@@ -15,45 +15,26 @@ struct NAWINAPISlider {
 
 NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  //NABool check;
 
   switch(message){
-  //case WM_SETFONT:
-  //case WM_WINDOWPOSCHANGING:
-  //case WM_CHILDACTIVATE:
-  //case WM_WINDOWPOSCHANGED:
-  //case WM_MOVE:
-  //case WM_SHOWWINDOW:
-  //case WM_PAINT:
-  //case WM_NCPAINT:
-  //case WM_ERASEBKGND:
-  //case WM_GETTEXTLENGTH:
-  //case WM_GETTEXT:
-  //case WM_NCHITTEST:
-  //case WM_SETCURSOR:
-  //case WM_MOUSEACTIVATE:
-  //case WM_IME_SETCONTEXT:
-  //case WM_SETFOCUS:
-  //case WM_CANCELMODE:
-  //case WM_CAPTURECHANGED:
-  //case WM_KILLFOCUS:
-  //case WM_IME_NOTIFY:
-  //case WM_GETDLGCODE:
-  //case WM_STYLECHANGING:
-  //case WM_STYLECHANGED:
-  //case WM_LBUTTONDOWN:
-  //case BM_SETSTATE: // only highlighting, not state changing.
-  //case BM_SETCHECK: // when pressed the button or manually sends BM_SETCHECK
-  //  break;
-
-  //case WM_LBUTTONUP:
-  //  ReleaseCapture();
-  //  check = naGetRadioState(uiElement);
-  //  naSetRadioState(uiElement, !check);
-  //  na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
-  //  info.hasbeenhandeled = NA_TRUE;
-  //  info.result = 0;
-  //  break;
+  case WM_WINDOWPOSCHANGING:
+  case WM_CHILDACTIVATE:
+  case WM_WINDOWPOSCHANGED:
+  case WM_MOVE:
+  case WM_SHOWWINDOW:
+  case WM_PAINT:
+  case WM_NCPAINT:
+  case WM_ERASEBKGND:
+  case WM_NCHITTEST:
+  case WM_SETCURSOR:
+  case WM_MOUSEMOVE:
+  case WM_MOUSELEAVE:
+  case WM_MOUSEACTIVATE:
+  case WM_LBUTTONDOWN:
+  case WM_LBUTTONUP:
+  case WM_KILLFOCUS:
+  case WM_IME_SETCONTEXT:
+    break;
 
   default:
     printf("Uncaught Slider message" NA_NL);
@@ -75,7 +56,7 @@ NA_DEF NASlider* naNewSlider(NASize size){
 
   NAWINAPISlider* winapiSlider = naAlloc(NAWINAPISlider);
 
-  style = WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS ;
+  style = WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS | TBS_ENABLESELRANGE;
 
   systemtext = naAllocSystemStringWithUTF8String("Slider");
 
@@ -85,6 +66,23 @@ NA_DEF NASlider* naNewSlider(NASize size){
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
   
   naFree(systemtext);
+
+  SendMessage(hWnd, TBM_SETRANGE, 
+    (WPARAM) TRUE,
+    (LPARAM) MAKELONG(NA_ZERO_u16, NA_MAX_u16));
+
+  SendMessage(hWnd, TBM_SETPAGESIZE, 
+      0, (LPARAM) 4);                  // new page size 
+
+  SendMessage(hWnd, TBM_SETSEL, 
+      (WPARAM) FALSE,                  // redraw flag 
+      (LPARAM) MAKELONG(0x3000, 0x7000)); 
+        
+  SendMessage(hWnd, TBM_SETPOS, 
+      (WPARAM) TRUE,                   // redraw flag 
+      (LPARAM) 0x5000); 
+
+  SetFocus(hWnd); 
 
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}

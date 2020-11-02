@@ -42,6 +42,12 @@ struct ExperimentController{
   NALabel* openGLSpaceLabel;
   NAOpenGLSpace* openGLSpace;
 
+  NALabel* radioLabel;
+  NARadio* radio;
+
+  NALabel* sliderLabel;
+  NASlider* slider;
+
   int textOption;
   int imageOption;
   NALabel* outputLabel;
@@ -98,13 +104,40 @@ NABool checkBoxPressed(NAReaction reaction){
   return NA_TRUE;
 }
 
-void initOpenGL(void* initData){
-}
-
 NABool redrawOpenGLSpace(NAReaction reaction){
+  static float ang = 0.f;
+
+  ang += .05f;
+  if(ang > NA_PI2f){ang = 0.f;}
+
   glClearColor(0.f, 0.f, .4f, 1.f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glColor4f(1.f, 1.f, 1.f, 1.f);
+  glPointSize(5);
+  glBegin(GL_POINTS);
+    glVertex3f(naSinf(ang) * .9f, 0.f, 0.f);
+  glEnd();
+
   naSwapOpenGLBuffer(reaction.uiElement);
+  
+  naRefreshUIElement(reaction.uiElement, 1./ 60);
+
+  return NA_TRUE;
+}
+
+NABool radioPressed(NAReaction reaction){
+  ExperimentController* con = reaction.controller;
+  naSetLabelText(con->outputLabel, "Radio Pressed");
+
+  return NA_TRUE;
+}
+
+NABool sliderEdited(NAReaction reaction){
+  ExperimentController* con = reaction.controller;
+  NASlider* slider = reaction.uiElement;
+  const char* outputText = naAllocSprintf(NA_TRUE, "Slider Value Edited to %f", naGetSliderValue(slider));
+  naSetLabelText(con->outputLabel, outputText);
 
   return NA_TRUE;
 }
@@ -185,9 +218,21 @@ ExperimentController* createExperimentController(){
 
   con->openGLSpaceLabel = naNewLabel("NAOpenGLSpace", naMakeSize(200, 16));
   naAddSpaceChild(con->contentSpace, con->openGLSpaceLabel, naMakePos(10, windowHeight - 308));
-  con->openGLSpace = naNewOpenGLSpace(con->contentSpace, naMakeSize(150, 22), initOpenGL, NA_NULL);
+  con->openGLSpace = naNewOpenGLSpace(con->contentSpace, naMakeSize(150, 22), NA_NULL, NA_NULL);
   naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(10, windowHeight - 330));
   naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, NA_NULL);
+
+  con->radioLabel = naNewLabel("NARadio", naMakeSize(200, 16));
+  naAddSpaceChild(con->contentSpace, con->radioLabel, naMakePos(10, windowHeight - 348));
+  con->radio = naNewRadio("I am a Radio", naMakeSize(150, 22));
+  naAddSpaceChild(con->contentSpace, con->radio, naMakePos(10, windowHeight - 370));
+  naAddUIReaction(con->radio, NA_UI_COMMAND_PRESSED, radioPressed, con);
+
+  con->sliderLabel = naNewLabel("NASlider", naMakeSize(200, 16));
+  naAddSpaceChild(con->contentSpace, con->sliderLabel, naMakePos(10, windowHeight - 388));
+  con->slider = naNewSlider(naMakeSize(150, 22));
+  naAddSpaceChild(con->contentSpace, con->slider, naMakePos(10, windowHeight - 410));
+  naAddUIReaction(con->slider, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",

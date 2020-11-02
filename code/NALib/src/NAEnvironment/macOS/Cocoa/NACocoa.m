@@ -40,17 +40,18 @@
 #include "ObjectiveC/UI/NAUICocoaLegacyII.h"
 #include "ObjectiveC/UI/NAUICocoaII.h"
 #include "ObjectiveC/UI/NAApplicationII.h"
-#include "ObjectiveC/UI/NAWindowII.h"
-#include "ObjectiveC/UI/NASpaceII.h"
-#include "ObjectiveC/UI/NAImageSpaceII.h"
-#include "ObjectiveC/UI/NAOpenGLSpaceII.h"
+
 #include "ObjectiveC/UI/NAButtonII.h"
-#include "ObjectiveC/UI/NARadioII.h"
 #include "ObjectiveC/UI/NACheckBoxII.h"
+#include "ObjectiveC/UI/NAImageSpaceII.h"
 #include "ObjectiveC/UI/NALabelII.h"
-#include "ObjectiveC/UI/NATextFieldII.h"
-#include "ObjectiveC/UI/NATextBoxII.h"
+#include "ObjectiveC/UI/NAOpenGLSpaceII.h"
+#include "ObjectiveC/UI/NARadioII.h"
 #include "ObjectiveC/UI/NASliderII.h"
+#include "ObjectiveC/UI/NASpaceII.h"
+#include "ObjectiveC/UI/NATextBoxII.h"
+#include "ObjectiveC/UI/NATextFieldII.h"
+#include "ObjectiveC/UI/NAWindowII.h"
 
 #endif // (NA_COMPILE_GUI == 1)
 #endif // defined __OBJC__
