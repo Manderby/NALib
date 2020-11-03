@@ -179,7 +179,6 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
   na_InitButton(&(winapiButton->button), hWnd);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiButton->button));
   winapiButton->image = NA_NULL;
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
@@ -214,7 +213,6 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
   na_InitButton(&(winapiButton->button), hWnd);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiButton->button));
   winapiButton->image = NA_NULL;
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
@@ -238,7 +236,6 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size){
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
   
   na_InitButton(&(winapiButton->button), hWnd);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiButton->button));
   winapiButton->image = uiImage;
   winapiButton->transparent = NA_FALSE;
 
@@ -261,7 +258,6 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiImage, NASize size){
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
   
   na_InitButton(&(winapiButton->button), hWnd);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiButton->button));
   winapiButton->image = uiImage;
   winapiButton->transparent = NA_TRUE;
 

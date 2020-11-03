@@ -29,7 +29,6 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaImageSpace* cocoaImageSpace = [[NACocoaImageSpace alloc] initWithImageSpace:imageSpace frame:frameRect];  
   na_InitImageSpace(imageSpace, NA_COCOA_PTR_OBJC_TO_C(cocoaImageSpace));
-  [cocoaImageSpace setTag: (NSInteger)imageSpace];
 
   [cocoaImageSpace setUIImage: uiImage];
   

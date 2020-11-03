@@ -48,7 +48,10 @@ struct NA_UIElement{
 
 struct NAApplication{
   NA_UIElement      uiElement;
-  NAList            windows;      // A list of all windows.
+  
+  NAList            windows;         // A list of all windows
+  NAList            uiElements;      // A list of all ui elements in use.
+  
   NATranslator*     translator;
   NAMouseStatus     mouseStatus;     // The mouse cursor status
   NAKeyboardStatus  keyboardStatus;  // The keyboard status
@@ -201,6 +204,13 @@ NA_HAPI void na_ClearSlider(NASlider* slider);
 
 
 
+// Returns a pointer to the ui element which uses the given native ID.
+// Every gui element which is handeled by NALib uses a native struct which is
+// dependent on the system running. When handling events, a native ID is sent
+// but this native ID can in general not be mapped directly to a corresponding
+// NALib struct. This function solves that. Slow, but does the job.
+NA_HAPI void* na_GetUINALibEquivalent(void* nativeId);
+
 NA_HAPI NABool na_IsApplicationRunning(void);
 
 NA_HAPI NAFont na_GetFontWithKind(NAFontKind kind);
@@ -239,12 +249,6 @@ NA_HAPI void na_ClearUINativeId(NANativeId nativeId);
 NA_HAPI void* na_AllocMouseTracking(NANativeId nativeId);
 NA_HAPI void na_DeallocMouseTracking(void* tracking);
 
-// Returns a pointer to the ui element which uses the given native ID.
-// Every gui element which is handeled by NALib uses a native struct which is
-// dependent on the system running. When handling events, a native ID is sent
-// but this native ID can in general not be mapped directly to a corresponding
-// NALib struct. This function solves that. Slow, but does the job.
-NA_HAPI void* na_GetUINALibEquivalent(void* nativeId);
 
 
 

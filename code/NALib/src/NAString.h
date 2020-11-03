@@ -206,7 +206,7 @@ NA_API NAString* naNewStringEPSDecoded(const NAString* inputString);
 // Appending functions: Appends something at the end of originalString.
 // The storage of originalString will be detached and deleted if necessary.
 // Before that, all content will be COPIED. The resulting string will be
-// NULL-terminated.
+// Null-terminated.
 
 // Appends another NAString
 NA_API void naAppendStringString(       NAString* originalString,

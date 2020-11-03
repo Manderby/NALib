@@ -134,7 +134,6 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
 
   na_InitImageSpace(&(winapiImageSpace->imageSpace), hWnd);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiImageSpace->imageSpace));
   winapiImageSpace->image = uiImage;
 
   return (NAImageSpace*)winapiImageSpace;

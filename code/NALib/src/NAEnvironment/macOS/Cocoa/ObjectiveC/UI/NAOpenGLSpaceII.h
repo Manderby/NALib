@@ -7,6 +7,9 @@
 
 #if (NA_COMPILE_OPENGL == 1)
 
+  #pragma GCC diagnostic push 
+  #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
   @implementation NACocoaOpenGLSpace
   - (id)initWithOpenGLSpace:(NAOpenGLSpace*)newOpenGLSpace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
     self = [super initWithFrame:frameRect pixelFormat:pixelformat];
@@ -83,16 +86,12 @@ NA_UNUSED(event);
 //    keyCode = NA_KEYCODE_LEFT_COMMAND;
     na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
   }
-  @synthesize tag = _tag;
-  - (void)setTag:(NSInteger)newTag{
-    _tag = newTag;
-  }
   @end
 
 
 
   NA_DEF NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator initfunc, void* initdata){
-    NA_UNUSED(window);
+    NA_UNUSED(parent);
     NAOpenGLSpace* openGLSpace = naAlloc(NAOpenGLSpace);
 
     // Configure the OpenGL Context and initialize this object.
@@ -116,7 +115,6 @@ NA_UNUSED(event);
     }
 
     na_InitOpenGLSpace(openGLSpace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
-    [cocoaSpace setTag: (NSInteger)openGLSpace];
     return openGLSpace;
   }
 
@@ -143,6 +141,8 @@ NA_UNUSED(event);
     [cocoaOpenGLSpace setFrame: frame];
   }
   
+  #pragma GCC diagnostic pop
+
 #endif  // NA_COMPILE_OPENGL
 
 NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openglspace){

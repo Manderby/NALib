@@ -48,6 +48,12 @@ struct ExperimentController{
   NALabel* sliderLabel;
   NASlider* slider;
 
+  NALabel* textBoxLabel;
+  NATextBox* textBox;
+
+  NALabel* textFieldLabel;
+  NATextField* textField;
+
   int textOption;
   int imageOption;
   NALabel* outputLabel;
@@ -105,6 +111,12 @@ NABool checkBoxPressed(NAReaction reaction){
 }
 
 NABool redrawOpenGLSpace(NAReaction reaction){
+  // OpenGL is declared deprecated on macOS 10.14. These pragma directives
+  // omit the nasty warnings. Do not forget the pragma pop at the end of this
+  // function!
+  #pragma GCC diagnostic push 
+  #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
   static float ang = 0.f;
 
   ang += .05f;
@@ -124,6 +136,8 @@ NABool redrawOpenGLSpace(NAReaction reaction){
   naRefreshUIElement(reaction.uiElement, 1./ 60);
 
   return NA_TRUE;
+
+  #pragma GCC diagnostic pop 
 }
 
 NABool radioPressed(NAReaction reaction){
@@ -142,10 +156,21 @@ NABool sliderEdited(NAReaction reaction){
   return NA_TRUE;
 }
 
+NABool textFieldEdited(NAReaction reaction){
+  ExperimentController* con = reaction.controller;
+  NATextField* textField = reaction.uiElement;
+  NAString* textFieldString = naNewStringWithTextFieldText(textField);
+  const char* outputText = naAllocSprintf(NA_TRUE, "TextField Value Edited to %s", naGetStringUTF8Pointer(textFieldString));
+  naSetLabelText(con->outputLabel, outputText);
+  naDelete(textFieldString);
+
+  return NA_TRUE;
+}
+
 
 
 ExperimentController* createExperimentController(){
-  double windowWidth = 500;
+  double windowWidth = 420;
   double windowHeight = 600;
 
   ExperimentController* con = naAlloc(ExperimentController);
@@ -159,80 +184,103 @@ ExperimentController* createExperimentController(){
   con->contentSpace = naNewSpace(naMakeSize(windowWidth, windowHeight));
   naSetWindowContentSpace(con->experimentWindow, con->contentSpace);
 
-  con->pushButtonLabel = naNewLabel("NAButton: PushButton", naMakeSize(200, 16));
-  naAddSpaceChild(con->contentSpace, con->pushButtonLabel, naMakePos(10, windowHeight - 28));
-  con->pushButton = naNewPushButton("Push Button", naMakeSize(150, 22));
-  naAddSpaceChild(con->contentSpace, con->pushButton, naMakePos(10, windowHeight - 50));
+  double curPosY = windowHeight - 42;
+  con->pushButtonLabel = naNewLabel("NAButton: PushButton", naMakeSize(200, 22));
+  naAddSpaceChild(con->contentSpace, con->pushButtonLabel, naMakePos(20, curPosY));
+  con->pushButton = naNewPushButton("Push Button", naMakeSize(150, 24));
+  naAddSpaceChild(con->contentSpace, con->pushButton, naMakePos(250, curPosY));
   naAddUIReaction(con->pushButton, NA_UI_COMMAND_PRESSED, pushButtonPressed, con);
 
-  con->textOptionButtonLabel = naNewLabel("NAButton: TextOptionButton", naMakeSize(200, 16));
-  naAddSpaceChild(con->contentSpace, con->textOptionButtonLabel, naMakePos(10, windowHeight - 68));
+  curPosY -= 30;
+  con->textOptionButtonLabel = naNewLabel("NAButton: TextOptionButton", naMakeSize(200, 22));
+  naAddSpaceChild(con->contentSpace, con->textOptionButtonLabel, naMakePos(20, curPosY));
   con->textOptionButton1 = naNewTextOptionButton("Text 1", naMakeSize(50, 22));
-  naAddSpaceChild(con->contentSpace, con->textOptionButton1, naMakePos(10, windowHeight - 90));
+  naAddSpaceChild(con->contentSpace, con->textOptionButton1, naMakePos(250, curPosY));
   naAddUIReaction(con->textOptionButton1, NA_UI_COMMAND_PRESSED, textOptionButtonPressed, con);
   con->textOptionButton2 = naNewTextOptionButton("Text 2", naMakeSize(50, 22));
-  naAddSpaceChild(con->contentSpace, con->textOptionButton2, naMakePos(60, windowHeight - 90));
+  naAddSpaceChild(con->contentSpace, con->textOptionButton2, naMakePos(300, curPosY));
   naAddUIReaction(con->textOptionButton2, NA_UI_COMMAND_PRESSED, textOptionButtonPressed, con);
   con->textOptionButton3 = naNewTextOptionButton("Text 3", naMakeSize(50, 22));
-  naAddSpaceChild(con->contentSpace, con->textOptionButton3, naMakePos(110, windowHeight - 90));
+  naAddSpaceChild(con->contentSpace, con->textOptionButton3, naMakePos(350, curPosY));
   naAddUIReaction(con->textOptionButton3, NA_UI_COMMAND_PRESSED, textOptionButtonPressed, con);
 
+  curPosY -= 30;
   NABabyColor mainColor = {1., .25, 0., 1.};
   NABabyColor altColor = {.25, 0., 1., 1.};
   NABabyImage* mainImage = naCreateBabyImage(naMakeSizei(20, 10), mainColor);
   NABabyImage* altImage = naCreateBabyImage(naMakeSizei(20, 10), altColor);
   NAUIImage* testImage = naAllocUIImage(mainImage, altImage, NA_UIIMAGE_RESOLUTION_1x, NA_BLEND_ZERO);
-  con->imageOptionButtonLabel = naNewLabel("NAButton: ImageOptionButton", naMakeSize(200, 16));
-  naAddSpaceChild(con->contentSpace, con->imageOptionButtonLabel, naMakePos(10, windowHeight - 108));
+  con->imageOptionButtonLabel = naNewLabel("NAButton: ImageOptionButton", naMakeSize(200, 22));
+  naAddSpaceChild(con->contentSpace, con->imageOptionButtonLabel, naMakePos(20, curPosY));
   con->imageOptionButton1 = naNewImageOptionButton(testImage, naMakeSize(50, 22));
-  naAddSpaceChild(con->contentSpace, con->imageOptionButton1, naMakePos(10, windowHeight - 130));
+  naAddSpaceChild(con->contentSpace, con->imageOptionButton1, naMakePos(250, curPosY));
   naAddUIReaction(con->imageOptionButton1, NA_UI_COMMAND_PRESSED, imageOptionButtonPressed, con);
   con->imageOptionButton2 = naNewImageOptionButton(testImage, naMakeSize(50, 22));
-  naAddSpaceChild(con->contentSpace, con->imageOptionButton2, naMakePos(60, windowHeight - 130));
+  naAddSpaceChild(con->contentSpace, con->imageOptionButton2, naMakePos(300, curPosY));
   naAddUIReaction(con->imageOptionButton2, NA_UI_COMMAND_PRESSED, imageOptionButtonPressed, con);
   con->imageOptionButton3 = naNewImageOptionButton(testImage, naMakeSize(50, 22));
-  naAddSpaceChild(con->contentSpace, con->imageOptionButton3, naMakePos(110, windowHeight - 130));
+  naAddSpaceChild(con->contentSpace, con->imageOptionButton3, naMakePos(350, curPosY));
   naAddUIReaction(con->imageOptionButton3, NA_UI_COMMAND_PRESSED, imageOptionButtonPressed, con);
 
-  con->imageButtonLabel = naNewLabel("NAButton: ImageButton", naMakeSize(200, 16));
-  naAddSpaceChild(con->contentSpace, con->imageButtonLabel, naMakePos(10, windowHeight - 148));
+  curPosY -= 30;
+  con->imageButtonLabel = naNewLabel("NAButton: ImageButton", naMakeSize(200, 22));
+  naAddSpaceChild(con->contentSpace, con->imageButtonLabel, naMakePos(20, curPosY));
   con->imageButton = naNewImageButton(testImage, naMakeSize(150, 22));
-  naAddSpaceChild(con->contentSpace, con->imageButton, naMakePos(10, windowHeight - 170));
+  naAddSpaceChild(con->contentSpace, con->imageButton, naMakePos(250, curPosY));
   naAddUIReaction(con->imageButton, NA_UI_COMMAND_PRESSED, imageButtonPressed, con);
 
-  con->checkBoxLabel = naNewLabel("NACheckBox", naMakeSize(200, 16));
-  naAddSpaceChild(con->contentSpace, con->checkBoxLabel, naMakePos(10, windowHeight - 188));
+  curPosY -= 30;
+  con->checkBoxLabel = naNewLabel("NACheckBox", naMakeSize(200, 22));
+  naAddSpaceChild(con->contentSpace, con->checkBoxLabel, naMakePos(20, curPosY));
   con->checkBox = naNewCheckBox("I am a CheckBox", naMakeSize(150, 22));
-  naAddSpaceChild(con->contentSpace, con->checkBox, naMakePos(10, windowHeight - 210));
+  naAddSpaceChild(con->contentSpace, con->checkBox, naMakePos(250, curPosY));
   naAddUIReaction(con->checkBox, NA_UI_COMMAND_PRESSED, checkBoxPressed, con);
 
-  con->imageSpaceLabel = naNewLabel("NAImageSpace", naMakeSize(200, 16));
-  naAddSpaceChild(con->contentSpace, con->imageSpaceLabel, naMakePos(10, windowHeight - 228));
+  curPosY -= 30;
+  con->imageSpaceLabel = naNewLabel("NAImageSpace", naMakeSize(200, 22));
+  naAddSpaceChild(con->contentSpace, con->imageSpaceLabel, naMakePos(20, curPosY));
   con->imageSpace = naNewImageSpace(testImage, naMakeSize(150, 22));
-  naAddSpaceChild(con->contentSpace, con->imageSpace, naMakePos(10, windowHeight - 250));
+  naAddSpaceChild(con->contentSpace, con->imageSpace, naMakePos(250, curPosY));
 
-  con->labelLabel = naNewLabel("NALabel", naMakeSize(200, 16));
-  naAddSpaceChild(con->contentSpace, con->labelLabel, naMakePos(10, windowHeight - 268));
+  curPosY -= 30;
+  con->labelLabel = naNewLabel("NALabel", naMakeSize(200, 22));
+  naAddSpaceChild(con->contentSpace, con->labelLabel, naMakePos(20, curPosY));
   con->label = naNewLabel("I am a Label", naMakeSize(150, 22));
-  naAddSpaceChild(con->contentSpace, con->label, naMakePos(10, windowHeight - 290));
+  naAddSpaceChild(con->contentSpace, con->label, naMakePos(250, curPosY));
 
-  con->openGLSpaceLabel = naNewLabel("NAOpenGLSpace", naMakeSize(200, 16));
-  naAddSpaceChild(con->contentSpace, con->openGLSpaceLabel, naMakePos(10, windowHeight - 308));
+  curPosY -= 30;
+  con->openGLSpaceLabel = naNewLabel("NAOpenGLSpace", naMakeSize(200, 22));
+  naAddSpaceChild(con->contentSpace, con->openGLSpaceLabel, naMakePos(20, curPosY));
   con->openGLSpace = naNewOpenGLSpace(con->contentSpace, naMakeSize(150, 22), NA_NULL, NA_NULL);
-  naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(10, windowHeight - 330));
+  naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(250, curPosY));
   naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, NA_NULL);
 
-  con->radioLabel = naNewLabel("NARadio", naMakeSize(200, 16));
-  naAddSpaceChild(con->contentSpace, con->radioLabel, naMakePos(10, windowHeight - 348));
+  curPosY -= 30;
+  con->radioLabel = naNewLabel("NARadio", naMakeSize(200, 22));
+  naAddSpaceChild(con->contentSpace, con->radioLabel, naMakePos(20, curPosY));
   con->radio = naNewRadio("I am a Radio", naMakeSize(150, 22));
-  naAddSpaceChild(con->contentSpace, con->radio, naMakePos(10, windowHeight - 370));
+  naAddSpaceChild(con->contentSpace, con->radio, naMakePos(250, curPosY));
   naAddUIReaction(con->radio, NA_UI_COMMAND_PRESSED, radioPressed, con);
 
-  con->sliderLabel = naNewLabel("NASlider", naMakeSize(200, 16));
-  naAddSpaceChild(con->contentSpace, con->sliderLabel, naMakePos(10, windowHeight - 388));
+  curPosY -= 30;
+  con->sliderLabel = naNewLabel("NASlider", naMakeSize(200, 22));
+  naAddSpaceChild(con->contentSpace, con->sliderLabel, naMakePos(20, curPosY));
   con->slider = naNewSlider(naMakeSize(150, 22));
-  naAddSpaceChild(con->contentSpace, con->slider, naMakePos(10, windowHeight - 410));
+  naAddSpaceChild(con->contentSpace, con->slider, naMakePos(250, curPosY));
   naAddUIReaction(con->slider, NA_UI_COMMAND_EDITED, sliderEdited, con);
+
+  curPosY -= 30;
+  con->textBoxLabel = naNewLabel("NATextBox", naMakeSize(200, 22));
+  naAddSpaceChild(con->contentSpace, con->textBoxLabel, naMakePos(20, curPosY));
+  con->textBox = naNewTextBox(naMakeSize(150, 22));
+  naAddSpaceChild(con->contentSpace, con->textBox, naMakePos(250, curPosY));
+
+  curPosY -= 30;
+  con->textFieldLabel = naNewLabel("NATextField", naMakeSize(200, 22));
+  naAddSpaceChild(con->contentSpace, con->textFieldLabel, naMakePos(20, curPosY));
+  con->textField = naNewTextField(naMakeSize(150, 22));
+  naAddSpaceChild(con->contentSpace, con->textField, naMakePos(250, curPosY));
+  naAddUIReaction(con->textField, NA_UI_COMMAND_EDITED, textFieldEdited, con);
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",

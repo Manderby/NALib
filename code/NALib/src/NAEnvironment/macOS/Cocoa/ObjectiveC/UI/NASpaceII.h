@@ -39,10 +39,6 @@
   NA_UNUSED(event);
   na_DispatchUIElementCommand((NA_UIElement*)space, NA_UI_COMMAND_MOUSE_EXITED);
 }
-@synthesize tag = _tag;
-- (void)setTag:(NSInteger)newTag{
-  _tag = newTag;
-}
 @end
 
 
@@ -56,7 +52,6 @@ NA_DEF NASpace* naNewSpace(NASize size){
   contentRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   cocoaSpace = [[NACocoaSpace alloc] initWithSpace:space frame:contentRect];  
   na_InitSpace(space, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
-  [cocoaSpace setTag: (NSInteger)space];
 
   return space;
 }

@@ -157,7 +157,6 @@ NA_DEF NASpace* naNewSpace(NASize size){
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
 
   na_InitSpace(&(winapiSpace->space), hWnd);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiSpace->space));
   winapiSpace->lastBgColor = &(app->bgColor);
   winapiSpace->space.alternatebackground = NA_FALSE;
 

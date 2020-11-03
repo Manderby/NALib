@@ -90,7 +90,6 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}
 
   na_InitRadio(&(winapiRadio->radio), hWnd);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiRadio->radio));
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
