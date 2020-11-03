@@ -297,6 +297,11 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
   NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(hWnd);
   NAUIElementType firsttype = uiElement ? naGetUIElementType(uiElement) : NA_UI_APPLICATION;
 
+  if(message == WM_HSCROLL)
+  {
+    int asdf = 1243;
+  }
+
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   if(message == WM_COMMAND){

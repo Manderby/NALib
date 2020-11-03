@@ -19,7 +19,7 @@ struct NAWINAPIOpenGLSpace {
 
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  PAINTSTRUCT paintStruct;
+  //PAINTSTRUCT paintStruct;
 
   switch(message){
   case WM_PAINT:
@@ -29,8 +29,8 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
     GetUpdateRect(naGetUIElementNativeId(uiElement), &updateRegion, NA_FALSE);
     ValidateRect(naGetUIElementNativeId(uiElement), &updateRegion);
 
-    BeginPaint(naGetUIElementNativeId(uiElement), &paintStruct);   
-    EndPaint(naGetUIElementNativeId(uiElement), &paintStruct);
+    //BeginPaint(naGetUIElementNativeId(uiElement), &paintStruct);   
+    //EndPaint(naGetUIElementNativeId(uiElement), &paintStruct);
     info.result = 0;
     break;
 
@@ -57,7 +57,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator init
 
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = naAlloc(NAWINAPIOpenGLSpace);
 
-  style = WS_CHILD | WS_VISIBLE | ES_READONLY | CS_OWNDC;
+  style = WS_CHILD | WS_VISIBLE | ES_READONLY;
 
 	hWnd = CreateWindow(
 		TEXT("NAOpenGLSpace"), TEXT(""), style,
@@ -105,13 +105,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator init
 
 NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openGLSpace;
-  //NADateTime time1 = naMakeDateTimeNow();
-  /*NABool success = */SwapBuffers(GetDC((HWND)naGetUIElementNativeId(&(winapiOpenGLSpace->openGLSpace.uiElement))));
-  //NADateTime time2 = naMakeDateTimeNow();
-  //printf("%f\n", naGetDateTimeDifference(&time2, &time1));
-  //if(!success){
-  //  printf("SpawBuffers failed with error code %d" NA_NL, GetLastError());
-  //}
+  SwapBuffers(GetDC((HWND)naGetUIElementNativeId(&(winapiOpenGLSpace->openGLSpace.uiElement))));
 }
 
 

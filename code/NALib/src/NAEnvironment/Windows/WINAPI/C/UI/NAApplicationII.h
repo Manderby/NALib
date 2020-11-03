@@ -47,9 +47,10 @@ struct NAWINAPIApplication {
   NA_UIElement* mouseHoverElement;
 
   WNDPROC oldButtonWindowProc;
-  WNDPROC oldRadioWindowProc;
   WNDPROC oldCheckBoxWindowProc;
   WNDPROC oldLabelWindowProc;
+  WNDPROC oldRadioWindowProc;
+  WNDPROC oldSliderWindowProc;
   WNDPROC oldTextFieldWindowProc;
 
   NAWINAPIColor fgColor;
@@ -64,14 +65,17 @@ struct NAWINAPIApplication {
 WNDPROC naGetApplicationOldButtonWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldButtonWindowProc;
 }
-WNDPROC naGetApplicationOldRadioWindowProc(){
-  return ((NAWINAPIApplication*)naGetApplication())->oldRadioWindowProc;
-}
 WNDPROC naGetApplicationOldCheckBoxWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldCheckBoxWindowProc;
 }
 WNDPROC naGetApplicationOldLabelWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldLabelWindowProc;
+}
+WNDPROC naGetApplicationOldRadioWindowProc(){
+  return ((NAWINAPIApplication*)naGetApplication())->oldRadioWindowProc;
+}
+WNDPROC naGetApplicationOldSliderWindowProc(){
+  return ((NAWINAPIApplication*)naGetApplication())->oldSliderWindowProc;
 }
 WNDPROC naGetApplicationOldTextFieldWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldTextFieldWindowProc;
@@ -259,9 +263,10 @@ NA_HDEF NAApplication* na_NewApplication(void){
   winapiApplication->mouseHoverElement = NA_NULL;
 
   winapiApplication->oldButtonWindowProc = NA_NULL;
-  winapiApplication->oldRadioWindowProc = NA_NULL;
   winapiApplication->oldCheckBoxWindowProc = NA_NULL;
   winapiApplication->oldLabelWindowProc = NA_NULL;
+  winapiApplication->oldRadioWindowProc = NA_NULL;
+  winapiApplication->oldSliderWindowProc = NA_NULL;
   winapiApplication->oldTextFieldWindowProc = NA_NULL;
 
   winapiApplication->fgColor.color = GetSysColor(COLOR_WINDOWTEXT);

@@ -112,7 +112,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     break;
 
   default:
-    //printf("Uncaught Space message" NA_NL);
+    printf("Uncaught Space message" NA_NL);
     break;
   }
   

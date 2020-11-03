@@ -58,7 +58,7 @@ NA_DEF NASlider* naNewSlider(NASize size){
 
   NAWINAPISlider* winapiSlider = naAlloc(NAWINAPISlider);
 
-  style = WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS | TBS_ENABLESELRANGE;
+  style = WS_CHILD | WS_VISIBLE | TBS_NOTICKS ;
 
   systemtext = naAllocSystemStringWithUTF8String("Slider");
 
@@ -69,25 +69,25 @@ NA_DEF NASlider* naNewSlider(NASize size){
   
   naFree(systemtext);
 
-  SendMessage(hWnd, TBM_SETRANGE, 
+  SendMessage(hWnd, TBM_SETRANGEMIN , 
     (WPARAM) TRUE,
-    (LPARAM) MAKELONG(NA_ZERO_u16, NA_MAX_u16));
+    (LPARAM) NA_ZERO_u32);
+  SendMessage(hWnd, TBM_SETRANGEMAX, 
+    (WPARAM) TRUE,
+    (LPARAM) NA_MAX_i32);
 
-  SendMessage(hWnd, TBM_SETPAGESIZE, 
-      0, (LPARAM) 4);                  // new page size 
+  //SendMessage(hWnd, TBM_SETPAGESIZE, 
+  //    0, (LPARAM) 4);                  // new page size 
 
-  SendMessage(hWnd, TBM_SETSEL, 
-      (WPARAM) FALSE,                  // redraw flag 
-      (LPARAM) MAKELONG(0x3000, 0x7000)); 
-        
-  SendMessage(hWnd, TBM_SETPOS, 
-      (WPARAM) TRUE,                   // redraw flag 
-      (LPARAM) 0x5000); 
+  //SendMessage(hWnd, TBM_SETSEL, 
+  //    (WPARAM) FALSE,                  // redraw flag 
+  //    (LPARAM) MAKELONG(0x3000, 0x7000)); 
+  //      
 
-  SetFocus(hWnd); 
+  //SetFocus(hWnd); 
 
-  oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}
+  //oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  //if(!app->oldSliderWindowProc){app->oldSliderWindowProc = oldproc;}
 
   na_InitSlider(&(winapiSlider->slider), hWnd);
   SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiSlider->slider));
@@ -117,13 +117,19 @@ NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount){
 
 
 NA_API double naGetSliderValue(NASlider* slider){
-    return 0;
+  int32 sliderValue = (int32)SendMessage(naGetUIElementNativeId(slider), TBM_GETPOS, 0, 0); 
+  return (double)sliderValue / (double)NA_MAX_i32;
 }
 
 
 
 NA_API void naSetSliderValue(NASlider* slider, double value){
+  int32 sliderValue = (int32)(value * (double)NA_MAX_i32);
+  SendMessage(naGetUIElementNativeId(slider), TBM_SETPOS, 
+    (WPARAM) TRUE, // redraw flag 
+    (LPARAM) sliderValue); 
 }
+
 
 //NA_DEF NABool naGetRadioState(NARadio* radio){
 //  LPARAM state = SendMessage(naGetUIElementNativeId(radio), BM_GETSTATE, 0, 0);
