@@ -22,11 +22,14 @@ NA_HDEF void na_RegisterUIElement(NA_UIElement* uiElement, NAUIElementType eleme
   naInitList(&(uiElement->shortcuts));
   uiElement->mouseInside = NA_FALSE;
   uiElement->allowNotifications = NA_TRUE;
+  
+  naAddListLastMutable(&(na_App->uiElements), uiElement);
 }
 
 
 
 NA_HDEF void na_UnregisterUIElement(NA_UIElement* uiElement){
+  naRemoveListData(&(na_App->uiElements), uiElement);
   na_ClearUINativeId(uiElement->nativeId);
 }
 NA_HDEF void na_AddApplicationWindow(NAWindow* window){
@@ -45,6 +48,7 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativeId nativeId)
   na_App = application;
 
   naInitList(&(application->windows));
+  naInitList(&(application->uiElements));
 
   application->translator = NA_NULL;
   naStartTranslator();
@@ -76,6 +80,9 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
 
   naForeachListMutable(&(na_App->windows), naReleaseUIElement);
   naClearList(&(na_App->windows));
+
+  // todo test if all uiElements are gone.
+  naClearList(&(na_App->uiElements));
 
   naStopTranslator();
   na_UnregisterUIElement(&(application->uiElement));
@@ -217,6 +224,18 @@ NA_DEF NABool naIsWindowResizeable(NAWindow* window){
 
 NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
   return window->contentSpace;
+}
+
+
+
+// todo: find a faster way. Hash perhaps or something else.
+NA_HDEF void* na_GetUINALibEquivalent(NANativeId nativeId){
+  NAListIterator iter;
+  NA_UIElement* retelem = NA_NULL;
+  naBeginListMutatorIteration(NA_UIElement* elem, &(na_App->uiElements), iter);
+    if(elem->nativeId == nativeId){retelem = elem; break;}
+  naEndListIteration(iter);
+  return retelem;
 }
 
 

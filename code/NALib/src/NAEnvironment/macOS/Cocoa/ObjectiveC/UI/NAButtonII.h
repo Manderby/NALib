@@ -99,7 +99,6 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaButton* cocoaButton = [[NACocoaButton alloc] initWithButton:button bezelStyle:NABezelStyleRounded frame:frameRect];
   na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
-  [cocoaButton setTag: (NSInteger)button];
   [cocoaButton setButtonText:text];
   
   return button;

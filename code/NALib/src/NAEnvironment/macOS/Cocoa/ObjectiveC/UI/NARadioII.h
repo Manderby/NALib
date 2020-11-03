@@ -74,7 +74,6 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaRadio* cocoaRadio = [[NACocoaRadio alloc] initWithRadio:radio frame:frameRect];
   na_InitRadio(radio, NA_COCOA_PTR_OBJC_TO_C(cocoaRadio));
-  [cocoaRadio setTag: (NSInteger)radio];
   [cocoaRadio setText:text];
   
   return radio;

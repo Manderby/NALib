@@ -641,7 +641,7 @@ NA_API NARect naGetMainScreenRect(void);
 
 // Space (In other frameworks called View, Frame, Area, Widget...)
 // Beware that adding a child to a space which formerly was the first responder
-// of a window, that windows first responder will be reset to NULL.
+// of a window, that windows first responder will be reset to Null.
 NA_API NASpace* naNewSpace(NASize size);
 NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);

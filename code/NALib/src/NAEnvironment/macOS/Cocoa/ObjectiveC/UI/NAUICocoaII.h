@@ -54,7 +54,6 @@ struct NACocoaApplication {
   NASpace* space;
   NSTrackingArea* trackingArea;
 }
-- (void)setTag:(NSInteger)newTag;
 @end
 
 @interface NACocoaImageSpace : NSImageView{
@@ -64,6 +63,8 @@ struct NACocoaApplication {
 @end
 
 #if (NA_COMPILE_OPENGL == 1)
+  #pragma GCC diagnostic push 
+  #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
   @interface NACocoaOpenGLSpace : NSOpenGLView{
     NAOpenGLSpace* openGLSpace;
     NSTrackingArea* trackingArea;
@@ -71,6 +72,7 @@ struct NACocoaApplication {
     void* initData;
   }
   @end
+  #pragma GCC diagnostic pop
 #endif
 
 @interface NACocoaButton : NSButton{
@@ -114,7 +116,6 @@ struct NACocoaApplication {
   NSScrollView* scrollView;
 }
 - (NSView*) getContainingView;
-- (void)setTag:(NSInteger)newTag;
 @end
 
 @interface NACocoaSlider : NSSlider{
@@ -132,21 +133,6 @@ NA_HDEF void na_ClearUINativeId(NANativeId nativeId){
   NA_COCOA_RELEASE(nativeId);
 }
 
-
-NA_HDEF void* na_GetUINALibEquivalent(NANativeId nativeId){
-  NA_UIElement* retElem = NA_NULL;
-  if([(NA_COCOA_BRIDGE id)nativeId isKindOfClass:[NSView class]]){
-    retElem = (NA_UIElement*)[(NA_COCOA_BRIDGE NSView*)nativeId tag];
-  }else if([(NA_COCOA_BRIDGE id)nativeId isKindOfClass:[NSApplication class]]){
-    retElem = &(na_App->uiElement);
-  }else{
-    NAListIterator iter;
-    naBeginListMutatorIteration(NA_UIElement* elem, &(na_App->windows), iter);
-      if(elem->nativeId == nativeId){retElem = elem; break;}
-    naEndListIteration(iter);
-  }
-  return retElem;
-}
 
 
 NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){

@@ -90,7 +90,6 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator init
 	if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
 
   na_InitOpenGLSpace(&(winapiOpenGLSpace->openGLSpace), hWnd);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiOpenGLSpace->openGLSpace));
 
   // Now the OpenGL context is created and current. We can initialize it
   // if necessary.

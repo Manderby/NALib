@@ -56,7 +56,7 @@ NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
 
   #ifndef NDEBUG
     if(!uiElement)
-      naError("uiElement is NULL");
+      naError("uiElement is Null");
   #endif
     elem = (NA_UIElement*)uiElement;
     parentElem = (NA_UIElement*)parent;
@@ -74,7 +74,7 @@ NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
     HWND result;
     #ifndef NDEBUG
     if(!elem)
-      naCrash("elem is NULL");
+      naCrash("elem is Null");
     #endif
 
     elem->parent = parent;
@@ -683,19 +683,6 @@ NA_HDEF void na_DeallocMouseTracking(void* tracking){
   winapiTracking->dwFlags |= TME_CANCEL;
   TrackMouseEvent(winapiTracking);
   naFree(winapiTracking);
-}
-
-
-
-NA_HDEF void* na_GetUINALibEquivalent(NANativeId nativeId){
-  // In WINAPI, the NALib equivalent is usually stored in the userdata of the
-  // HWND structure. The antiveId is always a HWND except if it is the
-  // application itels. We simply check for that and otherwise use the HWND.
-  if(nativeId == na_App->uiElement.nativeId){
-    return naGetApplication();
-  }else{
-    return (void*)GetWindowLongPtrA(nativeId, GWLP_USERDATA);
-  }
 }
 
 

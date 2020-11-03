@@ -196,7 +196,7 @@ NA_IDEF const void* naGetArrayPointerConst(const NAArray* array){
       return NA_NULL;
     }else{
       if(naIsArrayEmpty(array))
-        naError("array is empty, returned pointer is NULL");
+        naError("array is empty, returned pointer is Null");
     }
   #endif
   return naGetPtrConst(array->ptr);
@@ -211,7 +211,7 @@ NA_IDEF void* naGetArrayPointerMutable(NAArray* array){
       return NA_NULL;
     }else{
       if(naIsArrayEmpty(array))
-        naError("array is empty, returned pointer is NULL");
+        naError("array is empty, returned pointer is Null");
     }
   #endif
   return naGetPtrMutable(array->ptr);

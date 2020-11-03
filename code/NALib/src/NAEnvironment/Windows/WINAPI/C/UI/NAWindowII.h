@@ -199,7 +199,6 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   naFree(systemtitle);
 
   na_InitWindow(&(winapiWindow->window), hWnd, NA_NULL, NA_FALSE, resizeable, rect);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiWindow->window));
   winapiWindow->firstResponder = NA_NULL;
 
   naAddUIKeyboardShortcut(winapiWindow, naMakeKeybardStatus(0, NA_KEYCODE_TAB), naHandleWindowTabOrder, NA_NULL);
