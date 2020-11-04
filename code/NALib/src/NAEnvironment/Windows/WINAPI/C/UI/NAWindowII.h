@@ -13,6 +13,9 @@ struct NAWINAPIWindow {
   NA_UIElement* firstResponder;
 };
 
+NA_HAPI void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow);
+NA_RUNTIME_TYPE(NAWINAPIWindow, na_DestructWINAPIWindow, NA_FALSE);
+
 
 
 NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
@@ -164,7 +167,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   HICON hIcon;
   NASpace* space;
   
-  NAWINAPIWindow* winapiWindow = naAlloc(NAWINAPIWindow);
+  NAWINAPIWindow* winapiWindow = naNew(NAWINAPIWindow);
 
   rect = naSetWindowStorageTag(&(winapiWindow->window), storageTag, rect, resizeable);
 
@@ -220,7 +223,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 
 
 
-NA_DEF void na_DestructWindow(NAWindow* window){
+NA_DEF void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow){
   DestroyWindow(naGetUIElementNativePtr(window));
   naReleaseUIElement(window->contentSpace);
   na_ClearWindow(window);

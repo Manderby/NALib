@@ -6,11 +6,25 @@
 
 
 
+typedef struct NACocoaTextField NACocoaTextField;
+struct NACocoaTextField{
+  NATextField   textField;
+};
+
+NA_HAPI void na_DestructCocoaTextField(NACocoaTextField* cocoaTextField);
+NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
+
+@interface NACocoaNativeTextField : NSTextField <NSTextFieldDelegate>{
+  NACocoaTextField* cocoaTextField;
+}
+@end
+
+
+
 @implementation NACocoaNativeTextField
 
-- (id) initWithTextField:(NATextField*)newTextField frame:(NSRect)frame{
+- (id) initWithTextField:(NACocoaTextField*)newCocoaTextField frame:(NSRect)frame{
   self = [super initWithFrame:frame];
-//  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
   [self setSelectable:YES];
   [self setEditable:YES];
   [self setBordered:YES];
@@ -25,18 +39,18 @@
   [self setAction:@selector(onEdited:)];
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
   [self setDelegate:self];
-  textField = newTextField;
+  cocoaTextField = newCocoaTextField;
   return self;
 }
 
 - (void) onEdited:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)textField, NA_UI_COMMAND_EDITED);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDITED);
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification{
   NA_UNUSED(notification);
-  na_DispatchUIElementCommand((NA_UIElement*)textField, NA_UI_COMMAND_EDITED);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDITED);
 }
 
 - (void) setText:(const NAUTF8Char*)text{
@@ -64,20 +78,20 @@
 
 
 NA_DEF NATextField* naNewTextField(NASize size){
-  NATextField* textField = naAlloc(NATextField);
+  NACocoaTextField* cocoaTextField = naNew(NACocoaTextField);
   
   NACocoaNativeTextField* nativePtr = [[NACocoaNativeTextField alloc]
-    initWithTextField:textField
+    initWithTextField:cocoaTextField
     frame:naMakeNSRectWithSize(size)];
-  na_InitTextField(textField, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitTextField((NATextField*)cocoaTextField, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
-  return textField;
+  return (NATextField*)cocoaTextField;
 }
 
 
 
-NA_DEF void na_DestructTextField(NATextField* textField){
-  na_ClearTextField(textField);
+NA_DEF void na_DestructCocoaTextField(NACocoaTextField* cocoaTextField){
+  na_ClearTextField((NATextField*)cocoaTextField);
 }
 
 

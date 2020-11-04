@@ -32,96 +32,9 @@ NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);
 
 
 
-// Not much of use currently, but consistent with the WINAPI implementation.
-typedef struct NACocoaApplication NACocoaApplication;
-struct NACocoaApplication {
-  NAApplication application;
-};
-
-@interface NACocoaNativeApplicationDelegate : NSObject <NSApplicationDelegate>{
-  NACocoaApplication* cocoaApplication;
-}
-@end
-
-@interface NACocoaNativeButton : NSButton{
-  NAButton* button;
-}
-- (void) onPressed:(id)sender;
-@end
-
-@interface NACocoaNativeRadio : NSButton{
-  NARadio* radio;
-  // Cocoa thinks it's smart by doing things automatically. Unfortunately, we
-  // have to encapsulate the radio into its own view to get the behaviour
-  // we need.
-  NSView* containingview;
-}
-- (NSView*) getContainingView;
-@end
-
-@interface NACocoaNativeCheckBox : NSButton{
-  NACheckBox* checkBox;
-}
-@end
-
-//@interface MDVerticallyCenteredTextFieldCell : NSTextFieldCell{
-//}
-//@end
-
-@interface NACocoaNativeImageSpace : NSImageView{
-  NAImageSpace* imageSpace;
-  NAUIImage* uiImage;
-}
-@end
-
-@interface NACocoaNativeLabel : NSTextField{
-  NALabel* label;
-}
-@end
-
-#if (NA_COMPILE_OPENGL == 1)
-  #pragma GCC diagnostic push 
-  #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-  @interface NACocoaNativeOpenGLSpace : NSOpenGLView{
-    NAOpenGLSpace* openGLSpace;
-    NSTrackingArea* trackingArea;
-    NAMutator initFunc;
-    void* initData;
-  }
-  @end
-  #pragma GCC diagnostic pop
-#endif
-
-@interface NACocoaNativeSlider : NSSlider{
-  NASlider* slider;
-}
-- (void) onValueChanged:(id)sender;
-@end
-
-@interface NACocoaNativeSpace : NSView{
-  NASpace* space;
-  NSTrackingArea* trackingArea;
-}
-@end
-
-@interface NACocoaNativeTextField : NSTextField <NSTextFieldDelegate>{
-  NATextField* textField;
-}
-- (void) onEdited:(id)sender;
-@end
-
-@interface NACocoaNativeTextBox : NSTextView{
-  NATextBox* textBox;
-  NSScrollView* scrollView;
-}
-- (NSView*) getContainingView;
-@end
-
-@interface NACocoaNativeWindow : NSWindow <NSWindowDelegate>{
-  NAWindow* window;
-  NAUInt trackingcount;
-  NSTrackingArea* trackingArea;
-}
+@protocol NACocoaNativeEncapsulatedElement
+@required
+- (NSView*) getEncapsulatingView;
 @end
 
 
@@ -136,7 +49,7 @@ NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr){
 
 
 
-NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
+NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent){
   NA_UIElement* elem = (NA_UIElement*)uiElement;
   // todo: remove from old parent
   elem->parent = parent;
@@ -237,8 +150,8 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
 
 
 NA_DEF void na_RefreshUIElementNow(void* uiElement){
-  naDefineCocoaObject(NSView, cocoaview, uiElement);
-  [cocoaview setNeedsDisplay:YES];
+  naDefineCocoaObject(NSView, cocoaView, uiElement);
+  [cocoaView setNeedsDisplay:YES];
 }
 
 

@@ -6,7 +6,26 @@
 
 
 
+typedef struct NACocoaLabel NACocoaLabel;
+struct NACocoaLabel{
+  NALabel   label;
+};
+
+NA_HAPI void na_DestructCocoaLabel(NACocoaLabel* cocoaLabel);
+NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
+
+@interface NACocoaNativeLabel : NSTextField{
+  NACocoaLabel* cocoaLabel;
+}
+@end
+
+
+
 // Commented out for future development. Maybe.
+//@interface MDVerticallyCenteredTextFieldCell : NSTextFieldCell{
+//}
+//@end
+//
 //@implementation MDVerticallyCenteredTextFieldCell
 //
 //- (NSRect)adjustedFrameToVerticallyCenterText:(NSRect)rect {
@@ -111,7 +130,7 @@
 
 @implementation NACocoaNativeLabel
 
-- (id) initWithLabel:(NALabel*)newLabel frame:(NSRect)frame{
+- (id) initWithLabel:(NACocoaLabel*)newCocoaLabel frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 //  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
   [self setSelectable:YES];
@@ -122,7 +141,7 @@
   [self setTextColor:[NSColor labelColor]];
   [[self cell] setLineBreakMode:NSLineBreakByWordWrapping];
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
-  label = newLabel;
+  cocoaLabel = newCocoaLabel;
   return self;
 }
 
@@ -183,22 +202,22 @@
 
 
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
-  NALabel* label = naAlloc(NALabel);
+  NACocoaLabel* cocoaLabel = naAlloc(NACocoaLabel);
 
   NACocoaNativeLabel* nativePtr = [[NACocoaNativeLabel alloc]
-    initWithLabel:label
+    initWithLabel:cocoaLabel
     frame:naMakeNSRectWithSize(size)];
-  na_InitLabel(label, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitLabel((NALabel*)cocoaLabel, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
-  naSetLabelText(label, text);
+  naSetLabelText((NALabel*)cocoaLabel, text);
   
-  return (NALabel*)label;
+  return (NALabel*)cocoaLabel;
 }
 
 
 
-NA_DEF void na_DestructLabel(NALabel* label){
-  na_ClearLabel(label);
+NA_DEF void na_DestructCocoaLabel(NACocoaLabel* cocoaLabel){
+  na_ClearLabel((NALabel*)cocoaLabel);
 }
 
 

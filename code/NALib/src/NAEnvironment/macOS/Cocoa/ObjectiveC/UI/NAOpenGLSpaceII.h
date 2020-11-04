@@ -5,14 +5,33 @@
 // Do not include this file anywhere else!
 
 
+
+typedef struct NACocoaOpenGLSpace NACocoaOpenGLSpace;
+struct NACocoaOpenGLSpace{
+  NAOpenGLSpace   openGLSpace;
+};
+
+NA_HAPI void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace);
+NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
+
 #if (NA_COMPILE_OPENGL == 1)
 
   #pragma GCC diagnostic push 
   #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+  
+  @interface NACocoaNativeOpenGLSpace : NSOpenGLView{
+    NACocoaOpenGLSpace* cocoaOpenGLSpace;
+    NSTrackingArea* trackingArea;
+    NAMutator initFunc;
+    void* initData;
+  }
+  @end
+
+
 
   @implementation NACocoaNativeOpenGLSpace
   
-  - (id)initWithOpenGLSpace:(NAOpenGLSpace*)newOpenGLSpace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
+  - (id)initWithOpenGLSpace:(NACocoaOpenGLSpace*)newCocoaOpenGLSpace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
     self = [super initWithFrame:frameRect pixelFormat:pixelformat];
 
     // todo: make this dependent on whether tracking is needed or not.
@@ -21,7 +40,7 @@
         owner:self userInfo:nil];
     [self addTrackingArea:trackingArea];
 
-    openGLSpace = newOpenGLSpace;
+    cocoaOpenGLSpace = newCocoaOpenGLSpace;
     initFunc = newinitFunc;
     initData = newinitData;
     return self;
@@ -50,29 +69,29 @@
   - (void)drawRect:(NSRect)dirtyRect{
     NA_UNUSED(dirtyRect);
     [[self openGLContext] makeCurrentContext];
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, NA_UI_COMMAND_REDRAW);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_REDRAW);
   }
   
   - (void)reshape{
     [super reshape];
     [[self openGLContext] update];
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, NA_UI_COMMAND_RESHAPE);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_RESHAPE);
   }
   
   - (void)mouseMoved:(NSEvent*)event{
     na_SetMouseMovedByDiff([event deltaX], -[event deltaY]);
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, NA_UI_COMMAND_MOUSE_MOVED);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED);
     //[NSEvent setMouseCoalescingEnabled:NO];
   }
   
   - (void)keyDown:(NSEvent*)event{
     NA_UNUSED(event);
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, NA_UI_COMMAND_KEYDOWN);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEYDOWN);
   }
   
   - (void)keyUp:(NSEvent*)event{
     NA_UNUSED(event);
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, NA_UI_COMMAND_KEYUP);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEYUP);
   }
   
   - (void)flagsChanged:(NSEvent*)event{
@@ -81,10 +100,10 @@
     NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
     NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
 
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, (shift ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, (alt ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, (control ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, (command ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (shift ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (alt ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (control ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (command ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
   }
   
   @end
@@ -92,7 +111,7 @@
 
 
   NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
-    NAOpenGLSpace* openGLSpace = naAlloc(NAOpenGLSpace);
+    NACocoaOpenGLSpace* cocoaOpenGLSpace = naAlloc(NACocoaOpenGLSpace);
 
     // Configure the OpenGL context and initialize this object.
     NSOpenGLPixelFormatAttribute attr[] = {
@@ -104,12 +123,12 @@
     NSOpenGLPixelFormat *pixelformat = NA_COCOA_AUTORELEASE([[NSOpenGLPixelFormat alloc] initWithAttributes:attr]);
 
     NACocoaNativeOpenGLSpace* nativePtr = [[NACocoaNativeOpenGLSpace alloc]
-      initWithOpenGLSpace:openGLSpace
+      initWithOpenGLSpace:cocoaOpenGLSpace
       frame:naMakeNSRectWithSize(size)
       pixelFormat:pixelformat
       initFunc:initFunc
       initData:initData];
-    na_InitOpenGLSpace(openGLSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+    na_InitOpenGLSpace((NAOpenGLSpace*)cocoaOpenGLSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
     if([nativePtr respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
       NA_MACOS_AVAILABILITY_GUARD_10_7(
@@ -117,13 +136,13 @@
       )
     }
     
-    return openGLSpace;
+    return (NAOpenGLSpace*)cocoaOpenGLSpace;
   }
 
 
 
-  NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace){
-    na_ClearOpenGLSpace(openGLSpace);
+  NA_DEF void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace){
+    na_ClearOpenGLSpace((NAOpenGLSpace*)cocoaOpenGLSpace);
   }
 
 
@@ -150,7 +169,7 @@
     return NA_NULL;
   }
 
-  NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace){
+  NA_DEF void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace){
     naError("OpenGL has not been configured. See NAConfiguration.h");
   }
 

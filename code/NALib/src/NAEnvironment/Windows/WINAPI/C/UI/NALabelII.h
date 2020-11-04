@@ -13,6 +13,10 @@ struct NAWINAPILabel {
   NAString* href;
 };
 
+NA_HAPI void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel);
+NA_RUNTIME_TYPE(NAWINAPILabel, na_DestructWINAPILabel, NA_FALSE);
+
+
 
 NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
@@ -87,7 +91,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPILabel* winapiLabel = naAlloc(NAWINAPILabel);
+  NAWINAPILabel* winapiLabel = naNew(NAWINAPILabel);
 
   // We need a read only edit control here, otherwise on windows, the user is not able to select text.
   style = WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE;
@@ -115,10 +119,9 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF void na_DestructLabel(NALabel* label){
-  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
+NA_DEF void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel){
   if(winapiLabel->href){naDelete(winapiLabel->href);}
-  na_ClearLabel(&(winapiLabel->label));
+  na_ClearLabel((NALabel*)winapiLabel);
 }
 
 

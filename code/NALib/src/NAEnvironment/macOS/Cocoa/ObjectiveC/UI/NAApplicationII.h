@@ -5,6 +5,22 @@
 // Do not include this file anywhere else!
 
 
+
+typedef struct NACocoaApplication NACocoaApplication;
+struct NACocoaApplication {
+  NAApplication application;
+};
+
+NA_HAPI void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication);
+NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
+
+@interface NACocoaNativeApplicationDelegate : NSObject <NSApplicationDelegate>{
+  NACocoaApplication* cocoaApplication;
+}
+@end
+
+
+
 @implementation NACocoaNativeApplicationDelegate
 
 - (id) initWithCocoaApplication:(NACocoaApplication*)newCocoaApplication{
@@ -101,9 +117,8 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
 
 
-NA_DEF void na_DestructApplication(NAApplication* application){
-  NACocoaApplication* cocoaApplication = (NACocoaApplication*)application;
-  na_ClearApplication(&(cocoaApplication->application));
+NA_DEF void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication){
+  na_ClearApplication((NAApplication*)cocoaApplication);
 }
 
 

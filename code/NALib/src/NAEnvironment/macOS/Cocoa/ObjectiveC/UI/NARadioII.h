@@ -6,9 +6,29 @@
 
 
 
+typedef struct NACocoaRadio NACocoaRadio;
+struct NACocoaRadio{
+  NARadio   radio;
+};
+
+NA_HAPI void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio);
+NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
+
+@interface NACocoaNativeRadio : NSButton <NACocoaNativeEncapsulatedElement>{
+  NACocoaRadio* cocoaRadio;
+  // Cocoa thinks it's smart by doing things automatically. Unfortunately, we
+  // have to encapsulate the radio into its own view to get the behaviour
+  // we need.
+  NSView* containingview;
+}
+- (NSView*) getEncapsulatingView;
+@end
+
+
+
 @implementation NACocoaNativeRadio
 
-- (id) initWithRadio:(NARadio*)newRadio frame:(NSRect)frame{
+- (id) initWithRadio:(NACocoaRadio*)newCocoaRadio frame:(NSRect)frame{
   NSRect newbounds = frame;
   newbounds.origin.x = 0;
   newbounds.origin.y = 0;
@@ -19,7 +39,7 @@
 //  [self setBezelStyle:NSBezelStyleRounded];
 //  [self setBezelStyle:NSBezelStyleShadowlessSquare];
 //  [self setBordered:YES];
-  radio = newRadio;
+  cocoaRadio = newCocoaRadio;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
 
@@ -29,7 +49,7 @@
   return self;
 }
 
-- (NSView*) getContainingView{
+- (NSView*) getEncapsulatingView{
   return containingview;
 }
 
@@ -61,7 +81,7 @@
 
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)radio, NA_UI_COMMAND_PRESSED);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaRadio, NA_UI_COMMAND_PRESSED);
 }
 
 - (void) setRadioState:(NABool)state{
@@ -77,22 +97,22 @@
 
 
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
-  NARadio* radio = naAlloc(NARadio);
+  NACocoaRadio* cocoaRadio = naNew(NACocoaRadio);
 
   NACocoaNativeRadio* nativePtr = [[NACocoaNativeRadio alloc]
-    initWithRadio:radio
+    initWithRadio:cocoaRadio
     frame:naMakeNSRectWithSize(size)];
-  na_InitRadio(radio, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitRadio((NARadio*)cocoaRadio, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   [nativePtr setText:text];
   
-  return radio;
+  return (NARadio*)cocoaRadio;
 }
 
 
 
-NA_DEF void na_DestructRadio(NARadio* radio){
-  na_ClearRadio(radio);
+NA_DEF void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio){
+  na_ClearRadio((NARadio*)cocoaRadio);
 }
 
 

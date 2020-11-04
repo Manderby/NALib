@@ -6,13 +6,28 @@
 
 
 
+typedef struct NACocoaCheckBox NACocoaCheckBox;
+struct NACocoaCheckBox{
+  NACheckBox   checkBox;
+};
+
+NA_HAPI void na_DestructCocoaCheckBox(NACocoaCheckBox* cocoaCheckBox);
+NA_RUNTIME_TYPE(NACocoaCheckBox, na_DestructCocoaCheckBox, NA_FALSE);
+
+@interface NACocoaNativeCheckBox : NSButton{
+  NACocoaCheckBox* cocoaCheckBox;
+}
+@end
+
+
+
 @implementation NACocoaNativeCheckBox
 
-- (id) initWithCheckBox:(NACheckBox*)newCheckBox frame:(NSRect)frame{
+- (id) initWithCheckBox:(NACocoaCheckBox*)newCocoaCheckBox frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   
   [self setButtonType:NAButtonTypeSwitch];
-  checkBox = newCheckBox;
+  cocoaCheckBox = newCocoaCheckBox;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
 
@@ -47,7 +62,7 @@
 
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)checkBox, NA_UI_COMMAND_PRESSED);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaCheckBox, NA_UI_COMMAND_PRESSED);
 }
 
 - (void) setCheckBoxState:(NABool)state{
@@ -63,22 +78,22 @@
 
 
 NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
-  NACheckBox* checkBox = naAlloc(NACheckBox);
+  NACocoaCheckBox* cocoaCheckBox = naNew(NACocoaCheckBox);
 
   NACocoaNativeCheckBox* nativePtr = [[NACocoaNativeCheckBox alloc]
-    initWithCheckBox:checkBox
+    initWithCheckBox:cocoaCheckBox
     frame:naMakeNSRectWithSize(size)];    
-  na_InitCheckBox(checkBox, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitCheckBox((NACheckBox*)cocoaCheckBox, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   [nativePtr setText:text];
   
-  return (NACheckBox*)checkBox;
+  return (NACheckBox*)cocoaCheckBox;
 }
 
 
 
-NA_DEF void na_DestructCheckBox(NACheckBox* checkBox){
-  na_ClearCheckBox(checkBox);
+NA_HAPI void na_DestructCocoaCheckBox(NACocoaCheckBox* cocoaCheckBox){
+  na_ClearCheckBox((NACheckBox*)cocoaCheckBox);
 }
 
 

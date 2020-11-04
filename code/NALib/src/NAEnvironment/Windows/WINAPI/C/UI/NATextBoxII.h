@@ -13,6 +13,9 @@ struct NAWINAPITextBox {
   void*     prevTabStop;
 };
 
+NA_HAPI void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox);
+NA_RUNTIME_TYPE(NAWINAPITextBox, na_DestructWINAPITextBox, NA_FALSE);
+
 
 
 NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
@@ -86,9 +89,8 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 
 
 
-NA_DEF void na_DestructTextBox(NATextBox* textBox){
-  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  na_ClearTextBox(&(winapiTextBox->textBox));
+NA_DEF void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox){
+  na_ClearTextBox((NATextBox*)winapiTextBox);
 }
 
 

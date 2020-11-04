@@ -13,6 +13,9 @@ struct NAWINAPITextField {
   void*       prevTabStop;
 };
 
+NA_HAPI void na_DestructWINAPITextField(NAWINAPITextField* winapiTextField);
+NA_RUNTIME_TYPE(NAWINAPITextField, na_DestructWINAPITextField, NA_FALSE);
+
 
 
 NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
@@ -116,7 +119,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPITextField* winapiTextField = naAlloc(NAWINAPITextField);
+  NAWINAPITextField* winapiTextField = naNew(NAWINAPITextField);
 
   // WS_TABSTOP and WS_GROUP seem not to work... strange. I solved it using the
   // na_InterceptKeyboardShortcut function. 
@@ -152,9 +155,8 @@ NA_DEF NATextField* naNewTextField(NASize size){
 
 
 
-NA_DEF void na_DestructTextField(NATextField* textField){
-  NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
-  na_ClearTextField(&(winapiTextField->textField));
+NA_DEF void na_DestructWINAPITextField(NAWINAPITextField* winapiTextField){
+  na_ClearTextField((NATextField*)winapiTextField);
 }
 
 

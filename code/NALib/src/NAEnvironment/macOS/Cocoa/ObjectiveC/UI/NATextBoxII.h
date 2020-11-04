@@ -6,9 +6,26 @@
 
 
 
+typedef struct NACocoaTextBox NACocoaTextBox;
+struct NACocoaTextBox{
+  NATextBox   textBox;
+};
+
+NA_HAPI void na_DestructCocoaTextBox(NACocoaTextBox* cocoaTextBox);
+NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
+
+@interface NACocoaNativeTextBox : NSTextView <NACocoaNativeEncapsulatedElement>{
+  NACocoaTextBox* cocoaTextBox;
+  NSScrollView* scrollView;
+}
+- (NSView*) getEncapsulatingView;
+@end
+
+
+
 @implementation NACocoaNativeTextBox
 
-- (id) initWithTextBox:(NATextBox*)newTextBox frame:(NSRect)frame{
+- (id) initWithTextBox:(NACocoaTextBox*)newCocoaTextBox frame:(NSRect)frame{
   NSRect clipRect;
   NSClipView* clipView;
   NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
@@ -35,7 +52,7 @@
     )
   }
 
-  textBox = newTextBox;
+  cocoaTextBox = newCocoaTextBox;
   return self;
 }
 
@@ -55,7 +72,7 @@
   [self setEditable:!readonly];
 }
 
-- (NSView*) getContainingView{
+- (NSView*) getEncapsulatingView{
   return scrollView;
 }
 
@@ -64,20 +81,20 @@
 
 
 NA_DEF NATextBox* naNewTextBox(NASize size){
-  NATextBox* textBox = naAlloc(NATextBox);
+  NACocoaTextBox* cocoaTextBox = naNew(NACocoaTextBox);
   
   NACocoaNativeTextBox* nativePtr = [[NACocoaNativeTextBox alloc]
-    initWithTextBox:textBox
+    initWithTextBox:cocoaTextBox
     frame:naMakeNSRectWithSize(size)];
-  na_InitTextBox(textBox, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitTextBox((NATextBox*)cocoaTextBox, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
-  return (NATextBox*)textBox;
+  return (NATextBox*)cocoaTextBox;
 }
 
 
 
-NA_DEF void na_DestructTextBox(NATextBox* textBox){
-  na_ClearTextBox(textBox);
+NA_DEF void na_DestructCocoaTextBox(NACocoaTextBox* cocoaTextBox){
+  na_ClearTextBox((NATextBox*)cocoaTextBox);
 }
 
 

@@ -11,36 +11,8 @@ struct NAWINAPIImageSpace {
   NAUIImage*   image;
 };
 
-
-NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement);
-
-
-
-NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
-
-  switch(message){
-  case WM_WINDOWPOSCHANGING:
-  case WM_CHILDACTIVATE:
-  case WM_WINDOWPOSCHANGED:
-  case WM_MOVE:
-  case WM_SHOWWINDOW:
-  case WM_NCPAINT:
-  case WM_ERASEBKGND:
-    break;
-
-  case WM_PAINT:
-    naImageSpaceWINAPIDrawItem(uiElement);
-    info.hasBeenHandeled = NA_TRUE;
-    break;
-
-  default:
-    //printf("Uncaught Image Space message" NA_NL);
-    break;
-  }
-  
-  return info;
-}
+NA_HAPI void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace);
+NA_RUNTIME_TYPE(NAWINAPIImageSpace, na_DestructWINAPIImageSpace, NA_FALSE);
 
 
 
@@ -117,13 +89,41 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
 
 
 
+NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+
+  switch(message){
+  case WM_WINDOWPOSCHANGING:
+  case WM_CHILDACTIVATE:
+  case WM_WINDOWPOSCHANGED:
+  case WM_MOVE:
+  case WM_SHOWWINDOW:
+  case WM_NCPAINT:
+  case WM_ERASEBKGND:
+    break;
+
+  case WM_PAINT:
+    naImageSpaceWINAPIDrawItem(uiElement);
+    info.hasBeenHandeled = NA_TRUE;
+    break;
+
+  default:
+    //printf("Uncaught Image Space message" NA_NL);
+    break;
+  }
+  
+  return info;
+}
+
+
+
 NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
   HWND hWnd;
   DWORD exStyle;
   DWORD style;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPIImageSpace* winapiImageSpace = naAlloc(NAWINAPIImageSpace);
+  NAWINAPIImageSpace* winapiImageSpace = naNew(NAWINAPIImageSpace);
 
   exStyle = 0;
   style = WS_CHILD | WS_VISIBLE;
@@ -140,6 +140,10 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
 }
 
 
+
+NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace){
+  na_ClearImageSpace((NAImageSpace*)winapiImageSpace);
+}
 
 NA_DEF void na_DestructImageSpace(NAImageSpace* imageSpace){
   NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;

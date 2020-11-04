@@ -286,31 +286,29 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
 
 
-NA_DEF void na_DestructApplication(NAApplication* application){
-  NAWINAPIApplication* app = (NAWINAPIApplication*)application;
+NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication){
+  DestroyWindow(winapiApplication->offscreenWindow);
 
-  DestroyWindow(app->offscreenWindow);
+  DeleteObject(winapiApplication->fgColor.brush);
+  DeleteObject(winapiApplication->fgColorDisabled.brush);
+  DeleteObject(winapiApplication->bgColor.brush);
+  DeleteObject(winapiApplication->bgColorAlternate.brush);
+  DeleteObject(winapiApplication->bgColorAlternate2.brush);
 
-  DeleteObject(app->fgColor.brush);
-  DeleteObject(app->fgColorDisabled.brush);
-  DeleteObject(app->bgColor.brush);
-  DeleteObject(app->bgColorAlternate.brush);
-  DeleteObject(app->bgColorAlternate2.brush);
+  if(winapiApplication->systemFont){DeleteObject(app->systemFont);}
+  if(winapiApplication->titleFont){DeleteObject(app->titleFont);}
+  if(winapiApplication->monospaceFont){DeleteObject(app->monospaceFont);}
+  if(winapiApplication->paragraphFont){DeleteObject(app->paragraphFont);}
+  if(winapiApplication->mathFont){DeleteObject(app->mathFont);}
 
-  if(app->systemFont){DeleteObject(app->systemFont);}
-  if(app->titleFont){DeleteObject(app->titleFont);}
-  if(app->monospaceFont){DeleteObject(app->monospaceFont);}
-  if(app->paragraphFont){DeleteObject(app->paragraphFont);}
-  if(app->mathFont){DeleteObject(app->mathFont);}
+  DestroyIcon(winapiApplication->appIcon);
 
-  DestroyIcon(app->appIcon);
-
-  na_ClearApplication(&(app->application));  
+  na_ClearApplication(&(winapiApplication->application));  
 
   // Now that all windows are destroyed, all dependent timers are deleted. We can
   // safely release the timer structs. todo: Make killing the timers a sport.
-  naForeachListMutable(&(app->timers), (NAMutator)naFree);
-  naClearList(&(app->timers));
+  naForeachListMutable(&(winapiApplication->timers), (NAMutator)naFree);
+  naClearList(&(winapiApplication->timers));
 }
 
 

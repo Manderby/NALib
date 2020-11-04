@@ -6,48 +6,69 @@
 
 
 
-@implementation NACocoaNativeSlider
-- (id) initWithSlider:(NASlider*)newSlider frame:(NSRect)frame{
-  NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
-  self = [super initWithFrame:documentrect];
-  [self setTarget:self];
-  [self setAction:@selector(onValueChanged:)];
-  slider = newSlider;
-  return self;
-}
-- (void) setTickCount:(NAInt)tickCount{
-  self.numberOfTickMarks = tickCount;
-  self.allowsTickMarkValuesOnly = tickCount > 0;
-}
-- (double) getSliderValue{
-  return [self doubleValue];
-}
-- (void) setSliderValue:(double) value{
-  [self setDoubleValue:value];
-}
-- (void) onValueChanged:(id)sender{
-  NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)slider, NA_UI_COMMAND_EDITED);
+typedef struct NACocoaSlider NACocoaSlider;
+struct NACocoaSlider{
+  NASlider   slider;
+};
+
+NA_HAPI void na_DestructCocoaSlider(NACocoaSlider* cocoaSlider);
+NA_RUNTIME_TYPE(NACocoaSlider, na_DestructCocoaSlider, NA_FALSE);
+
+@interface NACocoaNativeSlider : NSSlider{
+  NACocoaSlider* cocoaSlider;
 }
 @end
 
 
 
-NA_DEF NASlider* naNewSlider(NASize size){
-  NASlider* slider = naAlloc(NASlider);
-  
-  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaNativeSlider* nativePtr = [[NACocoaNativeSlider alloc] initWithSlider:slider frame:frameRect];
-  na_InitSlider(slider, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
-  [nativePtr setTag: (NSInteger)slider];
+@implementation NACocoaNativeSlider
 
-  return (NASlider*)slider;
+- (id) initWithSlider:(NACocoaSlider*)newCocoaSlider frame:(NSRect)frame{
+  NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
+  self = [super initWithFrame:documentrect];
+  [self setTarget:self];
+  [self setAction:@selector(onValueChanged:)];
+  cocoaSlider = newCocoaSlider;
+  return self;
+}
+
+- (void) setTickCount:(NAInt)tickCount{
+  self.numberOfTickMarks = tickCount;
+  self.allowsTickMarkValuesOnly = tickCount > 0;
+}
+
+- (double) getSliderValue{
+  return [self doubleValue];
+}
+
+- (void) setSliderValue:(double) value{
+  [self setDoubleValue:value];
+}
+
+- (void) onValueChanged:(id)sender{
+  NA_UNUSED(sender);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDITED);
+}
+
+@end
+
+
+
+NA_DEF NASlider* naNewSlider(NASize size){
+  NACocoaSlider* cocoaSlider = naNew(NACocoaSlider);
+  
+  NACocoaNativeSlider* nativePtr = [[NACocoaNativeSlider alloc]
+    initWithSlider:cocoaSlider
+    frame:naMakeNSRectWithSize(size)];
+  na_InitSlider((NASlider*)cocoaSlider, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+
+  return (NASlider*)cocoaSlider;
 }
 
 
 
-NA_DEF void na_DestructSlider(NASlider* slider){
-  na_ClearSlider(slider);
+NA_DEF void na_DestructCocoaSlider(NACocoaSlider* cocoaSlider){
+  na_ClearSlider((NASlider*)cocoaSlider);
 }
 
 

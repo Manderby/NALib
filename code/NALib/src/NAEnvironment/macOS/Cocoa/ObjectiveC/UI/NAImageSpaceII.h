@@ -6,11 +6,27 @@
 
 
 
+typedef struct NACocoaImageSpace NACocoaImageSpace;
+struct NACocoaImageSpace{
+  NAImageSpace   imageSpace;
+};
+
+NA_HAPI void na_DestructCocoaImageSpace(NACocoaImageSpace* cocoaImageSpace);
+NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
+
+@interface NACocoaNativeImageSpace : NSImageView{
+  NACocoaImageSpace* cocoaImageSpace;
+  NAUIImage* uiImage;
+}
+@end
+
+
+
 @implementation NACocoaNativeImageSpace
 
-- (id) initWithImageSpace:(NAImageSpace*)newImageSpace frame:(NSRect)frame{
+- (id) initWithImageSpace:(NACocoaImageSpace*)newCocoaImageSpace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
-  imageSpace = newImageSpace;
+  cocoaImageSpace = newCocoaImageSpace;
   return self;
 }
 
@@ -28,22 +44,22 @@
 
 
 NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
-  NAImageSpace* imageSpace = naAlloc(NAImageSpace);
+  NACocoaImageSpace* cocoaImageSpace = naNew(NACocoaImageSpace);
 
   NACocoaNativeImageSpace* nativePtr = [[NACocoaNativeImageSpace alloc]
-    initWithImageSpace:imageSpace
+    initWithImageSpace:cocoaImageSpace
     frame:naMakeNSRectWithSize(size)];
-  na_InitImageSpace(imageSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitImageSpace((NAImageSpace*)cocoaImageSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   [nativePtr setUIImage: uiImage];
   
-  return imageSpace;
+  return (NAImageSpace*)cocoaImageSpace;
 }
 
 
 
-NA_DEF void na_DestructImageSpace(NAImageSpace* imageSpace){
-  na_ClearImageSpace(imageSpace);
+NA_DEF void na_DestructCocoaImageSpace(NACocoaImageSpace* cocoaImageSpace){
+  na_ClearImageSpace((NAImageSpace*)cocoaImageSpace);
 }
 
 

@@ -10,6 +10,9 @@ struct NAWINAPICheckBox {
   NACheckBox checkBox;
 };
 
+NA_HAPI void na_DestructWINAPICheckBox(NAWINAPICheckBox* winapiCheckBox);
+NA_RUNTIME_TYPE(NAWINAPICheckBox, na_DestructWINAPICheckBox, NA_FALSE);
+
 
 
 NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
@@ -81,7 +84,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPICheckBox* winapiCheckBox = naAlloc(NAWINAPICheckBox);
+  NAWINAPICheckBox* winapiCheckBox = naNew(NAWINAPICheckBox);
 
   style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_CHECKBOX;
 
@@ -106,9 +109,8 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF void na_DestructCheckBox(NACheckBox* checkBox){
-  NAWINAPICheckBox* winapiCheckBox = (NAWINAPICheckBox*)checkBox;
-  na_ClearCheckBox(&(winapiCheckBox->checkBox));
+NA_DEF void na_DestructWINAPICheckBox(NAWINAPICheckBox* winapiCheckBox){
+  na_ClearCheckBox((NACheckBox*)winapiCheckBox);
 }
 
 

@@ -11,6 +11,9 @@ struct NAWINAPISlider {
   NASlider slider;
 };
 
+NA_HAPI void na_DestructWINAPISlider(NAWINAPISlider* winapiSlider);
+NA_RUNTIME_TYPE(NAWINAPISlider, na_DestructWINAPISlider, NA_FALSE);
+
 
 
 NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
@@ -119,9 +122,8 @@ NA_DEF NASlider* naNewSlider(NASize size){
 
 
 
-NA_DEF void na_DestructSlider(NASlider* slider){
-  NAWINAPISlider* winapiSlider = (NAWINAPISlider*)slider;
-  na_ClearSlider(&(winapiSlider->slider));
+NA_DEF void na_DestructWINAPISlider(NAWINAPISlider* winapiSlider){
+  na_ClearSlider((NASlider*)winapiSlider);
 }
 
 

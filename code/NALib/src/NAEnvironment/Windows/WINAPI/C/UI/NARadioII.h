@@ -11,6 +11,9 @@ struct NAWINAPIRadio {
   NARadio radio;
 };
 
+NA_HAPI void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio);
+NA_RUNTIME_TYPE(NAWINAPIRadio, na_DestructWINAPIRadio, NA_FALSE);
+
 
 
 NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
@@ -73,7 +76,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPIRadio* winapiRadio = naAlloc(NAWINAPIRadio);
+  NAWINAPIRadio* winapiRadio = naNew(NAWINAPIRadio);
 
   style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_RADIOBUTTON;
 
@@ -98,9 +101,8 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF void na_DestructRadio(NARadio* radio){
-  NAWINAPIRadio* winapiRadio = (NAWINAPIRadio*)radio;
-  na_ClearRadio(&(winapiRadio->radio));
+NA_DEF void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio){
+  na_ClearRadio((NARadio*)winapiRadio);
 }
 
 

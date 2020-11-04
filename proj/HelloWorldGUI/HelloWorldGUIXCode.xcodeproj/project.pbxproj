@@ -191,6 +191,8 @@
 		90F919C42551B4D600481596 /* ExperimentController.c in Sources */ = {isa = PBXBuildFile; fileRef = 9058BB36254F07F200B4960D /* ExperimentController.c */; };
 		90F919C52551B4D800481596 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 90AF11EF248DA5E200D223EB /* main.c */; };
 		90F919C72551F07E00481596 /* libNALib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9024BDED24732B2000258690 /* libNALib.a */; };
+		90F919C9255361BE00481596 /* NASliderII.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F919C8255361BE00481596 /* NASliderII.h */; };
+		90F919CB2553625400481596 /* NASliderII.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F919CA2553625400481596 /* NASliderII.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -387,6 +389,8 @@
 		90F919BF2551B4D100481596 /* HelloWorldGUI.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = HelloWorldGUI.entitlements; sourceTree = "<group>"; };
 		90F919C02551B4D100481596 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		90F919C12551B4D100481596 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90F919C8255361BE00481596 /* NASliderII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NASliderII.h; sourceTree = "<group>"; };
+		90F919CA2553625400481596 /* NASliderII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NASliderII.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -709,6 +713,7 @@
 				90AF10FF248DA5D300D223EB /* NALabelII.h */,
 				90AF10FB248DA5D300D223EB /* NAOpenGLSpaceII.h */,
 				90AF10FA248DA5D300D223EB /* NARadioII.h */,
+				90F919C8255361BE00481596 /* NASliderII.h */,
 				90AF10FD248DA5D300D223EB /* NASpaceII.h */,
 				90AF10F4248DA5D300D223EB /* NATextBoxII.h */,
 				90AF1100248DA5D300D223EB /* NATextFieldII.h */,
@@ -749,18 +754,19 @@
 		90AF110A248DA5D300D223EB /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				90AF110B248DA5D300D223EB /* NATextBoxII.h */,
 				90AF110C248DA5D300D223EB /* NAApplicationII.h */,
-				90AF110D248DA5D300D223EB /* NAUIWINAPIII.h */,
-				90AF110E248DA5D300D223EB /* NAWindowII.h */,
 				90AF110F248DA5D300D223EB /* NAButtonII.h */,
 				90AF1110248DA5D300D223EB /* NACheckBoxII.h */,
-				90AF1111248DA5D300D223EB /* NARadioII.h */,
-				90AF1112248DA5D300D223EB /* NAOpenGLSpaceII.h */,
-				90AF1113248DA5D300D223EB /* NASpaceII.h */,
 				90AF1114248DA5D300D223EB /* NAImageSpaceII.h */,
 				90AF1115248DA5D300D223EB /* NALabelII.h */,
+				90AF1112248DA5D300D223EB /* NAOpenGLSpaceII.h */,
+				90AF1111248DA5D300D223EB /* NARadioII.h */,
+				90F919CA2553625400481596 /* NASliderII.h */,
+				90AF1113248DA5D300D223EB /* NASpaceII.h */,
+				90AF110B248DA5D300D223EB /* NATextBoxII.h */,
 				90AF1116248DA5D300D223EB /* NATextFieldII.h */,
+				90AF110D248DA5D300D223EB /* NAUIWINAPIII.h */,
+				90AF110E248DA5D300D223EB /* NAWindowII.h */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -902,6 +908,7 @@
 				90AF1197248DA5D400D223EB /* NAThreadingII.h in Headers */,
 				90AF1146248DA5D300D223EB /* NABufferII.h in Headers */,
 				90AF1137248DA5D300D223EB /* NABase.h in Headers */,
+				90F919CB2553625400481596 /* NASliderII.h in Headers */,
 				90AF1170248DA5D400D223EB /* NAMacros.h in Headers */,
 				90AF11E7248DA5D400D223EB /* NAPool.h in Headers */,
 				90AF11BA248DA5D400D223EB /* NATextFieldII.h in Headers */,
@@ -913,6 +920,7 @@
 				90AF11C2248DA5D400D223EB /* NAApplicationII.h in Headers */,
 				90AF113B248DA5D300D223EB /* NAStack.h in Headers */,
 				90AF1159248DA5D400D223EB /* NACircularBufferII.h in Headers */,
+				90F919C9255361BE00481596 /* NASliderII.h in Headers */,
 				90AF11B8248DA5D400D223EB /* NAImageSpaceII.h in Headers */,
 				90AF11B3248DA5D400D223EB /* NACheckBoxII.h in Headers */,
 				90AF1166248DA5D400D223EB /* NATreeUtilitiesII.h in Headers */,

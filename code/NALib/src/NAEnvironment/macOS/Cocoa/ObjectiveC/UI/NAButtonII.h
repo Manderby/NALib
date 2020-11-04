@@ -6,6 +6,22 @@
 
 
 
+typedef struct NACocoaButton NACocoaButton;
+struct NACocoaButton{
+  NAButton   button;
+};
+
+NA_HAPI void na_DestructCocoaButton(NACocoaButton* cocoaButton);
+NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
+
+@interface NACocoaNativeButton : NSButton{
+  NACocoaButton* cocoaButton;
+}
+- (void) onPressed:(id)sender;
+@end
+
+
+
 NSImage* naCreateResolutionIndependentNSImage(
   NSView* viewOnScreen,
   const NAUIImage* uiImage,
@@ -62,13 +78,13 @@ void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage){
 
 @implementation NACocoaNativeButton
 
-- (id) initWithButton:(NAButton*)newButton bezelStyle:(NSBezelStyle)bezelStyle frame:(NSRect)frame{
+- (id) initWithButton:(NACocoaButton*)newCocoaButton bezelStyle:(NSBezelStyle)bezelStyle frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   [self setButtonType:(bezelStyle == NABezelStyleRounded) ? NAButtonTypeMomentaryLight : NAButtonTypePushOnPushOff];
   // NSBezelStyleShadowlessSquare is used to have a transparent background. The option 0 has a grey background.
   [self setBezelStyle:bezelStyle ? bezelStyle : NABezelStyleShadowlessSquare]; 
   [self setBordered:bezelStyle ? YES : NO];
-  button = newButton;
+  cocoaButton = newCocoaButton;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
   return self;
@@ -84,7 +100,7 @@ void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage){
 
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)button, NA_UI_COMMAND_PRESSED);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED);
 }
 
 - (void) setButtonState:(NABool)state{
@@ -104,71 +120,71 @@ void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage){
 
 
 NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
-  NAButton* button = naAlloc(NAButton);
+  NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
-    initWithButton:button
+    initWithButton:cocoaButton
     bezelStyle:NABezelStyleRounded
     frame:naMakeNSRectWithSize(size)];
-  na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   [nativePtr setButtonText:text];
   
-  return button;
+  return (NAButton*)cocoaButton;
 }
 
 
 
 NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
-  NAButton* button = naAlloc(NAButton);
+  NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
-    initWithButton:button
+    initWithButton:cocoaButton
     bezelStyle:NABezelStyleShadowlessSquare
     frame:naMakeNSRectWithSize(size)];
-  na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   [nativePtr setButtonText:text];
   
-  return button;
+  return (NAButton*)cocoaButton;
 }
 
 
 
 NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size){
-  NAButton* button = naAlloc(NAButton);
+  NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
-    initWithButton:button
+    initWithButton:cocoaButton
     bezelStyle:NABezelStyleShadowlessSquare
     frame:naMakeNSRectWithSize(size)];
-  na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   [nativePtr setUIImage:uiImage];
   
-  return button;
+  return (NAButton*)cocoaButton;
 }
 
 
 
 NA_DEF NAButton* naNewImageButton(NAUIImage* uiImage, NASize size){
-  NAButton* button = naAlloc(NAButton);
+  NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
-    initWithButton:button
+    initWithButton:cocoaButton
     bezelStyle:0
     frame:naMakeNSRectWithSize(size)];
-  na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   [nativePtr setUIImage:uiImage];
   
-  return button;
+  return (NAButton*)cocoaButton;
 }
 
 
 
-NA_DEF void na_DestructButton(NAButton* button){
-  na_ClearButton(button);
+NA_DEF void na_DestructCocoaButton(NACocoaButton* cocoaButton){
+  na_ClearButton((NAButton*)cocoaButton);
 }
 
 

@@ -12,6 +12,8 @@ struct NAWINAPISpace {
   NAWINAPIColor* lastBgColor;
 };
 
+NA_HAPI void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace);
+NA_RUNTIME_TYPE(NAWINAPISpace, na_DestructWINAPISpace, NA_FALSE);
 
 
 NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace);
@@ -147,7 +149,7 @@ NA_DEF NASpace* naNewSpace(NASize size){
   DWORD style;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPISpace* winapiSpace = naAlloc(NAWINAPISpace);
+  NAWINAPISpace* winapiSpace = naNew(NAWINAPISpace);
 
   style = WS_CHILD | WS_VISIBLE;
 
@@ -165,9 +167,8 @@ NA_DEF NASpace* naNewSpace(NASize size){
 
 
 
-NA_DEF void na_DestructSpace(NASpace* space){
-  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
-  na_ClearSpace(&(winapiSpace->space));
+NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace){
+  na_ClearSpace((NASpace*)winapiSpace);
 }
 
 

@@ -15,6 +15,9 @@ struct NAWINAPIOpenGLSpace {
   HGLRC         hRC;    // The rendering context for OpenGL
 };
 
+NA_HAPI void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace);
+NA_RUNTIME_TYPE(NAWINAPIOpenGLSpace, na_DestructWINAPIOpenGLSpace, NA_FALSE);
+
 
 
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
@@ -53,7 +56,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 	PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
   const char *extensions;
 
-  NAWINAPIOpenGLSpace* winapiOpenGLSpace = naAlloc(NAWINAPIOpenGLSpace);
+  NAWINAPIOpenGLSpace* winapiOpenGLSpace = naNew(NAWINAPIOpenGLSpace);
 
   style = WS_CHILD | WS_VISIBLE | ES_READONLY;
   
@@ -114,8 +117,8 @@ NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
 
 
 
-NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace){
-  na_ClearOpenGLSpace(openGLSpace);
+NA_DEF void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace){
+  na_ClearOpenGLSpace((NAOpenGLSpace*)winapiOpenGLSpace);
 }
 
 

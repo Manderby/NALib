@@ -325,23 +325,6 @@ NA_HDEF NABool na_IsApplicationRunning(void){
 // //////////////////////////////////////
 // Public functions
 
-
-
-// Prototypes for the naReleaseUIElement frunction.
-NA_HAPI void na_DestructApplication(NAApplication* application);
-NA_HAPI void na_DestructWindow(NAWindow* window);
-NA_HAPI void na_DestructSpace(NASpace* space);
-NA_HAPI void na_DestructImageSpace(NAImageSpace* imageSpace);
-NA_HAPI void na_DestructOpenGLSpace(NAOpenGLSpace* space);
-NA_HAPI void na_DestructRadio(NARadio* radio);
-NA_HAPI void na_DestructCheckBox(NACheckBox* checkBox);
-NA_HAPI void na_DestructLabel(NALabel* label);
-NA_HAPI void na_DestructTextField(NATextField* textField);
-NA_HAPI void na_DestructTextBox(NATextBox* textBox);
-NA_HAPI void na_DestructSlider(NASlider* slider);
-
-
-
 NA_DEF void naReleaseUIElement(void* uiElement){
   NA_UIElement* element = (NA_UIElement*)uiElement;
 
@@ -351,27 +334,7 @@ NA_DEF void naReleaseUIElement(void* uiElement){
   naClearList(&(element->shortcuts));
   element->mouseInside = NA_FALSE;
 
-  switch(naGetUIElementType(element))
-  {
-  case NA_UI_APPLICATION: na_DestructApplication(uiElement); break;
-  case NA_UI_BUTTON:      naDelete(uiElement); break;
-  case NA_UI_CHECKBOX:    na_DestructCheckBox(uiElement); break;
-  case NA_UI_IMAGESPACE:  na_DestructImageSpace(uiElement); break;
-  case NA_UI_LABEL:       na_DestructLabel(uiElement); break;
-  case NA_UI_OPENGLSPACE: na_DestructOpenGLSpace(uiElement); break;
-  case NA_UI_RADIO:       na_DestructRadio(uiElement); break;
-//  case NA_UI_SCREEN:      naDeleteScreen(uiElement);
-  case NA_UI_SLIDER:      na_DestructSlider(uiElement); break;
-  case NA_UI_SPACE:       na_DestructSpace(uiElement); break;
-  case NA_UI_TEXTBOX:     na_DestructTextBox(uiElement); break;
-  case NA_UI_TEXTFIELD:   na_DestructTextField(uiElement); break;
-  case NA_UI_WINDOW:      na_DestructWindow(uiElement); break;
-  default:
-    #ifndef NDEBUG
-      naError("Invalid element type");
-    #endif
-    break;
-  }
+  naDelete(uiElement);
 }
 
 
