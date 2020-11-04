@@ -227,110 +227,110 @@ NA_IDEF NASizei naMakeSizeiEmpty(){
 
 
 NA_IDEF NARect naMakeRect(NAPos pos, NASize size){
-  NARect newrect;
+  NARect newRect;
   #ifndef NDEBUG
     if(!naIsPosValid(pos) || !naIsSizeValid(size))
       naError("Invalid values given.");
     if(!naIsPosUseful(pos) || !naIsSizeUseful(size))
       naError("Values given are not useful.");
   #endif
-  newrect.pos = pos;
-  newrect.size = size;
-  return newrect;
+  newRect.pos = pos;
+  newRect.size = size;
+  return newRect;
 }
 NA_IDEF NARecti naMakeRecti(NAPosi pos, NASizei size){
-  NARecti newrect;
+  NARecti newRect;
   #ifndef NDEBUG
     if(!naIsPosiValid(pos) || !naIsSizeiValid(size))
       naError("Invalid values given.");
     if(!naIsPosiUseful(pos) || !naIsSizeiUseful(size))
       naError("Values given are not useful.");
   #endif
-  newrect.pos = pos;
-  newrect.size = size;
-  return newrect;
+  newRect.pos = pos;
+  newRect.size = size;
+  return newRect;
 }
 NA_IDEF NARect naMakeRectE(NAPos pos, NASize size){
-  NARect newrect;
+  NARect newRect;
   #ifndef NDEBUG
     if(!naIsPosValid(pos) || !naIsSizeValid(size))
       naError("Invalid values given.");
   #endif
-  newrect.pos = pos;
-  newrect.size = size;
-  return newrect;
+  newRect.pos = pos;
+  newRect.size = size;
+  return newRect;
 }
 NA_IDEF NARecti naMakeRectiE(NAPosi pos, NASizei size){
-  NARecti newrect;
+  NARecti newRect;
   #ifndef NDEBUG
     if(!naIsPosiValid(pos) || !naIsSizeiValid(size))
       naError("Invalid values given.");
   #endif
-  newrect.pos = pos;
-  newrect.size = size;
-  return newrect;
+  newRect.pos = pos;
+  newRect.size = size;
+  return newRect;
 }
 NA_IDEF NARect naMakeRectS(double x, double y, double width, double height){
-  NARect newrect;
+  NARect newRect;
   #ifndef NDEBUG
     if(!naIsOffsetValueValid(x) || !naIsOffsetValueValid(y) || !naIsLengthValueValid(width) || !naIsLengthValueValid(height))
       naError("Invalid values given.");
     if(!naIsOffsetValueUseful(x) || !naIsOffsetValueUseful(y) || !naIsLengthValueUseful(width) || !naIsLengthValueUseful(height))
       naError("Values given are not useful.");
   #endif
-  newrect.pos = naMakePos(x, y);
-  newrect.size = naMakeSize(width, height);
-  return newrect;
+  newRect.pos = naMakePos(x, y);
+  newRect.size = naMakeSize(width, height);
+  return newRect;
 }
 NA_IDEF NARecti naMakeRectiS(NAInt x, NAInt y, NAInt width, NAInt height){
-  NARecti newrect;
+  NARecti newRect;
   #ifndef NDEBUG
     if(!naIsOffsetValueValidi(x) || !naIsOffsetValueValidi(y) || !naIsLengthValueValidi(width) || !naIsLengthValueValidi(height))
       naError("Invalid values given.");
     if(!naIsOffsetValueUsefuli(x) || !naIsOffsetValueUsefuli(y) || !naIsLengthValueUsefuli(width) || !naIsLengthValueUsefuli(height))
       naError("Values given are not useful.");
   #endif
-  newrect.pos = naMakePosi(x, y);
-  newrect.size = naMakeSizei(width, height);
-  return newrect;
+  newRect.pos = naMakePosi(x, y);
+  newRect.size = naMakeSizei(width, height);
+  return newRect;
 }
 NA_IDEF NARect naMakeRectSE(double x, double y, double width, double height){
-  NARect newrect;
+  NARect newRect;
   #ifndef NDEBUG
     if(!naIsOffsetValueValid(x) || !naIsOffsetValueValid(y) || !naIsLengthValueValid(width) || !naIsLengthValueValid(height))
       naError("Invalid values given.");
   #endif
-  newrect.pos = naMakePos(x, y);
-  newrect.size = naMakeSizeE(width, height);
-  return newrect;
+  newRect.pos = naMakePos(x, y);
+  newRect.size = naMakeSizeE(width, height);
+  return newRect;
 }
 NA_IDEF NARecti naMakeRectiSE(NAInt x, NAInt y, NAInt width, NAInt height){
-  NARecti newrect;
+  NARecti newRect;
   #ifndef NDEBUG
     if(!naIsOffsetValueValidi(x) || !naIsOffsetValueValidi(y) || !naIsLengthValueValidi(width) || !naIsLengthValueValidi(height))
       naError("Invalid values given.");
   #endif
-  newrect.pos = naMakePosi(x, y);
-  newrect.size = naMakeSizeiE(width, height);
-  return newrect;
+  newRect.pos = naMakePosi(x, y);
+  newRect.size = naMakeSizeiE(width, height);
+  return newRect;
 }
 NA_IDEF NARect naMakeRectWithRecti(NARecti rect){
-  NARect newrect = naMakeRectSE((double)rect.pos.x, (double)rect.pos.y, (double)rect.size.width, (double)rect.size.height);
-  return newrect;
+  NARect newRect = naMakeRectSE((double)rect.pos.x, (double)rect.pos.y, (double)rect.size.width, (double)rect.size.height);
+  return newRect;
 }
 NA_IDEF NARecti naMakeRectiWithRect(NARect rect){
-  NARecti newrect = naMakeRectiSE((NAInt)rect.pos.x, (NAInt)rect.pos.y, (NAInt)rect.size.width, (NAInt)rect.size.height);
-  return newrect;
+  NARecti newRect = naMakeRectiSE((NAInt)rect.pos.x, (NAInt)rect.pos.y, (NAInt)rect.size.width, (NAInt)rect.size.height);
+  return newRect;
 }
 NA_IDEF NARect naMakeRectEmpty(){
-  NARect newrect;
-  newrect.size.width = 0.;
-  return newrect;
+  NARect newRect;
+  newRect.size.width = 0.;
+  return newRect;
 }
 NA_IDEF NARecti naMakeRectiEmpty(){
-  NARecti newrect;
-  newrect.size.width = 0;
-  return newrect;
+  NARecti newRect;
+  newRect.size.width = 0;
+  return newRect;
 }
 
 
@@ -587,99 +587,107 @@ NA_IDEF NABoxi naMakeBoxiEmpty(){
 
 
 #ifdef CGGEOMETRY_H_
-NA_IDEF NAPos naMakePosWithCGPoint(CGPoint cgpoint){
+NA_IDEF NAPos naMakePosWithCGPoint(CGPoint cgPoint){
   NAPos newpos;
   #ifndef NDEBUG
-    if(!(naIsOffsetValueValid(cgpoint.x) && naIsOffsetValueValid(cgpoint.y)))
+    if(!(naIsOffsetValueValid(cgPoint.x) && naIsOffsetValueValid(cgPoint.y)))
       naError("Invalid values given.");
-    if(!(naIsOffsetValueUseful(cgpoint.x) && naIsOffsetValueUseful(cgpoint.y)))
+    if(!(naIsOffsetValueUseful(cgPoint.x) && naIsOffsetValueUseful(cgPoint.y)))
       naError("Values given are not useful.");
   #endif
-  newpos.x = cgpoint.x;
-  newpos.y = cgpoint.y;
+  newpos.x = cgPoint.x;
+  newpos.y = cgPoint.y;
   return newpos;
 }
-NA_IDEF NASize naMakeSizeWithCGSize(CGSize cgsize){
+NA_IDEF NASize naMakeSizeWithCGSize(CGSize cgSize){
   NASize newsize;
   #ifndef NDEBUG
-    if(!(naIsLengthValueValid(cgsize.width) && naIsLengthValueValid(cgsize.height)))
+    if(!(naIsLengthValueValid(cgSize.width) && naIsLengthValueValid(cgSize.height)))
       naError("Invalid values given.");
-    if(!(naIsLengthValueUseful(cgsize.width) && naIsLengthValueUseful(cgsize.height)))
+    if(!(naIsLengthValueUseful(cgSize.width) && naIsLengthValueUseful(cgSize.height)))
       naError("Values given are not useful.");
   #endif
-  newsize.width = cgsize.width;
-  newsize.height = cgsize.height;
+  newsize.width = cgSize.width;
+  newsize.height = cgSize.height;
   return newsize;
 }
-NA_IDEF NARect naMakeRectWithCGRect(CGRect cgrect){
-  NARect newrect;
-  newrect.pos = naMakePosWithCGPoint(cgrect.origin);
-  newrect.size = naMakeSizeWithCGSize(cgrect.size);
-  return newrect;
+NA_IDEF NARect naMakeRectWithCGRect(CGRect cgRect){
+  NARect newRect;
+  newRect.pos = naMakePosWithCGPoint(cgRect.origin);
+  newRect.size = naMakeSizeWithCGSize(cgRect.size);
+  return newRect;
 }
 #endif
 
 
 
 #if defined __OBJC__ && defined __AVAILABILITYMACROS__
-NA_IDEF NAPos naMakePosWithNSPoint(NSPoint nspoint){
+NA_IDEF NAPos naMakePosWithNSPoint(NSPoint nsPoint){
   NAPos newpos;
   #ifndef NDEBUG
-    if(!(naIsOffsetValueValid(nspoint.x) && naIsOffsetValueValid(nspoint.y)))
+    if(!(naIsOffsetValueValid(nsPoint.x) && naIsOffsetValueValid(nsPoint.y)))
       naError("Invalid values given.");
-    if(!(naIsOffsetValueUseful(nspoint.x) && naIsOffsetValueUseful(nspoint.y)))
+    if(!(naIsOffsetValueUseful(nsPoint.x) && naIsOffsetValueUseful(nsPoint.y)))
       naError("Values given are not useful.");
   #endif
-  newpos.x = nspoint.x;
-  newpos.y = nspoint.y;
+  newpos.x = nsPoint.x;
+  newpos.y = nsPoint.y;
   return newpos;
 }
-NA_IDEF NSPoint naMakeNSPointWithPos(NAPos napos){
+NA_IDEF NSPoint naMakeNSPointWithPos(NAPos naPos){
   NSPoint newpoint;
   #ifndef NDEBUG
-    if(!(naIsOffsetValueValid(napos.x) && naIsOffsetValueValid(napos.y)))
+    if(!(naIsOffsetValueValid(naPos.x) && naIsOffsetValueValid(naPos.y)))
       naError("Invalid values given.");
-    if(!(naIsOffsetValueUseful(napos.x) && naIsOffsetValueUseful(napos.y)))
+    if(!(naIsOffsetValueUseful(naPos.x) && naIsOffsetValueUseful(naPos.y)))
       naError("Values given are not useful.");
   #endif
-  newpoint.x = (CGFloat)napos.x;
-  newpoint.y = (CGFloat)napos.y;
+  newpoint.x = (CGFloat)naPos.x;
+  newpoint.y = (CGFloat)naPos.y;
   return newpoint;
 }
-NA_IDEF NASize naMakeSizeWithNSSize(NSSize nssize){
+NA_IDEF NASize naMakeSizeWithNSSize(NSSize nsSize){
   NASize newsize;
   #ifndef NDEBUG
-    if(!(naIsLengthValueValid(nssize.width) && naIsLengthValueValid(nssize.height)))
+    if(!(naIsLengthValueValid(nsSize.width) && naIsLengthValueValid(nsSize.height)))
       naError("Invalid values given.");
-    if(!(naIsLengthValueUseful(nssize.width) && naIsLengthValueUseful(nssize.height)))
+    if(!(naIsLengthValueUseful(nsSize.width) && naIsLengthValueUseful(nsSize.height)))
       naError("Values given are not useful.");
   #endif
-  newsize.width = nssize.width;
-  newsize.height = nssize.height;
+  newsize.width = nsSize.width;
+  newsize.height = nsSize.height;
   return newsize;
 }
-NA_IDEF NSSize naMakeNSSizeWithSize(NASize nasize){
+NA_IDEF NSSize naMakeNSSizeWithSize(NASize naSize){
   NSSize newsize;
   #ifndef NDEBUG
-    if(!(naIsLengthValueValid(nasize.width) && naIsLengthValueValid(nasize.height)))
+    if(!(naIsLengthValueValid(naSize.width) && naIsLengthValueValid(naSize.height)))
       naError("Invalid values given.");
-    if(!(naIsLengthValueUseful(nasize.width) && naIsLengthValueUseful(nasize.height)))
+    if(!(naIsLengthValueUseful(naSize.width) && naIsLengthValueUseful(naSize.height)))
       naError("Values given are not useful.");
   #endif
-  newsize.width = (CGFloat)nasize.width;
-  newsize.height = (CGFloat)nasize.height;
+  newsize.width = (CGFloat)naSize.width;
+  newsize.height = (CGFloat)naSize.height;
   return newsize;
 }
-NA_IDEF NARect naMakeRectWithNSRect(NSRect nsrect){
-  NARect newrect;
-  newrect.pos = naMakePosWithNSPoint(nsrect.origin);
-  newrect.size = naMakeSizeWithNSSize(nsrect.size);
-  return newrect;
+NA_IDEF NARect naMakeRectWithNSRect(NSRect nsRect){
+  NARect newRect;
+  newRect.pos = naMakePosWithNSPoint(nsRect.origin);
+  newRect.size = naMakeSizeWithNSSize(nsRect.size);
+  return newRect;
 }
-NA_IDEF NSRect naMakeNSRectWithRect(NARect narect){
-  NSRect newrect;
-  newrect = NSMakeRect((CGFloat)narect.pos.x, (CGFloat)narect.pos.y, (CGFloat)narect.size.width, (CGFloat)narect.size.height);
-  return newrect;
+NA_IDEF NSRect naMakeNSRectWithSize(NASize naSize){
+  NSRect newRect;
+  newRect.origin = NSMakePoint(0., 0.);
+  newRect.size = naMakeNSSizeWithSize(naSize);
+  return newRect;
+}
+NA_IDEF NSRect naMakeNSRectWithRect(NARect naRect){
+  return NSMakeRect(
+    (CGFloat)naRect.pos.x,
+    (CGFloat)naRect.pos.y,
+    (CGFloat)naRect.size.width,
+    (CGFloat)naRect.size.height);
 }
 #endif
 
@@ -815,7 +823,7 @@ NA_IDEF NARangei naMakeRangeiWithRangeAndRange (NARangei range1, NARangei range2
 
 
 NA_IDEF NARect naMakeRectWithPosAndPos(NAPos pos1, NAPos pos2){
-  NARect newrect;
+  NARect newRect;
   #ifndef NDEBUG
     if(!naIsPosValid(pos1))
       naError("pos1 is invalid.");
@@ -823,23 +831,23 @@ NA_IDEF NARect naMakeRectWithPosAndPos(NAPos pos1, NAPos pos2){
       naError("pos2 is invalid.");
   #endif
   if(pos2.x > pos1.x){
-    newrect.pos.x = pos1.x;
-    newrect.size.width = naMakeLengthWithStartAndEnd(pos1.x, pos2.x);
+    newRect.pos.x = pos1.x;
+    newRect.size.width = naMakeLengthWithStartAndEnd(pos1.x, pos2.x);
   }else{
-    newrect.pos.x = pos2.x;
-    newrect.size.width = naMakeLengthWithStartAndEnd(pos2.x, pos1.x);
+    newRect.pos.x = pos2.x;
+    newRect.size.width = naMakeLengthWithStartAndEnd(pos2.x, pos1.x);
   }
   if(pos2.y > pos1.y){
-    newrect.pos.y = pos1.y;
-    newrect.size.height = naMakeLengthWithStartAndEnd(pos1.y, pos2.y);
+    newRect.pos.y = pos1.y;
+    newRect.size.height = naMakeLengthWithStartAndEnd(pos1.y, pos2.y);
   }else{
-    newrect.pos.y = pos2.y;
-    newrect.size.height = naMakeLengthWithStartAndEnd(pos2.y, pos1.y);
+    newRect.pos.y = pos2.y;
+    newRect.size.height = naMakeLengthWithStartAndEnd(pos2.y, pos1.y);
   }
-  return newrect;
+  return newRect;
 }
 NA_IDEF NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
-  NARect newrect;
+  NARect newRect;
   double end;
   #ifndef NDEBUG
     if(naIsRectEmpty(rect))
@@ -849,16 +857,16 @@ NA_IDEF NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
     if(!naIsPosValid(pos))
       naError("pos is invalid.");
   #endif
-  newrect.pos.x = naMin(rect.pos.x, pos.x);
-  newrect.pos.y = naMin(rect.pos.y, pos.y);
+  newRect.pos.x = naMin(rect.pos.x, pos.x);
+  newRect.pos.y = naMin(rect.pos.y, pos.y);
   end = naGetRectEndX(rect);
-  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMax(end, pos.x));
+  newRect.size.width  = naMakeLengthWithStartAndEnd(newRect.pos.x, naMax(end, pos.x));
   end = naGetRectEndY(rect);
-  newrect.size.height = naMakeLengthWithStartAndEnd(newrect.pos.y, naMax(end, pos.y));
-  return newrect;
+  newRect.size.height = naMakeLengthWithStartAndEnd(newRect.pos.y, naMax(end, pos.y));
+  return newRect;
 }
 NA_IDEF NARect naMakeRectWithRectAndPosE(NARect rect, NAPos pos){
-  NARect newrect;
+  NARect newRect;
   #ifndef NDEBUG
     if(!naIsRectEmpty(rect) && !naIsRectValid(rect))
       naError("rect is invalid.");
@@ -866,23 +874,23 @@ NA_IDEF NARect naMakeRectWithRectAndPosE(NARect rect, NAPos pos){
       naError("pos is invalid.");
   #endif
   if(naIsRectEmpty(rect)){
-    newrect.pos = pos;
-    newrect.size = naMakeSize(1., 1.);
+    newRect.pos = pos;
+    newRect.size = naMakeSize(1., 1.);
   }else{
     double end;
-    newrect.pos.x = naMin(rect.pos.x, pos.x);
-    newrect.pos.y = naMin(rect.pos.y, pos.y); 
+    newRect.pos.x = naMin(rect.pos.x, pos.x);
+    newRect.pos.y = naMin(rect.pos.y, pos.y); 
     // Note: We do compute the end instead of the max, because this may require
     // one less instruction. Save whatever you can!
     end = naGetRectEndX(rect);
-    newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMax(end, pos.x));
+    newRect.size.width  = naMakeLengthWithStartAndEnd(newRect.pos.x, naMax(end, pos.x));
     end = naGetRectEndY(rect);
-    newrect.size.height = naMakeLengthWithStartAndEnd(newrect.pos.y, naMax(end, pos.y));
+    newRect.size.height = naMakeLengthWithStartAndEnd(newRect.pos.y, naMax(end, pos.y));
   }
-  return newrect;
+  return newRect;
 }
 NA_IDEF NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
-  NARect newrect;
+  NARect newRect;
   double end1;
   double end2;
   #ifndef NDEBUG
@@ -895,18 +903,18 @@ NA_IDEF NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
     if(!naIsRectValid(rect2))
       naError("rect2 is invalid.");
   #endif
-  newrect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
+  newRect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
+  newRect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectEndX(rect1);
   end2 = naGetRectEndX(rect2);
-  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMax(end1, end2));
+  newRect.size.width  = naMakeLengthWithStartAndEnd(newRect.pos.x, naMax(end1, end2));
   end1 = naGetRectEndY(rect1);
   end2 = naGetRectEndY(rect2);
-  newrect.size.height  = naMakeLengthWithStartAndEnd(newrect.pos.y, naMax(end1, end2));
-  return newrect;
+  newRect.size.height  = naMakeLengthWithStartAndEnd(newRect.pos.y, naMax(end1, end2));
+  return newRect;
 }
 NA_IDEF NARect naMakeRectWithRectAndRectE(NARect rect1, NARect rect2){
-  NARect newrect;
+  NARect newRect;
   double end1;
   double end2;
   #ifndef NDEBUG
@@ -917,18 +925,18 @@ NA_IDEF NARect naMakeRectWithRectAndRectE(NARect rect1, NARect rect2){
   #endif
   if(naIsRectEmpty(rect1)){return rect2;}
   if(naIsRectEmpty(rect2)){return rect1;}
-  newrect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
+  newRect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
+  newRect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectEndX(rect1);
   end2 = naGetRectEndX(rect2);
-  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMax(end1, end2));
+  newRect.size.width  = naMakeLengthWithStartAndEnd(newRect.pos.x, naMax(end1, end2));
   end1 = naGetRectEndY(rect1);
   end2 = naGetRectEndY(rect2);
-  newrect.size.height  = naMakeLengthWithStartAndEnd(newrect.pos.y, naMax(end1, end2));
-  return newrect;
+  newRect.size.height  = naMakeLengthWithStartAndEnd(newRect.pos.y, naMax(end1, end2));
+  return newRect;
 }
 NA_IDEF NARecti naMakeRectiWithPosAndPos(NAPosi pos1, NAPosi pos2){
-  NARecti newrect;
+  NARecti newRect;
   #ifndef NDEBUG
     if(!naIsPosiValid(pos1))
       naError("pos1 is invalid.");
@@ -936,23 +944,23 @@ NA_IDEF NARecti naMakeRectiWithPosAndPos(NAPosi pos1, NAPosi pos2){
       naError("pos2 is invalid.");
   #endif
   if(pos2.x > pos1.x){
-    newrect.pos.x = pos1.x;
-    newrect.size.width = naMakeLengthWithMinAndMaxi(pos1.x, pos2.x);
+    newRect.pos.x = pos1.x;
+    newRect.size.width = naMakeLengthWithMinAndMaxi(pos1.x, pos2.x);
   }else{
-    newrect.pos.x = pos2.x;
-    newrect.size.width = naMakeLengthWithMinAndMaxi(pos2.x, pos1.x);
+    newRect.pos.x = pos2.x;
+    newRect.size.width = naMakeLengthWithMinAndMaxi(pos2.x, pos1.x);
   }
   if(pos2.y > pos1.y){
-    newrect.pos.y = pos1.y;
-    newrect.size.height = naMakeLengthWithMinAndMaxi(pos1.y, pos2.y);
+    newRect.pos.y = pos1.y;
+    newRect.size.height = naMakeLengthWithMinAndMaxi(pos1.y, pos2.y);
   }else{
-    newrect.pos.y = pos2.y;
-    newrect.size.height = naMakeLengthWithMinAndMaxi(pos2.y, pos1.y);
+    newRect.pos.y = pos2.y;
+    newRect.size.height = naMakeLengthWithMinAndMaxi(pos2.y, pos1.y);
   }
-  return newrect;
+  return newRect;
 }
 NA_IDEF NARecti naMakeRectiWithRectAndPos(NARecti rect, NAPosi pos){
-  NARecti newrect;
+  NARecti newRect;
   NAInt max;
   #ifndef NDEBUG
     if(naIsRectiEmptySlow(rect))
@@ -962,18 +970,18 @@ NA_IDEF NARecti naMakeRectiWithRectAndPos(NARecti rect, NAPosi pos){
     if(!naIsPosiValid(pos))
       naError("pos is invalid.");
   #endif
-  newrect.pos.x = naMini(rect.pos.x, pos.x);
-  newrect.pos.y = naMini(rect.pos.y, pos.y);
+  newRect.pos.x = naMini(rect.pos.x, pos.x);
+  newRect.pos.y = naMini(rect.pos.y, pos.y);
   // Note: We do compute the end instead of the max, because this may require
   // one less instruction. Save whatever you can!
   max = naGetRectiMaxX(rect);
-  newrect.size.width  = naMakeLengthWithMinAndMaxi(newrect.pos.x, naMaxi(max, pos.x));
+  newRect.size.width  = naMakeLengthWithMinAndMaxi(newRect.pos.x, naMaxi(max, pos.x));
   max = naGetRectiMaxY(rect);
-  newrect.size.height = naMakeLengthWithMinAndMaxi(newrect.pos.y, naMaxi(max, pos.y));
-  return newrect;
+  newRect.size.height = naMakeLengthWithMinAndMaxi(newRect.pos.y, naMaxi(max, pos.y));
+  return newRect;
 }
 NA_IDEF NARecti naMakeRectiWithRectAndPosE(NARecti rect, NAPosi pos){
-  NARecti newrect;
+  NARecti newRect;
   #ifndef NDEBUG
     if(!naIsRectiValid(rect))
       naError("rect is invalid.");
@@ -981,23 +989,23 @@ NA_IDEF NARecti naMakeRectiWithRectAndPosE(NARecti rect, NAPosi pos){
       naError("pos is invalid.");
   #endif
   if(naIsRectiEmpty(rect)){
-    newrect.pos = pos;
-    newrect.size = naMakeSizei(1, 1);
+    newRect.pos = pos;
+    newRect.size = naMakeSizei(1, 1);
   }else{
     NAInt max;
-    newrect.pos.x = naMini(rect.pos.x, pos.x);
-    newrect.pos.y = naMini(rect.pos.y, pos.y);
+    newRect.pos.x = naMini(rect.pos.x, pos.x);
+    newRect.pos.y = naMini(rect.pos.y, pos.y);
     // Note: We do compute the end instead of the max, because this may require
     // one less instruction. Save whatever you can!
     max = naGetRectiMaxX(rect);
-    newrect.size.width  = naMakeLengthWithMinAndMaxi(newrect.pos.x, naMaxi(max, pos.x));
+    newRect.size.width  = naMakeLengthWithMinAndMaxi(newRect.pos.x, naMaxi(max, pos.x));
     max = naGetRectiMaxY(rect);
-    newrect.size.height = naMakeLengthWithMinAndMaxi(newrect.pos.y, naMaxi(max, pos.y));
+    newRect.size.height = naMakeLengthWithMinAndMaxi(newRect.pos.y, naMaxi(max, pos.y));
   }
-  return newrect;
+  return newRect;
 }
 NA_IDEF NARecti naMakeRectiWithRectAndRect(NARecti rect1, NARecti rect2){
-  NARecti newrect;
+  NARecti newRect;
   NAInt end1;
   NAInt end2;
   #ifndef NDEBUG
@@ -1010,18 +1018,18 @@ NA_IDEF NARecti naMakeRectiWithRectAndRect(NARecti rect1, NARecti rect2){
     if(!naIsRectiValid(rect2))
       naError("rect2 is invalid.");
   #endif
-  newrect.pos.x = naMini(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMini(rect1.pos.y, rect2.pos.y);
+  newRect.pos.x = naMini(rect1.pos.x, rect2.pos.x);
+  newRect.pos.y = naMini(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectiEndX(rect1);
   end2 = naGetRectiEndX(rect2);
-  newrect.size.width  = naMakeLengthWithStartAndEndi(newrect.pos.x, naMaxi(end1, end2));
+  newRect.size.width  = naMakeLengthWithStartAndEndi(newRect.pos.x, naMaxi(end1, end2));
   end1 = naGetRectiEndY(rect1);
   end2 = naGetRectiEndY(rect2);
-  newrect.size.height = naMakeLengthWithStartAndEndi(newrect.pos.y, naMaxi(end1, end2));
-  return newrect;
+  newRect.size.height = naMakeLengthWithStartAndEndi(newRect.pos.y, naMaxi(end1, end2));
+  return newRect;
 }
 NA_IDEF NARecti naMakeRectiWithRectAndRectE(NARecti rect1, NARecti rect2){
-  NARecti newrect;
+  NARecti newRect;
   NAInt end1;
   NAInt end2;
   #ifndef NDEBUG
@@ -1032,15 +1040,15 @@ NA_IDEF NARecti naMakeRectiWithRectAndRectE(NARecti rect1, NARecti rect2){
   #endif
   if(naIsRectiEmpty(rect1)){return rect2;}
   if(naIsRectiEmpty(rect2)){return rect1;}
-  newrect.pos.x = naMini(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMini(rect1.pos.y, rect2.pos.y);
+  newRect.pos.x = naMini(rect1.pos.x, rect2.pos.x);
+  newRect.pos.y = naMini(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectiEndX(rect1);
   end2 = naGetRectiEndX(rect2);
-  newrect.size.width  = naMakeLengthWithStartAndEndi(newrect.pos.x, naMaxi(end1, end2));
+  newRect.size.width  = naMakeLengthWithStartAndEndi(newRect.pos.x, naMaxi(end1, end2));
   end1 = naGetRectiEndY(rect1);
   end2 = naGetRectiEndY(rect2);
-  newrect.size.height = naMakeLengthWithStartAndEndi(newrect.pos.y, naMaxi(end1, end2));
-  return newrect;
+  newRect.size.height = naMakeLengthWithStartAndEndi(newRect.pos.y, naMaxi(end1, end2));
+  return newRect;
 }
 
 
@@ -1324,7 +1332,7 @@ NA_IDEF NARangei naMakeRangeiWithRangeIntersection(NARangei range1, NARangei ran
   return newrange;
 }
 NA_IDEF NARect naMakeRectWithRectIntersection(NARect rect1, NARect rect2){
-  NARect newrect;
+  NARect newRect;
   double end1;
   double end2;
   #ifndef NDEBUG
@@ -1333,18 +1341,18 @@ NA_IDEF NARect naMakeRectWithRectIntersection(NARect rect1, NARect rect2){
     if(!naIsRectValid(rect2))
       naError("rect2 is invalid.");
   #endif
-  newrect.pos.x = naMax(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMax(rect1.pos.y, rect2.pos.y);
+  newRect.pos.x = naMax(rect1.pos.x, rect2.pos.x);
+  newRect.pos.y = naMax(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectEndX(rect1);
   end2 = naGetRectEndX(rect2);
-  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMin(end1, end2));
+  newRect.size.width  = naMakeLengthWithStartAndEnd(newRect.pos.x, naMin(end1, end2));
   end1 = naGetRectEndY(rect1);
   end2 = naGetRectEndY(rect2);
-  newrect.size.height  = naMakeLengthWithStartAndEnd(newrect.pos.y, naMin(end1, end2));
-  return newrect;
+  newRect.size.height  = naMakeLengthWithStartAndEnd(newRect.pos.y, naMin(end1, end2));
+  return newRect;
 }
 NA_IDEF NARecti naMakeRectiWithRectIntersection(NARecti rect1, NARecti rect2){
-  NARecti newrect;
+  NARecti newRect;
   NAInt end1;
   NAInt end2;
   #ifndef NDEBUG
@@ -1353,15 +1361,15 @@ NA_IDEF NARecti naMakeRectiWithRectIntersection(NARecti rect1, NARecti rect2){
     if(!naIsRectiValid(rect2))
       naError("rect2 is invalid.");
   #endif
-  newrect.pos.x = naMaxi(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMaxi(rect1.pos.y, rect2.pos.y);
+  newRect.pos.x = naMaxi(rect1.pos.x, rect2.pos.x);
+  newRect.pos.y = naMaxi(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectiEndX(rect1);
   end2 = naGetRectiEndX(rect2);
-  newrect.size.width  = naMakeLengthWithStartAndEndi(newrect.pos.x, naMini(end1, end2));
+  newRect.size.width  = naMakeLengthWithStartAndEndi(newRect.pos.x, naMini(end1, end2));
   end1 = naGetRectiEndY(rect1);
   end2 = naGetRectiEndY(rect2);
-  newrect.size.height  = naMakeLengthWithStartAndEndi(newrect.pos.y, naMini(end1, end2));
-  return newrect;
+  newRect.size.height  = naMakeLengthWithStartAndEndi(newRect.pos.y, naMini(end1, end2));
+  return newRect;
 }
 NA_IDEF NABox naMakeBoxWithBoxIntersection(NABox box1, NABox box2){
   NABox newbox;
@@ -1415,20 +1423,20 @@ NA_IDEF NABoxi naMakeBoxiWithBoxIntersection(NABoxi box1, NABoxi box2){
 
 
 NA_IDEF NARect naMakeRectWithRectAndBorder(NARect rect, double border){
-  NARect newrect;
-  newrect.pos.x = rect.pos.x - border;
-  newrect.pos.y = rect.pos.y - border;
-  newrect.size.width = rect.size.width + 2 * border;
-  newrect.size.height = rect.size.height + 2 * border;
-  return newrect;
+  NARect newRect;
+  newRect.pos.x = rect.pos.x - border;
+  newRect.pos.y = rect.pos.y - border;
+  newRect.size.width = rect.size.width + 2 * border;
+  newRect.size.height = rect.size.height + 2 * border;
+  return newRect;
 }
 NA_IDEF NARecti naMakeRectiWithRectAndBorder(NARecti rect, NAInt border){
-  NARecti newrect;
-  newrect.pos.x = rect.pos.x - border;
-  newrect.pos.y = rect.pos.y - border;
-  newrect.size.width = rect.size.width + 2 * border;
-  newrect.size.height = rect.size.height + 2 * border;
-  return newrect;
+  NARecti newRect;
+  newRect.pos.x = rect.pos.x - border;
+  newRect.pos.y = rect.pos.y - border;
+  newRect.size.width = rect.size.width + 2 * border;
+  newRect.size.height = rect.size.height + 2 * border;
+  return newRect;
 }
 
 
@@ -1743,7 +1751,7 @@ NA_IDEF NAPosi naClampPosiToRect(NAPosi pos, NARecti clampRect){
 NA_IDEF NARect naClampRectToRect(NARect rect, NARect clampRect){
   // Todo: use helper functions in this function.
   double value;
-  NARect newrect;
+  NARect newRect;
   #ifndef NDEBUG
     if(naIsRectEmpty(rect))
       naError("rect is empty.");
@@ -1754,34 +1762,34 @@ NA_IDEF NARect naClampRectToRect(NARect rect, NARect clampRect){
     if(!naIsRectValid(clampRect))
       naError("clampRect is invalid.");
   #endif
-  newrect = rect;
+  newRect = rect;
   // Adjust in first dimension
-  value = clampRect.pos.x - newrect.pos.x;
+  value = clampRect.pos.x - newRect.pos.x;
   if(value > 0){
-    newrect.size.width -= value;
-    newrect.pos.x = clampRect.pos.x;
+    newRect.size.width -= value;
+    newRect.pos.x = clampRect.pos.x;
   }
   value = naGetRectEndX(clampRect);
-  if(naGetRectEndXE(newrect) > value){
-    newrect.size.width = value - newrect.pos.x;
+  if(naGetRectEndXE(newRect) > value){
+    newRect.size.width = value - newRect.pos.x;
   }
 
   // Adjust in second dimension
-  value = clampRect.pos.y - newrect.pos.y;
+  value = clampRect.pos.y - newRect.pos.y;
   if(value > 0){
-    newrect.size.height -= value;
-    newrect.pos.y = clampRect.pos.y;
+    newRect.size.height -= value;
+    newRect.pos.y = clampRect.pos.y;
   }
   value = naGetRectEndY(clampRect);
-  if(naGetRectEndYE(newrect) > value){
-    newrect.size.height = value - newrect.pos.y;
+  if(naGetRectEndYE(newRect) > value){
+    newRect.size.height = value - newRect.pos.y;
   }
-  return newrect;
+  return newRect;
 }
 NA_IDEF NARecti naClampRectiToRect(NARecti rect, NARecti clampRect){
   // Todo: use helper functions in this function.
   NAInt value;
-  NARecti newrect;
+  NARecti newRect;
   #ifndef NDEBUG
     if(naIsRectiEmptySlow(rect))
       naError("rect is empty.");
@@ -1793,34 +1801,34 @@ NA_IDEF NARecti naClampRectiToRect(NARecti rect, NARecti clampRect){
       naError("clampRect is invalid.");
   #endif
 
-  newrect = rect;
+  newRect = rect;
 
   // Adjust in first dimension
-  value = clampRect.pos.x - newrect.pos.x;
+  value = clampRect.pos.x - newRect.pos.x;
   if(value > 0){
-    newrect.size.width -= value;
-    if(newrect.size.width <= 0){return newrect;}
-    newrect.pos.x = clampRect.pos.x;
+    newRect.size.width -= value;
+    if(newRect.size.width <= 0){return newRect;}
+    newRect.pos.x = clampRect.pos.x;
   }
   value = naGetRectiEndX(clampRect);
-  if(naGetRectiEndX(newrect) > value){
-    newrect.size.width = value - newrect.pos.x;
-    if(newrect.size.width <= 0){return newrect;}
+  if(naGetRectiEndX(newRect) > value){
+    newRect.size.width = value - newRect.pos.x;
+    if(newRect.size.width <= 0){return newRect;}
   }
 
   // Adjust in second dimension
-  value = clampRect.pos.y - newrect.pos.y;
+  value = clampRect.pos.y - newRect.pos.y;
   if(value > 0){
-    newrect.size.height -= value;
-    if(newrect.size.height <= 0){return newrect;}
-    newrect.pos.y = clampRect.pos.y;
+    newRect.size.height -= value;
+    if(newRect.size.height <= 0){return newRect;}
+    newRect.pos.y = clampRect.pos.y;
   }
   value = naGetRectiEndY(clampRect);
-  if(naGetRectiEndY(newrect) > value){
-    newrect.size.height = value - newrect.pos.y;
-    if(newrect.size.height <= 0){return newrect;}
+  if(naGetRectiEndY(newRect) > value){
+    newRect.size.height = value - newRect.pos.y;
+    if(newRect.size.height <= 0){return newRect;}
   }
-  return newrect;
+  return newRect;
 }
 
 

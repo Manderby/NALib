@@ -199,8 +199,16 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   na_InitWindow(&(winapiWindow->window), hWnd, NA_NULL, NA_FALSE, resizeable, rect);
   winapiWindow->firstResponder = NA_NULL;
 
-  naAddUIKeyboardShortcut(winapiWindow, naMakeKeybardStatus(0, NA_KEYCODE_TAB), naHandleWindowTabOrder, NA_NULL);
-  naAddUIKeyboardShortcut(winapiWindow, naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB), naHandleWindowTabOrder, NA_NULL);
+  naAddUIKeyboardShortcut(
+    winapiWindow,
+    naMakeKeybardStatus(0, NA_KEYCODE_TAB),
+    naHandleWindowTabOrder,
+    NA_NULL);
+  naAddUIKeyboardShortcut(
+    winapiWindow,
+    naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB),
+    naHandleWindowTabOrder,
+    NA_NULL);
 
   space = naNewSpace(rect.size);
   naSetWindowContentSpace(&(winapiWindow->window), space);
@@ -373,7 +381,7 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* uiElement){
 
 NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
   DWORD style;
-  NARect newrect;
+  NARect newRect;
   NARect screenRect;
   
   if(fullScreen != naIsWindowFullscreen(window)){
@@ -382,13 +390,13 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
       DEVMODE screenSettings;
       window->windowedFrame = naGetUIElementRect(window, naGetApplication(), NA_TRUE);
 
-      newrect = naGetMainScreenRect();
+      newRect = naGetMainScreenRect();
 
       memset(&screenSettings, 0, sizeof(screenSettings)); // set everything to 0
       screenSettings.dmSize = sizeof(screenSettings);
       //memcpy(screenSettings.dmDeviceName, fullscreendevicename, CCHDEVICENAME * sizeof(WCHAR));
-      screenSettings.dmPelsWidth = (DWORD)newrect.size.width;
-      screenSettings.dmPelsHeight = (DWORD)newrect.size.height;
+      screenSettings.dmPelsWidth = (DWORD)newRect.size.width;
+      screenSettings.dmPelsHeight = (DWORD)newRect.size.height;
       screenSettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
 
       style = WS_POPUP;
@@ -398,7 +406,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
       //ChangeDisplaySettings(NULL, 0);
       //ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN);
     }else{
-      newrect = window->windowedFrame;
+      newRect = window->windowedFrame;
       style = WS_OVERLAPPEDWINDOW;
       SetWindowLongPtr(naGetUIElementNativePtr(window), GWL_STYLE, style);
       SetWindowPos(

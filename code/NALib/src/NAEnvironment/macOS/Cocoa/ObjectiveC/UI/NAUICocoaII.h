@@ -38,8 +38,6 @@ struct NACocoaApplication {
   NAApplication application;
 };
 
-
-
 @interface NACocoaNativeApplicationDelegate : NSObject <NSApplicationDelegate>{
   NACocoaApplication* cocoaApplication;
 }
@@ -84,7 +82,7 @@ struct NACocoaApplication {
 #if (NA_COMPILE_OPENGL == 1)
   #pragma GCC diagnostic push 
   #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-  @interface NACocoaOpenGLSpace : NSOpenGLView{
+  @interface NACocoaNativeOpenGLSpace : NSOpenGLView{
     NAOpenGLSpace* openGLSpace;
     NSTrackingArea* trackingArea;
     NAMutator initFunc;
@@ -263,9 +261,9 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
     return;
   }
 
-  naDefineCocoaObject(NSView, cocoaelem, elem);
+  naDefineCocoaObject(NSView, cocoaCurTabElem, elem);
   naDefineCocoaObject(NSView, cocoaNextTabElem, nextTabElem);
-  [cocoaelem setNextKeyView:cocoaNextTabElem];
+  [cocoaCurTabElem setNextKeyView:cocoaNextTabElem];
 }
 
 

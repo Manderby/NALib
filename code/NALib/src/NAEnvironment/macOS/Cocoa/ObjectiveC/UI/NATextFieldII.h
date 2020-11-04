@@ -7,6 +7,7 @@
 
 
 @implementation NACocoaNativeTextField
+
 - (id) initWithTextField:(NATextField*)newTextField frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 //  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
@@ -27,29 +28,37 @@
   textField = newTextField;
   return self;
 }
+
 - (void) onEdited:(id)sender{
   NA_UNUSED(sender);
   na_DispatchUIElementCommand((NA_UIElement*)textField, NA_UI_COMMAND_EDITED);
 }
+
 - (void)controlTextDidChange:(NSNotification *)notification{
   NA_UNUSED(notification);
   na_DispatchUIElementCommand((NA_UIElement*)textField, NA_UI_COMMAND_EDITED);
 }
+
 - (void) setText:(const NAUTF8Char*)text{
   [self setStringValue:[NSString stringWithUTF8String:text]];
 }
+
 - (NAString*) newStringWithText{
   return naNewStringWithFormat([[self stringValue] UTF8String]);
 }
+
 //- (void) setTextFieldEnabled:(NABool)enabled{
 ////  [self setAlphaValue:enabled ? 1. : .35];
 //}
+
 - (void) setTextAlignment:(NATextAlignment) alignment{
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
+
 - (void) setFontKind:(NAFontKind)kind{
    [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKind(kind))];
 }
+
 @end
 
 
@@ -57,8 +66,9 @@
 NA_DEF NATextField* naNewTextField(NASize size){
   NATextField* textField = naAlloc(NATextField);
   
-  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaNativeTextField* nativePtr = [[NACocoaNativeTextField alloc] initWithTextField:textField frame:frameRect];
+  NACocoaNativeTextField* nativePtr = [[NACocoaNativeTextField alloc]
+    initWithTextField:textField
+    frame:naMakeNSRectWithSize(size)];
   na_InitTextField(textField, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return textField;

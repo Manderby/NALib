@@ -7,6 +7,7 @@
 
 
 @implementation NACocoaNativeTextBox
+
 - (id) initWithTextBox:(NATextBox*)newTextBox frame:(NSRect)frame{
   NSRect clipRect;
   NSClipView* clipView;
@@ -37,21 +38,27 @@
   textBox = newTextBox;
   return self;
 }
+
 - (void) setText:(const NAUTF8Char*)text{
   [self setString:[NSString stringWithUTF8String:text]];
 }
+
 - (void) setTextAlignment:(NATextAlignment) alignment{
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
+
 - (void) setFontKind:(NAFontKind)kind{
   [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKind(kind))];
 }
+
 - (void) setReadOnly:(NABool)readonly{
   [self setEditable:!readonly];
 }
+
 - (NSView*) getContainingView{
   return scrollView;
 }
+
 @end
 
 
@@ -59,8 +66,9 @@
 NA_DEF NATextBox* naNewTextBox(NASize size){
   NATextBox* textBox = naAlloc(NATextBox);
   
-  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaNativeTextBox* nativePtr = [[NACocoaNativeTextBox alloc] initWithTextBox:textBox frame:frameRect];
+  NACocoaNativeTextBox* nativePtr = [[NACocoaNativeTextBox alloc]
+    initWithTextBox:textBox
+    frame:naMakeNSRectWithSize(size)];
   na_InitTextBox(textBox, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return (NATextBox*)textBox;

@@ -7,6 +7,7 @@
 
 
 @implementation NACocoaNativeRadio
+
 - (id) initWithRadio:(NARadio*)newRadio frame:(NSRect)frame{
   NSRect newbounds = frame;
   newbounds.origin.x = 0;
@@ -27,12 +28,15 @@
 
   return self;
 }
+
 - (NSView*) getContainingView{
   return containingview;
 }
+
 - (void) setText:(const NAUTF8Char*)text{
   [self setTitle:[NSString stringWithUTF8String:text]];
 }
+
 - (void) setColor:(const NABabyColor*)color{
   NSColor* nsColor;
   if(color){
@@ -54,16 +58,20 @@
   
   [self setAttributedTitle: attrString];
 }
+
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
   na_DispatchUIElementCommand((NA_UIElement*)radio, NA_UI_COMMAND_PRESSED);
 }
+
 - (void) setRadioState:(NABool)state{
   [self setState:state ? NAStateOn : NAStateOff];
 }
+
 - (NABool) radioState{
   return ([self state] == NAStateOn) ? NA_TRUE : NA_FALSE;
 }
+
 @end
 
 
@@ -71,9 +79,11 @@
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   NARadio* radio = naAlloc(NARadio);
 
-  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaNativeRadio* nativePtr = [[NACocoaNativeRadio alloc] initWithRadio:radio frame:frameRect];
+  NACocoaNativeRadio* nativePtr = [[NACocoaNativeRadio alloc]
+    initWithRadio:radio
+    frame:naMakeNSRectWithSize(size)];
   na_InitRadio(radio, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  
   [nativePtr setText:text];
   
   return radio;

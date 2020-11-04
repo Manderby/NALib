@@ -5,7 +5,9 @@
 // Do not include this file anywhere else!
 
 
+
 @implementation NACocoaNativeCheckBox
+
 - (id) initWithCheckBox:(NACheckBox*)newCheckBox frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   
@@ -16,9 +18,11 @@
 
   return self;
 }
+
 - (void) setText:(const NAUTF8Char*)text{
   [self setTitle:[NSString stringWithUTF8String:text]];
 }
+
 - (void) setColor:(const NABabyColor*)color{
   NSColor* nsColor;
   if(color){
@@ -40,30 +44,32 @@
   
   [self setAttributedTitle: attrString];
 }
+
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
   na_DispatchUIElementCommand((NA_UIElement*)checkBox, NA_UI_COMMAND_PRESSED);
 }
+
 - (void) setCheckBoxState:(NABool)state{
   [self setState:state ? NAStateOn : NAStateOff];
 }
+
 - (NABool) checkBoxState{
   return ([self state] == NAStateOn) ? NA_TRUE : NA_FALSE;
 }
+
 @end
 
 
 
 NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
-  NACocoaNativeCheckBox* nativePtr;
   NACheckBox* checkBox = naAlloc(NACheckBox);
-  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NSRect boundrect = frameRect;
-  boundrect.origin.x = 0;
-  boundrect.origin.y = 0;
 
-  nativePtr = [[NACocoaNativeCheckBox alloc] initWithCheckBox:checkBox frame:frameRect];
+  NACocoaNativeCheckBox* nativePtr = [[NACocoaNativeCheckBox alloc]
+    initWithCheckBox:checkBox
+    frame:naMakeNSRectWithSize(size)];    
   na_InitCheckBox(checkBox, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  
   [nativePtr setText:text];
   
   return (NACheckBox*)checkBox;

@@ -141,7 +141,7 @@ NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace){
     naError("OpenGL has not been configured. See NAConfiguration.h");
   }
 
-  NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
+  NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
     naError("OpenGL has not been configured. See NAConfiguration.h");
   }
 

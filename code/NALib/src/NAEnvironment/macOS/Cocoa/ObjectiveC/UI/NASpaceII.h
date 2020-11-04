@@ -7,6 +7,7 @@
 
 
 @implementation NACocoaNativeSpace
+
 - (id) initWithSpace:(NASpace*)newSpace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
@@ -20,6 +21,7 @@
   space = newSpace;
   return self;
 }
+
 - (void)drawRect:(NSRect)dirtyRect{
   [super drawRect:dirtyRect];
   if(space->alternatebackground){
@@ -27,30 +29,33 @@
     NSRectFill(dirtyRect);
   }
 }
+
 - (void)mouseMoved:(NSEvent*)event{
   NA_UNUSED(event);
   na_DispatchUIElementCommand((NA_UIElement*)space, NA_UI_COMMAND_MOUSE_MOVED);
 }
+
 - (void)mouseEntered:(NSEvent*)event{
   NA_UNUSED(event);
   na_DispatchUIElementCommand((NA_UIElement*)space, NA_UI_COMMAND_MOUSE_ENTERED);
 }
+
 - (void)mouseExited:(NSEvent*)event{
   NA_UNUSED(event);
   na_DispatchUIElementCommand((NA_UIElement*)space, NA_UI_COMMAND_MOUSE_EXITED);
 }
+
 @end
 
 
 
 NA_DEF NASpace* naNewSpace(NASize size){
-  NSRect contentRect;
-  NACocoaNativeSpace* nativePtr;
   NASpace* space = naAlloc(NASpace);
   space->alternatebackground = NA_FALSE;
 
-  contentRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  nativePtr = [[NACocoaNativeSpace alloc] initWithSpace:space frame:contentRect];  
+  NACocoaNativeSpace* nativePtr = [[NACocoaNativeSpace alloc]
+    initWithSpace:space
+    frame:naMakeNSRectWithSize(size)];  
   na_InitSpace(space, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return space;
@@ -74,28 +79,28 @@ NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
 
 
 NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
-  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
+  naDefineCocoaObject(NACocoaNativeSpace, nativeSpacePtr, space);
   naDefineCocoaObject(NSView, cocoaview, child);
   NACocoaNativeRadio* nativeRadioPtr;
   NACocoaNativeTextBox* nativeTextBoxPtr;
-  NSView* subview;
-  NSRect frame;
-  
+
+  NSView* subview;  
   switch(naGetUIElementType(child)){
   case NA_UI_RADIO:
-    nativePtr = (NACocoaNativeRadio*)cocoaview;
+    nativeRadioPtr = (NACocoaNativeRadio*)cocoaview;
     subview = [nativeRadioPtr getContainingView];
     break;
   case NA_UI_TEXTBOX:
-    cocoaTextBox = (NACocoaNativeTextBox*)cocoaview;
+    nativeTextBoxPtr = (NACocoaNativeTextBox*)cocoaview;
     subview = [nativeTextBoxPtr getContainingView];
     break;
   default:
     subview = cocoaview;
     break;
   }
-  [cocoaSpace addSubview:subview];
-  frame = [subview frame];
+  
+  [nativeSpacePtr addSubview:subview];
+  NSRect frame = [subview frame];
   frame.origin = NSMakePoint((CGFloat)pos.x, (CGFloat)pos.y);
   [subview setFrame: frame];
   na_SetUIElementParent(child, space);
@@ -104,17 +109,15 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
 
 
 NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
-  NARect rect;
-  NSRect contentRect;
-  NARect windowrect;
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   // Warning: does not work when frame unequal bounds.
-  contentRect = [nativePtr frame];
-  windowrect = na_GetWindowAbsoluteInnerRect((NA_UIElement*)naGetUIElementWindow(space));
-  rect.pos.x = windowrect.pos.x + contentRect.origin.x;
-  rect.pos.y = windowrect.pos.y + contentRect.origin.y;
-  rect.size.width = contentRect.size.width;
-  rect.size.height = contentRect.size.height;
+  NSRect contentRect = [nativePtr frame];
+  NARect windowrect = na_GetWindowAbsoluteInnerRect((NA_UIElement*)naGetUIElementWindow(space));
+  NARect rect = naMakeRectS(
+    windowrect.pos.x + contentRect.origin.x,
+    windowrect.pos.y + contentRect.origin.y,
+    contentRect.size.width,
+    contentRect.size.height);
   return rect;
 }
 

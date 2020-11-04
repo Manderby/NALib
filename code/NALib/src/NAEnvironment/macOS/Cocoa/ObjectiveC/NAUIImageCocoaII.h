@@ -72,7 +72,11 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 
 
 
-void* naAllocNativeImageWithUIImage(const NAUIImage* uiImage, NAUIImageKind kind, NAUIImageSkin skin){
+void* naAllocNativeImageWithUIImage(
+  const NAUIImage* uiImage,
+  NAUIImageKind kind,
+  NAUIImageSkin skin)
+{
   NASizei imageSize = naGetUIImage1xSize(uiImage);
   NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
 

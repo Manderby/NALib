@@ -6,6 +6,7 @@
 
 
 
+// Commented out for future development. Maybe.
 //@implementation MDVerticallyCenteredTextFieldCell
 //
 //- (NSRect)adjustedFrameToVerticallyCenterText:(NSRect)rect {
@@ -109,6 +110,7 @@
 //@end
 
 @implementation NACocoaNativeLabel
+
 - (id) initWithLabel:(NALabel*)newLabel frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 //  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
@@ -123,9 +125,11 @@
   label = newLabel;
   return self;
 }
+
 - (void) setText:(const NAUTF8Char*)text{
   [self setStringValue:[NSString stringWithUTF8String:text]];
 }
+
 - (void) setColor:(const NABabyColor*)color{
   if(color){
     uint8 buf[4];
@@ -135,6 +139,7 @@
     [self setTextColor:[NSColor labelColor]];
   }
 }
+
 - (void) setLink:(const NAUTF8Char*)url{
   NSMutableAttributedString* attrString;
   NSRange range;
@@ -160,15 +165,19 @@
   
   [self setAttributedStringValue: attrString];
 }
+
 - (void) setLabelEnabled:(NABool)enabled{
   [self setAlphaValue:enabled ? (CGFloat)1. : (CGFloat).35];
 }
+
 - (void) setTextAlignment:(NATextAlignment) alignment{
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
+
 - (void) setFontKind:(NAFontKind)kind{
   [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKind(kind))];
 }
+
 @end
 
 
@@ -176,9 +185,11 @@
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   NALabel* label = naAlloc(NALabel);
 
-  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaNativeLabel* nativePtr = [[NACocoaNativeLabel alloc] initWithLabel:label frame:frameRect];
+  NACocoaNativeLabel* nativePtr = [[NACocoaNativeLabel alloc]
+    initWithLabel:label
+    frame:naMakeNSRectWithSize(size)];
   na_InitLabel(label, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  
   naSetLabelText(label, text);
   
   return (NALabel*)label;
@@ -194,42 +205,42 @@ NA_DEF void na_DestructLabel(NALabel* label){
 
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [cocoaLabel setText:text];
+  [nativePtr setText:text];
 }
 
 
 
 NA_DEF void naSetLabelTextColor(NALabel* label, const NABabyColor* color){
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [cocoaLabel setColor:color];
+  [nativePtr setColor:color];
 }
 
 
 
 NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [cocoaLabel setLink: url];
+  [nativePtr setLink: url];
 }
 
 
 
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [cocoaLabel setLabelEnabled:enabled];
+  [nativePtr setLabelEnabled:enabled];
 }
 
 
 
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [cocoaLabel setTextAlignment:alignment];
+  [nativePtr setTextAlignment:alignment];
 }
 
 
 
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [cocoaLabel setFontKind:kind];
+  [nativePtr setFontKind:kind];
 }
 
 

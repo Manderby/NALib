@@ -134,8 +134,16 @@ NA_DEF NATextField* naNewTextField(NASize size){
   winapiTextField->nextTabStop = winapiTextField;
   winapiTextField->prevTabStop = winapiTextField;
 
-  naAddUIKeyboardShortcut(winapiTextField, naMakeKeybardStatus(0, NA_KEYCODE_TAB), naHandleTextFieldTabOrder, NA_NULL);
-  naAddUIKeyboardShortcut(winapiTextField, naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB), naHandleTextFieldReverseTabOrder, NA_NULL);
+  naAddUIKeyboardShortcut(
+    winapiTextField,
+    naMakeKeybardStatus(0, NA_KEYCODE_TAB),
+    naHandleTextFieldTabOrder,
+    NA_NULL);
+  naAddUIKeyboardShortcut(
+    winapiTextField,
+    naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB),
+    naHandleTextFieldReverseTabOrder,
+    NA_NULL);
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 

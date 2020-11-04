@@ -68,8 +68,16 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
   winapiTextBox->nextTabStop = winapiTextBox;
   winapiTextBox->prevTabStop = winapiTextBox;
 
-   naAddUIKeyboardShortcut(winapiTextBox, naMakeKeybardStatus(0, NA_KEYCODE_TAB), naHandleTextBoxTabOrder, NA_NULL);
- naAddUIKeyboardShortcut(winapiTextBox, naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB), naHandleTextBoxReverseTabOrder, NA_NULL);
+  naAddUIKeyboardShortcut(
+    winapiTextBox,
+    naMakeKeybardStatus(0, NA_KEYCODE_TAB),
+    naHandleTextBoxTabOrder,
+    NA_NULL);
+  naAddUIKeyboardShortcut(
+    winapiTextBox,
+    naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB),
+    naHandleTextBoxReverseTabOrder,
+    NA_NULL);
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 

@@ -277,9 +277,6 @@ NA_HDEF void na_SetMouseMovedByDiff(double deltaX, double deltaY){
   na_App->mouseStatus.prevPos = na_App->mouseStatus.pos;
   na_App->mouseStatus.pos.x += deltaX;
   na_App->mouseStatus.pos.y += deltaY;
-  if(na_App->mouseStatus.pos.y < 0){
-    int asdf = 1234;
-  }
 }
 
 
@@ -430,7 +427,12 @@ NA_DEF NAKeyboardStatus naMakeKeybardStatus(NAInt modifiers, NAUIKeyCode keyCode
 
 
 
-NA_DEF void naAddUIKeyboardShortcut(void* uiElement, NAKeyboardStatus shortcut, NAReactionHandler handler, void* controller){
+NA_DEF void naAddUIKeyboardShortcut(
+  void* uiElement,
+  NAKeyboardStatus shortcut,
+  NAReactionHandler handler,
+  void* controller)
+{
   NAKeyboardShortcutReaction* keyReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
   //#ifndef NDEBUG

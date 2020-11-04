@@ -518,15 +518,17 @@ struct NAReaction{
 
 typedef NABool (*NAReactionHandler)(NAReaction reaction);
 
-NA_API void naAddUIReaction(        void* uiElement,
-                                     NAUICommand command,
-                               NAReactionHandler handler,
-                                           void* controller);
+NA_API void naAddUIReaction(
+  void*             uiElement,
+  NAUICommand       command,
+  NAReactionHandler handler,
+  void*             controller);
 
-NA_API void naAddUIKeyboardShortcut(void* uiElement,
-                                NAKeyboardStatus shortcut,
-                               NAReactionHandler handler,
-                                           void* controller);
+NA_API void naAddUIKeyboardShortcut(
+  void*             uiElement,
+  NAKeyboardStatus  shortcut,
+  NAReactionHandler handler,
+  void*             controller);
 
 // The function naAddUIReaction and the function prototype NAReactionHandler
 // work in pairs. The controller given to naAddUIReaction is an arbitrary
