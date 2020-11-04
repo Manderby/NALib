@@ -63,7 +63,7 @@ NAWINAPICallbackInfo naCheckBoxWINAPINotify(void* uiElement, WORD notificationCo
       check = naGetCheckBoxState(uiElement);
       naSetCheckBoxState(uiElement, !check);
       na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
-      info.hasbeenhandeled = NA_TRUE;
+      info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
       break;
   }

@@ -36,6 +36,12 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_IME_SETCONTEXT:
   case WM_DESTROY:
   case WM_NCDESTROY:
+  case WM_SETFOCUS:
+  case WM_CAPTURECHANGED:
+  case WM_IME_NOTIFY:
+  case WM_TIMER:
+  case TBM_SETPOS:  // (WM_USER + 5)
+  case TBM_GETPOS: // (WM_USER + 0)
     break;
 
   default:
@@ -43,6 +49,23 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
     break;
   }
   
+  return info;
+}
+
+
+
+NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam){
+  NAWINAPICallbackInfo info = {NA_TRUE, 0};
+
+  //int16 lo = LOWORD(wParam);
+  //int16 hi = HIWORD(wParam);
+
+  NAPos pos = naGetMousePos(naGetMouseStatus());
+  NARect rect = naGetUIElementRect(uiElement, naGetApplication(), NA_FALSE);
+
+  naSetSliderValue(uiElement, (double)pos.x / (double)rect.size.width);
+  na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED);
+
   return info;
 }
 
@@ -86,11 +109,10 @@ NA_DEF NASlider* naNewSlider(NASize size){
 
   //SetFocus(hWnd); 
 
-  //oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  //if(!app->oldSliderWindowProc){app->oldSliderWindowProc = oldproc;}
+  oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!app->oldSliderWindowProc){app->oldSliderWindowProc = oldproc;}
 
   na_InitSlider(&(winapiSlider->slider), hWnd);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiSlider->slider));
 
   return (NASlider*)winapiSlider;
 }
@@ -104,9 +126,24 @@ NA_DEF void na_DestructSlider(NASlider* slider){
 
 
 
-NA_HDEF NARect na_GetSliderAbsoluteInnerRect(NASlider* slider){
-  NA_UNUSED(slider);
-  return naMakeRectS(20, 40, 100, 50);
+NA_HDEF NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* slider){
+  //return naMakeRectS(20, 40, 100, 50);
+  RECT contentRect;
+  NARect screenRect;
+  NARect rect;
+  GetClientRect(naGetUIElementNativeId(slider), &contentRect);
+
+  POINT testpoint = {0, 0};
+
+  //GetClientRect(space->nativeId, &contentRect);
+  ClientToScreen(naGetUIElementNativeId(slider), &testpoint);
+  screenRect = naGetMainScreenRect();
+
+  rect.pos.x = testpoint.x;
+  rect.pos.y = (double)screenRect.size.height - ((double)testpoint.y + ((double)contentRect.bottom - (double)contentRect.top));
+  rect.size.width = (double)contentRect.right - (double)contentRect.left;
+  rect.size.height = (double)contentRect.bottom - (double)contentRect.top;
+  return rect;
 }
 
 

@@ -277,6 +277,9 @@ NA_HDEF void na_SetMouseMovedByDiff(double deltaX, double deltaY){
   na_App->mouseStatus.prevPos = na_App->mouseStatus.pos;
   na_App->mouseStatus.pos.x += deltaX;
   na_App->mouseStatus.pos.y += deltaY;
+  if(na_App->mouseStatus.pos.y < 0){
+    int asdf = 1234;
+  }
 }
 
 
@@ -359,9 +362,7 @@ NA_DEF void naReleaseUIElement(void* uiElement){
   case NA_UI_CHECKBOX:    na_DestructCheckBox(uiElement); break;
   case NA_UI_IMAGESPACE:  na_DestructImageSpace(uiElement); break;
   case NA_UI_LABEL:       na_DestructLabel(uiElement); break;
-  #if NA_COMPILE_OPENGL == 1
-    case NA_UI_OPENGLSPACE: na_DestructOpenGLSpace(uiElement); break;
-  #endif
+  case NA_UI_OPENGLSPACE: na_DestructOpenGLSpace(uiElement); break;
   case NA_UI_RADIO:       na_DestructRadio(uiElement); break;
 //  case NA_UI_SCREEN:      naDeleteScreen(uiElement);
   case NA_UI_SLIDER:      na_DestructSlider(uiElement); break;
@@ -489,8 +490,7 @@ NA_DEF NASpace* naGetUIElementParentSpace(void* uiElement){
 
 
 NA_DEF const NAMouseStatus* naGetMouseStatus(){
-  return &(na_App->mouseStatus
-  );
+  return &(na_App->mouseStatus);
 }
 
 

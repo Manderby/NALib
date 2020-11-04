@@ -614,19 +614,18 @@ NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
 NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind);
 
 // OpenGLSpace
-#if NA_COMPILE_OPENGL == 1
-  // the initfunc will be called with initdata as the input parameter as
-  // soon as there is an KaroOpenGLContext available. You can put there all
-  // initialization necessary like for example uploading of textures to the
-  // GPU.
-  // Note that the initFunc will be called...
-  // Win: Right within the naNewOpenGLSpace
-  // Mac: when prepareOpenGL is called (which may be as late as when the
-  //      space comes onsceen)
-  NA_API NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator initfunc, void* initdata);
-  NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace);
-  NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds);
-#endif
+// Note that you must have NA_COMPILE_OPENGL configured in NAConfiguration.h
+// to use these functions.
+// Use initFunc to perform any initialization necessary like for example
+// uploading of textures to the GPU. The initFunc will be called with
+// initData as the input parameter. The initFunc can be Null.
+// Note that the initFunc will be called...
+// Win: Right within the naNewOpenGLSpace
+// Mac: when prepareOpenGL is called (which may be as late as when the
+//      space comes onsceen)
+NA_API NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData);
+NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace);
+NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds);
 
 // Radio
 NA_API NARadio* naNewRadio(const NAUTF8Char* text, NASize size);

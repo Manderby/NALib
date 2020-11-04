@@ -63,7 +63,7 @@ NAWINAPICallbackInfo naButtonWINAPINotify(void* uiElement, WORD notificationCode
   switch(notificationCode){
     case BN_CLICKED:
       na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
-      info.hasbeenhandeled = NA_TRUE;
+      info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
       break;
     default:
@@ -93,7 +93,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   NAWINAPIButton* button = (NAWINAPIButton*)uiElement;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
 
-  CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeId(uiElement), WM_ERASEBKGND, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
+  CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativeId(uiElement), WM_ERASEBKGND, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
 
   if(!button->transparent){
     long oldstyle = (long)GetWindowLongPtr(naGetUIElementNativeId(uiElement), GWL_STYLE);
@@ -102,7 +102,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     // Oh boi. That is one hell of a hidden feature. Usually, the WM_PAINT message does not
     // use wParam and lParam at all. But there are some common controls (and buttons seems to
     // be one of them) which in fact only work if you send the device context in wParam.
-    CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeId(uiElement), WM_PAINT, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
+    CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativeId(uiElement), WM_PAINT, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
     SetWindowLongPtr(naGetUIElementNativeId(uiElement), GWL_STYLE, (LONG_PTR)oldstyle);
   }
 

@@ -31,7 +31,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARA
 
   case WM_PAINT:
     naImageSpaceWINAPIDrawItem(uiElement);
-    info.hasbeenhandeled = NA_TRUE;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   default:
@@ -66,7 +66,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
 
   imageSpace = (NAWINAPIImageSpace*)uiElement;
 
-  CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeId(uiElement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
+  CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativeId(uiElement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
 
   size1x = naGetUIImage1xSize(imageSpace->image);
 

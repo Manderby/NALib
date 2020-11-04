@@ -78,7 +78,7 @@ NAWINAPICallbackInfo naTextFieldWINAPINotify(void* uiElement, WORD notificationC
   switch(notificationCode){
   case EN_CHANGE:
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED);
-    info.hasbeenhandeled = NA_TRUE;
+    info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;
   }

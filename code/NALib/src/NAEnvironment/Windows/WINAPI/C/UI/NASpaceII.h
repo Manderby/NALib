@@ -95,7 +95,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
       bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
       SetBkColor((HDC)wParam, bgColor->color);
       info.result = (LRESULT)bgColor->brush;
-      info.hasbeenhandeled = NA_TRUE;
+      info.hasBeenHandeled = NA_TRUE;
       break;
     }
     break;
@@ -107,12 +107,12 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
       FillRect((HDC)wParam, &spacerect, bgColor->brush);
       winapiSpace->lastBgColor = bgColor;
     }
-    info.hasbeenhandeled = NA_TRUE;
+    info.hasBeenHandeled = NA_TRUE;
     info.result = 1;
     break;
 
   default:
-    printf("Uncaught Space message" NA_NL);
+    //printf("Uncaught Space message" NA_NL);
     break;
   }
   
@@ -196,18 +196,18 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
 
 NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   NARect rect;
-  NARect screenrect;
-  RECT contentrect;
+  NARect screenRect;
+  RECT contentRect;
   POINT testpoint = {0, 0};
 
-  GetClientRect(space->nativeId, &contentrect);
+  GetClientRect(space->nativeId, &contentRect);
   ClientToScreen(space->nativeId, &testpoint);
-  screenrect = naGetMainScreenRect();
+  screenRect = naGetMainScreenRect();
 
   rect.pos.x = testpoint.x;
-  rect.pos.y = (double)screenrect.size.height - ((double)testpoint.y + ((double)contentrect.bottom - (double)contentrect.top));
-  rect.size.width = (double)contentrect.right - (double)contentrect.left;
-  rect.size.height = (double)contentrect.bottom - (double)contentrect.top;
+  rect.pos.y = (double)screenRect.size.height - ((double)testpoint.y + ((double)contentRect.bottom - (double)contentRect.top));
+  rect.size.width = (double)contentRect.right - (double)contentRect.left;
+  rect.size.height = (double)contentRect.bottom - (double)contentRect.top;
   return rect;
 }
 

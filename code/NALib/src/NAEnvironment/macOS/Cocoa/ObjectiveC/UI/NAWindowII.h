@@ -187,15 +187,15 @@ NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem){
 
 NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
   NARect rect;
-  NSRect contentrect;
+  NSRect contentRect;
   NSRect windowframe;
   naDefineCocoaObject(NACocoaWindow, cocoawindow, window);
-  contentrect = [[cocoawindow contentView] frame];
+  contentRect = [[cocoawindow contentView] frame];
   windowframe = [cocoawindow frame];
-  rect.pos.x = windowframe.origin.x + contentrect.origin.x;
-  rect.pos.y = windowframe.origin.y + contentrect.origin.y;
-  rect.size.width = contentrect.size.width;
-  rect.size.height = contentrect.size.height;
+  rect.pos.x = windowframe.origin.x + contentRect.origin.x;
+  rect.pos.y = windowframe.origin.y + contentRect.origin.y;
+  rect.size.width = contentRect.size.width;
+  rect.size.height = contentRect.size.height;
   return rect;
 }
 

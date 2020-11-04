@@ -90,8 +90,7 @@ NA_UNUSED(event);
 
 
 
-  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator initfunc, void* initdata){
-    NA_UNUSED(parent);
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
     NAOpenGLSpace* openGLSpace = naAlloc(NAOpenGLSpace);
 
     // Configure the OpenGL Context and initialize this object.
@@ -105,7 +104,7 @@ NA_UNUSED(event);
     NSOpenGLPixelFormat *pixelformat = NA_COCOA_AUTORELEASE([[NSOpenGLPixelFormat alloc] initWithAttributes:attr]);
     
     NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)size.width, (CGFloat)size.height);
-    NACocoaOpenGLSpace* cocoaSpace = [[NACocoaOpenGLSpace alloc] initWithOpenGLSpace:openGLSpace frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
+    NACocoaOpenGLSpace* cocoaSpace = [[NACocoaOpenGLSpace alloc] initWithOpenGLSpace:openGLSpace frame:frameRect pixelFormat:pixelformat initFunc:initFunc initData:initData];
 //    [cocoaSpace retain];
 
     if([cocoaSpace respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
@@ -142,6 +141,25 @@ NA_UNUSED(event);
   }
   
   #pragma GCC diagnostic pop
+
+#else
+
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+    return NA_NULL;
+  }
+
+  NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace){
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+  }
+
+  NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+  }
+
+  NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+  }
 
 #endif  // NA_COMPILE_OPENGL
 

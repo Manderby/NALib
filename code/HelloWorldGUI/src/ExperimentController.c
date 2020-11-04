@@ -114,8 +114,10 @@ NABool redrawOpenGLSpace(NAReaction reaction){
   // OpenGL is declared deprecated on macOS 10.14. These pragma directives
   // omit the nasty warnings. Do not forget the pragma pop at the end of this
   // function!
-  #pragma GCC diagnostic push 
-  #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+  #if NA_OS == NA_OS_MAC_OS_X
+    #pragma GCC diagnostic push 
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+  #endif
 
   static float ang = 0.f;
 
@@ -137,7 +139,9 @@ NABool redrawOpenGLSpace(NAReaction reaction){
 
   return NA_TRUE;
 
-  #pragma GCC diagnostic pop 
+  #if NA_OS == NA_OS_MAC_OS_X
+    #pragma GCC diagnostic pop
+  #endif
 }
 
 NABool radioPressed(NAReaction reaction){
@@ -251,7 +255,7 @@ ExperimentController* createExperimentController(){
   curPosY -= 30;
   con->openGLSpaceLabel = naNewLabel("NAOpenGLSpace", naMakeSize(200, 22));
   naAddSpaceChild(con->contentSpace, con->openGLSpaceLabel, naMakePos(20, curPosY));
-  con->openGLSpace = naNewOpenGLSpace(con->contentSpace, naMakeSize(150, 22), NA_NULL, NA_NULL);
+  con->openGLSpace = naNewOpenGLSpace(naMakeSize(150, 22), NA_NULL, NA_NULL);
   naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(250, curPosY));
   naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, NA_NULL);
 

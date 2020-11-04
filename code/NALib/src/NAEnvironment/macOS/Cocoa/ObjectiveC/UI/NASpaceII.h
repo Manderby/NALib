@@ -105,16 +105,16 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
 
 NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   NARect rect;
-  NSRect contentrect;
+  NSRect contentRect;
   NARect windowrect;
   naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
   // Warning: does not work when frame unequal bounds.
-  contentrect = [cocoaSpace frame];
+  contentRect = [cocoaSpace frame];
   windowrect = na_GetWindowAbsoluteInnerRect((NA_UIElement*)naGetUIElementWindow(space));
-  rect.pos.x = windowrect.pos.x + contentrect.origin.x;
-  rect.pos.y = windowrect.pos.y + contentrect.origin.y;
-  rect.size.width = contentrect.size.width;
-  rect.size.height = contentrect.size.height;
+  rect.pos.x = windowrect.pos.x + contentRect.origin.x;
+  rect.pos.y = windowrect.pos.y + contentRect.origin.y;
+  rect.size.width = contentRect.size.width;
+  rect.size.height = contentRect.size.height;
   return rect;
 }
 

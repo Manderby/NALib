@@ -48,7 +48,7 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     break;
 
   case WM_ERASEBKGND:
-    info.hasbeenhandeled = NA_TRUE;
+    info.hasBeenHandeled = NA_TRUE;
     info.result = 1;
     break;
 
@@ -69,7 +69,7 @@ NAWINAPICallbackInfo naLabelWINAPINotify(void* uiElement, WORD notificationCode)
     case EN_SETFOCUS:
       if(winapiLabel->href){
         system(naGetStringUTF8Pointer(winapiLabel->href));
-        info.hasbeenhandeled = NA_TRUE;
+        info.hasBeenHandeled = NA_TRUE;
         info.result = 0;
       }
       break;

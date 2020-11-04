@@ -19,18 +19,16 @@ struct NAWINAPIOpenGLSpace {
 
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  //PAINTSTRUCT paintStruct;
 
   switch(message){
   case WM_PAINT:
 
-    info.hasbeenhandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
+    info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
     RECT updateRegion;
     GetUpdateRect(naGetUIElementNativeId(uiElement), &updateRegion, NA_FALSE);
     ValidateRect(naGetUIElementNativeId(uiElement), &updateRegion);
 
-    //BeginPaint(naGetUIElementNativeId(uiElement), &paintStruct);   
-    //EndPaint(naGetUIElementNativeId(uiElement), &paintStruct);
+    info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;
 
@@ -45,7 +43,7 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
 
 typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
 
-NA_DEF NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator initfunc, void* initdata){
+NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
 	
   HWND hWnd;
   HDC hDC;
@@ -58,11 +56,11 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator init
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = naAlloc(NAWINAPIOpenGLSpace);
 
   style = WS_CHILD | WS_VISIBLE | ES_READONLY;
-
+  
 	hWnd = CreateWindow(
 		TEXT("NAOpenGLSpace"), TEXT(""), style,
 		0, 0, (int)size.width, (int)size.height,
-		(HWND)naGetUIElementNativeId(parent), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
     
   hDC = GetDC(hWnd);
 
@@ -93,8 +91,8 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator init
 
   // Now the OpenGL context is created and current. We can initialize it
   // if necessary.
-  if(initfunc){
-    initfunc(initdata);
+  if(initFunc){
+    initFunc(initData);
   }
 
 	//glewInit();
@@ -122,8 +120,32 @@ NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace){
 
 
 
-  
-#endif  // NA_COMPILE_OPENGL
+#else
+
+  NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+    NAWINAPICallbackInfo info = {NA_FALSE, 0};
+    return info;
+  }
+
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+    return NA_NULL;
+  }
+
+  NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace){
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+  }
+
+  NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+  }
+
+  NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+  }
+
+#endif  // NA_COMPILE_OPENGL == 1
 
 NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openGLSpace){
   return na_GetSpaceAbsoluteInnerRect(openGLSpace);

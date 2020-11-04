@@ -62,22 +62,22 @@ struct NAWINAPIApplication {
 
 
 
-WNDPROC naGetApplicationOldButtonWindowProc(){
+WNDPROC na_GetApplicationOldButtonWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldButtonWindowProc;
 }
-WNDPROC naGetApplicationOldCheckBoxWindowProc(){
+WNDPROC na_GetApplicationOldCheckBoxWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldCheckBoxWindowProc;
 }
-WNDPROC naGetApplicationOldLabelWindowProc(){
+WNDPROC na_GetApplicationOldLabelWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldLabelWindowProc;
 }
-WNDPROC naGetApplicationOldRadioWindowProc(){
+WNDPROC na_GetApplicationOldRadioWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldRadioWindowProc;
 }
-WNDPROC naGetApplicationOldSliderWindowProc(){
+WNDPROC na_GetApplicationOldSliderWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldSliderWindowProc;
 }
-WNDPROC naGetApplicationOldTextFieldWindowProc(){
+WNDPROC na_GetApplicationOldTextFieldWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldTextFieldWindowProc;
 }
 
