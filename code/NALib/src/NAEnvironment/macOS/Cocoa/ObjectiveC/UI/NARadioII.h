@@ -6,7 +6,7 @@
 
 
 
-@implementation NACocoaRadio
+@implementation NACocoaNativeRadio
 - (id) initWithRadio:(NARadio*)newRadio frame:(NSRect)frame{
   NSRect newbounds = frame;
   newbounds.origin.x = 0;
@@ -72,9 +72,9 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   NARadio* radio = naAlloc(NARadio);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaRadio* cocoaRadio = [[NACocoaRadio alloc] initWithRadio:radio frame:frameRect];
-  na_InitRadio(radio, NA_COCOA_PTR_OBJC_TO_C(cocoaRadio));
-  [cocoaRadio setText:text];
+  NACocoaNativeRadio* nativePtr = [[NACocoaNativeRadio alloc] initWithRadio:radio frame:frameRect];
+  na_InitRadio(radio, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  [nativePtr setText:text];
   
   return radio;
 }
@@ -88,8 +88,8 @@ NA_DEF void na_DestructRadio(NARadio* radio){
 
 
 NA_DEF void naSetRadioTextColor(NARadio* radio, const NABabyColor* color){
-  naDefineCocoaObject(NACocoaRadio, cocoaRadio, radio);
-  [cocoaRadio setColor:color];
+  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  [nativePtr setColor:color];
 }
 
 
@@ -102,22 +102,22 @@ NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
 
 
 NA_DEF void naSetRadioState(NARadio* radio, NABool state){
-  naDefineCocoaObject(NACocoaRadio, cocoaRadio, radio);
-  [cocoaRadio setRadioState:state];
+  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  [nativePtr setRadioState:state];
 }
 
 
 
 NA_DEF void naSetRadioEnabled(NARadio* radio, NABool enabled){
-  naDefineCocoaObject(NACocoaRadio, cocoaRadio, radio);
-  [cocoaRadio setEnabled:enabled];
+  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  [nativePtr setEnabled:enabled];
 }
 
 
 
 NA_DEF NABool naGetRadioState(NARadio* radio){
-  naDefineCocoaObject(NACocoaRadio, cocoaRadio, radio);
-  return [cocoaRadio radioState];
+  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  return [nativePtr radioState];
 }
 
 

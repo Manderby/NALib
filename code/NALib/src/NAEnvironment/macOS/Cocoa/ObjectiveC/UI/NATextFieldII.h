@@ -6,7 +6,7 @@
 
 
 
-@implementation NACocoaTextField
+@implementation NACocoaNativeTextField
 - (id) initWithTextField:(NATextField*)newTextField frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 //  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
@@ -58,8 +58,8 @@ NA_DEF NATextField* naNewTextField(NASize size){
   NATextField* textField = naAlloc(NATextField);
   
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaTextField* cocoaTextField = [[NACocoaTextField alloc] initWithTextField:textField frame:frameRect];
-  na_InitTextField(textField, NA_COCOA_PTR_OBJC_TO_C(cocoaTextField));
+  NACocoaNativeTextField* nativePtr = [[NACocoaNativeTextField alloc] initWithTextField:textField frame:frameRect];
+  na_InitTextField(textField, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return textField;
 }
@@ -73,29 +73,29 @@ NA_DEF void na_DestructTextField(NATextField* textField){
 
 
 NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text){
-  naDefineCocoaObject(NACocoaTextField, cocoaTextField, textField);
-  [cocoaTextField setText:text];
+  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
+  [nativePtr setText:text];
 }
 
 
 
 NA_DEF NAString* naNewStringWithTextFieldText(NATextField* textField){
-  naDefineCocoaObject(NACocoaTextField, cocoaTextField, textField);
-  return [cocoaTextField newStringWithText];
+  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
+  return [nativePtr newStringWithText];
 }
 
 
 
 NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment alignment){
-  naDefineCocoaObject(NACocoaTextField, cocoaTextField, textField);
-  [cocoaTextField setTextAlignment:alignment];
+  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
+  [nativePtr setTextAlignment:alignment];
 }
 
 
 
 NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind){
-  naDefineCocoaObject(NACocoaTextField, cocoaTextField, textField);
-  [cocoaTextField setFontKind:kind];
+  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
+  [nativePtr setFontKind:kind];
 }
 
 

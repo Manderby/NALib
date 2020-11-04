@@ -12,7 +12,7 @@
 typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
 struct NAWINAPIOpenGLSpace {
   NAOpenGLSpace openGLSpace;
-  HGLRC hRC;    // The rendering context for OpenGL
+  HGLRC         hRC;    // The rendering context for OpenGL
 };
 
 
@@ -25,8 +25,8 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
 
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
     RECT updateRegion;
-    GetUpdateRect(naGetUIElementNativeId(uiElement), &updateRegion, NA_FALSE);
-    ValidateRect(naGetUIElementNativeId(uiElement), &updateRegion);
+    GetUpdateRect(naGetUIElementNativePtr(uiElement), &updateRegion, NA_FALSE);
+    ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
 
     info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
@@ -60,7 +60,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 	hWnd = CreateWindow(
 		TEXT("NAOpenGLSpace"), TEXT(""), style,
 		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
     
   hDC = GetDC(hWnd);
 
@@ -102,13 +102,13 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 
 NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openGLSpace;
-  SwapBuffers(GetDC((HWND)naGetUIElementNativeId(&(winapiOpenGLSpace->openGLSpace.uiElement))));
+  SwapBuffers(GetDC((HWND)naGetUIElementNativePtr(&(winapiOpenGLSpace->openGLSpace.uiElement))));
 }
 
 
 
 NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
-  SetWindowPos((HWND)naGetUIElementNativeId(openGLSpace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
+  SetWindowPos((HWND)naGetUIElementNativePtr(openGLSpace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
 }
 
 

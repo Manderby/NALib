@@ -17,47 +17,47 @@
 // a list of the running NAWINAPIApplication.
 typedef struct NAWINAPITimerStruct NAWINAPITimerStruct;
 struct NAWINAPITimerStruct {
-  UINT key;
+  UINT      key;
   NAMutator func;
-  void* arg;
+  void*     arg;
 };
 
 typedef struct NAWINAPIColor NAWINAPIColor;
 struct NAWINAPIColor {
   COLORREF color;
-  HBRUSH brush;
+  HBRUSH   brush;
 };
 
 // The struct NAWINAPIApplication stores a list of timers which could otherwise
 // not be done.
 typedef struct NAWINAPIApplication NAWINAPIApplication;
 struct NAWINAPIApplication {
-  NAApplication application;
-  NAList timers;
-  HWND offscreenWindow;
+  NAApplication    application;
+  NAList           timers;
+  HWND             offscreenWindow;
   NONCLIENTMETRICS nonClientMetrics;
-  HICON appIcon;
+  HICON            appIcon;
 
-  HFONT systemFont;
-  HFONT titleFont;
-  HFONT monospaceFont;
-  HFONT paragraphFont;
-  HFONT mathFont;
+  HFONT            systemFont;
+  HFONT            titleFont;
+  HFONT            monospaceFont;
+  HFONT            paragraphFont;
+  HFONT            mathFont;
 
-  NA_UIElement* mouseHoverElement;
+  NA_UIElement*    mouseHoverElement;
 
-  WNDPROC oldButtonWindowProc;
-  WNDPROC oldCheckBoxWindowProc;
-  WNDPROC oldLabelWindowProc;
-  WNDPROC oldRadioWindowProc;
-  WNDPROC oldSliderWindowProc;
-  WNDPROC oldTextFieldWindowProc;
+  WNDPROC          oldButtonWindowProc;
+  WNDPROC          oldCheckBoxWindowProc;
+  WNDPROC          oldLabelWindowProc;
+  WNDPROC          oldRadioWindowProc;
+  WNDPROC          oldSliderWindowProc;
+  WNDPROC          oldTextFieldWindowProc;
 
-  NAWINAPIColor fgColor;
-  NAWINAPIColor fgColorDisabled;
-  NAWINAPIColor bgColor;
-  NAWINAPIColor bgColorAlternate;
-  NAWINAPIColor bgColorAlternate2;
+  NAWINAPIColor    fgColor;
+  NAWINAPIColor    fgColorDisabled;
+  NAWINAPIColor    bgColor;
+  NAWINAPIColor    bgColorAlternate;
+  NAWINAPIColor    bgColorAlternate2;
 };
 
 
@@ -171,7 +171,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
 	wndclass.lpszClassName = TEXT("NAOpenGLSpace");
 	RegisterClass(&wndclass);
 
-    // Start the WINAPI application and set the native ID of the application.
+    // Start the WINAPI application and set the nativePtr of the application.
   app = (NAWINAPIApplication*)na_NewApplication();
 
   // Call preStartup if desired.

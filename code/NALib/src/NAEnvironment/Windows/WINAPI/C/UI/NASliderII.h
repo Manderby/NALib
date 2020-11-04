@@ -88,7 +88,7 @@ NA_DEF NASlider* naNewSlider(NASize size){
 	hWnd = CreateWindow(
 		TRACKBAR_CLASS, systemtext, style,
 		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
   
   naFree(systemtext);
 
@@ -131,12 +131,12 @@ NA_HDEF NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* slider){
   RECT contentRect;
   NARect screenRect;
   NARect rect;
-  GetClientRect(naGetUIElementNativeId(slider), &contentRect);
+  GetClientRect(naGetUIElementNativePtr(slider), &contentRect);
 
   POINT testpoint = {0, 0};
 
-  //GetClientRect(space->nativeId, &contentRect);
-  ClientToScreen(naGetUIElementNativeId(slider), &testpoint);
+  //GetClientRect(space->nativePtr, &contentRect);
+  ClientToScreen(naGetUIElementNativePtr(slider), &testpoint);
   screenRect = naGetMainScreenRect();
 
   rect.pos.x = testpoint.x;
@@ -154,7 +154,7 @@ NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount){
 
 
 NA_API double naGetSliderValue(NASlider* slider){
-  int32 sliderValue = (int32)SendMessage(naGetUIElementNativeId(slider), TBM_GETPOS, 0, 0); 
+  int32 sliderValue = (int32)SendMessage(naGetUIElementNativePtr(slider), TBM_GETPOS, 0, 0); 
   return (double)sliderValue / (double)NA_MAX_i32;
 }
 
@@ -162,14 +162,14 @@ NA_API double naGetSliderValue(NASlider* slider){
 
 NA_API void naSetSliderValue(NASlider* slider, double value){
   int32 sliderValue = (int32)(value * (double)NA_MAX_i32);
-  SendMessage(naGetUIElementNativeId(slider), TBM_SETPOS, 
+  SendMessage(naGetUIElementNativePtr(slider), TBM_SETPOS, 
     (WPARAM) TRUE, // redraw flag 
     (LPARAM) sliderValue); 
 }
 
 
 //NA_DEF NABool naGetRadioState(NARadio* radio){
-//  LPARAM state = SendMessage(naGetUIElementNativeId(radio), BM_GETSTATE, 0, 0);
+//  LPARAM state = SendMessage(naGetUIElementNativePtr(radio), BM_GETSTATE, 0, 0);
 //  return (state & BST_CHECKED) == BST_CHECKED;
 //}
 //
@@ -177,7 +177,7 @@ NA_API void naSetSliderValue(NASlider* slider, double value){
 //
 //NA_DEF void naSetRadioState(NARadio* radio, NABool state){
 //  LPARAM lParam = state ? BST_CHECKED : BST_UNCHECKED;
-//  SendMessage(naGetUIElementNativeId(radio), BM_SETCHECK, lParam, 0);
+//  SendMessage(naGetUIElementNativePtr(radio), BM_SETCHECK, lParam, 0);
 //}
 
 

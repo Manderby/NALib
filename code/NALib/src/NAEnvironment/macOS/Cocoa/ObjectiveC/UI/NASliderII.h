@@ -6,7 +6,7 @@
 
 
 
-@implementation NACocoaSlider
+@implementation NACocoaNativeSlider
 - (id) initWithSlider:(NASlider*)newSlider frame:(NSRect)frame{
   NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
   self = [super initWithFrame:documentrect];
@@ -37,9 +37,9 @@ NA_DEF NASlider* naNewSlider(NASize size){
   NASlider* slider = naAlloc(NASlider);
   
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaSlider* cocoaSlider = [[NACocoaSlider alloc] initWithSlider:slider frame:frameRect];
-  na_InitSlider(slider, NA_COCOA_PTR_OBJC_TO_C(cocoaSlider));
-  [cocoaSlider setTag: (NSInteger)slider];
+  NACocoaNativeSlider* nativePtr = [[NACocoaNativeSlider alloc] initWithSlider:slider frame:frameRect];
+  na_InitSlider(slider, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  [nativePtr setTag: (NSInteger)slider];
 
   return (NASlider*)slider;
 }
@@ -53,22 +53,22 @@ NA_DEF void na_DestructSlider(NASlider* slider){
 
 
 NA_DEF void naSetSliderTickCount(NASlider* slider, NAInt tickCount){
-  naDefineCocoaObject(NACocoaSlider, cocoaSlider, slider);
-  [cocoaSlider setTickCount:tickCount];
+  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
+  [nativePtr setTickCount:tickCount];
 }
 
 
 
 NA_DEF double naGetSliderValue(NASlider* slider){
-  naDefineCocoaObject(NACocoaSlider, cocoaSlider, slider);
-  return [cocoaSlider getSliderValue];
+  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
+  return [nativePtr getSliderValue];
 }
 
 
 
 NA_DEF void naSetSliderValue(NASlider* slider, double value){
-  naDefineCocoaObject(NACocoaSlider, cocoaSlider, slider);
-  [cocoaSlider setSliderValue:value];
+  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
+  [nativePtr setSliderValue:value];
 }
 
 

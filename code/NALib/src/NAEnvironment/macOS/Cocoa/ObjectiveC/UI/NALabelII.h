@@ -6,109 +6,109 @@
 
 
 
-@implementation MDVerticallyCenteredTextFieldCell
-
-- (NSRect)adjustedFrameToVerticallyCenterText:(NSRect)rect {
-//    CGFloat fontSize = self.font.boundingRectForFont.size.height;
-//    NSRect boundRect = [[self font] boundingRectForFont];
-//    CGFloat ascender = [[self font] ascender];
-//    CGFloat capHeight = [[self font] capHeight];
-//    CGFloat descender = [[self font] descender];
-//    CGFloat xHeight = [[self font] xHeight];
-//    CGFloat test = fontSize - ascender + descender;
-//    CGFloat offset = 15 - (fontSize + (fontSize + boundRect.origin.y - ascender + descender));
-//    CGFloat offset = 18 - (floor(fontSize) + floor(boundRect.origin.y));
-    CGFloat offset = 0;
-    return NSMakeRect(rect.origin.x, offset, rect.size.width, rect.size.height - offset);
-//    return NSMakeRect(rect.origin.x, 15 - (fontSize + boundRect.origin.y), rect.size.width, fontSize);
-}
-- (void)editWithFrame:(NSRect)aRect inView:(NSView *)controlView
-         editor:(NSText *)editor delegate:(id)delegate event:(NSEvent *)event {
-    [super editWithFrame:[self adjustedFrameToVerticallyCenterText:aRect]
-          inView:controlView editor:editor delegate:delegate event:event];
-}
-
-- (void)selectWithFrame:(NSRect)aRect inView:(NSView *)controlView
-                 editor:(NSText *)editor delegate:(id)delegate 
-                  start:(NSInteger)start length:(NSInteger)length {
-
-    [super selectWithFrame:[self adjustedFrameToVerticallyCenterText:aRect]
-                    inView:controlView editor:editor delegate:delegate
-                     start:start length:length];
-}
-
-//- (void)drawInteriorWithFrame:(NSRect)frame inView:(NSView *)view {
-//    [super drawInteriorWithFrame:[self adjustedFrameToVerticallyCenterText:frame] inView:view];
+//@implementation MDVerticallyCenteredTextFieldCell
+//
+//- (NSRect)adjustedFrameToVerticallyCenterText:(NSRect)rect {
+////    CGFloat fontSize = self.font.boundingRectForFont.size.height;
+////    NSRect boundRect = [[self font] boundingRectForFont];
+////    CGFloat ascender = [[self font] ascender];
+////    CGFloat capHeight = [[self font] capHeight];
+////    CGFloat descender = [[self font] descender];
+////    CGFloat xHeight = [[self font] xHeight];
+////    CGFloat test = fontSize - ascender + descender;
+////    CGFloat offset = 15 - (fontSize + (fontSize + boundRect.origin.y - ascender + descender));
+////    CGFloat offset = 18 - (floor(fontSize) + floor(boundRect.origin.y));
+//    CGFloat offset = 0;
+//    return NSMakeRect(rect.origin.x, offset, rect.size.width, rect.size.height - offset);
+////    return NSMakeRect(rect.origin.x, 15 - (fontSize + boundRect.origin.y), rect.size.width, fontSize);
 //}
-- (void)drawWithFrame:(NSRect)frame inView:(NSView *)view {
-//    CGFontRef cgfont = CTFontCopyGraphicsFont([self font], nil);
-//  CGFloat cgAscent = CGFontGetAscent(cgfont);
-
-//  NSLayoutManager* layout = [[NSLayoutManager alloc] init];
-//  CGFloat defaultLineHeight = [layout defaultLineHeightForFont:[self font]];
-//  CGFloat baselineOffset = [layout defaultBaselineOffsetForFont:[self font]];
+//- (void)editWithFrame:(NSRect)aRect inView:(NSView *)controlView
+//         editor:(NSText *)editor delegate:(id)delegate event:(NSEvent *)event {
+//    [super editWithFrame:[self adjustedFrameToVerticallyCenterText:aRect]
+//          inView:controlView editor:editor delegate:delegate event:event];
+//}
 //
-//    NSRect titleRect = [self titleRectForBounds:frame];
-//    CGFloat fontHeight = self.font.boundingRectForFont.size.height;
-//    NSRect boundRect = [[self font] boundingRectForFont];
-//    CGFloat origin = boundRect.origin.y;
-//    CGFloat ascender = ([[self font] ascender]);
-//    CGFloat capHeight = [[self font] capHeight];
-//    CGFloat descender = ([[self font] descender]);
-//    CGFloat xHeight = [[self font] xHeight];
-//    CGFloat underlinePos = [[self font] underlinePosition];
-//    CGFloat leading = [[self font] leading];
-//    NSRect glyphrect = [[self font] boundingRectForCGGlyph:'x'];
-//    const CGFloat* matrix = [[self font] matrix];
-//CGFloat baseline = ceil(NSMinY(titleRect) + [[self font] ascender]);
+//- (void)selectWithFrame:(NSRect)aRect inView:(NSView *)controlView
+//                 editor:(NSText *)editor delegate:(id)delegate 
+//                  start:(NSInteger)start length:(NSInteger)length {
+//
+//    [super selectWithFrame:[self adjustedFrameToVerticallyCenterText:aRect]
+//                    inView:controlView editor:editor delegate:delegate
+//                     start:start length:length];
+//}
+//
+////- (void)drawInteriorWithFrame:(NSRect)frame inView:(NSView *)view {
+////    [super drawInteriorWithFrame:[self adjustedFrameToVerticallyCenterText:frame] inView:view];
+////}
+//- (void)drawWithFrame:(NSRect)frame inView:(NSView *)view {
+////    CGFontRef cgfont = CTFontCopyGraphicsFont([self font], nil);
+////  CGFloat cgAscent = CGFontGetAscent(cgfont);
+//
+////  NSLayoutManager* layout = [[NSLayoutManager alloc] init];
+////  CGFloat defaultLineHeight = [layout defaultLineHeightForFont:[self font]];
+////  CGFloat baselineOffset = [layout defaultBaselineOffsetForFont:[self font]];
+////
+////    NSRect titleRect = [self titleRectForBounds:frame];
+////    CGFloat fontHeight = self.font.boundingRectForFont.size.height;
+////    NSRect boundRect = [[self font] boundingRectForFont];
+////    CGFloat origin = boundRect.origin.y;
+////    CGFloat ascender = ([[self font] ascender]);
+////    CGFloat capHeight = [[self font] capHeight];
+////    CGFloat descender = ([[self font] descender]);
+////    CGFloat xHeight = [[self font] xHeight];
+////    CGFloat underlinePos = [[self font] underlinePosition];
+////    CGFloat leading = [[self font] leading];
+////    NSRect glyphrect = [[self font] boundingRectForCGGlyph:'x'];
+////    const CGFloat* matrix = [[self font] matrix];
+////CGFloat baseline = ceil(NSMinY(titleRect) + [[self font] ascender]);
+////    
+////    CGFloat testleading = leading;
+////    if(testleading < 0){testleading = 0;}
+////    testleading = floor(testleading + .5);
+////    
+////    CGFloat testlineheight = floor(ascender + .5) - ceil(descender - .5) + leading;
+////    CGFloat testDelta = 0;
+////    if(leading <= 0){
+////      testDelta = floor (0.2 * testlineheight + 0.5);
+////    }
+////    
+////    CGFloat test = defaultLineHeight;
+////
+////    printf("%f" NA_NL, baselineOffset);
+////
+////    [[NSColor yellowColor] setFill];
+////    boundRect.origin.y = 0;
+//////    boundRect.size.height = defaultLineHeight;
+////    boundRect.size.width += 20;
+////    NSRectFill(boundRect);
+////    boundRect.size.width -= 20;
+////
+////    [[NSColor orangeColor] setFill];
+////    boundRect.origin.y = 0;
+////    boundRect.size.height = ascender;
+////    NSRectFill(boundRect);
+////
+////    [[NSColor redColor] setFill];
+////    boundRect.origin.y = ascender;
+////    boundRect.size.height = -descender;
+////    NSRectFill(boundRect);
+////
+////    [[NSColor orangeColor] setFill];
+////    boundRect.origin.y = test;
+////    boundRect.size.height = ascender;
+////    NSRectFill(boundRect);
+////
+////    [[NSColor redColor] setFill];
+////    boundRect.origin.y = test + ascender;
+////    boundRect.size.height = -descender;
+////    NSRectFill(boundRect);
 //    
-//    CGFloat testleading = leading;
-//    if(testleading < 0){testleading = 0;}
-//    testleading = floor(testleading + .5);
-//    
-//    CGFloat testlineheight = floor(ascender + .5) - ceil(descender - .5) + leading;
-//    CGFloat testDelta = 0;
-//    if(leading <= 0){
-//      testDelta = floor (0.2 * testlineheight + 0.5);
-//    }
-//    
-//    CGFloat test = defaultLineHeight;
+//    [super drawWithFrame:[self adjustedFrameToVerticallyCenterText:frame] inView:view];
+//}
 //
-//    printf("%f" NA_NL, baselineOffset);
-//
-//    [[NSColor yellowColor] setFill];
-//    boundRect.origin.y = 0;
-////    boundRect.size.height = defaultLineHeight;
-//    boundRect.size.width += 20;
-//    NSRectFill(boundRect);
-//    boundRect.size.width -= 20;
-//
-//    [[NSColor orangeColor] setFill];
-//    boundRect.origin.y = 0;
-//    boundRect.size.height = ascender;
-//    NSRectFill(boundRect);
-//
-//    [[NSColor redColor] setFill];
-//    boundRect.origin.y = ascender;
-//    boundRect.size.height = -descender;
-//    NSRectFill(boundRect);
-//
-//    [[NSColor orangeColor] setFill];
-//    boundRect.origin.y = test;
-//    boundRect.size.height = ascender;
-//    NSRectFill(boundRect);
-//
-//    [[NSColor redColor] setFill];
-//    boundRect.origin.y = test + ascender;
-//    boundRect.size.height = -descender;
-//    NSRectFill(boundRect);
-    
-    [super drawWithFrame:[self adjustedFrameToVerticallyCenterText:frame] inView:view];
-}
+//@end
 
-@end
-
-@implementation NACocoaLabel
+@implementation NACocoaNativeLabel
 - (id) initWithLabel:(NALabel*)newLabel frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 //  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
@@ -177,8 +177,8 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   NALabel* label = naAlloc(NALabel);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaLabel* cocoaLabel = [[NACocoaLabel alloc] initWithLabel:label frame:frameRect];
-  na_InitLabel(label, NA_COCOA_PTR_OBJC_TO_C(cocoaLabel));
+  NACocoaNativeLabel* nativePtr = [[NACocoaNativeLabel alloc] initWithLabel:label frame:frameRect];
+  na_InitLabel(label, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   naSetLabelText(label, text);
   
   return (NALabel*)label;
@@ -193,42 +193,42 @@ NA_DEF void na_DestructLabel(NALabel* label){
 
 
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
-  naDefineCocoaObject(NACocoaLabel, cocoaLabel, label);
+  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
   [cocoaLabel setText:text];
 }
 
 
 
 NA_DEF void naSetLabelTextColor(NALabel* label, const NABabyColor* color){
-  naDefineCocoaObject(NACocoaLabel, cocoaLabel, label);
+  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
   [cocoaLabel setColor:color];
 }
 
 
 
 NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
-  naDefineCocoaObject(NACocoaLabel, cocoaLabel, label);
+  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
   [cocoaLabel setLink: url];
 }
 
 
 
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
-  naDefineCocoaObject(NACocoaLabel, cocoaLabel, label);
+  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
   [cocoaLabel setLabelEnabled:enabled];
 }
 
 
 
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
-  naDefineCocoaObject(NACocoaLabel, cocoaLabel, label);
+  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
   [cocoaLabel setTextAlignment:alignment];
 }
 
 
 
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
-  naDefineCocoaObject(NACocoaLabel, cocoaLabel, label);
+  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
   [cocoaLabel setFontKind:kind];
 }
 

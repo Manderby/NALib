@@ -6,7 +6,7 @@
 
 
 
-@implementation NACocoaTextBox
+@implementation NACocoaNativeTextBox
 - (id) initWithTextBox:(NATextBox*)newTextBox frame:(NSRect)frame{
   NSRect clipRect;
   NSClipView* clipView;
@@ -60,8 +60,8 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
   NATextBox* textBox = naAlloc(NATextBox);
   
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaTextBox* cocoaTextBox = [[NACocoaTextBox alloc] initWithTextBox:textBox frame:frameRect];
-  na_InitTextBox(textBox, NA_COCOA_PTR_OBJC_TO_C(cocoaTextBox));
+  NACocoaNativeTextBox* nativePtr = [[NACocoaNativeTextBox alloc] initWithTextBox:textBox frame:frameRect];
+  na_InitTextBox(textBox, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return (NATextBox*)textBox;
 }
@@ -75,29 +75,29 @@ NA_DEF void na_DestructTextBox(NATextBox* textBox){
 
 
 NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text){
-  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textBox);
-  [cocoaTextBox setText:text];
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  [nativePtr setText:text];
 }
 
 
 
 NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment){
-  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textBox);
-  [cocoaTextBox setTextAlignment:alignment];
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  [nativePtr setTextAlignment:alignment];
 }
 
 
 
 NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind){
-  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textBox);
-  [cocoaTextBox setFontKind:kind];
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  [nativePtr setFontKind:kind];
 }
 
 
 
 NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
-  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textBox);
-  [cocoaTextBox setReadOnly:!editable];
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  [nativePtr setReadOnly:!editable];
 }
 
 

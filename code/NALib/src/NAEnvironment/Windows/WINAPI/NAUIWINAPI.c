@@ -34,17 +34,18 @@
 
 #include "C/UI/NAUIWINAPIII.h"
 #include "C/UI/NAApplicationII.h"
-#include "C/UI/NAWindowII.h"
-#include "C/UI/NASpaceII.h"
-#include "C/UI/NAImageSpaceII.h"
-#include "C/UI/NAOpenGLSpaceII.h"
+
 #include "C/UI/NAButtonII.h"
-#include "C/UI/NARadioII.h"
 #include "C/UI/NACheckBoxII.h"
+#include "C/UI/NAImageSpaceII.h"
 #include "C/UI/NALabelII.h"
-#include "C/UI/NATextFieldII.h"
-#include "C/UI/NATextBoxII.h"
+#include "C/UI/NAOpenGLSpaceII.h"
+#include "C/UI/NARadioII.h"
 #include "C/UI/NASliderII.h"
+#include "C/UI/NASpaceII.h"
+#include "C/UI/NATextBoxII.h"
+#include "C/UI/NATextFieldII.h"
+#include "C/UI/NAWindowII.h"
 
 #endif // (NA_COMPILE_GUI == 1)
 #endif // NA_OS == NA_OS_WINDOWS

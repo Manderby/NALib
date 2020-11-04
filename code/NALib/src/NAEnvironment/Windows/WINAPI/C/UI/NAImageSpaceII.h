@@ -8,7 +8,7 @@
 typedef struct NAWINAPIImageSpace NAWINAPIImageSpace;
 struct NAWINAPIImageSpace {
   NAImageSpace imageSpace;
-  NAUIImage* image;
+  NAUIImage*   image;
 };
 
 
@@ -61,12 +61,12 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   NAByte* blendedBuffer;
   HBITMAP hBlendedBitmap;
 
-  BeginPaint(naGetUIElementNativeId(uiElement), &paintStruct);
+  BeginPaint(naGetUIElementNativePtr(uiElement), &paintStruct);
   hMemDC = CreateCompatibleDC(paintStruct.hdc);
 
   imageSpace = (NAWINAPIImageSpace*)uiElement;
 
-  CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativeId(uiElement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
+  CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
 
   size1x = naGetUIImage1xSize(imageSpace->image);
 
@@ -109,8 +109,8 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
 
   // Deleting device contexts
   DeleteDC(hMemDC);
-  ReleaseDC(naGetUIElementNativeId(uiElement), paintStruct.hdc);
-  EndPaint(naGetUIElementNativeId(uiElement), &paintStruct);
+  ReleaseDC(naGetUIElementNativePtr(uiElement), paintStruct.hdc);
+  EndPaint(naGetUIElementNativePtr(uiElement), &paintStruct);
 
   return info;
 }
@@ -131,7 +131,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
 	hWnd = CreateWindow(
 		TEXT("NASpace"), TEXT("Space"), style,
 		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
 
   na_InitImageSpace(&(winapiImageSpace->imageSpace), hWnd);
   winapiImageSpace->image = uiImage;

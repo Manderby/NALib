@@ -9,8 +9,8 @@
 typedef struct NAWINAPITextBox NAWINAPITextBox;
 struct NAWINAPITextBox {
   NATextBox textBox;
-  void* nextTabStop;
-  void* prevTabStop;
+  void*     nextTabStop;
+  void*     prevTabStop;
 };
 
 
@@ -32,7 +32,7 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM w
 NABool naHandleTextBoxTabOrder(NAReaction reaction){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uiElement;
   if(winapiTextBox->nextTabStop){
-    SetFocus(naGetUIElementNativeId(winapiTextBox->nextTabStop));
+    SetFocus(naGetUIElementNativePtr(winapiTextBox->nextTabStop));
     return NA_TRUE;
   }
   return NA_FALSE;
@@ -43,7 +43,7 @@ NABool naHandleTextBoxTabOrder(NAReaction reaction){
 NABool naHandleTextBoxReverseTabOrder(NAReaction reaction){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uiElement;
   if(winapiTextBox->prevTabStop){
-    SetFocus(naGetUIElementNativeId(winapiTextBox->prevTabStop));
+    SetFocus(naGetUIElementNativePtr(winapiTextBox->prevTabStop));
     return NA_TRUE;
   }
   return NA_FALSE;
@@ -62,7 +62,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 	hWnd = CreateWindow(
 		TEXT("EDIT"), TEXT(""), style,
 		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
   
   na_InitTextBox(&(winapiTextBox->textBox), hWnd);
   winapiTextBox->nextTabStop = winapiTextBox;
@@ -87,29 +87,29 @@ NA_DEF void na_DestructTextBox(NATextBox* textBox){
 
 NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text){
   TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
-  SendMessage(naGetUIElementNativeId(textBox), WM_SETTEXT, 0, (LPARAM)systemtext);
+  SendMessage(naGetUIElementNativePtr(textBox), WM_SETTEXT, 0, (LPARAM)systemtext);
   naFree(systemtext);
 }
 
 
 
 NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment){
-  long style = (long)GetWindowLongPtr(naGetUIElementNativeId(textBox), GWL_STYLE);
+  long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(textBox), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
-  SetWindowLongPtr(naGetUIElementNativeId(textBox), GWL_STYLE, style);
+  SetWindowLongPtr(naGetUIElementNativePtr(textBox), GWL_STYLE, style);
 }
 
 
 
 NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  SendMessage(naGetUIElementNativeId(winapiTextBox), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
+  SendMessage(naGetUIElementNativePtr(winapiTextBox), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
 }
 
 
 
 NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
-  SendMessage(naGetUIElementNativeId(textBox), EM_SETREADONLY, (WPARAM)!editable, 0);
+  SendMessage(naGetUIElementNativePtr(textBox), EM_SETREADONLY, (WPARAM)!editable, 0);
 }
 
 

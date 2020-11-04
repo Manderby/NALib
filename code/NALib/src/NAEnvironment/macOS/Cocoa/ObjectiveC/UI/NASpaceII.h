@@ -6,7 +6,7 @@
 
 
 
-@implementation NACocoaSpace
+@implementation NACocoaNativeSpace
 - (id) initWithSpace:(NASpace*)newSpace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
@@ -45,13 +45,13 @@
 
 NA_DEF NASpace* naNewSpace(NASize size){
   NSRect contentRect;
-  NACocoaSpace* cocoaSpace;
+  NACocoaNativeSpace* nativePtr;
   NASpace* space = naAlloc(NASpace);
   space->alternatebackground = NA_FALSE;
 
   contentRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  cocoaSpace = [[NACocoaSpace alloc] initWithSpace:space frame:contentRect];  
-  na_InitSpace(space, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
+  nativePtr = [[NACocoaNativeSpace alloc] initWithSpace:space frame:contentRect];  
+  na_InitSpace(space, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return space;
 }
@@ -65,30 +65,30 @@ NA_DEF void na_DestructSpace(NASpace* space){
 
 
 NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
-  naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   NSRect frame = naMakeNSRectWithRect(rect);
   frame.origin = NSMakePoint(0, 0);
-  [cocoaSpace setFrame: frame];
+  [nativePtr setFrame: frame];
 }
 
 
 
 NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
-  naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   naDefineCocoaObject(NSView, cocoaview, child);
-  NACocoaRadio* cocoaRadio;
-  NACocoaTextBox* cocoaTextBox;
+  NACocoaNativeRadio* nativeRadioPtr;
+  NACocoaNativeTextBox* nativeTextBoxPtr;
   NSView* subview;
   NSRect frame;
   
   switch(naGetUIElementType(child)){
   case NA_UI_RADIO:
-    cocoaRadio = (NACocoaRadio*)cocoaview;
-    subview = [cocoaRadio getContainingView];
+    nativePtr = (NACocoaNativeRadio*)cocoaview;
+    subview = [nativeRadioPtr getContainingView];
     break;
   case NA_UI_TEXTBOX:
-    cocoaTextBox = (NACocoaTextBox*)cocoaview;
-    subview = [cocoaTextBox getContainingView];
+    cocoaTextBox = (NACocoaNativeTextBox*)cocoaview;
+    subview = [nativeTextBoxPtr getContainingView];
     break;
   default:
     subview = cocoaview;
@@ -107,9 +107,9 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   NARect rect;
   NSRect contentRect;
   NARect windowrect;
-  naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   // Warning: does not work when frame unequal bounds.
-  contentRect = [cocoaSpace frame];
+  contentRect = [nativePtr frame];
   windowrect = na_GetWindowAbsoluteInnerRect((NA_UIElement*)naGetUIElementWindow(space));
   rect.pos.x = windowrect.pos.x + contentRect.origin.x;
   rect.pos.y = windowrect.pos.y + contentRect.origin.y;
@@ -121,9 +121,9 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
 
 
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
-  naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   space->alternatebackground = alternate;
-  [cocoaSpace setNeedsDisplay:YES];
+  [nativePtr setNeedsDisplay:YES];
 }
 
 

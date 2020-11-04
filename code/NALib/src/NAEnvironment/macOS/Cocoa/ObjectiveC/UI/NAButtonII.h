@@ -57,7 +57,7 @@ void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage){
 // Option (Text / Image) (3px padding on all sides)
 // Borderless (Image only) (0px padding on all sides)
 
-@implementation NACocoaButton
+@implementation NACocoaNativeButton
 - (id) initWithButton:(NAButton*)newButton bezelStyle:(NSBezelStyle)bezelStyle frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   [self setButtonType:(bezelStyle == NABezelStyleRounded) ? NAButtonTypeMomentaryLight : NAButtonTypePushOnPushOff];
@@ -97,9 +97,9 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   NAButton* button = naAlloc(NAButton);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaButton* cocoaButton = [[NACocoaButton alloc] initWithButton:button bezelStyle:NABezelStyleRounded frame:frameRect];
-  na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
-  [cocoaButton setButtonText:text];
+  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc] initWithButton:button bezelStyle:NABezelStyleRounded frame:frameRect];
+  na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  [nativePtr setButtonText:text];
   
   return button;
 }
@@ -110,9 +110,9 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   NAButton* button = naAlloc(NAButton);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaButton* cocoaButton = [[NACocoaButton alloc] initWithButton:button bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
-  na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
-  [cocoaButton setButtonText:text];
+  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc] initWithButton:button bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
+  na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  [nativePtr setButtonText:text];
   
   return button;
 }
@@ -123,9 +123,9 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size){
   NAButton* button = naAlloc(NAButton);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaButton* cocoaButton = [[NACocoaButton alloc] initWithButton:button bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
-  na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
-  [cocoaButton setUIImage:uiImage];
+  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc] initWithButton:button bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
+  na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  [nativePtr setUIImage:uiImage];
   
   return button;
 }
@@ -136,9 +136,9 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiImage, NASize size){
   NAButton* button = naAlloc(NAButton);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaButton* cocoaButton = [[NACocoaButton alloc] initWithButton:button bezelStyle:0 frame:frameRect];
-  na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
-  [cocoaButton setUIImage:uiImage];
+  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc] initWithButton:button bezelStyle:0 frame:frameRect];
+  na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  [nativePtr setUIImage:uiImage];
   
   return button;
 }
@@ -152,15 +152,15 @@ NA_DEF void na_DestructButton(NAButton* button){
 
 
 NA_DEF void naSetButtonState(NAButton* button, NABool state){
-  naDefineCocoaObject(NACocoaButton, cocoaButton, button);
-  [cocoaButton setButtonState:state];
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  [nativePtr setButtonState:state];
 }
 
 
 
 NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller){
-  naDefineCocoaObject(NACocoaButton, cocoaButton, button);
-  [cocoaButton setDefaultButton:NA_TRUE];
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  [nativePtr setDefaultButton:NA_TRUE];
   naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER), handler, controller);
 }
 

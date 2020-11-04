@@ -5,7 +5,7 @@
 // Do not include this file anywhere else!
 
 
-@implementation NACocoaApplicationDelegate
+@implementation NACocoaNativeApplicationDelegate
 - (id) initWithCocoaApplication:(NACocoaApplication*)newCocoaApplication{
   self = [super init];
   cocoaApplication = newCocoaApplication;
@@ -36,7 +36,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
     NSAutoreleasePool* pool;
   #endif
   
-  // Start the shared application if not started already and set the native ID
+  // Start the shared application if not started already and set the nativePtr
   // of the application.
   [NSApplication sharedApplication];
   app = na_NewApplication();
@@ -61,7 +61,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
   #endif
 
   NA_UNUSED(app);
-  //[NSApp setDelegate:(NA_COCOA_BRIDGE id)naGetUIElementNativeId(app)];
+  //[NSApp setDelegate:(NA_COCOA_BRIDGE id)naGetUIElementNativePtr(app)];
   
 //  SEL selector = @selector(doSomethingWithObject:afterDelay:);
 //  IMP newImp = (IMP)swizzledDoSometingWithObjectAfterDelay;
@@ -109,9 +109,9 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 NA_HDEF NAApplication* na_NewApplication(void){
   NACocoaApplication* cocoaApplication = naAlloc(NACocoaApplication);
 
-  NACocoaApplicationDelegate* cocoaAppDelegate = [[NACocoaApplicationDelegate alloc] initWithCocoaApplication:cocoaApplication];
+  NACocoaNativeApplicationDelegate* nativePtr = [[NACocoaNativeApplicationDelegate alloc] initWithCocoaApplication:cocoaApplication];
 
-  na_InitApplication(&(cocoaApplication->application), NA_COCOA_PTR_OBJC_TO_C(cocoaAppDelegate));
+  na_InitApplication(&(cocoaApplication->application), NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return (NAApplication*)cocoaApplication;
 }

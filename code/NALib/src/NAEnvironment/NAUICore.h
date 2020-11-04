@@ -18,7 +18,7 @@
 #include "../NAList.h"
 #include "../NATranslator.h"
 
-// Very much the same as the native ID, there are certain types which are
+// Very much the same as the nativePtr, there are certain types which are
 // casted differently on the different systems and therefore they are
 // declared with a global void* or integer big enough to encapsulate all
 // possible casts on all systems. Internally, they are caseted to these
@@ -43,7 +43,7 @@ struct NA_UIElement{
   NAList shortcuts;
   NABool mouseInside;
   NABool allowNotifications;
-  void* nativeId;               // The native object
+  void* nativePtr;               // The native pointer
 };
 
 struct NAApplication{
@@ -161,55 +161,55 @@ NA_HAPI void na_AllowUIElementNotifications(NA_UIElement* elem);
 NA_HAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
 
 NA_HAPI NAApplication* na_NewApplication(void);
-NA_HAPI void na_InitApplication(NAApplication* application, NANativeId nativeId);
+NA_HAPI void na_InitApplication(NAApplication* application, NANativePtr nativePtr);
 NA_HAPI void na_ClearApplication(NAApplication* application);
 
-NA_HAPI void na_InitScreen(NAScreen* screen, void* nativeId);
+NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr);
 NA_HAPI void na_ClearScreen(NAScreen* screen);
 
-NA_HAPI void na_InitWindow(NAWindow* window, void* nativeId, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
+NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
 NA_HAPI void na_ClearWindow(NAWindow* window);
 NA_HAPI void na_RememberWindowPosition(NAWindow* window);
 NA_HAPI NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window);
 
-NA_HAPI void na_InitSpace(NASpace* space, void* nativeId);
+NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);
 NA_HAPI void na_ClearSpace(NASpace* space);
 
-NA_HAPI void na_InitImageSpace(NAImageSpace* imageSpace, void* nativeId);
+NA_HAPI void na_InitImageSpace(NAImageSpace* imageSpace, void* nativePtr);
 NA_HAPI void na_ClearImageSpace(NAImageSpace* imageSpace);
 
-NA_HAPI void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativeId);
+NA_HAPI void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr);
 NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
 
-NA_HAPI void na_InitButton(NAButton* button, void* nativeId);
+NA_HAPI void na_InitButton(NAButton* button, void* nativePtr);
 NA_HAPI void na_ClearButton(NAButton* button);
 
-NA_HAPI void na_InitRadio(NARadio* radio, void* nativeId);
+NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
 NA_HAPI void na_ClearRadio(NARadio* radio);
 
-NA_HAPI void na_InitCheckBox(NACheckBox* checkBox, void* nativeId);
+NA_HAPI void na_InitCheckBox(NACheckBox* checkBox, void* nativePtr);
 NA_HAPI void na_ClearCheckBox(NACheckBox* checkBox);
 
-NA_HAPI void na_InitLabel(NALabel* label, void* nativeId);
+NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
 NA_HAPI void na_ClearLabel(NALabel* label);
 
-NA_HAPI void na_InitTextField(NATextField* textField, void* nativeId);
+NA_HAPI void na_InitTextField(NATextField* textField, void* nativePtr);
 NA_HAPI void na_ClearTextField(NATextField* textField);
 
-NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativeId);
+NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);
 NA_HAPI void na_ClearTextBox(NATextBox* textBox);
 
-NA_HAPI void na_InitSlider(NASlider* slider, void* nativeId);
+NA_HAPI void na_InitSlider(NASlider* slider, void* nativePtr);
 NA_HAPI void na_ClearSlider(NASlider* slider);
 
 
 
-// Returns a pointer to the ui element which uses the given native ID.
+// Returns a pointer to the ui element which uses the given native pointer.
 // Every gui element which is handeled by NALib uses a native struct which is
-// dependent on the system running. When handling events, a native ID is sent
-// but this native ID can in general not be mapped directly to a corresponding
+// dependent on the system running. When handling events, a nativePtr is sent
+// but this nativePtr can in general not be mapped directly to a corresponding
 // NALib struct. This function solves that. Slow, but does the job.
-NA_HAPI void* na_GetUINALibEquivalent(void* nativeId);
+NA_HAPI void* na_GetUINALibEquivalent(void* nativePtr);
 
 NA_HAPI NABool na_IsApplicationRunning(void);
 
@@ -243,10 +243,10 @@ NA_HAPI void na_SetMouseExitedAtPos(NAPos newpos);
 
 NA_HAPI void na_RefreshUIElementNow(void* uiElement);
 
-// Calls the system specific method to clear/deallocate the given native id.
-NA_HAPI void na_ClearUINativeId(NANativeId nativeId);
+// Calls the system specific method to clear/deallocate the given nativePtr.
+NA_HAPI void na_ClearUINativePtr(NANativePtr nativePtr);
 
-NA_HAPI void* na_AllocMouseTracking(NANativeId nativeId);
+NA_HAPI void* na_AllocMouseTracking(NANativePtr nativePtr);
 NA_HAPI void na_DeallocMouseTracking(void* tracking);
 
 

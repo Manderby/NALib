@@ -5,7 +5,7 @@
 // Do not include this file anywhere else!
 
 
-@implementation NACocoaCheckBox
+@implementation NACocoaNativeCheckBox
 - (id) initWithCheckBox:(NACheckBox*)newCheckBox frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   
@@ -55,16 +55,16 @@
 
 
 NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
-  NACocoaCheckBox* cocoaCheckBox;
+  NACocoaNativeCheckBox* nativePtr;
   NACheckBox* checkBox = naAlloc(NACheckBox);
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NSRect boundrect = frameRect;
   boundrect.origin.x = 0;
   boundrect.origin.y = 0;
 
-  cocoaCheckBox = [[NACocoaCheckBox alloc] initWithCheckBox:checkBox frame:frameRect];
-  na_InitCheckBox(checkBox, NA_COCOA_PTR_OBJC_TO_C(cocoaCheckBox));
-  [cocoaCheckBox setText:text];
+  nativePtr = [[NACocoaNativeCheckBox alloc] initWithCheckBox:checkBox frame:frameRect];
+  na_InitCheckBox(checkBox, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  [nativePtr setText:text];
   
   return (NACheckBox*)checkBox;
 }
@@ -78,8 +78,8 @@ NA_DEF void na_DestructCheckBox(NACheckBox* checkBox){
 
 
 NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* color){
-  naDefineCocoaObject(NACocoaCheckBox, cocoaCheckBox, checkBox);
-  [cocoaCheckBox setColor:color];
+  naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
+  [nativePtr setColor:color];
 }
 
 
@@ -92,15 +92,15 @@ NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox){
 
 
 NA_DEF void naSetCheckBoxState(NACheckBox* checkBox, NABool state){
-  naDefineCocoaObject(NACocoaCheckBox, cocoaCheckBox, checkBox);
-  [cocoaCheckBox setCheckBoxState:state];
+  naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
+  [nativePtr setCheckBoxState:state];
 }
 
 
 
 NA_DEF NABool naGetCheckBoxState(NACheckBox* checkBox){
-  naDefineCocoaObject(NACocoaCheckBox, cocoaCheckBox, checkBox);
-  return [cocoaCheckBox checkBoxState];
+  naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
+  return [nativePtr checkBoxState];
 }
 
 

@@ -31,6 +31,7 @@ NA_HAPI void na_RenewWindowMouseTracking(NAWindow* window);
 NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);
 
 
+
 // Not much of use currently, but consistent with the WINAPI implementation.
 typedef struct NACocoaApplication NACocoaApplication;
 struct NACocoaApplication {
@@ -38,27 +39,45 @@ struct NACocoaApplication {
 };
 
 
-@interface NACocoaApplicationDelegate : NSObject <NSApplicationDelegate>{
+
+@interface NACocoaNativeApplicationDelegate : NSObject <NSApplicationDelegate>{
   NACocoaApplication* cocoaApplication;
 }
 @end
 
-@interface NACocoaWindow : NSWindow <NSWindowDelegate>{
-  NAWindow* window;
-  NAUInt trackingcount;
-  NSTrackingArea* trackingArea;
+@interface NACocoaNativeButton : NSButton{
+  NAButton* button;
+}
+- (void) onPressed:(id)sender;
+@end
+
+@interface NACocoaNativeRadio : NSButton{
+  NARadio* radio;
+  // Cocoa thinks it's smart by doing things automatically. Unfortunately, we
+  // have to encapsulate the radio into its own view to get the behaviour
+  // we need.
+  NSView* containingview;
+}
+- (NSView*) getContainingView;
+@end
+
+@interface NACocoaNativeCheckBox : NSButton{
+  NACheckBox* checkBox;
 }
 @end
 
-@interface NACocoaSpace : NSView{
-  NASpace* space;
-  NSTrackingArea* trackingArea;
-}
-@end
+//@interface MDVerticallyCenteredTextFieldCell : NSTextFieldCell{
+//}
+//@end
 
-@interface NACocoaImageSpace : NSImageView{
+@interface NACocoaNativeImageSpace : NSImageView{
   NAImageSpace* imageSpace;
   NAUIImage* uiImage;
+}
+@end
+
+@interface NACocoaNativeLabel : NSTextField{
+  NALabel* label;
 }
 @end
 
@@ -75,62 +94,46 @@ struct NACocoaApplication {
   #pragma GCC diagnostic pop
 #endif
 
-@interface NACocoaButton : NSButton{
-  NAButton* button;
+@interface NACocoaNativeSlider : NSSlider{
+  NASlider* slider;
 }
-- (void) onPressed:(id)sender;
+- (void) onValueChanged:(id)sender;
 @end
 
-@interface NACocoaRadio : NSButton{
-  NARadio* radio;
-  // Cocoa thinks it's smart by doing things automatically. Unfortunately, we
-  // have to encapsulate the radio into its own view to get the behaviour
-  // we need.
-  NSView* containingview;
-}
-- (NSView*) getContainingView;
-@end
-
-@interface NACocoaCheckBox : NSButton{
-  NACheckBox* checkBox;
+@interface NACocoaNativeSpace : NSView{
+  NASpace* space;
+  NSTrackingArea* trackingArea;
 }
 @end
 
-@interface MDVerticallyCenteredTextFieldCell : NSTextFieldCell{
-}
-@end
-
-@interface NACocoaLabel : NSTextField{
-  NALabel* label;
-}
-@end
-
-@interface NACocoaTextField : NSTextField <NSTextFieldDelegate>{
+@interface NACocoaNativeTextField : NSTextField <NSTextFieldDelegate>{
   NATextField* textField;
 }
 - (void) onEdited:(id)sender;
 @end
 
-@interface NACocoaTextBox : NSTextView{
+@interface NACocoaNativeTextBox : NSTextView{
   NATextBox* textBox;
   NSScrollView* scrollView;
 }
 - (NSView*) getContainingView;
 @end
 
-@interface NACocoaSlider : NSSlider{
-  NASlider* slider;
+@interface NACocoaNativeWindow : NSWindow <NSWindowDelegate>{
+  NAWindow* window;
+  NAUInt trackingcount;
+  NSTrackingArea* trackingArea;
 }
-- (void) onValueChanged:(id)sender;
 @end
 
 
+
 #define naDefineCocoaObject(cocoatype, var, uiElement)\
-  cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativeId(uiElement))
+  cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativePtr(uiElement))
 
 
-NA_HDEF void na_ClearUINativeId(NANativeId nativeId){
-  NA_COCOA_RELEASE(nativeId);
+NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr){
+  NA_COCOA_RELEASE(nativePtr);
 }
 
 
@@ -180,7 +183,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
       NSResponder* firstResponder = [focusWindow firstResponder];
       if(firstResponder){
         while(!elem && firstResponder){
-          elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativeId)(firstResponder));
+          elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativePtr)(firstResponder));
           if(!elem){
             if(firstResponder == focusWindow){
               elem = &(naGetApplication()->uiElement);
@@ -190,7 +193,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
           }
         }
       }else{
-        elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativeId)(focusWindow));
+        elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativePtr)(focusWindow));
       }
     }else{
       elem = &(naGetApplication()->uiElement);
