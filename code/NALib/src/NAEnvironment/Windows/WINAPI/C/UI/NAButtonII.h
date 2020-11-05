@@ -177,13 +177,13 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   
   naFree(systemText);
 
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
-
-  na_InitButton((NAButton*)winapiButton, hWnd);
+  na_InitButton((NAButton*)winapiButton, nativePtr);
   winapiButton->image = NA_NULL;
   winapiButton->transparent = NA_FALSE;
 
@@ -212,13 +212,13 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   
   naFree(systemText);
 
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
-
-  na_InitButton((NAButton*)winapiButton, hWnd);
+  na_InitButton((NAButton*)winapiButton, nativePtr);
   winapiButton->image = NA_NULL;
   winapiButton->transparent = NA_FALSE;
 
@@ -247,7 +247,7 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size){
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  na_InitButton((NAButton*)winapiButton, hWnd);
+  na_InitButton((NAButton*)winapiButton, nativePtr);
   winapiButton->image = uiImage;
   winapiButton->transparent = NA_FALSE;
 

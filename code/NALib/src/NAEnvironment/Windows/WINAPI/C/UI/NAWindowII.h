@@ -216,7 +216,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   space = naNewSpace(rect.size);
   naSetWindowContentSpace(&(winapiWindow->window), space);
 
-  na_SetUIElementParent(winapiWindow, naGetApplication());
+  na_SetUIElementParent((NA_UIElement*)winapiWindow, naGetApplication());
 
   return (NAWindow*)winapiWindow;
 }
@@ -224,7 +224,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 
 
 NA_DEF void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow){
-  na_ClearWindow(window);
+  na_ClearWindow((NAWindow*)winapiWindow);
 }
 
 
@@ -396,7 +396,14 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
 
       style = WS_POPUP;
       SetWindowLongPtr(naGetUIElementNativePtr(window), GWL_STYLE, style);
-      SetWindowPos(naGetUIElementNativePtr(window), HWND_TOPMOST, (int)screenRect.pos.x, (int)(screenRect.pos.y - screenRect.pos.y), (int)screenRect.size.width, (int)screenRect.size.height, SWP_SHOWWINDOW);
+      SetWindowPos(
+        naGetUIElementNativePtr(window),
+        HWND_TOPMOST,
+        (int)screenRect.pos.x,
+        (int)(screenRect.pos.y - screenRect.pos.y),
+        (int)screenRect.size.width,
+        (int)screenRect.size.height,
+        SWP_SHOWWINDOW);
       // Commented out for future use. Note: Incorporate resolution depencence zoom.
       //ChangeDisplaySettings(NULL, 0);
       //ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN);

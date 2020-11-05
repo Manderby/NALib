@@ -43,7 +43,7 @@ NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr){
 }
 
 
-NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
+NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent){
   NA_UIElement* elem;
   NA_UIElement* parentElem;
   NAWindow* window;
