@@ -14,6 +14,7 @@
 
 
 #include "NABase.h"
+#include <stddef.h>
 
 
 // Copies the array s to array d byte-by-byte

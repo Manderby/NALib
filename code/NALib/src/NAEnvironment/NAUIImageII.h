@@ -4,12 +4,16 @@
 // including "NAUIImage.h"
 
 
+
 struct NAUIImage {
   NASizei size1x;
   NABlendMode tintMode;
-  const NABabyImage* babyImages[NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT];
+  NABabyImage* babyImages[NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT];
   void* nativeImages[NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT];
 };
+
+NA_EXTERN_RUNTIME_TYPE(NAUIImage);
+
 
 
 NA_HAPI const NABabyImage* na_GetUIImageBabyImage(

@@ -1094,9 +1094,26 @@ NA_IAPI void naInvM22f(float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
 NA_IAPI void naInvM33f(float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
 NA_IAPI void naInvM44f(float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
 
-// Homogeneous coordinates
+// Homogeneous Coordinates Scale
 NA_IAPI void naScaleM33d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2);
+NA_IAPI void naScaleM44d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2, double s3);
+NA_IAPI void naScaleM33f(float* NA_RESTRICT D, const float* NA_RESTRICT A, float s1, float s2);
+NA_IAPI void naScaleM44f(float* NA_RESTRICT D, const float* NA_RESTRICT A, float s1, float s2, float s3);
+NA_IAPI void naScaleM33dS(double* D, double s1, double s2);
+NA_IAPI void naScaleM44dS(double* D, double s1, double s2, double s3);
+NA_IAPI void naScaleM33fS(float* D, float s1, float s2);
+NA_IAPI void naScaleM44fS(float* D, float s1, float s2, float s3);
+
+// Homogeneous Coordinates Translate
 NA_IAPI void naTranslateM33d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2);
+NA_IAPI void naTranslateM44d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2, double s3);
+NA_IAPI void naTranslateM33f(float* NA_RESTRICT D, const float* NA_RESTRICT A, float s1, float s2);
+NA_IAPI void naTranslateM44f(float* NA_RESTRICT D, const float* NA_RESTRICT A, float s1, float s2, float s3);
+NA_IAPI void naTranslateM33dS(double* D, double s1, double s2);
+NA_IAPI void naTranslateM44dS(double* D, double s1, double s2, double s3);
+NA_IAPI void naTranslateM33fS(float* D, float s1, float s2);
+NA_IAPI void naTranslateM44fS(float* D, float s1, float s2, float s3);
+
 NA_IAPI void naFillV2WithM33Origin(double* NA_RESTRICT d, const double* NA_RESTRICT A);
 NA_IAPI void naFillV2WithM33Coord2(double* NA_RESTRICT d, const double* NA_RESTRICT A, const double* NA_RESTRICT v);
 

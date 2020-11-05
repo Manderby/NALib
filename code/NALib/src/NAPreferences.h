@@ -23,14 +23,14 @@ NA_API NABool    naInitPreferencesBool   (const char* key, NABool value);
 NA_API NAInt     naInitPreferencesInt    (const char* key, NAInt value);
 NA_API NAInt     naInitPreferencesEnum   (const char* key, NAInt value);
 NA_API double    naInitPreferencesDouble (const char* key, double value);
-NA_API NAString* naInitPreferencesString (const char* key, NAString* value);
+NA_API NAString* naInitPreferencesString (const char* key, const NAString* value);
 
 // Sets or toggles the preference
 NA_API void   naSetPreferencesBool       (const char* key, NABool value);
 NA_API void   naSetPreferencesInt        (const char* key, NAInt value);
 NA_API void   naSetPreferencesEnum       (const char* key, NAInt value);
 NA_API void   naSetPreferencesDouble     (const char* key, double value);
-NA_API void   naSetPreferencesString     (const char* key, NAString* value);
+NA_API void   naSetPreferencesString     (const char* key, const NAString* value);
 NA_API NABool naTogglePreferencesBool    (const char* key);
 
 // Gets the preference. Beware for strings, naDelete must be called afterwards.

@@ -8,6 +8,11 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+- Adding more tests
+- Removed naNewStringWithUTF8CStringLiteral. Use naNewStringWithFormat.
+- Adding naTestCrash to NATesting
+- Adding NASlider to NAGUI and other public GUI functions.
+
 
 Version 25 (released 13. July 2020)
 ==========

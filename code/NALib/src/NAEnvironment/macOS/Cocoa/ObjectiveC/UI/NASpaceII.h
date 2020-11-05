@@ -6,124 +6,149 @@
 
 
 
-@implementation NACocoaSpace
-- (id) initWithSpace:(NASpace*)newSpace frame:(NSRect)frame{
-  self = [super initWithFrame:frame];
+typedef struct NACocoaSpace NACocoaSpace;
+struct NACocoaSpace{
+  NASpace space;
+};
 
-  // todo: make this dependent on whether tracking is needed or not.
-  trackingarea = [[NSTrackingArea alloc] initWithRect:[self bounds]
-      options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
-      owner:self userInfo:nil];
-  [self addTrackingArea:trackingarea];
-  [self setWantsLayer:YES];
+NA_HAPI void na_DestructCocoaSpace(NACocoaSpace* cocoaSpace);
+NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 
-  space = newSpace;
-  return self;
-}
-- (void)drawRect:(NSRect)dirtyRect{
-  [super drawRect:dirtyRect];
-  if(space->alternatebackground){
-    [[[NSColor controlTextColor] colorWithAlphaComponent:(CGFloat).075] setFill];
-    NSRectFill(dirtyRect);
-  }
-}
-- (void)mouseMoved:(NSEvent*)event{
-  NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)space, NA_UI_COMMAND_MOUSE_MOVED);
-}
-- (void)mouseEntered:(NSEvent*)event{
-  NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)space, NA_UI_COMMAND_MOUSE_ENTERED);
-}
-- (void)mouseExited:(NSEvent*)event{
-  NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)space, NA_UI_COMMAND_MOUSE_EXITED);
+@interface NACocoaNativeSpace : NSView{
+  NACocoaSpace*   cocaSpace;
+  NSTrackingArea* trackingArea;
 }
 @end
 
 
 
-NA_DEF NASpace* naNewSpace(NASize size){
-  NSRect contentRect;
-  NACocoaSpace* cocoaSpace;
-  NASpace* space = naAlloc(NASpace);
-  space->alternatebackground = NA_FALSE;
+@implementation NACocoaNativeSpace
 
-  contentRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  cocoaSpace = [[NACocoaSpace alloc] initWithSpace:space frame:contentRect];  
-  na_InitSpace(space, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
-  
-  return space;
+- (id) initWithSpace:(NACocoaSpace*)newCocoaSpace frame:(NSRect)frame{
+  self = [super initWithFrame:frame];
+
+  // todo: make this dependent on whether tracking is needed or not.
+  trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
+      options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
+      owner:self userInfo:nil];
+  [self addTrackingArea:trackingArea];
+  [self setWantsLayer:YES];
+
+  cocaSpace = newCocoaSpace;
+  return self;
+}
+
+- (void)dealloc{
+  NA_COCOA_RELEASE(trackingArea);
+  NA_COCOA_SUPER_DEALLOC();
+}
+
+- (void)drawRect:(NSRect)dirtyRect{
+  [super drawRect:dirtyRect];
+  if(cocaSpace->space.alternatebackground){
+    [[[NSColor controlTextColor] colorWithAlphaComponent:(CGFloat).075] setFill];
+    NSRectFill(dirtyRect);
+  }
+}
+
+- (void)mouseMoved:(NSEvent*)event{
+  NA_UNUSED(event);
+  na_DispatchUIElementCommand((NA_UIElement*)cocaSpace, NA_UI_COMMAND_MOUSE_MOVED);
+}
+
+- (void)mouseEntered:(NSEvent*)event{
+  NA_UNUSED(event);
+  na_DispatchUIElementCommand((NA_UIElement*)cocaSpace, NA_UI_COMMAND_MOUSE_ENTERED);
+}
+
+- (void)mouseExited:(NSEvent*)event{
+  NA_UNUSED(event);
+  na_DispatchUIElementCommand((NA_UIElement*)cocaSpace, NA_UI_COMMAND_MOUSE_EXITED);
+}
+
+@end
+
+
+
+NA_DEF NASpace* naNewSpace(NASize size){
+  NACocoaSpace* cocoaSpace = naNew(NACocoaSpace);
+
+  NACocoaNativeSpace* nativePtr = [[NACocoaNativeSpace alloc]
+    initWithSpace:cocoaSpace
+    frame:naMakeNSRectWithSize(size)];  
+  na_InitSpace((NASpace*)cocoaSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+
+  cocoaSpace->space.alternatebackground = NA_FALSE;
+
+  return (NASpace*)cocoaSpace;
 }
 
 
 
-NA_DEF void na_DestructSpace(NASpace* space){
-  na_ClearSpace(space);
+NA_DEF void na_DestructCocoaSpace(NACocoaSpace* cocoaSpace){
+  na_ClearSpace((NASpace*)cocoaSpace);
 }
 
 
 
 NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
-  naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   NSRect frame = naMakeNSRectWithRect(rect);
   frame.origin = NSMakePoint(0, 0);
-  [cocoaSpace setFrame: frame];
+  [nativePtr setFrame: frame];
 }
 
 
 
+@class NACocoaNativeRadio;
+@class NACocoaNativeTextBox;
+
 NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
-  naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
-  naDefineCocoaObject(NSView, cocoaview, child);
-  NACocoaRadio* cocoaRadio;
-  NACocoaTextBox* cocoaTextBox;
-  NSView* subview;
-  NSRect frame;
-  
+  naDefineCocoaObject(NACocoaNativeSpace, nativeSpacePtr, space);
+  naDefineCocoaObject(NSView<NACocoaNativeEncapsulatedElement>, cocoaView, child);
+
+  NSView* subview;  
   switch(naGetUIElementType(child)){
   case NA_UI_RADIO:
-    cocoaRadio = (NACocoaRadio*)cocoaview;
-    subview = [cocoaRadio getContainingView];
+    subview = [cocoaView getEncapsulatingView];
     break;
   case NA_UI_TEXTBOX:
-    cocoaTextBox = (NACocoaTextBox*)cocoaview;
-    subview = [cocoaTextBox getContainingView];
+    subview = [cocoaView getEncapsulatingView];
     break;
   default:
-    subview = cocoaview;
+    subview = cocoaView;
     break;
   }
-  [cocoaSpace addSubview:subview];
-  frame = [subview frame];
+  
+  [nativeSpacePtr addSubview:subview];
+  NSRect frame = [subview frame];
   frame.origin = NSMakePoint((CGFloat)pos.x, (CGFloat)pos.y);
   [subview setFrame: frame];
-  na_SetUIElementParent(child, space);
+  
+  na_AddSpaceChild(space, child);
 }
 
 
 
 NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
-  NARect rect;
-  NSRect contentrect;
-  NARect windowrect;
-  naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   // Warning: does not work when frame unequal bounds.
-  contentrect = [cocoaSpace frame];
-  windowrect = na_GetWindowAbsoluteInnerRect((NA_UIElement*)naGetUIElementWindow(space));
-  rect.pos.x = windowrect.pos.x + contentrect.origin.x;
-  rect.pos.y = windowrect.pos.y + contentrect.origin.y;
-  rect.size.width = contentrect.size.width;
-  rect.size.height = contentrect.size.height;
+  NSRect contentRect = [nativePtr frame];
+  NARect windowrect = na_GetWindowAbsoluteInnerRect((NA_UIElement*)naGetUIElementWindow(space));
+  NARect rect = naMakeRectS(
+    windowrect.pos.x + contentRect.origin.x,
+    windowrect.pos.y + contentRect.origin.y,
+    contentRect.size.width,
+    contentRect.size.height);
   return rect;
 }
 
 
 
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
-  naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   space->alternatebackground = alternate;
-  [cocoaSpace setNeedsDisplay:YES];
+  [nativePtr setNeedsDisplay:YES];
 }
 
 

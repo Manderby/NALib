@@ -6,8 +6,26 @@
 
 
 
-@implementation NACocoaRadio
-- (id) initWithRadio:(NARadio*)newRadio frame:(NSRect)frame{
+typedef struct NACocoaRadio NACocoaRadio;
+struct NACocoaRadio{
+  NARadio radio;
+};
+
+NA_HAPI void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio);
+NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
+
+@interface NACocoaNativeRadio : NSButton <NACocoaNativeEncapsulatedElement>{
+  NACocoaRadio* cocoaRadio;
+  NSView*       containingView;
+}
+- (NSView*) getEncapsulatingView;
+@end
+
+
+
+@implementation NACocoaNativeRadio
+
+- (id) initWithRadio:(NACocoaRadio*)newCocoaRadio frame:(NSRect)frame{
   NSRect newbounds = frame;
   newbounds.origin.x = 0;
   newbounds.origin.y = 0;
@@ -18,50 +36,94 @@
 //  [self setBezelStyle:NSBezelStyleRounded];
 //  [self setBezelStyle:NSBezelStyleShadowlessSquare];
 //  [self setBordered:YES];
-  radio = newRadio;
+  cocoaRadio = newCocoaRadio;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
 
-  containingview = [[NSView alloc] initWithFrame:frame];
-  [containingview addSubview:self];
+  containingView = [[NSView alloc] initWithFrame:frame];
+  [containingView addSubview:self];
 
   return self;
 }
-- (NSView*) getContainingView{
-  return containingview;
+
+- (void)dealloc{
+  NA_COCOA_RELEASE(containingView);
+  NA_COCOA_SUPER_DEALLOC();
 }
+
+- (NSView*) getEncapsulatingView{
+  return containingView;
+}
+
 - (void) setText:(const NAUTF8Char*)text{
   [self setTitle:[NSString stringWithUTF8String:text]];
 }
+
+- (void) setColor:(const NABabyColor*)color{
+  NSColor* nsColor;
+  if(color){
+    uint8 buf[4];
+    naFillu8WithBabyColor(buf, *color, NA_COLOR_BUFFER_RGBA);
+    nsColor = [NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.];
+  }else{
+    nsColor = [NSColor labelColor];
+  }
+  NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithAttributedString:[self attributedTitle]];
+  NSRange range = NSMakeRange(0, [attrString length]);
+
+  [attrString beginEditing];
+//  NSMutableParagraphStyle* paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+//  [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
+//  paragraphStyle.alignment = [self alignment];
+//  NA_COCOA_RELEASE(paragraphStyle);
+  [attrString addAttribute:NSForegroundColorAttributeName value:nsColor range:range];
+  [attrString endEditing];
+  
+  [self setAttributedTitle: attrString];
+  NA_COCOA_RELEASE(attrString);
+}
+
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)radio, NA_UI_COMMAND_PRESSED);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaRadio, NA_UI_COMMAND_PRESSED);
 }
+
 - (void) setRadioState:(NABool)state{
   [self setState:state ? NAStateOn : NAStateOff];
 }
+
 - (NABool) radioState{
   return ([self state] == NAStateOn) ? NA_TRUE : NA_FALSE;
 }
+
 @end
 
 
 
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
-  NARadio* radio = naAlloc(NARadio);
+  NACocoaRadio* cocoaRadio = naNew(NACocoaRadio);
 
-  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaRadio* cocoaRadio = [[NACocoaRadio alloc] initWithRadio:radio frame:frameRect];
-  na_InitRadio(radio, NA_COCOA_PTR_OBJC_TO_C(cocoaRadio));
-  [cocoaRadio setText:text];
+  NACocoaNativeRadio* nativePtr = [[NACocoaNativeRadio alloc]
+    initWithRadio:cocoaRadio
+    frame:naMakeNSRectWithSize(size)];
+  na_InitRadio((NARadio*)cocoaRadio, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
-  return radio;
+  [nativePtr setText:text];
+  
+  return (NARadio*)cocoaRadio;
 }
 
 
 
-NA_DEF void na_DestructRadio(NARadio* radio){
-  na_ClearRadio(radio);
+NA_DEF void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio){
+  na_ClearRadio((NARadio*)cocoaRadio);
+}
+
+
+
+NA_DEF void naSetRadioTextColor(NARadio* radio, const NABabyColor* color){
+  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  [nativePtr setColor:color];
 }
 
 
@@ -74,15 +136,22 @@ NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
 
 
 NA_DEF void naSetRadioState(NARadio* radio, NABool state){
-  naDefineCocoaObject(NACocoaRadio, cocoaRadio, radio);
-  [cocoaRadio setRadioState:state];
+  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  [nativePtr setRadioState:state];
+}
+
+
+
+NA_DEF void naSetRadioEnabled(NARadio* radio, NABool enabled){
+  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  [nativePtr setEnabled:enabled];
 }
 
 
 
 NA_DEF NABool naGetRadioState(NARadio* radio){
-  naDefineCocoaObject(NACocoaRadio, cocoaRadio, radio);
-  return [cocoaRadio radioState];
+  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  return [nativePtr radioState];
 }
 
 

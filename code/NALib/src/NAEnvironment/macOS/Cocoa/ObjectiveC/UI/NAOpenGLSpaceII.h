@@ -5,26 +5,56 @@
 // Do not include this file anywhere else!
 
 
+
+typedef struct NACocoaOpenGLSpace NACocoaOpenGLSpace;
+struct NACocoaOpenGLSpace{
+  NAOpenGLSpace openGLSpace;
+};
+
+NA_HAPI void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace);
+NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
+
 #if (NA_COMPILE_OPENGL == 1)
 
-  @implementation NACocoaOpenGLSpace
-  - (id)initWithOpenGLSpace:(NAOpenGLSpace*)newOpenGLSpace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
-    self = [super initWithFrame:frameRect pixelFormat:pixelformat];
+  #pragma GCC diagnostic push 
+  #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+  
+  @interface NACocoaNativeOpenGLSpace : NSOpenGLView{
+    NACocoaOpenGLSpace* cocoaOpenGLSpace;
+    NSTrackingArea*     trackingArea;
+    NAMutator           initFunc;
+    void*               initData;
+  }
+  @end
+
+
+
+  @implementation NACocoaNativeOpenGLSpace
+  
+  - (id)initWithOpenGLSpace:(NACocoaOpenGLSpace*)newCocoaOpenGLSpace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelFormat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
+    self = [super initWithFrame:frameRect pixelFormat:pixelFormat];
 
     // todo: make this dependent on whether tracking is needed or not.
-    trackingarea = [[NSTrackingArea alloc] initWithRect:[self bounds]
+    trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
         options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
         owner:self userInfo:nil];
-    [self addTrackingArea:trackingarea];
+    [self addTrackingArea:trackingArea];
 
-    openGLSpace = newOpenGLSpace;
+    cocoaOpenGLSpace = newCocoaOpenGLSpace;
     initFunc = newinitFunc;
     initData = newinitData;
     return self;
   }
+  
+  - (void)dealloc{
+    NA_COCOA_RELEASE(trackingArea);
+    NA_COCOA_SUPER_DEALLOC();
+  }
+  
   - (BOOL)acceptsFirstResponder{
     return YES; // This is required to get keyboard input.
   }
+  
   - (void)prepareOpenGL{
     // When entering this function, the opengl context is set.
     [super prepareOpenGL];
@@ -40,108 +70,137 @@
       initFunc(initData);
     }
   }
+  
   - (void)drawRect:(NSRect)dirtyRect{
     NA_UNUSED(dirtyRect);
     [[self openGLContext] makeCurrentContext];
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, NA_UI_COMMAND_REDRAW);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_REDRAW);
   }
+  
   - (void)reshape{
     [super reshape];
     [[self openGLContext] update];
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, NA_UI_COMMAND_RESHAPE);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_RESHAPE);
   }
+  
   - (void)mouseMoved:(NSEvent*)event{
     na_SetMouseMovedByDiff([event deltaX], -[event deltaY]);
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, NA_UI_COMMAND_MOUSE_MOVED);
-  //  [NSEvent setMouseCoalescingEnabled:NO];
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED);
+    //[NSEvent setMouseCoalescingEnabled:NO];
   }
+  
   - (void)keyDown:(NSEvent*)event{
     NA_UNUSED(event);
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, NA_UI_COMMAND_KEYDOWN);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEYDOWN);
   }
+  
   - (void)keyUp:(NSEvent*)event{
-NA_UNUSED(event);
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, NA_UI_COMMAND_KEYUP);
+    NA_UNUSED(event);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEYUP);
   }
+  
   - (void)flagsChanged:(NSEvent*)event{
-//    NAUIKeyCode keyCode;
     NABool shift   = ([event modifierFlags] & NAEventModifierFlagShift)    ?NA_TRUE:NA_FALSE;
     NABool alt     = ([event modifierFlags] & NAEventModifierFlagOption)   ?NA_TRUE:NA_FALSE;
     NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
     NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
 
-//    [event modifierFlags]; NSEventModifierFlagCapsLock;
-//    let isLeftShift = event.modifierFlags.rawValue & UInt(NX_DEVICELSHIFTKEYMASK) != 0
-//    let isRightShift = event.modifierFlags.rawValue & UInt(NX_DEVICERSHIFTKEYMASK) != 0
-
-//    keyCode = NA_KEYCODE_LEFT_SHIFT;
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
-//    keyCode = NA_KEYCODE_LEFT_OPTION;
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
-//    keyCode = NA_KEYCODE_CONTROL;
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
-//    keyCode = NA_KEYCODE_LEFT_COMMAND;
-    na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (shift ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (alt ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (control ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (command ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
   }
+  
   @end
 
 
 
-  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
-    NA_UNUSED(window);
-    NAOpenGLSpace* openGLSpace = naAlloc(NAOpenGLSpace);
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
+    NACocoaOpenGLSpace* cocoaOpenGLSpace = naNew(NACocoaOpenGLSpace);
 
-    // Configure the OpenGL Context and initialize this object.
+    // Configure the OpenGL context and initialize this object.
     NSOpenGLPixelFormatAttribute attr[] = {
       NSOpenGLPFADoubleBuffer,
       NSOpenGLPFAColorSize, 24,
-  //    NSOpenGLPFAAlphaSize, 8,
       NSOpenGLPFADepthSize, 64,
       NSOpenGLPFAAllowOfflineRenderers, // lets OpenGL know this context is offline renderer aware
       0 };
-    NSOpenGLPixelFormat *pixelformat = NA_COCOA_AUTORELEASE([[NSOpenGLPixelFormat alloc] initWithAttributes:attr]);
-    
-    NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)size.width, (CGFloat)size.height);
-    NACocoaOpenGLSpace* cocoaSpace = [[NACocoaOpenGLSpace alloc] initWithOpenGLSpace:openGLSpace frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
-//    [cocoaSpace retain];
+    NSOpenGLPixelFormat *pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attr];
 
-    if([cocoaSpace respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
+    NACocoaNativeOpenGLSpace* nativePtr = [[NACocoaNativeOpenGLSpace alloc]
+      initWithOpenGLSpace:cocoaOpenGLSpace
+      frame:naMakeNSRectWithSize(size)
+      pixelFormat:pixelFormat
+      initFunc:initFunc
+      initData:initData];
+    na_InitOpenGLSpace((NAOpenGLSpace*)cocoaOpenGLSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+
+    NA_COCOA_RELEASE(pixelFormat);
+
+    if([nativePtr respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
       NA_MACOS_AVAILABILITY_GUARD_10_7(
-        [cocoaSpace setWantsBestResolutionOpenGLSurface:YES];
+        [nativePtr setWantsBestResolutionOpenGLSurface:YES];
       )
     }
-
-    na_InitOpenGLSpace(openGLSpace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
-    return openGLSpace;
+    
+    return (NAOpenGLSpace*)cocoaOpenGLSpace;
   }
 
 
 
-  NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace){
-    na_ClearOpenGLSpace(openGLSpace);
+  NA_DEF void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace){
+    na_ClearOpenGLSpace((NAOpenGLSpace*)cocoaOpenGLSpace);
   }
 
 
 
   NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
-    [[(NA_COCOA_BRIDGE NACocoaOpenGLSpace*)(openGLSpace->uiElement.nativeID) openGLContext] flushBuffer];
+    [[(NA_COCOA_BRIDGE NACocoaNativeOpenGLSpace*)(openGLSpace->uiElement.nativePtr) openGLContext] flushBuffer];
   }
 
 
 
-  NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
-    NA_UNUSED(openglspace);
-    NA_UNUSED(bounds);
-    naDefineCocoaObject(NACocoaOpenGLSpace, cocoaOpenGLSpace, openglspace);
+  NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+    naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
     NSRect frame = naMakeNSRectWithRect(bounds);
     frame.origin = NSMakePoint(0, 0);
-    [cocoaOpenGLSpace setFrame: frame];
+    [nativePtr setFrame: frame];
   }
   
+  #pragma GCC diagnostic pop
+
+#else
+
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
+    NA_UNUSED(size);
+    NA_UNUSED(initFunc);
+    NA_UNUSED(initData);
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+    return NA_NULL;
+  }
+
+  NA_DEF void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace){
+    NA_UNUSED(cocoaOpenGLSpace);
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+  }
+
+  NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
+    NA_UNUSED(openGLSpace);
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+  }
+
+  NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+    NA_UNUSED(openGLSpace);
+    NA_UNUSED(bounds);
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+  }
+
 #endif  // NA_COMPILE_OPENGL
 
-NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openglspace){
-  return na_GetSpaceAbsoluteInnerRect(openglspace);
+
+
+NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openGLSpace){
+  return na_GetSpaceAbsoluteInnerRect(openGLSpace);
 }
 
 

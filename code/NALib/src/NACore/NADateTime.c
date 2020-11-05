@@ -357,7 +357,7 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
     if(monthindex == -1){
       if(isdigit((const char)str[0])){
         int32 returnint;
-        NAString* numberstring = naNewStringWithUTF8CStringLiteral(str);
+        NAString* numberstring = naNewStringWithFormat(str);
         returnint = naParseStringi32(numberstring) - 1;
         naDelete(numberstring);
         if(returnint >= 0 && returnint < 12){monthindex = returnint;}
@@ -1145,7 +1145,7 @@ NA_DEF NAString* naNewStringFromSecondDifference(double difference,
   }
 
   if(needsign){
-    signstring = naNewStringWithUTF8CStringLiteral("-");
+    signstring = naNewStringWithFormat("-");
   }else{
     signstring = naNewString();
   }

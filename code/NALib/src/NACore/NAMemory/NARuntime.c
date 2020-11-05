@@ -154,7 +154,7 @@ NA_HIDEF void na_RegisterTypeInfo(NA_TypeInfo* typeInfo){
 
   #ifndef NDEBUG
     if(typeInfo->curpart)
-      naError("Newly registered type should have NULL as current part.");
+      naError("Newly registered type should have Null as current part.");
     if(typeInfo->typeSize < NA_ADDRESS_BYTES)
       naError("Size of type is too small");
     if(typeInfo->typeSize > (na_Runtime->partSize - sizeof(NA_PoolPart)))

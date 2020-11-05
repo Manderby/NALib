@@ -57,9 +57,9 @@ NA_API NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color);
 // blend factor defines how strong the tinting is.
 NA_API NABabyImage* naCreateBabyImageWithTint(
   const NABabyImage* base,
-  const NABabyColor tint,
-  NABlendMode mode,
-  float blend);
+  const NABabyColor  tint,
+  NABlendMode        mode,
+  float              blend);
 
 // Creates a new image blending the top image upon the base image using the
 // given blend factor and blend mode. If base is Null, mode is ignored and
@@ -67,14 +67,14 @@ NA_API NABabyImage* naCreateBabyImageWithTint(
 NA_DEF NABabyImage* naCreateBabyImageWithBlend(
   const NABabyImage* base,
   const NABabyImage* top,
-  NABlendMode mode,
-  float blend);
+  NABlendMode        mode,
+  float              blend);
 
 // Creates an image half the size. Rescales data bilinearily.
 NA_API NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image);
 
 // Retains and Releases an image.
-NA_API const NABabyImage* naRetainBabyImage(const NABabyImage* image);
+NA_API NABabyImage* naRetainBabyImage(const NABabyImage* image);
 NA_API void naReleaseBabyImage(const NABabyImage* image);
 
 // Returns the number of float values per horizontal line.
@@ -91,9 +91,9 @@ NA_API float* naGetBabyImageData(const NABabyImage* image);
 // padding. Depending on the topToBottom flag, the data is expected as such.
 // Note that a BabyImage internally always stores images bottom to top.
 NA_API void naFillBabyImageWithu8(
-  NABabyImage* image,
-  const void* data,
-  NABool topToBottom,
+  NABabyImage*      image,
+  const void*       data,
+  NABool            topToBottom,
   NAColorBufferType bufferType);
 
 // Writes the contents of the image into a buffer. The output data will be
@@ -102,9 +102,9 @@ NA_API void naFillBabyImageWithu8(
 // Note that a BabyImage internally always stores images bottom to top.
 NA_API void naConvertBabyImageTou8(
   const NABabyImage* image,
-  void* data,
-  NABool topToBottom,
-  NAColorBufferType bufferType);
+  void*              data,
+  NABool             topToBottom,
+  NAColorBufferType  bufferType);
 
 
 #ifdef __cplusplus

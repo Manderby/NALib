@@ -3,6 +3,12 @@
 
 #if (NA_COMPILE_GUI == 1)
 
+
+
+NA_API void na_DeallocUIImage(NAUIImage* uiImage);
+NA_RUNTIME_TYPE(NAUIImage, na_DeallocUIImage, NA_TRUE);
+
+
 // Will retain the babyImage.
 NA_HIAPI void na_SetUIImageBabyImage(NAUIImage* uiImage, const NABabyImage* babyImage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin);
 
@@ -78,7 +84,7 @@ NA_HIDEF void na_SetUIImageBabyImage(NAUIImage* uiImage, const NABabyImage* baby
 
 
 
-NA_DEF NAUIImage* naAllocUIImage(const NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
+NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
   NAUIImage* uiImage;
   NABabyImage* main1x;
   
@@ -92,7 +98,7 @@ NA_DEF NAUIImage* naAllocUIImage(const NABabyImage* main, NABabyImage* alt, NAUI
     if(alt && !naEqualSizei(naGetBabyImageSize(main), naGetBabyImageSize(alt)))
       naError("Both images must have the same size.");
   #endif
-  uiImage = naAlloc(NAUIImage);
+  uiImage = naNew(NAUIImage);
   
   uiImage->size1x = naGetBabyImageSize(main);
   uiImage->tintMode = tintMode;
@@ -141,13 +147,12 @@ NA_DEF NAUIImage* naAllocUIImage(const NABabyImage* main, NABabyImage* alt, NAUI
 
 
 
-NA_API void naDeallocUIImage(NAUIImage* uiImage){
+NA_API void na_DeallocUIImage(NAUIImage* uiImage){
   NAInt i;
   for(i = 0; i < NA_UIIMAGE_SUBIMAGES_COUNT; i++){
     if(uiImage->nativeImages[i]){naDeallocNativeImage(uiImage->nativeImages[i]);}
     if(uiImage->babyImages[i]){naReleaseBabyImage(uiImage->babyImages[i]);}
   }
-  naFree(uiImage);
 }
 
 

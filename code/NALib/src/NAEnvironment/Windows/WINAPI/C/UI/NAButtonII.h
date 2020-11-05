@@ -7,10 +7,13 @@
 
 typedef struct NAWINAPIButton NAWINAPIButton;
 struct NAWINAPIButton{
-  NAButton button;
+  NAButton   button;
   NAUIImage* image;
-  NABool transparent;
+  NABool     transparent;
 };
+
+NA_HAPI void na_DestructWINAPIButton(NAWINAPIButton* winapiButton);
+NA_RUNTIME_TYPE(NAWINAPIButton, na_DestructWINAPIButton, NA_FALSE);
 
 
 
@@ -63,7 +66,7 @@ NAWINAPICallbackInfo naButtonWINAPINotify(void* uiElement, WORD notificationCode
   switch(notificationCode){
     case BN_CLICKED:
       na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
-      info.hasbeenhandeled = NA_TRUE;
+      info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
       break;
     default:
@@ -80,7 +83,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   NASizei size1x;
   NASizei buttonsize;
   NAPosi offset;
-  NABabyImage* foreImage;
+  const NABabyImage* foreImage;
   NAByte* backBuffer;
   HBITMAP hBackBitmap;
   NABabyImage* backImage;
@@ -93,17 +96,17 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   NAWINAPIButton* button = (NAWINAPIButton*)uiElement;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
 
-  CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uiElement), WM_ERASEBKGND, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
+  CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_ERASEBKGND, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
 
   if(!button->transparent){
-    long oldstyle = (long)GetWindowLongPtr(naGetUIElementNativeID(uiElement), GWL_STYLE);
+    long oldstyle = (long)GetWindowLongPtr(naGetUIElementNativePtr(uiElement), GWL_STYLE);
     long newstyle = (oldstyle & ~BS_OWNERDRAW) | BS_TEXT | BS_CENTER | BS_VCENTER;
-    SetWindowLongPtr(naGetUIElementNativeID(uiElement), GWL_STYLE, (LONG_PTR)newstyle);
+    SetWindowLongPtr(naGetUIElementNativePtr(uiElement), GWL_STYLE, (LONG_PTR)newstyle);
     // Oh boi. That is one hell of a hidden feature. Usually, the WM_PAINT message does not
     // use wParam and lParam at all. But there are some common controls (and buttons seems to
     // be one of them) which in fact only work if you send the device context in wParam.
-    CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uiElement), WM_PAINT, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
-    SetWindowLongPtr(naGetUIElementNativeID(uiElement), GWL_STYLE, (LONG_PTR)oldstyle);
+    CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_PAINT, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
+    SetWindowLongPtr(naGetUIElementNativePtr(uiElement), GWL_STYLE, (LONG_PTR)oldstyle);
   }
 
   size1x = naGetUIImage1xSize(button->image);
@@ -155,33 +158,34 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
 
 NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
-  HWND hWnd;
-  DWORD style;
-  TCHAR* systemtext;
-  WNDPROC oldproc;
+  NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
+
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
+
+	HWND nativePtr = CreateWindow(
+		TEXT("BUTTON"),
+    systemText,
+    WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON,
+		0,
+    0,
+    (int)size.width,
+    (int)size.height,
+		naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
+  
+  naFree(systemText);
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-
-  NAWINAPIButton* winapiButton = naAlloc(NAWINAPIButton);
-
-  style = WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON;
-
-  systemtext = naAllocSystemStringWithUTF8String(text);
-
-	hWnd = CreateWindow(
-		TEXT("BUTTON"), systemtext, style,
-		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL);
-  
-  naFree(systemtext);
-
-  oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  na_InitButton(&(winapiButton->button), hWnd);
-  winapiButton->image = NA_NULL;
-
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+
+  na_InitButton((NAButton*)winapiButton, hWnd);
+  winapiButton->image = NA_NULL;
+  winapiButton->transparent = NA_FALSE;
 
   return (NAButton*)winapiButton;
 }
@@ -189,27 +193,34 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
 
 
 NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
-  HWND hWnd;
-  DWORD style;
-  TCHAR* systemtext;
+  NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
-  NAWINAPIButton* winapiButton = naAlloc(NAWINAPIButton);
-
-  style = WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON;
-
-  systemtext = naAllocSystemStringWithUTF8String(text);
-
-	hWnd = CreateWindow(
-		TEXT("BUTTON"), systemtext, style,
-		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
   
-  naFree(systemtext);
+	HWND nativePtr = CreateWindow(
+		TEXT("BUTTON"),
+    systemText,
+    WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON,
+		0,
+    0,
+    (int)size.width,
+    (int)size.height,
+		naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
+  
+  naFree(systemText);
 
-  na_InitButton(&(winapiButton->button), hWnd);
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+
+  na_InitButton((NAButton*)winapiButton, hWnd);
   winapiButton->image = NA_NULL;
-
-  SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  winapiButton->transparent = NA_FALSE;
 
   return (NAButton*)winapiButton;
 }
@@ -217,19 +228,26 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
 
 
 NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size){
-  HWND hWnd;
-  DWORD style;
+  NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
-  NAWINAPIButton* winapiButton = naAlloc(NAWINAPIButton);
-
-  style = WS_CHILD | WS_VISIBLE | BS_OWNERDRAW | BS_PUSHBUTTON;
-
-	hWnd = CreateWindow(
-		TEXT("BUTTON"), TEXT(""), style,
-		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+	HWND nativePtr = CreateWindow(
+		TEXT("BUTTON"),
+    TEXT(""),
+    WS_CHILD | WS_VISIBLE | BS_OWNERDRAW | BS_PUSHBUTTON,
+		0,
+    0,
+    (int)size.width,
+    (int)size.height,
+		naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
   
-  na_InitButton(&(winapiButton->button), hWnd);
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+
+  na_InitButton((NAButton*)winapiButton, hWnd);
   winapiButton->image = uiImage;
   winapiButton->transparent = NA_FALSE;
 
@@ -239,19 +257,26 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size){
 
 
 NA_DEF NAButton* naNewImageButton(NAUIImage* uiImage, NASize size){
-  HWND hWnd;
-  DWORD style;
-
-  NAWINAPIButton* winapiButton = naAlloc(NAWINAPIButton);
-
-  style = WS_CHILD | WS_VISIBLE | BS_OWNERDRAW;
-
-	hWnd = CreateWindow(
-		TEXT("BUTTON"), TEXT(""), style,
-		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
   
-  na_InitButton(&(winapiButton->button), hWnd);
+	HWND nativePtr = CreateWindow(
+		TEXT("BUTTON"),
+    TEXT(""),
+    WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
+		0,
+    0,
+    (int)size.width,
+    (int)size.height,
+		naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
+    
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+
+  na_InitButton((NAButton*)winapiButton, nativePtr);
   winapiButton->image = uiImage;
   winapiButton->transparent = NA_TRUE;
 
@@ -260,32 +285,40 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiImage, NASize size){
 
 
 
-NA_DEF void na_DestructButton(NAButton* button){
-  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
-  na_ClearButton(&(winapiButton->button));
+NA_DEF void na_DestructWINAPIButton(NAWINAPIButton* winapiButton){
+  if(winapiButton->image){naRelease(winapiButton->image);}
+  na_ClearButton((NAButton*)winapiButton);
 }
 
 
 
 NA_DEF void naSetButtonState(NAButton* button, NABool state){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
-  SendMessage(naGetUIElementNativeID(winapiButton), BM_SETSTATE, (WPARAM)state, (LPARAM)NA_NULL);
+  SendMessage(naGetUIElementNativePtr(winapiButton), BM_SETSTATE, (WPARAM)state, (LPARAM)NA_NULL);
 }
 
 
 
 NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
-  long style = (long)GetWindowLongPtr(naGetUIElementNativeID(winapiButton), GWL_STYLE);
+  long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(winapiButton), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | BS_DEFPUSHBUTTON;
-  SetWindowLongPtr(naGetUIElementNativeID(winapiButton), GWL_STYLE, (LONG_PTR)style);
-  naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER), handler, controller);
+  SetWindowLongPtr(naGetUIElementNativePtr(winapiButton), GWL_STYLE, (LONG_PTR)style);
+  naAddUIKeyboardShortcut(
+    naGetUIElementWindow(button),
+    naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
+    handler,
+    controller);
 }
 
 
 
 NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller){
-  naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC), handler, controller);
+  naAddUIKeyboardShortcut(
+    naGetUIElementWindow(button),
+    naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
+    handler,
+    controller);
 }
 
 

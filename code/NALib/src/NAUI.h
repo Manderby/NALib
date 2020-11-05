@@ -66,17 +66,19 @@
 // ui element with any ui function where a ui element is expected.
 
 typedef struct NAApplication    NAApplication;
-typedef struct NAScreen         NAScreen;
-typedef struct NAWindow         NAWindow;
-typedef struct NASpace          NASpace;
-typedef struct NAImageSpace     NAImageSpace;
-typedef struct NAOpenGLSpace    NAOpenGLSpace;
+
 typedef struct NAButton         NAButton;
-typedef struct NARadio          NARadio;
 typedef struct NACheckBox       NACheckBox;
+typedef struct NAImageSpace     NAImageSpace;
 typedef struct NALabel          NALabel;
-typedef struct NATextField      NATextField;
+typedef struct NAOpenGLSpace    NAOpenGLSpace;
+typedef struct NARadio          NARadio;
+typedef struct NAScreen         NAScreen;
+typedef struct NASlider         NASlider;
+typedef struct NASpace          NASpace;
 typedef struct NATextBox        NATextBox;
+typedef struct NATextField      NATextField;
+typedef struct NAWindow         NAWindow;
 
 
 
@@ -86,22 +88,21 @@ typedef struct NATextBox        NATextBox;
 
 typedef enum{
   NA_UI_APPLICATION,
-  NA_UI_SCREEN,
-  NA_UI_WINDOW,
-  NA_UI_SPACE,
-  NA_UI_IMAGESPACE,
-  NA_UI_OPENGLSPACE,
   NA_UI_BUTTON,
-  NA_UI_RADIO,
   NA_UI_CHECKBOX,
+  NA_UI_IMAGESPACE,
   NA_UI_LABEL,
+  NA_UI_OPENGLSPACE,
+  NA_UI_RADIO,
+  NA_UI_SCREEN,
+  NA_UI_SLIDER,
+  NA_UI_SPACE,
+  NA_UI_TEXTBOX,
   NA_UI_TEXTFIELD,
-  NA_UI_TEXTBOX
+  NA_UI_WINDOW
 } NAUIElementType;
 
 NA_API NAUIElementType naGetUIElementType(void* uiElement);
-
-NA_API void naReleaseUIElement(void* uiElement);
 
 // Any ui element has a strict hierarchical ordering: Application - Screen -
 // Window - Space - Subspace - Subsubspace ... You can get the parent element
@@ -155,25 +156,25 @@ NA_API void naSetUIElementNextTabElement(void* elem, void* nextTabElem);
 //
 // NALib always acts as a layer on top of the native UI implementation of a
 // system. No matter if it is Macintosh or Windows, you can get the native
-// structures used in the corresponding UI systems with naGetUIElementNativeID.
+// structures used in corresponding UI systems with naGetUIElementNativePtr.
 // This allows you to do with the user interface elements whatever you need to
 // do.
 //
-// Windows: The native framework used is WINAPI and the nativeID you get is a
+// Windows: The native framework used is WINAPI and the nativePtr you get is a
 // HWND handle. If the user interface element is the application itself, you
 // get a HINSTANCE handle.
 //
 // Macintosh: NALib is using the Cocoa framework as the native UI. This means
 // that in the background, NALib implements certain Objective-C methods to
-// provide a UI most closely possible to a native experience. The nativeID
+// provide a UI most closely possible to a native experience. The nativePtr
 // corresponds to NSResponder*. Note that also NSApplication inherits from
 // NSResponder.
 //
-// Use the following function to retrieve the native ID for any ui element:
+// Use the following function to retrieve the nativePtr for any ui element:
 
-typedef void* NANativeID;
+typedef void* NANativePtr;
 
-NA_API NANativeID naGetUIElementNativeID(void* element);
+NA_API NANativePtr naGetUIElementNativePtr(void* element);
 
 
 
@@ -274,7 +275,7 @@ NA_API void naStartApplication(  NAMutator preStartup,
 NA_API NAApplication* naGetApplication(void);
 
 // If you need to get the native app pointer HINSTANCE (on Windows) or NSApp
-// (on a Macintosh), use naGetUIElementNativeID.
+// (on a Macintosh), use naGetUIElementNativePtr.
 
 // The message loop will run indefinitely until the application is terminated
 // by a signal or it recieves a stop message using the following function: This
@@ -515,15 +516,17 @@ struct NAReaction{
 
 typedef NABool (*NAReactionHandler)(NAReaction reaction);
 
-NA_API void naAddUIReaction(        void* uiElement,
-                                     NAUICommand command,
-                               NAReactionHandler handler,
-                                           void* controller);
+NA_API void naAddUIReaction(
+  void*             uiElement,
+  NAUICommand       command,
+  NAReactionHandler handler,
+  void*             controller);
 
-NA_API void naAddUIKeyboardShortcut(void* uiElement,
-                                NAKeyboardStatus shortcut,
-                               NAReactionHandler handler,
-                                           void* controller);
+NA_API void naAddUIKeyboardShortcut(
+  void*             uiElement,
+  NAKeyboardStatus  shortcut,
+  NAReactionHandler handler,
+  void*             controller);
 
 // The function naAddUIReaction and the function prototype NAReactionHandler
 // work in pairs. The controller given to naAddUIReaction is an arbitrary
@@ -580,9 +583,89 @@ typedef enum{
   NABool naLoadNib(NAUTF8Char* nibName);
 #endif
 
+// Button
+NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NASize size);
+NA_API NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size);
+NA_API NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size);
+NA_API NAButton* naNewImageButton(NAUIImage* uiImage, NASize size);
+NA_API void naSetButtonState(NAButton* button, NABool state);
+NA_API void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller);
+NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller);
+
+// CheckBox
+NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size);
+NA_API void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* color);
+NA_API void naSetCheckBoxState(NACheckBox* checkBox, NABool state);
+NA_API NABool naGetCheckBoxState(NACheckBox* checkBox);
+
+// ImageSpace
+NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size);
+
+// Label
+NA_API NALabel* naNewLabel(const NAUTF8Char* text, NASize size);
+NA_API void naSetLabelText(NALabel* label, const NAUTF8Char* text);
+NA_API void naSetLabelTextColor(NALabel* label, const NABabyColor* color);
+// Note that text alignment must be set before calling this method.
+NA_API void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
+NA_API NABool naIsLabelEnabled(NALabel* label);
+NA_API void naSetLabelEnabled(NALabel* label, NABool enabled);
+NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
+NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind);
+
+// OpenGLSpace
+// Note that you must have NA_COMPILE_OPENGL configured in NAConfiguration.h
+// to use these functions.
+// Use initFunc to perform any initialization necessary like for example
+// uploading of textures to the GPU. The initFunc will be called with
+// initData as the input parameter. The initFunc can be Null.
+// Note that the initFunc will be called...
+// Win: Right within the naNewOpenGLSpace
+// Mac: when prepareOpenGL is called (which may be as late as when the
+//      space comes onsceen)
+NA_API NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData);
+NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace);
+NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds);
+
+// Radio
+NA_API NARadio* naNewRadio(const NAUTF8Char* text, NASize size);
+NA_API void naSetRadioTextColor(NARadio* radio, const NABabyColor* color);
+NA_API NABool naGetRadioState(NARadio* radio);
+NA_API void naSetRadioState(NARadio* radio, NABool state);
+NA_API void naSetRadioEnabled(NARadio* radio, NABool enabled);
+
 // Screen
 // Screens are not implemented yet, but you can get the main screen rect:
 NA_API NARect naGetMainScreenRect(void);
+
+// Space (In other frameworks called View, Frame, Area, Widget...)
+// Beware that adding a child to a space which formerly was the first responder
+// of a window, that windows first responder will be reset to Null.
+NA_API NASpace* naNewSpace(NASize size);
+NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
+NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
+NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
+NA_API void naSetSpaceRect(NASpace* space, NARect rect);
+
+// Slider
+NA_API NASlider* naNewSlider(NASize size);
+NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount);
+NA_API double naGetSliderValue(NASlider* slider);
+NA_API void naSetSliderValue(NASlider* slider, double value);
+
+// TextBox
+NA_API NATextBox* naNewTextBox(NASize size);
+NA_API void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text);
+NA_API void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment);
+NA_API void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind);
+NA_API void naSetTextBoxEditable(NATextBox* textBox, NABool editable);
+
+// TextField
+NA_API NATextField* naNewTextField(NASize size);
+NA_API void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text);
+NA_API NAString* naNewStringWithTextFieldText(NATextField* textField);
+NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind);
+NA_API void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment alignment);
+NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind);
 
 // Window
 NA_API NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable, NAInt storageTag);
@@ -601,79 +684,6 @@ NA_API NABool naIsWindowFullscreen(NAWindow* window);
 NA_API NABool naIsWindowResizeable(NAWindow* window);
 NA_API void naPreventWindowFromClosing(NAWindow* window, NABool prevent);
 NA_API NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect rect, NABool resizeable);
-
-// Space (In other frameworks called View, Frame, Area, Widget...)
-// Beware that adding a child to a space which formerly was the first responder
-// of a window, that windows first responder will be reset to NULL.
-NA_API NASpace* naNewSpace(NASize size);
-NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
-NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
-NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
-NA_API void naSetSpaceRect(NASpace* space, NARect rect);
-
-// ImageSpace
-NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size);
-
-// OpenGLSpace
-#if NA_COMPILE_OPENGL == 1
-  // the initfunc will be called with initdata as the input parameter as
-  // soon as there is an KaroOpenGLContext available. You can put there all
-  // initialization necessary like for example uploading of textures to the
-  // GPU.
-  // Note that the initFunc will be called...
-  // Win: Right within the naNewOpenGLSpace
-  // Mac: when prepareOpenGL is called (which may be as late as when the
-  //      space comes onsceen)
-  NA_API NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata);
-  NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace);
-  NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds);
-#endif
-
-// Button
-void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage);
-
-NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NASize size);
-NA_API NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size);
-NA_API NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size);
-NA_API NAButton* naNewImageButton(NAUIImage* uiImage, NASize size);
-NA_API void naSetButtonState(NAButton* button, NABool state);
-NA_API void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller);
-NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller);
-
-// Radio
-NA_API NARadio* naNewRadio(const NAUTF8Char* text, NASize size);
-NA_API NABool naGetRadioState(NARadio* radio);
-NA_API void naSetRadioState(NARadio* radio, NABool state);
-
-// CheckBox
-NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size);
-NA_API void naSetCheckBoxState(NACheckBox* checkBox, NABool state);
-NA_API NABool naGetCheckBoxState(NACheckBox* checkBox);
-
-// Label
-NA_API NALabel* naNewLabel(const NAUTF8Char* text, NASize size);
-NA_API void naSetLabelText(NALabel* label, const NAUTF8Char* text);
-// Note that text alignment must be set before calling this method.
-NA_API void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
-NA_API NABool naIsLabelEnabled(NALabel* label);
-NA_API void naSetLabelEnabled(NALabel* label, NABool enabled);
-NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
-NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind);
-
-// TextField
-NA_API NATextField* naNewTextField(NASize size);
-NA_API void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text);
-NA_API NAString* naNewStringWithTextFieldText(NATextField* textField);
-NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind);
-NA_API void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment alignment);
-NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind);
-
-// TextBox
-NA_API NATextBox* naNewTextBox(NASize size);
-NA_API void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text);
-NA_API void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment);
-NA_API void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind);
-NA_API void naSetTextBoxEditable(NATextBox* textBox, NABool editable);
 
 
 

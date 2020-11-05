@@ -22,6 +22,7 @@
 // NA_C95
 // NA_C99
 // NA_C11
+// NA_C17
 //
 // NA_CPP98
 // NA_CPP11
@@ -45,6 +46,9 @@
       #if __STDC_VERSION__ >= 201112L
         #define NA_C11
       #endif
+      #if __STDC_VERSION__ >= 201710L
+        #define NA_C17
+      #endif
     #endif
 
   #elif defined _MSC_VER
@@ -59,6 +63,9 @@
     #if _MSC_VER >= 1910  // VS2017 does C11, but not completely.
       #define NA_C11
     #endif
+    #if _MSC_VER >= 1928  // Since VS 16.8 Preview 3
+      #define NA_C17
+    #endif
 
   #endif
 
@@ -72,6 +79,12 @@
   #endif
   #if __cplusplus >= 201402L
     #define NA_CPP14
+  #endif
+  #if __cplusplus >= 201703L
+    #define NA_CPP17
+  #endif
+  #if __cplusplus >= 202002L
+    #define NA_CPP20
   #endif
 #endif
 

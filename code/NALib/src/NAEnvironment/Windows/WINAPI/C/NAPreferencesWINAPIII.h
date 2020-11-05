@@ -118,7 +118,7 @@ NA_DEF double naInitPreferencesDouble(const char* key, double value){
   }
   return (naIsNaN(storedvalue) ? 0. : storedvalue);
 }
-NA_DEF NAString* naInitPreferencesString(const char* key, NAString* value){
+NA_DEF NAString* naInitPreferencesString(const char* key, const NAString* value){
   // Note that in this function it is necessary to convert the key to wchar_t
   // format as only the W functions can store unicode strings.
   // Stupid dog. You make this look bad.
@@ -215,7 +215,7 @@ NA_DEF void naSetPreferencesDouble(const char* key, double value){
     #endif
   }
 }
-NA_DEF void naSetPreferencesString(const char* key, NAString* value){
+NA_DEF void naSetPreferencesString(const char* key, const NAString* value){
   // Note that in this function it is necessary to convert the key to wchar_t
   // format as only the W functions can store unicode strings.
   // Stupid dog. You make this look bad.

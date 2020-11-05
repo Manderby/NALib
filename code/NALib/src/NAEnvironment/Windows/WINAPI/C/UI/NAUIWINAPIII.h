@@ -6,36 +6,30 @@
 
 
 #include "../../../../NAUICore.h"
-#include "../../../../../NACore/NAValueHelper.h"
-
-
-
-//#include <windows.h>
-//#ifdef __gl_h_
-//  #include <GL/GL.h>
-//#endif
+#include "../../../../../NAValueHelper.h"
 
 
 
 NA_HAPI NARect na_GetApplicationAbsoluteRect(void);
-NA_HAPI NARect na_GetScreenAbsoluteRect(NA_UIElement* screen);
-NA_HAPI NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window);
-NA_HAPI NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space);
-NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace);
-NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* space);
 NA_HAPI NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button);
-NA_HAPI NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio);
 NA_HAPI NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox);
+NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace);
 NA_HAPI NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label);
-NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField);
+NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* space);
+NA_HAPI NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio);
+NA_HAPI NARect na_GetScreenAbsoluteRect(NA_UIElement* screen);
+NA_HAPI NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* space);
+NA_HAPI NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space);
 NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox);
+NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField);
+NA_HAPI NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window);
 
 NA_HAPI void** na_GetUIElementNextTabReference(void* textField);
 NA_HAPI void** na_GetUIElementPrevTabReference(void* textField);
-NA_HAPI void** na_GetTextFieldNextTabReference(NATextField* textField);
-NA_HAPI void** na_GetTextFieldPrevTabReference(NATextField* textField);
 NA_HAPI void** na_GetTextBoxNextTabReference(NATextBox* textBox);
 NA_HAPI void** na_GetTextBoxPrevTabReference(NATextBox* textBox);
+NA_HAPI void** na_GetTextFieldNextTabReference(NATextField* textField);
+NA_HAPI void** na_GetTextFieldPrevTabReference(NATextField* textField);
 
 HWND naGetApplicationOffscreenWindow(void);
 NA_UIElement* naGetApplicationMouseHoverElement(void);
@@ -44,8 +38,8 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 
 
 
-NA_HDEF void na_ClearUINativeId(NANativeID nativeId){
-    DestroyWindow(nativeId);
+NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr){
+    DestroyWindow(nativePtr);
 }
 
 
@@ -56,7 +50,7 @@ NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
 
   #ifndef NDEBUG
     if(!uiElement)
-      naError("uiElement is NULL");
+      naError("uiElement is Null");
   #endif
     elem = (NA_UIElement*)uiElement;
     parentElem = (NA_UIElement*)parent;
@@ -69,16 +63,16 @@ NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
   if(!parentElem){
     HWND result;
     elem->parent = NA_NULL;
-    result = SetParent(elem->nativeID, HWND_MESSAGE);
+    result = SetParent(elem->nativePtr, HWND_MESSAGE);
   }else{
     HWND result;
     #ifndef NDEBUG
     if(!elem)
-      naCrash("elem is NULL");
+      naCrash("elem is Null");
     #endif
 
     elem->parent = parent;
-    result = SetParent(elem->nativeID, parentElem->nativeID);
+    result = SetParent(elem->nativePtr, parentElem->nativePtr);
   }
 }
 
@@ -143,9 +137,9 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 
   MessageBox(NA_NULL, systemMessage, systemTitle, MB_OK | iconType);
 
-  naDelete(messageString);
   naFree(systemMessage);
   naFree(systemTitle);
+  naDelete(messageString);
 }
 
 
@@ -191,7 +185,7 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message){
 
 
 NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
-  NABool retvalue = NA_FALSE;
+  NABool retValue = NA_FALSE;
   if(message->message == WM_KEYUP || message->message == WM_SYSKEYDOWN || message->message == WM_SYSKEYUP){
     na_CaptureKeyboardStatus(message);
   }else if(message->message == WM_KEYDOWN){
@@ -211,9 +205,9 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
     }
 
     // Search for a matching keyboard shortcut by bubbling.
-    while(!retvalue && elem){
+    while(!retValue && elem){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
-      while(!retvalue && naIterateList(&iter)){
+      while(!retValue && naIterateList(&iter)){
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
         if(keyReaction->shortcut.keyCode == na_App->keyboardStatus.keyCode){
           NABool needsShift   = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
@@ -232,7 +226,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
             reaction.uiElement = elem;
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
             reaction.controller = keyReaction->controller;
-            retvalue = keyReaction->handler(reaction);
+            retValue = keyReaction->handler(reaction);
           }
         }
       }
@@ -240,7 +234,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
       elem = naGetUIElementParent(elem);
     }
   }
-  return retvalue;
+  return retValue;
 }
 
 
@@ -251,41 +245,46 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
 
 typedef struct NAWINAPICallbackInfo NAWINAPICallbackInfo;
 struct NAWINAPICallbackInfo{
-  NABool hasbeenhandeled;
+  NABool hasBeenHandeled;
   LRESULT result;
 };
 
-WNDPROC naGetApplicationOldButtonWindowProc();
-WNDPROC naGetApplicationOldRadioWindowProc();
-WNDPROC naGetApplicationOldCheckBoxWindowProc();
-WNDPROC naGetApplicationOldLabelWindowProc();
-WNDPROC naGetApplicationOldTextFieldWindowProc();
+// Get overridden WindowProcs of specialized controls.
+WNDPROC na_GetApplicationOldButtonWindowProc();
+WNDPROC na_GetApplicationOldCheckBoxWindowProc();
+WNDPROC na_GetApplicationOldLabelWindowProc();
+WNDPROC na_GetApplicationOldRadioWindowProc();
+WNDPROC na_GetApplicationOldSliderWindowProc();
+WNDPROC na_GetApplicationOldTextFieldWindowProc();
 
-// Prototypes of the WindowProc handlers
-NAWINAPICallbackInfo naUIElementWINAPIProc  (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+// Prototypes of specialized WindowProc event handlers
+NAWINAPICallbackInfo naWINAPIDrawItemProc    (WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naWINAPIScrollItemProc  (WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naUIElementWINAPIProc  (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* drawitemstruct);
+NAWINAPICallbackInfo naSliderWINAPIScroll   (void* uiElement, WPARAM wParam);
 
+// Prototypes of the WindowProc handlers of the specific controls
 NAWINAPICallbackInfo naApplicationWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naWindowWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naSpaceWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naImageSpaceWINAPIProc (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-#if (NA_COMPILE_OPENGL == 1)
-  NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-#endif
 NAWINAPICallbackInfo naButtonWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naRadioWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naCheckBoxWINAPIProc   (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naImageSpaceWINAPIProc (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naLabelWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naTextFieldWINAPIProc  (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naRadioWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naSliderWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naSpaceWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naTextBoxWINAPIProc    (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naTextFieldWINAPIProc  (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naWindowWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 
+// Prototypes of WindowProc handlers which react to notifications
 NAWINAPICallbackInfo naButtonWINAPINotify   (void* uiElement, WORD notificationCode);
 NAWINAPICallbackInfo naCheckBoxWINAPINotify (void* uiElement, WORD notificationCode);
 NAWINAPICallbackInfo naLabelWINAPINotify    (void* uiElement, WORD notificationCode);
 NAWINAPICallbackInfo naTextFieldWINAPINotify(void* uiElement, WORD notificationCode);
 
-NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* drawitemstruct);
 
 
 
@@ -298,49 +297,59 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
-  if(message == WM_COMMAND){
-    info = naWINAPINotificationProc(wParam, lParam);
-  }
+  // Capture specific messages
   if(message == WM_DRAWITEM){
     info = naWINAPIDrawItemProc(wParam, lParam);
+  }else if(message == WM_COMMAND){
+    info = naWINAPINotificationProc(wParam, lParam);
+  }else if(message == WM_HSCROLL){
+    info = naWINAPIScrollItemProc(wParam, lParam);
   }
 
-  while(uiElement && !info.hasbeenhandeled){
+  // Capture messages handeled by the actual UIElements or its parents.
+  while(uiElement && !info.hasBeenHandeled){
+    // First, capture mouse and keyboard events if necessary.
     info = naUIElementWINAPIProc(uiElement, message, wParam, lParam);
-    if(info.hasbeenhandeled){break;}
+    if(info.hasBeenHandeled){break;}
 
+    // Then, go to the specialized window proc.
     switch(naGetUIElementType(uiElement)){
     case NA_UI_APPLICATION: info = naApplicationWINAPIProc(uiElement, message, wParam, lParam); break;
-    case NA_UI_WINDOW:      info = naWindowWINAPIProc     (uiElement, message, wParam, lParam); break;
-    case NA_UI_SPACE:       info = naSpaceWINAPIProc      (uiElement, message, wParam, lParam); break;
-    case NA_UI_IMAGESPACE:  info = naImageSpaceWINAPIProc (uiElement, message, wParam, lParam); break;
-    #if (NA_COMPILE_OPENGL == 1)
-      case NA_UI_OPENGLSPACE: info = naOpenGLSpaceWINAPIProc(uiElement, message, wParam, lParam); break;
-    #endif
-    case NA_UI_BUTTON:      info = naButtonWINAPIProc     (uiElement, message, wParam, lParam); break;
-    case NA_UI_RADIO:       info = naRadioWINAPIProc      (uiElement, message, wParam, lParam); break;
     case NA_UI_CHECKBOX:    info = naCheckBoxWINAPIProc   (uiElement, message, wParam, lParam); break;
+    case NA_UI_BUTTON:      info = naButtonWINAPIProc     (uiElement, message, wParam, lParam); break;
+    case NA_UI_IMAGESPACE:  info = naImageSpaceWINAPIProc (uiElement, message, wParam, lParam); break;
     case NA_UI_LABEL:       info = naLabelWINAPIProc      (uiElement, message, wParam, lParam); break;
-    case NA_UI_TEXTFIELD:   info = naTextFieldWINAPIProc  (uiElement, message, wParam, lParam); break;
+    case NA_UI_OPENGLSPACE: info = naOpenGLSpaceWINAPIProc(uiElement, message, wParam, lParam); break;
+    case NA_UI_RADIO:       info = naRadioWINAPIProc      (uiElement, message, wParam, lParam); break;
+    case NA_UI_SLIDER:      info = naSliderWINAPIProc     (uiElement, message, wParam, lParam); break;
+    case NA_UI_SPACE:       info = naSpaceWINAPIProc      (uiElement, message, wParam, lParam); break;
     case NA_UI_TEXTBOX:     info = naTextBoxWINAPIProc    (uiElement, message, wParam, lParam); break;
+    case NA_UI_TEXTFIELD:   info = naTextFieldWINAPIProc  (uiElement, message, wParam, lParam); break;
+    case NA_UI_WINDOW:      info = naWindowWINAPIProc     (uiElement, message, wParam, lParam); break;
     default: break;
     }
-    uiElement = naGetUIElementParent(uiElement);
+
+    // If the emitting uiElement does not handle the event, try its parent.
+    if(!info.hasBeenHandeled){
+      uiElement = naGetUIElementParent(uiElement);
+    }
   }
 
   // If the event has not been handeled, hand it over to the default procedure.
-  if(!info.hasbeenhandeled){
+  if(!info.hasBeenHandeled){
     switch(firsttype){
-    case NA_UI_BUTTON:    info.result = CallWindowProc(naGetApplicationOldButtonWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_RADIO:     info.result = CallWindowProc(naGetApplicationOldRadioWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_CHECKBOX:  info.result = CallWindowProc(naGetApplicationOldCheckBoxWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_LABEL:     info.result = CallWindowProc(naGetApplicationOldLabelWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_TEXTFIELD: info.result = CallWindowProc(naGetApplicationOldTextFieldWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_BUTTON:    info.result = CallWindowProc(na_GetApplicationOldButtonWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_CHECKBOX:  info.result = CallWindowProc(na_GetApplicationOldCheckBoxWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_LABEL:     info.result = CallWindowProc(na_GetApplicationOldLabelWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_RADIO:     info.result = CallWindowProc(na_GetApplicationOldRadioWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_SLIDER:    info.result = CallWindowProc(na_GetApplicationOldSliderWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_TEXTFIELD: info.result = CallWindowProc(na_GetApplicationOldTextFieldWindowProc(), hWnd, message, wParam, lParam); break;
     default:
       info.result = DefWindowProc(hWnd, message, wParam, lParam);
       break;
     }
   }
+
   return info.result;
 }
 
@@ -376,7 +385,7 @@ void naWINAPICaptureMouseHover(){
     TRACKMOUSEEVENT winapiTracking;
       winapiTracking.cbSize = sizeof(TRACKMOUSEEVENT);
       winapiTracking.dwFlags = TME_LEAVE;
-      winapiTracking.hwndTrack = naGetUIElementNativeID(elementUnderMouse);
+      winapiTracking.hwndTrack = naGetUIElementNativePtr(elementUnderMouse);
       winapiTracking.dwHoverTime = HOVER_DEFAULT;
       TrackMouseEvent(&winapiTracking);
     }
@@ -421,7 +430,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
 
     handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED);
     if(handeled){
-      info.hasbeenhandeled = NA_TRUE;
+      info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
     }
     break;
@@ -433,7 +442,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
   case WM_KEYDOWN:
     handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEYDOWN);
     if(handeled){
-      info.hasbeenhandeled = NA_TRUE;
+      info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
     }
     break;
@@ -441,7 +450,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
   case WM_KEYUP:
     handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEYUP);
     if(handeled){
-      info.hasbeenhandeled = NA_TRUE;
+      info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
     }
     break;
@@ -452,6 +461,22 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
 }
 
 
+
+NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  DRAWITEMSTRUCT* drawitemstruct = (DRAWITEMSTRUCT*)lParam;
+  NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(drawitemstruct->hwndItem);
+
+  if(uiElement){
+    switch(naGetUIElementType(uiElement)){
+    case NA_UI_BUTTON:     info = naButtonWINAPIDrawItem (uiElement, drawitemstruct); break;
+    default:
+      //printf("Uncaught draw item message" NA_NL);
+      break;
+    }
+  }
+  return info;
+}
 
 NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
@@ -474,18 +499,11 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
   return info;
 }
 
-NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naWINAPIScrollItemProc(WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  DRAWITEMSTRUCT* drawitemstruct = (DRAWITEMSTRUCT*)lParam;
-  NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(drawitemstruct->hwndItem);
-
-  if(uiElement){
-    switch(naGetUIElementType(uiElement)){
-    case NA_UI_BUTTON:     info = naButtonWINAPIDrawItem    (uiElement, drawitemstruct); break;
-    default:
-      //printf("Uncaught draw item message" NA_NL);
-      break;
-    }
+  NA_UIElement* scrollElem = (NA_UIElement*)na_GetUINALibEquivalent((void*)lParam);
+  if(naGetUIElementType(scrollElem) == NA_UI_SLIDER){
+    info = naSliderWINAPIScroll(scrollElem, wParam);
   }
   return info;
 }
@@ -497,7 +515,7 @@ NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
 // ///////////////////////////////////
 
 NA_HDEF void na_RefreshUIElementNow(void* uiElement){
-  RedrawWindow(naGetUIElementNativeID(uiElement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE);
+  RedrawWindow(naGetUIElementNativePtr(uiElement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE | RDW_UPDATENOW);
 }
 
 
@@ -568,7 +586,7 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
   *elemNextRef = nextTabElem;
 
   // This is how it is supposed to work on windows, but it doesn't.
-  //SetWindowPos(((NA_UIElement*)nextTabElem)->nativeID, ((NA_UIElement*)elem)->nativeID, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE); 
+  //SetWindowPos(((NA_UIElement*)nextTabElem)->nativePtr, ((NA_UIElement*)elem)->nativePtr, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE); 
 }
 
 
@@ -619,6 +637,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
   // Now, we find the appropriate relative element.
   if(!relElem){relElem = naGetUIElementParent(elem);}
 
+  // Now, get the rect of the element.
   switch(elem->elementType){
   case NA_UI_APPLICATION: rect = na_GetApplicationAbsoluteRect(); break;
   case NA_UI_SCREEN:      rect = na_GetScreenAbsoluteRect(elem); break;
@@ -630,6 +649,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
     }
     break;
   case NA_UI_OPENGLSPACE:  rect = na_GetSpaceAbsoluteInnerRect(elem); break;
+  case NA_UI_SLIDER:       rect = na_GetSliderAbsoluteInnerRect(elem); break;
   default:
     //#ifndef NDEBUG
     //  naError("Invalid UI type");
@@ -663,12 +683,12 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
 
 
 
-NA_HDEF void* na_AllocMouseTracking(NANativeID nativeId){
+NA_HDEF void* na_AllocMouseTracking(NANativePtr nativePtr){
   NABool success;
   TRACKMOUSEEVENT* winapiTracking = naAlloc(TRACKMOUSEEVENT);
   winapiTracking->cbSize = sizeof(TRACKMOUSEEVENT);
   winapiTracking->dwFlags = TME_LEAVE;
-  winapiTracking->hwndTrack = nativeId;
+  winapiTracking->hwndTrack = nativePtr;
   winapiTracking->dwHoverTime = HOVER_DEFAULT;
   success = TrackMouseEvent(winapiTracking);
   return winapiTracking;

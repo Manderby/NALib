@@ -5,12 +5,13 @@
 NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string){
   NAUTF8Char curchar;
   NAString* inputString;
-  NAString* pathcomponent;
+  NAString* pathComponent;
   NABufferIterator iter;
 
   url = naInitURL(url);
   if(!string){return url;}
-  inputString = naNewStringWithUTF8CStringLiteral(string);
+
+  inputString = naNewStringWithFormat("%s", string);
 
   curchar = *naGetStringUTF8Pointer(inputString);
   if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
@@ -29,11 +30,12 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
       continue;
     }
 
-    pathcomponent = naParseBufferPathComponent(&iter);
-    naAddListLastMutable(&(url->path), pathcomponent);
+    pathComponent = naParseBufferPathComponent(&iter);
+    naAddListLastMutable(&(url->path), pathComponent);
   }
 
   naClearBufferIterator(&iter);
+  naDelete(inputString);
 
   return url;
 }
@@ -42,8 +44,8 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
 
 NA_DEF NAString* naNewStringWithURLFilename(NAURL* url){
   if(naGetListCount(&(url->path))){
-    const NAString* lastcomponent = naGetListLastConst(&(url->path));
-    return naNewStringExtraction(lastcomponent, 0, -1);
+    const NAString* lastComponent = naGetListLastConst(&(url->path));
+    return naNewStringExtraction(lastComponent, 0, -1);
   }else{
     return naNewString();
   }

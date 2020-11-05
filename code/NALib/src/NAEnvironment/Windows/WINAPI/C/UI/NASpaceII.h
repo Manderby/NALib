@@ -8,10 +8,12 @@
 
 typedef struct NAWINAPISpace NAWINAPISpace;
 struct NAWINAPISpace {
-  NASpace space;
+  NASpace        space;
   NAWINAPIColor* lastBgColor;
 };
 
+NA_HAPI void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace);
+NA_RUNTIME_TYPE(NAWINAPISpace, na_DestructWINAPISpace, NA_FALSE);
 
 
 NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace);
@@ -95,19 +97,19 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
       bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
       SetBkColor((HDC)wParam, bgColor->color);
       info.result = (LRESULT)bgColor->brush;
-      info.hasbeenhandeled = NA_TRUE;
+      info.hasBeenHandeled = NA_TRUE;
       break;
     }
     break;
 
   case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
-    GetClientRect(naGetUIElementNativeID(uiElement), &spacerect);
+    GetClientRect(naGetUIElementNativePtr(uiElement), &spacerect);
     bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
     if(bgColor != winapiSpace->lastBgColor){ // Only draw if changed
       FillRect((HDC)wParam, &spacerect, bgColor->brush);
       winapiSpace->lastBgColor = bgColor;
     }
-    info.hasbeenhandeled = NA_TRUE;
+    info.hasBeenHandeled = NA_TRUE;
     info.result = 1;
     break;
 
@@ -147,14 +149,14 @@ NA_DEF NASpace* naNewSpace(NASize size){
   DWORD style;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPISpace* winapiSpace = naAlloc(NAWINAPISpace);
+  NAWINAPISpace* winapiSpace = naNew(NAWINAPISpace);
 
   style = WS_CHILD | WS_VISIBLE;
 
 	hWnd = CreateWindow(
 		TEXT("NASpace"), TEXT(""), style,
 		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
 
   na_InitSpace(&(winapiSpace->space), hWnd);
   winapiSpace->lastBgColor = &(app->bgColor);
@@ -165,15 +167,14 @@ NA_DEF NASpace* naNewSpace(NASize size){
 
 
 
-NA_DEF void na_DestructSpace(NASpace* space){
-  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
-  na_ClearSpace(&(winapiSpace->space));
+NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace){
+  na_ClearSpace((NASpace*)winapiSpace);
 }
 
 
 
 NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
-  SetWindowPos(naGetUIElementNativeID(space), HWND_TOP, 0, 0, (int)rect.size.width, (int)rect.size.height, SWP_NOMOVE | SWP_NOZORDER);
+  SetWindowPos(naGetUIElementNativePtr(space), HWND_TOP, 0, 0, (int)rect.size.width, (int)rect.size.height, SWP_NOMOVE | SWP_NOZORDER);
 }
 
 
@@ -184,11 +185,11 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
   int spaceheight;
   int childheight;
 
-  GetClientRect(naGetUIElementNativeID(space), &spacerect);
-  GetClientRect(naGetUIElementNativeID(child), &childrect);
+  GetClientRect(naGetUIElementNativePtr(space), &spacerect);
+  GetClientRect(naGetUIElementNativePtr(child), &childrect);
   spaceheight = spacerect.bottom - spacerect.top;
   childheight = childrect.bottom - childrect.top;
-  SetWindowPos(naGetUIElementNativeID(child), HWND_TOP, (int)pos.x, spaceheight - (int)pos.y - childheight, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+  SetWindowPos(naGetUIElementNativePtr(child), HWND_TOP, (int)pos.x, spaceheight - (int)pos.y - childheight, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
   na_SetUIElementParent(child, space);
 }
 
@@ -196,18 +197,18 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
 
 NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   NARect rect;
-  NARect screenrect;
-  RECT contentrect;
+  NARect screenRect;
+  RECT contentRect;
   POINT testpoint = {0, 0};
 
-  GetClientRect(space->nativeID, &contentrect);
-  ClientToScreen(space->nativeID, &testpoint);
-  screenrect = naGetMainScreenRect();
+  GetClientRect(space->nativePtr, &contentRect);
+  ClientToScreen(space->nativePtr, &testpoint);
+  screenRect = naGetMainScreenRect();
 
   rect.pos.x = testpoint.x;
-  rect.pos.y = (double)screenrect.size.height - ((double)testpoint.y + ((double)contentrect.bottom - (double)contentrect.top));
-  rect.size.width = (double)contentrect.right - (double)contentrect.left;
-  rect.size.height = (double)contentrect.bottom - (double)contentrect.top;
+  rect.pos.y = (double)screenRect.size.height - ((double)testpoint.y + ((double)contentRect.bottom - (double)contentRect.top));
+  rect.size.width = (double)contentRect.right - (double)contentRect.left;
+  rect.size.height = (double)contentRect.bottom - (double)contentRect.top;
   return rect;
 }
 

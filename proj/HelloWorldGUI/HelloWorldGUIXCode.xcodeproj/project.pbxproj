@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9024BF6624732B3F00258690 /* libNALib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9024BDED24732B2000258690 /* libNALib.a */; };
 		90AF1134248DA5D300D223EB /* NAMathConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AF106B248DA5D300D223EB /* NAMathConstants.h */; };
 		90AF1135248DA5D300D223EB /* NAMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AF106C248DA5D300D223EB /* NAMemory.h */; };
 		90AF1136248DA5D300D223EB /* NAComplex.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AF106D248DA5D300D223EB /* NAComplex.h */; };
@@ -188,24 +187,18 @@
 		90AF11E5248DA5D400D223EB /* NATranslator.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AF1131248DA5D300D223EB /* NATranslator.h */; };
 		90AF11E6248DA5D400D223EB /* NACoord.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AF1132248DA5D300D223EB /* NACoord.h */; };
 		90AF11E7248DA5D400D223EB /* NAPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AF1133248DA5D300D223EB /* NAPool.h */; };
-		90AF11F0248DA5E200D223EB /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 90AF11EF248DA5E200D223EB /* main.c */; };
+		90F919C22551B4D100481596 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90F919C02551B4D100481596 /* MainMenu.xib */; };
+		90F919C42551B4D600481596 /* ExperimentController.c in Sources */ = {isa = PBXBuildFile; fileRef = 9058BB36254F07F200B4960D /* ExperimentController.c */; };
+		90F919C52551B4D800481596 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 90AF11EF248DA5E200D223EB /* main.c */; };
+		90F919C72551F07E00481596 /* libNALib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9024BDED24732B2000258690 /* libNALib.a */; };
+		90F919C9255361BE00481596 /* NASliderII.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F919C8255361BE00481596 /* NASliderII.h */; };
+		90F919CB2553625400481596 /* NASliderII.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F919CA2553625400481596 /* NASliderII.h */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		90614029247163A100498AF3 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		9024BDED24732B2000258690 /* libNALib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNALib.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		9061402B247163A100498AF3 /* HelloWorldGUI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = HelloWorldGUI; sourceTree = BUILT_PRODUCTS_DIR; };
+		9058BB35254F07F100B4960D /* HelloWorldGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelloWorldGUI.h; sourceTree = "<group>"; };
+		9058BB36254F07F200B4960D /* ExperimentController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ExperimentController.c; sourceTree = "<group>"; };
 		90AF1069248DA5D300D223EB /* NALib.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = NALib.vcxproj; sourceTree = "<group>"; };
 		90AF106B248DA5D300D223EB /* NAMathConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMathConstants.h; sourceTree = "<group>"; };
 		90AF106C248DA5D300D223EB /* NAMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMemory.h; sourceTree = "<group>"; };
@@ -392,6 +385,12 @@
 		90AF11EC248DA5E200D223EB /* HelloWorldGUI.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = HelloWorldGUI.vcxproj; sourceTree = "<group>"; };
 		90AF11EE248DA5E200D223EB /* translationIDs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = translationIDs.h; sourceTree = "<group>"; };
 		90AF11EF248DA5E200D223EB /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		90F919AD2551B48F00481596 /* HelloWorldGUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HelloWorldGUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		90F919BF2551B4D100481596 /* HelloWorldGUI.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = HelloWorldGUI.entitlements; sourceTree = "<group>"; };
+		90F919C02551B4D100481596 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		90F919C12551B4D100481596 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90F919C8255361BE00481596 /* NASliderII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NASliderII.h; sourceTree = "<group>"; };
+		90F919CA2553625400481596 /* NASliderII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NASliderII.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -402,11 +401,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		90614028247163A100498AF3 /* Frameworks */ = {
+		90F919AA2551B48F00481596 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9024BF6624732B3F00258690 /* libNALib.a in Frameworks */,
+				90F919C72551F07E00481596 /* libNALib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,8 +425,8 @@
 		9061402C247163A100498AF3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9061402B247163A100498AF3 /* HelloWorldGUI */,
 				9024BDED24732B2000258690 /* libNALib.a */,
+				90F919AD2551B48F00481596 /* HelloWorldGUI.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -665,14 +664,14 @@
 		90AF10EC248DA5D300D223EB /* NAEnvironment */ = {
 			isa = PBXGroup;
 			children = (
-				90AF10ED248DA5D300D223EB /* NAUICore.h */,
 				90AF10EE248DA5D300D223EB /* macOS */,
 				90AF1102248DA5D300D223EB /* NATranslator.c */,
-				90AF1103248DA5D300D223EB /* NAUIImageII.h */,
-				90AF1104248DA5D300D223EB /* NAUIImage.h */,
 				90AF1105248DA5D300D223EB /* NAUICore.c */,
-				90AF1106248DA5D300D223EB /* Windows */,
+				90AF10ED248DA5D300D223EB /* NAUICore.h */,
 				90AF1119248DA5D300D223EB /* NAUIImage.c */,
+				90AF1104248DA5D300D223EB /* NAUIImage.h */,
+				90AF1103248DA5D300D223EB /* NAUIImageII.h */,
+				90AF1106248DA5D300D223EB /* Windows */,
 			);
 			path = NAEnvironment;
 			sourceTree = "<group>";
@@ -707,19 +706,20 @@
 		90AF10F3248DA5D300D223EB /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				90AF10F4248DA5D300D223EB /* NATextBoxII.h */,
 				90AF10F5248DA5D300D223EB /* NAApplicationII.h */,
-				90AF10F6248DA5D300D223EB /* NAWindowII.h */,
-				90AF10F7248DA5D300D223EB /* NAUICocoaLegacyII.h */,
 				90AF10F8248DA5D300D223EB /* NAButtonII.h */,
 				90AF10F9248DA5D300D223EB /* NACheckBoxII.h */,
-				90AF10FA248DA5D300D223EB /* NARadioII.h */,
-				90AF10FB248DA5D300D223EB /* NAOpenGLSpaceII.h */,
-				90AF10FC248DA5D300D223EB /* NAUICocoaII.h */,
-				90AF10FD248DA5D300D223EB /* NASpaceII.h */,
 				90AF10FE248DA5D300D223EB /* NAImageSpaceII.h */,
 				90AF10FF248DA5D300D223EB /* NALabelII.h */,
+				90AF10FB248DA5D300D223EB /* NAOpenGLSpaceII.h */,
+				90AF10FA248DA5D300D223EB /* NARadioII.h */,
+				90F919C8255361BE00481596 /* NASliderII.h */,
+				90AF10FD248DA5D300D223EB /* NASpaceII.h */,
+				90AF10F4248DA5D300D223EB /* NATextBoxII.h */,
 				90AF1100248DA5D300D223EB /* NATextFieldII.h */,
+				90AF10FC248DA5D300D223EB /* NAUICocoaII.h */,
+				90AF10F7248DA5D300D223EB /* NAUICocoaLegacyII.h */,
+				90AF10F6248DA5D300D223EB /* NAWindowII.h */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -754,18 +754,19 @@
 		90AF110A248DA5D300D223EB /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				90AF110B248DA5D300D223EB /* NATextBoxII.h */,
 				90AF110C248DA5D300D223EB /* NAApplicationII.h */,
-				90AF110D248DA5D300D223EB /* NAUIWINAPIII.h */,
-				90AF110E248DA5D300D223EB /* NAWindowII.h */,
 				90AF110F248DA5D300D223EB /* NAButtonII.h */,
 				90AF1110248DA5D300D223EB /* NACheckBoxII.h */,
-				90AF1111248DA5D300D223EB /* NARadioII.h */,
-				90AF1112248DA5D300D223EB /* NAOpenGLSpaceII.h */,
-				90AF1113248DA5D300D223EB /* NASpaceII.h */,
 				90AF1114248DA5D300D223EB /* NAImageSpaceII.h */,
 				90AF1115248DA5D300D223EB /* NALabelII.h */,
+				90AF1112248DA5D300D223EB /* NAOpenGLSpaceII.h */,
+				90AF1111248DA5D300D223EB /* NARadioII.h */,
+				90F919CA2553625400481596 /* NASliderII.h */,
+				90AF1113248DA5D300D223EB /* NASpaceII.h */,
+				90AF110B248DA5D300D223EB /* NATextBoxII.h */,
 				90AF1116248DA5D300D223EB /* NATextFieldII.h */,
+				90AF110D248DA5D300D223EB /* NAUIWINAPIII.h */,
+				90AF110E248DA5D300D223EB /* NAWindowII.h */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -818,6 +819,7 @@
 		90AF11E9248DA5E200D223EB /* res */ = {
 			isa = PBXGroup;
 			children = (
+				90F919BE2551B4D100481596 /* macOS */,
 				90AF11EA248DA5E200D223EB /* translationsGeneral.txt */,
 				90AF11EB248DA5E200D223EB /* translationsFinance.txt */,
 			);
@@ -827,10 +829,22 @@
 		90AF11ED248DA5E200D223EB /* src */ = {
 			isa = PBXGroup;
 			children = (
+				9058BB36254F07F200B4960D /* ExperimentController.c */,
+				9058BB35254F07F100B4960D /* HelloWorldGUI.h */,
 				90AF11EE248DA5E200D223EB /* translationIDs.h */,
 				90AF11EF248DA5E200D223EB /* main.c */,
 			);
 			path = src;
+			sourceTree = "<group>";
+		};
+		90F919BE2551B4D100481596 /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				90F919BF2551B4D100481596 /* HelloWorldGUI.entitlements */,
+				90F919C02551B4D100481596 /* MainMenu.xib */,
+				90F919C12551B4D100481596 /* Info.plist */,
+			);
+			path = macOS;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -894,6 +908,7 @@
 				90AF1197248DA5D400D223EB /* NAThreadingII.h in Headers */,
 				90AF1146248DA5D300D223EB /* NABufferII.h in Headers */,
 				90AF1137248DA5D300D223EB /* NABase.h in Headers */,
+				90F919CB2553625400481596 /* NASliderII.h in Headers */,
 				90AF1170248DA5D400D223EB /* NAMacros.h in Headers */,
 				90AF11E7248DA5D400D223EB /* NAPool.h in Headers */,
 				90AF11BA248DA5D400D223EB /* NATextFieldII.h in Headers */,
@@ -905,6 +920,7 @@
 				90AF11C2248DA5D400D223EB /* NAApplicationII.h in Headers */,
 				90AF113B248DA5D300D223EB /* NAStack.h in Headers */,
 				90AF1159248DA5D400D223EB /* NACircularBufferII.h in Headers */,
+				90F919C9255361BE00481596 /* NASliderII.h in Headers */,
 				90AF11B8248DA5D400D223EB /* NAImageSpaceII.h in Headers */,
 				90AF11B3248DA5D400D223EB /* NACheckBoxII.h in Headers */,
 				90AF1166248DA5D400D223EB /* NATreeUtilitiesII.h in Headers */,
@@ -1007,22 +1023,22 @@
 			productReference = 9024BDED24732B2000258690 /* libNALib.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		9061402A247163A100498AF3 /* HelloWorldGUI */ = {
+		90F919AC2551B48F00481596 /* HelloWorldGUI */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 90614032247163A100498AF3 /* Build configuration list for PBXNativeTarget "HelloWorldGUI" */;
+			buildConfigurationList = 90F919BB2551B49000481596 /* Build configuration list for PBXNativeTarget "HelloWorldGUI" */;
 			buildPhases = (
-				90614027247163A100498AF3 /* Sources */,
-				90614028247163A100498AF3 /* Frameworks */,
-				90614029247163A100498AF3 /* CopyFiles */,
+				90F919A92551B48F00481596 /* Sources */,
+				90F919AA2551B48F00481596 /* Frameworks */,
+				90F919AB2551B48F00481596 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = HelloWorldGUI;
-			productName = HelloWorld;
-			productReference = 9061402B247163A100498AF3 /* HelloWorldGUI */;
-			productType = "com.apple.product-type.tool";
+			productName = HelloWorldGUI;
+			productReference = 90F919AD2551B48F00481596 /* HelloWorldGUI.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -1035,7 +1051,7 @@
 					9024BDEC24732B2000258690 = {
 						CreatedOnToolsVersion = 11.4;
 					};
-					9061402A247163A100498AF3 = {
+					90F919AC2551B48F00481596 = {
 						CreatedOnToolsVersion = 11.4;
 					};
 				};
@@ -1053,11 +1069,22 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9061402A247163A100498AF3 /* HelloWorldGUI */,
 				9024BDEC24732B2000258690 /* NALib */,
+				90F919AC2551B48F00481596 /* HelloWorldGUI */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		90F919AB2551B48F00481596 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90F919C22551B4D100481596 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		9024BDEA24732B2000258690 /* Sources */ = {
@@ -1103,11 +1130,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		90614027247163A100498AF3 /* Sources */ = {
+		90F919A92551B48F00481596 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				90AF11F0248DA5E200D223EB /* main.c in Sources */,
+				90F919C52551B4D800481596 /* main.c in Sources */,
+				90F919C42551B4D600481596 /* ExperimentController.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1123,7 +1151,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -1185,7 +1212,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -1234,33 +1260,37 @@
 		906140252471637E00498AF3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"NA_COMPILE_GUI=1",
 					"NA_COMPILE_OPENGL=1",
 				);
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGL;
 			};
 			name = Debug;
 		};
 		906140262471637E00498AF3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"NA_COMPILE_GUI=1",
 					"NA_COMPILE_OPENGL=1",
 				);
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGL;
 			};
 			name = Release;
 		};
-		90614030247163A100498AF3 /* Debug */ = {
+		90F919BC2551B49000481596 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -1283,7 +1313,9 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = HelloWorldGUI/HelloWorldGUI.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1302,26 +1334,31 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../code/NALib/src/;
+				INFOPLIST_FILE = ../../code/HelloWorldGUI/res/macOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = ManderC.HelloWorldGUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
-		90614031247163A100498AF3 /* Release */ = {
+		90F919BD2551B49000481596 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -1344,7 +1381,9 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = HelloWorldGUI/HelloWorldGUI.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1357,10 +1396,15 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../code/NALib/src/;
+				INFOPLIST_FILE = ../../code/HelloWorldGUI/res/macOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = ManderC.HelloWorldGUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -1387,11 +1431,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		90614032247163A100498AF3 /* Build configuration list for PBXNativeTarget "HelloWorldGUI" */ = {
+		90F919BB2551B49000481596 /* Build configuration list for PBXNativeTarget "HelloWorldGUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				90614030247163A100498AF3 /* Debug */,
-				90614031247163A100498AF3 /* Release */,
+				90F919BC2551B49000481596 /* Debug */,
+				90F919BD2551B49000481596 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

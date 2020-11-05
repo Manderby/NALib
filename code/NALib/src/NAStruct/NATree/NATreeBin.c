@@ -57,13 +57,13 @@ NA_HDEF NATreeLeaf* na_ConstructTreeLeafBin(NATree* tree, const void* key, NAPtr
 // ////////////////////////////
 
 
-NA_HDEF NAInt na_GetChildIndexBinDouble(NATreeNode* parentnode, const void* childkey){
-  NATreeBinNode* binnode = (NATreeBinNode*)(parentnode);
-  return na_GetKeyIndexBinDouble(na_GetBinNodeKey(binnode), childkey, NA_NULL);
+NA_HDEF NAInt na_GetChildIndexBinDouble(NATreeNode* parentNode, const void* childKey){
+  NATreeBinNode* binnode = (NATreeBinNode*)(parentNode);
+  return na_GetKeyIndexBinDouble(na_GetBinNodeKey(binnode), childKey, NA_NULL);
 }
-NA_HDEF NAInt na_GetKeyIndexBinDouble(const void* basekey, const void* testkey, const void* data){
+NA_HDEF NAInt na_GetKeyIndexBinDouble(const void* baseKey, const void* testKey, const void* data){
   NA_UNUSED(data);
-  return !(*(const double*)testkey < *(const double*)basekey); // results in 0 or 1
+  return !(*(const double*)testKey < *(const double*)baseKey); // results in 0 or 1
 }
 NA_HDEF NABool na_TestKeyBinDouble(const void* lowerLimit, const void* upperLimit, const void* key){
   return ((*(const double*)lowerLimit <= *(const double*)key) && (*(const double*)key) < *(const double*)upperLimit);
@@ -75,14 +75,14 @@ NA_HDEF NABool na_TestKeyLeafContainBinDouble(NATreeLeaf* leaf, const void* key)
 }
 
 
-NA_HDEF NAInt na_GetChildIndexBinNAInt(NATreeNode* parentnode, const void* childkey){
-  NATreeBinNode* binnode = (NATreeBinNode*)(parentnode);
-  return na_GetKeyIndexBinNAInt(na_GetBinNodeKey(binnode), childkey, NA_NULL);
+NA_HDEF NAInt na_GetChildIndexBinNAInt(NATreeNode* parentNode, const void* childKey){
+  NATreeBinNode* binnode = (NATreeBinNode*)(parentNode);
+  return na_GetKeyIndexBinNAInt(na_GetBinNodeKey(binnode), childKey, NA_NULL);
 }
-NA_HDEF NAInt na_GetKeyIndexBinNAInt(const void* basekey, const void* key, const void* data){
+NA_HDEF NAInt na_GetKeyIndexBinNAInt(const void* baseKey, const void* key, const void* data){
   NA_UNUSED(data);
-  // if key is equal to basekey, the return value must be 1.
-  return !(*(const NAInt*)key < *(const NAInt*)basekey); // results in 0 or 1
+  // if key is equal to baseKey, the return value must be 1.
+  return !(*(const NAInt*)key < *(const NAInt*)baseKey); // results in 0 or 1
 }
 NA_HDEF NABool na_TestKeyBinNAInt(const void* lowerLimit, const void* upperLimit, const void* key){
   return ((*(const NAInt*)lowerLimit <= *(const NAInt*)key) && (*(const NAInt*)key <= *(const NAInt*)upperLimit));

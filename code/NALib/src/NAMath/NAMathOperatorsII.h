@@ -445,28 +445,28 @@ NA_IDEF double naLog2(double x){
 }
 
 NA_IDEF int32 naLog2i32(int32 x){
-  int32 retvalue;
+  int32 retValue;
   #ifndef NDEBUG
     if(x < 0)
       naError("Logarithm of negative number.");
   #endif
   if(x <= 0){return 0;}
   x--;
-  retvalue = 0;
-  while(x){retvalue++; x>>=1;}
-  return retvalue;
+  retValue = 0;
+  while(x){retValue++; x>>=1;}
+  return retValue;
 }
 NA_IDEF NAi64 naLog2i64(NAi64 x){
-  NAi64 retvalue;
+  NAi64 retValue;
   #ifndef NDEBUG
     if(naSmalleri64(x, NA_ZERO_i64))
       naError("Logarithm of negative number.");
   #endif
   if(naSmallerEquali64(x, NA_ZERO_i64)){return NA_ZERO_i64;}
   naDeci64(x);
-  retvalue = NA_ZERO_i64;
-  while(!naEquali64(x, NA_ZERO_i64)){naInci64(retvalue); x = naShri64(x, 1);}
-  return retvalue;
+  retValue = NA_ZERO_i64;
+  while(!naEquali64(x, NA_ZERO_i64)){naInci64(retValue); x = naShri64(x, 1);}
+  return retValue;
 }
 NA_IDEF NAInt naLog2i(NAInt x){
   #if NA_TYPE_NAINT_BITS == 32

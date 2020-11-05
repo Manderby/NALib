@@ -234,6 +234,7 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
 
 
 NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
+  naCacheBufferRange(buffer, naGetBufferRange(buffer));
   NABufferIterator iter = naMakeBufferModifier(buffer);
 
   while(na_IterateBufferPart(&iter)){

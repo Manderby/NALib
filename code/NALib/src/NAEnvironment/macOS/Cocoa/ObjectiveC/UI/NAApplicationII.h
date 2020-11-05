@@ -5,45 +5,55 @@
 // Do not include this file anywhere else!
 
 
-@implementation NACocoaApplicationDelegate
-- (id) initWithCocoaApplication:(NACocoaApplication*)newCocoaApplication{
-  self = [super init];
-  cocoaApplication = newCocoaApplication;
-  return self;
-}
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender{
-  NA_UNUSED(sender);
-  naStopApplication();
-  return NSTerminateCancel;
-}
-- (void)applicationDidFinishLaunching:(NSNotification *)notification{
-  if([NSApp delegate] && [NSApp delegate] != self){
-    [[NSApp delegate] applicationDidFinishLaunching:notification];
-  }
+
+typedef struct NACocoaApplication NACocoaApplication;
+struct NACocoaApplication {
+  NAApplication application;
+};
+
+NA_HAPI void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication);
+NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
+
+@interface NACocoaNativeApplicationDelegate : NSObject <NSApplicationDelegate>{
+  NACocoaApplication* cocoaApplication;
 }
 @end
 
 
 
-NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void* arg){
-  // The ((id (*)(id, SEL)) part is a cast of the objc_msgSend function which
-  // is requires since a later version of Objective-C
-//  ( (id (*)(id, SEL)) objc_msgSend)(objc_getClass("NSApplication"), sel_registerName("sharedApplication"));
+@implementation NACocoaNativeApplicationDelegate
 
-  NAApplication* app;
-  NSDate* distantFuture;
-  #if !NA_MACOS_USES_ARC
-    NSAutoreleasePool* pool;
-  #endif
-  
-  // Start the shared application if not started already and set the native ID
+- (id) initWithCocoaApplication:(NACocoaApplication*)newCocoaApplication{
+  self = [super init];
+  cocoaApplication = newCocoaApplication;
+  return self;
+}
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender{
+  NA_UNUSED(sender);
+  naStopApplication();
+  return NSTerminateCancel;
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notification{
+  if([NSApp delegate] && [NSApp delegate] != self){
+    [[NSApp delegate] applicationDidFinishLaunching:notification];
+  }
+}
+
+@end
+
+
+
+NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void* arg){  
+  // Start the shared application if not started already and set the nativePtr
   // of the application.
   [NSApplication sharedApplication];
-  app = na_NewApplication();
+  NAApplication* app = na_NewApplication();
 
   // Put an autorelease pool in place for the startup sequence.
   #if !NA_MACOS_USES_ARC
-    pool = [[NSAutoreleasePool alloc] init];
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
   #endif
     // Call preStartup if desired.
     if(preStartup){preStartup(arg);}
@@ -57,40 +67,29 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
     // Call postStartup if desired.
     if(postStartup){postStartup(arg);}
   #if !NA_MACOS_USES_ARC
-    [pool drain];
+    [pool drain]; // also releases the pool. No separate release necessary.
   #endif
 
-  NA_UNUSED(app);
-  //[NSApp setDelegate:(NA_COCOA_BRIDGE id)naGetUIElementNativeID(app)];
-  
-//  SEL selector = @selector(doSomethingWithObject:afterDelay:);
-//  IMP newImp = (IMP)swizzledDoSometingWithObjectAfterDelay;
-//  Method method = class_getClassMethod([MyClass class], selector);
-//  const char * encoding = method_getTypeEncoding(method);
-//  class_replaceMethod([MyClass class], selector, newIMP, encoding);
-
   // Start the event loop.
-  distantFuture = [NSDate distantFuture];
+  NSDate* distantFuture = [NSDate distantFuture];
   while(na_IsApplicationRunning()){
-    NSEvent* curEvent;
     #if !NA_MACOS_USES_ARC
       pool = [[NSAutoreleasePool alloc] init];
     #endif
-      curEvent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantFuture inMode:NSDefaultRunLoopMode dequeue:YES];
+      NSEvent* curEvent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantFuture inMode:NSDefaultRunLoopMode dequeue:YES];
 //      if([curEvent type] == NSEventType)
       naCollectGarbage();
       if(!na_InterceptKeyboardShortcut(curEvent)){
         if(curEvent){[NSApp sendEvent:curEvent];}
       }
     #if !NA_MACOS_USES_ARC
-      [pool drain];
+      [pool drain]; // also releases the pool. No separate release necessary.
     #endif
   }
 
   // When reaching here, the application had been stopped.
-  naReleaseUIElement(app);
+  naDelete(app);
 }
-
 
 
 
@@ -107,20 +106,19 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 NA_HDEF NAApplication* na_NewApplication(void){
-  NACocoaApplication* cocoaApplication = naAlloc(NACocoaApplication);
+  NACocoaApplication* cocoaApplication = naNew(NACocoaApplication);
 
-  NACocoaApplicationDelegate* cocoaAppDelegate = [[NACocoaApplicationDelegate alloc] initWithCocoaApplication:cocoaApplication];
-
-  na_InitApplication(&(cocoaApplication->application), NA_COCOA_PTR_OBJC_TO_C(cocoaAppDelegate));
+  NACocoaNativeApplicationDelegate* nativePtr = [[NACocoaNativeApplicationDelegate alloc]
+    initWithCocoaApplication:cocoaApplication];
+  na_InitApplication(&(cocoaApplication->application), NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return (NAApplication*)cocoaApplication;
 }
 
 
 
-NA_DEF void na_DestructApplication(NAApplication* application){
-  NACocoaApplication* cocoaApplication = (NACocoaApplication*)application;
-  na_ClearApplication(&(cocoaApplication->application));
+NA_DEF void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication){
+  na_ClearApplication((NAApplication*)cocoaApplication);
 }
 
 
@@ -200,14 +198,12 @@ NA_DEF NAString* naNewApplicationIconPath(void){
 
 NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
   NSURL* url;
-  NAString* retString;
   if(dir){
     url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:dir]];
   }else{
     url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix]];
   }
-  retString = naNewStringWithFormat("%s", [[url path] UTF8String]);
-  return retString;
+  return naNewStringWithFormat("%s", [[url path] UTF8String]);
 }
 
 

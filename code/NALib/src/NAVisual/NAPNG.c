@@ -205,45 +205,45 @@ NA_HDEF void na_DeallocPNGChunk(NAPNGChunk* chunk){
 
 
 NA_API NAInt naGetPNGBytesPerPixel(NAPNGColorType colorType){
-  NAInt retvalue;
+  NAInt retValue;
   switch(colorType){
   case NA_PNG_COLORTYPE_GREYSCALE:
-    retvalue = 1;
+    retValue = 1;
     break;
   case NA_PNG_COLORTYPE_TRUECOLOR:
-    retvalue = 3;
+    retValue = 3;
     break;
   case NA_PNG_COLORTYPE_INDEXEDCOLOR:
-    retvalue = 1;
+    retValue = 1;
     break;
   case NA_PNG_COLORTYPE_GREYSCALE_ALPHA:
-    retvalue = 2;
+    retValue = 2;
     break;
   case NA_PNG_COLORTYPE_TRUECOLOR_ALPHA:
-    retvalue = 4;
+    retValue = 4;
     break;
   default:
     #ifndef NDEBUG
       naError("Invalid colorType given");
     #endif
-    retvalue = 0;
+    retValue = 0;
     break;
   }
-  return retvalue;
+  return retValue;
 }
 
 
 
 NA_DEF NAByte naGetPaethPredictor(NAByte a, NAByte b, NAByte c){
-  NAByte retvalue;
+  NAByte retValue;
   NAInt p = (NAInt)a + (NAInt)b - (NAInt)c;
   NAInt pa = naAbsi(p - (NAInt)a);
   NAInt pb = naAbsi(p - (NAInt)b);
   NAInt pc = naAbsi(p - (NAInt)c);
-  if((pa <= pb) && (pa <= pc)){retvalue = a;}
-  else if(pb <= pc){retvalue = b;}
-  else{retvalue = c;}
-  return retvalue;
+  if((pa <= pb) && (pa <= pc)){retValue = a;}
+  else if(pb <= pc){retValue = b;}
+  else{retValue = c;}
+  return retValue;
 }
 
 

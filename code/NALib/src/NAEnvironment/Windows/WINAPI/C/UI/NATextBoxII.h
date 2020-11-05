@@ -9,9 +9,12 @@
 typedef struct NAWINAPITextBox NAWINAPITextBox;
 struct NAWINAPITextBox {
   NATextBox textBox;
-  void* nextTabStop;
-  void* prevTabStop;
+  void*     nextTabStop;
+  void*     prevTabStop;
 };
+
+NA_HAPI void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox);
+NA_RUNTIME_TYPE(NAWINAPITextBox, na_DestructWINAPITextBox, NA_FALSE);
 
 
 
@@ -32,7 +35,7 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM w
 NABool naHandleTextBoxTabOrder(NAReaction reaction){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uiElement;
   if(winapiTextBox->nextTabStop){
-    SetFocus(naGetUIElementNativeID(winapiTextBox->nextTabStop));
+    SetFocus(naGetUIElementNativePtr(winapiTextBox->nextTabStop));
     return NA_TRUE;
   }
   return NA_FALSE;
@@ -43,7 +46,7 @@ NABool naHandleTextBoxTabOrder(NAReaction reaction){
 NABool naHandleTextBoxReverseTabOrder(NAReaction reaction){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uiElement;
   if(winapiTextBox->prevTabStop){
-    SetFocus(naGetUIElementNativeID(winapiTextBox->prevTabStop));
+    SetFocus(naGetUIElementNativePtr(winapiTextBox->prevTabStop));
     return NA_TRUE;
   }
   return NA_FALSE;
@@ -55,21 +58,29 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
   HWND hWnd;
   DWORD style;
 
-  NAWINAPITextBox* winapiTextBox = naAlloc(NAWINAPITextBox);
+  NAWINAPITextBox* winapiTextBox = naNew(NAWINAPITextBox);
 
   style = WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN;
 
 	hWnd = CreateWindow(
 		TEXT("EDIT"), TEXT(""), style,
 		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
   
   na_InitTextBox(&(winapiTextBox->textBox), hWnd);
   winapiTextBox->nextTabStop = winapiTextBox;
   winapiTextBox->prevTabStop = winapiTextBox;
 
-   naAddUIKeyboardShortcut(winapiTextBox, naMakeKeybardStatus(0, NA_KEYCODE_TAB), naHandleTextBoxTabOrder, NA_NULL);
- naAddUIKeyboardShortcut(winapiTextBox, naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB), naHandleTextBoxReverseTabOrder, NA_NULL);
+  naAddUIKeyboardShortcut(
+    winapiTextBox,
+    naMakeKeybardStatus(0, NA_KEYCODE_TAB),
+    naHandleTextBoxTabOrder,
+    NA_NULL);
+  naAddUIKeyboardShortcut(
+    winapiTextBox,
+    naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB),
+    naHandleTextBoxReverseTabOrder,
+    NA_NULL);
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
@@ -78,38 +89,37 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 
 
 
-NA_DEF void na_DestructTextBox(NATextBox* textBox){
-  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  na_ClearTextBox(&(winapiTextBox->textBox));
+NA_DEF void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox){
+  na_ClearTextBox((NATextBox*)winapiTextBox);
 }
 
 
 
 NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text){
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
-  SendMessage(naGetUIElementNativeID(textBox), WM_SETTEXT, 0, (LPARAM)systemtext);
-  naFree(systemtext);
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
+  SendMessage(naGetUIElementNativePtr(textBox), WM_SETTEXT, 0, (LPARAM)systemText);
+  naFree(systemText);
 }
 
 
 
 NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment){
-  long style = (long)GetWindowLongPtr(naGetUIElementNativeID(textBox), GWL_STYLE);
+  long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(textBox), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
-  SetWindowLongPtr(naGetUIElementNativeID(textBox), GWL_STYLE, style);
+  SetWindowLongPtr(naGetUIElementNativePtr(textBox), GWL_STYLE, style);
 }
 
 
 
 NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  SendMessage(naGetUIElementNativeID(winapiTextBox), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
+  SendMessage(naGetUIElementNativePtr(winapiTextBox), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
 }
 
 
 
 NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
-  SendMessage(naGetUIElementNativeID(textBox), EM_SETREADONLY, (WPARAM)!editable, 0);
+  SendMessage(naGetUIElementNativePtr(textBox), EM_SETREADONLY, (WPARAM)!editable, 0);
 }
 
 

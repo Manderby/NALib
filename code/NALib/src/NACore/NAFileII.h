@@ -6,9 +6,9 @@
 
 
 // Use this function with originType = SEEK_SET, SEEK_CUR or SEEK_END.
-// Note that all systems define NAFilesize to be a signed integer. Therefore
+// Note that all systems define NAFileSize to be a signed integer. Therefore
 // searching backwards with SEEK_CUR is possible.
-NA_IDEF NAFilesize naLseek(int fd, NAFilesize byteOffset, int originType){
+NA_IDEF NAFileSize naLseek(int fd, NAFileSize byteOffset, int originType){
   #if NA_OS == NA_OS_WINDOWS
     #if NA_ADDRESS_BITS == 64
       return _lseeki64(fd, byteOffset, originType);
@@ -23,9 +23,9 @@ NA_IDEF NAFilesize naLseek(int fd, NAFilesize byteOffset, int originType){
 
 
 // Use this function with originType = SEEK_SET, SEEK_CUR or SEEK_END.
-// Note that all systems define NAFilesize to be a signed integer. Therefore
+// Note that all systems define NAFileSize to be a signed integer. Therefore
 // searching backwards with SEEK_CUR is possible.
-NA_IDEF NAFilesize naTell(int fd){
+NA_IDEF NAFileSize naTell(int fd){
   #if NA_OS == NA_OS_WINDOWS
     #if NA_ADDRESS_BITS == 64
       return _lseeki64(fd, 0, SEEK_CUR);
@@ -66,20 +66,20 @@ NA_IDEF int naClose(int fd){
 }
 
 
-NA_IDEF NAFilesize naRead(int fd, void* buf, NAFilesize byteSize){
+NA_IDEF NAFileSize naRead(int fd, void* buf, NAFileSize byteSize){
   #if NA_OS == NA_OS_WINDOWS
-    return (NAFilesize)_read(fd, buf, (unsigned int)byteSize);
+    return (NAFileSize)_read(fd, buf, (unsigned int)byteSize);
   #elif NA_OS == NA_OS_MAC_OS_X
-    return (NAFilesize)read(fd, buf, (size_t)byteSize);
+    return (NAFileSize)read(fd, buf, (size_t)byteSize);
   #endif
 }
 
 
-NA_IDEF NAFilesize naWrite(int fd, const void* buf, NAFilesize byteSize){
+NA_IDEF NAFileSize naWrite(int fd, const void* buf, NAFileSize byteSize){
   #if NA_OS == NA_OS_WINDOWS
-    return (NAFilesize)_write(fd, buf, (unsigned int)byteSize);
+    return (NAFileSize)_write(fd, buf, (unsigned int)byteSize);
   #elif NA_OS == NA_OS_MAC_OS_X
-    return (NAFilesize)write(fd, buf, (size_t)byteSize);
+    return (NAFileSize)write(fd, buf, (size_t)byteSize);
   #endif
 }
 
@@ -136,19 +136,19 @@ NA_IDEF NABool naCopyFile(const char* dstPath, const char* srcPath){
 
 NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NABool canWrite, NABool canExecute){
   #if NA_OS == NA_OS_WINDOWS
-    int testmode = 0;
-    // testmode |= (exists?00:0); // This line has been commented out because of static code analysis.
-    testmode |= (canRead?04:0);
-    testmode |= (canWrite?02:0);
+    int testMode = 0;
+    // testMode |= (exists?00:0); // This line has been commented out because of static code analysis.
+    testMode |= (canRead?04:0);
+    testMode |= (canWrite?02:0);
     NA_UNUSED(canExecute); // Under windows, the executable flag does not exist.
-    return (_access(path, testmode) == 0);
+    return (_access(path, testMode) == 0);
   #elif NA_OS == NA_OS_MAC_OS_X
-    int testmode = 0;
-    testmode |= (doesExists?F_OK:0);
-    testmode |= (canRead?R_OK:0);
-    testmode |= (canWrite?W_OK:0);
-    testmode |= (canExecute?X_OK:0);
-    return (access(path, testmode) == 0);
+    int testMode = 0;
+    testMode |= (doesExists?F_OK:0);
+    testMode |= (canRead?R_OK:0);
+    testMode |= (canWrite?W_OK:0);
+    testMode |= (canExecute?X_OK:0);
+    return (access(path, testMode) == 0);
   #endif
 }
 
@@ -256,17 +256,17 @@ NA_IDEF void naReleaseFile(NAFile* file){
 
 
 
-NA_IDEF NAFilesize naComputeFileBytesize(const NAFile* file){
-  NAFilesize curOffset;
-  NAFilesize filesize;
+NA_IDEF NAFileSize naComputeFileBytesize(const NAFile* file){
+  NAFileSize curOffset;
+  NAFileSize fileSize;
   curOffset = naLseek(file->desc, 0, SEEK_CUR);
   #ifndef NDEBUG
     if(curOffset == -1)
       naError("An error occured while seeking the file. Maybe file not open or a stream? Undefined behaviour.");
   #endif
-  filesize = naLseek(file->desc, 0, SEEK_END);
+  fileSize = naLseek(file->desc, 0, SEEK_END);
   naLseek(file->desc, curOffset, SEEK_SET);
-  return filesize;  // todo: check if filesize too big for NAInt
+  return fileSize;  // todo: check if fileSize too big for NAInt
 }
 
 
@@ -277,37 +277,37 @@ NA_IDEF NABool naIsFileOpen(const NAFile* file){
 
 
 
-NA_IDEF void naSeekFileAbsolute(NAFile* file, NAFilesize byteOffset){
-  NAFilesize newoffset;
+NA_IDEF void naSeekFileAbsolute(NAFile* file, NAFileSize byteOffset){
+  NAFileSize newOffset;
   #ifndef NDEBUG
     if(byteOffset < 0)
       naError("Negative offset in absolute jump.");
   #endif
-  newoffset = naLseek(file->desc, byteOffset, SEEK_SET);
+  newOffset = naLseek(file->desc, byteOffset, SEEK_SET);
   #ifndef NDEBUG
-    if(newoffset == -1)
+    if(newOffset == -1)
       naError("An error occured while seeking the file. Maybe file not open or a stream? Undefined behaviour.");
   #else
-    NA_UNUSED(newoffset);
+    NA_UNUSED(newOffset);
   #endif
 }
 
 
 
-NA_IDEF void naSeekFileRelative(NAFile* file, NAFilesize byteOffset){
-  NAFilesize newoffset;
-  newoffset = naLseek(file->desc, byteOffset, SEEK_CUR);
+NA_IDEF void naSeekFileRelative(NAFile* file, NAFileSize byteOffset){
+  NAFileSize newOffset;
+  newOffset = naLseek(file->desc, byteOffset, SEEK_CUR);
   #ifndef NDEBUG
-    if(newoffset == -1)
+    if(newOffset == -1)
       naError("An error occured while seeking the file. Maybe file not open or a stream? Undefined behaviour.");
   #else
-    NA_UNUSED(newoffset);
+    NA_UNUSED(newOffset);
   #endif
 }
 
 
 
-NA_IDEF NAFilesize naReadFileBytes(NAFile* file, void* buf, NAFilesize byteSize){
+NA_IDEF NAFileSize naReadFileBytes(NAFile* file, void* buf, NAFileSize byteSize){
   #ifndef NDEBUG
     if(!naIsFileOpen(file))
       naError("File is not open.");
@@ -321,7 +321,7 @@ NA_IDEF NAFilesize naReadFileBytes(NAFile* file, void* buf, NAFilesize byteSize)
 }
 
 
-NA_IDEF NAFilesize naWriteFileBytes(NAFile* file, const void* ptr, NAFilesize byteSize){
+NA_IDEF NAFileSize naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize byteSize){
   #ifndef NDEBUG
     if(!naIsFileOpen(file))
       naError("File is not open.");
@@ -344,15 +344,15 @@ NA_IDEF NAFilesize naWriteFileBytes(NAFile* file, const void* ptr, NAFilesize by
 
 
 NA_IDEF int naScanDecimal(){
-  int retvalue;
+  int retValue;
   #if NA_OS == NA_OS_WINDOWS
-    scanf_s("%d", &retvalue);
+    scanf_s("%d", &retValue);
   #elif NA_OS == NA_OS_MAC_OS_X
-    scanf("%d", &retvalue);
+    scanf("%d", &retValue);
   #else
-    scanf("%d", &retvalue);  // Might not compile on an undetected system.
+    scanf("%d", &retValue);  // Might not compile on an undetected system.
   #endif
-  return retvalue;
+  return retValue;
 }
 
 

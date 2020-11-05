@@ -80,18 +80,6 @@ NA_API NAUTF8Char* naPriix256(NAi256 value);
 // Makes a new, EMPTY NAString.
 NA_API NAString* naNewString(void);
 
-// Returns an NAString representing a given C-String written directly in the
-// programming code and encoded in UTF8. This function is useful for the
-// programmers which like to write strings in the code like "Hello World".
-// This function takes such strings and wraps it into a string struct. The
-// string is marked explicitely as read-only. Note that this works only
-// reliable if the source-code itself is encoded in UTF-8. DOES NOT COPY!
-//
-// Beware! Only use it for literals! Trying to use it with other char* may
-// lead to serious trouble! Use naNewStringWithFormat for that. Also be
-// advised to not convert from NAString to char* and back again!
-NA_API NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr);
-
 // Returns an NAString with the given length using the given buffer. The buffer
 // must be big enough! When destructor is anything but NA_NULL, the given
 // buffer will be cleaned up when eventually it is no longer in use.
@@ -218,7 +206,7 @@ NA_API NAString* naNewStringEPSDecoded(const NAString* inputString);
 // Appending functions: Appends something at the end of originalString.
 // The storage of originalString will be detached and deleted if necessary.
 // Before that, all content will be COPIED. The resulting string will be
-// NULL-terminated.
+// Null-terminated.
 
 // Appends another NAString
 NA_API void naAppendStringString(       NAString* originalString,

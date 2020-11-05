@@ -11,6 +11,9 @@ struct NAWINAPIRadio {
   NARadio radio;
 };
 
+NA_HAPI void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio);
+NA_RUNTIME_TYPE(NAWINAPIRadio, na_DestructWINAPIRadio, NA_FALSE);
+
 
 
 NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
@@ -51,7 +54,7 @@ NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     check = naGetRadioState(uiElement);
     naSetRadioState(uiElement, !check);
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
-    info.hasbeenhandeled = NA_TRUE;
+    info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;
 
@@ -68,23 +71,23 @@ NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
-  TCHAR* systemtext;
+  TCHAR* systemText;
   WNDPROC oldproc;
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPIRadio* winapiRadio = naAlloc(NAWINAPIRadio);
+  NAWINAPIRadio* winapiRadio = naNew(NAWINAPIRadio);
 
   style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_RADIOBUTTON;
 
-  systemtext = naAllocSystemStringWithUTF8String(text);
+  systemText = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
-		TEXT("BUTTON"), systemtext, style,
+		TEXT("BUTTON"), systemText, style,
 		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
   
-  naFree(systemtext);
+  naFree(systemText);
 
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}
@@ -98,9 +101,8 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF void na_DestructRadio(NARadio* radio){
-  NAWINAPIRadio* winapiRadio = (NAWINAPIRadio*)radio;
-  na_ClearRadio(&(winapiRadio->radio));
+NA_DEF void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio){
+  na_ClearRadio((NARadio*)winapiRadio);
 }
 
 
@@ -113,7 +115,7 @@ NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
 
 
 NA_DEF NABool naGetRadioState(NARadio* radio){
-  LPARAM state = SendMessage(naGetUIElementNativeID(radio), BM_GETSTATE, 0, 0);
+  LPARAM state = SendMessage(naGetUIElementNativePtr(radio), BM_GETSTATE, 0, 0);
   return (state & BST_CHECKED) == BST_CHECKED;
 }
 
@@ -121,7 +123,7 @@ NA_DEF NABool naGetRadioState(NARadio* radio){
 
 NA_DEF void naSetRadioState(NARadio* radio, NABool state){
   LPARAM lParam = state ? BST_CHECKED : BST_UNCHECKED;
-  SendMessage(naGetUIElementNativeID(radio), BM_SETCHECK, lParam, 0);
+  SendMessage(naGetUIElementNativePtr(radio), BM_SETCHECK, lParam, 0);
 }
 
 

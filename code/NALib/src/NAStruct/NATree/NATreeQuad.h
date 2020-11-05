@@ -7,7 +7,7 @@ struct NATreeQuadNode{
   NATreeItem* childs[4];
   NAPos origin;
   NAPtr userData;
-  NAInt childexponent;
+  NAInt childExponent;
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeQuadNode);
 
@@ -16,7 +16,7 @@ struct NATreeQuadLeaf{
   NATreeLeaf leaf;
   NAPos origin;  // todo remove this maybe?
   NAPtr userData;
-  NAInt leafexponent; // todo remove this maybe?
+  NAInt leafExponent; // todo remove this maybe?
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeQuadLeaf);
 
@@ -27,10 +27,10 @@ NA_EXTERN_RUNTIME_TYPE(NATreeQuadLeaf);
 #define LEAF_USERDATA_OFFSET_QUAD   offsetof(NATreeQuadLeaf, userData)
 #define NODE_USERDATA_OFFSET_QUAD   offsetof(NATreeQuadNode, userData)
 
-NA_HAPI  NAInt na_GetChildIndexQuadDouble(NATreeNode* parentnode, const void* childkey);
-NA_HAPI  NAInt na_GetKeyIndexQuadDouble(const void* basekey, const void* testkey, const void* data);
+NA_HAPI  NAInt na_GetChildIndexQuadDouble(NATreeNode* parentNode, const void* childKey);
+NA_HAPI  NAInt na_GetKeyIndexQuadDouble(const void* baseKey, const void* testKey, const void* data);
 NA_HAPI  NABool na_TestKeyQuadDouble(const void* lowerLimit, const void* upperLimit, const void* key);
-NA_HAPI  NABool na_TestKeyNodeContainQuadDouble(NATreeNode* parentnode, const void* key);
+NA_HAPI  NABool na_TestKeyNodeContainQuadDouble(NATreeNode* parentNode, const void* key);
 NA_HAPI  NABool na_TestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key);
 
 NA_HAPI  void na_DestructTreeNodeQuad(NATreeNode* node);

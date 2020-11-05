@@ -209,8 +209,8 @@ NA_DEF NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image){
   NAInt x, y;
   NABabyImage* outimage;
   NAInt valuesPerLine;
-  float* inptr1;
-  float* inptr2;
+  float* inPtr1;
+  float* inPtr2;
   float* outdataptr;
   
   #ifndef NDEBUG
@@ -222,21 +222,21 @@ NA_DEF NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image){
   outimage = naCreateBabyImage(halfsize, NA_NULL);
   valuesPerLine = naGetBabyImageValuesPerLine(image);
   
-  inptr1 = image->data;
-  inptr2 = image->data + valuesPerLine;
+  inPtr1 = image->data;
+  inPtr2 = image->data + valuesPerLine;
   outdataptr = outimage->data;
   for(y = 0; y < image->height; y += 2){
     for(x = 0; x < image->width; x += 2){
-      outdataptr[0] = inptr1[0] * inptr1[3] + inptr1[4] * inptr1[7];
-      outdataptr[1] = inptr1[1] * inptr1[3] + inptr1[5] * inptr1[7];
-      outdataptr[2] = inptr1[2] * inptr1[3] + inptr1[6] * inptr1[7];
-      outdataptr[3] = inptr1[3] + inptr1[7];
-      inptr1 += 8;
-      outdataptr[0] += inptr2[0] * inptr2[3] + inptr2[4] * inptr2[7];
-      outdataptr[1] += inptr2[1] * inptr2[3] + inptr2[5] * inptr2[7];
-      outdataptr[2] += inptr2[2] * inptr2[3] + inptr2[6] * inptr2[7];
-      outdataptr[3] += inptr2[3] + inptr2[7];
-      inptr2 += 8;
+      outdataptr[0] = inPtr1[0] * inPtr1[3] + inPtr1[4] * inPtr1[7];
+      outdataptr[1] = inPtr1[1] * inPtr1[3] + inPtr1[5] * inPtr1[7];
+      outdataptr[2] = inPtr1[2] * inPtr1[3] + inPtr1[6] * inPtr1[7];
+      outdataptr[3] = inPtr1[3] + inPtr1[7];
+      inPtr1 += 8;
+      outdataptr[0] += inPtr2[0] * inPtr2[3] + inPtr2[4] * inPtr2[7];
+      outdataptr[1] += inPtr2[1] * inPtr2[3] + inPtr2[5] * inPtr2[7];
+      outdataptr[2] += inPtr2[2] * inPtr2[3] + inPtr2[6] * inPtr2[7];
+      outdataptr[3] += inPtr2[3] + inPtr2[7];
+      inPtr2 += 8;
       if(outdataptr[3] != 0.f){
         float invweight = naInvf(outdataptr[3]);
         outdataptr[0] *= invweight;
@@ -248,8 +248,8 @@ NA_DEF NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image){
     }
     // Each line has advanced till the last pixel of the line, so we only
     // have to overjump one more line.
-    inptr1 += valuesPerLine;
-    inptr2 += valuesPerLine;
+    inPtr1 += valuesPerLine;
+    inPtr2 += valuesPerLine;
   }
   return outimage;
 }
@@ -261,9 +261,9 @@ NA_HDEF void na_DestroyBabyImage(NABabyImage* image){
   naFree(image);
 }
 
-NA_API const NABabyImage* naRetainBabyImage(const NABabyImage* image){
+NA_API NABabyImage* naRetainBabyImage(const NABabyImage* image){
   NABabyImage* mutableImage = (NABabyImage*)image; 
-  return (const NABabyImage*)naRetainRefCount(&mutableImage->refCount);
+  return (NABabyImage*)naRetainRefCount(&mutableImage->refCount);
 }
 
 NA_DEF void naReleaseBabyImage(const NABabyImage* image){

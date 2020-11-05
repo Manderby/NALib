@@ -176,7 +176,7 @@ NA_API int16     naMakeShiftFromTimeZone(const NATimeZone* timeZone);
 
 // Fills the given struct with date and time values, splitted into all of the
 // components of the given dateTime. Fills an NADateTimeAttribute with further
-// information about this date if desired. The attribute can be NULL.
+// information about this date if desired. The attribute can be Null.
 NA_API void naExtractDateTimeInformation(const NADateTime* dateTime,
                                          NADateTimeStruct* dts,
                                       NADateTimeAttribute* dta);

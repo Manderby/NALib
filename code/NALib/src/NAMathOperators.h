@@ -45,7 +45,7 @@
 // Never returns 0!  You can use the result of this function safely as a
 // multiplication factor. You can also subtract the result of this function
 // from the comma ASCII character and get a string representation of the sign:
-// NAUTF8Char signASCII = ',' - naSigni(-42);
+// NAUTF8Char signASCII = ',' - naSigni(-1234);
 NA_IAPI NAInt         naSigni  (NAInt x);
 
 // naAlmostZero   Returns NA_TRUE, if the ABSOLUTE discance between x and 0 is

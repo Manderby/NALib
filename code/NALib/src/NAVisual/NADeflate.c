@@ -230,89 +230,89 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
 
 
 uint16 naDecodeLiteralLength(NABufferIterator* iter, uint16 code){
-  uint16 retvalue;
+  uint16 retValue;
   switch(code){
-  case 257: retvalue = 3; break;
-  case 258: retvalue = 4; break;
-  case 259: retvalue = 5; break;
-  case 260: retvalue = 6; break;
-  case 261: retvalue = 7; break;
-  case 262: retvalue = 8; break;
-  case 263: retvalue = 9; break;
-  case 264: retvalue = 10; break;
-  case 265: retvalue = 11 + (uint16)naReadBufferBits(iter, 1); break;
-  case 266: retvalue = 13 + (uint16)naReadBufferBits(iter, 1); break;
-  case 267: retvalue = 15 + (uint16)naReadBufferBits(iter, 1); break;
-  case 268: retvalue = 17 + (uint16)naReadBufferBits(iter, 1); break;
-  case 269: retvalue = 19 + (uint16)naReadBufferBits(iter, 2); break;
-  case 270: retvalue = 23 + (uint16)naReadBufferBits(iter, 2); break;
-  case 271: retvalue = 27 + (uint16)naReadBufferBits(iter, 2); break;
-  case 272: retvalue = 31 + (uint16)naReadBufferBits(iter, 2); break;
-  case 273: retvalue = 35 + (uint16)naReadBufferBits(iter, 3); break;
-  case 274: retvalue = 43 + (uint16)naReadBufferBits(iter, 3); break;
-  case 275: retvalue = 51 + (uint16)naReadBufferBits(iter, 3); break;
-  case 276: retvalue = 59 + (uint16)naReadBufferBits(iter, 3); break;
-  case 277: retvalue = 67 + (uint16)naReadBufferBits(iter, 4); break;
-  case 278: retvalue = 83 + (uint16)naReadBufferBits(iter, 4); break;
-  case 279: retvalue = 99 + (uint16)naReadBufferBits(iter, 4); break;
-  case 280: retvalue = 115 + (uint16)naReadBufferBits(iter, 4); break;
-  case 281: retvalue = 131 + (uint16)naReadBufferBits(iter, 5); break;
-  case 282: retvalue = 163 + (uint16)naReadBufferBits(iter, 5); break;
-  case 283: retvalue = 195 + (uint16)naReadBufferBits(iter, 5); break;
-  case 284: retvalue = 227 + (uint16)naReadBufferBits(iter, 5); break;
-  case 285: retvalue = 258; break;
+  case 257: retValue = 3; break;
+  case 258: retValue = 4; break;
+  case 259: retValue = 5; break;
+  case 260: retValue = 6; break;
+  case 261: retValue = 7; break;
+  case 262: retValue = 8; break;
+  case 263: retValue = 9; break;
+  case 264: retValue = 10; break;
+  case 265: retValue = 11 + (uint16)naReadBufferBits(iter, 1); break;
+  case 266: retValue = 13 + (uint16)naReadBufferBits(iter, 1); break;
+  case 267: retValue = 15 + (uint16)naReadBufferBits(iter, 1); break;
+  case 268: retValue = 17 + (uint16)naReadBufferBits(iter, 1); break;
+  case 269: retValue = 19 + (uint16)naReadBufferBits(iter, 2); break;
+  case 270: retValue = 23 + (uint16)naReadBufferBits(iter, 2); break;
+  case 271: retValue = 27 + (uint16)naReadBufferBits(iter, 2); break;
+  case 272: retValue = 31 + (uint16)naReadBufferBits(iter, 2); break;
+  case 273: retValue = 35 + (uint16)naReadBufferBits(iter, 3); break;
+  case 274: retValue = 43 + (uint16)naReadBufferBits(iter, 3); break;
+  case 275: retValue = 51 + (uint16)naReadBufferBits(iter, 3); break;
+  case 276: retValue = 59 + (uint16)naReadBufferBits(iter, 3); break;
+  case 277: retValue = 67 + (uint16)naReadBufferBits(iter, 4); break;
+  case 278: retValue = 83 + (uint16)naReadBufferBits(iter, 4); break;
+  case 279: retValue = 99 + (uint16)naReadBufferBits(iter, 4); break;
+  case 280: retValue = 115 + (uint16)naReadBufferBits(iter, 4); break;
+  case 281: retValue = 131 + (uint16)naReadBufferBits(iter, 5); break;
+  case 282: retValue = 163 + (uint16)naReadBufferBits(iter, 5); break;
+  case 283: retValue = 195 + (uint16)naReadBufferBits(iter, 5); break;
+  case 284: retValue = 227 + (uint16)naReadBufferBits(iter, 5); break;
+  case 285: retValue = 258; break;
   default:
     #ifndef NDEBUG
       naError("Invalid literal length code receyved");
     #endif
-    retvalue = 0;
+    retValue = 0;
     break;
   }
-  return retvalue;
+  return retValue;
 }
 
 
 uint16 naDecodeDistance(NABufferIterator* iter, uint16 code){
-  uint16 retvalue;
+  uint16 retValue;
   switch(code){
-  case 0: retvalue = 1; break;
-  case 1: retvalue = 2; break;
-  case 2: retvalue = 3; break;
-  case 3: retvalue = 4; break;
-  case 4: retvalue = 5 + (uint16)naReadBufferBits(iter, 1); break;
-  case 5: retvalue = 7 + (uint16)naReadBufferBits(iter, 1); break;
-  case 6: retvalue = 9 + (uint16)naReadBufferBits(iter, 2); break;
-  case 7: retvalue = 13 + (uint16)naReadBufferBits(iter, 2); break;
-  case 8: retvalue = 17 + (uint16)naReadBufferBits(iter, 3); break;
-  case 9: retvalue = 25 + (uint16)naReadBufferBits(iter, 3); break;
-  case 10: retvalue = 33 + (uint16)naReadBufferBits(iter, 4); break;
-  case 11: retvalue = 49 + (uint16)naReadBufferBits(iter, 4); break;
-  case 12: retvalue = 65 + (uint16)naReadBufferBits(iter, 5); break;
-  case 13: retvalue = 97 + (uint16)naReadBufferBits(iter, 5); break;
-  case 14: retvalue = 129 + (uint16)naReadBufferBits(iter, 6); break;
-  case 15: retvalue = 193 + (uint16)naReadBufferBits(iter, 6); break;
-  case 16: retvalue = 257 + (uint16)naReadBufferBits(iter, 7); break;
-  case 17: retvalue = 385 + (uint16)naReadBufferBits(iter, 7); break;
-  case 18: retvalue = 513 + (uint16)naReadBufferBits(iter, 8); break;
-  case 19: retvalue = 769 + (uint16)naReadBufferBits(iter, 8); break;
-  case 20: retvalue = 1025 + (uint16)naReadBufferBits(iter, 9); break;
-  case 21: retvalue = 1537 + (uint16)naReadBufferBits(iter, 9); break;
-  case 22: retvalue = 2049 + (uint16)naReadBufferBits(iter, 10); break;
-  case 23: retvalue = 3073 + (uint16)naReadBufferBits(iter, 10); break;
-  case 24: retvalue = 4097 + (uint16)naReadBufferBits(iter, 11); break;
-  case 25: retvalue = 6145 + (uint16)naReadBufferBits(iter, 11); break;
-  case 26: retvalue = 8193 + (uint16)naReadBufferBits(iter, 12); break;
-  case 27: retvalue = 12289 + (uint16)naReadBufferBits(iter, 12); break;
-  case 28: retvalue = 16385 + (uint16)naReadBufferBits(iter, 13); break;
-  case 29: retvalue = 24577 + (uint16)naReadBufferBits(iter, 13); break;
+  case 0: retValue = 1; break;
+  case 1: retValue = 2; break;
+  case 2: retValue = 3; break;
+  case 3: retValue = 4; break;
+  case 4: retValue = 5 + (uint16)naReadBufferBits(iter, 1); break;
+  case 5: retValue = 7 + (uint16)naReadBufferBits(iter, 1); break;
+  case 6: retValue = 9 + (uint16)naReadBufferBits(iter, 2); break;
+  case 7: retValue = 13 + (uint16)naReadBufferBits(iter, 2); break;
+  case 8: retValue = 17 + (uint16)naReadBufferBits(iter, 3); break;
+  case 9: retValue = 25 + (uint16)naReadBufferBits(iter, 3); break;
+  case 10: retValue = 33 + (uint16)naReadBufferBits(iter, 4); break;
+  case 11: retValue = 49 + (uint16)naReadBufferBits(iter, 4); break;
+  case 12: retValue = 65 + (uint16)naReadBufferBits(iter, 5); break;
+  case 13: retValue = 97 + (uint16)naReadBufferBits(iter, 5); break;
+  case 14: retValue = 129 + (uint16)naReadBufferBits(iter, 6); break;
+  case 15: retValue = 193 + (uint16)naReadBufferBits(iter, 6); break;
+  case 16: retValue = 257 + (uint16)naReadBufferBits(iter, 7); break;
+  case 17: retValue = 385 + (uint16)naReadBufferBits(iter, 7); break;
+  case 18: retValue = 513 + (uint16)naReadBufferBits(iter, 8); break;
+  case 19: retValue = 769 + (uint16)naReadBufferBits(iter, 8); break;
+  case 20: retValue = 1025 + (uint16)naReadBufferBits(iter, 9); break;
+  case 21: retValue = 1537 + (uint16)naReadBufferBits(iter, 9); break;
+  case 22: retValue = 2049 + (uint16)naReadBufferBits(iter, 10); break;
+  case 23: retValue = 3073 + (uint16)naReadBufferBits(iter, 10); break;
+  case 24: retValue = 4097 + (uint16)naReadBufferBits(iter, 11); break;
+  case 25: retValue = 6145 + (uint16)naReadBufferBits(iter, 11); break;
+  case 26: retValue = 8193 + (uint16)naReadBufferBits(iter, 12); break;
+  case 27: retValue = 12289 + (uint16)naReadBufferBits(iter, 12); break;
+  case 28: retValue = 16385 + (uint16)naReadBufferBits(iter, 13); break;
+  case 29: retValue = 24577 + (uint16)naReadBufferBits(iter, 13); break;
   default:
     #ifndef NDEBUG
       naError("Invalid distance code receyved");
     #endif
-    retvalue = 0;
+    retValue = 0;
     break;
   }
-  return retvalue;
+  return retValue;
 }
 
 

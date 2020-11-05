@@ -29,13 +29,13 @@ NA_EXTERN_RUNTIME_TYPE(NATreeBinLeaf);
 #define LEAF_USERDATA_OFFSET_BIN   offsetof(NATreeBinLeaf, userData)
 #define NODE_USERDATA_OFFSET_BIN   offsetof(NATreeBinNode, userData)
 
-NA_HAPI  NAInt na_GetChildIndexBinDouble(NATreeNode* parentnode, const void* childkey);
-NA_HAPI  NAInt na_GetKeyIndexBinDouble(const void* basekey, const void* testkey, const void* data);
+NA_HAPI  NAInt na_GetChildIndexBinDouble(NATreeNode* parentNode, const void* childKey);
+NA_HAPI  NAInt na_GetKeyIndexBinDouble(const void* baseKey, const void* testKey, const void* data);
 NA_HAPI  NABool na_TestKeyBinDouble(const void* lowerLimit, const void* upperLimit, const void* key);
 NA_HAPI NABool na_TestKeyLeafContainBinDouble(NATreeLeaf* leaf, const void* key);
 
-NA_HAPI  NAInt na_GetChildIndexBinNAInt(NATreeNode* parentnode, const void* childkey);
-NA_HAPI  NAInt na_GetKeyIndexBinNAInt(const void* basekey, const void* key, const void* data);
+NA_HAPI  NAInt na_GetChildIndexBinNAInt(NATreeNode* parentNode, const void* childKey);
+NA_HAPI  NAInt na_GetKeyIndexBinNAInt(const void* baseKey, const void* key, const void* data);
 NA_HAPI  NABool na_TestKeyBinNAInt(const void* lowerLimit, const void* upperLimit, const void* key);
 NA_HAPI NABool na_TestKeyLeafContainBinNAInt(NATreeLeaf* leaf, const void* key);
 

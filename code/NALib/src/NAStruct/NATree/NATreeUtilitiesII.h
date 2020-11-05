@@ -115,45 +115,45 @@ NA_IDEF NABool naAddTreeLastMutable(NATree* tree, void* content){
 
 
 NA_IDEF const void* naGetTreeFirstConst(const NATree* tree){
-  const void* retvalue;
+  const void* retValue;
   NATreeIterator iter = naMakeTreeAccessor(tree);
   naLocateTreeFirst(&iter);
-  retvalue = naGetTreeCurLeafConst(&iter);
+  retValue = naGetTreeCurLeafConst(&iter);
   naClearTreeIterator(&iter);
-  return retvalue;
+  return retValue;
 }
 
 
 
 NA_IDEF void* naGetTreeFirstMutable(const NATree* tree){
-  void* retvalue;
+  void* retValue;
   NATreeIterator iter = naMakeTreeAccessor(tree);
   naLocateTreeFirst(&iter);
-  retvalue = naGetTreeCurLeafMutable(&iter);
+  retValue = naGetTreeCurLeafMutable(&iter);
   naClearTreeIterator(&iter);
-  return retvalue;
+  return retValue;
 }
 
 
 
 NA_IDEF const void* naGetTreeLastConst(const NATree* tree){
-  const void* retvalue;
+  const void* retValue;
   NATreeIterator iter = naMakeTreeAccessor(tree);
   naLocateTreeLast(&iter);
-  retvalue = naGetTreeCurLeafConst(&iter);
+  retValue = naGetTreeCurLeafConst(&iter);
   naClearTreeIterator(&iter);
-  return retvalue;
+  return retValue;
 }
 
 
 
 NA_IDEF void* naGetTreeLastMutable(const NATree* tree){
-  void* retvalue;
+  void* retValue;
   NATreeIterator iter = naMakeTreeAccessor(tree);
   naLocateTreeLast(&iter);
-  retvalue = naGetTreeCurLeafMutable(&iter);
+  retValue = naGetTreeCurLeafMutable(&iter);
   naClearTreeIterator(&iter);
-  return retvalue;
+  return retValue;
 }
 
 
@@ -219,15 +219,15 @@ NA_HIDEF void na_MarkTreeRootLeaf(NATree* tree, NABool isleaf){
 
 // todo: If this shows up in performance, adding rootparent again? Or adding childIndex as flag in every item?
 NA_HIDEF NABool na_IsTreeItemLeaf(const NATree* tree, NATreeItem* item){
-  NABool retvalue;
+  NABool retValue;
   if(na_IsTreeItemRoot(item)){
-    retvalue = naIsTreeRootLeaf(tree);
+    retValue = naIsTreeRootLeaf(tree);
   }else{
     NATreeNode* parent = na_GetTreeItemParent(item);
     NAInt childIndex = na_GetTreeNodeChildIndex(tree->config, parent, item);
-    retvalue = na_IsNodeChildLeaf(parent, childIndex);
+    retValue = na_IsNodeChildLeaf(parent, childIndex);
   }
-  return retvalue;
+  return retValue;
 }
 
 

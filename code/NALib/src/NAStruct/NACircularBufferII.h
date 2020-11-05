@@ -33,9 +33,9 @@ void* naPullCircularBuffer(NACircularBuffer* buffer){
     if(buffer->last == buffer->cur)
       naError("naNextCircularBuffer", "Buffer is empty");
   #endif
-  void* retvalue = buffer->data[buffer->cur];
+  void* retValue = buffer->data[buffer->cur];
   buffer->cur = buffer->cur % buffer->space;
-  return retvalue;
+  return retValue;
 }
 
 

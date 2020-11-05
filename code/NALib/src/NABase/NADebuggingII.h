@@ -6,7 +6,6 @@
 #define NA_DEBUGGING_II_INCLUDED
 
 
-
 // This file contains inline implementations of debugging methods.
 
 #ifndef NDEBUG
@@ -32,11 +31,13 @@
 
   // Note for the future: The exit call must be in the macro and must not be
   // moved to the capture function!
+
   #define naCrash(text)\
-    {\
-      na_Crash(NA_DEBUG_FUNCTIONSYMBOL, text);\
-      exit(EXIT_FAILURE);\
-    }
+  {\
+    na_Crash(NA_DEBUG_FUNCTIONSYMBOL, text);\
+    exit(EXIT_FAILURE);\
+  }
+
 
 #endif // NDEBUG
 

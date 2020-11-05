@@ -17,63 +17,65 @@
 // a list of the running NAWINAPIApplication.
 typedef struct NAWINAPITimerStruct NAWINAPITimerStruct;
 struct NAWINAPITimerStruct {
-  UINT key;
+  UINT      key;
   NAMutator func;
-  void* arg;
+  void*     arg;
 };
 
 typedef struct NAWINAPIColor NAWINAPIColor;
 struct NAWINAPIColor {
   COLORREF color;
-  HBRUSH brush;
+  HBRUSH   brush;
 };
 
-// The struct NAWINAPIApplication stores a list of timers which could otherwise
-// not be done.
 typedef struct NAWINAPIApplication NAWINAPIApplication;
 struct NAWINAPIApplication {
-  NAApplication application;
-  NAList timers;
-  HWND offscreenWindow;
+  NAApplication    application;
+  NAList           timers;
+  HWND             offscreenWindow;
   NONCLIENTMETRICS nonClientMetrics;
-  HICON appIcon;
+  HICON            appIcon;
 
-  HFONT systemFont;
-  HFONT titleFont;
-  HFONT monospaceFont;
-  HFONT paragraphFont;
-  HFONT mathFont;
+  HFONT            systemFont;
+  HFONT            titleFont;
+  HFONT            monospaceFont;
+  HFONT            paragraphFont;
+  HFONT            mathFont;
 
-  NA_UIElement* mouseHoverElement;
+  NA_UIElement*    mouseHoverElement;
 
-  WNDPROC oldButtonWindowProc;
-  WNDPROC oldRadioWindowProc;
-  WNDPROC oldCheckBoxWindowProc;
-  WNDPROC oldLabelWindowProc;
-  WNDPROC oldTextFieldWindowProc;
+  WNDPROC          oldButtonWindowProc;
+  WNDPROC          oldCheckBoxWindowProc;
+  WNDPROC          oldLabelWindowProc;
+  WNDPROC          oldRadioWindowProc;
+  WNDPROC          oldSliderWindowProc;
+  WNDPROC          oldTextFieldWindowProc;
 
-  NAWINAPIColor fgColor;
-  NAWINAPIColor fgColorDisabled;
-  NAWINAPIColor bgColor;
-  NAWINAPIColor bgColorAlternate;
-  NAWINAPIColor bgColorAlternate2;
+  NAWINAPIColor    fgColor;
+  NAWINAPIColor    fgColorDisabled;
+  NAWINAPIColor    bgColor;
+  NAWINAPIColor    bgColorAlternate;
+  NAWINAPIColor    bgColorAlternate2;
 };
 
 
 
-WNDPROC naGetApplicationOldButtonWindowProc(){
+WNDPROC na_GetApplicationOldButtonWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldButtonWindowProc;
 }
-WNDPROC naGetApplicationOldRadioWindowProc(){
-  return ((NAWINAPIApplication*)naGetApplication())->oldRadioWindowProc;
-}
-WNDPROC naGetApplicationOldCheckBoxWindowProc(){
+WNDPROC na_GetApplicationOldCheckBoxWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldCheckBoxWindowProc;
 }
-WNDPROC naGetApplicationOldLabelWindowProc(){
+WNDPROC na_GetApplicationOldLabelWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldLabelWindowProc;
 }
-WNDPROC naGetApplicationOldTextFieldWindowProc(){
+WNDPROC na_GetApplicationOldRadioWindowProc(){
+  return ((NAWINAPIApplication*)naGetApplication())->oldRadioWindowProc;
+}
+WNDPROC na_GetApplicationOldSliderWindowProc(){
+  return ((NAWINAPIApplication*)naGetApplication())->oldSliderWindowProc;
+}
+WNDPROC na_GetApplicationOldTextFieldWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldTextFieldWindowProc;
 }
 
@@ -153,7 +155,21 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
 	wndclass.lpszClassName = TEXT("NASpace");
 	RegisterClass(&wndclass);
 
-    // Start the WINAPI application and set the native ID of the application.
+    // Register the OpenGL space class
+  naZeron(&wndclass, sizeof(WNDCLASS));
+	wndclass.style = CS_OWNDC;
+	wndclass.lpfnWndProc = naWINAPIWindowCallback;
+	wndclass.cbClsExtra = 0;
+	wndclass.cbWndExtra = 0;
+	wndclass.hInstance = GetModuleHandle(NULL);
+	wndclass.hIcon = LoadIcon( NULL, IDI_APPLICATION );
+	wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
+	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+	wndclass.lpszMenuName = NULL;
+	wndclass.lpszClassName = TEXT("NAOpenGLSpace");
+	RegisterClass(&wndclass);
+
+    // Start the WINAPI application and set the nativePtr of the application.
   app = (NAWINAPIApplication*)na_NewApplication();
 
   // Call preStartup if desired.
@@ -192,7 +208,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
   }
 
   // When reaching here, the application had been stopped.
-  naReleaseUIElement(app);
+  naDelete(app);
 }
 
 
@@ -220,7 +236,7 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 NA_HDEF NAApplication* na_NewApplication(void){
 
-  NAWINAPIApplication* winapiApplication = naAlloc(NAWINAPIApplication);
+  NAWINAPIApplication* winapiApplication = naNew(NAWINAPIApplication);
 
   na_InitApplication(&(winapiApplication->application), GetModuleHandle(NULL));
 
@@ -245,9 +261,10 @@ NA_HDEF NAApplication* na_NewApplication(void){
   winapiApplication->mouseHoverElement = NA_NULL;
 
   winapiApplication->oldButtonWindowProc = NA_NULL;
-  winapiApplication->oldRadioWindowProc = NA_NULL;
   winapiApplication->oldCheckBoxWindowProc = NA_NULL;
   winapiApplication->oldLabelWindowProc = NA_NULL;
+  winapiApplication->oldRadioWindowProc = NA_NULL;
+  winapiApplication->oldSliderWindowProc = NA_NULL;
   winapiApplication->oldTextFieldWindowProc = NA_NULL;
 
   winapiApplication->fgColor.color = GetSysColor(COLOR_WINDOWTEXT);
@@ -267,31 +284,29 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
 
 
-NA_DEF void na_DestructApplication(NAApplication* application){
-  NAWINAPIApplication* app = (NAWINAPIApplication*)application;
+NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication){
+  DestroyWindow(winapiApplication->offscreenWindow);
 
-  DestroyWindow(app->offscreenWindow);
+  DeleteObject(winapiApplication->fgColor.brush);
+  DeleteObject(winapiApplication->fgColorDisabled.brush);
+  DeleteObject(winapiApplication->bgColor.brush);
+  DeleteObject(winapiApplication->bgColorAlternate.brush);
+  DeleteObject(winapiApplication->bgColorAlternate2.brush);
 
-  DeleteObject(app->fgColor.brush);
-  DeleteObject(app->fgColorDisabled.brush);
-  DeleteObject(app->bgColor.brush);
-  DeleteObject(app->bgColorAlternate.brush);
-  DeleteObject(app->bgColorAlternate2.brush);
+  if(winapiApplication->systemFont){DeleteObject(app->systemFont);}
+  if(winapiApplication->titleFont){DeleteObject(app->titleFont);}
+  if(winapiApplication->monospaceFont){DeleteObject(app->monospaceFont);}
+  if(winapiApplication->paragraphFont){DeleteObject(app->paragraphFont);}
+  if(winapiApplication->mathFont){DeleteObject(app->mathFont);}
 
-  if(app->systemFont){DeleteObject(app->systemFont);}
-  if(app->titleFont){DeleteObject(app->titleFont);}
-  if(app->monospaceFont){DeleteObject(app->monospaceFont);}
-  if(app->paragraphFont){DeleteObject(app->paragraphFont);}
-  if(app->mathFont){DeleteObject(app->mathFont);}
+  DestroyIcon(winapiApplication->appIcon);
 
-  DestroyIcon(app->appIcon);
-
-  na_ClearApplication(&(app->application));  
+  na_ClearApplication(&(winapiApplication->application));  
 
   // Now that all windows are destroyed, all dependent timers are deleted. We can
   // safely release the timer structs. todo: Make killing the timers a sport.
-  naForeachListMutable(&(app->timers), (NAMutator)naFree);
-  naClearList(&(app->timers));
+  naForeachListMutable(&(winapiApplication->timers), (NAMutator)naFree);
+  naClearList(&(winapiApplication->timers));
 }
 
 
@@ -335,12 +350,12 @@ NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT
   UINT timerkey = (UINT)idEvent;
   app = (NAWINAPIApplication*)naGetApplication();
 
-  naBeginListModifierIteration(NAWINAPITimerStruct* timerstruct, &(app->timers), iter);
-    if(timerstruct->key == timerkey) {
+  naBeginListModifierIteration(NAWINAPITimerStruct* timerStruct, &(app->timers), iter);
+    if(timerStruct->key == timerkey) {
       naRemoveListCurMutable(&iter, NA_FALSE);
       KillTimer(hwnd, idEvent);
-      timerstruct->func(timerstruct->arg);
-      naFree(timerstruct);
+      timerStruct->func(timerStruct->arg);
+      naFree(timerStruct);
       break;
     }
   naEndListIteration(iter);
@@ -350,13 +365,13 @@ NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT
 
 NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff){
   NAWINAPIApplication* app;
-  NAWINAPITimerStruct* timerstruct = naAlloc(NAWINAPITimerStruct);
-  timerstruct->func = function;
-  timerstruct->arg = arg;
+  NAWINAPITimerStruct* timerStruct = naAlloc(NAWINAPITimerStruct);
+  timerStruct->func = function;
+  timerStruct->arg = arg;
   // todo: Check type
-  timerstruct->key = (UINT)SetTimer((HWND)NA_NULL, (UINT_PTR)NA_NULL, (UINT)(1000 * timediff), na_TimerCallbackFunction);
+  timerStruct->key = (UINT)SetTimer((HWND)NA_NULL, (UINT_PTR)NA_NULL, (UINT)(1000 * timediff), na_TimerCallbackFunction);
   app = (NAWINAPIApplication*)naGetApplication();
-  naAddListLastMutable(&(app->timers), timerstruct);
+  naAddListLastMutable(&(app->timers), timerStruct);
 }
 
 
@@ -377,12 +392,12 @@ NA_DEF void naOpenConsoleWindow(void){
   FILE *outFile;
   FILE *errFile;
   FILE *inFile;
-  TCHAR* systemtitle;
+  TCHAR* systemTitle;
 
   AllocConsole();
 
-  systemtitle = TEXT("Debug Console");
-  SetConsoleTitle(systemtitle);
+  systemTitle = TEXT("Debug Console");
+  SetConsoleTitle(systemTitle);
 
   freopen_s(&inFile, "CONIN$", "r", stdin);
   freopen_s(&outFile, "CONOUT$", "w", stdout);
@@ -435,17 +450,17 @@ NA_DEF NAString* naNewApplicationName(void){
   if(app->application.name){
     return naNewStringWithFormat("%s", app->application.name);
   }else{
-    TCHAR modulepath[MAX_PATH];
-    NAString* utf8modulepath;
+    TCHAR modulePath[MAX_PATH];
+    NAString* utf8ModulePath;
     NAURL url;
     NAString* applicationName;
     NAString* applicationbasename;
 
-    GetModuleFileName(NULL, modulepath, MAX_PATH);
-    utf8modulepath = naNewStringFromSystemString(modulepath);
+    GetModuleFileName(NULL, modulePath, MAX_PATH);
+    utf8ModulePath = naNewStringFromSystemString(modulePath);
 
-    naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8modulepath));
-    naDelete(utf8modulepath);
+    naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8ModulePath));
+    naDelete(utf8ModulePath);
     applicationName = naNewStringWithURLFilename(&url);
     applicationbasename = naNewStringWithBasenameOfPath(applicationName);
     naClearURL(&url);

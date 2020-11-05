@@ -8,10 +8,14 @@
 
 typedef struct NAWINAPILabel NAWINAPILabel;
 struct NAWINAPILabel {
-  NALabel label;
-  NABool enabled;
+  NALabel   label;
+  NABool    enabled;
   NAString* href;
 };
+
+NA_HAPI void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel);
+NA_RUNTIME_TYPE(NAWINAPILabel, na_DestructWINAPILabel, NA_FALSE);
+
 
 
 NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
@@ -48,7 +52,7 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     break;
 
   case WM_ERASEBKGND:
-    info.hasbeenhandeled = NA_TRUE;
+    info.hasBeenHandeled = NA_TRUE;
     info.result = 1;
     break;
 
@@ -69,7 +73,7 @@ NAWINAPICallbackInfo naLabelWINAPINotify(void* uiElement, WORD notificationCode)
     case EN_SETFOCUS:
       if(winapiLabel->href){
         system(naGetStringUTF8Pointer(winapiLabel->href));
-        info.hasbeenhandeled = NA_TRUE;
+        info.hasBeenHandeled = NA_TRUE;
         info.result = 0;
       }
       break;
@@ -82,24 +86,24 @@ NAWINAPICallbackInfo naLabelWINAPINotify(void* uiElement, WORD notificationCode)
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
-  TCHAR* systemtext;
+  TCHAR* systemText;
   WNDPROC oldproc;
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPILabel* winapiLabel = naAlloc(NAWINAPILabel);
+  NAWINAPILabel* winapiLabel = naNew(NAWINAPILabel);
 
   // We need a read only edit control here, otherwise on windows, the user is not able to select text.
   style = WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE;
 
-  systemtext = naAllocSystemStringWithUTF8String(text);
+  systemText = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
-		TEXT("EDIT"), systemtext, style,
+		TEXT("EDIT"), systemText, style,
 		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
   
-  naFree(systemtext);
+  naFree(systemText);
 
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
@@ -115,18 +119,17 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF void na_DestructLabel(NALabel* label){
-  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
+NA_DEF void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel){
   if(winapiLabel->href){naDelete(winapiLabel->href);}
-  na_ClearLabel(&(winapiLabel->label));
+  na_ClearLabel((NALabel*)winapiLabel);
 }
 
 
 
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
-  SendMessage(naGetUIElementNativeID(label), WM_SETTEXT, 0, (LPARAM)systemtext);
-  naFree(systemtext);
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
+  SendMessage(naGetUIElementNativePtr(label), WM_SETTEXT, 0, (LPARAM)systemText);
+  naFree(systemText);
 }
 
 
@@ -141,11 +144,11 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
     if(!url || !*url)
       naError("url must be something useful. Deleting a Link is not possible yet.");
   #endif
-  hOriginalFont = (HFONT)SendMessage(naGetUIElementNativeID(label), WM_GETFONT, 0, 0);
+  hOriginalFont = (HFONT)SendMessage(naGetUIElementNativePtr(label), WM_GETFONT, 0, 0);
   GetObject(hOriginalFont, sizeof(LOGFONT), &lf);
   lf.lfUnderline = NA_TRUE;
   hFont = CreateFontIndirect(&lf);
-  SendMessage(naGetUIElementNativeID(label), WM_SETFONT, (WPARAM)hFont, NA_FALSE);
+  SendMessage(naGetUIElementNativePtr(label), WM_SETFONT, (WPARAM)hFont, NA_FALSE);
 
   if(winapiLabel->href){naDelete(winapiLabel->href);}
   winapiLabel->href = naNewStringWithFormat("start %s", url);
@@ -169,15 +172,15 @@ NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
 
 
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
-  long style = (long)GetWindowLongPtr(naGetUIElementNativeID(label), GWL_STYLE);
+  long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(label), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
-  SetWindowLongPtr(naGetUIElementNativeID(label), GWL_STYLE, style);
+  SetWindowLongPtr(naGetUIElementNativePtr(label), GWL_STYLE, style);
 }
 
 
 
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
-  SendMessage(naGetUIElementNativeID(label), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
+  SendMessage(naGetUIElementNativePtr(label), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
 }
 
 

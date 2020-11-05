@@ -225,7 +225,7 @@ NA_HIDEF void na_SetTreeNodeChild(NATreeNode* parent, NATreeItem* child, NAInt c
 
 
 NA_HDEF NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, NATreeItem* child){
-  NAInt retvalue;
+  NAInt retValue;
   NATreeItem** childs;
 
   #ifndef NDEBUG
@@ -239,15 +239,15 @@ NA_HDEF NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATree
   // We assume, the child MUST be a child of this parent. Therefore we only
   // search until childpernode - 1 and just return the last possibility in
   // good belief.
-  for(retvalue = 0; retvalue < config->childpernode - 1; retvalue++){
-    if(childs[retvalue] == child){break;}
+  for(retValue = 0; retValue < config->childpernode - 1; retValue++){
+    if(childs[retValue] == child){break;}
   }
   
   #ifndef NDEBUG
-    if(childs[retvalue] != child)
+    if(childs[retValue] != child)
       naError("returned childindex does not correspond to the desired child");
   #endif
-  return retvalue;
+  return retValue;
 }
 
 

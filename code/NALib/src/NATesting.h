@@ -9,10 +9,16 @@
 // case. Usual values are around .01 seconds. Lower values are quicker but
 // less sound. If printAllGroups is false, only the groups which have
 // errors will be printed. A final printout will be made upon stopping.
-NA_API void naStartTesting(
+//
+// Returns true if the testing did start sucessfully, false otherwise.
+// A common reason for an unsuccessful start is to forget the rootName in
+// the command line arguments.
+NA_API NABool naStartTesting(
   const NAUTF8Char* rootName,
   double timePerBenchmark,
-  NABool printAllGroups);
+  NABool printAllGroups,
+  int argc,
+  const char** argv);
 
 // Stops the testing and prints some final results.
 NA_API void naStopTesting(void);
@@ -25,6 +31,9 @@ NA_API void naPrintUntested(void);
 
 // Tests successfully if one or more naError calls happen.
 #define naTestError(expr)
+
+// Tests successfully if the expression would crash the application.
+#define naTestCrash(expr)
 
 // Groups together tests. Use it like naTestGroup("Multiple Tests"){ ... }
 #define naTestGroup(string)

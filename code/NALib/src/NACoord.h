@@ -249,26 +249,27 @@ NA_IAPI NABoxi      naMakeBoxiEmpty(void);
 
 // Mac OS X specific stuff
 #ifdef CGGEOMETRY_H_
-NA_IAPI NAPos     naMakePosWithCGPoint(CGPoint cgpoint);
-NA_IAPI NASize    naMakeSizeWithCGSize(CGSize  cgsize);
-NA_IAPI NARect    naMakeRectWithCGRect(CGRect  cgrect);
+NA_IAPI NAPos     naMakePosWithCGPoint(CGPoint cgPoint);
+NA_IAPI NASize    naMakeSizeWithCGSize(CGSize  cgSize);
+NA_IAPI NARect    naMakeRectWithCGRect(CGRect  cgRect);
 #endif
 #if defined __OBJC__ && defined __AVAILABILITYMACROS__
 // Note: In order to make this compile, you need to include "NACoord.h" AFTER
 // including <Cocoa/Cocoa.h>
-NA_IAPI NAPos     naMakePosWithNSPoint  (NSPoint nspoint);
-NA_IAPI NSPoint   naMakeNSPointWithPos   (NAPos   napos);
-NA_IAPI NASize    naMakeSizeWithNSSize  (NSSize  nssize);
-NA_IAPI NSSize    naMakeNSSizeWithSize  (NASize  nasize);
-NA_IAPI NARect    naMakeRectWithNSRect  (NSRect  nsrect);
-NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  narect);
+NA_IAPI NAPos     naMakePosWithNSPoint  (NSPoint nsPoint);
+NA_IAPI NSPoint   naMakeNSPointWithPos  (NAPos   naPos);
+NA_IAPI NASize    naMakeSizeWithNSSize  (NSSize  nsSize);
+NA_IAPI NSSize    naMakeNSSizeWithSize  (NASize  naSize);
+NA_IAPI NARect    naMakeRectWithNSRect  (NSRect  nsRect);
+NA_IAPI NSRect    naMakeNSRectWithSize  (NASize  naSize); // origin = (0, 0)
+NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  naRect);
 #endif
 
 // Creates a new origin which is the given origin floored to a multiple of
 // the given alignment. Also works for negative input offsets.
-NA_IAPI NAPosi    naMakePosiWithAlignment    (NAPosi    origin, NARecti alignRect);
+NA_IAPI NAPosi    naMakePosiWithAlignment   (NAPosi    origin, NARecti alignRect);
 NA_IAPI NAPos     naMakePosWithAlignment    (NAPos     origin, NARect  alignRect);
-NA_IAPI NAVertexi naMakeVertexiWithAlignment (NAVertexi origin, NABoxi  alignBox);
+NA_IAPI NAVertexi naMakeVertexiWithAlignment(NAVertexi origin, NABoxi  alignBox);
 NA_IAPI NAVertex  naMakeVertexWithAlignment (NAVertex  origin, NABox   alignBox);
 
 // Create the bounding box of two elements. The range, size or volume of the

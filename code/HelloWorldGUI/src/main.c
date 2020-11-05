@@ -28,6 +28,7 @@
 #include "../../NALib/src/NAUI.h"
 #include "../../NALib/src/NAStack.h"
 
+#include "HelloWorldGUI.h"
 
 
 // Put GUI elements belonging together into a controller struct.
@@ -36,6 +37,7 @@ struct ConverterApplication{
   NAStack controllers;
   int nextWindowX;
   int nextWindowY;
+  ExperimentController* experimentController;
 };
 
 // The variable storing the app. For simplicity, here defined as global.
@@ -83,7 +85,7 @@ NABool pressButton(NAReaction reaction){
 
 
 // Prototype
-void createController();
+void createController(void);
 
 // Will be called when the + Button is pressed.
 NABool newController(NAReaction reaction){
@@ -137,7 +139,7 @@ void createController(){
   naAddSpaceChild(windowSpace, con->label, naMakePos(160, 70));
 
   // Create a + button for opening a new window.
-  con->newButton = naNewPushButton("+", naMakeSize(30, 30));
+  con->newButton = naNewPushButton("+", naMakeSize(60, 30));
   naAddSpaceChild(windowSpace, con->newButton, naMakePos(20, 20));
   naAddUIReaction(con->newButton, NA_UI_COMMAND_PRESSED, newController, con);
 
@@ -154,12 +156,8 @@ void createController(){
 
 // Clear all allocated elements.
 void clearController(ConverterController* con){
-  naFree(con->window);
-  naFree(con->button);
-  naFree(con->textField);
-  naFree(con->label);
-  naFree(con->newButton);
-  naFree(con->quitButton);
+  // Note that all UI elements which are attached in some way to the root
+  // application UIElement will be cleared automatically.
 }
 
 
@@ -171,7 +169,7 @@ void prestartup(void* arg){
   NA_UNUSED(arg);
   app = naAlloc(ConverterApplication);
   naInitStack(&(app->controllers), sizeof(ConverterController), 2);
-  app->nextWindowX = 200;
+  app->nextWindowX = 700;
   app->nextWindowY = 400;
 }
 
@@ -179,8 +177,9 @@ void prestartup(void* arg){
 
 // Delete all controllers and finally, delete this application
 void clearApplication(void){
-  naForeachStackMutable(&(app->controllers), clearController);
+  naForeachStackMutable(&(app->controllers), (NAMutator)clearController);
   naClearStack(&(app->controllers));
+  clearExperimentController(app->experimentController);
   naFree(app);
 }
 
@@ -192,6 +191,7 @@ void clearApplication(void){
 void poststartup(void* arg){
   NA_UNUSED(arg);
   createController();
+  app->experimentController = createExperimentController();
 }
 
 

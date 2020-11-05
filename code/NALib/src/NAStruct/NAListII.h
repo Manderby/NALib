@@ -45,6 +45,7 @@ struct NAListIterator{
   #endif
 };
 
+#include "stdio.h"
 
 NA_IDEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next){
   NAListElement* elem = naNew(NAListElement);
@@ -60,7 +61,7 @@ NA_IDEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next
 NA_IDEF NAList* naInitList(NAList* list){
   #ifndef NDEBUG
     if(!list)
-      naCrash("list is NULL");
+      naCrash("list is Null");
   #endif
   list->count = 0;
   list->sentinel.ptr  = naMakePtrNull();
@@ -707,7 +708,7 @@ NA_IDEF void* naGetListPrevMutable(NAListIterator* iter){
 NA_IDEF const void* naGetListCurConst(const NAListIterator* iter){
   #ifndef NDEBUG
     // Note that the empty check has been removed. Getting the current elem
-    // of an empty list automatically returns NULL. This is a feature!
+    // of an empty list automatically returns Null. This is a feature!
     // if(naIsListEmpty(naGetPtrConst(iter->listptr)))
     //   naError("List is empty");
   #endif
@@ -720,7 +721,7 @@ NA_IDEF void* naGetListCurMutable(NAListIterator* iter){
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     // Note that the empty check has been removed. Getting the current elem
-    // of an empty list automatically returns NULL. This is a feature!
+    // of an empty list automatically returns Null. This is a feature!
     // if(naIsListEmpty(naGetPtrConst(iter->listptr)))
     //   naError("List is empty");
   #endif
