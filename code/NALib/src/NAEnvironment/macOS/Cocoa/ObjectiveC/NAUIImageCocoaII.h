@@ -143,12 +143,14 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
     CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
     CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
     if(img1x){
-      NSBitmapImageRep* rep = NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x]);
+      NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithCGImage:img1x];
       [image addRepresentation:rep];
+      NA_COCOA_RELEASE(rep);
     }
     if(img2x){
-      NSBitmapImageRep* rep = NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img2x]);
+      NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithCGImage:img2x];
       [image addRepresentation:rep];
+      NA_COCOA_RELEASE(rep);
     }
   }
   

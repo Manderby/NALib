@@ -14,6 +14,8 @@ struct ExperimentController{
   NAWindow* experimentWindow;
   NASpace* contentSpace;
 
+  NAUIImage* testImage;
+
   NALabel* pushButtonLabel;
   NAButton* pushButton;
 
@@ -179,6 +181,12 @@ ExperimentController* createExperimentController(){
 
   ExperimentController* con = naAlloc(ExperimentController);
 
+  NABabyColor mainColor = {1., .25, 0., 1.};
+  NABabyColor altColor = {.25, 0., 1., 1.};
+  NABabyImage* mainImage = naCreateBabyImage(naMakeSizei(20, 10), mainColor);
+  NABabyImage* altImage = naCreateBabyImage(naMakeSizei(20, 10), altColor);
+  con->testImage = naNewUIImage(mainImage, altImage, NA_UIIMAGE_RESOLUTION_1x, NA_BLEND_ZERO);
+
   con->experimentWindow = naNewWindow(
     "Experiment",
     naMakeRectS(150, 150, windowWidth, windowHeight),
@@ -208,28 +216,23 @@ ExperimentController* createExperimentController(){
   naAddSpaceChild(con->contentSpace, con->textOptionButton3, naMakePos(350, curPosY));
   naAddUIReaction(con->textOptionButton3, NA_UI_COMMAND_PRESSED, textOptionButtonPressed, con);
 
-  curPosY -= 30;
-  NABabyColor mainColor = {1., .25, 0., 1.};
-  NABabyColor altColor = {.25, 0., 1., 1.};
-  NABabyImage* mainImage = naCreateBabyImage(naMakeSizei(20, 10), mainColor);
-  NABabyImage* altImage = naCreateBabyImage(naMakeSizei(20, 10), altColor);
-  NAUIImage* testImage = naAllocUIImage(mainImage, altImage, NA_UIIMAGE_RESOLUTION_1x, NA_BLEND_ZERO);
+  curPosY -= 30;  
   con->imageOptionButtonLabel = naNewLabel("NAButton: ImageOptionButton", naMakeSize(200, 22));
   naAddSpaceChild(con->contentSpace, con->imageOptionButtonLabel, naMakePos(20, curPosY));
-  con->imageOptionButton1 = naNewImageOptionButton(testImage, naMakeSize(50, 22));
+  con->imageOptionButton1 = naNewImageOptionButton(con->testImage, naMakeSize(50, 22));
   naAddSpaceChild(con->contentSpace, con->imageOptionButton1, naMakePos(250, curPosY));
   naAddUIReaction(con->imageOptionButton1, NA_UI_COMMAND_PRESSED, imageOptionButtonPressed, con);
-  con->imageOptionButton2 = naNewImageOptionButton(testImage, naMakeSize(50, 22));
+  con->imageOptionButton2 = naNewImageOptionButton(con->testImage, naMakeSize(50, 22));
   naAddSpaceChild(con->contentSpace, con->imageOptionButton2, naMakePos(300, curPosY));
   naAddUIReaction(con->imageOptionButton2, NA_UI_COMMAND_PRESSED, imageOptionButtonPressed, con);
-  con->imageOptionButton3 = naNewImageOptionButton(testImage, naMakeSize(50, 22));
+  con->imageOptionButton3 = naNewImageOptionButton(con->testImage, naMakeSize(50, 22));
   naAddSpaceChild(con->contentSpace, con->imageOptionButton3, naMakePos(350, curPosY));
   naAddUIReaction(con->imageOptionButton3, NA_UI_COMMAND_PRESSED, imageOptionButtonPressed, con);
 
   curPosY -= 30;
   con->imageButtonLabel = naNewLabel("NAButton: ImageButton", naMakeSize(200, 22));
   naAddSpaceChild(con->contentSpace, con->imageButtonLabel, naMakePos(20, curPosY));
-  con->imageButton = naNewImageButton(testImage, naMakeSize(150, 22));
+  con->imageButton = naNewImageButton(con->testImage, naMakeSize(150, 22));
   naAddSpaceChild(con->contentSpace, con->imageButton, naMakePos(250, curPosY));
   naAddUIReaction(con->imageButton, NA_UI_COMMAND_PRESSED, imageButtonPressed, con);
 
@@ -243,7 +246,7 @@ ExperimentController* createExperimentController(){
   curPosY -= 30;
   con->imageSpaceLabel = naNewLabel("NAImageSpace", naMakeSize(200, 22));
   naAddSpaceChild(con->contentSpace, con->imageSpaceLabel, naMakePos(20, curPosY));
-  con->imageSpace = naNewImageSpace(testImage, naMakeSize(150, 22));
+  con->imageSpace = naNewImageSpace(con->testImage, naMakeSize(150, 22));
   naAddSpaceChild(con->contentSpace, con->imageSpace, naMakePos(250, curPosY));
 
   curPosY -= 30;

@@ -163,11 +163,11 @@ NA_DEF void na_DestructWINAPITextField(NAWINAPITextField* winapiTextField){
 
 NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
   na_BlockUIElementNotifications(&(winapiTextField->textField.uiElement));
-  SendMessage(naGetUIElementNativePtr(textField), WM_SETTEXT, 0, (LPARAM)systemtext);
+  SendMessage(naGetUIElementNativePtr(textField), WM_SETTEXT, 0, (LPARAM)systemText);
   na_AllowUIElementNotifications(&(winapiTextField->textField.uiElement));
-  naFree(systemtext);
+  naFree(systemText);
 }
 
 

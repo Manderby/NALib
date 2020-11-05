@@ -8,7 +8,7 @@
 
 typedef struct NACocoaTextField NACocoaTextField;
 struct NACocoaTextField{
-  NATextField   textField;
+  NATextField textField;
 };
 
 NA_HAPI void na_DestructCocoaTextField(NACocoaTextField* cocoaTextField);

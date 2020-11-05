@@ -8,14 +8,14 @@
 
 typedef struct NACocoaSpace NACocoaSpace;
 struct NACocoaSpace{
-  NASpace   space;
+  NASpace space;
 };
 
 NA_HAPI void na_DestructCocoaSpace(NACocoaSpace* cocoaSpace);
 NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 
 @interface NACocoaNativeSpace : NSView{
-  NACocoaSpace* cocaSpace;
+  NACocoaSpace*   cocaSpace;
   NSTrackingArea* trackingArea;
 }
 @end
@@ -36,6 +36,11 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 
   cocaSpace = newCocoaSpace;
   return self;
+}
+
+- (void)dealloc{
+  NA_COCOA_RELEASE(trackingArea);
+  NA_COCOA_SUPER_DEALLOC();
 }
 
 - (void)drawRect:(NSRect)dirtyRect{

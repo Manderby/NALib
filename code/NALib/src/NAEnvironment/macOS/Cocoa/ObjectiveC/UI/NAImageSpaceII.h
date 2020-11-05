@@ -8,7 +8,7 @@
 
 typedef struct NACocoaImageSpace NACocoaImageSpace;
 struct NACocoaImageSpace{
-  NAImageSpace   imageSpace;
+  NAImageSpace imageSpace;
 };
 
 NA_HAPI void na_DestructCocoaImageSpace(NACocoaImageSpace* cocoaImageSpace);
@@ -16,7 +16,6 @@ NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
 
 @interface NACocoaNativeImageSpace : NSImageView{
   NACocoaImageSpace* cocoaImageSpace;
-  NAUIImage* uiImage;
 }
 @end
 
@@ -30,8 +29,7 @@ NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
   return self;
 }
 
-- (void) setUIImage:(NAUIImage*)newuiImage{
-  uiImage = newuiImage;
+- (void) setUIImage:(NAUIImage*)uiImage{
   NSImage* image = naCreateResolutionIndependentNativeImage(
     self,
     uiImage,

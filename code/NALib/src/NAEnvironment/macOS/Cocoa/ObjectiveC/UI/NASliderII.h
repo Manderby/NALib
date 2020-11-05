@@ -8,7 +8,7 @@
 
 typedef struct NACocoaSlider NACocoaSlider;
 struct NACocoaSlider{
-  NASlider   slider;
+  NASlider slider;
 };
 
 NA_HAPI void na_DestructCocoaSlider(NACocoaSlider* cocoaSlider);

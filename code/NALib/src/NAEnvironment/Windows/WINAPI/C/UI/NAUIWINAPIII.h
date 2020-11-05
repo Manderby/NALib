@@ -137,9 +137,9 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 
   MessageBox(NA_NULL, systemMessage, systemTitle, MB_OK | iconType);
 
-  naDelete(messageString);
   naFree(systemMessage);
   naFree(systemTitle);
+  naDelete(messageString);
 }
 
 

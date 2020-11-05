@@ -77,7 +77,7 @@ NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam){
 NA_DEF NASlider* naNewSlider(NASize size){
   HWND hWnd;
   DWORD style;
-  TCHAR* systemtext;
+  TCHAR* systemText;
   WNDPROC oldproc;
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
@@ -86,14 +86,14 @@ NA_DEF NASlider* naNewSlider(NASize size){
 
   style = WS_CHILD | WS_VISIBLE | TBS_NOTICKS ;
 
-  systemtext = naAllocSystemStringWithUTF8String("Slider");
+  systemText = naAllocSystemStringWithUTF8String("Slider");
 
 	hWnd = CreateWindow(
-		TRACKBAR_CLASS, systemtext, style,
+		TRACKBAR_CLASS, systemText, style,
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
   
-  naFree(systemtext);
+  naFree(systemText);
 
   SendMessage(hWnd, TBM_SETRANGEMIN , 
     (WPARAM) TRUE,

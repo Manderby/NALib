@@ -28,8 +28,6 @@ struct NAWINAPIColor {
   HBRUSH   brush;
 };
 
-// The struct NAWINAPIApplication stores a list of timers which could otherwise
-// not be done.
 typedef struct NAWINAPIApplication NAWINAPIApplication;
 struct NAWINAPIApplication {
   NAApplication    application;
@@ -394,12 +392,12 @@ NA_DEF void naOpenConsoleWindow(void){
   FILE *outFile;
   FILE *errFile;
   FILE *inFile;
-  TCHAR* systemtitle;
+  TCHAR* systemTitle;
 
   AllocConsole();
 
-  systemtitle = TEXT("Debug Console");
-  SetConsoleTitle(systemtitle);
+  systemTitle = TEXT("Debug Console");
+  SetConsoleTitle(systemTitle);
 
   freopen_s(&inFile, "CONIN$", "r", stdin);
   freopen_s(&outFile, "CONOUT$", "w", stdout);

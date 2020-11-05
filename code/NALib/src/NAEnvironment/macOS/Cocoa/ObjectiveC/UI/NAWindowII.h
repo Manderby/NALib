@@ -11,7 +11,7 @@
 
 typedef struct NACocoaWindow NACocoaWindow;
 struct NACocoaWindow{
-  NAWindow   window;
+  NAWindow window;
 };
 
 NA_HAPI void na_DestructCocoaWindow(NACocoaWindow* cocoaWindow);
@@ -19,7 +19,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 @interface NACocoaNativeWindow : NSWindow <NSWindowDelegate>{
   NACocoaWindow* cocoaWindow;
-  NAUInt trackingcount;
+  NAUInt trackingCount;
   NSTrackingArea* trackingArea;
 }
 @end
@@ -31,10 +31,15 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 - (id) initWithWindow:(NACocoaWindow*)newCocoaWindow contentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag screen:(NSScreen *)screen{
   self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag screen:screen];
   cocoaWindow = newCocoaWindow;
-  trackingcount = 0;
+  trackingCount = 0;
   trackingArea = nil;
   [self setReleasedWhenClosed:NO];
   return self;
+}
+
+- (void)dealloc{
+  NA_COCOA_RELEASE(trackingArea);
+  NA_COCOA_SUPER_DEALLOC();
 }
 
 - (NACocoaWindow*) window{
@@ -45,8 +50,8 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
   return trackingArea;
 }
 
-- (NAUInt) trackingcount{
-  return trackingcount;
+- (NAUInt) trackingCount{
+  return trackingCount;
 }
 
 - (BOOL)windowShouldClose:(id)sender{
@@ -78,6 +83,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 }
 
 - (void)renewMouseTracking{
+  NA_COCOA_RELEASE(trackingArea);
   trackingArea = [[NSTrackingArea alloc] initWithRect:[[self contentView] bounds]
       options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder
       owner:self userInfo:nil];
@@ -91,16 +97,16 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 }
 
 - (void)retainMouseTracking{
-  trackingcount++;
-  if(trackingcount == 1){
+  trackingCount++;
+  if(trackingCount == 1){
     [self setAcceptsMouseMovedEvents:YES];
     na_RenewWindowMouseTracking((NAWindow*)cocoaWindow);
   }
 }
 
 - (void)releaseMouseTracking{
-  trackingcount--;
-  if(trackingcount == 0){
+  trackingCount--;
+  if(trackingCount == 0){
     [self setAcceptsMouseMovedEvents:NO];
     na_ClearWindowMouseTracking((NAWindow*)cocoaWindow);
   }
@@ -312,7 +318,7 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* uiElement){
   window->contentSpace = (NASpace*)uiElement;
   na_SetUIElementParent(uiElement, window);
   
-  if([nativeWindowPtr trackingcount]){na_RenewWindowMouseTracking(window);}
+  if([nativeWindowPtr trackingCount]){na_RenewWindowMouseTracking(window);}
 }
 
 

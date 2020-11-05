@@ -8,7 +8,7 @@
 
 typedef struct NACocoaRadio NACocoaRadio;
 struct NACocoaRadio{
-  NARadio   radio;
+  NARadio radio;
 };
 
 NA_HAPI void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio);
@@ -16,10 +16,7 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
 
 @interface NACocoaNativeRadio : NSButton <NACocoaNativeEncapsulatedElement>{
   NACocoaRadio* cocoaRadio;
-  // Cocoa thinks it's smart by doing things automatically. Unfortunately, we
-  // have to encapsulate the radio into its own view to get the behaviour
-  // we need.
-  NSView* containingview;
+  NSView*       containingView;
 }
 - (NSView*) getEncapsulatingView;
 @end
@@ -43,14 +40,19 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
 
-  containingview = [[NSView alloc] initWithFrame:frame];
-  [containingview addSubview:self];
+  containingView = [[NSView alloc] initWithFrame:frame];
+  [containingView addSubview:self];
 
   return self;
 }
 
+- (void)dealloc{
+  NA_COCOA_RELEASE(containingView);
+  NA_COCOA_SUPER_DEALLOC();
+}
+
 - (NSView*) getEncapsulatingView{
-  return containingview;
+  return containingView;
 }
 
 - (void) setText:(const NAUTF8Char*)text{
@@ -70,13 +72,15 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
   NSRange range = NSMakeRange(0, [attrString length]);
 
   [attrString beginEditing];
-  NSMutableParagraphStyle* paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-  [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
-  paragraphStyle.alignment = [self alignment];
+//  NSMutableParagraphStyle* paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+//  [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
+//  paragraphStyle.alignment = [self alignment];
+//  NA_COCOA_RELEASE(paragraphStyle);
   [attrString addAttribute:NSForegroundColorAttributeName value:nsColor range:range];
   [attrString endEditing];
   
   [self setAttributedTitle: attrString];
+  NA_COCOA_RELEASE(attrString);
 }
 
 - (void) onPressed:(id)sender{

@@ -41,13 +41,11 @@ typedef struct NAUIImage NAUIImage;
 // Useful tint modes are
 // NA_BLEND_ZERO         leaves the image as it is
 // NA_BLEND_OPAQUE       tints opaque parts of the image
-// NA_BLEND_BLACK_GREEN  tints black pixels (measures by the green channel)
-// NA_BLEND_WHITE_GREEN  tints white pixels (measures by the green channel)
+// NA_BLEND_BLACK_GREEN  tints black pixels (measured by the green channel)
+// NA_BLEND_WHITE_GREEN  tints white pixels (measured by the green channel)
 // The other tint modes are applicable but will likely produce unuseful images.
-NA_API NAUIImage* naAllocUIImage(const NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode);
-
-// Deallocates the uiImage
-NA_API void naDeallocUIImage(NAUIImage* uiImage);
+// Use naRetain and naRelease.
+NA_API NAUIImage* naNewUIImage(const NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode);
 
 NA_IAPI NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
 

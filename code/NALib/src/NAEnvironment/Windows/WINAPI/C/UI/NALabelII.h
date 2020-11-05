@@ -86,7 +86,7 @@ NAWINAPICallbackInfo naLabelWINAPINotify(void* uiElement, WORD notificationCode)
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
-  TCHAR* systemtext;
+  TCHAR* systemText;
   WNDPROC oldproc;
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
@@ -96,14 +96,14 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   // We need a read only edit control here, otherwise on windows, the user is not able to select text.
   style = WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE;
 
-  systemtext = naAllocSystemStringWithUTF8String(text);
+  systemText = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
-		TEXT("EDIT"), systemtext, style,
+		TEXT("EDIT"), systemText, style,
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
   
-  naFree(systemtext);
+  naFree(systemText);
 
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
@@ -127,9 +127,9 @@ NA_DEF void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel){
 
 
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
-  SendMessage(naGetUIElementNativePtr(label), WM_SETTEXT, 0, (LPARAM)systemtext);
-  naFree(systemtext);
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
+  SendMessage(naGetUIElementNativePtr(label), WM_SETTEXT, 0, (LPARAM)systemText);
+  naFree(systemText);
 }
 
 

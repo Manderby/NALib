@@ -160,11 +160,11 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
 	HWND nativePtr = CreateWindow(
 		TEXT("BUTTON"),
-    systemtext,
+    systemText,
     WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON,
 		0,
     0,
@@ -175,7 +175,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
   
-  naFree(systemtext);
+  naFree(systemText);
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
@@ -195,11 +195,11 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
 NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
   
 	HWND nativePtr = CreateWindow(
 		TEXT("BUTTON"),
-    systemtext,
+    systemText,
     WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON,
 		0,
     0,
@@ -210,6 +210,8 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
   
+  naFree(systemText);
+
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
@@ -219,8 +221,6 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   na_InitButton((NAButton*)winapiButton, hWnd);
   winapiButton->image = NA_NULL;
   winapiButton->transparent = NA_FALSE;
-
-  naFree(systemtext);
 
   return (NAButton*)winapiButton;
 }
@@ -286,7 +286,7 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiImage, NASize size){
 
 
 NA_DEF void na_DestructWINAPIButton(NAWINAPIButton* winapiButton){
-  if(winapiButton->image){naDeallocUIImage(winapiButton->image);}
+  if(winapiButton->image){naRelease(winapiButton->image);}
   na_ClearButton((NAButton*)winapiButton);
 }
 

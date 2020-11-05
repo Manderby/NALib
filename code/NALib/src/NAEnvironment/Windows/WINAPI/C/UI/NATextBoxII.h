@@ -96,9 +96,9 @@ NA_DEF void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox){
 
 
 NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text){
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
-  SendMessage(naGetUIElementNativePtr(textBox), WM_SETTEXT, 0, (LPARAM)systemtext);
-  naFree(systemtext);
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
+  SendMessage(naGetUIElementNativePtr(textBox), WM_SETTEXT, 0, (LPARAM)systemText);
+  naFree(systemText);
 }
 
 

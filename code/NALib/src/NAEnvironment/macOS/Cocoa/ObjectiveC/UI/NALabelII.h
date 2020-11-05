@@ -8,7 +8,7 @@
 
 typedef struct NACocoaLabel NACocoaLabel;
 struct NACocoaLabel{
-  NALabel   label;
+  NALabel label;
 };
 
 NA_HAPI void na_DestructCocoaLabel(NACocoaLabel* cocoaLabel);
@@ -168,21 +168,24 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
   [self setAllowsEditingTextAttributes: YES];
   [self setSelectable: YES];
 
-  attrString = NA_COCOA_AUTORELEASE([[NSMutableAttributedString alloc] initWithString: [self stringValue]]);
+  attrString = [[NSMutableAttributedString alloc] initWithString: [self stringValue]];
   range = NSMakeRange(0, [attrString length]);
 
   nsurl = [NSURL URLWithString:[NSString stringWithUTF8String:url]];
+  
   [attrString beginEditing];
   [attrString addAttribute:NSLinkAttributeName value:[nsurl absoluteString] range:range];
   paragraphStyle = [[NSMutableParagraphStyle alloc] init];
   [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
   paragraphStyle.alignment = [self alignment];
   [attrString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:range];
+  NA_COCOA_RELEASE(paragraphStyle);
   [attrString addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInt:NSUnderlineStyleSingle] range:range];
   [attrString addAttribute:NSForegroundColorAttributeName value:[NSColor linkColor] range:range];
   [attrString endEditing];
   
   [self setAttributedStringValue: attrString];
+  NA_COCOA_RELEASE(attrString);
 }
 
 - (void) setLabelEnabled:(NABool)enabled{

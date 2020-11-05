@@ -8,7 +8,7 @@
 
 typedef struct NACocoaOpenGLSpace NACocoaOpenGLSpace;
 struct NACocoaOpenGLSpace{
-  NAOpenGLSpace   openGLSpace;
+  NAOpenGLSpace openGLSpace;
 };
 
 NA_HAPI void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace);
@@ -21,9 +21,9 @@ NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
   
   @interface NACocoaNativeOpenGLSpace : NSOpenGLView{
     NACocoaOpenGLSpace* cocoaOpenGLSpace;
-    NSTrackingArea* trackingArea;
-    NAMutator initFunc;
-    void* initData;
+    NSTrackingArea*     trackingArea;
+    NAMutator           initFunc;
+    void*               initData;
   }
   @end
 
@@ -31,8 +31,8 @@ NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
 
   @implementation NACocoaNativeOpenGLSpace
   
-  - (id)initWithOpenGLSpace:(NACocoaOpenGLSpace*)newCocoaOpenGLSpace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
-    self = [super initWithFrame:frameRect pixelFormat:pixelformat];
+  - (id)initWithOpenGLSpace:(NACocoaOpenGLSpace*)newCocoaOpenGLSpace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelFormat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
+    self = [super initWithFrame:frameRect pixelFormat:pixelFormat];
 
     // todo: make this dependent on whether tracking is needed or not.
     trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
@@ -44,6 +44,11 @@ NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
     initFunc = newinitFunc;
     initData = newinitData;
     return self;
+  }
+  
+  - (void)dealloc{
+    NA_COCOA_RELEASE(trackingArea);
+    NA_COCOA_SUPER_DEALLOC();
   }
   
   - (BOOL)acceptsFirstResponder{
@@ -120,15 +125,17 @@ NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
       NSOpenGLPFADepthSize, 64,
       NSOpenGLPFAAllowOfflineRenderers, // lets OpenGL know this context is offline renderer aware
       0 };
-    NSOpenGLPixelFormat *pixelformat = NA_COCOA_AUTORELEASE([[NSOpenGLPixelFormat alloc] initWithAttributes:attr]);
+    NSOpenGLPixelFormat *pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attr];
 
     NACocoaNativeOpenGLSpace* nativePtr = [[NACocoaNativeOpenGLSpace alloc]
       initWithOpenGLSpace:cocoaOpenGLSpace
       frame:naMakeNSRectWithSize(size)
-      pixelFormat:pixelformat
+      pixelFormat:pixelFormat
       initFunc:initFunc
       initData:initData];
     na_InitOpenGLSpace((NAOpenGLSpace*)cocoaOpenGLSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+
+    NA_COCOA_RELEASE(pixelFormat);
 
     if([nativePtr respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
       NA_MACOS_AVAILABILITY_GUARD_10_7(

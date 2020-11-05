@@ -8,7 +8,7 @@
 
 typedef struct NACocoaButton NACocoaButton;
 struct NACocoaButton{
-  NAButton   button;
+  NAButton button;
 };
 
 NA_HAPI void na_DestructCocoaButton(NACocoaButton* cocoaButton);

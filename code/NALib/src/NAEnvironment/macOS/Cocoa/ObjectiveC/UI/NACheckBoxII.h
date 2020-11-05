@@ -8,7 +8,7 @@
 
 typedef struct NACocoaCheckBox NACocoaCheckBox;
 struct NACocoaCheckBox{
-  NACheckBox   checkBox;
+  NACheckBox checkBox;
 };
 
 NA_HAPI void na_DestructCocoaCheckBox(NACocoaCheckBox* cocoaCheckBox);
@@ -55,9 +55,11 @@ NA_RUNTIME_TYPE(NACocoaCheckBox, na_DestructCocoaCheckBox, NA_FALSE);
   [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
   paragraphStyle.alignment = [self alignment];
   [attrString addAttribute:NSForegroundColorAttributeName value:nsColor range:range];
+  NA_COCOA_RELEASE(paragraphStyle);
   [attrString endEditing];
   
   [self setAttributedTitle: attrString];
+  NA_COCOA_RELEASE(attrString);
 }
 
 - (void) onPressed:(id)sender{

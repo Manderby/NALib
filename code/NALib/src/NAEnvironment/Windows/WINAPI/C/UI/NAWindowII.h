@@ -163,7 +163,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   HWND hWnd;
   RECT windowrect;
   NARect screenRect;
-  TCHAR* systemtitle;
+  TCHAR* systemTitle;
   HICON hIcon;
   NASpace* space;
   
@@ -184,10 +184,10 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   windowrect.left = (int)rect.pos.x;
   AdjustWindowRect(&windowrect, style, NA_FALSE);
 
-  systemtitle = naAllocSystemStringWithUTF8String(title);
+  systemTitle = naAllocSystemStringWithUTF8String(title);
 
 	hWnd = CreateWindow(
-		TEXT("NAWindow"), systemtitle, style,
+		TEXT("NAWindow"), systemTitle, style,
 		windowrect.left, windowrect.top, windowrect.right - windowrect.left, windowrect.bottom - windowrect.top,
 		NULL, NULL, naGetUIElementNativePtr(naGetApplication()), NULL);
 
@@ -197,7 +197,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
     SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
   }
 
-  naFree(systemtitle);
+  naFree(systemTitle);
 
   na_InitWindow(&(winapiWindow->window), hWnd, NA_NULL, NA_FALSE, resizeable, rect);
   winapiWindow->firstResponder = NA_NULL;
@@ -232,9 +232,9 @@ NA_DEF void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow){
 
 
 NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title){
-  TCHAR* systemtitle = naAllocSystemStringWithUTF8String(title);
-  SetWindowText(naGetUIElementNativePtr(window), systemtitle);
-  naFree(systemtitle);
+  TCHAR* systemTitle = naAllocSystemStringWithUTF8String(title);
+  SetWindowText(naGetUIElementNativePtr(window), systemTitle);
+  naFree(systemTitle);
 }
 
 

@@ -68,6 +68,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
     if(postStartup){postStartup(arg);}
   #if !NA_MACOS_USES_ARC
     [pool drain];
+    NA_COCOA_RELEASE(pool);
   #endif
 
   // Start the event loop.
@@ -84,6 +85,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
       }
     #if !NA_MACOS_USES_ARC
       [pool drain];
+      NA_COCOA_RELEASE(pool);
     #endif
   }
 

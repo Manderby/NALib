@@ -8,7 +8,7 @@
 
 typedef struct NACocoaTextBox NACocoaTextBox;
 struct NACocoaTextBox{
-  NATextBox   textBox;
+  NATextBox textBox;
 };
 
 NA_HAPI void na_DestructCocoaTextBox(NACocoaTextBox* cocoaTextBox);
@@ -16,7 +16,7 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 
 @interface NACocoaNativeTextBox : NSTextView <NACocoaNativeEncapsulatedElement>{
   NACocoaTextBox* cocoaTextBox;
-  NSScrollView* scrollView;
+  NSScrollView*   scrollView;
 }
 - (NSView*) getEncapsulatingView;
 @end
@@ -40,6 +40,7 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
   clipView = [[NSClipView alloc] initWithFrame:clipRect];
   [scrollView setContentView:clipView];
   [scrollView setDocumentView:self];
+  NA_COCOA_RELEASE(clipView);
 
   if([scrollView respondsToSelector:@selector(setAutomaticallyAdjustsContentInsets:)]){
     NA_MACOS_AVAILABILITY_GUARD_10_10(
@@ -54,6 +55,11 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 
   cocoaTextBox = newCocoaTextBox;
   return self;
+}
+
+- (void)dealloc{
+  NA_COCOA_RELEASE(scrollView);
+  NA_COCOA_SUPER_DEALLOC();
 }
 
 - (void) setText:(const NAUTF8Char*)text{
