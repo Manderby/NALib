@@ -145,20 +145,24 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace){
 
 
 NA_DEF NASpace* naNewSpace(NASize size){
-  HWND hWnd;
-  DWORD style;
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-
   NAWINAPISpace* winapiSpace = naNew(NAWINAPISpace);
 
-  style = WS_CHILD | WS_VISIBLE;
+	HWND nativePtr = CreateWindow(
+		TEXT("NASpace"),
+    TEXT(""),
+    WS_CHILD | WS_VISIBLE,
+		0,
+    0,
+    (int)size.width,
+    (int)size.height,
+		naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
 
-	hWnd = CreateWindow(
-		TEXT("NASpace"), TEXT(""), style,
-		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
+  na_InitSpace(&(winapiSpace->space), nativePtr);
 
-  na_InitSpace(&(winapiSpace->space), hWnd);
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   winapiSpace->lastBgColor = &(app->bgColor);
   winapiSpace->space.alternatebackground = NA_FALSE;
 

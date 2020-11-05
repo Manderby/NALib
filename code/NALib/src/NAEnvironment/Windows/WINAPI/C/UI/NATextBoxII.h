@@ -55,19 +55,22 @@ NABool naHandleTextBoxReverseTabOrder(NAReaction reaction){
 
 
 NA_DEF NATextBox* naNewTextBox(NASize size){
-  HWND hWnd;
-  DWORD style;
-
   NAWINAPITextBox* winapiTextBox = naNew(NAWINAPITextBox);
 
-  style = WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN;
-
-	hWnd = CreateWindow(
-		TEXT("EDIT"), TEXT(""), style,
-		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
+	HWND nativePtr = CreateWindow(
+		TEXT("EDIT"),
+    TEXT(""),
+    WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
+		0,
+    0, 
+    (int)size.width,
+    (int)size.height,
+		naGetApplicationOffscreenWindow(), 
+    NULL, 
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL );
   
-  na_InitTextBox(&(winapiTextBox->textBox), hWnd);
+  na_InitTextBox(&(winapiTextBox->textBox), nativePtr);
   winapiTextBox->nextTabStop = winapiTextBox;
   winapiTextBox->prevTabStop = winapiTextBox;
 
@@ -82,7 +85,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
     naHandleTextBoxReverseTabOrder,
     NA_NULL);
 
-  SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NATextBox*)winapiTextBox;
 }

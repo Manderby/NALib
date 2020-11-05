@@ -113,27 +113,27 @@ NABool naHandleTextFieldReverseTabOrder(NAReaction reaction){
 
 
 NA_DEF NATextField* naNewTextField(NASize size){
-  HWND hWnd;
-  DWORD style;
-  WNDPROC oldproc;
-
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
   NAWINAPITextField* winapiTextField = naNew(NAWINAPITextField);
 
-  // WS_TABSTOP and WS_GROUP seem not to work... strange. I solved it using the
-  // na_InterceptKeyboardShortcut function. 
-  style = WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL;
-
-  hWnd = CreateWindow(
-	  TEXT("EDIT"), TEXT(""), style,
-	  0, 0, (int)size.width, (int)size.height,
-	  naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
+  HWND nativePtr = CreateWindow(
+	  TEXT("EDIT"),
+    TEXT(""),
+    WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL,
+	  0,
+    0,
+    (int)size.width,
+    (int)size.height,
+	  naGetApplicationOffscreenWindow(),
+    NULL, 
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
  
-  oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldTextFieldWindowProc){app->oldTextFieldWindowProc = oldproc;}
 
-  na_InitTextField(&(winapiTextField->textField), hWnd);
+  na_InitTextField(&(winapiTextField->textField), nativePtr);
   winapiTextField->nextTabStop = winapiTextField;
   winapiTextField->prevTabStop = winapiTextField;
 
@@ -148,7 +148,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
     naHandleTextFieldReverseTabOrder,
     NA_NULL);
 
-  SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NATextField*)winapiTextField;
 }

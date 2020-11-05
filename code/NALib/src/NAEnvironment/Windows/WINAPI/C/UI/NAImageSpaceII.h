@@ -118,22 +118,22 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARA
 
 
 NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
-  HWND hWnd;
-  DWORD exStyle;
-  DWORD style;
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-
   NAWINAPIImageSpace* winapiImageSpace = naNew(NAWINAPIImageSpace);
 
-  exStyle = 0;
-  style = WS_CHILD | WS_VISIBLE;
+	HWND nativePtr = CreateWindow(
+		TEXT("NASpace"),
+    TEXT("Space"),
+    WS_CHILD | WS_VISIBLE,
+		0,
+    0,
+    (int)size.width,
+    (int)size.height,
+		naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
 
-	hWnd = CreateWindow(
-		TEXT("NASpace"), TEXT("Space"), style,
-		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
-
-  na_InitImageSpace(&(winapiImageSpace->imageSpace), hWnd);
+  na_InitImageSpace(&(winapiImageSpace->imageSpace), nativePtr);
   winapiImageSpace->image = uiImage;
 
   return (NAImageSpace*)winapiImageSpace;

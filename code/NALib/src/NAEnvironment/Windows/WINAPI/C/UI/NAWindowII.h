@@ -159,47 +159,48 @@ NABool naHandleWindowTabOrder(NAReaction reaction){
 
 
 NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable, NAInt storageTag){
-  DWORD style;
-  HWND hWnd;
-  RECT windowrect;
-  NARect screenRect;
-  TCHAR* systemTitle;
-  HICON hIcon;
-  NASpace* space;
-  
   NAWINAPIWindow* winapiWindow = naNew(NAWINAPIWindow);
 
   rect = naSetWindowStorageTag(&(winapiWindow->window), storageTag, rect, resizeable);
 
-  style = WS_OVERLAPPEDWINDOW;
+  DWORD style = WS_OVERLAPPEDWINDOW;
   if(!resizeable){
     style &= ~WS_THICKFRAME;
     style &= ~WS_MAXIMIZEBOX;
   }
 
-  screenRect = naGetMainScreenRect();
+  NARect screenRect = naGetMainScreenRect();
+  RECT windowrect;
   windowrect.top = (int)(screenRect.size.height - rect.pos.y - rect.size.height);
   windowrect.right = (int)(rect.pos.x + rect.size.width);
   windowrect.bottom = (int)(screenRect.size.height - rect.pos.y);
   windowrect.left = (int)rect.pos.x;
   AdjustWindowRect(&windowrect, style, NA_FALSE);
 
-  systemTitle = naAllocSystemStringWithUTF8String(title);
+  TCHAR* systemTitle = naAllocSystemStringWithUTF8String(title);
 
-	hWnd = CreateWindow(
-		TEXT("NAWindow"), systemTitle, style,
-		windowrect.left, windowrect.top, windowrect.right - windowrect.left, windowrect.bottom - windowrect.top,
-		NULL, NULL, naGetUIElementNativePtr(naGetApplication()), NULL);
+	HWND nativePtr = CreateWindow(
+		TEXT("NAWindow"),
+    systemTitle,
+    style,
+		windowrect.left,
+    windowrect.top,
+    windowrect.right - windowrect.left,
+    windowrect.bottom - windowrect.top,
+		NULL,
+    NULL,
+    naGetUIElementNativePtr(naGetApplication()),
+    NULL);
 
-  hIcon = naGetWINAPIApplicationIcon();
+  HICON hIcon = naGetWINAPIApplicationIcon();
   if(hIcon){   
-    SendMessage(hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
-    SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+    SendMessage(nativePtr, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+    SendMessage(nativePtr, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
   }
 
   naFree(systemTitle);
 
-  na_InitWindow(&(winapiWindow->window), hWnd, NA_NULL, NA_FALSE, resizeable, rect);
+  na_InitWindow(&(winapiWindow->window), nativePtr, NA_NULL, NA_FALSE, resizeable, rect);
   winapiWindow->firstResponder = NA_NULL;
 
   naAddUIKeyboardShortcut(
@@ -213,8 +214,8 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
     naHandleWindowTabOrder,
     NA_NULL);
 
-  space = naNewSpace(rect.size);
-  naSetWindowContentSpace(&(winapiWindow->window), space);
+  NASpace* contentSpace = naNewSpace(rect.size);
+  naSetWindowContentSpace(&(winapiWindow->window), contentSpace);
 
   na_SetUIElementParent((NA_UIElement*)winapiWindow, naGetApplication());
 

@@ -75,30 +75,29 @@ NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam){
 
 
 NA_DEF NASlider* naNewSlider(NASize size){
-  HWND hWnd;
-  DWORD style;
-  TCHAR* systemText;
-  WNDPROC oldproc;
-
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-
   NAWINAPISlider* winapiSlider = naNew(NAWINAPISlider);
 
-  style = WS_CHILD | WS_VISIBLE | TBS_NOTICKS ;
+  TCHAR* systemText = naAllocSystemStringWithUTF8String("Slider");
 
-  systemText = naAllocSystemStringWithUTF8String("Slider");
-
-	hWnd = CreateWindow(
-		TRACKBAR_CLASS, systemText, style,
-		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
+	HWND nativePtr = CreateWindow(
+		TRACKBAR_CLASS,
+    systemText,
+    WS_CHILD | WS_VISIBLE | TBS_NOTICKS,
+		0,
+    0,
+    (int)size.width,
+    (int)size.height,
+		naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
   
   naFree(systemText);
 
-  SendMessage(hWnd, TBM_SETRANGEMIN , 
+  SendMessage(nativePtr, TBM_SETRANGEMIN , 
     (WPARAM) TRUE,
     (LPARAM) NA_ZERO_u32);
-  SendMessage(hWnd, TBM_SETRANGEMAX, 
+  SendMessage(nativePtr, TBM_SETRANGEMAX, 
     (WPARAM) TRUE,
     (LPARAM) NA_MAX_i32);
 
@@ -112,10 +111,11 @@ NA_DEF NASlider* naNewSlider(NASize size){
 
   //SetFocus(hWnd); 
 
-  oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldSliderWindowProc){app->oldSliderWindowProc = oldproc;}
 
-  na_InitSlider(&(winapiSlider->slider), hWnd);
+  na_InitSlider(&(winapiSlider->slider), nativePtr);
 
   return (NASlider*)winapiSlider;
 }

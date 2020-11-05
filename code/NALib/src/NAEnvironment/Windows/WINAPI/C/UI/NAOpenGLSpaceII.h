@@ -49,28 +49,26 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
 typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
 
 NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
-	
-  HWND hWnd;
-  HDC hDC;
- 	PIXELFORMATDESCRIPTOR pfd;
-  int format;
-  DWORD style;
-	PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
-  const char *extensions;
-
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = naNew(NAWINAPIOpenGLSpace);
 
-  style = WS_CHILD | WS_VISIBLE | ES_READONLY;
-  
-	hWnd = CreateWindow(
-		TEXT("NAOpenGLSpace"), TEXT(""), style,
-		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
+	HWND nativePtr = CreateWindow(
+		TEXT("NAOpenGLSpace"),
+    TEXT(""),
+    WS_CHILD | WS_VISIBLE | ES_READONLY,
+		0, 
+    0,
+    (int)size.width,
+    (int)size.height,
+		naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), 
+    NULL);
     
-  hDC = GetDC(hWnd);
+  HDC hDC = GetDC(nativePtr);
 
   // Expected to be called when initializing. Do not multithread!
 	// define pixel format for device context
+ 	PIXELFORMATDESCRIPTOR pfd;
 	ZeroMemory( &pfd, sizeof( pfd ) );
 	pfd.nSize = sizeof( pfd );
 	pfd.nVersion = 1;
@@ -80,7 +78,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 	pfd.cColorBits = 24;
 	pfd.cDepthBits = 16;
 	pfd.iLayerType = PFD_MAIN_PLANE;
-	format = ChoosePixelFormat( GetDC(hWnd), &pfd );
+	int format = ChoosePixelFormat( GetDC(nativePtr), &pfd );
 
 	SetPixelFormat( hDC, format, &pfd );
 	
@@ -88,11 +86,12 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 	winapiOpenGLSpace->hRC = wglCreateContext(hDC);
 	wglMakeCurrent(hDC, winapiOpenGLSpace->hRC);
 
-	extensions = (char*)glGetString(GL_EXTENSIONS);
+	const char* extensions = (char*)glGetString(GL_EXTENSIONS);
+	PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
 	if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
 
-  na_InitOpenGLSpace(&(winapiOpenGLSpace->openGLSpace), hWnd);
+  na_InitOpenGLSpace(&(winapiOpenGLSpace->openGLSpace), nativePtr);
 
   // Now the OpenGL context is created and current. We can initialize it
   // if necessary.
