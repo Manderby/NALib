@@ -111,7 +111,7 @@ NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
 
 
   NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
-    NACocoaOpenGLSpace* cocoaOpenGLSpace = naAlloc(NACocoaOpenGLSpace);
+    NACocoaOpenGLSpace* cocoaOpenGLSpace = naNew(NACocoaOpenGLSpace);
 
     // Configure the OpenGL context and initialize this object.
     NSOpenGLPixelFormatAttribute attr[] = {

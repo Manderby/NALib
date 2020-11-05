@@ -106,7 +106,7 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 NA_HDEF NAApplication* na_NewApplication(void){
-  NACocoaApplication* cocoaApplication = naAlloc(NACocoaApplication);
+  NACocoaApplication* cocoaApplication = naNew(NACocoaApplication);
 
   NACocoaNativeApplicationDelegate* nativePtr = [[NACocoaNativeApplicationDelegate alloc]
     initWithCocoaApplication:cocoaApplication];

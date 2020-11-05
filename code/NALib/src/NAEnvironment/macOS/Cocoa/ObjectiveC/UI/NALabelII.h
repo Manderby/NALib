@@ -202,7 +202,7 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
 
 
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
-  NACocoaLabel* cocoaLabel = naAlloc(NACocoaLabel);
+  NACocoaLabel* cocoaLabel = naNew(NACocoaLabel);
 
   NACocoaNativeLabel* nativePtr = [[NACocoaNativeLabel alloc]
     initWithLabel:cocoaLabel

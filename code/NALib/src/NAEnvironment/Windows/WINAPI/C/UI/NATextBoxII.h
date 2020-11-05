@@ -58,7 +58,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
   HWND hWnd;
   DWORD style;
 
-  NAWINAPITextBox* winapiTextBox = naAlloc(NAWINAPITextBox);
+  NAWINAPITextBox* winapiTextBox = naNew(NAWINAPITextBox);
 
   style = WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN;
 

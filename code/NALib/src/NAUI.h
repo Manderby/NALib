@@ -586,7 +586,6 @@ typedef enum{
 #endif
 
 // Button
-void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage);
 NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NASize size);
 NA_API NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size);
 NA_API NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size);

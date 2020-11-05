@@ -32,10 +32,11 @@ NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
 
 - (void) setUIImage:(NAUIImage*)newuiImage{
   uiImage = newuiImage;
-  NSImage* image = NA_COCOA_PTR_C_TO_OBJC(naAllocNativeImageWithUIImage(
+  NSImage* image = naCreateResolutionIndependentNativeImage(
+    self,
     uiImage,
     NA_UIIMAGE_KIND_MAIN,
-    NA_UIIMAGE_SKIN_PLAIN));
+    NA_UIIMAGE_SKIN_PLAIN);
   [self setImage:image];
 }
 

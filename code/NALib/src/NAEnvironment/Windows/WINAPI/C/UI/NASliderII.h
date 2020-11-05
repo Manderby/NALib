@@ -82,7 +82,7 @@ NA_DEF NASlider* naNewSlider(NASize size){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPISlider* winapiSlider = naAlloc(NAWINAPISlider);
+  NAWINAPISlider* winapiSlider = naNew(NAWINAPISlider);
 
   style = WS_CHILD | WS_VISIBLE | TBS_NOTICKS ;
 

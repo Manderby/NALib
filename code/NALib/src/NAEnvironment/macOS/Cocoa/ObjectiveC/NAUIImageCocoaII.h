@@ -5,8 +5,40 @@
 // Do not include this file anywhere else!
 
 
+#include "Availability.h"
 #include "../../../NAUIImage.h"
 #include "../../../../NAPNG.h"
+
+
+
+#if defined __MAC_10_9
+  NAUIImageSkin naGetSkinForCurrentAppearance(void){
+    NAUIImageSkin skin = NA_UIIMAGE_SKIN_LIGHT;
+    if([NSAppearance respondsToSelector:@selector(currentAppearance)]){
+      NSAppearanceName appearancename = NSAppearanceNameAqua;
+      if([[NSAppearance currentAppearance] respondsToSelector:@selector(name)]){
+        NA_MACOS_AVAILABILITY_GUARD_10_9(
+          appearancename = [[NSAppearance currentAppearance] name];
+        )
+      }
+      NA_MACOS_AVAILABILITY_GUARD_10_10(
+        if(appearancename == NSAppearanceNameVibrantDark){skin = NA_UIIMAGE_SKIN_DARK;}
+      )
+      NA_MACOS_AVAILABILITY_GUARD_10_14(
+        if(appearancename == NSAppearanceNameDarkAqua
+        || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
+        || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark){
+          skin = NA_UIIMAGE_SKIN_DARK;}
+      )
+    }
+    return skin;
+  }
+#else
+  NAUIImageSkin naGetSkinForCurrentAppearance(void){
+    return NA_UIIMAGE_SKIN_LIGHT;
+  }
+#endif
+
 
 
 NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
@@ -71,27 +103,56 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 
 
 
-
-void* naAllocNativeImageWithUIImage(
+NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
+  const NSView* containingView,
   const NAUIImage* uiImage,
   NAUIImageKind kind,
   NAUIImageSkin skin)
 {
-  NASizei imageSize = naGetUIImage1xSize(uiImage);
-  NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
+  NSImage* image = nil;
 
-  CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-  CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
-  if(img1x){
-    NSBitmapImageRep* rep = NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x]);
-    [image addRepresentation:rep];
-  }
-  if(img2x){
-    NSBitmapImageRep* rep = NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img2x]);
-    [image addRepresentation:rep];
+  // modern method: Create an image which redraws itself automatically.
+  if([NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
+    NA_MACOS_AVAILABILITY_GUARD_10_8(
+      NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
+      image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
+      {        
+        NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
+        if(uiImage->tintMode != NA_BLEND_ZERO){
+          skin = naGetSkinForCurrentAppearance();
+        }
+
+        CGContextRef context = naGetCGContextRef([NSGraphicsContext currentContext]);
+        NAUIImageResolution resolution = naGetWindowBackingScaleFactor([containingView window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
+
+        CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, kind, skin);
+        if(!cocoaimage){
+          cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
+        }
+        CGContextDrawImage(context, dstRect, cocoaimage);
+        return YES;
+      }];
+    ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
   }
   
-  return NA_COCOA_PTR_OBJC_TO_C(image);
+  // old method: Just create an image with multiple representations.
+  if(!image){
+    NASizei imageSize = naGetUIImage1xSize(uiImage);
+    NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
+
+    CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
+    CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
+    if(img1x){
+      NSBitmapImageRep* rep = NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x]);
+      [image addRepresentation:rep];
+    }
+    if(img2x){
+      NSBitmapImageRep* rep = NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img2x]);
+      [image addRepresentation:rep];
+    }
+  }
+  
+  return image;
 }
 
 

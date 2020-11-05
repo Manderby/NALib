@@ -133,35 +133,6 @@ CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext){
 
 
 
-#if defined __MAC_10_9
-  NAUIImageSkin naGetSkinForCurrentAppearance(void){
-    NAUIImageSkin skin = NA_UIIMAGE_SKIN_LIGHT;
-    if([NSAppearance respondsToSelector:@selector(currentAppearance)]){
-      NSAppearanceName appearancename = NSAppearanceNameAqua;
-      if([[NSAppearance currentAppearance] respondsToSelector:@selector(name)]){
-        NA_MACOS_AVAILABILITY_GUARD_10_9(
-          appearancename = [[NSAppearance currentAppearance] name];
-        )
-      }
-      NA_MACOS_AVAILABILITY_GUARD_10_10(
-        if(appearancename == NSAppearanceNameVibrantDark){skin = NA_UIIMAGE_SKIN_DARK;}
-      )
-      NA_MACOS_AVAILABILITY_GUARD_10_14(
-        if(appearancename == NSAppearanceNameDarkAqua
-        || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
-        || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark){
-          skin = NA_UIIMAGE_SKIN_DARK;}
-      )
-    }
-    return skin;
-  }
-#else
-  NAUIImageSkin naGetSkinForCurrentAppearance(void){
-    return NA_UIIMAGE_SKIN_LIGHT;
-  }
-#endif
-
-
 CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
   CGFloat res = (CGFloat)1.;
 

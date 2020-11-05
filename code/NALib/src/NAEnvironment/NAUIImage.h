@@ -56,10 +56,6 @@ void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage);
 NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr);
 NA_API void* naAllocNativeImageWithBabyImage(const NABabyImage* image);
-NA_API void* naAllocNativeImageWithUIImage(
-  const NAUIImage* uiImage,
-  NAUIImageKind kind,
-  NAUIImageSkin skin);
 NA_API void naDeallocNativeImage(void* nativeImage);
 
 

@@ -34,10 +34,11 @@
 
 #import <Cocoa/Cocoa.h>
 
+#include "ObjectiveC/UI/NAUICocoaLegacyII.h"
+
 #include "ObjectiveC/NAUIImageCocoaII.h"
 #include "ObjectiveC/NAPreferencesCocoaII.h"
 
-#include "ObjectiveC/UI/NAUICocoaLegacyII.h"
 #include "ObjectiveC/UI/NAUICocoaII.h"
 #include "ObjectiveC/UI/NAApplicationII.h"
 

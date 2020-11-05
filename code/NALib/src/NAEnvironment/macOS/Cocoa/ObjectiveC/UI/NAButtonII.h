@@ -17,62 +17,7 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 @interface NACocoaNativeButton : NSButton{
   NACocoaButton* cocoaButton;
 }
-- (void) onPressed:(id)sender;
 @end
-
-
-
-NSImage* naCreateResolutionIndependentNSImage(
-  NSView* viewOnScreen,
-  const NAUIImage* uiImage,
-  NAUIImageKind imageKind)
-{
-  NSImage* image = nil; // todo: this must be implemented before macOS 10.8
-
-  if([NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
-    NA_MACOS_AVAILABILITY_GUARD_10_8(
-      NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
-      image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
-      {        
-        NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
-        if(uiImage->tintMode != NA_BLEND_ZERO){
-          skin = naGetSkinForCurrentAppearance();
-        }
-
-        CGContextRef context = naGetCGContextRef([NSGraphicsContext currentContext]);
-        NAUIImageResolution resolution = naGetWindowBackingScaleFactor([viewOnScreen window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
-
-        CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, imageKind, skin);
-        if(!cocoaimage){
-          cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, imageKind, skin);
-        }
-        CGContextDrawImage(context, dstRect, cocoaimage);
-        return YES;
-      }];
-    ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
-  }else{
-    image = NA_COCOA_PTR_C_TO_OBJC(naAllocNativeImageWithUIImage(
-      uiImage,
-      imageKind,
-      NA_UIIMAGE_SKIN_LIGHT));
-  }
-  return image;
-}
-
-
-void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage){
-  NSButton* button = (NA_COCOA_BRIDGE NSButton*)(nsButton);
-
-  [button setImage:naCreateResolutionIndependentNSImage(
-    button,
-    uiImage,
-    NA_UIIMAGE_KIND_MAIN)];
-  [button setAlternateImage:naCreateResolutionIndependentNSImage(
-    button,
-    uiImage,
-    NA_UIIMAGE_KIND_ALT)];
-  [[button cell] setImageScaling:NSImageScaleProportionallyUpOrDown];
-}
 
 
 
@@ -95,7 +40,18 @@ void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage){
 }
 
 - (void) setUIImage:(NAUIImage*)uiImage{
-  naTellNSButtonSetUIImage((NA_COCOA_BRIDGE void*)self, uiImage);
+  [self setImage:naCreateResolutionIndependentNativeImage(
+    self,
+    uiImage,
+    NA_UIIMAGE_KIND_MAIN,
+    NA_UIIMAGE_SKIN_PLAIN)];
+  [self setAlternateImage:naCreateResolutionIndependentNativeImage(
+    self,
+    uiImage,
+    NA_UIIMAGE_KIND_ALT,
+    NA_UIIMAGE_SKIN_PLAIN)];
+
+  [[self cell] setImageScaling:NSImageScaleNone];
 }
 
 - (void) onPressed:(id)sender{

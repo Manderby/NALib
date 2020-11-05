@@ -238,7 +238,7 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 NA_HDEF NAApplication* na_NewApplication(void){
 
-  NAWINAPIApplication* winapiApplication = naAlloc(NAWINAPIApplication);
+  NAWINAPIApplication* winapiApplication = naNew(NAWINAPIApplication);
 
   na_InitApplication(&(winapiApplication->application), GetModuleHandle(NULL));
 
