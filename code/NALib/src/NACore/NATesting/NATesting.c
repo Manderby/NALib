@@ -176,7 +176,7 @@ NA_HDEF void na_FailSafeCrasher()
         struct proc_bsdinfo thisProc;
         proc_pidinfo(thisPid, PROC_PIDTBSDINFO, 0, &thisProc, PROC_PIDTBSDINFO_SIZE);
                              
-        for (int i = 0; i < procCount; i++) { 
+        for (size_t i = 0; i < procCount; i++) { 
           struct kinfo_proc *proc = &result[i]; 
 //          printf("%s\n", proc->kp_proc.p_comm);
           if (strcmp(thisProc.pbi_comm, proc->kp_proc.p_comm) == 0) { 
@@ -489,6 +489,8 @@ NA_HDEF void na_AddTestError(const char* expr, int lineNum){
 
 
 NA_HDEF void na_AddTestCrash(const char* expr, int lineNum){
+  NA_UNUSED(expr);
+  NA_UNUSED(lineNum);
   #ifndef NDEBUG
   if(!na_Testing)
     naError("Testing not running. Use naStartTesting.");
@@ -596,7 +598,7 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
       }
       NAInt pathCount = naGetStackCount(&testPathStrings);
   
-      char** const argv = naMalloc((pathCount + 3) * sizeof(const char*));
+      char** const argv = naMalloc((pathCount + 3) * naSizeof(const char*));
       argv[0] = naMalloc(naGetStringBytesize(modulePath) + 1);
       argv[0][naGetStringBytesize(modulePath)] = '\0';
       naWriteBufferToData(naGetStringBufferMutable(modulePath), argv[0]);
