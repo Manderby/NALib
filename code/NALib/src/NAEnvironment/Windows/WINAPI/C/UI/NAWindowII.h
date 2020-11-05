@@ -120,6 +120,11 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case SPI_GETDOCKMOVING:
   case WM_DESTROY:
   case WM_NCDESTROY:
+  case BM_SETSTATE:
+  case 0xC0D6: // undocumented
+  case WM_ENTERSIZEMOVE:
+  case WM_MOVING:
+  case WM_EXITSIZEMOVE:
     break;
 
   // Cases being called due to bubbling the message.
