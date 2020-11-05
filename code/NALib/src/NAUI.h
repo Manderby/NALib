@@ -104,8 +104,6 @@ typedef enum{
 
 NA_API NAUIElementType naGetUIElementType(void* uiElement);
 
-NA_API void naReleaseUIElement(void* uiElement);
-
 // Any ui element has a strict hierarchical ordering: Application - Screen -
 // Window - Space - Subspace - Subsubspace ... You can get the parent element
 // with this function. The parent of the Application will be NA_NULL.

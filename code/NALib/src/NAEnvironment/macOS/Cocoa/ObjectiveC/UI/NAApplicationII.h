@@ -67,8 +67,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
     // Call postStartup if desired.
     if(postStartup){postStartup(arg);}
   #if !NA_MACOS_USES_ARC
-    [pool drain];
-    NA_COCOA_RELEASE(pool);
+    [pool drain]; // also releases the pool. No separate release necessary.
   #endif
 
   // Start the event loop.
@@ -84,13 +83,12 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
         if(curEvent){[NSApp sendEvent:curEvent];}
       }
     #if !NA_MACOS_USES_ARC
-      [pool drain];
-      NA_COCOA_RELEASE(pool);
+      [pool drain]; // also releases the pool. No separate release necessary.
     #endif
   }
 
   // When reaching here, the application had been stopped.
-  naReleaseUIElement(app);
+  naDelete(app);
 }
 
 

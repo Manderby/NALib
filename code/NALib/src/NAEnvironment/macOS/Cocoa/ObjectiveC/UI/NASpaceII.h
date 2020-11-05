@@ -124,7 +124,8 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
   NSRect frame = [subview frame];
   frame.origin = NSMakePoint((CGFloat)pos.x, (CGFloat)pos.y);
   [subview setFrame: frame];
-  na_SetUIElementParent(child, space);
+  
+  na_AddSpaceChild(space, child);
 }
 
 

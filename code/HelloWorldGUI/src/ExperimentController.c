@@ -303,7 +303,9 @@ ExperimentController* createExperimentController(){
 
 
 void clearExperimentController(ExperimentController* con){
-  naReleaseUIElement(con->experimentWindow);
+  // Note that all UI elements which are attached in some way to the root
+  // application UIElement will be cleared automatically.
+  naRelease(con->testImage);
   naFree(con);
 }
 

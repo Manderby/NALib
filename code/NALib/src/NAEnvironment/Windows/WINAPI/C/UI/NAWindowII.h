@@ -224,8 +224,6 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 
 
 NA_DEF void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow){
-  DestroyWindow(naGetUIElementNativePtr(window));
-  naReleaseUIElement(window->contentSpace);
   na_ClearWindow(window);
 }
 
@@ -352,12 +350,6 @@ NA_HDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
   rect.size.height = (double)windowrect.bottom - (double)windowrect.top;
 
   return rect;
-}
-
-
-
-NA_DEF void naClearWindow(NAWindow* window){
-	DestroyWindow(naGetUIElementNativePtr(window));
 }
 
 

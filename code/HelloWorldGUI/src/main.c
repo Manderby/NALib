@@ -156,12 +156,8 @@ void createController(){
 
 // Clear all allocated elements.
 void clearController(ConverterController* con){
-  naReleaseUIElement(con->window);
-  //naReleaseUIElement(con->button);
-  //naReleaseUIElement(con->textField);
-  //naReleaseUIElement(con->label);
-  //naReleaseUIElement(con->newButton);
-  //naReleaseUIElement(con->quitButton);
+  // Note that all UI elements which are attached in some way to the root
+  // application UIElement will be cleared automatically.
 }
 
 

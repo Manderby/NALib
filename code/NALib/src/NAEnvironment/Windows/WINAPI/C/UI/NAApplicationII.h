@@ -208,7 +208,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
   }
 
   // When reaching here, the application had been stopped.
-  naReleaseUIElement(app);
+  naDelete(app);
 }
 
 

@@ -38,12 +38,12 @@ typedef void*  NAFont;
 
 struct NA_UIElement{
   NAUIElementType elementType;
-  void* parent;
-  NAList reactions;
-  NAList shortcuts;
-  NABool mouseInside;
-  NABool allowNotifications;
-  void* nativePtr;               // The native pointer
+  void*           parent;
+  NAList          reactions;
+  NAList          shortcuts;
+  NABool          mouseInside;
+  NABool          allowNotifications;
+  void*           nativePtr;         // The native pointer
 };
 
 struct NAApplication{
@@ -57,11 +57,11 @@ struct NAApplication{
   NAKeyboardStatus  keyboardStatus;  // The keyboard status
   NAInt             flags;
 
-  NAUTF8Char* name;
-  NAUTF8Char* companyName;
-  NAUTF8Char* versionString;
-  NAUTF8Char* buildString;
-  NAUTF8Char* iconPath;
+  NAUTF8Char*       name;
+  NAUTF8Char*       companyName;
+  NAUTF8Char*       versionString;
+  NAUTF8Char*       buildString;
+  NAUTF8Char*       iconPath;
 };
 
 struct NAScreen{
@@ -70,15 +70,16 @@ struct NAScreen{
 
 struct NAWindow{
   NA_UIElement uiElement;
-  NAInt storageTag;
-  NASpace* contentSpace;
-  NAInt flags;
-  NARect windowedFrame;
+  NAInt        storageTag;
+  NASpace*     contentSpace;
+  NAInt        flags;
+  NARect       windowedFrame;
 };
 
 struct NASpace{
   NA_UIElement uiElement;
-  NABool alternatebackground;
+  NAList       childs;
+  NABool       alternatebackground;
 };
 
 struct NAImageSpace{
@@ -118,14 +119,14 @@ struct NASlider{
 };
 
 struct NAEventReaction{
-  void* controller;
-  NAUICommand command;
+  void*             controller;
+  NAUICommand       command;
   NAReactionHandler handler;
 };
 
 struct NAKeyboardShortcutReaction{
-  void* controller;
-  NAKeyboardStatus shortcut;
+  void*             controller;
+  NAKeyboardStatus  shortcut;
   NAReactionHandler handler;
 };
 
@@ -174,6 +175,7 @@ NA_HAPI NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window);
 
 NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);
 NA_HAPI void na_ClearSpace(NASpace* space);
+NA_HAPI void na_AddSpaceChild(NASpace*, NA_UIElement* child);
 
 NA_HAPI void na_InitImageSpace(NAImageSpace* imageSpace, void* nativePtr);
 NA_HAPI void na_ClearImageSpace(NAImageSpace* imageSpace);

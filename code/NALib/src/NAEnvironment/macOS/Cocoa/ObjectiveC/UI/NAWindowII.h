@@ -183,7 +183,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 NA_DEF void na_DestructCocoaWindow(NACocoaWindow* cocoaWindow){
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, cocoaWindow);
   [nativePtr close];
-  naReleaseUIElement(cocoaWindow->window.contentSpace);
+  
   na_ClearWindow((NAWindow*)cocoaWindow);
 }
 
@@ -288,12 +288,6 @@ NA_HDEF void na_ClearWindowMouseTracking(NAWindow* window){
 
 
 
-NA_DEF void naClearWindow(NAWindow* window){
-  NA_UNUSED(window);
-}
-
-
-
 NA_DEF void naShowWindow(NAWindow* window){
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   [nativePtr makeKeyAndOrderFront:NA_NULL];
@@ -315,6 +309,7 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* uiElement){
   [nativeWindowPtr setContentView:nativeUIElementPtr];
   [nativeWindowPtr setInitialFirstResponder:[nativeWindowPtr contentView]];
   
+  if(window->contentSpace){naDelete(window->contentSpace);}
   window->contentSpace = (NASpace*)uiElement;
   na_SetUIElementParent(uiElement, window);
   
