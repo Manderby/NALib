@@ -9,7 +9,7 @@
 // Homogeneous Coordinates
 // ///////////////////////////////
 
-NA_IDEF void naScaleM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2){
+NA_IDEF void naScaleM33d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2){
   D[0] = A[0] * s1;
   D[1] = A[1] * s1;
   D[2] = A[2] * s1;
@@ -23,7 +23,7 @@ NA_IDEF void naScaleM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT A, do
 
 
 
-NA_IDEF void naTranslateM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2){
+NA_IDEF void naTranslateM33d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2){
   D[0] = A[0];
   D[1] = A[1];
   D[2] = A[2];
