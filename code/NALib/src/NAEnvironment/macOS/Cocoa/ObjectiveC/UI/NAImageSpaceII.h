@@ -33,8 +33,7 @@ NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
   NSImage* image = naCreateResolutionIndependentNativeImage(
     self,
     uiImage,
-    NA_UIIMAGE_KIND_MAIN,
-    NA_UIIMAGE_SKIN_PLAIN);
+    NA_UIIMAGE_KIND_MAIN);
   [self setImage:image];
 }
 
@@ -50,6 +49,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
     frame:naMakeNSRectWithSize(size)];
   na_InitImageSpace((NAImageSpace*)cocoaImageSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
+  cocoaImageSpace->imageSpace.uiImage = naRetain(uiImage);
   [nativePtr setUIImage: uiImage];
   
   return (NAImageSpace*)cocoaImageSpace;
@@ -58,6 +58,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
 
 
 NA_DEF void na_DestructCocoaImageSpace(NACocoaImageSpace* cocoaImageSpace){
+  naRelease(cocoaImageSpace->imageSpace.uiImage);
   na_ClearImageSpace((NAImageSpace*)cocoaImageSpace);
 }
 

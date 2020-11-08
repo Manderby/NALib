@@ -598,7 +598,7 @@ NA_API void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* colo
 NA_API void naSetCheckBoxState(NACheckBox* checkBox, NABool state);
 NA_API NABool naGetCheckBoxState(NACheckBox* checkBox);
 
-// ImageSpace
+// ImageSpace. Will retain the uiImage.
 NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size);
 
 // Label
