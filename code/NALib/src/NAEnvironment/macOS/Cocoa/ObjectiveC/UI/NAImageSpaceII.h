@@ -49,8 +49,8 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
     initWithImageSpace:cocoaImageSpace
     frame:naMakeNSRectWithSize(size)];
   na_InitImageSpace((NAImageSpace*)cocoaImageSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
-
-  [nativePtr setUIImage: uiImage];
+  
+  [nativePtr setUIImage: naRetain(uiImage)];
   
   return (NAImageSpace*)cocoaImageSpace;
 }
