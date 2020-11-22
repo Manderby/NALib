@@ -84,35 +84,35 @@ NAWINAPICallbackInfo naLabelWINAPINotify(void* uiElement, WORD notificationCode)
 
 
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
-  HWND hWnd;
-  DWORD style;
-  TCHAR* systemText;
-  WNDPROC oldproc;
-
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-
   NAWINAPILabel* winapiLabel = naNew(NAWINAPILabel);
 
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
+
   // We need a read only edit control here, otherwise on windows, the user is not able to select text.
-  style = WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE;
-
-  systemText = naAllocSystemStringWithUTF8String(text);
-
-	hWnd = CreateWindow(
-		TEXT("EDIT"), systemText, style,
-		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
+	HWND nativePtr = CreateWindow(
+		TEXT("EDIT"),
+    systemText,
+    WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE,
+		0,
+    0,
+    (int)size.width,
+    (int)size.height,
+		naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
   
   naFree(systemText);
 
-  oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
 
-  na_InitLabel(&(winapiLabel->label), hWnd);
+  na_InitLabel(&(winapiLabel->label), nativePtr);
 
   winapiLabel->enabled = NA_TRUE;
   winapiLabel->href = NA_NULL;
-  SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NALabel*)winapiLabel;
 }

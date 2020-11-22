@@ -106,13 +106,12 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
   const NSView* containingView,
   const NAUIImage* uiImage,
-  NAUIImageKind kind,
-  NAUIImageSkin skin)
+  NAUIImageKind kind)
 {
   NSImage* image = nil;
 
   // modern method: Create an image which redraws itself automatically.
-  if([NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
+  if(containingView && [NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
     NA_MACOS_AVAILABILITY_GUARD_10_8(
       NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
       image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
@@ -138,7 +137,12 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
   // old method: Just create an image with multiple representations.
   if(!image){
     NASizei imageSize = naGetUIImage1xSize(uiImage);
-    NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
+    image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
+
+    NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
+    if(uiImage->tintMode != NA_BLEND_ZERO){
+      skin = naGetSkinForCurrentAppearance();
+    }
 
     CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
     CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
@@ -155,6 +159,22 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
   }
   
   return image;
+}
+
+
+
+void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage){
+  NSButton* button = (NA_COCOA_BRIDGE NSButton*)(nsButton);
+
+  [button setImage:naCreateResolutionIndependentNativeImage(
+    button,
+    uiImage,
+    NA_UIIMAGE_KIND_MAIN)];
+  [button setAlternateImage:naCreateResolutionIndependentNativeImage(
+    button,
+    uiImage,
+    NA_UIIMAGE_KIND_ALT)];
+  [[button cell] setImageScaling:NSImageScaleProportionallyUpOrDown];
 }
 
 

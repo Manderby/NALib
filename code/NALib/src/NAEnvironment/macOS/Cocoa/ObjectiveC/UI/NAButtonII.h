@@ -43,13 +43,11 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   [self setImage:naCreateResolutionIndependentNativeImage(
     self,
     uiImage,
-    NA_UIIMAGE_KIND_MAIN,
-    NA_UIIMAGE_SKIN_PLAIN)];
+    NA_UIIMAGE_KIND_MAIN)];
   [self setAlternateImage:naCreateResolutionIndependentNativeImage(
     self,
     uiImage,
-    NA_UIIMAGE_KIND_ALT,
-    NA_UIIMAGE_SKIN_PLAIN)];
+    NA_UIIMAGE_KIND_ALT)];
 
   [[self cell] setImageScaling:NSImageScaleNone];
 }

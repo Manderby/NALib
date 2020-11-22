@@ -69,32 +69,32 @@ NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
 
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
-  HWND hWnd;
-  DWORD style;
-  TCHAR* systemText;
-  WNDPROC oldproc;
-
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-
   NAWINAPIRadio* winapiRadio = naNew(NAWINAPIRadio);
 
-  style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_RADIOBUTTON;
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
-  systemText = naAllocSystemStringWithUTF8String(text);
-
-	hWnd = CreateWindow(
-		TEXT("BUTTON"), systemText, style,
-		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), NULL );
+	HWND nativePtr = CreateWindow(
+		TEXT("BUTTON"),
+    systemText,
+    WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_RADIOBUTTON,
+		0,
+    0,
+    (int)size.width,
+    (int)size.height,
+		naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
   
   naFree(systemText);
 
-  oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}
 
-  na_InitRadio(&(winapiRadio->radio), hWnd);
+  na_InitRadio(&(winapiRadio->radio), nativePtr);
 
-  SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NARadio*)winapiRadio;
 }

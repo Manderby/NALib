@@ -598,7 +598,7 @@ NA_API void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* colo
 NA_API void naSetCheckBoxState(NACheckBox* checkBox, NABool state);
 NA_API NABool naGetCheckBoxState(NACheckBox* checkBox);
 
-// ImageSpace
+// ImageSpace. Will retain the uiImage.
 NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size);
 
 // Label
@@ -668,7 +668,12 @@ NA_API void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment 
 NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind);
 
 // Window
-NA_API NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable, NAInt storageTag);
+
+NA_API NAWindow* naNewWindow(
+  const NAUTF8Char* title,
+  NARect rect,
+  NABool resizeable,
+  NAInt storageTag);
 NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
 NA_API void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
 NA_API void naSetWindowRect(NAWindow* window, NARect rect);
@@ -683,7 +688,11 @@ NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 NA_API NABool naIsWindowResizeable(NAWindow* window);
 NA_API void naPreventWindowFromClosing(NAWindow* window, NABool prevent);
-NA_API NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect rect, NABool resizeable);
+NA_API NARect naSetWindowStorageTag(
+  NAWindow* window,
+  NAInt storageTag,
+  NARect rect,
+  NABool resizeable);
 
 
 

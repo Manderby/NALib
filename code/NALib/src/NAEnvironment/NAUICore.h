@@ -84,6 +84,7 @@ struct NASpace{
 
 struct NAImageSpace{
   NA_UIElement uiElement;
+  NAUIImage* uiImage;
 };
 
 struct NAOpenGLSpace{

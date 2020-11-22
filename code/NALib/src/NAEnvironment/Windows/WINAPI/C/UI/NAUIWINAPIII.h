@@ -43,7 +43,7 @@ NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr){
 }
 
 
-NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
+NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent){
   NA_UIElement* elem;
   NA_UIElement* parentElem;
   NAWindow* window;
@@ -184,6 +184,8 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message){
 
 
 
+// For certain elements like TextField, WS_TABSTOP and WS_GROUP seem not to
+// work... strange. I solved it using this function. 
 NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
   NABool retValue = NA_FALSE;
   if(message->message == WM_KEYUP || message->message == WM_SYSKEYDOWN || message->message == WM_SYSKEYUP){

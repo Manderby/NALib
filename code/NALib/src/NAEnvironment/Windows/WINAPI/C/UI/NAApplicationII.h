@@ -58,6 +58,9 @@ struct NAWINAPIApplication {
   NAWINAPIColor    bgColorAlternate2;
 };
 
+NA_HAPI void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication);
+NA_RUNTIME_TYPE(NAWINAPIApplication, na_DestructWINAPIApplication, NA_FALSE);
+
 
 
 WNDPROC na_GetApplicationOldButtonWindowProc(){
@@ -293,11 +296,11 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
   DeleteObject(winapiApplication->bgColorAlternate.brush);
   DeleteObject(winapiApplication->bgColorAlternate2.brush);
 
-  if(winapiApplication->systemFont){DeleteObject(app->systemFont);}
-  if(winapiApplication->titleFont){DeleteObject(app->titleFont);}
-  if(winapiApplication->monospaceFont){DeleteObject(app->monospaceFont);}
-  if(winapiApplication->paragraphFont){DeleteObject(app->paragraphFont);}
-  if(winapiApplication->mathFont){DeleteObject(app->mathFont);}
+  if(winapiApplication->systemFont){DeleteObject(winapiApplication->systemFont);}
+  if(winapiApplication->titleFont){DeleteObject(winapiApplication->titleFont);}
+  if(winapiApplication->monospaceFont){DeleteObject(winapiApplication->monospaceFont);}
+  if(winapiApplication->paragraphFont){DeleteObject(winapiApplication->paragraphFont);}
+  if(winapiApplication->mathFont){DeleteObject(winapiApplication->mathFont);}
 
   DestroyIcon(winapiApplication->appIcon);
 
