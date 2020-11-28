@@ -580,7 +580,7 @@ typedef enum{
 } NATextAlignment;
 
 #if NA_OS == NA_OS_MAC_OS_X
-  NABool naLoadNib(NAUTF8Char* nibName);
+  NABool naLoadNib(const NAUTF8Char* nibName);
 #endif
 
 // Button

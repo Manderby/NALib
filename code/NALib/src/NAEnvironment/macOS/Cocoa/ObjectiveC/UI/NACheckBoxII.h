@@ -45,7 +45,7 @@ NA_RUNTIME_TYPE(NACocoaCheckBox, na_DestructCocoaCheckBox, NA_FALSE);
     naFillu8WithBabyColor(buf, *color, NA_COLOR_BUFFER_RGBA);
     nsColor = [NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.];
   }else{
-    nsColor = [NSColor labelColor];
+    nsColor = naGetLabelColor();
   }
   NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithAttributedString:[self attributedTitle]];
   NSRange range = NSMakeRange(0, [attrString length]);

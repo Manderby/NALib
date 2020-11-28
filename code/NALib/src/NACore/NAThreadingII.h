@@ -243,7 +243,8 @@ NA_IDEF void naClearMutex(NAMutex mutex){
       naFree(macintoshmutex);
     #else
       #if NA_MACOS_USES_ARC
-      // Mutex will be released automatically when ARC is turned on.
+        // Mutex will be released automatically when ARC is turned on.
+        NA_UNUSED(mutex);
       #else
         dispatch_release(mutex);
       #endif

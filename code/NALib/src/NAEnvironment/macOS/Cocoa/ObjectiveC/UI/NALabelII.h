@@ -138,7 +138,7 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
   [self setBordered:NO];
 //  [self setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)0. green:(CGFloat)0. blue:(CGFloat)1. alpha:(CGFloat).1]];
   [self setDrawsBackground:NO];
-  [self setTextColor:[NSColor labelColor]];
+  [self setTextColor:naGetLabelColor()];
   [[self cell] setLineBreakMode:NSLineBreakByWordWrapping];
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
   cocoaLabel = newCocoaLabel;
@@ -155,7 +155,7 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
     naFillu8WithBabyColor(buf, *color, NA_COLOR_BUFFER_RGBA);
     [self setTextColor:[NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.]];
   }else{
-    [self setTextColor:[NSColor labelColor]];
+    [self setTextColor:naGetLabelColor()];
   }
 }
 
@@ -181,7 +181,7 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
   [attrString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:range];
   NA_COCOA_RELEASE(paragraphStyle);
   [attrString addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInt:NSUnderlineStyleSingle] range:range];
-  [attrString addAttribute:NSForegroundColorAttributeName value:[NSColor linkColor] range:range];
+  [attrString addAttribute:NSForegroundColorAttributeName value:naGetLinkColor() range:range];
   [attrString endEditing];
   
   [self setAttributedStringValue: attrString];

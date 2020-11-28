@@ -148,7 +148,7 @@ CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
 
 
 
-NABool naLoadNib(NAUTF8Char* nibName){
+NABool naLoadNib(const NAUTF8Char* nibName){
   if([NSBundle respondsToSelector:@selector(loadNibNamed:owner:topLevelObjects:)]){
     NA_MACOS_AVAILABILITY_GUARD_10_8(
       return [[NSBundle mainBundle] loadNibNamed:[NSString stringWithUTF8String:nibName] owner:NSApp topLevelObjects:nil];
@@ -156,6 +156,26 @@ NABool naLoadNib(NAUTF8Char* nibName){
   }else{
     return [NSBundle loadNibNamed:[NSString stringWithUTF8String:nibName] owner:NSApp];
   }
+}
+
+
+
+NSColor* naGetLabelColor(){
+  if([NSColor respondsToSelector:@selector(labelColor)]){
+    NA_MACOS_AVAILABILITY_GUARD_10_10(
+      return [NSColor labelColor];
+    )
+  }
+  return [NSColor controlTextColor];
+}
+
+NSColor* naGetLinkColor(){
+  if([NSColor respondsToSelector:@selector(linkColor)]){
+    NA_MACOS_AVAILABILITY_GUARD_10_10(
+      return [NSColor linkColor];
+    )
+  }
+  return [NSColor blueColor];
 }
 
 
