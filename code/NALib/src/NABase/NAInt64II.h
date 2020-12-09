@@ -82,7 +82,7 @@
   // Native
 
   NA_IDEF NAi64 na_Makei64(int32 hi, uint32 lo){
-    return ((NAi64)hi << 32) | lo;
+    return ((NAi64)((NAu64)hi << 32)) | lo;
   }
   NA_IDEF NAi64 na_Makei64WithLo(int32 lo){
     return (NAi64)lo;
@@ -91,7 +91,7 @@
     return (NAi64)lo;
   }
   NA_IDEF NAi64 na_Makei64WithBinary(uint32 b1, uint32 b0){
-    return ((NAi64)b1 << 32) | b0;
+    return ((NAi64)((NAu64)b1 << 32)) | b0;
   }
 
   // We declare these as inline functions to reduce warnings.
