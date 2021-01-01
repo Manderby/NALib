@@ -32,6 +32,8 @@ NA_HAPI  NAInt na_GetKeyIndexOctDouble(const void* baseKey, const void* testKey,
 NA_HAPI  NABool na_TestKeyOctDouble(const void* lowerLimit, const void* upperLimit, const void* key);
 NA_HAPI  NABool na_TestKeyNodeContainOctDouble(NATreeNode* parentNode, const void* key);
 NA_HAPI  NABool na_TestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key);
+NA_HAPI  NABool na_TestKeyNodeOverlapOctDouble(NATreeNode* parentNode, const void* lowerKey, const void* upperKey);
+NA_HAPI  NABool na_TestKeyLeafOverlapOctDouble(NATreeLeaf* parentNode, const void* lowerKey, const void* upperKey);
 
 NA_HAPI  void na_DestructTreeNodeOct(NATreeNode* node);
 NA_HAPI  void na_DestructTreeLeafOct(NATreeLeaf* leaf);

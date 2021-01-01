@@ -140,13 +140,33 @@ NA_HDEF NABool na_TestKeyNodeContainOctDouble(NATreeNode* parentNode, const void
   NATreeOctNode* octNode = (NATreeOctNode*)(parentNode);
   double childwidth = naMakeDoubleWithExponent((int32)octNode->childExponent);
   NAVertex upperLimit = naMakeVertex(octNode->origin.x + 2 * childwidth, octNode->origin.y + 2 * childwidth, octNode->origin.z + 2 * childwidth);
-  return NA_KEY_OP(LowerEqual, NAVertex)(&(octNode->origin), key) && NA_KEY_OP(Lower, NAVertex)(key, &upperLimit);
+  return
+    NA_KEY_OP(LowerEqual, NAVertex)(&(octNode->origin), key) &&
+    NA_KEY_OP(Lower, NAVertex)(key, &upperLimit);
 }
 NA_HDEF NABool na_TestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key){
   NATreeOctLeaf* octLeaf = (NATreeOctLeaf*)(leaf);
   double leafwidth = naMakeDoubleWithExponent((int32)octLeaf->leafExponent);
   NAVertex upperLimit = naMakeVertex(octLeaf->origin.x + leafwidth, octLeaf->origin.y + leafwidth, octLeaf->origin.z + leafwidth);
-  return NA_KEY_OP(LowerEqual, NAVertex)(&(octLeaf->origin), key) && NA_KEY_OP(Lower, NAVertex)(key, &upperLimit);
+  return
+    NA_KEY_OP(LowerEqual, NAVertex)(&(octLeaf->origin), key) &&
+    NA_KEY_OP(Lower, NAVertex)(key, &upperLimit);
+}
+NA_HDEF NABool na_TestKeyNodeOverlapOctDouble(NATreeNode* parentNode, const void* lowerKey, const void* upperKey){
+  NATreeOctNode* octNode = (NATreeOctNode*)(parentNode);
+  double childwidth = naMakeDoubleWithExponent((int32)octNode->childExponent);
+  NAPos upperLimit = naMakePos(octNode->origin.x + 2 * childwidth, octNode->origin.y + 2 * childwidth);
+  return
+    upperKey && NA_KEY_OP(LowerEqual, NAPos)(&(octNode->origin), upperKey) &&
+    lowerKey && NA_KEY_OP(Lower, NAPos)(lowerKey, &upperLimit);
+}
+NA_HDEF NABool na_TestKeyLeafOverlapOctDouble(NATreeLeaf* leaf, const void* lowerKey, const void* upperKey){
+  NATreeOctLeaf* octLeaf = (NATreeOctLeaf*)(leaf);
+  double leafwidth = naMakeDoubleWithExponent((int32)octLeaf->leafExponent);
+  NAPos upperLimit = naMakePos(octLeaf->origin.x + leafwidth, octLeaf->origin.y + leafwidth);
+  return
+    upperKey && NA_KEY_OP(LowerEqual, NAPos)(&(octLeaf->origin), upperKey) &&
+    lowerKey && NA_KEY_OP(Lower, NAPos)(lowerKey, &upperLimit);
 }
 
 

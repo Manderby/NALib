@@ -176,7 +176,7 @@ NA_HIDEF void na_RegisterTypeInfo(NA_TypeInfo* typeInfo){
     naCopyn(newinfos, na_Runtime->typeInfos, naSizeof(NA_TypeInfo*) * na_Runtime->typeInfoCount);
   }
 
-  // We add the new typeinfo as a pointer to the na_Runtime infos.
+  // We add the new typeInfo as a pointer to the na_Runtime infos.
   newinfos[na_Runtime->typeInfoCount] = typeInfo;
   na_Runtime->typeInfoCount++;
 
@@ -297,20 +297,20 @@ NA_HIDEF void na_EnhancePool(NA_TypeInfo* typeInfo){
 
 
 
-NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
+NA_DEF void* naNewStruct(NATypeInfo* info){
   void* pointer;
   NA_TypeInfo* typeInfo;
 
   #ifndef NDEBUG
     if(!na_Runtime)
       naCrash("Runtime not running. Use naStartRuntime()");
-    if(!typeinfo)
+    if(!info)
       naCrash("Given type identifier is Null-Pointer. Do not call naNewStruct directly. Use the naNew macro.");
-    if(typeinfo->typeSize == 0)
+    if(info->typeSize == 0)
       naError("Type size is zero. Is the type void?");
   #endif
 
-  typeInfo = (NA_TypeInfo*)typeinfo;
+  typeInfo = (NA_TypeInfo*)info;
 
   // If there is no current part, create a first one.
   // This happends either upon first naNew of this type ever or when aggressive
@@ -347,6 +347,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
     // The current space has not been used ever. Use the next address one
     // typeSize ahead.
     typeInfo->curpart->firstunused = (NAByte*)(typeInfo->curpart->firstunused) + typeInfo->typeSize;
+
     // Increase the number of ever used spaces in this part.
     typeInfo->curpart->everUsedCount++;
   }else{

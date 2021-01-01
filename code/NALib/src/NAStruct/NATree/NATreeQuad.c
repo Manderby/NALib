@@ -135,13 +135,33 @@ NA_HDEF NABool na_TestKeyNodeContainQuadDouble(NATreeNode* parentNode, const voi
   NATreeQuadNode* quadNode = (NATreeQuadNode*)(parentNode);
   double childwidth = naMakeDoubleWithExponent((int32)quadNode->childExponent);
   NAPos upperLimit = naMakePos(quadNode->origin.x + 2 * childwidth, quadNode->origin.y + 2 * childwidth);
-  return NA_KEY_OP(LowerEqual, NAPos)(&(quadNode->origin), key) && NA_KEY_OP(Lower, NAPos)(key, &upperLimit);
+  return
+    NA_KEY_OP(LowerEqual, NAPos)(&(quadNode->origin), key) &&
+    NA_KEY_OP(Lower, NAPos)(key, &upperLimit);
 }
 NA_HDEF NABool na_TestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key){
   NATreeQuadLeaf* quadLeaf = (NATreeQuadLeaf*)(leaf);
   double leafwidth = naMakeDoubleWithExponent((int32)quadLeaf->leafExponent);
   NAPos upperLimit = naMakePos(quadLeaf->origin.x + leafwidth, quadLeaf->origin.y + leafwidth);
-  return NA_KEY_OP(LowerEqual, NAPos)(&(quadLeaf->origin), key) && NA_KEY_OP(Lower, NAPos)(key, &upperLimit);
+  return
+    NA_KEY_OP(LowerEqual, NAPos)(&(quadLeaf->origin), key) &&
+    NA_KEY_OP(Lower, NAPos)(key, &upperLimit);
+}
+NA_HDEF NABool na_TestKeyNodeOverlapQuadDouble(NATreeNode* parentNode, const void* lowerKey, const void* upperKey){
+  NATreeQuadNode* quadNode = (NATreeQuadNode*)(parentNode);
+  double childwidth = naMakeDoubleWithExponent((int32)quadNode->childExponent);
+  NAPos upperLimit = naMakePos(quadNode->origin.x + 2 * childwidth, quadNode->origin.y + 2 * childwidth);
+  return
+    upperKey && NA_KEY_OP(LowerEqual, NAPos)(&(quadNode->origin), upperKey) &&
+    lowerKey && NA_KEY_OP(Lower, NAPos)(lowerKey, &upperLimit);
+}
+NA_HDEF NABool na_TestKeyLeafOverlapQuadDouble(NATreeLeaf* leaf, const void* lowerKey, const void* upperKey){
+  NATreeQuadLeaf* quadLeaf = (NATreeQuadLeaf*)(leaf);
+  double leafwidth = naMakeDoubleWithExponent((int32)quadLeaf->leafExponent);
+  NAPos upperLimit = naMakePos(quadLeaf->origin.x + leafwidth, quadLeaf->origin.y + leafwidth);
+  return
+    upperKey && NA_KEY_OP(LowerEqual, NAPos)(&(quadLeaf->origin), upperKey) &&
+    lowerKey && NA_KEY_OP(Lower, NAPos)(lowerKey, &upperLimit);
 }
 
 

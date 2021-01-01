@@ -47,6 +47,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyTester             = na_TestKeyQuadDouble;
       config->keyNodeContainTester  = na_TestKeyNodeContainQuadDouble;
       config->keyLeafContainTester  = na_TestKeyLeafContainQuadDouble;
+      config->keyNodeOverlapTester  = na_TestKeyNodeOverlapQuadDouble;
+      config->keyLeafOverlapTester  = na_TestKeyLeafOverlapQuadDouble;
       break;
     default:
       #ifndef NDEBUG
@@ -93,6 +95,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyTester             = na_TestKeyOctDouble;
       config->keyNodeContainTester  = na_TestKeyNodeContainOctDouble;
       config->keyLeafContainTester  = na_TestKeyLeafContainOctDouble;
+      config->keyNodeOverlapTester  = na_TestKeyNodeOverlapOctDouble;
+      config->keyLeafOverlapTester  = na_TestKeyLeafOverlapOctDouble;
       break;
     default:
       #ifndef NDEBUG
@@ -138,6 +142,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyTester             = NA_NULL;
       config->keyNodeContainTester  = NA_NULL;
       config->keyLeafContainTester  = NA_NULL;
+      config->keyNodeOverlapTester  = NA_NULL;
+      config->keyLeafOverlapTester  = NA_NULL;
       break;
     case NA_TREE_KEY_DOUBLE:
       config->childIndexGetter      = na_GetChildIndexBinDouble;
@@ -149,6 +155,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyTester             = na_TestKeyBinDouble;
       config->keyNodeContainTester  = NA_NULL;
       config->keyLeafContainTester  = na_TestKeyLeafContainBinDouble;
+      config->keyNodeOverlapTester  = NA_NULL;
+      config->keyLeafOverlapTester  = NA_NULL;
       break;
     case NA_TREE_KEY_NAINT:
       config->childIndexGetter      = na_GetChildIndexBinNAInt;
@@ -160,6 +168,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyTester             = na_TestKeyBinNAInt;
       config->keyNodeContainTester  = NA_NULL;
       config->keyLeafContainTester  = na_TestKeyLeafContainBinNAInt;
+      config->keyNodeOverlapTester  = NA_NULL;
+      config->keyLeafOverlapTester  = NA_NULL;
       break;
     default:
       #ifndef NDEBUG

@@ -27,18 +27,18 @@ NA_HDEF void na_IterateTreeCapture(NATreeIterator* iter, NAInt index, NATreeIter
     if(iter->item){
       if(na_IsNodeChildLeaf(parentNode, index)){
         // The child is a leaf.
-        const void* key = na_GetTreeLeafKey(tree->config, (NATreeLeaf*)iter->item);
-        if(  (!info->lowerLimit || tree->config->keyLowerEqualComparer(info->lowerLimit, key))
-          || (!info->upperLimit || tree->config->keyLowerComparer(key, info->upperLimit)))
+        if(
+          (!info->lowerLimit && !info->upperLimit) ||
+          tree->config->keyLeafOverlapTester((NATreeLeaf*)iter->item, info->lowerLimit, info->upperLimit))
         {
           // We found our goal. Good ending.
           break;
         }
       }else{
         // The child is a node.
-        const void* key = na_GetTreeNodeKey(tree->config, (NATreeNode*)iter->item);
-        if(  (!info->lowerLimit || tree->config->keyLowerEqualComparer(info->lowerLimit, key))
-          || (!info->upperLimit || tree->config->keyLowerComparer(key, info->upperLimit)))
+        if(
+          (!info->lowerLimit && !info->upperLimit) ||
+          tree->config->keyNodeOverlapTester((NATreeNode*)iter->item, info->lowerLimit, info->upperLimit))
         {
           // we have to go deeper.
           parentNode = (NATreeNode*)iter->item;

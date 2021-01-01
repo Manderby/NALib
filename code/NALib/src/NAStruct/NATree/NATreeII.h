@@ -52,6 +52,13 @@ typedef enum{
 // NATreeLeafInserter        Expects the child ad childIndex of grandparent to
 //                           be a leaf which will be split to a node containing
 //                           both that leaf and the new sibling.
+//
+// NANodeConteinTester       Tests if the given key is in the given leaf.
+// NALeafConteinTester       Tests if the given key is in the given node.
+// NANodeOverlapTester       Tests if the given range consisting of lower and
+//                           upper key overlaps the given node.
+// NALeafOverlapTester       Tests if the given range consisting of lower and
+//                           upper key overlaps the given leaf.
 typedef NAInt           (*NAKeyIndexGetter)(const void* baseKey, const void* testKey, const void* data);
 typedef NAInt           (*NAChildIndexGetter)(NATreeNode* parentNode, const void* childKey);
 typedef NABool          (*NAKeyEqualComparer)(const void* key1, const void* key2);
@@ -62,6 +69,8 @@ typedef void            (*NAKeyAdder)(void* dst, const void* src1, const void* s
 typedef NABool          (*NAKeyTester)(const void* lowerLimit, const void* upperLimit, const void* key);
 typedef NABool          (*NAKeyNodeContainTester)(NATreeNode* parentNode, const void* key);
 typedef NABool          (*NAKeyLeafContainTester)(NATreeLeaf* leaf, const void* key);
+typedef NABool          (*NAKeyNodeOverlapTester)(NATreeNode* parentNode, const void* lowerKey, const void* upperKey);
+typedef NABool          (*NAKeyLeafOverlapTester)(NATreeLeaf* leaf, const void* lowerKey, const void* upperKey);
 
 typedef void            (*NA_TreeNodeDestructor)(NATreeNode* node);
 typedef void            (*NA_TreeLeafDestructor)(NATreeLeaf* leaf);
@@ -107,9 +116,11 @@ struct NATreeConfiguration{
   NAKeyTester                   keyTester;
   NAKeyNodeContainTester        keyNodeContainTester;
   NAKeyLeafContainTester        keyLeafContainTester;
+  NAKeyNodeOverlapTester        keyNodeOverlapTester;
+  NAKeyLeafOverlapTester        keyLeafOverlapTester;
 
-  NA_TreeNodeDestructor      nodeDestructor;
-  NA_TreeLeafDestructor      leafDestructor;
+  NA_TreeNodeDestructor         nodeDestructor;
+  NA_TreeLeafDestructor         leafDestructor;
   NATreeBubbleLocator           bubbleLocator;
   NATreeLeafRemover             leafRemover;
   NATreeLeafInserter            leafInserter;

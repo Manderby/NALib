@@ -32,6 +32,8 @@ NA_HAPI  NAInt na_GetKeyIndexQuadDouble(const void* baseKey, const void* testKey
 NA_HAPI  NABool na_TestKeyQuadDouble(const void* lowerLimit, const void* upperLimit, const void* key);
 NA_HAPI  NABool na_TestKeyNodeContainQuadDouble(NATreeNode* parentNode, const void* key);
 NA_HAPI  NABool na_TestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key);
+NA_HAPI  NABool na_TestKeyNodeOverlapQuadDouble(NATreeNode* parentNode, const void* lowerKey, const void* upperKey);
+NA_HAPI  NABool na_TestKeyLeafOverlapQuadDouble(NATreeLeaf* leaf, const void* lowerKey, const void* upperKey);
 
 NA_HAPI  void na_DestructTreeNodeQuad(NATreeNode* node);
 NA_HAPI  void na_DestructTreeLeafQuad(NATreeLeaf* leaf);
