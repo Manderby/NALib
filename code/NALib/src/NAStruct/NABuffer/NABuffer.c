@@ -623,6 +623,8 @@ NA_DEF NABool naEqualBufferToData(NABuffer* buffer, const void* data, NAInt data
     #endif
 
     remainingbytes = na_GetBufferPartByteSize(part);
+    // todo: Here happends a crash when no cached string is available.
+    // Find out why!
     bufferbytes = na_GetBufferPartDataPointerConst(&iter);
     if(bufferbytes != bytes){
       if(!naEqualUTF8CStringLiterals((NAUTF8Char*)bufferbytes, (NAUTF8Char*)bytes, remainingbytes, caseSensitive)){
