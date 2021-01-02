@@ -65,7 +65,7 @@ NA_IDEF void* naMallocAligned(size_t byteSize, size_t align){
       void* mem = malloc(byteSize + align + sizeof(void*));
       #ifndef NDEBUG
       if(!mem)
-        naCrash("naMallocAligned", "Out of memory");
+        naCrash("Out of memory");
       #endif
       // make a pointer point to the first byte being aligned within the memory
       // allocated in mem which comes after align bytes and a pointer size.
@@ -78,7 +78,7 @@ NA_IDEF void* naMallocAligned(size_t byteSize, size_t align){
       retptr = aligned_alloc(align, byteSize);
       #ifndef NDEBUG
       if(!retptr)
-        naCrash("naMallocAligned", "Out of aligned memory");
+        naCrash("Out of aligned memory");
       #endif
     #elif NA_MEMALIGN == NA_MEMALIGN_USE_POSIX
       int error = posix_memalign(&retptr, align, byteSize);
