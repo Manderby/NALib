@@ -12,6 +12,7 @@ correct, complete or final.
 - Removed naNewStringWithUTF8CStringLiteral. Use naNewStringWithFormat.
 - Adding naTestCrash to NATesting
 - Adding NASlider to NAGUI and other public GUI functions.
+- Adding leap second information according to bulletin C 61
 
 
 Version 25 (released 13. July 2020)
