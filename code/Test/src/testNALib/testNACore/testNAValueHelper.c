@@ -128,36 +128,43 @@ void testRange(){
 
   naTestGroup("Make End with Start and Length"){
     naTest(naMakeEndWithStartAndLength(5., 10.) == 15.);
+    naTestError(naMakeEndWithStartAndLength(0., -1.));
     naTestError(naMakeEndWithStartAndLength(0., NA_NAN));
     naTest(naMakeEndWithStartAndLengthf(5.f, 10.f) == 15.f);
+    naTestError(naMakeEndWithStartAndLengthf(0.f, -1.f));
     naTestError(naMakeEndWithStartAndLengthf(0.f, NA_NANf));
     naTest(naMakeEndWithStartAndLengthi(5, 10) == 15);
-    naTestError(naMakeEndWithStartAndLengthi(NA_MIN_i, -1));
+    naTestError(naMakeEndWithStartAndLengthi(0, -1));
     naTestError(naMakeEndWithStartAndLengthi(NA_MAX_i, 1));
   }
 
   naTestGroup("Make Max with Min and Length"){
     naTest(naMakeMaxWithMinAndLengthi(5, 10) == 14);
-    naTestError(naMakeMaxWithMinAndLengthi(NA_MIN_i, -1));
+    naTestError(naMakeMaxWithMinAndLengthi(0, -1));
     naTestError(naMakeMaxWithMinAndLengthi(NA_MAX_i, 1));
+    naTestError(naMakeMaxWithMinAndLengthi(NA_MAX_i, 2));
   }
 
   naTestGroup("Make Length with Start and End"){
     naTest(naMakeLengthWithStartAndEnd(5., 10.) == 5.);
+    naTest(naMakeLengthWithStartAndEnd(5., 5.) == 0.);
     naTest(naMakeLengthWithStartAndEndf(5.f, 10.f) == 5.f);
+    naTest(naMakeLengthWithStartAndEndf(5.f, 5.f) == 0.f);
     naTest(naMakeLengthWithStartAndEndi(5, 10) == 5);
+    naTest(naMakeLengthWithStartAndEndi(5, 5) == 0);
+    naTestError(naMakeLengthWithStartAndEnd(10., 5.));
     naTestError(naMakeLengthWithStartAndEnd(5., NA_NAN));
+    naTestError(naMakeLengthWithStartAndEndf(10.f, 5.f));
     naTestError(naMakeLengthWithStartAndEndf(5.f, NA_NANf));
-    naTestError(naMakeLengthWithStartAndEndi(NA_MIN_i, NA_MAX_i));
-    naTestError(naMakeLengthWithStartAndEndi(NA_MAX_i, NA_MIN_i));
-    naTestError(naMakeLengthWithStartAndEnd(50., 10.));
-    naTestError(naMakeLengthWithStartAndEndf(50.f, 10.f));
     naTestError(naMakeLengthWithStartAndEndi(50, 10));
+    naTestError(naMakeLengthWithStartAndEndi(-1, NA_MAX_i));
   }
 
   naTestGroup("Make Length with Min and Max"){
     naTest(naMakeLengthWithMinAndMaxi(5, 10) == 6);
-    naTestError(naMakeLengthWithMinAndMaxi(50, 10));
+    naTestError(naMakeLengthWithMinAndMaxi(0, NA_MAX_i));
+    naTestError(naMakeLengthWithMinAndMaxi(10, 5));
+    naTestError(naMakeLengthWithMinAndMaxi(-1, NA_MAX_i - 1));
   }
 }
 
