@@ -33,7 +33,7 @@ NA_IDEF NABool naLocateBufferFromStart(NABufferIterator* iter, NAInt offset){
 
 NA_IDEF NABool naLocateBufferFromEnd(NABufferIterator* iter, NAInt offset){
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-  return naLocateBufferAbsolute(iter, naGetRangeiEnd(buffer->range) - offset);
+  return naLocateBufferAbsolute(iter, naGetRangeiEnd(buffer->range) + offset);
 }
 
 

@@ -151,17 +151,19 @@ NA_HDEF NABool na_TestKeyNodeOverlapQuadDouble(NATreeNode* parentNode, const voi
   NATreeQuadNode* quadNode = (NATreeQuadNode*)(parentNode);
   double childwidth = naMakeDoubleWithExponent((int32)quadNode->childExponent);
   NAPos upperLimit = naMakePos(quadNode->origin.x + 2 * childwidth, quadNode->origin.y + 2 * childwidth);
-  return
-    upperKey && NA_KEY_OP(LowerEqual, NAPos)(&(quadNode->origin), upperKey) &&
-    lowerKey && NA_KEY_OP(Lower, NAPos)(lowerKey, &upperLimit);
+  NARect nodeRect = naMakeRectWithPosAndPos(quadNode->origin, upperLimit);
+  NARect keyRect = naMakeRectWithPosAndPos(*((NAPos*)lowerKey), *((NAPos*)upperKey));
+  NARect intersection = naMakeRectWithRectIntersection(nodeRect, keyRect);
+  return !naIsRectEmpty(intersection);
 }
 NA_HDEF NABool na_TestKeyLeafOverlapQuadDouble(NATreeLeaf* leaf, const void* lowerKey, const void* upperKey){
   NATreeQuadLeaf* quadLeaf = (NATreeQuadLeaf*)(leaf);
   double leafwidth = naMakeDoubleWithExponent((int32)quadLeaf->leafExponent);
   NAPos upperLimit = naMakePos(quadLeaf->origin.x + leafwidth, quadLeaf->origin.y + leafwidth);
-  return
-    upperKey && NA_KEY_OP(LowerEqual, NAPos)(&(quadLeaf->origin), upperKey) &&
-    lowerKey && NA_KEY_OP(Lower, NAPos)(lowerKey, &upperLimit);
+  NARect leafRect = naMakeRectWithPosAndPos(quadLeaf->origin, upperLimit);
+  NARect keyRect = naMakeRectWithPosAndPos(*((NAPos*)lowerKey), *((NAPos*)upperKey));
+  NARect intersection = naMakeRectWithRectIntersection(leafRect, keyRect);
+  return !naIsRectEmpty(intersection);
 }
 
 

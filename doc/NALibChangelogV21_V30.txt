@@ -13,6 +13,7 @@ correct, complete or final.
 - Adding naTestCrash to NATesting
 - Adding NASlider to NAGUI and other public GUI functions.
 - Fixed a bug in QuadTree range detection.
+- Adding leap second information according to bulletin C 61
 
 
 Version 25 (released 13. July 2020)
