@@ -161,6 +161,8 @@ NA_IDEF NAInt naMakeMaxWithMinAndLengthi(NAInt min, NAInt length){
 NA_IDEF double naMakeLengthWithStartAndEnd(double start, double end){
   double result = end - start;
   #ifndef NDEBUG
+  if(start > end)
+    naError("start is greater than end");
   if(!naIsLengthValueValid(result)){
     naError("result invalid");
   }
@@ -170,6 +172,8 @@ NA_IDEF double naMakeLengthWithStartAndEnd(double start, double end){
 NA_IDEF float naMakeLengthWithStartAndEndf(float start, float end){
   float result = end - start;
   #ifndef NDEBUG
+  if(start > end)
+    naError("start is greater than end");
   if(!naIsLengthValueValidf(result)){
     naError("result invalid");
   }
@@ -179,6 +183,8 @@ NA_IDEF float naMakeLengthWithStartAndEndf(float start, float end){
 NA_IDEF NAInt naMakeLengthWithStartAndEndi(NAInt start, NAInt end){
   NAInt result = end - start;
   #ifndef NDEBUG
+  if(start > end)
+    naError("start is greater than end");
   if(end > start){
     if(result < 0)
       naError("Integer underflow");
@@ -190,6 +196,10 @@ NA_IDEF NAInt naMakeLengthWithStartAndEndi(NAInt start, NAInt end){
   return result;
 }
 NA_IDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max){
+  #ifndef NDEBUG
+  if(min > max + 1)
+    naError("min is greater than max + 1");
+  #endif
   return naMakeEndWithMaxi(max) - min;
 }
 

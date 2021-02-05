@@ -25,9 +25,9 @@ NA_IAPI NABool naGetFlagi(NAInt flags, NAInt flag);
 NA_IAPI NABool naGetFlagu(NAUInt flags, NAUInt flag);
 
 // Sets the given flag in the bit mask according to the boolean parameter set.
-NA_IAPI void   naSetFlag(int* flags, int flag, NABool set);
-NA_IAPI void   naSetFlagi(NAInt* flags, NAInt flag, NABool set);
-NA_IAPI void   naSetFlagu(NAUInt* flags, NAUInt flag, NABool set);
+NA_IAPI void naSetFlag(int* flags, int flag, NABool set);
+NA_IAPI void naSetFlagi(NAInt* flags, NAInt flag, NABool set);
+NA_IAPI void naSetFlagu(NAUInt* flags, NAUInt flag, NABool set);
 
 // Toggles the specified flag in the bit mask and returns the resulting boolean
 // value of that flag.
