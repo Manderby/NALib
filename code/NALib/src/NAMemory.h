@@ -419,6 +419,7 @@ NA_IAPI       void* naGetPointerMutable(      NAPointer* pointer);
 
 NA_API  void   naStartRuntime(void);
 NA_API  void   naStopRuntime(void);
+NA_IAPI NABool naIsRuntimeRunning(void);
 
 NA_API  void   naCollectGarbage(void);
 NA_IAPI size_t naGetRuntimeGarbageByteSize(void);

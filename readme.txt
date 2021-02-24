@@ -1,35 +1,35 @@
+Quick Start:
+------------
+
+- Download whole package.
+- HelloWorld examples are in proj folder.
+- To compile your own code, there are two ways:
+  1. Compile NALib as part of your own solution by simply dragging the whole
+     code\NALib\src folder into your project.
+  2. Create a static library and reference it. VisualStudio project is in the
+     code\NALib folder. XCode project is in proj folder.
+
+
+
+Description:
+------------
+
 NALib is a collection of source code written in the C programming language
 which contain code like system-dependent macros, high-performance functions
 and container structs, a small runtime system with memory pools and optional
 reference counting, a GUI implementation for Mac and Windows and many helpful
 comments.
 
-The master branch contains the latest developments.
-Older release versions are available as tags.
-
-Follow on Twitter for latest developments: @Manderby52
 Email: nalib@manderc.com
+Follow on Twitter for latest developments: @Manderby52
 
-Installation:
---------------
-There are two ways of using NALib.
-
-1. Simply drag and drop the whole NALib folder into your project. This will
-   cause your application to compile all sourcefiles as part of your own
-   solution.
-2. Create a static library and reference it. There are projects/libraries
-   prepared in the solutions/project files in the proj or code folder.
-
-Also note:
-
+- API is documented directly in the .h files.
+- Some design principles can be read in the doc/documentation.txt file.
 - NALib just needs the standard libraries.
 - Compilation of the whole collection usually takes less than 5 seconds.
+- The master branch contains the latest developments.
+- Older release versions are available as tags.
 
-
-Documentation:
---------------
-- Can be found directly within the source files.
-- Some design principles can be read in the doc/documentation.txt file.
 
 
 Contribute & License:
@@ -39,6 +39,7 @@ has been used as a private engineering code collection. But input is always
 welcome. Write Issues on GitHub or write Emails to nalib@manderc.com.
 
 License: Public Domain
+
 
 
 History:

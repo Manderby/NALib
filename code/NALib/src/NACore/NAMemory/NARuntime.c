@@ -302,7 +302,7 @@ NA_DEF void* naNewStruct(NATypeInfo* info){
   NA_TypeInfo* typeInfo;
 
   #ifndef NDEBUG
-    if(!na_Runtime)
+    if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!info)
       naCrash("Given type identifier is Null-Pointer. Do not call naNewStruct directly. Use the naNew macro.");
@@ -433,7 +433,7 @@ NA_DEF void naDelete(void* pointer){
   NA_PoolPart* part;
 
   #ifndef NDEBUG
-    if(!na_Runtime)
+    if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif
 
@@ -468,7 +468,7 @@ NA_DEF void* naRetain(void* pointer){
 
   #ifndef NDEBUG
     NA_PoolPart* part;
-    if(!na_Runtime)
+    if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!pointer)
       naCrash("pointer is null");
@@ -500,7 +500,7 @@ NA_DEF void naRelease(void* pointer){
   NARefCount* refCount;
 
   #ifndef NDEBUG
-    if(!na_Runtime)
+    if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!pointer)
       naCrash("pointer is null");
@@ -550,7 +550,7 @@ NA_DEF void naStartRuntime(){
   #else
 
     #ifndef NDEBUG
-      if(na_Runtime)
+      if(naIsRuntimeRunning())
         naCrash("Runtime already running");
       if(sizeof(NA_PoolPart) != (8 * NA_ADDRESS_BYTES))
         naError("NA_PoolPart struct encoding misaligned");
@@ -593,7 +593,7 @@ NA_DEF void naStopRuntime(){
   // Then, we detect, if there are any memory leaks.
   #ifndef NDEBUG
     leakmessageprinted = NA_FALSE;
-    if(!na_Runtime)
+    if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
 
     // Go through all registered types and output a leak message if necessary.
@@ -656,7 +656,7 @@ NA_DEF void* naMallocTmp(size_t byteSize){
   void* newPtr;
   NAMallocGarbage* garbage;
   #ifndef NDEBUG
-    if(!na_Runtime)
+    if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif
   #if NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT != 0
@@ -683,7 +683,7 @@ NA_DEF void* naMallocTmp(size_t byteSize){
 
 NA_DEF void naCollectGarbage(){
   #ifndef NDEBUG
-    if(!na_Runtime)
+    if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif
   while(na_Runtime->mallocGarbage){

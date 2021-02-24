@@ -19,9 +19,9 @@
 
 // todo: global variables
 
-// The global timezone setting.
+// The global imeZone setting.
 int16  na_GlobalTimeShift = 0;
-NABool na_GlobalSummerTime = NA_FALSE;
+NABool na_GlobalDaylightSavingTime = NA_FALSE;
 
 const char* na_MonthEnglishNames[12] = {"January", "February", "March", "April", "Mai", "June", "July", "August", "September", "October", "November", "December"};
 const char* na_MonthEnglishAbbreviationNames[12] = {"Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -381,15 +381,16 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
 NA_DEF NADateTime naMakeDateTimeNow(){
   #if NA_OS == NA_OS_WINDOWS
     FILETIME fileTime;
-    NATimeZone timezone;
+    NATimeZone imeZone;
     GetSystemTimeAsFileTime(&fileTime);
-    GetTimeZoneInformation(&timezone);
-    return naMakeDateTimeFromFileTime(&fileTime, &timezone);
+    // Daylight saving is active if the function returns 2.
+    NAInt daylightCode = GetTimeZoneInformation(&imeZone);
+    return naMakeDateTimeFromFileTime(&fileTime, &imeZone, daylightCode == 2);
   #elif NA_OS == NA_OS_MAC_OS_X
     struct timeval curtime;
-    NATimeZone curtimezone;
-    gettimeofday(&curtime, &curtimezone);
-    return naMakeDateTimeFromTimeVal(&curtime, &curtimezone);
+    NATimeZone curTimeZone;
+    gettimeofday(&curtime, &curTimeZone);
+    return naMakeDateTimeFromTimeVal(&curtime, &curTimeZone);
   #endif
 }
 
@@ -675,8 +676,10 @@ NA_DEF const char* naGetDateTimeErrorString(uint8 errorNum){
 
 
 
-NA_DEF NAString* naNewStringWithDateTime(const NADateTime* dateTime,
-                           NAAscDateTimeFormat format){
+NA_DEF NAString* naNewStringWithDateTime(
+  const NADateTime* dateTime,
+  NAAscDateTimeFormat format)
+{
   NAString* string;
   NADateTimeStruct dts;
   NADateTimeAttribute dta;
@@ -752,10 +755,10 @@ NA_DEF struct tm naMakeTMfromDateTime(const NADateTime* dateTime){
   systemtimestruct.tm_year = naCasti64Toi32(dts.year) - 1900;
   systemtimestruct.tm_wday = (dta.weekday + 1) % 7;
   systemtimestruct.tm_yday = dta.dayOfYear;
-  systemtimestruct.tm_isdst = naHasDateTimeSummerTime(dateTime)?1:0;
+  systemtimestruct.tm_isdst = naHasDateTimeDaylightSavingTime(dateTime)?1:0;
   #if NA_OS == NA_OS_MAC_OS_X
     systemtimestruct.tm_gmtoff = (long)(dts.shift * NA_SECONDS_PER_MINUTE);
-    if(naHasDateTimeSummerTime(dateTime)){
+    if(naHasDateTimeDaylightSavingTime(dateTime)){
       systemtimestruct.tm_zone = tzname[1];
     }else{
       systemtimestruct.tm_zone = tzname[0];
@@ -766,18 +769,18 @@ NA_DEF struct tm naMakeTMfromDateTime(const NADateTime* dateTime){
 
 
 
-NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone){
+NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylightSaving){
   int16 shift;
   #if NA_OS == NA_OS_WINDOWS
-    shift = - (int16)timeZone->Bias;
-    if(timeZone->DaylightBias){
+    shift = -(int16)timeZone->Bias;
+    if(daylightSaving){
       shift += NA_MINUTES_PER_HOUR;
     }
   #elif NA_OS == NA_OS_MAC_OS_X
     shift = (int16)-timeZone->tz_minuteswest; // yes, its inverted.
-    if(timeZone->tz_dsttime){
-      // In contrast to tm_gmtoff, the timezone struct does not automatically
-      // contain the summerTime shift and must be added manually.
+    if(daylightSaving){
+      // In contrast to tm_gmtoff, the imeZone struct does not automatically
+      // contain the daylightSavingTime shift and must be added manually.
       shift += NA_MINUTES_PER_HOUR;
     }
   #endif
@@ -792,7 +795,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone){
 
 #if NA_OS == NA_OS_WINDOWS
 
-  NA_DEF NADateTime naMakeDateTimeFromFileTime(const FILETIME* fileTime, const NATimeZone* timeZone){
+  NA_DEF NADateTime naMakeDateTimeFromFileTime(const FILETIME* fileTime, const NATimeZone* timeZone, NABool daylightSaving){
     NADateTime dateTime;
     NAi64 nanoSeconds = naCastu64Toi64(naMakeu64(fileTime->dwHighDateTime, fileTime->dwLowDateTime));
 
@@ -805,18 +808,18 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone){
     }
 
     if(timeZone){
-      dateTime.shift = naMakeShiftFromTimeZone(timeZone);
-      dateTime.flags = ((timeZone->DaylightBias) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
+      dateTime.shift = naMakeShiftFromTimeZone(timeZone, daylightSaving);
+      dateTime.flags = (daylightSaving ? NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME : 0);
     }else{
       dateTime.shift = na_GlobalTimeShift;
-      dateTime.flags = ((na_GlobalSummerTime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
+      dateTime.flags = ((na_GlobalDaylightSavingTime) ? NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME : 0);
     }
     return dateTime;
   }
 
 #elif NA_OS == NA_OS_MAC_OS_X
 
-  NA_DEF struct timespec naMakeTimeSpecFromDateTime(const NADateTime* dateTime){
+  NA_DEF struct timespec naMakeTimeSpecFromDateTime(const NADateTime* dateTime, NABool daylightSaving){
     struct timespec timeSpec;
     NAInt taiperiod = naGetTAIPeriodIndexForSISecond(dateTime->siSecond);
     #if NA_TYPE_NATIVE_LONG_BITS == 32
@@ -850,9 +853,9 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone){
   NA_DEF NATimeZone naMakeTimeZoneFromDateTime(const NADateTime* dateTime){
     NATimeZone timeZone;
     timeZone.tz_minuteswest = -dateTime->shift; // yes, its inverted.
-    if(naHasDateTimeSummerTime(dateTime)){
-      // In contrast to tm_gmtoff, the timezone struct does not automatically
-      // contain the summerTime shift and must be subtracted manually.
+    if(naHasDateTimeDaylightSavingTime(dateTime)){
+      // In contrast to tm_gmtoff, the imeZone struct does not automatically
+      // contain the daylightSavingTime shift and must be subtracted manually.
       timeZone.tz_dsttime = 1;
       timeZone.tz_minuteswest -= (int)NA_MINUTES_PER_HOUR;
     }else{
@@ -885,11 +888,11 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone){
     }
     dateTime.nanoSecond = (int32)timeSpec->tv_nsec;
     if(timeZone){
-      dateTime.shift = naMakeShiftFromTimeZone(timeZone);
-      dateTime.flags = ((timeZone->tz_dsttime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
+      dateTime.shift = naMakeShiftFromTimeZone(timeZone, daylightSaving);
+      dateTime.flags = (daylightSaving ? NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME : 0);
     }else{
       dateTime.shift = na_GlobalTimeShift;
-      dateTime.flags = ((na_GlobalSummerTime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
+      dateTime.flags = ((na_GlobalDaylightSavingTime) ? NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME : 0);
     }
     return dateTime;
   }
@@ -908,9 +911,11 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone){
 
 
 
-NA_DEF void naExtractDateTimeInformation(const NADateTime* dateTime,
-                          NADateTimeStruct* dts,
-                       NADateTimeAttribute* dta){
+NA_DEF void naExtractDateTimeInformation(
+  const NADateTime* dateTime,
+  NADateTimeStruct* dts,
+  NADateTimeAttribute* dta)
+{
   NAi64 remainingSeconds;
   NAi64 years400;
   NAi64 years100;
@@ -1185,15 +1190,18 @@ NA_DEF NAInt naGetLeapSecondCorrectionConstant(NAi64 oldUncertainSecondNumber){
 
 NA_DEF void naSetGlobalTimeShiftToSystemSettings(){
   #if NA_OS == NA_OS_WINDOWS
-    NATimeZone curtimezone;
-    GetTimeZoneInformation(&curtimezone);
-    na_GlobalTimeShift = naMakeShiftFromTimeZone(&curtimezone);
-    na_GlobalSummerTime = ((curtimezone.DaylightBias) ? NA_TRUE : NA_FALSE);
+    NATimeZone curTimeZone;
+    // Daylight saving is active if the function returns 2.
+    NAInt daylightCode = GetTimeZoneInformation(&curTimeZone);
+    NABool daylightSaving = (daylightCode == 2);
+    na_GlobalTimeShift = naMakeShiftFromTimeZone(&curTimeZone, daylightSaving);
+    na_GlobalDaylightSavingTime = (daylightSaving ? NA_TRUE : NA_FALSE);
   #elif NA_OS == NA_OS_MAC_OS_X
-    NATimeZone curtimezone;
-    gettimeofday(NULL, &curtimezone);
-    na_GlobalTimeShift = naMakeShiftFromTimeZone(&curtimezone);
-    na_GlobalSummerTime = ((curtimezone.tz_dsttime) ? NA_TRUE : NA_FALSE);
+    NATimeZone curTimeZone;
+    gettimeofday(NULL, &curTimeZone);
+    NABool daylightSaving = curtimezone.tz_dsttime;
+    na_GlobalTimeShift = naMakeShiftFromTimeZone(&curTimeZone, daylightSaving);
+    na_GlobalDaylightSavingTime = (daylightSaving ? NA_TRUE : NA_FALSE);
   #endif
 }
 
