@@ -5,10 +5,10 @@
 
 
 extern int16  na_GlobalTimeShift;
-extern NABool na_GlobalSummerTime;
+extern NABool na_GlobalDaylightSavingTime;
 
 
-#define NA_DATETIME_FLAG_SUMMERTIME 0x01
+#define NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME 0x01
 
 #define NA_DATETIME_GREGORIAN_400_YEAR_PERIOD naMakei64WithLo(400)
 #define NA_DATETIME_GREGORIAN_100_YEAR_PERIOD naMakei64WithLo(100)
@@ -57,11 +57,11 @@ extern NABool na_GlobalSummerTime;
 
 
 struct NADateTime{
-  NAi64  siSecond;     // SI-second number starting Jan 1st 1958, 00:00 + 00:00
-  int32    nanoSecond;      // nanosecond number in range [0, 999999999]
-  int16    shift;     // time shift in minutes (positive and negative)
-  uint8    errorNum;  // error number in case invalid values were given.
-  uint8    flags;     // Various flags.
+  NAi64  siSecond;   // SI-second number starting Jan 1st 1958, 00:00 + 00:00
+  int32  nanoSecond; // nanosecond number in range [0, 999999999]
+  int16  shift;      // time shift in minutes (positive and negative)
+  uint8  errorNum;   // error number in case invalid values were given.
+  uint8  flags;      // Various flags.
 };
 
 
@@ -99,7 +99,7 @@ NA_IDEF NADateTime naMakeDateTime(NAi64 year, int32 mon, int32 day, int32 hour, 
   dts.nanoSecond = 0;
   dts.shift = na_GlobalTimeShift;
   dts.errorNum = NA_DATETIME_ERROR_NONE;
-  dts.flags = (uint8)na_GlobalSummerTime;
+  dts.flags = (uint8)na_GlobalDaylightSavingTime;
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
 
@@ -118,9 +118,11 @@ NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(NAi64 secondNumber){
 
 
 
-NA_IDEF void naExtractDateTimeUTCInformation(const NADateTime* dateTime,
-                             NADateTimeStruct* dts,
-                          NADateTimeAttribute* dta){
+NA_IDEF void naExtractDateTimeUTCInformation(
+  const NADateTime* dateTime,
+  NADateTimeStruct* dts,
+  NADateTimeAttribute* dta)
+{
   NADateTime utcdateTime = *dateTime;
   naSetDateTimeZone(&utcdateTime, 0, NA_FALSE);
   naExtractDateTimeInformation(&utcdateTime, dts, dta);
@@ -128,15 +130,17 @@ NA_IDEF void naExtractDateTimeUTCInformation(const NADateTime* dateTime,
 
 
 
-NA_IDEF void naSetDateTimeZone( NADateTime* dateTime,
-                              int16 newShift,
-                             NABool summerTime){
+NA_IDEF void naSetDateTimeZone(
+  NADateTime* dateTime,
+  int16 newShift,
+  NABool daylightSavingTime)
+{
   dateTime->errorNum = NA_DATETIME_ERROR_NONE;
   dateTime->shift = newShift;
-  if(summerTime){
-    dateTime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
+  if(daylightSavingTime){
+    dateTime->flags |= NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME;
   }else{
-    dateTime->flags &= ~NA_DATETIME_FLAG_SUMMERTIME;
+    dateTime->flags &= ~NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME;
   }
 }
 
@@ -144,11 +148,11 @@ NA_IDEF void naSetDateTimeZone( NADateTime* dateTime,
 
 NA_IDEF void naCorrectDateTimeZone( NADateTime* dateTime,
                                   int16 newShift,
-                                 NABool summerTime){
+                                 NABool daylightSavingTime){
   dateTime->errorNum = NA_DATETIME_ERROR_NONE;
   dateTime->siSecond = naSubi64(dateTime->siSecond, naMakei64WithLo(dateTime->shift * (int32)NA_SECONDS_PER_MINUTE));
   dateTime->siSecond = naAddi64(dateTime->siSecond, naMakei64WithLo(newShift * (int32)NA_SECONDS_PER_MINUTE));
-  naSetDateTimeZone(dateTime, newShift, summerTime);
+  naSetDateTimeZone(dateTime, newShift, daylightSavingTime);
 }
 
 
@@ -186,22 +190,22 @@ NA_IDEF void naAddDateTimeDifference(NADateTime* dateTime, double difference){
 
 
 
-NA_IDEF NABool naHasDateTimeSummerTime(const NADateTime* dateTime){
-  return (dateTime->flags & NA_DATETIME_FLAG_SUMMERTIME) ? NA_TRUE : NA_FALSE;
+NA_IDEF NABool naHasDateTimeDaylightSavingTime(const NADateTime* dateTime){
+  return (dateTime->flags & NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME) ? NA_TRUE : NA_FALSE;
 }
 
 
 
-NA_IDEF void naSetDateTimeSummertime(NADateTime* dateTime, NABool summerTime){
+NA_IDEF void naSetDateTimeDaylightSavingTime(NADateTime* dateTime, NABool daylightSavingTime){
   dateTime->errorNum = NA_DATETIME_ERROR_NONE;
-  if(summerTime){
-    if((dateTime->flags & NA_DATETIME_FLAG_SUMMERTIME) == 0){
-      dateTime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
+  if(daylightSavingTime){
+    if((dateTime->flags & NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME) == 0){
+      dateTime->flags |= NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME;
       dateTime->shift += NA_MINUTES_PER_HOUR;
     }
   }else{
-    if((dateTime->flags & NA_DATETIME_FLAG_SUMMERTIME) != 0){
-      dateTime->flags &= ~NA_DATETIME_FLAG_SUMMERTIME;
+    if((dateTime->flags & NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME) != 0){
+      dateTime->flags &= ~NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME;
       dateTime->shift -= NA_MINUTES_PER_HOUR;
     }
   }
@@ -209,9 +213,9 @@ NA_IDEF void naSetDateTimeSummertime(NADateTime* dateTime, NABool summerTime){
 
 
 
-NA_IDEF void naSetGlobalTimeShift(int16 shiftMinutes, NABool summerTime){
+NA_IDEF void naSetGlobalTimeShift(int16 shiftMinutes, NABool daylightSavingTime){
   na_GlobalTimeShift = shiftMinutes;
-  na_GlobalSummerTime = summerTime;
+  na_GlobalDaylightSavingTime = daylightSavingTime;
 }
 
 

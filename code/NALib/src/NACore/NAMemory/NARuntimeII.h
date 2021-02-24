@@ -75,7 +75,7 @@ extern NARuntime* na_Runtime;
 
 NA_IDEF size_t naGetRuntimeGarbageByteSize(){
   #ifndef NDEBUG
-    if(!na_Runtime)
+    if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif
   return na_Runtime->totalMallocGarbageByteCount;
@@ -85,7 +85,7 @@ NA_IDEF size_t naGetRuntimeGarbageByteSize(){
 
 NA_IDEF size_t naGetRuntimeMemoryPageSize(){
   #ifndef NDEBUG
-    if(!na_Runtime)
+    if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif
   return na_Runtime->memPageSize;
@@ -95,7 +95,7 @@ NA_IDEF size_t naGetRuntimeMemoryPageSize(){
 
 NA_IDEF size_t naGetRuntimePoolPartSize(){
   #ifndef NDEBUG
-    if(!na_Runtime)
+    if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif
   return na_Runtime->partSize;

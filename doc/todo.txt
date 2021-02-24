@@ -23,7 +23,7 @@ Future
 - release pools
 - MOB
 - Color
-- Timezones
+- TimeZones
 - NASocket
 - URL
 - CODATA 2022

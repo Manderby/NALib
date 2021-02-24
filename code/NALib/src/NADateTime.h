@@ -14,14 +14,14 @@
   #include "Windows.h"
   typedef TIME_ZONE_INFORMATION NATimeZone;
 #elif NA_OS == NA_OS_MAC_OS_X
-  typedef struct timezone NATimeZone;
+  typedef struct imeZone NATimeZone;
 #endif
 
 
 
 
 // If not defined, the Asc and Bin formats will use 00:00 and wintertime as the
-// default timezone setting.
+// default imeZone setting.
 typedef enum{
   NA_DATETIME_FORMAT_APACHE,                   // 01/Apr/234567:22:37:51 -0130
   NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT,  // 234567-04-01T22:37:51-01:30
@@ -107,8 +107,8 @@ NA_IAPI NABool naIsLeapYear            (NAi64 year);
 //
 // The mon and day values are expected 1-indexed (1 is January or the first
 // day of the month respectively). This is in contrast to the NADateTimeStruct
-// where mon and day always are expressed 0-indexed. The timezone is set to
-// the global setting, see below. If you want to set the timezone manually or
+// where mon and day always are expressed 0-indexed. The imeZone is set to
+// the global setting, see below. If you want to set the imeZone manually or
 // provide any additional information, use the constructor with the
 // NADateTimeStruct as an argument instead, it is much more powerful.
 NA_IAPI NADateTime naMakeDateTime(  NAi64 year,
@@ -119,7 +119,7 @@ NA_IAPI NADateTime naMakeDateTime(  NAi64 year,
                                     int32 sec);
 
 // Returns an NADateTime struct with the current system clock including the
-// systems timezone. Note that an NADateTime does not require naClearXXX upon
+// systems imeZone. Note that an NADateTime does not require naClearXXX upon
 // deletion!
 //
 // Want to implement a nanosecond-timer? This is the function for you. Together
@@ -156,13 +156,15 @@ NA_API NAString* naNewStringWithDateTime(const NADateTime* dateTime,
 
 // Converts between the systems time formats and NADateTime
 NA_API struct tm naMakeTMfromDateTime   (const NADateTime* dateTime);
-// Computes the time shift in minutes including summer time, if applicable.
-NA_API int16     naMakeShiftFromTimeZone(const NATimeZone* timeZone);
-// if timeZone is a Null-Pointer, the global timezone settings are used.
+// Computes the time shift in minutes including daylight saving time, if applicable.
+NA_API int16     naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylightSaving);
+// if timeZone is a Null-Pointer, the global imeZone settings are used.
 
 #if NA_OS == NA_OS_WINDOWS
-  NA_API NADateTime      naMakeDateTimeFromFileTime(const FILETIME* fileTime,
-                                                  const NATimeZone* timeZone);
+  NA_API NADateTime naMakeDateTimeFromFileTime(
+    const FILETIME* fileTime,
+    const NATimeZone* timeZone,
+    NABool daylightSaving);
 #elif NA_OS == NA_OS_MAC_OS_X
   NA_API struct timespec naMakeTimeSpecFromDateTime(const NADateTime* dateTime);
   NA_API struct timeval  naMakeTimeValFromDateTime (const NADateTime* dateTime);
@@ -180,18 +182,18 @@ NA_API int16     naMakeShiftFromTimeZone(const NATimeZone* timeZone);
 NA_API void naExtractDateTimeInformation(const NADateTime* dateTime,
                                          NADateTimeStruct* dts,
                                       NADateTimeAttribute* dta);
-// Same thing but expressed in timezone 00:00 wintertime
+// Same thing but expressed in imeZone 00:00 wintertime
 NA_IAPI void naExtractDateTimeUTCInformation(const NADateTime* dateTime,
                                              NADateTimeStruct* dts,
                                           NADateTimeAttribute* dta);
 
-// Alters timezone shift and summerTime flag WITHOUT changing the real clock.
+// Alters imeZone shift and daylightSavingTime flag WITHOUT changing the real clock.
 // For example: 2011-04-01T22:37:51+06:00
 // becomes      2011-04-02T06:07:51-01:30
 NA_IAPI void naSetDateTimeZone(NADateTime* dateTime,
                                      int16 newShift,
-                                    NABool summerTime);
-// Alters timezone shift and summerTime flag WITH changing the real clock.
+                                    NABool daylightSavingTime);
+// Alters imeZone shift and daylightSavingTime flag WITH changing the real clock.
 // For example: 2011-04-01T22:37:51+06:00
 // becomes      2011-04-01T22:37:51-01:30
 // Note that if you are uncertain whether to use setZone or correctZone, this
@@ -199,7 +201,7 @@ NA_IAPI void naSetDateTimeZone(NADateTime* dateTime,
 // DateTimes which accidentally were stored with an incorrect time shift.
 NA_IAPI void naCorrectDateTimeZone(NADateTime* dateTime,
                                          int16 newShift,
-                                        NABool summerTime);
+                                        NABool daylightSavingTime);
 
 // Returns the difference in time. The returned value is in seconds. The
 // returned value can be negative if end is before begin.
@@ -214,13 +216,13 @@ NA_IAPI void naAddDateTimeDifference(NADateTime* dateTime, double difference);
 NA_API NAString* naNewStringFromSecondDifference(       double difference,
                                                          uint8 decimalDigits);
 
-// Returns NA_TRUE if the date has summerTime.
-NA_IAPI NABool naHasDateTimeSummerTime(const NADateTime* dateTime);
-NA_IAPI void naSetDateTimeSummertime(NADateTime* dateTime, NABool summerTime);
+// Returns NA_TRUE if the date has daylightSavingTime.
+NA_IAPI NABool naHasDateTimeDaylightSavingTime(const NADateTime* dateTime);
+NA_IAPI void naSetDateTimeDaylightSavingTime(NADateTime* dateTime, NABool daylightSavingTime);
 
 
-// Global timezone settings
-// The NADateTime.c file defines a global timezone shift and a daylight
+// Global imeZone settings
+// The NADateTime.c file defines a global imeZone shift and a daylight
 // saving time flag. These global settings are automatically used for
 // constructors, input- and output methods where no explicit or implicit
 // information about the shift is available.
@@ -231,7 +233,7 @@ NA_IAPI void naSetDateTimeSummertime(NADateTime* dateTime, NABool summerTime);
 // Use the following methods to manipulate the global settings:
 //
 // Sets a custom time shift and daylight saving flag.
-NA_IAPI void naSetGlobalTimeShift(int16 shiftMinutes, NABool summerTime);
+NA_IAPI void naSetGlobalTimeShift(int16 shiftMinutes, NABool daylightSavingTime);
 // Sets the time shift and daylight saving flag to the system settings of the
 // local machine.
 NA_API void naSetGlobalTimeShiftToSystemSettings(void);

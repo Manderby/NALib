@@ -779,8 +779,8 @@ NA_HDEF double na_BenchmarkTime(){
     return fileTime.dwLowDateTime / 10000000.;  // see definition of dwLowDateDime
   #else
     struct timeval curtime;
-    struct timezone curtimezone;
-    gettimeofday(&curtime, &curtimezone);
+    struct imeZone curTimeZone;
+    gettimeofday(&curtime, &curTimeZone);
     return curtime.tv_sec + curtime.tv_usec / 1000000.;
   #endif
 }

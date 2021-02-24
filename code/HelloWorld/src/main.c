@@ -8,6 +8,9 @@
 // NAXXX.h files. But for the sake of simplicity, we use relative paths here.
 #include "../../NALib/src/NABase.h"
 #include "../../NALib/src/NAString.h"
+#include "../../NALib/src/NADateTime.h"
+#include "../../NALib/src/NAList.h"
+#include "../../NALib/src/NAStack.h"
 #include <stdio.h>
 
 int main(void){
@@ -28,21 +31,67 @@ int main(void){
   #endif
   printf(" %d Bits Addresses, %d Bits Integers)" NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
+
+
+  printf("Hello World" NA_NL);
+
+
+
+  naStartRuntime();
+
+    naSetGlobalTimeShiftToSystemSettings();
+    NADateTime dateTime = naMakeDateTimeNow();
+    NAString* timeString = naNewStringWithDateTime(
+      &dateTime,
+      NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT);
+    printf("Current date and time: %s" NA_NL, naGetStringUTF8Pointer(timeString));
+    naDelete(timeString);
+
+
+
+    int a = 12;
+    int b = 34;
+    int c = 56;
+
+    NAList list;
+    naInitList(&list);
+    naAddListLastConst(&list, &a);
+    naAddListLastConst(&list, &b);
+    naAddListLastConst(&list, &c);
+    printf("Listing elements: ");
+    NAListIterator listIter = naMakeListAccessor(&list);
+    while(naIterateList(&listIter)){
+      printf("%d ", *(const int*)naGetListCurConst(&listIter));
+    }
+    naClearListIterator(&listIter);
+    printf(NA_NL);
+    naClearList(&list);
+
+
+
+    NAStack stack;
+    naInitStack(&stack, naSizeof(int), 2);
+    *(int*)naPushStack(&stack) = 3;
+    *(int*)naPushStack(&stack) = 2;
+    *(int*)naPushStack(&stack) = 1;
+    printf("Stacking elements: ");
+    printf("%d ", *(int*)naPopStack(&stack));
+    printf("%d ", *(int*)naPopStack(&stack));
+    printf("%d ", *(int*)naPopStack(&stack));
+    printf(NA_NL);
+    naClearStack(&stack);
+
+  naStopRuntime();
+  
+
+
+  printf("Finished." NA_NL);
   #if NA_OS == NA_OS_WINDOWS
-    printf("Finished." NA_NL);
     NA_UNUSED(getchar());
   #endif
 
   
   
-  naStartRuntime();
-    NAString* testString = naNewStringWithFormat("This is %s running." NA_NL, "Hello World");
-    printf("%s", naGetStringUTF8Pointer(testString));
-    naDelete(testString);
-  naStopRuntime();
-  
-
-
   return 0;
 }
 

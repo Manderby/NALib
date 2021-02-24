@@ -38,8 +38,10 @@
       na_SetTestCaseRunning(NA_FALSE);
     #endif
     na_Error(functionSymbol, text);
-    fprintf(stderr, NA_NL "Crashing the application deliberately..." NA_NL);
-  }
+    fprintf(stderr, NA_NL "Stopping the application deliberately." NA_NL);
+
+    NA_UNUSED(getchar());
+}
 
 
 
