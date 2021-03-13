@@ -135,7 +135,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
 
   na_InitImageSpace(&(winapiImageSpace->imageSpace), nativePtr);
 
-  cocoaImageSpace->imageSpace.uiImage = naRetain(uiImage);
+  winapiImageSpace->imageSpace.uiImage = naRetain(uiImage);
   winapiImageSpace->image = uiImage;
 
   return (NAImageSpace*)winapiImageSpace;
@@ -144,7 +144,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
 
 
 NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace){
-  naRelease(cocoaImageSpace->imageSpace.uiImage);
+  naRelease(winapiImageSpace->imageSpace.uiImage);
   na_ClearImageSpace((NAImageSpace*)winapiImageSpace);
 }
 
