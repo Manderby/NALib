@@ -1,38 +1,44 @@
 
 NALib Readme
-This file is part of NALib, a collection of C source code
-intended for didactical purposes. Full license notice at the bottom.
-====================
+============
+
 
 
 Table of Content:
 -----------------
 1.   Short Introduction
 2    Memory and Structs
-2.1    Creation and deletion of memory blocks
+2.1    Creation and deletion of raw memory blocks
 2.2    Construction and Destruction of structs
-2.3    Runtime system memory and struct functions
-2.4    Manual reference counting, smart pointers
+2.3    POD functions make, fill
+2.4    Struct functions init, clear, new, delete, create, retain, release
+2.5    Runtime system
+2.6    Using the runtime system for custom structs
+2.7    Temporary memory with garbage collection like deletion
+2.8    Manual reference counting, smart pointers
 3.   Iteration of container structs
-4.   Inline Implementations
-5.   Opaque types
-6.   Symbol naming
-7.   Standard, Compiler, File header and footer
-
+4.   Declarations and Definitions
+4.1    Symbol naming
+4.2    Inline Implementations
+4.3    Opaque Types
+5.   Standard, Compiler, File header and footer
+6.   License
 
 
 
 1. Short Introduction
 ---------------------
-- Simply include the whole NALib folder into your project.
+- To compile your own code, there are two ways:
+  1. Compile NALib as part of your own solution by simply dragging the whole
+     code\NALib\src folder into your project.
+  2. Create a static library and reference it. VisualStudio project is in the
+     code\NALib folder. XCode project is in proj folder.
 - NALib just needs the standard libraries.
 - Any documentation can be found within the source files or in this file.
 
-If you are curious on how NALib works, start at the most basic files:
-- NABase.h        Functions, Macros and Definitions, System-Dependancy
-- NAMemory.h      Functions to work with the memory
+All important include files are in the base src folder.
 
-Other than that, all important include files are in the base src folder.
+To get the minimal functionality of NALib, include NABase.h
 
 For more information, visit
 http://manderc.com/nalib/index.php
@@ -45,7 +51,6 @@ Have fun, Tobias Stamm.
 
 2. Memory and Structs
 ---------------------
-
 NALib is a collection of C code. The C programming language has no notion of
 object oriented programming (OOP) and therefore relies on simpler concepts
 like memory blocks, pointers and structs (sometimes called "records" in other
@@ -58,8 +63,8 @@ that in NALib.
 
 
 
-2.1 Creation and deletion of memory blocks
-------------------------------------------
+2.1 Creation and deletion of raw memory blocks
+----------------------------------------------
 You can use the default malloc and free functions to create memory blocks
 as you like. NALib nontheless provides its own allocation functions (which 
 are basically mappings to malloc and free):
@@ -76,15 +81,13 @@ You can also allocate memory on byte numbers or even page boundaries:
                        will be aligned to a page boundary.
 - naFreePageAligned    Frees the aligned memory.
 
-Additionally, starting with NALib version 10, you can also use the runtime-
-system to allocate memory. See next sections.
-
+Additionally, you can also use the runtime-system to allocate memory. See next
+sections.
 
 
 
 2.2 Construction and Destruction of structs
 -------------------------------------------
-
 Structs usually must be initialized before being able to use them and must
 be destroyed when not needed anymore. As NALib is a C library, there are no
 constructors or destructors like in typical OOP languages and consequently,
@@ -93,70 +96,67 @@ such initialization must be done manually by the programmer.
 Therefore, NALib offers construction and destruction functions for many
 structs. The naming scheme guides you.
 
-POD functions MAKE, FILL
-------------------------
-Simple structs like NAPos are very basic structs and are generally called
-pod (plain old data). Such usually provide an naMakeXXX or naFillXXX function.
-Sometimes to destruct such a struct, a corresponding naClearXXX function is
-needed. See the specific API for more information.
 
-- naMakeXXX:    Returns the struct as a value. Only very basic structs (pod)
-                will provide such functions.
+
+2.3 POD functions make, fill
+----------------------------
+Simple structs like NAPos are very basic structs which are generally called
+POD (plain old data). Such structs usually provide an naMakeXXX or naFillXXX
+function. Sometimes, to destruct such a struct, a corresponding naClearXXX
+function is needed. See the specific API for more information.
+
+- naMakeXXX:    Returns the struct as a value.
 - naFillXXX:    Expects the first argument to be a pointer to the struct.
-                Again, only basic structs (pod) will offer such functions.
 
-Struct functions INIT, CLEAR, NEW, DELETE, CREATE, RETAIN, RELEASE
-------------------------------------------------------------------
+
+
+2.4 Struct functions init, clear, new, delete, create, retain, release
+----------------------------------------------------------------------
 For more complex structs like NAArray, NAFile or NAString, the construction-
 functions usually are called naInitXXX, naCreateXXX or naNewXXX. These
 functions usually assume the given struct to be uninitialized and will
 overwrite all values.
 
-- naInitXXX:    Expects a pointer to an existing struct in memory. That pointer
-                is expected to point at a non-initialized struct and will now
-                be initialized. Returns the pointer again.
-- naNewXXX:     Starting with NALib version 10, certain structs like NAString
-                have been restricted to be managed by the runtime system. These
-                structs do not provide naInitXXX functions but naNewXXX
-                functions instead.
-- naCreateXXX:  Starting with NALib version 18, certain structs have reference
-                counting built in. This function initializes the reference
-                count to 1. After creation, you shall use naRetainXXX and
-                naReleaseXXX.
+- naInitXXX:    Expects a pointer to an existing struct in memory, initializes
+                it and returns the pointer again. Note that the struct itself
+                must be allocated outside of the naInitXXX function.
+- naNewXXX:     Certain structs like NAString can only be created using the
+                runtime system of NALib. These structs do provide naNewXXX
+                functions instead of naInitXXX functions.
+- naCreateXXX:  Certain structs like NAFile have reference counting built in.
+                This function initializes the reference count to 1. After
+                creation, you shall use naRetainXXX and naReleaseXXX.
 
 The corresponding destruction functions are the following:
 
 - naClearXXX:   Expects a pointer to a struct initialized with naInitXXX which
-                shall be cleared. Is sometimes is also required for pod structs
-                initialized with naMakeXXX. See the specific API for more
-                information.
-- naDeleteXXX:  Deletes the given pointer which previously has been created
-                using an naNewXXX function.
+                shall be cleared. Sometimes an naClearXX function is also
+                required for POD structs, see the specific API for more
+                information. Note that naClearXXX will only erase the
+                contents of the provided pointer, but not the pointer itself!
+- naDeleteXXX:  Deletes the given pointer which previously was created using
+                an naNewXXX function.
 - naRetainXXX:  Adds 1 to the reference count of a struct created with an
                 naCreateXXX function.
 - naReleaseXXX: Subtracts 1 from the reference count of a struct created with
                 an naCreateXXX function. If zero is reached, the struct will
                 automatically be destroyed.
 
-All destruction functions expect a pointer to an initialized struct and will
-perform all necessary destructions.
-
-When using naInitXXX functions, the struct itself must always be allocated
-outside of the naInitXXX function. Therefore beware that naClearXXX will only
-erase the contents but not the pointer itself.
 
 
-Runtime system functions NEW, DELETE, RETAIN, RELEASE, MALLOCTMP
-----------------------------------------------------------------
-There exists a small Runtime System in NALib which allows you to quickly
-allocate memory for any structs by using inifinitely large pools. Using that
-runtime system is quite a bit faster than malloc and free but requires a bit
-of additional memory. Another advantage is that for any struct, an appropriate
-destructor can be called automatically upon deletion and each "object" can
-even have automatic reference counting.
+2.5 Runtime system
+------------------
+NALib has its own little runtime system. With it, memory allocation becomes
+quite a bit faster by using infinitely large memory pools and you can even
+use automatic reference counting, such that an appropriate destructor will
+automatically be called when an "object" is no longer needed. When using this
+runtime system, memory leaks can even be detected.
+
+The naNewXXX and naCreateXXX functions described above for example make use
+of that runtime system.
 
 In order to use the runtime system, an instance of NARuntime must be created
-before any naNew function is called. When NDEBUG is undefined, a friendly
+before any naNewXXX function is called. When NDEBUG is undefined, a friendly
 warning tells you to start the runtime system. You can start it by a simple
 call to
 
@@ -166,30 +166,15 @@ When you no longer need the runtime system, you can stop it using
 
 naStopRuntime();
 
-As soon as the runtime system is running, the following functions can be used:
+Note that the runtime system is indeed faster than malloc but requires a bit
+more memory.
 
-- naNew:        Uses the NARuntime system to quickly provide a pointer. Since
-                version 21, runtime types can even have automatic reference
-                counting. The desired type must be declared with the
-                NA_RUNTIME_TYPE macro in order to work.
-- naDelete:     Deletes a non-reference counting pointer allocated with naNew.
-- naRetain:     Retains a reference counting pointer allocated with naNew.
-- naRelease:    Releases a reference counting pointer allocated with naNew.
 
-A runtime type which is not using reference counting must be deleted with
-naDelete. Reference counting types can use the naRetain and naRelease functions
-and will automatically deallocate the struct when reference counting reaches
-zero.
 
-Additionally, the runtime system provides a garbage memory struct which allows
-you to allocate memory which is automatically placed in a pool which will be
-deleted all at once. Use it with the following two functions:
-
-- naMallocTmp:      Allocates a given number of bytes and stores the pointer in
-                    a pool for later deletion.
-- naCollectGarbage: Collects all pointers created with naMallocTmp at once.
-                    This function should only be called at designated spots
-                    like for example between the execution of two UI commands.
+2.6 Using the runtime system for custom structs
+-----------------------------------------------
+The NALib runtime system provides very generic functions which you can use
+for your own custom structs.
 
 To use the runtime system for your own custom structs, the desired type must
 be declared with the NA_RUNTIME_TYPE macro as follows:
@@ -200,17 +185,46 @@ This declaration can be made opaque by putting it into an implementation file
 and using NA_EXTERN_RUNTIME_TYPE in the .h file. For more information, see
 the Memory.h file.
 
+As soon as the runtime system is running and your type is defined as a runtime
+type, the following functions can be used:
+
+- naNew:        Uses the NARuntime system to quickly provide a pointer. Such
+                runtime types can even have automatic reference counting.
+                The desired type must be declared with the NA_RUNTIME_TYPE
+                macro in order to work.
+- naDelete:     Deletes a non-reference counting pointer allocated with naNew.
+- naRetain:     Retains a reference counting pointer allocated with naNew.
+- naRelease:    Releases a reference counting pointer allocated with naNew.
+
+A runtime type which is not using reference counting must be deleted with
+naDelete. Reference counting types must use the naRetain and naRelease
+functions and will automatically deallocate the struct when reference counting
+reaches zero.
 
 
 
-2.3 Manual reference counting, smart pointers
+2.7 Temporary memory with garbage collection like deletion
+----------------------------------------------------------
+Additionally, the runtime system provides a garbage memory struct which allows
+you to allocate memory which is automatically placed in a pool which will be
+deleted all at once. Use it with the following two functions:
+
+- naMallocTmp:      Allocates a given number of bytes and stores the pointer
+                    in a pool for later deletion.
+- naCollectGarbage: Collects all pointers created with naMallocTmp at once.
+                    This function should only be called at designated spots
+                    like for example between the execution of two UI commands.
+
+
+
+2.8 Manual reference counting, smart pointers
 ---------------------------------------------
-
 In the NAMemory.h file, many structures do not only allow to allocate and
-deallocate memory but also to add manual reference counting. Here are listed
-the different structs together with the intended way of using them:
+deallocate memory but also to check for const safety and to add manual
+reference counting. Here are listed the different structs together with the
+intended way of using them:
 
-- NARefCount
+- NARefCount:
   Use this type in your own custom structs as the first member / field and
   initialize it upon creation with naInitRefCount. Use naRetainRefCount to
   retain your struct. Create your own function like releaseMyStruct which
@@ -218,21 +232,25 @@ the different structs together with the intended way of using them:
   set it as the destructor parameter of naReleaseRefCount.
   Note that structs of NALib which use this scenario always use naCreateXXX
   as the creator function.
-- NASmartPtr
+- NAPtr:
+  Use this type to store either a const or mutable pointer. This is a helper
+  struct which will check const safety during debugging but becomes a simple
+  raw pointer with no code execution in a release configuration.
+- NASmartPtr:
   An NASmartPtr stores two things: An NARefCount and an NAPtr. Use this struct
   when you want to store a pointer with a reference count. You can use the
   naRetainSmartPtr function to retain the struct and call naReleaseSmartPtr
   with a potential destructor callback to release the struct.
   This is a raw implementation of a reference count which does not require
   the NALib runtime system.
-- NAPointer
+- NAPointer:
   An NAPointer stores an NASmartPtr together with a destructor. You will not
   need to remember the destructor upon releasing like with NARefCount or with
   NASmartPtr. Note that an NAPointer is instanciated using a fast memory pool.
   This requires the runtime system.
   
-Authors note about smart pointers:
-----------------------------------
+Authors note about NASmartPtr and NAPointer:
+--------------------------------------------
 Since the introduction of naNew and automatic reference counting using the
 NALib runtime system, the NASmartPtr and NAPointer structs are not in use in
 NALib anymore but stay in the source code as many developers are used to write
@@ -241,14 +259,12 @@ or the C++11 standard. The author does not like them. He thinks, they're poop.
 
 
 
-
 3 Iteration of container structs
 --------------------------------
-
 Container structs like NAArray, NAList, NABuffer, etc. implement iterators
 which allow the programmer to visit all elements in a specific order without
-having to manage the container data or pointers. With NALib version 19, all
-iterators have been implemented in the same way:
+having to manage the container data or pointers. In NALib, all iterators are
+implemented in the same way:
 
 Create an iterator using one of these functions (Where XXX is the name of the
 type and the container is a pointer to the struct):
@@ -267,19 +283,19 @@ As soon as the iterator is created, you can use the iterate functions in a
 while loop to visit all elements:
 
 while(naIterateXXX(&iter)){
-  const MyElementData* constdata   = naGetXXXCurConst();
-        MyElementData* mutabledata = naGetXXXCurMutable();
+  const MyElementData* constdata   = naGetXXXConst();
+        MyElementData* mutabledata = naGetXXXMutable();
   // do something with the data.
 }
 
-Depending on the type, there might me more functions to iterate, access, mutate
-and modify. Note that depending on how the iterator was created, certain
-conditions will be checked. An Accessor for example has no rights to return
-mutable data. Or a remove function will only work on Modifiers. In such cases,
-NALib will emit warnings when NDEBUG is undefined.
+Depending on the type, there might be more or less functions to iterate,
+access, mutate and modify. Note that depending on how the iterator was
+created, certain conditions will be checked. An Accessor for example has
+no rights to return mutable data. Or a remove function will only work on
+modifiers. In such cases, NALib will emit warnings when NDEBUG is undefined.
 
 IMPORTANT:
-After using the iterator, you always must clear an iterator with a final call
+After using the iterator, you always MUST clear an iterator with a final call
 to the following function:
 
 naClearXXXIterator(&iter);
@@ -287,122 +303,53 @@ naClearXXXIterator(&iter);
 If you forget that call, many warnings will be emitted. The container struct
 as well as the single elements will keep track of whether there are still
 iterators operating upon. If at any time, some element will be removed or a
-complete struct will be erased where there is still an iterator visiting, NALib
-will emit a warning. These warnings will be completely omitted when NDEBUG
-ist defined.
+complete struct will be erased where there is still an iterator visiting,
+NALib will emit a warning. Note that these warnings will be completely
+omitted in release configurations when NDEBUG ist defined.
 
 
 
-4. Inline Implementations
--------------------------
-Unfortunately, inline- and template-functions must be present to the compiler
-during compilation. This means, every declaration must be followed by a
-definition in the same file scope.
-
-One way to achieve this is to simply make no declarations at all but instead
-implement every function directly in the header file. This makes it hard though
-to create a useful interface. Header files do have (among other things) the
-purpose of providing an API to the programmer. And such an API preferably is
-written in a compact, readable way.
-
-Another way is to write declarations and move all definitions to the end of a
-header file and hence keep separate sections: API above, implementation below.
-
-Yet another way is to copy all implementation code to a separate file and
-include that file at the end of the header file. Some suffixes known are
-.hpp .ii .inl .tpl .hxx. But there is no standard.
-
-Starting with NALib version 16, the author decided to move any inline
-implementation into a separate header file, for example NAArray.h has an
-additional NAArrayII.h file. This II-File (Inline Implementation) is stored
-in a folder so that the main .h-File remains in the base folder visible to
-anyone.
-
-
-
-
-5. Opaque Types
----------------
-All around NALib you find declarations like these:
-
-typedef struct NAArray NAArray;
-
-This line tells the compiler that NAArray shall be used as a type. After this
-line, the compiler expects a declaration somewhere and allows the programmer to
-use the type by just using its name. The actual declaration of this type can
-be written anywhere but in NALib is often given in the inline implementation
-files by the following lines starting with something like
-
-struct NAArray{
-  ...
-}
-
-These lines usually should be written in an implementation file corresponding
-to the type. Doing so, they become opaque to the user after compilation,
-meaning the data organisation is unknown.
-
-This normally is a good thing. For end products, this is a desirable behaviour,
-such that reengineering or misuse of undocumented functionality becomes much
-more difficult. The downfall though is that even the programmers have no access
-to the declaration. The type defined by the typedef-line can only be used as
-pointer or by a specific set of API calls given by the programmer of the type.
-
-It is no problem to store pointers to any type in C and C++ but storing and
-accessing the type itself as a value or subpart of another type requires the
-compiler to know the exact declaration of that type. Other modern languages
-like Java or C# do not suffer from this limitation as basically, every type
-is accessed by a pointer. The potential of C and C++ though gets limited
-fundamentally, as types can not contain reference-types whose declaration is
-unknown.
-
-To not limit the functionality, all such types are declared somewhen after its
-typedef in the same header file. This allows NALib to inline lots of code and
-hence become very fast. The programmer though has to take the responsibility
-to not access any of the fields of an opaque type directly. Always use the API!
-
-Note that if you want to create a library where the types become opaque but
-can nontheless be accessed by your own implementation, collect all opaque type
-declarations into one header file which will be included by the implementation
-files and must be present during compilation. During distribution, remove that
-header file from the package. It's tricky, but it works.
-
-
-
-6. Symbol naming
-----------------
-In NALib, a (mostly) consistent naming scheme is applied. Every symbol
-consists at least of a suffix and an identifier.
-
-Suffix:
-- macros                         NA_ and are UPPER_CASE
-- public types                   NA  and are MixedCase
-- public functions               na  and are MixedCase
-- private types                  NA_ and are MixedCase
-- private functions & variables  na_ and are MixedCase
-
-Further more, symbols are declared with the following attribute macros:
+4. Declarations and Definitions
+-------------------------------
+In NALib, functions are declared and defined with the following attribute
+macros:
 
 Declaration | Definition | Explanation
 ------------+------------+------------------------
-NA_API      | NA_DEF     | Public normal functions. Default calling convention.
-            |            | API will not be exported when linking.
-NA_IAPI     | NA_IDEF    | Public inline functions. Code will likely be inlined.
-            |            | Declared static to prevent duplicate definitions and
-            |            | to not export API when linking.
+NA_API      | NA_DEF     | Public normal functions. Default calling
+            |            | convention. API will not be exported when linking.
+NA_IAPI     | NA_IDEF    | Public inline functions. Code will likely be
+            |            | inlined. Declared static to prevent duplicate
+            |            | definitions and to not export API when linking.
 ------------+------------+------------------------
-NA_HAPI     | NA_HDEF    | Helper function. Default calling convention. Belongs
-            |            | to internal code of NALib. Would normally not be
-            |            | visible to the programmer but in NALib, you can
-            |            | look it up. API is not exported when linking. Uses
-            |            | the na_ prefix.
+NA_HAPI     | NA_HDEF    | Helper function. Default calling convention.
+            |            | Belongs to internal code of NALib. Would normally
+            |            | not be visible to the programmer but in NALib, you
+            |            | can look it up. API is not exported when linking.
+            |            | Uses the na_ prefix.
 NA_HIAPI    | NA_HIDEF   | Same thing but inlined.
+
+
+
+4.1 Symbol naming
+-----------------
+Furhter more, a consistent naming scheme is applied. Every symbol consists at
+least of a prefix and an identifier:
+
+Symbol                          | Prefix and casing      | Example
+--------------------------------+------------------------+-------------------
+- macros                        | NA_ and are UPPER_CASE | NA_SYSTEM_WIN
+- public types                  | NA  and are MixedCase  | NABuffer
+- public functions              | na  and are MixedCase  | naStartRuntime
+- private types                 | NA_ and are MixedCase  | NA_TreeItem
+- private functions & variables | na_ and are MixedCase  | na_DeallocFile
 
 Types are always typedef'd, meaning you won't have to write the struct keyword
 all the time when declaring variables. Also enums are typedef'd with a clear
 name. Example: NAAscDateTimeFormat
 
 Some macros have just one identifier after the prefix. These macros denote
-key values often used in all of the source code. Examples: NA_NULL, NA_RESTRICT
+key values often used in all of the source code. Examples: NA_NULL, NA_OS
 
 Some other macros have multiple identifiers after the prefix. The first
 identifier denotes the topic which the macros are used for. The remaining
@@ -425,22 +372,103 @@ functions are declared as helper functions.
 
 
 
-7. Standard, Compiler, File header and footer
+4.2 Inline Implementations
+--------------------------
+Unfortunately, inline- and (in C++) template-functions must be present to
+the compiler during compilation. This means, every declaration must be
+followed by a definition in the same file scope.
+
+One way to achieve this is to simply make no declarations at all but instead
+implement every function directly in the header file. This makes it hard
+though to create a useful interface. Header files do have (among other things)
+the purpose of providing an API to the programmer. And such an API preferably
+is written in a compact, readable way.
+
+Another way is to write declarations and move all definitions to the end of a
+header file and hence keep separate sections: API above, implementation below.
+
+Yet another way is to copy all implementation code to a separate file and
+include that file at the end of the header file. Some suffixes known are
+.hpp .ii .inc .inl .tpl .hxx. But there is no standard.
+
+In NALib, the author decided to move any inline implementation into a separate
+header file with an II suffix (Inline Implementation). For example NAArray.h
+has an additional NAArrayII.h file. This II-File is stored in a folder so that
+the main .h-File remains in the base folder visible to anyone.
+
+Additionally, in NALib, non-public functions are declared in II files as well
+in order to be able to test it with the built-in testing framework. Of course,
+the programmer should not use these methods, so to distinguish them from
+public functions, they have the na_ prefix with underscore instead of just
+having the na prefix.
+
+
+
+4.3 Opaque Types
+----------------
+All around NALib you find declarations like these:
+
+typedef struct NAArray NAArray;
+
+This line tells the compiler that NAArray shall be used as a type. After this
+line, the compiler expects a declaration somewhere and allows the programmer
+to use the type by just using its name. In NALib, the actual declaration of
+the type is usually given either in the implementation files (.c) or in the
+inline implementation files (II.h) with something like this:
+
+struct NAArray{
+  ...
+};
+
+Such type definitions usually should always be written in an implementation
+file (.c) because when doing so, they become opaque to the user after
+compilation, meaning the data organisation is unknown and unreachable to the
+programmer.
+
+This normally is a good thing. For end products, this is the desirable
+behaviour, such that reengineering or misuse of undocumented functionality
+becomes much more difficult. The downfall though is that even the programmers
+have no access to the declaration. The type defined by the typedef-line can
+only be used as pointer or by a specific set of API calls given by the
+creator of the framework.
+
+It is no problem to store pointers to any type in C and C++ but storing and
+accessing the type itself as a value or subpart of another type requires the
+compiler to know the exact declaration of that type. Other modern languages
+like Java or C# do not suffer from this limitation as basically, every type
+is accessed by a pointer. The potential of C and C++ though gets limited
+fundamentally, as types can not contain reference-types whose declaration is
+unknown.
+
+To not limit the functionality, in NALib, many types are declared somewhen
+after its typedef in the inline implementation file (II.h). This allows NALib
+to inline lots of code and hence become very fast. The programmer though has
+to take the responsibility to not access any of the fields of an opaque type
+directly. Always use the API!
+
+Note that if you want to create a library where the types become opaque but
+can nontheless be accessed by your own implementation, collect all opaque type
+declarations into one header file which will be included by the implementation
+files and must be present during compilation. During distribution, remove that
+header file from the package. It's tricky, but it works.
+
+
+
+5. Standard, Compiler, File header and footer
 ----------------------------
 This code has been written to be compatible with C99.
 Earlier standards will most probably not compile.
 
 At the bottom of each file the license notice is attached.
 
-Aside from that, all header files are encapsulated by standard include-once
-directives:
+Aside from that, all header files are encapsulated by standard include guards:
 
 #ifndef NA_XXX_INCLUDED
 #define NA_XXX_INCLUDED
 ...
 #endif // NA_XXX_INCLUDED
 
-Which allows you to simply include all header files as many times as you want
+This allows you to simply include all header files as many times as you want
 without bumping into redefinitions.
 
 Further more, all header files are encapsulated by the standard c-linkage
@@ -459,8 +487,8 @@ errors.
 
 
 
-
-====================
+6. License
+----------
 This is free and unencumbered software released into the public domain.
 
 Anyone is free to copy, modify, publish, use, compile, sell, or
