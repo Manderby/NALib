@@ -153,27 +153,6 @@ NA_IDEF void* naPopStack(NAStack* stack){
 
 
 
-NA_IDEF void* naPeekStack(NAStack* stack, NAInt index){
-  //NAListIterator iter = naMakeListMutator(&(stack->arrays));
-  //NAInt arrayindex = 0;
-  //void* retValue = NA_NULL;
-  //while(naIterateList(&iter)){
-  //  NAInt nextbaseindex = na_GetStackArrayBaseIndex(stack, arrayindex + 1);
-  //  if(nextbaseindex > index)
-  //  {
-  //    NAByte* array = naGetListCurMutable(&iter);
-  //    NAInt curbaseindex = na_GetStackArrayBaseIndex(stack, arrayindex);
-  //    retValue = &(array[(index - curbaseindex) * stack->typeSize]);
-  //    break;
-  //  }
-  //  arrayindex++;
-  //}
-  //naClearListIterator(&iter);
-  //return retValue;
-}
-
-
-
 NA_IDEF size_t naGetStackCount(const NAStack* stack){
   #ifndef NDEBUG
     if(!stack)

@@ -89,7 +89,7 @@ void testStackInitClear(){
 
 
 
-void testStackPushTopPop(){
+void testStackPushTopPopPeek(){
   NAStack stack;
   void* data = NA_NULL;
 
@@ -112,16 +112,34 @@ void testStackPushTopPop(){
     naTestVoid(naClearStack(&stack));
   }
 
+  naTestGroup("Peeking"){
+    naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, 0);
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++){naPushStack(&stack);}
+    naTest((data = naPeekStack(&stack, 0)) != NA_NULL);
+    naTest((data = naPeekStack(&stack, NA_TEST_STACK_INIT_COUNT - 1)) != NA_NULL);
+    naTest((data = naPeekStack(&stack, NA_TEST_STACK_INIT_COUNT + 0)) != NA_NULL);
+    naTestError(naPeekStack(&stack, NA_TEST_STACK_INIT_COUNT + 1));
+    naClearStack(&stack);
+  }
+
   naTestGroup("Null pointer"){
     naTestCrash(naPushStack(NA_NULL));
     naTestCrash(naTopStack(NA_NULL));
     naTestCrash(naPopStack(NA_NULL));
+    naTestCrash(naPeekStack(NA_NULL, 0));
   }
 
   naTestGroup("Empty stack"){
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, 0);
     naTestError(naTopStack(&stack));
+    naClearStack(&stack);
+
+    naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, 0);
     naTestError(naPopStack(&stack));
+    naClearStack(&stack);
+
+    naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, 0);
+    naTestError(naPeekStack(&stack, 0));
     naClearStack(&stack);
   }
 }
@@ -524,10 +542,31 @@ void testStackForeach(){
 }
 
 
+
+void printNAStack(){
+  printf("NAStack.h:" NA_NL);
+
+  naPrintMacro(NA_STACK_GROW_AUTO);
+  naPrintMacro(NA_STACK_GROW_LINEAR);
+  naPrintMacro(NA_STACK_GROW_FIBONACCI);
+  naPrintMacro(NA_STACK_GROW_EXPONENTIAL);
+  naPrintMacro(NA_STACK_FIXED_SIZE);
+
+  naPrintMacro(NA_STACK_SHRINK_AUTO);
+  naPrintMacro(NA_STACK_NO_SHRINKING);
+
+  naPrintMacro(NA_STACK_GROW_MASK);
+  naPrintMacro(NA_STACK_SHRINK_MASK);
+
+  printf(NA_NL);
+}
+
+
+
 void testNAStack(){
   naTestGroupFunction(StackArray);  
   naTestGroupFunction(StackInitClear);  
-  naTestGroupFunction(StackPushTopPop);  
+  naTestGroupFunction(StackPushTopPopPeek);  
   naTestGroupFunction(StackCount);  
   naTestGroupFunction(StackGrow);  
   naTestGroupFunction(StackShrink);  

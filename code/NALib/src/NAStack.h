@@ -101,21 +101,21 @@ NA_API NAStack* naInitStack(
 // Clears the given stack.
 NA_API void naClearStack  (NAStack* stack);
 
-// Top:   Accesses the topmost element by returning a pointer to that element
-// Push:  Grows the stack by 1 element and returns a pointer to that element
-// Pop:   Shrinks the stack by 1 element and returns a pointer to the element
+// Top:   Accesses the topmost element by returning a pointer to the element.
+// Push:  Grows the stack by 1 element and returns a pointer to the element.
+// Pop:   Shrinks the stack by 1 element and returns a pointer to the element.
 //        which just had beed popped.
 // Peek:  Looks at the element with the given index. Warning: Not very fast.
 //        Better use iterators if you want to visit all elements of the stack.
 //
 // Note that the Pop function returns the element which had been removed. It
-// will still be available shortly after a call to this function as the stack
-// will only shrink upon a call to naShrinkStackIfNecessary and hence the data
-// remains in memory as long as it is not overwritten or freed.
+// will still be available after a call to this function as long as it does
+// not gets overwritten by another push operation or the stack shrinks again
+// either by a later pop operation or by calling naShrinkStackIfNecessary.
 NA_IAPI void* naTopStack(NAStack* stack);
 NA_IAPI void* naPushStack(NAStack* stack);
 NA_IAPI void* naPopStack(NAStack* stack);
-NA_IAPI void* naPeekStack(NAStack* stack, NAInt index);
+NA_API  void* naPeekStack(NAStack* stack, NAInt index);
 
 // Returns the number of elements actually stored in the stack
 NA_IAPI size_t naGetStackCount(const NAStack* stack);
@@ -153,13 +153,13 @@ NA_IAPI NABool naIterateStack(NAStackIterator* iterator);
 // will result in a crash. As soon as iterating starts, the iterator is not
 // at the initial position anymore. When reaching the end of iteration, the
 // iterator again returns to the initial position. Use these functions to
-// test if it is at the initial position or manually reset it.
+// test if it is at the initial position or manually reset it to.
 NA_IAPI NABool naIsStackAtInitial(NAStackIterator* iterator);
 NA_IAPI void   naResetStackIterator(NAStackIterator* iterator);
 
 // Returns a pointer to the current element. Note that if you store pointers
 // you will get a pointer to a pointer. If you want a pointer directly, just
-// use the p variant
+// use the p variant.
 NA_IAPI const void* naGetStackCurConst    (NAStackIterator* iterator);
 NA_IAPI void*       naGetStackCurMutable  (NAStackIterator* iterator);
 NA_IAPI const void* naGetStackCurpConst   (NAStackIterator* iterator);

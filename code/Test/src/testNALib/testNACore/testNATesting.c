@@ -16,6 +16,7 @@ void printNATesting(){
   printf("NATesting.h:" NA_NL);
 
   naPrintMacroDefined(naTest(expr));
+  naPrintMacroDefined(naTestVoid(expr));
   naPrintMacroDefined(naTestError(expr));
   naPrintMacroDefined(naTestGroup(string));
   naPrintMacroDefined(naTestGroupFunction(identifier));

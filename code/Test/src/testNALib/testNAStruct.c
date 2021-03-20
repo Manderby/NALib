@@ -5,14 +5,14 @@
 
 
 // Prototypes
-//void printNAStack(void);
+void printNAStack(void);
 
 void testNAStack(void);
 
 
 
 void printNAStruct(){
-  //printNAStack();
+  printNAStack();
 }
 
 void testNAStruct(){

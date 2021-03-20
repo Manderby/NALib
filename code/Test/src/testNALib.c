@@ -41,7 +41,7 @@ int main(int argc, const char** argv){
   #if NA_PRINTOUT_ENABLED == 1
     //printNABase();
     //printNACore();
-    //printNAStruct();
+    printNAStruct();
   #endif
 
   // Start testing

@@ -66,6 +66,32 @@ NA_DEF void naClearStack(NAStack* stack){
 
 
 
+NA_DEF void* naPeekStack(NAStack* stack, NAInt index){
+  #ifndef NDEBUG
+    if(!stack)
+      naCrash("stack is Null");
+    if(index >= naGetStackCount(stack))
+      naError("index out of bounds.");
+  #endif
+
+  NAListIterator iter = naMakeListMutator(&(stack->arrays));
+  size_t curBaseIndex = 0;
+  void* retValue = NA_NULL;
+  while(naIterateList(&iter)){
+    NAInt nextBaseIndex = curBaseIndex + na_GetStackArrayCount(&iter);
+    if(nextBaseIndex > index)
+    {
+      naClearListIterator(&iter);
+      return na_GetStackArrayAt(&iter, index - curBaseIndex, stack->typeSize);
+    }
+    curBaseIndex = nextBaseIndex;
+  }
+  naClearListIterator(&iter);
+  return retValue;
+}
+
+
+
 NA_HDEF void na_GrowStack(NAStack* stack){
   #ifndef NDEBUG
     if(!stack)
