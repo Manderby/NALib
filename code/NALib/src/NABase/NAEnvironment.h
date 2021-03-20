@@ -45,7 +45,8 @@
 //
 // NA_OS                   One of the system macros above
 // NA_ENDIANNESS_HOST      Either big or little, see macros above
-// NA_ADDRESS_BITS  32 or 64. Denoting the number of bits per address.
+// NA_ADDRESS_BITS         32 or 64. Denoting the number of bits per address.
+// NA_SIZE_T_BITS          32 or 64. Denoting the number of bits for size_t.
 //
 // Currently, there are the following system configurations assumed:
 // - Mac OS X with GCC or Clang
@@ -64,12 +65,16 @@
   #define NA_ENDIANNESS_HOST NA_ENDIANNESS_LITTLE
   #if defined _M_ARM
     #define NA_ADDRESS_BITS NA_TYPE32_BITS
+    #define NA_SIZE_T_BITS NA_TYPE32_BITS
   #elif defined _M_ARM64
     #define NA_ADDRESS_BITS NA_TYPE64_BITS
+    #define NA_SIZE_T_BITS NA_TYPE64_BITS
   #elif defined _WIN64
     #define NA_ADDRESS_BITS NA_TYPE64_BITS
+    #define NA_SIZE_T_BITS NA_TYPE64_BITS
   #else
     #define NA_ADDRESS_BITS NA_TYPE32_BITS
+    #define NA_SIZE_T_BITS NA_TYPE32_BITS
   #endif
 
 #elif defined __APPLE__ && __MACH__
@@ -83,8 +88,10 @@
   #endif
   #if defined __LP64__
     #define NA_ADDRESS_BITS NA_TYPE64_BITS
+    #define NA_SIZE_T_BITS NA_TYPE64_BITS
   #else
     #define NA_ADDRESS_BITS NA_TYPE32_BITS
+    #define NA_SIZE_T_BITS NA_TYPE32_BITS
   #endif
   #if defined __has_feature
     #define NA_MACOS_USES_ARC __has_feature(objc_arc)
@@ -117,13 +124,19 @@
   #define NA_OS NA_OS_UNKNOWN
   #define NA_ENDIANNESS_HOST NA_ENDIANNESS_LITTLE
   #define NA_ADDRESS_BITS NA_TYPE32_BITS
+  #define NA_SIZE_T_BITS NA_TYPE32_BITS
   #undef NA_PREFERRED_NAINT_BITS
   #define NA_PREFERRED_NAINT_BITS 32
 #endif
 
 #ifndef NA_ADDRESS_BITS
   #warning "Address bits not detected, trying 32."
-  #define NA_ADDRESS_BITS NA_TYPE32_BITS
+#define NA_ADDRESS_BITS NA_TYPE32_BITS
+#endif
+
+#ifndef NA_SIZE_T_BITS
+  #warning "size_t bits not detected, trying 32."
+#define NA_SIZE_T_BITS NA_TYPE32_BITS
 #endif
 
 #ifndef NA_ENDIANNESS_HOST
@@ -136,15 +149,6 @@
 #define NA_ADDRESS_BYTES (NA_ADDRESS_BITS >> 3)
 
 
-
-// size_t environment constants
-#if (SIZE_MAX == NA_MAX_u64)
-  #define NA_SIZE_T_BITS NA_TYPE64_BITS
-#elif (SIZE_MAX == NA_MAX_u32)
-  #define NA_SIZE_T_BITS NA_TYPE32_BITS
-#else
-  #warning "Non-standard size_t limit detected. Might cause problems."
-#endif
 
 #if (NA_SIZE_T_BITS != NA_ADDRESS_BITS)
   #warning "size_t and address size do not match. Might cause problems."
