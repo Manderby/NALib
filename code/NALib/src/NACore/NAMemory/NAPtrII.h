@@ -77,24 +77,6 @@ NA_IDEF NAPtr naMakePtrNull(){
 
 
 
-// Note: byteSize 0 ist not allowed. Allowing it would introduce an if statement
-// which should not exist at this low level function. A debug error will fire
-// and you have to deal with zero sizes in higher level functions.
-NA_IDEF NAPtr naMakePtrWithBytesize(NAInt byteSize){
-  NAPtr ptr;
-  #ifndef NDEBUG
-    if(byteSize == NA_ZERO)
-      naError("byteSize is zero.");
-  #endif
-  ptr.data.d = naMalloc(byteSize);
-  #ifndef NDEBUG
-    ptr.debugFlags = NA_ZERO;
-  #endif
-  return ptr;
-}
-
-
-
 NA_IDEF void naCleanupPtr(NAPtr* ptr, NAMutator destructor){
   #ifndef NDEBUG
     if(ptr->debugFlags & NA_PTR_CLEANED)

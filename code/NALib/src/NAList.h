@@ -55,7 +55,7 @@ NA_IAPI void    naClearList   (NAList* list);
 NA_IAPI void    naEmptyList   (NAList* list);
 
 // Returns informations about the number of elements in this list.
-NA_IAPI NAInt   naGetListCount(const NAList* list);
+NA_IAPI size_t  naGetListCount(const NAList* list);
 NA_IAPI NABool  naIsListEmpty (const NAList* list);
 
 
@@ -230,8 +230,8 @@ NA_API  NABool naLocateListData     (NAListIterator* iter, const void* data);
 NA_API  NABool naLocateListIndex    (NAListIterator* iter, NAInt index);
 
 // Positions dstIter at the same element as srcIter.
-NA_IAPI void   naLocateListIterator (NAListIterator* dstIter,
-                                     NAListIterator* srcIter);
+NA_IAPI void   naLocateListIterator (      NAListIterator* dstIter,
+                                     const NAListIterator* srcIter);
 
 
 // /////////////////////////////////

@@ -10,19 +10,25 @@
 // of the same type ordered in a stack-wise order. The number of elements
 // stored is only limited by the available memory.
 //
-// Implementation notes:
-// NAStack was originally named NAGrowingSpace which was a strictly growing
-// structure which provided very fast access to elements with a yet unknown
-// count. With NALib version 18, the implementation was enhancet with a Pop
-// function and hence became a fully featured stack implementation.
+// NAStack internally stores elements in a list of memory blocks. That list
+// can grow and shrink when needed. The addresses of your elements inside
+// the memory blocks though will not change as long as they are stored in
+// the stack. Traversing the stack one-by-one can be done efficiently using
+// an iterator.
 //
-// NAStack stores elements in a list of arrays. Therefore, the addresses
-// of your elements will not change as long as they are stored in the stack.
-// Traversing the stack one-by-one can be done efficiently using an iterator.
+// The stack can grow and shrink automatically whereas you can choose upon
+// initialization how the growing and shrinking shall be performed using
+// flags. You can also set an initial count or let NALib choose one for you.
 //
-// The stack grows exponentially. Starting with an initial count, the
-// following arrays will always be double in size. Choose your initial size
-// wisely.
+// Implementation note: There always is at least one memory block present!
+//
+// Implementation note about shrinking: As naPopStack returns the pointer to
+// the popped element, it must reside in memory after the function call, even
+// if it was stored in a memory block which now became empty. Therefore, when
+// automatically shrinking, the last memory block emptied is kept in memory.
+// This is called "mildly" shrinking. If you want even that last memory block
+// to be erased, you have to "aggressively" shrink the stack by manually
+// call naShrinkStackIfNecessary with the aggressive flag set to true.
 //
 // IMPORTANT:
 // NAStack is not a Pool structure!
@@ -39,7 +45,9 @@
 // lot.
 
 
-#include "NAList.h"
+
+#include "NABase.h"
+
 
 
 // The full type definition is in the file "NAStackII.h"
@@ -47,20 +55,54 @@ typedef struct NAStack NAStack;
 typedef struct NAStackIterator NAStackIterator;
 
 
-// Creates a new NAStack with the desired type size. The memory will grow
-// exponentially over time. With the minimalCount parameter, you can define,
-// where the exponential growth shall start. NAStack will always have at least
-// that amount of memory prepared. The values 0 and 1 are reserved for future
-// use, you have to use at least a minimalCount of 2.
-NA_IAPI NAStack* naInitStack( NAStack* stack,
-                                NAInt typeSize,
-                                NAInt minimalCount);
+
+// A stack has an initial count but can grow automatically when the space is
+// not sufficient. This is done by allocating additional memory blocks of
+// a specific size. Choose one of the following methods to grow the stack:
+// AUTO:        Uses the flag which the author of NALib thinks is best for
+//              everyday general use. Currently FIBONACCI.
+// LINEAR:      Each new memory block has the same size as the previous one.
+// FIBONACCI:   Uses a fibonacci like growth.
+// EXPONENTIAL: Uses factor 2 growth.
+// FIXED_SIZE:  Stack always remains at the initial count which in this case
+//              you have to specify with a count > 0.
+#define NA_STACK_GROW_AUTO        0x00
+#define NA_STACK_GROW_LINEAR      0x01
+#define NA_STACK_GROW_FIBONACCI   0x02
+#define NA_STACK_GROW_EXPONENTIAL 0x03
+#define NA_STACK_FIXED_SIZE       0x04
+
+// When emptying a stack using naPopStack, the allocated memory blocks can be
+// erased from memory automatically, which is called shrinking. Choose one of
+// the following flags to shrink the stack:
+// AUTO:         When shrinking, keeps the last emptied memory block in memory
+//               for not having to reallocate it again when growing. Any
+//               memory block after that is erased.
+// NO_SHRINKING: Does not shrink automatically. To manually shrink the stack,
+//               use the naShrinkStackIfNecessary function.
+// Note that AUTO can not be combined with NA_STACK_FIXED_SIZE.
+#define NA_STACK_SHRINK_AUTO       0x00
+#define NA_STACK_NO_SHRINKING      0x10
+
+// Initializes a stack with the given typeSize in Bytes. The initialCount
+// denotes how many elements will be preallocated from the beginning. Use 0
+// to let NALib choose a reasonable number. To grow or shrink the number of
+// elements the stack can hold, use the flags described above, one for growing
+// and one for shrinking and combine them with the | operator. Use 0 if you
+// want everything to be automatic. Note that in case of the FIXED_SIZE flag,
+// the shrinking flag is ignored and also, you must specify an initialCount
+// which is greater than 0.
+NA_API NAStack* naInitStack(
+  NAStack* stack,
+  size_t typeSize,
+  size_t initialCount,
+  NAInt flags);
 
 // Clears the given stack.
-NA_IAPI void naClearStack  (NAStack* stack);
+NA_API void naClearStack  (NAStack* stack);
 
-// Push:  Grows the stack by 1 element and returns a pointer to the new element.
-// Top:   Accesses the topmost element by returning a pointer to that element.
+// Top:   Accesses the topmost element by returning a pointer to that element
+// Push:  Grows the stack by 1 element and returns a pointer to that element
 // Pop:   Shrinks the stack by 1 element and returns a pointer to the element
 //        which just had beed popped.
 // Peek:  Looks at the element with the given index. Warning: Not very fast.
@@ -70,23 +112,25 @@ NA_IAPI void naClearStack  (NAStack* stack);
 // will still be available shortly after a call to this function as the stack
 // will only shrink upon a call to naShrinkStackIfNecessary and hence the data
 // remains in memory as long as it is not overwritten or freed.
-NA_IAPI void* naPushStack(NAStack* stack);
 NA_IAPI void* naTopStack(NAStack* stack);
+NA_IAPI void* naPushStack(NAStack* stack);
 NA_IAPI void* naPopStack(NAStack* stack);
 NA_IAPI void* naPeekStack(NAStack* stack, NAInt index);
 
 // Returns the number of elements actually stored in the stack
-NA_IAPI NAInt naGetStackCount(const NAStack* stack);
-// Returns the number of elements reserved in memory.
-NA_IAPI NAInt naGetStackReservedCount(const NAStack* stack);
+NA_IAPI size_t naGetStackCount(const NAStack* stack);
+// Returns the number of elements reserved in memory. Warning: Rather slow.
+NA_API size_t naGetStackReservedCount(const NAStack* stack);
 
-// The stack will never shrink automatically. If you want the stack to shrink,
-// you need to call this function. The stack will be shrinked so that not more
-// than three quarters of the stack are unused. If you choose aggressive to be
-// NA_TRUE, the stack will be shrinked even more so that not more than half
-// of the stack are unused. If you observe an unusual high amount of repetitive
-// memory allocations, you may want to set aggressive to NA_FALSE.
-NA_IAPI void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive);
+// If you want the stack to shrink manually, you can call this function. This
+// is useful if you defined NO_SHRINKING upon init or if you want to release
+// as much memory as possible. Normal shrinking left one memory block after
+// the current block untouched in case new push operations will take place.
+// But if you set aggressive to true, all unused memory blocks are released.
+// Note that upon using this function and when observing an unusual high
+// amount of repetitive memory allocations, you may want to set aggressive
+// to NA_FALSE.
+NA_API void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive);
 
 
 
@@ -103,20 +147,28 @@ NA_IAPI void naClearStackIterator(NAStackIterator* iterator);
 
 // Iterates through the stack from base to top. Returns NA_FALSE if there are
 // no more elements.
-NA_IAPI NABool      naIterateStack(NAStackIterator* iterator);
+NA_IAPI NABool naIterateStack(NAStackIterator* iterator);
+
+// Upon creating, an iterator is at an initial position which, when accessed
+// will result in a crash. As soon as iterating starts, the iterator is not
+// at the initial position anymore. When reaching the end of iteration, the
+// iterator again returns to the initial position. Use these functions to
+// test if it is at the initial position or manually reset it.
+NA_IAPI NABool naIsStackAtInitial(NAStackIterator* iterator);
+NA_IAPI void   naResetStackIterator(NAStackIterator* iterator);
 
 // Returns a pointer to the current element. Note that if you store pointers
 // you will get a pointer to a pointer. If you want a pointer directly, just
 // use the p variant
-NA_IAPI const void* naGetStackCurConst         (NAStackIterator* iterator);
-NA_IAPI void*       naGetStackCurMutable       (NAStackIterator* iterator);
-NA_IAPI const void* naGetStackCurpConst        (NAStackIterator* iterator);
-NA_IAPI void*       naGetStackCurpMutable      (NAStackIterator* iterator);
+NA_IAPI const void* naGetStackCurConst    (NAStackIterator* iterator);
+NA_IAPI void*       naGetStackCurMutable  (NAStackIterator* iterator);
+NA_IAPI const void* naGetStackCurpConst   (NAStackIterator* iterator);
+NA_IAPI void*       naGetStackCurpMutable (NAStackIterator* iterator);
 
 // Will call the accessor or mutator on every element stored in the stack.
 // The p variants expect this stack to store pointers hence the accessor or
-// mutator will directly be called with the stored pointer instead of a pointer
-// to a pointer.
+// mutator will directly be called with the stored pointer instead of a
+// pointer to a pointer.
 NA_IAPI void naForeachStackConst   (const NAStack* stack, NAAccessor accessor);
 NA_IAPI void naForeachStackMutable (const NAStack* stack, NAMutator  mutator);
 NA_IAPI void naForeachStackpConst  (const NAStack* stack, NAAccessor accessor);
@@ -124,13 +176,8 @@ NA_IAPI void naForeachStackpMutable(const NAStack* stack, NAMutator  mutator);
 
 
 
-
-
-
-
 // Inline implementations are in a separate file:
-#include "NAStruct/NAStackII.h"
-
+#include "NAStruct/NAStack/NAStackII.h"
 
 
 

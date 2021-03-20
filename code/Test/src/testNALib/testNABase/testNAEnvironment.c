@@ -45,6 +45,7 @@ void printNAEnvironment(){
   naPrintMacroEnum         (NA_ENDIANNESS_HOST, na_EndiannessEnumStrings, 4);
   naPrintMacroInt          (NA_ADDRESS_BITS);
   naPrintMacroInt          (NA_ADDRESS_BYTES);
+  naPrintMacroInt          (NA_SIZE_T_BITS);
   printf(NA_NL);
 }
 

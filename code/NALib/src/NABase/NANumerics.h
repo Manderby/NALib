@@ -208,6 +208,12 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
 
 
 
+// size_t basic integer constants
+#define NA_ZERO_s              ((size_t)0)
+#define NA_ONE_s               ((size_t)1)
+
+
+
 // Inline implementations are in a separate file and will be included later
 // on in the NABase.h file.
 

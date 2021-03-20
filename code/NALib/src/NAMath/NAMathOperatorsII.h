@@ -174,6 +174,9 @@ NA_IDEF int32 naMaxi32(int32 a, int32 b){
 NA_IDEF NAi64 naMaxi64(NAi64 a, NAi64 b){
   return naGreateri64(a, b) ? a : b;
 }
+NA_IDEF size_t naMaxs(size_t a, size_t b){
+  return (a > b) ? a : b;
+}
 
 
 NA_IDEF float naInvf(float x){
@@ -443,7 +446,13 @@ NA_IDEF double naLog2(double x){
     return log2(x);
   #endif
 }
-
+NA_IDEF NAInt naLog2i(NAInt x){
+  #if NA_TYPE_NAINT_BITS == 32
+  return naLog2i32(x);
+  #elif NA_TYPE_NAINT_BITS == 64
+  return naLog2i64(x);
+  #endif
+}
 NA_IDEF int32 naLog2i32(int32 x){
   int32 retValue;
   #ifndef NDEBUG
@@ -467,13 +476,6 @@ NA_IDEF NAi64 naLog2i64(NAi64 x){
   retValue = NA_ZERO_i64;
   while(!naEquali64(x, NA_ZERO_i64)){naInci64(retValue); x = naShri64(x, 1);}
   return retValue;
-}
-NA_IDEF NAInt naLog2i(NAInt x){
-  #if NA_TYPE_NAINT_BITS == 32
-    return naLog2i32(x);
-  #elif NA_TYPE_NAINT_BITS == 64
-    return naLog2i64(x);
-  #endif
 }
 
 
@@ -577,6 +579,40 @@ NA_IDEF float naPowerOf2f(NAInt n){
 }
 NA_IDEF double naPowerOf2(NAInt n){
   return naMakeDoubleWithExponent((int32)n);
+}
+NA_IDEF NAInt naPowerOf2i  (NAInt n){
+  #if NA_TYPE_NAINT_BITS == 32
+  return naPowerOf2i32(n);
+  #elif NA_TYPE_NAINT_BITS == 64
+  return naPowerOf2i64(n);
+  #endif
+}
+NA_IDEF int32 naPowerOf2i32(int32 n){
+  #ifndef NDEBUG
+    if(n < 0)
+      naError("Can only compute integral numbers");
+    if(n > 30)
+      naError("Overflow");
+  #endif
+  return NA_ONE_i32 << n;
+}
+NA_IDEF int64 naPowerOf2i64(NAi64 n){
+  #ifndef NDEBUG
+    if(n < 0)
+      naError("Can only compute integral numbers");
+    if(n > 62)
+      naError("Overflow");
+  #endif
+  return NA_ONE_i64 << n;
+}
+NA_IDEF size_t naPowerOf2s(size_t n){
+  #ifndef NDEBUG
+    if(n > (NA_SIZE_T_BITS - 1))
+      naError("Overflow");
+    if(n == (NA_SIZE_T_BITS - 1))
+      naError("Potential Overflow if used as signed");
+  #endif
+  return NA_ONE_s << n;
 }
 
 

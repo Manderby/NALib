@@ -137,6 +137,19 @@
 
 
 
+// size_t environment constants
+#if (SIZE_MAX == NA_MAX_u64)
+  #define NA_SIZE_T_BITS NA_TYPE64_BITS
+#elif (SIZE_MAX == NA_MAX_u32)
+  #define NA_SIZE_T_BITS NA_TYPE32_BITS
+#else
+  #warning "Non-standard size_t limit detected. Might cause problems."
+#endif
+
+#if (NA_SIZE_T_BITS != NA_ADDRESS_BITS)
+  #warning "size_t and address size do not match. Might cause problems."
+#endif
+
 #endif // NA_ENVIRONMENT_INCLUDED
 
 

@@ -205,7 +205,7 @@ NA_HIDEF void na_InitTestingData(NATestData* testData, const char* name, NATestD
   testData->name = name;
   testData->lineNum = lineNum;
   testData->success = NA_TRUE;
-  naInitStack(&(testData->childs), naSizeof(NATestData), 2);
+  naInitStack(&(testData->childs), naSizeof(NATestData), 0, 0);
   testData->childSuccessCount = 0;
   testData->leafSuccessCount = 0;
   testData->totalLeafCount = 0;
@@ -308,7 +308,7 @@ NA_DEF NABool naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark
     na_Testing->in[na_Testing->curInIndex] = ((uint32)rand() << 20) ^ ((uint32)rand() << 10) ^ ((uint32)rand());
   }
 
-  naInitStack(&(na_Testing->untestedStrings), naSizeof(NAString*), 2);
+  naInitStack(&(na_Testing->untestedStrings), naSizeof(NAString*), 0, 0);
   naInitList(&(na_Testing->testRestriction));
 
   if(argc > 1){
@@ -404,11 +404,11 @@ NA_DEF void naStopTesting(){
 
 
 NA_DEF void naPrintUntested(void){
-  NAInt stackCount =  naGetStackCount(&(na_Testing->untestedStrings));
+  int stackCount = (int)naGetStackCount(&(na_Testing->untestedStrings));
   if(!stackCount){
     printf("No untested functionality." NA_NL);
   }else{
-    printf("Untested functionality (%d):" NA_NL, (int)stackCount);
+    printf("Untested functionality (%d):" NA_NL, stackCount);
     NAStackIterator iter = naMakeStackAccessor(&(na_Testing->untestedStrings));
     while(naIterateStack(&iter)){
       const NAString* string = naGetStackCurpConst(&iter);
@@ -507,7 +507,7 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
     naError("Testing not running. Use naStartTesting.");
   #endif
 
-  if(na_Testing->letCrashTestsCrash){return;}
+  if(na_LetCrashTestCrash()){return;}
 
   NATestData* testData = naPushStack(&(na_Testing->curTestData->childs));
   na_InitTestingData(testData, expr, na_Testing->curTestData, lineNum);
@@ -596,7 +596,7 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
           break;
         }
       }
-      NAInt pathCount = naGetStackCount(&testPathStrings);
+      NAInt pathCount = (NAInt)naGetStackCount(&testPathStrings);
   
       char** const argv = naMalloc((pathCount + 3) * naSizeof(const char*));
       argv[0] = naMalloc(naGetStringBytesize(modulePath) + 1);
@@ -793,14 +793,14 @@ NA_HDEF double na_GetBenchmarkLimit(){
 
 
 
-NA_HDEF int na_GetBenchmarkTestSizeLimit(){
+NA_HDEF size_t na_GetBenchmarkTestSizeLimit(){
   return 30;
 }
 
 
 
 NA_HDEF void na_PrintBenchmark(double timeDiff, int testSize, const char* exprString, int lineNum){
-  if(timeDiff < na_GetBenchmarkLimit() || testSize >= 1 << na_GetBenchmarkTestSizeLimit()){
+  if(timeDiff < na_GetBenchmarkLimit() || testSize >= naPowerOf2s(na_GetBenchmarkTestSizeLimit())){
       printf("Line %d: Immeasurable   : %s" NA_NL, lineNum, exprString);
   }else{
     double execsPerSec = testSize / timeDiff;

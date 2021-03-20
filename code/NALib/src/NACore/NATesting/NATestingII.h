@@ -8,6 +8,7 @@
 
 // First, undefine all macros defined in the .h file
 #undef naTest
+#undef naTestVoid
 #undef naTestError
 #undef naTestCrash
 #undef naTestGroup
@@ -38,7 +39,7 @@ NA_HAPI NABool na_ShallExecuteGroup(const char* name);
 NA_HAPI uint32 na_getBenchmarkIn(void);
 NA_HAPI double na_BenchmarkTime(void);
 NA_HAPI double na_GetBenchmarkLimit(void);
-NA_HAPI int    na_GetBenchmarkTestSizeLimit(void);
+NA_HAPI size_t na_GetBenchmarkTestSizeLimit(void);
 NA_HAPI void   na_PrintBenchmark(double timeDiff, int testSize, const char* exprString, int lineNum);
 NA_HAPI void   na_StoreBenchmarkResult(char);
 
@@ -70,9 +71,17 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
     na_AddTest(#expr, success, __LINE__);\
   }
 
+#define naTestVoid(expr)\
+  if(na_ShallExecuteGroup(#expr)){\
+    NA_START_TEST_CASE\
+    expr;\
+    NA_STOP_TEST_CASE\
+    na_AddTest(#expr, NA_TRUE, __LINE__);\
+  }
+
 // Testing for errors and crashes is only useful when NDEBUG is undefined.
 #ifndef NDEBUG
-#define naTestError(expr)\
+  #define naTestError(expr)\
     if(na_ShallExecuteGroup(#expr)){\
       NA_START_TEST_CASE\
       { expr; }\
@@ -80,7 +89,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
       na_AddTestError(#expr, __LINE__);\
     }
 
-#define naTestCrash(expr)\
+  #define naTestCrash(expr)\
     if(na_ShallExecuteGroup(#expr)){\
       if(na_LetCrashTestCrash()){\
         NA_START_TEST_CASE\
@@ -93,6 +102,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
     }
 #else
   #define naTestError(expr)
+  #define naTestVoidError(expr)
   #define naTestCrash(expr)
 #endif
 
@@ -114,7 +124,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
 {\
   int testSize = 1;\
   double timeDiff = 0;\
-  int pow;\
+  size_t pow;\
   double startT = na_BenchmarkTime();\
   double endT;\
   for(pow = 0; pow < na_GetBenchmarkTestSizeLimit(); pow++){\
@@ -139,6 +149,8 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
 #else
 
 #define naTest(expr)\
+  NA_UNUSED(expr)
+#define naTestVoid(expr)\
   NA_UNUSED(expr)
 #define naTestError(expr)\
   NA_UNUSED(expr)

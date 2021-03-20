@@ -148,6 +148,7 @@
     <ClInclude Include="src\NAStruct\NAListII.h" />
     <ClInclude Include="src\NAStruct\NAPoolII.h" />
     <ClInclude Include="src\NAStruct\NAStackII.h" />
+    <ClInclude Include="src\NAStruct\NAStack\NAStackII.h" />
     <ClInclude Include="src\NAStruct\NAStringII.h" />
     <ClInclude Include="src\NAStruct\NATree\NATreeBin.h" />
     <ClInclude Include="src\NAStruct\NATree\NATreeConfigurationII.h" />
@@ -190,6 +191,7 @@
     <ClCompile Include="src\NAStruct\NABuffer\NAMemoryBlock.c" />
     <ClCompile Include="src\NAStruct\NAHeap\NAHeap.c" />
     <ClCompile Include="src\NAStruct\NAList.c" />
+    <ClCompile Include="src\NAStruct\NAStack\NAStack.c" />
     <ClCompile Include="src\NAStruct\NAString.c" />
     <ClCompile Include="src\NAStruct\NATree\NATree.c" />
     <ClCompile Include="src\NAStruct\NATree\NATreeAVL.c" />

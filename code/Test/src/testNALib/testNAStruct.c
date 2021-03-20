@@ -1,74 +1,22 @@
 
 #include "NATesting.h"
-#include "NAMemory.h"
-#include "NAString.h"
 #include <stdio.h>
 
 
 
 // Prototypes
-void printNABase(void);
-void printNACore(void);
-void printNAStruct(void);
+//void printNAStack(void);
 
-void testNABase(void);
-void testNACore(void);
-void testNAStruct(void);
-
-void benchmarkNABase(void);
-
-
-int main(int argc, const char** argv){
-
-  //printf("NALib Version: %d (", NA_VERSION);
-  //#ifndef NDEBUG
-  //  printf("Debug");
-  //#else
-  //  printf("Release");
-  //#endif
-  //printf(", %d Bits Addresses, %d Bits Integers)" NA_NL NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
-
-  naStartRuntime();
-
-
-//  for(int i = 1; i < argc; i++)
-//  {
-//    printf("ArgumentFound: %s" NA_NL, argv[i]);
-//  }
-
-
-  // Print macro information
-  #if NA_PRINTOUT_ENABLED == 1
-    //printNABase();
-    //printNACore();
-    //printNAStruct();
-  #endif
-
-  // Start testing
-  NABool testStartSuccessful = naStartTesting("NALib", .01, NA_FALSE, argc, argv);
-  if(testStartSuccessful)
-  {
-    //naTestGroupFunction(NABase);
-    //naTestGroupFunction(NACore);
-    naTestGroupFunction(NAStruct);
-
-    //printf(NA_NL);
-    //naPrintUntested();
-
-    //printf(NA_NL "Benchmarking:" NA_NL);
-    //benchmarkNABase();
-    
-    printf(NA_NL);
-  }else{
-    printf("Could not start Testing." NA_NL);
-  }
-  naStopTesting();
+void testNAStack(void);
 
 
 
-  naStopRuntime();
+void printNAStruct(){
+  //printNAStack();
+}
 
-  return testStartSuccessful ? EXIT_SUCCESS : EXIT_FAILURE;
+void testNAStruct(){
+  naTestGroupFunction(NAStack);
 }
 
 

@@ -367,6 +367,14 @@ void printNANumerics(){
   naPrintMacroix256(NA_MIN_i256);
   naPrintMacroix256(NA_MINUS_ONE_i256);
 
+  #if NA_SIZE_T_BITS == NA_TYPE32_BITS
+    naPrintMacroix32(NA_ZERO_s);
+    naPrintMacroux32(NA_ONE_s);
+  #else
+    naPrintMacroix64(NA_ZERO_s);
+    naPrintMacroux64(NA_ONE_s);
+  #endif
+
   printf(NA_NL);
 }
 

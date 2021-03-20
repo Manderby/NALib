@@ -25,7 +25,7 @@ struct NAListElement{
 NA_EXTERN_RUNTIME_TYPE(NAListElement);
 
 struct NAList{
-  NAInt count;            // The number of elements stored in this list.
+  size_t count;           // The number of elements stored in this list.
   NAListElement sentinel; // The sentinel of the list.
                           // Stores the first and last element of the list
                           // as next and prev pointer. The content is NA_NULL.
@@ -135,7 +135,7 @@ NA_IDEF void naEmptyList(NAList* list){
 
 
 
-NA_IDEF NAInt naGetListCount(const NAList* list){
+NA_IDEF size_t naGetListCount(const NAList* list){
   return list->count;
 }
 
@@ -158,6 +158,8 @@ NA_HIDEF void na_InjectListElement(NAList* list, NAListElement* element){
     element->list = list;
     if(element->iterCount)
       naError("Iterators are still using this element. Undefined behaviour.");
+    if(list->count + 1 < list->count)
+      naError("Integer overflow");
   #endif
   list->count++;
 }
@@ -209,6 +211,8 @@ NA_HIDEF void na_EjectList(NAList* list, NAListElement* element, NABool deleteel
     element->list = NA_NULL;  // This will capture some errors.
     if(element->iterCount)
       naError("Iterators still running on a list element. Did you use naClearListIterator?");
+    if(list->count == 0)
+      naError("List count is zero already");
   #endif
   list->count--;
   if(deleteelement){naDelete(element);}
@@ -402,7 +406,9 @@ NA_HIDEF void na_InjectExistingListElement(NAList* list, NAListElement* element)
     element->list = list;
     if(element->iterCount)
       naError("Iterators are still using this element. Undefined behaviour.");
-  #endif
+    if(list->count + 1 < list->count)
+      naError("Integer overflow");
+    #endif
   list->count++;
 }
 
@@ -435,6 +441,10 @@ NA_IDEF void naMoveListToLast(NAList* src, NAList* dst){
     lastelement->next = &(dst->sentinel);
     dst->sentinel.prev = lastelement;
     
+    #ifndef NDEBUG
+      if(dst->count + src->count < dst->count)
+        naError("Integer overflow");
+    #endif
     dst->count += src->count;
     src->sentinel.ptr  = naMakePtrNull();
     src->sentinel.next = &(src->sentinel);
@@ -592,7 +602,7 @@ NA_IDEF NABool naLocateListLast(NAListIterator* iter){
 
 
 
-NA_IAPI void naLocateListIterator(NAListIterator* dstIter, NAListIterator* srcIter){
+NA_IAPI void naLocateListIterator(NAListIterator* dstIter, const NAListIterator* srcIter){
   #ifndef NDEBUG
     if(naGetPtrConst(dstIter->listptr) != naGetPtrConst(srcIter->listptr))
       naError("Iterators do not share the same list");
@@ -1057,7 +1067,7 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* srcIter, NAList* dst){
   src = (NAList*)naGetPtrMutable(srcIter->listptr);
 
   if(!naIsListEmpty(src)){
-    NAInt movecount = 1;
+    size_t movecount = 1;
 
     #ifndef NDEBUG
       srcIter->cur->iterCount--;
@@ -1101,6 +1111,8 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* srcIter, NAList* dst){
     #ifndef NDEBUG
       if(src->count < movecount)
         naError("Internal error: List count negative.");
+      if(src->count + movecount < src->count)
+        naError("Integer overflow");
     #endif
 
     src->count -= movecount;

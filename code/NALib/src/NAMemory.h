@@ -240,11 +240,6 @@ typedef struct NAPtr NAPtr;
 // Creates a NULL pointer
 NA_IAPI NAPtr naMakePtrNull(void);
 
-// Makes an NAPtr with a newly allocated memory block of the given byteSize.
-// The byteSize parameter can be negative. See naMalloc function for more
-// information.
-NA_IAPI NAPtr naMakePtrWithBytesize(NAInt byteSize);
-
 // Fills the given NAPtr struct with either a const or a non-const pointer
 // without copying any bytes.
 NA_IAPI NAPtr naMakePtrWithDataConst(       const void* data);
