@@ -47,8 +47,8 @@ NA_HAPI void           na_ShrinkStack(NAStack* stack);
 NA_HIAPI void*         na_AllocStackArray(size_t count, size_t typeSize);
 NA_HIAPI void          na_DeallocStackArray(void* array);
 NA_HIAPI size_t        na_GetStackArrayCount(const NAListIterator* iter);
-NA_HIAPI const NAByte* na_GetStackArrayFirstConst(const void* baseAddr);
-NA_HIAPI NAByte*       na_GetStackArrayFirstMutable(void* baseAddr);
+NA_HIAPI const NAByte* na_GetStackArrayFirstConst(const NAListIterator* iter);
+NA_HIAPI NAByte*       na_GetStackArrayFirstMutable(NAListIterator* iter);
 NA_HIAPI void*         na_GetStackArrayAt(NAListIterator* iter, size_t index, size_t typeSize);
 #ifndef NDEBUG
   NA_HIAPI NABool na_IsStackIteratorPastEnd(NAStackIterator* iter);
@@ -81,6 +81,8 @@ NA_HIDEF void na_DeallocStackArray(void* array){
 
 NA_HIDEF size_t na_GetStackArrayCount(const NAListIterator* iter){
   #ifndef NDEBUG
+    if(!iter)
+      naCrash("iter is Null");
     if(naIsListAtInitial(iter))
       naCrash("iterator is at initial position");
   #endif
@@ -89,28 +91,34 @@ NA_HIDEF size_t na_GetStackArrayCount(const NAListIterator* iter){
 
 
 
-NA_HIDEF const NAByte* na_GetStackArrayFirstConst(const void* baseAddr){
+NA_HIDEF const NAByte* na_GetStackArrayFirstConst(const NAListIterator* iter){
   #ifndef NDEBUG
-    if(!baseAddr)
-      naError("baseAddr is Null");
+    if(!iter)
+      naCrash("iter is Null");
+    if(naIsListAtInitial(iter))
+      naCrash("iterator is at initial position");
   #endif
-  return (const NAByte*)baseAddr + naSizeof(size_t);
+  return (const NAByte*)naGetListCurConst(iter) + naSizeof(size_t);
 }
 
 
 
-NA_HIDEF NAByte* na_GetStackArrayFirstMutable(void* baseAddr){
+NA_HIDEF NAByte* na_GetStackArrayFirstMutable(NAListIterator* iter){
   #ifndef NDEBUG
-    if(!baseAddr)
-      naError("baseAddr is Null");
+    if(!iter)
+      naCrash("iter is Null");
+    if(naIsListAtInitial(iter))
+      naCrash("iterator is at initial position");
   #endif
-  return (NAByte*)baseAddr + naSizeof(size_t);
+  return (NAByte*)naGetListCurMutable(iter) + naSizeof(size_t);
 }
 
 
 
 NA_HIDEF void* na_GetStackArrayAt(NAListIterator* iter, size_t index, size_t typeSize){
   #ifndef NDEBUG
+    if(!iter)
+      naCrash("iter is Null");
     if(naIsListAtInitial(iter))
       naCrash("iterator is at initial position");
     if(index >= na_GetStackArrayCount(iter))
@@ -118,7 +126,7 @@ NA_HIDEF void* na_GetStackArrayAt(NAListIterator* iter, size_t index, size_t typ
     if(!typeSize)
       naError("typeSize must be > 0");
   #endif
-  return na_GetStackArrayFirstMutable(naGetListCurMutable(iter)) + typeSize * index;
+  return na_GetStackArrayFirstMutable(iter) + typeSize * index;
 }
 
 
@@ -275,7 +283,7 @@ NA_IDEF NABool naIterateStack(NAStackIterator* iter){
     iter->cur++;
   }
 
-  if(naGetListCurConst(&(iter->curArray)) == naGetListCurConst(&(iter->stack->curArray)) && iter->cur == iter->stack->curCount)
+  if(naEqualListIterator(&(iter->curArray), &(iter->stack->curArray)) && iter->cur == iter->stack->curCount)
   {
     // We reached the end of iteration.
     naResetStackIterator(iter);

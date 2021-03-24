@@ -616,6 +616,12 @@ NA_IAPI void naLocateListIterator(NAListIterator* dstIter, const NAListIterator*
 
 
 
+NA_IDEF NABool naEqualListIterator(
+  const NAListIterator* iter1,
+  const NAListIterator* iter2)
+{
+  return naGetListCurConst(iter1) == naGetListCurConst(iter2);
+}
 
 
 

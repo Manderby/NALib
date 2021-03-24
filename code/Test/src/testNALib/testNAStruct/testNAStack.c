@@ -27,26 +27,40 @@ void testStackArray(){
 
   naTestGroup("Get Stack Array count"){
     naTest(na_GetStackArrayCount(&listIter) == NA_TEST_STACK_INIT_COUNT);
+
+    // Testing iterator at initial and Null
     naIterateList(&listIter);
     naTestCrash(na_GetStackArrayCount(&listIter));
+    naTestCrash(na_GetStackArrayCount(NA_NULL));
   }
 
   naResetListIterator(&listIter);
   naIterateList(&listIter);
 
   naTestGroup("Get Stack Array First"){
-    naTest(na_GetStackArrayFirstConst(naGetListCurConst(&listIter)) == (const NAByte*)array + sizeof(size_t));
-    naTest(na_GetStackArrayFirstMutable(naGetListCurMutable(&listIter)) == (NAByte*)array + sizeof(size_t));
-    naTestError(na_GetStackArrayFirstConst(NA_NULL)); 
-    naTestError(na_GetStackArrayFirstMutable(NA_NULL)); 
+    naTest(na_GetStackArrayFirstConst(&listIter) == (const NAByte*)array + sizeof(size_t));
+    naTest(na_GetStackArrayFirstMutable(&listIter) == (NAByte*)array + sizeof(size_t));
+
+    // Testing iterator at initial and Null
+    naIterateList(&listIter);
+    naTestCrash(na_GetStackArrayFirstConst(&listIter));
+    naTestCrash(na_GetStackArrayFirstMutable(&listIter));
+    naTestCrash(na_GetStackArrayFirstConst(NA_NULL)); 
+    naTestCrash(na_GetStackArrayFirstMutable(NA_NULL)); 
   }
+
+  naResetListIterator(&listIter);
+  naIterateList(&listIter);
 
   naTestGroup("Get Stack Array at"){
     naTest(na_GetStackArrayAt(&listIter, 0, NA_TEST_STACK_TYPE_SIZE) == (NAByte*)array + sizeof(size_t));
     naTestError(na_GetStackArrayAt(&listIter, NA_TEST_STACK_INIT_COUNT, NA_TEST_STACK_TYPE_SIZE)); // index out of bound
     naTestError(na_GetStackArrayAt(&listIter, 0, 0)); // bad typeSize
+
+    // Testing iterator at initial and Null
     naIterateList(&listIter);
     naTestCrash(na_GetStackArrayAt(&listIter, 0, NA_TEST_STACK_TYPE_SIZE));
+    naTestCrash(na_GetStackArrayAt(NA_NULL, 0, NA_TEST_STACK_TYPE_SIZE));
   }
 
   naTestGroup("Freeing Stack Array"){

@@ -229,15 +229,16 @@ NA_DEF void naDumpStack(NAStack* stack, void* buf){
 
   NAListIterator arrayIter = naMakeListAccessor(&(stack->arrays));
   while(naIterateList(&arrayIter)){
-    size_t byteCount = naGetListCurConst(&arrayIter) == naGetListCurConst(&(stack->curArray)) ?
-      stack->typeSize * stack->curCount :
-      stack->typeSize * na_GetStackArrayCount(&arrayIter);
-    if(byteCount){
+    size_t count = naEqualListIterator(&arrayIter, &(stack->curArray)) ?
+      stack->curCount :
+      na_GetStackArrayCount(&arrayIter);
+    if(count){
+      count *= stack->typeSize;
       naCopyn(
         buf,
-        na_GetStackArrayFirstConst(naGetListCurConst(&arrayIter)),
-        byteCount);
-      ((NAByte*)buf) += byteCount;
+        na_GetStackArrayFirstConst(&arrayIter),
+        count);
+      ((NAByte*)buf) += count;
     }
   }
   naClearListIterator(&arrayIter);

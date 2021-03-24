@@ -233,6 +233,14 @@ NA_API  NABool naLocateListIndex    (NAListIterator* iter, NAInt index);
 NA_IAPI void   naLocateListIterator (      NAListIterator* dstIter,
                                      const NAListIterator* srcIter);
 
+// Returns true if both iterators point at the same thing. This is done by
+// testing the address which is stored at the given iterators. So even if
+// the two iterators do not belong to the same list, they still can be equal
+// if both lists contain the same address. Also returns true if both iterators
+// are at initial position.
+NA_IAPI NABool naEqualListIterator(
+  const NAListIterator* iter1,
+  const NAListIterator* iter2);
 
 // /////////////////////////////////
 // Iterating
