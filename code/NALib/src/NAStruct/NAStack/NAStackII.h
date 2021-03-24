@@ -42,12 +42,14 @@ struct NAStackIterator{
 
 
 
-NA_HAPI void    na_GrowStack(NAStack* stack);
-NA_HAPI void    na_ShrinkStack(NAStack* stack);
-NA_HIAPI void*  na_AllocStackArray(size_t count, size_t typeSize);
-NA_HIAPI void   na_DeallocStackArray(void* array);
-NA_HIAPI size_t na_GetStackArrayCount(const NAListIterator* iter);
-NA_HIAPI void*  na_GetStackArrayAt(NAListIterator* iter, size_t index, size_t typeSize);
+NA_HAPI void           na_GrowStack(NAStack* stack);
+NA_HAPI void           na_ShrinkStack(NAStack* stack);
+NA_HIAPI void*         na_AllocStackArray(size_t count, size_t typeSize);
+NA_HIAPI void          na_DeallocStackArray(void* array);
+NA_HIAPI size_t        na_GetStackArrayCount(const NAListIterator* iter);
+NA_HIAPI const NAByte* na_GetStackArrayFirstConst(const void* baseAddr);
+NA_HIAPI NAByte*       na_GetStackArrayFirstMutable(void* baseAddr);
+NA_HIAPI void*         na_GetStackArrayAt(NAListIterator* iter, size_t index, size_t typeSize);
 #ifndef NDEBUG
   NA_HIAPI NABool na_IsStackIteratorPastEnd(NAStackIterator* iter);
 #endif
@@ -87,6 +89,26 @@ NA_HIDEF size_t na_GetStackArrayCount(const NAListIterator* iter){
 
 
 
+NA_HIDEF const NAByte* na_GetStackArrayFirstConst(const void* baseAddr){
+  #ifndef NDEBUG
+    if(!baseAddr)
+      naError("baseAddr is Null");
+  #endif
+  return (const NAByte*)baseAddr + naSizeof(size_t);
+}
+
+
+
+NA_HIDEF NAByte* na_GetStackArrayFirstMutable(void* baseAddr){
+  #ifndef NDEBUG
+    if(!baseAddr)
+      naError("baseAddr is Null");
+  #endif
+  return (NAByte*)baseAddr + naSizeof(size_t);
+}
+
+
+
 NA_HIDEF void* na_GetStackArrayAt(NAListIterator* iter, size_t index, size_t typeSize){
   #ifndef NDEBUG
     if(naIsListAtInitial(iter))
@@ -96,7 +118,7 @@ NA_HIDEF void* na_GetStackArrayAt(NAListIterator* iter, size_t index, size_t typ
     if(!typeSize)
       naError("typeSize must be > 0");
   #endif
-  return (NAByte*)naGetListCurMutable(iter) + naSizeof(size_t) + typeSize * index;
+  return na_GetStackArrayFirstMutable(naGetListCurMutable(iter)) + typeSize * index;
 }
 
 

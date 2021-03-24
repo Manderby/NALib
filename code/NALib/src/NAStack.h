@@ -115,7 +115,7 @@ NA_API void naClearStack  (NAStack* stack);
 NA_IAPI void* naTopStack(NAStack* stack);
 NA_IAPI void* naPushStack(NAStack* stack);
 NA_IAPI void* naPopStack(NAStack* stack);
-NA_API  void* naPeekStack(NAStack* stack, NAInt index);
+NA_API  void* naPeekStack(NAStack* stack, size_t index);
 
 // Returns the number of elements actually stored in the stack
 NA_IAPI size_t naGetStackCount(const NAStack* stack);
@@ -131,6 +131,11 @@ NA_API size_t naGetStackReservedCount(const NAStack* stack);
 // amount of repetitive memory allocations, you may want to set aggressive
 // to NA_FALSE.
 NA_API void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive);
+
+// Copies all of the contents of the stack to the given buffer. It is expected
+// that buf contains enough space to hold all stored elements arranged as a
+// plain C array.
+NA_API void naDumpStack(NAStack* stack, void* buf);
 
 
 

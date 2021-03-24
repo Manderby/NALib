@@ -66,7 +66,7 @@ NA_DEF void naClearStack(NAStack* stack){
 
 
 
-NA_DEF void* naPeekStack(NAStack* stack, NAInt index){
+NA_DEF void* naPeekStack(NAStack* stack, size_t index){
   #ifndef NDEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -78,7 +78,7 @@ NA_DEF void* naPeekStack(NAStack* stack, NAInt index){
   size_t curBaseIndex = 0;
   void* retValue = NA_NULL;
   while(naIterateList(&iter)){
-    NAInt nextBaseIndex = curBaseIndex + na_GetStackArrayCount(&iter);
+    size_t nextBaseIndex = curBaseIndex + na_GetStackArrayCount(&iter);
     if(nextBaseIndex > index)
     {
       naClearListIterator(&iter);
@@ -213,6 +213,32 @@ NA_DEF void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive){
   // Delete as long as there are arrays after this one.
   while(!naIsListAtInitial(&arrayIter) && !naIsListAtLast(&arrayIter)){
     na_DeallocStackArray(naRemoveListLastMutable(&(stack->arrays)));
+  }
+  naClearListIterator(&arrayIter);
+}
+
+
+
+NA_DEF void naDumpStack(NAStack* stack, void* buf){
+  #ifndef NDEBUG
+    if(!stack)
+      naCrash("stack is Null");
+    if(!buf)
+      naCrash("buf is Null");
+  #endif
+
+  NAListIterator arrayIter = naMakeListAccessor(&(stack->arrays));
+  while(naIterateList(&arrayIter)){
+    size_t byteCount = naGetListCurConst(&arrayIter) == naGetListCurConst(&(stack->curArray)) ?
+      stack->typeSize * stack->curCount :
+      stack->typeSize * na_GetStackArrayCount(&arrayIter);
+    if(byteCount){
+      naCopyn(
+        buf,
+        na_GetStackArrayFirstConst(naGetListCurConst(&arrayIter)),
+        byteCount);
+      ((NAByte*)buf) += byteCount;
+    }
   }
   naClearListIterator(&arrayIter);
 }

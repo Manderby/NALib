@@ -34,6 +34,13 @@ void testStackArray(){
   naResetListIterator(&listIter);
   naIterateList(&listIter);
 
+  naTestGroup("Get Stack Array First"){
+    naTest(na_GetStackArrayFirstConst(naGetListCurConst(&listIter)) == (const NAByte*)array + sizeof(size_t));
+    naTest(na_GetStackArrayFirstMutable(naGetListCurMutable(&listIter)) == (NAByte*)array + sizeof(size_t));
+    naTestError(na_GetStackArrayFirstConst(NA_NULL)); 
+    naTestError(na_GetStackArrayFirstMutable(NA_NULL)); 
+  }
+
   naTestGroup("Get Stack Array at"){
     naTest(na_GetStackArrayAt(&listIter, 0, NA_TEST_STACK_TYPE_SIZE) == (NAByte*)array + sizeof(size_t));
     naTestError(na_GetStackArrayAt(&listIter, NA_TEST_STACK_INIT_COUNT, NA_TEST_STACK_TYPE_SIZE)); // index out of bound
@@ -307,6 +314,56 @@ void testStackShrinkIfNecessary(){
 }
 
 
+void testStackDump(){
+  NAStack stack;
+  int dmp[] = {99, 99, 99, 99, 99};
+
+  naTestGroup("Dumping empty stack"){
+    naInitStack(&stack, sizeof(int), 0, 0);
+    naDumpStack(&stack, dmp);
+    naClearStack(&stack);
+
+    naTest(dmp[0] == 99);
+  }
+
+  naTestGroup("Dumping stack"){
+    naInitStack(&stack, sizeof(int), 0, 0);
+    *(int*)naPushStack(&stack) = 1;
+    *(int*)naPushStack(&stack) = 2;
+    naDumpStack(&stack, dmp);
+    naClearStack(&stack);
+
+    naTest(dmp[0] == 1);
+    naTest(dmp[1] == 2);
+    naTest(dmp[2] == 99);
+  }
+
+  dmp[0] = 99;
+  dmp[1] = 99;
+
+  naTestGroup("Dumping stack with multiple arrays"){
+    naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
+    *(int*)naPushStack(&stack) = 1;
+    *(int*)naPushStack(&stack) = 2;
+    naDumpStack(&stack, dmp);
+    naClearStack(&stack);
+
+    naTest(dmp[0] == 1);
+    naTest(dmp[1] == 2);
+    naTest(dmp[2] == 99);
+  }
+
+  naTestGroup("Null pointer"){
+    naInitStack(&stack, sizeof(int), 0, 0);
+
+    naTestCrash(naDumpStack(NA_NULL, dmp));
+    naTestCrash(naDumpStack(&stack, NA_NULL));
+
+    naClearStack(&stack);
+  }
+}
+
+
 
 void testStackIterator(){
   NAStack stack;
@@ -571,6 +628,7 @@ void testNAStack(){
   naTestGroupFunction(StackGrow);  
   naTestGroupFunction(StackShrink);  
   naTestGroupFunction(StackShrinkIfNecessary);  
+  naTestGroupFunction(StackDump);  
   naTestGroupFunction(StackIterator);  
   naTestGroupFunction(StackIteratorAccessAndMutate);  
   naTestGroupFunction(StackForeach);  
