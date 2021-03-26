@@ -9,7 +9,7 @@ void printNAStack(void);
 
 void testNAStack(void);
 
-
+void benchmarkNAStack(void);
 
 void printNAStruct(){
   printNAStack();
@@ -19,7 +19,9 @@ void testNAStruct(){
   naTestGroupFunction(NAStack);
 }
 
-
+void benchmarkNAStruct(){
+  benchmarkNAStack();
+}
 
 // This is free and unencumbered software released into the public domain.
 

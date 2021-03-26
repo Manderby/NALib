@@ -40,7 +40,7 @@ NA_HAPI uint32 na_getBenchmarkIn(void);
 NA_HAPI double na_BenchmarkTime(void);
 NA_HAPI double na_GetBenchmarkLimit(void);
 NA_HAPI size_t na_GetBenchmarkTestSizeLimit(void);
-NA_HAPI void   na_PrintBenchmark(double timeDiff, int testSize, const char* exprString, int lineNum);
+NA_HAPI void   na_PrintBenchmark(double timeDiff, size_t testSize, const char* exprString, int lineNum);
 NA_HAPI void   na_StoreBenchmarkResult(char);
 
 
@@ -130,7 +130,9 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
   for(pow = 0; pow < na_GetBenchmarkTestSizeLimit(); pow++){\
     for(int testRun = 0; testRun < testSize; testRun++){\
       /*na_StoreBenchmarkResult((char)(expr));*/\
-      (void)expr;\
+      {\
+        expr; (void)0;\
+      }\
     }\
     endT = na_BenchmarkTime();\
     timeDiff = endT - startT;\

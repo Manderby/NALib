@@ -16,7 +16,7 @@ void testNACore(void);
 void testNAStruct(void);
 
 void benchmarkNABase(void);
-
+void benchmarkNAStruct(void);
 
 int main(int argc, const char** argv){
 
@@ -41,7 +41,7 @@ int main(int argc, const char** argv){
   #if NA_PRINTOUT_ENABLED == 1
     //printNABase();
     //printNACore();
-    printNAStruct();
+    //printNAStruct();
   #endif
 
   // Start testing
@@ -50,13 +50,14 @@ int main(int argc, const char** argv){
   {
     //naTestGroupFunction(NABase);
     //naTestGroupFunction(NACore);
-    naTestGroupFunction(NAStruct);
+    //naTestGroupFunction(NAStruct);
 
     //printf(NA_NL);
     //naPrintUntested();
 
-    //printf(NA_NL "Benchmarking:" NA_NL);
+    printf(NA_NL "Benchmarking:" NA_NL);
     //benchmarkNABase();
+    benchmarkNAStruct();
     
     printf(NA_NL);
   }else{

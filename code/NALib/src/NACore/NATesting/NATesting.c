@@ -799,7 +799,7 @@ NA_HDEF size_t na_GetBenchmarkTestSizeLimit(){
 
 
 
-NA_HDEF void na_PrintBenchmark(double timeDiff, int testSize, const char* exprString, int lineNum){
+NA_HDEF void na_PrintBenchmark(double timeDiff, size_t testSize, const char* exprString, int lineNum){
   if(timeDiff < na_GetBenchmarkLimit() || testSize >= naPowerOf2s(na_GetBenchmarkTestSizeLimit())){
       printf("Line %d: Immeasurable   : %s" NA_NL, lineNum, exprString);
   }else{

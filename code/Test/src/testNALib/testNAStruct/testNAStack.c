@@ -6,6 +6,7 @@
 
 #define NA_TEST_STACK_INIT_COUNT 10
 #define NA_TEST_STACK_TYPE_SIZE 20
+#define NA_BENCHMARK_STACK_SIZE 1000
 
 void testStackArray(){
   void* array = NA_NULL;
@@ -648,7 +649,181 @@ void testNAStack(){
   naTestGroupFunction(StackForeach);  
 }
 
+
+
+void benchmarkNAStack(){
+  NAStack stack;
+  int* buf;
+  NAStackIterator iter;
+  int myInteger = 1;
+
+  // Init / Clear
+  naBenchmark(naClearStack(naInitStack(&stack, sizeof(int), 0, 0)));
+
+  // Push all automatic
+  naInitStack(&stack, sizeof(int), 0, 0);
+  naBenchmark(naPushStack(&stack));
+  naClearStack(&stack);
+
+  // Push linear starting with 1
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
+  naBenchmark(naPushStack(&stack));
+  naClearStack(&stack);
+
+  // Push fibonacci starting with 1
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
+  naBenchmark(naPushStack(&stack));
+  naClearStack(&stack);
+
+  // Push exponential starting with 1
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_EXPONENTIAL);
+  naBenchmark(naPushStack(&stack));
+  naClearStack(&stack);
+
+  // Push / Pop
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
+  naBenchmark(naPushStack(&stack); naPopStack(&stack););
+  naClearStack(&stack);
+
+  // Many Push / Pop WITH shrinking
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
+  naBenchmark(for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);} for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPopStack(&stack);});
+  naClearStack(&stack);
+
+  // Many Push / Pop with NO shrinking
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI | NA_STACK_NO_SHRINKING);
+  naBenchmark(for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);} for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPopStack(&stack);});
+  naClearStack(&stack);
+
+  // Top
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
+  naPushStack(&stack);
+  naBenchmark(naTopStack(&stack));
+  naClearStack(&stack);
+
+  // Peek linear
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
+  for(size_t i = 0; i < NA_BENCHMARK_STACK_SIZE; i++)naPushStack(&stack);
+  naBenchmark(naPeekStack(&stack, NA_BENCHMARK_STACK_SIZE - 1));
+  naClearStack(&stack);
+
+  // Peek fibonacci
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
+  for(size_t i = 0; i < NA_BENCHMARK_STACK_SIZE; i++)naPushStack(&stack);
+  naBenchmark(naPeekStack(&stack, NA_BENCHMARK_STACK_SIZE - 1));
+  naClearStack(&stack);
   
+  // get count, get reserved count
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
+  for(size_t i = 0; i < NA_BENCHMARK_STACK_SIZE; i++)naPushStack(&stack);
+  naBenchmark(naGetStackCount(&stack));
+  naBenchmark(naGetStackReservedCount(&stack));
+  naClearStack(&stack);
+
+  // Shrink fibonacci stack mildly with many items
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
+  naBenchmark(for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);} for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPopStack(&stack);} naShrinkStackIfNecessary(&stack, NA_FALSE));
+  naClearStack(&stack);
+
+  // Shrink fibonacci stack aggressively with many items
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
+  naBenchmark(for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);} for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPopStack(&stack);} naShrinkStackIfNecessary(&stack, NA_TRUE));
+  naClearStack(&stack);
+
+  // Dump linear stack
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
+  buf = naMalloc(sizeof(int) * NA_BENCHMARK_STACK_SIZE);
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);}
+  naBenchmark(naDumpStack(&stack, buf));
+  naFree(buf);
+  naClearStack(&stack);
+
+  // Dump fibonacci stack
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
+  buf = naMalloc(sizeof(int) * NA_BENCHMARK_STACK_SIZE);
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);}
+  naBenchmark(naDumpStack(&stack, buf));
+  naFree(buf);
+  naClearStack(&stack);
+
+  // Iterater make and clear
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
+  naBenchmark(NAStackIterator iter = naMakeStackAccessor(&stack); naClearStackIterator(&iter));
+  naBenchmark(NAStackIterator iter = naMakeStackMutator(&stack); naClearStackIterator(&iter));
+  naClearStack(&stack);
+
+  // Iterate linear
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);}
+  iter = naMakeStackAccessor(&stack);
+  naBenchmark(naIterateStack(&iter));
+  naClearStackIterator(&iter);
+  naClearStack(&stack);
+
+  // Iterate fibonacci
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);}
+  iter = naMakeStackAccessor(&stack);
+  naBenchmark(naIterateStack(&iter));
+  naClearStackIterator(&iter);
+  naClearStack(&stack);
+
+  // Is stack at initial
+  naInitStack(&stack, sizeof(int), 1, 0);
+  iter = naMakeStackAccessor(&stack);
+  naBenchmark(naIsStackAtInitial(&iter));
+  naBenchmark(naResetStackIterator(&iter));
+  naClearStackIterator(&iter);
+  naClearStack(&stack);
+
+  // Get cur element of iterator int
+  naInitStack(&stack, sizeof(int), 1, 0);
+  naPushStack(&stack);
+  iter = naMakeStackAccessor(&stack);
+  naIterateStack(&iter);
+  naBenchmark(naGetStackCurConst(&iter));
+  naBenchmark(naGetStackCurMutable(&iter));
+  naClearStackIterator(&iter);
+  naClearStack(&stack);
+
+  // Get cur element of iterator int*
+  naInitStack(&stack, sizeof(int*), 1, 0);
+  naPushStack(&stack);
+  iter = naMakeStackAccessor(&stack);
+  naIterateStack(&iter);
+  naBenchmark(naGetStackCurpConst(&iter));
+  naBenchmark(naGetStackCurpMutable(&iter));
+  naClearStackIterator(&iter);
+  naClearStack(&stack);
+
+  // foreach on linear stack with int
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){*(int*)naPushStack(&stack) = 1;}
+  naBenchmark(naForeachStackConst(&stack, (NAAccessor)na_test_increase_test_sum_const));
+  naBenchmark(naForeachStackMutable(&stack, (NAMutator)na_test_increase_test_sum_mutable));
+  naClearStack(&stack);
+
+  // foreach on fibonacci stack with int
+  naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){*(int*)naPushStack(&stack) = 1;}
+  naBenchmark(naForeachStackConst(&stack, (NAAccessor)na_test_increase_test_sum_const));
+  naBenchmark(naForeachStackMutable(&stack, (NAMutator)na_test_increase_test_sum_mutable));
+  naClearStack(&stack);
+
+    // foreach on linear stack with int
+  naInitStack(&stack, sizeof(int*), 1, NA_STACK_GROW_LINEAR);
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){*(int**)naPushStack(&stack) = &myInteger;}
+  naBenchmark(naForeachStackpConst(&stack, (NAAccessor)na_test_increase_test_sum_const));
+  naBenchmark(naForeachStackpMutable(&stack, (NAMutator)na_test_increase_test_sum_mutable));
+  naClearStack(&stack);
+
+    // foreach on fibonacci stack with int
+  naInitStack(&stack, sizeof(int*), 1, NA_STACK_GROW_FIBONACCI);
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){*(int**)naPushStack(&stack) = &myInteger;}
+  naBenchmark(naForeachStackpConst(&stack, (NAAccessor)na_test_increase_test_sum_const));
+  naBenchmark(naForeachStackpMutable(&stack, (NAMutator)na_test_increase_test_sum_mutable));
+  naClearStack(&stack);
+}
  
 
 

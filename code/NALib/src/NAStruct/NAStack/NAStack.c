@@ -125,6 +125,12 @@ NA_HDEF void na_GrowStack(NAStack* stack){
       #endif
       newArrayCount = 0;
       break;
+    default:
+      #ifndef NDEBUG
+        naError("Unknown grow option.");
+      #endif
+      newArrayCount = 0;
+      break;
     }
 
     void* newArray = na_AllocStackArray(newArrayCount, stack->typeSize);
