@@ -83,6 +83,7 @@ NA_IAPI NABool        naIsInfinite (double x);
 NA_IAPI float        naMinf  (float   a, float   b);
 NA_IAPI double       naMin   (double  a, double  b);
 NA_IAPI NAInt        naMini  (NAInt   a, NAInt   b);
+NA_IAPI size_t       naMins  (size_t  a, size_t  b);
 NA_IAPI int8         naMini8 (int8    a, int8    b);
 NA_IAPI int16        naMini16(int16   a, int16   b);
 NA_IAPI int32        naMini32(int32   a, int32   b);
@@ -91,11 +92,11 @@ NA_IAPI NAi64        naMini64(NAi64 a, NAi64 b);
 NA_IAPI float        naMaxf  (float   a, float   b);
 NA_IAPI double       naMax   (double  a, double  b);
 NA_IAPI NAInt        naMaxi  (NAInt   a, NAInt   b);
+NA_IAPI size_t       naMaxs  (size_t  a, size_t  b);
 NA_IAPI int8         naMaxi8 (int8    a, int8    b);
 NA_IAPI int16        naMaxi16(int16   a, int16   b);
 NA_IAPI int32        naMaxi32(int32   a, int32   b);
 NA_IAPI NAi64        naMaxi64(NAi64 a, NAi64 b);
-NA_IAPI size_t       naMaxs(size_t a, size_t b);
 
 
 

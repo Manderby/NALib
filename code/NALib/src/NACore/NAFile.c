@@ -10,7 +10,7 @@
 NA_DEF NAString* naNewStringWithCurWorkingDirectory(){
   NAString* string;
   NAUTF8Char* cwdbuf = naGetCwd(NA_NULL, 0);
-  string = naNewStringWithMutableUTF8Buffer(cwdbuf, (NAInt)(naStrlen(cwdbuf)), (NAMutator)naFree);
+  string = naNewStringWithMutableUTF8Buffer(cwdbuf, naStrlen(cwdbuf), (NAMutator)naFree);
   return string;
 }
 

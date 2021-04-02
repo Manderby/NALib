@@ -45,8 +45,8 @@ NA_IAPI NAArray* naInitArray(NAArray* array);
 // typeSize denoes the number of bytes per element and count denotes the number
 // of elements.
 NA_IAPI NAArray* naInitArrayWithCount(       NAArray* array,
-                                                NAInt typeSize,
-                                                NAInt count);
+                                                size_t typeSize,
+                                                size_t count);
 
 // Creates an NAArray which stores the given data WITHOUT copying.
 //
@@ -64,12 +64,12 @@ NA_IAPI NAArray* naInitArrayWithCount(       NAArray* array,
 // you can use naForeachArray.
 NA_IAPI  NAArray* naInitArrayWithDataConst(   NAArray* array,
                                            const void* data,
-                                                 NAInt typeSize,
-                                                 NAInt count);
+                                                 size_t typeSize,
+                                                 size_t count);
 NA_IAPI  NAArray* naInitArrayWithDataMutable( NAArray* array,
                                                  void* data,
-                                                 NAInt typeSize,
-                                                 NAInt count,
+                                                 size_t typeSize,
+                                                 size_t count,
                                              NAMutator destructor);
 
 // Clears the given array.
@@ -105,9 +105,9 @@ NA_IAPI const void* naGetArrayElementpConst  (const NAArray* array, NAInt index)
 NA_IAPI       void* naGetArrayElementpMutable(      NAArray* array, NAInt index);
 
 // Returns information about of nuber of elements in this array.
-NA_IAPI NAInt  naGetArrayCount    (const NAArray* array);
-NA_IAPI NAInt  naGetArrayMaxIndex (const NAArray* array);
-NA_IAPI NAInt  naGetArraytypeSize (const NAArray* array);
+NA_IAPI size_t naGetArrayCount    (const NAArray* array);
+NA_IAPI size_t naGetArrayMaxIndex (const NAArray* array);
+NA_IAPI size_t naGetArrayTypeSize (const NAArray* array);
 NA_IAPI NABool naIsArrayEmpty     (const NAArray* array);
 
 
@@ -219,7 +219,7 @@ NA_IAPI NABool naIsArrayAtLast   (const NAArrayIterator* iterator);
 NA_IAPI NABool naIsArrayAtIndex  (const NAArrayIterator* iterator, NAInt index);
 NA_IAPI NABool naIsArrayAtInitial(const NAArrayIterator* iterator);
 
-NA_IAPI NAInt  naGetArrayCurIndex(const NAArrayIterator* iterator);
+NA_IAPI size_t naGetArrayCurIndex(const NAArrayIterator* iterator);
 
 
 

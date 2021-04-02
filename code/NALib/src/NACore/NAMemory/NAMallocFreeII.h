@@ -16,7 +16,7 @@
 
 
 
-NA_IDEF void* naMalloc(NAInt byteSize){
+NA_IDEF void* naMalloc(size_t byteSize){
   void* ptr;
 
   #ifndef NDEBUG

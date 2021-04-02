@@ -113,8 +113,8 @@
 
 NA_HDEF void na_GrowHeap(NAHeap* heap){
   ptrdiff_t entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
-  void* newData = naMalloc((-heap->maxcount * 2 + 1) * entrysize);
-  naCopyn(newData, heap->data, ((heap->count + 1) * entrysize));
+  void* newData = naMalloc((size_t)(-heap->maxcount * 2 + 1) * (size_t)entrysize);
+  naCopyn(newData, heap->data, (size_t)((heap->count + 1) * entrysize));
   naFree(heap->data);
   heap->data = newData;
   heap->root = (NAByte*)(heap->data) + entrysize;
@@ -130,8 +130,8 @@ NA_DEF void naShrinkHeapIfNecessary(NAHeap* heap){
   #endif
   if((NAInt)heap->count < -heap->maxcount / 4){
     ptrdiff_t entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
-    void* newData = naMalloc((-heap->maxcount / 2 + 1) * entrysize);
-    naCopyn(newData, heap->data, ((heap->count + 1) * entrysize));
+    void* newData = naMalloc((size_t)(-heap->maxcount / 2 + 1) * (size_t)entrysize);
+    naCopyn(newData, heap->data, (size_t)((heap->count + 1) * entrysize));
     naFree(heap->data);
     heap->data = newData;
     heap->root = (NAByte*)(heap->data) + entrysize;
@@ -406,7 +406,6 @@ NA_HDEF void na_UpdateHeapElementBack(NAHeap* heap, NAInt backPointer){
 // structure are set. After this function, these pointers can no longer be
 // changed and therefore define the behaviour of the heap until its deletion.
 NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
-  NAInt entrysize;
   #ifndef NDEBUG
     if(!heap)
       naCrash("heap is Null-Pointer");
@@ -432,9 +431,8 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
   if(!(flags & NA_HEAP_STORES_BACKPOINTERS)){
     // entries store no backPointers
 
-    entrysize = sizeof(NAHeapEntry);
     heap->count = 0;
-    heap->data = naMalloc((naAbsi(heap->maxcount) + 1) * entrysize);
+    heap->data = naMalloc((size_t)(naAbsi(heap->maxcount) + 1) * sizeof(NAHeapEntry));
     heap->root = &(((NAHeapEntry*)heap->data)[1]);
 
     heap->insertConst = na_InsertHeapElementConstNoBack;
@@ -494,9 +492,8 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
   }else{
     // Entries store backPointers
 
-    entrysize = sizeof(NAHeapBackEntry);
     heap->count = 0;
-    heap->data = naMalloc((naAbsi(heap->maxcount) + 1) * entrysize);
+    heap->data = naMalloc((size_t)(naAbsi(heap->maxcount) + 1) * sizeof(NAHeapBackEntry));
     heap->root = &(((NAHeapBackEntry*)heap->data)[1]);
 
     heap->insertConst = na_InsertHeapElementConstBack;

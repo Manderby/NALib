@@ -14,13 +14,12 @@ struct NAHuffmanCodeTree{
 
 
 NAHuffmanCodeTree* naAllocHuffmanCodeTree(uint16 alphabetcount){
-  int16 i;
   NAHuffmanCodeTree* tree = naAlloc(NAHuffmanCodeTree);
   tree->alphabetcount = alphabetcount;
   tree->codes = naMalloc(alphabetcount * sizeof(uint16));
   tree->codelengths = naMalloc(alphabetcount * sizeof(uint16));
-  tree->indextree = naMalloc((NAInt)(2 * (NAInt)alphabetcount - 1) * naSizeof(int32));
-  for(i = 0; i < alphabetcount; i++){tree->codelengths[i] = 0;}
+  tree->indextree = naMalloc((2 * (size_t)alphabetcount - 1) * sizeof(int32));
+  for(int16 i = 0; i < alphabetcount; i++){tree->codelengths[i] = 0;}
   return tree;
 }
 

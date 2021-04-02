@@ -72,7 +72,7 @@
 //          using some kind of space to be existent. In NALib correspondingly,
 //          a size describes the amount of bytes used in RAM. But to avoid
 //          confusion, such a size is always denoted as a one-word like
-//          "Bytesize", "typeSize", "Filesize" or "Pagesize" but never as
+//          "ByteSize", "typeSize", "Filesize" or "Pagesize" but never as
 //          a plain "Size".
 //          "NASize" on the other hand is a struct which stores two-dimensional
 //          coordinate data (width, height) and in the corresponding situations
@@ -499,21 +499,23 @@ NA_IAPI NAInt     naGetBoxiMaxZ  (NABoxi box);
 
 // Raw Index functions. Assuming a 2-dimensional or 3-dimensional array with
 // row-first or column-first ordering. Row-first is the default C ordering.
-NA_IAPI NAInt    naGetIndexWithOriginAndPosRowFirst(       NAPosi    origin, NAPosi    offset, NAInt width);
-NA_IAPI NAInt    naGetIndexWithOriginAndPosColumnFirst(    NAPosi    origin, NAPosi    offset, NAInt height);
-NA_IAPI NAInt    naGetIndexWithOriginAndVertexRowFirst(    NAVertexi origin, NAVertexi vertex, NAInt width, NAInt height);
-NA_IAPI NAInt    naGetIndexWithOriginAndVertexColumnFirst( NAVertexi origin, NAVertexi vertex, NAInt depth, NAInt height);
+NA_IAPI size_t naGetIndexWithOriginAndPosRowFirst(       NAPosi    origin, NAPosi    offset, NAInt width);
+NA_IAPI size_t naGetIndexWithOriginAndPosColumnFirst(    NAPosi    origin, NAPosi    offset, NAInt height);
+NA_IAPI size_t naGetIndexWithOriginAndVertexRowFirst(    NAVertexi origin, NAVertexi vertex, NAInt width, NAInt height);
+NA_IAPI size_t naGetIndexWithOriginAndVertexColumnFirst( NAVertexi origin, NAVertexi vertex, NAInt depth, NAInt height);
 
-// Count returns the total number of indices (width*height) within a rect.
+// Count returns the total number of indices (width*height) within a size.
 // IndexOf returns the index of the corresponding 1-dimensional array.
 // Note that row-first is the default C ordering.
-NA_IAPI NAInt     naGetRectiIndexCount             (NARecti rect);
-NA_IAPI NAInt     naGetRectiIndexOfPosRowFirst     (NARecti rect, NAPosi pos);
-NA_IAPI NAInt     naGetRectiIndexOfPosColumnFirst  (NARecti rect, NAPosi pos);
+NA_IAPI size_t naGetSizeiIndexCount             (NASizei size);
 
-NA_IAPI NAInt     naGetBoxiIndexCount              (NABoxi box);
-NA_IAPI NAInt     naGetBoxiIndexOfVertexRowFirst   (NABoxi box, NAVertexi vertex);
-NA_IAPI NAInt     naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex);
+NA_IAPI size_t naGetRectiIndexOfPosRowFirst     (NARecti rect, NAPosi pos);
+NA_IAPI size_t naGetRectiIndexOfPosColumnFirst  (NARecti rect, NAPosi pos);
+
+NA_IAPI size_t naGetVolumeiIndexCount           (NAVolumei volume);
+
+NA_IAPI size_t naGetBoxiIndexOfVertexRowFirst   (NABoxi box, NAVertexi vertex);
+NA_IAPI size_t naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex);
 // Example:    Rect(Pos(2, 5), Size(4, 3)) describes a 2D-field. It stores
 //             a corresponding 1D-Array {a, b, c, d, e, f, g, h, i, j, k, l}.
 // (a b c d)   End is (6, 8), Max is (5, 7). Count is 3*4 = 12

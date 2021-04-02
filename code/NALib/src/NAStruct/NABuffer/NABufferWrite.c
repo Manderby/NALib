@@ -4,10 +4,9 @@
 
 // This is the internal function actually preparing and storing the bytes
 // delivered in the parameters.
-NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, NAInt byteSize, NABool prepare, NABool advance){
+NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, size_t byteSize, NABool prepare, NABool advance){
   const NABuffer* buffer;
-  NAInt firstpartOffset;
-  NATreeIterator firstbufiter;
+  NATreeIterator firstBufIter;
   const NAByte* src = data;
 
   #ifndef NDEBUG
@@ -28,15 +27,14 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, NAInt
   // memory. The iterator should point to the buffer part containing offset.
 
   // We store the current iterator to move back to it later on if necessary.
-  firstpartOffset = iter->partOffset;
-  firstbufiter = naMakeTreeAccessor(&(buffer->parts));
-  naLocateTreeIterator(&firstbufiter, &(iter->partIter));
+  size_t firstPartOffset = iter->partOffset;
+  firstBufIter = naMakeTreeAccessor(&(buffer->parts));
+  naLocateTreeIterator(&firstBufIter, &(iter->partIter));
 
   // do as long as there is a byteSize remaining. Remember that the data may
   // be split into different buffer parts.
   while(byteSize){
     NABufferPart* part;
-    NAInt possiblelength;
     void* dst;
 
     #ifndef NDEBUG
@@ -53,32 +51,32 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, NAInt
     // We get the data pointer where we can write bytes.
     dst = na_GetBufferPartDataPointerMutable(iter);
     // We detect, how many bytes actually can be put into the current part.
-    possiblelength = na_GetBufferPartByteSize(part) - iter->partOffset;
+    size_t possibleLength = na_GetBufferPartByteSize(part) - iter->partOffset;
 
     #ifndef NDEBUG
-      if(possiblelength <= 0)
+      if(possibleLength <= 0)
         naError("possible length invalid");
     #endif
 
-    if(possiblelength > byteSize){
+    if(possibleLength > byteSize){
       // If we can put in more bytes than needed, we copy all remaining bytes
       // and stay on this part.
-      possiblelength = byteSize;
+      possibleLength = byteSize;
       iter->partOffset += byteSize;
     }else{
       // We copy as many bytes as possible and advance to the next part.
       na_LocateBufferNextPart(iter);
     }
-    naCopyn(dst, src, possiblelength);
-    src += possiblelength;
-    byteSize -= possiblelength;
+    naCopyn(dst, src, possibleLength);
+    src += possibleLength;
+    byteSize -= possibleLength;
   }
   
   if(!advance){
-    iter->partOffset = firstpartOffset;
-    naLocateTreeIterator(&(iter->partIter), &firstbufiter);
+    iter->partOffset = firstPartOffset;
+    naLocateTreeIterator(&(iter->partIter), &firstBufIter);
   }
-  naClearTreeIterator(&firstbufiter);  
+  naClearTreeIterator(&firstBufIter);  
 }
 
 
@@ -87,7 +85,7 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, NAInt
 // MULTI WRITING
 // ////////////////////////////////////
 
-NA_DEF void naWriteBufferi8v(NABufferIterator* iter, const int8* src, NAInt count){
+NA_DEF void naWriteBufferi8v(NABufferIterator* iter, const int8* src, size_t count){
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   int8 value;
   na_PrepareBuffer(iter, count * 1);
@@ -99,7 +97,7 @@ NA_DEF void naWriteBufferi8v(NABufferIterator* iter, const int8* src, NAInt coun
     count--;
   }
 }
-NA_DEF void naWriteBufferi16v(NABufferIterator* iter, const int16* src, NAInt count){
+NA_DEF void naWriteBufferi16v(NABufferIterator* iter, const int16* src, size_t count){
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   int16 value;
   na_PrepareBuffer(iter, count * 2);
@@ -111,7 +109,7 @@ NA_DEF void naWriteBufferi16v(NABufferIterator* iter, const int16* src, NAInt co
     count--;
   }
 }
-NA_DEF void naWriteBufferi32v(NABufferIterator* iter, const int32* src, NAInt count){
+NA_DEF void naWriteBufferi32v(NABufferIterator* iter, const int32* src, size_t count){
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   int32 value;
   na_PrepareBuffer(iter, count * 4);
@@ -123,7 +121,7 @@ NA_DEF void naWriteBufferi32v(NABufferIterator* iter, const int32* src, NAInt co
     count--;
   }
 }
-NA_DEF void naWriteBufferi64v(NABufferIterator* iter, const NAi64* src, NAInt count){
+NA_DEF void naWriteBufferi64v(NABufferIterator* iter, const NAi64* src, size_t count){
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   NAi64 value;
   na_PrepareBuffer(iter, count * 8);
@@ -138,7 +136,7 @@ NA_DEF void naWriteBufferi64v(NABufferIterator* iter, const NAi64* src, NAInt co
 
 
 
-NA_DEF void naWriteBufferu8v(NABufferIterator* iter, const uint8* src, NAInt count){
+NA_DEF void naWriteBufferu8v(NABufferIterator* iter, const uint8* src, size_t count){
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   uint8 value;
   na_PrepareBuffer(iter, count * 1);
@@ -150,7 +148,7 @@ NA_DEF void naWriteBufferu8v(NABufferIterator* iter, const uint8* src, NAInt cou
     count--;
   }
 }
-NA_DEF void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, NAInt count){
+NA_DEF void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, size_t count){
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   uint16 value;
   na_PrepareBuffer(iter, count * 2);
@@ -162,7 +160,7 @@ NA_DEF void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, NAInt c
     count--;
   }
 }
-NA_DEF void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, NAInt count){
+NA_DEF void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, size_t count){
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   uint32 value;
   na_PrepareBuffer(iter, count * 4);
@@ -174,7 +172,7 @@ NA_DEF void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, NAInt c
     count--;
   }
 }
-NA_DEF void naWriteBufferu64v(NABufferIterator* iter, const NAu64* src, NAInt count){
+NA_DEF void naWriteBufferu64v(NABufferIterator* iter, const NAu64* src, size_t count){
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   NAu64 value;
   na_PrepareBuffer(iter, count * 8);
@@ -189,7 +187,7 @@ NA_DEF void naWriteBufferu64v(NABufferIterator* iter, const NAu64* src, NAInt co
 
 
 
-NA_DEF void naWriteBufferfv(NABufferIterator* iter, const float* src, NAInt count){
+NA_DEF void naWriteBufferfv(NABufferIterator* iter, const float* src, size_t count){
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   float value;
   na_PrepareBuffer(iter, count * 4);
@@ -201,7 +199,7 @@ NA_DEF void naWriteBufferfv(NABufferIterator* iter, const float* src, NAInt coun
     count--;
   }
 }
-NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt count){
+NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, size_t count){
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   double value;
   na_PrepareBuffer(iter, count * 8);
@@ -248,43 +246,43 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcBuffe
 
 
 
-NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt byteSize, NABool useCopy){
-  NABufferIterator readiter;
+NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, size_t byteSize, NABool useCopy){
+  NABufferIterator readIter;
   NABuffer* buffer;
   NAByte* bufptr;
 
   // Create the read iterator
   NAInt writeoffset = naGetBufferLocation(iter);
   buffer = na_GetBufferIteratorBufferMutable(iter);
-  readiter = naMakeBufferAccessor(buffer);
-  naLocateBufferAbsolute(&readiter, writeoffset - distance);
+  readIter = naMakeBufferAccessor(buffer);
+  naLocateBufferAbsolute(&readIter, writeoffset - distance);
 
   if(useCopy){
-    NAInt remainingbyteSize;
+    size_t remainingByteSize;
     NABuffer* tmpbuffer;
     
     NAByte* buf = naMalloc(byteSize);
     
-    NAInt segmentsize = naMini(distance, byteSize);
-    naReadBufferBytes(&readiter, buf, segmentsize);
-    remainingbyteSize = byteSize - segmentsize;
+    NAInt segmentSize = naMini(distance, (NAInt)byteSize);
+    naReadBufferBytes(&readIter, buf, (size_t)segmentSize);
+    remainingByteSize = byteSize - (size_t)segmentSize;
     
-    bufptr = &(buf[segmentsize]);
-    while(remainingbyteSize){
-      *bufptr = bufptr[-segmentsize]; //todo
-      remainingbyteSize--;
+    bufptr = &(buf[segmentSize]);
+    while(remainingByteSize){
+      *bufptr = bufptr[-segmentSize]; //todo
+      remainingByteSize--;
       bufptr++;
     }
 
     tmpbuffer = naNewBufferWithMutableData(buf, byteSize, naFree);
-    naWriteBufferBuffer(iter, tmpbuffer, naMakeRangei(0, byteSize));
+    naWriteBufferBuffer(iter, tmpbuffer, naMakeRangei(0, (NAInt)byteSize));
     naRelease(tmpbuffer);
 
   }else{
     // Now start copying the buffers.
     while(byteSize){
-      NAInt remainingwrite;
-      NAInt remainingread;
+      size_t remainingWrite;
+      size_t remainingRead;
       NABufferPart* writepart;
       const NABufferPart* readpart;
       const void* src;
@@ -292,30 +290,30 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
 
       // Prepare the two iterators
       na_PrepareBuffer(iter, byteSize);
-      na_PrepareBuffer(&readiter, byteSize);
+      na_PrepareBuffer(&readIter, byteSize);
 
-      readpart = na_GetBufferPart(&readiter);
+      readpart = na_GetBufferPart(&readIter);
       writepart = na_GetBufferPart(iter);
 
-      remainingread = na_GetBufferPartByteSize(readpart) - readiter.partOffset;
-      remainingwrite = na_GetBufferPartByteSize(writepart) - iter->partOffset;
+      remainingRead = na_GetBufferPartByteSize(readpart) - readIter.partOffset;
+      remainingWrite = na_GetBufferPartByteSize(writepart) - iter->partOffset;
 
-      // We reduce the remainingread such that it does not overflow either the
-      // distance, the remainingwrite or the byteSize.
-      remainingread = naMini(remainingread, distance);
-      remainingread = naMini(remainingread, remainingwrite);
-      remainingread = naMini(remainingread, byteSize);
+      // We reduce the remainingRead such that it does not overflow either the
+      // distance, the remainingWrite or the byteSize.
+      remainingRead = (size_t)naMini((NAInt)remainingRead, distance);
+      remainingRead = naMins(remainingRead, remainingWrite);
+      remainingRead = naMins(remainingRead, byteSize);
 
-      src = na_GetBufferPartDataPointerConst(&readiter);
+      src = na_GetBufferPartDataPointerConst(&readIter);
       dst = na_GetBufferPartDataPointerMutable(iter);
-      naCopyn(dst, src, remainingread);
-      byteSize -= remainingread;
-      iter->partOffset += remainingread;
-      readiter.partOffset += remainingread;
+      naCopyn(dst, src, remainingRead);
+      byteSize -= remainingRead;
+      iter->partOffset += remainingRead;
+      readIter.partOffset += remainingRead;
     }
 
   }
-  naClearBufferIterator(&readiter);
+  naClearBufferIterator(&readIter);
 }
 
 

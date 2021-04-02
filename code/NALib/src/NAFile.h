@@ -172,7 +172,7 @@ NA_IAPI NAFile* naCreateFileWritingStderr(void);
 NA_IAPI void    naReleaseFile(NAFile* file);
 
 // Computes the fileSize (from first to last byte).
-NA_IAPI NAFileSize naComputeFileBytesize(const NAFile* file);
+NA_IAPI NAFileSize naComputeFileByteSize(const NAFile* file);
 
 // Tests if a file has been opened.
 NA_IAPI NABool naIsFileOpen(const NAFile* file);

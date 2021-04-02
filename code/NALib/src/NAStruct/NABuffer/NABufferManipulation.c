@@ -162,25 +162,23 @@ NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(NAString* string){
 
 
 NA_DEF void naAccumulateChecksumBuffer(NAChecksum* checksum, NABuffer* buffer){
-  NAInt byteSize = buffer->range.length;
+  size_t byteSize = (size_t)buffer->range.length;
   NABufferIterator iter = naMakeBufferModifier(buffer);
   na_LocateBufferStart(&iter);
 
   while(byteSize){
-    NAInt remainingbytes;
-    const void* src;
     #ifndef NDEBUG
       if(na_IsBufferIteratorSparse(&iter))
         naError("Buffer contains sparse parts. Can not compute checksum. Use naCacheBuffer.");
     #endif
 
-    remainingbytes = na_GetBufferPartByteSize(na_GetBufferPart(&iter));
-    src = na_GetBufferPartDataPointerConst(&iter);
+    size_t remainingBytes = na_GetBufferPartByteSize(na_GetBufferPart(&iter));
+    const void* src = na_GetBufferPartDataPointerConst(&iter);
 
-    if(byteSize > remainingbytes){
-      naAccumulateChecksum(checksum, src, remainingbytes);
+    if(byteSize > remainingBytes){
+      naAccumulateChecksum(checksum, src, remainingBytes);
       na_IterateBufferPart(&iter);
-      byteSize -= remainingbytes;
+      byteSize -= remainingBytes;
     }else{
       naAccumulateChecksum(checksum, src, byteSize);
       byteSize = 0;
@@ -208,22 +206,18 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
     na_LocateBufferStart(&iter);
 
     while(byteSize){
-      NABufferPart* part;
-      NAInt remainingbytes;
-      const NAByte* src;
-
-      part = na_GetBufferPart(&iter);
-      remainingbytes = na_GetBufferPartByteSize(part);
-      src = na_GetBufferPartDataPointerConst(&iter);
+      NABufferPart* part = na_GetBufferPart(&iter);
+      size_t remainingBytes = na_GetBufferPartByteSize(part);
+      const NAByte* src = na_GetBufferPartDataPointerConst(&iter);
 
       #ifndef NDEBUG
         if(na_IsBufferPartSparse(part))
           naError("Buffer contains sparse parts.");
       #endif
 
-      naWriteFileBytes(file, src, remainingbytes);
+      naWriteFileBytes(file, src, (NAFileSize)remainingBytes);
       na_LocateBufferNextPart(&iter);
-      byteSize -= remainingbytes;
+      byteSize -= remainingBytes;
     }
 
     naClearBufferIterator(&iter);
@@ -238,7 +232,7 @@ NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
   NABufferIterator iter = naMakeBufferModifier(buffer);
 
   while(na_IterateBufferPart(&iter)){
-    NAInt byteSize = na_GetBufferPartByteSize(na_GetBufferPart(&iter));
+    size_t byteSize = na_GetBufferPartByteSize(na_GetBufferPart(&iter));
     const void* src = na_GetBufferPartDataPointerConst(&iter);
     #ifndef NDEBUG
       if(na_IsBufferIteratorSparse(&iter))

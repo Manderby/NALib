@@ -3,11 +3,10 @@
 
 
 
-NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byteSize, NABool advance){
+NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t byteSize, NABool advance){
   const NABuffer* buffer;
-  NAInt firstpartOffset;
   NAByte* dst = data;
-  NATreeIterator firstbufiter;
+  NATreeIterator firstBufIter;
 
   #ifndef NDEBUG
     if(!data)
@@ -25,15 +24,14 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt by
   // memory. The iterator should point to the buffer part containing offset.
   
   // We store the current iterator to move back to it later on if necessary.
-  firstpartOffset = iter->partOffset;
-  firstbufiter = naMakeTreeAccessor(&(buffer->parts));
-  naLocateTreeIterator(&firstbufiter, &(iter->partIter));
+  size_t firstPartOffset = iter->partOffset;
+  firstBufIter = naMakeTreeAccessor(&(buffer->parts));
+  naLocateTreeIterator(&firstBufIter, &(iter->partIter));
 
   // do as long as there is a byteSize remaining. Remember that the data may
   // be split into different buffer parts.
   while(byteSize){
     NABufferPart* part;
-    NAInt possiblelength;
     const void* src;
 
     #ifndef NDEBUG
@@ -50,37 +48,37 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt by
     // We get the data pointer where we can read bytes.
     src = na_GetBufferPartDataPointerConst(iter);
     // We detect, how many bytes actually can be read from the current part.
-    possiblelength = na_GetBufferPartByteSize(part) - iter->partOffset;
+    size_t possibleLength = na_GetBufferPartByteSize(part) - iter->partOffset;
 
     #ifndef NDEBUG
-      if(possiblelength <= 0)
+      if(possibleLength <= 0)
         naError("possible length invalid");
     #endif
 
-    if(possiblelength > byteSize){
+    if(possibleLength > byteSize){
       // If we can get out more bytes than needed, we copy all remaining bytes
       // and stay on this part.
-      possiblelength = byteSize;
+      possibleLength = byteSize;
       iter->partOffset += byteSize;
     }else{
       // We copy as many bytes as possible and advance to the next part.
       na_LocateBufferNextPart(iter);
     }
-    naCopyn(dst, src, possiblelength);
-    dst += possiblelength;
-    byteSize -= possiblelength;
+    naCopyn(dst, src, possibleLength);
+    dst += possibleLength;
+    byteSize -= possibleLength;
   }
   
   if(!advance){
-    iter->partOffset = firstpartOffset;
-    naLocateTreeIterator(&(iter->partIter), &firstbufiter);
+    iter->partOffset = firstPartOffset;
+    naLocateTreeIterator(&(iter->partIter), &firstBufIter);
   }
-  naClearTreeIterator(&firstbufiter);  
+  naClearTreeIterator(&firstBufIter);  
 }
 
 
 
-NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt index){
+NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, size_t index){
   NAByte retbyte;
   NABufferIterator iter;
   NABool found;
@@ -91,7 +89,7 @@ NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt index){
   #endif
 
   iter = naMakeBufferAccessor(buffer);  
-  found = naLocateBufferAbsolute(&iter, index);
+  found = naLocateBufferAbsolute(&iter, (NAInt)index);
   if(found){
     retbyte = naGetBufferu8(&iter);
   }else{

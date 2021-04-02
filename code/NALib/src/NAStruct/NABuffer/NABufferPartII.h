@@ -8,8 +8,8 @@
 struct NABufferPart{
   NABufferSource*     source;       // The referenced source.
   NAInt               sourceOffset; // The source offset of the first byte
-  NAInt               byteSize;     // The number of bytes referenced.
-  NAInt               blockoffset;  // The byte offset in the block.
+  size_t              byteSize;     // The number of bytes referenced.
+  size_t              blockOffset;  // The byte offset in the block.
   NAMemoryBlock*      memblock;     // The referenced memory block.
 };
 NA_EXTERN_RUNTIME_TYPE(NABufferPart);
@@ -22,7 +22,7 @@ NA_HIDEF NABufferSource* na_GetBufferPartSource(const NABufferPart* part){
 
 
 
-NA_HIDEF NAInt na_GetBufferPartByteSize(const NABufferPart* part){
+NA_HIDEF size_t na_GetBufferPartByteSize(const NABufferPart* part){
   return part->byteSize;
 }
 
@@ -42,7 +42,7 @@ NA_HIDEF NABool na_IsBufferPartSparse(const NABufferPart* part){
 
 // Enlarges a sparse buffer part with a given number of bytes at the start and
 // at the end.
-NA_HIDEF void na_EnlargeBufferPart(NABufferPart* part, NAInt bytesAtStart, NAInt bytesAtEnd){
+NA_HIDEF void na_EnlargeBufferPart(NABufferPart* part, size_t bytesAtStart, size_t bytesAtEnd){
   #ifndef NDEBUG
     if(!na_IsBufferPartSparse(part))
       naError("part is not sparse");
@@ -54,7 +54,7 @@ NA_HIDEF void na_EnlargeBufferPart(NABufferPart* part, NAInt bytesAtStart, NAInt
 
 
 // Returns a the number of bytes left in this part at given offet.
-NA_HIDEF NAInt na_GetBufferPartRemainingBytes(NABufferIterator* iter){
+NA_HIDEF size_t na_GetBufferPartRemainingBytes(NABufferIterator* iter){
   NABufferPart* part;
   #ifndef NDEBUG
     if(!iter)
@@ -78,7 +78,7 @@ NA_HIDEF const void* na_GetBufferPartDataPointerConst(NABufferIterator* iter){
       naError("buffer part is sparse");
   #endif
   part = na_GetBufferPart(iter);
-  return na_GetMemoryBlockDataPointerConst(part->memblock, part->blockoffset + iter->partOffset);
+  return na_GetMemoryBlockDataPointerConst(part->memblock, part->blockOffset + iter->partOffset);
 }
 
 
@@ -93,7 +93,7 @@ NA_HIDEF void* na_GetBufferPartDataPointerMutable(NABufferIterator* iter){
       naError("buffer part is sparse");
   #endif
   part = na_GetBufferPart(iter);
-  return na_GetMemoryBlockDataPointerMutable(part->memblock, part->blockoffset + iter->partOffset);
+  return na_GetMemoryBlockDataPointerMutable(part->memblock, part->blockOffset + iter->partOffset);
 }
 
 

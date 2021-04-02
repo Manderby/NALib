@@ -9,18 +9,18 @@ struct NAMemoryBlock{
   NAPtr            data;
   NAMutator        destructor;
   #ifndef NDEBUG
-    NAInt          byteSize;
+    size_t          byteSize;
   #endif
 };
 NA_EXTERN_RUNTIME_TYPE(NAMemoryBlock);
 
 
 
-NA_HIDEF NAMemoryBlock* na_NewMemoryBlock(NAInt byteSize){
+NA_HIDEF NAMemoryBlock* na_NewMemoryBlock(size_t byteSize){
   NAMemoryBlock* block;
   #ifndef NDEBUG
-    if(byteSize <= 0)
-      naError("byteSize invalid");
+    if(byteSize == 0)
+      naError("byteSize is zero");
   #endif
   block = naNew(NAMemoryBlock);
   block->data = naMakePtrWithDataMutable(naMalloc(byteSize));
@@ -33,11 +33,11 @@ NA_HIDEF NAMemoryBlock* na_NewMemoryBlock(NAInt byteSize){
 
 
 
-NA_HIDEF NAMemoryBlock* na_NewMemoryBlockWithData(NAPtr data, NAInt byteSize, NAMutator destructor){
+NA_HIDEF NAMemoryBlock* na_NewMemoryBlockWithData(NAPtr data, size_t byteSize, NAMutator destructor){
   NAMemoryBlock* block;
   #ifndef NDEBUG
-    if(byteSize <= 0)
-      naError("byteSize invalid");
+    if(byteSize == 0)
+      naError("byteSize is zero");
     if(naIsPtrConst(data) && destructor != NA_NULL)
       naError("having a destructor for const data is probably wrong.");
   #else
@@ -54,13 +54,13 @@ NA_HIDEF NAMemoryBlock* na_NewMemoryBlockWithData(NAPtr data, NAInt byteSize, NA
 
 
 
-NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, NAInt index){
+NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, size_t index){
   return (const void*)&(((const NAByte*)naGetPtrConst(block->data))[index]);
 }
 
 
 
-NA_HIDEF void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, NAInt index){
+NA_HIDEF void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, size_t index){
   return (void*)&(((const NAByte*)naGetPtrMutable(block->data))[index]);
 }
 

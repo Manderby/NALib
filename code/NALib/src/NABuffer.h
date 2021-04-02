@@ -119,9 +119,9 @@ NA_API NABuffer* naNewBufferWithInputPath(const char* filePath);
 // data is mutable, you can give a destructor if you want to delete the
 // memory of the data pointer when no longer needed.
 NA_API NABuffer* naNewBufferWithConstData( const void* data,
-                                                 NAInt byteSize);
+                                                 size_t byteSize);
 NA_API NABuffer* naNewBufferWithMutableData(     void* data,
-                                                 NAInt byteSize,
+                                                 size_t byteSize,
                                              NAMutator destructor);
 
 
@@ -222,7 +222,7 @@ NA_IAPI void   naSetBufferEndianness(NABuffer* buffer, NAInt endianness);
 
 // Returns the byte at the given index. Warning: This function is costly. You
 // might want to use one of the Reading or Parsing functions instead.
-NA_API NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt index);
+NA_API NAByte naGetBufferByteAtIndex(NABuffer* buffer, size_t index);
 
 // Searches for the given byte starting at (and including) startOffset, either
 // forward or backwards.
@@ -254,7 +254,7 @@ NA_API NABool naEqualBufferToBuffer(  const NABuffer* buffer1,
 // bytes for equality. If caseSensitive is NA_TRUE, an exact match is tested.
 NA_API NABool naEqualBufferToData(      NABuffer* buffer,
                                           const void* data,
-                                                NAInt dataByteSize,
+                                                size_t dataByteSize,
                                                NABool caseSensitive);
 
 // Appends the whole content of srcBuffer to the end of dstbuffer.
@@ -365,22 +365,22 @@ NA_IAPI NAu64  naReadBufferu64 (NABufferIterator* iter);
 NA_IAPI float  naReadBufferf   (NABufferIterator* iter);
 NA_IAPI double naReadBufferd   (NABufferIterator* iter);
 
-NA_IAPI void naReadBufferi8v (NABufferIterator* iter, int8*   dst, NAInt count);
-NA_IAPI void naReadBufferi16v(NABufferIterator* iter, int16*  dst, NAInt count);
-NA_IAPI void naReadBufferi32v(NABufferIterator* iter, int32*  dst, NAInt count);
-NA_IAPI void naReadBufferi64v(NABufferIterator* iter, NAi64*  dst, NAInt count);
-NA_IAPI void naReadBufferu8v (NABufferIterator* iter, uint8*  dst, NAInt count);
-NA_IAPI void naReadBufferu16v(NABufferIterator* iter, uint16* dst, NAInt count);
-NA_IAPI void naReadBufferu32v(NABufferIterator* iter, uint32* dst, NAInt count);
-NA_IAPI void naReadBufferu64v(NABufferIterator* iter, NAu64*  dst, NAInt count);
-NA_IAPI void naReadBufferfv  (NABufferIterator* iter, float*  dst, NAInt count);
-NA_IAPI void naReadBufferdv  (NABufferIterator* iter, double* dst, NAInt count);
+NA_IAPI void naReadBufferi8v (NABufferIterator* iter, int8*   dst, size_t count);
+NA_IAPI void naReadBufferi16v(NABufferIterator* iter, int16*  dst, size_t count);
+NA_IAPI void naReadBufferi32v(NABufferIterator* iter, int32*  dst, size_t count);
+NA_IAPI void naReadBufferi64v(NABufferIterator* iter, NAi64*  dst, size_t count);
+NA_IAPI void naReadBufferu8v (NABufferIterator* iter, uint8*  dst, size_t count);
+NA_IAPI void naReadBufferu16v(NABufferIterator* iter, uint16* dst, size_t count);
+NA_IAPI void naReadBufferu32v(NABufferIterator* iter, uint32* dst, size_t count);
+NA_IAPI void naReadBufferu64v(NABufferIterator* iter, NAu64*  dst, size_t count);
+NA_IAPI void naReadBufferfv  (NABufferIterator* iter, float*  dst, size_t count);
+NA_IAPI void naReadBufferdv  (NABufferIterator* iter, double* dst, size_t count);
 
 // Reads the given number of bytes from the current position of buffer to data.
 NA_IAPI void naReadBufferBytes(
   NABufferIterator* iter,
   void* data,
-  NAInt byteSize);
+  size_t byteSize);
 
 // Reads the given number of bytes from the current position of buffer to data.
 NA_IAPI NABuffer* naReadBufferBuffer( NABufferIterator* iter,
@@ -406,22 +406,22 @@ NA_IAPI void naWriteBufferu64 (NABufferIterator* iter, NAu64  value);
 NA_IAPI void naWriteBufferf   (NABufferIterator* iter, float  value);
 NA_IAPI void naWriteBufferd   (NABufferIterator* iter, double value);
 
-NA_API  void naWriteBufferi8v (NABufferIterator* iter, const int8*   src, NAInt count);
-NA_API  void naWriteBufferi16v(NABufferIterator* iter, const int16*  src, NAInt count);
-NA_API  void naWriteBufferi32v(NABufferIterator* iter, const int32*  src, NAInt count);
-NA_API  void naWriteBufferi64v(NABufferIterator* iter, const NAi64*  src, NAInt count);
-NA_API  void naWriteBufferu8v (NABufferIterator* iter, const uint8*  src, NAInt count);
-NA_API  void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, NAInt count);
-NA_API  void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, NAInt count);
-NA_API  void naWriteBufferu64v(NABufferIterator* iter, const NAu64*  src, NAInt count);
-NA_API  void naWriteBufferfv  (NABufferIterator* iter, const float*  src, NAInt count);
-NA_API  void naWriteBufferdv  (NABufferIterator* iter, const double* src, NAInt count);
+NA_API  void naWriteBufferi8v (NABufferIterator* iter, const int8*   src, size_t count);
+NA_API  void naWriteBufferi16v(NABufferIterator* iter, const int16*  src, size_t count);
+NA_API  void naWriteBufferi32v(NABufferIterator* iter, const int32*  src, size_t count);
+NA_API  void naWriteBufferi64v(NABufferIterator* iter, const NAi64*  src, size_t count);
+NA_API  void naWriteBufferu8v (NABufferIterator* iter, const uint8*  src, size_t count);
+NA_API  void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, size_t count);
+NA_API  void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, size_t count);
+NA_API  void naWriteBufferu64v(NABufferIterator* iter, const NAu64*  src, size_t count);
+NA_API  void naWriteBufferfv  (NABufferIterator* iter, const float*  src, size_t count);
+NA_API  void naWriteBufferdv  (NABufferIterator* iter, const double* src, size_t count);
 
 // Writes the given number of bytes in data to the current position of buffer.
 NA_IAPI void naWriteBufferBytes(
   NABufferIterator* iter,
   const void* data,
-  NAInt byteSize);
+  size_t byteSize);
 
 // Writes the content in the specified range of the source buffer into the
 // buffer indicated by iter at the current position.
@@ -444,7 +444,7 @@ NA_API void naWriteBufferBuffer(
 NA_API void naRepeatBufferBytes(
   NABufferIterator* iter,
   NAInt distance,
-  NAInt byteSize,
+  size_t byteSize,
   NABool useCopy);
 
 

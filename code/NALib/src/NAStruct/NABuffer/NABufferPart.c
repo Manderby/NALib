@@ -32,8 +32,8 @@ NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei so
     part->source = NA_NULL;
     part->sourceOffset = 0;
   }
-  part->byteSize = sourceRange.length;
-  part->blockoffset = 0;
+  part->byteSize = (size_t)sourceRange.length;
+  part->blockOffset = 0;
   part->memblock = NA_NULL;
   return part;
 }
@@ -41,17 +41,17 @@ NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei so
 
 
 // Creates a memory block with constant data
-NA_HDEF NABufferPart* na_NewBufferPartWithConstData(const void* data, NAInt byteSize){
+NA_HDEF NABufferPart* na_NewBufferPartWithConstData(const void* data, size_t byteSize){
   NABufferPart* part;
   #ifndef NDEBUG
-    if(!naIsLengthValueUsefuli(byteSize))
-      naError("byteSize is not useful");
+    if(byteSize == 0)
+      naError("byteSize is zero");
   #endif
   part = naNew(NABufferPart);
   part->source = NA_NULL;
   part->sourceOffset = 0;
   part->byteSize = byteSize;
-  part->blockoffset = 0;
+  part->blockOffset = 0;
   part->memblock = na_NewMemoryBlockWithData(naMakePtrWithDataConst(data), byteSize, NA_NULL);
   return part;
 }
@@ -59,17 +59,17 @@ NA_HDEF NABufferPart* na_NewBufferPartWithConstData(const void* data, NAInt byte
 
 
 // Creates a memory block with mutable data
-NA_HDEF NABufferPart* na_NewBufferPartWithMutableData(void* data, NAInt byteSize, NAMutator destructor){
+NA_HDEF NABufferPart* na_NewBufferPartWithMutableData(void* data, size_t byteSize, NAMutator destructor){
   NABufferPart* part;
   #ifndef NDEBUG
-    if(!naIsLengthValueUsefuli(byteSize))
-      naError("byteSize is not useful");
+    if(byteSize == 0)
+      naError("byteSize is zero");
   #endif
   part = naNew(NABufferPart);
   part->source = NA_NULL;
   part->sourceOffset = 0;
   part->byteSize = byteSize;
-  part->blockoffset = 0;
+  part->blockOffset = 0;
   part->memblock = na_NewMemoryBlockWithData(naMakePtrWithDataMutable(data), byteSize, destructor);
   return part;
 }
@@ -78,7 +78,7 @@ NA_HDEF NABufferPart* na_NewBufferPartWithMutableData(void* data, NAInt byteSize
 
 NA_HDEF void na_SeparateBufferPart(NABufferPart* part){
   NAMemoryBlock* newblock = na_NewMemoryBlock(part->byteSize);
-  naCopyn(na_GetMemoryBlockDataPointerMutable(newblock, 0), na_GetMemoryBlockDataPointerConst(part->memblock, part->blockoffset), part->byteSize);
+  naCopyn(na_GetMemoryBlockDataPointerMutable(newblock, 0), na_GetMemoryBlockDataPointerConst(part->memblock, part->blockOffset), part->byteSize);
   naRelease(part->memblock);
   part->memblock = newblock;
 }
@@ -99,17 +99,17 @@ NA_HDEF void na_DestructBufferPart(NABufferPart* part){
 // points to that very part.
 // The start and end parameters must be positive definite.
 // Moves the iterator to the desired part and returns that part.
-NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, NAInt start, NAInt end){
+NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start, size_t end){
   NABufferPart* part = naGetTreeCurLeafMutable(partIter);
   NABufferPart* newpart;
-  NAInt prevbyteSize;
+  size_t prevByteSize;
 
   #ifndef NDEBUG
     if(naIsTreeAtInitial(partIter))
       naError("Iterator is at initial position.");
     if(!na_IsBufferPartSparse(part))
       naError("part is not sparse");
-    if(!naIsLengthValueUsefuli(end - start))
+    if(end <= start == 0)
       naError("start and end make no sense");
     if(start > part->byteSize)
       naError("start is too big");
@@ -117,7 +117,7 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, NAInt start, 
       naError("end should not be negative");
   #endif
 
-  prevbyteSize = part->byteSize;
+  prevByteSize = part->byteSize;
 
   if(start < 0){start = 0;}
   if(end > part->byteSize){end = part->byteSize;}
@@ -133,11 +133,11 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, NAInt start, 
   // part offset with the offset of the part they are visiting. If that
   // would change, the iterators would confuse their position.
 
-  if(end < prevbyteSize){
+  if(end < prevByteSize){
     // We need to add a new part at the end.
     part->byteSize = end;
     naUpdateTreeLeaf(partIter);
-    newpart = na_NewBufferPartSparse(part->source, naMakeRangeiWithStartAndEnd(part->sourceOffset + end, part->sourceOffset + prevbyteSize));
+    newpart = na_NewBufferPartSparse(part->source, naMakeRangeiWithStartAndEnd(part->sourceOffset + (NAInt)end, part->sourceOffset + (NAInt)prevByteSize));
     naAddTreeNextMutable(partIter, newpart, NA_FALSE);
   }
 
@@ -146,7 +146,7 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, NAInt start, 
     // We change this parts size and add a new one after this one.
     part->byteSize = start;
     naUpdateTreeLeaf(partIter);
-    newpart = na_NewBufferPartSparse(part->source, naMakeRangeiWithStartAndEnd(part->sourceOffset + start, part->sourceOffset + end));
+    newpart = na_NewBufferPartSparse(part->source, naMakeRangeiWithStartAndEnd(part->sourceOffset + (NAInt)start, part->sourceOffset + (NAInt)end));
     naAddTreeNextMutable(partIter, newpart, NA_TRUE);
     // Note that using the NA_TRUE, we automatically move to the new part.
     // This means that iter now points to the desired part.
@@ -164,10 +164,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partIter,
   NABufferIterator iter;
   NABool found;
   NABufferPart* sourcepart;
-  NAInt offsetinsourcepart;
-  NAInt remainingbytesinsourcepart;
-  NAInt normedstart;
-  NAInt normedend;
+  NAInt remainingBytesInSourcePart;
   
   NABufferPart* part = naGetTreeCurLeafMutable(partIter);
   NABufferSource* source = part->source;
@@ -206,7 +203,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partIter,
   // sourceOffset.
   
   // Recursive call to the source buffer to prepare itself.
-  na_PrepareBuffer(&iter, partrange.length);
+  na_PrepareBuffer(&iter, (size_t)partrange.length);
   sourcepart = na_GetBufferPart(&iter);
   
   #ifndef NDEBUG
@@ -217,12 +214,12 @@ NA_HDEF NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partIter,
   // Reaching here, iter points at the desired byte in the source buffer.
   // The computation is a little complicated, so here is a diagram:
   //
-  //                              |<--- remainingbytesinsourcepart --->|
+  //                              |<--- remainingBytesInSourcePart --->|
   // +-- SOURCEPART --------------+------------------------------------+
-  // |       offsetinsourcepart ->X                                    |
+  // |       offsetInSourcePart ->X                                    |
   // +----------------------------+------------------------------------+
   //                              |
-  // +-- normedstart              |                        normedend --+
+  // +-- normedStart              |                        normedEnd --+
   // |                            |                                    |
   // V                            |                                    V
   // +      +- PART --------------+------------------------+           +
@@ -232,18 +229,18 @@ NA_HDEF NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partIter,
   // Note that in general, part may be larger than sourcepart in which case
   // na_SplitBufferPart will split part into pieces.
   //
-  // Note that the na_SplitBufferPart function will ensure that normedstart
-  // and normedend are clamped to the parts boundaries if part is smaller
+  // Note that the na_SplitBufferPart function will ensure that normedStart
+  // and normedEnd are clamped to the parts boundaries if part is smaller
   // than sourcepart.
   
-  offsetinsourcepart = iter.partOffset;
-  remainingbytesinsourcepart = sourcepart->byteSize - iter.partOffset;
-  normedstart = partrange.origin - offsetinsourcepart;
-  normedend = partrange.origin + remainingbytesinsourcepart;
-  part = na_SplitBufferPart(partIter, normedstart, normedend);
+  size_t offsetInSourcePart = iter.partOffset;
+  remainingBytesInSourcePart = (NAInt)(sourcepart->byteSize - iter.partOffset);
+  size_t normedStart = (size_t)partrange.origin - offsetInSourcePart;
+  size_t normedEnd = (size_t)(partrange.origin + remainingBytesInSourcePart);
+  part = na_SplitBufferPart(partIter, normedStart, normedEnd);
 
   part->memblock = naRetain(na_GetBufferPartMemoryBlock(sourcepart));
-  part->blockoffset = sourcepart->blockoffset + offsetinsourcepart;
+  part->blockOffset = sourcepart->blockOffset + offsetInSourcePart;
     
   naClearBufferIterator(&iter);
 
@@ -253,16 +250,16 @@ NA_HDEF NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partIter,
 
 
 #if NA_BUFFER_PART_BYTESIZE == 0
-  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)naGetRuntimeMemoryPageSize())
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE (naGetRuntimeMemoryPageSize())
 #else
-  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)NA_BUFFER_PART_BYTESIZE)
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE (NA_BUFFER_PART_BYTESIZE)
 #endif
 
 
 
-NA_HIDEF NAInt na_GetBufferPartNormedStart(NAInt start){
-  NAInt signshift = (start < 0);   // Note that (start < 0) either results in 0 or 1.
-  return (((start + signshift) / NA_INTERNAL_BUFFER_PART_BYTESIZE) - signshift) * NA_INTERNAL_BUFFER_PART_BYTESIZE;
+NA_HIDEF size_t na_GetBufferPartNormedStart(NAInt start){
+  NAInt signShift = (start < 0);   // Note that (start < 0) either results in 0 or 1.
+  return (size_t)((((size_t)(start + signShift) / NA_INTERNAL_BUFFER_PART_BYTESIZE) - (size_t)signShift) * NA_INTERNAL_BUFFER_PART_BYTESIZE);
   // Examples explain best how this behaves (assume default part size to be 10):
   //  11:  (( 11 + 0) / 10) - 0 * 10 =  10
   //  10:  (( 10 + 0) / 10) - 0 * 10 =  10
@@ -277,7 +274,7 @@ NA_HIDEF NAInt na_GetBufferPartNormedStart(NAInt start){
 
 
 
-NA_HIDEF NAInt na_GetBufferPartNormedEnd(NAInt end){
+NA_HIDEF size_t na_GetBufferPartNormedEnd(NAInt end){
   // Return the end coordinate, such that end-1 (=max) is within it.
   return na_GetBufferPartNormedStart(naMakeMaxWithEndi(end)) + NA_INTERNAL_BUFFER_PART_BYTESIZE;
 }
@@ -287,8 +284,6 @@ NA_HIDEF NAInt na_GetBufferPartNormedEnd(NAInt end){
 // This function expects a sparse buffer part, splits it such that a suitable
 // range can be made non-sparse and that range is filled with memory.
 NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARangei partrange){
-  NAInt normedstart;
-  NAInt normedend;
   void* dst;
   NABufferPart* part = naGetTreeCurLeafMutable(partIter);
   NABufferSource* source = part->source;
@@ -305,20 +300,20 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
   // We do this by aligning start and end at NA_INTERNAL_BUFFER_PART_BYTESIZE.
   // Both endpoints do not need to be adjusted as the partrange is always
   // positive definite and more bytes in the block do not harm.
-  normedstart = na_GetBufferPartNormedStart(partrange.origin);
-  normedend = na_GetBufferPartNormedEnd(partrange.origin + 1);
+  size_t normedStart = na_GetBufferPartNormedStart(partrange.origin);
+  size_t normedEnd = na_GetBufferPartNormedEnd(partrange.origin + 1);
 
   // We split the sparse part as necessary.
-  part = na_SplitBufferPart(partIter, normedstart, normedend);
+  part = na_SplitBufferPart(partIter, normedStart, normedEnd);
 
   // Now, the part has been split in whatever manner it was necessary.
   // Let's create the memory block.
   part->memblock = na_NewMemoryBlock(part->byteSize);
-  part->blockoffset = 0;
+  part->blockOffset = 0;
   
   // Fill the memory block according to the source.
   dst = na_GetMemoryBlockDataPointerMutable(part->memblock, 0);
-  na_FillSourceBuffer(source, dst, naMakeRangeiWithStartAndEnd(normedstart, normedstart + part->byteSize));
+  na_FillSourceBuffer(source, dst, naMakeRangeiWithStartAndEnd((NAInt)normedStart, (NAInt)(normedStart + part->byteSize)));
 
   return part;
 }
@@ -330,29 +325,29 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
 // the current part but always results in iterator pointing to a part being
 // completely prepared and the number of available bytes after the current byte
 // is returned.
-NA_HDEF NAInt na_PrepareBufferPart(NABufferIterator* iter, NAInt byteCount){
-  NAInt preparedbyteCount;
+NA_HDEF size_t na_PrepareBufferPart(NABufferIterator* iter, size_t byteCount){
+  size_t preparedByteCount;
   NABufferPart* part = na_GetBufferPart(iter);
   if(na_IsBufferPartSparse(part)){
     // We decide how to prepare the part.
     NABuffer* sourcebuffer = na_GetBufferIteratorSourceBuffer(iter);
     if(sourcebuffer){
       // There is a source buffer, so we try to fill the part with it.
-      part = na_PrepareBufferPartSourceBuffer(&(iter->partIter), naMakeRangei(iter->partOffset, byteCount));
+      part = na_PrepareBufferPartSourceBuffer(&(iter->partIter), naMakeRangei((NAInt)iter->partOffset, (NAInt)byteCount));
     }else{
       // We have no source or no source buffer, meaning, we prepare memory.
-      part = na_PrepareBufferPartMemory(&(iter->partIter), naMakeRangei(iter->partOffset, byteCount));
+      part = na_PrepareBufferPartMemory(&(iter->partIter), naMakeRangei((NAInt)iter->partOffset, (NAInt)byteCount));
     }
   }
   
   // Reaching here, the current part is a prepared part. We compute the number
   // of remaining bytes in the part and return it.
-  preparedbyteCount = part->byteSize - iter->partOffset;
+  preparedByteCount = part->byteSize - iter->partOffset;
   #ifndef NDEBUG
-    if(preparedbyteCount <= 0)
+    if(preparedByteCount <= 0)
       naError("Returned value should be greater zero");
   #endif
-  return preparedbyteCount;
+  return preparedByteCount;
 }
 
 

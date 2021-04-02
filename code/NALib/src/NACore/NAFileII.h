@@ -256,7 +256,7 @@ NA_IDEF void naReleaseFile(NAFile* file){
 
 
 
-NA_IDEF NAFileSize naComputeFileBytesize(const NAFile* file){
+NA_IDEF NAFileSize naComputeFileByteSize(const NAFile* file){
   NAFileSize curOffset;
   NAFileSize fileSize;
   curOffset = naLseek(file->desc, 0, SEEK_CUR);

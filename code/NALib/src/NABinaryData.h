@@ -27,7 +27,7 @@ NA_IAPI void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s);
 NA_IAPI void naCopyn(
   void* NA_RESTRICT d,
   const void* NA_RESTRICT s,
-  NAInt byteSize);
+  size_t byteSize);
 
 
 // Swaps the content of the two pointers with the given number of bits.
@@ -57,14 +57,10 @@ NA_IAPI NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b);
 
 
 // Fills the given buffer with binary zero for the given byteSize
-NA_IAPI void naZeron32(void* d, int32   byteSize);
-NA_IAPI void naZeron64(void* d, NAi64 byteSize);
-NA_IAPI void naZeron  (void* d, NAInt   byteSize);
+NA_IAPI void naZeron(void* d, size_t byteSize);
 
 // Fills the given buffer with the value for the given byteSize
-NA_IAPI void naSetn32(void* d, int32   byteSize, NAByte value);
-NA_IAPI void naSetn64(void* d, NAi64 byteSize, NAByte value);
-NA_IAPI void naSetn  (void* d, NAInt   byteSize, NAByte value);
+NA_IAPI void naSetn(void* d, size_t byteSize, NAByte value);
 
 
 
@@ -198,7 +194,7 @@ NA_API void naResetChecksum(NAChecksum* checksum);
 NA_API void naAccumulateChecksum(
   NAChecksum* checksum,
   const NAByte* buf,
-  NAInt byteSize);
+  size_t byteSize);
 NA_API uint32 naGetChecksumResult(NAChecksum* checksum);
 
 

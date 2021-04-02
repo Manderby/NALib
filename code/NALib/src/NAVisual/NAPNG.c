@@ -204,8 +204,8 @@ NA_HDEF void na_DeallocPNGChunk(NAPNGChunk* chunk){
 
 
 
-NA_API NAInt naGetPNGBytesPerPixel(NAPNGColorType colorType){
-  NAInt retValue;
+NA_API size_t naGetPNGBytesPerPixel(NAPNGColorType colorType){
+  size_t retValue;
   switch(colorType){
   case NA_PNG_COLORTYPE_GREYSCALE:
     retValue = 1;
@@ -252,13 +252,12 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
   NAByte* curbyte;
   NAByte* upbuffer;
   NAByte* upbufptr;
-  NAInt x, y;
   NABufferIterator iterfilter;
 
-  NAInt bpp = naGetPNGBytesPerPixel(png->colorType);
-  NAInt bytesperline = png->size.width * bpp;
+  size_t bpp = naGetPNGBytesPerPixel(png->colorType);
+  size_t bytesperline = (size_t)png->size.width * bpp;
 
-  png->pixeldata = naMalloc(naSizeof(NAByte) * png->size.width * png->size.height * bpp);
+  png->pixeldata = naMalloc(sizeof(NAByte) * naGetSizeiIndexCount(png->size) * bpp);
   curbyte = png->pixeldata;
 
   upbuffer = naMalloc(bytesperline);
@@ -267,7 +266,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
 
   iterfilter = naMakeBufferMutator(png->filtereddata);
 
-  for(y = 0; y < png->size.height; y++){
+  for(size_t y = 0; y < (size_t)png->size.height; y++){
 
     NAByte filtertype = naReadBufferu8(&iterfilter);
     naReadBufferu8v(&iterfilter, curbyte, bytesperline);
@@ -278,40 +277,40 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
       curbyte += bytesperline;
       break;
     case NA_PNG_FILTER_TYPE_SUB:
-      for(x = 0; x < bpp; x++){
+      for(size_t x = 0; x < bpp; x++){
         curbyte++;  // The first byte adds value 0 from the virtual left byte.
       }
-      for(x = bpp; x < (png->size.width * bpp); x++){
+      for(size_t x = bpp; x < ((size_t)png->size.width * bpp); x++){
         *curbyte += *(curbyte - bpp);
         curbyte++;
       }
       break;
     case NA_PNG_FILTER_TYPE_UP:
-      for(x = 0; x < (png->size.width * bpp); x++){
+      for(size_t x = 0; x < ((size_t)png->size.width * bpp); x++){
         *curbyte += *upbufptr;
         curbyte++;
         upbufptr++;
       }
       break;
     case NA_PNG_FILTER_TYPE_AVERAGE:
-      for(x = 0; x < bpp; x++){
+      for(size_t x = 0; x < bpp; x++){
         *curbyte += (NAByte)(((NAUInt)*upbufptr) / 2);
         curbyte++;
         upbufptr++;
       }
-      for(x = bpp; x < (png->size.width * bpp); x++){
+      for(size_t x = bpp; x < ((size_t)png->size.width * bpp); x++){
         *curbyte += (NAByte)(((NAUInt)*(curbyte - bpp) + (NAUInt)*upbufptr) / 2);
         curbyte++;
         upbufptr++;
       }
       break;
     case NA_PNG_FILTER_TYPE_PAETH:
-      for(x = 0; x < bpp; x++){
+      for(size_t x = 0; x < bpp; x++){
         *curbyte += naGetPaethPredictor(0, *upbufptr, 0);
         curbyte++;
         upbufptr++;
       }
-      for(x = bpp; x < (png->size.width * bpp); x++){
+      for(size_t x = bpp; x < ((size_t)png->size.width * bpp); x++){
         *curbyte += naGetPaethPredictor(*(curbyte - bpp), *upbufptr, *(upbufptr - bpp));
         curbyte++;
         upbufptr++;
@@ -340,7 +339,6 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
 
 
 NA_DEF void naFilterData(NAPNG* png){
-  NAInt bpp;
   NAByte* pixeldata;
   NAInt y;
   NABufferIterator iter;
@@ -348,14 +346,14 @@ NA_DEF void naFilterData(NAPNG* png){
   png->filtereddata = naNewBuffer(NA_FALSE);
   naSetBufferEndianness(png->filtereddata, NA_ENDIANNESS_NETWORK);
 
-  bpp = naGetPNGBytesPerPixel(png->colorType);
+  size_t bpp = naGetPNGBytesPerPixel(png->colorType);
   pixeldata = naGetPNGPixelData(png);
 
   iter = naMakeBufferModifier(png->filtereddata);
   for(y = 0; y < png->size.height; y++){
     naWriteBufferu8(&iter, NA_PNG_FILTER_TYPE_NONE);
-    naWriteBufferBytes(&iter, pixeldata, png->size.width * bpp);
-    pixeldata += png->size.width * bpp;
+    naWriteBufferBytes(&iter, pixeldata, (size_t)png->size.width * bpp);
+    pixeldata += (size_t)png->size.width * bpp;
   }
   naClearBufferIterator(&iter);
 
@@ -676,7 +674,6 @@ NA_HDEF void na_ReadPNGzTXtChunk(NAPNG* png, NAPNGChunk* ztxt){
 
 
 NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colorType, NAUInt bitDepth){
-  NAInt bpp;
   NAPNG* png = naNew(NAPNG);
 
   #ifndef NDEBUG
@@ -698,8 +695,8 @@ NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colorType, NAUInt bitDepth){
   png->size = size;
   png->colorType = colorType;
 
-  bpp = naGetPNGBytesPerPixel(colorType);
-  png->pixeldata = naMalloc(size.width * size.height * bpp);
+  size_t bpp = naGetPNGBytesPerPixel(colorType);
+  png->pixeldata = naMalloc(naGetSizeiIndexCount(size) * bpp);
   png->filtereddata = NA_NULL;
 
   return png;
@@ -813,9 +810,9 @@ NA_DEF void* naGetPNGPixelData(NAPNG* png){
 
 
 
-NA_DEF NAInt naGetPNGPixelDataBytesize(NAPNG* png){
-  NAInt bpp = naGetPNGBytesPerPixel(png->colorType);
-  return png->size.width * png->size.height * bpp;
+NA_DEF size_t naGetPNGPixelDataByteSize(NAPNG* png){
+  size_t bpp = naGetPNGBytesPerPixel(png->colorType);
+  return naGetSizeiIndexCount(png->size) * bpp;
 }
 
 

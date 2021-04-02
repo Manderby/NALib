@@ -635,7 +635,7 @@ NA_DEF const char* naGetDateTimeErrorString(uint8 errorNum){
 //  switch(format){
 //  case NA_DATETIME_FORMAT_ICC_PROFILE:
 //    // ICC section 5.1.1, page 4, dateTimeNumber
-//    bytearray = naInitByteArrayWithBytesize(bytearray, 12);
+//    bytearray = naInitByteArrayWithByteSize(bytearray, 12);
 //    ptr = naGetByteArrayMutablePointer(bytearray);
 //
 //    valueu16 = (uint16)dts.year;

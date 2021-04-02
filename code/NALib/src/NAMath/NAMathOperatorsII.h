@@ -139,6 +139,9 @@ NA_IDEF double naMin(double a, double b){
 NA_IDEF NAInt naMini(NAInt a, NAInt b){
   return (a < b) ? a : b;
 }
+NA_IDEF size_t naMins(size_t a, size_t b){
+  return (a < b) ? a : b;
+}
 NA_IDEF int8 naMini8(int8 a, int8 b){
   return (a < b) ? a : b;
 }
@@ -162,6 +165,9 @@ NA_IDEF double naMax(double a, double b){
 NA_IDEF NAInt naMaxi(NAInt a, NAInt b){
   return (a > b) ? a : b;
 }
+NA_IDEF size_t naMaxs(size_t a, size_t b){
+  return (a > b) ? a : b;
+}
 NA_IDEF int8 naMaxi8(int8 a, int8 b){
   return (a > b) ? a : b;
 }
@@ -173,9 +179,6 @@ NA_IDEF int32 naMaxi32(int32 a, int32 b){
 }
 NA_IDEF NAi64 naMaxi64(NAi64 a, NAi64 b){
   return naGreateri64(a, b) ? a : b;
-}
-NA_IDEF size_t naMaxs(size_t a, size_t b){
-  return (a > b) ? a : b;
 }
 
 

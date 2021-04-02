@@ -232,7 +232,7 @@ NA_DEF void naDumpStack(NAStack* stack, void* buf){
     if(!buf)
       naCrash("buf is Null");
   #endif
-
+  NAByte* bufPtr = (NAByte*)buf;
   NAListIterator arrayIter = naMakeListAccessor(&(stack->arrays));
   while(naIterateList(&arrayIter)){
     size_t count = naEqualListIterator(&arrayIter, &(stack->curArray)) ?
@@ -241,10 +241,10 @@ NA_DEF void naDumpStack(NAStack* stack, void* buf){
     if(count){
       count *= stack->typeSize;
       naCopyn(
-        buf,
+        bufPtr,
         na_GetStackArrayFirstConst(&arrayIter),
         count);
-      ((NAByte*)buf) += count;
+      bufPtr += count;
     }
   }
   naClearListIterator(&arrayIter);

@@ -169,7 +169,7 @@ NA_HIDEF void na_RegisterTypeInfo(NA_TypeInfo* typeInfo){
   // performance, but this code is usually called rather seldomly. If you
   // experience here a lot of memory allocations, you might want to check if
   // NA_MEMORY_POOL_AGGRESSIVE_CLEANUP is set to 1 and set it back to 0.
-  newinfos = naMalloc(naSizeof(NA_TypeInfo*) * (na_Runtime->typeInfoCount + NA_ONE));
+  newinfos = naMalloc(sizeof(NA_TypeInfo*) * (na_Runtime->typeInfoCount + NA_ONE_s));
 
   // We copy all previous infos to the newly allocated memory block.
   if(na_Runtime->typeInfos){
@@ -190,14 +190,13 @@ NA_HIDEF void na_RegisterTypeInfo(NA_TypeInfo* typeInfo){
 NA_HIDEF void na_UnregisterTypeInfo(NA_TypeInfo* typeInfo){
   NA_TypeInfo** newinfos = NA_NULL;
   if(na_Runtime->typeInfoCount > 1){
-    NAInt i;
     NAInt oldindex = 0;
     newinfos = naMalloc(naSizeof(NA_TypeInfo*) * (na_Runtime->typeInfoCount - NA_ONE));
 
     // We shrink the info array by one by omitting the one entry which equals
     // the given parameter. Again, just like na_RegisterTypeInfo, this is not
     // very fast, but does the job. See comment there.
-    for(i = 0; i < (na_Runtime->typeInfoCount - NA_ONE); i++){
+    for(size_t i = 0; i < (na_Runtime->typeInfoCount - NA_ONE_s); i++){
       if(na_Runtime->typeInfos[i] == typeInfo){oldindex++;}
       newinfos[i] = na_Runtime->typeInfos[oldindex];
       oldindex++;
@@ -576,11 +575,6 @@ NA_DEF void naStartRuntime(){
 
 
 NA_DEF void naStopRuntime(){
-  #ifndef NDEBUG
-    NAInt i;
-    NABool leakmessageprinted;
-  #endif
-
   // First, we collect the garbage
   naCollectGarbage();
   #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 0
@@ -592,18 +586,18 @@ NA_DEF void naStopRuntime(){
 
   // Then, we detect, if there are any memory leaks.
   #ifndef NDEBUG
-    leakmessageprinted = NA_FALSE;
+    NABool leakMessagePrinted = NA_FALSE;
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
 
     // Go through all registered types and output a leak message if necessary.
-    for(i = 0; i < na_Runtime->typeInfoCount; i++){
+    for(size_t i = 0; i < na_Runtime->typeInfoCount; i++){
       size_t spacecount = na_GetTypeInfoAllocatedCount(na_Runtime->typeInfos[i]);
       #ifndef NDEBUG
         if(spacecount){
-          if(!leakmessageprinted){
+          if(!leakMessagePrinted){
             printf(NA_NL "Memory leaks detected in NARuntime:" NA_NL);
-            leakmessageprinted = NA_TRUE;
+            leakMessagePrinted = NA_TRUE;
           }
           printf("%s: %zu * %zu = %zu Bytes" NA_NL, na_Runtime->typeInfos[i]->typeName, spacecount, na_Runtime->typeInfos[i]->typeSize, spacecount * na_Runtime->typeInfos[i]->typeSize);
         }
@@ -663,7 +657,7 @@ NA_DEF void* naMallocTmp(size_t byteSize){
     if(na_Runtime->totalMallocGarbageByteCount > (size_t)NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT){naCollectGarbage();}
   #endif
   na_Runtime->totalMallocGarbageByteCount += byteSize;
-  newPtr = naMalloc((NAInt)byteSize);
+  newPtr = naMalloc(byteSize);
   if(!na_Runtime->mallocGarbage || (na_Runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)){
     na_EnhanceMallocGarbage();
   }

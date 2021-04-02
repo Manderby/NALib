@@ -33,12 +33,12 @@ NA_HIDEF NAInt na_GetBabyImagePixelCount(const NABabyImage* image){
 
 
 
-NA_HIDEF NAInt na_GetBabyImageDataSize(const NABabyImage* image){
+NA_HIDEF size_t na_GetBabyImageDataSize(const NABabyImage* image){
   #ifndef NDEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
-  return (NAInt)image->width * (NAInt)image->height * NA_BABY_COLOR_BYTES_PER_COMPONENT;
+  return (size_t)image->width * (size_t)image->height * NA_BABY_COLOR_BYTES_PER_COMPONENT;
 }
 
 

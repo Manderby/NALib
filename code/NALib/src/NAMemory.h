@@ -132,7 +132,7 @@ NA_IAPI size_t naGetSystemMemoryPagesizeMask(void);
 //
 // Note that the actual definitions of the macros are in NAMemoryII.h
 
-NA_IAPI void* naMalloc            (NAInt byteSize);
+NA_IAPI void* naMalloc            (size_t byteSize);
 #define       naAlloc             (type)
 NA_IAPI void  naFree              (void* ptr);
 

@@ -65,7 +65,7 @@ struct NARuntime{
   size_t partSizeMask;
   NAMallocGarbage* mallocGarbage;
   size_t totalMallocGarbageByteCount;
-  NAInt typeInfoCount;
+  size_t typeInfoCount;
   NA_TypeInfo** typeInfos;
 };
 

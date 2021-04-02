@@ -31,15 +31,15 @@ typedef enum{
 
 
 // Remapping of some starndard functions.
-NA_IAPI NAInt naStrlen(               const NAUTF8Char* str);
-NA_IAPI NAInt naVsnprintf(                  NAUTF8Char* buffer,
+NA_IAPI size_t naStrlen(               const NAUTF8Char* str);
+NA_IAPI size_t naVsnprintf(                  NAUTF8Char* buffer,
                                                  size_t length,
                                       const NAUTF8Char* newstr,
                                                 va_list argumentList);
 
 // Returns the number of characters needed to transform the given string and
 // arguments using sprintf.
-NA_IAPI NAInt naVarargStringLength(   const NAUTF8Char* string,
+NA_IAPI size_t naVarargStringLength(   const NAUTF8Char* string,
   va_list args);
 
 // Compares the string content of the two pointers being equal.
@@ -48,7 +48,7 @@ NA_IAPI NAInt naVarargStringLength(   const NAUTF8Char* string,
 // If caseSensitive is NA_TRUE, an exact match is tested.
 NA_API NABool naEqualUTF8CStringLiterals( const NAUTF8Char* string1,
                                           const NAUTF8Char* string2,
-                                                      NAInt length,
+                                                      size_t length,
                                                      NABool caseSensitive);
 
 // Allocates and returns memory and formats the given string like printf.
@@ -86,7 +86,7 @@ NA_API NAString* naNewString(void);
 // When length is negative, the absolute value will be used but the buffer is
 // expected to be null-terminated (the null character is not in length).
 NA_API NAString* naNewStringWithMutableUTF8Buffer(  NAUTF8Char* buffer,
-                                                          NAInt length,
+                                                          size_t length,
                                                       NAMutator destructor);
 
 // Creates an NAString just like sprintf.
@@ -136,7 +136,7 @@ NA_API NAString* naNewStringWithNewlineSanitization( NAString* string,
 
 
 // Returns the length of the string in bytes.
-NA_API NAInt naGetStringBytesize(const NAString* string);
+NA_API size_t naGetStringByteSize(const NAString* string);
 
 // Returns a const pointer to a C-style representation of the string.
 // Note that this is a costly function as the representation is always created
@@ -151,7 +151,7 @@ NA_API const NABuffer* naGetStringBufferConst(const NAString* string);
 NA_API NABuffer* naGetStringBufferMutable(NAString* string);
 
 // Returns the char at the given index.
-NA_API NAUTF8Char naGetStringChar(NAString* string, NAInt index);
+NA_API NAUTF8Char naGetStringChar(NAString* string, size_t index);
 
 
 // The following two functions allow you to get either the basename or the

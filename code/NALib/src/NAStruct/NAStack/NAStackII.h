@@ -62,7 +62,7 @@ NA_HIDEF void* na_AllocStackArray(size_t count, size_t typeSize){
     if(!typeSize)
       naError("typeSize must be > 0");
   #endif
-  void* array = naMalloc(naSizeof(size_t) + typeSize * count);
+  void* array = naMalloc(sizeof(size_t) + typeSize * count);
   *((size_t*)array) = count;
   return array;
 }

@@ -599,8 +599,8 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
       NAInt pathCount = (NAInt)naGetStackCount(&testPathStrings);
   
       char** const argv = naMalloc((pathCount + 3) * naSizeof(const char*));
-      argv[0] = naMalloc(naGetStringBytesize(modulePath) + 1);
-      argv[0][naGetStringBytesize(modulePath)] = '\0';
+      argv[0] = naMalloc(naGetStringByteSize(modulePath) + 1);
+      argv[0][naGetStringByteSize(modulePath)] = '\0';
       naWriteBufferToData(naGetStringBufferMutable(modulePath), argv[0]);
       argv[1] = "-C"; // DO NOT TURN -C OPTION OFF!!!
       int i = 2;
@@ -610,9 +610,9 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
         NAString* pathItemString = naNewStringWithFormat("%s", *curPathItem);
         NAString* escapedPathItemString = naNewStringCEscaped(pathItemString);
         NAString* encapsulatedPathItemString = naNewStringWithFormat("\"%s\"", naGetStringUTF8Pointer(escapedPathItemString));
-        argv[i] = naMalloc(naGetStringBytesize(encapsulatedPathItemString) + 1);
+        argv[i] = naMalloc(naGetStringByteSize(encapsulatedPathItemString) + 1);
         naWriteBufferToData(naGetStringBufferMutable(encapsulatedPathItemString), argv[i]);
-        argv[i][naGetStringBytesize(encapsulatedPathItemString)] = '\0';
+        argv[i][naGetStringByteSize(encapsulatedPathItemString)] = '\0';
         naDelete(encapsulatedPathItemString);
         naDelete(escapedPathItemString);
         naDelete(pathItemString);

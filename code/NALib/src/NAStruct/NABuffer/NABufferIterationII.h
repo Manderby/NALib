@@ -38,7 +38,7 @@ NA_IDEF NABool naLocateBufferFromEnd(NABufferIterator* iter, NAInt offset){
 
 
 
-NA_HIDEF NAInt na_GetBufferIteratorPartOffset(NABufferIterator* iter){
+NA_HIDEF size_t na_GetBufferIteratorPartOffset(NABufferIterator* iter){
   return iter->partOffset;
 }
 
@@ -64,11 +64,11 @@ NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter){
       NABool found = naLocateBufferAbsolute(iter, naGetBufferLocation(iter));
       if(!found){
         naResetTreeIterator(&(iter->partIter));
-        iter->partOffset = naGetRangeiEnd(buffer->range);
+        iter->partOffset = (size_t)naGetRangeiEnd(buffer->range);
       }
     }
   }
-  return (naIsBufferAtInitial(iter) && (iter->partOffset == naGetRangeiEnd(buffer->range)));
+  return (naIsBufferAtInitial(iter) && (iter->partOffset == (size_t)naGetRangeiEnd(buffer->range)));
 }
 
 

@@ -2932,32 +2932,36 @@ NA_IDEF NAInt naGetBoxiMaxZ(NABoxi box){
 
 
 
-NA_IDEF NAInt naGetIndexWithOriginAndPosRowFirst(NAPosi origin, NAPosi offset, NAInt width){
-  return ((offset.y - origin.y)) * width + (offset.x - origin.x);
+NA_IDEF size_t naGetIndexWithOriginAndPosRowFirst(NAPosi origin, NAPosi offset, NAInt width){
+  return (size_t)((offset.y - origin.y) * width + (offset.x - origin.x));
 }
-NA_IDEF NAInt naGetIndexWithOriginAndPosColumnFirst(NAPosi origin, NAPosi offset, NAInt height){
-  return ((offset.x - origin.x)) * height + (offset.y - origin.y);
+NA_IDEF size_t naGetIndexWithOriginAndPosColumnFirst(NAPosi origin, NAPosi offset, NAInt height){
+  return (size_t)((offset.x - origin.x) * height + (offset.y - origin.y));
 }
-NA_IDEF NAInt naGetIndexWithOriginAndVertexRowFirst(NAVertexi origin, NAVertexi vertex, NAInt width, NAInt height){
-  return (((vertex.z - origin.z)) * height + (vertex.y - origin.y)) * width + (vertex.x - origin.x);
+NA_IDEF size_t naGetIndexWithOriginAndVertexRowFirst(NAVertexi origin, NAVertexi vertex, NAInt width, NAInt height){
+  return (size_t)(((vertex.z - origin.z) * height + (vertex.y - origin.y)) * width + (vertex.x - origin.x));
 }
-NA_IDEF NAInt naGetIndexWithOriginAndVertexColumnFirst(NAVertexi origin, NAVertexi vertex, NAInt depth, NAInt height){
-  return ((vertex.x - origin.x) * height + (vertex.y - origin.y)) * depth + (vertex.z - origin.z);
+NA_IDEF size_t naGetIndexWithOriginAndVertexColumnFirst(NAVertexi origin, NAVertexi vertex, NAInt depth, NAInt height){
+  return (size_t)(((vertex.x - origin.x) * height + (vertex.y - origin.y)) * depth + (vertex.z - origin.z));
 }
 
 
 
-
-NA_IDEF NAInt naGetRectiIndexCount(NARecti rect){
+NA_IDEF size_t naGetSizeiIndexCount(NASizei size){
   #ifndef NDEBUG
-    if(naIsRectiEmptySlow(rect))
-      naError("rect is empty.");
-    if(!naIsRectiValid(rect))
-      naError("rect is invalid.");
+    if(naIsSizeiEmptySlow(size))
+      naError("size is empty.");
+    if(!naIsSizeiValid(size))
+      naError("size is invalid.");
+    if(!naIsSizeiUseful(size))
+      naError("size is not useful.");
   #endif
-  return rect.size.width * rect.size.height;
+  return (size_t)(size.width * size.height);
 }
-NA_IDEF NAInt naGetRectiIndexOfPosRowFirst(NARecti rect, NAPosi pos){
+
+
+
+NA_IDEF size_t naGetRectiIndexOfPosRowFirst(NARecti rect, NAPosi pos){
   #ifndef NDEBUG
     if(naIsRectiEmptySlow(rect))
       naError("rect is empty.");
@@ -2970,7 +2974,7 @@ NA_IDEF NAInt naGetRectiIndexOfPosRowFirst(NARecti rect, NAPosi pos){
   #endif
   return naGetIndexWithOriginAndPosRowFirst(rect.pos, pos, rect.size.width);
 }
-NA_IDEF NAInt naGetRectiIndexOfPosColumnFirst(NARecti rect, NAPosi pos){
+NA_IDEF size_t naGetRectiIndexOfPosColumnFirst(NARecti rect, NAPosi pos){
   #ifndef NDEBUG
     if(naIsRectiEmptySlow(rect))
       naError("rect is empty.");
@@ -2986,16 +2990,21 @@ NA_IDEF NAInt naGetRectiIndexOfPosColumnFirst(NARecti rect, NAPosi pos){
 
 
 
-NA_IDEF NAInt naGetBoxiIndexCount(NABoxi box){
+NA_IDEF size_t naGetVolumeiIndexCount(NAVolumei volume){
   #ifndef NDEBUG
-    if(naIsBoxiEmptySlow(box))
-      naError("box is empty.");
-    if(!naIsBoxiValid(box))
-      naError("box is invalid.");
+    if(naIsVolumeiEmptySlow(volume))
+      naError("volume is empty.");
+    if(!naIsVolumeiValid(volume))
+      naError("volume is invalid.");
+    if(!naIsVolumeiUseful(volume))
+      naError("volume is not useful.");
   #endif
-  return box.volume.width * box.volume.height * box.volume.depth;
+  return (size_t)(volume.width * volume.height * volume.depth);
 }
-NA_IDEF NAInt naGetBoxiIndexOfVertexRowFirst(NABoxi box, NAVertexi vertex){
+
+
+
+NA_IDEF size_t naGetBoxiIndexOfVertexRowFirst(NABoxi box, NAVertexi vertex){
   #ifndef NDEBUG
     if(naIsBoxiEmptySlow(box))
       naError("box is empty.");
@@ -3008,7 +3017,7 @@ NA_IDEF NAInt naGetBoxiIndexOfVertexRowFirst(NABoxi box, NAVertexi vertex){
   #endif
   return naGetIndexWithOriginAndVertexRowFirst(box.vertex, vertex, box.volume.width, box.volume.height);
 }
-NA_IDEF NAInt naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex){
+NA_IDEF size_t naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex){
   #ifndef NDEBUG
     if(naIsBoxiEmptySlow(box))
       naError("box is empty.");
@@ -3097,12 +3106,12 @@ NA_IDEF NABool naIsSizeEmpty (NASize size){
   return naIsLengthValueEmpty(size.width) || naIsLengthValueEmpty(size.height);
 }
 NA_IDEF NABool naIsSizeiEmpty(NASizei size){
-  NAInt totalsize = size.width * size.height;
+  NAInt totalSize = size.width * size.height;
   #ifndef NDEBUG
-    if(naIsLengthValueEmptyi(totalsize) && !naIsLengthValueEmptyi(size.width) && !naIsLengthValueEmptyi(size.height))
+    if(naIsLengthValueEmptyi(totalSize) && !naIsLengthValueEmptyi(size.width) && !naIsLengthValueEmptyi(size.height))
       naError("You experience a rare occasion of integer overflow. Consider using naIsSizeiEmptySlow");
   #endif
-  return naIsLengthValueEmptyi(totalsize);
+  return naIsLengthValueEmptyi(totalSize);
 }
 NA_IDEF NABool naIsSizeiEmptySlow(NASizei size){
   return (naIsLengthValueEmptyi(size.width) || naIsLengthValueEmptyi(size.height));
