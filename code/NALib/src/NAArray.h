@@ -14,8 +14,7 @@
 // Following is a very general implementation of an array, storing one type
 // of data. Note that this implementation may be marginally slower than the
 // default C-like array. It has the big advantage though of knowing how many
-// elements are stored and hence being able to check for under- and overflows
-// as well as locating elements counting from the end (using negative indexes).
+// elements are stored and hence being able to check for under- and overflows.
 //
 // This array implementaiton is more for complex datastructure building. If
 // you are looking for a simple array of integers for example, better use the
@@ -89,9 +88,7 @@ NA_IAPI void naForeachArraypMutable(NAArray* array, NAMutator  mutator);
 NA_IAPI const void* naGetArrayPointerConst  (const NAArray* array);
 NA_IAPI       void* naGetArrayPointerMutable(      NAArray* array);
 
-// Returns a pointer to the element at the given index. If index is negative, it
-// is searched from the end of the array. For example -1 denotes the last
-// element.
+// Returns a pointer to the element at the given index.
 //
 // Note that if you store pointers you will get a pointer to a pointer. If you
 // want a pointer directly, just use the p variant.
@@ -99,10 +96,10 @@ NA_IAPI       void* naGetArrayPointerMutable(      NAArray* array);
 // Note that calling this function too often might not be a good idea with
 // respect to speed. Try getting a pointer using naGetArrayPointer or this
 // function and use pointer arithmetic afterwards.
-NA_IAPI const void* naGetArrayElementConst   (const NAArray* array, NAInt index);
-NA_IAPI       void* naGetArrayElementMutable (      NAArray* array, NAInt index);
-NA_IAPI const void* naGetArrayElementpConst  (const NAArray* array, NAInt index);
-NA_IAPI       void* naGetArrayElementpMutable(      NAArray* array, NAInt index);
+NA_IAPI const void* naGetArrayElementConst   (const NAArray* array, size_t index);
+NA_IAPI       void* naGetArrayElementMutable (      NAArray* array, size_t index);
+NA_IAPI const void* naGetArrayElementpConst  (const NAArray* array, size_t index);
+NA_IAPI       void* naGetArrayElementpMutable(      NAArray* array, size_t index);
 
 // Returns information about of nuber of elements in this array.
 NA_IAPI size_t naGetArrayCount    (const NAArray* array);
@@ -169,9 +166,7 @@ NA_IAPI void naClearArrayIterator(NAArrayIterator* iterator);
 // Last:          Moves iterator to last element. This function is very fast.
 // Data:          A specific content pointer is searched within the array. This
 //                function is very slow.
-// Index:         The element with the specified index is searched. If the given
-//                index is negative, it denotes the element from the end of the
-//                list, whereas -1 denotes the last element.
+// Index:         The element with the specified index is searched.
 //
 // The Data and Index variants will return NA_FALSE, if the element has not
 // been found and NA_TRUE if it has been found. If not found, the iterator will
@@ -183,17 +178,15 @@ NA_IAPI void naClearArrayIterator(NAArrayIterator* iterator);
 NA_IAPI NABool naLocateArrayFirst(NAArrayIterator* iterator);
 NA_IAPI NABool naLocateArrayLast (NAArrayIterator* iterator);
 NA_IAPI NABool naLocateArrayData (NAArrayIterator* iterator, const void* data);
-NA_IAPI NABool naLocateArrayIndex(NAArrayIterator* iterator, NAInt index);
+NA_IAPI NABool naLocateArrayIndex(NAArrayIterator* iterator, size_t index);
 
 
 // /////////////////////////////////
 // Iterating
-// Moves the iterator forward or backward the given number of positive or
-// negative steps respectively. If the step over- or underflows the array
-// and NDEBUG is undefined, a warning is emitted.
+// Moves the iterator forward by the given number of steps.
 //
-// Returns NA_FALSE when one of the two ends of the array is reached.
-NA_IAPI NABool  naIterateArray(NAArrayIterator* iterator, NAInt step);
+// Returns NA_FALSE when the end of the array is reached.
+NA_IAPI NABool  naIterateArray(NAArrayIterator* iterator, size_t step);
 
 // /////////////////////////////////
 // Returns the content of the previous, current or next element without moving
@@ -212,11 +205,9 @@ NA_IAPI       void* naGetArrayNextMutable(      NAArrayIterator* iterator);
 
 // /////////////////////////////////////////////
 // Getting position informations around the current position.
-// Note that index can be negative, denoting the number of elements from the
-// end of the array, whereas -1 denotes the last element.
 NA_IAPI NABool naIsArrayAtFirst  (const NAArrayIterator* iterator);
 NA_IAPI NABool naIsArrayAtLast   (const NAArrayIterator* iterator);
-NA_IAPI NABool naIsArrayAtIndex  (const NAArrayIterator* iterator, NAInt index);
+NA_IAPI NABool naIsArrayAtIndex  (const NAArrayIterator* iterator, size_t index);
 NA_IAPI NABool naIsArrayAtInitial(const NAArrayIterator* iterator);
 
 NA_IAPI size_t naGetArrayCurIndex(const NAArrayIterator* iterator);
