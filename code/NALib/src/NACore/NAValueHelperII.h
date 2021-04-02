@@ -196,11 +196,6 @@ NA_IDEF NAInt naMakeMaxWithMinAndLengthi(NAInt min, NAInt length){
   return result;
 }
 NA_IDEF size_t naMakeMaxWithMinAndLengths(size_t min, size_t length){
-  #ifndef NDEBUG
-    if(length < 0){
-      naError("length is negative");
-    }
-  #endif
   size_t result = naMakeMaxWithEnds(min + length);
   #ifndef NDEBUG
     if(result < min)
@@ -255,10 +250,6 @@ NA_IDEF size_t naMakeLengthWithStartAndEnds(size_t start, size_t end){
       naError("start is greater than end");
   #endif
   size_t result = end - start;
-  #ifndef NDEBUG
-    if(result > end)
-      naError("Integer overflow");
-  #endif
   return result;
 }
 
@@ -280,16 +271,12 @@ NA_IDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max){
 }
 NA_IDEF size_t naMakeLengthWithMinAndMaxs(size_t min, size_t max){
   #ifndef NDEBUG
-    if(max == NA_MAX_i32)
+    if(max == NA_MAX_s)
       naError("max being equal to the integer maximum will lead to an overflow");
     if(min > max + 1)
       naError("min is greater than max + 1");
   #endif
   size_t result = naMakeEndWithMaxs(max) - min;
-  #ifndef NDEBUG
-    if(result > max)
-      naError("Integer overflow");
-  #endif
   return result;
 }
 

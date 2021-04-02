@@ -370,9 +370,11 @@ void printNANumerics(){
   #if NA_SIZE_T_BITS == NA_TYPE32_BITS
     naPrintMacroix32(NA_ZERO_s);
     naPrintMacroux32(NA_ONE_s);
+    naPrintMacroux32(NA_MAX_s);
   #else
     naPrintMacroix64(NA_ZERO_s);
     naPrintMacroux64(NA_ONE_s);
+    naPrintMacroux64(NA_MAX_s);
   #endif
 
   printf(NA_NL);
