@@ -20,20 +20,14 @@
 
 
 // Tests a bit mask for the specified flag and returns NA_TRUE if it is set.
-NA_IAPI NABool naGetFlag(int flags, int flag);
-NA_IAPI NABool naGetFlagi(NAInt flags, NAInt flag);
-NA_IAPI NABool naGetFlagu(NAUInt flags, NAUInt flag);
+NA_IAPI NABool naGetFlagu32(uint32 flags, uint32 flag);
 
 // Sets the given flag in the bit mask according to the boolean parameter set.
-NA_IAPI void naSetFlag(int* flags, int flag, NABool set);
-NA_IAPI void naSetFlagi(NAInt* flags, NAInt flag, NABool set);
-NA_IAPI void naSetFlagu(NAUInt* flags, NAUInt flag, NABool set);
+NA_IAPI void naSetFlagu32(uint32* flags, uint32 flag, NABool set);
 
 // Toggles the specified flag in the bit mask and returns the resulting boolean
 // value of that flag.
-NA_IAPI NABool naToggleFlag(int* flags, int flag);
-NA_IAPI NABool naToggleFlagi(NAInt* flags, NAInt flag);
-NA_IAPI NABool naToggleFlagu(NAUInt* flags, NAUInt flag);
+NA_IAPI NABool naToggleFlagu32(uint32* flags, uint32 flag);
 
 
 

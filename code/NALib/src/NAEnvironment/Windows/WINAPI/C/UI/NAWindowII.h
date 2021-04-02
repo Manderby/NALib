@@ -54,10 +54,10 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
   case WM_CLOSE:
     window = naGetUIElementWindow(uiElement);
-    naSetFlagi(&(window->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
+    naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES);
-    shouldClose = !naGetFlagi(window->flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
-    naSetFlagi(&(window->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
+    shouldClose = !naGetFlagu32(window->flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
+    naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
     if(shouldClose){naCloseWindow(window);}
     info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
@@ -428,7 +428,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
       //ChangeDisplaySettings(NULL, 0);
     }
 
-    naSetFlagi(&(window->flags), NA_CORE_WINDOW_FLAG_FULLSCREEN, fullScreen);
+    naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_FULLSCREEN, fullScreen);
   }
 }
 

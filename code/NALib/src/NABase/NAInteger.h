@@ -103,7 +103,7 @@ typedef int32_t               int32;
 
 
 
-// NAInt and NAUInt
+// NAInt
 //
 // The NAInt type is the default integer used in NALib. Usually, that type
 // corresponds to the byteSize which is needed for storing an address. This
@@ -118,10 +118,6 @@ typedef int32_t               int32;
 // NAInt will be used as the default integer type in NALib. Many fundamental
 // functions will return NAInt or expect it as an argument. Note that the
 // NAInt type is signed!
-//
-// There also exists NAUInt, the unsigned variant. Some functions explicitely
-// require or return an unsigned integer. This helps detecting errors as a
-// compiler can emit warnings on sign differences.
 //
 // The signed variant NAInt is also used for enums as well as by memory and
 // array functions. This means that in 32-Bit systems, only about 2 billion
@@ -161,7 +157,6 @@ typedef int32_t               int32;
     #warn "Primary integer type NAInt is emulated."
   #endif
   typedef int64 NAInt;
-  typedef uint64 NAUInt;
   #define NA_MAX_i NA_MAX_i64
   #define NA_MIN_i NA_MIN_i64
   #define NA_MAX_u NA_MAX_u64
@@ -169,7 +164,6 @@ typedef int32_t               int32;
   #define NA_ONE   NA_ONE_i64
 #elif NA_TYPE_NAINT_BITS == NA_TYPE32_BITS
   typedef int32 NAInt;
-  typedef uint32 NAUInt;
   #define NA_MAX_i NA_MAX_i32
   #define NA_MIN_i NA_MIN_i32
   #define NA_MAX_u NA_MAX_u32
@@ -177,7 +171,6 @@ typedef int32_t               int32;
   #define NA_ONE   NA_ONE_i32
 #elif NA_TYPE_NAINT_BITS == NA_TYPE16_BITS
   typedef int16 NAInt;
-  typedef uint16 NAUInt;
   #define NA_MAX_i NA_MAX_i16
   #define NA_MIN_i NA_MIN_i16
   #define NA_MAX_u NA_MAX_u16

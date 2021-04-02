@@ -72,7 +72,7 @@ struct NAWindow{
   NA_UIElement uiElement;
   NAInt        storageTag;
   NASpace*     contentSpace;
-  NAInt        flags;
+  uint32       flags;
   NARect       windowedFrame;
 };
 

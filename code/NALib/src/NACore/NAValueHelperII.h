@@ -5,16 +5,10 @@
 
 
 
-NA_IDEF NABool naGetFlag(int flags, int flag){
+NA_IDEF NABool naGetFlagu32(uint32 flags, uint32 flag){
   return ((flags & flag) == flag);
 }
-NA_IDEF NABool naGetFlagi(NAInt flags, NAInt flag){
-  return ((flags & flag) == flag);
-}
-NA_IDEF NABool naGetFlagu(NAUInt flags, NAUInt flag){
-  return ((flags & flag) == flag);
-}
-NA_IDEF void naSetFlag(int* flags, int flag, NABool set){
+NA_IDEF void naSetFlagu32(uint32* flags, uint32 flag, NABool set){
   #ifndef NDEBUG
     if(flags == NA_NULL)
       naCrash("flags is Nullpointer");
@@ -23,47 +17,13 @@ NA_IDEF void naSetFlag(int* flags, int flag, NABool set){
   #endif
   *flags = (*flags & ~flag) | (set * flag);
 }
-NA_IDEF void naSetFlagi(NAInt* flags, NAInt flag, NABool set){
-  #ifndef NDEBUG
-    if(flags == NA_NULL)
-      naCrash("flags is Nullpointer");
-    if(set != NA_FALSE && set != NA_TRUE)
-      naError("Boolean value invalid");
-  #endif
-  *flags = (*flags & ~flag) | (set * flag);
-}
-NA_IDEF void naSetFlagu(NAUInt* flags, NAUInt flag, NABool set){
-  #ifndef NDEBUG
-    if(flags == NA_NULL)
-      naCrash("flags is Nullpointer");
-    if(set != NA_FALSE && set != NA_TRUE)
-      naError("Boolean value invalid");
-  #endif
-  *flags = (*flags & ~flag) | ((NAUInt)set * flag);
-}
-NA_IDEF NABool naToggleFlag(int* flags, int flag){
+NA_IDEF NABool naToggleFlagu32(uint32* flags, uint32 flag){
   #ifndef NDEBUG
     if(flags == NA_NULL)
       naCrash("flags is Nullpointer");
   #endif
   (*flags) ^= flag;
-  return naGetFlag(*flags, flag);
-}
-NA_IDEF NABool naToggleFlagi(NAInt* flags, NAInt flag){
-  #ifndef NDEBUG
-    if(flags == NA_NULL)
-      naCrash("flags is Nullpointer");
-  #endif
-  (*flags) ^= flag;
-  return naGetFlagi(*flags, flag);
-}
-NA_IDEF NABool naToggleFlagu(NAUInt* flags, NAUInt flag){
-  #ifndef NDEBUG
-    if(flags == NA_NULL)
-      naCrash("flags is Nullpointer");
-  #endif
-  (*flags) ^= flag;
-  return naGetFlagu(*flags, flag);
+  return naGetFlagu32(*flags, flag);
 }
 
 

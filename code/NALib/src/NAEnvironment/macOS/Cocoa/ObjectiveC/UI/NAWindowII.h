@@ -57,10 +57,10 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 - (BOOL)windowShouldClose:(id)sender{
   NABool shouldClose;
   NA_UNUSED(sender);
-  naSetFlagi(&(cocoaWindow->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
+  naSetFlagu32(&(cocoaWindow->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
   na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_CLOSES);
-  shouldClose = !naGetFlagi(cocoaWindow->window.flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
-  naSetFlagi(&(cocoaWindow->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
+  shouldClose = !naGetFlagu32(cocoaWindow->window.flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
+  naSetFlagu32(&(cocoaWindow->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
   return (BOOL)shouldClose;
 }
 
@@ -331,7 +331,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
       [nativePtr setFrame:naMakeNSRectWithRect(window->windowedFrame) display:YES];
       [nativePtr setLevel:NSNormalWindowLevel];
     }
-    naSetFlagi(&(window->flags), NA_CORE_WINDOW_FLAG_FULLSCREEN, fullScreen);
+    naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_FULLSCREEN, fullScreen);
     // Setting the first responder again is necessary as otherwise the first
     // responder is lost.
     [nativePtr makeFirstResponder:[nativePtr contentView]];

@@ -72,7 +72,7 @@ NA_IDEF NATreeIterator naMakeTreeModifier(NATree* tree){
 
 NA_HIDEF void na_SetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newitem){
   #ifndef NDEBUG
-    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
     if(!naIsTreeAtInitial(iter)){
       if(!iter->item)
@@ -92,7 +92,7 @@ NA_HIDEF void na_SetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newite
 
 NA_IDEF void naResetTreeIterator(NATreeIterator* iter){
   #ifndef NDEBUG
-    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
   #endif
   na_SetTreeIteratorCurItem(iter, NA_NULL);
@@ -116,14 +116,14 @@ NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
   #ifndef NDEBUG
     NATree* mutabletree = na_GetTreeIteratorTreeMutable(iter);
     mutabletree->iterCount--;
-    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has already been cleared.");
 
     // Yes, we only execute the following line in debug code.
     // Release should not do anything at all.
     na_SetTreeIteratorCurItem(iter, NA_NULL);
 
-    naSetFlagi(&(iter->flags), NA_TREE_ITERATOR_CLEARED, NA_TRUE);
+    naSetFlagu32(&(iter->flags), NA_TREE_ITERATOR_CLEARED, NA_TRUE);
   #else
     NA_UNUSED(iter);
   #endif
@@ -172,7 +172,7 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
   NATreeItem* item;
   NABool continueBubbling;
   #ifndef NDEBUG
-    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
     if(naIsTreeAtInitial(iter))
       naError("This iterator is not at a leaf.");
@@ -193,7 +193,7 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
 NA_IDEF const void* naGetTreeCurLeafKey(NATreeIterator* iter){
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
-    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
     if(naIsTreeAtInitial(iter))
       naError("This iterator is at initial position.");
@@ -208,7 +208,7 @@ NA_IDEF const void* naGetTreeCurLeafKey(NATreeIterator* iter){
 NA_IDEF const void* naGetTreeCurNodeKey(NATreeIterator* iter){
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
-    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
     if(naIsTreeAtInitial(iter))
       naError("This iterator is at initial position.");
@@ -223,7 +223,7 @@ NA_IDEF const void* naGetTreeCurNodeKey(NATreeIterator* iter){
 NA_IDEF const void* naGetTreeCurLeafConst(NATreeIterator* iter){
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
-    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
     if(naIsTreeAtInitial(iter))
       naError("This iterator is at initial position.");
@@ -238,7 +238,7 @@ NA_IDEF const void* naGetTreeCurLeafConst(NATreeIterator* iter){
 NA_IDEF const void* naGetTreeCurNodeConst(NATreeIterator* iter){
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
-    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
     if(naIsTreeAtInitial(iter))
       naError("This iterator is at initial position.");
@@ -253,7 +253,7 @@ NA_IDEF const void* naGetTreeCurNodeConst(NATreeIterator* iter){
 NA_IDEF void* naGetTreeCurLeafMutable(NATreeIterator* iter){
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
-  if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+  if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
     naError("This iterator has been cleared. You need to make it anew.");
   if(naIsTreeAtInitial(iter))
     naError("This iterator is at initial position.");
@@ -268,7 +268,7 @@ NA_IDEF void* naGetTreeCurLeafMutable(NATreeIterator* iter){
 NA_IDEF void* naGetTreeCurNodeMutable(NATreeIterator* iter){
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
-  if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+  if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
     naError("This iterator has been cleared. You need to make it anew.");
   if(naIsTreeAtInitial(iter))
     naError("This iterator is at initial position.");
@@ -356,7 +356,7 @@ NA_HIDEF NABool na_AddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLea
   #ifndef NDEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees with keys");
-    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
   #endif
   if(!iter->item && tree->root){
@@ -403,7 +403,7 @@ NA_IDEF void naRemoveTreeCurLeaf(NATreeIterator* iter){
   NATreeItem* removeItem;
 
   #ifndef NDEBUG
-    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
     if(naIsTreeAtInitial(iter))
       naError("This iterator is at initial position.");

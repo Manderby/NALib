@@ -119,14 +119,14 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
       while(!retValue && naIterateList(&iter)){
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
         if(keyReaction->shortcut.keyCode == na_App->keyboardStatus.keyCode){
-          NABool needsShift   = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool needsControl = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool needsOption  = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool needsCommand = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
-          NABool hasShift   = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool hasControl = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool hasOption  = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool hasCommand = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_COMMAND);
+          NABool needsShift   = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool needsControl = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool needsOption  = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool needsCommand = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
+          NABool hasShift   = naGetFlagu32(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool hasControl = naGetFlagu32(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool hasOption  = naGetFlagu32(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool hasCommand = naGetFlagu32(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_COMMAND);
           if(needsShift   == hasShift
           && needsControl == hasControl
           && needsOption  == hasOption

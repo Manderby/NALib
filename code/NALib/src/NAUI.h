@@ -491,7 +491,7 @@ typedef enum{
 
 typedef struct NAKeyboardStatus NAKeyboardStatus;
 struct NAKeyboardStatus{
-  NAInt modifiers;
+  uint32 modifiers;
   NAUIKeyCode keyCode;
 };
 

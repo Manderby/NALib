@@ -145,7 +145,7 @@ struct NATreeItem{
 
 struct NATreeNode{
   NATreeItem item;
-  NAInt flags;
+  uint32 flags;
 };
 
 struct NATreeLeaf{
@@ -156,7 +156,7 @@ struct NATreeIterator{
   NAPtr tree;
   NATreeItem* item;
   #ifndef NDEBUG
-    NAInt flags;
+    uint32 flags;
   #endif
 };
 

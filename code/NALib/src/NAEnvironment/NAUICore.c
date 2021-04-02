@@ -228,18 +228,18 @@ NA_HDEF void na_ClearWindow(NAWindow* window){
 
 NA_DEF void naPreventWindowFromClosing(NAWindow* window, NABool prevent){
   #ifndef NDEBUG
-    if(!naGetFlagi(window->flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE))
+    if(!naGetFlagu32(window->flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE))
       naError("This function is only allowed during a \"CLOSES\" event");
   #endif
-  naSetFlagi(&(window->flags), NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, prevent);
+  naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, prevent);
 }
 
 NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
-  return naGetFlagi(window->flags, NA_CORE_WINDOW_FLAG_FULLSCREEN);
+  return naGetFlagu32(window->flags, NA_CORE_WINDOW_FLAG_FULLSCREEN);
 }
 
 NA_DEF NABool naIsWindowResizeable(NAWindow* window){
-  return naGetFlagi(window->flags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
+  return naGetFlagu32(window->flags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
 }
 
 NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
