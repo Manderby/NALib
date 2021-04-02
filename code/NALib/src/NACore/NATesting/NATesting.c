@@ -581,7 +581,7 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
     
     if(!childPid){
       NAStack testPathStrings;
-      naInitStack(&testPathStrings, sizeof(const char*), 2);
+      naInitStack(&testPathStrings, sizeof(const char*), 0, 0);
 
       const char** thisPathItem = (const char**)naPushStack(&testPathStrings);
       (*thisPathItem) = expr;

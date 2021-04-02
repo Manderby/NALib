@@ -650,6 +650,10 @@ void testNAStack(){
 }
 
 
+NA_HIDEF void na_pushAndPopManyItemsOnStack(NAStack* stack){
+  for(size_t i = 0; i < NA_BENCHMARK_STACK_SIZE; i++){naPushStack(stack);}
+  for(size_t i = 0; i < NA_BENCHMARK_STACK_SIZE; i++){naPopStack(stack);}
+}
 
 void benchmarkNAStack(){
   NAStack stack;
@@ -682,17 +686,17 @@ void benchmarkNAStack(){
 
   // Push / Pop
   naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
-  naBenchmark(naPushStack(&stack); naPopStack(&stack););
+  naBenchmark(naPushStack(&stack); naPopStack(&stack));
   naClearStack(&stack);
 
   // Many Push / Pop WITH shrinking
   naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
-  naBenchmark(for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);} for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPopStack(&stack);});
+  naBenchmark(na_pushAndPopManyItemsOnStack(&stack));
   naClearStack(&stack);
 
   // Many Push / Pop with NO shrinking
   naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI | NA_STACK_NO_SHRINKING);
-  naBenchmark(for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);} for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPopStack(&stack);});
+  naBenchmark(na_pushAndPopManyItemsOnStack(&stack));
   naClearStack(&stack);
 
   // Top
@@ -722,12 +726,12 @@ void benchmarkNAStack(){
 
   // Shrink fibonacci stack mildly with many items
   naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
-  naBenchmark(for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);} for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPopStack(&stack);} naShrinkStackIfNecessary(&stack, NA_FALSE));
+  naBenchmark(na_pushAndPopManyItemsOnStack(&stack); naShrinkStackIfNecessary(&stack, NA_FALSE));
   naClearStack(&stack);
 
   // Shrink fibonacci stack aggressively with many items
   naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
-  naBenchmark(for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);} for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPopStack(&stack);} naShrinkStackIfNecessary(&stack, NA_TRUE));
+  naBenchmark(na_pushAndPopManyItemsOnStack(&stack); naShrinkStackIfNecessary(&stack, NA_TRUE));
   naClearStack(&stack);
 
   // Dump linear stack
@@ -748,8 +752,10 @@ void benchmarkNAStack(){
 
   // Iterater make and clear
   naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
-  naBenchmark(NAStackIterator iter = naMakeStackAccessor(&stack); naClearStackIterator(&iter));
-  naBenchmark(NAStackIterator iter = naMakeStackMutator(&stack); naClearStackIterator(&iter));
+  NAStackIterator iter1;
+  NAStackIterator iter2;
+  naBenchmark((iter1 = naMakeStackAccessor(&stack)); naClearStackIterator(&iter1));
+  naBenchmark((iter2 = naMakeStackMutator(&stack)); naClearStackIterator(&iter2));
   naClearStack(&stack);
 
   // Iterate linear

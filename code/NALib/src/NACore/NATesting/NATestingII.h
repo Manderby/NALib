@@ -131,7 +131,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
     for(int testRun = 0; testRun < testSize; testRun++){\
       /*na_StoreBenchmarkResult((char)(expr));*/\
       {\
-        expr; (void)0;\
+        (void)expr; (void)0;\
       }\
     }\
     endT = na_BenchmarkTime();\

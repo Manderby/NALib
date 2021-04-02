@@ -41,23 +41,23 @@ int main(int argc, const char** argv){
   #if NA_PRINTOUT_ENABLED == 1
     //printNABase();
     //printNACore();
-    //printNAStruct();
+    printNAStruct();
   #endif
 
   // Start testing
   NABool testStartSuccessful = naStartTesting("NALib", .01, NA_FALSE, argc, argv);
   if(testStartSuccessful)
   {
-    //naTestGroupFunction(NABase);
-    //naTestGroupFunction(NACore);
-    //naTestGroupFunction(NAStruct);
+    naTestGroupFunction(NABase);
+    naTestGroupFunction(NACore);
+    naTestGroupFunction(NAStruct);
 
     //printf(NA_NL);
     //naPrintUntested();
 
-    printf(NA_NL "Benchmarking:" NA_NL);
+    //printf(NA_NL "Benchmarking:" NA_NL);
     //benchmarkNABase();
-    benchmarkNAStruct();
+    //benchmarkNAStruct();
     
     printf(NA_NL);
   }else{

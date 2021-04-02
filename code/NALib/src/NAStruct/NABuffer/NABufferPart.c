@@ -109,7 +109,7 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start,
       naError("Iterator is at initial position.");
     if(!na_IsBufferPartSparse(part))
       naError("part is not sparse");
-    if(end <= start == 0)
+    if(end <= start)
       naError("start and end make no sense");
     if(start > part->byteSize)
       naError("start is too big");
