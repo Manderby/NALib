@@ -205,7 +205,7 @@ NA_HIDEF void na_InitTestingData(NATestData* testData, const char* name, NATestD
   testData->name = name;
   testData->lineNum = lineNum;
   testData->success = NA_TRUE;
-  naInitStack(&(testData->childs), naSizeof(NATestData), 0, 0);
+  naInitStack(&(testData->childs), sizeof(NATestData), 0, 0);
   testData->childSuccessCount = 0;
   testData->leafSuccessCount = 0;
   testData->totalLeafCount = 0;
@@ -308,7 +308,7 @@ NA_DEF NABool naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark
     na_Testing->in[na_Testing->curInIndex] = ((uint32)rand() << 20) ^ ((uint32)rand() << 10) ^ ((uint32)rand());
   }
 
-  naInitStack(&(na_Testing->untestedStrings), naSizeof(NAString*), 0, 0);
+  naInitStack(&(na_Testing->untestedStrings), sizeof(NAString*), 0, 0);
   naInitList(&(na_Testing->testRestriction));
 
   if(argc > 1){
@@ -598,7 +598,7 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
       }
       NAInt pathCount = (NAInt)naGetStackCount(&testPathStrings);
   
-      char** const argv = naMalloc((pathCount + 3) * naSizeof(const char*));
+      char** const argv = naMalloc((pathCount + 3) * sizeof(const char*));
       argv[0] = naMalloc(naGetStringByteSize(modulePath) + 1);
       argv[0][naGetStringByteSize(modulePath)] = '\0';
       naWriteBufferToData(naGetStringBufferMutable(modulePath), argv[0]);

@@ -50,10 +50,6 @@ NA_IAPI size_t naGetSystemMemoryPagesizeMask(void);
 #define NA_INVALID_MEMORY_INDEX     NA_MIN_i
 
 
-// As all memory functions expect an NAInt, we make it easier to write code
-// with a custom sizeof macro
-#define naSizeof(type)
-
 // Usually, aligned memory can be created in unix like systems using several
 // methods. Unfortunately, none of them did work reliably on the Mac OS X
 // version Snow Leopard back around the year 2015. It looks though as since

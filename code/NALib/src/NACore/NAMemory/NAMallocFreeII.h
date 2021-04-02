@@ -37,14 +37,9 @@ NA_IDEF void* naMalloc(size_t byteSize){
 }
 
 
-// We "prototyped" the naSizeof macro in the .h file, therefore the undef.
-#undef naSizeof
-#define naSizeof(type) ((NAInt)sizeof(type))
-
-
 // We "prototyped" the naAlloc macro in the .h file, therefore the undef.
 #undef naAlloc
-#define naAlloc(type) (type*)naMalloc(naSizeof(type))
+#define naAlloc(type) (type*)naMalloc(sizeof(type))
 
 
 

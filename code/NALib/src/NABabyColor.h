@@ -41,7 +41,7 @@
 
 #define NA_BABY_COLOR_CHANNEL_COUNT 4
 #define NA_BABY_COLOR_BYTES_PER_COMPONENT \
-  (NA_BABY_COLOR_CHANNEL_COUNT * naSizeof(float))
+  (NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float))
 typedef float NABabyColor[NA_BABY_COLOR_CHANNEL_COUNT];
 
 typedef enum{

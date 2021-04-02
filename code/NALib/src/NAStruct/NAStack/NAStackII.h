@@ -98,7 +98,7 @@ NA_HIDEF const NAByte* na_GetStackArrayFirstConst(const NAListIterator* iter){
     if(naIsListAtInitial(iter))
       naCrash("iterator is at initial position");
   #endif
-  return (const NAByte*)naGetListCurConst(iter) + naSizeof(size_t);
+  return (const NAByte*)naGetListCurConst(iter) + sizeof(size_t);
 }
 
 
@@ -110,7 +110,7 @@ NA_HIDEF NAByte* na_GetStackArrayFirstMutable(NAListIterator* iter){
     if(naIsListAtInitial(iter))
       naCrash("iterator is at initial position");
   #endif
-  return (NAByte*)naGetListCurMutable(iter) + naSizeof(size_t);
+  return (NAByte*)naGetListCurMutable(iter) + sizeof(size_t);
 }
 
 

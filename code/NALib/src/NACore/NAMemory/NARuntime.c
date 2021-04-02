@@ -173,7 +173,7 @@ NA_HIDEF void na_RegisterTypeInfo(NA_TypeInfo* typeInfo){
 
   // We copy all previous infos to the newly allocated memory block.
   if(na_Runtime->typeInfos){
-    naCopyn(newinfos, na_Runtime->typeInfos, naSizeof(NA_TypeInfo*) * na_Runtime->typeInfoCount);
+    naCopyn(newinfos, na_Runtime->typeInfos, sizeof(NA_TypeInfo*) * na_Runtime->typeInfoCount);
   }
 
   // We add the new typeInfo as a pointer to the na_Runtime infos.
@@ -191,7 +191,7 @@ NA_HIDEF void na_UnregisterTypeInfo(NA_TypeInfo* typeInfo){
   NA_TypeInfo** newinfos = NA_NULL;
   if(na_Runtime->typeInfoCount > 1){
     NAInt oldindex = 0;
-    newinfos = naMalloc(naSizeof(NA_TypeInfo*) * (na_Runtime->typeInfoCount - NA_ONE));
+    newinfos = naMalloc(sizeof(NA_TypeInfo*) * (na_Runtime->typeInfoCount - NA_ONE_s));
 
     // We shrink the info array by one by omitting the one entry which equals
     // the given parameter. Again, just like na_RegisterTypeInfo, this is not

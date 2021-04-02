@@ -76,7 +76,7 @@ NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config,
       naError("This configuration is not for a quadtree and not for an octtree");
   #endif
   if(config->configdata){naFree(config->configdata);}
-  configdata = naMalloc(naSizeof(NAInt));
+  configdata = naMalloc(sizeof(NAInt));
   *configdata = baseLeafExponent;
   config->configdata = configdata;
 }

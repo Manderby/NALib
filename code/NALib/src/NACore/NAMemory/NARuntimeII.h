@@ -30,7 +30,7 @@ struct NATypeInfo{
   #define NA_RUNTIME_TYPE(typeName, destructor, refCounting)\
     NATypeInfo na_ ## typeName ## TypeInfo =\
     {NA_NULL,\
-    naSizeof(typeName),\
+    sizeof(typeName),\
     (NAMutator)destructor,\
     refCounting,\
     #typeName}
@@ -38,7 +38,7 @@ struct NATypeInfo{
   #define NA_RUNTIME_TYPE(typeName, destructor, refCounting)\
     NATypeInfo na_ ## typeName ## TypeInfo =\
     {NA_NULL,\
-    naSizeof(typeName),\
+    sizeof(typeName),\
     (NAMutator)destructor,\
     refCounting}
 #endif

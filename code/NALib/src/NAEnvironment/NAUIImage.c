@@ -102,11 +102,11 @@ NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, NABabyImage* alt, NAUIIm
   
   uiImage->size1x = naGetBabyImageSize(main);
   uiImage->tintMode = tintMode;
-  naZeron(uiImage->babyImages, NA_UIIMAGE_SUBIMAGES_COUNT * naSizeof(NABabyImage*));
+  naZeron(uiImage->babyImages, NA_UIIMAGE_SUBIMAGES_COUNT * sizeof(NABabyImage*));
   #if NA_OS == NA_OS_WINDOWS
-    naZeron(uiImage->nativeImages, NA_UIIMAGE_SUBIMAGES_COUNT * naSizeof(HBITMAP));
+    naZeron(uiImage->nativeImages, NA_UIIMAGE_SUBIMAGES_COUNT * sizeof(HBITMAP));
   #else
-    naZeron(uiImage->nativeImages, NA_UIIMAGE_SUBIMAGES_COUNT * naSizeof(void*));
+    naZeron(uiImage->nativeImages, NA_UIIMAGE_SUBIMAGES_COUNT * sizeof(void*));
   #endif
   
   switch(resolution){
