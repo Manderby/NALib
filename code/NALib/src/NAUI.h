@@ -333,7 +333,7 @@ NA_API NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF
 // When handling keyboard input, NALib captures the keys pressed and provides
 // you commands for KeyDown and KeyUp. The key pressed is stored in the
 // following type:
-typedef NAUInt NAUIKeyCode;
+typedef size_t NAUIKeyCode;
 
 // A NAUIKeyCode can have the following values. These values correspond to the
 // "US extended" keyboard layout. They represent the physical keys and not the

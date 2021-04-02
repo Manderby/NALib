@@ -251,7 +251,7 @@ NA_HIDEF void na_EnhancePool(NA_TypeInfo* typeInfo){
 
   // We create a new part with the size of a full part but we type it as
   // NA_PoolPart to access the first bytes.
-  part = (NA_PoolPart*)naMallocAligned((NAUInt)na_Runtime->partSize, (NAUInt)na_Runtime->partSize);
+  part = (NA_PoolPart*)naMallocAligned(na_Runtime->partSize, na_Runtime->partSize);
   #ifndef NDEBUG
     // Do you think the following check is not necessary? You'd be surprised
     // how many systems do not align memory correctly!
@@ -681,10 +681,9 @@ NA_DEF void naCollectGarbage(){
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif
   while(na_Runtime->mallocGarbage){
-    NAUInt i;
     NAMallocGarbage* nextgarbage;
     void** ptr = na_Runtime->mallocGarbage->pointers;
-    for(i = 0; i < na_Runtime->mallocGarbage->cur; i++){
+    for(size_t i = 0; i < na_Runtime->mallocGarbage->cur; i++){
       naFree(*ptr);
       ptr++;
     }

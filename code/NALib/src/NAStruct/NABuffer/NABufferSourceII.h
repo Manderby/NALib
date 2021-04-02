@@ -16,7 +16,7 @@ struct NABufferSource{
   NABuffer*         buffer;         // The underlying buffer, if any.
   void*             data;           // data sent to filler and destructor.
   NAMutator         dataDestructor; // Data destructor.
-  NAUInt            flags;          // Flags for the source
+  uint32            flags;          // Flags for the source
   NARangei          limit;          // Source limit (used if flag set)
 };
 NA_EXTERN_RUNTIME_TYPE(NABufferSource);

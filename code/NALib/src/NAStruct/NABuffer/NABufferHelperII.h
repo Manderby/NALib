@@ -69,7 +69,7 @@ NA_IDEF void naSetBufferEndianness(NABuffer* buffer, NAInt endianness){
 
 
 
-NA_IDEF NAUInt naGetBufferLineNumber(NABufferIterator* iter){
+NA_IDEF size_t naGetBufferLineNumber(NABufferIterator* iter){
   return iter->lineNum;
 }
 

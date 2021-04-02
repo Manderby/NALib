@@ -19,7 +19,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 @interface NACocoaNativeWindow : NSWindow <NSWindowDelegate>{
   NACocoaWindow* cocoaWindow;
-  NAUInt trackingCount;
+  size_t trackingCount;
   NSTrackingArea* trackingArea;
 }
 @end
@@ -50,7 +50,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
   return trackingArea;
 }
 
-- (NAUInt) trackingCount{
+- (size_t) trackingCount{
   return trackingCount;
 }
 

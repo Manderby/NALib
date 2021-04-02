@@ -19,7 +19,7 @@ struct NAListElement{
   NAListElement* prev;  // A pointer to the previous element
   #ifndef NDEBUG
     NAList* list;       // A list pointer just for debugging.
-    NAUInt iterCount;   // debugging iterator count.
+    size_t iterCount;   // debugging iterator count.
   #endif
 };
 NA_EXTERN_RUNTIME_TYPE(NAListElement);
@@ -30,7 +30,7 @@ struct NAList{
                           // Stores the first and last element of the list
                           // as next and prev pointer. The content is NA_NULL.
   #ifndef NDEBUG
-    NAUInt iterCount;     // debugging iterator count
+    size_t iterCount;     // debugging iterator count
   #endif
 };
 

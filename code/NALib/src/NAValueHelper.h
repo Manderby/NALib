@@ -99,34 +99,34 @@ NA_IAPI NAInt  naMakeIntWithIntegerDouble   (double x);
 NA_IAPI NABool naIsOffsetValueValid  (double a);
 NA_IAPI NABool naIsOffsetValueValidf (float  a);
 NA_IAPI NABool naIsOffsetValueValidi (NAInt  a);
-NA_IAPI NABool naIsOffsetValueValidu (NAUInt a);
+NA_IAPI NABool naIsOffsetValueValids (size_t a);
 NA_IAPI NABool naIsLengthValueValid  (double a);
 NA_IAPI NABool naIsLengthValueValidf (float  a);
 NA_IAPI NABool naIsLengthValueValidi (NAInt  a);
-NA_IAPI NABool naIsLengthValueValidu (NAUInt a);
+NA_IAPI NABool naIsLengthValueValids (size_t a);
 
 // EMPTY means: Precisely Zero.
 NA_IAPI NABool naIsLengthValueEmpty  (double a);
 NA_IAPI NABool naIsLengthValueEmptyf (float  a);
 NA_IAPI NABool naIsLengthValueEmptyi (NAInt  a);
-NA_IAPI NABool naIsLengthValueEmptyu (NAUInt a);
+NA_IAPI NABool naIsLengthValueEmptys (size_t a);
 
 // NEGATIVE means: Smaller than Zero.
 NA_IAPI NABool naIsLengthValueNegative  (double a);
 NA_IAPI NABool naIsLengthValueNegativef (float  a);
 NA_IAPI NABool naIsLengthValueNegativei (NAInt  a);
-NA_IAPI NABool naIsLengthValueNegativeu (NAUInt a);
+NA_IAPI NABool naIsLengthValueNegatives (size_t a);
 
 // USEFUL means: Positions must be valid. Lengths must be valid, not empty and
 // not negative.
 NA_IAPI NABool naIsOffsetValueUseful  (double a);
 NA_IAPI NABool naIsOffsetValueUsefulf (float  a);
 NA_IAPI NABool naIsOffsetValueUsefuli (NAInt  a);
-NA_IAPI NABool naIsOffsetValueUsefulu (NAUInt a);
+NA_IAPI NABool naIsOffsetValueUsefuls (size_t a);
 NA_IAPI NABool naIsLengthValueUseful  (double a);
 NA_IAPI NABool naIsLengthValueUsefulf (float  a);
 NA_IAPI NABool naIsLengthValueUsefuli (NAInt  a);
-NA_IAPI NABool naIsLengthValueUsefulu (NAUInt a);
+NA_IAPI NABool naIsLengthValueUsefuls (size_t a);
 
 
 

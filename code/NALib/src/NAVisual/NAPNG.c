@@ -47,7 +47,7 @@ struct NAPNG{
 
   NAByte* pixeldata;  // stored from top to bottom
   NABuffer* compresseddata;
-  NABuffer* filtereddata;
+  NABuffer* filteredData;
 };
 
 
@@ -249,90 +249,90 @@ NA_DEF NAByte naGetPaethPredictor(NAByte a, NAByte b, NAByte c){
 
 
 NA_DEF void naReconstructFilterData(NAPNG* png){
-  NAByte* curbyte;
-  NAByte* upbuffer;
-  NAByte* upbufptr;
-  NABufferIterator iterfilter;
+  NAByte* curByte;
+  NAByte* upBuffer;
+  NAByte* upBufPtr;
+  NABufferIterator iterFilter;
 
   size_t bpp = naGetPNGBytesPerPixel(png->colorType);
-  size_t bytesperline = (size_t)png->size.width * bpp;
+  size_t bytesPerLine = (size_t)png->size.width * bpp;
 
   png->pixeldata = naMalloc(sizeof(NAByte) * naGetSizeiIndexCount(png->size) * bpp);
-  curbyte = png->pixeldata;
+  curByte = png->pixeldata;
 
-  upbuffer = naMalloc(bytesperline);
-  naZeron(upbuffer, bytesperline);
-  upbufptr = upbuffer;
+  upBuffer = naMalloc(bytesPerLine);
+  naZeron(upBuffer, bytesPerLine);
+  upBufPtr = upBuffer;
 
-  iterfilter = naMakeBufferMutator(png->filtereddata);
+  iterFilter = naMakeBufferMutator(png->filteredData);
 
   for(size_t y = 0; y < (size_t)png->size.height; y++){
 
-    NAByte filtertype = naReadBufferu8(&iterfilter);
-    naReadBufferu8v(&iterfilter, curbyte, bytesperline);
+    NAByte filtertype = naReadBufferu8(&iterFilter);
+    naReadBufferu8v(&iterFilter, curByte, bytesPerLine);
 
     switch(filtertype){
     case NA_PNG_FILTER_TYPE_NONE:
       // nothing to do.
-      curbyte += bytesperline;
+      curByte += bytesPerLine;
       break;
     case NA_PNG_FILTER_TYPE_SUB:
       for(size_t x = 0; x < bpp; x++){
-        curbyte++;  // The first byte adds value 0 from the virtual left byte.
+        curByte++;  // The first byte adds value 0 from the virtual left byte.
       }
       for(size_t x = bpp; x < ((size_t)png->size.width * bpp); x++){
-        *curbyte += *(curbyte - bpp);
-        curbyte++;
+        *curByte += *(curByte - bpp);
+        curByte++;
       }
       break;
     case NA_PNG_FILTER_TYPE_UP:
       for(size_t x = 0; x < ((size_t)png->size.width * bpp); x++){
-        *curbyte += *upbufptr;
-        curbyte++;
-        upbufptr++;
+        *curByte += *upBufPtr;
+        curByte++;
+        upBufPtr++;
       }
       break;
     case NA_PNG_FILTER_TYPE_AVERAGE:
       for(size_t x = 0; x < bpp; x++){
-        *curbyte += (NAByte)(((NAUInt)*upbufptr) / 2);
-        curbyte++;
-        upbufptr++;
+        *curByte += (NAByte)(((size_t)*upBufPtr) / 2);
+        curByte++;
+        upBufPtr++;
       }
       for(size_t x = bpp; x < ((size_t)png->size.width * bpp); x++){
-        *curbyte += (NAByte)(((NAUInt)*(curbyte - bpp) + (NAUInt)*upbufptr) / 2);
-        curbyte++;
-        upbufptr++;
+        *curByte += (NAByte)(((size_t)*(curByte - bpp) + (size_t)*upBufPtr) / 2);
+        curByte++;
+        upBufPtr++;
       }
       break;
     case NA_PNG_FILTER_TYPE_PAETH:
       for(size_t x = 0; x < bpp; x++){
-        *curbyte += naGetPaethPredictor(0, *upbufptr, 0);
-        curbyte++;
-        upbufptr++;
+        *curByte += naGetPaethPredictor(0, *upBufPtr, 0);
+        curByte++;
+        upBufPtr++;
       }
       for(size_t x = bpp; x < ((size_t)png->size.width * bpp); x++){
-        *curbyte += naGetPaethPredictor(*(curbyte - bpp), *upbufptr, *(upbufptr - bpp));
-        curbyte++;
-        upbufptr++;
+        *curByte += naGetPaethPredictor(*(curByte - bpp), *upBufPtr, *(upBufPtr - bpp));
+        curByte++;
+        upBufPtr++;
       }
       break;
     default:
       #ifndef NDEBUG
         naError("Invalid Filter");
       #endif
-      curbyte += bytesperline;
+      curByte += bytesPerLine;
       break;
     }
 
-    upbufptr = curbyte - bytesperline;
+    upBufPtr = curByte - bytesPerLine;
   }
 
 //  outfile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
 //  naWriteFileBytes(outfile, png->pixeldata, png->size.width * png->size.height * bpp);
 //  naReleaseFile(outfile);
 
-  naClearBufferIterator(&iterfilter);
-  naFree(upbuffer);
+  naClearBufferIterator(&iterFilter);
+  naFree(upBuffer);
 }
 
 
@@ -343,13 +343,13 @@ NA_DEF void naFilterData(NAPNG* png){
   NAInt y;
   NABufferIterator iter;
 
-  png->filtereddata = naNewBuffer(NA_FALSE);
-  naSetBufferEndianness(png->filtereddata, NA_ENDIANNESS_NETWORK);
+  png->filteredData = naNewBuffer(NA_FALSE);
+  naSetBufferEndianness(png->filteredData, NA_ENDIANNESS_NETWORK);
 
   size_t bpp = naGetPNGBytesPerPixel(png->colorType);
   pixeldata = naGetPNGPixelData(png);
 
-  iter = naMakeBufferModifier(png->filtereddata);
+  iter = naMakeBufferModifier(png->filteredData);
   for(y = 0; y < png->size.height; y++){
     naWriteBufferu8(&iter, NA_PNG_FILTER_TYPE_NONE);
     naWriteBufferBytes(&iter, pixeldata, (size_t)png->size.width * bpp);
@@ -357,7 +357,7 @@ NA_DEF void naFilterData(NAPNG* png){
   }
   naClearBufferIterator(&iter);
 
-  naFixBufferRange(png->filtereddata);
+  naFixBufferRange(png->filteredData);
 }
 
 
@@ -454,7 +454,7 @@ NA_HDEF NAPNGChunk* na_AllocPNGIDATChunk(NAPNG* png){
   naSetBufferEndianness(idat->data, NA_ENDIANNESS_NETWORK);
 
   naFilterData(png);
-  naFillBufferWithZLIBCompression(idat->data, png->filtereddata, NA_DEFLATE_COMPRESSION_FASTEST);
+  naFillBufferWithZLIBCompression(idat->data, png->filteredData, NA_DEFLATE_COMPRESSION_FASTEST);
 
   idat->type = NA_PNG_CHUNK_TYPE_IDAT;
 
@@ -673,7 +673,7 @@ NA_HDEF void na_ReadPNGzTXtChunk(NAPNG* png, NAPNGChunk* ztxt){
 
 
 
-NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colorType, NAUInt bitDepth){
+NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colorType, int8 bitDepth){
   NAPNG* png = naNew(NAPNG);
 
   #ifndef NDEBUG
@@ -697,7 +697,7 @@ NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colorType, NAUInt bitDepth){
 
   size_t bpp = naGetPNGBytesPerPixel(colorType);
   png->pixeldata = naMalloc(naGetSizeiIndexCount(size) * bpp);
-  png->filtereddata = NA_NULL;
+  png->filteredData = NA_NULL;
 
   return png;
 }
@@ -719,7 +719,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath){
   png->pixeldimensions[0] = 1.f;
   png->pixeldimensions[1] = 1.f;
   png->pixelunit = NA_PIXEL_UNIT_RATIO;
-  png->filtereddata = NA_NULL;
+  png->filteredData = NA_NULL;
 
   buffer = naNewBufferWithInputPath(filePath);
   bufiter = naMakeBufferModifier(buffer);
@@ -752,7 +752,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath){
   // Create the buffer to hold the compressed and decompressed data
   png->compresseddata = naNewBuffer(NA_FALSE);
   naSetBufferEndianness(png->compresseddata, NA_ENDIANNESS_NETWORK);
-  png->filtereddata = naNewBuffer(NA_FALSE);
+  png->filteredData = naNewBuffer(NA_FALSE);
 
   naBeginListMutatorIteration(NAPNGChunk* chunk, &(png->chunks), iter);
     switch(chunk->type){
@@ -785,7 +785,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath){
 //  naReleaseFile(outfile);
 
   naFixBufferRange(png->compresseddata);
-  naFillBufferWithZLIBDecompression(png->filtereddata, png->compresseddata);
+  naFillBufferWithZLIBDecompression(png->filteredData, png->compresseddata);
   naReconstructFilterData(png);
 
   NAEndReadingPNG:
@@ -931,7 +931,7 @@ NA_HDEF void na_DestructPNG(NAPNG* png){
   naClearList(&(png->chunks));
   if(png->pixeldata){naFree(png->pixeldata);}
   if(png->compresseddata){naRelease(png->compresseddata);}
-  if(png->filtereddata){naRelease(png->filtereddata);}
+  if(png->filteredData){naRelease(png->filteredData);}
 }
 
 

@@ -53,9 +53,7 @@ void testNAInteger(){
   }
 
   naTestGroup("NAInt typedefs"){
-    NAUInt u  = 42;
     NAInt  i  = -42;
-    naTest(u == 42);
     naTest(i == -42);
   }
 }

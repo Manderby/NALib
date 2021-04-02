@@ -44,7 +44,6 @@ NA_IAPI void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b);
 NA_IAPI void naSwap (double* NA_RESTRICT a, double* NA_RESTRICT b);
 NA_IAPI void naSwapf(float*  NA_RESTRICT a, float*  NA_RESTRICT b);
 NA_IAPI void naSwapi(NAInt*  NA_RESTRICT a, NAInt*  NA_RESTRICT b);
-NA_IAPI void naSwapu(NAUInt* NA_RESTRICT a, NAUInt* NA_RESTRICT b);
 
 
 // Compares the array of the first argument with the array of the second

@@ -491,34 +491,34 @@ NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt start
 
   while(!naIsTreeAtInitial(&(iter.partIter))){
     const NABufferPart* part;
-    const NAByte* curbyte;
+    const NAByte* curByte;
 
     part = na_GetBufferPart(&iter);
     #ifndef NDEBUG
       if(na_IsBufferPartSparse(part))
         naError("sparse part detected.");
     #endif
-    curbyte = (const NAByte*)na_GetBufferPartDataPointerConst(&iter);
+    curByte = (const NAByte*)na_GetBufferPartDataPointerConst(&iter);
     if(forward){
       size_t remainingBytes = na_GetBufferPartByteSize(part) - iter.partOffset;
       while(remainingBytes){
-        if(*curbyte == byte){
+        if(*curByte == byte){
           found = NA_TRUE;
           break;
         }
         indexshift++;
-        curbyte++;
+        curByte++;
         remainingBytes--;
       }
     }else{
       size_t remainingBytes = iter.partOffset;
       while(remainingBytes){
-        if(*curbyte == byte){
+        if(*curByte == byte){
           found = NA_TRUE;
           break;
         }
         indexshift--;
-        curbyte--;
+        curByte--;
         remainingBytes--;
       }
     }

@@ -16,7 +16,7 @@ NA_DEF NABool naEqualUTF8CStringLiterals(const NAUTF8Char* string1, const NAUTF8
     length = length1;
   }
   if(caseSensitive){
-    int result = memcmp(string1, string2, (NAUInt)length);
+    int result = memcmp(string1, string2, length);
     if(result){return NA_FALSE;}
   }else{
     while(length){
@@ -40,15 +40,16 @@ NA_DEF NAUTF8Char* naAllocSprintf(NABool useTmp, const NAUTF8Char* format, ...){
   va_list argumentList2;
   va_start(argumentList, format);
   va_copy(argumentList2, argumentList);
+
   size_t stringLen = naVarargStringLength(format, argumentList);
 
-  NAUTF8Char* stringbuf = (useTmp)
+  NAUTF8Char* stringBuf = (useTmp)
     ? naMallocTmp(stringLen + 1)
     : naMalloc(stringLen + 1);
-  naVsnprintf(stringbuf, (NAUInt)(stringLen + 1), format, argumentList2);
-  stringbuf[stringLen] = '\0';
+  naVsnprintf(stringBuf, stringLen + 1, format, argumentList2);
+  stringBuf[stringLen] = '\0';
 
-  return stringbuf;
+  return stringBuf;
 }
 
 
@@ -188,10 +189,10 @@ NA_DEF NAString* naNewStringWithArguments(const NAUTF8Char* format, va_list argu
   va_copy(argumentList3, argumentList);
   size_t stringLen = naVarargStringLength(format, argumentList2);
   if(stringLen){
-    NAUTF8Char* stringbuf = naMalloc(stringLen + 1);
-    naVsnprintf(stringbuf, stringLen + 1, format, argumentList3);
-    stringbuf[stringLen] = '\0';
-    string = naNewStringWithMutableUTF8Buffer(stringbuf, stringLen, (NAMutator)naFree);
+    NAUTF8Char* stringBuf = naMalloc(stringLen + 1);
+    naVsnprintf(stringBuf, stringLen + 1, format, argumentList3);
+    stringBuf[stringLen] = '\0';
+    string = naNewStringWithMutableUTF8Buffer(stringBuf, stringLen, (NAMutator)naFree);
   }else{
     string = naNewString();
   }
@@ -620,43 +621,37 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
 
 #if NA_OS == NA_OS_WINDOWS
   NA_DEF wchar_t* naAllocWideCharStringWithUTF8String(const NAUTF8Char* utf8String){
-    wchar_t* outstr;
-    NAUInt length;
-    NAUInt widelength;
     NAString* string = naNewStringWithFormat("%s", utf8String);
-    NAString* newlinestring = naNewStringWithNewlineSanitization(string, NA_NEWLINE_WIN);
-    length = naGetStringByteSize(newlinestring);
+    NAString* newLineString = naNewStringWithNewlineSanitization(string, NA_NEWLINE_WIN);
+
+    size_t length = naGetStringByteSize(newLineString);
     naDelete(string);
-    widelength = MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, NULL, 0);
-    outstr = (wchar_t*)naMalloc(((widelength + 1) * sizeof(wchar_t)));
-    MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, outstr, (int)widelength);
-    outstr[widelength] = 0;
-    naDelete(newlinestring);
-    return outstr;
+    size_t wideLength = (size_t)MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newLineString), (int)length, NULL, 0);
+    wchar_t* outStr = (wchar_t*)naMalloc(((wideLength + 1) * sizeof(wchar_t)));
+    MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newLineString), (int)length, outStr, (int)wideLength);
+    outStr[wideLength] = 0;
+    naDelete(newLineString);
+    return outStr;
   }
 
   NA_DEF char* naAllocAnsiStringWithUTF8String(const NAUTF8Char* utf8String){
-    char* outstr;
-    NAUInt length;
-    NAUInt widelength;
-    wchar_t* wstr;
-    NAUInt ansilength;
     NAString* string = naNewStringWithFormat("%s", utf8String);
-    NAString* newlinestring = naNewStringWithNewlineSanitization(string, NA_NEWLINE_WIN);
-    length = naGetStringByteSize(newlinestring);
+    NAString* newLineString = naNewStringWithNewlineSanitization(string, NA_NEWLINE_WIN);
+    size_t length = naGetStringByteSize(newLineString);
     naDelete(string);
+
     // We have to convert UTF8 first to WideChar, then back to 8 bit Ansi.
-    widelength = MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, NULL, 0);
-    wstr = naMalloc(((widelength + 1) * sizeof(wchar_t)));
-    MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, wstr, (int)widelength);
-    wstr[widelength] = 0;
-    ansilength = WideCharToMultiByte(CP_ACP, 0, wstr, (int)widelength, NA_NULL, 0, NA_NULL, NA_NULL);
-    outstr = (char*)naMalloc(((ansilength + 1) * sizeof(char)));
-    WideCharToMultiByte(CP_ACP, 0, wstr, (int)widelength, outstr, (int)ansilength, NA_NULL, NA_NULL);
+    size_t wideLength = (size_t)MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newLineString), (int)length, NULL, 0);
+    wchar_t* wstr = naMalloc(((wideLength + 1) * sizeof(wchar_t)));
+    MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newLineString), (int)length, wstr, (int)wideLength);
+    wstr[wideLength] = 0;
+    size_t ansiLength = (size_t)WideCharToMultiByte(CP_ACP, 0, wstr, (int)wideLength, NA_NULL, 0, NA_NULL, NA_NULL);
+    char* outStr = (char*)naMalloc(((ansiLength + 1) * sizeof(char)));
+    WideCharToMultiByte(CP_ACP, 0, wstr, (int)wideLength, outStr, (int)ansiLength, NA_NULL, NA_NULL);
     naFree(wstr);
-    outstr[ansilength] = 0;
-    naDelete(newlinestring);
-    return outstr;
+    outStr[ansiLength] = 0;
+    naDelete(newLineString);
+    return outStr;
   }
 
   // Returns a newly allocated memory block containing the system-encoded
@@ -671,42 +666,30 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
   }
 
   NA_DEF NAString* naNewStringFromWideCharString(wchar_t* wcharString){
-    NAString* string;
-    NAString* newlinestring;
-    NAUInt length;
-    NAInt utf8length;
-    NAUTF8Char* stringbuf;
-    length = wcslen(wcharString);
-    utf8length = WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, NULL, 0, NULL, NULL);
-    stringbuf = naMalloc((utf8length + 1) * sizeof(NAUTF8Char));
-    WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, stringbuf, (int)utf8length, NULL, NULL);
-    newlinestring = naNewStringWithMutableUTF8Buffer(stringbuf, utf8length, (NAMutator)naFree);
-    string = naNewStringWithNewlineSanitization(newlinestring, NA_NEWLINE_UNIX);
-    naDelete(newlinestring);
+    size_t length = wcslen(wcharString);
+    NAInt utf8Length = WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, NULL, 0, NULL, NULL);
+    NAUTF8Char* stringBuf = naMalloc((utf8Length + 1) * sizeof(NAUTF8Char));
+    WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, stringBuf, (int)utf8Length, NULL, NULL);
+    NAString* newLineString = naNewStringWithMutableUTF8Buffer(stringBuf, utf8Length, (NAMutator)naFree);
+    NAString* string = naNewStringWithNewlineSanitization(newLineString, NA_NEWLINE_UNIX);
+    naDelete(newLineString);
     return string;
   }
-
+  
   NA_DEF NAString* naNewStringFromAnsiString(char* ansiString){
-    NAString* string;
-    NAString* newlinestring;
-    NAUInt length;
-    NAUInt widelength;
-    wchar_t* wstr;
-    NAUInt utf8length;
-    NAUTF8Char* stringbuf;
-    length = strlen(ansiString);
-    widelength = MultiByteToWideChar(CP_ACP, 0, ansiString, (int)length, NULL, 0);
-    wstr = naMalloc(((widelength + 1) * sizeof(wchar_t)));
-    MultiByteToWideChar(CP_ACP, 0, ansiString, (int)length, wstr, (int)widelength);
-    wstr[widelength] = 0;
-    utf8length = WideCharToMultiByte(CP_UTF8, 0, wstr, (int)widelength, NA_NULL, 0, NA_NULL, NA_NULL);
-    stringbuf = (NAUTF8Char*)naMalloc(((utf8length + 1) * sizeof(NAUTF8Char)));
-    WideCharToMultiByte(CP_UTF8, 0, wstr, (int)widelength, stringbuf, (int)utf8length, NA_NULL, NA_NULL);
+    size_t length = strlen(ansiString);
+    size_t wideLength = (size_t)MultiByteToWideChar(CP_ACP, 0, ansiString, (int)length, NULL, 0);
+    wchar_t* wstr = naMalloc(((wideLength + 1) * sizeof(wchar_t)));
+    MultiByteToWideChar(CP_ACP, 0, ansiString, (int)length, wstr, (int)wideLength);
+    wstr[wideLength] = 0;
+    size_t utf8Length = WideCharToMultiByte(CP_UTF8, 0, wstr, (int)wideLength, NA_NULL, 0, NA_NULL, NA_NULL);
+    NAUTF8Char* stringBuf = (NAUTF8Char*)naMalloc(((utf8Length + 1) * sizeof(NAUTF8Char)));
+    WideCharToMultiByte(CP_UTF8, 0, wstr, (int)wideLength, stringBuf, (int)utf8Length, NA_NULL, NA_NULL);
     naFree(wstr);
-    stringbuf[utf8length] = 0;
-    newlinestring = naNewStringWithMutableUTF8Buffer(stringbuf, utf8length, (NAMutator)naFree);
-    string = naNewStringWithNewlineSanitization(newlinestring, NA_NEWLINE_UNIX);
-    naDelete(newlinestring);
+    stringBuf[utf8Length] = 0;
+    NAString* newLineString = naNewStringWithMutableUTF8Buffer(stringBuf, utf8Length, (NAMutator)naFree);
+    NAString* string = naNewStringWithNewlineSanitization(newLineString, NA_NEWLINE_UNIX);
+    naDelete(newLineString);
     return string;
   }
 

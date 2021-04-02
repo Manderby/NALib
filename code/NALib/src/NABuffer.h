@@ -499,12 +499,12 @@ NA_API void naWriteBufferLineWithArguments(   NABufferIterator* iter,
 // Note that most read or write functions require the internal bit counter
 // to be aligned to a byte boundary. Use naPadBufferBits to ensure that.
 
-NA_API NABool naReadBufferBit (NABufferIterator* iter);
-NA_API NAUInt naReadBufferBits(NABufferIterator* iter, uint8 count);
+NA_API NABool naReadBufferBit(NABufferIterator* iter);
+NA_API uint32 naReadBufferBits32(NABufferIterator* iter, uint8 count);
 
 // Aligns the bit counter to the next byte boundary. If the bit counter is
 // already at a boundary, nothing happends.
-NA_API void   naPadBufferBits (NABufferIterator* iter);
+NA_API void naPadBufferBits (NABufferIterator* iter);
 
 
 
@@ -547,7 +547,7 @@ NA_API NAString* naParseBufferLine( NABufferIterator* iter,
 // Returns the current line number (starting with 1). This is an experimental
 // feature which currently only works reliably if naParseBufferLine is used.
 // If this function returns 0, naParseBufferLine has never been called.
-NA_IAPI NAUInt naGetBufferLineNumber(NABufferIterator* iter);
+NA_IAPI size_t naGetBufferLineNumber(NABufferIterator* iter);
 
 // Returns everything from the current position till the end of the buffer as
 // a string.

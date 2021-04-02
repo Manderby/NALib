@@ -6,9 +6,9 @@
 
 
 struct NARefCount{
-  NAUInt count;      // Reference count.
+  size_t count;      // Reference count.
   #ifndef NDEBUG
-    NAUInt dummy;
+    uint32 dummy;
   #endif
 };
 
@@ -30,15 +30,11 @@ struct NARefCount{
 // wrongly.
 
 
-#if NA_TYPE_NAINT_BITS == 64
-  #define NA_REFCOUNT_DUMMY_VALUE (NAUInt)0xaaaaaaaaaaaaaaaaLL
-#else
-  #define NA_REFCOUNT_DUMMY_VALUE (NAUInt)0xaaaaaaaa
-#endif
+#define NA_REFCOUNT_DUMMY_VALUE (uint32)0xaaaaaaaa
 
 
 
-NA_HIDEF NAUInt na_GetRefCountCount(const NARefCount* refCount){
+NA_HIDEF size_t na_GetRefCountCount(const NARefCount* refCount){
   return refCount->count;
 }
 
@@ -55,11 +51,7 @@ NA_IDEF NARefCount* naInitRefCount(NARefCount* refCount){
 
 
 NA_IDEF NABool naIsRefCountZero(NARefCount* refCount){
-  #ifndef NDEBUG
-    if(refCount->count < 0)
-      naError("Refcount has a count smaller than zero.");
-  #endif
-    return refCount->count == 0;
+  return refCount->count == 0;
 }
 
 
@@ -76,16 +68,12 @@ NA_IDEF NARefCount* naRetainRefCount(NARefCount* refCount){
       // however that most likely the true cause of the error did occur long
       // before reaching here.
       if(refCount->count == NA_ZERO)
-        naCrash("Retaining NARefCount with a count of 0");
+        naError("Retaining NARefCount with a count of 0");
+      if(refCount->count == NA_MAX_s)
+        naError("Reference count overflow");
     }
   #endif
   refCount->count++;
-  #ifndef NDEBUG
-    // If refCount now suddenly becomes zero, there was either an error earlier
-    // or the object has been retained too many times. Overflow.
-    if(refCount->count == NA_ZERO)
-      naError("Reference count overflow");
-  #endif
   return refCount;
 }
 
@@ -101,7 +89,7 @@ NA_IDEF void naReleaseRefCount(NARefCount* refCount, void* data, NAMutator destr
     // however that most likely the true cause of the error did occur long
     // before reaching here.
     if(refCount->count == NA_ZERO)
-      naCrash("Releasing NARefCount with a count of 0");
+      naError("Releasing NARefCount with a count of 0");
   #endif
   // Note that the author decided to always count to zero, even if it is clear
   // that the pointer will eventually be freed and the data will be lost in

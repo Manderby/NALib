@@ -130,20 +130,20 @@ NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
 
 
 
-NA_DEF NAUInt naReadBufferBits(NABufferIterator* iter, uint8 count){
-  NAUInt retValuei = 0;
-  NAUInt curmask = 1;
+NA_DEF uint32 naReadBufferBits32(NABufferIterator* iter, uint8 count){
+  uint32 retValue = 0;
+  uint32 curmask = 1;
   #ifndef NDEBUG
-    if(count > NA_TYPE_NAINT_BITS)
-      naError("Max bit readable per function call exceeded.");
+    if(count > 32)
+      naError("Can read 32 Bits maximum.");
   #endif
   while(count){
     NABool curBit = naReadBufferBit(iter);
-    retValuei |= curmask * (NAUInt)curBit;
+    retValue |= curmask * (uint32)curBit;
     curmask <<= 1;
     count--;
   }
-  return retValuei;
+  return retValue;
 }
 
 

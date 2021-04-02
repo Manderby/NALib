@@ -29,10 +29,10 @@ typedef struct NAPool NAPool;
 
 // Creates a new pointer pool with the given maximum count. The pool is empty
 // and can be filled with whatever drops you like.
-NA_IAPI NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count);
+NA_IAPI NAPool* naInitPoolEmpty(NAPool* pool, size_t count);
 
 // Creates a new pool pre-filled with count elements with the given typeSize.
-NA_IAPI NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typeSize);
+NA_IAPI NAPool* naInitPoolFilled(NAPool* pool, size_t count, size_t typeSize);
 
 // Clears the pool. Depending whether you created the pool empty or filled,
 // your pool should be in the same state now.
@@ -43,8 +43,8 @@ NA_IAPI void* naSuckPool(NAPool* pool);
 NA_IAPI void  naSpitPool(NAPool* pool, void* drop);
 
 // Returns information about the number of elements stored in the pool.
-NA_IAPI NAUInt naGetPoolCount(NAPool* pool);
-NA_IAPI NAUInt naGetPoolRemainingCount(NAPool* pool);
+NA_IAPI size_t naGetPoolCount(NAPool* pool);
+NA_IAPI size_t naGetPoolRemainingCount(NAPool* pool);
 NA_IAPI NABool naIsPoolEmpty(NAPool* pool);
 NA_IAPI NABool na_IsPoolPartFull(NAPool* pool);
 

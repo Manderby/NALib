@@ -6,17 +6,17 @@
 
 struct NAPool{
   NAByte** drops;       // The drops, speaking: Pointers.
-  NAUInt count;         // The maximum count of drops in this pool.
-  NAUInt cur;           // The current position in the drops array.
+  size_t count;         // The maximum count of drops in this pool.
+  size_t cur;           // The current position in the drops array.
   void* storagearray;   // The storage of elements, if pool is created filled.
   #ifndef NDEBUG
-    NAUInt typeSize;    // The typeSize is just for debugging.
+    size_t typeSize;    // The typeSize is just for debugging.
   #endif
 };
 
 
 
-NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count){
+NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, size_t count){
   #ifndef NDEBUG
     if(!pool)
       naCrash("pool is Null-Pointer");
@@ -32,11 +32,7 @@ NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count){
 
 
 
-NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typeSize){
-  NAByte** dropptr;
-  NAByte* storageptr;
-  NAUInt i;
-
+NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, size_t count, size_t typeSize){
   #ifndef NDEBUG
     if(!pool)
       naCrash("pool is Null-Pointer");
@@ -54,9 +50,9 @@ NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typeSize){
   #endif
 
   // Insert all elements to the drop array.
-  dropptr = pool->drops;
-  storageptr = (NAByte*)pool->storagearray;
-  for(i = 0; i < pool->count; i++){
+  NAByte** dropptr = pool->drops;
+  NAByte* storageptr = (NAByte*)pool->storagearray;
+  for(size_t i = 0; i < pool->count; i++){
     *dropptr = storageptr;
     dropptr++;
     storageptr += typeSize;
@@ -108,10 +104,10 @@ NA_IDEF void naSpitPool(NAPool* pool, void* drop){
 
 
 
-NA_IDEF NAUInt naGetPoolCount(NAPool* pool){
+NA_IDEF size_t naGetPoolCount(NAPool* pool){
   return pool->cur;
 }
-NA_IDEF NAUInt naGetPoolRemainingCount(NAPool* pool){
+NA_IDEF size_t naGetPoolRemainingCount(NAPool* pool){
   return pool->count - pool->cur;
 }
 NA_IDEF NABool naIsPoolEmpty(NAPool* pool){
@@ -124,9 +120,8 @@ NA_IDEF NABool na_IsPoolPartFull(NAPool* pool){
 
 
 NA_IDEF void naForeachPool(const NAPool* pool, NAMutator mutator){
-  NAUInt i;
   NAByte** curptr = pool->drops;
-  for(i = 0; i < pool->cur; i++){
+  for(size_t i = 0; i < pool->cur; i++){
     mutator(*curptr);
     curptr++;
   }

@@ -18,7 +18,7 @@ struct NAPtr{
     void*       d;              // ... non-const (mutable) data.
   } data;
   #ifndef NDEBUG
-    NAUInt debugFlags;          // This field stores some flags.
+    uint32 debugFlags;          // This field stores some flags.
   #endif
 };
 // Note that this is one of the very, very rare situations, where a union type

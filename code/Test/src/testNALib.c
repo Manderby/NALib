@@ -48,9 +48,9 @@ int main(int argc, const char** argv){
   NABool testStartSuccessful = naStartTesting("NALib", .01, NA_FALSE, argc, argv);
   if(testStartSuccessful)
   {
-    //naTestGroupFunction(NABase);
+    naTestGroupFunction(NABase);
     naTestGroupFunction(NACore);
-    //naTestGroupFunction(NAStruct);
+    naTestGroupFunction(NAStruct);
 
     //printf(NA_NL);
     //naPrintUntested();

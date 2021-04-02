@@ -336,7 +336,7 @@ NA_IDEF NABool naIsOffsetValueValidi(NAInt a){
   NA_UNUSED(a);
   return NA_TRUE;
 }
-NA_IDEF NABool naIsOffsetValueValidu(NAUInt a){
+NA_IDEF NABool naIsOffsetValueValids(size_t a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
@@ -356,7 +356,7 @@ NA_IDEF NABool naIsLengthValueValidi(NAInt a){
   NA_UNUSED(a);
   return NA_TRUE;
 }
-NA_IDEF NABool naIsLengthValueValidu(NAUInt a){
+NA_IDEF NABool naIsLengthValueValids(size_t a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
@@ -375,7 +375,7 @@ NA_IDEF NABool naIsLengthValueEmptyf(float a){
 NA_IDEF NABool naIsLengthValueEmptyi(NAInt a){
   return (a == 0);
 }
-NA_IDEF NABool naIsLengthValueEmptyu(NAUInt a){
+NA_IDEF NABool naIsLengthValueEmptys(size_t a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
@@ -393,7 +393,7 @@ NA_IDEF NABool naIsLengthValueNegativef(float a){
 NA_IDEF NABool naIsLengthValueNegativei(NAInt a){
   return (a < 0);
 }
-NA_IDEF NABool naIsLengthValueNegativeu(NAUInt a){
+NA_IDEF NABool naIsLengthValueNegatives(size_t a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
@@ -414,7 +414,7 @@ NA_IDEF NABool naIsOffsetValueUsefuli(NAInt a){
   NA_UNUSED(a);
   return NA_TRUE;
 }
-NA_IDEF NABool naIsOffsetValueUsefulu(NAUInt a){
+NA_IDEF NABool naIsOffsetValueUsefuls(size_t a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
@@ -436,7 +436,7 @@ NA_IDEF NABool naIsLengthValueUsefulf(float a){
 NA_IDEF NABool naIsLengthValueUsefuli(NAInt a){
   return (a > 0);
 }
-NA_IDEF NABool naIsLengthValueUsefulu(NAUInt a){
+NA_IDEF NABool naIsLengthValueUsefuls(size_t a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");

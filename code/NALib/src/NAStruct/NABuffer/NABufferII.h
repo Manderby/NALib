@@ -158,7 +158,7 @@ struct NABufferIterator{
   NATreeIterator partIter;
   size_t partOffset;  // The current byte offset in the referenced part.
   uint8 curBit;      // The current bit number
-  NAUInt lineNum;    // The line number, starting with 1 after first line read.
+  size_t lineNum;    // The line number, starting with 1 after first line read.
 };
 
 struct NABuffer{
@@ -166,7 +166,7 @@ struct NABuffer{
   NAInt sourceOffset; // Offset of source relative to this buffers
                              // origin. Add this offset to the desired pos to
                              // get the position within the source.
-  NAUInt flags;
+  uint32 flags;
   NARangei range;
 
   NANewlineEncoding newlineEncoding;  // The current newline encoding
