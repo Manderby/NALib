@@ -495,7 +495,7 @@ struct NAKeyboardStatus{
   NAUIKeyCode keyCode;
 };
 
-NAKeyboardStatus naMakeKeybardStatus(NAInt modifiers, NAUIKeyCode keyCode);
+NAKeyboardStatus naMakeKeybardStatus(uint32 modifiers, NAUIKeyCode keyCode);
 
 typedef struct NAMouseStatus NAMouseStatus;
 struct NAMouseStatus{

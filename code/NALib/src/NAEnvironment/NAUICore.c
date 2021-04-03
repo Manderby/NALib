@@ -387,7 +387,7 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
 
 
 
-NA_DEF NAKeyboardStatus naMakeKeybardStatus(NAInt modifiers, NAUIKeyCode keyCode){
+NA_DEF NAKeyboardStatus naMakeKeybardStatus(uint32 modifiers, NAUIKeyCode keyCode){
   NAKeyboardStatus newshtatus;
   newshtatus.modifiers = modifiers;
   newshtatus.keyCode = keyCode;

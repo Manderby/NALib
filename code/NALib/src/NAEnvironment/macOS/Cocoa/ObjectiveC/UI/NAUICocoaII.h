@@ -75,10 +75,10 @@ NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event){
   hasOption    = (flags & NAEventModifierFlagOption)  != 0;
   hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
   na_App->keyboardStatus.modifiers = 0;
-  na_App->keyboardStatus.modifiers |= hasShift * NA_MODIFIER_FLAG_SHIFT;
-  na_App->keyboardStatus.modifiers |= hasControl * NA_MODIFIER_FLAG_CONTROL;
-  na_App->keyboardStatus.modifiers |= hasOption * NA_MODIFIER_FLAG_OPTION;
-  na_App->keyboardStatus.modifiers |= hasCommand * NA_MODIFIER_FLAG_COMMAND;
+  na_App->keyboardStatus.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
+  na_App->keyboardStatus.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
+  na_App->keyboardStatus.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
+  na_App->keyboardStatus.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
 }
 
 
