@@ -27,7 +27,7 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, size_
   // memory. The iterator should point to the buffer part containing offset.
 
   // We store the current iterator to move back to it later on if necessary.
-  size_t firstPartOffset = iter->partOffset;
+  size_t firstPartOffset = (size_t)iter->partOffset;
   firstBufIter = naMakeTreeAccessor(&(buffer->parts));
   naLocateTreeIterator(&firstBufIter, &(iter->partIter));
 
@@ -51,7 +51,7 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, size_
     // We get the data pointer where we can write bytes.
     dst = na_GetBufferPartDataPointerMutable(iter);
     // We detect, how many bytes actually can be put into the current part.
-    size_t possibleLength = na_GetBufferPartByteSize(part) - iter->partOffset;
+    size_t possibleLength = na_GetBufferPartByteSize(part) - (size_t)iter->partOffset;
 
     #ifndef NDEBUG
       if(possibleLength <= 0)
@@ -73,7 +73,7 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, size_
   }
   
   if(!advance){
-    iter->partOffset = firstPartOffset;
+    iter->partOffset = (NAInt)firstPartOffset;
     naLocateTreeIterator(&(iter->partIter), &firstBufIter);
   }
   naClearTreeIterator(&firstBufIter);  
@@ -295,8 +295,8 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, size_t b
       readpart = na_GetBufferPart(&readIter);
       writepart = na_GetBufferPart(iter);
 
-      remainingRead = na_GetBufferPartByteSize(readpart) - readIter.partOffset;
-      remainingWrite = na_GetBufferPartByteSize(writepart) - iter->partOffset;
+      remainingRead = na_GetBufferPartByteSize(readpart) - (size_t)readIter.partOffset;
+      remainingWrite = na_GetBufferPartByteSize(writepart) - (size_t)iter->partOffset;
 
       // We reduce the remainingRead such that it does not overflow either the
       // distance, the remainingWrite or the byteSize.

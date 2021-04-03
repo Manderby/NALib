@@ -156,7 +156,7 @@ typedef struct NABufferSearchToken NABufferSearchToken;
 struct NABufferIterator{
   NAPtr bufferPtr;
   NATreeIterator partIter;
-  size_t partOffset;  // The current byte offset in the referenced part.
+  NAInt partOffset;  // The current byte offset in the referenced part.
   uint8 curBit;      // The current bit number
   size_t lineNum;    // The line number, starting with 1 after first line read.
 };
@@ -207,7 +207,7 @@ NA_HAPI NABool na_LocateBufferEnd(NABufferIterator* iter);
 NA_HAPI NABool na_IterateBufferPart(NABufferIterator* iter);
 
 NA_HAPI NABuffer* na_GetBufferIteratorSourceBuffer(NABufferIterator* iter);
-NA_HIAPI size_t na_GetBufferIteratorPartOffset(NABufferIterator* iter);
+NA_HIAPI NAInt na_GetBufferIteratorPartOffset(NABufferIterator* iter);
 NA_HAPI NABool na_IsBufferIteratorSparse(NABufferIterator* iter);
 NA_HIAPI NABufferPart* na_GetBufferPart(NABufferIterator* iter);
 NA_HAPI void na_PrepareBuffer(NABufferIterator* iter, size_t byteCount);

@@ -15,7 +15,7 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
     if(naIsBufferAtInitial(iter)){break;}
     curByte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partOffset < na_GetBufferPartByteSize(part)){
+    while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)){
       if(*curByte > ' '){
         found = NA_TRUE;
         break;
@@ -59,7 +59,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty){
     curByte = na_GetBufferPartDataPointerConst(iter);
     
     // Note: Do not use NA_NL_XXX macros here. That is semantically wrong.
-    while(iter->partOffset < na_GetBufferPartByteSize(part)){
+    while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)){
       if(checkWindowsEnd){
         checkWindowsEnd = NA_FALSE;
         if(*curByte == '\n'){iter->partOffset++; break;}
@@ -124,7 +124,7 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
     if(naIsBufferAtInitial(iter)){break;}
     curByte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partOffset < na_GetBufferPartByteSize(part)){
+    while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)){
       if(*curByte <= ' '){
         found = NA_TRUE;
         break;
@@ -204,7 +204,7 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
     if(naIsBufferAtInitial(iter)){break;}
     curByte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partOffset < na_GetBufferPartByteSize(part)){
+    while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)){
       if(*curByte == '/' || *curByte == '\\'){
         found = NA_TRUE;
         break;
@@ -254,7 +254,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
     if(naIsBufferAtInitial(iter)){break;}
     curByte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partOffset < na_GetBufferPartByteSize(part)){
+    while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)){
       if(bytesused >= maxDigitCount){break;}
 
       if((*curByte < '0') || (*curByte > '9')){found = NA_TRUE; break;}

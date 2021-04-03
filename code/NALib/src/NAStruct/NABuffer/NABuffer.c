@@ -500,7 +500,7 @@ NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt start
     #endif
     curByte = (const NAByte*)na_GetBufferPartDataPointerConst(&iter);
     if(forward){
-      size_t remainingBytes = na_GetBufferPartByteSize(part) - iter.partOffset;
+      size_t remainingBytes = na_GetBufferPartByteSize(part) - (size_t)iter.partOffset;
       while(remainingBytes){
         if(*curByte == byte){
           found = NA_TRUE;
@@ -511,7 +511,7 @@ NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt start
         remainingBytes--;
       }
     }else{
-      size_t remainingBytes = iter.partOffset;
+      size_t remainingBytes = (size_t)iter.partOffset;
       while(remainingBytes){
         if(*curByte == byte){
           found = NA_TRUE;

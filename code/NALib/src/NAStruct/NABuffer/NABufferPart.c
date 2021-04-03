@@ -233,8 +233,8 @@ NA_HDEF NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partIter,
   // and normedEnd are clamped to the parts boundaries if part is smaller
   // than sourcepart.
   
-  size_t offsetInSourcePart = iter.partOffset;
-  remainingBytesInSourcePart = (NAInt)(sourcepart->byteSize - iter.partOffset);
+  size_t offsetInSourcePart = (size_t)iter.partOffset;
+  remainingBytesInSourcePart = (NAInt)(sourcepart->byteSize - (size_t)iter.partOffset);
   size_t normedStart = (size_t)partrange.origin - offsetInSourcePart;
   size_t normedEnd = (size_t)(partrange.origin + remainingBytesInSourcePart);
   part = na_SplitBufferPart(partIter, normedStart, normedEnd);
@@ -342,7 +342,7 @@ NA_HDEF size_t na_PrepareBufferPart(NABufferIterator* iter, size_t byteCount){
   
   // Reaching here, the current part is a prepared part. We compute the number
   // of remaining bytes in the part and return it.
-  preparedByteCount = part->byteSize - iter->partOffset;
+  preparedByteCount = part->byteSize - (size_t)iter->partOffset;
   #ifndef NDEBUG
     if(preparedByteCount <= 0)
       naError("Returned value should be greater zero");

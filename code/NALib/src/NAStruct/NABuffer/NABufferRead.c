@@ -24,7 +24,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
   // memory. The iterator should point to the buffer part containing offset.
   
   // We store the current iterator to move back to it later on if necessary.
-  size_t firstPartOffset = iter->partOffset;
+  size_t firstPartOffset = (size_t)iter->partOffset;
   firstBufIter = naMakeTreeAccessor(&(buffer->parts));
   naLocateTreeIterator(&firstBufIter, &(iter->partIter));
 
@@ -48,7 +48,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
     // We get the data pointer where we can read bytes.
     src = na_GetBufferPartDataPointerConst(iter);
     // We detect, how many bytes actually can be read from the current part.
-    size_t possibleLength = na_GetBufferPartByteSize(part) - iter->partOffset;
+    size_t possibleLength = na_GetBufferPartByteSize(part) - (size_t)iter->partOffset;
 
     #ifndef NDEBUG
       if(possibleLength <= 0)
@@ -70,7 +70,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
   }
   
   if(!advance){
-    iter->partOffset = firstPartOffset;
+    iter->partOffset = (NAInt)firstPartOffset;
     naLocateTreeIterator(&(iter->partIter), &firstBufIter);
   }
   naClearTreeIterator(&firstBufIter);  
