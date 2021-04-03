@@ -15,7 +15,7 @@ NA_IDEF void naSetFlagu32(uint32* flags, uint32 flag, NABool set){
     if(set != NA_FALSE && set != NA_TRUE)
       naError("Boolean value invalid");
   #endif
-  *flags = (*flags & ~flag) | (set * flag);
+  *flags = (*flags & ~flag) | ((uint32)set * flag);
 }
 NA_IDEF NABool naToggleFlagu32(uint32* flags, uint32 flag){
   #ifndef NDEBUG
