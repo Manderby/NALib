@@ -50,7 +50,8 @@ void testMemoryBlock(){
 
 
 
-void na_testBufferFiller(void* dst, NARangei sourceRange, void* sourceData){
+//
+void na_DummyBufferFiller(void* dst, NARangei sourceRange, void* sourceData){
 }
 
 void testBufferSource(){
@@ -59,11 +60,11 @@ void testBufferSource(){
     NABufferSource* source = NA_NULL;
     naTestVoid(source = naNewBufferSource(NA_NULL, NA_NULL));
     naTestVoid(naRelease(source));
-    naTestVoid(source = naNewBufferSource(na_testBufferFiller, NA_NULL));
+    naTestVoid(source = naNewBufferSource(na_DummyBufferFiller, NA_NULL));
     naRelease(source);
     naTestVoid(source = naNewBufferSource(NA_NULL, cache));
     naRelease(source);
-    naTestVoid(source = naNewBufferSource(na_testBufferFiller, cache));
+    naTestVoid(source = naNewBufferSource(na_DummyBufferFiller, cache));
     naRelease(source);
 
     naRelease(cache);
@@ -71,7 +72,7 @@ void testBufferSource(){
 
   naTestGroup("Set data"){
     int* data = naAlloc(int);
-    NABufferSource* fillingSource = naNewBufferSource(na_testBufferFiller, NA_NULL);
+    NABufferSource* fillingSource = naNewBufferSource(na_DummyBufferFiller, NA_NULL);
     naTestVoid(naSetBufferSourceData(fillingSource, data, naFree));
     naTestVoid(naRelease(fillingSource));
 
@@ -86,7 +87,7 @@ void testBufferSource(){
     naRelease(emptySource);
 
     // setting data twice:
-    fillingSource = naNewBufferSource(na_testBufferFiller, NA_NULL);
+    fillingSource = naNewBufferSource(na_DummyBufferFiller, NA_NULL);
     data = naAlloc(int);
     naSetBufferSourceData(fillingSource, data, naFree);
     naTestError(naSetBufferSourceData(fillingSource, data, naFree));
@@ -110,12 +111,12 @@ void testBufferSource(){
   }
 
   naTestGroup("Accessors"){
-    NABufferSource* source = naNewBufferSource(na_testBufferFiller, NA_NULL);
+    NABufferSource* source = naNewBufferSource(na_DummyBufferFiller, NA_NULL);
     naTest(!na_HasBufferSourceCache(source));
     naRelease(source);
 
     NABuffer* cache = naNewBuffer(NA_FALSE);
-    source = naNewBufferSource(na_testBufferFiller, cache);
+    source = naNewBufferSource(na_DummyBufferFiller, cache);
     naTest(na_HasBufferSourceCache(source));
     naTest(na_GetBufferSourceCache(source) == cache);
     naRelease(cache);
@@ -136,18 +137,18 @@ void testBufferSource(){
     NAByte buf[10];
 
     NABufferSource* source = naNewBufferSource(NA_NULL, NA_NULL);
-    naTestVoid(na_FillSourceBuffer(source, buf, naMakeRangei(0, 10)));
+    naTestVoid(na_FillBufferSourceMemory(source, buf, naMakeRangei(0, 10)));
     naSetBufferSourceLimit(source, naMakeRangei(0, 10));
-    naTestVoid(na_FillSourceBuffer(source, buf, naMakeRangei(0, 10)));
-    naTestError(na_FillSourceBuffer(source, buf, naMakeRangei(0, 11)));
+    naTestVoid(na_FillBufferSourceMemory(source, buf, naMakeRangei(0, 10)));
+    naTestError(na_FillBufferSourceMemory(source, buf, naMakeRangei(0, 11)));
     naRelease(source);
 
-    source = naNewBufferSource(na_testBufferFiller, NA_NULL);
-    naTestVoid(na_FillSourceBuffer(source, buf, naMakeRangei(0, 10)));
+    source = naNewBufferSource(na_DummyBufferFiller, NA_NULL);
+    naTestVoid(na_FillBufferSourceMemory(source, buf, naMakeRangei(0, 10)));
 
-    //naTestCrash(na_FillSourceBuffer(NA_NULL, buf, naMakeRangei(0, 10)));
-    //naTestCrash(na_FillSourceBuffer(source, NA_NULL, naMakeRangei(0, 10)));
-    naTestError(na_FillSourceBuffer(source, buf, naMakeRangei(0, 0)));
+    //naTestCrash(na_FillBufferSourceMemory(NA_NULL, buf, naMakeRangei(0, 10)));
+    //naTestCrash(na_FillBufferSourceMemory(source, NA_NULL, naMakeRangei(0, 10)));
+    naTestError(na_FillBufferSourceMemory(source, buf, naMakeRangei(0, 0)));
     naRelease(source);
   }
 }

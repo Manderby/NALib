@@ -227,7 +227,7 @@ NA_HIAPI NABool na_HasBufferSourceCache(NABufferSource* source);
 NA_HIAPI NABuffer* na_GetBufferSourceCache(NABufferSource* source);
 NA_HIAPI NABool na_HasBufferSourceLimit(const NABufferSource* source);
 NA_HIAPI NARangei na_GetBufferSourceLimit(const NABufferSource* source);
-NA_HIAPI void na_FillSourceBuffer(const NABufferSource* source, void* dst, NARangei range);
+NA_HIAPI void na_FillBufferSourceMemory(const NABufferSource* source, void* dst, NARangei range);
 
 
 

@@ -314,7 +314,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
   
   // Fill the memory block according to the source.
   dst = na_GetMemoryBlockDataPointerMutable(part->memBlock, 0);
-  na_FillSourceBuffer(source, dst, naMakeRangeiWithStartAndEnd((NAInt)normedStart, (NAInt)(normedStart + part->byteSize)));
+  na_FillBufferSourceMemory(source, dst, naMakeRangeiWithStartAndEnd((NAInt)normedStart, (NAInt)(normedStart + part->byteSize)));
 
   return part;
 }

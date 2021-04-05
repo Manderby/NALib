@@ -36,7 +36,7 @@ NA_HAPI int    na_GetErrorCount(void);
 NA_HDEF NABool na_LetCrashTestCrash(void);
 NA_HAPI NABool na_ShallExecuteGroup(const char* name);
 
-NA_HAPI uint32 na_getBenchmarkIn(void);
+NA_HAPI uint32 na_GetBenchmarkIn(void);
 NA_HAPI double na_BenchmarkTime(void);
 NA_HAPI double na_GetBenchmarkLimit(void);
 NA_HAPI size_t na_GetBenchmarkTestSizeLimit(void);
@@ -144,7 +144,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
 }
 
 #define naTestIn\
-  na_getBenchmarkIn()
+  na_GetBenchmarkIn()
 
 
 

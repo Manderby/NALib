@@ -763,7 +763,7 @@ NA_HDEF void na_StopTestGroup(){
 
 
 
-NA_HDEF uint32 na_getBenchmarkIn(){
+NA_HDEF uint32 na_GetBenchmarkIn(){
   na_Testing->curInIndex = (na_Testing->curInIndex + 1) & NA_TEST_INDEX_MASK;
   return na_Testing->in[na_Testing->curInIndex];
 }

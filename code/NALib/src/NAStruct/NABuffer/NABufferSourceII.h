@@ -99,7 +99,7 @@ NA_HIDEF NARangei na_GetBufferSourceLimit(const NABufferSource* source){
 
 
 
-NA_HIDEF void na_FillSourceBuffer(const NABufferSource* source, void* dst, NARangei range){
+NA_HIDEF void na_FillBufferSourceMemory(const NABufferSource* source, void* dst, NARangei range){
   #ifndef NDEBUG
     if(!source)
       naCrash("Source is Null");
