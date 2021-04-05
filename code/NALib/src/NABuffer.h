@@ -36,8 +36,8 @@ typedef struct NABufferIterator NABufferIterator;
 // An NABuffer structure always requires a source to fill itself with content.
 // A source defines a linear storage containing content. This source can be
 // allocated memory, a file, an existing C-array, another NABuffer and more.
-// The source guarantees, that each byte of that source has its clearly
-// defined position in memory.
+// If the content has to be cached data, the source guarantees, that each byte
+// of that source has its clearly defined position in memory.
 //
 // The NABuffer uses that source and "borrows" the contents of the linear
 // memory, arbitrarily positioned.
@@ -124,53 +124,12 @@ NA_API NABuffer* naNewBufferWithMutableData(     void* data,
                                                  size_t byteSize,
                                              NAMutator destructor);
 
-
-
-// ////////////////////////////////////////
-// Buffer with custom source
-// ////////////////////////////////////////
-
-// You can create an NABuffer from any linear source you want by creating a
-// custom source object. Such a source has the purpose to fill memory blocks
-// denoting a certain range of the source with specific contents.
-
-// Prototype for the filler function.
-// The function has to perform the task to fill dst with the content of the
-// custom source. The range denotes both the source origin of the first byte
-// of dst as well as the length in bytes the dst buffer holds. The sourceData
-// parameter will be the data pointer given to naSetBufferSourceData.
-typedef void (*NABufferFiller)(void* dst, NARangei sourceRange, void* sourceData);
-
-// Create custom sources.
-// You can provide a filler function as well as an underlying buffer. Both
-// parameters can be NA_NULL. Their meaning is:
-// filler: The given function gets called whenever a certain memory block needs
-//         to be filled with the contents of the source. If NA_NULL is given,
-//         the memory blocks will be returned uninitialized.
-// buffer: An optional NABuffer which holds all memory blocks sorted by their
-//         linear address for later access. If NA_NULL is given, memory blocks
-//         will always be created anew and on the go, completely unordered. For
-//         example, a file buffer has a simple underlying NABuffer which holds
-//         all bytes which already have been read.
-NA_API NABufferSource* naNewBufferSource(      NABufferFiller filler,
-                                                    NABuffer* buffer);
-
-// Add data to your source which will be available when the filler function
-// is called. Add a dataDestructor to automatically clean up that deta when
-// the source is no longer needed.
-NA_IAPI void naSetBufferSourceData(           NABufferSource* source,
-                                                        void* data,
-                                                    NAMutator dataDestructor);
-
-// Limits the source to a specific range of bytes. This is for example used
-// when reading a file, where the source is limited to the file size.
-NA_IAPI void naSetBufferSourceLimit(          NABufferSource* source,
-                                                     NARangei limit);
-
-// Creates a buffer with a custom source. Note that the NABuffer will retain
-// the source, meaning you can safely release the source after this function.
+// Creates a buffer with a custom source. You can create an NABuffer from
+// any source you want by creating a custom source object, see below.
+// Note that the NABuffer will retain the source, meaning you can safely
+// release the source after this function.
 // The sourceOffset denotes how many bytes the source is shifted away from the
-// bnew uffer. For example if source denotes a string like "Hello World",
+// new buffer. For example if source denotes a string like "Hello World",
 // ranging from 0 to 10 and you define an sourceOffset of -6, filling the new
 // buffer at index 0 results in "World", containing the source indices 6 to 10
 // of the source buffer.
@@ -181,7 +140,58 @@ NA_IAPI void naSetBufferSourceLimit(          NABufferSource* source,
 // at index 0 results in "rld", containing the source indices 6 to 8 of the
 // source buffer.
 NA_API NABuffer* naNewBufferWithCustomSource( NABufferSource* source,
-                                                        NAInt sourceOffset);
+  NAInt sourceOffset);
+
+
+
+// ////////////////////////////////////////
+// Buffer Source
+// ////////////////////////////////////////
+
+//  Such a source has the purpose to fill memory blocks denoting
+// a certain range of the source with specific contents.
+
+// Prototype for the filler function.
+// The function has to perform the task to fill dst with the content of the
+// custom source. The range denotes both the source origin of the first byte
+// of dst as well as the length in bytes the dst buffer holds. The sourceData
+// parameter will be the data pointer given to naSetBufferSourceData.
+typedef void (*NABufferFiller)(
+  void* dst,
+  NARangei sourceRange,
+  void* sourceData);
+
+// Creates a new custom source.
+// You can provide a filler function as well as an underlying buffer. Both
+// parameters can be NA_NULL. Their meaning is:
+// filler: The given function gets called whenever a certain memory block needs
+//         to be filled with the contents of the source. If NA_NULL is given,
+//         the memory blocks will be left uninitialized.
+// cache:  An optional NABuffer which holds all memory blocks sorted by their
+//         linear address for later access. If NA_NULL is given, memory blocks
+//         will always be created anew and on the go, completely unordered. For
+//         example, a file buffer has a simple linear NABuffer which holds
+//         all bytes which already have been read. But a custom source which
+//         initializes all bytes to 42 does not need a buffer.
+NA_API NABufferSource* naNewBufferSource(
+  NABufferFiller filler,
+  NABuffer* cache);
+
+// Add data to your source which will be available when the filler function
+// is called. Add a dataDestructor to automatically clean up that data when
+// the source is no longer needed. This function can only be called once per
+// source!
+NA_IAPI void naSetBufferSourceData(
+  NABufferSource* source,
+  void* data,
+  NAMutator dataDestructor);
+
+// Limits the source to a specific range of bytes. This is for example used
+// when reading a file, where the source is limited to the file size. This
+// function can only be called once per source!
+NA_IAPI void naSetBufferSourceLimit(
+  NABufferSource* source,
+  NARangei limit);
 
 
 

@@ -16,7 +16,7 @@
 //                 +==== BUFFER PART =+
 //                 | blockOffset :  0 |    +====== MEMORY BLOCK =======+
 // NABuffer buf0 = | byteSize    : 25 |    |     referenceCount: 1     |
-//                 | memblock ------------>| This is an exciting trend |
+//                 | memBlock ------------>| This is an exciting trend |
 //                 +==================+    +===========================+
 // 
 // So, a simple buffer just contains one part which references one memory
@@ -51,7 +51,7 @@
 // +==== BUFFER PART ====+
 // | blockOffset :  0    |       +==== MEMORY BLOCK ====+
 // | byteSize    : 10    |       |   referenceCount: 1  |
-// | memblock ---------------->  |      everywhere      |
+// | memBlock ---------------->  |      everywhere      |
 // +=====================+       +======================+
 //
 // As seen in the topmost example, the memory block not only stores the word
@@ -72,14 +72,14 @@
 // +==== BUFFER PART ====+
 // | blockOffset :  1    |
 // | byteSize    :  4    |
-// | memblock --------------\
+// | memBlock --------------\
 // +=====================+   \
 //                            -->  +==== MEMORY BLOCK ====+
 //                                 |   referenceCount: 3  |
 // +==== BUFFER PART ====+         |      everywhere      |
 // | blockOffset :  6    |    -->  +======================+
 // | byteSize    :  3    |   /
-// | memblock --------------/
+// | memBlock --------------/
 // +=====================+
 //
 // As you can see, the buffer parts share the same memory block which now has
@@ -93,7 +93,7 @@
 // NABuffer buf1 = |     This is      |       very       |     exciting.    |
 //                 | blockOffset :  0 | blockOffset :  1 | blockOffset : 12 |
 //                 | byteSize    :  7 | byteSize    :  4 | byteSize    :  8 |
-//             +---- memblock         | memblock  --+    | memblock  --+    |
+//             +---- memBlock         | memBlock  --+    | memBlock  --+    |
 //             |   +------------------+-------------|----+-------------|----+
 //             |                                    |                  |
 //             |      +==== MEMORY BLOCK ====+      |                  |
@@ -121,7 +121,7 @@
 //        +==================== BUFFER PART ============================+
 // buf3 = | blockOffset:  0                                             |
 //        | byteSize:    37                                             |
-//        | memblock:  NULL                                             |
+//        | memBlock:  NULL                                             |
 //        +-------------------------------------------------------------+
 //
 // That single buffer part knows that the file content has in total 37 bytes
@@ -222,6 +222,15 @@ NA_HIAPI void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, size_t 
 
 
 
+// NABufferSource
+NA_HIAPI NABool na_HasBufferSourceCache(NABufferSource* source);
+NA_HIAPI NABuffer* na_GetBufferSourceCache(NABufferSource* source);
+NA_HIAPI NABool na_HasBufferSourceLimit(const NABufferSource* source);
+NA_HIAPI NARangei na_GetBufferSourceLimit(const NABufferSource* source);
+NA_HIAPI void na_FillSourceBuffer(const NABufferSource* source, void* dst, NARangei range);
+
+
+
 // NABufferHelper
 NA_HAPI void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end);
 
@@ -263,12 +272,6 @@ NA_HIAPI void na_EnlargeBufferPart(NABufferPart* part, size_t bytesAtStart, size
 NA_HIAPI size_t na_GetBufferPartRemainingBytes(NABufferIterator* iter);
 NA_HIAPI const void* na_GetBufferPartDataPointerConst(NABufferIterator* iter);
 NA_HIAPI void* na_GetBufferPartDataPointerMutable(NABufferIterator* iter);
-
-// NABufferSource
-NA_HIAPI NABuffer* na_GetBufferSourceUnderlyingBuffer(NABufferSource* source);
-NA_HIAPI NABool na_IsBufferSourceLimited(const NABufferSource* source);
-NA_HIAPI NARangei na_GetBufferSourceLimit(const NABufferSource* source);
-NA_HIAPI void na_FillSourceBuffer(const NABufferSource* source, void* dst, NARangei range);
 
 // NABufferRead and NABufferWrite
 NA_HAPI void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t byteSize, NABool advance);

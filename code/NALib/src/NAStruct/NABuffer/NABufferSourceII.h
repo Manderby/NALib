@@ -5,28 +5,33 @@
 
 
 
-// Flags for the buffer source:
+// Flags for the buffer source
 #define NA_BUFFER_SOURCE_RANGE_LIMITED        0x01
-#define NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE 0x80
 
 
 
 struct NABufferSource{
-  NABufferFiller    buffiller;      // Fill function filling memory.
-  NABuffer*         buffer;         // The underlying buffer, if any.
+  // automatic reference counting implemented as runtime type.
+  NABufferFiller    bufFiller;      // Fill function filling memory.
+  NABuffer*         cache;          // The underlying cache, if any.
   void*             data;           // data sent to filler and destructor.
   NAMutator         dataDestructor; // Data destructor.
   uint32            flags;          // Flags for the source
-  NARangei          limit;          // Source limit (used if flag set)
+  NARangei          limit;          // Range limit (used if flag set)
 };
-NA_EXTERN_RUNTIME_TYPE(NABufferSource);
 
 
 
 NA_DEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator dataDestructor){
   #ifndef NDEBUG
-    if(source->flags & NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE)
-      naError("Source already used in a buffer. Mayor problems may occur in the future");
+    if(!source)
+      naCrash("Source is Null");
+    if(!data)
+      naError("data is Null");
+    if(!source->bufFiller)
+      naError("Adding data to a source without filler function is useless.");
+    if(source->data)
+      naError("Source already has data");
   #endif
   source->data = data;
   source->dataDestructor = dataDestructor;
@@ -36,10 +41,12 @@ NA_DEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator 
 
 NA_DEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
   #ifndef NDEBUG
+    if(!source)
+      naCrash("Source is Null");
     if(source->flags & NA_BUFFER_SOURCE_RANGE_LIMITED)
       naError("Source already has a limit");
-    if(source->flags & NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE)
-      naError("Source already used in a buffer. Mayor problems may occur in the future");
+    if(!naIsRangeiUseful(limit))
+      naError("Given limit is not useful");
   #endif
   source->flags |= NA_BUFFER_SOURCE_RANGE_LIMITED;
   source->limit = limit;
@@ -47,22 +54,44 @@ NA_DEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
 
 
 
-NA_HDEF NABuffer* na_GetBufferSourceUnderlyingBuffer(NABufferSource* source){
-  return source->buffer;
+NA_HIDEF NABool na_HasBufferSourceCache(NABufferSource* source){
+  #ifndef NDEBUG
+    if(!source)
+      naCrash("Source is Null");
+  #endif
+  return source->cache != NA_NULL;
+}
+
+
+
+NA_HIDEF NABuffer* na_GetBufferSourceCache(NABufferSource* source){
+  #ifndef NDEBUG
+    if(!source)
+      naCrash("Source is Null");
+    if(!na_HasBufferSourceCache(source))
+      naError("source has no cache");
+  #endif
+  return source->cache;
 }
 
 
 
 // Returns NA_TRUE if the range is a valid limiting range.
-NA_HDEF NABool na_IsBufferSourceLimited(const NABufferSource* source){
+NA_HIDEF NABool na_HasBufferSourceLimit(const NABufferSource* source){
+  #ifndef NDEBUG
+    if(!source)
+      naCrash("Source is Null");
+  #endif
   return (NABool)(source->flags & NA_BUFFER_SOURCE_RANGE_LIMITED);
 }
 
 
 
-NA_HDEF NARangei na_GetBufferSourceLimit(const NABufferSource* source){
+NA_HIDEF NARangei na_GetBufferSourceLimit(const NABufferSource* source){
   #ifndef NDEBUG
-    if(!na_IsBufferSourceLimited(source))
+    if(!source)
+      naCrash("Source is Null");
+    if(!na_HasBufferSourceLimit(source))
       naError("source is not limited");
   #endif
   return source->limit;
@@ -70,9 +99,19 @@ NA_HDEF NARangei na_GetBufferSourceLimit(const NABufferSource* source){
 
 
 
-NA_HDEF void na_FillSourceBuffer(const NABufferSource* source, void* dst, NARangei range){
-  if(source && source->buffiller){
-    source->buffiller(dst, range, source->data);
+NA_HIDEF void na_FillSourceBuffer(const NABufferSource* source, void* dst, NARangei range){
+  #ifndef NDEBUG
+    if(!source)
+      naCrash("Source is Null");
+    if(!dst)
+      naCrash("dst is Null");
+    if(!naIsRangeiUseful(range))
+      naError("range is not useful");
+    if(na_HasBufferSourceLimit(source) && !naEqualRangei(naMakeRangeiWithRangeIntersection(range, source->limit), range))
+      naError("range is out of limit");
+  #endif
+  if(source->bufFiller){
+    source->bufFiller(dst, range, source->data);
   }
 }
 

@@ -10,7 +10,7 @@ struct NABufferPart{
   NAInt               sourceOffset; // The source offset of the first byte
   size_t              byteSize;     // The number of bytes referenced.
   size_t              blockOffset;  // The byte offset in the block.
-  NAMemoryBlock*      memblock;     // The referenced memory block.
+  NAMemoryBlock*      memBlock;     // The referenced memory block.
 };
 
 
@@ -28,13 +28,13 @@ NA_HIDEF size_t na_GetBufferPartByteSize(const NABufferPart* part){
 
 
 NA_HIDEF NAMemoryBlock* na_GetBufferPartMemoryBlock(const NABufferPart* part){
-  return part->memblock;
+  return part->memBlock;
 }
 
 
 
 NA_HIDEF NABool na_IsBufferPartSparse(const NABufferPart* part){
-  return (part->memblock == NA_NULL);
+  return (part->memBlock == NA_NULL);
 }
 
 
@@ -77,7 +77,7 @@ NA_HIDEF const void* na_GetBufferPartDataPointerConst(NABufferIterator* iter){
       naError("buffer part is sparse");
   #endif
   part = na_GetBufferPart(iter);
-  return na_GetMemoryBlockDataPointerConst(part->memblock, part->blockOffset + (size_t)iter->partOffset);
+  return na_GetMemoryBlockDataPointerConst(part->memBlock, part->blockOffset + (size_t)iter->partOffset);
 }
 
 
@@ -92,7 +92,7 @@ NA_HIDEF void* na_GetBufferPartDataPointerMutable(NABufferIterator* iter){
       naError("buffer part is sparse");
   #endif
   part = na_GetBufferPart(iter);
-  return na_GetMemoryBlockDataPointerMutable(part->memblock, part->blockOffset + (size_t)iter->partOffset);
+  return na_GetMemoryBlockDataPointerMutable(part->memBlock, part->blockOffset + (size_t)iter->partOffset);
 }
 
 

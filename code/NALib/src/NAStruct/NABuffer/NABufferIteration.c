@@ -312,7 +312,7 @@ NA_HDEF NABuffer* na_GetBufferIteratorSourceBuffer(NABufferIterator* iter){
     source = na_GetBufferPartSource(part);
   }
   if(source){
-    return na_GetBufferSourceUnderlyingBuffer(source);
+    return na_GetBufferSourceCache(source);
   }else{
     return NA_NULL;
   }

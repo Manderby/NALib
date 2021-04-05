@@ -223,16 +223,16 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcBuffe
     NABuffer* dstbuffer;
     NABufferSource* tmpsource;
     NAInt tmpsourceOffset;
-    NABuffer* mutablesrcBuffer;
+    NABuffer* mutableSrcBuffer;
     NAInt curPos;
 
     dstbuffer = na_GetBufferIteratorBufferMutable(iter);
     curPos = naGetBufferLocation(iter);
-    mutablesrcBuffer = (NABuffer*)srcBuffer;
+    mutableSrcBuffer = (NABuffer*)srcBuffer;
 
     tmpsource = dstbuffer->source;
     tmpsourceOffset = dstbuffer->sourceOffset;
-    dstbuffer->source = naNewBufferSource(NA_NULL, mutablesrcBuffer);
+    dstbuffer->source = naNewBufferSource(NA_NULL, mutableSrcBuffer);
     dstbuffer->sourceOffset = srcRange.origin - curPos;
 
     naCacheBufferRange(dstbuffer, naMakeRangei(curPos, srcRange.length));

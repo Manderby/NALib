@@ -8,11 +8,11 @@ NA_RUNTIME_TYPE(NABufferSource, na_DestructBufferSource, NA_TRUE);
 
 
 
-NA_DEF NABufferSource* naNewBufferSource(NABufferFiller filler, NABuffer* buffer){
+NA_DEF NABufferSource* naNewBufferSource(NABufferFiller filler, NABuffer* cache){
   NABufferSource* source = naNew(NABufferSource);
 
-  source->buffiller = filler;
-  source->buffer = buffer ? naRetain(buffer) : NA_NULL;
+  source->bufFiller = filler;
+  source->cache = cache ? naRetain(cache) : NA_NULL;
   source->data = NA_NULL;
   source->dataDestructor = NA_NULL;
   source->flags = 0;
@@ -25,7 +25,7 @@ NA_DEF NABufferSource* naNewBufferSource(NABufferFiller filler, NABuffer* buffer
 
 NA_HDEF void na_DestructBufferSource(NABufferSource* source){
   if(source->dataDestructor){source->dataDestructor(source->data);}
-  if(source->buffer){naRelease(source->buffer);}
+  if(source->cache){naRelease(source->cache);}
 }
 
 

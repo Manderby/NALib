@@ -21,12 +21,11 @@ NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei so
   #endif
   part = naNew(NABufferPart);
   if(source){
-    NABuffer* sourcebuffer;
     part->source = naRetain(source);
     part->sourceOffset = sourceRange.origin;
-    sourcebuffer = na_GetBufferSourceUnderlyingBuffer(source);
-    if(sourcebuffer){
-      na_EnsureBufferRange(sourcebuffer, sourceRange.origin, naGetRangeiEnd(sourceRange));
+    if(na_HasBufferSourceCache(source)){
+      NABuffer* sourceCache = na_GetBufferSourceCache(source);
+      na_EnsureBufferRange(sourceCache, sourceRange.origin, naGetRangeiEnd(sourceRange));
     }
   }else{
     part->source = NA_NULL;
@@ -34,7 +33,7 @@ NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei so
   }
   part->byteSize = (size_t)sourceRange.length;
   part->blockOffset = 0;
-  part->memblock = NA_NULL;
+  part->memBlock = NA_NULL;
   return part;
 }
 
@@ -52,7 +51,7 @@ NA_HDEF NABufferPart* na_NewBufferPartWithConstData(const void* data, size_t byt
   part->sourceOffset = 0;
   part->byteSize = byteSize;
   part->blockOffset = 0;
-  part->memblock = na_NewMemoryBlockWithData(naMakePtrWithDataConst(data), byteSize, NA_NULL);
+  part->memBlock = na_NewMemoryBlockWithData(naMakePtrWithDataConst(data), byteSize, NA_NULL);
   return part;
 }
 
@@ -70,17 +69,8 @@ NA_HDEF NABufferPart* na_NewBufferPartWithMutableData(void* data, size_t byteSiz
   part->sourceOffset = 0;
   part->byteSize = byteSize;
   part->blockOffset = 0;
-  part->memblock = na_NewMemoryBlockWithData(naMakePtrWithDataMutable(data), byteSize, destructor);
+  part->memBlock = na_NewMemoryBlockWithData(naMakePtrWithDataMutable(data), byteSize, destructor);
   return part;
-}
-
-
-
-NA_HDEF void na_SeparateBufferPart(NABufferPart* part){
-  NAMemoryBlock* newblock = na_NewMemoryBlock(part->byteSize);
-  naCopyn(na_GetMemoryBlockDataPointerMutable(newblock, 0), na_GetMemoryBlockDataPointerConst(part->memblock, part->blockOffset), part->byteSize);
-  naRelease(part->memblock);
-  part->memblock = newblock;
 }
 
 
@@ -88,7 +78,16 @@ NA_HDEF void na_SeparateBufferPart(NABufferPart* part){
 // The destructor method which will automatically be called by naRelease.
 NA_HDEF void na_DestructBufferPart(NABufferPart* part){
   if(part->source){naRelease(part->source);}
-  if(part->memblock){naRelease(part->memblock);}
+  if(part->memBlock){naRelease(part->memBlock);}
+}
+
+
+
+NA_HDEF void na_SeparateBufferPart(NABufferPart* part){
+  NAMemoryBlock* newblock = na_NewMemoryBlock(part->byteSize);
+  naCopyn(na_GetMemoryBlockDataPointerMutable(newblock, 0), na_GetMemoryBlockDataPointerConst(part->memBlock, part->blockOffset), part->byteSize);
+  naRelease(part->memBlock);
+  part->memBlock = newblock;
 }
 
 
@@ -169,26 +168,28 @@ NA_HDEF NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partIter,
   NABufferPart* part = naGetTreeCurLeafMutable(partIter);
   NABufferSource* source = part->source;
   NAInt sourceOffset = part->sourceOffset + partrange.origin;
-  NABuffer* sourcebuffer = na_GetBufferSourceUnderlyingBuffer(source);
+
+  // todo: test for na_HasBufferSourceCache
+  NABuffer* sourceCache = na_GetBufferSourceCache(source);
 
   #ifndef NDEBUG
-    if(!na_GetBufferSourceUnderlyingBuffer(source))
+    if(!na_HasBufferSourceCache(source))
       naCrash("source has no buffer");
     if(!na_IsBufferPartSparse(part))
       naError("part is not sparse");
-    if(na_IsBufferSourceLimited(source) && !naContainsRangeiOffset(na_GetBufferSourceLimit(source), sourceOffset))
+    if(na_HasBufferSourceLimit(source) && !naContainsRangeiOffset(na_GetBufferSourceLimit(source), sourceOffset))
       naError("offset is not in source limits");
   #endif
 
-  iter = naMakeBufferModifier(sourcebuffer);
+  iter = naMakeBufferModifier(sourceCache);
 
   found = naLocateBufferAbsolute(&iter, sourceOffset);
   if(!found){
     // If we haven't found a suitable part, we must ensure the desired range.
-    na_EnsureBufferRange(sourcebuffer, sourceOffset, sourceOffset + partrange.length);
+    na_EnsureBufferRange(sourceCache, sourceOffset, sourceOffset + partrange.length);
     // We now know that the new byte must either be at the beginning or
     // the end.
-    if(sourcebuffer->range.origin == sourceOffset){
+    if(sourceCache->range.origin == sourceOffset){
       na_LocateBufferStart(&iter);
     }else{
       na_LocateBufferMax(&iter);
@@ -239,7 +240,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partIter,
   size_t normedEnd = (size_t)(partrange.origin + remainingBytesInSourcePart);
   part = na_SplitBufferPart(partIter, normedStart, normedEnd);
 
-  part->memblock = naRetain(na_GetBufferPartMemoryBlock(sourcepart));
+  part->memBlock = naRetain(na_GetBufferPartMemoryBlock(sourcepart));
   part->blockOffset = sourcepart->blockOffset + offsetInSourcePart;
     
   naClearBufferIterator(&iter);
@@ -308,11 +309,11 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
 
   // Now, the part has been split in whatever manner it was necessary.
   // Let's create the memory block.
-  part->memblock = na_NewMemoryBlock(part->byteSize);
+  part->memBlock = na_NewMemoryBlock(part->byteSize);
   part->blockOffset = 0;
   
   // Fill the memory block according to the source.
-  dst = na_GetMemoryBlockDataPointerMutable(part->memblock, 0);
+  dst = na_GetMemoryBlockDataPointerMutable(part->memBlock, 0);
   na_FillSourceBuffer(source, dst, naMakeRangeiWithStartAndEnd((NAInt)normedStart, (NAInt)(normedStart + part->byteSize)));
 
   return part;
@@ -330,8 +331,8 @@ NA_HDEF size_t na_PrepareBufferPart(NABufferIterator* iter, size_t byteCount){
   NABufferPart* part = na_GetBufferPart(iter);
   if(na_IsBufferPartSparse(part)){
     // We decide how to prepare the part.
-    NABuffer* sourcebuffer = na_GetBufferIteratorSourceBuffer(iter);
-    if(sourcebuffer){
+    NABuffer* sourceBuffer = na_GetBufferIteratorSourceBuffer(iter);
+    if(sourceBuffer){
       // There is a source buffer, so we try to fill the part with it.
       part = na_PrepareBufferPartSourceBuffer(&(iter->partIter), naMakeRangei((NAInt)iter->partOffset, (NAInt)byteCount));
     }else{
