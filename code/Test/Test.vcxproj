@@ -183,6 +183,7 @@
     <ClCompile Include="src\testNALib\testNACore\testNATesting.c" />
     <ClCompile Include="src\testNALib\testNACore\testNAValueHelper.c" />
     <ClCompile Include="src\testNALib\testNAStruct.c" />
+    <ClCompile Include="src\testNALib\testNAStruct\testNABuffer.c" />
     <ClCompile Include="src\testNALib\testNAStruct\testNAStack.c" />
   </ItemGroup>
   <ItemGroup>

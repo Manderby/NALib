@@ -12,7 +12,6 @@ struct NABufferPart{
   size_t              blockOffset;  // The byte offset in the block.
   NAMemoryBlock*      memblock;     // The referenced memory block.
 };
-NA_EXTERN_RUNTIME_TYPE(NABufferPart);
 
 
 

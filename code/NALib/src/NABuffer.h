@@ -24,9 +24,9 @@ typedef struct NABufferIterator NABufferIterator;
 // An NABuffer is capable of storing any kind of linear data, potentially
 // broken into multiple parts. It uses sparse memory, meaning as long as a
 // part is not explicitely needed, no memory at that position is allocated.
-// This means for example that you can open a file which has a total fileSize
-// of 1GB but you only access a few bytes resulting in only needing a few
-// bytes in memory. Even if these bytes are scattered around multiple
+// This means for example that you can open a file which has a total file
+// size of 1GB but you only access a few bytes resulting in only needing a
+// few bytes in memory. Even if these bytes are scattered around multiple
 // positions in the file, only those parts of the file are read which
 // are actually needed.
 //
@@ -36,8 +36,8 @@ typedef struct NABufferIterator NABufferIterator;
 // An NABuffer structure always requires a source to fill itself with content.
 // A source defines a linear storage containing content. This source can be
 // allocated memory, a file, an existing C-array, another NABuffer and more.
-// The source guarantees, that each byte of that source has its clearly defined
-// position in memory.
+// The source guarantees, that each byte of that source has its clearly
+// defined position in memory.
 //
 // The NABuffer uses that source and "borrows" the contents of the linear
 // memory, arbitrarily positioned.
@@ -58,10 +58,10 @@ typedef struct NABufferIterator NABufferIterator;
 //
 // The important thing is, that memory will not be copied but only referenced
 // (hence being very fast) and stays in memory as long as some structure needs
-// it. This means, you can read a whole file, pick the contents you need to
-// to keep and close the file source again, resulting in all memory deallocated
-// which is not needed anymore and only leaving the memory active which is
-// actually in use.
+// it. This means that a programmer can read a whole file, pick the contents
+// which are needed and close the file source again, resulting in all memory
+// deallocated which is not needed anymore and only leaving the memory active
+// which is actually in use.
 //
 // NABuffers are able to use multiple sources and stitch together pieces
 // arbitrarily. Like for example:

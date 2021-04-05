@@ -6,61 +6,35 @@
 
 
 struct NAMemoryBlock{
-  NAPtr            data;
-  NAMutator        destructor;
+  // automatic reference counting implemented as runtime type.
+  NAPtr     data;
+  NAMutator destructor;
   #ifndef NDEBUG
-    size_t          byteSize;
+    size_t  byteSize;
   #endif
 };
-NA_EXTERN_RUNTIME_TYPE(NAMemoryBlock);
-
-
-
-NA_HIDEF NAMemoryBlock* na_NewMemoryBlock(size_t byteSize){
-  NAMemoryBlock* block;
-  #ifndef NDEBUG
-    if(byteSize == 0)
-      naError("byteSize is zero");
-  #endif
-  block = naNew(NAMemoryBlock);
-  block->data = naMakePtrWithDataMutable(naMalloc(byteSize));
-  block->destructor = (NAMutator)naFree;
-  #ifndef NDEBUG
-    block->byteSize = byteSize;
-  #endif
-  return block;
-}
-
-
-
-NA_HIDEF NAMemoryBlock* na_NewMemoryBlockWithData(NAPtr data, size_t byteSize, NAMutator destructor){
-  NAMemoryBlock* block;
-  #ifndef NDEBUG
-    if(byteSize == 0)
-      naError("byteSize is zero");
-    if(naIsPtrConst(data) && destructor != NA_NULL)
-      naError("having a destructor for const data is probably wrong.");
-  #else
-    NA_UNUSED(byteSize);
-  #endif
-  block = naNew(NAMemoryBlock);
-  block->data = data;
-  block->destructor = destructor;
-  #ifndef NDEBUG
-    block->byteSize = byteSize;
-  #endif
-  return block;
-}
 
 
 
 NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, size_t index){
+  #ifndef NDEBUG
+    if(!block)
+      naCrash("block is Null");
+    if(index >= block->byteSize)
+      naError("index out of range");
+  #endif
   return (const void*)&(((const NAByte*)naGetPtrConst(block->data))[index]);
 }
 
 
 
 NA_HIDEF void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, size_t index){
+  #ifndef NDEBUG
+    if(!block)
+      naCrash("block is Null");
+    if(index >= block->byteSize)
+      naError("index out of range");
+  #endif
   return (void*)&(((const NAByte*)naGetPtrMutable(block->data))[index]);
 }
 

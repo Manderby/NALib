@@ -7,6 +7,7 @@
 // Prototypes
 void printNAStack(void);
 
+void testNABuffer(void);
 void testNAStack(void);
 
 void benchmarkNAStack(void);
@@ -16,7 +17,8 @@ void printNAStruct(){
 }
 
 void testNAStruct(){
-  naTestGroupFunction(NAStack);
+  naTestGroupFunction(NABuffer);
+  //naTestGroupFunction(NAStack);
 }
 
 void benchmarkNAStruct(){

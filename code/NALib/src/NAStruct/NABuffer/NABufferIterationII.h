@@ -5,6 +5,16 @@
 
 
 
+struct NABufferIterator{
+  NAPtr bufferPtr;
+  NATreeIterator partIter;
+  NAInt partOffset;  // The current byte offset in the referenced part.
+  uint8 curBit;      // The current bit number
+  size_t lineNum;    // The line number, starting with 1 after first line read.
+};
+
+
+
 NA_HIDEF const NABuffer* na_GetBufferIteratorBufferConst(const NABufferIterator* iter){
   return naGetPtrConst(iter->bufferPtr);
 }
@@ -75,6 +85,12 @@ NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter){
 
 NA_IDEF uint8 naGetBufferCurBit(NABufferIterator* iter){
   return iter->curBit;
+}
+
+
+
+NA_IDEF size_t naGetBufferLineNumber(NABufferIterator* iter){
+  return iter->lineNum;
 }
 
 
