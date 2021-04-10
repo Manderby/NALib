@@ -8,7 +8,7 @@
 // This needs to be in this inline implementation file as it needs to be
 // accessible to the compiler at all times.
 struct NATypeInfo{
-  void*             curpoolpart;    // The actual type of this entry is hidden.
+  void*             curPoolPart;    // The actual type of this entry is hidden.
   size_t            typeSize;
   NAMutator         destructor;
   NABool            refCounting;
@@ -19,12 +19,8 @@ struct NATypeInfo{
 
 
 
-#undef NA_EXTERN_RUNTIME_TYPE
-#define NA_EXTERN_RUNTIME_TYPE(typeName)\
-  extern NATypeInfo na_ ## typeName ## TypeInfo
-
-
-
+// This is the runtime type macro which actually creates a global variable
+// called na_MyStruct_Typeinfo (for whatever MyStruct is) storing all values.
 #undef NA_RUNTIME_TYPE
 #ifndef NDEBUG
   #define NA_RUNTIME_TYPE(typeName, destructor, refCounting)\
@@ -45,12 +41,20 @@ struct NATypeInfo{
 
 
 
+// This is the declarative macro which lets you hide the struct declaration
+// in an implementation file.
+#undef NA_EXTERN_RUNTIME_TYPE
+#define NA_EXTERN_RUNTIME_TYPE(typeName)\
+  extern NATypeInfo na_ ## typeName ## TypeInfo
+
+
+
 #undef naNew
-#define naNew(typeName) (typeName*)naNewStruct(&na_ ## typeName ## TypeInfo)
+#define naNew(typeName) ((typeName*)na_NewStruct(&na_ ## typeName ## TypeInfo))
 // If you experience an error here with naNew: Have you marked your type with
 // NA_RUNTIME_TYPE? See NA_RUNTIME_TYPE below.
 
-NA_API void* naNewStruct(NATypeInfo* info);
+NA_API void* na_NewStruct(NATypeInfo* info);
 
 
 
@@ -70,6 +74,12 @@ struct NARuntime{
 };
 
 extern NARuntime* na_Runtime;
+
+
+
+NA_IDEF NABool naIsRuntimeRunning(){
+  return na_Runtime != NA_NULL;
+}
 
 
 

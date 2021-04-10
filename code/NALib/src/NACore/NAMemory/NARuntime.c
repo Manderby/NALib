@@ -50,8 +50,7 @@
 // Initially, there will only be garbage values. NALib keeps track of that by
 // counting how many spaces have ever been used inside the part. If the new
 // space has never been used, the next available pointer will simply be one
-// typeSize ahead. Note from the author: This little trick made the current
-// implementation really fast!
+// typeSize ahead.
 //
 // Otherwise, when that space has already been used once and has been deleted
 // in the meantime, it will now contain an address to the next free space.
@@ -62,6 +61,9 @@
 // just deleted space, hence ultimately creating a linear list. With this
 // mechanism, the NA_PoolPart can always keep track of which spacess are
 // still available.
+// 
+// Note from the author: This little trick made the current implementation
+// really fast!
 //
 // When finally the number of spaces used in a part equals the maximum number
 // of spaces, the part has no more space. Then, the next part in the list is
@@ -93,7 +95,7 @@
 
 
 // This structure is stored in the first bytes of every part block.
-// Its size is ALWAYS 8 times an addresssize, the rest of the block is
+// Its size is ALWAYS 8 times an addressSize, the rest of the block is
 // available for the memory.
 typedef struct NA_PoolPart NA_PoolPart;
 struct NA_PoolPart{
@@ -102,17 +104,18 @@ struct NA_PoolPart{
   size_t usedCount;
   size_t everUsedCount;
   void* firstUnused;
-  NA_PoolPart* prevpart;
-  NA_PoolPart* nextpart;
-  // The following field is a dummy entry not in use.
+  NA_PoolPart* prevPart;
+  NA_PoolPart* nextPart;
+  // The following field is a dummy entry and has no meaning in release code.
   // It shall not be removed though as the total amount of bytes used for
-  // an NA_PoolPart shall be 8 times an addresssize.
-  void* dummy; // used in debugging. Points at first byte of the whole pool
-               // for consistency check.
+  // an NA_PoolPart shall be 8 times an addressSize.
+  // It is used in debugging though. Points at first byte of the whole pool
+  // for consistency check.
+  void* dummy;
 };
 
 struct NA_TypeInfo{
-  NA_PoolPart*   curPart;
+  NA_PoolPart*      curPart;
   size_t            typeSize;
   NAMutator         destructor;
   NABool            refCounting;
@@ -121,8 +124,11 @@ struct NA_TypeInfo{
   #endif
 };
 
+
+
+// The number of entries in a garbage pointer list part.  The 2 denotes the
+// first two entries of the NAMallocGarbage struct.
 #define NA_MALLOC_GARBAGE_POINTER_COUNT (NA_POOLPART_BYTESIZE / NA_ADDRESS_BYTES - 2)
-// The 2 denotes the first two entries in this struct.
 
 struct NAMallocGarbage{
   NAMallocGarbage* next;
@@ -190,12 +196,12 @@ NA_HIDEF void na_RegisterTypeInfo(NA_TypeInfo* typeInfo){
 NA_HIDEF void na_UnregisterTypeInfo(NA_TypeInfo* typeInfo){
   NA_TypeInfo** newinfos = NA_NULL;
   if(na_Runtime->typeInfoCount > 1){
-    NAInt oldindex = 0;
     newinfos = naMalloc(sizeof(NA_TypeInfo*) * (na_Runtime->typeInfoCount - NA_ONE_s));
 
     // We shrink the info array by one by omitting the one entry which equals
     // the given parameter. Again, just like na_RegisterTypeInfo, this is not
     // very fast, but does the job. See comment there.
+    NAInt oldindex = 0;
     for(size_t i = 0; i < (na_Runtime->typeInfoCount - NA_ONE_s); i++){
       if(na_Runtime->typeInfos[i] == typeInfo){oldindex++;}
       newinfos[i] = na_Runtime->typeInfos[oldindex];
@@ -218,13 +224,13 @@ NA_HIDEF void na_UnregisterTypeInfo(NA_TypeInfo* typeInfo){
 
 NA_HDEF size_t na_GetTypeInfoAllocatedCount(NA_TypeInfo* typeInfo){
   NA_PoolPart* firstpart = typeInfo->curPart;
-  NA_PoolPart* curPart = firstpart->nextpart;
-  size_t totalcount = firstpart->usedCount;
+  NA_PoolPart* curPart = firstpart->nextPart;
+  size_t totalCount = firstpart->usedCount;
   while(curPart != firstpart){
-    totalcount += curPart->usedCount;
-    curPart = curPart->nextpart;
+    totalCount += curPart->usedCount;
+    curPart = curPart->nextPart;
   }
-  return totalcount;
+  return totalCount;
 }
 
 
@@ -236,10 +242,10 @@ NA_HIDEF NABool na_IsPoolPartFull(NA_PoolPart* part){
 
 
 NA_HIDEF void na_AttachPoolPartAfterCurPoolPart(NA_TypeInfo* typeInfo, NA_PoolPart* part){
-  part->prevpart = typeInfo->curPart;
-  part->nextpart = typeInfo->curPart->nextpart;
-  part->prevpart->nextpart = part;
-  part->nextpart->prevpart = part;
+  part->prevPart = typeInfo->curPart;
+  part->nextPart = typeInfo->curPart->nextPart;
+  part->prevPart->nextPart = part;
+  part->nextPart->prevPart = part;
 }
 
 
@@ -286,8 +292,8 @@ NA_HIDEF void na_EnhancePool(NA_TypeInfo* typeInfo){
   if(typeInfo->curPart){
     na_AttachPoolPartAfterCurPoolPart(typeInfo, part);
   }else{
-    part->prevpart = part;
-    part->nextpart = part;
+    part->prevPart = part;
+    part->nextPart = part;
   }
 
   // Set the newly created part to be the current part.
@@ -296,20 +302,17 @@ NA_HIDEF void na_EnhancePool(NA_TypeInfo* typeInfo){
 
 
 
-NA_DEF void* naNewStruct(NATypeInfo* info){
-  void* pointer;
-  NA_TypeInfo* typeInfo;
-
+NA_DEF void* na_NewStruct(NATypeInfo* info){
   #ifndef NDEBUG
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!info)
-      naCrash("Given type identifier is Null-Pointer. Do not call naNewStruct directly. Use the naNew macro.");
+      naCrash("Given type identifier is Null-Pointer. Do not call na_NewStruct directly. Use the naNew macro.");
     if(info->typeSize == 0)
       naError("Type size is zero. Is the type void?");
   #endif
 
-  typeInfo = (NA_TypeInfo*)info;
+  NA_TypeInfo* typeInfo = (NA_TypeInfo*)info;
 
   // If there is no current part, create a first one.
   // This happends either upon first naNew of this type ever or when aggressive
@@ -326,7 +329,7 @@ NA_DEF void* naNewStruct(NATypeInfo* info){
 
   // If the current part is full, we try the next in the part list.
   if(na_IsPoolPartFull(typeInfo->curPart)){
-    typeInfo->curPart = typeInfo->curPart->nextpart;
+    typeInfo->curPart = typeInfo->curPart->nextPart;
     // If the next in the part list is full too, no part in the list has any
     // space left and hence we must create a new part.
     if(na_IsPoolPartFull(typeInfo->curPart)){na_EnhancePool(typeInfo);}
@@ -339,20 +342,21 @@ NA_DEF void* naNewStruct(NATypeInfo* info){
   #endif
 
   // We get the pointer to the first currently unused space.
-  pointer = typeInfo->curPart->firstUnused;
+  void* pointer = typeInfo->curPart->firstUnused;
 
   // We find out which will be the next pointer to return.
   if(typeInfo->curPart->usedCount == typeInfo->curPart->everUsedCount){
-    // The current space has not been used ever. Use the next address one
-    // typeSize ahead.
+    // The current space has not been used ever and is de facto the one unused
+    // space with the lowest address in this part. Use the next address one
+    // typeSize ahead for the next space.
     typeInfo->curPart->firstUnused = (NAByte*)(typeInfo->curPart->firstUnused) + typeInfo->typeSize;
 
     // Increase the number of ever used spaces in this part.
     typeInfo->curPart->everUsedCount++;
   }else{
     // The space has already been used and deleted before which means, it
-    // stores now a pointer to the next unused space.
-    typeInfo->curPart->firstUnused = *((void**)typeInfo->curPart->firstUnused);
+    // currently stores a pointer to the next unused space.
+    typeInfo->curPart->firstUnused = *((void**)pointer);
   }
 
   // Increase the number of spaces used in this part.
@@ -391,9 +395,9 @@ NA_HIDEF void na_EjectPoolPartObject(NA_PoolPart* part, void* pointer){
   // it comes one after the current part. But only if there are more than one
   // parts around and the current part of the typeInfo is not already the
   // current part.
-  if((part->usedCount == part->maxCount) && (part->nextpart != part) && (part->typeInfo->curPart != part)){
-    part->nextpart->prevpart = part->prevpart;
-    part->prevpart->nextpart = part->nextpart;
+  if(na_IsPoolPartFull(part) && (part->nextPart != part) && (part->typeInfo->curPart != part)){
+    part->nextPart->prevPart = part->prevPart;
+    part->prevPart->nextPart = part->nextPart;
     na_AttachPoolPartAfterCurPoolPart(part->typeInfo, part);
   }
 
@@ -402,7 +406,7 @@ NA_HIDEF void na_EjectPoolPartObject(NA_PoolPart* part, void* pointer){
 
   // If no more spaces are in use, we can shrink that part away.
   if(!part->usedCount){
-    if(part->nextpart == part){
+    if(part->nextPart == part){
       #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 1
         // If this part is the last part of the pool and the cleanup is set to
         // aggressive, we shrink it away and unregister the type.
@@ -415,11 +419,18 @@ NA_HIDEF void na_EjectPoolPartObject(NA_PoolPart* part, void* pointer){
       // There are other parts in the pool. If the empty part is the one which
       // is the current part of the pool, we move to the next part.
       if(part->typeInfo->curPart == part){
-        part->typeInfo->curPart = part->nextpart;
+        part->typeInfo->curPart = part->nextPart;
       }
+
+      // Now, one could think of checking whether there are more parts with
+      // free space available and keep the part if there is absolutely none
+      // available. But that would become a bit of a list nightmare and would
+      // destroy the simplicity of the current approach. Still, might be an
+      // idea.
+
       // We unlink the part from the list.
-      part->prevpart->nextpart = part->nextpart;
-      part->nextpart->prevpart = part->prevpart;
+      part->prevPart->nextPart = part->nextPart;
+      part->nextPart->prevPart = part->prevPart;
       // And delete its memory.
       naFreeAligned(part);
     }
@@ -463,10 +474,7 @@ NA_DEF void naDelete(void* pointer){
 
 
 NA_DEF void* naRetain(void* pointer){
-  NARefCount* refCount;
-
   #ifndef NDEBUG
-    NA_PoolPart* part;
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!pointer)
@@ -478,7 +486,7 @@ NA_DEF void* naRetain(void* pointer){
       naError("No native integer type to successfully run the runtime system.");
       NA_UNUSED(part);
     #else
-      part = (NA_PoolPart*)((size_t)pointer & na_Runtime->partSizeMask);
+      NA_PoolPart* part = (NA_PoolPart*)((size_t)pointer & na_Runtime->partSizeMask);
       if(part->dummy != part)
         naError("Pointer seems not to be from a pool.");
       if(!part->typeInfo->refCounting)
@@ -487,7 +495,7 @@ NA_DEF void* naRetain(void* pointer){
   #endif
 
   // Retain the refCounter.
-  refCount = (NARefCount*)((NAByte*)pointer - sizeof(NARefCount));
+  NARefCount* refCount = (NARefCount*)((NAByte*)pointer - sizeof(NARefCount));
   naRetainRefCount(refCount);
   return pointer;
 }
@@ -495,9 +503,6 @@ NA_DEF void* naRetain(void* pointer){
 
 
 NA_DEF void naRelease(void* pointer){
-  NA_PoolPart* part;
-  NARefCount* refCount;
-
   #ifndef NDEBUG
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
@@ -505,8 +510,6 @@ NA_DEF void naRelease(void* pointer){
       naCrash("pointer is null");
   #endif
 
-  // Find the pool entry at the beginning of the part by AND'ing the
-  // address with the partSizeMask
   #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
     NA_UNUSED(part);
     NA_UNUSED(pointer);
@@ -516,7 +519,9 @@ NA_DEF void naRelease(void* pointer){
     #endif
   #else
 
-    part = (NA_PoolPart*)((size_t)pointer & na_Runtime->partSizeMask);
+    // Find the pool entry at the beginning of the part by AND'ing the
+    // address with the partSizeMask
+    NA_PoolPart* part = (NA_PoolPart*)((size_t)pointer & na_Runtime->partSizeMask);
 
     #ifndef NDEBUG
       if(part->dummy != part)
@@ -526,7 +531,7 @@ NA_DEF void naRelease(void* pointer){
     #endif
 
     // Release the space and delete it with the destructor if refCount is zero.
-    refCount = (NARefCount*)((NAByte*)pointer - sizeof(NARefCount));
+    NARefCount* refCount = (NARefCount*)((NAByte*)pointer - sizeof(NARefCount));
     naReleaseRefCount(refCount, pointer, part->typeInfo->destructor);
     // Note: The following test could also be achieved by using a special
     // mutator function in the previous naReleaseRefCount call. But this would
@@ -537,6 +542,85 @@ NA_DEF void naRelease(void* pointer){
     }
 
   #endif
+}
+
+
+
+NA_HIDEF void na_EnhanceMallocGarbage(){
+  NAMallocGarbage* newGarbage = naAlloc(NAMallocGarbage);
+#ifndef NDEBUG
+  if(!newGarbage)
+    naCrash("No garbage memory allocated");
+#endif
+  newGarbage->next = na_Runtime->mallocGarbage;
+  newGarbage->cur = 0;
+  na_Runtime->mallocGarbage = newGarbage;
+}
+
+
+
+NA_DEF void* naMallocTmp(size_t byteSize){
+#ifndef NDEBUG
+  if(!naIsRuntimeRunning())
+    naCrash("Runtime not running. Use naStartRuntime()");
+#endif
+
+#if NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT != 0
+  if(na_Runtime->totalMallocGarbageByteCount > (size_t)NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT){naCollectGarbage();}
+#endif
+
+  na_Runtime->totalMallocGarbageByteCount += byteSize;
+  void* newPtr = naMalloc(byteSize);
+
+  if(!na_Runtime->mallocGarbage || (na_Runtime->mallocGarbage->cur == NA_MALLOC_GARBAGE_POINTER_COUNT)){
+    na_EnhanceMallocGarbage();
+  }
+
+#ifndef NDEBUG
+  if(!na_Runtime->mallocGarbage)
+    naCrash("Garbage struct is Null");
+  if(na_Runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)
+    naCrash("Buffer overrun.");
+#endif
+
+  NAMallocGarbage* garbage = na_Runtime->mallocGarbage;
+  garbage->pointers[garbage->cur] = newPtr;
+  garbage->cur++;
+  return newPtr;
+}
+
+
+
+NA_DEF void naCollectGarbage(){
+#ifndef NDEBUG
+  if(!naIsRuntimeRunning())
+    naCrash("Runtime not running. Use naStartRuntime()");
+#endif
+  while(na_Runtime->mallocGarbage){
+    void** ptr = na_Runtime->mallocGarbage->pointers;
+    for(size_t i = 0; i < na_Runtime->mallocGarbage->cur; i++){
+      naFree(*ptr);
+      ptr++;
+    }
+    NAMallocGarbage* nextgarbage = na_Runtime->mallocGarbage->next;
+
+    // If this was the last part, we decide if we want to delete it depending
+    // on the aggressive setting.
+  #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 1
+    naFree(na_Runtime->mallocGarbage);
+    na_Runtime->mallocGarbage = nextgarbage;
+  #else
+    if(nextgarbage){
+      naFree(na_Runtime->mallocGarbage);
+      na_Runtime->mallocGarbage = nextgarbage;
+    }else{
+      na_Runtime->mallocGarbage->cur = 0;
+      break;
+    }
+  #endif
+  }
+
+  na_Runtime->totalMallocGarbageByteCount = 0;
 }
 
 
@@ -592,14 +676,14 @@ NA_DEF void naStopRuntime(){
 
     // Go through all registered types and output a leak message if necessary.
     for(size_t i = 0; i < na_Runtime->typeInfoCount; i++){
-      size_t spacecount = na_GetTypeInfoAllocatedCount(na_Runtime->typeInfos[i]);
+      size_t spaceCount = na_GetTypeInfoAllocatedCount(na_Runtime->typeInfos[i]);
       #ifndef NDEBUG
-        if(spacecount){
+        if(spaceCount){
           if(!leakMessagePrinted){
             printf(NA_NL "Memory leaks detected in NARuntime:" NA_NL);
             leakMessagePrinted = NA_TRUE;
           }
-          printf("%s: %zu * %zu = %zu Bytes" NA_NL, na_Runtime->typeInfos[i]->typeName, spacecount, na_Runtime->typeInfos[i]->typeSize, spacecount * na_Runtime->typeInfos[i]->typeSize);
+          printf("%s: %zu * %zu = %zu Bytes" NA_NL, na_Runtime->typeInfos[i]->typeName, spaceCount, na_Runtime->typeInfos[i]->typeSize, spaceCount * na_Runtime->typeInfos[i]->typeSize);
         }
       #endif
     }
@@ -610,16 +694,16 @@ NA_DEF void naStopRuntime(){
   while(na_Runtime->typeInfos){
     NA_PoolPart* firstpart;
     NA_PoolPart* curPart;
-    NA_PoolPart* nextpart;
+    NA_PoolPart* nextPart;
 
     // Free all parts.
     firstpart = na_Runtime->typeInfos[0]->curPart;
     curPart = firstpart;
     while(curPart){
-      nextpart = curPart->nextpart;
+      nextPart = curPart->nextPart;
       naFreeAligned(curPart);
-      if(nextpart == firstpart){break;}
-      curPart = nextpart;
+      if(nextPart == firstpart){break;}
+      curPart = nextPart;
     }
 
     // Finally, unregister the type.
@@ -630,84 +714,6 @@ NA_DEF void naStopRuntime(){
   naFree(na_Runtime);
   na_Runtime = NA_NULL;
 }
-
-
-
-NA_HIDEF void na_EnhanceMallocGarbage(){
-  NAMallocGarbage* newgarbage = naAlloc(NAMallocGarbage);
-  #ifndef NDEBUG
-    if(!newgarbage)
-	    naCrash("No garbage memory allocated");
-  #endif
-  newgarbage->next = na_Runtime->mallocGarbage;
-  newgarbage->cur = 0;
-  na_Runtime->mallocGarbage = newgarbage;
-}
-
-
-
-NA_DEF void* naMallocTmp(size_t byteSize){
-  void* newPtr;
-  NAMallocGarbage* garbage;
-  #ifndef NDEBUG
-    if(!naIsRuntimeRunning())
-      naCrash("Runtime not running. Use naStartRuntime()");
-  #endif
-  #if NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT != 0
-    if(na_Runtime->totalMallocGarbageByteCount > (size_t)NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT){naCollectGarbage();}
-  #endif
-  na_Runtime->totalMallocGarbageByteCount += byteSize;
-  newPtr = naMalloc(byteSize);
-  if(!na_Runtime->mallocGarbage || (na_Runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)){
-    na_EnhanceMallocGarbage();
-  }
-  #ifndef NDEBUG
-    if(!na_Runtime->mallocGarbage)
-      naCrash("Garbage struct is null");
-    if(na_Runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)
-      naCrash("Buffer overrun.");
-  #endif
-  garbage = na_Runtime->mallocGarbage;
-  garbage->pointers[garbage->cur] = newPtr;
-  garbage->cur++;
-  return newPtr;
-}
-
-
-
-NA_DEF void naCollectGarbage(){
-  #ifndef NDEBUG
-    if(!naIsRuntimeRunning())
-      naCrash("Runtime not running. Use naStartRuntime()");
-  #endif
-  while(na_Runtime->mallocGarbage){
-    NAMallocGarbage* nextgarbage;
-    void** ptr = na_Runtime->mallocGarbage->pointers;
-    for(size_t i = 0; i < na_Runtime->mallocGarbage->cur; i++){
-      naFree(*ptr);
-      ptr++;
-    }
-    nextgarbage = na_Runtime->mallocGarbage->next;
-
-    // If this was the last part, we decide if we want to delete it depending
-    // on the aggressive setting.
-    #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 1
-      naFree(na_Runtime->mallocGarbage);
-      na_Runtime->mallocGarbage = nextgarbage;
-    #else
-      if(nextgarbage){
-        naFree(na_Runtime->mallocGarbage);
-        na_Runtime->mallocGarbage = nextgarbage;
-      }else{
-        na_Runtime->mallocGarbage->cur = 0;
-        break;
-      }
-    #endif
-
-  }
-  na_Runtime->totalMallocGarbageByteCount = 0;
-}
-
 
 
 
