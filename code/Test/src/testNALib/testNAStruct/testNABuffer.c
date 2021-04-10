@@ -179,8 +179,8 @@ void testBufferPart(){
     naTestVoid(naDelete(part));
 
     // no source
-    naTestError(part = na_NewBufferPartSparse(NA_NULL, naMakeRangei(0, 1)));
-    naDelete(part);
+    //naTestError(part = na_NewBufferPartSparse(NA_NULL, naMakeRangei(0, 1)));
+    //naDelete(part);
     // no useful range
     naTestError(part = na_NewBufferPartSparse(source, naMakeRangei(0, 0)));
     naDelete(part);
@@ -220,11 +220,11 @@ void testBufferPart(){
     naTest(na_IsBufferPartSparse(dataPart) == NA_FALSE);
     naTest(na_GetBufferPartMemoryBlock(dataPart) != NA_NULL);
 
-    //naTestCrash(na_GetBufferPartSource(NA_NULL));
-    //naTestCrash(na_GetBufferPartSourceOffset(NA_NULL));
-    //naTestCrash(na_GetBufferPartByteSize(NA_NULL));
-    //naTestCrash(na_IsBufferPartSparse(NA_NULL));
-    //naTestCrash(na_GetBufferPartMemoryBlock(NA_NULL));
+    naTestCrash(na_GetBufferPartSource(NA_NULL));
+    naTestCrash(na_GetBufferPartSourceOffset(NA_NULL));
+    naTestCrash(na_GetBufferPartByteSize(NA_NULL));
+    naTestCrash(na_IsBufferPartSparse(NA_NULL));
+    naTestCrash(na_GetBufferPartMemoryBlock(NA_NULL));
     naTestError(na_GetBufferPartSourceOffset(dataPart));
     naTestError(na_GetBufferPartMemoryBlock(sparsePart));
     naDelete(dataPart);
@@ -243,7 +243,7 @@ void testBufferPart(){
     NAByte dataConst[] = {0, 1, 2, 3};
     NABufferPart* dataPart = na_NewBufferPartWithConstData(dataConst, 4);
     naTestError(na_EnlargeBufferPart(dataPart, 2, 6));
-    //naTestCrash(na_EnlargeBufferPart(NA_NULL, 0, 0));
+    naTestCrash(na_EnlargeBufferPart(NA_NULL, 0, 0));
     naDelete(dataPart);
     naDelete(sparsePart);
   }
@@ -256,7 +256,7 @@ void testBufferPart(){
     naTest(na_GetMemoryBlockDataPointerMutable(na_GetBufferPartMemoryBlock(part), 0) != dataConst);
     naTestVoid(naDelete(part));
 
-    //naTestCrash(na_DecoupleBufferPart(NA_NULL));
+    naTestCrash(na_DecoupleBufferPart(NA_NULL));
   }
 
   naTestGroup("Sparse Part splitting"){
@@ -293,8 +293,8 @@ void printNABuffer(){
 
 
 void testNABuffer(){
-  //naTestGroupFunction(MemoryBlock);  
-  //naTestGroupFunction(BufferSource);  
+  naTestGroupFunction(MemoryBlock);  
+  naTestGroupFunction(BufferSource);  
   naTestGroupFunction(BufferPart);  
 }
 

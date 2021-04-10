@@ -11,8 +11,8 @@ NA_RUNTIME_TYPE(NABufferPart, na_DestructBufferPart, NA_FALSE);
 // Creates a buffer part with sparse memory.
 NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei sourceRange){
   #ifndef NDEBUG
-    if(!source)
-      naError("source is Null");
+    //if(!source)
+    //  naError("source is Null");
     if(!naIsLengthValueUsefuli(sourceRange.length))
       naError("range length is not useful");
   #endif
@@ -96,7 +96,7 @@ NA_HDEF void na_DestructBufferPart(NABufferPart* part){
 NA_HDEF void na_DecoupleBufferPart(NABufferPart* part){
   #ifndef NDEBUG
     if(!part)
-      naError("part is Null");
+      naCrash("part is Null");
   #endif
   NAMemoryBlock* newblock = na_NewMemoryBlock(part->byteSize);
   naCopyn(
