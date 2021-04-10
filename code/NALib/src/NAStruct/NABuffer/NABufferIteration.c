@@ -302,7 +302,7 @@ NA_DEF NABool naLocateBufferAbsolute(NABufferIterator* iter, NAInt offset){
 
 
 
-NA_HDEF NABuffer* na_GetBufferIteratorSourceBuffer(NABufferIterator* iter){
+NA_HDEF NABuffer* na_GetBufferIteratorCache(NABufferIterator* iter){
   NABufferSource* source;
   if(naIsTreeAtInitial(&(iter->partIter))){
     NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
@@ -395,7 +395,7 @@ NA_HDEF NABool na_IsBufferIteratorSparse(NABufferIterator* iter){
   }
 
   // Reaching here, we can be sure, the iterator points at the correct part.
-  return (na_GetBufferPartMemoryBlock(part) == NA_NULL);
+  return (na_IsBufferPartSparse(part));
 }
 
 
@@ -420,7 +420,7 @@ NA_HDEF void na_PrepareBuffer(NABufferIterator* iter, size_t byteCount){
   #ifndef NDEBUG
     if(naGetBufferCurBit(iter))
       naError("bitcount should be 0");
-    if(byteCount <= 0)
+    if(byteCount == 0)
       naError("byteCount should be >= 1");
   #endif
 
@@ -431,8 +431,6 @@ NA_HDEF void na_PrepareBuffer(NABufferIterator* iter, size_t byteCount){
   // split buffers into parts, it may be the case that there are many parts
   // to prepare, one after the other.
   while(byteCount){
-    size_t preparedByteCount;
-
     // First, let's make sure, the iterator is at a buffer part and the offset
     // does not overflow the range.
     
@@ -452,7 +450,7 @@ NA_HDEF void na_PrepareBuffer(NABufferIterator* iter, size_t byteCount){
 
     // //////////////////////////
     // We prepare the current part.
-    preparedByteCount = na_PrepareBufferPart(iter, byteCount);
+    size_t preparedByteCount = na_PrepareBufferPart(iter, byteCount);
     // //////////////////////////
 
     // Reaching here, iter points at a part filled with memory. Now, we can

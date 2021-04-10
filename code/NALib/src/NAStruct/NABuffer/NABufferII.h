@@ -231,6 +231,22 @@ NA_HIAPI void na_FillBufferSourceMemory(const NABufferSource* source, void* dst,
 
 
 
+// NABufferPart
+NA_HIAPI NAInt na_GetBufferPartNormedStart(NAInt start);
+NA_HIAPI NAInt na_GetBufferPartNormedEnd(NAInt end);
+NA_HAPI NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei sourceRange);
+NA_HAPI NABufferPart* na_NewBufferPartWithConstData(const void* data, size_t byteSize);
+NA_HAPI NABufferPart* na_NewBufferPartWithMutableData(void* data, size_t byteSize, NAMutator destructor);
+NA_HIAPI NABufferSource* na_GetBufferPartSource(const NABufferPart* part);
+NA_HIAPI NAInt na_GetBufferPartSourceOffset(const NABufferPart* part);
+NA_HIAPI size_t na_GetBufferPartByteSize(const NABufferPart* part);
+NA_HIAPI NABool na_IsBufferPartSparse(const NABufferPart* part);
+NA_HIAPI NAMemoryBlock* na_GetBufferPartMemoryBlock(const NABufferPart* part);
+NA_HAPI void na_DecoupleBufferPart(NABufferPart* part);
+NA_HIAPI void na_EnlargeBufferPart(NABufferPart* part, size_t bytesAtStart, size_t bytesAtEnd);
+
+
+
 // NABufferHelper
 NA_HAPI void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end);
 
@@ -246,29 +262,18 @@ NA_HAPI NABool na_LocateBufferMax(NABufferIterator* iter);
 NA_HAPI NABool na_LocateBufferEnd(NABufferIterator* iter);
 NA_HAPI NABool na_IterateBufferPart(NABufferIterator* iter);
 
-NA_HAPI NABuffer* na_GetBufferIteratorSourceBuffer(NABufferIterator* iter);
+NA_HAPI NABuffer* na_GetBufferIteratorCache(NABufferIterator* iter);
 NA_HIAPI NAInt na_GetBufferIteratorPartOffset(NABufferIterator* iter);
 NA_HAPI NABool na_IsBufferIteratorSparse(NABufferIterator* iter);
 NA_HIAPI NABufferPart* na_GetBufferPart(NABufferIterator* iter);
 NA_HAPI void na_PrepareBuffer(NABufferIterator* iter, size_t byteCount);
 
 // NABufferPart
-NA_HAPI NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei sourceRange);
-NA_HAPI NABufferPart* na_NewBufferPartWithConstData(const void* data, size_t byteSize);
-NA_HAPI NABufferPart* na_NewBufferPartWithMutableData(void* data, size_t byteSize, NAMutator destructor);
-NA_HAPI void na_SeparateBufferPart(NABufferPart* part);
-
-NA_HIAPI NABufferSource* na_GetBufferPartSource(const NABufferPart* part);
-NA_HIAPI size_t na_GetBufferPartByteSize(const NABufferPart* part);
-NA_HIAPI NAMemoryBlock* na_GetBufferPartMemoryBlock(const NABufferPart* part);
-NA_HIAPI NABool na_IsBufferPartSparse(const NABufferPart* part);
-
 NA_HAPI NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start, size_t end);
-NA_HAPI NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partIter, NARangei partrange);
-NA_HAPI NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARangei partrange);
-NA_HAPI size_t na_PrepareBufferPart(NABufferIterator* iter, size_t byteCount);
+NA_HAPI NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARangei partRange);
+NA_HAPI NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARangei partRange);
+NA_HAPI size_t na_PrepareBufferPart(NABufferIterator* iter, NAInt byteCount);
 
-NA_HIAPI void na_EnlargeBufferPart(NABufferPart* part, size_t bytesAtStart, size_t bytesAtEnd);
 NA_HIAPI size_t na_GetBufferPartRemainingBytes(NABufferIterator* iter);
 NA_HIAPI const void* na_GetBufferPartDataPointerConst(NABufferIterator* iter);
 NA_HIAPI void* na_GetBufferPartDataPointerMutable(NABufferIterator* iter);

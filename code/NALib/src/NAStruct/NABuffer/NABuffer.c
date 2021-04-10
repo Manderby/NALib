@@ -177,7 +177,7 @@ NA_DEF NABuffer* naNewBufferCopy(const NABuffer* srcBuffer, NARangei range, NABo
   partIter = naMakeTreeMutator(&(buffer->parts));
   while(naIterateTree(&partIter, NA_NULL, NA_NULL)){
     NABufferPart* part = naGetTreeCurLeafMutable(&partIter);
-    na_SeparateBufferPart(part);
+    na_DecoupleBufferPart(part);
   }
   naClearTreeIterator(&partIter);
 
@@ -429,36 +429,36 @@ NA_HDEF void na_UnlinkBufferRange(NABuffer* buffer, NARangei range){
 //  // containing the range.offset.
 //  while(range.length){
 //    NABufferPart* part;
-//    NARangei partrange;
+//    NARangei partRange;
 //
 //    part = naGetListCurMutable(&iter);
-//    partrange = na_GetBufferPartRange(part);
-//    if(naContainsRangeiRange(range, partrange)){
+//    partRange = na_GetBufferPartRange(part);
+//    if(naContainsRangeiRange(range, partRange)){
 //      // If this parts range is contained completely in the range to dismiss,
 //      // we remove the whole part.
-//      range = naMakeRangeiWithStartAndEnd(naGetRangeiEnd(partrange), naGetRangeiEnd(range));
+//      range = naMakeRangeiWithStartAndEnd(naGetRangeiEnd(partRange), naGetRangeiEnd(range));
 //      naDelete(naRemoveListCurMutable(&iter, NA_TRUE));
-//    }else if(range.origin == partrange.origin){
+//    }else if(range.origin == partRange.origin){
 //      // If the origins match, we split the part such that the remaining bytes
 //      // lie at the end of the current part.
-//      part->range = naMakeRangeiWithStartAndEnd(naGetRangeiEnd(range), naGetRangeiEnd(partrange));
+//      part->range = naMakeRangeiWithStartAndEnd(naGetRangeiEnd(range), naGetRangeiEnd(partRange));
 //      range = naMakeRangeiWithStartAndEnd(naGetRangeiEnd(range), naGetRangeiEnd(range));
-//    }else if(naGetRangeiEnd(range) >= naGetRangeiEnd(partrange)){
+//    }else if(naGetRangeiEnd(range) >= naGetRangeiEnd(partRange)){
 //      // If the desired range is equal or larger than the part range, we split
 //      // the current part such that the remaining bytes lie at the beginning
 //      // of the current part. After that, we iterate to the part after the
 //      // removed subpart.
-//      rangepos = naGetRangeiEnd(partrange);
-//      part->range = naMakeRangeiWithStartAndEnd(partrange.origin, range.origin);
+//      rangepos = naGetRangeiEnd(partRange);
+//      part->range = naMakeRangeiWithStartAndEnd(partRange.origin, range.origin);
 //      range = naMakeRangeiWithStartAndEnd(rangepos, naGetRangeiEnd(range));
 //      naIterateList(&iter);
 //    }else{
 //      // Reaching here, the desired range lies completely within the current
 //      // part. We subdivide the current part into two pieces.
-//      NABufferPart* newpart = na_NewBufferPartSparse(naMakeRangeiWithStartAndEnd(naGetRangeiEnd(range), naGetRangeiEnd(partrange)));
-//      naReferenceBufferPart(newpart, part, partrange.origin);
-//      naAddListAfterMutable(&iter, newpart);
-//      part->range = naMakeRangeiWithStartAndEnd(partrange.origin, range.origin);
+//      NABufferPart* newPart = na_NewBufferPartSparse(naMakeRangeiWithStartAndEnd(naGetRangeiEnd(range), naGetRangeiEnd(partRange)));
+//      naReferenceBufferPart(newPart, part, partRange.origin);
+//      naAddListAfterMutable(&iter, newPart);
+//      part->range = naMakeRangeiWithStartAndEnd(partRange.origin, range.origin);
 //      range = naMakeRangeiWithStartAndEnd(naGetRangeiEnd(range), naGetRangeiEnd(range));
 //      naIterateList(&iter);
 //    }

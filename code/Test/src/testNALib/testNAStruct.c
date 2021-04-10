@@ -5,6 +5,7 @@
 
 
 // Prototypes
+void printNABuffer(void);
 void printNAStack(void);
 
 void testNABuffer(void);
@@ -13,7 +14,8 @@ void testNAStack(void);
 void benchmarkNAStack(void);
 
 void printNAStruct(){
-  printNAStack();
+  printNABuffer();
+  //printNAStack();
 }
 
 void testNAStruct(){

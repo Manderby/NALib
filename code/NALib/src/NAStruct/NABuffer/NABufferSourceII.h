@@ -110,7 +110,7 @@ NA_HIDEF void na_FillBufferSourceMemory(const NABufferSource* source, void* dst,
     if(na_HasBufferSourceLimit(source) && !naEqualRangei(naMakeRangeiWithRangeIntersection(range, source->limit), range))
       naError("range is out of limit");
   #endif
-  if(source->bufFiller){
+  if(source && source->bufFiller){
     source->bufFiller(dst, range, source->data);
   }
 }

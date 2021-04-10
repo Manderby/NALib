@@ -336,13 +336,13 @@ NA_HIAPI    | NA_HIDEF   | Same thing but inlined.
 Furhter more, a consistent naming scheme is applied. Every symbol consists at
 least of a prefix and an identifier:
 
-Symbol                          | Prefix and casing      | Example
---------------------------------+------------------------+-------------------
-- macros                        | NA_ and are UPPER_CASE | NA_SYSTEM_WIN
-- public types                  | NA  and are MixedCase  | NABuffer
-- public functions              | na  and are MixedCase  | naStartRuntime
-- private types                 | NA_ and are MixedCase  | NA_TreeItem
-- private functions & variables | na_ and are MixedCase  | na_DeallocFile
+Symbol                           | Prefix and casing      | Example
+---------------------------------+------------------------+-------------------
+- macros                         | NA_ and are UPPER_CASE | NA_SYSTEM_WIN
+- public types                   | NA  and are MixedCase  | NABuffer
+- public functions               | na  and are MixedCase  | naStartRuntime
+- internal types                 | NA_ and are MixedCase  | NA_TreeItem
+- internal functions & variables | na_ and are MixedCase  | na_DeallocFile
 
 Types are always typedef'd, meaning you won't have to write the struct keyword
 all the time when declaring variables. Also enums are typedef'd with a clear

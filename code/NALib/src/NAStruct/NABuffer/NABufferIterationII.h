@@ -8,9 +8,9 @@
 struct NABufferIterator{
   NAPtr bufferPtr;
   NATreeIterator partIter;
-  NAInt partOffset;  // The current byte offset in the referenced part.
-  uint8 curBit;      // The current bit number
-  size_t lineNum;    // The line number, starting with 1 after first line read.
+  NAInt partOffset; // The current byte offset in the referenced part.
+  uint8 curBit;     // The current bit number
+  size_t lineNum;   // The line number, starting with 1 after first line read.
 };
 
 

@@ -5,6 +5,16 @@
 
 
 
+#if NA_BUFFER_PART_BYTESIZE == 0
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)naGetRuntimeMemoryPageSize())
+#else
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)NA_BUFFER_PART_BYTESIZE)
+#endif
+
+
+
+// The meaning of sourceOffset and blockOffset: Quering the memBlock with
+// blockOffset is the same as quering the source buffer with sourceOffset.
 struct NABufferPart{
   NABufferSource*     source;       // The referenced source.
   NAInt               sourceOffset; // The source offset of the first byte
@@ -15,26 +25,81 @@ struct NABufferPart{
 
 
 
+NA_HIDEF NAInt na_GetBufferPartNormedStart(NAInt start){
+  NAInt signShift = (start < 0);   // Note that (start < 0) either results in 0 or 1.
+  return ((((start + signShift) / NA_INTERNAL_BUFFER_PART_BYTESIZE) - signShift) * NA_INTERNAL_BUFFER_PART_BYTESIZE);
+  // Examples explain best how this behaves (assume default part size to be 10):
+  //  11:  (( 11 + 0) / 10) - 0 * 10 =  10
+  //  10:  (( 10 + 0) / 10) - 0 * 10 =  10
+  //   9:  ((  9 + 0) / 10) - 0 * 10 =   0
+  //   1:  ((  1 + 0) / 10) - 0 * 10 =   0
+  //   0:  ((  0 + 0) / 10) - 0 * 10 =   0
+  //  -1:  (( -1 + 1) / 10) - 1 * 10 = -10
+  //  -9:  (( -9 + 1) / 10) - 1 * 10 = -10
+  // -10:  ((-10 + 1) / 10) - 1 * 10 = -10
+  // -11:  ((-11 + 1) / 10) - 1 * 10 = -20
+}
+
+
+
+NA_HIDEF NAInt na_GetBufferPartNormedEnd(NAInt end){
+  // Return the end coordinate, such that max (= end-1) is within the normed
+  // range.
+  return na_GetBufferPartNormedStart(naMakeMaxWithEndi(end)) + NA_INTERNAL_BUFFER_PART_BYTESIZE;
+}
+
+
+
 NA_HIDEF NABufferSource* na_GetBufferPartSource(const NABufferPart* part){
+  #ifndef NDEBUG
+    if(!part)
+      naCrash("part is Null");
+  #endif
   return part->source;
 }
 
 
 
+NA_HIDEF NAInt na_GetBufferPartSourceOffset(const NABufferPart* part){
+  #ifndef NDEBUG
+    if(!part)
+      naCrash("part is Null");
+    if(!part->source)
+      naError("part has no source");
+  #endif
+  return part->sourceOffset;
+}
+
+
+
 NA_HIDEF size_t na_GetBufferPartByteSize(const NABufferPart* part){
+#ifndef NDEBUG
+  if(!part)
+    naCrash("part is Null");
+#endif
   return part->byteSize;
 }
 
 
 
-NA_HIDEF NAMemoryBlock* na_GetBufferPartMemoryBlock(const NABufferPart* part){
-  return part->memBlock;
+NA_HIDEF NABool na_IsBufferPartSparse(const NABufferPart* part){
+  #ifndef NDEBUG
+    if(!part)
+      naCrash("part is Null");
+  #endif
+  return (part->memBlock == NA_NULL);
 }
 
 
 
-NA_HIDEF NABool na_IsBufferPartSparse(const NABufferPart* part){
-  return (part->memBlock == NA_NULL);
+NA_HIDEF NAMemoryBlock* na_GetBufferPartMemoryBlock(const NABufferPart* part){
+  #ifndef NDEBUG
+    if(!part)
+      naCrash("part is Null");
+    if(na_IsBufferPartSparse(part))
+      naError("part is sparse");
+  #endif
+  return part->memBlock;
 }
 
 
@@ -43,9 +108,11 @@ NA_HIDEF NABool na_IsBufferPartSparse(const NABufferPart* part){
 // at the end.
 NA_HIDEF void na_EnlargeBufferPart(NABufferPart* part, size_t bytesAtStart, size_t bytesAtEnd){
   #ifndef NDEBUG
-    if(!na_IsBufferPartSparse(part))
-      naError("part is not sparse");
-  #endif
+  if(!part)
+    naCrash("part is Null");
+  if(!na_IsBufferPartSparse(part))
+    naError("part is not sparse");
+#endif
   part->byteSize += bytesAtStart + bytesAtEnd;
   part->sourceOffset -= bytesAtStart;
 }
@@ -60,6 +127,8 @@ NA_HIDEF size_t na_GetBufferPartRemainingBytes(NABufferIterator* iter){
       naCrash("iterator is Null pointer");
     if(na_IsBufferIteratorSparse(iter))
       naError("buffer part is sparse");
+    if(iter->partOffset < 0)
+      naError("part offset is negative");
   #endif
   part = na_GetBufferPart(iter);
   return part->byteSize - (size_t)iter->partOffset;
@@ -75,6 +144,8 @@ NA_HIDEF const void* na_GetBufferPartDataPointerConst(NABufferIterator* iter){
       naCrash("iterator is Null pointer");
     if(na_IsBufferIteratorSparse(iter))
       naError("buffer part is sparse");
+    if(iter->partOffset < 0)
+      naError("part offset is negative");
   #endif
   part = na_GetBufferPart(iter);
   return na_GetMemoryBlockDataPointerConst(part->memBlock, part->blockOffset + (size_t)iter->partOffset);
@@ -90,6 +161,8 @@ NA_HIDEF void* na_GetBufferPartDataPointerMutable(NABufferIterator* iter){
       naCrash("iterator is Null pointer");
     if(na_IsBufferIteratorSparse(iter))
       naError("buffer part is sparse");
+    if(iter->partOffset < 0)
+      naError("part offset is negative");
   #endif
   part = na_GetBufferPart(iter);
   return na_GetMemoryBlockDataPointerMutable(part->memBlock, part->blockOffset + (size_t)iter->partOffset);
