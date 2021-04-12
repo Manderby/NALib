@@ -70,7 +70,7 @@ int main(void){
 
 
     NAStack stack;
-    naInitStack(&stack, naSizeof(int), 2);
+    naInitStack(&stack, sizeof(int), 0, 0);
     *(int*)naPushStack(&stack) = 3;
     *(int*)naPushStack(&stack) = 2;
     *(int*)naPushStack(&stack) = 1;

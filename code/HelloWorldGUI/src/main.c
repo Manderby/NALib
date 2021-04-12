@@ -168,7 +168,7 @@ void clearController(ConverterController* con){
 void prestartup(void* arg){
   NA_UNUSED(arg);
   app = naAlloc(ConverterApplication);
-  naInitStack(&(app->controllers), sizeof(ConverterController), 2);
+  naInitStack(&(app->controllers), sizeof(ConverterController), 0, 0);
   app->nextWindowX = 700;
   app->nextWindowY = 400;
 }
