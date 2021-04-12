@@ -10,8 +10,7 @@ void testMemoryBlock(){
     NAMemoryBlock* block = NA_NULL;
     naTestVoid(block = na_NewMemoryBlock(10));
     naTestVoid(naRelease(block));
-    //naTestCrash(block = na_NewMemoryBlock(0));
-    naRelease(block);
+    naTestCrash(block = na_NewMemoryBlock(0); naRelease(block));
   }
 
   naTestGroup("New and release with data"){
@@ -29,8 +28,7 @@ void testMemoryBlock(){
     naRelease(block);
     naTestError(block = na_NewMemoryBlockWithData(constPtr, 0, NA_NULL));
     naRelease(block);
-    //naTestError(block = na_NewMemoryBlockWithData(constPtr, sizeof(int), naFree));
-    //naTestCrash(naRelease(block));
+    naTestCrash(block = na_NewMemoryBlockWithData(constPtr, sizeof(int), naFree); naRelease(block));
   }
 
   naTestGroup("Accessing and Mutating"){
@@ -40,9 +38,9 @@ void testMemoryBlock(){
     naTest(na_GetMemoryBlockDataPointerConst(block, sizeof(int) - 1) != NULL);
     naTest(na_GetMemoryBlockDataPointerMutable(block, 0) != NULL);
     naTest(na_GetMemoryBlockDataPointerMutable(block, sizeof(int) - 1) != NULL);
-    //naTestCrash(na_GetMemoryBlockDataPointerConst(NA_NULL, 0));
+    naTestCrash(na_GetMemoryBlockDataPointerConst(NA_NULL, 0));
     naTestError(na_GetMemoryBlockDataPointerConst(block, 1000));
-    //naTestCrash(na_GetMemoryBlockDataPointerMutable(NA_NULL, 0));
+    naTestCrash(na_GetMemoryBlockDataPointerMutable(NA_NULL, 0));
     naTestError(na_GetMemoryBlockDataPointerMutable(block, 1000));
     naRelease(block);
   }
@@ -79,7 +77,7 @@ void testBufferSource(){
     NABufferSource* emptySource = naNewBufferSource(NA_NULL, NA_NULL);
     data = naAlloc(int);
     // source is Null:
-    //naTestCrash(naSetBufferSourceData(NA_NULL, data, naFree));
+    naTestCrash(naSetBufferSourceData(NA_NULL, data, naFree));
     // setting Null data
     naTestError(naSetBufferSourceData(emptySource, NA_NULL, naFree));
     // setting data to non filling source:
@@ -105,7 +103,7 @@ void testBufferSource(){
     // trying to set a bad range
     naTestError(naSetBufferSourceLimit(source, naMakeRangei(0, 0)));
     // source is Null:
-    //naTestCrash(naSetBufferSourceLimit(NA_NULL, naMakeRangei(0, 10)));
+    naTestCrash(naSetBufferSourceLimit(NA_NULL, naMakeRangei(0, 10)));
 
     naRelease(source);
   }
@@ -127,10 +125,10 @@ void testBufferSource(){
     naTest(naEqualRangei(na_GetBufferSourceLimit(source), naMakeRangei(0, 10)));
     naRelease(source);
 
-    //naTestCrash(na_HasBufferSourceCache(NA_NULL));
-    //naTestCrash(na_GetBufferSourceCache(NA_NULL));
-    //naTestCrash(na_HasBufferSourceLimit(NA_NULL));
-    //naTestCrash(na_GetBufferSourceLimit(NA_NULL));
+    naTestCrash(na_HasBufferSourceCache(NA_NULL));
+    naTestCrash(na_GetBufferSourceCache(NA_NULL));
+    naTestCrash(na_HasBufferSourceLimit(NA_NULL));
+    naTestCrash(na_GetBufferSourceLimit(NA_NULL));
   }
 
   naTestGroup("Filling data"){
@@ -146,8 +144,8 @@ void testBufferSource(){
     source = naNewBufferSource(na_DummyBufferFiller, NA_NULL);
     naTestVoid(na_FillBufferSourceMemory(source, buf, naMakeRangei(0, 10)));
 
-    //naTestCrash(na_FillBufferSourceMemory(NA_NULL, buf, naMakeRangei(0, 10)));
-    //naTestCrash(na_FillBufferSourceMemory(source, NA_NULL, naMakeRangei(0, 10)));
+    naTestCrash(na_FillBufferSourceMemory(NA_NULL, buf, naMakeRangei(0, 10)));
+    naTestCrash(na_FillBufferSourceMemory(source, NA_NULL, naMakeRangei(0, 10)));
     naTestError(na_FillBufferSourceMemory(source, buf, naMakeRangei(0, 0)));
     naRelease(source);
   }
@@ -206,6 +204,8 @@ void testBufferPart(){
     naTestError(part = na_NewBufferPartWithMutableData(dataMutable, 0, NA_NULL));
     naDelete(part);
   }
+
+  
 
   naTestGroup("Accessors"){
     NAByte dataConst[] = {0, 1, 2, 3};

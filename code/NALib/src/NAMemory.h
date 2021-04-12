@@ -143,6 +143,7 @@ NA_API  void  naDelete            (void* pointer);
 NA_API  void* naRetain            (void* pointer);
 NA_API  void  naRelease           (void* pointer);
 
+NA_API size_t naGetRuntimeTypeRefCount(const void* pointer);
 
 
 // ////////////////////////
@@ -186,8 +187,6 @@ NA_IAPI NARefCount* naRetainRefCount( NARefCount* refCount);
 NA_IAPI void        naReleaseRefCount(NARefCount* refCount,
                                             void* data,
                                         NAMutator destructor);
-
-
 
 // ////////////////////////
 // NAPtr

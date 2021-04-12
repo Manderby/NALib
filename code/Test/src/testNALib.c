@@ -45,7 +45,7 @@ int main(int argc, const char** argv){
   #endif
 
   // Start testing
-  NABool testStartSuccessful = naStartTesting("NALib", .01, NA_FALSE, argc, argv);
+  NABool testStartSuccessful = naStartTesting("NALib", .01, NA_TRUE, argc, argv);
   if(testStartSuccessful)
   {
     //naTestGroupFunction(NABase);

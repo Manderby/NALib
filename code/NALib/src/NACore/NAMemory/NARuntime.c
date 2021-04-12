@@ -729,6 +729,25 @@ NA_HDEF void na_DestructPointer(NAPointer* pointer){
 
 
 
+NA_HDEF size_t naGetRuntimeTypeRefCount(const void* pointer){
+  #ifndef NDEBUG
+    // Find the pool entry at the beginning of the part by AND'ing the
+    // address with the partSizeMask
+    if(!pointer)
+      naCrash("pointer is Null");
+    NA_PoolPart* part = (NA_PoolPart*)((size_t)pointer & na_Runtime->partSizeMask);
+    if(part->dummy != part)
+      naError("Pointer seems not to be from a pool.");
+    if(!part->typeInfo->refCounting)
+      naError("Pointer belongs to a NON-reference-counting entity. Use naDelete instead of naRelease!");
+  #endif
+
+  const NARefCount* refCount = (const NARefCount*)((const NAByte*)pointer - sizeof(NARefCount));
+  return na_GetRefCountCount(refCount);
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
