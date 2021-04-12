@@ -196,7 +196,7 @@ NA_IDEF NABool naIsTreeRootLeaf(const NATree* tree){
 NA_HIDEF void na_SetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf){
   #ifndef NDEBUG
     if(!newroot)
-      naCrash("Do not send null as new root. Use na_ClearTreeRoot for that.");
+      naCrash("Do not send Null as new root. Use na_ClearTreeRoot for that.");
   #endif
   tree->root = newroot;
   na_MarkTreeRootLeaf(tree, isLeaf);

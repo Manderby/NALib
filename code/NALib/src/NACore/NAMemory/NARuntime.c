@@ -478,7 +478,7 @@ NA_DEF void* naRetain(void* pointer){
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!pointer)
-      naCrash("pointer is null");
+      naCrash("pointer is Null");
 
     // Find the part entry at the beginning of the part by AND'ing the
     // address with the partSizeMask
@@ -507,7 +507,7 @@ NA_DEF void naRelease(void* pointer){
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!pointer)
-      naCrash("pointer is null");
+      naCrash("pointer is Null");
   #endif
 
   #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE

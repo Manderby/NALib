@@ -188,9 +188,9 @@ NA_HDEF NATreeNode* na_LocateBubbleQuadWithLimits(const NATree* tree, NATreeNode
   #ifndef NDEBUG
     naError("not implemented yet");
     if(node == NA_NULL)
-      naError("node should not be null");
+      naError("node should not be Null");
     if(previtem == NA_NULL)
-      naError("prevnode should not be null");
+      naError("prevnode should not be Null");
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("tree is configured with no key");
   #endif
