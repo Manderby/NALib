@@ -297,7 +297,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
     curPart->memBlock = naRetain(na_GetBufferPartMemoryBlock(sourcePart));
     curPart->blockOffset = sourcePart->blockOffset + sourceIter.partOffset;
 
-    if(remainingBytesInSourcePart < curPart->byteSize){
+    if(remainingBytesInSourcePart < partRange.length){
       partRange.origin += remainingBytesInSourcePart;
       partRange.length -= remainingBytesInSourcePart;
       naIterateBuffer(&sourceIter, remainingBytesInSourcePart);
