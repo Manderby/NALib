@@ -290,14 +290,14 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
 
     NAInt remainingBytesInSourcePart = sourcePart->byteSize - sourceIter.partOffset;
 
-    if(remainingBytesInSourcePart < partRange.length){
+    if(remainingBytesInSourcePart < curPart->byteSize){
       na_SplitBufferPart(&curPartIter, 0, remainingBytesInSourcePart);
     }
     
     curPart->memBlock = naRetain(na_GetBufferPartMemoryBlock(sourcePart));
     curPart->blockOffset = sourcePart->blockOffset + sourceIter.partOffset;
 
-    if(remainingBytesInSourcePart < partRange.length){
+    if(remainingBytesInSourcePart < curPart->byteSize){
       partRange.origin += remainingBytesInSourcePart;
       partRange.length -= remainingBytesInSourcePart;
       naIterateBuffer(&sourceIter, remainingBytesInSourcePart);
