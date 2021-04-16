@@ -103,104 +103,6 @@ NA_HDEF NAString* na_NewTestApplicationName(void){
 
 
 
-NA_HDEF void na_FailSafeCrasher()
-{
-  NAInt exeCount = 0;
-  NABool wantsSuccessExit = NA_FALSE;
-
-  #if NA_OS == NA_OS_WINDOWS
-    // Crash with SUCCESS if there are more than a specific number of processes
-    // of this very one running. This detects an accidental recursive bomb.
-    NAString* thisExeName = na_NewTestApplicationName();
-
-    // take a snapshot of processes
-    DWORD dwFlags = TH32CS_SNAPPROCESS;
-    HANDLE hSnapshot = CreateToolhelp32Snapshot(dwFlags, 0);
-    if(hSnapshot == INVALID_HANDLE_VALUE)
-    {
-      wantsSuccessExit = NA_TRUE;
-    }else{
-      PROCESSENTRY32 processEntry = {0};
-      processEntry.dwSize = sizeof(PROCESSENTRY32);
-
-      // Iterate through all processes
-      if(Process32First(hSnapshot, &processEntry))
-      {
-        while(!wantsSuccessExit && Process32Next(hSnapshot, &processEntry))
-        {
-          NAString* exeName = naNewStringFromSystemString(processEntry.szExeFile);
-          if(naEqualStringToString(exeName, thisExeName, NA_TRUE))
-          {
-            exeCount++;
-            if(exeCount > 42)
-            {
-              // Security exit: Too many recursions assumed.
-              wantsSuccessExit = NA_TRUE;
-            }
-          }
-          naDelete(exeName);
-        }
-      }
-      CloseHandle(hSnapshot);
-    }
-
-    naDelete(thisExeName);
-
-  #elif NA_OS == NA_OS_MAC_OS_X
-  
-    int err;
-    size_t procCount;
-    struct kinfo_proc* result;
-    static const int name[] = { CTL_KERN, KERN_PROC, KERN_PROC_ALL, 0 };
-    size_t length;
-    err = sysctl( (int *) name, (sizeof(name) / sizeof(*name)) - 1,
-                      NULL, &length,
-                      NULL, 0);
-                      
-    while(!err){
-      length = 0;
-      err = sysctl( (int *) name, (sizeof(name) / sizeof(*name)) - 1,
-                    NULL, &length,
-                    NULL, 0);
-                    
-      if (err == 0) {
-        result = malloc(length);
-        
-        err = sysctl( (int *) name, (sizeof(name) / sizeof(*name)) - 1,
-                result, &length,
-                NULL, 0);
-
-        procCount = length / sizeof(struct kinfo_proc);
-
-        pid_t thisPid = getpid();
-        struct proc_bsdinfo thisProc;
-        proc_pidinfo(thisPid, PROC_PIDTBSDINFO, 0, &thisProc, PROC_PIDTBSDINFO_SIZE);
-                             
-        for (size_t i = 0; i < procCount; i++) { 
-          struct kinfo_proc *proc = &result[i]; 
-//          printf("%s\n", proc->kp_proc.p_comm);
-          if (strcmp(thisProc.pbi_comm, proc->kp_proc.p_comm) == 0) { 
-            exeCount++;
-            if(exeCount > 42)
-            {
-              // Security exit: Too many recursions assumed.
-              wantsSuccessExit = NA_TRUE;
-            }
-          }
-        }
-
-        break;
-      }
-    }
-  #endif
-
-  if(wantsSuccessExit){
-    exit(EXIT_SUCCESS);
-  }
-}
-
-
-
 NA_HIDEF void na_InitTestingData(NATestData* testData, const char* name, NATestData* parent, int lineNum){
   testData->name = name;
   testData->lineNum = lineNum;
@@ -288,8 +190,6 @@ NA_DEF NABool naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark
   if(na_Testing)
     naError("Testing already running.");
 #endif
-
-  //na_FailSafeCrasher();
 
   na_Testing = naAlloc(NATesting);
 

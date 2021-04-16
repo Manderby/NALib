@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		903513C226296D1C000B2621 /* testNABuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 903513C126296D1C000B2621 /* testNABuffer.c */; };
 		9061401F24713EC000498AF3 /* libNALib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90613CF22471365300498AF3 /* libNALib.a */; };
 		909293452617558300E627D4 /* testNAInt256.c in Sources */ = {isa = PBXBuildFile; fileRef = 9092932C2617558300E627D4 /* testNAInt256.c */; };
 		909293462617558300E627D4 /* testNACompiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 9092932D2617558300E627D4 /* testNACompiler.c */; };
@@ -230,6 +231,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		903513C126296D1C000B2621 /* testNABuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testNABuffer.c; sourceTree = "<group>"; };
 		90613BF62471349A00498AF3 /* Test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Test; sourceTree = BUILT_PRODUCTS_DIR; };
 		90613BFF2471356B00498AF3 /* doc */ = {isa = PBXFileReference; lastKnownFileType = folder; name = doc; path = ../../doc; sourceTree = "<group>"; };
 		90613C002471357B00498AF3 /* license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = license.txt; path = ../../license.txt; sourceTree = "<group>"; };
@@ -553,6 +555,7 @@
 			isa = PBXGroup;
 			children = (
 				9092933E2617558300E627D4 /* testNAStack.c */,
+				903513C126296D1C000B2621 /* testNABuffer.c */,
 			);
 			path = testNAStruct;
 			sourceTree = "<group>";
@@ -1186,6 +1189,7 @@
 				909293492617558300E627D4 /* testNAEncoding.c in Sources */,
 				9092934B2617558300E627D4 /* testNALanguage.c in Sources */,
 				909293472617558300E627D4 /* testNAFloatingPoint.c in Sources */,
+				903513C226296D1C000B2621 /* testNABuffer.c in Sources */,
 				9092934E2617558300E627D4 /* testNAEnvironment.c in Sources */,
 				909293452617558300E627D4 /* testNAInt256.c in Sources */,
 				909293572617558300E627D4 /* testNAValueHelper.c in Sources */,

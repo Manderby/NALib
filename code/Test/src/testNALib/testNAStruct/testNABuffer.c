@@ -50,6 +50,9 @@ void testMemoryBlock(){
 
 // dummy function to fill a buffer source
 void na_DummyBufferFiller(void* dst, NARangei sourceRange, void* sourceData){
+  NA_UNUSED(dst);
+  NA_UNUSED(sourceRange);
+  NA_UNUSED(sourceData);
 }
 
 void testBufferSource(){

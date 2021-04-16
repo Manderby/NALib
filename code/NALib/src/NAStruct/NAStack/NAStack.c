@@ -13,7 +13,7 @@ NA_DEF NAStack* naInitStack(
     if(!stack)
       naCrash("stack is Null-Pointer");
     if(typeSize < 1)
-      naError("typeSize must be at least 1");
+      naCrash("typeSize must be at least 1");
     if((flags & NA_STACK_GROW_MASK) == NA_STACK_FIXED_SIZE && initialCount == 0)
       naError("You must specify an initialCount when using a fixed size stack.");
   #endif
