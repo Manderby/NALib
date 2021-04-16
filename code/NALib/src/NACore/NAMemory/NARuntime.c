@@ -248,8 +248,6 @@ NA_HIDEF void na_AttachPoolPartAfterCurPoolPart(NA_TypeInfo* typeInfo, NA_PoolPa
   part->nextPart->prevPart = part;
 }
 
-
-
 // This function gets called when no part has any more space.
 // A new part is created and added to the list at the current position.
 NA_HIDEF void na_EnhancePool(NA_TypeInfo* typeInfo){
@@ -343,6 +341,14 @@ NA_DEF void* na_NewStruct(NATypeInfo* info){
 
   // We get the pointer to the first currently unused space.
   void* pointer = typeInfo->curPart->firstUnused;
+  void* retPointer = pointer;
+  
+  // In case this is a reference counting type, initialize the refCounter
+  // and set the retPointer to the correct position.
+  if(typeInfo->refCounting){
+    naInitRefCount(pointer);
+    retPointer = (NAByte*)pointer + sizeof(NARefCount);
+  }
 
   // We find out which will be the next pointer to return.
   if(typeInfo->curPart->usedCount == typeInfo->curPart->everUsedCount){
@@ -356,7 +362,12 @@ NA_DEF void* na_NewStruct(NATypeInfo* info){
   }else{
     // The space has already been used and deleted before which means, it
     // currently stores a pointer to the next unused space.
-    typeInfo->curPart->firstUnused = *((void**)pointer);
+    // Note that the next pointer is stored at retPointer, not pointer. This
+    // is because reference counting types use the first bytes for the
+    // NARefCount structure which still is useful for error checking. So one
+    // can still detect if the programmer erroneously wants to retain or
+    // release the pointer.
+    typeInfo->curPart->firstUnused = *((void**)retPointer);
   }
 
   // Increase the number of spaces used in this part.
@@ -371,14 +382,7 @@ NA_DEF void* na_NewStruct(NATypeInfo* info){
     #endif
   #endif
 
-  // Now, the pointer points to a space which can be constructed. Initialize
-  // the refCounter if applicable and return the pointer.
-  if(typeInfo->refCounting){
-    naInitRefCount(pointer);
-    return (void*)((NAByte*)pointer + sizeof(NARefCount));
-  }else{
-    return pointer;
-  }
+  return retPointer;
 }
 
 
@@ -388,7 +392,16 @@ NA_HIDEF void na_EjectPoolPartObject(NA_PoolPart* part, void* pointer){
 
   // We explicitely store a pointer to the next unused space at that
   // position, ultimately creating a list.
-  *((void**)pointer) = part->firstUnused;
+  // Note that for reference counting types, we store the next pointer at
+  // the place where the actual content is stored, not the reference count.
+  // With that, it is still possible to do some error checks when for example
+  // the programmer wants to erroneously retain or release a pointer which
+  // has already been erased.
+  if(part->typeInfo->refCounting){
+    *((void**)((NAByte*)pointer + sizeof(NARefCount))) = part->firstUnused;
+  }else{
+    *((void**)pointer) = part->firstUnused;
+  }
   part->firstUnused = pointer;
 
   // If the part was full up until now, we reattach it in the list such that

@@ -24,10 +24,8 @@ void testMemoryBlock(){
     naTestVoid(block = na_NewMemoryBlockWithData(mutablePtr, sizeof(int), naFree));
     naRelease(block);
 
-    naTestError(block = na_NewMemoryBlockWithData(naMakePtrNull(), sizeof(int), NA_NULL));
-    naRelease(block);
-    naTestError(block = na_NewMemoryBlockWithData(constPtr, 0, NA_NULL));
-    naRelease(block);
+    naTestError(block = na_NewMemoryBlockWithData(naMakePtrNull(), sizeof(int), NA_NULL); naRelease(block));
+    naTestError(block = na_NewMemoryBlockWithData(constPtr, 0, NA_NULL); naRelease(block));
     naTestCrash(block = na_NewMemoryBlockWithData(constPtr, sizeof(int), naFree); naRelease(block));
   }
 
@@ -107,7 +105,6 @@ void testBufferSource(){
     naTestError(naSetBufferSourceLimit(source, naMakeRangei(0, 0)));
     // source is Null:
     naTestCrash(naSetBufferSourceLimit(NA_NULL, naMakeRangei(0, 10)));
-
     naRelease(source);
   }
 
@@ -146,7 +143,6 @@ void testBufferSource(){
 
     source = naNewBufferSource(na_DummyBufferFiller, NA_NULL);
     naTestVoid(na_FillBufferSourceMemory(source, buf, naMakeRangei(0, 10)));
-
     naTestCrash(na_FillBufferSourceMemory(NA_NULL, buf, naMakeRangei(0, 10)));
     naTestCrash(na_FillBufferSourceMemory(source, NA_NULL, naMakeRangei(0, 10)));
     naTestError(na_FillBufferSourceMemory(source, buf, naMakeRangei(0, 0)));
@@ -183,8 +179,7 @@ void testBufferPart(){
     //naTestError(part = na_NewBufferPartSparse(NA_NULL, naMakeRangei(0, 1)));
     //naDelete(part);
     // no useful range
-    naTestError(part = na_NewBufferPartSparse(source, naMakeRangei(0, 0)));
-    naDelete(part);
+    naTestError(part = na_NewBufferPartSparse(source, naMakeRangei(0, 0)); naDelete(part));
   }
 
   naTestGroup("New and delete data part"){
@@ -198,17 +193,11 @@ void testBufferPart(){
     naTestVoid(part = na_NewBufferPartWithMutableData(dataConst, 4, NA_NULL));
     naTestVoid(naDelete(part));
 
-    naTestError(part = na_NewBufferPartWithConstData(NA_NULL, 4));
-    naDelete(part);
-    naTestError(part = na_NewBufferPartWithMutableData(NA_NULL, 4, NA_NULL));
-    naDelete(part);
-    naTestError(part = na_NewBufferPartWithConstData(dataConst, 0));
-    naDelete(part);
-    naTestError(part = na_NewBufferPartWithMutableData(dataMutable, 0, NA_NULL));
-    naDelete(part);
+    naTestError(part = na_NewBufferPartWithConstData(NA_NULL, 4); naDelete(part));
+    naTestError(part = na_NewBufferPartWithMutableData(NA_NULL, 4, NA_NULL); naDelete(part));
+    naTestError(part = na_NewBufferPartWithConstData(dataConst, 0); naDelete(part));
+    naTestError(part = na_NewBufferPartWithMutableData(dataMutable, 0, NA_NULL); naDelete(part));
   }
-
-  
 
   naTestGroup("Accessors"){
     NAByte dataConst[] = {0, 1, 2, 3};

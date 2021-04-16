@@ -55,7 +55,7 @@
 #ifndef NDEBUG
   #define NA_DEBUG 1
 #else
-  #define NA_DEBUG 1
+  #define NA_DEBUG 0
 #endif
 
 

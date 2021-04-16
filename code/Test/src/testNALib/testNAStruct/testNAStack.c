@@ -94,13 +94,11 @@ void testStackInitClear(){
   }
 
   naTestGroup("Bad typeSize"){
-    naTestError(naInitStack(&stack, 0, NA_TEST_STACK_INIT_COUNT, 0));
-    naClearStack(&stack);
+    naTestCrash(naInitStack(&stack, 0, NA_TEST_STACK_INIT_COUNT, 0); naClearStack(&stack));
   }
 
   naTestGroup("Missing initialCount when fixed size"){
-    naTestError(naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, 0, NA_STACK_FIXED_SIZE));
-    naClearStack(&stack);
+    naTestError(naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, 0, NA_STACK_FIXED_SIZE); naClearStack(&stack));
   }
 
   naTestGroup("Too many iterators"){
