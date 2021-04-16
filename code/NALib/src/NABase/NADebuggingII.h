@@ -8,7 +8,7 @@
 
 // This file contains inline implementations of debugging methods.
 
-#ifndef NDEBUG
+#if NA_DEBUG
 
   #include <stdlib.h>   // for the exit function
 
@@ -39,7 +39,7 @@
   }
 
 
-#endif // NDEBUG
+#endif // NA_DEBUG
 
 
 

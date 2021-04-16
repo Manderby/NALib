@@ -9,7 +9,7 @@ NA_DEF NAStack* naInitStack(
   size_t initialCount,
   NAInt flags)
 {
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null-Pointer");
     if(typeSize < 1)
@@ -38,7 +38,7 @@ NA_DEF NAStack* naInitStack(
   stack->curBaseIndex = 0;
   stack->curCount = 0;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     stack->iterCount = 0;
   #endif
   return stack;
@@ -47,7 +47,7 @@ NA_DEF NAStack* naInitStack(
 
 
 NA_DEF void naClearStack(NAStack* stack){
-  #ifndef NDEBUG
+  #if NA_DEBUG
   if(!stack)
     naCrash("stack is Null-Pointer.");
   if(stack->iterCount != 0)
@@ -67,7 +67,7 @@ NA_DEF void naClearStack(NAStack* stack){
 
 
 NA_DEF void* naPeekStack(NAStack* stack, size_t index){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
     if(index >= naGetStackCount(stack))
@@ -93,7 +93,7 @@ NA_DEF void* naPeekStack(NAStack* stack, size_t index){
 
 
 NA_HDEF void na_GrowStack(NAStack* stack){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
   #endif
@@ -120,13 +120,13 @@ NA_HDEF void na_GrowStack(NAStack* stack){
       newArrayCount = 2 * lastArrayCount;
       break;
     case NA_STACK_FIXED_SIZE:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Stack overflow.");
       #endif
       newArrayCount = 0;
       break;
     default:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Unknown grow option.");
       #endif
       newArrayCount = 0;
@@ -146,7 +146,7 @@ NA_HDEF void na_GrowStack(NAStack* stack){
 
 
 NA_HDEF void na_ShrinkStack(NAStack* stack){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
   #endif
@@ -181,7 +181,7 @@ NA_HDEF void na_ShrinkStack(NAStack* stack){
 
 
 NA_DEF size_t naGetStackReservedCount(const NAStack* stack){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
   #endif
@@ -204,7 +204,7 @@ NA_DEF size_t naGetStackReservedCount(const NAStack* stack){
 
 
 NA_DEF void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
   #endif
@@ -226,7 +226,7 @@ NA_DEF void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive){
 
 
 NA_DEF void naDumpStack(NAStack* stack, void* buf){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
     if(!buf)

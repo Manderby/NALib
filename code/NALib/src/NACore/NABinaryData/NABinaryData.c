@@ -89,7 +89,7 @@ NA_DEF NAChecksum* naInitChecksum(NAChecksum* checksum, NAChecksumType type){
     //naPrepareAdler((NAChecksumAdler*)(checksum->data)); // nothing to be prepared
     break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Checksum type invalid");
     #endif
     break;
@@ -116,7 +116,7 @@ NA_DEF void naResetChecksum(NAChecksum* checksum){
     ((NAChecksumAdler*)(checksum->data))->s2 = (1 >> 16) & 0xffff;
     break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Checksum type invalid");
     #endif
     break;
@@ -134,7 +134,7 @@ NA_DEF void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, size_t
     na_AccumulateAdler(((NAChecksumAdler*)(checksum->data)), buf, byteSize);
     break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Checksum type invalid");
     #endif
     break;
@@ -153,7 +153,7 @@ NA_DEF uint32 naGetChecksumResult(NAChecksum* checksum){
     retValue = (((NAChecksumAdler*)(checksum->data))->s2 << 16) + ((NAChecksumAdler*)(checksum->data))->s1;
     break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Checksum type invalid");
     #endif
     retValue = 0;

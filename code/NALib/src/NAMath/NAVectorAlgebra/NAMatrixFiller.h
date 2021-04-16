@@ -111,7 +111,7 @@ NA_IDEF void naFillM44fColumnFirst( float* D,
 NA_IDEF void naFillM22dWithAxis(double* NA_RESTRICT D,
                          const double* NA_RESTRICT v0,
                          const double* NA_RESTRICT v1){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, v0, 4, 2))
       naError("v0 overlaps with D");
     if(naElementOverlap(D, v1, 4, 2))
@@ -125,7 +125,7 @@ NA_IDEF void naFillM33dWithAxis(double* NA_RESTRICT D,
                          const double* NA_RESTRICT v0,
                          const double* NA_RESTRICT v1,
                          const double* NA_RESTRICT v2){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, v0, 9, 3))
       naError("v0 overlaps with D");
     if(naElementOverlap(D, v1, 9, 3))
@@ -143,7 +143,7 @@ NA_IDEF void naFillM44dWithAxis(double* NA_RESTRICT D,
                          const double* NA_RESTRICT v1,
                          const double* NA_RESTRICT v2,
                          const double* NA_RESTRICT v3){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, v0, 16, 4))
       naError("v0 overlaps with D");
     if(naElementOverlap(D, v1, 16, 4))
@@ -162,7 +162,7 @@ NA_IDEF void naFillM44dWithAxis(double* NA_RESTRICT D,
 NA_IDEF void naFillM22fWithAxis(float* NA_RESTRICT D,
                           const float* NA_RESTRICT v0,
                           const float* NA_RESTRICT v1){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, v0, 4, 2))
       naError("v0 overlaps with D");
     if(naElementOverlap(D, v1, 4, 2))
@@ -176,7 +176,7 @@ NA_IDEF void naFillM33fWithAxis(float* NA_RESTRICT D,
                           const float* NA_RESTRICT v0,
                           const float* NA_RESTRICT v1,
                           const float* NA_RESTRICT v2){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, v0, 9, 3))
       naError("v0 overlaps with D");
     if(naElementOverlap(D, v1, 9, 3))
@@ -194,7 +194,7 @@ NA_IDEF void naFillM44fWithAxis(float* NA_RESTRICT D,
                           const float* NA_RESTRICT v1,
                           const float* NA_RESTRICT v2,
                           const float* NA_RESTRICT v3){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, v0, 16, 4))
       naError("v0 overlaps with D");
     if(naElementOverlap(D, v1, 16, 4))
@@ -262,7 +262,7 @@ NA_IDEF void naFillM44fWithDiag(float* D, float s){
 // ///////////////////////////////
 
 NA_IDEF void naFillM22dWithDiagV2d(double* NA_RESTRICT D, const double* NA_RESTRICT diag){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, diag, 4, 2))
       naError("diag overlaps with D");
   #endif
@@ -271,7 +271,7 @@ NA_IDEF void naFillM22dWithDiagV2d(double* NA_RESTRICT D, const double* NA_RESTR
                 0.     , diag[1]);
 }
 NA_IDEF void naFillM33dWithDiagV3d(double* NA_RESTRICT D, const double* NA_RESTRICT diag){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, diag, 9, 3))
       naError("diag overlaps with D");
   #endif
@@ -281,7 +281,7 @@ NA_IDEF void naFillM33dWithDiagV3d(double* NA_RESTRICT D, const double* NA_RESTR
                 0.     , 0.     , diag[2]);
 }
 NA_IDEF void naFillM44dWithDiagV4d(double* NA_RESTRICT D, const double* NA_RESTRICT diag){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, diag, 16, 4))
       naError("diag overlaps with D");
   #endif
@@ -292,7 +292,7 @@ NA_IDEF void naFillM44dWithDiagV4d(double* NA_RESTRICT D, const double* NA_RESTR
                 0.     , 0.     , 0.     , diag[3]);
 }
 NA_IDEF void naFillM22fWithDiagV2f(float* NA_RESTRICT D, const float* NA_RESTRICT diag){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, diag, 4, 2))
       naError("diag overlaps with D");
   #endif
@@ -300,7 +300,7 @@ NA_IDEF void naFillM22fWithDiagV2f(float* NA_RESTRICT D, const float* NA_RESTRIC
                 0.f    , diag[1]);
 }
 NA_IDEF void naFillM33fWithDiagV3f(float* NA_RESTRICT D, const float* NA_RESTRICT diag){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, diag, 9, 3))
       naError("diag overlaps with D");
   #endif
@@ -310,7 +310,7 @@ NA_IDEF void naFillM33fWithDiagV3f(float* NA_RESTRICT D, const float* NA_RESTRIC
                 0.f    , 0.f    , diag[2]);
 }
 NA_IDEF void naFillM44fWithDiagV4f(float* NA_RESTRICT D, const float* NA_RESTRICT diag){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, diag, 16, 4))
       naError("diag overlaps with D");
   #endif
@@ -328,7 +328,7 @@ NA_IDEF void naFillM44fWithDiagV4f(float* NA_RESTRICT D, const float* NA_RESTRIC
 // ///////////////////////////////
 
 NA_IDEF void naCopyM22d( double* NA_RESTRICT D, const double* NA_RESTRICT A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(D == A)
       naError("A is equal to D. Use E variant or povide strict pointer.");
     else if(naElementOverlap(D, A, 4, 4))
@@ -338,7 +338,7 @@ NA_IDEF void naCopyM22d( double* NA_RESTRICT D, const double* NA_RESTRICT A){
   D[1] = A[1]; D[3] = A[3];
 }
 NA_IDEF void naCopyM33d( double* NA_RESTRICT D, const double* NA_RESTRICT A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(D == A)
       naError("A is equal to D. Use E variant or povide strict pointer.");
     else if(naElementOverlap(D, A, 9, 9))
@@ -349,7 +349,7 @@ NA_IDEF void naCopyM33d( double* NA_RESTRICT D, const double* NA_RESTRICT A){
   D[2] = A[2]; D[5] = A[5]; D[8] = A[8];
 }
 NA_IDEF void naCopyM44d( double* NA_RESTRICT D, const double* NA_RESTRICT A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(D == A)
       naError("A is equal to D. Use E variant or povide strict pointer.");
     else if(naElementOverlap(D, A, 16, 16))
@@ -361,7 +361,7 @@ NA_IDEF void naCopyM44d( double* NA_RESTRICT D, const double* NA_RESTRICT A){
   D[3] = A[3]; D[7] = A[7]; D[11] = A[11]; D[15] = A[15];
 }
 NA_IDEF void naCopyM22f( float* NA_RESTRICT D, const float* NA_RESTRICT A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(D == A)
       naError("A is equal to D. Use E variant or povide strict pointer.");
     else if(naElementOverlap(D, A, 4, 4))
@@ -371,7 +371,7 @@ NA_IDEF void naCopyM22f( float* NA_RESTRICT D, const float* NA_RESTRICT A){
   D[1] = A[1]; D[3] = A[3];
 }
 NA_IDEF void naCopyM33f( float* NA_RESTRICT D, const float* NA_RESTRICT A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(D == A)
       naError("A is equal to D. Use E variant or povide strict pointer.");
     else if(naElementOverlap(D, A, 9, 9))
@@ -382,7 +382,7 @@ NA_IDEF void naCopyM33f( float* NA_RESTRICT D, const float* NA_RESTRICT A){
   D[2] = A[2]; D[5] = A[5]; D[8] = A[8];
 }
 NA_IDEF void naCopyM44f( float* NA_RESTRICT D, const float* NA_RESTRICT A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(D == A)
       naError("A is equal to D. Use E variant or povide strict pointer.");
     else if(naElementOverlap(D, A, 16, 16))
@@ -394,7 +394,7 @@ NA_IDEF void naCopyM44f( float* NA_RESTRICT D, const float* NA_RESTRICT A){
   D[3] = A[3]; D[7] = A[7]; D[11] = A[11]; D[15] = A[15];
 }
 NA_IDEF void naCopyM22dE( double* D, const double* A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((D != A) && naElementOverlap(D, A, 4, 4))
       naError("A overlaps misaligned with D");
   #endif
@@ -402,7 +402,7 @@ NA_IDEF void naCopyM22dE( double* D, const double* A){
   D[1] = A[1]; D[3] = A[3];
 }
 NA_IDEF void naCopyM33dE( double* D, const double* A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((D != A) && naElementOverlap(D, A, 9, 9))
       naError("A overlaps misaligned with D");
   #endif
@@ -411,7 +411,7 @@ NA_IDEF void naCopyM33dE( double* D, const double* A){
   D[2] = A[2]; D[5] = A[5]; D[8] = A[8];
 }
 NA_IDEF void naCopyM44dE( double* D, const double* A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((D != A) && naElementOverlap(D, A, 16, 16))
       naError("A overlaps misaligned with D");
   #endif
@@ -421,7 +421,7 @@ NA_IDEF void naCopyM44dE( double* D, const double* A){
   D[3] = A[3]; D[7] = A[7]; D[11] = A[11]; D[15] = A[15];
 }
 NA_IDEF void naCopyM22fE( float* D, const float* A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((D != A) && naElementOverlap(D, A, 4, 4))
       naError("A overlaps misaligned with D");
   #endif
@@ -429,7 +429,7 @@ NA_IDEF void naCopyM22fE( float* D, const float* A){
   D[1] = A[1]; D[3] = A[3];
 }
 NA_IDEF void naCopyM33fE( float* D, const float* A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((D != A) && naElementOverlap(D, A, 9, 9))
       naError("A overlaps misaligned with D");
   #endif
@@ -438,7 +438,7 @@ NA_IDEF void naCopyM33fE( float* D, const float* A){
   D[2] = A[2]; D[5] = A[5]; D[8] = A[8];
 }
 NA_IDEF void naCopyM44fE( float* D, const float* A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((D != A) && naElementOverlap(D, A, 16, 16))
       naError("A overlaps misaligned with D");
   #endif

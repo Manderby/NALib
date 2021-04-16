@@ -5,20 +5,10 @@
 
 
 void testNADebugging(){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     naTestError(naError(""));
     naUntested(naCrash: Can not test as it would lead to a crash. Duh.);
   #endif
-}
-
-  
-  
-void printNADebugging(){
-  printf("NADebugging.h:" NA_NL);
-
-  naPrintMacroDefined(NA_DEBUG);
-
-  printf(NA_NL);
 }
 
 

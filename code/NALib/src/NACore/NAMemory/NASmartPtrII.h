@@ -37,7 +37,7 @@ NA_IDEF NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr){
 
 
 NA_IDEF void naReleaseSmartPtr(NASmartPtr* sptr, NAMutator destructor, NABool onlyData){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!sptr)
       naCrash("sptr is Null-Pointer.");
   #endif

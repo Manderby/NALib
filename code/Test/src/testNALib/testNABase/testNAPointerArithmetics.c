@@ -1,50 +1,22 @@
 
-// This file contains inline implementations of the file NACircularBuffer.h
-// Do not include this file directly! It will automatically be included when
-// including "NACircularBuffer.h"
+#include "NATesting.h"
+#include <stdio.h>
 
 
-#include "NAMemory.h"
 
-
-struct NACircularBuffer{
-  NAInt space;
-  NAInt cur;
-  NAInt last;
-  void** data;
-};
-
-
-NACircularBuffer* naInitCircularBuffer(NACircularBuffer* buffer, NAInt count){
-  buffer->space = count + 1;
-  buffer->cur = 0;
-  buffer->last = 0;
-  buffer->data = naMalloc(sizeof(void*) * buffer->space);
-}
-
-
-void naClearCircularBuffer(NACircularBuffer* buffer){
-  naFree(buffer->data);
-}
-
-
-void* naPullCircularBuffer(NACircularBuffer* buffer){
+void testNAPointerArithmetics(){
   #if NA_DEBUG
-    if(buffer->last == buffer->cur)
-      naError("naNextCircularBuffer", "Buffer is empty");
-  #endif
-  void* retValue = buffer->data[buffer->cur];
-  buffer->cur = buffer->cur % buffer->space;
-  return retValue;
-}
-
-
-void naPushCircularBuffer(NACircularBuffer* buffer, void* newData){
-  buffer->data[buffer->last] = newData;
-  buffer->last = buffer->last % buffer->space;
-  #if NA_DEBUG
-    if(buffer->last == buffer->cur)
-      naError("naPushCircularBuffer", "Buffer did just overflow");
+    naTestGroup("ElementOverlap"){
+      int32 test[3] = {42, 42, 42};
+      naTest(naElementOverlap(&test[0], &test[0], 0, 0) == NA_FALSE);
+      naTest(naElementOverlap(&test[0], &test[1], 0, 0) == NA_FALSE);
+      naTest(naElementOverlap(&test[0], &test[1], 0, 1) == NA_FALSE);
+      naTest(naElementOverlap(&test[1], &test[0], 0, 0) == NA_FALSE);
+      naTest(naElementOverlap(&test[0], &test[2], 2, 0) == NA_FALSE);
+      naTest(naElementOverlap(&test[0], &test[1], 2, 0) == NA_TRUE);
+      naTest(naElementOverlap(&test[1], &test[0], 0, 2) == NA_TRUE);
+      naTest(naElementOverlap(&test[2], &test[0], 0, 2) == NA_FALSE);
+    }
   #endif
 }
 

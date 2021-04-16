@@ -655,7 +655,7 @@ NA_DEF NAFont na_GetFontWithKind(NAFontKind kind){
       retfont = app->mathFont;
       break;
     default:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Unknown font kind");
       #endif
       break;

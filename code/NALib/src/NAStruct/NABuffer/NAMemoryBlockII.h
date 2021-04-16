@@ -9,7 +9,7 @@ struct NAMemoryBlock{
   // automatic reference counting implemented as runtime type.
   NAPtr     data;
   NAMutator destructor;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     size_t  byteSize;
   #endif
 };
@@ -17,7 +17,7 @@ struct NAMemoryBlock{
 
 
 NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, size_t index){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!block)
       naCrash("block is Null");
     if(index >= block->byteSize)
@@ -29,7 +29,7 @@ NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, siz
 
 
 NA_HIDEF void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, size_t index){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!block)
       naCrash("block is Null");
     if(index >= block->byteSize)

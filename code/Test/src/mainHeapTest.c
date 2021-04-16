@@ -213,7 +213,7 @@
 //  int i;
 //
 //  printf("NALib Version: %d ", NA_VERSION);
-//  #ifndef NDEBUG
+//  #if NA_DEBUG
 //    printf("(Debug ");
 //  #else
 //    printf("(Release ");

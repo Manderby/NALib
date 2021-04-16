@@ -137,8 +137,8 @@ NA_IAPI NABool naIsArrayEmpty     (const NAArray* array);
 //
 // Be sure to not forget naClearArrayIterator. Otherwise when debugging, arrays
 // will keep references to iterators which are no longer in use and will hence
-// emit a warning when they are cleared. When NDEBUG is defined however, no
-// such checks will be performed.
+// emit a warning when they are cleared. When NA_DEBUG is 0 however, no such
+// checks will be performed.
 
 
 // ///////////////////////////////
@@ -151,9 +151,8 @@ NA_IAPI NABool naIsArrayEmpty     (const NAArray* array);
 //
 // After you are done using the iterator, you should clear it with a call to
 // naClearArrayIterator. NALib keeps track of where the iterators are when
-// NDEBUG is undefined. Therefore, you will get lots of warnings if the
-// iterators are not properly cleared. In the release code, no checks are
-// performed.
+// NA_DEBUG is 1. Therefore, you will get lots of warnings if the iterators
+// are not properly cleared. In the release code, no checks are performed.
 NA_IAPI NAArrayIterator naMakeArrayAccessor(const NAArray* array);
 NA_IAPI NAArrayIterator naMakeArrayMutator (      NAArray* array);
 
@@ -173,8 +172,8 @@ NA_IAPI void naClearArrayIterator(NAArrayIterator* iterator);
 // point to the initial array position.
 //
 // The other variants will always return NA_TRUE. That's because of speed.
-// Erroneous behaviour will only be checked when NDEBUG is undefined and hence
-// the programmer is already forced to do things right when debugging the code.
+// Erroneous behaviour will only be checked when NA_DEBUG is 1 and hence the
+// programmer is already forced to do things right when debugging the code.
 NA_IAPI NABool naLocateArrayFirst(NAArrayIterator* iterator);
 NA_IAPI NABool naLocateArrayLast (NAArrayIterator* iterator);
 NA_IAPI NABool naLocateArrayData (NAArrayIterator* iterator, const void* data);

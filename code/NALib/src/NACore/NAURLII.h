@@ -6,7 +6,7 @@
 
 
 NA_IDEF NAURL* naInitURL(NAURL* url){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!url)
       naCrash("url is Null-Pointer");
   #endif

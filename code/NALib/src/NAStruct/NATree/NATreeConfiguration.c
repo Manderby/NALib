@@ -10,7 +10,7 @@
 NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   // This is just for testing if the implemented nodes "inheriting" from the
   // NATreeNode structure have their childs storage at the correct position.
-  #ifndef NDEBUG
+  #if NA_DEBUG
     int nodeChildsOffset;
   #endif
 
@@ -19,7 +19,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   config->flags = flags;
   naInitRefCount(&(config->refCount));
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     // Just some security measures in case the programmer sees no purpos in
     // setting it.
     config->leafKeyOffset        = -1;
@@ -30,7 +30,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   
   if(flags & NA_TREE_QUADTREE){
   
-    #ifndef NDEBUG
+    #if NA_DEBUG
       config->sizeofNode = sizeof(NATreeQuadNode);
       config->sizeofLeaf = sizeof(NATreeQuadLeaf);
     #endif
@@ -51,13 +51,13 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyLeafOverlapTester  = na_TestKeyLeafOverlapQuadDouble;
       break;
     default:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Quadtree must have type double. Other options are not implemented yet.");
       #endif
       break;
     }
     if(flags & NA_TREE_BALANCE_AVL){
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Quadtree can not have AVL balance.");
       #endif
     }
@@ -68,7 +68,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafRemover             = na_RemoveLeafQuad;
     config->leafInserter            = na_InsertLeafQuad;
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       nodeChildsOffset                = NODE_CHILDS_OFFSET_QUAD;
     #endif
     config->leafKeyOffset           = LEAF_KEY_OFFSET_QUAD;
@@ -78,7 +78,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
 
   }else if(flags & NA_TREE_OCTTREE){
   
-    #ifndef NDEBUG
+    #if NA_DEBUG
       config->sizeofNode = sizeof(NATreeOctNode);
       config->sizeofLeaf = sizeof(NATreeOctLeaf);
     #endif
@@ -99,13 +99,13 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyLeafOverlapTester  = na_TestKeyLeafOverlapOctDouble;
       break;
     default:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Octtree must have type double. Other options are not implemented yet.");
       #endif
       break;
     }
     if(flags & NA_TREE_BALANCE_AVL){
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Octtree can not have AVL balance.");
       #endif
     }
@@ -116,7 +116,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafRemover             = na_RemoveLeafOct;
     config->leafInserter            = na_InsertLeafOct;
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       nodeChildsOffset                = NODE_CHILDS_OFFSET_OCT;
     #endif
     config->leafKeyOffset           = LEAF_KEY_OFFSET_OCT;
@@ -126,7 +126,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
 
   }else{
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       config->sizeofNode = sizeof(NATreeBinNode);
       config->sizeofLeaf = sizeof(NATreeBinLeaf);
     #endif
@@ -172,7 +172,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyLeafOverlapTester  = NA_NULL;
       break;
     default:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Invalid key type in flags");
       #endif
       break;
@@ -185,7 +185,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafRemover             = na_RemoveLeafBin;
     config->leafInserter            = na_InsertLeafBin;
     
-    #ifndef NDEBUG
+    #if NA_DEBUG
       nodeChildsOffset                = NODE_CHILDS_OFFSET_BIN;
     #endif
     config->leafKeyOffset           = LEAF_KEY_OFFSET_BIN;
@@ -194,7 +194,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->nodeUserDataOffset      = NODE_USERDATA_OFFSET_BIN;
   }
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(nodeChildsOffset != NA_TREE_NOTE_CHILDS_OFFSET)
       naError("The childs storage must come right after the node storage.");
   #endif

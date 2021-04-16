@@ -184,7 +184,7 @@ NA_IDEF NAFile* naCreateFileReadingPath(const char* filePath){
   NAFile* file = naAlloc(NAFile);
   naInitRefCount(&(file->refCount));
   file->desc = naOpen(filePath, NA_FILE_OPEN_FLAGS_READ, NA_FILEMODE_DEFAULT);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(file->desc < 0)
       naError("Could not open file.");
   #endif
@@ -197,7 +197,7 @@ NA_IDEF NAFile* naCreateFileWritingPath(const char* filePath, NAFileMode mode){
   NAFile* file = naAlloc(NAFile);
   naInitRefCount(&(file->refCount));
   file->desc = naOpen(filePath, NA_FILE_OPEN_FLAGS_WRITE, mode);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(file->desc < 0)
       naError("Could not create file.");
   #endif
@@ -210,7 +210,7 @@ NA_IDEF NAFile* naCreateFileAppendingPath(const char* filePath, NAFileMode mode)
   NAFile* file = naAlloc(NAFile);
   naInitRefCount(&(file->refCount));
   file->desc = naOpen(filePath, NA_FILE_OPEN_FLAGS_APPEND, mode);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(file->desc < 0)
       naError("Could not create file.");
   #endif
@@ -260,7 +260,7 @@ NA_IDEF NAFileSize naComputeFileByteSize(const NAFile* file){
   NAFileSize curOffset;
   NAFileSize fileSize;
   curOffset = naLseek(file->desc, 0, SEEK_CUR);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(curOffset == -1)
       naError("An error occured while seeking the file. Maybe file not open or a stream? Undefined behaviour.");
   #endif
@@ -279,12 +279,12 @@ NA_IDEF NABool naIsFileOpen(const NAFile* file){
 
 NA_IDEF void naSeekFileAbsolute(NAFile* file, NAFileSize byteOffset){
   NAFileSize newOffset;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(byteOffset < 0)
       naError("Negative offset in absolute jump.");
   #endif
   newOffset = naLseek(file->desc, byteOffset, SEEK_SET);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(newOffset == -1)
       naError("An error occured while seeking the file. Maybe file not open or a stream? Undefined behaviour.");
   #else
@@ -297,7 +297,7 @@ NA_IDEF void naSeekFileAbsolute(NAFile* file, NAFileSize byteOffset){
 NA_IDEF void naSeekFileRelative(NAFile* file, NAFileSize byteOffset){
   NAFileSize newOffset;
   newOffset = naLseek(file->desc, byteOffset, SEEK_CUR);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(newOffset == -1)
       naError("An error occured while seeking the file. Maybe file not open or a stream? Undefined behaviour.");
   #else
@@ -308,7 +308,7 @@ NA_IDEF void naSeekFileRelative(NAFile* file, NAFileSize byteOffset){
 
 
 NA_IDEF NAFileSize naReadFileBytes(NAFile* file, void* buf, NAFileSize byteSize){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naIsFileOpen(file))
       naError("File is not open.");
     if(!byteSize)
@@ -322,7 +322,7 @@ NA_IDEF NAFileSize naReadFileBytes(NAFile* file, void* buf, NAFileSize byteSize)
 
 
 NA_IDEF NAFileSize naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize byteSize){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naIsFileOpen(file))
       naError("File is not open.");
     if(!byteSize)

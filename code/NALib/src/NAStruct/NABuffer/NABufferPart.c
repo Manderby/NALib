@@ -10,7 +10,7 @@ NA_RUNTIME_TYPE(NABufferPart, na_DestructBufferPart, NA_FALSE);
 
 // Creates a buffer part with sparse memory.
 NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei sourceRange){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     //if(!source)
     //  naError("source is Null");
     if(!naIsLengthValueUsefuli(sourceRange.length))
@@ -43,7 +43,7 @@ NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei so
 
 // Creates a buffer part with constant data
 NA_HDEF NABufferPart* na_NewBufferPartWithConstData(const void* data, size_t byteSize){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!data)
       naError("data is Null");
     if(byteSize == 0)
@@ -64,7 +64,7 @@ NA_HDEF NABufferPart* na_NewBufferPartWithConstData(const void* data, size_t byt
 // Creates a buffer part with mutable data
 NA_HDEF NABufferPart* na_NewBufferPartWithMutableData(void* data, size_t byteSize, NAMutator destructor){
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!data)
       naError("data is Null");
     if(byteSize == 0)
@@ -94,7 +94,7 @@ NA_HDEF void na_DestructBufferPart(NABufferPart* part){
 // mutable copy of the referenced contents. The part will lose the connection
 // to the source.
 NA_HDEF void na_DecoupleBufferPart(NABufferPart* part){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!part)
       naCrash("part is Null");
   #endif
@@ -121,7 +121,7 @@ NA_HDEF void na_DecoupleBufferPart(NABufferPart* part){
 NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start, size_t end){
   NABufferPart* part = naGetTreeCurLeafMutable(partIter);
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naIsTreeAtInitial(partIter))
       naError("Iterator is at initial position.");
     if(!na_IsBufferPartSparse(part))
@@ -178,7 +178,7 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start,
 NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARangei partRange){  
   NABufferPart* returnPart = naGetTreeCurLeafMutable(partIter);
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!returnPart->source)
       naError("Part has no source");
     if(partRange.origin < 0)
@@ -188,7 +188,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
   NAInt sourceOffset = na_GetBufferPartSourceOffset(returnPart) + partRange.origin;
   NABuffer* sourceCache = na_GetBufferSourceCache(returnPart->source);
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!na_HasBufferSourceCache(returnPart->source))
       naCrash("source has no buffer");
     if(!na_IsBufferPartSparse(returnPart))
@@ -220,7 +220,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
     }else{
       na_LocateBufferMax(&sourceIter);
     }
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(naGetBufferLocation(&sourceIter) != sourceOffset)
         naError("unsuccessfully enlarged buffer");
     #endif
@@ -281,7 +281,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
     NABufferPart* sourcePart = na_GetBufferPart(&sourceIter);
     NABufferPart* curPart = naGetTreeCurLeafMutable(&curPartIter);
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(na_IsBufferPartSparse(sourcePart))
         naError("source part is sparse");
       if(sourceIter.partOffset < 0)
@@ -289,8 +289,12 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
     #endif
 
     NAInt remainingBytesInSourcePart = sourcePart->byteSize - sourceIter.partOffset;
+    #if NA_DEBUG
+      if(remainingBytesInSourcePart < 0)
+        naError("remaining Bytes count is negative");
+    #endif
 
-    if(remainingBytesInSourcePart < curPart->byteSize){
+    if((size_t)remainingBytesInSourcePart < curPart->byteSize){
       na_SplitBufferPart(&curPartIter, 0, remainingBytesInSourcePart);
     }
     
@@ -308,7 +312,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
   }
 
 //  NABufferPart* sourcePart = na_GetBufferPart(&sourceIter);
-//#ifndef NDEBUG
+//#if NA_DEBUG
 //  if(na_IsBufferPartSparse(sourcePart))
 //    naError("source part is sparse");
 //#endif
@@ -335,7 +339,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
 NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARangei partRange){
   NABufferPart* part = naGetTreeCurLeafMutable(partIter);
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!na_IsBufferPartSparse(part))
       naError("part is not sparse");
     if(partRange.origin < 0)
@@ -348,7 +352,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
   // NA_INTERNAL_BUFFER_PART_BYTESIZE.
   NAInt normedStart = na_GetBufferPartNormedStart(partRange.origin);
   NAInt normedEnd = na_GetBufferPartNormedEnd(naGetRangeiEnd(partRange));
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(normedStart < 0)
       naError("normed start is negative");
   #endif
@@ -384,7 +388,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
 // prepared and the number of available bytes after the current byte is
 // returned.
 NA_HDEF size_t na_PrepareBufferPart(NABufferIterator* iter, NAInt byteCount){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(iter->partOffset < 0)
       naError("part offset is negative.");
   #endif
@@ -410,7 +414,7 @@ NA_HDEF size_t na_PrepareBufferPart(NABufferIterator* iter, NAInt byteCount){
   // Reaching here, the current part is a prepared part. We compute the number
   // of remaining bytes in the part and return it.
   NAInt preparedByteCount = (NAInt)part->byteSize - iter->partOffset;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(preparedByteCount <= 0)
       naError("Internal error: Returned value should be greater zero");
   #endif

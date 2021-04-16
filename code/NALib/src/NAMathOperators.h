@@ -14,7 +14,7 @@
 // functions as well as standard math operators. All functions are defined
 // inline. When debugging, many checks are performed like division by zero
 // which may slow the implementation down. You can disable these checks by
-// defining NDEBUG.
+// setting NA_DEBUG to 0.
 //
 // Note that there exist implementations for float and double, but not for
 // long double. The reason for this is that the author has observed that the

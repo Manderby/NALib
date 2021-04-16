@@ -17,7 +17,7 @@ struct NAListElement{
   NAPtr ptr;            // A pointer to the stored content
   NAListElement* next;  // A pointer to the next element
   NAListElement* prev;  // A pointer to the previous element
-  #ifndef NDEBUG
+  #if NA_DEBUG
     NAList* list;       // A list pointer just for debugging.
     size_t iterCount;   // debugging iterator count.
   #endif
@@ -29,7 +29,7 @@ struct NAList{
   NAListElement sentinel; // The sentinel of the list.
                           // Stores the first and last element of the list
                           // as next and prev pointer. The content is NA_NULL.
-  #ifndef NDEBUG
+  #if NA_DEBUG
     size_t iterCount;     // debugging iterator count
   #endif
 };
@@ -40,7 +40,7 @@ struct NAList{
 struct NAListIterator{
   NAPtr           listptr;
   NAListElement*  cur;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     NABool mutator;
   #endif
 };
@@ -51,7 +51,7 @@ NA_IDEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next
   NAListElement* elem = naNew(NAListElement);
   elem->prev = prev;
   elem->next = next;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     elem->iterCount = 0;
   #endif
   return elem;
@@ -59,7 +59,7 @@ NA_IDEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next
 
 
 NA_IDEF NAList* naInitList(NAList* list){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!list)
       naCrash("list is Null");
   #endif
@@ -67,7 +67,7 @@ NA_IDEF NAList* naInitList(NAList* list){
   list->sentinel.ptr  = naMakePtrNull();
   list->sentinel.next = &(list->sentinel);
   list->sentinel.prev = &(list->sentinel);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     list->sentinel.list = list;
     list->sentinel.iterCount = 0;
     list->iterCount = 0;
@@ -79,14 +79,14 @@ NA_IDEF NAList* naInitList(NAList* list){
 
 NA_IDEF NAList* naCopyList(NAList* list, NAList* originalList){
   NAListElement* cur;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(list == originalList)
       naError("the two lists are the same.");
   #endif
   list = naInitList(list);
   cur = originalList->sentinel.next;
   while(cur != &(originalList->sentinel)){
-    // Note that the following if will be optimized out when NDEBUG is defined.
+    // Note that the following if will be optimized out when NA_DEBUG is 0.
     if(naIsPtrConst(cur->ptr)){
       naAddListLastConst(list, naGetPtrConst(cur->ptr));
     }else{
@@ -100,7 +100,7 @@ NA_IDEF NAList* naCopyList(NAList* list, NAList* originalList){
 
 
 NA_IDEF void naClearList(NAList* list){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!list)
       naCrash("list is Null-Pointer.");
     if(list->iterCount)
@@ -114,13 +114,13 @@ NA_IDEF void naClearList(NAList* list){
 NA_IDEF void naEmptyList(NAList* list){
   NAListElement* cur;
   NAListElement* next;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!list)
       naCrash("list is Null-Pointer.");
   #endif
   cur = list->sentinel.next;
   while(cur != &(list->sentinel)){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(cur->iterCount)
         naError("Iterators still running on a list element. Did you use naClearListIterator?");
     #endif
@@ -154,7 +154,7 @@ NA_IDEF NABool naIsListEmpty(const NAList* list){
 NA_HIDEF void na_InjectListElement(NAList* list, NAListElement* element){
   element->next->prev = element;
   element->prev->next = element;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     element->list = list;
     if(element->iterCount)
       naError("Iterators are still using this element. Undefined behaviour.");
@@ -207,7 +207,7 @@ NA_IDEF void naAddListLastMutable(NAList* list, void* content){
 NA_HIDEF void na_EjectList(NAList* list, NAListElement* element, NABool deleteelement){
   element->prev->next = element->next;
   element->next->prev = element->prev;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     element->list = NA_NULL;  // This will capture some errors.
     if(element->iterCount)
       naError("Iterators still running on a list element. Did you use naClearListIterator?");
@@ -221,7 +221,7 @@ NA_HIDEF void na_EjectList(NAList* list, NAListElement* element, NABool deleteel
 
 
 NA_HIDEF void na_EjectListConst(NAList* list, NAListElement* element, NABool deleteelement){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(element == &(list->sentinel))
       naError("Trying to eject sentinel element. This should not happen.");
   #endif
@@ -232,7 +232,7 @@ NA_HIDEF void na_EjectListConst(NAList* list, NAListElement* element, NABool del
 
 NA_HIDEF void* na_EjectListMutable(NAList* list, NAListElement* element, NABool deleteelement){
   void* contentpointer;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(element == &(list->sentinel))
       naError("Trying to eject sentinel element. This should not happen.");
   #endif
@@ -244,7 +244,7 @@ NA_HIDEF void* na_EjectListMutable(NAList* list, NAListElement* element, NABool 
 
 
 NA_IDEF void naRemoveListFirstConst(NAList* list){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(list->count == 0)
       naError("List is empty");
   #endif
@@ -253,7 +253,7 @@ NA_IDEF void naRemoveListFirstConst(NAList* list){
 
 
 NA_IDEF void* naRemoveListFirstMutable(NAList* list){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(list->count == 0)
       naError("List is empty");
   #endif
@@ -262,7 +262,7 @@ NA_IDEF void* naRemoveListFirstMutable(NAList* list){
 
 
 NA_IDEF void naRemoveListLastConst(NAList* list){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(list->count == 0)
       naError("List is empty");
   #endif
@@ -271,7 +271,7 @@ NA_IDEF void naRemoveListLastConst(NAList* list){
 
 
 NA_IDEF void* naRemoveListLastMutable(NAList* list){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(list->count == 0)
       naError("List is empty");
   #endif
@@ -282,7 +282,7 @@ NA_IDEF void* naRemoveListLastMutable(NAList* list){
 NA_IAPI void naRemoveListData(NAList* list, void* data){
   NAListIterator iter = naMakeListModifier(list);
   NABool found = naLocateListData(&iter, data);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!found)
       naError("data not found in this list");
   #else
@@ -299,7 +299,7 @@ NA_IAPI void naRemoveListData(NAList* list, void* data){
 // ACCESSING ELEMENTS
 
 NA_IDEF const void* naGetListFirstConst(const NAList* list){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(list->count == 0)
       naError("List is empty");
   #endif
@@ -308,7 +308,7 @@ NA_IDEF const void* naGetListFirstConst(const NAList* list){
 
 
 NA_IDEF void* naGetListFirstMutable(const NAList* list){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(list->count == 0)
       naError("List is empty");
   #endif
@@ -317,7 +317,7 @@ NA_IDEF void* naGetListFirstMutable(const NAList* list){
 
 
 NA_IDEF const void* naGetListLastConst(const NAList* list){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(list->count == 0)
       naError("List is empty");
   #endif
@@ -326,7 +326,7 @@ NA_IDEF const void* naGetListLastConst(const NAList* list){
 
 
 NA_IDEF void* naGetListLastMutable(const NAList* list){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(list->count == 0)
       naError("List is empty");
   #endif
@@ -345,7 +345,7 @@ NA_IDEF void* naGetListLastMutable(const NAList* list){
 
 NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor){
   NAListElement* cur;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if (!list)
       naCrash("list is Null-Pointer.");
     if (!accessor)
@@ -353,11 +353,11 @@ NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor){
   #endif
   cur = list->sentinel.next;
   while(cur != &(list->sentinel)){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       NAListElement* next = cur->next;
     #endif
     accessor(naGetPtrConst(cur->ptr));
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(cur->next != next)
         naError("List changed during iteration. Unexpected behaviour.");
     #endif
@@ -368,7 +368,7 @@ NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor){
 
 NA_IDEF void naForeachListMutable(const NAList* list, NAMutator mutator){
   NAListElement* cur;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!list)
       naCrash("list is Null-Pointer.");
     if(!mutator)
@@ -376,11 +376,11 @@ NA_IDEF void naForeachListMutable(const NAList* list, NAMutator mutator){
   #endif
   cur = list->sentinel.next;
   while(cur != &(list->sentinel)){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       NAListElement* next = cur->next;
     #endif
     mutator(naGetPtrMutable(cur->ptr));
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(cur->next != next)
         naError("List changed during iteration. Unexpected behaviour.");
     #endif
@@ -402,7 +402,7 @@ NA_IDEF void naForeachListMutable(const NAList* list, NAMutator mutator){
 NA_HIDEF void na_InjectExistingListElement(NAList* list, NAListElement* element){
   element->next->prev = element;
   element->prev->next = element;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     element->list = list;
     if(element->iterCount)
       naError("Iterators are still using this element. Undefined behaviour.");
@@ -427,7 +427,7 @@ NA_IDEF void naMoveListToLast(NAList* src, NAList* dst){
   NAListElement* firstelement;
   NAListElement* lastelement;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(src->iterCount)
       naError("Src list still has iterators operating upon the elements.");
   #endif
@@ -441,7 +441,7 @@ NA_IDEF void naMoveListToLast(NAList* src, NAList* dst){
     lastelement->next = &(dst->sentinel);
     dst->sentinel.prev = lastelement;
     
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(dst->count + src->count < dst->count)
         naError("Integer overflow");
     #endif
@@ -457,7 +457,7 @@ NA_IDEF void naMoveListToLast(NAList* src, NAList* dst){
 
 NA_IDEF void naMoveListFirstToLast(NAList* src, NAList* dst){
   NAListElement* element;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naIsListEmpty(src))
       naError("Src List has no first element because it is empty.");
     if(src->sentinel.next->iterCount)
@@ -502,7 +502,7 @@ NA_IDEF NAListIterator naMakeListAccessor(const NAList* list){
   NAListIterator iter;
   iter.listptr = naMakePtrWithDataConst(list);
   iter.cur = (NAListElement*)(&(list->sentinel));
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!list)
       naCrash("list is Null pointer");
     iter.mutator = NA_FALSE;
@@ -518,7 +518,7 @@ NA_IDEF NAListIterator naMakeListMutator(const NAList* list){
   NAListIterator iter;
   iter.listptr = naMakePtrWithDataConst(list);
   iter.cur = (NAListElement*)(&(list->sentinel));
-  #ifndef NDEBUG
+  #if NA_DEBUG
     iter.mutator = NA_TRUE;
     iter.cur->iterCount++;
     ((NAList*)list)->iterCount++;
@@ -532,7 +532,7 @@ NA_IDEF NAListIterator naMakeListModifier(NAList* list){
   NAListIterator iter;
   iter.listptr = naMakePtrWithDataMutable(list);
   iter.cur = (NAListElement*)(&(list->sentinel));
-  #ifndef NDEBUG
+  #if NA_DEBUG
     iter.mutator = NA_TRUE;
     iter.cur->iterCount++;
     list->iterCount++;
@@ -544,11 +544,11 @@ NA_IDEF NAListIterator naMakeListModifier(NAList* list){
 
 NA_IDEF void naResetListIterator(NAListIterator* iter){
   const NAList* list = (NAList*)naGetPtrConst(iter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     iter->cur->iterCount--;
   #endif
   iter->cur = (NAListElement*)(&(list->sentinel));
-  #ifndef NDEBUG
+  #if NA_DEBUG
     iter->cur->iterCount++;
   #endif
 }
@@ -556,7 +556,7 @@ NA_IDEF void naResetListIterator(NAListIterator* iter){
 
 
 NA_IDEF void naClearListIterator(NAListIterator* iter){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     const NAList* list;
     if(iter->cur->iterCount == 0)
       naError("No Iterator at this element. Did you do a double clear?");
@@ -572,13 +572,13 @@ NA_IDEF void naClearListIterator(NAListIterator* iter){
 
 NA_IDEF NABool naLocateListFirst(NAListIterator* iter){
   const NAList* list = (const NAList*)naGetPtrConst(iter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naIsListEmpty(list))
       naError("List is empty");
     iter->cur->iterCount--;
   #endif
   iter->cur = list->sentinel.next;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     iter->cur->iterCount++;
   #endif
   return NA_TRUE;
@@ -588,13 +588,13 @@ NA_IDEF NABool naLocateListFirst(NAListIterator* iter){
 
 NA_IDEF NABool naLocateListLast(NAListIterator* iter){
   const NAList* list = (const NAList*)naGetPtrConst(iter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naIsListEmpty(list))
       naError("List is empty");
     iter->cur->iterCount--;
   #endif
   iter->cur = list->sentinel.prev;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     iter->cur->iterCount++;
   #endif
   return NA_TRUE;
@@ -603,13 +603,13 @@ NA_IDEF NABool naLocateListLast(NAListIterator* iter){
 
 
 NA_IAPI void naLocateListIterator(NAListIterator* dstIter, const NAListIterator* srcIter){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naGetPtrConst(dstIter->listptr) != naGetPtrConst(srcIter->listptr))
       naError("Iterators do not share the same list");
     dstIter->cur->iterCount--;
   #endif
   dstIter->cur = srcIter->cur;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     dstIter->cur->iterCount++;
   #endif
 }
@@ -626,13 +626,13 @@ NA_IDEF NABool naEqualListIterator(
 
 
 NA_IDEF NABool naIterateList(NAListIterator* iter){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(iter->cur->iterCount == 0)
       naError("No Iterator at this element. Did you do a double clear?");
     iter->cur->iterCount--;
   #endif
   iter->cur = iter->cur->next;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     iter->cur->iterCount++;
   #endif
 
@@ -642,13 +642,13 @@ NA_IDEF NABool naIterateList(NAListIterator* iter){
 
 
 NA_IDEF NABool naIterateListBack(NAListIterator* iter){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(iter->cur->iterCount == 0)
       naError("No Iterator at this element. Did you do a double clear?");
     iter->cur->iterCount--;
   #endif
   iter->cur = iter->cur->prev;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     iter->cur->iterCount++;
   #endif
 
@@ -661,20 +661,20 @@ NA_IDEF NABool naIterateListBack(NAListIterator* iter){
 // this code is built in release, it all boils down to two loops just moving
 // a pointer forward or backward.
 NA_IDEF NABool naIterateListStep(NAListIterator* iter, NAInt step){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(step == NA_ZERO){
       naError("step is zero.");
     }
   #endif
   while(step > NA_ZERO){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(iter->cur->iterCount == 0)
         naError("No Iterator at this element. Did you do a double clear?");
       iter->cur->iterCount--;
     #endif
     iter->cur = iter->cur->next;
     step--;
-    #ifndef NDEBUG
+    #if NA_DEBUG
       iter->cur->iterCount++;
       if((iter->cur == &(((NAList*)naGetPtrConst(iter->listptr))->sentinel)) && (step != NA_ZERO)){
         naError("The iteration overflows the number of elements.");
@@ -682,14 +682,14 @@ NA_IDEF NABool naIterateListStep(NAListIterator* iter, NAInt step){
     #endif
   }
   while(step < NA_ZERO){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(iter->cur->iterCount == 0)
         naError("No Iterator at this element. Did you do a double clear?");
       iter->cur->iterCount--;
     #endif
     iter->cur = iter->cur->prev;
     step++;
-    #ifndef NDEBUG
+    #if NA_DEBUG
       iter->cur->iterCount++;
       if((iter->cur == &(((NAList*)naGetPtrConst(iter->listptr))->sentinel)) && (step != NA_ZERO)){
         naError("The iteration underflows the number of elements.");
@@ -702,7 +702,7 @@ NA_IDEF NABool naIterateListStep(NAListIterator* iter, NAInt step){
 
 
 NA_IDEF const void* naGetListPrevConst(const NAListIterator* iter){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naIsListEmpty((const NAList*)naGetPtrConst(iter->listptr)))
       naError("List is empty");
   #endif
@@ -711,7 +711,7 @@ NA_IDEF const void* naGetListPrevConst(const NAListIterator* iter){
 
 
 NA_IDEF void* naGetListPrevMutable(NAListIterator* iter){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsListEmpty((const NAList*)naGetPtrConst(iter->listptr)))
@@ -722,7 +722,7 @@ NA_IDEF void* naGetListPrevMutable(NAListIterator* iter){
 
 
 NA_IDEF const void* naGetListCurConst(const NAListIterator* iter){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     // Note that the empty check has been removed. Getting the current elem
     // of an empty list automatically returns Null. This is a feature!
     // if(naIsListEmpty(naGetPtrConst(iter->listptr)))
@@ -733,7 +733,7 @@ NA_IDEF const void* naGetListCurConst(const NAListIterator* iter){
 
 
 NA_IDEF void* naGetListCurMutable(NAListIterator* iter){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     // Note that the empty check has been removed. Getting the current elem
@@ -746,7 +746,7 @@ NA_IDEF void* naGetListCurMutable(NAListIterator* iter){
 
 
 NA_IDEF const void* naGetListNextConst(const NAListIterator* iter){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naIsListEmpty((const NAList*)naGetPtrConst(iter->listptr)))
       naError("List is empty");
   #endif
@@ -755,7 +755,7 @@ NA_IDEF const void* naGetListNextConst(const NAListIterator* iter){
 
 
 NA_IDEF void* naGetListNextMutable(NAListIterator* iter){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsListEmpty((const NAList*)naGetPtrConst(iter->listptr)))
@@ -769,7 +769,7 @@ NA_IDEF void* naGetListNextMutable(NAListIterator* iter){
 
 NA_IDEF void naAddListBeforeConst(NAListIterator* iter, const void* content){
   NAListElement* newelement;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(iter->listptr))
@@ -782,7 +782,7 @@ NA_IDEF void naAddListBeforeConst(NAListIterator* iter, const void* content){
 
 NA_IDEF void naAddListBeforeMutable(NAListIterator* iter, void* content){
   NAListElement* newelement;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(iter->listptr))
@@ -795,7 +795,7 @@ NA_IDEF void naAddListBeforeMutable(NAListIterator* iter, void* content){
 
 NA_IDEF void naAddListAfterConst(NAListIterator* iter, const void* content){
   NAListElement* newelement;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(iter->listptr))
@@ -808,7 +808,7 @@ NA_IDEF void naAddListAfterConst(NAListIterator* iter, const void* content){
 
 NA_IDEF void naAddListAfterMutable(NAListIterator* iter, void* content){
   NAListElement* newelement;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(iter->listptr))
@@ -822,14 +822,14 @@ NA_IDEF void naAddListAfterMutable(NAListIterator* iter, void* content){
 
 NA_IDEF void naRemoveListPrevConst(NAListIterator* iter){
   NAList* list;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor iter");
     if(naIsPtrConst(iter->listptr))
       naError("Trying to modify list while iterator is no modifier");
   #endif
   list = (NAList*)naGetPtrMutable(iter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(iter->cur == list->sentinel.next)
       naError("There is no previous element. Iterator is at first position. Major memory corruption expected...");
     if(list->count == 0)
@@ -841,14 +841,14 @@ NA_IDEF void naRemoveListPrevConst(NAListIterator* iter){
 
 NA_IDEF void* naRemoveListPrevMutable(NAListIterator* iter){
   NAList* list;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(iter->listptr))
       naError("Trying to modify list while iterator is no modifier");
   #endif
   list = (NAList*)naGetPtrMutable(iter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(iter->cur == list->sentinel.next)
       naError("There is no previous element. Internal pointer is at first position. Major memory corruption expected...");
     if(list->count == 0)
@@ -861,26 +861,26 @@ NA_IDEF void* naRemoveListPrevMutable(NAListIterator* iter){
 NA_IDEF void naRemoveListCurConst(NAListIterator* iter, NABool advance){
   NAList* list;
   NAListElement* newelem;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(iter->listptr))
       naError("Trying to modify list while iterator is no modifier");
   #endif
   list = (NAList*)naGetPtrMutable(iter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(list->count == 0)
       naError("List is empty");
     if(iter->cur == &(list->sentinel))
       naError("No current internal pointer is set. Major memory corruption expected...");
   #endif
   newelem = advance ? iter->cur->next : iter->cur->prev;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     iter->cur->iterCount--;
   #endif
   na_EjectListConst(list, iter->cur, NA_TRUE);
   iter->cur = newelem;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     iter->cur->iterCount++;
   #endif
 }
@@ -890,14 +890,14 @@ NA_IDEF void* naRemoveListCurMutable(NAListIterator* iter, NABool advance){
   NAList* list;
   NAListElement* newelem;
   void* returncontent;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(iter->listptr))
       naError("Trying to modify list while iterator is no modifier");
   #endif
   list = (NAList*)naGetPtrMutable(iter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(list->count == 0)
       naError("List is empty");
     if(iter->cur == &(list->sentinel))
@@ -906,12 +906,12 @@ NA_IDEF void* naRemoveListCurMutable(NAListIterator* iter, NABool advance){
       naError("Internal error. No iterators registered at element which iterator is located at now");
   #endif
   newelem = advance ? iter->cur->next : iter->cur->prev;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     iter->cur->iterCount--;
   #endif
   returncontent = na_EjectListMutable(list, iter->cur, NA_TRUE);
   iter->cur = newelem;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     iter->cur->iterCount++;
   #endif
   return returncontent;
@@ -920,14 +920,14 @@ NA_IDEF void* naRemoveListCurMutable(NAListIterator* iter, NABool advance){
 
 NA_IDEF void naRemoveListNextConst(NAListIterator* iter){
   NAList* list;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(iter->listptr))
       naError("Trying to modify list while iterator is no modifier");
   #endif
   list = (NAList*)naGetPtrMutable(iter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(iter->cur == list->sentinel.prev)
       naError("There is no next element. Internal pointer is at last position. Major memory corruption expected...");
     if(list->count == 0)
@@ -939,14 +939,14 @@ NA_IDEF void naRemoveListNextConst(NAListIterator* iter){
 
 NA_IDEF void* naRemoveListNextMutable(NAListIterator* iter){
   NAList* list;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(iter->listptr))
       naError("Trying to modify list while iterator is no modifier");
   #endif
   list = (NAList*)naGetPtrMutable(iter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(iter->cur == list->sentinel.prev)
       naError("There is no next element. Internal pointer is at last position. Major memory corruption expected...");
     if(list->count == 0)
@@ -964,7 +964,7 @@ NA_IDEF void* naRemoveListNextMutable(NAListIterator* iter){
 
 NA_IDEF NABool naIsListAtFirst(const NAListIterator* iter){
   const NAList* list = (const NAList*)naGetPtrConst(iter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naIsListEmpty(list))
       naError("List is empty");
   #endif
@@ -975,7 +975,7 @@ NA_IDEF NABool naIsListAtFirst(const NAListIterator* iter){
 
 NA_IDEF NABool naIsListAtLast(const NAListIterator* iter){
   const NAList* list = (const NAList*)naGetPtrConst(iter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naIsListEmpty(list))
       naError("List is empty");
   #endif
@@ -995,20 +995,20 @@ NA_IDEF NABool naIsListAtInitial(const NAListIterator* iter){
 NA_IDEF void naMoveListCurToFirst(NAListIterator* srcIter, NABool advance, NAList* dst){
   NAList* src;
   NAListElement* newelem;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!srcIter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(srcIter->listptr))
       naError("Trying to modify list while iterator is no modifier");
   #endif
   src = (NAList*)naGetPtrMutable(srcIter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(srcIter->cur == &(src->sentinel))
       naError("List has no current element set.");
   #endif
 
   newelem = advance ? srcIter->cur->next : srcIter->cur->prev;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     srcIter->cur->iterCount--;
     if(srcIter->cur->iterCount)
       naError("element has other iterators running.");
@@ -1018,7 +1018,7 @@ NA_IDEF void naMoveListCurToFirst(NAListIterator* srcIter, NABool advance, NALis
   srcIter->cur->prev = &(dst->sentinel);
   na_InjectExistingListElement(dst, srcIter->cur);
   srcIter->cur = newelem;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     srcIter->cur->iterCount++;
   #endif
 
@@ -1029,20 +1029,20 @@ NA_IDEF void naMoveListCurToFirst(NAListIterator* srcIter, NABool advance, NALis
 NA_IDEF void naMoveListCurToLast(NAListIterator* srcIter, NABool advance, NAList* dst){
   NAList* src;
   NAListElement* newelem;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!srcIter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(srcIter->listptr))
       naError("Trying to modify list while iterator is no modifier");
   #endif
   src = (NAList*)naGetPtrMutable(srcIter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(srcIter->cur == &(src->sentinel))
       naError("List has no current element set.");
   #endif
 
   newelem = advance ? srcIter->cur->next : srcIter->cur->prev;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     srcIter->cur->iterCount--;
     if(srcIter->cur->iterCount)
       naError("element has other iterators running.");
@@ -1052,7 +1052,7 @@ NA_IDEF void naMoveListCurToLast(NAListIterator* srcIter, NABool advance, NAList
   srcIter->cur->prev = dst->sentinel.prev;
   na_InjectExistingListElement(dst, srcIter->cur);
   srcIter->cur = newelem;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     srcIter->cur->iterCount++;
   #endif
 
@@ -1063,7 +1063,7 @@ NA_IDEF void naMoveListCurToLast(NAListIterator* srcIter, NABool advance, NAList
 NA_IDEF void naMoveListRemainingToLast(NAListIterator* srcIter, NAList* dst){
   NAList* src;
   NAListElement* element;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     NAListElement* testelem;
     if(!srcIter->mutator)
       naError("Trying to mutate elements with an accessor");
@@ -1075,7 +1075,7 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* srcIter, NAList* dst){
   if(!naIsListEmpty(src)){
     size_t movecount = 1;
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       srcIter->cur->iterCount--;
     #endif
 
@@ -1085,7 +1085,7 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* srcIter, NAList* dst){
       element = src->sentinel.next;
     }
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       // Test all remaining elements for iterators
       testelem = srcIter->cur;
       while(testelem != &(src->sentinel)){
@@ -1114,7 +1114,7 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* srcIter, NAList* dst){
     element->next = &(dst->sentinel);
     dst->sentinel.prev = element;
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(src->count < movecount)
         naError("Internal error: List count negative.");
       if(src->count + movecount < src->count)
@@ -1124,7 +1124,7 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* srcIter, NAList* dst){
     src->count -= movecount;
     dst->count += movecount;
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       srcIter->cur->iterCount++;
     #endif
   }
@@ -1134,19 +1134,19 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* srcIter, NAList* dst){
 
 NA_IDEF void naMoveListThisToFirst(NAListIterator* srcIter, NAList* dst){
   NAList* src;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!srcIter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(srcIter->listptr))
       naError("Trying to modify with no modifier");
   #endif
   src = (NAList*)naGetPtrMutable(srcIter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(srcIter->cur == &(src->sentinel))
       naError("List iterator does not point to any element. No ''This'' available.");
   #endif
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!srcIter->cur->iterCount)
       naError("Count is already 0");
     if(!src->iterCount)
@@ -1160,7 +1160,7 @@ NA_IDEF void naMoveListThisToFirst(NAListIterator* srcIter, NAList* dst){
   na_InjectExistingListElement(dst, srcIter->cur);
   naCleanupPtr(&(srcIter->listptr), NA_NULL);
   srcIter->listptr = naMakePtrWithDataMutable(dst);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     srcIter->cur->iterCount++;
     dst->iterCount++;
   #endif
@@ -1170,19 +1170,19 @@ NA_IDEF void naMoveListThisToFirst(NAListIterator* srcIter, NAList* dst){
 
 NA_IDEF void naMoveListThisToLast(NAListIterator* srcIter, NAList* dst){
   NAList* src;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!srcIter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(srcIter->listptr))
       naError("Trying to modify with no modifier");
   #endif
   src = (NAList*)naGetPtrMutable(srcIter->listptr);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(srcIter->cur == &(src->sentinel))
       naError("List iterator does not point to any element. No ''This'' available.");
   #endif
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!srcIter->cur->iterCount)
       naError("Count is already 0");
     if(!src->iterCount)
@@ -1196,7 +1196,7 @@ NA_IDEF void naMoveListThisToLast(NAListIterator* srcIter, NAList* dst){
   na_InjectExistingListElement(dst, srcIter->cur);
   naCleanupPtr(&(srcIter->listptr), NA_NULL);
   srcIter->listptr = naMakePtrWithDataMutable(dst);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     srcIter->cur->iterCount++;
     dst->iterCount++;
   #endif
@@ -1208,7 +1208,7 @@ NA_IDEF void naExchangeListParts(NAListIterator* iter){
   NAList* src;
   NAListElement* first;
   NAListElement* prev;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     if(naIsPtrConst(iter->listptr))
@@ -1216,7 +1216,7 @@ NA_IDEF void naExchangeListParts(NAListIterator* iter){
   #endif
   src = (NAList*)naGetPtrMutable(iter->listptr);
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(iter->cur == &(src->sentinel))
       naError("List has no current element set.");
   #endif

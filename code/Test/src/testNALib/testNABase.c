@@ -13,7 +13,6 @@ void printNAEncoding(void);
 void printNAChar(void);
 void printNAInteger(void);
 void printNAMacros(void);
-void printNADebugging(void);
 void printNANumerics(void);
 void printNAFloatingPoint(void);
 
@@ -25,6 +24,7 @@ void testNAInt128(void);
 void testNAInt256(void);
 void testNAMacros(void);
 void testNADebugging(void);
+void testNAPointerArithmetics(void);
 void testNANumerics(void);
 void testNAFloatingPoint(void);
 
@@ -43,7 +43,6 @@ void printNABase(){
   printNAChar();
   printNAInteger();
   printNAMacros();
-  printNADebugging();
   printNANumerics();
   printNAFloatingPoint();
 }
@@ -57,6 +56,7 @@ void testNABase(){
   naTestGroupFunction(NAInt256);
   naTestGroupFunction(NAMacros);
   naTestGroupFunction(NADebugging);
+  naTestGroupFunction(NAPointerArithmetics);
   naTestGroupFunction(NANumerics);
   naTestGroupFunction(NAFloatingPoint);
 }

@@ -25,7 +25,7 @@ NA_HIDEF void na_SetNodeAVL(NATreeBinNode* binnode, NAInt balance){
 
 NA_HIDEF void na_RotateLeftBin(NATree* tree, NATreeBinNode* parent, NATreeBinNode* rightchild){
   NATreeNode* grandparent;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(na_IsTreeItemLeaf(tree, na_GetBinNodeItem(parent)))
       naError("given parent is not a node");
     if(na_IsTreeItemLeaf(tree, na_GetBinNodeItem(rightchild)))
@@ -55,7 +55,7 @@ NA_HIDEF void na_RotateLeftBin(NATree* tree, NATreeBinNode* parent, NATreeBinNod
 
 NA_HIDEF void na_RotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBinNode* parent){
   NATreeNode* grandparent;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(na_IsTreeItemLeaf(tree, na_GetBinNodeItem(leftchild)))
       naError("given left child is not a node");
     if(na_IsTreeItemLeaf(tree, na_GetBinNodeItem(parent)))
@@ -119,7 +119,7 @@ NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex){
     }else{
       NATreeBinNode* grandchild;
       NAInt grandchildbalance;
-      #ifndef NDEBUG
+      #if NA_DEBUG
         if(childbalance != 1)
           naError("child balance invalid with node balance -2");
       #endif
@@ -136,7 +136,7 @@ NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex){
         na_SetNodeAVL(grandchild, 0);    // because of the split operation which
         na_SetNodeAVL(child, 0);         // adds a balanced node to a subtree.
       }else{
-        #ifndef NDEBUG
+        #if NA_DEBUG
           if(grandchildbalance != 1)
             naError("grandchild balance invalid with node balance -2");
         #endif
@@ -155,7 +155,7 @@ NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex){
     }else{
       NATreeBinNode* grandchild;
       NAInt grandchildbalance;
-      #ifndef NDEBUG
+      #if NA_DEBUG
         if(childbalance != -1)
           naError("child balance invalid with node balance 2");
       #endif
@@ -172,7 +172,7 @@ NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex){
         na_SetNodeAVL(grandchild, 0);    // because of the split operation which
         na_SetNodeAVL(child, 0);         // adds a balanced node to a subtree.
       }else{
-        #ifndef NDEBUG
+        #if NA_DEBUG
           if(grandchildbalance != -1)
             naError("grandchild balance invalid with node balance 2");
         #endif
@@ -182,7 +182,7 @@ NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex){
       }
     }
   }else{
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("AVL balance out of balance");
     #endif
   }
@@ -213,7 +213,7 @@ NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex
     }else{
       NATreeBinNode* grandchild;
       NAInt grandchildbalance;
-      #ifndef NDEBUG
+      #if NA_DEBUG
         if(childbalance != -1)
           naError("child balance invalid with node balance 2");
       #endif
@@ -229,7 +229,7 @@ NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex
         na_SetNodeAVL(binnode, 0);
         na_SetNodeAVL(child, 0);
       }else{
-        #ifndef NDEBUG
+        #if NA_DEBUG
           if(grandchildbalance != 1)
             naError("grandchild balance invalid with node balance 2");
         #endif
@@ -253,7 +253,7 @@ NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex
     }else{
       NATreeBinNode* grandchild;
       NAInt grandchildbalance;
-      #ifndef NDEBUG
+      #if NA_DEBUG
         if(childbalance != 1)
           naError("child balance invalid with node balance -2");
       #endif
@@ -269,7 +269,7 @@ NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex
         na_SetNodeAVL(child, 0);
         na_SetNodeAVL(binnode, 0);
       }else{
-        #ifndef NDEBUG
+        #if NA_DEBUG
           if(grandchildbalance != -1)
             naError("grandchild balance invalid with node balance -2");
         #endif
@@ -279,7 +279,7 @@ NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex
       na_PropagateAVLShrink(tree, grandchild);
     }
   }else{
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("AVL balance out of balance");
     #endif
   }

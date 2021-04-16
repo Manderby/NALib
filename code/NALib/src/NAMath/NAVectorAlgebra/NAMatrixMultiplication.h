@@ -10,7 +10,7 @@
 // ///////////////////////////////
 
 NA_IDEF void naMulM22dV2d(double* NA_RESTRICT d, const double* NA_RESTRICT A, const double* NA_RESTRICT v){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(A, d, 4, 2))
       naError("A overlaps with d.");
     if(naElementOverlap(v, d, 2, 2))
@@ -20,7 +20,7 @@ NA_IDEF void naMulM22dV2d(double* NA_RESTRICT d, const double* NA_RESTRICT A, co
   d[1] = A[1]*v[0] + A[3]*v[1];
 }
 NA_IDEF void naMulM33dV3d(double* NA_RESTRICT d, const double* NA_RESTRICT A, const double* NA_RESTRICT v){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(A, d, 9, 3))
       naError("A overlaps with d.");
     if(naElementOverlap(v, d, 3, 3))
@@ -31,7 +31,7 @@ NA_IDEF void naMulM33dV3d(double* NA_RESTRICT d, const double* NA_RESTRICT A, co
   d[2] = A[2]*v[0] + A[5]*v[1] + A[8]*v[2];
 }
 NA_IDEF void naMulM44dV4d(double* NA_RESTRICT d, const double* NA_RESTRICT A, const double* NA_RESTRICT v){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(A, d, 16, 4))
       naError("A overlaps with d.");
     if(naElementOverlap(v, d, 4, 4))
@@ -43,7 +43,7 @@ NA_IDEF void naMulM44dV4d(double* NA_RESTRICT d, const double* NA_RESTRICT A, co
   d[3] = A[3]*v[0] + A[7]*v[1] + A[11]*v[2] + A[15]*v[3];
 }
 NA_IDEF void naMulM22fV2f(float* NA_RESTRICT d, const float* NA_RESTRICT A, const float* NA_RESTRICT v){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(A, d, 4, 2))
       naError("A overlaps with d.");
     if(naElementOverlap(v, d, 2, 2))
@@ -53,7 +53,7 @@ NA_IDEF void naMulM22fV2f(float* NA_RESTRICT d, const float* NA_RESTRICT A, cons
   d[1] = A[1]*v[0] + A[3]*v[1];
 }
 NA_IDEF void naMulM33fV3f(float* NA_RESTRICT d, const float* NA_RESTRICT A, const float* NA_RESTRICT v){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(A, d, 9, 3))
       naError("A overlaps with d.");
     if(naElementOverlap(v, d, 3, 3))
@@ -64,7 +64,7 @@ NA_IDEF void naMulM33fV3f(float* NA_RESTRICT d, const float* NA_RESTRICT A, cons
   d[2] = A[2]*v[0] + A[5]*v[1] + A[8]*v[2];
 }
 NA_IDEF void naMulM44fV4f(float* NA_RESTRICT d, const float* NA_RESTRICT A, const float* NA_RESTRICT v){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(A, d, 16, 4))
       naError("A overlaps with d.");
     if(naElementOverlap(v, d, 4, 4))
@@ -82,7 +82,7 @@ NA_IDEF void naMulM44fV4f(float* NA_RESTRICT d, const float* NA_RESTRICT A, cons
 // ///////////////////////////////
 
 NA_IDEF void naMulM22dM22d(double* NA_RESTRICT D, const double* A, const double* B){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, A, 4, 4))
       naError("A overlaps with D.");
     if(naElementOverlap(D, B, 4, 4))
@@ -94,7 +94,7 @@ NA_IDEF void naMulM22dM22d(double* NA_RESTRICT D, const double* A, const double*
   D[3] = A[1]*B[2] + A[3]*B[3];
 }
 NA_IDEF void naMulM33dM33d(double* NA_RESTRICT D, const double* A, const double* B){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, A, 9, 9))
       naError("A overlaps with D.");
     if(naElementOverlap(D, B, 9, 9))
@@ -111,7 +111,7 @@ NA_IDEF void naMulM33dM33d(double* NA_RESTRICT D, const double* A, const double*
   D[8] = A[2]*B[6] + A[5]*B[7] + A[8]*B[8];
 }
 NA_IDEF void naMulM44dM44d(double* NA_RESTRICT D, const double* A, const double* B){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, A, 16, 16))
       naError("A overlaps with D.");
     if(naElementOverlap(D, B, 16, 16))
@@ -135,7 +135,7 @@ NA_IDEF void naMulM44dM44d(double* NA_RESTRICT D, const double* A, const double*
   D[15] = A[3]*B[12] + A[7]*B[13] + A[11]*B[14] + A[15]*B[15];
 }
 NA_IDEF void naMulM22fM22f(float* NA_RESTRICT D, const float* A, const float* B){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, A, 4, 4))
       naError("A overlaps with D.");
     if(naElementOverlap(D, B, 4, 4))
@@ -147,7 +147,7 @@ NA_IDEF void naMulM22fM22f(float* NA_RESTRICT D, const float* A, const float* B)
   D[3] = A[1]*B[2] + A[3]*B[3];
 }
 NA_IDEF void naMulM33fM33f(float* NA_RESTRICT D, const float* A, const float* B){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, A, 9, 9))
       naError("A overlaps with D.");
     if(naElementOverlap(D, B, 9, 9))
@@ -164,7 +164,7 @@ NA_IDEF void naMulM33fM33f(float* NA_RESTRICT D, const float* A, const float* B)
   D[8] = A[2]*B[6] + A[5]*B[7] + A[8]*B[8];
 }
 NA_IDEF void naMulM44fM44f(float* NA_RESTRICT D, const float* A, const float* B){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(D, A, 16, 16))
       naError("A overlaps with D.");
     if(naElementOverlap(D, B, 16, 16))

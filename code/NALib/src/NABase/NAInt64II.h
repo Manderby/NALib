@@ -446,7 +446,7 @@
     *div = NA_ZERO_u64;
     *rem = a;
     if(naEqualu64(b, NA_ZERO_u64)){
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naCrash("Integer Division by 0");
       #endif
     }else if(naSmalleru64(a, b)){
@@ -471,7 +471,7 @@
       while(!naEqualu64(aHighestBit, bHighestBit)){
         if(naEqualu64(bTmp, NA_ZERO_u64)){
           // b is larger than a and hence the result is zero.
-          #ifndef NDEBUG
+          #if NA_DEBUG
             naError("This should not happen.");
           #endif
         }

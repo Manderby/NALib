@@ -186,7 +186,7 @@ NA_HIDEF void na_PrintTestGroup(NATestData* testData){
 
 
 NA_DEF NABool naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups, int argc, const char** argv){
-#ifndef NDEBUG
+#if NA_DEBUG
   if(na_Testing)
     naError("Testing already running.");
 #endif
@@ -265,7 +265,7 @@ NA_DEF NABool naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark
 
 
 NA_DEF void naStopTesting(){
-  #ifndef NDEBUG
+  #if NA_DEBUG
   if(!na_Testing)
     naError("Testing not running. Use naStartTesting.");
   #endif
@@ -339,9 +339,9 @@ NA_HDEF void na_UpdateTestParentLeaf(NATestData* testData, NABool leafSuccess){
 
 
 NA_HDEF void na_AddTest(const char* expr, int success, int lineNum){
-  #ifndef NDEBUG
-  if(!na_Testing)
-    naError("Testing not running. Use naStartTesting.");
+  #if NA_DEBUG
+    if(!na_Testing)
+      naError("Testing not running. Use naStartTesting.");
   #endif
 
   NATestData* testData = naPushStack(&(na_Testing->curTestData->childs));
@@ -368,7 +368,7 @@ NA_HDEF void na_AddTest(const char* expr, int success, int lineNum){
 
 
 NA_HDEF void na_AddTestError(const char* expr, int lineNum){
-  #ifndef NDEBUG
+  #if NA_DEBUG
   if(!na_Testing)
     naError("Testing not running. Use naStartTesting.");
   #endif
@@ -391,7 +391,7 @@ NA_HDEF void na_AddTestError(const char* expr, int lineNum){
 NA_HDEF void na_AddTestCrash(const char* expr, int lineNum){
   NA_UNUSED(expr);
   NA_UNUSED(lineNum);
-  #ifndef NDEBUG
+  #if NA_DEBUG
   if(!na_Testing)
     naError("Testing not running. Use naStartTesting.");
   #endif
@@ -402,7 +402,7 @@ NA_HDEF void na_AddTestCrash(const char* expr, int lineNum){
 
 
 NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
-  #ifndef NDEBUG
+  #if NA_DEBUG
   if(!na_Testing)
     naError("Testing not running. Use naStartTesting.");
   #endif
@@ -630,7 +630,7 @@ NA_HDEF NABool na_ShallExecuteGroup(const char* name){
 
 
 NA_HDEF NABool na_StartTestGroup(const char* name, int lineNum){
-  #ifndef NDEBUG
+  #if NA_DEBUG
   if(!na_Testing)
     naError("Testing not running. Use naStartTesting.");
   #endif
@@ -649,7 +649,7 @@ NA_HDEF NABool na_StartTestGroup(const char* name, int lineNum){
 
 
 NA_HDEF void na_StopTestGroup(){
-  #ifndef NDEBUG
+  #if NA_DEBUG
   if(!na_Testing)
     naError("Testing not running. Use naStartTesting.");
   #endif
@@ -732,7 +732,7 @@ NA_DEF NABool naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark
   NA_UNUSED(printAllGroups);
   NA_UNUSED(argc);
   NA_UNUSED(argv);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     naError("Testing is not enabled. Go look for NA_TESTING_ENABLED");
   #endif
   return NA_FALSE;
@@ -741,7 +741,7 @@ NA_DEF NABool naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark
 
 
 NA_DEF void naStopTesting(){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     naError("Testing is not enabled. Go look for NA_TESTING_ENABLED");
   #endif
 }

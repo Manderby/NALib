@@ -52,7 +52,7 @@ NA_HAPI void na_DestructPointer(NAPointer* pointer);
 
 
 NA_IDEF void naReleasePointer(NAPointer* pointer){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!pointer)
       naCrash("pointer is Null-Pointer.");
   #endif

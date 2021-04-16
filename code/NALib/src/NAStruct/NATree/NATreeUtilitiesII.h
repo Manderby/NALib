@@ -2,7 +2,7 @@
 NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
   tree->config = na_RetainTreeConfiguration(config);
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(((tree->config->flags & NA_TREE_QUADTREE) || (tree->config->flags & NA_TREE_OCTTREE)) && !tree->config->configdata)
       naError("Quadtree or Octtree configuration need more information. Use naSetTreeConfigurationBaseLeafExponent");
   #endif
@@ -15,7 +15,7 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
   // Init the tree root.
   tree->root = NA_NULL;
   tree->flags = 0;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     tree->iterCount = 0;
   #endif
 
@@ -25,7 +25,7 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
 
 
 NA_IDEF void naEmptyTree(NATree* tree){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(tree->iterCount != 0)
       naError("There are still iterators running on this tree. Did you miss a naClearTreeIterator call?");
   #endif
@@ -60,7 +60,7 @@ NA_IDEF NABool naIsTreeEmpty(const NATree* tree){
 
 NA_IDEF NABool naAddTreeFirstConst(NATree* tree, const void* content){
   NATreeIterator iter;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees with keys");
   #endif
@@ -74,7 +74,7 @@ NA_IDEF NABool naAddTreeFirstConst(NATree* tree, const void* content){
 
 NA_IDEF NABool naAddTreeFirstMutable(NATree* tree, void* content){
   NATreeIterator iter;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees with keys");
   #endif
@@ -88,7 +88,7 @@ NA_IDEF NABool naAddTreeFirstMutable(NATree* tree, void* content){
 
 NA_IDEF NABool naAddTreeLastConst(NATree* tree, const void* content){
   NATreeIterator iter;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees with keys");
   #endif
@@ -102,7 +102,7 @@ NA_IDEF NABool naAddTreeLastConst(NATree* tree, const void* content){
 
 NA_IDEF NABool naAddTreeLastMutable(NATree* tree, void* content){
   NATreeIterator iter;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees with keys");
   #endif
@@ -159,7 +159,7 @@ NA_IDEF void* naGetTreeLastMutable(const NATree* tree){
 
 
 NA_IDEF void naUpdateTree(NATree* tree){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!tree->config->nodeUpdater)
       naError("tree is configured without nodeUpdater callback");
   #endif
@@ -174,7 +174,7 @@ NA_IDEF NAPtr naGetRootNodeContent(NATree* tree)
 {
   NAPtr retdata;
   if(tree->root){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(naIsTreeRootLeaf(tree))
         naError("Root of the tree is not a node");
     #endif
@@ -194,7 +194,7 @@ NA_IDEF NABool naIsTreeRootLeaf(const NATree* tree){
 
 
 NA_HIDEF void na_SetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!newroot)
       naCrash("Do not send Null as new root. Use na_ClearTreeRoot for that.");
   #endif

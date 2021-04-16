@@ -25,8 +25,8 @@
 //
 // Note that NAHeap allows you to store const and mutable pointers arbitrarily
 // mixed but beware that only elements inserted as mutable elements can also
-// be accessed as mutable elements. Otherwise, a warning is emitted when NDEBUG
-// is undefined.
+// be accessed as mutable elements. Otherwise, a warning is emitted when
+// NA_DEBUG is 1.
 //
 // The implementation in NALib also allows you to store an optional backPointer
 // for each element. The backPointer is a pointer to an (mutable!) NAInt where
@@ -37,8 +37,8 @@
 // You are free to use the backPointer on none, all or only certain elements.
 // You provide it with a call to naInsertHeapElement. If your heap was created
 // without the BACKPOINTER flag, the backPointer is simply ignored. You should
-// send NA_NULL nontheless as NALib will emit a warning otherwise if NDEBUG is
-// undefined.
+// send NA_NULL nontheless as NALib will emit a warning otherwise if NA_DEBUG
+// is 1.
 //
 // You can always use NA_NULL for the backPointer to not store this value for
 // a particular element. If you do store the value, you should probably provide

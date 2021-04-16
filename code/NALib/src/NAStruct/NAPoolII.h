@@ -9,7 +9,7 @@ struct NAPool{
   size_t count;         // The maximum count of drops in this pool.
   size_t cur;           // The current position in the drops array.
   void* storagearray;   // The storage of elements, if pool is created filled.
-  #ifndef NDEBUG
+  #if NA_DEBUG
     size_t typeSize;    // The typeSize is just for debugging.
   #endif
 };
@@ -17,7 +17,7 @@ struct NAPool{
 
 
 NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, size_t count){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!pool)
       naCrash("pool is Null-Pointer");
     if(count == 0)
@@ -33,7 +33,7 @@ NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, size_t count){
 
 
 NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, size_t count, size_t typeSize){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!pool)
       naCrash("pool is Null-Pointer");
     if(count == 0)
@@ -45,7 +45,7 @@ NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, size_t count, size_t typeSize){
   pool->count = count;
   pool->cur = count;
   pool->storagearray = naMalloc(count * typeSize);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     pool->typeSize = typeSize;
   #endif
 
@@ -64,13 +64,13 @@ NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, size_t count, size_t typeSize){
 
 NA_IDEF void naClearPool(NAPool* pool){
   if(pool->storagearray){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(pool->cur != pool->count)
         naError("Pool was created filled but is not filled now.");
     #endif
     free(pool->storagearray);
   }else{
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(pool->cur != 0)
         naError("Pool was created empty but is not empty now.");
     #endif
@@ -81,7 +81,7 @@ NA_IDEF void naClearPool(NAPool* pool){
 
 
 NA_IDEF void* naSuckPool(NAPool* pool){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(pool->cur == 0)
       naError("Pool is empty");
   #endif
@@ -92,7 +92,7 @@ NA_IDEF void* naSuckPool(NAPool* pool){
 
 
 NA_IDEF void naSpitPool(NAPool* pool, void* drop){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(pool->cur == pool->count)
       naError("Pool is full");
     if(pool->storagearray && (!naInsidei((NAByte*)drop - (NAByte*)pool->storagearray, 0, pool->typeSize * pool->count)))

@@ -122,7 +122,7 @@ NA_HDEF NAInt na_GetKeyIndexOctDouble(const void* baseKey, const void* testKey, 
   NAInt index = 0;
   double childwidth;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!na_ContainsTreeNodeChildOct(baseVertex, testVertex, childExponent))
       naError("Vertex lies outside");
   #endif
@@ -191,7 +191,7 @@ NA_HDEF NATreeNode* na_LocateBubbleOctWithLimits(const NATree* tree, NATreeNode*
   NATreeOctNode* octNode;
   NATreeItem* item;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     naError("not implemented yet");
     if(node == NA_NULL)
       naError("node should not be Null");
@@ -235,14 +235,14 @@ NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
   NATreeItem* leafItem = na_GetTreeLeafItem(leaf);
   NATreeNode* parent = na_GetTreeItemParent(leafItem);
   if(na_IsTreeItemRoot(leafItem)){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(tree->config->flags & NA_TREE_ROOT_NO_LEAF)
         naError("Internal error: Tree root seems to be a leaf wheres there should be no leafes at the root");
     #endif
     na_ClearTreeRoot(tree);
   }else{
     NAInt leafIndex = na_GetTreeNodeChildIndex(tree->config, parent, leafItem);
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(!na_IsNodeChildLeaf(parent, leafIndex))
         naError("Child is not marked as a leaf");
       if(!parent)
@@ -279,7 +279,7 @@ NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
         if(tree->config->flags & NA_TREE_ROOT_NO_LEAF){
           // The siblingCount being zero can only happen if this parent is the
           // root, having no more leafes. Completely delete it and break.
-          #ifndef NDEBUG
+          #if NA_DEBUG
             if(!na_IsTreeItemRoot(na_GetTreeNodeItem(parent)))
               naError("This should be the root");
           #endif
@@ -287,7 +287,7 @@ NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
           na_DestructTreeNode(tree->config, parent, NA_FALSE);
           break;
         }else{
-          #ifndef NDEBUG
+          #if NA_DEBUG
             naCrash("This should not happen");
           #endif
         }
@@ -312,7 +312,7 @@ NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
       }
 
       // Reaching here, the parent has only 1 child and shall be optimized away.
-      #ifndef NDEBUG
+      #if NA_DEBUG
         if(siblingCount != 1)
           naError("Parent should have precisely one child");
       #endif
@@ -363,17 +363,17 @@ NA_HDEF NATreeOctNode* na_CreateTreeParentOct(NATree* tree, NATreeItem* item, NA
   tree->config->keyAssigner(&newRootOrigin, prevRootOrigin);
   
   while(1){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       NAVertex testRootOrigin;
     #endif
     newRootChildExponent++;
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(newRootChildExponent >= NA_ADDRESS_BITS)
         naCrash("childExponent grown too big.");
       testRootOrigin = newRootOrigin;
     #endif
     newRootOrigin = na_GetTreeNewRootOriginOct(newRootChildExponent, newRootOrigin);
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(!na_ContainsTreeNodeChildOct(&newRootOrigin, &testRootOrigin, newRootChildExponent))
         naError("Expanding root fails to cover the original root");
     #endif
@@ -420,7 +420,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, con
   NATreeLeaf* newLeaf;
   NA_UNUSED(insertOrder);
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(insertOrder != NA_TREE_LEAF_INSERT_ORDER_KEY)
       naError("Invalid insertOrder");
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
@@ -516,7 +516,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, con
         // The two items share the same child. Go further down.
         smallestParentOrigin = na_GetChildOriginOct(smallestParentOrigin, smallestNewLeafIndex, smallestParentChildExponent);
         smallestParentChildExponent--;
-        #ifndef NDEBUG
+        #if NA_DEBUG
           if(smallestParentChildExponent < naGetTreeConfigurationBaseLeafExponent(tree->config))
             naError("child exponent shrank too deep");
         #endif
@@ -529,7 +529,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, con
       // existingParent and existingChild.
       
       if(smallestParentChildExponent != existingParentChildExponent){
-        #ifndef NDEBUG
+        #if NA_DEBUG
           NAInt testExistingIndex;
         #endif
         NATreeOctNode* smallestParent = na_ConstructTreeNodeOct(tree->config, smallestParentOrigin, smallestParentChildExponent);
@@ -539,13 +539,13 @@ NA_HDEF NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, con
         NAInt smallestExistingIndex = tree->config->keyIndexGetter(&smallestParentOrigin, existingChildOrigin, &smallestParentChildExponent);
         na_SetTreeNodeChild(na_GetOctNodeNode(smallestParent), prevExistingChild, smallestExistingIndex, isPrevExistingChildLeaf);
               
-        #ifndef NDEBUG
+        #if NA_DEBUG
           if(smallestParentChildExponent >= existingParent->childExponent)
             naError("exponent must be smaller");
         #endif
         
         // Then, attach the new parent to the existing parent.
-        #ifndef NDEBUG
+        #if NA_DEBUG
           testExistingIndex = tree->config->keyIndexGetter(na_GetOctNodeKey(existingParent), na_GetOctNodeKey(smallestParent), &(existingParent->childExponent));
           if(testExistingIndex != prevExistingChildIndex)
             naError("Newly computed index differs from previously computed index");
@@ -557,7 +557,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, con
       
       // Now existingParent contains both items and is minimal. Attach the newLeaf
       // at its appropriate place.
-      #ifndef NDEBUG
+      #if NA_DEBUG
         if(existingParent->childs[smallestNewLeafIndex])
           naError("Child is already occupied");
       #endif

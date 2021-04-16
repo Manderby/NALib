@@ -1,7 +1,7 @@
 
 #include "../NABase.h"
 
-#ifndef NDEBUG
+#if NA_DEBUG
 
   #include <stdio.h>    // for the fprintf function
   #include "../NATesting.h"
@@ -9,7 +9,7 @@
 
 
   // The error printing method. Errors will be emitted to the stderr output.
-  // When NDEBUG is defined, this function is OBSOLETE!
+  // When NA_DEBUG is 0, this function is OBSOLETE!
 
   NA_HDEF void na_Error(const char* functionSymbol, const char* text){
     NABool doPrintOut = NA_TRUE;
@@ -45,7 +45,7 @@
 
 
 
-#endif // NDEBUG
+#endif // NA_DEBUG
 
 
 

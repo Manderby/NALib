@@ -146,7 +146,7 @@ NA_HDEF NAPNGChunk* na_AllocPNGChunkFromBuffer(NABufferIterator* iter){
   NAPNGChunk* chunk = naAlloc(NAPNGChunk);
 
   chunk->length = naReadBufferu32(iter);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(chunk->length > (1U<<31)-1U)
       naError("length should not exceed 2^31-1.");
   #endif
@@ -165,7 +165,7 @@ NA_HDEF NAPNGChunk* na_AllocPNGChunkFromBuffer(NABufferIterator* iter){
       break;
     }
   }
-  #ifndef NDEBUG
+  #if NA_DEBUG
 //    if(chunk->type == NA_PNG_CHUNK_TYPE_UNKNOWN){
 //      printf("Undefined Chunkname %c%c%c%c" NA_NL, chunkname[0], chunkname[1], chunkname[2], chunkname[3]);
 //    }
@@ -184,7 +184,7 @@ NA_HDEF NAPNGChunk* na_AllocPNGChunkFromBuffer(NABufferIterator* iter){
 
   chunk->crc = naReadBufferu32(iter);
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(chunk->crc != crc)
       naError("Checksum validation failed.");
   #else
@@ -223,7 +223,7 @@ NA_API size_t naGetPNGBytesPerPixel(NAPNGColorType colorType){
     retValue = 4;
     break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Invalid colorType given");
     #endif
     retValue = 0;
@@ -317,7 +317,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
       }
       break;
     default:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Invalid Filter");
       #endif
       curByte += bytesPerLine;
@@ -368,7 +368,7 @@ NA_HDEF void na_ReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
 
   NABufferIterator iter;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(png->flags & NA_PNG_FLAGS_IHDR_AVAILABLE)
       naError("IHDR chunk already read.");
   #endif
@@ -380,17 +380,17 @@ NA_HDEF void na_ReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
   png->bitDepth = naReadBufferi8(&iter);
   png->colorType = (NAPNGColorType)naReadBufferi8(&iter);
   png->compressionmethod = naReadBufferi8(&iter);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(png->compressionmethod != 0)
       naError("Invalid compression method in IHDR chunk");
   #endif
   png->filtermethod = naReadBufferi8(&iter);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(png->filtermethod != 0)
       naError("Invalid filter method in IHDR chunk");
   #endif
   png->interlacemethod = (NAPNGInterlaceMethod)naReadBufferi8(&iter);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(png->interlacemethod == 1)
       naError("This version of NALib can not read interlaced PNG files. Has not been implemented yet. Sorry.");
   #endif
@@ -614,7 +614,7 @@ NA_HDEF void na_ReadPNGpHYsChunk(NAPNG* png, NAPNGChunk* phys){
     png->pixelunit = NA_PIXEL_UNIT_PER_METER;
     break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Undefined pixel unit");
     #endif
     break;
@@ -676,7 +676,7 @@ NA_HDEF void na_ReadPNGzTXtChunk(NAPNG* png, NAPNGChunk* ztxt){
 NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colorType, int8 bitDepth){
   NAPNG* png = naNew(NAPNG);
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(bitDepth != 8)
       naError("Sorry, bitDepth must be 8 for now. Everything else will be implemented later.");
     if((colorType != NA_PNG_COLORTYPE_TRUECOLOR) && (colorType != NA_PNG_COLORTYPE_TRUECOLOR_ALPHA))
@@ -735,7 +735,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath){
   // Read the magic numbers. If they do not match, this is no png file.
   naReadBufferBytes(&bufiter, magic, 8);
   if(!naEqual64(magic, na_PngMagic)){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("File is not a PNG file.");
     #endif
     goto NAEndReadingPNG;
@@ -844,7 +844,7 @@ NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
     naFillBabyImageWithu8(babyImage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
     break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Not implemented yet");
     #endif
     break;

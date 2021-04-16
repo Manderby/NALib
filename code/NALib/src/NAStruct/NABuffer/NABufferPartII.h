@@ -51,7 +51,7 @@ NA_HIDEF NAInt na_GetBufferPartNormedEnd(NAInt end){
 
 
 NA_HIDEF NABufferSource* na_GetBufferPartSource(const NABufferPart* part){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!part)
       naCrash("part is Null");
   #endif
@@ -61,7 +61,7 @@ NA_HIDEF NABufferSource* na_GetBufferPartSource(const NABufferPart* part){
 
 
 NA_HIDEF NAInt na_GetBufferPartSourceOffset(const NABufferPart* part){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!part)
       naCrash("part is Null");
     if(!part->source)
@@ -73,7 +73,7 @@ NA_HIDEF NAInt na_GetBufferPartSourceOffset(const NABufferPart* part){
 
 
 NA_HIDEF size_t na_GetBufferPartByteSize(const NABufferPart* part){
-#ifndef NDEBUG
+#if NA_DEBUG
   if(!part)
     naCrash("part is Null");
 #endif
@@ -83,7 +83,7 @@ NA_HIDEF size_t na_GetBufferPartByteSize(const NABufferPart* part){
 
 
 NA_HIDEF NABool na_IsBufferPartSparse(const NABufferPart* part){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!part)
       naCrash("part is Null");
   #endif
@@ -93,7 +93,7 @@ NA_HIDEF NABool na_IsBufferPartSparse(const NABufferPart* part){
 
 
 NA_HIDEF NAMemoryBlock* na_GetBufferPartMemoryBlock(const NABufferPart* part){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!part)
       naCrash("part is Null");
     if(na_IsBufferPartSparse(part))
@@ -107,7 +107,7 @@ NA_HIDEF NAMemoryBlock* na_GetBufferPartMemoryBlock(const NABufferPart* part){
 // Enlarges a sparse buffer part with a given number of bytes at the start and
 // at the end.
 NA_HIDEF void na_EnlargeBufferPart(NABufferPart* part, size_t bytesAtStart, size_t bytesAtEnd){
-  #ifndef NDEBUG
+  #if NA_DEBUG
   if(!part)
     naCrash("part is Null");
   if(!na_IsBufferPartSparse(part))
@@ -122,7 +122,7 @@ NA_HIDEF void na_EnlargeBufferPart(NABufferPart* part, size_t bytesAtStart, size
 // Returns a the number of bytes left in this part at given offet.
 NA_HIDEF size_t na_GetBufferPartRemainingBytes(NABufferIterator* iter){
   NABufferPart* part;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter)
       naCrash("iterator is Null pointer");
     if(na_IsBufferIteratorSparse(iter))
@@ -139,7 +139,7 @@ NA_HIDEF size_t na_GetBufferPartRemainingBytes(NABufferIterator* iter){
 // Returns a pointer to the raw data of this buffer part, given its offset.
 NA_HIDEF const void* na_GetBufferPartDataPointerConst(NABufferIterator* iter){
   NABufferPart* part;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter)
       naCrash("iterator is Null pointer");
     if(na_IsBufferIteratorSparse(iter))
@@ -156,7 +156,7 @@ NA_HIDEF const void* na_GetBufferPartDataPointerConst(NABufferIterator* iter){
 // Returns a pointer to the raw data of this buffer part, given its offset.
 NA_HIDEF void* na_GetBufferPartDataPointerMutable(NABufferIterator* iter){
   NABufferPart* part;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!iter)
       naCrash("iterator is Null pointer");
     if(na_IsBufferIteratorSparse(iter))

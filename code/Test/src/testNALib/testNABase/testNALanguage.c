@@ -20,20 +20,6 @@ void testNALanguage(){
     naTest(testAccessor == na_AccessorFunc);
     naTest(testMutator == na_MutatorFunc);
   }
-
-  #ifndef NDEBUG
-    naTestGroup("ElementOverlap"){
-      int32 test[3] = {42, 42, 42};
-      naTest(naElementOverlap(&test[0], &test[0], 0, 0) == NA_FALSE);
-      naTest(naElementOverlap(&test[0], &test[1], 0, 0) == NA_FALSE);
-      naTest(naElementOverlap(&test[0], &test[1], 0, 1) == NA_FALSE);
-      naTest(naElementOverlap(&test[1], &test[0], 0, 0) == NA_FALSE);
-      naTest(naElementOverlap(&test[0], &test[2], 2, 0) == NA_FALSE);
-      naTest(naElementOverlap(&test[0], &test[1], 2, 0) == NA_TRUE);
-      naTest(naElementOverlap(&test[1], &test[0], 0, 2) == NA_TRUE);
-      naTest(naElementOverlap(&test[2], &test[0], 0, 2) == NA_FALSE);
-    }
-  #endif
 }
 
 

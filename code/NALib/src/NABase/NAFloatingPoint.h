@@ -6,7 +6,6 @@
 #define NA_FLOATING_POINT_INCLUDED
 
 
-#include "../NABase.h"
 
 // Following are the macros for the most important constants when working
 // with IEEE-754 floating point values. They are properly defined in the

@@ -9,7 +9,7 @@ NA_IDEF NABool naGetFlagu32(uint32 flags, uint32 flag){
   return ((flags & flag) == flag);
 }
 NA_IDEF void naSetFlagu32(uint32* flags, uint32 flag, NABool set){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(flags == NA_NULL)
       naCrash("flags is Nullpointer");
     if(set != NA_FALSE && set != NA_TRUE)
@@ -18,7 +18,7 @@ NA_IDEF void naSetFlagu32(uint32* flags, uint32 flag, NABool set){
   *flags = (*flags & ~flag) | ((uint32)set * flag);
 }
 NA_IDEF NABool naToggleFlagu32(uint32* flags, uint32 flag){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(flags == NA_NULL)
       naCrash("flags is Nullpointer");
   #endif
@@ -29,14 +29,14 @@ NA_IDEF NABool naToggleFlagu32(uint32* flags, uint32 flag){
 
 
 NA_IDEF int32 naMakeMaxWithEndi32(int32 end){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(end == NA_MIN_i32)
       naError("Integer underflow");
   #endif
   return end - NA_ONE_i32;
 }
 NA_IDEF NAi64 naMakeMaxWithEndi64(NAi64 end){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naEquali64(end, NA_MIN_i64))
       naError("Integer underflow");
   #endif
@@ -50,7 +50,7 @@ NA_IDEF NAInt naMakeMaxWithEndi(NAInt end){
   #endif
 }
 NA_IDEF size_t naMakeMaxWithEnds(size_t end){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(end == NA_ZERO_s)
       naError("Integer underflow");
   #endif
@@ -60,14 +60,14 @@ NA_IDEF size_t naMakeMaxWithEnds(size_t end){
 
 
 NA_IDEF int32 naMakeEndWithMaxi32(int32 max){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(max == NA_MAX_i32)
       naError("Integer overflow");
   #endif
   return max + NA_ONE_i32;
 }
 NA_IDEF NAi64 naMakeEndWithMaxi64(NAi64 max){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naEquali64(max, NA_MAX_i64))
       naError("Integer overflow");
   #endif
@@ -81,7 +81,7 @@ NA_IDEF NAInt naMakeEndWithMaxi(NAInt max){
   #endif
 }
 NA_IDEF size_t naMakeEndWithMaxs(size_t max){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(max == NA_MAX_s)
       naError("Integer overflow");
   #endif
@@ -91,13 +91,13 @@ NA_IDEF size_t naMakeEndWithMaxs(size_t max){
 
 
 NA_IDEF double naMakeEndWithStartAndLength(double start, double length){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(length < 0.){
       naError("length is negative");
     }
   #endif
   double result = start + length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naIsOffsetValueValid(result)){
       naError("result invalid");
     }
@@ -105,13 +105,13 @@ NA_IDEF double naMakeEndWithStartAndLength(double start, double length){
   return result;
 }
 NA_IDEF float naMakeEndWithStartAndLengthf(float start, float length){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(length < 0.f){
       naError("length is negative");
     }
   #endif
   float result = start + length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naIsOffsetValueValidf(result)){
       naError("result invalid");
     }
@@ -119,13 +119,13 @@ NA_IDEF float naMakeEndWithStartAndLengthf(float start, float length){
   return result;
 }
 NA_IDEF NAInt naMakeEndWithStartAndLengthi(NAInt start, NAInt length){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(length < 0){
       naError("length is negative");
     }
   #endif
   NAInt result = start + length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(length >= 0 && result < start)
       naError("Integer overflow");
   #endif
@@ -133,7 +133,7 @@ NA_IDEF NAInt naMakeEndWithStartAndLengthi(NAInt start, NAInt length){
 }
 NA_IDEF size_t naMakeEndWithStartAndLengths(size_t start, size_t length){
   size_t result = start + length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(result < start)
       naError("Integer overflow");
   #endif
@@ -143,13 +143,13 @@ NA_IDEF size_t naMakeEndWithStartAndLengths(size_t start, size_t length){
 
 
 NA_IDEF NAInt naMakeMaxWithMinAndLengthi(NAInt min, NAInt length){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(length < 0){
       naError("length is negative");
     }
   #endif
   NAInt result = naMakeMaxWithEndi(min + length);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(length > 0 && result < min)
       naError("Integer overflow");
   #endif
@@ -157,7 +157,7 @@ NA_IDEF NAInt naMakeMaxWithMinAndLengthi(NAInt min, NAInt length){
 }
 NA_IDEF size_t naMakeMaxWithMinAndLengths(size_t min, size_t length){
   size_t result = naMakeMaxWithEnds(min + length);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(result < min)
       naError("Integer overflow");
   #endif
@@ -167,12 +167,12 @@ NA_IDEF size_t naMakeMaxWithMinAndLengths(size_t min, size_t length){
 
 
 NA_IDEF double naMakeLengthWithStartAndEnd(double start, double end){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(start > end)
       naError("start is greater than end");
   #endif
   double result = end - start;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naIsLengthValueValid(result)){
       naError("result invalid");
     }
@@ -180,12 +180,12 @@ NA_IDEF double naMakeLengthWithStartAndEnd(double start, double end){
   return result;
 }
 NA_IDEF float naMakeLengthWithStartAndEndf(float start, float end){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(start > end)
       naError("start is greater than end");
   #endif
   float result = end - start;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naIsLengthValueValidf(result)){
       naError("result invalid");
     }
@@ -193,19 +193,19 @@ NA_IDEF float naMakeLengthWithStartAndEndf(float start, float end){
   return result;
 }
 NA_IDEF NAInt naMakeLengthWithStartAndEndi(NAInt start, NAInt end){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(start > end)
       naError("start is greater than end");
   #endif
   NAInt result = end - start;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(end > start && result < 0)
       naError("Integer overflow");
   #endif
   return result;
 }
 NA_IDEF size_t naMakeLengthWithStartAndEnds(size_t start, size_t end){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(start > end)
       naError("start is greater than end");
   #endif
@@ -216,21 +216,21 @@ NA_IDEF size_t naMakeLengthWithStartAndEnds(size_t start, size_t end){
 
 
 NA_IDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(max == NA_MAX_i32)
       naError("max being equal to the integer maximum will lead to an overflow");
     if(min > max + 1)
       naError("min is greater than max + 1");
   #endif
   NAInt result = naMakeEndWithMaxi(max) - min;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(max > min && result < 0)
       naError("Integer overflow");
   #endif
   return result;
 }
 NA_IDEF size_t naMakeLengthWithMinAndMaxs(size_t min, size_t max){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(max == NA_MAX_s)
       naError("max being equal to the integer maximum will lead to an overflow");
     if(min > max + 1)
@@ -246,7 +246,7 @@ NA_IDEF size_t naMakeLengthWithMinAndMaxs(size_t min, size_t max){
 
 NA_IDEF NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength){
   NAInt shiftx;
-  #ifndef NDEBUG
+  #if NA_DEBUG
   if(!naIsLengthValueUsefuli(alignlength))
     naError("Invalid size leads to range overflow. Correcting to empty range.");
   #endif
@@ -259,7 +259,7 @@ NA_IDEF NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength){
 }
 NA_IDEF double naAlignValued(double x, double offset, double alignlength){
   double shiftx;
-  #ifndef NDEBUG
+  #if NA_DEBUG
   if(!naIsLengthValueUseful(alignlength))
     naError("Invalid size leads to range overflow. Correcting to empty range.");
   #endif
@@ -270,14 +270,14 @@ NA_IDEF double naAlignValued(double x, double offset, double alignlength){
 
 
 NA_IDEF NAInt naMakeIntWithIntegerFloat(float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naRoundf(x) != x)
       naError("Given float is not an integer number");
   #endif
   return (NAInt)x;
 }
 NA_IDEF NAInt naMakeIntWithIntegerDouble(double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naRound(x) != x)
       naError("Given double is not an integer number");
   #endif
@@ -297,7 +297,7 @@ NA_IDEF NABool naIsOffsetValueValidi(NAInt a){
   return NA_TRUE;
 }
 NA_IDEF NABool naIsOffsetValueValids(size_t a){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
   #else
@@ -317,7 +317,7 @@ NA_IDEF NABool naIsLengthValueValidi(NAInt a){
   return NA_TRUE;
 }
 NA_IDEF NABool naIsLengthValueValids(size_t a){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
   #else
@@ -336,7 +336,7 @@ NA_IDEF NABool naIsLengthValueEmptyi(NAInt a){
   return (a == 0);
 }
 NA_IDEF NABool naIsLengthValueEmptys(size_t a){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
   #endif
@@ -354,7 +354,7 @@ NA_IDEF NABool naIsLengthValueNegativei(NAInt a){
   return (a < 0);
 }
 NA_IDEF NABool naIsLengthValueNegatives(size_t a){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
   #else
@@ -375,7 +375,7 @@ NA_IDEF NABool naIsOffsetValueUsefuli(NAInt a){
   return NA_TRUE;
 }
 NA_IDEF NABool naIsOffsetValueUsefuls(size_t a){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
   #else
@@ -397,7 +397,7 @@ NA_IDEF NABool naIsLengthValueUsefuli(NAInt a){
   return (a > 0);
 }
 NA_IDEF NABool naIsLengthValueUsefuls(size_t a){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
   #endif

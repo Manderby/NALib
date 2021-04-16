@@ -165,7 +165,7 @@ NA_IDEF void naRunThread(NAThread thread){
       HANDLE mutex;
     #endif
     NABool islockedbythisthread;
-    #ifndef NDEBUG
+    #if NA_DEBUG
       NABool seemslocked;
     #endif
   };
@@ -179,7 +179,7 @@ NA_IDEF void naRunThread(NAThread thread){
 
 #else
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     typedef struct NAMacintoshMutex NAMacintoshMutex;
     struct NAMacintoshMutex{
       dispatch_semaphore_t mutex;
@@ -203,13 +203,13 @@ NA_IDEF NAMutex naMakeMutex(void){
       windowsMutex->mutex = CreateMutex(NULL, FALSE, NULL);
     #endif
     windowsMutex->islockedbythisthread = NA_FALSE;
-    #ifndef NDEBUG
+    #if NA_DEBUG
       windowsMutex->seemslocked = NA_FALSE;
     #endif
     return windowsMutex;
   #else
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       NAMacintoshMutex* macintoshmutex = naAlloc(NAMacintoshMutex);
       macintoshmutex->mutex = dispatch_semaphore_create(1);
       macintoshmutex->seemslocked = NA_FALSE;
@@ -233,7 +233,7 @@ NA_IDEF void naClearMutex(NAMutex mutex){
     #endif
     naFree(windowsMutex);
   #else
-    #ifndef NDEBUG
+    #if NA_DEBUG
       NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
       #if NA_MACOS_USES_ARC
       // Mutex will be released automatically when ARC is turned on.
@@ -265,16 +265,16 @@ NA_IDEF void naLockMutex(NAMutex mutex){
     #else
       WaitForSingleObject(windowsMutex->mutex, INFINITE);
     #endif
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(windowsMutex->islockedbythisthread)
         naError("Mutex was already locked by this thread. This is not how Mutexes in NALib work.");
     #endif
     windowsMutex->islockedbythisthread = NA_TRUE;
-    #ifndef NDEBUG
+    #if NA_DEBUG
       windowsMutex->seemslocked = NA_TRUE;
     #endif
    #else
-    #ifndef NDEBUG
+    #if NA_DEBUG
       NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
       dispatch_semaphore_wait(macintoshmutex->mutex, DISPATCH_TIME_FOREVER);
       macintoshmutex->seemslocked = NA_TRUE;
@@ -292,11 +292,11 @@ NA_IDEF void naLockMutex(NAMutex mutex){
 NA_IDEF void naUnlockMutex(NAMutex mutex){
   #if NA_OS == NA_OS_WINDOWS
     NAWindowsMutex* windowsMutex = (NAWindowsMutex*)mutex;
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(!naIsMutexLocked(mutex))
         naError("Mutex was not locked. Note: If this only happends once and very rarely, it might be because this check is unreliable!");
     #endif
-    #ifndef NDEBUG
+    #if NA_DEBUG
       windowsMutex->seemslocked = NA_FALSE;
     #endif
     windowsMutex->islockedbythisthread = NA_FALSE;
@@ -306,7 +306,7 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
       ReleaseMutex(windowsMutex->mutex);
     #endif
   #else
-    #ifndef NDEBUG
+    #if NA_DEBUG
       NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
       macintoshmutex->seemslocked = NA_FALSE;
       dispatch_semaphore_signal(macintoshmutex->mutex);
@@ -318,7 +318,7 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
 
 
 
-#ifndef NDEBUG
+#if NA_DEBUG
   NA_IDEF NABool naIsMutexLocked(NAMutex mutex){
     #if NA_OS == NA_OS_WINDOWS
       NAWindowsMutex* windowsMutex = (NAWindowsMutex*)mutex;
@@ -380,7 +380,7 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
       }
     #endif
   #else
-    #ifndef NDEBUG
+    #if NA_DEBUG
       NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
       long retValue = dispatch_semaphore_wait(macintoshmutex->mutex, DISPATCH_TIME_NOW);
       if(retValue){
@@ -442,7 +442,7 @@ NA_IDEF void naClearAlarm(NAAlarm alarmer){
 NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxWaitTime){
   #if NA_OS == NA_OS_WINDOWS
     DWORD result;
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(maxWaitTime < 0.)
         naError("maxWaitTime should not be negative. Beware of the zero!");
     #endif
@@ -455,7 +455,7 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxWaitTime){
     return (result == WAIT_OBJECT_0);
   #else
     long result;
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(maxWaitTime < 0.)
         naError("maxWaitTime should not be negative. Beware of the zero!");
     #endif

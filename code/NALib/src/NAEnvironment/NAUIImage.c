@@ -30,7 +30,7 @@ void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin){
     skinColor[3] = 255;
     break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Cannot provide color for plain skin");
     #endif
     break;
@@ -88,7 +88,7 @@ NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, NABabyImage* alt, NAUIIm
   NAUIImage* uiImage;
   NABabyImage* main1x;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     #if NA_OS == NA_OS_WINDOWS
       if(sizeof(WORD) > 4)
         naError("Bitamps require WORD alignment. But WORD is kind-a big on this system. Expect bad images.");
@@ -117,7 +117,7 @@ NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, NABabyImage* alt, NAUIIm
     }
     break;
   case NA_UIIMAGE_RESOLUTION_2x:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(uiImage->size1x.width % 2 || uiImage->size1x.height % 2)
         naError("Image size is not divisable by 2");
     #endif
@@ -136,7 +136,7 @@ NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, NABabyImage* alt, NAUIIm
     }
     break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Unknown resolution");
     #endif
     break;

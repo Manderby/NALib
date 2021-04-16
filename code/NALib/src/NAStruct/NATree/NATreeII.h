@@ -102,7 +102,7 @@ struct NATreeConfiguration{
   int                           nodeUserDataOffset;
   void*                         configdata;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     size_t                      sizeofNode;
     size_t                      sizeofLeaf;
   #endif
@@ -138,7 +138,7 @@ struct NATreeConfiguration{
 
 struct NATreeItem{
   NATreeNode* parent;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     NAInt iterCount;
   #endif
 };
@@ -155,7 +155,7 @@ struct NATreeLeaf{
 struct NATreeIterator{
   NAPtr tree;
   NATreeItem* item;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     uint32 flags;
   #endif
 };
@@ -164,7 +164,7 @@ struct NATree{
   NATreeConfiguration* config;
   NATreeItem* root;
   NAInt flags;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     NAInt iterCount;
   #endif
 };

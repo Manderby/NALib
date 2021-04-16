@@ -13,6 +13,7 @@ const char* na_MemAlignEnumStrings[] = {
 
 void printNAConfiguration(){
   printf("NAConfiguration.h:" NA_NL);
+  naPrintMacroIntYesNo     (NA_DEBUG);
   naPrintMacroIntSpecial   (NA_PREFERRED_NAINT_BITS, 0, "Automatic");
   naPrintMacroIntYesNo     (NA_COMPILE_OPENGL);
   naPrintMacroIntYesNo     (NA_COMPILE_GUI);

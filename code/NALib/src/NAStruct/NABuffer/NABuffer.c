@@ -70,7 +70,7 @@ NA_HDEF void na_InitBufferStruct(NABuffer* buffer){
   naSetTreeConfigurationLeafCallbacks(config, NA_NULL, naDestructBufferTreeLeaf);
   naSetTreeConfigurationNodeCallbacks(config, naConstructBufferTreeNode, naDestructBufferTreeNode, naUpdateBufferTreeNode);
   naInitTree(&(buffer->parts), config);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     buffer->iterCount = 0;
   #endif
   naReleaseTreeConfiguration(config);
@@ -113,13 +113,13 @@ NA_DEF NABuffer* naNewBuffer(NABool secureMemory){
 NA_HIAPI NARangei na_MakeRangeiAbsolute(NAInt offset, NAInt length, NARangei containingrange){
   NAInt start;
   NAInt end;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naIsLengthValueUsefuli(containingrange.length))
       naError("Length of containing range is not useful.");
   #endif
   start = containingrange.origin + (offset < 0) * containingrange.length + offset;
   end = ((length >= 0) ? start : (naGetRangeiEnd(containingrange) + 1)) + length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naContainsRangeiOffset(containingrange, start))
       naError("Resulting range underflows containing range.");
     if(!naContainsRangeiOffset(containingrange, naMakeMaxWithEndi(end)))
@@ -322,7 +322,7 @@ NA_DEF NABuffer* naNewBufferWithCustomSource(NABufferSource* source, NAInt sourc
 
 
 NA_HDEF void na_DeallocBuffer(NABuffer* buffer){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(buffer->iterCount)
       naError("There are still iterators running. Did you forgot naClearBufferIterator?");
   #endif
@@ -338,7 +338,7 @@ NA_HDEF void na_DeallocBuffer(NABuffer* buffer){
 NA_HDEF void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
   NAInt length = end - start;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(length <= 0)
       naError("Range length shall be >= 0");
     if(naHasBufferFixedRange(buffer) && (start < buffer->range.origin))
@@ -409,7 +409,7 @@ NA_HDEF void na_UnlinkBufferRange(NABuffer* buffer, NARangei range){
 //  NABufferPart* sparsepart;
 //  NAListIterator iter;
 //
-//  #ifndef NDEBUG
+//  #if NA_DEBUG
 //    if(naIsBufferEmpty(buffer))
 //      naError("na_UnlinkBufferRange", "Buffer ist empty");
 //    if(!naContainsRangeiRange(buffer->range, range))
@@ -494,7 +494,7 @@ NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt start
     const NAByte* curByte;
 
     part = na_GetBufferPart(&iter);
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(na_IsBufferPartSparse(part))
         naError("sparse part detected.");
     #endif
@@ -556,7 +556,7 @@ NA_DEF NABool naEqualBufferToBuffer(const NABuffer* buffer1, const NABuffer* buf
     const NAByte* bufferbytes1;
     const NAByte* bufferbytes2;
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       const NABufferPart* part1 = na_GetBufferPart(&iter1);
       const NABufferPart* part2 = na_GetBufferPart(&iter2);
       if(na_IsBufferPartSparse(part1))
@@ -610,7 +610,7 @@ NA_DEF NABool naEqualBufferToData(NABuffer* buffer, const void* data, size_t dat
     const NAByte* bufferbytes;
 
     part = na_GetBufferPart(&iter);
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(na_IsBufferPartSparse(part))
         naError("Buffer has sparse part");
     #endif

@@ -124,7 +124,7 @@ NA_HDEF void na_GrowHeap(NAHeap* heap){
 
 
 NA_DEF void naShrinkHeapIfNecessary(NAHeap* heap){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(heap->maxcount > 0)
       naError("Heap defined with a fixed count of elements.");
   #endif
@@ -145,7 +145,7 @@ NA_HDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, con
   NAInt newindex;
   NAHeapEntry* thedata;
   NA_UNUSED(backPointer);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
       naError("Heap overflow.");
     if(backPointer)
@@ -164,7 +164,7 @@ NA_HDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, con
 NA_HDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const void* key, NAInt* backPointer){
   NAInt newindex;
   NAHeapBackEntry* thedata;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
       naError("Heap overflow.");
   #endif
@@ -192,7 +192,7 @@ NA_HDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const v
   NAInt newindex;
   NAHeapEntry* thedata;
   NA_UNUSED(backPointer);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
       naError("Heap overflow.");
     if(backPointer)
@@ -211,7 +211,7 @@ NA_HDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const v
 NA_HDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const void* key, NAInt* backPointer){
   NAInt newindex;
   NAHeapBackEntry* thedata;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
       naError("Heap overflow.");
   #endif
@@ -238,7 +238,7 @@ NA_HDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const voi
 NA_HDEF const void* na_RemoveHeapRootConstNoBack(NAHeap* heap){
   NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
   const void* returnvalue;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(heap->count == 0)
       naError("Heap is empty.");
   #endif
@@ -256,7 +256,7 @@ NA_HDEF const void* na_RemoveHeapRootConstNoBack(NAHeap* heap){
 NA_HDEF const void* na_RemoveHeapRootConstBack(NAHeap* heap){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   const void* returnvalue;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(heap->count == 0)
       naError("Heap is empty.");
   #endif
@@ -276,7 +276,7 @@ NA_HDEF const void* na_RemoveHeapRootConstBack(NAHeap* heap){
 NA_HDEF void* na_RemoveHeapRootMutableNoBack(NAHeap* heap){
   NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
   void* returnvalue;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(heap->count == 0)
       naError("Heap is empty.");
   #endif
@@ -293,7 +293,7 @@ NA_HDEF void* na_RemoveHeapRootMutableNoBack(NAHeap* heap){
 NA_HDEF void* na_RemoveHeapRootMutableBack(NAHeap* heap){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   void* returnvalue;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(heap->count == 0)
       naError("Heap is empty.");
   #endif
@@ -313,7 +313,7 @@ NA_HDEF void* na_RemoveHeapRootMutableBack(NAHeap* heap){
 NA_HDEF const void* na_RemoveHeapPosConstNoBack(NAHeap* heap, NAInt backPointer){
   NA_UNUSED(heap);
   NA_UNUSED(backPointer);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     naError("Can not update heap as he stores no backPointers. Function has no effect");
   #endif
   return NA_NULL;
@@ -324,7 +324,7 @@ NA_HDEF const void* na_RemoveHeapPosConstNoBack(NAHeap* heap, NAInt backPointer)
 NA_HDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, NAInt backPointer){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   const void* returnvalue;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(backPointer > heap->count)
       naError("backPointer makes no sense.");
     if(backPointer == 0)
@@ -346,7 +346,7 @@ NA_HDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, NAInt backPointer){
 NA_HDEF void* na_RemoveHeapPosMutableNoBack(NAHeap* heap, NAInt backPointer){
   NA_UNUSED(heap);
   NA_UNUSED(backPointer);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     naError("Can not update heap as he stores no backPointers. Function has no effect");
   #endif
   return NA_NULL;
@@ -356,7 +356,7 @@ NA_HDEF void* na_RemoveHeapPosMutableNoBack(NAHeap* heap, NAInt backPointer){
 NA_HDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, NAInt backPointer){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   void* returnvalue;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(backPointer > heap->count)
       naError("backPointer makes no sense.");
     if(backPointer == 0)
@@ -377,7 +377,7 @@ NA_HDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, NAInt backPointer){
 NA_HDEF void na_UpdateHeapElementNoBack(NAHeap* heap, NAInt backPointer){
   NA_UNUSED(heap);
   NA_UNUSED(backPointer);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     naError("Can not update heap as he stores no backPointers. Function has no effect");
   #endif
 }
@@ -388,7 +388,7 @@ NA_HDEF void na_UpdateHeapElementBack(NAHeap* heap, NAInt backPointer){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   NAHeapBackEntry tmp;
   NAInt curIndex;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(backPointer > heap->count)
       naError("backPointer makes no sense.");
     if(backPointer == 0)
@@ -406,7 +406,7 @@ NA_HDEF void na_UpdateHeapElementBack(NAHeap* heap, NAInt backPointer){
 // structure are set. After this function, these pointers can no longer be
 // changed and therefore define the behaviour of the heap until its deletion.
 NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!heap)
       naCrash("heap is Null-Pointer");
     // there is always count + 1 elements stored in the array.
@@ -481,7 +481,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
       }
       break;
     default:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naCrash("flag combination not implemented.");
         return NA_NULL;
       #else
@@ -542,7 +542,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
       }
       break;
     default:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naCrash("flag combination not implemented.");
         return NA_NULL;
       #else

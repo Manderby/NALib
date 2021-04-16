@@ -44,7 +44,7 @@ NA_IDEF  void naConvertEndianness128v(NAInt endianness, void* buffer, size_t cou
 // //////////////////////////////////////////////////////////////////////
 
 NA_IDEF void naConvertLittleBig8(void* buffer){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!buffer)
       naError("Buffer is Null-Pointer");
   #endif
@@ -52,7 +52,7 @@ NA_IDEF void naConvertLittleBig8(void* buffer){
 }
 
 NA_IDEF void naConvertLittleBig16(void* buffer){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!buffer)
       naCrash("Buffer is Null-Pointer");
   #endif
@@ -60,7 +60,7 @@ NA_IDEF void naConvertLittleBig16(void* buffer){
 }
 
 NA_IDEF void naConvertLittleBig32(void* buffer){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!buffer)
       naCrash("Buffer is Null-Pointer");
   #endif
@@ -73,7 +73,7 @@ NA_IDEF void naConvertLittleBig64(void* buffer){
 //    uint32* hi;
 //    uint32* lo;
 //  #endif
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!buffer)
       naCrash("Buffer is Null-Pointer");
   #endif
@@ -97,7 +97,7 @@ NA_IDEF void naConvertLittleBig64(void* buffer){
 }
 
 NA_IDEF void naConvertLittleBig128(void* buffer){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!buffer)
       naCrash("Buffer is Null-Pointer");
   #endif
@@ -124,7 +124,7 @@ NA_IDEF void naConvertLittleBig128(void* buffer){
 // //////////////////////////////
 
 NA_IDEF void naConvertLittleBig8v(void* buffer, size_t count){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!buffer)
       naError("buffer is Null-Pointer");
   #endif
@@ -133,7 +133,7 @@ NA_IDEF void naConvertLittleBig8v(void* buffer, size_t count){
 }
 
 NA_IDEF void naConvertLittleBig16v(void* buffer, size_t count){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!buffer)
       naError("buffer is Null-Pointer");
   #endif
@@ -144,7 +144,7 @@ NA_IDEF void naConvertLittleBig16v(void* buffer, size_t count){
 }
 
 NA_IDEF void naConvertLittleBig32v(void* buffer, size_t count){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!buffer)
       naError("buffer is Null-Pointer");
   #endif
@@ -155,7 +155,7 @@ NA_IDEF void naConvertLittleBig32v(void* buffer, size_t count){
 }
 
 NA_IDEF void naConvertLittleBig64v(void* buffer, size_t count){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!buffer)
       naError("buffer is Null-Pointer");
   #endif
@@ -166,7 +166,7 @@ NA_IDEF void naConvertLittleBig64v(void* buffer, size_t count){
 }
 
 NA_IDEF void naConvertLittleBig128v(void* buffer, size_t count){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!buffer)
       naError("buffer is Null-Pointer");
   #endif
@@ -179,7 +179,7 @@ NA_IDEF void naConvertLittleBig128v(void* buffer, size_t count){
 
 
 NA_IAPI NABool naIsEndiannessHost(NAInt endianness){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((endianness != 1) && (endianness != 2))
       naError("endianness is invalid. Result is undefined.");
   #endif
@@ -221,7 +221,7 @@ NA_IDEF NAInt naParseEndiannessMarker(const NAByte marker[4]){
     return NA_ENDIANNESS_BIG;
     break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Endianness unknown. Returning Little");
     #endif
     return NA_ENDIANNESS_LITTLE;

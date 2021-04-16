@@ -43,7 +43,7 @@ NA_IDEF double naDetM44d(double* A){
 // ///////////////////////////////
 
 NA_IDEF void naTransposeM22d( double* NA_RESTRICT D, double* NA_RESTRICT A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(A == D)
       naError("A equals D. Use E or S variant.");
     else if(naElementOverlap(D, A, 4, 4))
@@ -53,7 +53,7 @@ NA_IDEF void naTransposeM22d( double* NA_RESTRICT D, double* NA_RESTRICT A){
   D[1] = A[2]; D[3] = A[3];
 }
 NA_IDEF void naTransposeM33d( double* NA_RESTRICT D, double* NA_RESTRICT A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(A == D)
       naError("A equals D. Use E or S variant.");
     else if(naElementOverlap(D, A, 9, 9))
@@ -64,7 +64,7 @@ NA_IDEF void naTransposeM33d( double* NA_RESTRICT D, double* NA_RESTRICT A){
   D[2] = A[6]; D[5] = A[7]; D[8] = A[8];
 }
 NA_IDEF void naTransposeM44d( double* NA_RESTRICT D, double* NA_RESTRICT A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(A == D)
       naError("A equals D. Use E or S variant.");
     else if(naElementOverlap(D, A, 16, 16))
@@ -76,7 +76,7 @@ NA_IDEF void naTransposeM44d( double* NA_RESTRICT D, double* NA_RESTRICT A){
   D[3] = A[12]; D[7] = A[13]; D[11] = A[14]; D[15] = A[15];
 }
 NA_IDEF void naTransposeM22f( float* NA_RESTRICT D, float* NA_RESTRICT A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(A == D)
       naError("A equals D. Use E or S variant.");
     else if(naElementOverlap(D, A, 4, 4))
@@ -86,7 +86,7 @@ NA_IDEF void naTransposeM22f( float* NA_RESTRICT D, float* NA_RESTRICT A){
   D[1] = A[2]; D[3] = A[3];
 }
 NA_IDEF void naTransposeM33f( float* NA_RESTRICT D, float* NA_RESTRICT A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(A == D)
       naError("A equals D. Use E or S variant.");
     else if(naElementOverlap(D, A, 9, 9))
@@ -97,7 +97,7 @@ NA_IDEF void naTransposeM33f( float* NA_RESTRICT D, float* NA_RESTRICT A){
   D[2] = A[6]; D[5] = A[7]; D[8] = A[8];
 }
 NA_IDEF void naTransposeM44f( float* NA_RESTRICT D, float* NA_RESTRICT A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(A == D)
       naError("A equals D. Use E or S variant.");
     else if(naElementOverlap(D, A, 16, 16))
@@ -109,7 +109,7 @@ NA_IDEF void naTransposeM44f( float* NA_RESTRICT D, float* NA_RESTRICT A){
   D[3] = A[12]; D[7] = A[13]; D[11] = A[14]; D[15] = A[15];
 }
 NA_IDEF void naTransposeM22dE( double* D, double* A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((A != D) && naElementOverlap(D, A, 4, 4))
       naError("A overlaps misaligned with D");
   #endif
@@ -117,7 +117,7 @@ NA_IDEF void naTransposeM22dE( double* D, double* A){
   D[1] = A[2]; D[3] = A[3];
 }
 NA_IDEF void naTransposeM33dE( double* D, double* A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((A != D) && naElementOverlap(D, A, 9, 9))
       naError("A overlaps misaligned with D");
   #endif
@@ -126,7 +126,7 @@ NA_IDEF void naTransposeM33dE( double* D, double* A){
   D[2] = A[6]; D[5] = A[7]; D[8] = A[8];
 }
 NA_IDEF void naTransposeM44dE( double* D, double* A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((A != D) && naElementOverlap(D, A, 16, 16))
       naError("A overlaps misaligned with D");
   #endif
@@ -136,7 +136,7 @@ NA_IDEF void naTransposeM44dE( double* D, double* A){
   D[3] = A[12]; D[7] = A[13]; D[11] = A[14]; D[15] = A[15];
 }
 NA_IDEF void naTransposeM22fE( float* D, float* A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((A != D) && naElementOverlap(D, A, 4, 4))
       naError("A overlaps misaligned with D");
   #endif
@@ -144,7 +144,7 @@ NA_IDEF void naTransposeM22fE( float* D, float* A){
   D[1] = A[2]; D[3] = A[3];
 }
 NA_IDEF void naTransposeM33fE( float* D, float* A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((A != D) && naElementOverlap(D, A, 9, 9))
       naError("A overlaps misaligned with D");
   #endif
@@ -153,7 +153,7 @@ NA_IDEF void naTransposeM33fE( float* D, float* A){
   D[2] = A[6]; D[5] = A[7]; D[8] = A[8];
 }
 NA_IDEF void naTransposeM44fE( float* D, float* A){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((A != D) && naElementOverlap(D, A, 16, 16))
       naError("A overlaps misaligned with D");
   #endif

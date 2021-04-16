@@ -8,7 +8,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
   NAByte* dst = data;
   NATreeIterator firstBufIter;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!data)
       naError("data is Null pointer.");
     if(naGetBufferCurBit(iter) != 0)
@@ -34,7 +34,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
     NABufferPart* part;
     const void* src;
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(na_IsBufferIteratorSparse(iter))
         naError("Cur part is sparse");
     #endif
@@ -50,7 +50,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
     // We detect, how many bytes actually can be read from the current part.
     size_t possibleLength = na_GetBufferPartByteSize(part) - (size_t)iter->partOffset;
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(possibleLength <= 0)
         naError("possible length invalid");
     #endif
@@ -83,7 +83,7 @@ NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, size_t index){
   NABufferIterator iter;
   NABool found;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(buffer->range.origin != 0)
       naError("This function should only be used for buffers with origin 0.");
   #endif
@@ -133,7 +133,7 @@ NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
 NA_DEF uint32 naReadBufferBits32(NABufferIterator* iter, uint8 count){
   uint32 retValue = 0;
   uint32 curmask = 1;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(count > 32)
       naError("Can read 32 Bits maximum.");
   #endif

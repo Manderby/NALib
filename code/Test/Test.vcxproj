@@ -179,6 +179,7 @@
     <ClCompile Include="src\testNALib\testNABase\testNALanguage.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAMacros.c" />
     <ClCompile Include="src\testNALib\testNABase\testNANumerics.c" />
+    <ClCompile Include="src\testNALib\testNABase\testNAPointerArithmetics.c" />
     <ClCompile Include="src\testNALib\testNACore.c" />
     <ClCompile Include="src\testNALib\testNACore\testNATesting.c" />
     <ClCompile Include="src\testNALib\testNACore\testNAValueHelper.c" />

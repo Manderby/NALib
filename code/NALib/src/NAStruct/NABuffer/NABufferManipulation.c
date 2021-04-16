@@ -15,7 +15,7 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
   NAByte      srctriple[3];
   NAUTF8Char  dsttriple[4];
   NAString* retString;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naHasBufferFixedRange(buffer))
       naError("Buffer has no determined range. Use naFixBufferRange");
   #endif
@@ -102,7 +102,7 @@ NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(NAString* string){
     else if (curchar <= 'Z'){newChar = curchar - 'A';}
     else if (curchar <= 'z'){newChar = curchar - ('a' - 26);}
     else{
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Invalid character. This does not seem to be a Base64 encoding");
       #endif
       newChar = '\0';
@@ -129,14 +129,14 @@ NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(NAString* string){
     triples--;
     naWriteBufferBytes(&dstIter, dsttriple, 3);
   }
-  #ifndef NDEBUG
+  #if NA_DEBUG
   if(sizeremainder == 1)
     naError("This sizeremainder should not happen");
   #endif
   if(sizeremainder == 2){
     naReadBufferBytes(&asciter, asctriple, 2);
     dsttriple[0] = (NAByte) (asctriple[0] << 2)         | (NAByte)(asctriple[1] >> 4);
-    #ifndef NDEBUG
+    #if NA_DEBUG
     if((asctriple[1] & 0x0f) << 4)
       naError("Security breach: Data in unobserved bits of second character");
     #endif
@@ -146,7 +146,7 @@ NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(NAString* string){
     naReadBufferBytes(&asciter, asctriple, 3);
     dsttriple[0] = (NAByte) (asctriple[0] << 2)         | (NAByte)(asctriple[1] >> 4);
     dsttriple[1] = (NAByte)((asctriple[1] & 0x0f) << 4) | (NAByte)(asctriple[2] >> 2);
-    #ifndef NDEBUG
+    #if NA_DEBUG
     if((asctriple[2] & 0x03) << 6)
       naError("Security breach: Data in unobserved bits of third character");
     #endif
@@ -167,7 +167,7 @@ NA_DEF void naAccumulateChecksumBuffer(NAChecksum* checksum, NABuffer* buffer){
   na_LocateBufferStart(&iter);
 
   while(byteSize){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(na_IsBufferIteratorSparse(&iter))
         naError("Buffer contains sparse parts. Can not compute checksum. Use naCacheBuffer.");
     #endif
@@ -195,7 +195,7 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
   NAInt byteSize;
   NABufferIterator iter;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naHasBufferFixedRange(buffer))
       naError("Buffer has no determined range. Use naFixBufferRange");
   #endif
@@ -210,7 +210,7 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
       size_t remainingBytes = na_GetBufferPartByteSize(part);
       const NAByte* src = na_GetBufferPartDataPointerConst(&iter);
 
-      #ifndef NDEBUG
+      #if NA_DEBUG
         if(na_IsBufferPartSparse(part))
           naError("Buffer contains sparse parts.");
       #endif
@@ -234,7 +234,7 @@ NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
   while(na_IterateBufferPart(&iter)){
     size_t byteSize = na_GetBufferPartByteSize(na_GetBufferPart(&iter));
     const void* src = na_GetBufferPartDataPointerConst(&iter);
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(na_IsBufferIteratorSparse(&iter))
         naError("Buffer contains sparse parts. Use naCacheBuffer.");
     #endif

@@ -106,7 +106,7 @@ typedef float  NAMat44f[16];
 // Note again, that the E variants really mean "Equal". If some pointers
 // overlap in a misaligned way, NALib will still emit warnings!
 //
-// When NDEBUG is defined, no checks will be executed an no warnings will be
+// When NA_DEBUG is 0, no checks will be executed an no warnings will be
 // emitted at all.
 //
 // Implementation note:

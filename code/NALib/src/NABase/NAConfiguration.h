@@ -34,6 +34,33 @@
 
 
 // ////////////////////////////////
+// Debugging
+// ////////////////////////////////
+
+// Depending on the definition of the NA_DEBUG macro, the naError and naCrash
+// functions will either be defined or not. If defined, debugging checks like
+// the following can be written anywhere in the code:
+// 
+// #if NA_DEBUG
+//   if(somethingIsWrong)
+//     naError("Uppsie");
+//   if(somethingIsVeryWrong)
+//     naCrash("Gonna crash!");
+// #endif
+// 
+// For more information, see the comments in NADebugging.h
+// 
+// Be default, NA_DEBUG is set to 1 when NDEBUG is undefined.
+
+#ifndef NDEBUG
+  #define NA_DEBUG 1
+#else
+  #define NA_DEBUG 1
+#endif
+
+
+
+// ////////////////////////////////
 // NAInt bit width
 // ////////////////////////////////
 
@@ -243,17 +270,17 @@
 //
 // When set to 1, the NAString structure always tries to create a cached
 // version of its content. This is really only useful when debugging as the
-// cached version will be stored within the NAString structure. With NDEBUG
-// defined though, nothing will be stored and it is just a waste of time.
-// Nontheless as caching will take a considerable amount of time even in
-// debugging, you may choose to set NA_STRING_ALWAYS_CACHE to 0 even for
+// cached version will be stored within the NAString structure. With NA_DEBUG
+// being 0 though, nothing will be stored as it is in most cases just a waste
+// of time. Nontheless as caching will take a considerable amount of time even
+// in debugging, you may choose to set NA_STRING_ALWAYS_CACHE to 0 even for
 // debugging right here.
 //
 // The default is that strings will always be cached when running in debug
-// mode but will not be cached if NDEBUG is defined.
+// mode but will not be cached if NA_DEBUG is 0.
 
 #ifndef NA_STRING_ALWAYS_CACHE
-  #ifndef NDEBUG
+  #if NA_DEBUG
     #define NA_STRING_ALWAYS_CACHE 1
   #else
     #define NA_STRING_ALWAYS_CACHE 0

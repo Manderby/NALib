@@ -14,7 +14,7 @@ NA_IDEF NAComplex naMakeComplex(double re, double im){
 
 NA_IDEF NAComplex naMakeComplexFromPolar(double r, double phi){
   NAComplex newcomplex;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(r < 0.)
       naError("naMakeComplexFromPolar", "Radius is negative");
   #endif

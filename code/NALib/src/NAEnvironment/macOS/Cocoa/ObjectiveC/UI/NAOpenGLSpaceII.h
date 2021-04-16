@@ -175,7 +175,7 @@ NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
     NA_UNUSED(size);
     NA_UNUSED(initFunc);
     NA_UNUSED(initData);
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
     return NA_NULL;
@@ -183,14 +183,14 @@ NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
 
   NA_DEF void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace){
     NA_UNUSED(cocoaOpenGLSpace);
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
   }
 
   NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
     NA_UNUSED(openGLSpace);
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
   }
@@ -198,7 +198,7 @@ NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
   NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
     NA_UNUSED(openGLSpace);
     NA_UNUSED(bounds);
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
   }

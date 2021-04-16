@@ -7,8 +7,6 @@
 
 
 
-#include "../NABase.h"
-
 // Returns either 0 or -1 in two complement form but stored as an uint
 // depending on whether the parameter is positive or negative.
 NA_IAPI uint8  naGetSignum8  (int8   i);

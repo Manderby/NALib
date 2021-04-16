@@ -40,7 +40,7 @@ NA_IDEF float naLengthV4f(const float* v){
 // ///////////////////////////////
 
 NA_IDEF double naDistanceV1d(const double* NA_RESTRICT a, const double* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == b)
       naError("a and b are the same pointer");
   #endif
@@ -48,7 +48,7 @@ NA_IDEF double naDistanceV1d(const double* NA_RESTRICT a, const double* NA_RESTR
 }
 NA_IDEF double naDistanceV2d(const double* NA_RESTRICT a, const double* NA_RESTRICT b){
   NAVec2d vec;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == b)
       naError("a and b are the same pointer");
   #endif
@@ -57,7 +57,7 @@ NA_IDEF double naDistanceV2d(const double* NA_RESTRICT a, const double* NA_RESTR
 }
 NA_IDEF double naDistanceV3d(const double* NA_RESTRICT a, const double* NA_RESTRICT b){
   NAVec3d vec;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == b)
       naError("a and b are the same pointer");
   #endif
@@ -66,7 +66,7 @@ NA_IDEF double naDistanceV3d(const double* NA_RESTRICT a, const double* NA_RESTR
 }
 NA_IDEF double naDistanceV4d(const double* NA_RESTRICT a, const double* NA_RESTRICT b){
   NAVec4d vec;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == b)
       naError("a and b are the same pointer");
   #endif
@@ -74,7 +74,7 @@ NA_IDEF double naDistanceV4d(const double* NA_RESTRICT a, const double* NA_RESTR
   return naLengthV4d(vec);
 }
 NA_IDEF float naDistanceV1f(const float* NA_RESTRICT a, const float* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == b)
       naError("a and b are the same pointer");
   #endif
@@ -82,7 +82,7 @@ NA_IDEF float naDistanceV1f(const float* NA_RESTRICT a, const float* NA_RESTRICT
 }
 NA_IDEF float naDistanceV2f(const float* NA_RESTRICT a, const float* NA_RESTRICT b){
   NAVec2f vec;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == b)
       naError("a and b are the same pointer");
   #endif
@@ -91,7 +91,7 @@ NA_IDEF float naDistanceV2f(const float* NA_RESTRICT a, const float* NA_RESTRICT
 }
 NA_IDEF float naDistanceV3f(const float* NA_RESTRICT a, const float* NA_RESTRICT b){
   NAVec3f vec;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == b)
       naError("a and b are the same pointer");
   #endif
@@ -100,7 +100,7 @@ NA_IDEF float naDistanceV3f(const float* NA_RESTRICT a, const float* NA_RESTRICT
 }
 NA_IDEF float naDistanceV4f(const float* NA_RESTRICT a, const float* NA_RESTRICT b){
   NAVec4f vec;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == b)
       naError("a and b are the same pointer");
   #endif
@@ -151,7 +151,7 @@ NA_IDEF float naDistanceV4fE(const float* a, const float* b){
 // ///////////////////////////////
 
 NA_IDEF void naMirrorV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 1, 1))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV1d(n)))
@@ -164,7 +164,7 @@ NA_IDEF void naMirrorV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a, con
   naMadV1d(d, a, n, -2. * naDotV1d(a, n));
 }
 NA_IDEF void naMirrorV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 2, 2))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV2d(n)))
@@ -177,7 +177,7 @@ NA_IDEF void naMirrorV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a, con
   naMadV2d(d, a, n, -2. * naDotV2d(a, n));
 }
 NA_IDEF void naMirrorV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 3, 3))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV3d(n)))
@@ -190,7 +190,7 @@ NA_IDEF void naMirrorV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a, con
   naMadV3d(d, a, n, -2. * naDotV3d(a, n));
 }
 NA_IDEF void naMirrorV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 4, 4))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV4d(n)))
@@ -203,7 +203,7 @@ NA_IDEF void naMirrorV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a, con
   naMadV4d(d, a, n, -2. * naDotV4d(a, n));
 }
 NA_IDEF void naMirrorV1f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 1, 1))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV1f(n)))
@@ -216,7 +216,7 @@ NA_IDEF void naMirrorV1f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const
   naMadV1f(d, a, n, -2.f * naDotV1f(a, n));
 }
 NA_IDEF void naMirrorV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 2, 2))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV2f(n)))
@@ -229,7 +229,7 @@ NA_IDEF void naMirrorV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const
   naMadV2f(d, a, n, -2.f * naDotV2f(a, n));
 }
 NA_IDEF void naMirrorV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 3, 3))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV3f(n)))
@@ -242,7 +242,7 @@ NA_IDEF void naMirrorV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const
   naMadV3f(d, a, n, -2.f * naDotV3f(a, n));
 }
 NA_IDEF void naMirrorV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 4, 4))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV4f(n)))
@@ -255,7 +255,7 @@ NA_IDEF void naMirrorV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const
   naMadV4f(d, a, n, -2.f * naDotV4f(a, n));
 }
 NA_IDEF void naMirrorV1dE(double* d, const double* a, const double* n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 1, 1))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV1d(n)))
@@ -266,7 +266,7 @@ NA_IDEF void naMirrorV1dE(double* d, const double* a, const double* n){
   naMadV1d(d, a, n, -2. * naDotV1d(a, n));
 }
 NA_IDEF void naMirrorV2dE(double* d, const double* a, const double* n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 2, 2))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV2d(n)))
@@ -277,7 +277,7 @@ NA_IDEF void naMirrorV2dE(double* d, const double* a, const double* n){
   naMadV2d(d, a, n, -2. * naDotV2d(a, n));
 }
 NA_IDEF void naMirrorV3dE(double* d, const double* a, const double* n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 3, 3))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV3d(n)))
@@ -288,7 +288,7 @@ NA_IDEF void naMirrorV3dE(double* d, const double* a, const double* n){
   naMadV3d(d, a, n, -2. * naDotV3d(a, n));
 }
 NA_IDEF void naMirrorV4dE(double* d, const double* a, const double* n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 4, 4))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV4d(n)))
@@ -299,7 +299,7 @@ NA_IDEF void naMirrorV4dE(double* d, const double* a, const double* n){
   naMadV4d(d, a, n, -2. * naDotV4d(a, n));
 }
 NA_IDEF void naMirrorV1fE(float* d, const float* a, const float* n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 1, 1))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV1f(n)))
@@ -310,7 +310,7 @@ NA_IDEF void naMirrorV1fE(float* d, const float* a, const float* n){
   naMadV1f(d, a, n, -2.f * naDotV1f(a, n));
 }
 NA_IDEF void naMirrorV2fE(float* d, const float* a, const float* n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 2, 2))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV2f(n)))
@@ -321,7 +321,7 @@ NA_IDEF void naMirrorV2fE(float* d, const float* a, const float* n){
   naMadV2f(d, a, n, -2.f * naDotV2f(a, n));
 }
 NA_IDEF void naMirrorV3fE(float* d, const float* a, const float* n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 3, 3))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV3f(n)))
@@ -332,7 +332,7 @@ NA_IDEF void naMirrorV3fE(float* d, const float* a, const float* n){
   naMadV3f(d, a, n, -2.f * naDotV3f(a, n));
 }
 NA_IDEF void naMirrorV4fE(float* d, const float* a, const float* n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 4, 4))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV4f(n)))
@@ -343,7 +343,7 @@ NA_IDEF void naMirrorV4fE(float* d, const float* a, const float* n){
   naMadV4f(d, a, n, -2.f * naDotV4f(a, n));
 }
 NA_IDEF void naMirrorV1dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 1, 1))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV1d(n)))
@@ -352,7 +352,7 @@ NA_IDEF void naMirrorV1dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
   naMadV1dS(d, n, -2. * naDotV1d(d, n));
 }
 NA_IDEF void naMirrorV2dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 2, 2))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV2d(n)))
@@ -361,7 +361,7 @@ NA_IDEF void naMirrorV2dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
   naMadV2dS(d, n, -2. * naDotV2d(d, n));
 }
 NA_IDEF void naMirrorV3dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 3, 3))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV3d(n)))
@@ -370,7 +370,7 @@ NA_IDEF void naMirrorV3dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
   naMadV3dS(d, n, -2. * naDotV3d(d, n));
 }
 NA_IDEF void naMirrorV4dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 4, 4))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV4d(n)))
@@ -379,7 +379,7 @@ NA_IDEF void naMirrorV4dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
   naMadV4dS(d, n, -2. * naDotV4d(d, n));
 }
 NA_IDEF void naMirrorV1fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 1, 1))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV1f(n)))
@@ -388,7 +388,7 @@ NA_IDEF void naMirrorV1fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
   naMadV1fS(d, n, -2.f * naDotV1f(d, n));
 }
 NA_IDEF void naMirrorV2fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 2, 2))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV2f(n)))
@@ -397,7 +397,7 @@ NA_IDEF void naMirrorV2fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
   naMadV2fS(d, n, -2.f * naDotV2f(d, n));
 }
 NA_IDEF void naMirrorV3fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 3, 3))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV3f(n)))
@@ -406,7 +406,7 @@ NA_IDEF void naMirrorV3fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
   naMadV3fS(d, n, -2.f * naDotV3f(d, n));
 }
 NA_IDEF void naMirrorV4fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(n, d, 4, 4))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV4f(n)))
@@ -424,7 +424,7 @@ NA_IDEF void naMirrorV4fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
 
 NA_IDEF double naNormalizeV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a){
   double length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 1, 1))
@@ -436,7 +436,7 @@ NA_IDEF double naNormalizeV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a
 }
 NA_IDEF double naNormalizeV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a){
   double length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 2, 2))
@@ -448,7 +448,7 @@ NA_IDEF double naNormalizeV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a
 }
 NA_IDEF double naNormalizeV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a){
   double length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 3, 3))
@@ -460,7 +460,7 @@ NA_IDEF double naNormalizeV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a
 }
 NA_IDEF double naNormalizeV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a){
   double length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 4, 4))
@@ -472,7 +472,7 @@ NA_IDEF double naNormalizeV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a
 }
 NA_IDEF float naNormalizeV1f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
   float length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 1, 1))
@@ -484,7 +484,7 @@ NA_IDEF float naNormalizeV1f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
 }
 NA_IDEF float naNormalizeV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
   float length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 2, 2))
@@ -496,7 +496,7 @@ NA_IDEF float naNormalizeV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
 }
 NA_IDEF float naNormalizeV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
   float length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 3, 3))
@@ -508,7 +508,7 @@ NA_IDEF float naNormalizeV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
 }
 NA_IDEF float naNormalizeV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
   float length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 4, 4))
@@ -520,7 +520,7 @@ NA_IDEF float naNormalizeV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
 }
 NA_IDEF double naNormalizeV1dE(double* d, const double* a){
   double length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 1, 1))
       naError("a overlaps misaligned with d");
   #endif
@@ -530,7 +530,7 @@ NA_IDEF double naNormalizeV1dE(double* d, const double* a){
 }
 NA_IDEF double naNormalizeV2dE(double* d, const double* a){
   double length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
   #endif
@@ -540,7 +540,7 @@ NA_IDEF double naNormalizeV2dE(double* d, const double* a){
 }
 NA_IDEF double naNormalizeV3dE(double* d, const double* a){
   double length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
   #endif
@@ -550,7 +550,7 @@ NA_IDEF double naNormalizeV3dE(double* d, const double* a){
 }
 NA_IDEF double naNormalizeV4dE(double* d, const double* a){
   double length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
   #endif
@@ -560,7 +560,7 @@ NA_IDEF double naNormalizeV4dE(double* d, const double* a){
 }
 NA_IDEF float naNormalizeV1fE(float* d, const float* a){
   float length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 1, 1))
       naError("a overlaps misaligned with d");
   #endif
@@ -570,7 +570,7 @@ NA_IDEF float naNormalizeV1fE(float* d, const float* a){
 }
 NA_IDEF float naNormalizeV2fE(float* d, const float* a){
   float length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
   #endif
@@ -580,7 +580,7 @@ NA_IDEF float naNormalizeV2fE(float* d, const float* a){
 }
 NA_IDEF float naNormalizeV3fE(float* d, const float* a){
   float length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
   #endif
@@ -590,7 +590,7 @@ NA_IDEF float naNormalizeV3fE(float* d, const float* a){
 }
 NA_IDEF float naNormalizeV4fE(float* d, const float* a){
   float length;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
   #endif
@@ -646,7 +646,7 @@ NA_IDEF float naNormalizeV4fS(float* v){
 
 NA_IDEF void naOrthogonalizeV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b){
   double bnorm = naDotV2dS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 2, 2))
@@ -660,7 +660,7 @@ NA_IDEF void naOrthogonalizeV2d(double* NA_RESTRICT d, const double* NA_RESTRICT
 }
 NA_IDEF void naOrthogonalizeV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b){
   double bnorm = naDotV3dS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 3, 3))
@@ -674,7 +674,7 @@ NA_IDEF void naOrthogonalizeV3d(double* NA_RESTRICT d, const double* NA_RESTRICT
 }
 NA_IDEF void naOrthogonalizeV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b){
   double bnorm = naDotV4dS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 4, 4))
@@ -688,7 +688,7 @@ NA_IDEF void naOrthogonalizeV4d(double* NA_RESTRICT d, const double* NA_RESTRICT
 }
 NA_IDEF void naOrthogonalizeV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT b){
   float bnorm = naDotV2fS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 2, 2))
@@ -702,7 +702,7 @@ NA_IDEF void naOrthogonalizeV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a
 }
 NA_IDEF void naOrthogonalizeV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT b){
   float bnorm = naDotV3fS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 3, 3))
@@ -716,7 +716,7 @@ NA_IDEF void naOrthogonalizeV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a
 }
 NA_IDEF void naOrthogonalizeV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT b){
   float bnorm = naDotV4fS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
     else if(naElementOverlap(a, d, 4, 4))
@@ -730,7 +730,7 @@ NA_IDEF void naOrthogonalizeV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a
 }
 NA_IDEF void naOrthogonalizeV2dE(double* d, const double* a, const double* b){
   double bnorm = naDotV2dS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
     if(naElementOverlap(b, d, 2, 2))
@@ -742,7 +742,7 @@ NA_IDEF void naOrthogonalizeV2dE(double* d, const double* a, const double* b){
 }
 NA_IDEF void naOrthogonalizeV3dE(double* d, const double* a, const double* b){
   double bnorm = naDotV3dS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
     if(naElementOverlap(b, d, 3, 3))
@@ -754,7 +754,7 @@ NA_IDEF void naOrthogonalizeV3dE(double* d, const double* a, const double* b){
 }
 NA_IDEF void naOrthogonalizeV4dE(double* d, const double* a, const double* b){
   double bnorm = naDotV4dS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
     if(naElementOverlap(b, d, 4, 4))
@@ -766,7 +766,7 @@ NA_IDEF void naOrthogonalizeV4dE(double* d, const double* a, const double* b){
 }
 NA_IDEF void naOrthogonalizeV2fE(float* d, const float* a, const float* b){
   float bnorm = naDotV2fS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
     if(naElementOverlap(b, d, 2, 2))
@@ -778,7 +778,7 @@ NA_IDEF void naOrthogonalizeV2fE(float* d, const float* a, const float* b){
 }
 NA_IDEF void naOrthogonalizeV3fE(float* d, const float* a, const float* b){
   float bnorm = naDotV3fS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
     if(naElementOverlap(b, d, 3, 3))
@@ -790,7 +790,7 @@ NA_IDEF void naOrthogonalizeV3fE(float* d, const float* a, const float* b){
 }
 NA_IDEF void naOrthogonalizeV4fE(float* d, const float* a, const float* b){
   float bnorm = naDotV4fS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
     if(naElementOverlap(b, d, 4, 4))
@@ -802,7 +802,7 @@ NA_IDEF void naOrthogonalizeV4fE(float* d, const float* a, const float* b){
 }
 NA_IDEF void naOrthogonalizeV2dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   double bnorm = naDotV2dS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
     if(naAlmostZero(bnorm))
@@ -812,7 +812,7 @@ NA_IDEF void naOrthogonalizeV2dS(double* NA_RESTRICT d, const double* NA_RESTRIC
 }
 NA_IDEF void naOrthogonalizeV3dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   double bnorm = naDotV3dS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
     if(naAlmostZero(bnorm))
@@ -822,7 +822,7 @@ NA_IDEF void naOrthogonalizeV3dS(double* NA_RESTRICT d, const double* NA_RESTRIC
 }
 NA_IDEF void naOrthogonalizeV4dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   double bnorm = naDotV4dS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
     if(naAlmostZero(bnorm))
@@ -832,7 +832,7 @@ NA_IDEF void naOrthogonalizeV4dS(double* NA_RESTRICT d, const double* NA_RESTRIC
 }
 NA_IDEF void naOrthogonalizeV2fS(float* NA_RESTRICT d, const float* NA_RESTRICT b){
   float bnorm = naDotV2fS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
     if(naAlmostZerof(bnorm))
@@ -842,7 +842,7 @@ NA_IDEF void naOrthogonalizeV2fS(float* NA_RESTRICT d, const float* NA_RESTRICT 
 }
 NA_IDEF void naOrthogonalizeV3fS(float* NA_RESTRICT d, const float* NA_RESTRICT b){
   float bnorm = naDotV3fS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
     if(naAlmostZerof(bnorm))
@@ -852,7 +852,7 @@ NA_IDEF void naOrthogonalizeV3fS(float* NA_RESTRICT d, const float* NA_RESTRICT 
 }
 NA_IDEF void naOrthogonalizeV4fS(float* NA_RESTRICT d, const float* NA_RESTRICT b){
   float bnorm = naDotV4fS(b);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
     if(naAlmostZerof(bnorm))
@@ -868,7 +868,7 @@ NA_IDEF void naOrthogonalizeV4fS(float* NA_RESTRICT d, const float* NA_RESTRICT 
 // ///////////////////////////////
 
 NA_IDEF void naOrthonormalizeV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a equals d. Use E or S variant.");
     else if(naElementOverlap(a, d, 2, 2))
@@ -882,7 +882,7 @@ NA_IDEF void naOrthonormalizeV2d(double* NA_RESTRICT d, const double* NA_RESTRIC
   naNormalizeV2dS(d);
 }
 NA_IDEF void naOrthonormalizeV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a equals d. Use E or S variant.");
     else if(naElementOverlap(a, d, 3, 3))
@@ -896,7 +896,7 @@ NA_IDEF void naOrthonormalizeV3d(double* NA_RESTRICT d, const double* NA_RESTRIC
   naNormalizeV3dS(d);
 }
 NA_IDEF void naOrthonormalizeV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a equals d. Use E or S variant.");
     else if(naElementOverlap(a, d, 4, 4))
@@ -910,7 +910,7 @@ NA_IDEF void naOrthonormalizeV4d(double* NA_RESTRICT d, const double* NA_RESTRIC
   naNormalizeV4dS(d);
 }
 NA_IDEF void naOrthonormalizeV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a equals d. Use E or S variant.");
     else if(naElementOverlap(a, d, 2, 2))
@@ -924,7 +924,7 @@ NA_IDEF void naOrthonormalizeV2f(float* NA_RESTRICT d, const float* NA_RESTRICT 
   naNormalizeV2fS(d);
 }
 NA_IDEF void naOrthonormalizeV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a equals d. Use E or S variant.");
     else if(naElementOverlap(a, d, 3, 3))
@@ -938,7 +938,7 @@ NA_IDEF void naOrthonormalizeV3f(float* NA_RESTRICT d, const float* NA_RESTRICT 
   naNormalizeV3fS(d);
 }
 NA_IDEF void naOrthonormalizeV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a == d)
       naError("a equals d. Use E or S variant.");
     else if(naElementOverlap(a, d, 4, 4))
@@ -952,7 +952,7 @@ NA_IDEF void naOrthonormalizeV4f(float* NA_RESTRICT d, const float* NA_RESTRICT 
   naNormalizeV4fS(d);
 }
 NA_IDEF void naOrthonormalizeV2dE(double* d, const double* a, const double* b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
     if(!naAlmostOne(naLengthV4d(b)))
@@ -964,7 +964,7 @@ NA_IDEF void naOrthonormalizeV2dE(double* d, const double* a, const double* b){
   naNormalizeV2dS(d);
 }
 NA_IDEF void naOrthonormalizeV3dE(double* d, const double* a, const double* b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
     if(!naAlmostOne(naLengthV3d(b)))
@@ -976,7 +976,7 @@ NA_IDEF void naOrthonormalizeV3dE(double* d, const double* a, const double* b){
   naNormalizeV3dS(d);
 }
 NA_IDEF void naOrthonormalizeV4dE(double* d, const double* a, const double* b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
     if(!naAlmostOne(naLengthV4d(b)))
@@ -988,7 +988,7 @@ NA_IDEF void naOrthonormalizeV4dE(double* d, const double* a, const double* b){
   naNormalizeV4dS(d);
 }
 NA_IDEF void naOrthonormalizeV2fE(float* d, const float* a, const float* b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
     if(!naAlmostOnef(naLengthV2f(b)))
@@ -1000,7 +1000,7 @@ NA_IDEF void naOrthonormalizeV2fE(float* d, const float* a, const float* b){
   naNormalizeV2fS(d);
 }
 NA_IDEF void naOrthonormalizeV3fE(float* d, const float* a, const float* b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
     if(!naAlmostOnef(naLengthV3f(b)))
@@ -1012,7 +1012,7 @@ NA_IDEF void naOrthonormalizeV3fE(float* d, const float* a, const float* b){
   naNormalizeV3fS(d);
 }
 NA_IDEF void naOrthonormalizeV4fE(float* d, const float* a, const float* b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
     if(!naAlmostOnef(naLengthV4f(b)))
@@ -1024,7 +1024,7 @@ NA_IDEF void naOrthonormalizeV4fE(float* d, const float* a, const float* b){
   naNormalizeV4fS(d);
 }
 NA_IDEF void naOrthonormalizeV2dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naAlmostOne(naLengthV4d(b)))
       naError("b is not normalized");
     if(naElementOverlap(b, d, 2, 2))
@@ -1034,7 +1034,7 @@ NA_IDEF void naOrthonormalizeV2dS(double* NA_RESTRICT d, const double* NA_RESTRI
   naNormalizeV2dS(d);
 }
 NA_IDEF void naOrthonormalizeV3dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naAlmostOne(naLengthV3d(b)))
       naError("b is not normalized");
     if(naElementOverlap(b, d, 3, 3))
@@ -1044,7 +1044,7 @@ NA_IDEF void naOrthonormalizeV3dS(double* NA_RESTRICT d, const double* NA_RESTRI
   naNormalizeV3dS(d);
 }
 NA_IDEF void naOrthonormalizeV4dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naAlmostOne(naLengthV4d(b)))
       naError("b is not normalized");
     if(naElementOverlap(b, d, 4, 4))
@@ -1054,7 +1054,7 @@ NA_IDEF void naOrthonormalizeV4dS(double* NA_RESTRICT d, const double* NA_RESTRI
   naNormalizeV4dS(d);
 }
 NA_IDEF void naOrthonormalizeV2fS(float* NA_RESTRICT d, const float* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naAlmostOnef(naLengthV2f(b)))
       naError("b is not normalized");
     if(naElementOverlap(b, d, 2, 2))
@@ -1064,7 +1064,7 @@ NA_IDEF void naOrthonormalizeV2fS(float* NA_RESTRICT d, const float* NA_RESTRICT
   naNormalizeV2fS(d);
 }
 NA_IDEF void naOrthonormalizeV3fS(float* NA_RESTRICT d, const float* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naAlmostOnef(naLengthV3f(b)))
       naError("b is not normalized");
     if(naElementOverlap(b, d, 3, 3))
@@ -1074,7 +1074,7 @@ NA_IDEF void naOrthonormalizeV3fS(float* NA_RESTRICT d, const float* NA_RESTRICT
   naNormalizeV3fS(d);
 }
 NA_IDEF void naOrthonormalizeV4fS(float* NA_RESTRICT d, const float* NA_RESTRICT b){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naAlmostOnef(naLengthV4f(b)))
       naError("b is not normalized");
     if(naElementOverlap(b, d, 4, 4))

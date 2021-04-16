@@ -123,7 +123,7 @@ NA_DEF NAUTF8Char* naPriix256(NAi256 value){
 
 struct NAString{
   NABuffer* buffer;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     const NAUTF8Char* cachedstr;
   #endif
 };
@@ -138,7 +138,7 @@ NA_RUNTIME_TYPE(NAString, na_DestructString, NA_FALSE);
 NA_DEF NAString* naNewString(){
   NAString* string = naNew(NAString);
   string->buffer = naNewBuffer(NA_FALSE);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     string->cachedstr = NA_NULL;
   #endif
   #if NA_STRING_ALWAYS_CACHE == 1
@@ -150,13 +150,13 @@ NA_DEF NAString* naNewString(){
 
 
 NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, size_t length, NAMutator destructor){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!destructor)
       naError("You must specify a destructor, as this string becomes the owner of the provided buffer.");
   #endif
   NAString* string = naNew(NAString);
   string->buffer = naNewBufferWithMutableData(buffer, length, destructor);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     string->cachedstr = NA_NULL;
   #endif
   #if NA_STRING_ALWAYS_CACHE == 1
@@ -209,7 +209,7 @@ NA_DEF NAString* naNewStringWithArguments(const NAUTF8Char* format, va_list argu
 NA_DEF NAString* naNewStringExtraction(const NAString* srcString, NAInt offset, NAInt length){
   NAString* string = naNewString();
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!srcString)
       naCrash("srcString is Null-Pointer.");
   #endif
@@ -217,7 +217,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcString, NAInt offset, 
   // Extract the string
   naRelease(string->buffer);
   string->buffer = naNewBufferExtraction(srcString->buffer, offset, length);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     string->cachedstr = NA_NULL;
   #endif
 
@@ -231,7 +231,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcString, NAInt offset, 
 
 NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei range){
   NAString* string;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naIsLengthValueUsefuli(buffer->range.length))
       naError("Buffer Range length is not useful.");
     if(!naIsLengthValueUsefuli(range.length))
@@ -239,7 +239,7 @@ NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei rang
   #endif
   string = naNew(NAString);
   string->buffer = naNewBufferExtraction(buffer, range.origin, range.length);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     string->cachedstr = NA_NULL;
   #endif
   #if NA_STRING_ALWAYS_CACHE == 1
@@ -297,7 +297,7 @@ NA_DEF size_t naGetStringByteSize(const NAString* string){
 
 
 NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     NAString* mutablestring = (NAString*)string;
     if(!string){
       naCrash("string is Null-Pointer.");
@@ -311,7 +311,7 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
     NAInt numchars;
     NAUTF8Char* newstr;
     numchars = naGetBufferRange(string->buffer).length;
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(!numchars)
         naError("String is empty");
     #endif
@@ -319,7 +319,7 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
     naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer));
     naWriteBufferToData(string->buffer, newstr);
     newstr[numchars] = '\0';
-    #ifndef NDEBUG
+    #if NA_DEBUG
       mutablestring->cachedstr = newstr;
     #endif
     return newstr;
@@ -329,7 +329,7 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
 
 
 NA_DEF NABool naIsStringEmpty(const NAString* string){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!string){
       naCrash("string is Null-Pointer.");
       return NA_TRUE;
@@ -459,7 +459,7 @@ NA_DEF NAString* naNewStringCUnescaped(const NAString* inputString){
       case '?':  naWriteBufferi8(&outiter, '\?');  break;
     // todo: Add more escapes
       default:
-        #ifndef NDEBUG
+        #if NA_DEBUG
           naError("Unrecognized escape character");
         #endif
         naWriteBufferi8(&outiter, curchar);
@@ -531,7 +531,7 @@ NA_DEF NAString* naNewStringXMLDecoded(const NAString* inputString){
       else if(naEqualStringToUTF8CString(token, "quot",  NA_TRUE)){naWriteBufferi8(&outiter, '\"');}
       else if(naEqualStringToUTF8CString(token, "apos",  NA_TRUE)){naWriteBufferi8(&outiter, '\'');}
       else{
-        #ifndef NDEBUG
+        #if NA_DEBUG
           naError("Could not decode entity");
         #endif
         naWriteBufferi8(&outiter, curchar);
@@ -600,7 +600,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
       case '(':  naWriteBufferi8(&outiter, '(');  break;
       case ')':  naWriteBufferi8(&outiter, ')');  break;
       default:
-        #ifndef NDEBUG
+        #if NA_DEBUG
           naError("Unrecognized escape character");
         #endif
         naWriteBufferi8(&outiter, curchar);
@@ -823,7 +823,7 @@ NA_DEF float naParseStringFloat(const NAString* string){
   size_t len = naGetStringByteSize(string);
   if(len > 20){
     len = 20;
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("String truncated to 20 characters");
     #endif
   }
@@ -843,7 +843,7 @@ NA_DEF double naParseStringDouble(const NAString* string){
   size_t len = naGetStringByteSize(string);
   if(len > 20){
     len = 20;
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("String truncated to 20 characters");
     #endif
   }

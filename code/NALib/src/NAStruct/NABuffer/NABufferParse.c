@@ -89,7 +89,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty){
     }
   }
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!string)
       naError("string not initialized");
   #endif
@@ -259,7 +259,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
 
       if((*curByte < '0') || (*curByte > '9')){found = NA_TRUE; break;}
       *retValuei = naAddu64(naMulu64(*retValuei, naMakeu64WithLo(10)), naMakeu64WithLo(*curByte - '0'));
-      #ifndef NDEBUG
+      #if NA_DEBUG
         if(naGreateru64(*retValuei, max))
           naError("The value overflowed max.");
         if(naSmalleru64(*retValuei, prevval))

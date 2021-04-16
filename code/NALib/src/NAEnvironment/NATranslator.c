@@ -62,7 +62,7 @@ NA_HDEF void na_DestructGroups(NAPtr leafData){
 
 
 NA_DEF void naStartTranslator(void){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     #if NA_COMPILE_GUI == 1
       if(!na_App)
         naCrash("Translator requires application to run. Please use naStartApplication.");
@@ -90,7 +90,7 @@ NA_DEF void naStartTranslator(void){
 
 
 NA_DEF void naStopTranslator(void){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     #if NA_COMPILE_GUI == 1
       if(!na_App)
         naCrash("Translator requires application to run. Please use naStartApplication.");
@@ -113,7 +113,7 @@ NA_DEF void naStopTranslator(void){
 
 
 NA_DEF NAInt naRegisterTranslatorGroup(void){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     #if NA_COMPILE_GUI == 1
       if(!na_App)
         naCrash("Translator requires application to run. Please use naStartApplication.");
@@ -132,7 +132,7 @@ NA_DEF void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code){
   NABool codefound;
   NAListIterator it;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     #if NA_COMPILE_GUI == 1
       if(!na_App)
         naCrash("Translator requires application to run. Please use naStartApplication.");
@@ -167,7 +167,7 @@ NA_DEF void naInsertTranslatorString(NAInt id, NAUTF8Char* str){
   NATree* languagepack;
   NATreeIterator stringiter;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     #if NA_COMPILE_GUI == 1
       if(!na_App)
         naCrash("Translator requires application to run. Please use naStartApplication.");
@@ -201,7 +201,7 @@ NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code){
   NABool codefound;
   NAListIterator it;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     #if NA_COMPILE_GUI == 1
       if(!na_App)
         naCrash("Translator requires application to run. Please use naStartApplication.");
@@ -235,7 +235,7 @@ NA_DEF const NAUTF8Char* naTranslate(NAInt group, NAInt id){
   NATreeIterator groupiter;
   NABool groupfound;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     #if NA_COMPILE_GUI == 1
       if(!na_App)
         naCrash("Translator requires application to run. Please use naStartApplication.");

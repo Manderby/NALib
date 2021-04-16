@@ -69,7 +69,7 @@ NA_IAPI NABool  naIsListEmpty (const NAList* list);
 //
 // You have to define whether you want to store a const or mutable element.
 // If later on, you try to get a mutable element which was stored const, you
-// will get an error when NDEBUG is undefined.
+// will get an error when NA_DEBUG is 1.
 NA_IAPI void naAddListFirstConst    (NAList* list, const void* content);
 NA_IAPI void naAddListFirstMutable  (NAList* list,       void* content);
 NA_IAPI void naAddListLastConst     (NAList* list, const void* content);
@@ -147,7 +147,7 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 // Having a separate iterator has several advantages. It may need a little bit
 // more coding but you can be way more flexible. Note that for example removing
 // an element will test if there are other iterators using that element when
-// NDEBUG is undefined. This is very useful in a multithreaded environment.
+// NA_DEBUG is 1. This is very useful in a multithreaded environment.
 //
 // The easiest way to implement an iteration is using a while loop:
 //
@@ -161,8 +161,8 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 //
 // Be sure to not forget naClearListIterator. Otherwise when debugging, lists
 // will keep references to iterators which are no longer in use and will hence
-// emit a warning when they are cleared. When NDEBUG is defined however, no
-// such checks will be performed.
+// emit a warning when they are cleared. When NA_DEBUG is 0 however, no such
+// checks will be performed.
 //
 // You can also use the predefined Begin and End Iterator macros. Beware,
 // these are macros. They perform a simple one-by-one traversal of the list
@@ -194,9 +194,8 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 //
 // After you are done using the iterator, you should clear it with a call to
 // naClearListIterator. NALib keeps track of where the iterators are when
-// NDEBUG is undefined. Therefore, you will get lots of warnings if the
-// iterators are not properly cleared. In the release code, no checks are
-// performed.
+// NA_DEBUG is 1. Therefore, you will get lots of warnings if the iterators
+// are not properly cleared. In the release code, no checks are performed.
 NA_IAPI NAListIterator naMakeListAccessor(const NAList* list);
 NA_IAPI NAListIterator naMakeListMutator (const NAList* list);
 NA_IAPI NAListIterator naMakeListModifier(      NAList* list);
@@ -222,8 +221,8 @@ NA_IAPI void naClearListIterator(NAListIterator* iter);
 // point to the initial list position.
 //
 // The other variants will always return NA_TRUE. That's because of speed.
-// Erroneous behaviour will only be checked when NDEBUG is undefined and hence
-// the programmer is already forced to do things right when debugging the code.
+// Erroneous behaviour will only be checked when NA_DEBUG is 1 and hence the
+// programmer is already forced to do things right when debugging the code.
 NA_IAPI NABool naLocateListFirst    (NAListIterator* iter);
 NA_IAPI NABool naLocateListLast     (NAListIterator* iter);
 NA_API  NABool naLocateListData     (NAListIterator* iter, const void* data);
@@ -248,8 +247,8 @@ NA_IAPI NABool naEqualListIterator(
 // one step backwards. The Step-variant moves the iterator forward or backward
 // the given number of positive or negative steps.
 //
-// If the step over- or underflows the stored elements and NDEBUG is undefined,
-// a warning is emitted.
+// If the step over- or underflows the stored elements and NA_DEBUG is 1, a
+// warning is emitted.
 //
 // Returns NA_FALSE when one of the two ends of the list is reached.
 NA_IAPI NABool naIterateList        (NAListIterator* iter);

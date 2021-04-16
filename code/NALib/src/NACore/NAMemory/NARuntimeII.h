@@ -12,7 +12,7 @@ struct NATypeInfo{
   size_t            typeSize;
   NAMutator         destructor;
   NABool            refCounting;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     const char*     typeName;
   #endif
 };
@@ -22,7 +22,7 @@ struct NATypeInfo{
 // This is the runtime type macro which actually creates a global variable
 // called na_MyStruct_Typeinfo (for whatever MyStruct is) storing all values.
 #undef NA_RUNTIME_TYPE
-#ifndef NDEBUG
+#if NA_DEBUG
   #define NA_RUNTIME_TYPE(typeName, destructor, refCounting)\
     NATypeInfo na_ ## typeName ## TypeInfo =\
     {NA_NULL,\
@@ -84,7 +84,7 @@ NA_IDEF NABool naIsRuntimeRunning(){
 
 
 NA_IDEF size_t naGetRuntimeGarbageByteSize(){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif
@@ -94,7 +94,7 @@ NA_IDEF size_t naGetRuntimeGarbageByteSize(){
 
 
 NA_IDEF size_t naGetRuntimeMemoryPageSize(){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif
@@ -104,7 +104,7 @@ NA_IDEF size_t naGetRuntimeMemoryPageSize(){
 
 
 NA_IDEF size_t naGetRuntimePoolPartSize(){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif

@@ -16,7 +16,7 @@ NA_HIDEF HKEY na_GetNativePreferences(){
   NAString* companyname;
   NAString* fullkeyname;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naGetApplication())
       naError("No application running. Use naStartApplication.");
   #endif
@@ -52,7 +52,7 @@ NA_DEF NABool naInitPreferencesBool(const char* key, NABool value){
     storedvalue = (value ? naMakei64WithLo(1) : naMakei64WithLo(-1));
     errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
     if(errorcode != ERROR_SUCCESS){
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Could not init bool to Registry");
       #endif
     }
@@ -69,7 +69,7 @@ NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt value){
     storedvalue = ((value == 0) ? NA_MIN_i64 : naCastIntToi64(value));
     errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
     if(errorcode != ERROR_SUCCESS){
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Could not init int to Registry");
       #endif
     }
@@ -83,7 +83,7 @@ NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt value){
   HKEY hKey;
   LSTATUS errorcode;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(value == -1)
       naError("Value -1 can not be stored correctly.");
   #endif
@@ -94,7 +94,7 @@ NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt value){
     storedvalue = naAddi64(naCastIntToi64(value), naMakei64WithLo(1));
     errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
     if(errorcode != ERROR_SUCCESS){
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Could not init enum to Registry");
       #endif
     }
@@ -111,7 +111,7 @@ NA_DEF double naInitPreferencesDouble(const char* key, double value){
     storedvalue = ((value == 0.) ? NA_NAN : value);
     errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
     if(errorcode != ERROR_SUCCESS){
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Could not init double to Registry");
       #endif
     }
@@ -134,7 +134,7 @@ NA_DEF NAString* naInitPreferencesString(const char* key, const NAString* value)
     storedvalue = naMalloc(valuesize);
     errorcode = RegGetValueW(hKey, NULL, systemkey, RRF_RT_ANY, &type, storedvalue, (LPDWORD)&valuesize);
     if(errorcode != ERROR_SUCCESS){
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Could not read string from Registry");
       #endif
     }
@@ -143,7 +143,7 @@ NA_DEF NAString* naInitPreferencesString(const char* key, const NAString* value)
     valuesize = ((DWORD)wcslen(storedvalue) + 1) * sizeof(wchar_t);
     errorcode = RegSetKeyValueW(hKey, NULL, systemkey, REG_SZ, storedvalue, valuesize);
     if(errorcode != ERROR_SUCCESS){
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Could not init string to Registry");
       #endif
     }
@@ -163,7 +163,7 @@ NA_DEF void naSetPreferencesBool(const char* key, NABool value){
 
   LSTATUS errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
   if(errorcode != ERROR_SUCCESS){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Could not store value in registry.");
     #endif
   }
@@ -174,7 +174,7 @@ NA_DEF void naSetPreferencesInt(const char* key, NAInt value){
   HKEY hKey = na_GetNativePreferences();
   LSTATUS errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
   if(errorcode != ERROR_SUCCESS){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Could not store value in registry.");
     #endif
   }
@@ -185,7 +185,7 @@ NA_DEF void naSetPreferencesEnum(const char* key, NAInt value){
   HKEY hKey;
   LSTATUS errorcode;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(value == -1)
       naError("Value -1 can not be stored correctly.");
   #endif
@@ -194,7 +194,7 @@ NA_DEF void naSetPreferencesEnum(const char* key, NAInt value){
   hKey = na_GetNativePreferences();
   errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
   if(errorcode != ERROR_SUCCESS){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Could not store value in registry.");
     #endif
   }
@@ -210,7 +210,7 @@ NA_DEF void naSetPreferencesDouble(const char* key, double value){
   hKey = na_GetNativePreferences();
   errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
   if(errorcode != ERROR_SUCCESS){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Could not store value in registry.");
     #endif
   }
@@ -231,7 +231,7 @@ NA_DEF void naSetPreferencesString(const char* key, const NAString* value){
   valuesize = ((DWORD)wcslen(storedvalue) + 1) * sizeof(wchar_t);
   errorcode = RegSetKeyValueW(hKey, NULL, systemkey, REG_SZ, storedvalue, valuesize);
   if(errorcode != ERROR_SUCCESS){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Could not store value in registry");
     #endif
   }
@@ -309,7 +309,7 @@ NA_DEF NAString* naNewPreferencesString(const char* key){
   storedvalue = naMalloc(valuesize);
   errorcode = RegGetValueW(hKey, NULL, systemkey, RRF_RT_ANY, &type, storedvalue, (LPDWORD)&valuesize);
   if(errorcode != ERROR_SUCCESS){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Could not read string from Registry");
     #endif
     return NA_NULL;

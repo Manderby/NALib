@@ -14,7 +14,7 @@
 //
 // Note that there is a basic distinction between trees with and without keys.
 // Some APIs are only allowed for one of the kind. You will get an error when
-// using NDEBUG.
+// NA_DEBUG is 1.
 //
 // With this structure, it is possible to...
 // - Store keys with inner nodes and leafes to automatically sort the tree.
@@ -149,7 +149,7 @@ typedef NABool (*NATreeNodeUpdater)       (NAPtr parentData,
 // defined above.
 //
 // If you try to change a configuration after it has been used for at least
-// one tree, you will get a warning if NDEBUG is undefined.
+// one tree, you will get a warning if NA_DEBUG is 1.
 
 NA_API  NATreeConfiguration* naCreateTreeConfiguration(NAInt flags);
 NA_IAPI void naReleaseTreeConfiguration(NATreeConfiguration* config);
@@ -196,7 +196,7 @@ NA_IAPI NABool naIsTreeEmpty(const NATree* tree);
 
 // Returns the data stored at the first or last leaf. Note that trying to get
 // a mutable pointer of a data object which was stored as const will result
-// in a warning when NDEBUG is undefined.
+// in a warning when NA_DEBUG is 1.
 //
 // Note that these are just convenience functions. They internally createn an
 // iterator, search for the desired item and clear the iterator again. You can
@@ -245,8 +245,8 @@ NA_IAPI NABool naIsTreeRootLeaf(const NATree* tree);
 // You can choose to have an Accessor, a Mutator or a Modifier as Iterator.
 //
 // Beware to always use naClearTreeIterator. Otherwise NALib will emit
-// warnings that there are still iterators running on the struct if NDEBUG is
-// undefined.
+// warnings that there are still iterators running on the struct if NA_DEBUG
+// is 1.
 //
 // You can also use the predefined Begin and End Iterator macros. Beware,
 // these are macros. They perform a simple one-by-one traversal of the tree.
@@ -277,9 +277,8 @@ NA_IAPI NABool naIsTreeRootLeaf(const NATree* tree);
 //
 // After you are done using the iterator, you should clear it with a call to
 // naClearTreeIterator. NALib keeps track of where the iterators are when
-// NDEBUG is undefined. Therefore, you will get lots of warnings if the
-// iterators are not properly cleared. In the release code, no checks are
-// performed.
+// NA_DEBUG is 1. Therefore, you will get lots of warnings if the iterators
+// are not properly cleared. In the release code, no checks are performed.
 NA_IAPI NATreeIterator naMakeTreeAccessor(const NATree* tree);
 NA_IAPI NATreeIterator naMakeTreeMutator(NATree* tree);
 NA_IAPI NATreeIterator naMakeTreeModifier(NATree* tree);
@@ -445,7 +444,7 @@ NA_IAPI void naRemoveTreeCurLeaf(NATreeIterator* iter);
 NA_IAPI NABool naIsTreeAtInitial(const NATreeIterator* iter);
 
 
-#ifndef NDEBUG
+#if NA_DEBUG
   void naDebugTree(NATree* tree);
 #endif 
 

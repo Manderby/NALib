@@ -5,7 +5,7 @@
 
 NA_HIDEF void na_InitTreeItem(NATreeItem* item){
   // We do not initialize the parent. Code must use na_SetTreeItemParent.
-  #ifndef NDEBUG
+  #if NA_DEBUG
     item->iterCount = 0;
   #else
     NA_UNUSED(item);
@@ -15,7 +15,7 @@ NA_HIDEF void na_InitTreeItem(NATreeItem* item){
 
 
 NA_HIDEF void na_ClearTreeItem(NATreeItem* item){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(item->iterCount)
       naError("There are still iterators running on this item. Did you forget a call to naClearTreeIterator?");
   #else
@@ -90,7 +90,7 @@ NA_HIDEF void na_DestructNodeData(const NATreeConfiguration* config, NAPtr data)
 
 
 NA_HIDEF void na_DestructTreeNode(const NATreeConfiguration* config, NATreeNode* node, NABool recursive){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!node)
       naCrash("node shall not be Null");
   #endif
@@ -117,7 +117,7 @@ NA_HIDEF void na_DestructTreeNode(const NATreeConfiguration* config, NATreeNode*
 
 
 NA_HIDEF NABool na_IsNodeChildLeaf(NATreeNode* node, NAInt childIndex){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!node)
       naCrash("Node is Null Pointer.");
   #endif
@@ -127,7 +127,7 @@ NA_HIDEF NABool na_IsNodeChildLeaf(NATreeNode* node, NAInt childIndex){
 
 
 NA_HIDEF void na_MarkNodeChildLeaf(NATreeNode* node, NAInt childIndex, NABool isleaf){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!node)
       naCrash("Node is Null Pointer.");
   #endif
@@ -138,7 +138,7 @@ NA_HIDEF void na_MarkNodeChildLeaf(NATreeNode* node, NAInt childIndex, NABool is
 
 
 NA_HIDEF void* na_GetTreeNodeKey(const NATreeConfiguration* config, NATreeNode* node){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!node)
       naCrash("Node is Null Pointer.");
   #endif
@@ -149,7 +149,7 @@ NA_HIDEF void* na_GetTreeNodeKey(const NATreeConfiguration* config, NATreeNode* 
 
 
 NA_HIDEF NAPtr na_GetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!node)
       naCrash("Node is Null Pointer.");
   #endif
@@ -160,7 +160,7 @@ NA_HIDEF NAPtr na_GetTreeNodeData(const NATreeConfiguration* config, NATreeNode*
 
 
 NA_HIDEF void na_SetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node, NAPtr newData){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!node)
       naCrash("Node is Null Pointer.");
   #endif
@@ -171,7 +171,7 @@ NA_HIDEF void na_SetTreeNodeData(const NATreeConfiguration* config, NATreeNode* 
 
 
 NA_HIDEF NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* parent){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!parent)
       naCrash("Parent is Null Pointer.");
   #endif
@@ -186,7 +186,7 @@ NA_HIDEF NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* parent){
 
 
 NA_HIDEF NATreeItem* na_GetTreeNodeChild(const NATreeConfiguration* config, NATreeNode* parent, NAInt childIndex){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(childIndex < 0)
       naError("childIndex must be >= 0");
     if(childIndex >= config->childpernode)
@@ -202,7 +202,7 @@ NA_HIDEF NATreeItem* na_GetTreeNodeChild(const NATreeConfiguration* config, NATr
 
 NA_HIDEF void na_SetTreeNodeChildEmpty(NATreeNode* parent, NAInt childIndex){
   // We thank the power of pointer arithmetic!
-//  #ifndef NDEBUG
+//  #if NA_DEBUG
 //    if(!(na_GetTreeNodeChildStorage(parent)[childIndex]))
 //      naError("Child was not existent before.");
 //  #endif
@@ -213,7 +213,7 @@ NA_HIDEF void na_SetTreeNodeChildEmpty(NATreeNode* parent, NAInt childIndex){
 
 NA_HIDEF void na_SetTreeNodeChild(NATreeNode* parent, NATreeItem* child, NAInt childIndex, NABool isChildLeaf){
   // We thank the power of pointer arithmetic!
-//  #ifndef NDEBUG
+//  #if NA_DEBUG
 //    if((na_GetTreeNodeChildStorage(parent)[childIndex]))
 //      naError("Duplicate child assign.");
 //  #endif
@@ -228,7 +228,7 @@ NA_HDEF NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATree
   NAInt retValue;
   NATreeItem** childs;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!child)
       naError("Child should not be Null");
   #endif
@@ -243,7 +243,7 @@ NA_HDEF NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATree
     if(childs[retValue] == child){break;}
   }
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(childs[retValue] != child)
       naError("returned childindex does not correspond to the desired child");
   #endif
@@ -288,7 +288,7 @@ NA_HIDEF void na_DestructLeafData(const NATreeConfiguration* config, NAPtr data)
 
 
 NA_HIDEF void na_DestructTreeLeaf(const NATreeConfiguration* config, NATreeLeaf* leaf){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!leaf)
       naCrash("leaf shall not be Null");
   #endif

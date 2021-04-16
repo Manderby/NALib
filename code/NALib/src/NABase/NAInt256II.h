@@ -303,7 +303,7 @@
     *div = NA_ZERO_u256;
     *rem = a;
     if(naEqualu256(b, NA_ZERO_u256)){
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naCrash("Integer Division by 0");
       #endif
     }else if(naSmalleru256(a, b)){
@@ -328,7 +328,7 @@
       while(!naEqualu256(aHighestBit, bHighestBit)){
         if(naEqualu256(bTmp, NA_ZERO_u256)){
           // b is larger than a and hence the result is zero.
-          #ifndef NDEBUG
+          #if NA_DEBUG
             naError("This should not happen.");
           #endif
           return;

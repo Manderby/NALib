@@ -196,7 +196,7 @@ struct NABuffer{
 
   NATree parts;             // Tree with all parts in this buffer
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     NAInt iterCount;
   #endif
 };

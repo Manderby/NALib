@@ -163,7 +163,7 @@ NA_DEF void na_RefreshUIElementNow(void* uiElement){
 NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
   if(  naGetUIElementType(elem) != NA_UI_TEXTFIELD
     && naGetUIElementType(elem) != NA_UI_TEXTBOX){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("elem has a type which can not be used as a next tab.");
     #endif
     return;
@@ -171,7 +171,7 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
 
   if(  naGetUIElementType(nextTabElem) != NA_UI_TEXTFIELD
     && naGetUIElementType(nextTabElem) != NA_UI_TEXTBOX){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("nextTabElem has a type which can not be used as a next tab.");
     #endif
     return;
@@ -222,7 +222,7 @@ NAFont na_GetFontWithKind(NAFontKind kind){
       font = [NSFont fontWithDescriptor:descriptor size:systemSize];
       break;
     default:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Unknown font kind");
       #endif
       font = [NSFont systemFontOfSize:systemSize];
@@ -240,7 +240,7 @@ NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment){
     case NA_TEXT_ALIGNMENT_RIGHT: nsalignment = NATextAlignmentRight; break;
     case NA_TEXT_ALIGNMENT_CENTER: nsalignment = NATextAlignmentCenter; break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Invalid alignment enumeration");
     #endif
     break;
@@ -353,7 +353,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
 
   // First, let's handle the root case: Returning the application rect.
   if(element == (NA_UIElement*)app){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(relelement && (relelement != (NA_UIElement*)app))
         naError("The relative element is invalid for the given uiElement, which seems to be the application.");
     #endif

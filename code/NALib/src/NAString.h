@@ -108,7 +108,7 @@ NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
 // - if the charoffset and length combination somehow leads to a length of
 //   exactly 0, the resulting string will be empty without a warning emitted.
 // - If the charoffset and length combination somehow leads to an over- or
-//   underflow, a warning will be emitted if NDEBUG is defined. The behaviour
+//   underflow, a warning will be emitted if NA_DEBUG is 1. The behaviour
 //   when using such a string is undefined.
 //
 // Example: String ABCDEF with the pair (charoffset, length):

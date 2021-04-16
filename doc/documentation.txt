@@ -6,23 +6,24 @@ NALib Readme
 
 Table of Content:
 -----------------
-1.   Short Introduction
-2    Memory and Structs
-2.1    Creation and deletion of raw memory blocks
-2.2    Construction and Destruction of structs
-2.3    POD functions make, fill
-2.4    Struct functions init, clear, new, delete, create, retain, release
-2.5    Runtime system
-2.6    Using the runtime system for custom structs
-2.7    Temporary memory with garbage collection like deletion
-2.8    Manual reference counting, smart pointers
-3.   Iteration of container structs
-4.   Declarations and Definitions
-4.1    Symbol naming
-4.2    Inline Implementations
-4.3    Opaque Types
-5.   Standard, Compiler, File header and footer
-6.   License
+1    Short Introduction
+2    Configuration and Debugging
+3    Memory and Structs
+3.1    Creation and deletion of raw memory blocks
+3.2    Construction and Destruction of structs
+3.3    POD functions make, fill
+3.4    Struct functions init, clear, new, delete, create, retain, release
+3.5    Runtime system
+3.6    Using the runtime system for custom structs
+3.7    Temporary memory with garbage collection like deletion
+3.8    Manual reference counting, smart pointers
+4.   Iteration of container structs
+5.   Declarations and Definitions
+5.1    Symbol naming
+5.2    Inline Implementations
+5.3    Opaque Types
+6.   Standard, Compiler, File header and footer
+7.   License
 
 
 
@@ -47,9 +48,35 @@ Have fun, Tobias Stamm.
 
 
 
+2. Configuration and Debugging
+------------------------------
+In the NABase folder, you find the NAConfiguration.h file. In this file,
+base macros are defined which control the whole compilation of NALib.
+
+All of these macros can be overruled by pre-defining them for example by
+setting an explicit preprocessor macro in the project properties, by using
+property sheets or even by using precompiled headers.
+
+Beware though that these pre-definitions should be synchronized among
+all compiled projects. You can do this with make or CMake for example.
+
+There is one central macro called NA_DEBUG. It is either 0 or 1 and defines
+whether NALib shall execute inline checks during runtime. If set to 1, NALib
+for example checks if two arrays overlap during a vector copy or if a given
+pointer parameter is Null.
+
+NALib does a ton of these checks. Therefore, by default, NA_DEBUG is set to 1
+only in debug configurations but will be set to 0 automatically for release
+configurations. You may choose otherwise but due to the large amount of such
+checks, the performance of NALib is considerably lower when running in a
+debug configuration.
+
+For more information, have a look at the NAConfiguration.h and NADebugging.h
+files.
 
 
-2. Memory and Structs
+
+3. Memory and Structs
 ---------------------
 NALib is a collection of C code. The C programming language has no notion of
 object oriented programming (OOP) and therefore relies on simpler concepts
@@ -63,7 +90,7 @@ that in NALib.
 
 
 
-2.1 Creation and deletion of raw memory blocks
+3.1 Creation and deletion of raw memory blocks
 ----------------------------------------------
 You can use the default malloc and free functions to create memory blocks
 as you like. NALib nontheless provides its own allocation functions (which 
@@ -86,7 +113,7 @@ sections.
 
 
 
-2.2 Construction and Destruction of structs
+3.2 Construction and Destruction of structs
 -------------------------------------------
 Structs usually must be initialized before being able to use them and must
 be destroyed when not needed anymore. As NALib is a C library, there are no
@@ -98,7 +125,7 @@ structs. The naming scheme guides you.
 
 
 
-2.3 POD functions make, fill
+3.3 POD functions make, fill
 ----------------------------
 Simple structs like NAPos are very basic structs which are generally called
 POD (plain old data). Such structs usually provide an naMakeXXX or naFillXXX
@@ -110,7 +137,7 @@ function is needed. See the specific API for more information.
 
 
 
-2.4 Struct functions init, clear, new, delete, create, retain, release
+3.4 Struct functions init, clear, new, delete, create, retain, release
 ----------------------------------------------------------------------
 For more complex structs like NAArray, NAFile or NAString, the construction-
 functions usually are called naInitXXX, naCreateXXX or naNewXXX. These
@@ -144,7 +171,7 @@ The corresponding destruction functions are the following:
 
 
 
-2.5 Runtime system
+3.5 Runtime system
 ------------------
 NALib has its own little runtime system. With it, memory allocation becomes
 quite a bit faster by using infinitely large memory pools and you can even
@@ -156,7 +183,7 @@ The naNewXXX and naCreateXXX functions described above for example make use
 of that runtime system.
 
 In order to use the runtime system, an instance of NARuntime must be created
-before any naNewXXX function is called. When NDEBUG is undefined, a friendly
+before any naNewXXX function is called. When NA_DEBUG is 1, a friendly
 warning tells you to start the runtime system. You can start it by a simple
 call to
 
@@ -171,7 +198,7 @@ more memory.
 
 
 
-2.6 Using the runtime system for custom structs
+3.6 Using the runtime system for custom structs
 -----------------------------------------------
 The NALib runtime system provides very generic functions which you can use
 for your own custom structs.
@@ -203,7 +230,7 @@ reaches zero.
 
 
 
-2.7 Temporary memory with garbage collection like deletion
+3.7 Temporary memory with garbage collection like deletion
 ----------------------------------------------------------
 Additionally, the runtime system provides a garbage memory struct which allows
 you to allocate memory which is automatically placed in a pool which will be
@@ -217,7 +244,7 @@ deleted all at once. Use it with the following two functions:
 
 
 
-2.8 Manual reference counting, smart pointers
+3.8 Manual reference counting, smart pointers
 ---------------------------------------------
 In the NAMemory.h file, many structures do not only allow to allocate and
 deallocate memory but also to check for const safety and to add manual
@@ -259,7 +286,7 @@ or the C++11 standard. The author does not like them. He thinks, they're poop.
 
 
 
-3 Iteration of container structs
+4 Iteration of container structs
 --------------------------------
 Container structs like NAArray, NAList, NABuffer, etc. implement iterators
 which allow the programmer to visit all elements in a specific order without
@@ -292,7 +319,7 @@ Depending on the type, there might be more or less functions to iterate,
 access, mutate and modify. Note that depending on how the iterator was
 created, certain conditions will be checked. An Accessor for example has
 no rights to return mutable data. Or a remove function will only work on
-modifiers. In such cases, NALib will emit warnings when NDEBUG is undefined.
+modifiers. In such cases, NALib will emit warnings when NA_DEBUG is 1.
 
 IMPORTANT:
 After using the iterator, you always MUST clear an iterator with a final call
@@ -305,11 +332,11 @@ as well as the single elements will keep track of whether there are still
 iterators operating upon. If at any time, some element will be removed or a
 complete struct will be erased where there is still an iterator visiting,
 NALib will emit a warning. Note that these warnings will be completely
-omitted in release configurations when NDEBUG ist defined.
+omitted in release configurations when NA_DEBUG is 0.
 
 
 
-4. Declarations and Definitions
+5. Declarations and Definitions
 -------------------------------
 In NALib, functions are declared and defined with the following attribute
 macros:
@@ -331,7 +358,7 @@ NA_HIAPI    | NA_HIDEF   | Same thing but inlined.
 
 
 
-4.1 Symbol naming
+5.1 Symbol naming
 -----------------
 Furhter more, a consistent naming scheme is applied. Every symbol consists at
 least of a prefix and an identifier:
@@ -372,7 +399,7 @@ functions are declared as helper functions.
 
 
 
-4.2 Inline Implementations
+5.2 Inline Implementations
 --------------------------
 Unfortunately, inline- and (in C++) template-functions must be present to
 the compiler during compilation. This means, every declaration must be
@@ -404,7 +431,7 @@ having the na prefix.
 
 
 
-4.3 Opaque Types
+5.3 Opaque Types
 ----------------
 All around NALib you find declarations like these:
 
@@ -454,7 +481,7 @@ header file from the package. It's tricky, but it works.
 
 
 
-5. Standard, Compiler, File header and footer
+6. Standard, Compiler, File header and footer
 ----------------------------
 This code has been written to be compatible with C99.
 Earlier standards will most probably not compile.
@@ -487,7 +514,7 @@ errors.
 
 
 
-6. License
+7. License
 ----------
 This is free and unencumbered software released into the public domain.
 

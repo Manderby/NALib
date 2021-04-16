@@ -47,6 +47,7 @@
     <ClInclude Include="src\NABase\NANumericsII.h" />
     <ClInclude Include="src\NABase\NAMacros.h" />
     <ClInclude Include="src\NABase\NAEncoding.h" />
+    <ClInclude Include="src\NABase\NAPointerArithmetics.h" />
     <ClInclude Include="src\NABinaryData.h" />
     <ClInclude Include="src\NABuffer.h" />
     <ClInclude Include="src\NACircularBuffer.h" />

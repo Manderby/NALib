@@ -208,9 +208,9 @@ NA_IAPI void        naReleaseRefCount(NARefCount* refCount,
 //
 // So, during debugging, using NAPtr can greatly improve your code-safety.
 // Note however, that all the features of NAPtr are only avaliable when
-// debugging. When compiling with NDEBUG, all your code will still compile
-// but NAPtr will optimize to a simple (mutable) C-Pointer. No additional
-// information will be stored and no code is executed whatsoever.
+// debugging. When compiling with NA_DEBUG = 1, all your code will still
+// compile but NAPtr will optimize to a simple (mutable) C-Pointer. No
+// additional information will be stored and no code is executed whatsoever.
 //
 // The problem is that C has no concept of how to specifically handle a
 // pointer, and especially how to use accessors and mutators. Even
@@ -248,11 +248,11 @@ NA_IAPI void naCleanupPtr(NAPtr* ptr, NAMutator destructor);
 
 // The following functions return either a const or a mutable pointer.
 //
-// When NDEBUG is NOT defined, NALib will check if a const value is accessed
-// as a mutator and will emit a warning if so. If the content of the pointer
-// is a NULL pointer, NO warning will be emitted.
+// When NA_DEBUG is 1, NALib will check if a const value is accessed as a
+// mutator and will emit a warning if so. If the content of the pointer is
+// a NULL pointer, NO warning will be emitted.
 //
-// When NDEBUG IS defined, the const and mutable functions behave equally and
+// When NA_DEBUG is 0, the const and mutable functions behave equally and
 // no test will be performed whatsoever.
 NA_IAPI const void* naGetPtrConst   (NAPtr ptr);
 NA_IAPI       void* naGetPtrMutable (NAPtr ptr);
@@ -261,7 +261,7 @@ NA_IAPI       void* naGetPtrMutable (NAPtr ptr);
 NA_IAPI NABool naIsPtrValid(NAPtr ptr);
 
 // Returns NA_TRUE, if the pointer stores const data. This function only is
-// useful when debugging. When NDEBUG is defined, this function always returns
+// useful when debugging. When NA_DEBUG is 0, this function always returns
 // NA_FALSE.
 NA_IAPI NABool naIsPtrConst(NAPtr ptr);
 
@@ -389,7 +389,7 @@ NA_IAPI void        naReleasePointer(NAPointer* pointer);
 //
 // The distinction between const and mutable is done to ensure no const pointer
 // gets mutated. But this is only checked during debugging. These two functions
-// behave equivalent when NDEBUG is defined.
+// behave equivalently when NA_DEBUG is 0.
 NA_IAPI const void* naGetPointerConst  (const NAPointer* pointer);
 NA_IAPI       void* naGetPointerMutable(      NAPointer* pointer);
 

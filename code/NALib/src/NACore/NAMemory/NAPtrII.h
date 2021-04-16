@@ -9,15 +9,15 @@
 // mutable. It also stores information about the byteSize of the memory
 // being pointed at and how it is null terminated. Even more, it stores,
 // how the pointer had originally been allocated. All this information is just
-// for debugging and can be omitted if necessary. When compiling with NDEBUG,
-// no information is stored at all.
+// for debugging and can be omitted if necessary. When compiling with NA_DEBUG
+// being 0, no information is stored at all.
 
 struct NAPtr{
   union{                        // A union storing either ...
     const void* constd;         // ... const data or ...
     void*       d;              // ... non-const (mutable) data.
   } data;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     uint32 debugFlags;          // This field stores some flags.
   #endif
 };
@@ -25,7 +25,7 @@ struct NAPtr{
 // actually makes sense.
 //
 // Also note that NAPtr will be fully optimized to a simple C-pointer
-// when NDEBUG is defined.
+// when NA_DEBUG is 0.
 //
 // Authors note:
 // The decision to include debugging information arose over many
@@ -57,7 +57,7 @@ struct NAPtr{
 // The following macros and functions are only available when debugging and
 // are defined to be helper functions. They are needed when debugging to
 // tag NAPtr values with various information.
-#ifndef NDEBUG
+#if NA_DEBUG
   #define NA_PTR_CONST_DATA                 0x01
   #define NA_PTR_CLEANED                    0x02
 #endif
@@ -68,7 +68,7 @@ struct NAPtr{
 NA_IDEF NAPtr naMakePtrNull(){
   NAPtr ptr;
   ptr.data.d = NA_NULL;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     ptr.debugFlags = NA_ZERO; // Do not mark a null pointer as const.
                               // Otherwise many more errors will spawn.
   #endif
@@ -78,14 +78,14 @@ NA_IDEF NAPtr naMakePtrNull(){
 
 
 NA_IDEF void naCleanupPtr(NAPtr* ptr, NAMutator destructor){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(ptr->debugFlags & NA_PTR_CLEANED)
       naError("NAPtr has already been cleaned once.");
     if(destructor && ptr->debugFlags & NA_PTR_CONST_DATA)
       naError("Calling a destructor on const data. This smells fishy.");
   #endif
   if(destructor){destructor(ptr->data.d);}
-  #ifndef NDEBUG
+  #if NA_DEBUG
     ptr->debugFlags |= NA_PTR_CLEANED;
   #endif
 }
@@ -95,7 +95,7 @@ NA_IDEF void naCleanupPtr(NAPtr* ptr, NAMutator destructor){
 NA_IDEF NAPtr naMakePtrWithDataConst(const void* data){
   NAPtr ptr;
   ptr.data.constd = data;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     ptr.debugFlags = NA_PTR_CONST_DATA;
   #endif
   return ptr;
@@ -106,7 +106,7 @@ NA_IDEF NAPtr naMakePtrWithDataConst(const void* data){
 NA_IDEF NAPtr naMakePtrWithDataMutable(void* data){
   NAPtr ptr;
   ptr.data.d = data;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     ptr.debugFlags = NA_ZERO;
   #endif
   return ptr;
@@ -133,7 +133,7 @@ NA_IDEF NABool naIsPtrValid(NAPtr ptr){
 
 
 NA_IDEF NABool naIsPtrConst(NAPtr ptr){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     return (NABool)(ptr.debugFlags & NA_PTR_CONST_DATA);
   #else
     NA_UNUSED(ptr);

@@ -303,7 +303,7 @@ NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
 NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem){
   NAWINAPIWindow* winapiWindow;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naGetUIElementWindow(firstTabElem) != window)
       naError("Element is not part of the window.");
   #endif

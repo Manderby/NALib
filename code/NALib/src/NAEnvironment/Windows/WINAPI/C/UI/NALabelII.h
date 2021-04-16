@@ -140,7 +140,7 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
   LOGFONT lf;
 
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!url || !*url)
       naError("url must be something useful. Deleting a Link is not possible yet.");
   #endif

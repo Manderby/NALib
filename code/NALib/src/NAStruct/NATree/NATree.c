@@ -71,7 +71,7 @@ NA_HDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt c
 NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   NABool bubble;
   NAInt i;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!tree->config->nodeUpdater)
       naCrash("tree is configured without nodeUpdater callback");
   #endif
@@ -103,7 +103,7 @@ NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
 
 
 
-#ifndef NDEBUG
+#if NA_DEBUG
 
 //  typedef struct NADebugTreeToken NADebugTreeToken;
 //  struct NADebugTreeToken{

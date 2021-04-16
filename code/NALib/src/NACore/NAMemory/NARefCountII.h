@@ -7,7 +7,7 @@
 
 struct NARefCount{
   size_t count;      // Reference count.
-  #ifndef NDEBUG
+  #if NA_DEBUG
     uint32 dummy;
   #endif
 };
@@ -23,7 +23,7 @@ struct NARefCount{
 // 32 bit system, you can have a max of 2^26 = 67 million references and on a
 // 64 bit system, you can have a max of 2^58 = [insert huge number here] refs.
 //
-// Note that when NDEBUG is undefined, there are additional flags which make
+// Note that when NA_DEBUG is 1, there are additional flags which make
 // debugging easier and also serve to detect hard to find memory bugs. The
 // dummy field stores a very specific number which should never be overwritten.
 // If it is overwritten or otherwise not correct, the NARefCount has been used
@@ -42,7 +42,7 @@ NA_HIDEF size_t na_GetRefCountCount(const NARefCount* refCount){
 
 NA_IDEF NARefCount* naInitRefCount(NARefCount* refCount){
   refCount->count = 1;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     refCount->dummy = NA_REFCOUNT_DUMMY_VALUE;
   #endif
   return refCount;
@@ -57,7 +57,7 @@ NA_IDEF NABool naIsRefCountZero(NARefCount* refCount){
 
 
 NA_IDEF NARefCount* naRetainRefCount(NARefCount* refCount){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!refCount){
       naCrash("refCount is Null-Pointer.");
       return NA_NULL;
@@ -80,7 +80,7 @@ NA_IDEF NARefCount* naRetainRefCount(NARefCount* refCount){
 
 
 NA_IDEF void naReleaseRefCount(NARefCount* refCount, void* data, NAMutator destructor){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!refCount)
       naCrash("refCount is Null-Pointer.");
     if(refCount->dummy != NA_REFCOUNT_DUMMY_VALUE)
@@ -95,7 +95,7 @@ NA_IDEF void naReleaseRefCount(NARefCount* refCount, void* data, NAMutator destr
   // that the pointer will eventually be freed and the data will be lost in
   // nirvana. But often times in debugging, when retaining and releasing is not
   // done correctly, an NARefCount is released too often. When refCount is 0
-  // and NDEBUG is not defined, this can be detected!
+  // and NA_DEBUG is 1, this can be detected!
   refCount->count--;
 
   if(refCount->count == NA_ZERO){

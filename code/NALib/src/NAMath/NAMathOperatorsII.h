@@ -183,7 +183,7 @@ NA_IDEF NAi64 naMaxi64(NAi64 a, NAi64 b){
 
 
 NA_IDEF float naInvf(float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x == 0.f)
       naError("Division by zero.");
     if(naAlmostZerof(x))
@@ -192,7 +192,7 @@ NA_IDEF float naInvf(float x){
   return 1.f / x;
 }
 NA_IDEF double naInv(double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x == 0.)
       naError("Division by zero.");
     if(naAlmostZero(x))
@@ -203,14 +203,14 @@ NA_IDEF double naInv(double x){
 
 
 NA_IDEF float naSqrtf(float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x < 0.f)
       naError("naSqrt of negative number.");
   #endif
   return sqrtf(x);
 }
 NA_IDEF double naSqrt(double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x < 0.)
       naError("naSqrt of negative number.");
   #endif
@@ -220,7 +220,7 @@ NA_IDEF double naSqrt(double x){
 
 
 NA_IDEF float naCbrtf(float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x < 0.f)
       naError("naCbrtd of negative number.");
   #endif
@@ -232,7 +232,7 @@ NA_IDEF float naCbrtf(float x){
 }
 
 NA_IDEF double naCbrt(double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x < 0.)
       naError("naCbrtd of negative number.");
   #endif
@@ -331,14 +331,14 @@ NA_IDEF double naTan(double x){
 
 
 NA_IDEF float naAsinf(float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naInsideNormIIf(x))
       naError("naAsind of invalid value.");
   #endif
   return asinf(x);
 }
 NA_IDEF double naAsin(double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naInsideNormII(x))
       naError("naAsind of invalid value.");
   #endif
@@ -347,14 +347,14 @@ NA_IDEF double naAsin(double x){
 
 
 NA_IDEF float naAcosf(float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naInsideNormIIf(x))
       naError("naAcosd of invalid value.");
   #endif
   return acosf(x);
 }
 NA_IDEF double naAcos(double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naInsideNormII(x))
       naError("naAcosd of invalid value.");
   #endif
@@ -393,14 +393,14 @@ NA_IDEF double naExp(double x){
 
 
 NA_IDEF float naLogf(float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x < 0.f)
       naError("Logarithm of negative number.");
   #endif
   return logf(x);
 }
 NA_IDEF double naLog(double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x < 0.)
       naError("Logarithm of negative number.");
   #endif
@@ -410,14 +410,14 @@ NA_IDEF double naLog(double x){
 
 
 NA_IDEF float naLog10f(float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x < 0)
       naError("Logarithm of negative number.");
   #endif
   return log10f(x);
 }
 NA_IDEF double naLog10(double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x < 0)
       naError("Logarithm of negative number.");
   #endif
@@ -428,7 +428,7 @@ NA_IDEF double naLog10(double x){
 
 
 NA_IDEF float naLog2f(float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x < 0.f)
       naError("Logarithm of negative number.");
   #endif
@@ -439,7 +439,7 @@ NA_IDEF float naLog2f(float x){
   #endif
 }
 NA_IDEF double naLog2(double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x < 0.)
       naError("Logarithm of negative number.");
   #endif
@@ -458,7 +458,7 @@ NA_IDEF NAInt naLog2i(NAInt x){
 }
 NA_IDEF int32 naLog2i32(int32 x){
   int32 retValue;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x < 0)
       naError("Logarithm of negative number.");
   #endif
@@ -470,7 +470,7 @@ NA_IDEF int32 naLog2i32(int32 x){
 }
 NA_IDEF NAi64 naLog2i64(NAi64 x){
   NAi64 retValue;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naSmalleri64(x, NA_ZERO_i64))
       naError("Logarithm of negative number.");
   #endif
@@ -505,7 +505,7 @@ NA_IDEF NAInt naExp2i(NAInt x){
 #endif
 }
 NA_IDEF int32 naExp2i32(int32 x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x < 0)
       naError("Exponent negative. Will result in 0.");
     if(x >= 32)
@@ -514,7 +514,7 @@ NA_IDEF int32 naExp2i32(int32 x){
   return NA_ONE_i32 << x;
 }
 NA_IDEF NAi64 naExp2i64(NAi64 x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naSmalleri64(x, NA_ZERO_i64))
       naError("Exponent negative. Will result in 0.");
     if(naGreaterEquali64(x, naMakei64WithLo(64)))
@@ -540,7 +540,7 @@ NA_IDEF NAInt naExp10i(NAInt x){
 }
 NA_IDEF int32 naExp10i32(int32 x){
   int32 i;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(x > 9)
       naError("Exponent of 10 exceeds integer range.");
   #endif
@@ -550,7 +550,7 @@ NA_IDEF int32 naExp10i32(int32 x){
 }
 NA_IDEF NAi64 naExp10i64(NAi64 x){
   NAi64 i;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naGreateri64(x, naMakei64WithLo(18)))
       naError("Exponent of 10 exceeds integer range.");
   #endif
@@ -561,14 +561,14 @@ NA_IDEF NAi64 naExp10i64(NAi64 x){
 
 
 NA_IDEF float naPowf(float b, float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(b < 0.f)
       naError("Base of power function smaller 0.");
   #endif
   return powf(b, x);
 }
 NA_IDEF double naPow(double b, double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(b < 0.)
       naError("Base of power function smaller 0.");
   #endif
@@ -591,7 +591,7 @@ NA_IDEF NAInt naPowerOf2i  (NAInt n){
   #endif
 }
 NA_IDEF int32 naPowerOf2i32(int32 n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(n < 0)
       naError("Can only compute integral numbers");
     if(n > 30)
@@ -600,7 +600,7 @@ NA_IDEF int32 naPowerOf2i32(int32 n){
   return NA_ONE_i32 << n;
 }
 NA_IDEF int64 naPowerOf2i64(NAi64 n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(n < 0)
       naError("Can only compute integral numbers");
     if(n > 62)
@@ -609,7 +609,7 @@ NA_IDEF int64 naPowerOf2i64(NAi64 n){
   return NA_ONE_i64 << n;
 }
 NA_IDEF size_t naPowerOf2s(size_t n){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(n > (NA_SIZE_T_BITS - 1))
       naError("Overflow");
     if(n == (NA_SIZE_T_BITS - 1))
@@ -688,14 +688,14 @@ NA_IDEF void naCartesianToPolar(double* rtheta, const double* xy){
 
 // inclusive, inclusive
 NA_IDEF NABool naInsideII(double a, double b, double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a > b)
       naError("a is greater b. Will always return FALSE");
   #endif
   return (!((x < a) || (x > b)));
 }
 NA_IDEF NABool naInsideIIf(float a, float b, float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a > b)
       naError("a is greater b. Will always return FALSE");
   #endif
@@ -705,14 +705,14 @@ NA_IDEF NABool naInsideIIf(float a, float b, float x){
 
 // inclusive, exclusive
 NA_IDEF NABool naInsideIE(double a, double b, double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!(a < b))
       naError("a is greaterequal b. Will always return FALSE");
   #endif
   return (!(x < a) && (x < b));
 }
 NA_IDEF NABool naInsideIEf(float a, float b, float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!(a < b))
       naError("a is greaterequal b. Will always return FALSE");
   #endif
@@ -722,14 +722,14 @@ NA_IDEF NABool naInsideIEf(float a, float b, float x){
 
 // exclusive, inclusive
 NA_IDEF NABool naInsideEI(double a, double b, double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!(a < b))
       naError("a is greaterequal b. Will always return FALSE");
   #endif
   return ((x > a) && !(x > b));
 }
 NA_IDEF NABool naInsideEIf(float a, float b, float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!(a < b))
       naError("a is greaterequal b. Will always return FALSE");
   #endif
@@ -739,14 +739,14 @@ NA_IDEF NABool naInsideEIf(float a, float b, float x){
 
 // exclusive, exclusive
 NA_IDEF NABool naInsideEE(double a, double b, double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!(a < b))
       naError("a is greaterequal b. Will always return FALSE");
   #endif
   return ((x > a) && (x < b));
 }
 NA_IDEF NABool naInsideEEf(float a, float b, float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!(a < b))
       naError("a is greaterequal b. Will always return FALSE");
   #endif
@@ -763,14 +763,14 @@ NA_IDEF NABool naInsidei(NAInt a, NAInt b, NAInt x){
 #endif
 }
 NA_IDEF NABool naInsidei32(int32 a, int32 b, int32 x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a > b)
       naError("a is greater b. Will always return FALSE");
   #endif
   return (!((x < a) || (x > b)));
 }
 NA_IDEF NABool naInsidei64(NAi64 a, NAi64 b, NAi64 x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naGreateri64(a, b))
       naError("a is greater b. Will always return FALSE");
   #endif
@@ -783,7 +783,7 @@ NA_IDEF NABool naInsidei64(NAi64 a, NAi64 b, NAi64 x){
 // which only needs to be almost accurate, the one function is chosen which is
 // simplest.
 NA_IDEF NABool naAlmostInside(double a, double b, double x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a>b)
       naError("a is greater b.");
   #endif
@@ -792,7 +792,7 @@ NA_IDEF NABool naAlmostInside(double a, double b, double x){
   return naInsideEE(a, b, x);
 }
 NA_IDEF NABool naAlmostInsidef(float a, float b, float x){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(a>b)
       naError("a is greater b.");
   #endif

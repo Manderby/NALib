@@ -14,7 +14,7 @@ struct NABabyImage{
 
 
 NA_DEF NAInt naGetBabyImageValuesPerLine(const NABabyImage* image){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
@@ -24,7 +24,7 @@ NA_DEF NAInt naGetBabyImageValuesPerLine(const NABabyImage* image){
 
 
 NA_HIDEF NAInt na_GetBabyImagePixelCount(const NABabyImage* image){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
@@ -34,7 +34,7 @@ NA_HIDEF NAInt na_GetBabyImagePixelCount(const NABabyImage* image){
 
 
 NA_HIDEF size_t na_GetBabyImageDataSize(const NABabyImage* image){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
@@ -44,7 +44,7 @@ NA_HIDEF size_t na_GetBabyImageDataSize(const NABabyImage* image){
 
 
 NA_DEF float* naGetBabyImageData(const NABabyImage* image){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
@@ -54,7 +54,7 @@ NA_DEF float* naGetBabyImageData(const NABabyImage* image){
 
 
 NA_DEF NASizei naGetBabyImageSize(const NABabyImage* image){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
@@ -65,7 +65,7 @@ NA_DEF NASizei naGetBabyImageSize(const NABabyImage* image){
 
 NA_DEF NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color){
   NABabyImage* image;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(size.width <= 0 || size.height <= 0)
       naError("size must be > 0");
     if(size.width > NA_MAX_i32 || size.height > NA_MAX_i32)
@@ -157,7 +157,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithTint(const NABabyImage* base, const NAB
   NAInt pixelCount;
   const float* baseptr;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!base)
       naCrash("Given base image is a Null-Pointer");
     if(!tint)
@@ -181,7 +181,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(const NABabyImage* base, const NA
   NABabyImage* retimage;
   NAInt pixelCount;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!top)
       naCrash("top is Null");
     if(base && !naEqualSizei(naGetBabyImageSize(base), naGetBabyImageSize(top)))
@@ -213,7 +213,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image){
   float* inPtr2;
   float* outdataptr;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((image->width % 2) || (image->height % 2))
       naError("Width or height not divisible by 2");
   #endif

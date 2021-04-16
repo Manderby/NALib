@@ -45,7 +45,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
 
 
 
-#ifndef NDEBUG
+#if NA_DEBUG
   #define NA_START_TEST_CASE\
     if(na_GetTestCaseRunning())\
       naError("A test case is already running. This might lead to bad test results.");\
@@ -79,8 +79,8 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
     na_AddTest(#expr, NA_TRUE, __LINE__);\
   }
 
-// Testing for errors and crashes is only useful when NDEBUG is undefined.
-#ifndef NDEBUG
+// Testing for errors and crashes is only useful when NA_DEBUG is 1.
+#if NA_DEBUG
   #define naTestError(expr)\
     if(na_ShallExecuteGroup(#expr)){\
       NA_START_TEST_CASE\

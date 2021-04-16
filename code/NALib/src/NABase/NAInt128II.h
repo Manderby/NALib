@@ -297,7 +297,7 @@
     *div = NA_ZERO_u128;
     *rem = a;
     if(naEqualu128(b, NA_ZERO_u128)){
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naCrash("Integer Division by 0");
       #endif
     }else if(naSmalleru128(a, b)){
@@ -322,7 +322,7 @@
       while(!naEqualu128(aHighestBit, bHighestBit)){
         if(naEqualu128(bTmp, NA_ZERO_u128)){
           // b is larger than a and hence the result is zero.
-          #ifndef NDEBUG
+          #if NA_DEBUG
             naError("This should not happen.");
           #endif
         }

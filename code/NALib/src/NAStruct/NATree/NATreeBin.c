@@ -111,7 +111,7 @@ NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode*
   NATreeBinNode* binnode;
   NATreeItem* item;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(node == NA_NULL)
       naError("node should not be Null");
     if(previtem == NA_NULL)
@@ -201,7 +201,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafBin(NATree* tree, NATreeItem* existingItem, con
     NATreeLeaf* left;
     NATreeLeaf* right;
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(!na_IsTreeItemLeaf(tree, existingItem))
         naError("Item should be a leaf");
     #endif
@@ -210,7 +210,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafBin(NATree* tree, NATreeItem* existingItem, con
   
     switch(insertOrder){
     case NA_TREE_LEAF_INSERT_ORDER_KEY:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
           naError("tree is configured with no key");
       #endif
@@ -223,7 +223,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafBin(NATree* tree, NATreeItem* existingItem, con
       }
       break;
     case NA_TREE_LEAF_INSERT_ORDER_PREV:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
           naError("tree is configured with key");
       #endif
@@ -231,7 +231,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafBin(NATree* tree, NATreeItem* existingItem, con
       right = existingLeaf;
       break;
     case NA_TREE_LEAF_INSERT_ORDER_NEXT:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
           naError("tree is configured with key");
       #endif
@@ -239,7 +239,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafBin(NATree* tree, NATreeItem* existingItem, con
       right = newleaf;
       break;
     default:
-      #ifndef NDEBUG
+      #if NA_DEBUG
       naError("Invalid insertOrder");
       #endif
     left = existingLeaf;

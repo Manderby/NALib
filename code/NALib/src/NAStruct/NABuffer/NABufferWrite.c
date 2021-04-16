@@ -9,7 +9,7 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, size_
   NATreeIterator firstBufIter;
   const NAByte* src = data;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!data)
       naError("data is Null pointer.");
     if(naGetBufferCurBit(iter) != 0)
@@ -37,7 +37,7 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, size_
     NABufferPart* part;
     void* dst;
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(na_IsBufferIteratorSparse(iter))
         naError("Cur part is sparse");
     #endif
@@ -53,7 +53,7 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, size_
     // We detect, how many bytes actually can be put into the current part.
     size_t possibleLength = na_GetBufferPartByteSize(part) - (size_t)iter->partOffset;
 
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(possibleLength <= 0)
         naError("possible length invalid");
     #endif

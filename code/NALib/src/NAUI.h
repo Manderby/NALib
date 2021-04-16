@@ -731,8 +731,9 @@ NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
 //
 // In order to have a console output, you can call naOpenConsoleWindow
 // which opens up a separate console window when running. Note that NALib
-// will NOT automatically hide the console when NDEBUG is defined! This
-// function does nothing on a Mac.
+// will NOT automatically hide the console when NA_DEBUG is 0.
+// 
+// This function does nothing on a Mac.
 
 NA_API void naOpenConsoleWindow(void);
 

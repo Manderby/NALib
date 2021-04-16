@@ -9,7 +9,7 @@
 
 
 NA_HIDEF NSUserDefaults* na_GetNativePreferences(){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naGetApplication())
       naError("No application running. Use naStartApplication.");
   #endif
@@ -33,7 +33,7 @@ NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt value){
   NSUserDefaults* userDefaults;
   NSString* nsKey;
   NSInteger curValue;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(value == NSIntegerMin)
       naError("Minimal integer value is reserved");
   #endif
@@ -50,7 +50,7 @@ NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt value){
   NSUserDefaults* userDefaults;
   NSString* nsKey;
   NSInteger curValue;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(value == -1)
       naError("Value -1 can not be stored correctly.");
   #endif
@@ -67,7 +67,7 @@ NA_DEF double naInitPreferencesDouble(const char* key, double value){
   NSUserDefaults* userDefaults;
   NSString* nsKey;
   double curValue;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naIsNaN(value))
       naError("NaN value is reserved");
   #endif
@@ -102,7 +102,7 @@ NA_DEF void naSetPreferencesBool(const char* key, NABool value){
 NA_DEF void naSetPreferencesInt(const char* key, NAInt value){
   NSUserDefaults* userDefaults;
   NSString* nsKey;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(value == NSIntegerMin)
       naError("Minimal integer value is reserved");
   #endif
@@ -113,7 +113,7 @@ NA_DEF void naSetPreferencesInt(const char* key, NAInt value){
 NA_DEF void naSetPreferencesEnum(const char* key, NAInt value){
   NSUserDefaults* userDefaults;
   NSString* nsKey;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(value == -1)
       naError("Value -1 can not be stored correctly.");
   #endif
@@ -124,7 +124,7 @@ NA_DEF void naSetPreferencesEnum(const char* key, NAInt value){
 NA_DEF void naSetPreferencesDouble(const char* key, double value){
   NSUserDefaults* userDefaults;
   NSString* nsKey;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naIsNaN(value))
       naError("NaN value is reserved");
   #endif

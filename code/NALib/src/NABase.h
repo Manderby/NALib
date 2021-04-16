@@ -48,6 +48,7 @@
 #include "NABase/NADebugging.h"
 
 // Adding some base mathematical implementations
+#include "NABase/NAPointerArithmetics.h"
 #include "NABase/NANumerics.h"
 #include "NABase/NAFloatingPoint.h"
 

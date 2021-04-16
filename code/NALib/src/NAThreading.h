@@ -102,7 +102,7 @@ _When_(return == NA_TRUE, _Acquires_lock_(windowsMutex->mutex))
 #endif
 NA_IAPI NABool naTryMutex(NAMutex mutex);
 
-#ifndef NDEBUG
+#if NA_DEBUG
   // Returns NA_TRUE if the mutex is locked or NA_FALSE otherwise.
   // Beware!
   // This function is not guaranteed to return a meaningful result. While in

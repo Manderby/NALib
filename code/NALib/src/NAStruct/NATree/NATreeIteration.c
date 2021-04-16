@@ -10,7 +10,7 @@ NA_HDEF void na_IterateTreeCapture(NATreeIterator* iter, NAInt index, NATreeIter
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
   NATreeNode* parentNode;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(na_IsTreeItemLeaf(tree, iter->item))
       naError("Iter is not placed at a node");
     if(index == info->breakIndex)
@@ -61,7 +61,7 @@ NA_HDEF void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* inf
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
   NATreeItem* item;
   
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!na_IsTreeItemLeaf(tree, iter->item))
       naError("Iter is not placed at a leaf");
   #endif
@@ -92,7 +92,7 @@ NA_HDEF void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* inf
 
 NA_HDEF NABool na_IterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info){
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
     if(!naIsTreeAtInitial(iter) && !na_IsTreeItemLeaf(tree, iter->item))
@@ -101,7 +101,7 @@ NA_HDEF NABool na_IterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo*
 
   // If the tree has no root, we do not iterate.
   if(naIsTreeEmpty(tree)){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(!naIsTreeAtInitial(iter))
       naCrash("Current iterator item is set although no root available");
     #endif
@@ -130,7 +130,7 @@ NA_HDEF NABool na_IterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo*
 NA_HDEF NATreeItem* na_LocateTreeKeyCapture(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound){
   NAInt childIndex;
   NATreeItem* child;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("tree is configured with no key");
   #endif
@@ -176,14 +176,14 @@ NA_HDEF NABool na_LocateTreeKey(NATreeIterator* iter, const void* key, NABool us
   NATreeNode* node;
   NATreeItem* founditem;
   NABool matchfound;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
   #endif
 
   // When there is no root, nothing can be found.
   if(naIsTreeEmpty(tree)){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(!naIsTreeAtInitial(iter))
       naCrash("Current iterator item is set although no root available");
     #endif
@@ -202,7 +202,7 @@ NA_HDEF NABool na_LocateTreeKey(NATreeIterator* iter, const void* key, NABool us
   // Search for the leaf containing key, starting from the uppermost node.
   founditem = na_LocateTreeKeyCapture(tree, node, key, &matchfound);
   na_SetTreeIteratorCurItem(iter, founditem);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!founditem)
       naError("Result of capture locator was Null");
   #endif
@@ -214,7 +214,7 @@ NA_HDEF NABool na_LocateTreeKey(NATreeIterator* iter, const void* key, NABool us
 NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher){
   NAInt nextIndex = NA_TREE_SEARCH_ABORT;
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
     if(!nodeSearcher)
@@ -238,7 +238,7 @@ NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTok
         nextIndex = nodeSearcher(token, data);
       }
       
-      #ifndef NDEBUG
+      #if NA_DEBUG
         if(nextIndex < NA_TREE_SEARCH_ABORT)
           naError("Invalid return value given in callback");
         if(na_IsTreeItemLeaf(tree, iter->item) && nextIndex >= 0)
@@ -271,7 +271,7 @@ NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTok
 NA_HDEF NABool na_AddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace){
   NABool found;
   NATree* tree = na_GetTreeIteratorTreeMutable(iter);;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
   #endif

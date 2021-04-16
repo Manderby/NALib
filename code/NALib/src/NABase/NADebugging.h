@@ -10,15 +10,15 @@
 // /////////////////////////////////
 // Debugging:
 //
-// The following definitions will only be defined if NDEBUG is undefined.
-// Many functions of NALib will perform many tests which will slow down
-// the performance more or less considerably. If NDEBUG is defined however,
-// no tests are performed whatsoever.
-//
+// In this file, the naError and naCrash functions are defined which can be
+// used for checking code inline at runtime. The use of these functions is
+// dependent on the NA_DEBUG macro defined in the NAConfiguration.h file.
+// 
+// By default, NA_DEBUG is 1 when the NDEBUG macro is undefined.
+// 
 // When it comes to debugging, the macro NDEBUG is the only one being
 // somewhat standardized across all systems and compilers. It literally tells
-// the compiler to NOT-DEBUG, which means: When the macro is undefined, code
-// encapsulated in #ifndef NDEBUG will be compiled, otherwise not.
+// the compiler to NOT-DEBUG.
 //
 // Usually in IDEs (Integrated Development Environments), there are at least
 // two configurations per application: Debug and Release, sometimes also
@@ -27,8 +27,12 @@
 // Not every IDE does this by default though, so you might have to add it
 // manually to the build options.
 //
-// Note that in NALib, all tests performed by code encapsulated by
-// #ifndef NDEBUG will emit errors on stderr in the following format:
+// NALib does a ton of debugging checks even for the smallest functions. This
+// does reduce the performance while debugging considerably. Therefore, in
+// release configurations, NA_DEBUG is usually set to 0.
+//
+// Note that the naError and naCrash functions will emit errors on stderr in
+// the following format:
 // Function_name: Errormessage NEWLINE
 // Therefore, a programmer can simply set a breakpoint in the implemented
 // function and start debugging.
@@ -37,18 +41,20 @@
 // function, you can simply set a breakpoint in the naError function.
 // This function is explicitely NOT inlined and is defined in a separate
 // implementation file (and therefore a separate translation unit) due to
-// that reason. See NADebug.c
+// that reason. See the NADebugging.c file.
 //
-// Also note that in NALib, code executed within NDEBUG will not alter the
-// runtime execution. In other words: Except from speed differences and
-// outputs to strerr, NALib will NOT behave differently depending on NDEBUG
-// being defined or not. The only remark is that calls to naCrash will
-// eventually lead to an exit(EXIT_FAILURE) call before the real error is
-// executed. If you use code sanity checking (for example clang analyzer)
-// you should therefore always check both with and without NDEBUG defined.
-// Otherwise, the analyzer might miss some errors.
+// Also note that in NALib, code executed within NA_DEBUG will NOT alter the
+// functionality of code. Except from speed differences, a few more bytes for
+// certain structs and outputs to strerr, NALib will NOT behave differently
+// depending on NA_DEBUG being 0 or 1. The only remark is that calls to
+// naCrash will forcefully lead to an exit(EXIT_FAILURE) call before the real
+// error is executed. If you use code sanity checking (for example clang
+// analyzer) you should therefore always check both with and without NA_DEBUG
+// defined. Otherwise, the analyzer might miss some errors.
 
-#ifndef NDEBUG
+
+
+#if NA_DEBUG
 
   // Evaluates to the current function name. Depending on the system, this
   // can be including a classname if this is compiled in C++.
@@ -81,7 +87,7 @@
   // occurs and all code analysis tools are silented.
   #define naCrash(text)
 
-#endif // NDEBUG
+#endif // NA_DEBUG
 
 
 

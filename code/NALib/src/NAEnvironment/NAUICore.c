@@ -84,7 +84,7 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
 }
 
 NA_HDEF void na_ClearApplication(NAApplication* application){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!na_App)
       naCrash("No Application running");
   #endif
@@ -227,7 +227,7 @@ NA_HDEF void na_ClearWindow(NAWindow* window){
 }
 
 NA_DEF void naPreventWindowFromClosing(NAWindow* window, NABool prevent){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!naGetFlagu32(window->flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE))
       naError("This function is only allowed during a \"CLOSES\" event");
   #endif
@@ -348,7 +348,7 @@ NA_HDEF NABool na_IsApplicationRunning(void){
 NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHandler handler, void* controller){
   NAEventReaction* eventReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if((command == NA_UI_COMMAND_RESHAPE) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
       naError("Only windows can receyve RESHAPE commands.");
 //    if((command == NA_UI_COMMAND_KEYDOWN) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
@@ -404,7 +404,7 @@ NA_DEF void naAddUIKeyboardShortcut(
 {
   NAKeyboardShortcutReaction* keyReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
-  //#ifndef NDEBUG
+  //#if NA_DEBUG
   //  if((naGetUIElementType(uiElement) != NA_UI_APPLICATION) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
   //    naError("Currently, only applications and windows are allowed as uiElement. Use naGetApplication() for the app.");
   //#endif
@@ -424,7 +424,7 @@ NA_DEF void naStopApplication(void){
 
 
 NA_DEF NAApplication* naGetApplication(void){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!na_App)
       naError("Internal error: application is not in ui elements list");
   #endif

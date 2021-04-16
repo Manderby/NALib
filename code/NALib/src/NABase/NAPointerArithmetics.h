@@ -1,52 +1,22 @@
 
-// This file contains inline implementations of the file NACircularBuffer.h
-// Do not include this file directly! It will automatically be included when
-// including "NACircularBuffer.h"
+#if defined NA_POINTER_ARITHMETICS_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_POINTER_ARITHMETICS_INCLUDED
+#define NA_POINTER_ARITHMETICS_INCLUDED
 
 
-#include "NAMemory.h"
+
+#if NA_DEBUG
+  // Returns whether the two arrays with the given number of elements overlap
+  // each other. Both pointers must be of the same type.
+  #define naElementOverlap(ptrA, ptrB, countA, countB)\
+    ((((ptrB) - (ptrA)) < countA) && (((ptrB) - (ptrA)) > -countB))
+#endif
 
 
-struct NACircularBuffer{
-  NAInt space;
-  NAInt cur;
-  NAInt last;
-  void** data;
-};
 
-
-NACircularBuffer* naInitCircularBuffer(NACircularBuffer* buffer, NAInt count){
-  buffer->space = count + 1;
-  buffer->cur = 0;
-  buffer->last = 0;
-  buffer->data = naMalloc(sizeof(void*) * buffer->space);
-}
-
-
-void naClearCircularBuffer(NACircularBuffer* buffer){
-  naFree(buffer->data);
-}
-
-
-void* naPullCircularBuffer(NACircularBuffer* buffer){
-  #if NA_DEBUG
-    if(buffer->last == buffer->cur)
-      naError("naNextCircularBuffer", "Buffer is empty");
-  #endif
-  void* retValue = buffer->data[buffer->cur];
-  buffer->cur = buffer->cur % buffer->space;
-  return retValue;
-}
-
-
-void naPushCircularBuffer(NACircularBuffer* buffer, void* newData){
-  buffer->data[buffer->last] = newData;
-  buffer->last = buffer->last % buffer->space;
-  #if NA_DEBUG
-    if(buffer->last == buffer->cur)
-      naError("naPushCircularBuffer", "Buffer did just overflow");
-  #endif
-}
+#endif // NA_POINTER_ARITHMETICS_INCLUDED
 
 
 

@@ -48,7 +48,7 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent){
   NA_UIElement* parentElem;
   NAWindow* window;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(!uiElement)
       naError("uiElement is Null");
   #endif
@@ -66,7 +66,7 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent){
     result = SetParent(elem->nativePtr, HWND_MESSAGE);
   }else{
     HWND result;
-    #ifndef NDEBUG
+    #if NA_DEBUG
     if(!elem)
       naCrash("elem is Null");
     #endif
@@ -95,7 +95,7 @@ NA_HDEF NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElem
 
 
 NA_HDEF void na_BlockUIElementNotifications(NA_UIElement* elem){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(elem->allowNotifications == NA_FALSE)
       naError("Element already blocks notifications");
   #endif
@@ -104,7 +104,7 @@ NA_HDEF void na_BlockUIElementNotifications(NA_UIElement* elem){
 
 
 NA_HDEF void na_AllowUIElementNotifications(NA_UIElement* elem){
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(elem->allowNotifications == NA_TRUE)
       naError("Element already allows notifications");
   #endif
@@ -527,7 +527,7 @@ NA_HDEF void** na_GetUIElementNextTabReference(void* uiElement){
   case NA_UI_TEXTFIELD: return na_GetTextFieldNextTabReference(uiElement); break;
   case NA_UI_TEXTBOX:   return na_GetTextBoxNextTabReference(uiElement); break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Invalid type");
     #endif
     return NA_NULL;
@@ -541,7 +541,7 @@ NA_HDEF void** na_GetUIElementPrevTabReference(void* uiElement){
   case NA_UI_TEXTFIELD: return na_GetTextFieldPrevTabReference(uiElement); break;
   case NA_UI_TEXTBOX:   return na_GetTextBoxPrevTabReference(uiElement); break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Invalid type");
     #endif
     return NA_NULL;
@@ -556,14 +556,14 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
   void** elemNextPrevRef;
   void** nextPrevNextRef;
 
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naGetUIElementWindow(elem) != naGetUIElementWindow(nextTabElem))
       naError("element do not share the same window.");
   #endif
 
   if(  naGetUIElementType(elem) != NA_UI_TEXTFIELD
     && naGetUIElementType(elem) != NA_UI_TEXTBOX){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("elem has a type which can not be used as a next tab.");
     #endif
     return;
@@ -571,7 +571,7 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
 
   if(  naGetUIElementType(nextTabElem) != NA_UI_TEXTFIELD
     && naGetUIElementType(nextTabElem) != NA_UI_TEXTBOX){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("nextTabElem has a type which can not be used as a next tab.");
     #endif
     return;
@@ -629,7 +629,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
 
   // First, let's handle the root case: Returning the application rect.
   if(elem == (NA_UIElement*)app){
-    #ifndef NDEBUG
+    #if NA_DEBUG
       if(relativeelement && (relativeelement != app))
         naError("The relative element is invalid for the given uiElement, which seems to be the application.");
     #endif
@@ -653,7 +653,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
   case NA_UI_OPENGLSPACE:  rect = na_GetSpaceAbsoluteInnerRect(elem); break;
   case NA_UI_SLIDER:       rect = na_GetSliderAbsoluteInnerRect(elem); break;
   default:
-    //#ifndef NDEBUG
+    //#if NA_DEBUG
     //  naError("Invalid UI type");
     //#endif
     rect = naMakeRectSE(0., 0., 0., 0.);
@@ -667,7 +667,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
     case NA_UI_WINDOW:      relrect = na_GetWindowAbsoluteInnerRect(relElem); break;
     case NA_UI_OPENGLSPACE:  relrect = na_GetSpaceAbsoluteInnerRect(relElem); break;
     default:
-      #ifndef NDEBUG
+      #if NA_DEBUG
         naError("Invalid UI type");
       #endif
       relrect = naMakeRectSE(0., 0., 0., 0.);
@@ -731,7 +731,7 @@ long getWINAPITextAlignmentWithAlignment(NATextAlignment alignment){
   case NA_TEXT_ALIGNMENT_RIGHT: winapiAlignment = ES_RIGHT; break;
   case NA_TEXT_ALIGNMENT_CENTER: winapiAlignment = ES_CENTER; break;
   default:
-    #ifndef NDEBUG
+    #if NA_DEBUG
       naError("Invalid alignment enumeration");
     #endif
     winapiAlignment = ES_LEFT; break;
