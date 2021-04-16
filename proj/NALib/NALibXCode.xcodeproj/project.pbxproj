@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		903513C226296D1C000B2621 /* testNABuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 903513C126296D1C000B2621 /* testNABuffer.c */; };
+		903513C82629FED9000B2621 /* testNAPointerArithmetics.c in Sources */ = {isa = PBXBuildFile; fileRef = 903513C72629FED9000B2621 /* testNAPointerArithmetics.c */; };
 		9061401F24713EC000498AF3 /* libNALib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90613CF22471365300498AF3 /* libNALib.a */; };
 		909293452617558300E627D4 /* testNAInt256.c in Sources */ = {isa = PBXBuildFile; fileRef = 9092932C2617558300E627D4 /* testNAInt256.c */; };
 		909293462617558300E627D4 /* testNACompiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 9092932D2617558300E627D4 /* testNACompiler.c */; };
@@ -232,6 +233,7 @@
 
 /* Begin PBXFileReference section */
 		903513C126296D1C000B2621 /* testNABuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testNABuffer.c; sourceTree = "<group>"; };
+		903513C72629FED9000B2621 /* testNAPointerArithmetics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testNAPointerArithmetics.c; sourceTree = "<group>"; };
 		90613BF62471349A00498AF3 /* Test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Test; sourceTree = BUILT_PRODUCTS_DIR; };
 		90613BFF2471356B00498AF3 /* doc */ = {isa = PBXFileReference; lastKnownFileType = folder; name = doc; path = ../../doc; sourceTree = "<group>"; };
 		90613C002471357B00498AF3 /* license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = license.txt; path = ../../license.txt; sourceTree = "<group>"; };
@@ -545,6 +547,7 @@
 				909293352617558300E627D4 /* testNAEnvironment.c */,
 				909293362617558300E627D4 /* testNANumerics.c */,
 				909293372617558300E627D4 /* testNAInt64.c */,
+				903513C72629FED9000B2621 /* testNAPointerArithmetics.c */,
 				909293382617558300E627D4 /* testNAMacros.c */,
 				909293392617558300E627D4 /* testNAInt128.c */,
 			);
@@ -1238,6 +1241,7 @@
 				90929488261755AF00E627D4 /* NADeflate.c in Sources */,
 				9092945B261755AF00E627D4 /* NATreeIteration.c in Sources */,
 				90929453261755AF00E627D4 /* NABufferSource.c in Sources */,
+				903513C82629FED9000B2621 /* testNAPointerArithmetics.c in Sources */,
 				90929450261755AF00E627D4 /* NABuffer.c in Sources */,
 				90929487261755AF00E627D4 /* NABabyImage.c in Sources */,
 				9092944E261755AF00E627D4 /* NABufferParse.c in Sources */,
