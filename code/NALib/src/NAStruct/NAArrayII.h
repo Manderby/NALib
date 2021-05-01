@@ -463,10 +463,10 @@ NA_IDEF NABool naIterateArray(NAArrayIterator* iterator, size_t step){
   iterator->index += step;
   if(iterator->index == naGetArrayCount(naGetPtrConst(iterator->array))){iterator->index = NA_ARRAY_INVALID_INDEX;}
   #if NA_DEBUG
-    if(iterator->index < NA_ARRAY_INVALID_INDEX)
-      naError("Iterator underflows");
-    if(iterator->index >= naGetArrayCount(naGetPtrConst(iterator->array)))
-      naError("Iterator overflows");
+//    if(iterator->index < NA_ARRAY_INVALID_INDEX)
+//      naError("Iterator underflows");
+//    if(iterator->index >= naGetArrayCount(naGetPtrConst(iterator->array)))
+//      naError("Iterator overflows");
   #endif
   return (iterator->index != NA_ARRAY_INVALID_INDEX);
 }

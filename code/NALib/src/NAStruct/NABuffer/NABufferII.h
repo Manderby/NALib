@@ -272,7 +272,7 @@ NA_HAPI void na_PrepareBuffer(NABufferIterator* iter, size_t byteCount);
 NA_HAPI NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start, size_t end);
 NA_HAPI NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARangei partRange);
 NA_HAPI NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARangei partRange);
-NA_HAPI size_t na_PrepareBufferPart(NABufferIterator* iter, NAInt byteCount);
+NA_HAPI size_t na_PrepareBufferPart(NABufferIterator* iter, size_t byteCount);
 
 NA_HIAPI size_t na_GetBufferPartRemainingBytes(NABufferIterator* iter);
 NA_HIAPI const void* na_GetBufferPartDataPointerConst(NABufferIterator* iter);

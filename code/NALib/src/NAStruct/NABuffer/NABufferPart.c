@@ -288,23 +288,23 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
         naError("part offset is negative.");
     #endif
 
-    NAInt remainingBytesInSourcePart = sourcePart->byteSize - sourceIter.partOffset;
     #if NA_DEBUG
-      if(remainingBytesInSourcePart < 0)
-        naError("remaining Bytes count is negative");
+      if((size_t)sourceIter.partOffset > sourcePart->byteSize)
+        naError("remaining Bytes count will be negative");
     #endif
+    size_t remainingBytesInSourcePart = sourcePart->byteSize - (size_t)sourceIter.partOffset;
 
     if((size_t)remainingBytesInSourcePart < curPart->byteSize){
       na_SplitBufferPart(&curPartIter, 0, remainingBytesInSourcePart);
     }
     
     curPart->memBlock = naRetain(na_GetBufferPartMemoryBlock(sourcePart));
-    curPart->blockOffset = sourcePart->blockOffset + sourceIter.partOffset;
+    curPart->blockOffset = sourcePart->blockOffset + (size_t)sourceIter.partOffset;
 
-    if(remainingBytesInSourcePart < partRange.length){
+    if(remainingBytesInSourcePart < (size_t)partRange.length){
       partRange.origin += remainingBytesInSourcePart;
       partRange.length -= remainingBytesInSourcePart;
-      naIterateBuffer(&sourceIter, remainingBytesInSourcePart);
+      naIterateBuffer(&sourceIter, (NAInt)remainingBytesInSourcePart);
       naIterateTree(&curPartIter, NA_NULL, NA_NULL);
     }else{
       partRange.length = 0;
@@ -373,7 +373,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
     na_FillBufferSourceMemory(
       part->source,
       dst,
-      naMakeRangeiWithStartAndEnd(sourceOffset, sourceOffset + part->byteSize));
+      naMakeRangeiWithStartAndEnd(sourceOffset, sourceOffset + (NAInt)part->byteSize));
   }
 
   return part;
@@ -387,7 +387,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
 // part but always results in iterator pointing to a part being completely
 // prepared and the number of available bytes after the current byte is
 // returned.
-NA_HDEF size_t na_PrepareBufferPart(NABufferIterator* iter, NAInt byteCount){
+NA_HDEF size_t na_PrepareBufferPart(NABufferIterator* iter, size_t byteCount){
   #if NA_DEBUG
     if(iter->partOffset < 0)
       naError("part offset is negative.");
@@ -402,12 +402,12 @@ NA_HDEF size_t na_PrepareBufferPart(NABufferIterator* iter, NAInt byteCount){
       // There is a cache, so we try to fill the part with it.
       part = na_PrepareBufferPartCache(
         &(iter->partIter),
-        naMakeRangei(iter->partOffset, byteCount));
+        naMakeRangei(iter->partOffset, (NAInt)byteCount));
     }else{
       // We have no cache, meaning, we prepare memory ourselfes.
       part = na_PrepareBufferPartMemory(
         &(iter->partIter),
-        naMakeRangei(iter->partOffset, byteCount));
+        naMakeRangei(iter->partOffset, (NAInt)byteCount));
     }
   }
   
