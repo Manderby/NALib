@@ -105,6 +105,7 @@
 
 
 #include "NABase.h"
+#include <stdlib.h>
 
 
 // /////////////////////////////////

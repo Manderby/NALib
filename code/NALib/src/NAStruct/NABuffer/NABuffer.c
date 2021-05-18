@@ -217,7 +217,7 @@ NA_HDEF void na_FillBufferPartFile(void* dst, NARangei sourceRange, void* data){
 NA_DEF NABuffer* naNewBufferWithInputPath(const char* filePath){
   NARangei range;
   NAFile* file;
-  NABuffer* filebuffer;
+  NABuffer* fileBuffer;
   NABufferSource* readsource;
   NABufferSource* bufsource;
 
@@ -227,19 +227,19 @@ NA_DEF NABuffer* naNewBufferWithInputPath(const char* filePath){
   file = naCreateFileReadingPath(filePath);
   range = naMakeRangei(0, (NAInt)naComputeFileByteSize(file));
 
-  filebuffer = naNewBuffer(NA_FALSE);
+  fileBuffer = naNewBuffer(NA_FALSE);
   readsource = naNewBufferSource(na_FillBufferPartFile, NA_NULL);
     naSetBufferSourceData(readsource, file, (NAMutator)naReleaseFile);
     naSetBufferSourceLimit(readsource, range);
-    filebuffer->source = naRetain(readsource);
-    filebuffer->sourceOffset = 0;
+    fileBuffer->source = naRetain(readsource);
+    fileBuffer->sourceOffset = 0;
   naRelease(readsource);
 
-  bufsource = naNewBufferSource(NA_NULL, filebuffer);
+  bufsource = naNewBufferSource(NA_NULL, fileBuffer);
     buffer->source = naRetain(bufsource);
     buffer->sourceOffset = 0;
   naRelease(bufsource);
-  naRelease(filebuffer);
+  naRelease(fileBuffer);
 
   na_EnsureBufferRange(buffer, 0, range.length);
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;

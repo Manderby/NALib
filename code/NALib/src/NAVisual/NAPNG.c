@@ -327,9 +327,9 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
     upBufPtr = curByte - bytesPerLine;
   }
 
-//  outfile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
-//  naWriteFileBytes(outfile, png->pixeldata, png->size.width * png->size.height * bpp);
-//  naReleaseFile(outfile);
+//  outFile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
+//  naWriteFileBytes(outFile, png->pixeldata, png->size.width * png->size.height * bpp);
+//  naReleaseFile(outFile);
 
   naClearBufferIterator(&iterFilter);
   naFree(upBuffer);
@@ -780,9 +780,9 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath){
     }
   naEndListIteration(iter);
 
-//  NAFile* outfile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
-//  naWriteBufferToFile(png->compresseddata, outfile);
-//  naReleaseFile(outfile);
+//  NAFile* outFile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
+//  naWriteBufferToFile(png->compresseddata, outFile);
+//  naReleaseFile(outFile);
 
   naFixBufferRange(png->compresseddata);
   naFillBufferWithZLIBDecompression(png->filteredData, png->compresseddata);
@@ -876,7 +876,7 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath){
 
   NABuffer* outbuffer;
   NAChecksum checksum;
-  NAFile* outfile;
+  NAFile* outFile;
   NAListIterator iter;
   NABufferIterator iterout;
 
@@ -915,10 +915,10 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath){
 
   naClearBufferIterator(&iterout);
 
-  outfile = naCreateFileWritingPath(filePath, NA_FILEMODE_DEFAULT);
+  outFile = naCreateFileWritingPath(filePath, NA_FILEMODE_DEFAULT);
   naFixBufferRange(outbuffer);
-  naWriteBufferToFile(outbuffer, outfile);
-  naReleaseFile(outfile);
+  naWriteBufferToFile(outbuffer, outFile);
+  naReleaseFile(outFile);
   naRelease(outbuffer);
 }
 
