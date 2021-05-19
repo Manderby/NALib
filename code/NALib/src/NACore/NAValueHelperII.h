@@ -171,13 +171,7 @@ NA_IDEF double naMakeLengthWithStartAndEnd(double start, double end){
     if(start > end)
       naError("start is greater than end");
   #endif
-  double result = end - start;
-  #if NA_DEBUG
-    if(!naIsLengthValueValid(result)){
-      naError("result invalid");
-    }
-  #endif
-  return result;
+  return naMakeLengthWithStartAndEndE(start, end);
 }
 NA_IDEF double naMakeLengthWithStartAndEndE(double start, double end){
   double result = end - start;
@@ -193,13 +187,7 @@ NA_IDEF float naMakeLengthWithStartAndEndf(float start, float end){
     if(start > end)
       naError("start is greater than end");
   #endif
-  float result = end - start;
-  #if NA_DEBUG
-    if(!naIsLengthValueValidf(result)){
-      naError("result invalid");
-    }
-  #endif
-  return result;
+  return naMakeLengthWithStartAndEndfE(start, end);
 }
 NA_IDEF float naMakeLengthWithStartAndEndfE(float start, float end){
   float result = end - start;
@@ -215,12 +203,7 @@ NA_IDEF NAInt naMakeLengthWithStartAndEndi(NAInt start, NAInt end){
     if(start > end)
       naError("start is greater than end");
   #endif
-  NAInt result = end - start;
-  #if NA_DEBUG
-    if(end > start && result < 0)
-      naError("Integer overflow");
-  #endif
-  return result;
+  return naMakeLengthWithStartAndEndiE(start, end);
 }
 NA_IDEF NAInt naMakeLengthWithStartAndEndiE(NAInt start, NAInt end){
   NAInt result = end - start;
@@ -235,8 +218,7 @@ NA_IDEF size_t naMakeLengthWithStartAndEnds(size_t start, size_t end){
     if(start > end)
       naError("start is greater than end");
   #endif
-  size_t result = end - start;
-  return result;
+  return naMakeLengthWithStartAndEndsE(start, end);
 }
 NA_IDEF size_t naMakeLengthWithStartAndEndsE(size_t start, size_t end){
   size_t result = end - start;

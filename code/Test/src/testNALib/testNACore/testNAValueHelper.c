@@ -108,6 +108,24 @@ void testRange(){
     naTestError(naMakeLengthWithStartAndEnds(50, 10));
   }
 
+  naTestGroup("Make Length with Start and End E variants"){
+    naTest(naMakeLengthWithStartAndEndE(5., 10.) == 5.);
+    naTest(naMakeLengthWithStartAndEndE(5., 5.) == 0.);
+    naTest(naMakeLengthWithStartAndEndfE(5.f, 10.f) == 5.f);
+    naTest(naMakeLengthWithStartAndEndfE(5.f, 5.f) == 0.f);
+    naTest(naMakeLengthWithStartAndEndiE(5, 10) == 5);
+    naTest(naMakeLengthWithStartAndEndiE(5, 5) == 0);
+    naTest(naMakeLengthWithStartAndEndsE(5, 10) == 5);
+    naTest(naMakeLengthWithStartAndEndsE(5, 5) == 0);
+    naTestVoid(naMakeLengthWithStartAndEndE(10., 5.));
+    naTestError(naMakeLengthWithStartAndEndE(5., NA_NAN));
+    naTestVoid(naMakeLengthWithStartAndEndfE(10.f, 5.f));
+    naTestError(naMakeLengthWithStartAndEndfE(5.f, NA_NANf));
+    naTestVoid(naMakeLengthWithStartAndEndiE(50, 10));
+    naTestError(naMakeLengthWithStartAndEndiE(-1, NA_MAX_i));
+    naTestVoid(naMakeLengthWithStartAndEndsE(50, 10));
+  }
+
   naTestGroup("Make Length with Min and Max"){
     naTest(naMakeLengthWithMinAndMaxi(5, 10) == 6);
     naTest(naMakeLengthWithMinAndMaxi(5, 5) == 1);
