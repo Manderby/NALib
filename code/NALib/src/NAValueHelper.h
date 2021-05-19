@@ -51,10 +51,16 @@ NA_IAPI size_t naMakeEndWithStartAndLengths (size_t start, size_t length);
 NA_IAPI NAInt  naMakeMaxWithMinAndLengthi   (NAInt  min,   NAInt  length);
 NA_IAPI size_t naMakeMaxWithMinAndLengths   (size_t min,   size_t length);
 
-NA_IAPI double naMakeLengthWithStartAndEnd  (double start, double end);
-NA_IAPI float  naMakeLengthWithStartAndEndf (float  start, float  end);
-NA_IAPI NAInt  naMakeLengthWithStartAndEndi (NAInt  start, NAInt  end);
-NA_IAPI size_t naMakeLengthWithStartAndEnds (size_t start, size_t end);
+// The Variants with E also allow start to be greater than end,
+// resulting in a negative size.
+NA_IAPI double naMakeLengthWithStartAndEnd   (double start, double end);
+NA_IAPI double naMakeLengthWithStartAndEndE  (double start, double end);
+NA_IAPI float  naMakeLengthWithStartAndEndf  (float  start, float  end);
+NA_IAPI float  naMakeLengthWithStartAndEndfE (float  start, float  end);
+NA_IAPI NAInt  naMakeLengthWithStartAndEndi  (NAInt  start, NAInt  end);
+NA_IAPI NAInt  naMakeLengthWithStartAndEndiE (NAInt  start, NAInt  end);
+NA_IAPI size_t naMakeLengthWithStartAndEnds  (size_t start, size_t end);
+NA_IAPI size_t naMakeLengthWithStartAndEndsE (size_t start, size_t end);
 
 NA_IAPI NAInt  naMakeLengthWithMinAndMaxi   (NAInt  min,   NAInt  max);
 NA_IAPI size_t naMakeLengthWithMinAndMaxs   (size_t min,   size_t max);

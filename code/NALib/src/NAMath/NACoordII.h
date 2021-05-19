@@ -1345,10 +1345,10 @@ NA_IDEF NARect naMakeRectWithRectIntersection(NARect rect1, NARect rect2){
   newRect.pos.y = naMax(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectEndX(rect1);
   end2 = naGetRectEndX(rect2);
-  newRect.size.width  = naMakeLengthWithStartAndEnd(newRect.pos.x, naMin(end1, end2));
+  newRect.size.width  = naMakeLengthWithStartAndEndE(newRect.pos.x, naMin(end1, end2));
   end1 = naGetRectEndY(rect1);
   end2 = naGetRectEndY(rect2);
-  newRect.size.height  = naMakeLengthWithStartAndEnd(newRect.pos.y, naMin(end1, end2));
+  newRect.size.height  = naMakeLengthWithStartAndEndE(newRect.pos.y, naMin(end1, end2));
   return newRect;
 }
 NA_IDEF NARecti naMakeRectiWithRectIntersection(NARecti rect1, NARecti rect2){
@@ -1365,10 +1365,10 @@ NA_IDEF NARecti naMakeRectiWithRectIntersection(NARecti rect1, NARecti rect2){
   newRect.pos.y = naMaxi(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectiEndX(rect1);
   end2 = naGetRectiEndX(rect2);
-  newRect.size.width  = naMakeLengthWithStartAndEndi(newRect.pos.x, naMini(end1, end2));
+  newRect.size.width  = naMakeLengthWithStartAndEndiE(newRect.pos.x, naMini(end1, end2));
   end1 = naGetRectiEndY(rect1);
   end2 = naGetRectiEndY(rect2);
-  newRect.size.height  = naMakeLengthWithStartAndEndi(newRect.pos.y, naMini(end1, end2));
+  newRect.size.height  = naMakeLengthWithStartAndEndiE(newRect.pos.y, naMini(end1, end2));
   return newRect;
 }
 NA_IDEF NABox naMakeBoxWithBoxIntersection(NABox box1, NABox box2){
