@@ -154,7 +154,7 @@ NA_HDEF NABool na_TestKeyNodeOverlapQuadDouble(NATreeNode* parentNode, const voi
   NARect nodeRect = naMakeRectWithPosAndPos(quadNode->origin, upperLimit);
   NARect keyRect = naMakeRectWithPosAndPos(*((NAPos*)lowerKey), *((NAPos*)upperKey));
   NARect intersection = naMakeRectWithRectIntersection(nodeRect, keyRect);
-  return naIsRectUseful(intersection);
+  return !naIsRectEmpty(intersection);
 }
 NA_HDEF NABool na_TestKeyLeafOverlapQuadDouble(NATreeLeaf* leaf, const void* lowerKey, const void* upperKey){
   NATreeQuadLeaf* quadLeaf = (NATreeQuadLeaf*)(leaf);
@@ -163,7 +163,7 @@ NA_HDEF NABool na_TestKeyLeafOverlapQuadDouble(NATreeLeaf* leaf, const void* low
   NARect leafRect = naMakeRectWithPosAndPos(quadLeaf->origin, upperLimit);
   NARect keyRect = naMakeRectWithPosAndPos(*((NAPos*)lowerKey), *((NAPos*)upperKey));
   NARect intersection = naMakeRectWithRectIntersection(leafRect, keyRect);
-  return naIsRectUseful(intersection);
+  return !naIsRectEmpty(intersection);
 }
 
 
