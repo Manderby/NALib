@@ -112,26 +112,28 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
 
   // modern method: Create an image which redraws itself automatically.
   if(containingView && [NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
-    NA_MACOS_AVAILABILITY_GUARD_10_8(
-      NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
-      image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
-      {        
-        NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
-        if(uiImage->tintMode != NA_BLEND_ZERO){
-          skin = naGetSkinForCurrentAppearance();
-        }
-
-        CGContextRef context = naGetCGContextRef([NSGraphicsContext currentContext]);
-        NAUIImageResolution resolution = naGetWindowBackingScaleFactor([containingView window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
-
-        CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, kind, skin);
-        if(!cocoaimage){
-          cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-        }
-        CGContextDrawImage(context, dstRect, cocoaimage);
-        return YES;
-      }];
-    ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
+//    NA_MACOS_AVAILABILITY_GUARD_10_8(
+//      NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
+//      image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
+//      {
+//        NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
+//        if(uiImage->tintMode != NA_BLEND_ZERO){
+//          skin = naGetSkinForCurrentAppearance();
+//        }
+//
+//        CGContextRef context = naGetCGContextRef([NSGraphicsContext currentContext]);
+//        if(!context){return NO;}
+//
+//        NAUIImageResolution resolution = naGetWindowBackingScaleFactor([containingView window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
+//
+//        CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, kind, skin);
+//        if(!cocoaimage){
+//          cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
+//        }
+//        CGContextDrawImage(context, dstRect, cocoaimage);
+//        return YES;
+//      }];
+//    ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
   }
   
   // old method: Just create an image with multiple representations.
