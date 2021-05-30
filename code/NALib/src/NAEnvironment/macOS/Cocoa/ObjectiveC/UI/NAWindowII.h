@@ -85,7 +85,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 - (void)renewMouseTracking{
   NA_COCOA_RELEASE(trackingArea);
   trackingArea = [[NSTrackingArea alloc] initWithRect:[[self contentView] bounds]
-      options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder
+      options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder)
       owner:self userInfo:nil];
   [[self contentView] addTrackingArea:trackingArea];
 }

@@ -4,113 +4,7 @@
 // actually contains non-inlinenable code. See NACocoa.m for more information.
 // Do not include this file anywhere else!
 
-
-
-#include "Availability.h"
-
-#if __clang_major__ >= 5  // Supposedly, clang 5 is needed for @available.
-  #define NA_MACOS_AVAILABILITY_GUARD_10_6(code)  if(@available(macOS 10.6, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_7(code)  if(@available(macOS 10.7, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_8(code)  if(@available(macOS 10.8, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_9(code)  if(@available(macOS 10.9, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_10(code) if(@available(macOS 10.10, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_11(code) if(@available(macOS 10.11, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_12(code) if(@available(macOS 10.12, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_13(code) if(@available(macOS 10.13, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_14(code) if(@available(macOS 10.14, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_15(code) if(@available(macOS 10.15, *)){ code }
-#else
-  #define NA_MACOS_AVAILABILITY_GUARD_10_6(code)  if(0){ }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_7(code)  if(0){ }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_8(code)  if(0){ }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_9(code)  if(0){ }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_10(code) if(0){ }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_11(code) if(0){ }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_12(code) if(0){ }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_13(code) if(0){ }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_14(code) if(0){ }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_15(code) if(0){ }
-#endif
-
-
-
-// Mapping of deprecated entities
-#if defined __MAC_10_7
-  #define NAEventTypeKeyUp                NSEventTypeKeyUp
-  #define NAEventTypeKeyDown              NSEventTypeKeyDown
-
-  #define NAButtonTypeRadio               NSButtonTypeRadio
-  #define NAButtonTypeMomentaryLight      NSButtonTypeMomentaryLight
-  #define NAButtonTypePushOnPushOff       NSButtonTypePushOnPushOff
-  #define NAButtonTypeSwitch              NSButtonTypeSwitch
-  
-  #define NATextAlignmentLeft             NSTextAlignmentLeft
-  #define NATextAlignmentRight            NSTextAlignmentRight
-  #define NATextAlignmentCenter           NSTextAlignmentCenter
-#else // deprecated definitions before 10.7
-  #define NAEventTypeKeyUp                NSKeyUp
-  #define NAEventTypeKeyDown              NSKeyDown
-  
-  #define NAButtonTypeRadio               NSRadioButton
-  #define NAButtonTypeMomentaryLight      NSMomentaryLightButton
-  #define NAButtonTypePushOnPushOff       NSPushOnPushOffButton
-  #define NAButtonTypeSwitch              NSSwitchButton
-
-  #define NATextAlignmentLeft             NSLeftTextAlignment
-  #define NATextAlignmentRight            NSRightTextAlignment
-  #define NATextAlignmentCenter           NSCenterTextAlignment
-#endif
-
-#if defined __MAC_10_12
-  #define NAEventMaskAny                  NSEventMaskAny
-  #define NAWindowStyleMaskTitled         NSWindowStyleMaskTitled
-  #define NAWindowStyleMaskClosable       NSWindowStyleMaskClosable
-  #define NAWindowStyleMaskMiniaturizable NSWindowStyleMaskMiniaturizable
-  #define NAWindowStyleMaskResizable      NSWindowStyleMaskResizable
-  #define NAWindowStyleMaskBorderless     NSWindowStyleMaskBorderless
-  #define NAEventModifierFlagShift        NSEventModifierFlagShift
-  #define NAEventModifierFlagOption       NSEventModifierFlagOption
-  #define NAEventModifierFlagControl      NSEventModifierFlagControl
-  #define NAEventModifierFlagCommand      NSEventModifierFlagCommand
-
-  #define NAAlertStyleWarning             NSAlertStyleInformational
-  #define NAAlertStyleInfo                NSAlertStyleWarning
-  #define NSAlertStyleError               NSAlertStyleCritical
-#else // deprecated definitions before 10.12
-  #define NAEventMaskAny                  NSAnyEventMask
-  #define NAWindowStyleMaskTitled         NSTitledWindowMask
-  #define NAWindowStyleMaskClosable       NSClosableWindowMask
-  #define NAWindowStyleMaskMiniaturizable NSMiniaturizableWindowMask
-  #define NAWindowStyleMaskResizable      NSResizableWindowMask
-  #define NAWindowStyleMaskBorderless     NSBorderlessWindowMask
-  #define NAEventModifierFlagShift        NSShiftKeyMask
-  #define NAEventModifierFlagOption       NSAlternateKeyMask
-  #define NAEventModifierFlagControl      NSControlKeyMask
-  #define NAEventModifierFlagCommand      NSCommandKeyMask
-
-  #define NAAlertStyleWarning             NSInformationalAlertStyle
-  #define NAAlertStyleInfo                NSWarningAlertStyle
-  #define NSAlertStyleError               NSCriticalAlertStyle
-#endif
-
-#if defined __MAC_10_14
-  #define NABezelStyleRounded             NSBezelStyleRounded
-  #define NABezelStyleShadowlessSquare    NSBezelStyleShadowlessSquare
-
-  #define NAStateOn                       NSControlStateValueOn
-  #define NAStateOff                      NSControlStateValueOff
-  
-  #define NAOpenGLContextParameterSwapInterval  NSOpenGLContextParameterSwapInterval
-#else // deprecated definitions before 10.14
-  #define NABezelStyleRounded             NSRoundedBezelStyle
-  #define NABezelStyleShadowlessSquare    NSShadowlessSquareBezelStyle
-
-  #define NAStateOn                       NSOnState
-  #define NAStateOff                      NSOffState
-
-#define NAOpenGLContextParameterSwapInterval  NSOpenGLCPSwapInterval
-#endif
-
+#include "NAUICocoaLegacy.h"
 
 
 // Damnit Apple or clang or whoever responsible for this mess!
@@ -121,14 +15,19 @@
 
 
 
+
 CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext){
-  if([graphicsContext respondsToSelector:@selector(CGContext)]){
-    NA_MACOS_AVAILABILITY_GUARD_10_14(
-      return [graphicsContext CGContext];
-    )else{return nil;}
-  }else{
-    return [graphicsContext graphicsPort];
+  CGContextRef cgContext = nil;
+
+  NA_MACOS_AVAILABILITY_GUARD_10_14(
+    if([NSGraphicsContext instancesRespondToSelector:@selector(CGContext)]){
+      cgContext = [graphicsContext CGContext];
+    }
+  )
+  if(!cgContext){
+    cgContext = [graphicsContext graphicsPort];
   }
+  return cgContext;
 }
 
 
@@ -136,11 +35,12 @@ CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext){
 CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
   CGFloat res = (CGFloat)1.;
 
-  if([window respondsToSelector:@selector(backingScaleFactor)]){
-    NA_MACOS_AVAILABILITY_GUARD_10_7(
+  NA_MACOS_AVAILABILITY_GUARD_10_7(
+    if([NSWindow instancesRespondToSelector:@selector(backingScaleFactor)]){
       res = [window backingScaleFactor];
-    )
-  }else{
+    }
+  )
+  if(res == 0.){
     res = [window userSpaceScaleFactor];
   }
   return res;
@@ -149,41 +49,58 @@ CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
 
 
 NABool naLoadNib(const NAUTF8Char* nibName){
-  if([NSBundle respondsToSelector:@selector(loadNibNamed:owner:topLevelObjects:)]){
-    NA_MACOS_AVAILABILITY_GUARD_10_8(
-      return [[NSBundle mainBundle] loadNibNamed:[NSString stringWithUTF8String:nibName] owner:NSApp topLevelObjects:nil];
-    )else{return NA_FALSE;}
-  }else{
-    return [NSBundle loadNibNamed:[NSString stringWithUTF8String:nibName] owner:NSApp];
+  NABool loaded = NA_FALSE;
+  
+  NA_MACOS_AVAILABILITY_GUARD_10_8(
+    if([NSBundle instancesRespondToSelector:@selector(loadNibNamed:owner:topLevelObjects:)]){
+      // Yes, we are retaining the topLevelObjects just like that. Upon closing the app,
+      // these will be a leak but who cares at this point.
+      NSArray * topLevelObjects;
+      loaded = [[NSBundle mainBundle] loadNibNamed:[NSString stringWithUTF8String:nibName] owner:NSApp topLevelObjects:&topLevelObjects];
+      [topLevelObjects retain];
+    }
+  )
+  if(!loaded){
+    loaded = [NSBundle loadNibNamed:[NSString stringWithUTF8String:nibName] owner:NSApp];
   }
+  return loaded;
 }
 
 
 
 NSColor* naGetLabelColor(){
-  if([NSColor respondsToSelector:@selector(labelColor)]){
-    NA_MACOS_AVAILABILITY_GUARD_10_10(
-      return [NSColor labelColor];
-    )
+  NSColor* color = nil;
+  
+  NA_MACOS_AVAILABILITY_GUARD_10_10(
+    if([NSColor instancesRespondToSelector:@selector(labelColor)]){
+      color = [NSColor labelColor];
+    }
+  )
+  if(!color){
+    color = [NSColor controlTextColor];
   }
-  return [NSColor controlTextColor];
+  return color;
 }
 
 NSColor* naGetLinkColor(){
-  if([NSColor respondsToSelector:@selector(linkColor)]){
-    NA_MACOS_AVAILABILITY_GUARD_10_10(
-      return [NSColor linkColor];
-    )
-  }
-  return [NSColor blueColor];
-}
+  NSColor* color = nil;
 
+  // documentation says available since 10.10 but that is not true. It is at least 10.12 but maybe even higher.
+  NA_MACOS_AVAILABILITY_GUARD_10_12(
+    if([NSColor instancesRespondToSelector:@selector(linkColor)]){
+      color = [NSColor linkColor];
+    }
+  )
+  if(!color){
+    color = [NSColor blueColor];
+  }
+  return color;
+}
 
 
 #if defined __clang_major__
   #pragma clang diagnostic pop
 #endif
-
 
 
 // This is free and unencumbered software released into the public domain.

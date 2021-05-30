@@ -85,7 +85,7 @@ NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event){
 
 NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
   NABool retValue = NA_FALSE;
-  if([event type] == NAEventTypeKeyDown || [event type] == NSEventTypeFlagsChanged){
+  if([event type] == NAEventTypeKeyDown || [event type] == NAEventTypeFlagsChanged){
     NA_UIElement* elem;
     NSWindow* focusWindow;
     na_CaptureKeyboardStatus(event);

@@ -126,7 +126,7 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiImage, NASize size){
   
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
-    bezelStyle:0
+    bezelStyle:(NSBezelStyle)0
     frame:naMakeNSRectWithSize(size)];
   na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   

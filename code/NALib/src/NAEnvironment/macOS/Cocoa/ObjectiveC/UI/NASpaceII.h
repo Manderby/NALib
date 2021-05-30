@@ -29,7 +29,7 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 
   // todo: make this dependent on whether tracking is needed or not.
   trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
-      options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
+      options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow)
       owner:self userInfo:nil];
   [self addTrackingArea:trackingArea];
   [self setWantsLayer:YES];

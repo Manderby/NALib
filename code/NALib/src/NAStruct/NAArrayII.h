@@ -446,10 +446,7 @@ NA_IDEF NABool naLocateArrayIndex(NAArrayIterator* iterator, size_t index){
       naError("Array is empty");
   #endif
   iterator->index = index;
-  if(index < 0){
-    iterator->index = NA_ARRAY_INVALID_INDEX;
-    return NA_FALSE;
-  }else if(index >= naGetArrayCount(naGetPtrConst(iterator->array))){
+  if(index >= naGetArrayCount(naGetPtrConst(iterator->array))){
     iterator->index = NA_ARRAY_INVALID_INDEX;
     return NA_FALSE;
   }
@@ -459,15 +456,35 @@ NA_IDEF NABool naLocateArrayIndex(NAArrayIterator* iterator, size_t index){
 
 
 NA_IDEF NABool naIterateArray(NAArrayIterator* iterator, size_t step){
-  if(naIsArrayAtInitial(iterator) && step < 0){iterator->index += naGetArrayCount(naGetPtrConst(iterator->array));}
+  // todo: make IterateBack possible with a separate function
   iterator->index += step;
   if(iterator->index == naGetArrayCount(naGetPtrConst(iterator->array))){iterator->index = NA_ARRAY_INVALID_INDEX;}
-  #if NA_DEBUG
-//    if(iterator->index < NA_ARRAY_INVALID_INDEX)
-//      naError("Iterator underflows");
-//    if(iterator->index >= naGetArrayCount(naGetPtrConst(iterator->array)))
-//      naError("Iterator overflows");
-  #endif
+#if NA_DEBUG
+  //    if(iterator->index < NA_ARRAY_INVALID_INDEX)
+  //      naError("Iterator underflows");
+  //    if(iterator->index >= naGetArrayCount(naGetPtrConst(iterator->array)))
+  //      naError("Iterator overflows");
+#endif
+  return (iterator->index != NA_ARRAY_INVALID_INDEX);
+}
+
+
+
+NA_IDEF NABool naIterateArrayBack(NAArrayIterator* iterator, size_t step){
+  // todo: make IterateBack possible with a separate function
+  if(naIsArrayAtInitial(iterator)){iterator->index += naGetArrayCount(naGetPtrConst(iterator->array));}
+  if(iterator->index < step){
+    iterator->index = NA_ARRAY_INVALID_INDEX;
+  }else{
+    iterator->index -= step;
+    if(iterator->index == naGetArrayCount(naGetPtrConst(iterator->array))){iterator->index = NA_ARRAY_INVALID_INDEX;}
+  }
+#if NA_DEBUG
+  //    if(iterator->index < NA_ARRAY_INVALID_INDEX)
+  //      naError("Iterator underflows");
+  //    if(iterator->index >= naGetArrayCount(naGetPtrConst(iterator->array)))
+  //      naError("Iterator overflows");
+#endif
   return (iterator->index != NA_ARRAY_INVALID_INDEX);
 }
 

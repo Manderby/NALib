@@ -227,6 +227,7 @@ NA_IAPI NABool naLocateListFirst    (NAListIterator* iter);
 NA_IAPI NABool naLocateListLast     (NAListIterator* iter);
 NA_API  NABool naLocateListData     (NAListIterator* iter, const void* data);
 NA_API  NABool naLocateListIndex    (NAListIterator* iter, size_t index);
+NA_API  NABool naLocateListIndexBack(NAListIterator* iter, size_t index);
 
 // Positions dstIter at the same element as srcIter.
 NA_IAPI void   naLocateListIterator (      NAListIterator* dstIter,

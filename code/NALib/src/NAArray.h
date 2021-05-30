@@ -182,10 +182,13 @@ NA_IAPI NABool naLocateArrayIndex(NAArrayIterator* iterator, size_t index);
 
 // /////////////////////////////////
 // Iterating
-// Moves the iterator forward by the given number of steps.
+// Moves the iterator forward or backward by the given number of steps.
+// Backward iteration starts at the end of the array, not the last index!
+// To iterate to the last element, use naIterateArrayBack(it, 1);
 //
-// Returns NA_FALSE when the end of the array is reached.
-NA_IAPI NABool  naIterateArray(NAArrayIterator* iterator, size_t step);
+// Returns NA_FALSE when either end of the array is reached.
+NA_IAPI NABool naIterateArray(NAArrayIterator* iterator, size_t step);
+NA_IAPI NABool naIterateArrayBack(NAArrayIterator* iterator, size_t step);
 
 // /////////////////////////////////
 // Returns the content of the previous, current or next element without moving
