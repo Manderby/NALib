@@ -588,6 +588,7 @@ NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NASize size);
 NA_API NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size);
 NA_API NAButton* naNewImageOptionButton(const NAUIImage* uiImage, NASize size);
 NA_API NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size);
+NA_API void naSetButtonImage(NAButton* button, const NAUIImage* uiImage);
 NA_API void naSetButtonState(NAButton* button, NABool state);
 NA_API void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller);
 NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller);
