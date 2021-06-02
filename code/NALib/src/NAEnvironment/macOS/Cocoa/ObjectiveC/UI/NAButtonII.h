@@ -39,7 +39,7 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   [self setTitle:[NSString stringWithUTF8String:text]];
 }
 
-- (void) setUIImage:(NAUIImage*)uiImage{
+- (void) setUIImage:(const NAUIImage*)uiImage{
   [self setImage:naCreateResolutionIndependentNativeImage(
     self,
     uiImage,
@@ -67,6 +67,11 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   }else{
     [self setKeyEquivalent:@""];
   }
+}
+  
+- (void) setVisible:(NABool)visible{
+  [self setHidden:visible ? NO : YES];
+  printf("%d\n", visible);
 }
 
 @end
@@ -105,7 +110,7 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size){
+NA_DEF NAButton* naNewImageOptionButton(const NAUIImage* uiImage, NASize size){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
@@ -121,7 +126,7 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size){
 
 
 
-NA_DEF NAButton* naNewImageButton(NAUIImage* uiImage, NASize size){
+NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
@@ -181,6 +186,13 @@ NA_DEF void naSetButtonAbort(
     naMakeKeybardStatus(NA_MODIFIER_FLAG_COMMAND, NA_KEYCODE_PERIOD),
     handler,
     controller);
+}
+
+
+
+NA_API void naSetButtonVisible(NAButton* button, NABool visible){
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  [nativePtr setVisible:visible];
 }
 
 

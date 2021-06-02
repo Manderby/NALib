@@ -171,6 +171,12 @@ NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
 
 
 
+NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable){
+  // todo
+}
+
+
+
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
   long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(label), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
@@ -181,6 +187,12 @@ NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
 
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
   SendMessage(naGetUIElementNativePtr(label), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
+}
+
+
+
+NA_DEF void naSetLabelVisible(NALabel* label, NABool visible){
+  // todo
 }
 
 

@@ -8,7 +8,7 @@
 typedef struct NAWINAPIButton NAWINAPIButton;
 struct NAWINAPIButton{
   NAButton   button;
-  NAUIImage* image;
+  const NAUIImage* image;
   NABool     transparent;
 };
 
@@ -227,7 +227,7 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size){
+NA_DEF NAButton* naNewImageOptionButton(const NAUIImage* uiImage, NASize size){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
 	HWND nativePtr = CreateWindow(
@@ -321,6 +321,10 @@ NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* 
     controller);
 }
 
+
+NA_DEF void naSetButtonVisible(NAButton* button, NABool visible){
+  //todo
+}
 
 
 NA_HDEF NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button){

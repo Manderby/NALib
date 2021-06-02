@@ -586,11 +586,12 @@ typedef enum{
 // Button
 NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NASize size);
 NA_API NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size);
-NA_API NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size);
-NA_API NAButton* naNewImageButton(NAUIImage* uiImage, NASize size);
+NA_API NAButton* naNewImageOptionButton(const NAUIImage* uiImage, NASize size);
+NA_API NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size);
 NA_API void naSetButtonState(NAButton* button, NABool state);
 NA_API void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller);
 NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller);
+NA_API void naSetButtonVisible(NAButton* button, NABool visible);
 
 // CheckBox
 NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size);
@@ -602,6 +603,7 @@ NA_API NABool naGetCheckBoxState(NACheckBox* checkBox);
 NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size);
 
 // Label
+// A labe is by default: Eanbled, visible, selectable
 NA_API NALabel* naNewLabel(const NAUTF8Char* text, NASize size);
 NA_API void naSetLabelText(NALabel* label, const NAUTF8Char* text);
 NA_API void naSetLabelTextColor(NALabel* label, const NABabyColor* color);
@@ -609,8 +611,10 @@ NA_API void naSetLabelTextColor(NALabel* label, const NABabyColor* color);
 NA_API void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
 NA_API NABool naIsLabelEnabled(NALabel* label);
 NA_API void naSetLabelEnabled(NALabel* label, NABool enabled);
+NA_API void naSetLabelSelectable(NALabel* label, NABool selectable);
 NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
 NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind);
+NA_API void naSetLabelVisible(NALabel* label, NABool visible);
 
 // OpenGLSpace
 // Note that you must have NA_COMPILE_OPENGL configured in NAConfiguration.h

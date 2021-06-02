@@ -192,12 +192,20 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
   [self setAlphaValue:enabled ? (CGFloat)1. : (CGFloat).35];
 }
 
+- (void) setLabelSelectable:(NABool)selectable{
+  [self setSelectable:selectable ? YES : NO];
+}
+
 - (void) setTextAlignment:(NATextAlignment) alignment{
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 
 - (void) setFontKind:(NAFontKind)kind{
   [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKind(kind))];
+}
+
+- (void) setVisible:(NABool)visible{
+  [self setHidden:visible ? NO : YES];
 }
 
 @end
@@ -253,6 +261,13 @@ NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
 
 
 
+NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable){
+  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
+  [nativePtr setLabelSelectable:selectable];
+}
+
+
+
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
   [nativePtr setTextAlignment:alignment];
@@ -263,6 +278,13 @@ NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
   [nativePtr setFontKind:kind];
+}
+
+
+
+NA_DEF void naSetLabelVisible(NALabel* label, NABool visible){
+  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
+  [nativePtr setVisible:visible];
 }
 
 
