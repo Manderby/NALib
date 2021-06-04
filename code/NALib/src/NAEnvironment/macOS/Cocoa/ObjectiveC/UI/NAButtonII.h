@@ -16,6 +16,7 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 
 @interface NACocoaNativeButton : NSButton{
   NACocoaButton* cocoaButton;
+  NSTrackingArea* trackingArea;
 }
 @end
 
@@ -32,7 +33,19 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   cocoaButton = newCocoaButton;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
+  
+  // todo: make this dependent on whether tracking is needed or not.
+  trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
+      options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveAlways)
+      owner:self userInfo:nil];
+  [self addTrackingArea:trackingArea];
+
   return self;
+}
+
+- (void)dealloc{
+  NA_COCOA_RELEASE(trackingArea);
+  [super dealloc];
 }
 
 - (void) setButtonText:(const NAUTF8Char*)text{
@@ -57,6 +70,16 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED);
 }
 
+- (void) mouseEntered:(NSEvent*)event{
+  NA_UNUSED(event);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_ENTERED);
+}
+
+- (void) mouseExited:(NSEvent*)event{
+  NA_UNUSED(event);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_EXITED);
+}
+
 - (void) setButtonState:(NABool)state{
   [self setState:state ? NAStateOn : NAStateOff];
 }
@@ -71,7 +94,6 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   
 - (void) setVisible:(NABool)visible{
   [self setHidden:visible ? NO : YES];
-  printf("%d\n", visible);
 }
 
 @end
@@ -144,6 +166,13 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size){
 
 NA_DEF void na_DestructCocoaButton(NACocoaButton* cocoaButton){
   na_ClearButton((NAButton*)cocoaButton);
+}
+
+
+
+NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  [nativePtr setUIImage:uiImage];
 }
 
 

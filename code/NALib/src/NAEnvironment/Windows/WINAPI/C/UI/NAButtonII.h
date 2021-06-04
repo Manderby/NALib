@@ -292,6 +292,12 @@ NA_DEF void na_DestructWINAPIButton(NAWINAPIButton* winapiButton){
 
 
 
+NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
+  // todo
+}
+
+
+
 NA_DEF void naSetButtonState(NAButton* button, NABool state){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   SendMessage(naGetUIElementNativePtr(winapiButton), BM_SETSTATE, (WPARAM)state, (LPARAM)NA_NULL);
