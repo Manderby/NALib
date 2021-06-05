@@ -126,8 +126,10 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
           skin = naGetSkinForCurrentAppearance();
         }
 
+        [image lockFocus];
         CGContextRef context = naGetCGContextRef([NSGraphicsContext currentContext]);
         if(!context){
+          [image unlockFocus];
           return NO;
         }
 
@@ -138,6 +140,8 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
           cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
         }
         CGContextDrawImage(context, dstRect, cocoaimage);
+        [image unlockFocus];
+
         return YES;
       }];
     ) // end NA_MACOS_AVAILABILITY_GUARD_10_8

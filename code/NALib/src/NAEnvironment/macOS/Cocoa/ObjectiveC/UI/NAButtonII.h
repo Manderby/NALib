@@ -36,7 +36,7 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   
   // todo: make this dependent on whether tracking is needed or not.
   trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
-      options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveAlways)
+      options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp)
       owner:self userInfo:nil];
   [self addTrackingArea:trackingArea];
 
