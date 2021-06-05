@@ -114,38 +114,41 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
   NAUIImageKind kind)
 {
   NSImage* image = nil;
+  NA_UNUSED(containingView);
 
   // modern method: Create an image which redraws itself automatically.
-  if(containingView && [NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
-    NA_MACOS_AVAILABILITY_GUARD_10_8(
-      NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
-      image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
-      {
-        NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
-        if(uiImage->tintMode != NA_BLEND_ZERO){
-          skin = naGetSkinForCurrentAppearance();
-        }
-
-        [image lockFocus];
-        CGContextRef context = naGetCGContextRef([NSGraphicsContext currentContext]);
-        if(!context){
-          [image unlockFocus];
-          return NO;
-        }
-
-        NAUIImageResolution resolution = naGetWindowBackingScaleFactor([containingView window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
-
-        CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, kind, skin);
-        if(!cocoaimage){
-          cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-        }
-        CGContextDrawImage(context, dstRect, cocoaimage);
-        [image unlockFocus];
-
-        return YES;
-      }];
-    ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
-  }
+  // This is commented out as there have been severe problems with this working
+  // on different computers. The context sometimes simply does not seem to be
+  // there and returns null, resulting in empty images.
+//  if(containingView && [NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
+//    NA_MACOS_AVAILABILITY_GUARD_10_8(
+//      NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
+//      image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
+//      {
+//        NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
+//        if(uiImage->tintMode != NA_BLEND_ZERO){
+//          skin = naGetSkinForCurrentAppearance();
+//        }
+//
+//        [image lockFocus];
+//        CGContextRef context = naGetCGContextRef([NSGraphicsContext currentContext]);
+//        if(!context){
+//          [image unlockFocus];
+//          return NO;
+//        }
+//
+//        NAUIImageResolution resolution = naGetWindowBackingScaleFactor([containingView window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
+//
+//        CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, kind, skin);
+//        if(!cocoaimage){
+//          cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
+//        }
+//        CGContextDrawImage(context, dstRect, cocoaimage);
+//        [image unlockFocus];
+//        return YES;
+//      }];
+//    ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
+//  }
   
   // old method: Just create an image with multiple representations.
   if(!image){
