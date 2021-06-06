@@ -84,7 +84,7 @@ NA_HIDEF void na_SetUIImageBabyImage(NAUIImage* uiImage, const NABabyImage* baby
 
 
 
-NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
+NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, const NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
   NAUIImage* uiImage;
   NABabyImage* main1x;
   

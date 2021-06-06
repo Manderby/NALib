@@ -26,7 +26,7 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 
 - (id) initWithButton:(NACocoaButton*)newCocoaButton bezelStyle:(NSBezelStyle)bezelStyle frame:(NSRect)frame{
   self = [super initWithFrame:frame];
-  [self setButtonType:(bezelStyle == NABezelStyleRounded) ? NAButtonTypeMomentaryLight : NAButtonTypePushOnPushOff];
+  [self setButtonType:(bezelStyle == NABezelStyleRounded) ? NAButtonTypeMomentaryLight : NSButtonTypeToggle];
   // NSBezelStyleShadowlessSquare is used to have a transparent background. The option 0 has a grey background.
   [self setBezelStyle:bezelStyle ? bezelStyle : NABezelStyleShadowlessSquare]; 
   [self setBordered:bezelStyle ? YES : NO];

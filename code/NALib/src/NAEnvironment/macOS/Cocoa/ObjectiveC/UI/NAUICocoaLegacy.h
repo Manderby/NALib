@@ -177,6 +177,7 @@
   #define NAButtonTypeRadio               NSButtonTypeRadio
   #define NAButtonTypeSwitch              NSButtonTypeSwitch
   #define NAButtonTypePushOnPushOff       NSButtonTypePushOnPushOff
+  #define NAButtonTypeToggle              NSButtonTypeToggle
   #define NAButtonTypeMomentaryChange     NSButtonTypeMomentaryChange
 
   #define NABezelStyleRounded             NSBezelStyleRounded
@@ -190,6 +191,7 @@
   #define NAButtonTypeRadio               NSRadioButton
   #define NAButtonTypeSwitch              NSSwitchButton
   #define NAButtonTypePushOnPushOff       NSPushOnPushOffButton
+  #define NAButtonTypeToggle              NSToggleButton
   #define NAButtonTypeMomentaryChange     NSMomentaryChangeButton
 
   #define NABezelStyleRounded             NSRoundedBezelStyle
