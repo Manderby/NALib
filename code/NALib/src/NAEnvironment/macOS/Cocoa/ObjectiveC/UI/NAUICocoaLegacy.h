@@ -106,6 +106,18 @@
 
 
 // Mapping of deprecated entities
+
+// For reference, here are how the different button states behave:
+// name                    recessed   stateful   toggles main/alt
+// NAButtonTypeMomentaryPushIn   N          N          N
+// NAButtonTypeMomentaryLight    Y          N          N
+// NAButtonTypeOnOff             N          Y          N
+// NAButtonTypeMomentaryChange   N          N          Y
+// NAButtonTypePushOnPushOff     Y          Y          N
+// NAButtonTypeToggle            N          Y          Y
+// NAButtonTypeSwitch            = NAButtonTypeToggle but borderless
+// NAButtonTypeRadio             = NAButtonTypeSwitch but constrained
+
 #if defined __MAC_10_7
   #define NATextAlignmentLeft             NSTextAlignmentLeft
   #define NATextAlignmentRight            NSTextAlignmentRight
@@ -179,6 +191,8 @@
   #define NAButtonTypePushOnPushOff       NSButtonTypePushOnPushOff
   #define NAButtonTypeToggle              NSButtonTypeToggle
   #define NAButtonTypeMomentaryChange     NSButtonTypeMomentaryChange
+  #define NAButtonTypeOnOff               NSButtonTypeOnOff
+  #define NAButtonTypeMomentaryPushIn     NSButtonTypeMomentaryPushIn
 
   #define NABezelStyleRounded             NSBezelStyleRounded
   #define NABezelStyleShadowlessSquare    NSBezelStyleShadowlessSquare

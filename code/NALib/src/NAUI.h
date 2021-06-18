@@ -584,12 +584,16 @@ typedef enum{
 #endif
 
 // Button
-NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NASize size);
-NA_API NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size);
-NA_API NAButton* naNewImageOptionButton(const NAUIImage* uiImage, NASize size);
-NA_API NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size);
+#define NA_BUTTON_BORDERED   0x00
+#define NA_BUTTON_BORDERLESS 0x01
+#define NA_BUTTON_PUSH       0x00
+#define NA_BUTTON_STATEFUL   0x10
+
+NA_API NAButton* naNewTextButton(const NAUTF8Char* text, NASize size, uint32 flags);
+NA_API NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 flags);
 NA_API void naSetButtonImage(NAButton* button, const NAUIImage* uiImage);
 NA_API void naSetButtonState(NAButton* button, NABool state);
+NA_API NABool naGetButtonState(NAButton* button);
 NA_API void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller);
 NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller);
 NA_API void naSetButtonVisible(NAButton* button, NABool visible);
