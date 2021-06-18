@@ -61,7 +61,7 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 
 - (void)dealloc{
   NA_COCOA_RELEASE(trackingArea);
-  [super dealloc];
+  NA_COCOA_SUPER_DEALLOC();
 }
 
 - (void) setButtonText:(const NAUTF8Char*)text{
