@@ -139,6 +139,15 @@ NA_HDEF void na_ClearLabel(NALabel* label){
 
 
 
+NA_HDEF void na_InitMenu(NAMenu* menu, void* nativePtr){
+  na_InitUIElement(&(menu->uiElement), NA_UI_MENU, nativePtr);
+}
+NA_HDEF void na_ClearMenu(NAMenu* menu){
+  na_ClearUIElement(&(menu->uiElement));
+}
+
+
+
 NA_HDEF void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr){
   na_InitUIElement(&(openGLSpace->uiElement), NA_UI_OPENGLSPACE, nativePtr);
 }
@@ -339,6 +348,16 @@ NA_HDEF NABool na_IsApplicationRunning(void){
   return (NABool)(na_App->flags & NA_APPLICATION_FLAG_RUNNING);
 }
 
+
+
+NA_HDEF NARect na_GetApplicationAbsoluteRect(){
+  NARect rect;
+  rect.pos.x = 0;
+  rect.pos.y = 0;
+  rect.size.width = 1;
+  rect.size.height = 1;
+  return rect;
+}
 
 
 

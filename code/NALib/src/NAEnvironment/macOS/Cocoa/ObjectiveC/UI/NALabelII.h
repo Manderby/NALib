@@ -208,6 +208,10 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
   [self setHidden:visible ? NO : YES];
 }
 
+- (NARect) getInnerRect{
+  return naMakeRectWithNSRect([self frame]);
+}
+
 @end
 
 
@@ -290,8 +294,12 @@ NA_DEF void naSetLabelVisible(NALabel* label, NABool visible){
 
 
 NA_HDEF NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label){
-  NA_UNUSED(label);
-  return naMakeRectS(20, 40, 100, 50);
+  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(label), naGetApplication(), NA_FALSE);
+  NARect relRect = [nativePtr getInnerRect];
+  return naMakeRect(
+    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
+    relRect.size);
 }
 
 

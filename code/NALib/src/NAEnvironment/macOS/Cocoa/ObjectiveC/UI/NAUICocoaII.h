@@ -13,20 +13,6 @@
 
 
 
-NA_HAPI NARect na_GetApplicationAbsoluteRect(void);
-NA_HAPI NARect na_GetScreenAbsoluteRect(NA_UIElement* screen);
-NA_HAPI NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window);
-NA_HAPI NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space);
-NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace);
-NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* space);
-NA_HAPI NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button);
-NA_HAPI NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio);
-NA_HAPI NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox);
-NA_HAPI NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label);
-NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField);
-NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox);
-NA_HAPI NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* slider);
-
 NA_HAPI void na_RenewWindowMouseTracking(NAWindow* window);
 NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);
 
@@ -250,19 +236,6 @@ NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment){
 
 
 
-
-
-NA_HDEF NARect na_GetApplicationAbsoluteRect(void){
-  NARect rect;
-  rect.pos.x = 0;
-  rect.pos.y = 0;
-  rect.size.width = 1;
-  rect.size.height = 1;
-  return rect;
-}
-
-
-
 NA_HDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
   NARect rect;
   NSRect frame;
@@ -366,6 +339,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
   case NA_UI_CHECKBOX:    rect = na_GetCheckBoxAbsoluteInnerRect(element); break;
   case NA_UI_IMAGESPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(element); break;
   case NA_UI_LABEL:       rect = na_GetLabelAbsoluteInnerRect(element); break;
+  case NA_UI_MENU:        rect = na_GetMenuAbsoluteInnerRect(element); break;
   case NA_UI_OPENGLSPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(element); break;
   case NA_UI_RADIO:       rect = na_GetRadioAbsoluteInnerRect(element); break;
   case NA_UI_SCREEN:      rect = na_GetScreenAbsoluteRect(element); break;
@@ -392,6 +366,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
     case NA_UI_CHECKBOX:    relrect = na_GetCheckBoxAbsoluteInnerRect(relelement); break;
     case NA_UI_IMAGESPACE:  relrect = na_GetImageSpaceAbsoluteInnerRect(relelement); break;
     case NA_UI_LABEL:       relrect = na_GetLabelAbsoluteInnerRect(relelement); break;
+    case NA_UI_MENU:        relrect = na_GetMenuAbsoluteInnerRect(relelement); break;
     case NA_UI_OPENGLSPACE: relrect = na_GetOpenGLSpaceAbsoluteInnerRect(relelement); break;
     case NA_UI_RADIO:       relrect = na_GetRadioAbsoluteInnerRect(relelement); break;
     case NA_UI_SCREEN:      relrect = na_GetScreenAbsoluteRect(relelement); break;

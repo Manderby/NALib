@@ -75,6 +75,9 @@ NA_RUNTIME_TYPE(NACocoaCheckBox, na_DestructCocoaCheckBox, NA_FALSE);
   return ([self state] == NAStateOn) ? NA_TRUE : NA_FALSE;
 }
 
+- (NARect) getInnerRect{
+  return naMakeRectWithNSRect([self frame]);
+}
 @end
 
 
@@ -108,8 +111,12 @@ NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* colo
 
 
 NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox){
-  NA_UNUSED(checkBox);
-  return naMakeRectS(20, 40, 100, 50);
+  naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(checkBox), naGetApplication(), NA_FALSE);
+  NARect relRect = [nativePtr getInnerRect];
+  return naMakeRect(
+    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
+    relRect.size);
 }
 
 

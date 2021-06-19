@@ -96,6 +96,10 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
   return ([self state] == NAStateOn) ? NA_TRUE : NA_FALSE;
 }
 
+- (NARect) getInnerRect{
+  return naMakeRectWithNSRect([self frame]);
+}
+
 @end
 
 
@@ -129,8 +133,12 @@ NA_DEF void naSetRadioTextColor(NARadio* radio, const NABabyColor* color){
 
 
 NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
-  NA_UNUSED(radio);
-  return naMakeRectS(20, 40, 100, 50);
+  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(radio), naGetApplication(), NA_FALSE);
+  NARect relRect = [nativePtr getInnerRect];
+  return naMakeRect(
+    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
+    relRect.size);
 }
 
 

@@ -52,10 +52,25 @@ struct ExperimentController{
   NALabel* textFieldLabel;
   NATextField* textField;
 
+  NALabel* menuLabel;
+  NAButton* menuButton;
+  NAMenu* menu;
+
   int textOption;
   int imageOption;
   NALabel* outputLabel;
 };
+
+NABool windowReshaped(NAReaction reaction){
+  ExperimentController* con = reaction.controller;
+  NARect rect = naGetUIElementRect(con->experimentWindow, naGetApplication(), NA_FALSE);
+  NARect borderRect = naGetUIElementRect(con->experimentWindow, naGetApplication(), NA_TRUE);
+  NAString* labelString = naNewStringWithFormat("Window reshaped.\nRect with border:    %.01f, %.01f, %.01f, %.01f\nRect without border: %.01f, %.01f, %.01f, %.01f", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height, borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
+  naSetLabelText(con->outputLabel, naGetStringUTF8Pointer(labelString));
+  naDelete(labelString);
+
+  return NA_TRUE;
+}
 
 NABool buttonPressed(NAReaction reaction){
   ExperimentController* con = reaction.controller;
@@ -156,6 +171,24 @@ NABool textFieldEdited(NAReaction reaction){
   return NA_TRUE;
 }
 
+NABool menuButtonPressed(NAReaction reaction){
+  ExperimentController* con = reaction.controller;
+  
+  NARect rect = naGetUIElementRect(con->menuButton, naGetApplication(), NA_FALSE);
+  NAPos menuPos = rect.pos;
+  menuPos.x += rect.size.width;
+  menuPos.y += rect.size.height;
+
+  naDisplayMenu(con->menu, menuPos);
+//  NATextField* textField = reaction.uiElement;
+//  NAString* textFieldString = naNewStringWithTextFieldText(textField);
+//  const char* outputText = naAllocSprintf(NA_TRUE, "TextField Value Edited to %s", naGetStringUTF8Pointer(textFieldString));
+//  naSetLabelText(con->outputLabel, outputText);
+//  naDelete(textFieldString);
+
+  return NA_TRUE;
+}
+
 
 
 ExperimentController* createExperimentController(){
@@ -182,6 +215,7 @@ ExperimentController* createExperimentController(){
 
   con->contentSpace = naNewSpace(naMakeSize(windowWidth, windowHeight));
   naSetWindowContentSpace(con->experimentWindow, con->contentSpace);
+  naAddUIReaction(con->experimentWindow, NA_UI_COMMAND_RESHAPE, windowReshaped, con);
 
   double curPosY = windowHeight - 42;
   con->textButtonLabel = naNewLabel("NAButton: TextButton", naMakeSize(200, 22));
@@ -276,9 +310,18 @@ ExperimentController* createExperimentController(){
   naAddSpaceChild(con->contentSpace, con->textField, naMakePos(250, curPosY));
   naAddUIReaction(con->textField, NA_UI_COMMAND_EDITED, textFieldEdited, con);
 
+  curPosY -= 30;
+  con->menuLabel = naNewLabel("NAMenu", naMakeSize(descSize, 22));
+  naAddSpaceChild(con->contentSpace, con->menuLabel, naMakePos(20, curPosY));
+  con->menuButton = naNewTextButton("Push for Menu", naMakeSize(buttonSize * 2, 24), 0);
+  naAddUIReaction(con->menuButton, NA_UI_COMMAND_PRESSED, menuButtonPressed, con);
+  naAddSpaceChild(con->contentSpace, con->menuButton, naMakePos(left, curPosY));
+  con->menu = naNewMenu();
+
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
-    naMakeSize(windowWidth - 20, 44));
+    naMakeSize(windowWidth - 20, 88));
+  naSetLabelFontKind(con->outputLabel, NA_FONT_KIND_MONOSPACE);
   naAddSpaceChild(con->contentSpace, con->outputLabel, naMakePos(10, 10));
 
   con->textOption = 0;

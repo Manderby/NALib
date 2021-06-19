@@ -37,6 +37,9 @@ NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
   [self setImage:image];
 }
 
+- (NARect) getInnerRect{
+  return naMakeRectWithNSRect([self frame]);
+}
 @end
 
 
@@ -65,8 +68,12 @@ NA_DEF void na_DestructCocoaImageSpace(NACocoaImageSpace* cocoaImageSpace){
 
 
 NA_HDEF NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace){
-  NA_UNUSED(imageSpace);
-  return naMakeRectS(20, 40, 100, 50);
+  naDefineCocoaObject(NACocoaNativeImageSpace, nativePtr, imageSpace);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(imageSpace), naGetApplication(), NA_FALSE);
+  NARect relRect = [nativePtr getInnerRect];
+  return naMakeRect(
+    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
+    relRect.size);
 }
 
 
