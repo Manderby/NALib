@@ -134,10 +134,21 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   // Warning: does not work when frame unequal bounds.
   NSRect contentRect = [nativePtr frame];
-  NARect windowrect = na_GetWindowAbsoluteInnerRect((NA_UIElement*)naGetUIElementWindow(space));
+  
+  NARect windowRect;
+  NAWindow* window = naGetUIElementWindow(space);
+  if(window){
+    windowRect = na_GetNativeWindowAbsoluteInnerRect(naGetUIElementNativePtr(window));
+  }else{
+    #ifndef NDEBUG
+      naError("Given element has no NAWindow as parent. Using native window parent.");
+    #endif
+    windowRect = naMakeRectWithNSRect([[nativePtr window] frame]);
+  }
+  
   NARect rect = naMakeRectS(
-    windowrect.pos.x + contentRect.origin.x,
-    windowrect.pos.y + contentRect.origin.y,
+    windowRect.pos.x + contentRect.origin.x,
+    windowRect.pos.y + contentRect.origin.y,
     contentRect.size.width,
     contentRect.size.height);
   return rect;

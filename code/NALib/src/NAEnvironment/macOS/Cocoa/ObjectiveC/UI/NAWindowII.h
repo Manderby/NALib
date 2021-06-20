@@ -231,18 +231,24 @@ NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem){
 
 
 
-NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
+NA_HDEF NARect na_GetNativeWindowAbsoluteInnerRect(NSWindow* window){
   NARect rect;
   NSRect contentRect;
   NSRect windowFrame;
-  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
-  contentRect = [[nativePtr contentView] frame];
-  windowFrame = [nativePtr frame];
+  contentRect = [[window contentView] frame];
+  windowFrame = [window frame];
   rect.pos.x = windowFrame.origin.x + contentRect.origin.x;
   rect.pos.y = windowFrame.origin.y + contentRect.origin.y;
   rect.size.width = contentRect.size.width;
   rect.size.height = contentRect.size.height;
   return rect;
+}
+
+
+
+NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
+  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+  return na_GetNativeWindowAbsoluteInnerRect(nativePtr);
 }
 
 

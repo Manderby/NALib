@@ -16,7 +16,7 @@
 NA_HAPI void na_RenewWindowMouseTracking(NAWindow* window);
 NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);
 
-
+NA_HAPI NARect na_GetNativeWindowAbsoluteInnerRect(NSWindow* window);
 
 // Cocoa thinks it's smart by doing things automatically. Unfortunately, we
 // have to encapsulate some ui elements like NARadio or NATextBox into its own

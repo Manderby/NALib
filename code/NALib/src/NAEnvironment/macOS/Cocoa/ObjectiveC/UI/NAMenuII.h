@@ -52,7 +52,7 @@ NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
   if(index == -1){
     [self addItem:item];
   }else{
-    [self insertItem:item atIndex: (NSUInteger)index];
+    [self insertItem:item atIndex: (NSInteger)index];
   }
 }
 

@@ -401,8 +401,9 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
       naError("Only windows can receyve CLOSES commands.");
     if((command == NA_UI_COMMAND_PRESSED)
       && (naGetUIElementType(uiElement) != NA_UI_BUTTON)
-      && (naGetUIElementType(uiElement) != NA_UI_RADIO)
-      && (naGetUIElementType(uiElement) != NA_UI_CHECKBOX))
+      && (naGetUIElementType(uiElement) != NA_UI_CHECKBOX)
+      && (naGetUIElementType(uiElement) != NA_UI_MENUITEM)
+      && (naGetUIElementType(uiElement) != NA_UI_RADIO))
       naError("Only buttons, radios and checkBoxes can receyve PRESSED commands.");
     if((command == NA_UI_COMMAND_EDITED) && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD) && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
       naError("Only textFields or Sliders can receyve EDITED commands.");
