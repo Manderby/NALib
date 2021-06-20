@@ -19,24 +19,41 @@ NA_RUNTIME_TYPE(NACocoaMenu, na_DestructCocoaMenu, NA_FALSE);
 }
 @end
 
+typedef struct NACocoaMenuItem NACocoaMenuItem;
+struct NACocoaMenuItem{
+  NAMenuItem menuItem;
+};
+
+NA_HAPI void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem);
+NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
+
+@interface NACocoaNativeMenuItem : NSMenuItem{
+  NACocoaMenuItem* cocoaMenuItem;
+}
+@end
+
 
 
 @implementation NACocoaNativeMenu
 
 - (id) initWithMenu:(NACocoaMenu*)newCocoaMenu{
   self = [super initWithTitle:@"NALib"];
-
-  NSMenuItem* item0 = [[NSMenuItem alloc] initWithTitle:@"I am Groot" action:nil keyEquivalent:@""];
-  [self insertItem:item0 atIndex: 0];
-  NSMenuItem* item1 = [[NSMenuItem alloc] initWithTitle:@"You are Winner" action:nil keyEquivalent:@""];
-  [self insertItem:item1 atIndex: 1];
-  NSMenuItem* item2 = [[NSMenuItem alloc] initWithTitle:@"Kohle, Kohle, Kohle" action:nil keyEquivalent:@""];
-  [self insertItem:item2 atIndex: 2];
-  NSMenuItem* item3 = [[NSMenuItem alloc] initWithTitle:@"None of that Objective-C rubbish" action:nil keyEquivalent:@""];
-  [self insertItem:item3 atIndex: 3];
-
   cocoaMenu = newCocoaMenu;
   return self;
+}
+
+- (int) getMenuItemIndex:(NSMenuItem*)item{
+  NSUInteger index = [[self itemArray] indexOfObject:item];
+  return index == NSNotFound ? -1 : (int)index;
+}
+
+- (void) addMenuItem:(NSMenuItem*)item atItem:(NSMenuItem*)atItem{  
+  int index = [self getMenuItemIndex:atItem];
+  if(index == -1){
+    [self addItem:item];
+  }else{
+    [self insertItem:item atIndex: (NSUInteger)index];
+  }
 }
 
 - (void) displayAt:(NAPos)pos{
@@ -52,14 +69,37 @@ NA_RUNTIME_TYPE(NACocoaMenu, na_DestructCocoaMenu, NA_FALSE);
 
 @end
 
+@implementation NACocoaNativeMenuItem
+
+- (id) initWithMenuItem:(NACocoaMenuItem*)newCocoaMenuItem text:(NAUTF8Char*) text{
+  self = [super
+    initWithTitle:[NSString stringWithUTF8String:text]
+    action:@selector(itemSelected:)
+    keyEquivalent:@""];
+  [self setTarget:self];
+  cocoaMenuItem = newCocoaMenuItem;
+  return self;
+}
+
+- (void)itemSelected:(id)sender{
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaMenuItem, NA_UI_COMMAND_PRESSED);
+}
+
+- (NARect) getInnerRect{
+  // todo
+  return naMakeRectS(0, 0, 10, 10);
+}
+
+@end
 
 
-NA_DEF NAMenu* naNewMenu(){
+
+NA_DEF NAMenu* naNewMenu(void* parent){
   NACocoaMenu* cocoaMenu = naNew(NACocoaMenu);
   
   NACocoaNativeMenu* nativePtr = [[NACocoaNativeMenu alloc]
     initWithMenu:cocoaMenu];
-  na_InitMenu((NAMenu*)cocoaMenu, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitMenu((NAMenu*)cocoaMenu, NA_COCOA_PTR_OBJC_TO_C(nativePtr), (NA_UIElement*)parent);
 
   return (NAMenu*)cocoaMenu;
 }
@@ -72,7 +112,45 @@ NA_DEF void na_DestructCocoaMenu(NACocoaMenu* cocoaMenu){
 
 
 
-NA_DEF void naDisplayMenu(NAMenu* menu, NAPos pos){
+NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, NAUTF8Char* text, NAMenuItem* atItem){
+  NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
+  
+  NACocoaNativeMenuItem* nativeItemPtr = [[NACocoaNativeMenuItem alloc]
+    initWithMenuItem:cocoaMenuItem
+    text: text];
+  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr));
+
+  naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
+  
+  if(atItem){
+    naDefineCocoaObject(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
+    [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
+  }else{
+    [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];
+  }
+  
+  na_AddMenuChild(menu, (NAMenuItem*)cocoaMenuItem);
+  
+  return (NAMenuItem*)cocoaMenuItem;
+}
+
+
+
+NA_DEF void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem){
+  na_ClearMenuItem((NAMenuItem*)cocoaMenuItem);
+}
+
+
+
+NA_DEF int32 naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
+  naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
+  naDefineCocoaObject(NACocoaNativeMenuItem, nativeMenuItemPtr, item);
+  return [nativeMenuPtr getMenuItemIndex:nativeMenuItemPtr];
+}
+
+
+
+NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos){
   naDefineCocoaObject(NACocoaNativeMenu, nativePtr, menu);
   [nativePtr displayAt:pos];
 }
@@ -82,6 +160,17 @@ NA_DEF void naDisplayMenu(NAMenu* menu, NAPos pos){
 NA_HDEF NARect na_GetMenuAbsoluteInnerRect(NA_UIElement* menu){
   naDefineCocoaObject(NACocoaNativeMenu, nativePtr, menu);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(menu), naGetApplication(), NA_FALSE);
+  NARect relRect = [nativePtr getInnerRect];
+  return naMakeRect(
+    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
+    relRect.size);
+}
+
+
+
+NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(NA_UIElement* menuItem){
+  naDefineCocoaObject(NACocoaNativeMenuItem, nativePtr, menuItem);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(menuItem), naGetApplication(), NA_FALSE);
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

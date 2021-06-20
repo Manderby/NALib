@@ -308,6 +308,7 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     case NA_UI_IMAGESPACE:  info = naImageSpaceWINAPIProc (uiElement, message, wParam, lParam); break;
     case NA_UI_LABEL:       info = naLabelWINAPIProc      (uiElement, message, wParam, lParam); break;
     case NA_UI_MENU:        info = naMenuWINAPIProc       (uiElement, message, wParam, lParam); break;
+    case NA_UI_MENUITEM:    info = naMenuItemWINAPIProc   (uiElement, message, wParam, lParam); break;
     case NA_UI_OPENGLSPACE: info = naOpenGLSpaceWINAPIProc(uiElement, message, wParam, lParam); break;
     case NA_UI_RADIO:       info = naRadioWINAPIProc      (uiElement, message, wParam, lParam); break;
     case NA_UI_SLIDER:      info = naSliderWINAPIProc     (uiElement, message, wParam, lParam); break;

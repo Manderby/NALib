@@ -139,11 +139,28 @@ NA_HDEF void na_ClearLabel(NALabel* label){
 
 
 
-NA_HDEF void na_InitMenu(NAMenu* menu, void* nativePtr){
+NA_HDEF void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent){
   na_InitUIElement(&(menu->uiElement), NA_UI_MENU, nativePtr);
+  naInitList(&(menu->childs));
+  na_SetUIElementParent(&(menu->uiElement), parent);
 }
 NA_HDEF void na_ClearMenu(NAMenu* menu){
+  naForeachListMutable(&(menu->childs), (NAMutator)naDelete);
+  naClearList(&(menu->childs));
   na_ClearUIElement(&(menu->uiElement));
+}
+NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child){
+  naAddListLastMutable(&(menu->childs), child);
+  na_SetUIElementParent(&(child->uiElement), menu);
+}
+
+
+
+NA_HDEF void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr){
+  na_InitUIElement(&(menuItem->uiElement), NA_UI_MENUITEM, nativePtr);
+}
+NA_HDEF void na_ClearMenuItem(NAMenuItem* menuItem){
+  na_ClearUIElement(&(menuItem->uiElement));
 }
 
 

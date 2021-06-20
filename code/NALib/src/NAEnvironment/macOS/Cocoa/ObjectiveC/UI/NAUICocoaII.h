@@ -340,6 +340,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
   case NA_UI_IMAGESPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(element); break;
   case NA_UI_LABEL:       rect = na_GetLabelAbsoluteInnerRect(element); break;
   case NA_UI_MENU:        rect = na_GetMenuAbsoluteInnerRect(element); break;
+  case NA_UI_MENUITEM:    rect = na_GetMenuItemAbsoluteInnerRect(element); break;
   case NA_UI_OPENGLSPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(element); break;
   case NA_UI_RADIO:       rect = na_GetRadioAbsoluteInnerRect(element); break;
   case NA_UI_SCREEN:      rect = na_GetScreenAbsoluteRect(element); break;
@@ -367,6 +368,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
     case NA_UI_IMAGESPACE:  relrect = na_GetImageSpaceAbsoluteInnerRect(relelement); break;
     case NA_UI_LABEL:       relrect = na_GetLabelAbsoluteInnerRect(relelement); break;
     case NA_UI_MENU:        relrect = na_GetMenuAbsoluteInnerRect(relelement); break;
+    case NA_UI_MENUITEM:    relrect = na_GetMenuItemAbsoluteInnerRect(relelement); break;
     case NA_UI_OPENGLSPACE: relrect = na_GetOpenGLSpaceAbsoluteInnerRect(relelement); break;
     case NA_UI_RADIO:       relrect = na_GetRadioAbsoluteInnerRect(relelement); break;
     case NA_UI_SCREEN:      relrect = na_GetScreenAbsoluteRect(relelement); break;
