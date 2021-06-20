@@ -72,6 +72,8 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
     [pool drain]; // also releases the pool. No separate release necessary.
   #endif
 
+//  [NSApp setDelegate:naGetUIElementNativePtr(app)];
+
   // Start the event loop.
   NSDate* distantFuture = [NSDate distantFuture];
   while(na_IsApplicationRunning()){
@@ -79,6 +81,11 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
       pool = [[NSAutoreleasePool alloc] init];
     #endif
       NSEvent* curEvent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantFuture inMode:NSDefaultRunLoopMode dequeue:YES];
+//      NSEventType type = [curEvent type];
+//      [curevent description]
+//      NSEventSubtype subtype = [curEvent subtype];
+//      printf("type %d, desc %s\n", (int)type, [[curEvent description] UTF8String]);
+//      NSEventSubtypeWindowMoved
       naCollectGarbage();
       if(!na_InterceptKeyboardShortcut(curEvent)){
         if(curEvent){[NSApp sendEvent:curEvent];}
