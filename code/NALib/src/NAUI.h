@@ -71,6 +71,8 @@ typedef struct NAButton         NAButton;
 typedef struct NACheckBox       NACheckBox;
 typedef struct NAImageSpace     NAImageSpace;
 typedef struct NALabel          NALabel;
+typedef struct NAMenu           NAMenu;
+typedef struct NAMenuItem       NAMenuItem;
 typedef struct NAOpenGLSpace    NAOpenGLSpace;
 typedef struct NARadio          NARadio;
 typedef struct NAScreen         NAScreen;
@@ -92,6 +94,8 @@ typedef enum{
   NA_UI_CHECKBOX,
   NA_UI_IMAGESPACE,
   NA_UI_LABEL,
+  NA_UI_MENU,
+  NA_UI_MENUITEM,
   NA_UI_OPENGLSPACE,
   NA_UI_RADIO,
   NA_UI_SCREEN,
@@ -620,6 +624,14 @@ NA_API void naSetLabelSelectable(NALabel* label, NABool selectable);
 NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
 NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind);
 NA_API void naSetLabelVisible(NALabel* label, NABool visible);
+
+// Menu and MenuItem
+// naNewMenuItem adds a new menu item before atItem. If atItem is Null, it is
+// added to the end of the menu.
+NA_API NAMenu* naNewMenu(void* parent);
+NA_API NAMenuItem* naNewMenuItem(NAMenu* menu, NAUTF8Char* text, NAMenuItem* atItem);
+NA_API int32 naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item);
+NA_API void naPresentMenu(NAMenu* menu, NAPos pos);
 
 // OpenGLSpace
 // Note that you must have NA_COMPILE_OPENGL configured in NAConfiguration.h

@@ -47,6 +47,7 @@
 #include "ObjectiveC/UI/NAImageSpaceII.h"
 #include "ObjectiveC/UI/NALabelII.h"
 #include "ObjectiveC/UI/NAOpenGLSpaceII.h"
+#include "ObjectiveC/UI/NAMenuII.h"
 #include "ObjectiveC/UI/NARadioII.h"
 #include "ObjectiveC/UI/NASliderII.h"
 #include "ObjectiveC/UI/NASpaceII.h"

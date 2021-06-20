@@ -73,6 +73,10 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
    [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKind(kind))];
 }
 
+- (NARect) getInnerRect{
+  return naMakeRectWithNSRect([self frame]);
+}
+
 @end
 
 
@@ -125,8 +129,12 @@ NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind){
 
 
 NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField){
-  NA_UNUSED(textField);
-  return naMakeRectS(20, 40, 100, 50);
+  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(textField), naGetApplication(), NA_FALSE);
+  NARect relRect = [nativePtr getInnerRect];
+  return naMakeRect(
+    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
+    relRect.size);
 }
 
 

@@ -82,6 +82,10 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
   return scrollView;
 }
 
+- (NARect) getInnerRect{
+  return naMakeRectWithNSRect([self frame]);
+}
+
 @end
 
 
@@ -134,8 +138,12 @@ NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
 
 
 NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox){
-  NA_UNUSED(textBox);
-  return naMakeRectS(20, 40, 100, 50);
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(textBox), naGetApplication(), NA_FALSE);
+  NARect relRect = [nativePtr getInnerRect];
+  return naMakeRect(
+    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
+    relRect.size);
 }
 
 

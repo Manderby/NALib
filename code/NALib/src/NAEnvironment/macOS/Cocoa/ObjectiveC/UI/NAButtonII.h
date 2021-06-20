@@ -116,6 +116,9 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   [self setHidden:visible ? NO : YES];
 }
 
+- (NARect) getInnerRect{
+  return naMakeRectWithNSRect([self frame]);
+}
 @end
 
 
@@ -246,8 +249,12 @@ NA_API void naSetButtonVisible(NAButton* button, NABool visible){
 
 
 NA_HDEF NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button){
-  NA_UNUSED(button);
-  return naMakeRectS(20, 40, 100, 50);
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(button), naGetApplication(), NA_FALSE);
+  NARect relRect = [nativePtr getInnerRect];
+  return naMakeRect(
+    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
+    relRect.size);
 }
 
 

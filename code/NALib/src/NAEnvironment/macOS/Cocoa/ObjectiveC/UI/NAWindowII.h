@@ -67,7 +67,6 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 - (void)setContentRect:(NARect)rect{
   NSRect frame = [NSWindow frameRectForContentRect:naMakeNSRectWithRect(rect) styleMask:[self styleMask]];
   [super setFrame:frame display:YES];
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE);
 }
 
 - (void)setWindowTitle:(const NAUTF8Char*) title{
@@ -138,11 +137,13 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 - (void)windowDidResize:(NSNotification *)notification{
   NA_UNUSED(notification);
   na_RememberWindowPosition((NAWindow*)cocoaWindow);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE);
 }
 
 - (void)windowDidMove:(NSNotification *)notification{
   NA_UNUSED(notification);
   na_RememberWindowPosition((NAWindow*)cocoaWindow);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE);
 }
 
 @end
@@ -233,12 +234,12 @@ NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem){
 NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
   NARect rect;
   NSRect contentRect;
-  NSRect windowframe;
+  NSRect windowFrame;
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   contentRect = [[nativePtr contentView] frame];
-  windowframe = [nativePtr frame];
-  rect.pos.x = windowframe.origin.x + contentRect.origin.x;
-  rect.pos.y = windowframe.origin.y + contentRect.origin.y;
+  windowFrame = [nativePtr frame];
+  rect.pos.x = windowFrame.origin.x + contentRect.origin.x;
+  rect.pos.y = windowFrame.origin.y + contentRect.origin.y;
   rect.size.width = contentRect.size.width;
   rect.size.height = contentRect.size.height;
   return rect;
@@ -248,13 +249,13 @@ NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
 
 NA_HDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
   NARect rect;
-  NSRect windowframe;
+  NSRect windowFrame;
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
-  windowframe = [nativePtr frame];
-  rect.pos.x = windowframe.origin.x;
-  rect.pos.y = windowframe.origin.y;
-  rect.size.width = windowframe.size.width;
-  rect.size.height = windowframe.size.height;
+  windowFrame = [nativePtr frame];
+  rect.pos.x = windowFrame.origin.x;
+  rect.pos.y = windowFrame.origin.y;
+  rect.size.width = windowFrame.size.width;
+  rect.size.height = windowFrame.size.height;
   return rect;
 }
 
