@@ -135,6 +135,25 @@ NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, NAUTF8Char* text, NAMenuItem* atI
 }
 
 
+NA_DEF NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem){
+  NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
+  
+  NSMenuItem* nativeItemPtr = [NSMenuItem separatorItem];
+  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr));
+
+  naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
+  
+  if(atItem){
+    naDefineCocoaObject(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
+    [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
+  }else{
+    [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];
+  }
+  
+  na_AddMenuChild(menu, (NAMenuItem*)cocoaMenuItem);
+  
+  return (NAMenuItem*)cocoaMenuItem;
+}
 
 NA_DEF void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem){
   na_ClearMenuItem((NAMenuItem*)cocoaMenuItem);

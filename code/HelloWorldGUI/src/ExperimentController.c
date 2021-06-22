@@ -60,6 +60,7 @@ struct ExperimentController{
   NAMenuItem* menuItem2;
   NAMenuItem* menuItem3;
   NAMenuItem* menuItem4;
+  NAMenuItem* menuSeparator;
 
   int textOption;
   int imageOption;
@@ -336,6 +337,7 @@ ExperimentController* createExperimentController(){
   con->menuItem2 = naNewMenuItem(con->menu, "Kohle, Kohle, Kohle", NA_NULL);
   con->menuItem3 = naNewMenuItem(con->menu, "None of that Objective-C rubbish", NA_NULL);
   con->menuItem4 = naNewMenuItem(con->menu, "Bread crumbs and beaver spit", NA_NULL);
+  con->menuSeparator = naNewMenuSeparator(con->menu, con->menuItem3);
   naAddUIReaction(con->menuItem0, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
   naAddUIReaction(con->menuItem1, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
   naAddUIReaction(con->menuItem2, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
