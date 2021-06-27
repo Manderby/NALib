@@ -14,7 +14,7 @@ NA_HIAPI void na_SetUIImageBabyImage(NAUIImage* uiImage, const NABabyImage* baby
 
 
 
-void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin){
   uint8 skinColor[4];
   switch(skin){
   case NA_UIIMAGE_SKIN_LIGHT:
@@ -26,6 +26,32 @@ void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin){
   case NA_UIIMAGE_SKIN_DARK:
     skinColor[0] = 240;
     skinColor[1] = 240;
+    skinColor[2] = 240;
+    skinColor[3] = 255;
+    break;
+  default:
+    #if NA_DEBUG
+      naError("Cannot provide color for plain skin");
+    #endif
+    break;
+  }
+  naFillBabyColorWithu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
+}
+
+
+
+void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+  uint8 skinColor[4];
+  switch(skin){
+  case NA_UIIMAGE_SKIN_LIGHT:
+    skinColor[0] = 16;
+    skinColor[1] = 128;
+    skinColor[2] = 240;
+    skinColor[3] = 255;
+    break;
+  case NA_UIIMAGE_SKIN_DARK:
+    skinColor[0] = 64;
+    skinColor[1] = 196;
     skinColor[2] = 240;
     skinColor[3] = 255;
     break;
@@ -53,7 +79,7 @@ NA_HDEF const NABabyImage* na_GetUIImageBabyImage(const NAUIImage* uiImage, NAUI
     if(plainimg){
       NABabyColor skinColor;
       NABabyImage* skinnedImage;
-      naFillBabyColorWithSkin(skinColor, skin);
+      naFillDefaultTextColorWithSkin(skinColor, skin);
       skinnedImage = naCreateBabyImageWithTint(plainimg, skinColor, uiImage->tintMode, 1.f);
       // todo: not so beautiful const cast to NAUIImage*.
       na_SetUIImageBabyImage((NAUIImage*)uiImage, skinnedImage, resolution, kind, skin);
@@ -84,7 +110,7 @@ NA_HIDEF void na_SetUIImageBabyImage(NAUIImage* uiImage, const NABabyImage* baby
 
 
 
-NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
+NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, const NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
   NAUIImage* uiImage;
   NABabyImage* main1x;
   

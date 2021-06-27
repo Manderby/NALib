@@ -10,20 +10,6 @@
 
 
 
-NA_HAPI NARect na_GetApplicationAbsoluteRect(void);
-NA_HAPI NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button);
-NA_HAPI NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox);
-NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace);
-NA_HAPI NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label);
-NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* space);
-NA_HAPI NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio);
-NA_HAPI NARect na_GetScreenAbsoluteRect(NA_UIElement* screen);
-NA_HAPI NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* space);
-NA_HAPI NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space);
-NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox);
-NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField);
-NA_HAPI NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window);
-
 NA_HAPI void** na_GetUIElementNextTabReference(void* textField);
 NA_HAPI void** na_GetUIElementPrevTabReference(void* textField);
 NA_HAPI void** na_GetTextBoxNextTabReference(NATextBox* textBox);
@@ -321,6 +307,8 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     case NA_UI_BUTTON:      info = naButtonWINAPIProc     (uiElement, message, wParam, lParam); break;
     case NA_UI_IMAGESPACE:  info = naImageSpaceWINAPIProc (uiElement, message, wParam, lParam); break;
     case NA_UI_LABEL:       info = naLabelWINAPIProc      (uiElement, message, wParam, lParam); break;
+    case NA_UI_MENU:        info = naMenuWINAPIProc       (uiElement, message, wParam, lParam); break;
+    case NA_UI_MENUITEM:    info = naMenuItemWINAPIProc   (uiElement, message, wParam, lParam); break;
     case NA_UI_OPENGLSPACE: info = naOpenGLSpaceWINAPIProc(uiElement, message, wParam, lParam); break;
     case NA_UI_RADIO:       info = naRadioWINAPIProc      (uiElement, message, wParam, lParam); break;
     case NA_UI_SLIDER:      info = naSliderWINAPIProc     (uiElement, message, wParam, lParam); break;
@@ -593,18 +581,6 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
 
 
 
-
-NA_HDEF NARect na_GetApplicationAbsoluteRect(){
-  NARect rect;
-  rect.pos.x = 0;
-  rect.pos.y = 0;
-  rect.size.width = 1;
-  rect.size.height = 1;
-  return rect;
-}
-
-
-
 NA_HDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
   NARect rect;
   rect.pos.x = 0;
@@ -665,7 +641,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
     case NA_UI_APPLICATION: relrect = na_GetApplicationAbsoluteRect(); break;
     case NA_UI_SCREEN:      relrect = na_GetScreenAbsoluteRect(relElem); break;
     case NA_UI_WINDOW:      relrect = na_GetWindowAbsoluteInnerRect(relElem); break;
-    case NA_UI_OPENGLSPACE:  relrect = na_GetSpaceAbsoluteInnerRect(relElem); break;
+    case NA_UI_OPENGLSPACE: relrect = na_GetSpaceAbsoluteInnerRect(relElem); break;
     default:
       #if NA_DEBUG
         naError("Invalid UI type");

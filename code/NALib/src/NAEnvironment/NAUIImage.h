@@ -45,11 +45,13 @@ typedef struct NAUIImage NAUIImage;
 // NA_BLEND_WHITE_GREEN  tints white pixels (measured by the green channel)
 // The other tint modes are applicable but will likely produce unuseful images.
 // Use naRetain and naRelease.
-NA_API NAUIImage* naNewUIImage(const NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode);
+NA_API NAUIImage* naNewUIImage(const NABabyImage* main, const NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode);
 
 NA_IAPI NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
 
-void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin);
+// Returns the default foreground color for the given skin.
+void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin);
+void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 
 NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage);
 NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr);

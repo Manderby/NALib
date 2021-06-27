@@ -64,7 +64,59 @@ struct NAApplication{
   NAUTF8Char*       iconPath;
 };
 
+struct NAButton{
+  NA_UIElement uiElement;
+};
+
+struct NACheckBox{
+  NA_UIElement uiElement;
+};
+
+struct NAImageSpace{
+  NA_UIElement uiElement;
+  NAUIImage* uiImage;
+};
+
+struct NALabel{
+  NA_UIElement uiElement;
+};
+
+struct NAMenu{
+  NA_UIElement uiElement;
+  NAList       childs;
+};
+
+struct NAMenuItem{
+  NA_UIElement uiElement;
+};
+
+struct NAOpenGLSpace{
+  NA_UIElement uiElement;
+};
+
+struct NARadio{
+  NA_UIElement uiElement;
+};
+
 struct NAScreen{
+  NA_UIElement uiElement;
+};
+
+struct NASlider{
+  NA_UIElement uiElement;
+};
+
+struct NASpace{
+  NA_UIElement uiElement;
+  NAList       childs;
+  NABool       alternatebackground;
+};
+
+struct NATextField{
+  NA_UIElement uiElement;
+};
+
+struct NATextBox{
   NA_UIElement uiElement;
 };
 
@@ -76,48 +128,7 @@ struct NAWindow{
   NARect       windowedFrame;
 };
 
-struct NASpace{
-  NA_UIElement uiElement;
-  NAList       childs;
-  NABool       alternatebackground;
-};
 
-struct NAImageSpace{
-  NA_UIElement uiElement;
-  NAUIImage* uiImage;
-};
-
-struct NAOpenGLSpace{
-  NA_UIElement uiElement;
-};
-
-struct NAButton{
-  NA_UIElement uiElement;
-};
-
-struct NARadio{
-  NA_UIElement uiElement;
-};
-
-struct NACheckBox{
-  NA_UIElement uiElement;
-};
-
-struct NALabel{
-  NA_UIElement uiElement;
-};
-
-struct NATextField{
-  NA_UIElement uiElement;
-};
-
-struct NATextBox{
-  NA_UIElement uiElement;
-};
-
-struct NASlider{
-  NA_UIElement uiElement;
-};
 
 struct NAEventReaction{
   void*             controller;
@@ -162,48 +173,56 @@ NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
 NA_HAPI void na_AllowUIElementNotifications(NA_UIElement* elem);
 NA_HAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
 
+
+
 NA_HAPI NAApplication* na_NewApplication(void);
 NA_HAPI void na_InitApplication(NAApplication* application, NANativePtr nativePtr);
 NA_HAPI void na_ClearApplication(NAApplication* application);
 
+NA_HAPI void na_InitButton(NAButton* button, void* nativePtr);
+NA_HAPI void na_ClearButton(NAButton* button);
+
+NA_HAPI void na_InitCheckBox(NACheckBox* checkBox, void* nativePtr);
+NA_HAPI void na_ClearCheckBox(NACheckBox* checkBox);
+
+NA_HAPI void na_InitImageSpace(NAImageSpace* imageSpace, void* nativePtr);
+NA_HAPI void na_ClearImageSpace(NAImageSpace* imageSpace);
+
+NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
+NA_HAPI void na_ClearLabel(NALabel* label);
+
+NA_HAPI void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent);
+NA_HAPI void na_ClearMenu(NAMenu* menu);
+NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child);
+
+NA_HAPI void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr);
+NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);
+
+NA_HAPI void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr);
+NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
+
+NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
+NA_HAPI void na_ClearRadio(NARadio* radio);
+
 NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr);
 NA_HAPI void na_ClearScreen(NAScreen* screen);
 
-NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
-NA_HAPI void na_ClearWindow(NAWindow* window);
-NA_HAPI void na_RememberWindowPosition(NAWindow* window);
-NA_HAPI NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window);
+NA_HAPI void na_InitSlider(NASlider* slider, void* nativePtr);
+NA_HAPI void na_ClearSlider(NASlider* slider);
 
 NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);
 NA_HAPI void na_ClearSpace(NASpace* space);
 NA_HAPI void na_AddSpaceChild(NASpace*, NA_UIElement* child);
 
-NA_HAPI void na_InitImageSpace(NAImageSpace* imageSpace, void* nativePtr);
-NA_HAPI void na_ClearImageSpace(NAImageSpace* imageSpace);
-
-NA_HAPI void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr);
-NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
-
-NA_HAPI void na_InitButton(NAButton* button, void* nativePtr);
-NA_HAPI void na_ClearButton(NAButton* button);
-
-NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
-NA_HAPI void na_ClearRadio(NARadio* radio);
-
-NA_HAPI void na_InitCheckBox(NACheckBox* checkBox, void* nativePtr);
-NA_HAPI void na_ClearCheckBox(NACheckBox* checkBox);
-
-NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
-NA_HAPI void na_ClearLabel(NALabel* label);
+NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);
+NA_HAPI void na_ClearTextBox(NATextBox* textBox);
 
 NA_HAPI void na_InitTextField(NATextField* textField, void* nativePtr);
 NA_HAPI void na_ClearTextField(NATextField* textField);
 
-NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);
-NA_HAPI void na_ClearTextBox(NATextBox* textBox);
-
-NA_HAPI void na_InitSlider(NASlider* slider, void* nativePtr);
-NA_HAPI void na_ClearSlider(NASlider* slider);
+NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
+NA_HAPI void na_ClearWindow(NAWindow* window);
+NA_HAPI void na_RememberWindowPosition(NAWindow* window);
 
 
 
@@ -252,6 +271,22 @@ NA_HAPI void na_ClearUINativePtr(NANativePtr nativePtr);
 NA_HAPI void* na_AllocMouseTracking(NANativePtr nativePtr);
 NA_HAPI void na_DeallocMouseTracking(void* tracking);
 
+NA_HAPI NARect na_GetApplicationAbsoluteRect     (void);
+NA_HAPI NARect na_GetButtonAbsoluteInnerRect     (NA_UIElement* button);
+NA_HAPI NARect na_GetCheckBoxAbsoluteInnerRect   (NA_UIElement* checkBox);
+NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect (NA_UIElement* imageSpace);
+NA_HAPI NARect na_GetLabelAbsoluteInnerRect      (NA_UIElement* label);
+NA_HAPI NARect na_GetMenuAbsoluteInnerRect       (NA_UIElement* menu);
+NA_HAPI NARect na_GetMenuItemAbsoluteInnerRect   (NA_UIElement* menuItem);
+NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* space);
+NA_HAPI NARect na_GetRadioAbsoluteInnerRect      (NA_UIElement* radio);
+NA_HAPI NARect na_GetScreenAbsoluteRect          (NA_UIElement* screen);
+NA_HAPI NARect na_GetSliderAbsoluteInnerRect     (NA_UIElement* space);
+NA_HAPI NARect na_GetSpaceAbsoluteInnerRect      (NA_UIElement* space);
+NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect    (NA_UIElement* textBox);
+NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect  (NA_UIElement* textField);
+NA_HAPI NARect na_GetWindowAbsoluteOuterRect     (NA_UIElement* window);
+NA_HAPI NARect na_GetWindowAbsoluteInnerRect     (NA_UIElement* window);
 
 
 

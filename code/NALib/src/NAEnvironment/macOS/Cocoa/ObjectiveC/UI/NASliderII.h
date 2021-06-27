@@ -50,6 +50,10 @@ NA_RUNTIME_TYPE(NACocoaSlider, na_DestructCocoaSlider, NA_FALSE);
   na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDITED);
 }
 
+- (NARect) getInnerRect{
+  return naMakeRectWithNSRect([self frame]);
+}
+
 @end
 
 
@@ -95,8 +99,12 @@ NA_DEF void naSetSliderValue(NASlider* slider, double value){
 
 
 NA_HDEF NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* slider){
-  NA_UNUSED(slider);
-  return naMakeRectS(20, 40, 100, 50);
+  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(slider), naGetApplication(), NA_FALSE);
+  NARect relRect = [nativePtr getInnerRect];
+  return naMakeRect(
+    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
+    relRect.size);
 }
 
 

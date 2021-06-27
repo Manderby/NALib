@@ -14,6 +14,8 @@ struct NACocoaApplication {
 NA_HAPI void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication);
 NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
 
+
+
 @interface NACocoaNativeApplicationDelegate : NSObject <NSApplicationDelegate>{
   NACocoaApplication* cocoaApplication;
 }
@@ -77,7 +79,6 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
       pool = [[NSAutoreleasePool alloc] init];
     #endif
       NSEvent* curEvent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantFuture inMode:NSDefaultRunLoopMode dequeue:YES];
-//      if([curEvent type] == NSEventType)
       naCollectGarbage();
       if(!na_InterceptKeyboardShortcut(curEvent)){
         if(curEvent){[NSApp sendEvent:curEvent];}

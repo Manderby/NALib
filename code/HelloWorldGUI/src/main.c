@@ -123,7 +123,7 @@ void createController(){
 
   // Create the main button, assign a press command and make it the default
   // button.
-  con->button = naNewPushButton("Compute", naMakeSize(100, 30));
+  con->button = naNewTextButton("Compute", naMakeSize(100, 30), 0);
   naAddSpaceChild(windowSpace, con->button, naMakePos(150, 20));
   naAddUIReaction(con->button, NA_UI_COMMAND_PRESSED, pressButton, con);
   naSetButtonSubmit(con->button, pressButton, con);
@@ -139,12 +139,12 @@ void createController(){
   naAddSpaceChild(windowSpace, con->label, naMakePos(160, 70));
 
   // Create a + button for opening a new window.
-  con->newButton = naNewPushButton("+", naMakeSize(60, 30));
+  con->newButton = naNewTextButton("+", naMakeSize(60, 30), 0);
   naAddSpaceChild(windowSpace, con->newButton, naMakePos(20, 20));
   naAddUIReaction(con->newButton, NA_UI_COMMAND_PRESSED, newController, con);
 
   // Create a Quit button for terminating the whole application.
-  con->quitButton = naNewPushButton("Quit", naMakeSize(60, 30));
+  con->quitButton = naNewTextButton("Quit", naMakeSize(60, 30), 0);
   naAddSpaceChild(windowSpace, con->quitButton, naMakePos(320, 20));
   naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, quitApplication, con);
 

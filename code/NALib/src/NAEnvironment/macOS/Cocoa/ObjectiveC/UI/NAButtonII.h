@@ -24,12 +24,28 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 
 @implementation NACocoaNativeButton
 
-- (id) initWithButton:(NACocoaButton*)newCocoaButton bezelStyle:(NSBezelStyle)bezelStyle frame:(NSRect)frame{
+- (id) initWithButton:(NACocoaButton*)newCocoaButton flags:(uint32)flags isText:(bool)isText frame:(NSRect)frame{
   self = [super initWithFrame:frame];
-  [self setButtonType:(bezelStyle == NABezelStyleRounded) ? NAButtonTypeMomentaryLight : NAButtonTypePushOnPushOff];
-  // NSBezelStyleShadowlessSquare is used to have a transparent background. The option 0 has a grey background.
-  [self setBezelStyle:bezelStyle ? bezelStyle : NABezelStyleShadowlessSquare]; 
-  [self setBordered:bezelStyle ? YES : NO];
+
+  if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS)){
+    if(isText && naGetFlagu32(flags, NA_BUTTON_STATEFUL)){
+      [self setBezelStyle:NSBezelStyleInline]; 
+      [self setBordered:YES];
+    }else{
+      [self setBezelStyle:NABezelStyleRounded]; 
+      [self setBordered:NO];
+    }
+  }else{
+    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NABezelStyleShadowlessSquare : NABezelStyleRounded]; 
+    [self setBordered:YES];
+  }
+
+  if(isText){
+    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
+  }else{
+    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypeToggle : NAButtonTypeMomentaryChange];
+  }
+  
   cocoaButton = newCocoaButton;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
@@ -45,7 +61,7 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 
 - (void)dealloc{
   NA_COCOA_RELEASE(trackingArea);
-  [super dealloc];
+  NA_COCOA_SUPER_DEALLOC();
 }
 
 - (void) setButtonText:(const NAUTF8Char*)text{
@@ -84,6 +100,10 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   [self setState:state ? NAStateOn : NAStateOff];
 }
 
+- (NABool) getButtonState{
+  return [self state] == NAStateOn;
+}
+
 - (void) setDefaultButton:(NABool)isDefault{
   if(isDefault){
     [self setKeyEquivalent:@"\r"];
@@ -96,16 +116,25 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   [self setHidden:visible ? NO : YES];
 }
 
+- (NARect) getInnerRect{
+  return naMakeRectWithNSRect([self frame]);
+}
 @end
 
 
 
-NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
-  NACocoaButton* cocoaButton = naNew(NACocoaButton);
+NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, NASize size, uint32 flags){
+//  #ifndef NDEBUG
+//    if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS))
+//      naError("Borderless Text buttons should not be used as they can not be distinguished.");
+//  #endif
   
+  NACocoaButton* cocoaButton = naNew(NACocoaButton);
+
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
-    bezelStyle:NABezelStyleRounded
+    flags:flags
+    isText:YES
     frame:naMakeNSRectWithSize(size)];
   na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
@@ -121,7 +150,8 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
-    bezelStyle:NABezelStyleShadowlessSquare
+    flags:NABezelStyleShadowlessSquare
+    isText:YES
     frame:naMakeNSRectWithSize(size)];
   na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
@@ -132,28 +162,13 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF NAButton* naNewImageOptionButton(const NAUIImage* uiImage, NASize size){
+NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 flags){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
-    bezelStyle:NABezelStyleShadowlessSquare
-    frame:naMakeNSRectWithSize(size)];
-  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
-  
-  [nativePtr setUIImage:uiImage];
-  
-  return (NAButton*)cocoaButton;
-}
-
-
-
-NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size){
-  NACocoaButton* cocoaButton = naNew(NACocoaButton);
-  
-  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
-    initWithButton:cocoaButton
-    bezelStyle:(NSBezelStyle)0
+    flags:flags
+    isText:NO
     frame:naMakeNSRectWithSize(size)];
   na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
@@ -180,6 +195,13 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
 NA_DEF void naSetButtonState(NAButton* button, NABool state){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   [nativePtr setButtonState:state];
+}
+
+
+
+NA_DEF NABool naGetButtonState(NAButton* button){
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  return [nativePtr getButtonState];
 }
 
 
@@ -227,8 +249,12 @@ NA_API void naSetButtonVisible(NAButton* button, NABool visible){
 
 
 NA_HDEF NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button){
-  NA_UNUSED(button);
-  return naMakeRectS(20, 40, 100, 50);
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(button), naGetApplication(), NA_FALSE);
+  NARect relRect = [nativePtr getInnerRect];
+  return naMakeRect(
+    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
+    relRect.size);
 }
 
 
