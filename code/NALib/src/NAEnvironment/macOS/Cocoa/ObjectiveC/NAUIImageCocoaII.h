@@ -140,10 +140,13 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
         // that but otherwise the context just isn't there on all systems.
         // Potentially this has to do with threading which can only allocate
         // memory in its own region as this handler may be called in a thread.
+        [NSGraphicsContext saveGraphicsState];
         NSImage* drawImage = [[NSImage alloc] initWithSize:imageSize];
         [drawImage lockFocus];
           CGContextDrawImage(naGetCGContextRef([NSGraphicsContext currentContext]), dstRect, cocoaimage);
         [drawImage unlockFocus];
+        [NSGraphicsContext restoreGraphicsState];
+
         [drawImage drawInRect:dstRect];
 
         return YES;
