@@ -71,7 +71,7 @@ NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
 
 @implementation NACocoaNativeMenuItem
 
-- (id) initWithMenuItem:(NACocoaMenuItem*)newCocoaMenuItem text:(NAUTF8Char*) text{
+- (id) initWithMenuItem:(NACocoaMenuItem*)newCocoaMenuItem text:(const NAUTF8Char*) text{
   self = [super
     initWithTitle:[NSString stringWithUTF8String:text]
     action:@selector(itemSelected:)
@@ -112,7 +112,7 @@ NA_DEF void na_DestructCocoaMenu(NACocoaMenu* cocoaMenu){
 
 
 
-NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, NAUTF8Char* text, NAMenuItem* atItem){
+NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuItem* atItem){
   NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
   
   NACocoaNativeMenuItem* nativeItemPtr = [[NACocoaNativeMenuItem alloc]
