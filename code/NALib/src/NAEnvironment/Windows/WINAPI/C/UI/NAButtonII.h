@@ -256,7 +256,7 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, NASize size, uint32 fla
 
 
 
-NA_DEF NAButton* naNewImageButton(NAUIImage* uiImage, NASize size, uint32 flags){
+NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 flags){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
   
 	HWND nativePtr = CreateWindow(
@@ -286,7 +286,6 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiImage, NASize size, uint32 flags)
 
 
 NA_DEF void na_DestructWINAPIButton(NAWINAPIButton* winapiButton){
-  if(winapiButton->image){naRelease(winapiButton->image);}
   na_ClearButton((NAButton*)winapiButton);
 }
 
@@ -294,6 +293,15 @@ NA_DEF void na_DestructWINAPIButton(NAWINAPIButton* winapiButton){
 
 NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
   // todo
+}
+
+
+
+NA_DEF NABool naGetButtonState(NAButton* button){
+  // todo
+  return NA_FALSE;
+  //naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  //return [nativePtr getButtonState];
 }
 
 

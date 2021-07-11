@@ -82,6 +82,7 @@
     <ClInclude Include="src\NAEnvironment\Windows\WINAPI\C\UI\NACheckBoxII.h" />
     <ClInclude Include="src\NAEnvironment\Windows\WINAPI\C\UI\NAImageSpaceII.h" />
     <ClInclude Include="src\NAEnvironment\Windows\WINAPI\C\UI\NALabelII.h" />
+    <ClInclude Include="src\NAEnvironment\Windows\WINAPI\C\UI\NAMenuII.h" />
     <ClInclude Include="src\NAEnvironment\Windows\WINAPI\C\UI\NAOpenGLSpaceII.h" />
     <ClInclude Include="src\NAEnvironment\Windows\WINAPI\C\UI\NARadioII.h" />
     <ClInclude Include="src\NAEnvironment\Windows\WINAPI\C\UI\NASliderII.h" />

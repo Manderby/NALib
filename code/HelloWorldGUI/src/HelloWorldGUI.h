@@ -4,10 +4,26 @@
 
 
 
-typedef struct ExperimentController ExperimentController;
+typedef struct TemperatureController TemperatureController;
+TemperatureController* createTemperatureController(void);
+void clearTemperatureController(TemperatureController* con);
 
+
+
+typedef struct ExperimentController ExperimentController;
 ExperimentController* createExperimentController(void);
 void clearExperimentController(ExperimentController* con);
+
+
+
+typedef struct HelloWorldGUIApplication HelloWorldGUIApplication;
+void prestartup(void* arg);
+void poststartup(void* arg);
+void clearApplication(void);
+double getNextWindowX(void);
+double getNextWindowY(void);
+addTemperatureControllerToApplication(TemperatureController* con);
+
 
 
 // This is free and unencumbered software released into the public domain.

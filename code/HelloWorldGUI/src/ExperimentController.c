@@ -229,7 +229,6 @@ ExperimentController* createExperimentController(){
     0);
 
   con->contentSpace = naNewSpace(naMakeSize(windowWidth, windowHeight));
-  naSetWindowContentSpace(con->experimentWindow, con->contentSpace);
   naAddUIReaction(con->experimentWindow, NA_UI_COMMAND_RESHAPE, windowReshaped, con);
 
   double curPosY = windowHeight - 42;
@@ -357,6 +356,7 @@ ExperimentController* createExperimentController(){
 
   con->textOption = 0;
 
+  naSetWindowContentSpace(con->experimentWindow, con->contentSpace);
   naShowWindow(con->experimentWindow);
 
   return con;
