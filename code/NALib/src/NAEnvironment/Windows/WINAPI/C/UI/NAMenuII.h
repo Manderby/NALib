@@ -125,18 +125,8 @@ NAWINAPICallbackInfo naMenuItemWINAPIProc(void* uiElement, UINT message, WPARAM 
 NA_DEF NAMenu* naNewMenu(void* parent){
   NAWINAPIMenu* winapiMenu = naNew(NAWINAPIMenu);
 
-	HWND nativePtr = CreateWindow(
-		TEXT("EDIT"),
-    TEXT(""),
-    WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE,
-		0,
-    0,
-    10,
-    10,
-		naGetApplicationOffscreenWindow(),
-    NULL,
-    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
-    NULL);
+  HMENU nativePtr = CreateMenu();
+  // todo: how about DestroyMenu?
 
  // NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
  // WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
