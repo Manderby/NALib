@@ -20,8 +20,8 @@ typedef struct HelloWorldGUIApplication HelloWorldGUIApplication;
 void prestartup(void* arg);
 void poststartup(void* arg);
 void clearApplication(void);
-double getNextWindowX(void);
-double getNextWindowY(void);
+double getAndAdvanceNextWindowX(void);
+double getAndAdvanceNextWindowY(void);
 addTemperatureControllerToApplication(TemperatureController* con);
 
 

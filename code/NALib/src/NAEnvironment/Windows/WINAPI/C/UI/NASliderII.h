@@ -35,16 +35,21 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
   case WM_LBUTTONUP:
-  case WM_KILLFOCUS:
   case WM_IME_SETCONTEXT:
   case WM_DESTROY:
   case WM_NCDESTROY:
-  case WM_SETFOCUS:
   case WM_CAPTURECHANGED:
   case WM_IME_NOTIFY:
   case WM_TIMER:
   case TBM_SETPOS:  // (WM_USER + 5)
   case TBM_GETPOS: // (WM_USER + 0)
+    break;
+
+  case WM_SETFOCUS:
+  case WM_KILLFOCUS:
+    // We do not display any caret.
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
     break;
 
   default:

@@ -54,16 +54,20 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
   case WM_IME_SETCONTEXT:
-  case WM_SETFOCUS:
   case WM_IME_NOTIFY:
   case WM_CANCELMODE:
   case WM_CAPTURECHANGED:
-  case WM_KILLFOCUS:
   case WM_LBUTTONUP:
   case WM_KEYDOWN:
   case WM_CHAR:
   case WM_KEYUP:
   case 0x43c: // undocumented
+    break;
+
+  case WM_SETFOCUS:
+  case WM_KILLFOCUS:
+    // Do not change the default behaviour of focus. Otherwise, this would cause
+    // labels and textfields to not display a cursor or selection.
     break;
 
   // Dialog messages

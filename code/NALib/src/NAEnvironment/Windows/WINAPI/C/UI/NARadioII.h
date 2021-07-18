@@ -36,10 +36,8 @@ NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_SETCURSOR:
   case WM_MOUSEACTIVATE:
   case WM_IME_SETCONTEXT:
-  case WM_SETFOCUS:
   case WM_CANCELMODE:
   case WM_CAPTURECHANGED:
-  case WM_KILLFOCUS:
   case WM_IME_NOTIFY:
   case WM_GETDLGCODE:
   case WM_STYLECHANGING:
@@ -47,6 +45,13 @@ NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_LBUTTONDOWN:
   case BM_SETSTATE: // only highlighting, not state changing.
   case BM_SETCHECK: // when pressed the button or manually sends BM_SETCHECK
+    break;
+
+  case WM_SETFOCUS:
+  case WM_KILLFOCUS:
+    // We do not display any caret.
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
     break;
 
   case WM_LBUTTONUP:

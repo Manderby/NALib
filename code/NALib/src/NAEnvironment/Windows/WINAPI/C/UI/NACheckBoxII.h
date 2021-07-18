@@ -36,14 +36,19 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM 
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
   case WM_IME_SETCONTEXT:
-  case WM_SETFOCUS:
   case BM_SETSTATE:
   case WM_CANCELMODE:
   case WM_CAPTURECHANGED:
-  case WM_KILLFOCUS:
   case WM_IME_NOTIFY:
   case BM_GETSTATE:
   case WM_LBUTTONUP:
+    break;
+
+  case WM_SETFOCUS:
+  case WM_KILLFOCUS:
+    // We do not display any caret.
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
     break;
 
   default:

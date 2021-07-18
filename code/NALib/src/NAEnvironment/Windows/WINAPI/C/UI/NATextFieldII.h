@@ -38,11 +38,9 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
   case WM_IME_SETCONTEXT:
-  case WM_SETFOCUS:
   case WM_IME_NOTIFY:
   case WM_CANCELMODE:
   case WM_CAPTURECHANGED:
-  case WM_KILLFOCUS:
   case WM_GETTEXTLENGTH:
   case EM_GETSEL:
   case EM_GETRECT:
@@ -62,9 +60,14 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM
   case WM_SYSKEYDOWN: // the alt key!
   case WM_MOUSEMOVE: // captured in naUIElementWINAPIProc
   case WM_MOUSELEAVE: // captured in naUIElementWINAPIProc
-
   // note that any change of the edit control is captured in naWINAPINotificationProc.
   break;
+
+  case WM_SETFOCUS:
+  case WM_KILLFOCUS:
+    // Do not change the default behaviour of focus. Otherwise, this would cause
+    // textfields to not display a cursor or selection.
+    break;
 
   default:
     //printf("Uncaught TextField message" NA_NL);

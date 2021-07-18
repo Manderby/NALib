@@ -77,14 +77,12 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_SYNCPAINT:
   case WM_DWMNCRENDERINGCHANGED:
   case WM_GETMINMAXINFO:
-  case WM_KILLFOCUS:
   case WM_IME_NOTIFY:
   case WM_PAINT:
   case WM_NCPAINT:
   case WM_ERASEBKGND:
   case WM_GETFONT:
   case WM_SETFONT:
-  case WM_SETFOCUS:
   case WM_NCHITTEST:
   case WM_CTLCOLORSTATIC:
   case WM_CTLCOLOREDIT:
@@ -125,6 +123,12 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_ENTERSIZEMOVE:
   case WM_MOVING:
   case WM_EXITSIZEMOVE:
+    break;
+
+  case WM_SETFOCUS:
+  case WM_KILLFOCUS:
+    // Do not change the default behaviour of focus. Otherwise, this would cause
+    // labels and textfields to not display a cursor or selection.
     break;
 
   // Cases being called due to bubbling the message.
