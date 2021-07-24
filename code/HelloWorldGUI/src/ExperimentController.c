@@ -192,7 +192,7 @@ NABool menuButtonPressed(NAReaction reaction){
 
 NABool menuItemSelected(NAReaction reaction){
   ExperimentController* con = reaction.controller;
-  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "MenuItem with index %d selected", naGetMenuItemIndex(con->menu, reaction.uiElement));
+  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "MenuItem with index %d selected", (int)naGetMenuItemIndex(con->menu, reaction.uiElement));
   naSetLabelText(con->outputLabel, outputText);
 
   return NA_TRUE;
@@ -200,7 +200,7 @@ NABool menuItemSelected(NAReaction reaction){
 
 NABool menuItemKeyboardSelected(NAReaction reaction){
   ExperimentController* con = reaction.controller;
-  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "MenuItem with index %d selected by keyboard shortcut", naGetMenuItemIndex(con->menu, reaction.uiElement));
+  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "MenuItem with index %d selected by keyboard shortcut", (int)naGetMenuItemIndex(con->menu, reaction.uiElement));
   naSetLabelText(con->outputLabel, outputText);
 
   return NA_TRUE;
@@ -342,11 +342,11 @@ ExperimentController* createExperimentController(){
   naAddUIReaction(con->menuItem2, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
   naAddUIReaction(con->menuItem3, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
   naAddUIReaction(con->menuItem4, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
-//  naAddUIKeyboardShortcut(
-//    con->menuItem1,
-//    naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
-//    menuItemKeyboardSelected,
-//    con);
+  //naAddUIKeyboardShortcut(
+  //  con->menuItem1,
+  //  naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
+  //  menuItemKeyboardSelected,
+  //  con);
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",

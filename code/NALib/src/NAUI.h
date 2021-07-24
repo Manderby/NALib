@@ -631,7 +631,7 @@ NA_API void naSetLabelVisible(NALabel* label, NABool visible);
 NA_API NAMenu* naNewMenu(void* parent);
 NA_API NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuItem* atItem);
 NA_API NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem);
-NA_API int32 naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item);
+NA_API size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item);
 NA_API void naPresentMenu(NAMenu* menu, NAPos pos);
 
 // OpenGLSpace

@@ -101,6 +101,17 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
   naClearList(&(na_App->uiElements));
 }
 
+NA_HDEF void na_SetApplicationLastOpenedMenu(NAApplication* application, NAMenu* menu)
+{
+  na_App->lastOpenedMenu = menu;
+}
+
+NA_HDEF NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application)
+{
+  return na_App->lastOpenedMenu;
+}
+
+
 
 
 NA_HDEF void na_InitButton(NAButton* button, void* nativePtr){
@@ -156,11 +167,20 @@ NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child){
 
 
 
-NA_HDEF void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr){
+NA_HDEF void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent){
+  // Note that the nativePtr in this case is a pointer to the MENUITEMINFO,
+  // as there does not exist a native pointer for a MenuItem in WINAPI at all.
   na_InitUIElement(&(menuItem->uiElement), NA_UI_MENUITEM, nativePtr);
+  na_SetUIElementParent(&(menuItem->uiElement), parent, NA_FALSE);
 }
 NA_HDEF void na_ClearMenuItem(NAMenuItem* menuItem){
   na_ClearUIElement(&(menuItem->uiElement));
+}
+NA_HDEF void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id){
+  menuItem->id = id;
+}
+NA_HDEF uint32 na_GetMenuItemId(NAMenuItem* menuItem){
+  return menuItem->id;
 }
 
 

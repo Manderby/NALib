@@ -5,6 +5,7 @@
 // Do not include this file anywhere else!
 
 
+#include "../../../../../NAList.h"
 
 typedef struct NAWINAPIMenu NAWINAPIMenu;
 struct NAWINAPIMenu {
@@ -20,106 +21,11 @@ NA_RUNTIME_TYPE(NAWINAPIMenu, na_DestructWINAPIMenu, NA_FALSE);
 typedef struct NAWINAPIMenuItem NAWINAPIMenuItem;
 struct NAWINAPIMenuItem {
   NAMenuItem   menuItem;
+  MENUITEMINFO menuItemInfo;  // serves as the native ptr;
 };
 
 NA_HAPI void na_DestructWINAPIMenuItem(NAWINAPIMenuItem* winapiMenuItem);
 NA_RUNTIME_TYPE(NAWINAPIMenuItem, na_DestructWINAPIMenuItem, NA_FALSE);
-
-
-
-NAWINAPICallbackInfo naMenuWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
-
-  switch(message){
-  //case WM_SETFONT:
-  //case WM_STYLECHANGING:
-  //case WM_WINDOWPOSCHANGING:
-  //case WM_CHILDACTIVATE:
-  //case WM_MOVE:
-  //case WM_SHOWWINDOW:
-  //case WM_STYLECHANGED:
-  //case WM_WINDOWPOSCHANGED:
-  //case WM_SETTEXT:
-  //case WM_PAINT:
-  //case WM_NCPAINT:
-  //case WM_GETFONT:
-  //case WM_DESTROY:
-  //case WM_NCDESTROY:
-  //case WM_NCHITTEST:
-  //case WM_SETCURSOR:
-  //case WM_MOUSEMOVE: // captured in naUIElementWINAPIProc
-  //case WM_MOUSELEAVE: // captured in naUIElementWINAPIProc
-  //case WM_MOUSEACTIVATE:
-  //case WM_LBUTTONDOWN:
-  //case WM_IME_SETCONTEXT:
-  //case WM_SETFOCUS:
-  //case WM_CANCELMODE:
-  //case WM_CAPTURECHANGED:
-  //case WM_KILLFOCUS:
-  //case WM_IME_NOTIFY:
-  //case WM_LBUTTONUP:
-  //  break;
-
-  //case WM_ERASEBKGND:
-  //  info.hasBeenHandeled = NA_TRUE;
-  //  info.result = 1;
-  //  break;
-
-  default:
-    //printf("Uncaught Label message" NA_NL);
-    break;
-  }
-  
-  return info;
-}
-
-
-
-NAWINAPICallbackInfo naMenuItemWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
-
-  switch(message){
-  //case WM_SETFONT:
-  //case WM_STYLECHANGING:
-  //case WM_WINDOWPOSCHANGING:
-  //case WM_CHILDACTIVATE:
-  //case WM_MOVE:
-  //case WM_SHOWWINDOW:
-  //case WM_STYLECHANGED:
-  //case WM_WINDOWPOSCHANGED:
-  //case WM_SETTEXT:
-  //case WM_PAINT:
-  //case WM_NCPAINT:
-  //case WM_GETFONT:
-  //case WM_DESTROY:
-  //case WM_NCDESTROY:
-  //case WM_NCHITTEST:
-  //case WM_SETCURSOR:
-  //case WM_MOUSEMOVE: // captured in naUIElementWINAPIProc
-  //case WM_MOUSELEAVE: // captured in naUIElementWINAPIProc
-  //case WM_MOUSEACTIVATE:
-  //case WM_LBUTTONDOWN:
-  //case WM_IME_SETCONTEXT:
-  //case WM_SETFOCUS:
-  //case WM_CANCELMODE:
-  //case WM_CAPTURECHANGED:
-  //case WM_KILLFOCUS:
-  //case WM_IME_NOTIFY:
-  //case WM_LBUTTONUP:
-  //  break;
-
-  //case WM_ERASEBKGND:
-  //  info.hasBeenHandeled = NA_TRUE;
-  //  info.result = 1;
-  //  break;
-
-  default:
-    //printf("Uncaught Label message" NA_NL);
-    break;
-  }
-  
-  return info;
-}
 
 
 
@@ -133,7 +39,7 @@ NA_DEF NAMenu* naNewMenu(void* parent){
   menuInfo.cbSize = sizeof(MENUINFO);
   menuInfo.fMask = MIM_STYLE;
   menuInfo.dwStyle = MNS_NOCHECK;
-  SetMenuInfo(winapiMenu->hMenu, &menuInfo);
+  //SetMenuInfo(winapiMenu->hMenu, &menuInfo);
 
  // NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
  // WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
@@ -148,39 +54,35 @@ NA_DEF NAMenu* naNewMenu(void* parent){
   return (NAMenu*)winapiMenu;
 }
 
+static int menuItemId = 0;
+
 NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuItem* atItem){
   NAWINAPIMenuItem* winapiMenuItem = naNew(NAWINAPIMenuItem);
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
-  MENUITEMINFO menuItemInfo;
-  naZeron(&menuItemInfo, sizeof(MENUITEMINFO));
-  menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+  naZeron(&(winapiMenuItem->menuItemInfo), sizeof(MENUITEMINFO));
+  winapiMenuItem->menuItemInfo.cbSize = sizeof(MENUITEMINFO);
   // Note for the future, do not combine MIIM_TYPE with MIIM_FTYPE.
-  menuItemInfo.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
-  menuItemInfo.wID = 52;
-  menuItemInfo.fType = MFT_STRING;
-  menuItemInfo.dwTypeData = naAllocSystemStringWithUTF8String(text);
-  menuItemInfo.cch = (UINT)naStrlen(text);
-  menuItemInfo.fState = /*MFS_CHECKED | */MFS_ENABLED/* | MFS_DEFAULT*/;
+  winapiMenuItem->menuItemInfo.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
+  winapiMenuItem->menuItemInfo.wID = menuItemId;
+  winapiMenuItem->menuItemInfo.fType = MFT_STRING;
+  winapiMenuItem->menuItemInfo.dwTypeData = naAllocSystemStringWithUTF8String(text);
+  winapiMenuItem->menuItemInfo.cch = (UINT)naStrlen(text);
+  winapiMenuItem->menuItemInfo.fState = /*MFS_CHECKED | */MFS_ENABLED/* | MFS_DEFAULT*/;
+
+  na_SetMenuItemId(&(winapiMenuItem->menuItem), menuItemId);
+  menuItemId++;
 
   BOOL test = InsertMenuItem(
     winapiMenu->hMenu,
-    naGetListCount(&(menu->childs)),
+    (UINT)naGetListCount(&(menu->childs)),
     TRUE,
-    &menuItemInfo);
+    &(winapiMenuItem->menuItemInfo));
 
   DWORD error = GetLastError();
 
- // NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
- // WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
- // if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
-
-  na_InitMenuItem(&(winapiMenuItem->menuItem), NA_NULL);
+  na_InitMenuItem(&(winapiMenuItem->menuItem), &(winapiMenuItem->menuItemInfo), naGetUIElementParent(menu));
   na_AddMenuChild(menu, (NAMenuItem*)winapiMenuItem);
-
- // winapiLabel->enabled = NA_TRUE;
- // winapiLabel->href = NA_NULL;
- // SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NAMenuItem*)winapiMenuItem;
 }
@@ -189,60 +91,48 @@ NA_DEF NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem){
   NAWINAPIMenuItem* winapiMenuItem = naNew(NAWINAPIMenuItem);
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
-  MENUITEMINFO menuItemInfo;
-  naZeron(&menuItemInfo, sizeof(MENUITEMINFO));
-  menuItemInfo.cbSize = sizeof(MENUITEMINFO);
-  menuItemInfo.fMask = /*MIIM_ID | */MIIM_FTYPE/* | MIIM_STATE*/;
-  //menuItemInfo.wID = 52;
-  menuItemInfo.fType = MFT_SEPARATOR;
-  //menuItemInfo.fState = /*MFS_CHECKED | */MFS_ENABLED/* | MFS_DEFAULT*/;
+  naZeron(&(winapiMenuItem->menuItemInfo), sizeof(MENUITEMINFO));
+  winapiMenuItem->menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+  winapiMenuItem->menuItemInfo.fMask = MIIM_FTYPE;
+  winapiMenuItem->menuItemInfo.fType = MFT_SEPARATOR;
 
-  int32 index = naGetMenuItemIndex(menu, atItem);
+  size_t index = naGetMenuItemIndex(menu, atItem);
 
   BOOL test = InsertMenuItem(
     winapiMenu->hMenu,
-    index,
+    (UINT)index,
     TRUE,
-    &menuItemInfo);
+    &(winapiMenuItem->menuItemInfo));
 
   DWORD error = GetLastError();
 
- // NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
- // WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
- // if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
-
-  na_InitMenuItem(&(winapiMenuItem->menuItem), NA_NULL);
+  na_InitMenuItem(&(winapiMenuItem->menuItem), &(winapiMenuItem->menuItemInfo), naGetUIElementParent(menu));
   na_AddMenuChild(menu, (NAMenuItem*)winapiMenuItem);
-
- // winapiLabel->enabled = NA_TRUE;
- // winapiLabel->href = NA_NULL;
- // SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NAMenuItem*)winapiMenuItem;
 }
 
-NA_DEF int32 naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
+NA_DEF size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
   return naGetListElemIndex(&(menu->childs), item);
 }
 
 NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos){
+  NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
+
   HMENU hMenu = CreatePopupMenu();
 
   POINT cursorPos;
   GetCursorPos(&cursorPos);
 
+  na_SetApplicationLastOpenedMenu(naGetApplication(), menu);
 
-  NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
   int selection = TrackPopupMenu(
     winapiMenu->hMenu, 
-    TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, 
+    TPM_LEFTALIGN | TPM_RIGHTBUTTON/* | TPM_RETURNCMD*/, 
     cursorPos.x, cursorPos.y, 0,
     naGetUIElementNativePtr(naGetUIElementParent(menu)), NULL);
 
   DWORD error = GetLastError();
-
-  switch(selection) {
-  }
 }
 
 

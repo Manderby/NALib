@@ -262,8 +262,6 @@ NAWINAPICallbackInfo naButtonWINAPIProc     (void* uiElement, UINT message, WPAR
 NAWINAPICallbackInfo naCheckBoxWINAPIProc   (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naImageSpaceWINAPIProc (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naLabelWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naMenuWINAPIProc       (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naMenuItemWINAPIProc   (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naRadioWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naSliderWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
@@ -312,8 +310,6 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     case NA_UI_BUTTON:      info = naButtonWINAPIProc     (uiElement, message, wParam, lParam); break;
     case NA_UI_IMAGESPACE:  info = naImageSpaceWINAPIProc (uiElement, message, wParam, lParam); break;
     case NA_UI_LABEL:       info = naLabelWINAPIProc      (uiElement, message, wParam, lParam); break;
-    case NA_UI_MENU:        info = naMenuWINAPIProc       (uiElement, message, wParam, lParam); break;
-    case NA_UI_MENUITEM:    info = naMenuItemWINAPIProc   (uiElement, message, wParam, lParam); break;
     case NA_UI_OPENGLSPACE: info = naOpenGLSpaceWINAPIProc(uiElement, message, wParam, lParam); break;
     case NA_UI_RADIO:       info = naRadioWINAPIProc      (uiElement, message, wParam, lParam); break;
     case NA_UI_SLIDER:      info = naSliderWINAPIProc     (uiElement, message, wParam, lParam); break;
@@ -480,7 +476,29 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
   HWND controlWnd = (HWND)lParam;
   NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(controlWnd);
 
-  if(uiElement && na_AreUIElementNotificationsAllowed(uiElement)){
+  if(lParam == 0 && notificationCode == 0)
+  {
+    // This is a menu message
+    NAMenu* menu = na_GetApplicationLastOpenedMenu(naGetApplication());
+    NAMenuItem* menuItem = NA_NULL;
+    NAListIterator iter = naMakeListMutator(&(menu->childs));
+    while(naIterateList(&iter)){
+      menuItem = naGetListCurMutable(&iter);
+      if(na_GetMenuItemId(menuItem) == controlIdentifier){
+        break;
+      }
+      menuItem = NA_NULL;
+    }
+    naClearListIterator(&iter);
+
+    if(menuItem){
+      na_DispatchUIElementCommand((NA_UIElement*)menuItem, NA_UI_COMMAND_PRESSED);
+      info.hasBeenHandeled = NA_TRUE;
+    }
+    na_SetApplicationLastOpenedMenu(naGetApplication(), NA_NULL);
+
+  } else if(uiElement && na_AreUIElementNotificationsAllowed(uiElement)){
+    // This is a control message
     switch(naGetUIElementType(uiElement)){
     case NA_UI_BUTTON:    info = naButtonWINAPINotify   (uiElement, notificationCode); break;
     case NA_UI_CHECKBOX:  info = naCheckBoxWINAPINotify (uiElement, notificationCode); break;

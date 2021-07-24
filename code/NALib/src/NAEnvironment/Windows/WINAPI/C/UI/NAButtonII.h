@@ -53,6 +53,18 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case BM_GETSTATE:
     break;
 
+  // Menu messages
+  case WM_ENTERMENULOOP:
+  case WM_INITMENU:
+  case WM_INITMENUPOPUP:
+  case 0x93:  // undocumented
+  case 0x94:  // undocumented
+  case WM_ENTERIDLE:
+  case WM_MENUSELECT:
+  case WM_UNINITMENUPOPUP:
+  case WM_EXITMENULOOP:
+    break;
+
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
     // We do not display any caret.
@@ -82,7 +94,7 @@ NAWINAPICallbackInfo naButtonWINAPINotify(void* uiElement, WORD notificationCode
     info.result = 0;
     break;
   default:
-    //printf("Uncaught Button notification" NA_NL);
+    printf("Uncaught Button notification" NA_NL);
     break;
   }
   return info;
