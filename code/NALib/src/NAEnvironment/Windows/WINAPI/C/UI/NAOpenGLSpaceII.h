@@ -86,10 +86,12 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 	winapiOpenGLSpace->hRC = wglCreateContext(hDC);
 	wglMakeCurrent(hDC, winapiOpenGLSpace->hRC);
 
+  //glfwWindowHint(GLFW_SAMPLES, 4);
+
 	const char* extensions = (char*)glGetString(GL_EXTENSIONS);
 	PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
-	if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
+	//if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
 
   na_InitOpenGLSpace(&(winapiOpenGLSpace->openGLSpace), nativePtr);
 

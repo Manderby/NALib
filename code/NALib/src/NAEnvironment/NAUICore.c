@@ -142,7 +142,7 @@ NA_HDEF void na_ClearLabel(NALabel* label){
 NA_HDEF void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent){
   na_InitUIElement(&(menu->uiElement), NA_UI_MENU, nativePtr);
   naInitList(&(menu->childs));
-  na_SetUIElementParent(&(menu->uiElement), parent);
+  na_SetUIElementParent(&(menu->uiElement), parent, NA_FALSE);
 }
 NA_HDEF void na_ClearMenu(NAMenu* menu){
   naForeachListMutable(&(menu->childs), (NAMutator)naDelete);
@@ -151,7 +151,7 @@ NA_HDEF void na_ClearMenu(NAMenu* menu){
 }
 NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child){
   naAddListLastMutable(&(menu->childs), child);
-  na_SetUIElementParent(&(child->uiElement), menu);
+  na_SetUIElementParent(&(child->uiElement), menu, NA_FALSE);
 }
 
 
@@ -203,7 +203,7 @@ NA_HDEF void na_ClearSpace(NASpace* space){
 }
 NA_HDEF void na_AddSpaceChild(NASpace* space, NA_UIElement* child){
   naAddListLastMutable(&(space->childs), child);
-  na_SetUIElementParent(child, space);
+  na_SetUIElementParent(child, space, NA_TRUE);
 }
 NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
   return space->alternatebackground;
@@ -402,8 +402,8 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
     if((command == NA_UI_COMMAND_PRESSED)
       && (naGetUIElementType(uiElement) != NA_UI_BUTTON)
       && (naGetUIElementType(uiElement) != NA_UI_CHECKBOX)
-      && (naGetUIElementType(uiElement) != NA_UI_MENUITEM)
       && (naGetUIElementType(uiElement) != NA_UI_RADIO)
+      && (naGetUIElementType(uiElement) != NA_UI_MENU)
       && (naGetUIElementType(uiElement) != NA_UI_MENUITEM))
       naError("Only buttons, radios and checkBoxes can receyve PRESSED commands.");
     if((command == NA_UI_COMMAND_EDITED)

@@ -29,7 +29,7 @@ NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr){
 }
 
 
-NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent){
+NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttached){
   NA_UIElement* elem;
   NA_UIElement* parentElem;
   NAWindow* window;
@@ -38,8 +38,8 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent){
     if(!uiElement)
       naError("uiElement is Null");
   #endif
-    elem = (NA_UIElement*)uiElement;
-    parentElem = (NA_UIElement*)parent;
+  elem = (NA_UIElement*)uiElement;
+  parentElem = (NA_UIElement*)parent;
 
   window = naGetUIElementWindow(uiElement);
   if(window && naGetWindowFirstTabElement(window) == elem){
@@ -58,7 +58,10 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent){
     #endif
 
     elem->parent = parent;
-    result = SetParent(elem->nativePtr, parentElem->nativePtr);
+    if(isElementAttached)
+    {
+      result = SetParent(elem->nativePtr, parentElem->nativePtr);
+    }
   }
 }
 

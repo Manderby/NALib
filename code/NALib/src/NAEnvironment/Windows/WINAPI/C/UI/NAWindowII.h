@@ -226,7 +226,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   NASpace* contentSpace = naNewSpace(rect.size);
   naSetWindowContentSpace(&(winapiWindow->window), contentSpace);
 
-  na_SetUIElementParent((NA_UIElement*)winapiWindow, naGetApplication());
+  na_SetUIElementParent((NA_UIElement*)winapiWindow, naGetApplication(), NA_TRUE);
 
   return (NAWindow*)winapiWindow;
 }
@@ -379,7 +379,7 @@ NA_DEF void naCloseWindow(NAWindow* window){
 
 NA_DEF void naSetWindowContentSpace(NAWindow* window, void* uiElement){
   window->contentSpace = (NASpace*)uiElement;
-  na_SetUIElementParent(uiElement, window);
+  na_SetUIElementParent(uiElement, window, NA_TRUE);
 }
 
 

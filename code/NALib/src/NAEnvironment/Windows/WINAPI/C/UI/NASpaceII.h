@@ -198,7 +198,7 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
   spaceheight = spacerect.bottom - spacerect.top;
   childheight = childrect.bottom - childrect.top;
   SetWindowPos(naGetUIElementNativePtr(child), HWND_TOP, (int)pos.x, spaceheight - (int)pos.y - childheight, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-  na_SetUIElementParent(child, space);
+  na_SetUIElementParent(child, space, NA_TRUE);
 }
 
 

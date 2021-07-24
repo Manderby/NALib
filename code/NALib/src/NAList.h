@@ -106,6 +106,15 @@ NA_IAPI       void* naGetListFirstMutable   (const NAList* list);
 NA_IAPI const void* naGetListLastConst      (const NAList* list);
 NA_IAPI       void* naGetListLastMutable    (const NAList* list);
 
+// //////////////////////////////
+// Getting the index of an element
+//
+// If the element is not found, the index after the last index is returned.
+// meaning the returned index in a list with 5 elements will be 5.
+//
+// Note that this method is slow. Try to use it as few as possible. Use
+// Iterators instead.
+NA_IAPI size_t naGetListElemIndex(const NAList* list, void* elem);
 
 // Traverses the whole list calling the accessor or mutator on each element.
 // A pointer to each element will be given to the mutator. The list is

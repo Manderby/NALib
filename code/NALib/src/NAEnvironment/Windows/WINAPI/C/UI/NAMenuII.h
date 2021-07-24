@@ -9,6 +9,7 @@
 typedef struct NAWINAPIMenu NAWINAPIMenu;
 struct NAWINAPIMenu {
   NAMenu   menu;
+  HMENU    hMenu;
 };
 
 NA_HAPI void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu);
@@ -125,14 +126,20 @@ NAWINAPICallbackInfo naMenuItemWINAPIProc(void* uiElement, UINT message, WPARAM 
 NA_DEF NAMenu* naNewMenu(void* parent){
   NAWINAPIMenu* winapiMenu = naNew(NAWINAPIMenu);
 
-  HMENU nativePtr = CreateMenu();
-  // todo: how about DestroyMenu?
+  winapiMenu->hMenu = CreatePopupMenu();
+
+  MENUINFO menuInfo;
+  naZeron(&menuInfo, sizeof(MENUINFO));
+  menuInfo.cbSize = sizeof(MENUINFO);
+  menuInfo.fMask = MIM_STYLE;
+  menuInfo.dwStyle = MNS_NOCHECK;
+  SetMenuInfo(winapiMenu->hMenu, &menuInfo);
 
  // NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
  // WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
  // if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
 
-  na_InitMenu(&(winapiMenu->menu), nativePtr, parent);
+  na_InitMenu(&(winapiMenu->menu), winapiMenu->hMenu, parent);
 
  // winapiLabel->enabled = NA_TRUE;
  // winapiLabel->href = NA_NULL;
@@ -141,29 +148,35 @@ NA_DEF NAMenu* naNewMenu(void* parent){
   return (NAMenu*)winapiMenu;
 }
 
-
-
 NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuItem* atItem){
   NAWINAPIMenuItem* winapiMenuItem = naNew(NAWINAPIMenuItem);
+  NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
-	HWND nativePtr = CreateWindow(
-		TEXT("EDIT"),
-    TEXT(""),
-    WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE,
-		0,
-    0,
-    10,
-    10,
-		naGetApplicationOffscreenWindow(),
-    NULL,
-    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
-    NULL);
+  MENUITEMINFO menuItemInfo;
+  naZeron(&menuItemInfo, sizeof(MENUITEMINFO));
+  menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+  // Note for the future, do not combine MIIM_TYPE with MIIM_FTYPE.
+  menuItemInfo.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
+  menuItemInfo.wID = 52;
+  menuItemInfo.fType = MFT_STRING;
+  menuItemInfo.dwTypeData = naAllocSystemStringWithUTF8String(text);
+  menuItemInfo.cch = (UINT)naStrlen(text);
+  menuItemInfo.fState = /*MFS_CHECKED | */MFS_ENABLED/* | MFS_DEFAULT*/;
+
+  BOOL test = InsertMenuItem(
+    winapiMenu->hMenu,
+    naGetListCount(&(menu->childs)),
+    TRUE,
+    &menuItemInfo);
+
+  DWORD error = GetLastError();
 
  // NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
  // WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
  // if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
 
-  na_InitMenuItem(&(winapiMenuItem->menuItem), nativePtr);
+  na_InitMenuItem(&(winapiMenuItem->menuItem), NA_NULL);
+  na_AddMenuChild(menu, (NAMenuItem*)winapiMenuItem);
 
  // winapiLabel->enabled = NA_TRUE;
  // winapiLabel->href = NA_NULL;
@@ -174,25 +187,32 @@ NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuIte
 
 NA_DEF NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem){
   NAWINAPIMenuItem* winapiMenuItem = naNew(NAWINAPIMenuItem);
+  NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
-	HWND nativePtr = CreateWindow(
-		TEXT("EDIT"),
-    TEXT(""),
-    WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE,
-		0,
-    0,
-    10,
-    10,
-		naGetApplicationOffscreenWindow(),
-    NULL,
-    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
-    NULL);
+  MENUITEMINFO menuItemInfo;
+  naZeron(&menuItemInfo, sizeof(MENUITEMINFO));
+  menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+  menuItemInfo.fMask = /*MIIM_ID | */MIIM_FTYPE/* | MIIM_STATE*/;
+  //menuItemInfo.wID = 52;
+  menuItemInfo.fType = MFT_SEPARATOR;
+  //menuItemInfo.fState = /*MFS_CHECKED | */MFS_ENABLED/* | MFS_DEFAULT*/;
+
+  int32 index = naGetMenuItemIndex(menu, atItem);
+
+  BOOL test = InsertMenuItem(
+    winapiMenu->hMenu,
+    index,
+    TRUE,
+    &menuItemInfo);
+
+  DWORD error = GetLastError();
 
  // NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
  // WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
  // if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
 
-  na_InitMenuItem(&(winapiMenuItem->menuItem), nativePtr);
+  na_InitMenuItem(&(winapiMenuItem->menuItem), NA_NULL);
+  na_AddMenuChild(menu, (NAMenuItem*)winapiMenuItem);
 
  // winapiLabel->enabled = NA_TRUE;
  // winapiLabel->href = NA_NULL;
@@ -202,16 +222,33 @@ NA_DEF NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem){
 }
 
 NA_DEF int32 naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
-  return 0;
+  return naGetListElemIndex(&(menu->childs), item);
 }
 
 NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos){
-  // todo
+  HMENU hMenu = CreatePopupMenu();
+
+  POINT cursorPos;
+  GetCursorPos(&cursorPos);
+
+
+  NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
+  int selection = TrackPopupMenu(
+    winapiMenu->hMenu, 
+    TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, 
+    cursorPos.x, cursorPos.y, 0,
+    naGetUIElementNativePtr(naGetUIElementParent(menu)), NULL);
+
+  DWORD error = GetLastError();
+
+  switch(selection) {
+  }
 }
 
 
 
 NA_DEF void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu){
+  DestroyMenu(winapiMenu->hMenu);
   na_ClearMenu((NAMenu*)winapiMenu);
 }
 

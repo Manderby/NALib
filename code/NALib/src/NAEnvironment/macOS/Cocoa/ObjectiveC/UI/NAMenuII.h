@@ -165,6 +165,7 @@ NA_DEF int32 naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
   naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
   naDefineCocoaObject(NACocoaNativeMenuItem, nativeMenuItemPtr, item);
   return [nativeMenuPtr getMenuItemIndex:nativeMenuItemPtr];
+  // todo why not use the child list?
 }
 
 
