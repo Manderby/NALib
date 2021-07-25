@@ -118,7 +118,7 @@ NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuIte
   NACocoaNativeMenuItem* nativeItemPtr = [[NACocoaNativeMenuItem alloc]
     initWithMenuItem:cocoaMenuItem
     text: text];
-  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), naGetUIElementParent(menu));
+  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), menu);
 
   naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
   
@@ -139,7 +139,7 @@ NA_DEF NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem){
   NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
   
   NSMenuItem* nativeItemPtr = [NSMenuItem separatorItem];
-  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), naGetUIElementParent(menu));
+  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), menu);
 
   naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
   
@@ -172,7 +172,6 @@ NA_DEF size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
 
 NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos){
   naDefineCocoaObject(NACocoaNativeMenu, nativePtr, menu);
-  na_SetApplicationLastOpenedMenu(naGetApplication(), menu);
   [nativePtr displayAt:pos];
 }
 

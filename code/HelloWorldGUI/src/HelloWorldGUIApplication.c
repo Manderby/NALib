@@ -42,7 +42,6 @@ void poststartup(void* arg){
 }
 
 
-
 // Delete all controllers and finally, delete this application
 void clearApplication(void){
   naForeachStackMutable(&(app->temperatureControllers), (NAMutator)clearTemperatureController);
@@ -70,6 +69,12 @@ addTemperatureControllerToApplication(TemperatureController* con){
   *(TemperatureController**)naPushStack(&(app->temperatureControllers)) = con;
 }
 
+
+
+NABool quitApplication(NAReaction reaction){
+  naStopApplication();
+  return NA_TRUE;
+}
 
 // This is free and unencumbered software released into the public domain.
 

@@ -2,6 +2,7 @@
 // This is an example showing how to create a GUI application with NALib which
 // converts temperatures from Degree Celsius to Degree Fahrenheit.
 
+#include "../../NALib/src/NAUI.h"
 
 
 typedef struct TemperatureController TemperatureController;
@@ -23,6 +24,7 @@ void clearApplication(void);
 double getAndAdvanceNextWindowX(void);
 double getAndAdvanceNextWindowY(void);
 addTemperatureControllerToApplication(TemperatureController* con);
+NABool quitApplication(NAReaction reaction);
 
 
 

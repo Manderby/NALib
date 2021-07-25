@@ -43,6 +43,8 @@ struct NAWINAPIApplication {
   HFONT            mathFont;
 
   NA_UIElement*    mouseHoverElement;
+  NAMenu*          lastOpenedMenu;
+  UINT             nextMenuItemId;
 
   WNDPROC          oldButtonWindowProc;
   WNDPROC          oldCheckBoxWindowProc;
@@ -262,6 +264,8 @@ NA_HDEF NAApplication* na_NewApplication(void){
   winapiApplication->mathFont = NA_NULL;
 
   winapiApplication->mouseHoverElement = NA_NULL;
+  winapiApplication->lastOpenedMenu = NA_NULL;
+  winapiApplication->nextMenuItemId = 1;
 
   winapiApplication->oldButtonWindowProc = NA_NULL;
   winapiApplication->oldCheckBoxWindowProc = NA_NULL;
@@ -698,6 +702,25 @@ NA_DEF void naHideMouse(){
     ShowCursor(0);
     app->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   }
+}
+
+
+NA_HDEF UINT na_GetApplicationNextMenuItemId(NAApplication* application)
+{
+  NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;
+  return winapiApplication->nextMenuItemId++;
+}
+
+NA_HDEF void na_SetApplicationLastOpenedMenu(NAApplication* application, NAMenu* menu)
+{
+  NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;
+  winapiApplication->lastOpenedMenu = menu;
+}
+
+NA_HDEF NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application)
+{
+  NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;
+  return winapiApplication->lastOpenedMenu;
 }
 
 

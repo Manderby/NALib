@@ -5,8 +5,6 @@
 // Do not include this file anywhere else!
 
 
-#include "../../../../../NAList.h"
-
 typedef struct NAWINAPIMenu NAWINAPIMenu;
 struct NAWINAPIMenu {
   NAMenu   menu;
@@ -21,7 +19,6 @@ NA_RUNTIME_TYPE(NAWINAPIMenu, na_DestructWINAPIMenu, NA_FALSE);
 typedef struct NAWINAPIMenuItem NAWINAPIMenuItem;
 struct NAWINAPIMenuItem {
   NAMenuItem   menuItem;
-  MENUITEMINFO menuItemInfo;  // serves as the native ptr;
 };
 
 NA_HAPI void na_DestructWINAPIMenuItem(NAWINAPIMenuItem* winapiMenuItem);
@@ -34,55 +31,45 @@ NA_DEF NAMenu* naNewMenu(void* parent){
 
   winapiMenu->hMenu = CreatePopupMenu();
 
-  MENUINFO menuInfo;
-  naZeron(&menuInfo, sizeof(MENUINFO));
-  menuInfo.cbSize = sizeof(MENUINFO);
-  menuInfo.fMask = MIM_STYLE;
-  menuInfo.dwStyle = MNS_NOCHECK;
+  //MENUINFO menuInfo;
+  //naZeron(&menuInfo, sizeof(MENUINFO));
+  //menuInfo.cbSize = sizeof(MENUINFO);
+  //menuInfo.fMask = MIM_STYLE;
+  //menuInfo.dwStyle = MNS_NOCHECK;
   //SetMenuInfo(winapiMenu->hMenu, &menuInfo);
-
- // NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
- // WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
- // if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
 
   na_InitMenu(&(winapiMenu->menu), winapiMenu->hMenu, parent);
 
- // winapiLabel->enabled = NA_TRUE;
- // winapiLabel->href = NA_NULL;
- // SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
-
   return (NAMenu*)winapiMenu;
 }
-
-static int menuItemId = 0;
 
 NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuItem* atItem){
   NAWINAPIMenuItem* winapiMenuItem = naNew(NAWINAPIMenuItem);
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
-  naZeron(&(winapiMenuItem->menuItemInfo), sizeof(MENUITEMINFO));
-  winapiMenuItem->menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+  MENUITEMINFO menuItemInfo;
+  naZeron(&menuItemInfo, sizeof(MENUITEMINFO));
+  menuItemInfo.cbSize = sizeof(MENUITEMINFO);
   // Note for the future, do not combine MIIM_TYPE with MIIM_FTYPE.
-  winapiMenuItem->menuItemInfo.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
-  winapiMenuItem->menuItemInfo.wID = menuItemId;
-  winapiMenuItem->menuItemInfo.fType = MFT_STRING;
-  winapiMenuItem->menuItemInfo.dwTypeData = naAllocSystemStringWithUTF8String(text);
-  winapiMenuItem->menuItemInfo.cch = (UINT)naStrlen(text);
-  winapiMenuItem->menuItemInfo.fState = /*MFS_CHECKED | */MFS_ENABLED/* | MFS_DEFAULT*/;
+  menuItemInfo.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
+  menuItemInfo.wID = na_GetApplicationNextMenuItemId(naGetApplication());
+  menuItemInfo.fType = MFT_STRING;
+  menuItemInfo.dwTypeData = naAllocSystemStringWithUTF8String(text);
+  menuItemInfo.cch = (UINT)naStrlen(text);
+  menuItemInfo.fState = /*MFS_CHECKED | */MFS_ENABLED/* | MFS_DEFAULT*/;
 
-  na_SetMenuItemId(&(winapiMenuItem->menuItem), menuItemId);
-  menuItemId++;
+  na_SetMenuItemId(&(winapiMenuItem->menuItem), menuItemInfo.wID);
+
+  size_t index = naGetMenuItemIndex(menu, atItem);
 
   BOOL test = InsertMenuItem(
     winapiMenu->hMenu,
-    (UINT)naGetListCount(&(menu->childs)),
+    (UINT)index,
     TRUE,
-    &(winapiMenuItem->menuItemInfo));
+    &menuItemInfo);
 
-  DWORD error = GetLastError();
-
-  na_InitMenuItem(&(winapiMenuItem->menuItem), &(winapiMenuItem->menuItemInfo), naGetUIElementParent(menu));
-  na_AddMenuChild(menu, (NAMenuItem*)winapiMenuItem);
+  na_InitMenuItem(&(winapiMenuItem->menuItem), winapiMenuItem, (NA_UIElement*)menu);
+  na_AddMenuChild(menu, (NAMenuItem*)winapiMenuItem, atItem);
 
   return (NAMenuItem*)winapiMenuItem;
 }
@@ -91,10 +78,12 @@ NA_DEF NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem){
   NAWINAPIMenuItem* winapiMenuItem = naNew(NAWINAPIMenuItem);
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
-  naZeron(&(winapiMenuItem->menuItemInfo), sizeof(MENUITEMINFO));
-  winapiMenuItem->menuItemInfo.cbSize = sizeof(MENUITEMINFO);
-  winapiMenuItem->menuItemInfo.fMask = MIIM_FTYPE;
-  winapiMenuItem->menuItemInfo.fType = MFT_SEPARATOR;
+  MENUITEMINFO menuItemInfo;
+  naZeron(&menuItemInfo, sizeof(MENUITEMINFO));
+  menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+  menuItemInfo.fMask = MIIM_ID | MIIM_FTYPE;
+  menuItemInfo.wID = na_GetApplicationNextMenuItemId(naGetApplication());
+  menuItemInfo.fType = MFT_SEPARATOR;
 
   size_t index = naGetMenuItemIndex(menu, atItem);
 
@@ -102,12 +91,10 @@ NA_DEF NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem){
     winapiMenu->hMenu,
     (UINT)index,
     TRUE,
-    &(winapiMenuItem->menuItemInfo));
+    &menuItemInfo);
 
-  DWORD error = GetLastError();
-
-  na_InitMenuItem(&(winapiMenuItem->menuItem), &(winapiMenuItem->menuItemInfo), naGetUIElementParent(menu));
-  na_AddMenuChild(menu, (NAMenuItem*)winapiMenuItem);
+  na_InitMenuItem(&(winapiMenuItem->menuItem), winapiMenuItem, (NA_UIElement*)menu);
+  na_AddMenuChild(menu, (NAMenuItem*)winapiMenuItem, atItem);
 
   return (NAMenuItem*)winapiMenuItem;
 }
@@ -131,8 +118,6 @@ NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos){
     TPM_LEFTALIGN | TPM_RIGHTBUTTON/* | TPM_RETURNCMD*/, 
     cursorPos.x, cursorPos.y, 0,
     naGetUIElementNativePtr(naGetUIElementParent(menu)), NULL);
-
-  DWORD error = GetLastError();
 }
 
 

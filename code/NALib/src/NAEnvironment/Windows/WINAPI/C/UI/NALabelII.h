@@ -70,19 +70,18 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
 
 
-NAWINAPICallbackInfo naLabelWINAPINotify(void* uiElement, WORD notificationCode){
+NABool naLabelWINAPINotify(void* uiElement, WORD notificationCode){
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)uiElement;
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NABool hasBeenHandeled = NA_FALSE;
   switch(notificationCode){
     case EN_SETFOCUS:
       if(winapiLabel->href){
         system(naGetStringUTF8Pointer(winapiLabel->href));
-        info.hasBeenHandeled = NA_TRUE;
-        info.result = 0;
+        hasBeenHandeled = NA_TRUE;
       }
       break;
   }
-  return info;
+  return hasBeenHandeled;
 }
 
 

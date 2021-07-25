@@ -2,7 +2,6 @@
 // This is an example showing how to create a GUI application with NALib which
 // converts temperatures from Degree Celsius to Degree Fahrenheit.
 
-#include "../../NALib/src/NAUI.h"
 #include "HelloWorldGUI.h"
 
 
@@ -49,14 +48,6 @@ NABool pressButton(NAReaction reaction){
 // Will be called when the + Button is pressed.
 NABool newTemperatureController(NAReaction reaction){
   createTemperatureController();
-  return NA_TRUE;
-}
-
-
-
-// Will be called when the Quit Button is pressed.
-NABool quitApplication(NAReaction reaction){
-  naStopApplication();
   return NA_TRUE;
 }
 

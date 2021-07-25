@@ -9,7 +9,6 @@
 #include "../../../../../NAValueHelper.h"
 
 
-
 NA_HAPI void** na_GetUIElementNextTabReference(void* textField);
 NA_HAPI void** na_GetUIElementPrevTabReference(void* textField);
 NA_HAPI void** na_GetTextBoxNextTabReference(NATextBox* textBox);
@@ -22,6 +21,10 @@ NA_UIElement* naGetApplicationMouseHoverElement(void);
 void naSetApplicationMouseHoverElement(NA_UIElement* element);
 const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 
+NA_HAPI UINT na_GetApplicationNextMenuItemId(NAApplication* application);
+NA_HAPI void na_SetApplicationLastOpenedMenu(NAApplication* application, NAMenu* menu);
+NA_HAPI NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application);
+
 
 
 NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr){
@@ -29,7 +32,7 @@ NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr){
 }
 
 
-NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttached){
+NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable){
   NA_UIElement* elem;
   NA_UIElement* parentElem;
   NAWindow* window;
@@ -58,7 +61,7 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
     #endif
 
     elem->parent = parent;
-    if(isElementAttached)
+    if(isElementAttachable)
     {
       result = SetParent(elem->nativePtr, parentElem->nativePtr);
     }
@@ -271,10 +274,10 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc  (void* uiElement, UINT message, WPAR
 NAWINAPICallbackInfo naWindowWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 
 // Prototypes of WindowProc handlers which react to notifications
-NAWINAPICallbackInfo naButtonWINAPINotify   (void* uiElement, WORD notificationCode);
-NAWINAPICallbackInfo naCheckBoxWINAPINotify (void* uiElement, WORD notificationCode);
-NAWINAPICallbackInfo naLabelWINAPINotify    (void* uiElement, WORD notificationCode);
-NAWINAPICallbackInfo naTextFieldWINAPINotify(void* uiElement, WORD notificationCode);
+NABool naButtonWINAPINotify   (void* uiElement, WORD notificationCode);
+NABool naCheckBoxWINAPINotify (void* uiElement, WORD notificationCode);
+NABool naLabelWINAPINotify    (void* uiElement, WORD notificationCode);
+NABool naTextFieldWINAPINotify(void* uiElement, WORD notificationCode);
 
 
 
@@ -474,9 +477,9 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
   WORD notificationCode = HIWORD(wParam);
   WORD controlIdentifier = LOWORD(wParam);
   HWND controlWnd = (HWND)lParam;
-  NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(controlWnd);
+  NABool hasBeenHandeled = NA_FALSE;
 
-  if(lParam == 0 && notificationCode == 0)
+  if(controlWnd == 0 && notificationCode == 0)
   {
     // This is a menu message
     NAMenu* menu = na_GetApplicationLastOpenedMenu(naGetApplication());
@@ -493,21 +496,29 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
 
     if(menuItem){
       na_DispatchUIElementCommand((NA_UIElement*)menuItem, NA_UI_COMMAND_PRESSED);
-      info.hasBeenHandeled = NA_TRUE;
+      hasBeenHandeled = NA_TRUE;
     }
     na_SetApplicationLastOpenedMenu(naGetApplication(), NA_NULL);
 
-  } else if(uiElement && na_AreUIElementNotificationsAllowed(uiElement)){
+  }else{
     // This is a control message
-    switch(naGetUIElementType(uiElement)){
-    case NA_UI_BUTTON:    info = naButtonWINAPINotify   (uiElement, notificationCode); break;
-    case NA_UI_CHECKBOX:  info = naCheckBoxWINAPINotify (uiElement, notificationCode); break;
-    case NA_UI_LABEL:     info = naLabelWINAPINotify    (uiElement, notificationCode); break;
-    case NA_UI_TEXTFIELD: info = naTextFieldWINAPINotify(uiElement, notificationCode); break;
-    default:
-      //printf("Uncaught notification" NA_NL);
-      break;
+    NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(controlWnd);
+    if(uiElement && na_AreUIElementNotificationsAllowed(uiElement)){
+      switch(naGetUIElementType(uiElement)){
+      case NA_UI_BUTTON:    hasBeenHandeled = naButtonWINAPINotify   (uiElement, notificationCode); break;
+      case NA_UI_CHECKBOX:  hasBeenHandeled = naCheckBoxWINAPINotify (uiElement, notificationCode); break;
+      case NA_UI_LABEL:     hasBeenHandeled = naLabelWINAPINotify    (uiElement, notificationCode); break;
+      case NA_UI_TEXTFIELD: hasBeenHandeled = naTextFieldWINAPINotify(uiElement, notificationCode); break;
+      default:
+        //printf("Uncaught notification" NA_NL);
+        break;
+      }
     }
+  }
+
+  if(hasBeenHandeled){
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0; // Must be zero. See documentation.
   }
   return info;
 }

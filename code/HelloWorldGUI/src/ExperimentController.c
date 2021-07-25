@@ -4,7 +4,6 @@
 
 
 
-#include "../../NALib/src/NAUI.h"
 #include "HelloWorldGUI.h"
 #include "../../NALib/src/NAEnvironment/NAUIImage.h"
 
@@ -61,6 +60,8 @@ struct ExperimentController{
   NAMenuItem* menuItem3;
   NAMenuItem* menuItem4;
   NAMenuItem* menuSeparator;
+
+  NAButton* quitButton;
 
   int textOption;
   int imageOption;
@@ -331,9 +332,9 @@ ExperimentController* createExperimentController(){
   naAddUIReaction(con->menuButton, NA_UI_COMMAND_PRESSED, menuButtonPressed, con);
   naAddSpaceChild(con->contentSpace, con->menuButton, naMakePos(left, curPosY));
   con->menu = naNewMenu(con->menuButton);  
-  con->menuItem0 = naNewMenuItem(con->menu, "I am Groot", NA_NULL);
-  con->menuItem1 = naNewMenuItem(con->menu, "You are Winner", NA_NULL);
-  con->menuItem2 = naNewMenuItem(con->menu, "Kohle, Kohle, Kohle", NA_NULL);
+  con->menuItem0 = naNewMenuItem(con->menu, "You are Winner", NA_NULL);
+  con->menuItem1 = naNewMenuItem(con->menu, "Kohle, Kohle, Kohle", NA_NULL);
+  con->menuItem2 = naNewMenuItem(con->menu, "I am Groot", con->menuItem0);
   con->menuItem3 = naNewMenuItem(con->menu, "None of that Objective-C rubbish", NA_NULL);
   con->menuItem4 = naNewMenuItem(con->menu, "Bread crumbs and beaver spit", NA_NULL);
   con->menuSeparator = naNewMenuSeparator(con->menu, con->menuItem3);
@@ -347,6 +348,11 @@ ExperimentController* createExperimentController(){
   //  naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
   //  menuItemKeyboardSelected,
   //  con);
+
+  // Create a Quit button for terminating the whole application.
+  con->quitButton = naNewTextButton("Quit", naMakeSize(60, 30), 0);
+  naAddSpaceChild(con->contentSpace, con->quitButton, naMakePos(10, 110));
+  naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, quitApplication, con);
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",

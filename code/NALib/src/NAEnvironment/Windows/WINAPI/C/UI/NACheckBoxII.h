@@ -61,8 +61,8 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM 
 
 
 
-NAWINAPICallbackInfo naCheckBoxWINAPINotify(void* uiElement, WORD notificationCode){
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+NABool naCheckBoxWINAPINotify(void* uiElement, WORD notificationCode){
+  NABool hasBeenHandeled = NA_FALSE;
   NABool check;
 
   switch(notificationCode){
@@ -71,12 +71,11 @@ NAWINAPICallbackInfo naCheckBoxWINAPINotify(void* uiElement, WORD notificationCo
       check = naGetCheckBoxState(uiElement);
       naSetCheckBoxState(uiElement, !check);
       na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
-      info.hasBeenHandeled = NA_TRUE;
-      info.result = 0;
+      hasBeenHandeled = NA_TRUE;
       break;
   }
 
-  return info;
+  return hasBeenHandeled;
 }
 
 

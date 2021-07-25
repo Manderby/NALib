@@ -26,7 +26,6 @@
 // Note that you could add an include path in your project to access the
 // NAXXX.h files. But for the sake of simplicity, we use relative paths here.
 #include "HelloWorldGUI.h"
-#include "../../NALib/src/NAUI.h"
 
 
 

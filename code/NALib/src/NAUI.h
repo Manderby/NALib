@@ -628,6 +628,7 @@ NA_API void naSetLabelVisible(NALabel* label, NABool visible);
 // Menu and MenuItem
 // naNewMenuItem adds a new menu item before atItem. If atItem is Null, it is
 // added to the end of the menu.
+// naGetMenuItemIndex returns the index including all separators.
 NA_API NAMenu* naNewMenu(void* parent);
 NA_API NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuItem* atItem);
 NA_API NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem);

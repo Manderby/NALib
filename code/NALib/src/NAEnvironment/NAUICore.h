@@ -56,7 +56,6 @@ struct NAApplication{
   NAMouseStatus     mouseStatus;     // The mouse cursor status
   NAKeyboardStatus  keyboardStatus;  // The keyboard status
   NAInt             flags;
-  NAMenu*           lastOpenedMenu;
 
   NAUTF8Char*       name;
   NAUTF8Char*       companyName;
@@ -169,7 +168,7 @@ extern NAApplication* na_App;
 // gathered here. You are free to use them but note that these are supposed to
 // be helper functions.
 
-NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttached);
+NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
 NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
 NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
 NA_HAPI void na_AllowUIElementNotifications(NA_UIElement* elem);
@@ -180,8 +179,6 @@ NA_HAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
 NA_HAPI NAApplication* na_NewApplication(void);
 NA_HAPI void na_InitApplication(NAApplication* application, NANativePtr nativePtr);
 NA_HAPI void na_ClearApplication(NAApplication* application);
-NA_HAPI void na_SetApplicationLastOpenedMenu(NAApplication* application, NAMenu* menu);
-NA_HAPI NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application);
 
 NA_HAPI void na_InitButton(NAButton* button, void* nativePtr);
 NA_HAPI void na_ClearButton(NAButton* button);
@@ -197,7 +194,7 @@ NA_HAPI void na_ClearLabel(NALabel* label);
 
 NA_HAPI void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent);
 NA_HAPI void na_ClearMenu(NAMenu* menu);
-NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child);
+NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, NAMenuItem* itemAt);
 
 NA_HAPI void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent);
 NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);

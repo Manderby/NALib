@@ -82,22 +82,21 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
 
 
-NAWINAPICallbackInfo naButtonWINAPINotify(void* uiElement, WORD notificationCode){
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+NABool naButtonWINAPINotify(void* uiElement, WORD notificationCode){
+  NABool hasBeenHandeled = NA_FALSE;
   NAButton* button = (NAButton*)uiElement;
 
   switch(notificationCode){
   case BN_CLICKED:
     naSetButtonState(button, !naGetButtonState(button));
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
-    info.hasBeenHandeled = NA_TRUE;
-    info.result = 0;
+    hasBeenHandeled = NA_TRUE;
     break;
   default:
     printf("Uncaught Button notification" NA_NL);
     break;
   }
-  return info;
+  return hasBeenHandeled;
 }
 
 

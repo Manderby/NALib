@@ -79,16 +79,15 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM
 
 
 
-NAWINAPICallbackInfo naTextFieldWINAPINotify(void* uiElement, WORD notificationCode){
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+NABool naTextFieldWINAPINotify(void* uiElement, WORD notificationCode){
+  NABool hasBeenHandeled = NA_FALSE;
   switch(notificationCode){
   case EN_CHANGE:
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED);
-    info.hasBeenHandeled = NA_TRUE;
-    info.result = 0;
+    hasBeenHandeled = NA_TRUE;
     break;
   }
-  return info;
+  return hasBeenHandeled;
 }
 
 
