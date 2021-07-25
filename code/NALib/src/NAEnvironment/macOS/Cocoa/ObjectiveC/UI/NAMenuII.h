@@ -178,23 +178,13 @@ NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos){
 
 
 NA_HDEF NARect na_GetMenuAbsoluteInnerRect(NA_UIElement* menu){
-  naDefineCocoaObject(NACocoaNativeMenu, nativePtr, menu);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParent(menu), naGetApplication(), NA_FALSE);
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
+  return naMakeRectS(0, 0, 1, 1);
 }
 
 
 
 NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(NA_UIElement* menuItem){
-  naDefineCocoaObject(NACocoaNativeMenuItem, nativePtr, menuItem);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParent(menuItem), naGetApplication(), NA_FALSE);
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
+  return naMakeRectS(0, 0, 1, 1);
 }
 
 

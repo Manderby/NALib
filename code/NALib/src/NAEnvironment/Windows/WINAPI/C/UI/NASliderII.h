@@ -134,20 +134,18 @@ NA_DEF void na_DestructWINAPISlider(NAWINAPISlider* winapiSlider){
 
 
 NA_HDEF NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* slider){
-  //return naMakeRectS(20, 40, 100, 50);
   RECT contentRect;
   NARect screenRect;
   NARect rect;
   GetClientRect(naGetUIElementNativePtr(slider), &contentRect);
 
-  POINT testpoint = {0, 0};
+  POINT testPoint = {0, 0};
 
-  //GetClientRect(space->nativePtr, &contentRect);
-  ClientToScreen(naGetUIElementNativePtr(slider), &testpoint);
+  ClientToScreen(naGetUIElementNativePtr(slider), &testPoint);
   screenRect = naGetMainScreenRect();
 
-  rect.pos.x = testpoint.x;
-  rect.pos.y = (double)screenRect.size.height - ((double)testpoint.y + ((double)contentRect.bottom - (double)contentRect.top));
+  rect.pos.x = testPoint.x;
+  rect.pos.y = (double)screenRect.size.height - ((double)testPoint.y + ((double)contentRect.bottom - (double)contentRect.top));
   rect.size.width = (double)contentRect.right - (double)contentRect.left;
   rect.size.height = (double)contentRect.bottom - (double)contentRect.top;
   return rect;
@@ -173,19 +171,6 @@ NA_API void naSetSliderValue(NASlider* slider, double value){
     (WPARAM) TRUE, // redraw flag 
     (LPARAM) sliderValue); 
 }
-
-
-//NA_DEF NABool naGetRadioState(NARadio* radio){
-//  LPARAM state = SendMessage(naGetUIElementNativePtr(radio), BM_GETSTATE, 0, 0);
-//  return (state & BST_CHECKED) == BST_CHECKED;
-//}
-//
-//
-//
-//NA_DEF void naSetRadioState(NARadio* radio, NABool state){
-//  LPARAM lParam = state ? BST_CHECKED : BST_UNCHECKED;
-//  SendMessage(naGetUIElementNativePtr(radio), BM_SETCHECK, lParam, 0);
-//}
 
 
 

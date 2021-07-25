@@ -120,8 +120,17 @@ NA_DEF void na_DestructWINAPICheckBox(NAWINAPICheckBox* winapiCheckBox){
 
 
 NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox){
-  NA_UNUSED(checkBox);
-  return naMakeRectS(20, 40, 100, 50);
+  NARect screenRect = naGetMainScreenRect();
+  RECT clientRect;
+  GetClientRect(naGetUIElementNativePtr(checkBox), &clientRect);
+  double height = clientRect.bottom - clientRect.top;
+
+  POINT testPoint = {0, (LONG)height};
+  ClientToScreen(naGetUIElementNativePtr(checkBox), &testPoint);
+
+  return naMakeRect(
+    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
+    naMakeSize(clientRect.right - clientRect.left, height));
 }
 
 

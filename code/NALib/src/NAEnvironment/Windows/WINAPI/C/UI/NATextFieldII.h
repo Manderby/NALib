@@ -217,8 +217,17 @@ NA_HDEF void** na_GetTextFieldPrevTabReference(NATextField* textField){
 
 
 NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField){
- NA_UNUSED(textField);
- return naMakeRectS(20, 40, 100, 50);
+  NARect screenRect = naGetMainScreenRect();
+  RECT clientRect;
+  GetClientRect(naGetUIElementNativePtr(textField), &clientRect);
+  double height = clientRect.bottom - clientRect.top;
+
+  POINT testPoint = {0, (LONG)height};
+  ClientToScreen(naGetUIElementNativePtr(textField), &testPoint);
+
+  return naMakeRect(
+    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
+    naMakeSize(clientRect.right - clientRect.left, height));
 }
 
 

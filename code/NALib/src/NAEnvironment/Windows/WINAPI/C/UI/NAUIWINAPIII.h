@@ -652,7 +652,19 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
   // Now, get the rect of the element.
   switch(elem->elementType){
   case NA_UI_APPLICATION: rect = na_GetApplicationAbsoluteRect(); break;
+  case NA_UI_BUTTON:      rect = na_GetButtonAbsoluteInnerRect(elem); break;
+  case NA_UI_CHECKBOX:    rect = na_GetCheckBoxAbsoluteInnerRect(elem); break;
+  case NA_UI_IMAGESPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(elem); break;
+  case NA_UI_LABEL:       rect = na_GetLabelAbsoluteInnerRect(elem); break;
+  case NA_UI_MENU:        rect = na_GetMenuAbsoluteInnerRect(elem); break;
+  case NA_UI_MENUITEM:    rect = na_GetMenuItemAbsoluteInnerRect(elem); break;
+  case NA_UI_OPENGLSPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(elem); break;
+  case NA_UI_RADIO:       rect = na_GetRadioAbsoluteInnerRect(elem); break;
   case NA_UI_SCREEN:      rect = na_GetScreenAbsoluteRect(elem); break;
+  case NA_UI_SLIDER:      rect = na_GetSliderAbsoluteInnerRect(elem); break;
+  case NA_UI_SPACE:       rect = na_GetSpaceAbsoluteInnerRect(elem); break;
+  case NA_UI_TEXTBOX:     rect = na_GetTextBoxAbsoluteInnerRect(elem); break;
+  case NA_UI_TEXTFIELD:   rect = na_GetTextFieldAbsoluteInnerRect(elem); break;
   case NA_UI_WINDOW:
     if(includebounds){
       rect = na_GetWindowAbsoluteOuterRect(elem);
@@ -660,8 +672,6 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
       rect = na_GetWindowAbsoluteInnerRect(elem);
     }
     break;
-  case NA_UI_OPENGLSPACE:  rect = na_GetSpaceAbsoluteInnerRect(elem); break;
-  case NA_UI_SLIDER:       rect = na_GetSliderAbsoluteInnerRect(elem); break;
   default:
     //#if NA_DEBUG
     //  naError("Invalid UI type");
@@ -673,9 +683,9 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
   if(relElem){
     switch(relElem->elementType){
     case NA_UI_APPLICATION: relrect = na_GetApplicationAbsoluteRect(); break;
+    case NA_UI_OPENGLSPACE: relrect = na_GetOpenGLSpaceAbsoluteInnerRect(relElem); break;
     case NA_UI_SCREEN:      relrect = na_GetScreenAbsoluteRect(relElem); break;
     case NA_UI_WINDOW:      relrect = na_GetWindowAbsoluteInnerRect(relElem); break;
-    case NA_UI_OPENGLSPACE: relrect = na_GetSpaceAbsoluteInnerRect(relElem); break;
     default:
       #if NA_DEBUG
         naError("Invalid UI type");

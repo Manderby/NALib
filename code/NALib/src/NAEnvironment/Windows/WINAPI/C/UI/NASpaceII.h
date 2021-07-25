@@ -207,14 +207,14 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   NARect rect;
   NARect screenRect;
   RECT contentRect;
-  POINT testpoint = {0, 0};
+  POINT testPoint = {0, 0};
 
   GetClientRect(space->nativePtr, &contentRect);
-  ClientToScreen(space->nativePtr, &testpoint);
+  ClientToScreen(space->nativePtr, &testPoint);
   screenRect = naGetMainScreenRect();
 
-  rect.pos.x = testpoint.x;
-  rect.pos.y = (double)screenRect.size.height - ((double)testpoint.y + ((double)contentRect.bottom - (double)contentRect.top));
+  rect.pos.x = testPoint.x;
+  rect.pos.y = (double)screenRect.size.height - ((double)testPoint.y + ((double)contentRect.bottom - (double)contentRect.top));
   rect.size.width = (double)contentRect.right - (double)contentRect.left;
   rect.size.height = (double)contentRect.bottom - (double)contentRect.top;
   return rect;

@@ -108,15 +108,13 @@ NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos){
 
   HMENU hMenu = CreatePopupMenu();
 
-  POINT cursorPos;
-  GetCursorPos(&cursorPos);
-
   na_SetApplicationLastOpenedMenu(naGetApplication(), menu);
+  NARect screenRect = naGetMainScreenRect();
 
   int selection = TrackPopupMenu(
     winapiMenu->hMenu, 
     TPM_LEFTALIGN | TPM_RIGHTBUTTON/* | TPM_RETURNCMD*/, 
-    cursorPos.x, cursorPos.y, 0,
+    (int)pos.x, (int)screenRect.size.height - (int)pos.y, 0,
     naGetUIElementNativePtr(naGetUIElementParent(menu)), NULL);
 }
 
@@ -135,7 +133,12 @@ NA_DEF void na_DestructWINAPIMenuItem(NAWINAPIMenuItem* winapiMenuItem){
 
 NA_HDEF NARect na_GetMenuAbsoluteInnerRect(NA_UIElement* menu){
   NA_UNUSED(menu);
-  return naMakeRectS(20, 40, 100, 50);
+  return naMakeRectS(0, 0, 1, 1);
+}
+
+NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(NA_UIElement* menu){
+  NA_UNUSED(menu);
+  return naMakeRectS(0, 0, 1, 1);
 }
 
 

@@ -113,8 +113,17 @@ NA_DEF void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio){
 
 
 NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
-  NA_UNUSED(radio);
-  return naMakeRectS(20, 40, 100, 50);
+  NARect screenRect = naGetMainScreenRect();
+  RECT clientRect;
+  GetClientRect(naGetUIElementNativePtr(radio), &clientRect);
+  double height = clientRect.bottom - clientRect.top;
+
+  POINT testPoint = {0, (LONG)height};
+  ClientToScreen(naGetUIElementNativePtr(radio), &testPoint);
+
+  return naMakeRect(
+    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
+    naMakeSize(clientRect.right - clientRect.left, height));
 }
 
 

@@ -201,8 +201,17 @@ NA_DEF void naSetLabelVisible(NALabel* label, NABool visible){
 
 
 NA_HDEF NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label){
-  NA_UNUSED(label);
-  return naMakeRectS(20, 40, 100, 50);
+  NARect screenRect = naGetMainScreenRect();
+  RECT clientRect;
+  GetClientRect(naGetUIElementNativePtr(label), &clientRect);
+  double height = clientRect.bottom - clientRect.top;
+
+  POINT testPoint = {0, (LONG)height};
+  ClientToScreen(naGetUIElementNativePtr(label), &testPoint);
+
+  return naMakeRect(
+    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
+    naMakeSize(clientRect.right - clientRect.left, height));
 }
 
 

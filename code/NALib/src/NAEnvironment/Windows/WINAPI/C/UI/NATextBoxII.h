@@ -142,8 +142,17 @@ NA_HDEF void** na_GetTextBoxPrevTabReference(NATextBox* textBox){
 
 
 NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox){
-  NA_UNUSED(textBox);
-  return naMakeRectS(20, 40, 100, 50);
+  NARect screenRect = naGetMainScreenRect();
+  RECT clientRect;
+  GetClientRect(naGetUIElementNativePtr(textBox), &clientRect);
+  double height = clientRect.bottom - clientRect.top;
+
+  POINT testPoint = {0, (LONG)height};
+  ClientToScreen(naGetUIElementNativePtr(textBox), &testPoint);
+
+  return naMakeRect(
+    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
+    naMakeSize(clientRect.right - clientRect.left, height));
 }
 
 

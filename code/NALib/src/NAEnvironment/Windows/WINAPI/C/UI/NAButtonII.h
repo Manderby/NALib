@@ -337,8 +337,17 @@ NA_DEF void naSetButtonVisible(NAButton* button, NABool visible){
 
 
 NA_HDEF NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button){
-  NA_UNUSED(button);
-  return naMakeRectS(20, 40, 100, 50);
+  NARect screenRect = naGetMainScreenRect();
+  RECT clientRect;
+  GetClientRect(naGetUIElementNativePtr(button), &clientRect);
+  double height = clientRect.bottom - clientRect.top;
+
+  POINT testPoint = {0, (LONG)height};
+  ClientToScreen(naGetUIElementNativePtr(button), &testPoint);
+
+  return naMakeRect(
+    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
+    naMakeSize(clientRect.right - clientRect.left, height));
 }
 
 

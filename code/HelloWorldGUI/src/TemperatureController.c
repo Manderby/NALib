@@ -61,8 +61,8 @@ TemperatureController* createTemperatureController(){
   TemperatureController* con = naAlloc(TemperatureController);
 
   // Create a new window
-  NARect windowrect = naMakeRectS(getAndAdvanceNextWindowX(), getAndAdvanceNextWindowY(), 400, 200);
-  con->window = naNewWindow("Temperature Converter", windowrect, NA_FALSE, 0);
+  NARect windowRect = naMakeRectS(getAndAdvanceNextWindowX(), getAndAdvanceNextWindowY(), 400, 200);
+  con->window = naNewWindow("Temperature Converter", windowRect, NA_FALSE, 0);
 
   // Every window has a space which defines its contents.
   NASpace* windowSpace = naGetWindowContentSpace(con->window);
