@@ -23,7 +23,7 @@ void poststartup(void* arg);
 void clearApplication(void);
 double getAndAdvanceNextWindowX(void);
 double getAndAdvanceNextWindowY(void);
-addTemperatureControllerToApplication(TemperatureController* con);
+void addTemperatureControllerToApplication(TemperatureController* con);
 NABool quitApplication(NAReaction reaction);
 
 

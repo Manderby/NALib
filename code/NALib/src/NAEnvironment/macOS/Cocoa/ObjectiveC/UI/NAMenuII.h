@@ -118,7 +118,7 @@ NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuIte
   NACocoaNativeMenuItem* nativeItemPtr = [[NACocoaNativeMenuItem alloc]
     initWithMenuItem:cocoaMenuItem
     text: text];
-  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), menu);
+  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), (NA_UIElement*)menu);
 
   naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
   
@@ -129,7 +129,7 @@ NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuIte
     [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];
   }
   
-  na_AddMenuChild(menu, (NAMenuItem*)cocoaMenuItem);
+  na_AddMenuChild(menu, (NAMenuItem*)cocoaMenuItem, atItem);
   
   return (NAMenuItem*)cocoaMenuItem;
 }
@@ -139,7 +139,7 @@ NA_DEF NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem){
   NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
   
   NSMenuItem* nativeItemPtr = [NSMenuItem separatorItem];
-  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), menu);
+  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), (NA_UIElement*)menu);
 
   naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
   
@@ -150,7 +150,7 @@ NA_DEF NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem){
     [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];
   }
   
-  na_AddMenuChild(menu, (NAMenuItem*)cocoaMenuItem);
+  na_AddMenuChild(menu, (NAMenuItem*)cocoaMenuItem, atItem);
   
   return (NAMenuItem*)cocoaMenuItem;
 }
@@ -162,10 +162,7 @@ NA_DEF void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem){
 
 
 NA_DEF size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
-  naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
-  naDefineCocoaObject(NACocoaNativeMenuItem, nativeMenuItemPtr, item);
-  return [nativeMenuPtr getMenuItemIndex:nativeMenuItemPtr];
-  // todo why not use the child list?
+  return naGetListElemIndex(&(menu->childs), item);
 }
 
 
