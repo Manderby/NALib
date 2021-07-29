@@ -124,10 +124,10 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 
 
 NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, NASize size, uint32 flags){
-//  #ifndef NDEBUG
-//    if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS))
-//      naError("Borderless Text buttons should not be used as they can not be distinguished.");
-//  #endif
+  #if NA_DEBUG
+    if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS))
+      naError("Borderless Text buttons should not be used as they can not be distinguished.");
+  #endif
   
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
 

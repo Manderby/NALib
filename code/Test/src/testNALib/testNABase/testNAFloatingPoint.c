@@ -173,6 +173,7 @@ void testGetFloat(){
 
   naTestGroup("naGetFloatInteger valid cases"){
     naTest(naGetFloatInteger(0.f) == 0);
+    naTest(naGetFloatInteger(-0.f) == 0);
     naTest(naGetFloatInteger(0.001234f) == 0);
     naTest(naGetFloatInteger(0x0.fffffep0f) == 0);
     naTest(naGetFloatInteger(0.999999999f) == 1);
@@ -180,11 +181,15 @@ void testGetFloat(){
     naTest(naGetFloatInteger(-42.f) == -42);
     naTest(naGetFloatInteger(0x1.fffffep23f) == 0xffffff);
     naTest(naGetFloatInteger(-0x1.fffffep23f) == -0xffffff);
-  }
+    naTest(naGetFloatInteger(0x00ffffff) == 0x00ffffff);
+    naTest(naGetFloatInteger(-0x00ffffff) == -0x00ffffff);
+}
 
   naTestGroup("naGetFloatInteger invalid cases"){
     naTestError(naGetFloatInteger(NA_INFINITYf));
     naTestError(naGetFloatInteger(0x1.fffffep24f));
+    naTestError(naGetFloatInteger(0x01000000));
+    naTestError(naGetFloatInteger(-0x01000000));
   }
 
   naTestGroup("naGetFloatFraction valid cases"){
@@ -263,6 +268,7 @@ void testGetDouble(){
  
   naTestGroup("naGetDoubleInteger valid cases"){
     naTest(naGetDoubleInteger(0.) == 0);
+    naTest(naGetDoubleInteger(-0.) == 0);
     naTest(naGetDoubleInteger(0.00001234) == 0);
     naTest(naGetDoubleInteger(0x0.fffffffffffffp0) == 0);
     naTest(naGetDoubleInteger(0.99999999999999999) == 1);
@@ -270,11 +276,15 @@ void testGetDouble(){
     naTest(naGetDoubleInteger(-42.) == -42);
     naTest(naGetDoubleInteger(0x1.fffffffffffffp52) == 0x1fffffffffffff);
     naTest(naGetDoubleInteger(-0x1.fffffffffffffp52) == -0x1fffffffffffff);
+    naTest(naEquali64(naGetDoubleInteger(naCasti64ToDouble(naMakei64(0x001fffff, 0xffffffff))), naMakei64(0x001fffff, 0xffffffff)));
+    naTest(naGetDoubleInteger(naCasti64ToDouble(naNegi64(naMakei64(0x001fffff, 0xffffffff)))) == naNegi64(naMakei64(0x001fffff, 0xffffffff)));
   }
 
   naTestGroup("naGetDoubleInteger invalid cases"){
     naTestError(naGetDoubleInteger(NA_INFINITY));
     naTestError(naGetDoubleInteger(0x1.fffffffffffffp53));
+    naTestError(naGetDoubleInteger(naCasti64ToDouble(naMakei64(0x00200000, 0x00000000))));
+    naTestError(naGetDoubleInteger(naCasti64ToDouble(naNegi64(naMakei64(0x00200000, 0x00000000)))));
   }
 
   naTestGroup("naGetDoubleFraction valid cases"){

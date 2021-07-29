@@ -256,44 +256,31 @@ NA_IDEF size_t naMakeLengthWithMinAndMaxs(size_t min, size_t max){
 
 #include "../NAMathOperators.h"
 
-NA_IDEF NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength){
-  NAInt shiftx;
+NA_IDEF NAInt naAlignValuei(NAInt value, NAInt offset, NAInt alignLength){
+  NAInt shiftValue = value - offset;
   #if NA_DEBUG
-  if(!naIsLengthValueUsefuli(alignlength))
-    naError("Invalid size leads to range overflow. Correcting to empty range.");
+    if(!naIsLengthValueUsefuli(alignLength))
+      naError("Length must be > 0");
+    if(offset > value && shiftValue > 0)
+      naError("Underflow");
+    if(value > offset && shiftValue < 0)
+      naError("Overflow");
   #endif
-  shiftx = x - offset;
-  if(shiftx < 0){
-    return (((NAInt)((shiftx + 1) / alignlength) - 1) * alignlength) + offset;
+  if(shiftValue < 0){
+    return (((NAInt)((shiftValue + 1) / alignLength) - 1) * alignLength) + offset;
   }else{
-    return (((NAInt)((shiftx + 0) / alignlength) - 0) * alignlength) + offset;
+    return (((NAInt)((shiftValue + 0) / alignLength) - 0) * alignLength) + offset;
   }
 }
-NA_IDEF double naAlignValued(double x, double offset, double alignlength){
-  double shiftx;
+NA_IDEF double naAlignValued(double value, double offset, double alignLength){
+  double shiftValue = value - offset;
   #if NA_DEBUG
-  if(!naIsLengthValueUseful(alignlength))
-    naError("Invalid size leads to range overflow. Correcting to empty range.");
+    if(!naIsLengthValueUseful(alignLength))
+        naError("Length must be > 0.");
+    if(!naIsOffsetValueUseful(shiftValue))
+        naError("given offset results in a non-useful number.");
   #endif
-  shiftx = x - offset;
-  return ((naFloor((shiftx) / alignlength)) * alignlength) + offset;
-}
-
-
-
-NA_IDEF NAInt naMakeIntWithIntegerFloat(float x){
-  #if NA_DEBUG
-    if(naRoundf(x) != x)
-      naError("Given float is not an integer number");
-  #endif
-  return (NAInt)x;
-}
-NA_IDEF NAInt naMakeIntWithIntegerDouble(double x){
-  #if NA_DEBUG
-    if(naRound(x) != x)
-      naError("Given double is not an integer number");
-  #endif
-  return (NAInt)x;
+  return ((naFloor((shiftValue) / alignLength)) * alignLength) + offset;
 }
 
 
@@ -377,10 +364,10 @@ NA_IDEF NABool naIsLengthValueNegatives(size_t a){
 
 
 NA_IDEF NABool naIsOffsetValueUseful(double a){
-  return !naIsNaN(a);
+  return !naIsNaN(a) && !naIsInfinite(a);
 }
 NA_IDEF NABool naIsOffsetValueUsefulf(float a){
-  return !naIsNaNf(a);
+  return !naIsNaNf(a) && !naIsInfinitef(a);
 }
 NA_IDEF NABool naIsOffsetValueUsefuli(NAInt a){
   NA_UNUSED(a);

@@ -141,9 +141,40 @@ void testRange(){
 
 
 
+void testAlign(){
+  naTestGroup("naAlignValuei"){
+    naTest(naAlignValuei(0, 0, 20) == 0);
+    naTest(naAlignValuei(5, 0, 20) == 0);
+    naTest(naAlignValuei(65, 0, 20) == 60);
+    naTest(naAlignValuei(-75, 0, 20) == -80);
+    naTest(naAlignValuei(10, 10, 20) == 10);
+    naTest(naAlignValuei(55, 10, 20) == 50);
+    naTest(naAlignValuei(5, 10, 20) == -10);
+    naTestError(naAlignValuei(5, 0, -20));
+    naTestError(naAlignValuei(5, NA_MIN_i, 20));
+    naTestError(naAlignValuei(-5, NA_MAX_i, 20));
+  }
+
+  naTestGroup("naAlignValued"){
+    naTest(naAlignValued(0., 0., 20.) == 0.);
+    naTest(naAlignValued(5., 0., 20.) == 0.);
+    naTest(naAlignValued(65., 0., 20.) == 60.);
+    naTest(naAlignValued(-75., 0., 20.) == -80.);
+    naTest(naAlignValued(10., 10., 20.) == 10.);
+    naTest(naAlignValued(55., 10., 20.) == 50.);
+    naTest(naAlignValued(5., 10., 20.) == -10.);
+    naTestError(naAlignValued(5., 0., -20.));
+    naTestError(naAlignValued(5., -NA_INFINITY, 20.));
+    naTestError(naAlignValued(-5., NA_INFINITY, 20.));
+  }
+}
+
+
+
 void testNAValueHelper(){
-  naTestGroupFunction(Flags);  
-  naTestGroupFunction(Range);  
+  //naTestGroupFunction(Flags);
+  //naTestGroupFunction(Range);
+  //naTestGroupFunction(Align);
 }
 
   

@@ -139,7 +139,7 @@ NA_IDEF NAPosi naMakePosiWithPos(NAPos pos){
   return newpos;
 }
 NA_IDEF NAPosi naMakePosiWithIntegerPos(NAPos pos){
-  NAPosi newpos = naMakePosi(naMakeIntWithIntegerDouble(pos.x), naMakeIntWithIntegerDouble(pos.y));
+  NAPosi newpos = naMakePosi((NAInt)naGetDoubleInteger(pos.x), (NAInt)naGetDoubleInteger(pos.y));
   return newpos;
 }
 NA_IDEF NAPos naMakePosWithV2(double* v){
@@ -210,7 +210,7 @@ NA_IDEF NASizei naMakeSizeiWithSize(NASize size){
   return newsize;
 }
 NA_IDEF NASizei naMakeSizeiWithIntegerSize(NASize size){
-  NASizei newsize = naMakeSizeiE(naMakeIntWithIntegerDouble(size.width), naMakeIntWithIntegerDouble(size.height));
+  NASizei newsize = naMakeSizeiE((NAInt)naGetDoubleInteger(size.width), (NAInt)naGetDoubleInteger(size.height));
   return newsize;
 }
 NA_IDEF NASize naMakeSizeEmpty(){

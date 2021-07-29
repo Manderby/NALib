@@ -368,8 +368,9 @@ NA_IAPI int32 naGetFloatInteger(float f){
     if(fabsf(f) > 0x1.fffffep23)
       naError("Given numbers absolute value is too large. Result will be undefined");
   #endif
-  int32 fBits = *((int32*)(void*)&f);
-  if(f != 0.){
+  int32 fBits = 0;
+  if(f != 0.f){
+    fBits = *((int32*)(void*)&f);
     fBits = fBits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
     fBits = fBits | NA_IEEE754_SINGLE_SIGNIFICAND_NORM;
     int32 exponent = naGetFloatExponent(f);
@@ -411,8 +412,9 @@ NA_IAPI NAi64 naGetDoubleInteger(double d){
     if(fabs(d) > 0x1.fffffffffffffp52)
       naError("Given numbers absolute value is too large. Result will be undefined");
     #endif
-  NAi64 dBits = *((NAi64*)(void*)&d);
-  if(d != 0.){
+  NAi64 dBits = NA_ZERO_u64;
+  if(d != 0){
+    dBits = *((NAi64*)(void*)&d);
     dBits = naAndi64(dBits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
     dBits = naOri64(dBits, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);
     int32 exponent = naGetDoubleExponent(d);

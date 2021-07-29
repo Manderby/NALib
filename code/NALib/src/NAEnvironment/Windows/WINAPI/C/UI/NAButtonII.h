@@ -205,6 +205,11 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, NASize size, uint32 flags){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
+  #if NA_DEBUG
+    if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS))
+      naError("Borderless Text buttons should not be used as they can not be distinguished.");
+  #endif
+
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
 	HWND nativePtr = CreateWindow(
@@ -231,7 +236,7 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, NASize size, uint32 fla
   na_InitButton((NAButton*)winapiButton, nativePtr);
   winapiButton->image = NA_NULL;
   winapiButton->state = 0;
-  #ifndef NDEBUG
+  #if NA_DEBUG
     if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS))
       naError("Borderless text buttons have undefined behaviour. Use Labels with reactions instead.");
   #endif

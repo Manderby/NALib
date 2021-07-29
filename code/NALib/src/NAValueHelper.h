@@ -68,16 +68,16 @@ NA_IAPI size_t naMakeLengthWithMinAndMaxs   (size_t min,   size_t max);
 
 
 // Returns a value which is the given x floored to a multiple of
-// alignlength with an offset. Also works for negative values.
-NA_IAPI NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength);
-NA_IAPI double naAlignValued(double x, double offset, double alignlength);
-
-
-
-// Takes a floating point value and converts it to an NAInt. Emits an error
-// when the original value was not integral.
-NA_IAPI NAInt  naMakeIntWithIntegerFloat    (float x);
-NA_IAPI NAInt  naMakeIntWithIntegerDouble   (double x);
+// alignLength with an offset. For example {0, 20, 40, 60, ...} for length 20.
+// Also works for negative x and offset. The length must be > 0.
+// Example:
+// naAlignValuei(5, 0, 20) == 0
+// naAlignValuei(65, 0, 20) == 60
+// naAlignValuei(-75, 0, 20) == -80
+// naAlignValuei(15, 10, 20) == 10
+// naAlignValuei(35, 10, 20) == 30
+NA_IAPI NAInt naAlignValuei(NAInt value, NAInt offset, NAInt alignLength);
+NA_IAPI double naAlignValued(double value, double offset, double alignLength);
 
 
 
@@ -117,8 +117,8 @@ NA_IAPI NABool naIsLengthValueNegativef (float  a);
 NA_IAPI NABool naIsLengthValueNegativei (NAInt  a);
 NA_IAPI NABool naIsLengthValueNegatives (size_t a);
 
-// USEFUL means: Positions must be valid. Lengths must be valid, not empty and
-// not negative.
+// USEFUL means: Positions must be deterministic (infinity is not).
+// Lengths must be deterministic and greater than zero.
 NA_IAPI NABool naIsOffsetValueUseful  (double a);
 NA_IAPI NABool naIsOffsetValueUsefulf (float  a);
 NA_IAPI NABool naIsOffsetValueUsefuli (NAInt  a);
