@@ -50,7 +50,7 @@ int main(int argc, const char** argv){
   {
     naTestGroupFunction(NABase);
     naTestGroupFunction(NACore);
-    //naTestGroupFunction(NAStruct);
+    naTestGroupFunction(NAStruct);
 
     //printf(NA_NL);
     //naPrintUntested();

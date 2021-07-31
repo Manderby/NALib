@@ -171,10 +171,184 @@ void testAlign(){
 
 
 
+void testIsValueValid(){
+  naTestGroup("naIsOffsetValueValid"){
+      naTest(naIsOffsetValueValid(0.));
+      naTest(naIsOffsetValueValid(NA_INFINITY));
+      naTest(naIsOffsetValueValid(-NA_INFINITY));
+      naTest(!naIsOffsetValueValid(NA_NAN));
+  }
+  naTestGroup("naIsOffsetValueValidf"){
+      naTest(naIsOffsetValueValidf(0.f));
+      naTest(naIsOffsetValueValidf(NA_INFINITYf));
+      naTest(naIsOffsetValueValidf(-NA_INFINITYf));
+      naTest(!naIsOffsetValueValidf(NA_NANf));
+  }
+  naTestGroup("naIsOffsetValueValidi"){
+      naTest(naIsOffsetValueValidi(0));
+      naTest(naIsOffsetValueValidi(NA_MAX_i));
+      naTest(naIsOffsetValueValidi(NA_MIN_i));
+  }
+  naTestGroup("naIsOffsetValueValids"){
+      naTest(naIsOffsetValueValids(0));
+      naTestError(naIsOffsetValueValids(NA_MAX_s));
+  }
+
+  naTestGroup("naIsLengthValueValid"){
+      naTest(naIsLengthValueValid(0.));
+      naTest(naIsLengthValueValid(NA_INFINITY));
+      naTest(naIsLengthValueValid(-NA_INFINITY));
+      naTest(!naIsLengthValueValid(NA_NAN));
+  }
+  naTestGroup("naIsLengthValueValidf"){
+      naTest(naIsLengthValueValidf(0.f));
+      naTest(naIsLengthValueValidf(NA_INFINITYf));
+      naTest(naIsLengthValueValidf(-NA_INFINITYf));
+      naTest(!naIsLengthValueValidf(NA_NANf));
+  }
+  naTestGroup("naIsLengthValueValidi"){
+      naTest(naIsLengthValueValidi(0));
+      naTest(naIsLengthValueValidi(NA_MAX_i));
+      naTest(naIsLengthValueValidi(NA_MIN_i));
+  }
+  naTestGroup("naIsLengthValueValids"){
+      naTest(naIsLengthValueValids(0));
+      naTestError(naIsLengthValueValids(NA_MAX_s));
+  }
+}
+
+
+
+void testIsValueEmpty(){
+  naTestGroup("naIsLengthValueEmpty"){
+      naTest(naIsLengthValueEmpty(0.));
+      naTest(!naIsLengthValueEmpty(1.));
+      naTest(!naIsLengthValueEmpty(-1.));
+      naTest(!naIsLengthValueEmpty(NA_NAN));
+  }
+  naTestGroup("naIsLengthValueEmptyf"){
+      naTest(naIsLengthValueEmptyf(0.f));
+      naTest(!naIsLengthValueEmptyf(1.f));
+      naTest(!naIsLengthValueEmptyf(-1.f));
+      naTest(!naIsLengthValueEmptyf(NA_NANf));
+  }
+  naTestGroup("naIsLengthValueEmptyi"){
+      naTest(naIsLengthValueEmptyi(0));
+      naTest(!naIsLengthValueEmptyi(1));
+      naTest(!naIsLengthValueEmptyi(-1));
+  }
+  naTestGroup("naIsLengthValueEmptys"){
+      naTest(naIsLengthValueEmptys(0));
+      naTest(!naIsLengthValueEmptys(1));
+      naTestError(naIsLengthValueEmptys(NA_MAX_s));
+  }
+}
+
+
+
+void testIsValueNegative(){
+  naTestGroup("naIsLengthValueNegative"){
+      naTest(!naIsLengthValueNegative(0.));
+      naTest(!naIsLengthValueNegative(1.));
+      naTest(naIsLengthValueNegative(-1.));
+      naTest(!naIsLengthValueNegative(NA_INFINITY));
+      naTest(naIsLengthValueNegative(-NA_INFINITY));
+      naTest(!naIsLengthValueNegative(NA_NAN));
+  }
+  naTestGroup("naIsLengthValueNegativef"){
+      naTest(!naIsLengthValueNegativef(0.f));
+      naTest(!naIsLengthValueNegativef(1.f));
+      naTest(naIsLengthValueNegativef(-1.f));
+      naTest(!naIsLengthValueNegativef(NA_INFINITYf));
+      naTest(naIsLengthValueNegativef(-NA_INFINITYf));
+      naTest(!naIsLengthValueNegativef(NA_NANf));
+  }
+  naTestGroup("naIsLengthValueNegativei"){
+      naTest(!naIsLengthValueNegativei(0));
+      naTest(!naIsLengthValueNegativei(1));
+      naTest(naIsLengthValueNegativei(-1));
+      naTest(!naIsLengthValueNegativei(NA_MAX_i));
+      naTest(naIsLengthValueNegativei(NA_MIN_i));
+  }
+  naTestGroup("naIsLengthValueNegatives"){
+      naTest(!naIsLengthValueNegatives(0));
+      naTest(!naIsLengthValueNegatives(1));
+      naTestError(naIsLengthValueNegatives(NA_MAX_s));
+  }
+}
+
+
+
+void testIsValueUseful(){
+  naTestGroup("naIsOffsetValueUseful"){
+      naTest(naIsOffsetValueUseful(0.));
+      naTest(naIsOffsetValueUseful(1.));
+      naTest(naIsOffsetValueUseful(-1.));
+      naTest(!naIsOffsetValueUseful(NA_INFINITY));
+      naTest(!naIsOffsetValueUseful(-NA_INFINITY));
+      naTest(!naIsOffsetValueUseful(NA_NAN));
+  }
+  naTestGroup("naIsOffsetValueUsefulf"){
+      naTest(naIsOffsetValueUsefulf(0.f));
+      naTest(naIsOffsetValueUsefulf(1.f));
+      naTest(naIsOffsetValueUsefulf(-1.f));
+      naTest(!naIsOffsetValueUsefulf(NA_INFINITYf));
+      naTest(!naIsOffsetValueUsefulf(-NA_INFINITYf));
+      naTest(!naIsOffsetValueUsefulf(NA_NANf));
+  }
+  naTestGroup("naIsOffsetValueUsefuli"){
+      naTest(naIsOffsetValueUsefuli(0));
+      naTest(naIsOffsetValueUsefuli(1));
+      naTest(naIsOffsetValueUsefuli(-1));
+      naTest(naIsOffsetValueUsefuli(NA_MAX_i));
+      naTest(naIsOffsetValueUsefuli(NA_MIN_i));
+  }
+  naTestGroup("naIsOffsetValueUsefuls"){
+      naTest(naIsOffsetValueUsefuls(0));
+      naTest(naIsOffsetValueUsefuls(1));
+      naTestError(naIsOffsetValueUsefuls(NA_MAX_s));
+  }
+
+  naTestGroup("naIsLengthValueUseful"){
+      naTest(!naIsLengthValueUseful(0.));
+      naTest(naIsLengthValueUseful(1.));
+      naTest(!naIsLengthValueUseful(-1.));
+      naTest(!naIsLengthValueUseful(NA_INFINITY));
+      naTest(!naIsLengthValueUseful(-NA_INFINITY));
+      naTest(!naIsLengthValueUseful(NA_NAN));
+  }
+  naTestGroup("naIsLengthValueUsefulf"){
+      naTest(!naIsLengthValueUsefulf(0.f));
+      naTest(naIsLengthValueUsefulf(1.f));
+      naTest(!naIsLengthValueUsefulf(-1.f));
+      naTest(!naIsLengthValueUsefulf(NA_INFINITYf));
+      naTest(!naIsLengthValueUsefulf(-NA_INFINITYf));
+      naTest(!naIsLengthValueUsefulf(NA_NANf));
+  }
+  naTestGroup("naIsLengthValueUsefuli"){
+      naTest(!naIsLengthValueUsefuli(0));
+      naTest(naIsLengthValueUsefuli(1));
+      naTest(!naIsLengthValueUsefuli(-1));
+      naTest(naIsLengthValueUsefuli(NA_MAX_i));
+      naTest(!naIsLengthValueUsefuli(NA_MIN_i));
+  }
+  naTestGroup("naIsLengthValueUsefuls"){
+      naTest(!naIsLengthValueUsefuls(0));
+      naTest(naIsLengthValueUsefuls(1));
+      naTestError(naIsLengthValueUsefuls(NA_MAX_s));
+  }
+}
+
+
+
 void testNAValueHelper(){
-  //naTestGroupFunction(Flags);
-  //naTestGroupFunction(Range);
-  //naTestGroupFunction(Align);
+  naTestGroupFunction(Flags);
+  naTestGroupFunction(Range);
+  naTestGroupFunction(Align);
+  naTestGroupFunction(IsValueValid);
+  naTestGroupFunction(IsValueEmpty);
+  naTestGroupFunction(IsValueNegative);
+  naTestGroupFunction(IsValueUseful);
 }
 
   

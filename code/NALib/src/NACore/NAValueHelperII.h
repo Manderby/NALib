@@ -385,12 +385,12 @@ NA_IDEF NABool naIsOffsetValueUsefuls(size_t a){
 
 
 NA_IDEF NABool naIsLengthValueUseful(double a){
-  // Note that this test will return NA_FALSE if a is NaN.
-  return (a > 0.);
+  // Note that this test will return NA_FALSE if a is NaN or infinite.
+  return (a > 0.) && !naIsInfinite(a);
 }
 NA_IDEF NABool naIsLengthValueUsefulf(float a){
-  // Note that this test will return NA_FALSE if a is NaN.
-  return (a > 0.);
+  // Note that this test will return NA_FALSE if a is NaN or infinite.
+  return (a > 0.) && !naIsInfinitef(a);
 }
 NA_IDEF NABool naIsLengthValueUsefuli(NAInt a){
   return (a > 0);
