@@ -15,7 +15,7 @@ void benchmarkNAStack(void);
 
 void printNAStruct(){
   printNABuffer();
-  //printNAStack();
+  printNAStack();
 }
 
 void testNAStruct(){

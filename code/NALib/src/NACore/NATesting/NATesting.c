@@ -701,17 +701,17 @@ NA_HDEF size_t na_GetBenchmarkTestSizeLimit(){
 
 NA_HDEF void na_PrintBenchmark(double timeDiff, size_t testSize, const char* exprString, int lineNum){
   if(timeDiff < na_GetBenchmarkLimit() || testSize >= naPowerOf2s(na_GetBenchmarkTestSizeLimit())){
-      printf("Line %d: Immeasurable   : %s" NA_NL, lineNum, exprString);
+      printf("Line %4d: Immeasurable   : %s" NA_NL, lineNum, exprString);
   }else{
     double execsPerSec = testSize / timeDiff;
     if(execsPerSec > 1000000000.)
-      printf("Line %d: %6.2f G : %s" NA_NL, lineNum, execsPerSec * .000000001, exprString);
+      printf("Line %4d: %6.2f G : %s" NA_NL, lineNum, execsPerSec * .000000001, exprString);
     else if(execsPerSec > 1000000.)
-      printf("Line %d: %6.2f M : %s" NA_NL, lineNum, execsPerSec * .000001, exprString);
+      printf("Line %4d: %6.2f M : %s" NA_NL, lineNum, execsPerSec * .000001, exprString);
     else if(execsPerSec > 1000.)
-      printf("Line %d: %6.2f k : %s" NA_NL, lineNum, execsPerSec * .001, exprString);
+      printf("Line %4d: %6.2f k : %s" NA_NL, lineNum, execsPerSec * .001, exprString);
     else
-      printf("Line %d: %6.2f   : %s" NA_NL, lineNum, execsPerSec, exprString);
+      printf("Line %4d: %6.2f   : %s" NA_NL, lineNum, execsPerSec, exprString);
   }
 }
 

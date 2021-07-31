@@ -55,9 +55,9 @@ int main(int argc, const char** argv){
     //printf(NA_NL);
     //naPrintUntested();
 
-    //printf(NA_NL "Benchmarking:" NA_NL);
-    //benchmarkNABase();
-    //benchmarkNAStruct();
+    printf(NA_NL "Benchmarking:" NA_NL);
+    benchmarkNABase();
+    benchmarkNAStruct();
     
     printf(NA_NL);
   }else{

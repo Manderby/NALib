@@ -654,6 +654,8 @@ NA_HIDEF void na_DummyPushAndPopManyItemsOnStack(NAStack* stack){
 }
 
 void benchmarkNAStack(){
+  printf(NA_NL "NAStack:" NA_NL);
+
   NAStack stack;
   int* buf;
   NAStackIterator iter;
@@ -783,7 +785,7 @@ void benchmarkNAStack(){
   // Get cur element of iterator int
   naInitStack(&stack, sizeof(int), 1, 0);
   naPushStack(&stack);
-  iter = naMakeStackAccessor(&stack);
+  iter = naMakeStackMutator(&stack);
   naIterateStack(&iter);
   naBenchmark(naGetStackCurConst(&iter));
   naBenchmark(naGetStackCurMutable(&iter));
@@ -793,7 +795,7 @@ void benchmarkNAStack(){
   // Get cur element of iterator int*
   naInitStack(&stack, sizeof(int*), 1, 0);
   naPushStack(&stack);
-  iter = naMakeStackAccessor(&stack);
+  iter = naMakeStackMutator(&stack);
   naIterateStack(&iter);
   naBenchmark(naGetStackCurpConst(&iter));
   naBenchmark(naGetStackCurpMutable(&iter));
