@@ -65,7 +65,7 @@ double getAndAdvanceNextWindowY(void){
 }
 
 
-addTemperatureControllerToApplication(TemperatureController* con){
+void addTemperatureControllerToApplication(TemperatureController* con){
   *(TemperatureController**)naPushStack(&(app->temperatureControllers)) = con;
 }
 
