@@ -175,12 +175,14 @@ NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos){
 
 
 NA_HDEF NARect na_GetMenuAbsoluteInnerRect(NA_UIElement* menu){
+  NA_UNUSED(menu);
   return naMakeRectS(0, 0, 1, 1);
 }
 
 
 
 NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(NA_UIElement* menuItem){
+  NA_UNUSED(menuItem);
   return naMakeRectS(0, 0, 1, 1);
 }
 

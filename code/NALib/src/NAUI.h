@@ -595,6 +595,7 @@ typedef enum{
 
 NA_API NAButton* naNewTextButton(const NAUTF8Char* text, NASize size, uint32 flags);
 NA_API NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 flags);
+NA_API void naSetButtonText(NAButton* button, const NAUTF8Char* text);
 NA_API void naSetButtonImage(NAButton* button, const NAUIImage* uiImage);
 NA_API void naSetButtonState(NAButton* button, NABool state);
 NA_API NABool naGetButtonState(NAButton* button);
