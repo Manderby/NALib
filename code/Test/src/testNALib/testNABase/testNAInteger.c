@@ -4,7 +4,7 @@
 
 
 
-void testNAInteger(){
+void testNAInteger(void){
   naTestGroup("NABool typedefs"){
     NABool bool = NA_TRUE;
     naTest(bool == NA_TRUE);
@@ -60,7 +60,7 @@ void testNAInteger(){
 
 
 
-void printNAInteger(){
+void printNAInteger(void){
   printf("NAInteger.h:" NA_NL);
   
   naPrintMacroInt(NA_FALSE);

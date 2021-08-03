@@ -34,7 +34,7 @@ void benchmarkNAInt256(void);
 
 
 
-void printNABase(){
+void printNABase(void){
   printNAConfiguration();
   printNAEnvironment();
   printNACompiler();
@@ -47,7 +47,7 @@ void printNABase(){
   printNAFloatingPoint();
 }
 
-void testNABase(){
+void testNABase(void){
   naTestGroupFunction(NALanguage);
   naTestGroupFunction(NAChar);
   naTestGroupFunction(NAInteger);
@@ -61,7 +61,7 @@ void testNABase(){
   naTestGroupFunction(NAFloatingPoint);
 }
 
-void benchmarkNABase(){
+void benchmarkNABase(void){
   benchmarkNAInt64();
   benchmarkNAInt128();
   benchmarkNAInt256();

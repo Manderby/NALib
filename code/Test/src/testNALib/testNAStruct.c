@@ -13,17 +13,17 @@ void testNAStack(void);
 
 void benchmarkNAStack(void);
 
-void printNAStruct(){
+void printNAStruct(void){
   printNABuffer();
   printNAStack();
 }
 
-void testNAStruct(){
+void testNAStruct(void){
   naTestGroupFunction(NABuffer);
   naTestGroupFunction(NAStack);
 }
 
-void benchmarkNAStruct(){
+void benchmarkNAStruct(void){
   benchmarkNAStack();
 }
 

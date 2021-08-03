@@ -4,7 +4,7 @@
 
 
 
-void testNAPointerArithmetics(){
+void testNAPointerArithmetics(void){
   #if NA_DEBUG
     naTestGroup("ElementOverlap"){
       int32 test[3] = {42, 42, 42};

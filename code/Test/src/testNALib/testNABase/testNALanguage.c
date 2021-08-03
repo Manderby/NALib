@@ -13,7 +13,7 @@ void na_MutatorFunc(void* param){
 
 
 
-void testNALanguage(){
+void testNALanguage(void){
   naTestGroup("typedefs"){
     NAAccessor testAccessor = na_AccessorFunc;
     NAMutator testMutator = na_MutatorFunc;
@@ -24,7 +24,7 @@ void testNALanguage(){
 
 
 
-void printNALanguage(){
+void printNALanguage(void){
   printf("NALanguage.h:" NA_NL);
   
   naPrintMacro(NA_RESTRICT);

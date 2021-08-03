@@ -4,7 +4,7 @@
 
 
 
-void testNADebugging(){
+void testNADebugging(void){
   #if NA_DEBUG
     naTestError(naError(""));
     naUntested(naCrash: Can not test as it would lead to a crash. Duh.);

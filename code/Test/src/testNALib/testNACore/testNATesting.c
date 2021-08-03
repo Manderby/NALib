@@ -4,7 +4,7 @@
 
 
 
-void testNATesting(){
+void testNATesting(void){
   naUntested(naStartTesting: Can not test during testing);
   naUntested(naStopTesting: Can not test during testing);
   naUntested(naUntested: Can not test during testing);
@@ -12,7 +12,7 @@ void testNATesting(){
 
   
   
-void printNATesting(){
+void printNATesting(void){
   printf("NATesting.h:" NA_NL);
 
   naPrintMacroDefined(naTest(expr));

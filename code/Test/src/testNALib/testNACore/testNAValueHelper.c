@@ -7,7 +7,7 @@
 #include "NAThreading.h"
 #include "NAString.h"
 
-void testFlags(){
+void testFlags(void){
   uint32 flagsu = 0xcccccccc;          // 0b11001100110011001100110011001100
   uint32 testFlagu1 = 0x00000001;      // not set
   uint32 testFlagu2 = 0x00000004;      // set
@@ -47,7 +47,7 @@ void testFlags(){
 
 
 
-void testRange(){
+void testRange(void){
   naTestGroup("Make Max with End"){
     naTest(naMakeMaxWithEndi32(1234) == 1233);
     naTest(naMakeMaxWithEndi64(1234) == 1233);
@@ -141,7 +141,7 @@ void testRange(){
 
 
 
-void testAlign(){
+void testAlign(void){
   naTestGroup("naAlignValuei"){
     naTest(naAlignValuei(0, 0, 20) == 0);
     naTest(naAlignValuei(5, 0, 20) == 0);
@@ -171,7 +171,7 @@ void testAlign(){
 
 
 
-void testIsValueValid(){
+void testIsValueValid(void){
   naTestGroup("naIsOffsetValueValid"){
       naTest(naIsOffsetValueValid(0.));
       naTest(naIsOffsetValueValid(NA_INFINITY));
@@ -219,7 +219,7 @@ void testIsValueValid(){
 
 
 
-void testIsValueEmpty(){
+void testIsValueEmpty(void){
   naTestGroup("naIsLengthValueEmpty"){
       naTest(naIsLengthValueEmpty(0.));
       naTest(!naIsLengthValueEmpty(1.));
@@ -246,7 +246,7 @@ void testIsValueEmpty(){
 
 
 
-void testIsValueNegative(){
+void testIsValueNegative(void){
   naTestGroup("naIsLengthValueNegative"){
       naTest(!naIsLengthValueNegative(0.));
       naTest(!naIsLengthValueNegative(1.));
@@ -279,7 +279,7 @@ void testIsValueNegative(){
 
 
 
-void testIsValueUseful(){
+void testIsValueUseful(void){
   naTestGroup("naIsOffsetValueUseful"){
       naTest(naIsOffsetValueUseful(0.));
       naTest(naIsOffsetValueUseful(1.));
@@ -341,7 +341,7 @@ void testIsValueUseful(){
 
 
 
-void testNAValueHelper(){
+void testNAValueHelper(void){
   naTestGroupFunction(Flags);
   naTestGroupFunction(Range);
   naTestGroupFunction(Align);

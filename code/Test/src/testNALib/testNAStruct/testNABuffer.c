@@ -5,7 +5,7 @@
 #include "NABuffer.h"
 
 
-void testMemoryBlock(){
+void testMemoryBlock(void){
   naTestGroup("New and release"){
     NAMemoryBlock* block = NA_NULL;
     naTestVoid(block = na_NewMemoryBlock(10));
@@ -53,7 +53,7 @@ void na_DummyBufferFiller(void* dst, NARangei sourceRange, void* sourceData){
   NA_UNUSED(sourceData);
 }
 
-void testBufferSource(){
+void testBufferSource(void){
   naTestGroup("New and release"){
     NABuffer* cache = naNewBuffer(NA_FALSE);
     NABufferSource* source = NA_NULL;
@@ -152,7 +152,7 @@ void testBufferSource(){
 
 
   
-void testBufferPart(){
+void testBufferPart(void){
   NABufferSource* source = naNewBufferSource(NA_NULL, NA_NULL);
 
   naTestGroup("Normed start and end"){
@@ -273,7 +273,7 @@ void testBufferPart(){
 
 
 
-void printNABuffer(){
+void printNABuffer(void){
   printf("NABuffer.h:" NA_NL);
 
   naPrintMacro(NA_BUFFER_SOURCE_RANGE_LIMITED);
@@ -284,7 +284,7 @@ void printNABuffer(){
 
 
 
-void testNABuffer(){
+void testNABuffer(void){
   naTestGroupFunction(MemoryBlock);  
   naTestGroupFunction(BufferSource);  
   naTestGroupFunction(BufferPart);  

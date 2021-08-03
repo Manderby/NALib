@@ -15,7 +15,7 @@ NABool equali64(NAi64 i, uint32 goal1, uint32 goal0){
 
 
 
-void testNAInt64Make(){
+void testNAInt64Make(void){
   NAi64 i1 = naMakei64(-0x12345678, 0x98765432);
   NAi64 i2 = naMakei64WithLo(-0x12345678);
   NAi64 i3 = naMakei64WithDouble(-123456789012345.);
@@ -39,7 +39,7 @@ void testNAInt64Make(){
 
 
 
-void benchmarkNAInt64Make(){
+void benchmarkNAInt64Make(void){
   naBenchmark(naMakei64(-(int32)naTestIn, naTestIn));
   naBenchmark(naMakei64WithLo(-(int32)naTestIn));
   naBenchmark(naMakei64WithDouble(-((int32)naTestIn / NA_MAX_i32)));
@@ -52,7 +52,7 @@ void benchmarkNAInt64Make(){
 
 
 
-void testNAInt64Binary(){
+void testNAInt64Binary(void){
   NAi64 i = naMakei64WithDouble(-123456789012345.); 
   NAi64 term = naMakei64WithBinary(0x55555555, 0x55555555);
   NAu64 u = naMakeu64WithBinary(0x12345678, 0x56473829);
@@ -92,7 +92,7 @@ void testNAInt64Binary(){
 #define randi64 naMakei64WithBinary(naTestIn, naTestIn)
 #define randu64 naMakeu64WithBinary(naTestIn, naTestIn)
 
-void benchmarkNAInt64Binary(){
+void benchmarkNAInt64Binary(void){
   naBenchmark(naNoti64(randi64));
   naBenchmark(naOri64(randi64, randi64));
   naBenchmark(naAndi64(randi64, randi64));
@@ -110,7 +110,7 @@ void benchmarkNAInt64Binary(){
 
 
 
-void testNAInt64Comparison(){
+void testNAInt64Comparison(void){
   NAi64 i1 = naMakei64WithDouble(-123456789012345.);
   NAi64 i2 = naMakei64WithDouble(-123456.);
   NAu64 u1 = naMakeu64WithDouble(123456789012345.);
@@ -147,7 +147,7 @@ void testNAInt64Comparison(){
 
 
 
-void benchmarkNAInt64Comparison(){
+void benchmarkNAInt64Comparison(void){
   naBenchmark(naEquali64(randi64, randi64));
   naBenchmark(naGreateri64(randi64, randi64));
   naBenchmark(naGreaterEquali64(randi64, randi64));
@@ -163,7 +163,7 @@ void benchmarkNAInt64Comparison(){
 
 
 
-void testNAInt64Arithmetic(){
+void testNAInt64Arithmetic(void){
   NAi64 i01 = naMakei64WithDouble(-123456789012345.);
   NAi64 i02 = naMakei64WithDouble(987654321987.);
   NAi64 i03 = NA_ZERO_i64;
@@ -235,7 +235,7 @@ void testNAInt64Arithmetic(){
 
 
 
-void benchmarkNAInt64Arithmetic(){
+void benchmarkNAInt64Arithmetic(void){
   NAi64 i;
   NAu64 u;
 
@@ -261,7 +261,7 @@ void benchmarkNAInt64Arithmetic(){
 
 
 
-void testNAInt64(){
+void testNAInt64(void){
   naTestGroupFunction(NAInt64Make);
   naTestGroupFunction(NAInt64Binary);
   naTestGroupFunction(NAInt64Comparison);
@@ -270,7 +270,7 @@ void testNAInt64(){
 
 
 
-void benchmarkNAInt64(){
+void benchmarkNAInt64(void){
   printf(NA_NL "NAInt64:" NA_NL);
   benchmarkNAInt64Make();
   benchmarkNAInt64Binary();

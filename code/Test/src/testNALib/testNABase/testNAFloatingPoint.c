@@ -5,7 +5,7 @@
 
 
 
-void testMakeFloat(){
+void testMakeFloat(void){
   // Never seen this kind of literal yet? Go look for hex float literals!
   // It is actually quite useful for testing. One only has to remember that
   // single precision only use 23 bits for the significant, which is why the
@@ -81,7 +81,7 @@ void testMakeFloat(){
 
 
 
-void testMakeDouble(){
+void testMakeDouble(void){
   // Never seen this kind of literal yet? Go look for hex float literals!
   // It is actually quite useful for testing..
   naTestGroup("naMakeDouble valid cases"){
@@ -155,7 +155,7 @@ void testMakeDouble(){
 
 
 
-void testGetFloat(){
+void testGetFloat(void){
   naTestGroup("naGetFloatExponent valid cases"){
     naTest(naGetFloatExponent(1.f) == 0);
     naTest(naGetFloatExponent(0x1.0p42f) == 42);
@@ -250,7 +250,7 @@ void testGetFloat(){
 
 
 
-void testGetDouble(){
+void testGetDouble(void){
   naTestGroup("naGetDoubleExponent valid cases"){
     naTest(naGetDoubleExponent(1.) == 0);
     naTest(naGetDoubleExponent(0x1.0p42) == 42);
@@ -345,7 +345,7 @@ void testGetDouble(){
 
 
 
-void testNAFloatingPoint(){
+void testNAFloatingPoint(void){
   naTestGroupFunction(MakeFloat);
   naTestGroupFunction(MakeDouble);
   naTestGroupFunction(GetFloat);
@@ -354,7 +354,7 @@ void testNAFloatingPoint(){
 
 
 
-void printNAFloatingPoint(){
+void printNAFloatingPoint(void){
   printf("NAFloatingPoint.h:" NA_NL);
 
   printf("Fundamental values:" NA_NL);

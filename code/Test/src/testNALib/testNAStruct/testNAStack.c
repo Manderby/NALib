@@ -8,7 +8,7 @@
 #define NA_TEST_STACK_TYPE_SIZE 20
 #define NA_BENCHMARK_STACK_SIZE 1000
 
-void testStackArray(){
+void testStackArray(void){
   void* array = NA_NULL;
   
   naTestGroup("Allocating Stack Array"){
@@ -75,7 +75,7 @@ void testStackArray(){
 
 
   
-void testStackInitClear(){
+void testStackInitClear(void){
   NAStack stack;
 
   naTestGroup("With initial count"){
@@ -109,7 +109,7 @@ void testStackInitClear(){
 
 
 
-void testStackPushTopPopPeek(){
+void testStackPushTopPopPeek(void){
   NAStack stack;
   void* data = NA_NULL;
 
@@ -166,7 +166,7 @@ void testStackPushTopPopPeek(){
 
 
 
-void testStackCount(){
+void testStackCount(void){
   NAStack stack;
 
   naTestGroup("get count"){
@@ -201,7 +201,7 @@ void testStackCount(){
 
 
 
-void testStackGrow(){
+void testStackGrow(void){
   NAStack stack;
 
   naTestGroup("Linear Growing"){
@@ -243,7 +243,7 @@ void testStackGrow(){
 
 }  
   
-void testStackShrink(){
+void testStackShrink(void){
   NAStack stack;
 
   naTestGroup("Automatic shrinking"){
@@ -273,7 +273,7 @@ void testStackShrink(){
 
 
 
-void testStackShrinkIfNecessary(){
+void testStackShrinkIfNecessary(void){
   NAStack stack;
 
   naTestGroup("Nothing to shrink"){
@@ -327,7 +327,7 @@ void testStackShrinkIfNecessary(){
 }
 
 
-void testStackDump(){
+void testStackDump(void){
   NAStack stack;
   int dmp[] = {99, 99, 99, 99, 99};
 
@@ -378,7 +378,7 @@ void testStackDump(){
 
 
 
-void testStackIterator(){
+void testStackIterator(void){
   NAStack stack;
   naInitStack(&stack, sizeof(int), 0, 0);
   *(int*)naPushStack(&stack) = 1;
@@ -462,7 +462,7 @@ void testStackIterator(){
 
 
 
-void testStackIteratorAccessAndMutate(){
+void testStackIteratorAccessAndMutate(void){
   NAStack stack;
   naInitStack(&stack, sizeof(int), 0, 0);
   *(int*)naPushStack(&stack) = 1;
@@ -566,7 +566,7 @@ void na_DummyIncreaseSumMutable(void* elem){
   na_DummyStackSum += *(int*)elem;
 }
 
-void testStackForeach(){
+void testStackForeach(void){
   NAStack stack;
   naInitStack(&stack, sizeof(int), 0, 0);
   *(int*)naPushStack(&stack) = 1;
@@ -613,7 +613,7 @@ void testStackForeach(){
 
 
 
-void printNAStack(){
+void printNAStack(void){
   printf("NAStack.h:" NA_NL);
 
   naPrintMacro(NA_STACK_GROW_AUTO);
@@ -633,7 +633,7 @@ void printNAStack(){
 
 
 
-void testNAStack(){
+void testNAStack(void){
   naTestGroupFunction(StackArray);  
   naTestGroupFunction(StackInitClear);  
   naTestGroupFunction(StackPushTopPopPeek);  
@@ -653,7 +653,7 @@ NA_HIDEF void na_DummyPushAndPopManyItemsOnStack(NAStack* stack){
   for(size_t i = 0; i < NA_BENCHMARK_STACK_SIZE; i++){naPopStack(stack);}
 }
 
-void benchmarkNAStack(){
+void benchmarkNAStack(void){
   printf(NA_NL "NAStack:" NA_NL);
 
   NAStack stack;
