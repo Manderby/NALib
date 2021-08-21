@@ -12,8 +12,10 @@ correct, complete or final.
 - Removed naNewStringWithUTF8CStringLiteral. Use naNewStringWithFormat.
 - Adding naTestCrash to NATesting
 - Adding NASlider to NAGUI and other public GUI functions.
+- Adding NAMenu and new buttons to GUI.
+- Updated HelloWorldGUI.
 - Fixed a bug in QuadTree range detection.
-- Adding leap second information according to bulletin C 61
+- Adding leap second information according to bulletin C 61 and 62
 - Removed naSizeOf, removed NAUInt, replaced many NAInt with size_t
 
 
