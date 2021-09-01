@@ -168,7 +168,7 @@ NA_DEF NASpace* naNewSpace(NASize size){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   winapiSpace->lastBgColor = &(app->bgColor);
-  winapiSpace->space.alternatebackground = NA_FALSE;
+  winapiSpace->space.alternateBackground = NA_FALSE;
 
   return (NASpace*)winapiSpace;
 }
@@ -223,7 +223,7 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
 
 
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
-  space->alternatebackground = alternate;
+  space->alternateBackground = alternate;
   naRefreshUIElement(space, 0.);
 }
 

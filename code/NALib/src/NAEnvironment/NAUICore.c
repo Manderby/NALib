@@ -147,7 +147,7 @@ NA_HDEF void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent){
 NA_HDEF void na_ClearMenu(NAMenu* menu){
   naForeachListMutable(&(menu->childs), (NAMutator)naDelete);
   naClearList(&(menu->childs));
-  na_ClearUIElement(&(menu->uiElement));
+//  na_ClearUIElement(&(menu->uiElement));
 }
 NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, NAMenuItem* itemAt){
   NAListIterator iter = naMakeListModifier(&(menu->childs));
@@ -219,7 +219,7 @@ NA_HDEF void na_AddSpaceChild(NASpace* space, NA_UIElement* child){
   na_SetUIElementParent(child, space, NA_TRUE);
 }
 NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
-  return space->alternatebackground;
+  return space->alternateBackground;
 }
 
 

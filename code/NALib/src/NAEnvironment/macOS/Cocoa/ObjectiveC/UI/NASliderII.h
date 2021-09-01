@@ -77,6 +77,13 @@ NA_DEF void na_DestructCocoaSlider(NACocoaSlider* cocoaSlider){
 
 
 
+NA_DEF void naSetSliderEnabled(NASlider* slider, NABool enabled){
+  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
+  [nativePtr setEnabled:(BOOL)enabled];
+}
+
+
+
 NA_DEF void naSetSliderTickCount(NASlider* slider, NAInt tickCount){
   naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
   [nativePtr setTickCount:tickCount];

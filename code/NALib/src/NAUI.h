@@ -672,6 +672,7 @@ NA_API void naSetSpaceRect(NASpace* space, NARect rect);
 
 // Slider
 NA_API NASlider* naNewSlider(NASize size);
+NA_API void naSetSliderEnabled(NASlider* slider, NABool enabled);
 NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount);
 NA_API double naGetSliderValue(NASlider* slider);
 NA_API void naSetSliderValue(NASlider* slider, double value);

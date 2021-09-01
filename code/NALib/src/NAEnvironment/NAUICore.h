@@ -110,7 +110,7 @@ struct NASlider{
 struct NASpace{
   NA_UIElement uiElement;
   NAList       childs;
-  NABool       alternatebackground;
+  NABool       alternateBackground;
 };
 
 struct NATextField{

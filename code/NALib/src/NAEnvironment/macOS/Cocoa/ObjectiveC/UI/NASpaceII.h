@@ -45,7 +45,7 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 
 - (void)drawRect:(NSRect)dirtyRect{
   [super drawRect:dirtyRect];
-  if(cocaSpace->space.alternatebackground){
+  if(cocaSpace->space.alternateBackground){
     [[[NSColor controlTextColor] colorWithAlphaComponent:(CGFloat).075] setFill];
     NSRectFill(dirtyRect);
   }
@@ -78,7 +78,7 @@ NA_DEF NASpace* naNewSpace(NASize size){
     frame:naMakeNSRectWithSize(size)];  
   na_InitSpace((NASpace*)cocoaSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
-  cocoaSpace->space.alternatebackground = NA_FALSE;
+  cocoaSpace->space.alternateBackground = NA_FALSE;
 
   return (NASpace*)cocoaSpace;
 }
@@ -158,7 +158,7 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
 
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
-  space->alternatebackground = alternate;
+  space->alternateBackground = alternate;
   [nativePtr setNeedsDisplay:YES];
 }
 
