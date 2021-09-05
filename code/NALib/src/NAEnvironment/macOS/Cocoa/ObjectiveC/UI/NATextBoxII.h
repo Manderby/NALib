@@ -14,7 +14,7 @@ struct NACocoaTextBox{
 NA_HAPI void na_DestructCocoaTextBox(NACocoaTextBox* cocoaTextBox);
 NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 
-@interface NACocoaNativeTextBox : NSTextView <NACocoaNativeEncapsulatedElement>{
+@interface NACocoaNativeTextBox : NSTextView <NACocoaNativeEncapsulatedElement, NSTextViewDelegate>{
   NACocoaTextBox* cocoaTextBox;
   NSScrollView*   scrollView;
 }
@@ -30,6 +30,11 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
   NSClipView* clipView;
   NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
   self = [super initWithFrame:documentrect];
+  
+  [self setDelegate:self];
+  [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver: self
+    selector: @selector(textDidChange:)
+    name: NSTextDidChangeNotification object: NULL];
 
   scrollView = [[NSScrollView alloc] initWithFrame:frame];
   [scrollView setHasHorizontalScroller:NO];
@@ -63,7 +68,13 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 }
 
 - (void) setText:(const NAUTF8Char*)text{
+  NSArray<NSValue*>* selectedRanges = [self selectedRanges];
   [self setString:[NSString stringWithUTF8String:text]];
+  [self setSelectedRanges:selectedRanges affinity:[self selectionAffinity] stillSelecting:NO];
+}
+
+- (NAString*) newStringWithText{
+  return naNewStringWithFormat([[[self textStorage] string] UTF8String]);
 }
 
 - (void) setTextAlignment:(NATextAlignment) alignment{
@@ -76,6 +87,11 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 
 - (void) setReadOnly:(NABool)readonly{
   [self setEditable:!readonly];
+}
+
+- (void)textDidChange:(NSNotification *)obj{
+  NA_UNUSED(obj);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaTextBox, NA_UI_COMMAND_EDITED);
 }
 
 - (NSView*) getEncapsulatingView{
@@ -112,6 +128,13 @@ NA_DEF void na_DestructCocoaTextBox(NACocoaTextBox* cocoaTextBox){
 NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text){
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setText:text];
+}
+
+
+
+NA_DEF NAString* naNewStringWithTextBoxText(NATextBox* textBox){
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  return [nativePtr newStringWithText];
 }
 
 

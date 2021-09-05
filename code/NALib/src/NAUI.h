@@ -681,6 +681,7 @@ NA_API void naSetSliderValue(NASlider* slider, double value);
 // TextBox
 NA_API NATextBox* naNewTextBox(NASize size);
 NA_API void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text);
+NA_API NAString* naNewStringWithTextBoxText(NATextBox* textBox);
 NA_API void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment);
 NA_API void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind);
 NA_API void naSetTextBoxEditable(NATextBox* textBox, NABool editable);
