@@ -423,6 +423,9 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
       && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD)
       && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
       naError("Only textFields or Sliders can receyve EDITED commands.");
+    if((command == NA_UI_COMMAND_EDIT_FINISHED)
+      && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD))
+      naError("Only textFields can receyve EDIT_FINISHED commands.");
   #endif
   eventReaction = naAlloc(NAEventReaction);
   eventReaction->controller = controller;

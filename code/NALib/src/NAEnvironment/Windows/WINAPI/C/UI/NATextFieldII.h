@@ -86,6 +86,7 @@ NABool naTextFieldWINAPINotify(void* uiElement, WORD notificationCode){
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED);
     hasBeenHandeled = NA_TRUE;
     break;
+  // todo: add code for NA_UI_COMMAND_EDIT_FINISHED
   }
   return hasBeenHandeled;
 }

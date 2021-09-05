@@ -39,6 +39,7 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
   cocoaRadio = newCocoaRadio;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
+  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
 
   containingView = [[NSView alloc] initWithFrame:frame];
   [containingView addSubview:self];

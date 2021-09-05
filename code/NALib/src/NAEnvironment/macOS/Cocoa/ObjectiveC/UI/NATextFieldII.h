@@ -45,7 +45,7 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
 
 - (void) onEdited:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDITED);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDIT_FINISHED);
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification{

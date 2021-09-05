@@ -30,6 +30,7 @@ NA_RUNTIME_TYPE(NACocoaCheckBox, na_DestructCocoaCheckBox, NA_FALSE);
   cocoaCheckBox = newCocoaCheckBox;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
+  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
 
   return self;
 }
