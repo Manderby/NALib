@@ -122,7 +122,7 @@ NA_HDEF void na_ClearCheckBox(NACheckBox* checkBox){
 
 
 NA_HDEF void na_InitImageSpace(NAImageSpace* imageSpace, void* nativePtr){
-  na_InitUIElement(&(imageSpace->uiElement), NA_UI_IMAGESPACE, nativePtr);
+  na_InitUIElement(&(imageSpace->uiElement), NA_UI_IMAGE_SPACE, nativePtr);
 }
 NA_HDEF void na_ClearImageSpace(NAImageSpace* imageSpace){
   na_ClearUIElement(&(imageSpace->uiElement));
@@ -178,8 +178,17 @@ NA_HDEF uint32 na_GetMenuItemId(NAMenuItem* menuItem){
 
 
 
+NA_HDEF void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr){
+  na_InitUIElement(&(metalSpace->uiElement), NA_UI_METAL_SPACE, nativePtr);
+}
+NA_HDEF void na_ClearMetalSpace(NAMetalSpace* metalSpace){
+  na_ClearUIElement(&(metalSpace->uiElement));
+}
+
+
+
 NA_HDEF void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr){
-  na_InitUIElement(&(openGLSpace->uiElement), NA_UI_OPENGLSPACE, nativePtr);
+  na_InitUIElement(&(openGLSpace->uiElement), NA_UI_OPENGL_SPACE, nativePtr);
 }
 NA_HDEF void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace){
   na_ClearUIElement(&(openGLSpace->uiElement));
@@ -420,6 +429,7 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
       && (naGetUIElementType(uiElement) != NA_UI_MENUITEM))
       naError("Only buttons, radios and checkBoxes can receyve PRESSED commands.");
     if((command == NA_UI_COMMAND_EDITED)
+      && (naGetUIElementType(uiElement) != NA_UI_TEXTBOX)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD)
       && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
       naError("Only textFields or Sliders can receyve EDITED commands.");

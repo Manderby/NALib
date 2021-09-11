@@ -40,6 +40,7 @@
 #include "C/UI/NAImageSpaceII.h"
 #include "C/UI/NALabelII.h"
 #include "C/UI/NAMenuII.h"
+#include "C/UI/NAMetalSpaceII.h"
 #include "C/UI/NAOpenGLSpaceII.h"
 #include "C/UI/NARadioII.h"
 #include "C/UI/NASliderII.h"

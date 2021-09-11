@@ -82,14 +82,21 @@
 
 
 // ////////////////////////////////
-// OpenGL support
+// OpenGL and Metal support
 // ////////////////////////////////
 
-// If the following macro is set to 1, NALib compiles with OpenGL support.
+// If the following macros are set to 1, NALib compiles with support for the
+// specific graphics engine.
 //
 // If so, you MUST link your program to the appropriate library:
+//
+// OpenGL:
 // Windows: WinAPI (always available) and opengl32.lib
-// Macintosh: Cocoa
+// Macintosh: Cocoa and /System/Library/Frameworks/Metal.framework/OpenGL
+//
+// Metal:
+// Windows: unavailable
+// Macintosh: Cocoa and /System/Library/Frameworks/Metal.framework/Metal
 //
 // The #include directives can be found on top of the NAUI.h file
 //
@@ -97,6 +104,10 @@
 
 #ifndef NA_COMPILE_OPENGL
   #define NA_COMPILE_OPENGL 0
+#endif
+
+#ifndef NA_COMPILE_METAL
+  #define NA_COMPILE_METAL 0
 #endif
 
 

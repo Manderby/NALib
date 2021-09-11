@@ -91,6 +91,10 @@ struct NAMenuItem{
   uint32       id;
 };
 
+struct NAMetalSpace{
+  NA_UIElement uiElement;
+};
+
 struct NAOpenGLSpace{
   NA_UIElement uiElement;
 };
@@ -201,6 +205,9 @@ NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);
 NA_HAPI void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id);
 NA_HAPI uint32 na_GetMenuItemId(NAMenuItem* menuItem);
 
+NA_HAPI void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr);
+NA_HAPI void na_ClearMetalSpace(NAMetalSpace* metalSpace);
+
 NA_HAPI void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr);
 NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
 
@@ -281,6 +288,7 @@ NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect (NA_UIElement* imageSpace);
 NA_HAPI NARect na_GetLabelAbsoluteInnerRect      (NA_UIElement* label);
 NA_HAPI NARect na_GetMenuAbsoluteInnerRect       (NA_UIElement* menu);
 NA_HAPI NARect na_GetMenuItemAbsoluteInnerRect   (NA_UIElement* menuItem);
+NA_HAPI NARect na_GetMetalSpaceAbsoluteInnerRect (NA_UIElement* space);
 NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* space);
 NA_HAPI NARect na_GetRadioAbsoluteInnerRect      (NA_UIElement* radio);
 NA_HAPI NARect na_GetScreenAbsoluteRect          (NA_UIElement* screen);

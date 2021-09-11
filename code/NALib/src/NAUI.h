@@ -19,6 +19,12 @@
   #endif
 #endif
 
+#if (NA_COMPILE_METAL == 1)
+  #if NA_OS == NA_OS_WINDOWS
+    #error "Metal is a macOS only framework. Does not work on windows."
+  #endif
+#endif
+
 #include "NACoord.h"
 #include "NAString.h"
 #include "NABabyImage.h"
@@ -73,6 +79,7 @@ typedef struct NAImageSpace     NAImageSpace;
 typedef struct NALabel          NALabel;
 typedef struct NAMenu           NAMenu;
 typedef struct NAMenuItem       NAMenuItem;
+typedef struct NAMetalSpace     NAMetalSpace;
 typedef struct NAOpenGLSpace    NAOpenGLSpace;
 typedef struct NARadio          NARadio;
 typedef struct NAScreen         NAScreen;
@@ -92,11 +99,12 @@ typedef enum{
   NA_UI_APPLICATION,
   NA_UI_BUTTON,
   NA_UI_CHECKBOX,
-  NA_UI_IMAGESPACE,
+  NA_UI_IMAGE_SPACE,
   NA_UI_LABEL,
   NA_UI_MENU,
   NA_UI_MENUITEM,
-  NA_UI_OPENGLSPACE,
+  NA_UI_METAL_SPACE,
+  NA_UI_OPENGL_SPACE,
   NA_UI_RADIO,
   NA_UI_SCREEN,
   NA_UI_SLIDER,
@@ -636,6 +644,19 @@ NA_API NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuIte
 NA_API NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem);
 NA_API size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item);
 NA_API void naPresentMenu(NAMenu* menu, NAPos pos);
+
+// MetalSpace
+// Note that you must have NA_COMPILE_METAL configured in NAConfiguration.h
+// to use these functions. Also note that metal is macOS only.
+// Use initFunc to perform any initialization necessary like for example
+// uploading of textures to the GPU. The initFunc will be called with
+// initData as the input parameter. The initFunc can be Null.
+// Note that the initFunc will be called when prepareMetal is called (which
+// may be as late as when the space comes onsceen)
+NA_API NAMetalSpace* naNewMetalSpace(NASize size, NAMutator initFunc, void* initData);
+NA_API void* naGetMetalSystemContext(NAMetalSpace* metalSpace);
+NA_API void naSwapMetalBuffer(NAMetalSpace* metalSpace);
+NA_API void naSetMetalInnerRect(NAMetalSpace* metalSpace, NARect bounds);
 
 // OpenGLSpace
 // Note that you must have NA_COMPILE_OPENGL configured in NAConfiguration.h
