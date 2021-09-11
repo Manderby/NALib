@@ -58,7 +58,7 @@ NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
   - (void)prepareOpenGL{
     // When entering this function, the opengl context is set.
     [super prepareOpenGL];
-    // Make sure OpenGL always swaps the buffers of the default framebuffer. If
+    // Make sure OpenGL always swaps the buffers of the default frameBuffer. If
     // this is not done, sometimes, the double buffer will not work properly.
     GLint swapInt = 1;
     
@@ -152,6 +152,11 @@ NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
     na_ClearOpenGLSpace((NAOpenGLSpace*)cocoaOpenGLSpace);
   }
 
+
+  NA_DEF void* naGetOpenGLSystemContext(NAOpenGLSpace* openGLSpace){
+    naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
+    return [nativePtr openGLContext];
+  }
 
 
   NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){

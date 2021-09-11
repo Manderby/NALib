@@ -648,6 +648,7 @@ NA_API void naPresentMenu(NAMenu* menu, NAPos pos);
 // Mac: when prepareOpenGL is called (which may be as late as when the
 //      space comes onsceen)
 NA_API NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData);
+NA_API void* naGetOpenGLSystemContext(NAOpenGLSpace* openGLSpace);
 NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace);
 NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds);
 

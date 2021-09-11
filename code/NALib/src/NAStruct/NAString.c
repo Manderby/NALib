@@ -251,9 +251,9 @@ NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei rang
 
 
 NA_API NAString* naNewStringWithNewlineSanitization( NAString* string, NANewlineEncoding encoding){
-  NAString* newstring;
+  NAString* newString;
   if(naIsStringEmpty(string)){
-    newstring = naNewString();
+    newString = naNewString();
   }else{
     NABufferIterator readIter;
     NABufferIterator writeIter;
@@ -277,10 +277,10 @@ NA_API NAString* naNewStringWithNewlineSanitization( NAString* string, NANewline
     }
     naClearBufferIterator(&readIter);
     naClearBufferIterator(&writeIter);
-    newstring = naNewStringWithBufferExtraction(newbuffer, naGetBufferRange(newbuffer));
+    newString = naNewStringWithBufferExtraction(newbuffer, naGetBufferRange(newbuffer));
     naRelease(newbuffer);
   }
-  return newstring;
+  return newString;
 }
 
 
