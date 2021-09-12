@@ -152,19 +152,26 @@ NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
   }
 
 
-  NA_DEF void* naGetOpenGLSystemContext(NAOpenGLSpace* openGLSpace){
+  NA_DEF void* naGetOpenGLSpaceSystemContext(NAOpenGLSpace* openGLSpace){
     naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
     return [nativePtr openGLContext];
   }
 
 
-  NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
+  NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
     [[(NA_COCOA_BRIDGE NACocoaNativeOpenGLSpace*)(openGLSpace->uiElement.nativePtr) openGLContext] flushBuffer];
   }
 
 
 
-  NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+  NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible){
+    naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
+    [nativePtr setHidden:visible ? NO : YES];
+  }
+
+
+
+  NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
     naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
     NSRect frame = naMakeNSRectWithRect(bounds);
     frame.origin = NSMakePoint(0, 0);
@@ -192,21 +199,21 @@ NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
     #endif
   }
 
-  NA_DEF void* naGetOpenGLSystemContext(NAOpenGLSpace* openGLSpace){
+  NA_DEF void* naGetOpenGLSpaceSystemContext(NAOpenGLSpace* openGLSpace){
     NA_UNUSED(cocoaOpenGLSpace);
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
   }
 
-  NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
+  NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
     NA_UNUSED(openGLSpace);
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
   }
 
-  NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+  NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
     NA_UNUSED(openGLSpace);
     NA_UNUSED(bounds);
     #if NA_DEBUG

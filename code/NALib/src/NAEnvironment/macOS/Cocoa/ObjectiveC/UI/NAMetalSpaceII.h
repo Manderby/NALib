@@ -59,7 +59,7 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
       //      
       //    karoSetDrawContextScaleFactor(context, [KaroNSApplication getUIScaleFactorForWindow:[self window]]);
       
-      [self setLayer:metalLayer];
+//      [self setLayer:metalLayer];
       [self setLayerContentsRedrawPolicy:NSViewLayerContentsRedrawOnSetNeedsDisplay];
       
     }
@@ -113,7 +113,7 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
 //  }
   
   - (void)reshape{
-    [super reshape];
+//    [super reshape];
 //    [[self metalContext] update];
 //    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_RESHAPE);
   }
@@ -178,7 +178,7 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
   }
 
 
-  NA_DEF void* naGetMetalSystemContext(NAMetalSpace* metalSpace){
+  NA_DEF void* naGetMetalSpaceSystemContext(NAMetalSpace* metalSpace){
     naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
 //    return [nativePtr metalContext];
     return [nativePtr layer];
@@ -186,13 +186,21 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
   }
 
 
-  NA_DEF void naSwapMetalBuffer(NAMetalSpace* metalSpace){
+  NA_DEF void naSwapMetalSpaceBuffer(NAMetalSpace* metalSpace){
+    NA_UNUSED(metalSpace);
 //    [[(NA_COCOA_BRIDGE NACocoaNativeMetalSpace*)(metalSpace->uiElement.nativePtr) metalContext] flushBuffer];
   }
 
 
 
-  NA_DEF void naSetMetalInnerRect(NAMetalSpace* metalSpace, NARect bounds){
+  NA_DEF void naSetMetalSpaceVisible(NAMetalSpace* metalSpace, NABool visible){
+    naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
+    [nativePtr setHidden:visible ? NO : YES];
+  }
+
+
+
+  NA_DEF void naSetMetalSpaceInnerRect(NAMetalSpace* metalSpace, NARect bounds){
     naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
     NSRect frame = naMakeNSRectWithRect(bounds);
     frame.origin = NSMakePoint(0, 0);
@@ -218,7 +226,7 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
     #endif
   }
 
-  NA_DEF void* naGetMetalSystemContext(NAMetalSpace* metalSpace){
+  NA_DEF void* naGetMetalSpaceSystemContext(NAMetalSpace* metalSpace){
     NA_UNUSED(metalSpace);
     #if NA_DEBUG
       naError("Metal has not been configured. See NAConfiguration.h");
@@ -226,14 +234,14 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
     return NA_NULL;
   }
 
-  NA_DEF void naSwapMetalBuffer(NAMetalSpace* metalSpace){
+  NA_DEF void naSwapMetalSpaceBuffer(NAMetalSpace* metalSpace){
     NA_UNUSED(metalSpace);
     #if NA_DEBUG
       naError("Metal has not been configured. See NAConfiguration.h");
     #endif
   }
 
-  NA_DEF void naSetMetalInnerRect(NAMetalSpace* metalSpace, NARect bounds){
+  NA_DEF void naSetMetalSpaceInnerRect(NAMetalSpace* metalSpace, NARect bounds){
     NA_UNUSED(metalSpace);
     NA_UNUSED(bounds);
     #if NA_DEBUG

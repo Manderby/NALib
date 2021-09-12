@@ -654,9 +654,10 @@ NA_API void naPresentMenu(NAMenu* menu, NAPos pos);
 // Note that the initFunc will be called when prepareMetal is called (which
 // may be as late as when the space comes onsceen)
 NA_API NAMetalSpace* naNewMetalSpace(NASize size, NAMutator initFunc, void* initData);
-NA_API void* naGetMetalSystemContext(NAMetalSpace* metalSpace);
-NA_API void naSwapMetalBuffer(NAMetalSpace* metalSpace);
-NA_API void naSetMetalInnerRect(NAMetalSpace* metalSpace, NARect bounds);
+NA_API void* naGetMetalSpaceSystemContext(NAMetalSpace* metalSpace);
+NA_API void naSwapMetalSpaceBuffer(NAMetalSpace* metalSpace);
+NA_API void naSetMetalSpaceVisible(NAMetalSpace* metalSpace, NABool visible);
+NA_API void naSetMetalSpaceInnerRect(NAMetalSpace* metalSpace, NARect bounds);
 
 // OpenGLSpace
 // Note that you must have NA_COMPILE_OPENGL configured in NAConfiguration.h
@@ -669,9 +670,10 @@ NA_API void naSetMetalInnerRect(NAMetalSpace* metalSpace, NARect bounds);
 // Mac: when prepareOpenGL is called (which may be as late as when the
 //      space comes onsceen)
 NA_API NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData);
-NA_API void* naGetOpenGLSystemContext(NAOpenGLSpace* openGLSpace);
-NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace);
-NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds);
+NA_API void* naGetOpenGLSpaceSystemContext(NAOpenGLSpace* openGLSpace);
+NA_API void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace);
+NA_API void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible);
+NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds);
 
 // Radio
 NA_API NARadio* naNewRadio(const NAUTF8Char* text, NASize size);

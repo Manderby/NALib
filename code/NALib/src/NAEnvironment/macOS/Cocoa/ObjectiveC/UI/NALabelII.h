@@ -86,10 +86,10 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
 ////    if(testleading < 0){testleading = 0;}
 ////    testleading = floor(testleading + .5);
 ////    
-////    CGFloat testlineheight = floor(ascender + .5) - ceil(descender - .5) + leading;
+////    CGFloat testlineHeight = floor(ascender + .5) - ceil(descender - .5) + leading;
 ////    CGFloat testDelta = 0;
 ////    if(leading <= 0){
-////      testDelta = floor (0.2 * testlineheight + 0.5);
+////      testDelta = floor (0.2 * testlineHeight + 0.5);
 ////    }
 ////    
 ////    CGFloat test = defaultLineHeight;
