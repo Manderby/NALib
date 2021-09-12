@@ -23,8 +23,6 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
   @interface NACocoaNativeMetalSpace : NSView<CALayerDelegate>{
     NACocoaMetalSpace* cocoaMetalSpace;
     NSTrackingArea*     trackingArea;
-    NAMutator           initFunc;
-    void*               initData;
   }
   @end
 
@@ -32,7 +30,7 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
 
   @implementation NACocoaNativeMetalSpace
   
-  - (id)initWithMetalSpace:(NACocoaMetalSpace*)newCocoaMetalSpace frame:(NSRect)frameRect initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
+  - (id)initWithMetalSpace:(NACocoaMetalSpace*)newCocoaMetalSpace frame:(NSRect)frameRect{
     self = [super initWithFrame:frameRect];
 
     if (@available(macOS 10.11, *)) {
@@ -50,18 +48,8 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
       // Do not reorder these two lines!
       
       [metalLayer setDelegate:self];
-      
-      //    context = karoAllocDrawContext(
-      //      KARO_DRAW_TARGET_METAL,
-      //      NA_COCOA_PTR_OBJC_TO_C(metalLayer),
-      //      newRaster,
-      //      NA_FALSE);
-      //      
-      //    karoSetDrawContextScaleFactor(context, [KaroNSApplication getUIScaleFactorForWindow:[self window]]);
-      
-//      [self setLayer:metalLayer];
+            
       [self setLayerContentsRedrawPolicy:NSViewLayerContentsRedrawOnSetNeedsDisplay];
-      
     }
 
     // todo: make this dependent on whether tracking is needed or not.
@@ -71,13 +59,11 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
     [self addTrackingArea:trackingArea];
 
     cocoaMetalSpace = newCocoaMetalSpace;
-    initFunc = newinitFunc;
-    initData = newinitData;
     return self;
   }
   
   - (void)dealloc{
-//    NA_COCOA_RELEASE(trackingArea);
+    NA_COCOA_RELEASE(trackingArea);
     NA_COCOA_SUPER_DEALLOC();
   }
   
@@ -85,43 +71,20 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
     return YES; // This is required to get keyboard input.
   }
   
-//  - (void)prepareMetal{
-//    // When entering this function, the opengl context is set.
-//    [super prepareMetal];
-//    // Make sure Metal always swaps the buffers of the default frameBuffer. If
-//    // this is not done, sometimes, the double buffer will not work properly.
-//    GLint swapInt = 1;
-//    
-//    [[self metalContext] setValues:&swapInt forParameter:NAMetalContextParameterSwapInterval];
-//
-//    // Now the Metal context is created and current. We can initialize it
-//    // if necessary.
-//    if(initFunc){
-//      initFunc(initData);
-//    }
-//  }
-  
-- (void) displayLayer:(CALayer *)layer {
+  - (void) displayLayer:(CALayer *)layer {
     NA_UNUSED(layer);
-//    [[self metalContext] makeCurrentContext];
     na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_REDRAW);
   }
-//  - (void)drawRect:(NSRect)dirtyRect{
-//    NA_UNUSED(dirtyRect);
-////    [[self metalContext] makeCurrentContext];
-////    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_REDRAW);
-//  }
   
-  - (void)reshape{
-//    [super reshape];
-//    [[self metalContext] update];
+//  - (void) resizeSubviewsWithOldSize:(NSSize) oldSize{
+////    [super resizeSubviewsWithOldSize: oldSize];
 //    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_RESHAPE);
-  }
+//  }
   
   - (void)mouseMoved:(NSEvent*)event{
     na_SetMouseMovedByDiff([event deltaX], -[event deltaY]);
     na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED);
-    //[NSEvent setMouseCoalescingEnabled:NO];
+    [NSEvent setMouseCoalescingEnabled:NO];
   }
   
   - (void)keyDown:(NSEvent*)event{
@@ -150,24 +113,14 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
 
 
 
-  NA_DEF NAMetalSpace* naNewMetalSpace(NASize size, NAMutator initFunc, void* initData){
+  NA_DEF NAMetalSpace* naNewMetalSpace(NASize size){
     NACocoaMetalSpace* cocoaMetalSpace = naNew(NACocoaMetalSpace);
 
     NACocoaNativeMetalSpace* nativePtr = [[NACocoaNativeMetalSpace alloc]
       initWithMetalSpace:cocoaMetalSpace
-      frame:naMakeNSRectWithSize(size)
-      initFunc:initFunc
-      initData:initData];
+      frame:naMakeNSRectWithSize(size)];
     na_InitMetalSpace((NAMetalSpace*)cocoaMetalSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
-//    NA_COCOA_RELEASE(pixelFormat);
-//
-//    if([nativePtr respondsToSelector:@selector(setWantsBestResolutionMetalSurface:)]){
-//      NA_MACOS_AVAILABILITY_GUARD_10_7(
-//        [nativePtr setWantsBestResolutionMetalSurface:YES];
-//      )
-//    }
-    
     return (NAMetalSpace*)cocoaMetalSpace;
   }
 
@@ -180,17 +133,9 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
 
   NA_DEF void* naGetMetalSpaceSystemContext(NAMetalSpace* metalSpace){
     naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
-//    return [nativePtr metalContext];
     return [nativePtr layer];
     return NA_NULL;
   }
-
-
-  NA_DEF void naSwapMetalSpaceBuffer(NAMetalSpace* metalSpace){
-    NA_UNUSED(metalSpace);
-//    [[(NA_COCOA_BRIDGE NACocoaNativeMetalSpace*)(metalSpace->uiElement.nativePtr) metalContext] flushBuffer];
-  }
-
 
 
   NA_DEF void naSetMetalSpaceVisible(NAMetalSpace* metalSpace, NABool visible){
@@ -209,10 +154,8 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
 
 #else
 
-  NA_DEF NAMetalSpace* naNewMetalSpace(NASize size, NAMutator initFunc, void* initData){
+  NA_DEF NAMetalSpace* naNewMetalSpace(NASize size){
     NA_UNUSED(size);
-    NA_UNUSED(initFunc);
-    NA_UNUSED(initData);
     #if NA_DEBUG
       naError("Metal has not been configured. See NAConfiguration.h");
     #endif
@@ -232,13 +175,6 @@ NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
       naError("Metal has not been configured. See NAConfiguration.h");
     #endif
     return NA_NULL;
-  }
-
-  NA_DEF void naSwapMetalSpaceBuffer(NAMetalSpace* metalSpace){
-    NA_UNUSED(metalSpace);
-    #if NA_DEBUG
-      naError("Metal has not been configured. See NAConfiguration.h");
-    #endif
   }
 
   NA_DEF void naSetMetalSpaceInnerRect(NAMetalSpace* metalSpace, NARect bounds){

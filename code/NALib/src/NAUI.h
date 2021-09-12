@@ -653,9 +653,8 @@ NA_API void naPresentMenu(NAMenu* menu, NAPos pos);
 // initData as the input parameter. The initFunc can be Null.
 // Note that the initFunc will be called when prepareMetal is called (which
 // may be as late as when the space comes onsceen)
-NA_API NAMetalSpace* naNewMetalSpace(NASize size, NAMutator initFunc, void* initData);
+NA_API NAMetalSpace* naNewMetalSpace(NASize size);
 NA_API void* naGetMetalSpaceSystemContext(NAMetalSpace* metalSpace);
-NA_API void naSwapMetalSpaceBuffer(NAMetalSpace* metalSpace);
 NA_API void naSetMetalSpaceVisible(NAMetalSpace* metalSpace, NABool visible);
 NA_API void naSetMetalSpaceInnerRect(NAMetalSpace* metalSpace, NARect bounds);
 
