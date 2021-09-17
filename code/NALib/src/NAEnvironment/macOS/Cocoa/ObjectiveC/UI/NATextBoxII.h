@@ -160,6 +160,13 @@ NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
 
 
 
+NA_DEF void naSetTextBoxVisible(NATextBox* textBox, NABool visible){
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  [nativePtr setHidden: !visible];
+}
+
+
+
 NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox){
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(textBox), naGetApplication(), NA_FALSE);

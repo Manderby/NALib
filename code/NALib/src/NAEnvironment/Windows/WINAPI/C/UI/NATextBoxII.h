@@ -127,6 +127,12 @@ NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
 
 
 
+NA_DEF void naSetTextBoxVisible(NATextBox* textBox, NABool visible){
+
+}
+
+
+
 NA_HDEF void** na_GetTextBoxNextTabReference(NATextBox* textBox){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   return &(winapiTextBox->nextTabStop);

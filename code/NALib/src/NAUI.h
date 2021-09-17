@@ -708,6 +708,7 @@ NA_API NAString* naNewStringWithTextBoxText(NATextBox* textBox);
 NA_API void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment);
 NA_API void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind);
 NA_API void naSetTextBoxEditable(NATextBox* textBox, NABool editable);
+NA_API void naSetTextBoxVisible(NATextBox* textBox, NABool visible);
 
 // TextField
 NA_API NATextField* naNewTextField(NASize size);
