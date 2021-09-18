@@ -69,8 +69,8 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 
-- (void) setFontKind:(NAFontKind)kind{
-   [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKind(kind))];
+- (void) setFontKind:(NAFontKind)kind size:(NAFontSize)size{
+   [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKindAndSize(kind, size))];
 }
 
 - (NARect) getInnerRect{
@@ -121,9 +121,9 @@ NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment 
 
 
 
-NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind){
+NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFontSize size){
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
-  [nativePtr setFontKind:kind];
+  [nativePtr setFontKind:kind size:size];
 }
 
 

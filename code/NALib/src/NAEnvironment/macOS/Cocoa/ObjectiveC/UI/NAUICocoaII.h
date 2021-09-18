@@ -175,44 +175,51 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
 
 
 
-NAFont na_GetFontWithKind(NAFontKind kind){
+NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
   NSFont* font;
-  CGFloat systemSize = [NSFont systemFontSize];
+  CGFloat baseSize;
+  switch(size){
+  case NA_FONT_SIZE_SMALL: baseSize = 11; break;
+  case NA_FONT_SIZE_DEFAULT: baseSize = [NSFont systemFontSize]; break;
+  case NA_FONT_SIZE_BIG: baseSize = 18; break;
+  case NA_FONT_SIZE_HUGE: baseSize = 24; break;
+  default: baseSize = [NSFont systemFontSize]; break;
+  }
   NSFontDescriptor* descriptor;
   NSDictionary* dict;
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
-      font = [NSFont systemFontOfSize:systemSize];
+      font = [NSFont systemFontOfSize:baseSize];
       break;
     case NA_FONT_KIND_TITLE:
-      font = [NSFont boldSystemFontOfSize:systemSize];
+      font = [NSFont boldSystemFontOfSize:baseSize];
       break;
     case NA_FONT_KIND_MONOSPACE:
       dict = [NSDictionary dictionaryWithObjectsAndKeys:
                             @"Courier", NSFontFamilyAttribute, 
                             @"Regular", NSFontFaceAttribute, nil];
       descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
-      font = [NSFont fontWithDescriptor:descriptor size:systemSize];
+      font = [NSFont fontWithDescriptor:descriptor size:baseSize];
       break;
     case NA_FONT_KIND_PARAGRAPH:
       dict = [NSDictionary dictionaryWithObjectsAndKeys:
                             @"Palatino", NSFontFamilyAttribute, 
                             @"Regular", NSFontFaceAttribute, nil];
       descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
-      font = [NSFont fontWithDescriptor:descriptor size:systemSize + 1];
+      font = [NSFont fontWithDescriptor:descriptor size:baseSize + 1];
       break;
     case NA_FONT_KIND_MATH:
       dict = [NSDictionary dictionaryWithObjectsAndKeys:
                             @"Times New Roman", NSFontFamilyAttribute, 
                             @"Italic", NSFontFaceAttribute, nil];
       descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
-      font = [NSFont fontWithDescriptor:descriptor size:systemSize];
+      font = [NSFont fontWithDescriptor:descriptor size:baseSize];
       break;
     default:
       #if NA_DEBUG
         naError("Unknown font kind");
       #endif
-      font = [NSFont systemFontOfSize:systemSize];
+      font = [NSFont systemFontOfSize:baseSize];
       break;
   }
   return NA_COCOA_PTR_OBJC_TO_C(font);

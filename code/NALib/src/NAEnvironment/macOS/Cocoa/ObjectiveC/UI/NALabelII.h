@@ -200,8 +200,8 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 
-- (void) setFontKind:(NAFontKind)kind{
-  [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKind(kind))];
+- (void) setFontKind:(NAFontKind)kind size:(NAFontSize)size{
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKindAndSize(kind, size))];
 }
 
 - (void) setVisible:(NABool)visible{
@@ -279,9 +279,9 @@ NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
 
 
 
-NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
+NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size){
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setFontKind:kind];
+  [nativePtr setFontKind:kind size:size];
 }
 
 

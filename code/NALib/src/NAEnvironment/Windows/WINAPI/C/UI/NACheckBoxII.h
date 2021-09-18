@@ -106,7 +106,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
 
   na_InitCheckBox(&(winapiCheckBox->checkBox), nativePtr);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NACheckBox*)winapiCheckBox;
 }

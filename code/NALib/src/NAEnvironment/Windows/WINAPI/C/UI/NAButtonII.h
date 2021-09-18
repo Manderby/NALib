@@ -227,7 +227,7 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, NASize size, uint32 fla
   
   naFree(systemText);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);

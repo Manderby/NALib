@@ -85,7 +85,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
     naHandleTextBoxReverseTabOrder,
     NA_NULL);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NATextBox*)winapiTextBox;
 }
@@ -116,7 +116,7 @@ NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignm
 
 NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  SendMessage(naGetUIElementNativePtr(winapiTextBox), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
+  SendMessage(naGetUIElementNativePtr(winapiTextBox), WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(kind), MAKELPARAM(TRUE, 0));
 }
 
 

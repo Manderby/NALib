@@ -587,6 +587,14 @@ typedef enum{
 } NAFontKind;
 
 typedef enum{
+  NA_FONT_SIZE_SMALL,
+  NA_FONT_SIZE_DEFAULT,     // The default system font size
+  NA_FONT_SIZE_BIG,
+  NA_FONT_SIZE_HUGE,
+  NA_FONT_SIZE_COUNT
+} NAFontSize;
+
+typedef enum{
   NA_TEXT_ALIGNMENT_LEFT,
   NA_TEXT_ALIGNMENT_RIGHT,
   NA_TEXT_ALIGNMENT_CENTER
@@ -632,7 +640,7 @@ NA_API NABool naIsLabelEnabled(NALabel* label);
 NA_API void naSetLabelEnabled(NALabel* label, NABool enabled);
 NA_API void naSetLabelSelectable(NALabel* label, NABool selectable);
 NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
-NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind);
+NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size);
 NA_API void naSetLabelVisible(NALabel* label, NABool visible);
 
 // Menu and MenuItem
@@ -706,7 +714,8 @@ NA_API NATextBox* naNewTextBox(NASize size);
 NA_API void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text);
 NA_API NAString* naNewStringWithTextBoxText(NATextBox* textBox);
 NA_API void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment);
-NA_API void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind);
+NA_API void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind, NAFontSize size);
+NA_API void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox);
 NA_API void naSetTextBoxEditable(NATextBox* textBox, NABool editable);
 NA_API void naSetTextBoxVisible(NATextBox* textBox, NABool visible);
 
@@ -714,9 +723,9 @@ NA_API void naSetTextBoxVisible(NATextBox* textBox, NABool visible);
 NA_API NATextField* naNewTextField(NASize size);
 NA_API void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text);
 NA_API NAString* naNewStringWithTextFieldText(NATextField* textField);
-NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind);
+NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFontSize size);
 NA_API void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment alignment);
-NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind);
+NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFontSize size);
 
 // Window
 

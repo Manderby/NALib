@@ -547,7 +547,7 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
 
 
 
-NA_DEF NAFont na_GetFontWithKind(NAFontKind kind){
+NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   HFONT retfont = NA_NULL;
 

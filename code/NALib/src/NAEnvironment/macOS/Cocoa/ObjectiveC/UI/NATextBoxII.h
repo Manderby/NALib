@@ -28,8 +28,8 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 - (id) initWithTextBox:(NACocoaTextBox*)newCocoaTextBox frame:(NSRect)frame{
   NSRect clipRect;
   NSClipView* clipView;
-  NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
-  self = [super initWithFrame:documentrect];
+  NSRect documentRect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
+  self = [super initWithFrame:documentRect];
   
   [self setDelegate:self];
   [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver: self
@@ -81,8 +81,18 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 
-- (void) setFontKind:(NAFontKind)kind{
-  [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKind(kind))];
+- (void) setFontKind:(NAFontKind)kind size:(NAFontSize)size{
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKindAndSize(kind, size))];
+}
+
+- (void) setUseHorizontalScrolling{
+  float LargeNumberForText = 1.0e7f;
+  NSTextContainer *textContainer = [self textContainer];
+  [textContainer setContainerSize:NSMakeSize(LargeNumberForText, [textContainer containerSize].height)];
+  [textContainer setWidthTracksTextView:NO];
+  [self setMaxSize:NSMakeSize(LargeNumberForText, [self maxSize].height)];
+  [self setHorizontallyResizable:YES];
+  [scrollView setHasHorizontalScroller:YES];
 }
 
 - (void) setReadOnly:(NABool)readonly{
@@ -146,9 +156,16 @@ NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignm
 
 
 
-NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind){
+NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind, NAFontSize size){
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
-  [nativePtr setFontKind:kind];
+  [nativePtr setFontKind:kind size:size];
+}
+
+
+
+NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox){
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  [nativePtr setUseHorizontalScrolling];
 }
 
 

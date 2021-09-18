@@ -245,7 +245,7 @@ NA_HAPI void* na_GetUINALibEquivalent(void* nativePtr);
 
 NA_HAPI NABool na_IsApplicationRunning(void);
 
-NA_HAPI NAFont na_GetFontWithKind(NAFontKind kind);
+NA_HAPI NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size);
 
 // Dispatches a command with the given uiElement.
 // As long as the command has not been finished using NA_TRUE as a return value

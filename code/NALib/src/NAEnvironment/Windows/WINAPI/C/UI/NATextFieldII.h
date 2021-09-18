@@ -151,7 +151,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
     naHandleTextFieldReverseTabOrder,
     NA_NULL);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NATextField*)winapiTextField;
 }
@@ -198,7 +198,7 @@ NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment 
 
 NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind){
  NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
- SendMessage(naGetUIElementNativePtr(winapiTextField), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
+ SendMessage(naGetUIElementNativePtr(winapiTextField), WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(kind), MAKELPARAM(TRUE, 0));
 }
 
 
