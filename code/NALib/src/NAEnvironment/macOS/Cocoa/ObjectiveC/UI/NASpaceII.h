@@ -124,7 +124,7 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   NARect windowRect;
   NAWindow* window = naGetUIElementWindow(space);
   if(window){
-    windowRect = na_GetNativeWindowAbsoluteInnerRect(naGetUIElementNativePtr(window));
+    windowRect = na_GetNativeWindowAbsoluteInnerRect((NSWindow*)NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(window)));
   }else{
     #if NA_DEBUG
       naError("Given element has no NAWindow as parent. Using native window parent.");

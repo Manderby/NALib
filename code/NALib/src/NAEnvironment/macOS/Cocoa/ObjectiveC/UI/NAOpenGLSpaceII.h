@@ -184,10 +184,11 @@
   }
 
   NA_DEF void* naGetOpenGLSpaceSystemContext(NAOpenGLSpace* openGLSpace){
-    NA_UNUSED(cocoaOpenGLSpace);
+    NA_UNUSED(openGLSpace);
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
+    return NA_NULL;
   }
 
   NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
