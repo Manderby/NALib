@@ -6,16 +6,6 @@
 
 
 
-typedef struct NAWINAPISlider NAWINAPISlider;
-struct NAWINAPISlider {
-  NASlider slider;
-};
-
-NA_HAPI void na_DestructWINAPISlider(NAWINAPISlider* winapiSlider);
-NA_RUNTIME_TYPE(NAWINAPISlider, na_DestructWINAPISlider, NA_FALSE);
-
-
-
 NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
@@ -90,8 +80,8 @@ NA_DEF NASlider* naNewSlider(double width){
     WS_CHILD | WS_VISIBLE | TBS_NOTICKS,
 		0,
     0,
-    (int)size.width,
-    (int)size.height,
+    (int)width,
+    24,
 		naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),

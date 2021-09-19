@@ -6,18 +6,6 @@
 
 
 
-typedef struct NAWINAPITextBox NAWINAPITextBox;
-struct NAWINAPITextBox {
-  NATextBox textBox;
-  void*     nextTabStop;
-  void*     prevTabStop;
-};
-
-NA_HAPI void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox);
-NA_RUNTIME_TYPE(NAWINAPITextBox, na_DestructWINAPITextBox, NA_FALSE);
-
-
-
 NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
@@ -85,7 +73,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
     naHandleTextBoxReverseTabOrder,
     NA_NULL);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT), MAKELPARAM(TRUE, 0));
 
   return (NATextBox*)winapiTextBox;
 }
@@ -114,9 +102,9 @@ NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignm
 
 
 
-NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind){
+NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind, NAFontSize size){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  SendMessage(naGetUIElementNativePtr(winapiTextBox), WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(kind), MAKELPARAM(TRUE, 0));
+  SendMessage(naGetUIElementNativePtr(winapiTextBox), WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(kind, size), MAKELPARAM(TRUE, 0));
 }
 
 

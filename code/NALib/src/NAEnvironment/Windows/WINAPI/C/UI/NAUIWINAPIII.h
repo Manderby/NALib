@@ -266,6 +266,7 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc   (void* uiElement, UINT message, WPAR
 NAWINAPICallbackInfo naImageSpaceWINAPIProc (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naLabelWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naPopupButtonWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naRadioWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naSliderWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naSpaceWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
@@ -313,7 +314,6 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     case NA_UI_BUTTON:       info = naButtonWINAPIProc     (uiElement, message, wParam, lParam); break;
     case NA_UI_IMAGE_SPACE:  info = naImageSpaceWINAPIProc (uiElement, message, wParam, lParam); break;
     case NA_UI_LABEL:        info = naLabelWINAPIProc      (uiElement, message, wParam, lParam); break;
-    case NA_UI_METAL_SPACE:  info = naMetalSpaceWINAPIProc (uiElement, message, wParam, lParam); break;
     case NA_UI_OPENGL_SPACE: info = naOpenGLSpaceWINAPIProc(uiElement, message, wParam, lParam); break;
     case NA_UI_POPUP_BUTTON: info = naPopupButtonWINAPIProc(uiElement, message, wParam, lParam); break;
     case NA_UI_RADIO:        info = naRadioWINAPIProc      (uiElement, message, wParam, lParam); break;

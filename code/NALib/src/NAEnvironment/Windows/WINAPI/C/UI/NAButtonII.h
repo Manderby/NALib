@@ -8,16 +8,6 @@
 #define NA_WINAPI_BUTTON_STATEFUL   0x02
 #define NA_WINAPI_BUTTON_STATE      0x04
 
-typedef struct NAWINAPIButton NAWINAPIButton;
-struct NAWINAPIButton{
-  NAButton   button;
-  const NAUIImage* image;
-  uint32 state;
-};
-
-NA_HAPI void na_DestructWINAPIButton(NAWINAPIButton* winapiButton);
-NA_RUNTIME_TYPE(NAWINAPIButton, na_DestructWINAPIButton, NA_FALSE);
-
 
 
 NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
@@ -218,8 +208,8 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
     WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON,
 		0,
     0,
-    (int)size.width,
-    (int)size.height,
+    (int)width,
+    24,
 		naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -227,7 +217,7 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
   
   naFree(systemText);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT), MAKELPARAM(TRUE, 0));
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);

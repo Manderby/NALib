@@ -192,7 +192,6 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
 
 
 NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
-  NSFont* font;
   CGFloat baseSize;
   switch(size){
   case NA_FONT_SIZE_SMALL: baseSize = 11; break;
@@ -201,6 +200,8 @@ NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
   case NA_FONT_SIZE_HUGE: baseSize = 24; break;
   default: baseSize = [NSFont systemFontSize]; break;
   }
+
+  NSFont* font;
   NSFontDescriptor* descriptor;
   NSDictionary* dict;
   switch(kind){

@@ -6,16 +6,6 @@
 
 
 
-typedef struct NAWINAPIRadio NAWINAPIRadio;
-struct NAWINAPIRadio {
-  NARadio radio;
-};
-
-NA_HAPI void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio);
-NA_RUNTIME_TYPE(NAWINAPIRadio, na_DestructWINAPIRadio, NA_FALSE);
-
-
-
 NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NABool check;
@@ -84,8 +74,8 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width){
     WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_RADIOBUTTON,
 		0,
     0,
-    (int)size.width,
-    (int)size.height,
+    (int)width,
+    18,
 		naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -99,7 +89,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width){
 
   na_InitRadio(&(winapiRadio->radio), nativePtr);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT), MAKELPARAM(TRUE, 0));
 
   return (NARadio*)winapiRadio;
 }

@@ -7,15 +7,6 @@
 
 #include "../../../../../NAPreferences.h"
 
-typedef struct NAWINAPIWindow NAWINAPIWindow;
-struct NAWINAPIWindow {
-  NAWindow      window;
-  NA_UIElement* firstResponder;
-};
-
-NA_HAPI void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow);
-NA_RUNTIME_TYPE(NAWINAPIWindow, na_DestructWINAPIWindow, NA_FALSE);
-
 
 
 NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){

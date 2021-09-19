@@ -33,6 +33,7 @@
 #include "C/NAPreferencesWINAPIII.h"
 
 #include "C/UI/NAUIWINAPIII.h"
+#include "C/UI/NAUIWINAPIInterfaces.h"
 #include "C/UI/NAApplicationII.h"
 
 #include "C/UI/NAButtonII.h"

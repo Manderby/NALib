@@ -5,15 +5,6 @@
 // Do not include this file anywhere else!
 
 
-typedef struct NAWINAPICheckBox NAWINAPICheckBox;
-struct NAWINAPICheckBox {
-  NACheckBox checkBox;
-};
-
-NA_HAPI void na_DestructWINAPICheckBox(NAWINAPICheckBox* winapiCheckBox);
-NA_RUNTIME_TYPE(NAWINAPICheckBox, na_DestructWINAPICheckBox, NA_FALSE);
-
-
 
 NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
@@ -91,8 +82,8 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width){
     WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_CHECKBOX,
 		0,
     0,
-    (int)size.width,
-    (int)size.height,
+    (int)width,
+    18,
 		naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -106,7 +97,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width){
 
   na_InitCheckBox(&(winapiCheckBox->checkBox), nativePtr);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT), MAKELPARAM(TRUE, 0));
 
   return (NACheckBox*)winapiCheckBox;
 }

@@ -6,16 +6,6 @@
 
 
 
-typedef struct NAWINAPISpace NAWINAPISpace;
-struct NAWINAPISpace {
-  NASpace        space;
-  NAWINAPIColor* lastBgColor;
-};
-
-NA_HAPI void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace);
-NA_RUNTIME_TYPE(NAWINAPISpace, na_DestructWINAPISpace, NA_FALSE);
-
-
 NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace);
 
 

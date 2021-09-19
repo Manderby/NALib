@@ -5,18 +5,9 @@
 // Do not include this file anywhere else!
 
 
-#if (NA_COMPILE_OPENGL == 1)
+#if NA_COMPILE_OPENGL == 1
 
 #include "../../../../../NADateTime.h"
-
-typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
-struct NAWINAPIOpenGLSpace {
-  NAOpenGLSpace openGLSpace;
-  HGLRC         hRC;    // The rendering context for OpenGL
-};
-
-NA_HAPI void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace);
-NA_RUNTIME_TYPE(NAWINAPIOpenGLSpace, na_DestructWINAPIOpenGLSpace, NA_FALSE);
 
 
 

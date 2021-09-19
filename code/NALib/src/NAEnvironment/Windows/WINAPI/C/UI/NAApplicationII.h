@@ -13,56 +13,6 @@
   #include <commctrl.h>
 #endif
 
-// The following struct stores all relevant data which will then be stored in
-// a list of the running NAWINAPIApplication.
-typedef struct NAWINAPITimerStruct NAWINAPITimerStruct;
-struct NAWINAPITimerStruct {
-  UINT      key;
-  NAMutator func;
-  void*     arg;
-};
-
-typedef struct NAWINAPIColor NAWINAPIColor;
-struct NAWINAPIColor {
-  COLORREF color;
-  HBRUSH   brush;
-};
-
-typedef struct NAWINAPIApplication NAWINAPIApplication;
-struct NAWINAPIApplication {
-  NAApplication    application;
-  NAList           timers;
-  HWND             offscreenWindow;
-  NONCLIENTMETRICS nonClientMetrics;
-  HICON            appIcon;
-
-  HFONT            systemFont;
-  HFONT            titleFont;
-  HFONT            monospaceFont;
-  HFONT            paragraphFont;
-  HFONT            mathFont;
-
-  NA_UIElement*    mouseHoverElement;
-  NAMenu*          lastOpenedMenu;
-  UINT             nextMenuItemId;
-
-  WNDPROC          oldButtonWindowProc;
-  WNDPROC          oldCheckBoxWindowProc;
-  WNDPROC          oldLabelWindowProc;
-  WNDPROC          oldRadioWindowProc;
-  WNDPROC          oldSliderWindowProc;
-  WNDPROC          oldTextFieldWindowProc;
-
-  NAWINAPIColor    fgColor;
-  NAWINAPIColor    fgColorDisabled;
-  NAWINAPIColor    bgColor;
-  NAWINAPIColor    bgColorAlternate;
-  NAWINAPIColor    bgColorAlternate2;
-};
-
-NA_HAPI void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication);
-NA_RUNTIME_TYPE(NAWINAPIApplication, na_DestructWINAPIApplication, NA_FALSE);
-
 
 
 WNDPROC na_GetApplicationOldButtonWindowProc(){
@@ -547,8 +497,9 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
 
 
 
-NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind){
+NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  
   HFONT retfont = NA_NULL;
 
   ////EnumFontFamilies(GetDC(NA_NULL), NA_NULL, enumFonts, NA_NULL);
@@ -557,11 +508,20 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind){
 
   const NONCLIENTMETRICS* metrics = naGetApplicationMetrics();
 
+  LONG baseSize;
+  switch(size){
+  case NA_FONT_SIZE_SMALL: baseSize = -11; break;
+  case NA_FONT_SIZE_DEFAULT: baseSize = metrics->lfMessageFont.lfHeight; break;
+  case NA_FONT_SIZE_BIG: baseSize = -18; break;
+  case NA_FONT_SIZE_HUGE: baseSize = -24; break;
+  default: baseSize = metrics->lfMessageFont.lfHeight; break;
+  }
+
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
       if(!app->systemFont){
         app->systemFont = CreateFont(
-          metrics->lfMessageFont.lfHeight,
+          baseSize,
           0,
           0,
           0,
@@ -581,7 +541,7 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind){
     case NA_FONT_KIND_TITLE:
       if(!app->titleFont){
         app->titleFont = CreateFont(
-        metrics->lfMessageFont.lfHeight,
+        baseSize,
         0,
         0,
         0,
@@ -601,7 +561,7 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind){
     case NA_FONT_KIND_MONOSPACE:
       if(!app->monospaceFont){
         app->monospaceFont = CreateFont(
-        metrics->lfMessageFont.lfHeight,
+        baseSize,
         0,
         0,
         0,
@@ -621,7 +581,7 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind){
     case NA_FONT_KIND_PARAGRAPH:
       if(!app->paragraphFont){
         app->paragraphFont = CreateFont(
-        metrics->lfMessageFont.lfHeight,
+        baseSize,
         0,
         0,
         0,
@@ -641,7 +601,7 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind){
     case NA_FONT_KIND_MATH:
       if(!app->mathFont){
         app->mathFont = CreateFont(
-        metrics->lfMessageFont.lfHeight,
+        baseSize,
         0,
         0,
         0,

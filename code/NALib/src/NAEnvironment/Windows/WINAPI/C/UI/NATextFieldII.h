@@ -6,18 +6,6 @@
 
 
 
-typedef struct NAWINAPITextField NAWINAPITextField;
-struct NAWINAPITextField {
-  NATextField textField;
-  void*       nextTabStop;
-  void*       prevTabStop;
-};
-
-NA_HAPI void na_DestructWINAPITextField(NAWINAPITextField* winapiTextField);
-NA_RUNTIME_TYPE(NAWINAPITextField, na_DestructWINAPITextField, NA_FALSE);
-
-
-
 NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
@@ -126,8 +114,8 @@ NA_DEF NATextField* naNewTextField(double width){
     WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL,
 	  0,
     0,
-    (int)size.width,
-    (int)size.height,
+    (int)width,
+    21,
 	  naGetApplicationOffscreenWindow(),
     NULL, 
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -151,7 +139,7 @@ NA_DEF NATextField* naNewTextField(double width){
     naHandleTextFieldReverseTabOrder,
     NA_NULL);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT), MAKELPARAM(TRUE, 0));
 
   return (NATextField*)winapiTextField;
 }
@@ -196,9 +184,9 @@ NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment 
 
 
 
-NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind){
+NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFontSize size){
  NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
- SendMessage(naGetUIElementNativePtr(winapiTextField), WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(kind), MAKELPARAM(TRUE, 0));
+ SendMessage(naGetUIElementNativePtr(winapiTextField), WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(kind, size), MAKELPARAM(TRUE, 0));
 }
 
 

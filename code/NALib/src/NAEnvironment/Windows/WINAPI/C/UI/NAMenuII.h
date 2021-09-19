@@ -5,26 +5,6 @@
 // Do not include this file anywhere else!
 
 
-typedef struct NAWINAPIMenu NAWINAPIMenu;
-struct NAWINAPIMenu {
-  NAMenu   menu;
-  HMENU    hMenu;
-};
-
-NA_HAPI void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu);
-NA_RUNTIME_TYPE(NAWINAPIMenu, na_DestructWINAPIMenu, NA_FALSE);
-
-
-
-typedef struct NAWINAPIMenuItem NAWINAPIMenuItem;
-struct NAWINAPIMenuItem {
-  NAMenuItem   menuItem;
-};
-
-NA_HAPI void na_DestructWINAPIMenuItem(NAWINAPIMenuItem* winapiMenuItem);
-NA_RUNTIME_TYPE(NAWINAPIMenuItem, na_DestructWINAPIMenuItem, NA_FALSE);
-
-
 
 NA_DEF NAMenu* naNewMenu(void* parent){
   NAWINAPIMenu* winapiMenu = naNew(NAWINAPIMenu);
@@ -43,60 +23,52 @@ NA_DEF NAMenu* naNewMenu(void* parent){
   return (NAMenu*)winapiMenu;
 }
 
-NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuItem* atItem){
-  NAWINAPIMenuItem* winapiMenuItem = naNew(NAWINAPIMenuItem);
+NA_DEF void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu){
+  DestroyMenu(winapiMenu->hMenu);
+  na_ClearMenu((NAMenu*)winapiMenu);
+}
+
+NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem){
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
+  NAWINAPIMenuItem* winapiMenuItem = (NAWINAPIMenuItem*)item;
 
   MENUITEMINFO menuItemInfo;
   naZeron(&menuItemInfo, sizeof(MENUITEMINFO));
   menuItemInfo.cbSize = sizeof(MENUITEMINFO);
-  // Note for the future, do not combine MIIM_TYPE with MIIM_FTYPE.
-  menuItemInfo.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
-  menuItemInfo.wID = na_GetApplicationNextMenuItemId(naGetApplication());
-  menuItemInfo.fType = MFT_STRING;
-  menuItemInfo.dwTypeData = naAllocSystemStringWithUTF8String(text);
-  menuItemInfo.cch = (UINT)naStrlen(text);
-  menuItemInfo.fState = /*MFS_CHECKED | */MFS_ENABLED/* | MFS_DEFAULT*/;
+
+  if(winapiMenuItem->isSeparator){
+    menuItemInfo.fMask = MIIM_ID | MIIM_FTYPE;
+    menuItemInfo.wID = na_GetApplicationNextMenuItemId(naGetApplication());
+    menuItemInfo.fType = MFT_SEPARATOR;
+  }else{
+    // Note for the future, do not combine MIIM_TYPE with MIIM_FTYPE.
+    menuItemInfo.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
+    menuItemInfo.wID = na_GetApplicationNextMenuItemId(naGetApplication());
+    menuItemInfo.fType = MFT_STRING;
+    menuItemInfo.dwTypeData = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(winapiMenuItem->text));
+    menuItemInfo.cch = (UINT)naGetStringByteSize(winapiMenuItem->text);
+    menuItemInfo.fState = /*MFS_CHECKED | */MFS_ENABLED/* | MFS_DEFAULT*/;
+  }
 
   na_SetMenuItemId(&(winapiMenuItem->menuItem), menuItemInfo.wID);
 
   size_t index = naGetMenuItemIndex(menu, atItem);
 
-  BOOL test = InsertMenuItem(
+  InsertMenuItem(
     winapiMenu->hMenu,
     (UINT)index,
     TRUE,
     &menuItemInfo);
 
-  na_InitMenuItem(&(winapiMenuItem->menuItem), winapiMenuItem, (NA_UIElement*)menu);
-  na_AddMenuChild(menu, (NAMenuItem*)winapiMenuItem, atItem);
-
-  return (NAMenuItem*)winapiMenuItem;
-}
-
-NA_DEF NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem){
-  NAWINAPIMenuItem* winapiMenuItem = naNew(NAWINAPIMenuItem);
-  NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
-
-  MENUITEMINFO menuItemInfo;
-  naZeron(&menuItemInfo, sizeof(MENUITEMINFO));
-  menuItemInfo.cbSize = sizeof(MENUITEMINFO);
-  menuItemInfo.fMask = MIIM_ID | MIIM_FTYPE;
-  menuItemInfo.wID = na_GetApplicationNextMenuItemId(naGetApplication());
-  menuItemInfo.fType = MFT_SEPARATOR;
-
-  size_t index = naGetMenuItemIndex(menu, atItem);
-
-  BOOL test = InsertMenuItem(
-    winapiMenu->hMenu,
-    (UINT)index,
-    TRUE,
-    &menuItemInfo);
-
-  na_InitMenuItem(&(winapiMenuItem->menuItem), winapiMenuItem, (NA_UIElement*)menu);
-  na_AddMenuChild(menu, (NAMenuItem*)winapiMenuItem, atItem);
-
-  return (NAMenuItem*)winapiMenuItem;
+  //if(atItem){
+  //  NAWINAPIMenu* winapiAtItem = (NAWINAPIMenuItem*)atItem;
+  //  [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
+  //}else{
+  //  [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];
+  //}
+  
+  na_AddMenuChild(menu, item, atItem);
+//  na_SetUIElementParent(&(menuItem->uiElement), parent, NA_FALSE);
 }
 
 NA_DEF size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
@@ -118,28 +90,11 @@ NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos){
     naGetUIElementNativePtr(naGetUIElementParent(menu)), NULL);
 }
 
-
-
-NA_DEF void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu){
-  DestroyMenu(winapiMenu->hMenu);
-  na_ClearMenu((NAMenu*)winapiMenu);
-}
-
-NA_DEF void na_DestructWINAPIMenuItem(NAWINAPIMenuItem* winapiMenuItem){
-  na_ClearMenuItem((NAMenuItem*)winapiMenuItem);
-}
-
-
-
 NA_HDEF NARect na_GetMenuAbsoluteInnerRect(NA_UIElement* menu){
   NA_UNUSED(menu);
   return naMakeRectS(0, 0, 1, 1);
 }
 
-NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(NA_UIElement* menu){
-  NA_UNUSED(menu);
-  return naMakeRectS(0, 0, 1, 1);
-}
 
 
 

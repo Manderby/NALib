@@ -5,16 +5,6 @@
 // Do not include this file anywhere else!
 
 
-typedef struct NAWINAPIImageSpace NAWINAPIImageSpace;
-struct NAWINAPIImageSpace {
-  NAImageSpace imageSpace;
-  NAUIImage*   image;
-};
-
-NA_HAPI void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace);
-NA_RUNTIME_TYPE(NAWINAPIImageSpace, na_DestructWINAPIImageSpace, NA_FALSE);
-
-
 
 NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   PAINTSTRUCT paintStruct;
