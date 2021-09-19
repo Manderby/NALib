@@ -648,6 +648,7 @@ NA_API void naSetButtonVisible(NAButton* button, NABool visible);
 NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width);
 NA_API void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* color);
 NA_API void naSetCheckBoxState(NACheckBox* checkBox, NABool state);
+NA_API void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled);
 NA_API NABool naGetCheckBoxState(NACheckBox* checkBox);
 
 // ImageSpace. Will retain the uiImage.
@@ -719,6 +720,7 @@ NA_API void naSetPopupButtonVisible(NAPopupButton* popupButton, NABool visible);
 NA_API void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, NAMenuItem* atItem);
 NA_API size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, NAMenuItem* item);
 NA_API void naSetPopupButtonItemSelected(NAPopupButton* popupButton, NAMenuItem* item);
+NA_API void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled);
 
 // Radio. Default height is 18. Y-offset: +4
 NA_API NARadio* naNewRadio(const NAUTF8Char* text, double width);
@@ -816,7 +818,10 @@ typedef enum{
   NA_ALERT_BOX_ERROR
 } NAAlertBoxType;
 
+typedef NABool (*FilePanelCallback)(NABool doPerform, const NAUTF8Char* path);
+
 NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText);
+NA_API void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* fileName, const NAUTF8Char* allowedFileSuffix, FilePanelCallback callback);
 NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
 
 // When using a GUI on windows, you will sooner or later have to set the

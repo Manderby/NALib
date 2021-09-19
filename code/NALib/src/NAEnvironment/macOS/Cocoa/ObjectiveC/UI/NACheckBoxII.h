@@ -114,6 +114,13 @@ NA_DEF void naSetCheckBoxState(NACheckBox* checkBox, NABool state){
 
 
 
+NA_DEF void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled){
+  naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
+  [nativePtr setEnabled:(BOOL)enabled];
+}
+
+
+
 NA_DEF NABool naGetCheckBoxState(NACheckBox* checkBox){
   naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
   return [nativePtr checkBoxState];

@@ -328,6 +328,28 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 
 
 
+NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* fileName, const NAUTF8Char* allowedFileSuffix, FilePanelCallback callback){
+  #if NA_DEBUG
+    if(load)
+      naError("Load panels are not implemented yet.");
+  #else
+    NA_UNUSED(load);
+  #endif
+
+  NSSavePanel* savepanel = [NSSavePanel savePanel];
+
+  [savepanel setNameFieldStringValue:[NSString stringWithUTF8String:fileName]];
+  [savepanel setExtensionHidden:NO];
+  [savepanel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:allowedFileSuffix]]];
+
+  [savepanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(window) completionHandler:^(NSInteger result){
+    NABool doPerform = result != NSFileHandlingPanelCancelButton;
+    callback(doPerform, [[[savepanel URL] path] UTF8String]);
+  }];
+}
+
+
+
 NA_DEF void naCenterMouse(void* uiElement, NABool includebounds, NABool sendmovemessage){
   NARect spacerect;
   NSRect screenframe;

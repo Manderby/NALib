@@ -109,6 +109,13 @@ NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, NAMenuItem*
 
 
 
+NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
+  naDefineCocoaObject(NACocoaNativePopupButton, nativePopupPtr, popupButton);
+  [nativePopupPtr setEnabled:(BOOL)enabled];
+}
+
+
+
 NA_HDEF NARect na_GetPopupButtonAbsoluteInnerRect(NA_UIElement* popupButton){
   naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(popupButton), naGetApplication(), NA_FALSE);
