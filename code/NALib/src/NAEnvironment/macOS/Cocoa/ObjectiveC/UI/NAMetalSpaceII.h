@@ -6,8 +6,8 @@
 
 
 
-#if (NA_COMPILE_METAL == 1)
-#ifdef __MAC_10_12  // Metal is only available since macOS 10.11, CALayerDelegate since 10.12
+#if (NA_COMPILE_METAL == 1) && defined __MAC_10_12
+// Metal is only available since macOS 10.11, CALayerDelegate since 10.12
 
   @implementation NACocoaNativeMetalSpace
   
@@ -166,8 +166,7 @@
     #endif
   }
 
-#endif // __MAC_10_12
-#endif  // NA_COMPILE_METAL
+#endif  // NA_COMPILE_METAL && defined __MAC_10_12
 
 
 

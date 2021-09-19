@@ -343,7 +343,11 @@ NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* file
   [savepanel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:allowedFileSuffix]]];
 
   [savepanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(window) completionHandler:^(NSInteger result){
-    NABool doPerform = result != NSFileHandlingPanelCancelButton;
+    #if defined __MAC_10_9
+      NABool doPerform = result != NSModalResponseCancel;
+    #else
+      NABool doPerform = result != NSFileHandlingPanelCancelButton;
+    #endif
     callback(doPerform, [[[savepanel URL] path] UTF8String]);
   }];
 }

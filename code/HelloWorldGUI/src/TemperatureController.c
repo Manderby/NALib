@@ -69,33 +69,33 @@ TemperatureController* createTemperatureController(){
 
   // Create the main button, assign a press command and make it the default
   // button.
-  con->button = naNewTextButton("Compute", naMakeSize(100, 30), 0);
+  con->button = naNewTextButton("Compute", 100, 0);
   naAddSpaceChild(windowSpace, con->button, naMakePos(150, 20));
   naAddUIReaction(con->button, NA_UI_COMMAND_PRESSED, pressButton, con);
   naSetButtonSubmit(con->button, pressButton, con);
 
     // Create the infoLabel containing informations.
-  con->infoLabel = naNewLabel("Temperature in Celsius", naMakeSize(160, 20));
+  con->infoLabel = naNewLabel("Temperature in Celsius", 160);
   naSetLabelTextAlignment(con->infoLabel, NA_TEXT_ALIGNMENT_CENTER);
   naAddSpaceChild(windowSpace, con->infoLabel, naMakePos(120, 130));
 
   // Create the textField.
-  con->textField = naNewTextField(naMakeSize(80, 20));
+  con->textField = naNewTextField(80);
   naSetTextFieldTextAlignment(con->textField, NA_TEXT_ALIGNMENT_CENTER);
   naAddSpaceChild(windowSpace, con->textField, naMakePos(160, 100));
 
   // Create the resutLabel containing the results.
-  con->resutLabel = naNewLabel("Result in Fahrenheit", naMakeSize(160, 20));
+  con->resutLabel = naNewLabel("Result in Fahrenheit", 160);
   naSetLabelTextAlignment(con->resutLabel, NA_TEXT_ALIGNMENT_CENTER);
   naAddSpaceChild(windowSpace, con->resutLabel, naMakePos(120, 70));
 
   // Create a + button for opening a new window.
-  con->newButton = naNewTextButton("+", naMakeSize(60, 30), 0);
+  con->newButton = naNewTextButton("+", 60, 0);
   naAddSpaceChild(windowSpace, con->newButton, naMakePos(20, 20));
   naAddUIReaction(con->newButton, NA_UI_COMMAND_PRESSED, newTemperatureController, con);
 
   // Create a Quit button for terminating the whole application.
-  con->quitButton = naNewTextButton("Quit", naMakeSize(60, 30), 0);
+  con->quitButton = naNewTextButton("Quit", 60, 0);
   naAddSpaceChild(windowSpace, con->quitButton, naMakePos(320, 20));
   naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, quitApplication, con);
 
