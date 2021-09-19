@@ -6,28 +6,13 @@
 
 
 
-typedef struct NACocoaTextField NACocoaTextField;
-struct NACocoaTextField{
-  NATextField textField;
-};
-
-NA_HAPI void na_DestructCocoaTextField(NACocoaTextField* cocoaTextField);
-NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
-
-@interface NACocoaNativeTextField : NSTextField <NSTextFieldDelegate>{
-  NACocoaTextField* cocoaTextField;
-}
-@end
-
-
-
 @implementation NACocoaNativeTextField
 
 - (id) initWithTextField:(NACocoaTextField*)newCocoaTextField frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   [self setSelectable:YES];
   [self setEditable:YES];
-  [self setBordered:YES];
+//  [self setBordered:YES];
   if([self respondsToSelector:@selector(setLineBreakMode:)]){
     NA_MACOS_AVAILABILITY_GUARD_10_10(
       [self setLineBreakMode:NSLineBreakByTruncatingHead];
@@ -81,12 +66,12 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
 
 
 
-NA_DEF NATextField* naNewTextField(NASize size){
+NA_DEF NATextField* naNewTextField(double width){
   NACocoaTextField* cocoaTextField = naNew(NACocoaTextField);
   
   NACocoaNativeTextField* nativePtr = [[NACocoaNativeTextField alloc]
     initWithTextField:cocoaTextField
-    frame:naMakeNSRectWithSize(size)];
+    frame:naMakeNSRectWithSize(naMakeSize(width, 21))];
   na_InitTextField((NATextField*)cocoaTextField, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return (NATextField*)cocoaTextField;

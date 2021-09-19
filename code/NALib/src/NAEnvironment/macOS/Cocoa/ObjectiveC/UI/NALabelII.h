@@ -6,21 +6,6 @@
 
 
 
-typedef struct NACocoaLabel NACocoaLabel;
-struct NACocoaLabel{
-  NALabel label;
-};
-
-NA_HAPI void na_DestructCocoaLabel(NACocoaLabel* cocoaLabel);
-NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
-
-@interface NACocoaNativeLabel : NSTextField{
-  NACocoaLabel* cocoaLabel;
-}
-@end
-
-
-
 // Commented out for future development. Maybe.
 //@interface MDVerticallyCenteredTextFieldCell : NSTextFieldCell{
 //}
@@ -145,6 +130,12 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
   return self;
 }
 
+- (void) setHeight:(double)height{
+  NSRect frame = [self frame];
+  frame.size.height = height;
+  [self setFrame: frame];
+}
+
 - (void) setText:(const NAUTF8Char*)text{\
   [self setStringValue:[NSString stringWithUTF8String:text]];
 }
@@ -216,12 +207,12 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
 
 
 
-NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
+NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
   NACocoaLabel* cocoaLabel = naNew(NACocoaLabel);
 
   NACocoaNativeLabel* nativePtr = [[NACocoaNativeLabel alloc]
     initWithLabel:cocoaLabel
-    frame:naMakeNSRectWithSize(size)];
+    frame:naMakeNSRectWithSize(naMakeSize(width, 16))];
   na_InitLabel((NALabel*)cocoaLabel, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   naSetLabelText((NALabel*)cocoaLabel, text);
@@ -233,6 +224,13 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 
 NA_DEF void na_DestructCocoaLabel(NACocoaLabel* cocoaLabel){
   na_ClearLabel((NALabel*)cocoaLabel);
+}
+
+
+
+NA_DEF void naSetLabelHeight(NALabel* label, double height){
+  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
+  [nativePtr setHeight:height];
 }
 
 

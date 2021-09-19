@@ -79,7 +79,7 @@ NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam){
 
 
 
-NA_DEF NASlider* naNewSlider(NASize size){
+NA_DEF NASlider* naNewSlider(double width){
   NAWINAPISlider* winapiSlider = naNew(NAWINAPISlider);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String("Slider");

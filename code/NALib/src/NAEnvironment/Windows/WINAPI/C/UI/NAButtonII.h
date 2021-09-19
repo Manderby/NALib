@@ -202,7 +202,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
 
 
-NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, NASize size, uint32 flags){
+NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 flags){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
   #if NA_DEBUG

@@ -6,23 +6,6 @@
 
 
 
-typedef struct NACocoaRadio NACocoaRadio;
-struct NACocoaRadio{
-  NARadio radio;
-};
-
-NA_HAPI void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio);
-NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
-
-@interface NACocoaNativeRadio : NSButton <NACocoaNativeEncapsulatedElement>{
-  NACocoaRadio* cocoaRadio;
-  NSView*       containingView;
-}
-- (NSView*) getEncapsulatingView;
-@end
-
-
-
 @implementation NACocoaNativeRadio
 
 - (id) initWithRadio:(NACocoaRadio*)newCocoaRadio frame:(NSRect)frame{
@@ -105,12 +88,12 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
 
 
 
-NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
+NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width){
   NACocoaRadio* cocoaRadio = naNew(NACocoaRadio);
 
   NACocoaNativeRadio* nativePtr = [[NACocoaNativeRadio alloc]
     initWithRadio:cocoaRadio
-    frame:naMakeNSRectWithSize(size)];
+    frame:naMakeNSRectWithSize(naMakeSize(width, 18))];
   na_InitRadio((NARadio*)cocoaRadio, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   [nativePtr setText:text];

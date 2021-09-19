@@ -6,22 +6,6 @@
 
 
 
-typedef struct NACocoaSpace NACocoaSpace;
-struct NACocoaSpace{
-  NASpace space;
-};
-
-NA_HAPI void na_DestructCocoaSpace(NACocoaSpace* cocoaSpace);
-NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
-
-@interface NACocoaNativeSpace : NSView{
-  NACocoaSpace*   cocaSpace;
-  NSTrackingArea* trackingArea;
-}
-@end
-
-
-
 @implementation NACocoaNativeSpace
 
 - (id) initWithSpace:(NACocoaSpace*)newCocoaSpace frame:(NSRect)frame{
@@ -120,9 +104,11 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
     break;
   }
   
+  double offsetY = na_GetUIElementOffsetY(child);
+  
   [nativeSpacePtr addSubview:subview];
   NSRect frame = [subview frame];
-  frame.origin = NSMakePoint((CGFloat)pos.x, (CGFloat)pos.y);
+  frame.origin = NSMakePoint((CGFloat)pos.x, (CGFloat)pos.y + offsetY);
   [subview setFrame: frame];
   
   na_AddSpaceChild(space, child);

@@ -86,7 +86,7 @@ NABool naLabelWINAPINotify(void* uiElement, WORD notificationCode){
 
 
 
-NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
+NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
   NAWINAPILabel* winapiLabel = naNew(NAWINAPILabel);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);

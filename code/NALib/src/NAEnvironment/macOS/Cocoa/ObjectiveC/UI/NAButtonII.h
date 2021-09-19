@@ -6,22 +6,6 @@
 
 
 
-typedef struct NACocoaButton NACocoaButton;
-struct NACocoaButton{
-  NAButton button;
-};
-
-NA_HAPI void na_DestructCocoaButton(NACocoaButton* cocoaButton);
-NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
-
-@interface NACocoaNativeButton : NSButton{
-  NACocoaButton* cocoaButton;
-  NSTrackingArea* trackingArea;
-}
-@end
-
-
-
 @implementation NACocoaNativeButton
 
 - (id) initWithButton:(NACocoaButton*)newCocoaButton flags:(uint32)flags isText:(bool)isText frame:(NSRect)frame{
@@ -123,7 +107,7 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 
 
 
-NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, NASize size, uint32 flags){
+NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 flags){
   #if NA_DEBUG
     if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS))
       naError("Borderless Text buttons should not be used as they can not be distinguished.");
@@ -135,24 +119,7 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, NASize size, uint32 fla
     initWithButton:cocoaButton
     flags:flags
     isText:YES
-    frame:naMakeNSRectWithSize(size)];
-  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
-  
-  [nativePtr setButtonText:text];
-  
-  return (NAButton*)cocoaButton;
-}
-
-
-
-NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
-  NACocoaButton* cocoaButton = naNew(NACocoaButton);
-  
-  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
-    initWithButton:cocoaButton
-    flags:NABezelStyleShadowlessSquare
-    isText:YES
-    frame:naMakeNSRectWithSize(size)];
+    frame:naMakeNSRectWithSize(naMakeSize(width, 24))];
   na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   [nativePtr setButtonText:text];

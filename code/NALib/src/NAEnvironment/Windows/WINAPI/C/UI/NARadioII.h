@@ -73,7 +73,7 @@ NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
 
 
-NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
+NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width){
   NAWINAPIRadio* winapiRadio = naNew(NAWINAPIRadio);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);

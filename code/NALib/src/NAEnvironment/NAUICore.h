@@ -99,6 +99,11 @@ struct NAOpenGLSpace{
   NA_UIElement uiElement;
 };
 
+struct NAPopupButton{
+  NA_UIElement uiElement;
+  NAList       childs;
+};
+
 struct NARadio{
   NA_UIElement uiElement;
 };
@@ -173,6 +178,8 @@ extern NAApplication* na_App;
 // be helper functions.
 
 NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
+NA_HAPI double na_GetUIElementOffsetY(NA_UIElement* elem);
+
 NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
 NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
 NA_HAPI void na_AllowUIElementNotifications(NA_UIElement* elem);
@@ -210,6 +217,10 @@ NA_HAPI void na_ClearMetalSpace(NAMetalSpace* metalSpace);
 
 NA_HAPI void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr);
 NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
+
+NA_HAPI void na_InitPopupButton(NAPopupButton* popupButton, void* nativePtr);
+NA_HAPI void na_ClearPopupButton(NAPopupButton* popupButton);
+NA_HDEF void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* child, NAMenuItem* itemAt);
 
 NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
 NA_HAPI void na_ClearRadio(NARadio* radio);
@@ -288,11 +299,12 @@ NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect (NA_UIElement* imageSpace);
 NA_HAPI NARect na_GetLabelAbsoluteInnerRect      (NA_UIElement* label);
 NA_HAPI NARect na_GetMenuAbsoluteInnerRect       (NA_UIElement* menu);
 NA_HAPI NARect na_GetMenuItemAbsoluteInnerRect   (NA_UIElement* menuItem);
-NA_HAPI NARect na_GetMetalSpaceAbsoluteInnerRect (NA_UIElement* space);
-NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* space);
+NA_HAPI NARect na_GetMetalSpaceAbsoluteInnerRect (NA_UIElement* metalSpace);
+NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openGLSpace);
+NA_HAPI NARect na_GetPopupButtonAbsoluteInnerRect(NA_UIElement* popupButton);
 NA_HAPI NARect na_GetRadioAbsoluteInnerRect      (NA_UIElement* radio);
 NA_HAPI NARect na_GetScreenAbsoluteRect          (NA_UIElement* screen);
-NA_HAPI NARect na_GetSliderAbsoluteInnerRect     (NA_UIElement* space);
+NA_HAPI NARect na_GetSliderAbsoluteInnerRect     (NA_UIElement* slider);
 NA_HAPI NARect na_GetSpaceAbsoluteInnerRect      (NA_UIElement* space);
 NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect    (NA_UIElement* textBox);
 NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect  (NA_UIElement* textField);

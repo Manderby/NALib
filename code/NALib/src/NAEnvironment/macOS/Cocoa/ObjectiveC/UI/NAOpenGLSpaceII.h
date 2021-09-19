@@ -6,27 +6,11 @@
 
 
 
-typedef struct NACocoaOpenGLSpace NACocoaOpenGLSpace;
-struct NACocoaOpenGLSpace{
-  NAOpenGLSpace openGLSpace;
-};
-
-NA_HAPI void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace);
-NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
-
 #if (NA_COMPILE_OPENGL == 1)
 
   #pragma GCC diagnostic push 
   #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
   
-  @interface NACocoaNativeOpenGLSpace : NSOpenGLView{
-    NACocoaOpenGLSpace* cocoaOpenGLSpace;
-    NSTrackingArea*     trackingArea;
-    NAMutator           initFunc;
-    void*               initData;
-  }
-  @end
-
 
 
   @implementation NACocoaNativeOpenGLSpace

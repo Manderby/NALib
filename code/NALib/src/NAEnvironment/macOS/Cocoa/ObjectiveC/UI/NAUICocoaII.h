@@ -18,14 +18,6 @@ NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);
 
 NA_HAPI NARect na_GetNativeWindowAbsoluteInnerRect(NSWindow* window);
 
-// Cocoa thinks it's smart by doing things automatically. Unfortunately, we
-// have to encapsulate some ui elements like NARadio or NATextBox into its own
-// view to get the behaviour we need.
-@protocol NACocoaNativeEncapsulatedElement
-@required
-- (NSView*) getEncapsulatingView;
-@end
-
 
 
 #define naDefineCocoaObject(cocoatype, var, uiElement)\
@@ -43,6 +35,30 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
   NA_UIElement* elem = (NA_UIElement*)uiElement;
   // todo: remove from old parent
   elem->parent = parent;
+}
+
+
+
+NA_HDEF double na_GetUIElementOffsetY(NA_UIElement* elem){
+  switch(naGetUIElementType(elem)){
+  case NA_UI_APPLICATION:  return  0.;
+  case NA_UI_BUTTON:       return -1.;
+  case NA_UI_CHECKBOX:     return +4.;
+  case NA_UI_IMAGE_SPACE:  return  0.;
+  case NA_UI_LABEL:        return +6.;
+  case NA_UI_MENU:         return  0.;
+  case NA_UI_MENUITEM:     return  0.;
+  case NA_UI_METAL_SPACE:  return  0.;
+  case NA_UI_OPENGL_SPACE: return  0.;
+  case NA_UI_POPUP_BUTTON: return -1.;
+  case NA_UI_RADIO:        return +4.;
+  case NA_UI_SCREEN:       return  0.;
+  case NA_UI_SLIDER:       return  0.;
+  case NA_UI_SPACE:        return -2.;
+  case NA_UI_TEXTBOX:      return  0.;
+  case NA_UI_TEXTFIELD:    return +3.;
+  case NA_UI_WINDOW:       return  0.;
+  }
 }
 
 
@@ -227,6 +243,32 @@ NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
 
 
 
+NAFont na_GetCustomFont(const NAUTF8Char* fontName, uint32 flags, double size){
+  NA_UNUSED(flags);
+  NSFont* font;
+
+  NSString* attrStr = @"Regular";
+//  if(flags == NA_FONT_FLAG_BOLD){ attrStr = @"Bold"; }
+//  if(flags == NA_FONT_FLAG_ITALIC){ attrStr = @"Italic"; }
+//  if(flags == NA_FONT_FLAG_BOLD | NA_FONT_FLAG_ITALIC){ attrStr = @"Bold Italic"; }
+
+  NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                        [NSString stringWithUTF8String: fontName], NSFontFamilyAttribute, 
+                        attrStr, NSFontFaceAttribute, nil];
+  NSFontDescriptor* descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
+  font = [NSFont fontWithDescriptor:descriptor size:size];
+
+  if(!font){
+    #if NA_DEBUG
+      naError("Font can not be found");
+    #endif
+    font = [NSFont systemFontOfSize:size];
+  }
+  return NA_COCOA_PTR_OBJC_TO_C(font);
+}
+
+
+
 NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment){
   NSTextAlignment nsalignment;
   switch(alignment){
@@ -323,19 +365,19 @@ NA_DEF void naHideMouse(){
 
 NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABool includeborder){
   NARect rect;
-  NARect relrect;
+  NARect relRect;
   NA_UIElement* element;
-  NA_UIElement* relelement;
+  NA_UIElement* relElement;
   NAApplication* app;
 
   element = (NA_UIElement*)uiElement;
-  relelement = (NA_UIElement*)relativeuiElement;
+  relElement = (NA_UIElement*)relativeuiElement;
   app = naGetApplication();
 
   // First, let's handle the root case: Returning the application rect.
   if(element == (NA_UIElement*)app){
     #if NA_DEBUG
-      if(relelement && (relelement != (NA_UIElement*)app))
+      if(relElement && (relElement != (NA_UIElement*)app))
         naError("The relative element is invalid for the given uiElement, which seems to be the application.");
     #endif
     return na_GetApplicationAbsoluteRect();
@@ -351,6 +393,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
   case NA_UI_MENUITEM:     rect = na_GetMenuItemAbsoluteInnerRect(element); break;
   case NA_UI_METAL_SPACE:  rect = na_GetMetalSpaceAbsoluteInnerRect(element); break;
   case NA_UI_OPENGL_SPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_POPUP_BUTTON: rect = na_GetPopupButtonAbsoluteInnerRect(element); break;
   case NA_UI_RADIO:        rect = na_GetRadioAbsoluteInnerRect(element); break;
   case NA_UI_SCREEN:       rect = na_GetScreenAbsoluteRect(element); break;
   case NA_UI_SLIDER:       rect = na_GetSliderAbsoluteInnerRect(element); break;
@@ -365,32 +408,35 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
     }
     break;
   }
+  rect.pos.y -= na_GetUIElementOffsetY(element);
 
   // Now, we find the appropriate relative element.
-  if(!relelement){relelement = (NA_UIElement*)naGetUIElementParent(element);}
+  if(!relElement){relElement = (NA_UIElement*)naGetUIElementParent(element);}
 
-  if(relelement){
-    switch(relelement->elementType){
-    case NA_UI_APPLICATION:  relrect = na_GetApplicationAbsoluteRect(); break;
-    case NA_UI_BUTTON:       relrect = na_GetButtonAbsoluteInnerRect(relelement); break;
-    case NA_UI_CHECKBOX:     relrect = na_GetCheckBoxAbsoluteInnerRect(relelement); break;
-    case NA_UI_IMAGE_SPACE:  relrect = na_GetImageSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_LABEL:        relrect = na_GetLabelAbsoluteInnerRect(relelement); break;
-    case NA_UI_MENU:         relrect = na_GetMenuAbsoluteInnerRect(relelement); break;
-    case NA_UI_MENUITEM:     relrect = na_GetMenuItemAbsoluteInnerRect(relelement); break;
-    case NA_UI_METAL_SPACE:  relrect = na_GetMetalSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_OPENGL_SPACE: relrect = na_GetOpenGLSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_RADIO:        relrect = na_GetRadioAbsoluteInnerRect(relelement); break;
-    case NA_UI_SCREEN:       relrect = na_GetScreenAbsoluteRect(relelement); break;
-    case NA_UI_SLIDER:       relrect = na_GetSliderAbsoluteInnerRect(relelement); break;
-    case NA_UI_SPACE:        relrect = na_GetSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_TEXTBOX:      relrect = na_GetTextBoxAbsoluteInnerRect(relelement); break;
-    case NA_UI_TEXTFIELD:    relrect = na_GetTextFieldAbsoluteInnerRect(relelement); break;
-    case NA_UI_WINDOW:       relrect = na_GetWindowAbsoluteInnerRect(relelement); break;
+  if(relElement){
+    switch(relElement->elementType){
+    case NA_UI_APPLICATION:  relRect = na_GetApplicationAbsoluteRect(); break;
+    case NA_UI_BUTTON:       relRect = na_GetButtonAbsoluteInnerRect(relElement); break;
+    case NA_UI_CHECKBOX:     relRect = na_GetCheckBoxAbsoluteInnerRect(relElement); break;
+    case NA_UI_IMAGE_SPACE:  relRect = na_GetImageSpaceAbsoluteInnerRect(relElement); break;
+    case NA_UI_LABEL:        relRect = na_GetLabelAbsoluteInnerRect(relElement); break;
+    case NA_UI_MENU:         relRect = na_GetMenuAbsoluteInnerRect(relElement); break;
+    case NA_UI_MENUITEM:     relRect = na_GetMenuItemAbsoluteInnerRect(relElement); break;
+    case NA_UI_METAL_SPACE:  relRect = na_GetMetalSpaceAbsoluteInnerRect(relElement); break;
+    case NA_UI_OPENGL_SPACE: relRect = na_GetOpenGLSpaceAbsoluteInnerRect(relElement); break;
+    case NA_UI_POPUP_BUTTON: relRect = na_GetPopupButtonAbsoluteInnerRect(relElement); break;
+    case NA_UI_RADIO:        relRect = na_GetRadioAbsoluteInnerRect(relElement); break;
+    case NA_UI_SCREEN:       relRect = na_GetScreenAbsoluteRect(relElement); break;
+    case NA_UI_SLIDER:       relRect = na_GetSliderAbsoluteInnerRect(relElement); break;
+    case NA_UI_SPACE:        relRect = na_GetSpaceAbsoluteInnerRect(relElement); break;
+    case NA_UI_TEXTBOX:      relRect = na_GetTextBoxAbsoluteInnerRect(relElement); break;
+    case NA_UI_TEXTFIELD:    relRect = na_GetTextFieldAbsoluteInnerRect(relElement); break;
+    case NA_UI_WINDOW:       relRect = na_GetWindowAbsoluteInnerRect(relElement); break;
     }
+    relRect.pos.y -= na_GetUIElementOffsetY(relElement);
 
-    rect.pos.x = rect.pos.x - relrect.pos.x;
-    rect.pos.y = rect.pos.y - relrect.pos.y;
+    rect.pos.x = rect.pos.x - relRect.pos.x;
+    rect.pos.y = rect.pos.y - relRect.pos.y;
   }
 
 //  rect.size.width = rect.size.width;
@@ -405,7 +451,6 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
 NA_API void naOpenURLInBrowser(const NAUTF8Char* url){
   [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithUTF8String:url]]];
 }
-
 
 
 

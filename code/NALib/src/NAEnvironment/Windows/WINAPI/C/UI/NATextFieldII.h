@@ -115,7 +115,7 @@ NABool naHandleTextFieldReverseTabOrder(NAReaction reaction){
 
 
 
-NA_DEF NATextField* naNewTextField(NASize size){
+NA_DEF NATextField* naNewTextField(double width){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
   NAWINAPITextField* winapiTextField = naNew(NAWINAPITextField);

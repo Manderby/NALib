@@ -40,6 +40,7 @@
 #include "ObjectiveC/NAPreferencesCocoaII.h"
 
 #include "ObjectiveC/UI/NAUICocoaII.h"
+#include "ObjectiveC/UI/NAUICocoaInterfaces.h"
 #include "ObjectiveC/UI/NAApplicationII.h"
 
 #include "ObjectiveC/UI/NAButtonII.h"
@@ -47,8 +48,10 @@
 #include "ObjectiveC/UI/NAImageSpaceII.h"
 #include "ObjectiveC/UI/NALabelII.h"
 #include "ObjectiveC/UI/NAMenuII.h"
+#include "ObjectiveC/UI/NAMenuItemII.h"
 #include "ObjectiveC/UI/NAMetalSpaceII.h"
 #include "ObjectiveC/UI/NAOpenGLSpaceII.h"
+#include "ObjectiveC/UI/NAPopupButtonII.h"
 #include "ObjectiveC/UI/NARadioII.h"
 #include "ObjectiveC/UI/NASliderII.h"
 #include "ObjectiveC/UI/NASpaceII.h"

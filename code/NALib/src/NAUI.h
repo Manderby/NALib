@@ -81,6 +81,7 @@ typedef struct NAMenu           NAMenu;
 typedef struct NAMenuItem       NAMenuItem;
 typedef struct NAMetalSpace     NAMetalSpace;
 typedef struct NAOpenGLSpace    NAOpenGLSpace;
+typedef struct NAPopupButton    NAPopupButton;
 typedef struct NARadio          NARadio;
 typedef struct NAScreen         NAScreen;
 typedef struct NASlider         NASlider;
@@ -105,6 +106,7 @@ typedef enum{
   NA_UI_MENUITEM,
   NA_UI_METAL_SPACE,
   NA_UI_OPENGL_SPACE,
+  NA_UI_POPUP_BUTTON,
   NA_UI_RADIO,
   NA_UI_SCREEN,
   NA_UI_SLIDER,
@@ -594,6 +596,10 @@ typedef enum{
   NA_FONT_SIZE_COUNT
 } NAFontSize;
 
+#define NA_FONT_FLAG_REGULAR = 0x00;
+#define NA_FONT_FLAG_BOLD    = 0x01;
+#define NA_FONT_FLAG_ITALIC  = 0x02;
+
 typedef enum{
   NA_TEXT_ALIGNMENT_LEFT,
   NA_TEXT_ALIGNMENT_RIGHT,
@@ -604,13 +610,31 @@ typedef enum{
   NABool naLoadNib(const NAUTF8Char* nibName);
 #endif
 
-// Button
+
+// In the following, the specific UI elements and their API are presented.
+//
+// Usually, UI-elementes are placed in a line-by-line fashion, usually asking
+// the user to read from top to bottom. Therefore, it is good to know the
+// vertical alignment of all UI-elements.
+//
+// In the comments, you find the default values for the height as well as a
+// Y-offset which allows you to align your GUI elements based on the bottom
+// left corner such that all elements fit into one line and all text is on
+// the same baseline.
+//
+// The tallest items are 24 points in height. But the visual representation is
+// often times shifted in vertical position such that some elements are even
+// overlapping when displayed line by line. Therefore, it is proposed to always
+// use at least a difference of 25 points between lines. The author strongly
+// recommends that number.
+
 #define NA_BUTTON_BORDERED   0x00
 #define NA_BUTTON_BORDERLESS 0x01
 #define NA_BUTTON_PUSH       0x00
 #define NA_BUTTON_STATEFUL   0x10
 
-NA_API NAButton* naNewTextButton(const NAUTF8Char* text, NASize size, uint32 flags);
+// Button. Default height for TextButton: 24. Y-offset: -1
+NA_API NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 flags);
 NA_API NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 flags);
 NA_API void naSetButtonText(NAButton* button, const NAUTF8Char* text);
 NA_API void naSetButtonImage(NAButton* button, const NAUIImage* uiImage);
@@ -620,8 +644,8 @@ NA_API void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void*
 NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller);
 NA_API void naSetButtonVisible(NAButton* button, NABool visible);
 
-// CheckBox
-NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size);
+// CheckBox. Default height: 18, Y-offset: +4
+NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width);
 NA_API void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* color);
 NA_API void naSetCheckBoxState(NACheckBox* checkBox, NABool state);
 NA_API NABool naGetCheckBoxState(NACheckBox* checkBox);
@@ -629,9 +653,10 @@ NA_API NABool naGetCheckBoxState(NACheckBox* checkBox);
 // ImageSpace. Will retain the uiImage.
 NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size);
 
-// Label
+// Label. Default Height 16. Y-Offset: +4
 // A labe is by default: Eanbled, visible, selectable
-NA_API NALabel* naNewLabel(const NAUTF8Char* text, NASize size);
+NA_API NALabel* naNewLabel(const NAUTF8Char* text, double width);
+NA_API void naSetLabelHeight(NALabel* label, double height);
 NA_API void naSetLabelText(NALabel* label, const NAUTF8Char* text);
 NA_API void naSetLabelTextColor(NALabel* label, const NABabyColor* color);
 // Note that text alignment must be set before calling this method.
@@ -643,15 +668,18 @@ NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
 NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size);
 NA_API void naSetLabelVisible(NALabel* label, NABool visible);
 
-// Menu and MenuItem
-// naNewMenuItem adds a new menu item before atItem. If atItem is Null, it is
+// Menu
+// naAddMenuItem adds a menu item before atItem. If atItem is Null, it is
 // added to the end of the menu.
 // naGetMenuItemIndex returns the index including all separators.
 NA_API NAMenu* naNewMenu(void* parent);
-NA_API NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuItem* atItem);
-NA_API NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem);
+NA_API void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem);
 NA_API size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item);
 NA_API void naPresentMenu(NAMenu* menu, NAPos pos);
+
+// MenuItem
+NA_API NAMenuItem* naNewMenuItem(const NAUTF8Char* text);
+NA_API NAMenuItem* naNewMenuSeparator(void);
 
 // MetalSpace
 // Note that you must have NA_COMPILE_METAL configured in NAConfiguration.h
@@ -682,8 +710,18 @@ NA_API void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace);
 NA_API void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible);
 NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds);
 
-// Radio
-NA_API NARadio* naNewRadio(const NAUTF8Char* text, NASize size);
+// PopupButton. Default height is 23. Y-offset: -1
+// naAddPopupButtonMenuItem adds a menu item before atItem. If atItem is Null,
+// it is added to the end of the menu.
+// naGetPopupButtonItemIndex returns the index including all separators.
+NA_API NAPopupButton* naNewPopupButton(double width);
+NA_API void naSetPopupButtonVisible(NAPopupButton* popupButton, NABool visible);
+NA_API void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, NAMenuItem* atItem);
+NA_API size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, NAMenuItem* item);
+NA_API void naSetPopupButtonItemSelected(NAPopupButton* popupButton, NAMenuItem* item);
+
+// Radio. Default height is 18. Y-offset: +4
+NA_API NARadio* naNewRadio(const NAUTF8Char* text, double width);
 NA_API void naSetRadioTextColor(NARadio* radio, const NABabyColor* color);
 NA_API NABool naGetRadioState(NARadio* radio);
 NA_API void naSetRadioState(NARadio* radio, NABool state);
@@ -702,8 +740,8 @@ NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
 NA_API void naSetSpaceRect(NASpace* space, NARect rect);
 
-// Slider
-NA_API NASlider* naNewSlider(NASize size);
+// Slider. Default height: 24. Y-offset: -2
+NA_API NASlider* naNewSlider(double width);
 NA_API void naSetSliderEnabled(NASlider* slider, NABool enabled);
 NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount);
 NA_API double naGetSliderValue(NASlider* slider);
@@ -715,12 +753,13 @@ NA_API void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text);
 NA_API NAString* naNewStringWithTextBoxText(NATextBox* textBox);
 NA_API void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment);
 NA_API void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind, NAFontSize size);
+NA_API void naSetTextBoxCustomFont(NATextBox* textBox, const NAUTF8Char* fontName, uint32 flags, double size);
 NA_API void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox);
 NA_API void naSetTextBoxEditable(NATextBox* textBox, NABool editable);
 NA_API void naSetTextBoxVisible(NATextBox* textBox, NABool visible);
 
-// TextField
-NA_API NATextField* naNewTextField(NASize size);
+// TextField. Default height is 21. Y-offset: +3
+NA_API NATextField* naNewTextField(double width);
 NA_API void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text);
 NA_API NAString* naNewStringWithTextFieldText(NATextField* textField);
 NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFontSize size);
@@ -728,7 +767,6 @@ NA_API void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment 
 NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFontSize size);
 
 // Window
-
 NA_API NAWindow* naNewWindow(
   const NAUTF8Char* title,
   NARect rect,

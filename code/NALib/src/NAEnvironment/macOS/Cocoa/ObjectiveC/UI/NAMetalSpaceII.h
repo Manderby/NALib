@@ -6,27 +6,8 @@
 
 
 
-typedef struct NACocoaMetalSpace NACocoaMetalSpace;
-struct NACocoaMetalSpace{
-  NAMetalSpace metalSpace;
-};
-
-NA_HAPI void na_DestructCocoaMetalSpace(NACocoaMetalSpace* cocoaMetalSpace);
-NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
-
 #if (NA_COMPILE_METAL == 1)
 #ifdef __MAC_10_12  // Metal is only available since macOS 10.11, CALayerDelegate since 10.12
-
-  #import <QuartzCore/CAMetalLayer.h>
-  #include <Metal/Metal.h>
-
-  @interface NACocoaNativeMetalSpace : NSView<CALayerDelegate>{
-    NACocoaMetalSpace* cocoaMetalSpace;
-    NSTrackingArea*     trackingArea;
-  }
-  @end
-
-
 
   @implementation NACocoaNativeMetalSpace
   

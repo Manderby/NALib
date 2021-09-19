@@ -6,23 +6,6 @@
 
 
 
-typedef struct NACocoaTextBox NACocoaTextBox;
-struct NACocoaTextBox{
-  NATextBox textBox;
-};
-
-NA_HAPI void na_DestructCocoaTextBox(NACocoaTextBox* cocoaTextBox);
-NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
-
-@interface NACocoaNativeTextBox : NSTextView <NACocoaNativeEncapsulatedElement, NSTextViewDelegate>{
-  NACocoaTextBox* cocoaTextBox;
-  NSScrollView*   scrollView;
-}
-- (NSView*) getEncapsulatingView;
-@end
-
-
-
 @implementation NACocoaNativeTextBox
 
 - (id) initWithTextBox:(NACocoaTextBox*)newCocoaTextBox frame:(NSRect)frame{
@@ -83,6 +66,10 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 
 - (void) setFontKind:(NAFontKind)kind size:(NAFontSize)size{
   [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKindAndSize(kind, size))];
+}
+
+- (void) setCustomFont:(const NAUTF8Char*)fontName flags:(uint32)flags size:(double)size{
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetCustomFont(fontName, flags, size))];
 }
 
 - (void) setUseHorizontalScrolling{
@@ -159,6 +146,13 @@ NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignm
 NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind, NAFontSize size){
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setFontKind:kind size:size];
+}
+
+
+
+NA_DEF void naSetTextBoxCustomFont(NATextBox* textBox, const NAUTF8Char* fontName, uint32 flags, double size){
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  [nativePtr setCustomFont:fontName flags:flags size:size];
 }
 
 

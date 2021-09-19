@@ -6,21 +6,6 @@
 
 
 
-typedef struct NACocoaSlider NACocoaSlider;
-struct NACocoaSlider{
-  NASlider slider;
-};
-
-NA_HAPI void na_DestructCocoaSlider(NACocoaSlider* cocoaSlider);
-NA_RUNTIME_TYPE(NACocoaSlider, na_DestructCocoaSlider, NA_FALSE);
-
-@interface NACocoaNativeSlider : NSSlider{
-  NACocoaSlider* cocoaSlider;
-}
-@end
-
-
-
 @implementation NACocoaNativeSlider
 
 - (id) initWithSlider:(NACocoaSlider*)newCocoaSlider frame:(NSRect)frame{
@@ -58,12 +43,12 @@ NA_RUNTIME_TYPE(NACocoaSlider, na_DestructCocoaSlider, NA_FALSE);
 
 
 
-NA_DEF NASlider* naNewSlider(NASize size){
+NA_DEF NASlider* naNewSlider(double width){
   NACocoaSlider* cocoaSlider = naNew(NACocoaSlider);
   
   NACocoaNativeSlider* nativePtr = [[NACocoaNativeSlider alloc]
     initWithSlider:cocoaSlider
-    frame:naMakeNSRectWithSize(size)];
+    frame:naMakeNSRectWithSize(naMakeSize(width, 24))];
   na_InitSlider((NASlider*)cocoaSlider, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return (NASlider*)cocoaSlider;

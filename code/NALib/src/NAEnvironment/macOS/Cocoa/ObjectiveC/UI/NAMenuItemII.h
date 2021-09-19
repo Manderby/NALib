@@ -6,59 +6,65 @@
 
 
 
-@implementation NACocoaNativeImageSpace
+@implementation NACocoaNativeMenuItem
 
-- (id) initWithImageSpace:(NACocoaImageSpace*)newCocoaImageSpace frame:(NSRect)frame{
-  self = [super initWithFrame:frame];
-  cocoaImageSpace = newCocoaImageSpace;
+- (id) initWithMenuItem:(NACocoaMenuItem*)newCocoaMenuItem text:(const NAUTF8Char*) text{
+  self = [super
+    initWithTitle:[NSString stringWithUTF8String:text]
+    action:@selector(itemSelected:)
+    keyEquivalent:@""];
+  [self setTarget:self];
+  cocoaMenuItem = newCocoaMenuItem;
   return self;
 }
 
-- (void) setUIImage:(NAUIImage*)uiImage{
-  NSImage* image = naCreateResolutionIndependentNativeImage(
-    self,
-    uiImage,
-    NA_UIIMAGE_KIND_MAIN);
-  [self setImage:image];
+- (void)itemSelected:(id)sender{
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaMenuItem, NA_UI_COMMAND_PRESSED);
 }
 
 - (NARect) getInnerRect{
-  return naMakeRectWithNSRect([self frame]);
+  // todo
+  return naMakeRectS(0, 0, 10, 10);
 }
+
 @end
 
 
 
-NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
-  NACocoaImageSpace* cocoaImageSpace = naNew(NACocoaImageSpace);
+NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text){
+  NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
+  
+  NACocoaNativeMenuItem* nativeItemPtr = [[NACocoaNativeMenuItem alloc]
+    initWithMenuItem:cocoaMenuItem
+    text: text];
+//  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), (NA_UIElement*)menu);
+  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), NA_NULL);
 
-  NACocoaNativeImageSpace* nativePtr = [[NACocoaNativeImageSpace alloc]
-    initWithImageSpace:cocoaImageSpace
-    frame:naMakeNSRectWithSize(size)];
-  na_InitImageSpace((NAImageSpace*)cocoaImageSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  return (NAMenuItem*)cocoaMenuItem;
+}
+
+
+NA_DEF NAMenuItem* naNewMenuSeparator(){
+  NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
   
-  cocoaImageSpace->imageSpace.uiImage = naRetain(uiImage);
-  [nativePtr setUIImage: uiImage];
+  NSMenuItem* nativeItemPtr = [NSMenuItem separatorItem];
+  //na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), (NA_UIElement*)menu);
+  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), NA_NULL);
   
-  return (NAImageSpace*)cocoaImageSpace;
+  return (NAMenuItem*)cocoaMenuItem;
 }
 
 
 
-NA_DEF void na_DestructCocoaImageSpace(NACocoaImageSpace* cocoaImageSpace){
-  naRelease(cocoaImageSpace->imageSpace.uiImage);
-  na_ClearImageSpace((NAImageSpace*)cocoaImageSpace);
+NA_DEF void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem){
+  na_ClearMenuItem((NAMenuItem*)cocoaMenuItem);
 }
 
 
 
-NA_HDEF NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace){
-  naDefineCocoaObject(NACocoaNativeImageSpace, nativePtr, imageSpace);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParent(imageSpace), naGetApplication(), NA_FALSE);
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
+NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(NA_UIElement* menuItem){
+  NA_UNUSED(menuItem);
+  return naMakeRectS(0, 0, 1, 1);
 }
 
 

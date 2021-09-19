@@ -6,34 +6,6 @@
 
 
 
-typedef struct NACocoaMenu NACocoaMenu;
-struct NACocoaMenu{
-  NAMenu menu;
-};
-
-NA_HAPI void na_DestructCocoaMenu(NACocoaMenu* cocoaMenu);
-NA_RUNTIME_TYPE(NACocoaMenu, na_DestructCocoaMenu, NA_FALSE);
-
-@interface NACocoaNativeMenu : NSMenu{
-  NACocoaMenu* cocoaMenu;
-}
-@end
-
-typedef struct NACocoaMenuItem NACocoaMenuItem;
-struct NACocoaMenuItem{
-  NAMenuItem menuItem;
-};
-
-NA_HAPI void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem);
-NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
-
-@interface NACocoaNativeMenuItem : NSMenuItem{
-  NACocoaMenuItem* cocoaMenuItem;
-}
-@end
-
-
-
 @implementation NACocoaNativeMenu
 
 - (id) initWithMenu:(NACocoaMenu*)newCocoaMenu{
@@ -69,29 +41,6 @@ NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
 
 @end
 
-@implementation NACocoaNativeMenuItem
-
-- (id) initWithMenuItem:(NACocoaMenuItem*)newCocoaMenuItem text:(const NAUTF8Char*) text{
-  self = [super
-    initWithTitle:[NSString stringWithUTF8String:text]
-    action:@selector(itemSelected:)
-    keyEquivalent:@""];
-  [self setTarget:self];
-  cocoaMenuItem = newCocoaMenuItem;
-  return self;
-}
-
-- (void)itemSelected:(id)sender{
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaMenuItem, NA_UI_COMMAND_PRESSED);
-}
-
-- (NARect) getInnerRect{
-  // todo
-  return naMakeRectS(0, 0, 10, 10);
-}
-
-@end
-
 
 
 NA_DEF NAMenu* naNewMenu(void* parent){
@@ -112,16 +61,10 @@ NA_DEF void na_DestructCocoaMenu(NACocoaMenu* cocoaMenu){
 
 
 
-NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuItem* atItem){
-  NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
-  
-  NACocoaNativeMenuItem* nativeItemPtr = [[NACocoaNativeMenuItem alloc]
-    initWithMenuItem:cocoaMenuItem
-    text: text];
-  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), (NA_UIElement*)menu);
-
+NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem){
   naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
-  
+  naDefineCocoaObject(NACocoaNativeMenuItem, nativeItemPtr, item);
+
   if(atItem){
     naDefineCocoaObject(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
     [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
@@ -129,34 +72,8 @@ NA_DEF NAMenuItem* naNewMenuItem(NAMenu* menu, const NAUTF8Char* text, NAMenuIte
     [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];
   }
   
-  na_AddMenuChild(menu, (NAMenuItem*)cocoaMenuItem, atItem);
-  
-  return (NAMenuItem*)cocoaMenuItem;
-}
-
-
-NA_DEF NAMenuItem* naNewMenuSeparator(NAMenu* menu, NAMenuItem* atItem){
-  NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
-  
-  NSMenuItem* nativeItemPtr = [NSMenuItem separatorItem];
-  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), (NA_UIElement*)menu);
-
-  naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
-  
-  if(atItem){
-    naDefineCocoaObject(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
-    [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
-  }else{
-    [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];
-  }
-  
-  na_AddMenuChild(menu, (NAMenuItem*)cocoaMenuItem, atItem);
-  
-  return (NAMenuItem*)cocoaMenuItem;
-}
-
-NA_DEF void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem){
-  na_ClearMenuItem((NAMenuItem*)cocoaMenuItem);
+  na_AddMenuChild(menu, item, atItem);
+//  na_SetUIElementParent(&(menuItem->uiElement), parent, NA_FALSE);
 }
 
 
@@ -179,12 +96,6 @@ NA_HDEF NARect na_GetMenuAbsoluteInnerRect(NA_UIElement* menu){
   return naMakeRectS(0, 0, 1, 1);
 }
 
-
-
-NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(NA_UIElement* menuItem){
-  NA_UNUSED(menuItem);
-  return naMakeRectS(0, 0, 1, 1);
-}
 
 
 

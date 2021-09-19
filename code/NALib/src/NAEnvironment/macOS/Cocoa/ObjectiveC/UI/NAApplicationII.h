@@ -6,23 +6,6 @@
 
 
 
-typedef struct NACocoaApplication NACocoaApplication;
-struct NACocoaApplication {
-  NAApplication application;
-};
-
-NA_HAPI void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication);
-NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
-
-
-
-@interface NACocoaNativeApplicationDelegate : NSObject <NSApplicationDelegate>{
-  NACocoaApplication* cocoaApplication;
-}
-@end
-
-
-
 @implementation NACocoaNativeApplicationDelegate
 
 - (id) initWithCocoaApplication:(NACocoaApplication*)newCocoaApplication{

@@ -80,7 +80,7 @@ NABool naCheckBoxWINAPINotify(void* uiElement, WORD notificationCode){
 
 
 
-NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
+NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width){
   NAWINAPICheckBox* winapiCheckBox = naNew(NAWINAPICheckBox);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);

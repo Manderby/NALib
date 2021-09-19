@@ -196,6 +196,26 @@ NA_HDEF void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace){
 
 
 
+NA_HDEF void na_InitPopupButton(NAPopupButton* popupButton, void* nativePtr){
+  na_InitUIElement(&(popupButton->uiElement), NA_UI_POPUP_BUTTON, nativePtr);
+  naInitList(&(popupButton->childs));
+}
+NA_HDEF void na_ClearPopupButton(NAPopupButton* popupButton){
+  naForeachListMutable(&(popupButton->childs), (NAMutator)naDelete);
+  naClearList(&(popupButton->childs));
+  na_ClearUIElement(&(popupButton->uiElement));
+}
+NA_HDEF void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* child, NAMenuItem* itemAt){
+  NAListIterator iter = naMakeListModifier(&(popupButton->childs));
+  naLocateListData(&iter, itemAt);
+  naAddListBeforeMutable(&iter, child);
+  naClearListIterator(&iter);
+  //naAddListLastMutable(&(menu->childs), child);
+  na_SetUIElementParent(&(child->uiElement), popupButton, NA_FALSE);
+}
+
+
+
 NA_HDEF void na_InitRadio(NARadio* radio, void* nativePtr){
   na_InitUIElement(&(radio->uiElement), NA_UI_RADIO, nativePtr);
 }
