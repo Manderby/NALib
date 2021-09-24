@@ -480,34 +480,38 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
     pid_t childPid = fork();
     
     if(!childPid){
-      NAStack testPathStrings;
-      naInitStack(&testPathStrings, sizeof(const char*), 0, 0);
+      
+      // Don't use structs of NARuntime here!!!
+      
+      #define NA_MAX_TEST_INPUT_STRINGS 100
+      const char* testPathStrings[NA_MAX_TEST_INPUT_STRINGS];
+      size_t curTestPathStringIndex = 0;
 
-      const char** thisPathItem = (const char**)naPushStack(&testPathStrings);
-      (*thisPathItem) = expr;
+      testPathStrings[curTestPathStringIndex] = expr;
+      curTestPathStringIndex++;
 
       NATestData* curTestData = na_Testing->curTestData;
       while(NA_TRUE){
-        const char** curPathItem = (const char**)naPushStack(&testPathStrings);
-        (*curPathItem) = curTestData->name;
+        testPathStrings[curTestPathStringIndex] = curTestData->name;
+        curTestPathStringIndex++;
         if(curTestData->parent){
          curTestData = curTestData->parent;
         }else{
           break;
         }
       }
-      NAInt pathCount = (NAInt)naGetStackCount(&testPathStrings);
   
-      char** const argv = naMalloc((pathCount + 3) * sizeof(const char*));
+      char** const argv = naMalloc((curTestPathStringIndex + 3) * sizeof(const char*));
       argv[0] = naMalloc(naGetStringByteSize(modulePath) + 1);
       argv[0][naGetStringByteSize(modulePath)] = '\0';
       naWriteBufferToData(naGetStringBufferMutable(modulePath), argv[0]);
       argv[1] = "-C"; // DO NOT TURN -C OPTION OFF!!!
       int i = 2;
-      while(naGetStackCount(&testPathStrings))
+      
+      for(size_t curBackIndex = 0; curBackIndex < curTestPathStringIndex; curBackIndex++)
       {
-        const char** curPathItem = naPopStack(&testPathStrings);
-        NAString* pathItemString = naNewStringWithFormat("%s", *curPathItem);
+        const char* curPathItem = testPathStrings[curTestPathStringIndex - curBackIndex - 1];
+        NAString* pathItemString = naNewStringWithFormat("%s", curPathItem);
         NAString* escapedPathItemString = naNewStringCEscaped(pathItemString);
         NAString* encapsulatedPathItemString = naNewStringWithFormat("\"%s\"", naGetStringUTF8Pointer(escapedPathItemString));
         argv[i] = naMalloc(naGetStringByteSize(encapsulatedPathItemString) + 1);
@@ -518,9 +522,8 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
         naDelete(pathItemString);
         i++;
       }
-      naClearStack(&testPathStrings);
       
-      argv[pathCount + 2] = NA_NULL;
+      argv[curTestPathStringIndex + 2] = NA_NULL;
       execv(naGetStringUTF8Pointer(modulePath), argv);
       
       // If reaching here, something went wrong.
