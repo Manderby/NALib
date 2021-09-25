@@ -559,6 +559,20 @@ NA_DEF void naRelease(void* pointer){
 
 
 
+NA_DEF const void* naRetainConst(const void* pointer){
+  void* mutablePointer = (void*)pointer;
+  return naRetain(mutablePointer);
+}
+
+
+
+NA_DEF void naReleaseConst(const void* pointer){
+  void* mutablePointer = (void*)pointer;
+  naRelease(mutablePointer);
+}
+
+
+
 NA_HIDEF void na_EnhanceMallocGarbage(){
   NAMallocGarbage* newGarbage = naAlloc(NAMallocGarbage);
 #if NA_DEBUG

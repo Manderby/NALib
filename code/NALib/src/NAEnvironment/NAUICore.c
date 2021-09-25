@@ -103,10 +103,18 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
 
 
 
-NA_HDEF void na_InitButton(NAButton* button, void* nativePtr){
+NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage){
   na_InitUIElement(&(button->uiElement), NA_UI_BUTTON, nativePtr);
+  if(uiImage){
+    button->uiImage = naRetainConst(uiImage);
+  }else{
+    button->uiImage = NA_NULL;
+  }
 }
 NA_HDEF void na_ClearButton(NAButton* button){
+  if(button->uiImage){
+    naReleaseConst(button->uiImage);
+  }
   na_ClearUIElement(&(button->uiElement));
 }
 

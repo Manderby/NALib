@@ -223,8 +223,7 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  na_InitButton((NAButton*)winapiButton, nativePtr);
-  winapiButton->image = NA_NULL;
+  na_InitButton((NAButton*)winapiButton, nativePtr, NA_NULL);
   winapiButton->state = 0;
   #if NA_DEBUG
     if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS))
@@ -258,8 +257,7 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  na_InitButton((NAButton*)winapiButton, nativePtr);
-  winapiButton->image = uiImage;
+  na_InitButton((NAButton*)winapiButton, nativePtr, uiImage);
   winapiButton->state = 0;
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, naGetFlagu32(flags, NA_BUTTON_BORDERLESS)); 
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATEFUL, naGetFlagu32(flags, NA_BUTTON_STATEFUL)); 

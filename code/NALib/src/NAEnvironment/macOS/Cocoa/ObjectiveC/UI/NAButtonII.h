@@ -120,7 +120,7 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
     flags:flags
     isText:YES
     frame:naMakeNSRectWithSize(naMakeSize(width, 24))];
-  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL);
   
   [nativePtr setButtonText:text];
   
@@ -137,7 +137,7 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
     flags:flags
     isText:NO
     frame:naMakeNSRectWithSize(size)];
-  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), uiImage);
   
   [nativePtr setUIImage:uiImage];
   
@@ -161,6 +161,12 @@ NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text){
 
 NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  #if NA_DEBUG
+    if(!button->uiImage)
+      naError("This is not an image button.");
+  #endif
+  naReleaseConst(button->uiImage);
+  button->uiImage = naRetainConst(uiImage);
   [nativePtr setUIImage:uiImage];
 }
 

@@ -57,7 +57,6 @@ NA_RUNTIME_TYPE(NAWINAPIApplication, na_DestructWINAPIApplication, NA_FALSE);
 typedef struct NAWINAPIButton NAWINAPIButton;
 struct NAWINAPIButton{
   NAButton   button;
-  const NAUIImage* image;
   uint32 state;
 };
 NA_HAPI void na_DestructWINAPIButton(NAWINAPIButton* winapiButton);

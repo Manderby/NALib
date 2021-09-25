@@ -73,7 +73,7 @@ struct NACocoaPopupButton{
   NAPopupButton popupButton;
 };
 NA_HAPI void na_DestructCocoaPopupButton(NACocoaPopupButton* cocoaPopupButton);
-NA_RUNTIME_TYPE(NACocoaPopupButton, na_DestructCocoaButton, NA_FALSE);
+NA_RUNTIME_TYPE(NACocoaPopupButton, na_DestructCocoaPopupButton, NA_FALSE);
 
 typedef struct NACocoaRadio NACocoaRadio;
 struct NACocoaRadio{
