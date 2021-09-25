@@ -221,6 +221,7 @@
 
 
 CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext);
+CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement);
 CGFloat naGetWindowBackingScaleFactor(NSWindow* window);
 NABool naLoadNib(const NAUTF8Char* nibName);
 NSColor* naGetLabelColor(void);

@@ -188,6 +188,30 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
 
 
 
+NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
+  if(naGetUIElementType(uiElement) == NA_UI_APPLICATION){return 1.;}
+  if(naGetUIElementType(uiElement) == NA_UI_SCREEN){
+    #if NA_DEBUG
+      naError("Sorry, was too lazy to implement this. I mean, it's not hard, but as screens are not used anyway at the moment, who cares.");
+    #endif
+    return 1.;
+  }
+  
+  void* parent = naGetUIElementParent(uiElement);
+  while(naGetUIElementType(uiElement) != NA_UI_WINDOW && parent){
+    uiElement = parent;
+    parent = naGetUIElementParent(uiElement);
+  }
+  
+  if(naGetUIElementType(uiElement) == NA_UI_WINDOW){
+    return naGetWindowBackingScaleFactor(naGetUIElementNativePtr(uiElement));
+  }else{
+    return naGetUIElementBackingScaleFactor(naGetUIElementNativePtr(uiElement));
+  }
+}
+
+
+
 
 
 

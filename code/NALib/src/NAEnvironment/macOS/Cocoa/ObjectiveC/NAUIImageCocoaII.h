@@ -106,6 +106,39 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
   return nativeImage;
 }
 
+
+NA_HDEF BOOL na_createResolutionIndependentImage(const NSView* containingView, const NAUIImage* uiImage, NAUIImageKind kind, NSSize imageSize, NSRect dstRect){
+  NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
+  if(uiImage->tintMode != NA_BLEND_ZERO){
+    skin = naGetSkinForCurrentAppearance();
+  }
+  
+  NAUIImageResolution resolution = naGetWindowBackingScaleFactor([containingView window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
+
+  CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, kind, skin);
+  if(!cocoaimage){
+    cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
+  }
+
+  // Yes, we create a new NSImage which we draw into the NSImage which
+  // calls this handler. It is unknown to me exactly why I need to do
+  // that but otherwise the context just isn't there on all systems.
+  // Potentially this has to do with threading which can only allocate
+  // memory in its own region as this handler may be called in a thread.
+  [NSGraphicsContext saveGraphicsState];
+  NSImage* drawImage = [[NSImage alloc] initWithSize:imageSize];
+  [drawImage lockFocus];
+    CGContextDrawImage(naGetCGContextRef([NSGraphicsContext currentContext]), dstRect, cocoaimage);
+  [drawImage unlockFocus];
+  [NSGraphicsContext restoreGraphicsState];
+
+  [drawImage drawInRect:dstRect];
+
+  return YES;
+}
+
+
+
 NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
   const NSView* containingView,
   const NAUIImage* uiImage,
@@ -123,33 +156,7 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
       NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
       image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
       {
-        NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
-        if(uiImage->tintMode != NA_BLEND_ZERO){
-          skin = naGetSkinForCurrentAppearance();
-        }
-        
-        NAUIImageResolution resolution = naGetWindowBackingScaleFactor([containingView window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
-
-        CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, kind, skin);
-        if(!cocoaimage){
-          cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-        }
-
-        // Yes, we create a new NSImage which we draw into the NSImage which
-        // calls this handler. It is unknown to me exactly why I need to do
-        // that but otherwise the context just isn't there on all systems.
-        // Potentially this has to do with threading which can only allocate
-        // memory in its own region as this handler may be called in a thread.
-        [NSGraphicsContext saveGraphicsState];
-        NSImage* drawImage = [[NSImage alloc] initWithSize:imageSize];
-        [drawImage lockFocus];
-          CGContextDrawImage(naGetCGContextRef([NSGraphicsContext currentContext]), dstRect, cocoaimage);
-        [drawImage unlockFocus];
-        [NSGraphicsContext restoreGraphicsState];
-
-        [drawImage drawInRect:dstRect];
-
-        return YES;
+        return na_createResolutionIndependentImage(containingView, uiImage, kind, imageSize, dstRect);
       }];
     ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
   }

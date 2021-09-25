@@ -57,6 +57,29 @@
     na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_REDRAW);
   }
   
+- (void)adjustLayerFrame{
+  double scaleFactor = naGetWindowBackingScaleFactor([self window]);
+  NSRect frame = [self frame];
+  frame.size.width *= scaleFactor;
+  frame.size.height *= scaleFactor;
+  NA_MACOS_AVAILABILITY_GUARD_10_11(
+    [(CAMetalLayer*)[self layer] setDrawableSize:frame.size];
+    [(CAMetalLayer*)[self layer] setContentsScale:scaleFactor];
+  )
+}
+
+- (void)setFrame:(NSRect) frame{
+  [super setFrame:frame];
+  [self adjustLayerFrame];
+}
+
+- (void)viewDidChangeBackingProperties{
+  [super viewDidChangeBackingProperties];
+  if([self layer]){
+    [self adjustLayerFrame];
+  }
+}
+
 //  - (void) resizeSubviewsWithOldSize:(NSSize) oldSize{
 ////    [super resizeSubviewsWithOldSize: oldSize];
 //    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_RESHAPE);
@@ -115,7 +138,6 @@
   NA_DEF void* naGetMetalSpaceSystemContext(NAMetalSpace* metalSpace){
     naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
     return [nativePtr layer];
-    return NA_NULL;
   }
 
 

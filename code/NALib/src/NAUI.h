@@ -166,6 +166,11 @@ NA_API void naRefreshUIElement(void* uiElement, double timediff);
 // naSetWindowFirstTabElement.
 NA_API void naSetUIElementNextTabElement(void* elem, void* nextTabElem);
 
+// Returns the resolution scale factor for the given element. Is 2. for example
+// on high resolution display settings. Returns 1 if no parent window or screen
+// can be found, as well as for NAApplication
+NA_API double naGetUIElementResolutionFactor(void* uiElement);
+
 // Native IDs
 //
 // NALib always acts as a layer on top of the native UI implementation of a

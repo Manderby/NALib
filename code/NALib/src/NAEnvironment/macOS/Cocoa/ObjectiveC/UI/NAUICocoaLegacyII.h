@@ -32,6 +32,12 @@ CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext){
 
 
 
+CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement){
+  return naGetWindowBackingScaleFactor([uiElement window]);
+}
+
+
+
 CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
   CGFloat res = (CGFloat)1.;
 
@@ -43,6 +49,7 @@ CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
   if(res == 0.){
     res = [window userSpaceScaleFactor];
   }
+
   return res;
 }
 
