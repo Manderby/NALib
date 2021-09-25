@@ -49,7 +49,10 @@ CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
   if(res == 0.){
     res = [window userSpaceScaleFactor];
   }
-
+  if(res == 0.){
+    res = 1.;
+  }
+  
   return res;
 }
 

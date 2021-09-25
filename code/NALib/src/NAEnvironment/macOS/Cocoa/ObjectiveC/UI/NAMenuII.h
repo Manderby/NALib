@@ -43,12 +43,13 @@
 
 
 
-NA_DEF NAMenu* naNewMenu(void* parent){
+NA_DEF NAMenu* naNewMenu(){
   NACocoaMenu* cocoaMenu = naNew(NACocoaMenu);
   
   NACocoaNativeMenu* nativePtr = [[NACocoaNativeMenu alloc]
     initWithMenu:cocoaMenu];
-  na_InitMenu((NAMenu*)cocoaMenu, NA_COCOA_PTR_OBJC_TO_C(nativePtr), (NA_UIElement*)parent);
+    
+  na_InitMenu((NAMenu*)cocoaMenu, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL);
 
   return (NAMenu*)cocoaMenu;
 }
@@ -73,7 +74,6 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem){
   }
   
   na_AddMenuChild(menu, item, atItem);
-//  na_SetUIElementParent(&(menuItem->uiElement), parent, NA_FALSE);
 }
 
 
@@ -84,7 +84,8 @@ NA_DEF size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
 
 
 
-NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos){
+NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos, void* parentUIElement){
+  NA_UNUSED(parentUIElement);
   naDefineCocoaObject(NACocoaNativeMenu, nativePtr, menu);
   [nativePtr displayAt:pos];
 }

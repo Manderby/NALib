@@ -62,6 +62,10 @@
   NSRect frame = [self frame];
   frame.size.width *= scaleFactor;
   frame.size.height *= scaleFactor;
+  #if NA_DEBUG
+    if(frame.size.width == 0 || frame.size.height == 0)
+      naError("Frame size is zero");
+  #endif
   NA_MACOS_AVAILABILITY_GUARD_10_11(
     [(CAMetalLayer*)[self layer] setDrawableSize:frame.size];
     [(CAMetalLayer*)[self layer] setContentsScale:scaleFactor];

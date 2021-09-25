@@ -6,7 +6,7 @@
 
 
 
-NA_DEF NAMenu* naNewMenu(void* parent){
+NA_DEF NAMenu* naNewMenu(){
   NAWINAPIMenu* winapiMenu = naNew(NAWINAPIMenu);
 
   winapiMenu->hMenu = CreatePopupMenu();
@@ -18,7 +18,7 @@ NA_DEF NAMenu* naNewMenu(void* parent){
   //menuInfo.dwStyle = MNS_NOCHECK;
   //SetMenuInfo(winapiMenu->hMenu, &menuInfo);
 
-  na_InitMenu(&(winapiMenu->menu), winapiMenu->hMenu, parent);
+  na_InitMenu(&(winapiMenu->menu), winapiMenu->hMenu, NA_NULL);
 
   return (NAMenu*)winapiMenu;
 }
@@ -68,14 +68,13 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem){
   //}
   
   na_AddMenuChild(menu, item, atItem);
-//  na_SetUIElementParent(&(menuItem->uiElement), parent, NA_FALSE);
 }
 
 NA_DEF size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
   return naGetListElemIndex(&(menu->childs), item);
 }
 
-NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos){
+NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos, NAUIElement* parentUIElement){
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
   HMENU hMenu = CreatePopupMenu();
@@ -87,7 +86,7 @@ NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos){
     winapiMenu->hMenu, 
     TPM_LEFTALIGN | TPM_RIGHTBUTTON/* | TPM_RETURNCMD*/, 
     (int)pos.x, (int)screenRect.size.height - (int)pos.y, 0,
-    naGetUIElementNativePtr(naGetUIElementParent(menu)), NULL);
+    naGetUIElementNativePtr(parentUIElement), NULL);
 }
 
 NA_HDEF NARect na_GetMenuAbsoluteInnerRect(NA_UIElement* menu){

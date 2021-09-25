@@ -678,10 +678,11 @@ NA_API void naSetLabelVisible(NALabel* label, NABool visible);
 // naAddMenuItem adds a menu item before atItem. If atItem is Null, it is
 // added to the end of the menu.
 // naGetMenuItemIndex returns the index including all separators.
-NA_API NAMenu* naNewMenu(void* parent);
+// To present the menu onscreen, you need to provide a parent UIElement.
+NA_API NAMenu* naNewMenu(void);
 NA_API void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem);
 NA_API size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item);
-NA_API void naPresentMenu(NAMenu* menu, NAPos pos);
+NA_API void naPresentMenu(NAMenu* menu, NAPos pos, void* parentUIElement);
 
 // MenuItem
 NA_API NAMenuItem* naNewMenuItem(const NAUTF8Char* text);

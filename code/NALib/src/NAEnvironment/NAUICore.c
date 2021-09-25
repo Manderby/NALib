@@ -154,7 +154,6 @@ NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, NAMenuItem* itemAt
   naLocateListData(&iter, itemAt);
   naAddListBeforeMutable(&iter, child);
   naClearListIterator(&iter);
-  //naAddListLastMutable(&(menu->childs), child);
   na_SetUIElementParent(&(child->uiElement), menu, NA_FALSE);
 }
 
