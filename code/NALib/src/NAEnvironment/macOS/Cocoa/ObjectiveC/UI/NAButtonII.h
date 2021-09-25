@@ -132,6 +132,11 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
 NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 flags){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
+  #if NA_DEBUG
+    if(!uiImage)
+      naError("uiImage is null");
+  #endif
+
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
@@ -165,8 +170,7 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
     if(!button->uiImage)
       naError("This is not an image button.");
   #endif
-  naReleaseConst(button->uiImage);
-  button->uiImage = naRetainConst(uiImage);
+  na_setButtonImage(button, uiImage);
   [nativePtr setUIImage:uiImage];
 }
 

@@ -194,6 +194,7 @@ NA_HAPI void na_ClearApplication(NAApplication* application);
 
 NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage);
 NA_HAPI void na_ClearButton(NAButton* button);
+NA_HAPI void na_setButtonImage(NAButton* button, const NAUIImage* uiImage);
 
 NA_HAPI void na_InitCheckBox(NACheckBox* checkBox, void* nativePtr);
 NA_HAPI void na_ClearCheckBox(NACheckBox* checkBox);

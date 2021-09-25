@@ -240,6 +240,11 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
 NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 flags){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
   
+  #if NA_DEBUG
+    if(!uiImage)
+      naError("uiImage is null");
+  #endif
+
 	HWND nativePtr = CreateWindow(
 		TEXT("BUTTON"),
     TEXT(""),
