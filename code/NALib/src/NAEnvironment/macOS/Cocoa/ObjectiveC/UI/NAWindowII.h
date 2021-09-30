@@ -40,10 +40,10 @@
 - (BOOL)windowShouldClose:(id)sender{
   NABool shouldClose;
   NA_UNUSED(sender);
-  naSetFlagu32(&(cocoaWindow->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
+  naSetFlagu32(&(cocoaWindow->window.coreFlags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
   na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_CLOSES);
-  shouldClose = !naGetFlagu32(cocoaWindow->window.flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
-  naSetFlagu32(&(cocoaWindow->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
+  shouldClose = !naGetFlagu32(cocoaWindow->window.coreFlags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
+  naSetFlagu32(&(cocoaWindow->window.coreFlags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
   return (BOOL)shouldClose;
 }
 
@@ -129,17 +129,39 @@
   na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE);
 }
 
+- (BOOL)canBecomeMainWindow{
+  return !naGetFlagu32(cocoaWindow->window.flags, NA_WINDOW_AUXILIARY);
+}
+
+- (BOOL)canBecomeKeyWindow{
+  return YES;
+}
+
+- (BOOL)acceptsFirstMouse:(NSEvent*)event{
+  NA_UNUSED(event);
+  return YES;
+}
+
 @end
 
 
 
-NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable, NAInt storageTag){
+NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, NAInt storageTag){
   NACocoaWindow* cocoaWindow = naNew(NACocoaWindow);
 
+  NABool resizeable = naGetFlagu32(flags, NA_WINDOW_RESIZEABLE);
+  NABool titleless = naGetFlagu32(flags, NA_WINDOW_TITLELESS);
+  NABool noncloseable = naGetFlagu32(flags, NA_WINDOW_NON_CLOSEABLE);
+  NABool nonminiaturizeable = naGetFlagu32(flags, NA_WINDOW_NON_MINIATURIZEABLE);
+  NABool auxiliary = naGetFlagu32(flags, NA_WINDOW_AUXILIARY);
+  
   rect = naSetWindowStorageTag((NAWindow*)cocoaWindow, storageTag, rect, resizeable);
 
-  NSUInteger styleMask = NAWindowStyleMaskTitled | NAWindowStyleMaskClosable | NAWindowStyleMaskMiniaturizable;
+  NSUInteger styleMask = 0;
   if(resizeable){styleMask |= NAWindowStyleMaskResizable;}
+  if(!titleless){styleMask |= NAWindowStyleMaskTitled;}
+  if(!noncloseable){styleMask |= NAWindowStyleMaskClosable;}
+  if(!nonminiaturizeable){styleMask |= NAWindowStyleMaskMiniaturizable;}
   
   NACocoaNativeWindow* nativePtr = [[NACocoaNativeWindow alloc]
     initWithWindow:cocoaWindow
@@ -149,10 +171,19 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
     defer:NO
     screen:nil];
   
+  if(auxiliary){
+    [nativePtr setKeepOnTop:YES];
+    [nativePtr setHidesOnDeactivate:YES];
+    [nativePtr setCollectionBehavior:NSWindowCollectionBehaviorTransient | NSWindowCollectionBehaviorFullScreenAuxiliary];
+    [nativePtr setExcludedFromWindowsMenu:YES];
+  }
+  
   [nativePtr setDelegate:nativePtr];
   [nativePtr setTitle:[NSString stringWithUTF8String:title]];
   [nativePtr setInitialFirstResponder:[nativePtr contentView]];
   na_InitWindow((NAWindow*)cocoaWindow, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL, NA_FALSE, resizeable, rect);
+
+  cocoaWindow->window.flags = flags;
 
   NASpace* space = naNewSpace(rect.size);
   naSetWindowContentSpace((NAWindow*)cocoaWindow, space);
@@ -278,6 +309,12 @@ NA_HDEF void na_ClearWindowMouseTracking(NAWindow* window){
 
 
 
+NA_DEF NARect naGetMainScreenRect(){
+  return naMakeRectWithNSRect([[NSScreen mainScreen] frame]);
+}
+
+
+
 NA_DEF void naShowWindow(NAWindow* window){
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   [nativePtr makeKeyAndOrderFront:NA_NULL];
@@ -321,7 +358,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
       [nativePtr setFrame:naMakeNSRectWithRect(window->windowedFrame) display:YES];
       [nativePtr setLevel:NSNormalWindowLevel];
     }
-    naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_FULLSCREEN, fullScreen);
+    naSetFlagu32(&(window->coreFlags), NA_CORE_WINDOW_FLAG_FULLSCREEN, fullScreen);
     // Setting the first responder again is necessary as otherwise the first
     // responder is lost.
     [nativePtr makeFirstResponder:[nativePtr contentView]];

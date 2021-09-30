@@ -120,6 +120,7 @@ struct NASlider{
 struct NASpace{
   NA_UIElement uiElement;
   NAList       childs;
+  NABabyColor  backgroundColor;
   NABool       alternateBackground;
 };
 
@@ -135,6 +136,7 @@ struct NAWindow{
   NA_UIElement uiElement;
   NAInt        storageTag;
   NASpace*     contentSpace;
+  uint32       coreFlags;
   uint32       flags;
   NARect       windowedFrame;
 };
@@ -236,6 +238,7 @@ NA_HAPI void na_ClearSlider(NASlider* slider);
 NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);
 NA_HAPI void na_ClearSpace(NASpace* space);
 NA_HAPI void na_AddSpaceChild(NASpace*, NA_UIElement* child);
+NA_HAPI void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child);
 
 NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);
 NA_HAPI void na_ClearTextBox(NATextBox* textBox);

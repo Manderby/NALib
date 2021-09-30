@@ -158,6 +158,11 @@ NA_DEF NASpace* naNewSpace(NASize size){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   winapiSpace->lastBgColor = &(app->bgColor);
+
+  winapiSpace->space.backgroundColor[0] = 0.;
+  winapiSpace->space.backgroundColor[1] = 0.;
+  winapiSpace->space.backgroundColor[2] = 0.;
+  winapiSpace->space.backgroundColor[3] = 0.;
   winapiSpace->space.alternateBackground = NA_FALSE;
 
   return (NASpace*)winapiSpace;

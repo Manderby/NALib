@@ -158,7 +158,7 @@ NABool naHandleWindowTabOrder(NAReaction reaction){
 
 
 
-NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable, NAInt storageTag){
+NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, NAInt storageTag){
   NAWINAPIWindow* winapiWindow = naNew(NAWINAPIWindow);
 
   rect = naSetWindowStorageTag(&(winapiWindow->window), storageTag, rect, resizeable);

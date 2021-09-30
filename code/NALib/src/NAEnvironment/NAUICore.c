@@ -264,6 +264,10 @@ NA_HDEF void na_AddSpaceChild(NASpace* space, NA_UIElement* child){
   naAddListLastMutable(&(space->childs), child);
   na_SetUIElementParent(child, space, NA_TRUE);
 }
+NA_HDEF void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child){
+  naRemoveListData(&(space->childs), child);
+  na_SetUIElementParent(child, NA_NULL, NA_TRUE);
+}
 NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
   return space->alternateBackground;
 }
@@ -300,31 +304,32 @@ NA_HDEF void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSp
   na_InitUIElement(&(window->uiElement), NA_UI_WINDOW, nativePtr);
   na_AddApplicationWindow(window);
   window->contentSpace = contentSpace;
-  window->flags = 0;
-  if(fullScreen){window->flags |= NA_CORE_WINDOW_FLAG_FULLSCREEN;}
-  if(resizeable){window->flags |= NA_CORE_WINDOW_FLAG_RESIZEABLE;}
+  window->coreFlags = 0;
+  if(fullScreen){window->coreFlags |= NA_CORE_WINDOW_FLAG_FULLSCREEN;}
+  if(resizeable){window->coreFlags |= NA_CORE_WINDOW_FLAG_RESIZEABLE;}
   window->windowedFrame = windowedFrame;
 }
 
 NA_HDEF void na_ClearWindow(NAWindow* window){
+  na_RemoveApplicationWindow(window);
   if(window->contentSpace){naDelete(window->contentSpace);}
   na_ClearUIElement(&(window->uiElement));
 }
 
 NA_DEF void naPreventWindowFromClosing(NAWindow* window, NABool prevent){
   #if NA_DEBUG
-    if(!naGetFlagu32(window->flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE))
+    if(!naGetFlagu32(window->coreFlags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE))
       naError("This function is only allowed during a \"CLOSES\" event");
   #endif
-  naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, prevent);
+  naSetFlagu32(&(window->coreFlags), NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, prevent);
 }
 
 NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
-  return naGetFlagu32(window->flags, NA_CORE_WINDOW_FLAG_FULLSCREEN);
+  return naGetFlagu32(window->coreFlags, NA_CORE_WINDOW_FLAG_FULLSCREEN);
 }
 
 NA_DEF NABool naIsWindowResizeable(NAWindow* window){
-  return naGetFlagu32(window->flags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
+  return naGetFlagu32(window->coreFlags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
 }
 
 NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){

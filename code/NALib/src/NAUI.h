@@ -744,6 +744,8 @@ NA_API NARect naGetMainScreenRect(void);
 // of a window, that windows first responder will be reset to Null.
 NA_API NASpace* naNewSpace(NASize size);
 NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
+NA_API void naRemoveSpaceChilds(NASpace* space);
+NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
 NA_API void naSetSpaceRect(NASpace* space, NARect rect);
@@ -774,11 +776,23 @@ NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFo
 NA_API void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment alignment);
 NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFontSize size);
 
+// A window is by bu default:
+#define NA_WINDOW_FIXED_SIZE             0x00
+#define NA_WINDOW_RESIZEABLE             0x01
+#define NA_WINDOW_DEFAULT                0x00
+#define NA_WINDOW_AUXILIARY              0x02
+#define NA_WINDOW_TITLED                 0x00
+#define NA_WINDOW_TITLELESS              0x04
+#define NA_WINDOW_CLOSEABLE              0x00
+#define NA_WINDOW_NON_CLOSEABLE          0x08
+#define NA_WINDOW_MINIATURIZEABLE        0x00
+#define NA_WINDOW_NON_MINIATURIZEABLE    0x10
+
 // Window
 NA_API NAWindow* naNewWindow(
   const NAUTF8Char* title,
   NARect rect,
-  NABool resizeable,
+  uint32 flags,
   NAInt storageTag);
 NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
 NA_API void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);

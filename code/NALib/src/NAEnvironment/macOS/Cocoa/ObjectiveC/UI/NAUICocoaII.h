@@ -39,24 +39,25 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 
 
 
+// Note that all spaces have offset 0.
 NA_HDEF double na_GetUIElementOffsetY(NA_UIElement* elem){
   switch(naGetUIElementType(elem)){
   case NA_UI_APPLICATION:  return  0.;
-  case NA_UI_BUTTON:       return -1.;
-  case NA_UI_CHECKBOX:     return +4.;
+  case NA_UI_BUTTON:       return +1.;
+  case NA_UI_CHECKBOX:     return +6.;
   case NA_UI_IMAGE_SPACE:  return  0.;
-  case NA_UI_LABEL:        return +6.;
+  case NA_UI_LABEL:        return +8.;
   case NA_UI_MENU:         return  0.;
   case NA_UI_MENUITEM:     return  0.;
   case NA_UI_METAL_SPACE:  return  0.;
   case NA_UI_OPENGL_SPACE: return  0.;
-  case NA_UI_POPUP_BUTTON: return -1.;
-  case NA_UI_RADIO:        return +4.;
+  case NA_UI_POPUP_BUTTON: return +1.;
+  case NA_UI_RADIO:        return +6.;
   case NA_UI_SCREEN:       return  0.;
-  case NA_UI_SLIDER:       return  0.;
-  case NA_UI_SPACE:        return -2.;
-  case NA_UI_TEXTBOX:      return  0.;
-  case NA_UI_TEXTFIELD:    return +3.;
+  case NA_UI_SLIDER:       return +2.;
+  case NA_UI_SPACE:        return  0.;
+  case NA_UI_TEXTBOX:      return +2.;
+  case NA_UI_TEXTFIELD:    return +5.;
   case NA_UI_WINDOW:       return  0.;
   }
 }

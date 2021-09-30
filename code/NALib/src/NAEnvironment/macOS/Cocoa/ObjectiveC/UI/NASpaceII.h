@@ -29,6 +29,13 @@
 
 - (void)drawRect:(NSRect)dirtyRect{
   [super drawRect:dirtyRect];
+  if(cocaSpace->space.backgroundColor[3] != 0.){
+    [[NSColor colorWithRed:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[0])
+      green:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[1])
+      blue:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[2])
+      alpha:cocaSpace->space.backgroundColor[3]] setFill];
+    NSRectFill(dirtyRect);
+  }
   if(cocaSpace->space.alternateBackground){
     [[[NSColor controlTextColor] colorWithAlphaComponent:(CGFloat).075] setFill];
     NSRectFill(dirtyRect);
@@ -62,6 +69,10 @@ NA_DEF NASpace* naNewSpace(NASize size){
     frame:naMakeNSRectWithSize(size)];  
   na_InitSpace((NASpace*)cocoaSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
+  cocoaSpace->space.backgroundColor[0] = 0.;
+  cocoaSpace->space.backgroundColor[1] = 0.;
+  cocoaSpace->space.backgroundColor[2] = 0.;
+  cocoaSpace->space.backgroundColor[3] = 0.;
   cocoaSpace->space.alternateBackground = NA_FALSE;
 
   return (NASpace*)cocoaSpace;
@@ -116,6 +127,17 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
 
 
 
+NA_HDEF void naRemoveSpaceChilds(NASpace* space)
+{
+  while(!naIsListEmpty(&(space->childs))){
+    void* child = naGetListFirstMutable(&(space->childs));
+    na_RemoveSpaceChild(space, child);
+    [(NSView*)naGetUIElementNativePtr(child) removeFromSuperview];
+  }
+}
+
+
+
 NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   // Warning: does not work when frame unequal bounds.
@@ -138,6 +160,21 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
     contentRect.size.width,
     contentRect.size.height);
   return rect;
+}
+
+
+
+NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color){
+  if(color){
+    space->backgroundColor[0] = (*color)[0];
+    space->backgroundColor[1] = (*color)[1];
+    space->backgroundColor[2] = (*color)[2];
+    space->backgroundColor[3] = (*color)[3];
+  }else{
+    space->backgroundColor[3] = 0.;
+  }
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
+  [nativePtr setNeedsDisplay:YES];
 }
 
 
