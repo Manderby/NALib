@@ -137,11 +137,6 @@
   return YES;
 }
 
-- (BOOL)acceptsFirstMouse:(NSEvent*)event{
-  NA_UNUSED(event);
-  return YES;
-}
-
 @end
 
 
@@ -162,6 +157,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
   if(!titleless){styleMask |= NAWindowStyleMaskTitled;}
   if(!noncloseable){styleMask |= NAWindowStyleMaskClosable;}
   if(!nonminiaturizeable){styleMask |= NAWindowStyleMaskMiniaturizable;}
+  if(auxiliary){styleMask |= NAWindowStyleMaskNonactivatingPanel | NAWindowStyleMaskUtilityWindow;}
   
   NACocoaNativeWindow* nativePtr = [[NACocoaNativeWindow alloc]
     initWithWindow:cocoaWindow

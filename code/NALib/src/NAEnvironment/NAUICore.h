@@ -122,6 +122,7 @@ struct NASpace{
   NAList       childs;
   NABabyColor  backgroundColor;
   NABool       alternateBackground;
+  NABool       dragsWindow;
 };
 
 struct NATextField{

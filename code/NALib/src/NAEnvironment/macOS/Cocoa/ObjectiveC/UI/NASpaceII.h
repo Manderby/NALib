@@ -17,6 +17,7 @@
       owner:self userInfo:nil];
   [self addTrackingArea:trackingArea];
   [self setWantsLayer:YES];
+  [self resetDrag];
 
   cocaSpace = newCocoaSpace;
   return self;
@@ -42,6 +43,35 @@
   }
 }
 
+- (void)mouseDown:(NSEvent*)event{
+  if(cocaSpace->space.dragsWindow){
+    isMoving = NA_TRUE;
+    originMousePos = naMakePosWithNSPoint([event locationInWindow]);
+  }else{
+    [super mouseDown:event];
+  }
+}
+
+- (void)mouseDragged:(NSEvent*)event{
+  if(cocaSpace->space.dragsWindow && isMoving){
+    NAPos curMousePos = naMakePosWithNSPoint([event locationInWindow]);
+    NSRect frame = [[self window] frame];
+    frame.origin.x += curMousePos.x - originMousePos.x;
+    frame.origin.y += curMousePos.y - originMousePos.y;
+    [[self window] setFrame:frame display:YES];
+  }else{
+    [super mouseDragged:event];
+  }
+}
+
+- (void)mouseUp:(NSEvent*)event{
+  if(cocaSpace->space.dragsWindow){
+    [self resetDrag];
+  }else{
+    [super mouseUp:event];
+  }
+}
+
 - (void)mouseMoved:(NSEvent*)event{
   NA_UNUSED(event);
   na_DispatchUIElementCommand((NA_UIElement*)cocaSpace, NA_UI_COMMAND_MOUSE_MOVED);
@@ -55,6 +85,20 @@
 - (void)mouseExited:(NSEvent*)event{
   NA_UNUSED(event);
   na_DispatchUIElementCommand((NA_UIElement*)cocaSpace, NA_UI_COMMAND_MOUSE_EXITED);
+}
+
+- (void)resetDrag{
+  isMoving = NA_FALSE;
+  originMousePos = naMakePos(0, 0);
+}
+
+- (BOOL)acceptsFirstMouse:(NSEvent*)event{
+  NA_UNUSED(event);
+  return YES;
+}
+
+- (void)cancelOperation:(nullable id)sender{
+  [self resetDrag];
 }
 
 @end
@@ -74,6 +118,7 @@ NA_DEF NASpace* naNewSpace(NASize size){
   cocoaSpace->space.backgroundColor[2] = 0.;
   cocoaSpace->space.backgroundColor[3] = 0.;
   cocoaSpace->space.alternateBackground = NA_FALSE;
+  cocoaSpace->space.dragsWindow = NA_FALSE;
 
   return (NASpace*)cocoaSpace;
 }
@@ -91,6 +136,12 @@ NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
   NSRect frame = naMakeNSRectWithRect(rect);
   frame.origin = NSMakePoint(0, 0);
   [nativePtr setFrame: frame];
+}
+
+
+
+NA_DEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable){
+  space->dragsWindow = isDraggable;
 }
 
 

@@ -152,6 +152,8 @@
   #define NAWindowStyleMaskBorderless     NSWindowStyleMaskBorderless
   #define NAWindowStyleMaskHUDWindow      NSWindowStyleMaskHUDWindow
   #define NAWindowStyleMaskFullScreen     NSWindowStyleMaskFullScreen
+  #define NAWindowStyleMaskNonactivatingPanel NSWindowStyleMaskNonactivatingPanel
+  #define NAWindowStyleMaskUtilityWindow  NSWindowStyleMaskUtilityWindow
   #define NAEventModifierFlagShift        NSEventModifierFlagShift
   #define NAEventModifierFlagOption       NSEventModifierFlagOption
   #define NAEventModifierFlagControl      NSEventModifierFlagControl

@@ -745,10 +745,11 @@ NA_API NARect naGetMainScreenRect(void);
 NA_API NASpace* naNewSpace(NASize size);
 NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
 NA_API void naRemoveSpaceChilds(NASpace* space);
-NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color);
+NA_API void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
 NA_API void naSetSpaceRect(NASpace* space, NARect rect);
+NA_API void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable);
 
 // Slider. Default height: 24. Y-offset: -2
 NA_API NASlider* naNewSlider(double width);
