@@ -197,11 +197,19 @@ NA_DEF void naSetButtonSubmit(
 {
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   [nativePtr setDefaultButton:NA_TRUE];
-  naAddUIKeyboardShortcut(
-    naGetUIElementWindow(button),
-    naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
-    handler,
-    controller);
+  
+  NAWindow* window = naGetUIElementWindow(button);
+  if(window){
+    naAddUIKeyboardShortcut(
+      window,
+      naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
+      handler,
+      controller);
+  }else{
+    #if NA_DEBUG
+      naError("Submit button requires NAWindow to work.");
+    #endif
+  }
 }
 
 
