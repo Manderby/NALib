@@ -12,6 +12,7 @@
   self = [super initWithFrame:frame];
 
   // todo: make this dependent on whether tracking is needed or not.
+  NSRect bounds = [self bounds];
   trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
       options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow)
       owner:self userInfo:nil];

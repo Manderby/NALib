@@ -34,17 +34,17 @@
     }
 
     // todo: make this dependent on whether tracking is needed or not.
-    trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
-        options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
-        owner:self userInfo:nil];
-    [self addTrackingArea:trackingArea];
+//    trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
+//        options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
+//        owner:self userInfo:nil];
+//    [self addTrackingArea:trackingArea];
 
     cocoaMetalSpace = newCocoaMetalSpace;
     return self;
   }
   
   - (void)dealloc{
-    NA_COCOA_RELEASE(trackingArea);
+//    NA_COCOA_RELEASE(trackingArea);
     NA_COCOA_SUPER_DEALLOC();
   }
   
