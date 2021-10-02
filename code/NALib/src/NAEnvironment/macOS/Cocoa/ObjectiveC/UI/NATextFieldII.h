@@ -33,6 +33,11 @@
   na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDIT_FINISHED);
 }
 
+- (void) controlTextDidEndEditing:(NSNotification *)notification{
+  NA_UNUSED(notification);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDIT_FINISHED);
+}
+
 - (void)controlTextDidChange:(NSNotification *)notification{
   NA_UNUSED(notification);
   na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDITED);

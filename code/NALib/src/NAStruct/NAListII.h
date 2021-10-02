@@ -340,7 +340,7 @@ NA_IDEF size_t naGetListElemIndex(const NAList* list, void* elem){
   while(naIterateList(&iter))
   {
     const void* curElem = naGetListCurConst(&iter);
-    if(curElem == elem){ return index; }
+    if(curElem == elem){ break; }
     index++;
   }
   naClearListIterator(&iter);
