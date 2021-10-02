@@ -134,7 +134,7 @@
 }
 
 - (BOOL)canBecomeKeyWindow{
-  return YES;
+  return (BOOL)naGetFlagu32(cocoaWindow->window.coreFlags, NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS);
 }
 
 @end
@@ -157,7 +157,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
   if(!titleless){styleMask |= NAWindowStyleMaskTitled;}
   if(!noncloseable){styleMask |= NAWindowStyleMaskClosable;}
   if(!nonminiaturizeable){styleMask |= NAWindowStyleMaskMiniaturizable;}
-  if(auxiliary){styleMask |= NAWindowStyleMaskNonactivatingPanel | NAWindowStyleMaskUtilityWindow;}
+//  if(auxiliary){styleMask |= NAWindowStyleMaskNonactivatingPanel | NAWindowStyleMaskUtilityWindow;}
   
   NACocoaNativeWindow* nativePtr = [[NACocoaNativeWindow alloc]
     initWithWindow:cocoaWindow
@@ -362,6 +362,10 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
 }
 
 
+
+NA_DEF void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts){
+  naSetFlagu32(&(window->coreFlags), NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS, accepts);
+}
 
 // This is free and unencumbered software released into the public domain.
 

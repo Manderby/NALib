@@ -8,11 +8,10 @@
 
 @implementation NACocoaNativeSpace
 
-- (id) initWithSpace:(NACocoaSpace*)newCocoaSpace frame:(NSRect)frame{
+- (id _Nonnull) initWithSpace:(NACocoaSpace* _Nonnull)newCocoaSpace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
   // todo: make this dependent on whether tracking is needed or not.
-  NSRect bounds = [self bounds];
   trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
       options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow)
       owner:self userInfo:nil];
@@ -44,7 +43,7 @@
   }
 }
 
-- (void)mouseDown:(NSEvent*)event{
+- (void)mouseDown:(NSEvent* _Nonnull)event{
   if(cocaSpace->space.dragsWindow){
     isMoving = NA_TRUE;
     originMousePos = naMakePosWithNSPoint([event locationInWindow]);
@@ -53,7 +52,7 @@
   }
 }
 
-- (void)mouseDragged:(NSEvent*)event{
+- (void)mouseDragged:(NSEvent* _Nonnull)event{
   if(cocaSpace->space.dragsWindow && isMoving){
     NAPos curMousePos = naMakePosWithNSPoint([event locationInWindow]);
     NSRect frame = [[self window] frame];
@@ -65,7 +64,7 @@
   }
 }
 
-- (void)mouseUp:(NSEvent*)event{
+- (void)mouseUp:(NSEvent* _Nonnull)event{
   if(cocaSpace->space.dragsWindow){
     [self resetDrag];
   }else{
@@ -73,17 +72,17 @@
   }
 }
 
-- (void)mouseMoved:(NSEvent*)event{
+- (void)mouseMoved:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
   na_DispatchUIElementCommand((NA_UIElement*)cocaSpace, NA_UI_COMMAND_MOUSE_MOVED);
 }
 
-- (void)mouseEntered:(NSEvent*)event{
+- (void)mouseEntered:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
   na_DispatchUIElementCommand((NA_UIElement*)cocaSpace, NA_UI_COMMAND_MOUSE_ENTERED);
 }
 
-- (void)mouseExited:(NSEvent*)event{
+- (void)mouseExited:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
   na_DispatchUIElementCommand((NA_UIElement*)cocaSpace, NA_UI_COMMAND_MOUSE_EXITED);
 }
@@ -93,7 +92,7 @@
   originMousePos = naMakePos(0, 0);
 }
 
-- (BOOL)acceptsFirstMouse:(NSEvent*)event{
+- (BOOL)acceptsFirstMouse:(NSEvent* _Nullable)event{
   NA_UNUSED(event);
   return YES;
 }
@@ -106,7 +105,7 @@
 
 
 
-NA_DEF NASpace* naNewSpace(NASize size){
+NA_DEF NASpace* _Nonnull naNewSpace(NASize size){
   NACocoaSpace* cocoaSpace = naNew(NACocoaSpace);
 
   NACocoaNativeSpace* nativePtr = [[NACocoaNativeSpace alloc]
@@ -126,13 +125,13 @@ NA_DEF NASpace* naNewSpace(NASize size){
 
 
 
-NA_DEF void na_DestructCocoaSpace(NACocoaSpace* cocoaSpace){
+NA_DEF void na_DestructCocoaSpace(NACocoaSpace* _Nonnull cocoaSpace){
   na_ClearSpace((NASpace*)cocoaSpace);
 }
 
 
 
-NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
+NA_DEF void naSetSpaceRect(NASpace* _Nonnull space, NARect rect){
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   NSRect frame = naMakeNSRectWithRect(rect);
   frame.origin = NSMakePoint(0, 0);
@@ -141,7 +140,7 @@ NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
 
 
 
-NA_DEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable){
+NA_DEF void naSetSpaceDragsWindow(NASpace* _Nonnull space, NABool isDraggable){
   space->dragsWindow = isDraggable;
 }
 
@@ -150,7 +149,7 @@ NA_DEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable){
 @class NACocoaNativeRadio;
 @class NACocoaNativeTextBox;
 
-NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
+NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos){
   naDefineCocoaObject(NACocoaNativeSpace, nativeSpacePtr, space);
   naDefineCocoaObject(NSView<NACocoaNativeEncapsulatedElement>, cocoaView, child);
 
@@ -179,7 +178,7 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
 
 
 
-NA_HDEF void naRemoveSpaceChilds(NASpace* space)
+NA_HDEF void naRemoveSpaceChilds(NASpace* _Nonnull space)
 {
   while(!naIsListEmpty(&(space->childs))){
     void* child = naGetListFirstMutable(&(space->childs));
@@ -190,7 +189,7 @@ NA_HDEF void naRemoveSpaceChilds(NASpace* space)
 
 
 
-NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
+NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* _Nonnull space){
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   // Warning: does not work when frame unequal bounds.
   NSRect contentRect = [nativePtr frame];
@@ -216,7 +215,7 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
 
 
 
-NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color){
+NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NABabyColor* _Nullable color){
   if(color){
     space->backgroundColor[0] = (*color)[0];
     space->backgroundColor[1] = (*color)[1];
@@ -231,7 +230,7 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color){
 
 
 
-NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
+NA_DEF void naSetSpaceAlternateBackground(NASpace* _Nonnull space, NABool alternate){
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   space->alternateBackground = alternate;
   [nativePtr setNeedsDisplay:YES];

@@ -806,6 +806,7 @@ NA_API void naCloseWindow(NAWindow* window);
 NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
 NA_API void naSetWindowContentSpace(NAWindow* window, void* uiElement);
 NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);
+NA_API void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 NA_API NABool naIsWindowResizeable(NAWindow* window);
 NA_API void naPreventWindowFromClosing(NAWindow* window, NABool prevent);

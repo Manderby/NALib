@@ -304,7 +304,7 @@ NA_HDEF void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSp
   na_InitUIElement(&(window->uiElement), NA_UI_WINDOW, nativePtr);
   na_AddApplicationWindow(window);
   window->contentSpace = contentSpace;
-  window->coreFlags = 0;
+  window->coreFlags = NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS;
   if(fullScreen){window->coreFlags |= NA_CORE_WINDOW_FLAG_FULLSCREEN;}
   if(resizeable){window->coreFlags |= NA_CORE_WINDOW_FLAG_RESIZEABLE;}
   window->windowedFrame = windowedFrame;
