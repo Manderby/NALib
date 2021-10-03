@@ -50,6 +50,10 @@
   NA_COCOA_SUPER_DEALLOC();
 }
 
+- (void)paste:(id) sender{
+  [self pasteAsPlainText:sender];
+}
+
 - (void) setText:(const NAUTF8Char*)text{
   NSArray<NSValue*>* selectedRanges = [self selectedRanges];
   [self setString:[NSString stringWithUTF8String:text]];
