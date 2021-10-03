@@ -25,7 +25,7 @@ NA_HAPI NARect na_GetNativeWindowAbsoluteInnerRect(NSWindow* window);
 
 
 NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr){
-  NA_COCOA_RELEASE(nativePtr);
+  NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(nativePtr));
 }
 
 
@@ -205,9 +205,9 @@ NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
   }
   
   if(naGetUIElementType(uiElement) == NA_UI_WINDOW){
-    return naGetWindowBackingScaleFactor(naGetUIElementNativePtr(uiElement));
+    return naGetWindowBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(uiElement)));
   }else{
-    return naGetUIElementBackingScaleFactor(naGetUIElementNativePtr(uiElement));
+    return naGetUIElementBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(uiElement)));
   }
 }
 

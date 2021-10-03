@@ -105,7 +105,7 @@
     #define NA_COCOA_BRIDGE __bridge
     #define NA_COCOA_PTR_OBJC_TO_C(obj) (void*)CFBridgingRetain(obj)
     #define NA_COCOA_PTR_C_TO_OBJC(ptr) CFBridgingRelease(ptr)
-    #define NA_COCOA_RETAIN(obj) (void)obj
+    #define NA_COCOA_RETAIN(obj) obj
     #define NA_COCOA_RELEASE(obj) (void)obj
     #define NA_COCOA_AUTORELEASE(obj) obj
     #define NA_COCOA_SUPER_DEALLOC()

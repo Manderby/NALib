@@ -67,7 +67,7 @@ NABool naLoadNib(const NAUTF8Char* nibName){
       // these will be a leak but who cares at this point.
       NSArray * topLevelObjects;
       loaded = [[NSBundle mainBundle] loadNibNamed:[NSString stringWithUTF8String:nibName] owner:NSApp topLevelObjects:&topLevelObjects];
-      NA_COCOA_RETAIN(topLevelObjects);
+      (void)NA_COCOA_RETAIN(topLevelObjects);
     }
   )
   if(!loaded){
