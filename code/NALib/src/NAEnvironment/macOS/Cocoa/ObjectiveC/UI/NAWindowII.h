@@ -17,6 +17,7 @@
   trackingCount = 0;
   trackingArea = nil;
   [self setReleasedWhenClosed:NO];
+  [self setHasShadow:YES];
   return self;
 }
 
