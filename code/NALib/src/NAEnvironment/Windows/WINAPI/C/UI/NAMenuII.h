@@ -74,7 +74,7 @@ NA_DEF size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
   return naGetListElemIndex(&(menu->childs), item);
 }
 
-NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos, NAUIElement* parentUIElement){
+NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos, void* parentUIElement){
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
   HMENU hMenu = CreatePopupMenu();

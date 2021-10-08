@@ -510,10 +510,11 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
 
   LONG baseSize;
   switch(size){
-  case NA_FONT_SIZE_SMALL: baseSize = -11; break;
-  case NA_FONT_SIZE_DEFAULT: baseSize = metrics->lfMessageFont.lfHeight; break;
-  case NA_FONT_SIZE_BIG: baseSize = -18; break;
-  case NA_FONT_SIZE_HUGE: baseSize = -24; break;
+  case NA_FONT_SIZE_SMALL: baseSize = 12; break;
+  case NA_FONT_SIZE_DEFAULT: baseSize = 14; break;
+  //case NA_FONT_SIZE_DEFAULT: baseSize = metrics->lfMessageFont.lfHeight; break;
+  case NA_FONT_SIZE_BIG: baseSize = 18; break;
+  case NA_FONT_SIZE_HUGE: baseSize = 24; break;
   default: baseSize = metrics->lfMessageFont.lfHeight; break;
   }
 

@@ -53,6 +53,19 @@ NABool newTemperatureController(NAReaction reaction){
 
 
 
+// Will be called when the + Button is pressed.
+NABool pressTemperatureButton(NAReaction reaction){
+  TemperatureController* con = reaction.controller;
+  
+  if(reaction.uiElement == con->quitButton){
+    naStopApplication();
+  }
+
+  return NA_TRUE;
+}
+
+
+
 TemperatureController* createTemperatureController(){
   // Note for the sake of simplicity, the memory allocated here will leak.
   // You should store this con pointer somewhere in the application and
@@ -97,7 +110,7 @@ TemperatureController* createTemperatureController(){
   // Create a Quit button for terminating the whole application.
   con->quitButton = naNewTextButton("Quit", 60, 0);
   naAddSpaceChild(windowSpace, con->quitButton, naMakePos(320, 20));
-  naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, quitApplication, con);
+  naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, pressTemperatureButton, con);
 
   // Show the current window.
   naShowWindow(con->window);

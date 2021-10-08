@@ -8,7 +8,6 @@
 #include "../../NALib/src/NAEnvironment/NAUIImage.h"
 
 
-
 struct ExperimentController{
   NAWindow* experimentWindow;
   NASpace* contentSpace;
@@ -61,6 +60,7 @@ struct ExperimentController{
   NAMenuItem* menuItem4;
   NAMenuItem* menuSeparator;
 
+  NAButton* fontButton;
   NAButton* quitButton;
 
   int textOption;
@@ -186,7 +186,7 @@ NABool menuButtonPressed(NAReaction reaction){
   menuPos.y += rect.size.height;
 
   naSetLabelText(con->outputLabel, "Menu button pressed");
-  naPresentMenu(con->menu, menuPos);
+  naPresentMenu(con->menu, menuPos, con->menuButton);
 
   return NA_TRUE;
 }
@@ -203,6 +203,18 @@ NABool menuItemKeyboardSelected(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "MenuItem with index %d selected by keyboard shortcut", (int)naGetMenuItemIndex(con->menu, reaction.uiElement));
   naSetLabelText(con->outputLabel, outputText);
+
+  return NA_TRUE;
+}
+
+NABool pressExperimentButton(NAReaction reaction){
+  ExperimentController* con = (ExperimentController*)reaction.controller;
+
+  if(reaction.uiElement == con->fontButton){
+    showFonts();
+  }else if(reaction.uiElement == con->quitButton){
+    naStopApplication();
+  }
 
   return NA_TRUE;
 }
@@ -331,7 +343,7 @@ ExperimentController* createExperimentController(){
   con->menuButton = naNewTextButton("Push for Menu", buttonSize * 2, 0);
   naAddUIReaction(con->menuButton, NA_UI_COMMAND_PRESSED, menuButtonPressed, con);
   naAddSpaceChild(con->contentSpace, con->menuButton, naMakePos(left, curPosY));
-  con->menu = naNewMenu(con->menuButton);  
+  con->menu = naNewMenu();  
   con->menuItem0 = naNewMenuItem("You are Winner");
   con->menuItem1 = naNewMenuItem("Kohle, Kohle, Kohle");
   con->menuItem2 = naNewMenuItem("I am Groot");
@@ -355,10 +367,12 @@ ExperimentController* createExperimentController(){
   //  menuItemKeyboardSelected,
   //  con);
 
-  // Create a Quit button for terminating the whole application.
+  con->fontButton = naNewTextButton("Fonts", 60, 0);
   con->quitButton = naNewTextButton("Quit", 60, 0);
+  naAddSpaceChild(con->contentSpace, con->fontButton, naMakePos(10, 140));
   naAddSpaceChild(con->contentSpace, con->quitButton, naMakePos(10, 110));
-  naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, quitApplication, con);
+  naAddUIReaction(con->fontButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
+  naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",

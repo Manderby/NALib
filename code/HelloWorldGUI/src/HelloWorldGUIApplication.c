@@ -12,6 +12,7 @@ struct HelloWorldGUIApplication{
   int nextWindowX;
   int nextWindowY;
   ExperimentController* experimentController;
+  FontController* fontController;
 };
 
 // The central variable storing the app. Defined as global.
@@ -39,6 +40,7 @@ void poststartup(void* arg){
   NA_UNUSED(arg);
   createTemperatureController();
   app->experimentController = createExperimentController();
+  app->fontController = createFontController();
 }
 
 
@@ -47,6 +49,7 @@ void clearApplication(void){
   naForeachStackMutable(&(app->temperatureControllers), (NAMutator)clearTemperatureController);
   naClearStack(&(app->temperatureControllers));
   clearExperimentController(app->experimentController);
+  clearFontController(app->fontController);
   naFree(app);
 }
 
@@ -69,12 +72,11 @@ void addTemperatureControllerToApplication(TemperatureController* con){
   *(TemperatureController**)naPushStack(&(app->temperatureControllers)) = con;
 }
 
-
-
-NABool quitApplication(NAReaction reaction){
-  naStopApplication();
-  return NA_TRUE;
+void showFonts(){
+  showFontController(app->fontController);
 }
+
+
 
 // This is free and unencumbered software released into the public domain.
 

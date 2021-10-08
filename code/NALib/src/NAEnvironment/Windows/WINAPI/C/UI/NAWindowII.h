@@ -161,6 +161,8 @@ NABool naHandleWindowTabOrder(NAReaction reaction){
 NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, NAInt storageTag){
   NAWINAPIWindow* winapiWindow = naNew(NAWINAPIWindow);
 
+  NABool resizeable = naGetFlagu32(flags, NA_WINDOW_RESIZEABLE);
+
   rect = naSetWindowStorageTag(&(winapiWindow->window), storageTag, rect, resizeable);
 
   DWORD style = WS_OVERLAPPEDWINDOW;
@@ -202,6 +204,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
 
   na_InitWindow(&(winapiWindow->window), nativePtr, NA_NULL, NA_FALSE, resizeable, rect);
   winapiWindow->firstResponder = NA_NULL;
+  winapiWindow->window.flags = flags;
 
   naAddUIKeyboardShortcut(
     winapiWindow,

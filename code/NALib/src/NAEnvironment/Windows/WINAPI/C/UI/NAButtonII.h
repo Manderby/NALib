@@ -122,9 +122,9 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     SetWindowLongPtr(naGetUIElementNativePtr(uiElement), GWL_STYLE, (LONG_PTR)oldstyle);
   }
 
-  if(winapiButton->image)
+  if(winapiButton->button.uiImage)
   {
-    size1x = naGetUIImage1xSize(winapiButton->image);
+    size1x = naGetUIImage1xSize(winapiButton->button.uiImage);
 
     buttonsize = naMakeSizei(
       drawitemstruct->rcItem.right - drawitemstruct->rcItem.left,
@@ -149,9 +149,9 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     }
 
     if(alt){
-      foreImage = na_GetUIImageBabyImage(winapiButton->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_LIGHT);
+      foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_LIGHT);
     }else{
-      foreImage = na_GetUIImageBabyImage(winapiButton->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT);
+      foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT);
     }
 
     // We store the background where the image will be placed.

@@ -191,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ExperimentController.c" />
+    <ClCompile Include="src\FontController.c" />
     <ClCompile Include="src\HelloWorldGUIApplication.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\TemperatureController.c" />

@@ -9,11 +9,14 @@ typedef struct TemperatureController TemperatureController;
 TemperatureController* createTemperatureController(void);
 void clearTemperatureController(TemperatureController* con);
 
-
-
 typedef struct ExperimentController ExperimentController;
 ExperimentController* createExperimentController(void);
 void clearExperimentController(ExperimentController* con);
+
+typedef struct FontController FontController;
+FontController* createFontController(void);
+void clearFontController(FontController* con);
+void showFontController(FontController* con);
 
 
 
@@ -23,8 +26,9 @@ void poststartup(void* arg);
 void clearApplication(void);
 double getAndAdvanceNextWindowX(void);
 double getAndAdvanceNextWindowY(void);
+
 void addTemperatureControllerToApplication(TemperatureController* con);
-NABool quitApplication(NAReaction reaction);
+void showFonts(void);
 
 
 
