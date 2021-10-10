@@ -202,7 +202,7 @@ NA_DEF void naSetButtonSubmit(
   if(window){
     naAddUIKeyboardShortcut(
       window,
-      naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
+      naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
       handler,
       controller);
   }else{
@@ -221,12 +221,12 @@ NA_DEF void naSetButtonAbort(
 {
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
-    naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
+    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
     handler,
     controller);
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
-    naMakeKeybardStatus(NA_MODIFIER_FLAG_COMMAND, NA_KEYCODE_PERIOD),
+    naMakeKeyStroke(NA_MODIFIER_FLAG_COMMAND, NA_KEYCODE_PERIOD),
     handler,
     controller);
 }

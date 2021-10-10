@@ -98,7 +98,7 @@
 // Windows: unavailable
 // Macintosh: Cocoa and /System/Library/Frameworks/Metal.framework/Metal
 //
-// The #include directives can be found on top of the NAUI.h file
+// The #include directives can be found on top of the NAApp.h file
 //
 // Default is 0
 

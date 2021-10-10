@@ -369,8 +369,15 @@ NA_DEF void naCloseWindow(NAWindow* window){
 
 
 
-NA_DEF void naSetWindowContentSpace(NAWindow* window, void* uiElement){
-  window->contentSpace = (NASpace*)uiElement;
+NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
+  #if NA_DEBUG
+    if((naGetUIElementType(space) != NA_UI_SPACE) &&
+      (naGetUIElementType(space) != NA_UI_IMAGE_SPACE) &&
+      (naGetUIElementType(space) != NA_UI_OPENGL_SPACE) &&
+      (naGetUIElementType(space) != NA_UI_METAL_SPACE))
+      naError("Require a space, not any arbitrary ui element.");
+  #endif
+  window->contentSpace = space;
   na_SetUIElementParent(uiElement, window, NA_TRUE);
 }
 

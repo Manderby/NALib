@@ -6,8 +6,8 @@
 
 
 #include "Availability.h"
-#include "../../../NAUIImage.h"
-#include "../../../../NAPNG.h"
+#include "NAApp.h"
+#include "../../NAPNG.h"
 
 
 

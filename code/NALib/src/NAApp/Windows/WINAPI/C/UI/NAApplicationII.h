@@ -149,7 +149,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
         break;
       }
       //if(!IsDialogMessage(message.hwnd, &message)){
-      // Capture any keyboard shortcuts overwritten by the NALib user
+      // Capture any keyboard shortcuts overridden by the NALib user
       // Note: Usually, the IsDialogMessage function is responsible for
       // capturing TAB events but it has proven to be difficult to handle
       // and therefore, everything is captured in na_InterceptKeyboardShortcut.
@@ -632,11 +632,11 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
 }
 
 
-NA_DEF void naCenterMouse(void* uiElement, NABool includebounds, NABool sendmovemessage){
+NA_DEF void naCenterMouse(void* uiElement, NABool includeBorder){
   NARect spacerect;
   NARect screenframe;
   NAPos centerpos;
-  spacerect = naGetUIElementRect(uiElement, naGetApplication(), includebounds);
+  spacerect = naGetUIElementRect(uiElement, naGetApplication(), includeBorder);
   // todo: screen not defined
   screenframe = naGetMainScreenRect();
   centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;

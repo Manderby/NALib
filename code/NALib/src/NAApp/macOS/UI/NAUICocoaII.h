@@ -5,7 +5,7 @@
 // Do not include this file anywhere else!
 
 
-#include "NAUICore.h"
+#include "NAAppCore.h"
 #include "NAMemory.h"
 #include "NACoord.h"
 #include "NAThreading.h"
@@ -71,18 +71,18 @@ NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event){
   NABool hasOption;
   NABool hasCommand;
   NAUIKeyCode keyCode = [event keyCode];
-  na_App->keyboardStatus.keyCode = keyCode;
+  na_App->curKeyStroke.keyCode = keyCode;
   [event modifierFlags];
   flags = (NSUInteger)[event modifierFlags];
   hasShift     = (flags & NAEventModifierFlagShift)   != 0;
   hasControl   = (flags & NAEventModifierFlagControl) != 0;
   hasOption    = (flags & NAEventModifierFlagOption)  != 0;
   hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
-  na_App->keyboardStatus.modifiers = 0;
-  na_App->keyboardStatus.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
-  na_App->keyboardStatus.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
-  na_App->keyboardStatus.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
-  na_App->keyboardStatus.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
+  na_App->curKeyStroke.modifiers = 0;
+  na_App->curKeyStroke.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
+  na_App->curKeyStroke.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
+  na_App->curKeyStroke.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
+  na_App->curKeyStroke.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
 }
 
 
@@ -122,15 +122,15 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
       while(!retValue && naIterateList(&iter)){
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
-        if(keyReaction->shortcut.keyCode == na_App->keyboardStatus.keyCode){
+        if(keyReaction->shortcut.keyCode == na_App->curKeyStroke.keyCode){
           NABool needsShift   = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
           NABool needsControl = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
           NABool needsOption  = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
           NABool needsCommand = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
-          NABool hasShift   = naGetFlagu32(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool hasControl = naGetFlagu32(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool hasOption  = naGetFlagu32(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool hasCommand = naGetFlagu32(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_COMMAND);
+          NABool hasShift   = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool hasControl = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool hasOption  = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool hasCommand = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
           if(needsShift   == hasShift
           && needsControl == hasControl
           && needsOption  == hasOption
@@ -380,12 +380,11 @@ NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* file
 
 
 
-NA_DEF void naCenterMouse(void* uiElement, NABool includebounds, NABool sendmovemessage){
+NA_DEF void naCenterMouse(void* uiElement, NABool includeBorder){
   NARect spacerect;
   NSRect screenframe;
   CGPoint centerpos;
-  NA_UNUSED(sendmovemessage);
-  spacerect = naGetUIElementRect(uiElement, naGetApplication(), includebounds);
+  spacerect = naGetUIElementRect(uiElement, naGetApplication(), includeBorder);
   screenframe = [[NSScreen mainScreen] frame];
   centerpos.x = (CGFloat)spacerect.pos.x + (CGFloat)spacerect.size.width * .5f;
   centerpos.y = (CGFloat)screenframe.size.height - (CGFloat)(spacerect.pos.y + spacerect.size.height * .5f);
@@ -415,7 +414,7 @@ NA_DEF void naHideMouse(){
 
 
 
-NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABool includeborder){
+NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABool includeBorder){
   NARect rect;
   NARect relRect;
   NA_UIElement* element;
@@ -453,7 +452,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
   case NA_UI_TEXTBOX:      rect = na_GetTextBoxAbsoluteInnerRect(element); break;
   case NA_UI_TEXTFIELD:    rect = na_GetTextFieldAbsoluteInnerRect(element); break;
   case NA_UI_WINDOW:
-    if(includeborder){
+    if(includeBorder){
       rect = na_GetWindowAbsoluteOuterRect(element);
     }else{
       rect = na_GetWindowAbsoluteInnerRect(element);

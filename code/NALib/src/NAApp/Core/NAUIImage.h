@@ -1,17 +1,17 @@
 
+#if defined NA_UI_IMAGE_INCLUDED || !defined NA_APP_INCLUDED
+  #warning "Do not include this file directly. Use NAApp.h"
+#endif
 #ifndef NA_UI_IMAGE_INCLUDED
 #define NA_UI_IMAGE_INCLUDED
+
 #ifdef __cplusplus
   extern "C"{
 #endif
 
-// ///////////////////////////
-// This file contains API which should be hidden to the programmer but which
-// is shared among the different implementations of the UI in Mac and Win.
-// ///////////////////////////
 
 
-#include "../NABabyImage.h"
+#include "../../NABabyImage.h"
 
 typedef enum{
   NA_UIIMAGE_RESOLUTION_1x,
@@ -37,16 +37,42 @@ typedef enum{
 typedef struct NAUIImage NAUIImage;
 
 
-
+// naNewUIImage creates a new UIImage with a given main and alternative image.
+//
+// You always provide the images in the highest resolution available. If you
+// have for example a 512x512 point image representing the double resolution
+// image of a 256x256 icon, you provide that 512x512 image with the resolution
+// NA_UIIMAGE_RESOLUTION_2x.
+//
+// Downsampling will be done automatically by NALib.
+//
+// Note that a UIImage is here to solve the issue of different resolutions,
+// not the issue of different representations depending on the visual size
+// of an image. Meaning: If for example an icon usually is 256x256 points in
+// size but you display it as a 16x16 sized icon, you might want to have a
+// different representation with less detail. In such a case, you create a
+// separate UIImage for that representation, not use the same UIImage.
+//
+// The tintMode defines how the images are preprocessed with the system default
+// control color which is dependent on the current color scheme of the system.
+// For example, in dark mode, the images get tinted with a white color.
+//
 // Useful tint modes are
-// NA_BLEND_ZERO         leaves the image as it is
+// NA_BLEND_ZERO         leaves the image as it is. All colors are preserved.
 // NA_BLEND_OPAQUE       tints opaque parts of the image
 // NA_BLEND_BLACK_GREEN  tints black pixels (measured by the green channel)
 // NA_BLEND_WHITE_GREEN  tints white pixels (measured by the green channel)
-// The other tint modes are applicable but will likely produce unuseful images.
-// Use naRetain and naRelease.
-NA_API NAUIImage* naNewUIImage(const NABabyImage* main, const NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode);
+// Other NABlendMode values are applicable but will likely produce unuseful
+// images.
+//
+// The NAUIImage has reference counting built in. Use naRetain and naRelease.
+NA_API NAUIImage* naNewUIImage(
+  const NABabyImage* main,
+  const NABabyImage* alt,
+  NAUIImageResolution resolution,
+  NABlendMode tintMode);
 
+// Returns the size of the 1x representation.
 NA_IAPI NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
 
 // Returns the default foreground color for the given skin.

@@ -5,7 +5,6 @@
 
 
 #include "HelloWorldGUI.h"
-#include "../../NALib/src/NAEnvironment/NAUIImage.h"
 
 
 struct ExperimentController{

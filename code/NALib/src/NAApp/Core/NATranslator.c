@@ -1,10 +1,10 @@
 
-#include "../NATranslator.h"
-#include "../NATree.h"
-#include "../NAList.h"
-#include "../NAString.h"
-#include "../NAUI.h"
-#include "NAUICore.h"
+#include "../../NATranslator.h"
+#include "../../NATree.h"
+#include "../../NAList.h"
+#include "../../NAString.h"
+#include "../../NAApp.h"
+#include "NAAppCore.h"
 #include <ctype.h>
 
 

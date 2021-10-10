@@ -1,34 +1,44 @@
 
-// This is an example showing how to create a GUI application with NALib which
-// converts temperatures from Degree Celsius to Degree Fahrenheit.
-
-#include "../../NALib/src/NAApp.h"
-
-
-typedef struct TemperatureController TemperatureController;
-TemperatureController* createTemperatureController(void);
-void clearTemperatureController(TemperatureController* con);
-
-typedef struct ExperimentController ExperimentController;
-ExperimentController* createExperimentController(void);
-void clearExperimentController(ExperimentController* con);
-
-typedef struct FontController FontController;
-FontController* createFontController(void);
-void clearFontController(FontController* con);
-void showFontController(FontController* con);
+#if defined NA_FONT_INCLUDED || !defined NA_APP_INCLUDED
+  #warning "Do not include this file directly. Use NAApp.h"
+#endif
+#ifndef NA_FONT_INCLUDED
+#define NA_FONT_INCLUDED
 
 
+// NALib defines a set of well working fonts with different sizes. They have
+// been tested on different systems and provide a consistent appearance.
 
-typedef struct HelloWorldGUIApplication HelloWorldGUIApplication;
-void prestartup(void* arg);
-void poststartup(void* arg);
-void clearApplication(void);
-double getAndAdvanceNextWindowX(void);
-double getAndAdvanceNextWindowY(void);
+typedef enum{
+  NA_FONT_KIND_SYSTEM,      // The default system font
+  NA_FONT_KIND_TITLE,       // A bolder kind of the default system font
+  NA_FONT_KIND_MONOSPACE,   // A monospace font.
+  NA_FONT_KIND_PARAGRAPH,   // A nice to read font for displaying longer texts.
+  NA_FONT_KIND_MATH,        // A font close to mathematical representation.
+  NA_FONT_KIND_COUNT
+} NAFontKind;
 
-void addTemperatureControllerToApplication(TemperatureController* con);
-void showFonts(void);
+typedef enum{
+  NA_FONT_SIZE_SMALL,
+  NA_FONT_SIZE_DEFAULT,     // The default system font size
+  NA_FONT_SIZE_BIG,
+  NA_FONT_SIZE_HUGE,
+  NA_FONT_SIZE_COUNT
+} NAFontSize;
+
+#define NA_FONT_FLAG_REGULAR = 0x00;
+#define NA_FONT_FLAG_BOLD    = 0x01;
+#define NA_FONT_FLAG_ITALIC  = 0x02;
+
+typedef enum{
+  NA_TEXT_ALIGNMENT_LEFT,
+  NA_TEXT_ALIGNMENT_RIGHT,
+  NA_TEXT_ALIGNMENT_CENTER
+} NATextAlignment;
+
+
+
+#endif // NA_FONT_INCLUDED
 
 
 

@@ -5,7 +5,7 @@
 // Do not include this file anywhere else!
 
 
-#include "../../../../NAUICore.h"
+#include "../../../../NAAppCore.h"
 #include "../../../../../NAValueHelper.h"
 
 
@@ -628,7 +628,7 @@ NA_HDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
 
 
 
-NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool includebounds){
+NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool includeBorder){
   NARect rect;
   NARect relRect;
   NA_UIElement* elem;
@@ -670,7 +670,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
   case NA_UI_TEXTBOX:      rect = na_GetTextBoxAbsoluteInnerRect(elem); break;
   case NA_UI_TEXTFIELD:    rect = na_GetTextFieldAbsoluteInnerRect(elem); break;
   case NA_UI_WINDOW:
-    if(includebounds){
+    if(includeBorder){
       rect = na_GetWindowAbsoluteOuterRect(elem);
     }else{
       rect = na_GetWindowAbsoluteInnerRect(elem);

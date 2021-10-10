@@ -5,7 +5,7 @@
 // Do not include this file anywhere else!
 
 #include "../../../../NAPreferences.h"
-#include "../../../../NAUI.h"
+#include "../../../../NAApp.h"
 
 
 NA_HIDEF HKEY na_GetNativePreferences(){

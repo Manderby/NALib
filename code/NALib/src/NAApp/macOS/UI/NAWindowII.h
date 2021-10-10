@@ -326,16 +326,24 @@ NA_DEF void naCloseWindow(NAWindow* window){
 
 
 
-NA_DEF void naSetWindowContentSpace(NAWindow* window, void* uiElement){
+NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
+  #if NA_DEBUG
+    if((naGetUIElementType(space) != NA_UI_SPACE) &&
+      (naGetUIElementType(space) != NA_UI_IMAGE_SPACE) &&
+      (naGetUIElementType(space) != NA_UI_OPENGL_SPACE) &&
+      (naGetUIElementType(space) != NA_UI_METAL_SPACE))
+      naError("Require a space, not any arbitrary ui element.");
+  #endif
+
   naDefineCocoaObject(NACocoaNativeWindow, nativeWindowPtr, window);
-  naDefineCocoaObject(NSView, nativeUIElementPtr, uiElement);
+  naDefineCocoaObject(NSView, nativeUIElementPtr, space);
   if([nativeWindowPtr trackingArea]){na_ClearWindowMouseTracking(window);}
   [nativeWindowPtr setContentView:nativeUIElementPtr];
   [nativeWindowPtr setInitialFirstResponder:[nativeWindowPtr contentView]];
   
   if(window->contentSpace){naDelete(window->contentSpace);}
-  window->contentSpace = (NASpace*)uiElement;
-  na_SetUIElementParent(uiElement, window, NA_TRUE);
+  window->contentSpace = space;
+  na_SetUIElementParent(space, window, NA_TRUE);
   
   if([nativeWindowPtr trackingCount]){na_RenewWindowMouseTracking(window);}
 }

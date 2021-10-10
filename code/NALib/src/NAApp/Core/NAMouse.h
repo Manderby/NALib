@@ -1,34 +1,40 @@
 
-// This is an example showing how to create a GUI application with NALib which
-// converts temperatures from Degree Celsius to Degree Fahrenheit.
-
-#include "../../NALib/src/NAApp.h"
-
-
-typedef struct TemperatureController TemperatureController;
-TemperatureController* createTemperatureController(void);
-void clearTemperatureController(TemperatureController* con);
-
-typedef struct ExperimentController ExperimentController;
-ExperimentController* createExperimentController(void);
-void clearExperimentController(ExperimentController* con);
-
-typedef struct FontController FontController;
-FontController* createFontController(void);
-void clearFontController(FontController* con);
-void showFontController(FontController* con);
+#if defined NA_MOUSE_INCLUDED || !defined NA_APP_INCLUDED
+  #warning "Do not include this file directly. Use NAApp.h"
+#endif
+#ifndef NA_MOUSE_INCLUDED
+#define NA_MOUSE_INCLUDED
 
 
 
-typedef struct HelloWorldGUIApplication HelloWorldGUIApplication;
-void prestartup(void* arg);
-void poststartup(void* arg);
-void clearApplication(void);
-double getAndAdvanceNextWindowX(void);
-double getAndAdvanceNextWindowY(void);
+// A mouse status currently consists of the current position and the last one
+// recorded.
+typedef struct NAMouseStatus NAMouseStatus;
+struct NAMouseStatus{
+  NAPos pos;
+  NAPos prevPos;
+};
 
-void addTemperatureControllerToApplication(TemperatureController* con);
-void showFonts(void);
+
+
+// Returns the current mouse status.
+NA_API const NAMouseStatus* naGetMouseStatus(void);
+
+// Returns the position of the mouse status.
+NA_API NAPos naGetMousePos(const NAMouseStatus* mousestatus);
+
+// Returns the difference between the current and last recorded position.
+NA_API NASize naGetMouseDelta(const NAMouseStatus* mousestatus);
+
+// Centers the mouse in the given uiElement with or without border.
+NA_API void naCenterMouse(void* uiElement, NABool includeBorder);
+
+// Shows or hides the mouse
+NA_API void naShowMouse(void);
+NA_API void naHideMouse(void);
+
+
+#endif // NA_MOUSE_INCLUDED
 
 
 

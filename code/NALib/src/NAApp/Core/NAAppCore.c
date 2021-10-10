@@ -1,12 +1,12 @@
 
-#include "NAUICore.h"
+#include "NAAppCore.h"
 
 #if (NA_COMPILE_GUI == 1)
 
-#include "../NAMemory.h"
-#include "../NACoord.h"
-#include "../NAThreading.h"
-#include "../NAPreferences.h"
+#include "../../NAMemory.h"
+#include "../../NACoord.h"
+#include "../../NAThreading.h"
+#include "../../NAPreferences.h"
 
 
 // The pointer storing the app if any.
@@ -65,8 +65,8 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
   application->mouseStatus.pos = naMakePos(0, 0);
   application->mouseStatus.prevPos = naMakePos(0, 0);
   
-  application->keyboardStatus.keyCode = NA_KEYCODE_ESC;
-  application->keyboardStatus.modifiers = 0;
+  application->curKeyStroke.keyCode = NA_KEYCODE_ESC;
+  application->curKeyStroke.modifiers = 0;
   
   application->flags = 0;
   application->flags |= NA_APPLICATION_FLAG_RUNNING;
@@ -495,18 +495,18 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
 
 
 
-NA_DEF NAKeyboardStatus naMakeKeybardStatus(uint32 modifiers, NAUIKeyCode keyCode){
-  NAKeyboardStatus newshtatus;
-  newshtatus.modifiers = modifiers;
-  newshtatus.keyCode = keyCode;
-  return newshtatus;
+NA_DEF NAKeyStroke naMakeKeyStroke(uint32 modifiers, NAUIKeyCode keyCode){
+  NAKeyStroke newStroke;
+  newStroke.modifiers = modifiers;
+  newStroke.keyCode = keyCode;
+  return newStroke;
 }
 
 
 
 NA_DEF void naAddUIKeyboardShortcut(
   void* uiElement,
-  NAKeyboardStatus shortcut,
+  NAKeyStroke shortcut,
   NAReactionHandler handler,
   void* controller)
 {
@@ -585,8 +585,8 @@ NA_DEF NASize naGetMouseDelta(const NAMouseStatus* mousestatus){
 
 
 
-NA_DEF NAKeyboardStatus naGetKeyboardStatus(){
-  return na_App->keyboardStatus;
+NA_DEF NAKeyStroke naGetCurrentKeyStroke(){
+  return na_App->curKeyStroke;
 }
 
 

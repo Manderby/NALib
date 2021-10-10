@@ -34,30 +34,30 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include "ObjectiveC/UI/NAUICocoaLegacyII.h"
+#include "NAUICocoaLegacyII.h"
 
-#include "ObjectiveC/NAUIImageCocoaII.h"
-#include "ObjectiveC/NAPreferencesCocoaII.h"
+#include "NAUIImageCocoaII.h"
+#include "NAPreferencesCocoaII.h"
 
-#include "ObjectiveC/UI/NAUICocoaII.h"
-#include "ObjectiveC/UI/NAUICocoaInterfaces.h"
-#include "ObjectiveC/UI/NAApplicationII.h"
+#include "NAUICocoaII.h"
+#include "NAUICocoaInterfaces.h"
+#include "NAApplicationII.h"
 
-#include "ObjectiveC/UI/NAButtonII.h"
-#include "ObjectiveC/UI/NACheckBoxII.h"
-#include "ObjectiveC/UI/NAImageSpaceII.h"
-#include "ObjectiveC/UI/NALabelII.h"
-#include "ObjectiveC/UI/NAMenuII.h"
-#include "ObjectiveC/UI/NAMenuItemII.h"
-#include "ObjectiveC/UI/NAMetalSpaceII.h"
-#include "ObjectiveC/UI/NAOpenGLSpaceII.h"
-#include "ObjectiveC/UI/NAPopupButtonII.h"
-#include "ObjectiveC/UI/NARadioII.h"
-#include "ObjectiveC/UI/NASliderII.h"
-#include "ObjectiveC/UI/NASpaceII.h"
-#include "ObjectiveC/UI/NATextBoxII.h"
-#include "ObjectiveC/UI/NATextFieldII.h"
-#include "ObjectiveC/UI/NAWindowII.h"
+#include "NAButtonII.h"
+#include "NACheckBoxII.h"
+#include "NAImageSpaceII.h"
+#include "NALabelII.h"
+#include "NAMenuII.h"
+#include "NAMenuItemII.h"
+#include "NAMetalSpaceII.h"
+#include "NAOpenGLSpaceII.h"
+#include "NAPopupButtonII.h"
+#include "NARadioII.h"
+#include "NASliderII.h"
+#include "NASpaceII.h"
+#include "NATextBoxII.h"
+#include "NATextFieldII.h"
+#include "NAWindowII.h"
 
 #endif // (NA_COMPILE_GUI == 1)
 #endif // defined __OBJC__

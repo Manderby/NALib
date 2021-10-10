@@ -11,12 +11,12 @@
 // is shared among the different implementations of the UI in Mac and Win.
 // ///////////////////////////
 
-#include "../NAUI.h"
+#include "../../NAApp.h"
 
 #if (NA_COMPILE_GUI == 1)
 
-#include "../NAList.h"
-#include "../NATranslator.h"
+#include "../../NAList.h"
+#include "../../NATranslator.h"
 
 // Very much the same as the nativePtr, there are certain types which are
 // casted differently on the different systems and therefore they are
@@ -24,9 +24,9 @@
 // possible casts on all systems. Internally, they are caseted to these
 // types:
 
-typedef struct NA_UIElement      NA_UIElement;
+typedef struct NA_UIElement NA_UIElement;
 
-typedef struct NAEventReaction       NAEventReaction;
+typedef struct NAEventReaction NAEventReaction;
 typedef struct NAKeyboardShortcutReaction NAKeyboardShortcutReaction;
 
 typedef void*  NAFont;
@@ -54,7 +54,7 @@ struct NAApplication{
   
   NATranslator*     translator;
   NAMouseStatus     mouseStatus;     // The mouse cursor status
-  NAKeyboardStatus  keyboardStatus;  // The keyboard status
+  NAKeyStroke       curKeyStroke;    // The currently pressed key combination
   NAInt             flags;
 
   NAUTF8Char*       name;
@@ -136,7 +136,7 @@ struct NATextBox{
 struct NAWindow{
   NA_UIElement uiElement;
   NAInt        storageTag;
-  NASpace*     contentSpace;
+  void*        contentSpace;
   uint32       coreFlags;
   uint32       flags;
   NARect       windowedFrame;
@@ -152,7 +152,7 @@ struct NAEventReaction{
 
 struct NAKeyboardShortcutReaction{
   void*             controller;
-  NAKeyboardStatus  shortcut;
+  NAKeyStroke       shortcut;
   NAReactionHandler handler;
 };
 
