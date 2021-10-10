@@ -130,12 +130,12 @@ NA_DEF NATextField* naNewTextField(double width){
 
   naAddUIKeyboardShortcut(
     winapiTextField,
-    naMakeKeybardStatus(0, NA_KEYCODE_TAB),
+    naMakeKeyStroke(0, NA_KEYCODE_TAB),
     naHandleTextFieldTabOrder,
     NA_NULL);
   naAddUIKeyboardShortcut(
     winapiTextField,
-    naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB),
+    naMakeKeyStroke(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB),
     naHandleTextFieldReverseTabOrder,
     NA_NULL);
 

@@ -7,7 +7,7 @@
 
 #if NA_COMPILE_OPENGL == 1
 
-#include "../../../../../NADateTime.h"
+#include "../../../NADateTime.h"
 
 
 

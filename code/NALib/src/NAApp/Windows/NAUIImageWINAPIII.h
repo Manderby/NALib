@@ -5,8 +5,7 @@
 // Do not include this file anywhere else!
 
 
-#include "../../../NAUIImage.h"
-#include "../../../NAPNG.h"
+#include "../../NAPNG.h"
 #include <wincodec.h>
 
 

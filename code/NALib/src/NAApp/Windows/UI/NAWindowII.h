@@ -5,7 +5,7 @@
 // Do not include this file anywhere else!
 
 
-#include "../../../../../NAPreferences.h"
+#include "../../../NAPreferences.h"
 
 
 
@@ -208,12 +208,12 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
 
   naAddUIKeyboardShortcut(
     winapiWindow,
-    naMakeKeybardStatus(0, NA_KEYCODE_TAB),
+    naMakeKeyStroke(0, NA_KEYCODE_TAB),
     naHandleWindowTabOrder,
     NA_NULL);
   naAddUIKeyboardShortcut(
     winapiWindow,
-    naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB),
+    naMakeKeyStroke(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB),
     naHandleWindowTabOrder,
     NA_NULL);
 
@@ -378,7 +378,7 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
       naError("Require a space, not any arbitrary ui element.");
   #endif
   window->contentSpace = space;
-  na_SetUIElementParent(uiElement, window, NA_TRUE);
+  na_SetUIElementParent(space, window, NA_TRUE);
 }
 
 

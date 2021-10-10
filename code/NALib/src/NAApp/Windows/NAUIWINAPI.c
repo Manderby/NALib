@@ -13,7 +13,7 @@
 // one single file speeds up the compilation considerably!
 
 
-#include "../../../NABase.h"
+#include "../../NABase.h"
 
 #if NA_OS == NA_OS_WINDOWS
 // Now, we are sure, we compile on Windows. The #if directives will be closed
@@ -26,31 +26,31 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include "C/NAUIImageWINAPIII.h"
+#include "NAUIImageWINAPIII.h"
 
 #if (NA_COMPILE_GUI == 1)
 
-#include "C/NAPreferencesWINAPIII.h"
+#include "NAPreferencesWINAPIII.h"
 
-#include "C/UI/NAUIWINAPIII.h"
-#include "C/UI/NAUIWINAPIInterfaces.h"
-#include "C/UI/NAApplicationII.h"
+#include "UI/NAUIWINAPIII.h"
+#include "UI/NAUIWINAPIInterfaces.h"
+#include "UI/NAApplicationII.h"
 
-#include "C/UI/NAButtonII.h"
-#include "C/UI/NACheckBoxII.h"
-#include "C/UI/NAImageSpaceII.h"
-#include "C/UI/NALabelII.h"
-#include "C/UI/NAMenuII.h"
-#include "C/UI/NAMenuItemII.h"
-#include "C/UI/NAMetalSpaceII.h"
-#include "C/UI/NAOpenGLSpaceII.h"
-#include "C/UI/NAPopupButtonII.h"
-#include "C/UI/NARadioII.h"
-#include "C/UI/NASliderII.h"
-#include "C/UI/NASpaceII.h"
-#include "C/UI/NATextBoxII.h"
-#include "C/UI/NATextFieldII.h"
-#include "C/UI/NAWindowII.h"
+#include "UI/NAButtonII.h"
+#include "UI/NACheckBoxII.h"
+#include "UI/NAImageSpaceII.h"
+#include "UI/NALabelII.h"
+#include "UI/NAMenuII.h"
+#include "UI/NAMenuItemII.h"
+#include "UI/NAMetalSpaceII.h"
+#include "UI/NAOpenGLSpaceII.h"
+#include "UI/NAPopupButtonII.h"
+#include "UI/NARadioII.h"
+#include "UI/NASliderII.h"
+#include "UI/NASpaceII.h"
+#include "UI/NATextBoxII.h"
+#include "UI/NATextFieldII.h"
+#include "UI/NAWindowII.h"
 
 #endif // (NA_COMPILE_GUI == 1)
 #endif // NA_OS == NA_OS_WINDOWS

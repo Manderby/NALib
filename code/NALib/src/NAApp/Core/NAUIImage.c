@@ -1,5 +1,5 @@
 
-#include "NAApp.h"
+#include "../../NAApp.h"
 
 #if (NA_COMPILE_GUI == 1)
 

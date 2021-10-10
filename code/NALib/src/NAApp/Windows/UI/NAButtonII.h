@@ -319,7 +319,7 @@ NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void*
   SetWindowLongPtr(naGetUIElementNativePtr(winapiButton), GWL_STYLE, (LONG_PTR)style);
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
-    naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
+    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
     handler,
     controller);
 }
@@ -329,7 +329,7 @@ NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void*
 NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller){
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
-    naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
+    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
     handler,
     controller);
 }
