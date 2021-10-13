@@ -30,7 +30,7 @@ NA_DEF void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu){
 
 NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem){
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
-  NAWINAPIMenuItem* winapiMenuItem = (NAWINAPIMenuItem*)item;
+  NA_WINAPIMenuItem* winapiMenuItem = (NA_WINAPIMenuItem*)item;
 
   MENUITEMINFO menuItemInfo;
   naZeron(&menuItemInfo, sizeof(MENUITEMINFO));
@@ -61,7 +61,7 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem){
     &menuItemInfo);
 
   //if(atItem){
-  //  NAWINAPIMenu* winapiAtItem = (NAWINAPIMenuItem*)atItem;
+  //  NAWINAPIMenu* winapiAtItem = (NA_WINAPIMenuItem*)atItem;
   //  [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
   //}else{
   //  [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];

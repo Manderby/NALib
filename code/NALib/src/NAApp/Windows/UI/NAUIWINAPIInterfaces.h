@@ -94,14 +94,14 @@ struct NAWINAPIMenu {
 NA_HAPI void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu);
 NA_RUNTIME_TYPE(NAWINAPIMenu, na_DestructWINAPIMenu, NA_FALSE);
 
-typedef struct NAWINAPIMenuItem NAWINAPIMenuItem;
-struct NAWINAPIMenuItem {
+typedef struct NA_WINAPIMenuItem NA_WINAPIMenuItem;
+struct NA_WINAPIMenuItem {
   NAMenuItem   menuItem;
   NABool       isSeparator;
   NAString*    text;
 };
-NA_HAPI void na_DestructWINAPIMenuItem(NAWINAPIMenuItem* winapiMenuItem);
-NA_RUNTIME_TYPE(NAWINAPIMenuItem, na_DestructWINAPIMenuItem, NA_FALSE);
+NA_HAPI void na_DestructWINAPIMenuItem(NA_WINAPIMenuItem* winapiMenuItem);
+NA_RUNTIME_TYPE(NA_WINAPIMenuItem, na_DestructWINAPIMenuItem, NA_FALSE);
 
 #if NA_COMPILE_OPENGL == 1
   //#include "../../../../../NADateTime.h"

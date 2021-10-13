@@ -61,9 +61,6 @@
 #include "NAApp/Core/UIElement/NAApplication.h"
 
 
-#if NA_OS == NA_OS_MAC_OS_X
-  NABool naLoadNib(const NAUTF8Char* nibName);
-#endif
 
 
 

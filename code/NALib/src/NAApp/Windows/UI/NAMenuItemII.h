@@ -7,7 +7,7 @@
 
 
 NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text){
-  NAWINAPIMenuItem* winapiMenuItem = naNew(NAWINAPIMenuItem);
+  NA_WINAPIMenuItem* winapiMenuItem = naNew(NA_WINAPIMenuItem);
 
   winapiMenuItem->isSeparator = NA_FALSE;
   winapiMenuItem->text = naNewStringWithFormat("%s", text);
@@ -42,7 +42,7 @@ NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text){
 }
 
 NA_DEF NAMenuItem* naNewMenuSeparator(){
-  NAWINAPIMenuItem* winapiMenuItem = naNew(NAWINAPIMenuItem);
+  NA_WINAPIMenuItem* winapiMenuItem = naNew(NA_WINAPIMenuItem);
   //NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
   //MENUITEMINFO menuItemInfo;
@@ -67,7 +67,7 @@ NA_DEF NAMenuItem* naNewMenuSeparator(){
   return (NAMenuItem*)winapiMenuItem;
 }
 
-NA_DEF void na_DestructWINAPIMenuItem(NAWINAPIMenuItem* winapiMenuItem){
+NA_DEF void na_DestructWINAPIMenuItem(NA_WINAPIMenuItem* winapiMenuItem){
   na_ClearMenuItem((NAMenuItem*)winapiMenuItem);
 }
 

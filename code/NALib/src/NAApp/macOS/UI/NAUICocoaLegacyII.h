@@ -58,7 +58,7 @@ CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
 
 
 
-NABool naLoadNib(const NAUTF8Char* nibName){
+NABool naLoadNib(const NAUTF8Char* nibName, void* owner){
   NABool loaded = NA_FALSE;
   
   NA_MACOS_AVAILABILITY_GUARD_10_8(
@@ -66,12 +66,12 @@ NABool naLoadNib(const NAUTF8Char* nibName){
       // Yes, we are retaining the topLevelObjects just like that. Upon closing the app,
       // these will be a leak but who cares at this point.
       NSArray * topLevelObjects;
-      loaded = [[NSBundle mainBundle] loadNibNamed:[NSString stringWithUTF8String:nibName] owner:NSApp topLevelObjects:&topLevelObjects];
+      loaded = [[NSBundle mainBundle] loadNibNamed:[NSString stringWithUTF8String:nibName] owner:owner topLevelObjects:&topLevelObjects];
       (void)NA_COCOA_RETAIN(topLevelObjects);
     }
   )
   if(!loaded){
-    loaded = [NSBundle loadNibNamed:[NSString stringWithUTF8String:nibName] owner:NSApp];
+    loaded = [NSBundle loadNibNamed:[NSString stringWithUTF8String:nibName] owner:owner];
   }
   return loaded;
 }

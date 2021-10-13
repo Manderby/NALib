@@ -14,7 +14,7 @@ NA_HIAPI void na_SetUIImageBabyImage(NAUIImage* uiImage, const NABabyImage* baby
 
 
 
-void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+NA_DEF void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin){
   uint8 skinColor[4];
   switch(skin){
   case NA_UIIMAGE_SKIN_LIGHT:
@@ -40,7 +40,7 @@ void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin){
 
 
 
-void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+NA_DEF void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin){
   uint8 skinColor[4];
   switch(skin){
   case NA_UIIMAGE_SKIN_LIGHT:
@@ -70,6 +70,8 @@ NA_HIDEF NAInt na_GetUIImageSubImageIndex(NAUIImageResolution resolution, NAUIIm
   return ((NAInt)resolution * (NAInt)NA_UIIMAGE_KIND_COUNT + (NAInt)kind) * (NAInt)NA_UIIMAGE_SKIN_COUNT + (NAInt)skin;
 }
 
+
+
 NA_HDEF const NABabyImage* na_GetUIImageBabyImage(const NAUIImage* uiImage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
   NAInt subIndex = na_GetUIImageSubImageIndex(resolution, kind, skin);
   const NABabyImage* retimg = uiImage->babyImages[subIndex];
@@ -89,6 +91,7 @@ NA_HDEF const NABabyImage* na_GetUIImageBabyImage(const NAUIImage* uiImage, NAUI
   }
   return retimg;
 }
+
 
 
 NA_HDEF void* na_GetUIImageNativeImage(const NAUIImage* uiImage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){

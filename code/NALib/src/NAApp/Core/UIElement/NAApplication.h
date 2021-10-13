@@ -21,9 +21,9 @@ NA_API void naStartApplication(
   NAMutator postStartup,
   void* arg);
 
-// All arguments can be NA_NULL but you can ask NALib to call the given two
-// startup functions with the given arg. The precise order of the calls is
-// described here:
+// All arguments can be NA_NULL but the arguemnts allow you to ask NALib to
+// call the given two startup functions with the given arg. The precise order
+// of the calls is described here:
 //
 // Mac: - NALib calls [NSApplication sharedApplication]
 //      - NALib allocates some structures in the background to run the UI
@@ -36,12 +36,10 @@ NA_API void naStartApplication(
 //          application delegate you might have set.
 //        * NALib calls postStartup with arg.
 //      - NALib drains the autorelease pool. (only when ARC is turned off)
-//      - NALib sets its own internal application object as the apps delegate.
 //      - NALib will start a message loop. When ARC is turned off, a new
 //        NSAutoreleasePools is created for each and every message. At its
 //        first run, a message to NSApplicationDidFinishLaunchingNotification
-//        will be forwarded to whatever your application delegate was before
-//        it was set to the NALib internal application object.
+//        will be sent to your application delegate.
 //
 // Win: - NALib registers its window classes
 //      - NALib allocates some structures in the background to run the UI
@@ -80,6 +78,7 @@ NA_API void naStartApplication(
 //
 // void postStartup(void* arg){
 //   [NSBundle loadNibNamed:@"MainMenu" owner:NSApp];
+//   // or use naLoadNib("MainMenu", NSApp);
 //   // Now, do UI stuff with NALib.
 // }
 //
@@ -87,6 +86,7 @@ NA_API void naStartApplication(
 //   naStartRuntime();
 //   [MyExistingApplication sharedApplication];
 //   naStartApplication(NA_NULL, postStartup, NA_NULL);
+//   naEndRundime();
 //   return 0;
 // }
 //
@@ -105,16 +105,15 @@ NA_API void naStartApplication(
 
 // Note that both in the preStartup as well as the postStartup function, the
 // global NAApplication struct of NALib is ready to be used. You can get this
-// struct using the following call:
-
-NA_API NAApplication* naGetApplication(void);
-
+// struct using the following function.
+//
 // If you need to get the native app pointer HINSTANCE (on Windows) or NSApp
 // (on a Macintosh), call naGetUIElementNativePtr with the result.
+NA_API NAApplication* naGetApplication(void);
 
 // The message loop will run indefinitely until the application is terminated
-// by a signal or it recieves a stop message using the following function: This
-// Will send a stop message to the application which then in the next schedule
+// by a signal or it recieves a stop message using the following function. This
+// will send a stop message to the application which then in the next schedule
 // will stop the run message loop and eventually return from the call
 // to naStartApplication. All attached memory of the application will be freed
 // and the application will not be able to run again!
@@ -126,7 +125,7 @@ NA_API void naStopApplication(void);
 //
 // Note that this function is not defined in the NAThreading.h file because
 // it only makes sense if there is a message loop which only exists when
-// running a UI.
+// running an App.
 NA_API void naCallApplicationFunctionInSeconds(
   NAMutator function,
   void* arg,
@@ -141,7 +140,7 @@ NA_API void naResetApplicationPreferredTranslatorLanguages(void);
 // Define basic information about the application. On a mac, these informations
 // can be extracted automatically from a plist file if not defined. On windows
 // though, one has to provide it using the following functions. Note that also
-// on Mac, the settings provided here override anything else.
+// on Mac, the settings provided here override anything read from a plist.
 NA_API void naSetApplicationName(NAUTF8Char* name);
 NA_API void naSetApplicationCompanyName(NAUTF8Char* name);
 NA_API void naSetApplicationVersionString(NAUTF8Char* string);
@@ -157,14 +156,21 @@ NA_API NAString* naNewApplicationIconPath(void);
 
 // The application binary usually resides in some kind of base package folder
 // and resources are located relative to that location. Using the following
-// function, you can retrieve various informations. dir can be Null to search
-// in the base package folder.
+// function, you can retrieve files with a basename and a suffix. dir can be
+// NA_NULL to search in the base package folder.
 NA_API NAString* naNewApplicationResourcePath(
   const NAUTF8Char* dir,
   const NAUTF8Char* basename,
   const NAUTF8Char* suffix);
 
 
+#if NA_OS == NA_OS_MAC_OS_X
+  // If you are on macOS and need to load in a NIB file, use the following
+  // function. Note that this function also works on older systems.
+  NABool naLoadNib(const NAUTF8Char* nibName, void* owner);
+  // You usually load nibs after the application startup. A good idea is to
+  // do it in the postStartup callback of naStartApplication.
+#endif
 
 #endif // NA_APPLICATION_INCLUDED
 

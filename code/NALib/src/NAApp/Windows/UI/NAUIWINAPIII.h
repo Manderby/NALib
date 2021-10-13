@@ -617,6 +617,13 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
 
 
 
+NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
+  // Resolution awareness is not yet implemented on windows. Sorry.
+  return 1.;
+}
+
+
+
 NA_HDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
   NARect rect;
   rect.pos.x = 0;

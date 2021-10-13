@@ -55,6 +55,10 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
     [pool drain]; // also releases the pool. No separate release necessary.
   #endif
 
+    // Setting this delegate changes the behaviour of applications which
+    // already have a delegate defined, for example in the XIB file. Be
+    // careful when implementing it and mention it in the naStartApplication
+    // comments.
 //  [NSApp setDelegate:naGetUIElementNativePtr(app)];
 
   // Start the event loop.

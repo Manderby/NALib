@@ -17,6 +17,16 @@
 // - Space
 // - Subspaces...
 // - Elements like Buttons, Sliders, ...
+//
+// As GUIs are handeled differently amongst different systems, in NALib, the
+// implementation of the corresponding structs is split into two parts: A core
+// which stores any basic attributes and a system dependent implementation
+// containing the core struct as its first entry and having additional fields
+// necessary for the system dependent implementation. To the programmer, only
+// the core structs are visible and the system dependent implementation is
+// hidden.
+//
+// These are the core structs:
 
 typedef struct NAApplication    NAApplication;
 
@@ -37,11 +47,9 @@ typedef struct NATextBox        NATextBox;
 typedef struct NATextField      NATextField;
 typedef struct NAWindow         NAWindow;
 
-// As GUIs are handeled differently amongst different systems, in NALib, the
-// implementation of the corresponding structs is split into two parts: A core
-// which stores any basic attributes and a system dependent implementation
-// containing the core struct as its first entry and having additional fields
-// necessary for the system dependent implementation.
+// As the C programming language has no notion of inheritance, the functions
+// listed further below which expect an arbitrary uiElement will expect it as
+// a void pointer.
 //
 // Each of the UI elements can identify themselves as what they are.
 // In order to find out what a specific UI element is, you can use the
@@ -68,14 +76,6 @@ typedef enum{
 } NAUIElementType;
 
 NA_API NAUIElementType naGetUIElementType(void* uiElement);
-
-// Note that due to the fact that the C programming language has no notion
-// of inheritance, functions which expect an arbitrary uiElement will expect
-// it as a void pointer.
-//
-// There are many element specific functions which can be found in other
-// header files, all listed in the NAApp.h header file. But here are listed
-// the functions which work with any arbitrary uiElement.
 
 // Any ui element has a strict hierarchical ordering: Application - Screen -
 // Window - Space - Subspace - Subsubspace ... You can get the parent element
@@ -116,8 +116,8 @@ NA_API NARect naGetUIElementRect(
 // element to be displayed anew. The time difference defines when the refresh
 // shall occur in seconds. Note that even when using 0 as timediff, the redraw
 // method will not execute immediately but put a message to the default message
-// queue of the application. Therefore, this function will always immediately
-// return.
+// queue of the application. Therefore, this function will always return
+// immediately.
 NA_API void naRefreshUIElement(void* uiElement, double timediff);
 
 // When navigating with the tab key, this method defines, which will be the
@@ -125,7 +125,7 @@ NA_API void naRefreshUIElement(void* uiElement, double timediff);
 // naSetWindowFirstTabElement.
 NA_API void naSetUIElementNextTabElement(void* elem, void* nextTabElem);
 
-// Returns the resolution scale factor for the given element. Is 2. for example
+// Returns the resolution scale factor for the given element. Is 2 for example
 // on high resolution display settings. Returns 1 if no parent window or screen
 // can be found, as well as for NAApplication
 NA_API double naGetUIElementResolutionFactor(void* uiElement);
@@ -133,18 +133,21 @@ NA_API double naGetUIElementResolutionFactor(void* uiElement);
 // Native IDs
 //
 // NALib always acts as a layer on top of the native UI implementation of a
-// system. No matter if it is Macintosh or Windows, you can get the native
+// system. No matter if it is macOS or Windows, you can get the native
 // structures used in corresponding UI systems with naGetUIElementNativePtr.
 // This allows you to do with the user interface elements whatever you need to
 // do.
 //
-// Windows: The native framework used is WINAPI and the nativePtr you get is a
-// HWND handle. If the user interface element is the application itself, you
-// get a HINSTANCE handle.
+// Windows: The native framework used is WINAPI and the nativePtr you get
+// usually is a HWND handle. There are some special cases though where you
+// get a different pointer:
+// Application: HINSTANCE handle
+// Menu:        HMENU handle
+// MenuItem:    NA_WINAPIMenuItem* (opaque, internal structure)
 //
 // Macintosh: NALib is using the Cocoa framework as the native UI. This means
 // that in the background, NALib implements certain Objective-C methods to
-// provide a UI most closely possible to a native experience. The nativePtr
+// provide a UI most closely resembling a native experience. The nativePtr
 // corresponds to NSResponder*. Note that also NSApplication inherits from
 // NSResponder.
 //

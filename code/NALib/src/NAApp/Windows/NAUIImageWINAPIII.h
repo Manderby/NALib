@@ -10,7 +10,7 @@
 
 
 
-NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
+NA_DEF NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
   BYTE* lpPixels;
   NABabyImage* babyImage;
 
@@ -45,7 +45,7 @@ NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
 
 
 
-NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
+NA_DEF NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
   // Currently, only png is possible
   NAPNG* png = naNewPNGWithPath(pathStr);
   NABabyImage* babyImage = naCreateBabyImageFromPNG(png);
@@ -72,7 +72,7 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 
 
 
-void naDeallocNativeImage(void* nativeImage){
+NA_DEF void naDeallocNativeImage(void* nativeImage){
   DeleteObject(nativeImage);
 } 
 

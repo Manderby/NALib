@@ -46,7 +46,7 @@
 
 
 
-NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
+NA_DEF NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
   NABabyImage* image;
   
   CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)nativeImage));
@@ -60,7 +60,7 @@ NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
 
 
 
-NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
+NA_DEF NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
   NABabyImage* image = NA_NULL;
 
 //  // Currently, only png is possible
@@ -190,23 +190,7 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
 
 
 
-void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage){
-  NSButton* button = (NA_COCOA_BRIDGE NSButton*)(nsButton);
-
-  [button setImage:naCreateResolutionIndependentNativeImage(
-    button,
-    uiImage,
-    NA_UIIMAGE_KIND_MAIN)];
-  [button setAlternateImage:naCreateResolutionIndependentNativeImage(
-    button,
-    uiImage,
-    NA_UIIMAGE_KIND_ALT)];
-  [[button cell] setImageScaling:NSImageScaleProportionallyUpOrDown];
-}
-
-
-
-void naDeallocNativeImage(void* nativeImage){
+NA_DEF void naDeallocNativeImage(void* nativeImage){
   CGImageRelease(nativeImage);
 } 
 
