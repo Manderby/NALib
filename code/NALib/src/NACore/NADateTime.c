@@ -507,7 +507,7 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
   switch(format){
   case NA_DATETIME_FORMAT_APACHE:
     dts.day = naParseBufferi32(&iter, NA_TRUE);
-    token = naParseBufferTokenWithDelimiter(&iter, '/');
+    token = naParseBufferTokenWithDelimiter(&iter, '/', NA_FALSE);
     dts.mon = naGetMonthNumberWithEnglishAbbreviation(token);
     naDelete(token);
     dts.year = naParseBufferi64(&iter, NA_TRUE);

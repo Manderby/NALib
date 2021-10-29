@@ -574,9 +574,12 @@ NA_API NAString* naParseBufferToken(NABufferIterator* iter);
 // Gathers the first token within buffer which ends in the given delimiter.
 // The delimiter will not be included in the returned string. After this
 // function, buffer will point to the first character after the delimiter.
-// Whitespaces at the start or end will NOT be stripped at all.
-NA_API NAString* naParseBufferTokenWithDelimiter( NABufferIterator* iter,
-                                                    NAUTF8Char delimiter);
+// If skipWhitespace is NA_TRUE, any whitespaces after the delimiter will be
+// skipped as well. Whitespaces at the start will NOT be skipped!
+NA_API NAString* naParseBufferTokenWithDelimiter(
+  NABufferIterator* iter,
+  NAUTF8Char delimiter,
+  NABool skipWhitespace);
 
 // Gathers the first token within buffer which ends in a path delimiter. Both
 // path delimiters / and \ are detected. The delimiter will not be included.

@@ -150,7 +150,7 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
 
 
 
-NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8Char delimiter){
+NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8Char delimiter, NABool skipWhitespace){
   NAString* string;
   NARangei range;
   NABool found = NA_FALSE;
@@ -180,6 +180,8 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
 
   if(!found){
     end = naGetRangeiEnd(buffer->range);
+  }else{
+    naIterateBuffer(iter, 1);
   }
   range = naMakeRangeiWithStartAndEnd(start, end);
   if(!naIsRangeiEmpty(range)){
@@ -187,7 +189,11 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
   }else{
     string = naNewString();
   }
-  naSkipBufferWhitespaces(iter);
+  
+  if(skipWhitespace){
+    naSkipBufferWhitespaces(iter);
+  }
+  
   return string;
 }
 
