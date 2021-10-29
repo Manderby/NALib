@@ -87,6 +87,7 @@
 // Button. Default height for TextButton: 24.
 NA_API NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 flags);
 NA_API NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 flags);
+NA_API void naSetButtonEnabled(NAButton* button, NABool enabled);
 NA_API void naSetButtonText(NAButton* button, const NAUTF8Char* text);
 NA_API void naSetButtonImage(NAButton* button, const NAUIImage* uiImage);
 NA_API void naSetButtonState(NAButton* button, NABool state);

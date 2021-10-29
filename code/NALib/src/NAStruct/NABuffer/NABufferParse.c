@@ -151,38 +151,44 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
 
 
 NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8Char delimiter){
-  NA_UNUSED(iter);
-  NA_UNUSED(delimiter);
-//  NAString* string;
-//  NAInt tokenstart = iter->curOffset;
-//  const NABufferPart* part;
-//
-//  while(!naIsBufferAtInitial(iter)){
-//    const NAUTF8Char* curByte;
-//    NAInt endoffset;
-//    NABool found = NA_FALSE;
-//
-//    part = naGetListCurConst(&(iter->partIter));
-//    if(na_IsBufferPartSparse(part)){
-//      naGetBufferu8(iter);
-//      part = naGetListCurConst(&(iter->partIter));
-//    }
-//    curByte = (NAUTF8Char*)na_GetBufferPartDataPointerConst(part, iter->curOffset);
-//    endoffset = na_GetBufferPartEnd(part);
-//    while(iter->curOffset < endoffset){
-//      if(*curByte == delimiter){found = NA_TRUE; break;}
-//      curByte++;
-//      iter->curOffset++;
-//    }
-//    if(!naContainsBufferPartOffset(part, iter->curOffset)){naIterateList(&(iter->partIter));}
-//    if(found){break;}
-//  }
-//
-//  NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
-//  string = naNewStringWithBufferExtraction(buffer naMakeRangeiWithStartAndEnd(tokenstart, iter->curOffset));
-//  naLocateBufferRelative(iter, 1);
-//  return string;
-  return NA_NULL;
+  NAString* string;
+  NARangei range;
+  NABool found = NA_FALSE;
+  NAInt start = naGetBufferLocation(iter);
+  NAInt end = start;
+  NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
+
+  while(!found && !naIsBufferAtEnd(iter)){
+    const NAByte* curByte;
+    const NABufferPart* part;
+    
+    na_PrepareBuffer(iter, 1);
+    part = na_GetBufferPart(iter);
+    if(naIsBufferAtInitial(iter)){break;}
+    curByte = na_GetBufferPartDataPointerConst(iter);
+
+    while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)){
+      if(*curByte == delimiter){
+        found = NA_TRUE;
+        break;
+      }
+      curByte++;
+      end++;
+      iter->partOffset++;
+    }
+  }
+
+  if(!found){
+    end = naGetRangeiEnd(buffer->range);
+  }
+  range = naMakeRangeiWithStartAndEnd(start, end);
+  if(!naIsRangeiEmpty(range)){
+    string = naNewStringWithBufferExtraction(buffer, range);
+  }else{
+    string = naNewString();
+  }
+  naSkipBufferWhitespaces(iter);
+  return string;
 }
 
 
