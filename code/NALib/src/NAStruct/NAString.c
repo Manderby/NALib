@@ -524,7 +524,7 @@ NA_DEF NAString* naNewStringXMLDecoded(const NAString* inputString){
   while(!naIsBufferAtInitial(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
     if(curchar == '&'){
-      NAString* token = naParseBufferTokenWithDelimiter(&iter, ';');
+      NAString* token = naParseBufferTokenWithDelimiter(&iter, ';', NA_FALSE);
       if     (naEqualStringToUTF8CString(token, "amp",   NA_TRUE)){naWriteBufferi8(&outiter, '&');}
       else if(naEqualStringToUTF8CString(token, "lt",    NA_TRUE)){naWriteBufferi8(&outiter, '<');}
       else if(naEqualStringToUTF8CString(token, "gt",    NA_TRUE)){naWriteBufferi8(&outiter, '>');}

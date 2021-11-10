@@ -71,6 +71,10 @@ typedef size_t NAUIKeyCode;
   #define NA_KEYCODE_PERIOD         0x34
   #define NA_KEYCODE_NUMPAD_MINUS   0x4a
   #define NA_KEYCODE_NUMPAD_PLUS    0x4e
+  #define NA_KEYCODE_ARROW_LEFT     0xff  // todo
+  #define NA_KEYCODE_ARROW_RIGHT    0xff  // todo
+  #define NA_KEYCODE_ARROW_DOWN     0xff  // todo
+  #define NA_KEYCODE_ARROW_UP       0xff  // todo
 #elif NA_OS == NA_OS_MAC_OS_X
   #define NA_KEYCODE_0              0x1d
   #define NA_KEYCODE_1              0x12
@@ -126,6 +130,10 @@ typedef size_t NAUIKeyCode;
   #define NA_KEYCODE_PERIOD         0x2f
   #define NA_KEYCODE_NUMPAD_MINUS   0x4e
   #define NA_KEYCODE_NUMPAD_PLUS    0x45
+  #define NA_KEYCODE_ARROW_LEFT     0x7b
+  #define NA_KEYCODE_ARROW_RIGHT    0x7c
+  #define NA_KEYCODE_ARROW_DOWN     0x7d
+  #define NA_KEYCODE_ARROW_UP       0x7e
 #endif
 
 // The modifier keys are stored as a bitmask with the following predefined

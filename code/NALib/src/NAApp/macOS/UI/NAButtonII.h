@@ -157,6 +157,13 @@ NA_DEF void na_DestructCocoaButton(NACocoaButton* cocoaButton){
 
 
 
+NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled){
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  [nativePtr setEnabled:enabled];
+}
+
+
+
 NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   [nativePtr setButtonText:text];

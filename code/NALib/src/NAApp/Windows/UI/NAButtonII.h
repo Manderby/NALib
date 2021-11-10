@@ -278,6 +278,12 @@ NA_DEF void na_DestructWINAPIButton(NAWINAPIButton* winapiButton){
 
 
 
+NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled){
+  // todo
+}
+
+
+
 NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text){
   // todo
 }
