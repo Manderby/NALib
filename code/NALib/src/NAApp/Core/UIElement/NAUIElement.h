@@ -123,7 +123,7 @@ NA_API void naRefreshUIElement(void* uiElement, double timediff);
 // When navigating with the tab key, this method defines, which will be the
 // next ui element to have the focus. You start the tab order with a call to
 // naSetWindowFirstTabElement.
-NA_API void naSetUIElementNextTabElement(void* elem, void* nextTabElem);
+NA_API void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem);
 
 // Returns the resolution scale factor for the given element. Is 2 for example
 // on high resolution display settings. Returns 1 if no parent window or screen
@@ -155,7 +155,7 @@ NA_API double naGetUIElementResolutionFactor(void* uiElement);
 
 typedef void* NANativePtr;
 
-NA_API NANativePtr naGetUIElementNativePtr(void* element);
+NA_API NANativePtr naGetUIElementNativePtr(void* uiElement);
 
 
 #endif // NA_UI_ELEMENT_INCLUDED

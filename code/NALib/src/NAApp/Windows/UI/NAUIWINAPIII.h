@@ -574,19 +574,19 @@ NA_HDEF void** na_GetUIElementPrevTabReference(void* uiElement){
 
 
 
-NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
+NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem){
   void** elemNextRef;
   void** nextPrevRef;
   void** elemNextPrevRef;
   void** nextPrevNextRef;
 
   #if NA_DEBUG
-    if(naGetUIElementWindow(elem) != naGetUIElementWindow(nextTabElem))
+    if(naGetUIElementWindow(uiElement) != naGetUIElementWindow(nextTabElem))
       naError("element do not share the same window.");
   #endif
 
-  if(  naGetUIElementType(elem) != NA_UI_TEXTFIELD
-    && naGetUIElementType(elem) != NA_UI_TEXTBOX){
+  if(  naGetUIElementType(uiElement) != NA_UI_TEXTFIELD
+    && naGetUIElementType(uiElement) != NA_UI_TEXTBOX){
     #if NA_DEBUG
       naError("elem has a type which can not be used as a next tab.");
     #endif
@@ -601,14 +601,14 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
     return;
   }
 
-  elemNextRef = na_GetUIElementNextTabReference(elem);
+  elemNextRef = na_GetUIElementNextTabReference(uiElement);
   nextPrevRef = na_GetUIElementPrevTabReference(nextTabElem);
   elemNextPrevRef = na_GetUIElementPrevTabReference(*elemNextRef);
   nextPrevNextRef = na_GetUIElementNextTabReference(*nextPrevRef);
 
   *nextPrevNextRef = *elemNextRef;
   *elemNextPrevRef = *nextPrevRef;
-  *nextPrevRef = elem;
+  *nextPrevRef = uiElement;
   *elemNextRef = nextTabElem;
 
   // This is how it is supposed to work on windows, but it doesn't.

@@ -27,6 +27,7 @@
     <ClInclude Include="src\NAApp\Core\NAUIImage.h" />
     <ClInclude Include="src\NAApp\Core\NAUIImageII.h" />
     <ClInclude Include="src\NAApp\Core\UIElement\NAApplication.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NAButton.h" />
     <ClInclude Include="src\NAApp\Core\UIElement\NAUIElement.h" />
     <ClInclude Include="src\NAApp\Windows\NAPreferencesWINAPIII.h" />
     <ClInclude Include="src\NAApp\Windows\NAUIImageWINAPIII.h" />

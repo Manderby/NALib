@@ -57,41 +57,16 @@
 #include "NAApp/Core/NAReaction.h"
 #include "NAApp/Core/NAUIImage.h"
 
+// The base of every ui element. It is implemented in NAAppCore.c
 #include "NAApp/Core/UIElement/NAUIElement.h"
+
+// The following APIs are implemented in system specific files:
 #include "NAApp/Core/UIElement/NAApplication.h"
+#include "NAApp/Core/UIElement/NAButton.h"
 
 
 
 
-
-// In the following, the specific UI elements and their API are presented.
-//
-// Usually, UI-elementes are placed in a line-by-line fashion, usually asking
-// the user to read from top to bottom. Therefore, it is good to know the
-// vertical alignment of all UI-elements.
-//
-// The tallest items are 24 points in height. But the visual representation is
-// often times shifted in vertical position such that some elements are even
-// overlapping when displayed line by line. Therefore, it is proposed to always
-// use at least a difference of 25 points between lines. The author strongly
-// recommends that number.
-
-#define NA_BUTTON_BORDERED   0x00
-#define NA_BUTTON_BORDERLESS 0x01
-#define NA_BUTTON_PUSH       0x00
-#define NA_BUTTON_STATEFUL   0x10
-
-// Button. Default height for TextButton: 24.
-NA_API NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 flags);
-NA_API NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 flags);
-NA_API void naSetButtonEnabled(NAButton* button, NABool enabled);
-NA_API void naSetButtonText(NAButton* button, const NAUTF8Char* text);
-NA_API void naSetButtonImage(NAButton* button, const NAUIImage* uiImage);
-NA_API void naSetButtonState(NAButton* button, NABool state);
-NA_API NABool naGetButtonState(NAButton* button);
-NA_API void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller);
-NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller);
-NA_API void naSetButtonVisible(NAButton* button, NABool visible);
 
 // CheckBox. Default height: 18
 NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width);
@@ -186,6 +161,17 @@ NA_API NARect naGetMainScreenRect(void);
 // Space (In other frameworks called View, Frame, Area, Widget...)
 // Beware that adding a child to a space which formerly was the first responder
 // of a window, that windows first responder will be reset to Null.
+//
+// Usually, UI-elementes are placed in a line-by-line fashion, usually asking
+// the user to read from top to bottom. Therefore, it is good to know the
+// vertical alignment of all UI-elements.
+//
+// The tallest items are 24 points in height. But the visual representation is
+// often times shifted in vertical position such that some elements are even
+// overlapping when displayed line by line. Therefore, it is proposed to always
+// use at least a difference of 25 points between lines. The author strongly
+// recommends that number.
+
 NA_API NASpace* naNewSpace(NASize size);
 NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
 NA_API void naRemoveSpaceChilds(NASpace* space);

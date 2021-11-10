@@ -8,11 +8,13 @@
 
 @implementation NACocoaNativeButton
 
-- (id) initWithButton:(NACocoaButton*)newCocoaButton flags:(uint32)flags isText:(bool)isText frame:(NSRect)frame{
+- (id) initWithButton:(NACocoaButton*)newCocoaButton flags:(uint32)flags isImage:(bool)isImage frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
+  self.isImage = isImage;
+
   if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS)){
-    if(isText && naGetFlagu32(flags, NA_BUTTON_STATEFUL)){
+    if(!isImage && naGetFlagu32(flags, NA_BUTTON_STATEFUL)){
       [self setBezelStyle:NSBezelStyleInline]; 
       [self setBordered:YES];
     }else{
@@ -24,10 +26,10 @@
     [self setBordered:YES];
   }
 
-  if(isText){
-    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
-  }else{
+  if(isImage){
     [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypeToggle : NAButtonTypeMomentaryChange];
+  }else{
+    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
   }
   
   cocoaButton = newCocoaButton;
@@ -46,6 +48,10 @@
 - (void)dealloc{
   NA_COCOA_RELEASE(trackingArea);
   NA_COCOA_SUPER_DEALLOC();
+}
+
+- (bool) isImage{
+  return isImage;
 }
 
 - (void) setButtonText:(const NAUTF8Char*)text{
@@ -118,7 +124,7 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
-    isText:YES
+    isImage:NO
     frame:naMakeNSRectWithSize(naMakeSize(width, 24))];
   na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL);
   
@@ -140,7 +146,7 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
-    isText:NO
+    isImage:YES
     frame:naMakeNSRectWithSize(size)];
   na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), uiImage);
   
@@ -166,6 +172,10 @@ NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled){
 
 NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  #if NA_DEBUG
+    if([nativePtr isImage])
+      naError("This is not a text button");
+  #endif
   [nativePtr setButtonText:text];
 }
 
@@ -174,7 +184,7 @@ NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text){
 NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   #if NA_DEBUG
-    if(!button->uiImage)
+    if(![nativePtr isImage])
       naError("This is not an image button.");
   #endif
   na_setButtonImage(button, uiImage);
@@ -186,13 +196,18 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
 NA_DEF void naSetButtonState(NAButton* button, NABool state){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   [nativePtr setButtonState:state];
+  // todo:
+  // naError("This is not a stateful button");
 }
 
 
 
-NA_DEF NABool naGetButtonState(NAButton* button){
+NA_DEF NABool naGetButtonState(const NAButton* button){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   return [nativePtr getButtonState];
+  // todo:
+  // naError("This is not a stateful button");
+
 }
 
 

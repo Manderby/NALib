@@ -5,6 +5,7 @@
 // Do not include this file anywhere else!
 
 
+
 // The following struct stores all relevant data which will then be stored in
 // a list of the running NAWINAPIApplication.
 typedef struct NAWINAPITimerStruct NAWINAPITimerStruct;
@@ -20,7 +21,50 @@ struct NAWINAPIColor {
   HBRUSH   brush;
 };
 
+
+
+// Typedefs of all ui elements
 typedef struct NAWINAPIApplication NAWINAPIApplication;
+typedef struct NAWINAPIButton NAWINAPIButton;
+typedef struct NAWINAPICheckBox NAWINAPICheckBox;
+typedef struct NAWINAPIImageSpace NAWINAPIImageSpace;
+typedef struct NAWINAPILabel NAWINAPILabel;
+typedef struct NAWINAPIMenu NAWINAPIMenu;
+typedef struct NA_WINAPIMenuItem NA_WINAPIMenuItem;
+#if NA_COMPILE_OPENGL == 1
+  typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
+#endif
+typedef struct NAWINAPIPopupButton NAWINAPIPopupButton;
+typedef struct NAWINAPIRadio NAWINAPIRadio;
+typedef struct NAWINAPISlider NAWINAPISlider;
+typedef struct NAWINAPISpace NAWINAPISpace;
+typedef struct NAWINAPITextBox NAWINAPITextBox;
+typedef struct NAWINAPITextField NAWINAPITextField;
+typedef struct NAWINAPIWindow NAWINAPIWindow;
+
+
+
+// Prototypes of all ui element desctructors
+NA_HAPI void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication);
+NA_HAPI void na_DestructWINAPIButton(NAWINAPIButton* winapiButton);
+NA_HAPI void na_DestructWINAPICheckBox(NAWINAPICheckBox* winapiCheckBox);
+NA_HAPI void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace);
+NA_HAPI void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel);
+NA_HAPI void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu);
+NA_HAPI void na_DestructWINAPIMenuItem(NA_WINAPIMenuItem* winapiMenuItem);
+#if NA_COMPILE_OPENGL == 1
+  NA_HAPI void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace);
+#endif
+NA_HAPI void na_DestructWINAPIPopupButton(NAWINAPIPopupButton* winapiPopupButton);
+NA_HAPI void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio);
+NA_HAPI void na_DestructWINAPISlider(NAWINAPISlider* winapiSlider);
+NA_HAPI void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace);
+NA_HAPI void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox);
+NA_HAPI void na_DestructWINAPITextField(NAWINAPITextField* winapiTextField);
+NA_HAPI void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow);
+
+
+
 struct NAWINAPIApplication {
   NAApplication    application;
   NAList           timers;
@@ -51,124 +95,100 @@ struct NAWINAPIApplication {
   NAWINAPIColor    bgColorAlternate;
   NAWINAPIColor    bgColorAlternate2;
 };
-NA_HAPI void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication);
-NA_RUNTIME_TYPE(NAWINAPIApplication, na_DestructWINAPIApplication, NA_FALSE);
 
-typedef struct NAWINAPIButton NAWINAPIButton;
 struct NAWINAPIButton{
-  NAButton   button;
+  NAButton button;
   uint32 state;
 };
-NA_HAPI void na_DestructWINAPIButton(NAWINAPIButton* winapiButton);
-NA_RUNTIME_TYPE(NAWINAPIButton, na_DestructWINAPIButton, NA_FALSE);
 
-typedef struct NAWINAPICheckBox NAWINAPICheckBox;
 struct NAWINAPICheckBox {
   NACheckBox checkBox;
 };
-NA_HAPI void na_DestructWINAPICheckBox(NAWINAPICheckBox* winapiCheckBox);
-NA_RUNTIME_TYPE(NAWINAPICheckBox, na_DestructWINAPICheckBox, NA_FALSE);
 
-typedef struct NAWINAPIImageSpace NAWINAPIImageSpace;
 struct NAWINAPIImageSpace {
   NAImageSpace imageSpace;
   NAUIImage*   image;
 };
-NA_HAPI void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace);
-NA_RUNTIME_TYPE(NAWINAPIImageSpace, na_DestructWINAPIImageSpace, NA_FALSE);
 
-typedef struct NAWINAPILabel NAWINAPILabel;
 struct NAWINAPILabel {
   NALabel   label;
   NABool    enabled;
   NAString* href;
 };
-NA_HAPI void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel);
-NA_RUNTIME_TYPE(NAWINAPILabel, na_DestructWINAPILabel, NA_FALSE);
 
-typedef struct NAWINAPIMenu NAWINAPIMenu;
 struct NAWINAPIMenu {
   NAMenu   menu;
   HMENU    hMenu;
 };
-NA_HAPI void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu);
-NA_RUNTIME_TYPE(NAWINAPIMenu, na_DestructWINAPIMenu, NA_FALSE);
 
-typedef struct NA_WINAPIMenuItem NA_WINAPIMenuItem;
 struct NA_WINAPIMenuItem {
   NAMenuItem   menuItem;
   NABool       isSeparator;
   NAString*    text;
 };
-NA_HAPI void na_DestructWINAPIMenuItem(NA_WINAPIMenuItem* winapiMenuItem);
-NA_RUNTIME_TYPE(NA_WINAPIMenuItem, na_DestructWINAPIMenuItem, NA_FALSE);
 
 #if NA_COMPILE_OPENGL == 1
-  //#include "../../../../../NADateTime.h"
-  //
-  typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
   struct NAWINAPIOpenGLSpace {
     NAOpenGLSpace openGLSpace;
     HGLRC         hRC;    // The rendering context for OpenGL
   };
-  NA_HAPI void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace);
-  NA_RUNTIME_TYPE(NAWINAPIOpenGLSpace, na_DestructWINAPIOpenGLSpace, NA_FALSE);
 #endif
 
-typedef struct NAWINAPIPopupButton NAWINAPIPopupButton;
 struct NAWINAPIPopupButton {
   NAPopupButton   popupButton;
 };
-NA_HAPI void na_DestructWINAPIPopupButton(NAWINAPIPopupButton* winapiPopupButton);
-NA_RUNTIME_TYPE(NAWINAPIPopupButton, na_DestructWINAPIPopupButton, NA_FALSE);
 
-typedef struct NAWINAPIRadio NAWINAPIRadio;
 struct NAWINAPIRadio {
   NARadio radio;
 };
-NA_HAPI void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio);
-NA_RUNTIME_TYPE(NAWINAPIRadio, na_DestructWINAPIRadio, NA_FALSE);
 
-typedef struct NAWINAPISlider NAWINAPISlider;
 struct NAWINAPISlider {
   NASlider slider;
 };
-NA_HAPI void na_DestructWINAPISlider(NAWINAPISlider* winapiSlider);
-NA_RUNTIME_TYPE(NAWINAPISlider, na_DestructWINAPISlider, NA_FALSE);
 
-typedef struct NAWINAPISpace NAWINAPISpace;
 struct NAWINAPISpace {
   NASpace        space;
   NAWINAPIColor* lastBgColor;
 };
-NA_HAPI void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace);
-NA_RUNTIME_TYPE(NAWINAPISpace, na_DestructWINAPISpace, NA_FALSE);
 
-typedef struct NAWINAPITextBox NAWINAPITextBox;
 struct NAWINAPITextBox {
   NATextBox textBox;
   void*     nextTabStop;
   void*     prevTabStop;
 };
-NA_HAPI void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox);
-NA_RUNTIME_TYPE(NAWINAPITextBox, na_DestructWINAPITextBox, NA_FALSE);
 
-typedef struct NAWINAPITextField NAWINAPITextField;
 struct NAWINAPITextField {
   NATextField textField;
   void*       nextTabStop;
   void*       prevTabStop;
 };
-NA_HAPI void na_DestructWINAPITextField(NAWINAPITextField* winapiTextField);
-NA_RUNTIME_TYPE(NAWINAPITextField, na_DestructWINAPITextField, NA_FALSE);
 
-typedef struct NAWINAPIWindow NAWINAPIWindow;
 struct NAWINAPIWindow {
   NAWindow      window;
   NA_UIElement* firstResponder;
 };
-NA_HAPI void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow);
+
+
+
+NA_RUNTIME_TYPE(NAWINAPIApplication, na_DestructWINAPIApplication, NA_FALSE);
+NA_RUNTIME_TYPE(NAWINAPIButton, na_DestructWINAPIButton, NA_FALSE);
+NA_RUNTIME_TYPE(NAWINAPICheckBox, na_DestructWINAPICheckBox, NA_FALSE);
+NA_RUNTIME_TYPE(NAWINAPIImageSpace, na_DestructWINAPIImageSpace, NA_FALSE);
+NA_RUNTIME_TYPE(NAWINAPILabel, na_DestructWINAPILabel, NA_FALSE);
+NA_RUNTIME_TYPE(NAWINAPIMenu, na_DestructWINAPIMenu, NA_FALSE);
+NA_RUNTIME_TYPE(NA_WINAPIMenuItem, na_DestructWINAPIMenuItem, NA_FALSE);
+#if NA_COMPILE_OPENGL == 1
+  NA_RUNTIME_TYPE(NAWINAPIOpenGLSpace, na_DestructWINAPIOpenGLSpace, NA_FALSE);
+#endif
+NA_RUNTIME_TYPE(NAWINAPIPopupButton, na_DestructWINAPIPopupButton, NA_FALSE);
+NA_RUNTIME_TYPE(NAWINAPIRadio, na_DestructWINAPIRadio, NA_FALSE);
+NA_RUNTIME_TYPE(NAWINAPISlider, na_DestructWINAPISlider, NA_FALSE);
+NA_RUNTIME_TYPE(NAWINAPISpace, na_DestructWINAPISpace, NA_FALSE);
+NA_RUNTIME_TYPE(NAWINAPITextBox, na_DestructWINAPITextBox, NA_FALSE);
+NA_RUNTIME_TYPE(NAWINAPITextField, na_DestructWINAPITextField, NA_FALSE);
 NA_RUNTIME_TYPE(NAWINAPIWindow, na_DestructWINAPIWindow, NA_FALSE);
+
+
 
 // This is free and unencumbered software released into the public domain.
 

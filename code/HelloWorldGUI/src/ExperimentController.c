@@ -80,13 +80,13 @@ NABool windowReshaped(NAReaction reaction){
 NABool buttonPressed(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   NAString* labelString;
-  NABool state = naGetButtonState(reaction.uiElement);
   
   if(reaction.uiElement == con->textPushButton){
     labelString = naNewStringWithFormat("Text Push Button Pressed");
   //}else if(reaction.uiElement == con->textPushButtonBorderless){
   //  labelString = naNewStringWithFormat("Borderless Text Push Button Pressed");
   }else if(reaction.uiElement == con->textPushButtonState){
+    NABool state = naGetButtonState(reaction.uiElement);
     labelString = naNewStringWithFormat("Text Stateful Button Switched to %d", (int)state);
   //}else if(reaction.uiElement == con->textPushButtonStateBorderless){
   //  labelString = naNewStringWithFormat("Borderless Text State Button Switched to %d", (int)state);
@@ -95,8 +95,10 @@ NABool buttonPressed(NAReaction reaction){
   }else if(reaction.uiElement == con->imagePushButtonBorderless){
     labelString = naNewStringWithFormat("Borderless Image Push Button Pressed");
   }else if(reaction.uiElement == con->imagePushButtonState){
+    NABool state = naGetButtonState(reaction.uiElement);
     labelString = naNewStringWithFormat("Image Stateful Button Switched to %d", (int)state);
   }else if(reaction.uiElement == con->imagePushButtonStateBorderless){
+    NABool state = naGetButtonState(reaction.uiElement);
     labelString = naNewStringWithFormat("Borderless Image Stateful Button Switched to %d", (int)state);
   }else{
     labelString = naNewString();

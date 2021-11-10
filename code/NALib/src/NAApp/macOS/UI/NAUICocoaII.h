@@ -164,9 +164,9 @@ NA_DEF void na_RefreshUIElementNow(void* uiElement){
 
 
 
-NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
-  if(  naGetUIElementType(elem) != NA_UI_TEXTFIELD
-    && naGetUIElementType(elem) != NA_UI_TEXTBOX){
+NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem){
+  if(  naGetUIElementType(uiElement) != NA_UI_TEXTFIELD
+    && naGetUIElementType(uiElement) != NA_UI_TEXTBOX){
     #if NA_DEBUG
       naError("elem has a type which can not be used as a next tab.");
     #endif
@@ -181,7 +181,7 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
     return;
   }
 
-  naDefineCocoaObject(NSView, cocoaCurTabElem, elem);
+  naDefineCocoaObject(NSView, cocoaCurTabElem, uiElement);
   naDefineCocoaObject(NSView, cocoaNextTabElem, nextTabElem);
   [cocoaCurTabElem setNextKeyView:cocoaNextTabElem];
 }

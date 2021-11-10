@@ -6,7 +6,8 @@
 
 #define NA_WINAPI_BUTTON_BORDERLESS 0x01
 #define NA_WINAPI_BUTTON_STATEFUL   0x02
-#define NA_WINAPI_BUTTON_STATE      0x04
+#define NA_WINAPI_BUTTON_IMAGE      0x04
+#define NA_WINAPI_BUTTON_STATE      0x08
 
 
 
@@ -38,6 +39,9 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_STYLECHANGED:
   case WM_IME_NOTIFY:
   case WM_LBUTTONUP:
+  case WM_LBUTTONDBLCLK:
+  case WM_DESTROY:
+  case WM_NCDESTROY:
   case BM_SETSTATE:
   case BM_SETCHECK:
   case BM_GETSTATE:
@@ -72,13 +76,27 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
 
 
+NA_HDEF NABool na_GetButtonState(const NAWINAPIButton* winapiButton){
+  return naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATE);
+}
+
+NA_HDEF void na_SetButtonState(NAWINAPIButton* winapiButton, NABool state){
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATE, state);
+  SendMessage(naGetUIElementNativePtr(winapiButton), BM_SETSTATE, (WPARAM)state, (LPARAM)NA_NULL);
+}
+
+
+
 NABool naButtonWINAPINotify(void* uiElement, WORD notificationCode){
   NABool hasBeenHandeled = NA_FALSE;
-  NAButton* button = (NAButton*)uiElement;
+  NAWINAPIButton* winapiButton = (NAWINAPIButton*)uiElement;
 
   switch(notificationCode){
   case BN_CLICKED:
-    naSetButtonState(button, !naGetButtonState(button));
+  case BN_DOUBLECLICKED:
+    if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATEFUL)){
+      na_SetButtonState(winapiButton, !na_GetButtonState(winapiButton));
+    }
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
     hasBeenHandeled = NA_TRUE;
     break;
@@ -138,7 +156,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     NABool pushed = (result & BST_PUSHED) == BST_PUSHED;
     if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATEFUL))
     {
-      if(naGetButtonState((NAButton*)winapiButton)){
+      if(na_GetButtonState(winapiButton)){
         alt = NA_TRUE;
       }
       // unfortuantely, the following does not work as the button is not drawn
@@ -231,6 +249,7 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
   #endif
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, naGetFlagu32(flags, NA_BUTTON_BORDERLESS)); 
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATEFUL, naGetFlagu32(flags, NA_BUTTON_STATEFUL)); 
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_FALSE); 
 
   return (NAButton*)winapiButton;
 }
@@ -266,6 +285,7 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
   winapiButton->state = 0;
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, naGetFlagu32(flags, NA_BUTTON_BORDERLESS)); 
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATEFUL, naGetFlagu32(flags, NA_BUTTON_STATEFUL)); 
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
 
   return (NAButton*)winapiButton;
 }
@@ -278,29 +298,25 @@ NA_DEF void na_DestructWINAPIButton(NAWINAPIButton* winapiButton){
 
 
 
+NA_DEF void naSetButtonVisible(NAButton* button, NABool visible){
+  //todo
+}
+
+
+
 NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled){
   // todo
 }
 
 
 
-NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text){
-  // todo
-}
-
-
-
-NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
-  // todo
-}
-
-
-
-NA_DEF NABool naGetButtonState(NAButton* button){
-  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
-  // Note that BM_SETSTATE only changes the visual highlight, not the state of the
-  // WINAPI button. Therefore, we need a separate state boolean.
-  return naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATE);
+NA_DEF NABool naGetButtonState(const NAButton* button){
+  const NAWINAPIButton* winapiButton = (const NAWINAPIButton*)button;
+  #if NA_DEBUG
+    if(!naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATEFUL))
+      naError("This is not a stateful button");
+  #endif
+  return na_GetButtonState(winapiButton);
 }
 
 
@@ -311,9 +327,34 @@ NA_DEF void naSetButtonState(NAButton* button, NABool state){
   // WINAPI button. Therefore, we need a separate state boolean.
   if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATEFUL))
   {
-    naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATE, state);
-    SendMessage(naGetUIElementNativePtr(winapiButton), BM_SETSTATE, (WPARAM)state, (LPARAM)NA_NULL);
+    na_SetButtonState(winapiButton, state);
+  }else{
+    #if NA_DEBUG
+      naError("This is not a stateful button");
+    #endif
   }
+}
+
+
+
+NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text){
+  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
+  #if NA_DEBUG
+    if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))
+      naError("This is not a text button");
+  #endif
+  // todo
+}
+
+
+
+NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
+  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
+  #if NA_DEBUG
+    if(!naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))
+      naError("This is not a image button");
+  #endif
+  // todo
 }
 
 
@@ -340,10 +381,6 @@ NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* 
     controller);
 }
 
-
-NA_DEF void naSetButtonVisible(NAButton* button, NABool visible){
-  //todo
-}
 
 
 NA_HDEF NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button){

@@ -136,6 +136,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 @interface NACocoaNativeButton : NSButton{
   NACocoaButton* cocoaButton;
   NSTrackingArea* trackingArea;
+  bool isImage;
 }
 @end
 
