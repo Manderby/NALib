@@ -53,6 +53,10 @@
   na_DispatchUIElementCommand((NA_UIElement*)cocoaCheckBox, NA_UI_COMMAND_PRESSED);
 }
 
+- (void) setVisible:(NABool)visible{
+  [self setHidden:visible ? NO : YES];
+}
+
 - (void) setCheckBoxState:(NABool)state{
   [self setState:state ? NAStateOn : NAStateOff];
 }
@@ -110,6 +114,13 @@ NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox){
 NA_DEF void naSetCheckBoxState(NACheckBox* checkBox, NABool state){
   naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
   [nativePtr setCheckBoxState:state];
+}
+
+
+
+NA_DEF void naSetCheckBoxVisible(NACheckBox* checkBox, NABool visible){
+  naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
+  [nativePtr setVisible:visible];
 }
 
 

@@ -140,13 +140,6 @@ NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace){
 
 
 
-NA_DEF void na_DestructImageSpace(NAImageSpace* imageSpace){
-  NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
-  na_ClearImageSpace(&(winapiImageSpace->imageSpace));
-}
-
-
-
 NA_HDEF NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace){
   NARect screenRect = naGetMainScreenRect();
   RECT clientRect;

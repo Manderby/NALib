@@ -19,7 +19,7 @@
 // For Visual Studio users: When you add NALib as a project to your own .sln
 // file, the NALib project automatically searches for a property sheet named
 // NAConfiguration.props which should be located right next the .sln file.
-// You can configure NALib for you whole solution with that. See an example
+// You can configure NALib for your whole solution with that. See an example
 // in the proj folder. By doing so, the preprocessor macros for NALib will
 // inherit from you settings defined in there. If no such file exists, no
 // settings are imported but the ones defined in this file are used.

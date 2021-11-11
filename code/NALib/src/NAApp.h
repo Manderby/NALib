@@ -30,26 +30,7 @@
 
 
 
-// Have a look at NAConfiguration.h to use OpenGL
-#if (NA_COMPILE_OPENGL == 1)
-  #if NA_OS == NA_OS_WINDOWS
-    #include <windows.h>
-    #include <GL/GL.h>
-  #else
-    #include <OpenGL/gl.h>
-  #endif
-#endif
-
-// Have a look at NAConfiguration.h to use Metal
-#if (NA_COMPILE_METAL == 1)
-  #if NA_OS == NA_OS_WINDOWS
-    #error "Metal is a macOS only framework. Does not work on windows."
-  #endif
-#endif
-
-#include "NACoord.h"
 #include "NAString.h"
-#include "NABabyImage.h"
 
 #include "NAApp/Core/NAFont.h"
 #include "NAApp/Core/NAKeyboard.h"
@@ -57,84 +38,20 @@
 #include "NAApp/Core/NAReaction.h"
 #include "NAApp/Core/NAUIImage.h"
 
-// The base of every ui element. It is implemented in NAAppCore.c
+// The base of every ui element.
 #include "NAApp/Core/UIElement/NAUIElement.h"
 
-// The following APIs are implemented in system specific files:
+// The acutal ui elements
 #include "NAApp/Core/UIElement/NAApplication.h"
 #include "NAApp/Core/UIElement/NAButton.h"
+#include "NAApp/Core/UIElement/NACheckBox.h"
+#include "NAApp/Core/UIElement/NAImageSpace.h"
+#include "NAApp/Core/UIElement/NALabel.h"
+#include "NAApp/Core/UIElement/NAMenu.h"
+#include "NAApp/Core/UIElement/NAMenuItem.h"
+#include "NAApp/Core/UIElement/NAMetalSpace.h"
+#include "NAApp/Core/UIElement/NAOpenGLSpace.h"
 
-
-
-
-
-// CheckBox. Default height: 18
-NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width);
-NA_API void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* color);
-NA_API void naSetCheckBoxState(NACheckBox* checkBox, NABool state);
-NA_API void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled);
-NA_API NABool naGetCheckBoxState(NACheckBox* checkBox);
-
-// ImageSpace. Will retain the uiImage.
-NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size);
-
-// Label. Default Height 16. Y-Offset: +4
-// A labe is by default: Eanbled, visible, selectable
-NA_API NALabel* naNewLabel(const NAUTF8Char* text, double width);
-NA_API void naSetLabelHeight(NALabel* label, double height);
-NA_API void naSetLabelText(NALabel* label, const NAUTF8Char* text);
-NA_API void naSetLabelTextColor(NALabel* label, const NABabyColor* color);
-// Note that text alignment must be set before calling this method.
-NA_API void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
-NA_API NABool naIsLabelEnabled(NALabel* label);
-NA_API void naSetLabelEnabled(NALabel* label, NABool enabled);
-NA_API void naSetLabelSelectable(NALabel* label, NABool selectable);
-NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
-NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size);
-NA_API void naSetLabelVisible(NALabel* label, NABool visible);
-
-// Menu
-// naAddMenuItem adds a menu item before atItem. If atItem is Null, it is
-// added to the end of the menu.
-// naGetMenuItemIndex returns the index including all separators.
-// To present the menu onscreen, you need to provide a parent UIElement.
-NA_API NAMenu* naNewMenu(void);
-NA_API void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem);
-NA_API size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item);
-NA_API void naPresentMenu(NAMenu* menu, NAPos pos, void* parentUIElement);
-
-// MenuItem
-NA_API NAMenuItem* naNewMenuItem(const NAUTF8Char* text);
-NA_API NAMenuItem* naNewMenuSeparator(void);
-
-// MetalSpace
-// Note that you must have NA_COMPILE_METAL configured in NAConfiguration.h
-// to use these functions. Also note that metal is macOS only.
-// Use initFunc to perform any initialization necessary like for example
-// uploading of textures to the GPU. The initFunc will be called with
-// initData as the input parameter. The initFunc can be Null.
-// Note that the initFunc will be called when prepareMetal is called (which
-// may be as late as when the space comes onsceen)
-NA_API NAMetalSpace* naNewMetalSpace(NASize size);
-NA_API void* naGetMetalSpaceSystemContext(NAMetalSpace* metalSpace);
-NA_API void naSetMetalSpaceVisible(NAMetalSpace* metalSpace, NABool visible);
-NA_API void naSetMetalSpaceInnerRect(NAMetalSpace* metalSpace, NARect bounds);
-
-// OpenGLSpace
-// Note that you must have NA_COMPILE_OPENGL configured in NAConfiguration.h
-// to use these functions.
-// Use initFunc to perform any initialization necessary like for example
-// uploading of textures to the GPU. The initFunc will be called with
-// initData as the input parameter. The initFunc can be Null.
-// Note that the initFunc will be called...
-// Win: Right within the naNewOpenGLSpace
-// Mac: when prepareOpenGL is called (which may be as late as when the
-//      space comes onsceen)
-NA_API NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData);
-NA_API void* naGetOpenGLSpaceSystemContext(NAOpenGLSpace* openGLSpace);
-NA_API void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace);
-NA_API void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible);
-NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds);
 
 // PopupButton. Default height is 23
 // naAddPopupButtonMenuItem adds a menu item before atItem. If atItem is Null,
@@ -207,7 +124,7 @@ NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFo
 NA_API void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment alignment);
 NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFontSize size);
 
-// A window is by bu default:
+// Window flags:
 #define NA_WINDOW_FIXED_SIZE             0x00
 #define NA_WINDOW_RESIZEABLE             0x01
 #define NA_WINDOW_DEFAULT                0x00

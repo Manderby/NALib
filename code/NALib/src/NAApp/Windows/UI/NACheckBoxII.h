@@ -110,18 +110,14 @@ NA_DEF void na_DestructWINAPICheckBox(NAWINAPICheckBox* winapiCheckBox){
 
 
 
-NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox){
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtr(checkBox), &clientRect);
-  double height = clientRect.bottom - clientRect.top;
+NA_DEF void naSetCheckBoxVisible(NACheckBox* checkBox, NABool visible){
+  //todo
+}
 
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtr(checkBox), &testPoint);
 
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize(clientRect.right - clientRect.left, height));
+
+NA_DEF void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled){
+  // todo
 }
 
 
@@ -136,6 +132,28 @@ NA_DEF NABool naGetCheckBoxState(NACheckBox* checkBox){
 NA_DEF void naSetCheckBoxState(NACheckBox* checkBox, NABool state){
   LPARAM lParam = state ? BST_CHECKED : BST_UNCHECKED;
   SendMessage(naGetUIElementNativePtr(checkBox), BM_SETCHECK, lParam, 0);
+}
+
+
+
+NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* color){
+  // todo
+}
+
+
+
+NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox){
+  NARect screenRect = naGetMainScreenRect();
+  RECT clientRect;
+  GetClientRect(naGetUIElementNativePtr(checkBox), &clientRect);
+  double height = clientRect.bottom - clientRect.top;
+
+  POINT testPoint = {0, (LONG)height};
+  ClientToScreen(naGetUIElementNativePtr(checkBox), &testPoint);
+
+  return naMakeRect(
+    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
+    naMakeSize(clientRect.right - clientRect.left, height));
 }
 
 

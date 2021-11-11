@@ -41,6 +41,8 @@ NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text){
   return (NAMenuItem*)winapiMenuItem;
 }
 
+
+
 NA_DEF NAMenuItem* naNewMenuSeparator(){
   NA_WINAPIMenuItem* winapiMenuItem = naNew(NA_WINAPIMenuItem);
   //NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
@@ -67,9 +69,13 @@ NA_DEF NAMenuItem* naNewMenuSeparator(){
   return (NAMenuItem*)winapiMenuItem;
 }
 
+
+
 NA_DEF void na_DestructWINAPIMenuItem(NA_WINAPIMenuItem* winapiMenuItem){
   na_ClearMenuItem((NAMenuItem*)winapiMenuItem);
 }
+
+
 
 NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(NA_UIElement* menu){
   NA_UNUSED(menu);

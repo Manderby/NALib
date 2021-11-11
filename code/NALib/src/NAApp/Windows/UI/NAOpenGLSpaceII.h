@@ -97,6 +97,19 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 }
 
 
+
+NA_DEF void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace){
+  na_ClearOpenGLSpace((NAOpenGLSpace*)winapiOpenGLSpace);
+}
+
+
+
+NA_DEF void naSetOpenGLVisible(NAOpenGLSpace* openGLSpace, NABool visible){
+  // todo
+}
+
+
+
 NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openGLSpace;
   SwapBuffers(GetDC((HWND)naGetUIElementNativePtr(&(winapiOpenGLSpace->openGLSpace.uiElement))));
@@ -106,13 +119,6 @@ NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
 
 NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
   SetWindowPos((HWND)naGetUIElementNativePtr(openGLSpace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
-}
-
-
-
-
-NA_DEF void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace){
-  na_ClearOpenGLSpace((NAOpenGLSpace*)winapiOpenGLSpace);
 }
 
 
@@ -134,6 +140,10 @@ NA_DEF void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace)
     naError("OpenGL has not been configured. See NAConfiguration.h");
   }
 
+  NA_DEF void naSetOpenGLVisible(NAOpenGLSpace* openGLSpace, NABool visible){
+    naError("OpenGL has not been configured. See NAConfiguration.h");
+  } 
+
   NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
     naError("OpenGL has not been configured. See NAConfiguration.h");
   }
@@ -143,6 +153,8 @@ NA_DEF void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace)
   }
 
 #endif  // NA_COMPILE_OPENGL == 1
+
+
 
 NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openGLSpace){
   return na_GetSpaceAbsoluteInnerRect(openGLSpace);

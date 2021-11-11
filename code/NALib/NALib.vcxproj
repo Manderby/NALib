@@ -28,6 +28,13 @@
     <ClInclude Include="src\NAApp\Core\NAUIImageII.h" />
     <ClInclude Include="src\NAApp\Core\UIElement\NAApplication.h" />
     <ClInclude Include="src\NAApp\Core\UIElement\NAButton.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NACheckBox.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NAImageSpace.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NALabel.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NAMenu.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NAMenuItem.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NAMetalSpace.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NAOpenGLSpace.h" />
     <ClInclude Include="src\NAApp\Core\UIElement\NAUIElement.h" />
     <ClInclude Include="src\NAApp\Windows\NAPreferencesWINAPIII.h" />
     <ClInclude Include="src\NAApp\Windows\NAUIImageWINAPIII.h" />

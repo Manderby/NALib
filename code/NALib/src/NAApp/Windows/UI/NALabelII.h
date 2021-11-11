@@ -117,6 +117,27 @@ NA_DEF void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel){
 
 
 
+NA_DEF void naSetLabelVisible(NALabel* label, NABool visible){
+  // todo
+}
+
+
+
+NA_DEF NABool naIsLabelEnabled(const NALabel* label){
+  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
+  return winapiLabel->enabled;
+}
+
+
+
+NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
+  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
+  winapiLabel->enabled = enabled;
+  naRefreshUIElement(label, 0);
+}
+
+
+
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
   SendMessage(naGetUIElementNativePtr(label), WM_SETTEXT, 0, (LPARAM)systemText);
@@ -147,22 +168,19 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
 
 
 
-NA_DEF NABool naIsLabelEnabled(NALabel* label){
-  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
-  return winapiLabel->enabled;
-}
-
-
-
-NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
-  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
-  winapiLabel->enabled = enabled;
-  naRefreshUIElement(label, 0);
-}
-
-
-
 NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable){
+  // todo
+}
+
+
+
+NA_DEF void naSetLabelHeight(NALabel* label, double height){
+  // todo
+}
+
+
+
+NA_DEF void naSetLabelTextColor(NALabel* label, const NABabyColor* color){
   // todo
 }
 
@@ -178,12 +196,6 @@ NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
 
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size){
   SendMessage(naGetUIElementNativePtr(label), WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(kind, size), MAKELPARAM(TRUE, 0));
-}
-
-
-
-NA_DEF void naSetLabelVisible(NALabel* label, NABool visible){
-  // todo
 }
 
 

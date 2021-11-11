@@ -23,10 +23,14 @@ NA_DEF NAMenu* naNewMenu(){
   return (NAMenu*)winapiMenu;
 }
 
+
+
 NA_DEF void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu){
   DestroyMenu(winapiMenu->hMenu);
   na_ClearMenu((NAMenu*)winapiMenu);
 }
+
+
 
 NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem){
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
@@ -60,19 +64,16 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem){
     TRUE,
     &menuItemInfo);
 
-  //if(atItem){
-  //  NAWINAPIMenu* winapiAtItem = (NA_WINAPIMenuItem*)atItem;
-  //  [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
-  //}else{
-  //  [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];
-  //}
-  
   na_AddMenuChild(menu, item, atItem);
 }
+
+
 
 NA_DEF size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
   return naGetListElemIndex(&(menu->childs), item);
 }
+
+
 
 NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos, void* parentUIElement){
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
@@ -82,7 +83,10 @@ NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos, void* parentUIElement){
   na_SetApplicationLastOpenedMenu(naGetApplication(), menu);
   NARect screenRect = naGetMainScreenRect();
 
-  int selection = TrackPopupMenu(
+  // The messages are sent to the parent ui element. See WM_ENTERMENULOOP for
+  // example. Currently only works with buttons.
+
+  /*int selection = */TrackPopupMenu(
     winapiMenu->hMenu, 
     TPM_LEFTALIGN | TPM_RIGHTBUTTON/* | TPM_RETURNCMD*/, 
     (int)pos.x, (int)screenRect.size.height - (int)pos.y, 0,
