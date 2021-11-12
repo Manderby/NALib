@@ -1,39 +1,43 @@
 
-#if defined NA_LABEL_INCLUDED || !defined NA_APP_INCLUDED
+#if defined NA_UI_POPUP_BUTTON_INCLUDED || !defined NA_APP_INCLUDED
   #warning "Do not include this file directly. Use NAApp.h"
 #endif
-#ifndef NA_LABEL_INCLUDED
-#define NA_LABEL_INCLUDED
+#ifndef NA_UI_POPUP_BUTTON_INCLUDED
+#define NA_UI_POPUP_BUTTON_INCLUDED
 
 
 
-// Creates a new label. Default Height is 16.
-// A label is by default: Enabled, visible, selectable
-NA_API NALabel* naNewLabel(const NAUTF8Char* text, double width);
+// Creates a new PopupButton. Default height is 23.
+NA_API NAPopupButton* naNewPopupButton(double width);
 
-// Gets or sets the visibility or enabled state of the button.
-NA_API void naSetLabelVisible(NALabel* label, NABool visible);
-NA_API NABool naIsLabelEnabled(const NALabel* label);
-NA_API void naSetLabelEnabled(NALabel* label, NABool enabled);
+// Changes the visibility or enabled state of the button.
+NA_API void naSetPopupButtonVisible(
+  NAPopupButton* popupButton,
+  NABool visible);
+NA_API void naSetPopupButtonEnabled(
+  NAPopupButton* popupButton,
+  NABool enabled);
 
-// Sets the contents of a label. Setting a link makes the whole label
-// clickable and opens the default browser with the given url.
-// Note that text alignment will be overwritten when setting a link.
-NA_API void naSetLabelText(NALabel* label, const NAUTF8Char* text);
-NA_API void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
+// naAddPopupButtonMenuItem adds a menu item before atItem. If atItem is Null,
+// it is added to the end of the menu.
+NA_API void naAddPopupButtonMenuItem(
+  NAPopupButton* popupButton,
+  NAMenuItem* item,
+  NAMenuItem* atItem);
 
-// Sets general properties of a label.
-NA_API void naSetLabelSelectable(NALabel* label, NABool selectable);
-NA_API void naSetLabelHeight(NALabel* label, double height);
+// naGetPopupButtonItemIndex returns the index including all separators.
+NA_API size_t naGetPopupButtonItemIndex(
+  NAPopupButton* popupButton,
+  NAMenuItem* item);
 
-// Sets font properties of a label.
-NA_API void naSetLabelTextColor(NALabel* label, const NABabyColor* color);
-NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
-NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size);
+// Sets which item is presented as the selected item.
+NA_API void naSetPopupButtonItemSelected(
+  NAPopupButton* popupButton,
+  NAMenuItem* item);
 
 
 
-#endif // NA_LABEL_INCLUDED
+#endif // NA_UI_POPUP_BUTTON_INCLUDED
 
 
 

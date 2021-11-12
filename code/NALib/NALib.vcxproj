@@ -35,7 +35,15 @@
     <ClInclude Include="src\NAApp\Core\UIElement\NAMenuItem.h" />
     <ClInclude Include="src\NAApp\Core\UIElement\NAMetalSpace.h" />
     <ClInclude Include="src\NAApp\Core\UIElement\NAOpenGLSpace.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NAPopupButton.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NARadio.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NAScreen.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NASlider.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NASpace.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NATextBox.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NATextField.h" />
     <ClInclude Include="src\NAApp\Core\UIElement\NAUIElement.h" />
+    <ClInclude Include="src\NAApp\Core\UIElement\NAWindow.h" />
     <ClInclude Include="src\NAApp\Windows\NAPreferencesWINAPIII.h" />
     <ClInclude Include="src\NAApp\Windows\NAUIImageWINAPIII.h" />
     <ClInclude Include="src\NAApp\Windows\UI\NAApplicationII.h" />

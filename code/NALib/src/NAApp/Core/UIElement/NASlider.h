@@ -1,39 +1,29 @@
 
-#if defined NA_LABEL_INCLUDED || !defined NA_APP_INCLUDED
+#if defined NA_UI_SLIDER_INCLUDED || !defined NA_APP_INCLUDED
   #warning "Do not include this file directly. Use NAApp.h"
 #endif
-#ifndef NA_LABEL_INCLUDED
-#define NA_LABEL_INCLUDED
+#ifndef NA_UI_SLIDER_INCLUDED
+#define NA_UI_SLIDER_INCLUDED
 
 
 
-// Creates a new label. Default Height is 16.
-// A label is by default: Enabled, visible, selectable
-NA_API NALabel* naNewLabel(const NAUTF8Char* text, double width);
+// Creates a new Slider. Default height is 24.
+NA_API NASlider* naNewSlider(double width);
 
-// Gets or sets the visibility or enabled state of the button.
-NA_API void naSetLabelVisible(NALabel* label, NABool visible);
-NA_API NABool naIsLabelEnabled(const NALabel* label);
-NA_API void naSetLabelEnabled(NALabel* label, NABool enabled);
+// Changes the visibility or enabled state of the button.
+NA_API void naSetSliderVisible(NASlider* slider, NABool visible);
+NA_API void naSetSliderEnabled(NASlider* slider, NABool enabled);
 
-// Sets the contents of a label. Setting a link makes the whole label
-// clickable and opens the default browser with the given url.
-// Note that text alignment will be overwritten when setting a link.
-NA_API void naSetLabelText(NALabel* label, const NAUTF8Char* text);
-NA_API void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
+// Gets or sets the current double value of the slider. Must be in [0, 1]
+NA_API double naGetSliderValue(NASlider* slider);
+NA_API void naSetSliderValue(NASlider* slider, double value);
 
-// Sets general properties of a label.
-NA_API void naSetLabelSelectable(NALabel* label, NABool selectable);
-NA_API void naSetLabelHeight(NALabel* label, double height);
-
-// Sets font properties of a label.
-NA_API void naSetLabelTextColor(NALabel* label, const NABabyColor* color);
-NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
-NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size);
+// Sets how many ticks are shown.
+NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount);
 
 
 
-#endif // NA_LABEL_INCLUDED
+#endif // NA_UI_SLIDER_INCLUDED
 
 
 

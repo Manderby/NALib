@@ -134,6 +134,13 @@ NA_DEF void naSetRadioState(NARadio* radio, NABool state){
 
 
 
+NA_DEF void naSetRadioVisible(NARadio* radio, NABool visible){
+  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  [nativePtr setVisible:(BOOL)visible];
+}
+
+
+
 NA_DEF void naSetRadioEnabled(NARadio* radio, NABool enabled){
   naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
   [nativePtr setEnabled:(BOOL)enabled];

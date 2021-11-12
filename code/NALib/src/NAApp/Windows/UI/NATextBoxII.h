@@ -86,6 +86,25 @@ NA_DEF void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox){
 
 
 
+NA_DEF void naSetTextBoxVisible(NATextBox* textBox, NABool visible){
+  // todo
+}
+
+
+
+NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
+  SendMessage(naGetUIElementNativePtr(textBox), EM_SETREADONLY, (WPARAM)!editable, 0);
+}
+
+
+
+NA_DEF NAString* naNewStringWithTextBoxText(NATextBox* textBox){
+  return NA_NULL;
+  // todo
+}
+
+
+
 NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text){
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
   SendMessage(naGetUIElementNativePtr(textBox), WM_SETTEXT, 0, (LPARAM)systemText);
@@ -109,14 +128,14 @@ NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind, NAFontSize
 
 
 
-NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
-  SendMessage(naGetUIElementNativePtr(textBox), EM_SETREADONLY, (WPARAM)!editable, 0);
+NA_DEF void naSetTextBoxCustomFont(NATextBox* textBox, const NAUTF8Char* fontName, uint32 flags, double size){
+  // todo
 }
 
 
 
-NA_DEF void naSetTextBoxVisible(NATextBox* textBox, NABool visible){
-
+NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox){
+  // todo
 }
 
 

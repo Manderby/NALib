@@ -1,39 +1,29 @@
 
-#if defined NA_LABEL_INCLUDED || !defined NA_APP_INCLUDED
+#if defined NA_UI_RADIO_INCLUDED || !defined NA_APP_INCLUDED
   #warning "Do not include this file directly. Use NAApp.h"
 #endif
-#ifndef NA_LABEL_INCLUDED
-#define NA_LABEL_INCLUDED
+#ifndef NA_UI_RADIO_INCLUDED
+#define NA_UI_RADIO_INCLUDED
 
 
 
-// Creates a new label. Default Height is 16.
-// A label is by default: Enabled, visible, selectable
-NA_API NALabel* naNewLabel(const NAUTF8Char* text, double width);
+// Creates a new Radio. Default height is 18.
+NA_API NARadio* naNewRadio(const NAUTF8Char* text, double width);
 
-// Gets or sets the visibility or enabled state of the button.
-NA_API void naSetLabelVisible(NALabel* label, NABool visible);
-NA_API NABool naIsLabelEnabled(const NALabel* label);
-NA_API void naSetLabelEnabled(NALabel* label, NABool enabled);
+// Changes the visibility or enabled state of the radio.
+NA_API void naSetRadioVisible(NARadio* radio, NABool visible);
+NA_API void naSetRadioEnabled(NARadio* radio, NABool enabled);
 
-// Sets the contents of a label. Setting a link makes the whole label
-// clickable and opens the default browser with the given url.
-// Note that text alignment will be overwritten when setting a link.
-NA_API void naSetLabelText(NALabel* label, const NAUTF8Char* text);
-NA_API void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
+// Gets or sets the state of the radio.
+NA_API NABool naGetRadioState(NARadio* radio);
+NA_API void naSetRadioState(NARadio* radio, NABool state);
 
-// Sets general properties of a label.
-NA_API void naSetLabelSelectable(NALabel* label, NABool selectable);
-NA_API void naSetLabelHeight(NALabel* label, double height);
-
-// Sets font properties of a label.
-NA_API void naSetLabelTextColor(NALabel* label, const NABabyColor* color);
-NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
-NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size);
+// Sets the color of the text of the radio.
+NA_API void naSetRadioTextColor(NARadio* radio, const NABabyColor* color);
 
 
 
-#endif // NA_LABEL_INCLUDED
+#endif // NA_UI_RADIO_INCLUDED
 
 
 

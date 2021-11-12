@@ -43,19 +43,24 @@ NA_DEF void na_DestructWINAPIPopupButton(NAWINAPIPopupButton* winapiPopupButton)
 }
 
 NA_DEF void naSetPopupButtonVisible(NAPopupButton* popupButton, NABool visible){
+  // todo
+}
+
+NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
+  // todo
 }
 
 NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, NAMenuItem* atItem){
+  // todo
 }
 
 NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, NAMenuItem* item){
+  // todo
   return 0;
 }
 
 NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, NAMenuItem* item){
-}
-
-NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
+  // todo
 }
 
 NA_HDEF NARect na_GetPopupButtonAbsoluteInnerRect(NA_UIElement* menu){

@@ -51,119 +51,14 @@
 #include "NAApp/Core/UIElement/NAMenuItem.h"
 #include "NAApp/Core/UIElement/NAMetalSpace.h"
 #include "NAApp/Core/UIElement/NAOpenGLSpace.h"
-
-
-// PopupButton. Default height is 23
-// naAddPopupButtonMenuItem adds a menu item before atItem. If atItem is Null,
-// it is added to the end of the menu.
-// naGetPopupButtonItemIndex returns the index including all separators.
-NA_API NAPopupButton* naNewPopupButton(double width);
-NA_API void naSetPopupButtonVisible(NAPopupButton* popupButton, NABool visible);
-NA_API void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, NAMenuItem* atItem);
-NA_API size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, NAMenuItem* item);
-NA_API void naSetPopupButtonItemSelected(NAPopupButton* popupButton, NAMenuItem* item);
-NA_API void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled);
-
-// Radio. Default height is 18
-NA_API NARadio* naNewRadio(const NAUTF8Char* text, double width);
-NA_API void naSetRadioTextColor(NARadio* radio, const NABabyColor* color);
-NA_API NABool naGetRadioState(NARadio* radio);
-NA_API void naSetRadioState(NARadio* radio, NABool state);
-NA_API void naSetRadioEnabled(NARadio* radio, NABool enabled);
-
-// Screen
-// Screens are not implemented yet, but you can get the main screen rect:
-NA_API NARect naGetMainScreenRect(void);
-
-// Space (In other frameworks called View, Frame, Area, Widget...)
-// Beware that adding a child to a space which formerly was the first responder
-// of a window, that windows first responder will be reset to Null.
-//
-// Usually, UI-elementes are placed in a line-by-line fashion, usually asking
-// the user to read from top to bottom. Therefore, it is good to know the
-// vertical alignment of all UI-elements.
-//
-// The tallest items are 24 points in height. But the visual representation is
-// often times shifted in vertical position such that some elements are even
-// overlapping when displayed line by line. Therefore, it is proposed to always
-// use at least a difference of 25 points between lines. The author strongly
-// recommends that number.
-
-NA_API NASpace* naNewSpace(NASize size);
-NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
-NA_API void naRemoveSpaceChilds(NASpace* space);
-NA_API void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color);
-NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
-NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
-NA_API void naSetSpaceRect(NASpace* space, NARect rect);
-NA_API void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable);
-
-// Slider. Default height: 24
-NA_API NASlider* naNewSlider(double width);
-NA_API void naSetSliderEnabled(NASlider* slider, NABool enabled);
-NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount);
-NA_API double naGetSliderValue(NASlider* slider);
-NA_API void naSetSliderValue(NASlider* slider, double value);
-
-// TextBox
-NA_API NATextBox* naNewTextBox(NASize size);
-NA_API void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text);
-NA_API NAString* naNewStringWithTextBoxText(NATextBox* textBox);
-NA_API void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment);
-NA_API void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind, NAFontSize size);
-NA_API void naSetTextBoxCustomFont(NATextBox* textBox, const NAUTF8Char* fontName, uint32 flags, double size);
-NA_API void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox);
-NA_API void naSetTextBoxEditable(NATextBox* textBox, NABool editable);
-NA_API void naSetTextBoxVisible(NATextBox* textBox, NABool visible);
-
-// TextField. Default height is 21
-NA_API NATextField* naNewTextField(double width);
-NA_API void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text);
-NA_API NAString* naNewStringWithTextFieldText(NATextField* textField);
-NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFontSize size);
-NA_API void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment alignment);
-NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFontSize size);
-
-// Window flags:
-#define NA_WINDOW_FIXED_SIZE             0x00
-#define NA_WINDOW_RESIZEABLE             0x01
-#define NA_WINDOW_DEFAULT                0x00
-#define NA_WINDOW_AUXILIARY              0x02
-#define NA_WINDOW_TITLED                 0x00
-#define NA_WINDOW_TITLELESS              0x04
-#define NA_WINDOW_CLOSEABLE              0x00
-#define NA_WINDOW_NON_CLOSEABLE          0x08
-#define NA_WINDOW_MINIATURIZEABLE        0x00
-#define NA_WINDOW_NON_MINIATURIZEABLE    0x10
-
-// Window
-NA_API NAWindow* naNewWindow(
-  const NAUTF8Char* title,
-  NARect rect,
-  uint32 flags,
-  NAInt storageTag);
-NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
-NA_API void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
-NA_API void naSetWindowRect(NAWindow* window, NARect rect);
-NA_API NAUIImageResolution naGetWindowUIResolution(NAWindow* window);
-NA_API void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem);
-NA_API void* naGetWindowFirstTabElement(NAWindow* window);
-NA_API void naShowWindow(NAWindow* window);
-NA_API void naCloseWindow(NAWindow* window);
-NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
-NA_API void naSetWindowContentSpace(NAWindow* window, void* space);
-NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);
-NA_API void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts);
-NA_API NABool naIsWindowFullscreen(NAWindow* window);
-NA_API NABool naIsWindowResizeable(NAWindow* window);
-NA_API void naPreventWindowFromClosing(NAWindow* window, NABool prevent);
-NA_API NARect naSetWindowStorageTag(
-  NAWindow* window,
-  NAInt storageTag,
-  NARect rect,
-  NABool resizeable);
-
-
+#include "NAApp/Core/UIElement/NAPopupButton.h"
+#include "NAApp/Core/UIElement/NARadio.h"
+#include "NAApp/Core/UIElement/NAScreen.h"
+#include "NAApp/Core/UIElement/NASlider.h"
+#include "NAApp/Core/UIElement/NASpace.h"
+#include "NAApp/Core/UIElement/NATextBox.h"
+#include "NAApp/Core/UIElement/NATextField.h"
+#include "NAApp/Core/UIElement/NAWindow.h"
 
 
 

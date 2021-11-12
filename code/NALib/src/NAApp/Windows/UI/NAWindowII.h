@@ -233,125 +233,16 @@ NA_DEF void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow){
 
 
 
-NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title){
-  TCHAR* systemTitle = naAllocSystemStringWithUTF8String(title);
-  SetWindowText(naGetUIElementNativePtr(window), systemTitle);
-  naFree(systemTitle);
-}
-
-
-
-NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
-  if(keepOnTop){
-    SetWindowPos(naGetUIElementNativePtr(window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-  }else{
-    SetWindowPos(naGetUIElementNativePtr(window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-  }
-}
-
-
-
-NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
-  NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
-  NARect currect = naGetUIElementRect(&(winapiWindow->window), NA_NULL, NA_FALSE);
-  if(!naEqualRect(currect, rect)){
-    POINT testPoint = {0, 0};
-    RECT clientRect;
-    RECT windowRect;
-    LONG leftdiff;
-    LONG topdiff;
-    LONG rightdiff;
-    LONG bottomdiff;
-
-    NARect screenRect = naGetMainScreenRect();
-    GetClientRect(naGetUIElementNativePtr(window), &clientRect);
-    GetWindowRect(naGetUIElementNativePtr(window), &windowRect);
-    ClientToScreen(naGetUIElementNativePtr(window), &testPoint);
-
-    leftdiff = (testPoint.x - windowRect.left);
-    topdiff =  (testPoint.y - windowRect.top);
-    rightdiff =  ((windowRect.right - windowRect.left) - (clientRect.right - clientRect.left) - leftdiff);
-    bottomdiff =  ((windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top) - topdiff);
-    rect.pos.x -= leftdiff;
-    rect.pos.y -= bottomdiff;
-    rect.size.width += leftdiff;
-    rect.size.height += bottomdiff;
-    rect.size.width += rightdiff;
-    rect.size.height += topdiff;
-
-    MoveWindow(
-      naGetUIElementNativePtr(winapiWindow),
-      (LONG)rect.pos.x,
-      (LONG)(screenRect.size.height - rect.pos.y - rect.size.height),
-      (LONG)rect.size.width,
-      (LONG)rect.size.height,
-      NA_FALSE);
-  }
-}
-
-
-
-NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
-  // Currently, NALib for windows GUI is not resolution aware. Be patient.
-  return NA_UIIMAGE_RESOLUTION_1x;
-}
-
-
-
-NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem){
-  NAWINAPIWindow* winapiWindow;
-  
+NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
   #if NA_DEBUG
-    if(naGetUIElementWindow(firstTabElem) != window)
-      naError("Element is not part of the window.");
+    if((naGetUIElementType(space) != NA_UI_SPACE) &&
+      (naGetUIElementType(space) != NA_UI_IMAGE_SPACE) &&
+      (naGetUIElementType(space) != NA_UI_OPENGL_SPACE) &&
+      (naGetUIElementType(space) != NA_UI_METAL_SPACE))
+      naError("Require a space, not any arbitrary ui element.");
   #endif
-  winapiWindow = (NAWINAPIWindow*)window;
-  winapiWindow->firstResponder = firstTabElem;
-}
-
-
-
-NA_DEF void* naGetWindowFirstTabElement(NAWindow* window){
-  NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
-  return winapiWindow->firstResponder;
-}
-
-
-
-NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
-  NARect rect;
-  NARect screenRect;
-  RECT clientRect;
-  POINT testPoint = {0, 0};
-
-  GetClientRect(window->nativePtr, &clientRect);
-  ClientToScreen(window->nativePtr, &testPoint);
-
-  screenRect = naGetMainScreenRect();
-
-  rect.pos.x = testPoint.x;
-  rect.pos.y = (double)screenRect.size.height - testPoint.y - ((double)clientRect.bottom - (double)clientRect.top);
-  rect.size.width = (double)clientRect.right - (double)clientRect.left;
-  rect.size.height = (double)clientRect.bottom - (double)clientRect.top;
-  return rect;
-}
-
-
-
-NA_HDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
-  NARect rect;
-  NARect screenRect;
-  RECT windowRect;
-
-  GetWindowRect(window->nativePtr, &windowRect);
-  screenRect = naGetMainScreenRect();
-
-  rect.pos.x = windowRect.left;
-  rect.pos.y = screenRect.size.height - windowRect.bottom;
-  rect.size.width = (double)windowRect.right - (double)windowRect.left;
-  rect.size.height = (double)windowRect.bottom - (double)windowRect.top;
-
-  return rect;
+  window->contentSpace = space;
+  na_SetUIElementParent(space, window, NA_TRUE);
 }
 
 
@@ -365,20 +256,6 @@ NA_DEF void naShowWindow(NAWindow* window){
 
 NA_DEF void naCloseWindow(NAWindow* window){
   ShowWindow(naGetUIElementNativePtr(window), SW_HIDE);
-}
-
-
-
-NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
-  #if NA_DEBUG
-    if((naGetUIElementType(space) != NA_UI_SPACE) &&
-      (naGetUIElementType(space) != NA_UI_IMAGE_SPACE) &&
-      (naGetUIElementType(space) != NA_UI_OPENGL_SPACE) &&
-      (naGetUIElementType(space) != NA_UI_METAL_SPACE))
-      naError("Require a space, not any arbitrary ui element.");
-  #endif
-  window->contentSpace = space;
-  na_SetUIElementParent(space, window, NA_TRUE);
 }
 
 
@@ -433,6 +310,135 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
 
     naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_FULLSCREEN, fullScreen);
   }
+}
+
+
+
+NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
+  // Currently, NALib for windows GUI is not resolution aware. Be patient.
+  return NA_UIIMAGE_RESOLUTION_1x;
+}
+
+
+
+NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title){
+  TCHAR* systemTitle = naAllocSystemStringWithUTF8String(title);
+  SetWindowText(naGetUIElementNativePtr(window), systemTitle);
+  naFree(systemTitle);
+}
+
+
+
+NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
+  NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
+  NARect currect = naGetUIElementRect(&(winapiWindow->window), NA_NULL, NA_FALSE);
+  if(!naEqualRect(currect, rect)){
+    POINT testPoint = {0, 0};
+    RECT clientRect;
+    RECT windowRect;
+    LONG leftdiff;
+    LONG topdiff;
+    LONG rightdiff;
+    LONG bottomdiff;
+
+    NARect screenRect = naGetMainScreenRect();
+    GetClientRect(naGetUIElementNativePtr(window), &clientRect);
+    GetWindowRect(naGetUIElementNativePtr(window), &windowRect);
+    ClientToScreen(naGetUIElementNativePtr(window), &testPoint);
+
+    leftdiff = (testPoint.x - windowRect.left);
+    topdiff =  (testPoint.y - windowRect.top);
+    rightdiff =  ((windowRect.right - windowRect.left) - (clientRect.right - clientRect.left) - leftdiff);
+    bottomdiff =  ((windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top) - topdiff);
+    rect.pos.x -= leftdiff;
+    rect.pos.y -= bottomdiff;
+    rect.size.width += leftdiff;
+    rect.size.height += bottomdiff;
+    rect.size.width += rightdiff;
+    rect.size.height += topdiff;
+
+    MoveWindow(
+      naGetUIElementNativePtr(winapiWindow),
+      (LONG)rect.pos.x,
+      (LONG)(screenRect.size.height - rect.pos.y - rect.size.height),
+      (LONG)rect.size.width,
+      (LONG)rect.size.height,
+      NA_FALSE);
+  }
+}
+
+
+
+NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
+  if(keepOnTop){
+    SetWindowPos(naGetUIElementNativePtr(window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+  }else{
+    SetWindowPos(naGetUIElementNativePtr(window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+  }
+}
+
+
+
+NA_DEF void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts){
+  // todo
+}
+
+
+
+NA_DEF void* naGetWindowFirstTabElement(NAWindow* window){
+  NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
+  return winapiWindow->firstResponder;
+}
+
+
+
+NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem){
+  NAWINAPIWindow* winapiWindow;
+  
+  #if NA_DEBUG
+    if(naGetUIElementWindow(firstTabElem) != window)
+      naError("Element is not part of the window.");
+  #endif
+  winapiWindow = (NAWINAPIWindow*)window;
+  winapiWindow->firstResponder = firstTabElem;
+}
+
+
+
+NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
+  NARect rect;
+  NARect screenRect;
+  RECT clientRect;
+  POINT testPoint = {0, 0};
+
+  GetClientRect(window->nativePtr, &clientRect);
+  ClientToScreen(window->nativePtr, &testPoint);
+
+  screenRect = naGetMainScreenRect();
+
+  rect.pos.x = testPoint.x;
+  rect.pos.y = (double)screenRect.size.height - testPoint.y - ((double)clientRect.bottom - (double)clientRect.top);
+  rect.size.width = (double)clientRect.right - (double)clientRect.left;
+  rect.size.height = (double)clientRect.bottom - (double)clientRect.top;
+  return rect;
+}
+
+
+
+NA_HDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
+  NARect rect;
+  NARect screenRect;
+  RECT windowRect;
+
+  GetWindowRect(window->nativePtr, &windowRect);
+  screenRect = naGetMainScreenRect();
+
+  rect.pos.x = windowRect.left;
+  rect.pos.y = screenRect.size.height - windowRect.bottom;
+  rect.size.width = (double)windowRect.right - (double)windowRect.left;
+  rect.size.height = (double)windowRect.bottom - (double)windowRect.top;
+
+  return rect;
 }
 
 

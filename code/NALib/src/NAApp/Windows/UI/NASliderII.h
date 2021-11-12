@@ -123,27 +123,11 @@ NA_DEF void na_DestructWINAPISlider(NAWINAPISlider* winapiSlider){
 
 
 
-NA_HDEF NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* slider){
-  RECT contentRect;
-  NARect screenRect;
-  NARect rect;
-  GetClientRect(naGetUIElementNativePtr(slider), &contentRect);
-
-  POINT testPoint = {0, 0};
-
-  ClientToScreen(naGetUIElementNativePtr(slider), &testPoint);
-  screenRect = naGetMainScreenRect();
-
-  rect.pos.x = testPoint.x;
-  rect.pos.y = (double)screenRect.size.height - ((double)testPoint.y + ((double)contentRect.bottom - (double)contentRect.top));
-  rect.size.width = (double)contentRect.right - (double)contentRect.left;
-  rect.size.height = (double)contentRect.bottom - (double)contentRect.top;
-  return rect;
+NA_DEF void naSetSliderVisible(NASlider* slider, NABool visible){
+  // todo
 }
-
-
-
-NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount){
+NA_DEF void naSetSliderEnabled(NASlider* slider, NABool enabled){
+  // todo
 }
 
 
@@ -160,6 +144,32 @@ NA_API void naSetSliderValue(NASlider* slider, double value){
   SendMessage(naGetUIElementNativePtr(slider), TBM_SETPOS, 
     (WPARAM) TRUE, // redraw flag 
     (LPARAM) sliderValue); 
+}
+
+
+
+NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount){
+  // todo
+}
+
+
+
+NA_HDEF NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* slider){
+  RECT contentRect;
+  NARect screenRect;
+  NARect rect;
+  GetClientRect(naGetUIElementNativePtr(slider), &contentRect);
+
+  POINT testPoint = {0, 0};
+
+  ClientToScreen(naGetUIElementNativePtr(slider), &testPoint);
+  screenRect = naGetMainScreenRect();
+
+  rect.pos.x = testPoint.x;
+  rect.pos.y = (double)screenRect.size.height - ((double)testPoint.y + ((double)contentRect.bottom - (double)contentRect.top));
+  rect.size.width = (double)contentRect.right - (double)contentRect.left;
+  rect.size.height = (double)contentRect.bottom - (double)contentRect.top;
+  return rect;
 }
 
 

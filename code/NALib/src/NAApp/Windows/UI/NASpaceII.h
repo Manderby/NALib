@@ -176,12 +176,6 @@ NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace){
 
 
 
-NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
-  SetWindowPos(naGetUIElementNativePtr(space), HWND_TOP, 0, 0, (int)rect.size.width, (int)rect.size.height, SWP_NOMOVE | SWP_NOZORDER);
-}
-
-
-
 NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
   RECT spacerect;
   RECT childrect;
@@ -194,6 +188,37 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
   childheight = childrect.bottom - childrect.top;
   SetWindowPos(naGetUIElementNativePtr(child), HWND_TOP, (int)pos.x, spaceheight - (int)pos.y - childheight, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
   na_SetUIElementParent(child, space, NA_TRUE);
+}
+
+
+
+NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color){
+  // todo
+}
+
+
+
+NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
+  space->alternateBackground = alternate;
+  naRefreshUIElement(space, 0.);
+}
+
+
+
+NA_DEF void naRemoveSpaceChilds(NASpace* space){
+  // todo
+}
+
+
+
+NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
+  SetWindowPos(naGetUIElementNativePtr(space), HWND_TOP, 0, 0, (int)rect.size.width, (int)rect.size.height, SWP_NOMOVE | SWP_NOZORDER);
+}
+
+
+
+NA_HDEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable){
+  // todo
 }
 
 
@@ -213,13 +238,6 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   rect.size.width = (double)contentRect.right - (double)contentRect.left;
   rect.size.height = (double)contentRect.bottom - (double)contentRect.top;
   return rect;
-}
-
-
-
-NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
-  space->alternateBackground = alternate;
-  naRefreshUIElement(space, 0.);
 }
 
 

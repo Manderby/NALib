@@ -102,18 +102,14 @@ NA_DEF void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio){
 
 
 
-NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtr(radio), &clientRect);
-  double height = clientRect.bottom - clientRect.top;
+NA_DEF void naSetRadioVisible(NARadio* radio, NABool visible){
+  // todo
+}
 
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtr(radio), &testPoint);
 
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize(clientRect.right - clientRect.left, height));
+
+NA_DEF void naSetRadioEnabled(NARadio* radio, NABool enabled){
+  // todo
 }
 
 
@@ -128,6 +124,22 @@ NA_DEF NABool naGetRadioState(NARadio* radio){
 NA_DEF void naSetRadioState(NARadio* radio, NABool state){
   LPARAM lParam = state ? BST_CHECKED : BST_UNCHECKED;
   SendMessage(naGetUIElementNativePtr(radio), BM_SETCHECK, lParam, 0);
+}
+
+
+
+NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
+  NARect screenRect = naGetMainScreenRect();
+  RECT clientRect;
+  GetClientRect(naGetUIElementNativePtr(radio), &clientRect);
+  double height = clientRect.bottom - clientRect.top;
+
+  POINT testPoint = {0, (LONG)height};
+  ClientToScreen(naGetUIElementNativePtr(radio), &testPoint);
+
+  return naMakeRect(
+    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
+    naMakeSize(clientRect.right - clientRect.left, height));
 }
 
 
