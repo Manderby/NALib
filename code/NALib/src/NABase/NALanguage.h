@@ -137,11 +137,11 @@
   #ifdef __cplusplus
     #define NA_NULL nullptr
   #else
-    #define NA_NULL ((void*)0)
+    #define NA_NULL NULL
   #endif
   #define NA_NORETURN _Noreturn
 #else
-  #define NA_NULL ((void*)0)
+  #define NA_NULL NULL
   #define NA_NORETURN
 #endif
 
