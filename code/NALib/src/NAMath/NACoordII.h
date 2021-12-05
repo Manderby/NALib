@@ -21,87 +21,87 @@
 
 
 NA_IDEF NARange naMakeRange(double origin, double length){
-  NARange newrange;
+  NARange newRange;
   #if NA_DEBUG
     if(!(naIsOffsetValueValid(origin) && naIsLengthValueValid(length)))
       naError("Invalid values given.");
     if(!naIsLengthValueUseful(length))
       naError("length is not useful.");
   #endif
-  newrange.origin = origin;
-  newrange.length = length;
-  return newrange;
+  newRange.origin = origin;
+  newRange.length = length;
+  return newRange;
 }
 NA_IDEF NARangef naMakeRangef(float origin, float length){
-  NARangef newrange;
+  NARangef newRange;
   #if NA_DEBUG
     if(!(naIsOffsetValueValidf(origin) && naIsLengthValueValidf(length)))
       naError("Invalid values given.");
     if(!naIsLengthValueUsefulf(length))
       naError("length is not useful.");
   #endif
-  newrange.origin = origin;
-  newrange.length = length;
-  return newrange;
+  newRange.origin = origin;
+  newRange.length = length;
+  return newRange;
 }
 NA_IDEF NARangei naMakeRangei(NAInt origin, NAInt length){
-  NARangei newrange;
+  NARangei newRange;
   #if NA_DEBUG
     if(!(naIsOffsetValueValidi(origin) && naIsLengthValueValidi(length)))
       naError("Invalid values given.");
     if(!naIsLengthValueUsefuli(length))
       naError("length is not useful.");
   #endif
-  newrange.origin = origin;
-  newrange.length = length;
-  return newrange;
+  newRange.origin = origin;
+  newRange.length = length;
+  return newRange;
 }
 NA_IDEF NARange naMakeRangeE (double origin, double length){
-  NARange newrange;
+  NARange newRange;
   #if NA_DEBUG
     if(!(naIsOffsetValueValid(origin) && naIsLengthValueValid(length)))
       naError("Invalid values given.");
     if(!naIsLengthValueValid(length))
       naError("length is not valid.");
   #endif
-  newrange.origin = origin;
-  newrange.length = length;
-  return newrange;
+  newRange.origin = origin;
+  newRange.length = length;
+  return newRange;
 }
 NA_IDEF NARangei naMakeRangeiE(NAInt origin, NAInt length){
-  NARangei newrange;
+  NARangei newRange;
   #if NA_DEBUG
     if(!(naIsOffsetValueValidi(origin) && naIsLengthValueValidi(length)))
       naError("Invalid values given.");
     if(!naIsLengthValueValidi(length))
       naError("length is not valid.");
   #endif
-  newrange.origin = origin;
-  newrange.length = length;
-  return newrange;
+  newRange.origin = origin;
+  newRange.length = length;
+  return newRange;
 }
 NA_IDEF NARange naMakeRangeWithRangei(NARangei range){
-  NARange newrange = naMakeRangeE((double)range.origin, (double)range.length);
-  return newrange;
+  NARange newRange = naMakeRangeE((double)range.origin, (double)range.length);
+  return newRange;
 }
 NA_IDEF NARangei naMakeRangeiWithRange(NARange range){
-  NARangei newrange = naMakeRangeiE((NAInt)range.origin, (NAInt)range.length);
-  return newrange;
+  NARangei newRange = naMakeRangeiE((NAInt)range.origin, (NAInt)range.length);
+  return newRange;
 }
 NA_IDEF NARange naMakeRangeEmpty(){
-  NARange newrange;
-  newrange.length = 0.;
-  return newrange;
+  NARange newRange;
+  newRange.length = 0.;
+  return newRange;
 }
 NA_IDEF NARangef naMakeRangefEmpty(){
-  NARangef newrange;
-  newrange.length = 0.f;
-  return newrange;
+  NARangef newRange;
+  newRange.length = 0.f;
+  return newRange;
 }
 NA_IDEF NARangei naMakeRangeiEmpty(){
-  NARangei newrange;
-  newrange.length = 0;
-  return newrange;
+  NARangei newRange;
+  newRange.length = 0;
+  return newRange;
 }
 
 
@@ -739,69 +739,69 @@ NA_IDEF NAVertex naMakeVertexWithAlignment(NAVertex origin, NABox alignBox){
 
 
 NA_IDEF NARange naMakeRangeWithStartAndEnd(double start, double end){
-  NARange newrange;
+  NARange newRange;
   #if NA_DEBUG
     if(!(naIsOffsetValueValid(start) && naIsOffsetValueValid(end)))
       naError("Invalid values given.");
   #endif
-  newrange.origin = start;
-  newrange.length = naMakeLengthWithStartAndEnd(start, end);
-  return newrange;
+  newRange.origin = start;
+  newRange.length = naMakeLengthWithStartAndEnd(start, end);
+  return newRange;
 }
 NA_IDEF NARangef naMakeRangefWithStartAndEnd(float start, float end){
-  NARangef newrange;
+  NARangef newRange;
   #if NA_DEBUG
     if(!(naIsOffsetValueValidf(start) && naIsOffsetValueValidf(end)))
       naError("Invalid values given.");
   #endif
-  newrange.origin = start;
-  newrange.length = naMakeLengthWithStartAndEndf(start, end);
-  return newrange;
+  newRange.origin = start;
+  newRange.length = naMakeLengthWithStartAndEndf(start, end);
+  return newRange;
 }
 NA_IDEF NARangei naMakeRangeiWithStartAndEnd(NAInt start, NAInt end){
-  NARangei newrange;
+  NARangei newRange;
   #if NA_DEBUG
     if(!(naIsOffsetValueValidi(start) && naIsOffsetValueValidi(end)))
       naError("Invalid values given.");
   #endif
-  newrange.origin = start;
-  newrange.length = naMakeLengthWithStartAndEndi(start, end);
-  return newrange;
+  newRange.origin = start;
+  newRange.length = naMakeLengthWithStartAndEndi(start, end);
+  return newRange;
 }
 NA_IDEF NARangei naMakeRangeiWithMinAndMax(NAInt min, NAInt max){
-  NARangei newrange;
+  NARangei newRange;
   #if NA_DEBUG
     if(!(naIsOffsetValueValidi(min) && naIsOffsetValueValidi(max)))
       naError("Invalid values given.");
     if(max < min)
       naError("min should be smallerequal to max.");
   #endif
-  newrange.origin = min;
-  newrange.length = naMakeLengthWithMinAndMaxi(min, max);
-  return newrange;
+  newRange.origin = min;
+  newRange.length = naMakeLengthWithMinAndMaxi(min, max);
+  return newRange;
 }
 NA_IDEF NARangei naMakeRangeiWithRangeAndOffset(NARangei range, NAInt offset){
-  NARangei newrange;
+  NARangei newRange;
   #if NA_DEBUG
     if(!naIsOffsetValueValidi(offset))
       naError("Invalid offset given.");
   #endif
   if(naIsRangeiEmpty(range)){
-    newrange.length = 1;
-    newrange.origin = offset;
+    newRange.length = 1;
+    newRange.origin = offset;
   }else if(offset < range.origin){
-    newrange.length = naMakeLengthWithStartAndEndi(offset, naGetRangeiEnd(range));
-    newrange.origin = offset;
+    newRange.length = naMakeLengthWithStartAndEndi(offset, naGetRangeiEnd(range));
+    newRange.origin = offset;
   }else if(offset > naGetRangeiMax(range)){
-    newrange.length = naMakeLengthWithMinAndMaxi(range.origin, offset);
-    newrange.origin = range.origin;
+    newRange.length = naMakeLengthWithMinAndMaxi(range.origin, offset);
+    newRange.origin = range.origin;
   }else{
-    newrange = range;
+    newRange = range;
   }
-  return newrange;
+  return newRange;
 }
 NA_IDEF NARangei naMakeRangeiWithRangeAndRange (NARangei range1, NARangei range2){
-  NARangei newrange;
+  NARangei newRange;
   #if NA_DEBUG
     if(!naIsRangeiValid(range1))
       naError("Invalid range 1 given.");
@@ -809,15 +809,15 @@ NA_IDEF NARangei naMakeRangeiWithRangeAndRange (NARangei range1, NARangei range2
       naError("Invalid range 2 given.");
   #endif
   if(naIsRangeiEmpty(range1) && naIsRangeiEmpty(range2)){
-    newrange = naMakeRangeiE(0, 0);
+    newRange = naMakeRangeiE(0, 0);
   }else if(naIsRangeiEmpty(range1)){
-    newrange = range2;
+    newRange = range2;
   }else if(naIsRangeiEmpty(range2)){
-    newrange = range1;
+    newRange = range1;
   }else{
-    newrange = naMakeRangeiWithStartAndEnd(naMini(range1.origin, range2.origin), naMaxi(naGetRangeiEnd(range1), naGetRangeiEnd(range2)));
+    newRange = naMakeRangeiWithStartAndEnd(naMini(range1.origin, range2.origin), naMaxi(naGetRangeiEnd(range1), naGetRangeiEnd(range2)));
   }
-  return newrange;
+  return newRange;
 }
 
 
@@ -1300,7 +1300,7 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndBoxE(NABoxi box1, NABoxi box2){
 
 
 NA_IDEF NARange naMakeRangeWithRangeIntersection(NARange range1, NARange range2){
-  NARange newrange;
+  NARange newRange;
   double end1;
   double end2;
   #if NA_DEBUG
@@ -1309,14 +1309,14 @@ NA_IDEF NARange naMakeRangeWithRangeIntersection(NARange range1, NARange range2)
     if(!naIsRangeValid(range2))
       naError("range2 is invalid.");
   #endif
-  newrange.origin = naMax(range1.origin, range2.origin);
+  newRange.origin = naMax(range1.origin, range2.origin);
   end1 = naGetRangeEnd(range1);
   end2 = naGetRangeEnd(range2);
-  newrange.length  = naMakeLengthWithStartAndEnd(newrange.origin, naMin(end1, end2));
-  return newrange;
+  newRange.length  = naMakeLengthWithStartAndEnd(newRange.origin, naMin(end1, end2));
+  return newRange;
 }
 NA_IDEF NARangei naMakeRangeiWithRangeIntersection(NARangei range1, NARangei range2){
-  NARangei newrange;
+  NARangei newRange;
   NAInt end1;
   NAInt end2;
   #if NA_DEBUG
@@ -1325,11 +1325,11 @@ NA_IDEF NARangei naMakeRangeiWithRangeIntersection(NARangei range1, NARangei ran
     if(!naIsRangeiValid(range2))
       naError("range2 is invalid.");
   #endif
-  newrange.origin = naMaxi(range1.origin, range2.origin);
+  newRange.origin = naMaxi(range1.origin, range2.origin);
   end1 = naGetRangeiEnd(range1);
   end2 = naGetRangeiEnd(range2);
-  newrange.length  = naMakeLengthWithStartAndEndi(newrange.origin, naMini(end1, end2));
-  return newrange;
+  newRange.length  = naMakeLengthWithStartAndEndi(newRange.origin, naMini(end1, end2));
+  return newRange;
 }
 NA_IDEF NARect naMakeRectWithRectIntersection(NARect rect1, NARect rect2){
   NARect newRect;
@@ -1640,7 +1640,7 @@ NA_IDEF NAVertex naGetBoxCeneteredVolumeOffset(NABox box, NAVolume volume){
 
 NA_IDEF NARangei naClampRangeiToRange(NARangei range, NARangei clampRange){
   NAInt value;
-  NARangei newrange;
+  NARangei newRange;
   #if NA_DEBUG
     if(naIsRangeiEmpty(range))
       naError("range is empty.");
@@ -1651,23 +1651,23 @@ NA_IDEF NARangei naClampRangeiToRange(NARangei range, NARangei clampRange){
     if(!naIsRangeiValid(clampRange))
       naError("clampRange is invalid.");
   #endif
-  newrange = range;
+  newRange = range;
 
-  value = clampRange.origin - newrange.origin;
+  value = clampRange.origin - newRange.origin;
   if(value > 0){
-    newrange.length -= value;
-    newrange.origin = clampRange.origin;
+    newRange.length -= value;
+    newRange.origin = clampRange.origin;
   }
   value = naGetRangeiEnd(clampRange);
-  if(naGetRangeiEnd(newrange) > value){
-    newrange.length = value - newrange.origin;
+  if(naGetRangeiEnd(newRange) > value){
+    newRange.length = value - newRange.origin;
   }
 
-  return newrange;
+  return newRange;
 }
 NA_IDEF NARangei naClampRangeiToMin(NARangei range, NAInt min){
   NAInt value;
-  NARangei newrange;
+  NARangei newRange;
   #if NA_DEBUG
     if(naIsRangeiEmpty(range))
       naError("range is empty.");
@@ -1676,18 +1676,18 @@ NA_IDEF NARangei naClampRangeiToMin(NARangei range, NAInt min){
     if(!naIsOffsetValueValidi(min))
       naError("min is invalid.");
   #endif
-  newrange = range;
+  newRange = range;
 
-  value = min - newrange.origin;
+  value = min - newRange.origin;
   if(value > 0){
-    newrange.length -= value;
-    newrange.origin = min;
+    newRange.length -= value;
+    newRange.origin = min;
   }
-  return newrange;
+  return newRange;
 }
 NA_IDEF NARangei naClampRangeiToEnd(NARangei range, NAInt end){
   NAInt value;
-  NARangei newrange;
+  NARangei newRange;
   #if NA_DEBUG
     if(naIsRangeiEmpty(range))
       naError("range is empty.");
@@ -1696,14 +1696,14 @@ NA_IDEF NARangei naClampRangeiToEnd(NARangei range, NAInt end){
     if(!naIsOffsetValueValidi(end))
       naError("min is invalid.");
   #endif
-  newrange = range;
+  newRange = range;
 
   value = end;
-  if(naGetRangeiEnd(newrange) > value){
-    newrange.length = value - newrange.origin;
+  if(naGetRangeiEnd(newRange) > value){
+    newRange.length = value - newRange.origin;
   }
 
-  return newrange;
+  return newRange;
 }
 
 
