@@ -85,12 +85,12 @@
   }
   
   - (void)keyDown:(NSEvent*)event{
-    NA_UNUSED(event);
+    na_CaptureKeyboardStatus(event);
     na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEYDOWN);
   }
   
   - (void)keyUp:(NSEvent*)event{
-    NA_UNUSED(event);
+    na_CaptureKeyboardStatus(event);
     na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEYUP);
   }
   
