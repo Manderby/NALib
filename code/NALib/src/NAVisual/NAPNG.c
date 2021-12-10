@@ -721,6 +721,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath){
   png->pixelunit = NA_PIXEL_UNIT_RATIO;
   png->filteredData = NA_NULL;
 
+  NAString* pwd = naNewStringWithCurWorkingDirectory();
   buffer = naNewBufferWithInputPath(filePath);
   bufiter = naMakeBufferModifier(buffer);
 

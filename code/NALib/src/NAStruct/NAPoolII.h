@@ -114,7 +114,7 @@ NA_IDEF NABool naIsPoolEmpty(NAPool* pool){
   return (pool->cur == 0);
 }
 NA_IDEF NABool na_IsPoolPartFull(NAPool* pool){
-  return (pool->cur == pool->cur);
+  return (pool->count == pool->cur);
 }
 
 
