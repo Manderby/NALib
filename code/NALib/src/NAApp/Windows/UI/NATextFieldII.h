@@ -54,7 +54,7 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
     // Do not change the default behaviour of focus. Otherwise, this would cause
-    // textfields to not display a cursor or selection.
+    // textFields to not display a cursor or selection.
     break;
 
   default:
