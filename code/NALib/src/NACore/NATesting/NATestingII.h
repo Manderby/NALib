@@ -41,10 +41,10 @@ NA_HAPI double na_BenchmarkTime(void);
 NA_HAPI double na_GetBenchmarkLimit(void);
 NA_HAPI size_t na_GetBenchmarkTestSizeLimit(void);
 NA_HAPI void   na_PrintBenchmark(double timeDiff, size_t testSize, const char* exprString, int lineNum);
-NA_HAPI void   na_StoreBenchmarkResult(char);
 
 
 
+// Starting and stopping tests
 #if NA_DEBUG
   #define NA_START_TEST_CASE\
     if(na_GetTestCaseRunning())\
@@ -57,12 +57,12 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
     na_ResetErrorCount();
 #endif
 
-
 #define NA_STOP_TEST_CASE\
   na_SetTestCaseRunning(NA_FALSE);
 
 
 
+// Testing expressions
 #define naTest(expr)\
   if(na_ShallExecuteGroup(#expr)){\
     NA_START_TEST_CASE\
@@ -78,8 +78,10 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
     NA_STOP_TEST_CASE\
     na_AddTest(#expr, NA_TRUE, __LINE__);\
   }
+  
+  
 
-// Testing for errors and crashes is only useful when NA_DEBUG is 1.
+// Testing for errors and crashes. Only useful when NA_DEBUG is 1.
 #if NA_DEBUG
   #define naTestError(expr)\
     if(na_ShallExecuteGroup(#expr)){\
@@ -102,12 +104,14 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
     }
 #else
   #define naTestError(expr)
-  #define naTestVoidError(expr)
   #define naTestCrash(expr)
 #endif
 
+
+
+// Grouping tests
 #define naTestGroup(string)\
-  for(int g = 1 - na_StartTestGroup(string, __LINE__); g < 1 ; g++, na_StopTestGroup())
+  for(int g = na_StartTestGroup(string, __LINE__); g > 0 ; g--, na_StopTestGroup())
 
 #define naTestGroupFunction(identifier)\
   {\
@@ -117,9 +121,15 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
   }\
   }
 
+
+
+// Untested functionality
 #define naUntested(text)\
   na_RegisterUntested(#text);
 
+
+
+// Benchmarking
 #define naBenchmark(expr)\
 {\
   int testSize = 1;\
@@ -127,9 +137,9 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
   size_t pow;\
   double startT = na_BenchmarkTime();\
   double endT;\
+  /* The number of tested expressions doubles every loop. */\
   for(pow = 0; pow < na_GetBenchmarkTestSizeLimit(); pow++){\
     for(int testRun = 0; testRun < testSize; testRun++){\
-      /*na_StoreBenchmarkResult((char)(expr));*/\
       {\
         (void)expr; (void)0;\
       }\
@@ -148,7 +158,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
 
 
 
-#else
+#else // NA_TESTING_ENABLED == 1
 
 #define naTest(expr)\
   NA_UNUSED(expr)

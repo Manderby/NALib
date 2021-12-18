@@ -39,8 +39,6 @@
     #endif
     na_Error(functionSymbol, text);
     fprintf(stderr, NA_NL "Stopping the application deliberately." NA_NL);
-
-    NA_UNUSED(getchar());
 }
 
 

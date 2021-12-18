@@ -29,7 +29,7 @@ NA_API void naPrintUntested(void);
 // Tests successfully if the given expression evaluates to true.
 #define naTest(expr)
 
-// Simply executes the given expression but keeps track of any errors.
+// Simply executes the given expression but keeps track of any naError calls.
 #define naTestVoid(expr)
 
 // Tests successfully if one or more naError calls happen.
