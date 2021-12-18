@@ -269,10 +269,10 @@ void benchmarkNAInt256Arithmetic(void){
 
 
 void testNAInt256(void){
-  naTestGroupFunction(NAInt256Make);
-  naTestGroupFunction(NAInt256Binary);
-  naTestGroupFunction(NAInt256Comparison);
-  naTestGroupFunction(NAInt256Arithmetic);
+  naTestFunction(testNAInt256Make);
+  naTestFunction(testNAInt256Binary);
+  naTestFunction(testNAInt256Comparison);
+  naTestFunction(testNAInt256Arithmetic);
 }
 
 

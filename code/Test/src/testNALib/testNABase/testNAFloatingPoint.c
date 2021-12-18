@@ -346,10 +346,10 @@ void testGetDouble(void){
 
 
 void testNAFloatingPoint(void){
-  naTestGroupFunction(MakeFloat);
-  naTestGroupFunction(MakeDouble);
-  naTestGroupFunction(GetFloat);
-  naTestGroupFunction(GetDouble);
+  naTestFunction(testMakeFloat);
+  naTestFunction(testMakeDouble);
+  naTestFunction(testGetFloat);
+  naTestFunction(testGetDouble);
 }
 
 

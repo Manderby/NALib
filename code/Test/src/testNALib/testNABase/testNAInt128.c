@@ -264,10 +264,10 @@ void benchmarkNAInt128Arithmetic(void){
 
 
 void testNAInt128(void){
-  naTestGroupFunction(NAInt128Make);
-  naTestGroupFunction(NAInt128Binary);
-  naTestGroupFunction(NAInt128Comparison);
-  naTestGroupFunction(NAInt128Arithmetic);
+  naTestFunction(testNAInt128Make);
+  naTestFunction(testNAInt128Binary);
+  naTestFunction(testNAInt128Comparison);
+  naTestFunction(testNAInt128Arithmetic);
 }
 
 

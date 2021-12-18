@@ -41,10 +41,8 @@ NA_API void naPrintUntested(void);
 // Groups together tests. Use it like naTestGroup("Multiple Tests"){ ... }
 #define naTestGroup(string)
 
-// Groups together tests by calling a function named the same as the given
-// identifier, but prefixed with "test".
-// For example naTestGroupFunction(Algo) calls void testAlgo().
-#define naTestGroupFunction(identifier)
+// Groups together tests by calling the given function.
+#define naTestFunction(function)
 
 // Stores an arbitrary text which denotes something to be untested. Use it
 // together with naPrintUntested to get a complete list of all untested

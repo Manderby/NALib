@@ -308,9 +308,9 @@ NA_DEF void naStopTesting(){
 NA_DEF void naPrintUntested(void){
   int stackCount = (int)naGetStackCount(&(na_Testing->untestedStrings));
   if(!stackCount){
-    printf("No untested functionality." NA_NL);
+    printf(NA_NL "No untested functionality." NA_NL);
   }else{
-    printf("Untested functionality (%d):" NA_NL, stackCount);
+    printf(NA_NL "Untested functionality (%d):" NA_NL, stackCount);
     NAStackIterator iter = naMakeStackAccessor(&(na_Testing->untestedStrings));
     while(naIterateStack(&iter)){
       const NAString* string = naGetStackCurpConst(&iter);

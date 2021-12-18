@@ -19,7 +19,7 @@ void printNATesting(void){
   naPrintMacroDefined(naTestVoid(expr));
   naPrintMacroDefined(naTestError(expr));
   naPrintMacroDefined(naTestGroup(string));
-  naPrintMacroDefined(naTestGroupFunction(identifier));
+  naPrintMacroDefined(naTestFunction(identifier));
   naPrintMacroDefined(naUntested(text));
 
   printf(NA_NL);

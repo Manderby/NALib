@@ -18,6 +18,28 @@ void testNAStruct(void);
 void benchmarkNABase(void);
 void benchmarkNAStruct(void);
 
+
+
+void printNALib(){
+  #if NA_PRINTOUT_ENABLED == 1
+    printNABase();
+    printNACore();
+    printNAStruct();
+  #endif
+}
+
+void testNALib(){
+  naTestFunction(testNABase);
+  naTestFunction(testNACore);
+  naTestFunction(testNAStruct);
+}
+
+void benchmarkNALib(){
+  printf(NA_NL "Benchmarking:" NA_NL);
+  benchmarkNABase();
+  benchmarkNAStruct();
+}
+
 int main(int argc, const char** argv){
   printf("Testing NALib Version: %d ", NA_VERSION);
   #if NA_DEBUG
@@ -29,31 +51,20 @@ int main(int argc, const char** argv){
   naStartRuntime();
 
   // Print macro information
-  #if NA_PRINTOUT_ENABLED == 1
-//    printNABase();
-//    printNACore();
-//    printNAStruct();
-  #endif
+//  printNALib();
 
   // Start testing
   NABool testStartSuccessful = naStartTesting("NALib", .01, NA_FALSE, argc, argv);
   if(testStartSuccessful)
   {
-    naTestGroupFunction(NABase);
-//    naTestGroupFunction(NACore);
-//    naTestGroupFunction(NAStruct);
-
-    //printf(NA_NL);
-    //naPrintUntested();
-
-//    printf(NA_NL "Benchmarking:" NA_NL);
-//    benchmarkNABase();
-//    benchmarkNAStruct();
-    
-    printf(NA_NL);
+    testNALib();
+    naPrintUntested();
+//    benchmarkNALib();
   }else{
-    printf("Could not start Testing." NA_NL);
+    printf("Could not start Testing.");
   }
+  
+  printf(NA_NL);
   naStopTesting();
 
   naStopRuntime();

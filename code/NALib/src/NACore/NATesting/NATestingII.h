@@ -12,7 +12,7 @@
 #undef naTestError
 #undef naTestCrash
 #undef naTestGroup
-#undef naTestGroupFunction
+#undef naTestFunction
 #undef naUntested
 #undef naBenchmark
 #undef naTestIn
@@ -113,10 +113,10 @@ NA_HAPI void   na_PrintBenchmark(double timeDiff, size_t testSize, const char* e
 #define naTestGroup(string)\
   for(int g = na_StartTestGroup(string, __LINE__); g > 0 ; g--, na_StopTestGroup())
 
-#define naTestGroupFunction(identifier)\
+#define naTestFunction(function)\
   {\
-  if(na_StartTestGroup(#identifier, __LINE__)){\
-    test ## identifier();\
+  if(na_StartTestGroup(#function, __LINE__)){\
+    function();\
     na_StopTestGroup();\
   }\
   }
@@ -171,7 +171,7 @@ NA_HAPI void   na_PrintBenchmark(double timeDiff, size_t testSize, const char* e
 #define naTestGroup(string)\
   NA_UNUSED(string);\
   for(int g = 0; g < 1 ; g++)
-#define naTestGroupFunction(identifier)
+#define naTestFunction(function)
 #define naUntested(text)
 #define naBenchmark(expr)
 #define naTestIn 0

@@ -296,10 +296,10 @@ void testGetAbsi(void){
 
 
 void testNANumerics(void){
-  naTestGroupFunction(GetSignum);
-  naTestGroupFunction(GetSigni);
-  naTestGroupFunction(SetUnsetSign);
-  naTestGroupFunction(GetAbsi);
+  naTestFunction(testGetSignum);
+  naTestFunction(testGetSigni);
+  naTestFunction(testSetUnsetSign);
+  naTestFunction(testGetAbsi);
 }
 
 

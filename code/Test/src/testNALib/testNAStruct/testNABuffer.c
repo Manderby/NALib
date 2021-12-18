@@ -285,9 +285,9 @@ void printNABuffer(void){
 
 
 void testNABuffer(void){
-  naTestGroupFunction(MemoryBlock);  
-  naTestGroupFunction(BufferSource);  
-  naTestGroupFunction(BufferPart);  
+  naTestFunction(testMemoryBlock);  
+  naTestFunction(testBufferSource);  
+  naTestFunction(testBufferPart);  
 }
 
 
