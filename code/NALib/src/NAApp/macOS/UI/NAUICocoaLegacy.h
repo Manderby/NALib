@@ -235,10 +235,6 @@ NA_API NSColor* naGetLabelColor(void);
 NA_API NSColor* naGetLinkColor(void);
 
 
-#if defined __clang_major__
-  #pragma clang diagnostic pop
-#endif
-
 #ifdef __cplusplus
   }
 #endif
