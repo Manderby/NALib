@@ -14,6 +14,7 @@
   #include <sys/sysctl.h>
   #include <libproc.h>
   #include <errno.h>
+  #include <signal.h>
 #endif
 
 #include "../../NAStack.h"
@@ -275,10 +276,14 @@ NA_DEF void naStopTesting(){
   na_StopTestGroup();
 
   if(na_Testing->testingStartSuccessful){
-    if(na_Testing->rootTestData->success){
-      printf("All test successful." NA_NL);
-      if(!na_Testing->printAllTestGroups){
-        na_PrintTestGroup(na_Testing->rootTestData);
+    if(na_Testing->rootTestData->totalLeafCount == 0){
+      printf("No tests executed." NA_NL);
+    }else{
+      if(na_Testing->rootTestData->success){
+        printf("All test successful." NA_NL);
+        if(!na_Testing->printAllTestGroups){
+          na_PrintTestGroup(na_Testing->rootTestData);
+        }
       }
     }
     printf("Testing finished." NA_NL NA_NL);
@@ -530,7 +535,7 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
       i++;
     }
     argv[curTestPathStringIndex + 2] = NA_NULL;
-    
+
     pid_t childPid = fork();
     if(!childPid){
 

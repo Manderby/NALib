@@ -58,7 +58,7 @@ int main(int argc, const char** argv){
   if(testStartSuccessful)
   {
     testNALib();
-    naPrintUntested();
+//    naPrintUntested();
 //    benchmarkNALib();
   }else{
     printf("Could not start Testing.");
