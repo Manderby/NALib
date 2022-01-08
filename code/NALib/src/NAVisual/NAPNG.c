@@ -36,9 +36,9 @@ struct NAPNG{
   int8 filtermethod;
   float gamma;
   NAVec2f whitepoint;
-  NAVec2f redprimary;
-  NAVec2f greenprimary;
-  NAVec2f blueprimary;
+  NAVec2f redPrimary;
+  NAVec2f greenPrimary;
+  NAVec2f bluePrimary;
   uint8 significantbits[4];
   NAVec2f pixeldimensions;
   NAPixelUnit pixelunit;
@@ -132,9 +132,9 @@ NA_HDEF void na_SetPNGsRGBColorimetry(NAPNG* png){
   // This corresponds to the sRGB space.
   png->gamma = 45455.f / 100000.f;
   naFillV2f(png->whitepoint,    31270.f / 100000.f, 32900.f / 100000.f);
-  naFillV2f(png->redprimary,    64000.f / 100000.f, 33000.f / 100000.f);
-  naFillV2f(png->greenprimary,  30000.f / 100000.f, 60000.f / 100000.f);
-  naFillV2f(png->blueprimary,   15000.f / 100000.f,  6000.f / 100000.f);
+  naFillV2f(png->redPrimary,    64000.f / 100000.f, 33000.f / 100000.f);
+  naFillV2f(png->greenPrimary,  30000.f / 100000.f, 60000.f / 100000.f);
+  naFillV2f(png->bluePrimary,   15000.f / 100000.f,  6000.f / 100000.f);
 }
 
 
@@ -493,12 +493,12 @@ NA_HDEF void na_ReadPNGcHRMChunk(NAPNG* png, NAPNGChunk* chrm){
 
     png->whitepoint[0]    = (float)naReadBufferu32(&iter) / 100000.f;
     png->whitepoint[1]    = (float)naReadBufferu32(&iter) / 100000.f;
-    png->redprimary[0]    = (float)naReadBufferu32(&iter) / 100000.f;
-    png->redprimary[1]    = (float)naReadBufferu32(&iter) / 100000.f;
-    png->greenprimary[0]  = (float)naReadBufferu32(&iter) / 100000.f;
-    png->greenprimary[1]  = (float)naReadBufferu32(&iter) / 100000.f;
-    png->blueprimary[0]   = (float)naReadBufferu32(&iter) / 100000.f;
-    png->blueprimary[1]   = (float)naReadBufferu32(&iter) / 100000.f;
+    png->redPrimary[0]    = (float)naReadBufferu32(&iter) / 100000.f;
+    png->redPrimary[1]    = (float)naReadBufferu32(&iter) / 100000.f;
+    png->greenPrimary[0]  = (float)naReadBufferu32(&iter) / 100000.f;
+    png->greenPrimary[1]  = (float)naReadBufferu32(&iter) / 100000.f;
+    png->bluePrimary[0]   = (float)naReadBufferu32(&iter) / 100000.f;
+    png->bluePrimary[1]   = (float)naReadBufferu32(&iter) / 100000.f;
 
     naClearBufferIterator(&iter);
   }

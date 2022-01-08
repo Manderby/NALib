@@ -33,7 +33,7 @@ void testNAInt128Make(void){
   naTest(equali128(i4, 0x11223344, 0xffeeddcc, 0x98765432, 0x12345678));
   naTest(equalu128(u1, 0x11223344, 0xffeeddcc, 0x98765432, 0x12345678));
   naTest(equalu128(u2, 0x00000000, 0x00000000, 0x98765432, 0x12345678));
-  naTest(equalu128(u3, 0x00000000, 0x00000000, 0x00007048 , 0x860ddf79));
+  naTest(equalu128(u3, 0x00000000, 0x00000000, 0x00007048, 0x860ddf79));
   naTest(equalu128(u5, 0x11223344, 0xffeeddcc, 0x98765432, 0x12345678));
 }
 
@@ -58,9 +58,9 @@ void benchmarkNAInt128Make(void){
 
 
 void testNAInt128Binary(void){
-  NAi128 i =      naMakei128WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
-  NAi128 term =   naMakei128WithBinary(0x55555555, 0x55555555, 0x55555555, 0x55555555);
-  NAu128 u =    naMakeu128WithBinary(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
+  NAi128 i =     naMakei128WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
+  NAi128 term =  naMakei128WithBinary(0x55555555, 0x55555555, 0x55555555, 0x55555555);
+  NAu128 u =     naMakeu128WithBinary(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
   NAu128 uterm = naMakeu128WithBinary(0x55555555, 0x55555555, 0x55555555, 0x55555555);
   
   NAi128 i1 = naNoti128(i);
@@ -264,10 +264,10 @@ void benchmarkNAInt128Arithmetic(void){
 
 
 void testNAInt128(void){
-  naTestGroupFunction(NAInt128Make);
-  naTestGroupFunction(NAInt128Binary);
-  naTestGroupFunction(NAInt128Comparison);
-  naTestGroupFunction(NAInt128Arithmetic);
+  naTestFunction(testNAInt128Make);
+  naTestFunction(testNAInt128Binary);
+  naTestFunction(testNAInt128Comparison);
+  naTestFunction(testNAInt128Arithmetic);
 }
 
 

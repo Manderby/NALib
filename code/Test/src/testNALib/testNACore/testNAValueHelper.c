@@ -342,13 +342,13 @@ void testIsValueUseful(void){
 
 
 void testNAValueHelper(void){
-  naTestGroupFunction(Flags);
-  naTestGroupFunction(Range);
-  naTestGroupFunction(Align);
-  naTestGroupFunction(IsValueValid);
-  naTestGroupFunction(IsValueEmpty);
-  naTestGroupFunction(IsValueNegative);
-  naTestGroupFunction(IsValueUseful);
+  naTestFunction(testFlags);
+  naTestFunction(testRange);
+  naTestFunction(testAlign);
+  naTestFunction(testIsValueValid);
+  naTestFunction(testIsValueEmpty);
+  naTestFunction(testIsValueNegative);
+  naTestFunction(testIsValueUseful);
 }
 
   

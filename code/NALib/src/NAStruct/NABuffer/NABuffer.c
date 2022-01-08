@@ -224,6 +224,7 @@ NA_DEF NABuffer* naNewBufferWithInputPath(const char* filePath){
   NABuffer* buffer = naNew(NABuffer);
   na_InitBufferStruct(buffer);
 
+//  NAString* pwd = naNewStringWithCurWorkingDirectory();
   file = naCreateFileReadingPath(filePath);
   range = naMakeRangei(0, (NAInt)naComputeFileByteSize(file));
 

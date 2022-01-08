@@ -52,10 +52,12 @@
 // 
 // Be default, NA_DEBUG is set to 1 when NDEBUG is undefined.
 
-#ifndef NDEBUG
-  #define NA_DEBUG 1
-#else
-  #define NA_DEBUG 0
+#ifndef NA_DEBUG
+  #ifndef NDEBUG
+    #define NA_DEBUG 1
+  #else
+    #define NA_DEBUG 0
+  #endif
 #endif
 
 

@@ -57,7 +57,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
     // Do not change the default behaviour of focus. Otherwise, this would cause
-    // labels and textfields to not display a cursor or selection.
+    // labels and textFields to not display a cursor or selection.
     break;
 
   // Dialog messages

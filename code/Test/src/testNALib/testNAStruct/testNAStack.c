@@ -634,17 +634,17 @@ void printNAStack(void){
 
 
 void testNAStack(void){
-  naTestGroupFunction(StackArray);  
-  naTestGroupFunction(StackInitClear);  
-  naTestGroupFunction(StackPushTopPopPeek);  
-  naTestGroupFunction(StackCount);  
-  naTestGroupFunction(StackGrow);  
-  naTestGroupFunction(StackShrink);  
-  naTestGroupFunction(StackShrinkIfNecessary);  
-  naTestGroupFunction(StackDump);  
-  naTestGroupFunction(StackIterator);  
-  naTestGroupFunction(StackIteratorAccessAndMutate);  
-  naTestGroupFunction(StackForeach);  
+  naTestFunction(testStackArray);  
+  naTestFunction(testStackInitClear);  
+  naTestFunction(testStackPushTopPopPeek);  
+  naTestFunction(testStackCount);  
+  naTestFunction(testStackGrow);  
+  naTestFunction(testStackShrink);  
+  naTestFunction(testStackShrinkIfNecessary);  
+  naTestFunction(testStackDump);  
+  naTestFunction(testStackIterator);  
+  naTestFunction(testStackIteratorAccessAndMutate);  
+  naTestFunction(testStackForeach);  
 }
 
 

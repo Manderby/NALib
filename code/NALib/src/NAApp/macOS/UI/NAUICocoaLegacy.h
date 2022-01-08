@@ -4,6 +4,11 @@
 // actually contains non-inlinenable code. See NACocoa.m for more information.
 // Do not include this file anywhere else!
 
+#ifndef NA_UI_COCOA_LEGACY_INCLUDED
+#define NA_UI_COCOA_LEGACY_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 #include "Availability.h"
@@ -222,15 +227,19 @@
 
 
 
-CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext);
-CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement);
-CGFloat naGetWindowBackingScaleFactor(NSWindow* window);
-//NABool naLoadNib(const NAUTF8Char* nibName, void* owner);
-NSColor* naGetLabelColor(void);
-NSColor* naGetLinkColor(void);
+NA_API CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext);
+NA_API CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement);
+NA_API CGFloat naGetWindowBackingScaleFactor(NSWindow* window);
+NA_API NABool naLoadNib(const NAUTF8Char* nibName);
+NA_API NSColor* naGetLabelColor(void);
+NA_API NSColor* naGetLinkColor(void);
 
 
+#ifdef __cplusplus
+  }
+#endif
 
+#endif // NA_UI_COCOA_LEGACY_INCLUDED
 
 
 // This is free and unencumbered software released into the public domain.

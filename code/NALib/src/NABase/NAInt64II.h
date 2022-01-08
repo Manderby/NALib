@@ -118,7 +118,7 @@
   #define naOri64(a, b)               ((a) | (b))
   #define naAndi64(a, b)              ((a) & (b))
   #define naXori64(a, b)              ((a) ^ (b))
-  #define naShli64(a, n)              ((a) << (n))
+  #define naShli64(a, n)              ((int64)(((uint64)(a)) << (n)))
   #define naShri64(a, n)              ((a) >> (n))
 
   #define naEquali64(a, b)            ((a) == (b))

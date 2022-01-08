@@ -17,8 +17,8 @@ void printNACore(void){
 }
 
 void testNACore(void){
-  naTestGroupFunction(NATesting);
-  naTestGroupFunction(NAValueHelper);
+  naTestFunction(testNATesting);
+  naTestFunction(testNAValueHelper);
 }
 
 

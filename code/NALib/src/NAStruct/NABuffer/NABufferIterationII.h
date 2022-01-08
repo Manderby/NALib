@@ -16,13 +16,13 @@ struct NABufferIterator{
 
 
 NA_HIDEF const NABuffer* na_GetBufferIteratorBufferConst(const NABufferIterator* iter){
-  return naGetPtrConst(iter->bufferPtr);
+  return (const NABuffer*)naGetPtrConst(iter->bufferPtr);
 }
 
 
 
 NA_HIDEF NABuffer* na_GetBufferIteratorBufferMutable(NABufferIterator* iter){
-  return naGetPtrMutable(iter->bufferPtr);
+  return (NABuffer*)naGetPtrMutable(iter->bufferPtr);
 }
 
 
@@ -55,7 +55,7 @@ NA_HIDEF NAInt na_GetBufferIteratorPartOffset(NABufferIterator* iter){
 
 
 NA_HIDEF NABufferPart* na_GetBufferPart(NABufferIterator* iter){
-  return naGetTreeCurLeafMutable(&(iter->partIter));
+  return (NABufferPart*)naGetTreeCurLeafMutable(&(iter->partIter));
 }
 
 

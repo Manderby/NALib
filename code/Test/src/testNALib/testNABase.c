@@ -48,17 +48,17 @@ void printNABase(void){
 }
 
 void testNABase(void){
-  naTestGroupFunction(NALanguage);
-  naTestGroupFunction(NAChar);
-  naTestGroupFunction(NAInteger);
-  naTestGroupFunction(NAInt64);
-  naTestGroupFunction(NAInt128);
-  naTestGroupFunction(NAInt256);
-  naTestGroupFunction(NAMacros);
-  naTestGroupFunction(NADebugging);
-  naTestGroupFunction(NAPointerArithmetics);
-  naTestGroupFunction(NANumerics);
-  naTestGroupFunction(NAFloatingPoint);
+  naTestFunction(testNALanguage);
+  naTestFunction(testNAChar);
+  naTestFunction(testNAInteger);
+  naTestFunction(testNAInt64);
+  naTestFunction(testNAInt128);
+  naTestFunction(testNAInt256);
+  naTestFunction(testNAMacros);
+  naTestFunction(testNADebugging);
+  naTestFunction(testNAPointerArithmetics);
+  naTestFunction(testNANumerics);
+  naTestFunction(testNAFloatingPoint);
 }
 
 void benchmarkNABase(void){

@@ -8,7 +8,7 @@
 
 
 #if defined NA_TYPE_INT128
-  NA_IDEF NAi128 naMakei128(int64 hi, uint64 lo){return ((NAi128)hi << 64) | lo;}
+  NA_IDEF NAi128 naMakei128(int64 hi, uint64 lo){return (NAi128)((NAu128)hi << 64) | lo;}
   NA_IDEF NAi128 naMakei128WithLo(NAi64 lo){return (NAi128)lo;}
   NA_IDEF NAi128 naMakei128WithDouble(double lo){return (NAi128)lo;}
   NA_IDEF NAi128 naMakei128WithBinary(uint32 b3, uint32 b2, uint32 b1, uint32 b0){return ((NAi128)b3 << 96) | ((NAi128)b2 << 64) | ((NAi128)b1 << 32) | b0;}

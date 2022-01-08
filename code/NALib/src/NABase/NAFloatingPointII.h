@@ -111,7 +111,7 @@
   //#define NA_INFINITYl       (1.L/0.L)
   #ifndef HUGE_VALF
     #define NA_INFINITYf       ((float)HUGE_VAL)
-    #define NA_INFINITY        HUGE_VAL
+    #define NA_INFINITY        ((double)HUGE_VAL)
     #define NA_INFINITYl       ((long double)HUGE_VAL)
   #else
     #define NA_INFINITYf       HUGE_VALF
@@ -119,8 +119,9 @@
     #define NA_INFINITYl       HUGE_VALL
   #endif
 #else
+  // Without casts, the native definition INFINITY on windows gives warnings.
   #define NA_INFINITYf       ((float)INFINITY)
-  #define NA_INFINITY        INFINITY
+  #define NA_INFINITY        ((double)INFINITY)
   #define NA_INFINITYl       ((long double)INFINITY)
 #endif
 
@@ -132,9 +133,13 @@
   #define NA_NAN              (NA_INFINITY  - NA_INFINITY)
   #define NA_NANl             (NA_INFINITYl - NA_INFINITYl)
 #else
-  #define NA_NANf             ((float)NAN)
-  #define NA_NAN              ((double)NAN)
-  #define NA_NANl             ((long double)NAN)
+  // The native definition NAN on windows results in warnings.
+  //#define NA_NANf             ((float)NAN)
+  //#define NA_NAN              ((double)NAN)
+  //#define NA_NANl             ((long double)NAN)
+  #define NA_NANf             ((float)(NA_INFINITYf - NA_INFINITYf))
+  #define NA_NAN              ((double)(NA_INFINITY  - NA_INFINITY))
+  #define NA_NANl             ((long double)(NA_INFINITYl - NA_INFINITYl))
 #endif
 
 // NA_SINGULARITY is a very small number which corresponds to 10 times the
@@ -264,7 +269,7 @@ NA_IDEF float naMakeFloatWithExponent(int32 signedExponent){
     if(signedExponent == NA_IEEE754_SINGLE_EXPONENT_SPECIAL)
       naError("exponent equals max exponent which is reserved for special values");
   #endif
-  int32 dBits = ((signedExponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BITS);
+  int32 dBits = (int32)((uint32)(signedExponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BITS);
   return *((float*)(void*)&dBits);
   // Note that the additional void* cast is necessary for static code analizers.
 }

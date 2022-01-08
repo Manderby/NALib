@@ -19,23 +19,34 @@
 
   NAUIImageSkin naGetSkinForCurrentAppearance(void){
     NAUIImageSkin skin = NA_UIIMAGE_SKIN_LIGHT;
-    if([NSAppearance respondsToSelector:@selector(currentAppearance)]){
-      NSAppearanceName appearancename = NSAppearanceNameAqua;
-      if([[NSAppearance currentAppearance] respondsToSelector:@selector(name)]){
-        NA_MACOS_AVAILABILITY_GUARD_10_9(
-          appearancename = [[NSAppearance currentAppearance] name];
-        )
+    NSAppearanceName appearancename = NSAppearanceNameAqua;
+
+    #if defined __MAC_11_0
+      NA_MACOS_AVAILABILITY_GUARD_11_0(
+        if([NSAppearance respondsToSelector:@selector(currentDrawingAppearance)]){
+          appearancename = [[NSAppearance currentDrawingAppearance] name];
+        }
+      )
+    #else
+      if([NSAppearance respondsToSelector:@selector(currentAppearance)]){
+        if([[NSAppearance currentAppearance] respondsToSelector:@selector(name)]){
+          NA_MACOS_AVAILABILITY_GUARD_10_9(
+            appearancename = [[NSAppearance currentAppearance] name];
+          )
+        }
       }
-      NA_MACOS_AVAILABILITY_GUARD_10_10(
-        if(appearancename == NSAppearanceNameVibrantDark){skin = NA_UIIMAGE_SKIN_DARK;}
-      )
-      NA_MACOS_AVAILABILITY_GUARD_10_14(
-        if(appearancename == NSAppearanceNameDarkAqua
-        || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
-        || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark){
-          skin = NA_UIIMAGE_SKIN_DARK;}
-      )
-    }
+    #endif
+
+    NA_MACOS_AVAILABILITY_GUARD_10_10(
+      if(appearancename == NSAppearanceNameVibrantDark){skin = NA_UIIMAGE_SKIN_DARK;}
+    )
+    NA_MACOS_AVAILABILITY_GUARD_10_14(
+      if(appearancename == NSAppearanceNameDarkAqua
+      || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
+      || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark){
+        skin = NA_UIIMAGE_SKIN_DARK;}
+    )
+
     return skin;
   }
 #else

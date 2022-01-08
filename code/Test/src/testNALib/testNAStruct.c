@@ -19,8 +19,8 @@ void printNAStruct(void){
 }
 
 void testNAStruct(void){
-  naTestGroupFunction(NABuffer);
-  naTestGroupFunction(NAStack);
+  naTestFunction(testNABuffer);
+  naTestFunction(testNAStack);
 }
 
 void benchmarkNAStruct(void){

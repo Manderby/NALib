@@ -11,6 +11,8 @@
 #include "NAThreading.h"
 #include "NATranslator.h"
 
+// the following import is needed for UTType definitions.
+#import <UniformTypeIdentifiers/UTType.h>
 
 
 NA_HAPI void na_RenewWindowMouseTracking(NAWindow* window);
@@ -366,8 +368,14 @@ NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* file
 
   [savepanel setNameFieldStringValue:[NSString stringWithUTF8String:fileName]];
   [savepanel setExtensionHidden:NO];
-  [savepanel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:allowedFileSuffix]]];
-
+  #if defined __MAC_11_0
+    NA_MACOS_AVAILABILITY_GUARD_11_0(
+      [savepanel setAllowedContentTypes:[NSArray arrayWithObject:[UTType typeWithFilenameExtension:[NSString stringWithUTF8String:allowedFileSuffix]]]];
+    )
+  #else
+    [savepanel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:allowedFileSuffix]]];
+  #endif
+  
   [savepanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(window) completionHandler:^(NSInteger result){
     #if defined __MAC_10_9
       NABool doPerform = result != NSModalResponseCancel;

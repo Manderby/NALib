@@ -101,13 +101,13 @@ NA_IDEF void naResetTreeIterator(NATreeIterator* iter){
 
 
 NA_HIDEF const NATree* na_GetTreeIteratorTreeConst(const NATreeIterator* iter){
-  return naGetPtrConst(iter->tree);
+  return (const NATree*)naGetPtrConst(iter->tree);
 }
 
 
 
 NA_HIDEF NATree* na_GetTreeIteratorTreeMutable(NATreeIterator* iter){
-  return naGetPtrMutable(iter->tree);
+  return (NATree*)naGetPtrMutable(iter->tree);
 }
 
 

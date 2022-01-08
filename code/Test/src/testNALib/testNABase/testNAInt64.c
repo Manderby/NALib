@@ -262,10 +262,10 @@ void benchmarkNAInt64Arithmetic(void){
 
 
 void testNAInt64(void){
-  naTestGroupFunction(NAInt64Make);
-  naTestGroupFunction(NAInt64Binary);
-  naTestGroupFunction(NAInt64Comparison);
-  naTestGroupFunction(NAInt64Arithmetic);
+  naTestFunction(testNAInt64Make);
+  naTestFunction(testNAInt64Binary);
+  naTestFunction(testNAInt64Comparison);
+  naTestFunction(testNAInt64Arithmetic);
 }
 
 

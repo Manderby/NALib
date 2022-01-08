@@ -6,6 +6,7 @@
 #endif
 
 #include "NABase.h"
+#include <stdlib.h>
 
 // Threading, Sleeping
 //

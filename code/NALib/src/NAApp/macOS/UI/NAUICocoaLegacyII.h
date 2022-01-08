@@ -16,7 +16,7 @@
 
 
 
-CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext){
+NA_DEF CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext){
   CGContextRef cgContext = nil;
 
   NA_MACOS_AVAILABILITY_GUARD_10_14(
@@ -32,13 +32,13 @@ CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext){
 
 
 
-CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement){
+NA_DEF CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement){
   return naGetWindowBackingScaleFactor([uiElement window]);
 }
 
 
 
-CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
+NA_DEF CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
   CGFloat res = (CGFloat)1.;
 
   NA_MACOS_AVAILABILITY_GUARD_10_7(
@@ -58,15 +58,15 @@ CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
 
 
 
-NABool naLoadNib(const NAUTF8Char* nibName, void* owner){
+NA_DEF NABool naLoadNib(const NAUTF8Char* nibName){
   NABool loaded = NA_FALSE;
-  
+
   NA_MACOS_AVAILABILITY_GUARD_10_8(
     if([NSBundle instancesRespondToSelector:@selector(loadNibNamed:owner:topLevelObjects:)]){
+      NSArray * topLevelObjects;
+      loaded = [[NSBundle mainBundle] loadNibNamed:[NSString stringWithUTF8String:nibName] owner:NSApp topLevelObjects:&topLevelObjects];
       // Yes, we are retaining the topLevelObjects just like that. Upon closing the app,
       // these will be a leak but who cares at this point.
-      NSArray * topLevelObjects;
-      loaded = [[NSBundle mainBundle] loadNibNamed:[NSString stringWithUTF8String:nibName] owner:owner topLevelObjects:&topLevelObjects];
       (void)NA_COCOA_RETAIN(topLevelObjects);
     }
   )
@@ -78,7 +78,7 @@ NABool naLoadNib(const NAUTF8Char* nibName, void* owner){
 
 
 
-NSColor* naGetLabelColor(){
+NA_DEF NSColor* naGetLabelColor(){
   NSColor* color = nil;
   
   NA_MACOS_AVAILABILITY_GUARD_10_10(
@@ -92,7 +92,7 @@ NSColor* naGetLabelColor(){
   return color;
 }
 
-NSColor* naGetLinkColor(){
+NA_DEF NSColor* naGetLinkColor(){
   NSColor* color = nil;
 
   // documentation says available since 10.10 but that is not true. It is at least 10.12 but maybe even higher.
