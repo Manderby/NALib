@@ -47,6 +47,7 @@ NABool pressButton(NAReaction reaction){
 
 // Will be called when the + Button is pressed.
 NABool newTemperatureController(NAReaction reaction){
+  NA_UNUSED(reaction);
   createTemperatureController();
   return NA_TRUE;
 }
@@ -124,6 +125,7 @@ TemperatureController* createTemperatureController(){
 
 // Clear all allocated elements.
 void clearTemperatureController(TemperatureController* con){
+  NA_UNUSED(con);
   // Note that all UI elements which are attached in some way to the root
   // application UIElement will be cleared automatically.
 }
