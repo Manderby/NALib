@@ -8,15 +8,21 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 26 (released 8. January 2022)
+==========
+
+Big changes:
 - Adding more tests
+- Adding lots of GUI functionality. New NASlider NAMenu NAPopupButton
+- Many improvemens in the background.
+
+Smaller Things:
+- Removed naSizeOf, removed NAUInt, replaced many NAInt with size_t
 - Removed naNewStringWithUTF8CStringLiteral. Use naNewStringWithFormat.
-- Adding naTestCrash to NATesting
-- Adding NASlider to NAGUI and other public GUI functions.
-- Adding NAMenu and new buttons to GUI.
+- Adding naTestCrash to NATesting. Still buggy on macOS
 - Updated HelloWorldGUI.
 - Fixed a bug in QuadTree range detection.
-- Adding leap second information according to bulletin C 61 and 62
-- Removed naSizeOf, removed NAUInt, replaced many NAInt with size_t
+- Adding leap second information according to bulletin C 61, 62 and 63
 
 
 Version 25 (released 13. July 2020)
