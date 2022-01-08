@@ -34,7 +34,7 @@
   #define naOri128(a, b)               ((a) | (b))
   #define naAndi128(a, b)              ((a) & (b))
   #define naXori128(a, b)              ((a) ^ (b))
-  #define naShli128(a, n)              ((a) << (n))
+  #define naShli128(a, n)              ((int128)(((uint128)(a)) << (n)))
   #define naShri128(a, n)              ((a) >> (n))
 
   #define naEquali128(a, b)            ((a) == (b))

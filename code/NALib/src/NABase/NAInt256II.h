@@ -8,7 +8,7 @@
 
 
 #if defined NA_TYPE_INT256
-  NA_IDEF NAi256 naMakei256(int128 hi, uint128 lo){return ((NAi256)hi << 128) | lo;}
+  NA_IDEF NAi256 naMakei256(int128 hi, uint128 lo){return (NAi256)((NAu256)hi << 128) | lo;}
   NA_IDEF NAi256 naMakei256WithLo(NAi128 lo){return (NAi256)lo;}
   NA_IDEF NAi256 naMakei256WithDouble(double lo){return (NAi256)lo;}
   NA_IDEF NAi256 naMakei256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0){return ((NAi256)b3 << 224) | (NAi256)b3 << 192) | (NAi256)b3 << 160) | (NAi256)b3 << 128) | (NAi256)b3 << 96) | ((NAi256)b2 << 64) | ((NAi256)b1 << 32) | b0;}

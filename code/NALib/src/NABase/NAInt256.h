@@ -34,7 +34,7 @@
   #define naOri256(a, b)            ((a) | (b))
   #define naAndi256(a, b)           ((a) & (b))
   #define naXori256(a, b)           ((a) ^ (b))
-  #define naShli256(a, n)           ((a) << (n))
+  #define naShli256(a, n)           ((int256)(((uint256)(a)) << (n)))
   #define naShri256(a, n)           ((a) >> (n))
 
   #define naEquali256(a, b)         ((a) == (b))

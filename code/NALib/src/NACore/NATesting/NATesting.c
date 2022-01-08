@@ -553,6 +553,14 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
       int exitCode;
       waitpid(childPid, &exitCode, 0);
 
+      naFree(argv[0]);
+      i = 2;
+      for(size_t curBackIndex = 0; curBackIndex < curTestPathStringIndex; curBackIndex++){
+        naFree(argv[i]);
+        i++;
+      }
+      naFree(argv);
+
       NABool hasExitedNormally = WIFEXITED(exitCode);
 //      NABool hasBeenSignaled = WIFSIGNALED(exitCode);
 //      int sigNum = WTERMSIG(exitCode);

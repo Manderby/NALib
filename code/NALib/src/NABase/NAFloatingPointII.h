@@ -264,7 +264,7 @@ NA_IDEF float naMakeFloatWithExponent(int32 signedExponent){
     if(signedExponent == NA_IEEE754_SINGLE_EXPONENT_SPECIAL)
       naError("exponent equals max exponent which is reserved for special values");
   #endif
-  int32 dBits = ((signedExponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BITS);
+  int32 dBits = (int32)((uint32)(signedExponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BITS);
   return *((float*)(void*)&dBits);
   // Note that the additional void* cast is necessary for static code analizers.
 }
