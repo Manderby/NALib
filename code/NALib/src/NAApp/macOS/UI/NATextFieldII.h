@@ -97,8 +97,8 @@ NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text){
 
 
 
-NA_DEF NAString* naNewStringWithTextFieldText(NATextField* textField){
-  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
+NA_DEF NAString* naNewStringWithTextFieldText(const NATextField* textField){
+  naDefineCocoaObjectConst(NACocoaNativeTextField, nativePtr, textField);
   return [nativePtr newStringWithText];
 }
 
@@ -118,9 +118,9 @@ NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFo
 
 
 
-NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField){
-  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParent(textField), naGetApplication(), NA_FALSE);
+NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(const NA_UIElement* textField){
+  naDefineCocoaObjectConst(NACocoaNativeTextField, nativePtr, textField);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(textField), naGetApplication(), NA_FALSE);
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

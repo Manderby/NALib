@@ -136,8 +136,8 @@
   }
 
 
-  NA_DEF void* naGetOpenGLSpaceSystemContext(NAOpenGLSpace* openGLSpace){
-    naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
+  NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace){
+    naDefineCocoaObjectConst(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
     return NA_COCOA_PTR_OBJC_TO_C([nativePtr openGLContext]);
   }
 
@@ -210,7 +210,7 @@
 
 
 
-NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openGLSpace){
+NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(const NA_UIElement* openGLSpace){
   return na_GetSpaceAbsoluteInnerRect(openGLSpace);
 }
 

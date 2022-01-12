@@ -15,7 +15,7 @@ NA_API void naSetSliderVisible(NASlider* slider, NABool visible);
 NA_API void naSetSliderEnabled(NASlider* slider, NABool enabled);
 
 // Gets or sets the current double value of the slider. Must be in [0, 1]
-NA_API double naGetSliderValue(NASlider* slider);
+NA_API double naGetSliderValue(const NASlider* slider);
 NA_API void naSetSliderValue(NASlider* slider, double value);
 
 // Sets how many ticks are shown.

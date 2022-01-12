@@ -225,8 +225,8 @@ NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
 
 
 
-NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
-  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+NA_DEF NAUIImageResolution naGetWindowUIResolution(const NAWindow* window){
+  naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   CGFloat res = naGetWindowBackingScaleFactor(nativePtr);
 
   return (res == 1.) ? NA_UIIMAGE_RESOLUTION_1x : NA_UIIMAGE_RESOLUTION_2x;
@@ -234,15 +234,15 @@ NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
 
 
 
-NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem){
+NA_DEF void naSetWindowFirstTabElement(NAWindow* window, const void* firstTabElem){
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
-  naDefineCocoaObject(NSView, cocoaFirstTab, firstTabElem);
+  naDefineCocoaObjectConst(NSView, cocoaFirstTab, firstTabElem);
   [nativePtr setInitialFirstResponder:cocoaFirstTab];
 }
 
 
 
-NA_HDEF NARect na_GetNativeWindowAbsoluteInnerRect(NSWindow* window){
+NA_HDEF NARect na_GetNativeWindowAbsoluteInnerRect(const NSWindow* window){
   NARect rect;
   NSRect contentRect;
   NSRect windowFrame;
@@ -257,17 +257,17 @@ NA_HDEF NARect na_GetNativeWindowAbsoluteInnerRect(NSWindow* window){
 
 
 
-NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
-  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window){
+  naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   return na_GetNativeWindowAbsoluteInnerRect(nativePtr);
 }
 
 
 
-NA_HDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
+NA_HDEF NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window){
   NARect rect;
   NSRect windowFrame;
-  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+  naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   windowFrame = [nativePtr frame];
   rect.pos.x = windowFrame.origin.x;
   rect.pos.y = windowFrame.origin.y;
@@ -312,15 +312,15 @@ NA_DEF NARect naGetMainScreenRect(){
 
 
 
-NA_DEF void naShowWindow(NAWindow* window){
-  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+NA_DEF void naShowWindow(const NAWindow* window){
+  naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   [nativePtr makeKeyAndOrderFront:NA_NULL];
 }
 
 
 
-NA_DEF void naCloseWindow(NAWindow* window){
-  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+NA_DEF void naCloseWindow(const NAWindow* window){
+  naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   [nativePtr performClose:NA_NULL];
 }
 
@@ -336,7 +336,7 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
   #endif
 
   naDefineCocoaObject(NACocoaNativeWindow, nativeWindowPtr, window);
-  naDefineCocoaObject(NSView, nativeUIElementPtr, space);
+  naDefineCocoaObjectConst(NSView, nativeUIElementPtr, space);
   if([nativeWindowPtr trackingArea]){na_ClearWindowMouseTracking(window);}
   [nativeWindowPtr setContentView:nativeUIElementPtr];
   [nativeWindowPtr setInitialFirstResponder:[nativeWindowPtr contentView]];

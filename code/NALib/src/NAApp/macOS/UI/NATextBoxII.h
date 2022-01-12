@@ -133,8 +133,8 @@ NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text){
 
 
 
-NA_DEF NAString* naNewStringWithTextBoxText(NATextBox* textBox){
-  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+NA_DEF NAString* naNewStringWithTextBoxText(const NATextBox* textBox){
+  naDefineCocoaObjectConst(NACocoaNativeTextBox, nativePtr, textBox);
   return [nativePtr newStringWithText];
 }
 
@@ -182,9 +182,9 @@ NA_DEF void naSetTextBoxVisible(NATextBox* textBox, NABool visible){
 
 
 
-NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox){
-  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParent(textBox), naGetApplication(), NA_FALSE);
+NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(const NA_UIElement* textBox){
+  naDefineCocoaObjectConst(NACocoaNativeTextBox, nativePtr, textBox);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(textBox), naGetApplication(), NA_FALSE);
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

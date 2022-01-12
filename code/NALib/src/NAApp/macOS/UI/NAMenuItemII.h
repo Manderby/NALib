@@ -62,7 +62,7 @@ NA_DEF void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem){
 
 
 
-NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(NA_UIElement* menuItem){
+NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(const NA_UIElement* menuItem){
   NA_UNUSED(menuItem);
   return naMakeRectS(0, 0, 1, 1);
 }

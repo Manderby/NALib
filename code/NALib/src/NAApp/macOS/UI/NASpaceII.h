@@ -151,7 +151,7 @@ NA_DEF void naSetSpaceDragsWindow(NASpace* _Nonnull space, NABool isDraggable){
 
 NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos){
   naDefineCocoaObject(NACocoaNativeSpace, nativeSpacePtr, space);
-  naDefineCocoaObject(NSView<NACocoaNativeEncapsulatedElement>, cocoaView, child);
+  naDefineCocoaObjectConst(NSView<NACocoaNativeEncapsulatedElement>, cocoaView, child);
 
   NSView* subview;  
   switch(naGetUIElementType(child)){
@@ -189,15 +189,15 @@ NA_HDEF void naRemoveSpaceChilds(NASpace* _Nonnull space)
 
 
 
-NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* _Nonnull space){
-  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
+NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* _Nonnull space){
+  naDefineCocoaObjectConst(NACocoaNativeSpace, nativePtr, space);
   // Warning: does not work when frame unequal bounds.
   NSRect contentRect = [nativePtr frame];
   
   NARect windowRect;
-  NAWindow* window = naGetUIElementWindow(space);
+  const NAWindow* window = naGetUIElementWindowConst(space);
   if(window){
-    windowRect = na_GetNativeWindowAbsoluteInnerRect((NSWindow*)NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(window)));
+    windowRect = na_GetNativeWindowAbsoluteInnerRect((const NSWindow*)NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(window)));
   }else{
     #if NA_DEBUG
       naError("Given element has no NAWindow as parent. Using native window parent.");

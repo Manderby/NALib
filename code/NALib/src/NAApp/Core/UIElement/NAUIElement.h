@@ -75,18 +75,20 @@ typedef enum{
   NA_UI_WINDOW
 } NAUIElementType;
 
-NA_API NAUIElementType naGetUIElementType(void* uiElement);
+NA_API NAUIElementType naGetUIElementType(const void* uiElement);
 
 // Any ui element has a strict hierarchical ordering: Application - Screen -
 // Window - Space - Subspace - Subsubspace ... You can get the parent element
 // with this function. The parent of the Application will be NA_NULL.
 NA_API void* naGetUIElementParent(void* uiElement);
+NA_API const void* naGetUIElementParentConst(const void* uiElement);
 
 // You can get the window of any ui element except for application and screen
 // elements. An application or screen element will return NA_NULL. A window
 // element will return itself and any other ui element will return the window
 // it is contained in.
-NA_API NAWindow*  naGetUIElementWindow(void* uiElement);
+NA_API NAWindow* naGetUIElementWindow(void* uiElement);
+NA_API const NAWindow* naGetUIElementWindowConst(const void* uiElement);
 
 // You can get the parent space of any ui element. Note that when the
 // given element is itself a space, the parental space will be returned.
@@ -108,8 +110,8 @@ NA_API NASpace* naGetUIElementParentSpace(void* uiElement);
 // returns either the content rectangle (client rectangle) or the window
 // outer frame.
 NA_API NARect naGetUIElementRect(
-  void* uiElement,
-  void* relativeuiElement,
+  const void* uiElement,
+  const void* relativeuiElement,
   NABool includeBorder);
 
 // You can ask any ui element to refresh its contents. This will cause the
@@ -123,7 +125,7 @@ NA_API void naRefreshUIElement(void* uiElement, double timediff);
 // When navigating with the tab key, this method defines, which will be the
 // next ui element to have the focus. You start the tab order with a call to
 // naSetWindowFirstTabElement.
-NA_API void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem);
+NA_API void naSetUIElementNextTabElement(void* uiElement, const void* nextTabElem);
 
 // Returns the resolution scale factor for the given element. Is 2 for example
 // on high resolution display settings. Returns 1 if no parent window or screen
@@ -156,6 +158,7 @@ NA_API double naGetUIElementResolutionFactor(void* uiElement);
 typedef void* NANativePtr;
 
 NA_API NANativePtr naGetUIElementNativePtr(void* uiElement);
+NA_API const NANativePtr naGetUIElementNativePtrConst(const void* uiElement);
 
 
 #endif // NA_UI_ELEMENT_INCLUDED

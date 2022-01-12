@@ -62,12 +62,12 @@ NA_DEF void na_DestructCocoaMenu(NACocoaMenu* cocoaMenu){
 
 
 
-NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem){
+NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atItem){
   naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
   naDefineCocoaObject(NACocoaNativeMenuItem, nativeItemPtr, item);
 
   if(atItem){
-    naDefineCocoaObject(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
+    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
     [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
   }else{
     [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];
@@ -78,21 +78,21 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem){
 
 
 
-NA_DEF size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
+NA_DEF size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item){
   return naGetListElemIndex(&(menu->childs), item);
 }
 
 
 
-NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos, void* parentUIElement){
+NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement){
   NA_UNUSED(parentUIElement);
-  naDefineCocoaObject(NACocoaNativeMenu, nativePtr, menu);
+  naDefineCocoaObjectConst(NACocoaNativeMenu, nativePtr, menu);
   [nativePtr displayAt:pos];
 }
 
 
 
-NA_HDEF NARect na_GetMenuAbsoluteInnerRect(NA_UIElement* menu){
+NA_HDEF NARect na_GetMenuAbsoluteInnerRect(const NA_UIElement* menu){
   NA_UNUSED(menu);
   return naMakeRectS(0, 0, 1, 1);
 }

@@ -581,7 +581,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem){
   void** nextPrevNextRef;
 
   #if NA_DEBUG
-    if(naGetUIElementWindow(uiElement) != naGetUIElementWindow(nextTabElem))
+    if(naGetUIElementWindowConst(uiElement) != naGetUIElementWindowConst(nextTabElem))
       naError("element do not share the same window.");
   #endif
 

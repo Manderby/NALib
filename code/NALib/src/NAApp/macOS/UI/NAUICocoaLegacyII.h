@@ -71,7 +71,7 @@ NA_DEF NABool naLoadNib(const NAUTF8Char* nibName){
     }
   )
   if(!loaded){
-    loaded = [NSBundle loadNibNamed:[NSString stringWithUTF8String:nibName] owner:owner];
+    loaded = [NSBundle loadNibNamed:[NSString stringWithUTF8String:nibName] owner:NSApp];
   }
   return loaded;
 }

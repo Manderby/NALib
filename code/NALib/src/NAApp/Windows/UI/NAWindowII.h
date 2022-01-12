@@ -25,7 +25,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     // wParam: Unused
     // lParam: (int)(short)LOWORD: x coordinate, (int)(short)HIWORD: y coordinate
     // result: 0 when handeled.
-    window = naGetUIElementWindow(uiElement);
+    window = naGetUIElementWindowConst(uiElement);
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
     if (info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
     na_RememberWindowPosition(window);
@@ -36,7 +36,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     // wParam: Type of resizing (maximize, minimize, ...)
     // lParam: LOWORD: width, HIWORD: height
     // result: 0 when handeled.
-    window = naGetUIElementWindow(uiElement);
+    window = naGetUIElementWindowConst(uiElement);
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
     if (info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
     na_RememberWindowPosition(window);
@@ -44,7 +44,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     break;
 
   case WM_CLOSE:
-    window = naGetUIElementWindow(uiElement);
+    window = naGetUIElementWindowConst(uiElement);
     naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES);
     shouldClose = !naGetFlagu32(window->flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
@@ -396,7 +396,7 @@ NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem){
   NAWINAPIWindow* winapiWindow;
   
   #if NA_DEBUG
-    if(naGetUIElementWindow(firstTabElem) != window)
+    if(naGetUIElementWindowConst(firstTabElem) != window)
       naError("Element is not part of the window.");
   #endif
   winapiWindow = (NAWINAPIWindow*)window;

@@ -76,8 +76,8 @@ NA_DEF void naSetSliderTickCount(NASlider* slider, NAInt tickCount){
 
 
 
-NA_DEF double naGetSliderValue(NASlider* slider){
-  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
+NA_DEF double naGetSliderValue(const NASlider* slider){
+  naDefineCocoaObjectConst(NACocoaNativeSlider, nativePtr, slider);
   return [nativePtr getSliderValue];
 }
 
@@ -90,9 +90,9 @@ NA_DEF void naSetSliderValue(NASlider* slider, double value){
 
 
 
-NA_HDEF NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* slider){
-  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParent(slider), naGetApplication(), NA_FALSE);
+NA_HDEF NARect na_GetSliderAbsoluteInnerRect(const NA_UIElement* slider){
+  naDefineCocoaObjectConst(NACocoaNativeSlider, nativePtr, slider);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(slider), naGetApplication(), NA_FALSE);
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

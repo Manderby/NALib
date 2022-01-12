@@ -167,7 +167,7 @@ NA_HDEF void na_ClearMenu(NAMenu* menu){
   naClearList(&(menu->childs));
 //  na_ClearUIElement(&(menu->uiElement));
 }
-NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, NAMenuItem* itemAt){
+NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* itemAt){
   NAListIterator iter = naMakeListModifier(&(menu->childs));
   naLocateListData(&iter, itemAt);
   naAddListBeforeMutable(&iter, child);
@@ -222,7 +222,7 @@ NA_HDEF void na_ClearPopupButton(NAPopupButton* popupButton){
   naClearList(&(popupButton->childs));
   na_ClearUIElement(&(popupButton->uiElement));
 }
-NA_HDEF void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* child, NAMenuItem* itemAt){
+NA_HDEF void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* child, const NAMenuItem* itemAt){
   NAListIterator iter = naMakeListModifier(&(popupButton->childs));
   naLocateListData(&iter, itemAt);
   naAddListBeforeMutable(&iter, child);
@@ -328,7 +328,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
   return naGetFlagu32(window->coreFlags, NA_CORE_WINDOW_FLAG_FULLSCREEN);
 }
 
-NA_DEF NABool naIsWindowResizeable(NAWindow* window){
+NA_DEF NABool naIsWindowResizeable(const NAWindow* window){
   return naGetFlagu32(window->coreFlags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
 }
 
@@ -403,7 +403,7 @@ NA_HDEF void na_SetMouseExitedAtPos(NAPos newpos){
 
 
 
-NA_DEF NAUIElementType naGetUIElementType(void* uiElement){
+NA_DEF NAUIElementType naGetUIElementType(const void* uiElement){
   return ((NA_UIElement*)uiElement)->elementType;
 }
 
@@ -411,6 +411,12 @@ NA_DEF NAUIElementType naGetUIElementType(void* uiElement){
 
 NA_DEF NANativePtr naGetUIElementNativePtr(void* uiElement){
   return ((NA_UIElement*)uiElement)->nativePtr;
+}
+
+
+
+NA_DEF const NANativePtr naGetUIElementNativePtrConst(const void* uiElement){
+  return ((const NA_UIElement*)uiElement)->nativePtr;
 }
 
 
@@ -547,10 +553,26 @@ NA_DEF void* naGetUIElementParent(void* uiElement){
 
 
 
+NA_DEF const void* naGetUIElementParentConst(const void* uiElement){
+  return ((const NA_UIElement*)uiElement)->parent;
+}
+
+
+
 NA_DEF NAWindow* naGetUIElementWindow(void* uiElement){
   void* curelement = uiElement;
   while(curelement && naGetUIElementType(curelement) != NA_UI_WINDOW){
     curelement = naGetUIElementParent(curelement);
+  }
+  return curelement;
+}
+
+
+
+NA_DEF const NAWindow* naGetUIElementWindowConst(const void* uiElement){
+  const void* curelement = uiElement;
+  while(curelement && naGetUIElementType(curelement) != NA_UI_WINDOW){
+    curelement = naGetUIElementParentConst(curelement);
   }
   return curelement;
 }
@@ -614,7 +636,7 @@ NA_DEF NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect r
 
 
 
-NA_HDEF void na_RememberWindowPosition(NAWindow* window){
+NA_HDEF void na_RememberWindowPosition(const NAWindow* window){
   if(window->storageTag){
     NARect rect = na_GetWindowAbsoluteInnerRect(&(window->uiElement));
     NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, (int)window->storageTag);

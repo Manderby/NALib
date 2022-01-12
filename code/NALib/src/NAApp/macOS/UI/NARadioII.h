@@ -116,9 +116,9 @@ NA_DEF void naSetRadioTextColor(NARadio* radio, const NABabyColor* color){
 
 
 
-NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
-  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParent(radio), naGetApplication(), NA_FALSE);
+NA_HDEF NARect na_GetRadioAbsoluteInnerRect(const NA_UIElement* radio){
+  naDefineCocoaObjectConst(NACocoaNativeRadio, nativePtr, radio);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(radio), naGetApplication(), NA_FALSE);
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
@@ -136,7 +136,7 @@ NA_DEF void naSetRadioState(NARadio* radio, NABool state){
 
 NA_DEF void naSetRadioVisible(NARadio* radio, NABool visible){
   naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
-  [nativePtr setVisible:(BOOL)visible];
+  [nativePtr setHidden:(BOOL)!visible];
 }
 
 
@@ -148,8 +148,8 @@ NA_DEF void naSetRadioEnabled(NARadio* radio, NABool enabled){
 
 
 
-NA_DEF NABool naGetRadioState(NARadio* radio){
-  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+NA_DEF NABool naGetRadioState(const NARadio* radio){
+  naDefineCocoaObjectConst(NACocoaNativeRadio, nativePtr, radio);
   return [nativePtr radioState];
 }
 

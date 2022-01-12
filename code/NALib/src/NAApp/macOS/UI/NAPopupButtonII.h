@@ -79,12 +79,12 @@ NA_DEF void naSetPopupButtonVisible(NAPopupButton* popupButton, NABool visible){
 
 
 
-NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, NAMenuItem* atItem){
+NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, const NAMenuItem* atItem){
   naDefineCocoaObject(NACocoaNativePopupButton, nativePopupPtr, popupButton);
-  naDefineCocoaObject(NACocoaNativeMenuItem, nativeItemPtr, item);
+  naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemPtr, item);
 
   if(atItem){
-    naDefineCocoaObject(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
+    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
     [nativePopupPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
   }else{
     [nativePopupPtr addMenuItem:nativeItemPtr atItem:nil];
@@ -116,9 +116,9 @@ NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
 
 
 
-NA_HDEF NARect na_GetPopupButtonAbsoluteInnerRect(NA_UIElement* popupButton){
-  naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParent(popupButton), naGetApplication(), NA_FALSE);
+NA_HDEF NARect na_GetPopupButtonAbsoluteInnerRect(const NA_UIElement* popupButton){
+  naDefineCocoaObjectConst(NACocoaNativePopupButton, nativePtr, popupButton);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(popupButton), naGetApplication(), NA_FALSE);
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

@@ -167,7 +167,7 @@ NA_API NAString* naNewApplicationResourcePath(
 #if NA_OS == NA_OS_MAC_OS_X
   // If you are on macOS and need to load in a NIB file, use the following
   // function. Note that this function also works on older systems.
-  NABool naLoadNib(const NAUTF8Char* nibName, void* owner);
+  NABool naLoadNib(const NAUTF8Char* nibName);
   // You usually load nibs after the application startup. A good idea is to
   // do it in the postStartup callback of naStartApplication.
 #endif

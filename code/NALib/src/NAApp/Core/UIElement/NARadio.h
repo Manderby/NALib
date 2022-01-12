@@ -15,7 +15,7 @@ NA_API void naSetRadioVisible(NARadio* radio, NABool visible);
 NA_API void naSetRadioEnabled(NARadio* radio, NABool enabled);
 
 // Gets or sets the state of the radio.
-NA_API NABool naGetRadioState(NARadio* radio);
+NA_API NABool naGetRadioState(const NARadio* radio);
 NA_API void naSetRadioState(NARadio* radio, NABool state);
 
 // Sets the color of the text of the radio.

@@ -332,7 +332,7 @@ NA_IDEF void* naGetListLastMutable(const NAList* list){
 }
 
 
-NA_IDEF size_t naGetListElemIndex(const NAList* list, void* elem){
+NA_IDEF size_t naGetListElemIndex(const NAList* list, const void* elem){
   size_t index = 0;
   NAListIterator iter = naMakeListAccessor(list);
   while(naIterateList(&iter))

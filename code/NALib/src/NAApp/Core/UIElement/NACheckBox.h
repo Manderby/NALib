@@ -15,7 +15,7 @@ NA_API void naSetCheckBoxVisible(NACheckBox* checkBox, NABool visible);
 NA_API void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled);
 
 // Gets or sets the check state of the checkBox
-NA_API NABool naGetCheckBoxState(NACheckBox* checkBox);
+NA_API NABool naGetCheckBoxState(const NACheckBox* checkBox);
 NA_API void naSetCheckBoxState(NACheckBox* checkBox, NABool state);
 
 // Sets the color of the text of the checkBox

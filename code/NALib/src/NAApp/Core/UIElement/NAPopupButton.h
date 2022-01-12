@@ -23,7 +23,7 @@ NA_API void naSetPopupButtonEnabled(
 NA_API void naAddPopupButtonMenuItem(
   NAPopupButton* popupButton,
   NAMenuItem* item,
-  NAMenuItem* atItem);
+  const NAMenuItem* atItem);
 
 // naGetPopupButtonItemIndex returns the index including all separators.
 NA_API size_t naGetPopupButtonItemIndex(

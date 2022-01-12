@@ -211,7 +211,7 @@ NA_HAPI void na_ClearLabel(NALabel* label);
 
 NA_HAPI void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent);
 NA_HAPI void na_ClearMenu(NAMenu* menu);
-NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, NAMenuItem* itemAt);
+NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* itemAt);
 
 NA_HAPI void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent);
 NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);
@@ -226,7 +226,7 @@ NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
 
 NA_HAPI void na_InitPopupButton(NAPopupButton* popupButton, void* nativePtr);
 NA_HAPI void na_ClearPopupButton(NAPopupButton* popupButton);
-NA_HDEF void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* child, NAMenuItem* itemAt);
+NA_HDEF void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* child, const NAMenuItem* itemAt);
 
 NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
 NA_HAPI void na_ClearRadio(NARadio* radio);
@@ -250,7 +250,7 @@ NA_HAPI void na_ClearTextField(NATextField* textField);
 
 NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
 NA_HAPI void na_ClearWindow(NAWindow* window);
-NA_HAPI void na_RememberWindowPosition(NAWindow* window);
+NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
 
 
 
@@ -300,23 +300,23 @@ NA_HAPI void* na_AllocMouseTracking(NANativePtr nativePtr);
 NA_HAPI void na_DeallocMouseTracking(void* tracking);
 
 NA_HAPI NARect na_GetApplicationAbsoluteRect     (void);
-NA_HAPI NARect na_GetButtonAbsoluteInnerRect     (NA_UIElement* button);
-NA_HAPI NARect na_GetCheckBoxAbsoluteInnerRect   (NA_UIElement* checkBox);
-NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect (NA_UIElement* imageSpace);
-NA_HAPI NARect na_GetLabelAbsoluteInnerRect      (NA_UIElement* label);
-NA_HAPI NARect na_GetMenuAbsoluteInnerRect       (NA_UIElement* menu);
-NA_HAPI NARect na_GetMenuItemAbsoluteInnerRect   (NA_UIElement* menuItem);
-NA_HAPI NARect na_GetMetalSpaceAbsoluteInnerRect (NA_UIElement* metalSpace);
-NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openGLSpace);
-NA_HAPI NARect na_GetPopupButtonAbsoluteInnerRect(NA_UIElement* popupButton);
-NA_HAPI NARect na_GetRadioAbsoluteInnerRect      (NA_UIElement* radio);
-NA_HAPI NARect na_GetScreenAbsoluteRect          (NA_UIElement* screen);
-NA_HAPI NARect na_GetSliderAbsoluteInnerRect     (NA_UIElement* slider);
-NA_HAPI NARect na_GetSpaceAbsoluteInnerRect      (NA_UIElement* space);
-NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect    (NA_UIElement* textBox);
-NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect  (NA_UIElement* textField);
-NA_HAPI NARect na_GetWindowAbsoluteOuterRect     (NA_UIElement* window);
-NA_HAPI NARect na_GetWindowAbsoluteInnerRect     (NA_UIElement* window);
+NA_HAPI NARect na_GetButtonAbsoluteInnerRect     (const NA_UIElement* button);
+NA_HAPI NARect na_GetCheckBoxAbsoluteInnerRect   (const NA_UIElement* checkBox);
+NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect (const NA_UIElement* imageSpace);
+NA_HAPI NARect na_GetLabelAbsoluteInnerRect      (const NA_UIElement* label);
+NA_HAPI NARect na_GetMenuAbsoluteInnerRect       (const NA_UIElement* menu);
+NA_HAPI NARect na_GetMenuItemAbsoluteInnerRect   (const NA_UIElement* menuItem);
+NA_HAPI NARect na_GetMetalSpaceAbsoluteInnerRect (const NA_UIElement* metalSpace);
+NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(const NA_UIElement* openGLSpace);
+NA_HAPI NARect na_GetPopupButtonAbsoluteInnerRect(const NA_UIElement* popupButton);
+NA_HAPI NARect na_GetRadioAbsoluteInnerRect      (const NA_UIElement* radio);
+NA_HAPI NARect na_GetScreenAbsoluteRect          (const NA_UIElement* screen);
+NA_HAPI NARect na_GetSliderAbsoluteInnerRect     (const NA_UIElement* slider);
+NA_HAPI NARect na_GetSpaceAbsoluteInnerRect      (const NA_UIElement* space);
+NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect    (const NA_UIElement* textBox);
+NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect  (const NA_UIElement* textField);
+NA_HAPI NARect na_GetWindowAbsoluteOuterRect     (const NA_UIElement* window);
+NA_HAPI NARect na_GetWindowAbsoluteInnerRect     (const NA_UIElement* window);
 
 
 

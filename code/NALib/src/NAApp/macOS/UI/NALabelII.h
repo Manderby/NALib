@@ -291,9 +291,9 @@ NA_DEF void naSetLabelVisible(NALabel* label, NABool visible){
 
 
 
-NA_HDEF NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label){
-  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParent(label), naGetApplication(), NA_FALSE);
+NA_HDEF NARect na_GetLabelAbsoluteInnerRect(const NA_UIElement* label){
+  naDefineCocoaObjectConst(NACocoaNativeLabel, nativePtr, label);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(label), naGetApplication(), NA_FALSE);
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

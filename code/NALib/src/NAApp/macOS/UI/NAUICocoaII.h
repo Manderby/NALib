@@ -18,12 +18,15 @@
 NA_HAPI void na_RenewWindowMouseTracking(NAWindow* window);
 NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);
 
-NA_HAPI NARect na_GetNativeWindowAbsoluteInnerRect(NSWindow* window);
+NA_HAPI NARect na_GetNativeWindowAbsoluteInnerRect(const NSWindow* window);
 
 
 
 #define naDefineCocoaObject(cocoatype, var, uiElement)\
   cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativePtr(uiElement))
+  
+#define naDefineCocoaObjectConst(cocoatype, var, uiElement)\
+  cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativePtrConst(uiElement))
 
 
 NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr){
@@ -159,14 +162,14 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
 
 
 NA_DEF void na_RefreshUIElementNow(void* uiElement){
-  naDefineCocoaObject(NSView, cocoaView, uiElement);
+  naDefineCocoaObjectConst(NSView, cocoaView, uiElement);
   [cocoaView setNeedsDisplay:YES];
 }
 
 
 
 
-NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem){
+NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabElem){
   if(  naGetUIElementType(uiElement) != NA_UI_TEXTFIELD
     && naGetUIElementType(uiElement) != NA_UI_TEXTBOX){
     #if NA_DEBUG
@@ -184,7 +187,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem){
   }
 
   naDefineCocoaObject(NSView, cocoaCurTabElem, uiElement);
-  naDefineCocoaObject(NSView, cocoaNextTabElem, nextTabElem);
+  naDefineCocoaObjectConst(NSView, cocoaNextTabElem, nextTabElem);
   [cocoaCurTabElem setNextKeyView:cocoaNextTabElem];
 }
 
@@ -314,11 +317,11 @@ NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment){
 
 
 
-NA_HDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
+NA_HDEF NARect na_GetScreenAbsoluteRect(const NA_UIElement* screen){
   NARect rect;
   NSRect frame;
   NSRect mainframe;
-  naDefineCocoaObject(NSScreen, cocoascreen, screen);
+  naDefineCocoaObjectConst(NSScreen, cocoascreen, screen);
   mainframe = [[NSScreen mainScreen] frame];
   frame = [cocoascreen frame];
   rect.pos.x = frame.origin.x;
@@ -422,7 +425,7 @@ NA_DEF void naHideMouse(){
 
 
 
-NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABool includeBorder){
+NA_DEF NARect naGetUIElementRect(const void* uiElement, const void* relativeuiElement, NABool includeBorder){
   NARect rect;
   NARect relRect;
   NA_UIElement* element;

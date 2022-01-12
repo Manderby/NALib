@@ -8,10 +8,10 @@
 
 @implementation NACocoaNativeButton
 
-- (id) initWithButton:(NACocoaButton*)newCocoaButton flags:(uint32)flags isImage:(bool)isImage frame:(NSRect)frame{
+- (id) initWithButton:(NACocoaButton*)newCocoaButton flags:(uint32)flags isImage:(bool)newIsImage frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
-  self.isImage = isImage;
+  isImage = newIsImage;
 
   if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS)){
     if(!isImage && naGetFlagu32(flags, NA_BUTTON_STATEFUL)){
@@ -203,7 +203,7 @@ NA_DEF void naSetButtonState(NAButton* button, NABool state){
 
 
 NA_DEF NABool naGetButtonState(const NAButton* button){
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  naDefineCocoaObjectConst(const NACocoaNativeButton, nativePtr, button);
   return [nativePtr getButtonState];
   // todo:
   // naError("This is not a stateful button");
@@ -262,9 +262,9 @@ NA_API void naSetButtonVisible(NAButton* button, NABool visible){
 
 
 
-NA_HDEF NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button){
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParent(button), naGetApplication(), NA_FALSE);
+NA_HDEF NARect na_GetButtonAbsoluteInnerRect(const NA_UIElement* button){
+  naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(button), naGetApplication(), NA_FALSE);
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

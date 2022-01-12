@@ -31,8 +31,8 @@ NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
 NA_API void naSetWindowContentSpace(NAWindow* window, void* space);
 
 // Show or close the window
-NA_API void naShowWindow(NAWindow* window);
-NA_API void naCloseWindow(NAWindow* window);
+NA_API void naShowWindow(const NAWindow* window);
+NA_API void naCloseWindow(const NAWindow* window);
 
 // During a NA_UI_COMMAND_CLOSES command, call this function to prevent the
 // window from closing. If not called, the window will close.
@@ -43,8 +43,8 @@ NA_API NABool naIsWindowFullscreen(NAWindow* window);
 NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);
 
 // Get various properties of the window
-NA_API NAUIImageResolution naGetWindowUIResolution(NAWindow* window);
-NA_API NABool naIsWindowResizeable(NAWindow* window);
+NA_API NAUIImageResolution naGetWindowUIResolution(const NAWindow* window);
+NA_API NABool naIsWindowResizeable(const NAWindow* window);
 
 // Set various properties of the window
 NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
@@ -54,7 +54,7 @@ NA_API void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts);
 
 // Get and set the first tab element of the window.
 NA_API void* naGetWindowFirstTabElement(NAWindow* window);
-NA_API void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem);
+NA_API void naSetWindowFirstTabElement(NAWindow* window, const void* firstTabElem);
 
 // Set the storage tag for automatically remembering the position of the
 // window.

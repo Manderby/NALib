@@ -11,7 +11,7 @@
 NA_API NATextField* naNewTextField(double width);
 
 // Get or set the text of the textField.
-NA_API NAString* naNewStringWithTextFieldText(NATextField* textField);
+NA_API NAString* naNewStringWithTextFieldText(const NATextField* textField);
 NA_API void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text);
 
 // Sets different kind of font properties of the textBox.

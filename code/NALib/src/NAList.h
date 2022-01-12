@@ -114,7 +114,7 @@ NA_IAPI       void* naGetListLastMutable    (const NAList* list);
 //
 // Note that this method is slow. Try to use it as few as possible. Use
 // Iterators instead.
-NA_IAPI size_t naGetListElemIndex(const NAList* list, void* elem);
+NA_IAPI size_t naGetListElemIndex(const NAList* list, const void* elem);
 
 // Traverses the whole list calling the accessor or mutator on each element.
 // A pointer to each element will be given to the mutator. The list is

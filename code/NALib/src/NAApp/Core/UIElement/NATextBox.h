@@ -15,7 +15,7 @@ NA_API void naSetTextBoxVisible(NATextBox* textBox, NABool visible);
 NA_API void naSetTextBoxEditable(NATextBox* textBox, NABool editable);
 
 // Get or set the text of the textBox.
-NA_API NAString* naNewStringWithTextBoxText(NATextBox* textBox);
+NA_API NAString* naNewStringWithTextBoxText(const NATextBox* textBox);
 NA_API void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text);
 
 // Sets different kind of font properties of the textBox.

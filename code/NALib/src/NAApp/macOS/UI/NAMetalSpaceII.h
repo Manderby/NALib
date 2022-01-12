@@ -139,8 +139,8 @@
   }
 
 
-  NA_DEF void* naGetMetalSpaceSystemContext(NAMetalSpace* metalSpace){
-    naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
+  NA_DEF void* naGetMetalSpaceSystemContext(const NAMetalSpace* metalSpace){
+    naDefineCocoaObjectConst(NACocoaNativeMetalSpace, nativePtr, metalSpace);
     return NA_COCOA_PTR_OBJC_TO_C([nativePtr layer]);
   }
 
@@ -196,7 +196,7 @@
 
 
 
-NA_HDEF NARect na_GetMetalSpaceAbsoluteInnerRect(NA_UIElement* metalSpace){
+NA_HDEF NARect na_GetMetalSpaceAbsoluteInnerRect(const NA_UIElement* metalSpace){
   return na_GetSpaceAbsoluteInnerRect(metalSpace);
 }
 
