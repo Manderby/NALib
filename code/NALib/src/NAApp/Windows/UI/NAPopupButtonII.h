@@ -50,7 +50,7 @@ NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
   // todo
 }
 
-NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, NAMenuItem* atItem){
+NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, const NAMenuItem* atItem){
   // todo
 }
 
@@ -63,7 +63,7 @@ NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, NAMenuItem*
   // todo
 }
 
-NA_HDEF NARect na_GetPopupButtonAbsoluteInnerRect(NA_UIElement* menu){
+NA_HDEF NARect na_GetPopupButtonAbsoluteInnerRect(const NA_UIElement* menu){
   NA_UNUSED(menu);
   return naMakeRectS(0, 0, 1, 1);
 }

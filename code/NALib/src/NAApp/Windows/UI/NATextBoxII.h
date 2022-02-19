@@ -98,7 +98,7 @@ NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
 
 
 
-NA_DEF NAString* naNewStringWithTextBoxText(NATextBox* textBox){
+NA_DEF NAString* naNewStringWithTextBoxText(const NATextBox* textBox){
   return NA_NULL;
   // todo
 }
@@ -154,14 +154,14 @@ NA_HDEF void** na_GetTextBoxPrevTabReference(NATextBox* textBox){
 
 
 
-NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox){
+NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(const NA_UIElement* textBox){
   NARect screenRect = naGetMainScreenRect();
   RECT clientRect;
-  GetClientRect(naGetUIElementNativePtr(textBox), &clientRect);
+  GetClientRect(naGetUIElementNativePtrConst(textBox), &clientRect);
   double height = clientRect.bottom - clientRect.top;
 
   POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtr(textBox), &testPoint);
+  ClientToScreen(naGetUIElementNativePtrConst(textBox), &testPoint);
 
   return naMakeRect(
     naMakePos(testPoint.x, screenRect.size.height - testPoint.y),

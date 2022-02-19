@@ -122,8 +122,8 @@ NA_DEF void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled){
 
 
 
-NA_DEF NABool naGetCheckBoxState(NACheckBox* checkBox){
-  LPARAM state = SendMessage(naGetUIElementNativePtr(checkBox), BM_GETSTATE, 0, 0);
+NA_DEF NABool naGetCheckBoxState(const NACheckBox* checkBox){
+  LPARAM state = SendMessage(naGetUIElementNativePtrConst(checkBox), BM_GETSTATE, 0, 0);
   return (state & BST_CHECKED) == BST_CHECKED;
 }
 
@@ -142,14 +142,14 @@ NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* colo
 
 
 
-NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox){
+NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(const NA_UIElement* checkBox){
   NARect screenRect = naGetMainScreenRect();
   RECT clientRect;
-  GetClientRect(naGetUIElementNativePtr(checkBox), &clientRect);
+  GetClientRect(naGetUIElementNativePtrConst(checkBox), &clientRect);
   double height = clientRect.bottom - clientRect.top;
 
   POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtr(checkBox), &testPoint);
+  ClientToScreen(naGetUIElementNativePtrConst(checkBox), &testPoint);
 
   return naMakeRect(
     naMakePos(testPoint.x, screenRect.size.height - testPoint.y),

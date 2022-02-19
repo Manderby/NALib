@@ -383,14 +383,14 @@ NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* 
 
 
 
-NA_HDEF NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button){
+NA_HDEF NARect na_GetButtonAbsoluteInnerRect(const NA_UIElement* button){
   NARect screenRect = naGetMainScreenRect();
   RECT clientRect;
-  GetClientRect(naGetUIElementNativePtr(button), &clientRect);
+  GetClientRect(naGetUIElementNativePtrConst(button), &clientRect);
   double height = clientRect.bottom - clientRect.top;
 
   POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtr(button), &testPoint);
+  ClientToScreen(naGetUIElementNativePtrConst(button), &testPoint);
 
   return naMakeRect(
     naMakePos(testPoint.x, screenRect.size.height - testPoint.y),

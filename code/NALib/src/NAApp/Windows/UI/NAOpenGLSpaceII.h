@@ -156,7 +156,7 @@ NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds)
 
 
 
-NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openGLSpace){
+NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(const NA_UIElement* openGLSpace){
   return na_GetSpaceAbsoluteInnerRect(openGLSpace);
 }
 

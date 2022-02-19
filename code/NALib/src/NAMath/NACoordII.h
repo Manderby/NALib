@@ -1467,7 +1467,7 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndBorder(NABoxi box, NAInt border){
 NA_IDEF NARange naMakeRangePositive(NARange range){
   NAInt rangenegative = (NAInt)(range.length < 0);
   range.origin += rangenegative * range.length;
-  range.length -= (double)(rangenegative << 1) * range.length;
+  range.length -= (double)rangenegative * 2 * range.length;
   return range;
 }
 NA_IDEF NARangei naMakeRangeiPositive(NARangei range){

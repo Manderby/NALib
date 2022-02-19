@@ -11,7 +11,8 @@
 
 NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  NAWindow* window;
+  const NAWindow* windowConst;
+  NAWindow* windowMutable;
   NABool shouldClose;
 
   switch(message){
@@ -25,10 +26,10 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     // wParam: Unused
     // lParam: (int)(short)LOWORD: x coordinate, (int)(short)HIWORD: y coordinate
     // result: 0 when handeled.
-    window = naGetUIElementWindowConst(uiElement);
+	windowConst = naGetUIElementWindowConst(uiElement);
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
     if (info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
-    na_RememberWindowPosition(window);
+    na_RememberWindowPosition(windowConst);
     info.result = 0;
     break;
 
@@ -36,20 +37,20 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     // wParam: Type of resizing (maximize, minimize, ...)
     // lParam: LOWORD: width, HIWORD: height
     // result: 0 when handeled.
-    window = naGetUIElementWindowConst(uiElement);
+	windowConst = naGetUIElementWindowConst(uiElement);
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
     if (info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
-    na_RememberWindowPosition(window);
+    na_RememberWindowPosition(windowConst);
     info.result = 0;
     break;
 
   case WM_CLOSE:
-    window = naGetUIElementWindowConst(uiElement);
-    naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
+    windowMutable = naGetUIElementWindow(uiElement);
+    naSetFlagu32(&(windowMutable->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES);
-    shouldClose = !naGetFlagu32(window->flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
-    naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
-    if(shouldClose){naCloseWindow(window);}
+    shouldClose = !naGetFlagu32(windowMutable->flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
+    naSetFlagu32(&(windowMutable->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
+    if(shouldClose){naCloseWindow(windowMutable);}
     info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;
@@ -247,15 +248,15 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
 
 
 
-NA_DEF void naShowWindow(NAWindow* window){
-  ShowWindow(naGetUIElementNativePtr(window), SW_SHOW);
-  BringWindowToTop(naGetUIElementNativePtr(window));
+NA_DEF void naShowWindow(const NAWindow* window){
+  ShowWindow(naGetUIElementNativePtrConst(window), SW_SHOW);
+  BringWindowToTop(naGetUIElementNativePtrConst(window));
 }
 
 
 
-NA_DEF void naCloseWindow(NAWindow* window){
-  ShowWindow(naGetUIElementNativePtr(window), SW_HIDE);
+NA_DEF void naCloseWindow(const NAWindow* window){
+  ShowWindow(naGetUIElementNativePtrConst(window), SW_HIDE);
 }
 
 
@@ -314,7 +315,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
 
 
 
-NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
+NA_DEF NAUIImageResolution naGetWindowUIResolution(const NAWindow* window){
   // Currently, NALib for windows GUI is not resolution aware. Be patient.
   return NA_UIIMAGE_RESOLUTION_1x;
 }
@@ -405,7 +406,7 @@ NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem){
 
 
 
-NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
+NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window){
   NARect rect;
   NARect screenRect;
   RECT clientRect;
@@ -425,7 +426,7 @@ NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
 
 
 
-NA_HDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
+NA_HDEF NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window){
   NARect rect;
   NARect screenRect;
   RECT windowRect;

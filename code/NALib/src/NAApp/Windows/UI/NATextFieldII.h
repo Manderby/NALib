@@ -163,11 +163,11 @@ NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text){
 
 
 
-NA_DEF NAString* naNewStringWithTextFieldText(NATextField* textField){
-  LRESULT textlength = SendMessage(naGetUIElementNativePtr(textField), WM_GETTEXTLENGTH, 0, 0);
+NA_DEF NAString* naNewStringWithTextFieldText(const NATextField* textField){
+  LRESULT textlength = SendMessage(naGetUIElementNativePtrConst(textField), WM_GETTEXTLENGTH, 0, 0);
   if(textlength){
     TCHAR* buffer = naMalloc((textlength + 1) * sizeof(TCHAR));
-    SendMessage(naGetUIElementNativePtr(textField), WM_GETTEXT, textlength + 1, (LPARAM)buffer);
+    SendMessage(naGetUIElementNativePtrConst(textField), WM_GETTEXT, textlength + 1, (LPARAM)buffer);
     return naNewStringFromSystemString(buffer);
   }else{
     return naNewString();
@@ -205,14 +205,14 @@ NA_HDEF void** na_GetTextFieldPrevTabReference(NATextField* textField){
 
 
 
-NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField){
+NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(const NA_UIElement* textField){
   NARect screenRect = naGetMainScreenRect();
   RECT clientRect;
-  GetClientRect(naGetUIElementNativePtr(textField), &clientRect);
+  GetClientRect(naGetUIElementNativePtrConst(textField), &clientRect);
   double height = clientRect.bottom - clientRect.top;
 
   POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtr(textField), &testPoint);
+  ClientToScreen(naGetUIElementNativePtrConst(textField), &testPoint);
 
   return naMakeRect(
     naMakePos(testPoint.x, screenRect.size.height - testPoint.y),

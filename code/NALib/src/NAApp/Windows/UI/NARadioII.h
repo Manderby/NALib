@@ -114,8 +114,8 @@ NA_DEF void naSetRadioEnabled(NARadio* radio, NABool enabled){
 
 
 
-NA_DEF NABool naGetRadioState(NARadio* radio){
-  LPARAM state = SendMessage(naGetUIElementNativePtr(radio), BM_GETSTATE, 0, 0);
+NA_DEF NABool naGetRadioState(const NARadio* radio){
+  LPARAM state = SendMessage(naGetUIElementNativePtrConst(radio), BM_GETSTATE, 0, 0);
   return (state & BST_CHECKED) == BST_CHECKED;
 }
 
@@ -128,14 +128,14 @@ NA_DEF void naSetRadioState(NARadio* radio, NABool state){
 
 
 
-NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
+NA_HDEF NARect na_GetRadioAbsoluteInnerRect(const NA_UIElement* radio){
   NARect screenRect = naGetMainScreenRect();
   RECT clientRect;
-  GetClientRect(naGetUIElementNativePtr(radio), &clientRect);
+  GetClientRect(naGetUIElementNativePtrConst(radio), &clientRect);
   double height = clientRect.bottom - clientRect.top;
 
   POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtr(radio), &testPoint);
+  ClientToScreen(naGetUIElementNativePtrConst(radio), &testPoint);
 
   return naMakeRect(
     naMakePos(testPoint.x, screenRect.size.height - testPoint.y),

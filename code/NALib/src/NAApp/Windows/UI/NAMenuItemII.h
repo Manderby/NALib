@@ -77,7 +77,7 @@ NA_DEF void na_DestructWINAPIMenuItem(NA_WINAPIMenuItem* winapiMenuItem){
 
 
 
-NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(NA_UIElement* menu){
+NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(const NA_UIElement* menu){
   NA_UNUSED(menu);
   return naMakeRectS(0, 0, 1, 1);
 }

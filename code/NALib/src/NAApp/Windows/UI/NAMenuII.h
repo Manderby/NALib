@@ -32,7 +32,7 @@ NA_DEF void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu){
 
 
 
-NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem){
+NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atItem){
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
   NA_WINAPIMenuItem* winapiMenuItem = (NA_WINAPIMenuItem*)item;
 
@@ -69,7 +69,7 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, NAMenuItem* atItem){
 
 
 
-NA_DEF size_t naGetMenuItemIndex(NAMenu* menu, NAMenuItem* item){
+NA_DEF size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item){
   return naGetListElemIndex(&(menu->childs), item);
 }
 
@@ -93,7 +93,7 @@ NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos, void* parentUIElement){
     naGetUIElementNativePtr(parentUIElement), NULL);
 }
 
-NA_HDEF NARect na_GetMenuAbsoluteInnerRect(NA_UIElement* menu){
+NA_HDEF NARect na_GetMenuAbsoluteInnerRect(const NA_UIElement* menu){
   NA_UNUSED(menu);
   return naMakeRectS(0, 0, 1, 1);
 }

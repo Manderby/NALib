@@ -200,14 +200,14 @@ NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size)
 
 
 
-NA_HDEF NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label){
+NA_HDEF NARect na_GetLabelAbsoluteInnerRect(const NA_UIElement* label){
   NARect screenRect = naGetMainScreenRect();
   RECT clientRect;
-  GetClientRect(naGetUIElementNativePtr(label), &clientRect);
+  GetClientRect(naGetUIElementNativePtrConst(label), &clientRect);
   double height = clientRect.bottom - clientRect.top;
 
   POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtr(label), &testPoint);
+  ClientToScreen(naGetUIElementNativePtrConst(label), &testPoint);
 
   return naMakeRect(
     naMakePos(testPoint.x, screenRect.size.height - testPoint.y),

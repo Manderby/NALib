@@ -624,7 +624,7 @@ NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
 
 
 
-NA_HDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
+NA_HDEF NARect na_GetScreenAbsoluteRect(const NA_UIElement* screen){
   NARect rect;
   rect.pos.x = 0;
   rect.pos.y = 0;

@@ -19,7 +19,7 @@ NA_API size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item);
 
 // Presents the menu onscreen at the dedicated absolute position.
 // You need to provide a parent UIElement. Currently must be a button.
-NA_API void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement);
+NA_API void naPresentMenu(NAMenu* menu, NAPos pos, void* parentUIElement);
 
 
 

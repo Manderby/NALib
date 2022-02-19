@@ -223,7 +223,7 @@ NA_HDEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable){
 
 
 
-NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
+NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* space){
   NARect rect;
   NARect screenRect;
   RECT contentRect;

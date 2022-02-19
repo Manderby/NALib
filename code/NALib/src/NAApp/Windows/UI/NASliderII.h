@@ -132,8 +132,8 @@ NA_DEF void naSetSliderEnabled(NASlider* slider, NABool enabled){
 
 
 
-NA_API double naGetSliderValue(NASlider* slider){
-  int32 sliderValue = (int32)SendMessage(naGetUIElementNativePtr(slider), TBM_GETPOS, 0, 0); 
+NA_API double naGetSliderValue(const NASlider* slider){
+  int32 sliderValue = (int32)SendMessage(naGetUIElementNativePtrConst(slider), TBM_GETPOS, 0, 0); 
   return (double)sliderValue / (double)NA_MAX_i32;
 }
 
@@ -154,15 +154,15 @@ NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount){
 
 
 
-NA_HDEF NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* slider){
+NA_HDEF NARect na_GetSliderAbsoluteInnerRect(const NA_UIElement* slider){
   RECT contentRect;
   NARect screenRect;
   NARect rect;
-  GetClientRect(naGetUIElementNativePtr(slider), &contentRect);
+  GetClientRect(naGetUIElementNativePtrConst(slider), &contentRect);
 
   POINT testPoint = {0, 0};
 
-  ClientToScreen(naGetUIElementNativePtr(slider), &testPoint);
+  ClientToScreen(naGetUIElementNativePtrConst(slider), &testPoint);
   screenRect = naGetMainScreenRect();
 
   rect.pos.x = testPoint.x;

@@ -13,7 +13,7 @@
 
 #endif  // NA_COMPILE_METAL == 1
 
-NA_HDEF NARect na_GetMetalSpaceAbsoluteInnerRect(NA_UIElement* metalSpace){
+NA_HDEF NARect na_GetMetalSpaceAbsoluteInnerRect(const NA_UIElement* metalSpace){
   return na_GetSpaceAbsoluteInnerRect(metalSpace);
 }
 
