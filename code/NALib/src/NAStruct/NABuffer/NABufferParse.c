@@ -297,7 +297,7 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAi64* re
   NAi64 sign = NA_ONE_i64;
   NAInt bytesused = 0;
   NAi64 limit = max;
-  NAu64 intvalue;
+  NAu64 intValue;
   const NAByte* curByte;
 
   *retValuei = NA_ZERO_i64;
@@ -320,8 +320,8 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAi64* re
   }
   if(maxDigitCount == -1){maxDigitCount = 0;}
 
-  bytesused += naParseBufferDecimalUnsignedInteger(iter, &intvalue, maxDigitCount, naCasti64Tou64(limit));
-  *retValuei = naMuli64(sign, naCastu64Toi64(intvalue));
+  bytesused += naParseBufferDecimalUnsignedInteger(iter, &intValue, maxDigitCount, naCasti64Tou64(limit));
+  *retValuei = naMuli64(sign, naCastu64Toi64(intValue));
   return bytesused;
 }
 
