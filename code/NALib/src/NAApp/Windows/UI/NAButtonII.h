@@ -264,15 +264,15 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
       naError("uiImage is null");
   #endif
 
-	HWND nativePtr = CreateWindow(
-		TEXT("BUTTON"),
+    HWND nativePtr = CreateWindow(
+    TEXT("BUTTON"),
     TEXT(""),
     WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
-		0,
+    0,
     0,
     (int)size.width,
     (int)size.height,
-		naGetApplicationOffscreenWindow(),
+    naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
@@ -387,14 +387,14 @@ NA_HDEF NARect na_GetButtonAbsoluteInnerRect(const NA_UIElement* button){
   NARect screenRect = naGetMainScreenRect();
   RECT clientRect;
   GetClientRect(naGetUIElementNativePtrConst(button), &clientRect);
-  double height = clientRect.bottom - clientRect.top;
+  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
 
   POINT testPoint = {0, (LONG)height};
   ClientToScreen(naGetUIElementNativePtrConst(button), &testPoint);
 
   return naMakeRect(
     naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize(clientRect.right - clientRect.left, height));
+    naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
 }
 
 

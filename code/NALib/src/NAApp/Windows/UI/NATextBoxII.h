@@ -158,14 +158,14 @@ NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(const NA_UIElement* textBox){
   NARect screenRect = naGetMainScreenRect();
   RECT clientRect;
   GetClientRect(naGetUIElementNativePtrConst(textBox), &clientRect);
-  double height = clientRect.bottom - clientRect.top;
+  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
 
   POINT testPoint = {0, (LONG)height};
   ClientToScreen(naGetUIElementNativePtrConst(textBox), &testPoint);
 
   return naMakeRect(
     naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize(clientRect.right - clientRect.left, height));
+    naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
 }
 
 

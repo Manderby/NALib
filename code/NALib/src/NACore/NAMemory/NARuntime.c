@@ -629,19 +629,25 @@ NA_DEF void naCollectGarbage(){
       naFree(*ptr);
       ptr++;
     }
-    NAMallocGarbage* nextgarbage = na_Runtime->mallocGarbage->next;
+    NAMallocGarbage* nextGarbage = na_Runtime->mallocGarbage->next;
 
     // If this was the last part, we decide if we want to delete it depending
     // on the aggressive setting.
   #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 1
     naFree(na_Runtime->mallocGarbage);
-    na_Runtime->mallocGarbage = nextgarbage;
+    na_Runtime->mallocGarbage = nextGarbage;
   #else
-    if(nextgarbage){
+    if(nextGarbage){
       naFree(na_Runtime->mallocGarbage);
-      na_Runtime->mallocGarbage = nextgarbage;
+      na_Runtime->mallocGarbage = nextGarbage;
     }else{
-      na_Runtime->mallocGarbage->cur = 0;
+      if (na_Runtime->mallocGarbage){
+        na_Runtime->mallocGarbage->cur = 0;
+      }else{
+        #if NA_DEBUG
+          naError("This should not happen but code sanity checks require it.");
+        #endif
+      }
       break;
     }
   #endif

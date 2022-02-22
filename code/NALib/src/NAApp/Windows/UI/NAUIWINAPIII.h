@@ -39,7 +39,7 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 
   #if NA_DEBUG
     if(!uiElement)
-      naError("uiElement is Null");
+      naCrash("uiElement is Null");
   #endif
   elem = (NA_UIElement*)uiElement;
   parentElem = (NA_UIElement*)parent;
@@ -55,10 +55,6 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
     result = SetParent(elem->nativePtr, HWND_MESSAGE);
   }else{
     HWND result;
-    #if NA_DEBUG
-    if(!elem)
-      naCrash("elem is Null");
-    #endif
 
     elem->parent = parent;
     if(isElementAttachable)
@@ -216,10 +212,10 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
           && needsControl == hasControl
           && needsOption  == hasOption
           && needsCommand == hasCommand){
-            NAReaction reaction;
-            reaction.uiElement = elem;
-            reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
-            reaction.controller = keyReaction->controller;
+            NAReaction reaction = {
+              elem,
+              NA_UI_COMMAND_KEYBOARD_SHORTCUT,
+              keyReaction->controller};
             retValue = keyReaction->handler(reaction);
           }
         }
@@ -351,22 +347,14 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 
 
 void naWINAPICaptureMouseHover(){
-  DWORD msgpos;
-  POINT pt;
-  HWND hWndUnderMouse;
-  NA_UIElement* elementUnderMouse;
-  NA_UIElement* curElement;
-  NA_UIElement* commonParent;
-
-  msgpos = GetMessagePos();
-  pt.x = GET_X_LPARAM(msgpos);
-  pt.y = GET_Y_LPARAM(msgpos);
-  hWndUnderMouse = WindowFromPoint(pt);
-  elementUnderMouse = (NA_UIElement*)na_GetUINALibEquivalent(hWndUnderMouse);
-  curElement = naGetApplicationMouseHoverElement();
+  DWORD msgpos = GetMessagePos();
+  POINT pt = {GET_X_LPARAM(msgpos), GET_Y_LPARAM(msgpos)};
+  HWND hWndUnderMouse = WindowFromPoint(pt);
+  NA_UIElement* elementUnderMouse = (NA_UIElement*)na_GetUINALibEquivalent(hWndUnderMouse);
+  NA_UIElement* curElement = naGetApplicationMouseHoverElement();
 
   if(curElement != elementUnderMouse){
-    commonParent = na_GetUIElementCommonParent(curElement, elementUnderMouse);
+    NA_UIElement* commonParent = na_GetUIElementCommonParent(curElement, elementUnderMouse);
 
     // Send a leave reaction to all elements which are not hovered anymore.
     while(curElement && curElement != commonParent){
@@ -378,11 +366,11 @@ void naWINAPICaptureMouseHover(){
     // Reset the hover element to the current one and track the mouse leaving it.
     naSetApplicationMouseHoverElement(elementUnderMouse);
     if(elementUnderMouse){
-    TRACKMOUSEEVENT winapiTracking;
-      winapiTracking.cbSize = sizeof(TRACKMOUSEEVENT);
-      winapiTracking.dwFlags = TME_LEAVE;
-      winapiTracking.hwndTrack = naGetUIElementNativePtr(elementUnderMouse);
-      winapiTracking.dwHoverTime = HOVER_DEFAULT;
+      TRACKMOUSEEVENT winapiTracking = {
+        sizeof(TRACKMOUSEEVENT),
+        TME_LEAVE,
+        naGetUIElementNativePtr(elementUnderMouse),
+        HOVER_DEFAULT};
       TrackMouseEvent(&winapiTracking);
     }
 
@@ -401,8 +389,8 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
   NA_UIElement* elem = (NA_UIElement*)uiElement;
   NABool handeled;
   NAPos pos;
-  NASize size;
-  NARect rect;
+  NASize size = {0};
+  NARect rect = {0};
   const NAMouseStatus* mouseStatus;
 
   switch(message){
@@ -625,11 +613,7 @@ NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
 
 
 NA_HDEF NARect na_GetScreenAbsoluteRect(const NA_UIElement* screen){
-  NARect rect;
-  rect.pos.x = 0;
-  rect.pos.y = 0;
-  rect.size.width = 1;
-  rect.size.height = 1;
+  NARect rect = {{0, 0}, {1, 1}};
   return rect;
 }
 
@@ -742,16 +726,17 @@ NA_HDEF void na_DeallocMouseTracking(void* tracking){
 
 NA_API NARect naGetMainScreenRect(){
   HMONITOR screen;
-  MONITORINFO screeninfo;
-  NARect rect;
+  MONITORINFO screeninfo = {0};
   POINT origin = {0, 0};  // top left point which surely is on the main screen.
   screen = MonitorFromPoint(origin, MONITOR_DEFAULTTOPRIMARY);
   screeninfo.cbSize = sizeof(MONITORINFO);
   GetMonitorInfo(screen, &screeninfo);
-  rect.pos.x = 0; // The main monitor is by definition at (0,0)
-  rect.pos.y = 0; // which in NALib is the bottom left corner.
-  rect.size.width = (double)screeninfo.rcMonitor.right - (double)screeninfo.rcMonitor.left;
-  rect.size.height = (double)screeninfo.rcMonitor.bottom - (double)screeninfo.rcMonitor.top;
+
+  // The main monitor is by definition at (0,0) which in NALib is the bottom left corner.
+  NARect rect = {
+    {0, 0},
+    {(double)screeninfo.rcMonitor.right - (double)screeninfo.rcMonitor.left,
+    (double)screeninfo.rcMonitor.bottom - (double)screeninfo.rcMonitor.top}};
   return rect;
 }
 

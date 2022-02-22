@@ -83,12 +83,12 @@ NA_IAPI void naClearMutex(NAMutex mutex);
 
 // Locks and unlocks a mutex. Waiting threads wait forever.
 #if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-_When_(NA_TRUE, _Acquires_lock_(windowsMutex->mutex))
+  _Acquires_lock_(((NAWindowsMutex*)mutex)->mutex)
 #endif
 NA_IAPI void naLockMutex(NAMutex mutex);
 
 #if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-_When_(NA_TRUE, _Releases_lock_(windowsMutex->mutex))
+  _Releases_lock_(((NAWindowsMutex*)mutex)->mutex)
 #endif
 NA_IAPI void naUnlockMutex(NAMutex mutex);
 
@@ -99,7 +99,7 @@ NA_IAPI void naUnlockMutex(NAMutex mutex);
 // is a difference to the behaviour of Mutexes in WINAPI but is now solved
 // consistently along all systems.
 #if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-_When_(return == NA_TRUE, _Acquires_lock_(windowsMutex->mutex))
+  _When_(return == NA_TRUE, _Acquires_lock_(((NAWindowsMutex*)mutex)->mutex))
 #endif
 NA_IAPI NABool naTryMutex(NAMutex mutex);
 
