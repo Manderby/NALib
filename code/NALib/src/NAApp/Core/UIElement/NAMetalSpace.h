@@ -24,7 +24,7 @@ NA_API NAMetalSpace* naNewMetalSpace(NASize size);
 NA_API void naSetMetalSpaceVisible(NAMetalSpace* metalSpace, NABool visible);
 
 // Returns the system specific context (macOS: MTLLayer*)
-NA_API void* naGetMetalSpaceSystemContext(NAMetalSpace* metalSpace);
+NA_API void* naGetMetalSpaceSystemContext(const NAMetalSpace* metalSpace);
 
 // Sets the inner bounds of the space.
 NA_API void naSetMetalSpaceInnerRect(NAMetalSpace* metalSpace, NARect bounds);

@@ -40,7 +40,7 @@ NA_API void naSetOpenGLSpaceVisible(
 
 // Returns the system specific context (macOS: NSOpenGLContext*)
 NA_API void* naGetOpenGLSpaceSystemContext(
-  NAOpenGLSpace* openGLSpace);
+  const NAOpenGLSpace* openGLSpace);
 
 // Swaps the buffers (double buffer is turned on by default)
 NA_API void naSwapOpenGLSpaceBuffer(
