@@ -18,6 +18,9 @@ NA_API void naSetSliderEnabled(NASlider* slider, NABool enabled);
 NA_API double naGetSliderValue(const NASlider* slider);
 NA_API void naSetSliderValue(NASlider* slider, double value);
 
+// Gets the values which was valid before the slider was clicked.
+NA_API double naGetSliderStaticValue(const NASlider* slider);
+
 // Sets how many ticks are shown.
 NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount);
 

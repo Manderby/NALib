@@ -32,7 +32,20 @@
 
 - (void) onValueChanged:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDITED);
+  NSEvent *event = [[NSApplication sharedApplication] currentEvent];
+ 
+  if(event.type == NSLeftMouseUp){
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDIT_FINISHED); 
+    cocoaSlider->slider.sliderInMovement = false;
+  }else{
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDITED);  
+    cocoaSlider->slider.sliderInMovement = true;
+  }
+}
+
+- (void) mouseDown:(id)sender{
+  cocoaSlider->slider.sliderInMovement = true;
+  [super mouseDown:sender];
 }
 
 - (NARect) getInnerRect{
@@ -83,9 +96,18 @@ NA_DEF double naGetSliderValue(const NASlider* slider){
 
 
 
+NA_DEF double naGetSliderStaticValue(const NASlider* slider){
+  return slider->staticValue;
+}
+
+
+
 NA_DEF void naSetSliderValue(NASlider* slider, double value){
   naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
   [nativePtr setSliderValue:value];
+  if(!slider->sliderInMovement){
+    slider->staticValue = value;
+  }
 }
 
 

@@ -20,17 +20,10 @@
   }else{
     [[self cell] setLineBreakMode:NSLineBreakByTruncatingHead];
   }
-  [self setTarget:self];
-  [self setAction:@selector(onEdited:)];
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
   [self setDelegate:self];
   cocoaTextField = newCocoaTextField;
   return self;
-}
-
-- (void) onEdited:(id)sender{
-  NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDIT_FINISHED);
 }
 
 - (void) controlTextDidEndEditing:(NSNotification *)notification{

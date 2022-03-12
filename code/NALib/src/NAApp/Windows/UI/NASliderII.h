@@ -8,6 +8,7 @@
 
 NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NSSlider* slider = (NSSlider*)uiElement;
 
   switch(message){
   case WM_WINDOWPOSCHANGING:
@@ -23,8 +24,6 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_MOUSEMOVE:
   case WM_MOUSELEAVE:
   case WM_MOUSEACTIVATE:
-  case WM_LBUTTONDOWN:
-  case WM_LBUTTONUP:
   case WM_IME_SETCONTEXT:
   case WM_DESTROY:
   case WM_NCDESTROY:
@@ -38,6 +37,18 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
     // We do not display any caret.
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
+    break;
+
+  case WM_LBUTTONDOWN:
+    slider->sliderInMovement = true;
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
+    break;
+
+  case WM_LBUTTONUP:
+    slider->sliderInMovement = false;
     info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;
@@ -139,11 +150,20 @@ NA_API double naGetSliderValue(const NASlider* slider){
 
 
 
+NA_DEF double naGetSliderStaticValue(const NASlider* slider){
+  return slider->staticValue;
+}
+
+
+
 NA_API void naSetSliderValue(NASlider* slider, double value){
   int32 sliderValue = (int32)(value * (double)NA_MAX_i32);
   SendMessage(naGetUIElementNativePtr(slider), TBM_SETPOS, 
     (WPARAM) TRUE, // redraw flag 
-    (LPARAM) sliderValue); 
+    (LPARAM) sliderValue);
+  if(!slider->sliderInMovement){
+    slider->staticValue = value;
+  }
 }
 
 

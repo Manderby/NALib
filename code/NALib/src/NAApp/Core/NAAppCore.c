@@ -275,6 +275,8 @@ NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
 
 NA_HDEF void na_InitSlider(NASlider* slider, void* nativePtr){
   na_InitUIElement(&(slider->uiElement), NA_UI_SLIDER, nativePtr);
+  slider->staticValue = 0.;
+  slider->sliderInMovement = false;
 }
 NA_HDEF void na_ClearSlider(NASlider* slider){
   na_ClearUIElement(&(slider->uiElement));
@@ -482,8 +484,9 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
       && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
       naError("Only textFields or Sliders can receyve EDITED commands.");
     if((command == NA_UI_COMMAND_EDIT_FINISHED)
+      && (naGetUIElementType(uiElement) != NA_UI_SLIDER)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD))
-      naError("Only textFields can receyve EDIT_FINISHED commands.");
+      naError("Only textFields and sliders can receyve EDIT_FINISHED commands.");
   #endif
   eventReaction = naAlloc(NAEventReaction);
   eventReaction->controller = controller;

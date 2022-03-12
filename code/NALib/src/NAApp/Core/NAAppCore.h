@@ -115,6 +115,8 @@ struct NAScreen{
 
 struct NASlider{
   NA_UIElement uiElement;
+  double staticValue;
+  NABool sliderInMovement;
 };
 
 struct NASpace{
