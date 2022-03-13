@@ -476,8 +476,9 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
       && (naGetUIElementType(uiElement) != NA_UI_CHECKBOX)
       && (naGetUIElementType(uiElement) != NA_UI_RADIO)
       && (naGetUIElementType(uiElement) != NA_UI_MENU)
-      && (naGetUIElementType(uiElement) != NA_UI_MENUITEM))
-      naError("Only buttons, radios and checkBoxes can receyve PRESSED commands.");
+      && (naGetUIElementType(uiElement) != NA_UI_MENUITEM)
+      && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
+      naError("Only buttons, checkBoxes, radios, menus, menuItems and sliders can receyve PRESSED commands.");
     if((command == NA_UI_COMMAND_EDITED)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTBOX)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD)

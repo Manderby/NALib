@@ -45,6 +45,7 @@
 
 - (void) mouseDown:(id)sender{
   cocoaSlider->slider.sliderInMovement = true;
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_PRESSED);  
   [super mouseDown:sender];
 }
 
