@@ -488,6 +488,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputString){
   }
   buffer = naNewBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputString->buffer);
+  naIterateBuffer(&iter, 1);
   outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtInitial(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
