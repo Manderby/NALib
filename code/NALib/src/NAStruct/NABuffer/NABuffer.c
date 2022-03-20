@@ -480,11 +480,11 @@ NA_HDEF void na_UnlinkBufferRange(NABuffer* buffer, NARangei range){
 
 NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt startOffset, NABool forward){
   NABufferIterator iter;
-  NAInt indexshift;
+  NAInt indexShift;
   NABool found;
 
   if(naIsBufferEmpty(buffer)){return NA_INVALID_MEMORY_INDEX;}
-  indexshift = 0;
+  indexShift = 0;
   found = NA_FALSE;
 
   iter = naMakeBufferAccessor(buffer);
@@ -507,7 +507,7 @@ NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt start
           found = NA_TRUE;
           break;
         }
-        indexshift++;
+        indexShift++;
         curByte++;
         remainingBytes--;
       }
@@ -518,7 +518,7 @@ NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt start
           found = NA_TRUE;
           break;
         }
-        indexshift--;
+        indexShift--;
         curByte--;
         remainingBytes--;
       }
@@ -532,7 +532,7 @@ NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt start
   }
 
   naClearBufferIterator(&iter);
-  return found ? (startOffset + indexshift) : NA_INVALID_MEMORY_INDEX;
+  return found ? (startOffset + indexShift) : NA_INVALID_MEMORY_INDEX;
 }
 
 
