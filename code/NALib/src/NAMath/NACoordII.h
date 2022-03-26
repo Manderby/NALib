@@ -1426,8 +1426,8 @@ NA_IDEF NARect naMakeRectWithRectAndBorder(NARect rect, double border){
   NARect newRect;
   newRect.pos.x = rect.pos.x - border;
   newRect.pos.y = rect.pos.y - border;
-  newRect.size.width = rect.size.width + 2 * border;
-  newRect.size.height = rect.size.height + 2 * border;
+  newRect.size.width = rect.size.width + 2. * border;
+  newRect.size.height = rect.size.height + 2. * border;
   return newRect;
 }
 NA_IDEF NARecti naMakeRectiWithRectAndBorder(NARecti rect, NAInt border){
@@ -1446,9 +1446,9 @@ NA_IDEF NABox naMakeBoxWithBoxAndBorder(NABox box, double border){
   newbox.vertex.x = box.vertex.x - border;
   newbox.vertex.y = box.vertex.y - border;
   newbox.vertex.z = box.vertex.z - border;
-  newbox.volume.width = box.volume.width + 2 * border;
-  newbox.volume.height = box.volume.height + 2 * border;
-  newbox.volume.depth = box.volume.depth + 2 * border;
+  newbox.volume.width = box.volume.width + 2. * border;
+  newbox.volume.height = box.volume.height + 2. * border;
+  newbox.volume.depth = box.volume.depth + 2. * border;
   return newbox;
 }
 NA_IDEF NABoxi naMakeBoxiWithBoxAndBorder(NABoxi box, NAInt border){
@@ -1467,7 +1467,7 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndBorder(NABoxi box, NAInt border){
 NA_IDEF NARange naMakeRangePositive(NARange range){
   NAInt rangenegative = (NAInt)(range.length < 0);
   range.origin += rangenegative * range.length;
-  range.length -= (double)rangenegative * 2 * range.length;
+  range.length -= (double)rangenegative * 2. * range.length;
   return range;
 }
 NA_IDEF NARangei naMakeRangeiPositive(NARangei range){
