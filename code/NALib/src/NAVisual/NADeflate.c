@@ -492,17 +492,17 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
       // find the value 256.
       while(1){
 
-        uint16 curcode;
+        uint16 curCode;
         uint16 length;
         uint16 dist;
-        curcode = naDecodeHuffman(literalhuffman, &iterz);
-        if(curcode < 256){
-          naWriteBufferu8(&iterout, (uint8)curcode);
-        }else if(curcode == 256){
+        curCode = naDecodeHuffman(literalhuffman, &iterz);
+        if(curCode < 256){
+          naWriteBufferu8(&iterout, (uint8)curCode);
+        }else if(curCode == 256){
           break;
         }else{
           uint16 distcode;
-          length = naDecodeLiteralLength(&iterz, curcode);
+          length = naDecodeLiteralLength(&iterz, curCode);
           distcode = naDecodeHuffman(distancehuffman, &iterz);
           dist = naDecodeDistance(&iterz, distcode);
           naRepeatBufferBytes(&iterout, dist, length, NA_FALSE);
