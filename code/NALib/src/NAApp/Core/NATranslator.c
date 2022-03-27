@@ -301,6 +301,7 @@ NA_DEF NALanguageCode3 naConvertLanguageCode1To3(NALanguageCode1 code1){
   switch(code1){
   case NA_LANG_DE: return NA_LANG_DEU;
   case NA_LANG_EN: return NA_LANG_ENG;
+  case NA_LANG_FR: return NA_LANG_FRA;
   default: return NA_LANG_ENG;
   }
 }

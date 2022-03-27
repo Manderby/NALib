@@ -88,6 +88,7 @@ typedef struct NATranslator NATranslator;
 typedef enum{
   NA_LANG_DEU = 0x646575,  // German
   NA_LANG_ENG = 0x656e67,  // English
+  NA_LANG_FRA = 0x667261,  // French
   NA_LANG_GSW = 0x677377   // Swiss German
 } NALanguageCode3;
 
@@ -96,7 +97,8 @@ typedef enum{
 // function naConvertLanguageCode1To3
 typedef enum{
   NA_LANG_DE = 0x6465,  // German hallo
-  NA_LANG_EN = 0x656e   // English
+  NA_LANG_EN = 0x656e,  // English
+  NA_LANG_FR = 0x6672   // French
 } NALanguageCode1;
 
 
