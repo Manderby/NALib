@@ -42,6 +42,11 @@ NA_API void naRemoveSpaceChilds(NASpace* space);
 // Sets the rectangle of the space relative to its parent.
 NA_API void naSetSpaceRect(NASpace* space, NARect rect);
 
+// Changes the visibility of the space.
+NA_API void naSetSpaceVisible(
+  NASpace* ospace,
+  NABool visible);
+
 // Makes the space react to mouse drags in order to move the window.
 NA_API void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable);
 

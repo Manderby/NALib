@@ -152,6 +152,12 @@ NA_DEF void na_DestructWINAPITextField(NAWINAPITextField* winapiTextField){
 
 
 
+NA_DEF void naSetTextFieldEnabled(NATextField* textField, NABool enabled){
+  // todo
+}
+
+
+
 NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);

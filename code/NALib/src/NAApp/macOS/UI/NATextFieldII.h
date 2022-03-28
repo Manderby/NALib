@@ -83,6 +83,13 @@ NA_DEF void na_DestructCocoaTextField(NACocoaTextField* cocoaTextField){
 
 
 
+NA_DEF void naSetTextFieldEnabled(NATextField* textField, NABool enabled){
+  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
+  [nativePtr setEnabled:(BOOL)enabled];
+}
+
+
+
 NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text){
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
   [nativePtr setText:text];

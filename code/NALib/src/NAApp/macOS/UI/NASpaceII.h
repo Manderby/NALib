@@ -140,6 +140,13 @@ NA_DEF void naSetSpaceRect(NASpace* _Nonnull space, NARect rect){
 
 
 
+NA_DEF void naSetSpaceVisible(NASpace* _Nonnull space, NABool visible){
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
+  [nativePtr setHidden:visible ? NO : YES];
+}
+
+
+
 NA_DEF void naSetSpaceDragsWindow(NASpace* _Nonnull space, NABool isDraggable){
   space->dragsWindow = isDraggable;
 }

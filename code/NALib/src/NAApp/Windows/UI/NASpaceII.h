@@ -217,6 +217,12 @@ NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
 
 
 
+NA_DEF void naSetSpaceVisible(NASpace* space, NABool visible){
+  // todo
+}
+
+
+
 NA_HDEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable){
   // todo
 }
