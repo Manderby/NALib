@@ -212,7 +212,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
 
   NACocoaNativeLabel* nativePtr = [[NACocoaNativeLabel alloc]
     initWithLabel:cocoaLabel
-    frame:naMakeNSRectWithSize(naMakeSize(width, 16))];
+    frame:naMakeNSRectWithSize(naMakeSize(width, 17))];
   na_InitLabel((NALabel*)cocoaLabel, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   naSetLabelText((NALabel*)cocoaLabel, text);

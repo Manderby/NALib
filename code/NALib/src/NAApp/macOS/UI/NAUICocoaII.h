@@ -51,7 +51,7 @@ NA_HDEF double na_GetUIElementOffsetY(NA_UIElement* elem){
   case NA_UI_BUTTON:       return +1.;
   case NA_UI_CHECKBOX:     return +6.;
   case NA_UI_IMAGE_SPACE:  return  0.;
-  case NA_UI_LABEL:        return +8.;
+  case NA_UI_LABEL:        return +7.;
   case NA_UI_MENU:         return  0.;
   case NA_UI_MENUITEM:     return  0.;
   case NA_UI_METAL_SPACE:  return  0.;
