@@ -15,7 +15,8 @@
 
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  
+  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
+
   return self;
 }
 

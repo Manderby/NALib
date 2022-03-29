@@ -35,7 +35,8 @@
   cocoaButton = newCocoaButton;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  
+  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
+
   // todo: make this dependent on whether tracking is needed or not.
   trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
       options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp)
@@ -126,7 +127,7 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
     flags:flags
     isImage:NO
     frame:naMakeNSRectWithSize(naMakeSize(width, 24))];
-  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL);
+  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL, flags);
   
   [nativePtr setButtonText:text];
   
@@ -148,7 +149,7 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(size)];
-  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), uiImage);
+  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), uiImage, flags);
   
   [nativePtr setUIImage:uiImage];
   
@@ -165,7 +166,7 @@ NA_DEF void na_DestructCocoaButton(NACocoaButton* cocoaButton){
 
 NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
-  [nativePtr setEnabled:enabled];
+  [nativePtr setEnabled:(BOOL)enabled];
 }
 
 
@@ -189,6 +190,18 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
   #endif
   na_setButtonImage(button, uiImage);
   [nativePtr setUIImage:uiImage];
+}
+
+
+
+NA_DEF NABool naIsButtonStateful(NAButton* button){
+  return naGetFlagu32(button->flags, NA_BUTTON_STATEFUL);
+}
+
+
+
+NA_DEF NABool naIsButtonBorderless(NAButton* button){
+  return naGetFlagu32(button->flags, NA_BUTTON_BORDERLESS);
 }
 
 

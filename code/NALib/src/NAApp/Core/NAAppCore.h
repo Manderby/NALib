@@ -67,6 +67,7 @@ struct NAApplication{
 struct NAButton{
   NA_UIElement uiElement;
   const NAUIImage* uiImage;
+  uint32 flags;
 };
 
 struct NACheckBox{
@@ -198,7 +199,7 @@ NA_HAPI NAApplication* na_NewApplication(void);
 NA_HAPI void na_InitApplication(NAApplication* application, NANativePtr nativePtr);
 NA_HAPI void na_ClearApplication(NAApplication* application);
 
-NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage);
+NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage, uint32 flags);
 NA_HAPI void na_ClearButton(NAButton* button);
 NA_HAPI void na_setButtonImage(NAButton* button, const NAUIImage* uiImage);
 

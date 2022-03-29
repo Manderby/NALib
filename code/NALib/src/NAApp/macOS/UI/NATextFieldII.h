@@ -22,6 +22,7 @@
   }
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
   [self setDelegate:self];
+
   cocoaTextField = newCocoaTextField;
   return self;
 }
