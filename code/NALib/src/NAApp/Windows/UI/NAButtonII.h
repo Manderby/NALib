@@ -359,6 +359,27 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
 
 
 
+NA_DEF NABool naIsButtonStateful(NAButton* button){
+  // todo
+  return NA_FALSE;
+}
+
+
+
+NA_DEF NABool naIsButtonBorderless(NAButton* button){
+  // todo
+  return NA_FALSE;
+}
+
+
+
+NA_DEF NABool naIsButtonTextual(NAButton* button){
+  // todo
+  return NA_TRUE;
+}
+
+
+
 NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(winapiButton), GWL_STYLE);

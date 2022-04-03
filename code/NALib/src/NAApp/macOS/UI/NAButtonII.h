@@ -206,6 +206,13 @@ NA_DEF NABool naIsButtonBorderless(NAButton* button){
 
 
 
+NA_DEF NABool naIsButtonTextual(NAButton* button){
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  return ![nativePtr isImage];
+}
+
+
+
 NA_DEF void naSetButtonState(NAButton* button, NABool state){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   [nativePtr setButtonState:state];

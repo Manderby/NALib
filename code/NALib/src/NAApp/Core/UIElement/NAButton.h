@@ -41,6 +41,7 @@ NA_API void naSetButtonImage(NAButton* button, const NAUIImage* uiImage);
 // Returns the display flags of a button.
 NA_API NABool naIsButtonStateful(NAButton* button);
 NA_API NABool naIsButtonBorderless(NAButton* button);
+NA_API NABool naIsButtonTextual(NAButton* button);
 
 // Defines this button to be a submit or abort button.
 // A submit button will be shown visually prominent and serves as the default
