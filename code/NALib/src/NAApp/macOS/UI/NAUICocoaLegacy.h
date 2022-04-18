@@ -109,7 +109,6 @@
 
 
 
-
 // Mapping of deprecated entities
 
 // For reference, here are how the different button states behave:

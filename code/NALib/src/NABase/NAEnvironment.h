@@ -93,6 +93,7 @@
     #define NA_ADDRESS_BITS NA_TYPE32_BITS
     #define NA_SIZE_T_BITS NA_TYPE32_BITS
   #endif
+
   #if defined __has_feature
     #define NA_MACOS_USES_ARC __has_feature(objc_arc)
   #else
@@ -112,10 +113,10 @@
   #else
     #define NA_COCOA_BRIDGE
     #define NA_COCOA_PTR_OBJC_TO_C(obj) (void*)obj
-    #define NA_COCOA_PTR_C_TO_OBJC(ptr) ptr
-    #define NA_COCOA_RETAIN(obj) [(id)obj retain]
-    #define NA_COCOA_RELEASE(obj) [(id)obj release]
-    #define NA_COCOA_AUTORELEASE(obj) [(id)obj autorelease]
+    #define NA_COCOA_PTR_C_TO_OBJC(ptr) (id)ptr
+    #define NA_COCOA_RETAIN(obj) [obj retain]
+    #define NA_COCOA_RELEASE(obj) [obj release]
+    #define NA_COCOA_AUTORELEASE(obj) [obj autorelease]
     #define NA_COCOA_SUPER_DEALLOC() [super dealloc]
   #endif
 
