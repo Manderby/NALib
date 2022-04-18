@@ -145,7 +145,8 @@ NA_DEF void naSetSliderEnabled(NASlider* slider, NABool enabled){
 
 NA_API double naGetSliderValue(const NASlider* slider){
   int32 sliderValue = (int32)SendMessage(naGetUIElementNativePtrConst(slider), TBM_GETPOS, 0, 0); 
-  return (double)sliderValue / (double)NA_MAX_i32;
+  double plainValue = (double)sliderValue / (double)NA_MAX_i32;
+  return plainValue * (slider->max - slider->min) + slider->min;
 }
 
 
@@ -157,7 +158,8 @@ NA_DEF double naGetSliderStaticValue(const NASlider* slider){
 
 
 NA_API void naSetSliderValue(NASlider* slider, double value){
-  int32 sliderValue = (int32)(value * (double)NA_MAX_i32);
+  double plainValue = (value - slider->min) / (slider->max - slider->min);
+  int32 sliderValue = (int32)(plainValue * (double)NA_MAX_i32);
   SendMessage(naGetUIElementNativePtr(slider), TBM_SETPOS, 
     (WPARAM) TRUE, // redraw flag 
     (LPARAM) sliderValue);
@@ -168,8 +170,10 @@ NA_API void naSetSliderValue(NASlider* slider, double value){
 
 
 
-NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount){
+NA_API void naSetSliderRange(NASlider* slider, double min, double max, NAInt tickCount){
   // todo
+  slider->min = min;
+  slider->max = max;
 }
 
 

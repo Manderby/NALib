@@ -22,7 +22,7 @@ NA_API void naSetSliderValue(NASlider* slider, double value);
 NA_API double naGetSliderStaticValue(const NASlider* slider);
 
 // Sets how many ticks are shown.
-NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount);
+NA_API void naSetSliderRange(NASlider* slider, double min, double max, NAInt tickCount);
 
 
 
