@@ -60,16 +60,22 @@
 }
 
 - (void) setUIImage:(const NAUIImage*)uiImage{
-  [self setImage:naCreateResolutionIndependentNativeImage(
-    self,
-    uiImage,
-    NA_UIIMAGE_KIND_MAIN)];
-  [self setAlternateImage:naCreateResolutionIndependentNativeImage(
-    self,
-    uiImage,
-    NA_UIIMAGE_KIND_ALT)];
+  if(uiImage)
+  {
+    [self setImage:naCreateResolutionIndependentNativeImage(
+      self,
+      uiImage,
+      NA_UIIMAGE_KIND_MAIN)];
+    [self setAlternateImage:naCreateResolutionIndependentNativeImage(
+      self,
+      uiImage,
+      NA_UIIMAGE_KIND_ALT)];
 
-  [[self cell] setImageScaling:NSImageScaleNone];
+    [[self cell] setImageScaling:NSImageScaleNone];
+  }else{
+    [self setImage:nil];
+    [self setAlternateImage:nil];
+  }
 }
 
 - (void) onPressed:(id)sender{

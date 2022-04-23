@@ -119,14 +119,19 @@ NA_HDEF void na_ClearButton(NAButton* button){
   na_ClearUIElement(&(button->uiElement));
 }
 NA_HDEF void na_setButtonImage(NAButton* button, const NAUIImage* uiImage){
-  #if NA_DEBUG
-    if(!uiImage)
-      naError("uiImage is null");
-  #endif
-  if(uiImage){
+//  #if NA_DEBUG
+//    if(!uiImage)
+//      naError("uiImage is null");
+//  #endif
+  if(button->uiImage){
     naReleaseConst(button->uiImage);
   }
-  button->uiImage = naRetainConst(uiImage);
+  if(uiImage)
+  {
+    button->uiImage = naRetainConst(uiImage);
+  }else{
+    button->uiImage = NA_NULL;
+  }
 }
 
 
