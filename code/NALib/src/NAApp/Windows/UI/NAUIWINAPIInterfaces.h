@@ -79,7 +79,7 @@ struct NAWINAPIApplication {
   HFONT            mathFont;
 
   NA_UIElement*    mouseHoverElement;
-  NAMenu*          lastOpenedMenu;
+  const NAMenu*    lastOpenedMenu;
   UINT             nextMenuItemId;
 
   WNDPROC          oldButtonWindowProc;

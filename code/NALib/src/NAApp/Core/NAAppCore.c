@@ -195,7 +195,7 @@ NA_HDEF void na_ClearMenuItem(NAMenuItem* menuItem){
 NA_HDEF void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id){
   menuItem->id = id;
 }
-NA_HDEF uint32 na_GetMenuItemId(NAMenuItem* menuItem){
+NA_HDEF uint32 na_GetMenuItemId(const NAMenuItem* menuItem){
   return menuItem->id;
 }
 
@@ -282,7 +282,7 @@ NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
 NA_HDEF void na_InitSlider(NASlider* slider, void* nativePtr){
   na_InitUIElement(&(slider->uiElement), NA_UI_SLIDER, nativePtr);
   slider->staticValue = 0.;
-  slider->sliderInMovement = false;
+  slider->sliderInMovement = NA_FALSE;
 }
 NA_HDEF void na_ClearSlider(NASlider* slider){
   na_ClearUIElement(&(slider->uiElement));
@@ -358,7 +358,7 @@ NA_HDEF void* na_GetUINALibEquivalent(NANativePtr nativePtr){
 
 
 
-NA_HDEF NABool na_DispatchUIElementCommand(NA_UIElement* element, NAUICommand command){
+NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command){
   NABool finished = NA_FALSE;
   NAListIterator iter;
 
@@ -376,7 +376,7 @@ NA_HDEF NABool na_DispatchUIElementCommand(NA_UIElement* element, NAUICommand co
 
   // If the command has not been finished, search for other reactions in the parent elements.
   if(!finished && command != NA_UI_COMMAND_MOUSE_ENTERED && command != NA_UI_COMMAND_MOUSE_EXITED){
-    NA_UIElement* parentelement = (NA_UIElement*)naGetUIElementParent(element);
+    const NA_UIElement* parentelement = (const NA_UIElement*)naGetUIElementParentConst(element);
     if(parentelement){finished = na_DispatchUIElementCommand(parentelement, command);}
   }
 

@@ -8,7 +8,7 @@
 
 NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  NSSlider* slider = (NSSlider*)uiElement;
+  NASlider* slider = (NASlider*)uiElement;
 
   switch(message){
   case WM_WINDOWPOSCHANGING:
@@ -42,13 +42,13 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
     break;
 
   case WM_LBUTTONDOWN:
-    slider->sliderInMovement = true;
+    slider->sliderInMovement = NA_TRUE;
     info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;
 
   case WM_LBUTTONUP:
-    slider->sliderInMovement = false;
+    slider->sliderInMovement = NA_TRUE;
     info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;

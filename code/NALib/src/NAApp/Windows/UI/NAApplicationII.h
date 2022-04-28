@@ -672,13 +672,13 @@ NA_HDEF UINT na_GetApplicationNextMenuItemId(NAApplication* application)
   return winapiApplication->nextMenuItemId++;
 }
 
-NA_HDEF void na_SetApplicationLastOpenedMenu(NAApplication* application, NAMenu* menu)
+NA_HDEF void na_SetApplicationLastOpenedMenu(NAApplication* application, const NAMenu* menu)
 {
   NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;
   winapiApplication->lastOpenedMenu = menu;
 }
 
-NA_HDEF NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application)
+NA_HDEF const NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application)
 {
   NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;
   return winapiApplication->lastOpenedMenu;
