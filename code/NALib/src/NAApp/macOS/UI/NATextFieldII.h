@@ -112,7 +112,7 @@ NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment 
 
 
 
-NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFontSize size){
+NA_DEF void naSetTextFieldFont(NATextField* textField, NAFont* font){
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
   [nativePtr setFontKind:kind size:size];
 }

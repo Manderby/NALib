@@ -277,7 +277,7 @@ NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
 
 
 
-NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size){
+NA_DEF void naSetLabelFont(NALabel* label, NAFont* font){
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
   [nativePtr setFontKind:kind size:size];
 }

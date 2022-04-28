@@ -8,7 +8,6 @@
 #include "../../NAThreading.h"
 #include "../../NAPreferences.h"
 
-
 // The pointer storing the app if any.
 NAApplication* na_App = NA_NULL;
 
@@ -62,6 +61,8 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
   application->translator = NA_NULL;
   naStartTranslator();
   
+  application->systemFont = naNewFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT);
+
   application->mouseStatus.pos = naMakePos(0, 0);
   application->mouseStatus.prevPos = naMakePos(0, 0);
   
@@ -94,6 +95,8 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
 
   naStopTranslator();
   na_ClearUIElement(&(application->uiElement));
+
+  naRelease(application->systemFont);
 
   // This must be at the very end as the uiElements are used up until the last
   // ClearUIElement operation.
@@ -407,6 +410,12 @@ NA_HDEF void na_SetMouseEnteredAtPos(NAPos newpos){
 NA_HDEF void na_SetMouseExitedAtPos(NAPos newpos){
   na_App->mouseStatus.prevPos = na_App->mouseStatus.pos;
   na_App->mouseStatus.pos = newpos;
+}
+
+
+
+NA_DEF NAFont* naGetSystemFont(){
+  return na_App->systemFont;
 }
 
 

@@ -29,8 +29,6 @@ typedef struct NA_UIElement NA_UIElement;
 typedef struct NAEventReaction NAEventReaction;
 typedef struct NAKeyboardShortcutReaction NAKeyboardShortcutReaction;
 
-typedef void*  NAFont;
-
 // //////////////////////////////
 //
 // NA_UIElement is the base type of any ui element. All ui element struct
@@ -53,6 +51,7 @@ struct NAApplication{
   NAList            uiElements;      // A list of all ui elements in use.
   
   NATranslator*     translator;
+  NAFont*           systemFont;
   NAMouseStatus     mouseStatus;     // The mouse cursor status
   NAKeyStroke       curKeyStroke;    // The currently pressed key combination
   NAInt             flags;
@@ -81,6 +80,7 @@ struct NAImageSpace{
 
 struct NALabel{
   NA_UIElement uiElement;
+  NAFont* font;
 };
 
 struct NAMenu{
@@ -132,10 +132,12 @@ struct NASpace{
 
 struct NATextField{
   NA_UIElement uiElement;
+  NAFont* font;
 };
 
 struct NATextBox{
   NA_UIElement uiElement;
+  NAFont* font;
 };
 
 struct NAWindow{
@@ -267,8 +269,6 @@ NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
 NA_HAPI void* na_GetUINALibEquivalent(void* nativePtr);
 
 NA_HAPI NABool na_IsApplicationRunning(void);
-
-NA_HAPI NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size);
 
 // Dispatches a command with the given uiElement.
 // As long as the command has not been finished using NA_TRUE as a return value

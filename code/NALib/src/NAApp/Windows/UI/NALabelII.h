@@ -103,7 +103,13 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
 
   winapiLabel->enabled = NA_TRUE;
   winapiLabel->href = NA_NULL;
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT), MAKELPARAM(TRUE, 0));
+
+  winapiLabel->label.font = naRetain(naGetSystemFont());
+  SendMessage(
+    nativePtr,
+    WM_SETFONT,
+    (WPARAM)naGetFontNativePointer(winapiLabel->label.font),
+    MAKELPARAM(TRUE, 0));
 
   return (NALabel*)winapiLabel;
 }
@@ -194,8 +200,10 @@ NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
 
 
 
-NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size){
-  SendMessage(naGetUIElementNativePtr(label), WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(kind, size), MAKELPARAM(TRUE, 0));
+NA_DEF void naSetLabelFont(NALabel* label, NAFont* font){
+  SendMessage(naGetUIElementNativePtr(label), WM_SETFONT, (WPARAM)naGetFontNativePointer(font), MAKELPARAM(TRUE, 0));
+  naRelease(label->font);
+  label->font = naRetain(font);
 }
 
 

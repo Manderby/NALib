@@ -20,70 +20,134 @@ FontController* createFontController(){
   NASpace* windowSpace = naGetWindowContentSpace(con->window);
 
   NALabel* label;
+  NAFont* font;
 
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_SMALL);
+  font = naNewFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_SMALL);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(10, 260));
+
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT);
+  font = naNewFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 260));
+   
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_BIG);
+  font = naNewFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_BIG);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 260));
+   
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_HUGE);
+  font = naNewFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_HUGE);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(310, 260));
 
+
+
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_TITLE, NA_FONT_SIZE_SMALL);
+  font = naNewFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_SMALL);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(10, 210));
+
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_TITLE, NA_FONT_SIZE_DEFAULT);
+  font = naNewFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_DEFAULT);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 210));
+
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_TITLE, NA_FONT_SIZE_BIG);
+  font = naNewFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_BIG);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 210));
+
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_TITLE, NA_FONT_SIZE_HUGE);
+  font = naNewFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_HUGE);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(310, 210));
 
+
+
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_SMALL);
+  font = naNewFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_SMALL);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(10, 160));
+
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
+  font = naNewFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 160));
+
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_BIG);
+  font = naNewFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_BIG);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 160));
+
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_HUGE);
+  font = naNewFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_HUGE);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(310, 160));
 
-  label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_SMALL);
-  naAddSpaceChild(windowSpace, label, naMakePos(10, 110));
-  label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_DEFAULT);
-  naAddSpaceChild(windowSpace, label, naMakePos(110, 110));
-  label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_BIG);
-  naAddSpaceChild(windowSpace, label, naMakePos(210, 110));
-  label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_HUGE);
-  naAddSpaceChild(windowSpace, label, naMakePos(310, 110));
+
 
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_MATH, NA_FONT_SIZE_SMALL);
+  font = naNewFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_SMALL);
+  naSetLabelFont(label, font);
+  naRelease(font);
+  naAddSpaceChild(windowSpace, label, naMakePos(10, 110));
+
+  label = naNewLabel(u8"Hello 你好", 100);
+  font = naNewFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_DEFAULT);
+  naSetLabelFont(label, font);
+  naRelease(font);
+  naAddSpaceChild(windowSpace, label, naMakePos(110, 110));
+
+  label = naNewLabel(u8"Hello 你好", 100);
+  font = naNewFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_BIG);
+  naSetLabelFont(label, font);
+  naRelease(font);
+  naAddSpaceChild(windowSpace, label, naMakePos(210, 110));
+
+  label = naNewLabel(u8"Hello 你好", 100);
+  font = naNewFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_HUGE);
+  naSetLabelFont(label, font);
+  naRelease(font);
+  naAddSpaceChild(windowSpace, label, naMakePos(310, 110));
+
+
+
+  label = naNewLabel(u8"Hello 你好", 100);
+  font = naNewFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_SMALL);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(10, 60));
+
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_MATH, NA_FONT_SIZE_DEFAULT);
+  font = naNewFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_DEFAULT);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 60));
+
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_MATH, NA_FONT_SIZE_BIG);
+  font = naNewFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_BIG);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 60));
+
   label = naNewLabel(u8"Hello 你好", 100);
-  naSetLabelFontKind(label, NA_FONT_KIND_MATH, NA_FONT_SIZE_HUGE);
+  font = naNewFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_HUGE);
+  naSetLabelFont(label, font);
+  naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(310, 60));
 
   naShowWindow(con->window);

@@ -193,6 +193,9 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
   NAWINAPIApplication* winapiApplication = naNew(NAWINAPIApplication);
 
+  winapiApplication->nonClientMetrics.cbSize = sizeof(NONCLIENTMETRICS);
+  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiApplication->nonClientMetrics), 0);
+
   na_InitApplication(&(winapiApplication->application), GetModuleHandle(NULL));
 
   naInitList(&(winapiApplication->timers));
@@ -202,16 +205,7 @@ NA_HDEF NAApplication* na_NewApplication(void){
 		0, 0, 0, 0,
 		NULL, NULL, GetModuleHandle(NULL), NULL);
 
-  winapiApplication->nonClientMetrics.cbSize = sizeof(NONCLIENTMETRICS);
-  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiApplication->nonClientMetrics), 0);
-
   winapiApplication->appIcon = NA_NULL;
-
-  winapiApplication->systemFont = NA_NULL;
-  winapiApplication->titleFont = NA_NULL;
-  winapiApplication->monospaceFont = NA_NULL;
-  winapiApplication->paragraphFont = NA_NULL;
-  winapiApplication->mathFont = NA_NULL;
 
   winapiApplication->mouseHoverElement = NA_NULL;
   winapiApplication->lastOpenedMenu = NA_NULL;
@@ -249,12 +243,6 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
   DeleteObject(winapiApplication->bgColor.brush);
   DeleteObject(winapiApplication->bgColorAlternate.brush);
   DeleteObject(winapiApplication->bgColorAlternate2.brush);
-
-  if(winapiApplication->systemFont){DeleteObject(winapiApplication->systemFont);}
-  if(winapiApplication->titleFont){DeleteObject(winapiApplication->titleFont);}
-  if(winapiApplication->monospaceFont){DeleteObject(winapiApplication->monospaceFont);}
-  if(winapiApplication->paragraphFont){DeleteObject(winapiApplication->paragraphFont);}
-  if(winapiApplication->mathFont){DeleteObject(winapiApplication->mathFont);}
 
   DestroyIcon(winapiApplication->appIcon);
 
@@ -497,7 +485,31 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
 
 
 
-NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
+struct NAFont{
+  void* nativePtr;
+};
+
+NA_HAPI void na_DeallocFont(NAFont* font);
+
+NA_RUNTIME_TYPE(NAFont, na_DeallocFont, NA_TRUE);
+
+NA_HAPI void* na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size);
+
+NA_DEF NAFont* naNewFontWithPreset(NAFontKind kind, NAFontSize size){
+  NAFont* font = naNew(NAFont);
+  font->nativePtr = na_GetFontWithKindAndSize(kind, size);
+  return font;
+}
+
+NA_HDEF void na_DeallocFont(NAFont* font){
+  DeleteObject(font->nativePtr);
+}
+
+NA_DEF void* naGetFontNativePointer(const NAFont* font){
+  return font->nativePtr;
+}
+
+NA_HDEF void* na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   
   HFONT retfont = NA_NULL;
@@ -511,37 +523,33 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
   LONG baseSize;
   switch(size){
   case NA_FONT_SIZE_SMALL: baseSize = 12; break;
-  case NA_FONT_SIZE_DEFAULT: baseSize = 14; break;
+  case NA_FONT_SIZE_DEFAULT: baseSize = 16; break;
   //case NA_FONT_SIZE_DEFAULT: baseSize = metrics->lfMessageFont.lfHeight; break;
-  case NA_FONT_SIZE_BIG: baseSize = 18; break;
+  case NA_FONT_SIZE_BIG: baseSize = 20; break;
   case NA_FONT_SIZE_HUGE: baseSize = 24; break;
   default: baseSize = metrics->lfMessageFont.lfHeight; break;
   }
 
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
-      if(!app->systemFont){
-        app->systemFont = CreateFont(
-          baseSize,
-          0,
-          0,
-          0,
-          FW_NORMAL,
-          NA_FALSE,
-          NA_FALSE,
-          NA_FALSE,
-          DEFAULT_CHARSET,
-          OUT_DEFAULT_PRECIS,
-          CLIP_DEFAULT_PRECIS,
-          DEFAULT_QUALITY,
-          DEFAULT_PITCH | FF_DONTCARE,
-          metrics->lfMessageFont.lfFaceName);
-      }
-      retfont = app->systemFont;
+      retfont = CreateFont(
+        baseSize,
+        0,
+        0,
+        0,
+        FW_NORMAL,
+        NA_FALSE,
+        NA_FALSE,
+        NA_FALSE,
+        DEFAULT_CHARSET,
+        OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE,
+        metrics->lfMessageFont.lfFaceName);
       break;
     case NA_FONT_KIND_TITLE:
-      if(!app->titleFont){
-        app->titleFont = CreateFont(
+      retfont = CreateFont(
         baseSize,
         0,
         0,
@@ -556,12 +564,9 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
         DEFAULT_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE,
         metrics->lfMessageFont.lfFaceName);
-      }
-      retfont = app->titleFont;
       break;
     case NA_FONT_KIND_MONOSPACE:
-      if(!app->monospaceFont){
-        app->monospaceFont = CreateFont(
+      retfont = CreateFont(
         baseSize,
         0,
         0,
@@ -576,12 +581,9 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
         DEFAULT_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE,
         TEXT("Courier New"));
-      }
-      retfont = app->monospaceFont;
       break;
     case NA_FONT_KIND_PARAGRAPH:
-      if(!app->paragraphFont){
-        app->paragraphFont = CreateFont(
+      retfont = CreateFont(
         baseSize,
         0,
         0,
@@ -596,12 +598,9 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
         DEFAULT_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE,
         TEXT("Palatino Linotype"));
-      }
-      retfont = app->paragraphFont;
       break;
     case NA_FONT_KIND_MATH:
-      if(!app->mathFont){
-        app->mathFont = CreateFont(
+      retfont = CreateFont(
         baseSize,
         0,
         0,
@@ -616,8 +615,6 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
         DEFAULT_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE,
         TEXT("Times New Roman"));
-      }
-      retfont = app->mathFont;
       break;
     default:
       #if NA_DEBUG
@@ -628,7 +625,7 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
 
   #endif
 
-  return (NAFont)retfont;
+  return retfont;
 }
 
 

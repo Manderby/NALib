@@ -22,10 +22,9 @@ NA_API void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text);
 NA_API void naSetTextBoxTextAlignment(
   NATextBox* textBox,
   NATextAlignment alignment);
-NA_API void naSetTextBoxFontKind(
+NA_API void naSetTextBoxFont(
   NATextBox* textBox,
-  NAFontKind kind,
-  NAFontSize size);
+  NAFont* font);
 NA_API void naSetTextBoxCustomFont(
   NATextBox* textBox,
   const NAUTF8Char* fontName,

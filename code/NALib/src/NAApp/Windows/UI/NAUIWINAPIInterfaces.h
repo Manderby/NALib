@@ -72,12 +72,6 @@ struct NAWINAPIApplication {
   NONCLIENTMETRICS nonClientMetrics;
   HICON            appIcon;
 
-  HFONT            systemFont;
-  HFONT            titleFont;
-  HFONT            monospaceFont;
-  HFONT            paragraphFont;
-  HFONT            mathFont;
-
   NA_UIElement*    mouseHoverElement;
   const NAMenu*    lastOpenedMenu;
   UINT             nextMenuItemId;

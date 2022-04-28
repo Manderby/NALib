@@ -380,7 +380,9 @@ ExperimentController* createExperimentController(){
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
     windowWidth - 20);
-  naSetLabelFontKind(con->outputLabel, NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
+  NAFont* monospaceFont = naNewFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
+  naSetLabelFont(con->outputLabel, monospaceFont);
+  naRelease(monospaceFont);
   naAddSpaceChild(con->contentSpace, con->outputLabel, naMakePos(10, 10));
 
   con->textOption = 0;
