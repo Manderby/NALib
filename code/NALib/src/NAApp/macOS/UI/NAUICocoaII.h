@@ -254,7 +254,7 @@ NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
 
 
 
-NA_HDEF void na_DeallocFont(NAFont* font){
+NA_HDEF void na_DestructFont(NAFont* font){
   NA_COCOA_RELEASE(font->nativePtr);
   naDelete(font->name);
 }

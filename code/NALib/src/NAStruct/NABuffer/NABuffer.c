@@ -2,8 +2,8 @@
 #include "../../NABuffer.h"
 
 
-NA_HAPI void na_DeallocBuffer(NABuffer* buffer);
-NA_RUNTIME_TYPE(NABuffer, na_DeallocBuffer, NA_TRUE);
+NA_HAPI void na_DestructBuffer(NABuffer* buffer);
+NA_RUNTIME_TYPE(NABuffer, na_DestructBuffer, NA_TRUE);
 
 
 
@@ -322,7 +322,7 @@ NA_DEF NABuffer* naCreateBufferWithCustomSource(NABufferSource* source, NAInt so
 
 
 
-NA_HDEF void na_DeallocBuffer(NABuffer* buffer){
+NA_HDEF void na_DestructBuffer(NABuffer* buffer){
   #if NA_DEBUG
     if(buffer->iterCount)
       naError("There are still iterators running. Did you forgot naClearBufferIterator?");

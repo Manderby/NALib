@@ -472,7 +472,7 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
 
 
 
-NA_HDEF void na_DeallocFont(NAFont* font){
+NA_HDEF void na_DestructFont(NAFont* font){
   DeleteObject(font->nativePtr);
   naDelete(font->name);
 }

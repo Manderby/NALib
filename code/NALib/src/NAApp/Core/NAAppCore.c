@@ -417,8 +417,8 @@ NA_HDEF void na_SetMouseExitedAtPos(NAPos newpos){
 
 
 
-NA_HAPI void na_DeallocFont(NAFont* font);
-NA_RUNTIME_TYPE(NAFont, na_DeallocFont, NA_TRUE);
+NA_HAPI void na_DestructFont(NAFont* font);
+NA_RUNTIME_TYPE(NAFont, na_DestructFont, NA_TRUE);
 
 NA_DEF NAFont* naGetSystemFont(){
   return na_App->systemFont;

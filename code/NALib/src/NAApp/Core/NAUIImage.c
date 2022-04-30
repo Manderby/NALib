@@ -5,8 +5,8 @@
 
 
 
-NA_API void na_DeallocUIImage(NAUIImage* uiImage);
-NA_RUNTIME_TYPE(NAUIImage, na_DeallocUIImage, NA_TRUE);
+NA_API void na_DestructUIImage(NAUIImage* uiImage);
+NA_RUNTIME_TYPE(NAUIImage, na_DestructUIImage, NA_TRUE);
 
 
 // Will retain the babyImage.
@@ -176,7 +176,7 @@ NA_DEF NAUIImage* naCreateUIImage(const NABabyImage* main, const NABabyImage* al
 
 
 
-NA_API void na_DeallocUIImage(NAUIImage* uiImage){
+NA_API void na_DestructUIImage(NAUIImage* uiImage){
   NAInt i;
   for(i = 0; i < NA_UIIMAGE_SUBIMAGES_COUNT; i++){
     if(uiImage->nativeImages[i]){naDeallocNativeImage(uiImage->nativeImages[i]);}
