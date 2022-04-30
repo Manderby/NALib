@@ -472,31 +472,14 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
 
 
 
-struct NAFont{
-  void* nativePtr;  // HFONT on Windows, NSFont* on Mac
-  NAString* name;
-  uint32 flags;
-  double size;
-};
-
-NA_HAPI void na_DeallocFont(NAFont* font);
-
-NA_RUNTIME_TYPE(NAFont, na_DeallocFont, NA_TRUE);
-
-NA_HAPI NAFont* na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size);
-
 NA_HDEF void na_DeallocFont(NAFont* font){
   DeleteObject(font->nativePtr);
   naDelete(font->name);
 }
 
-NA_DEF void* naGetFontNativePointer(const NAFont* font){
-  return font->nativePtr;
-}
-
-NA_DEF NAFont* naNewFont(const NAUTF8Char* fontName, uint32 flags, double size){
+NA_DEF NAFont* naNewFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size){
   NAFont* font = naNew(NAFont);
-  wchar_t* systemFontName = naAllocWideCharStringWithUTF8String(fontName);
+  wchar_t* systemFontName = naAllocWideCharStringWithUTF8String(fontFamilyName);
 
   font->nativePtr = CreateFont(
     (int)size,
@@ -514,7 +497,7 @@ NA_DEF NAFont* naNewFont(const NAUTF8Char* fontName, uint32 flags, double size){
     DEFAULT_PITCH | FF_DONTCARE,
     systemFontName);
 
-  font->name = naNewStringWithFormat("%s", fontName);
+  font->name = naNewStringWithFormat("%s", fontFamilyName);
   font->flags = flags;
   font->size = size;
   
@@ -555,41 +538,41 @@ NA_DEF NAFont* naNewFontWithPreset(NAFontKind kind, NAFontSize size){
   default: baseSize = metrics->lfMessageFont.lfHeight; break;
   }
 
-  NAString* fontName;
+  NAString* fontFamilyName;
 
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
-      fontName = naNewStringFromWideCharString(metrics->lfMessageFont.lfFaceName);
+      fontFamilyName = naNewStringFromWideCharString(metrics->lfMessageFont.lfFaceName);
       retFont = naNewFont(
-        naGetStringUTF8Pointer(fontName),
+        naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     case NA_FONT_KIND_TITLE:
-      fontName = naNewStringFromWideCharString(metrics->lfMessageFont.lfFaceName);
+      fontFamilyName = naNewStringFromWideCharString(metrics->lfMessageFont.lfFaceName);
       retFont = naNewFont(
-        naGetStringUTF8Pointer(fontName),
+        naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_BOLD,
         baseSize);
       break;
     case NA_FONT_KIND_MONOSPACE:
-      fontName = naNewStringFromWideCharString(TEXT("Courier New"));
+      fontFamilyName = naNewStringFromWideCharString(TEXT("Courier New"));
       retFont = naNewFont(
-        naGetStringUTF8Pointer(fontName),
+        naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     case NA_FONT_KIND_PARAGRAPH:
-      fontName = naNewStringFromWideCharString(TEXT("Palatino Linotype"));
+      fontFamilyName = naNewStringFromWideCharString(TEXT("Palatino Linotype"));
       retFont = naNewFont(
-        naGetStringUTF8Pointer(fontName),
+        naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      fontName = naNewStringFromWideCharString(TEXT("Times New Roman"));
+      fontFamilyName = naNewStringFromWideCharString(TEXT("Times New Roman"));
       retFont = naNewFont(
-        naGetStringUTF8Pointer(fontName),
+        naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_ITALIC,
         baseSize);
       break;
@@ -597,25 +580,15 @@ NA_DEF NAFont* naNewFontWithPreset(NAFontKind kind, NAFontSize size){
       #if NA_DEBUG
         naError("Unknown font kind");
       #endif
-      fontName = naNewString();
+      fontFamilyName = naNewString();
       break;
   }
 
   #endif
 
-  naDelete(fontName);
+  naDelete(fontFamilyName);
 
   return retFont;
-}
-
-NA_DEF const NAString* naGetFontName(const NAFont* font){
-  return font->name;
-}
-NA_DEF uint32 naGetFontFlags(const NAFont* font){
-  return font->flags;
-}
-NA_DEF double naGetFontSize(const NAFont* font){
-  return font->size;
 }
 
 

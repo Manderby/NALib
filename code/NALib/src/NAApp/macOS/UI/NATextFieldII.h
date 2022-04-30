@@ -20,7 +20,7 @@
   }else{
     [[self cell] setLineBreakMode:NSLineBreakByTruncatingHead];
   }
-  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
+  [self setFont:naGetFontNativePointer(naGetSystemFont())];
   [self setDelegate:self];
 
   cocoaTextField = newCocoaTextField;
@@ -53,8 +53,8 @@
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 
-- (void) setFontKind:(NAFontKind)kind size:(NAFontSize)size{
-   [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKindAndSize(kind, size))];
+- (void) setNAFont:(NAFont*)font{
+   [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
 }
 
 - (NARect) getInnerRect{
@@ -72,6 +72,8 @@ NA_DEF NATextField* naNewTextField(double width){
     initWithTextField:cocoaTextField
     frame:naMakeNSRectWithSize(naMakeSize(width, 21))];
   na_InitTextField((NATextField*)cocoaTextField, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+
+  cocoaTextField->textField.font = naRetain(naGetSystemFont());
 
   return (NATextField*)cocoaTextField;
 }
@@ -114,7 +116,9 @@ NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment 
 
 NA_DEF void naSetTextFieldFont(NATextField* textField, NAFont* font){
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
-  [nativePtr setFontKind:kind size:size];
+  [nativePtr setNAFont:font];
+  naRelease(textField->font);
+  textField->font = naRetain(font);
 }
 
 

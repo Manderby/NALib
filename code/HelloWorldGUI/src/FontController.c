@@ -1,4 +1,4 @@
-﻿
+
 // This is an example showing how to create a GUI application with NALib which
 // converts temperatures from Degree Celsius to Degree Fahrenheit.
 
@@ -35,19 +35,19 @@ FontController* createFontController(){
   naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 360));
    
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(u8"Haxig 你好", 120);
   font = naNewFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 360));
    
-  label = naNewLabel(u8"Haxig 你好", 120);
+  label = naNewLabel(u8"Haxig 你好", 150);
   font = naNewFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 24.);
-  naAddSpaceChild(windowSpace, label, naMakePos(310, 360));
+  naAddSpaceChild(windowSpace, label, naMakePos(350, 360));
 
 
 
@@ -64,19 +64,19 @@ FontController* createFontController(){
   naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 310));
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(u8"Haxig 你好", 120);
   font = naNewFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 310));
 
-  label = naNewLabel(u8"Haxig 你好", 120);
+  label = naNewLabel(u8"Haxig 你好", 150);
   font = naNewFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 24.);
-  naAddSpaceChild(windowSpace, label, naMakePos(310, 310));
+  naAddSpaceChild(windowSpace, label, naMakePos(350, 310));
 
 
 
@@ -93,19 +93,19 @@ FontController* createFontController(){
   naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 260));
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(u8"Haxig 你好", 120);
   font = naNewFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 260));
 
-  label = naNewLabel(u8"Haxig 你好", 120);
+  label = naNewLabel(u8"Haxig 你好", 150);
   font = naNewFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 24.);
-  naAddSpaceChild(windowSpace, label, naMakePos(310, 260));
+  naAddSpaceChild(windowSpace, label, naMakePos(350, 260));
 
 
 
@@ -122,19 +122,19 @@ FontController* createFontController(){
   naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 210));
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(u8"Haxig 你好", 120);
   font = naNewFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 210));
 
-  label = naNewLabel(u8"Haxig 你好", 120);
+  label = naNewLabel(u8"Haxig 你好", 150);
   font = naNewFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 24.);
-  naAddSpaceChild(windowSpace, label, naMakePos(310, 210));
+  naAddSpaceChild(windowSpace, label, naMakePos(350, 210));
 
 
 
@@ -151,19 +151,19 @@ FontController* createFontController(){
   naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 160));
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(u8"Haxig 你好", 120);
   font = naNewFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 160));
 
-  label = naNewLabel(u8"Haxig 你好", 120);
+  label = naNewLabel(u8"Haxig 你好", 150);
   font = naNewFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 24.);
-  naAddSpaceChild(windowSpace, label, naMakePos(310, 160));
+  naAddSpaceChild(windowSpace, label, naMakePos(350, 160));
 
 
 
@@ -171,14 +171,14 @@ FontController* createFontController(){
   font = naNewFont("Comic Sans MS", NA_FONT_FLAG_REGULAR, 32);
   naSetLabelFont(label, font);
   naRelease(font);
-  naSetLabelHeight(label, 32);
+  naSetLabelHeight(label, 50);
   naAddSpaceChild(windowSpace, label, naMakePos(10, 80));
 
-  label = naNewLabel(u8"Comic Sans Link", 200);
+  label = naNewLabel(u8"Comic Sans Link", 250);
   font = naNewFont("Comic Sans MS", NA_FONT_FLAG_REGULAR, 32);
   naSetLabelFont(label, font);
   naRelease(font);
-  naSetLabelHeight(label, 32);
+  naSetLabelHeight(label, 50);
   naSetLabelLink(label, "https://manderc.com");
   naAddSpaceChild(windowSpace, label, naMakePos(210, 80));
 

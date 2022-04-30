@@ -176,7 +176,7 @@
     #endif
   }
 
-  NA_DEF void* naGetMetalSpaceSystemContext(NAMetalSpace* metalSpace){
+  NA_DEF void* naGetMetalSpaceSystemContext(const NAMetalSpace* metalSpace){
     NA_UNUSED(metalSpace);
     #if NA_DEBUG
       naError("Metal has not been configured. See NAConfiguration.h");

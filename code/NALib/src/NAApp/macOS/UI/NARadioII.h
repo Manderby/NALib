@@ -22,7 +22,7 @@
   cocoaRadio = newCocoaRadio;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
+  [self setFont:naGetFontNativePointer(naGetSystemFont())];
 
   containingView = [[NSView alloc] initWithFrame:frame];
   [containingView addSubview:self];

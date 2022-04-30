@@ -163,6 +163,14 @@ struct NAKeyboardShortcutReaction{
   NAReactionHandler handler;
 };
 
+struct NAFont{
+  void* nativePtr;  // HFONT on Windows, NSFont* on Mac
+  NAString* name;
+  uint32 flags;
+  double size;
+};
+NA_EXTERN_RUNTIME_TYPE(NAFont);
+
 
 
 extern NAApplication* na_App;

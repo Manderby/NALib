@@ -15,7 +15,7 @@
   cocoaCheckBox = newCocoaCheckBox;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
+  [self setFont:naGetFontNativePointer(naGetSystemFont())];
 
   return self;
 }
