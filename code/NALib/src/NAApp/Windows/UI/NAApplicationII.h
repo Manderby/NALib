@@ -477,8 +477,8 @@ NA_HDEF void na_DeallocFont(NAFont* font){
   naDelete(font->name);
 }
 
-NA_DEF NAFont* naNewFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size){
-  NAFont* font = naNew(NAFont);
+NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size){
+  NAFont* font = naCreate(NAFont);
   wchar_t* systemFontName = naAllocWideCharStringWithUTF8String(fontFamilyName);
 
   font->nativePtr = CreateFont(
@@ -517,7 +517,7 @@ NA_DEF NAFont* naNewFont(const NAUTF8Char* fontFamilyName, uint32 flags, double 
 //  printf("%ls" NA_NL, lpelf->elfFullName);
 //}
 
-NA_DEF NAFont* naNewFontWithPreset(NAFontKind kind, NAFontSize size){
+NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   
   NAFont* retFont = NA_NULL;
@@ -543,35 +543,35 @@ NA_DEF NAFont* naNewFontWithPreset(NAFontKind kind, NAFontSize size){
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
       fontFamilyName = naNewStringFromWideCharString(metrics->lfMessageFont.lfFaceName);
-      retFont = naNewFont(
+      retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     case NA_FONT_KIND_TITLE:
       fontFamilyName = naNewStringFromWideCharString(metrics->lfMessageFont.lfFaceName);
-      retFont = naNewFont(
+      retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_BOLD,
         baseSize);
       break;
     case NA_FONT_KIND_MONOSPACE:
       fontFamilyName = naNewStringFromWideCharString(TEXT("Courier New"));
-      retFont = naNewFont(
+      retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     case NA_FONT_KIND_PARAGRAPH:
       fontFamilyName = naNewStringFromWideCharString(TEXT("Palatino Linotype"));
-      retFont = naNewFont(
+      retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     case NA_FONT_KIND_MATH:
       fontFamilyName = naNewStringFromWideCharString(TEXT("Times New Roman"));
-      retFont = naNewFont(
+      retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_ITALIC,
         baseSize);

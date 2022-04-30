@@ -236,7 +236,7 @@ ExperimentController* createExperimentController(){
   NABabyColor altColor = {.25, 0., 1., 1.};
   NABabyImage* mainImage = naCreateBabyImage(naMakeSizei(20, 10), mainColor);
   NABabyImage* altImage = naCreateBabyImage(naMakeSizei(20, 10), altColor);
-  con->testImage = naNewUIImage(mainImage, altImage, NA_UIIMAGE_RESOLUTION_1x, NA_BLEND_ZERO);
+  con->testImage = naCreateUIImage(mainImage, altImage, NA_UIIMAGE_RESOLUTION_1x, NA_BLEND_ZERO);
 
   con->experimentWindow = naNewWindow(
     "Experiment",
@@ -380,7 +380,7 @@ ExperimentController* createExperimentController(){
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
     windowWidth - 20);
-  NAFont* monospaceFont = naNewFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
+  NAFont* monospaceFont = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
   naSetLabelFont(con->outputLabel, monospaceFont);
   naRelease(monospaceFont);
   naAddSpaceChild(con->contentSpace, con->outputLabel, naMakePos(10, 10));

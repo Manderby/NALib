@@ -259,8 +259,8 @@ NA_HDEF void na_DeallocFont(NAFont* font){
   naDelete(font->name);
 }
 
-NA_DEF NAFont* naNewFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size){
-  NAFont* font = naNew(NAFont);
+NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size){
+  NAFont* font = naCreate(NAFont);
   NSString* systemFontName = [NSString stringWithUTF8String: fontFamilyName];
 
   NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
@@ -289,7 +289,7 @@ NA_DEF NAFont* naNewFont(const NAUTF8Char* fontFamilyName, uint32 flags, double 
   return font;
 }
 
-NAFont* naNewFontWithPreset(NAFontKind kind, NAFontSize size){
+NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
   CGFloat baseSize;
   switch(size){
   case NA_FONT_SIZE_SMALL: baseSize = 11; break;
@@ -304,25 +304,25 @@ NAFont* naNewFontWithPreset(NAFontKind kind, NAFontSize size){
   NAFont* retFont;
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
-      retFont = naNewFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_REGULAR, baseSize);
+      retFont = naCreateFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_REGULAR, baseSize);
       break;
     case NA_FONT_KIND_TITLE:
-      retFont = naNewFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_BOLD, baseSize);
+      retFont = naCreateFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_BOLD, baseSize);
       break;
     case NA_FONT_KIND_MONOSPACE:
-      retFont = naNewFont("Courier", NA_FONT_FLAG_REGULAR, baseSize);
+      retFont = naCreateFont("Courier", NA_FONT_FLAG_REGULAR, baseSize);
       break;
     case NA_FONT_KIND_PARAGRAPH:
-      retFont = naNewFont("Palatino", NA_FONT_FLAG_REGULAR, baseSize);
+      retFont = naCreateFont("Palatino", NA_FONT_FLAG_REGULAR, baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      retFont = naNewFont("Times New Roman", NA_FONT_FLAG_ITALIC, baseSize);
+      retFont = naCreateFont("Times New Roman", NA_FONT_FLAG_ITALIC, baseSize);
       break;
     default:
       #if NA_DEBUG
         naError("Unknown font kind");
       #endif
-      retFont = naNewFont("San Francisco", NA_FONT_FLAG_REGULAR, size);
+      retFont = naCreateFont("San Francisco", NA_FONT_FLAG_REGULAR, size);
       break;
   }
   
@@ -419,37 +419,6 @@ NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* file
     callback(doPerform, [[[savepanel URL] path] UTF8String]);
   }];
 }
-
-
-
-//NA_DEF NAFont* naNewFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size){
-//  NAFont* font = naNew(NAFont);
-//  wchar_t* systemFontName = naAllocWideCharStringWithUTF8String(fontFamilyName);
-//
-//  font->nativePtr = CreateFont(
-//    (int)size,
-//    0,
-//    0,
-//    0,
-//    naGetFlagu32(flags, NA_FONT_FLAG_BOLD) ? FW_BOLD : FW_NORMAL,
-//    naGetFlagu32(flags, NA_FONT_FLAG_ITALIC),
-//    naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE),
-//    NA_FALSE,
-//    DEFAULT_CHARSET,
-//    OUT_DEFAULT_PRECIS,
-//    CLIP_DEFAULT_PRECIS,
-//    CLEARTYPE_QUALITY,
-//    DEFAULT_PITCH | FF_DONTCARE,
-//    systemFontName);
-//
-//  font->name = naNewStringWithFormat("%s", fontFamilyName);
-//  font->flags = flags;
-//  font->size = size;
-//  
-//  naFree(systemFontName);
-//
-//  return font;
-//}
 
 
 

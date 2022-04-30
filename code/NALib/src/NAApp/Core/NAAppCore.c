@@ -61,7 +61,7 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
   application->translator = NA_NULL;
   naStartTranslator();
   
-  application->systemFont = naNewFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT);
+  application->systemFont = naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT);
 
   application->mouseStatus.pos = naMakePos(0, 0);
   application->mouseStatus.prevPos = naMakePos(0, 0);
@@ -162,6 +162,7 @@ NA_HDEF void na_InitLabel(NALabel* label, void* nativePtr){
 }
 NA_HDEF void na_ClearLabel(NALabel* label){
   na_ClearUIElement(&(label->uiElement));
+  naRelease(label->font);
 }
 
 
@@ -298,6 +299,7 @@ NA_HDEF void na_InitTextBox(NATextBox* textBox, void* nativePtr){
 }
 NA_HDEF void na_ClearTextBox(NATextBox* textBox){
   na_ClearUIElement(&(textBox->uiElement));
+  naRelease(textBox->font);
 }
 
 
@@ -307,6 +309,7 @@ NA_HDEF void na_InitTextField(NATextField* textField, void* nativePtr){
 }
 NA_HDEF void na_ClearTextField(NATextField* textField){
   na_ClearUIElement(&(textField->uiElement));
+  naRelease(textField->font);
 }
 
 

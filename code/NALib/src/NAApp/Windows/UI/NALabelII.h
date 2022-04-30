@@ -159,7 +159,7 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
       naError("url must be something useful. Deleting a Link is not possible yet.");
   #endif
 
-  NAFont* underlineFont = naNewFont(
+  NAFont* underlineFont = naCreateFont(
     naGetStringUTF8Pointer(naGetFontName(label->font)),
     naGetFontFlags(label->font) | NA_FONT_FLAG_UNDERLINE,
     naGetFontSize(label->font));

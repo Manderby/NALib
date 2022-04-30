@@ -48,13 +48,18 @@ struct NATypeInfo{
   extern NATypeInfo na_ ## typeName ## TypeInfo
 
 
-
 #undef naNew
 #define naNew(typeName) ((typeName*)na_NewStruct(&na_ ## typeName ## TypeInfo))
-// If you experience an error here with naNew: Have you marked your type with
-// NA_RUNTIME_TYPE? See NA_RUNTIME_TYPE below.
+// If you experience an error here with naNew: Have you marked your type
+// with NA_RUNTIME_TYPE? See NA_RUNTIME_TYPE below.
+
+#undef naCreate
+#define naCreate(typeName) ((typeName*)na_CreateStruct(&na_ ## typeName ## TypeInfo))
+// If you experience an error here with naCreate: Have you marked your type
+// with NA_RUNTIME_TYPE? See NA_RUNTIME_TYPE below.
 
 NA_API void* na_NewStruct(NATypeInfo* info);
+NA_API void* na_CreateStruct(NATypeInfo* info);
 
 
 

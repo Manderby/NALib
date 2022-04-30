@@ -113,7 +113,7 @@ NA_HIDEF void na_SetUIImageBabyImage(NAUIImage* uiImage, const NABabyImage* baby
 
 
 
-NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, const NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
+NA_DEF NAUIImage* naCreateUIImage(const NABabyImage* main, const NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
   NAUIImage* uiImage;
   NABabyImage* main1x;
   
@@ -127,7 +127,7 @@ NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, const NABabyImage* alt, 
     if(alt && !naEqualSizei(naGetBabyImageSize(main), naGetBabyImageSize(alt)))
       naError("Both images must have the same size.");
   #endif
-  uiImage = naNew(NAUIImage);
+  uiImage = naCreate(NAUIImage);
   
   uiImage->size1x = naGetBabyImageSize(main);
   uiImage->tintMode = tintMode;

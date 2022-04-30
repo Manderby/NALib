@@ -74,7 +74,7 @@ NA_HDEF NAVertex na_GetChildOriginOct(NAVertex parentorigin, NAInt childIndex, N
 
 
 
-NA_HDEF NATreeOctNode* na_ConstructTreeNodeOct(const NATreeConfiguration* config, NAVertex origin, NAInt childExponent){
+NA_HDEF NATreeOctNode* na_NewTreeNodeOct(const NATreeConfiguration* config, NAVertex origin, NAInt childExponent){
   NATreeOctNode* octNode = naNew(NATreeOctNode);
   na_InitTreeNode(config, na_GetOctNodeNode(octNode), &origin);
 
@@ -94,7 +94,7 @@ NA_HIDEF NAVertex na_GetOctTreeAlignedVertex(NAInt leafExponent, const NAVertex*
 
 
 
-NA_HDEF NATreeLeaf* na_ConstructTreeLeafOct(const NATreeConfiguration* config, const void* key, NAPtr content){
+NA_HDEF NATreeLeaf* na_NewTreeLeafOct(const NATreeConfiguration* config, const void* key, NAPtr content){
   NAInt leafExponent = naGetTreeConfigurationBaseLeafExponent(config);
   NATreeOctLeaf* octLeaf = naNew(NATreeOctLeaf);
   NAVertex alignedVertex = na_GetOctTreeAlignedVertex(leafExponent, key);
@@ -382,7 +382,7 @@ NA_HDEF NATreeOctNode* na_CreateTreeParentOct(NATree* tree, NATreeItem* item, NA
   // Reaching here, newRootOrigin and newRootChildExponent
   // denote a new parent containing both the existing child and the new leaf.
   // We create a new node which will become the root.
-  return na_ConstructTreeNodeOct(tree->config, newRootOrigin, newRootChildExponent);
+  return na_NewTreeNodeOct(tree->config, newRootOrigin, newRootChildExponent);
 }
 
 
@@ -428,7 +428,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, con
   #endif
   
   // Create the new leaf and initialize it.
-  newLeaf = na_ConstructTreeLeafOct(tree->config, key, content);
+  newLeaf = na_NewTreeLeafOct(tree->config, key, content);
 
   if(!existingItem){
     // There is no leaf to add to, meaning there was no root. Therefore, we
@@ -532,7 +532,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, con
         #if NA_DEBUG
           NAInt testExistingIndex;
         #endif
-        NATreeOctNode* smallestParent = na_ConstructTreeNodeOct(tree->config, smallestParentOrigin, smallestParentChildExponent);
+        NATreeOctNode* smallestParent = na_NewTreeNodeOct(tree->config, smallestParentOrigin, smallestParentChildExponent);
         
         // First, attach the previous item to the new parent.
         NABool isPrevExistingChildLeaf = na_IsTreeItemLeaf(tree, prevExistingChild);

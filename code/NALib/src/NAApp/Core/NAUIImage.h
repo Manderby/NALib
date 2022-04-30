@@ -66,7 +66,7 @@ typedef struct NAUIImage NAUIImage;
 // images.
 //
 // The NAUIImage has reference counting built in. Use naRetain and naRelease.
-NA_API NAUIImage* naNewUIImage(
+NA_API NAUIImage* naCreateUIImage(
   const NABabyImage* main,
   const NABabyImage* alt,
   NAUIImageResolution resolution,

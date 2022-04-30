@@ -8,8 +8,8 @@ NA_RUNTIME_TYPE(NABufferSource, na_DestructBufferSource, NA_TRUE);
 
 
 
-NA_DEF NABufferSource* naNewBufferSource(NABufferFiller filler, NABuffer* cache){
-  NABufferSource* source = naNew(NABufferSource);
+NA_DEF NABufferSource* naCreateBufferSource(NABufferFiller filler, NABuffer* cache){
+  NABufferSource* source = naCreate(NABufferSource);
 
   source->bufFiller = filler;
   source->cache = cache ? naRetain(cache) : NA_NULL;

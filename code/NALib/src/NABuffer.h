@@ -88,12 +88,12 @@ typedef struct NABufferIterator NABufferIterator;
 // Allocates an empty buffer. Can for example be extended using naWriteBuffer
 // calls. When secureMemory is set to NA_TRUE, each byte will be set to binary
 // zero before it can be used.
-NA_API NABuffer* naNewBuffer(NABool secureMemory);
+NA_API NABuffer* naCreateBuffer(NABool secureMemory);
 
 // Creates a buffer referencing a subrange of another buffer. The origin of
 // the new buffer will be at zero and its range is fixed. Does NOT copy any
 // content, only references it.
-NA_API NABuffer* naNewBufferExtraction( NABuffer* srcBuffer,
+NA_API NABuffer* naCreateBufferExtraction( NABuffer* srcBuffer,
                                             NAInt offset,
                                             NAInt length);
 
@@ -103,24 +103,24 @@ NA_API NABuffer* naNewBufferExtraction( NABuffer* srcBuffer,
 // at zero.
 // All content will be loaded in the new buffer. If there are sparse parts
 // in the src buffer, they will be filled with the current source.
-NA_API NABuffer* naNewBufferCopy(const NABuffer* srcBuffer,
+NA_API NABuffer* naCreateBufferCopy(const NABuffer* srcBuffer,
                                         NARangei range,
                                           NABool secureMemory);
 
 // Creates a buffer sharing the same source as the given buffer. Also uses
 // the same settings like endianness or newlines.
-NA_API NABuffer* naNewBufferWithSameSource(  NABuffer* srcBuffer);
+NA_API NABuffer* naCreateBufferWithSameSource(  NABuffer* srcBuffer);
 
 // Creates a buffer inputting contents from a file. Its origin is always at
 // zero and its range is fixed to the fileSize.
-NA_API NABuffer* naNewBufferWithInputPath(const char* filePath);
+NA_API NABuffer* naCreateBufferWithInputPath(const char* filePath);
 
 // Creates a buffer accessing already existing const or mutable data. If the
 // data is mutable, you can give a destructor if you want to delete the
 // memory of the data pointer when no longer needed.
-NA_API NABuffer* naNewBufferWithConstData( const void* data,
+NA_API NABuffer* naCreateBufferWithConstData( const void* data,
                                                  size_t byteSize);
-NA_API NABuffer* naNewBufferWithMutableData(     void* data,
+NA_API NABuffer* naCreateBufferWithMutableData(     void* data,
                                                  size_t byteSize,
                                              NAMutator destructor);
 
@@ -139,7 +139,7 @@ NA_API NABuffer* naNewBufferWithMutableData(     void* data,
 // from -2 to 8 instead and using a sourceOffset of -6, filling the new buffer
 // at index 0 results in "rld", containing the source indices 6 to 8 of the
 // source buffer.
-NA_API NABuffer* naNewBufferWithCustomSource( NABufferSource* source,
+NA_API NABuffer* naCreateBufferWithCustomSource( NABufferSource* source,
   NAInt sourceOffset);
 
 
@@ -173,7 +173,7 @@ typedef void (*NABufferFiller)(
 //         example, a file buffer has a simple linear NABuffer which holds
 //         all bytes which already have been read. But a custom source which
 //         initializes all bytes to 42 does not need a buffer.
-NA_API NABufferSource* naNewBufferSource(
+NA_API NABufferSource* naCreateBufferSource(
   NABufferFiller filler,
   NABuffer* cache);
 
@@ -278,7 +278,7 @@ NA_API NAString* naNewStringWithBufferBase64Encoded(
                                                NABool appendEndSign);
 
 // Extracts the bytes from string encoded in Base64.
-NA_API NABuffer* naNewBufferWithStringBase64Decoded(
+NA_API NABuffer* naCreateBufferWithStringBase64Decoded(
                                        NAString* string);
 
 // Uses all bytes of the buffer to write to output or use it in other structs.
