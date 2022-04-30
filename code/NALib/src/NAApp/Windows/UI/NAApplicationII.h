@@ -473,7 +473,7 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
 
 
 struct NAFont{
-  void* nativePtr;
+  void* nativePtr;  // HFONT on Windows, NSFont* on Mac
   NAString* name;
   uint32 flags;
   double size;
@@ -487,6 +487,7 @@ NA_HAPI NAFont* na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size);
 
 NA_HDEF void na_DeallocFont(NAFont* font){
   DeleteObject(font->nativePtr);
+  naDelete(font->name);
 }
 
 NA_DEF void* naGetFontNativePointer(const NAFont* font){
@@ -504,7 +505,7 @@ NA_DEF NAFont* naNewFont(const NAUTF8Char* fontName, uint32 flags, double size){
     0,
     naGetFlagu32(flags, NA_FONT_FLAG_BOLD) ? FW_BOLD : FW_NORMAL,
     naGetFlagu32(flags, NA_FONT_FLAG_ITALIC),
-    NA_FALSE,
+    naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE),
     NA_FALSE,
     DEFAULT_CHARSET,
     OUT_DEFAULT_PRECIS,
@@ -606,6 +607,17 @@ NA_DEF NAFont* naNewFontWithPreset(NAFontKind kind, NAFontSize size){
 
   return retFont;
 }
+
+NA_DEF const NAString* naGetFontName(const NAFont* font){
+  return font->name;
+}
+NA_DEF uint32 naGetFontFlags(const NAFont* font){
+  return font->flags;
+}
+NA_DEF double naGetFontSize(const NAFont* font){
+  return font->size;
+}
+
 
 
 NA_DEF void naCenterMouse(void* uiElement, NABool includeBorder){

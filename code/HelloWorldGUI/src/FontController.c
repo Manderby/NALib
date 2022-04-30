@@ -174,6 +174,13 @@ FontController* createFontController(){
   naSetLabelHeight(label, 32);
   naAddSpaceChild(windowSpace, label, naMakePos(10, 80));
 
+  label = naNewLabel(u8"Comic Sans Link", 200);
+  font = naNewFont("Comic Sans MS", NA_FONT_FLAG_REGULAR, 32);
+  naSetLabelFont(label, font);
+  naRelease(font);
+  naSetLabelHeight(label, 32);
+  naSetLabelLink(label, "https://manderc.com");
+  naAddSpaceChild(windowSpace, label, naMakePos(210, 80));
 
 
   naShowWindow(con->window);

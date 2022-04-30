@@ -153,20 +153,20 @@ NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
 
 
 NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
-  HFONT hFont;
-  HFONT hOriginalFont;
-  LOGFONT lf = {0};
-
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
   #if NA_DEBUG
     if(!url || !*url)
       naError("url must be something useful. Deleting a Link is not possible yet.");
   #endif
-  hOriginalFont = (HFONT)SendMessage(naGetUIElementNativePtr(label), WM_GETFONT, 0, 0);
-  GetObject(hOriginalFont, sizeof(LOGFONT), &lf);
-  lf.lfUnderline = NA_TRUE;
-  hFont = CreateFontIndirect(&lf);
-  SendMessage(naGetUIElementNativePtr(label), WM_SETFONT, (WPARAM)hFont, NA_FALSE);
+
+  NAFont* underlineFont = naNewFont(
+    naGetStringUTF8Pointer(naGetFontName(label->font)),
+    naGetFontFlags(label->font) | NA_FONT_FLAG_UNDERLINE,
+    naGetFontSize(label->font));
+
+  naSetLabelFont(label, underlineFont);
+
+  naRelease(underlineFont);
 
   if(winapiLabel->href){naDelete(winapiLabel->href);}
   winapiLabel->href = naNewStringWithFormat("start %s", url);

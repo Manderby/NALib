@@ -135,12 +135,6 @@ NA_DEF void naSetTextBoxFont(NATextBox* textBox, NAFont* font){
 
 
 
-NA_DEF void naSetTextBoxCustomFont(NATextBox* textBox, const NAUTF8Char* fontName, uint32 flags, double size){
-  // todo
-}
-
-
-
 NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox){
   // todo
 }

@@ -25,11 +25,6 @@ NA_API void naSetTextBoxTextAlignment(
 NA_API void naSetTextBoxFont(
   NATextBox* textBox,
   NAFont* font);
-NA_API void naSetTextBoxCustomFont(
-  NATextBox* textBox,
-  const NAUTF8Char* fontName,
-  uint32 flags,
-  double size);
 
 // Sets if the textBox allows horizontal scrolling
 NA_API void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox);
