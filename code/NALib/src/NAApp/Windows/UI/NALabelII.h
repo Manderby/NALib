@@ -181,7 +181,16 @@ NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable){
 
 
 NA_DEF void naSetLabelHeight(NALabel* label, double height){
-  // todo
+  RECT rect;
+  GetWindowRect(label->uiElement.nativePtr, &rect);
+  SetWindowPos(
+    label->uiElement.nativePtr,
+    HWND_TOP,
+    rect.left,
+    rect.bottom + (int)height,
+    rect.right - rect.left,
+    (int)height,
+    0);
 }
 
 

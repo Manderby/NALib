@@ -666,7 +666,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
     #endif
   }
 
-  NA_DEF NAString* naNewStringFromWideCharString(wchar_t* wcharString){
+  NA_DEF NAString* naNewStringFromWideCharString(const wchar_t* wcharString){
     size_t length = wcslen(wcharString);
     NAInt utf8Length = WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, NULL, 0, NULL, NULL);
     NAUTF8Char* stringBuf = naMalloc((utf8Length + 1) * sizeof(NAUTF8Char));
@@ -677,7 +677,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
     return string;
   }
   
-  NA_DEF NAString* naNewStringFromAnsiString(char* ansiString){
+  NA_DEF NAString* naNewStringFromAnsiString(const char* ansiString){
     size_t length = strlen(ansiString);
     size_t wideLength = (size_t)MultiByteToWideChar(CP_ACP, 0, ansiString, (int)length, NULL, 0);
     wchar_t* wstr = naMalloc(((wideLength + 1) * sizeof(wchar_t)));
@@ -695,7 +695,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
   }
 
   // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
-  NA_DEF NAString* naNewStringFromSystemString(TCHAR* systemString){
+  NA_DEF NAString* naNewStringFromSystemString(const TCHAR* systemString){
     #ifdef UNICODE
       return naNewStringFromWideCharString(systemString);
     #else

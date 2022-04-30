@@ -26,9 +26,9 @@ typedef enum{
   NA_FONT_SIZE_COUNT
 } NAFontSize;
 
-#define NA_FONT_FLAG_REGULAR = 0x00;
-#define NA_FONT_FLAG_BOLD    = 0x01;
-#define NA_FONT_FLAG_ITALIC  = 0x02;
+#define NA_FONT_FLAG_REGULAR 0x00
+#define NA_FONT_FLAG_BOLD    0x01
+#define NA_FONT_FLAG_ITALIC  0x02
 
 typedef enum{
   NA_TEXT_ALIGNMENT_LEFT,
@@ -41,6 +41,7 @@ typedef enum{
 typedef struct NAFont NAFont;
 
 // Use NARelease to release the font again.
+NA_API NAFont* naNewFont(const NAUTF8Char* fontName, uint32 flags, double size);
 NA_API NAFont* naNewFontWithPreset(NAFontKind kind, NAFontSize size);
 
 NA_API void* naGetFontNativePointer(const NAFont* font);

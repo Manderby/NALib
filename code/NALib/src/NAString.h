@@ -192,13 +192,13 @@ NA_API NAString* naNewStringEPSDecoded(const NAString* inputString);
   NA_API char* naAllocAnsiStringWithUTF8String(const NAUTF8Char* utf8String);
 
   // Creates a new NAString from an encoded string. COPIES ALWAYS!
-  NA_API NAString* naNewStringFromWideCharString(wchar_t* wcharString);
-  NA_API NAString* naNewStringFromAnsiString(char* ansiString);
+  NA_API NAString* naNewStringFromWideCharString(const wchar_t* wcharString);
+  NA_API NAString* naNewStringFromAnsiString(const char* ansiString);
 
   // Conversions based on the application setting.
   // (See project properties, character set)
   NA_API TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8String);
-  NA_API NAString* naNewStringFromSystemString(TCHAR* systemString);
+  NA_API NAString* naNewStringFromSystemString(const TCHAR* systemString);
 
 #endif
 

@@ -472,34 +472,18 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
 
 
 
-// This is just a small code snipplet useful for debugging. See call to EnumFontFamilies below.
-//int CALLBACK enumFonts(
-//  _In_ ENUMLOGFONT   *lpelf,
-//  _In_ NEWTEXTMETRIC *lpntm,
-//  _In_ DWORD         FontType,
-//  _In_ LPARAM        lParam
-//){
-//  int x = 1234;
-//  printf("%s"  NA_NL, lpelf->elfFullName);
-//}
-
-
-
 struct NAFont{
   void* nativePtr;
+  NAString* name;
+  uint32 flags;
+  double size;
 };
 
 NA_HAPI void na_DeallocFont(NAFont* font);
 
 NA_RUNTIME_TYPE(NAFont, na_DeallocFont, NA_TRUE);
 
-NA_HAPI void* na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size);
-
-NA_DEF NAFont* naNewFontWithPreset(NAFontKind kind, NAFontSize size){
-  NAFont* font = naNew(NAFont);
-  font->nativePtr = na_GetFontWithKindAndSize(kind, size);
-  return font;
-}
+NA_HAPI NAFont* na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size);
 
 NA_HDEF void na_DeallocFont(NAFont* font){
   DeleteObject(font->nativePtr);
@@ -509,12 +493,52 @@ NA_DEF void* naGetFontNativePointer(const NAFont* font){
   return font->nativePtr;
 }
 
-NA_HDEF void* na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
+NA_DEF NAFont* naNewFont(const NAUTF8Char* fontName, uint32 flags, double size){
+  NAFont* font = naNew(NAFont);
+  wchar_t* systemFontName = naAllocWideCharStringWithUTF8String(fontName);
+
+  font->nativePtr = CreateFont(
+    (int)size,
+    0,
+    0,
+    0,
+    naGetFlagu32(flags, NA_FONT_FLAG_BOLD) ? FW_BOLD : FW_NORMAL,
+    naGetFlagu32(flags, NA_FONT_FLAG_ITALIC),
+    NA_FALSE,
+    NA_FALSE,
+    DEFAULT_CHARSET,
+    OUT_DEFAULT_PRECIS,
+    CLIP_DEFAULT_PRECIS,
+    CLEARTYPE_QUALITY,
+    DEFAULT_PITCH | FF_DONTCARE,
+    systemFontName);
+
+  font->name = naNewStringWithFormat("%s", fontName);
+  font->flags = flags;
+  font->size = size;
+  
+  naFree(systemFontName);
+
+  return font;
+}
+
+//// This is just a small code snipplet useful for debugging. See call to EnumFontFamilies below.
+//int CALLBACK enumFonts(
+//  _In_ ENUMLOGFONT   *lpelf,
+//  _In_ NEWTEXTMETRIC *lpntm,
+//  _In_ DWORD         FontType,
+//  _In_ LPARAM        lParam
+//){
+//  int x = 1234;
+//  printf("%ls" NA_NL, lpelf->elfFullName);
+//}
+
+NA_DEF NAFont* naNewFontWithPreset(NAFontKind kind, NAFontSize size){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   
-  HFONT retfont = NA_NULL;
+  NAFont* retFont = NA_NULL;
 
-  ////EnumFontFamilies(GetDC(NA_NULL), NA_NULL, enumFonts, NA_NULL);
+  //EnumFontFamilies(GetDC(NA_NULL), NA_NULL, enumFonts, NA_NULL);
 
   #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
 
@@ -530,102 +554,57 @@ NA_HDEF void* na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
   default: baseSize = metrics->lfMessageFont.lfHeight; break;
   }
 
+  NAString* fontName;
+
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
-      retfont = CreateFont(
-        baseSize,
-        0,
-        0,
-        0,
-        FW_NORMAL,
-        NA_FALSE,
-        NA_FALSE,
-        NA_FALSE,
-        DEFAULT_CHARSET,
-        OUT_DEFAULT_PRECIS,
-        CLIP_DEFAULT_PRECIS,
-        DEFAULT_QUALITY,
-        DEFAULT_PITCH | FF_DONTCARE,
-        metrics->lfMessageFont.lfFaceName);
+      fontName = naNewStringFromWideCharString(metrics->lfMessageFont.lfFaceName);
+      retFont = naNewFont(
+        naGetStringUTF8Pointer(fontName),
+        NA_FONT_FLAG_REGULAR,
+        baseSize);
       break;
     case NA_FONT_KIND_TITLE:
-      retfont = CreateFont(
-        baseSize,
-        0,
-        0,
-        0,
-        FW_BOLD,
-        NA_FALSE,
-        NA_FALSE,
-        NA_FALSE,
-        DEFAULT_CHARSET,
-        OUT_DEFAULT_PRECIS,
-        CLIP_DEFAULT_PRECIS,
-        DEFAULT_QUALITY,
-        DEFAULT_PITCH | FF_DONTCARE,
-        metrics->lfMessageFont.lfFaceName);
+      fontName = naNewStringFromWideCharString(metrics->lfMessageFont.lfFaceName);
+      retFont = naNewFont(
+        naGetStringUTF8Pointer(fontName),
+        NA_FONT_FLAG_BOLD,
+        baseSize);
       break;
     case NA_FONT_KIND_MONOSPACE:
-      retfont = CreateFont(
-        baseSize,
-        0,
-        0,
-        0,
-        FW_BOLD,
-        NA_FALSE,
-        NA_FALSE,
-        NA_FALSE,
-        DEFAULT_CHARSET,
-        OUT_DEFAULT_PRECIS,
-        CLIP_DEFAULT_PRECIS,
-        DEFAULT_QUALITY,
-        DEFAULT_PITCH | FF_DONTCARE,
-        TEXT("Courier New"));
+      fontName = naNewStringFromWideCharString(TEXT("Courier New"));
+      retFont = naNewFont(
+        naGetStringUTF8Pointer(fontName),
+        NA_FONT_FLAG_REGULAR,
+        baseSize);
       break;
     case NA_FONT_KIND_PARAGRAPH:
-      retfont = CreateFont(
-        baseSize,
-        0,
-        0,
-        0,
-        FW_BOLD,
-        NA_FALSE,
-        NA_FALSE,
-        NA_FALSE,
-        DEFAULT_CHARSET,
-        OUT_DEFAULT_PRECIS,
-        CLIP_DEFAULT_PRECIS,
-        DEFAULT_QUALITY,
-        DEFAULT_PITCH | FF_DONTCARE,
-        TEXT("Palatino Linotype"));
+      fontName = naNewStringFromWideCharString(TEXT("Palatino Linotype"));
+      retFont = naNewFont(
+        naGetStringUTF8Pointer(fontName),
+        NA_FONT_FLAG_REGULAR,
+        baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      retfont = CreateFont(
-        baseSize,
-        0,
-        0,
-        0,
-        FW_BOLD,
-        NA_TRUE,
-        NA_FALSE,
-        NA_FALSE,
-        DEFAULT_CHARSET,
-        OUT_DEFAULT_PRECIS,
-        CLIP_DEFAULT_PRECIS,
-        DEFAULT_QUALITY,
-        DEFAULT_PITCH | FF_DONTCARE,
-        TEXT("Times New Roman"));
+      fontName = naNewStringFromWideCharString(TEXT("Times New Roman"));
+      retFont = naNewFont(
+        naGetStringUTF8Pointer(fontName),
+        NA_FONT_FLAG_ITALIC,
+        baseSize);
       break;
     default:
       #if NA_DEBUG
         naError("Unknown font kind");
       #endif
+      fontName = naNewString();
       break;
   }
 
   #endif
 
-  return retfont;
+  naDelete(fontName);
+
+  return retFont;
 }
 
 
