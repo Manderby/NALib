@@ -441,7 +441,7 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
     NAString* testPath = na_NewTestPath(testData, NA_TRUE);
     
     // DO NOT TURN -C OPTION OFF!!!
-    NAString* commandPath = naNewStringWithFormat("%s -C %s", naGetStringUTF8Pointer(modulePath), naGetStringUTF8Pointer(testPath));
+    NAString* commandPath = naNewStringWithFormat("\"%s\" -C %s", naGetStringUTF8Pointer(modulePath), naGetStringUTF8Pointer(testPath));
     TCHAR* systemCommandPath = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(commandPath));
 
     BOOL success = CreateProcess(

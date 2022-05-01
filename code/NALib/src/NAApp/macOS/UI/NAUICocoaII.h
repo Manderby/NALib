@@ -292,10 +292,44 @@ NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
 
 
 
+NA_HDEF void na_DestructFont(NAFont* font){
+  NA_COCOA_RELEASE(font->nativePtr);
+  naDelete(font->name);
+}
 
+NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size){
+  NAFont* font = naCreate(NAFont);
+  NSString* systemFontName = [NSString stringWithUTF8String: fontFamilyName];
 
+  NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
+  NSFont* retFont;
 
-NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
+  if(systemFontName == [systemFont familyName]){
+    retFont = (naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) ?
+      [NSFont systemFontOfSize:size] :
+      [NSFont boldSystemFontOfSize:size];
+  }else{
+    NSFontTraitMask traits = 0;
+    if(naGetFlagu32(flags, NA_FONT_FLAG_BOLD)){ traits |= NSBoldFontMask; }
+    if(naGetFlagu32(flags, NA_FONT_FLAG_ITALIC)){ traits |= NSItalicFontMask; }
+    if(naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE)){ }
+
+    retFont = [[NSFontManager sharedFontManager]
+      fontWithFamily:systemFontName
+      traits:traits
+      weight:5  // ignored if NSBoldFontMask is set.
+      size:size];
+  }
+  font->nativePtr = NA_COCOA_RETAIN(retFont);
+
+  font->name = naNewStringWithFormat("%s", fontFamilyName);
+  font->flags = flags;
+  font->size = size;
+  
+  return font;
+}
+
+NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
   CGFloat baseSize;
   switch(size){
   case NA_FONT_SIZE_SMALL: baseSize = 11; break;
@@ -305,71 +339,34 @@ NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
   default: baseSize = [NSFont systemFontSize]; break;
   }
 
-  NSFont* font;
-  NSFontDescriptor* descriptor;
-  NSDictionary* dict;
+  NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
+
+  NAFont* retFont;
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
-      font = [NSFont systemFontOfSize:baseSize];
+      retFont = naCreateFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_REGULAR, baseSize);
       break;
     case NA_FONT_KIND_TITLE:
-      font = [NSFont boldSystemFontOfSize:baseSize];
+      retFont = naCreateFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_BOLD, baseSize);
       break;
     case NA_FONT_KIND_MONOSPACE:
-      dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                            @"Courier", NSFontFamilyAttribute, 
-                            @"Regular", NSFontFaceAttribute, nil];
-      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
-      font = [NSFont fontWithDescriptor:descriptor size:baseSize];
+      retFont = naCreateFont("Courier", NA_FONT_FLAG_REGULAR, baseSize);
       break;
     case NA_FONT_KIND_PARAGRAPH:
-      dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                            @"Palatino", NSFontFamilyAttribute, 
-                            @"Regular", NSFontFaceAttribute, nil];
-      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
-      font = [NSFont fontWithDescriptor:descriptor size:baseSize + 1];
+      retFont = naCreateFont("Palatino", NA_FONT_FLAG_REGULAR, baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                            @"Times New Roman", NSFontFamilyAttribute, 
-                            @"Italic", NSFontFaceAttribute, nil];
-      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
-      font = [NSFont fontWithDescriptor:descriptor size:baseSize];
+      retFont = naCreateFont("Times New Roman", NA_FONT_FLAG_ITALIC, baseSize);
       break;
     default:
       #if NA_DEBUG
         naError("Unknown font kind");
       #endif
-      font = [NSFont systemFontOfSize:baseSize];
+      retFont = naCreateFont("San Francisco", NA_FONT_FLAG_REGULAR, size);
       break;
   }
-  return NA_COCOA_PTR_OBJC_TO_C(font);
-}
-
-
-
-NAFont na_GetCustomFont(const NAUTF8Char* fontName, uint32 flags, double size){
-  NA_UNUSED(flags);
-  NSFont* font;
-
-  NSString* attrStr = @"Regular";
-//  if(flags == NA_FONT_FLAG_BOLD){ attrStr = @"Bold"; }
-//  if(flags == NA_FONT_FLAG_ITALIC){ attrStr = @"Italic"; }
-//  if(flags == NA_FONT_FLAG_BOLD | NA_FONT_FLAG_ITALIC){ attrStr = @"Bold Italic"; }
-
-  NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [NSString stringWithUTF8String: fontName], NSFontFamilyAttribute, 
-                        attrStr, NSFontFaceAttribute, nil];
-  NSFontDescriptor* descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
-  font = [NSFont fontWithDescriptor:descriptor size:size];
-
-  if(!font){
-    #if NA_DEBUG
-      naError("Font can not be found");
-    #endif
-    font = [NSFont systemFontOfSize:size];
-  }
-  return NA_COCOA_PTR_OBJC_TO_C(font);
+  
+  return retFont;
 }
 
 

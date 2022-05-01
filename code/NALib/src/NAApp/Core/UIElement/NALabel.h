@@ -29,7 +29,7 @@ NA_API void naSetLabelHeight(NALabel* label, double height);
 // Sets font properties of a label.
 NA_API void naSetLabelTextColor(NALabel* label, const NABabyColor* color);
 NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
-NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size);
+NA_API void naSetLabelFont(NALabel* label, NAFont* font);
 
 
 

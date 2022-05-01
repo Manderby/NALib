@@ -34,7 +34,7 @@
   NA_UNUSED(sender);
   NSEvent *event = [[NSApplication sharedApplication] currentEvent];
  
-  if(event.type == NSLeftMouseUp){
+  if(event.type == NAEventTypeLeftMouseUp){
     na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDIT_FINISHED); 
     cocoaSlider->slider.sliderInMovement = false;
   }else{

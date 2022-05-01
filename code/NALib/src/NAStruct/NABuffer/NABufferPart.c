@@ -55,7 +55,7 @@ NA_HDEF NABufferPart* na_NewBufferPartWithConstData(const void* data, size_t byt
   part->sourceOffset = 0;
   part->byteSize = byteSize;
   part->blockOffset = 0;
-  part->memBlock = na_NewMemoryBlockWithData(naMakePtrWithDataConst(data), byteSize, NA_NULL);
+  part->memBlock = na_CreateMemoryBlockWithData(naMakePtrWithDataConst(data), byteSize, NA_NULL);
   return part;
 }
 
@@ -76,7 +76,7 @@ NA_HDEF NABufferPart* na_NewBufferPartWithMutableData(void* data, size_t byteSiz
   part->sourceOffset = 0;
   part->byteSize = byteSize;
   part->blockOffset = 0;
-  part->memBlock = na_NewMemoryBlockWithData(naMakePtrWithDataMutable(data), byteSize, destructor);
+  part->memBlock = na_CreateMemoryBlockWithData(naMakePtrWithDataMutable(data), byteSize, destructor);
   return part;
 }
 
@@ -98,7 +98,7 @@ NA_HDEF void na_DecoupleBufferPart(NABufferPart* part){
     if(!part)
       naCrash("part is Null");
   #endif
-  NAMemoryBlock* newblock = na_NewMemoryBlock(part->byteSize);
+  NAMemoryBlock* newblock = na_CreateMemoryBlock(part->byteSize);
   naCopyn(
     na_GetMemoryBlockDataPointerMutable(newblock, 0),
     na_GetMemoryBlockDataPointerConst(part->memBlock, part->blockOffset),
@@ -363,7 +363,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
 
   // Now, the part has been split in whatever was necessary.
   // Let's create the memory block.
-  part->memBlock = na_NewMemoryBlock(part->byteSize);
+  part->memBlock = na_CreateMemoryBlock(part->byteSize);
   part->blockOffset = 0;
   
   // Fill the memory block according to the source.

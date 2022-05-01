@@ -29,8 +29,6 @@ typedef struct NA_UIElement NA_UIElement;
 typedef struct NAEventReaction NAEventReaction;
 typedef struct NAKeyboardShortcutReaction NAKeyboardShortcutReaction;
 
-typedef void*  NAFont;
-
 // //////////////////////////////
 //
 // NA_UIElement is the base type of any ui element. All ui element struct
@@ -53,6 +51,7 @@ struct NAApplication{
   NAList            uiElements;      // A list of all ui elements in use.
   
   NATranslator*     translator;
+  NAFont*           systemFont;
   NAMouseStatus     mouseStatus;     // The mouse cursor status
   NAKeyStroke       curKeyStroke;    // The currently pressed key combination
   NAInt             flags;
@@ -81,6 +80,7 @@ struct NAImageSpace{
 
 struct NALabel{
   NA_UIElement uiElement;
+  NAFont* font;
 };
 
 struct NAMenu{
@@ -132,10 +132,12 @@ struct NASpace{
 
 struct NATextField{
   NA_UIElement uiElement;
+  NAFont* font;
 };
 
 struct NATextBox{
   NA_UIElement uiElement;
+  NAFont* font;
 };
 
 struct NAWindow{
@@ -160,6 +162,14 @@ struct NAKeyboardShortcutReaction{
   NAKeyStroke       shortcut;
   NAReactionHandler handler;
 };
+
+struct NAFont{
+  void* nativePtr;  // HFONT on Windows, NSFont* on Mac
+  NAString* name;
+  uint32 flags;
+  double size;
+};
+NA_EXTERN_RUNTIME_TYPE(NAFont);
 
 
 
@@ -221,7 +231,7 @@ NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* 
 NA_HAPI void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent);
 NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);
 NA_HAPI void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id);
-NA_HAPI uint32 na_GetMenuItemId(NAMenuItem* menuItem);
+NA_HAPI uint32 na_GetMenuItemId(const NAMenuItem* menuItem);
 
 NA_HAPI void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr);
 NA_HAPI void na_ClearMetalSpace(NAMetalSpace* metalSpace);
@@ -268,8 +278,6 @@ NA_HAPI void* na_GetUINALibEquivalent(void* nativePtr);
 
 NA_HAPI NABool na_IsApplicationRunning(void);
 
-NA_HAPI NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size);
-
 // Dispatches a command with the given uiElement.
 // As long as the command has not been finished using NA_TRUE as a return value
 // in the NAReactionHandler function handler, it will be bubbling upwards in
@@ -284,7 +292,7 @@ NA_HAPI NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size);
 // processed by the calling function. This is especially important on Windows
 // where non-handling of certain events might interrupt the whole messaging
 // chain.
-NA_HAPI NABool na_DispatchUIElementCommand(  NA_UIElement* element, NAUICommand command);
+NA_HAPI NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command);
 
 // Mouse related functions
 NA_HAPI void na_SetMouseWarpedTo(NAPos newpos);

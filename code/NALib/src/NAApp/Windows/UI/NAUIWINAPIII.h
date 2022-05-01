@@ -22,8 +22,8 @@ void naSetApplicationMouseHoverElement(NA_UIElement* element);
 const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 
 NA_HAPI UINT na_GetApplicationNextMenuItemId(NAApplication* application);
-NA_HAPI void na_SetApplicationLastOpenedMenu(NAApplication* application, NAMenu* menu);
-NA_HAPI NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application);
+NA_HAPI void na_SetApplicationLastOpenedMenu(NAApplication* application, const NAMenu* menu);
+NA_HAPI const NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application);
 
 
 
@@ -472,9 +472,9 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
   if(controlWnd == 0 && notificationCode == 0)
   {
     // This is a menu message
-    NAMenu* menu = na_GetApplicationLastOpenedMenu(naGetApplication());
-    NAMenuItem* menuItem = NA_NULL;
-    NAListIterator iter = naMakeListMutator(&(menu->childs));
+    const NAMenu* menu = na_GetApplicationLastOpenedMenu(naGetApplication());
+    const NAMenuItem* menuItem = NA_NULL;
+    NAListIterator iter = naMakeListAccessor(&(menu->childs));
     while(naIterateList(&iter)){
       menuItem = naGetListCurMutable(&iter);
       if(na_GetMenuItemId(menuItem) == controlIdentifier){
@@ -485,7 +485,7 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
     naClearListIterator(&iter);
 
     if(menuItem){
-      na_DispatchUIElementCommand((NA_UIElement*)menuItem, NA_UI_COMMAND_PRESSED);
+      na_DispatchUIElementCommand((const NA_UIElement*)menuItem, NA_UI_COMMAND_PRESSED);
       hasBeenHandeled = NA_TRUE;
     }
     na_SetApplicationLastOpenedMenu(naGetApplication(), NA_NULL);

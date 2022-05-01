@@ -137,7 +137,7 @@ NA_RUNTIME_TYPE(NAString, na_DestructString, NA_FALSE);
 // We especially inline this definition as it is used many times in this file.
 NA_DEF NAString* naNewString(){
   NAString* string = naNew(NAString);
-  string->buffer = naNewBuffer(NA_FALSE);
+  string->buffer = naCreateBuffer(NA_FALSE);
   #if NA_DEBUG
     string->cachedstr = NA_NULL;
   #endif
@@ -155,7 +155,7 @@ NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, size_t len
       naError("You must specify a destructor, as this string becomes the owner of the provided buffer.");
   #endif
   NAString* string = naNew(NAString);
-  string->buffer = naNewBufferWithMutableData(buffer, length, destructor);
+  string->buffer = naCreateBufferWithMutableData(buffer, length, destructor);
   #if NA_DEBUG
     string->cachedstr = NA_NULL;
   #endif
@@ -216,7 +216,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcString, NAInt offset, 
 
   // Extract the string
   naRelease(string->buffer);
-  string->buffer = naNewBufferExtraction(srcString->buffer, offset, length);
+  string->buffer = naCreateBufferExtraction(srcString->buffer, offset, length);
   #if NA_DEBUG
     string->cachedstr = NA_NULL;
   #endif
@@ -238,7 +238,7 @@ NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei rang
       naError("Range length is not useful.");
   #endif
   string = naNew(NAString);
-  string->buffer = naNewBufferExtraction(buffer, range.origin, range.length);
+  string->buffer = naCreateBufferExtraction(buffer, range.origin, range.length);
   #if NA_DEBUG
     string->cachedstr = NA_NULL;
   #endif
@@ -259,7 +259,7 @@ NA_API NAString* naNewStringWithNewlineSanitization( NAString* string, NANewline
     NABufferIterator writeIter;
     NABool writeNL;
     
-    NABuffer* newbuffer = naNewBuffer(NA_FALSE);
+    NABuffer* newbuffer = naCreateBuffer(NA_FALSE);
     naSetBufferNewlineEncoding(newbuffer, encoding);
     readIter = naMakeBufferAccessor(naGetStringBufferConst(string));
     writeIter = naMakeBufferModifier(newbuffer);
@@ -400,7 +400,7 @@ NA_DEF NAString* naNewStringCEscaped(const NAString* inputString){
   }
   iter = naMakeBufferAccessor(inputString->buffer);
   na_LocateBufferStart(&iter);
-  buffer = naNewBuffer(NA_FALSE);
+  buffer = naCreateBuffer(NA_FALSE);
   outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtInitial(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
@@ -437,7 +437,7 @@ NA_DEF NAString* naNewStringCUnescaped(const NAString* inputString){
   if(naIsStringEmpty(inputString)){
     return naNewString();
   }
-  buffer = naNewBuffer(NA_FALSE);
+  buffer = naCreateBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputString->buffer);
   na_LocateBufferStart(&iter);
   outiter = naMakeBufferModifier(buffer);
@@ -486,7 +486,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputString){
   if(naIsStringEmpty(inputString)){
     return naNewString();
   }
-  buffer = naNewBuffer(NA_FALSE);
+  buffer = naCreateBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputString->buffer);
   naIterateBuffer(&iter, 1);
   outiter = naMakeBufferModifier(buffer);
@@ -519,7 +519,7 @@ NA_DEF NAString* naNewStringXMLDecoded(const NAString* inputString){
   if(naIsStringEmpty(inputString)){
     return naNewString();
   }
-  buffer = naNewBuffer(NA_FALSE);
+  buffer = naCreateBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputString->buffer);
   outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtInitial(&iter)){
@@ -561,7 +561,7 @@ NA_DEF NAString* naNewStringEPSEncoded(const NAString* inputString){
   if(naIsStringEmpty(inputString)){
     return naNewString();
   }
-  buffer = naNewBuffer(NA_FALSE);
+  buffer = naCreateBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputString->buffer);
   outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtInitial(&iter)){
@@ -589,7 +589,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
   if(naIsStringEmpty(inputString)){
     return naNewString();
   }
-  buffer = naNewBuffer(NA_FALSE);
+  buffer = naCreateBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputString->buffer);
   outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtInitial(&iter)){
@@ -666,7 +666,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
     #endif
   }
 
-  NA_DEF NAString* naNewStringFromWideCharString(wchar_t* wcharString){
+  NA_DEF NAString* naNewStringFromWideCharString(const wchar_t* wcharString){
     size_t length = wcslen(wcharString);
     NAInt utf8Length = WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, NULL, 0, NULL, NULL);
     NAUTF8Char* stringBuf = naMalloc((utf8Length + 1) * sizeof(NAUTF8Char));
@@ -677,7 +677,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
     return string;
   }
   
-  NA_DEF NAString* naNewStringFromAnsiString(char* ansiString){
+  NA_DEF NAString* naNewStringFromAnsiString(const char* ansiString){
     size_t length = strlen(ansiString);
     size_t wideLength = (size_t)MultiByteToWideChar(CP_ACP, 0, ansiString, (int)length, NULL, 0);
     wchar_t* wstr = naMalloc(((wideLength + 1) * sizeof(wchar_t)));
@@ -695,7 +695,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
   }
 
   // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
-  NA_DEF NAString* naNewStringFromSystemString(TCHAR* systemString){
+  NA_DEF NAString* naNewStringFromSystemString(const TCHAR* systemString){
     #ifdef UNICODE
       return naNewStringFromWideCharString(systemString);
     #else

@@ -35,7 +35,7 @@
   cocoaButton = newCocoaButton;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
+  [self setFont:naGetFontNativePointer(naGetSystemFont())];
 
   // todo: make this dependent on whether tracking is needed or not.
   trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
