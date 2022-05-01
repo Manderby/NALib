@@ -25,6 +25,7 @@
 }
 
 - (int) getMenuItemIndex:(NSMenuItem*)item{
+  if(!item){return -1;}
   NSUInteger index = [[self itemArray] indexOfObject:item];
   return index == NSNotFound ? -1 : (int)index;
 }

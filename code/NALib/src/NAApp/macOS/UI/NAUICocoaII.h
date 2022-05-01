@@ -264,9 +264,10 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
   NSString* systemFontName = [NSString stringWithUTF8String: fontFamilyName];
 
   NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
+  NSFont* retFont;
 
   if(systemFontName == [systemFont familyName]){
-    font->nativePtr = (naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) ?
+    retFont = (naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) ?
       [NSFont systemFontOfSize:size] :
       [NSFont boldSystemFontOfSize:size];
   }else{
@@ -275,12 +276,13 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
     if(naGetFlagu32(flags, NA_FONT_FLAG_ITALIC)){ traits |= NSItalicFontMask; }
     if(naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE)){ }
 
-    font->nativePtr = [[NSFontManager sharedFontManager]
+    retFont = [[NSFontManager sharedFontManager]
       fontWithFamily:systemFontName
       traits:traits
       weight:5  // ignored if NSBoldFontMask is set.
       size:size];
   }
+  font->nativePtr = NA_COCOA_RETAIN(retFont);
 
   font->name = naNewStringWithFormat("%s", fontFamilyName);
   font->flags = flags;
