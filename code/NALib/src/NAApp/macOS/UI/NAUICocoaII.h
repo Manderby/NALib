@@ -255,7 +255,7 @@ NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
 
 
 NA_HDEF void na_DestructFont(NAFont* font){
-  NA_COCOA_RELEASE(font->nativePtr);
+  NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(font->nativePtr));
   naDelete(font->name);
 }
 
@@ -282,7 +282,7 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
       weight:5  // ignored if NSBoldFontMask is set.
       size:size];
   }
-  font->nativePtr = NA_COCOA_RETAIN(retFont);
+  font->nativePtr = NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(retFont));
 
   font->name = naNewStringWithFormat("%s", fontFamilyName);
   font->flags = flags;
