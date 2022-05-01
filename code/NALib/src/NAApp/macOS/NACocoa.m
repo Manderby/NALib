@@ -21,8 +21,6 @@
 
 #if NA_OS == NA_OS_MAC_OS_X
 
-//#import <Carbon/Carbon>
-
 #if defined __OBJC__
 #if (NA_COMPILE_GUI == 1)
 // Now, we are sure, we compile with Objective-C and on MacOSX. The
@@ -32,6 +30,7 @@
   #error Compiling NALib and Cocoa without a native int64 type will not work.
 #endif
 
+#import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 
 #include "NAUICocoaLegacyII.h"
