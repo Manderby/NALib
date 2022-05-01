@@ -192,6 +192,44 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
 }
 
 
+
+NAString* naNewKeyPressString(uint32 modifiers, NAUIKeyCode keyCode){
+  TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardLayoutInputSource();
+  CFDataRef layoutData = TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
+  const UCKeyboardLayout* keyboardLayout = (const UCKeyboardLayout*)CFDataGetBytePtr(layoutData);
+  
+  uint32 keysDown = 0;
+  UniChar chars[4];
+  UniCharCount realLength;
+                
+  UInt32 modifierKeyState = 0;
+  if(modifiers & NA_MODIFIER_FLAG_SHIFT){modifierKeyState |= shiftKey;}
+  if(modifiers & NA_MODIFIER_FLAG_CONTROL){modifierKeyState |= controlKey;}
+  if(modifiers & NA_MODIFIER_FLAG_OPTION){modifierKeyState |= optionKey;}
+  if(modifiers & NA_MODIFIER_FLAG_COMMAND){modifierKeyState |= cmdKey;}
+
+  UCKeyTranslate(
+    keyboardLayout,
+    (UInt16)keyCode,
+    kUCKeyActionDisplay,
+    modifierKeyState >> 8,
+    LMGetKbdType(),
+    kUCKeyTranslateNoDeadKeysBit,
+    &keysDown,
+    sizeof(chars) / sizeof(chars[0]),
+    &realLength,
+    chars);
+  CFRelease(currentKeyboard);
+    
+  NAUTF8Char utf8String[10];
+  CFStringRef letterCFString = CFStringCreateWithCharacters(kCFAllocatorDefault, chars, 1);
+  CFStringGetCString(letterCFString, utf8String, 10, kCFStringEncodingUTF8);
+  CFRelease(letterCFString);
+  return naNewStringWithFormat("%s", utf8String);
+}
+
+
+
 // ///////////////////////////////////
 // UI ELEMENT
 // ///////////////////////////////////
