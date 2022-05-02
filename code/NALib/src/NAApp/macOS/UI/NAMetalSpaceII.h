@@ -15,7 +15,7 @@
     self = [super initWithFrame:frameRect];
 
     if (@available(macOS 10.11, *)) {
-      CAMetalLayer* metalLayer = [[CAMetalLayer alloc] init];
+      CAMetalLayer* metalLayer = NA_COCOA_AUTORELEASE([[CAMetalLayer alloc] init]);
       metalLayer.frame = [self frame];
       metalLayer.device = MTLCreateSystemDefaultDevice();
       metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
