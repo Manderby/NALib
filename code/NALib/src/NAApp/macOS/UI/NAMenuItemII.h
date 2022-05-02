@@ -37,7 +37,6 @@ NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text){
   NACocoaNativeMenuItem* nativeItemPtr = [[NACocoaNativeMenuItem alloc]
     initWithMenuItem:cocoaMenuItem
     text: text];
-//  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), (NA_UIElement*)menu);
   na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), NA_NULL);
 
   return (NAMenuItem*)cocoaMenuItem;
@@ -48,7 +47,6 @@ NA_DEF NAMenuItem* naNewMenuSeparator(){
   NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
   
   NSMenuItem* nativeItemPtr = [NSMenuItem separatorItem];
-  //na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), (NA_UIElement*)menu);
   na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), NA_NULL);
   
   return (NAMenuItem*)cocoaMenuItem;

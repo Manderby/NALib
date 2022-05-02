@@ -141,7 +141,7 @@
 
   NA_DEF void* naGetMetalSpaceSystemContext(const NAMetalSpace* metalSpace){
     naDefineCocoaObjectConst(NACocoaNativeMetalSpace, nativePtr, metalSpace);
-    return NA_COCOA_PTR_OBJC_TO_C([nativePtr layer]);
+    return (NA_COCOA_BRIDGE void*)[nativePtr layer];
   }
 
 

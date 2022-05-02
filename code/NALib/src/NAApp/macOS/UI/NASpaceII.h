@@ -190,7 +190,7 @@ NA_HDEF void naRemoveSpaceChilds(NASpace* _Nonnull space)
   while(!naIsListEmpty(&(space->childs))){
     void* child = naGetListFirstMutable(&(space->childs));
     na_RemoveSpaceChild(space, child);
-    [(NSView*)NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(child)) removeFromSuperview];
+    [(NA_COCOA_BRIDGE NSView*)(naGetUIElementNativePtr(child)) removeFromSuperview];
   }
 }
 

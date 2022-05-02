@@ -106,17 +106,17 @@
     #define NA_COCOA_BRIDGE __bridge
     #define NA_COCOA_PTR_OBJC_TO_C(obj) (void*)CFBridgingRetain(obj)
     #define NA_COCOA_PTR_C_TO_OBJC(ptr) CFBridgingRelease(ptr)
-    #define NA_COCOA_RETAIN(obj) obj
-    #define NA_COCOA_RELEASE(obj) (void)obj
-    #define NA_COCOA_AUTORELEASE(obj) obj
+    #define NA_COCOA_RETAIN(obj) (obj)
+    #define NA_COCOA_RELEASE(obj) (void)(obj)
+    #define NA_COCOA_AUTORELEASE(obj) (obj)
     #define NA_COCOA_SUPER_DEALLOC()
   #else
     #define NA_COCOA_BRIDGE
-    #define NA_COCOA_PTR_OBJC_TO_C(obj) (void*)obj
-    #define NA_COCOA_PTR_C_TO_OBJC(ptr) (id)ptr
-    #define NA_COCOA_RETAIN(obj) [(id)obj retain]
-    #define NA_COCOA_RELEASE(obj) [(id)obj release]
-    #define NA_COCOA_AUTORELEASE(obj) [(id)obj autorelease]
+    #define NA_COCOA_PTR_OBJC_TO_C(obj) (void*)(obj)
+    #define NA_COCOA_PTR_C_TO_OBJC(ptr) (id)(ptr)
+    #define NA_COCOA_RETAIN(obj) [(id)(obj) retain]
+    #define NA_COCOA_RELEASE(obj) [(id)(obj) release]
+    #define NA_COCOA_AUTORELEASE(obj) [(id)(obj) autorelease]
     #define NA_COCOA_SUPER_DEALLOC() [super dealloc]
   #endif
 
