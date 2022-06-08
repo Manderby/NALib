@@ -55,9 +55,11 @@
 }
 
 - (void) setText:(const NAUTF8Char*)text{
-  NSArray<NSValue*>* selectedRanges = [self selectedRanges];
+  NSArray<NSValue*>* selectedRanges = [[NSArray alloc] initWithArray: [self selectedRanges]];
   [self setString:[NSString stringWithUTF8String:text]];
-  [self setSelectedRanges:selectedRanges affinity:[self selectionAffinity] stillSelecting:NO];
+  if([selectedRanges count])
+    [self setSelectedRanges:selectedRanges affinity:[self selectionAffinity] stillSelecting:NO];
+  NA_COCOA_RELEASE(selectedRanges);
 }
 
 - (NAString*) newStringWithText{
