@@ -37,7 +37,8 @@ typedef enum{
 typedef struct NAUIImage NAUIImage;
 
 
-// naNewUIImage creates a new UIImage with a given main and alternative image.
+// naCreateUIImage creates a new UIImage with a given main and alternative
+// image.
 //
 // You always provide the images in the highest resolution available. If you
 // have for example a 512x512 point image representing the double resolution
