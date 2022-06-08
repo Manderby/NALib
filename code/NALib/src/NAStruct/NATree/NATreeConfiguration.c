@@ -41,8 +41,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->childIndexGetter      = na_GetChildIndexQuadDouble;
       config->keyIndexGetter        = na_GetKeyIndexQuadDouble;
       config->keyEqualComparer      = NA_KEY_OP(Equal, NAPos);
-      config->keyLowerComparer      = NA_KEY_OP(Lower, NAPos);
-      config->keyLowerEqualComparer = NA_KEY_OP(LowerEqual, NAPos);
+      config->keyLessComparer      = NA_KEY_OP(Less, NAPos);
+      config->keyLessEqualComparer = NA_KEY_OP(LessEqual, NAPos);
       config->keyAssigner           = NA_KEY_OP(Assign, NAPos);
       config->keyTester             = na_TestKeyQuadDouble;
       config->keyNodeContainTester  = na_TestKeyNodeContainQuadDouble;
@@ -89,8 +89,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->childIndexGetter      = na_GetChildIndexOctDouble;
       config->keyIndexGetter        = na_GetKeyIndexOctDouble;
       config->keyEqualComparer      = NA_KEY_OP(Equal, NAVertex);
-      config->keyLowerComparer      = NA_KEY_OP(Lower, NAVertex);
-      config->keyLowerEqualComparer = NA_KEY_OP(LowerEqual, NAVertex);
+      config->keyLessComparer      = NA_KEY_OP(Less, NAVertex);
+      config->keyLessEqualComparer = NA_KEY_OP(LessEqual, NAVertex);
       config->keyAssigner           = NA_KEY_OP(Assign, NAVertex);
       config->keyTester             = na_TestKeyOctDouble;
       config->keyNodeContainTester  = na_TestKeyNodeContainOctDouble;
@@ -136,8 +136,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     case NA_TREE_KEY_NOKEY:
       config->keyIndexGetter        = NA_NULL;
       config->keyEqualComparer      = NA_NULL;
-      config->keyLowerComparer      = NA_NULL;
-      config->keyLowerEqualComparer = NA_NULL;
+      config->keyLessComparer      = NA_NULL;
+      config->keyLessEqualComparer = NA_NULL;
       config->keyAssigner           = NA_NULL;
       config->keyTester             = NA_NULL;
       config->keyNodeContainTester  = NA_NULL;
@@ -149,8 +149,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->childIndexGetter      = na_GetChildIndexBinDouble;
       config->keyIndexGetter        = na_GetKeyIndexBinDouble;
       config->keyEqualComparer      = NA_KEY_OP(Equal, double);
-      config->keyLowerComparer      = NA_KEY_OP(Lower, double);
-      config->keyLowerEqualComparer = NA_KEY_OP(LowerEqual, double);
+      config->keyLessComparer      = NA_KEY_OP(Less, double);
+      config->keyLessEqualComparer = NA_KEY_OP(LessEqual, double);
       config->keyAssigner           = NA_KEY_OP(Assign, double);
       config->keyTester             = na_TestKeyBinDouble;
       config->keyNodeContainTester  = NA_NULL;
@@ -162,8 +162,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->childIndexGetter      = na_GetChildIndexBinNAInt;
       config->keyIndexGetter        = na_GetKeyIndexBinNAInt;
       config->keyEqualComparer      = NA_KEY_OP(Equal, NAInt);
-      config->keyLowerComparer      = NA_KEY_OP(Lower, NAInt);
-      config->keyLowerEqualComparer = NA_KEY_OP(LowerEqual, NAInt);
+      config->keyLessComparer      = NA_KEY_OP(Less, NAInt);
+      config->keyLessEqualComparer = NA_KEY_OP(LessEqual, NAInt);
       config->keyAssigner           = NA_KEY_OP(Assign, NAInt);
       config->keyTester             = na_TestKeyBinNAInt;
       config->keyNodeContainTester  = NA_NULL;

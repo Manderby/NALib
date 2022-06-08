@@ -62,8 +62,8 @@ typedef enum{
 typedef NAInt           (*NAKeyIndexGetter)(const void* baseKey, const void* testKey, const void* data);
 typedef NAInt           (*NAChildIndexGetter)(NATreeNode* parentNode, const void* childKey);
 typedef NABool          (*NAKeyEqualComparer)(const void* key1, const void* key2);
-typedef NABool          (*NAKeyLowerComparer)(const void* key1, const void* key2);
-typedef NABool          (*NAKeyLowerEqualComparer)(const void* key1, const void* key2);
+typedef NABool          (*NAKeyLessComparer)(const void* key1, const void* key2);
+typedef NABool          (*NAKeyLessEqualComparer)(const void* key1, const void* key2);
 typedef void            (*NAKeyAssigner)(void* dst, const void* src);
 typedef void            (*NAKeyAdder)(void* dst, const void* src1, const void* src2);
 typedef NABool          (*NAKeyTester)(const void* lowerLimit, const void* upperLimit, const void* key);
@@ -110,8 +110,8 @@ struct NATreeConfiguration{
   NAKeyIndexGetter              keyIndexGetter;
   NAChildIndexGetter            childIndexGetter;
   NAKeyEqualComparer            keyEqualComparer;
-  NAKeyLowerComparer            keyLowerComparer;
-  NAKeyLowerEqualComparer       keyLowerEqualComparer;
+  NAKeyLessComparer             keyLessComparer;
+  NAKeyLessEqualComparer        keyLessEqualComparer;
   NAKeyAssigner                 keyAssigner;
   NAKeyTester                   keyTester;
   NAKeyNodeContainTester        keyNodeContainTester;

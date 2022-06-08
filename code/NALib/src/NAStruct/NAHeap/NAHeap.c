@@ -27,7 +27,7 @@
 
 #define NA_T_USE_BACKPOINTERS 0
   #define NA_T_DONT_MOVE_DOWN_COMPARATOR Greater
-  #define NA_T_DONT_MOVE_UP_COMPARATOR Lower
+  #define NA_T_DONT_MOVE_UP_COMPARATOR Less
     #define NA_T_TYPE double
       #include "NAHeapT.h"
     #undef NA_T_TYPE
@@ -46,7 +46,7 @@
   #undef NA_T_DONT_MOVE_DOWN_COMPARATOR
   #undef NA_T_DONT_MOVE_UP_COMPARATOR
 
-  #define NA_T_DONT_MOVE_DOWN_COMPARATOR Lower
+  #define NA_T_DONT_MOVE_DOWN_COMPARATOR Less
   #define NA_T_DONT_MOVE_UP_COMPARATOR Greater
     #define NA_T_TYPE double
       #include "NAHeapT.h"
@@ -69,7 +69,7 @@
 
 #define NA_T_USE_BACKPOINTERS 1
   #define NA_T_DONT_MOVE_DOWN_COMPARATOR Greater
-  #define NA_T_DONT_MOVE_UP_COMPARATOR Lower
+  #define NA_T_DONT_MOVE_UP_COMPARATOR Less
     #define NA_T_TYPE double
       #include "NAHeapT.h"
     #undef NA_T_TYPE
@@ -88,7 +88,7 @@
   #undef NA_T_DONT_MOVE_DOWN_COMPARATOR
   #undef NA_T_DONT_MOVE_UP_COMPARATOR
 
-  #define NA_T_DONT_MOVE_DOWN_COMPARATOR Lower
+  #define NA_T_DONT_MOVE_DOWN_COMPARATOR Less
   #define NA_T_DONT_MOVE_UP_COMPARATOR Greater
     #define NA_T_TYPE double
       #include "NAHeapT.h"
@@ -446,38 +446,38 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     switch(flags & NA_HEAP_DATATYPE_MASK){
     case NA_HEAP_USES_DOUBLE_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   double, 0);
+        heap->movedown = NA_T3(na_HeapMoveDown, Less,   double, 0);
         heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, double, 0);
       }else{
         heap->movedown = NA_T3(na_HeapMoveDown, Greater, double, 0);
-        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   double, 0);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Less,   double, 0);
       }
       break;
     case NA_HEAP_USES_FLOAT_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   float, 0);
+        heap->movedown = NA_T3(na_HeapMoveDown, Less,   float, 0);
         heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, float, 0);
       }else{
         heap->movedown = NA_T3(na_HeapMoveDown, Greater, float, 0);
-        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   float, 0);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Less,   float, 0);
       }
       break;
     case NA_HEAP_USES_NAINT_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   NAInt, 0);
+        heap->movedown = NA_T3(na_HeapMoveDown, Less,   NAInt, 0);
         heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, NAInt, 0);
       }else{
         heap->movedown = NA_T3(na_HeapMoveDown, Greater, NAInt, 0);
-        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   NAInt, 0);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Less,   NAInt, 0);
       }
       break;
     case NA_HEAP_USES_DATETIME_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   NADateTime, 0);
+        heap->movedown = NA_T3(na_HeapMoveDown, Less,   NADateTime, 0);
         heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, NADateTime, 0);
       }else{
         heap->movedown = NA_T3(na_HeapMoveDown, Greater, NADateTime, 0);
-        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   NADateTime, 0);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Less,   NADateTime, 0);
       }
       break;
     default:
@@ -507,38 +507,38 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     switch(flags & NA_HEAP_DATATYPE_MASK){
     case NA_HEAP_USES_DOUBLE_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   double, 1);
+        heap->movedown = NA_T3(na_HeapMoveDown, Less,   double, 1);
         heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, double, 1);
       }else{
         heap->movedown = NA_T3(na_HeapMoveDown, Greater, double, 1);
-        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   double, 1);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Less,   double, 1);
       }
       break;
     case NA_HEAP_USES_FLOAT_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   float, 1);
+        heap->movedown = NA_T3(na_HeapMoveDown, Less,   float, 1);
         heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, float, 1);
       }else{
         heap->movedown = NA_T3(na_HeapMoveDown, Greater, float, 1);
-        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   float, 1);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Less,   float, 1);
       }
       break;
     case NA_HEAP_USES_NAINT_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   NAInt, 1);
+        heap->movedown = NA_T3(na_HeapMoveDown, Less,   NAInt, 1);
         heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, NAInt, 1);
       }else{
         heap->movedown = NA_T3(na_HeapMoveDown, Greater, NAInt, 1);
-        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   NAInt, 1);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Less,   NAInt, 1);
       }
       break;
     case NA_HEAP_USES_DATETIME_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   NADateTime, 1);
+        heap->movedown = NA_T3(na_HeapMoveDown, Less,   NADateTime, 1);
         heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, NADateTime, 1);
       }else{
         heap->movedown = NA_T3(na_HeapMoveDown, Greater, NADateTime, 1);
-        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   NADateTime, 1);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Less,   NADateTime, 1);
       }
       break;
     default:
