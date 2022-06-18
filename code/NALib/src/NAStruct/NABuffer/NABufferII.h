@@ -9,7 +9,7 @@
 // we easily turn that into an NABuffer:
 //
 // const NAUTF8Char* myString = "This is an exciting trend";
-// NABuffer* buf0 = naNewBufferWithConstData(myString, naStrlen(myString));
+// NABuffer* buf0 = naCreateBufferWithConstData(myString, naStrlen(myString));
 //
 // This results in the following structure:
 //
@@ -110,8 +110,8 @@
 // "This is", "very" and "exciting" which in this case come from two sources.
 // 
 // A source can for for example be an existing array in memory, a file, or
-// another NABuffer. You can create custom sources with naNewBufferSource and
-// the corresponding buffers by calling naNewBufferWithCustomSource.
+// another NABuffer. You can create custom sources with naCreateBufferSource and
+// the corresponding buffers by calling naCreateBufferWithCustomSource.
 //
 // As we have seen, buf0 was a constant string. Imagine, buf3 being read from
 // a file. In NALib, the file content stays on disk as long as it is not
@@ -215,8 +215,8 @@ struct NABufferTreeNodeData{
 
 
 // NAMemoryBlock
-NA_HAPI NAMemoryBlock* na_NewMemoryBlock(size_t byteSize);
-NA_HAPI NAMemoryBlock* na_NewMemoryBlockWithData(NAPtr data, size_t byteSize, NAMutator destructor);
+NA_HAPI NAMemoryBlock* na_CreateMemoryBlock(size_t byteSize);
+NA_HAPI NAMemoryBlock* na_CreateMemoryBlockWithData(NAPtr data, size_t byteSize, NAMutator destructor);
 NA_HIAPI const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, size_t index);
 NA_HIAPI void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, size_t index);
 
@@ -292,6 +292,7 @@ NA_HAPI void na_StoreBufferBytes(NABufferIterator* iter, const void* data, size_
 #include "NABufferSourceII.h"
 #include "NABufferWriteII.h"
 #include "NAMemoryBlockII.h"
+
 
 
 

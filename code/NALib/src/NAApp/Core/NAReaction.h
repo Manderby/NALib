@@ -33,7 +33,7 @@ typedef enum{
 
 typedef struct NAReaction NAReaction;
 struct NAReaction{
-  void* uiElement;
+  const void* uiElement;
   NAUICommand command;
   void* controller;
 };

@@ -75,43 +75,43 @@ NA_IAPI void   NA_KEY_OP(Assign,       double)(void* dst, const void* src);
 NA_IAPI NABool NA_KEY_OP(Greater,      double)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(GreaterEqual, double)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(Equal,        double)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(Lower,        double)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(LowerEqual,   double)(const void* a, const void* b);
+NA_IAPI NABool NA_KEY_OP(Less,        double)(const void* a, const void* b);
+NA_IAPI NABool NA_KEY_OP(LessEqual,   double)(const void* a, const void* b);
 
 NA_IAPI void   NA_KEY_OP(Assign,       float)(void* dst, const void* src);
 NA_IAPI NABool NA_KEY_OP(Greater,      float)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(GreaterEqual, float)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(Equal,        float)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(Lower,        float)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(LowerEqual,   float)(const void* a, const void* b);
+NA_IAPI NABool NA_KEY_OP(Less,        float)(const void* a, const void* b);
+NA_IAPI NABool NA_KEY_OP(LessEqual,   float)(const void* a, const void* b);
 
 NA_IAPI void   NA_KEY_OP(Assign,       NAInt)(void* dst, const void* src);
 NA_IAPI NABool NA_KEY_OP(Greater,      NAInt)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(GreaterEqual, NAInt)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(Equal,        NAInt)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(Lower,        NAInt)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(LowerEqual,   NAInt)(const void* a, const void* b);
+NA_IAPI NABool NA_KEY_OP(Less,        NAInt)(const void* a, const void* b);
+NA_IAPI NABool NA_KEY_OP(LessEqual,   NAInt)(const void* a, const void* b);
 
 NA_IAPI void   NA_KEY_OP(Assign,       NAPos)(void* dst, const void* src);
 NA_IAPI NABool NA_KEY_OP(Greater,      NAPos)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(GreaterEqual, NAPos)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(Equal,        NAPos)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(Lower,        NAPos)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(LowerEqual,   NAPos)(const void* a, const void* b);
+NA_IAPI NABool NA_KEY_OP(Less,        NAPos)(const void* a, const void* b);
+NA_IAPI NABool NA_KEY_OP(LessEqual,   NAPos)(const void* a, const void* b);
 
 NA_IAPI void   NA_KEY_OP(Assign,       NAVertex)(void* dst, const void* src);
 NA_IAPI NABool NA_KEY_OP(Greater,      NAVertex)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(GreaterEqual, NAVertex)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(Equal,        NAVertex)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(Lower,        NAVertex)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(LowerEqual,   NAVertex)(const void* a, const void* b);
+NA_IAPI NABool NA_KEY_OP(Less,        NAVertex)(const void* a, const void* b);
+NA_IAPI NABool NA_KEY_OP(LessEqual,   NAVertex)(const void* a, const void* b);
 
 NA_IAPI void   NA_KEY_OP(Assign,       NADateTime)(void* dst, const void* src);
 NA_IAPI NABool NA_KEY_OP(Greater,      NADateTime)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(GreaterEqual, NADateTime)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(Equal,        NADateTime)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(Lower,        NADateTime)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(LowerEqual,   NADateTime)(const void* a, const void* b);
+NA_IAPI NABool NA_KEY_OP(Less,        NADateTime)(const void* a, const void* b);
+NA_IAPI NABool NA_KEY_OP(LessEqual,   NADateTime)(const void* a, const void* b);
 
 
 

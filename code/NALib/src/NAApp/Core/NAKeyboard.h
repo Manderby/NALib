@@ -175,6 +175,9 @@ NA_API NAKeyStroke naGetCurrentKeyStroke(void);
 // modifier keys. Can for example be used as input for naAddUIKeyboardShortcut.
 NA_API NAKeyStroke naMakeKeyStroke(uint32 modifiers, NAUIKeyCode keyCode);
 
+// Returns a string which represents what the user would see when pressing
+// the given key with the given modifiers. Implemented system-specific.
+NAString* naNewKeyPressString(uint32 modifiers, NAUIKeyCode keyCode);
 
 #endif // NA_KEYBOARD_INCLUDED
 

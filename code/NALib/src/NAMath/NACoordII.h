@@ -1426,8 +1426,8 @@ NA_IDEF NARect naMakeRectWithRectAndBorder(NARect rect, double border){
   NARect newRect;
   newRect.pos.x = rect.pos.x - border;
   newRect.pos.y = rect.pos.y - border;
-  newRect.size.width = rect.size.width + 2 * border;
-  newRect.size.height = rect.size.height + 2 * border;
+  newRect.size.width = rect.size.width + 2. * border;
+  newRect.size.height = rect.size.height + 2. * border;
   return newRect;
 }
 NA_IDEF NARecti naMakeRectiWithRectAndBorder(NARecti rect, NAInt border){
@@ -1446,9 +1446,9 @@ NA_IDEF NABox naMakeBoxWithBoxAndBorder(NABox box, double border){
   newbox.vertex.x = box.vertex.x - border;
   newbox.vertex.y = box.vertex.y - border;
   newbox.vertex.z = box.vertex.z - border;
-  newbox.volume.width = box.volume.width + 2 * border;
-  newbox.volume.height = box.volume.height + 2 * border;
-  newbox.volume.depth = box.volume.depth + 2 * border;
+  newbox.volume.width = box.volume.width + 2. * border;
+  newbox.volume.height = box.volume.height + 2. * border;
+  newbox.volume.depth = box.volume.depth + 2. * border;
   return newbox;
 }
 NA_IDEF NABoxi naMakeBoxiWithBoxAndBorder(NABoxi box, NAInt border){
@@ -1467,7 +1467,7 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndBorder(NABoxi box, NAInt border){
 NA_IDEF NARange naMakeRangePositive(NARange range){
   NAInt rangenegative = (NAInt)(range.length < 0);
   range.origin += rangenegative * range.length;
-  range.length -= (double)rangenegative * 2 * range.length;
+  range.length -= (double)rangenegative * 2. * range.length;
   return range;
 }
 NA_IDEF NARangei naMakeRangeiPositive(NARangei range){
@@ -2141,7 +2141,7 @@ NA_IDEF NABool naEqualBoxi(NABoxi box1, NABoxi box2){
 // COMPARING
 // ///////////////////////////////////////
 
-NA_IDEF NABool naLowerPos(NAPos pos1, NAPos pos2){
+NA_IDEF NABool naLessPos(NAPos pos1, NAPos pos2){
   #if NA_DEBUG
     if(!naIsPosValid(pos1))
       naError("pos1 is invalid.");
@@ -2150,7 +2150,7 @@ NA_IDEF NABool naLowerPos(NAPos pos1, NAPos pos2){
   #endif
   return ((pos1.x < pos2.x) && (pos1.y < pos2.y));
 }
-NA_IDEF NABool naLowerEqualPos(NAPos pos1, NAPos pos2){
+NA_IDEF NABool naLessEqualPos(NAPos pos1, NAPos pos2){
   #if NA_DEBUG
     if(!naIsPosValid(pos1))
       naError("pos1 is invalid.");
@@ -2180,7 +2180,7 @@ NA_IDEF NABool naGreaterPos(NAPos pos1, NAPos pos2){
 
 
 
-NA_IDEF NABool naLowerVertex(NAVertex vertex1, NAVertex vertex2){
+NA_IDEF NABool naLessVertex(NAVertex vertex1, NAVertex vertex2){
   #if NA_DEBUG
     if(!naIsVertexValid(vertex1))
       naError("vertex1 is invalid.");
@@ -2189,7 +2189,7 @@ NA_IDEF NABool naLowerVertex(NAVertex vertex1, NAVertex vertex2){
   #endif
   return ((vertex1.x < vertex2.x) && (vertex1.y < vertex2.y) && (vertex1.z < vertex2.z));
 }
-NA_IDEF NABool naLowerEqualVertex(NAVertex vertex1, NAVertex vertex2){
+NA_IDEF NABool naLessEqualVertex(NAVertex vertex1, NAVertex vertex2){
   #if NA_DEBUG
     if(!naIsVertexValid(vertex1))
       naError("vertex1 is invalid.");

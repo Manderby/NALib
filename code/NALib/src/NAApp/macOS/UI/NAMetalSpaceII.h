@@ -15,7 +15,7 @@
     self = [super initWithFrame:frameRect];
 
     if (@available(macOS 10.11, *)) {
-      CAMetalLayer* metalLayer = [[CAMetalLayer alloc] init];
+      CAMetalLayer* metalLayer = NA_COCOA_AUTORELEASE([[CAMetalLayer alloc] init]);
       metalLayer.frame = [self frame];
       metalLayer.device = MTLCreateSystemDefaultDevice();
       metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
@@ -141,7 +141,7 @@
 
   NA_DEF void* naGetMetalSpaceSystemContext(const NAMetalSpace* metalSpace){
     naDefineCocoaObjectConst(NACocoaNativeMetalSpace, nativePtr, metalSpace);
-    return NA_COCOA_PTR_OBJC_TO_C([nativePtr layer]);
+    return (NA_COCOA_BRIDGE void*)[nativePtr layer];
   }
 
 
@@ -176,7 +176,7 @@
     #endif
   }
 
-  NA_DEF void* naGetMetalSpaceSystemContext(NAMetalSpace* metalSpace){
+  NA_DEF void* naGetMetalSpaceSystemContext(const NAMetalSpace* metalSpace){
     NA_UNUSED(metalSpace);
     #if NA_DEBUG
       naError("Metal has not been configured. See NAConfiguration.h");

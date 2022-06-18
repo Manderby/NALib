@@ -139,7 +139,12 @@ NA_DEF NATextField* naNewTextField(double width){
     naHandleTextFieldReverseTabOrder,
     NA_NULL);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT), MAKELPARAM(TRUE, 0));
+  winapiTextField->textField.font = naRetain(naGetSystemFont());
+  SendMessage(
+    nativePtr,
+    WM_SETFONT,
+    (WPARAM)naGetFontNativePointer(winapiTextField->textField.font),
+    MAKELPARAM(TRUE, 0));
 
   return (NATextField*)winapiTextField;
 }
@@ -148,6 +153,12 @@ NA_DEF NATextField* naNewTextField(double width){
 
 NA_DEF void na_DestructWINAPITextField(NAWINAPITextField* winapiTextField){
   na_ClearTextField((NATextField*)winapiTextField);
+}
+
+
+
+NA_DEF void naSetTextFieldEnabled(NATextField* textField, NABool enabled){
+  // todo
 }
 
 
@@ -184,9 +195,11 @@ NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment 
 
 
 
-NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind, NAFontSize size){
+NA_DEF void naSetTextFieldFont(NATextField* textField, NAFont* font){
  NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
- SendMessage(naGetUIElementNativePtr(winapiTextField), WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(kind, size), MAKELPARAM(TRUE, 0));
+ SendMessage(naGetUIElementNativePtr(winapiTextField), WM_SETFONT, (WPARAM)naGetFontNativePointer(font), MAKELPARAM(TRUE, 0));
+ naRelease(textField->font);
+ textField->font = naRetain(font);
 }
 
 

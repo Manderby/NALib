@@ -15,7 +15,6 @@
 
 
 
-
 NA_DEF CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext){
   CGContextRef cgContext = nil;
 

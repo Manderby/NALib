@@ -23,7 +23,7 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
   triples = totalbyteSize / 3;
   sizeremainder = totalbyteSize % 3;
 
-  dstbuffer = naNewBuffer(NA_FALSE);
+  dstbuffer = naCreateBuffer(NA_FALSE);
   dstIter = naMakeBufferModifier(dstbuffer);
   srcIter = naMakeBufferMutator(buffer);
 
@@ -80,7 +80,7 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
 
 
 
-NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(NAString* string){
+NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(NAString* string){
   NAInt totalcharsize;
   NAInt triples;
   NAInt sizeremainder;
@@ -89,7 +89,7 @@ NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(NAString* string){
   NAUTF8Char  asctriple[4];
   NAByte      dsttriple[3];
   NABufferIterator srcIter = naMakeBufferMutator(naGetStringBufferMutable(string));
-  NABuffer* ascbuffer = naNewBuffer(NA_FALSE);
+  NABuffer* ascbuffer = naCreateBuffer(NA_FALSE);
   NABufferIterator asciter = naMakeBufferModifier(ascbuffer);
 
   while(!naIsBufferAtEnd(&srcIter)){
@@ -117,7 +117,7 @@ NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(NAString* string){
   triples = totalcharsize / 4;
   sizeremainder = totalcharsize % 4;
 
-  dstbuffer = naNewBuffer(NA_FALSE);
+  dstbuffer = naCreateBuffer(NA_FALSE);
   dstIter = naMakeBufferModifier(dstbuffer);
   asciter = naMakeBufferMutator(ascbuffer);
 

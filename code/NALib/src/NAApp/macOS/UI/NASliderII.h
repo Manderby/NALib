@@ -32,7 +32,21 @@
 
 - (void) onValueChanged:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDITED);
+  NSEvent *event = [[NSApplication sharedApplication] currentEvent];
+ 
+  if(event.type == NAEventTypeLeftMouseUp){
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDIT_FINISHED); 
+    cocoaSlider->slider.sliderInMovement = false;
+  }else{
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDITED);  
+    cocoaSlider->slider.sliderInMovement = true;
+  }
+}
+
+- (void) mouseDown:(id)sender{
+  cocoaSlider->slider.sliderInMovement = true;
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_PRESSED);  
+  [super mouseDown:sender];
 }
 
 - (NARect) getInnerRect{
@@ -69,8 +83,10 @@ NA_DEF void naSetSliderEnabled(NASlider* slider, NABool enabled){
 
 
 
-NA_DEF void naSetSliderTickCount(NASlider* slider, NAInt tickCount){
+NA_DEF void naSetSliderRange(NASlider* slider, double min, double max, NAInt tickCount){
   naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
+  slider->min = min;
+  slider->max = max;
   [nativePtr setTickCount:tickCount];
 }
 
@@ -78,14 +94,25 @@ NA_DEF void naSetSliderTickCount(NASlider* slider, NAInt tickCount){
 
 NA_DEF double naGetSliderValue(const NASlider* slider){
   naDefineCocoaObjectConst(NACocoaNativeSlider, nativePtr, slider);
-  return [nativePtr getSliderValue];
+  double plainValue = [nativePtr getSliderValue];
+  return plainValue * (slider->max - slider->min) + slider->min;
+}
+
+
+
+NA_DEF double naGetSliderStaticValue(const NASlider* slider){
+  return slider->staticValue;
 }
 
 
 
 NA_DEF void naSetSliderValue(NASlider* slider, double value){
   naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
-  [nativePtr setSliderValue:value];
+  double plainValue = (value - slider->min) / (slider->max - slider->min);
+  [nativePtr setSliderValue:plainValue];
+  if(!slider->sliderInMovement){
+    slider->staticValue = value;
+  }
 }
 
 

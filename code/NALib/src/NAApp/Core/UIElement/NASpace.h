@@ -21,9 +21,8 @@ NA_API NASpace* naNewSpace(NASize size);
 //
 // The tallest items are 24 points in height. But the visual representation is
 // often times shifted in vertical position such that some elements are even
-// overlapping when displayed line by line. Therefore, it is proposed to always
-// use at least a difference of 25 points between lines. The author strongly
-// recommends that number.
+// overlapping when displayed line by line. The author recommends a line height
+// of 24 points.
 NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
 
 // Switch between clear or an alternate color which adds a slight gray to the
@@ -41,6 +40,11 @@ NA_API void naRemoveSpaceChilds(NASpace* space);
 
 // Sets the rectangle of the space relative to its parent.
 NA_API void naSetSpaceRect(NASpace* space, NARect rect);
+
+// Changes the visibility of the space.
+NA_API void naSetSpaceVisible(
+  NASpace* ospace,
+  NABool visible);
 
 // Makes the space react to mouse drags in order to move the window.
 NA_API void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable);

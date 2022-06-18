@@ -15,7 +15,8 @@
 
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(naGetSystemFont()))];
+
   return self;
 }
 
@@ -24,6 +25,7 @@
 }
 
 - (int) getMenuItemIndex:(NSMenuItem*)item{
+  if(!item){return -1;}
   NSUInteger index = [[self itemArray] indexOfObject:item];
   return index == NSNotFound ? -1 : (int)index;
 }

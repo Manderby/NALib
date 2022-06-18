@@ -8,7 +8,6 @@
 #include "../../NAThreading.h"
 #include "../../NAPreferences.h"
 
-
 // The pointer storing the app if any.
 NAApplication* na_App = NA_NULL;
 
@@ -62,6 +61,8 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
   application->translator = NA_NULL;
   naStartTranslator();
   
+  application->systemFont = naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT);
+
   application->mouseStatus.pos = naMakePos(0, 0);
   application->mouseStatus.prevPos = naMakePos(0, 0);
   
@@ -95,6 +96,8 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
   naStopTranslator();
   na_ClearUIElement(&(application->uiElement));
 
+  naRelease(application->systemFont);
+
   // This must be at the very end as the uiElements are used up until the last
   // ClearUIElement operation.
   // todo test if all uiElements are gone.
@@ -103,13 +106,14 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
 
 
 
-NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage){
+NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage, uint32 flags){
   na_InitUIElement(&(button->uiElement), NA_UI_BUTTON, nativePtr);
   if(uiImage){
     button->uiImage = naRetainConst(uiImage);
   }else{
     button->uiImage = NA_NULL;
   }
+  button->flags = flags;
 }
 NA_HDEF void na_ClearButton(NAButton* button){
   if(button->uiImage){
@@ -118,14 +122,19 @@ NA_HDEF void na_ClearButton(NAButton* button){
   na_ClearUIElement(&(button->uiElement));
 }
 NA_HDEF void na_setButtonImage(NAButton* button, const NAUIImage* uiImage){
-  #if NA_DEBUG
-    if(!uiImage)
-      naError("uiImage is null");
-  #endif
-  if(uiImage){
+//  #if NA_DEBUG
+//    if(!uiImage)
+//      naError("uiImage is null");
+//  #endif
+  if(button->uiImage){
     naReleaseConst(button->uiImage);
   }
-  button->uiImage = naRetainConst(uiImage);
+  if(uiImage)
+  {
+    button->uiImage = naRetainConst(uiImage);
+  }else{
+    button->uiImage = NA_NULL;
+  }
 }
 
 
@@ -153,6 +162,7 @@ NA_HDEF void na_InitLabel(NALabel* label, void* nativePtr){
 }
 NA_HDEF void na_ClearLabel(NALabel* label){
   na_ClearUIElement(&(label->uiElement));
+  naRelease(label->font);
 }
 
 
@@ -189,7 +199,7 @@ NA_HDEF void na_ClearMenuItem(NAMenuItem* menuItem){
 NA_HDEF void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id){
   menuItem->id = id;
 }
-NA_HDEF uint32 na_GetMenuItemId(NAMenuItem* menuItem){
+NA_HDEF uint32 na_GetMenuItemId(const NAMenuItem* menuItem){
   return menuItem->id;
 }
 
@@ -275,6 +285,8 @@ NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
 
 NA_HDEF void na_InitSlider(NASlider* slider, void* nativePtr){
   na_InitUIElement(&(slider->uiElement), NA_UI_SLIDER, nativePtr);
+  slider->staticValue = 0.;
+  slider->sliderInMovement = NA_FALSE;
 }
 NA_HDEF void na_ClearSlider(NASlider* slider){
   na_ClearUIElement(&(slider->uiElement));
@@ -287,6 +299,7 @@ NA_HDEF void na_InitTextBox(NATextBox* textBox, void* nativePtr){
 }
 NA_HDEF void na_ClearTextBox(NATextBox* textBox){
   na_ClearUIElement(&(textBox->uiElement));
+  naRelease(textBox->font);
 }
 
 
@@ -296,6 +309,7 @@ NA_HDEF void na_InitTextField(NATextField* textField, void* nativePtr){
 }
 NA_HDEF void na_ClearTextField(NATextField* textField){
   na_ClearUIElement(&(textField->uiElement));
+  naRelease(textField->font);
 }
 
 
@@ -350,7 +364,7 @@ NA_HDEF void* na_GetUINALibEquivalent(NANativePtr nativePtr){
 
 
 
-NA_HDEF NABool na_DispatchUIElementCommand(NA_UIElement* element, NAUICommand command){
+NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command){
   NABool finished = NA_FALSE;
   NAListIterator iter;
 
@@ -368,7 +382,7 @@ NA_HDEF NABool na_DispatchUIElementCommand(NA_UIElement* element, NAUICommand co
 
   // If the command has not been finished, search for other reactions in the parent elements.
   if(!finished && command != NA_UI_COMMAND_MOUSE_ENTERED && command != NA_UI_COMMAND_MOUSE_EXITED){
-    NA_UIElement* parentelement = (NA_UIElement*)naGetUIElementParent(element);
+    const NA_UIElement* parentelement = (const NA_UIElement*)naGetUIElementParentConst(element);
     if(parentelement){finished = na_DispatchUIElementCommand(parentelement, command);}
   }
 
@@ -399,6 +413,29 @@ NA_HDEF void na_SetMouseEnteredAtPos(NAPos newpos){
 NA_HDEF void na_SetMouseExitedAtPos(NAPos newpos){
   na_App->mouseStatus.prevPos = na_App->mouseStatus.pos;
   na_App->mouseStatus.pos = newpos;
+}
+
+
+
+NA_HAPI void na_DestructFont(NAFont* font);
+NA_RUNTIME_TYPE(NAFont, na_DestructFont, NA_TRUE);
+
+NA_DEF NAFont* naGetSystemFont(){
+  return na_App->systemFont;
+}
+
+NA_DEF void* naGetFontNativePointer(const NAFont* font){
+  return font->nativePtr;
+}
+
+NA_DEF const NAString* naGetFontName(const NAFont* font){
+  return font->name;
+}
+NA_DEF uint32 naGetFontFlags(const NAFont* font){
+  return font->flags;
+}
+NA_DEF double naGetFontSize(const NAFont* font){
+  return font->size;
 }
 
 
@@ -474,16 +511,18 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
       && (naGetUIElementType(uiElement) != NA_UI_CHECKBOX)
       && (naGetUIElementType(uiElement) != NA_UI_RADIO)
       && (naGetUIElementType(uiElement) != NA_UI_MENU)
-      && (naGetUIElementType(uiElement) != NA_UI_MENUITEM))
-      naError("Only buttons, radios and checkBoxes can receyve PRESSED commands.");
+      && (naGetUIElementType(uiElement) != NA_UI_MENUITEM)
+      && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
+      naError("Only buttons, checkBoxes, radios, menus, menuItems and sliders can receyve PRESSED commands.");
     if((command == NA_UI_COMMAND_EDITED)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTBOX)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD)
       && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
       naError("Only textFields or Sliders can receyve EDITED commands.");
     if((command == NA_UI_COMMAND_EDIT_FINISHED)
+      && (naGetUIElementType(uiElement) != NA_UI_SLIDER)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD))
-      naError("Only textFields can receyve EDIT_FINISHED commands.");
+      naError("Only textFields and sliders can receyve EDIT_FINISHED commands.");
   #endif
   eventReaction = naAlloc(NAEventReaction);
   eventReaction->controller = controller;

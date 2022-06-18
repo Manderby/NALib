@@ -20,7 +20,7 @@ void benchmarkNAStruct(void);
 
 
 
-void printNALib(){
+void printNALib(void){
   #if NA_PRINTOUT_ENABLED == 1
     printNABase();
     printNACore();
@@ -28,13 +28,13 @@ void printNALib(){
   #endif
 }
 
-void testNALib(){
+void testNALib(void){
   naTestFunction(testNABase);
   naTestFunction(testNACore);
   naTestFunction(testNAStruct);
 }
 
-void benchmarkNALib(){
+void benchmarkNALib(void){
   printf(NA_NL "Benchmarking:" NA_NL);
   benchmarkNABase();
   benchmarkNAStruct();

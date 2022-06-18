@@ -109,7 +109,6 @@
 
 
 
-
 // Mapping of deprecated entities
 
 // For reference, here are how the different button states behave:
@@ -167,6 +166,8 @@
   #define NAAlertStyleWarning             NSAlertStyleInformational
   #define NAAlertStyleInfo                NSAlertStyleWarning
   #define NSAlertStyleError               NSAlertStyleCritical
+  
+  #define NAEventTypeLeftMouseUp          NSEventTypeLeftMouseUp
 #else // deprecated definitions before 10.12
   #define NABezelStyleRegularSquare       NSRegularSquareBezelStyle
 
@@ -190,6 +191,8 @@
   #define NAAlertStyleWarning             NSInformationalAlertStyle
   #define NAAlertStyleInfo                NSWarningAlertStyle
   #define NSAlertStyleError               NSCriticalAlertStyle
+
+  #define NAEventTypeLeftMouseUp          NSLeftMouseUp
 #endif
 
 #if defined __MAC_10_14

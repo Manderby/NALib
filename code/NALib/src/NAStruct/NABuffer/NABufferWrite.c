@@ -232,7 +232,7 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcBuffe
 
     tmpsource = dstbuffer->source;
     tmpsourceOffset = dstbuffer->sourceOffset;
-    dstbuffer->source = naNewBufferSource(NA_NULL, mutableSrcBuffer);
+    dstbuffer->source = naCreateBufferSource(NA_NULL, mutableSrcBuffer);
     dstbuffer->sourceOffset = srcRange.origin - curPos;
 
     naCacheBufferRange(dstbuffer, naMakeRangei(curPos, srcRange.length));
@@ -274,7 +274,7 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, size_t b
       bufptr++;
     }
 
-    tmpbuffer = naNewBufferWithMutableData(buf, byteSize, naFree);
+    tmpbuffer = naCreateBufferWithMutableData(buf, byteSize, naFree);
     naWriteBufferBuffer(iter, tmpbuffer, naMakeRangei(0, (NAInt)byteSize));
     naRelease(tmpbuffer);
 

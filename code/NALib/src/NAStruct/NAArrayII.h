@@ -457,8 +457,10 @@ NA_IDEF NABool naLocateArrayIndex(NAArrayIterator* iterator, size_t index){
 
 NA_IDEF NABool naIterateArray(NAArrayIterator* iterator, size_t step){
   // todo: make IterateBack possible with a separate function
-  iterator->index += step;
-  if(iterator->index == naGetArrayCount(naGetPtrConst(iterator->array))){iterator->index = NA_ARRAY_INVALID_INDEX;}
+  iterator->index = (iterator->index == NA_ARRAY_INVALID_INDEX) ? step - 1 : iterator->index + step;
+  if(iterator->index == naGetArrayCount(naGetPtrConst(iterator->array))){
+    iterator->index = NA_ARRAY_INVALID_INDEX;
+  }
 #if NA_DEBUG
   //    if(iterator->index < NA_ARRAY_INVALID_INDEX)
   //      naError("Iterator underflows");
@@ -477,7 +479,9 @@ NA_IDEF NABool naIterateArrayBack(NAArrayIterator* iterator, size_t step){
     iterator->index = NA_ARRAY_INVALID_INDEX;
   }else{
     iterator->index -= step;
-    if(iterator->index == naGetArrayCount(naGetPtrConst(iterator->array))){iterator->index = NA_ARRAY_INVALID_INDEX;}
+    if(iterator->index == naGetArrayCount(naGetPtrConst(iterator->array))){
+      iterator->index = NA_ARRAY_INVALID_INDEX;
+    }
   }
 #if NA_DEBUG
   //    if(iterator->index < NA_ARRAY_INVALID_INDEX)

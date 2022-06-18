@@ -10,6 +10,7 @@
 #if NA_OS == NA_OS_WINDOWS
   #include <windows.h>
 #elif NA_OS == NA_OS_MAC_OS_X
+  #include <objc/objc.h>
   #include <unistd.h>
   #include <dispatch/dispatch.h>
   // Workaround for XCode 3 where the following macro is not defined:
@@ -279,7 +280,7 @@ NA_IDEF void naLockMutex(NAMutex mutex){
       dispatch_semaphore_wait(macintoshmutex->mutex, DISPATCH_TIME_FOREVER);
       macintoshmutex->seemslocked = NA_TRUE;
     #else
-      dispatch_semaphore_wait(NA_COCOA_PTR_C_TO_OBJC(mutex), DISPATCH_TIME_FOREVER);
+      dispatch_semaphore_wait((NA_COCOA_BRIDGE dispatch_semaphore_t)mutex, DISPATCH_TIME_FOREVER);
     #endif
   #endif
 }
@@ -311,7 +312,7 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
       macintoshmutex->seemslocked = NA_FALSE;
       dispatch_semaphore_signal(macintoshmutex->mutex);
     #else
-      dispatch_semaphore_signal(NA_COCOA_PTR_C_TO_OBJC(mutex));
+      dispatch_semaphore_signal((NA_COCOA_BRIDGE dispatch_semaphore_t)mutex);
     #endif
   #endif
 }
@@ -390,7 +391,7 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
         macintoshmutex->seemslocked = NA_TRUE;
       }
     #else
-      long retValue = dispatch_semaphore_wait(NA_COCOA_PTR_C_TO_OBJC(mutex), DISPATCH_TIME_NOW);
+      long retValue = dispatch_semaphore_wait((NA_COCOA_BRIDGE dispatch_semaphore_t)mutex, DISPATCH_TIME_NOW);
       return (retValue ? NA_FALSE : NA_TRUE);
     #endif
   #endif
@@ -460,10 +461,10 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxWaitTime){
         naError("maxWaitTime should not be negative. Beware of the zero!");
     #endif
     if(maxWaitTime == 0){
-      result = dispatch_semaphore_wait(NA_COCOA_PTR_C_TO_OBJC(alarmer), DISPATCH_TIME_FOREVER);
+      result = dispatch_semaphore_wait((NA_COCOA_BRIDGE dispatch_semaphore_t)alarmer, DISPATCH_TIME_FOREVER);
     }else{
       dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1000000000 * maxWaitTime));
-      result = dispatch_semaphore_wait(NA_COCOA_PTR_C_TO_OBJC(alarmer), timeout);
+      result = dispatch_semaphore_wait((NA_COCOA_BRIDGE dispatch_semaphore_t)alarmer, timeout);
     }
     return (result ? NA_FALSE : NA_TRUE);
   #endif
@@ -475,7 +476,7 @@ NA_IDEF void naTriggerAlarm(NAAlarm alarmer){
   #if NA_OS == NA_OS_WINDOWS
     SetEvent(alarmer);
   #else
-    dispatch_semaphore_signal(NA_COCOA_PTR_C_TO_OBJC(alarmer));
+    dispatch_semaphore_signal((NA_COCOA_BRIDGE dispatch_semaphore_t)alarmer);
   #endif
 }
 

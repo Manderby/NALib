@@ -140,6 +140,13 @@ NA_DEF void naSetSpaceRect(NASpace* _Nonnull space, NARect rect){
 
 
 
+NA_DEF void naSetSpaceVisible(NASpace* _Nonnull space, NABool visible){
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
+  [nativePtr setHidden:visible ? NO : YES];
+}
+
+
+
 NA_DEF void naSetSpaceDragsWindow(NASpace* _Nonnull space, NABool isDraggable){
   space->dragsWindow = isDraggable;
 }
@@ -183,7 +190,7 @@ NA_HDEF void naRemoveSpaceChilds(NASpace* _Nonnull space)
   while(!naIsListEmpty(&(space->childs))){
     void* child = naGetListFirstMutable(&(space->childs));
     na_RemoveSpaceChild(space, child);
-    [(NSView*)NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(child)) removeFromSuperview];
+    [(NA_COCOA_BRIDGE NSView*)(naGetUIElementNativePtr(child)) removeFromSuperview];
   }
 }
 

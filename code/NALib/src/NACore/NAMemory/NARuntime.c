@@ -300,7 +300,7 @@ NA_HIDEF void na_EnhancePool(NA_TypeInfo* typeInfo){
 
 
 
-NA_DEF void* na_NewStruct(NATypeInfo* info){
+NA_DEF void* na_NewStructInternal(NATypeInfo* info){
   #if NA_DEBUG
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
@@ -383,6 +383,25 @@ NA_DEF void* na_NewStruct(NATypeInfo* info){
   #endif
 
   return retPointer;
+}
+
+
+
+NA_DEF void* na_NewStruct(NATypeInfo* info){
+  #if NA_DEBUG
+    NA_TypeInfo* typeInfo = (NA_TypeInfo*)info;
+    if(typeInfo->refCounting)
+      naError("Do not use naNew for reference-counting types. Use naCreate.");
+  #endif
+  return na_NewStructInternal(info);
+}
+NA_DEF void* na_CreateStruct(NATypeInfo* info){
+  #if NA_DEBUG
+    NA_TypeInfo* typeInfo = (NA_TypeInfo*)info;
+    if(!typeInfo->refCounting)
+      naError("Do not use naCreate for non-reference-counting types. Use naNew.");
+  #endif
+  return na_NewStructInternal(info);
 }
 
 

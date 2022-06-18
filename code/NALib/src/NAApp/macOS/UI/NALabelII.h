@@ -125,7 +125,7 @@
   [self setDrawsBackground:NO];
   [self setTextColor:naGetLabelColor()];
   [[self cell] setLineBreakMode:NSLineBreakByWordWrapping];
-  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(naGetSystemFont()))];
   cocoaLabel = newCocoaLabel;
   return self;
 }
@@ -191,8 +191,8 @@
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 
-- (void) setFontKind:(NAFontKind)kind size:(NAFontSize)size{
-  [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKindAndSize(kind, size))];
+- (void) setNAFont:(NAFont*)font{
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
 }
 
 - (void) setVisible:(NABool)visible{
@@ -212,11 +212,13 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
 
   NACocoaNativeLabel* nativePtr = [[NACocoaNativeLabel alloc]
     initWithLabel:cocoaLabel
-    frame:naMakeNSRectWithSize(naMakeSize(width, 16))];
+    frame:naMakeNSRectWithSize(naMakeSize(width, 17))];
   na_InitLabel((NALabel*)cocoaLabel, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   naSetLabelText((NALabel*)cocoaLabel, text);
   
+  cocoaLabel->label.font = naRetain(naGetSystemFont());
+
   return (NALabel*)cocoaLabel;
 }
 
@@ -277,9 +279,11 @@ NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
 
 
 
-NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size){
+NA_DEF void naSetLabelFont(NALabel* label, NAFont* font){
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setFontKind:kind size:size];
+  [nativePtr setNAFont:font];
+  naRelease(label->font);
+  label->font = naRetain(font);
 }
 
 

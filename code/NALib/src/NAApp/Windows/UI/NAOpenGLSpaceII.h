@@ -104,7 +104,7 @@ NA_DEF void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace)
 
 
 
-NA_DEF void naSetOpenGLVisible(NAOpenGLSpace* openGLSpace, NABool visible){
+NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible){
   // todo
 }
 
@@ -140,7 +140,7 @@ NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds)
     naError("OpenGL has not been configured. See NAConfiguration.h");
   }
 
-  NA_DEF void naSetOpenGLVisible(NAOpenGLSpace* openGLSpace, NABool visible){
+  NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible){
     naError("OpenGL has not been configured. See NAConfiguration.h");
   } 
 

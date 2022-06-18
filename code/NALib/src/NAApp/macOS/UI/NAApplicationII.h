@@ -107,8 +107,6 @@ NA_HDEF NAApplication* na_NewApplication(void){
     initWithCocoaApplication:cocoaApplication];
   na_InitApplication(&(cocoaApplication->application), NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
-//  na_InitApplication(&(cocoaApplication->application), NA_COCOA_PTR_OBJC_TO_C(NSApp));
-
   return (NAApplication*)cocoaApplication;
 }
 

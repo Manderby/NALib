@@ -70,7 +70,7 @@ NA_HDEF NAPos na_GetChildOriginQuad(NAPos parentorigin, NAInt childIndex, NAInt 
 
 
 
-NA_HDEF NATreeQuadNode* na_ConstructTreeNodeQuad(const NATreeConfiguration* config, NAPos origin, NAInt childExponent){
+NA_HDEF NATreeQuadNode* na_NewTreeNodeQuad(const NATreeConfiguration* config, NAPos origin, NAInt childExponent){
   NATreeQuadNode* quadNode = naNew(NATreeQuadNode);
   na_InitTreeNode(config, na_GetQuadNodeNode(quadNode), &origin);
 
@@ -90,7 +90,7 @@ NA_HIDEF NAPos na_GetQuadTreeAlignedPos(NAInt leafExponent, const NAPos* pos){
 
 
 
-NA_HDEF NATreeLeaf* na_ConstructTreeLeafQuad(const NATreeConfiguration* config, const void* key, NAPtr content){
+NA_HDEF NATreeLeaf* na_NewTreeLeafQuad(const NATreeConfiguration* config, const void* key, NAPtr content){
   NAInt leafExponent = naGetTreeConfigurationBaseLeafExponent(config);
   NATreeQuadLeaf* quadLeaf = naNew(NATreeQuadLeaf);
   NAPos alignedPos = na_GetQuadTreeAlignedPos(leafExponent, key);
@@ -129,23 +129,23 @@ NA_HDEF NAInt na_GetKeyIndexQuadDouble(const void* baseKey, const void* testKey,
   return index;
 }
 NA_HDEF NABool na_TestKeyQuadDouble(const void* lowerLimit, const void* upperLimit, const void* key){
-  return NA_KEY_OP(LowerEqual, NAPos)(lowerLimit, key) && NA_KEY_OP(Lower, NAPos)(key, upperLimit);
+  return NA_KEY_OP(LessEqual, NAPos)(lowerLimit, key) && NA_KEY_OP(Less, NAPos)(key, upperLimit);
 }
 NA_HDEF NABool na_TestKeyNodeContainQuadDouble(NATreeNode* parentNode, const void* key){
   NATreeQuadNode* quadNode = (NATreeQuadNode*)(parentNode);
   double childwidth = naMakeDoubleWithExponent((int32)quadNode->childExponent);
   NAPos upperLimit = naMakePos(quadNode->origin.x + 2 * childwidth, quadNode->origin.y + 2 * childwidth);
   return
-    NA_KEY_OP(LowerEqual, NAPos)(&(quadNode->origin), key) &&
-    NA_KEY_OP(Lower, NAPos)(key, &upperLimit);
+    NA_KEY_OP(LessEqual, NAPos)(&(quadNode->origin), key) &&
+    NA_KEY_OP(Less, NAPos)(key, &upperLimit);
 }
 NA_HDEF NABool na_TestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key){
   NATreeQuadLeaf* quadLeaf = (NATreeQuadLeaf*)(leaf);
   double leafwidth = naMakeDoubleWithExponent((int32)quadLeaf->leafExponent);
   NAPos upperLimit = naMakePos(quadLeaf->origin.x + leafwidth, quadLeaf->origin.y + leafwidth);
   return
-    NA_KEY_OP(LowerEqual, NAPos)(&(quadLeaf->origin), key) &&
-    NA_KEY_OP(Lower, NAPos)(key, &upperLimit);
+    NA_KEY_OP(LessEqual, NAPos)(&(quadLeaf->origin), key) &&
+    NA_KEY_OP(Less, NAPos)(key, &upperLimit);
 }
 NA_HDEF NABool na_TestKeyNodeOverlapQuadDouble(NATreeNode* parentNode, const void* lowerKey, const void* upperKey){
   NATreeQuadNode* quadNode = (NATreeQuadNode*)(parentNode);
@@ -372,7 +372,7 @@ NA_HDEF NATreeQuadNode* naCreateTreeParentQuad(NATree* tree, NATreeItem* item, N
   // Reaching here, newRootOrigin and newRootChildExponent
   // denote a new parent containing both the existing child and the new leaf.
   // We create a new node which will become the root.
-  return na_ConstructTreeNodeQuad(tree->config, newRootOrigin, newRootChildExponent);
+  return na_NewTreeNodeQuad(tree->config, newRootOrigin, newRootChildExponent);
 }
 
 
@@ -418,7 +418,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafQuad(NATree* tree, NATreeItem* existingItem, co
   #endif
   
   // Create the new leaf and initialize it.
-  newLeaf = na_ConstructTreeLeafQuad(tree->config, key, content);
+  newLeaf = na_NewTreeLeafQuad(tree->config, key, content);
 
   if(!existingItem){
     // There is no leaf to add to, meaning there was no root. Therefore, we
@@ -522,7 +522,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafQuad(NATree* tree, NATreeItem* existingItem, co
         #if NA_DEBUG
           NAInt testExistingIndex;
         #endif
-        NATreeQuadNode* smallestParent = na_ConstructTreeNodeQuad(tree->config, smallestParentOrigin, smallestParentChildExponent);
+        NATreeQuadNode* smallestParent = na_NewTreeNodeQuad(tree->config, smallestParentOrigin, smallestParentChildExponent);
         
         // First, attach the previous item to the new parent.
         NABool isPrevExistingChildLeaf = na_IsTreeItemLeaf(tree, prevExistingChild);
