@@ -560,21 +560,21 @@ NA_DEF const void* naGetUIElementParentConst(const void* uiElement){
 
 
 NA_DEF NAWindow* naGetUIElementWindow(void* uiElement){
-  void* curelement = uiElement;
-  while(curelement && naGetUIElementType(curelement) != NA_UI_WINDOW){
-    curelement = naGetUIElementParent(curelement);
+  void* curElement = uiElement;
+  while(curElement && naGetUIElementType(curElement) != NA_UI_WINDOW){
+    curElement = naGetUIElementParent(curElement);
   }
-  return curelement;
+  return curElement;
 }
 
 
 
 NA_DEF const NAWindow* naGetUIElementWindowConst(const void* uiElement){
-  const void* curelement = uiElement;
-  while(curelement && naGetUIElementType(curelement) != NA_UI_WINDOW){
-    curelement = naGetUIElementParentConst(curelement);
+  const void* curElement = uiElement;
+  while(curElement && naGetUIElementType(curElement) != NA_UI_WINDOW){
+    curElement = naGetUIElementParentConst(curElement);
   }
-  return curelement;
+  return curElement;
 }
 
 

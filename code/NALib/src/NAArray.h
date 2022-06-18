@@ -130,8 +130,8 @@ NA_IAPI NABool naIsArrayEmpty     (const NAArray* array);
 // NAArray* myarray;
 // NAArrayIterator iter = naMakeArrayIterator(myarray);
 // while(naIterateArray(&iter, 1)){
-//   void* curelement = naGetArrayCurMutable(iter);
-//   Do stuff with curelement.
+//   void* curElement = naGetArrayCurMutable(iter);
+//   Do stuff with curElement.
 // }
 // naClearArrayIterator(&iter);
 //
