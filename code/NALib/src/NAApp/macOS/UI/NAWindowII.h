@@ -171,7 +171,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
   if(auxiliary){
     [nativePtr setKeepOnTop:YES];
     [nativePtr setHidesOnDeactivate:YES];
-    [nativePtr setCollectionBehavior:NSWindowCollectionBehaviorTransient | NSWindowCollectionBehaviorFullScreenAuxiliary];
+    [nativePtr setCollectionBehavior:NSWindowCollectionBehaviorTransient | NAWindowCollectionBehaviorFullScreenAuxiliary];
     [nativePtr setExcludedFromWindowsMenu:YES];
   }
   

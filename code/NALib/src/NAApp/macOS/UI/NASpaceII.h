@@ -31,7 +31,7 @@
 - (void)drawRect:(NSRect)dirtyRect{
   [super drawRect:dirtyRect];
   if(cocaSpace->space.backgroundColor[3] != 0.){
-    [[NSColor colorWithRed:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[0])
+    [[NSColor colorWithDeviceRed:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[0])
       green:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[1])
       blue:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[2])
       alpha:cocaSpace->space.backgroundColor[3]] setFill];

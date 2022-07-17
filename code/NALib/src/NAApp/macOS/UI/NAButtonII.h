@@ -15,7 +15,7 @@
 
   if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS)){
     if(!isImage && naGetFlagu32(flags, NA_BUTTON_STATEFUL)){
-      [self setBezelStyle:NSBezelStyleInline]; 
+      [self setBezelStyle:NABezelStyleInline]; 
       [self setBordered:YES];
     }else{
       [self setBezelStyle:NABezelStyleRounded]; 

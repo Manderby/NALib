@@ -127,10 +127,17 @@
   #define NATextAlignmentRight            NSTextAlignmentRight
   #define NATextAlignmentCenter           NSTextAlignmentCenter
 
+  #define NABezelStyleInline              NSBezelStyleInline
+  #define NAWindowCollectionBehaviorFullScreenAuxiliary NSWindowCollectionBehaviorFullScreenAuxiliary
+
 #else // deprecated definitions before 10.7
   #define NATextAlignmentLeft             NSLeftTextAlignment
   #define NATextAlignmentRight            NSRightTextAlignment
   #define NATextAlignmentCenter           NSCenterTextAlignment
+
+  // Elements introduced in 10.7. No replacement possible.
+  #define NABezelStyleInline              NABezelStyleRounded
+  #define NAWindowCollectionBehaviorFullScreenAuxiliary 0
 #endif
 
 #if defined __MAC_10_12
@@ -162,12 +169,15 @@
   #define NAEventModifierFlagOption       NSEventModifierFlagOption
   #define NAEventModifierFlagControl      NSEventModifierFlagControl
   #define NAEventModifierFlagCommand      NSEventModifierFlagCommand
+  #define NAEventModifierFlagFunction     NSEventModifierFlagFunction
 
   #define NAAlertStyleWarning             NSAlertStyleInformational
   #define NAAlertStyleInfo                NSAlertStyleWarning
   #define NSAlertStyleError               NSAlertStyleCritical
   
   #define NAEventTypeLeftMouseUp          NSEventTypeLeftMouseUp
+  
+  #define NADeviceIndependentModifierFlagsMask NSEventModifierFlagDeviceIndependentFlagsMask
 #else // deprecated definitions before 10.12
   #define NABezelStyleRegularSquare       NSRegularSquareBezelStyle
 
@@ -187,12 +197,15 @@
   #define NAEventModifierFlagOption       NSAlternateKeyMask
   #define NAEventModifierFlagControl      NSControlKeyMask
   #define NAEventModifierFlagCommand      NSCommandKeyMask
+  #define NAEventModifierFlagFunction     NSFunctionKeyMask
 
   #define NAAlertStyleWarning             NSInformationalAlertStyle
   #define NAAlertStyleInfo                NSWarningAlertStyle
   #define NSAlertStyleError               NSCriticalAlertStyle
 
   #define NAEventTypeLeftMouseUp          NSLeftMouseUp
+
+  #define NADeviceIndependentModifierFlagsMask NSDeviceIndependentModifierFlagsMask
 #endif
 
 #if defined __MAC_10_14

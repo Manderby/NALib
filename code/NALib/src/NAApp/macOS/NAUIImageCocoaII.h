@@ -11,8 +11,10 @@
 
 
 
-#if defined __MAC_10_9 // NSAppearance exists since 10.9 but NSAppearanceName since 10.13
+// NSAppearance and drawInRect exists since 10.9
+#if defined __MAC_10_9
 
+  // NSAppearanceName exists since 10.13
   #if !defined __MAC_10_13
     typedef NSString* NSAppearanceName;
   #endif
