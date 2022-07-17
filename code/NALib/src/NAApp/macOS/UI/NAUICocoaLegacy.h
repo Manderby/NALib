@@ -10,7 +10,6 @@
   extern "C"{
 #endif
 
-
 #include "Availability.h"
 
 #if __clang_major__ >= 8  // Supposedly, clang 8 is needed for @available.
@@ -122,11 +121,14 @@
 // NAButtonTypeSwitch            = NAButtonTypeToggle but borderless
 // NAButtonTypeRadio             = NAButtonTypeSwitch but constrained
 
+
+
 #if defined __MAC_10_7
   #define NATextAlignmentLeft             NSTextAlignmentLeft
   #define NATextAlignmentRight            NSTextAlignmentRight
   #define NATextAlignmentCenter           NSTextAlignmentCenter
 
+  // Elements introduced in 10.7. No replacement possible.
   #define NABezelStyleInline              NSBezelStyleInline
   #define NAWindowCollectionBehaviorFullScreenAuxiliary NSWindowCollectionBehaviorFullScreenAuxiliary
 
@@ -140,106 +142,98 @@
   #define NAWindowCollectionBehaviorFullScreenAuxiliary 0
 #endif
 
+
+
 #if defined __MAC_10_12
   #define NAButtonTypeMomentaryLight      NSButtonTypeMomentaryLight
 #elif defined __MAC_10_9
   #define NAButtonTypeMomentaryLight      NSMomentaryLightButton
 #else // deprecated definitions before 10.9
-  #define NAButtonTypeMomentaryLight      NSMomentaryPushButton // yes, this was reversed with the push button
+  // yes, this was reversed with the push button
+  #define NAButtonTypeMomentaryLight      NSMomentaryPushButton
 #endif
+
+
 
 #if defined __MAC_10_12
-  #define NABezelStyleRegularSquare       NSBezelStyleRegularSquare
-
-  #define NAEventTypeKeyUp                NSEventTypeKeyUp
-  #define NAEventTypeKeyDown              NSEventTypeKeyDown
-  #define NAEventTypeFlagsChanged         NSEventTypeFlagsChanged
-
-  #define NAEventMaskAny                  NSEventMaskAny
-  #define NAWindowStyleMaskTitled         NSWindowStyleMaskTitled
-  #define NAWindowStyleMaskClosable       NSWindowStyleMaskClosable
-  #define NAWindowStyleMaskMiniaturizable NSWindowStyleMaskMiniaturizable
-  #define NAWindowStyleMaskResizable      NSWindowStyleMaskResizable
-  #define NAWindowStyleMaskBorderless     NSWindowStyleMaskBorderless
-  #define NAWindowStyleMaskHUDWindow      NSWindowStyleMaskHUDWindow
-  #define NAWindowStyleMaskFullScreen     NSWindowStyleMaskFullScreen
-  #define NAWindowStyleMaskNonactivatingPanel NSWindowStyleMaskNonactivatingPanel // Only supported for NSPanel
-  #define NAWindowStyleMaskUtilityWindow  NSWindowStyleMaskUtilityWindow // Only supported for NSPanel
-  #define NAEventModifierFlagShift        NSEventModifierFlagShift
-  #define NAEventModifierFlagOption       NSEventModifierFlagOption
-  #define NAEventModifierFlagControl      NSEventModifierFlagControl
-  #define NAEventModifierFlagCommand      NSEventModifierFlagCommand
-  #define NAEventModifierFlagFunction     NSEventModifierFlagFunction
-
-  #define NAAlertStyleWarning             NSAlertStyleInformational
+  #define NAAlertStyleError               NSAlertStyleCritical
   #define NAAlertStyleInfo                NSAlertStyleWarning
-  #define NSAlertStyleError               NSAlertStyleCritical
-  
-  #define NAEventTypeLeftMouseUp          NSEventTypeLeftMouseUp
-  
+  #define NAAlertStyleWarning             NSAlertStyleInformational
+  #define NABezelStyleRegularSquare       NSBezelStyleRegularSquare
+  #define NACompositePlusDarker           NSCompositingOperationPlusDarker
   #define NADeviceIndependentModifierFlagsMask NSEventModifierFlagDeviceIndependentFlagsMask
+  #define NAEventMaskAny                  NSEventMaskAny
+  #define NAEventModifierFlagCommand      NSEventModifierFlagCommand
+  #define NAEventModifierFlagControl      NSEventModifierFlagControl
+  #define NAEventModifierFlagFunction     NSEventModifierFlagFunction
+  #define NAEventModifierFlagOption       NSEventModifierFlagOption
+  #define NAEventModifierFlagShift        NSEventModifierFlagShift
+  #define NAEventTypeFlagsChanged         NSEventTypeFlagsChanged
+  #define NAEventTypeLeftMouseUp          NSEventTypeLeftMouseUp
+  #define NAEventTypeKeyDown              NSEventTypeKeyDown
+  #define NAEventTypeKeyUp                NSEventTypeKeyUp
+  #define NAWindowStyleMaskBorderless     NSWindowStyleMaskBorderless
+  #define NAWindowStyleMaskClosable       NSWindowStyleMaskClosable
+  #define NAWindowStyleMaskFullScreen     NSWindowStyleMaskFullScreen
+  #define NAWindowStyleMaskHUDWindow      NSWindowStyleMaskHUDWindow
+  #define NAWindowStyleMaskMiniaturizable NSWindowStyleMaskMiniaturizable
+  #define NAWindowStyleMaskNonactivatingPanel NSWindowStyleMaskNonactivatingPanel // Only supported for NSPanel
+  #define NAWindowStyleMaskResizable      NSWindowStyleMaskResizable
+  #define NAWindowStyleMaskTitled         NSWindowStyleMaskTitled
+  #define NAWindowStyleMaskUtilityWindow  NSWindowStyleMaskUtilityWindow // Only supported for NSPanel
 #else // deprecated definitions before 10.12
+  #define NAAlertStyleError               NSCriticalAlertStyle
+  #define NAAlertStyleInfo                NSWarningAlertStyle
+  #define NAAlertStyleWarning             NSInformationalAlertStyle
   #define NABezelStyleRegularSquare       NSRegularSquareBezelStyle
-
-  #define NAEventTypeKeyUp                NSKeyUp
-  #define NAEventTypeKeyDown              NSKeyDown
-  #define NAEventTypeFlagsChanged         NSFlagsChanged
-
+  #define NACompositePlusDarker           NSCompositePlusDarker
+  #define NADeviceIndependentModifierFlagsMask NSDeviceIndependentModifierFlagsMask
   #define NAEventMaskAny                  NSAnyEventMask
-  #define NAWindowStyleMaskTitled         NSTitledWindowMask
+  #define NAEventModifierFlagCommand      NSCommandKeyMask
+  #define NAEventModifierFlagControl      NSControlKeyMask
+  #define NAEventModifierFlagFunction     NSFunctionKeyMask
+  #define NAEventModifierFlagOption       NSAlternateKeyMask
+  #define NAEventModifierFlagShift        NSShiftKeyMask
+  #define NAEventTypeFlagsChanged         NSFlagsChanged
+  #define NAEventTypeLeftMouseUp          NSLeftMouseUp
+  #define NAEventTypeKeyDown              NSKeyDown
+  #define NAEventTypeKeyUp                NSKeyUp
+  #define NAWindowStyleMaskBorderless     NSBorderlessWindowMask
   #define NAWindowStyleMaskClosable       NSClosableWindowMask
+  #define NAWindowStyleMaskFullScreen     NSFullScreenWindowMask
+  #define NAWindowStyleMaskHUDWindow      1 << 13
   #define NAWindowStyleMaskMiniaturizable NSMiniaturizableWindowMask
   #define NAWindowStyleMaskResizable      NSResizableWindowMask
-  #define NAWindowStyleMaskBorderless     NSBorderlessWindowMask
-  #define NAWindowStyleMaskHUDWindow      1 << 13
-  #define NAWindowStyleMaskFullScreen     NSFullScreenWindowMask
-  #define NAEventModifierFlagShift        NSShiftKeyMask
-  #define NAEventModifierFlagOption       NSAlternateKeyMask
-  #define NAEventModifierFlagControl      NSControlKeyMask
-  #define NAEventModifierFlagCommand      NSCommandKeyMask
-  #define NAEventModifierFlagFunction     NSFunctionKeyMask
-
-  #define NAAlertStyleWarning             NSInformationalAlertStyle
-  #define NAAlertStyleInfo                NSWarningAlertStyle
-  #define NSAlertStyleError               NSCriticalAlertStyle
-
-  #define NAEventTypeLeftMouseUp          NSLeftMouseUp
-
-  #define NADeviceIndependentModifierFlagsMask NSDeviceIndependentModifierFlagsMask
+  #define NAWindowStyleMaskTitled         NSTitledWindowMask
 #endif
+
+
 
 #if defined __MAC_10_14
-  #define NAButtonTypeRadio               NSButtonTypeRadio
-  #define NAButtonTypeSwitch              NSButtonTypeSwitch
-  #define NAButtonTypePushOnPushOff       NSButtonTypePushOnPushOff
-  #define NAButtonTypeToggle              NSButtonTypeToggle
-  #define NAButtonTypeMomentaryChange     NSButtonTypeMomentaryChange
-  #define NAButtonTypeOnOff               NSButtonTypeOnOff
-  #define NAButtonTypeMomentaryPushIn     NSButtonTypeMomentaryPushIn
-
   #define NABezelStyleRounded             NSBezelStyleRounded
   #define NABezelStyleShadowlessSquare    NSBezelStyleShadowlessSquare
-
-  #define NAStateOn                       NSControlStateValueOn
-  #define NAStateOff                      NSControlStateValueOff
-  
+  #define NAButtonTypeMomentaryChange     NSButtonTypeMomentaryChange
+  #define NAButtonTypeMomentaryPushIn     NSButtonTypeMomentaryPushIn
+  #define NAButtonTypeOnOff               NSButtonTypeOnOff
+  #define NAButtonTypePushOnPushOff       NSButtonTypePushOnPushOff
+  #define NAButtonTypeRadio               NSButtonTypeRadio
+  #define NAButtonTypeSwitch              NSButtonTypeSwitch
+  #define NAButtonTypeToggle              NSButtonTypeToggle
   #define NAOpenGLContextParameterSwapInterval  NSOpenGLContextParameterSwapInterval
+  #define NAStateOff                      NSControlStateValueOff
+  #define NAStateOn                       NSControlStateValueOn
 #else // deprecated definitions before 10.14
-  #define NAButtonTypeRadio               NSRadioButton
-  #define NAButtonTypeSwitch              NSSwitchButton
-  #define NAButtonTypePushOnPushOff       NSPushOnPushOffButton
-  #define NAButtonTypeToggle              NSToggleButton
-  #define NAButtonTypeMomentaryChange     NSMomentaryChangeButton
-
   #define NABezelStyleRounded             NSRoundedBezelStyle
   #define NABezelStyleShadowlessSquare    NSShadowlessSquareBezelStyle
-
-  #define NAStateOn                       NSOnState
+  #define NAButtonTypeMomentaryChange     NSMomentaryChangeButton
+  #define NAButtonTypePushOnPushOff       NSPushOnPushOffButton
+  #define NAButtonTypeRadio               NSRadioButton
+  #define NAButtonTypeSwitch              NSSwitchButton
+  #define NAButtonTypeToggle              NSToggleButton
+  #define NAOpenGLContextParameterSwapInterval  NSOpenGLCPSwapInterval
   #define NAStateOff                      NSOffState
-
-#define NAOpenGLContextParameterSwapInterval  NSOpenGLCPSwapInterval
+  #define NAStateOn                       NSOnState
 #endif
-
 
 
 
@@ -249,6 +243,7 @@ NA_API CGFloat naGetWindowBackingScaleFactor(NSWindow* window);
 NA_API NABool naLoadNib(const NAUTF8Char* nibName);
 NA_API NSColor* naGetLabelColor(void);
 NA_API NSColor* naGetLinkColor(void);
+
 
 
 #ifdef __cplusplus

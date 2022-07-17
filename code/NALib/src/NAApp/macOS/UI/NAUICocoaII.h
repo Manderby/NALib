@@ -419,7 +419,7 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
     switch(alertBoxType){
     case NA_ALERT_BOX_INFO:    alert.alertStyle = NAAlertStyleWarning; break;
     case NA_ALERT_BOX_WARNING: alert.alertStyle = NAAlertStyleInfo; break;
-    case NA_ALERT_BOX_ERROR:   alert.alertStyle = NSAlertStyleError; break;
+    case NA_ALERT_BOX_ERROR:   alert.alertStyle = NAAlertStyleError; break;
     }
     
     alert.messageText = [NSString stringWithUTF8String:titleText];
