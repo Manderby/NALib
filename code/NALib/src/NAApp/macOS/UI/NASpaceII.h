@@ -237,14 +237,6 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NABabyColor
 
 
 
-NA_DEF void naSetSpaceAlternateBackground(NASpace* _Nonnull space, NABool alternate){
-  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
-  space->alternateBackground = alternate;
-  [nativePtr setNeedsDisplay:YES];
-}
-
-
-
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

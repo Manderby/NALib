@@ -207,62 +207,83 @@ NA_HAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
 
 
 
+// NAUIElement
+NA_HAPI void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, NANativePtr nativePtr);
+NA_HAPI void na_ClearUIElement(NA_UIElement* uiElement);
+
+// NAApplication
 NA_HAPI NAApplication* na_NewApplication(void);
 NA_HAPI void na_InitApplication(NAApplication* application, NANativePtr nativePtr);
 NA_HAPI void na_ClearApplication(NAApplication* application);
 
+// NAButton
 NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage, uint32 flags);
 NA_HAPI void na_ClearButton(NAButton* button);
 NA_HAPI void na_setButtonImage(NAButton* button, const NAUIImage* uiImage);
 
+// NACheckBox
 NA_HAPI void na_InitCheckBox(NACheckBox* checkBox, void* nativePtr);
 NA_HAPI void na_ClearCheckBox(NACheckBox* checkBox);
 
+// NAImageSpace
 NA_HAPI void na_InitImageSpace(NAImageSpace* imageSpace, void* nativePtr);
 NA_HAPI void na_ClearImageSpace(NAImageSpace* imageSpace);
 
+// NALabel
 NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
 NA_HAPI void na_ClearLabel(NALabel* label);
 
+// NAMenu
 NA_HAPI void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent);
 NA_HAPI void na_ClearMenu(NAMenu* menu);
 NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* itemAt);
 
+// NAMenuItem
 NA_HAPI void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent);
 NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);
 NA_HAPI void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id);
 NA_HAPI uint32 na_GetMenuItemId(const NAMenuItem* menuItem);
 
+// NAMetalSpace
 NA_HAPI void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr);
 NA_HAPI void na_ClearMetalSpace(NAMetalSpace* metalSpace);
 
+// NAOpenGLSpace
 NA_HAPI void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr);
 NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
 
+// NAPopupButton
 NA_HAPI void na_InitPopupButton(NAPopupButton* popupButton, void* nativePtr);
 NA_HAPI void na_ClearPopupButton(NAPopupButton* popupButton);
 NA_HDEF void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* child, const NAMenuItem* itemAt);
 
+// NARadio
 NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
 NA_HAPI void na_ClearRadio(NARadio* radio);
 
+// NAScreen
 NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr);
 NA_HAPI void na_ClearScreen(NAScreen* screen);
 
+// NASlider
 NA_HAPI void na_InitSlider(NASlider* slider, void* nativePtr);
 NA_HAPI void na_ClearSlider(NASlider* slider);
 
+// NASpace
 NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);
 NA_HAPI void na_ClearSpace(NASpace* space);
 NA_HAPI void na_AddSpaceChild(NASpace*, NA_UIElement* child);
 NA_HAPI void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child);
 
+// NATextBox
 NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);
 NA_HAPI void na_ClearTextBox(NATextBox* textBox);
 
+// NATextField
 NA_HAPI void na_InitTextField(NATextField* textField, void* nativePtr);
 NA_HAPI void na_ClearTextField(NATextField* textField);
 
+// NAWindow
 NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
 NA_HAPI void na_ClearWindow(NAWindow* window);
 NA_HAPI void na_RememberWindowPosition(const NAWindow* window);

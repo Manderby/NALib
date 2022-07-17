@@ -27,8 +27,8 @@ NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
 
 // Switch between clear or an alternate color which adds a slight gray to the
 // background.
-NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
+NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 
 // Set a specific background color.
 NA_API void naSetSpaceBackgroundColor(

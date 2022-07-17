@@ -198,13 +198,6 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color){
 
 
 
-NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
-  space->alternateBackground = alternate;
-  naRefreshUIElement(space, 0.);
-}
-
-
-
 NA_DEF void naRemoveSpaceChilds(NASpace* space){
   // todo
 }
