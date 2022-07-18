@@ -138,14 +138,14 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message){
   NABool rControl;
   NABool lOption;
   NABool rOption;
-  NABool hasShift   = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
-  NABool hasControl = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
-  NABool hasOption  = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
-  NABool hasCommand = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
+  NABool hasShift   = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
+  NABool hasControl = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
+  NABool hasOption  = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
+  NABool hasCommand = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
   NABool isExtendedKey = (message->lParam >> 24) & 0x01;  // Extended keys usually are the ones on the right.
 
   NAUIKeyCode scanCode = (NAUIKeyCode)MapVirtualKey((UINT)message->wParam, MAPVK_VK_TO_VSC);
-  na_App->curKeyStroke.keyCode = scanCode;
+  naGetApplication()->curKeyStroke.keyCode = scanCode;
   lShift = (GetKeyState(VK_LSHIFT) & 0x8000) >> 15;
   rShift = (GetKeyState(VK_RSHIFT) & 0x8000) >> 15;
   // Note: Due to the right shift key not properly being detected by the extended key flag
@@ -163,11 +163,11 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message){
   // Note, this implementation is far from finished. It does strange things, but that
   // just seems to be a thing with windows key mappings. :(
 
-  na_App->curKeyStroke.modifiers = 0;
-  na_App->curKeyStroke.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
-  na_App->curKeyStroke.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
-  na_App->curKeyStroke.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
-  na_App->curKeyStroke.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
+  naGetApplication()->curKeyStroke.modifiers = 0;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
 }
 
 
@@ -199,15 +199,15 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
       while(!retValue && naIterateList(&iter)){
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
-        if(keyReaction->shortcut.keyCode == na_App->curKeyStroke.keyCode){
+        if(keyReaction->shortcut.keyCode == naGetApplication()->curKeyStroke.keyCode){
           NABool needsShift   = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
           NABool needsControl = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
           NABool needsOption  = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
           NABool needsCommand = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
-          NABool hasShift   = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool hasControl = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool hasOption  = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool hasCommand = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
+          NABool hasShift   = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool hasControl = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool hasOption  = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool hasCommand = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
           if(needsShift   == hasShift
           && needsControl == hasControl
           && needsOption  == hasOption

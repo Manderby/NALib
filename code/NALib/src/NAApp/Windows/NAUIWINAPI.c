@@ -28,7 +28,7 @@
 
 #include "NAUIImageWINAPIII.h"
 
-#if (NA_COMPILE_GUI == 1)
+#if NA_COMPILE_GUI == 1
 
 #include "NAPreferencesWINAPIII.h"
 
@@ -52,7 +52,7 @@
 #include "UI/NATextFieldII.h"
 #include "UI/NAWindowII.h"
 
-#endif // (NA_COMPILE_GUI == 1)
+#endif // NA_COMPILE_GUI == 1
 #endif // NA_OS == NA_OS_WINDOWS
 
 

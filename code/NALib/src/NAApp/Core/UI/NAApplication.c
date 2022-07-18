@@ -1,6 +1,19 @@
 
 #include "NAAppCore.h"
 
+
+
+// The pointer storing the app if any.
+NAApplication* na_App = NA_NULL;
+
+
+
+NA_HDEF NABool na_IsApplicationRunning(void){
+  return (NABool)(na_App->flags & NA_APPLICATION_FLAG_RUNNING);
+}
+
+
+
 NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePtr){
   na_App = application;
 
@@ -37,12 +50,12 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
 
 NA_HDEF void na_ClearApplication(NAApplication* application){
   #if NA_DEBUG
-    if(!na_App)
+    if(!naGetApplication())
       naCrash("No Application running");
   #endif
 
-  naForeachListMutable(&(na_App->windows), (NAMutator)naDelete);
-  naClearList(&(na_App->windows));
+  naForeachListMutable(&(naGetApplication()->windows), (NAMutator)naDelete);
+  naClearList(&(naGetApplication()->windows));
 
   naStopTranslator();
   na_ClearUIElement(&(application->uiElement));
@@ -52,5 +65,32 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
   // This must be at the very end as the uiElements are used up until the last
   // ClearUIElement operation.
   // todo test if all uiElements are gone.
-  naClearList(&(na_App->uiElements));
+  naClearList(&(naGetApplication()->uiElements));
+}
+
+
+
+NA_HDEF NARect na_GetApplicationAbsoluteRect(){
+  NARect rect;
+  rect.pos.x = 0;
+  rect.pos.y = 0;
+  rect.size.width = 1;
+  rect.size.height = 1;
+  return rect;
+}
+
+
+
+NA_DEF void naStopApplication(void){
+  na_App->flags &= ~NA_APPLICATION_FLAG_RUNNING;
+}
+
+
+
+NA_DEF NAApplication* naGetApplication(void){
+  #if NA_DEBUG
+    if(!na_App)
+      naError("Internal error: application is not in ui elements list");
+  #endif
+  return na_App;
 }

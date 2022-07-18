@@ -22,7 +22,7 @@
 #if NA_OS == NA_OS_MAC_OS_X
 
 #if defined __OBJC__
-#if (NA_COMPILE_GUI == 1)
+#if NA_COMPILE_GUI == 1
 // Now, we are sure, we compile with Objective-C and on MacOSX. The
 // #if directives will be closed at the very bottom of this file.
 
@@ -58,7 +58,7 @@
 #include "NATextFieldII.h"
 #include "NAWindowII.h"
 
-#endif // (NA_COMPILE_GUI == 1)
+#endif // NA_COMPILE_GUI == 1
 #endif // defined __OBJC__
 #endif // NA_OS == NA_OS_MAC_OS_X
 

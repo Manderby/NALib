@@ -164,6 +164,10 @@ NA_API NAString* naNewApplicationResourcePath(
   const NAUTF8Char* suffix);
 
 
+
+// ////////////////////////////////
+// macOS nib loading.
+
 #if NA_OS == NA_OS_MAC_OS_X
   // If you are on macOS and need to load in a NIB file, use the following
   // function. Note that this function also works on older systems.
@@ -171,6 +175,35 @@ NA_API NAString* naNewApplicationResourcePath(
   // You usually load nibs after the application startup. A good idea is to
   // do it in the postStartup callback of naStartApplication.
 #endif
+
+
+
+// ////////////////////////////////
+// Open URL in system default wrowser
+
+NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
+
+
+
+// ////////////////////////////////
+// Open debugging console
+//
+// When using a GUI on windows, you will sooner or later have to set the
+// subsystem in the project properties->linker->system to /SUBSYSTEM:WINDOWS.
+// This means two things:
+// 1. Instead of in main(int, char**), you need
+//    int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
+// 2. There is no console output using the standard channels 0, 1 and 2 like
+//    they are used with printf and such.
+//
+// In order to have a console output, you can call naOpenConsoleWindow
+// which opens up a separate console window when running. Note that NALib
+// will NOT automatically hide the console when NA_DEBUG is 0.
+// 
+// This function does nothing on a Mac.
+
+NA_API void naOpenConsoleWindow(void);
+
 
 #endif // NA_APPLICATION_INCLUDED
 

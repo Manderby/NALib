@@ -112,18 +112,18 @@ NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event){
   NABool hasOption;
   NABool hasCommand;
   NAUIKeyCode keyCode = [event keyCode];
-  na_App->curKeyStroke.keyCode = keyCode;
+  naGetApplication()->curKeyStroke.keyCode = keyCode;
   [event modifierFlags];
   flags = (NSUInteger)[event modifierFlags];
   hasShift     = (flags & NAEventModifierFlagShift)   != 0;
   hasControl   = (flags & NAEventModifierFlagControl) != 0;
   hasOption    = (flags & NAEventModifierFlagOption)  != 0;
   hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
-  na_App->curKeyStroke.modifiers = 0;
-  na_App->curKeyStroke.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
-  na_App->curKeyStroke.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
-  na_App->curKeyStroke.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
-  na_App->curKeyStroke.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
+  naGetApplication()->curKeyStroke.modifiers = 0;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
 }
 
 
@@ -163,21 +163,21 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
       while(!retValue && naIterateList(&iter)){
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
-        if(keyReaction->shortcut.keyCode == na_App->curKeyStroke.keyCode){
+        if(keyReaction->shortcut.keyCode == naGetApplication()->curKeyStroke.keyCode){
           NABool needsShift   = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
           NABool needsControl = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
           NABool needsOption  = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
           NABool needsCommand = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
-          NABool hasShift   = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool hasControl = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool hasOption  = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool hasCommand = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
+          NABool hasShift   = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool hasControl = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool hasOption  = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool hasCommand = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
           if(needsShift   == hasShift
           && needsControl == hasControl
           && needsOption  == hasOption
           && needsCommand == hasCommand){
             NAReaction reaction;
-            reaction.uiElement = na_App;
+            reaction.uiElement = naGetApplication();
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
             reaction.controller = keyReaction->controller;
             retValue = keyReaction->handler(reaction);

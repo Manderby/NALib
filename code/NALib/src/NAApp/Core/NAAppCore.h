@@ -11,9 +11,11 @@
 // is shared among the different implementations of the UI in Mac and Win.
 // ///////////////////////////
 
+
+
 #include "../../NAApp.h"
 
-#if (NA_COMPILE_GUI == 1)
+#if NA_COMPILE_GUI == 1
 
 #include "../../NAList.h"
 #include "../../NATranslator.h"
@@ -30,7 +32,6 @@ typedef struct NAEventReaction NAEventReaction;
 typedef struct NAKeyboardShortcutReaction NAKeyboardShortcutReaction;
 
 // //////////////////////////////
-//
 // NA_UIElement is the base type of any ui element. All ui element struct
 // definitions have an NA_UIElement as the first entry:
 
@@ -197,6 +198,18 @@ extern NAApplication* na_App;
 // gathered here. You are free to use them but note that these are supposed to
 // be helper functions.
 
+
+
+// Native UI Pointer
+// Calls the system specific method to clear/deallocate the given nativePtr.
+NA_HAPI void na_ClearUINativePtr(NANativePtr nativePtr);
+
+
+
+// NAUIElement
+NA_HAPI void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, NANativePtr nativePtr);
+NA_HAPI void na_ClearUIElement(NA_UIElement* uiElement);
+
 NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
 NA_HAPI double na_GetUIElementOffsetY(NA_UIElement* elem);
 
@@ -205,99 +218,12 @@ NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
 NA_HAPI void na_AllowUIElementNotifications(NA_UIElement* elem);
 NA_HAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
 
-
-
-// NAUIElement
-NA_HAPI void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, NANativePtr nativePtr);
-NA_HAPI void na_ClearUIElement(NA_UIElement* uiElement);
-
-// NAApplication
-NA_HAPI NAApplication* na_NewApplication(void);
-NA_HAPI void na_InitApplication(NAApplication* application, NANativePtr nativePtr);
-NA_HAPI void na_ClearApplication(NAApplication* application);
-
-// NAButton
-NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage, uint32 flags);
-NA_HAPI void na_ClearButton(NAButton* button);
-NA_HAPI void na_setButtonImage(NAButton* button, const NAUIImage* uiImage);
-
-// NACheckBox
-NA_HAPI void na_InitCheckBox(NACheckBox* checkBox, void* nativePtr);
-NA_HAPI void na_ClearCheckBox(NACheckBox* checkBox);
-
-// NAImageSpace
-NA_HAPI void na_InitImageSpace(NAImageSpace* imageSpace, void* nativePtr);
-NA_HAPI void na_ClearImageSpace(NAImageSpace* imageSpace);
-
-// NALabel
-NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
-NA_HAPI void na_ClearLabel(NALabel* label);
-
-// NAMenu
-NA_HAPI void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent);
-NA_HAPI void na_ClearMenu(NAMenu* menu);
-NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* itemAt);
-
-// NAMenuItem
-NA_HAPI void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent);
-NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);
-NA_HAPI void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id);
-NA_HAPI uint32 na_GetMenuItemId(const NAMenuItem* menuItem);
-
-// NAMetalSpace
-NA_HAPI void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr);
-NA_HAPI void na_ClearMetalSpace(NAMetalSpace* metalSpace);
-
-// NAOpenGLSpace
-NA_HAPI void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr);
-NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
-
-// NAPopupButton
-NA_HAPI void na_InitPopupButton(NAPopupButton* popupButton, void* nativePtr);
-NA_HAPI void na_ClearPopupButton(NAPopupButton* popupButton);
-NA_HDEF void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* child, const NAMenuItem* itemAt);
-
-// NARadio
-NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
-NA_HAPI void na_ClearRadio(NARadio* radio);
-
-// NAScreen
-NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr);
-NA_HAPI void na_ClearScreen(NAScreen* screen);
-
-// NASlider
-NA_HAPI void na_InitSlider(NASlider* slider, void* nativePtr);
-NA_HAPI void na_ClearSlider(NASlider* slider);
-
-// NASpace
-NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);
-NA_HAPI void na_ClearSpace(NASpace* space);
-NA_HAPI void na_AddSpaceChild(NASpace*, NA_UIElement* child);
-NA_HAPI void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child);
-
-// NATextBox
-NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);
-NA_HAPI void na_ClearTextBox(NATextBox* textBox);
-
-// NATextField
-NA_HAPI void na_InitTextField(NATextField* textField, void* nativePtr);
-NA_HAPI void na_ClearTextField(NATextField* textField);
-
-// NAWindow
-NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
-NA_HAPI void na_ClearWindow(NAWindow* window);
-NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
-
-
-
 // Returns a pointer to the ui element which uses the given native pointer.
 // Every gui element which is handeled by NALib uses a native struct which is
 // dependent on the system running. When handling events, a nativePtr is sent
 // but this nativePtr can in general not be mapped directly to a corresponding
 // NALib struct. This function solves that. Slow, but does the job.
 NA_HAPI void* na_GetUINALibEquivalent(void* nativePtr);
-
-NA_HAPI NABool na_IsApplicationRunning(void);
 
 // Dispatches a command with the given uiElement.
 // As long as the command has not been finished using NA_TRUE as a return value
@@ -315,46 +241,121 @@ NA_HAPI NABool na_IsApplicationRunning(void);
 // chain.
 NA_HAPI NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command);
 
+// To be implemented in the system dependent files:
+NA_HAPI void na_RefreshUIElementNow(void* uiElement);
+
+
+
+// NAApplication
+NA_HAPI NAApplication* na_NewApplication(void);
+NA_HAPI NABool na_IsApplicationRunning(void);
+NA_HAPI void na_InitApplication(NAApplication* application, NANativePtr nativePtr);
+NA_HAPI void na_ClearApplication(NAApplication* application);
+NA_HAPI NARect na_GetApplicationAbsoluteRect(void);
+
+// NAButton
+NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage, uint32 flags);
+NA_HAPI void na_ClearButton(NAButton* button);
+NA_HAPI void na_setButtonImage(NAButton* button, const NAUIImage* uiImage);
+NA_HAPI NARect na_GetButtonAbsoluteInnerRect(const NA_UIElement* button);
+
+// NACheckBox
+NA_HAPI void na_InitCheckBox(NACheckBox* checkBox, void* nativePtr);
+NA_HAPI void na_ClearCheckBox(NACheckBox* checkBox);
+NA_HAPI NARect na_GetCheckBoxAbsoluteInnerRect(const NA_UIElement* checkBox);
+
+// NAImageSpace
+NA_HAPI void na_InitImageSpace(NAImageSpace* imageSpace, void* nativePtr);
+NA_HAPI void na_ClearImageSpace(NAImageSpace* imageSpace);
+NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect(const NA_UIElement* imageSpace);
+
+// NALabel
+NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
+NA_HAPI void na_ClearLabel(NALabel* label);
+NA_HAPI NARect na_GetLabelAbsoluteInnerRect(const NA_UIElement* label);
+
+// NAMenu
+NA_HAPI void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent);
+NA_HAPI void na_ClearMenu(NAMenu* menu);
+NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* itemAt);
+NA_HAPI NARect na_GetMenuAbsoluteInnerRect(const NA_UIElement* menu);
+
+// NAMenuItem
+NA_HAPI void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent);
+NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);
+NA_HAPI void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id);
+NA_HAPI uint32 na_GetMenuItemId(const NAMenuItem* menuItem);
+NA_HAPI NARect na_GetMenuItemAbsoluteInnerRect(const NA_UIElement* menuItem);
+
+// NAMetalSpace
+NA_HAPI void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr);
+NA_HAPI void na_ClearMetalSpace(NAMetalSpace* metalSpace);
+NA_HAPI NARect na_GetMetalSpaceAbsoluteInnerRect(const NA_UIElement* metalSpace);
+
+// NAOpenGLSpace
+NA_HAPI void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr);
+NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
+NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(const NA_UIElement* openGLSpace);
+
+// NAPopupButton
+NA_HAPI void na_InitPopupButton(NAPopupButton* popupButton, void* nativePtr);
+NA_HAPI void na_ClearPopupButton(NAPopupButton* popupButton);
+NA_HDEF void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* child, const NAMenuItem* itemAt);
+NA_HAPI NARect na_GetPopupButtonAbsoluteInnerRect(const NA_UIElement* popupButton);
+
+// NARadio
+NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
+NA_HAPI void na_ClearRadio(NARadio* radio);
+NA_HAPI NARect na_GetRadioAbsoluteInnerRect(const NA_UIElement* radio);
+
+// NAScreen
+NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr);
+NA_HAPI void na_ClearScreen(NAScreen* screen);
+NA_HAPI NARect na_GetScreenAbsoluteRect(const NA_UIElement* screen);
+
+// NASlider
+NA_HAPI void na_InitSlider(NASlider* slider, void* nativePtr);
+NA_HAPI void na_ClearSlider(NASlider* slider);
+NA_HAPI NARect na_GetSliderAbsoluteInnerRect(const NA_UIElement* slider);
+
+// NASpace
+NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);
+NA_HAPI void na_ClearSpace(NASpace* space);
+NA_HAPI void na_AddSpaceChild(NASpace*, NA_UIElement* child);
+NA_HAPI void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child);
+NA_HAPI NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* space);
+
+// NATextBox
+NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);
+NA_HAPI void na_ClearTextBox(NATextBox* textBox);
+NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect(const NA_UIElement* textBox);
+
+// NATextField
+NA_HAPI void na_InitTextField(NATextField* textField, void* nativePtr);
+NA_HAPI void na_ClearTextField(NATextField* textField);
+NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect(const NA_UIElement* textField);
+
+// NAWindow
+NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
+NA_HAPI void na_ClearWindow(NAWindow* window);
+NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
+NA_HAPI NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window);
+NA_HAPI NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window);
+
+
+
 // Mouse related functions
 NA_HAPI void na_SetMouseWarpedTo(NAPos newpos);
 NA_HAPI void na_SetMouseMovedByDiff(double deltaX, double deltaY);
 NA_HAPI void na_SetMouseEnteredAtPos(NAPos newpos);
 NA_HAPI void na_SetMouseExitedAtPos(NAPos newpos);
 
-
-
-// To be implemented in the system dependent files:
-
-NA_HAPI void na_RefreshUIElementNow(void* uiElement);
-
-// Calls the system specific method to clear/deallocate the given nativePtr.
-NA_HAPI void na_ClearUINativePtr(NANativePtr nativePtr);
-
-NA_HAPI void* na_AllocMouseTracking(NANativePtr nativePtr);
-NA_HAPI void na_DeallocMouseTracking(void* tracking);
-
-NA_HAPI NARect na_GetApplicationAbsoluteRect     (void);
-NA_HAPI NARect na_GetButtonAbsoluteInnerRect     (const NA_UIElement* button);
-NA_HAPI NARect na_GetCheckBoxAbsoluteInnerRect   (const NA_UIElement* checkBox);
-NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect (const NA_UIElement* imageSpace);
-NA_HAPI NARect na_GetLabelAbsoluteInnerRect      (const NA_UIElement* label);
-NA_HAPI NARect na_GetMenuAbsoluteInnerRect       (const NA_UIElement* menu);
-NA_HAPI NARect na_GetMenuItemAbsoluteInnerRect   (const NA_UIElement* menuItem);
-NA_HAPI NARect na_GetMetalSpaceAbsoluteInnerRect (const NA_UIElement* metalSpace);
-NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(const NA_UIElement* openGLSpace);
-NA_HAPI NARect na_GetPopupButtonAbsoluteInnerRect(const NA_UIElement* popupButton);
-NA_HAPI NARect na_GetRadioAbsoluteInnerRect      (const NA_UIElement* radio);
-NA_HAPI NARect na_GetScreenAbsoluteRect          (const NA_UIElement* screen);
-NA_HAPI NARect na_GetSliderAbsoluteInnerRect     (const NA_UIElement* slider);
-NA_HAPI NARect na_GetSpaceAbsoluteInnerRect      (const NA_UIElement* space);
-NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect    (const NA_UIElement* textBox);
-NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect  (const NA_UIElement* textField);
-NA_HAPI NARect na_GetWindowAbsoluteOuterRect     (const NA_UIElement* window);
-NA_HAPI NARect na_GetWindowAbsoluteInnerRect     (const NA_UIElement* window);
+NA_HAPI void* na_AllocMouseTracking(NANativePtr nativePtr); // todo
+NA_HAPI void na_DeallocMouseTracking(void* tracking);       // todo
 
 
 
-#endif // (NA_COMPILE_GUI == 1)
+#endif // NA_COMPILE_GUI == 1
 
 #ifdef __cplusplus
   } // extern "C"

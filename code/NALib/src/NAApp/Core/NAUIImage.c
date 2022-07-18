@@ -1,7 +1,7 @@
 
 #include "../../NAApp.h"
 
-#if (NA_COMPILE_GUI == 1)
+#if NA_COMPILE_GUI == 1
 
 
 
@@ -185,8 +185,7 @@ NA_API void na_DestructUIImage(NAUIImage* uiImage){
 }
 
 
-#endif // (NA_COMPILE_GUI == 1)
-
+#endif // NA_COMPILE_GUI == 1
 
 
 // This is free and unencumbered software released into the public domain.

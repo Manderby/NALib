@@ -66,6 +66,28 @@ NA_API NARect naSetWindowStorageTag(
 
 
 
+// ////////////////////////////////
+// Alert box
+
+typedef enum{
+  NA_ALERT_BOX_INFO,
+  NA_ALERT_BOX_WARNING,
+  NA_ALERT_BOX_ERROR
+} NAAlertBoxType;
+
+NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText);
+
+
+
+// ////////////////////////////////
+// File panel
+
+typedef NABool (*FilePanelCallback)(NABool doPerform, const NAUTF8Char* path);
+
+NA_API void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* fileName, const NAUTF8Char* allowedFileSuffix, FilePanelCallback callback);
+
+
+
 #endif // NA_UI_WINDOW_INCLUDED
 
 

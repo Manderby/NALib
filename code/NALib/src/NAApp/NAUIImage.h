@@ -11,7 +11,7 @@
 
 
 
-#include "../../NABabyImage.h"
+#include "../NABabyImage.h"
 
 typedef enum{
   NA_UIIMAGE_RESOLUTION_1x,

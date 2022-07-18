@@ -32,66 +32,35 @@
 
 #include "NAString.h"
 
-#include "NAApp/Core/NAFont.h"
-#include "NAApp/Core/NAKeyboard.h"
-#include "NAApp/Core/NAMouse.h"
-#include "NAApp/Core/NAReaction.h"
-#include "NAApp/Core/NAUIImage.h"
+#include "NAApp/NAFont.h"
+#include "NAApp/NAKeyboard.h"
+#include "NAApp/NAMouse.h"
+#include "NAApp/NAReaction.h"
+#include "NAApp/NAUIImage.h"
 
 // The base of every ui element.
-#include "NAApp/Core/UIHeaders/NAUIElement.h"
+#include "NAApp/NAUIElement.h"
 
 // The acutal ui elements
-#include "NAApp/Core/UIHeaders/NAApplication.h"
-#include "NAApp/Core/UIHeaders/NAButton.h"
-#include "NAApp/Core/UIHeaders/NACheckBox.h"
-#include "NAApp/Core/UIHeaders/NAImageSpace.h"
-#include "NAApp/Core/UIHeaders/NALabel.h"
-#include "NAApp/Core/UIHeaders/NAMenu.h"
-#include "NAApp/Core/UIHeaders/NAMenuItem.h"
-#include "NAApp/Core/UIHeaders/NAMetalSpace.h"
-#include "NAApp/Core/UIHeaders/NAOpenGLSpace.h"
-#include "NAApp/Core/UIHeaders/NAPopupButton.h"
-#include "NAApp/Core/UIHeaders/NARadio.h"
-#include "NAApp/Core/UIHeaders/NAScreen.h"
-#include "NAApp/Core/UIHeaders/NASlider.h"
-#include "NAApp/Core/UIHeaders/NASpace.h"
-#include "NAApp/Core/UIHeaders/NATextBox.h"
-#include "NAApp/Core/UIHeaders/NATextField.h"
-#include "NAApp/Core/UIHeaders/NAWindow.h"
+#include "NAApp/NAApplication.h"
+#include "NAApp/NAButton.h"
+#include "NAApp/NACheckBox.h"
+#include "NAApp/NAImageSpace.h"
+#include "NAApp/NALabel.h"
+#include "NAApp/NAMenu.h"
+#include "NAApp/NAMenuItem.h"
+#include "NAApp/NAMetalSpace.h"
+#include "NAApp/NAOpenGLSpace.h"
+#include "NAApp/NAPopupButton.h"
+#include "NAApp/NARadio.h"
+#include "NAApp/NAScreen.h"
+#include "NAApp/NASlider.h"
+#include "NAApp/NASpace.h"
+#include "NAApp/NATextBox.h"
+#include "NAApp/NATextField.h"
+#include "NAApp/NAWindow.h"
 
 
-
-// ////////////////////////////////
-// Other UI functions.
-
-typedef enum{
-  NA_ALERT_BOX_INFO,
-  NA_ALERT_BOX_WARNING,
-  NA_ALERT_BOX_ERROR
-} NAAlertBoxType;
-
-typedef NABool (*FilePanelCallback)(NABool doPerform, const NAUTF8Char* path);
-
-NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText);
-NA_API void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* fileName, const NAUTF8Char* allowedFileSuffix, FilePanelCallback callback);
-NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
-
-// When using a GUI on windows, you will sooner or later have to set the
-// subsystem in the project properties->linker->system to /SUBSYSTEM:WINDOWS.
-// This means two things:
-// 1. Instead of in main(int, char**), you need
-//    int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
-// 2. There is no console output using the standard channels 0, 1 and 2 like
-//    they are used with printf and such.
-//
-// In order to have a console output, you can call naOpenConsoleWindow
-// which opens up a separate console window when running. Note that NALib
-// will NOT automatically hide the console when NA_DEBUG is 0.
-// 
-// This function does nothing on a Mac.
-
-NA_API void naOpenConsoleWindow(void);
 
 #endif // NA_COMPILE_GUI == 1
 
