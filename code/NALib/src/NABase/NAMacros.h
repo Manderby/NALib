@@ -84,7 +84,7 @@
 
 
 // Inline implementations are in a separate file:
-#include "NAMacrosII.h"
+#include "Core/NAMacrosII.h"
 
 
 

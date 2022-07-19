@@ -17,8 +17,8 @@
 
 #if NA_COMPILE_GUI == 1
 
-#include "../../NAList.h"
-#include "../../NATranslator.h"
+#include "../../NAStruct/NAList.h"
+#include "../../NAUtility/NATranslator.h"
 
 // Very much the same as the nativePtr, there are certain types which are
 // casted differently on the different systems and therefore they are

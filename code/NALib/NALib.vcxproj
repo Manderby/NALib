@@ -158,7 +158,7 @@
     <ClInclude Include="src\NAMath\NANumerics.h" />
     <ClInclude Include="src\NAMath\NANumericsII.h" />
     <ClInclude Include="src\NAMath\NARandomII.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebraII.h" />
+    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAVectorAlgebraII.h" />
     <ClInclude Include="src\NAMath\NAVectorAlgebra\NAHomogeneousCoordinates.h" />
     <ClInclude Include="src\NAMath\NAVectorAlgebra\NAMatrixAlgebraOperations.h" />
     <ClInclude Include="src\NAMath\NAVectorAlgebra\NAMatrixBaseOperations.h" />

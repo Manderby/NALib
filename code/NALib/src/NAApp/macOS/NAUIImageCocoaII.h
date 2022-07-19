@@ -7,7 +7,7 @@
 
 #include "Availability.h"
 #include "NAApp.h"
-#include "../../NAPNG.h"
+#include "../../NAVisual/NAPNG.h"
 
 
 

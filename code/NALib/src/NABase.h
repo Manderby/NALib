@@ -53,11 +53,11 @@
 #include "NABase/NAFloatingPoint.h"
 
 // Adding inline implementations of numerical types
-#include "NABase/NAInt64II.h"
-#include "NABase/NAInt128II.h"
-#include "NABase/NAInt256II.h"
-#include "NABase/NANumericsII.h"
-#include "NABase/NAFloatingPointII.h"
+#include "NABase/Core/NAInt64II.h"
+#include "NABase/Core/NAInt128II.h"
+#include "NABase/Core/NAInt256II.h"
+#include "NABase/Core/NANumericsII.h"
+#include "NABase/Core/NAFloatingPointII.h"
 
 
 
