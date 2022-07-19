@@ -1,23 +1,36 @@
 
-#ifndef NA_VISUAL_INCLUDED
-#define NA_VISUAL_INCLUDED
+#ifndef NA_3D_HELPER_INCLUDED
+#define NA_3D_HELPER_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
-// Include this file to automatically include all APIs from the NAVisual
-// folder. You are free to include the files individually though.
+#include "../NABase.h"
+#include "../NAMath/NAVectorAlgebra.h"
 
 
 
-#include "NAVisual/NA3DHelper.h"
-#include "NAVisual/NABabyColor.h"
-#include "NAVisual/NABabyImage.h"
-#include "NAVisual/NADeflate.h"
-#include "NAVisual/NAPNG.h"
+NA_API void naFillMatrixPerspective(
+  NAMat44d matrix,
+  double fovy,
+  double aspect,
+  double nearZ,
+  double farZ);
+
+NA_API void naFillMatrixLookAt(
+  NAMat44d matrix,
+  double eyeX, double eyeY, double eyeZ,
+  double centerX, double centerY, double centerZ,
+  double upX, double upY, double upZ);
 
 
 
-#endif // NA_VISUAL_INCLUDED
+#ifdef __cplusplus
+  } // extern "C"
+#endif
+#endif // NA_3D_HELPER_INCLUDED
 
 
 
