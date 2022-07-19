@@ -2,6 +2,8 @@
 #include "NAAppCore.h"
 #include "NAPreferences.h"
 
+#if NA_COMPILE_GUI == 1
+
 
 
 NA_HDEF void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame){
@@ -88,3 +90,7 @@ NA_DEF NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect r
   }
   return rect;
 }
+
+
+
+#endif // NA_COMPILE_GUI == 1

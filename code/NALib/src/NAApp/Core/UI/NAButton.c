@@ -1,6 +1,8 @@
 
 #include "NAAppCore.h"
 
+#if NA_COMPILE_GUI == 1
+
 
 
 NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage, uint32 flags){
@@ -33,3 +35,7 @@ NA_HDEF void na_setButtonImage(NAButton* button, const NAUIImage* uiImage){
     button->uiImage = NA_NULL;
   }
 }
+
+
+
+#endif // NA_COMPILE_GUI == 1

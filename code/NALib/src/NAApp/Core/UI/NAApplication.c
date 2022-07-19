@@ -1,6 +1,7 @@
 
-#include "NAAppCore.h"
+#include "../NAAppCore.h"
 
+#if NA_COMPILE_GUI == 1
 
 
 // The pointer storing the app if any.
@@ -94,3 +95,7 @@ NA_DEF NAApplication* naGetApplication(void){
   #endif
   return na_App;
 }
+
+
+
+#endif // NA_COMPILE_GUI == 1

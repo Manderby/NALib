@@ -20,6 +20,7 @@ NACircularBuffer* naInitCircularBuffer(NACircularBuffer* buffer, NAInt count){
   buffer->cur = 0;
   buffer->last = 0;
   buffer->data = naMalloc(sizeof(void*) * buffer->space);
+  return buffer;
 }
 
 
@@ -31,7 +32,7 @@ void naClearCircularBuffer(NACircularBuffer* buffer){
 void* naPullCircularBuffer(NACircularBuffer* buffer){
   #if NA_DEBUG
     if(buffer->last == buffer->cur)
-      naError("naNextCircularBuffer", "Buffer is empty");
+      naError("Buffer is empty");
   #endif
   void* retValue = buffer->data[buffer->cur];
   buffer->cur = buffer->cur % buffer->space;
@@ -44,7 +45,7 @@ void naPushCircularBuffer(NACircularBuffer* buffer, void* newData){
   buffer->last = buffer->last % buffer->space;
   #if NA_DEBUG
     if(buffer->last == buffer->cur)
-      naError("naPushCircularBuffer", "Buffer did just overflow");
+      naError("Buffer did just overflow");
   #endif
 }
 

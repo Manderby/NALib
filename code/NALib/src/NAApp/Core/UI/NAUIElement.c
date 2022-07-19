@@ -1,6 +1,8 @@
 
 #include "NAAppCore.h"
 
+#if NA_COMPILE_GUI == 1
+
 
 
 NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, NANativePtr nativePtr){
@@ -188,3 +190,7 @@ NA_DEF NASpace* naGetUIElementParentSpace(void* uiElement){
   }
   return parent;
 }
+
+
+
+#endif // NA_COMPILE_GUI == 1

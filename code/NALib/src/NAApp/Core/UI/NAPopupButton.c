@@ -1,6 +1,8 @@
 
 #include "NAAppCore.h"
 
+#if NA_COMPILE_GUI == 1
+
 
 
 NA_HDEF void na_InitPopupButton(NAPopupButton* popupButton, void* nativePtr){
@@ -27,3 +29,7 @@ NA_HDEF void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* chil
   //naAddListLastMutable(&(menu->childs), child);
   na_SetUIElementParent(&(child->uiElement), popupButton, NA_FALSE);
 }
+
+
+
+#endif // NA_COMPILE_GUI == 1

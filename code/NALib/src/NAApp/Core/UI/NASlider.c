@@ -1,6 +1,8 @@
 
 #include "NAAppCore.h"
 
+#if NA_COMPILE_GUI == 1
+
 
 
 NA_HDEF void na_InitSlider(NASlider* slider, void* nativePtr){
@@ -15,3 +17,6 @@ NA_HDEF void na_ClearSlider(NASlider* slider){
   na_ClearUIElement(&(slider->uiElement));
 }
 
+
+
+#endif // NA_COMPILE_GUI == 1

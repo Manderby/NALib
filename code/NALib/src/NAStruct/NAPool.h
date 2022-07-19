@@ -56,7 +56,7 @@ NA_IAPI void naForeachPool(const NAPool* pool, NAMutator mutator);
 
 
 // Inline implementations are in a separate file:
-#include "NAStruct/NAPoolII.h"
+#include "Core/NAPoolII.h"
 
 
 

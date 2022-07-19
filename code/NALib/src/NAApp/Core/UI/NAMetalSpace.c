@@ -1,6 +1,8 @@
 
 #include "NAAppCore.h"
 
+#if NA_COMPILE_GUI == 1
+
 
 
 NA_HDEF void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr){
@@ -13,3 +15,6 @@ NA_HDEF void na_ClearMetalSpace(NAMetalSpace* metalSpace){
   na_ClearUIElement(&(metalSpace->uiElement));
 }
 
+
+
+#endif // NA_COMPILE_GUI == 1

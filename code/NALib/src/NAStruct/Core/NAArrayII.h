@@ -4,7 +4,7 @@
 // including "NAArray.h"
 
 
-#include "../NACoord.h"
+#include "../../NAMath/NACoord.h"
 
 
 

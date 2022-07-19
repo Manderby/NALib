@@ -1,6 +1,8 @@
 
 #include "NAAppCore.h"
 
+#if NA_COMPILE_GUI == 1
+
 
 
 NA_HDEF void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent){
@@ -27,3 +29,7 @@ NA_HDEF void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id){
 NA_HDEF uint32 na_GetMenuItemId(const NAMenuItem* menuItem){
   return menuItem->id;
 }
+
+
+
+#endif // NA_COMPILE_GUI == 1

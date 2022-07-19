@@ -1,9 +1,12 @@
 
 #ifndef NA_COMPLEX_INCLUDED
 #define NA_COMPLEX_INCLUDED
+
+
 #ifdef __cplusplus
   extern "C"{
 #endif
+
 
 
 // Type is presented as non-opaque as the programmer wants to access the two
@@ -50,11 +53,8 @@ NA_IAPI NAComplex  naCosComplex   (NAComplex a);
 
 
 
-
 // Inline implementations are in a separate file:
-#include "NAMath/NAComplexII.h"
-
-
+#include "Core/NAComplexII.h"
 
 
 

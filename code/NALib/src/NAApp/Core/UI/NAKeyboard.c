@@ -1,6 +1,8 @@
 
 #include "NAAppCore.h"
 
+#if NA_COMPILE_GUI == 1
+
 
 
 NA_DEF NAKeyStroke naMakeKeyStroke(uint32 modifiers, NAUIKeyCode keyCode){
@@ -36,3 +38,7 @@ NA_DEF void naAddUIKeyboardShortcut(
 NA_DEF NAKeyStroke naGetCurrentKeyStroke(){
   return na_App->curKeyStroke;
 }
+
+
+
+#endif // NA_COMPILE_GUI == 1

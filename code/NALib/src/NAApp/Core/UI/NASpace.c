@@ -1,6 +1,8 @@
 
 #include "NAAppCore.h"
 
+#if NA_COMPILE_GUI == 1
+
 
 
 NA_HDEF void na_InitSpace(NASpace* space, void* nativePtr){
@@ -42,3 +44,7 @@ NA_DEF void naSetSpaceAlternateBackground(NASpace* _Nonnull space, NABool altern
   space->alternateBackground = alternate;
   naRefreshUIElement(space, 0.);
 }
+
+
+
+#endif // NA_COMPILE_GUI == 1

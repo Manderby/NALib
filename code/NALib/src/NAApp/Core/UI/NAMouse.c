@@ -1,6 +1,8 @@
 
 #include "NAAppCore.h"
 
+#if NA_COMPILE_GUI == 1
+
 
 
 NA_HDEF void na_SetMouseWarpedTo(NAPos newpos){
@@ -47,3 +49,6 @@ NA_DEF NAPos naGetMousePos(const NAMouseStatus* mousestatus){
 NA_DEF NASize naGetMouseDelta(const NAMouseStatus* mousestatus){
   return naMakeSizeE(mousestatus->pos.x - mousestatus->prevPos.x, mousestatus->pos.y - mousestatus->prevPos.y);
 }
+
+
+#endif // NA_COMPILE_GUI == 1

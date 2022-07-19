@@ -17,8 +17,8 @@
   #include <signal.h>
 #endif
 
-#include "../../NAStack.h"
-#include "../../NAList.h"
+#include "../../../NAStruct/NAStack.h"
+#include "../../../NAStruct/NAList.h"
 #include "../../NAString.h"
 #include "../../NAURL.h"
 

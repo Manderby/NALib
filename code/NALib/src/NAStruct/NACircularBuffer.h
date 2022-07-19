@@ -43,7 +43,7 @@ void naPushCircularBuffer(NACircularBuffer* buffer, void* newData);
 
 
 // Inline implementations are in a separate file:
-#include "NAStruct/NACircularBufferII.h"
+#include "Core/NACircularBufferII.h"
 
 
 

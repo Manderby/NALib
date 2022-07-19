@@ -1,6 +1,8 @@
 
 #include "NAAppCore.h"
 
+#if NA_COMPILE_GUI == 1
+
 
 
 NA_HDEF void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent){
@@ -27,3 +29,7 @@ NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* 
   naClearListIterator(&iter);
   na_SetUIElementParent(&(child->uiElement), menu, NA_FALSE);
 }
+
+
+
+#endif // NA_COMPILE_GUI == 1

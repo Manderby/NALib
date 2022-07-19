@@ -5,6 +5,8 @@
 
 
 
+#include "NAMathOperators.h"
+
 
 NA_IDEF NAComplex naMakeComplex(double re, double im){
   NAComplex newcomplex = {re, im};
@@ -16,7 +18,7 @@ NA_IDEF NAComplex naMakeComplexFromPolar(double r, double phi){
   NAComplex newcomplex;
   #if NA_DEBUG
     if(r < 0.)
-      naError("naMakeComplexFromPolar", "Radius is negative");
+      naError("Radius is negative");
   #endif
   newcomplex.re = r * naCos(phi);
   newcomplex.im = r * naSin(phi);
@@ -137,12 +139,12 @@ NA_IDEF double naAbsComplex(NAComplex a){
 
 
 NA_IDEF double naArgComplex(NAComplex a){
-  return naAtan2d(a.im, a.re);
+  return naAtan2(a.im, a.re);
 }
 
 
 NA_IDEF NAComplex naExpComplex(NAComplex a){
-  double exponent = naExpd(a.re);
+  double exponent = naExp(a.re);
   NAComplex newcomplex = {
     exponent * naCos(a.im),
     exponent * naSin(a.im)
@@ -152,8 +154,8 @@ NA_IDEF NAComplex naExpComplex(NAComplex a){
 
 
 NA_IDEF NAComplex naSinComplex(NAComplex a){
-  double exponent1 = naExpd(-a.im);
-  double exponent2 = naExpd(a.im);
+  double exponent1 = naExp(-a.im);
+  double exponent2 = naExp(a.im);
   NAComplex newcomplex = {
     (naSin(a.re) * (exponent1 + exponent2)) * .5,
     (naCos(a.re) * (exponent2 - exponent1)) * .5
@@ -163,8 +165,8 @@ NA_IDEF NAComplex naSinComplex(NAComplex a){
 
 
 NA_IDEF NAComplex naCosComplex(NAComplex a){
-  double exponent1 = naExpd(-a.im);
-  double exponent2 = naExpd(a.im);
+  double exponent1 = naExp(-a.im);
+  double exponent2 = naExp(a.im);
   NAComplex newcomplex = {
     (naCos(a.re) * (exponent1 + exponent2)) * .5,
     (naSin(a.re) * (exponent1 - exponent2)) * .5

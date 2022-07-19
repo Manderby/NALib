@@ -1,6 +1,8 @@
 
 #include "NAAppCore.h"
 
+#if NA_COMPILE_GUI == 1
+
 
 
 NA_HAPI void na_DestructFont(NAFont* font);
@@ -23,3 +25,6 @@ NA_DEF uint32 naGetFontFlags(const NAFont* font){
 NA_DEF double naGetFontSize(const NAFont* font){
   return font->size;
 }
+
+
+#endif // NA_COMPILE_GUI == 1

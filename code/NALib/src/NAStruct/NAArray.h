@@ -218,7 +218,7 @@ NA_IAPI size_t naGetArrayCurIndex(const NAArrayIterator* iterator);
 
 
 // Inline implementations are in a separate file:
-#include "NAStruct/NAArrayII.h"
+#include "Core/NAArrayII.h"
 
 
 
