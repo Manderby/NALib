@@ -11,10 +11,10 @@
 NA_DEF float naIntegratef(size_t sampleCount, IntegrateFuncf eval, const void* obj, float min, float max)
 {
   // This is a highly efficient and accurate integration method developed by
-  // Tobias Stamm. It even outperforms a simple for loop by using the memory
-  // cache and is much more accurate for well-behaving value sequences as
-  // it combines neighboring values and hence loses much fewer floating point
-  // accuracy when summing these up.
+  // Tobias Stamm. It might even outperformsa simple for loop by using the
+  // memory cache more efficiently but overall is much more accurate for
+  // well-behaving value sequences as it combines neighboring values and hence
+  // loses much fewer floating point accuracy when summing these up.
   
   float tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
   memset(tmpSums, 0, sizeof(float) * (8 * sizeof(size_t))); // nullify.
@@ -51,6 +51,61 @@ NA_DEF float naIntegratef(size_t sampleCount, IntegrateFuncf eval, const void* o
   }
   
   float sum = 0.f;
+  // Finally, go though all temp sums and add those to the final sum where
+  // sampleCount has a binary 1
+  for(size_t i = 0; i < 8 * sizeof(size_t); i++){
+    if(sampleCount & ((size_t)1 << i)){
+      sum += tmpSums[i];
+    }
+  }
+  return sum;
+}
+
+
+
+NA_DEF double naIntegrated(size_t sampleCount, IntegrateFuncd eval, const void* obj, double min, double max)
+{
+  // This is a highly efficient and accurate integration method developed by
+  // Tobias Stamm. It might even outperformsa simple for loop by using the
+  // memory cache more efficiently but overall is much more accurate for
+  // well-behaving value sequences as it combines neighboring values and hence
+  // loses much fewer floating point accuracy when summing these up.
+  
+  double tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
+  memset(tmpSums, 0, sizeof(double) * (8 * sizeof(size_t))); // nullify.
+
+  if(sampleCount > 1){
+    double stepSize = (max - min) / (sampleCount - 1);
+    
+    for(size_t iStep = 0; iStep < sampleCount; iStep += 2){
+
+      // Compute two neighboring values.
+      double x1 = min + stepSize * iStep;
+      double value1 = eval(obj, x1);
+      double x2 = min + stepSize * (iStep + 1);
+      double value2 = eval(obj, x2);
+      
+      // Add these values together with the temp sums up to the position where
+      // the current iStep has its first binary 0.
+      double walkingSum = value1 + value2;
+      char p = 1; // the current tmpSum as well as the current bit of iStep
+      size_t step = 2; // = 2^p
+      while(iStep & step){
+        walkingSum += tmpSums[p];
+        p++;
+        step <<= 1;
+      }
+      // Store the current sum at the position of the subsequent binary 1
+      tmpSums[p] = walkingSum;
+    }
+  }
+  
+  // If the count is odd, store the remaining value at position 0.
+  if(sampleCount & 1){
+    tmpSums[0] = eval(obj, max);
+  }
+  
+  double sum = 0.f;
   // Finally, go though all temp sums and add those to the final sum where
   // sampleCount has a binary 1
   for(size_t i = 0; i < 8 * sizeof(size_t); i++){

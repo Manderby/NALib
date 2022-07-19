@@ -249,6 +249,7 @@ NA_IAPI void          naCartesianToPolarf(float*  rtheta, const float*  xy);
 
 
 typedef float (*IntegrateFuncf)(const void*, float);
+typedef double (*IntegrateFuncd)(const void*, double);
 
 NA_API float naIntegratef(
   size_t sampleCount,
@@ -256,6 +257,13 @@ NA_API float naIntegratef(
   const void* obj,
   float min,
   float max);
+
+NA_API double naIntegrated(
+  size_t sampleCount,
+  IntegrateFuncd eval,
+  const void* obj,
+  double min,
+  double max);
 
 
 
