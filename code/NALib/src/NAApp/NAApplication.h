@@ -21,7 +21,7 @@ NA_API void naStartApplication(
   NAMutator postStartup,
   void* arg);
 
-// All arguments can be NA_NULL but the arguemnts allow you to ask NALib to
+// All arguments can be NA_NULL but the arguments allow you to ask NALib to
 // call the given two startup functions with the given arg. The precise order
 // of the calls is described here:
 //
@@ -98,6 +98,8 @@ NA_API void naStartApplication(
 //   willFinishLaunching method of the application delegate already.
 // - In order to react to willFinishLaunching and didFinishLaunching, your
 //   application class must use the <NSApplicationDelegate> protocol.
+// - If you get a runtime exception like "Creating more than one Application",
+//   make sure your nib file does not instanciate an application delegate.
 //
 // ////////////////////
 

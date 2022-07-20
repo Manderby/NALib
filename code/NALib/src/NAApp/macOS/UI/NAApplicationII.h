@@ -59,7 +59,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
     // already have a delegate defined, for example in the XIB file. Be
     // careful when implementing it and mention it in the naStartApplication
     // comments.
-//  [NSApp setDelegate:naGetUIElementNativePtr(app)];
+  // [NSApp setDelegate:naGetUIElementNativePtr(app)];
 
   // Start the event loop.
   NSDate* distantFuture = [NSDate distantFuture];
