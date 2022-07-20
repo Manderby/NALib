@@ -84,7 +84,7 @@ NA_DEF size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item){
 
 
 
-NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement){
+NA_DEF void naPresentMenu(NAMenu* menu, NAPos pos, void* parentUIElement){
   NA_UNUSED(parentUIElement);
   naDefineCocoaObjectConst(NACocoaNativeMenu, nativePtr, menu);
   [nativePtr displayAt:pos];
