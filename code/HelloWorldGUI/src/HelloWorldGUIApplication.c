@@ -3,7 +3,7 @@
 // converts temperatures from Degree Celsius to Degree Fahrenheit.
 
 #include "HelloWorldGUI.h"
-#include "../../NALib/src/NAStack.h"
+#include "NAStack.h"
 
 
 // Put GUI elements belonging together into a controller struct.

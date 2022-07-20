@@ -21,8 +21,8 @@ typedef enum{
 
 
 #include "NAMemory.h"
-#include "NACoord.h"
-#include "NABuffer.h"
+#include "../NAMath/NACoord.h"
+#include "../NAStruct/NABuffer.h"
 
 
 
