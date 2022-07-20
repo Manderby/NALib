@@ -40,7 +40,7 @@ NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
 
 
 
-NA_DEF void naSetSpaceAlternateBackground(NASpace* _Nonnull space, NABool alternate){
+NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
   space->alternateBackground = alternate;
   naRefreshUIElement(space, 0.);
 }
