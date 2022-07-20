@@ -11,7 +11,7 @@
 NA_DEF float naIntegratef(size_t sampleCount, IntegrateFuncf eval, const void* obj, float min, float max)
 {
   // This is a highly efficient and accurate integration method developed by
-  // Tobias Stamm. It might even outperformsa simple for loop by using the
+  // Tobias Stamm. It might even outperform a simple for loop by using the
   // memory cache more efficiently but overall is much more accurate for
   // well-behaving value sequences as it combines neighboring values and hence
   // loses much fewer floating point accuracy when summing these up.
@@ -66,7 +66,7 @@ NA_DEF float naIntegratef(size_t sampleCount, IntegrateFuncf eval, const void* o
 NA_DEF double naIntegrated(size_t sampleCount, IntegrateFuncd eval, const void* obj, double min, double max)
 {
   // This is a highly efficient and accurate integration method developed by
-  // Tobias Stamm. It might even outperformsa simple for loop by using the
+  // Tobias Stamm. It might even outperform a simple for loop by using the
   // memory cache more efficiently but overall is much more accurate for
   // well-behaving value sequences as it combines neighboring values and hence
   // loses much fewer floating point accuracy when summing these up.
