@@ -1,7 +1,7 @@
 
-#include "NATesting.h"
-#include "NAMemory.h"
-#include "NAString.h"
+#include "NAUtility/NATesting.h"
+#include "NAUtility/NAMemory.h"
+#include "NAUtility/NAString.h"
 #include <stdio.h>
 
 
@@ -39,6 +39,8 @@ void benchmarkNALib(void){
   benchmarkNABase();
   benchmarkNAStruct();
 }
+
+
 
 int main(int argc, const char** argv){
   printf("Testing NALib Version: %d ", NA_VERSION);

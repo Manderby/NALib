@@ -1,6 +1,6 @@
 
-#include "NAAppCore.h"
-#include "NAPreferences.h"
+#include "../NAAppCore.h"
+#include "../../NAPreferences.h"
 
 #if NA_COMPILE_GUI == 1
 

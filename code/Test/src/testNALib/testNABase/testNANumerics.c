@@ -1,6 +1,6 @@
 
-#include "NATesting.h"
-#include "NAString.h"
+#include "NAUtility/NATesting.h"
+#include "NAUtility/NAString.h"
 #include <stdio.h>
 
 

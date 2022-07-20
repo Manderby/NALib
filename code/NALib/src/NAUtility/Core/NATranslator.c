@@ -4,7 +4,7 @@
 #include "../../NAStruct/NAList.h"
 #include "../../NAUtility/NAString.h"
 #include "../../NAApp.h"
-#include "NAAppCore.h"
+#include "../../NAApp/Core/NAAppCore.h"
 #include <ctype.h>
 
 

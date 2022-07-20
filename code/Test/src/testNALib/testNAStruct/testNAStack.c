@@ -1,8 +1,8 @@
 
-#include "NATesting.h"
+#include "NAUtility/NATesting.h"
 #include <stdio.h>
 
-#include "NAStack.h"
+#include "NAStruct/NAStack.h"
 
 #define NA_TEST_STACK_INIT_COUNT 10
 #define NA_TEST_STACK_TYPE_SIZE 20

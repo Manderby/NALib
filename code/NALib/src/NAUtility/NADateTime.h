@@ -5,9 +5,9 @@
   extern "C"{
 #endif
 
-#include "NABase.h"
+#include "../NABase.h"
 #include "NAString.h"
-#include "NABuffer.h"
+#include "../NAStruct/NABuffer.h"
 
 
 #if NA_OS == NA_OS_WINDOWS

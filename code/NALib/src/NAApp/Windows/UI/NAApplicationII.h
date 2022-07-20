@@ -6,8 +6,8 @@
 
 
 
-#include "../../../NAString.h"
-#include "../../../NAURL.h"
+#include "../../../NAUtility/NAString.h"
+#include "../../../NAUtility/NAURL.h"
 
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   #include <commctrl.h>

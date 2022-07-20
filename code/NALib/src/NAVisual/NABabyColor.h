@@ -36,8 +36,8 @@
 // - Simplified conversion from/to uint8 is done with multiplication of 255.
 //   Clamps values below 0 and above 1 to 0 and 255 respectively. 
 
-#include "NABase.h"
-#include "NAMemory.h"
+#include "../NABase.h"
+#include "../NAUtility/NAMemory.h"
 
 #define NA_BABY_COLOR_CHANNEL_COUNT 4
 #define NA_BABY_COLOR_BYTES_PER_COMPONENT \

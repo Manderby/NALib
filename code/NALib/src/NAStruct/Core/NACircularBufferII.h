@@ -4,7 +4,7 @@
 // including "NACircularBuffer.h"
 
 
-#include "NAMemory.h"
+#include "../NAUtility/NAMemory.h"
 
 
 struct NACircularBuffer{

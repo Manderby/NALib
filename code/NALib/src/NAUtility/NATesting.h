@@ -2,7 +2,7 @@
 #ifndef NA_TESTING_INCLUDED
 #define NA_TESTING_INCLUDED
 
-#include "NABase.h"
+#include "../NABase.h"
 
 // Starts and stops the testing. Provide the top name of the code you
 // want to test. The timePerBenchmark denotes the time spent per benchmark

@@ -163,6 +163,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NALib\NALib.vcxproj">
+      <Project>{d03034cf-5ce8-4e68-8fd9-d5820e2745ba}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\mainHeapTest.c" />
+    <ClCompile Include="src\mainTreeTest.c" />
     <ClCompile Include="src\testNALib.c" />
     <ClCompile Include="src\testNALib\testNABase.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAChar.c" />
@@ -186,11 +193,6 @@
     <ClCompile Include="src\testNALib\testNAStruct.c" />
     <ClCompile Include="src\testNALib\testNAStruct\testNABuffer.c" />
     <ClCompile Include="src\testNALib\testNAStruct\testNAStack.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NALib\NALib.vcxproj">
-      <Project>{d03034cf-5ce8-4e68-8fd9-d5820e2745ba}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

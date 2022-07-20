@@ -6,7 +6,7 @@
 
 
 #include "../Core/NAAppCore.h"
-#include "../../NAValueHelper.h"
+#include "../../../NAUtility/NAValueHelper.h"
 
 
 NA_HAPI void** na_GetUIElementNextTabReference(void* textField);

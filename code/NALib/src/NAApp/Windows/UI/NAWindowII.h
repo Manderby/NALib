@@ -5,7 +5,7 @@
 // Do not include this file anywhere else!
 
 
-#include "../../../NAPreferences.h"
+#include "../../../NAApp/NAPreferences.h"
 
 
 

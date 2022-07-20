@@ -30,7 +30,7 @@
 
 
 
-#include "NAString.h"
+#include "NAUtility/NAString.h"
 
 #include "NAApp/NAFont.h"
 #include "NAApp/NAKeyboard.h"

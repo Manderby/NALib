@@ -6,7 +6,7 @@
 #endif
 
 
-#include "NABase.h"
+#include "../NABase.h"
 
 
 // This file contains functions to generate pseudo random numbers.

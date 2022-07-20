@@ -6,7 +6,7 @@
 #endif
 
 
-#include "NAString.h"
+#include "../NAUtility/NAString.h"
 
 // This file allows a programmer to store user preferences for an application.
 // This is a system dependent implementation. On Mac, the NSUserDefaults class

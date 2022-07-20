@@ -105,7 +105,7 @@ NA_API void naDeallocNativeImage(void* nativeImage);
 
 
 // Inline implementations are in a separate file: 
-#include "NAUIImageII.h"
+#include "Core/NAUIImageII.h"
 
 
 
