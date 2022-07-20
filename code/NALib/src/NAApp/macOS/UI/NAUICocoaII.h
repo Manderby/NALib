@@ -13,7 +13,7 @@
 
 // the following import is needed for UTType definitions.
 #import <UniformTypeIdentifiers/UTType.h>
-
+#import <Carbon/Carbon.h>
 
 NA_HAPI void na_RenewWindowMouseTracking(NAWindow* window);
 NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);

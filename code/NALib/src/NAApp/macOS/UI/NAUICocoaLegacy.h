@@ -240,7 +240,6 @@
 NA_API CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext);
 NA_API CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement);
 NA_API CGFloat naGetWindowBackingScaleFactor(NSWindow* window);
-NA_API NABool naLoadNib(const NAUTF8Char* nibName);
 NA_API NSColor* naGetLabelColor(void);
 NA_API NSColor* naGetLinkColor(void);
 
