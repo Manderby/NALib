@@ -86,7 +86,7 @@ NA_API void naStartApplication(
 //   naStartRuntime();
 //   [MyExistingApplication sharedApplication];
 //   naStartApplication(NA_NULL, postStartup, NA_NULL);
-//   naEndRundime();
+//   naStopRuntime();
 //   return 0;
 // }
 //
