@@ -151,7 +151,7 @@ NABool redrawOpenGLSpace(NAReaction reaction){
     glVertex3f(naSinf(ang) * .9f, 0.f, 0.f);
   glEnd();
 
-  naDrawASCIICharacter('&', naSinf(ang) * .9f, 0, 0);
+  naDrawASCIICharacters("Hello World", naSinf(ang) * .9f, 0, 0);
    
 
 

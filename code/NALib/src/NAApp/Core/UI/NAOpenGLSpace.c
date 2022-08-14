@@ -171,7 +171,7 @@ char na_pixelFont5x9[(5*16/8)*9*6] = {
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     int offsetX = 0;
-    for(int i = 0; i < strlen(str); ++i){
+    for(size_t i = 0; i < strlen(str); ++i){
       char c = str[i];
       
       if(c == '\n'){
@@ -191,7 +191,7 @@ char na_pixelFont5x9[(5*16/8)*9*6] = {
         glVertex3i(viewX + offsetX, viewY, 0);
         glTexCoord2f((texX * 5.f) * scaleX, (texY * 9.f) * scaleY);
         glVertex3i(viewX + offsetX, viewY + 9, 0);
-        glTexCoord2f(((texX + 1.f) * 5.f) * scaleX, ((texY + 1.f) * 9.) * scaleY);
+        glTexCoord2f(((texX + 1.f) * 5.f) * scaleX, ((texY + 1.f) * 9.f) * scaleY);
         glVertex3i(viewX + offsetX + 5, viewY, 0);
         glTexCoord2f(((texX + 1.f) * 5.f) * scaleX, (texY * 9.f) * scaleY);
         glVertex3i(viewX + offsetX + 5, viewY + 9, 0);
