@@ -1,6 +1,7 @@
 
 #ifndef NA_APP_INCLUDED
 #define NA_APP_INCLUDED
+
 #ifdef __cplusplus
   extern "C"{
 #endif

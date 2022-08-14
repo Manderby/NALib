@@ -346,11 +346,12 @@ NA_DEF NABool naIterateBuffer(NABufferIterator* iter, NAInt step){
   iter->partOffset += (size_t)step;
   if(step > 0){
     while(!naIsTreeAtInitial(&(iter->partIter)) && iter->partOffset >= (NAInt)na_GetBufferPartByteSize(part)){
-      iter->partOffset -= na_GetBufferPartByteSize(part);
       naIterateTree(&(iter->partIter), NA_NULL, NA_NULL);
       if(!naIsTreeAtInitial(&(iter->partIter))){
+        iter->partOffset -= na_GetBufferPartByteSize(part);
         part = naGetTreeCurLeafConst(&(iter->partIter));
       }else{
+        iter->partOffset = naGetRangeiEnd(buffer->range);
         part = NA_NULL;
       }
     }
@@ -358,9 +359,10 @@ NA_DEF NABool naIterateBuffer(NABufferIterator* iter, NAInt step){
     while(!naIsTreeAtInitial(&(iter->partIter)) && iter->partOffset < 0){
       naIterateTreeBack(&(iter->partIter), NA_NULL, NA_NULL);
       if(!naIsTreeAtInitial(&(iter->partIter))){
-        part = naGetTreeCurLeafConst(&(iter->partIter));
         iter->partOffset += na_GetBufferPartByteSize(part);
+        part = naGetTreeCurLeafConst(&(iter->partIter));
       }else{
+        iter->partOffset = naGetRangeiEnd(buffer->range);
         part = NA_NULL;
       }
     }

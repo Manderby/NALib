@@ -5,6 +5,7 @@
 
 
 #include "HelloWorldGUI.h"
+#include "../../NALib/src/NAVisual/NA3DHelper.h"
 
 
 struct ExperimentController{
@@ -117,6 +118,12 @@ NABool checkBoxPressed(NAReaction reaction){
   return NA_TRUE;
 }
 
+void initOpenGL(void* initData)
+{
+  NA_UNUSED(initData);
+  naStartupPixelFont();
+}
+
 NABool redrawOpenGLSpace(NAReaction reaction){
   // OpenGL is declared deprecated on macOS 10.14. These pragma directives
   // omit the nasty warnings. Do not forget the pragma pop at the end of this
@@ -136,11 +143,32 @@ NABool redrawOpenGLSpace(NAReaction reaction){
   glClearColor(0.f, 0.f, .4f, 1.f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glColor4f(1.f, 1.f, 1.f, 1.f);
+  glDisable(GL_TEXTURE_2D);
+
+  glColor4f(1.f, .5f, 1.f, 1.f);
   glPointSize(5);
   glBegin(GL_POINTS);
     glVertex3f(naSinf(ang) * .9f, 0.f, 0.f);
   glEnd();
+
+  naDrawASCIICharacter('&', naSinf(ang) * .9f, 0, 0);
+   
+
+
+//  GLfloat colors[2] = {0., 1.}; 
+//  glPixelMapfv(GL_PIXEL_MAP_I_TO_R, 2, colors);
+//  glPixelMapfv(GL_PIXEL_MAP_I_TO_G, 2, colors);
+//  glPixelMapfv(GL_PIXEL_MAP_I_TO_B, 2, colors);
+//  glPixelMapfv(GL_PIXEL_MAP_I_TO_A, 2, colors);
+//
+//  glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
+//  glRasterPos2d(-1, 1);
+//  glPixelZoom(1, -1);
+//
+//  glDrawPixels(5*16, 9*6, GL_COLOR_INDEX, GL_BITMAP, na_pixelFont5x9);
+////  glBitmap(5*16, 9*6, 0, 0, 0, 0, na_pixelFont5x9);
+
+
 
   naSwapOpenGLSpaceBuffer(con->openGLSpace);
   
@@ -309,7 +337,7 @@ ExperimentController* createExperimentController(){
   curPosY -= 30;
   con->openGLSpaceLabel = naNewLabel("NAOpenGLSpace", descSize);
   naAddSpaceChild(con->contentSpace, con->openGLSpaceLabel, naMakePos(20, curPosY));
-  con->openGLSpace = naNewOpenGLSpace(naMakeSize(150, 22), NA_NULL, NA_NULL);
+  con->openGLSpace = naNewOpenGLSpace(naMakeSize(150, 22), initOpenGL, NA_NULL);
   naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(250, curPosY));
   naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, con);
 
@@ -399,6 +427,8 @@ void clearExperimentController(ExperimentController* con){
   // application UIElement will be cleared automatically.
   naRelease(con->testImage);
   naFree(con);
+
+  naShutdownPixelFont();
 }
 
 

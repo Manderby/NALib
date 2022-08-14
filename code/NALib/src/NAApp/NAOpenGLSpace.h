@@ -14,6 +14,7 @@
     #include <windows.h>
     #include <GL/GL.h>
   #else
+    #define GL_SILENCE_DEPRECATION
     #include <OpenGL/gl.h>
   #endif
 #endif
@@ -51,6 +52,27 @@ NA_API void naSetOpenGLSpaceInnerRect(
   NAOpenGLSpace* openGLSpace,
   NARect bounds);
 
+// In order to draw characters with naDrawASCIICharacters, you first need to
+// startup a pixelfont. The startup function must be called after the openGL
+// context is set. The best place to call it is in the callback of the
+// naNewOpenGLSpace function or, if naNewOpenGLSpace is not used, the
+// prepareOpenGL method of Cocoa. When the pixel font is no longer needed, you
+// can shut it down again.
+NA_API void naStartupPixelFont(void);
+NA_API void naShutdownPixelFont(void);
+
+// Draws a series of characters at the specified world coordinates. Requires
+// naStartupPixelFont to be called somewhen in advance. The font used is a
+// monospaced font, 5x9 pixels in size. An additional 1 pixel will be used when
+// multiple characters are placed, both horizontally as well as vertically.
+// The character '\n' is treated as a newline, all other non-printable ASCII
+// codes are overjumped. The given coordinates are the bottom left corner of
+// the first drawn character.
+NA_API void naDrawASCIICharacters(
+  const char* str,
+  double x,
+  double y,
+  double z);
 
 
 #endif // NA_UI_OPENGL_SPACE_INCLUDED
