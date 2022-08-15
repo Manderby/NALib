@@ -134,7 +134,6 @@ NA_DEF void na_DestructCocoaSpace(NACocoaSpace* _Nonnull cocoaSpace){
 NA_DEF void naSetSpaceRect(NASpace* _Nonnull space, NARect rect){
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   NSRect frame = naMakeNSRectWithRect(rect);
-  frame.origin = NSMakePoint(0, 0);
   [nativePtr setFrame: frame];
 }
 
