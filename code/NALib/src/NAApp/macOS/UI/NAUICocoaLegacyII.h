@@ -78,6 +78,12 @@ NA_DEF NABool naLoadNib(const NAUTF8Char* nibName, void* owner){
 
 
 
+NA_DEF void naSwitchApplicationToGraphiteAppearance(void){
+  [[NSUserDefaults standardUserDefaults] setVolatileDomain:@{@"AppleAquaColorVariant": @6} forName:NSArgumentDomain];
+}
+
+
+
 NA_DEF NSColor* naGetLabelColor(){
   NSColor* color = nil;
   

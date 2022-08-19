@@ -168,15 +168,23 @@ NA_API NAString* naNewApplicationResourcePath(
 
 
 // ////////////////////////////////
-// macOS nib loading.
+// macOS specific functions.
 
 #if NA_OS == NA_OS_MAC_OS_X
+
   // If you are on macOS and need to load in a NIB file, use the following
   // function. Note that this function also works on older systems.
   NABool naLoadNib(const NAUTF8Char* nibName, void* owner);
   // You usually load nibs after the application startup. A good idea is to
   // do it in the postStartup callback of naStartApplication.
-#endif
+
+  // Sets the macintosh application to graphite appearance. This only is
+  // possible before macOS 11. Requires an autorelease pool to be available.
+  // A good idea is to call this in the preStartup callback of
+  // naStartApplication.
+  void naSwitchApplicationToGraphiteAppearance(void);
+
+#endif // macOS specific functions
 
 
 
