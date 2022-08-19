@@ -19,7 +19,7 @@ NA_HDEF void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace){
 
 
 
-char na_pixelFont5x9[(5*16/8)*9*6] = {
+NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
   0x01, 0x14, 0xa7, 0xe5, 0x84, 0x12, 0x00, 0x00, 0x00, 0x01, 
   0x01, 0x15, 0xfa, 0x6a, 0x44, 0x21, 0x00, 0x00, 0x00, 0x02, 
   0x01, 0x00, 0xaa, 0x0a, 0x40, 0x40, 0x94, 0x40, 0x00, 0x02, 
@@ -84,18 +84,18 @@ char na_pixelFont5x9[(5*16/8)*9*6] = {
   NA_DEF void naStartupPixelFont(){
     #ifndef NDEBUG
       if(fontTex)
-        naError("Pixel Font already startstarted.");
+        naError("Pixel Font already started.");
     #endif
     
     NAByte texBuf[5*16 * 9*6 * 4];
 
-    char* byte = na_pixelFont5x9;
+    NAByte* byte = na_pixelFont5x9;
     NAByte* texPtr = texBuf;
     
     int byteNum = 7;
     for(int y = 0; y < 9*6; ++y){
       for(int x = 0; x < 5*16; ++x){
-        int value = (*byte >> byteNum) & 0x01;
+        NAByte value = (*byte >> byteNum) & 0x01;
         *texPtr++ = 0xff * value;
         *texPtr++ = 0xff * value;
         *texPtr++ = 0xff * value;
