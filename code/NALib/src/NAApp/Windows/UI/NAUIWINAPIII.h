@@ -424,7 +424,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
     break;
 
   case WM_KEYDOWN:
-    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEYDOWN);
+    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_DOWN);
     if(handeled){
       info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
@@ -432,7 +432,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
     break;
 
   case WM_KEYUP:
-    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEYUP);
+    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_UP);
     if(handeled){
       info.hasBeenHandeled = NA_TRUE;
       info.result = 0;

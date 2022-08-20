@@ -13,6 +13,7 @@ typedef struct NAMouseStatus NAMouseStatus;
 struct NAMouseStatus{
   NAPos pos;
   NAPos prevPos;
+  NABool leftPressed;
 };
 
 

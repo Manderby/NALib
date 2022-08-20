@@ -105,12 +105,12 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
   #if NA_DEBUG
     if((command == NA_UI_COMMAND_RESHAPE) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
       naError("Only windows can receyve RESHAPE commands.");
-//    if((command == NA_UI_COMMAND_KEYDOWN) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
+//    if((command == NA_UI_COMMAND_KEY_DOWN) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
 //      naError("Only windows can receyve KEYDOWN commands.");
-//    if((command == NA_UI_COMMAND_KEYUP) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
+//    if((command == NA_UI_COMMAND_KEY_UP) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
 //      naError("Only windows can receyve KEYUP commands.");
-    if((command == NA_UI_COMMAND_MOUSE_MOVED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
-      naError("Only windows can receyve MOUSE_MOVED commands.");
+    if((command == NA_UI_COMMAND_MOUSE_MOVED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW) && (naGetUIElementType(uiElement) != NA_UI_OPENGL_SPACE))
+      naError("Only windows and openGLSpace can receyve MOUSE_MOVED commands.");
 //    if((command == NA_UI_COMMAND_MOUSE_ENTERED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
 //      naError("Only windows can receyve MOUSE_ENTERED commands.");
 //    if((command == NA_UI_COMMAND_MOUSE_EXITED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
