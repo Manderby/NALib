@@ -32,6 +32,7 @@ NA_API void naCenterMouse(void* uiElement, NABool includeBorder);
 // Shows or hides the mouse
 NA_API void naShowMouse(void);
 NA_API void naHideMouse(void);
+NA_API void naHideMouseUntilMovement(NABool hide);
 
 
 #endif // NA_MOUSE_INCLUDED

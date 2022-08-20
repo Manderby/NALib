@@ -626,6 +626,9 @@ NA_DEF void naHideMouse(){
   }
 }
 
+NA_DEF void naHideMouseUntilMovement(NABool hide){
+  // todo
+}
 
 NA_HDEF UINT na_GetApplicationNextMenuItemId(NAApplication* application)
 {
