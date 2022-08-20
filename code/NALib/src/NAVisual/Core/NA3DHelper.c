@@ -16,7 +16,7 @@ NA_DEF void naFillMatrixPerspective(NAMat44d matrix, double fovy, double aspect,
   matrix[ 8] = 0.;
   matrix[ 9] = 0.;
   matrix[10] = (farZ + nearZ) / (nearZ - farZ);
-  matrix[11] = -1.;
+  matrix[11] = -1.; // I like right handed systems.
   matrix[12] = 0.;
   matrix[13] = 0.;
   matrix[14] = (2. * farZ * nearZ) / (nearZ - farZ);
