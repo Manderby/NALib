@@ -494,6 +494,11 @@ NA_DEF void naHideMouse(){
 
 
 
+NA_DEF void naHideMouseUntilMovement(NABool hide){
+  [NSCursor setHiddenUntilMouseMoves:hide ? YES : NO];
+}
+
+
 
 NA_DEF NARect naGetUIElementRect(const void* uiElement, const void* relativeuiElement, NABool includeBorder){
   NARect rect;
