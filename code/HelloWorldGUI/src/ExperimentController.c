@@ -35,6 +35,7 @@ struct ExperimentController{
   NALabel* labelLabel;
   NALabel* label;
 
+  NAInt fontId;
   NALabel* openGLSpaceLabel;
   NAOpenGLSpace* openGLSpace;
 
@@ -120,8 +121,8 @@ NABool checkBoxPressed(NAReaction reaction){
 
 void initOpenGL(void* initData)
 {
-  NA_UNUSED(initData);
-  naStartupPixelFont();
+  ExperimentController* con = (ExperimentController*)initData;
+  con->fontId = naStartupPixelFont();
 }
 
 NABool redrawOpenGLSpace(NAReaction reaction){
@@ -151,25 +152,8 @@ NABool redrawOpenGLSpace(NAReaction reaction){
     glVertex3f(naSinf(ang) * .9f, 0.f, 0.f);
   glEnd();
 
-  naDrawASCIICharacters("Hello World", naSinf(ang) * .9f, 0, 0);
+  naDrawASCIICharacters(con->fontId, "Hello World", naSinf(ang) * .9f, 0, 0);
    
-
-
-//  GLfloat colors[2] = {0., 1.}; 
-//  glPixelMapfv(GL_PIXEL_MAP_I_TO_R, 2, colors);
-//  glPixelMapfv(GL_PIXEL_MAP_I_TO_G, 2, colors);
-//  glPixelMapfv(GL_PIXEL_MAP_I_TO_B, 2, colors);
-//  glPixelMapfv(GL_PIXEL_MAP_I_TO_A, 2, colors);
-//
-//  glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
-//  glRasterPos2d(-1, 1);
-//  glPixelZoom(1, -1);
-//
-//  glDrawPixels(5*16, 9*6, GL_COLOR_INDEX, GL_BITMAP, na_pixelFont5x9);
-////  glBitmap(5*16, 9*6, 0, 0, 0, 0, na_pixelFont5x9);
-
-
-
   naSwapOpenGLSpaceBuffer(con->openGLSpace);
   
   naRefreshUIElement(con->openGLSpace, 1./ 60);
@@ -337,7 +321,7 @@ ExperimentController* createExperimentController(){
   curPosY -= 30;
   con->openGLSpaceLabel = naNewLabel("NAOpenGLSpace", descSize);
   naAddSpaceChild(con->contentSpace, con->openGLSpaceLabel, naMakePos(20, curPosY));
-  con->openGLSpace = naNewOpenGLSpace(naMakeSize(150, 22), initOpenGL, NA_NULL);
+  con->openGLSpace = naNewOpenGLSpace(naMakeSize(150, 22), initOpenGL, con);
   naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(250, curPosY));
   naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, con);
 
@@ -428,7 +412,7 @@ void clearExperimentController(ExperimentController* con){
   naRelease(con->testImage);
   naFree(con);
 
-  naShutdownPixelFont();
+  naShutdownPixelFont(con->fontId);
 }
 
 
