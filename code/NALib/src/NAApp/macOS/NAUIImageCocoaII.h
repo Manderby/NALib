@@ -120,14 +120,12 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 }
 
 
-NA_HDEF BOOL na_createResolutionIndependentImage(const NSView* containingView, const NAUIImage* uiImage, NAUIImageKind kind, NSSize imageSize, NSRect dstRect){
+NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, NAUIImageResolution resolution, NAUIImageKind kind, NSSize imageSize, NSRect dstRect){
   NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
   if(uiImage->tintMode != NA_BLEND_ZERO){
     skin = naGetSkinForCurrentAppearance();
   }
   
-  NAUIImageResolution resolution = naGetWindowBackingScaleFactor([containingView window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
-
   CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, kind, skin);
   if(!cocoaimage){
     cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
@@ -158,7 +156,6 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
   NAUIImageKind kind)
 {
   NSImage* image = nil;
-  NA_UNUSED(containingView);
 
   // modern method: Create an image which redraws itself automatically.
   // This is commented out as there have been severe problems with this working
@@ -169,7 +166,8 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
       NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
       image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
       {
-        return na_createResolutionIndependentImage(containingView, uiImage, kind, imageSize, dstRect);
+        NAUIImageResolution resolution = (naGetWindowBackingScaleFactor([containingView window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x);
+        return na_drawFixedResolutionImage(uiImage, resolution, kind, imageSize, dstRect);
       }];
     ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
   }

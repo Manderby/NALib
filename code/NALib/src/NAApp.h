@@ -35,10 +35,10 @@
 
 #include "NAApp/NAFont.h"
 #include "NAApp/NAKeyboard.h"
-#include "NAApp/NAMouse.h"
 #include "NAApp/NAPreferences.h"
 #include "NAApp/NAReaction.h"
 #include "NAApp/NAUIImage.h"
+#include "NAApp/NAMouse.h"
 
 // The base of every ui element.
 #include "NAApp/NAUIElement.h"

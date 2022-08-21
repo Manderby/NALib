@@ -500,6 +500,13 @@ NA_DEF void naHideMouseUntilMovement(NABool hide){
 
 
 
+NA_DEF NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot){
+  NSImage* nsImage = naCreateResolutionIndependentNativeImage(NA_NULL, uiImage, NA_UIIMAGE_KIND_MAIN);
+  return [[NSCursor alloc] initWithImage:nsImage hotSpot:naMakeNSPointWithPos(hotspot)];
+}
+
+
+
 NA_DEF NARect naGetUIElementRect(const void* uiElement, const void* relativeuiElement, NABool includeBorder){
   NARect rect;
   NARect relRect;
