@@ -16,6 +16,8 @@ struct NAMouseStatus{
   NABool leftPressed;
 };
 
+typedef void* NACursorImage;
+
 
 
 // Returns the current mouse status.
@@ -35,6 +37,9 @@ NA_API void naShowMouse(void);
 NA_API void naHideMouse(void);
 NA_API void naHideMouseUntilMovement(NABool hide);
 
+// Creates a resolution independent image for a cursor with a hotspot.
+// On macOS, NACursorImage is of type NSCursor*
+NA_API NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot);
 
 #endif // NA_MOUSE_INCLUDED
 
