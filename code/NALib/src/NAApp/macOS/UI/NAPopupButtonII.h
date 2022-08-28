@@ -97,15 +97,14 @@ NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* ite
 
 
 
-NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, NAMenuItem* item){
+NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, const NAMenuItem* item){
   return naGetListElemIndex(&(popupButton->childs), item);
 }
 
 
 
-NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, NAMenuItem* item){
+NA_DEF void naSetPopupButtonIndexSelected(NAPopupButton* popupButton, size_t index){
   naDefineCocoaObject(NACocoaNativePopupButton, nativePopupPtr, popupButton);
-  size_t index = naGetPopupButtonItemIndex(popupButton, item);
   [nativePopupPtr selectItemAtIndex:(NSInteger)index];
 }
 
