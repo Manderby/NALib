@@ -41,6 +41,7 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
   application->companyName = NA_NULL;
   application->versionString = NA_NULL;
   application->buildString = NA_NULL;
+  application->resourcePath = NA_NULL;
   application->iconPath = NA_NULL;
 
   // This is done at the very end of the InitApplication function as the

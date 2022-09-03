@@ -126,30 +126,42 @@ NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds)
 #else
 
   NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
-    naError("OpenGL has not been configured. See NAConfiguration.h");
+    #if NA_DEBUG
+      naError("OpenGL has not been configured. See NAConfiguration.h");
+    #endif
     NAWINAPICallbackInfo info = {NA_FALSE, 0};
     return info;
   }
 
   NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
-    naError("OpenGL has not been configured. See NAConfiguration.h");
+    #if NA_DEBUG
+      naError("OpenGL has not been configured. See NAConfiguration.h");
+    #endif
     return NA_NULL;
   }
 
   NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace){
-    naError("OpenGL has not been configured. See NAConfiguration.h");
+    #if NA_DEBUG
+      naError("OpenGL has not been configured. See NAConfiguration.h");
+    #endif
   }
 
   NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible){
-    naError("OpenGL has not been configured. See NAConfiguration.h");
+    #if NA_DEBUG
+      naError("OpenGL has not been configured. See NAConfiguration.h");
+    #endif
   } 
 
   NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
-    naError("OpenGL has not been configured. See NAConfiguration.h");
+    #if NA_DEBUG
+      naError("OpenGL has not been configured. See NAConfiguration.h");
+    #endif
   }
 
   NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
-    naError("OpenGL has not been configured. See NAConfiguration.h");
+    #if NA_DEBUG
+      naError("OpenGL has not been configured. See NAConfiguration.h");
+    #endif
   }
 
 #endif  // NA_COMPILE_OPENGL == 1
