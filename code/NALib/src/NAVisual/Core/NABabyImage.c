@@ -92,6 +92,24 @@ NA_DEF NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color){
 
 
 
+NA_HDEF NABabyImage* naCreateBabyImageCopy(const NABabyImage* image){
+  NABabyImage* newImage;
+  #if NA_DEBUG
+  if(!image)
+    naError("given image is a Null pointer");
+  #endif
+  newImage = naAlloc(NABabyImage);
+  naInitRefCount(&newImage->refCount);
+  newImage->width = image->width;
+  newImage->height = image->height;
+  size_t dataSize = na_GetBabyImageDataSize(newImage);
+  newImage->data = naMalloc(dataSize);
+  naCopyn(newImage->data, image->data, dataSize);
+  return newImage;
+}
+
+
+
 NA_HDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, const float* top, NABlendMode mode, float blend, NABool baseIsImage, NABool topIsImage){
   NAInt i;
   blend = naLinearizeColorValue(blend);

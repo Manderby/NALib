@@ -74,22 +74,36 @@ NA_HIDEF NAInt na_GetUIImageSubImageIndex(NAUIImageResolution resolution, NAUIIm
 
 NA_HDEF const NABabyImage* na_GetUIImageBabyImage(const NAUIImage* uiImage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
   NAInt subIndex = na_GetUIImageSubImageIndex(resolution, kind, skin);
-  const NABabyImage* retimg = uiImage->babyImages[subIndex];
-  if(!retimg && skin != NA_UIIMAGE_SKIN_PLAIN){
-    NAInt plainIndex = na_GetUIImageSubImageIndex(resolution, kind, NA_UIIMAGE_SKIN_PLAIN);
-    const NABabyImage* plainimg = uiImage->babyImages[plainIndex];
-    if(plainimg){
-      NABabyColor skinColor;
-      NABabyImage* skinnedImage;
-      naFillDefaultTextColorWithSkin(skinColor, skin);
-      skinnedImage = naCreateBabyImageWithTint(plainimg, skinColor, uiImage->tintMode, 1.f);
+  const NABabyImage* retImg = uiImage->babyImages[subIndex];
+
+  if(!retImg && skin != NA_UIIMAGE_SKIN_PLAIN){
+    // If the skinned image does not exist, create one automatically out of
+    // the plain image of the same kind and resolution.
+    const NABabyImage* plainImg = na_GetUIImageBabyImage(uiImage, resolution, kind, NA_UIIMAGE_SKIN_PLAIN);
+    if(plainImg){
+      NABabyColor tintColor;
+      NABabyImage* tintedImage;
+      naFillDefaultTextColorWithSkin(tintColor, skin);
+      tintedImage = naCreateBabyImageWithTint(plainImg, tintColor, uiImage->tintMode, 1.f);
       // todo: not so beautiful const cast to NAUIImage*.
-      na_SetUIImageBabyImage((NAUIImage*)uiImage, skinnedImage, resolution, kind, skin);
-      naReleaseBabyImage(skinnedImage);
-      retimg = uiImage->babyImages[subIndex];
+      na_SetUIImageBabyImage((NAUIImage*)uiImage, tintedImage, resolution, kind, skin);
+      naReleaseBabyImage(tintedImage);
+      retImg = uiImage->babyImages[subIndex];
     }
+  }else if(!retImg && kind != NA_UIIMAGE_KIND_MAIN){
+    // If the kinded image does not exist, create one automatically out of
+    // the main image of the same skin and resolution.
+    const NABabyImage* mainImg = na_GetUIImageBabyImage(uiImage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
+    if(mainImg){
+      NABabyImage* kindedImage = naCreateBabyImageCopy(mainImg);
+      // todo: not so beautiful const cast to NAUIImage*.
+      na_SetUIImageBabyImage((NAUIImage*)uiImage, kindedImage, resolution, kind, skin);
+      naReleaseBabyImage(kindedImage);
+      retImg = uiImage->babyImages[subIndex];
+    }
+    // todo: third else if should automatically create a resized image.
   }
-  return retimg;
+  return retImg;
 }
 
 
