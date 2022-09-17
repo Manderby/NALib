@@ -62,7 +62,7 @@ NA_DEF NASlider* naNewSlider(double width){
   
   NACocoaNativeSlider* nativePtr = [[NACocoaNativeSlider alloc]
     initWithSlider:cocoaSlider
-    frame:naMakeNSRectWithSize(naMakeSize(width, 24))];
+    frame:naMakeNSRectWithSize(naMakeSize(width, 26))];
   na_InitSlider((NASlider*)cocoaSlider, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return (NASlider*)cocoaSlider;

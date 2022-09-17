@@ -60,7 +60,7 @@ NA_DEF NAPopupButton* naNewPopupButton(double width){
 
   NACocoaNativePopupButton* nativePtr = [[NACocoaNativePopupButton alloc]
     initWithPopupButton:cocoaPopupButton
-    frame:naMakeNSRectWithSize(naMakeSize(width, 23))];
+    frame:naMakeNSRectWithSize(naMakeSize(width, 25))];
   na_InitPopupButton((NAPopupButton*)cocoaPopupButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   return (NAPopupButton*)cocoaPopupButton;
