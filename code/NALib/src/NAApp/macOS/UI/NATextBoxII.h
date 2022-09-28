@@ -165,6 +165,8 @@ NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox){
 
 NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use){
   // todo
+  NA_UNUSED(textBox);
+  NA_UNUSED(use);
 }
 
 

@@ -212,6 +212,11 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
     #endif
   }
   NA_DEF void naDrawASCIICharacter(NAInt fontId, char c, double x, double y, double z){
+    NA_UNUSED(fontId);
+    NA_UNUSED(c);
+    NA_UNUSED(x);
+    NA_UNUSED(y);
+    NA_UNUSED(z);
     #if NA_DEBUG
       naError("Function has no effect when NA_COMPILE_OPENGL is undefined.");
     #endif
