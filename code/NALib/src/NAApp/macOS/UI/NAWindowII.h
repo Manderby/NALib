@@ -115,7 +115,7 @@
 
 - (void)keyUp:(NSEvent*)event{
   NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEYUP);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_UP);
 }
 
 - (void)windowDidResize:(NSNotification *)notification{
@@ -171,7 +171,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
   if(auxiliary){
     [nativePtr setKeepOnTop:YES];
     [nativePtr setHidesOnDeactivate:YES];
-    [nativePtr setCollectionBehavior:NSWindowCollectionBehaviorTransient | NSWindowCollectionBehaviorFullScreenAuxiliary];
+    [nativePtr setCollectionBehavior:NSWindowCollectionBehaviorTransient | NAWindowCollectionBehaviorFullScreenAuxiliary];
     [nativePtr setExcludedFromWindowsMenu:YES];
   }
   

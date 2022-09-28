@@ -55,9 +55,11 @@
 }
 
 - (void) setText:(const NAUTF8Char*)text{
-  NSArray<NSValue*>* selectedRanges = [self selectedRanges];
+  NSArray<NSValue*>* selectedRanges = [[NSArray alloc] initWithArray: [self selectedRanges]];
   [self setString:[NSString stringWithUTF8String:text]];
-  [self setSelectedRanges:selectedRanges affinity:[self selectionAffinity] stillSelecting:NO];
+  if([selectedRanges count])
+    [self setSelectedRanges:selectedRanges affinity:[self selectionAffinity] stillSelecting:NO];
+  NA_COCOA_RELEASE(selectedRanges);
 }
 
 - (NAString*) newStringWithText{
@@ -68,12 +70,8 @@
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 
-- (void) setFontKind:(NAFontKind)kind size:(NAFontSize)size{
-  [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKindAndSize(kind, size))];
-}
-
-- (void) setCustomFont:(const NAUTF8Char*)fontName flags:(uint32)flags size:(double)size{
-  [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetCustomFont(fontName, flags, size))];
+- (void) setNAFont:(NAFont*)font{
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
 }
 
 - (void) setUseHorizontalScrolling{
@@ -115,6 +113,8 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
     frame:naMakeNSRectWithSize(size)];
   na_InitTextBox((NATextBox*)cocoaTextBox, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
+  cocoaTextBox->textBox.font = naRetain(naGetSystemFont());
+
   return (NATextBox*)cocoaTextBox;
 }
 
@@ -147,16 +147,11 @@ NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignm
 
 
 
-NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind, NAFontSize size){
+NA_DEF void naSetTextBoxFont(NATextBox* textBox, NAFont* font){
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
-  [nativePtr setFontKind:kind size:size];
-}
-
-
-
-NA_DEF void naSetTextBoxCustomFont(NATextBox* textBox, const NAUTF8Char* fontName, uint32 flags, double size){
-  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
-  [nativePtr setCustomFont:fontName flags:flags size:size];
+  [nativePtr setNAFont:font];
+  naRelease(textBox->font);
+  textBox->font = naRetain(font);
 }
 
 
@@ -164,6 +159,12 @@ NA_DEF void naSetTextBoxCustomFont(NATextBox* textBox, const NAUTF8Char* fontNam
 NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox){
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setUseHorizontalScrolling];
+}
+
+
+
+NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use){
+  // todo
 }
 
 

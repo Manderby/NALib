@@ -23,6 +23,11 @@
 // in the proj folder. By doing so, the preprocessor macros for NALib will
 // inherit from you settings defined in there. If no such file exists, no
 // settings are imported but the ones defined in this file are used.
+// 
+// To use the same .props file in your own projects, search in the project
+// file in plain text for the following line and copy it to your project at
+// the appropriate position.
+// <Import Project="$(SolutionDir)\NAConfiguration.props" Condition="Exists('$(SolutionDir)\NAConfiguration.props')" />
 //
 // NAConfiguration.h is included at the beginning of the NABase.h file.
 // Do not include it anywhere else.
@@ -197,7 +202,7 @@
 //
 // If you set this macro to 0, one memory page size will be used.
 //
-// Turns out, on most systems, one pagesize is far too small to result in
+// Turns out, on most systems, one pageSize is far too small to result in
 // good speed improvements for naNew. A large enough custom byteSize can
 // result in up to 2 times faster allocation and deallocation.
 //

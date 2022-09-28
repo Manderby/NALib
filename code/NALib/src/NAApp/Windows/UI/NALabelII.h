@@ -103,7 +103,13 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
 
   winapiLabel->enabled = NA_TRUE;
   winapiLabel->href = NA_NULL;
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT), MAKELPARAM(TRUE, 0));
+
+  winapiLabel->label.font = naRetain(naGetSystemFont());
+  SendMessage(
+    nativePtr,
+    WM_SETFONT,
+    (WPARAM)naGetFontNativePointer(winapiLabel->label.font),
+    MAKELPARAM(TRUE, 0));
 
   return (NALabel*)winapiLabel;
 }
@@ -147,20 +153,20 @@ NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
 
 
 NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
-  HFONT hFont;
-  HFONT hOriginalFont;
-  LOGFONT lf = {0};
-
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
   #if NA_DEBUG
     if(!url || !*url)
       naError("url must be something useful. Deleting a Link is not possible yet.");
   #endif
-  hOriginalFont = (HFONT)SendMessage(naGetUIElementNativePtr(label), WM_GETFONT, 0, 0);
-  GetObject(hOriginalFont, sizeof(LOGFONT), &lf);
-  lf.lfUnderline = NA_TRUE;
-  hFont = CreateFontIndirect(&lf);
-  SendMessage(naGetUIElementNativePtr(label), WM_SETFONT, (WPARAM)hFont, NA_FALSE);
+
+  NAFont* underlineFont = naCreateFont(
+    naGetStringUTF8Pointer(naGetFontName(label->font)),
+    naGetFontFlags(label->font) | NA_FONT_FLAG_UNDERLINE,
+    naGetFontSize(label->font));
+
+  naSetLabelFont(label, underlineFont);
+
+  naRelease(underlineFont);
 
   if(winapiLabel->href){naDelete(winapiLabel->href);}
   winapiLabel->href = naNewStringWithFormat("start %s", url);
@@ -175,7 +181,16 @@ NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable){
 
 
 NA_DEF void naSetLabelHeight(NALabel* label, double height){
-  // todo
+  RECT rect;
+  GetWindowRect(label->uiElement.nativePtr, &rect);
+  SetWindowPos(
+    label->uiElement.nativePtr,
+    HWND_TOP,
+    rect.left,
+    rect.bottom + (int)height,
+    rect.right - rect.left,
+    (int)height,
+    0);
 }
 
 
@@ -194,8 +209,10 @@ NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
 
 
 
-NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind, NAFontSize size){
-  SendMessage(naGetUIElementNativePtr(label), WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(kind, size), MAKELPARAM(TRUE, 0));
+NA_DEF void naSetLabelFont(NALabel* label, NAFont* font){
+  SendMessage(naGetUIElementNativePtr(label), WM_SETFONT, (WPARAM)naGetFontNativePointer(font), MAKELPARAM(TRUE, 0));
+  naRelease(label->font);
+  label->font = naRetain(font);
 }
 
 

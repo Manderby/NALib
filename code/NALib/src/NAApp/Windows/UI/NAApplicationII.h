@@ -6,8 +6,8 @@
 
 
 
-#include "../../../NAString.h"
-#include "../../../NAURL.h"
+#include "../../../NAUtility/NAString.h"
+#include "../../../NAUtility/NAURL.h"
 
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   #include <commctrl.h>
@@ -193,6 +193,9 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
   NAWINAPIApplication* winapiApplication = naNew(NAWINAPIApplication);
 
+  winapiApplication->nonClientMetrics.cbSize = sizeof(NONCLIENTMETRICS);
+  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiApplication->nonClientMetrics), 0);
+
   na_InitApplication(&(winapiApplication->application), GetModuleHandle(NULL));
 
   naInitList(&(winapiApplication->timers));
@@ -202,16 +205,7 @@ NA_HDEF NAApplication* na_NewApplication(void){
 		0, 0, 0, 0,
 		NULL, NULL, GetModuleHandle(NULL), NULL);
 
-  winapiApplication->nonClientMetrics.cbSize = sizeof(NONCLIENTMETRICS);
-  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiApplication->nonClientMetrics), 0);
-
   winapiApplication->appIcon = NA_NULL;
-
-  winapiApplication->systemFont = NA_NULL;
-  winapiApplication->titleFont = NA_NULL;
-  winapiApplication->monospaceFont = NA_NULL;
-  winapiApplication->paragraphFont = NA_NULL;
-  winapiApplication->mathFont = NA_NULL;
 
   winapiApplication->mouseHoverElement = NA_NULL;
   winapiApplication->lastOpenedMenu = NA_NULL;
@@ -249,12 +243,6 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
   DeleteObject(winapiApplication->bgColor.brush);
   DeleteObject(winapiApplication->bgColorAlternate.brush);
   DeleteObject(winapiApplication->bgColorAlternate2.brush);
-
-  if(winapiApplication->systemFont){DeleteObject(winapiApplication->systemFont);}
-  if(winapiApplication->titleFont){DeleteObject(winapiApplication->titleFont);}
-  if(winapiApplication->monospaceFont){DeleteObject(winapiApplication->monospaceFont);}
-  if(winapiApplication->paragraphFont){DeleteObject(winapiApplication->paragraphFont);}
-  if(winapiApplication->mathFont){DeleteObject(winapiApplication->mathFont);}
 
   DestroyIcon(winapiApplication->appIcon);
 
@@ -363,25 +351,30 @@ NA_DEF void naOpenConsoleWindow(void){
 
 
 
-NA_DEF void naSetApplicationName(NAUTF8Char* name){
+NA_DEF void naSetApplicationName(const NAUTF8Char* name){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.name = name;
 }
-NA_DEF void naSetApplicationCompanyName(NAUTF8Char* name){
+NA_DEF void naSetApplicationCompanyName(const NAUTF8Char* name){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.companyName = name;
 }
-NA_DEF void naSetApplicationVersionString(NAUTF8Char* string){
+NA_DEF void naSetApplicationVersionString(const NAUTF8Char* string){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.versionString = string;
 }
-NA_DEF void naSetApplicationBuildString(NAUTF8Char* string){
+NA_DEF void naSetApplicationBuildString(const NAUTF8Char* string){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.buildString = string;
 }
-NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
+NA_DEF void naSetApplicationResourcePath(const NAUTF8Char* path){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->application.iconPath = path;
+  app->application.resourcePath = path;
+}
+
+NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path){
+    NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+    app->application.iconPath = path;
 
   if(path){
     NABabyImage* iconBabyImage = naCreateBabyImageFromFilePath(path);
@@ -397,6 +390,27 @@ NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
     ii.hbmColor = bitmap;
     ii.hbmMask  = hbmMask;
     app->appIcon = CreateIconIndirect(&ii);
+  }
+}
+
+
+
+NA_DEF NAString* naNewApplicationPath(void){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  if(app->application.name){
+    return naNewStringWithFormat("%s", app->application.name);
+  }else{
+    TCHAR modulePath[MAX_PATH];
+    NAString* utf8ModulePath;
+    NAString* utf8ModuleBasePath;
+
+    GetModuleFileName(NULL, modulePath, MAX_PATH);
+    utf8ModulePath = naNewStringFromSystemString(modulePath);
+    utf8ModuleBasePath = naNewStringWithParentOfPath(utf8ModulePath);
+
+    naDelete(utf8ModulePath);
+
+    return utf8ModuleBasePath;
   }
 }
 
@@ -466,11 +480,20 @@ NA_DEF NAString* naNewApplicationIconPath(void){
 }
 
 NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAString* retString;
   if(dir){
-    retString = naNewStringWithFormat("%s/%s.%s", dir, basename, suffix);
+    if(app->application.resourcePath){
+      retString = naNewStringWithFormat("%s%c%s%c%s%c%s", app->application.resourcePath, NA_PATH_DELIMITER_WIN, dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
+    }else{
+      retString = naNewStringWithFormat("%s%c%s%c%s", dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
+    }
   }else{
-    retString = naNewStringWithFormat("%s.%s", basename, suffix);
+    if(app->application.resourcePath){
+      retString = naNewStringWithFormat("%s%c%s%c%s", app->application.resourcePath, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
+    }else{
+      retString = naNewStringWithFormat("%s%c%s", basename, NA_SUFFIX_DELIMITER, suffix);
+    }
   }
   return retString;
 }
@@ -484,7 +507,41 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
 
 
 
-// This is just a small code snipplet useful for debugging. See call to EnumFontFamilies below.
+NA_HDEF void na_DestructFont(NAFont* font){
+  DeleteObject(font->nativePtr);
+  naDelete(font->name);
+}
+
+NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size){
+  NAFont* font = naCreate(NAFont);
+  wchar_t* systemFontName = naAllocWideCharStringWithUTF8String(fontFamilyName);
+
+  font->nativePtr = CreateFont(
+    (int)size,
+    0,
+    0,
+    0,
+    naGetFlagu32(flags, NA_FONT_FLAG_BOLD) ? FW_BOLD : FW_NORMAL,
+    naGetFlagu32(flags, NA_FONT_FLAG_ITALIC),
+    naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE),
+    NA_FALSE,
+    DEFAULT_CHARSET,
+    OUT_DEFAULT_PRECIS,
+    CLIP_DEFAULT_PRECIS,
+    CLEARTYPE_QUALITY,
+    DEFAULT_PITCH | FF_DONTCARE,
+    systemFontName);
+
+  font->name = naNewStringWithFormat("%s", fontFamilyName);
+  font->flags = flags;
+  font->size = size;
+  
+  naFree(systemFontName);
+
+  return font;
+}
+
+//// This is just a small code snipplet useful for debugging. See call to EnumFontFamilies below.
 //int CALLBACK enumFonts(
 //  _In_ ENUMLOGFONT   *lpelf,
 //  _In_ NEWTEXTMETRIC *lpntm,
@@ -492,17 +549,15 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
 //  _In_ LPARAM        lParam
 //){
 //  int x = 1234;
-//  printf("%s"  NA_NL, lpelf->elfFullName);
+//  printf("%ls" NA_NL, lpelf->elfFullName);
 //}
 
-
-
-NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
+NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   
-  HFONT retfont = NA_NULL;
+  NAFont* retFont = NA_NULL;
 
-  ////EnumFontFamilies(GetDC(NA_NULL), NA_NULL, enumFonts, NA_NULL);
+  //EnumFontFamilies(GetDC(NA_NULL), NA_NULL, enumFonts, NA_NULL);
 
   #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
 
@@ -511,125 +566,66 @@ NA_DEF NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
   LONG baseSize;
   switch(size){
   case NA_FONT_SIZE_SMALL: baseSize = 12; break;
-  case NA_FONT_SIZE_DEFAULT: baseSize = 14; break;
+  case NA_FONT_SIZE_DEFAULT: baseSize = 16; break;
   //case NA_FONT_SIZE_DEFAULT: baseSize = metrics->lfMessageFont.lfHeight; break;
-  case NA_FONT_SIZE_BIG: baseSize = 18; break;
+  case NA_FONT_SIZE_BIG: baseSize = 20; break;
   case NA_FONT_SIZE_HUGE: baseSize = 24; break;
   default: baseSize = metrics->lfMessageFont.lfHeight; break;
   }
 
+  NAString* fontFamilyName;
+
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
-      if(!app->systemFont){
-        app->systemFont = CreateFont(
-          baseSize,
-          0,
-          0,
-          0,
-          FW_NORMAL,
-          NA_FALSE,
-          NA_FALSE,
-          NA_FALSE,
-          DEFAULT_CHARSET,
-          OUT_DEFAULT_PRECIS,
-          CLIP_DEFAULT_PRECIS,
-          DEFAULT_QUALITY,
-          DEFAULT_PITCH | FF_DONTCARE,
-          metrics->lfMessageFont.lfFaceName);
-      }
-      retfont = app->systemFont;
+      fontFamilyName = naNewStringFromWideCharString(metrics->lfMessageFont.lfFaceName);
+      retFont = naCreateFont(
+        naGetStringUTF8Pointer(fontFamilyName),
+        NA_FONT_FLAG_REGULAR,
+        baseSize);
       break;
     case NA_FONT_KIND_TITLE:
-      if(!app->titleFont){
-        app->titleFont = CreateFont(
-        baseSize,
-        0,
-        0,
-        0,
-        FW_BOLD,
-        NA_FALSE,
-        NA_FALSE,
-        NA_FALSE,
-        DEFAULT_CHARSET,
-        OUT_DEFAULT_PRECIS,
-        CLIP_DEFAULT_PRECIS,
-        DEFAULT_QUALITY,
-        DEFAULT_PITCH | FF_DONTCARE,
-        metrics->lfMessageFont.lfFaceName);
-      }
-      retfont = app->titleFont;
+      fontFamilyName = naNewStringFromWideCharString(metrics->lfMessageFont.lfFaceName);
+      retFont = naCreateFont(
+        naGetStringUTF8Pointer(fontFamilyName),
+        NA_FONT_FLAG_BOLD,
+        baseSize);
       break;
     case NA_FONT_KIND_MONOSPACE:
-      if(!app->monospaceFont){
-        app->monospaceFont = CreateFont(
-        baseSize,
-        0,
-        0,
-        0,
-        FW_BOLD,
-        NA_FALSE,
-        NA_FALSE,
-        NA_FALSE,
-        DEFAULT_CHARSET,
-        OUT_DEFAULT_PRECIS,
-        CLIP_DEFAULT_PRECIS,
-        DEFAULT_QUALITY,
-        DEFAULT_PITCH | FF_DONTCARE,
-        TEXT("Courier New"));
-      }
-      retfont = app->monospaceFont;
+      fontFamilyName = naNewStringFromWideCharString(TEXT("Courier New"));
+      retFont = naCreateFont(
+        naGetStringUTF8Pointer(fontFamilyName),
+        NA_FONT_FLAG_REGULAR,
+        baseSize);
       break;
     case NA_FONT_KIND_PARAGRAPH:
-      if(!app->paragraphFont){
-        app->paragraphFont = CreateFont(
-        baseSize,
-        0,
-        0,
-        0,
-        FW_BOLD,
-        NA_FALSE,
-        NA_FALSE,
-        NA_FALSE,
-        DEFAULT_CHARSET,
-        OUT_DEFAULT_PRECIS,
-        CLIP_DEFAULT_PRECIS,
-        DEFAULT_QUALITY,
-        DEFAULT_PITCH | FF_DONTCARE,
-        TEXT("Palatino Linotype"));
-      }
-      retfont = app->paragraphFont;
+      fontFamilyName = naNewStringFromWideCharString(TEXT("Palatino Linotype"));
+      retFont = naCreateFont(
+        naGetStringUTF8Pointer(fontFamilyName),
+        NA_FONT_FLAG_REGULAR,
+        baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      if(!app->mathFont){
-        app->mathFont = CreateFont(
-        baseSize,
-        0,
-        0,
-        0,
-        FW_BOLD,
-        NA_TRUE,
-        NA_FALSE,
-        NA_FALSE,
-        DEFAULT_CHARSET,
-        OUT_DEFAULT_PRECIS,
-        CLIP_DEFAULT_PRECIS,
-        DEFAULT_QUALITY,
-        DEFAULT_PITCH | FF_DONTCARE,
-        TEXT("Times New Roman"));
-      }
-      retfont = app->mathFont;
+      fontFamilyName = naNewStringFromWideCharString(TEXT("Times New Roman"));
+      retFont = naCreateFont(
+        naGetStringUTF8Pointer(fontFamilyName),
+        NA_FONT_FLAG_ITALIC,
+        baseSize);
       break;
     default:
       #if NA_DEBUG
         naError("Unknown font kind");
       #endif
+      fontFamilyName = naNewString();
       break;
   }
 
   #endif
 
-  return (NAFont)retfont;
+  naDelete(fontFamilyName);
+
+  return retFont;
 }
+
 
 
 NA_DEF void naCenterMouse(void* uiElement, NABool includeBorder){
@@ -665,6 +661,9 @@ NA_DEF void naHideMouse(){
   }
 }
 
+NA_DEF void naHideMouseUntilMovement(NABool hide){
+  // todo
+}
 
 NA_HDEF UINT na_GetApplicationNextMenuItemId(NAApplication* application)
 {
@@ -672,13 +671,13 @@ NA_HDEF UINT na_GetApplicationNextMenuItemId(NAApplication* application)
   return winapiApplication->nextMenuItemId++;
 }
 
-NA_HDEF void na_SetApplicationLastOpenedMenu(NAApplication* application, NAMenu* menu)
+NA_HDEF void na_SetApplicationLastOpenedMenu(NAApplication* application, const NAMenu* menu)
 {
   NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;
   winapiApplication->lastOpenedMenu = menu;
 }
 
-NA_HDEF NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application)
+NA_HDEF const NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application)
 {
   NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;
   return winapiApplication->lastOpenedMenu;

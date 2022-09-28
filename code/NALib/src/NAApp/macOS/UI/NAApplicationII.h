@@ -59,7 +59,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
     // already have a delegate defined, for example in the XIB file. Be
     // careful when implementing it and mention it in the naStartApplication
     // comments.
-//  [NSApp setDelegate:naGetUIElementNativePtr(app)];
+  // [NSApp setDelegate:naGetUIElementNativePtr(app)];
 
   // Start the event loop.
   NSDate* distantFuture = [NSDate distantFuture];
@@ -89,12 +89,12 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
 
 
 NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
-  NAInt lang = (NAInt)[[NSLocale preferredLanguages] count] - 1;
-  while(lang >= 0){
-    NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)lang];
+  NAInt langIndex = (NAInt)[[NSLocale preferredLanguages] count] - 1;
+  while(langIndex >= 0){
+    NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)langIndex];
     NALanguageCode3 langCode = naGetLanguageCode([language UTF8String]);
     naSetTranslatorLanguagePreference(langCode);
-    lang--;
+    langIndex--;
   }
 }
 
@@ -106,8 +106,6 @@ NA_HDEF NAApplication* na_NewApplication(void){
   NACocoaNativeApplicationDelegate* nativePtr = [[NACocoaNativeApplicationDelegate alloc]
     initWithCocoaApplication:cocoaApplication];
   na_InitApplication(&(cocoaApplication->application), NA_COCOA_PTR_OBJC_TO_C(nativePtr));
-
-//  na_InitApplication(&(cocoaApplication->application), NA_COCOA_PTR_OBJC_TO_C(NSApp));
 
   return (NAApplication*)cocoaApplication;
 }

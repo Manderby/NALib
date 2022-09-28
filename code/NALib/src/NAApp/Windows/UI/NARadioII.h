@@ -89,7 +89,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width){
 
   na_InitRadio(&(winapiRadio->radio), nativePtr);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)na_GetFontWithKindAndSize(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT), MAKELPARAM(TRUE, 0));
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)naGetFontNativePointer(naGetSystemFont()), MAKELPARAM(TRUE, 0));
 
   return (NARadio*)winapiRadio;
 }

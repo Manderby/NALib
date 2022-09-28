@@ -31,7 +31,7 @@
 - (void)drawRect:(NSRect)dirtyRect{
   [super drawRect:dirtyRect];
   if(cocaSpace->space.backgroundColor[3] != 0.){
-    [[NSColor colorWithRed:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[0])
+    [[NSColor colorWithDeviceRed:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[0])
       green:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[1])
       blue:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[2])
       alpha:cocaSpace->space.backgroundColor[3]] setFill];
@@ -134,8 +134,14 @@ NA_DEF void na_DestructCocoaSpace(NACocoaSpace* _Nonnull cocoaSpace){
 NA_DEF void naSetSpaceRect(NASpace* _Nonnull space, NARect rect){
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   NSRect frame = naMakeNSRectWithRect(rect);
-  frame.origin = NSMakePoint(0, 0);
   [nativePtr setFrame: frame];
+}
+
+
+
+NA_DEF void naSetSpaceVisible(NASpace* _Nonnull space, NABool visible){
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
+  [nativePtr setHidden:visible ? NO : YES];
 }
 
 
@@ -166,7 +172,7 @@ NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos
     break;
   }
   
-  double offsetY = na_GetUIElementOffsetY(child);
+  double offsetY = na_GetUIElementYOffset(child);
   
   [nativeSpacePtr addSubview:subview];
   NSRect frame = [subview frame];
@@ -183,7 +189,7 @@ NA_HDEF void naRemoveSpaceChilds(NASpace* _Nonnull space)
   while(!naIsListEmpty(&(space->childs))){
     void* child = naGetListFirstMutable(&(space->childs));
     na_RemoveSpaceChild(space, child);
-    [(NSView*)NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(child)) removeFromSuperview];
+    [(NA_COCOA_BRIDGE NSView*)(naGetUIElementNativePtr(child)) removeFromSuperview];
   }
 }
 
@@ -225,14 +231,6 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NABabyColor
     space->backgroundColor[3] = 0.;
   }
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
-  [nativePtr setNeedsDisplay:YES];
-}
-
-
-
-NA_DEF void naSetSpaceAlternateBackground(NASpace* _Nonnull space, NABool alternate){
-  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
-  space->alternateBackground = alternate;
   [nativePtr setNeedsDisplay:YES];
 }
 

@@ -21,10 +21,8 @@
 
 #if NA_OS == NA_OS_MAC_OS_X
 
-//#import <Carbon/Carbon>
-
 #if defined __OBJC__
-#if (NA_COMPILE_GUI == 1)
+#if NA_COMPILE_GUI == 1
 // Now, we are sure, we compile with Objective-C and on MacOSX. The
 // #if directives will be closed at the very bottom of this file.
 
@@ -32,6 +30,7 @@
   #error Compiling NALib and Cocoa without a native int64 type will not work.
 #endif
 
+#import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 
 #include "NAUICocoaLegacyII.h"
@@ -59,7 +58,7 @@
 #include "NATextFieldII.h"
 #include "NAWindowII.h"
 
-#endif // (NA_COMPILE_GUI == 1)
+#endif // NA_COMPILE_GUI == 1
 #endif // defined __OBJC__
 #endif // NA_OS == NA_OS_MAC_OS_X
 

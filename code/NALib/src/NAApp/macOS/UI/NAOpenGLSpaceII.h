@@ -78,20 +78,42 @@
     na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_RESHAPE);
   }
   
+  - (void)mouseDown:(NSEvent*)event{
+    na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_DOWN);
+  }
+
+  - (void)mouseUp:(NSEvent*)event{
+    na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_UP);
+  }
+
+  - (void)mouseDragged:(NSEvent*)event{
+    na_SetMouseMovedByDiff([event deltaX], -[event deltaY]);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED);
+  }
+
   - (void)mouseMoved:(NSEvent*)event{
     na_SetMouseMovedByDiff([event deltaX], -[event deltaY]);
     na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED);
     //[NSEvent setMouseCoalescingEnabled:NO];
   }
   
+  - (void)scrollWheel:(NSEvent*)event{
+    na_SetMouseScrolledByDiff([event deltaX], [event deltaY]);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_SCROLLED);
+  }
+
   - (void)keyDown:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEYDOWN);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEY_DOWN);
   }
   
   - (void)keyUp:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEYUP);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEY_UP);
   }
   
   - (void)flagsChanged:(NSEvent*)event{
@@ -100,10 +122,10 @@
     NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
     NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
 
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (shift ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (alt ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (control ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (command ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (shift ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (alt ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (control ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (command ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
   }
   
   @end
@@ -138,7 +160,7 @@
 
   NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace){
     naDefineCocoaObjectConst(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
-    return NA_COCOA_PTR_OBJC_TO_C([nativePtr openGLContext]);
+    return (NA_COCOA_BRIDGE void*)[nativePtr openGLContext];
   }
 
 
@@ -183,7 +205,7 @@
     #endif
   }
 
-  NA_DEF void* naGetOpenGLSpaceSystemContext(NAOpenGLSpace* openGLSpace){
+  NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace){
     NA_UNUSED(openGLSpace);
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");

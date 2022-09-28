@@ -19,31 +19,115 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\NAApp\Core\NAUIImage.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAApplication.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAButton.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NACheckBox.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAFont.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAImageSpace.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAKeyboard.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NALabel.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAMenu.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAMenuItem.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAMetalSpace.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAMouse.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAOpenGLSpace.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAPopupButton.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NARadio.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAScreen.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NASlider.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NASpace.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NATextBox.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NATextField.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAUIElement.c" />
+    <ClCompile Include="src\NAApp\Core\UI\NAWindow.c" />
+    <ClCompile Include="src\NAApp\Windows\NAUIWINAPI.c" />
+    <ClCompile Include="src\NABase\Core\NADebugging.c" />
+    <ClCompile Include="src\NABase\Core\NAMacros.c" />
+    <ClCompile Include="src\NAMath\Core\NAMathOperators.c" />
+    <ClCompile Include="src\NAStruct\Core\NABuffer\NABuffer.c" />
+    <ClCompile Include="src\NAStruct\Core\NABuffer\NABufferIteration.c" />
+    <ClCompile Include="src\NAStruct\Core\NABuffer\NABufferManipulation.c" />
+    <ClCompile Include="src\NAStruct\Core\NABuffer\NABufferParse.c" />
+    <ClCompile Include="src\NAStruct\Core\NABuffer\NABufferPart.c" />
+    <ClCompile Include="src\NAStruct\Core\NABuffer\NABufferRead.c" />
+    <ClCompile Include="src\NAStruct\Core\NABuffer\NABufferSource.c" />
+    <ClCompile Include="src\NAStruct\Core\NABuffer\NABufferWrite.c" />
+    <ClCompile Include="src\NAStruct\Core\NABuffer\NAMemoryBlock.c" />
+    <ClCompile Include="src\NAStruct\Core\NAHeap\NAHeap.c" />
+    <ClCompile Include="src\NAStruct\Core\NAList.c" />
+    <ClCompile Include="src\NAStruct\Core\NAStack\NAStack.c" />
+    <ClCompile Include="src\NAStruct\Core\NATree\NATree.c" />
+    <ClCompile Include="src\NAStruct\Core\NATree\NATreeAVL.c" />
+    <ClCompile Include="src\NAStruct\Core\NATree\NATreeBin.c" />
+    <ClCompile Include="src\NAStruct\Core\NATree\NATreeConfiguration.c" />
+    <ClCompile Include="src\NAStruct\Core\NATree\NATreeIteration.c" />
+    <ClCompile Include="src\NAStruct\Core\NATree\NATreeOct.c" />
+    <ClCompile Include="src\NAStruct\Core\NATree\NATreeQuad.c" />
+    <ClCompile Include="src\NAUtility\Core\NABinaryData\NABinaryData.c" />
+    <ClCompile Include="src\NAUtility\Core\NADateTime.c" />
+    <ClCompile Include="src\NAUtility\Core\NAFile.c" />
+    <ClCompile Include="src\NAUtility\Core\NAMemory\NARuntime.c" />
+    <ClCompile Include="src\NAUtility\Core\NAString.c" />
+    <ClCompile Include="src\NAUtility\Core\NATesting\NATesting.c" />
+    <ClCompile Include="src\NAUtility\Core\NATranslator.c" />
+    <ClCompile Include="src\NAUtility\Core\NAURL.c" />
+    <ClCompile Include="src\NAVisual\Core\NA3DHelper.c" />
+    <ClCompile Include="src\NAVisual\Core\NABabyColor.c" />
+    <ClCompile Include="src\NAVisual\Core\NABabyImage.c" />
+    <ClCompile Include="src\NAVisual\Core\NADeflate.c" />
+    <ClCompile Include="src\NAVisual\Core\NAPNG.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\NAApp.h" />
     <ClInclude Include="src\NAApp\Core\NAAppCore.h" />
-    <ClInclude Include="src\NAApp\Core\NAFont.h" />
-    <ClInclude Include="src\NAApp\Core\NAKeyboard.h" />
-    <ClInclude Include="src\NAApp\Core\NAMouse.h" />
-    <ClInclude Include="src\NAApp\Core\NAReaction.h" />
-    <ClInclude Include="src\NAApp\Core\NAUIImage.h" />
     <ClInclude Include="src\NAApp\Core\NAUIImageII.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NAApplication.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NAButton.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NACheckBox.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NAImageSpace.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NALabel.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NAMenu.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NAMenuItem.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NAMetalSpace.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NAOpenGLSpace.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NAPopupButton.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NARadio.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NAScreen.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NASlider.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NASpace.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NATextBox.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NATextField.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NAUIElement.h" />
-    <ClInclude Include="src\NAApp\Core\UIElement\NAWindow.h" />
+    <ClInclude Include="src\NAApp\macOS\NAPreferencesCocoaII.h" />
+    <ClInclude Include="src\NAApp\macOS\NAUIImageCocoaII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAApplicationII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAButtonII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NACheckBoxII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAImageSpaceII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NALabelII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAMenuII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAMenuItemII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAMetalSpaceII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAOpenGLSpaceII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAPopupButtonII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NARadioII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NASliderII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NASpaceII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NATextBoxII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NATextFieldII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAUICocoaII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAUICocoaInterfaces.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAUICocoaLegacy.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAUICocoaLegacyII.h" />
+    <ClInclude Include="src\NAApp\macOS\UI\NAWindowII.h" />
+    <ClInclude Include="src\NAApp\NAApplication.h" />
+    <ClInclude Include="src\NAApp\NAButton.h" />
+    <ClInclude Include="src\NAApp\NACheckBox.h" />
+    <ClInclude Include="src\NAApp\NAFont.h" />
+    <ClInclude Include="src\NAApp\NAImageSpace.h" />
+    <ClInclude Include="src\NAApp\NAKeyboard.h" />
+    <ClInclude Include="src\NAApp\NALabel.h" />
+    <ClInclude Include="src\NAApp\NAMenu.h" />
+    <ClInclude Include="src\NAApp\NAMenuItem.h" />
+    <ClInclude Include="src\NAApp\NAMetalSpace.h" />
+    <ClInclude Include="src\NAApp\NAMouse.h" />
+    <ClInclude Include="src\NAApp\NAOpenGLSpace.h" />
+    <ClInclude Include="src\NAApp\NAPopupButton.h" />
+    <ClInclude Include="src\NAApp\NAPreferences.h" />
+    <ClInclude Include="src\NAApp\NARadio.h" />
+    <ClInclude Include="src\NAApp\NAReaction.h" />
+    <ClInclude Include="src\NAApp\NAScreen.h" />
+    <ClInclude Include="src\NAApp\NASlider.h" />
+    <ClInclude Include="src\NAApp\NASpace.h" />
+    <ClInclude Include="src\NAApp\NATextBox.h" />
+    <ClInclude Include="src\NAApp\NATextField.h" />
+    <ClInclude Include="src\NAApp\NAUIElement.h" />
+    <ClInclude Include="src\NAApp\NAUIImage.h" />
+    <ClInclude Include="src\NAApp\NAWindow.h" />
     <ClInclude Include="src\NAApp\Windows\NAPreferencesWINAPIII.h" />
     <ClInclude Include="src\NAApp\Windows\NAUIImageWINAPIII.h" />
     <ClInclude Include="src\NAApp\Windows\UI\NAApplicationII.h" />
@@ -64,229 +148,156 @@
     <ClInclude Include="src\NAApp\Windows\UI\NAUIWINAPIII.h" />
     <ClInclude Include="src\NAApp\Windows\UI\NAUIWINAPIInterfaces.h" />
     <ClInclude Include="src\NAApp\Windows\UI\NAWindowII.h" />
-    <ClInclude Include="src\NAArray.h" />
-    <ClInclude Include="src\NABabyColor.h" />
-    <ClInclude Include="src\NABabyImage.h" />
     <ClInclude Include="src\NABase.h" />
+    <ClInclude Include="src\NABase\Core\NADebuggingII.h" />
+    <ClInclude Include="src\NABase\Core\NAFloatingPointII.h" />
+    <ClInclude Include="src\NABase\Core\NAInt128II.h" />
+    <ClInclude Include="src\NABase\Core\NAInt256II.h" />
+    <ClInclude Include="src\NABase\Core\NAInt64II.h" />
+    <ClInclude Include="src\NABase\Core\NAMacrosII.h" />
+    <ClInclude Include="src\NABase\Core\NANumericsII.h" />
     <ClInclude Include="src\NABase\NAChar.h" />
     <ClInclude Include="src\NABase\NACompiler.h" />
-    <ClInclude Include="src\NABase\NACompilerII.h" />
     <ClInclude Include="src\NABase\NAConfiguration.h" />
     <ClInclude Include="src\NABase\NADebugging.h" />
-    <ClInclude Include="src\NABase\NADebuggingII.h" />
-    <ClInclude Include="src\NABase\NAApp.h" />
-    <ClInclude Include="src\NABase\NAAppII.h" />
+    <ClInclude Include="src\NABase\NAEncoding.h" />
     <ClInclude Include="src\NABase\NAEnvironment.h" />
     <ClInclude Include="src\NABase\NAFloatingPoint.h" />
-    <ClInclude Include="src\NABase\NAFloatingPointII.h" />
     <ClInclude Include="src\NABase\NAInt128.h" />
-    <ClInclude Include="src\NABase\NAInt128II.h" />
     <ClInclude Include="src\NABase\NAInt256.h" />
-    <ClInclude Include="src\NABase\NAInt256II.h" />
     <ClInclude Include="src\NABase\NAInt64.h" />
-    <ClInclude Include="src\NABase\NAInt64II.h" />
     <ClInclude Include="src\NABase\NAInteger.h" />
     <ClInclude Include="src\NABase\NALanguage.h" />
-    <ClInclude Include="src\NABase\NALanguageII.h" />
-    <ClInclude Include="src\NABase\NAMacrosII.h" />
-    <ClInclude Include="src\NABase\NANumerics.h" />
-    <ClInclude Include="src\NABase\NANumericsII.h" />
     <ClInclude Include="src\NABase\NAMacros.h" />
-    <ClInclude Include="src\NABase\NAEncoding.h" />
+    <ClInclude Include="src\NABase\NANumerics.h" />
     <ClInclude Include="src\NABase\NAPointerArithmetics.h" />
-    <ClInclude Include="src\NABinaryData.h" />
-    <ClInclude Include="src\NABuffer.h" />
-    <ClInclude Include="src\NACircularBuffer.h" />
-    <ClInclude Include="src\NAComplex.h" />
-    <ClInclude Include="src\NAConfiguration.h" />
-    <ClInclude Include="src\NACoord.h" />
-    <ClInclude Include="src\NACore\NABinaryData\NABinaryDataII.h" />
-    <ClInclude Include="src\NACore\NABinaryData\NAEndiannessII.h" />
-    <ClInclude Include="src\NACore\NADateTimeII.h" />
-    <ClInclude Include="src\NACore\NAFileII.h" />
-    <ClInclude Include="src\NACore\NAKeyII.h" />
-    <ClInclude Include="src\NACore\NAMemory\NAMallocFreeII.h" />
-    <ClInclude Include="src\NACore\NAMemory\NAMemoryII.h" />
-    <ClInclude Include="src\NACore\NAMemory\NAPointerII.h" />
-    <ClInclude Include="src\NACore\NAMemory\NAPtrII.h" />
-    <ClInclude Include="src\NACore\NAMemory\NARefCountII.h" />
-    <ClInclude Include="src\NACore\NAMemory\NARuntimeII.h" />
-    <ClInclude Include="src\NACore\NAMemory\NASmartPtrII.h" />
-    <ClInclude Include="src\NACore\NATesting\NATestingII.h" />
-    <ClInclude Include="src\NACore\NAThreadingII.h" />
-    <ClInclude Include="src\NACore\NAURLII.h" />
-    <ClInclude Include="src\NACore\NAValueHelperII.h" />
-    <ClInclude Include="src\NADateTime.h" />
-    <ClInclude Include="src\NADeflate.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\NAPreferencesWINAPIII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\NAUIImageWINAPIII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NAApplicationII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NAButtonII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NACheckBoxII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NAImageSpaceII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NALabelII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NAMenuII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NAMenuItemII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NAMetalSpaceII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NAOpenGLSpaceII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NAPopupButtonII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NARadioII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NASliderII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NASpaceII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NATextBoxII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NATextFieldII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NAUIWINAPIII.h" />
-    <ClInclude Include="src\NAApp\Windows\WINAPI\C\UI\NAWindowII.h" />
-    <ClInclude Include="src\NAFile.h" />
-    <ClInclude Include="src\NAHeap.h" />
-    <ClInclude Include="src\NAIntEmulation.h" />
-    <ClInclude Include="src\NAKey.h" />
-    <ClInclude Include="src\NAList.h" />
-    <ClInclude Include="src\NAMathConstants.h" />
-    <ClInclude Include="src\NAMathOperators.h" />
-    <ClInclude Include="src\NAMath\NAComplexII.h" />
-    <ClInclude Include="src\NAMath\NACoordII.h" />
-    <ClInclude Include="src\NAMath\NAFloatingPoint.h" />
-    <ClInclude Include="src\NAMath\NAFloatingPointII.h" />
-    <ClInclude Include="src\NAMath\NAInt128.h" />
-    <ClInclude Include="src\NAMath\NAInt128II.h" />
-    <ClInclude Include="src\NAMath\NAInt256.h" />
-    <ClInclude Include="src\NAMath\NAInt256II.h" />
-    <ClInclude Include="src\NAMath\NAInt64.h" />
-    <ClInclude Include="src\NAMath\NAInt64II.h" />
-    <ClInclude Include="src\NAMath\NAMathOperatorsII.h" />
-    <ClInclude Include="src\NAMath\NANumerics.h" />
-    <ClInclude Include="src\NAMath\NANumericsII.h" />
-    <ClInclude Include="src\NAMath\NARandomII.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebraII.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAHomogeneousCoordinates.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAMatrixAlgebraOperations.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAMatrixBaseOperations.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAMatrixComparison.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAMatrixComponentwise.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAMatrixFiller.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAMatrixMultiplication.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAMatrixRotations.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAVectorBaseOperations.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAVectorComparison.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAVectorComponentwise.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAVectorFiller.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAVectorGeometry.h" />
-    <ClInclude Include="src\NAMath\NAVectorAlgebra\NAVectorProducts.h" />
-    <ClInclude Include="src\NAMemory.h" />
-    <ClInclude Include="src\NAPNG.h" />
-    <ClInclude Include="src\NAPool.h" />
-    <ClInclude Include="src\NAPreferences.h" />
-    <ClInclude Include="src\NARandom.h" />
-    <ClInclude Include="src\NAStack.h" />
-    <ClInclude Include="src\NAString.h" />
-    <ClInclude Include="src\NAStruct\NAArrayII.h" />
-    <ClInclude Include="src\NAStruct\NABuffer\NABufferHelperII.h" />
-    <ClInclude Include="src\NAStruct\NABuffer\NABufferII.h" />
-    <ClInclude Include="src\NAStruct\NABuffer\NABufferIterationII.h" />
-    <ClInclude Include="src\NAStruct\NABuffer\NABufferParseII.h" />
-    <ClInclude Include="src\NAStruct\NABuffer\NABufferPartII.h" />
-    <ClInclude Include="src\NAStruct\NABuffer\NABufferReadII.h" />
-    <ClInclude Include="src\NAStruct\NABuffer\NABufferSourceII.h" />
-    <ClInclude Include="src\NAStruct\NABuffer\NABufferWriteII.h" />
-    <ClInclude Include="src\NAStruct\NABuffer\NAMemoryBlockII.h" />
-    <ClInclude Include="src\NAStruct\NACircularBufferII.h" />
-    <ClInclude Include="src\NAStruct\NAHeap\NAHeapII.h" />
-    <ClInclude Include="src\NAStruct\NAHeap\NAHeapT.h" />
-    <ClInclude Include="src\NAStruct\NAListII.h" />
-    <ClInclude Include="src\NAStruct\NAPoolII.h" />
-    <ClInclude Include="src\NAStruct\NAStackII.h" />
-    <ClInclude Include="src\NAStruct\NAStack\NAStackII.h" />
-    <ClInclude Include="src\NAStruct\NAStringII.h" />
-    <ClInclude Include="src\NAStruct\NATree\NATreeBin.h" />
-    <ClInclude Include="src\NAStruct\NATree\NATreeConfigurationII.h" />
-    <ClInclude Include="src\NAStruct\NATree\NATreeII.h" />
-    <ClInclude Include="src\NAStruct\NATree\NATreeItemII.h" />
-    <ClInclude Include="src\NAStruct\NATree\NATreeIterationII.h" />
-    <ClInclude Include="src\NAStruct\NATree\NATreeOct.h" />
-    <ClInclude Include="src\NAStruct\NATree\NATreeQuad.h" />
-    <ClInclude Include="src\NAStruct\NATree\NATreeUtilitiesII.h" />
-    <ClInclude Include="src\NATesting.h" />
-    <ClInclude Include="src\NAThreading.h" />
-    <ClInclude Include="src\NATranslator.h" />
-    <ClInclude Include="src\NATree.h" />
-    <ClInclude Include="src\NAApp.h" />
-    <ClInclude Include="src\NAURL.h" />
-    <ClInclude Include="src\NAValueHelper.h" />
-    <ClInclude Include="src\NAVectorAlgebra.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\NAApp\Core\NAAppCore.c" />
-    <ClCompile Include="src\NAApp\Core\NATranslator.c" />
-    <ClCompile Include="src\NAApp\Core\NAUIImage.c" />
-    <ClCompile Include="src\NAApp\Windows\NAUIWINAPI.c" />
-    <ClCompile Include="src\NABase\NADebugging.c" />
-    <ClCompile Include="src\NABase\NAMacros.c" />
-    <ClCompile Include="src\NACore\NABinaryData\NABinaryData.c" />
-    <ClCompile Include="src\NACore\NADateTime.c" />
-    <ClCompile Include="src\NACore\NAFile.c" />
-    <ClCompile Include="src\NACore\NAMemory\NARuntime.c" />
-    <ClCompile Include="src\NACore\NATesting\NATesting.c" />
-    <ClCompile Include="src\NACore\NAURL.c" />
-    <ClCompile Include="src\NAStruct\NABuffer\NABuffer.c" />
-    <ClCompile Include="src\NAStruct\NABuffer\NABufferIteration.c" />
-    <ClCompile Include="src\NAStruct\NABuffer\NABufferManipulation.c" />
-    <ClCompile Include="src\NAStruct\NABuffer\NABufferParse.c" />
-    <ClCompile Include="src\NAStruct\NABuffer\NABufferPart.c" />
-    <ClCompile Include="src\NAStruct\NABuffer\NABufferRead.c" />
-    <ClCompile Include="src\NAStruct\NABuffer\NABufferSource.c" />
-    <ClCompile Include="src\NAStruct\NABuffer\NABufferWrite.c" />
-    <ClCompile Include="src\NAStruct\NABuffer\NAMemoryBlock.c" />
-    <ClCompile Include="src\NAStruct\NAHeap\NAHeap.c" />
-    <ClCompile Include="src\NAStruct\NAList.c" />
-    <ClCompile Include="src\NAStruct\NAStack\NAStack.c" />
-    <ClCompile Include="src\NAStruct\NAString.c" />
-    <ClCompile Include="src\NAStruct\NATree\NATree.c" />
-    <ClCompile Include="src\NAStruct\NATree\NATreeAVL.c" />
-    <ClCompile Include="src\NAStruct\NATree\NATreeBin.c" />
-    <ClCompile Include="src\NAStruct\NATree\NATreeConfiguration.c" />
-    <ClCompile Include="src\NAStruct\NATree\NATreeIteration.c" />
-    <ClCompile Include="src\NAStruct\NATree\NATreeOct.c" />
-    <ClCompile Include="src\NAStruct\NATree\NATreeQuad.c" />
-    <ClCompile Include="src\NAVisual\NABabyColor.c" />
-    <ClCompile Include="src\NAVisual\NABabyImage.c" />
-    <ClCompile Include="src\NAVisual\NADeflate.c" />
-    <ClCompile Include="src\NAVisual\NAPNG.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\NABase\cpp.hint" />
+    <ClInclude Include="src\NALib.h" />
+    <ClInclude Include="src\NAMath.h" />
+    <ClInclude Include="src\NAMath\Core\NAComplexII.h" />
+    <ClInclude Include="src\NAMath\Core\NACoordII.h" />
+    <ClInclude Include="src\NAMath\Core\NAMathOperatorsII.h" />
+    <ClInclude Include="src\NAMath\Core\NARandomII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAHomogeneousCoordinatesII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAMatrixAlgebraOperationsII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAMatrixBaseOperationsII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAMatrixComparisonII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAMatrixComponentwiseII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAMatrixFillerII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAMatrixMultiplicationII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAMatrixRotationsII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAVectorAlgebraII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAVectorBaseOperationsII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAVectorComparisonII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAVectorComponentwiseII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAVectorFillerII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAVectorGeometryII.h" />
+    <ClInclude Include="src\NAMath\Core\NAVectorAlgebra\NAVectorProductsII.h" />
+    <ClInclude Include="src\NAMath\NAComplex.h" />
+    <ClInclude Include="src\NAMath\NACoord.h" />
+    <ClInclude Include="src\NAMath\NAMathConstants.h" />
+    <ClInclude Include="src\NAMath\NAMathOperators.h" />
+    <ClInclude Include="src\NAMath\NARandom.h" />
+    <ClInclude Include="src\NAMath\NAVectorAlgebra.h" />
+    <ClInclude Include="src\NAStruct.h" />
+    <ClInclude Include="src\NAStruct\Core\NAArrayII.h" />
+    <ClInclude Include="src\NAStruct\Core\NABuffer\NABufferHelperII.h" />
+    <ClInclude Include="src\NAStruct\Core\NABuffer\NABufferII.h" />
+    <ClInclude Include="src\NAStruct\Core\NABuffer\NABufferIterationII.h" />
+    <ClInclude Include="src\NAStruct\Core\NABuffer\NABufferParseII.h" />
+    <ClInclude Include="src\NAStruct\Core\NABuffer\NABufferPartII.h" />
+    <ClInclude Include="src\NAStruct\Core\NABuffer\NABufferReadII.h" />
+    <ClInclude Include="src\NAStruct\Core\NABuffer\NABufferSourceII.h" />
+    <ClInclude Include="src\NAStruct\Core\NABuffer\NABufferWriteII.h" />
+    <ClInclude Include="src\NAStruct\Core\NABuffer\NAMemoryBlockII.h" />
+    <ClInclude Include="src\NAStruct\Core\NACircularBufferII.h" />
+    <ClInclude Include="src\NAStruct\Core\NAHeap\NAHeapII.h" />
+    <ClInclude Include="src\NAStruct\Core\NAHeap\NAHeapT.h" />
+    <ClInclude Include="src\NAStruct\Core\NAListII.h" />
+    <ClInclude Include="src\NAStruct\Core\NAPoolII.h" />
+    <ClInclude Include="src\NAStruct\Core\NAStack\NAStackII.h" />
+    <ClInclude Include="src\NAStruct\Core\NATree\NATreeBin.h" />
+    <ClInclude Include="src\NAStruct\Core\NATree\NATreeConfigurationII.h" />
+    <ClInclude Include="src\NAStruct\Core\NATree\NATreeII.h" />
+    <ClInclude Include="src\NAStruct\Core\NATree\NATreeItemII.h" />
+    <ClInclude Include="src\NAStruct\Core\NATree\NATreeIterationII.h" />
+    <ClInclude Include="src\NAStruct\Core\NATree\NATreeOct.h" />
+    <ClInclude Include="src\NAStruct\Core\NATree\NATreeQuad.h" />
+    <ClInclude Include="src\NAStruct\Core\NATree\NATreeUtilitiesII.h" />
+    <ClInclude Include="src\NAStruct\NAArray.h" />
+    <ClInclude Include="src\NAStruct\NABuffer.h" />
+    <ClInclude Include="src\NAStruct\NACircularBuffer.h" />
+    <ClInclude Include="src\NAStruct\NAHeap.h" />
+    <ClInclude Include="src\NAStruct\NAList.h" />
+    <ClInclude Include="src\NAStruct\NAPool.h" />
+    <ClInclude Include="src\NAStruct\NAStack.h" />
+    <ClInclude Include="src\NAStruct\NATree.h" />
+    <ClInclude Include="src\NAUtility.h" />
+    <ClInclude Include="src\NAUtility\Core\NABinaryData\NABinaryDataII.h" />
+    <ClInclude Include="src\NAUtility\Core\NABinaryData\NAEndiannessII.h" />
+    <ClInclude Include="src\NAUtility\Core\NADateTimeII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAFileII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAKeyII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAMemory\NAMallocFreeII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAMemory\NAMemoryII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAMemory\NAPointerII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAMemory\NAPtrII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAMemory\NARefCountII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAMemory\NARuntimeII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAMemory\NASmartPtrII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAStringII.h" />
+    <ClInclude Include="src\NAUtility\Core\NATesting\NATestingII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAThreadingII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAURLII.h" />
+    <ClInclude Include="src\NAUtility\Core\NAValueHelperII.h" />
+    <ClInclude Include="src\NAUtility\NABinaryData.h" />
+    <ClInclude Include="src\NAUtility\NADateTime.h" />
+    <ClInclude Include="src\NAUtility\NAFile.h" />
+    <ClInclude Include="src\NAUtility\NAKey.h" />
+    <ClInclude Include="src\NAUtility\NAMemory.h" />
+    <ClInclude Include="src\NAUtility\NAString.h" />
+    <ClInclude Include="src\NAUtility\NATesting.h" />
+    <ClInclude Include="src\NAUtility\NAThreading.h" />
+    <ClInclude Include="src\NAUtility\NATranslator.h" />
+    <ClInclude Include="src\NAUtility\NAURL.h" />
+    <ClInclude Include="src\NAUtility\NAValueHelper.h" />
+    <ClInclude Include="src\NAVisual.h" />
+    <ClInclude Include="src\NAVisual\NA3DHelper.h" />
+    <ClInclude Include="src\NAVisual\NABabyColor.h" />
+    <ClInclude Include="src\NAVisual\NABabyImage.h" />
+    <ClInclude Include="src\NAVisual\NADeflate.h" />
+    <ClInclude Include="src\NAVisual\NAPNG.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{D03034CF-5CE8-4E68-8FD9-D5820E2745BA}</ProjectGuid>
     <RootNamespace>NALibTest</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(SolutionDir)\NAConfiguration.props" Condition="Exists('$(SolutionDir)\NAConfiguration.props')" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

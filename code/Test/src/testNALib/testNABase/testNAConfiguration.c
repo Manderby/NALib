@@ -1,6 +1,6 @@
 
-#include "NATesting.h"
-#include "NAMemory.h"
+#include "NAUtility/NATesting.h"
+#include "NAUtility/NAMemory.h"
 #include <stdio.h>
 
 

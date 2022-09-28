@@ -15,7 +15,8 @@
 
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(naGetSystemFont()))];
+
   return self;
 }
 
@@ -24,6 +25,7 @@
 }
 
 - (int) getMenuItemIndex:(NSMenuItem*)item{
+  if(!item){return -1;}
   NSUInteger index = [[self itemArray] indexOfObject:item];
   return index == NSNotFound ? -1 : (int)index;
 }
@@ -58,7 +60,7 @@ NA_DEF NAPopupButton* naNewPopupButton(double width){
 
   NACocoaNativePopupButton* nativePtr = [[NACocoaNativePopupButton alloc]
     initWithPopupButton:cocoaPopupButton
-    frame:naMakeNSRectWithSize(naMakeSize(width, 23))];
+    frame:naMakeNSRectWithSize(naMakeSize(width, 25))];
   na_InitPopupButton((NAPopupButton*)cocoaPopupButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   return (NAPopupButton*)cocoaPopupButton;
@@ -95,15 +97,14 @@ NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* ite
 
 
 
-NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, NAMenuItem* item){
+NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, const NAMenuItem* item){
   return naGetListElemIndex(&(popupButton->childs), item);
 }
 
 
 
-NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, NAMenuItem* item){
+NA_DEF void naSetPopupButtonIndexSelected(NAPopupButton* popupButton, size_t index){
   naDefineCocoaObject(NACocoaNativePopupButton, nativePopupPtr, popupButton);
-  size_t index = naGetPopupButtonItemIndex(popupButton, item);
   [nativePopupPtr selectItemAtIndex:(NSInteger)index];
 }
 

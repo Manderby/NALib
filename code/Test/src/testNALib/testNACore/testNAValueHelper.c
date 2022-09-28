@@ -1,11 +1,11 @@
 
-#include "NATesting.h"
+#include "NAUtility/NATesting.h"
 #include <stdio.h>
 
-#include "NAValueHelper.h"
+#include "NAUtility/NAValueHelper.h"
 
-#include "NAThreading.h"
-#include "NAString.h"
+#include "NAUtility/NAThreading.h"
+#include "NAUtility/NAString.h"
 
 void testFlags(void){
   uint32 flagsu = 0xcccccccc;          // 0b11001100110011001100110011001100

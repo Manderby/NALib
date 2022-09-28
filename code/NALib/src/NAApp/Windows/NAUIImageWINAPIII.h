@@ -5,7 +5,7 @@
 // Do not include this file anywhere else!
 
 
-#include "../../NAPNG.h"
+#include "../../NAVisual/NAPNG.h"
 #include <wincodec.h>
 
 

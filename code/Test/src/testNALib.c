@@ -1,7 +1,7 @@
 
-#include "NATesting.h"
-#include "NAMemory.h"
-#include "NAString.h"
+#include "NAUtility/NATesting.h"
+#include "NAUtility/NAMemory.h"
+#include "NAUtility/NAString.h"
 #include <stdio.h>
 
 
@@ -20,7 +20,7 @@ void benchmarkNAStruct(void);
 
 
 
-void printNALib(){
+void printNALib(void){
   #if NA_PRINTOUT_ENABLED == 1
     printNABase();
     printNACore();
@@ -28,17 +28,19 @@ void printNALib(){
   #endif
 }
 
-void testNALib(){
+void testNALib(void){
   naTestFunction(testNABase);
   naTestFunction(testNACore);
   naTestFunction(testNAStruct);
 }
 
-void benchmarkNALib(){
+void benchmarkNALib(void){
   printf(NA_NL "Benchmarking:" NA_NL);
   benchmarkNABase();
   benchmarkNAStruct();
 }
+
+
 
 int main(int argc, const char** argv){
   printf("Testing NALib Version: %d ", NA_VERSION);
@@ -98,3 +100,5 @@ int main(int argc, const char** argv){
 // OTHER DEALINGS IN THE SOFTWARE.
 
 // For more information, please refer to <http://unlicense.org/>
+
+

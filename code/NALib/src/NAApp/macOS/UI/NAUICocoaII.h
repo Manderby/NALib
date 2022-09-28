@@ -13,7 +13,7 @@
 
 // the following import is needed for UTType definitions.
 #import <UniformTypeIdentifiers/UTType.h>
-
+#import <Carbon/Carbon.h>
 
 NA_HAPI void na_RenewWindowMouseTracking(NAWindow* window);
 NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);
@@ -43,27 +43,63 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 }
 
 
+#ifndef NSAppKitVersionNumber11_0
+  #define NSAppKitVersionNumber11_0 2022
+#endif
 
-// Note that all spaces have offset 0.
-NA_HDEF double na_GetUIElementOffsetY(NA_UIElement* elem){
-  switch(naGetUIElementType(elem)){
-  case NA_UI_APPLICATION:  return  0.;
-  case NA_UI_BUTTON:       return +1.;
-  case NA_UI_CHECKBOX:     return +6.;
-  case NA_UI_IMAGE_SPACE:  return  0.;
-  case NA_UI_LABEL:        return +8.;
-  case NA_UI_MENU:         return  0.;
-  case NA_UI_MENUITEM:     return  0.;
-  case NA_UI_METAL_SPACE:  return  0.;
-  case NA_UI_OPENGL_SPACE: return  0.;
-  case NA_UI_POPUP_BUTTON: return +1.;
-  case NA_UI_RADIO:        return +6.;
-  case NA_UI_SCREEN:       return  0.;
-  case NA_UI_SLIDER:       return +2.;
-  case NA_UI_SPACE:        return  0.;
-  case NA_UI_TEXTBOX:      return +2.;
-  case NA_UI_TEXTFIELD:    return +5.;
-  case NA_UI_WINDOW:       return  0.;
+NA_HDEF double na_GetUIElementYOffset(NA_UIElement* elem){
+  // Line height is considered to be 25 for an optimal display. In this
+  // function, the UI elements are shifted in Y direction such that text
+  // always is displayed on a common baseline. The reference element is
+  // a stateful text button.
+  // All spaces and stateful/image buttons have offset 0.
+  
+  if(NSAppKitVersionNumber < NSAppKitVersionNumber11_0){
+    switch(naGetUIElementType(elem)){
+    case NA_UI_APPLICATION:  return  0.;
+    case NA_UI_BUTTON:{
+      NAButton* button = (NAButton*)elem;
+      return naIsButtonStateful(button) || !naIsButtonTextual(button) ? +0. : -2.;
+    }
+    case NA_UI_CHECKBOX:     return +3.;
+    case NA_UI_IMAGE_SPACE:  return  0.;
+    case NA_UI_LABEL:        return +4.;
+    case NA_UI_MENU:         return  0.;
+    case NA_UI_MENUITEM:     return  0.;
+    case NA_UI_METAL_SPACE:  return  0.;
+    case NA_UI_OPENGL_SPACE: return  0.;
+    case NA_UI_POPUP_BUTTON: return +0.;
+    case NA_UI_RADIO:        return +3.;
+    case NA_UI_SCREEN:       return  0.;
+    case NA_UI_SLIDER:       return -1.;
+    case NA_UI_SPACE:        return  0.;
+    case NA_UI_TEXTBOX:      return -1.;
+    case NA_UI_TEXTFIELD:    return +2.;
+    case NA_UI_WINDOW:       return  0.;
+    }
+  }else{
+    switch(naGetUIElementType(elem)){
+    case NA_UI_APPLICATION:  return  0.;
+    case NA_UI_BUTTON:{
+      NAButton* button = (NAButton*)elem;
+      return naIsButtonStateful(button) || !naIsButtonTextual(button) ? +0. : -2.;
+    }
+    case NA_UI_CHECKBOX:     return +3.;
+    case NA_UI_IMAGE_SPACE:  return  0.;
+    case NA_UI_LABEL:        return +4.;
+    case NA_UI_MENU:         return  0.;
+    case NA_UI_MENUITEM:     return  0.;
+    case NA_UI_METAL_SPACE:  return  0.;
+    case NA_UI_OPENGL_SPACE: return  0.;
+    case NA_UI_POPUP_BUTTON: return -3.;
+    case NA_UI_RADIO:        return +3.;
+    case NA_UI_SCREEN:       return  0.;
+    case NA_UI_SLIDER:       return -4.;
+    case NA_UI_SPACE:        return  0.;
+    case NA_UI_TEXTBOX:      return -1.;
+    case NA_UI_TEXTFIELD:    return +2.;
+    case NA_UI_WINDOW:       return  0.;
+    }
   }
 }
 
@@ -76,18 +112,18 @@ NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event){
   NABool hasOption;
   NABool hasCommand;
   NAUIKeyCode keyCode = [event keyCode];
-  na_App->curKeyStroke.keyCode = keyCode;
+  naGetApplication()->curKeyStroke.keyCode = keyCode;
   [event modifierFlags];
   flags = (NSUInteger)[event modifierFlags];
   hasShift     = (flags & NAEventModifierFlagShift)   != 0;
   hasControl   = (flags & NAEventModifierFlagControl) != 0;
   hasOption    = (flags & NAEventModifierFlagOption)  != 0;
   hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
-  na_App->curKeyStroke.modifiers = 0;
-  na_App->curKeyStroke.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
-  na_App->curKeyStroke.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
-  na_App->curKeyStroke.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
-  na_App->curKeyStroke.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
+  naGetApplication()->curKeyStroke.modifiers = 0;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
 }
 
 
@@ -127,21 +163,21 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
       while(!retValue && naIterateList(&iter)){
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
-        if(keyReaction->shortcut.keyCode == na_App->curKeyStroke.keyCode){
+        if(keyReaction->shortcut.keyCode == naGetApplication()->curKeyStroke.keyCode){
           NABool needsShift   = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
           NABool needsControl = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
           NABool needsOption  = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
           NABool needsCommand = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
-          NABool hasShift   = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool hasControl = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool hasOption  = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool hasCommand = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
+          NABool hasShift   = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool hasControl = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool hasOption  = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool hasCommand = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
           if(needsShift   == hasShift
           && needsControl == hasControl
           && needsOption  == hasOption
           && needsCommand == hasCommand){
             NAReaction reaction;
-            reaction.uiElement = na_App;
+            reaction.uiElement = naGetApplication();
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
             reaction.controller = keyReaction->controller;
             retValue = keyReaction->handler(reaction);
@@ -154,6 +190,44 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
   }
   return retValue;
 }
+
+
+
+NAString* naNewKeyPressString(uint32 modifiers, NAUIKeyCode keyCode){
+  TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardLayoutInputSource();
+  CFDataRef layoutData = TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
+  const UCKeyboardLayout* keyboardLayout = (const UCKeyboardLayout*)CFDataGetBytePtr(layoutData);
+  
+  uint32 keysDown = 0;
+  UniChar chars[4];
+  UniCharCount realLength;
+                
+  UInt32 modifierKeyState = 0;
+  if(modifiers & NA_MODIFIER_FLAG_SHIFT){modifierKeyState |= shiftKey;}
+  if(modifiers & NA_MODIFIER_FLAG_CONTROL){modifierKeyState |= controlKey;}
+  if(modifiers & NA_MODIFIER_FLAG_OPTION){modifierKeyState |= optionKey;}
+  if(modifiers & NA_MODIFIER_FLAG_COMMAND){modifierKeyState |= cmdKey;}
+
+  UCKeyTranslate(
+    keyboardLayout,
+    (UInt16)keyCode,
+    kUCKeyActionDisplay,
+    modifierKeyState >> 8,
+    LMGetKbdType(),
+    kUCKeyTranslateNoDeadKeysBit,
+    &keysDown,
+    sizeof(chars) / sizeof(chars[0]),
+    &realLength,
+    chars);
+  CFRelease(currentKeyboard);
+    
+  NAUTF8Char utf8String[10];
+  CFStringRef letterCFString = CFStringCreateWithCharacters(kCFAllocatorDefault, chars, 1);
+  CFStringGetCString(letterCFString, utf8String, 10, kCFStringEncodingUTF8);
+  CFRelease(letterCFString);
+  return naNewStringWithFormat("%s", utf8String);
+}
+
 
 
 // ///////////////////////////////////
@@ -218,10 +292,44 @@ NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
 
 
 
+NA_HDEF void na_DestructFont(NAFont* font){
+  NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(font->nativePtr));
+  naDelete(font->name);
+}
 
+NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size){
+  NAFont* font = naCreate(NAFont);
+  NSString* systemFontName = [NSString stringWithUTF8String: fontFamilyName];
 
+  NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
+  NSFont* retFont;
 
-NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
+  if(systemFontName == [systemFont familyName]){
+    retFont = (naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) ?
+      [NSFont systemFontOfSize:size] :
+      [NSFont boldSystemFontOfSize:size];
+  }else{
+    NSFontTraitMask traits = 0;
+    if(naGetFlagu32(flags, NA_FONT_FLAG_BOLD)){ traits |= NSBoldFontMask; }
+    if(naGetFlagu32(flags, NA_FONT_FLAG_ITALIC)){ traits |= NSItalicFontMask; }
+    if(naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE)){ }
+
+    retFont = [[NSFontManager sharedFontManager]
+      fontWithFamily:systemFontName
+      traits:traits
+      weight:5  // ignored if NSBoldFontMask is set.
+      size:size];
+  }
+  font->nativePtr = NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(retFont));
+
+  font->name = naNewStringWithFormat("%s", fontFamilyName);
+  font->flags = flags;
+  font->size = size;
+  
+  return font;
+}
+
+NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
   CGFloat baseSize;
   switch(size){
   case NA_FONT_SIZE_SMALL: baseSize = 11; break;
@@ -231,71 +339,34 @@ NAFont na_GetFontWithKindAndSize(NAFontKind kind, NAFontSize size){
   default: baseSize = [NSFont systemFontSize]; break;
   }
 
-  NSFont* font;
-  NSFontDescriptor* descriptor;
-  NSDictionary* dict;
+  NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
+
+  NAFont* retFont;
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
-      font = [NSFont systemFontOfSize:baseSize];
+      retFont = naCreateFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_REGULAR, baseSize);
       break;
     case NA_FONT_KIND_TITLE:
-      font = [NSFont boldSystemFontOfSize:baseSize];
+      retFont = naCreateFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_BOLD, baseSize);
       break;
     case NA_FONT_KIND_MONOSPACE:
-      dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                            @"Courier", NSFontFamilyAttribute, 
-                            @"Regular", NSFontFaceAttribute, nil];
-      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
-      font = [NSFont fontWithDescriptor:descriptor size:baseSize];
+      retFont = naCreateFont("Courier", NA_FONT_FLAG_REGULAR, baseSize);
       break;
     case NA_FONT_KIND_PARAGRAPH:
-      dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                            @"Palatino", NSFontFamilyAttribute, 
-                            @"Regular", NSFontFaceAttribute, nil];
-      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
-      font = [NSFont fontWithDescriptor:descriptor size:baseSize + 1];
+      retFont = naCreateFont("Palatino", NA_FONT_FLAG_REGULAR, baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                            @"Times New Roman", NSFontFamilyAttribute, 
-                            @"Italic", NSFontFaceAttribute, nil];
-      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
-      font = [NSFont fontWithDescriptor:descriptor size:baseSize];
+      retFont = naCreateFont("Times New Roman", NA_FONT_FLAG_ITALIC, baseSize);
       break;
     default:
       #if NA_DEBUG
         naError("Unknown font kind");
       #endif
-      font = [NSFont systemFontOfSize:baseSize];
+      retFont = naCreateFont("San Francisco", NA_FONT_FLAG_REGULAR, size);
       break;
   }
-  return NA_COCOA_PTR_OBJC_TO_C(font);
-}
-
-
-
-NAFont na_GetCustomFont(const NAUTF8Char* fontName, uint32 flags, double size){
-  NA_UNUSED(flags);
-  NSFont* font;
-
-  NSString* attrStr = @"Regular";
-//  if(flags == NA_FONT_FLAG_BOLD){ attrStr = @"Bold"; }
-//  if(flags == NA_FONT_FLAG_ITALIC){ attrStr = @"Italic"; }
-//  if(flags == NA_FONT_FLAG_BOLD | NA_FONT_FLAG_ITALIC){ attrStr = @"Bold Italic"; }
-
-  NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [NSString stringWithUTF8String: fontName], NSFontFamilyAttribute, 
-                        attrStr, NSFontFaceAttribute, nil];
-  NSFontDescriptor* descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
-  font = [NSFont fontWithDescriptor:descriptor size:size];
-
-  if(!font){
-    #if NA_DEBUG
-      naError("Font can not be found");
-    #endif
-    font = [NSFont systemFontOfSize:size];
-  }
-  return NA_COCOA_PTR_OBJC_TO_C(font);
+  
+  return retFont;
 }
 
 
@@ -343,18 +414,17 @@ NA_HDEF NARect na_GetScreenAbsoluteRect(const NA_UIElement* screen){
 
 
 NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText){
-    NSAlert* alert = [[NSAlert alloc] init];
+    NSAlert* alert = NA_COCOA_AUTORELEASE([[NSAlert alloc] init]);
 
     switch(alertBoxType){
     case NA_ALERT_BOX_INFO:    alert.alertStyle = NAAlertStyleWarning; break;
     case NA_ALERT_BOX_WARNING: alert.alertStyle = NAAlertStyleInfo; break;
-    case NA_ALERT_BOX_ERROR:   alert.alertStyle = NSAlertStyleError; break;
+    case NA_ALERT_BOX_ERROR:   alert.alertStyle = NAAlertStyleError; break;
     }
     
     alert.messageText = [NSString stringWithUTF8String:titleText];
     alert.informativeText = [NSString stringWithUTF8String:infoText];
     [alert runModal];
-    NA_COCOA_RELEASE(alert);
 }
 
 
@@ -424,6 +494,18 @@ NA_DEF void naHideMouse(){
 
 
 
+NA_DEF void naHideMouseUntilMovement(NABool hide){
+  [NSCursor setHiddenUntilMouseMoves:hide ? YES : NO];
+}
+
+
+
+NA_DEF NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot){
+  NSImage* nsImage = naCreateResolutionIndependentNativeImage(NA_NULL, uiImage, NA_UIIMAGE_KIND_MAIN);
+  return [[NSCursor alloc] initWithImage:nsImage hotSpot:naMakeNSPointWithPos(hotspot)];
+}
+
+
 
 NA_DEF NARect naGetUIElementRect(const void* uiElement, const void* relativeuiElement, NABool includeBorder){
   NARect rect;
@@ -470,7 +552,7 @@ NA_DEF NARect naGetUIElementRect(const void* uiElement, const void* relativeuiEl
     }
     break;
   }
-  rect.pos.y -= na_GetUIElementOffsetY(element);
+  rect.pos.y -= na_GetUIElementYOffset(element);
 
   // Now, we find the appropriate relative element.
   if(!relElement){relElement = (NA_UIElement*)naGetUIElementParent(element);}
@@ -495,7 +577,7 @@ NA_DEF NARect naGetUIElementRect(const void* uiElement, const void* relativeuiEl
     case NA_UI_TEXTFIELD:    relRect = na_GetTextFieldAbsoluteInnerRect(relElement); break;
     case NA_UI_WINDOW:       relRect = na_GetWindowAbsoluteInnerRect(relElement); break;
     }
-    relRect.pos.y -= na_GetUIElementOffsetY(relElement);
+    relRect.pos.y -= na_GetUIElementYOffset(relElement);
 
     rect.pos.x = rect.pos.x - relRect.pos.x;
     rect.pos.y = rect.pos.y - relRect.pos.y;

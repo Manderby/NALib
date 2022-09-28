@@ -6,7 +6,7 @@
 
 
 #include "../Core/NAAppCore.h"
-#include "../../NAValueHelper.h"
+#include "../../../NAUtility/NAValueHelper.h"
 
 
 NA_HAPI void** na_GetUIElementNextTabReference(void* textField);
@@ -22,8 +22,8 @@ void naSetApplicationMouseHoverElement(NA_UIElement* element);
 const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 
 NA_HAPI UINT na_GetApplicationNextMenuItemId(NAApplication* application);
-NA_HAPI void na_SetApplicationLastOpenedMenu(NAApplication* application, NAMenu* menu);
-NA_HAPI NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application);
+NA_HAPI void na_SetApplicationLastOpenedMenu(NAApplication* application, const NAMenu* menu);
+NA_HAPI const NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application);
 
 
 
@@ -138,14 +138,14 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message){
   NABool rControl;
   NABool lOption;
   NABool rOption;
-  NABool hasShift   = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
-  NABool hasControl = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
-  NABool hasOption  = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
-  NABool hasCommand = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
+  NABool hasShift   = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
+  NABool hasControl = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
+  NABool hasOption  = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
+  NABool hasCommand = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
   NABool isExtendedKey = (message->lParam >> 24) & 0x01;  // Extended keys usually are the ones on the right.
 
   NAUIKeyCode scanCode = (NAUIKeyCode)MapVirtualKey((UINT)message->wParam, MAPVK_VK_TO_VSC);
-  na_App->curKeyStroke.keyCode = scanCode;
+  naGetApplication()->curKeyStroke.keyCode = scanCode;
   lShift = (GetKeyState(VK_LSHIFT) & 0x8000) >> 15;
   rShift = (GetKeyState(VK_RSHIFT) & 0x8000) >> 15;
   // Note: Due to the right shift key not properly being detected by the extended key flag
@@ -163,11 +163,11 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message){
   // Note, this implementation is far from finished. It does strange things, but that
   // just seems to be a thing with windows key mappings. :(
 
-  na_App->curKeyStroke.modifiers = 0;
-  na_App->curKeyStroke.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
-  na_App->curKeyStroke.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
-  na_App->curKeyStroke.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
-  na_App->curKeyStroke.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
+  naGetApplication()->curKeyStroke.modifiers = 0;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
+  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
 }
 
 
@@ -199,15 +199,15 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
       while(!retValue && naIterateList(&iter)){
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
-        if(keyReaction->shortcut.keyCode == na_App->curKeyStroke.keyCode){
+        if(keyReaction->shortcut.keyCode == naGetApplication()->curKeyStroke.keyCode){
           NABool needsShift   = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
           NABool needsControl = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
           NABool needsOption  = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
           NABool needsCommand = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
-          NABool hasShift   = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool hasControl = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool hasOption  = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool hasCommand = naGetFlagu32(na_App->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
+          NABool hasShift   = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool hasControl = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool hasOption  = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool hasCommand = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
           if(needsShift   == hasShift
           && needsControl == hasControl
           && needsOption  == hasOption
@@ -424,7 +424,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
     break;
 
   case WM_KEYDOWN:
-    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEYDOWN);
+    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_DOWN);
     if(handeled){
       info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
@@ -432,7 +432,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
     break;
 
   case WM_KEYUP:
-    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEYUP);
+    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_UP);
     if(handeled){
       info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
@@ -472,9 +472,9 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
   if(controlWnd == 0 && notificationCode == 0)
   {
     // This is a menu message
-    NAMenu* menu = na_GetApplicationLastOpenedMenu(naGetApplication());
-    NAMenuItem* menuItem = NA_NULL;
-    NAListIterator iter = naMakeListMutator(&(menu->childs));
+    const NAMenu* menu = na_GetApplicationLastOpenedMenu(naGetApplication());
+    const NAMenuItem* menuItem = NA_NULL;
+    NAListIterator iter = naMakeListAccessor(&(menu->childs));
     while(naIterateList(&iter)){
       menuItem = naGetListCurMutable(&iter);
       if(na_GetMenuItemId(menuItem) == controlIdentifier){
@@ -485,7 +485,7 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
     naClearListIterator(&iter);
 
     if(menuItem){
-      na_DispatchUIElementCommand((NA_UIElement*)menuItem, NA_UI_COMMAND_PRESSED);
+      na_DispatchUIElementCommand((const NA_UIElement*)menuItem, NA_UI_COMMAND_PRESSED);
       hasBeenHandeled = NA_TRUE;
     }
     na_SetApplicationLastOpenedMenu(naGetApplication(), NA_NULL);

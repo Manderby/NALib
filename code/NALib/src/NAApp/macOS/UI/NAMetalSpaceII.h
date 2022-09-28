@@ -15,7 +15,7 @@
     self = [super initWithFrame:frameRect];
 
     if (@available(macOS 10.11, *)) {
-      CAMetalLayer* metalLayer = [[CAMetalLayer alloc] init];
+      CAMetalLayer* metalLayer = NA_COCOA_AUTORELEASE([[CAMetalLayer alloc] init]);
       metalLayer.frame = [self frame];
       metalLayer.device = MTLCreateSystemDefaultDevice();
       metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
@@ -97,12 +97,12 @@
   
   - (void)keyDown:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEYDOWN);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_DOWN);
   }
   
   - (void)keyUp:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEYUP);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_UP);
   }
   
   - (void)flagsChanged:(NSEvent*)event{
@@ -111,10 +111,10 @@
     NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
     NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
 
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (shift ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (alt ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (control ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (command ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (shift ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (alt ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (control ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (command ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
   }
   
   @end
@@ -141,7 +141,7 @@
 
   NA_DEF void* naGetMetalSpaceSystemContext(const NAMetalSpace* metalSpace){
     naDefineCocoaObjectConst(NACocoaNativeMetalSpace, nativePtr, metalSpace);
-    return NA_COCOA_PTR_OBJC_TO_C([nativePtr layer]);
+    return (NA_COCOA_BRIDGE void*)[nativePtr layer];
   }
 
 
@@ -176,7 +176,7 @@
     #endif
   }
 
-  NA_DEF void* naGetMetalSpaceSystemContext(NAMetalSpace* metalSpace){
+  NA_DEF void* naGetMetalSpaceSystemContext(const NAMetalSpace* metalSpace){
     NA_UNUSED(metalSpace);
     #if NA_DEBUG
       naError("Metal has not been configured. See NAConfiguration.h");

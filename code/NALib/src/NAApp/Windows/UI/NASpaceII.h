@@ -198,13 +198,6 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color){
 
 
 
-NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
-  space->alternateBackground = alternate;
-  naRefreshUIElement(space, 0.);
-}
-
-
-
 NA_DEF void naRemoveSpaceChilds(NASpace* space){
   // todo
 }
@@ -213,6 +206,12 @@ NA_DEF void naRemoveSpaceChilds(NASpace* space){
 
 NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
   SetWindowPos(naGetUIElementNativePtr(space), HWND_TOP, 0, 0, (int)rect.size.width, (int)rect.size.height, SWP_NOMOVE | SWP_NOZORDER);
+}
+
+
+
+NA_DEF void naSetSpaceVisible(NASpace* space, NABool visible){
+  // todo
 }
 
 

@@ -15,7 +15,7 @@
 
   if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS)){
     if(!isImage && naGetFlagu32(flags, NA_BUTTON_STATEFUL)){
-      [self setBezelStyle:NSBezelStyleInline]; 
+      [self setBezelStyle:NABezelStyleInline]; 
       [self setBordered:YES];
     }else{
       [self setBezelStyle:NABezelStyleRounded]; 
@@ -35,7 +35,8 @@
   cocoaButton = newCocoaButton;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(naGetSystemFont()))];
+
   // todo: make this dependent on whether tracking is needed or not.
   trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
       options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp)
@@ -59,16 +60,22 @@
 }
 
 - (void) setUIImage:(const NAUIImage*)uiImage{
-  [self setImage:naCreateResolutionIndependentNativeImage(
-    self,
-    uiImage,
-    NA_UIIMAGE_KIND_MAIN)];
-  [self setAlternateImage:naCreateResolutionIndependentNativeImage(
-    self,
-    uiImage,
-    NA_UIIMAGE_KIND_ALT)];
+  if(uiImage)
+  {
+    [self setImage:naCreateResolutionIndependentNativeImage(
+      self,
+      uiImage,
+      NA_UIIMAGE_KIND_MAIN)];
+    [self setAlternateImage:naCreateResolutionIndependentNativeImage(
+      self,
+      uiImage,
+      NA_UIIMAGE_KIND_ALT)];
 
-  [[self cell] setImageScaling:NSImageScaleNone];
+    [[self cell] setImageScaling:NSImageScaleNone];
+  }else{
+    [self setImage:nil];
+    [self setAlternateImage:nil];
+  }
 }
 
 - (void) onPressed:(id)sender{
@@ -121,12 +128,14 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
   
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
 
+  const NABool isStateful = naGetFlagu32(flags, NA_BUTTON_STATEFUL);
+
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
-    frame:naMakeNSRectWithSize(naMakeSize(width, 24))];
-  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL);
+    frame:naMakeNSRectWithSize(naMakeSize(width, isStateful ? 25 : 24))];
+  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL, flags);
   
   [nativePtr setButtonText:text];
   
@@ -148,7 +157,7 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(size)];
-  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), uiImage);
+  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), uiImage, flags);
   
   [nativePtr setUIImage:uiImage];
   
@@ -165,7 +174,7 @@ NA_DEF void na_DestructCocoaButton(NACocoaButton* cocoaButton){
 
 NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
-  [nativePtr setEnabled:enabled];
+  [nativePtr setEnabled:(BOOL)enabled];
 }
 
 
@@ -189,6 +198,25 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
   #endif
   na_setButtonImage(button, uiImage);
   [nativePtr setUIImage:uiImage];
+}
+
+
+
+NA_DEF NABool naIsButtonStateful(NAButton* button){
+  return naGetFlagu32(button->flags, NA_BUTTON_STATEFUL);
+}
+
+
+
+NA_DEF NABool naIsButtonBorderless(NAButton* button){
+  return naGetFlagu32(button->flags, NA_BUTTON_BORDERLESS);
+}
+
+
+
+NA_DEF NABool naIsButtonTextual(NAButton* button){
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  return ![nativePtr isImage];
 }
 
 

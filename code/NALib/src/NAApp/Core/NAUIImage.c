@@ -1,12 +1,12 @@
 
 #include "../../NAApp.h"
 
-#if (NA_COMPILE_GUI == 1)
+#if NA_COMPILE_GUI == 1
 
 
 
-NA_API void na_DeallocUIImage(NAUIImage* uiImage);
-NA_RUNTIME_TYPE(NAUIImage, na_DeallocUIImage, NA_TRUE);
+NA_API void na_DestructUIImage(NAUIImage* uiImage);
+NA_RUNTIME_TYPE(NAUIImage, na_DestructUIImage, NA_TRUE);
 
 
 // Will retain the babyImage.
@@ -74,22 +74,36 @@ NA_HIDEF NAInt na_GetUIImageSubImageIndex(NAUIImageResolution resolution, NAUIIm
 
 NA_HDEF const NABabyImage* na_GetUIImageBabyImage(const NAUIImage* uiImage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
   NAInt subIndex = na_GetUIImageSubImageIndex(resolution, kind, skin);
-  const NABabyImage* retimg = uiImage->babyImages[subIndex];
-  if(!retimg && skin != NA_UIIMAGE_SKIN_PLAIN){
-    NAInt plainIndex = na_GetUIImageSubImageIndex(resolution, kind, NA_UIIMAGE_SKIN_PLAIN);
-    const NABabyImage* plainimg = uiImage->babyImages[plainIndex];
-    if(plainimg){
-      NABabyColor skinColor;
-      NABabyImage* skinnedImage;
-      naFillDefaultTextColorWithSkin(skinColor, skin);
-      skinnedImage = naCreateBabyImageWithTint(plainimg, skinColor, uiImage->tintMode, 1.f);
+  const NABabyImage* retImg = uiImage->babyImages[subIndex];
+
+  if(!retImg && skin != NA_UIIMAGE_SKIN_PLAIN){
+    // If the skinned image does not exist, create one automatically out of
+    // the plain image of the same kind and resolution.
+    const NABabyImage* plainImg = na_GetUIImageBabyImage(uiImage, resolution, kind, NA_UIIMAGE_SKIN_PLAIN);
+    if(plainImg){
+      NABabyColor tintColor;
+      NABabyImage* tintedImage;
+      naFillDefaultTextColorWithSkin(tintColor, skin);
+      tintedImage = naCreateBabyImageWithTint(plainImg, tintColor, uiImage->tintMode, 1.f);
       // todo: not so beautiful const cast to NAUIImage*.
-      na_SetUIImageBabyImage((NAUIImage*)uiImage, skinnedImage, resolution, kind, skin);
-      naReleaseBabyImage(skinnedImage);
-      retimg = uiImage->babyImages[subIndex];
+      na_SetUIImageBabyImage((NAUIImage*)uiImage, tintedImage, resolution, kind, skin);
+      naReleaseBabyImage(tintedImage);
+      retImg = uiImage->babyImages[subIndex];
     }
+  }else if(!retImg && kind != NA_UIIMAGE_KIND_MAIN){
+    // If the kinded image does not exist, create one automatically out of
+    // the main image of the same skin and resolution.
+    const NABabyImage* mainImg = na_GetUIImageBabyImage(uiImage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
+    if(mainImg){
+      NABabyImage* kindedImage = naCreateBabyImageCopy(mainImg);
+      // todo: not so beautiful const cast to NAUIImage*.
+      na_SetUIImageBabyImage((NAUIImage*)uiImage, kindedImage, resolution, kind, skin);
+      naReleaseBabyImage(kindedImage);
+      retImg = uiImage->babyImages[subIndex];
+    }
+    // todo: third else if should automatically create a resized image.
   }
-  return retimg;
+  return retImg;
 }
 
 
@@ -113,7 +127,7 @@ NA_HIDEF void na_SetUIImageBabyImage(NAUIImage* uiImage, const NABabyImage* baby
 
 
 
-NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, const NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
+NA_DEF NAUIImage* naCreateUIImage(const NABabyImage* main, const NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
   NAUIImage* uiImage;
   NABabyImage* main1x;
   
@@ -127,7 +141,7 @@ NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, const NABabyImage* alt, 
     if(alt && !naEqualSizei(naGetBabyImageSize(main), naGetBabyImageSize(alt)))
       naError("Both images must have the same size.");
   #endif
-  uiImage = naNew(NAUIImage);
+  uiImage = naCreate(NAUIImage);
   
   uiImage->size1x = naGetBabyImageSize(main);
   uiImage->tintMode = tintMode;
@@ -176,7 +190,7 @@ NA_DEF NAUIImage* naNewUIImage(const NABabyImage* main, const NABabyImage* alt, 
 
 
 
-NA_API void na_DeallocUIImage(NAUIImage* uiImage){
+NA_API void na_DestructUIImage(NAUIImage* uiImage){
   NAInt i;
   for(i = 0; i < NA_UIIMAGE_SUBIMAGES_COUNT; i++){
     if(uiImage->nativeImages[i]){naDeallocNativeImage(uiImage->nativeImages[i]);}
@@ -185,8 +199,7 @@ NA_API void na_DeallocUIImage(NAUIImage* uiImage){
 }
 
 
-#endif // (NA_COMPILE_GUI == 1)
-
+#endif // NA_COMPILE_GUI == 1
 
 
 // This is free and unencumbered software released into the public domain.

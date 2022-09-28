@@ -5,6 +5,7 @@
 
 
 #include "HelloWorldGUI.h"
+#include "../../NALib/src/NAVisual/NA3DHelper.h"
 
 
 struct ExperimentController{
@@ -34,6 +35,7 @@ struct ExperimentController{
   NALabel* labelLabel;
   NALabel* label;
 
+  NAInt fontId;
   NALabel* openGLSpaceLabel;
   NAOpenGLSpace* openGLSpace;
 
@@ -117,6 +119,12 @@ NABool checkBoxPressed(NAReaction reaction){
   return NA_TRUE;
 }
 
+void initOpenGL(void* initData)
+{
+  ExperimentController* con = (ExperimentController*)initData;
+  con->fontId = naStartupPixelFont();
+}
+
 NABool redrawOpenGLSpace(NAReaction reaction){
   // OpenGL is declared deprecated on macOS 10.14. These pragma directives
   // omit the nasty warnings. Do not forget the pragma pop at the end of this
@@ -126,6 +134,8 @@ NABool redrawOpenGLSpace(NAReaction reaction){
     #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
   #endif
 
+  ExperimentController* con = reaction.controller;
+
   static float ang = 0.f;
 
   ang += .05f;
@@ -134,15 +144,19 @@ NABool redrawOpenGLSpace(NAReaction reaction){
   glClearColor(0.f, 0.f, .4f, 1.f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glColor4f(1.f, 1.f, 1.f, 1.f);
+  glDisable(GL_TEXTURE_2D);
+
+  glColor4f(1.f, .5f, 1.f, 1.f);
   glPointSize(5);
   glBegin(GL_POINTS);
     glVertex3f(naSinf(ang) * .9f, 0.f, 0.f);
   glEnd();
 
-  naSwapOpenGLSpaceBuffer(reaction.uiElement);
+  naDrawASCIICharacters(con->fontId, "Hello World", naSinf(ang) * .9f, 0, 0);
+   
+  naSwapOpenGLSpaceBuffer(con->openGLSpace);
   
-  naRefreshUIElement(reaction.uiElement, 1./ 60);
+  naRefreshUIElement(con->openGLSpace, 1./ 60);
 
   return NA_TRUE;
 
@@ -160,7 +174,7 @@ NABool radioPressed(NAReaction reaction){
 
 NABool sliderEdited(NAReaction reaction){
   ExperimentController* con = reaction.controller;
-  NASlider* slider = reaction.uiElement;
+  const NASlider* slider = reaction.uiElement;
   const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "Slider Value Edited to %f", naGetSliderValue(slider));
   naSetLabelText(con->outputLabel, outputText);
 
@@ -169,7 +183,7 @@ NABool sliderEdited(NAReaction reaction){
 
 NABool textFieldEdited(NAReaction reaction){
   ExperimentController* con = reaction.controller;
-  NATextField* textField = reaction.uiElement;
+  const NATextField* textField = reaction.uiElement;
   NAString* textFieldString = naNewStringWithTextFieldText(textField);
   const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "TextField Value Edited to %s", naGetStringUTF8Pointer(textFieldString));
   naSetLabelText(con->outputLabel, outputText);
@@ -234,7 +248,7 @@ ExperimentController* createExperimentController(){
   NABabyColor altColor = {.25, 0., 1., 1.};
   NABabyImage* mainImage = naCreateBabyImage(naMakeSizei(20, 10), mainColor);
   NABabyImage* altImage = naCreateBabyImage(naMakeSizei(20, 10), altColor);
-  con->testImage = naNewUIImage(mainImage, altImage, NA_UIIMAGE_RESOLUTION_1x, NA_BLEND_ZERO);
+  con->testImage = naCreateUIImage(mainImage, altImage, NA_UIIMAGE_RESOLUTION_1x, NA_BLEND_ZERO);
 
   con->experimentWindow = naNewWindow(
     "Experiment",
@@ -307,9 +321,9 @@ ExperimentController* createExperimentController(){
   curPosY -= 30;
   con->openGLSpaceLabel = naNewLabel("NAOpenGLSpace", descSize);
   naAddSpaceChild(con->contentSpace, con->openGLSpaceLabel, naMakePos(20, curPosY));
-  con->openGLSpace = naNewOpenGLSpace(naMakeSize(150, 22), NA_NULL, NA_NULL);
+  con->openGLSpace = naNewOpenGLSpace(naMakeSize(150, 22), initOpenGL, con);
   naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(250, curPosY));
-  naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, NA_NULL);
+  naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, con);
 
   curPosY -= 30;
   con->radioLabel = naNewLabel("NARadio", descSize);
@@ -378,7 +392,9 @@ ExperimentController* createExperimentController(){
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
     windowWidth - 20);
-  naSetLabelFontKind(con->outputLabel, NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
+  NAFont* monospaceFont = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
+  naSetLabelFont(con->outputLabel, monospaceFont);
+  naRelease(monospaceFont);
   naAddSpaceChild(con->contentSpace, con->outputLabel, naMakePos(10, 10));
 
   con->textOption = 0;
@@ -395,6 +411,8 @@ void clearExperimentController(ExperimentController* con){
   // application UIElement will be cleared automatically.
   naRelease(con->testImage);
   naFree(con);
+
+  naShutdownPixelFont(con->fontId);
 }
 
 
