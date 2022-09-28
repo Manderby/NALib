@@ -59,7 +59,7 @@ NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, NAMenuItem* 
   return 0;
 }
 
-NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, NAMenuItem* item){
+NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, size_t index){
   // todo
 }
 

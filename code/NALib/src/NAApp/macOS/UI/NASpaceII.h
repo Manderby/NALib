@@ -172,7 +172,7 @@ NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos
     break;
   }
   
-  double offsetY = na_GetUIElementOffsetY(child);
+  double offsetY = na_GetUIElementYOffset(child);
   
   [nativeSpacePtr addSubview:subview];
   NSRect frame = [subview frame];

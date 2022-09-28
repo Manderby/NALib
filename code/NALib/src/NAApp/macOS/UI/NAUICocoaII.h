@@ -47,7 +47,7 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
   #define NSAppKitVersionNumber11_0 2022
 #endif
 
-NA_HDEF double na_GetUIElementOffsetY(NA_UIElement* elem){
+NA_HDEF double na_GetUIElementYOffset(NA_UIElement* elem){
   // Line height is considered to be 25 for an optimal display. In this
   // function, the UI elements are shifted in Y direction such that text
   // always is displayed on a common baseline. The reference element is
@@ -91,10 +91,10 @@ NA_HDEF double na_GetUIElementOffsetY(NA_UIElement* elem){
     case NA_UI_MENUITEM:     return  0.;
     case NA_UI_METAL_SPACE:  return  0.;
     case NA_UI_OPENGL_SPACE: return  0.;
-    case NA_UI_POPUP_BUTTON: return -2.;
+    case NA_UI_POPUP_BUTTON: return -3.;
     case NA_UI_RADIO:        return +3.;
     case NA_UI_SCREEN:       return  0.;
-    case NA_UI_SLIDER:       return -2.;
+    case NA_UI_SLIDER:       return -4.;
     case NA_UI_SPACE:        return  0.;
     case NA_UI_TEXTBOX:      return -1.;
     case NA_UI_TEXTFIELD:    return +2.;
@@ -552,7 +552,7 @@ NA_DEF NARect naGetUIElementRect(const void* uiElement, const void* relativeuiEl
     }
     break;
   }
-  rect.pos.y -= na_GetUIElementOffsetY(element);
+  rect.pos.y -= na_GetUIElementYOffset(element);
 
   // Now, we find the appropriate relative element.
   if(!relElement){relElement = (NA_UIElement*)naGetUIElementParent(element);}
@@ -577,7 +577,7 @@ NA_DEF NARect naGetUIElementRect(const void* uiElement, const void* relativeuiEl
     case NA_UI_TEXTFIELD:    relRect = na_GetTextFieldAbsoluteInnerRect(relElement); break;
     case NA_UI_WINDOW:       relRect = na_GetWindowAbsoluteInnerRect(relElement); break;
     }
-    relRect.pos.y -= na_GetUIElementOffsetY(relElement);
+    relRect.pos.y -= na_GetUIElementYOffset(relElement);
 
     rect.pos.x = rect.pos.x - relRect.pos.x;
     rect.pos.y = rect.pos.y - relRect.pos.y;

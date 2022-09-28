@@ -128,11 +128,13 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
   
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
 
+  const NABool isStateful = naGetFlagu32(flags, NA_BUTTON_STATEFUL);
+
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
-    frame:naMakeNSRectWithSize(naMakeSize(width, 24))];
+    frame:naMakeNSRectWithSize(naMakeSize(width, isStateful ? 25 : 24))];
   na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL, flags);
   
   [nativePtr setButtonText:text];

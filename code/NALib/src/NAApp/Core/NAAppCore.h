@@ -212,7 +212,7 @@ NA_HAPI void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
 NA_HAPI void na_ClearUIElement(NA_UIElement* uiElement);
 
 NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
-NA_HAPI double na_GetUIElementOffsetY(NA_UIElement* elem);
+NA_HAPI double na_GetUIElementYOffset(NA_UIElement* elem);
 
 NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
 NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
