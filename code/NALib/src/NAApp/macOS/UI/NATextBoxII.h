@@ -163,6 +163,12 @@ NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox){
 
 
 
+NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use){
+  // todo
+}
+
+
+
 NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setReadOnly:!editable];

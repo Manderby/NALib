@@ -141,6 +141,13 @@ NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox){
 
 
 
+NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use){
+  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
+  ShowScrollBar(naGetUIElementNativePtr(textBox), SB_VERT, use);
+}
+
+
+
 NA_HDEF void** na_GetTextBoxNextTabReference(NATextBox* textBox){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   return &(winapiTextBox->nextTabStop);
