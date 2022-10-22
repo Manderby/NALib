@@ -84,6 +84,16 @@
   [scrollView setHasHorizontalScroller:YES];
 }
 
+- (void) setUseVerticalScrolling: (BOOL)use{
+//  float LargeNumberForText = 1.0e7f;
+//  NSTextContainer *textContainer = [self textContainer];
+//  [textContainer setContainerSize:NSMakeSize(LargeNumberForText, [textContainer containerSize].height)];
+//  [textContainer setWidthTracksTextView:NO];
+//  [self setMaxSize:NSMakeSize(LargeNumberForText, [self maxSize].height)];
+//  [self setHorizontallyResizable:YES];
+  [scrollView setHasVerticalScroller:use];
+}
+
 - (void) setReadOnly:(NABool)readonly{
   [self setEditable:!readonly];
 }
@@ -164,9 +174,8 @@ NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox){
 
 
 NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use){
-  // todo
-  NA_UNUSED(textBox);
-  NA_UNUSED(use);
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  [nativePtr setUseVerticalScrolling: use ? YES : NO];
 }
 
 
