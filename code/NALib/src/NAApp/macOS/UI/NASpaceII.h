@@ -205,10 +205,17 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* _Nonnull space){
   if(window){
     windowRect = na_GetNativeWindowAbsoluteInnerRect((const NSWindow*)NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(window)));
   }else{
-    #if NA_DEBUG
-      naError("Given element has no NAWindow as parent. Using native window parent.");
-    #endif
-    windowRect = naMakeRectWithNSRect([[nativePtr window] frame]);
+    if([nativePtr window]){
+      #if NA_DEBUG
+        naError("Given element has no NAWindow as parent. Using native window parent.");
+      #endif
+      windowRect = naMakeRectWithNSRect([[nativePtr window] frame]);
+    }else{
+      // The space has not (yet) been added to a window. Just use zero values.
+      // Do not emit a warning as this is quite a common case when trying to
+      // add a space to a super-space using the information of its size.
+      windowRect = naMakeRectSE(0., 0., 0., 0.);
+    }
   }
   
   NARect rect = naMakeRectS(
