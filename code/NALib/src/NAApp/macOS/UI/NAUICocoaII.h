@@ -514,6 +514,10 @@ NA_DEF NARect naGetUIElementRect(const void* uiElement, const void* relativeuiEl
   NA_UIElement* relElement;
   NAApplication* app;
 
+  if(!uiElement){
+    return naMakeRectEmpty();
+  }
+
   element = (NA_UIElement*)uiElement;
   relElement = (NA_UIElement*)relativeuiElement;
   app = naGetApplication();

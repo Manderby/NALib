@@ -671,7 +671,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
     //#if NA_DEBUG
     //  naError("Invalid UI type");
     //#endif
-    rect = naMakeRectSE(0., 0., 0., 0.);
+    rect = naMakeRectZero();
     break;
   }
 
@@ -687,7 +687,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
       #if NA_DEBUG
         naError("Invalid UI type");
       #endif
-      relRect = naMakeRectSE(0., 0., 0., 0.);
+      relRect = naMakeRectZero();
       break;
     }
 

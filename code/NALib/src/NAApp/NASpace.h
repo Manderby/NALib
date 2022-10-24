@@ -38,6 +38,10 @@ NA_API void naSetSpaceBackgroundColor(
 // Removes all children of a space
 NA_API void naRemoveSpaceChilds(NASpace* space);
 
+// Moves all childs with the given x and y coordinates in direction
+// to the right and top.
+NA_API void naShiftSpaceChilds(NASpace* space, NAPos shift);
+
 // Sets the rectangle of the space relative to its parent.
 NA_API void naSetSpaceRect(NASpace* space, NARect rect);
 

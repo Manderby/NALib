@@ -155,42 +155,67 @@ NA_DEF void naSetSpaceDragsWindow(NASpace* _Nonnull space, NABool isDraggable){
 @class NACocoaNativeRadio;
 @class NACocoaNativeTextBox;
 
-NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos){
-  naDefineCocoaObject(NACocoaNativeSpace, nativeSpacePtr, space);
+
+NA_HDEF NSView* _Nonnull na_getNSViewOfChild(void* _Nonnull child){
   naDefineCocoaObjectConst(NSView<NACocoaNativeEncapsulatedElement>, cocoaView, child);
 
-  NSView* subview;  
+  NSView* childView;  
   switch(naGetUIElementType(child)){
   case NA_UI_RADIO:
-    subview = [cocoaView getEncapsulatingView];
+    childView = [cocoaView getEncapsulatingView];
     break;
   case NA_UI_TEXTBOX:
-    subview = [cocoaView getEncapsulatingView];
+    childView = [cocoaView getEncapsulatingView];
     break;
   default:
-    subview = cocoaView;
+    childView = cocoaView;
     break;
   }
   
+  return childView;
+}
+
+
+
+NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos){
+  naDefineCocoaObject(NACocoaNativeSpace, nativeSpacePtr, space);
+
+  NSView* childView = na_getNSViewOfChild(child);  
+  
   double offsetY = na_GetUIElementYOffset(child);
   
-  [nativeSpacePtr addSubview:subview];
-  NSRect frame = [subview frame];
+  [nativeSpacePtr addSubview:childView];
+  NSRect frame = [childView frame];
   frame.origin = NSMakePoint((CGFloat)pos.x, (CGFloat)pos.y + offsetY);
-  [subview setFrame: frame];
+  [childView setFrame: frame];
   
   na_AddSpaceChild(space, child);
 }
 
 
 
-NA_HDEF void naRemoveSpaceChilds(NASpace* _Nonnull space)
+NA_DEF void naRemoveSpaceChilds(NASpace* _Nonnull space)
 {
   while(!naIsListEmpty(&(space->childs))){
     void* child = naGetListFirstMutable(&(space->childs));
     na_RemoveSpaceChild(space, child);
     [(NA_COCOA_BRIDGE NSView*)(naGetUIElementNativePtr(child)) removeFromSuperview];
   }
+}
+
+
+
+NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift)
+{
+  NAListIterator childIt = naMakeListMutator(&(space->childs));
+  while(naIterateList(&childIt)){
+    void* child = naGetListCurMutable(&childIt);
+    NSView* childView = na_getNSViewOfChild(child);  
+    NSRect frame = [childView frame];
+    frame.origin = NSMakePoint(frame.origin.x + shift.x, frame.origin.y + shift.y);
+    [childView setFrame: frame];
+  }
+  naClearListIterator(&childIt);
 }
 
 
@@ -214,7 +239,7 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* _Nonnull space){
       // The space has not (yet) been added to a window. Just use zero values.
       // Do not emit a warning as this is quite a common case when trying to
       // add a space to a super-space using the information of its size.
-      windowRect = naMakeRectSE(0., 0., 0., 0.);
+      windowRect = naMakeRectZero();
     }
   }
   

@@ -223,6 +223,18 @@ NA_IDEF NASizei naMakeSizeiEmpty(){
   newsize.width = 0;
   return newsize;
 }
+NA_IDEF NASize naMakeSizeZero(){
+  NASize newsize;
+  newsize.width = 0.;
+  newsize.height = 0.;
+  return newsize;
+}
+NA_IDEF NASizei naMakeSizeiZero(){
+  NASizei newsize;
+  newsize.width = 0;
+  newsize.height = 0;
+  return newsize;
+}
 
 
 
@@ -332,12 +344,29 @@ NA_IDEF NARecti naMakeRectiEmpty(){
   newRect.size.width = 0;
   return newRect;
 }
+NA_IDEF NARect naMakeRectZero(){
+  NARect newRect;
+  newRect.size.width = 0.;
+  newRect.size.width = 0.;
+  newRect.size.width = 0.;
+  newRect.size.height = 0.;
+  return newRect;
+}
+NA_IDEF NARecti naMakeRectiZero(){
+  NARecti newRect;
+  newRect.size.width = 0;
+  newRect.size.width = 0;
+  newRect.size.width = 0;
+  newRect.size.height = 0;
+  return newRect;
+}
 
 
 
 NA_IDEF NABounds4 naMakeBounds4(double top, double right, double bottom, double left){
   NABounds4 newbounds;
   #if NA_DEBUG
+    naError("NABounds4 is deprecated. Use NABezel4.");
     if(!naIsLengthValueValid(top) || !naIsLengthValueValid(right) || !naIsLengthValueValid(bottom) || !naIsLengthValueValid(left))
       naError("Invalid values given.");
   #endif
@@ -350,6 +379,7 @@ NA_IDEF NABounds4 naMakeBounds4(double top, double right, double bottom, double 
 NA_IDEF NABounds4i naMakeBounds4i(NAInt top, NAInt right, NAInt bottom, NAInt left){
   NABounds4i newbounds;
   #if NA_DEBUG
+    naError("NABounds4i is deprecated. Use NABezel4i.");
     if(!naIsLengthValueValidi(top) || !naIsLengthValueValidi(right) || !naIsLengthValueValidi(bottom) || !naIsLengthValueValidi(left))
       naError("Invalid values given.");
   #endif
@@ -361,13 +391,61 @@ NA_IDEF NABounds4i naMakeBounds4i(NAInt top, NAInt right, NAInt bottom, NAInt le
 }
 NA_IDEF NABounds4 naMakeBounds4WithBounds4i(NABounds4i bounds){
   NABounds4 newbounds = naMakeBounds4((double)bounds.top, (double)bounds.right, (double)bounds.bottom, (double)bounds.left);
+  #if NA_DEBUG
+    naError("NABounds4 is deprecated. Use NABezel4.");
+  #endif
   return newbounds;
 }
 NA_IDEF NABounds4i naMakeBounds4iWithBounds4(NABounds4 bounds){
   NABounds4i newbounds = naMakeBounds4i((NAInt)bounds.top, (NAInt)bounds.right, (NAInt)bounds.bottom, (NAInt)bounds.left);
+  #if NA_DEBUG
+    naError("NABounds4i is deprecated. Use NABezel4i.");
+  #endif
   return newbounds;
 }
 
+
+
+NA_IDEF NABezel4 naMakeBezel4(double right, double top, double left, double bottom){
+  NABezel4 newbezel;
+  #if NA_DEBUG
+    if(!naIsLengthValueValid(right) || !naIsLengthValueValid(top) || !naIsLengthValueValid(left) || !naIsLengthValueValid(bottom))
+      naError("Invalid values given.");
+  #endif
+  newbezel.right = right;
+  newbezel.top = top;
+  newbezel.left = left;
+  newbezel.bottom = bottom;
+  return newbezel;
+}
+NA_IDEF NABezel4i naMakeBezel4i(NAInt right, NAInt top, NAInt left, NAInt bottom){
+  NABezel4i newbezel;
+  #if NA_DEBUG
+    if(!naIsLengthValueValidi(right) || !naIsLengthValueValidi(top) || !naIsLengthValueValidi(left) || !naIsLengthValueValidi(bottom))
+      naError("Invalid values given.");
+  #endif
+  newbezel.right = right;
+  newbezel.top = top;
+  newbezel.left = left;
+  newbezel.bottom = bottom;
+  return newbezel;
+}
+NA_IDEF NABezel4 naMakeBezel4WithBezel4i(NABezel4i bezel){
+  NABezel4 newbezel = naMakeBezel4((double)bezel.right, (double)bezel.top, (double)bezel.left, (double)bezel.bottom);
+  return newbezel;
+}
+NA_IDEF NABezel4i naMakeBezel4iWithBezel4(NABezel4 bezel){
+  NABezel4i newbezel = naMakeBezel4i((NAInt)bezel.right, (NAInt)bezel.top, (NAInt)bezel.left, (NAInt)bezel.bottom);
+  return newbezel;
+}
+NA_IDEF NABezel4 naMakeBezel4Zero(){
+  NABezel4 newbezel = naMakeBezel4(0., 0., 0., 0.);
+  return newbezel;
+}
+NA_IDEF NABezel4i naMakeBezel4iZero(){
+  NABezel4i newbezel = naMakeBezel4i(0, 0, 0, 0);
+  return newbezel;
+}
 
 
 NA_IDEF NAVertex naMakeVertex(double x, double y, double z){

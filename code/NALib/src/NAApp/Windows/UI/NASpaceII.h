@@ -204,6 +204,12 @@ NA_DEF void naRemoveSpaceChilds(NASpace* space){
 
 
 
+NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift){
+  // todo
+}
+
+
+
 NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
   SetWindowPos(naGetUIElementNativePtr(space), HWND_TOP, 0, 0, (int)rect.size.width, (int)rect.size.height, SWP_NOMOVE | SWP_NOZORDER);
 }
