@@ -19,7 +19,7 @@
   [self setWantsLayer:YES];
   [self resetDrag];
 
-  cocaSpace = newCocoaSpace;
+  cocoaSpace = newCocoaSpace;
   return self;
 }
 
@@ -30,30 +30,31 @@
 
 - (void)drawRect:(NSRect)dirtyRect{
   [super drawRect:dirtyRect];
-  if(cocaSpace->space.backgroundColor[3] != 0.){
-    [[NSColor colorWithDeviceRed:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[0])
-      green:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[1])
-      blue:naUnlinearizeColorValue(cocaSpace->space.backgroundColor[2])
-      alpha:cocaSpace->space.backgroundColor[3]] setFill];
+  if(cocoaSpace->space.backgroundColor[3] != 0.){
+    [[NSColor colorWithDeviceRed:naUnlinearizeColorValue(cocoaSpace->space.backgroundColor[0])
+      green:naUnlinearizeColorValue(cocoaSpace->space.backgroundColor[1])
+      blue:naUnlinearizeColorValue(cocoaSpace->space.backgroundColor[2])
+      alpha:cocoaSpace->space.backgroundColor[3]] setFill];
     NSRectFill(dirtyRect);
   }
-  if(cocaSpace->space.alternateBackground){
+  if(cocoaSpace->space.alternateBackground){
     [[[NSColor controlTextColor] colorWithAlphaComponent:(CGFloat).075] setFill];
     NSRectFill(dirtyRect);
   }
 }
 
 - (void)mouseDown:(NSEvent* _Nonnull)event{
-  if(cocaSpace->space.dragsWindow){
+  if(cocoaSpace->space.dragsWindow){
     isMoving = NA_TRUE;
     originMousePos = naMakePosWithNSPoint([event locationInWindow]);
   }else{
     [super mouseDown:event];
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_DOWN);
   }
 }
 
 - (void)mouseDragged:(NSEvent* _Nonnull)event{
-  if(cocaSpace->space.dragsWindow && isMoving){
+  if(cocoaSpace->space.dragsWindow && isMoving){
     NAPos curMousePos = naMakePosWithNSPoint([event locationInWindow]);
     NSRect frame = [[self window] frame];
     frame.origin.x += curMousePos.x - originMousePos.x;
@@ -61,30 +62,32 @@
     [[self window] setFrame:frame display:YES];
   }else{
     [super mouseDragged:event];
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED);
   }
 }
 
 - (void)mouseUp:(NSEvent* _Nonnull)event{
-  if(cocaSpace->space.dragsWindow){
+  if(cocoaSpace->space.dragsWindow){
     [self resetDrag];
   }else{
     [super mouseUp:event];
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_UP);
   }
 }
 
 - (void)mouseMoved:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocaSpace, NA_UI_COMMAND_MOUSE_MOVED);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED);
 }
 
 - (void)mouseEntered:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocaSpace, NA_UI_COMMAND_MOUSE_ENTERED);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_ENTERED);
 }
 
 - (void)mouseExited:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocaSpace, NA_UI_COMMAND_MOUSE_EXITED);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_EXITED);
 }
 
 - (void)resetDrag{
