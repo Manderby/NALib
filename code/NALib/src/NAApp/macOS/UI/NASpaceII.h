@@ -227,15 +227,19 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* _Nonnull space){
   naDefineCocoaObjectConst(NACocoaNativeSpace, nativePtr, space);
   // Warning: does not work when frame unequal bounds.
   NSRect contentRect = [nativePtr frame];
-  
-  NARect windowRect;
-  const NAWindow* window = naGetUIElementWindowConst(space);
-  if(window){
-    windowRect = na_GetNativeWindowAbsoluteInnerRect((const NSWindow*)NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(window)));
+
+  const void* parent = naGetUIElementParentConst(space);
+  if(parent){
+    NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(space), naGetApplication(), NA_FALSE);
+    NARect relRect = naMakeRectWithNSRect([nativePtr frame]);
+    return naMakeRect(
+      naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
+      relRect.size);
   }else{
+    NARect windowRect;
     if([nativePtr window]){
       #if NA_DEBUG
-        naError("Given element has no NAWindow as parent. Using native window parent.");
+        //naError("Given element has no NAWindow as parent. Using native window parent.");
       #endif
       windowRect = naMakeRectWithNSRect([[nativePtr window] frame]);
     }else{
@@ -244,14 +248,12 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* _Nonnull space){
       // add a space to a super-space using the information of its size.
       windowRect = naMakeRectZero();
     }
+    return naMakeRectS(
+      windowRect.pos.x + contentRect.origin.x,
+      windowRect.pos.y + contentRect.origin.y,
+      contentRect.size.width,
+      contentRect.size.height);
   }
-  
-  NARect rect = naMakeRectS(
-    windowRect.pos.x + contentRect.origin.x,
-    windowRect.pos.y + contentRect.origin.y,
-    contentRect.size.width,
-    contentRect.size.height);
-  return rect;
 }
 
 

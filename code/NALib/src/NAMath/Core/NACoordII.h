@@ -346,16 +346,16 @@ NA_IDEF NARecti naMakeRectiEmpty(){
 }
 NA_IDEF NARect naMakeRectZero(){
   NARect newRect;
-  newRect.size.width = 0.;
-  newRect.size.width = 0.;
+  newRect.pos.x = 0.;
+  newRect.pos.y = 0.;
   newRect.size.width = 0.;
   newRect.size.height = 0.;
   return newRect;
 }
 NA_IDEF NARecti naMakeRectiZero(){
   NARecti newRect;
-  newRect.size.width = 0;
-  newRect.size.width = 0;
+  newRect.pos.x = 0;
+  newRect.pos.y = 0;
   newRect.size.width = 0;
   newRect.size.height = 0;
   return newRect;
