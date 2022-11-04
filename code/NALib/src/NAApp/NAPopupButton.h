@@ -34,6 +34,9 @@ NA_API size_t naGetPopupButtonItemIndex(
 NA_API void naSetPopupButtonIndexSelected(
   NAPopupButton* popupButton,
   size_t index);
+NA_API void naSetPopupButtonItemSelected(
+  NAPopupButton* popupButton,
+  const NAMenuItem* item);
 
 
 

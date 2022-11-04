@@ -110,6 +110,14 @@ NA_DEF void naSetPopupButtonIndexSelected(NAPopupButton* popupButton, size_t ind
 
 
 
+NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, const NAMenuItem* item){
+  naDefineCocoaObject(NACocoaNativePopupButton, nativePopupPtr, popupButton);
+  size_t index = naGetPopupButtonItemIndex(popupButton, item);
+  [nativePopupPtr selectItemAtIndex:(NSInteger)index];
+}
+
+
+
 NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
   naDefineCocoaObject(NACocoaNativePopupButton, nativePopupPtr, popupButton);
   [nativePopupPtr setEnabled:(BOOL)enabled];
