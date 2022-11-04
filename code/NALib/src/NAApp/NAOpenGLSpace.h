@@ -14,6 +14,7 @@
     #include <windows.h>
     #include <GL/GL.h>
   #else
+    #undef GL_SILENCE_DEPRECATION
     #define GL_SILENCE_DEPRECATION
     #include <OpenGL/gl.h>
   #endif
