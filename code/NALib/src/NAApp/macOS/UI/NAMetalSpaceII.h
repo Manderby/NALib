@@ -90,7 +90,7 @@
 //  }
   
   - (void)mouseMoved:(NSEvent*)event{
-    na_SetMouseMovedByDiff([event deltaX], -[event deltaY]);
+    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED);
     [NSEvent setMouseCoalescingEnabled:NO];
   }

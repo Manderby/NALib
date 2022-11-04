@@ -91,12 +91,12 @@
   }
 
   - (void)mouseDragged:(NSEvent*)event{
-    na_SetMouseMovedByDiff([event deltaX], -[event deltaY]);
+    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED);
   }
 
   - (void)mouseMoved:(NSEvent*)event{
-    na_SetMouseMovedByDiff([event deltaX], -[event deltaY]);
+    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED);
     //[NSEvent setMouseCoalescingEnabled:NO];
   }

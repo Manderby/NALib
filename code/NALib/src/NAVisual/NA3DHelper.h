@@ -19,6 +19,15 @@ NA_API void naFillMatrixPerspective(
   double nearZ,
   double farZ);
 
+NA_API void naFillMatrixOrtho(
+  NAMat44d matrix,
+  double left,
+  double right,
+  double bottom,
+  double top,
+  double nearZ,
+  double farZ);
+
 NA_API void naFillMatrixLookAt(
   NAMat44d matrix,
   double eyeX, double eyeY, double eyeZ,

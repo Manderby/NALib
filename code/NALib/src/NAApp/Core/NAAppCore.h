@@ -349,6 +349,7 @@ NA_HAPI NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window);
 NA_HAPI void na_SetMouseButtonPressed(NABool leftPressed);
 
 NA_HAPI void na_SetMouseWarpedTo(NAPos newpos);
+NA_HAPI void na_SetMouseMovedTo(NAPos newpos);
 NA_HAPI void na_SetMouseMovedByDiff(double deltaX, double deltaY);
 NA_HAPI void na_SetMouseScrolledByDiff(double deltaX, double deltaY);
 NA_HAPI void na_SetMouseEnteredAtPos(NAPos newpos);
