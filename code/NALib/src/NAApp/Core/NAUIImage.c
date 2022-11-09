@@ -192,7 +192,7 @@ NA_DEF NAUIImage* naCreateUIImage(const NABabyImage* main, const NABabyImage* al
 
 NA_API void na_DestructUIImage(NAUIImage* uiImage){
   NAInt i;
-  for(i = 0; i < NA_UIIMAGE_SUBIMAGES_COUNT; i++){
+  for(i = 0; i < NA_UIIMAGE_SUBIMAGES_COUNT; ++i){
     if(uiImage->nativeImages[i]){naDeallocNativeImage(uiImage->nativeImages[i]);}
     if(uiImage->babyImages[i]){naReleaseBabyImage(uiImage->babyImages[i]);}
   }

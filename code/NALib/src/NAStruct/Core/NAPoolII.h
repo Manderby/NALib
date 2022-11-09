@@ -52,7 +52,7 @@ NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, size_t count, size_t typeSize){
   // Insert all elements to the drop array.
   NAByte** dropptr = pool->drops;
   NAByte* storageptr = (NAByte*)pool->storagearray;
-  for(size_t i = 0; i < pool->count; i++){
+  for(size_t i = 0; i < pool->count; ++i){
     *dropptr = storageptr;
     dropptr++;
     storageptr += typeSize;
@@ -121,7 +121,7 @@ NA_IDEF NABool na_IsPoolPartFull(NAPool* pool){
 
 NA_IDEF void naForeachPool(const NAPool* pool, NAMutator mutator){
   NAByte** curptr = pool->drops;
-  for(size_t i = 0; i < pool->cur; i++){
+  for(size_t i = 0; i < pool->cur; ++i){
     mutator(*curptr);
     curptr++;
   }

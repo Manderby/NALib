@@ -19,7 +19,7 @@ NA_HDEF NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, con
 
 NA_HDEF void na_FillTreeNodeChildData(const NATreeConfiguration* config, NAPtr childdata[NA_TREE_NODE_MAX_CHILDS], NATreeNode* node){
   NAInt i;
-  for(i = 0; i < config->childpernode; i++){
+  for(i = 0; i < config->childpernode; ++i){
     NATreeItem* child = na_GetTreeNodeChild(config, node, i);
     if(!child){
       childdata[i] = naMakePtrNull();
@@ -78,7 +78,7 @@ NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   bubble = NA_FALSE;
 
   // Go through all childs and call the capturing message recursively.
-  for(i = 0; i < tree->config->childpernode; i++){
+  for(i = 0; i < tree->config->childpernode; ++i){
     NATreeNode* subnode = (NATreeNode*)na_GetTreeNodeChild(tree->config, node, i);
     if(subnode){
       if(na_IsNodeChildLeaf(node, i)){
