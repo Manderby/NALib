@@ -14,6 +14,10 @@ NA_API NATextField* naNewTextField(double width);
 NA_API NAString* naNewStringWithTextFieldText(const NATextField* textField);
 NA_API void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text);
 
+// Get the desired value directly.
+NA_API double naGetTextFieldDouble(NATextField* textField);
+
+// Enable or disable the textfield.
 NA_API void naSetTextFieldEnabled(NATextField* textField, NABool enabled);
 
 // Sets different kind of font properties of the textBox.
