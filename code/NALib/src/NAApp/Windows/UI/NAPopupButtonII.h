@@ -24,16 +24,28 @@ NAWINAPICallbackInfo naPopupButtonWINAPIProc(void* uiElement, UINT message, WPAR
 NA_DEF NAPopupButton* naNewPopupButton(double width){
   NAWINAPIPopupButton* winapiPopupButton = naNew(NAWINAPIPopupButton);
 
-  //winapiPopupButton->hMenu = CreatePopupMenu();
+  TCHAR* systemText = naAllocSystemStringWithUTF8String("Popup");
 
-  ////MENUINFO menuInfo;
-  ////naZeron(&menuInfo, sizeof(MENUINFO));
-  ////menuInfo.cbSize = sizeof(MENUINFO);
-  ////menuInfo.fMask = MIM_STYLE;
-  ////menuInfo.dwStyle = MNS_NOCHECK;
-  ////SetMenuInfo(winapiPopupButton->hMenu, &menuInfo);
+  HWND nativePtr = CreateWindow(
+    TEXT("BUTTON"),
+    systemText,
+    WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_RADIOBUTTON,
+    0,
+    0,
+    (int)width,
+    18,
+    naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
 
-  //na_InitMenu(&(winapiPopupButton->menu), winapiPopupButton->hMenu, parent);
+  naFree(systemText);
+
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}
+
+  na_InitPopupButton((NAPopupButton*)winapiPopupButton, nativePtr);
 
   return (NAPopupButton*)winapiPopupButton;
 }
@@ -57,6 +69,10 @@ NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* ite
 NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, NAMenuItem* item){
   // todo
   return 0;
+}
+
+NA_DEF void naSetPopupButtonIndexSelected(NAPopupButton* popupButton, size_t index){
+  // todo
 }
 
 NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, size_t index){
