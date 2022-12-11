@@ -181,7 +181,7 @@ NA_API void naSetSliderRange(NASlider* slider, double min, double max, NAInt tic
 NA_HDEF NARect na_GetSliderAbsoluteInnerRect(const NA_UIElement* slider){
   RECT contentRect;
   NARect screenRect;
-  NARect rect;
+  NARect rect = {0};
   GetClientRect(naGetUIElementNativePtrConst(slider), &contentRect);
 
   POINT testPoint = {0, 0};

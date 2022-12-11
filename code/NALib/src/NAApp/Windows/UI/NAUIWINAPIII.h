@@ -678,11 +678,23 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
   if(relElem){
     switch(relElem->elementType){
     case NA_UI_APPLICATION:  relRect = na_GetApplicationAbsoluteRect(); break;
+    case NA_UI_BUTTON:       relRect = na_GetButtonAbsoluteInnerRect(relElem); break;
+    case NA_UI_CHECKBOX:     relRect = na_GetCheckBoxAbsoluteInnerRect(relElem); break;
+    case NA_UI_IMAGE_SPACE:  relRect = na_GetImageSpaceAbsoluteInnerRect(relElem); break;
+    case NA_UI_LABEL:        relRect = na_GetLabelAbsoluteInnerRect(relElem); break;
+    case NA_UI_MENU:         relRect = na_GetMenuAbsoluteInnerRect(relElem); break;
+    case NA_UI_MENUITEM:     relRect = na_GetMenuItemAbsoluteInnerRect(relElem); break;
     case NA_UI_METAL_SPACE:  relRect = na_GetMetalSpaceAbsoluteInnerRect(relElem); break;
     case NA_UI_OPENGL_SPACE: relRect = na_GetOpenGLSpaceAbsoluteInnerRect(relElem); break;
     case NA_UI_POPUP_BUTTON: relRect = na_GetPopupButtonAbsoluteInnerRect(relElem); break;
+    case NA_UI_RADIO:        relRect = na_GetRadioAbsoluteInnerRect(relElem); break;
     case NA_UI_SCREEN:       relRect = na_GetScreenAbsoluteRect(relElem); break;
+    case NA_UI_SLIDER:       relRect = na_GetSliderAbsoluteInnerRect(relElem); break;
+    case NA_UI_SPACE:        relRect = na_GetSpaceAbsoluteInnerRect(relElem); break;
+    case NA_UI_TEXTBOX:      relRect = na_GetTextBoxAbsoluteInnerRect(relElem); break;
+    case NA_UI_TEXTFIELD:    relRect = na_GetTextFieldAbsoluteInnerRect(relElem); break;
     case NA_UI_WINDOW:       relRect = na_GetWindowAbsoluteInnerRect(relElem); break;
+
     default:
       #if NA_DEBUG
         naError("Invalid UI type");

@@ -81,9 +81,17 @@ NABool naTextFieldWINAPINotify(void* uiElement, WORD notificationCode){
 
 
 
+NABool naHandleTextFieldEnter(NAReaction reaction){
+  na_DispatchUIElementCommand(reaction.uiElement, NA_UI_COMMAND_EDIT_FINISHED);
+  return NA_TRUE;
+}
+
+
+
 NABool naHandleTextFieldTabOrder(NAReaction reaction){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)reaction.uiElement;
   if(winapiTextField->nextTabStop){
+    naHandleTextFieldEnter(reaction);
     SetFocus(naGetUIElementNativePtr(winapiTextField->nextTabStop));
     return NA_TRUE;
   }
@@ -95,6 +103,7 @@ NABool naHandleTextFieldTabOrder(NAReaction reaction){
 NABool naHandleTextFieldReverseTabOrder(NAReaction reaction){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)reaction.uiElement;
   if(winapiTextField->prevTabStop){
+    naHandleTextFieldEnter(reaction);
     SetFocus(naGetUIElementNativePtr(winapiTextField->prevTabStop));
     return NA_TRUE;
   }
@@ -128,6 +137,11 @@ NA_DEF NATextField* naNewTextField(double width){
   winapiTextField->nextTabStop = winapiTextField;
   winapiTextField->prevTabStop = winapiTextField;
 
+  naAddUIKeyboardShortcut(
+    winapiTextField,
+    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
+    naHandleTextFieldEnter,
+    NA_NULL);
   naAddUIKeyboardShortcut(
     winapiTextField,
     naMakeKeyStroke(0, NA_KEYCODE_TAB),

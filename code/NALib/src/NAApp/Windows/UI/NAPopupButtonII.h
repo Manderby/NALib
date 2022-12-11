@@ -12,7 +12,7 @@ NAWINAPICallbackInfo naPopupButtonWINAPIProc(void* uiElement, UINT message, WPAR
   switch(message){
 
   default:
-    printf("Uncaught Button message" NA_NL);
+    //printf("Uncaught PopupButton message" NA_NL);
     break;
   }
   
@@ -66,7 +66,7 @@ NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* ite
   // todo
 }
 
-NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, NAMenuItem* item){
+NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, const NAMenuItem* item){
   // todo
   return 0;
 }
@@ -75,7 +75,7 @@ NA_DEF void naSetPopupButtonIndexSelected(NAPopupButton* popupButton, size_t ind
   // todo
 }
 
-NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, size_t index){
+NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, const NAMenuItem* item){
   // todo
 }
 
