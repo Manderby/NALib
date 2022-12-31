@@ -56,7 +56,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
   MSG message;
 
   // Uncommented for future use.
-  //SetProcessDPIAware();
+  SetProcessDPIAware();
   //DPI_AWARENESS awareness = DPI_AWARENESS_SYSTEM_AWARE;
   //SetProcessDpiAwarenessContext(&awareness);
 
@@ -516,8 +516,10 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
   NAFont* font = naCreate(NAFont);
   wchar_t* systemFontName = naAllocWideCharStringWithUTF8String(fontFamilyName);
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
   font->nativePtr = CreateFont(
-    (int)size,
+    (int)(size * uiScale),
     0,
     0,
     0,
@@ -552,7 +554,7 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
 //  printf("%ls" NA_NL, lpelf->elfFullName);
 //}
 
-NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
+NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   
   NAFont* retFont = NA_NULL;
@@ -564,7 +566,7 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
   const NONCLIENTMETRICS* metrics = naGetApplicationMetrics();
 
   LONG baseSize;
-  switch(size){
+  switch(fontSize){
   case NA_FONT_SIZE_SMALL: baseSize = 12; break;
   case NA_FONT_SIZE_DEFAULT: baseSize = 16; break;
   //case NA_FONT_SIZE_DEFAULT: baseSize = metrics->lfMessageFont.lfHeight; break;

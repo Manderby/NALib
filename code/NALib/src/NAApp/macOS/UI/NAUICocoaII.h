@@ -329,9 +329,9 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
   return font;
 }
 
-NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
+NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
   CGFloat baseSize;
-  switch(size){
+  switch(fontSize){
   case NA_FONT_SIZE_SMALL: baseSize = 11; break;
   case NA_FONT_SIZE_DEFAULT: baseSize = [NSFont systemFontSize]; break;
   case NA_FONT_SIZE_BIG: baseSize = 18; break;

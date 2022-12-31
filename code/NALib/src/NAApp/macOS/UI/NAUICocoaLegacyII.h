@@ -38,21 +38,21 @@ NA_DEF CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement){
 
 
 NA_DEF CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
-  CGFloat res = (CGFloat)1.;
+  CGFloat uiScale = (CGFloat)1.;
 
   NA_MACOS_AVAILABILITY_GUARD_10_7(
     if([NSWindow instancesRespondToSelector:@selector(backingScaleFactor)]){
-      res = [window backingScaleFactor];
+      uiScale = [window backingScaleFactor];
     }
   )
   if(res == 0.){
-    res = [window userSpaceScaleFactor];
+    uiScale = [window userSpaceScaleFactor];
   }
   if(res == 0.){
-    res = 1.;
+    uiScale = 1.;
   }
   
-  return res;
+  return uiScale;
 }
 
 

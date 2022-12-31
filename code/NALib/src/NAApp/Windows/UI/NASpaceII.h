@@ -141,15 +141,18 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace){
 NA_DEF NASpace* naNewSpace(NASize size){
   NAWINAPISpace* winapiSpace = naNew(NAWINAPISpace);
 
+  winapiSpace->rect = naMakeRect(naMakePos(0., 0.), size);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
 	HWND nativePtr = CreateWindow(
 		TEXT("NASpace"),
     TEXT(""),
     WS_CHILD | WS_VISIBLE,
-		0,
-    0,
-    (int)size.width,
-    (int)size.height,
-		naGetApplicationOffscreenWindow(),
+    winapiSpace->rect.pos.x,
+    winapiSpace->rect.pos.y,
+    (int)(winapiSpace->rect.size.width * uiScale),
+    (int)(winapiSpace->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
@@ -187,7 +190,9 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
   spaceheight = spacerect.bottom - spacerect.top;
   childheight = childrect.bottom - childrect.top;
   SetWindowPos(naGetUIElementNativePtr(child), HWND_TOP, (int)pos.x, spaceheight - (int)pos.y - childheight, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-  na_SetUIElementParent(child, space, NA_TRUE);
+  //na_SetUIElementParent(child, space, NA_TRUE);
+
+  na_AddSpaceChild(space, child);
 }
 
 
@@ -205,13 +210,38 @@ NA_DEF void naRemoveSpaceChilds(NASpace* space){
 
 
 NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift){
-  // todo
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
+
+  NAListIterator childIt = naMakeListMutator(&(space->childs));
+  while(naIterateList(&childIt)){
+    void* child = naGetListCurMutable(&childIt);
+    NARect elementRect = naGetUIElementRect(child, NA_NULL, NA_FALSE);
+    elementRect.pos.x += shift.x;
+    elementRect.pos.y += shift.y;
+    if(naGetUIElementType(child) == NA_UI_SPACE)
+    {
+      naSetSpaceRect(child, elementRect);
+    }
+  }
+  naClearListIterator(&childIt);
 }
 
 
 
 NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
-  SetWindowPos(naGetUIElementNativePtr(space), HWND_TOP, 0, 0, (int)rect.size.width, (int)rect.size.height, SWP_NOMOVE | SWP_NOZORDER);
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
+  winapiSpace->rect = rect;
+
+  SetWindowPos(
+    naGetUIElementNativePtr(space),
+    HWND_TOP,
+    (int)winapiSpace->rect.pos.x,
+    (int)naGetRectEndY(winapiSpace->rect),
+    (int)(winapiSpace->rect.size.width * uiScale),
+    (int)(winapiSpace->rect.size.height * uiScale),
+    SWP_NOMOVE | SWP_NOZORDER);
 }
 
 
@@ -234,14 +264,16 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* space){
   RECT contentRect;
   POINT testPoint = {0, 0};
 
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
+
   GetClientRect(space->nativePtr, &contentRect);
   ClientToScreen(space->nativePtr, &testPoint);
   screenRect = naGetMainScreenRect();
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
-  rect.pos.x = testPoint.x;
-  rect.pos.y = (double)screenRect.size.height - ((double)testPoint.y + ((double)contentRect.bottom - (double)contentRect.top));
-  rect.size.width = (double)contentRect.right - (double)contentRect.left;
-  rect.size.height = (double)contentRect.bottom - (double)contentRect.top;
+  rect.pos.x = (testPoint.x) / uiScale;
+  rect.pos.y = ((double)screenRect.size.height - ((double)testPoint.y + ((double)contentRect.bottom - (double)contentRect.top))) / uiScale;
+  rect.size = winapiSpace->rect.size;
   return rect;
 }
 

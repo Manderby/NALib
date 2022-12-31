@@ -606,8 +606,15 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem){
 
 
 NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
-  // Resolution awareness is not yet implemented on windows. Sorry.
-  return 1.;
+  int dpi;
+  HDC hDC;
+  if (hDC = GetDC (NULL)) {
+    dpi = GetDeviceCaps (hDC, LOGPIXELSX);
+    ReleaseDC (NULL, hDC);
+  }else{
+    dpi = USER_DEFAULT_SCREEN_DPI;
+  }
+  return (double)dpi / (double)USER_DEFAULT_SCREEN_DPI;
 }
 
 

@@ -97,6 +97,7 @@ struct NAWINAPIButton{
 
 struct NAWINAPICheckBox {
   NACheckBox checkBox;
+  NARect     rect;
 };
 
 struct NAWINAPIImageSpace {
@@ -106,6 +107,7 @@ struct NAWINAPIImageSpace {
 
 struct NAWINAPILabel {
   NALabel   label;
+  NARect    rect;
   NABool    enabled;
   NAString* href;
 };
@@ -142,6 +144,7 @@ struct NAWINAPISlider {
 
 struct NAWINAPISpace {
   NASpace        space;
+  NARect         rect;
   NAWINAPIColor* lastBgColor;
 };
 

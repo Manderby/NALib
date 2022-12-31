@@ -76,14 +76,18 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width){
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
+  winapiCheckBox->rect = naMakeRectS(0., 0., width, 18.);
+
 	HWND nativePtr = CreateWindow(
 		TEXT("BUTTON"),
     systemText,
     WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_CHECKBOX,
-		0,
-    0,
-    (int)width,
-    18,
+    winapiCheckBox->rect.pos.x,
+    winapiCheckBox->rect.pos.y,
+    (int)(winapiCheckBox->rect.size.width * uiScale),
+    (int)(winapiCheckBox->rect.size.height * uiScale),
 		naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -143,6 +147,8 @@ NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* colo
 
 
 NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(const NA_UIElement* checkBox){
+  const NAWINAPICheckBox* winapiCheckBox = (const NAWINAPICheckBox*)checkBox;
+
   NARect screenRect = naGetMainScreenRect();
   RECT clientRect;
   GetClientRect(naGetUIElementNativePtrConst(checkBox), &clientRect);
@@ -153,7 +159,7 @@ NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(const NA_UIElement* checkBox){
 
   return naMakeRect(
     naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
+    winapiCheckBox->rect.size);
 }
 
 

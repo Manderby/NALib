@@ -227,9 +227,9 @@ NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
 
 NA_DEF NAUIImageResolution naGetWindowUIResolution(const NAWindow* window){
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
-  CGFloat res = naGetWindowBackingScaleFactor(nativePtr);
+  CGFloat uiScale = naGetWindowBackingScaleFactor(nativePtr);
 
-  return (res == 1.) ? NA_UIIMAGE_RESOLUTION_1x : NA_UIIMAGE_RESOLUTION_2x;
+  return (uiScale == 1.) ? NA_UIIMAGE_RESOLUTION_1x : NA_UIIMAGE_RESOLUTION_2x;
 }
 
 
