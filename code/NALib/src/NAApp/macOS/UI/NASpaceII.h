@@ -230,7 +230,7 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* _Nonnull space){
 
   const void* parent = naGetUIElementParentConst(space);
   if(parent){
-    NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(space), naGetApplication(), NA_FALSE);
+    NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(space));
     NARect relRect = naMakeRectWithNSRect([nativePtr frame]);
     return naMakeRect(
       naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

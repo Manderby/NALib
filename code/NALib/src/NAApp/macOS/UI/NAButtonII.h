@@ -292,7 +292,7 @@ NA_API void naSetButtonVisible(NAButton* button, NABool visible){
 
 NA_HDEF NARect na_GetButtonAbsoluteInnerRect(const NA_UIElement* button){
   naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(button), naGetApplication(), NA_FALSE);
+  NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(button));
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

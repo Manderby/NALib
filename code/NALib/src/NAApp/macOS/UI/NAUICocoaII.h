@@ -461,11 +461,11 @@ NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* file
 
 
 
-NA_DEF void naCenterMouse(void* uiElement, NABool includeBorder){
+NA_DEF void naCenterMouse(void* uiElement){
   NARect spacerect;
   NSRect screenframe;
   CGPoint centerpos;
-  spacerect = naGetUIElementRect(uiElement, naGetApplication(), includeBorder);
+  spacerect = naGetUIElementRectAbsolute(uiElement);
   screenframe = [[NSScreen mainScreen] frame];
   centerpos.x = (CGFloat)spacerect.pos.x + (CGFloat)spacerect.size.width * .5f;
   centerpos.y = (CGFloat)screenframe.size.height - (CGFloat)(spacerect.pos.y + spacerect.size.height * .5f);
@@ -507,93 +507,93 @@ NA_DEF NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot)
 
 
 
-NA_DEF NARect naGetUIElementRect(const void* uiElement, const void* relativeuiElement, NABool includeBorder){
-  NARect rect;
-  NARect relRect;
-  NA_UIElement* element;
-  NA_UIElement* relElement;
-  NAApplication* app;
-
-  if(!uiElement){
-    return naMakeRectEmpty();
-  }
-
-  element = (NA_UIElement*)uiElement;
-  relElement = (NA_UIElement*)relativeuiElement;
-  app = naGetApplication();
-
-  // First, let's handle the root case: Returning the application rect.
-  if(element == (NA_UIElement*)app){
-    #if NA_DEBUG
-      if(relElement && (relElement != (NA_UIElement*)app))
-        naError("The relative element is invalid for the given uiElement, which seems to be the application.");
-    #endif
-    return na_GetApplicationAbsoluteRect();
-  }
-
-  switch(element->elementType){
-  case NA_UI_APPLICATION:  rect = na_GetApplicationAbsoluteRect(); break;
-  case NA_UI_BUTTON:       rect = na_GetButtonAbsoluteInnerRect(element); break;
-  case NA_UI_CHECKBOX:     rect = na_GetCheckBoxAbsoluteInnerRect(element); break;
-  case NA_UI_IMAGE_SPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_LABEL:        rect = na_GetLabelAbsoluteInnerRect(element); break;
-  case NA_UI_MENU:         rect = na_GetMenuAbsoluteInnerRect(element); break;
-  case NA_UI_MENUITEM:     rect = na_GetMenuItemAbsoluteInnerRect(element); break;
-  case NA_UI_METAL_SPACE:  rect = na_GetMetalSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_OPENGL_SPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_POPUP_BUTTON: rect = na_GetPopupButtonAbsoluteInnerRect(element); break;
-  case NA_UI_RADIO:        rect = na_GetRadioAbsoluteInnerRect(element); break;
-  case NA_UI_SCREEN:       rect = na_GetScreenAbsoluteRect(element); break;
-  case NA_UI_SLIDER:       rect = na_GetSliderAbsoluteInnerRect(element); break;
-  case NA_UI_SPACE:        rect = na_GetSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_TEXTBOX:      rect = na_GetTextBoxAbsoluteInnerRect(element); break;
-  case NA_UI_TEXTFIELD:    rect = na_GetTextFieldAbsoluteInnerRect(element); break;
-  case NA_UI_WINDOW:
-    if(includeBorder){
-      rect = na_GetWindowAbsoluteOuterRect(element);
-    }else{
-      rect = na_GetWindowAbsoluteInnerRect(element);
-    }
-    break;
-  }
-  rect.pos.y -= na_GetUIElementYOffset(element);
-
-  // Now, we find the appropriate relative element.
-  if(!relElement){relElement = (NA_UIElement*)naGetUIElementParent(element);}
-
-  if(relElement){
-    switch(relElement->elementType){
-    case NA_UI_APPLICATION:  relRect = na_GetApplicationAbsoluteRect(); break;
-    case NA_UI_BUTTON:       relRect = na_GetButtonAbsoluteInnerRect(relElement); break;
-    case NA_UI_CHECKBOX:     relRect = na_GetCheckBoxAbsoluteInnerRect(relElement); break;
-    case NA_UI_IMAGE_SPACE:  relRect = na_GetImageSpaceAbsoluteInnerRect(relElement); break;
-    case NA_UI_LABEL:        relRect = na_GetLabelAbsoluteInnerRect(relElement); break;
-    case NA_UI_MENU:         relRect = na_GetMenuAbsoluteInnerRect(relElement); break;
-    case NA_UI_MENUITEM:     relRect = na_GetMenuItemAbsoluteInnerRect(relElement); break;
-    case NA_UI_METAL_SPACE:  relRect = na_GetMetalSpaceAbsoluteInnerRect(relElement); break;
-    case NA_UI_OPENGL_SPACE: relRect = na_GetOpenGLSpaceAbsoluteInnerRect(relElement); break;
-    case NA_UI_POPUP_BUTTON: relRect = na_GetPopupButtonAbsoluteInnerRect(relElement); break;
-    case NA_UI_RADIO:        relRect = na_GetRadioAbsoluteInnerRect(relElement); break;
-    case NA_UI_SCREEN:       relRect = na_GetScreenAbsoluteRect(relElement); break;
-    case NA_UI_SLIDER:       relRect = na_GetSliderAbsoluteInnerRect(relElement); break;
-    case NA_UI_SPACE:        relRect = na_GetSpaceAbsoluteInnerRect(relElement); break;
-    case NA_UI_TEXTBOX:      relRect = na_GetTextBoxAbsoluteInnerRect(relElement); break;
-    case NA_UI_TEXTFIELD:    relRect = na_GetTextFieldAbsoluteInnerRect(relElement); break;
-    case NA_UI_WINDOW:       relRect = na_GetWindowAbsoluteInnerRect(relElement); break;
-    }
-    relRect.pos.y -= na_GetUIElementYOffset(relElement);
-
-    rect.pos.x = rect.pos.x - relRect.pos.x;
-    rect.pos.y = rect.pos.y - relRect.pos.y;
-  }
-
-//  rect.size.width = rect.size.width;
-//  rect.size.height = rect.size.height;
-
-  // Convert the rect into absolute coordinates.
-
-  return rect;
-}
+//NA_DEF NARect naGetUIElementRect(const void* uiElement, const void* relativeuiElement, NABool includeBorder){
+//  NARect rect;
+//  NARect relRect;
+//  NA_UIElement* element;
+//  NA_UIElement* relElement;
+//  NAApplication* app;
+//
+//  if(!uiElement){
+//    return naMakeRectEmpty();
+//  }
+//
+//  element = (NA_UIElement*)uiElement;
+//  relElement = (NA_UIElement*)relativeuiElement;
+//  app = naGetApplication();
+//
+//  // First, let's handle the root case: Returning the application rect.
+//  if(element == (NA_UIElement*)app){
+//    #if NA_DEBUG
+//      if(relElement && (relElement != (NA_UIElement*)app))
+//        naError("The relative element is invalid for the given uiElement, which seems to be the application.");
+//    #endif
+//    return na_GetApplicationAbsoluteRect();
+//  }
+//
+//  switch(element->elementType){
+//  case NA_UI_APPLICATION:  rect = na_GetApplicationAbsoluteRect(); break;
+//  case NA_UI_BUTTON:       rect = na_GetButtonAbsoluteInnerRect(element); break;
+//  case NA_UI_CHECKBOX:     rect = na_GetCheckBoxAbsoluteInnerRect(element); break;
+//  case NA_UI_IMAGE_SPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(element); break;
+//  case NA_UI_LABEL:        rect = na_GetLabelAbsoluteInnerRect(element); break;
+//  case NA_UI_MENU:         rect = na_GetMenuAbsoluteInnerRect(element); break;
+//  case NA_UI_MENUITEM:     rect = na_GetMenuItemAbsoluteInnerRect(element); break;
+//  case NA_UI_METAL_SPACE:  rect = na_GetMetalSpaceAbsoluteInnerRect(element); break;
+//  case NA_UI_OPENGL_SPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(element); break;
+//  case NA_UI_POPUP_BUTTON: rect = na_GetPopupButtonAbsoluteInnerRect(element); break;
+//  case NA_UI_RADIO:        rect = na_GetRadioAbsoluteInnerRect(element); break;
+//  case NA_UI_SCREEN:       rect = na_GetScreenAbsoluteRect(element); break;
+//  case NA_UI_SLIDER:       rect = na_GetSliderAbsoluteInnerRect(element); break;
+//  case NA_UI_SPACE:        rect = na_GetSpaceAbsoluteInnerRect(element); break;
+//  case NA_UI_TEXTBOX:      rect = na_GetTextBoxAbsoluteInnerRect(element); break;
+//  case NA_UI_TEXTFIELD:    rect = na_GetTextFieldAbsoluteInnerRect(element); break;
+//  case NA_UI_WINDOW:
+//    if(includeBorder){
+//      rect = na_GetWindowAbsoluteOuterRect(element);
+//    }else{
+//      rect = na_GetWindowAbsoluteInnerRect(element);
+//    }
+//    break;
+//  }
+//  rect.pos.y -= na_GetUIElementYOffset(element);
+//
+//  // Now, we find the appropriate relative element.
+//  if(!relElement){relElement = (NA_UIElement*)naGetUIElementParent(element);}
+//
+//  if(relElement){
+//    switch(relElement->elementType){
+//    case NA_UI_APPLICATION:  relRect = na_GetApplicationAbsoluteRect(); break;
+//    case NA_UI_BUTTON:       relRect = na_GetButtonAbsoluteInnerRect(relElement); break;
+//    case NA_UI_CHECKBOX:     relRect = na_GetCheckBoxAbsoluteInnerRect(relElement); break;
+//    case NA_UI_IMAGE_SPACE:  relRect = na_GetImageSpaceAbsoluteInnerRect(relElement); break;
+//    case NA_UI_LABEL:        relRect = na_GetLabelAbsoluteInnerRect(relElement); break;
+//    case NA_UI_MENU:         relRect = na_GetMenuAbsoluteInnerRect(relElement); break;
+//    case NA_UI_MENUITEM:     relRect = na_GetMenuItemAbsoluteInnerRect(relElement); break;
+//    case NA_UI_METAL_SPACE:  relRect = na_GetMetalSpaceAbsoluteInnerRect(relElement); break;
+//    case NA_UI_OPENGL_SPACE: relRect = na_GetOpenGLSpaceAbsoluteInnerRect(relElement); break;
+//    case NA_UI_POPUP_BUTTON: relRect = na_GetPopupButtonAbsoluteInnerRect(relElement); break;
+//    case NA_UI_RADIO:        relRect = na_GetRadioAbsoluteInnerRect(relElement); break;
+//    case NA_UI_SCREEN:       relRect = na_GetScreenAbsoluteRect(relElement); break;
+//    case NA_UI_SLIDER:       relRect = na_GetSliderAbsoluteInnerRect(relElement); break;
+//    case NA_UI_SPACE:        relRect = na_GetSpaceAbsoluteInnerRect(relElement); break;
+//    case NA_UI_TEXTBOX:      relRect = na_GetTextBoxAbsoluteInnerRect(relElement); break;
+//    case NA_UI_TEXTFIELD:    relRect = na_GetTextFieldAbsoluteInnerRect(relElement); break;
+//    case NA_UI_WINDOW:       relRect = na_GetWindowAbsoluteInnerRect(relElement); break;
+//    }
+//    relRect.pos.y -= na_GetUIElementYOffset(relElement);
+//
+//    rect.pos.x = rect.pos.x - relRect.pos.x;
+//    rect.pos.y = rect.pos.y - relRect.pos.y;
+//  }
+//
+////  rect.size.width = rect.size.width;
+////  rect.size.height = rect.size.height;
+//
+//  // Convert the rect into absolute coordinates.
+//
+//  return rect;
+//}
 
 
 NA_API void naOpenURLInBrowser(const NAUTF8Char* url){

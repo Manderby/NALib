@@ -127,7 +127,7 @@ NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
 
 NA_HDEF NARect na_GetPopupButtonAbsoluteInnerRect(const NA_UIElement* popupButton){
   naDefineCocoaObjectConst(NACocoaNativePopupButton, nativePtr, popupButton);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(popupButton), naGetApplication(), NA_FALSE);
+  NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(popupButton));
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

@@ -54,7 +54,7 @@ NA_DEF void na_DestructCocoaImageSpace(NACocoaImageSpace* cocoaImageSpace){
 
 NA_HDEF NARect na_GetImageSpaceAbsoluteInnerRect(const NA_UIElement* imageSpace){
   naDefineCocoaObjectConst(NACocoaNativeImageSpace, nativePtr, imageSpace);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(imageSpace), naGetApplication(), NA_FALSE);
+  NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(imageSpace));
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

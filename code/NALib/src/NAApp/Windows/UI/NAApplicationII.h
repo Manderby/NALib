@@ -630,11 +630,11 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
 
 
 
-NA_DEF void naCenterMouse(void* uiElement, NABool includeBorder){
+NA_DEF void naCenterMouse(void* uiElement){
   NARect spacerect;
   NARect screenframe;
   NAPos centerpos;
-  spacerect = naGetUIElementRect(uiElement, naGetApplication(), includeBorder);
+  spacerect = naGetUIElementRectAbsolute(uiElement);
   // todo: screen not defined
   screenframe = naGetMainScreenRect();
   centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;

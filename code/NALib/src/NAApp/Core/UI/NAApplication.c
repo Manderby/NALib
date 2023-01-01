@@ -74,14 +74,14 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
 
 
 NA_HDEF NARect na_GetApplicationAbsoluteRect(){
-  NARect rect;
-  rect.pos.x = 0;
-  rect.pos.y = 0;
-  rect.size.width = 1;
-  rect.size.height = 1;
+  NARect rect = {0., 0., 1., 1.};
   return rect;
 }
 
+NA_HAPI NARect na_GetApplicationRect(const NAApplication* application){
+  NARect rect = {0., 0., 1., 1.};
+  return rect;
+}
 
 
 NA_DEF void naStopApplication(void){

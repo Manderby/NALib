@@ -48,9 +48,10 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
   NABool finished = NA_FALSE;
   NAListIterator iter;
 
-  NAReaction reaction;
-  reaction.uiElement = element;
-  reaction.command = command;
+  NAReaction reaction = {
+    element,
+    command,
+    NA_NULL};
   naBeginListMutatorIteration(NAEventReaction* eventReaction, &(element->reactions), iter);
     if(eventReaction->command == command){
       reaction.controller = eventReaction->controller;
@@ -189,6 +190,72 @@ NA_DEF NASpace* naGetUIElementParentSpace(void* uiElement){
     parent = naGetUIElementParent(parent);
   }
   return parent;
+}
+
+
+
+NA_DEF NARect naGetUIElementRectAbsolute(void* uiElement){
+  NARect rect;
+  NA_UIElement* elem = (NA_UIElement*)uiElement;
+
+  switch(elem->elementType){
+  case NA_UI_APPLICATION:  rect = na_GetApplicationAbsoluteRect(); break;
+  case NA_UI_BUTTON:       rect = na_GetButtonAbsoluteInnerRect(elem); break;
+  case NA_UI_CHECKBOX:     rect = na_GetCheckBoxAbsoluteInnerRect(elem); break;
+  case NA_UI_IMAGE_SPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(elem); break;
+  case NA_UI_LABEL:        rect = na_GetLabelAbsoluteInnerRect(elem); break;
+  case NA_UI_MENU:         rect = na_GetMenuAbsoluteInnerRect(elem); break;
+  case NA_UI_MENUITEM:     rect = na_GetMenuItemAbsoluteInnerRect(elem); break;
+  case NA_UI_METAL_SPACE:  rect = na_GetMetalSpaceAbsoluteInnerRect(elem); break;
+  case NA_UI_OPENGL_SPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(elem); break;
+  case NA_UI_POPUP_BUTTON: rect = na_GetPopupButtonAbsoluteInnerRect(elem); break;
+  case NA_UI_RADIO:        rect = na_GetRadioAbsoluteInnerRect(elem); break;
+  case NA_UI_SCREEN:       rect = na_GetScreenAbsoluteRect(elem); break;
+  case NA_UI_SLIDER:       rect = na_GetSliderAbsoluteInnerRect(elem); break;
+  case NA_UI_SPACE:        rect = na_GetSpaceAbsoluteInnerRect(elem); break;
+  case NA_UI_TEXTBOX:      rect = na_GetTextBoxAbsoluteInnerRect(elem); break;
+  case NA_UI_TEXTFIELD:    rect = na_GetTextFieldAbsoluteInnerRect(elem); break;
+  case NA_UI_WINDOW:       rect = na_GetWindowAbsoluteInnerRect(elem); break;
+  default:                 rect = naMakeRectZero(); break;
+  }
+
+  return rect;
+}
+
+
+
+NA_DEF NARect naGetUIElementRect(void* uiElement){
+  NARect elemRect = naGetUIElementRectAbsolute(uiElement);
+
+  NA_UIElement* relElem = naGetUIElementParent(uiElement);
+  if(relElem){
+    NARect relRect = naGetUIElementRectAbsolute(relElem);
+    elemRect.pos.x = elemRect.pos.x - relRect.pos.x;
+    elemRect.pos.y = elemRect.pos.y - relRect.pos.y;
+  }
+
+  switch(naGetUIElementType(uiElement)){
+  case NA_UI_APPLICATION:  elemRect = na_GetApplicationRect(uiElement); break;
+  case NA_UI_BUTTON:       elemRect = na_GetButtonRect(uiElement); break;
+  case NA_UI_CHECKBOX:     elemRect = na_GetCheckBoxRect(uiElement); break;
+  case NA_UI_IMAGE_SPACE:  elemRect = na_GetImageSpaceRect(uiElement); break;
+  case NA_UI_LABEL:        elemRect = na_GetLabelRect(uiElement); break;
+  //case NA_UI_MENU:         rect = na_GetMenuAbsoluteInnerRect(elem); break;
+  //case NA_UI_MENUITEM:     rect = na_GetMenuItemAbsoluteInnerRect(elem); break;
+  //case NA_UI_METAL_SPACE:  rect = na_GetMetalSpaceAbsoluteInnerRect(elem); break;
+  //case NA_UI_OPENGL_SPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(elem); break;
+  //case NA_UI_POPUP_BUTTON: rect = na_GetPopupButtonAbsoluteInnerRect(elem); break;
+  case NA_UI_RADIO:        elemRect = na_GetRadioRect(uiElement); break;
+  case NA_UI_SCREEN:       elemRect = na_GetScreenRect(uiElement); break;
+  case NA_UI_SLIDER:       elemRect = na_GetSliderRect(uiElement); break;
+  case NA_UI_SPACE:        elemRect = na_GetSpaceRect(uiElement); break;
+  case NA_UI_TEXTBOX:      elemRect = na_GetTextBoxRect(uiElement); break;
+  case NA_UI_TEXTFIELD:    elemRect = na_GetTextFieldRect(uiElement); break;
+  case NA_UI_WINDOW:       elemRect = na_GetWindowRect(uiElement); break;
+  default:                 elemRect = naMakeRectZero(); break;
+  }
+
+  return elemRect;
 }
 
 

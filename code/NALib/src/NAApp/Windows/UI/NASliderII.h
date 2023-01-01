@@ -70,7 +70,7 @@ NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam){
   //int16 hi = HIWORD(wParam);
 
   NAPos pos = naGetMousePos(naGetMouseStatus());
-  NARect rect = naGetUIElementRect(uiElement, naGetApplication(), NA_FALSE);
+  NARect rect = naGetUIElementRectAbsolute(uiElement);
 
   naSetSliderValue(uiElement, (double)pos.x / (double)rect.size.width);
   na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED);
@@ -85,15 +85,18 @@ NA_DEF NASlider* naNewSlider(double width){
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String("Slider");
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  winapiSlider->rect = naMakeRectS(0., 0., width, 24.);
+
 	HWND nativePtr = CreateWindow(
 		TRACKBAR_CLASS,
     systemText,
     WS_CHILD | WS_VISIBLE | TBS_NOTICKS,
 		0,
     0,
-    (int)width,
-    24,
-		naGetApplicationOffscreenWindow(),
+    (int)(winapiSlider->rect.size.width * uiScale),
+    (int)(winapiSlider->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
@@ -196,6 +199,11 @@ NA_HDEF NARect na_GetSliderAbsoluteInnerRect(const NA_UIElement* slider){
   return rect;
 }
 
+NA_HAPI NARect na_GetSliderRect(const NA_UIElement* slider)
+{
+  const NAWINAPISlider* winapiSlider = (const NAWINAPISlider*)slider;
+  return winapiSlider->rect;
+}
 
 
 // This is free and unencumbered software released into the public domain.

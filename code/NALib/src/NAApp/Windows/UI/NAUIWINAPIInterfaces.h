@@ -92,7 +92,8 @@ struct NAWINAPIApplication {
 
 struct NAWINAPIButton{
   NAButton button;
-  uint32 state;
+  NARect   rect;
+  uint32   state;
 };
 
 struct NAWINAPICheckBox {
@@ -102,6 +103,7 @@ struct NAWINAPICheckBox {
 
 struct NAWINAPIImageSpace {
   NAImageSpace imageSpace;
+  NARect       rect;
   NAUIImage*   image;
 };
 
@@ -136,10 +138,12 @@ struct NAWINAPIPopupButton {
 
 struct NAWINAPIRadio {
   NARadio radio;
+  NARect  rect;
 };
 
 struct NAWINAPISlider {
   NASlider slider;
+  NARect   rect;
 };
 
 struct NAWINAPISpace {
@@ -150,18 +154,21 @@ struct NAWINAPISpace {
 
 struct NAWINAPITextBox {
   NATextBox textBox;
+  NARect    rect;
   void*     nextTabStop;
   void*     prevTabStop;
 };
 
 struct NAWINAPITextField {
   NATextField textField;
+  NARect      rect;
   void*       nextTabStop;
   void*       prevTabStop;
 };
 
 struct NAWINAPIWindow {
   NAWindow      window;
+  NARect        rect;
   NA_UIElement* firstResponder;
 };
 

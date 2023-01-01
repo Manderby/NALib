@@ -117,15 +117,18 @@ NA_DEF NATextField* naNewTextField(double width){
 
   NAWINAPITextField* winapiTextField = naNew(NAWINAPITextField);
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  winapiTextField->rect = naMakeRectS(0., 0., width, 21.);
+
   HWND nativePtr = CreateWindow(
 	  TEXT("EDIT"),
     TEXT(""),
     WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL,
 	  0,
     0,
-    (int)width,
-    21,
-	  naGetApplicationOffscreenWindow(),
+    (int)(winapiTextField->rect.size.width * uiScale),
+    (int)(winapiTextField->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
     NULL, 
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
@@ -246,6 +249,11 @@ NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(const NA_UIElement* textField){
     naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
 }
 
+NA_HAPI NARect na_GetTextFieldRect(const NA_UIElement* textField)
+{
+  const NAWINAPITextField* winapiTextField = (const NAWINAPITextField*)textField;
+  return winapiTextField->rect;
+}
 
 
 // This is free and unencumbered software released into the public domain.

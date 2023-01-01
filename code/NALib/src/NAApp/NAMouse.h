@@ -29,8 +29,8 @@ NA_API NAPos naGetMousePos(const NAMouseStatus* mousestatus);
 // Returns the difference between the current and last recorded position.
 NA_API NASize naGetMouseDelta(const NAMouseStatus* mousestatus);
 
-// Centers the mouse in the given uiElement with or without border.
-NA_API void naCenterMouse(void* uiElement, NABool includeBorder);
+// Centers the mouse in the given uiElement.
+NA_API void naCenterMouse(void* uiElement);
 
 // Shows or hides the mouse
 NA_API void naShowMouse(void);

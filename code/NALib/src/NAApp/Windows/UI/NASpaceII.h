@@ -148,8 +148,8 @@ NA_DEF NASpace* naNewSpace(NASize size){
 		TEXT("NASpace"),
     TEXT(""),
     WS_CHILD | WS_VISIBLE,
-    winapiSpace->rect.pos.x,
-    winapiSpace->rect.pos.y,
+    0,
+    0,
     (int)(winapiSpace->rect.size.width * uiScale),
     (int)(winapiSpace->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
@@ -185,12 +185,30 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
   int spaceheight;
   int childheight;
 
-  GetClientRect(naGetUIElementNativePtr(space), &spacerect);
-  GetClientRect(naGetUIElementNativePtr(child), &childrect);
-  spaceheight = spacerect.bottom - spacerect.top;
-  childheight = childrect.bottom - childrect.top;
-  SetWindowPos(naGetUIElementNativePtr(child), HWND_TOP, (int)pos.x, spaceheight - (int)pos.y - childheight, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-  //na_SetUIElementParent(child, space, NA_TRUE);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect spaceRect = naGetUIElementRect(space);
+  NARect childRect = naGetUIElementRect(child);
+
+  if(  naGetUIElementType(child) == NA_UI_APPLICATION
+    || naGetUIElementType(child) == NA_UI_BUTTON
+    || naGetUIElementType(child) == NA_UI_CHECKBOX
+    || naGetUIElementType(child) == NA_UI_IMAGE_SPACE
+    || naGetUIElementType(child) == NA_UI_LABEL
+    || naGetUIElementType(child) == NA_UI_RADIO
+    || naGetUIElementType(child) == NA_UI_SLIDER
+    || naGetUIElementType(child) == NA_UI_TEXTBOX
+    || naGetUIElementType(child) == NA_UI_TEXTFIELD
+    || naGetUIElementType(child) == NA_UI_WINDOW)
+  {
+    SetWindowPos(
+      naGetUIElementNativePtr(child),
+      HWND_TOP,
+      (int)(pos.x * uiScale),
+      (int)((spaceRect.size.height - pos.y - childRect.size.height) * uiScale),
+      0,
+      0,
+      SWP_NOSIZE | SWP_NOZORDER);
+  }
 
   na_AddSpaceChild(space, child);
 }
@@ -215,7 +233,7 @@ NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift){
   NAListIterator childIt = naMakeListMutator(&(space->childs));
   while(naIterateList(&childIt)){
     void* child = naGetListCurMutable(&childIt);
-    NARect elementRect = naGetUIElementRect(child, NA_NULL, NA_FALSE);
+    NARect elementRect = naGetUIElementRect(child);
     elementRect.pos.x += shift.x;
     elementRect.pos.y += shift.y;
     if(naGetUIElementType(child) == NA_UI_SPACE)
@@ -259,22 +277,28 @@ NA_HDEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable){
 
 
 NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* space){
-  NARect rect;
-  NARect screenRect;
-  RECT contentRect;
-  POINT testPoint = {0, 0};
+  //NARect rect;
+  //NARect screenRect;
+  //RECT contentRect;
+  //POINT testPoint = {0, 0};
 
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
+  return winapiSpace->rect;
 
-  GetClientRect(space->nativePtr, &contentRect);
-  ClientToScreen(space->nativePtr, &testPoint);
-  screenRect = naGetMainScreenRect();
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  //GetClientRect(space->nativePtr, &contentRect);
+  //ClientToScreen(space->nativePtr, &testPoint);
+  //screenRect = naGetMainScreenRect();
+  //double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
-  rect.pos.x = (testPoint.x) / uiScale;
-  rect.pos.y = ((double)screenRect.size.height - ((double)testPoint.y + ((double)contentRect.bottom - (double)contentRect.top))) / uiScale;
-  rect.size = winapiSpace->rect.size;
-  return rect;
+  //rect.pos.x = (testPoint.x) / uiScale;
+  //rect.pos.y = ((double)screenRect.size.height - ((double)testPoint.y + ((double)contentRect.bottom - (double)contentRect.top))) / uiScale;
+  //rect.size = winapiSpace->rect.size;
+  //return rect;
+}
+
+NA_HDEF NARect na_GetSpaceRect(const NA_UIElement* space){
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
+  return winapiSpace->rect;
 }
 
 

@@ -125,7 +125,7 @@ NA_DEF void naSetTextFieldFont(NATextField* textField, NAFont* font){
 
 NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(const NA_UIElement* textField){
   naDefineCocoaObjectConst(NACocoaNativeTextField, nativePtr, textField);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(textField), naGetApplication(), NA_FALSE);
+  NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(textField));
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

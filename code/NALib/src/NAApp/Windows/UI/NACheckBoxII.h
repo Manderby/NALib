@@ -77,15 +77,14 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width){
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-
   winapiCheckBox->rect = naMakeRectS(0., 0., width, 18.);
 
 	HWND nativePtr = CreateWindow(
 		TEXT("BUTTON"),
     systemText,
     WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_CHECKBOX,
-    winapiCheckBox->rect.pos.x,
-    winapiCheckBox->rect.pos.y,
+    0,
+    0,
     (int)(winapiCheckBox->rect.size.width * uiScale),
     (int)(winapiCheckBox->rect.size.height * uiScale),
 		naGetApplicationOffscreenWindow(),
@@ -162,6 +161,11 @@ NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(const NA_UIElement* checkBox){
     winapiCheckBox->rect.size);
 }
 
+NA_HAPI NARect na_GetCheckBoxRect(const NA_UIElement* checkBox)
+{
+  const NAWINAPICheckBox* winapiCheckBox = (const NAWINAPICheckBox*)checkBox;
+  return winapiCheckBox->rect;
+}
 
 
 // This is free and unencumbered software released into the public domain.

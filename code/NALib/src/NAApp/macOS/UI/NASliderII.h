@@ -119,7 +119,7 @@ NA_DEF void naSetSliderValue(NASlider* slider, double value){
 
 NA_HDEF NARect na_GetSliderAbsoluteInnerRect(const NA_UIElement* slider){
   naDefineCocoaObjectConst(NACocoaNativeSlider, nativePtr, slider);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(slider), naGetApplication(), NA_FALSE);
+  NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(slider));
   NARect relRect = [nativePtr getInnerRect];
   return naMakeRect(
     naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),

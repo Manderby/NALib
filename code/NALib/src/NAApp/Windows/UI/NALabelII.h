@@ -87,8 +87,8 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
 		TEXT("EDIT"),
     systemText,
     WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE,
-    winapiLabel->rect.pos.x,
-    winapiLabel->rect.pos.y,
+    0,
+    0,
     (int)(winapiLabel->rect.size.width * uiScale),
     (int)(winapiLabel->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
@@ -192,8 +192,8 @@ NA_DEF void naSetLabelHeight(NALabel* label, double height){
   SetWindowPos(
     label->uiElement.nativePtr,
     HWND_TOP,
-    (int)winapiLabel->rect.pos.x,
-    (int)naGetRectEndY(winapiLabel->rect),
+    (int)(winapiLabel->rect.pos.x * uiScale),
+    (int)(naGetRectEndY(winapiLabel->rect) * uiScale),
     (int)(winapiLabel->rect.size.width * uiScale),
     (int)(winapiLabel->rect.size.height * uiScale),
     0);
@@ -226,19 +226,26 @@ NA_DEF void naSetLabelFont(NALabel* label, NAFont* font){
 NA_HDEF NARect na_GetLabelAbsoluteInnerRect(const NA_UIElement* label){
   const NAWINAPILabel* winapiLabel = (const NAWINAPILabel*)label;
 
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtrConst(label), &clientRect);
-  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
+  return winapiLabel->rect;
 
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtrConst(label), &testPoint);
+  //NARect screenRect = naGetMainScreenRect();
+  //RECT clientRect;
+  //GetClientRect(naGetUIElementNativePtrConst(label), &clientRect);
+  //double height = (double)(clientRect.bottom) - (double)(clientRect.top);
 
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    winapiLabel->rect.size);
+  //POINT testPoint = {0, (LONG)height};
+  //ClientToScreen(naGetUIElementNativePtrConst(label), &testPoint);
+
+  //return naMakeRect(
+  //  naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
+  //  winapiLabel->rect.size);
 }
 
+NA_HAPI NARect na_GetLabelRect(const NA_UIElement* label)
+{
+  const NAWINAPILabel* winapiLabel = (const NAWINAPILabel*)label;
+  return winapiLabel->rect;
+}
 
 
 // This is free and unencumbered software released into the public domain.

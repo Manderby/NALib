@@ -33,8 +33,8 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   size1x = naGetUIImage1xSize(imageSpace->image);
 
   spacesize = naMakeSizei(
-    paintStruct.rcPaint.right - paintStruct.rcPaint.left,
-    paintStruct.rcPaint.bottom - paintStruct.rcPaint.top);
+    (NAInt)paintStruct.rcPaint.right - (NAInt)paintStruct.rcPaint.left,
+    (NAInt)paintStruct.rcPaint.bottom - (NAInt)paintStruct.rcPaint.top);
   offset = naMakePosi(
     (spacesize.width - size1x.width) / 2,
     (spacesize.height - size1x.height) / 2);
@@ -110,15 +110,18 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARA
 NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
   NAWINAPIImageSpace* winapiImageSpace = naNew(NAWINAPIImageSpace);
 
+  winapiImageSpace->rect = naMakeRect(naMakePos(0., 0.), size);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
 	HWND nativePtr = CreateWindow(
 		TEXT("NASpace"),
     TEXT("Space"),
     WS_CHILD | WS_VISIBLE,
 		0,
     0,
-    (int)size.width,
-    (int)size.height,
-		naGetApplicationOffscreenWindow(),
+    (int)(winapiImageSpace->rect.size.width * uiScale),
+    (int)(winapiImageSpace->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
@@ -154,6 +157,11 @@ NA_HDEF NARect na_GetImageSpaceAbsoluteInnerRect(const NA_UIElement* imageSpace)
     naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
 }
 
+NA_HAPI NARect na_GetImageSpaceRect(const NA_UIElement* imageSpace)
+{
+  const NAWINAPIImageSpace* winapiImageSpace = (const NAWINAPIImageSpace*)imageSpace;
+  return winapiImageSpace->rect;
+}
 
 
 // This is free and unencumbered software released into the public domain.

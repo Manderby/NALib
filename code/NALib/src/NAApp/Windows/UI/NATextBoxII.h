@@ -45,15 +45,18 @@ NABool naHandleTextBoxReverseTabOrder(NAReaction reaction){
 NA_DEF NATextBox* naNewTextBox(NASize size){
   NAWINAPITextBox* winapiTextBox = naNew(NAWINAPITextBox);
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  winapiTextBox->rect = naMakeRect(naMakePos(0., 0.), size);
+
 	HWND nativePtr = CreateWindow(
 		TEXT("EDIT"),
     TEXT(""),
     WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
 		0,
     0, 
-    (int)size.width,
-    (int)size.height,
-		naGetApplicationOffscreenWindow(), 
+    (int)(winapiTextBox->rect.size.width * uiScale),
+    (int)(winapiTextBox->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(), 
     NULL, 
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL );
@@ -176,6 +179,11 @@ NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(const NA_UIElement* textBox){
     naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
 }
 
+NA_HAPI NARect na_GetTextBoxRect(const NA_UIElement* textBox)
+{
+  const NAWINAPITextBox* winapiTextBox = (const NAWINAPITextBox*)textBox;
+  return winapiTextBox->rect;
+}
 
 
 // This is free and unencumbered software released into the public domain.

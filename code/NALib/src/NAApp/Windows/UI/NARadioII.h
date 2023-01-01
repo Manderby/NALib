@@ -68,15 +68,18 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width){
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  winapiRadio->rect = naMakeRectS(0., 0., width, 18.);
+
 	HWND nativePtr = CreateWindow(
 		TEXT("BUTTON"),
     systemText,
     WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_RADIOBUTTON,
 		0,
     0,
-    (int)width,
-    18,
-		naGetApplicationOffscreenWindow(),
+    (int)(winapiRadio->rect.size.width * uiScale),
+    (int)(winapiRadio->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
@@ -142,6 +145,11 @@ NA_HDEF NARect na_GetRadioAbsoluteInnerRect(const NA_UIElement* radio){
     naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
 }
 
+NA_HAPI NARect na_GetRadioRect(const NA_UIElement* radio)
+{
+  const NAWINAPIRadio* winapiRadio = (const NAWINAPIRadio*)radio;
+  return winapiRadio->rect;
+}
 
 
 // This is free and unencumbered software released into the public domain.
