@@ -241,10 +241,27 @@ NA_HDEF NARect na_GetLabelAbsoluteInnerRect(const NA_UIElement* label){
   //  winapiLabel->rect.size);
 }
 
-NA_HAPI NARect na_GetLabelRect(const NA_UIElement* label)
+NA_HDEF NARect na_GetLabelRect(const NA_UIElement* label)
 {
   const NAWINAPILabel* winapiLabel = (const NAWINAPILabel*)label;
   return winapiLabel->rect;
+}
+
+NA_HDEF void na_SetLabelRect(NA_UIElement* label, NARect rect){
+  NAWINAPILabel* winapiLabel = (const NAWINAPILabel*)label;
+
+  winapiLabel->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(label));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(label),
+    HWND_TOP,
+    (int)(winapiLabel->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiLabel->rect.pos.y - winapiLabel->rect.size.height) * uiScale),
+    (int)(winapiLabel->rect.size.width * uiScale),
+    (int)(winapiLabel->rect.size.height * uiScale),
+    0);
 }
 
 

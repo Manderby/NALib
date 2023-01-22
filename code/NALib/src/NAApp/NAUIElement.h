@@ -56,6 +56,7 @@ typedef struct NAWindow         NAWindow;
 // the following enum and function.
 
 typedef enum{
+  NA_UI_ELEMENT_UNDEFINED = 0,
   NA_UI_APPLICATION,
   NA_UI_BUTTON,
   NA_UI_CHECKBOX,
@@ -107,6 +108,7 @@ NA_API NASpace* naGetUIElementParentSpace(void* uiElement);
 // windows will not return their outer boundary.
 NA_API NARect naGetUIElementRect(const void* uiElement);
 NA_API NARect naGetUIElementRectAbsolute(const void* uiElement);
+NA_API void   naSetUIElementRect(void* uiElement, NARect rect);
 
 // You can ask any ui element to refresh its contents. This will cause the
 // element to be displayed anew. The time difference defines when the refresh

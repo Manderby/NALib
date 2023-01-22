@@ -180,35 +180,39 @@ NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace){
 
 
 NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
-  RECT spacerect;
-  RECT childrect;
-  int spaceheight;
-  int childheight;
+  //RECT spacerect;
+  //RECT childrect;
+  //int spaceheight;
+  //int childheight;
 
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-  NARect spaceRect = naGetUIElementRect(space);
+  //double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  //NARect spaceRect = naGetUIElementRect(space);
   NARect childRect = naGetUIElementRect(child);
 
-  if(  naGetUIElementType(child) == NA_UI_APPLICATION
-    || naGetUIElementType(child) == NA_UI_BUTTON
-    || naGetUIElementType(child) == NA_UI_CHECKBOX
-    || naGetUIElementType(child) == NA_UI_IMAGE_SPACE
-    || naGetUIElementType(child) == NA_UI_LABEL
-    || naGetUIElementType(child) == NA_UI_RADIO
-    || naGetUIElementType(child) == NA_UI_SLIDER
-    || naGetUIElementType(child) == NA_UI_TEXTBOX
-    || naGetUIElementType(child) == NA_UI_TEXTFIELD
-    || naGetUIElementType(child) == NA_UI_WINDOW)
-  {
-    SetWindowPos(
-      naGetUIElementNativePtr(child),
-      HWND_TOP,
-      (int)(pos.x * uiScale),
-      (int)((spaceRect.size.height - pos.y - childRect.size.height) * uiScale),
-      0,
-      0,
-      SWP_NOSIZE | SWP_NOZORDER);
-  }
+  //if(  naGetUIElementType(child) == NA_UI_APPLICATION
+  //  || naGetUIElementType(child) == NA_UI_BUTTON
+  //  || naGetUIElementType(child) == NA_UI_CHECKBOX
+  //  || naGetUIElementType(child) == NA_UI_IMAGE_SPACE
+  //  || naGetUIElementType(child) == NA_UI_LABEL
+  //  || naGetUIElementType(child) == NA_UI_RADIO
+  //  || naGetUIElementType(child) == NA_UI_SLIDER
+  //  || naGetUIElementType(child) == NA_UI_SPACE
+  //  || naGetUIElementType(child) == NA_UI_TEXTBOX
+  //  || naGetUIElementType(child) == NA_UI_TEXTFIELD
+  //  || naGetUIElementType(child) == NA_UI_WINDOW)
+  //{
+  //  SetWindowPos(
+  //    naGetUIElementNativePtr(child),
+  //    HWND_TOP,
+  //    (int)(pos.x * uiScale),
+  //    (int)((spaceRect.size.height - pos.y - childRect.size.height) * uiScale),
+  //    0,
+  //    0,
+  //    SWP_NOSIZE | SWP_NOZORDER);
+  //}
+
+  childRect.pos = pos;
+  naSetUIElementRect(child, childRect);
 
   na_AddSpaceChild(space, child);
 }
@@ -236,10 +240,7 @@ NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift){
     NARect elementRect = naGetUIElementRect(child);
     elementRect.pos.x += shift.x;
     elementRect.pos.y += shift.y;
-    if(naGetUIElementType(child) == NA_UI_SPACE)
-    {
-      naSetSpaceRect(child, elementRect);
-    }
+    naSetUIElementRect(child, elementRect);
   }
   naClearListIterator(&childIt);
 }
@@ -255,11 +256,11 @@ NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
   SetWindowPos(
     naGetUIElementNativePtr(space),
     HWND_TOP,
-    (int)winapiSpace->rect.pos.x,
-    (int)naGetRectEndY(winapiSpace->rect),
+    0,
+    0,
     (int)(winapiSpace->rect.size.width * uiScale),
     (int)(winapiSpace->rect.size.height * uiScale),
-    SWP_NOMOVE | SWP_NOZORDER);
+    SWP_NOZORDER);
 }
 
 

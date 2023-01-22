@@ -61,6 +61,8 @@ struct ExperimentController{
   NAMenuItem* menuItem4;
   NAMenuItem* menuSeparator;
 
+  NASpace* subSpace;
+
   NAButton* fontButton;
   NAButton* quitButton;
 
@@ -381,6 +383,11 @@ ExperimentController* createExperimentController(){
   //  naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
   //  menuItemKeyboardSelected,
   //  con);
+
+  curPosY -= 70;
+  con->subSpace = naNewSpace(naMakeSize(300, 50));
+  naSetSpaceAlternateBackground(con->subSpace, NA_TRUE);
+  naAddSpaceChild(con->contentSpace, con->subSpace, naMakePos(20, curPosY));
 
   con->fontButton = naNewTextButton("Fonts", 60, 0);
   con->quitButton = naNewTextButton("Quit", 60, 0);

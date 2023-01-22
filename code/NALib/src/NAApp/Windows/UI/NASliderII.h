@@ -199,12 +199,28 @@ NA_HDEF NARect na_GetSliderAbsoluteInnerRect(const NA_UIElement* slider){
   return rect;
 }
 
-NA_HAPI NARect na_GetSliderRect(const NA_UIElement* slider)
+NA_HDEF NARect na_GetSliderRect(const NA_UIElement* slider)
 {
   const NAWINAPISlider* winapiSlider = (const NAWINAPISlider*)slider;
   return winapiSlider->rect;
 }
 
+NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect){
+  NAWINAPISlider* winapiSlider = (const NAWINAPISlider*)slider;
+
+  winapiSlider->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(slider));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(slider),
+    HWND_TOP,
+    (int)(winapiSlider->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiSlider->rect.pos.y - winapiSlider->rect.size.height) * uiScale),
+    (int)(winapiSlider->rect.size.width * uiScale),
+    (int)(winapiSlider->rect.size.height * uiScale),
+    0);
+}
 
 // This is free and unencumbered software released into the public domain.
 

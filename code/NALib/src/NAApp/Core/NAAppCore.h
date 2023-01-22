@@ -279,6 +279,7 @@ NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
 NA_HAPI void na_ClearLabel(NALabel* label);
 NA_HAPI NARect na_GetLabelAbsoluteInnerRect(const NA_UIElement* label);
 NA_HAPI NARect na_GetLabelRect(const NA_UIElement* space);
+NA_HAPI void na_SetLabelRect(NA_UIElement* label, NARect rect);
 
 // NAMenu
 NA_HAPI void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent);
@@ -326,6 +327,7 @@ NA_HAPI void na_InitSlider(NASlider* slider, void* nativePtr);
 NA_HAPI void na_ClearSlider(NASlider* slider);
 NA_HAPI NARect na_GetSliderAbsoluteInnerRect(const NA_UIElement* slider);
 NA_HAPI NARect na_GetSliderRect(const NA_UIElement* slider);
+NA_HAPI void na_SetSliderRect(NA_UIElement* slider, NARect rect);
 
 // NASpace
 NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);

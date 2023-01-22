@@ -55,8 +55,9 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
   WNDCLASS wndclass;
   MSG message;
 
-  // Uncommented for future use.
   SetProcessDPIAware();
+
+  // Uncommented for future use.
   //DPI_AWARENESS awareness = DPI_AWARENESS_SYSTEM_AWARE;
   //SetProcessDpiAwarenessContext(&awareness);
 
