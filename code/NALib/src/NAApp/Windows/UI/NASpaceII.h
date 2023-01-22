@@ -238,8 +238,13 @@ NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift){
   while(naIterateList(&childIt)){
     void* child = naGetListCurMutable(&childIt);
     NARect elementRect = naGetUIElementRect(child);
-    elementRect.pos.x += shift.x;
-    elementRect.pos.y += shift.y;
+    //if(naGetUIElementType(child) == NA_UI_SPACE){
+    //  elementRect.pos.x = shift.x;
+    //  elementRect.pos.y = shift.y;
+    //}else{
+      elementRect.pos.x += shift.x;
+      elementRect.pos.y += shift.y;
+    //}
     naSetUIElementRect(child, elementRect);
   }
   naClearListIterator(&childIt);
@@ -248,19 +253,19 @@ NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift){
 
 
 NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
-  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  //NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
+  //double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
-  winapiSpace->rect = rect;
+  //winapiSpace->rect = rect;
 
-  SetWindowPos(
-    naGetUIElementNativePtr(space),
-    HWND_TOP,
-    0,
-    0,
-    (int)(winapiSpace->rect.size.width * uiScale),
-    (int)(winapiSpace->rect.size.height * uiScale),
-    SWP_NOZORDER);
+  //SetWindowPos(
+  //  naGetUIElementNativePtr(space),
+  //  HWND_TOP,
+  //  0,
+  //  0,
+  //  (int)(winapiSpace->rect.size.width * uiScale),
+  //  (int)(winapiSpace->rect.size.height * uiScale),
+  //  SWP_NOZORDER);
 }
 
 
@@ -300,6 +305,23 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* space){
 NA_HDEF NARect na_GetSpaceRect(const NA_UIElement* space){
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
   return winapiSpace->rect;
+}
+
+NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect){
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
+
+  winapiSpace->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(space));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(space),
+    HWND_TOP,
+    (int)(winapiSpace->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiSpace->rect.pos.y - winapiSpace->rect.size.height) * uiScale),
+    (int)(winapiSpace->rect.size.width * uiScale),
+    (int)(winapiSpace->rect.size.height * uiScale),
+    SWP_NOZORDER);
 }
 
 

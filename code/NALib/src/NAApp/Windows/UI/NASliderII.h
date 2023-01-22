@@ -206,7 +206,7 @@ NA_HDEF NARect na_GetSliderRect(const NA_UIElement* slider)
 }
 
 NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect){
-  NAWINAPISlider* winapiSlider = (const NAWINAPISlider*)slider;
+  NAWINAPISlider* winapiSlider = (NAWINAPISlider*)slider;
 
   winapiSlider->rect = rect;
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);

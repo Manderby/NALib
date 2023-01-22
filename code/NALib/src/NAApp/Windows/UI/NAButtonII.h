@@ -424,12 +424,28 @@ NA_HDEF NARect na_GetButtonAbsoluteInnerRect(const NA_UIElement* button){
     naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
 }
 
-NA_HAPI NARect na_GetButtonRect(const NA_UIElement* button)
+NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button)
 {
   const NAWINAPIButton* winapiButton = (const NAWINAPIButton*)button;
   return winapiButton->rect;
 }
 
+NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect){
+  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
+
+  winapiButton->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(button));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(button),
+    HWND_TOP,
+    (int)(winapiButton->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiButton->rect.pos.y - winapiButton->rect.size.height) * uiScale),
+    (int)(winapiButton->rect.size.width * uiScale),
+    (int)(winapiButton->rect.size.height * uiScale),
+    0);
+}
 
 // This is free and unencumbered software released into the public domain.
 

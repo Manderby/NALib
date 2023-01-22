@@ -248,7 +248,7 @@ NA_HDEF NARect na_GetLabelRect(const NA_UIElement* label)
 }
 
 NA_HDEF void na_SetLabelRect(NA_UIElement* label, NARect rect){
-  NAWINAPILabel* winapiLabel = (const NAWINAPILabel*)label;
+  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
 
   winapiLabel->rect = rect;
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);

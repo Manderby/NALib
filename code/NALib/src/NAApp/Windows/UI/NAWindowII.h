@@ -336,6 +336,8 @@ NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title){
 NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
   NARect currect = naGetUIElementRect(&(winapiWindow->window));
+  double yDiff = winapiWindow->rect.pos.y = rect.pos.y;
+
   if(!naEqualRect(currect, rect)){
     POINT testPoint = {0, 0};
     RECT clientRect;
@@ -374,6 +376,12 @@ NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
       (LONG)rect.size.height,
       NA_FALSE);
   }
+
+  // We need to trigger a repositioning of the content space. The position does not change,
+  // it is always (0,0).
+  NASpace* contentSpace = naGetWindowContentSpace(window);
+  NARect contentRect = naGetUIElementRect(contentSpace);
+  naSetUIElementRect(contentSpace, contentRect);
 }
 
 

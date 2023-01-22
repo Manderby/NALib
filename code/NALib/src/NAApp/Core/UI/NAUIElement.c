@@ -265,8 +265,8 @@ NA_DEF NARect naGetUIElementRect(void* uiElement){
 
 NA_DEF void naSetUIElementRect(void* uiElement, NARect rect){
   switch(naGetUIElementType(uiElement)){
-  //case NA_UI_APPLICATION:  elemRect = na_GetApplicationRect(uiElement); break;
-  //case NA_UI_BUTTON:       elemRect = na_GetButtonRect(uiElement); break;
+  case NA_UI_APPLICATION:  na_SetApplicationRect(uiElement, rect); break;
+  case NA_UI_BUTTON:       na_SetButtonRect(uiElement, rect); break;
   //case NA_UI_CHECKBOX:     elemRect = na_GetCheckBoxRect(uiElement); break;
   //case NA_UI_IMAGE_SPACE:  elemRect = na_GetImageSpaceRect(uiElement); break;
   case NA_UI_LABEL:        na_SetLabelRect(uiElement, rect); break;
@@ -278,9 +278,9 @@ NA_DEF void naSetUIElementRect(void* uiElement, NARect rect){
   //case NA_UI_RADIO:        elemRect = na_GetRadioRect(uiElement); break;
   //case NA_UI_SCREEN:       elemRect = na_GetScreenRect(uiElement); break;
   case NA_UI_SLIDER:       na_SetSliderRect(uiElement, rect); break;
-  //case NA_UI_SPACE:        elemRect = na_GetSpaceRect(uiElement); break;
+  case NA_UI_SPACE:        na_SetSpaceRect(uiElement, rect); break;
   //case NA_UI_TEXTBOX:      elemRect = na_GetTextBoxRect(uiElement); break;
-  //case NA_UI_TEXTFIELD:    elemRect = na_GetTextFieldRect(uiElement); break;
+  case NA_UI_TEXTFIELD:    na_SetTextFieldRect(uiElement, rect); break;
   //case NA_UI_WINDOW:       elemRect = na_GetWindowRect(uiElement); break;
   default:                 break;
   }

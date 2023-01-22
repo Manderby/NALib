@@ -255,6 +255,22 @@ NA_HAPI NARect na_GetTextFieldRect(const NA_UIElement* textField)
   return winapiTextField->rect;
 }
 
+NA_HDEF void na_SetTextFieldRect(NA_UIElement* textField, NARect rect){
+  NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
+
+  winapiTextField->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(textField));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(textField),
+    HWND_TOP,
+    (int)(winapiTextField->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiTextField->rect.pos.y - winapiTextField->rect.size.height) * uiScale),
+    (int)(winapiTextField->rect.size.width * uiScale),
+    (int)(winapiTextField->rect.size.height * uiScale),
+    0);
+}
 
 // This is free and unencumbered software released into the public domain.
 

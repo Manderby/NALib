@@ -78,9 +78,15 @@ NA_HDEF NARect na_GetApplicationAbsoluteRect(){
   return rect;
 }
 
-NA_HAPI NARect na_GetApplicationRect(const NAApplication* application){
+NA_HDEF NARect na_GetApplicationRect(const NAApplication* application){
   NARect rect = {0., 0., 1., 1.};
   return rect;
+}
+
+NA_HDEF void na_SetApplicationRect(const NAApplication* application, NARect rect){
+  #if NA_DEBUG
+    naError("Application rect can not be set.");
+  #endif
 }
 
 

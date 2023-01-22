@@ -254,6 +254,7 @@ NA_HAPI void na_InitApplication(NAApplication* application, NANativePtr nativePt
 NA_HAPI void na_ClearApplication(NAApplication* application);
 NA_HAPI NARect na_GetApplicationAbsoluteRect(void);
 NA_HAPI NARect na_GetApplicationRect(const NAApplication* application);
+NA_HAPI void na_SetApplicationRect(const NAApplication* application, NARect rect);
 
 // NAButton
 NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage, uint32 flags);
@@ -261,6 +262,7 @@ NA_HAPI void na_ClearButton(NAButton* button);
 NA_HAPI void na_setButtonImage(NAButton* button, const NAUIImage* uiImage);
 NA_HAPI NARect na_GetButtonAbsoluteInnerRect(const NA_UIElement* button);
 NA_HAPI NARect na_GetButtonRect(const NA_UIElement* button);
+NA_HAPI void na_SetButtonRect(NA_UIElement* button, NARect rect);
 
 // NACheckBox
 NA_HAPI void na_InitCheckBox(NACheckBox* checkBox, void* nativePtr);
@@ -336,6 +338,7 @@ NA_HAPI void na_AddSpaceChild(NASpace*, NA_UIElement* child);
 NA_HAPI void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child);
 NA_HAPI NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* space);
 NA_HAPI NARect na_GetSpaceRect(const NA_UIElement* space);
+NA_HAPI void na_SetSpaceRect(NA_UIElement* space, NARect rect);
 
 // NATextBox
 NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);
@@ -348,6 +351,7 @@ NA_HAPI void na_InitTextField(NATextField* textField, void* nativePtr);
 NA_HAPI void na_ClearTextField(NATextField* textField);
 NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect(const NA_UIElement* textField);
 NA_HAPI NARect na_GetTextFieldRect(const NA_UIElement* textField);
+NA_HAPI void na_SetTextFieldRect(NA_UIElement* textField, NARect rect);
 
 // NAWindow
 NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
