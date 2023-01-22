@@ -180,41 +180,11 @@ NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace){
 
 
 NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
-  //RECT spacerect;
-  //RECT childrect;
-  //int spaceheight;
-  //int childheight;
+  na_AddSpaceChild(space, child);
 
-  //double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-  //NARect spaceRect = naGetUIElementRect(space);
   NARect childRect = naGetUIElementRect(child);
-
-  //if(  naGetUIElementType(child) == NA_UI_APPLICATION
-  //  || naGetUIElementType(child) == NA_UI_BUTTON
-  //  || naGetUIElementType(child) == NA_UI_CHECKBOX
-  //  || naGetUIElementType(child) == NA_UI_IMAGE_SPACE
-  //  || naGetUIElementType(child) == NA_UI_LABEL
-  //  || naGetUIElementType(child) == NA_UI_RADIO
-  //  || naGetUIElementType(child) == NA_UI_SLIDER
-  //  || naGetUIElementType(child) == NA_UI_SPACE
-  //  || naGetUIElementType(child) == NA_UI_TEXTBOX
-  //  || naGetUIElementType(child) == NA_UI_TEXTFIELD
-  //  || naGetUIElementType(child) == NA_UI_WINDOW)
-  //{
-  //  SetWindowPos(
-  //    naGetUIElementNativePtr(child),
-  //    HWND_TOP,
-  //    (int)(pos.x * uiScale),
-  //    (int)((spaceRect.size.height - pos.y - childRect.size.height) * uiScale),
-  //    0,
-  //    0,
-  //    SWP_NOSIZE | SWP_NOZORDER);
-  //}
-
   childRect.pos = pos;
   naSetUIElementRect(child, childRect);
-
-  na_AddSpaceChild(space, child);
 }
 
 
@@ -238,34 +208,11 @@ NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift){
   while(naIterateList(&childIt)){
     void* child = naGetListCurMutable(&childIt);
     NARect elementRect = naGetUIElementRect(child);
-    //if(naGetUIElementType(child) == NA_UI_SPACE){
-    //  elementRect.pos.x = shift.x;
-    //  elementRect.pos.y = shift.y;
-    //}else{
-      elementRect.pos.x += shift.x;
-      elementRect.pos.y += shift.y;
-    //}
+    elementRect.pos.x += shift.x;
+    elementRect.pos.y += shift.y;
     naSetUIElementRect(child, elementRect);
   }
   naClearListIterator(&childIt);
-}
-
-
-
-NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
-  //NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
-  //double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-
-  //winapiSpace->rect = rect;
-
-  //SetWindowPos(
-  //  naGetUIElementNativePtr(space),
-  //  HWND_TOP,
-  //  0,
-  //  0,
-  //  (int)(winapiSpace->rect.size.width * uiScale),
-  //  (int)(winapiSpace->rect.size.height * uiScale),
-  //  SWP_NOZORDER);
 }
 
 

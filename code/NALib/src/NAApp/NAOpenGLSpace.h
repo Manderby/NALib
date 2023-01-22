@@ -49,9 +49,9 @@ NA_API void naSwapOpenGLSpaceBuffer(
   NAOpenGLSpace* openGLSpace);
 
 // Sets the inner bounds of the space.
-NA_API void naSetOpenGLSpaceInnerRect(
-  NAOpenGLSpace* openGLSpace,
-  NARect bounds);
+//NA_API void naSetOpenGLSpaceInnerRect(
+//  NAOpenGLSpace* openGLSpace,
+//  NARect bounds);
 
 // In order to draw characters with naDrawASCIICharacters, you first need to
 // startup a pixelfont. The startup function must be called after the openGL

@@ -134,7 +134,7 @@ NA_DEF void na_DestructCocoaSpace(NACocoaSpace* _Nonnull cocoaSpace){
 
 
 
-NA_DEF void naSetSpaceRect(NASpace* _Nonnull space, NARect rect){
+NA_DEF void naSetUIElementRect(NASpace* _Nonnull space, NARect rect){
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   NSRect frame = naMakeNSRectWithRect(rect);
   [nativePtr setFrame: frame];

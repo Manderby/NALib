@@ -179,12 +179,27 @@ NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(const NA_UIElement* textBox){
     naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
 }
 
-NA_HAPI NARect na_GetTextBoxRect(const NA_UIElement* textBox)
-{
+NA_HDEF NARect na_GetTextBoxRect(const NA_UIElement* textBox){
   const NAWINAPITextBox* winapiTextBox = (const NAWINAPITextBox*)textBox;
   return winapiTextBox->rect;
 }
 
+NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect){
+  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
+
+  winapiTextBox->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(textBox));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(textBox),
+    HWND_TOP,
+    (int)(winapiTextBox->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiTextBox->rect.pos.y - winapiTextBox->rect.size.height) * uiScale),
+    (int)(winapiTextBox->rect.size.width * uiScale),
+    (int)(winapiTextBox->rect.size.height * uiScale),
+    0);
+}
 
 // This is free and unencumbered software released into the public domain.
 

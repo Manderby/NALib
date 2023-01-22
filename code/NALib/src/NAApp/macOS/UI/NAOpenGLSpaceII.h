@@ -177,12 +177,12 @@
 
 
 
-  NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
-    naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
-    NSRect frame = naMakeNSRectWithRect(bounds);
-    frame.origin = NSMakePoint(0, 0);
-    [nativePtr setFrame: frame];
-  }
+  //NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+  //  naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
+  //  NSRect frame = naMakeNSRectWithRect(bounds);
+  //  frame.origin = NSMakePoint(0, 0);
+  //  [nativePtr setFrame: frame];
+  //}
   
   #pragma GCC diagnostic pop
 
@@ -220,11 +220,11 @@
     #endif
   }
 
-  NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
-    NA_UNUSED(openGLSpace);
-    NA_UNUSED(bounds);
-    #if NA_DEBUG
-      naError("OpenGL has not been configured. See NAConfiguration.h");
+  //NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+  //  NA_UNUSED(openGLSpace);
+  //  NA_UNUSED(bounds);
+  //  #if NA_DEBUG
+  //    naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
   }
 

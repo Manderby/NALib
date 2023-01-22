@@ -629,6 +629,12 @@ NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen){
   return rect;
 }
 
+NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect){
+  #if NA_DEBUG
+    naError("A screen can not be resized by software.");
+  #endif
+}
+
 
 
 //NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool includeBorder){

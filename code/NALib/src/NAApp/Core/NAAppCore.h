@@ -269,12 +269,14 @@ NA_HAPI void na_InitCheckBox(NACheckBox* checkBox, void* nativePtr);
 NA_HAPI void na_ClearCheckBox(NACheckBox* checkBox);
 NA_HAPI NARect na_GetCheckBoxAbsoluteInnerRect(const NA_UIElement* checkBox);
 NA_HAPI NARect na_GetCheckBoxRect(const NA_UIElement* checkBox);
+NA_HAPI void na_SetCheckBoxRect(NA_UIElement* checkBox, NARect rect);
 
 // NAImageSpace
 NA_HAPI void na_InitImageSpace(NAImageSpace* imageSpace, void* nativePtr);
 NA_HAPI void na_ClearImageSpace(NAImageSpace* imageSpace);
 NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect(const NA_UIElement* imageSpace);
 NA_HAPI NARect na_GetImageSpaceRect(const NA_UIElement* imageSpace);
+NA_HAPI void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect);
 
 // NALabel
 NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
@@ -300,11 +302,15 @@ NA_HAPI NARect na_GetMenuItemAbsoluteInnerRect(const NA_UIElement* menuItem);
 NA_HAPI void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr);
 NA_HAPI void na_ClearMetalSpace(NAMetalSpace* metalSpace);
 NA_HAPI NARect na_GetMetalSpaceAbsoluteInnerRect(const NA_UIElement* metalSpace);
+NA_HAPI NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace);
+NA_HAPI void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect);
 
 // NAOpenGLSpace
 NA_HAPI void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr);
 NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
 NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(const NA_UIElement* openGLSpace);
+NA_HAPI NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace);
+NA_HAPI void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect);
 
 // NAPopupButton
 NA_HAPI void na_InitPopupButton(NAPopupButton* popupButton, void* nativePtr);
@@ -317,12 +323,14 @@ NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
 NA_HAPI void na_ClearRadio(NARadio* radio);
 NA_HAPI NARect na_GetRadioAbsoluteInnerRect(const NA_UIElement* radio);
 NA_HAPI NARect na_GetRadioRect(const NA_UIElement* radio);
+NA_HAPI void na_SetRadioRect(NA_UIElement* radio, NARect rect);
 
 // NAScreen
 NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr);
 NA_HAPI void na_ClearScreen(NAScreen* screen);
 NA_HAPI NARect na_GetScreenAbsoluteRect(const NA_UIElement* screen);
-NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen);
+NA_HAPI NARect na_GetScreenRect(const NA_UIElement* screen);
+NA_HAPI void na_SetScreenRect(NA_UIElement* screen, NARect rect);
 
 // NASlider
 NA_HAPI void na_InitSlider(NASlider* slider, void* nativePtr);
@@ -345,6 +353,7 @@ NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);
 NA_HAPI void na_ClearTextBox(NATextBox* textBox);
 NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect(const NA_UIElement* textBox);
 NA_HAPI NARect na_GetTextBoxRect(const NA_UIElement* textBox);
+NA_HAPI void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect);
 
 // NATextField
 NA_HAPI void na_InitTextField(NATextField* textField, void* nativePtr);

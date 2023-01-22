@@ -128,6 +128,7 @@ struct NA_WINAPIMenuItem {
 #if NA_COMPILE_OPENGL == 1
   struct NAWINAPIOpenGLSpace {
     NAOpenGLSpace openGLSpace;
+    NARect        rect;
     HGLRC         hRC;    // The rendering context for OpenGL
   };
 #endif

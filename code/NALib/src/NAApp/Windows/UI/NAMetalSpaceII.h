@@ -17,6 +17,18 @@ NA_HDEF NARect na_GetMetalSpaceAbsoluteInnerRect(const NA_UIElement* metalSpace)
   return na_GetSpaceAbsoluteInnerRect(metalSpace);
 }
 
+NA_HDEF NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace){
+  #if NA_DEBUG
+    naError("Metal does not work on windows");
+  #endif
+  return naMakeRectZero();
+}
+
+NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect){
+  #if NA_DEBUG
+    naError("Metal does not work on windows");
+  #endif
+}
 
 
 // This is free and unencumbered software released into the public domain.

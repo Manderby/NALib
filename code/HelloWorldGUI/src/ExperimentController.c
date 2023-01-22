@@ -73,10 +73,10 @@ struct ExperimentController{
 
 NABool windowReshaped(NAReaction reaction){
   ExperimentController* con = reaction.controller;
-  NARect rect = naGetUIElementRect(con->experimentWindow, naGetApplication(), NA_FALSE);
-  NARect borderRect = naGetUIElementRect(con->experimentWindow, naGetApplication(), NA_TRUE);
-  const NAUTF8Char* labelString = naAllocSprintf(NA_TRUE, "Window reshaped.\nRect with border:    %.01f, %.01f, %.01f, %.01f\nRect without border: %.01f, %.01f, %.01f, %.01f", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height, borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
-  naSetLabelText(con->outputLabel, labelString);
+  //NARect rect = naGetUIElementRect(con->experimentWindow, naGetApplication(), NA_FALSE);
+  //NARect borderRect = naGetUIElementRect(con->experimentWindow, naGetApplication(), NA_TRUE);
+  //const NAUTF8Char* labelString = naAllocSprintf(NA_TRUE, "Window reshaped.\nRect with border:    %.01f, %.01f, %.01f, %.01f\nRect without border: %.01f, %.01f, %.01f, %.01f", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height, borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
+  //naSetLabelText(con->outputLabel, labelString);
 
   return NA_TRUE;
 }
@@ -197,7 +197,7 @@ NABool textFieldEdited(NAReaction reaction){
 NABool menuButtonPressed(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   
-  NARect rect = naGetUIElementRect(con->menuButton, naGetApplication(), NA_FALSE);
+  NARect rect = naGetUIElementRect(con->menuButton);
   NAPos menuPos = rect.pos;
   menuPos.x += rect.size.width;
   menuPos.y += rect.size.height;

@@ -145,12 +145,28 @@ NA_HDEF NARect na_GetRadioAbsoluteInnerRect(const NA_UIElement* radio){
     naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
 }
 
-NA_HAPI NARect na_GetRadioRect(const NA_UIElement* radio)
+NA_HDEF NARect na_GetRadioRect(const NA_UIElement* radio)
 {
   const NAWINAPIRadio* winapiRadio = (const NAWINAPIRadio*)radio;
   return winapiRadio->rect;
 }
 
+NA_HDEF void na_SetRadioRect(NA_UIElement* radio, NARect rect){
+  NAWINAPIRadio* winapiRadio = (NAWINAPIRadio*)radio;
+
+  winapiRadio->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(radio));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(radio),
+    HWND_TOP,
+    (int)(winapiRadio->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiRadio->rect.pos.y - winapiRadio->rect.size.height) * uiScale),
+    (int)(winapiRadio->rect.size.width * uiScale),
+    (int)(winapiRadio->rect.size.height * uiScale),
+    0);
+}
 
 // This is free and unencumbered software released into the public domain.
 
