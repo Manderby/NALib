@@ -476,7 +476,7 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
     const NAMenuItem* menuItem = NA_NULL;
     NAListIterator iter = naMakeListAccessor(&(menu->childs));
     while(naIterateList(&iter)){
-      menuItem = naGetListCurMutable(&iter);
+      menuItem = naGetListCurConst(&iter);
       if(na_GetMenuItemId(menuItem) == controlIdentifier){
         break;
       }

@@ -243,8 +243,8 @@ NA_DEF NARect naGetUIElementRect(void* uiElement){
   case NA_UI_CHECKBOX:     elemRect = na_GetCheckBoxRect(uiElement); break;
   case NA_UI_IMAGE_SPACE:  elemRect = na_GetImageSpaceRect(uiElement); break;
   case NA_UI_LABEL:        elemRect = na_GetLabelRect(uiElement); break;
-    //case NA_UI_MENU:         rect = na_GetMenuAbsoluteInnerRect(elem); break;
-    //case NA_UI_MENUITEM:     rect = na_GetMenuItemAbsoluteInnerRect(elem); break;
+  case NA_UI_MENU:         elemRect = na_GetMenuRect(uiElement); break;
+  case NA_UI_MENUITEM:     elemRect = na_GetMenuItemRect(uiElement); break;
   case NA_UI_METAL_SPACE:  elemRect = na_GetMetalSpaceRect(uiElement); break;
   case NA_UI_OPENGL_SPACE: elemRect = na_GetOpenGLSpaceRect(uiElement); break;
     //case NA_UI_POPUP_BUTTON: rect = na_GetPopupButtonAbsoluteInnerRect(elem); break;
@@ -270,8 +270,8 @@ NA_DEF void naSetUIElementRect(void* uiElement, NARect rect){
   case NA_UI_CHECKBOX:     na_SetCheckBoxRect(uiElement, rect); break;
   case NA_UI_IMAGE_SPACE:  na_SetImageSpaceRect(uiElement, rect); break;
   case NA_UI_LABEL:        na_SetLabelRect(uiElement, rect); break;
-    //case NA_UI_MENU:         rect = na_GetMenuAbsoluteInnerRect(elem); break;
-    //case NA_UI_MENUITEM:     rect = na_GetMenuItemAbsoluteInnerRect(elem); break;
+  case NA_UI_MENU:         na_SetMenuRect(uiElement, rect); break;
+  case NA_UI_MENUITEM:     na_SetMenuItemRect(uiElement, rect); break;
   case NA_UI_METAL_SPACE:  na_SetMetalSpaceRect(uiElement, rect); break;
   case NA_UI_OPENGL_SPACE: na_SetOpenGLSpaceRect(uiElement, rect); break;
     //case NA_UI_POPUP_BUTTON: rect = na_GetPopupButtonAbsoluteInnerRect(elem); break;
@@ -281,7 +281,7 @@ NA_DEF void naSetUIElementRect(void* uiElement, NARect rect){
   case NA_UI_SPACE:        na_SetSpaceRect(uiElement, rect); break;
   case NA_UI_TEXTBOX:      na_SetTextBoxRect(uiElement, rect); break;
   case NA_UI_TEXTFIELD:    na_SetTextFieldRect(uiElement, rect); break;
-  //case NA_UI_WINDOW:       elemRect = na_GetWindowRect(uiElement); break;
+  case NA_UI_WINDOW:       na_SetWindowRect(uiElement, rect); break;
   default:                 break;
   }
 }

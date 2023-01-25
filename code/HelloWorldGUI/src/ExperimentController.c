@@ -143,6 +143,14 @@ NABool redrawOpenGLSpace(NAReaction reaction){
   ang += .05f;
   if(ang > NA_PI2f){ang = 0.f;}
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NASize viewSize = naGetUIElementRect(reaction.uiElement).size;
+  glViewport(
+    0,
+    0,
+    (GLsizei)(viewSize.width * uiScale),
+    (GLsizei)(viewSize.height * uiScale));
+
   glClearColor(0.f, 0.f, .4f, 1.f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

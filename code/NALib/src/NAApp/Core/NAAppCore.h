@@ -288,8 +288,10 @@ NA_HAPI void na_SetLabelRect(NA_UIElement* label, NARect rect);
 // NAMenu
 NA_HAPI void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent);
 NA_HAPI void na_ClearMenu(NAMenu* menu);
-NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* itemAt);
+NA_HAPI void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* itemAt);
 NA_HAPI NARect na_GetMenuAbsoluteInnerRect(const NA_UIElement* menu);
+NA_HAPI NARect na_GetMenuRect(const NA_UIElement* menu);
+NA_HAPI void na_SetMenuRect(NA_UIElement* menu, NARect rect);
 
 // NAMenuItem
 NA_HAPI void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent);
@@ -297,6 +299,8 @@ NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);
 NA_HAPI void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id);
 NA_HAPI uint32 na_GetMenuItemId(const NAMenuItem* menuItem);
 NA_HAPI NARect na_GetMenuItemAbsoluteInnerRect(const NA_UIElement* menuItem);
+NA_HAPI NARect na_GetMenuItemRect(const NA_UIElement* menuItem);
+NA_HAPI void na_SetMenuItemRect(NA_UIElement* menuItem, NARect rect);
 
 // NAMetalSpace
 NA_HAPI void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr);
@@ -369,6 +373,7 @@ NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
 NA_HAPI NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window);
+NA_HAPI void na_SetWindowRect(NA_UIElement* window, NARect rect);
 
 
 
