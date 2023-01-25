@@ -30,8 +30,8 @@
 //  return index == NSNotFound ? -1 : (int)index;
 //}
 
-- (void) addMenuItem:(NSMenuItem*)item atItem:(NSMenuItem*)atItem{  
-  size_t index = nagetmenuitemIndex(cocoaMenu.menu, atItem);
+- (void) addMenuItem:(NSMenuItem*)item atItem:(const NAMenuItem*)atItem{  
+  size_t index = naGetPopupButtonItemIndex(&(cocoaPopupButton->popupButton), atItem);
   //int index = [self getMenuItemIndex:atItem];
   if(index == -1){
     [[self menu] addItem:item];
@@ -87,8 +87,8 @@ NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* ite
   naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemPtr, item);
 
   if(atItem){
-    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
-    [nativePopupPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
+//    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
+    [nativePopupPtr addMenuItem:nativeItemPtr atItem:atItem];
   }else{
     [nativePopupPtr addMenuItem:nativeItemPtr atItem:nil];
   }

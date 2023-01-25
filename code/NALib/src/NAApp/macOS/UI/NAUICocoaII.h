@@ -76,6 +76,7 @@ NA_HDEF double na_GetUIElementYOffset(NA_UIElement* elem){
     case NA_UI_TEXTBOX:      return -1.;
     case NA_UI_TEXTFIELD:    return +2.;
     case NA_UI_WINDOW:       return  0.;
+    default: return 0.;
     }
   }else{
     switch(naGetUIElementType(elem)){
@@ -99,6 +100,7 @@ NA_HDEF double na_GetUIElementYOffset(NA_UIElement* elem){
     case NA_UI_TEXTBOX:      return -1.;
     case NA_UI_TEXTFIELD:    return +2.;
     case NA_UI_WINDOW:       return  0.;
+    default: return 0.;
     }
   }
 }
@@ -362,7 +364,7 @@ NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
       #if NA_DEBUG
         naError("Unknown font kind");
       #endif
-      retFont = naCreateFont("San Francisco", NA_FONT_FLAG_REGULAR, size);
+      retFont = naCreateFont("San Francisco", NA_FONT_FLAG_REGULAR, baseSize);
       break;
   }
   

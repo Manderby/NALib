@@ -20,8 +20,8 @@
 //  return index == NSNotFound ? -1 : (int)index;
 //}
 
-- (void) addMenuItem:(NSMenuItem*)item atItem:(NSMenuItem*)atItem{
-  size_t index = nagetmenuitemIndex(cocoaMenu.menu, atItem);
+- (void) addMenuItem:(NSMenuItem*)item atItem:(const NAMenuItem*)atItem{
+  size_t index = naGetMenuItemIndex(&(cocoaMenu->menu), atItem);
   //int index = [self getMenuItemIndex:atItem];
   if(index == -1){
     [self addItem:item];
@@ -69,8 +69,8 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
   naDefineCocoaObject(NACocoaNativeMenuItem, nativeItemPtr, item);
 
   if(atItem){
-    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
-    [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
+//    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
+    [nativeMenuPtr addMenuItem:nativeItemPtr atItem:atItem];
   }else{
     [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];
   }

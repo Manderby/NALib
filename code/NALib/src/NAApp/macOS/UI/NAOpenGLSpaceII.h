@@ -225,7 +225,7 @@
   //  NA_UNUSED(bounds);
   //  #if NA_DEBUG
   //    naError("OpenGL has not been configured. See NAConfiguration.h");
-    #endif
+  //  #endif
   }
 
 #endif  // NA_COMPILE_OPENGL

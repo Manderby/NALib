@@ -194,41 +194,20 @@ NA_DEF NASpace* naGetUIElementParentSpace(void* uiElement){
 
 
 
-NA_DEF NARect naGetUIElementRectAbsolute(void* uiElement){
+NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement){
   NARect rect;
   NA_UIElement* elem = (NA_UIElement*)uiElement;
 
   if(!elem)
     return naMakeRectZero();
 
-  //switch(elem->elementType){
-  //case NA_UI_APPLICATION:  rect = na_GetApplicationAbsoluteRect(); break;
-  //case NA_UI_BUTTON:       rect = na_GetButtonAbsoluteInnerRect(elem); break;
-  //case NA_UI_CHECKBOX:     rect = na_GetCheckBoxAbsoluteInnerRect(elem); break;
-  //case NA_UI_IMAGE_SPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(elem); break;
-  //case NA_UI_LABEL:        rect = na_GetLabelAbsoluteInnerRect(elem); break;
-  //case NA_UI_MENU:         rect = na_GetMenuAbsoluteInnerRect(elem); break;
-  //case NA_UI_MENUITEM:     rect = na_GetMenuItemAbsoluteInnerRect(elem); break;
-  //case NA_UI_METAL_SPACE:  rect = na_GetMetalSpaceAbsoluteInnerRect(elem); break;
-  //case NA_UI_OPENGL_SPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(elem); break;
-  //case NA_UI_POPUP_BUTTON: rect = na_GetPopupButtonAbsoluteInnerRect(elem); break;
-  //case NA_UI_RADIO:        rect = na_GetRadioAbsoluteInnerRect(elem); break;
-  //case NA_UI_SCREEN:       rect = na_GetScreenAbsoluteRect(elem); break;
-  //case NA_UI_SLIDER:       rect = na_GetSliderAbsoluteInnerRect(elem); break;
-  //case NA_UI_SPACE:        rect = na_GetSpaceAbsoluteInnerRect(elem); break;
-  //case NA_UI_TEXTBOX:      rect = na_GetTextBoxAbsoluteInnerRect(elem); break;
-  //case NA_UI_TEXTFIELD:    rect = na_GetTextFieldAbsoluteInnerRect(elem); break;
-  //case NA_UI_WINDOW:       rect = na_GetWindowAbsoluteInnerRect(elem); break;
-  //default:                 rect = naMakeRectZero(); break;
-  //}
-
   rect = naGetUIElementRect(uiElement);
-  uiElement = naGetUIElementParent(uiElement);
+  uiElement = naGetUIElementParentConst(uiElement);
   while(uiElement){
     NARect curRect = naGetUIElementRect(uiElement);
     rect.pos.x += curRect.pos.x;
     rect.pos.y += curRect.pos.y;
-    uiElement = naGetUIElementParent(uiElement);
+    uiElement = naGetUIElementParentConst(uiElement);
   }
 
   return rect;
@@ -236,15 +215,7 @@ NA_DEF NARect naGetUIElementRectAbsolute(void* uiElement){
 
 
 
-NA_DEF NARect naGetUIElementRect(void* uiElement){
-  //NARect elemRect = naGetUIElementRectAbsolute(uiElement);
-
-  //NA_UIElement* relElem = naGetUIElementParent(uiElement);
-  //if(relElem){
-  //  NARect relRect = naGetUIElementRectAbsolute(relElem);
-  //  elemRect.pos.x = elemRect.pos.x - relRect.pos.x;
-  //  elemRect.pos.y = elemRect.pos.y - relRect.pos.y;
-  //}
+NA_DEF NARect naGetUIElementRect(const void* uiElement){
 
   NARect elemRect;
   switch(naGetUIElementType(uiElement)){
