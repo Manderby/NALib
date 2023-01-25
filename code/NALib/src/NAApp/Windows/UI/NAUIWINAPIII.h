@@ -272,10 +272,11 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc  (void* uiElement, UINT message, WPAR
 NAWINAPICallbackInfo naWindowWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 
 // Prototypes of WindowProc handlers which react to notifications
-NABool naButtonWINAPINotify   (void* uiElement, WORD notificationCode);
-NABool naCheckBoxWINAPINotify (void* uiElement, WORD notificationCode);
-NABool naLabelWINAPINotify    (void* uiElement, WORD notificationCode);
-NABool naTextFieldWINAPINotify(void* uiElement, WORD notificationCode);
+NABool naButtonWINAPINotify      (void* uiElement, WORD notificationCode);
+NABool naCheckBoxWINAPINotify    (void* uiElement, WORD notificationCode);
+NABool naLabelWINAPINotify       (void* uiElement, WORD notificationCode);
+NABool naPopupButtonWINAPINotify (void* uiElement, WORD notificationCode);
+NABool naTextFieldWINAPINotify   (void* uiElement, WORD notificationCode);
 
 
 
@@ -497,10 +498,11 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
     NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(controlWnd);
     if(uiElement && na_AreUIElementNotificationsAllowed(uiElement)){
       switch(naGetUIElementType(uiElement)){
-      case NA_UI_BUTTON:    hasBeenHandeled = naButtonWINAPINotify   (uiElement, notificationCode); break;
-      case NA_UI_CHECKBOX:  hasBeenHandeled = naCheckBoxWINAPINotify (uiElement, notificationCode); break;
-      case NA_UI_LABEL:     hasBeenHandeled = naLabelWINAPINotify    (uiElement, notificationCode); break;
-      case NA_UI_TEXTFIELD: hasBeenHandeled = naTextFieldWINAPINotify(uiElement, notificationCode); break;
+      case NA_UI_BUTTON:       hasBeenHandeled = naButtonWINAPINotify     (uiElement, notificationCode); break;
+      case NA_UI_CHECKBOX:     hasBeenHandeled = naCheckBoxWINAPINotify   (uiElement, notificationCode); break;
+      case NA_UI_LABEL:        hasBeenHandeled = naLabelWINAPINotify      (uiElement, notificationCode); break;
+      case NA_UI_POPUP_BUTTON: hasBeenHandeled = naPopupButtonWINAPINotify(uiElement, notificationCode); break;
+      case NA_UI_TEXTFIELD:    hasBeenHandeled = naTextFieldWINAPINotify  (uiElement, notificationCode); break;
       default:
         //printf("Uncaught notification" NA_NL);
         break;

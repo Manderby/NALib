@@ -14,14 +14,15 @@
   return self;
 }
 
-- (int) getMenuItemIndex:(NSMenuItem*)item{
-  if(!item){return -1;}
-  NSUInteger index = [[self itemArray] indexOfObject:item];
-  return index == NSNotFound ? -1 : (int)index;
-}
+//- (int) getMenuItemIndex:(NSMenuItem*)item{
+//  if(!item){return -1;}
+//  NSUInteger index = [[self itemArray] indexOfObject:item];
+//  return index == NSNotFound ? -1 : (int)index;
+//}
 
-- (void) addMenuItem:(NSMenuItem*)item atItem:(NSMenuItem*)atItem{  
-  int index = [self getMenuItemIndex:atItem];
+- (void) addMenuItem:(NSMenuItem*)item atItem:(NSMenuItem*)atItem{
+  size_t index = nagetmenuitemIndex(cocoaMenu.menu, atItem);
+  //int index = [self getMenuItemIndex:atItem];
   if(index == -1){
     [self addItem:item];
   }else{
@@ -75,12 +76,6 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
   }
   
   na_AddMenuChild(menu, item, atItem);
-}
-
-
-
-NA_DEF size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item){
-  return naGetListElemIndex(&(menu->childs), item);
 }
 
 

@@ -69,12 +69,6 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
 
 
 
-NA_DEF size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item){
-  return naGetListElemIndex(&(menu->childs), item);
-}
-
-
-
 NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement){
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 

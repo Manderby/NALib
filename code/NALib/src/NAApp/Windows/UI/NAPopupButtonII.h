@@ -30,9 +30,15 @@ NAWINAPICallbackInfo naPopupButtonWINAPIProc(void* uiElement, UINT message, WPAR
   case WM_IME_SETCONTEXT:
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
-  case 0x1606:  // undocumented
-  case BM_SETSTATE:
+  case WM_NCCALCSIZE:
+  case WM_SIZE:
+  case CB_INSERTSTRING:
+  case CB_SETCURSEL:
+  case WM_CTLCOLORLISTBOX:
   case WM_CAPTURECHANGED:
+  case 0x131: // undocumented
+  case WM_COMMAND:
+  case CB_GETCURSEL:
     break;
 
   default:
@@ -45,6 +51,27 @@ NAWINAPICallbackInfo naPopupButtonWINAPIProc(void* uiElement, UINT message, WPAR
 
 
 
+NABool naPopupButtonWINAPINotify(void* uiElement, WORD notificationCode){
+  NAWINAPIPopupButton* winapiPopupButton = (NAWINAPIPopupButton*)uiElement;
+  NABool hasBeenHandeled = NA_FALSE;
+  size_t itemIndex;
+  const NAMenuItem* child;
+
+  switch(notificationCode){
+  case CBN_SELCHANGE:
+    itemIndex = SendMessage(
+      naGetUIElementNativePtr(uiElement),
+      CB_GETCURSEL, 
+      0,
+      0);
+      child = naGetPopupButtonItem(uiElement, itemIndex);
+      na_DispatchUIElementCommand(&(child->uiElement), NA_UI_COMMAND_PRESSED);
+    break;
+  }
+  return hasBeenHandeled;
+}
+
+
 
 NA_DEF NAPopupButton* naNewPopupButton(double width){
   NAWINAPIPopupButton* winapiPopupButton = naNew(NAWINAPIPopupButton);
@@ -55,9 +82,9 @@ NA_DEF NAPopupButton* naNewPopupButton(double width){
   winapiPopupButton->rect = naMakeRectS(0., 0., width, 24.);
 
   HWND nativePtr = CreateWindow(
-    TEXT("BUTTON"),
+    WC_COMBOBOX,
     systemText,
-    WS_CHILD | WS_VISIBLE | BS_LEFT | BS_TEXT | BS_PUSHBUTTON | BS_SPLITBUTTON,
+    WS_CHILD | WS_VISIBLE | CBS_DROPDOWN | CBS_HASSTRINGS | WS_OVERLAPPED | CBS_SIMPLE,
     0,
     0,
     (int)(winapiPopupButton->rect.size.width * uiScale),
@@ -93,20 +120,25 @@ NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
 }
 
 NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, const NAMenuItem* atItem){
-  // todo
-}
+  NAWINAPIPopupButton* winapiPopupButton = (NAWINAPIPopupButton*)popupButton;
+  TCHAR* itemText = naAllocSystemStringWithUTF8String(naGetMenuItemText(item));
+  size_t index = naGetPopupButtonItemIndex(popupButton, atItem);
 
-NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, const NAMenuItem* item){
-  // todo
-  return 0;
+  SendMessage(naGetUIElementNativePtr(popupButton), (UINT)CB_INSERTSTRING , (WPARAM)index, (LPARAM) itemText);
+  if(naGetListCount(&(popupButton->childs)) == 0){
+    SendMessage(naGetUIElementNativePtr(popupButton), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
+  }
+
+  na_AddPopupButtonChild(popupButton, item, atItem);
 }
 
 NA_DEF void naSetPopupButtonIndexSelected(NAPopupButton* popupButton, size_t index){
-  // todo
+  SendMessage(naGetUIElementNativePtr(popupButton), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
 }
 
 NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, const NAMenuItem* item){
-  // todo
+  size_t index = naGetPopupButtonItemIndex(popupButton, item);
+  SendMessage(naGetUIElementNativePtr(popupButton), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
 }
 
 NA_HDEF NARect na_GetPopupButtonRect(const NA_UIElement* popupButton)

@@ -221,7 +221,7 @@ NABool popupButtonItemSelected(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(
     NA_TRUE,
-    "MenuItem with index %d selected",
+    "PopupButton item with index %d selected",
     (int)naGetPopupButtonItemIndex(con->popupButton, reaction.uiElement));
   naSetLabelText(con->outputLabel, outputText);
 
@@ -329,11 +329,12 @@ ExperimentController* createExperimentController(){
   naAddSpaceChild(con->contentSpace, con->popupButtonLabel, naMakePos(20, curPosY));
   con->popupButton = naNewPopupButton(150);
   naAddSpaceChild(con->contentSpace, con->popupButton, naMakePos(250, curPosY));
-  //for(size_t i = 0; i < 5; ++i){
-  //  NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Popup menu item %d", i));
-  //  naAddPopupButtonMenuItem(con->popupButton, item, NA_NULL);
-  //  naAddUIReaction(item, NA_UI_COMMAND_PRESSED, popupButtonItemSelected, con);
-  //}
+  for(size_t i = 0; i < 5; ++i){
+    NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Popup menu item %d", i));
+    naAddPopupButtonMenuItem(con->popupButton, item, NA_NULL);
+    naAddUIReaction(item, NA_UI_COMMAND_PRESSED, popupButtonItemSelected, con);
+  }
+  naSetPopupButtonIndexSelected(con->popupButton, 3);
 
   curPosY -= 30;
   con->checkBoxLabel = naNewLabel("NACheckBox", descSize);
@@ -418,8 +419,8 @@ ExperimentController* createExperimentController(){
   //  menuItemKeyboardSelected,
   //  con);
 
-  curPosY -= 70;
-  con->subSpace = naNewSpace(naMakeSize(300, 50));
+  curPosY -= 50;
+  con->subSpace = naNewSpace(naMakeSize(300, 30));
   naSetSpaceAlternateBackground(con->subSpace, NA_TRUE);
   naAddSpaceChild(con->contentSpace, con->subSpace, naMakePos(20, curPosY));
 

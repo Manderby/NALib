@@ -24,14 +24,15 @@
   NA_COCOA_SUPER_DEALLOC();
 }
 
-- (int) getMenuItemIndex:(NSMenuItem*)item{
-  if(!item){return -1;}
-  NSUInteger index = [[self itemArray] indexOfObject:item];
-  return index == NSNotFound ? -1 : (int)index;
-}
+//- (int) getMenuItemIndex:(NSMenuItem*)item{
+//  if(!item){return -1;}
+//  NSUInteger index = [[self itemArray] indexOfObject:item];
+//  return index == NSNotFound ? -1 : (int)index;
+//}
 
 - (void) addMenuItem:(NSMenuItem*)item atItem:(NSMenuItem*)atItem{  
-  int index = [self getMenuItemIndex:atItem];
+  size_t index = nagetmenuitemIndex(cocoaMenu.menu, atItem);
+  //int index = [self getMenuItemIndex:atItem];
   if(index == -1){
     [[self menu] addItem:item];
   }else{
@@ -93,12 +94,6 @@ NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* ite
   }
   
   na_AddPopupButtonChild(popupButton, item, atItem);
-}
-
-
-
-NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, const NAMenuItem* item){
-  return naGetListElemIndex(&(popupButton->childs), item);
 }
 
 

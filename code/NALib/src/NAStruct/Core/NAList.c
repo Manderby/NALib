@@ -26,6 +26,9 @@ NA_DEF NABool naLocateListData(NAListIterator* iter, const void* data){
 
 NA_DEF void na_LocateListIndex(NAListIterator* iter, size_t index){
   NAList* mutablelist = (NAList*)naGetPtrConst(iter->listptr);
+  #if NA_DEBUG
+    iter->cur->iterCount--;
+  #endif
 
   if(index < (mutablelist->count / 2)){
     // Go forward from start to end
@@ -43,6 +46,10 @@ NA_DEF void na_LocateListIndex(NAListIterator* iter, size_t index){
       index++;
     }
   }
+
+  #if NA_DEBUG
+  iter->cur->iterCount++;
+  #endif
 }
 
 
@@ -51,10 +58,14 @@ NA_DEF NABool naLocateListIndex(NAListIterator* iter, size_t index){
   NAList* mutablelist = (NAList*)naGetPtrConst(iter->listptr);
   
   if(index >= mutablelist->count){
-#if NA_DEBUG
-    naError("Index overflows the range of the list");
-#endif
+    #if NA_DEBUG
+      naError("Index overflows the range of the list");
+      iter->cur->iterCount--;
+    #endif  
     iter->cur = &(mutablelist->sentinel);
+    #if NA_DEBUG
+      iter->cur->iterCount++;
+    #endif
     return NA_FALSE;
   }else{
     na_LocateListIndex(iter, index);
@@ -68,10 +79,14 @@ NA_DEF NABool naLocateListIndexBack(NAListIterator* iter, size_t index){
   NAList* mutablelist = (NAList*)naGetPtrConst(iter->listptr);
   
   if(mutablelist->count < index){
-#if NA_DEBUG
-    naError("Backwards index underflows the range of the list");
-#endif
+    #if NA_DEBUG
+      naError("Backwards index underflows the range of the list");
+      iter->cur->iterCount--;
+    #endif
     iter->cur = &(mutablelist->sentinel);
+    #if NA_DEBUG
+      iter->cur->iterCount++;
+    #endif
     return NA_FALSE;
   }else{
     na_LocateListIndex(iter, mutablelist->count - index);
