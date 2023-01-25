@@ -410,20 +410,6 @@ NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* 
 
 
 
-NA_HDEF NARect na_GetButtonAbsoluteInnerRect(const NA_UIElement* button){
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtrConst(button), &clientRect);
-  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
-
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtrConst(button), &testPoint);
-
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
-}
-
 NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button)
 {
   const NAWINAPIButton* winapiButton = (const NAWINAPIButton*)button;

@@ -145,22 +145,6 @@ NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* colo
 
 
 
-NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(const NA_UIElement* checkBox){
-  const NAWINAPICheckBox* winapiCheckBox = (const NAWINAPICheckBox*)checkBox;
-
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtrConst(checkBox), &clientRect);
-  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
-
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtrConst(checkBox), &testPoint);
-
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    winapiCheckBox->rect.size);
-}
-
 NA_HDEF NARect na_GetCheckBoxRect(const NA_UIElement* checkBox)
 {
   const NAWINAPICheckBox* winapiCheckBox = (const NAWINAPICheckBox*)checkBox;

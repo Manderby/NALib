@@ -165,24 +165,12 @@ NA_HDEF void** na_GetTextBoxPrevTabReference(NATextBox* textBox){
 
 
 
-NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(const NA_UIElement* textBox){
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtrConst(textBox), &clientRect);
-  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
-
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtrConst(textBox), &testPoint);
-
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
-}
-
 NA_HDEF NARect na_GetTextBoxRect(const NA_UIElement* textBox){
   const NAWINAPITextBox* winapiTextBox = (const NAWINAPITextBox*)textBox;
   return winapiTextBox->rect;
 }
+
+
 
 NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;

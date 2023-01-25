@@ -116,17 +116,6 @@ NA_DEF void naSetRadioTextColor(NARadio* radio, const NABabyColor* color){
 
 
 
-NA_HDEF NARect na_GetRadioAbsoluteInnerRect(const NA_UIElement* radio){
-  naDefineCocoaObjectConst(NACocoaNativeRadio, nativePtr, radio);
-  NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(radio));
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
-}
-
-
-
 NA_DEF void naSetRadioState(NARadio* radio, NABool state){
   naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
   [nativePtr setRadioState:state];

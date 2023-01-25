@@ -10,9 +10,33 @@ NAWINAPICallbackInfo naPopupButtonWINAPIProc(void* uiElement, UINT message, WPAR
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
+  case WM_SHOWWINDOW:
+  case WM_WINDOWPOSCHANGING:
+  case WM_CHILDACTIVATE:
+  case WM_WINDOWPOSCHANGED:
+  case WM_MOVE:
+  case WM_PAINT:
+  case WM_NCPAINT:
+  case WM_ERASEBKGND:
+  case WM_NCHITTEST:
+  case WM_SETCURSOR:
+  case WM_MOUSEFIRST:
+  case WM_MOUSELEAVE:
+  case WM_MOUSEACTIVATE:
+  case WM_LBUTTONDOWN:
+  case WM_LBUTTONUP:
+  case WM_GETTEXTLENGTH:
+  case WM_GETTEXT:
+  case WM_IME_SETCONTEXT:
+  case WM_SETFOCUS:
+  case WM_KILLFOCUS:
+  case 0x1606:  // undocumented
+  case BM_SETSTATE:
+  case WM_CAPTURECHANGED:
+    break;
 
   default:
-    //printf("Uncaught PopupButton message" NA_NL);
+    printf("Uncaught PopupButton message" NA_NL);
     break;
   }
   
@@ -21,29 +45,35 @@ NAWINAPICallbackInfo naPopupButtonWINAPIProc(void* uiElement, UINT message, WPAR
 
 
 
+
 NA_DEF NAPopupButton* naNewPopupButton(double width){
   NAWINAPIPopupButton* winapiPopupButton = naNew(NAWINAPIPopupButton);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String("Popup");
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  winapiPopupButton->rect = naMakeRectS(0., 0., width, 24.);
+
   HWND nativePtr = CreateWindow(
     TEXT("BUTTON"),
     systemText,
-    WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_RADIOBUTTON,
+    WS_CHILD | WS_VISIBLE | BS_LEFT | BS_TEXT | BS_PUSHBUTTON | BS_SPLITBUTTON,
     0,
     0,
-    (int)width,
-    18,
+    (int)(winapiPopupButton->rect.size.width * uiScale),
+    (int)(winapiPopupButton->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
 
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)naGetFontNativePointer(naGetSystemFont()), MAKELPARAM(TRUE, 0));
+
   naFree(systemText);
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}
+  if(!app->oldPopupButtonWindowProc){app->oldPopupButtonWindowProc = oldproc;}
 
   na_InitPopupButton((NAPopupButton*)winapiPopupButton, nativePtr);
 
@@ -79,11 +109,28 @@ NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, const NAMen
   // todo
 }
 
-NA_HDEF NARect na_GetPopupButtonAbsoluteInnerRect(const NA_UIElement* menu){
-  NA_UNUSED(menu);
-  return naMakeRectS(0, 0, 1, 1);
+NA_HDEF NARect na_GetPopupButtonRect(const NA_UIElement* popupButton)
+{
+  const NAWINAPIPopupButton* winapiPopupButton = (const NAWINAPIPopupButton*)popupButton;
+  return winapiPopupButton->rect;
 }
 
+NA_HDEF void na_SetPopupButtonRect(NA_UIElement* popupButton, NARect rect){
+  NAWINAPIPopupButton* winapiPopupButton = (NAWINAPIPopupButton*)popupButton;
+
+  winapiPopupButton->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(popupButton));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(popupButton),
+    HWND_TOP,
+    (int)(winapiPopupButton->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiPopupButton->rect.pos.y - winapiPopupButton->rect.size.height) * uiScale),
+    (int)(winapiPopupButton->rect.size.width * uiScale),
+    (int)(winapiPopupButton->rect.size.height * uiScale),
+    0);
+}
 
 
 

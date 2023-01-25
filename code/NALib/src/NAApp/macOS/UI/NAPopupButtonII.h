@@ -125,17 +125,6 @@ NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
 
 
 
-NA_HDEF NARect na_GetPopupButtonAbsoluteInnerRect(const NA_UIElement* popupButton){
-  naDefineCocoaObjectConst(NACocoaNativePopupButton, nativePtr, popupButton);
-  NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(popupButton));
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
-}
-
-
-
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

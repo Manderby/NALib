@@ -13,10 +13,6 @@
 
 #endif  // NA_COMPILE_METAL == 1
 
-NA_HDEF NARect na_GetMetalSpaceAbsoluteInnerRect(const NA_UIElement* metalSpace){
-  return na_GetSpaceAbsoluteInnerRect(metalSpace);
-}
-
 NA_HDEF NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace){
   #if NA_DEBUG
     naError("Metal does not work on windows");

@@ -131,25 +131,13 @@ NA_DEF void naSetRadioState(NARadio* radio, NABool state){
 
 
 
-NA_HDEF NARect na_GetRadioAbsoluteInnerRect(const NA_UIElement* radio){
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtrConst(radio), &clientRect);
-  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
-
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtrConst(radio), &testPoint);
-
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
-}
-
 NA_HDEF NARect na_GetRadioRect(const NA_UIElement* radio)
 {
   const NAWINAPIRadio* winapiRadio = (const NAWINAPIRadio*)radio;
   return winapiRadio->rect;
 }
+
+
 
 NA_HDEF void na_SetRadioRect(NA_UIElement* radio, NARect rect){
   NAWINAPIRadio* winapiRadio = (NAWINAPIRadio*)radio;

@@ -99,11 +99,6 @@ NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement){
     NULL);
 }
 
-NA_HDEF NARect na_GetMenuAbsoluteInnerRect(const NA_UIElement* menu){
-  NA_UNUSED(menu);
-  return naMakeRectS(0, 0, 1, 1);
-}
-
 
 
 // This is free and unencumbered software released into the public domain.

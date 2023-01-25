@@ -243,6 +243,7 @@ struct NAWINAPICallbackInfo{
 WNDPROC na_GetApplicationOldButtonWindowProc();
 WNDPROC na_GetApplicationOldCheckBoxWindowProc();
 WNDPROC na_GetApplicationOldLabelWindowProc();
+WNDPROC na_GetApplicationOldPopupButtonWindowProc();
 WNDPROC na_GetApplicationOldRadioWindowProc();
 WNDPROC na_GetApplicationOldSliderWindowProc();
 WNDPROC na_GetApplicationOldTextFieldWindowProc();
@@ -330,12 +331,13 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
   // If the event has not been handeled, hand it over to the default procedure.
   if(!info.hasBeenHandeled){
     switch(firsttype){
-    case NA_UI_BUTTON:    info.result = CallWindowProc(na_GetApplicationOldButtonWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_CHECKBOX:  info.result = CallWindowProc(na_GetApplicationOldCheckBoxWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_LABEL:     info.result = CallWindowProc(na_GetApplicationOldLabelWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_RADIO:     info.result = CallWindowProc(na_GetApplicationOldRadioWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_SLIDER:    info.result = CallWindowProc(na_GetApplicationOldSliderWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_TEXTFIELD: info.result = CallWindowProc(na_GetApplicationOldTextFieldWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_BUTTON:       info.result = CallWindowProc(na_GetApplicationOldButtonWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_CHECKBOX:     info.result = CallWindowProc(na_GetApplicationOldCheckBoxWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_LABEL:        info.result = CallWindowProc(na_GetApplicationOldLabelWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_POPUP_BUTTON: info.result = CallWindowProc(na_GetApplicationOldPopupButtonWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_RADIO:        info.result = CallWindowProc(na_GetApplicationOldRadioWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_SLIDER:       info.result = CallWindowProc(na_GetApplicationOldSliderWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_TEXTFIELD:    info.result = CallWindowProc(na_GetApplicationOldTextFieldWindowProc(), hWnd, message, wParam, lParam); break;
     default:
       info.result = DefWindowProc(hWnd, message, wParam, lParam);
       break;
@@ -619,11 +621,6 @@ NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
 
 
 
-NA_HDEF NARect na_GetScreenAbsoluteRect(const NA_UIElement* screen){
-  NARect rect = {{0, 0}, {1, 1}};
-  return rect;
-}
-
 NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen){
   NARect rect = {{0, 0}, {1, 1}};
   return rect;
@@ -634,101 +631,6 @@ NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect){
     naError("A screen can not be resized by software.");
   #endif
 }
-
-
-
-//NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool includeBorder){
-//  NARect rect;
-//  NARect relRect;
-//  NA_UIElement* elem;
-//  NA_UIElement* relElem;
-//  NAApplication* app;
-//
-//  elem = (NA_UIElement*)uiElement;
-//  relElem = (NA_UIElement*)relativeelement;
-//  app = naGetApplication();
-//
-//  // First, let's handle the root case: Returning the application rect.
-//  if(elem == (NA_UIElement*)app){
-//    #if NA_DEBUG
-//      if(relativeelement && (relativeelement != app))
-//        naError("The relative element is invalid for the given uiElement, which seems to be the application.");
-//    #endif
-//    return na_GetApplicationAbsoluteRect();
-//  }
-//
-//  // Now, we find the appropriate relative element.
-//  if(!relElem){relElem = naGetUIElementParent(elem);}
-//
-//  // Now, get the rect of the element.
-//  switch(elem->elementType){
-//  case NA_UI_APPLICATION:  rect = na_GetApplicationAbsoluteRect(); break;
-//  case NA_UI_BUTTON:       rect = na_GetButtonAbsoluteInnerRect(elem); break;
-//  case NA_UI_CHECKBOX:     rect = na_GetCheckBoxAbsoluteInnerRect(elem); break;
-//  case NA_UI_IMAGE_SPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(elem); break;
-//  case NA_UI_LABEL:        rect = na_GetLabelAbsoluteInnerRect(elem); break;
-//  case NA_UI_MENU:         rect = na_GetMenuAbsoluteInnerRect(elem); break;
-//  case NA_UI_MENUITEM:     rect = na_GetMenuItemAbsoluteInnerRect(elem); break;
-//  case NA_UI_METAL_SPACE:  rect = na_GetMetalSpaceAbsoluteInnerRect(elem); break;
-//  case NA_UI_OPENGL_SPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(elem); break;
-//  case NA_UI_POPUP_BUTTON: rect = na_GetPopupButtonAbsoluteInnerRect(elem); break;
-//  case NA_UI_RADIO:        rect = na_GetRadioAbsoluteInnerRect(elem); break;
-//  case NA_UI_SCREEN:       rect = na_GetScreenAbsoluteRect(elem); break;
-//  case NA_UI_SLIDER:       rect = na_GetSliderAbsoluteInnerRect(elem); break;
-//  case NA_UI_SPACE:        rect = na_GetSpaceAbsoluteInnerRect(elem); break;
-//  case NA_UI_TEXTBOX:      rect = na_GetTextBoxAbsoluteInnerRect(elem); break;
-//  case NA_UI_TEXTFIELD:    rect = na_GetTextFieldAbsoluteInnerRect(elem); break;
-//  case NA_UI_WINDOW:
-//    if(includeBorder){
-//      rect = na_GetWindowAbsoluteOuterRect(elem);
-//    }else{
-//      rect = na_GetWindowAbsoluteInnerRect(elem);
-//    }
-//    break;
-//  default:
-//    //#if NA_DEBUG
-//    //  naError("Invalid UI type");
-//    //#endif
-//    rect = naMakeRectZero();
-//    break;
-//  }
-//
-//  if(relElem){
-//    switch(relElem->elementType){
-//    case NA_UI_APPLICATION:  relRect = na_GetApplicationAbsoluteRect(); break;
-//    case NA_UI_BUTTON:       relRect = na_GetButtonAbsoluteInnerRect(relElem); break;
-//    case NA_UI_CHECKBOX:     relRect = na_GetCheckBoxAbsoluteInnerRect(relElem); break;
-//    case NA_UI_IMAGE_SPACE:  relRect = na_GetImageSpaceAbsoluteInnerRect(relElem); break;
-//    case NA_UI_LABEL:        relRect = na_GetLabelAbsoluteInnerRect(relElem); break;
-//    case NA_UI_MENU:         relRect = na_GetMenuAbsoluteInnerRect(relElem); break;
-//    case NA_UI_MENUITEM:     relRect = na_GetMenuItemAbsoluteInnerRect(relElem); break;
-//    case NA_UI_METAL_SPACE:  relRect = na_GetMetalSpaceAbsoluteInnerRect(relElem); break;
-//    case NA_UI_OPENGL_SPACE: relRect = na_GetOpenGLSpaceAbsoluteInnerRect(relElem); break;
-//    case NA_UI_POPUP_BUTTON: relRect = na_GetPopupButtonAbsoluteInnerRect(relElem); break;
-//    case NA_UI_RADIO:        relRect = na_GetRadioAbsoluteInnerRect(relElem); break;
-//    case NA_UI_SCREEN:       relRect = na_GetScreenAbsoluteRect(relElem); break;
-//    case NA_UI_SLIDER:       relRect = na_GetSliderAbsoluteInnerRect(relElem); break;
-//    case NA_UI_SPACE:        relRect = na_GetSpaceAbsoluteInnerRect(relElem); break;
-//    case NA_UI_TEXTBOX:      relRect = na_GetTextBoxAbsoluteInnerRect(relElem); break;
-//    case NA_UI_TEXTFIELD:    relRect = na_GetTextFieldAbsoluteInnerRect(relElem); break;
-//    case NA_UI_WINDOW:       relRect = na_GetWindowAbsoluteInnerRect(relElem); break;
-//
-//    default:
-//      #if NA_DEBUG
-//        naError("Invalid UI type");
-//      #endif
-//      relRect = naMakeRectZero();
-//      break;
-//    }
-//
-//    rect.pos.x = rect.pos.x - relRect.pos.x;
-//    rect.pos.y = rect.pos.y - relRect.pos.y;
-//    rect.size.width = rect.size.width;
-//    rect.size.height = rect.size.height;
-//  }
-//
-//  return rect;
-//}
 
 
 

@@ -223,24 +223,6 @@ NA_DEF void naSetLabelFont(NALabel* label, NAFont* font){
 
 
 
-NA_HDEF NARect na_GetLabelAbsoluteInnerRect(const NA_UIElement* label){
-  const NAWINAPILabel* winapiLabel = (const NAWINAPILabel*)label;
-
-  return winapiLabel->rect;
-
-  //NARect screenRect = naGetMainScreenRect();
-  //RECT clientRect;
-  //GetClientRect(naGetUIElementNativePtrConst(label), &clientRect);
-  //double height = (double)(clientRect.bottom) - (double)(clientRect.top);
-
-  //POINT testPoint = {0, (LONG)height};
-  //ClientToScreen(naGetUIElementNativePtrConst(label), &testPoint);
-
-  //return naMakeRect(
-  //  naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-  //  winapiLabel->rect.size);
-}
-
 NA_HDEF NARect na_GetLabelRect(const NA_UIElement* label)
 {
   const NAWINAPILabel* winapiLabel = (const NAWINAPILabel*)label;

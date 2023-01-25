@@ -123,17 +123,6 @@ NA_DEF void naSetTextFieldFont(NATextField* textField, NAFont* font){
 
 
 
-NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(const NA_UIElement* textField){
-  naDefineCocoaObjectConst(NACocoaNativeTextField, nativePtr, textField);
-  NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(textField));
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
-}
-
-
-
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

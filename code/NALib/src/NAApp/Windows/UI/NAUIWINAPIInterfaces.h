@@ -79,6 +79,7 @@ struct NAWINAPIApplication {
   WNDPROC          oldButtonWindowProc;
   WNDPROC          oldCheckBoxWindowProc;
   WNDPROC          oldLabelWindowProc;
+  WNDPROC          oldPopupButtonWindowProc;
   WNDPROC          oldRadioWindowProc;
   WNDPROC          oldSliderWindowProc;
   WNDPROC          oldTextFieldWindowProc;
@@ -134,7 +135,8 @@ struct NA_WINAPIMenuItem {
 #endif
 
 struct NAWINAPIPopupButton {
-  NAPopupButton   popupButton;
+  NAPopupButton popupButton;
+  NARect        rect;
 };
 
 struct NAWINAPIRadio {

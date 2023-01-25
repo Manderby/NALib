@@ -229,30 +229,12 @@ NA_HDEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable){
 
 
 
-NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* space){
-  //NARect rect;
-  //NARect screenRect;
-  //RECT contentRect;
-  //POINT testPoint = {0, 0};
-
-  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
-  return winapiSpace->rect;
-
-  //GetClientRect(space->nativePtr, &contentRect);
-  //ClientToScreen(space->nativePtr, &testPoint);
-  //screenRect = naGetMainScreenRect();
-  //double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-
-  //rect.pos.x = (testPoint.x) / uiScale;
-  //rect.pos.y = ((double)screenRect.size.height - ((double)testPoint.y + ((double)contentRect.bottom - (double)contentRect.top))) / uiScale;
-  //rect.size = winapiSpace->rect.size;
-  //return rect;
-}
-
 NA_HDEF NARect na_GetSpaceRect(const NA_UIElement* space){
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
   return winapiSpace->rect;
 }
+
+
 
 NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect){
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
