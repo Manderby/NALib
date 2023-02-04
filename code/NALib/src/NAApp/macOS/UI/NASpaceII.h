@@ -237,6 +237,16 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NABabyColor
 }
 
 
+NA_HDEF NARect na_GetSpaceRect(const NA_UIElement* _Nullable space){
+  naDefineCocoaObjectConst(NACocoaNativeSpace, nativePtr, space);
+  return naMakeRectWithNSRect([nativePtr frame]);
+}
+
+NA_HDEF void na_SetSpaceRect(NA_UIElement* _Nullable space, NARect rect){
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
+
 
 // This is free and unencumbered software released into the public domain.
 

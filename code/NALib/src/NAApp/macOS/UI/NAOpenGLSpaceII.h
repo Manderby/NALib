@@ -176,6 +176,16 @@
   }
 
 
+  NA_HDEF NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace){
+    naDefineCocoaObjectConst(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
+    return naMakeRectWithNSRect([nativePtr frame]);
+  }
+
+  NA_HDEF void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect){
+    naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
+    [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+  }
+
 
   //NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
   //  naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
@@ -215,6 +225,22 @@
 
   NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
     NA_UNUSED(openGLSpace);
+    #if NA_DEBUG
+      naError("OpenGL has not been configured. See NAConfiguration.h");
+    #endif
+  }
+
+  NA_HDEF NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace){
+    NA_UNUSED(openGLSpace);
+    #if NA_DEBUG
+      naError("OpenGL has not been configured. See NAConfiguration.h");
+    #endif
+    return naMakeRectS(0., 0., 1., 1.);
+  }
+
+  NA_HDEF void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect){
+    NA_UNUSED(openGLSpace);
+    NA_UNUSED(rect);
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif

@@ -289,6 +289,16 @@ NA_API void naSetButtonVisible(NAButton* button, NABool visible){
 }
 
 
+NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button){
+  naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
+  return naMakeRectWithNSRect([nativePtr frame]);
+}
+
+NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect){
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
+
 
 // This is free and unencumbered software released into the public domain.
 
