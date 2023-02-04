@@ -128,6 +128,17 @@ NA_DEF NABool naGetCheckBoxState(const NACheckBox* checkBox){
 
 
 
+NA_HDEF NARect na_GetCheckBoxRect(const NA_UIElement* checkBox){
+  naDefineCocoaObjectConst(NACocoaNativeCheckBox, nativePtr, checkBox);
+  return naMakeRectWithNSRect([nativePtr frame]);
+}
+
+NA_HDEF void na_SetCheckBoxRect(NA_UIElement* checkBox, NARect rect){
+  naDefineCocoaObjectConst(NACocoaNativeCheckBox, nativePtr, checkBox);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

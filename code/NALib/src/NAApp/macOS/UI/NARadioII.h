@@ -143,6 +143,16 @@ NA_DEF NABool naGetRadioState(const NARadio* radio){
 }
 
 
+NA_HDEF NARect na_GetRadioRect(const NA_UIElement* radio){
+  naDefineCocoaObjectConst(NACocoaNativeRadio, nativePtr, radio);
+  return naMakeRectWithNSRect([nativePtr frame]);
+}
+
+NA_HDEF void na_SetRadioRect(NA_UIElement* radio, NARect rect){
+  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
+
 
 // This is free and unencumbered software released into the public domain.
 

@@ -159,6 +159,20 @@
     [nativePtr setFrame: frame];
   }
 
+
+
+NA_HDEF NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace){
+  naDefineCocoaObjectConst(NACocoaNativeMetalSpace, nativePtr, metalSpace);
+  return naMakeRectWithNSRect([nativePtr frame]);
+}
+
+NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect){
+  naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
+
+
+
 #else
 
   NA_DEF NAMetalSpace* naNewMetalSpace(NASize size){
@@ -187,6 +201,22 @@
   NA_DEF void naSetMetalSpaceInnerRect(NAMetalSpace* metalSpace, NARect bounds){
     NA_UNUSED(metalSpace);
     NA_UNUSED(bounds);
+    #if NA_DEBUG
+      naError("Metal has not been configured. See NAConfiguration.h");
+    #endif
+  }
+
+  NA_HDEF NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace){
+    NA_UNUSED(metalSpace);
+    #if NA_DEBUG
+      naError("Metal has not been configured. See NAConfiguration.h");
+    #endif
+    return naMakeRectS(0., 0., 1., 1.);
+  }
+
+  NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect){
+    NA_UNUSED(metalSpace);
+    NA_UNUSED(rect);
     #if NA_DEBUG
       naError("Metal has not been configured. See NAConfiguration.h");
     #endif

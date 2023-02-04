@@ -442,6 +442,17 @@ NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* file
 }
 
 
+NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen){
+  NARect rect = {{0, 0}, {1, 1}};
+  return rect;
+}
+
+NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect){
+  #if NA_DEBUG
+    naError("A screen can not be resized by software.");
+  #endif
+}
+
 
 NA_DEF void naCenterMouse(void* uiElement){
   NARect spacerect;

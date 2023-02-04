@@ -376,6 +376,18 @@ NA_DEF void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts){
   naSetFlagu32(&(window->coreFlags), NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS, accepts);
 }
 
+
+NA_HDEF NARect na_GetWindowRect(const NA_UIElement* window){
+  naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
+  return naMakeRectWithNSRect([nativePtr frame]);
+}
+
+NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect){
+  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+  [nativePtr setContentRect:rect];
+}
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

@@ -74,10 +74,10 @@ struct ExperimentController{
 
 NABool windowReshaped(NAReaction reaction){
   ExperimentController* con = reaction.controller;
-  //NARect rect = naGetUIElementRect(con->experimentWindow, naGetApplication(), NA_FALSE);
-  //NARect borderRect = naGetUIElementRect(con->experimentWindow, naGetApplication(), NA_TRUE);
-  //const NAUTF8Char* labelString = naAllocSprintf(NA_TRUE, "Window reshaped.\nRect with border:    %.01f, %.01f, %.01f, %.01f\nRect without border: %.01f, %.01f, %.01f, %.01f", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height, borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
-  //naSetLabelText(con->outputLabel, labelString);
+//  NARect rect = naGetUIElementRect(con->experimentWindow);
+//  NARect borderRect = naGetUIElementRect(con->experimentWindow);
+//  const NAUTF8Char* labelString = naAllocSprintf(NA_TRUE, "Window reshaped.\nRect with border:    %.01f, %.01f, %.01f, %.01f\nRect without border: %.01f, %.01f, %.01f, %.01f", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height, borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
+//  naSetLabelText(con->outputLabel, labelString);
 
   return NA_TRUE;
 }
@@ -143,6 +143,7 @@ NABool redrawOpenGLSpace(NAReaction reaction){
 
   ang += .05f;
   if(ang > NA_PI2f){ang = 0.f;}
+
 
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
   NASize viewSize = naGetUIElementRect(reaction.uiElement).size;

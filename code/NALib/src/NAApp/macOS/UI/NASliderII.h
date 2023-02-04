@@ -116,6 +116,15 @@ NA_DEF void naSetSliderValue(NASlider* slider, double value){
 }
 
 
+NA_HDEF NARect na_GetSliderRect(const NA_UIElement* slider){
+  naDefineCocoaObjectConst(NACocoaNativeSlider, nativePtr, slider);
+  return naMakeRectWithNSRect([nativePtr frame]);
+}
+
+NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect){
+  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
 
 // This is free and unencumbered software released into the public domain.
 
