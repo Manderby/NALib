@@ -65,6 +65,41 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 }
 
 
+
+NA_HDEF double na_GetUIElementYOffset(NA_UIElement* elem){
+  // Line height is considered to be 25 for an optimal display. In this
+  // function, the UI elements are shifted in Y direction such that text
+  // always is displayed on a common baseline. The reference element is
+  // a stateful text button.
+  // All spaces and stateful/image buttons have offset 0.
+
+  switch(naGetUIElementType(elem)){
+  case NA_UI_APPLICATION:  return  0.;
+  case NA_UI_BUTTON:{
+    NAButton* button = (NAButton*)elem;
+    return naIsButtonStateful(button) || !naIsButtonTextual(button) ? +0. : -2.;
+  }
+  case NA_UI_CHECKBOX:     return +1.;
+  case NA_UI_IMAGE_SPACE:  return  0.;
+  case NA_UI_LABEL:        return +2.;
+  case NA_UI_MENU:         return  0.;
+  case NA_UI_MENUITEM:     return  0.;
+  case NA_UI_METAL_SPACE:  return  0.;
+  case NA_UI_OPENGL_SPACE: return  0.;
+  case NA_UI_POPUP_BUTTON: return -3.;
+  case NA_UI_RADIO:        return +1.;
+  case NA_UI_SCREEN:       return  0.;
+  case NA_UI_SLIDER:       return -3.;
+  case NA_UI_SPACE:        return  0.;
+  case NA_UI_TEXTBOX:      return  2.;
+  case NA_UI_TEXTFIELD:    return  2.;
+  case NA_UI_WINDOW:       return  0.;
+  default: return 0.;
+  }
+}
+
+
+
 NA_HDEF NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2){
   NA_UIElement* commonParent = NA_NULL;
   NA_UIElement* tmpelem2;

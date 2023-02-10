@@ -118,7 +118,7 @@ NA_DEF NATextField* naNewTextField(double width){
   NAWINAPITextField* winapiTextField = naNew(NAWINAPITextField);
 
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-  winapiTextField->rect = naMakeRectS(0., 0., width, 21.);
+  winapiTextField->rect = naMakeRectS(0., 0., width, 16.);
 
   HWND nativePtr = CreateWindow(
 	  TEXT("EDIT"),

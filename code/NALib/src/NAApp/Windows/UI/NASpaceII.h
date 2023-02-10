@@ -12,7 +12,7 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace);
 
 NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  RECT spacerect;
+  RECT spaceRect;
   NA_UIElement* childelement;
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)uiElement;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
@@ -97,10 +97,10 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     break;
 
   case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
-    GetClientRect(naGetUIElementNativePtr(uiElement), &spacerect);
+    GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
     bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
     if(bgColor != winapiSpace->lastBgColor){ // Only draw if changed
-      FillRect((HDC)wParam, &spacerect, bgColor->brush);
+      FillRect((HDC)wParam, &spaceRect, bgColor->brush);
       winapiSpace->lastBgColor = bgColor;
     }
     info.hasBeenHandeled = NA_TRUE;
@@ -185,33 +185,10 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
   //int spaceheight;
   //int childheight;
 
-  //double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-  //NARect spaceRect = naGetUIElementRect(space);
+  double offsetY = na_GetUIElementYOffset(child);
+
   NARect childRect = naGetUIElementRect(child);
-
-  //if(  naGetUIElementType(child) == NA_UI_APPLICATION
-  //  || naGetUIElementType(child) == NA_UI_BUTTON
-  //  || naGetUIElementType(child) == NA_UI_CHECKBOX
-  //  || naGetUIElementType(child) == NA_UI_IMAGE_SPACE
-  //  || naGetUIElementType(child) == NA_UI_LABEL
-  //  || naGetUIElementType(child) == NA_UI_RADIO
-  //  || naGetUIElementType(child) == NA_UI_SLIDER
-  //  || naGetUIElementType(child) == NA_UI_SPACE
-  //  || naGetUIElementType(child) == NA_UI_TEXTBOX
-  //  || naGetUIElementType(child) == NA_UI_TEXTFIELD
-  //  || naGetUIElementType(child) == NA_UI_WINDOW)
-  //{
-  //  SetWindowPos(
-  //    naGetUIElementNativePtr(child),
-  //    HWND_TOP,
-  //    (int)(pos.x * uiScale),
-  //    (int)((spaceRect.size.height - pos.y - childRect.size.height) * uiScale),
-  //    0,
-  //    0,
-  //    SWP_NOSIZE | SWP_NOZORDER);
-  //}
-
-  childRect.pos = pos;
+  childRect.pos = naMakePos(pos.x, pos.y + offsetY);
   naSetUIElementRect(child, childRect);
 
   na_AddSpaceChild(space, child);

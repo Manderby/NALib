@@ -632,14 +632,14 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
 
 
 NA_DEF void naCenterMouse(void* uiElement){
-  NARect spacerect;
+  NARect spaceRect;
   NARect screenframe;
   NAPos centerpos;
-  spacerect = naGetUIElementRectAbsolute(uiElement);
+  spaceRect = naGetUIElementRectAbsolute(uiElement);
   // todo: screen not defined
   screenframe = naGetMainScreenRect();
-  centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;
-  centerpos.y = spacerect.pos.y + spacerect.size.height * .5f;
+  centerpos.x = spaceRect.pos.x + spaceRect.size.width * .5f;
+  centerpos.y = spaceRect.pos.y + spaceRect.size.height * .5f;
 
   na_SetMouseWarpedTo(centerpos);
   SetCursorPos((int)centerpos.x, (int)screenframe.size.height - (int)centerpos.y);

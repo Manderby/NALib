@@ -462,13 +462,13 @@ NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* file
 
 
 NA_DEF void naCenterMouse(void* uiElement){
-  NARect spacerect;
+  NARect spaceRect;
   NSRect screenframe;
   CGPoint centerpos;
-  spacerect = naGetUIElementRectAbsolute(uiElement);
+  spaceRect = naGetUIElementRectAbsolute(uiElement);
   screenframe = [[NSScreen mainScreen] frame];
-  centerpos.x = (CGFloat)spacerect.pos.x + (CGFloat)spacerect.size.width * .5f;
-  centerpos.y = (CGFloat)screenframe.size.height - (CGFloat)(spacerect.pos.y + spacerect.size.height * .5f);
+  centerpos.x = (CGFloat)spaceRect.pos.x + (CGFloat)spaceRect.size.width * .5f;
+  centerpos.y = (CGFloat)screenframe.size.height - (CGFloat)(spaceRect.pos.y + spaceRect.size.height * .5f);
 
   CGWarpMouseCursorPosition(centerpos);
 }

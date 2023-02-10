@@ -302,56 +302,71 @@ ExperimentController* createExperimentController(){
   naAddSpaceChild(con->contentSpace, con->imagePushButtonStateBorderless, naMakePos(left + 3 * buttonSize, curPosY));
 
   curPosY -= 30;
+<<<<<<< HEAD
+=======
+  con->popupButtonLabel = naNewLabel("NAPopupButton", descSize);
+  naAddSpaceChild(con->contentSpace, con->popupButtonLabel, naMakePos(20, curPosY));
+  con->popupButton = naNewPopupButton(150);
+  naAddSpaceChild(con->contentSpace, con->popupButton, naMakePos(left, curPosY));
+  for(size_t i = 0; i < 5; ++i){
+    NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Popup menu item %d", i));
+    naAddPopupButtonMenuItem(con->popupButton, item, NA_NULL);
+    naAddUIReaction(item, NA_UI_COMMAND_PRESSED, popupButtonItemSelected, con);
+  }
+  naSetPopupButtonIndexSelected(con->popupButton, 3);
+
+  curPosY -= 30;
+>>>>>>> 181d979... Adding latest functionality to NALib
   con->checkBoxLabel = naNewLabel("NACheckBox", descSize);
   naAddSpaceChild(con->contentSpace, con->checkBoxLabel, naMakePos(20, curPosY));
   con->checkBox = naNewCheckBox("I am a CheckBox", 150);
-  naAddSpaceChild(con->contentSpace, con->checkBox, naMakePos(250, curPosY));
+  naAddSpaceChild(con->contentSpace, con->checkBox, naMakePos(left, curPosY));
   naAddUIReaction(con->checkBox, NA_UI_COMMAND_PRESSED, checkBoxPressed, con);
 
   curPosY -= 30;
   con->imageSpaceLabel = naNewLabel("NAImageSpace", descSize);
   naAddSpaceChild(con->contentSpace, con->imageSpaceLabel, naMakePos(20, curPosY));
   con->imageSpace = naNewImageSpace(con->testImage, naMakeSize(150, 22));
-  naAddSpaceChild(con->contentSpace, con->imageSpace, naMakePos(250, curPosY));
+  naAddSpaceChild(con->contentSpace, con->imageSpace, naMakePos(left, curPosY));
 
   curPosY -= 30;
   con->labelLabel = naNewLabel("NALabel", descSize);
   naAddSpaceChild(con->contentSpace, con->labelLabel, naMakePos(20, curPosY));
   con->label = naNewLabel("I am a Label", 150);
-  naAddSpaceChild(con->contentSpace, con->label, naMakePos(250, curPosY));
+  naAddSpaceChild(con->contentSpace, con->label, naMakePos(left, curPosY));
 
   curPosY -= 30;
   con->openGLSpaceLabel = naNewLabel("NAOpenGLSpace", descSize);
   naAddSpaceChild(con->contentSpace, con->openGLSpaceLabel, naMakePos(20, curPosY));
   con->openGLSpace = naNewOpenGLSpace(naMakeSize(150, 22), initOpenGL, con);
-  naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(250, curPosY));
+  naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(left, curPosY));
   naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, con);
 
   curPosY -= 30;
   con->radioLabel = naNewLabel("NARadio", descSize);
   naAddSpaceChild(con->contentSpace, con->radioLabel, naMakePos(20, curPosY));
   con->radio = naNewRadio("I am a Radio", 150);
-  naAddSpaceChild(con->contentSpace, con->radio, naMakePos(250, curPosY));
+  naAddSpaceChild(con->contentSpace, con->radio, naMakePos(left, curPosY));
   naAddUIReaction(con->radio, NA_UI_COMMAND_PRESSED, radioPressed, con);
 
   curPosY -= 30;
   con->sliderLabel = naNewLabel("NASlider", descSize);
   naAddSpaceChild(con->contentSpace, con->sliderLabel, naMakePos(20, curPosY));
   con->slider = naNewSlider(150);
-  naAddSpaceChild(con->contentSpace, con->slider, naMakePos(250, curPosY));
+  naAddSpaceChild(con->contentSpace, con->slider, naMakePos(left, curPosY));
   naAddUIReaction(con->slider, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
   curPosY -= 30;
   con->textBoxLabel = naNewLabel("NATextBox", descSize);
   naAddSpaceChild(con->contentSpace, con->textBoxLabel, naMakePos(20, curPosY));
-  con->textBox = naNewTextBox(naMakeSize(150, 22));
-  naAddSpaceChild(con->contentSpace, con->textBox, naMakePos(250, curPosY));
+  con->textBox = naNewTextBox(naMakeSize(150, 16));
+  naAddSpaceChild(con->contentSpace, con->textBox, naMakePos(left, curPosY));
 
   curPosY -= 30;
   con->textFieldLabel = naNewLabel("NATextField", descSize);
   naAddSpaceChild(con->contentSpace, con->textFieldLabel, naMakePos(20, curPosY));
   con->textField = naNewTextField(150);
-  naAddSpaceChild(con->contentSpace, con->textField, naMakePos(250, curPosY));
+  naAddSpaceChild(con->contentSpace, con->textField, naMakePos(left, curPosY));
   naAddUIReaction(con->textField, NA_UI_COMMAND_EDITED, textFieldEdited, con);
 
   curPosY -= 30;
