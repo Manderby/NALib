@@ -143,24 +143,27 @@ NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace){
 
 
 
-NA_HDEF NARect na_GetImageSpaceAbsoluteInnerRect(const NA_UIElement* imageSpace){
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtrConst(imageSpace), &clientRect);
-  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
-
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtrConst(imageSpace), &testPoint);
-
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
-}
-
-NA_HAPI NARect na_GetImageSpaceRect(const NA_UIElement* imageSpace)
+NA_HDEF NARect na_GetImageSpaceRect(const NA_UIElement* imageSpace)
 {
   const NAWINAPIImageSpace* winapiImageSpace = (const NAWINAPIImageSpace*)imageSpace;
   return winapiImageSpace->rect;
+}
+
+NA_HDEF void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect){
+  NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
+
+  winapiImageSpace->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(imageSpace));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(imageSpace),
+    HWND_TOP,
+    (int)(winapiImageSpace->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiImageSpace->rect.pos.y - winapiImageSpace->rect.size.height) * uiScale),
+    (int)(winapiImageSpace->rect.size.width * uiScale),
+    (int)(winapiImageSpace->rect.size.height * uiScale),
+    0);
 }
 
 

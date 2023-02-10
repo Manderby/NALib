@@ -79,6 +79,7 @@ struct NAWINAPIApplication {
   WNDPROC          oldButtonWindowProc;
   WNDPROC          oldCheckBoxWindowProc;
   WNDPROC          oldLabelWindowProc;
+  WNDPROC          oldPopupButtonWindowProc;
   WNDPROC          oldRadioWindowProc;
   WNDPROC          oldSliderWindowProc;
   WNDPROC          oldTextFieldWindowProc;
@@ -128,12 +129,14 @@ struct NA_WINAPIMenuItem {
 #if NA_COMPILE_OPENGL == 1
   struct NAWINAPIOpenGLSpace {
     NAOpenGLSpace openGLSpace;
+    NARect        rect;
     HGLRC         hRC;    // The rendering context for OpenGL
   };
 #endif
 
 struct NAWINAPIPopupButton {
-  NAPopupButton   popupButton;
+  NAPopupButton popupButton;
+  NARect        rect;
 };
 
 struct NAWINAPIRadio {

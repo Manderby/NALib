@@ -116,7 +116,7 @@
 #endif
 
 #define NA_HAPI   NA_LINKER_NO_EXPORT
-#define NA_HDEF   NA_LINKER_NO_EXPORT
+#define NA_HAPI   NA_LINKER_NO_EXPORT
 #define NA_HIAPI   static NA_INLINE
 #define NA_HIDEF   static NA_INLINE
 

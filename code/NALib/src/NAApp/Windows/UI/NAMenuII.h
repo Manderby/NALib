@@ -69,12 +69,6 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
 
 
 
-NA_DEF size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item){
-  return naGetListElemIndex(&(menu->childs), item);
-}
-
-
-
 NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement){
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
@@ -82,6 +76,9 @@ NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement){
 
   na_SetApplicationLastOpenedMenu(naGetApplication(), menu);
   NARect screenRect = naGetMainScreenRect();
+  NARect windowRect = naGetUIElementRect(naGetUIElementWindowConst(parentUIElement));
+
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
   // The messages are sent to the parent ui element. See WM_ENTERMENULOOP for
   // example. Currently only works with buttons.
@@ -89,15 +86,12 @@ NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement){
   /*int selection = */TrackPopupMenu(
     winapiMenu->hMenu, 
     TPM_LEFTALIGN | TPM_RIGHTBUTTON/* | TPM_RETURNCMD*/, 
-    (int)pos.x, (int)screenRect.size.height - (int)pos.y, 0,
-    naGetUIElementNativePtr(parentUIElement), NULL);
+    (int)((windowRect.pos.y + pos.x) * uiScale),
+    (int)(screenRect.size.height - (windowRect.pos.y + pos.y) * uiScale),
+    0,
+    naGetUIElementNativePtr(parentUIElement),
+    NULL);
 }
-
-NA_HDEF NARect na_GetMenuAbsoluteInnerRect(const NA_UIElement* menu){
-  NA_UNUSED(menu);
-  return naMakeRectS(0, 0, 1, 1);
-}
-
 
 
 

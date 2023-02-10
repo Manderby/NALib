@@ -208,24 +208,6 @@ NA_API void naSetSliderRange(NASlider* slider, double min, double max, NAInt tic
 
 
 
-NA_HDEF NARect na_GetSliderAbsoluteInnerRect(const NA_UIElement* slider){
-  RECT contentRect;
-  NARect screenRect;
-  NARect rect = {0};
-  GetClientRect(naGetUIElementNativePtrConst(slider), &contentRect);
-
-  POINT testPoint = {0, 0};
-
-  ClientToScreen(naGetUIElementNativePtrConst(slider), &testPoint);
-  screenRect = naGetMainScreenRect();
-
-  rect.pos.x = testPoint.x;
-  rect.pos.y = (double)screenRect.size.height - ((double)testPoint.y + ((double)contentRect.bottom - (double)contentRect.top));
-  rect.size.width = (double)contentRect.right - (double)contentRect.left;
-  rect.size.height = (double)contentRect.bottom - (double)contentRect.top;
-  return rect;
-}
-
 NA_HDEF NARect na_GetSliderRect(const NA_UIElement* slider)
 {
   const NAWINAPISlider* winapiSlider = (const NAWINAPISlider*)slider;
@@ -233,7 +215,7 @@ NA_HDEF NARect na_GetSliderRect(const NA_UIElement* slider)
 }
 
 NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect){
-  NAWINAPISlider* winapiSlider = (const NAWINAPISlider*)slider;
+  NAWINAPISlider* winapiSlider = (NAWINAPISlider*)slider;
 
   winapiSlider->rect = rect;
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);

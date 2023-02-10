@@ -78,7 +78,8 @@ NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter){
       }
     }
   }
-  return (naIsBufferAtInitial(iter) && (iter->partOffset == naGetRangeiEnd(buffer->range)));
+  return buffer->range.length == 0
+    || (naIsBufferAtInitial(iter) && (iter->partOffset == naGetRangeiEnd(buffer->range)));
 }
 
 

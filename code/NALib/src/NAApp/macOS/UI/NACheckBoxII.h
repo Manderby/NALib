@@ -100,17 +100,6 @@ NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* colo
 
 
 
-NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(const NA_UIElement* checkBox){
-  naDefineCocoaObjectConst(NACocoaNativeCheckBox, nativePtr, checkBox);
-  NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(checkBox));
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
-}
-
-
-
 NA_DEF void naSetCheckBoxState(NACheckBox* checkBox, NABool state){
   naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
   [nativePtr setCheckBoxState:state];
@@ -137,6 +126,17 @@ NA_DEF NABool naGetCheckBoxState(const NACheckBox* checkBox){
   return [nativePtr checkBoxState];
 }
 
+
+
+NA_HDEF NARect na_GetCheckBoxRect(const NA_UIElement* checkBox){
+  naDefineCocoaObjectConst(NACocoaNativeCheckBox, nativePtr, checkBox);
+  return naMakeRectWithNSRect([nativePtr frame]);
+}
+
+NA_HDEF void na_SetCheckBoxRect(NA_UIElement* checkBox, NARect rect){
+  naDefineCocoaObjectConst(NACocoaNativeCheckBox, nativePtr, checkBox);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
 
 
 // This is free and unencumbered software released into the public domain.

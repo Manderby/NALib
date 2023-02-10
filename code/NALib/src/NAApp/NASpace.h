@@ -42,9 +42,6 @@ NA_API void naRemoveSpaceChilds(NASpace* space);
 // to the right and top.
 NA_API void naShiftSpaceChilds(NASpace* space, NAPos shift);
 
-// Sets the rectangle of the space relative to its parent.
-NA_API void naSetSpaceRect(NASpace* space, NARect rect);
-
 // Changes the visibility of the space.
 NA_API void naSetSpaceVisible(
   NASpace* ospace,

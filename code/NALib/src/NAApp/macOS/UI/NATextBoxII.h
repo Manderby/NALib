@@ -193,17 +193,15 @@ NA_DEF void naSetTextBoxVisible(NATextBox* textBox, NABool visible){
 }
 
 
-
-NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(const NA_UIElement* textBox){
+NA_HDEF NARect na_GetTextBoxRect(const NA_UIElement* textBox){
   naDefineCocoaObjectConst(NACocoaNativeTextBox, nativePtr, textBox);
-  NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(textBox));
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
+  return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-
+NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect){
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
 
 // This is free and unencumbered software released into the public domain.
 

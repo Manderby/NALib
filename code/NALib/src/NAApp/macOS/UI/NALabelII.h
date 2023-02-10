@@ -295,15 +295,15 @@ NA_DEF void naSetLabelVisible(NALabel* label, NABool visible){
 
 
 
-NA_HDEF NARect na_GetLabelAbsoluteInnerRect(const NA_UIElement* label){
+NA_HDEF NARect na_GetLabelRect(const NA_UIElement* label){
   naDefineCocoaObjectConst(NACocoaNativeLabel, nativePtr, label);
-  NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(label));
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
+  return naMakeRectWithNSRect([nativePtr frame]);
 }
 
+NA_HDEF void na_SetLabelRect(NA_UIElement* label, NARect rect){
+  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
 
 
 // This is free and unencumbered software released into the public domain.

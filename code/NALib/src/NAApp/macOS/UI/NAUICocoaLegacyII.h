@@ -45,10 +45,10 @@ NA_DEF CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
       uiScale = [window backingScaleFactor];
     }
   )
-  if(res == 0.){
+  if(uiScale == 0.){
     uiScale = [window userSpaceScaleFactor];
   }
-  if(res == 0.){
+  if(uiScale == 0.){
     uiScale = 1.;
   }
   

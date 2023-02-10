@@ -48,7 +48,7 @@ NA_API NABool naIsWindowResizeable(const NAWindow* window);
 
 // Set various properties of the window
 NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
-NA_API void naSetWindowRect(NAWindow* window, NARect rect);
+//NA_API void naSetWindowRect(NAWindow* window, NARect rect);
 NA_API void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
 NA_API void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts);
 

@@ -51,17 +51,15 @@ NA_DEF void na_DestructCocoaImageSpace(NACocoaImageSpace* cocoaImageSpace){
 }
 
 
-
-NA_HDEF NARect na_GetImageSpaceAbsoluteInnerRect(const NA_UIElement* imageSpace){
+NA_HDEF NARect na_GetImageSpaceRect(const NA_UIElement* imageSpace){
   naDefineCocoaObjectConst(NACocoaNativeImageSpace, nativePtr, imageSpace);
-  NARect parentRect = naGetUIElementRectAbsolute(naGetUIElementParentConst(imageSpace));
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
+  return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-
+NA_HDEF void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect){
+  naDefineCocoaObjectConst(NACocoaNativeImageSpace, nativePtr, imageSpace);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
 
 // This is free and unencumbered software released into the public domain.
 
