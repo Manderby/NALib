@@ -326,19 +326,10 @@ ExperimentController* createExperimentController(){
   naAddSpaceChild(con->contentSpace, con->imagePushButtonStateBorderless, naMakePos(left + 3 * buttonSize, curPosY));
 
   curPosY -= 30;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
   con->popupButtonLabel = naNewLabel("NAPopupButton", descSize);
   naAddSpaceChild(con->contentSpace, con->popupButtonLabel, naMakePos(20, curPosY));
   con->popupButton = naNewPopupButton(150);
   naAddSpaceChild(con->contentSpace, con->popupButton, naMakePos(left, curPosY));
-=======
-  con->popupButtonLabel = naNewLabel("NAPopupButton", descSize);
-  naAddSpaceChild(con->contentSpace, con->popupButtonLabel, naMakePos(20, curPosY));
-  con->popupButton = naNewPopupButton(150);
-  naAddSpaceChild(con->contentSpace, con->popupButton, naMakePos(250, curPosY));
->>>>>>> 20a3391aea9e347584af71ff303429a0c9b53d79
   for(size_t i = 0; i < 5; ++i){
     NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Popup menu item %d", i));
     naAddPopupButtonMenuItem(con->popupButton, item, NA_NULL);
@@ -347,10 +338,6 @@ ExperimentController* createExperimentController(){
   naSetPopupButtonIndexSelected(con->popupButton, 3);
 
   curPosY -= 30;
-<<<<<<< HEAD
->>>>>>> 181d979... Adding latest functionality to NALib
-=======
->>>>>>> 20a3391aea9e347584af71ff303429a0c9b53d79
   con->checkBoxLabel = naNewLabel("NACheckBox", descSize);
   naAddSpaceChild(con->contentSpace, con->checkBoxLabel, naMakePos(20, curPosY));
   con->checkBox = naNewCheckBox("I am a CheckBox", 150);
