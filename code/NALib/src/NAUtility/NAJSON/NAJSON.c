@@ -610,56 +610,54 @@ NA_HIDEF NAByte na_NextJSONByte(NAJSONParser* parser){
 
 NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser){
   NAByte curByte = na_CurJSONByte(parser);
-  double sign = 1.;
-  parser->number = 0.;
+  
+  int32 decimalShift = 0;
+  int64 decimalSign = 1.;
+  int32 exponentSign = 1;
+  int64 decimals = 0;
+  int32 exponent = 0;
   
   if(curByte == '+'){
     curByte = na_NextJSONByte(parser);
   }else if(curByte == '-'){
-    sign = -1.;
+    decimalSign = -1;
     curByte = na_NextJSONByte(parser);
   }
   
   while(curByte > '\0' && isdigit(curByte)){
-    parser->number = parser->number * 10. + curByte - '0';
+    decimals = decimals * 10 + curByte - '0';
     curByte = na_NextJSONByte(parser);
   }
   
   if(curByte == '.'){
     curByte = na_NextJSONByte(parser);
-    size_t digitCount = 0;
-    double decimals = 0;
 
     while(curByte > '\0' && isdigit(curByte)){
-      decimals = decimals * 10. + curByte - '0';
-      ++digitCount;
+      decimals = decimals * 10 + curByte - '0';
+      decimalShift++;
       curByte = na_NextJSONByte(parser);
     }
-    parser->number = parser->number + decimals / naPow(10., digitCount);
-    
   }
 
   if(curByte == 'e' || curByte == 'E'){
     curByte = na_NextJSONByte(parser);
-    double expSign = 1.;
-    double exponent = 0.;
     
     if(curByte == '+'){
       curByte = na_NextJSONByte(parser);
     }else if(curByte == '-'){
-      expSign = -1.;
+      exponentSign = -1;
       curByte = na_NextJSONByte(parser);
     }
 
     while(curByte > '\0' && isdigit(curByte)){
-      exponent = exponent * 10. + curByte - '0';
+      exponent  = exponent * 10 + curByte - '0';
       curByte = na_NextJSONByte(parser);
     }
-
-    parser->number *= naPow(10., exponent * expSign);
   }
 
-  parser->number *= sign;
+  decimals = decimals * decimalSign;
+  exponent = exponentSign * (exponent - decimalShift);
+  parser->number = (double)(decimals) * naExp10((double)(exponent));
   
   parser->parseStatus = NA_JSON_PARSE_NUMBER;
   return parser->parseStatus;

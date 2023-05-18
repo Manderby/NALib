@@ -288,8 +288,6 @@ NA_IDEF float naMakeFloatSubnormal(int32 signedSignificand) {
   // Note that the additional void* cast is necessary for static code analizers.
 }
 
-
-
 NA_IDEF double naMakeDouble(NAi64 signedSignificand, int32 signedExponent) {
   #if NA_DEBUG
   if (signedExponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
