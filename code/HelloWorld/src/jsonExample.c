@@ -117,7 +117,7 @@ int jsonExample(void){
   NADateTime now3 = naMakeDateTimeNow();
   for(int i = 0; i < TESTCOUNT; ++i){
     // Parse the buffer into the test variable.
-    naParseJSONBuffer(simpleParser, &test, buf, bufferSize);
+    naParseJSONBuffer(simpleParser, &test, buf, bufferSize + 1);
   }
   NADateTime now4 = naMakeDateTimeNow();
 
