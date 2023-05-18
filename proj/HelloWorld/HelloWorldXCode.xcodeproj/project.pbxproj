@@ -257,7 +257,10 @@
 		905CCC432A1662DC00D11708 /* NAVectorAlgebra.h in Headers */ = {isa = PBXBuildFile; fileRef = 905CCB4B2A1662DC00D11708 /* NAVectorAlgebra.h */; };
 		905CCC442A1662DC00D11708 /* NAMathOperators.h in Headers */ = {isa = PBXBuildFile; fileRef = 905CCB4C2A1662DC00D11708 /* NAMathOperators.h */; };
 		905CCC452A1662DC00D11708 /* NACoord.h in Headers */ = {isa = PBXBuildFile; fileRef = 905CCB4D2A1662DC00D11708 /* NACoord.h */; };
-		905CCC472A16634A00D11708 /* jsonTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 905CCC462A16634A00D11708 /* jsonTest.c */; };
+		905CCC492A1665B300D11708 /* jsonExample.c in Sources */ = {isa = PBXBuildFile; fileRef = 905CCC482A1665B300D11708 /* jsonExample.c */; };
+		905CCC4B2A1665C900D11708 /* generalExample.c in Sources */ = {isa = PBXBuildFile; fileRef = 905CCC4A2A1665C900D11708 /* generalExample.c */; };
+		905CCC4D2A1666E600D11708 /* listExample.c in Sources */ = {isa = PBXBuildFile; fileRef = 905CCC4C2A1666E600D11708 /* listExample.c */; };
+		905CCC4F2A16675E00D11708 /* stackExample.c in Sources */ = {isa = PBXBuildFile; fileRef = 905CCC4E2A16675E00D11708 /* stackExample.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -525,7 +528,10 @@
 		905CCB4B2A1662DC00D11708 /* NAVectorAlgebra.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAVectorAlgebra.h; sourceTree = "<group>"; };
 		905CCB4C2A1662DC00D11708 /* NAMathOperators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMathOperators.h; sourceTree = "<group>"; };
 		905CCB4D2A1662DC00D11708 /* NACoord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NACoord.h; sourceTree = "<group>"; };
-		905CCC462A16634A00D11708 /* jsonTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jsonTest.c; path = ../jsonTest.c; sourceTree = "<group>"; };
+		905CCC482A1665B300D11708 /* jsonExample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsonExample.c; sourceTree = "<group>"; };
+		905CCC4A2A1665C900D11708 /* generalExample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = generalExample.c; sourceTree = "<group>"; };
+		905CCC4C2A1666E600D11708 /* listExample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = listExample.c; sourceTree = "<group>"; };
+		905CCC4E2A16675E00D11708 /* stackExample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stackExample.c; sourceTree = "<group>"; };
 		9061402B247163A100498AF3 /* HelloWorld */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = HelloWorld; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -561,8 +567,11 @@
 		905CC8292A16623600D11708 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				905CCC4A2A1665C900D11708 /* generalExample.c */,
+				905CCC482A1665B300D11708 /* jsonExample.c */,
+				905CCC4C2A1666E600D11708 /* listExample.c */,
+				905CCC4E2A16675E00D11708 /* stackExample.c */,
 				905CC82A2A16623600D11708 /* main.c */,
-				905CCC462A16634A00D11708 /* jsonTest.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -580,19 +589,19 @@
 		905CCA3B2A1662DC00D11708 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				905CCA3C2A1662DC00D11708 /* NABase.h */,
-				905CCA3D2A1662DC00D11708 /* NAUtility.h */,
-				905CCA3E2A1662DC00D11708 /* NAStruct */,
-				905CCA772A1662DC00D11708 /* NAMath.h */,
-				905CCA782A1662DC00D11708 /* NABase */,
 				905CCA922A1662DC00D11708 /* NAApp */,
-				905CCAF52A1662DC00D11708 /* NAUtility */,
-				905CCB212A1662DC00D11708 /* NALib.h */,
-				905CCB222A1662DC00D11708 /* NAVisual */,
 				905CCB2E2A1662DC00D11708 /* NAApp.h */,
-				905CCB2F2A1662DC00D11708 /* NAVisual.h */,
-				905CCB302A1662DC00D11708 /* NAStruct.h */,
+				905CCA782A1662DC00D11708 /* NABase */,
+				905CCA3C2A1662DC00D11708 /* NABase.h */,
+				905CCB212A1662DC00D11708 /* NALib.h */,
 				905CCB312A1662DC00D11708 /* NAMath */,
+				905CCA772A1662DC00D11708 /* NAMath.h */,
+				905CCA3E2A1662DC00D11708 /* NAStruct */,
+				905CCB302A1662DC00D11708 /* NAStruct.h */,
+				905CCAF52A1662DC00D11708 /* NAUtility */,
+				905CCA3D2A1662DC00D11708 /* NAUtility.h */,
+				905CCB222A1662DC00D11708 /* NAVisual */,
+				905CCB2F2A1662DC00D11708 /* NAVisual.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -1409,7 +1418,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				905CCC472A16634A00D11708 /* jsonTest.c in Sources */,
+				905CCC492A1665B300D11708 /* jsonExample.c in Sources */,
+				905CCC4F2A16675E00D11708 /* stackExample.c in Sources */,
+				905CCC4B2A1665C900D11708 /* generalExample.c in Sources */,
+				905CCC4D2A1666E600D11708 /* listExample.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

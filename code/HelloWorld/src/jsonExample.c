@@ -1,4 +1,4 @@
-#include "NAJSON.h"
+#include "../../NALib/src/NALib.h"
 
 typedef struct TinyObject TinyObject;
 struct TinyObject {
@@ -33,6 +33,8 @@ struct Test {
   ArrayValues arrayValues;
   
 };
+
+
 
 NAJSONParser* allocateSimpleParser(void){
   NAJSONParser* parser = naAllocateJSONParser();
@@ -85,17 +87,15 @@ NAJSONParser* allocateSimpleParser(void){
   return parser;
 }
 
-int jsonTest(void){
+
+
+int jsonExample(void){
 
   naStartRuntime();
   
-  NAString* wd = naNewStringWithCurWorkingDirectory();
-  printf("Working Directory: %s", naGetStringUTF8Pointer(wd));
-  naDelete(wd);
-  
   NAFile* file = naCreateFileReadingPath("res/JSONinput.txt");
   NAFileSize fileSize = naComputeFileByteSize(file);
-  NAByte* buf = naMalloc(fileSize + 2);
+  NAByte* buf = naMalloc(fileSize + 1);
   naReadFileBytes(file, buf, fileSize);
   buf[fileSize] = '\0';
 
@@ -111,7 +111,7 @@ int jsonTest(void){
 
   NADateTime now2 = naMakeDateTimeNow();
   printf("Time: %f milliseconds per buffer\n", 1000. * naGetDateTimeDifference(&now2, &now1) / (double)TESTCOUNT);
-  printf("Variable \'test\' now contains all desired values.\n");
+  printf("Variable \'test\' now contains all desired values.\n\n");
 
   naDeallocateJSONParser(simpleParser);
 

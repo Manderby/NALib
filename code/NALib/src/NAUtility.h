@@ -10,6 +10,7 @@
 #include "NAUtility/NABinaryData.h"
 #include "NAUtility/NADateTime.h"
 #include "NAUtility/NAFile.h"
+#include "NAUtility/NAJSON.h"
 #include "NAUtility/NAKey.h"
 #include "NAUtility/NAMemory.h"
 #include "NAUtility/NAString.h"
