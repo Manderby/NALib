@@ -1,0 +1,42 @@
+{
+  "SimpleObject" : {
+    "value1" : 1234,
+    "value2" : 12.34,
+    "value3" : 12e45,
+    "value4" : true,
+    "value5" : null,
+    "value6" : "Yeah"
+    "value7" : {
+      "message" : "Super"
+    }
+    "value8" : {
+      "message" : "Duper"
+    }
+    "valueX" : "I am left out"
+  }
+  "ArraysObject" : {
+    "values1" : [10,11,12,13,14],
+    "values2" : [20,21,22,23,24],
+    "values3" : [
+	"Text11",
+	"Text12",
+	"Text13",
+	"Text14",
+	"Text15",
+    ],
+    "values4" : [
+	"Text21",
+	"Text22",
+	"Text23",
+	"Text24",
+	"Text25",
+    ],
+    "values5" : [
+	{ "message" : "Text31" },
+	{ "message" : "Text32" },
+	{ "message" : "Text33" },
+	{ "message" : "Text34" },
+	{ "message" : "Text35" },
+    ],
+  }
+}

@@ -2,6 +2,8 @@
 // This is just a small file to get you started using NALib.
 // It should compile and run and print some version notes on the screen.
 
+// Prototypes
+int jsonTest(void);
 
 
 // Note that you could add an include path in your project to access the
@@ -85,12 +87,13 @@ int main(void){
   
 
 
+  jsonTest();
+
+
   printf("Finished." NA_NL);
   #if NA_OS == NA_OS_WINDOWS
     NA_UNUSED(getchar());
   #endif
-
-  
   
   return 0;
 }
