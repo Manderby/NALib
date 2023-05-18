@@ -133,9 +133,12 @@ typedef struct NAVolumei  NAVolumei;
 typedef struct NABox      NABox;
 typedef struct NABoxi     NABoxi;
 
-// 2-D Coordinates: Bounds (Top-Right-Bottom-Left)
+// 2-D Coordinates: Bounds (Top-Right-Bottom-Left) deprecated. Use NABezel.
 typedef struct NABounds4  NABounds4;
 typedef struct NABounds4i NABounds4i;
+// 2-D Coordinates: Bezel (Right-Top-Left-Bottom)
+typedef struct NABezel4   NABezel4;
+typedef struct NABezel4i  NABezel4i;
 
 // The types are presented as non-opaque as the programmer wants to access the
 // parts of the structs.
