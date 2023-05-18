@@ -8,6 +8,17 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+- Windows GUI is now relsolution independent. Images are still missing though.
+- Deprecating NABounds4, replacing with NABezel4
+- Adding 3D orthographic projection matrix computation
+- Adding setEnabled and setVisible to some UIElements
+- Adding pixel font
+- Adding NAFont
+- Adding leap second information according to bulletin C 64
+- Adding binary pair sum method.
+- Rearranging GUI implementation files
+- Tons of smaller corrections, improvements, etc.
+
 Version 26 (released 8. January 2022)
 ==========
 

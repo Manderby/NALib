@@ -26,8 +26,9 @@ NA_API void naSetTextBoxFont(
   NATextBox* textBox,
   NAFont* font);
 
-// Sets if the textBox allows horizontal scrolling
+// Sets if the textBox allows horizontal or vertical scrolling
 NA_API void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox);
+NA_API void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use);
 
 
 

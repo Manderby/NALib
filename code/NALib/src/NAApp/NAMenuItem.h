@@ -13,6 +13,13 @@ NA_API NAMenuItem* naNewMenuItem(const NAUTF8Char* text);
 // Creates a new menuItem which is a separator.
 NA_API NAMenuItem* naNewMenuSeparator(void);
 
+// Returns the text stored in the menu item. Return Null for a separator.
+NA_API const NAUTF8Char* naGetMenuItemText(NAMenuItem* menuItem);
+
+// Sets the text of a given menu item. Also works for submenus.
+// The nativePtr must be of type NSMenuItem.
+NA_API void naSetMenuItemText(NAMenuItem* menuItem, const NAUTF8Char* text);
+
 
 
 #endif // NA_MENUITEM_INCLUDED

@@ -28,6 +28,7 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
 
   application->mouseStatus.pos = naMakePos(0, 0);
   application->mouseStatus.prevPos = naMakePos(0, 0);
+  application->mouseStatus.leftPressed = NA_FALSE;
   
   application->curKeyStroke.keyCode = NA_KEYCODE_ESC;
   application->curKeyStroke.modifiers = 0;
@@ -40,6 +41,7 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
   application->companyName = NA_NULL;
   application->versionString = NA_NULL;
   application->buildString = NA_NULL;
+  application->resourcePath = NA_NULL;
   application->iconPath = NA_NULL;
 
   // This is done at the very end of the InitApplication function as the
@@ -71,15 +73,16 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
 
 
 
-NA_HDEF NARect na_GetApplicationAbsoluteRect(){
-  NARect rect;
-  rect.pos.x = 0;
-  rect.pos.y = 0;
-  rect.size.width = 1;
-  rect.size.height = 1;
+NA_HDEF NARect na_GetApplicationRect(const NAApplication* application){
+  NARect rect = {0., 0., 1., 1.};
   return rect;
 }
 
+NA_HDEF void na_SetApplicationRect(const NAApplication* application, NARect rect){
+  #if NA_DEBUG
+    naError("Application rect can not be set.");
+  #endif
+}
 
 
 NA_DEF void naStopApplication(void){

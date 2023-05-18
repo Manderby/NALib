@@ -128,11 +128,13 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
   
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
 
+  const NABool isStateful = naGetFlagu32(flags, NA_BUTTON_STATEFUL);
+
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
-    frame:naMakeNSRectWithSize(naMakeSize(width, 24))];
+    frame:naMakeNSRectWithSize(naMakeSize(width, isStateful ? 25 : 24))];
   na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL, flags);
   
   [nativePtr setButtonText:text];
@@ -287,16 +289,15 @@ NA_API void naSetButtonVisible(NAButton* button, NABool visible){
 }
 
 
-
-NA_HDEF NARect na_GetButtonAbsoluteInnerRect(const NA_UIElement* button){
+NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button){
   naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(button), naGetApplication(), NA_FALSE);
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
+  return naMakeRectWithNSRect([nativePtr frame]);
 }
 
+NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect){
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
 
 
 // This is free and unencumbered software released into the public domain.

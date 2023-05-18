@@ -81,9 +81,17 @@ NABool naTextFieldWINAPINotify(void* uiElement, WORD notificationCode){
 
 
 
+NABool naHandleTextFieldEnter(NAReaction reaction){
+  na_DispatchUIElementCommand(reaction.uiElement, NA_UI_COMMAND_EDIT_FINISHED);
+  return NA_TRUE;
+}
+
+
+
 NABool naHandleTextFieldTabOrder(NAReaction reaction){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)reaction.uiElement;
   if(winapiTextField->nextTabStop){
+    naHandleTextFieldEnter(reaction);
     SetFocus(naGetUIElementNativePtr(winapiTextField->nextTabStop));
     return NA_TRUE;
   }
@@ -95,6 +103,7 @@ NABool naHandleTextFieldTabOrder(NAReaction reaction){
 NABool naHandleTextFieldReverseTabOrder(NAReaction reaction){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)reaction.uiElement;
   if(winapiTextField->prevTabStop){
+    naHandleTextFieldEnter(reaction);
     SetFocus(naGetUIElementNativePtr(winapiTextField->prevTabStop));
     return NA_TRUE;
   }
@@ -108,15 +117,18 @@ NA_DEF NATextField* naNewTextField(double width){
 
   NAWINAPITextField* winapiTextField = naNew(NAWINAPITextField);
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  winapiTextField->rect = naMakeRectS(0., 0., width, 16.);
+
   HWND nativePtr = CreateWindow(
 	  TEXT("EDIT"),
     TEXT(""),
     WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL,
 	  0,
     0,
-    (int)width,
-    21,
-	  naGetApplicationOffscreenWindow(),
+    (int)(winapiTextField->rect.size.width * uiScale),
+    (int)(winapiTextField->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
     NULL, 
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
@@ -128,6 +140,11 @@ NA_DEF NATextField* naNewTextField(double width){
   winapiTextField->nextTabStop = winapiTextField;
   winapiTextField->prevTabStop = winapiTextField;
 
+  naAddUIKeyboardShortcut(
+    winapiTextField,
+    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
+    naHandleTextFieldEnter,
+    NA_NULL);
   naAddUIKeyboardShortcut(
     winapiTextField,
     naMakeKeyStroke(0, NA_KEYCODE_TAB),
@@ -218,21 +235,30 @@ NA_HDEF void** na_GetTextFieldPrevTabReference(NATextField* textField){
 
 
 
-NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(const NA_UIElement* textField){
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtrConst(textField), &clientRect);
-  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
-
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtrConst(textField), &testPoint);
-
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
+NA_HAPI NARect na_GetTextFieldRect(const NA_UIElement* textField)
+{
+  const NAWINAPITextField* winapiTextField = (const NAWINAPITextField*)textField;
+  return winapiTextField->rect;
 }
 
 
+
+NA_HDEF void na_SetTextFieldRect(NA_UIElement* textField, NARect rect){
+  NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
+
+  winapiTextField->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(textField));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(textField),
+    HWND_TOP,
+    (int)(winapiTextField->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiTextField->rect.pos.y - winapiTextField->rect.size.height) * uiScale),
+    (int)(winapiTextField->rect.size.width * uiScale),
+    (int)(winapiTextField->rect.size.height * uiScale),
+    0);
+}
 
 // This is free and unencumbered software released into the public domain.
 

@@ -159,7 +159,7 @@ NA_HDEF NAPNGChunk* na_AllocPNGChunkFromBuffer(NABufferIterator* iter){
   }
 
   chunk->type = NA_PNG_CHUNK_TYPE_UNKNOWN;
-  for(i = 0; i < NA_PNG_CHUNK_TYPE_COUNT; i++){
+  for(i = 0; i < NA_PNG_CHUNK_TYPE_COUNT; ++i){
     if(naEqual32(na_PngChunkTypeNames[i], chunk->typeName)){
       chunk->type = (NAChunkType)i;
       break;

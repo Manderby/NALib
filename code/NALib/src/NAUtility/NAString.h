@@ -154,11 +154,13 @@ NA_API NABuffer* naGetStringBufferMutable(NAString* string);
 NA_API NAUTF8Char naGetStringChar(NAString* string, size_t index);
 
 
-// The following two functions allow you to get either the basename or the
-// suffix of a path. For example, the file "folder/document.txt" returns
-// the basename "folder/document" and the suffix "txt".
-// The suffix is detected by the first dot '.' from the right. If no such
-// dot is found, suffix is empty.
+// The following functions allow you to get the parent, the basename or the
+// suffix of a path. For example, the file "bin/folder/document.txt" returns
+// the parent "bin/folder", the basename "bin/folder/document" and the suffix
+// "txt". The suffix is detected by the first dot '.' from the right. If no
+// such dot is found, suffix is empty. Both path delimiters / and \ are
+// detected.
+NA_API NAString* naNewStringWithParentOfPath(const NAString* filePath);
 NA_API NAString* naNewStringWithBasenameOfPath(const NAString* filePath);
 NA_API NAString* naNewStringWithSuffixOfPath  (const NAString* filePath);
 

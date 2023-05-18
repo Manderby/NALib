@@ -19,7 +19,7 @@ NA_HDEF void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace){
 
 
 
-char na_pixelFont5x9[(5*16/8)*9*6] = {
+NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
   0x01, 0x14, 0xa7, 0xe5, 0x84, 0x12, 0x00, 0x00, 0x00, 0x01, 
   0x01, 0x15, 0xfa, 0x6a, 0x44, 0x21, 0x00, 0x00, 0x00, 0x02, 
   0x01, 0x00, 0xaa, 0x0a, 0x40, 0x40, 0x94, 0x40, 0x00, 0x02, 
@@ -79,23 +79,17 @@ char na_pixelFont5x9[(5*16/8)*9*6] = {
 
 #if NA_COMPILE_OPENGL == 1
 
-  GLuint fontTex = 0;
-
-  NA_DEF void naStartupPixelFont(){
-    #ifndef NDEBUG
-      if(fontTex)
-        naError("Pixel Font already startstarted.");
-    #endif
-    
+  NA_DEF NAInt naStartupPixelFont(){
+    GLuint fontTex = 0;
     NAByte texBuf[5*16 * 9*6 * 4];
 
-    char* byte = na_pixelFont5x9;
+    NAByte* byte = na_pixelFont5x9;
     NAByte* texPtr = texBuf;
     
     int byteNum = 7;
     for(int y = 0; y < 9*6; ++y){
       for(int x = 0; x < 5*16; ++x){
-        int value = (*byte >> byteNum) & 0x01;
+        NAByte value = (*byte >> byteNum) & 0x01;
         *texPtr++ = 0xff * value;
         *texPtr++ = 0xff * value;
         *texPtr++ = 0xff * value;
@@ -115,28 +109,20 @@ char na_pixelFont5x9[(5*16/8)*9*6] = {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    glBindTexture(GL_TEXTURE_2D, 0); 
+    glBindTexture(GL_TEXTURE_2D, 0);
+    return (NAInt)fontTex;
   }
 
 
 
-  NA_DEF void naShutdownPixelFont(){
-    #ifndef NDEBUG
-      if(!fontTex)
-        naError("No Pixel Font started.");
-    #endif
-
+  NA_DEF void naShutdownPixelFont(NAInt fontId){
+    GLuint fontTex = (GLuint)fontId;
     glDeleteTextures(1, &fontTex);
-    fontTex = 0;
   }
 
 
-  NA_DEF void naDrawASCIICharacters(const char* str, double x, double y, double z){
-    #ifndef NDEBUG
-      if(!fontTex)
-        naError("No Pixel Font started. Use naStartupPixelFont");
-    #endif
-     
+  NA_DEF void naDrawASCIICharacters(NAInt fontId, const char* str, double x, double y, double z){
+    GLuint fontTex = (GLuint)fontId;
     NAMat44d modelViewMatrix;
     NAMat44d invModelViewMatrix;
     NAMat44d projectionMatrix;
@@ -154,72 +140,83 @@ char na_pixelFont5x9[(5*16/8)*9*6] = {
     NAVec2d normPos;
     naMulM44dV4d(modelPos, modelViewMatrix, pos);
     naMulM44dV4d(projPos, projectionMatrix, modelPos);
-    naDivV2d(normPos, projPos, projPos[3]);
-    int viewX = (int)((normPos[0] + 1.) * .5 * viewPort[2]);
-    int viewY = (int)((normPos[1] + 1.) * .5 * viewPort[3]);
+    
+    if(!naAlmostZero(projPos[3]))
+    {
+      naDivV2d(normPos, projPos, projPos[3]);
+      int viewX = (int)((normPos[0] + 1.) * .5 * viewPort[2]);
+      int viewY = (int)((normPos[1] + 1.) * .5 * viewPort[3]);
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0, viewPort[2], 0, viewPort[3], -1., 1.);
+      glMatrixMode(GL_MODELVIEW);
+      glPushMatrix();
+      glLoadIdentity();
+      glMatrixMode(GL_PROJECTION);
+      glPushMatrix();
+      glLoadIdentity();
+      glOrtho(0, viewPort[2], 0, viewPort[3], -1., 1.);
 
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, fontTex);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+      glEnable(GL_TEXTURE_2D);
+      glBindTexture(GL_TEXTURE_2D, fontTex);
+      glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-    int offsetX = 0;
-    for(size_t i = 0; i < strlen(str); ++i){
-      char c = str[i];
-      
-      if(c == '\n'){
-        viewY -= 10;
-        offsetX = 0;
+      int offsetX = 0;
+      for(size_t i = 0; i < strlen(str); ++i){
+        char c = str[i];
+        
+        if(c == '\n'){
+          viewY -= 10;
+          offsetX = 0;
+        }
+        if(c < 32 || c > 127)
+          continue;
+
+        float texX = (float)(c % 16);
+        float texY = (float)(c / 16 - 2);
+        float scaleX = 1.f / (5.f * 16.f);
+        float scaleY = 1.f / (6.f * 9.f);
+        
+        glBegin(GL_TRIANGLE_STRIP);
+          glTexCoord2f((texX * 5.f) * scaleX, ((texY + 1.f) * 9.f) * scaleY);
+          glVertex3i(viewX + offsetX, viewY, 0);
+          glTexCoord2f((texX * 5.f) * scaleX, (texY * 9.f) * scaleY);
+          glVertex3i(viewX + offsetX, viewY + 9, 0);
+          glTexCoord2f(((texX + 1.f) * 5.f) * scaleX, ((texY + 1.f) * 9.f) * scaleY);
+          glVertex3i(viewX + offsetX + 5, viewY, 0);
+          glTexCoord2f(((texX + 1.f) * 5.f) * scaleX, (texY * 9.f) * scaleY);
+          glVertex3i(viewX + offsetX + 5, viewY + 9, 0);
+        glEnd();
+        
+        offsetX += 6;
       }
-      if(c < 32 || c > 127)
-        continue;
 
-      float texX = (float)(c % 16);
-      float texY = (float)(c / 16 - 2);
-      float scaleX = 1.f / (5.f * 16.f);
-      float scaleY = 1.f / (6.f * 9.f);
-      
-      glBegin(GL_TRIANGLE_STRIP);
-        glTexCoord2f((texX * 5.f) * scaleX, ((texY + 1.f) * 9.f) * scaleY);
-        glVertex3i(viewX + offsetX, viewY, 0);
-        glTexCoord2f((texX * 5.f) * scaleX, (texY * 9.f) * scaleY);
-        glVertex3i(viewX + offsetX, viewY + 9, 0);
-        glTexCoord2f(((texX + 1.f) * 5.f) * scaleX, ((texY + 1.f) * 9.f) * scaleY);
-        glVertex3i(viewX + offsetX + 5, viewY, 0);
-        glTexCoord2f(((texX + 1.f) * 5.f) * scaleX, (texY * 9.f) * scaleY);
-        glVertex3i(viewX + offsetX + 5, viewY + 9, 0);
-      glEnd();
-      
-      offsetX += 6;
+      glPopMatrix();
+      glMatrixMode(GL_MODELVIEW);
+      glPopMatrix();
+
+      glBindTexture(GL_TEXTURE_2D, 0); 
     }
-
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-
-    glBindTexture(GL_TEXTURE_2D, 0); 
   }
 
 #else
 
-  NA_API void naStartupPixelFont(void){
+  NA_DEF NAInt naStartupPixelFont(void){
+    #if NA_DEBUG
+      naError("Function has no effect when NA_COMPILE_OPENGL is undefined.");
+    #endif
+    return 0;
+  }
+  NA_DEF void naShutdownPixelFont(NAInt fontId){
+    NA_UNUSED(fontId);
     #if NA_DEBUG
       naError("Function has no effect when NA_COMPILE_OPENGL is undefined.");
     #endif
   }
-  NA_API void naShutdownPixelFont(void){
-    #if NA_DEBUG
-      naError("Function has no effect when NA_COMPILE_OPENGL is undefined.");
-    #endif
-  }
-  NA_API void naDrawASCIICharacter(char c, double x, double y, double z){
+  NA_DEF void naDrawASCIICharacter(NAInt fontId, char c, double x, double y, double z){
+    NA_UNUSED(fontId);
+    NA_UNUSED(c);
+    NA_UNUSED(x);
+    NA_UNUSED(y);
+    NA_UNUSED(z);
     #if NA_DEBUG
       naError("Function has no effect when NA_COMPILE_OPENGL is undefined.");
     #endif

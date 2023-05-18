@@ -22,11 +22,9 @@ NA_IDEF void* naMalloc(size_t byteSize){
   #if NA_DEBUG
     if(byteSize == NA_ZERO)
       naCrash("size is zero.");
-    if(byteSize < NA_ZERO)
-      naCrash("size is negative.");
   #endif
 
-  ptr = malloc((size_t)byteSize);
+  ptr = malloc(byteSize);
 
   #if NA_DEBUG
   if(!ptr)

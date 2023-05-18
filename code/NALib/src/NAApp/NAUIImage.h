@@ -76,6 +76,9 @@ NA_API NAUIImage* naCreateUIImage(
 // Returns the size of the 1x representation.
 NA_IAPI NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
 
+// Returns the Skin for the current Appearance.
+NAUIImageSkin naGetSkinForCurrentAppearance(void);
+
 // Returns the default foreground color for the given skin.
 NA_API void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 NA_API void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin);

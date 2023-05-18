@@ -79,16 +79,19 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
+  winapiLabel->rect = naMakeRectS(0., 0., width, 16.);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
   // We need a read only edit control here, otherwise on windows, the user is not able to select text.
 	HWND nativePtr = CreateWindow(
 		TEXT("EDIT"),
     systemText,
     WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE,
-		0,
     0,
-    (int)width,
-    16,
-		naGetApplicationOffscreenWindow(),
+    0,
+    (int)(winapiLabel->rect.size.width * uiScale),
+    (int)(winapiLabel->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
@@ -181,15 +184,18 @@ NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable){
 
 
 NA_DEF void naSetLabelHeight(NALabel* label, double height){
-  RECT rect;
-  GetWindowRect(label->uiElement.nativePtr, &rect);
+  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
+  winapiLabel->rect.size.height = height;
+
   SetWindowPos(
     label->uiElement.nativePtr,
     HWND_TOP,
-    rect.left,
-    rect.bottom + (int)height,
-    rect.right - rect.left,
-    (int)height,
+    (int)(winapiLabel->rect.pos.x * uiScale),
+    (int)(naGetRectEndY(winapiLabel->rect) * uiScale),
+    (int)(winapiLabel->rect.size.width * uiScale),
+    (int)(winapiLabel->rect.size.height * uiScale),
     0);
 }
 
@@ -217,20 +223,28 @@ NA_DEF void naSetLabelFont(NALabel* label, NAFont* font){
 
 
 
-NA_HDEF NARect na_GetLabelAbsoluteInnerRect(const NA_UIElement* label){
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtrConst(label), &clientRect);
-  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
-
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtrConst(label), &testPoint);
-
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
+NA_HDEF NARect na_GetLabelRect(const NA_UIElement* label)
+{
+  const NAWINAPILabel* winapiLabel = (const NAWINAPILabel*)label;
+  return winapiLabel->rect;
 }
 
+NA_HDEF void na_SetLabelRect(NA_UIElement* label, NARect rect){
+  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
+
+  winapiLabel->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(label));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(label),
+    HWND_TOP,
+    (int)(winapiLabel->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiLabel->rect.pos.y - winapiLabel->rect.size.height) * uiScale),
+    (int)(winapiLabel->rect.size.width * uiScale),
+    (int)(winapiLabel->rect.size.height * uiScale),
+    0);
+}
 
 
 // This is free and unencumbered software released into the public domain.

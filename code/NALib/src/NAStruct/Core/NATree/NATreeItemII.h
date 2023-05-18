@@ -62,7 +62,7 @@ NA_HIDEF void na_InitTreeNode(const NATreeConfiguration* config, NATreeNode* nod
     config->keyAssigner(na_GetTreeNodeKey(config, node), key);
   }
 
-  for(i = 0; i < config->childpernode; i++){
+  for(i = 0; i < config->childpernode; ++i){
     na_SetTreeNodeChildEmpty(node, i);
   }
 
@@ -97,7 +97,7 @@ NA_HIDEF void na_DestructTreeNode(const NATreeConfiguration* config, NATreeNode*
   
   if(recursive){
     NAInt i;
-    for(i = 0; i < config->childpernode; i++){
+    for(i = 0; i < config->childpernode; ++i){
       NATreeItem* child = na_GetTreeNodeChild(config, node, i);
       if(child){
         if(na_IsNodeChildLeaf(node, i)){

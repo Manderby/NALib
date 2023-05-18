@@ -62,7 +62,7 @@ NA_DEF NASlider* naNewSlider(double width){
   
   NACocoaNativeSlider* nativePtr = [[NACocoaNativeSlider alloc]
     initWithSlider:cocoaSlider
-    frame:naMakeNSRectWithSize(naMakeSize(width, 24))];
+    frame:naMakeNSRectWithSize(naMakeSize(width, 26))];
   na_InitSlider((NASlider*)cocoaSlider, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return (NASlider*)cocoaSlider;
@@ -116,17 +116,15 @@ NA_DEF void naSetSliderValue(NASlider* slider, double value){
 }
 
 
-
-NA_HDEF NARect na_GetSliderAbsoluteInnerRect(const NA_UIElement* slider){
+NA_HDEF NARect na_GetSliderRect(const NA_UIElement* slider){
   naDefineCocoaObjectConst(NACocoaNativeSlider, nativePtr, slider);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(slider), naGetApplication(), NA_FALSE);
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
+  return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-
+NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect){
+  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
 
 // This is free and unencumbered software released into the public domain.
 

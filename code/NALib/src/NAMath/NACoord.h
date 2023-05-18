@@ -133,9 +133,12 @@ typedef struct NAVolumei  NAVolumei;
 typedef struct NABox      NABox;
 typedef struct NABoxi     NABoxi;
 
-// 2-D Coordinates: Bounds (Top-Right-Bottom-Left)
+// 2-D Coordinates: Bounds (Top-Right-Bottom-Left) deprecated. Use NABezel.
 typedef struct NABounds4  NABounds4;
 typedef struct NABounds4i NABounds4i;
+// 2-D Coordinates: Bezel (Right-Top-Left-Bottom)
+typedef struct NABezel4   NABezel4;
+typedef struct NABezel4i  NABezel4i;
 
 // The types are presented as non-opaque as the programmer wants to access the
 // parts of the structs.
@@ -162,6 +165,9 @@ struct NABoxi{      NAVertexi vertex; NAVolumei volume;};
 
 struct NABounds4{   double top;   double  right; double bottom; double left;};
 struct NABounds4i{  NAInt  top;   NAInt   right; NAInt  bottom; NAInt  left;};
+
+struct NABezel4{    double right; double top; double left; double bottom;};
+struct NABezel4i{   NAInt  right; NAInt  top; NAInt  left; NAInt  bottom;};
 
 
 
@@ -198,8 +204,12 @@ NA_IAPI NASizei  naMakeSizeiWithSize(NASize  size);
 // The Integer variant assumes pos to only contain integers, hence using a
 // more advanced and quicker conversion. But pos must be integral to work.
 NA_IAPI NASizei  naMakeSizeiWithIntegerSize(NASize  size);
+
+// Empty only sets the width to zero while Zero sets all components to zero.
 NA_IAPI NASize   naMakeSizeEmpty(void);
 NA_IAPI NASizei  naMakeSizeiEmpty(void);
+NA_IAPI NASize   naMakeSizeZero(void);
+NA_IAPI NASizei  naMakeSizeiZero(void);
 
 NA_IAPI NARect   naMakeRect   (NAPos  pos, NASize  size);
 NA_IAPI NARecti  naMakeRecti  (NAPosi pos, NASizei size);
@@ -211,13 +221,24 @@ NA_IAPI NARect   naMakeRectSE (double x, double y, double width, double height);
 NA_IAPI NARecti  naMakeRectiSE(NAInt  x, NAInt  y, NAInt  width, NAInt  height);
 NA_IAPI NARect   naMakeRectWithRecti(NARecti rect);
 NA_IAPI NARecti  naMakeRectiWithRect(NARect  rect);
+
+// Empty only sets the width to zero while Zero sets all components to zero.
 NA_IAPI NARect   naMakeRectEmpty(void);
 NA_IAPI NARecti  naMakeRectiEmpty(void);
+NA_IAPI NARect   naMakeRectZero(void);
+NA_IAPI NARecti  naMakeRectiZero(void);
 
 NA_IAPI NABounds4  naMakeBounds4 (double top, double right, double bottom, double left);
 NA_IAPI NABounds4i naMakeBounds4i(NAInt  top, NAInt  right, NAInt  bottom, NAInt  left);
 NA_IAPI NABounds4  naMakeBounds4WithBounds4i(NABounds4i bounds);
 NA_IAPI NABounds4i naMakeBounds4iWithBounds4(NABounds4  bounds);
+
+NA_IAPI NABezel4   naMakeBezel4 (double right, double top, double left, double bottom);
+NA_IAPI NABezel4i  naMakeBezel4i(NAInt  right, NAInt  top, NAInt  left, NAInt  bottom);
+NA_IAPI NABezel4   naMakeBezel4WithBezel4i(NABezel4i bezel);
+NA_IAPI NABezel4i  naMakeBezel4iWithBezel4(NABezel4  bezel);
+NA_IAPI NABezel4   naMakeBezel4Zero(void);
+NA_IAPI NABezel4i  naMakeBezel4iZero(void);
 
 NA_IAPI NAVertex    naMakeVertex      (double x, double y, double z);
 NA_IAPI NAVertexi   naMakeVertexi (NAInt  x, NAInt  y, NAInt  z);

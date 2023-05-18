@@ -215,7 +215,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 @end
 
 @interface NACocoaNativeSpace : NSView{
-  NACocoaSpace*   cocaSpace;
+  NACocoaSpace*   cocoaSpace;
   NSTrackingArea* trackingArea;
   NABool isMoving;
   NAPos originMousePos;

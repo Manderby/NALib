@@ -24,14 +24,15 @@
   NA_COCOA_SUPER_DEALLOC();
 }
 
-- (int) getMenuItemIndex:(NSMenuItem*)item{
-  if(!item){return -1;}
-  NSUInteger index = [[self itemArray] indexOfObject:item];
-  return index == NSNotFound ? -1 : (int)index;
-}
+//- (int) getMenuItemIndex:(NSMenuItem*)item{
+//  if(!item){return -1;}
+//  NSUInteger index = [[self itemArray] indexOfObject:item];
+//  return index == NSNotFound ? -1 : (int)index;
+//}
 
-- (void) addMenuItem:(NSMenuItem*)item atItem:(NSMenuItem*)atItem{  
-  int index = [self getMenuItemIndex:atItem];
+- (void) addMenuItem:(NSMenuItem*)item atItem:(const NAMenuItem*)atItem{  
+  size_t index = naGetPopupButtonItemIndex(&(cocoaPopupButton->popupButton), atItem);
+  //int index = [self getMenuItemIndex:atItem];
   if(index == -1){
     [[self menu] addItem:item];
   }else{
@@ -60,7 +61,7 @@ NA_DEF NAPopupButton* naNewPopupButton(double width){
 
   NACocoaNativePopupButton* nativePtr = [[NACocoaNativePopupButton alloc]
     initWithPopupButton:cocoaPopupButton
-    frame:naMakeNSRectWithSize(naMakeSize(width, 23))];
+    frame:naMakeNSRectWithSize(naMakeSize(width, 25))];
   na_InitPopupButton((NAPopupButton*)cocoaPopupButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
   return (NAPopupButton*)cocoaPopupButton;
@@ -82,14 +83,14 @@ NA_DEF void naSetPopupButtonVisible(NAPopupButton* popupButton, NABool visible){
 
 
 NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, const NAMenuItem* atItem){
-  naDefineCocoaObject(NACocoaNativePopupButton, nativePopupPtr, popupButton);
+  naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
   naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemPtr, item);
 
   if(atItem){
-    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
-    [nativePopupPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
+//    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
+    [nativePtr addMenuItem:nativeItemPtr atItem:atItem];
   }else{
-    [nativePopupPtr addMenuItem:nativeItemPtr atItem:nil];
+    [nativePtr addMenuItem:nativeItemPtr atItem:nil];
   }
   
   na_AddPopupButtonChild(popupButton, item, atItem);
@@ -97,36 +98,36 @@ NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* ite
 
 
 
-NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, NAMenuItem* item){
-  return naGetListElemIndex(&(popupButton->childs), item);
+NA_DEF void naSetPopupButtonIndexSelected(NAPopupButton* popupButton, size_t index){
+  naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
+  [nativePtr selectItemAtIndex:(NSInteger)index];
 }
 
 
 
-NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, NAMenuItem* item){
-  naDefineCocoaObject(NACocoaNativePopupButton, nativePopupPtr, popupButton);
+NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, const NAMenuItem* item){
+  naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
   size_t index = naGetPopupButtonItemIndex(popupButton, item);
-  [nativePopupPtr selectItemAtIndex:(NSInteger)index];
+  [nativePtr selectItemAtIndex:(NSInteger)index];
 }
 
 
 
 NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
-  naDefineCocoaObject(NACocoaNativePopupButton, nativePopupPtr, popupButton);
-  [nativePopupPtr setEnabled:(BOOL)enabled];
+  naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
+  [nativePtr setEnabled:(BOOL)enabled];
 }
 
 
-
-NA_HDEF NARect na_GetPopupButtonAbsoluteInnerRect(const NA_UIElement* popupButton){
+NA_HDEF NARect na_GetPopupButtonRect(const NA_UIElement* popupButton){
   naDefineCocoaObjectConst(NACocoaNativePopupButton, nativePtr, popupButton);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(popupButton), naGetApplication(), NA_FALSE);
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
+  return naMakeRectWithNSRect([nativePtr frame]);
 }
 
+NA_HDEF void na_SetPopupButtonRect(NA_UIElement* popupButton, NARect rect){
+  naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
 
 
 // This is free and unencumbered software released into the public domain.
