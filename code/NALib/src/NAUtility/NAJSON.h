@@ -1,3 +1,10 @@
+
+#ifndef NA_JSON_INCLUDED
+#define NA_JSON_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
+
 #include <stdio.h>
 #include "NALib.h"
 
@@ -163,3 +170,9 @@ NA_API NAJSONRule* naNewJSONRuleFixedArrayFloat(
 NA_API NAJSONRule* naNewJSONRuleFixedArrayString(
   size_t arrayOffset,
   size_t elementCount);
+
+
+#ifdef __cplusplus
+  } // extern "C"
+#endif
+#endif // NA_JSON_INCLUDED

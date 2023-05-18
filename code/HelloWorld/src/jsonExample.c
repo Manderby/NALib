@@ -1,5 +1,9 @@
 #include "../../NALib/src/NALib.h"
 
+// This is already included by including NALib.h but here you can find all
+// relevant APIs:
+#include "../../NALib/src/NAUtility/NAJSON.h"
+
 typedef struct TinyObject TinyObject;
 struct TinyObject {
   NAUTF8Char* message;
@@ -31,7 +35,6 @@ typedef struct Test Test;
 struct Test {
   SimpleValues simpleValues;
   ArrayValues arrayValues;
-  
 };
 
 
@@ -93,26 +96,35 @@ int jsonExample(void){
 
   naStartRuntime();
   
-  NAFile* file = naCreateFileReadingPath("res/JSONinput.txt");
-  NAFileSize fileSize = naComputeFileByteSize(file);
-  NAByte* buf = naMalloc(fileSize + 1);
-  naReadFileBytes(file, buf, fileSize);
-  buf[fileSize] = '\0';
-
+  // Loading the buffer from a file.
   NADateTime now1 = naMakeDateTimeNow();
+  NAFile* file = naCreateFileReadingPath("res/JSONinput.txt");
+  NAFileSize bufferSize = naComputeFileByteSize(file);
+  NAByte* buf = naMalloc(bufferSize + 1);
+  naReadFileBytes(file, buf, bufferSize);
+  // Buffer needs to be closed with a \0 byte.
+  buf[bufferSize] = '\0';
+  NADateTime now2 = naMakeDateTimeNow();
 
+  printf("Time: %f milliseconds to read file\n", 1000. * naGetDateTimeDifference(&now2, &now1));
+
+  // Creating a parser which reads into the Test structure.
   Test test;
   NAJSONParser* simpleParser = allocateSimpleParser();
 
+  // Running a benchmark
   #define TESTCOUNT 100
+  NADateTime now3 = naMakeDateTimeNow();
   for(int i = 0; i < TESTCOUNT; ++i){
-    naParseJSONBuffer(simpleParser, &test, buf, fileSize);
+    // Parse the buffer into the test variable.
+    naParseJSONBuffer(simpleParser, &test, buf, bufferSize);
   }
+  NADateTime now4 = naMakeDateTimeNow();
 
-  NADateTime now2 = naMakeDateTimeNow();
-  printf("Time: %f milliseconds per buffer\n", 1000. * naGetDateTimeDifference(&now2, &now1) / (double)TESTCOUNT);
+  printf("Time: %f milliseconds to parse file\n", 1000. * naGetDateTimeDifference(&now4, &now3) / (double)TESTCOUNT);
   printf("Variable \'test\' now contains all desired values.\n\n");
 
+  // Deallocating the parser also deallocates all rules and ruleSets.
   naDeallocateJSONParser(simpleParser);
 
   naFree(buf);
