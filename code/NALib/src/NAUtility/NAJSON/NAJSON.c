@@ -104,10 +104,10 @@ struct NAJSONRuleSet{
 
 struct NAJSONParser{
   const void* buf;
-  size_t bufLen;
   const NAByte* curPtr;
   NA_JSONParseStatus parseStatus;
-  NAStack stackStatus;
+  size_t curStackStatus;
+  NA_JSONStackStatus* stackStatusStack;
   void* object;
   
   NAStack ruleSets;
@@ -503,15 +503,24 @@ NA_HDEF const NAJSONRule* na_findJSONRule(const NAJSONRuleSet* ruleSet, NA_JSOND
 // Stack Status
 
 NA_HIDEF void na_JSONPushStackStatus(NAJSONParser* parser, NA_JSONStackStatus status){
-  *(NA_JSONStackStatus*)naPushStack(&parser->stackStatus) = status;
+  #if NA_DEBUG
+    if(parser->curStackStatus == 32 - 1)
+      naError("Stack overflow. Heap corruption imminent...");
+  #endif
+  parser->curStackStatus++;
+  parser->stackStatusStack[parser->curStackStatus] = status;
 }
 
 NA_HIDEF NA_JSONStackStatus na_JSONTopStackStatus(NAJSONParser* parser){
-  return *(NA_JSONStackStatus*)naTopStack(&parser->stackStatus);
+  return parser->stackStatusStack[parser->curStackStatus];
 }
 
 NA_HIDEF void na_JSONPopStackStatus(NAJSONParser* parser){
-  naPopStack(&parser->stackStatus);
+  #if NA_DEBUG
+    if(parser->curStackStatus == 0)
+      naError("Stack underflow. Heap corruption imminent...");
+  #endif
+  parser->curStackStatus--;
 }
 
 void ns_JSONAdjustStackStatusAfterValueRead(NAJSONParser* parser){
@@ -530,10 +539,12 @@ void ns_JSONAdjustStackStatusAfterValueRead(NAJSONParser* parser){
 NA_DEF NAJSONParser* naAllocateJSONParser(){
   NAJSONParser* parser = naAlloc(NAJSONParser);
   parser->buf = NA_NULL;
-  parser->bufLen = 0;
   parser->curPtr = NA_NULL;
-  naInitStack(&parser->stackStatus, sizeof(NA_JSONStackStatus), 0, 0);
-  na_JSONPushStackStatus(parser, NA_JSON_FILE_EXPECTING_VALUE);
+  
+  parser->stackStatusStack = naMalloc(32 * sizeof(NA_JSONStackStatus));
+  parser->curStackStatus = 0;
+  parser->stackStatusStack[parser->curStackStatus] = NA_JSON_FILE_EXPECTING_VALUE;
+  
   parser->parseStatus = NA_JSON_PARSE_STATUS_UNDEFINED;
   parser->object = NA_NULL;
   
@@ -554,8 +565,6 @@ NA_DEF void naDeallocateJSONParser(NAJSONParser* parser){
       naCrash("parser is Nullptr");
   #endif
 
-  naClearStack(&parser->stackStatus);
-  
   naForeachStackpMutable(&parser->ruleSets, (NAMutator)na_DeallocJSONRuleSet);
   naClearStack(&parser->ruleSets);
   
@@ -576,11 +585,12 @@ void naParseJSONBuffer(
       naCrash("parser is Nullptr");
     if(!buf)
       naError("buf is Nullptr");
+    if(((NAByte*)buf)[byteCount - 1] != '\0')
+      naError("buffer must end with a zero byte.");
   #endif
 
   parser->object = object;
   parser->buf = buf;
-  parser->bufLen = byteCount ? byteCount : strlen(buf);
   parser->curPtr = buf;
 
   naParseJSONObject(parser, parser->initialRuleSet);
@@ -596,11 +606,8 @@ NA_HIDEF NAByte na_CurJSONByte(NAJSONParser* parser){
 }
 
 NA_HIDEF NAByte na_NextJSONByte(NAJSONParser* parser){
-  if (parser->curPtr - (const NAByte*)parser->buf < parser->bufLen){
-    ++parser->curPtr;
-    return *(const NAByte*)parser->curPtr;
-  }
-  return '\0';
+  ++parser->curPtr;
+  return *(const NAByte*)parser->curPtr;
 }
 
 
@@ -624,7 +631,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser){
     curByte = na_NextJSONByte(parser);
   }
   
-  while(curByte > '\0' && isdigit(curByte)){
+  while(isdigit(curByte)){
     decimals = decimals * 10 + curByte - '0';
     curByte = na_NextJSONByte(parser);
   }
@@ -632,14 +639,14 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser){
   if(curByte == '.'){
     curByte = na_NextJSONByte(parser);
 
-    while(curByte > '\0' && isdigit(curByte)){
+    while(isdigit(curByte)){
       decimals = decimals * 10 + curByte - '0';
       decimalShift++;
       curByte = na_NextJSONByte(parser);
     }
   }
 
-  if(curByte == 'e' || curByte == 'E'){
+  if((curByte | 0x20) == 'e'){
     curByte = na_NextJSONByte(parser);
     
     if(curByte == '+'){
@@ -649,7 +656,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser){
       curByte = na_NextJSONByte(parser);
     }
 
-    while(curByte > '\0' && isdigit(curByte)){
+    while(isdigit(curByte)){
       exponent  = exponent * 10 + curByte - '0';
       curByte = na_NextJSONByte(parser);
     }
@@ -666,7 +673,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser){
 NA_HDEF NA_JSONParseStatus na_ParseJSONIdentifier(NAJSONParser* parser){
   const NAByte* firstByte = parser->curPtr;
   NAByte curByte = na_NextJSONByte(parser);
-  while (curByte > '\0' && isalpha(curByte)){
+  while (isalpha(curByte)){
     curByte = na_NextJSONByte(parser);
   }
 
@@ -748,13 +755,13 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONPrimitives(NAJSONParser* parser){
       parser->parseStatus = NA_JSON_PARSE_BUFFER_END;
       return parser->parseStatus;
     
-    }else if(isalpha(curByte)){
-      parser->parseStatus = na_ParseJSONIdentifier(parser);
+    }else if(isdigit(curByte) || curByte == '-' || curByte == '+' || curByte == '.'){
+      parser->parseStatus = na_ParseJSONNumber(parser);
       ns_JSONAdjustStackStatusAfterValueRead(parser);
       return parser->parseStatus;
 
-    }else if(isdigit(curByte) || curByte == '+' || curByte == '-' || curByte == '.'){
-      parser->parseStatus = na_ParseJSONNumber(parser);
+    }else if(isalpha(curByte)){
+      parser->parseStatus = na_ParseJSONIdentifier(parser);
       ns_JSONAdjustStackStatusAfterValueRead(parser);
       return parser->parseStatus;
 
@@ -780,7 +787,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONPrimitives(NAJSONParser* parser){
       
     }else if(curByte == ']'){
       na_NextJSONByte(parser);
-      if(naGetStackCount(&parser->stackStatus) == 1){
+      if(parser->curStackStatus == 0){
         parser->parseStatus = NA_JSON_PARSE_UNEXPECTED_ARRAY_END;
         #if NA_DEBUG
           naError("Unexpected Array End\n");
@@ -806,7 +813,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONPrimitives(NAJSONParser* parser){
       
     }else if(curByte == '}'){
       na_NextJSONByte(parser);
-      if(naGetStackCount(&parser->stackStatus) == 1){
+      if(parser->curStackStatus == 0){
         parser->parseStatus = NA_JSON_PARSE_UNEXPECTED_OBJECT_END;
         #if NA_DEBUG
           naError("Unexpected Object End\n");
