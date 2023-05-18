@@ -37,6 +37,7 @@ struct ExperimentController{
 
   NALabel* openGLSpaceLabel;
   NAOpenGLSpace* openGLSpace;
+  int openGLSpaceRefreshCount;
 
   NALabel* radioLabel;
   NARadio* radio;
@@ -134,6 +135,13 @@ NABool redrawOpenGLSpace(NAReaction reaction){
   #endif
 
   ExperimentController* con = reaction.controller;
+  con->openGLSpaceRefreshCount--;
+
+  // Prepare the next refresh.
+  if(con->openGLSpaceRefreshCount == 0){
+    naRefreshUIElement(con->openGLSpace, 1./ 60);
+    con->openGLSpaceRefreshCount++;
+  }
 
   static float ang = 0.f;
 
@@ -172,7 +180,6 @@ NABool redrawOpenGLSpace(NAReaction reaction){
 
   naSwapOpenGLSpaceBuffer(con->openGLSpace);
   
-  naRefreshUIElement(con->openGLSpace, 1./ 60);
 
   return NA_TRUE;
 
@@ -340,6 +347,7 @@ ExperimentController* createExperimentController(){
   con->openGLSpace = naNewOpenGLSpace(naMakeSize(150, 22), initOpenGL, NA_NULL);
   naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(250, curPosY));
   naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, con);
+  con->openGLSpaceRefreshCount = 1;
 
   curPosY -= 30;
   con->radioLabel = naNewLabel("NARadio", descSize);
