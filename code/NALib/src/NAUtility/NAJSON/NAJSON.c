@@ -1,5 +1,5 @@
 
-#include "NAJSON.h"
+#include "../NAJSON.h"
 #include <ctype.h>
 
 typedef enum {
@@ -619,7 +619,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser){
   NAByte curByte = na_CurJSONByte(parser);
   
   int32 decimalShift = 0;
-  int64 decimalSign = 1.;
+  int64 decimalSign = 1;
   int32 exponentSign = 1;
   int64 decimals = 0;
   int32 exponent = 0;
@@ -1010,10 +1010,10 @@ NA_HDEF void na_ParseJSONDynamicArray(NAJSONParser* parser, const NA_JSONArrayRu
   
   // Store the array elements in the container object.
   size_t elementCount = naGetStackCount(&elementStack);
-  *((size_t*)(parser->object + elementRule->countOffset)) = elementCount;
+  *((size_t*)((NAByte*)parser->object + elementRule->countOffset)) = elementCount;
   
   if(elementCount){
-    void** array = (void**)(parser->object + elementRule->arrayOffset);
+    void** array = (void**)((NAByte*)parser->object + elementRule->arrayOffset);
     if(elementRule->storeAsPointer){
       *array = naMalloc(sizeof(void*) * elementCount);
     }else{
@@ -1021,7 +1021,7 @@ NA_HDEF void na_ParseJSONDynamicArray(NAJSONParser* parser, const NA_JSONArrayRu
     }
     naDumpStack(&elementStack, *array);
   }else{
-    *((void**)(parser->object + elementRule->arrayOffset)) = NA_NULL;
+    *((void**)((NAByte*)parser->object + elementRule->arrayOffset)) = NA_NULL;
   }
   
   naClearStack(&elementStack);
@@ -1039,7 +1039,7 @@ NA_HDEF void na_ParseJSONDynamicArray(NAJSONParser* parser, const NA_JSONArrayRu
 NA_HDEF void na_ParseJSONFixedArray(NAJSONParser* parser, const NA_JSONFixedArrayRule* elementRule){
   NABool unexpectedEnd = NA_FALSE;
   void* prevObject = parser->object;
-  parser->object = parser->object + elementRule->arrayOffset;
+  parser->object = (NAByte*)parser->object + elementRule->arrayOffset;
   NA_JSONObjectRule* subObjectRule = (NA_JSONObjectRule*)elementRule->subRule;
 
   #if NA_DEBUG
@@ -1062,7 +1062,7 @@ NA_HDEF void na_ParseJSONFixedArray(NAJSONParser* parser, const NA_JSONFixedArra
       default:
         break;
       }
-      parser->object = parser->object + elementRule->structSize;
+      parser->object = (NAByte*)parser->object + elementRule->structSize;
       break;
       
     case NA_JSON_PARSE_NUMBER:
@@ -1086,7 +1086,7 @@ NA_HDEF void na_ParseJSONFixedArray(NAJSONParser* parser, const NA_JSONFixedArra
       default:
         break;
       }
-      parser->object = parser->object + elementRule->structSize;
+      parser->object = (NAByte*)parser->object + elementRule->structSize;
       break;
       
     case NA_JSON_PARSE_STRING:
@@ -1094,19 +1094,19 @@ NA_HDEF void na_ParseJSONFixedArray(NAJSONParser* parser, const NA_JSONFixedArra
         na_incArrayCount();
         na_StoreJSONString(parser, (NAUTF8Char**)parser->object);
       }
-      parser->object = parser->object + elementRule->structSize;
+      parser->object = (NAByte*)parser->object + elementRule->structSize;
       break;
       
     case NA_JSON_PARSE_ARRAY_START:
       na_incArrayCount();
       na_ParseJSONArray(parser, elementRule->subRule);
-      parser->object = parser->object + elementRule->structSize;
+      parser->object = (NAByte*)parser->object + elementRule->structSize;
       break;
       
     case NA_JSON_PARSE_OBJECT_START:
       na_incArrayCount();
       naParseJSONObject(parser, subObjectRule->ruleSet);
-      parser->object = parser->object + elementRule->structSize;
+      parser->object = (NAByte*)parser->object + elementRule->structSize;
       break;
       
     case NA_JSON_PARSE_BUFFER_END:
@@ -1169,40 +1169,40 @@ NA_HDEF void naParseJSONObject(NAJSONParser* parser, const NAJSONRuleSet* ruleSe
       #endif
       if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_POINTER_OBJECT, &parser->key))){
         const NA_JSONPointerObjectRule* pointerObjectRule = (const NA_JSONPointerObjectRule*)rule;
-        *((void**)(parser->object + pointerObjectRule->memberOffset)) = NA_NULL;
+        *((void**)((NAByte*)parser->object + pointerObjectRule->memberOffset)) = NA_NULL;
       }
       break;
 
     case NA_JSON_PARSE_BOOLEAN:
       if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_INT32, &parser->key))){
         const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
-        *((int32*)(parser->object + memberRule->memberOffset)) = parser->boolean;
+        *((int32*)((NAByte*)parser->object + memberRule->memberOffset)) = parser->boolean;
       }else if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_INT64, &parser->key))){
         const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
-        *((int64*)(parser->object + memberRule->memberOffset)) = parser->boolean;
+        *((int64*)((NAByte*)parser->object + memberRule->memberOffset)) = parser->boolean;
       }
       break;
 
     case NA_JSON_PARSE_NUMBER:
       if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_INT32, &parser->key))){
         const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
-        *((int32*)(parser->object + memberRule->memberOffset)) = (int32)parser->number;
+        *((int32*)((NAByte*)parser->object + memberRule->memberOffset)) = (int32)parser->number;
       }else if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_INT64, &parser->key))){
         const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
-        *((int64*)(parser->object + memberRule->memberOffset)) = (int64)parser->number;
+        *((int64*)((NAByte*)parser->object + memberRule->memberOffset)) = (int64)parser->number;
       }else if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_DOUBLE, &parser->key))){
         const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
-        *((double*)(parser->object + memberRule->memberOffset)) = parser->number;
+        *((double*)((NAByte*)parser->object + memberRule->memberOffset)) = parser->number;
       }else if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_FLOAT, &parser->key))){
         const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
-        *((float*)(parser->object + memberRule->memberOffset)) = (float)parser->number;
+        *((float*)((NAByte*)parser->object + memberRule->memberOffset)) = (float)parser->number;
       }
       break;
 
     case NA_JSON_PARSE_STRING:
       if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_STRING, &parser->key))){
         const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
-        na_StoreJSONString(parser, (parser->object + memberRule->memberOffset));
+        na_StoreJSONString(parser, (NAUTF8Char**)((NAByte*)parser->object + memberRule->memberOffset));
       }
       break;
       
@@ -1220,7 +1220,7 @@ NA_HDEF void naParseJSONObject(NAJSONParser* parser, const NAJSONRuleSet* ruleSe
       }else if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_POINTER_OBJECT, &parser->key))){
         const NA_JSONPointerObjectRule* pointerObjectRule = (const NA_JSONPointerObjectRule*)rule;
         void* subObject = naMalloc(pointerObjectRule->structSize);
-        *((void**)(parser->object + pointerObjectRule->memberOffset)) = subObject;
+        *((void**)((NAByte*)parser->object + pointerObjectRule->memberOffset)) = subObject;
         parser->object = subObject;
         subRuleSet = pointerObjectRule->ruleSet;
       }
