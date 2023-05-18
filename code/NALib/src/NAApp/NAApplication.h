@@ -143,13 +143,25 @@ NA_API void naResetApplicationPreferredTranslatorLanguages(void);
 // can be extracted automatically from a plist file if not defined. On windows
 // though, one has to provide it using the following functions. Note that also
 // on Mac, the settings provided here override anything read from a plist.
-NA_API void naSetApplicationName(NAUTF8Char* name);
-NA_API void naSetApplicationCompanyName(NAUTF8Char* name);
-NA_API void naSetApplicationVersionString(NAUTF8Char* string);
-NA_API void naSetApplicationBuildString(NAUTF8Char* string);
-NA_API void naSetApplicationIconPath(NAUTF8Char* path);
+//
+// On windows, when creating an installer, you might want to set the resource
+// path to something like this to be able to locate resources relative to
+// the installation directory (best to do this in a preStartup function as
+// this needs an NAApplication to be running):
+// 
+// NAString* appPath = naNewApplicationPath();
+// naSetApplicationResourcePath(naGetStringUTF8Pointer(appPath));
+// naDelete(appPath);
+
+NA_API void naSetApplicationName(const NAUTF8Char* name);
+NA_API void naSetApplicationCompanyName(const NAUTF8Char* name);
+NA_API void naSetApplicationVersionString(const NAUTF8Char* string);
+NA_API void naSetApplicationBuildString(const NAUTF8Char* string);
+NA_API void naSetApplicationResourcePath(const NAUTF8Char* path);
+NA_API void naSetApplicationIconPath(const NAUTF8Char* path);
 
 // Retrieve the informations. All functions might return NA_NULL.
+NA_API NAString* naNewApplicationPath(void);
 NA_API NAString* naNewApplicationName(void);
 NA_API NAString* naNewApplicationCompanyName(void);
 NA_API NAString* naNewApplicationVersionString(void);

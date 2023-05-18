@@ -324,7 +324,7 @@ NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(NAi64 gregsecond){
 NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
   int32 i;
   int32 monthindex = -1;
-  for(i = 0; i < NA_MONTHS_PER_YEAR; i++){
+  for(i = 0; i < NA_MONTHS_PER_YEAR; ++i){
     if(naEqualStringToUTF8CString(str, na_MonthEnglishAbbreviationNames[i], NA_TRUE)){
       monthindex = i;
       break;
@@ -342,14 +342,14 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   int32 monthindex = -1;
   if(naStrlen(str)){
     int32 i;
-    for(i = 0; i<NA_MONTHS_PER_YEAR; i++){
+    for(i = 0; i<NA_MONTHS_PER_YEAR; ++i){
       if(naEqualUTF8CStringLiterals(str, na_MonthEnglishNames[i], 0, NA_FALSE)){
         monthindex = i;
         break;
       }
     }
     if(monthindex == -1){
-      for(i = 0; i<NA_MONTHS_PER_YEAR; i++){
+      for(i = 0; i<NA_MONTHS_PER_YEAR; ++i){
         if(naEqualUTF8CStringLiterals(str, na_MonthEnglishAbbreviationNames[i], 0, NA_FALSE)){
           monthindex = i;
           break;
@@ -1090,7 +1090,7 @@ NA_DEF void naExtractDateTimeInformation(
     d = dts->day + 1;
     y = dts->year;
     mon = dts->mon + 1;
-    if(mon<3){mon+=12; naDeci64(y);}
+    if(mon<3){mon += 12; naDeci64(y);}
     K = naModi64(naAddi64(naModi64(y, naMakei64WithLo(100)), naMakei64WithLo(100)), naMakei64WithLo(100));
     if(naSmalleri64(y, NA_ZERO_i64)){
       J = naDivi64(naAddi64(y, NA_ONE_i64), naMakei64WithLo(100));

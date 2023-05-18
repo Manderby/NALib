@@ -18,6 +18,13 @@ NA_HDEF void na_SetMouseWarpedTo(NAPos newpos){
 
 
 
+NA_HDEF void na_SetMouseMovedTo(NAPos newpos){
+  na_App->mouseStatus.prevPos = na_App->mouseStatus.pos;
+  na_App->mouseStatus.pos = newpos;
+}
+
+
+
 NA_HDEF void na_SetMouseMovedByDiff(double deltaX, double deltaY){
   na_App->mouseStatus.prevPos = na_App->mouseStatus.pos;
   na_App->mouseStatus.pos.x += deltaX;

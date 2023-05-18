@@ -20,6 +20,22 @@ NA_HDEF void na_ClearPopupButton(NAPopupButton* popupButton){
 
 
 
+NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, const NAMenuItem* item){
+  return naGetListElemIndex(&(popupButton->childs), item);
+}
+
+
+
+NA_DEF const NAMenuItem* naGetPopupButtonItem(const NAPopupButton* popupButton, size_t index){
+  NAListIterator iter = naMakeListAccessor(&(popupButton->childs));
+  naLocateListIndex(&iter, index);
+  const NAMenuItem* item = naGetListCurConst(&iter);
+  naClearListIterator(&iter);
+  return item;
+}
+
+
+
 NA_HDEF void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* child, const NAMenuItem* itemAt){
   NAListIterator iter = naMakeListModifier(&(popupButton->childs));
   naLocateListData(&iter, itemAt);

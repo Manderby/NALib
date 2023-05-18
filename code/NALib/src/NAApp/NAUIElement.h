@@ -56,6 +56,7 @@ typedef struct NAWindow         NAWindow;
 // the following enum and function.
 
 typedef enum{
+  NA_UI_ELEMENT_UNDEFINED = 0,
   NA_UI_APPLICATION,
   NA_UI_BUTTON,
   NA_UI_CHECKBOX,
@@ -100,19 +101,14 @@ NA_API NASpace* naGetUIElementParentSpace(void* uiElement);
 // handed coordinate system. The origin of the global coordinate system is
 // at the lower left screen corner of the main screen.
 //
-// Using naGetUIElementRect, you can get the rect of any ui element relative
-// to another element. If you send the NAApplication instance as the relative
-// element, (using naGetApplication), you will get global coordinates. If you
-// send NA_NULL as the relative element, you will get coordinates relative to
-// the parent element.
+// Using naGetUIElementRect, you can get the rect of any ui element either
+// in absolute coordinates or in relative coordinates to its parent element.
 //
-// Note that the includeBorder argument only works for windows for now. It
-// returns either the content rectangle (client rectangle) or the window
-// outer frame.
-NA_API NARect naGetUIElementRect(
-  const void* uiElement,
-  const void* relativeuiElement,
-  NABool includeBorder);
+// Note that elements always return the inner (client) rect. For example
+// windows will not return their outer boundary.
+NA_API NARect naGetUIElementRect(const void* uiElement);
+NA_API NARect naGetUIElementRectAbsolute(const void* uiElement);
+NA_API void   naSetUIElementRect(void* uiElement, NARect rect);
 
 // You can ask any ui element to refresh its contents. This will cause the
 // element to be displayed anew. The time difference defines when the refresh

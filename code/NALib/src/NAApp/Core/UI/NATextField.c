@@ -18,4 +18,13 @@ NA_HDEF void na_ClearTextField(NATextField* textField){
 
 
 
+NA_DEF double naGetTextFieldDouble(NATextField* textField){
+  NAString* string = naNewStringWithTextFieldText(textField);
+  double value = atof(naGetStringUTF8Pointer(string));
+  naDelete(string);
+  return value;
+}
+
+
+
 #endif // NA_COMPILE_GUI == 1

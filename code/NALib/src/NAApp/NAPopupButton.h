@@ -25,15 +25,22 @@ NA_API void naAddPopupButtonMenuItem(
   NAMenuItem* item,
   const NAMenuItem* atItem);
 
-// naGetPopupButtonItemIndex returns the index including all separators.
+// naGetPopupButtonItemIndex returns the index
 NA_API size_t naGetPopupButtonItemIndex(
   NAPopupButton* popupButton,
-  NAMenuItem* item);
+  const NAMenuItem* item);
+
+NA_API const NAMenuItem* naGetPopupButtonItem(
+  const NAPopupButton* popupButton,
+  size_t index);
 
 // Sets which item is presented as the selected item.
+NA_API void naSetPopupButtonIndexSelected(
+  NAPopupButton* popupButton,
+  size_t index);
 NA_API void naSetPopupButtonItemSelected(
   NAPopupButton* popupButton,
-  NAMenuItem* item);
+  const NAMenuItem* item);
 
 
 

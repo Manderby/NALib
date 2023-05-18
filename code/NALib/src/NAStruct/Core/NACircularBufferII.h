@@ -3,8 +3,10 @@
 // Do not include this file directly! It will automatically be included when
 // including "NACircularBuffer.h"
 
+#ifndef NA_CIRCULAR_BUFFER_INCLUDED
+#define NA_CIRCULAR_BUFFER_INCLUDED
 
-#include "../NAUtility/NAMemory.h"
+#include "../../NAUtility/NAMemory.h"
 
 
 struct NACircularBuffer{
@@ -49,6 +51,7 @@ void naPushCircularBuffer(NACircularBuffer* buffer, void* newData){
   #endif
 }
 
+#endif // NA_CIRCULAR_BUFFER_INCLUDED
 
 
 // This is free and unencumbered software released into the public domain.

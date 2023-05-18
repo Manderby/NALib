@@ -182,7 +182,7 @@ NA_DEF NABool naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark
 
 //  if(argc > 1){
 //    printf("Runnging tests with args:" NA_NL);
-//    for(int i = 1; i < argc; i++){
+//    for(int i = 1; i < argc; ++i){
 //      printf("%s ", argv[i]);
 //    }
 //  }
@@ -208,7 +208,7 @@ NA_DEF NABool naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark
   naInitList(&(na_Testing->testRestriction));
 
   if(argc > 1){
-    for(int i = 1; i < argc; i++)
+    for(int i = 1; i < argc; ++i)
     {
       if(argv[i][0] == '-'){
         if(argv[i][1] == 'C'){
@@ -534,7 +534,7 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
       naDelete(encapsulatedPathItemString);
       naDelete(escapedPathItemString);
       naDelete(pathItemString);
-      i++;
+      ++i;
     }
     argv[curTestPathStringIndex + 2] = NA_NULL;
 
@@ -559,7 +559,7 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
       i = 2;
       for(size_t curBackIndex = 0; curBackIndex < curTestPathStringIndex; curBackIndex++){
         naFree(argv[i]);
-        i++;
+        ++i;
       }
       naFree(argv);
 

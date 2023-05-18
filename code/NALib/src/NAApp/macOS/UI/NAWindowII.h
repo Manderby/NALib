@@ -96,7 +96,7 @@
 }
 
 - (void)mouseMoved:(NSEvent*)event{
-  na_SetMouseMovedByDiff([event deltaX], -[event deltaY]);
+  na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
   na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_MOVED);
 //  [NSEvent setMouseCoalescingEnabled:NO];
 }
@@ -215,21 +215,21 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
 
 
 
-NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
-  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
-  NARect currect = naGetUIElementRect(window, NA_NULL, NA_FALSE);
-  if(!naEqualRect(currect, rect)){
-    [nativePtr setContentRect:rect];
-  }
-}
+//NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
+//  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+//  NARect currect = naGetUIElementRect(window);
+//  if(!naEqualRect(currect, rect)){
+//    [nativePtr setContentRect:rect];
+//  }
+//}
 
 
 
 NA_DEF NAUIImageResolution naGetWindowUIResolution(const NAWindow* window){
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
-  CGFloat res = naGetWindowBackingScaleFactor(nativePtr);
+  CGFloat uiScale = naGetWindowBackingScaleFactor(nativePtr);
 
-  return (res == 1.) ? NA_UIIMAGE_RESOLUTION_1x : NA_UIIMAGE_RESOLUTION_2x;
+  return (uiScale == 1.) ? NA_UIIMAGE_RESOLUTION_1x : NA_UIIMAGE_RESOLUTION_2x;
 }
 
 
@@ -375,6 +375,18 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
 NA_DEF void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts){
   naSetFlagu32(&(window->coreFlags), NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS, accepts);
 }
+
+
+NA_HDEF NARect na_GetWindowRect(const NA_UIElement* window){
+  naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
+  return naMakeRectWithNSRect([nativePtr frame]);
+}
+
+NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect){
+  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+  [nativePtr setContentRect:rect];
+}
+
 
 // This is free and unencumbered software released into the public domain.
 

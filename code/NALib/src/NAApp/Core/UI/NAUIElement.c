@@ -48,9 +48,10 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
   NABool finished = NA_FALSE;
   NAListIterator iter;
 
-  NAReaction reaction;
-  reaction.uiElement = element;
-  reaction.command = command;
+  NAReaction reaction = {
+    element,
+    command,
+    NA_NULL};
   naBeginListMutatorIteration(NAEventReaction* eventReaction, &(element->reactions), iter);
     if(eventReaction->command == command){
       reaction.controller = eventReaction->controller;
@@ -82,19 +83,19 @@ NA_DEF void naRefreshUIElement(void* uiElement, double timediff){
 
 
 NA_DEF NAUIElementType naGetUIElementType(const void* uiElement){
-  return ((NA_UIElement*)uiElement)->elementType;
+  return uiElement ? ((NA_UIElement*)uiElement)->elementType : NA_UI_ELEMENT_UNDEFINED;
 }
 
 
 
 NA_DEF NANativePtr naGetUIElementNativePtr(void* uiElement){
-  return ((NA_UIElement*)uiElement)->nativePtr;
+  return uiElement ? ((NA_UIElement*)uiElement)->nativePtr : NA_NULL;
 }
 
 
 
 NA_DEF const NANativePtr naGetUIElementNativePtrConst(const void* uiElement){
-  return ((const NA_UIElement*)uiElement)->nativePtr;
+  return uiElement ? ((NA_UIElement*)uiElement)->nativePtr : NA_NULL;
 }
 
 
@@ -152,13 +153,13 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
 
 
 NA_DEF void* naGetUIElementParent(void* uiElement){
-  return ((NA_UIElement*)uiElement)->parent;
+  return uiElement ? ((NA_UIElement*)uiElement)->parent : NA_NULL;
 }
 
 
 
 NA_DEF const void* naGetUIElementParentConst(const void* uiElement){
-  return ((const NA_UIElement*)uiElement)->parent;
+  return uiElement ? ((NA_UIElement*)uiElement)->parent : NA_NULL;
 }
 
 
@@ -189,6 +190,81 @@ NA_DEF NASpace* naGetUIElementParentSpace(void* uiElement){
     parent = naGetUIElementParent(parent);
   }
   return parent;
+}
+
+
+
+NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement){
+  NARect rect;
+  NA_UIElement* elem = (NA_UIElement*)uiElement;
+
+  if(!elem)
+    return naMakeRectZero();
+
+  rect = naGetUIElementRect(uiElement);
+  uiElement = naGetUIElementParentConst(uiElement);
+  while(uiElement){
+    NARect curRect = naGetUIElementRect(uiElement);
+    rect.pos.x += curRect.pos.x;
+    rect.pos.y += curRect.pos.y;
+    uiElement = naGetUIElementParentConst(uiElement);
+  }
+
+  return rect;
+}
+
+
+
+NA_DEF NARect naGetUIElementRect(const void* uiElement){
+
+  NARect elemRect;
+  switch(naGetUIElementType(uiElement)){
+  case NA_UI_APPLICATION:  elemRect = na_GetApplicationRect(uiElement); break;
+  case NA_UI_BUTTON:       elemRect = na_GetButtonRect(uiElement); break;
+  case NA_UI_CHECKBOX:     elemRect = na_GetCheckBoxRect(uiElement); break;
+  case NA_UI_IMAGE_SPACE:  elemRect = na_GetImageSpaceRect(uiElement); break;
+  case NA_UI_LABEL:        elemRect = na_GetLabelRect(uiElement); break;
+  case NA_UI_MENU:         elemRect = na_GetMenuRect(uiElement); break;
+  case NA_UI_MENUITEM:     elemRect = na_GetMenuItemRect(uiElement); break;
+  case NA_UI_METAL_SPACE:  elemRect = na_GetMetalSpaceRect(uiElement); break;
+  case NA_UI_OPENGL_SPACE: elemRect = na_GetOpenGLSpaceRect(uiElement); break;
+  case NA_UI_POPUP_BUTTON: elemRect = na_GetPopupButtonRect(uiElement); break;
+  case NA_UI_RADIO:        elemRect = na_GetRadioRect(uiElement); break;
+  case NA_UI_SCREEN:       elemRect = na_GetScreenRect(uiElement); break;
+  case NA_UI_SLIDER:       elemRect = na_GetSliderRect(uiElement); break;
+  case NA_UI_SPACE:        elemRect = na_GetSpaceRect(uiElement); break;
+  case NA_UI_TEXTBOX:      elemRect = na_GetTextBoxRect(uiElement); break;
+  case NA_UI_TEXTFIELD:    elemRect = na_GetTextFieldRect(uiElement); break;
+  case NA_UI_WINDOW:       elemRect = na_GetWindowRect(uiElement); break;
+  default:                 elemRect = naMakeRectZero(); break;
+  }
+
+  return elemRect;
+}
+
+
+
+NA_DEF void naSetUIElementRect(void* uiElement, NARect rect){
+  switch(naGetUIElementType(uiElement)){
+  case NA_UI_APPLICATION:  na_SetApplicationRect(uiElement, rect); break;
+  case NA_UI_BUTTON:       na_SetButtonRect(uiElement, rect); break;
+  case NA_UI_CHECKBOX:     na_SetCheckBoxRect(uiElement, rect); break;
+  case NA_UI_IMAGE_SPACE:  na_SetImageSpaceRect(uiElement, rect); break;
+  case NA_UI_LABEL:        na_SetLabelRect(uiElement, rect); break;
+  case NA_UI_MENU:         na_SetMenuRect(uiElement, rect); break;
+  case NA_UI_MENUITEM:     na_SetMenuItemRect(uiElement, rect); break;
+  case NA_UI_METAL_SPACE:  na_SetMetalSpaceRect(uiElement, rect); break;
+  case NA_UI_OPENGL_SPACE: na_SetOpenGLSpaceRect(uiElement, rect); break;
+  case NA_UI_POPUP_BUTTON: na_SetPopupButtonRect(uiElement, rect); break;
+  case NA_UI_RADIO:        na_SetRadioRect(uiElement, rect); break;
+  case NA_UI_SCREEN:       na_SetScreenRect(uiElement, rect); break;
+  case NA_UI_SLIDER:       na_SetSliderRect(uiElement, rect); break;
+  case NA_UI_SPACE:        na_SetSpaceRect(uiElement, rect); break;
+  case NA_UI_TEXTBOX:      na_SetTextBoxRect(uiElement, rect); break;
+  case NA_UI_TEXTFIELD:    na_SetTextFieldRect(uiElement, rect); break;
+  case NA_UI_WINDOW:       na_SetWindowRect(uiElement, rect); break;
+  default:                 break;
+  }
 }
 
 

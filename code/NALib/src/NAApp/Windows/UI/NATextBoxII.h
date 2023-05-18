@@ -45,15 +45,18 @@ NABool naHandleTextBoxReverseTabOrder(NAReaction reaction){
 NA_DEF NATextBox* naNewTextBox(NASize size){
   NAWINAPITextBox* winapiTextBox = naNew(NAWINAPITextBox);
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  winapiTextBox->rect = naMakeRect(naMakePos(0., 0.), size);
+
 	HWND nativePtr = CreateWindow(
 		TEXT("EDIT"),
     TEXT(""),
     WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
 		0,
     0, 
-    (int)size.width,
-    (int)size.height,
-		naGetApplicationOffscreenWindow(), 
+    (int)(winapiTextBox->rect.size.width * uiScale),
+    (int)(winapiTextBox->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(), 
     NULL, 
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL );
@@ -141,6 +144,13 @@ NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox){
 
 
 
+NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use){
+  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
+  ShowScrollBar(naGetUIElementNativePtr(textBox), SB_VERT, use);
+}
+
+
+
 NA_HDEF void** na_GetTextBoxNextTabReference(NATextBox* textBox){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   return &(winapiTextBox->nextTabStop);
@@ -155,21 +165,29 @@ NA_HDEF void** na_GetTextBoxPrevTabReference(NATextBox* textBox){
 
 
 
-NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(const NA_UIElement* textBox){
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtrConst(textBox), &clientRect);
-  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
-
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtrConst(textBox), &testPoint);
-
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
+NA_HDEF NARect na_GetTextBoxRect(const NA_UIElement* textBox){
+  const NAWINAPITextBox* winapiTextBox = (const NAWINAPITextBox*)textBox;
+  return winapiTextBox->rect;
 }
 
 
+
+NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect){
+  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
+
+  winapiTextBox->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(textBox));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(textBox),
+    HWND_TOP,
+    (int)(winapiTextBox->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiTextBox->rect.pos.y - winapiTextBox->rect.size.height) * uiScale),
+    (int)(winapiTextBox->rect.size.width * uiScale),
+    (int)(winapiTextBox->rect.size.height * uiScale),
+    0);
+}
 
 // This is free and unencumbered software released into the public domain.
 

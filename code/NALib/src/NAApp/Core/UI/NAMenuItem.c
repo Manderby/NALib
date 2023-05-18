@@ -32,4 +32,20 @@ NA_HDEF uint32 na_GetMenuItemId(const NAMenuItem* menuItem){
 
 
 
+NA_HDEF NARect na_GetMenuItemRect(const NA_UIElement* menuItem)
+{
+  NA_UNUSED(menuItem);
+  return naMakeRectS(0, 0, 1, 1);
+}
+
+
+
+NA_HDEF void na_SetMenuItemRect(NA_UIElement* menuItem, NARect rect){
+  #if NA_DEBUG
+  naError("MenuItem rects can not be set.");
+  #endif
+}
+
+
+
 #endif // NA_COMPILE_GUI == 1

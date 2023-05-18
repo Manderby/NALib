@@ -122,17 +122,15 @@ NA_DEF void naSetTextFieldFont(NATextField* textField, NAFont* font){
 }
 
 
-
-NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(const NA_UIElement* textField){
+NA_HDEF NARect na_GetTextFieldRect(const NA_UIElement* textField){
   naDefineCocoaObjectConst(NACocoaNativeTextField, nativePtr, textField);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(textField), naGetApplication(), NA_FALSE);
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
+  return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-
+NA_HDEF void na_SetTextFieldRect(NA_UIElement* textField, NARect rect){
+  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
 
 // This is free and unencumbered software released into the public domain.
 

@@ -52,6 +52,9 @@ typedef enum{
 // If color is Null, the image contents will be uninitialized.
 NA_API NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color);
 
+// Creates an image which is an exact duplicate of the image given.
+NA_API NABabyImage* naCreateBabyImageCopy(const NABabyImage* image);
+
 // Creates a new image with a semi-transparent one-color representation of
 // the base image. The mode defines, how the tint color will be applied. The
 // blend factor defines how strong the tinting is.

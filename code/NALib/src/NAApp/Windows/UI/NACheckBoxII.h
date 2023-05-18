@@ -76,14 +76,17 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width){
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  winapiCheckBox->rect = naMakeRectS(0., 0., width, 18.);
+
 	HWND nativePtr = CreateWindow(
 		TEXT("BUTTON"),
     systemText,
     WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_CHECKBOX,
-		0,
     0,
-    (int)width,
-    18,
+    0,
+    (int)(winapiCheckBox->rect.size.width * uiScale),
+    (int)(winapiCheckBox->rect.size.height * uiScale),
 		naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -142,21 +145,28 @@ NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* colo
 
 
 
-NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(const NA_UIElement* checkBox){
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtrConst(checkBox), &clientRect);
-  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
-
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtrConst(checkBox), &testPoint);
-
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
+NA_HDEF NARect na_GetCheckBoxRect(const NA_UIElement* checkBox)
+{
+  const NAWINAPICheckBox* winapiCheckBox = (const NAWINAPICheckBox*)checkBox;
+  return winapiCheckBox->rect;
 }
 
+NA_HDEF void na_SetCheckBoxRect(NA_UIElement* checkBox, NARect rect){
+  NAWINAPICheckBox* winapiCheckBox = (NAWINAPICheckBox*)checkBox;
 
+  winapiCheckBox->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(checkBox));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(checkBox),
+    HWND_TOP,
+    (int)(winapiCheckBox->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiCheckBox->rect.pos.y - winapiCheckBox->rect.size.height) * uiScale),
+    (int)(winapiCheckBox->rect.size.width * uiScale),
+    (int)(winapiCheckBox->rect.size.height * uiScale),
+    0);
+}
 
 // This is free and unencumbered software released into the public domain.
 

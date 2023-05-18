@@ -220,15 +220,18 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
+  winapiButton->rect = naMakeRectS(0., 0., width, 24.);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
 	HWND nativePtr = CreateWindow(
 		TEXT("BUTTON"),
     systemText,
     WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON,
 		0,
     0,
-    (int)width,
-    24,
-		naGetApplicationOffscreenWindow(),
+    (int)(winapiButton->rect.size.width * uiScale),
+    (int)(winapiButton->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
@@ -264,14 +267,17 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
       naError("uiImage is null");
   #endif
 
-    HWND nativePtr = CreateWindow(
+  winapiButton->rect = naMakeRect(naMakePos(0., 0.), size);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
+  HWND nativePtr = CreateWindow(
     TEXT("BUTTON"),
     TEXT(""),
     WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
     0,
     0,
-    (int)size.width,
-    (int)size.height,
+    (int)(winapiButton->rect.size.width * uiScale),
+    (int)(winapiButton->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -404,21 +410,28 @@ NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* 
 
 
 
-NA_HDEF NARect na_GetButtonAbsoluteInnerRect(const NA_UIElement* button){
-  NARect screenRect = naGetMainScreenRect();
-  RECT clientRect;
-  GetClientRect(naGetUIElementNativePtrConst(button), &clientRect);
-  double height = (double)(clientRect.bottom) - (double)(clientRect.top);
-
-  POINT testPoint = {0, (LONG)height};
-  ClientToScreen(naGetUIElementNativePtrConst(button), &testPoint);
-
-  return naMakeRect(
-    naMakePos(testPoint.x, screenRect.size.height - testPoint.y),
-    naMakeSize((double)(clientRect.right) - (double)(clientRect.left), height));
+NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button)
+{
+  const NAWINAPIButton* winapiButton = (const NAWINAPIButton*)button;
+  return winapiButton->rect;
 }
 
+NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect){
+  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
 
+  winapiButton->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(button));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(button),
+    HWND_TOP,
+    (int)(winapiButton->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiButton->rect.pos.y - winapiButton->rect.size.height) * uiScale),
+    (int)(winapiButton->rect.size.width * uiScale),
+    (int)(winapiButton->rect.size.height * uiScale),
+    0);
+}
 
 // This is free and unencumbered software released into the public domain.
 

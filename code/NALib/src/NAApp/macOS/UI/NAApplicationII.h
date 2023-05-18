@@ -89,12 +89,12 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
 
 
 NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
-  NAInt lang = (NAInt)[[NSLocale preferredLanguages] count] - 1;
-  while(lang >= 0){
-    NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)lang];
+  NAInt langIndex = (NAInt)[[NSLocale preferredLanguages] count] - 1;
+  while(langIndex >= 0){
+    NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)langIndex];
     NALanguageCode3 langCode = naGetLanguageCode([language UTF8String]);
     naSetTranslatorLanguagePreference(langCode);
-    lang--;
+    langIndex--;
   }
 }
 
@@ -200,8 +200,6 @@ NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF
   }
   return naNewStringWithFormat("%s", [[url path] UTF8String]);
 }
-
-
 
 // This is free and unencumbered software released into the public domain.
 

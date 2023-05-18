@@ -6,8 +6,13 @@
 
 
 #include "../../NAVisual/NAPNG.h"
+#include "../../NAApp.h"
 #include <wincodec.h>
 
+
+NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(){
+  return NA_UIIMAGE_SKIN_LIGHT;
+}
 
 
 NA_DEF NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){

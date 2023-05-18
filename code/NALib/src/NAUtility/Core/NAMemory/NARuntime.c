@@ -202,7 +202,7 @@ NA_HIDEF void na_UnregisterTypeInfo(NA_TypeInfo* typeInfo){
     // the given parameter. Again, just like na_RegisterTypeInfo, this is not
     // very fast, but does the job. See comment there.
     NAInt oldindex = 0;
-    for(size_t i = 0; i < (na_Runtime->typeInfoCount - NA_ONE_s); i++){
+    for(size_t i = 0; i < (na_Runtime->typeInfoCount - NA_ONE_s); ++i){
       if(na_Runtime->typeInfos[i] == typeInfo){oldindex++;}
       newinfos[i] = na_Runtime->typeInfos[oldindex];
       oldindex++;
@@ -644,7 +644,7 @@ NA_DEF void naCollectGarbage(){
 #endif
   while(na_Runtime->mallocGarbage){
     void** ptr = na_Runtime->mallocGarbage->pointers;
-    for(size_t i = 0; i < na_Runtime->mallocGarbage->cur; i++){
+    for(size_t i = 0; i < na_Runtime->mallocGarbage->cur; ++i){
       naFree(*ptr);
       ptr++;
     }
@@ -727,7 +727,7 @@ NA_DEF void naStopRuntime(){
       naCrash("Runtime not running. Use naStartRuntime()");
 
     // Go through all registered types and output a leak message if necessary.
-    for(size_t i = 0; i < na_Runtime->typeInfoCount; i++){
+    for(size_t i = 0; i < na_Runtime->typeInfoCount; ++i){
       size_t spaceCount = na_GetTypeInfoAllocatedCount(na_Runtime->typeInfos[i]);
       #if NA_DEBUG
         if(spaceCount){

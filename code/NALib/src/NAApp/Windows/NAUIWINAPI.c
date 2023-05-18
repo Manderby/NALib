@@ -26,9 +26,9 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include "NAUIImageWINAPIII.h"
-
 #if NA_COMPILE_GUI == 1
+
+#include "NAUIImageWINAPIII.h"
 
 #include "NAPreferencesWINAPIII.h"
 

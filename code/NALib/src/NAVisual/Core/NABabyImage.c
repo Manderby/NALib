@@ -82,7 +82,7 @@ NA_DEF NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color){
     NAInt i;
     NAInt pixelCount = na_GetBabyImagePixelCount(image);
     float* ptr = image->data;
-    for(i = 0; i < pixelCount; i++){
+    for(i = 0; i < pixelCount; ++i){
       naCopyV4f(ptr, color);
       ptr += NA_BABY_COLOR_CHANNEL_COUNT;
     }
@@ -92,10 +92,28 @@ NA_DEF NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color){
 
 
 
+NA_HDEF NABabyImage* naCreateBabyImageCopy(const NABabyImage* image){
+  NABabyImage* newImage;
+  #if NA_DEBUG
+  if(!image)
+    naError("given image is a Null pointer");
+  #endif
+  newImage = naAlloc(NABabyImage);
+  naInitRefCount(&newImage->refCount);
+  newImage->width = image->width;
+  newImage->height = image->height;
+  size_t dataSize = na_GetBabyImageDataSize(newImage);
+  newImage->data = naMalloc(dataSize);
+  naCopyn(newImage->data, image->data, dataSize);
+  return newImage;
+}
+
+
+
 NA_HDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, const float* top, NABlendMode mode, float blend, NABool baseIsImage, NABool topIsImage){
   NAInt i;
   blend = naLinearizeColorValue(blend);
-  for(i = 0; i < pixelCount; i++){
+  for(i = 0; i < pixelCount; ++i){
     float topblend;
     switch(mode){
     case NA_BLEND_ZERO:
@@ -293,7 +311,7 @@ NA_DEF void naFillBabyImageWithu8(NABabyImage* image, const void* data, NABool t
     NAInt i;
     u8ptr = data;
     pixelCount = na_GetBabyImagePixelCount(image);
-    for(i = 0; i < pixelCount; i++){
+    for(i = 0; i < pixelCount; ++i){
       naFillBabyColorWithu8(imgptr, u8ptr, bufferType);
       imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
       u8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
@@ -323,7 +341,7 @@ NA_DEF void naConvertBabyImageTou8(const NABabyImage* image, void* data, NABool 
     NAInt i;
     u8ptr = data;
     pixelCount = na_GetBabyImagePixelCount(image);
-    for(i = 0; i < pixelCount; i++){
+    for(i = 0; i < pixelCount; ++i){
       naFillu8WithBabyColor(u8ptr, imgptr, bufferType);
       imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
       u8ptr += NA_BABY_COLOR_CHANNEL_COUNT;

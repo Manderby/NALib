@@ -24,6 +24,9 @@ WNDPROC na_GetApplicationOldCheckBoxWindowProc(){
 WNDPROC na_GetApplicationOldLabelWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldLabelWindowProc;
 }
+WNDPROC na_GetApplicationOldPopupButtonWindowProc(){
+  return ((NAWINAPIApplication*)naGetApplication())->oldPopupButtonWindowProc;
+}
 WNDPROC na_GetApplicationOldRadioWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldRadioWindowProc;
 }
@@ -55,8 +58,9 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
   WNDCLASS wndclass;
   MSG message;
 
+  SetProcessDPIAware();
+
   // Uncommented for future use.
-  //SetProcessDPIAware();
   //DPI_AWARENESS awareness = DPI_AWARENESS_SYSTEM_AWARE;
   //SetProcessDpiAwarenessContext(&awareness);
 
@@ -214,6 +218,7 @@ NA_HDEF NAApplication* na_NewApplication(void){
   winapiApplication->oldButtonWindowProc = NA_NULL;
   winapiApplication->oldCheckBoxWindowProc = NA_NULL;
   winapiApplication->oldLabelWindowProc = NA_NULL;
+  winapiApplication->oldPopupButtonWindowProc = NA_NULL;
   winapiApplication->oldRadioWindowProc = NA_NULL;
   winapiApplication->oldSliderWindowProc = NA_NULL;
   winapiApplication->oldTextFieldWindowProc = NA_NULL;
@@ -351,25 +356,30 @@ NA_DEF void naOpenConsoleWindow(void){
 
 
 
-NA_DEF void naSetApplicationName(NAUTF8Char* name){
+NA_DEF void naSetApplicationName(const NAUTF8Char* name){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.name = name;
 }
-NA_DEF void naSetApplicationCompanyName(NAUTF8Char* name){
+NA_DEF void naSetApplicationCompanyName(const NAUTF8Char* name){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.companyName = name;
 }
-NA_DEF void naSetApplicationVersionString(NAUTF8Char* string){
+NA_DEF void naSetApplicationVersionString(const NAUTF8Char* string){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.versionString = string;
 }
-NA_DEF void naSetApplicationBuildString(NAUTF8Char* string){
+NA_DEF void naSetApplicationBuildString(const NAUTF8Char* string){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.buildString = string;
 }
-NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
+NA_DEF void naSetApplicationResourcePath(const NAUTF8Char* path){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->application.iconPath = path;
+  app->application.resourcePath = path;
+}
+
+NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path){
+    NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+    app->application.iconPath = path;
 
   if(path){
     NABabyImage* iconBabyImage = naCreateBabyImageFromFilePath(path);
@@ -385,6 +395,27 @@ NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
     ii.hbmColor = bitmap;
     ii.hbmMask  = hbmMask;
     app->appIcon = CreateIconIndirect(&ii);
+  }
+}
+
+
+
+NA_DEF NAString* naNewApplicationPath(void){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  if(app->application.name){
+    return naNewStringWithFormat("%s", app->application.name);
+  }else{
+    TCHAR modulePath[MAX_PATH];
+    NAString* utf8ModulePath;
+    NAString* utf8ModuleBasePath;
+
+    GetModuleFileName(NULL, modulePath, MAX_PATH);
+    utf8ModulePath = naNewStringFromSystemString(modulePath);
+    utf8ModuleBasePath = naNewStringWithParentOfPath(utf8ModulePath);
+
+    naDelete(utf8ModulePath);
+
+    return utf8ModuleBasePath;
   }
 }
 
@@ -454,11 +485,20 @@ NA_DEF NAString* naNewApplicationIconPath(void){
 }
 
 NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAString* retString;
   if(dir){
-    retString = naNewStringWithFormat("%s/%s.%s", dir, basename, suffix);
+    if(app->application.resourcePath){
+      retString = naNewStringWithFormat("%s%c%s%c%s%c%s", app->application.resourcePath, NA_PATH_DELIMITER_WIN, dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
+    }else{
+      retString = naNewStringWithFormat("%s%c%s%c%s", dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
+    }
   }else{
-    retString = naNewStringWithFormat("%s.%s", basename, suffix);
+    if(app->application.resourcePath){
+      retString = naNewStringWithFormat("%s%c%s%c%s", app->application.resourcePath, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
+    }else{
+      retString = naNewStringWithFormat("%s%c%s", basename, NA_SUFFIX_DELIMITER, suffix);
+    }
   }
   return retString;
 }
@@ -481,8 +521,10 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
   NAFont* font = naCreate(NAFont);
   wchar_t* systemFontName = naAllocWideCharStringWithUTF8String(fontFamilyName);
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
   font->nativePtr = CreateFont(
-    (int)size,
+    (int)(size * uiScale),
     0,
     0,
     0,
@@ -517,7 +559,7 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
 //  printf("%ls" NA_NL, lpelf->elfFullName);
 //}
 
-NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
+NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   
   NAFont* retFont = NA_NULL;
@@ -529,7 +571,7 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
   const NONCLIENTMETRICS* metrics = naGetApplicationMetrics();
 
   LONG baseSize;
-  switch(size){
+  switch(fontSize){
   case NA_FONT_SIZE_SMALL: baseSize = 12; break;
   case NA_FONT_SIZE_DEFAULT: baseSize = 16; break;
   //case NA_FONT_SIZE_DEFAULT: baseSize = metrics->lfMessageFont.lfHeight; break;
@@ -593,15 +635,15 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
 
 
 
-NA_DEF void naCenterMouse(void* uiElement, NABool includeBorder){
-  NARect spacerect;
+NA_DEF void naCenterMouse(void* uiElement){
+  NARect spaceRect;
   NARect screenframe;
   NAPos centerpos;
-  spacerect = naGetUIElementRect(uiElement, naGetApplication(), includeBorder);
+  spaceRect = naGetUIElementRectAbsolute(uiElement);
   // todo: screen not defined
   screenframe = naGetMainScreenRect();
-  centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;
-  centerpos.y = spacerect.pos.y + spacerect.size.height * .5f;
+  centerpos.x = spaceRect.pos.x + spaceRect.size.width * .5f;
+  centerpos.y = spaceRect.pos.y + spaceRect.size.height * .5f;
 
   na_SetMouseWarpedTo(centerpos);
   SetCursorPos((int)centerpos.x, (int)screenframe.size.height - (int)centerpos.y);
