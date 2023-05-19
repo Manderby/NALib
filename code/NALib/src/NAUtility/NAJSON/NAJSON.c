@@ -909,6 +909,11 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONPrimitives(NAJSONParser* parser){
     
     
 
+// Prototype:
+NA_HAPI void na_ParseJSONArray(NAJSONParser* parser, void* object, const NAJSONRule* elementRule);
+NA_HAPI void na_ParseJSONDummyObject(NAJSONParser* parser);
+
+
 // ///////////////////
 // Parsing Arrays
 
@@ -922,7 +927,7 @@ NA_HDEF void na_ParseJSONDummyArray(NAJSONParser* parser){
       break;
       
     case NA_JSON_PARSE_OBJECT_START:
-        na_ParseJSONObject(parser, NA_NULL, NA_NULL);
+        na_ParseJSONDummyObject(parser);
       break;
       
     case NA_JSON_PARSE_BUFFER_END:
@@ -934,9 +939,6 @@ NA_HDEF void na_ParseJSONDummyArray(NAJSONParser* parser){
     }
   }
 }
-
-// Prototype:
-NA_HAPI void na_ParseJSONArray(NAJSONParser* parser, void* object, const NAJSONRule* elementRule);
 
 NA_HDEF void na_ParseJSONDynamicArray(NAJSONParser* parser, void* object, const NA_JSONArrayRule* elementRule){
   NABool unexpectedEnd = NA_FALSE;
@@ -1190,7 +1192,30 @@ NA_HDEF void na_ParseJSONArray(NAJSONParser* parser, void* object, const NAJSONR
 // ///////////////////
 // Parsing Objects
 
-NA_HDEF void na_ParseJSONObject(NAJSONParser* parser, void* object, const NAJSONRuleSet* ruleSet){
+NA_HDEF void na_ParseJSONDummyObject(NAJSONParser* parser){
+  NABool unexpectedEnd = NA_FALSE;
+  while(!unexpectedEnd && na_ParseJSONPrimitives(parser) != NA_JSON_PARSE_OBJECT_END){
+
+    switch(parser->parseStatus){
+    case NA_JSON_PARSE_ARRAY_START:
+        na_ParseJSONDummyArray(parser);
+      break;
+      
+    case NA_JSON_PARSE_OBJECT_START:
+        na_ParseJSONDummyObject(parser);
+      break;
+      
+    case NA_JSON_PARSE_BUFFER_END:
+      unexpectedEnd = NA_TRUE;
+      break;
+    
+    default:
+      break;
+    }
+  }
+}
+
+NA_HDEF void na_ParseJSONRuleSetObject(NAJSONParser* parser, void* object, const NAJSONRuleSet* ruleSet){
   NABool unexpectedEnd = NA_FALSE;
   void* subObject;
   const NAJSONRuleSet* subRuleSet = NA_NULL;
@@ -1288,4 +1313,13 @@ NA_HDEF void na_ParseJSONObject(NAJSONParser* parser, void* object, const NAJSON
 }
 
 
+NA_HDEF void na_ParseJSONObject(NAJSONParser* parser, void* object, const NAJSONRuleSet* ruleSet){
+  if(!ruleSet){
+    // In case no rule is given, we just read the contents without storing
+    // anything.
+    na_ParseJSONDummyObject(parser);
+  }else{
+    na_ParseJSONRuleSetObject(parser, object, ruleSet);
+  }
+}
 
