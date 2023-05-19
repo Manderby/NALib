@@ -102,17 +102,17 @@ struct NA_JSONPointerObjectRule{
 };
 
 struct NAJSONRuleSet{
-  NAStack rules;
+  NAStack ruleStack;
+  NAJSONRule** rules;
 };
 
 struct NAJSONParser{
-  const void* buf;
   const NAByte* curPtr;
   NA_JSONParseStatus parseStatus;
   size_t curStackStatus;
   NA_JSONStackStatus* stackStatusStack;
   
-  NAStack ruleSets;
+  NAStack ruleSetStack;
   const NAJSONRuleSet* initialRuleSet;
   
   NABool boolean;
@@ -188,18 +188,22 @@ NA_DEF NAJSONRuleSet* naRegisterJSONRuleSet(NAJSONParser* parser){
   #endif
 
   NAJSONRuleSet* ruleSet = naAlloc(NAJSONRuleSet);
-  naInitStack(&ruleSet->rules, sizeof(NAJSONRule*), 0, 0);
+  naInitStack(&ruleSet->ruleStack, sizeof(NAJSONRule*), 0, 0);
+  ruleSet->rules = NA_NULL;
   
   // Store the ruleset as part of the parser so it can be erased automatically.
-  NAJSONRuleSet** ruleSetPtr = naPushStack(&parser->ruleSets);
+  NAJSONRuleSet** ruleSetPtr = naPushStack(&parser->ruleSetStack);
   *ruleSetPtr = ruleSet;
   
   return ruleSet;
 }
 
 NA_HDEF void na_DeallocJSONRuleSet(NAJSONRuleSet* ruleSet){
-  naForeachStackpMutable(&ruleSet->rules, (NAMutator)na_DeallocJSONRule);
-  naClearStack(&ruleSet->rules);
+  if(ruleSet->rules){
+    naFree(ruleSet->rules);
+  }
+  naForeachStackpMutable(&ruleSet->ruleStack, (NAMutator)na_DeallocJSONRule);
+  naClearStack(&ruleSet->ruleStack);
   naFree(ruleSet);
 }
 
@@ -233,7 +237,7 @@ NA_DEF void naAddJSONRule(
       naError("rule has already been added to another ruleSet. This is not allowed and will likely result in memory corruption.");
   #endif
 
-  NAJSONRule** rulePtr = naPushStack(&ruleSet->rules);
+  NAJSONRule** rulePtr = naPushStack(&ruleSet->ruleStack);
   *rulePtr = rule;
   na_FillJSONString(&rule->key, key);
   #if NA_DEBUG
@@ -494,16 +498,13 @@ NA_DEF NAJSONRule* naNewJSONRulePointerObject(
 
 NA_HDEF const NAJSONRule* na_findJSONRule(const NAJSONRuleSet* ruleSet, NA_JSONDataType type, const NA_JSONString* key){
   if(ruleSet){
-    NAStackIterator iter = naMakeStackAccessor(&ruleSet->rules);
-    while(naIterateStack(&iter)){
-      const NAJSONRule* const * rule = naGetStackCurConst(&iter);
-      if((*rule)->type == type && na_EqualJSONString(&(*rule)->key, key))
+    for(size_t i = 0; i < naGetStackCount(&ruleSet->ruleStack); ++i){
+      const NAJSONRule* rule = ruleSet->rules[i];
+      if(rule->type == type && na_EqualJSONString(&rule->key, key))
       {
-        naClearStackIterator(&iter);
-        return *rule;
+        return rule;
       }
     }
-    naClearStackIterator(&iter);
   }
   return NA_NULL;
 }
@@ -549,7 +550,6 @@ void ns_JSONAdjustStackStatusAfterValueRead(NAJSONParser* parser){
 
 NA_DEF NAJSONParser* naAllocateJSONParser(){
   NAJSONParser* parser = naAlloc(NAJSONParser);
-  parser->buf = NA_NULL;
   parser->curPtr = NA_NULL;
   
   parser->stackStatusStack = naMalloc(32 * sizeof(NA_JSONStackStatus));
@@ -558,7 +558,7 @@ NA_DEF NAJSONParser* naAllocateJSONParser(){
   
   parser->parseStatus = NA_JSON_PARSE_STATUS_UNDEFINED;
   
-  naInitStack(&parser->ruleSets, sizeof(NAJSONRuleSet*), 0, 0);
+  naInitStack(&parser->ruleSetStack, sizeof(NAJSONRuleSet*), 0, 0);
   parser->initialRuleSet = NA_NULL;
 
   parser->boolean = NA_FALSE;
@@ -575,8 +575,8 @@ NA_DEF void naDeallocateJSONParser(NAJSONParser* parser){
       naCrash("parser is Nullptr");
   #endif
 
-  naForeachStackpMutable(&parser->ruleSets, (NAMutator)na_DeallocJSONRuleSet);
-  naClearStack(&parser->ruleSets);
+  naForeachStackpMutable(&parser->ruleSetStack, (NAMutator)na_DeallocJSONRuleSet);
+  naClearStack(&parser->ruleSetStack);
   
   naFree(parser);
 }
@@ -599,8 +599,23 @@ void naParseJSONBuffer(
       naError("buffer must end with a zero byte.");
   #endif
 
-  parser->buf = buf;
   parser->curPtr = buf;
+  
+  // Prepare all rules for faster access.
+  NAStackIterator ruleSetIt = naMakeStackMutator(&parser->ruleSetStack);
+  while(naIterateStack(&ruleSetIt)){
+    NAJSONRuleSet* ruleSet = naGetStackCurpMutable(&ruleSetIt);
+    if(ruleSet->rules){
+      naFree(ruleSet->rules);
+      ruleSet->rules = NA_NULL;
+    }
+    size_t ruleCount = naGetStackCount(&ruleSet->ruleStack);
+    if(ruleCount){
+      ruleSet->rules = naMalloc(ruleCount * sizeof(NAJSONRule*));
+      naDumpStack(&ruleSet->ruleStack, ruleSet->rules);
+    }
+  }
+  naClearStackIterator(&ruleSetIt);
 
   na_ParseJSONObject(parser, object, parser->initialRuleSet);
 }
