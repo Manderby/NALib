@@ -23,6 +23,8 @@ int main(void){
     NA_UNUSED(getchar());
   #endif
   
+  while(1){}
+  
   return 0;
 }
 

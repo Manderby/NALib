@@ -197,7 +197,9 @@ NA_DEF NAJSONRuleSet* naRegisterJSONRuleSet(NAJSONParser* parser){
   NAJSONRuleSet* ruleSet = naAlloc(NAJSONRuleSet);
   naInitStack(&ruleSet->ruleStack, sizeof(NAJSONRule*), 0, 0);
   ruleSet->rules = NA_NULL;
-  ruleSet->prepared = NA_FALSE;
+  #if NA_DEBUG
+    ruleSet->prepared = NA_FALSE;
+  #endif
   
   // Store the ruleset as part of the parser so it can be erased automatically.
   NAJSONRuleSet** ruleSetPtr = naPushStack(&parser->ruleSetStack);
@@ -645,7 +647,9 @@ void naParseJSONBuffer(
         ruleSet->rules = naMalloc(ruleCount * sizeof(NAJSONRule*));
         naDumpStack(&ruleSet->ruleStack, ruleSet->rules);
       }
-      ruleSet->prepared = NA_TRUE;
+      #if NA_DEBUG
+        ruleSet->prepared = NA_TRUE;
+      #endif
     }
     naClearStackIterator(&ruleSetIt);
     parser->prepared = NA_TRUE;
