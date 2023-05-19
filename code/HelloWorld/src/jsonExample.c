@@ -17,8 +17,8 @@ struct SimpleValues {
   int32 member4;
   void* member5;
   NAUTF8Char* member6;
-  TinyObject object1;
-  TinyObject* object2;
+  TinyObject* object1;
+  TinyObject object2;
 };
 
 typedef struct ArrayValues ArrayValues;
@@ -29,6 +29,13 @@ struct ArrayValues {
   NAUTF8Char* values3[5];
   size_t count4;
   NAUTF8Char** values4;
+
+  TinyObject objects5[5];
+  TinyObject* objects6[5];
+  size_t count7;
+  TinyObject* objects7;
+  size_t count8;
+  TinyObject** objects8;
 };
 
 typedef struct Test Test;
@@ -42,41 +49,86 @@ struct Test {
 NAJSONParser* allocateSimpleParser(void){
   NAJSONParser* parser = naAllocateJSONParser();
 
-  NAJSONRuleSet* tinyRules1 = naRegisterJSONRuleSet(parser);
-  naAddJSONRule(tinyRules1, "message", naNewJSONRuleString(offsetof(Test, simpleValues.object1.message)));
-
-  NAJSONRuleSet* tinyRules2 = naRegisterJSONRuleSet(parser);
-  naAddJSONRule(tinyRules2, "message", naNewJSONRuleString(offsetof(TinyObject, message)));
-
   NAJSONRuleSet* simpleRules = naRegisterJSONRuleSet(parser);
+  
+  // Reading simple values
+  
   naAddJSONRule(simpleRules, "value1", naNewJSONRuleInt64(offsetof(Test, simpleValues.member1)));
   naAddJSONRule(simpleRules, "value2", naNewJSONRuleFloat(offsetof(Test, simpleValues.member2)));
   naAddJSONRule(simpleRules, "value3", naNewJSONRuleDouble(offsetof(Test, simpleValues.member3)));
   naAddJSONRule(simpleRules, "value4", naNewJSONRuleInt32(offsetof(Test, simpleValues.member4)));
-  naAddJSONRule(simpleRules, "value5", naNewJSONRulePointerObject(
+  naAddJSONRule(simpleRules, "value5", naNewJSONRuleString(offsetof(Test, simpleValues.member6)));
+  
+  // Reading objects
+  
+  // Reading an object by creating it with malloc and storing a pointer.
+  NAJSONRuleSet* tinyRules1 = naRegisterJSONRuleSet(parser);
+  naAddJSONRule(tinyRules1, "message", naNewJSONRuleString(offsetof(TinyObject, message)));
+  naAddJSONRule(simpleRules, "object6", naNewJSONRulePointerObject(
+    offsetof(Test, simpleValues.object1),
+    sizeof(TinyObject),
+    tinyRules1));
+
+  // Reading an object directly into an existing object.
+  NAJSONRuleSet* tinyRules2 = naRegisterJSONRuleSet(parser);
+  naAddJSONRule(tinyRules2, "message", naNewJSONRuleString(offsetof(Test, simpleValues.object2.message)));
+  naAddJSONRule(simpleRules, "object7", naNewJSONRuleObject(tinyRules2));
+
+  // Reading an object which turns out to be null.
+  naAddJSONRule(simpleRules, "object8", naNewJSONRulePointerObject(
     offsetof(Test, simpleValues.member5),
     0,
     NA_NULL));
-  naAddJSONRule(simpleRules, "value6", naNewJSONRuleString(offsetof(Test, simpleValues.member6)));
-  naAddJSONRule(simpleRules, "value7", naNewJSONRuleObject(tinyRules1));
-  naAddJSONRule(simpleRules, "value8", naNewJSONRulePointerObject(
-    offsetof(Test, simpleValues.object2),
-    sizeof(TinyObject),
-    tinyRules2));
+    
+  // reading arrays of simple values
 
   NAJSONRuleSet* arrayRules = naRegisterJSONRuleSet(parser);
   naAddJSONRule(arrayRules, "values1", naNewJSONRuleFixedArrayInt32(
     offsetof(Test, arrayValues.values1),
-    5));
+    /*elementCount:*/ 5));
   naAddJSONRule(arrayRules, "values2", naNewJSONRuleArrayInt32(
     offsetof(Test, arrayValues.values2),
     offsetof(Test, arrayValues.count2)));
   naAddJSONRule(arrayRules, "values3", naNewJSONRuleFixedArrayString(
     offsetof(Test, arrayValues.values3),
-    5));
+    /*elementCount:*/ 5));
   naAddJSONRule(arrayRules, "values4", naNewJSONRuleArrayString(
     offsetof(Test, arrayValues.values4),
     offsetof(Test, arrayValues.count4)));
+    
+  // reading arrays of objects
+
+  // Reading objects into a fixed array
+  naAddJSONRule(arrayRules, "values5", naNewJSONRuleFixedArray(
+    offsetof(Test, arrayValues.objects5),
+    /*elementCount:*/ 5,
+    sizeof(TinyObject),
+    /*storeAsPointer:*/ NA_FALSE,
+    naNewJSONRuleObject(tinyRules1)));
+
+  // Reading objects into a fixed array
+  naAddJSONRule(arrayRules, "values6", naNewJSONRuleFixedArray(
+    offsetof(Test, arrayValues.objects6),
+    /*elementCount:*/ 5,
+    sizeof(TinyObject),
+    /*storeAsPointer:*/ NA_TRUE,
+    naNewJSONRuleObject(tinyRules1)));
+
+  // Reading objects into a dynamic array
+  naAddJSONRule(arrayRules, "values7", naNewJSONRuleArray(
+    offsetof(Test, arrayValues.objects7),
+    offsetof(Test, arrayValues.count7),
+    sizeof(TinyObject),
+    /*storeAsPointer:*/ NA_FALSE,
+    naNewJSONRuleObject(tinyRules1)));
+
+  // Reading objects as poitners into a dynamic array
+  naAddJSONRule(arrayRules, "values8", naNewJSONRuleArray(
+    offsetof(Test, arrayValues.objects8),
+    offsetof(Test, arrayValues.count8),
+    sizeof(TinyObject),
+    /*storeAsPointer:*/ NA_TRUE,
+    naNewJSONRuleObject(tinyRules1)));
 
   NAJSONRuleSet* baseRules = naRegisterJSONRuleSet(parser);
   naAddJSONRule(baseRules, "SimpleObject", naNewJSONRuleObject(simpleRules));

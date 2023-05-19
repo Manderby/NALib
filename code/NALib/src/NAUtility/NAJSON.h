@@ -9,7 +9,7 @@
 #include "../NABase.h"
 #include "../NAStruct/NAStack.h"
 
-// This file proveds a very simple JSON parser.
+// This file provides a very simple JSON parser.
 //
 // You define rules where to store data and just let the parser run. In the
 // end, your storage will be filled with the contents desired. If you haven't
@@ -116,9 +116,9 @@ NA_API NAJSONRule* naNewJSONRulePointerObject(
 // whether NALib shall store the contents of the elements directly as an object
 // in the desired array.
 //
-// When storeAsAbject is true, the destination array is considered to be an
-// array of multiple Objects, for example MyObject*, whereas if it is false,
-// it is considered to be an array of pointers to that Objects, MyObject**.
+// When storeAsPointer is false, the destination array is considered to be an
+// array of multiple Objects, for example MyObject*, whereas if it is true,
+// it is considered to be an array of pointers to that Objects: MyObject**.
 // In both cases, the number of elements is stored at the given countOffset.
 //
 // Additionally, certain objects shall be stored in an array with a fixed size,
@@ -134,8 +134,9 @@ NA_API NAJSONRule* naNewJSONRuleArray(
   NAJSONRule* subRule);
 NA_API NAJSONRule* naNewJSONRuleFixedArray(
   size_t arrayOffset,
-  size_t structSize,
   size_t elementCount,
+  size_t structSize,
+  NABool storeAsPointer,
   NAJSONRule* subRule);
 
 // Shortcuts for fixed arrays of basic types stored as objects.
