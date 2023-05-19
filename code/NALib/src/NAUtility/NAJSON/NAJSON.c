@@ -709,7 +709,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser){
     }
 
     const void* lastDecimalPtr = parser->curPtr;
-    decimalShift = (int32)(lastDecimalPtr - firstDecimalPtr);
+    decimalShift = (int32)((NAByte*)lastDecimalPtr - (NAByte*)firstDecimalPtr);
   }
 
   if((curByte | 0x20) == 'e'){
