@@ -72,6 +72,7 @@
     <ClCompile Include="src\NAUtility\Core\NATesting\NATesting.c" />
     <ClCompile Include="src\NAUtility\Core\NATranslator.c" />
     <ClCompile Include="src\NAUtility\Core\NAURL.c" />
+    <ClCompile Include="src\NAUtility\NAJSON\NAJSON.c" />
     <ClCompile Include="src\NAVisual\Core\NA3DHelper.c" />
     <ClCompile Include="src\NAVisual\Core\NABabyColor.c" />
     <ClCompile Include="src\NAVisual\Core\NABabyImage.c" />
@@ -252,6 +253,7 @@
     <ClInclude Include="src\NAUtility\NABinaryData.h" />
     <ClInclude Include="src\NAUtility\NADateTime.h" />
     <ClInclude Include="src\NAUtility\NAFile.h" />
+    <ClInclude Include="src\NAUtility\NAJSON.h" />
     <ClInclude Include="src\NAUtility\NAKey.h" />
     <ClInclude Include="src\NAUtility\NAMemory.h" />
     <ClInclude Include="src\NAUtility\NAString.h" />
