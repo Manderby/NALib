@@ -2,6 +2,8 @@
 #include "../NAJSON.h"
 #include <ctype.h>
 
+#define NA_JSON_PARSE_STACK_DEPTH 32
+
 typedef enum {
   NA_JSON_PARSE_STATUS_UNDEFINED,
   NA_JSON_PARSE_BUFFER_END,
@@ -516,7 +518,7 @@ NA_HDEF const NAJSONRule* na_findJSONRule(const NAJSONRuleSet* ruleSet, NA_JSOND
 
 NA_HIDEF void na_JSONPushStackStatus(NAJSONParser* parser, NA_JSONStackStatus status){
   #if NA_DEBUG
-    if(parser->curStackStatus == 32 - 1)
+    if(parser->curStackStatus == NA_JSON_PARSE_STACK_DEPTH - 1)
       naError("Stack overflow. Heap corruption imminent...");
   #endif
   parser->curStackStatus++;
@@ -552,7 +554,7 @@ NA_DEF NAJSONParser* naAllocateJSONParser(){
   NAJSONParser* parser = naAlloc(NAJSONParser);
   parser->curPtr = NA_NULL;
   
-  parser->stackStatusStack = naMalloc(32 * sizeof(NA_JSONStackStatus));
+  parser->stackStatusStack = naMalloc(NA_JSON_PARSE_STACK_DEPTH * sizeof(NA_JSONStackStatus));
   parser->curStackStatus = 0;
   parser->stackStatusStack[parser->curStackStatus] = NA_JSON_FILE_EXPECTING_VALUE;
   
