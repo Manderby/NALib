@@ -1,0 +1,63 @@
+{
+  "SimpleObject" : {
+    "value1" : 1234,
+    "value2" : 12.34,
+    "value3" : 12e45,
+    "value4" : true,
+    "value5" : "Yeah"
+    "object6" : {
+      "message" : "Super"
+    }
+    "object7" : {
+      "message" : "Duper"
+    }
+    "object8" : null,
+    "valueX" : "I am left out"
+  }
+  "ArraysObject" : {
+    "values1" : [10,11,12,13,14],
+    "values2" : [20,21,22,23,24],
+    "values3" : [
+	"Text31",
+	"Text32",
+	"Text33",
+	"Text34",
+	"Text35",
+    ],
+    "values4" : [
+	"Text41",
+	"Text42",
+	"Text43",
+	"Text44",
+	"Text45",
+    ],
+    "values5" : [
+	{ "message" : "Text51" },
+	{ "message" : "Text52" },
+	{ "message" : "Text53" },
+	{ "message" : "Text54" },
+	{ "message" : "Text55" },
+    ],
+    "values6" : [
+	{ "message" : "Text61" },
+	{ "message" : "Text62" },
+	{ "message" : "Text63" },
+	{ "message" : "Text64" },
+	{ "message" : "Text65" },
+    ],
+    "values7" : [
+	{ "message" : "Text71" },
+	{ "message" : "Text72" },
+	{ "message" : "Text73" },
+	{ "message" : "Text74" },
+	{ "message" : "Text75" },
+    ],
+    "values8" : [
+	{ "message" : "Text81" },
+	{ "message" : "Text82" },
+	{ "message" : "Text83" },
+	{ "message" : "Text84" },
+	{ "message" : "Text85" },
+    ],
+  }
+}
