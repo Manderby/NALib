@@ -821,12 +821,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONPrimitives(NAJSONParser* parser){
       parser->parseStatus = NA_JSON_PARSE_BUFFER_END;
       return parser->parseStatus;
     
-    }else if(isdigit(curByte)
-      || curByte == '-'
-      || curByte == '+'
-      || curByte == '.'
-      )
-    {
+    }else if(isdigit(curByte) || curByte == '-' || curByte == '+' || curByte == '.'){
       parser->parseStatus = na_ParseJSONNumber(parser);
       ns_JSONAdjustStackStatusAfterValueRead(parser);
       return parser->parseStatus;
@@ -870,10 +865,10 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONPrimitives(NAJSONParser* parser){
       parser->parseStatus = (stackStatus != NA_JSON_ARRAY_EXPECTING_VALUE_OR_END)
         ? NA_JSON_PARSE_UNEXPECTED_ARRAY_END
         : NA_JSON_PARSE_ARRAY_END;
+      #if NA_DEBUG
       if(parser->parseStatus == NA_JSON_PARSE_UNEXPECTED_ARRAY_END)
-        #if NA_DEBUG
-          naError("Unexpected Array End\n");
-        #endif
+        naError("Unexpected Array End\n");
+      #endif
       return parser->parseStatus;
       
     }else if(curByte == '{'){
@@ -896,10 +891,10 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONPrimitives(NAJSONParser* parser){
       parser->parseStatus = (stackStatus != NA_JSON_OBJECT_EXPECTING_KEY_OR_END)
         ? NA_JSON_PARSE_UNEXPECTED_OBJECT_END
         : NA_JSON_PARSE_OBJECT_END;
-      if(parser->parseStatus == NA_JSON_PARSE_UNEXPECTED_OBJECT_END)
-        #if NA_DEBUG
+      #if NA_DEBUG
+        if(parser->parseStatus == NA_JSON_PARSE_UNEXPECTED_OBJECT_END)
           naError("Unexpected Object End\n");
-        #endif
+      #endif
       return parser->parseStatus;
       
     }else if(curByte == ','){

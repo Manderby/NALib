@@ -162,10 +162,9 @@ int jsonExample(void){
   NAJSONParser* simpleParser = allocateSimpleParser();
 
   // Running a benchmark
-  #define TESTCOUNT 100000
+  #define TESTCOUNT 1000
   NADateTime now3 = naMakeDateTimeNow();
   for(int i = 0; i < TESTCOUNT; ++i){
-    naZeron(&test, sizeof(Test));
   
     // Parse the buffer into the test variable.
     naParseJSONBuffer(simpleParser, &test, buf, bufferSize + 1);

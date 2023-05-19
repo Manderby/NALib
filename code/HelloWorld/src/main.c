@@ -22,9 +22,7 @@ int main(void){
   #if NA_OS == NA_OS_WINDOWS
     NA_UNUSED(getchar());
   #endif
-  
-  while(1){}
-  
+    
   return 0;
 }
 
