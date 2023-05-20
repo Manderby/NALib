@@ -27,7 +27,6 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_MOVE:
   case WM_SHOWWINDOW:
   case WM_PAINT:
-  case WM_ERASEBKGND:
   case WM_NCPAINT:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
@@ -44,22 +43,14 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case TBM_GETPOS: // (WM_USER + 0)
     break;
 
-  //case WM_PAINT:
-  //  info.hasBeenHandeled = NA_TRUE;
-  //  info.result = 0;
-  //  break;
-
-  //case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
-  //  winapiSpace = (NAWINAPISpace*)naGetUIElementParentSpace(uiElement);
-  //  GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
-  //  bgColor = naGetWINAPISpaceBackgroundColor(winapiSpace);
-  //  //if(bgColor != winapiSpace->lastBgColor){ // Only draw if changed
-  //    FillRect((HDC)wParam, &spaceRect, testColor.brush);
-  //    //winapiSpace->lastBgColor = bgColor;
-  //  //}
-  //  info.hasBeenHandeled = NA_TRUE;
-  //  info.result = 1;
-  //  break;
+  case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
+    winapiSpace = (NAWINAPISpace*)naGetUIElementParentSpace(uiElement);
+    GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
+    bgColor = naGetWINAPISpaceBackgroundColor(winapiSpace);
+    FillRect((HDC)wParam, &spaceRect, testColor.brush);
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 1;
+    break;
 
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
