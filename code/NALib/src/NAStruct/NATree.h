@@ -115,7 +115,7 @@ typedef void  (*NATreeNodeDataDestructor) (NAPtr nodeData);
 // When returning NA_TRUE, the update will propagate to the next parent. When
 // returning NA_FALSE, propagation stops.
 typedef NABool (*NATreeNodeUpdater)       (NAPtr parentData,
-                                          NAPtr* childDatas,
+                                           NAPtr* childDatas,
                                            NAInt childIndex,
                                            NAInt childMask);
 

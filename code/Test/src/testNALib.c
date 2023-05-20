@@ -22,15 +22,15 @@ void benchmarkNAStruct(void);
 
 void printNALib(void){
   #if NA_PRINTOUT_ENABLED == 1
-    printNABase();
-    printNACore();
+    //printNABase();
+    //printNACore();
     printNAStruct();
   #endif
 }
 
 void testNALib(void){
-  naTestFunction(testNABase);
-  naTestFunction(testNACore);
+//  naTestFunction(testNABase);
+//  naTestFunction(testNACore);
   naTestFunction(testNAStruct);
 }
 
@@ -53,7 +53,7 @@ int main(int argc, const char** argv){
   naStartRuntime();
 
   // Print macro information
-//  printNALib();
+  printNALib();
 
   // Start testing
   NABool testStartSuccessful = naStartTesting("NALib", .01, NA_FALSE, argc, argv);

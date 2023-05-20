@@ -178,7 +178,7 @@ struct NATreeIterationInfo{
 };
 
 
-#define NA_TREE_NOTE_CHILDS_OFFSET sizeof(NATreeNode)
+#define NA_TREE_NODE_CHILDS_OFFSET sizeof(NATreeNode)
 
 
 // Helper functions. Do not use as public API.

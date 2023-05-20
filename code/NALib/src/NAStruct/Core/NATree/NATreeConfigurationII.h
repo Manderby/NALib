@@ -1,4 +1,5 @@
 
+// This flag must never overlap with the public flags in NATree.h
 #define NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE 0x8000
 
 

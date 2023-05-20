@@ -193,6 +193,7 @@
     <ClCompile Include="src\testNALib\testNAStruct.c" />
     <ClCompile Include="src\testNALib\testNAStruct\testNABuffer.c" />
     <ClCompile Include="src\testNALib\testNAStruct\testNAStack.c" />
+    <ClCompile Include="src\testNALib\testNAStruct\testNATree.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

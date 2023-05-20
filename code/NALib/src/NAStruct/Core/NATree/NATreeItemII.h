@@ -176,7 +176,7 @@ NA_HIDEF NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* parent){
       naCrash("Parent is Null Pointer.");
   #endif
   // We thank the power of pointer arithmetic!
-  return (NATreeItem**)(((char*)parent) + NA_TREE_NOTE_CHILDS_OFFSET);
+  return (NATreeItem**)(((char*)parent) + NA_TREE_NODE_CHILDS_OFFSET);
   // Note that this computation has originally been done using an integer
   // stored in config. But as this is used so often and needs to be
   // available at all times, it simply had been defined that the storage for
