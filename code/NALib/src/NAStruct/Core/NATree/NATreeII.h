@@ -24,7 +24,7 @@ typedef struct NATreeIterationInfo NATreeIterationInfo;
 
 // This is directly linked to the types defined in NATree.h.
 // See NA_TREE_KEY_NAINT for example.
-#define NA_TREE_CONFIG_KEY_TYPE_MASK  0x07
+#define NA_TREE_CONFIG_KEY_TYPE_MASK  0x0f
 
 #define NA_TREE_FLAG_ROOT_IS_LEAF 0x01
 #define NA_TREE_FLAG_TMP_KEY_TAKEN 0x02

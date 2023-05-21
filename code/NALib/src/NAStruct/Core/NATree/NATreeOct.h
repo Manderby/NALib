@@ -4,7 +4,7 @@
 typedef struct NATreeOctNode NATreeOctNode;
 struct NATreeOctNode{
   NATreeNode node;
-  NATreeItem* childs[8];
+  NATreeItem* childs[8];  // must come right after the node.
   NAVertex origin;
   NAPtr userData;
   NAInt childExponent;

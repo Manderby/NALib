@@ -4,7 +4,7 @@
 typedef struct NATreeQuadNode NATreeQuadNode;
 struct NATreeQuadNode{
   NATreeNode node;
-  NATreeItem* childs[4];
+  NATreeItem* childs[4]; // must come right after the node.
   NAPos origin;
   NAPtr userData;
   NAInt childExponent;

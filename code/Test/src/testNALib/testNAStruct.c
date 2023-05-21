@@ -18,7 +18,7 @@ void benchmarkNAStack(void);
 void printNAStruct(void){
   //printNABuffer();
   //printNAStack();
-  printNATree();
+  //printNATree();
 }
 
 void testNAStruct(void){

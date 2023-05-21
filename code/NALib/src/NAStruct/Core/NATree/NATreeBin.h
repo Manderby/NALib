@@ -2,7 +2,7 @@
 typedef struct NATreeBinNode NATreeBinNode;
 struct NATreeBinNode{
   NATreeNode node;
-  NATreeItem* childs[2];
+  NATreeItem* childs[2];  // must come right after the node.
   union{
     double d;
     NAInt i;

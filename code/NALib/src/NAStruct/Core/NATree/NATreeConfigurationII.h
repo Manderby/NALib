@@ -12,6 +12,10 @@ NA_HIDEF void na_DeallocConfiguration(NATreeConfiguration* config){
 
 
 NA_IDEF void naReleaseTreeConfiguration(NATreeConfiguration* config){
+  #if NA_DEBUG
+    if(!config)
+      naCrash("config is Nullptr");
+  #endif
   naReleaseRefCount(&config->refCount, config, (NAMutator)na_DeallocConfiguration);
 }
 
