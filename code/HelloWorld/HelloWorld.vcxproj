@@ -153,7 +153,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\generalExample.c" />
+    <ClCompile Include="src\jsonExample.c" />
+    <ClCompile Include="src\listExample.c" />
     <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\stackExample.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

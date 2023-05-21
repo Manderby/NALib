@@ -70,7 +70,12 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty){
           start++;
         }else{
           found = NA_TRUE;
-          string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(start, cur));
+          NARangei range = naMakeRangeiWithStartAndEnd(start, cur);
+          if(naIsRangeiUseful(range)){
+            string = naNewStringWithBufferExtraction(buffer, range);
+          }else{
+            string = naNewString();
+          }
         }
         checkWindowsEnd = (*curByte == '\r');
       }

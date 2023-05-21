@@ -42,15 +42,18 @@ typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
 NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = naNew(NAWINAPIOpenGLSpace);
 
+  winapiOpenGLSpace->rect = naMakeRect(naMakePos(0., 0.), size);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
 	HWND nativePtr = CreateWindow(
 		TEXT("NAOpenGLSpace"),
     TEXT(""),
     WS_CHILD | WS_VISIBLE | ES_READONLY,
-		0, 
     0,
-    (int)size.width,
-    (int)size.height,
-		naGetApplicationOffscreenWindow(),
+    0,
+    (int)(winapiOpenGLSpace->rect.size.width * uiScale),
+    (int)(winapiOpenGLSpace->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), 
     NULL);
@@ -117,8 +120,33 @@ NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
 
 
 
-NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
-  SetWindowPos((HWND)naGetUIElementNativePtr(openGLSpace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
+//NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+//  SetWindowPos((HWND)naGetUIElementNativePtr(openGLSpace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
+//}
+
+
+
+NA_API NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace)
+{
+  const NAWINAPIOpenGLSpace* winapiOpenGLSpace = (const NAWINAPIOpenGLSpace*)openGLSpace;
+  return winapiOpenGLSpace->rect;
+}
+
+NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect){
+  NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openGLSpace;
+
+  winapiOpenGLSpace->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(openGLSpace));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(openGLSpace),
+    HWND_TOP,
+    (int)(winapiOpenGLSpace->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiOpenGLSpace->rect.pos.y - winapiOpenGLSpace->rect.size.height) * uiScale),
+    (int)(winapiOpenGLSpace->rect.size.width * uiScale),
+    (int)(winapiOpenGLSpace->rect.size.height * uiScale),
+    0);
 }
 
 
@@ -158,19 +186,26 @@ NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds)
     #endif
   }
 
-  NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+  //NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+  //  #if NA_DEBUG
+  //    naError("OpenGL has not been configured. See NAConfiguration.h");
+  //  #endif
+  //}
+
+  NA_DEF NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace){
+    #if NA_DEBUG
+      naError("OpenGL has not been configured. See NAConfiguration.h");
+    #endif
+    return naMakeRectZero();
+  }
+
+  NA_DEF void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect){
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
   }
 
 #endif  // NA_COMPILE_OPENGL == 1
-
-
-
-NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(const NA_UIElement* openGLSpace){
-  return na_GetSpaceAbsoluteInnerRect(openGLSpace);
-}
 
 
 

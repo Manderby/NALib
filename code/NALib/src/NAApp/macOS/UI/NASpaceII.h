@@ -223,41 +223,6 @@ NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift)
 
 
 
-NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(const NA_UIElement* _Nonnull space){
-  naDefineCocoaObjectConst(NACocoaNativeSpace, nativePtr, space);
-  // Warning: does not work when frame unequal bounds.
-  NSRect contentRect = [nativePtr frame];
-
-  const void* parent = naGetUIElementParentConst(space);
-  if(parent){
-    NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(space), naGetApplication(), NA_FALSE);
-    NARect relRect = naMakeRectWithNSRect([nativePtr frame]);
-    return naMakeRect(
-      naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-      relRect.size);
-  }else{
-    NARect windowRect;
-    if([nativePtr window]){
-      #if NA_DEBUG
-        //naError("Given element has no NAWindow as parent. Using native window parent.");
-      #endif
-      windowRect = naMakeRectWithNSRect([[nativePtr window] frame]);
-    }else{
-      // The space has not (yet) been added to a window. Just use zero values.
-      // Do not emit a warning as this is quite a common case when trying to
-      // add a space to a super-space using the information of its size.
-      windowRect = naMakeRectZero();
-    }
-    return naMakeRectS(
-      windowRect.pos.x + contentRect.origin.x,
-      windowRect.pos.y + contentRect.origin.y,
-      contentRect.size.width,
-      contentRect.size.height);
-  }
-}
-
-
-
 NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NABabyColor* _Nullable color){
   if(color){
     space->backgroundColor[0] = (*color)[0];
@@ -271,6 +236,16 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NABabyColor
   [nativePtr setNeedsDisplay:YES];
 }
 
+
+NA_HDEF NARect na_GetSpaceRect(const NA_UIElement* _Nullable space){
+  naDefineCocoaObjectConst(NACocoaNativeSpace, nativePtr, space);
+  return naMakeRectWithNSRect([nativePtr frame]);
+}
+
+NA_HDEF void na_SetSpaceRect(NA_UIElement* _Nullable space, NARect rect){
+  naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
 
 
 // This is free and unencumbered software released into the public domain.

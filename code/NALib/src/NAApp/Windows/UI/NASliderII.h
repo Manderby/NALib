@@ -5,10 +5,20 @@
 // Do not include this file anywhere else!
 
 
+NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace);
+
 
 NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NASlider* slider = (NASlider*)uiElement;
+  RECT spaceRect;
+  NAWINAPIColor* bgColor;
+  NAWINAPISpace* winapiSpace;
+
+  NAWINAPIColor testColor;
+  testColor.color = RGB(0, 226, 226);
+  testColor.brush = CreateSolidBrush(testColor.color);
+
 
   switch(message){
   case WM_WINDOWPOSCHANGING:
@@ -18,7 +28,6 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_SHOWWINDOW:
   case WM_PAINT:
   case WM_NCPAINT:
-  case WM_ERASEBKGND:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
   case WM_MOUSEMOVE:
@@ -32,6 +41,15 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_TIMER:
   case TBM_SETPOS:  // (WM_USER + 5)
   case TBM_GETPOS: // (WM_USER + 0)
+    break;
+
+  case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
+    winapiSpace = (NAWINAPISpace*)naGetUIElementParentSpace(uiElement);
+    GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
+    bgColor = naGetWINAPISpaceBackgroundColor(winapiSpace);
+    FillRect((HDC)wParam, &spaceRect, testColor.brush);
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 1;
     break;
 
   case WM_SETFOCUS:
@@ -70,7 +88,7 @@ NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam){
   //int16 hi = HIWORD(wParam);
 
   NAPos pos = naGetMousePos(naGetMouseStatus());
-  NARect rect = naGetUIElementRect(uiElement, naGetApplication(), NA_FALSE);
+  NARect rect = naGetUIElementRectAbsolute(uiElement);
 
   naSetSliderValue(uiElement, (double)pos.x / (double)rect.size.width);
   na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED);
@@ -85,15 +103,18 @@ NA_DEF NASlider* naNewSlider(double width){
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String("Slider");
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  winapiSlider->rect = naMakeRectS(0., 0., width, 24.);
+
 	HWND nativePtr = CreateWindow(
 		TRACKBAR_CLASS,
     systemText,
     WS_CHILD | WS_VISIBLE | TBS_NOTICKS,
 		0,
     0,
-    (int)width,
-    24,
-		naGetApplicationOffscreenWindow(),
+    (int)(winapiSlider->rect.size.width * uiScale),
+    (int)(winapiSlider->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
@@ -178,25 +199,28 @@ NA_API void naSetSliderRange(NASlider* slider, double min, double max, NAInt tic
 
 
 
-NA_HDEF NARect na_GetSliderAbsoluteInnerRect(const NA_UIElement* slider){
-  RECT contentRect;
-  NARect screenRect;
-  NARect rect = {0};
-  GetClientRect(naGetUIElementNativePtrConst(slider), &contentRect);
-
-  POINT testPoint = {0, 0};
-
-  ClientToScreen(naGetUIElementNativePtrConst(slider), &testPoint);
-  screenRect = naGetMainScreenRect();
-
-  rect.pos.x = testPoint.x;
-  rect.pos.y = (double)screenRect.size.height - ((double)testPoint.y + ((double)contentRect.bottom - (double)contentRect.top));
-  rect.size.width = (double)contentRect.right - (double)contentRect.left;
-  rect.size.height = (double)contentRect.bottom - (double)contentRect.top;
-  return rect;
+NA_HDEF NARect na_GetSliderRect(const NA_UIElement* slider)
+{
+  const NAWINAPISlider* winapiSlider = (const NAWINAPISlider*)slider;
+  return winapiSlider->rect;
 }
 
+NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect){
+  NAWINAPISlider* winapiSlider = (NAWINAPISlider*)slider;
 
+  winapiSlider->rect = rect;
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(slider));
+
+  SetWindowPos(
+    naGetUIElementNativePtr(slider),
+    HWND_TOP,
+    (int)(winapiSlider->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiSlider->rect.pos.y - winapiSlider->rect.size.height) * uiScale),
+    (int)(winapiSlider->rect.size.width * uiScale),
+    (int)(winapiSlider->rect.size.height * uiScale),
+    0);
+}
 
 // This is free and unencumbered software released into the public domain.
 

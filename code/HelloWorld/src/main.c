@@ -1,97 +1,28 @@
+#include "../../NALib/src/NALib.h"
 
 // This is just a small file to get you started using NALib.
 // It should compile and run and print some version notes on the screen.
 
+// Prototypes
+int generalExample(void);
+int listExample(void);
+int stackExample(void);
+int jsonExample(void);
 
 
-// Note that you could add an include path in your project to access the
-// NAXXX.h files. But for the sake of simplicity, we use relative paths here.
-#include "../../NALib/src/NABase.h"
-#include "../../NALib/src/NAUtility/NAString.h"
-#include "../../NALib/src/NAUtility/NADateTime.h"
-#include "../../NALib/src/NAStruct/NAList.h"
-#include "../../NALib/src/NAStruct/NAStack.h"
-#include <stdio.h>
 
 int main(void){
-  printf("NALib Version: %d (", NA_VERSION);
-  #if defined NA_C11
-    printf("C11");
-  #elif defined NA_C99
-    printf("C99");
-  #elif defined NA_C90
-    printf("C90");
-  #else
-    printf("nonSTDC");
-  #endif
-  #ifndef NDEBUG
-    printf(" Debug");
-  #else
-    printf(" Release");
-  #endif
-  printf(" %d Bits Addresses, %d Bits Integers)" NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
-
-
-  printf("Hello World" NA_NL);
-
-
-
-  naStartRuntime();
-
-    naSetGlobalTimeShiftToSystemSettings();
-    NADateTime dateTime = naMakeDateTimeNow();
-    NAString* timeString = naNewStringWithDateTime(
-      &dateTime,
-      NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT);
-    printf("Current date and time: %s" NA_NL, naGetStringUTF8Pointer(timeString));
-    naDelete(timeString);
-
-
-
-    int a = 12;
-    int b = 34;
-    int c = 56;
-
-    NAList list;
-    naInitList(&list);
-    naAddListLastConst(&list, &a);
-    naAddListLastConst(&list, &b);
-    naAddListLastConst(&list, &c);
-    printf("Listing elements: ");
-    NAListIterator listIter = naMakeListAccessor(&list);
-    while(naIterateList(&listIter)){
-      printf("%d ", *(const int*)naGetListCurConst(&listIter));
-    }
-    naClearListIterator(&listIter);
-    printf(NA_NL);
-    naClearList(&list);
-
-
-
-    NAStack stack;
-    naInitStack(&stack, sizeof(int), 0, 0);
-    *(int*)naPushStack(&stack) = 3;
-    *(int*)naPushStack(&stack) = 2;
-    *(int*)naPushStack(&stack) = 1;
-    printf("Stacking elements: ");
-    printf("%d ", *(int*)naPopStack(&stack));
-    printf("%d ", *(int*)naPopStack(&stack));
-    printf("%d ", *(int*)naPopStack(&stack));
-    printf(NA_NL);
-    naClearStack(&stack);
-
-  naStopRuntime();
-  
-
+  generalExample();
+  listExample();
+  stackExample();
+  jsonExample();
 
   printf("Finished." NA_NL);
   #if NA_OS == NA_OS_WINDOWS
     NA_UNUSED(getchar());
   #endif
-
-  
-  
+    
   return 0;
 }
 

@@ -65,6 +65,41 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 }
 
 
+
+NA_HDEF double na_GetUIElementYOffset(NA_UIElement* elem){
+  // Line height is considered to be 25 for an optimal display. In this
+  // function, the UI elements are shifted in Y direction such that text
+  // always is displayed on a common baseline. The reference element is
+  // a stateful text button.
+  // All spaces and stateful/image buttons have offset 0.
+
+  switch(naGetUIElementType(elem)){
+  case NA_UI_APPLICATION:  return  0.;
+  case NA_UI_BUTTON:{
+    NAButton* button = (NAButton*)elem;
+    return naIsButtonStateful(button) || !naIsButtonTextual(button) ? +0. : -2.;
+  }
+  case NA_UI_CHECKBOX:     return +1.;
+  case NA_UI_IMAGE_SPACE:  return  0.;
+  case NA_UI_LABEL:        return +2.;
+  case NA_UI_MENU:         return  0.;
+  case NA_UI_MENUITEM:     return  0.;
+  case NA_UI_METAL_SPACE:  return  0.;
+  case NA_UI_OPENGL_SPACE: return  0.;
+  case NA_UI_POPUP_BUTTON: return -3.;
+  case NA_UI_RADIO:        return +1.;
+  case NA_UI_SCREEN:       return  0.;
+  case NA_UI_SLIDER:       return -3.;
+  case NA_UI_SPACE:        return  0.;
+  case NA_UI_TEXTBOX:      return  2.;
+  case NA_UI_TEXTFIELD:    return  2.;
+  case NA_UI_WINDOW:       return  0.;
+  default: return 0.;
+  }
+}
+
+
+
 NA_HDEF NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2){
   NA_UIElement* commonParent = NA_NULL;
   NA_UIElement* tmpelem2;
@@ -243,6 +278,7 @@ struct NAWINAPICallbackInfo{
 WNDPROC na_GetApplicationOldButtonWindowProc();
 WNDPROC na_GetApplicationOldCheckBoxWindowProc();
 WNDPROC na_GetApplicationOldLabelWindowProc();
+WNDPROC na_GetApplicationOldPopupButtonWindowProc();
 WNDPROC na_GetApplicationOldRadioWindowProc();
 WNDPROC na_GetApplicationOldSliderWindowProc();
 WNDPROC na_GetApplicationOldTextFieldWindowProc();
@@ -271,10 +307,11 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc  (void* uiElement, UINT message, WPAR
 NAWINAPICallbackInfo naWindowWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 
 // Prototypes of WindowProc handlers which react to notifications
-NABool naButtonWINAPINotify   (void* uiElement, WORD notificationCode);
-NABool naCheckBoxWINAPINotify (void* uiElement, WORD notificationCode);
-NABool naLabelWINAPINotify    (void* uiElement, WORD notificationCode);
-NABool naTextFieldWINAPINotify(void* uiElement, WORD notificationCode);
+NABool naButtonWINAPINotify      (void* uiElement, WORD notificationCode);
+NABool naCheckBoxWINAPINotify    (void* uiElement, WORD notificationCode);
+NABool naLabelWINAPINotify       (void* uiElement, WORD notificationCode);
+NABool naPopupButtonWINAPINotify (void* uiElement, WORD notificationCode);
+NABool naTextFieldWINAPINotify   (void* uiElement, WORD notificationCode);
 
 
 
@@ -330,12 +367,13 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
   // If the event has not been handeled, hand it over to the default procedure.
   if(!info.hasBeenHandeled){
     switch(firsttype){
-    case NA_UI_BUTTON:    info.result = CallWindowProc(na_GetApplicationOldButtonWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_CHECKBOX:  info.result = CallWindowProc(na_GetApplicationOldCheckBoxWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_LABEL:     info.result = CallWindowProc(na_GetApplicationOldLabelWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_RADIO:     info.result = CallWindowProc(na_GetApplicationOldRadioWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_SLIDER:    info.result = CallWindowProc(na_GetApplicationOldSliderWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_TEXTFIELD: info.result = CallWindowProc(na_GetApplicationOldTextFieldWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_BUTTON:       info.result = CallWindowProc(na_GetApplicationOldButtonWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_CHECKBOX:     info.result = CallWindowProc(na_GetApplicationOldCheckBoxWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_LABEL:        info.result = CallWindowProc(na_GetApplicationOldLabelWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_POPUP_BUTTON: info.result = CallWindowProc(na_GetApplicationOldPopupButtonWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_RADIO:        info.result = CallWindowProc(na_GetApplicationOldRadioWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_SLIDER:       info.result = CallWindowProc(na_GetApplicationOldSliderWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_TEXTFIELD:    info.result = CallWindowProc(na_GetApplicationOldTextFieldWindowProc(), hWnd, message, wParam, lParam); break;
     default:
       info.result = DefWindowProc(hWnd, message, wParam, lParam);
       break;
@@ -405,7 +443,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
 
     size.width = GET_X_LPARAM(lParam);
     size.height = GET_Y_LPARAM(lParam);
-    rect = naGetUIElementRect(uiElement, naGetApplication(), NA_FALSE);
+    rect = naGetUIElementRectAbsolute(uiElement);
     size.width += rect.pos.x;
     size.height = rect.pos.y + rect.size.height - size.height;
     mouseStatus = naGetMouseStatus();
@@ -476,7 +514,7 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
     const NAMenuItem* menuItem = NA_NULL;
     NAListIterator iter = naMakeListAccessor(&(menu->childs));
     while(naIterateList(&iter)){
-      menuItem = naGetListCurMutable(&iter);
+      menuItem = naGetListCurConst(&iter);
       if(na_GetMenuItemId(menuItem) == controlIdentifier){
         break;
       }
@@ -495,10 +533,11 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
     NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(controlWnd);
     if(uiElement && na_AreUIElementNotificationsAllowed(uiElement)){
       switch(naGetUIElementType(uiElement)){
-      case NA_UI_BUTTON:    hasBeenHandeled = naButtonWINAPINotify   (uiElement, notificationCode); break;
-      case NA_UI_CHECKBOX:  hasBeenHandeled = naCheckBoxWINAPINotify (uiElement, notificationCode); break;
-      case NA_UI_LABEL:     hasBeenHandeled = naLabelWINAPINotify    (uiElement, notificationCode); break;
-      case NA_UI_TEXTFIELD: hasBeenHandeled = naTextFieldWINAPINotify(uiElement, notificationCode); break;
+      case NA_UI_BUTTON:       hasBeenHandeled = naButtonWINAPINotify     (uiElement, notificationCode); break;
+      case NA_UI_CHECKBOX:     hasBeenHandeled = naCheckBoxWINAPINotify   (uiElement, notificationCode); break;
+      case NA_UI_LABEL:        hasBeenHandeled = naLabelWINAPINotify      (uiElement, notificationCode); break;
+      case NA_UI_POPUP_BUTTON: hasBeenHandeled = naPopupButtonWINAPINotify(uiElement, notificationCode); break;
+      case NA_UI_TEXTFIELD:    hasBeenHandeled = naTextFieldWINAPINotify  (uiElement, notificationCode); break;
       default:
         //printf("Uncaught notification" NA_NL);
         break;
@@ -606,110 +645,28 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem){
 
 
 NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
-  // Resolution awareness is not yet implemented on windows. Sorry.
-  return 1.;
+  int dpi;
+  HDC hDC;
+  if (hDC = GetDC (NULL)) {
+    dpi = GetDeviceCaps (hDC, LOGPIXELSX);
+    ReleaseDC (NULL, hDC);
+  }else{
+    dpi = USER_DEFAULT_SCREEN_DPI;
+  }
+  return (double)dpi / (double)USER_DEFAULT_SCREEN_DPI;
 }
 
 
 
-NA_HDEF NARect na_GetScreenAbsoluteRect(const NA_UIElement* screen){
+NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen){
   NARect rect = {{0, 0}, {1, 1}};
   return rect;
 }
 
-
-
-NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool includeBorder){
-  NARect rect;
-  NARect relRect;
-  NA_UIElement* elem;
-  NA_UIElement* relElem;
-  NAApplication* app;
-
-  elem = (NA_UIElement*)uiElement;
-  relElem = (NA_UIElement*)relativeelement;
-  app = naGetApplication();
-
-  // First, let's handle the root case: Returning the application rect.
-  if(elem == (NA_UIElement*)app){
-    #if NA_DEBUG
-      if(relativeelement && (relativeelement != app))
-        naError("The relative element is invalid for the given uiElement, which seems to be the application.");
-    #endif
-    return na_GetApplicationAbsoluteRect();
-  }
-
-  // Now, we find the appropriate relative element.
-  if(!relElem){relElem = naGetUIElementParent(elem);}
-
-  // Now, get the rect of the element.
-  switch(elem->elementType){
-  case NA_UI_APPLICATION:  rect = na_GetApplicationAbsoluteRect(); break;
-  case NA_UI_BUTTON:       rect = na_GetButtonAbsoluteInnerRect(elem); break;
-  case NA_UI_CHECKBOX:     rect = na_GetCheckBoxAbsoluteInnerRect(elem); break;
-  case NA_UI_IMAGE_SPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(elem); break;
-  case NA_UI_LABEL:        rect = na_GetLabelAbsoluteInnerRect(elem); break;
-  case NA_UI_MENU:         rect = na_GetMenuAbsoluteInnerRect(elem); break;
-  case NA_UI_MENUITEM:     rect = na_GetMenuItemAbsoluteInnerRect(elem); break;
-  case NA_UI_METAL_SPACE:  rect = na_GetMetalSpaceAbsoluteInnerRect(elem); break;
-  case NA_UI_OPENGL_SPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(elem); break;
-  case NA_UI_POPUP_BUTTON: rect = na_GetPopupButtonAbsoluteInnerRect(elem); break;
-  case NA_UI_RADIO:        rect = na_GetRadioAbsoluteInnerRect(elem); break;
-  case NA_UI_SCREEN:       rect = na_GetScreenAbsoluteRect(elem); break;
-  case NA_UI_SLIDER:       rect = na_GetSliderAbsoluteInnerRect(elem); break;
-  case NA_UI_SPACE:        rect = na_GetSpaceAbsoluteInnerRect(elem); break;
-  case NA_UI_TEXTBOX:      rect = na_GetTextBoxAbsoluteInnerRect(elem); break;
-  case NA_UI_TEXTFIELD:    rect = na_GetTextFieldAbsoluteInnerRect(elem); break;
-  case NA_UI_WINDOW:
-    if(includeBorder){
-      rect = na_GetWindowAbsoluteOuterRect(elem);
-    }else{
-      rect = na_GetWindowAbsoluteInnerRect(elem);
-    }
-    break;
-  default:
-    //#if NA_DEBUG
-    //  naError("Invalid UI type");
-    //#endif
-    rect = naMakeRectZero();
-    break;
-  }
-
-  if(relElem){
-    switch(relElem->elementType){
-    case NA_UI_APPLICATION:  relRect = na_GetApplicationAbsoluteRect(); break;
-    case NA_UI_BUTTON:       relRect = na_GetButtonAbsoluteInnerRect(relElem); break;
-    case NA_UI_CHECKBOX:     relRect = na_GetCheckBoxAbsoluteInnerRect(relElem); break;
-    case NA_UI_IMAGE_SPACE:  relRect = na_GetImageSpaceAbsoluteInnerRect(relElem); break;
-    case NA_UI_LABEL:        relRect = na_GetLabelAbsoluteInnerRect(relElem); break;
-    case NA_UI_MENU:         relRect = na_GetMenuAbsoluteInnerRect(relElem); break;
-    case NA_UI_MENUITEM:     relRect = na_GetMenuItemAbsoluteInnerRect(relElem); break;
-    case NA_UI_METAL_SPACE:  relRect = na_GetMetalSpaceAbsoluteInnerRect(relElem); break;
-    case NA_UI_OPENGL_SPACE: relRect = na_GetOpenGLSpaceAbsoluteInnerRect(relElem); break;
-    case NA_UI_POPUP_BUTTON: relRect = na_GetPopupButtonAbsoluteInnerRect(relElem); break;
-    case NA_UI_RADIO:        relRect = na_GetRadioAbsoluteInnerRect(relElem); break;
-    case NA_UI_SCREEN:       relRect = na_GetScreenAbsoluteRect(relElem); break;
-    case NA_UI_SLIDER:       relRect = na_GetSliderAbsoluteInnerRect(relElem); break;
-    case NA_UI_SPACE:        relRect = na_GetSpaceAbsoluteInnerRect(relElem); break;
-    case NA_UI_TEXTBOX:      relRect = na_GetTextBoxAbsoluteInnerRect(relElem); break;
-    case NA_UI_TEXTFIELD:    relRect = na_GetTextFieldAbsoluteInnerRect(relElem); break;
-    case NA_UI_WINDOW:       relRect = na_GetWindowAbsoluteInnerRect(relElem); break;
-
-    default:
-      #if NA_DEBUG
-        naError("Invalid UI type");
-      #endif
-      relRect = naMakeRectZero();
-      break;
-    }
-
-    rect.pos.x = rect.pos.x - relRect.pos.x;
-    rect.pos.y = rect.pos.y - relRect.pos.y;
-    rect.size.width = rect.size.width;
-    rect.size.height = rect.size.height;
-  }
-
-  return rect;
+NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect){
+  #if NA_DEBUG
+    naError("A screen can not be resized by software.");
+  #endif
 }
 
 

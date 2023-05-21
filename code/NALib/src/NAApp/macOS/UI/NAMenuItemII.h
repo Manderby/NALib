@@ -77,13 +77,6 @@ NA_DEF void naSetMenuItemText(NAMenuItem* menuItem, const NAUTF8Char* text){
 
 
 
-NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(const NA_UIElement* menuItem){
-  NA_UNUSED(menuItem);
-  return naMakeRectS(0, 0, 1, 1);
-}
-
-
-
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

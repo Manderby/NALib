@@ -24,6 +24,9 @@ WNDPROC na_GetApplicationOldCheckBoxWindowProc(){
 WNDPROC na_GetApplicationOldLabelWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldLabelWindowProc;
 }
+WNDPROC na_GetApplicationOldPopupButtonWindowProc(){
+  return ((NAWINAPIApplication*)naGetApplication())->oldPopupButtonWindowProc;
+}
 WNDPROC na_GetApplicationOldRadioWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldRadioWindowProc;
 }
@@ -55,8 +58,9 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
   WNDCLASS wndclass;
   MSG message;
 
+  SetProcessDPIAware();
+
   // Uncommented for future use.
-  //SetProcessDPIAware();
   //DPI_AWARENESS awareness = DPI_AWARENESS_SYSTEM_AWARE;
   //SetProcessDpiAwarenessContext(&awareness);
 
@@ -214,6 +218,7 @@ NA_HDEF NAApplication* na_NewApplication(void){
   winapiApplication->oldButtonWindowProc = NA_NULL;
   winapiApplication->oldCheckBoxWindowProc = NA_NULL;
   winapiApplication->oldLabelWindowProc = NA_NULL;
+  winapiApplication->oldPopupButtonWindowProc = NA_NULL;
   winapiApplication->oldRadioWindowProc = NA_NULL;
   winapiApplication->oldSliderWindowProc = NA_NULL;
   winapiApplication->oldTextFieldWindowProc = NA_NULL;
@@ -516,8 +521,10 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
   NAFont* font = naCreate(NAFont);
   wchar_t* systemFontName = naAllocWideCharStringWithUTF8String(fontFamilyName);
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
   font->nativePtr = CreateFont(
-    (int)size,
+    (int)(size * uiScale),
     0,
     0,
     0,
@@ -552,7 +559,7 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
 //  printf("%ls" NA_NL, lpelf->elfFullName);
 //}
 
-NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
+NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   
   NAFont* retFont = NA_NULL;
@@ -564,7 +571,7 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
   const NONCLIENTMETRICS* metrics = naGetApplicationMetrics();
 
   LONG baseSize;
-  switch(size){
+  switch(fontSize){
   case NA_FONT_SIZE_SMALL: baseSize = 12; break;
   case NA_FONT_SIZE_DEFAULT: baseSize = 16; break;
   //case NA_FONT_SIZE_DEFAULT: baseSize = metrics->lfMessageFont.lfHeight; break;
@@ -628,15 +635,15 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
 
 
 
-NA_DEF void naCenterMouse(void* uiElement, NABool includeBorder){
-  NARect spacerect;
+NA_DEF void naCenterMouse(void* uiElement){
+  NARect spaceRect;
   NARect screenframe;
   NAPos centerpos;
-  spacerect = naGetUIElementRect(uiElement, naGetApplication(), includeBorder);
+  spaceRect = naGetUIElementRectAbsolute(uiElement);
   // todo: screen not defined
   screenframe = naGetMainScreenRect();
-  centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;
-  centerpos.y = spacerect.pos.y + spacerect.size.height * .5f;
+  centerpos.x = spaceRect.pos.x + spaceRect.size.width * .5f;
+  centerpos.y = spaceRect.pos.y + spaceRect.size.height * .5f;
 
   na_SetMouseWarpedTo(centerpos);
   SetCursorPos((int)centerpos.x, (int)screenframe.size.height - (int)centerpos.y);

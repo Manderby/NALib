@@ -79,6 +79,7 @@ struct NAWINAPIApplication {
   WNDPROC          oldButtonWindowProc;
   WNDPROC          oldCheckBoxWindowProc;
   WNDPROC          oldLabelWindowProc;
+  WNDPROC          oldPopupButtonWindowProc;
   WNDPROC          oldRadioWindowProc;
   WNDPROC          oldSliderWindowProc;
   WNDPROC          oldTextFieldWindowProc;
@@ -92,20 +93,24 @@ struct NAWINAPIApplication {
 
 struct NAWINAPIButton{
   NAButton button;
-  uint32 state;
+  NARect   rect;
+  uint32   state;
 };
 
 struct NAWINAPICheckBox {
   NACheckBox checkBox;
+  NARect     rect;
 };
 
 struct NAWINAPIImageSpace {
   NAImageSpace imageSpace;
+  NARect       rect;
   NAUIImage*   image;
 };
 
 struct NAWINAPILabel {
   NALabel   label;
+  NARect    rect;
   NABool    enabled;
   NAString* href;
 };
@@ -124,41 +129,49 @@ struct NA_WINAPIMenuItem {
 #if NA_COMPILE_OPENGL == 1
   struct NAWINAPIOpenGLSpace {
     NAOpenGLSpace openGLSpace;
+    NARect        rect;
     HGLRC         hRC;    // The rendering context for OpenGL
   };
 #endif
 
 struct NAWINAPIPopupButton {
-  NAPopupButton   popupButton;
+  NAPopupButton popupButton;
+  NARect        rect;
 };
 
 struct NAWINAPIRadio {
   NARadio radio;
+  NARect  rect;
 };
 
 struct NAWINAPISlider {
   NASlider slider;
+  NARect   rect;
 };
 
 struct NAWINAPISpace {
   NASpace        space;
+  NARect         rect;
   NAWINAPIColor* lastBgColor;
 };
 
 struct NAWINAPITextBox {
   NATextBox textBox;
+  NARect    rect;
   void*     nextTabStop;
   void*     prevTabStop;
 };
 
 struct NAWINAPITextField {
   NATextField textField;
+  NARect      rect;
   void*       nextTabStop;
   void*       prevTabStop;
 };
 
 struct NAWINAPIWindow {
   NAWindow      window;
+  NARect        rect;
   NA_UIElement* firstResponder;
 };
 
