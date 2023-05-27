@@ -7,7 +7,7 @@
 
 
 #include "../NABase.h"
-
+#include <stdlib.h>
 
 // /////////////////////////////////
 // This file contains many basic functions such as min and max or comparing
