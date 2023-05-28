@@ -11,6 +11,9 @@
 - (id) initWithCocoaApplication:(NACocoaApplication*)newCocoaApplication{
   self = [super init];
   cocoaApplication = newCocoaApplication;
+  oldDelegate = NA_NULL;
+  postStartupFunction = NA_NULL;
+  postStartupArg = NA_NULL;
   return self;
 }
 
@@ -20,10 +23,52 @@
   return NSTerminateCancel;
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)notification{
-  if([NSApp delegate] && [NSApp delegate] != self){
-    [[NSApp delegate] applicationDidFinishLaunching:notification];
+- (void)setOldDelegate:(NSObject <NSApplicationDelegate>*)delegate {
+  oldDelegate = delegate;
+}
+
+- (void)setPostStartupFunction:(NAMutator)postUpdate {
+  postStartupFunction = postUpdate;
+}
+
+- (void)setPostStartupArg:(void*)arg {
+  postStartupArg = arg;
+}
+
+- (void)applicationWillFinishLaunching:(NSNotification *)notification{
+  // forward the notification to the oldDelegate
+  if(oldDelegate && oldDelegate != self){
+    [oldDelegate applicationWillFinishLaunching:notification];
   }
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notification{
+  // forward the notification to the oldDelegate
+  if(oldDelegate && oldDelegate != self){
+    [oldDelegate applicationDidFinishLaunching:notification];
+  }
+}
+
+- (void)applicationWillBecomeActive:(NSNotification *)notification{
+  // forward the notification to the oldDelegate
+  if(oldDelegate && oldDelegate != self){
+    [oldDelegate applicationWillBecomeActive:notification];
+  }
+}
+
+- (void)applicationDidBecomeActive:(NSNotification *)notification{
+  // forward the notification to the oldDelegate
+  if(oldDelegate && oldDelegate != self){
+    [oldDelegate applicationDidBecomeActive:notification];
+  }
+
+  // Call postStartup the first time if desired.
+  if(postStartupFunction){
+    postStartupFunction(postStartupArg);
+  }
+  
+  // Give up this delegate and return it to the previous delegate.
+  [NSApp setDelegate:oldDelegate];
 }
 
 @end
@@ -49,17 +94,19 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
     // Let the Macintosh System know that the app is ready to run.
     [NSApp finishLaunching];
     
-    // Call postStartup if desired.
-    if(postStartup){postStartup(arg);}
   #if !NA_MACOS_USES_ARC
     [pool drain]; // also releases the pool. No separate release necessary.
   #endif
 
-    // Setting this delegate changes the behaviour of applications which
-    // already have a delegate defined, for example in the XIB file. Be
-    // careful when implementing it and mention it in the naStartApplication
-    // comments.
-  // [NSApp setDelegate:naGetUIElementNativePtr(app)];
+  NACocoaNativeApplicationDelegate* nativeApp = (NACocoaNativeApplicationDelegate*)naGetUIElementNativePtr(app);
+
+  // Hijack the delegate during startup without losing the old delegate
+  // which might have already been set by the user or in a XIB file.
+  [nativeApp setOldDelegate:[NSApp delegate]];
+  [NSApp setDelegate:naGetUIElementNativePtr(app)];
+
+  [nativeApp setPostStartupFunction: postStartup];
+  [nativeApp setPostStartupArg: arg];
 
   // Start the event loop.
   NSDate* distantFuture = [NSDate distantFuture];

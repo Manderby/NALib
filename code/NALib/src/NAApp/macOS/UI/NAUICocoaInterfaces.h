@@ -130,7 +130,14 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 @interface NACocoaNativeApplicationDelegate : NSObject <NSApplicationDelegate>{
   NACocoaApplication* cocoaApplication;
+  NSObject <NSApplicationDelegate>* oldDelegate;
+  NAMutator postStartupFunction;
+  void* postStartupArg;
+  NABool atStartup;
 }
+- (void)setOldDelegate:(NSObject <NSApplicationDelegate>*)delegate;
+- (void)setPostStartupFunction:(NAMutator)postUpdate;
+- (void)setPostStartupArg:(void*)arg;
 @end
 
 @interface NACocoaNativeButton : NSButton{

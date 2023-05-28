@@ -2,7 +2,7 @@
 // This is an example showing how to create a GUI application with NALib which
 // converts temperatures from Degree Celsius to Degree Fahrenheit.
 
-#include "HelloWorldGUI.h"
+#include "GUIExamples.h"
 #include "../../NALib/src/NAStruct/NAStack.h"
 
 

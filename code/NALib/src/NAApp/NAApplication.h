@@ -25,7 +25,11 @@ NA_API void naStartApplication(
 // call the given two startup functions with the given arg. The precise order
 // of the calls is described here:
 //
-// Mac: - NALib calls [NSApplication sharedApplication]
+// Mac: - NALib calls [NSApplication sharedApplication]. If you have already
+//        created an application (for example by using a XIB file), then that
+//        application is used. If you need your own delegate, you have to set
+//        it before calling naStartApplication, otherwise, the application
+//        startup might not work as expected.
 //      - NALib allocates some structures in the background to run the UI
 //        including the application internal translator.
 //      - NALib creates an NSAutoreleasePool (only when ARC is turned off)
@@ -34,12 +38,13 @@ NA_API void naStartApplication(
 //        * NALib calls [NSApp finishLaunching] which in turn will post an
 //          NSApplicationWillFinishLaunchingNotification to whatever
 //          application delegate you might have set.
-//        * NALib calls postStartup with arg.
 //      - NALib drains the autorelease pool. (only when ARC is turned off)
 //      - NALib will start a message loop. When ARC is turned off, a new
 //        NSAutoreleasePools is created for each and every message. At its
 //        first run, a message to NSApplicationDidFinishLaunchingNotification
 //        will be sent to your application delegate.
+//      - The first time an applicationDidBecomeActive notification is sent,
+//        The postStartup function is called with arg.
 //
 // Win: - NALib registers its window classes
 //      - NALib allocates some structures in the background to run the UI

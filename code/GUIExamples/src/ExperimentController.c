@@ -4,7 +4,7 @@
 
 
 
-#include "HelloWorldGUI.h"
+#include "GUIExamples.h"
 #include "../../NALib/src/NAVisual/NA3DHelper.h"
 
 
@@ -74,10 +74,10 @@ struct ExperimentController{
 
 NABool windowReshaped(NAReaction reaction){
   ExperimentController* con = reaction.controller;
-//  NARect rect = naGetUIElementRect(con->experimentWindow);
-//  NARect borderRect = naGetUIElementRect(con->experimentWindow);
-//  const NAUTF8Char* labelString = naAllocSprintf(NA_TRUE, "Window reshaped.\nRect with border:    %.01f, %.01f, %.01f, %.01f\nRect without border: %.01f, %.01f, %.01f, %.01f", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height, borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
-//  naSetLabelText(con->outputLabel, labelString);
+  NARect rect = naGetUIElementRect(con->experimentWindow);
+  NARect borderRect = naGetUIElementRect(con->experimentWindow);
+  const NAUTF8Char* labelString = naAllocSprintf(NA_TRUE, "Window reshaped.\nRect with border:    %.01f, %.01f, %.01f, %.01f\nRect without border: %.01f, %.01f, %.01f, %.01f", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height, borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
+  naSetLabelText(con->outputLabel, labelString);
 
   return NA_TRUE;
 }
