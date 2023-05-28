@@ -11,6 +11,8 @@ struct FontController{
 };
 
 
+#define HAMBURGEFONTSIV u8"Haxig \x4f60\x597d"
+
 
 FontController* createFontController(){
   FontController* con = naAlloc(FontController);
@@ -22,27 +24,27 @@ FontController* createFontController(){
   NALabel* label;
   NAFont* font;
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_SMALL);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 12.);
   naAddSpaceChild(windowSpace, label, naMakePos(10, 360));
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT);
   naSetLabelFont(label, font);
   naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 360));
    
-  label = naNewLabel(u8"Haxig 你好", 120);
+  label = naNewLabel(HAMBURGEFONTSIV, 120);
   font = naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 360));
    
-  label = naNewLabel(u8"Haxig 你好", 150);
+  label = naNewLabel(HAMBURGEFONTSIV, 150);
   font = naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
@@ -51,27 +53,27 @@ FontController* createFontController(){
 
 
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_SMALL);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 12.);
   naAddSpaceChild(windowSpace, label, naMakePos(10, 310));
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_DEFAULT);
   naSetLabelFont(label, font);
   naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 310));
 
-  label = naNewLabel(u8"Haxig 你好", 120);
+  label = naNewLabel(HAMBURGEFONTSIV, 120);
   font = naCreateFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 310));
 
-  label = naNewLabel(u8"Haxig 你好", 150);
+  label = naNewLabel(HAMBURGEFONTSIV, 150);
   font = naCreateFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
@@ -80,27 +82,27 @@ FontController* createFontController(){
 
 
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_SMALL);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 12.);
   naAddSpaceChild(windowSpace, label, naMakePos(10, 260));
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
   naSetLabelFont(label, font);
   naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 260));
 
-  label = naNewLabel(u8"Haxig 你好", 120);
+  label = naNewLabel(HAMBURGEFONTSIV, 120);
   font = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 260));
 
-  label = naNewLabel(u8"Haxig 你好", 150);
+  label = naNewLabel(HAMBURGEFONTSIV, 150);
   font = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
@@ -109,27 +111,27 @@ FontController* createFontController(){
 
 
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_SMALL);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 12.);
   naAddSpaceChild(windowSpace, label, naMakePos(10, 210));
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_DEFAULT);
   naSetLabelFont(label, font);
   naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 210));
 
-  label = naNewLabel(u8"Haxig 你好", 120);
+  label = naNewLabel(HAMBURGEFONTSIV, 120);
   font = naCreateFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 210));
 
-  label = naNewLabel(u8"Haxig 你好", 150);
+  label = naNewLabel(HAMBURGEFONTSIV, 150);
   font = naCreateFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
@@ -138,27 +140,27 @@ FontController* createFontController(){
 
 
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_SMALL);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 12.);
   naAddSpaceChild(windowSpace, label, naMakePos(10, 160));
 
-  label = naNewLabel(u8"Haxig 你好", 100);
+  label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_DEFAULT);
   naSetLabelFont(label, font);
   naRelease(font);
   naAddSpaceChild(windowSpace, label, naMakePos(110, 160));
 
-  label = naNewLabel(u8"Haxig 你好", 120);
+  label = naNewLabel(HAMBURGEFONTSIV, 120);
   font = naCreateFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
   naAddSpaceChild(windowSpace, label, naMakePos(210, 160));
 
-  label = naNewLabel(u8"Haxig 你好", 150);
+  label = naNewLabel(HAMBURGEFONTSIV, 150);
   font = naCreateFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);

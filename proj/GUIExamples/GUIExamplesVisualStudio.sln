@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30011.22
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{2740F895-7AAB-42DC-AF98-534702E8C727}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{2740F895-7AA
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NALib", "..\..\code\NALib\NALib.vcxproj", "{D03034CF-5CE8-4E68-8FD9-D5820E2745BA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloWorldGUI", "..\..\code\HelloWorldGUI\HelloWorldGUI.vcxproj", "{4F4881CF-252C-4F96-8A94-4EEEBFCB4450}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GUIExamples", "..\..\code\GUIExamples\GUIExamples.vcxproj", "{4F4881CF-252C-4F96-8A94-4EEEBFCB4450}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -701,14 +701,14 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser){
   
   if(curByte == '.'){
     curByte = na_NextJSONByte(parser);
-    const void* firstDecimalPtr = parser->curPtr;
+    const NAByte* firstDecimalPtr = parser->curPtr;
 
     while(isdigit(curByte)){
       decimals = (decimals << 1) + (decimals << 3) + (curByte & 0x0f);
       curByte = na_NextJSONByte(parser);
     }
 
-    const void* lastDecimalPtr = parser->curPtr;
+    const NAByte* lastDecimalPtr = parser->curPtr;
     decimalShift = (int32)(lastDecimalPtr - firstDecimalPtr);
   }
 

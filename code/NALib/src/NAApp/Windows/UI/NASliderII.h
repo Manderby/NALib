@@ -11,9 +11,9 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace);
 NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NASlider* slider = (NASlider*)uiElement;
-  RECT spaceRect;
-  NAWINAPIColor* bgColor;
-  NAWINAPISpace* winapiSpace;
+  //RECT spaceRect;
+  //NAWINAPIColor* bgColor;
+  //NAWINAPISpace* winapiSpace;
 
   NAWINAPIColor testColor;
   testColor.color = RGB(0, 226, 226);
