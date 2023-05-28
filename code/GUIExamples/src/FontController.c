@@ -11,7 +11,7 @@ struct FontController{
 };
 
 
-#define HAMBURGEFONTSIV u8"Haxig \x4f60\x597d"
+#define HAMBURGEFONTSIV u8"Haxig \u4f60\u597d"
 
 
 FontController* createFontController(){
