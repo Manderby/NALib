@@ -18,9 +18,10 @@ Smaller things:
 - Adding setEnabled and setVisible to some UIElements
 - Adding pixel font
 - Adding NAFont
-- Adding leap second information according to bulletin C 64
+- Adding leap second information according to bulletin C 64 and 65
 - Adding binary pair sum method.
 - Rearranging GUI implementation files
+- Fixing macOS windows not appearing upon start of application
 - Tons of smaller corrections, improvements, etc.
 
 Version 26 (released 8. January 2022)

@@ -1177,12 +1177,12 @@
 		90E38D5A2A23939E0062F40E /* doc */ = {
 			isa = PBXGroup;
 			children = (
-				90E38D5B2A23939E0062F40E /* todo.txt */,
-				90E38D5C2A23939E0062F40E /* nalibtitle.png */,
 				90E38D5D2A23939E0062F40E /* documentation.txt */,
-				90E38D5E2A23939E0062F40E /* NALibChangelogV21_V30.txt */,
 				90E38D5F2A23939E0062F40E /* NALibChangelogV0_V10.txt */,
 				90E38D602A23939E0062F40E /* NALibChangelogV11_V20.txt */,
+				90E38D5E2A23939E0062F40E /* NALibChangelogV21_V30.txt */,
+				90E38D5C2A23939E0062F40E /* nalibtitle.png */,
+				90E38D5B2A23939E0062F40E /* todo.txt */,
 			);
 			name = doc;
 			path = ../../doc;

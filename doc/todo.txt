@@ -6,21 +6,17 @@ in NALib.
 
 Future
 - Reintroduce volatile buffer sources
-- malloc uint
 - NAComplexPolar
 - All todos
-- int uint
 - Iterators store start and end.
 - All Container structs can store pointers.
 - make naAtof and parseStringFloat
 - Homogeneous coordinates
 - Range tree
 - Red Black Tree
-- Threadsavety for structs
+- Threadsafety for structs
 - Compression in NAPNG
 - Add ARM, Linux
-- Make Memory addresses uint
-- release pools
 - MOB
 - Color
 - TimeZones
