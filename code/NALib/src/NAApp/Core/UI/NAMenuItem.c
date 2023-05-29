@@ -41,6 +41,8 @@ NA_HDEF NARect na_GetMenuItemRect(const NA_UIElement* menuItem)
 
 
 NA_HDEF void na_SetMenuItemRect(NA_UIElement* menuItem, NARect rect){
+  NA_UNUSED(menuItem);
+  NA_UNUSED(rect);
   #if NA_DEBUG
   naError("MenuItem rects can not be set.");
   #endif

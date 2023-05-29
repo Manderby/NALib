@@ -37,6 +37,12 @@ NA_DEF size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item){
 
 
 
+NA_DEF size_t naGetMenuItemCount(const NAMenu* menu){
+  return naGetListCount(&(menu->childs));
+}
+
+
+
 NA_HDEF NARect na_GetMenuRect(const NA_UIElement* menu)
 {
   NA_UNUSED(menu);
@@ -46,6 +52,8 @@ NA_HDEF NARect na_GetMenuRect(const NA_UIElement* menu)
 
 
 NA_HDEF void na_SetMenuRect(NA_UIElement* menu, NARect rect){
+  NA_UNUSED(menu);
+  NA_UNUSED(rect);
   #if NA_DEBUG
   naError("Menu rects can not be set.");
   #endif

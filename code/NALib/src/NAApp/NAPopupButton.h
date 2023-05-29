@@ -18,17 +18,21 @@ NA_API void naSetPopupButtonEnabled(
   NAPopupButton* popupButton,
   NABool enabled);
 
-// naAddPopupButtonMenuItem adds a menu item before atItem. If atItem is Null,
+// Adds a menu item before atItem. If atItem is Null,
 // it is added to the end of the menu.
 NA_API void naAddPopupButtonMenuItem(
   NAPopupButton* popupButton,
   NAMenuItem* item,
   const NAMenuItem* atItem);
 
-// naGetPopupButtonItemIndex returns the index
+// Returns the index of the given item. If not found, equals the item count of
+// the menu. 
 NA_API size_t naGetPopupButtonItemIndex(
   NAPopupButton* popupButton,
   const NAMenuItem* item);
+
+// returns the number of items in the popup Button menu.
+NA_API size_t naGetPopupButtonItemCount(NAPopupButton* popupButton);
 
 NA_API const NAMenuItem* naGetPopupButtonItem(
   const NAPopupButton* popupButton,

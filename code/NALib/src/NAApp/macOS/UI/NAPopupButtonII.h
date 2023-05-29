@@ -33,7 +33,7 @@
 - (void) addMenuItem:(NSMenuItem*)item atItem:(const NAMenuItem*)atItem{  
   size_t index = naGetPopupButtonItemIndex(&(cocoaPopupButton->popupButton), atItem);
   //int index = [self getMenuItemIndex:atItem];
-  if(index == -1){
+  if(index == naGetPopupButtonItemCount(&(cocoaPopupButton->popupButton))){
     [[self menu] addItem:item];
   }else{
     [[self menu] insertItem:item atIndex: (NSInteger)index];

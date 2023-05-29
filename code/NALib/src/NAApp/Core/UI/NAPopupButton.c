@@ -26,6 +26,12 @@ NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, const NAMenu
 
 
 
+NA_DEF size_t naGetPopupButtonItemCount(NAPopupButton* popupButton){
+  return naGetListCount(&(popupButton->childs));
+}
+
+
+
 NA_DEF const NAMenuItem* naGetPopupButtonItem(const NAPopupButton* popupButton, size_t index){
   NAListIterator iter = naMakeListAccessor(&(popupButton->childs));
   naLocateListIndex(&iter, index);

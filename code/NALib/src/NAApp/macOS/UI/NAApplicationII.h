@@ -37,28 +37,32 @@
 
 - (void)applicationWillFinishLaunching:(NSNotification *)notification{
   // forward the notification to the oldDelegate
-  if(oldDelegate && oldDelegate != self){
+  if(oldDelegate && oldDelegate != self
+    && [oldDelegate respondsToSelector:@selector(applicationWillFinishLaunching:)]){
     [oldDelegate applicationWillFinishLaunching:notification];
   }
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification{
   // forward the notification to the oldDelegate
-  if(oldDelegate && oldDelegate != self){
+  if(oldDelegate && oldDelegate != self
+    && [oldDelegate respondsToSelector:@selector(applicationDidFinishLaunching:)]){
     [oldDelegate applicationDidFinishLaunching:notification];
   }
 }
 
 - (void)applicationWillBecomeActive:(NSNotification *)notification{
   // forward the notification to the oldDelegate
-  if(oldDelegate && oldDelegate != self){
+  if(oldDelegate && oldDelegate != self
+    && [oldDelegate respondsToSelector:@selector(applicationWillBecomeActive:)]){
     [oldDelegate applicationWillBecomeActive:notification];
   }
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)notification{
   // forward the notification to the oldDelegate
-  if(oldDelegate && oldDelegate != self){
+  if(oldDelegate && oldDelegate != self
+    && [oldDelegate respondsToSelector:@selector(applicationDidBecomeActive:)]){
     [oldDelegate applicationDidBecomeActive:notification];
   }
 
@@ -98,12 +102,12 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
     [pool drain]; // also releases the pool. No separate release necessary.
   #endif
 
-  NACocoaNativeApplicationDelegate* nativeApp = (NACocoaNativeApplicationDelegate*)naGetUIElementNativePtr(app);
+  NACocoaNativeApplicationDelegate* nativeApp = (NA_COCOA_BRIDGE NACocoaNativeApplicationDelegate*)naGetUIElementNativePtr(app);
 
   // Hijack the delegate during startup without losing the old delegate
   // which might have already been set by the user or in a XIB file.
   [nativeApp setOldDelegate:[NSApp delegate]];
-  [NSApp setDelegate:naGetUIElementNativePtr(app)];
+  [NSApp setDelegate:(NA_COCOA_BRIDGE id<NSApplicationDelegate> _Nullable)(naGetUIElementNativePtr(app))];
 
   [nativeApp setPostStartupFunction: postStartup];
   [nativeApp setPostStartupArg: arg];

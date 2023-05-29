@@ -14,8 +14,12 @@ NA_API NAMenu* naNewMenu(void);
 // Note that item must be mutable.
 NA_API void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atItem);
 
-// Returns the index of the given item including all separators.
+// Returns the index of the given item including all separators. If the item
+// is not found, the returned value equals the number of entries in the menu.
 NA_API size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item);
+
+// Returns the number of entries in the menu including all separators.
+NA_API size_t naGetMenuItemCount(const NAMenu* menu);
 
 // Presents the menu onscreen at the dedicated absolute position.
 // You need to provide a parent UIElement. Currently must be a button.
