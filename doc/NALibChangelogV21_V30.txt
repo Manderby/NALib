@@ -8,7 +8,11 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Big changes:
+- Added NAJSON, a non-standard-conform but very fast JSON parser.
 - Windows GUI is now relsolution independent. Images are still missing though.
+
+Smaller things:
 - Deprecating NABounds4, replacing with NABezel4
 - Adding 3D orthographic projection matrix computation
 - Adding setEnabled and setVisible to some UIElements
