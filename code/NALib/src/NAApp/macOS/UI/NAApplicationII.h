@@ -49,6 +49,24 @@
     && [oldDelegate respondsToSelector:@selector(applicationDidFinishLaunching:)]){
     [oldDelegate applicationDidFinishLaunching:notification];
   }
+  
+  // If this is a bare application without XIB
+  if(!oldDelegate){
+    // Show with a dock icon:
+    [NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
+    // Without this event, the applicationDidBecomeActive will not be called.
+    NSEvent* activationEvent = [NSEvent
+      otherEventWithType: NSEventTypeAppKitDefined
+      location: NSMakePoint(0, 0)
+      modifierFlags: 0
+      timestamp: 0
+      windowNumber: 0
+      context: nil
+      subtype: NSEventSubtypeApplicationActivated
+      data1: 0
+      data2: 0];
+    [NSApp sendEvent:activationEvent];
+  }
 }
 
 - (void)applicationWillBecomeActive:(NSNotification *)notification{
@@ -69,6 +87,12 @@
   // Call postStartup the first time if desired.
   if(postStartupFunction){
     postStartupFunction(postStartupArg);
+    
+    // If this is a bare application without XIB
+    if(!oldDelegate){
+      // Make the application active
+      [NSApp activateIgnoringOtherApps:YES];
+    }
   }
   
   // Give up this delegate and return it to the previous delegate.
@@ -78,7 +102,8 @@
 @end
 
 
-
+// Interesting read:
+// https://lapcatsoftware.com/blog/2007/03/10/everything-you-always-wanted-to-know-about-nsapplication/
 NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void* arg){  
   // Start the shared application if not started already and set the nativePtr
   // of the application.
@@ -106,11 +131,11 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
 
   // Hijack the delegate during startup without losing the old delegate
   // which might have already been set by the user or in a XIB file.
-  [nativeApp setOldDelegate:[NSApp delegate]];
-  [NSApp setDelegate:(NA_COCOA_BRIDGE id<NSApplicationDelegate> _Nullable)(naGetUIElementNativePtr(app))];
-
+  NSObject <NSApplicationDelegate>* oldDelegate = [NSApp delegate];
+  [nativeApp setOldDelegate:oldDelegate];
   [nativeApp setPostStartupFunction: postStartup];
   [nativeApp setPostStartupArg: arg];
+  [NSApp setDelegate:(NA_COCOA_BRIDGE id<NSApplicationDelegate> _Nullable)(naGetUIElementNativePtr(app))];
 
   // Start the event loop.
   NSDate* distantFuture = [NSDate distantFuture];
