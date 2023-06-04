@@ -144,11 +144,13 @@ NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace){
 
 
 NA_DEF void naSetImageSpaceImage(NAImageSpace* imageSpace, NAUIImage* uiImage){
-  const NAWINAPIImageSpace* winapiImageSpace = (const NAWINAPIImageSpace*)imageSpace;
+  NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
   
   naRelease(imageSpace->uiImage);
   imageSpace->uiImage = naRetain(uiImage);
   winapiImageSpace->image = uiImage;
+
+  InvalidateRect(naGetUIElementNativePtr(imageSpace), NULL, TRUE);
 }
 
 

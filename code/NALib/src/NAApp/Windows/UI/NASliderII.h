@@ -61,13 +61,11 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
   case WM_LBUTTONDOWN:
     slider->sliderInMovement = NA_TRUE;
-    info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;
 
   case WM_LBUTTONUP:
     slider->sliderInMovement = NA_TRUE;
-    info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;
 
@@ -84,13 +82,12 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
 NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam){
   NAWINAPICallbackInfo info = {NA_TRUE, 0};
 
-  //int16 lo = LOWORD(wParam);
-  //int16 hi = HIWORD(wParam);
-
   NAPos pos = naGetMousePos(naGetMouseStatus());
   NARect rect = naGetUIElementRectAbsolute(uiElement);
 
-  naSetSliderValue(uiElement, (double)pos.x / (double)rect.size.width);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  LRESULT thumbLength = SendMessage(naGetUIElementNativePtr(uiElement), TBM_GETTHUMBLENGTH, 0, 0);
+  naSetSliderValue(uiElement, ((double)pos.x - thumbLength / 2.) * uiScale / (double)rect.size.width);
   na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED);
 
   return info;

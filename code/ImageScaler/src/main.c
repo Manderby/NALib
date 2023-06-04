@@ -12,7 +12,7 @@ NABabyImage* originalImage;
 NABool sliderEdited(NAReaction reaction){
   double value = naGetSliderValue(slider);
   NASizei originalSize = naGetBabyImageSize(originalImage);
-  NASizei newSize = naMakeSizei(value * originalSize.width, value * originalSize.height);
+  NASizei newSize = naMakeSizeiE((NAInt)(value * originalSize.width), (NAInt)(value * originalSize.height));
   if(naIsSizeiUseful(newSize)){
     NABabyImage* scaledImage = naCreateBabyImageWithResize(originalImage, newSize);
     NAUIImage* uiImage = naCreateUIImage(
