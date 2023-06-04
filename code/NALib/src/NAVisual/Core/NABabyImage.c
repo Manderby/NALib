@@ -96,7 +96,7 @@ NA_HDEF NABabyImage* naCreateBabyImageCopy(const NABabyImage* image){
   NABabyImage* newImage;
   #if NA_DEBUG
   if(!image)
-    naError("given image is a Null pointer");
+    naCrash("given image is a Null pointer");
   #endif
   newImage = naAlloc(NABabyImage);
   naInitRefCount(&newImage->refCount);
@@ -348,7 +348,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithResize(const NABabyImage* image, NASize
   // Normalize the whole output image;
   float divisor = (1.f / factorY) * (float)newSize.width / (float)image->width;
   float* outPtr = outImage->data;
-  for(uint32 i = 0; i < newSize.width * newSize.height * NA_BABY_COLOR_CHANNEL_COUNT; i += 1){
+  for(uint32 i = 0; i < (uint32)(newSize.width * newSize.height) * NA_BABY_COLOR_CHANNEL_COUNT; i += 1){
     *outPtr++ *= divisor;
   }
 
