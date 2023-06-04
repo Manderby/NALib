@@ -41,6 +41,8 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_TIMER:
   case TBM_SETPOS:  // (WM_USER + 5)
   case TBM_GETPOS: // (WM_USER + 0)
+  case TBM_GETTHUMBRECT:
+  case TBM_GETTHUMBLENGTH:
     break;
 
   case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
@@ -82,12 +84,7 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
 NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam){
   NAWINAPICallbackInfo info = {NA_TRUE, 0};
 
-  NAPos pos = naGetMousePos(naGetMouseStatus());
-  NARect rect = naGetUIElementRectAbsolute(uiElement);
-
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-  LRESULT thumbLength = SendMessage(naGetUIElementNativePtr(uiElement), TBM_GETTHUMBLENGTH, 0, 0);
-  naSetSliderValue(uiElement, ((double)pos.x - thumbLength / 2.) * uiScale / (double)rect.size.width);
+  naSetSliderValue(uiElement, naGetSliderValue(uiElement));
   na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED);
 
   return info;

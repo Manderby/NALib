@@ -38,8 +38,8 @@ void postStartup(void* arg){
   
   NASpace* contentSpace = naGetWindowContentSpace(window);
   
-  NAPNG* png = naNewPNGWithPath("res/marientaefer.png");
-//  NAPNG* png = naNewPNGWithPath("res/motor.png");
+//  NAPNG* png = naNewPNGWithPath("res/marientaefer.png");
+  NAPNG* png = naNewPNGWithPath("res/motor.png");
   originalImage = naCreateBabyImageFromPNG(png);
   NAUIImage* uiImage = naCreateUIImage(
     originalImage,
