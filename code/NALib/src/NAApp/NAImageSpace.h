@@ -11,6 +11,7 @@
 // An imageSpace is a space which displays the given image.
 NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size);
 
+NA_API void naSetImageSpaceImage(NAImageSpace* imageSpace, NAUIImage* uiImage);
 
 
 #endif // NA_IMAGESPACE_INCLUDED

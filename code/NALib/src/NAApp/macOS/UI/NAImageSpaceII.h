@@ -51,6 +51,17 @@ NA_DEF void na_DestructCocoaImageSpace(NACocoaImageSpace* cocoaImageSpace){
 }
 
 
+
+NA_DEF void naSetImageSpaceImage(NAImageSpace* imageSpace, NAUIImage* uiImage){
+  naDefineCocoaObjectConst(NACocoaNativeImageSpace, nativePtr, imageSpace);
+  
+  naRelease(imageSpace->uiImage);
+  imageSpace->uiImage = naRetain(uiImage);
+  [nativePtr setUIImage: uiImage];
+}
+
+
+
 NA_HDEF NARect na_GetImageSpaceRect(const NA_UIElement* imageSpace){
   naDefineCocoaObjectConst(NACocoaNativeImageSpace, nativePtr, imageSpace);
   return naMakeRectWithNSRect([nativePtr frame]);

@@ -223,53 +223,149 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(const NABabyImage* base, const NA
 
 
 NA_DEF NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image){
-  NASizei halfsize;
+  NASizei halfSize;
   NAInt x, y;
-  NABabyImage* outimage;
+  NABabyImage* outImage;
   NAInt valuesPerLine;
   float* inPtr1;
   float* inPtr2;
-  float* outdataptr;
+  float* outDataPtr;
   
   #if NA_DEBUG
     if((image->width % 2) || (image->height % 2))
       naError("Width or height not divisible by 2");
   #endif
-  halfsize = naMakeSizei(image->width / 2, image->height / 2);
+  halfSize = naMakeSizei(image->width / 2, image->height / 2);
 
-  outimage = naCreateBabyImage(halfsize, NA_NULL);
+  outImage = naCreateBabyImage(halfSize, NA_NULL);
   valuesPerLine = naGetBabyImageValuesPerLine(image);
   
   inPtr1 = image->data;
   inPtr2 = image->data + valuesPerLine;
-  outdataptr = outimage->data;
+  outDataPtr = outImage->data;
   for(y = 0; y < image->height; y += 2){
     for(x = 0; x < image->width; x += 2){
-      outdataptr[0] = inPtr1[0] * inPtr1[3] + inPtr1[4] * inPtr1[7];
-      outdataptr[1] = inPtr1[1] * inPtr1[3] + inPtr1[5] * inPtr1[7];
-      outdataptr[2] = inPtr1[2] * inPtr1[3] + inPtr1[6] * inPtr1[7];
-      outdataptr[3] = inPtr1[3] + inPtr1[7];
+      outDataPtr[0] = inPtr1[0] * inPtr1[3] + inPtr1[4] * inPtr1[7];
+      outDataPtr[1] = inPtr1[1] * inPtr1[3] + inPtr1[5] * inPtr1[7];
+      outDataPtr[2] = inPtr1[2] * inPtr1[3] + inPtr1[6] * inPtr1[7];
+      outDataPtr[3] = inPtr1[3] + inPtr1[7];
       inPtr1 += 8;
-      outdataptr[0] += inPtr2[0] * inPtr2[3] + inPtr2[4] * inPtr2[7];
-      outdataptr[1] += inPtr2[1] * inPtr2[3] + inPtr2[5] * inPtr2[7];
-      outdataptr[2] += inPtr2[2] * inPtr2[3] + inPtr2[6] * inPtr2[7];
-      outdataptr[3] += inPtr2[3] + inPtr2[7];
+      outDataPtr[0] += inPtr2[0] * inPtr2[3] + inPtr2[4] * inPtr2[7];
+      outDataPtr[1] += inPtr2[1] * inPtr2[3] + inPtr2[5] * inPtr2[7];
+      outDataPtr[2] += inPtr2[2] * inPtr2[3] + inPtr2[6] * inPtr2[7];
+      outDataPtr[3] += inPtr2[3] + inPtr2[7];
       inPtr2 += 8;
-      if(outdataptr[3] != 0.f){
-        float invweight = naInvf(outdataptr[3]);
-        outdataptr[0] *= invweight;
-        outdataptr[1] *= invweight;
-        outdataptr[2] *= invweight;
-        outdataptr[3] *= .25f;
+      if(outDataPtr[3] != 0.f){
+        float invweight = naInvf(outDataPtr[3]);
+        outDataPtr[0] *= invweight;
+        outDataPtr[1] *= invweight;
+        outDataPtr[2] *= invweight;
+        outDataPtr[3] *= .25f;
       }
-      outdataptr += NA_BABY_COLOR_CHANNEL_COUNT;
+      outDataPtr += NA_BABY_COLOR_CHANNEL_COUNT;
     }
     // Each line has advanced till the last pixel of the line, so we only
     // have to overjump one more line.
     inPtr1 += valuesPerLine;
     inPtr2 += valuesPerLine;
   }
-  return outimage;
+  return outImage;
+}
+
+
+NA_HDEF void naAccumulateResizeLine(float* out, const float* in, int32 outY, int32 inY, int32 outWidth, int32 inWidth, float factorY){
+  float* outPtr = &out[outY * outWidth * NA_BABY_COLOR_CHANNEL_COUNT];
+  const float* inPtr = &in[inY * inWidth * NA_BABY_COLOR_CHANNEL_COUNT];
+
+  int32 inX = 0;
+  float subX = 0.f;
+  float factorX = (float)inWidth / (float)outWidth;
+  float remainerX = factorX;
+  for(int32 outX = 0; outX < outWidth; outX += 1){
+    float counterSubX = 1.f - subX;
+    while(counterSubX <= remainerX){
+      float accumulateFactor = factorY * counterSubX;
+      outPtr[0] += accumulateFactor * inPtr[0];
+      outPtr[1] += accumulateFactor * inPtr[1];
+      outPtr[2] += accumulateFactor * inPtr[2];
+      outPtr[3] += accumulateFactor * inPtr[3];
+      remainerX -= counterSubX;
+      inPtr += NA_BABY_COLOR_CHANNEL_COUNT;
+      inX++;
+      counterSubX = 1.f;
+    }
+    subX = 1.f - counterSubX;
+    if(inX < inWidth){
+      float accumulateFactor = factorY * remainerX;
+      outPtr[0] += accumulateFactor * inPtr[0];
+      outPtr[1] += accumulateFactor * inPtr[1];
+      outPtr[2] += accumulateFactor * inPtr[2];
+      outPtr[3] += accumulateFactor * inPtr[3];
+    }
+    subX += remainerX;
+    outPtr += NA_BABY_COLOR_CHANNEL_COUNT;
+    remainerX = factorX;
+    remainerX = (outX + 2) * factorX - (inX + subX);
+  }
+}
+
+
+
+NA_DEF NABabyImage* naCreateBabyImageWithResize(const NABabyImage* image, NASizei newSize){
+  NABabyImage* outImage;
+  NAInt valuesPerLine;
+  
+  #if NA_DEBUG
+    if(!naIsSizeiUseful(newSize))
+      naError("Given size is not useful");
+  #endif
+
+  NABabyColor blank = {0.f, 0.f, 0.f, 0.f};
+  outImage = naCreateBabyImage(newSize, blank);
+  valuesPerLine = naGetBabyImageValuesPerLine(image);
+  
+  int32 inY = 0;
+  float subY = 0.f;
+  float factorY = (float)image->height / (float)newSize.height;
+  float remainerY = factorY;
+  for(int32 outY = 0; outY < newSize.height; outY += 1){
+    float counterSubY = 1.f - subY;
+    while(counterSubY <= remainerY){
+      naAccumulateResizeLine(outImage->data, image->data, outY, inY, (int32)newSize.width, image->width, counterSubY);
+      remainerY -= counterSubY;
+      inY++;
+      counterSubY = 1.f;
+    }
+    subY = 1.f - counterSubY;
+    if(inY < image->height){
+      naAccumulateResizeLine(outImage->data, image->data, outY, inY, (int32)newSize.width, image->width, remainerY);
+    }
+    subY += remainerY;
+    remainerY = factorY;
+    remainerY = (outY + 2) * factorY - (inY + subY);
+  }
+
+
+//
+//  for(int32 y = 0; y < image->height; y += 1){
+//    naAccumulateResizeLine(
+//      outImage->data,
+//      image->data,
+//      y,
+//      y,
+//      (int32)newSize.width,
+//      image->width);
+//  }
+
+  // Normalize the whole output image;
+  float divisor = (1.f / factorY) * (float)newSize.width / (float)image->width;
+  float* outPtr = outImage->data;
+  for(uint32 i = 0; i < newSize.width * newSize.height * NA_BABY_COLOR_CHANNEL_COUNT; i += 1){
+    *outPtr++ *= divisor;
+  }
+
+
+  return outImage;
 }
 
 

@@ -76,6 +76,11 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(
 // Creates an image half the size. Rescales data bilinearily.
 NA_API NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image);
 
+// Creates an image which is a resize of the given image.
+NA_API NABabyImage* naCreateBabyImageWithResize(
+  const NABabyImage* image,
+  NASizei newSize);
+
 // Retains and Releases an image.
 NA_API NABabyImage* naRetainBabyImage(const NABabyImage* image);
 NA_API void naReleaseBabyImage(const NABabyImage* image);
