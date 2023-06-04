@@ -345,18 +345,6 @@ NA_DEF NABabyImage* naCreateBabyImageWithResize(const NABabyImage* image, NASize
     remainerY = (outY + 2) * factorY - (inY + subY);
   }
 
-
-//
-//  for(int32 y = 0; y < image->height; y += 1){
-//    naAccumulateResizeLine(
-//      outImage->data,
-//      image->data,
-//      y,
-//      y,
-//      (int32)newSize.width,
-//      image->width);
-//  }
-
   // Normalize the whole output image;
   float divisor = (1.f / factorY) * (float)newSize.width / (float)image->width;
   float* outPtr = outImage->data;
