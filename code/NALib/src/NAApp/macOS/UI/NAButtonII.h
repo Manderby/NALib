@@ -65,11 +65,11 @@
     [self setImage:naCreateResolutionIndependentNativeImage(
       self,
       uiImage,
-      NA_UIIMAGE_KIND_MAIN)];
+      NA_UIIMAGE_STATUS_IDLE)];
     [self setAlternateImage:naCreateResolutionIndependentNativeImage(
       self,
       uiImage,
-      NA_UIIMAGE_KIND_ALT)];
+      NA_UIIMAGE_STATUS_IDLE)];
 
     [[self cell] setImageScaling:NSImageScaleNone];
   }else{

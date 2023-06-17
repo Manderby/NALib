@@ -225,11 +225,11 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
 
 
 
-NA_DEF NAUIImageResolution naGetWindowUIResolution(const NAWindow* window){
+NA_DEF double naGetWindowUIResolution(const NAWindow* window){
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   CGFloat uiScale = naGetWindowBackingScaleFactor(nativePtr);
 
-  return (uiScale == 1.) ? NA_UIIMAGE_RESOLUTION_1x : NA_UIIMAGE_RESOLUTION_2x;
+  return (uiScale == 1.) ? NA_UIIMAGE_RESOLUTION_SCREEN_1x : NA_UIIMAGE_RESOLUTION_SCREEN_2x;
 }
 
 

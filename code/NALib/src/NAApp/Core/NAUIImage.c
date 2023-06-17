@@ -10,7 +10,16 @@ NA_RUNTIME_TYPE(NAUIImage, na_DestructUIImage, NA_TRUE);
 
 
 // Will retain the babyImage.
-NA_HIAPI void na_SetUIImageBabyImage(NAUIImage* uiImage, const NABabyImage* babyImage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin);
+NA_HAPI void na_AddUISubImage(
+  NAUIImage* uiImage,
+  const NABabyImage* image,
+  double resolution,
+  NAUIImageSkin skin,
+  NAUIImageStatus status);
+  
+NA_HAPI void na_DeallocUISubImage(NA_UISubImage* subImage);
+
+NA_HAPI double na_GetUIImageBaseResolution(const NAUIImage* uiImage);
 
 
 
@@ -66,138 +75,216 @@ NA_DEF void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin
 
 
 
-NA_HIDEF NAInt na_GetUIImageSubImageIndex(NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
-  return ((NAInt)resolution * (NAInt)NA_UIIMAGE_KIND_COUNT + (NAInt)kind) * (NAInt)NA_UIIMAGE_SKIN_COUNT + (NAInt)skin;
-}
+//NA_HDEF const NABabyImage* na_GetUIImageBabyImage(const NAUIImage* uiImage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
+//  NAInt subIndex = na_GetUIImageSubImageIndex(resolution, kind, skin);
+//  const NABabyImage* retImg = uiImage->babyImages[subIndex];
+//
+//  if(!retImg && skin != NA_UIIMAGE_SKIN_PLAIN){
+//    // If the skinned image does not exist, create one automatically out of
+//    // the plain image of the same kind and resolution.
+//    const NABabyImage* plainImg = na_GetUIImageBabyImage(uiImage, resolution, kind, NA_UIIMAGE_SKIN_PLAIN);
+//    if(plainImg){
+//      NABabyColor tintColor;
+//      NABabyImage* tintedImage;
+//      naFillDefaultTextColorWithSkin(tintColor, skin);
+//      tintedImage = naCreateBabyImageWithTint(plainImg, tintColor, uiImage->tintMode, 1.f);
+//      // todo: not so beautiful const cast to NAUIImage*.
+//      na_SetUIImageBabyImage((NAUIImage*)uiImage, tintedImage, resolution, kind, skin);
+//      naReleaseBabyImage(tintedImage);
+//      retImg = uiImage->babyImages[subIndex];
+//    }
+//  }else if(!retImg && kind != NA_UIIMAGE_KIND_MAIN){
+//    // If the kinded image does not exist, create one automatically out of
+//    // the main image of the same skin and resolution.
+//    const NABabyImage* mainImg = na_GetUIImageBabyImage(uiImage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
+//    if(mainImg){
+//      NABabyImage* kindedImage = naCreateBabyImageCopy(mainImg);
+//      // todo: not so beautiful const cast to NAUIImage*.
+//      na_SetUIImageBabyImage((NAUIImage*)uiImage, kindedImage, resolution, kind, skin);
+//      naReleaseBabyImage(kindedImage);
+//      retImg = uiImage->babyImages[subIndex];
+//    }
+//    // todo: third else if should automatically create a resized image.
+//  }
+//  return retImg;
+//}
 
 
 
-NA_HDEF const NABabyImage* na_GetUIImageBabyImage(const NAUIImage* uiImage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
-  NAInt subIndex = na_GetUIImageSubImageIndex(resolution, kind, skin);
-  const NABabyImage* retImg = uiImage->babyImages[subIndex];
-
-  if(!retImg && skin != NA_UIIMAGE_SKIN_PLAIN){
-    // If the skinned image does not exist, create one automatically out of
-    // the plain image of the same kind and resolution.
-    const NABabyImage* plainImg = na_GetUIImageBabyImage(uiImage, resolution, kind, NA_UIIMAGE_SKIN_PLAIN);
-    if(plainImg){
-      NABabyColor tintColor;
-      NABabyImage* tintedImage;
-      naFillDefaultTextColorWithSkin(tintColor, skin);
-      tintedImage = naCreateBabyImageWithTint(plainImg, tintColor, uiImage->tintMode, 1.f);
-      // todo: not so beautiful const cast to NAUIImage*.
-      na_SetUIImageBabyImage((NAUIImage*)uiImage, tintedImage, resolution, kind, skin);
-      naReleaseBabyImage(tintedImage);
-      retImg = uiImage->babyImages[subIndex];
+NA_HDEF const NA_UISubImage* na_GetUISubImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageStatus status){
+  NAListIterator listIter = naMakeListAccessor(&uiImage->subImages);
+  while(naIterateList(&listIter)){
+    const NA_UISubImage* subImage = naGetListCurConst(&listIter);
+    if(subImage->resolution == resolution && subImage->skin == skin && subImage->status == status){
+      naClearListIterator(&listIter);
+      return subImage;
     }
-  }else if(!retImg && kind != NA_UIIMAGE_KIND_MAIN){
-    // If the kinded image does not exist, create one automatically out of
-    // the main image of the same skin and resolution.
-    const NABabyImage* mainImg = na_GetUIImageBabyImage(uiImage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
-    if(mainImg){
-      NABabyImage* kindedImage = naCreateBabyImageCopy(mainImg);
-      // todo: not so beautiful const cast to NAUIImage*.
-      na_SetUIImageBabyImage((NAUIImage*)uiImage, kindedImage, resolution, kind, skin);
-      naReleaseBabyImage(kindedImage);
-      retImg = uiImage->babyImages[subIndex];
-    }
-    // todo: third else if should automatically create a resized image.
   }
-  return retImg;
+  naClearListIterator(&listIter);
+  
+  // Reaching here, we have not found the desired image.
+  
+  // If the status is not IDLE, we build an image out of it.
+  if(status != NA_UIIMAGE_STATUS_IDLE){
+    return na_GetUISubImage(uiImage, resolution, skin, NA_UIIMAGE_STATUS_IDLE);
+  
+  // If the skin is not PLAIN, we build an image out of it.
+  }else if(skin != NA_UIIMAGE_SKIN_PLAIN){
+    return na_GetUISubImage(uiImage, resolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_STATUS_IDLE);
+
+  // If the resolution does not match, we build a corresponding one.
+  }else if(resolution != na_GetUIImageBaseResolution(uiImage)){
+    return na_GetUISubImage(uiImage, na_GetUIImageBaseResolution(uiImage), NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_STATUS_IDLE);
+  }
+  
+  return NA_NULL;
 }
 
 
 
-NA_HDEF void* na_GetUIImageNativeImage(const NAUIImage* uiImage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
-  NAInt subIndex;
+NA_HDEF const NABabyImage* na_GetUIImageBabyImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageStatus status){
   // Let the following function do the hard work.
-  na_GetUIImageBabyImage(uiImage, resolution, kind, skin);
-  // Now, we are sure that, if ever possible, nativeImages will contain the desired image.
-  subIndex = na_GetUIImageSubImageIndex(resolution, kind, skin);
-  return uiImage->nativeImages[subIndex];
+  const NA_UISubImage* subImage = na_GetUISubImage(uiImage, resolution, skin, status);
+  return subImage->image;
 }
 
 
 
-NA_HIDEF void na_SetUIImageBabyImage(NAUIImage* uiImage, const NABabyImage* babyImage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
-  NAInt subIndex = na_GetUIImageSubImageIndex(resolution, kind, skin);
-  uiImage->babyImages[subIndex] = naRetainBabyImage(babyImage);
-  uiImage->nativeImages[subIndex] = naAllocNativeImageWithBabyImage(babyImage);
+NA_HDEF void* na_GetUIImageNativeImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageStatus status){
+  // Let the following function do the hard work.
+  const NA_UISubImage* subImage = na_GetUISubImage(uiImage, resolution, skin, status);
+  return subImage->nativeImage;
 }
 
 
 
-NA_DEF NAUIImage* naCreateUIImage(const NABabyImage* main, const NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
-  NAUIImage* uiImage;
-  NABabyImage* main1x;
+//NA_DEF NAUIImage* naCreateUIImage(const NABabyImage* main, const NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
+//  NAUIImage* uiImage;
+//  NABabyImage* main1x;
+//  
+//  #if NA_DEBUG
+//    #if NA_OS == NA_OS_WINDOWS
+//      if(sizeof(WORD) > 4)
+//        naError("Bitamps require WORD alignment. But WORD is kind-a big on this system. Expect bad images.");
+//    #endif
+//    if(!main)
+//      naError("There must be a main image");
+//    if(alt && !naEqualSizei(naGetBabyImageSize(main), naGetBabyImageSize(alt)))
+//      naError("Both images must have the same size.");
+//  #endif
+//  uiImage = naCreate(NAUIImage);
+//  
+//  uiImage->size1x = naGetBabyImageSize(main);
+//  uiImage->tintMode = tintMode;
+//  naZeron(uiImage->babyImages, NA_UIIMAGE_SUBIMAGES_COUNT * sizeof(NABabyImage*));
+//  #if NA_OS == NA_OS_WINDOWS
+//    naZeron(uiImage->nativeImages, NA_UIIMAGE_SUBIMAGES_COUNT * sizeof(HBITMAP));
+//  #else
+//    naZeron(uiImage->nativeImages, NA_UIIMAGE_SUBIMAGES_COUNT * sizeof(void*));
+//  #endif
+//  
+//  switch(resolution){
+//  case NA_UIIMAGE_RESOLUTION_1x:
+//    na_SetUIImageBabyImage(uiImage, main, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
+//    if(alt){
+//      na_SetUIImageBabyImage(uiImage, alt, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
+//    }
+//    break;
+//  case NA_UIIMAGE_RESOLUTION_2x:
+//    #if NA_DEBUG
+//      if(uiImage->size1x.width % 2 || uiImage->size1x.height % 2)
+//        naError("Image size is not divisable by 2");
+//    #endif
+//    uiImage->size1x.width /= 2;
+//    uiImage->size1x.height /= 2;
+//    na_SetUIImageBabyImage(uiImage, main, NA_UIIMAGE_RESOLUTION_2x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
+//    main1x = naCreateBabyImageWithHalfSize(main);
+//    na_SetUIImageBabyImage(uiImage, main1x, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
+//    naReleaseBabyImage(main1x);
+//    if(alt){
+//      NABabyImage* alt1x;
+//      na_SetUIImageBabyImage(uiImage, alt, NA_UIIMAGE_RESOLUTION_2x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
+//      alt1x = naCreateBabyImageWithHalfSize(alt);
+//      na_SetUIImageBabyImage(uiImage, alt1x, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
+//      naReleaseBabyImage(alt1x);
+//    }
+//    break;
+//  default:
+//    #if NA_DEBUG
+//      naError("Unknown resolution");
+//    #endif
+//    break;
+//  }
+//
+//  naInitList(&uiImage->subImages);
+//
+//  return uiImage;
+//}
+
+
+NA_DEF NAUIImage* naCreateUIImage(
+  const NABabyImage* baseImage,
+  double baseResolution,
+  NABlendMode tintMode)
+{
+  NAUIImage* uiImage = naCreate(NAUIImage);
   
-  #if NA_DEBUG
-    #if NA_OS == NA_OS_WINDOWS
-      if(sizeof(WORD) > 4)
-        naError("Bitamps require WORD alignment. But WORD is kind-a big on this system. Expect bad images.");
-    #endif
-    if(!main)
-      naError("There must be a main image");
-    if(alt && !naEqualSizei(naGetBabyImageSize(main), naGetBabyImageSize(alt)))
-      naError("Both images must have the same size.");
-  #endif
-  uiImage = naCreate(NAUIImage);
-  
-  uiImage->size1x = naGetBabyImageSize(main);
+  naInitList(&uiImage->subImages);
   uiImage->tintMode = tintMode;
-  naZeron(uiImage->babyImages, NA_UIIMAGE_SUBIMAGES_COUNT * sizeof(NABabyImage*));
-  #if NA_OS == NA_OS_WINDOWS
-    naZeron(uiImage->nativeImages, NA_UIIMAGE_SUBIMAGES_COUNT * sizeof(HBITMAP));
-  #else
-    naZeron(uiImage->nativeImages, NA_UIIMAGE_SUBIMAGES_COUNT * sizeof(void*));
-  #endif
   
-  switch(resolution){
-  case NA_UIIMAGE_RESOLUTION_1x:
-    na_SetUIImageBabyImage(uiImage, main, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-    if(alt){
-      na_SetUIImageBabyImage(uiImage, alt, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-    }
-    break;
-  case NA_UIIMAGE_RESOLUTION_2x:
-    #if NA_DEBUG
-      if(uiImage->size1x.width % 2 || uiImage->size1x.height % 2)
-        naError("Image size is not divisable by 2");
-    #endif
-    uiImage->size1x.width /= 2;
-    uiImage->size1x.height /= 2;
-    na_SetUIImageBabyImage(uiImage, main, NA_UIIMAGE_RESOLUTION_2x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-    main1x = naCreateBabyImageWithHalfSize(main);
-    na_SetUIImageBabyImage(uiImage, main1x, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-    naReleaseBabyImage(main1x);
-    if(alt){
-      NABabyImage* alt1x;
-      na_SetUIImageBabyImage(uiImage, alt, NA_UIIMAGE_RESOLUTION_2x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-      alt1x = naCreateBabyImageWithHalfSize(alt);
-      na_SetUIImageBabyImage(uiImage, alt1x, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-      naReleaseBabyImage(alt1x);
-    }
-    break;
-  default:
-    #if NA_DEBUG
-      naError("Unknown resolution");
-    #endif
-    break;
-  }
-
+  na_AddUISubImage(uiImage, baseImage, baseResolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_STATUS_IDLE);
+  
   return uiImage;
 }
 
 
 
-NA_API void na_DestructUIImage(NAUIImage* uiImage){
-  NAInt i;
-  for(i = 0; i < NA_UIIMAGE_SUBIMAGES_COUNT; ++i){
-    if(uiImage->nativeImages[i]){naDeallocNativeImage(uiImage->nativeImages[i]);}
-    if(uiImage->babyImages[i]){naReleaseBabyImage(uiImage->babyImages[i]);}
-  }
+NA_DEF void na_DestructUIImage(NAUIImage* uiImage){
+  naForeachListMutable(&uiImage->subImages, (NAMutator)na_DeallocUISubImage);
+  naClearList(&uiImage->subImages);
 }
 
+
+
+NA_HDEF double na_GetUIImageBaseResolution(const NAUIImage* uiImage){
+  const NA_UISubImage* subImage = naGetListFirstConst(&uiImage->subImages);
+  return subImage->resolution;
+}
+
+
+
+NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage){
+  const NA_UISubImage* subImage = naGetListFirstConst(&uiImage->subImages);
+  NASizei size = naGetBabyImageSize(subImage->image);
+  double factor = subImage->resolution / NA_UIIMAGE_RESOLUTION_SCREEN_1x;
+  size.width = naFloor(size.width / factor);
+  size.height = naFloor(size.height / factor);
+  return size;
+}
+
+
+
+NA_HDEF void na_AddUISubImage(
+  NAUIImage* uiImage,
+  const NABabyImage* image,
+  double resolution,
+  NAUIImageSkin skin,
+  NAUIImageStatus status)
+{
+  NA_UISubImage* subImage = naAlloc(NA_UISubImage);
+  subImage->image = naRetainBabyImage(image);
+  subImage->nativeImage = naAllocNativeImageWithBabyImage(image);
+  subImage->resolution = resolution;
+  subImage->skin = skin;
+  subImage->status = status;
+  
+  naAddListLastMutable(&uiImage->subImages, subImage);
+}
+
+NA_HDEF void na_DeallocUISubImage(NA_UISubImage* subImage){
+  naReleaseBabyImage(subImage->image);
+  naFree(subImage);
+}
 
 #endif // NA_COMPILE_GUI == 1
 

@@ -13,26 +13,21 @@
 
 #include "../NAVisual/NABabyImage.h"
 
-typedef enum{
-  NA_UIIMAGE_RESOLUTION_1x,
-  NA_UIIMAGE_RESOLUTION_2x,
-  NA_UIIMAGE_RESOLUTION_COUNT
-} NAUIImageResolution;
+// These are the default resolutions given in dots/meter.
+#define NA_UIIMAGE_RESOLUTION_SCREEN_1x 3779.52755905511811   // 96 dpi
+#define NA_UIIMAGE_RESOLUTION_SCREEN_2x 7559.05511811023622   // 192 dpi
 
 typedef enum{
-  NA_UIIMAGE_KIND_MAIN,
-  NA_UIIMAGE_KIND_ALT,
-  NA_UIIMAGE_KIND_COUNT
-} NAUIImageKind;
+  NA_UIIMAGE_STATUS_IDLE,
+  NA_UIIMAGE_STATUS_HOVER,
+  NA_UIIMAGE_STATUS_DISABLED,
+} NAUIImageStatus;
 
 typedef enum{
   NA_UIIMAGE_SKIN_PLAIN,
   NA_UIIMAGE_SKIN_LIGHT,
   NA_UIIMAGE_SKIN_DARK,
-  NA_UIIMAGE_SKIN_COUNT
 } NAUIImageSkin;
-
-#define NA_UIIMAGE_SUBIMAGES_COUNT (NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT)
 
 typedef struct NAUIImage NAUIImage;
 
@@ -43,7 +38,7 @@ typedef struct NAUIImage NAUIImage;
 // You always provide the images in the highest resolution available. If you
 // have for example a 512x512 point image representing the double resolution
 // image of a 256x256 icon, you provide that 512x512 image with the resolution
-// NA_UIIMAGE_RESOLUTION_2x.
+// NA_UIIMAGE_RESOLUTION_SCREEN_2x.
 //
 // Downsampling will be done automatically by NALib.
 //
@@ -63,18 +58,17 @@ typedef struct NAUIImage NAUIImage;
 // NA_BLEND_OPAQUE       tints opaque parts of the image
 // NA_BLEND_BLACK_GREEN  tints black pixels (measured by the green channel)
 // NA_BLEND_WHITE_GREEN  tints white pixels (measured by the green channel)
-// Other NABlendMode values are applicable but will likely produce unuseful
+// Other NABlendMode values are applicable but will likely produce less useful
 // images.
 //
 // The NAUIImage has reference counting built in. Use naRetain and naRelease.
 NA_API NAUIImage* naCreateUIImage(
-  const NABabyImage* main,
-  const NABabyImage* alt,
-  NAUIImageResolution resolution,
+  const NABabyImage* baseImage,
+  double baseResolution,
   NABlendMode tintMode);
 
 // Returns the size of the 1x representation.
-NA_IAPI NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
+NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
 
 // Returns the Skin for the current Appearance.
 NAUIImageSkin naGetSkinForCurrentAppearance(void);

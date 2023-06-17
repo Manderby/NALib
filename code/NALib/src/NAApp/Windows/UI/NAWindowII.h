@@ -320,7 +320,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
 
 NA_DEF NAUIImageResolution naGetWindowUIResolution(const NAWindow* window){
   // Currently, NALib for windows GUI is not resolution aware. Be patient.
-  return NA_UIIMAGE_RESOLUTION_1x;
+  return NA_UIIMAGE_RESOLUTION_SCREEN_1x;
 }
 
 

@@ -278,10 +278,10 @@ ExperimentController* createExperimentController(){
   ExperimentController* con = naAlloc(ExperimentController);
 
   NABabyColor mainColor = {1., .25, 0., 1.};
-  NABabyColor altColor = {.25, 0., 1., 1.};
+//  NABabyColor altColor = {.25, 0., 1., 1.};
   NABabyImage* mainImage = naCreateBabyImage(naMakeSizei(20, 10), mainColor);
-  NABabyImage* altImage = naCreateBabyImage(naMakeSizei(20, 10), altColor);
-  con->testImage = naCreateUIImage(mainImage, altImage, NA_UIIMAGE_RESOLUTION_1x, NA_BLEND_ZERO);
+//  NABabyImage* altImage = naCreateBabyImage(naMakeSizei(20, 10), altColor);
+  con->testImage = naCreateUIImage(mainImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_BLEND_ZERO);
 
   con->experimentWindow = naNewWindow(
     "Experiment",

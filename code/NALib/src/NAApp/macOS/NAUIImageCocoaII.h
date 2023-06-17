@@ -120,16 +120,13 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 }
 
 
-NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, NAUIImageResolution resolution, NAUIImageKind kind, NSSize imageSize, NSRect dstRect){
+NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolution, NAUIImageStatus status, NSSize imageSize, NSRect dstRect){
   NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
   if(uiImage->tintMode != NA_BLEND_ZERO){
     skin = naGetSkinForCurrentAppearance();
   }
   
-  CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, kind, skin);
-  if(!cocoaimage){
-    cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-  }
+  CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, skin, status);
 
   // Yes, we create a new NSImage which we draw into the NSImage which
   // calls this handler. It is unknown to me exactly why I need to do
@@ -153,7 +150,7 @@ NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, NAUIImageReso
 NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
   const NSView* containingView,
   const NAUIImage* uiImage,
-  NAUIImageKind kind)
+  NAUIImageStatus status)
 {
   NSImage* image = nil;
 
@@ -166,8 +163,8 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
       NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
       image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
       {
-        NAUIImageResolution resolution = (naGetWindowBackingScaleFactor([containingView window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x);
-        return na_drawFixedResolutionImage(uiImage, resolution, kind, imageSize, dstRect);
+        double resolution = naGetWindowBackingScaleFactor([containingView window]) * NA_UIIMAGE_RESOLUTION_SCREEN_1x;
+        return na_drawFixedResolutionImage(uiImage, resolution, status, imageSize, dstRect);
       }];
     ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
   }
@@ -182,8 +179,8 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
       skin = naGetSkinForCurrentAppearance();
     }
 
-    CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-    CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
+    CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, skin, status);
+    CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_2x, skin, status);
     if(img1x){
       NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithCGImage:img1x];
       [image addRepresentation:rep];
