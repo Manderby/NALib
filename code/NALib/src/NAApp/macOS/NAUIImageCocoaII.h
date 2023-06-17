@@ -120,13 +120,13 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 }
 
 
-NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolution, NAUIImageStatus status, NSSize imageSize, NSRect dstRect){
+NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolution, NAUIImageInteraction interaction, NSSize imageSize, NSRect dstRect){
   NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
   if(uiImage->tintMode != NA_BLEND_ZERO){
     skin = naGetSkinForCurrentAppearance();
   }
   
-  CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, skin, status);
+  CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, skin, interaction);
 
   // Yes, we create a new NSImage which we draw into the NSImage which
   // calls this handler. It is unknown to me exactly why I need to do
@@ -150,7 +150,7 @@ NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolu
 NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
   const NSView* containingView,
   const NAUIImage* uiImage,
-  NAUIImageStatus status)
+  NAUIImageInteraction interaction)
 {
   NSImage* image = nil;
 
@@ -164,7 +164,7 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
       image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
       {
         double resolution = naGetWindowBackingScaleFactor([containingView window]) * NA_UIIMAGE_RESOLUTION_SCREEN_1x;
-        return na_drawFixedResolutionImage(uiImage, resolution, status, imageSize, dstRect);
+        return na_drawFixedResolutionImage(uiImage, resolution, interaction, imageSize, dstRect);
       }];
     ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
   }
@@ -179,8 +179,8 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
       skin = naGetSkinForCurrentAppearance();
     }
 
-    CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, skin, status);
-    CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_2x, skin, status);
+    CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, skin, interaction);
+    CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_2x, skin, interaction);
     if(img1x){
       NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithCGImage:img1x];
       [image addRepresentation:rep];

@@ -18,7 +18,7 @@
   NSImage* image = naCreateResolutionIndependentNativeImage(
     self,
     uiImage,
-    NA_UIIMAGE_STATUS_IDLE);
+    NA_UIIMAGE_INTERACTION_NONE);
   [self setImage:image];
 }
 

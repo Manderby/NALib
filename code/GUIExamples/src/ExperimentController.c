@@ -6,6 +6,7 @@
 
 #include "GUIExamples.h"
 #include "../../NALib/src/NAVisual/NA3DHelper.h"
+#include "../../NALib/src/NAVisual/NAPNG.h"
 
 
 struct ExperimentController{
@@ -13,6 +14,7 @@ struct ExperimentController{
   NASpace* contentSpace;
 
   NAUIImage* testImage;
+  NAUIImage* testImage2;
 
   NALabel* textButtonLabel;
   NAButton* textPushButton;
@@ -73,6 +75,10 @@ struct ExperimentController{
   NALabel* outputLabel;
 };
 
+void updateExperimentController(ExperimentController* con);
+
+
+
 NABool windowReshaped(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   NARect rect = naGetUIElementRect(con->experimentWindow);
@@ -112,6 +118,8 @@ NABool buttonPressed(NAReaction reaction){
   
   naSetLabelText(con->outputLabel, naGetStringUTF8Pointer(labelString));
   naDelete(labelString);
+
+  updateExperimentController(con);
 
   return NA_TRUE;
 }
@@ -277,11 +285,31 @@ ExperimentController* createExperimentController(){
 
   ExperimentController* con = naAlloc(ExperimentController);
 
-  NABabyColor mainColor = {1., .25, 0., 1.};
-//  NABabyColor altColor = {.25, 0., 1., 1.};
-  NABabyImage* mainImage = naCreateBabyImage(naMakeSizei(20, 10), mainColor);
-//  NABabyImage* altImage = naCreateBabyImage(naMakeSizei(20, 10), altColor);
-  con->testImage = naCreateUIImage(mainImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_BLEND_ZERO);
+  NAPNG* png = naNewPNGWithPath("res/cat.png");
+  if(!naIsSizeiUseful(naGetPNGSize(png))){
+    printf("\nCould not open the image file. Check that the working directory is correct.\n");
+    exit(1);
+  }
+  NABabyImage* originalImage = naCreateBabyImageFromPNG(png);
+  con->testImage = naCreateUIImage(
+    originalImage,
+    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
+    NA_BLEND_ZERO);
+  NASizei catSize = naGetBabyImageSize(originalImage);
+  NASize catButtonSize = naMakeSize(catSize.width / 2. + 10, catSize.height / 2. + 10);
+  naDelete(png);
+
+  NAPNG* png2 = naNewPNGWithPath("res/cat2.png");
+  if(!naIsSizeiUseful(naGetPNGSize(png2))){
+    printf("\nCould not open the image file. Check that the working directory is correct.\n");
+    exit(1);
+  }
+  NABabyImage* originalImage2 = naCreateBabyImageFromPNG(png2);
+  con->testImage2 = naCreateUIImage(
+    originalImage2,
+    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
+    NA_BLEND_ZERO);
+  naDelete(png2);
 
   con->experimentWindow = naNewWindow(
     "Experiment",
@@ -312,23 +340,23 @@ ExperimentController* createExperimentController(){
   //naAddUIReaction(con->textPushButtonStateBorderless, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   //naAddSpaceChild(con->contentSpace, con->textPushButtonStateBorderless, naMakePos(left + 3 * buttonSize, curPosY));
 
-  curPosY -= 30;
+  curPosY -= 60;
   con->imageButtonLabel = naNewLabel("NAButton: ImageButton", descSize);
   naAddSpaceChild(con->contentSpace, con->imageButtonLabel, naMakePos(20, curPosY));
 
-  con->imagePushButton = naNewImageButton(con->testImage, naMakeSize(buttonSize, 24), 0);
+  con->imagePushButton = naNewImageButton(con->testImage, catButtonSize, 0);
   naAddUIReaction(con->imagePushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(con->contentSpace, con->imagePushButton, naMakePos(left, curPosY));
 
-  con->imagePushButtonBorderless = naNewImageButton(con->testImage, naMakeSize(buttonSize, 24), NA_BUTTON_BORDERLESS);
+  con->imagePushButtonBorderless = naNewImageButton(con->testImage, catButtonSize, NA_BUTTON_BORDERLESS);
   naAddUIReaction(con->imagePushButtonBorderless, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(con->contentSpace, con->imagePushButtonBorderless, naMakePos(left + 1 * buttonSize, curPosY));
 
-  con->imagePushButtonState = naNewImageButton(con->testImage, naMakeSize(buttonSize, 24), NA_BUTTON_STATEFUL);
+  con->imagePushButtonState = naNewImageButton(con->testImage, catButtonSize, NA_BUTTON_STATEFUL);
   naAddUIReaction(con->imagePushButtonState, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(con->contentSpace, con->imagePushButtonState, naMakePos(left + 2 * buttonSize, curPosY));
 
-  con->imagePushButtonStateBorderless = naNewImageButton(con->testImage, naMakeSize(buttonSize, 24), NA_BUTTON_BORDERLESS | NA_BUTTON_STATEFUL);
+  con->imagePushButtonStateBorderless = naNewImageButton(con->testImage, catButtonSize, NA_BUTTON_BORDERLESS | NA_BUTTON_STATEFUL);
   naAddUIReaction(con->imagePushButtonStateBorderless, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(con->contentSpace, con->imagePushButtonStateBorderless, naMakePos(left + 3 * buttonSize, curPosY));
 
@@ -457,10 +485,23 @@ ExperimentController* createExperimentController(){
 }
 
 
+void updateExperimentController(ExperimentController* con){
+  NABool state;
+
+  state = naGetButtonState(con->imagePushButtonState);
+  naSetButtonImage(con->imagePushButtonState, state ? con->testImage2 : con->testImage);
+
+  state = naGetButtonState(con->imagePushButtonStateBorderless);
+  naSetButtonImage(con->imagePushButtonStateBorderless, state ? con->testImage2 : con->testImage);
+  
+}
+
+
 void clearExperimentController(ExperimentController* con){
   // Note that all UI elements which are attached in some way to the root
   // application UIElement will be cleared automatically.
   naRelease(con->testImage);
+  naRelease(con->testImage2);
   naFree(con);
 
   naShutdownPixelFont(con->fontId);

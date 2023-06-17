@@ -19,20 +19,20 @@ struct NA_UISubImage{
   void* nativeImage;
   double resolution;
   NAUIImageSkin skin;
-  NAUIImageStatus status;
+  NAUIImageInteraction interaction;
 };
 
 NA_HAPI const NABabyImage* na_GetUIImageBabyImage(
   const NAUIImage* uiImage,
   double resolution,
   NAUIImageSkin skin,
-  NAUIImageStatus status);
+  NAUIImageInteraction interaction);
 
 NA_HAPI void* na_GetUIImageNativeImage(
   const NAUIImage* uiImage,
   double resolution,
   NAUIImageSkin skin,
-  NAUIImageStatus status);
+  NAUIImageInteraction interaction);
 
 
 

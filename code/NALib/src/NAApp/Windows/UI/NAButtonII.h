@@ -167,9 +167,9 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     }
 
     if(alt){
-      foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_STATUS_IDLE);
+      foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_NONE);
     }else{
-      foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_STATUS_IDLE);
+      foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE);
     }
 
     // We store the background where the image will be placed.
