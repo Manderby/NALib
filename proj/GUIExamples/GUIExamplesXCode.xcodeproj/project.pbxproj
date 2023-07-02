@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90C719C72A51ACA9007D1F47 /* ButtonController.c in Sources */ = {isa = PBXBuildFile; fileRef = 90C719C62A51ACA9007D1F47 /* ButtonController.c */; };
 		90E389FD2A236D720062F40E /* NABase.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E388EB2A236D720062F40E /* NABase.h */; };
 		90E389FE2A236D720062F40E /* NAUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E388EC2A236D720062F40E /* NAUtility.h */; };
 		90E389FF2A236D720062F40E /* NABuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E388EE2A236D720062F40E /* NABuffer.h */; };
@@ -279,6 +280,7 @@
 
 /* Begin PBXFileReference section */
 		9024BDED24732B2000258690 /* libNALib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNALib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		90C719C62A51ACA9007D1F47 /* ButtonController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ButtonController.c; sourceTree = "<group>"; };
 		90E388E92A236D720062F40E /* NALib.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = NALib.vcxproj; sourceTree = "<group>"; };
 		90E388EB2A236D720062F40E /* NABase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABase.h; sourceTree = "<group>"; };
 		90E388EC2A236D720062F40E /* NAUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAUtility.h; sourceTree = "<group>"; };
@@ -1096,13 +1098,14 @@
 		90E38AFE2A236DA70062F40E /* src */ = {
 			isa = PBXGroup;
 			children = (
-				90E38AFF2A236DA70062F40E /* GUIExamplesApplication.c */,
-				90E38B002A236DA70062F40E /* GUIExamples.h */,
-				90E38B012A236DA70062F40E /* translationIDs.h */,
-				90E38B022A236DA70062F40E /* FontController.c */,
+				90C719C62A51ACA9007D1F47 /* ButtonController.c */,
 				90E38B032A236DA70062F40E /* ExperimentController.c */,
+				90E38B022A236DA70062F40E /* FontController.c */,
+				90E38B002A236DA70062F40E /* GUIExamples.h */,
+				90E38AFF2A236DA70062F40E /* GUIExamplesApplication.c */,
 				90E38B042A236DA70062F40E /* main.c */,
 				90E38B052A236DA70062F40E /* TemperatureController.c */,
+				90E38B012A236DA70062F40E /* translationIDs.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -1467,6 +1470,7 @@
 				90E38B0E2A236DA70062F40E /* main.c in Sources */,
 				90E38B0C2A236DA70062F40E /* FontController.c in Sources */,
 				90E38B0D2A236DA70062F40E /* ExperimentController.c in Sources */,
+				90C719C72A51ACA9007D1F47 /* ButtonController.c in Sources */,
 				90E38B0F2A236DA70062F40E /* TemperatureController.c in Sources */,
 				90E38B0B2A236DA70062F40E /* GUIExamplesApplication.c in Sources */,
 			);

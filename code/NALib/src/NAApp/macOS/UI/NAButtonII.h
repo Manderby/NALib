@@ -22,12 +22,12 @@
       [self setBordered:NO];
     }
   }else{
-    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NABezelStyleShadowlessSquare : NABezelStyleRounded]; 
+    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NSBezelStyleShadowlessSquare : NABezelStyleRounded]; 
     [self setBordered:YES];
   }
 
   if(isImage){
-    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypeToggle : NAButtonTypeMomentaryChange];
+    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
   }else{
     [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
   }

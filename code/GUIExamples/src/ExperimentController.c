@@ -68,6 +68,7 @@ struct ExperimentController{
   NASpace* subSpace;
 
   NAButton* fontButton;
+  NAButton* buttonButton;
   NAButton* quitButton;
 
   int textOption;
@@ -89,7 +90,7 @@ NABool windowReshaped(NAReaction reaction){
   return NA_TRUE;
 }
 
-NABool buttonPressed(NAReaction reaction){
+NABool experimentButtonPressed(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   NAString* labelString;
   
@@ -268,6 +269,8 @@ NABool pressExperimentButton(NAReaction reaction){
 
   if(reaction.uiElement == con->fontButton){
     showFonts();
+  }else if(reaction.uiElement == con->buttonButton){
+    showButtons();
   }else if(reaction.uiElement == con->quitButton){
     naStopApplication();
   }
@@ -325,19 +328,19 @@ ExperimentController* createExperimentController(){
   naAddSpaceChild(con->contentSpace, con->textButtonLabel, naMakePos(20, curPosY));
 
   con->textPushButton = naNewTextButton("Push", buttonSize, 0);
-  naAddUIReaction(con->textPushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+  naAddUIReaction(con->textPushButton, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
   naAddSpaceChild(con->contentSpace, con->textPushButton, naMakePos(left, curPosY));
 
   //con->textPushButtonBorderless = naNewTextButton("Push", naMakeSize(buttonSize, 24), NA_BUTTON_BORDERLESS);
-  //naAddUIReaction(con->textPushButtonBorderless, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+  //naAddUIReaction(con->textPushButtonBorderless, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
   //naAddSpaceChild(con->contentSpace, con->textPushButtonBorderless, naMakePos(left + 1 * buttonSize, curPosY));
 
   con->textPushButtonState = naNewTextButton("State", buttonSize, NA_BUTTON_STATEFUL);
-  naAddUIReaction(con->textPushButtonState, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+  naAddUIReaction(con->textPushButtonState, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
   naAddSpaceChild(con->contentSpace, con->textPushButtonState, naMakePos(left + 2 * buttonSize, curPosY));
 
   //con->textPushButtonStateBorderless = naNewTextButton("State", naMakeSize(buttonSize, 24), NA_BUTTON_BORDERLESS | NA_BUTTON_STATEFUL);
-  //naAddUIReaction(con->textPushButtonStateBorderless, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+  //naAddUIReaction(con->textPushButtonStateBorderless, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
   //naAddSpaceChild(con->contentSpace, con->textPushButtonStateBorderless, naMakePos(left + 3 * buttonSize, curPosY));
 
   curPosY -= 60;
@@ -345,19 +348,19 @@ ExperimentController* createExperimentController(){
   naAddSpaceChild(con->contentSpace, con->imageButtonLabel, naMakePos(20, curPosY));
 
   con->imagePushButton = naNewImageButton(con->testImage, catButtonSize, 0);
-  naAddUIReaction(con->imagePushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+  naAddUIReaction(con->imagePushButton, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
   naAddSpaceChild(con->contentSpace, con->imagePushButton, naMakePos(left, curPosY));
 
   con->imagePushButtonBorderless = naNewImageButton(con->testImage, catButtonSize, NA_BUTTON_BORDERLESS);
-  naAddUIReaction(con->imagePushButtonBorderless, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+  naAddUIReaction(con->imagePushButtonBorderless, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
   naAddSpaceChild(con->contentSpace, con->imagePushButtonBorderless, naMakePos(left + 1 * buttonSize, curPosY));
 
   con->imagePushButtonState = naNewImageButton(con->testImage, catButtonSize, NA_BUTTON_STATEFUL);
-  naAddUIReaction(con->imagePushButtonState, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+  naAddUIReaction(con->imagePushButtonState, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
   naAddSpaceChild(con->contentSpace, con->imagePushButtonState, naMakePos(left + 2 * buttonSize, curPosY));
 
   con->imagePushButtonStateBorderless = naNewImageButton(con->testImage, catButtonSize, NA_BUTTON_BORDERLESS | NA_BUTTON_STATEFUL);
-  naAddUIReaction(con->imagePushButtonStateBorderless, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+  naAddUIReaction(con->imagePushButtonStateBorderless, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
   naAddSpaceChild(con->contentSpace, con->imagePushButtonStateBorderless, naMakePos(left + 3 * buttonSize, curPosY));
 
   curPosY -= 30;
@@ -462,10 +465,13 @@ ExperimentController* createExperimentController(){
   naAddSpaceChild(con->contentSpace, con->subSpace, naMakePos(20, curPosY));
 
   con->fontButton = naNewTextButton("Fonts", 60, 0);
+  con->buttonButton = naNewTextButton("Buttons", 60, 0);
   con->quitButton = naNewTextButton("Quit", 60, 0);
   naAddSpaceChild(con->contentSpace, con->fontButton, naMakePos(10, 140));
+  naAddSpaceChild(con->contentSpace, con->buttonButton, naMakePos(80, 140));
   naAddSpaceChild(con->contentSpace, con->quitButton, naMakePos(10, 110));
   naAddUIReaction(con->fontButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
+  naAddUIReaction(con->buttonButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
   naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
 
   con->outputLabel = naNewLabel(

@@ -4,6 +4,7 @@
 
 #include "GUIExamples.h"
 #include "../../NALib/src/NAStruct/NAStack.h"
+#include "../../NALib/src/NAVisual/NAPNG.h"
 
 
 // Put GUI elements belonging together into a controller struct.
@@ -11,8 +12,14 @@ struct HelloWorldGUIApplication{
   NAStack temperatureControllers;
   int nextWindowX;
   int nextWindowY;
+  
+  NAUIImage* iconImage;
+  NAUIImage* state1Image;
+  NAUIImage* state2Image;
+  
   ExperimentController* experimentController;
   FontController* fontController;
+  ButtonController* buttonController;
 };
 
 // The central variable storing the app. Defined as global.
@@ -29,6 +36,7 @@ void prestartup(void* arg){
   naInitStack(&(app->temperatureControllers), sizeof(TemperatureController*), 0, 0);
   app->nextWindowX = 700;
   app->nextWindowY = 400;
+
 }
 
 
@@ -38,9 +46,52 @@ void prestartup(void* arg){
 // See naStartApplication for a detailed explanation.
 void poststartup(void* arg){
   NA_UNUSED(arg);
+  
+  // Load the image files
+  NAPNG* pngIcon = naNewPNGWithPath("res/catIcon.png");
+  if(!naIsSizeiUseful(naGetPNGSize(pngIcon))){
+    printf("\nCould not open the image file. Check that the working directory is correct.\n");
+    exit(1);
+  }
+  NABabyImage* originalImageIcon = naCreateBabyImageFromPNG(pngIcon);
+  app->iconImage = naCreateUIImage(
+    originalImageIcon,
+    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
+    NA_BLEND_ZERO);
+  naReleaseBabyImage(originalImageIcon);
+  naDelete(pngIcon);
+
+  NAPNG* png1 = naNewPNGWithPath("res/cat.png");
+  if(!naIsSizeiUseful(naGetPNGSize(png1))){
+    printf("\nCould not open the image file. Check that the working directory is correct.\n");
+    exit(1);
+  }
+  NABabyImage* originalImage1 = naCreateBabyImageFromPNG(png1);
+  app->state1Image = naCreateUIImage(
+    originalImage1,
+    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
+    NA_BLEND_ZERO);
+  naReleaseBabyImage(originalImage1);
+  naDelete(png1);
+
+  NAPNG* png2 = naNewPNGWithPath("res/cat2.png");
+  if(!naIsSizeiUseful(naGetPNGSize(png2))){
+    printf("\nCould not open the image file. Check that the working directory is correct.\n");
+    exit(1);
+  }
+  NABabyImage* originalImage2 = naCreateBabyImageFromPNG(png2);
+  app->state2Image = naCreateUIImage(
+    originalImage2,
+    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
+    NA_BLEND_ZERO);
+  naReleaseBabyImage(originalImage2);
+  naDelete(png2);
+
+  // Create the controllers
   createTemperatureController();
   app->experimentController = createExperimentController();
   app->fontController = createFontController();
+  app->buttonController = createButtonController();
 }
 
 
@@ -50,6 +101,7 @@ void clearApplication(void){
   naClearStack(&(app->temperatureControllers));
   clearExperimentController(app->experimentController);
   clearFontController(app->fontController);
+  clearButtonController(app->buttonController);
   naFree(app);
 }
 
@@ -67,6 +119,15 @@ double getAndAdvanceNextWindowY(void){
   return curWindowY;
 }
 
+NAUIImage* getIconImage(void){
+  return app->iconImage;
+}
+NAUIImage* getState1Image(void){
+  return app->state1Image;
+}
+NAUIImage* getState2Image(void){
+  return app->state2Image;
+}
 
 void addTemperatureControllerToApplication(TemperatureController* con){
   *(TemperatureController**)naPushStack(&(app->temperatureControllers)) = con;
@@ -74,6 +135,10 @@ void addTemperatureControllerToApplication(TemperatureController* con){
 
 void showFonts(){
   showFontController(app->fontController);
+}
+
+void showButtons(){
+  showButtonController(app->buttonController);
 }
 
 
