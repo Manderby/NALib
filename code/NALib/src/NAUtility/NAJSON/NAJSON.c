@@ -299,6 +299,9 @@ NA_DEF NAJSONRule* naNewJSONRuleFixedArray(
   size_t structSize,
   NAJSONRule* subRule)
 {
+  #if !NA_DEBUG
+    NA_UNUSED(elementCount);
+  #endif
   NA_JSONFixedArrayRule* rule = naAlloc(NA_JSONFixedArrayRule);
   na_initJSONRule(&rule->baseRule, NA_JSON_RULE_FIXED_ARRAY);
   rule->arrayOffset = arrayOffset;
@@ -319,6 +322,9 @@ NA_DEF NAJSONRule* naNewJSONRuleFixedPointerArray(
   size_t structSize,
   NAJSONRule* subRule)
 {
+  #if !NA_DEBUG
+    NA_UNUSED(elementCount);
+  #endif
   NA_JSONFixedArrayRule* rule = naAlloc(NA_JSONFixedArrayRule);
   na_initJSONRule(&rule->baseRule, NA_JSON_RULE_FIXED_ARRAY);
   rule->arrayOffset = arrayOffset;
@@ -629,6 +635,8 @@ void naParseJSONBuffer(
       naCrash("buf is Nullptr");
     if(((NAByte*)buf)[byteCount - 1] != '\0')
       naError("buffer must end with a zero byte.");
+  #else
+    NA_UNUSED(byteCount);
   #endif
 
   parser->curPtr = buf;
