@@ -18,11 +18,6 @@ struct ButtonController{
   NAButton* textStateButtonDisabled1;
   NAButton* textStateButtonDisabled2;
   
-  NALabel* submitLabel;
-  NAButton* textButtonSubmit;
-  NALabel* abortLabel;
-  NAButton* textButtonAbort;
-
   NALabel* imagePushButtonBorderedLabel;
   NAButton* imagePushButtonBordered;
   NAButton* imagePushButtonBorderedDisabled;
@@ -40,6 +35,14 @@ struct ButtonController{
   NAButton* imageStateButtonBorderless;
   NAButton* imageStateButtonBorderlessDisabled1;
   NAButton* imageStateButtonBorderlessDisabled2;
+
+  NALabel* submitLabel;
+  NAButton* textButtonSubmit;
+  NALabel* abortLabel;
+  NAButton* textButtonAbort;
+
+
+  NALabel* outputLabel;
 };
 
 void updateButtonController(ButtonController* con);
@@ -48,14 +51,50 @@ void updateButtonController(ButtonController* con);
 NABool buttonPressed(NAReaction reaction){
   ButtonController* con = reaction.controller;
 
-//  naSetLabelText(con->outputLabel, naGetStringUTF8Pointer(labelString));
-//  naDelete(labelString);
+  NABool state = NA_FALSE;
+  if(naGetUIElementType(reaction.uiElement) == NA_UI_BUTTON) {
+    state = naGetButtonState(reaction.uiElement);
+  }
+
+  NAString* labelString;
+
+  if(reaction.uiElement == con->textPushButton){
+    labelString = naNewStringWithFormat("Text Push Button Pressed");
+  }else if(reaction.uiElement == con->textStateButton){
+    labelString = naNewStringWithFormat("Text State Button Switched to %d", (int)state);
+  }else if(reaction.uiElement == con->imagePushButtonBordered){
+    labelString = naNewStringWithFormat("Bordered Image Push Button Pressed");
+  }else if(reaction.uiElement == con->imagePushButtonBorderless){
+    labelString = naNewStringWithFormat("Borderless Image Push Button Pressed");
+  }else if(reaction.uiElement == con->imageStateButtonBordered){
+    labelString = naNewStringWithFormat("Bordered Image State Button Switched to %d", (int)state);
+  }else if(reaction.uiElement == con->imageStateButtonBorderless){
+    labelString = naNewStringWithFormat("Borderless Image State Button Switched to %d", (int)state);
+  }else{
+    labelString = naNewString();
+  }
+
+  naSetLabelText(con->outputLabel, naGetStringUTF8Pointer(labelString));
+  naDelete(labelString);
 
   updateButtonController(con);
 
   return NA_TRUE;
 }
 
+NABool submitPressed(NAReaction reaction){
+  ButtonController* con = reaction.controller;
+  naSetLabelText(con->outputLabel, "Submit pressed");
+  updateButtonController(con);
+  return NA_TRUE;
+}
+
+NABool abortPressed(NAReaction reaction){
+  ButtonController* con = reaction.controller;
+  naSetLabelText(con->outputLabel, "Abort pressed");
+  updateButtonController(con);
+  return NA_TRUE;
+}
 
 ButtonController* createButtonController(){
   ButtonController* con = naAlloc(ButtonController);
@@ -103,16 +142,16 @@ ButtonController* createButtonController(){
   con->textStateButtonLabel = naNewLabel("Text Two States", labelWidth);
   naAddSpaceChild(windowSpace, con->textStateButtonLabel, naMakePos(20, curPosY));
 
-  con->textStateButton = naNewTextButton("State 1", buttonWidth, NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL);
+  con->textStateButton = naNewTextButton("Off", buttonWidth, NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL);
   naAddUIReaction(con->textStateButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->textStateButton, naMakePos(left1, curPosY));
 
-  con->textStateButtonDisabled1 = naNewTextButton("State 1", buttonWidth / 2, NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL);
+  con->textStateButtonDisabled1 = naNewTextButton("Off", buttonWidth / 2, NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL);
   naAddUIReaction(con->textStateButtonDisabled1, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naSetButtonEnabled(con->textStateButtonDisabled1, NA_FALSE);
   naAddSpaceChild(windowSpace, con->textStateButtonDisabled1, naMakePos(left2, curPosY));
 
-  con->textStateButtonDisabled2 = naNewTextButton("State 2", buttonWidth / 2, NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL);
+  con->textStateButtonDisabled2 = naNewTextButton("On", buttonWidth / 2, NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL);
   naAddUIReaction(con->textStateButtonDisabled2, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naSetButtonState(con->textStateButtonDisabled2, NA_TRUE);
   naSetButtonEnabled(con->textStateButtonDisabled2, NA_FALSE);
@@ -193,7 +232,7 @@ ButtonController* createButtonController(){
   con->textButtonSubmit = naNewTextButton("Ok", buttonWidth, NA_BUTTON_BORDERED | NA_BUTTON_PUSH);
   naAddUIReaction(con->textButtonSubmit, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->textButtonSubmit, naMakePos(left1, curPosY));
-  naSetButtonSubmit(con->textButtonSubmit, buttonPressed, con);
+  naSetButtonSubmit(con->textButtonSubmit, submitPressed, con);
 
   curPosY -= 30;
 
@@ -203,8 +242,15 @@ ButtonController* createButtonController(){
   con->textButtonAbort = naNewTextButton("Cancel", buttonWidth, NA_BUTTON_BORDERED | NA_BUTTON_PUSH);
   naAddUIReaction(con->textButtonAbort, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->textButtonAbort, naMakePos(left1, curPosY));
-  naSetButtonAbort(con->textButtonAbort, buttonPressed, con);
+  naSetButtonAbort(con->textButtonAbort, abortPressed, con);
 
+  curPosY -= 60;
+
+  con->outputLabel = naNewLabel( "Here will be the output of any operation.", windowWidth - 40);
+  NAFont* monospaceFont = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
+  naSetLabelFont(con->outputLabel, monospaceFont);
+  naRelease(monospaceFont);
+  naAddSpaceChild(windowSpace, con->outputLabel, naMakePos(20, curPosY));
 
   naShowWindow(con->window);
 
@@ -229,7 +275,7 @@ void updateButtonController(ButtonController* con){
   NABool state;
 
   state = naGetButtonState(con->textStateButton);
-  naSetButtonText(con->textStateButton, state ? "State 2" : "State 1");
+  naSetButtonText(con->textStateButton, state ? "On" : "Off");
 
   state = naGetButtonState(con->imageStateButtonBordered);
   naSetButtonImage(con->imageStateButtonBordered, state ? getState2Image() : getState1Image());

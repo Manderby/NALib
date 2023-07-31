@@ -126,6 +126,10 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
       && (naGetUIElementType(uiElement) != NA_UI_MENUITEM)
       && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
       naError("Only buttons, checkBoxes, radios, menus, menuItems and sliders can receyve PRESSED commands.");
+    if((command == NA_UI_COMMAND_PRESSED) && (naGetUIElementType(uiElement) == NA_UI_BUTTON)){
+//      if(na_isButtonSpecial(uiElement))
+//        naError("Special buttons like Submit or Abort will not be called by a PRESSED command.");
+    }
     if((command == NA_UI_COMMAND_EDITED)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTBOX)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD)

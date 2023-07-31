@@ -80,6 +80,9 @@
 
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
+  if(na_isButtonAbort((NA_UIElement*)cocoaButton)){
+  
+  }
   na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED);
 }
 
@@ -122,6 +125,8 @@
 
 NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 flags){
   #if NA_DEBUG
+    if(flags > 0x03)
+      naError("Invalid Flags");
     if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS))
       naError("Borderless Text buttons should not be used as they can not be distinguished.");
   #endif
@@ -148,6 +153,8 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   #if NA_DEBUG
+    if(flags > 0x03)
+      naError("Invalid Flags");
     if(!uiImage)
       naError("uiImage is null");
   #endif
@@ -250,9 +257,15 @@ NA_DEF void naSetButtonSubmit(
   
   NAWindow* window = naGetUIElementWindow(button);
   if(window){
+    na_setButtonSubmit(button);
     naAddUIKeyboardShortcut(
       window,
       naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
+      handler,
+      controller);
+    naAddUIKeyboardShortcut(
+      window,
+      naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_NUMPAD_ENTER),
       handler,
       controller);
   }else{
@@ -269,6 +282,7 @@ NA_DEF void naSetButtonAbort(
   NAReactionHandler handler,
   void* controller)
 {
+  na_setButtonAbort(button);
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
     naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
