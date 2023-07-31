@@ -311,6 +311,7 @@
 		903DFC882A784CF40009C2C6 /* NATestingII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATestingII.h; sourceTree = "<group>"; };
 		903DFC892A784CF40009C2C6 /* NATesting.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATesting.c; sourceTree = "<group>"; };
 		903DFC8A2A784CF40009C2C6 /* NATesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATesting.h; sourceTree = "<group>"; };
+		903DFC912A78615C0009C2C6 /* NATestingEnvironment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATestingEnvironment.h; sourceTree = "<group>"; };
 		90613BF62471349A00498AF3 /* Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		90613CF22471365300498AF3 /* libNALib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNALib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		90E38B152A2393900062F40E /* NALib.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = NALib.vcxproj; sourceTree = "<group>"; };
@@ -635,6 +636,7 @@
 				903DFC882A784CF40009C2C6 /* NATestingII.h */,
 				903DFC892A784CF40009C2C6 /* NATesting.c */,
 				903DFC8A2A784CF40009C2C6 /* NATesting.h */,
+				903DFC912A78615C0009C2C6 /* NATestingEnvironment.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
