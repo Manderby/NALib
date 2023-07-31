@@ -1,0 +1,3 @@
+[submodule "lib/NATest"]
+	path = lib/NATest
+	url = https://github.com/Manderby/NATest.git

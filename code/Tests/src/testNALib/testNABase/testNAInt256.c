@@ -1,5 +1,5 @@
 
-#include "NAUtility/NATesting.h"
+#include "NATesting.h"
 #include "NAUtility/NAString.h"
 #include <stdio.h>
 
