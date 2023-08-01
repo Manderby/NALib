@@ -4,7 +4,7 @@
 #if NA_DEBUG
 
   #include <stdio.h>    // for the fprintf function
-  #include "NATesting.h"
+  #include "NATest.h"
 
 
 

@@ -19,27 +19,6 @@
 #undef NA_T2
 #undef NA_T3
 
-#undef naPrintMacro
-#undef naPrintMacroDefined
-#undef naPrintMacroInt
-#undef naPrintMacroIntSpecial
-#undef naPrintMacroIntSpecialHex
-#undef naPrintMacroIntYesNo
-#undef naPrintMacroEnum
-
-#undef naPrintMacroux8
-#undef naPrintMacroix8
-#undef naPrintMacroux16
-#undef naPrintMacroix16
-#undef naPrintMacroux32
-#undef naPrintMacroix32
-#undef naPrintMacroux64
-#undef naPrintMacroix64
-#undef naPrintMacroux128
-#undef naPrintMacroix128
-#undef naPrintMacroux256
-#undef naPrintMacroix256
-
 
 
 // My proudest achievement at 4 o'clock in the morning.
@@ -62,99 +41,6 @@
 #define NA_T2(name, arg1, arg2)         NA_CONCAT_EVAL3(name, arg1, arg2)
 #define NA_T3(name, arg1, arg2, arg3)   NA_CONCAT_EVAL4(name, arg1, arg2, arg3)
 
-
-
-// /////////////////////////////////
-// Printouts
-// /////////////////////////////////
-
-#if NA_PRINTOUT_ENABLED == 1
-
-  // Prototypes of helper functions which should be invisible to the user.
-  NA_HAPI void na_PrintMacroPlain(const NAUTF8Char* macroString, const NAUTF8Char* macroStringified, NABool printContent);
-  NA_HAPI void na_PrintMacroInt(const NAUTF8Char* macroString, int value);
-  NA_HAPI void na_PrintMacroIntSpecial(const NAUTF8Char* macroString, int value, int specialValue, const NAUTF8Char* specialString);
-  NA_HAPI void na_PrintMacroIntSpecialHex(const NAUTF8Char* macroString, int value, int specialValue, const NAUTF8Char* specialString);
-  NA_HAPI void na_PrintMacroIntYesNo(const NAUTF8Char* macroString, int value);
-  NA_HAPI void na_PrintMacroEnum(const NAUTF8Char* macroString, int value, const NAUTF8Char** strings, int enumCount);
-
-  NA_HAPI void na_PrintMacroux8(const NAUTF8Char* macroString, uint8 value);
-  NA_HAPI void na_PrintMacroix8(const NAUTF8Char* macroString, int8 value);
-  NA_HAPI void na_PrintMacroux16(const NAUTF8Char* macroString, uint16 value);
-  NA_HAPI void na_PrintMacroix16(const NAUTF8Char* macroString, int16 value);
-  NA_HAPI void na_PrintMacroux32(const NAUTF8Char* macroString, uint32 value);
-  NA_HAPI void na_PrintMacroix32(const NAUTF8Char* macroString, int32 value);
-  NA_HAPI void na_PrintMacroux64(const NAUTF8Char* macroString, uint64 value);
-  NA_HAPI void na_PrintMacroix64(const NAUTF8Char* macroString, int64 value);
-  NA_HAPI void na_PrintMacroux128(const NAUTF8Char* macroString, uint128 value);
-  NA_HAPI void na_PrintMacroix128(const NAUTF8Char* macroString, int128 value);
-  NA_HAPI void na_PrintMacroux256(const NAUTF8Char* macroString, uint256 value);
-  NA_HAPI void na_PrintMacroix256(const NAUTF8Char* macroString, int256 value);
-
-  #define naPrintMacro(macro)\
-    na_PrintMacroPlain(#macro, NA_STRINGIFY(macro), NA_TRUE)
-  #define naPrintMacroDefined(macro)\
-    na_PrintMacroPlain(#macro, NA_STRINGIFY(macro), NA_FALSE)
-  #define naPrintMacroInt(macro)\
-    na_PrintMacroInt(#macro, (int)macro)
-  #define naPrintMacroIntSpecial(macro, specialValue, specialString)\
-    na_PrintMacroIntSpecial(#macro, (int)macro, (int)specialValue, specialString)
-  #define naPrintMacroIntSpecialHex(macro, specialValue, specialString)\
-    na_PrintMacroIntSpecialHex(#macro, (int)macro, (int)specialValue, specialString)
-  #define naPrintMacroIntYesNo(macro)\
-    na_PrintMacroIntYesNo(#macro, (int)macro)
-  #define naPrintMacroEnum(macro, strings, maxValue)\
-    na_PrintMacroEnum(#macro, (int)macro, strings, maxValue)
-
-  #define naPrintMacroux8(macro)\
-    na_PrintMacroux8(#macro, macro)
-  #define naPrintMacroix8(macro)\
-    na_PrintMacroix8(#macro, macro)
-  #define naPrintMacroux16(macro)\
-    na_PrintMacroux16(#macro, macro)
-  #define naPrintMacroix16(macro)\
-    na_PrintMacroix16(#macro, macro)
-  #define naPrintMacroux32(macro)\
-    na_PrintMacroux32(#macro, macro)
-  #define naPrintMacroix32(macro)\
-    na_PrintMacroix32(#macro, macro)
-  #define naPrintMacroux64(macro)\
-    na_PrintMacroux64(#macro, macro)
-  #define naPrintMacroix64(macro)\
-    na_PrintMacroix64(#macro, macro)
-  #define naPrintMacroux128(macro)\
-    na_PrintMacroux128(#macro, macro)
-  #define naPrintMacroix128(macro)\
-    na_PrintMacroix128(#macro, macro)
-  #define naPrintMacroux256(macro)\
-    na_PrintMacroux256(#macro, macro)
-  #define naPrintMacroix256(macro)\
-    na_PrintMacroix256(#macro, macro)
-
-#else
-
-  #define naPrintMacro(macro)
-  #define naPrintMacroDefined(macro)
-  #define naPrintMacroInt(macro)
-  #define naPrintMacroIntSpecial(macro, specialValue, specialString)
-  #define naPrintMacroIntSpecialHex(macro, specialValue, specialString)
-  #define naPrintMacroIntYesNo(macro)
-  #define naPrintMacroEnum(macro, strings, maxValue)
-
-  #define naPrintMacroux8(macro)
-  #define naPrintMacroix8(macro)
-  #define naPrintMacroux16(macro)
-  #define naPrintMacroix16(macro)
-  #define naPrintMacroux32(macro)
-  #define naPrintMacroix32(macro)
-  #define naPrintMacroux64(macro)
-  #define naPrintMacroix64(macro)
-  #define naPrintMacroux128(macro)
-  #define naPrintMacroix128(macro)
-  #define naPrintMacroux256(macro)
-  #define naPrintMacroix256(macro)
-
-#endif // NA_PRINTOUT_ENABLED == 1
 
 
 #endif // NA_MACROS_II_INCLUDED

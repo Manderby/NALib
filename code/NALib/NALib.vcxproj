@@ -257,7 +257,7 @@
     <ClInclude Include="src\NAUtility\NAKey.h" />
     <ClInclude Include="src\NAUtility\NAMemory.h" />
     <ClInclude Include="src\NAUtility\NAString.h" />
-    <ClInclude Include="src\NAUtility\NATesting.h" />
+    <ClInclude Include="src\NAUtility\NATest.h" />
     <ClInclude Include="src\NAUtility\NAThreading.h" />
     <ClInclude Include="src\NAUtility\NATranslator.h" />
     <ClInclude Include="src\NAUtility\NAURL.h" />

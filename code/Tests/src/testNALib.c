@@ -1,5 +1,5 @@
 
-#include "NATesting.h"
+#include "NATest.h"
 #include "NAUtility/NAMemory.h"
 #include "NAUtility/NAString.h"
 #include <stdio.h>
@@ -21,11 +21,9 @@ void benchmarkNAStruct(void);
 
 
 void printNALib(void){
-  #if NA_PRINTOUT_ENABLED == 1
-    printNABase();
-    printNACore();
-    printNAStruct();
-  #endif
+  printNABase();
+  printNACore();
+  printNAStruct();
 }
 
 void testNALib(void){
@@ -53,7 +51,7 @@ int main(int argc, const char** argv){
   naStartRuntime();
 
   // Print macro information
-//  printNALib();
+  printNALib();
 
   // Start testing
   NABool testStartSuccessful = naStartTesting("NALib", .01, NA_FALSE, argc, argv);

@@ -1,5 +1,5 @@
 
-#include "NATesting.h"
+#include "NATest.h"
 #include "NAUtility/NAMemory.h"
 #include <stdio.h>
 
@@ -27,7 +27,6 @@ void printNAConfiguration(void){
   naPrintMacroIntYesNo     (NA_STRING_ALWAYS_CACHE);
   naPrintMacroIntYesNo     (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION);
   naPrintMacroInt          (NA_NIST_CODATA_YEAR);
-  naPrintMacroIntYesNo     (NA_PRINTOUT_ENABLED);
   naPrintMacroIntYesNo     (NA_TESTING_ENABLED);
   printf(NA_NL);
 }
