@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9013B7442A799F1100612E2D /* NATestList.h in Headers */ = {isa = PBXBuildFile; fileRef = 9013B7432A799F1100612E2D /* NATestList.h */; };
 		903DFC8B2A784CF40009C2C6 /* NATestII.h in Headers */ = {isa = PBXBuildFile; fileRef = 903DFC882A784CF40009C2C6 /* NATestII.h */; };
 		903DFC8C2A784CF40009C2C6 /* NATest.c in Sources */ = {isa = PBXBuildFile; fileRef = 903DFC892A784CF40009C2C6 /* NATest.c */; };
 		903DFC8D2A784CF40009C2C6 /* NATest.h in Headers */ = {isa = PBXBuildFile; fileRef = 903DFC8A2A784CF40009C2C6 /* NATest.h */; };
@@ -310,6 +311,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9013B7432A799F1100612E2D /* NATestList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATestList.h; sourceTree = "<group>"; };
 		903DFC812A784CE90009C2C6 /* libNATest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNATest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		903DFC882A784CF40009C2C6 /* NATestII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATestII.h; sourceTree = "<group>"; };
 		903DFC892A784CF40009C2C6 /* NATest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATest.c; sourceTree = "<group>"; };
@@ -648,6 +650,7 @@
 				903DFC8A2A784CF40009C2C6 /* NATest.h */,
 				903DFC912A78615C0009C2C6 /* NATestEnvironment.h */,
 				903DFC882A784CF40009C2C6 /* NATestII.h */,
+				9013B7432A799F1100612E2D /* NATestList.h */,
 				90D1670E2A79262E003E4BA5 /* NATestString.c */,
 				90D1670F2A79262E003E4BA5 /* NATestString.h */,
 				90D167122A792BD8003E4BA5 /* NATestStringII.h */,
@@ -1240,6 +1243,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9013B7442A799F1100612E2D /* NATestList.h in Headers */,
 				903DFC8D2A784CF40009C2C6 /* NATest.h in Headers */,
 				90D167112A79262E003E4BA5 /* NATestString.h in Headers */,
 				90D167132A792BD8003E4BA5 /* NATestStringII.h in Headers */,
@@ -1833,7 +1837,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
-				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../code/NALib/src/;
+				HEADER_SEARCH_PATHS = "$PROJECT_DIR/../../code/NALib/src/**";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1845,7 +1849,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
-				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../code/NALib/src/;
+				HEADER_SEARCH_PATHS = "$PROJECT_DIR/../../code/NALib/src/**";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1947,7 +1951,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
-				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../code/NALib/src/;
+				HEADER_SEARCH_PATHS = "$PROJECT_DIR/../../code/NALib/src/**";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Optimize;

@@ -51,7 +51,7 @@ int main(int argc, const char** argv){
   naStartRuntime();
 
   // Print macro information
-  printNALib();
+  //printNALib();
 
   // Start testing
   NABool testStartSuccessful = naStartTesting("NALib", .01, NA_FALSE, argc, argv);
