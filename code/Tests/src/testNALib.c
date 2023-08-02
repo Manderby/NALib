@@ -54,7 +54,7 @@ int main(int argc, const char** argv){
   //printNALib();
 
   // Start testing
-  NABool testStartSuccessful = naStartTesting("NALib", .01, NA_FALSE, argc, argv);
+  NABool testStartSuccessful = naStartTesting("NALib", .01, NA_TRUE, NA_TRUE, argc, argv);
   if(testStartSuccessful)
   {
     testNALib();
