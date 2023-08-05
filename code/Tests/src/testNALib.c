@@ -1,5 +1,15 @@
 
+// You need the NATest package for this project!
+// It is located in the lib folder and can be optained as a git submodule. Run
+// the following commands in the base folder of NALib:
+//   git submodule init
+//   git submodule update
+// Or download the whole NALib package with the following command directly:
+//   git clone --recurse-submodules https://github.com/Manderby/NALib.git
 #include "NATest.h"
+
+
+
 #include "NAUtility/NAMemory.h"
 #include "NAUtility/NAString.h"
 #include <stdio.h>

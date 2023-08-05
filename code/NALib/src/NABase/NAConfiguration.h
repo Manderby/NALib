@@ -349,9 +349,10 @@
 // Testing
 // ////////////////////////////////
 
-// NALib provides a small testing framework which is used internally but can
-// also be used by others. Set this macro to 1 if you want to use this
-// functionality.
+// NALib uses NATest as a testing framework. Set this macro to 1 if you want
+// to use this functionality. In that case, you need to link/compile with the
+// NATest library. In the distribution, it is located in the lib folder and
+// you can get it as a git submodule.
 //
 // The default is 0.
 

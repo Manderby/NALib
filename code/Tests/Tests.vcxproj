@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)../../code/NALib/src/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../lib/NATest/code/NATest/src/;$(ProjectDir)../../code/NALib/src/</AdditionalIncludeDirectories>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -113,7 +113,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)../../code/NALib/src/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../lib/NATest/code/NATest/src/;$(ProjectDir)../../code/NALib/src/</AdditionalIncludeDirectories>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)../../code/NALib/src/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../lib/NATest/code/NATest/src/;$(ProjectDir)../../code/NALib/src/</AdditionalIncludeDirectories>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -151,7 +151,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)../../code/NALib/src/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../lib/NATest/code/NATest/src/;$(ProjectDir)../../code/NALib/src/</AdditionalIncludeDirectories>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -163,6 +163,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\NATest\code\NATest\NATest.vcxproj">
+      <Project>{863175c4-1036-4cd4-96f3-52901b8ed972}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\NALib\NALib.vcxproj">
       <Project>{d03034cf-5ce8-4e68-8fd9-d5820e2745ba}</Project>
     </ProjectReference>

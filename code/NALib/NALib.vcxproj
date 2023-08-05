@@ -43,7 +43,6 @@
     <ClCompile Include="src\NAApp\Core\UI\NAWindow.c" />
     <ClCompile Include="src\NAApp\Windows\NAUIWINAPI.c" />
     <ClCompile Include="src\NABase\Core\NADebugging.c" />
-    <ClCompile Include="src\NABase\Core\NAMacros.c" />
     <ClCompile Include="src\NAMath\Core\NAMathOperators.c" />
     <ClCompile Include="src\NAStruct\Core\NABuffer\NABuffer.c" />
     <ClCompile Include="src\NAStruct\Core\NABuffer\NABufferIteration.c" />
@@ -69,7 +68,6 @@
     <ClCompile Include="src\NAUtility\Core\NAFile.c" />
     <ClCompile Include="src\NAUtility\Core\NAMemory\NARuntime.c" />
     <ClCompile Include="src\NAUtility\Core\NAString.c" />
-    <ClCompile Include="src\NAUtility\Core\NATesting\NATesting.c" />
     <ClCompile Include="src\NAUtility\Core\NATranslator.c" />
     <ClCompile Include="src\NAUtility\Core\NAURL.c" />
     <ClCompile Include="src\NAUtility\NAJSON\NAJSON.c" />
@@ -352,6 +350,7 @@
       <WholeProgramOptimization>
       </WholeProgramOptimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../lib/NATest/code/NATest/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ComCtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -377,6 +376,7 @@
       <WholeProgramOptimization>
       </WholeProgramOptimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../lib/NATest/code/NATest/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ComCtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -400,6 +400,7 @@
       <CompileAs>CompileAsC</CompileAs>
       <ExceptionHandling>false</ExceptionHandling>
       <WholeProgramOptimization />
+      <AdditionalIncludeDirectories>$(ProjectDir)../../lib/NATest/code/NATest/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -425,6 +426,7 @@
       <CompileAs>CompileAsC</CompileAs>
       <ExceptionHandling>false</ExceptionHandling>
       <WholeProgramOptimization />
+      <AdditionalIncludeDirectories>$(ProjectDir)../../lib/NATest/code/NATest/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

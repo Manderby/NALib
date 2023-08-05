@@ -2,7 +2,11 @@ Quick Start:
 ------------
 
 - Download whole package.
+  git clone --recurse-submodules https://github.com/Manderby/NALib.git
+  There is a submodule for testing which you only need if you are testing.
+  
 - HelloWorld examples are in proj folder.
+
 - To compile your own code, there are two ways:
   1. Compile NALib as part of your own solution by simply dragging the whole
      code\NALib\src folder into your project.
