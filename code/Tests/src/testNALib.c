@@ -48,8 +48,6 @@ void benchmarkNALib(void){
   benchmarkNAStruct();
 }
 
-
-
 int main(int argc, const char** argv){
   printf("Testing NALib Version: %d ", NA_VERSION);
   #if NA_DEBUG
@@ -64,9 +62,15 @@ int main(int argc, const char** argv){
   //printNALib();
 
   // Start testing
-  NABool testStartSuccessful = naStartTesting("NALib", .01, NA_TRUE, NA_TRUE, argc, argv);
-  if(testStartSuccessful)
-  {
+  NABool testStartSuccessful = naStartTesting(
+    "NALib",
+    .01,
+    NA_TRUE,
+    NA_TRUE,
+    argc,
+    argv);
+
+  if(testStartSuccessful){
     testNALib();
 //    naPrintUntested();
 //    benchmarkNALib();
