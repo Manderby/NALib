@@ -182,7 +182,7 @@ FontController* createFontController(){
   naAddSpaceChild(windowSpace, label, naMakePos(210, 80));
 
 
-  naShowWindow(con->window);
+//  naShowWindow(con->window);
 
   return con;
 }

@@ -252,7 +252,7 @@ ButtonController* createButtonController(){
   naRelease(monospaceFont);
   naAddSpaceChild(windowSpace, con->outputLabel, naMakePos(20, curPosY));
 
-  naShowWindow(con->window);
+//  naShowWindow(con->window);
 
   return con;
 }

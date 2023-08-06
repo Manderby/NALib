@@ -10,7 +10,7 @@
 #define NA_BUTTON_BORDERED   0x00
 #define NA_BUTTON_BORDERLESS 0x01
 #define NA_BUTTON_PUSH       0x00
-#define NA_BUTTON_STATEFUL   0x10
+#define NA_BUTTON_STATEFUL   0x02
 
 // Creates either a text or image button.
 // The flags is a combination of the macros defined above.

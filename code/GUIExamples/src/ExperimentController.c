@@ -13,18 +13,10 @@ struct ExperimentController{
   NAWindow* experimentWindow;
   NASpace* contentSpace;
 
-  NAUIImage* testImage;
-  NAUIImage* testImage2;
-
-  NALabel* textButtonLabel;
-  NAButton* textPushButton;
-  NAButton* textPushButtonState;
-
-  NALabel* imageButtonLabel;
-  NAButton* imagePushButton;
-  NAButton* imagePushButtonBorderless;
-  NAButton* imagePushButtonState;
-  NAButton* imagePushButtonStateBorderless;
+  NALabel* labelLabel;
+  NALabel* label;
+  NALabel* buttonLabel;
+  NAButton* buttonButton;
 
   NALabel* popupButtonLabel;
   NAPopupButton* popupButton;
@@ -32,28 +24,20 @@ struct ExperimentController{
   NALabel* checkBoxLabel;
   NACheckBox* checkBox;
 
-  NALabel* imageSpaceLabel;
-  NAImageSpace* imageSpace;
-
-  NALabel* labelLabel;
-  NALabel* label;
-
-  NAInt fontId;
-  NALabel* openGLSpaceLabel;
-  NAOpenGLSpace* openGLSpace;
-  int openGLSpaceRefreshCount;
-
   NALabel* radioLabel;
   NARadio* radio;
 
-  NALabel* sliderLabel;
-  NASlider* slider;
+  NALabel* textFieldLabel;
+  NATextField* textField;
 
   NALabel* textBoxLabel;
   NATextBox* textBox;
 
-  NALabel* textFieldLabel;
-  NATextField* textField;
+  NALabel* fontLabel;
+  NAButton* fontButton;
+
+  NALabel* sliderLabel;
+  NASlider* slider;
 
   NALabel* menuLabel;
   NAButton* menuButton;
@@ -65,10 +49,16 @@ struct ExperimentController{
   NAMenuItem* menuItem4;
   NAMenuItem* menuSeparator;
 
+  NALabel* imageSpaceLabel;
+  NAImageSpace* imageSpace;
+
+  NAInt fontId;
+  NALabel* openGLSpaceLabel;
+  NAOpenGLSpace* openGLSpace;
+  int openGLSpaceRefreshCount;
+
   NASpace* subSpace;
 
-  NAButton* fontButton;
-  NAButton* buttonButton;
   NAButton* quitButton;
 
   int textOption;
@@ -86,41 +76,6 @@ NABool windowReshaped(NAReaction reaction){
   NARect borderRect = naGetUIElementRect(con->experimentWindow);
   const NAUTF8Char* labelString = naAllocSprintf(NA_TRUE, "Window reshaped.\nRect with border:    %.01f, %.01f, %.01f, %.01f\nRect without border: %.01f, %.01f, %.01f, %.01f", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height, borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
   naSetLabelText(con->outputLabel, labelString);
-
-  return NA_TRUE;
-}
-
-NABool experimentButtonPressed(NAReaction reaction){
-  ExperimentController* con = reaction.controller;
-  NAString* labelString;
-  
-//  if(reaction.uiElement == con->textPushButton){
-//    labelString = naNewStringWithFormat("Text Push Button Pressed");
-//  //}else if(reaction.uiElement == con->textPushButtonBorderless){
-//  //  labelString = naNewStringWithFormat("Borderless Text Push Button Pressed");
-//  }else if(reaction.uiElement == con->textPushButtonState){
-//    NABool state = naGetButtonState(reaction.uiElement);
-//    labelString = naNewStringWithFormat("Text Stateful Button Switched to %d", (int)state);
-//  //}else if(reaction.uiElement == con->textPushButtonStateBorderless){
-//  //  labelString = naNewStringWithFormat("Borderless Text State Button Switched to %d", (int)state);
-//  }else if(reaction.uiElement == con->imagePushButton){
-//    labelString = naNewStringWithFormat("Image Push Button Pressed");
-//  }else if(reaction.uiElement == con->imagePushButtonBorderless){
-//    labelString = naNewStringWithFormat("Borderless Image Push Button Pressed");
-//  }else if(reaction.uiElement == con->imagePushButtonState){
-//    NABool state = naGetButtonState(reaction.uiElement);
-//    labelString = naNewStringWithFormat("Image Stateful Button Switched to %d", (int)state);
-//  }else if(reaction.uiElement == con->imagePushButtonStateBorderless){
-//    NABool state = naGetButtonState(reaction.uiElement);
-//    labelString = naNewStringWithFormat("Borderless Image Stateful Button Switched to %d", (int)state);
-//  }else{
-//    labelString = naNewString();
-//  }
-  
-//  naSetLabelText(con->outputLabel, naGetStringUTF8Pointer(labelString));
-//  naDelete(labelString);
-
-  updateExperimentController(con);
 
   return NA_TRUE;
 }
@@ -288,32 +243,6 @@ ExperimentController* createExperimentController(){
 
   ExperimentController* con = naAlloc(ExperimentController);
 
-  NAPNG* png = naNewPNGWithPath("res/cat.png");
-  if(!naIsSizeiUseful(naGetPNGSize(png))){
-    printf("\nCould not open the image file. Check that the working directory is correct.\n");
-    exit(1);
-  }
-  NABabyImage* originalImage = naCreateBabyImageFromPNG(png);
-  con->testImage = naCreateUIImage(
-    originalImage,
-    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
-    NA_BLEND_ZERO);
-  NASizei catSize = naGetBabyImageSize(originalImage);
-  NASize catButtonSize = naMakeSize(catSize.width / 2. + 10, catSize.height / 2. + 10);
-  naDelete(png);
-
-  NAPNG* png2 = naNewPNGWithPath("res/cat2.png");
-  if(!naIsSizeiUseful(naGetPNGSize(png2))){
-    printf("\nCould not open the image file. Check that the working directory is correct.\n");
-    exit(1);
-  }
-  NABabyImage* originalImage2 = naCreateBabyImageFromPNG(png2);
-  con->testImage2 = naCreateUIImage(
-    originalImage2,
-    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
-    NA_BLEND_ZERO);
-  naDelete(png2);
-
   con->experimentWindow = naNewWindow(
     "Experiment",
     naMakeRectS(150, 150, windowWidth, windowHeight),
@@ -324,44 +253,18 @@ ExperimentController* createExperimentController(){
   naAddUIReaction(con->experimentWindow, NA_UI_COMMAND_RESHAPE, windowReshaped, con);
 
   double curPosY = windowHeight - 42;
-  con->textButtonLabel = naNewLabel("NAButton: TextButton", 200);
-  naAddSpaceChild(con->contentSpace, con->textButtonLabel, naMakePos(20, curPosY));
 
-  con->textPushButton = naNewTextButton("Push", buttonSize, 0);
-  naAddUIReaction(con->textPushButton, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
-  naAddSpaceChild(con->contentSpace, con->textPushButton, naMakePos(left, curPosY));
+  con->labelLabel = naNewLabel("NALabel", descSize);
+  naAddSpaceChild(con->contentSpace, con->labelLabel, naMakePos(20, curPosY));
+  con->label = naNewLabel("I am a Label", 150);
+  naAddSpaceChild(con->contentSpace, con->label, naMakePos(left, curPosY));
 
-  //con->textPushButtonBorderless = naNewTextButton("Push", naMakeSize(buttonSize, 24), NA_BUTTON_BORDERLESS);
-  //naAddUIReaction(con->textPushButtonBorderless, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
-  //naAddSpaceChild(con->contentSpace, con->textPushButtonBorderless, naMakePos(left + 1 * buttonSize, curPosY));
-
-  con->textPushButtonState = naNewTextButton("State", buttonSize, NA_BUTTON_STATEFUL);
-  naAddUIReaction(con->textPushButtonState, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
-  naAddSpaceChild(con->contentSpace, con->textPushButtonState, naMakePos(left + 2 * buttonSize, curPosY));
-
-  //con->textPushButtonStateBorderless = naNewTextButton("State", naMakeSize(buttonSize, 24), NA_BUTTON_BORDERLESS | NA_BUTTON_STATEFUL);
-  //naAddUIReaction(con->textPushButtonStateBorderless, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
-  //naAddSpaceChild(con->contentSpace, con->textPushButtonStateBorderless, naMakePos(left + 3 * buttonSize, curPosY));
-
-  curPosY -= 60;
-  con->imageButtonLabel = naNewLabel("NAButton: ImageButton", descSize);
-  naAddSpaceChild(con->contentSpace, con->imageButtonLabel, naMakePos(20, curPosY));
-
-  con->imagePushButton = naNewImageButton(con->testImage, catButtonSize, 0);
-  naAddUIReaction(con->imagePushButton, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
-  naAddSpaceChild(con->contentSpace, con->imagePushButton, naMakePos(left, curPosY));
-
-  con->imagePushButtonBorderless = naNewImageButton(con->testImage, catButtonSize, NA_BUTTON_BORDERLESS);
-  naAddUIReaction(con->imagePushButtonBorderless, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
-  naAddSpaceChild(con->contentSpace, con->imagePushButtonBorderless, naMakePos(left + 1 * buttonSize, curPosY));
-
-  con->imagePushButtonState = naNewImageButton(con->testImage, catButtonSize, NA_BUTTON_STATEFUL);
-  naAddUIReaction(con->imagePushButtonState, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
-  naAddSpaceChild(con->contentSpace, con->imagePushButtonState, naMakePos(left + 2 * buttonSize, curPosY));
-
-  con->imagePushButtonStateBorderless = naNewImageButton(con->testImage, catButtonSize, NA_BUTTON_BORDERLESS | NA_BUTTON_STATEFUL);
-  naAddUIReaction(con->imagePushButtonStateBorderless, NA_UI_COMMAND_PRESSED, experimentButtonPressed, con);
-  naAddSpaceChild(con->contentSpace, con->imagePushButtonStateBorderless, naMakePos(left + 3 * buttonSize, curPosY));
+  curPosY -= 30;
+  con->buttonLabel = naNewLabel("NAButton", descSize);
+  naAddSpaceChild(con->contentSpace, con->buttonLabel, naMakePos(20, curPosY));
+  con->buttonButton = naNewTextButton("Show Buttons window...", 200, NA_BUTTON_PUSH | NA_BUTTON_BORDERED);
+  naAddSpaceChild(con->contentSpace, con->buttonButton, naMakePos(left, curPosY));
+  naAddUIReaction(con->buttonButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
 
   curPosY -= 30;
   con->popupButtonLabel = naNewLabel("NAPopupButton", descSize);
@@ -383,26 +286,6 @@ ExperimentController* createExperimentController(){
   naAddUIReaction(con->checkBox, NA_UI_COMMAND_PRESSED, checkBoxPressed, con);
 
   curPosY -= 30;
-  con->imageSpaceLabel = naNewLabel("NAImageSpace", descSize);
-  naAddSpaceChild(con->contentSpace, con->imageSpaceLabel, naMakePos(20, curPosY));
-  con->imageSpace = naNewImageSpace(con->testImage, naMakeSize(150, 22));
-  naAddSpaceChild(con->contentSpace, con->imageSpace, naMakePos(left, curPosY));
-
-  curPosY -= 30;
-  con->labelLabel = naNewLabel("NALabel", descSize);
-  naAddSpaceChild(con->contentSpace, con->labelLabel, naMakePos(20, curPosY));
-  con->label = naNewLabel("I am a Label", 150);
-  naAddSpaceChild(con->contentSpace, con->label, naMakePos(left, curPosY));
-
-  curPosY -= 30;
-  con->openGLSpaceLabel = naNewLabel("NAOpenGLSpace", descSize);
-  naAddSpaceChild(con->contentSpace, con->openGLSpaceLabel, naMakePos(20, curPosY));
-  con->openGLSpace = naNewOpenGLSpace(naMakeSize(150, 22), initOpenGL, con);
-  naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(left, curPosY));
-  naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, con);
-  con->openGLSpaceRefreshCount = 1;
-
-  curPosY -= 30;
   con->radioLabel = naNewLabel("NARadio", descSize);
   naAddSpaceChild(con->contentSpace, con->radioLabel, naMakePos(20, curPosY));
   con->radio = naNewRadio("I am a Radio", 150);
@@ -410,24 +293,31 @@ ExperimentController* createExperimentController(){
   naAddUIReaction(con->radio, NA_UI_COMMAND_PRESSED, radioPressed, con);
 
   curPosY -= 30;
-  con->sliderLabel = naNewLabel("NASlider", descSize);
-  naAddSpaceChild(con->contentSpace, con->sliderLabel, naMakePos(20, curPosY));
-  con->slider = naNewSlider(150);
-  naAddSpaceChild(con->contentSpace, con->slider, naMakePos(left, curPosY));
-  naAddUIReaction(con->slider, NA_UI_COMMAND_EDITED, sliderEdited, con);
-
-  curPosY -= 30;
-  con->textBoxLabel = naNewLabel("NATextBox", descSize);
-  naAddSpaceChild(con->contentSpace, con->textBoxLabel, naMakePos(20, curPosY));
-  con->textBox = naNewTextBox(naMakeSize(150, 16));
-  naAddSpaceChild(con->contentSpace, con->textBox, naMakePos(left, curPosY));
-
-  curPosY -= 30;
   con->textFieldLabel = naNewLabel("NATextField", descSize);
   naAddSpaceChild(con->contentSpace, con->textFieldLabel, naMakePos(20, curPosY));
   con->textField = naNewTextField(150);
   naAddSpaceChild(con->contentSpace, con->textField, naMakePos(left, curPosY));
   naAddUIReaction(con->textField, NA_UI_COMMAND_EDITED, textFieldEdited, con);
+
+  curPosY -= 30;
+  con->textBoxLabel = naNewLabel("NATextBox", descSize);
+  naAddSpaceChild(con->contentSpace, con->textBoxLabel, naMakePos(20, curPosY));
+  con->textBox = naNewTextBox(naMakeSize(150, 40));
+  naAddSpaceChild(con->contentSpace, con->textBox, naMakePos(left, curPosY - 20));
+
+  curPosY -= 50;
+  con->fontLabel = naNewLabel("NAFont", descSize);
+  naAddSpaceChild(con->contentSpace, con->fontLabel, naMakePos(20, curPosY));
+  con->fontButton = naNewTextButton("Show Fonts window...", 200, NA_BUTTON_PUSH | NA_BUTTON_BORDERED);
+  naAddSpaceChild(con->contentSpace, con->fontButton, naMakePos(left, curPosY));
+  naAddUIReaction(con->fontButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
+
+  curPosY -= 30;
+  con->sliderLabel = naNewLabel("NASlider", descSize);
+  naAddSpaceChild(con->contentSpace, con->sliderLabel, naMakePos(20, curPosY));
+  con->slider = naNewSlider(150);
+  naAddSpaceChild(con->contentSpace, con->slider, naMakePos(left, curPosY));
+  naAddUIReaction(con->slider, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
   curPosY -= 30;
   con->menuLabel = naNewLabel("NAMenu", descSize);
@@ -459,19 +349,27 @@ ExperimentController* createExperimentController(){
   //  menuItemKeyboardSelected,
   //  con);
 
+  curPosY -= 30;
+  con->imageSpaceLabel = naNewLabel("NAImageSpace", descSize);
+  naAddSpaceChild(con->contentSpace, con->imageSpaceLabel, naMakePos(20, curPosY));
+  con->imageSpace = naNewImageSpace(getState1Image(), naMakeSize(150, 22));
+  naAddSpaceChild(con->contentSpace, con->imageSpace, naMakePos(left, curPosY));
+
+  curPosY -= 30;
+  con->openGLSpaceLabel = naNewLabel("NAOpenGLSpace", descSize);
+  naAddSpaceChild(con->contentSpace, con->openGLSpaceLabel, naMakePos(20, curPosY));
+  con->openGLSpace = naNewOpenGLSpace(naMakeSize(150, 22), initOpenGL, con);
+  naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(left, curPosY));
+  naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, con);
+  con->openGLSpaceRefreshCount = 1;
+
   curPosY -= 50;
   con->subSpace = naNewSpace(naMakeSize(300, 30));
   naSetSpaceAlternateBackground(con->subSpace, NA_TRUE);
   naAddSpaceChild(con->contentSpace, con->subSpace, naMakePos(20, curPosY));
 
-  con->fontButton = naNewTextButton("Fonts", 60, 0);
-  con->buttonButton = naNewTextButton("Buttons", 60, 0);
   con->quitButton = naNewTextButton("Quit", 60, 0);
-  naAddSpaceChild(con->contentSpace, con->fontButton, naMakePos(10, 140));
-  naAddSpaceChild(con->contentSpace, con->buttonButton, naMakePos(80, 140));
   naAddSpaceChild(con->contentSpace, con->quitButton, naMakePos(10, 110));
-  naAddUIReaction(con->fontButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
-  naAddUIReaction(con->buttonButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
   naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
 
   con->outputLabel = naNewLabel(
@@ -492,22 +390,12 @@ ExperimentController* createExperimentController(){
 
 
 void updateExperimentController(ExperimentController* con){
-  NABool state;
-
-  state = naGetButtonState(con->imagePushButtonState);
-  naSetButtonImage(con->imagePushButtonState, state ? con->testImage2 : con->testImage);
-
-  state = naGetButtonState(con->imagePushButtonStateBorderless);
-  naSetButtonImage(con->imagePushButtonStateBorderless, state ? con->testImage2 : con->testImage);
-  
 }
 
 
 void clearExperimentController(ExperimentController* con){
   // Note that all UI elements which are attached in some way to the root
   // application UIElement will be cleared automatically.
-  naRelease(con->testImage);
-  naRelease(con->testImage2);
   naFree(con);
 
   naShutdownPixelFont(con->fontId);
