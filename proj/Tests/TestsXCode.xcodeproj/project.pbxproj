@@ -7,7 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9013B7442A799F1100612E2D /* NATestList.h in Headers */ = {isa = PBXBuildFile; fileRef = 9013B7432A799F1100612E2D /* NATestList.h */; };
+		903DFC8B2A784CF40009C2C6 /* NATestII.h in Headers */ = {isa = PBXBuildFile; fileRef = 903DFC882A784CF40009C2C6 /* NATestII.h */; };
+		903DFC8C2A784CF40009C2C6 /* NATest.c in Sources */ = {isa = PBXBuildFile; fileRef = 903DFC892A784CF40009C2C6 /* NATest.c */; };
+		903DFC8D2A784CF40009C2C6 /* NATest.h in Headers */ = {isa = PBXBuildFile; fileRef = 903DFC8A2A784CF40009C2C6 /* NATest.h */; };
+		903DFC902A784D6F0009C2C6 /* libNATest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 903DFC812A784CE90009C2C6 /* libNATest.a */; };
 		9061401F24713EC000498AF3 /* libNALib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90613CF22471365300498AF3 /* libNALib.a */; };
+		90D1670D2A7922D2003E4BA5 /* NAMacroPrintout.c in Sources */ = {isa = PBXBuildFile; fileRef = 90D1670C2A7922D2003E4BA5 /* NAMacroPrintout.c */; };
+		90D167102A79262E003E4BA5 /* NATestString.c in Sources */ = {isa = PBXBuildFile; fileRef = 90D1670E2A79262E003E4BA5 /* NATestString.c */; };
+		90D167112A79262E003E4BA5 /* NATestString.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D1670F2A79262E003E4BA5 /* NATestString.h */; };
+		90D167132A792BD8003E4BA5 /* NATestStringII.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D167122A792BD8003E4BA5 /* NATestStringII.h */; };
 		90E38C292A2393910062F40E /* NABase.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38B172A2393900062F40E /* NABase.h */; };
 		90E38C2A2A2393910062F40E /* NAUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38B182A2393900062F40E /* NAUtility.h */; };
 		90E38C2B2A2393910062F40E /* NABuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38B1A2A2393900062F40E /* NABuffer.h */; };
@@ -70,7 +79,6 @@
 		90E38C642A2393910062F40E /* NADebuggingII.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38B5A2A2393900062F40E /* NADebuggingII.h */; };
 		90E38C652A2393910062F40E /* NAInt64II.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38B5B2A2393900062F40E /* NAInt64II.h */; };
 		90E38C662A2393910062F40E /* NADebugging.c in Sources */ = {isa = PBXBuildFile; fileRef = 90E38B5C2A2393900062F40E /* NADebugging.c */; };
-		90E38C672A2393910062F40E /* NAMacros.c in Sources */ = {isa = PBXBuildFile; fileRef = 90E38B5D2A2393900062F40E /* NAMacros.c */; };
 		90E38C682A2393910062F40E /* NANumericsII.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38B5E2A2393900062F40E /* NANumericsII.h */; };
 		90E38C692A2393910062F40E /* NAInt128II.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38B5F2A2393900062F40E /* NAInt128II.h */; };
 		90E38C6A2A2393910062F40E /* NAFloatingPointII.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38B602A2393900062F40E /* NAFloatingPointII.h */; };
@@ -182,8 +190,6 @@
 		90E38CD42A2393910062F40E /* NAMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38BD32A2393900062F40E /* NAMemory.h */; };
 		90E38CD52A2393910062F40E /* NAFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 90E38BD52A2393900062F40E /* NAFile.c */; };
 		90E38CD62A2393910062F40E /* NAStringII.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38BD62A2393900062F40E /* NAStringII.h */; };
-		90E38CD72A2393910062F40E /* NATestingII.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38BD82A2393900062F40E /* NATestingII.h */; };
-		90E38CD82A2393910062F40E /* NATesting.c in Sources */ = {isa = PBXBuildFile; fileRef = 90E38BD92A2393900062F40E /* NATesting.c */; };
 		90E38CD92A2393910062F40E /* NADateTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 90E38BDA2A2393900062F40E /* NADateTime.c */; };
 		90E38CDA2A2393910062F40E /* NADateTimeII.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38BDB2A2393900062F40E /* NADateTimeII.h */; };
 		90E38CDB2A2393910062F40E /* NAThreadingII.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38BDC2A2393900062F40E /* NAThreadingII.h */; };
@@ -213,7 +219,6 @@
 		90E38CF32A2393910062F40E /* NADateTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38BF62A2393900062F40E /* NADateTime.h */; };
 		90E38CF42A2393910062F40E /* NABinaryData.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38BF72A2393900062F40E /* NABinaryData.h */; };
 		90E38CF52A2393910062F40E /* NAKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38BF82A2393900062F40E /* NAKey.h */; };
-		90E38CF62A2393910062F40E /* NATesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38BF92A2393900062F40E /* NATesting.h */; };
 		90E38CF72A2393910062F40E /* NATranslator.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38BFA2A2393900062F40E /* NATranslator.h */; };
 		90E38CF82A2393910062F40E /* NAValueHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38BFB2A2393900062F40E /* NAValueHelper.h */; };
 		90E38CF92A2393910062F40E /* NALib.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E38BFC2A2393900062F40E /* NALib.h */; };
@@ -283,6 +288,16 @@
 		90E38D592A2393970062F40E /* mainTreeTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 90E38D402A2393970062F40E /* mainTreeTest.c */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		903DFC8E2A784D660009C2C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 90613BDE2471340600498AF3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 903DFC802A784CE90009C2C6;
+			remoteInfo = NATest;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		90613BF42471349A00498AF3 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -296,8 +311,20 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9013B7432A799F1100612E2D /* NATestList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATestList.h; sourceTree = "<group>"; };
+		903DFC812A784CE90009C2C6 /* libNATest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNATest.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		903DFC882A784CF40009C2C6 /* NATestII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATestII.h; sourceTree = "<group>"; };
+		903DFC892A784CF40009C2C6 /* NATest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATest.c; sourceTree = "<group>"; };
+		903DFC8A2A784CF40009C2C6 /* NATest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATest.h; sourceTree = "<group>"; };
+		903DFC912A78615C0009C2C6 /* NATestEnvironment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATestEnvironment.h; sourceTree = "<group>"; };
 		90613BF62471349A00498AF3 /* Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		90613CF22471365300498AF3 /* libNALib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNALib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		90D1670A2A7921E5003E4BA5 /* NAMacroPrintout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAMacroPrintout.h; sourceTree = "<group>"; };
+		90D1670B2A7921E5003E4BA5 /* NAMacroPrintoutII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAMacroPrintoutII.h; sourceTree = "<group>"; };
+		90D1670C2A7922D2003E4BA5 /* NAMacroPrintout.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAMacroPrintout.c; sourceTree = "<group>"; };
+		90D1670E2A79262E003E4BA5 /* NATestString.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATestString.c; sourceTree = "<group>"; };
+		90D1670F2A79262E003E4BA5 /* NATestString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATestString.h; sourceTree = "<group>"; };
+		90D167122A792BD8003E4BA5 /* NATestStringII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATestStringII.h; sourceTree = "<group>"; };
 		90E38B152A2393900062F40E /* NALib.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = NALib.vcxproj; sourceTree = "<group>"; };
 		90E38B172A2393900062F40E /* NABase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABase.h; sourceTree = "<group>"; };
 		90E38B182A2393900062F40E /* NAUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAUtility.h; sourceTree = "<group>"; };
@@ -361,7 +388,6 @@
 		90E38B5A2A2393900062F40E /* NADebuggingII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NADebuggingII.h; sourceTree = "<group>"; };
 		90E38B5B2A2393900062F40E /* NAInt64II.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAInt64II.h; sourceTree = "<group>"; };
 		90E38B5C2A2393900062F40E /* NADebugging.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NADebugging.c; sourceTree = "<group>"; };
-		90E38B5D2A2393900062F40E /* NAMacros.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAMacros.c; sourceTree = "<group>"; };
 		90E38B5E2A2393900062F40E /* NANumericsII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NANumericsII.h; sourceTree = "<group>"; };
 		90E38B5F2A2393900062F40E /* NAInt128II.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAInt128II.h; sourceTree = "<group>"; };
 		90E38B602A2393900062F40E /* NAFloatingPointII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAFloatingPointII.h; sourceTree = "<group>"; };
@@ -473,8 +499,6 @@
 		90E38BD32A2393900062F40E /* NAMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMemory.h; sourceTree = "<group>"; };
 		90E38BD52A2393900062F40E /* NAFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAFile.c; sourceTree = "<group>"; };
 		90E38BD62A2393900062F40E /* NAStringII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAStringII.h; sourceTree = "<group>"; };
-		90E38BD82A2393900062F40E /* NATestingII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATestingII.h; sourceTree = "<group>"; };
-		90E38BD92A2393900062F40E /* NATesting.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATesting.c; sourceTree = "<group>"; };
 		90E38BDA2A2393900062F40E /* NADateTime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NADateTime.c; sourceTree = "<group>"; };
 		90E38BDB2A2393900062F40E /* NADateTimeII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NADateTimeII.h; sourceTree = "<group>"; };
 		90E38BDC2A2393900062F40E /* NAThreadingII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAThreadingII.h; sourceTree = "<group>"; };
@@ -504,7 +528,6 @@
 		90E38BF62A2393900062F40E /* NADateTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NADateTime.h; sourceTree = "<group>"; };
 		90E38BF72A2393900062F40E /* NABinaryData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABinaryData.h; sourceTree = "<group>"; };
 		90E38BF82A2393900062F40E /* NAKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAKey.h; sourceTree = "<group>"; };
-		90E38BF92A2393900062F40E /* NATesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATesting.h; sourceTree = "<group>"; };
 		90E38BFA2A2393900062F40E /* NATranslator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATranslator.h; sourceTree = "<group>"; };
 		90E38BFB2A2393900062F40E /* NAValueHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAValueHelper.h; sourceTree = "<group>"; };
 		90E38BFC2A2393900062F40E /* NALib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NALib.h; sourceTree = "<group>"; };
@@ -582,6 +605,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		903DFC7F2A784CE90009C2C6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		90613BF32471349A00498AF3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -594,15 +624,44 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				903DFC902A784D6F0009C2C6 /* libNATest.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		903DFC862A784CF40009C2C6 /* NATest */ = {
+			isa = PBXGroup;
+			children = (
+				903DFC872A784CF40009C2C6 /* src */,
+			);
+			name = NATest;
+			path = ../../lib/NATest/code/NATest;
+			sourceTree = "<group>";
+		};
+		903DFC872A784CF40009C2C6 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				90D1670C2A7922D2003E4BA5 /* NAMacroPrintout.c */,
+				90D1670A2A7921E5003E4BA5 /* NAMacroPrintout.h */,
+				90D1670B2A7921E5003E4BA5 /* NAMacroPrintoutII.h */,
+				903DFC892A784CF40009C2C6 /* NATest.c */,
+				903DFC8A2A784CF40009C2C6 /* NATest.h */,
+				903DFC912A78615C0009C2C6 /* NATestEnvironment.h */,
+				903DFC882A784CF40009C2C6 /* NATestII.h */,
+				9013B7432A799F1100612E2D /* NATestList.h */,
+				90D1670E2A79262E003E4BA5 /* NATestString.c */,
+				90D1670F2A79262E003E4BA5 /* NATestString.h */,
+				90D167122A792BD8003E4BA5 /* NATestStringII.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		90613BDD2471340600498AF3 = {
 			isa = PBXGroup;
 			children = (
+				903DFC862A784CF40009C2C6 /* NATest */,
 				90E38D5A2A23939E0062F40E /* doc */,
 				90E38B142A2393900062F40E /* NALib */,
 				90E38D212A2393970062F40E /* Tests */,
@@ -616,6 +675,7 @@
 			children = (
 				90613BF62471349A00498AF3 /* Tests */,
 				90613CF22471365300498AF3 /* libNALib.a */,
+				903DFC812A784CE90009C2C6 /* libNATest.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -785,7 +845,6 @@
 				90E38B5A2A2393900062F40E /* NADebuggingII.h */,
 				90E38B5B2A2393900062F40E /* NAInt64II.h */,
 				90E38B5C2A2393900062F40E /* NADebugging.c */,
-				90E38B5D2A2393900062F40E /* NAMacros.c */,
 				90E38B5E2A2393900062F40E /* NANumericsII.h */,
 				90E38B5F2A2393900062F40E /* NAInt128II.h */,
 				90E38B602A2393900062F40E /* NAFloatingPointII.h */,
@@ -955,7 +1014,6 @@
 				90E38BF62A2393900062F40E /* NADateTime.h */,
 				90E38BF72A2393900062F40E /* NABinaryData.h */,
 				90E38BF82A2393900062F40E /* NAKey.h */,
-				90E38BF92A2393900062F40E /* NATesting.h */,
 				90E38BFA2A2393900062F40E /* NATranslator.h */,
 				90E38BFB2A2393900062F40E /* NAValueHelper.h */,
 			);
@@ -975,7 +1033,6 @@
 			children = (
 				90E38BD52A2393900062F40E /* NAFile.c */,
 				90E38BD62A2393900062F40E /* NAStringII.h */,
-				90E38BD72A2393900062F40E /* NATesting */,
 				90E38BDA2A2393900062F40E /* NADateTime.c */,
 				90E38BDB2A2393900062F40E /* NADateTimeII.h */,
 				90E38BDC2A2393900062F40E /* NAThreadingII.h */,
@@ -990,15 +1047,6 @@
 				90E38BED2A2393900062F40E /* NABinaryData */,
 			);
 			path = Core;
-			sourceTree = "<group>";
-		};
-		90E38BD72A2393900062F40E /* NATesting */ = {
-			isa = PBXGroup;
-			children = (
-				90E38BD82A2393900062F40E /* NATestingII.h */,
-				90E38BD92A2393900062F40E /* NATesting.c */,
-			);
-			path = NATesting;
 			sourceTree = "<group>";
 		};
 		90E38BE42A2393900062F40E /* NAMemory */ = {
@@ -1191,6 +1239,18 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		903DFC7D2A784CE90009C2C6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9013B7442A799F1100612E2D /* NATestList.h in Headers */,
+				903DFC8D2A784CF40009C2C6 /* NATest.h in Headers */,
+				90D167112A79262E003E4BA5 /* NATestString.h in Headers */,
+				90D167132A792BD8003E4BA5 /* NATestStringII.h in Headers */,
+				903DFC8B2A784CF40009C2C6 /* NATestII.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		90613CEE2471365300498AF3 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1241,7 +1301,6 @@
 				90E38C572A2393910062F40E /* NAArray.h in Headers */,
 				90E38C6A2A2393910062F40E /* NAFloatingPointII.h in Headers */,
 				90E38CA82A2393910062F40E /* NAUIImageII.h in Headers */,
-				90E38CD72A2393910062F40E /* NATestingII.h in Headers */,
 				90E38CBA2A2393910062F40E /* NAOpenGLSpace.h in Headers */,
 				90E38C502A2393910062F40E /* NATreeUtilitiesII.h in Headers */,
 				90E38CD22A2393910062F40E /* NATextBox.h in Headers */,
@@ -1364,7 +1423,6 @@
 				90E38CC32A2393910062F40E /* NAMenuII.h in Headers */,
 				90E38C682A2393910062F40E /* NANumericsII.h in Headers */,
 				90E38CCD2A2393910062F40E /* NATextFieldII.h in Headers */,
-				90E38CF62A2393910062F40E /* NATesting.h in Headers */,
 				90E38C412A2393910062F40E /* NAStackII.h in Headers */,
 				90E38CAF2A2393910062F40E /* NAReaction.h in Headers */,
 				90E38C7D2A2393910062F40E /* NAApplicationII.h in Headers */,
@@ -1389,6 +1447,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		903DFC802A784CE90009C2C6 /* NATest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 903DFC852A784CE90009C2C6 /* Build configuration list for PBXNativeTarget "NATest" */;
+			buildPhases = (
+				903DFC7D2A784CE90009C2C6 /* Headers */,
+				903DFC7E2A784CE90009C2C6 /* Sources */,
+				903DFC7F2A784CE90009C2C6 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NATest;
+			productName = NATest;
+			productReference = 903DFC812A784CE90009C2C6 /* libNATest.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		90613BF52471349A00498AF3 /* Tests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 90613BFA2471349A00498AF3 /* Build configuration list for PBXNativeTarget "Tests" */;
@@ -1417,6 +1492,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				903DFC8F2A784D660009C2C6 /* PBXTargetDependency */,
 			);
 			name = NALib;
 			productName = NALib;
@@ -1432,6 +1508,9 @@
 				LastUpgradeCheck = 1400;
 				ORGANIZATIONNAME = ManderC;
 				TargetAttributes = {
+					903DFC802A784CE90009C2C6 = {
+						CreatedOnToolsVersion = 14.1;
+					};
 					90613BF52471349A00498AF3 = {
 						CreatedOnToolsVersion = 11.4;
 					};
@@ -1455,11 +1534,22 @@
 			targets = (
 				90613BF52471349A00498AF3 /* Tests */,
 				90613CF12471365300498AF3 /* NALib */,
+				903DFC802A784CE90009C2C6 /* NATest */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		903DFC7E2A784CE90009C2C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90D167102A79262E003E4BA5 /* NATestString.c in Sources */,
+				90D1670D2A7922D2003E4BA5 /* NAMacroPrintout.c in Sources */,
+				903DFC8C2A784CF40009C2C6 /* NATest.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		90613BF22471349A00498AF3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1529,7 +1619,6 @@
 				90E38C332A2393910062F40E /* NABufferRead.c in Sources */,
 				90E38C312A2393910062F40E /* NABufferPart.c in Sources */,
 				90E38C902A2393910062F40E /* NACocoa.m in Sources */,
-				90E38CD82A2393910062F40E /* NATesting.c in Sources */,
 				90E38C3D2A2393910062F40E /* NAMemoryBlock.c in Sources */,
 				90E38C372A2393910062F40E /* NABufferWrite.c in Sources */,
 				90E38C4E2A2393910062F40E /* NATreeQuad.c in Sources */,
@@ -1551,7 +1640,6 @@
 				90E38CA12A2393910062F40E /* NAPopupButton.c in Sources */,
 				90E38C552A2393910062F40E /* NAList.c in Sources */,
 				90E38CFB2A2393910062F40E /* NAPNG.c in Sources */,
-				90E38C672A2393910062F40E /* NAMacros.c in Sources */,
 				90E38C362A2393910062F40E /* NABufferIteration.c in Sources */,
 				90E38CDC2A2393910062F40E /* NATranslator.c in Sources */,
 				90E38CE22A2393910062F40E /* NAURL.c in Sources */,
@@ -1561,7 +1649,58 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		903DFC8F2A784D660009C2C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 903DFC802A784CE90009C2C6 /* NATest */;
+			targetProxy = 903DFC8E2A784D660009C2C6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		903DFC822A784CE90009C2C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = YH3QFD54JB;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		903DFC832A784CE90009C2C6 /* Optimize */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = YH3QFD54JB;
+				EXECUTABLE_PREFIX = lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Optimize;
+		};
+		903DFC842A784CE90009C2C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = YH3QFD54JB;
+				EXECUTABLE_PREFIX = lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		90613BEB2471340600498AF3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1698,7 +1837,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
-				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../code/NALib/src/;
+				HEADER_SEARCH_PATHS = "$PROJECT_DIR/../../code/NALib/src/**";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1710,7 +1849,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
-				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../code/NALib/src/;
+				HEADER_SEARCH_PATHS = "$PROJECT_DIR/../../code/NALib/src/**";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1721,6 +1860,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = "${PROJECT_DIR}/lib/NATest/code/NATest/src/**";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -1732,6 +1872,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = "${PROJECT_DIR}/lib/NATest/code/NATest/src/**";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -1810,7 +1951,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
-				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../code/NALib/src/;
+				HEADER_SEARCH_PATHS = "$PROJECT_DIR/../../code/NALib/src/**";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Optimize;
@@ -1821,6 +1962,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = "${PROJECT_DIR}/lib/NATest/code/NATest/src/**";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -1829,6 +1971,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		903DFC852A784CE90009C2C6 /* Build configuration list for PBXNativeTarget "NATest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				903DFC822A784CE90009C2C6 /* Debug */,
+				903DFC832A784CE90009C2C6 /* Optimize */,
+				903DFC842A784CE90009C2C6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		90613BE12471340600498AF3 /* Build configuration list for PBXProject "TestsXCode" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

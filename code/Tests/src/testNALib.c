@@ -1,5 +1,15 @@
 
-#include "NAUtility/NATesting.h"
+// You need the NATest package for this project!
+// It is located in the lib folder and can be optained as a git submodule. Run
+// the following commands in the base folder of NALib:
+//   git submodule init
+//   git submodule update
+// Or download the whole NALib package with the following command directly:
+//   git clone --recurse-submodules https://github.com/Manderby/NALib.git
+#include "NATest.h"
+
+
+
 #include "NAUtility/NAMemory.h"
 #include "NAUtility/NAString.h"
 #include <stdio.h>
@@ -21,11 +31,9 @@ void benchmarkNAStruct(void);
 
 
 void printNALib(void){
-  #if NA_PRINTOUT_ENABLED == 1
-    printNABase();
-    printNACore();
-    printNAStruct();
-  #endif
+  printNABase();
+  printNACore();
+  printNAStruct();
 }
 
 void testNALib(void){
@@ -40,8 +48,6 @@ void benchmarkNALib(void){
   benchmarkNAStruct();
 }
 
-
-
 int main(int argc, const char** argv){
   printf("Testing NALib Version: %d ", NA_VERSION);
   #if NA_DEBUG
@@ -53,12 +59,18 @@ int main(int argc, const char** argv){
   naStartRuntime();
 
   // Print macro information
-//  printNALib();
+  //printNALib();
 
   // Start testing
-  NABool testStartSuccessful = naStartTesting("NALib", .01, NA_FALSE, argc, argv);
-  if(testStartSuccessful)
-  {
+  NABool testStartSuccessful = naStartTesting(
+    "NALib",
+    .01,
+    NA_TRUE,
+    NA_TRUE,
+    argc,
+    argv);
+
+  if(testStartSuccessful){
     testNALib();
 //    naPrintUntested();
 //    benchmarkNALib();

@@ -1,7 +1,8 @@
 
-#include "NAUtility/NATesting.h"
+#include "NATest.h"
 #include <stdio.h>
 
+#include "NALib.h"
 #include "NAStruct/NABuffer.h"
 
 

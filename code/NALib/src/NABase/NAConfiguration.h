@@ -346,29 +346,13 @@
 
 
 // ////////////////////////////////
-// Printouts
-// ////////////////////////////////
-
-// NALib provides a few functions to print out the contents of macros. They
-// can be a handy tool but they require stdio.h and string.h to be included.
-//
-// If this macro is set to 0, the printout API will just do nothing.
-//
-// The default is 1.
-
-#ifndef NA_PRINTOUT_ENABLED
-  #define NA_PRINTOUT_ENABLED 1
-#endif
-
-
-
-// ////////////////////////////////
 // Testing
 // ////////////////////////////////
 
-// NALib provides a small testing framework which is used internally but can
-// also be used by others. Set this macro to 1 if you want to use this
-// functionality.
+// NALib uses NATest as a testing framework. Set this macro to 1 if you want
+// to use this functionality. In that case, you need to link/compile with the
+// NATest library. In the distribution, it is located in the lib folder and
+// you can get it as a git submodule.
 //
 // The default is 0.
 

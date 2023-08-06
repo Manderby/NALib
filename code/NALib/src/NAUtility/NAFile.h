@@ -69,9 +69,9 @@ typedef struct NAFile NAFile;
     #define NA_FILESIZE_MAX NA_MAX_i64
   #elif NA_ADDRESS_BITS == 32
     typedef long NAFileSize;    // Is signed (Important for negative offsets)
-  #define NA_FILESIZE_BITS 32
-  #define NA_FILESIZE_MAX NA_MAX_i32
-#endif
+    #define NA_FILESIZE_BITS 32
+    #define NA_FILESIZE_MAX NA_MAX_i32
+  #endif
   typedef int NAFileMode;
   #define NA_FILEMODE_DEFAULT (_S_IREAD | _S_IWRITE)
   #define NA_DIRMODE_DEFAULT 0 // No directory modes on windows needed.

@@ -1,5 +1,6 @@
 
-#include "NAUtility/NATesting.h"
+#include "NATest.h"
+#include "NAUtility/NAString.h"
 #include <stdio.h>
 
 
@@ -13,7 +14,7 @@ void testNATesting(void){
   
   
 void printNATesting(void){
-  printf("NATesting.h:" NA_NL);
+  printf("NATest.h:" NA_NL);
 
   naPrintMacroDefined(naTest(expr));
   naPrintMacroDefined(naTestVoid(expr));
