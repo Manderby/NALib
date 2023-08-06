@@ -117,8 +117,8 @@ NABool experimentButtonPressed(NAReaction reaction){
 //    labelString = naNewString();
 //  }
   
-  naSetLabelText(con->outputLabel, naGetStringUTF8Pointer(labelString));
-  naDelete(labelString);
+//  naSetLabelText(con->outputLabel, naGetStringUTF8Pointer(labelString));
+//  naDelete(labelString);
 
   updateExperimentController(con);
 

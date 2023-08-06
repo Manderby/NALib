@@ -112,7 +112,7 @@ NA_HDEF NABabyImage* naCreateBabyImageCopy(const NABabyImage* image){
 
 NA_HDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, const float* top, NABlendMode mode, float blend, NABool baseIsImage, NABool topIsImage){
   NAInt i;
-  blend = naLinearizeColorValue(blend);
+  //blend = naLinearizeColorValue(blend);
   for(i = 0; i < pixelCount; ++i){
     float topblend;
     switch(mode){

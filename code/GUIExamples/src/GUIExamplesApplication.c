@@ -57,7 +57,7 @@ void poststartup(void* arg){
   app->iconImage = naCreateUIImage(
     originalImageIcon,
     NA_UIIMAGE_RESOLUTION_SCREEN_2x,
-    NA_BLEND_ZERO);
+    NA_BLEND_BLACK_GREEN);
   naReleaseBabyImage(originalImageIcon);
   naDelete(pngIcon);
 

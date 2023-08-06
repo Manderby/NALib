@@ -59,17 +59,20 @@
   [self setTitle:[NSString stringWithUTF8String:text]];
 }
 
-- (void) setUIImage:(const NAUIImage*)uiImage{
+- (void) setUIImage:(const NAUIImage*)uiImage interaction:(NAUIImageInteraction) interaction{
   if(uiImage)
   {
     [self setImage:naCreateResolutionIndependentNativeImage(
       self,
       uiImage,
-      NA_UIIMAGE_INTERACTION_NONE)];
-    [self setAlternateImage:naCreateResolutionIndependentNativeImage(
-      self,
-      uiImage,
-      NA_UIIMAGE_INTERACTION_NONE)];
+      interaction)];
+      
+    if(interaction != NA_UIIMAGE_INTERACTION_DISABLED){
+      [self setAlternateImage:naCreateResolutionIndependentNativeImage(
+        self,
+        uiImage,
+        NA_UIIMAGE_INTERACTION_PRESSED)];
+    }
 
     [[self cell] setImageScaling:NSImageScaleNone];
   }else{
@@ -80,7 +83,7 @@
 
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  if(na_isButtonAbort((NA_UIElement*)cocoaButton)){
+  if(na_isButtonAbort(&cocoaButton->button)){
   
   }
   na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED);
@@ -166,7 +169,7 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
     frame:naMakeNSRectWithSize(size)];
   na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), uiImage, flags);
   
-  [nativePtr setUIImage:uiImage];
+  [nativePtr setUIImage:uiImage interaction:NA_UIIMAGE_INTERACTION_NONE];
   
   return (NAButton*)cocoaButton;
 }
@@ -181,6 +184,9 @@ NA_DEF void na_DestructCocoaButton(NACocoaButton* cocoaButton){
 
 NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  [nativePtr
+    setUIImage:button->uiImage
+    interaction:enabled ? NA_UIIMAGE_INTERACTION_NONE : NA_UIIMAGE_INTERACTION_DISABLED];
   [nativePtr setEnabled:(BOOL)enabled];
 }
 
@@ -204,7 +210,7 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
       naError("This is not an image button.");
   #endif
   na_setButtonImage(button, uiImage);
-  [nativePtr setUIImage:uiImage];
+  [nativePtr setUIImage:uiImage interaction:NA_UIIMAGE_INTERACTION_NONE];
 }
 
 

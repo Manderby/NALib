@@ -128,7 +128,27 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(const NAUIImage* uiImage, double r
   
   // If the status is not NONE, we build an image out of it.
   if(interaction != NA_UIIMAGE_INTERACTION_NONE){
-    return na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
+    switch(interaction){
+    case NA_UIIMAGE_INTERACTION_PRESSED:
+      return na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
+      break;
+    case NA_UIIMAGE_INTERACTION_HOVER:
+      return na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
+      break;
+    case NA_UIIMAGE_INTERACTION_DISABLED:
+      {
+        const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
+        #if NA_OS == NA_OS_MAC_OS_X
+          return originalImage;
+        #else
+          NABabyImage* newImage = naCreateBabyImageWithBlend(NA_NULL, originalImage->image, NA_BLEND_OVERLAY, .45);
+          newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
+          naReleaseBabyImage(newImage);
+        #endif
+      }
+      break;
+    default: break;
+    }
   
   // If the skin is not PLAIN, we build an image out of it.
   }else if(skin != NA_UIIMAGE_SKIN_PLAIN){

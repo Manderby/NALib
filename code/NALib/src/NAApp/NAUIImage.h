@@ -13,9 +13,9 @@
 
 #include "../NAVisual/NABabyImage.h"
 
-// These are the default resolutions given in dots/meter.
-#define NA_UIIMAGE_RESOLUTION_SCREEN_1x 3779.52755905511811   // 96 dpi
-#define NA_UIIMAGE_RESOLUTION_SCREEN_2x 7559.05511811023622   // 192 dpi
+// These are the default resolutions given in points/meter.
+#define NA_UIIMAGE_RESOLUTION_SCREEN_1x 3779.52755905511811   // 96 ppi
+#define NA_UIIMAGE_RESOLUTION_SCREEN_2x 7559.05511811023622   // 192 ppi
 
 typedef enum{
   NA_UIIMAGE_INTERACTION_NONE,
