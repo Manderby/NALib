@@ -140,7 +140,18 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(const NAUIImage* uiImage, double r
       }
       break;
     case NA_UIIMAGE_INTERACTION_HOVER:
-      return na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
+      {
+        const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
+        
+        NABabyColor shadowColor;
+        naFillLabelBabyColor(shadowColor);
+        shadowColor[0] = 1.f - shadowColor[0];
+        shadowColor[1] = 1.f - shadowColor[1];
+        shadowColor[2] = 1.f - shadowColor[2];
+        NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, shadowColor, NA_BLEND_OPAQUE, naGetSkinForCurrentAppearance() == NA_UIIMAGE_SKIN_DARK ? .40 : .15);
+        newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
+        naReleaseBabyImage(newImage);
+      }
       break;
     case NA_UIIMAGE_INTERACTION_DISABLED:
       {

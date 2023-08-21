@@ -60,6 +60,22 @@
 
 
 
+NA_DEF void naFillLabelBabyColor(NABabyColor babyColor){
+  NSColor* labelColor = naGetLabelColor();
+  babyColor[0] = naLinearizeColorValue([labelColor redComponent]);
+  babyColor[1] = naLinearizeColorValue([labelColor greenComponent]);
+  babyColor[2] = naLinearizeColorValue([labelColor blueComponent]);
+  babyColor[3] = 1.f;
+}
+
+NA_DEF void naFillLinkBabyColor(NABabyColor babyColor){
+  NSColor* linkColor = naGetLinkColor();
+  babyColor[0] = naLinearizeColorValue([linkColor redComponent]);
+  babyColor[1] = naLinearizeColorValue([linkColor greenComponent]);
+  babyColor[2] = naLinearizeColorValue([linkColor blueComponent]);
+  babyColor[3] = 1.f;
+}
+
 NA_DEF void naFillAccentBabyColor(NABabyColor babyColor){
   NSColor* accentColor = naGetAccentColor();
   babyColor[0] = naLinearizeColorValue([accentColor redComponent]);

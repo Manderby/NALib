@@ -12,11 +12,8 @@
 
 NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage, uint32 flags){
   na_InitUIElement(&(button->uiElement), NA_UI_BUTTON, nativePtr);
-  if(uiImage){
-    button->uiImage = naRetainConst(uiImage);
-  }else{
-    button->uiImage = NA_NULL;
-  }
+  button->uiImage = NA_NULL;
+  na_setButtonImage(button, uiImage);
   button->flags = flags;
 }
 
@@ -35,8 +32,7 @@ NA_HDEF void na_setButtonImage(NAButton* button, const NAUIImage* uiImage){
   if(button->uiImage){
     naReleaseConst(button->uiImage);
   }
-  if(uiImage)
-  {
+  if(uiImage){
     button->uiImage = naRetainConst(uiImage);
   }else{
     button->uiImage = NA_NULL;

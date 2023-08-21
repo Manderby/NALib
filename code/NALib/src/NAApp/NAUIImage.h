@@ -71,10 +71,13 @@ NA_API NAUIImage* naCreateUIImage(
 // Returns the size of the 1x representation.
 NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
 
-// Returns the Skin for the current Appearance.
+// Returns the Skin for the current Appearance. Either returns LIGHT or DARK.
+// Never returns PLAIN.
 NA_API NAUIImageSkin naGetSkinForCurrentAppearance(void);
 
-// Returns the accent color of the user preferences.
+// Returns the desired color of the user preferences.
+NA_API void naFillLabelBabyColor(NABabyColor babyColor);
+NA_API void naFillLinkBabyColor(NABabyColor babyColor);
 NA_API void naFillAccentBabyColor(NABabyColor babyColor);
 
 // Returns the default foreground color for the given skin.

@@ -29,6 +29,7 @@
   if(isImage){
 //    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
     [self setButtonType:NSButtonTypeMomentaryChange];
+    [[self cell] setImageScaling:NSImageScaleNone];
   }else{
     [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
   }
@@ -60,28 +61,6 @@
   [self setTitle:[NSString stringWithUTF8String:text]];
 }
 
-- (void) setUIImage:(const NAUIImage*)uiImage interaction:(NAUIImageInteraction) interaction{
-  if(uiImage)
-  {
-    [self setImage:naCreateResolutionIndependentNativeImage(
-      self,
-      uiImage,
-      interaction)];
-      
-    if(interaction != NA_UIIMAGE_INTERACTION_DISABLED){
-      [self setAlternateImage:naCreateResolutionIndependentNativeImage(
-        self,
-        uiImage,
-        NA_UIIMAGE_INTERACTION_PRESSED)];
-    }
-
-    [[self cell] setImageScaling:NSImageScaleNone];
-  }else{
-    [self setImage:nil];
-    [self setAlternateImage:nil];
-  }
-}
-
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
   if(na_isButtonAbort(&cocoaButton->button)){
@@ -90,10 +69,9 @@
   na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED);
 }
 
-- (void) setEnabled:(BOOL)enabled{
-  [super setEnabled:enabled];
+- (void) updateImages{
   if(cocoaButton->button.uiImage){
-    if(enabled){
+    if([self isEnabled]){
       [self setImage:naCreateResolutionIndependentNativeImage(
         self,
         cocoaButton->button.uiImage,
@@ -111,16 +89,31 @@
         
       [self setAlternateImage:nil];
     }
+  }else{
+    [self setImage:nil];
+    [self setAlternateImage:nil];
   }
 }
 
 - (void) mouseEntered:(NSEvent*)event{
   NA_UNUSED(event);
+  if(cocoaButton->button.uiImage){
+    [self setImage:naCreateResolutionIndependentNativeImage(
+      self,
+      cocoaButton->button.uiImage,
+      NA_UIIMAGE_INTERACTION_HOVER)];
+  }
   na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_ENTERED);
 }
 
 - (void) mouseExited:(NSEvent*)event{
   NA_UNUSED(event);
+  if(cocoaButton->button.uiImage){
+    [self setImage:naCreateResolutionIndependentNativeImage(
+      self,
+      cocoaButton->button.uiImage,
+      NA_UIIMAGE_INTERACTION_NONE)];
+  }
   na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_EXITED);
 }
 
@@ -194,9 +187,7 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
     frame:naMakeNSRectWithSize(size)];
   na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), uiImage, flags);
   
-  [nativePtr setUIImage:uiImage interaction:NA_UIIMAGE_INTERACTION_NONE];
-  
-  [nativePtr setEnabled:YES];
+  [nativePtr updateImages];
 
   return (NAButton*)cocoaButton;
 }
@@ -211,10 +202,8 @@ NA_DEF void na_DestructCocoaButton(NACocoaButton* cocoaButton){
 
 NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
-  [nativePtr
-    setUIImage:button->uiImage
-    interaction:enabled ? NA_UIIMAGE_INTERACTION_NONE : NA_UIIMAGE_INTERACTION_DISABLED];
   [nativePtr setEnabled:(BOOL)enabled];
+  [nativePtr updateImages];
 }
 
 
@@ -237,7 +226,7 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
       naError("This is not an image button.");
   #endif
   na_setButtonImage(button, uiImage);
-  [nativePtr setUIImage:uiImage interaction:NA_UIIMAGE_INTERACTION_NONE];
+  [nativePtr updateImages];
 }
 
 

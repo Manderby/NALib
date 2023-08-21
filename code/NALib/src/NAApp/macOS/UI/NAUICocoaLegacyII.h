@@ -85,32 +85,36 @@ NA_DEF void naSwitchApplicationToGraphiteAppearance(void){
 
 
 NA_DEF NSColor* naGetLabelColor(){
-  NSColor* color = nil;
+  NSColor* sRGBColor = nil;
   
   NA_MACOS_AVAILABILITY_GUARD_10_10(
     if([NSColor instancesRespondToSelector:@selector(labelColor)]){
-      color = [NSColor labelColor];
+      NSColor* color = [NSColor labelColor];
+      sRGBColor = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
     }
   )
-  if(!color){
-    color = [NSColor controlTextColor];
+  if(!sRGBColor){
+    NSColor* color = [NSColor controlTextColor];
+    sRGBColor = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
   }
-  return color;
+  return sRGBColor;
 }
 
 NA_DEF NSColor* naGetLinkColor(){
-  NSColor* color = nil;
+  NSColor* sRGBColor = nil;
 
   // documentation says available since 10.10 but that is not true. It is at least 10.12 but maybe even higher.
   NA_MACOS_AVAILABILITY_GUARD_10_12(
     if([NSColor instancesRespondToSelector:@selector(linkColor)]){
-      color = [NSColor linkColor];
+      NSColor* color = [NSColor linkColor];
+      sRGBColor = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
     }
   )
-  if(!color){
-    color = [NSColor blueColor];
+  if(!sRGBColor){
+    NSColor* color = [NSColor blueColor];
+    sRGBColor = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
   }
-  return color;
+  return sRGBColor;
 }
 
 NA_DEF NSColor* naGetAccentColor(){
@@ -123,7 +127,8 @@ NA_DEF NSColor* naGetAccentColor(){
     }
   )
   if(!sRGBColor){
-    sRGBColor = [NSColor blueColor];
+    NSColor* color = [NSColor blueColor];
+    sRGBColor = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
   }
   return sRGBColor;
 }
