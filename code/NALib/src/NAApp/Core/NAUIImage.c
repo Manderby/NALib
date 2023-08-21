@@ -123,14 +123,21 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(const NAUIImage* uiImage, double r
   naClearListIterator(&listIter);
   
   // Reaching here, we have not found the desired image.
-  NA_UISubImage* newSubImage = NA_NULL;
+  const NA_UISubImage* newSubImage = NA_NULL;
   NAUIImage* mutableUIImage = (NAUIImage*)uiImage;
   
   // If the status is not NONE, we build an image out of it.
   if(interaction != NA_UIIMAGE_INTERACTION_NONE){
     switch(interaction){
     case NA_UIIMAGE_INTERACTION_PRESSED:
-      return na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
+      {
+        const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
+        NABabyColor accentColor;
+        naFillAccentBabyColor(accentColor);
+        NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, accentColor, NA_BLEND_OPAQUE, .33);
+        newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
+        naReleaseBabyImage(newImage);
+      }
       break;
     case NA_UIIMAGE_INTERACTION_HOVER:
       return na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
@@ -139,7 +146,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(const NAUIImage* uiImage, double r
       {
         const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
         #if NA_OS == NA_OS_MAC_OS_X
-          return originalImage;
+          newSubImage = originalImage;
         #else
           NABabyImage* newImage = naCreateBabyImageWithBlend(NA_NULL, originalImage->image, NA_BLEND_OVERLAY, .45);
           newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);

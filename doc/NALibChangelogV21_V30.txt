@@ -10,7 +10,8 @@ correct, complete or final.
 
 Big changes:
 - Added NAJSON, a non-standard-conform but very fast JSON parser.
-- Windows GUI is now resolution independent. Images are still missing though.
+- Windows GUI is now resolution independent.
+- Images can be scaled arbitrariyly. Linear up and downscaling.
 
 Smaller things:
 - Deprecating NABounds4, replacing with NABezel4

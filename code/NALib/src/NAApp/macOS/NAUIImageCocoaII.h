@@ -19,7 +19,7 @@
     typedef NSString* NSAppearanceName;
   #endif
 
-  NAUIImageSkin naGetSkinForCurrentAppearance(void){
+  NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(void){
     NAUIImageSkin skin = NA_UIIMAGE_SKIN_LIGHT;
     NSAppearanceName appearancename = NSAppearanceNameAqua;
 
@@ -52,10 +52,21 @@
     return skin;
   }
 #else
-  NAUIImageSkin naGetSkinForCurrentAppearance(void){
+  NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(void){
     return NA_UIIMAGE_SKIN_LIGHT;
   }
 #endif
+
+
+
+
+NA_DEF void naFillAccentBabyColor(NABabyColor babyColor){
+  NSColor* accentColor = naGetAccentColor();
+  babyColor[0] = naLinearizeColorValue([accentColor redComponent]);
+  babyColor[1] = naLinearizeColorValue([accentColor greenComponent]);
+  babyColor[2] = naLinearizeColorValue([accentColor blueComponent]);
+  babyColor[3] = 1.f;
+}
 
 
 

@@ -113,6 +113,20 @@ NA_DEF NSColor* naGetLinkColor(){
   return color;
 }
 
+NA_DEF NSColor* naGetAccentColor(){
+  NSColor* sRGBColor = nil;
+
+  NA_MACOS_AVAILABILITY_GUARD_10_14(
+    if([NSColor respondsToSelector:@selector(controlAccentColor)]){
+      NSColor* color = [NSColor controlAccentColor];
+      sRGBColor = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+    }
+  )
+  if(!sRGBColor){
+    sRGBColor = [NSColor blueColor];
+  }
+  return sRGBColor;
+}
 
 #if defined __clang_major__
   #pragma clang diagnostic pop

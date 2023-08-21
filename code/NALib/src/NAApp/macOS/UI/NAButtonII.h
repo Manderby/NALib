@@ -27,7 +27,8 @@
   }
 
   if(isImage){
-    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
+//    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
+    [self setButtonType:NSButtonTypeMomentaryChange];
   }else{
     [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
   }
@@ -87,6 +88,30 @@
   
   }
   na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED);
+}
+
+- (void) setEnabled:(BOOL)enabled{
+  [super setEnabled:enabled];
+  if(cocoaButton->button.uiImage){
+    if(enabled){
+      [self setImage:naCreateResolutionIndependentNativeImage(
+        self,
+        cocoaButton->button.uiImage,
+        NA_UIIMAGE_INTERACTION_NONE)];
+        
+      [self setAlternateImage:naCreateResolutionIndependentNativeImage(
+        self,
+        cocoaButton->button.uiImage,
+        NA_UIIMAGE_INTERACTION_PRESSED)];
+    }else{
+      [self setImage:naCreateResolutionIndependentNativeImage(
+        self,
+        cocoaButton->button.uiImage,
+        NA_UIIMAGE_INTERACTION_DISABLED)];
+        
+      [self setAlternateImage:nil];
+    }
+  }
 }
 
 - (void) mouseEntered:(NSEvent*)event{
@@ -171,6 +196,8 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
   
   [nativePtr setUIImage:uiImage interaction:NA_UIIMAGE_INTERACTION_NONE];
   
+  [nativePtr setEnabled:YES];
+
   return (NAButton*)cocoaButton;
 }
 

@@ -72,7 +72,10 @@ NA_API NAUIImage* naCreateUIImage(
 NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
 
 // Returns the Skin for the current Appearance.
-NAUIImageSkin naGetSkinForCurrentAppearance(void);
+NA_API NAUIImageSkin naGetSkinForCurrentAppearance(void);
+
+// Returns the accent color of the user preferences.
+NA_API void naFillAccentBabyColor(NABabyColor babyColor);
 
 // Returns the default foreground color for the given skin.
 NA_API void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin);
