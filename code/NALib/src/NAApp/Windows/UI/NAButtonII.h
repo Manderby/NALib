@@ -166,10 +166,14 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       alt = pushed;
     }
 
-    if(alt){
-      foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_NONE);
+    if(IsWindowEnabled(naGetUIElementNativePtr(winapiButton))){
+      if(pushed){
+        foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_PRESSED);
+      }else{
+        foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE);
+      }
     }else{
-      foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE);
+      foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_DISABLED);
     }
 
     // We store the background where the image will be placed.
@@ -311,7 +315,8 @@ NA_DEF void naSetButtonVisible(NAButton* button, NABool visible){
 
 
 NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled){
-  // todo
+  const NAWINAPIButton* winapiButton = (const NAWINAPIButton*)button;
+  EnableWindow(naGetUIElementNativePtr(button), enabled);
 }
 
 
