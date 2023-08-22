@@ -644,7 +644,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem){
 
 
 
-NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
+NA_DEF double naGetUIElementResolutionFactor(const void* uiElement){
   int dpi;
   HDC hDC;
   if (hDC = GetDC (NULL)) {

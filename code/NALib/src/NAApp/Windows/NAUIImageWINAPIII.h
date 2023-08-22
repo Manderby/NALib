@@ -15,6 +15,20 @@ NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(){
 }
 
 
+NA_DEF void naFillLabelBabyColor(NABabyColor babyColor){
+  naFillDefaultTextColorWithSkin(babyColor, NA_UIIMAGE_SKIN_LIGHT);
+}
+
+NA_DEF void naFillLinkBabyColor(NABabyColor babyColor){
+  naFillDefaultLinkColorWithSkin(babyColor, NA_UIIMAGE_SKIN_LIGHT);
+}
+
+NA_DEF void naFillAccentBabyColor(NABabyColor babyColor){
+  naFillDefaultAccentColorWithSkin(babyColor, NA_UIIMAGE_SKIN_LIGHT);
+}
+
+
+
 NA_DEF NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
   BYTE* lpPixels;
   NABabyImage* babyImage;

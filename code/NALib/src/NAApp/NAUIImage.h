@@ -83,6 +83,7 @@ NA_API void naFillAccentBabyColor(NABabyColor babyColor);
 // Returns the default foreground color for the given skin.
 NA_API void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 NA_API void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin);
+NA_API void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 
 // Creates a new BabyImage with the given path. Can only be PNG on windows,
 // macOS allows for various kind of input files.

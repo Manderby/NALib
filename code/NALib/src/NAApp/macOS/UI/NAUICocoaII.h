@@ -270,7 +270,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
 
 
 
-NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
+NA_DEF double naGetUIElementResolutionFactor(const void* uiElement){
   if(naGetUIElementType(uiElement) == NA_UI_APPLICATION){return 1.;}
   if(naGetUIElementType(uiElement) == NA_UI_SCREEN){
     #if NA_DEBUG

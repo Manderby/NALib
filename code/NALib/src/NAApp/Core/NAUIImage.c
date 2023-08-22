@@ -53,22 +53,48 @@ NA_DEF void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin
   uint8 skinColor[4];
   switch(skin){
   case NA_UIIMAGE_SKIN_LIGHT:
-    skinColor[0] = 16;
-    skinColor[1] = 128;
-    skinColor[2] = 240;
-    skinColor[3] = 255;
-    break;
+  skinColor[0] = 16;
+  skinColor[1] = 128;
+  skinColor[2] = 240;
+  skinColor[3] = 255;
+  break;
   case NA_UIIMAGE_SKIN_DARK:
-    skinColor[0] = 64;
-    skinColor[1] = 196;
-    skinColor[2] = 240;
-    skinColor[3] = 255;
-    break;
+  skinColor[0] = 64;
+  skinColor[1] = 196;
+  skinColor[2] = 240;
+  skinColor[3] = 255;
+  break;
   default:
-    #if NA_DEBUG
-      naError("Cannot provide color for plain skin");
-    #endif
-    break;
+  #if NA_DEBUG
+  naError("Cannot provide color for plain skin");
+  #endif
+  break;
+  }
+  naFillBabyColorWithu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
+}
+
+
+
+NA_DEF void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+  uint8 skinColor[4];
+  switch(skin){
+  case NA_UIIMAGE_SKIN_LIGHT:
+  skinColor[0] = 255;
+  skinColor[1] = 128;
+  skinColor[2] = 16;
+  skinColor[3] = 255;
+  break;
+  case NA_UIIMAGE_SKIN_DARK:
+  skinColor[0] = 255;
+  skinColor[1] = 128;
+  skinColor[2] = 16;
+  skinColor[3] = 255;
+  break;
+  default:
+  #if NA_DEBUG
+  naError("Cannot provide color for plain skin");
+  #endif
+  break;
   }
   naFillBabyColorWithu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
 }
@@ -134,7 +160,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(const NAUIImage* uiImage, double r
         const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
         NABabyColor accentColor;
         naFillAccentBabyColor(accentColor);
-        NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, accentColor, NA_BLEND_OPAQUE, .33);
+        NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, accentColor, NA_BLEND_OPAQUE, .33f);
         newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
         naReleaseBabyImage(newImage);
       }
@@ -148,7 +174,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(const NAUIImage* uiImage, double r
         shadowColor[0] = 1.f - shadowColor[0];
         shadowColor[1] = 1.f - shadowColor[1];
         shadowColor[2] = 1.f - shadowColor[2];
-        NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, shadowColor, NA_BLEND_OPAQUE, naGetSkinForCurrentAppearance() == NA_UIIMAGE_SKIN_DARK ? .40 : .15);
+        NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, shadowColor, NA_BLEND_OPAQUE, naGetSkinForCurrentAppearance() == NA_UIIMAGE_SKIN_DARK ? .40f : .15f);
         newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
         naReleaseBabyImage(newImage);
       }
@@ -159,7 +185,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(const NAUIImage* uiImage, double r
         #if NA_OS == NA_OS_MAC_OS_X
           newSubImage = originalImage;
         #else
-          NABabyImage* newImage = naCreateBabyImageWithBlend(NA_NULL, originalImage->image, NA_BLEND_OVERLAY, .45);
+          NABabyImage* newImage = naCreateBabyImageWithBlend(NA_NULL, originalImage->image, NA_BLEND_OVERLAY, .45f);
           newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
           naReleaseBabyImage(newImage);
         #endif
@@ -309,8 +335,8 @@ NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage){
   const NA_UISubImage* subImage = naGetListFirstConst(&uiImage->subImages);
   NASizei size = naGetBabyImageSize(subImage->image);
   double factor = subImage->resolution / NA_UIIMAGE_RESOLUTION_SCREEN_1x;
-  size.width = naFloor(size.width / factor);
-  size.height = naFloor(size.height / factor);
+  size.width = (NAInt)naFloor(size.width / factor);
+  size.height = (NAInt)naFloor(size.height / factor);
   return size;
 }
 

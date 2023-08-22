@@ -71,7 +71,7 @@ typedef size_t NAUIKeyCode;
   #define NA_KEYCODE_PERIOD         0x34
   #define NA_KEYCODE_NUMPAD_MINUS   0x4a
   #define NA_KEYCODE_NUMPAD_PLUS    0x4e
-  #define NA_KEYCODE_NUMPAD_ENTER         // todo
+  #define NA_KEYCODE_NUMPAD_ENTER   0xff  // todo
   #define NA_KEYCODE_ARROW_LEFT     0xff  // todo
   #define NA_KEYCODE_ARROW_RIGHT    0xff  // todo
   #define NA_KEYCODE_ARROW_DOWN     0xff  // todo
