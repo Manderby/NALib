@@ -30,7 +30,11 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
 
   CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
 
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
   size1x = naGetUIImage1xSize(imageSpace->image);
+  size1x.width = (NAInt)(size1x.width * uiScale);
+  size1x.height = (NAInt)(size1x.height * uiScale);
 
   spacesize = naMakeSizei(
     (NAInt)paintStruct.rcPaint.right - (NAInt)paintStruct.rcPaint.left,
@@ -39,7 +43,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
     (spacesize.width - size1x.width) / 2,
     (spacesize.height - size1x.height) / 2);
 
-  foreImage = na_GetUIImageBabyImage(imageSpace->image, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_NONE);
+  foreImage = na_GetUIImageBabyImage(imageSpace->image, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_NONE);
 
   // We store the background where the image will be placed.
   backBuffer = naMalloc(size1x.width * size1x.height * 4);

@@ -142,7 +142,10 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
   if(winapiButton->button.uiImage)
   {
+    double uiScale = naGetUIElementResolutionFactor(NA_NULL);
     size1x = naGetUIImage1xSize(winapiButton->button.uiImage);
+    size1x.width = (NAInt)(size1x.width * uiScale);
+    size1x.height = (NAInt)(size1x.height * uiScale);
 
     buttonsize = naMakeSizei(
       drawitemstruct->rcItem.right - drawitemstruct->rcItem.left,
@@ -151,29 +154,17 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       (buttonsize.width - size1x.width) / 2,
       (buttonsize.height - size1x.height) / 2);
 
-    NABool alt = NA_FALSE;
     LRESULT result = SendMessage(naGetUIElementNativePtr(winapiButton), BM_GETSTATE, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
     NABool pushed = (result & BST_PUSHED) == BST_PUSHED;
-    if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATEFUL))
-    {
-      if(na_GetButtonState(winapiButton)){
-        alt = NA_TRUE;
-      }
-      // unfortuantely, the following does not work as the button is not drawn
-      // with the correct state when releasing the mouse.
-      //if(pushed){alt = !alt;}
-    }else{
-      alt = pushed;
-    }
 
     if(IsWindowEnabled(naGetUIElementNativePtr(winapiButton))){
       if(pushed){
-        foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_PRESSED);
+        foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_PRESSED);
       }else{
-        foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE);
+        foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE);
       }
     }else{
-      foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_DISABLED);
+      foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_DISABLED);
     }
 
     // We store the background where the image will be placed.
