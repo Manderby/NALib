@@ -751,7 +751,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONIdentifier(NAJSONParser* parser){
     curByte = na_NextJSONByte(parser);
   }
 
-  const size_t strLen = parser->curPtr - firstByte;
+  const size_t strLen = (size_t)(parser->curPtr - firstByte);
   if(strLen == 4 && !memcmp(firstByte, "null", 4)){
     parser->parseStatus = NA_JSON_PARSE_NULL;
     return parser->parseStatus;
@@ -790,9 +790,9 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONString(NAJSONParser* parser){
       na_NextJSONByte(parser);
     }else if(curByte == '\"'){
       if(stackStatus == NA_JSON_OBJECT_EXPECTING_KEY_OR_END){
-        parser->key.strLen = (const NAUTF8Char*)parser->curPtr - parser->key.ptr;
+        parser->key.strLen = (size_t)((const NAUTF8Char*)parser->curPtr - parser->key.ptr);
       }else{
-        parser->string.strLen = (const NAUTF8Char*)parser->curPtr - parser->string.ptr;
+        parser->string.strLen = (size_t)((const NAUTF8Char*)parser->curPtr - parser->string.ptr);
       }
       na_NextJSONByte(parser);
       parser->parseStatus = NA_JSON_PARSE_STRING;

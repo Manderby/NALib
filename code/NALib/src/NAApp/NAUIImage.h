@@ -75,11 +75,6 @@ NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
 // Never returns PLAIN.
 NA_API NAUIImageSkin naGetSkinForCurrentAppearance(void);
 
-// Returns the desired color of the user preferences.
-NA_API void naFillLabelBabyColor(NABabyColor babyColor);
-NA_API void naFillLinkBabyColor(NABabyColor babyColor);
-NA_API void naFillAccentBabyColor(NABabyColor babyColor);
-
 // Returns the default foreground color for the given skin.
 NA_API void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 NA_API void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin);

@@ -15,16 +15,80 @@ NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(){
 }
 
 
-NA_DEF void naFillLabelBabyColor(NABabyColor babyColor){
-  naFillDefaultTextColorWithSkin(babyColor, NA_UIIMAGE_SKIN_LIGHT);
+NA_DEF void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+  uint8 skinColor[4];
+  switch(skin){
+  case NA_UIIMAGE_SKIN_LIGHT:
+    skinColor[0] = 16;
+    skinColor[1] = 16;
+    skinColor[2] = 16;
+    skinColor[3] = 255;
+    break;
+  case NA_UIIMAGE_SKIN_DARK:
+    skinColor[0] = 240;
+    skinColor[1] = 240;
+    skinColor[2] = 240;
+    skinColor[3] = 255;
+    break;
+  default:
+    #if NA_DEBUG
+      naError("Cannot provide color for plain skin");
+    #endif
+    break;
+  }
+  naFillBabyColorWithu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
 }
 
-NA_DEF void naFillLinkBabyColor(NABabyColor babyColor){
-  naFillDefaultLinkColorWithSkin(babyColor, NA_UIIMAGE_SKIN_LIGHT);
+
+
+NA_DEF void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+  uint8 skinColor[4];
+  switch(skin){
+  case NA_UIIMAGE_SKIN_LIGHT:
+  skinColor[0] = 16;
+  skinColor[1] = 128;
+  skinColor[2] = 240;
+  skinColor[3] = 255;
+  break;
+  case NA_UIIMAGE_SKIN_DARK:
+  skinColor[0] = 64;
+  skinColor[1] = 196;
+  skinColor[2] = 240;
+  skinColor[3] = 255;
+  break;
+  default:
+  #if NA_DEBUG
+  naError("Cannot provide color for plain skin");
+  #endif
+  break;
+  }
+  naFillBabyColorWithu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
 }
 
-NA_DEF void naFillAccentBabyColor(NABabyColor babyColor){
-  naFillDefaultAccentColorWithSkin(babyColor, NA_UIIMAGE_SKIN_LIGHT);
+
+
+NA_DEF void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+  uint8 skinColor[4];
+  switch(skin){
+  case NA_UIIMAGE_SKIN_LIGHT:
+  skinColor[0] = 255;
+  skinColor[1] = 128;
+  skinColor[2] = 16;
+  skinColor[3] = 255;
+  break;
+  case NA_UIIMAGE_SKIN_DARK:
+  skinColor[0] = 255;
+  skinColor[1] = 128;
+  skinColor[2] = 16;
+  skinColor[3] = 255;
+  break;
+  default:
+  #if NA_DEBUG
+  naError("Cannot provide color for plain skin");
+  #endif
+  break;
+  }
+  naFillBabyColorWithu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
 }
 
 

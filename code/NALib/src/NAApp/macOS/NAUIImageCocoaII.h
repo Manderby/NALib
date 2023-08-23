@@ -59,29 +59,50 @@
 
 
 
+NA_DEF void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+  #if NA_DEBUG
+    NAUIImageSkin activeSkin = naGetSkinForCurrentAppearance();
+    if(skin != activeSkin)
+      naError("Active skin is not equal to the desired skin.");
+  #endif
 
-NA_DEF void naFillLabelBabyColor(NABabyColor babyColor){
   NSColor* labelColor = naGetLabelColor();
-  babyColor[0] = naLinearizeColorValue([labelColor redComponent]);
-  babyColor[1] = naLinearizeColorValue([labelColor greenComponent]);
-  babyColor[2] = naLinearizeColorValue([labelColor blueComponent]);
-  babyColor[3] = 1.f;
+  color[0] = naLinearizeColorValue((float)[labelColor redComponent]);
+  color[1] = naLinearizeColorValue((float)[labelColor greenComponent]);
+  color[2] = naLinearizeColorValue((float)[labelColor blueComponent]);
+  color[3] = 1.f;
 }
 
-NA_DEF void naFillLinkBabyColor(NABabyColor babyColor){
+
+
+NA_DEF void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+  #if NA_DEBUG
+    NAUIImageSkin activeSkin = naGetSkinForCurrentAppearance();
+    if(skin != activeSkin)
+      naError("Active skin is not equal to the desired skin.");
+  #endif
+
   NSColor* linkColor = naGetLinkColor();
-  babyColor[0] = naLinearizeColorValue([linkColor redComponent]);
-  babyColor[1] = naLinearizeColorValue([linkColor greenComponent]);
-  babyColor[2] = naLinearizeColorValue([linkColor blueComponent]);
-  babyColor[3] = 1.f;
+  color[0] = naLinearizeColorValue((float)[linkColor redComponent]);
+  color[1] = naLinearizeColorValue((float)[linkColor greenComponent]);
+  color[2] = naLinearizeColorValue((float)[linkColor blueComponent]);
+  color[3] = 1.f;
 }
 
-NA_DEF void naFillAccentBabyColor(NABabyColor babyColor){
+
+
+NA_DEF void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+  #if NA_DEBUG
+    NAUIImageSkin activeSkin = naGetSkinForCurrentAppearance();
+    if(skin != activeSkin)
+      naError("Active skin is not equal to the desired skin.");
+  #endif
+
   NSColor* accentColor = naGetAccentColor();
-  babyColor[0] = naLinearizeColorValue([accentColor redComponent]);
-  babyColor[1] = naLinearizeColorValue([accentColor greenComponent]);
-  babyColor[2] = naLinearizeColorValue([accentColor blueComponent]);
-  babyColor[3] = 1.f;
+  color[0] = naLinearizeColorValue((float)[accentColor redComponent]);
+  color[1] = naLinearizeColorValue((float)[accentColor greenComponent]);
+  color[2] = naLinearizeColorValue((float)[accentColor blueComponent]);
+  color[3] = 1.f;
 }
 
 

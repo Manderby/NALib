@@ -85,52 +85,46 @@ NA_DEF void naSwitchApplicationToGraphiteAppearance(void){
 
 
 NA_DEF NSColor* naGetLabelColor(){
-  NSColor* sRGBColor = nil;
+  NSColor* color = nil;
   
   NA_MACOS_AVAILABILITY_GUARD_10_10(
     if([NSColor instancesRespondToSelector:@selector(labelColor)]){
-      NSColor* color = [NSColor labelColor];
-      sRGBColor = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+      color = [NSColor labelColor];
     }
   )
-  if(!sRGBColor){
-    NSColor* color = [NSColor controlTextColor];
-    sRGBColor = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+  if(!color){
+    color = [NSColor controlTextColor];
   }
-  return sRGBColor;
+  return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
 
 NA_DEF NSColor* naGetLinkColor(){
-  NSColor* sRGBColor = nil;
+  NSColor* color = nil;
 
   // documentation says available since 10.10 but that is not true. It is at least 10.12 but maybe even higher.
   NA_MACOS_AVAILABILITY_GUARD_10_12(
     if([NSColor instancesRespondToSelector:@selector(linkColor)]){
-      NSColor* color = [NSColor linkColor];
-      sRGBColor = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+      color = [NSColor linkColor];
     }
   )
-  if(!sRGBColor){
-    NSColor* color = [NSColor blueColor];
-    sRGBColor = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+  if(!color){
+    color = [NSColor blueColor];
   }
-  return sRGBColor;
+  return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
 
 NA_DEF NSColor* naGetAccentColor(){
-  NSColor* sRGBColor = nil;
+  NSColor* color = nil;
 
   NA_MACOS_AVAILABILITY_GUARD_10_14(
     if([NSColor respondsToSelector:@selector(controlAccentColor)]){
-      NSColor* color = [NSColor controlAccentColor];
-      sRGBColor = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+      color = [NSColor controlAccentColor];
     }
   )
-  if(!sRGBColor){
-    NSColor* color = [NSColor blueColor];
-    sRGBColor = [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+  if(!color){
+    color = [NSColor blueColor];
   }
-  return sRGBColor;
+  return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
 
 #if defined __clang_major__
