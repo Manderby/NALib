@@ -279,16 +279,16 @@ NA_DEF double naGetUIElementResolutionFactor(const void* uiElement){
     return 1.;
   }
   
-  void* parent = naGetUIElementParent(uiElement);
+  const void* parent = naGetUIElementParentConst(uiElement);
   while(naGetUIElementType(uiElement) != NA_UI_WINDOW && parent){
     uiElement = parent;
-    parent = naGetUIElementParent(uiElement);
+    parent = naGetUIElementParentConst(uiElement);
   }
   
   if(naGetUIElementType(uiElement) == NA_UI_WINDOW){
-    return naGetWindowBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(uiElement)));
+    return naGetWindowBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(uiElement)));
   }else{
-    return naGetUIElementBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(uiElement)));
+    return naGetUIElementBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(uiElement)));
   }
 }
 
