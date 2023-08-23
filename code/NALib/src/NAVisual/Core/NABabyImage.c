@@ -118,51 +118,57 @@ NA_HDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, 
     switch(mode){
     case NA_BLEND_ZERO:
       naCopyV4f(ret, base);
+      ret[0] = naUnlinearizeColorValue(ret[0]);
+      ret[1] = naUnlinearizeColorValue(ret[1]);
+      ret[2] = naUnlinearizeColorValue(ret[2]);
       break;
     case NA_BLEND:
       topblend = blend;
       naFillV4f(ret,
-        (1.f - topblend) * base[0] + topblend * top[0],
-        (1.f - topblend) * base[1] + topblend * top[1],
-        (1.f - topblend) * base[2] + topblend * top[2],
+        (1.f - topblend) * naUnlinearizeColorValue(base[0]) + topblend * naUnlinearizeColorValue(top[0]),
+        (1.f - topblend) * naUnlinearizeColorValue(base[1]) + topblend * naUnlinearizeColorValue(top[1]),
+        (1.f - topblend) * naUnlinearizeColorValue(base[2]) + topblend * naUnlinearizeColorValue(top[2]),
         (1.f - topblend) * base[3] + topblend * top[3]);
       break;
     case NA_BLEND_OVERLAY:
       topblend = top[3] * blend;
       naFillV4f(ret,
-        (1.f - topblend) * base[0] + topblend * top[0],
-        (1.f - topblend) * base[1] + topblend * top[1],
-        (1.f - topblend) * base[2] + topblend * top[2],
+        (1.f - topblend) * naUnlinearizeColorValue(base[0]) + topblend * naUnlinearizeColorValue(top[0]),
+        (1.f - topblend) * naUnlinearizeColorValue(base[1]) + topblend * naUnlinearizeColorValue(top[1]),
+        (1.f - topblend) * naUnlinearizeColorValue(base[2]) + topblend * naUnlinearizeColorValue(top[2]),
         base[3] + (1.f - base[3]) * topblend);
       break;
     case NA_BLEND_OPAQUE:
       topblend = top[3] * blend;
       naFillV4f(ret,
-        (1.f - topblend) * base[0] + topblend * top[0],
-        (1.f - topblend) * base[1] + topblend * top[1],
-        (1.f - topblend) * base[2] + topblend * top[2],
+        (1.f - topblend) * naUnlinearizeColorValue(base[0]) + topblend * naUnlinearizeColorValue(top[0]),
+        (1.f - topblend) * naUnlinearizeColorValue(base[1]) + topblend * naUnlinearizeColorValue(top[1]),
+        (1.f - topblend) * naUnlinearizeColorValue(base[2]) + topblend * naUnlinearizeColorValue(top[2]),
         base[3] * (1.f - (1.f - top[3]) * blend));
       break;
     case NA_BLEND_BLACK_GREEN:
       topblend = top[3] * blend;
       naFillV4f(ret,
-        (1.f - topblend) * base[0] + topblend * top[0],
-        (1.f - topblend) * base[1] + topblend * top[1],
-        (1.f - topblend) * base[2] + topblend * top[2],
+        (1.f - topblend) * naUnlinearizeColorValue(base[0]) + topblend * naUnlinearizeColorValue(top[0]),
+        (1.f - topblend) * naUnlinearizeColorValue(base[1]) + topblend * naUnlinearizeColorValue(top[1]),
+        (1.f - topblend) * naUnlinearizeColorValue(base[2]) + topblend * naUnlinearizeColorValue(top[2]),
         (1.f - base[1]) * base[3] * (1.f - (1.f - top[3]) * blend));
       break;
     case NA_BLEND_WHITE_GREEN:
       topblend = top[3] * blend;
       naFillV4f(ret,
-        (1.f - topblend) * base[0] + topblend * top[0],
-        (1.f - topblend) * base[1] + topblend * top[1],
-        (1.f - topblend) * base[2] + topblend * top[2],
+        (1.f - topblend) * naUnlinearizeColorValue(base[0]) + topblend * naUnlinearizeColorValue(top[0]),
+        (1.f - topblend) * naUnlinearizeColorValue(base[1]) + topblend * naUnlinearizeColorValue(top[1]),
+        (1.f - topblend) * naUnlinearizeColorValue(base[2]) + topblend * naUnlinearizeColorValue(top[2]),
         base[1] * base[3] * (1.f - (1.f - top[3]) * blend));
       break;
     }
     if(ret[3] == 0.f){
       naFillV3f(ret, 0.f, 0.f, 0.f);
     }
+    ret[0] = naLinearizeColorValue(ret[0]);
+    ret[1] = naLinearizeColorValue(ret[1]);
+    ret[2] = naLinearizeColorValue(ret[2]);
     ret += NA_BABY_COLOR_CHANNEL_COUNT;
     if(baseIsImage){base += NA_BABY_COLOR_CHANNEL_COUNT;}
     if(topIsImage){top += NA_BABY_COLOR_CHANNEL_COUNT;}

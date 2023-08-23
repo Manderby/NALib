@@ -23,7 +23,13 @@ NA_HAPI double na_GetUIImageBaseResolution(const NAUIImage* uiImage);
 
 
 
-NA_HDEF const NA_UISubImage* na_GetUISubImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction){
+NA_HDEF const NA_UISubImage* na_GetUISubImage(
+  const NAUIImage* uiImage,
+  double resolution,
+  NAUIImageSkin skin,
+  NAUIImageInteraction interaction)
+{
+
   NAListIterator listIter = naMakeListAccessor(&uiImage->subImages);
   while(naIterateList(&listIter)){
     const NA_UISubImage* subImage = naGetListCurConst(&listIter);
@@ -37,7 +43,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(const NAUIImage* uiImage, double r
   // Reaching here, we have not found the desired image.
   const NA_UISubImage* newSubImage = NA_NULL;
   NAUIImage* mutableUIImage = (NAUIImage*)uiImage;
-  
+
   // If the status is not NONE, we build an image out of it.
   if(interaction != NA_UIIMAGE_INTERACTION_NONE){
     switch(interaction){
@@ -60,7 +66,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(const NAUIImage* uiImage, double r
         hoverColor[0] = 1.f - hoverColor[0];
         hoverColor[1] = 1.f - hoverColor[1];
         hoverColor[2] = 1.f - hoverColor[2];
-        NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, hoverColor, NA_BLEND_OPAQUE, naGetSkinForCurrentAppearance() == NA_UIIMAGE_SKIN_DARK ? .40f : .15f);
+        NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, hoverColor, NA_BLEND_OPAQUE, .25f);
         newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
         naReleaseBabyImage(newImage);
       }

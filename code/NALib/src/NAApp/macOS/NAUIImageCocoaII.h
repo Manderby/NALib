@@ -62,7 +62,7 @@
 NA_DEF void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin){
   #if NA_DEBUG
     NAUIImageSkin activeSkin = naGetSkinForCurrentAppearance();
-    if(skin != activeSkin)
+    if(skin != NA_UIIMAGE_SKIN_PLAIN && skin != activeSkin)
       naError("Active skin is not equal to the desired skin.");
   #endif
 
@@ -78,7 +78,7 @@ NA_DEF void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin
 NA_DEF void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin){
   #if NA_DEBUG
     NAUIImageSkin activeSkin = naGetSkinForCurrentAppearance();
-    if(skin != activeSkin)
+    if(skin != NA_UIIMAGE_SKIN_PLAIN && skin != activeSkin)
       naError("Active skin is not equal to the desired skin.");
   #endif
 
@@ -94,7 +94,7 @@ NA_DEF void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin
 NA_DEF void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin skin){
   #if NA_DEBUG
     NAUIImageSkin activeSkin = naGetSkinForCurrentAppearance();
-    if(skin != activeSkin)
+    if(skin != NA_UIIMAGE_SKIN_PLAIN && skin != activeSkin)
       naError("Active skin is not equal to the desired skin.");
   #endif
 
