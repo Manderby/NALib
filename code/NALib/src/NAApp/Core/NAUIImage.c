@@ -61,12 +61,13 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
       {
         const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
         
-        NABabyColor hoverColor;
-        naFillDefaultTextColorWithSkin(hoverColor, skin);
-        hoverColor[0] = 1.f - hoverColor[0];
-        hoverColor[1] = 1.f - hoverColor[1];
-        hoverColor[2] = 1.f - hoverColor[2];
-        NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, hoverColor, NA_BLEND_OPAQUE, .25f);
+//        NABabyColor hoverColor;
+//        naFillDefaultTextColorWithSkin(hoverColor, skin);
+//        hoverColor[0] = 1.f - hoverColor[0];
+//        hoverColor[1] = 1.f - hoverColor[1];
+//        hoverColor[2] = 1.f - hoverColor[2];
+//        NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, hoverColor, NA_BLEND_OPAQUE, .25f);
+        NABabyImage* newImage = naCreateBabyImageWithBlend(NA_NULL, originalImage->image, NA_BLEND_OVERLAY, .85f);
         newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
         naReleaseBabyImage(newImage);
       }
@@ -126,70 +127,6 @@ NA_HDEF void* na_GetUIImageNativeImage(const NAUIImage* uiImage, double resoluti
   return subImage->nativeImage;
 }
 
-
-
-//NA_DEF NAUIImage* naCreateUIImage(const NABabyImage* main, const NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
-//  NAUIImage* uiImage;
-//  NABabyImage* main1x;
-//  
-//  #if NA_DEBUG
-//    #if NA_OS == NA_OS_WINDOWS
-//      if(sizeof(WORD) > 4)
-//        naError("Bitamps require WORD alignment. But WORD is kind-a big on this system. Expect bad images.");
-//    #endif
-//    if(!main)
-//      naError("There must be a main image");
-//    if(alt && !naEqualSizei(naGetBabyImageSize(main), naGetBabyImageSize(alt)))
-//      naError("Both images must have the same size.");
-//  #endif
-//  uiImage = naCreate(NAUIImage);
-//  
-//  uiImage->size1x = naGetBabyImageSize(main);
-//  uiImage->tintMode = tintMode;
-//  naZeron(uiImage->babyImages, NA_UIIMAGE_SUBIMAGES_COUNT * sizeof(NABabyImage*));
-//  #if NA_OS == NA_OS_WINDOWS
-//    naZeron(uiImage->nativeImages, NA_UIIMAGE_SUBIMAGES_COUNT * sizeof(HBITMAP));
-//  #else
-//    naZeron(uiImage->nativeImages, NA_UIIMAGE_SUBIMAGES_COUNT * sizeof(void*));
-//  #endif
-//  
-//  switch(resolution){
-//  case NA_UIIMAGE_RESOLUTION_SCREEN_1x:
-//    na_SetUIImageBabyImage(uiImage, main, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-//    if(alt){
-//      na_SetUIImageBabyImage(uiImage, alt, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-//    }
-//    break;
-//  case NA_UIIMAGE_RESOLUTION_SCREEN_2x:
-//    #if NA_DEBUG
-//      if(uiImage->size1x.width % 2 || uiImage->size1x.height % 2)
-//        naError("Image size is not divisable by 2");
-//    #endif
-//    uiImage->size1x.width /= 2;
-//    uiImage->size1x.height /= 2;
-//    na_SetUIImageBabyImage(uiImage, main, NA_UIIMAGE_RESOLUTION_SCREEN_2x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-//    main1x = naCreateBabyImageWithHalfSize(main);
-//    na_SetUIImageBabyImage(uiImage, main1x, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-//    naReleaseBabyImage(main1x);
-//    if(alt){
-//      NABabyImage* alt1x;
-//      na_SetUIImageBabyImage(uiImage, alt, NA_UIIMAGE_RESOLUTION_SCREEN_2x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-//      alt1x = naCreateBabyImageWithHalfSize(alt);
-//      na_SetUIImageBabyImage(uiImage, alt1x, NA_UIIMAGE_RESOLUTION_SCREEN_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-//      naReleaseBabyImage(alt1x);
-//    }
-//    break;
-//  default:
-//    #if NA_DEBUG
-//      naError("Unknown resolution");
-//    #endif
-//    break;
-//  }
-//
-//  naInitList(&uiImage->subImages);
-//
-//  return uiImage;
-//}
 
 
 NA_DEF NAUIImage* naCreateUIImage(

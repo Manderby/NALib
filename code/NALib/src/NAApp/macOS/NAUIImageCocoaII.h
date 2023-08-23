@@ -64,6 +64,8 @@ NA_DEF void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin
     NAUIImageSkin activeSkin = naGetSkinForCurrentAppearance();
     if(skin != NA_UIIMAGE_SKIN_PLAIN && skin != activeSkin)
       naError("Active skin is not equal to the desired skin.");
+  #else
+    NA_UNUSED(skin);
   #endif
 
   NSColor* labelColor = naGetLabelColor();
@@ -80,6 +82,8 @@ NA_DEF void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin
     NAUIImageSkin activeSkin = naGetSkinForCurrentAppearance();
     if(skin != NA_UIIMAGE_SKIN_PLAIN && skin != activeSkin)
       naError("Active skin is not equal to the desired skin.");
+  #else
+    NA_UNUSED(skin);
   #endif
 
   NSColor* linkColor = naGetLinkColor();
@@ -96,6 +100,8 @@ NA_DEF void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin sk
     NAUIImageSkin activeSkin = naGetSkinForCurrentAppearance();
     if(skin != NA_UIIMAGE_SKIN_PLAIN && skin != activeSkin)
       naError("Active skin is not equal to the desired skin.");
+  #else
+    NA_UNUSED(skin);
   #endif
 
   NSColor* accentColor = naGetAccentColor();
