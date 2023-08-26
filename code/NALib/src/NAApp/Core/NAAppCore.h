@@ -356,7 +356,7 @@ NA_HAPI void na_SetTextFieldRect(NA_UIElement* textField, NARect rect);
 NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
 NA_HAPI void na_ClearWindow(NAWindow* window);
 NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
-NA_HAPI NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window);
+//NA_HAPI NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window);
 NA_HAPI void na_SetWindowRect(NA_UIElement* window, NARect rect);
