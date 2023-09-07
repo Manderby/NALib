@@ -148,8 +148,8 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     size1x.height = (NAInt)(size1x.height * uiScale);
 
     buttonsize = naMakeSizei(
-      drawitemstruct->rcItem.right - drawitemstruct->rcItem.left,
-      drawitemstruct->rcItem.bottom - drawitemstruct->rcItem.top);
+      (NAInt)drawitemstruct->rcItem.right - (NAInt)drawitemstruct->rcItem.left,
+      (NAInt)drawitemstruct->rcItem.bottom - (NAInt)drawitemstruct->rcItem.top);
     offset = naMakePosi(
       (buttonsize.width - size1x.width) / 2,
       (buttonsize.height - size1x.height) / 2);

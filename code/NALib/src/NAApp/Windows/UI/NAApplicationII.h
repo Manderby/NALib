@@ -179,7 +179,7 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
   userLocalId = GetUserDefaultLCID();
   numchars = GetLocaleInfoA(userLocalId, LOCALE_SISO639LANGNAME2, NA_NULL, 0);
-  languageBuf = naMalloc((numchars + 1) * sizeof(NAUTF8Char));
+  languageBuf = naMalloc((size_t)numchars + 1 * sizeof(NAUTF8Char));
   GetLocaleInfoA(userLocalId, LOCALE_SISO639LANGNAME2, languageBuf, numchars);
   languageCode = naGetLanguageCode(languageBuf);
 

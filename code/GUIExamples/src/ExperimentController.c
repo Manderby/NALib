@@ -136,7 +136,7 @@ NABool redrawOpenGLSpace(NAReaction reaction){
     glVertex3f(naSinf(ang) * .9f, 0.f, 0.f);
   glEnd();
 
-  naDrawASCIICharacters(con->fontId, "Hello World", naSinf(ang) * .9f, 0, 0);
+  naDrawASCIICharacters(con->fontId, "Hello World", (double)naSinf(ang) * .9, 0, 0);
    
   naSwapOpenGLSpaceBuffer(con->openGLSpace);
   

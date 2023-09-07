@@ -423,8 +423,8 @@ NA_HDEF NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window){
 
   rect.pos.x = windowRect.left;
   rect.pos.y = screenRect.size.height - windowRect.bottom;
-  rect.size.width = winapiWindow->rect.size.width + (leftdiff + rightdiff) / uiScale;
-  rect.size.height = winapiWindow->rect.size.height + (topdiff + bottomdiff) / uiScale;
+  rect.size.width = winapiWindow->rect.size.width + (double)leftdiff + (double)rightdiff / uiScale;
+  rect.size.height = winapiWindow->rect.size.height + (double)topdiff + (double)bottomdiff / uiScale;
 
   return rect;
 }
