@@ -13,31 +13,41 @@ struct ExperimentController{
   NAWindow* experimentWindow;
   NASpace* contentSpace;
 
-  NALabel* labelLabel;
-  NALabel* label;
   NALabel* buttonLabel;
   NAButton* buttonButton;
-
-  NALabel* popupButtonLabel;
-  NAPopupButton* popupButton;
-
-  NALabel* checkBoxLabel;
-  NACheckBox* checkBox;
-
-  NALabel* radioLabel;
-  NARadio* radio;
-
-  NALabel* textFieldLabel;
-  NATextField* textField;
-
-  NALabel* textBoxLabel;
-  NATextBox* textBox;
 
   NALabel* fontLabel;
   NAButton* fontButton;
 
+  NALabel* enabledLabel;
+  NALabel* disabledLabel;
+
+  NALabel* labelLabel;
+  NALabel* label;
+  NALabel* labelDisabled;
+
+  NALabel* popupButtonLabel;
+  NAPopupButton* popupButton;
+  NAPopupButton* popupButtonDisabled;
+
+  NALabel* checkBoxLabel;
+  NACheckBox* checkBox;
+  NACheckBox* checkBoxDisabled;
+
+  NALabel* radioLabel;
+  NARadio* radio;
+  NARadio* radioDisabled;
+
   NALabel* sliderLabel;
   NASlider* slider;
+  NASlider* sliderDisabled;
+
+  NALabel* textFieldLabel;
+  NATextField* textField;
+  NATextField* textFieldDisabled;
+
+  NALabel* textBoxLabel;
+  NATextBox* textBox;
 
   NALabel* menuLabel;
   NAButton* menuButton;
@@ -58,7 +68,9 @@ struct ExperimentController{
   int openGLSpaceRefreshCount;
 
   NASpace* subSpace;
+  NALabel* subSpaceLabel;
 
+  NAButton* converterButton;
   NAButton* quitButton;
 
   int textOption;
@@ -175,10 +187,21 @@ NABool textFieldEdited(NAReaction reaction){
   return NA_TRUE;
 }
 
+NABool textFieldEditFinished(NAReaction reaction){
+  ExperimentController* con = reaction.controller;
+  const NATextField* textField = reaction.uiElement;
+  NAString* textFieldString = naNewStringWithTextFieldText(textField);
+  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "TextField Value Finished Editing to %s", naGetStringUTF8Pointer(textFieldString));
+  naSetLabelText(con->outputLabel, outputText);
+  naDelete(textFieldString);
+
+  return NA_TRUE;
+}
+
 NABool menuButtonPressed(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   
-  NARect rect = naGetUIElementRect(con->menuButton);
+  NARect rect = naGetUIElementRectAbsolute(con->menuButton);
   NAPos menuPos = rect.pos;
   menuPos.x += rect.size.width;
   menuPos.y += rect.size.height;
@@ -226,6 +249,8 @@ NABool pressExperimentButton(NAReaction reaction){
     showFonts();
   }else if(reaction.uiElement == con->buttonButton){
     showButtons();
+  }else if(reaction.uiElement == con->converterButton){
+    createTemperatureController();
   }else if(reaction.uiElement == con->quitButton){
     naStopApplication();
   }
@@ -234,12 +259,12 @@ NABool pressExperimentButton(NAReaction reaction){
 }
 
 ExperimentController* createExperimentController(){
-  double windowWidth = 500;
-  double windowHeight = 600;
+  double windowWidth = 600;
+  double windowHeight = 700;
 
-  double descSize = 190;
-  double left = 240;
-  double buttonSize = 60;
+  double descSize = 120;
+  double left = 160;
+  double left2 = 380;
 
   ExperimentController* con = naAlloc(ExperimentController);
 
@@ -254,12 +279,6 @@ ExperimentController* createExperimentController(){
 
   double curPosY = windowHeight - 42;
 
-  con->labelLabel = naNewLabel("NALabel", descSize);
-  naAddSpaceChild(con->contentSpace, con->labelLabel, naMakePos(20, curPosY));
-  con->label = naNewLabel("I am a Label", 150);
-  naAddSpaceChild(con->contentSpace, con->label, naMakePos(left, curPosY));
-
-  curPosY -= 30;
   con->buttonLabel = naNewLabel("NAButton", descSize);
   naAddSpaceChild(con->contentSpace, con->buttonLabel, naMakePos(20, curPosY));
   con->buttonButton = naNewTextButton("Show Buttons window...", 200, NA_BUTTON_PUSH | NA_BUTTON_BORDERED);
@@ -267,9 +286,33 @@ ExperimentController* createExperimentController(){
   naAddUIReaction(con->buttonButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
 
   curPosY -= 30;
+  con->fontLabel = naNewLabel("NAFont", descSize);
+  naAddSpaceChild(con->contentSpace, con->fontLabel, naMakePos(20, curPosY));
+  con->fontButton = naNewTextButton("Show Fonts window...", 200, NA_BUTTON_PUSH | NA_BUTTON_BORDERED);
+  naAddSpaceChild(con->contentSpace, con->fontButton, naMakePos(left, curPosY));
+  naAddUIReaction(con->fontButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
+
+  curPosY -= 50;
+  con->enabledLabel = naNewLabel("Enabled", 200);
+  naSetLabelTextAlignment(con->enabledLabel, NA_TEXT_ALIGNMENT_CENTER);
+  naAddSpaceChild(con->contentSpace, con->enabledLabel, naMakePos(left, curPosY));
+  con->disabledLabel = naNewLabel("Disabled", 200);
+  naSetLabelTextAlignment(con->disabledLabel, NA_TEXT_ALIGNMENT_CENTER);
+  naAddSpaceChild(con->contentSpace, con->disabledLabel, naMakePos(left2, curPosY));
+
+  curPosY -= 30;
+  con->labelLabel = naNewLabel("NALabel", descSize);
+  naAddSpaceChild(con->contentSpace, con->labelLabel, naMakePos(20, curPosY));
+  con->label = naNewLabel("I am a Label", 200);
+  naAddSpaceChild(con->contentSpace, con->label, naMakePos(left, curPosY));
+  con->labelDisabled = naNewLabel("I am a disabled Label", 200);
+  naSetLabelEnabled(con->labelDisabled, NA_FALSE);
+  naAddSpaceChild(con->contentSpace, con->labelDisabled, naMakePos(left2, curPosY));
+
+  curPosY -= 30;
   con->popupButtonLabel = naNewLabel("NAPopupButton", descSize);
   naAddSpaceChild(con->contentSpace, con->popupButtonLabel, naMakePos(20, curPosY));
-  con->popupButton = naNewPopupButton(150);
+  con->popupButton = naNewPopupButton(200);
   naAddSpaceChild(con->contentSpace, con->popupButton, naMakePos(left, curPosY));
   for(size_t i = 0; i < 5; ++i){
     NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Popup menu item %d", i));
@@ -278,51 +321,64 @@ ExperimentController* createExperimentController(){
   }
   naSetPopupButtonIndexSelected(con->popupButton, 3);
 
+  con->popupButtonDisabled = naNewPopupButton(200);
+  naSetPopupButtonEnabled(con->popupButtonDisabled, NA_FALSE);
+  NAMenuItem* disabledItem = naNewMenuItem(naAllocSprintf(NA_TRUE, "Disabled Popup Item", 0));
+  naAddPopupButtonMenuItem(con->popupButtonDisabled, disabledItem, NA_NULL);
+  naAddSpaceChild(con->contentSpace, con->popupButtonDisabled, naMakePos(left2, curPosY));
+
   curPosY -= 30;
   con->checkBoxLabel = naNewLabel("NACheckBox", descSize);
   naAddSpaceChild(con->contentSpace, con->checkBoxLabel, naMakePos(20, curPosY));
-  con->checkBox = naNewCheckBox("I am a CheckBox", 150);
+  con->checkBox = naNewCheckBox("I am a CheckBox", 200);
   naAddSpaceChild(con->contentSpace, con->checkBox, naMakePos(left, curPosY));
   naAddUIReaction(con->checkBox, NA_UI_COMMAND_PRESSED, checkBoxPressed, con);
+  con->checkBoxDisabled = naNewCheckBox("I am a disabled CheckBox", 200);
+  naSetCheckBoxEnabled(con->checkBoxDisabled, NA_FALSE);
+  naAddSpaceChild(con->contentSpace, con->checkBoxDisabled, naMakePos(left2, curPosY));
 
   curPosY -= 30;
   con->radioLabel = naNewLabel("NARadio", descSize);
   naAddSpaceChild(con->contentSpace, con->radioLabel, naMakePos(20, curPosY));
-  con->radio = naNewRadio("I am a Radio", 150);
+  con->radio = naNewRadio("I am a Radio", 200);
   naAddSpaceChild(con->contentSpace, con->radio, naMakePos(left, curPosY));
   naAddUIReaction(con->radio, NA_UI_COMMAND_PRESSED, radioPressed, con);
-
-  curPosY -= 30;
-  con->textFieldLabel = naNewLabel("NATextField", descSize);
-  naAddSpaceChild(con->contentSpace, con->textFieldLabel, naMakePos(20, curPosY));
-  con->textField = naNewTextField(150);
-  naAddSpaceChild(con->contentSpace, con->textField, naMakePos(left, curPosY));
-  naAddUIReaction(con->textField, NA_UI_COMMAND_EDITED, textFieldEdited, con);
-
-  curPosY -= 30;
-  con->textBoxLabel = naNewLabel("NATextBox", descSize);
-  naAddSpaceChild(con->contentSpace, con->textBoxLabel, naMakePos(20, curPosY));
-  con->textBox = naNewTextBox(naMakeSize(150, 40));
-  naAddSpaceChild(con->contentSpace, con->textBox, naMakePos(left, curPosY - 20));
-
-  curPosY -= 50;
-  con->fontLabel = naNewLabel("NAFont", descSize);
-  naAddSpaceChild(con->contentSpace, con->fontLabel, naMakePos(20, curPosY));
-  con->fontButton = naNewTextButton("Show Fonts window...", 200, NA_BUTTON_PUSH | NA_BUTTON_BORDERED);
-  naAddSpaceChild(con->contentSpace, con->fontButton, naMakePos(left, curPosY));
-  naAddUIReaction(con->fontButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
+  con->radioDisabled = naNewRadio("I am a disabled Radio", 200);
+  naSetRadioEnabled(con->radioDisabled, NA_FALSE);
+  naAddSpaceChild(con->contentSpace, con->radioDisabled, naMakePos(left2, curPosY));
 
   curPosY -= 30;
   con->sliderLabel = naNewLabel("NASlider", descSize);
   naAddSpaceChild(con->contentSpace, con->sliderLabel, naMakePos(20, curPosY));
-  con->slider = naNewSlider(150);
+  con->slider = naNewSlider(200);
   naAddSpaceChild(con->contentSpace, con->slider, naMakePos(left, curPosY));
   naAddUIReaction(con->slider, NA_UI_COMMAND_EDITED, sliderEdited, con);
+  con->sliderDisabled = naNewSlider(200);
+  naSetSliderEnabled(con->sliderDisabled, NA_FALSE);
+  naAddSpaceChild(con->contentSpace, con->sliderDisabled, naMakePos(left2, curPosY));
 
   curPosY -= 30;
+  con->textFieldLabel = naNewLabel("NATextField", descSize);
+  naAddSpaceChild(con->contentSpace, con->textFieldLabel, naMakePos(20, curPosY));
+  con->textField = naNewTextField(200);
+  naAddSpaceChild(con->contentSpace, con->textField, naMakePos(left, curPosY));
+  naAddUIReaction(con->textField, NA_UI_COMMAND_EDITED, textFieldEdited, con);
+  naAddUIReaction(con->textField, NA_UI_COMMAND_EDIT_FINISHED, textFieldEditFinished, con);
+  con->textFieldDisabled = naNewTextField(200);
+  naSetTextFieldEnabled(con->textFieldDisabled, NA_FALSE);
+  naSetTextFieldText(con->textFieldDisabled, "Disabled Textfield");
+  naAddSpaceChild(con->contentSpace, con->textFieldDisabled, naMakePos(left2, curPosY));
+
+  curPosY -= 50;
+  con->textBoxLabel = naNewLabel("NATextBox", descSize);
+  naAddSpaceChild(con->contentSpace, con->textBoxLabel, naMakePos(20, curPosY));
+  con->textBox = naNewTextBox(naMakeSize(200, 50));
+  naAddSpaceChild(con->contentSpace, con->textBox, naMakePos(left, curPosY - 20));
+
+  curPosY -= 50;
   con->menuLabel = naNewLabel("NAMenu", descSize);
   naAddSpaceChild(con->contentSpace, con->menuLabel, naMakePos(20, curPosY));
-  con->menuButton = naNewTextButton("Push for Menu", buttonSize * 2, 0);
+  con->menuButton = naNewTextButton("Push for Menu", 200, 0);
   naAddUIReaction(con->menuButton, NA_UI_COMMAND_PRESSED, menuButtonPressed, con);
   naAddSpaceChild(con->contentSpace, con->menuButton, naMakePos(left, curPosY));
   con->menu = naNewMenu();  
@@ -343,33 +399,36 @@ ExperimentController* createExperimentController(){
   naAddUIReaction(con->menuItem2, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
   naAddUIReaction(con->menuItem3, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
   naAddUIReaction(con->menuItem4, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
-  //naAddUIKeyboardShortcut(
-  //  con->menuItem1,
-  //  naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
-  //  menuItemKeyboardSelected,
-  //  con);
 
   curPosY -= 30;
   con->imageSpaceLabel = naNewLabel("NAImageSpace", descSize);
   naAddSpaceChild(con->contentSpace, con->imageSpaceLabel, naMakePos(20, curPosY));
-  con->imageSpace = naNewImageSpace(getState1Image(), naMakeSize(150, 22));
+  con->imageSpace = naNewImageSpace(getState1Image(), naMakeSize(200, 22));
   naAddSpaceChild(con->contentSpace, con->imageSpace, naMakePos(left, curPosY));
 
   curPosY -= 30;
   con->openGLSpaceLabel = naNewLabel("NAOpenGLSpace", descSize);
   naAddSpaceChild(con->contentSpace, con->openGLSpaceLabel, naMakePos(20, curPosY));
-  con->openGLSpace = naNewOpenGLSpace(naMakeSize(150, 22), initOpenGL, con);
+  con->openGLSpace = naNewOpenGLSpace(naMakeSize(200, 22), initOpenGL, con);
   naAddSpaceChild(con->contentSpace, con->openGLSpace, naMakePos(left, curPosY));
   naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, con);
   con->openGLSpaceRefreshCount = 1;
 
-  curPosY -= 50;
-  con->subSpace = naNewSpace(naMakeSize(300, 30));
+  curPosY -= 60;
+  con->subSpace = naNewSpace(naMakeSize(600, 50));
   naSetSpaceAlternateBackground(con->subSpace, NA_TRUE);
-  naAddSpaceChild(con->contentSpace, con->subSpace, naMakePos(20, curPosY));
+  con->subSpaceLabel = naNewLabel("Subspace with alternate background", 520);
+  naAddSpaceChild(con->subSpace, con->subSpaceLabel, naMakePos(20, 10));
+  naAddSpaceChild(con->contentSpace, con->subSpace, naMakePos(0, curPosY));
 
-  con->quitButton = naNewTextButton("Quit", 60, 0);
-  naAddSpaceChild(con->contentSpace, con->quitButton, naMakePos(10, 110));
+  curPosY -= 50;
+  con->converterButton = naNewTextButton("Example: Temp. Converter", 200, 0);
+  naAddSpaceChild(con->contentSpace, con->converterButton, naMakePos(20, curPosY));
+  naAddUIReaction(con->converterButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
+
+  curPosY -= 30;
+  con->quitButton = naNewTextButton("Quit", 200, 0);
+  naAddSpaceChild(con->contentSpace, con->quitButton, naMakePos(20, curPosY));
   naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
 
   con->outputLabel = naNewLabel(

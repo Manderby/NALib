@@ -12,6 +12,7 @@ Big changes:
 - Added NAJSON, a non-standard-conform but very fast JSON parser.
 - Windows GUI is now resolution independent.
 - Images can be scaled arbitrariyly. Linear up and downscaling.
+- Reprogrammed NAButton.
 
 Smaller things:
 - Deprecating NABounds4, replacing with NABezel4

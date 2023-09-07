@@ -88,7 +88,6 @@ void poststartup(void* arg){
   naDelete(png2);
 
   // Create the controllers
-  createTemperatureController();
   app->experimentController = createExperimentController();
   app->fontController = createFontController();
   app->buttonController = createButtonController();
