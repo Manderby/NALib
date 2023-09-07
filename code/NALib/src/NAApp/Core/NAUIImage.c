@@ -52,7 +52,11 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
         const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
         NABabyColor accentColor;
         naFillDefaultAccentColorWithSkin(accentColor, skin);
-        NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, accentColor, NA_BLEND_OPAQUE, .33f);
+        NABabyImage* newImage = naCreateBabyImageWithTint(
+          originalImage->image,
+          accentColor,
+          NA_BLEND_OPAQUE,
+          (mutableUIImage->tintMode == NA_BLEND_ZERO) ? .45f : 1.f);
         newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
         naReleaseBabyImage(newImage);
       }
@@ -61,13 +65,16 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
       {
         const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
         
-//        NABabyColor hoverColor;
-//        naFillDefaultTextColorWithSkin(hoverColor, skin);
-//        hoverColor[0] = 1.f - hoverColor[0];
-//        hoverColor[1] = 1.f - hoverColor[1];
-//        hoverColor[2] = 1.f - hoverColor[2];
-//        NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, hoverColor, NA_BLEND_OPAQUE, .25f);
-        NABabyImage* newImage = naCreateBabyImageWithBlend(NA_NULL, originalImage->image, NA_BLEND_OVERLAY, .85f);
+        NABabyColor hoverColor;
+        naFillDefaultAccentColorWithSkin(hoverColor, skin);
+        NABabyImage* newImage = naCreateBabyImageWithTint(
+          originalImage->image,
+          hoverColor,
+          NA_BLEND_OPAQUE,
+          (mutableUIImage->tintMode == NA_BLEND_ZERO) ? .15f : .5f);
+
+NA_HDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, const float* top, NABlendMode mode, float blend, NABool baseIsImage, NABool topIsImage);
+
         newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
         naReleaseBabyImage(newImage);
       }

@@ -97,7 +97,7 @@
 
 - (void) mouseEntered:(NSEvent*)event{
   NA_UNUSED(event);
-  if(cocoaButton->button.uiImage){
+  if(cocoaButton->button.uiImage && [self isEnabled]){
     [self setImage:naCreateResolutionIndependentNativeImage(
       self,
       cocoaButton->button.uiImage,
