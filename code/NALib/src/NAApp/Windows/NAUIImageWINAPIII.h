@@ -71,22 +71,22 @@ NA_DEF void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin sk
   uint8 skinColor[4];
   switch(skin){
   case NA_UIIMAGE_SKIN_LIGHT:
-  skinColor[0] = 255;
-  skinColor[1] = 128;
-  skinColor[2] = 16;
-  skinColor[3] = 255;
-  break;
+    skinColor[0] = 255;
+    skinColor[1] = 128;
+    skinColor[2] = 16;
+    skinColor[3] = 255;
+    break;
   case NA_UIIMAGE_SKIN_DARK:
-  skinColor[0] = 255;
-  skinColor[1] = 128;
-  skinColor[2] = 16;
-  skinColor[3] = 255;
-  break;
+    skinColor[0] = 255;
+    skinColor[1] = 128;
+    skinColor[2] = 16;
+    skinColor[3] = 255;
+    break;
   default:
-  #if NA_DEBUG
-  naError("Cannot provide color for plain skin");
-  #endif
-  break;
+    #if NA_DEBUG
+    naError("Cannot provide color for plain skin");
+    #endif
+    break;
   }
   naFillBabyColorWithu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
 }

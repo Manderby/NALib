@@ -86,7 +86,6 @@ NA_HDEF NABool na_GetButtonState(const NAWINAPIButton* winapiButton){
 
 NA_HDEF void na_SetButtonState(NAWINAPIButton* winapiButton, NABool state){
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATE, state);
-  SendMessage(naGetUIElementNativePtr(winapiButton), BM_SETSTATE, (WPARAM)state, (LPARAM)NA_NULL);
 }
 
 
@@ -127,8 +126,15 @@ NABool naButtonWINAPINotify(void* uiElement, WORD notificationCode){
   case BN_CLICKED:
   case BN_DOUBLECLICKED:
     if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATEFUL)){
+      // flip the state
       na_SetButtonState(winapiButton, !na_GetButtonState(winapiButton));
-      updateButtonText(winapiButton);
+      // Set the button to unpressed:
+      SendMessage(naGetUIElementNativePtr(winapiButton), BM_SETSTATE, (WPARAM)0, (LPARAM)NA_NULL);
+      // Update the button content
+      if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE)){
+      }else{
+        updateButtonText(winapiButton);
+      }
     }
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
     hasBeenHandeled = NA_TRUE;
@@ -138,6 +144,19 @@ NABool naButtonWINAPINotify(void* uiElement, WORD notificationCode){
     break;
   }
   return hasBeenHandeled;
+}
+
+
+
+const NAUIImage* currentImage(NAWINAPIButton* winapiButton){
+  NABool secondaryState = na_GetButtonState(winapiButton);
+  const NAUIImage* uiImage = secondaryState
+    ? winapiButton->button.uiImage2
+    : winapiButton->button.uiImage; 
+  if(secondaryState && !uiImage){
+    uiImage = winapiButton->button.uiImage;
+  }
+  return uiImage;
 }
 
 
@@ -166,17 +185,25 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     long oldstyle = (long)GetWindowLongPtr(naGetUIElementNativePtr(uiElement), GWL_STYLE);
     long newstyle = (oldstyle & ~BS_OWNERDRAW) | BS_TEXT | BS_CENTER | BS_VCENTER;
     SetWindowLongPtr(naGetUIElementNativePtr(uiElement), GWL_STYLE, (LONG_PTR)newstyle);
-    // Oh boi. That is one hell of a hidden feature. Usually, the WM_PAINT message does not
-    // use wParam and lParam at all. But there are some common controls (and buttons seems to
-    // be one of them) which in fact only work if you send the device context in wParam.
+    // Oh boi. That is one hell of a hidden feature. Usually, the WM_PAINT
+    // message does not use wParam and lParam at all. But there are some
+    // common controls (and buttons seems to be one of them) which in fact
+    // only work if you send the device context in wParam.
     CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_PAINT, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
     SetWindowLongPtr(naGetUIElementNativePtr(uiElement), GWL_STYLE, (LONG_PTR)oldstyle);
+  
+    //if(na_GetButtonState(winapiButton)){
+    //  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+    //  COLORREF color = RGB(50, 50, 226);
+    //  RECT rect = {0, 0, 50, 60};
+    //  FillRect((HDC)drawitemstruct->hDC, &rect, CreateSolidBrush(color));
+    //}
   }
 
-  if(winapiButton->button.uiImage)
-  {
+  const NAUIImage* uiImage = currentImage(winapiButton);
+  if(uiImage){
     double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-    size1x = naGetUIImage1xSize(winapiButton->button.uiImage);
+    size1x = naGetUIImage1xSize(uiImage);
     size1x.width = (NAInt)(size1x.width * uiScale);
     size1x.height = (NAInt)(size1x.height * uiScale);
 
@@ -192,12 +219,12 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
     if(IsWindowEnabled(naGetUIElementNativePtr(winapiButton))){
       if(pushed){
-        foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_PRESSED);
+        foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_PRESSED);
       }else{
-        foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE);
+        foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE);
       }
     }else{
-      foreImage = na_GetUIImageBabyImage(winapiButton->button.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_DISABLED);
+      foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_DISABLED);
     }
 
     // We store the background where the image will be placed.
@@ -465,6 +492,7 @@ NA_DEF void naSetButtonState(NAButton* button, NABool state){
   if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATEFUL)){
     na_SetButtonState(winapiButton, state);
     updateButtonText(winapiButton);
+    InvalidateRect(naGetUIElementNativePtr(winapiButton), NULL, TRUE);
   }else{
     #if NA_DEBUG
       naError("This is not a stateful button");
