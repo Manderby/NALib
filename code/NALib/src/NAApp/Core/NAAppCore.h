@@ -67,10 +67,10 @@ struct NAApplication{
 
 struct NAButton{
   NA_UIElement uiElement;
-  NAUTF8Char* textOn;
-  NAUTF8Char* textOff;
-  const NAUIImage* uiImageOff;
-  const NAUIImage* uiImageOn;
+  NAUTF8Char* text;
+  NAUTF8Char* text2;
+  const NAUIImage* uiImage;
+  const NAUIImage* uiImage2;
   uint32 flags;
 };
 
@@ -259,12 +259,15 @@ NA_HAPI NARect na_GetApplicationRect(const NAApplication* application);
 NA_HAPI void na_SetApplicationRect(const NAApplication* application, NARect rect);
 
 // NAButton
-NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* textOff, const NAUTF8Char* textOn, const NAUIImage* uiImageOff, const NAUIImage* uiImageOn, uint32 flags);
+#define NA_BUTTON_BORDERED   0x01
+#define NA_BUTTON_STATEFUL   0x02
+
+NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAUIImage* uiImage, const NAUIImage* uiImage2, uint32 flags);
 NA_HAPI void na_ClearButton(NAButton* button);
-NA_HAPI void na_setButtonTextOff(NAButton* button, const NAUTF8Char* text);
-NA_HAPI void na_setButtonTextOn(NAButton* button, const NAUTF8Char* text);
-NA_HAPI void na_setButtonImageOff(NAButton* button, const NAUIImage* uiImage);
-NA_HAPI void na_setButtonImageOn(NAButton* button, const NAUIImage* uiImage);
+NA_HAPI void na_setButtonText(NAButton* button, const NAUTF8Char* text);
+NA_HAPI void na_setButtonText2(NAButton* button, const NAUTF8Char* text);
+NA_HAPI void na_setButtonImage(NAButton* button, const NAUIImage* uiImage);
+NA_HAPI void na_setButtonImage2(NAButton* button, const NAUIImage* uiImage);
 NA_HAPI NABool na_isButtonSubmit(const NAButton* button);
 NA_HAPI void na_setButtonSubmit(NAButton* button);
 NA_HAPI NABool na_isButtonAbort(const NAButton* button);

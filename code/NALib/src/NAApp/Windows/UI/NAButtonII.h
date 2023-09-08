@@ -208,7 +208,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
-  uint32 flags = NA_BUTTON_PUSH | NA_BUTTON_BORDERED;
+  uint32 flags = NA_BUTTON_BORDERED;
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
@@ -276,7 +276,7 @@ NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size, NAB
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  na_InitButton((NAButton*)winapiButton, nativePtr, NA_NULL, NA_NULL, uiImageOff, uiImageOn, flags);
+  na_InitButton((NAButton*)winapiButton, nativePtr, NA_NULL, NA_NULL, uiImage, uiImage2, flags);
   winapiButton->state = 0;
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, !naGetFlagu32(flags, NA_BUTTON_BORDERED)); 
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATEFUL, naGetFlagu32(flags, NA_BUTTON_STATEFUL)); 

@@ -7,10 +7,6 @@
 
 
 
-#define NA_BUTTON_BORDERED   0x01
-#define NA_BUTTON_PUSH       0x00
-#define NA_BUTTON_STATEFUL   0x02
-
 // Creates either a text or image button.
 // The flags is a combination of the macros defined above.
 // Default height for TextPushButton is 24.
@@ -19,16 +15,16 @@ NA_API NAButton* naNewTextPushButton(
   const NAUTF8Char* text,
   double width);
 NA_API NAButton* naNewTextStateButton(
-  const NAUTF8Char* textOff,
-  const NAUTF8Char* textOn,
+  const NAUTF8Char* text,
+  const NAUTF8Char* text2,
   double width);
 NA_API NAButton* naNewImagePushButton(
   const NAUIImage* uiImage,
   NASize size,
   NABool bordered);
 NA_API NAButton* naNewImageStateButton(
-  const NAUIImage* uiImageOff,
-  const NAUIImage* uiImageOn,
+  const NAUIImage* uiImage,
+  const NAUIImage* uiImage2,
   NASize size,
   NABool bordered);
 
@@ -41,12 +37,13 @@ NA_API void naSetButtonEnabled(NAButton* button, NABool enabled);
 NA_API NABool naGetButtonState(const NAButton* button);
 NA_API void naSetButtonState(NAButton* button, NABool state);
 
-// Sets the text or the image for the button. Use Off function for push buttons.
+// Sets the text or the image for the button. The 2-functions will only work
+// for stateful buttons.
 // Will emit an error if the button was not created with the matching type.
-NA_API void naSetButtonTextOff(NAButton* button, const NAUTF8Char* text);
-NA_API void naSetButtonTextOn(NAButton* button, const NAUTF8Char* text);
-NA_API void naSetButtonImageOff(NAButton* button, const NAUIImage* uiImage);
-NA_API void naSetButtonImageOn(NAButton* button, const NAUIImage* uiImage);
+NA_API void naSetButtonText(NAButton* button, const NAUTF8Char* text);
+NA_API void naSetButtonText2(NAButton* button, const NAUTF8Char* text);
+NA_API void naSetButtonImage(NAButton* button, const NAUIImage* uiImage);
+NA_API void naSetButtonImage2(NAButton* button, const NAUIImage* uiImage);
 
 // Returns the display flags of a button.
 NA_API NABool naIsButtonStateful(NAButton* button);

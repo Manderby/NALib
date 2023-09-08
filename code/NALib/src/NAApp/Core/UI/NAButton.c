@@ -11,86 +11,86 @@
 #define NA_BUTTON_ABORT  0x20
 
 
-NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* textOff, const NAUTF8Char* textOn, const NAUIImage* uiImageOff, const NAUIImage* uiImageOn, uint32 flags){
+NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAUIImage* uiImage, const NAUIImage* uiImage2, uint32 flags){
   na_InitUIElement(&(button->uiElement), NA_UI_BUTTON, nativePtr);
-  button->textOff = NA_NULL;
-  button->textOn = NA_NULL;
-  button->uiImageOff = NA_NULL;
-  button->uiImageOn = NA_NULL;
-  na_setButtonTextOff(button, textOff);
-  na_setButtonTextOn(button, textOn);
-  na_setButtonImageOff(button, uiImageOff);
-  na_setButtonImageOn(button, uiImageOn);
+  button->text = NA_NULL;
+  button->text2 = NA_NULL;
+  button->uiImage = NA_NULL;
+  button->uiImage2 = NA_NULL;
+  na_setButtonText(button, text);
+  na_setButtonText2(button, text2);
+  na_setButtonImage(button, uiImage);
+  na_setButtonImage2(button, uiImage2);
   button->flags = flags;
 }
 
 
 
 NA_HDEF void na_ClearButton(NAButton* button){
-  if(button->uiImageOff){
-    naReleaseConst(button->uiImageOff);
+  if(button->uiImage){
+    naReleaseConst(button->uiImage);
   }
-  if(button->uiImageOn){
-    naReleaseConst(button->uiImageOn);
+  if(button->uiImage2){
+    naReleaseConst(button->uiImage2);
   }
   na_ClearUIElement(&(button->uiElement));
 }
 
 
 
-NA_HDEF void na_setButtonTextOff(NAButton* button, const NAUTF8Char* text){
-  if(button->textOff){
-    naFree(button->textOff);
+NA_HDEF void na_setButtonText(NAButton* button, const NAUTF8Char* text){
+  if(button->text){
+    naFree(button->text);
   }
   if(text){
     size_t len = strlen(text);
-    button->textOff = naMalloc(len + 1);
-    memcpy(button->textOff, text, len);
-    button->textOff[len] = '\0';
+    button->text = naMalloc(len + 1);
+    memcpy(button->text, text, len);
+    button->text[len] = '\0';
   }else{
-    button->textOff = NA_NULL;
+    button->text = NA_NULL;
   }
 }
 
 
 
-NA_HDEF void na_setButtonTextOn(NAButton* button, const NAUTF8Char* text){
-  if(button->textOn){
-    naFree(button->textOn);
+NA_HDEF void na_setButtonText2(NAButton* button, const NAUTF8Char* text){
+  if(button->text2){
+    naFree(button->text2);
   }
   if(text){
     size_t len = strlen(text);
-    button->textOn = naMalloc(len + 1);
-    memcpy(button->textOn, text, len);
-    button->textOn[len] = '\0';
+    button->text2 = naMalloc(len + 1);
+    memcpy(button->text2, text, len);
+    button->text2[len] = '\0';
   }else{
-    button->textOn = NA_NULL;
+    button->text2 = NA_NULL;
   }
 }
 
 
 
-NA_HDEF void na_setButtonImageOff(NAButton* button, const NAUIImage* uiImage){
-  if(button->uiImageOff){
-    naReleaseConst(button->uiImageOff);
+NA_HDEF void na_setButtonImage(NAButton* button, const NAUIImage* uiImage){
+  if(button->uiImage){
+    naReleaseConst(button->uiImage);
   }
   if(uiImage){
-    button->uiImageOff = naRetainConst(uiImage);
+    button->uiImage = naRetainConst(uiImage);
   }else{
-    button->uiImageOff = NA_NULL;
+    button->uiImage = NA_NULL;
   }
 }
 
 
 
-NA_HDEF void na_setButtonImageOn(NAButton* button, const NAUIImage* uiImage){
-  if(button->uiImageOn){
-    naReleaseConst(button->uiImageOn);
+NA_HDEF void na_setButtonImage2(NAButton* button, const NAUIImage* uiImage){
+  if(button->uiImage2){
+    naReleaseConst(button->uiImage2);
   }
   if(uiImage){
-    button->uiImageOn = naRetainConst(uiImage);
+    button->uiImage2 = naRetainConst(uiImage);
   }else{
-    button->uiImageOn = NA_NULL;
+    button->uiImage2 = NA_NULL;
   }
 }
 

@@ -14,14 +14,14 @@
   isImage = newIsImage;
 
   if(naGetFlagu32(flags, NA_BUTTON_BORDERED)){
-    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NSBezelStyleShadowlessSquare : NABezelStyleRounded]; 
+    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NSBezelStyleShadowlessSquare : NABezelStylePush]; 
     [self setBordered:YES];
   }else{
     if(!isImage && naGetFlagu32(flags, NA_BUTTON_STATEFUL)){
       [self setBezelStyle:NABezelStyleInline]; 
       [self setBordered:YES];
     }else{
-      [self setBezelStyle:NABezelStyleRounded]; 
+      [self setBezelStyle:NABezelStylePush]; 
       [self setBordered:NO];
     }
   }
@@ -59,10 +59,10 @@
 - (const NAUTF8Char*) currentText{
   NABool secondaryState = [self getButtonState];
   const NAUTF8Char* text = secondaryState
-    ? cocoaButton->button.textOn
-    : cocoaButton->button.textOff; 
+    ? cocoaButton->button.text2
+    : cocoaButton->button.text; 
   if(secondaryState && !text){
-    text = cocoaButton->button.textOn;
+    text = cocoaButton->button.text;
   }
   return text;
 }
@@ -90,10 +90,10 @@
 - (const NAUIImage*) currentImage{
   NABool secondaryState = [self getButtonState];
   const NAUIImage* uiImage = secondaryState
-    ? cocoaButton->button.uiImageOn
-    : cocoaButton->button.uiImageOff; 
+    ? cocoaButton->button.uiImage2
+    : cocoaButton->button.uiImage; 
   if(secondaryState && !uiImage){
-    uiImage = cocoaButton->button.uiImageOn;
+    uiImage = cocoaButton->button.uiImage;
   }
   return uiImage;
 }
@@ -183,7 +183,7 @@
 NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
 
-  uint32 flags = NA_BUTTON_PUSH | NA_BUTTON_BORDERED;
+  uint32 flags = NA_BUTTON_BORDERED;
 
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
@@ -206,7 +206,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width){
 
 
 
-NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* textOff, const NAUTF8Char* textOn, double width){
+NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* text2, double width){
   
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
 
@@ -220,8 +220,8 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* textOff, const NAUTF8Cha
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
-    textOff,
-    textOn,
+    text,
+    text2,
     NA_NULL,
     NA_NULL,
     flags);
@@ -236,9 +236,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* textOff, const NAUTF8Cha
 NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size, NABool bordered){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
-  uint32 flags = NA_BUTTON_PUSH;
-  if(bordered)
-    flags |= NA_BUTTON_BORDERED;
+  uint32 flags = (bordered) ? NA_BUTTON_BORDERED : 0;
 
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
@@ -261,7 +259,7 @@ NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size, NAB
 
 
 
-NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImageOff, const NAUIImage* uiImageOn, NASize size, NABool bordered){
+NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage* uiImage2, NASize size, NABool bordered){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   uint32 flags = NA_BUTTON_STATEFUL;
@@ -278,8 +276,8 @@ NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImageOff, const NAUIIm
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
     NA_NULL,
     NA_NULL,
-    uiImageOff,
-    uiImageOn,
+    uiImage,
+    uiImage2,
     flags);
   
   [nativePtr updateImages];
@@ -303,49 +301,49 @@ NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled){
 
 
 
-NA_DEF void naSetButtonTextOff(NAButton* button, const NAUTF8Char* text){
+NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   #if NA_DEBUG
     if([nativePtr isImage])
       naError("This is not a text button");
   #endif
-  na_setButtonTextOff(button, text);
+  na_setButtonText(button, text);
   [nativePtr updateButtonText];
 }
 
 
 
-NA_DEF void naSetButtonTextOn(NAButton* button, const NAUTF8Char* text){
+NA_DEF void naSetButtonText2(NAButton* button, const NAUTF8Char* text){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   #if NA_DEBUG
     if([nativePtr isImage])
       naError("This is not a text button");
   #endif
-  na_setButtonTextOn(button, text);
+  na_setButtonText(button, text);
   [nativePtr updateButtonText];
 }
 
 
 
-NA_DEF void naSetButtonImageOff(NAButton* button, const NAUIImage* uiImage){
+NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   #if NA_DEBUG
     if(![nativePtr isImage])
       naError("This is not an image button.");
   #endif
-  na_setButtonImageOff(button, uiImage);
+  na_setButtonImage(button, uiImage);
   [nativePtr updateImages];
 }
 
 
 
-NA_DEF void naSetButtonImageOn(NAButton* button, const NAUIImage* uiImage){
+NA_DEF void naSetButtonImage2(NAButton* button, const NAUIImage* uiImage){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   #if NA_DEBUG
     if(![nativePtr isImage])
       naError("This is not an image button.");
   #endif
-  na_setButtonImageOn(button, uiImage);
+  na_setButtonImage2(button, uiImage);
   [nativePtr updateImages];
 }
 
@@ -395,7 +393,7 @@ NA_DEF void naSetButtonSubmit(
   void* controller)
 {
   #if NA_DEBUG
-    if(!naGetFlagu32(button->flags, NA_BUTTON_PUSH))
+    if(naGetFlagu32(button->flags, NA_BUTTON_STATEFUL))
       naError("Abort functionality only works reliably for push buttons");
   #endif
 
@@ -430,7 +428,7 @@ NA_DEF void naSetButtonAbort(
   void* controller)
 {
   #if NA_DEBUG
-    if(!naGetFlagu32(button->flags, NA_BUTTON_PUSH))
+    if(naGetFlagu32(button->flags, NA_BUTTON_STATEFUL))
       naError("Abort functionality only works reliably for push buttons");
   #endif
   
