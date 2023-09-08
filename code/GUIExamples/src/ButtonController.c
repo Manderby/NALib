@@ -50,24 +50,22 @@ struct ButtonController{
 NABool buttonPressed(NAReaction reaction){
   ButtonController* con = reaction.controller;
 
-  NABool state = NA_FALSE;
-  if(naGetUIElementType(reaction.uiElement) == NA_UI_BUTTON) {
-    state = naGetButtonState(reaction.uiElement);
-  }
-
   NAString* labelString;
 
   if(reaction.uiElement == con->textPushButton){
     labelString = naNewStringWithFormat("Text Push Button Pressed");
   }else if(reaction.uiElement == con->textStateButton){
+    NABool state = naGetButtonState(reaction.uiElement);
     labelString = naNewStringWithFormat("Text State Button Switched to %d", (int)state);
   }else if(reaction.uiElement == con->imagePushButtonBordered){
     labelString = naNewStringWithFormat("Bordered Image Push Button Pressed");
   }else if(reaction.uiElement == con->imagePushButtonBorderless){
     labelString = naNewStringWithFormat("Borderless Image Push Button Pressed");
   }else if(reaction.uiElement == con->imageStateButtonBordered){
+    NABool state = naGetButtonState(reaction.uiElement);
     labelString = naNewStringWithFormat("Bordered Image State Button Switched to %d", (int)state);
   }else if(reaction.uiElement == con->imageStateButtonBorderless){
+    NABool state = naGetButtonState(reaction.uiElement);
     labelString = naNewStringWithFormat("Borderless Image State Button Switched to %d", (int)state);
   }else{
     labelString = naNewString();

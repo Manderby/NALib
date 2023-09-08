@@ -45,6 +45,8 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case BM_SETSTATE:
   case BM_SETCHECK:
   case BM_GETSTATE:
+  case WM_ENABLE:
+  case WM_SETTEXT:
     break;
 
   // Menu messages
@@ -80,9 +82,39 @@ NA_HDEF NABool na_GetButtonState(const NAWINAPIButton* winapiButton){
   return naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATE);
 }
 
+
+
 NA_HDEF void na_SetButtonState(NAWINAPIButton* winapiButton, NABool state){
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATE, state);
   SendMessage(naGetUIElementNativePtr(winapiButton), BM_SETSTATE, (WPARAM)state, (LPARAM)NA_NULL);
+}
+
+
+
+NA_HDEF const NAUTF8Char* currentText(NAWINAPIButton* winapiButton){
+  NABool secondaryState = na_GetButtonState(winapiButton);
+  const NAUTF8Char* text = secondaryState
+    ? winapiButton->button.text2
+    : winapiButton->button.text; 
+  if(secondaryState && !text){
+    text = winapiButton->button.text;
+  }
+  return text;
+}
+
+
+
+NA_HDEF void updateButtonText(NAWINAPIButton* winapiButton){
+  const NAUTF8Char* text = currentText(winapiButton);
+
+  TCHAR* systemText;
+  if(text){
+    systemText = naAllocSystemStringWithUTF8String(text);
+  }else{
+    systemText = naAllocSystemStringWithUTF8String("");
+  }
+  SendMessage(naGetUIElementNativePtr(winapiButton), WM_SETTEXT, 0, (LPARAM) systemText);
+  naFree(systemText);
 }
 
 
@@ -96,6 +128,7 @@ NABool naButtonWINAPINotify(void* uiElement, WORD notificationCode){
   case BN_DOUBLECLICKED:
     if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATEFUL)){
       na_SetButtonState(winapiButton, !na_GetButtonState(winapiButton));
+      updateButtonText(winapiButton);
     }
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
     hasBeenHandeled = NA_TRUE;
@@ -215,11 +248,11 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width){
   winapiButton->rect = naMakeRectS(0., 0., width, 24.);
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
-	HWND nativePtr = CreateWindow(
-		TEXT("BUTTON"),
+  HWND nativePtr = CreateWindow(
+    TEXT("BUTTON"),
     systemText,
     WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON,
-		0,
+    0,
     0,
     (int)(winapiButton->rect.size.width * uiScale),
     (int)(winapiButton->rect.size.height * uiScale),
@@ -227,7 +260,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width){
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
-  
+
   naFree(systemText);
 
   SendMessage(nativePtr, WM_SETFONT, (WPARAM)naGetFontNativePointer(naGetSystemFont()), MAKELPARAM(TRUE, 0));
@@ -236,7 +269,64 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width){
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  na_InitButton((NAButton*)winapiButton, nativePtr, text, NA_NULL, NA_NULL, NA_NULL, flags);
+  na_InitButton(
+    (NAButton*)winapiButton,
+    nativePtr,
+    text,
+    NA_NULL,
+    NA_NULL,
+    NA_NULL,
+    flags);
+  winapiButton->state = 0;
+
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, !naGetFlagu32(flags, NA_BUTTON_BORDERED)); 
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATEFUL, naGetFlagu32(flags, NA_BUTTON_STATEFUL)); 
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_FALSE); 
+
+  return (NAButton*)winapiButton;
+}
+
+
+
+NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* text2, double width){
+  NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
+
+  uint32 flags = NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL;
+
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
+
+  winapiButton->rect = naMakeRectS(0., 0., width, 24.);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
+  HWND nativePtr = CreateWindow(
+    TEXT("BUTTON"),
+    systemText,
+    WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON,
+    0,
+    0,
+    (int)(winapiButton->rect.size.width * uiScale),
+    (int)(winapiButton->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
+
+  naFree(systemText);
+
+  SendMessage(nativePtr, WM_SETFONT, (WPARAM)naGetFontNativePointer(naGetSystemFont()), MAKELPARAM(TRUE, 0));
+
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+
+  na_InitButton(
+    (NAButton*)winapiButton,
+    nativePtr,
+    text,
+    text2,
+    NA_NULL,
+    NA_NULL,
+    flags);
   winapiButton->state = 0;
 
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, !naGetFlagu32(flags, NA_BUTTON_BORDERED)); 
@@ -250,11 +340,8 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width){
 
 NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size, NABool bordered){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
-  
-  #if NA_DEBUG
-    if(!uiImage)
-      naError("uiImage is null");
-  #endif
+
+  uint32 flags = bordered ? NA_BUTTON_BORDERED : 0;
 
   winapiButton->rect = naMakeRect(naMakePos(0., 0.), size);
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
@@ -271,13 +358,67 @@ NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size, NAB
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
-    
+
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  na_InitButton((NAButton*)winapiButton, nativePtr, NA_NULL, NA_NULL, uiImage, uiImage2, flags);
+  na_InitButton(
+    (NAButton*)winapiButton,
+    nativePtr,
+    NA_NULL,
+    NA_NULL,
+    uiImage,
+    NA_NULL,
+    flags);
   winapiButton->state = 0;
+
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, !naGetFlagu32(flags, NA_BUTTON_BORDERED)); 
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATEFUL, naGetFlagu32(flags, NA_BUTTON_STATEFUL)); 
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
+
+  return (NAButton*)winapiButton;
+}
+
+
+
+NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage* uiImage2, NASize size, NABool bordered){
+  NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
+
+  uint32 flags = NA_BUTTON_STATEFUL;
+  if(bordered)
+    flags |= NA_BUTTON_BORDERED;
+
+  winapiButton->rect = naMakeRect(naMakePos(0., 0.), size);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
+  HWND nativePtr = CreateWindow(
+    TEXT("BUTTON"),
+    TEXT(""),
+    WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
+    0,
+    0,
+    (int)(winapiButton->rect.size.width * uiScale),
+    (int)(winapiButton->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
+
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+
+  na_InitButton(
+    (NAButton*)winapiButton,
+    nativePtr,
+    NA_NULL,
+    NA_NULL,
+    uiImage,
+    uiImage2,
+    flags);
+  winapiButton->state = 0;
+
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, !naGetFlagu32(flags, NA_BUTTON_BORDERED)); 
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATEFUL, naGetFlagu32(flags, NA_BUTTON_STATEFUL)); 
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
@@ -321,9 +462,9 @@ NA_DEF void naSetButtonState(NAButton* button, NABool state){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   // Note that BM_SETSTATE only changes the visual highlight, not the state of the
   // WINAPI button. Therefore, we need a separate state boolean.
-  if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATEFUL))
-  {
+  if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATEFUL)){
     na_SetButtonState(winapiButton, state);
+    updateButtonText(winapiButton);
   }else{
     #if NA_DEBUG
       naError("This is not a stateful button");
@@ -336,10 +477,23 @@ NA_DEF void naSetButtonState(NAButton* button, NABool state){
 NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   #if NA_DEBUG
-    if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))
-      naError("This is not a text button");
+  if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))
+    naError("This is not a text button");
   #endif
-  // todo
+  na_setButtonText(button, text);
+  updateButtonText(winapiButton);
+}
+
+
+
+NA_DEF void naSetButtonText2(NAButton* button, const NAUTF8Char* text){
+  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
+  #if NA_DEBUG
+  if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))
+    naError("This is not a text button");
+  #endif
+  na_setButtonText2(button, text);
+  updateButtonText(winapiButton);
 }
 
 
@@ -356,22 +510,20 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
 
 
 NA_DEF NABool naIsButtonStateful(NAButton* button){
-  // todo
-  return NA_FALSE;
+  return naGetFlagu32(button->flags, NA_BUTTON_STATEFUL);
 }
 
 
 
 NA_DEF NABool naIsButtonBordered(NAButton* button){
-  // todo
-  return NA_FALSE;
+  return naGetFlagu32(button->flags, NA_BUTTON_BORDERED);
 }
 
 
 
 NA_DEF NABool naIsButtonTextual(NAButton* button){
-  // todo
-  return NA_TRUE;
+  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
+  return naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE);
 }
 
 
@@ -388,11 +540,13 @@ NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void*
     naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
     handler,
     controller);
-  naAddUIKeyboardShortcut(
-    naGetUIElementWindow(button),
-    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_NUMPAD_ENTER),
-    handler,
-    controller);
+  // Windows can not distinguish between ENTER and NUMPAD_ENTER. So we do not
+  // install another keystroke listener.
+  //naAddUIKeyboardShortcut(
+  //  naGetUIElementWindow(button),
+  //  naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_NUMPAD_ENTER),
+  //  handler,
+  //  controller);
 }
 
 
@@ -408,11 +562,12 @@ NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* 
 
 
 
-NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button)
-{
+NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button){
   const NAWINAPIButton* winapiButton = (const NAWINAPIButton*)button;
   return winapiButton->rect;
 }
+
+
 
 NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
@@ -430,6 +585,8 @@ NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect){
     (int)(winapiButton->rect.size.height * uiScale),
     0);
 }
+
+
 
 // This is free and unencumbered software released into the public domain.
 

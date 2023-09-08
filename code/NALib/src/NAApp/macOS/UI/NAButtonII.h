@@ -368,21 +368,27 @@ NA_DEF NABool naIsButtonTextual(NAButton* button){
 
 
 
-NA_DEF void naSetButtonState(NAButton* button, NABool state){
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
-  [nativePtr setButtonState:state];
-  // todo:
-  // naError("This is not a stateful button");
+NA_DEF NABool naGetButtonState(const NAButton* button){
+  naDefineCocoaObjectConst(const NACocoaNativeButton, nativePtr, button);
+  #if NA_DEBUG
+  if(!naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATEFUL))
+    naError("This is not a stateful button");
+  #endif
+
+  return [nativePtr getButtonState];
 }
 
 
 
-NA_DEF NABool naGetButtonState(const NAButton* button){
-  naDefineCocoaObjectConst(const NACocoaNativeButton, nativePtr, button);
-  return [nativePtr getButtonState];
-  // todo:
-  // naError("This is not a stateful button");
-
+NA_DEF void naSetButtonState(NAButton* button, NABool state){
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_STATEFUL)){
+    [nativePtr setButtonState:state];
+  }else{
+    #if NA_DEBUG
+    naError("This is not a stateful button");
+    #endif
+  }
 }
 
 
