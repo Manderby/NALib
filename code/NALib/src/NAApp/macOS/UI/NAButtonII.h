@@ -13,7 +13,10 @@
 
   isImage = newIsImage;
 
-  if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS)){
+  if(naGetFlagu32(flags, NA_BUTTON_BORDERED)){
+    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NSBezelStyleShadowlessSquare : NABezelStyleRounded]; 
+    [self setBordered:YES];
+  }else{
     if(!isImage && naGetFlagu32(flags, NA_BUTTON_STATEFUL)){
       [self setBezelStyle:NABezelStyleInline]; 
       [self setBordered:YES];
@@ -21,14 +24,10 @@
       [self setBezelStyle:NABezelStyleRounded]; 
       [self setBordered:NO];
     }
-  }else{
-    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NSBezelStyleShadowlessSquare : NABezelStyleRounded]; 
-    [self setBordered:YES];
   }
 
   if(isImage){
-//    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
-    [self setButtonType:NSButtonTypeMomentaryChange];
+    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NSButtonTypeMomentaryChange];
     [[self cell] setImageScaling:NSImageScaleNone];
   }else{
     [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
@@ -57,8 +56,25 @@
   return isImage;
 }
 
-- (void) setButtonText:(const NAUTF8Char*)text{
-  [self setTitle:[NSString stringWithUTF8String:text]];
+- (const NAUTF8Char*) currentText{
+  NABool secondaryState = [self getButtonState];
+  const NAUTF8Char* text = secondaryState
+    ? cocoaButton->button.textOn
+    : cocoaButton->button.textOff; 
+  if(secondaryState && !text){
+    text = cocoaButton->button.textOn;
+  }
+  return text;
+}
+
+- (void) updateButtonText{
+  const NAUTF8Char* text = [self currentText];
+
+  if(text){
+    [self setTitle:[NSString stringWithUTF8String:text]];
+  }else{
+    [self setTitle:@""];
+  }
 }
 
 - (void) onPressed:(id)sender{
@@ -67,24 +83,39 @@
   
   }
   na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED);
+  [self updateButtonText];
+  [self updateImages];
+}
+
+- (const NAUIImage*) currentImage{
+  NABool secondaryState = [self getButtonState];
+  const NAUIImage* uiImage = secondaryState
+    ? cocoaButton->button.uiImageOn
+    : cocoaButton->button.uiImageOff; 
+  if(secondaryState && !uiImage){
+    uiImage = cocoaButton->button.uiImageOn;
+  }
+  return uiImage;
 }
 
 - (void) updateImages{
-  if(cocoaButton->button.uiImage){
+  const NAUIImage* uiImage = [self currentImage];
+  
+  if(uiImage){
     if([self isEnabled]){
       [self setImage:naCreateResolutionIndependentNativeImage(
         self,
-        cocoaButton->button.uiImage,
+        uiImage,
         NA_UIIMAGE_INTERACTION_NONE)];
         
       [self setAlternateImage:naCreateResolutionIndependentNativeImage(
         self,
-        cocoaButton->button.uiImage,
+        uiImage,
         NA_UIIMAGE_INTERACTION_PRESSED)];
     }else{
       [self setImage:naCreateResolutionIndependentNativeImage(
         self,
-        cocoaButton->button.uiImage,
+        uiImage,
         NA_UIIMAGE_INTERACTION_DISABLED)];
         
       [self setAlternateImage:nil];
@@ -97,10 +128,12 @@
 
 - (void) mouseEntered:(NSEvent*)event{
   NA_UNUSED(event);
-  if(cocoaButton->button.uiImage && [self isEnabled]){
+  const NAUIImage* uiImage = [self currentImage];
+
+  if(uiImage && [self isEnabled]){
     [self setImage:naCreateResolutionIndependentNativeImage(
       self,
-      cocoaButton->button.uiImage,
+      uiImage,
       NA_UIIMAGE_INTERACTION_HOVER)];
   }
   na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_ENTERED);
@@ -108,10 +141,12 @@
 
 - (void) mouseExited:(NSEvent*)event{
   NA_UNUSED(event);
-  if(cocoaButton->button.uiImage){
+  const NAUIImage* uiImage = [self currentImage];
+
+  if(uiImage){
     [self setImage:naCreateResolutionIndependentNativeImage(
       self,
-      cocoaButton->button.uiImage,
+      uiImage,
       NA_UIIMAGE_INTERACTION_NONE)];
   }
   na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_EXITED);
@@ -119,10 +154,11 @@
 
 - (void) setButtonState:(NABool)state{
   [self setState:state ? NAStateOn : NAStateOff];
+  [self updateButtonText];
 }
 
 - (NABool) getButtonState{
-  return [self state] == NAStateOn;
+  return naGetFlagu32(cocoaButton->button.flags, NA_BUTTON_STATEFUL) && [self state] == NAStateOn;
 }
 
 - (void) setDefaultButton:(NABool)isDefault{
@@ -144,48 +180,107 @@
 
 
 
-NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 flags){
-  #if NA_DEBUG
-    if(flags > 0x03)
-      naError("Invalid Flags");
-    if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS))
-      naError("Borderless Text buttons should not be used as they can not be distinguished.");
-  #endif
-  
+NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
 
-  const NABool isStateful = naGetFlagu32(flags, NA_BUTTON_STATEFUL);
+  uint32 flags = NA_BUTTON_PUSH | NA_BUTTON_BORDERED;
 
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
-    frame:naMakeNSRectWithSize(naMakeSize(width, isStateful ? 25 : 24))];
-  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL, flags);
+    frame:naMakeNSRectWithSize(naMakeSize(width, 24))];
+  na_InitButton(
+    (NAButton*)cocoaButton,
+    NA_COCOA_PTR_OBJC_TO_C(nativePtr),
+    text,
+    NA_NULL,
+    NA_NULL,
+    NA_NULL,
+    flags);
   
-  [nativePtr setButtonText:text];
+  [nativePtr updateButtonText];
   
   return (NAButton*)cocoaButton;
 }
 
 
 
-NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 flags){
+NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* textOff, const NAUTF8Char* textOn, double width){
+  
+  NACocoaButton* cocoaButton = naNew(NACocoaButton);
+
+  uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
+
+  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
+    initWithButton:cocoaButton
+    flags:flags
+    isImage:NO
+    frame:naMakeNSRectWithSize(naMakeSize(width, 25))];
+  na_InitButton(
+    (NAButton*)cocoaButton,
+    NA_COCOA_PTR_OBJC_TO_C(nativePtr),
+    textOff,
+    textOn,
+    NA_NULL,
+    NA_NULL,
+    flags);
+  
+  [nativePtr updateButtonText];
+  
+  return (NAButton*)cocoaButton;
+}
+
+
+
+NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size, NABool bordered){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
-  #if NA_DEBUG
-    if(flags > 0x03)
-      naError("Invalid Flags");
-    if(!uiImage)
-      naError("uiImage is null");
-  #endif
+  uint32 flags = NA_BUTTON_PUSH;
+  if(bordered)
+    flags |= NA_BUTTON_BORDERED;
 
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(size)];
-  na_InitButton((NAButton*)cocoaButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr), uiImage, flags);
+  na_InitButton(
+    (NAButton*)cocoaButton,
+    NA_COCOA_PTR_OBJC_TO_C(nativePtr),
+    NA_NULL,
+    NA_NULL,
+    uiImage,
+    NA_NULL,
+    flags);
+  
+  [nativePtr updateImages];
+
+  return (NAButton*)cocoaButton;
+}
+
+
+
+NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImageOff, const NAUIImage* uiImageOn, NASize size, NABool bordered){
+  NACocoaButton* cocoaButton = naNew(NACocoaButton);
+  
+  uint32 flags = NA_BUTTON_STATEFUL;
+  if(bordered)
+    flags |= NA_BUTTON_BORDERED;
+
+  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
+    initWithButton:cocoaButton
+    flags:flags
+    isImage:YES
+    frame:naMakeNSRectWithSize(size)];
+  na_InitButton(
+    (NAButton*)cocoaButton,
+    NA_COCOA_PTR_OBJC_TO_C(nativePtr),
+    NA_NULL,
+    NA_NULL,
+    uiImageOff,
+    uiImageOn,
+    flags);
   
   [nativePtr updateImages];
 
@@ -208,24 +303,49 @@ NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled){
 
 
 
-NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text){
+NA_DEF void naSetButtonTextOff(NAButton* button, const NAUTF8Char* text){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   #if NA_DEBUG
     if([nativePtr isImage])
       naError("This is not a text button");
   #endif
-  [nativePtr setButtonText:text];
+  na_setButtonTextOff(button, text);
+  [nativePtr updateButtonText];
 }
 
 
 
-NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
+NA_DEF void naSetButtonTextOn(NAButton* button, const NAUTF8Char* text){
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  #if NA_DEBUG
+    if([nativePtr isImage])
+      naError("This is not a text button");
+  #endif
+  na_setButtonTextOn(button, text);
+  [nativePtr updateButtonText];
+}
+
+
+
+NA_DEF void naSetButtonImageOff(NAButton* button, const NAUIImage* uiImage){
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   #if NA_DEBUG
     if(![nativePtr isImage])
       naError("This is not an image button.");
   #endif
-  na_setButtonImage(button, uiImage);
+  na_setButtonImageOff(button, uiImage);
+  [nativePtr updateImages];
+}
+
+
+
+NA_DEF void naSetButtonImageOn(NAButton* button, const NAUIImage* uiImage){
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  #if NA_DEBUG
+    if(![nativePtr isImage])
+      naError("This is not an image button.");
+  #endif
+  na_setButtonImageOn(button, uiImage);
   [nativePtr updateImages];
 }
 
@@ -237,8 +357,8 @@ NA_DEF NABool naIsButtonStateful(NAButton* button){
 
 
 
-NA_DEF NABool naIsButtonBorderless(NAButton* button){
-  return naGetFlagu32(button->flags, NA_BUTTON_BORDERLESS);
+NA_DEF NABool naIsButtonBordered(NAButton* button){
+  return naGetFlagu32(button->flags, NA_BUTTON_BORDERED);
 }
 
 
@@ -274,6 +394,11 @@ NA_DEF void naSetButtonSubmit(
   NAReactionHandler handler,
   void* controller)
 {
+  #if NA_DEBUG
+    if(!naGetFlagu32(button->flags, NA_BUTTON_PUSH))
+      naError("Abort functionality only works reliably for push buttons");
+  #endif
+
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   [nativePtr setDefaultButton:NA_TRUE];
   
@@ -304,6 +429,11 @@ NA_DEF void naSetButtonAbort(
   NAReactionHandler handler,
   void* controller)
 {
+  #if NA_DEBUG
+    if(!naGetFlagu32(button->flags, NA_BUTTON_PUSH))
+      naError("Abort functionality only works reliably for push buttons");
+  #endif
+  
   na_setButtonAbort(button);
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),

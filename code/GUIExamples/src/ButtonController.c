@@ -45,7 +45,6 @@ struct ButtonController{
   NALabel* outputLabel;
 };
 
-void updateButtonController(ButtonController* con);
 
 
 NABool buttonPressed(NAReaction reaction){
@@ -77,24 +76,26 @@ NABool buttonPressed(NAReaction reaction){
   naSetLabelText(con->outputLabel, naGetStringUTF8Pointer(labelString));
   naDelete(labelString);
 
-  updateButtonController(con);
-
   return NA_TRUE;
 }
+
+
 
 NABool submitPressed(NAReaction reaction){
   ButtonController* con = reaction.controller;
   naSetLabelText(con->outputLabel, "Submit pressed");
-  updateButtonController(con);
   return NA_TRUE;
 }
+
+
 
 NABool abortPressed(NAReaction reaction){
   ButtonController* con = reaction.controller;
   naSetLabelText(con->outputLabel, "Abort pressed");
-  updateButtonController(con);
   return NA_TRUE;
 }
+
+
 
 ButtonController* createButtonController(){
   ButtonController* con = naAlloc(ButtonController);
@@ -128,11 +129,11 @@ ButtonController* createButtonController(){
   con->textPushButtonLabel = naNewLabel("Text Push", labelWidth);
   naAddSpaceChild(windowSpace, con->textPushButtonLabel, naMakePos(20, curPosY));
 
-  con->textPushButton = naNewTextButton("Push", buttonWidth, NA_BUTTON_BORDERED | NA_BUTTON_PUSH);
+  con->textPushButton = naNewTextPushButton("Push", buttonWidth);
   naAddUIReaction(con->textPushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->textPushButton, naMakePos(left1, curPosY));
 
-  con->textPushButtonDisabled = naNewTextButton("Push", buttonWidth, NA_BUTTON_BORDERED | NA_BUTTON_PUSH);
+  con->textPushButtonDisabled = naNewTextPushButton("Push", buttonWidth);
   naAddUIReaction(con->textPushButtonDisabled, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naSetButtonEnabled(con->textPushButtonDisabled, NA_FALSE);
   naAddSpaceChild(windowSpace, con->textPushButtonDisabled, naMakePos(left2, curPosY));
@@ -142,16 +143,16 @@ ButtonController* createButtonController(){
   con->textStateButtonLabel = naNewLabel("Text Two States", labelWidth);
   naAddSpaceChild(windowSpace, con->textStateButtonLabel, naMakePos(20, curPosY));
 
-  con->textStateButton = naNewTextButton("Off", buttonWidth, NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL);
+  con->textStateButton = naNewTextStateButton("Off", "On", buttonWidth);
   naAddUIReaction(con->textStateButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->textStateButton, naMakePos(left1, curPosY));
 
-  con->textStateButtonDisabled1 = naNewTextButton("Off", buttonWidth / 2, NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL);
+  con->textStateButtonDisabled1 = naNewTextStateButton("Off", NA_NULL, buttonWidth / 2);
   naAddUIReaction(con->textStateButtonDisabled1, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naSetButtonEnabled(con->textStateButtonDisabled1, NA_FALSE);
   naAddSpaceChild(windowSpace, con->textStateButtonDisabled1, naMakePos(left2, curPosY));
 
-  con->textStateButtonDisabled2 = naNewTextButton("On", buttonWidth / 2, NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL);
+  con->textStateButtonDisabled2 = naNewTextStateButton(NA_NULL, "On", buttonWidth / 2);
   naAddUIReaction(con->textStateButtonDisabled2, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naSetButtonState(con->textStateButtonDisabled2, NA_TRUE);
   naSetButtonEnabled(con->textStateButtonDisabled2, NA_FALSE);
@@ -162,11 +163,11 @@ ButtonController* createButtonController(){
   con->imagePushButtonBorderedLabel = naNewLabel("Image Push", labelWidth);
   naAddSpaceChild(windowSpace, con->imagePushButtonBorderedLabel, naMakePos(20, curPosY));
 
-  con->imagePushButtonBordered = naNewImageButton(getIconImage(), naMakeSize(buttonWidth, 25), NA_BUTTON_BORDERED | NA_BUTTON_PUSH);
+  con->imagePushButtonBordered = naNewImagePushButton(getIconImage(), naMakeSize(buttonWidth, 25), NA_TRUE);
   naAddUIReaction(con->imagePushButtonBordered, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imagePushButtonBordered, naMakePos(left1, curPosY));
 
-  con->imagePushButtonBorderedDisabled = naNewImageButton(getIconImage(), naMakeSize(buttonWidth, 25), NA_BUTTON_BORDERED | NA_BUTTON_PUSH);
+  con->imagePushButtonBorderedDisabled = naNewImagePushButton(getIconImage(), naMakeSize(buttonWidth, 25), NA_TRUE);
   naSetButtonEnabled(con->imagePushButtonBorderedDisabled, NA_FALSE);
   naAddUIReaction(con->imagePushButtonBorderedDisabled, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imagePushButtonBorderedDisabled, naMakePos(left2, curPosY));
@@ -176,11 +177,11 @@ ButtonController* createButtonController(){
   con->imagePushButtonBorderlessLabel = naNewLabel("Borderless Image Push", labelWidth);
   naAddSpaceChild(windowSpace, con->imagePushButtonBorderlessLabel, naMakePos(20, curPosY));
 
-  con->imagePushButtonBorderless = naNewImageButton(getIconImage(), naMakeSize(buttonWidth, 25), NA_BUTTON_BORDERLESS | NA_BUTTON_PUSH);
+  con->imagePushButtonBorderless = naNewImagePushButton(getIconImage(), naMakeSize(buttonWidth, 25), NA_FALSE);
   naAddUIReaction(con->imagePushButtonBorderless, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imagePushButtonBorderless, naMakePos(left1, curPosY));
 
-  con->imagePushButtonBorderlessDisabled = naNewImageButton(getIconImage(), naMakeSize(buttonWidth, 25), NA_BUTTON_BORDERLESS | NA_BUTTON_PUSH);
+  con->imagePushButtonBorderlessDisabled = naNewImagePushButton(getIconImage(), naMakeSize(buttonWidth, 25), NA_FALSE);
   naSetButtonEnabled(con->imagePushButtonBorderlessDisabled, NA_FALSE);
   naAddUIReaction(con->imagePushButtonBorderlessDisabled, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imagePushButtonBorderlessDisabled, naMakePos(left2, curPosY));
@@ -190,16 +191,16 @@ ButtonController* createButtonController(){
   con->imageStateButtonBorderedLabel = naNewLabel("Bordered Image Two States", labelWidth);
   naAddSpaceChild(windowSpace, con->imageStateButtonBorderedLabel, naMakePos(20, curPosY + 15));
 
-  con->imageStateButtonBordered = naNewImageButton(getState1Image(), naMakeSize(buttonWidth, buttonHeight), NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL);
+  con->imageStateButtonBordered = naNewImageStateButton(getState1Image(), getState2Image(), naMakeSize(buttonWidth, buttonHeight), NA_TRUE);
   naAddUIReaction(con->imageStateButtonBordered, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imageStateButtonBordered, naMakePos(left1, curPosY));
 
-  con->imageStateButtonBorderedDisabled1 = naNewImageButton(getState1Image(), naMakeSize(buttonWidth / 2, buttonHeight), NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL);
+  con->imageStateButtonBorderedDisabled1 = naNewImageStateButton(getState1Image(), NA_NULL, naMakeSize(buttonWidth / 2, buttonHeight), NA_TRUE);
   naSetButtonEnabled(con->imageStateButtonBorderedDisabled1, NA_FALSE);
   naAddUIReaction(con->imageStateButtonBorderedDisabled1, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imageStateButtonBorderedDisabled1, naMakePos(left2, curPosY));
 
-  con->imageStateButtonBorderedDisabled2 = naNewImageButton(getState2Image(), naMakeSize(buttonWidth / 2, buttonHeight), NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL);
+  con->imageStateButtonBorderedDisabled2 = naNewImageStateButton(NA_NULL, getState2Image(), naMakeSize(buttonWidth / 2, buttonHeight), NA_TRUE);
   naSetButtonState(con->imageStateButtonBorderedDisabled2, NA_TRUE);
   naSetButtonEnabled(con->imageStateButtonBorderedDisabled2, NA_FALSE);
   naAddUIReaction(con->imageStateButtonBorderedDisabled2, NA_UI_COMMAND_PRESSED, buttonPressed, con);
@@ -210,16 +211,17 @@ ButtonController* createButtonController(){
   con->imageStateButtonBorderlessLabel = naNewLabel("Borderless Image Two states", labelWidth);
   naAddSpaceChild(windowSpace, con->imageStateButtonBorderlessLabel, naMakePos(20, curPosY + 15));
 
-  con->imageStateButtonBorderless = naNewImageButton(getState1Image(), naMakeSize(buttonWidth, buttonHeight), NA_BUTTON_BORDERLESS | NA_BUTTON_STATEFUL);
+  con->imageStateButtonBorderless = naNewImageStateButton(getState1Image(), getState2Image(), naMakeSize(buttonWidth, buttonHeight), NA_FALSE);
   naAddUIReaction(con->imageStateButtonBorderless, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imageStateButtonBorderless, naMakePos(left1, curPosY));
 
-  con->imageStateButtonBorderlessDisabled1 = naNewImageButton(getState1Image(), naMakeSize(buttonWidth / 2, buttonHeight), NA_BUTTON_BORDERLESS | NA_BUTTON_STATEFUL);
+  con->imageStateButtonBorderlessDisabled1 = naNewImageStateButton(getState1Image(), NA_NULL, naMakeSize(buttonWidth / 2, buttonHeight), NA_FALSE);
   naSetButtonEnabled(con->imageStateButtonBorderlessDisabled1, NA_FALSE);
   naAddUIReaction(con->imageStateButtonBorderlessDisabled1, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imageStateButtonBorderlessDisabled1, naMakePos(left2, curPosY));
 
-  con->imageStateButtonBorderlessDisabled2 = naNewImageButton(getState2Image(), naMakeSize(buttonWidth / 2, buttonHeight), NA_BUTTON_BORDERLESS | NA_BUTTON_STATEFUL);
+  con->imageStateButtonBorderlessDisabled2 = naNewImageStateButton(NA_NULL, getState2Image(), naMakeSize(buttonWidth / 2, buttonHeight), NA_FALSE);
+  naSetButtonState(con->imageStateButtonBorderlessDisabled2, NA_TRUE);
   naSetButtonEnabled(con->imageStateButtonBorderlessDisabled2, NA_FALSE);
   naAddUIReaction(con->imageStateButtonBorderlessDisabled2, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imageStateButtonBorderlessDisabled2, naMakePos(left2 + buttonWidth / 2, curPosY));
@@ -229,7 +231,7 @@ ButtonController* createButtonController(){
   con->submitLabel = naNewLabel("Submit (Enter)", labelWidth);
   naAddSpaceChild(windowSpace, con->submitLabel, naMakePos(20, curPosY));
 
-  con->textButtonSubmit = naNewTextButton("Ok", buttonWidth, NA_BUTTON_BORDERED | NA_BUTTON_PUSH);
+  con->textButtonSubmit = naNewTextPushButton("Ok", buttonWidth);
   naAddUIReaction(con->textButtonSubmit, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->textButtonSubmit, naMakePos(left1, curPosY));
   naSetButtonSubmit(con->textButtonSubmit, submitPressed, con);
@@ -239,7 +241,7 @@ ButtonController* createButtonController(){
   con->abortLabel = naNewLabel("Abort (Esc)", labelWidth);
   naAddSpaceChild(windowSpace, con->abortLabel, naMakePos(20, curPosY));
 
-  con->textButtonAbort = naNewTextButton("Cancel", buttonWidth, NA_BUTTON_BORDERED | NA_BUTTON_PUSH);
+  con->textButtonAbort = naNewTextPushButton("Cancel", buttonWidth);
   naAddUIReaction(con->textButtonAbort, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->textButtonAbort, naMakePos(left1, curPosY));
   naSetButtonAbort(con->textButtonAbort, abortPressed, con);
@@ -251,8 +253,6 @@ ButtonController* createButtonController(){
   naSetLabelFont(con->outputLabel, monospaceFont);
   naRelease(monospaceFont);
   naAddSpaceChild(windowSpace, con->outputLabel, naMakePos(20, curPosY));
-
-//  naShowWindow(con->window);
 
   return con;
 }
@@ -269,21 +269,6 @@ void showButtonController(ButtonController* con){
   naShowWindow(con->window);
 }
 
-
-
-void updateButtonController(ButtonController* con){
-  NABool state;
-
-  state = naGetButtonState(con->textStateButton);
-  naSetButtonText(con->textStateButton, state ? "On" : "Off");
-
-  state = naGetButtonState(con->imageStateButtonBordered);
-  naSetButtonImage(con->imageStateButtonBordered, state ? getState2Image() : getState1Image());
-
-  state = naGetButtonState(con->imageStateButtonBorderless);
-  naSetButtonImage(con->imageStateButtonBorderless, state ? getState2Image() : getState1Image());
-
-}
 
 
 // This is free and unencumbered software released into the public domain.

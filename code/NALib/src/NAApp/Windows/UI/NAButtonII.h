@@ -205,13 +205,10 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
 
 
-NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 flags){
+NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
-  #if NA_DEBUG
-    if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS))
-      naError("Borderless Text buttons should not be used as they can not be distinguished.");
-  #endif
+  uint32 flags = NA_BUTTON_PUSH | NA_BUTTON_BORDERED;
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
@@ -239,13 +236,10 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  na_InitButton((NAButton*)winapiButton, nativePtr, NA_NULL, flags);
+  na_InitButton((NAButton*)winapiButton, nativePtr, text, NA_NULL, NA_NULL, NA_NULL, flags);
   winapiButton->state = 0;
-  #if NA_DEBUG
-    if(naGetFlagu32(flags, NA_BUTTON_BORDERLESS))
-      naError("Borderless text buttons have undefined behaviour. Use Labels with reactions instead.");
-  #endif
-  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, naGetFlagu32(flags, NA_BUTTON_BORDERLESS)); 
+
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, !naGetFlagu32(flags, NA_BUTTON_BORDERED)); 
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATEFUL, naGetFlagu32(flags, NA_BUTTON_STATEFUL)); 
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_FALSE); 
 
@@ -254,7 +248,7 @@ NA_DEF NAButton* naNewTextButton(const NAUTF8Char* text, double width, uint32 fl
 
 
 
-NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 flags){
+NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size, NABool bordered){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
   
   #if NA_DEBUG
@@ -282,9 +276,9 @@ NA_DEF NAButton* naNewImageButton(const NAUIImage* uiImage, NASize size, uint32 
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  na_InitButton((NAButton*)winapiButton, nativePtr, uiImage, flags);
+  na_InitButton((NAButton*)winapiButton, nativePtr, NA_NULL, NA_NULL, uiImageOff, uiImageOn, flags);
   winapiButton->state = 0;
-  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, naGetFlagu32(flags, NA_BUTTON_BORDERLESS)); 
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, !naGetFlagu32(flags, NA_BUTTON_BORDERED)); 
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATEFUL, naGetFlagu32(flags, NA_BUTTON_STATEFUL)); 
   naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
 
@@ -368,7 +362,7 @@ NA_DEF NABool naIsButtonStateful(NAButton* button){
 
 
 
-NA_DEF NABool naIsButtonBorderless(NAButton* button){
+NA_DEF NABool naIsButtonBordered(NAButton* button){
   // todo
   return NA_FALSE;
 }

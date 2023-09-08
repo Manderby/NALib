@@ -281,14 +281,14 @@ ExperimentController* createExperimentController(){
 
   con->buttonLabel = naNewLabel("NAButton", descSize);
   naAddSpaceChild(con->contentSpace, con->buttonLabel, naMakePos(20, curPosY));
-  con->buttonButton = naNewTextButton("Show Buttons window...", 200, NA_BUTTON_PUSH | NA_BUTTON_BORDERED);
+  con->buttonButton = naNewTextPushButton("Show Buttons window...", 200);
   naAddSpaceChild(con->contentSpace, con->buttonButton, naMakePos(left, curPosY));
   naAddUIReaction(con->buttonButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
 
   curPosY -= 30;
   con->fontLabel = naNewLabel("NAFont", descSize);
   naAddSpaceChild(con->contentSpace, con->fontLabel, naMakePos(20, curPosY));
-  con->fontButton = naNewTextButton("Show Fonts window...", 200, NA_BUTTON_PUSH | NA_BUTTON_BORDERED);
+  con->fontButton = naNewTextPushButton("Show Fonts window...", 200);
   naAddSpaceChild(con->contentSpace, con->fontButton, naMakePos(left, curPosY));
   naAddUIReaction(con->fontButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
 
@@ -378,7 +378,7 @@ ExperimentController* createExperimentController(){
   curPosY -= 50;
   con->menuLabel = naNewLabel("NAMenu", descSize);
   naAddSpaceChild(con->contentSpace, con->menuLabel, naMakePos(20, curPosY));
-  con->menuButton = naNewTextButton("Push for Menu", 200, 0);
+  con->menuButton = naNewTextPushButton("Push for Menu", 200);
   naAddUIReaction(con->menuButton, NA_UI_COMMAND_PRESSED, menuButtonPressed, con);
   naAddSpaceChild(con->contentSpace, con->menuButton, naMakePos(left, curPosY));
   con->menu = naNewMenu();  
@@ -422,12 +422,12 @@ ExperimentController* createExperimentController(){
   naAddSpaceChild(con->contentSpace, con->subSpace, naMakePos(0, curPosY));
 
   curPosY -= 50;
-  con->converterButton = naNewTextButton("Example: Temp. Converter", 200, 0);
+  con->converterButton = naNewTextPushButton("Example: Temp. Converter", 200);
   naAddSpaceChild(con->contentSpace, con->converterButton, naMakePos(20, curPosY));
   naAddUIReaction(con->converterButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
 
   curPosY -= 30;
-  con->quitButton = naNewTextButton("Quit", 200, 0);
+  con->quitButton = naNewTextPushButton("Quit", 200);
   naAddSpaceChild(con->contentSpace, con->quitButton, naMakePos(20, curPosY));
   naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
 

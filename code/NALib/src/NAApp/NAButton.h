@@ -7,22 +7,30 @@
 
 
 
-#define NA_BUTTON_BORDERED   0x00
-#define NA_BUTTON_BORDERLESS 0x01
+#define NA_BUTTON_BORDERED   0x01
 #define NA_BUTTON_PUSH       0x00
 #define NA_BUTTON_STATEFUL   0x02
 
 // Creates either a text or image button.
 // The flags is a combination of the macros defined above.
-// Default height for TextButton is 24.
-NA_API NAButton* naNewTextButton(
+// Default height for TextPushButton is 24.
+// Default height for TextStateButton is 25.
+NA_API NAButton* naNewTextPushButton(
   const NAUTF8Char* text,
-  double width,
-  uint32 flags);
-NA_API NAButton* naNewImageButton(
+  double width);
+NA_API NAButton* naNewTextStateButton(
+  const NAUTF8Char* textOff,
+  const NAUTF8Char* textOn,
+  double width);
+NA_API NAButton* naNewImagePushButton(
   const NAUIImage* uiImage,
   NASize size,
-  uint32 flags);
+  NABool bordered);
+NA_API NAButton* naNewImageStateButton(
+  const NAUIImage* uiImageOff,
+  const NAUIImage* uiImageOn,
+  NASize size,
+  NABool bordered);
 
 // Changes the visibility or enabled state of the button.
 NA_API void naSetButtonVisible(NAButton* button, NABool visible);
@@ -33,14 +41,16 @@ NA_API void naSetButtonEnabled(NAButton* button, NABool enabled);
 NA_API NABool naGetButtonState(const NAButton* button);
 NA_API void naSetButtonState(NAButton* button, NABool state);
 
-// Sets the text or the image for the button.
+// Sets the text or the image for the button. Use Off function for push buttons.
 // Will emit an error if the button was not created with the matching type.
-NA_API void naSetButtonText(NAButton* button, const NAUTF8Char* text);
-NA_API void naSetButtonImage(NAButton* button, const NAUIImage* uiImage);
+NA_API void naSetButtonTextOff(NAButton* button, const NAUTF8Char* text);
+NA_API void naSetButtonTextOn(NAButton* button, const NAUTF8Char* text);
+NA_API void naSetButtonImageOff(NAButton* button, const NAUIImage* uiImage);
+NA_API void naSetButtonImageOn(NAButton* button, const NAUIImage* uiImage);
 
 // Returns the display flags of a button.
 NA_API NABool naIsButtonStateful(NAButton* button);
-NA_API NABool naIsButtonBorderless(NAButton* button);
+NA_API NABool naIsButtonBordered(NAButton* button);
 NA_API NABool naIsButtonTextual(NAButton* button);
 
 // Defines this button to be a submit or abort button.
