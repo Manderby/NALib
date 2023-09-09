@@ -112,7 +112,7 @@ NA_DEF void naSetRadioVisible(NARadio* radio, NABool visible){
 
 
 NA_DEF void naSetRadioEnabled(NARadio* radio, NABool enabled){
-  // todo
+  EnableWindow(naGetUIElementNativePtr(radio), enabled);
 }
 
 

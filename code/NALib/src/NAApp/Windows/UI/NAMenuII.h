@@ -86,7 +86,7 @@ NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement){
     winapiMenu->hMenu, 
     TPM_LEFTALIGN | TPM_RIGHTBUTTON/* | TPM_RETURNCMD*/, 
     (int)(pos.x * uiScale),
-    (int)(screenRect.size.height - pos.y * uiScale),
+    (int)((screenRect.size.height - pos.y) * uiScale),
     0,
     naGetUIElementNativePtr(parentUIElement),
     NULL);

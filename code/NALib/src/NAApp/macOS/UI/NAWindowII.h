@@ -307,7 +307,13 @@ NA_HDEF void na_ClearWindowMouseTracking(NAWindow* window){
 
 
 NA_DEF NARect naGetMainScreenRect(){
-  return naMakeRectWithNSRect([[NSScreen mainScreen] frame]);
+  CGFloat uiScale = [[NSScreen mainScreen] userSpaceScaleFactor];
+  NARect rect = naMakeRectWithNSRect([[NSScreen mainScreen] frame]);
+  rect.pos.x /= uiScale;
+  rect.pos.y /= uiScale;
+  rect.size.width /= uiScale;
+  rect.size.height /= uiScale;
+  return rect;
 }
 
 

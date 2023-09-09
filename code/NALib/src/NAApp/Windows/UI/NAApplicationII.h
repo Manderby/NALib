@@ -640,13 +640,17 @@ NA_DEF void naCenterMouse(void* uiElement){
   NARect screenframe;
   NAPos centerpos;
   spaceRect = naGetUIElementRectAbsolute(uiElement);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
   // todo: screen not defined
   screenframe = naGetMainScreenRect();
   centerpos.x = spaceRect.pos.x + spaceRect.size.width * .5f;
   centerpos.y = spaceRect.pos.y + spaceRect.size.height * .5f;
 
   na_SetMouseWarpedTo(centerpos);
-  SetCursorPos((int)centerpos.x, (int)screenframe.size.height - (int)centerpos.y);
+  SetCursorPos(
+    (int)(centerpos.x * uiScale),
+    (int)((screenframe.size.height - centerpos.y) * uiScale));
 }
 
 

@@ -64,7 +64,6 @@ NABool buttonPressed(NAReaction reaction){
     labelString = naNewStringWithFormat("Icon State Button Switched to %d", (int)state);
   }else if(reaction.uiElement == con->imagePushButton){
     labelString = naNewStringWithFormat("Image Push Button Pressed");
-    naSetButtonEnabled(con->imagePushButton, NA_FALSE);
   }else if(reaction.uiElement == con->imageStateButton){
     NABool state = naGetButtonState(reaction.uiElement);
     labelString = naNewStringWithFormat("Image State Button Switched to %d", (int)state);
@@ -231,7 +230,7 @@ ButtonController* createButtonController(){
   naAddSpaceChild(windowSpace, con->submitLabel, naMakePos(20, curPosY));
 
   con->textButtonSubmit = naNewTextPushButton("Ok", buttonWidth);
-  naAddUIReaction(con->textButtonSubmit, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+  naAddUIReaction(con->textButtonSubmit, NA_UI_COMMAND_PRESSED, submitPressed, con);
   naAddSpaceChild(windowSpace, con->textButtonSubmit, naMakePos(left1, curPosY));
   naSetButtonSubmit(con->textButtonSubmit, submitPressed, con);
 
@@ -241,7 +240,7 @@ ButtonController* createButtonController(){
   naAddSpaceChild(windowSpace, con->abortLabel, naMakePos(20, curPosY));
 
   con->textButtonAbort = naNewTextPushButton("Cancel", buttonWidth);
-  naAddUIReaction(con->textButtonAbort, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+  naAddUIReaction(con->textButtonAbort, NA_UI_COMMAND_PRESSED, abortPressed, con);
   naAddSpaceChild(windowSpace, con->textButtonAbort, naMakePos(left1, curPosY));
   naSetButtonAbort(con->textButtonAbort, abortPressed, con);
 

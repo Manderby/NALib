@@ -175,7 +175,7 @@ NA_DEF void na_DestructWINAPITextField(NAWINAPITextField* winapiTextField){
 
 
 NA_DEF void naSetTextFieldEnabled(NATextField* textField, NABool enabled){
-  // todo
+  EnableWindow(naGetUIElementNativePtr(textField), enabled);
 }
 
 

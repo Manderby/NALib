@@ -6,19 +6,18 @@
 
 NAWindow* window;
 NAImageSpace* imageSpace;
-NASlider* slider;
+NASlider* scaleSlider;
 NABabyImage* originalImage;
 
 NABool sliderEdited(NAReaction reaction){
-  double value = naGetSliderValue(slider);
+  double value = naGetSliderValue(scaleSlider);
   NASizei originalSize = naGetBabyImageSize(originalImage);
   NASizei newSize = naMakeSizeiE((NAInt)(value * originalSize.width), (NAInt)(value * originalSize.height));
   if(naIsSizeiUseful(newSize)){
     NABabyImage* scaledImage = naCreateBabyImageWithResize(originalImage, newSize);
     NAUIImage* uiImage = naCreateUIImage(
       scaledImage,
-      NA_NULL,
-      NA_UIIMAGE_RESOLUTION_1x,
+      NA_UIIMAGE_RESOLUTION_SCREEN_1x,
       NA_BLEND_ZERO);
     naSetImageSpaceImage(imageSpace, uiImage);
     naRelease(uiImage);
@@ -38,23 +37,22 @@ void postStartup(void* arg){
   
   NASpace* contentSpace = naGetWindowContentSpace(window);
   
-//  NAPNG* png = naNewPNGWithPath("res/marientaefer.png");
-  NAPNG* png = naNewPNGWithPath("res/motor.png");
+  NAPNG* png = naNewPNGWithPath("res/marientaefer.png");
+  //NAPNG* png = naNewPNGWithPath("res/motor.png");
   originalImage = naCreateBabyImageFromPNG(png);
   NAUIImage* uiImage = naCreateUIImage(
     originalImage,
-    NA_NULL,
-    NA_UIIMAGE_RESOLUTION_1x,
+    NA_UIIMAGE_RESOLUTION_SCREEN_1x,
     NA_BLEND_ZERO);
   
   imageSpace = naNewImageSpace(uiImage, naMakeSize(600, 400));
-  slider = naNewSlider(200);
-  naSetSliderRange(slider, 0., 2., 0);
-  naSetSliderValue(slider, 1.);
+  scaleSlider = naNewSlider(200);
+  naSetSliderRange(scaleSlider, 0., 2., 0);
+  naSetSliderValue(scaleSlider, 1.);
   
   naAddSpaceChild(contentSpace, imageSpace, naMakePos(10, 10));
-  naAddSpaceChild(contentSpace, slider, naMakePos(620, 200));
-  naAddUIReaction(slider, NA_UI_COMMAND_EDITED, sliderEdited, NA_NULL);
+  naAddSpaceChild(contentSpace, scaleSlider, naMakePos(620, 200));
+  naAddUIReaction(scaleSlider, NA_UI_COMMAND_EDITED, sliderEdited, NA_NULL);
   
   naShowWindow(window);
 }

@@ -120,7 +120,7 @@ NA_DEF void naSetCheckBoxVisible(NACheckBox* checkBox, NABool visible){
 
 
 NA_DEF void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled){
-  // todo
+  EnableWindow(naGetUIElementNativePtr(checkBox), enabled);
 }
 
 

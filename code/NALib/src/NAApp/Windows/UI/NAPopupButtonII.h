@@ -116,7 +116,7 @@ NA_DEF void naSetPopupButtonVisible(NAPopupButton* popupButton, NABool visible){
 }
 
 NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
-  // todo
+  EnableWindow(naGetUIElementNativePtr(popupButton), enabled);
 }
 
 NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, const NAMenuItem* atItem){

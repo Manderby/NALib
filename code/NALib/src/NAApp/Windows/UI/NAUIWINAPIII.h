@@ -698,12 +698,14 @@ NA_API NARect naGetMainScreenRect(){
   screen = MonitorFromPoint(origin, MONITOR_DEFAULTTOPRIMARY);
   screeninfo.cbSize = sizeof(MONITORINFO);
   GetMonitorInfo(screen, &screeninfo);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
   // The main monitor is by definition at (0,0) which in NALib is the bottom left corner.
-  NARect rect = {
-    {0, 0},
-    {(double)screeninfo.rcMonitor.right - (double)screeninfo.rcMonitor.left,
-    (double)screeninfo.rcMonitor.bottom - (double)screeninfo.rcMonitor.top}};
+  NARect rect = naMakeRectS(
+    0. / uiScale,
+    0. / uiScale,
+    ((double)screeninfo.rcMonitor.right - (double)screeninfo.rcMonitor.left) / uiScale,
+    ((double)screeninfo.rcMonitor.bottom - (double)screeninfo.rcMonitor.top) / uiScale);
   return rect;
 }
 
