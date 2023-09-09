@@ -47,7 +47,22 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
   #define NSAppKitVersionNumber11_0 2022
 #endif
 
-NA_HDEF double na_GetUIElementYOffset(NA_UIElement* elem){
+
+
+NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* elem){
+  if(naGetUIElementType(elem) == NA_UI_BUTTON){
+    // Bordered buttons on the newer systems are 5 units shorter than expected
+    // on the left and right. The width is already adapted in naNewButton.
+    if(naIsButtonBordered((const NAButton*)elem)){
+      return -5.;
+    }
+  }
+  return 0.;
+}
+
+
+
+NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem){
   // Line height is considered to be 25 for an optimal display. In this
   // function, the UI elements are shifted in Y direction such that text
   // always is displayed on a common baseline. The reference element is

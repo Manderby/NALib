@@ -620,19 +620,19 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage){
 
 
 
-NA_DEF NABool naIsButtonStateful(NAButton* button){
+NA_DEF NABool naIsButtonStateful(const NAButton* button){
   return naGetFlagu32(button->flags, NA_BUTTON_STATEFUL);
 }
 
 
 
-NA_DEF NABool naIsButtonBordered(NAButton* button){
+NA_DEF NABool naIsButtonBordered(const NAButton* button){
   return naGetFlagu32(button->flags, NA_BUTTON_BORDERED);
 }
 
 
 
-NA_DEF NABool naIsButtonTextual(NAButton* button){
+NA_DEF NABool naIsButtonTextual(const NAButton* button){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   return naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE);
 }

@@ -185,11 +185,12 @@ NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos
 
   NSView* childView = na_getNSViewOfChild(child);  
   
+  double offsetX = na_GetUIElementXOffset(child);
   double offsetY = na_GetUIElementYOffset(child);
-  
+   
   [nativeSpacePtr addSubview:childView];
   NSRect frame = [childView frame];
-  frame.origin = NSMakePoint((CGFloat)pos.x, (CGFloat)pos.y + offsetY);
+  frame.origin = NSMakePoint((CGFloat)pos.x + offsetX, (CGFloat)pos.y + offsetY);
   [childView setFrame: frame];
   
   na_AddSpaceChild(space, child);

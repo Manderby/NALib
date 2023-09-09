@@ -66,7 +66,7 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 
 
 
-NA_HDEF double na_GetUIElementYOffset(NA_UIElement* elem){
+NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem){
   // Line height is considered to be 25 for an optimal display. In this
   // function, the UI elements are shifted in Y direction such that text
   // always is displayed on a common baseline with 1x resolution. Higher
