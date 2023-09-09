@@ -276,12 +276,15 @@ NA_DEF NAButton* naNewIconPushButton(const NAUIImage* icon, double width){
 
 
 
-NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, double width){
+NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, const NAUIImage* icon2, double width){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
 
-  NAUIImage* icon2 = naRecreateUIImage(icon);
+  NAUIImage* secondaryIcon = NA_NULL;
+  if(!icon2){
+    secondaryIcon = naRecreateUIImage(icon);
+  }
 
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
@@ -294,10 +297,12 @@ NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, double width){
     NA_NULL,
     NA_NULL,
     icon,
-    icon2,
+    icon2 ? icon2 : secondaryIcon,
     flags);
     
-  naRelease(icon2);
+  if(secondaryIcon){
+    naRelease(secondaryIcon);
+  }
   
   [nativePtr updateImages];
 
@@ -306,10 +311,10 @@ NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, double width){
 
 
 
-NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size, NABool bordered){
+NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
-  uint32 flags = (bordered) ? NA_BUTTON_BORDERED : 0;
+  uint32 flags = 0;
 
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
@@ -332,12 +337,10 @@ NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size, NAB
 
 
 
-NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage* uiImage2, NASize size, NABool bordered){
+NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage* uiImage2, NASize size){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   uint32 flags = NA_BUTTON_STATEFUL;
-  if(bordered)
-    flags |= NA_BUTTON_BORDERED;
 
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
