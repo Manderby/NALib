@@ -410,40 +410,6 @@ NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window){
 
 
 
-NA_HDEF NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window){
-  NARect rect;
-  NARect screenRect;
-  POINT testPoint = {0, 0};
-  RECT clientRect;
-  RECT windowRect;
-  LONG leftdiff;
-  LONG topdiff;
-  LONG rightdiff;
-  LONG bottomdiff;
-
-  NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
-
-  GetWindowRect(window->nativePtr, &windowRect);
-  screenRect = naGetMainScreenRect();
-
-  GetClientRect(naGetUIElementNativePtrConst(window), &clientRect);
-  GetWindowRect(naGetUIElementNativePtrConst(window), &windowRect);
-  ClientToScreen(naGetUIElementNativePtrConst(window), &testPoint);
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-
-  leftdiff = (testPoint.x - windowRect.left);
-  topdiff =  (testPoint.y - windowRect.top);
-  rightdiff =  ((windowRect.right - windowRect.left) - (clientRect.right - clientRect.left) - leftdiff);
-  bottomdiff =  ((windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top) - topdiff);
-
-  rect.pos.x = windowRect.left / uiScale;
-  rect.pos.y = screenRect.size.height - windowRect.bottom / uiScale;
-  rect.size.width = winapiWindow->rect.size.width + (double)leftdiff + (double)rightdiff / uiScale;
-  rect.size.height = winapiWindow->rect.size.height + (double)topdiff + (double)bottomdiff / uiScale;
-
-  return rect;
-}
-
 NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window)
 {
   const NAWINAPIWindow* winapiWindow = (const NAWINAPIWindow*)window;

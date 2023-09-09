@@ -215,7 +215,8 @@ NA_HAPI void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
 NA_HAPI void na_ClearUIElement(NA_UIElement* uiElement);
 
 NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
-NA_HAPI double na_GetUIElementYOffset(NA_UIElement* elem);
+NA_HAPI double na_GetUIElementXOffset(const NA_UIElement* elem);
+NA_HAPI double na_GetUIElementYOffset(const NA_UIElement* elem);
 
 NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
 NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
@@ -369,7 +370,6 @@ NA_HAPI void na_SetTextFieldRect(NA_UIElement* textField, NARect rect);
 NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
 NA_HAPI void na_ClearWindow(NAWindow* window);
 NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
-NA_HAPI NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window);
 NA_HAPI void na_SetWindowRect(NA_UIElement* window, NARect rect);
