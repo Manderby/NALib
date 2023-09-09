@@ -66,6 +66,7 @@ NA_DEF void naFillu8WithBabyColor(uint8* outColor, const NABabyColor inColor, NA
     na_LimitColorComponentu8(&outColor[1], tmpcolor[1]);
     na_LimitColorComponentu8(&outColor[2], tmpcolor[0]);
     na_LimitColorComponentu8(&outColor[3], 0);
+    break;
   case NA_COLOR_BUFFER_BGRA:
     tmpcolor[3] = inColor[3];
     na_LimitColorComponentu8(&outColor[0], tmpcolor[2]);

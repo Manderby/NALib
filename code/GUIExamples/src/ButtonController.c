@@ -64,6 +64,7 @@ NABool buttonPressed(NAReaction reaction){
     labelString = naNewStringWithFormat("Icon State Button Switched to %d", (int)state);
   }else if(reaction.uiElement == con->imagePushButton){
     labelString = naNewStringWithFormat("Image Push Button Pressed");
+    naSetButtonEnabled(con->imagePushButton, NA_FALSE);
   }else if(reaction.uiElement == con->imageStateButton){
     NABool state = naGetButtonState(reaction.uiElement);
     labelString = naNewStringWithFormat("Image State Button Switched to %d", (int)state);
