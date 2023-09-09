@@ -201,15 +201,20 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width){
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
 
   uint32 flags = NA_BUTTON_BORDERED;
-
+  
+  double widthSupplement = 0.;
+  if(isAtLeastMacOSVersion(11, 0)){
   // On newer systems bordered buttons are 5 units shorter than expected on
   // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
   // move the button 5 units to the left.
+    widthSupplement = 10.;
+  }
+  
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
-    frame:naMakeNSRectWithSize(naMakeSize(width + 10, 24))];
+    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, 24))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -232,14 +237,19 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
 
+  double widthSupplement = 0.;
+  if(isAtLeastMacOSVersion(11, 0)){
   // On newer systems bordered buttons are 5 units shorter than expected on
   // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
   // move the button 5 units to the left.
+    widthSupplement = 10.;
+  }
+
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
-    frame:naMakeNSRectWithSize(naMakeSize(width + 10, 24))];
+    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, 24))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -261,14 +271,19 @@ NA_DEF NAButton* naNewIconPushButton(const NAUIImage* icon, double width){
   
   uint32 flags = NA_BUTTON_BORDERED;
 
+  double widthSupplement = 0.;
+  if(isAtLeastMacOSVersion(11, 0)){
   // On newer systems bordered buttons are 5 units shorter than expected on
   // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
   // move the button 5 units to the left.
+    widthSupplement = 10.;
+  }
+
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
-    frame:naMakeNSRectWithSize(naMakeSize(width + 10, 24))];
+    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, 24))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -295,14 +310,19 @@ NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, const NAUIImage* ic
     secondaryIcon = naRecreateUIImage(icon);
   }
 
+  double widthSupplement = 0.;
+  if(isAtLeastMacOSVersion(11, 0)){
   // On newer systems bordered buttons are 5 units shorter than expected on
   // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
   // move the button 5 units to the left.
+    widthSupplement = 10.;
+  }
+
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
-    frame:naMakeNSRectWithSize(naMakeSize(width + 10, 24))];
+    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, 24))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),

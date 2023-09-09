@@ -246,6 +246,7 @@ NA_API NSColor* naGetLabelColor(void);
 NA_API NSColor* naGetLinkColor(void);
 NA_API NSColor* naGetAccentColor(void);
 
+NA_API NABool isAtLeastMacOSVersion(int major, int minor);
 
 
 #ifdef __cplusplus

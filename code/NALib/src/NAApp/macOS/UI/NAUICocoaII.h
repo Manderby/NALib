@@ -51,10 +51,13 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 
 NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* elem){
   if(naGetUIElementType(elem) == NA_UI_BUTTON){
-    // Bordered buttons on the newer systems are 5 units shorter than expected
-    // on the left and right. The width is already adapted in naNewButton.
     if(naIsButtonBordered((const NAButton*)elem)){
-      return -5.;
+      if(isAtLeastMacOSVersion(11, 0)){
+        // On newer systems bordered buttons are 5 units shorter than expected on
+        // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
+        // move the button 5 units to the left.
+        return -5.;
+      }
     }
   }
   return 0.;

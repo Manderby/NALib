@@ -127,6 +127,17 @@ NA_DEF NSColor* naGetAccentColor(){
   return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
 
+NA_DEF NABool isAtLeastMacOSVersion(int major, int minor){
+  #if NA_DEBUG
+    NSOperatingSystemVersion curVer = [[NSProcessInfo processInfo] operatingSystemVersion];
+    NA_UNUSED(curVer);
+  #endif
+  
+  NSOperatingSystemVersion ver = {major, minor, 0};
+  return [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:ver];
+}
+
+
 #if defined __clang_major__
   #pragma clang diagnostic pop
 #endif
