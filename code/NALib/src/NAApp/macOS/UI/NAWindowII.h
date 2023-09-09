@@ -48,6 +48,11 @@
   return (BOOL)shouldClose;
 }
 
+- (NARect)getContentRect{
+  NSRect contentRect = [NSWindow contentRectForFrameRect:[super frame] styleMask:[self styleMask]];
+  return naMakeRectWithNSRect(contentRect);
+}
+
 - (void)setContentRect:(NARect)rect{
   NSRect frame = [NSWindow frameRectForContentRect:naMakeNSRectWithRect(rect) styleMask:[self styleMask]];
   [super setFrame:frame display:YES];
@@ -215,16 +220,6 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
 
 
 
-//NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
-//  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
-//  NARect currect = naGetUIElementRect(window);
-//  if(!naEqualRect(currect, rect)){
-//    [nativePtr setContentRect:rect];
-//  }
-//}
-
-
-
 NA_DEF double naGetWindowUIResolution(const NAWindow* window){
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   CGFloat uiScale = naGetWindowBackingScaleFactor(nativePtr);
@@ -264,20 +259,6 @@ NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window){
 
 
 
-NA_HDEF NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window){
-  NARect rect;
-  NSRect windowFrame;
-  naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
-  windowFrame = [nativePtr frame];
-  rect.pos.x = windowFrame.origin.x;
-  rect.pos.y = windowFrame.origin.y;
-  rect.size.width = windowFrame.size.width;
-  rect.size.height = windowFrame.size.height;
-  return rect;
-}
-
-
-
 NA_HDEF void na_RenewWindowMouseTracking(NAWindow* window){
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   [nativePtr renewMouseTracking];
@@ -307,7 +288,7 @@ NA_HDEF void na_ClearWindowMouseTracking(NAWindow* window){
 
 
 NA_DEF NARect naGetMainScreenRect(){
-  CGFloat uiScale = [[NSScreen mainScreen] userSpaceScaleFactor];
+  CGFloat uiScale = [[NSScreen mainScreen] backingScaleFactor];
   NARect rect = naMakeRectWithNSRect([[NSScreen mainScreen] frame]);
   rect.pos.x /= uiScale;
   rect.pos.y /= uiScale;
@@ -385,7 +366,7 @@ NA_DEF void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts){
 
 NA_HDEF NARect na_GetWindowRect(const NA_UIElement* window){
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
-  return naMakeRectWithNSRect([nativePtr frame]);
+  return [nativePtr getContentRect];
 }
 
 NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect){
@@ -393,6 +374,15 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect){
   [nativePtr setContentRect:rect];
 }
 
+NA_DEF NARect naGetWindowOuterRect(const NAWindow* window){
+  naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
+  return naMakeRectWithNSRect([nativePtr frame]);
+}
+
+NA_DEF void naSetWindowOuterRect(NAWindow* window, NARect rect){
+  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect) display:YES];
+}
 
 // This is free and unencumbered software released into the public domain.
 
