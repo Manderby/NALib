@@ -26,13 +26,15 @@ NA_HAPI const NABabyImage* na_GetUIImageBabyImage(
   const NAUIImage* uiImage,
   double resolution,
   NAUIImageSkin skin,
-  NAUIImageInteraction interaction);
+  NAUIImageInteraction interaction,
+  NABool secondaryState);
 
 NA_HAPI void* na_GetUIImageNativeImage(
   const NAUIImage* uiImage,
   double resolution,
   NAUIImageSkin skin,
-  NAUIImageInteraction interaction);
+  NAUIImageInteraction interaction,
+  NABool secondaryState);
 
 
 

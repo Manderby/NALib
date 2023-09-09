@@ -18,6 +18,12 @@ NA_API NAButton* naNewTextStateButton(
   const NAUTF8Char* text,
   const NAUTF8Char* text2,
   double width);
+NA_API NAButton* naNewIconPushButton(
+  const NAUIImage* icon,
+  double width);
+NA_API NAButton* naNewIconStateButton(
+  const NAUIImage* icon,
+  double width);
 NA_API NAButton* naNewImagePushButton(
   const NAUIImage* uiImage,
   NASize size,

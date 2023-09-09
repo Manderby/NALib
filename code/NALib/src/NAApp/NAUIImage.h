@@ -68,6 +68,11 @@ NA_API NAUIImage* naCreateUIImage(
   double baseResolution,
   NABlendMode tintMode);
 
+// Creates a new uiImage with the primary subimage, resolution and tintMode
+// of the given one. All other subimages (different resolutions, pressed,
+// hover, ...) will be computed anew.
+NA_API NAUIImage* naRecreateUIImage(const NAUIImage* uiImage);
+
 // Returns the size of the 1x representation.
 NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
 

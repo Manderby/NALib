@@ -53,39 +53,39 @@ void poststartup(void* arg){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
-  NABabyImage* originalImageIcon = naCreateBabyImageFromPNG(pngIcon);
+  NABabyImage* originalIconImage = naCreateBabyImageFromPNG(pngIcon);
   app->iconImage = naCreateUIImage(
-    originalImageIcon,
+    originalIconImage,
     NA_UIIMAGE_RESOLUTION_SCREEN_2x,
     NA_BLEND_BLACK_GREEN);
-  naReleaseBabyImage(originalImageIcon);
   naDelete(pngIcon);
+  naReleaseBabyImage(originalIconImage);
 
   NAPNG* png1 = naNewPNGWithPath("res/cat.png");
   if(!naIsSizeiUseful(naGetPNGSize(png1))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
-  NABabyImage* originalImage1 = naCreateBabyImageFromPNG(png1);
+  NABabyImage* originalState1Image = naCreateBabyImageFromPNG(png1);
   app->state1Image = naCreateUIImage(
-    originalImage1,
+    originalState1Image,
     NA_UIIMAGE_RESOLUTION_SCREEN_2x,
     NA_BLEND_ZERO);
-  naReleaseBabyImage(originalImage1);
   naDelete(png1);
+  naReleaseBabyImage(originalState1Image);
 
   NAPNG* png2 = naNewPNGWithPath("res/cat2.png");
   if(!naIsSizeiUseful(naGetPNGSize(png2))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
-  NABabyImage* originalImage2 = naCreateBabyImageFromPNG(png2);
+  NABabyImage* originalState2Image = naCreateBabyImageFromPNG(png2);
   app->state2Image = naCreateUIImage(
-    originalImage2,
+    originalState2Image,
     NA_UIIMAGE_RESOLUTION_SCREEN_2x,
     NA_BLEND_ZERO);
-  naReleaseBabyImage(originalImage2);
   naDelete(png2);
+  naReleaseBabyImage(originalState2Image);
 
   // Create the controllers
   app->experimentController = createExperimentController();
@@ -101,6 +101,9 @@ void clearApplication(void){
   clearExperimentController(app->experimentController);
   clearFontController(app->fontController);
   clearButtonController(app->buttonController);
+  naRelease(app->iconImage);
+  naRelease(app->state1Image);
+  naRelease(app->state2Image);
   naFree(app);
 }
 

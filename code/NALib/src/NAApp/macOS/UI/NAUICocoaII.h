@@ -497,7 +497,11 @@ NA_DEF void naHideMouseUntilMovement(NABool hide){
 
 
 NA_DEF NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot){
-  NSImage* nsImage = naCreateResolutionIndependentNativeImage(NA_NULL, uiImage, NA_UIIMAGE_INTERACTION_NONE);
+  NSImage* nsImage = na_CreateResolutionIndependentNativeImage(
+    NA_NULL,
+    uiImage,
+    NA_UIIMAGE_INTERACTION_NONE,
+    NA_FALSE);
   return NA_COCOA_PTR_OBJC_TO_C([[NSCursor alloc] initWithImage:nsImage hotSpot:naMakeNSPointWithPos(hotspot)]);
 }
 

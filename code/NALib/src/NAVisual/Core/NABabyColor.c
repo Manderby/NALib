@@ -17,6 +17,13 @@ NA_HIDEF void na_LinearizeRGB(float* outColor, const float* inColor){
 
 
 
+// Inverts the color
+NA_DEF void naInvertBabyColor(NABabyColor color){
+  color[0] = naLinearizeColorValue(1.f - naUnlinearizeColorValue(color[0]));
+  color[1] = naLinearizeColorValue(1.f - naUnlinearizeColorValue(color[1]));
+  color[2] = naLinearizeColorValue(1.f - naUnlinearizeColorValue(color[2]));
+}
+
 NA_HIDEF void na_LimitColorComponentu8(uint8* outvalue, const float invalue){
   if(invalue < 0.f){
     *outvalue = 0;

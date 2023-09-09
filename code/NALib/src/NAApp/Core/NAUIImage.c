@@ -27,7 +27,8 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
   const NAUIImage* uiImage,
   double resolution,
   NAUIImageSkin skin,
-  NAUIImageInteraction interaction)
+  NAUIImageInteraction interaction,
+  NABool secondaryState)
 {
 
   NAListIterator listIter = naMakeListAccessor(&uiImage->subImages);
@@ -49,7 +50,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
     switch(interaction){
     case NA_UIIMAGE_INTERACTION_PRESSED:
       {
-        const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
+        const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
         NABabyColor accentColor;
         naFillDefaultAccentColorWithSkin(accentColor, skin);
         NABabyImage* newImage = naCreateBabyImageWithTint(
@@ -57,13 +58,18 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
           accentColor,
           NA_BLEND_OPAQUE,
           (mutableUIImage->tintMode == NA_BLEND_ZERO) ? .45f : 1.f);
-        newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
+        newSubImage = na_AddUISubImage(
+          mutableUIImage,
+          newImage,
+          resolution,
+          skin,
+          interaction);
         naReleaseBabyImage(newImage);
       }
       break;
     case NA_UIIMAGE_INTERACTION_HOVER:
       {
-        const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
+        const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
         
         NABabyColor hoverColor;
         naFillDefaultAccentColorWithSkin(hoverColor, skin);
@@ -73,20 +79,28 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
           NA_BLEND_OPAQUE,
           (mutableUIImage->tintMode == NA_BLEND_ZERO) ? .15f : .5f);
 
-NA_HDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, const float* top, NABlendMode mode, float blend, NABool baseIsImage, NABool topIsImage);
-
-        newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
+        newSubImage = na_AddUISubImage(
+          mutableUIImage,
+          newImage,
+          resolution,
+          skin,
+          interaction);
         naReleaseBabyImage(newImage);
       }
       break;
     case NA_UIIMAGE_INTERACTION_DISABLED:
       {
-        const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
+        const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
         #if NA_OS == NA_OS_MAC_OS_X
           newSubImage = originalImage;
         #else
           NABabyImage* newImage = naCreateBabyImageWithBlend(NA_NULL, originalImage->image, NA_BLEND_OVERLAY, .5f);
-          newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, interaction);
+          newSubImage = na_AddUISubImage(
+            mutableUIImage,
+            newImage,
+            resolution,
+            skin,
+            interaction);
           naReleaseBabyImage(newImage);
         #endif
       }
@@ -98,20 +112,33 @@ NA_HDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, 
   }else if(skin != NA_UIIMAGE_SKIN_PLAIN){
     NABabyColor tintColor;
     naFillDefaultTextColorWithSkin(tintColor, skin);
-    const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE);
+    if(secondaryState && naGetSkinForCurrentAppearance() != NA_UIIMAGE_SKIN_DARK){
+      naInvertBabyColor(tintColor);
+    }
+    const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
     NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, tintColor, uiImage->tintMode, 1.f);
-    newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE);
+    newSubImage = na_AddUISubImage(
+      mutableUIImage,
+      newImage,
+      resolution,
+      skin,
+      NA_UIIMAGE_INTERACTION_NONE);
     naReleaseBabyImage(newImage);
 
   // If the resolution does not match, we build a corresponding one.
   }else{
     double baseResolution = na_GetUIImageBaseResolution(mutableUIImage);
-    const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, baseResolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE);
+    const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, baseResolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
     NASizei size = naGetBabyImageSize(originalImage->image);
     size.width = (NAInt)((double)size.width * resolution / baseResolution);
     size.height = (NAInt)((double)size.height * resolution / baseResolution);
     NABabyImage* newImage = naCreateBabyImageWithResize(originalImage->image, size);
-    newSubImage = na_AddUISubImage(mutableUIImage, newImage, resolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE);
+    newSubImage = na_AddUISubImage(
+      mutableUIImage,
+      newImage,
+      resolution,
+      NA_UIIMAGE_SKIN_PLAIN,
+      NA_UIIMAGE_INTERACTION_NONE);
     naReleaseBabyImage(newImage);
   }
   
@@ -120,17 +147,17 @@ NA_HDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, 
 
 
 
-NA_HDEF const NABabyImage* na_GetUIImageBabyImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction){
+NA_HDEF const NABabyImage* na_GetUIImageBabyImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction, NABool secondaryState){
   // Let the following function do the hard work.
-  const NA_UISubImage* subImage = na_GetUISubImage(uiImage, resolution, skin, interaction);
+  const NA_UISubImage* subImage = na_GetUISubImage(uiImage, resolution, skin, interaction, secondaryState);
   return subImage->image;
 }
 
 
 
-NA_HDEF void* na_GetUIImageNativeImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction){
+NA_HDEF void* na_GetUIImageNativeImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction, NABool secondaryState){
   // Let the following function do the hard work.
-  const NA_UISubImage* subImage = na_GetUISubImage(uiImage, resolution, skin, interaction);
+  const NA_UISubImage* subImage = na_GetUISubImage(uiImage, resolution, skin, interaction, secondaryState);
   return subImage->nativeImage;
 }
 
@@ -146,9 +173,34 @@ NA_DEF NAUIImage* naCreateUIImage(
   naInitList(&uiImage->subImages);
   uiImage->tintMode = tintMode;
   
-  na_AddUISubImage(uiImage, baseImage, baseResolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE);
+  na_AddUISubImage(
+    uiImage,
+    baseImage,
+    baseResolution,
+    NA_UIIMAGE_SKIN_PLAIN,
+    NA_UIIMAGE_INTERACTION_NONE);
   
   return uiImage;
+}
+
+
+
+NA_DEF NAUIImage* naRecreateUIImage(const NAUIImage* uiImage){
+  NAUIImage* newUIImage = naCreate(NAUIImage);
+  
+  naInitList(&newUIImage->subImages);
+  newUIImage->tintMode = uiImage->tintMode;
+  
+  const NA_UISubImage* subImage = naGetListFirstConst(&uiImage->subImages);
+  
+  na_AddUISubImage(
+    newUIImage,
+    naRetainBabyImage(subImage->image),
+    subImage->resolution,
+    NA_UIIMAGE_SKIN_PLAIN,
+    NA_UIIMAGE_INTERACTION_NONE);
+  
+  return newUIImage;
 }
 
 

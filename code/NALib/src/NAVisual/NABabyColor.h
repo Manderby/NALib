@@ -52,10 +52,12 @@ typedef enum{
   NA_COLOR_BUFFER_BGRA
 } NAColorBufferType;
 
-
 // Linearizes or unlinearizes a single float value using a baby transformation.
 NA_IAPI float naLinearizeColorValue(float value);
 NA_IAPI float naUnlinearizeColorValue(float value);
+
+// Inverts the color
+NA_API void naInvertBabyColor(NABabyColor color);
 
 // Converts between BabyColor and an uint8 representation.
 // When premultiplied is set to NA_TRUE, the uint8 variant is assumed to be
@@ -68,7 +70,6 @@ NA_API void naFillBabyColorWithu8(
   NABabyColor       outColor,
   const uint8*      inColor,
   NAColorBufferType bufferType);
-
 
 
 // This factor is nice and easy to remember. There is no greater mathematical

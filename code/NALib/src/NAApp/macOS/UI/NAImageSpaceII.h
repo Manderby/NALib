@@ -15,10 +15,11 @@
 }
 
 - (void) setUIImage:(NAUIImage*)uiImage{
-  NSImage* image = naCreateResolutionIndependentNativeImage(
+  NSImage* image = na_CreateResolutionIndependentNativeImage(
     self,
     uiImage,
-    NA_UIIMAGE_INTERACTION_NONE);
+    NA_UIIMAGE_INTERACTION_NONE,
+    NA_FALSE);
   [self setImage:image];
 }
 
