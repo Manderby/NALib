@@ -11,9 +11,11 @@
 
 NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  const NAWindow* windowConst;
-  NAWindow* windowMutable;
+  NAWINAPIWindow* windowMutable;
   NABool shouldClose;
+  NARect screenRect;
+  double uiScale;
+  double oldHeight;
 
   switch(message){
   case WM_SHOWWINDOW:
@@ -26,31 +28,42 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     // wParam: Unused
     // lParam: (int)(short)LOWORD: x coordinate, (int)(short)HIWORD: y coordinate
     // result: 0 when handeled.
-	windowConst = naGetUIElementWindowConst(uiElement);
+    windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
+    screenRect = naGetMainScreenRect();
+    uiScale = naGetUIElementResolutionFactor(NA_NULL);
+    windowMutable->rect.pos.x = (double)LOWORD(lParam) / uiScale;
+    windowMutable->rect.pos.y = (screenRect.size.height - ((double)HIWORD(lParam) + windowMutable->rect.size.height * uiScale)) / uiScale;
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
     if (info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
-    na_RememberWindowPosition(windowConst);
+    na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
+    //printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);
+    //printf("size %f, %f\n", windowMutable->rect.size.width, windowMutable->rect.size.height);
     break;
 
   case WM_SIZE:
     // wParam: Type of resizing (maximize, minimize, ...)
     // lParam: LOWORD: width, HIWORD: height
     // result: 0 when handeled.
-	windowConst = naGetUIElementWindowConst(uiElement);
+    windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
+    uiScale = naGetUIElementResolutionFactor(NA_NULL);
+    oldHeight = windowMutable->rect.size.height;
+    windowMutable->rect.size.width = (double)LOWORD(lParam) / uiScale;
+    windowMutable->rect.size.height = (double)HIWORD(lParam) / uiScale;
+    windowMutable->rect.pos.y -= (windowMutable->rect.size.height - oldHeight);
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
     if (info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
-    na_RememberWindowPosition(windowConst);
+    na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
     break;
 
   case WM_CLOSE:
-    windowMutable = naGetUIElementWindow(uiElement);
-    naSetFlagu32(&(windowMutable->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
+    windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
+    naSetFlagu32(&(windowMutable->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES);
-    shouldClose = !naGetFlagu32(windowMutable->flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
-    naSetFlagu32(&(windowMutable->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
-    if(shouldClose){naCloseWindow(windowMutable);}
+    shouldClose = !naGetFlagu32(windowMutable->window.flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
+    naSetFlagu32(&(windowMutable->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
+    if(shouldClose){naCloseWindow(&windowMutable->window);}
     info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;

@@ -403,7 +403,7 @@ ExperimentController* createExperimentController(){
   curPosY -= 30;
   con->imageSpaceLabel = naNewLabel("NAImageSpace", descSize);
   naAddSpaceChild(con->contentSpace, con->imageSpaceLabel, naMakePos(20, curPosY));
-  con->imageSpace = naNewImageSpace(getState1Image(), naMakeSize(200, 22));
+  con->imageSpace = naNewImageSpace(getIconImage(), naMakeSize(200, 22));
   naAddSpaceChild(con->contentSpace, con->imageSpace, naMakePos(left, curPosY));
 
   curPosY -= 30;

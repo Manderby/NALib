@@ -200,18 +200,18 @@ NA_DEF NASpace* naGetUIElementParentSpace(void* uiElement){
 
 NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement){
   NARect rect;
-  NA_UIElement* elem = (NA_UIElement*)uiElement;
+  const NA_UIElement* elem = (const NA_UIElement*)uiElement;
 
   if(!elem)
     return naMakeRectZero();
 
-  rect = naGetUIElementRect(uiElement);
-  uiElement = naGetUIElementParentConst(uiElement);
-  while(uiElement){
-    NARect curRect = naGetUIElementRect(uiElement);
+  rect = naGetUIElementRect(elem);
+  elem = naGetUIElementParentConst(elem);
+  while(elem){
+    NARect curRect = naGetUIElementRect(elem);
     rect.pos.x += curRect.pos.x;
     rect.pos.y += curRect.pos.y;
-    uiElement = naGetUIElementParentConst(uiElement);
+    elem = naGetUIElementParentConst(elem);
   }
 
   return rect;

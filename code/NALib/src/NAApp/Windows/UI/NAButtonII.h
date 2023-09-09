@@ -45,8 +45,6 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case BM_SETSTATE:
   case BM_SETCHECK:
   case BM_GETSTATE:
-  case WM_ENABLE:
-  case WM_SETTEXT:
     break;
 
   // Menu messages
@@ -59,6 +57,9 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_MENUSELECT:
   case WM_UNINITMENUPOPUP:
   case WM_EXITMENULOOP:
+  case WM_ENABLE:
+  case WM_SETTEXT:
+  case WM_UPDATEUISTATE:
     break;
 
   case WM_SETFOCUS:
@@ -217,14 +218,15 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     LRESULT result = SendMessage(naGetUIElementNativePtr(winapiButton), BM_GETSTATE, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
     NABool pushed = (result & BST_PUSHED) == BST_PUSHED;
 
+    NABool secondaryState = na_GetButtonState(winapiButton);
     if(IsWindowEnabled(naGetUIElementNativePtr(winapiButton))){
       if(pushed){
-        foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_PRESSED);
+        foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_PRESSED, secondaryState);
       }else{
-        foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE);
+        foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE, secondaryState);
       }
     }else{
-      foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_DISABLED);
+      foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_DISABLED, secondaryState);
     }
 
     // We store the background where the image will be placed.
@@ -365,10 +367,98 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
 
 
-NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size, NABool bordered){
+NA_DEF NAButton* naNewIconPushButton(const NAUIImage* uiImage, double width){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
-  uint32 flags = bordered ? NA_BUTTON_BORDERED : 0;
+  uint32 flags = 0;
+
+  winapiButton->rect = naMakeRectS(0., 0., width, 24.);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
+  HWND nativePtr = CreateWindow(
+    TEXT("BUTTON"),
+    TEXT(""),
+    WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
+    0,
+    0,
+    (int)(winapiButton->rect.size.width * uiScale),
+    (int)(winapiButton->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
+
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+
+  na_InitButton(
+    (NAButton*)winapiButton,
+    nativePtr,
+    NA_NULL,
+    NA_NULL,
+    uiImage,
+    NA_NULL,
+    flags);
+  winapiButton->state = 0;
+
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, !naGetFlagu32(flags, NA_BUTTON_BORDERED)); 
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATEFUL, naGetFlagu32(flags, NA_BUTTON_STATEFUL)); 
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
+
+  return (NAButton*)winapiButton;
+}
+
+
+
+NA_DEF NAButton* naNewIconStateButton(const NAUIImage* uiImage, const NAUIImage* uiImage2, double width){
+  NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
+
+  uint32 flags = NA_BUTTON_STATEFUL;
+
+  winapiButton->rect = naMakeRectS(0., 0., width, 24.);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
+  HWND nativePtr = CreateWindow(
+    TEXT("BUTTON"),
+    TEXT(""),
+    WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
+    0,
+    0,
+    (int)(winapiButton->rect.size.width * uiScale),
+    (int)(winapiButton->rect.size.height * uiScale),
+    naGetApplicationOffscreenWindow(),
+    NULL,
+    (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
+    NULL);
+
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+
+  na_InitButton(
+    (NAButton*)winapiButton,
+    nativePtr,
+    NA_NULL,
+    NA_NULL,
+    uiImage,
+    uiImage2,
+    flags);
+  winapiButton->state = 0;
+
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_BORDERLESS, !naGetFlagu32(flags, NA_BUTTON_BORDERED)); 
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATEFUL, naGetFlagu32(flags, NA_BUTTON_STATEFUL)); 
+  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
+
+  return (NAButton*)winapiButton;
+}
+
+
+
+NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size){
+  NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
+
+  uint32 flags = 0;
 
   winapiButton->rect = naMakeRect(naMakePos(0., 0.), size);
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
@@ -409,12 +499,10 @@ NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size, NAB
 
 
 
-NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage* uiImage2, NASize size, NABool bordered){
+NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage* uiImage2, NASize size){
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
   uint32 flags = NA_BUTTON_STATEFUL;
-  if(bordered)
-    flags |= NA_BUTTON_BORDERED;
 
   winapiButton->rect = naMakeRect(naMakePos(0., 0.), size);
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
