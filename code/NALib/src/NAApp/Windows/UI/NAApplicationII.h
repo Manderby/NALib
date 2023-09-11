@@ -88,17 +88,17 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
 
   // Register the offscreen window class
   naZeron(&wndclass, sizeof(WNDCLASS));
-	wndclass.style = CS_HREDRAW | CS_VREDRAW;
-	wndclass.lpfnWndProc = naWINAPIWindowCallback;
-	wndclass.cbClsExtra = 0;
-	wndclass.cbWndExtra = 0;
-	wndclass.hInstance = GetModuleHandle(NULL);
-	wndclass.hIcon = NULL;
-	wndclass.hCursor = NULL;
-	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
-	wndclass.lpszMenuName = NULL;
-	wndclass.lpszClassName = TEXT("NAOffscreenWindow");
-	RegisterClass(&wndclass);
+  wndclass.style = CS_HREDRAW | CS_VREDRAW;
+  wndclass.lpfnWndProc = naWINAPIWindowCallback;
+  wndclass.cbClsExtra = 0;
+  wndclass.cbWndExtra = 0;
+  wndclass.hInstance = GetModuleHandle(NULL);
+  wndclass.hIcon = NULL;
+  wndclass.hCursor = NULL;
+  wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+  wndclass.lpszMenuName = NULL;
+  wndclass.lpszClassName = TEXT("NAOffscreenWindow");
+  RegisterClass(&wndclass);
 
   // Register the space class
   naZeron(&wndclass, sizeof(WNDCLASS));
@@ -204,10 +204,10 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
   naInitList(&(winapiApplication->timers));
 
-	winapiApplication->offscreenWindow = CreateWindow(
-		TEXT("NAOffscreenWindow"), TEXT("Offscreen window"), WS_OVERLAPPEDWINDOW,
-		0, 0, 0, 0,
-		NULL, NULL, GetModuleHandle(NULL), NULL);
+  winapiApplication->offscreenWindow = CreateWindow(
+    TEXT("NAOffscreenWindow"), TEXT("Offscreen window"), WS_OVERLAPPEDWINDOW,
+    0, 0, 0, 0,
+    NULL, NULL, GetModuleHandle(NULL), NULL);
 
   winapiApplication->appIcon = NA_NULL;
 
@@ -645,11 +645,11 @@ NA_DEF void naCenterMouse(void* uiElement){
   centerPos.x = rect.pos.x + rect.size.width * .5f;
   centerPos.y = rect.pos.y + rect.size.height * .5f;
 
-  na_SetMouseWarpedTo(centerpos);
+  na_SetMouseWarpedTo(centerPos);
 
   SetCursorPos(
-    (int)(centerpos.x * uiScale),
-    (int)((screenframe.size.height - centerpos.y) * uiScale));
+    (int)(centerPos.x * uiScale),
+    (int)((screenFrame.size.height - centerPos.y) * uiScale));
 }
 
 

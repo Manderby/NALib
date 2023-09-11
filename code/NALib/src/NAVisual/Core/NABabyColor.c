@@ -92,23 +92,36 @@ NA_DEF void naFillBabyColorWithu8(NABabyColor outColor, const uint8* inColor, NA
     switch(bufferType){
     case NA_COLOR_BUFFER_RGBA:
       outColor[3] = (float)inColor[3] * inv;
+      tmpcolor[0] = (float)inColor[0] * inv;
+      tmpcolor[1] = (float)inColor[1] * inv;
+      tmpcolor[2] = (float)inColor[2] * inv;
       break;
     case NA_COLOR_BUFFER_RGBAPre:
       outColor[3] = (float)inColor[3] * inv;
       inv = naInvf((float)inColor[3]);
+      tmpcolor[0] = (float)inColor[0] * inv;
+      tmpcolor[1] = (float)inColor[1] * inv;
+      tmpcolor[2] = (float)inColor[2] * inv;
       break;
     case NA_COLOR_BUFFER_RGB:
+      outColor[3] = 1.f;
+      tmpcolor[0] = (float)inColor[0] * inv;
+      tmpcolor[1] = (float)inColor[1] * inv;
+      tmpcolor[2] = (float)inColor[2] * inv;
       break;
     case NA_COLOR_BUFFER_BGR0:
       outColor[3] = 1.f;
+      tmpcolor[0] = (float)inColor[2] * inv;
+      tmpcolor[1] = (float)inColor[1] * inv;
+      tmpcolor[2] = (float)inColor[0] * inv;
       break;
     case NA_COLOR_BUFFER_BGRA:
       outColor[3] = (float)inColor[3] * inv;
+      tmpcolor[0] = (float)inColor[2] * inv;
+      tmpcolor[1] = (float)inColor[1] * inv;
+      tmpcolor[2] = (float)inColor[0] * inv;
       break;
     }
-    tmpcolor[0] = (float)inColor[0] * inv;
-    tmpcolor[1] = (float)inColor[1] * inv;
-    tmpcolor[2] = (float)inColor[2] * inv;
     na_LinearizeRGB(outColor, tmpcolor);
   }
 }

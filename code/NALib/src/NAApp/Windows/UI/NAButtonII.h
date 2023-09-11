@@ -161,61 +161,90 @@ const NAUIImage* currentImage(NAWINAPIButton* winapiButton){
 
 
 NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* drawitemstruct){
-  HBITMAP hOldBitmap;
-  NASizei size1x;
-  NASizei buttonsize;
-  NAPosi offset;
-  const NABabyImage* foreImage;
-  NAByte* backBuffer;
-  HBITMAP hBackBitmap;
-  NABabyImage* backImage;
-  NABabyImage* blendedImage;
-  NAByte* blendedBuffer;
-  HBITMAP hBlendedBitmap;
+  NASizei buttonsize = naMakeSizei(
+    (NAInt)drawitemstruct->rcItem.right - (NAInt)drawitemstruct->rcItem.left,
+    (NAInt)drawitemstruct->rcItem.bottom - (NAInt)drawitemstruct->rcItem.top);
 
-  HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);
+  // Create an offscreen device context and buffer
+  HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);  
+  NAByte* buttonBuffer = naMalloc(buttonsize.width * buttonsize.height * 4);
+  HBITMAP hButtonBitmap = CreateBitmap((int)buttonsize.width, (int)buttonsize.height, 1, 32, buttonBuffer);
+  SelectObject(hMemDC, hButtonBitmap);
 
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)uiElement;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
 
-  CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_ERASEBKGND, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
+  //CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_ERASEBKGND, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
 
-  if(naGetFlagu32(winapiButton->button.flags, NA_BUTTON_BORDERED)){
-    long oldstyle = (long)GetWindowLongPtr(naGetUIElementNativePtr(uiElement), GWL_STYLE);
+  if(naIsButtonBordered(&winapiButton->button)){
+    HWND hwnd = naGetUIElementNativePtr(uiElement);
+    NABool customDraw = naIsButtonStateful(&winapiButton->button) && naGetButtonState(&winapiButton->button);
+
+    long oldstyle = (long)GetWindowLongPtr(hwnd, GWL_STYLE);
     long newstyle = (oldstyle & ~BS_OWNERDRAW) | BS_TEXT | BS_CENTER | BS_VCENTER;
-    SetWindowLongPtr(naGetUIElementNativePtr(uiElement), GWL_STYLE, (LONG_PTR)newstyle);
+    SetWindowLongPtr(hwnd, GWL_STYLE, (LONG_PTR)newstyle);
     // Oh boi. That is one hell of a hidden feature. Usually, the WM_PAINT
     // message does not use wParam and lParam at all. But there are some
     // common controls (and buttons seems to be one of them) which in fact
     // only work if you send the device context in wParam.
-    CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_PAINT, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
-    SetWindowLongPtr(naGetUIElementNativePtr(uiElement), GWL_STYLE, (LONG_PTR)oldstyle);
-  
-    //if(na_GetButtonState(winapiButton)){
-    //  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-    //  COLORREF color = RGB(50, 50, 226);
-    //  RECT rect = {0, 0, 50, 60};
-    //  FillRect((HDC)drawitemstruct->hDC, &rect, CreateSolidBrush(color));
-    //}
+    CallWindowProc(
+      na_GetApplicationOldButtonWindowProc(),
+      hwnd,
+      WM_PAINT,
+      customDraw ? (WPARAM)hMemDC : (WPARAM)drawitemstruct->hDC,
+      (LPARAM)NA_NULL);
+    SetWindowLongPtr(hwnd, GWL_STYLE, (LONG_PTR)oldstyle);
+
+    if(customDraw){
+      // We store the button as it is drawn by the system.
+      BitBlt(hMemDC, 0, 0, (int)buttonsize.width, (int)buttonsize.height, hMemDC, 0, 0, SRCCOPY);
+      NABabyImage* buttonImage = naCreateBabyImageFromNativeImage(hButtonBitmap);
+
+      // Now we blend manually the foreground to the background.
+      NABabyColor backColor = {.8f, .8f, .8f, 1.f};
+      NABabyColor maskColor = {1.f, 1.f, 0.f, 1.f};
+      NABabyColor accentColor;
+      naFillDefaultAccentColorWithSkin(accentColor, NA_UIIMAGE_SKIN_LIGHT);
+      NABabyImage* alphaImage = naCreateBabyImageWithTint(buttonImage, maskColor, NA_BLEND_ERASE_HUE, 1.f);
+      NABabyImage* tintedImage = naCreateBabyImageWithTint(alphaImage, accentColor, NA_BLEND_WHITE_GREEN, .85f);
+      NABabyImage* blendedImage = naCreateBabyImageWithApply(backColor, tintedImage, NA_BLEND_OVERLAY, 1.f);
+      naReleaseBabyImage(alphaImage);
+      naReleaseBabyImage(tintedImage);
+
+      NAByte* blendedBuffer = naMalloc(buttonsize.width * buttonsize.height * 4);
+      naConvertBabyImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
+      HBITMAP hBlendedBitmap = CreateBitmap((int)buttonsize.width, (int)buttonsize.height, 1, 32, blendedBuffer);
+
+      // Finally, we put the blended image onscreen.
+      SelectObject(hMemDC, hBlendedBitmap);
+      BitBlt(drawitemstruct->hDC, 0, 0, (int)buttonsize.width, (int)buttonsize.height, hMemDC, 0, 0, SRCCOPY);
+
+      // Deleting the blended objects and buffers
+      naReleaseBabyImage(buttonImage);
+      DeleteObject(hBlendedBitmap);
+      naFree(blendedBuffer);
+      naReleaseBabyImage(blendedImage);
+    }
+
+    DeleteObject(hButtonBitmap);
+    naFree(buttonBuffer);
   }
 
   const NAUIImage* uiImage = currentImage(winapiButton);
   if(uiImage){
     double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-    size1x = naGetUIImage1xSize(uiImage);
+    NASizei size1x = naGetUIImage1xSize(uiImage);
     size1x.width = (NAInt)(size1x.width * uiScale);
     size1x.height = (NAInt)(size1x.height * uiScale);
 
-    buttonsize = naMakeSizei(
-      (NAInt)drawitemstruct->rcItem.right - (NAInt)drawitemstruct->rcItem.left,
-      (NAInt)drawitemstruct->rcItem.bottom - (NAInt)drawitemstruct->rcItem.top);
-    offset = naMakePosi(
+    NAPosi offset = naMakePosi(
       (buttonsize.width - size1x.width) / 2,
       (buttonsize.height - size1x.height) / 2);
 
     LRESULT result = SendMessage(naGetUIElementNativePtr(winapiButton), BM_GETSTATE, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
     NABool pushed = (result & BST_PUSHED) == BST_PUSHED;
 
+    const NABabyImage* foreImage;
     NABool secondaryState = na_GetButtonState(winapiButton);
     if(IsWindowEnabled(naGetUIElementNativePtr(winapiButton))){
       if(pushed){
@@ -228,17 +257,17 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     }
 
     // We store the background where the image will be placed.
-    backBuffer = naMalloc(size1x.width * size1x.height * 4);
-    hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
-    hOldBitmap = SelectObject(hMemDC, hBackBitmap);
+    NAByte* backBuffer = naMalloc(size1x.width * size1x.height * 4);
+    HBITMAP hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
+    HBITMAP hOldBitmap = SelectObject(hMemDC, hBackBitmap);
     BitBlt(hMemDC, 0, 0, (int)size1x.width, (int)size1x.height, drawitemstruct->hDC, (int)offset.x, (int)offset.y, SRCCOPY);
-    backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
+    NABabyImage* backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
 
     // Now we blend manually the foreground to the background.
-    blendedImage = naCreateBabyImageWithBlend(backImage, foreImage, NA_BLEND_OVERLAY, 1.f);
-    blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
+    NABabyImage* blendedImage = naCreateBabyImageWithBlend(backImage, foreImage, NA_BLEND_OVERLAY, 1.f);
+    NAByte* blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
     naConvertBabyImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
-    hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);
+    HBITMAP hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);
 
     // Finally, we put the blended image onscreen.
     SelectObject(hMemDC, hBlendedBitmap);
@@ -326,7 +355,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
   HWND nativePtr = CreateWindow(
     TEXT("BUTTON"),
     systemText,
-    WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON,
+    WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON | BS_OWNERDRAW,
     0,
     0,
     (int)(winapiButton->rect.size.width * uiScale),

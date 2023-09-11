@@ -325,8 +325,8 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 
   // Capture specific messages
   if(message == WM_DRAWITEM){
-    info = naWINAPIDrawItemProc(wParam, lParam);
-  }else if(message == WM_COMMAND){
+      info = naWINAPIDrawItemProc(wParam, lParam);
+    }else if(message == WM_COMMAND){
     info = naWINAPINotificationProc(wParam, lParam);
   }else if(message == WM_HSCROLL){
     info = naWINAPIScrollItemProc(wParam, lParam);
@@ -472,6 +472,21 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
     if(handeled){
       info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
+    }
+    break;
+
+  case WM_CTLCOLORBTN:
+    {
+      const NA_UIElement* uiElement = na_GetUINALibEquivalent((void*)lParam);
+      if(naGetUIElementType(uiElement) == NA_UI_BUTTON){
+        const NAButton* button = (const NAButton*)uiElement;
+        if(naIsButtonBordered(button) && naIsButtonStateful(button) && naGetButtonState(button)){
+          // we choose yellow as background as this is probably the last color ever
+          // being used as a system UI style.
+          info.result = (LRESULT)CreateSolidBrush(RGB(255, 255, 0));
+          info.hasBeenHandeled = NA_TRUE;
+        }
+      }
     }
     break;
 
