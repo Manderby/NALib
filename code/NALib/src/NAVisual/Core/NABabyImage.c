@@ -110,6 +110,75 @@ NA_HDEF NABabyImage* naCreateBabyImageCopy(const NABabyImage* image){
 
 
 
+void na_ConvertRGBToHSV(float out[3], const float in[3]){
+  float min;
+  float range;
+  float rgb[3];
+  naCopyV3f(rgb, in);
+  if(rgb[0] < rgb[1]){min = rgb[0]; out[2] = rgb[1];}else{min = rgb[1]; out[2] = rgb[0];}
+  if(rgb[2] < min){min = rgb[2];}
+  if(rgb[2] > out[2]){out[2] = rgb[2];}
+  range = out[2] - min;
+  if(out[2] == 0.f){
+    out[1] = 0.f;
+  }else{
+    out[1] = range / out[2];
+  }
+  if(naAlmostZero(range)){
+    out[0] = 0.f;
+  }else{
+    float invrange = naInvf(range);
+    if(out[2] == rgb[0])      {out[0] = 60.f * (0.f + (rgb[1]-rgb[2]) * invrange);}
+    else if(out[2] == rgb[1]) {out[0] = 60.f * (2.f + (rgb[2]-rgb[0]) * invrange);}
+    else                      {out[0] = 60.f * (4.f + (rgb[0]-rgb[1]) * invrange);}
+    if(out[0] < 0.f){out[0] += 360.f;}
+  }
+}
+
+void na_ConvertHSVToRGB(float out[3], const float in[3]){
+  float hsv[3];
+  naCopyV3f(hsv, in);
+  size_t h0 = (size_t)floorf(hsv[0] / 60.f);
+  uint8 h1 = (uint8)((h0 % 6) + 6) % 6;
+  float f = (hsv[0] / 60.f) - h0;
+  float range = hsv[2] * hsv[1];
+  float min = hsv[2] - range;
+  float inc = f * range;
+  float dec = (1.f - f) * range;
+  inc += min;
+  dec += min;
+  switch(h1){
+  case 0: out[0] = hsv[2] ; out[1] = inc    ; out[2] = min    ; break;
+  case 1: out[0] = dec    ; out[1] = hsv[2] ; out[2] = min    ; break;
+  case 2: out[0] = min    ; out[1] = hsv[2] ; out[2] = inc    ; break;
+  case 3: out[0] = min    ; out[1] = dec    ; out[2] = hsv[2] ; break;
+  case 4: out[0] = inc    ; out[1] = min    ; out[2] = hsv[2] ; break;
+  case 5: out[0] = hsv[2] ; out[1] = min    ; out[2] = dec    ; break;
+  default:
+    out[0] = 0.f; out[1] = 0.f; out[2] = 0.f;
+  }
+}
+
+
+
+void na_ConvertHSVToHSL(float out[3], const float in[3]){
+  out[0] = in[0];
+  out[1] = in[1] * in[2];
+  out[2] = in[2] - 0.5f * out[1];
+}
+
+void na_ConvertHSLToHSV(float out[3], const float in[3]){
+  out[0] = in[0];
+  out[2] = in[2] + .5f * in[1];
+  if(out[2] == 0.f){
+    out[1] = in[1] / NA_SINGULARITYf;
+  }else{
+    out[1] = in[1] / out[2];
+  }
+}
+
+
+
 NA_HDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, const float* top, NABlendMode mode, float blend, NABool baseIsImage, NABool topIsImage){
   NAInt i;
   //blend = naLinearizeColorValue(blend);
@@ -171,15 +240,55 @@ NA_HDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, 
         base[1] * base[3] * (1.f - (1.f - top[3]) * blend));
       break;
     case NA_BLEND_ERASE_HUE:
-      naCopyV4f(ret, base);
-      ret[0] = naUnlinearizeColorValue(ret[0]);
-      ret[1] = naUnlinearizeColorValue(ret[1]);
-      ret[2] = naUnlinearizeColorValue(ret[2]);
-      if(ret[0] == top[0] && ret[1] == top[1] && ret[2] == top[2]){
-        ret[0] = 0.;
-        ret[1] = 0.;
-        ret[2] = 0.;
-        ret[3] = 0.;
+      {
+        float baseRGB[3];
+        float baseHSV[3];
+        float baseHSL[3];
+        baseRGB[0] = naUnlinearizeColorValue(base[0]);
+        baseRGB[1] = naUnlinearizeColorValue(base[1]);
+        baseRGB[2] = naUnlinearizeColorValue(base[2]);
+        na_ConvertRGBToHSV(baseHSV, baseRGB);
+        na_ConvertHSVToHSL(baseHSL, baseHSV);
+        float topRGB[3];
+        float topHSV[3];
+        float topHSL[3];
+        topRGB[0] = naUnlinearizeColorValue(top[0]);
+        topRGB[1] = naUnlinearizeColorValue(top[1]);
+        topRGB[2] = naUnlinearizeColorValue(top[2]);
+        na_ConvertRGBToHSV(topHSV, topRGB);
+        na_ConvertHSVToHSL(topHSL, topHSV);
+
+        if(baseHSV[1] != 1.)
+        {
+          int asdf = 1234;
+        }
+        float hDiff = topHSL[0] - baseHSL[0];
+        if(hDiff > 180.f){hDiff -= 360.f;}
+        else if(hDiff < -180.f){hDiff += 360.f;}
+
+        if(hDiff < -60.f || hDiff > 60.f){
+          // Not near the hue, leave the color as it is.
+          naCopyV3f(ret, baseRGB);
+          ret[3] = 1.;
+        }else{
+          if(hDiff < 0.){
+            float factor = -hDiff / 60.f;
+            baseHSL[0] = topHSL[0] + 60.f;
+            if(baseHSL[0] > 360.f){baseHSL[0] -= 360.f;}
+            ret[3] = 1.f - baseHSL[1];
+            baseHSL[1] *= factor;
+            na_ConvertHSLToHSV(baseHSV, baseHSL);
+            na_ConvertHSVToRGB(ret, baseHSV);
+          }else{
+            float factor = hDiff / 60.f;
+            baseHSL[0] = topHSL[0] - 60.f + 360.f;
+            if(baseHSL[0] > 360.f){baseHSL[0] -= 360.f;}
+            ret[3] = 1.f - baseHSL[1];
+            baseHSL[1] *= factor;
+            na_ConvertHSLToHSV(baseHSV, baseHSL);
+            na_ConvertHSVToRGB(ret, baseHSV);
+          }
+        }
       }
       break;
     }

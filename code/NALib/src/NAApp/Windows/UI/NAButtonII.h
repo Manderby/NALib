@@ -206,7 +206,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       NABabyColor accentColor;
       naFillDefaultAccentColorWithSkin(accentColor, NA_UIIMAGE_SKIN_LIGHT);
       NABabyImage* alphaImage = naCreateBabyImageWithTint(buttonImage, maskColor, NA_BLEND_ERASE_HUE, 1.f);
-      NABabyImage* tintedImage = naCreateBabyImageWithTint(alphaImage, accentColor, NA_BLEND_WHITE_GREEN, .85f);
+      NABabyImage* tintedImage = naCreateBabyImageWithTint(alphaImage, accentColor, NA_BLEND_MULTIPLY, .85f);
       NABabyImage* blendedImage = naCreateBabyImageWithApply(backColor, tintedImage, NA_BLEND_OVERLAY, 1.f);
       naReleaseBabyImage(alphaImage);
       naReleaseBabyImage(tintedImage);
