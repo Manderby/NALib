@@ -191,56 +191,84 @@ NA_HDEF void na_BlendBabyImage(
   NABool topIsImage,
   NAPosi offset)
 {
-  NARecti innerRect = naClampRectiToRect(naMakeRecti(offset, topSize), naMakeRecti(naMakePosi(0, 0), baseSize));
-  if(!naIsRectiUseful(innerRect)){
-    innerRect = naMakeRectiSE(0, 0, 0, 0);
-  }
+  NARecti innerRect;
+  
+  if(topIsImage && baseIsImage){
+    innerRect = naClampRectiToRect(naMakeRecti(offset, topSize), naMakeRecti(naMakePosi(0, 0), baseSize));
+    if(!naIsRectiUseful(innerRect)){
+      innerRect = naMakeRectiSE(0, 0, 0, 0);
+    }
 
-  // Simply copy the lower part of the base image
-  if(innerRect.pos.y > 0){
-    naCopyn(
-      ret,
-      base,
-      innerRect.pos.y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
-  }
-  // Simply copy the upper part of the base image
-  NAInt topPixelCount = baseSize.height - naGetRectiEndY(innerRect);
-  if(topPixelCount > 0){
-    naCopyn(
-      &ret[(baseSize.height - topPixelCount) * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
-      &base[(baseSize.height - topPixelCount) * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
-      topPixelCount * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+    // Simply copy the lower part of the base image
+    if(innerRect.pos.y > 0){
+      naCopyn(
+        ret,
+        base,
+        innerRect.pos.y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+    }
+    // Simply copy the upper part of the base image
+    NAInt topPixelCount = baseSize.height - naGetRectiEndY(innerRect);
+    if(topPixelCount > 0){
+      naCopyn(
+        &ret[(baseSize.height - topPixelCount) * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
+        &base[(baseSize.height - topPixelCount) * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
+        topPixelCount * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+    }
+  }else if(topIsImage){
+    innerRect = naMakeRecti(naMakePosi(0, 0), topSize);
+  }else{
+    innerRect = naMakeRecti(naMakePosi(0, 0), baseSize);
   }
 
   for(NAInt y = innerRect.pos.y; y < naGetRectiEndY(innerRect); ++y){
 
-    float* retPtr = &ret[(y * baseSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
-    const float* basePtr = &base[(y * baseSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
+    float* retPtr;    
+    const float* basePtr;
     
-    // Simply copy the left part of the base image
-    NAInt leftPixelCount = innerRect.pos.x;
-    if(leftPixelCount > 0){
-      if(leftPixelCount > baseSize.width){leftPixelCount = baseSize.width;}
-      naCopyn(
-        &ret[y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
-        &base[y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
-        leftPixelCount * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
-    }
-    // Simply copy the right part of the base image
-    NAInt rightPixelCount = baseSize.width - naGetRectiEndX(innerRect);
-    if(rightPixelCount > 0){
-      if(rightPixelCount > baseSize.width){rightPixelCount = baseSize.width;}
-      naCopyn(
-        &ret[(y * baseSize.width + baseSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
-        &base[(y * baseSize.width + baseSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
-        rightPixelCount * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+    if(topIsImage && baseIsImage){
+      retPtr = &ret[(y * baseSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
+      basePtr = &base[(y * baseSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
+
+      // Simply copy the left part of the base image
+      NAInt leftPixelCount = innerRect.pos.x;
+      if(leftPixelCount > 0){
+        if(leftPixelCount > baseSize.width){leftPixelCount = baseSize.width;}
+        naCopyn(
+          &ret[y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
+          &base[y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
+          leftPixelCount * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+      }
+      // Simply copy the right part of the base image
+      NAInt rightPixelCount = baseSize.width - naGetRectiEndX(innerRect);
+      if(rightPixelCount > 0){
+        if(rightPixelCount > baseSize.width){rightPixelCount = baseSize.width;}
+        naCopyn(
+          &ret[(y * baseSize.width + baseSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
+          &base[(y * baseSize.width + baseSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
+          rightPixelCount * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+      }
+    }else if(topIsImage){
+      retPtr = &ret[(y * topSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
+      basePtr = &base[(y * topSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
+    }else{
+      retPtr = &ret[(y * baseSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
+      basePtr = &base[(y * baseSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
     }
 
-    NAInt offsetX = 0;
-    NAInt offsetY = 0;
-    if(offset.x < 0) {offsetX = -offset.x;}
-    if(offset.y < 0) {offsetY = -offset.y;}
-    const float* topPtr = &top[(((y - innerRect.pos.y + offsetY) * topSize.width) + offsetX) * NA_BABY_COLOR_CHANNEL_COUNT];
+    const float* topPtr;
+    if(topIsImage && baseIsImage){
+      NAInt offsetX = 0;
+      NAInt offsetY = 0;
+      if(offset.x < 0) {offsetX = -offset.x;}
+      if(offset.y < 0) {offsetY = -offset.y;}
+      topPtr = &top[(((y - innerRect.pos.y + offsetY) * topSize.width) + offsetX) * NA_BABY_COLOR_CHANNEL_COUNT];
+      basePtr = &base[(y * topSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
+    }else if(topIsImage){
+      topPtr = &top[(y * topSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
+      basePtr = base;
+    }else{
+      topPtr = top;
+    }
 
     for(NAInt x = innerRect.pos.x; x < naGetRectiEndX(innerRect); ++x){
 

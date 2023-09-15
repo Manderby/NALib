@@ -71,7 +71,7 @@ NA_DEF void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin sk
   uint8 skinColor[4];
   switch(skin){
   case NA_UIIMAGE_SKIN_LIGHT:
-    skinColor[0] = 0;
+    skinColor[0] = 255;
     skinColor[1] = 128;
     skinColor[2] = 16;
     skinColor[3] = 255;
