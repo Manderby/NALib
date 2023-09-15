@@ -27,6 +27,9 @@ struct ImageTesterController{
   NALabel* scaleLabel;
   NASlider* scaleSlider;
 
+  NALabel* blendLabel;
+  NASlider* blendSlider;
+
   const NABabyImage* transparencyGridImage;
   const NABabyImage* topImage;
   NAPosi center;
@@ -101,6 +104,11 @@ ImageTesterController* naAllocImageTestController(){
   con->topLabel = naNewLabel("Top:", 200);
   con->topPopupButton = naNewPopupButton(200);
 
+  con->blendLabel = naNewLabel("Blend:", 200);
+  con->blendSlider = naNewSlider(200);
+  naSetSliderRange(con->blendSlider, 0., 1., 0);
+  naSetSliderValue(con->blendSlider, 1.);
+
   con->scaleLabel = naNewLabel("Scale:", 200);
   con->scaleSlider = naNewSlider(200);
   naSetSliderRange(con->scaleSlider, 0., 2., 0);
@@ -110,8 +118,8 @@ ImageTesterController* naAllocImageTestController(){
 
   naAddSpaceChild(contentSpace, con->imageSpace, naMakePos(10, 10));
 
-  naAddSpaceChild(contentSpace, con->topLabel, naMakePos(620, 275));
-  naAddSpaceChild(contentSpace, con->topPopupButton, naMakePos(620, 250));
+  naAddSpaceChild(contentSpace, con->topLabel, naMakePos(620, 325));
+  naAddSpaceChild(contentSpace, con->topPopupButton, naMakePos(620, 300));
   con->featherItem = naNewMenuItem("Feather");
   con->motorItem = naNewMenuItem("Motor");
   con->redColorItem = naNewMenuItem("Red");
@@ -119,12 +127,16 @@ ImageTesterController* naAllocImageTestController(){
   naAddPopupButtonMenuItem(con->topPopupButton, con->motorItem, NA_NULL);
   naAddPopupButtonMenuItem(con->topPopupButton, con->redColorItem, NA_NULL);
 
+  naAddSpaceChild(contentSpace, con->blendLabel, naMakePos(620, 275));
+  naAddSpaceChild(contentSpace, con->blendSlider, naMakePos(620, 250));
+
   naAddSpaceChild(contentSpace, con->scaleLabel, naMakePos(620, 225));
   naAddSpaceChild(contentSpace, con->scaleSlider, naMakePos(620, 200));
 
   naAddUIReaction(con->featherItem, NA_UI_COMMAND_PRESSED, topSelected, con);
   naAddUIReaction(con->motorItem, NA_UI_COMMAND_PRESSED, topSelected, con);
   naAddUIReaction(con->redColorItem, NA_UI_COMMAND_PRESSED, topSelected, con);
+  naAddUIReaction(con->blendSlider, NA_UI_COMMAND_EDITED, sliderEdited, con);
   naAddUIReaction(con->scaleSlider, NA_UI_COMMAND_EDITED, sliderEdited, con);
   naAddUIReaction(con->imageSpace, NA_UI_COMMAND_MOUSE_MOVED, mouseMoved, con);
 
@@ -147,9 +159,11 @@ void updateImage(ImageTesterController* con){
   if(!con->transparencyGridImage || !con->topImage)
     return;
 
-  double value = naGetSliderValue(con->scaleSlider);
+  float alpha = (float)naGetSliderValue(con->blendSlider);
+  double scale = naGetSliderValue(con->scaleSlider);
+
   NASizei originalSize = naGetBabyImageSize(con->topImage);
-  NASizei newSize = naMakeSizeiE((NAInt)(value * originalSize.width), (NAInt)(value * originalSize.height));
+  NASizei newSize = naMakeSizeiE((NAInt)(scale * originalSize.width), (NAInt)(scale * originalSize.height));
   if(naIsSizeiUseful(newSize)){
     NABabyImage* scaledImage = naCreateBabyImageWithResize(con->topImage, newSize);
     NASizei baseSize = naGetBabyImageSize(con->transparencyGridImage);
@@ -163,7 +177,7 @@ void updateImage(ImageTesterController* con){
       con->transparencyGridImage,
       scaledImage,
       NA_BLEND_OVERLAY,
-      1.,
+      alpha,
       origin);
     NAUIImage* uiImage = naCreateUIImage(
       fullImage,
