@@ -7,22 +7,61 @@
 NAWindow* window;
 NAImageSpace* imageSpace;
 NASlider* scaleSlider;
+NABabyImage* transparencyGridImage;
 NABabyImage* originalImage;
+NAPosi center = {0, 0};
 
-NABool sliderEdited(NAReaction reaction){
+void updateImage(){
   double value = naGetSliderValue(scaleSlider);
   NASizei originalSize = naGetBabyImageSize(originalImage);
   NASizei newSize = naMakeSizeiE((NAInt)(value * originalSize.width), (NAInt)(value * originalSize.height));
   if(naIsSizeiUseful(newSize)){
     NABabyImage* scaledImage = naCreateBabyImageWithResize(originalImage, newSize);
-    NAUIImage* uiImage = naCreateUIImage(
+    NASizei baseSize = naGetBabyImageSize(transparencyGridImage);
+    NASize spaceSize = naGetUIElementRect(imageSpace).size;
+
+    NAPosi origin = naMakePosi(
+      center.x - (NAInt)((newSize.width / 2.) + ((spaceSize.width - baseSize.width) / 2.)),
+      center.y - (NAInt)((newSize.height / 2.) + ((spaceSize.height - baseSize.height) / 2.)));
+
+    NABabyImage* fullImage = naCreateBabyImageWithBlend(
+      transparencyGridImage,
       scaledImage,
+      NA_BLEND_OVERLAY,
+      1.,
+      origin);
+    NAUIImage* uiImage = naCreateUIImage(
+      fullImage,
       NA_UIIMAGE_RESOLUTION_SCREEN_1x,
       NA_BLEND_ZERO);
     naSetImageSpaceImage(imageSpace, uiImage);
     naRelease(uiImage);
+    naReleaseBabyImage(fullImage);
     naReleaseBabyImage(scaledImage);
   }
+}
+
+NABool sliderEdited(NAReaction reaction){
+  updateImage();
+  return NA_TRUE;
+}
+
+NABool mouseMoved(NAReaction reaction){
+  const NAMouseStatus* mouse = naGetMouseStatus();
+  NARect spaceRect = naGetUIElementRectAbsolute(reaction.uiElement);
+  center.x = (NAInt)(mouse->pos.x - spaceRect.pos.x);
+  center.y = (NAInt)(mouse->pos.y - spaceRect.pos.y);
+  updateImage();
+  return NA_TRUE;
+}
+
+NABool mouseDown(NAReaction reaction){
+  printf("down\n");
+  return NA_TRUE;
+}
+
+NABool mouseUp(NAReaction reaction){
+  printf("up\n");
   return NA_TRUE;
 }
 
@@ -37,11 +76,17 @@ void postStartup(void* arg){
   
   NASpace* contentSpace = naGetWindowContentSpace(window);
   
-  NAPNG* png = naNewPNGWithPath("res/marientaefer.png");
+  NAPNG* gridPNG = naNewPNGWithPath("res/transparencyGrid.png");
+  NABabyImage* gridImage = naCreateBabyImageFromPNG(gridPNG);
+  NASizei gridSize = naGetBabyImageSize(gridImage);
+  transparencyGridImage = naCreateBabyImageWithResize(gridImage, naMakeSizei(gridSize.width * 2, gridSize.height * 2));
+
+  //NAPNG* featherPNG = naNewPNGWithPath("res/transparencyGrid.png");
+  NAPNG* featherPNG = naNewPNGWithPath("res/feather.png");
   //NAPNG* png = naNewPNGWithPath("res/motor.png");
-  originalImage = naCreateBabyImageFromPNG(png);
+  originalImage = naCreateBabyImageFromPNG(featherPNG);
   NAUIImage* uiImage = naCreateUIImage(
-    originalImage,
+    transparencyGridImage,
     NA_UIIMAGE_RESOLUTION_SCREEN_1x,
     NA_BLEND_ZERO);
   
@@ -53,6 +98,10 @@ void postStartup(void* arg){
   naAddSpaceChild(contentSpace, imageSpace, naMakePos(10, 10));
   naAddSpaceChild(contentSpace, scaleSlider, naMakePos(620, 200));
   naAddUIReaction(scaleSlider, NA_UI_COMMAND_EDITED, sliderEdited, NA_NULL);
+  naAddUIReaction(imageSpace, NA_UI_COMMAND_MOUSE_MOVED, mouseMoved, NA_NULL);
+  naAddUIReaction(imageSpace, NA_UI_COMMAND_MOUSE_DOWN, mouseDown, NA_NULL);
+  naAddUIReaction(imageSpace, NA_UI_COMMAND_MOUSE_UP, mouseUp, NA_NULL);
+
   
   naShowWindow(window);
 }

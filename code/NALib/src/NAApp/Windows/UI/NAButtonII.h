@@ -264,7 +264,12 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     NABabyImage* backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
 
     // Now we blend manually the foreground to the background.
-    NABabyImage* blendedImage = naCreateBabyImageWithBlend(backImage, foreImage, NA_BLEND_OVERLAY, 1.f);
+    NABabyImage* blendedImage = naCreateBabyImageWithBlend(
+      backImage,
+      foreImage,
+      NA_BLEND_OVERLAY,
+      1.f,
+      naMakePosi(0, 0));
     NAByte* blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
     naConvertBabyImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
     HBITMAP hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);

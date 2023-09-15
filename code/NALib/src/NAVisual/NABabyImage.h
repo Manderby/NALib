@@ -77,7 +77,8 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(
   const NABabyImage* base,
   const NABabyImage* top,
   NABlendMode        mode,
-  float              blend);
+  float              blend,
+  NAPosi             offset);
 NA_DEF NABabyImage* naCreateBabyImageWithApply(
   const NABabyColor  base,
   const NABabyImage* top,

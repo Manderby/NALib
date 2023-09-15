@@ -179,138 +179,154 @@ void na_ConvertHSLToHSV(float out[3], const float in[3]){
 
 
 
-NA_HDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, const float* top, NABlendMode mode, float blend, NABool baseIsImage, NABool topIsImage){
-  NAInt i;
-  //blend = naLinearizeColorValue(blend);
-  for(i = 0; i < pixelCount; ++i){
-    float topblend;
-    switch(mode){
-    case NA_BLEND_ZERO:
-      naCopyV4f(ret, base);
-      ret[0] = naUnlinearizeColorValue(ret[0]);
-      ret[1] = naUnlinearizeColorValue(ret[1]);
-      ret[2] = naUnlinearizeColorValue(ret[2]);
-      break;
-    case NA_BLEND:
-      topblend = blend;
-      naFillV4f(ret,
-        (1.f - topblend) * naUnlinearizeColorValue(base[0]) + topblend * naUnlinearizeColorValue(top[0]),
-        (1.f - topblend) * naUnlinearizeColorValue(base[1]) + topblend * naUnlinearizeColorValue(top[1]),
-        (1.f - topblend) * naUnlinearizeColorValue(base[2]) + topblend * naUnlinearizeColorValue(top[2]),
-        (1.f - topblend) * base[3] + topblend * top[3]);
-      break;
-    case NA_BLEND_OVERLAY:
-      topblend = top[3] * blend;
-      naFillV4f(ret,
-        (1.f - topblend) * naUnlinearizeColorValue(base[0]) + topblend * naUnlinearizeColorValue(top[0]),
-        (1.f - topblend) * naUnlinearizeColorValue(base[1]) + topblend * naUnlinearizeColorValue(top[1]),
-        (1.f - topblend) * naUnlinearizeColorValue(base[2]) + topblend * naUnlinearizeColorValue(top[2]),
-        base[3] + (1.f - base[3]) * topblend);
-      break;
-    case NA_BLEND_OPAQUE:
-      topblend = top[3] * blend;
-      naFillV4f(ret,
-        (1.f - topblend) * naUnlinearizeColorValue(base[0]) + topblend * naUnlinearizeColorValue(top[0]),
-        (1.f - topblend) * naUnlinearizeColorValue(base[1]) + topblend * naUnlinearizeColorValue(top[1]),
-        (1.f - topblend) * naUnlinearizeColorValue(base[2]) + topblend * naUnlinearizeColorValue(top[2]),
-        base[3] * (1.f - (1.f - top[3]) * blend));
-      break;
-    case NA_BLEND_BLACK_GREEN:
-      topblend = top[3] * blend;
-      naFillV4f(ret,
-        (1.f - topblend) * naUnlinearizeColorValue(base[0]) + topblend * naUnlinearizeColorValue(top[0]),
-        (1.f - topblend) * naUnlinearizeColorValue(base[1]) + topblend * naUnlinearizeColorValue(top[1]),
-        (1.f - topblend) * naUnlinearizeColorValue(base[2]) + topblend * naUnlinearizeColorValue(top[2]),
-        (1.f - base[1]) * base[3] * (1.f - (1.f - top[3]) * blend));
-      break;
-    case NA_BLEND_WHITE_GREEN:
-    topblend = top[3] * blend;
-    naFillV4f(ret,
-      (1.f - topblend) * naUnlinearizeColorValue(base[0]) + topblend * naUnlinearizeColorValue(top[0]),
-      (1.f - topblend) * naUnlinearizeColorValue(base[1]) + topblend * naUnlinearizeColorValue(top[1]),
-      (1.f - topblend) * naUnlinearizeColorValue(base[2]) + topblend * naUnlinearizeColorValue(top[2]),
-      base[1] * base[3] * (1.f - (1.f - top[3]) * blend));
-    break;
-      case NA_BLEND_MULTIPLY:
-      topblend = top[3] * blend;
-      naFillV4f(ret,
-        (1.f - topblend) * naUnlinearizeColorValue(base[0]) + topblend * naUnlinearizeColorValue(top[0]) * naUnlinearizeColorValue(base[0]),
-        (1.f - topblend) * naUnlinearizeColorValue(base[1]) + topblend * naUnlinearizeColorValue(top[1]) * naUnlinearizeColorValue(base[1]),
-        (1.f - topblend) * naUnlinearizeColorValue(base[2]) + topblend * naUnlinearizeColorValue(top[2]) * naUnlinearizeColorValue(base[2]),
-        base[1] * base[3] * (1.f - (1.f - top[3]) * blend));
-      break;
-    case NA_BLEND_ERASE_HUE:
-      {
-        float baseRGB[3];
-        float baseHSV[3];
-        float baseHSL[3];
-        baseRGB[0] = naUnlinearizeColorValue(base[0]);
-        baseRGB[1] = naUnlinearizeColorValue(base[1]);
-        baseRGB[2] = naUnlinearizeColorValue(base[2]);
-        na_ConvertRGBToHSV(baseHSV, baseRGB);
-        na_ConvertHSVToHSL(baseHSL, baseHSV);
-        float topRGB[3];
-        float topHSV[3];
-        float topHSL[3];
-        topRGB[0] = naUnlinearizeColorValue(top[0]);
-        topRGB[1] = naUnlinearizeColorValue(top[1]);
-        topRGB[2] = naUnlinearizeColorValue(top[2]);
-        na_ConvertRGBToHSV(topHSV, topRGB);
-        na_ConvertHSVToHSL(topHSL, topHSV);
+NA_HDEF void na_BlendBabyImage(
+  NASizei baseSize,
+  NASizei topSize,
+  float* ret,
+  const float* base,
+  const float* top,
+  NABlendMode mode,
+  float blend,
+  NABool baseIsImage,
+  NABool topIsImage,
+  NAPosi offset)
+{
+  NARecti innerRect = naClampRectiToRect(naMakeRecti(offset, topSize), naMakeRecti(naMakePosi(0, 0), baseSize));
 
-        if(baseHSV[1] != 1.)
+  for(NAInt y = innerRect.pos.y; y < naGetRectiEndY(innerRect); ++y){
+
+    float* retPtr = &ret[(y * baseSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
+    const float* basePtr = &base[(y * baseSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
+    const float* topPtr = &top[((y - innerRect.pos.y) * topSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
+    for(NAInt x = innerRect.pos.x; x < naGetRectiEndX(innerRect); ++x){
+
+      float topblend;
+      switch(mode){
+      case NA_BLEND_ZERO:
+        naCopyV4f(retPtr, basePtr);
+        retPtr[0] = naUnlinearizeColorValue(retPtr[0]);
+        retPtr[1] = naUnlinearizeColorValue(retPtr[1]);
+        retPtr[2] = naUnlinearizeColorValue(retPtr[2]);
+        break;
+      case NA_BLEND:
+        topblend = blend;
+        naFillV4f(retPtr,
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[0]) + topblend * naUnlinearizeColorValue(topPtr[0]),
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[1]) + topblend * naUnlinearizeColorValue(topPtr[1]),
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[2]) + topblend * naUnlinearizeColorValue(topPtr[2]),
+          (1.f - topblend) * basePtr[3] + topblend * topPtr[3]);
+        break;
+      case NA_BLEND_OVERLAY:
+        topblend = topPtr[3] * blend;
+        naFillV4f(retPtr,
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[0]) + topblend * naUnlinearizeColorValue(topPtr[0]),
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[1]) + topblend * naUnlinearizeColorValue(topPtr[1]),
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[2]) + topblend * naUnlinearizeColorValue(topPtr[2]),
+          basePtr[3] + (1.f - basePtr[3]) * topblend);
+        //naFillV4f(retPtr, 1, 0, 0, 1);
+          break;
+      case NA_BLEND_OPAQUE:
+        topblend = topPtr[3] * blend;
+        naFillV4f(retPtr,
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[0]) + topblend * naUnlinearizeColorValue(topPtr[0]),
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[1]) + topblend * naUnlinearizeColorValue(topPtr[1]),
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[2]) + topblend * naUnlinearizeColorValue(topPtr[2]),
+          basePtr[3] * (1.f - (1.f - topPtr[3]) * blend));
+        break;
+      case NA_BLEND_BLACK_GREEN:
+        topblend = topPtr[3] * blend;
+        naFillV4f(retPtr,
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[0]) + topblend * naUnlinearizeColorValue(topPtr[0]),
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[1]) + topblend * naUnlinearizeColorValue(topPtr[1]),
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[2]) + topblend * naUnlinearizeColorValue(topPtr[2]),
+          (1.f - basePtr[1]) * basePtr[3] * (1.f - (1.f - topPtr[3]) * blend));
+        break;
+      case NA_BLEND_WHITE_GREEN:
+      topblend = topPtr[3] * blend;
+      naFillV4f(retPtr,
+        (1.f - topblend) * naUnlinearizeColorValue(basePtr[0]) + topblend * naUnlinearizeColorValue(topPtr[0]),
+        (1.f - topblend) * naUnlinearizeColorValue(basePtr[1]) + topblend * naUnlinearizeColorValue(topPtr[1]),
+        (1.f - topblend) * naUnlinearizeColorValue(basePtr[2]) + topblend * naUnlinearizeColorValue(topPtr[2]),
+        basePtr[1] * basePtr[3] * (1.f - (1.f - topPtr[3]) * blend));
+      break;
+        case NA_BLEND_MULTIPLY:
+        topblend = topPtr[3] * blend;
+        naFillV4f(retPtr,
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[0]) + topblend * naUnlinearizeColorValue(topPtr[0]) * naUnlinearizeColorValue(basePtr[0]),
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[1]) + topblend * naUnlinearizeColorValue(topPtr[1]) * naUnlinearizeColorValue(basePtr[1]),
+          (1.f - topblend) * naUnlinearizeColorValue(basePtr[2]) + topblend * naUnlinearizeColorValue(topPtr[2]) * naUnlinearizeColorValue(basePtr[2]),
+          basePtr[3]);
+        break;
+      case NA_BLEND_ERASE_HUE:
         {
-          int asdf = 1234;
-        }
-        float hDiff = topHSL[0] - baseHSL[0];
-        if(hDiff > 180.f){hDiff -= 360.f;}
-        else if(hDiff < -180.f){hDiff += 360.f;}
+          float baseRGB[3];
+          float baseHSV[3];
+          float baseHSL[3];
+          baseRGB[0] = naUnlinearizeColorValue(basePtr[0]);
+          baseRGB[1] = naUnlinearizeColorValue(basePtr[1]);
+          baseRGB[2] = naUnlinearizeColorValue(basePtr[2]);
+          na_ConvertRGBToHSV(baseHSV, baseRGB);
+          na_ConvertHSVToHSL(baseHSL, baseHSV);
+          float topRGB[3];
+          float topHSV[3];
+          float topHSL[3];
+          topRGB[0] = naUnlinearizeColorValue(topPtr[0]);
+          topRGB[1] = naUnlinearizeColorValue(topPtr[1]);
+          topRGB[2] = naUnlinearizeColorValue(topPtr[2]);
+          na_ConvertRGBToHSV(topHSV, topRGB);
+          na_ConvertHSVToHSL(topHSL, topHSV);
 
-        if(hDiff < -60.f || hDiff > 60.f){
-          // Not near the hue, leave the color as it is.
-          naCopyV3f(ret, baseRGB);
-          ret[3] = 1.;
-        }else{
-          if(hDiff < 0.){
-            float factor = -hDiff / 60.f;
-            baseHSL[0] = topHSL[0] + 60.f;
-            if(baseHSL[0] > 360.f){baseHSL[0] -= 360.f;}
-            ret[3] = 1.f - baseHSL[1];
-            baseHSL[1] *= factor;
-            na_ConvertHSLToHSV(baseHSV, baseHSL);
-            na_ConvertHSVToRGB(ret, baseHSV);
+          if(baseHSV[1] != 1.)
+          {
+            int asdf = 1234;
+          }
+          float hDiff = topHSL[0] - baseHSL[0];
+          if(hDiff > 180.f){hDiff -= 360.f;}
+          else if(hDiff < -180.f){hDiff += 360.f;}
+
+          if(hDiff < -60.f || hDiff > 60.f){
+            // Not near the hue, leave the color as it is.
+            naCopyV3f(retPtr, baseRGB);
+            retPtr[3] = 1.;
           }else{
-            float factor = hDiff / 60.f;
-            baseHSL[0] = topHSL[0] - 60.f + 360.f;
-            if(baseHSL[0] > 360.f){baseHSL[0] -= 360.f;}
-            ret[3] = 1.f - baseHSL[1];
-            baseHSL[1] *= factor;
-            na_ConvertHSLToHSV(baseHSV, baseHSL);
-            na_ConvertHSVToRGB(ret, baseHSV);
+            if(hDiff < 0.){
+              float factor = -hDiff / 60.f;
+              baseHSL[0] = topHSL[0] + 60.f;
+              if(baseHSL[0] > 360.f){baseHSL[0] -= 360.f;}
+              retPtr[3] = 1.f - baseHSL[1];
+              baseHSL[1] *= factor;
+              na_ConvertHSLToHSV(baseHSV, baseHSL);
+              na_ConvertHSVToRGB(retPtr, baseHSV);
+            }else{
+              float factor = hDiff / 60.f;
+              baseHSL[0] = topHSL[0] - 60.f + 360.f;
+              if(baseHSL[0] > 360.f){baseHSL[0] -= 360.f;}
+              retPtr[3] = 1.f - baseHSL[1];
+              baseHSL[1] *= factor;
+              na_ConvertHSLToHSV(baseHSV, baseHSL);
+              na_ConvertHSVToRGB(retPtr, baseHSV);
+            }
           }
         }
+        break;
       }
-      break;
-    }
 
-    if(ret[3] == 0.f){
-      naFillV3f(ret, 0.f, 0.f, 0.f);
+      if(retPtr[3] == 0.f){
+        naFillV3f(retPtr, 0.f, 0.f, 0.f);
+      }
+      retPtr[0] = naLinearizeColorValue(retPtr[0]);
+      retPtr[1] = naLinearizeColorValue(retPtr[1]);
+      retPtr[2] = naLinearizeColorValue(retPtr[2]);
+
+      retPtr += NA_BABY_COLOR_CHANNEL_COUNT;
+      if(baseIsImage){basePtr += NA_BABY_COLOR_CHANNEL_COUNT;}
+      if(topIsImage){topPtr += NA_BABY_COLOR_CHANNEL_COUNT;}
     }
-    ret[0] = naLinearizeColorValue(ret[0]);
-    ret[1] = naLinearizeColorValue(ret[1]);
-    ret[2] = naLinearizeColorValue(ret[2]);
-    ret += NA_BABY_COLOR_CHANNEL_COUNT;
-    if(baseIsImage){base += NA_BABY_COLOR_CHANNEL_COUNT;}
-    if(topIsImage){top += NA_BABY_COLOR_CHANNEL_COUNT;}
   }
 }
 
 
 NA_DEF NABabyImage* naCreateBabyImageWithTint(const NABabyImage* base, const NABabyColor top, NABlendMode mode, float blend){
-  NABabyImage* retimage;
-  NAInt pixelCount;
-  const float* baseptr;
-  
   #if NA_DEBUG
     if(!base)
       naCrash("Given base image is a Null-Pointer");
@@ -320,36 +336,63 @@ NA_DEF NABabyImage* naCreateBabyImageWithTint(const NABabyImage* base, const NAB
       naError("insecure top color given");
   #endif
   
-  retimage = naCreateBabyImage(naGetBabyImageSize(base), NA_NULL);
-  pixelCount = na_GetBabyImagePixelCount(base);
+  NABabyImage* retimage = naCreateBabyImage(naGetBabyImageSize(base), NA_NULL);
   
-  baseptr = base->data;
-  na_BlendBabyImage(pixelCount, retimage->data, baseptr, top, mode, blend, NA_TRUE, NA_FALSE);
+  na_BlendBabyImage(
+    naGetBabyImageSize(base),
+    naMakeSizei(1, 1),
+    retimage->data,
+    base->data,
+    top,
+    mode,
+    blend,
+    NA_TRUE,
+    NA_FALSE,
+    naMakePosi(0, 0));
   return retimage;
 }
 
 
 
-NA_DEF NABabyImage* naCreateBabyImageWithBlend(const NABabyImage* base, const NABabyImage* top, NABlendMode mode, float blend){
-  NABabyImage* retimage;
-  NAInt pixelCount;
-
+NA_DEF NABabyImage* naCreateBabyImageWithBlend(
+  const NABabyImage* base,
+  const NABabyImage* top,
+  NABlendMode mode,
+  float blend,
+  NAPosi offset)
+{
   #if NA_DEBUG
   if(!top)
     naCrash("top is Null");
-  if(base && !naEqualSizei(naGetBabyImageSize(base), naGetBabyImageSize(top)))
-    naError("The two images have not the same size");
   #endif
 
-  retimage = naCreateBabyImage(naGetBabyImageSize(top), NA_NULL);
-  pixelCount = na_GetBabyImagePixelCount(top);
+  NABabyImage* retimage = naCreateBabyImage(naGetBabyImageSize(base), NA_NULL);
 
   if(base){
-    const float* baseptr = base->data;
-    na_BlendBabyImage(pixelCount, retimage->data, baseptr, top->data, mode, blend, NA_TRUE, NA_TRUE);
+    na_BlendBabyImage(
+      naGetBabyImageSize(base),
+      naGetBabyImageSize(top),
+      retimage->data,
+      base->data,
+      top->data,
+      mode,
+      blend,
+      NA_TRUE,
+      NA_TRUE,
+      offset);
   }else{
     NABabyColor transparent = {0.f, 0.f, 0.f, 0.f};
-    na_BlendBabyImage(pixelCount, retimage->data, transparent, top->data, mode, blend, NA_FALSE, NA_TRUE);
+    na_BlendBabyImage(
+      naMakeSizei(1, 1),
+      naGetBabyImageSize(top),
+      retimage->data,
+      transparent,
+      top->data,
+      mode,
+      blend,
+      NA_FALSE,
+      NA_TRUE,
+      offset);
   }
 
   return retimage;
@@ -358,9 +401,6 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(const NABabyImage* base, const NA
 
 
 NA_DEF NABabyImage* naCreateBabyImageWithApply(const NABabyColor base, const NABabyImage* top, NABlendMode mode, float blend){
-  NABabyImage* retimage;
-  NAInt pixelCount;
-
   #if NA_DEBUG
   if(!base)
     naCrash("base is Null");
@@ -370,11 +410,20 @@ NA_DEF NABabyImage* naCreateBabyImageWithApply(const NABabyColor base, const NAB
     naError("insecure base color given");
   #endif
 
-  retimage = naCreateBabyImage(naGetBabyImageSize(top), NA_NULL);
-  pixelCount = na_GetBabyImagePixelCount(top);
+  NABabyImage* retimage = naCreateBabyImage(naGetBabyImageSize(top), NA_NULL);
 
   const float* topptr = top->data;
-  na_BlendBabyImage(pixelCount, retimage->data, base, topptr, mode, blend, NA_FALSE, NA_TRUE);
+  na_BlendBabyImage(
+    naMakeSizei(1, 1),
+    naGetBabyImageSize(top),
+    retimage->data,
+    base,
+    topptr,
+    mode,
+    blend,
+    NA_FALSE,
+    NA_TRUE,
+    naMakePosi(0, 0));
 
   return retimage;
 }
