@@ -366,9 +366,10 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(
     naCrash("top is Null");
   #endif
 
-  NABabyImage* retimage = naCreateBabyImage(naGetBabyImageSize(base), NA_NULL);
+  NABabyImage* retimage;
 
   if(base){
+    retimage = naCreateBabyImage(naGetBabyImageSize(base), NA_NULL);
     na_BlendBabyImage(
       naGetBabyImageSize(base),
       naGetBabyImageSize(top),
@@ -382,6 +383,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(
       offset);
   }else{
     NABabyColor transparent = {0.f, 0.f, 0.f, 0.f};
+    retimage = naCreateBabyImage(naGetBabyImageSize(top), NA_NULL);
     na_BlendBabyImage(
       naMakeSizei(1, 1),
       naGetBabyImageSize(top),
