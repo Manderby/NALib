@@ -192,6 +192,9 @@ NA_HDEF void na_BlendBabyImage(
   NAPosi offset)
 {
   NARecti innerRect = naClampRectiToRect(naMakeRecti(offset, topSize), naMakeRecti(naMakePosi(0, 0), baseSize));
+  if(!naIsRectiUseful(innerRect)){
+    innerRect = naMakeRectiSE(0, 0, 0, 0);
+  }
 
   // Simply copy the lower part of the base image
   if(innerRect.pos.y > 0){
@@ -215,15 +218,18 @@ NA_HDEF void na_BlendBabyImage(
     const float* basePtr = &base[(y * baseSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
     
     // Simply copy the left part of the base image
-    if(innerRect.pos.x > 0){
+    NAInt leftPixelCount = innerRect.pos.x;
+    if(leftPixelCount > 0){
+      if(leftPixelCount > baseSize.width){leftPixelCount = baseSize.width;}
       naCopyn(
         &ret[y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
         &base[y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
-        innerRect.pos.x * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+        leftPixelCount * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
     }
     // Simply copy the right part of the base image
     NAInt rightPixelCount = baseSize.width - naGetRectiEndX(innerRect);
     if(rightPixelCount > 0){
+      if(rightPixelCount > baseSize.width){rightPixelCount = baseSize.width;}
       naCopyn(
         &ret[(y * baseSize.width + baseSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
         &base[(y * baseSize.width + baseSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
