@@ -31,9 +31,12 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
 
   CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
 
+  if(!imageSpace->imageSpace.uiImage)
+    return info;
+
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
-  size1x = naGetUIImage1xSize(imageSpace->image);
+  size1x = naGetUIImage1xSize(imageSpace->imageSpace.uiImage);
   size1x.width = (NAInt)(size1x.width * uiScale);
   size1x.height = (NAInt)(size1x.height * uiScale);
 
@@ -44,7 +47,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
     (spacesize.width - size1x.width) / 2,
     (spacesize.height - size1x.height) / 2);
 
-  foreImage = na_GetUIImageBabyImage(imageSpace->image, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, NA_FALSE);
+  foreImage = na_GetUIImageBabyImage(imageSpace->imageSpace.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, NA_FALSE);
 
   // We store the background where the image will be placed.
   backBuffer = naMalloc(size1x.width * size1x.height * 4);
@@ -140,8 +143,11 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
 
   na_InitImageSpace(&(winapiImageSpace->imageSpace), nativePtr);
 
-  winapiImageSpace->imageSpace.uiImage = naRetain(uiImage);
-  winapiImageSpace->image = uiImage;
+  if(uiImage){
+    winapiImageSpace->imageSpace.uiImage = naRetain(uiImage);
+  }else{
+    winapiImageSpace->imageSpace.uiImage = NA_NULL;
+  }
 
   return (NAImageSpace*)winapiImageSpace;
 }
@@ -158,9 +164,13 @@ NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace){
 NA_DEF void naSetImageSpaceImage(NAImageSpace* imageSpace, NAUIImage* uiImage){
   NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
   
-  naRelease(imageSpace->uiImage);
-  imageSpace->uiImage = naRetain(uiImage);
-  winapiImageSpace->image = uiImage;
+  if(imageSpace->uiImage){naRelease(imageSpace->uiImage);}
+  if(uiImage){
+    imageSpace->uiImage = naRetain(uiImage);
+  }
+  else{
+    imageSpace->uiImage = NA_NULL;
+  }
 
   InvalidateRect(naGetUIElementNativePtr(imageSpace), NULL, TRUE);
 }

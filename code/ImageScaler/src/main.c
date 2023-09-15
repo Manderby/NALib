@@ -8,7 +8,8 @@ typedef struct ImageTesterController ImageTesterController;
 
 struct ImageTesterApplication{
   NABabyImage* transparencyGridImage;
-  NABabyImage* topImage;
+  NABabyImage* featherImage;
+  NABabyImage* motorImage;
 
   ImageTesterController* imageTestController;
 };
@@ -16,6 +17,13 @@ struct ImageTesterApplication{
 struct ImageTesterController{
   NAWindow* window;
   NAImageSpace* imageSpace;
+
+  NALabel* topLabel;
+  NAPopupButton* topPopupButton;
+  NAMenuItem* featherItem;
+  NAMenuItem* motorItem;
+  NAMenuItem* redColorItem;
+  
   NALabel* scaleLabel;
   NASlider* scaleSlider;
 
@@ -28,10 +36,12 @@ ImageTesterApplication* imageTestApplication = NA_NULL;
 
 
 
-ImageTesterController* naAllocImageTestController(const NABabyImage* gridImage, const NABabyImage* topImage);
+ImageTesterController* naAllocImageTestController(void);
 void naDeallocImageTestController(ImageTesterController* con);
+NABool topSelected(NAReaction reaction);
 NABool sliderEdited(NAReaction reaction);
 NABool mouseMoved(NAReaction reaction);
+void updateImage(ImageTesterController* con);
 
 
 
@@ -44,12 +54,16 @@ ImageTesterApplication* naAllocImageTestApplication(){
   app->transparencyGridImage = naCreateBabyImageWithResize(gridImage, naMakeSizei(gridSize.width * 2, gridSize.height * 2));
   naReleaseBabyImage(gridImage);
 
-  NAPNG* topPNG = naNewPNGWithPath("res/feather.png");
-  app->topImage = naCreateBabyImageFromPNG(topPNG);
+  NAPNG* featherPNG = naNewPNGWithPath("res/feather.png");
+  app->featherImage = naCreateBabyImageFromPNG(featherPNG);
+  NAPNG* motorPNG = naNewPNGWithPath("res/motor.png");
+  app->motorImage = naCreateBabyImageFromPNG(motorPNG);
 
-  app->imageTestController = naAllocImageTestController(
-    app->transparencyGridImage,
-    app->topImage);
+  app->imageTestController = naAllocImageTestController();
+
+  app->imageTestController->topImage = app->featherImage;
+  app->imageTestController->transparencyGridImage = app->transparencyGridImage;
+  updateImage(app->imageTestController);
 
   return app;
 }
@@ -59,13 +73,14 @@ ImageTesterApplication* naAllocImageTestApplication(){
 void naDeallocImageTestApplication(ImageTesterApplication* app){
   naDeallocImageTestController(app->imageTestController);
   naReleaseBabyImage(app->transparencyGridImage);
-  naReleaseBabyImage(app->topImage);
+  naReleaseBabyImage(app->featherImage);
+  naReleaseBabyImage(app->motorImage);
   naFree(app);
 }
 
 
 
-ImageTesterController* naAllocImageTestController(const NABabyImage* gridImage, const NABabyImage* topImage){
+ImageTesterController* naAllocImageTestController(){
   ImageTesterController* con = naAlloc(ImageTesterController);
   con->center.x = 0;
   con->center.y = 0;
@@ -78,23 +93,38 @@ ImageTesterController* naAllocImageTestController(const NABabyImage* gridImage, 
 
   NASpace* contentSpace = naGetWindowContentSpace(con->window);
 
-  con->transparencyGridImage = gridImage;
-  con->topImage = topImage;
+  con->transparencyGridImage = NA_NULL;
+  con->topImage = NA_NULL;
 
-  NAUIImage* uiImage = naCreateUIImage(
-    con->transparencyGridImage,
-    NA_UIIMAGE_RESOLUTION_SCREEN_1x,
-    NA_BLEND_ZERO);
+  con->imageSpace = naNewImageSpace(NA_NULL, naMakeSize(600, 400));
 
-  con->imageSpace = naNewImageSpace(uiImage, naMakeSize(600, 400));
+  con->topLabel = naNewLabel("Top:", 200);
+  con->topPopupButton = naNewPopupButton(200);
+
   con->scaleLabel = naNewLabel("Scale:", 200);
   con->scaleSlider = naNewSlider(200);
   naSetSliderRange(con->scaleSlider, 0., 2., 0);
   naSetSliderValue(con->scaleSlider, 1.);
 
+
+
   naAddSpaceChild(contentSpace, con->imageSpace, naMakePos(10, 10));
-  naAddSpaceChild(contentSpace, con->scaleSlider, naMakePos(620, 200));
+
+  naAddSpaceChild(contentSpace, con->topLabel, naMakePos(620, 275));
+  naAddSpaceChild(contentSpace, con->topPopupButton, naMakePos(620, 250));
+  con->featherItem = naNewMenuItem("Feather");
+  con->motorItem = naNewMenuItem("Motor");
+  con->redColorItem = naNewMenuItem("Red");
+  naAddPopupButtonMenuItem(con->topPopupButton, con->featherItem, NA_NULL);
+  naAddPopupButtonMenuItem(con->topPopupButton, con->motorItem, NA_NULL);
+  naAddPopupButtonMenuItem(con->topPopupButton, con->redColorItem, NA_NULL);
+
   naAddSpaceChild(contentSpace, con->scaleLabel, naMakePos(620, 225));
+  naAddSpaceChild(contentSpace, con->scaleSlider, naMakePos(620, 200));
+
+  naAddUIReaction(con->featherItem, NA_UI_COMMAND_PRESSED, topSelected, con);
+  naAddUIReaction(con->motorItem, NA_UI_COMMAND_PRESSED, topSelected, con);
+  naAddUIReaction(con->redColorItem, NA_UI_COMMAND_PRESSED, topSelected, con);
   naAddUIReaction(con->scaleSlider, NA_UI_COMMAND_EDITED, sliderEdited, con);
   naAddUIReaction(con->imageSpace, NA_UI_COMMAND_MOUSE_MOVED, mouseMoved, con);
 
@@ -114,6 +144,9 @@ void naDeallocImageTestController(ImageTesterController* con){
 
 
 void updateImage(ImageTesterController* con){
+  if(!con->transparencyGridImage || !con->topImage)
+    return;
+
   double value = naGetSliderValue(con->scaleSlider);
   NASizei originalSize = naGetBabyImageSize(con->topImage);
   NASizei newSize = naMakeSizeiE((NAInt)(value * originalSize.width), (NAInt)(value * originalSize.height));
@@ -141,6 +174,21 @@ void updateImage(ImageTesterController* con){
     naReleaseBabyImage(fullImage);
     naReleaseBabyImage(scaledImage);
   }
+}
+
+
+
+NABool topSelected(NAReaction reaction){
+  ImageTesterController* con = (ImageTesterController*)reaction.controller;
+  if(reaction.uiElement == con->featherItem){
+    con->topImage = imageTestApplication->featherImage;
+  }else if(reaction.uiElement == con->motorItem){
+    con->topImage = imageTestApplication->motorImage;
+  }
+  con->transparencyGridImage = imageTestApplication->transparencyGridImage;
+  updateImage(con);
+
+  return NA_TRUE;
 }
 
 

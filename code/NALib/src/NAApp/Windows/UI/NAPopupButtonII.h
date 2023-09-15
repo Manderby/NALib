@@ -121,6 +121,8 @@ NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
 
 NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, const NAMenuItem* atItem){
   NAWINAPIPopupButton* winapiPopupButton = (NAWINAPIPopupButton*)popupButton;
+  
+  // todo: allow separators. Will crash currently.
   TCHAR* itemText = naAllocSystemStringWithUTF8String(naGetMenuItemText(item));
   size_t index = naGetPopupButtonItemIndex(popupButton, atItem);
 
