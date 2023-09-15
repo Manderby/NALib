@@ -193,11 +193,49 @@ NA_HDEF void na_BlendBabyImage(
 {
   NARecti innerRect = naClampRectiToRect(naMakeRecti(offset, topSize), naMakeRecti(naMakePosi(0, 0), baseSize));
 
+  // Simply copy the lower part of the base image
+  if(innerRect.pos.y > 0){
+    naCopyn(
+      ret,
+      base,
+      innerRect.pos.y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+  }
+  // Simply copy the upper part of the base image
+  NAInt topPixelCount = baseSize.height - naGetRectiEndY(innerRect);
+  if(topPixelCount > 0){
+    naCopyn(
+      &ret[(baseSize.height - topPixelCount) * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
+      &base[(baseSize.height - topPixelCount) * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
+      topPixelCount * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+  }
+
   for(NAInt y = innerRect.pos.y; y < naGetRectiEndY(innerRect); ++y){
 
     float* retPtr = &ret[(y * baseSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
     const float* basePtr = &base[(y * baseSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
-    const float* topPtr = &top[((y - innerRect.pos.y) * topSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
+    
+    // Simply copy the left part of the base image
+    if(innerRect.pos.x > 0){
+      naCopyn(
+        &ret[y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
+        &base[y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
+        innerRect.pos.x * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+    }
+    // Simply copy the right part of the base image
+    NAInt rightPixelCount = baseSize.width - naGetRectiEndX(innerRect);
+    if(rightPixelCount > 0){
+      naCopyn(
+        &ret[(y * baseSize.width + baseSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
+        &base[(y * baseSize.width + baseSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
+        rightPixelCount * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+    }
+
+    NAInt offsetX = 0;
+    NAInt offsetY = 0;
+    if(offset.x < 0) {offsetX = -offset.x;}
+    if(offset.y < 0) {offsetY = -offset.y;}
+    const float* topPtr = &top[(((y - innerRect.pos.y + offsetY) * topSize.width) + offsetX) * NA_BABY_COLOR_CHANNEL_COUNT];
+
     for(NAInt x = innerRect.pos.x; x < naGetRectiEndX(innerRect); ++x){
 
       float topblend;
