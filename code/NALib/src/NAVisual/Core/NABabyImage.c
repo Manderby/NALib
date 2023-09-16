@@ -297,7 +297,7 @@ NABabyImage* na_CreateBlendedBabyImage(
         sumBlend = (1.f - blend) * basePtr[3] + blend * topPtr[3];
         if(sumBlend > NA_SINGULARITYf){
           bottomBlend = (1.f - blend) * basePtr[3] / sumBlend;
-          topBlend = blend * topPtr[3] / sumBlend;
+          topBlend = 1.f - bottomBlend;
           naFillV4f(retPtr,
             bottomBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]),
             bottomBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]),
@@ -311,7 +311,7 @@ NABabyImage* na_CreateBlendedBabyImage(
         sumBlend = basePtr[3] * (1.f - blend * topPtr[3]) + blend * topPtr[3];
         if(sumBlend > NA_SINGULARITYf){
           bottomBlend = (basePtr[3] * (1.f - blend * topPtr[3])) / sumBlend;
-          topBlend = (blend * topPtr[3]) / sumBlend;
+          topBlend = 1.f - bottomBlend;
           naFillV4f(retPtr,
             bottomBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]),
             bottomBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]),
@@ -325,7 +325,7 @@ NABabyImage* na_CreateBlendedBabyImage(
         sumBlend = basePtr[3] * (1.f - blend * topPtr[3]) + blend * topPtr[3];
         if(sumBlend > NA_SINGULARITYf){
           bottomBlend = (basePtr[3] * (1.f - blend * topPtr[3])) / sumBlend;
-          topBlend = (blend * topPtr[3]) / sumBlend;
+          topBlend = 1.f - bottomBlend;
           naFillV4f(retPtr,
             bottomBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]),
             bottomBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]),
@@ -352,11 +352,12 @@ NABabyImage* na_CreateBlendedBabyImage(
         basePtr[1] * basePtr[3] * (1.f - (1.f - topPtr[3]) * blend));
       break;
         case NA_BLEND_MULTIPLY:
-        topBlend = topPtr[3] * blend;
+        bottomBlend = 1.f - topPtr[3] * blend;
+        topBlend = 1.f - bottomBlend;
         naFillV4f(retPtr,
-          (1.f - topBlend) * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]) * naUnlinearizeColorValue(basePtr[0]),
-          (1.f - topBlend) * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]) * naUnlinearizeColorValue(basePtr[1]),
-          (1.f - topBlend) * naUnlinearizeColorValue(basePtr[2]) + topBlend * naUnlinearizeColorValue(topPtr[2]) * naUnlinearizeColorValue(basePtr[2]),
+          bottomBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]) * naUnlinearizeColorValue(basePtr[0]),
+          bottomBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]) * naUnlinearizeColorValue(basePtr[1]),
+          bottomBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * naUnlinearizeColorValue(topPtr[2]) * naUnlinearizeColorValue(basePtr[2]),
           basePtr[3]);
         break;
       case NA_BLEND_ERASE_HUE:
