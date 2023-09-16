@@ -94,12 +94,12 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
         #if NA_OS == NA_OS_MAC_OS_X
           newSubImage = originalImage;
         #else
-          NABabyImage* newImage = naCreateBabyImageWithBlend(
-            NA_NULL,
+          NABabyColor transparent = {0., 0., 0., 0.};
+          NABabyImage* newImage = naCreateBabyImageWithApply(
+            transparent,
             originalImage->image,
             NA_BLEND_OVERLAY,
-            .5f,
-            naMakePosi(0, 0));
+            .5f);
           newSubImage = na_AddUISubImage(
             mutableUIImage,
             newImage,
