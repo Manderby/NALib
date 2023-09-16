@@ -7,6 +7,10 @@ typedef struct ImageTesterApplication ImageTesterApplication;
 typedef struct ImageTesterController ImageTesterController;
 
 typedef enum{
+  IMAGE_RAINBOW,
+  IMAGE_CAT_PINK,
+  IMAGE_CAT_BLUE,
+  IMAGE_CAT_GREEN,
   IMAGE_FEATHER,
   IMAGE_MOTOR,
   IMAGE_COUNT
@@ -26,7 +30,7 @@ typedef enum{
 struct ImageTesterApplication{
   NABabyImage* transparencyGridImage;
   NABabyImage* images[IMAGE_COUNT];
-  NAUTF8Char* imageNames[IMAGE_COUNT];
+  const NAUTF8Char* imageNames[IMAGE_COUNT];
   NABabyColor colors[COLOR_COUNT];
   NAUTF8Char* colorNames[COLOR_COUNT];
 
@@ -76,6 +80,13 @@ void updateImage(ImageTesterController* con);
 
 
 
+void addImage(size_t index, const NAUTF8Char* text, const NAUTF8Char* path){
+  NAPNG* png = naNewPNGWithPath(path);
+  app->images[index] = naCreateBabyImageFromPNG(png);
+  app->imageNames[index] = text;
+  naDelete(png);
+}
+
 void naStartImageTestApplication(){
   app = naAlloc(ImageTesterApplication);
 
@@ -85,14 +96,12 @@ void naStartImageTestApplication(){
   app->transparencyGridImage = naCreateBabyImageWithResize(gridImage, naMakeSizei(gridSize.width * 2, gridSize.height * 2));
   naReleaseBabyImage(gridImage);
 
-  NAPNG* featherPNG = naNewPNGWithPath("res/feather.png");
-  NAPNG* motorPNG = naNewPNGWithPath("res/motor.png");
-  app->images[IMAGE_FEATHER] = naCreateBabyImageFromPNG(featherPNG);
-  app->images[IMAGE_MOTOR] = naCreateBabyImageFromPNG(motorPNG);
-  app->imageNames[IMAGE_FEATHER] = "Feather";
-  app->imageNames[IMAGE_MOTOR] = "Motor";
-  naDelete(featherPNG);
-  naDelete(motorPNG);
+  addImage(IMAGE_RAINBOW, "Rainbow", "res/rainbow.png");
+  addImage(IMAGE_CAT_PINK, "Cat Pink", "res/catPink.png");
+  addImage(IMAGE_CAT_BLUE, "Cat Blue", "res/catBlue.png");
+  addImage(IMAGE_CAT_GREEN, "Cat Green", "res/catGreen.png");
+  addImage(IMAGE_FEATHER, "Feather", "res/feather.png");
+  addImage(IMAGE_MOTOR, "Motor", "res/motor.png");
 
   naFillBabyColor(app->colors[COLOR_TRANSPARENT], 0., 0., 0., 0.);
   naFillBabyColor(app->colors[COLOR_RED], 1., 0., 0., 1.);

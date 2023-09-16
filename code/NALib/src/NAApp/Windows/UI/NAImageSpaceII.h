@@ -27,7 +27,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   hMemDC = CreateCompatibleDC(paintStruct.hdc);
 
   imageSpace = (NAWINAPIImageSpace*)uiElement;
-  FillRect(paintStruct.hdc, &paintStruct.rcPaint, CreateSolidBrush(RGB(240,240,240)));
+  //FillRect(paintStruct.hdc, &paintStruct.rcPaint, CreateSolidBrush(RGB(240,240,240)));
 
   CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
 
