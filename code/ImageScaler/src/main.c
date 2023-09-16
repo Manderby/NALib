@@ -279,34 +279,19 @@ void updateImageTestController(ImageTesterController* con){
   naSetPopupButtonIndexSelected(con->blendModePopupButton, con->blendMode);
   naSetPopupButtonIndexSelected(con->bottomPopupButton, con->selectedBottom);
 
+  NASizei gridSize = naGetBabyImageSize(app->transparencyGridImage);
+
   NABabyImage* backImage;
   if(con->bottomImage){
-    NASizei originalSize = naGetBabyImageSize(con->bottomImage);
-    NASizei newSize = naMakeSizeiE((NAInt)(2. * originalSize.width), (NAInt)(2. * originalSize.height));
-
-    NABabyImage* scaledImage = naCreateBabyImageWithResize(con->bottomImage, newSize);
-    NASizei baseSize = naGetBabyImageSize(app->transparencyGridImage);
-
-    NAPosi origin = naMakePosi(
-      (baseSize.width - newSize.width) / 2,
-      (baseSize.height - newSize.height) / 2);
-
-    backImage = naCreateBabyImageWithBlend(
-      app->transparencyGridImage,
-      scaledImage,
-      NA_BLEND_OVERLAY,
-      1.,
-      origin);
-    naReleaseBabyImage(scaledImage);
+    NASizei newSize = naGetBabyImageSize(con->bottomImage);
+    newSize.width *= 2;
+    newSize.height *= 2;
+    backImage = naCreateBabyImageWithResize(con->bottomImage, newSize);
   }else{
-    backImage = naCreateBabyImageWithTint(
-      app->transparencyGridImage,
-      con->bottomColor,
-      NA_BLEND_OVERLAY,
-      1.);
+    backImage = naCreateBabyImage(gridSize, con->bottomColor);
   }
-
-  NABabyImage* fullImage;
+    
+  NABabyImage* blendedImage;
 
   if(con->topImage){
     NASizei originalSize = naGetBabyImageSize(con->topImage);
@@ -320,7 +305,7 @@ void updateImageTestController(ImageTesterController* con){
         con->center.x - (NAInt)((newSize.width / 2.) + ((spaceSize.width - baseSize.width) / 2.)),
         con->center.y - (NAInt)((newSize.height / 2.) + ((spaceSize.height - baseSize.height) / 2.)));
 
-      fullImage = naCreateBabyImageWithBlend(
+      blendedImage = naCreateBabyImageWithBlend(
         backImage,
         scaledImage,
         con->blendMode,
@@ -328,10 +313,10 @@ void updateImageTestController(ImageTesterController* con){
         origin);
       naReleaseBabyImage(scaledImage);
     }else{
-      fullImage = naRetainBabyImage(backImage);
+      blendedImage = naRetainBabyImage(backImage);
     }
   }else{
-    fullImage = naCreateBabyImageWithTint(
+    blendedImage = naCreateBabyImageWithTint(
       backImage,
       con->topColor,
       con->blendMode,
@@ -340,13 +325,29 @@ void updateImageTestController(ImageTesterController* con){
 
   naReleaseBabyImage(backImage);
 
+  NASizei blendedSize = naGetBabyImageSize(blendedImage);
+  NAPosi origin = naMakePosi(
+    (gridSize.width - blendedSize.width) / 2,
+    (gridSize.height - blendedSize.height) / 2);
+
+  NABabyImage* fullImage = naCreateBabyImageWithBlend(
+    app->transparencyGridImage,
+    blendedImage,
+    NA_BLEND_OVERLAY,
+    1.,
+    origin);
+
+  naReleaseBabyImage(blendedImage);
+
   NAUIImage* uiImage = naCreateUIImage(
     fullImage,
     NA_UIIMAGE_RESOLUTION_SCREEN_1x,
     NA_BLEND_ZERO);
+  naReleaseBabyImage(fullImage);
+
   naSetImageSpaceImage(con->imageSpace, uiImage);
   naRelease(uiImage);
-  naReleaseBabyImage(fullImage);
+
 }
 
 

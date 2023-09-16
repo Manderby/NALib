@@ -306,8 +306,7 @@ NABabyImage* na_CreateBlendedBabyImage(
           (1.f - topblend) * naUnlinearizeColorValue(basePtr[1]) + topblend * naUnlinearizeColorValue(topPtr[1]),
           (1.f - topblend) * naUnlinearizeColorValue(basePtr[2]) + topblend * naUnlinearizeColorValue(topPtr[2]),
           basePtr[3] + (1.f - basePtr[3]) * topblend);
-        //naFillV4f(retPtr, 1, 0, 0, 1);
-          break;
+        break;
       case NA_BLEND_OPAQUE:
         topblend = topPtr[3] * blend;
         naFillV4f(retPtr,
