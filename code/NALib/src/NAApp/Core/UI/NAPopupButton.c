@@ -20,13 +20,13 @@ NA_HDEF void na_ClearPopupButton(NAPopupButton* popupButton){
 
 
 
-NA_DEF size_t naGetPopupButtonItemIndex(NAPopupButton* popupButton, const NAMenuItem* item){
+NA_DEF size_t naGetPopupButtonItemIndex(const NAPopupButton* popupButton, const NAMenuItem* item){
   return naGetListElemIndex(&(popupButton->childs), item);
 }
 
 
 
-NA_DEF size_t naGetPopupButtonItemCount(NAPopupButton* popupButton){
+NA_DEF size_t naGetPopupButtonItemCount(const NAPopupButton* popupButton){
   return naGetListCount(&(popupButton->childs));
 }
 
