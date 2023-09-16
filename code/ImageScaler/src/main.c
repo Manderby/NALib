@@ -32,6 +32,7 @@ struct ImageTesterController{
 
   const NABabyImage* transparencyGridImage;
   const NABabyImage* topImage;
+  NABabyColor topColor;
   NAPosi center;
 };
 
@@ -65,6 +66,7 @@ ImageTesterApplication* naAllocImageTestApplication(){
   app->imageTestController = naAllocImageTestController();
 
   app->imageTestController->topImage = app->featherImage;
+  naFillBabyColor(app->imageTestController->topColor, 0., 0., 0., 0.);
   app->imageTestController->transparencyGridImage = app->transparencyGridImage;
   updateImage(app->imageTestController);
 
@@ -156,38 +158,51 @@ void naDeallocImageTestController(ImageTesterController* con){
 
 
 void updateImage(ImageTesterController* con){
-  if(!con->transparencyGridImage || !con->topImage)
+  if(!con->transparencyGridImage)
     return;
 
   float alpha = (float)naGetSliderValue(con->blendSlider);
   double scale = naGetSliderValue(con->scaleSlider);
 
-  NASizei originalSize = naGetBabyImageSize(con->topImage);
-  NASizei newSize = naMakeSizeiE((NAInt)(scale * originalSize.width), (NAInt)(scale * originalSize.height));
-  if(naIsSizeiUseful(newSize)){
-    NABabyImage* scaledImage = naCreateBabyImageWithResize(con->topImage, newSize);
-    NASizei baseSize = naGetBabyImageSize(con->transparencyGridImage);
-    NASize spaceSize = naGetUIElementRect(con->imageSpace).size;
+  NABabyImage* fullImage;
 
-    NAPosi origin = naMakePosi(
-      con->center.x - (NAInt)((newSize.width / 2.) + ((spaceSize.width - baseSize.width) / 2.)),
-      con->center.y - (NAInt)((newSize.height / 2.) + ((spaceSize.height - baseSize.height) / 2.)));
+  if(con->topImage){
+    NASizei originalSize = naGetBabyImageSize(con->topImage);
+    NASizei newSize = naMakeSizeiE((NAInt)(scale * originalSize.width), (NAInt)(scale * originalSize.height));
+    if(naIsSizeiUseful(newSize)){
+      NABabyImage* scaledImage = naCreateBabyImageWithResize(con->topImage, newSize);
+      NASizei baseSize = naGetBabyImageSize(con->transparencyGridImage);
+      NASize spaceSize = naGetUIElementRect(con->imageSpace).size;
 
-    NABabyImage* fullImage = naCreateBabyImageWithBlend(
+      NAPosi origin = naMakePosi(
+        con->center.x - (NAInt)((newSize.width / 2.) + ((spaceSize.width - baseSize.width) / 2.)),
+        con->center.y - (NAInt)((newSize.height / 2.) + ((spaceSize.height - baseSize.height) / 2.)));
+
+      fullImage = naCreateBabyImageWithBlend(
+        con->transparencyGridImage,
+        scaledImage,
+        NA_BLEND_OVERLAY,
+        alpha,
+        origin);
+      naReleaseBabyImage(scaledImage);
+    }else{
+      fullImage = naRetainBabyImage(con->transparencyGridImage);
+    }
+  }else{
+    fullImage = naCreateBabyImageWithTint(
       con->transparencyGridImage,
-      scaledImage,
+      con->topColor,
       NA_BLEND_OVERLAY,
-      alpha,
-      origin);
-    NAUIImage* uiImage = naCreateUIImage(
-      fullImage,
-      NA_UIIMAGE_RESOLUTION_SCREEN_1x,
-      NA_BLEND_ZERO);
-    naSetImageSpaceImage(con->imageSpace, uiImage);
-    naRelease(uiImage);
-    naReleaseBabyImage(fullImage);
-    naReleaseBabyImage(scaledImage);
+      alpha);
   }
+
+  NAUIImage* uiImage = naCreateUIImage(
+    fullImage,
+    NA_UIIMAGE_RESOLUTION_SCREEN_1x,
+    NA_BLEND_ZERO);
+  naSetImageSpaceImage(con->imageSpace, uiImage);
+  naRelease(uiImage);
+  naReleaseBabyImage(fullImage);
 }
 
 
@@ -198,6 +213,9 @@ NABool topSelected(NAReaction reaction){
     con->topImage = imageTestApplication->featherImage;
   }else if(reaction.uiElement == con->motorItem){
     con->topImage = imageTestApplication->motorImage;
+  }else if(reaction.uiElement == con->redColorItem){
+    con->topImage = NA_NULL;
+    naFillBabyColor(con->topColor, 1., 0., 0., 1.);
   }
   con->transparencyGridImage = imageTestApplication->transparencyGridImage;
   updateImage(con);

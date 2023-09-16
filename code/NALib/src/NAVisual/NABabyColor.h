@@ -56,6 +56,9 @@ typedef enum{
 NA_IAPI float naLinearizeColorValue(float value);
 NA_IAPI float naUnlinearizeColorValue(float value);
 
+// Fills the given BabyColor with the given values
+NA_IAPI naFillBabyColor(NABabyColor color, float r, float g, float b, float a);
+
 // Checks whether the given color is secure
 NA_API NABool naIsBabyColorSecure(const NABabyColor color);
 
@@ -84,6 +87,13 @@ NA_IDEF float naUnlinearizeColorValue(float value){
 }
 NA_IDEF float naLinearizeColorValue(float value){
   return (1.f - NA_BABY_FACTOR) * value / (1.f - NA_BABY_FACTOR * value);
+}
+
+NA_IDEF naFillBabyColor(NABabyColor color, float r, float g, float b, float a){
+  color[0] = r;
+  color[1] = g;
+  color[2] = b;
+  color[3] = a;
 }
 
 
