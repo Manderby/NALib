@@ -179,98 +179,109 @@ void na_ConvertHSLToHSV(float out[3], const float in[3]){
 
 
 
-NA_HDEF void na_BlendBabyImage(
-  NASizei baseSize,
-  NASizei topSize,
-  float* ret,
+NABabyImage* na_CreateBlendedBabyImage(
   const float* base,
+  NASizei baseSize,
   const float* top,
+  NASizei topSize,
   NABlendMode mode,
   float blend,
-  NABool baseIsImage,
-  NABool topIsImage,
   NAPosi offset)
 {
-  NARecti innerRect;
-  
-  if(topIsImage && baseIsImage){
-    innerRect = naClampRectiToRect(naMakeRecti(offset, topSize), naMakeRecti(naMakePosi(0, 0), baseSize));
-    if(!naIsRectiUseful(innerRect)){
-      innerRect = naMakeRectiSE(0, 0, 0, 0);
-    }
+  NABool baseIsImage = !naIsSizeiEmpty(baseSize);
+  NABool topIsImage = !naIsSizeiEmpty(topSize);
 
+  // First, define the return size and inner rect.
+  NASizei retSize;
+  NARecti innerRect;
+  if(topIsImage && baseIsImage){
+    retSize = baseSize;
+    innerRect = naClampRectiToRect(naMakeRecti(offset, topSize), naMakeRecti(naMakePosiZero(), retSize));
+    if(!naIsRectiUseful(innerRect)){innerRect = naMakeRectiZero();}
+  }else if(topIsImage){
+    retSize = topSize;
+    innerRect = naMakeRecti(naMakePosiZero(), retSize);
+  }else{
+    retSize = baseSize;
+    innerRect = naMakeRecti(naMakePosiZero(), retSize);
+  }
+  NAInt innerEndY = naIsRectiEmpty(innerRect) ? 0 : naGetRectiEndY(innerRect);
+  NAInt innerEndX = naIsRectiEmpty(innerRect) ? 0 : naGetRectiEndX(innerRect);
+
+  // Create the actual image to be filled.
+  NABabyImage* retImage = naCreateBabyImage(retSize, NA_NULL);
+  float* ret = naGetBabyImageData(retImage);
+
+  // In case we have two images, fill up the trivial vertial parts.
+  if(topIsImage && baseIsImage){
     // Simply copy the lower part of the base image
-    if(innerRect.pos.y > 0){
+    NAInt bottomPixelCount = innerRect.pos.y;
+    if(bottomPixelCount > 0){
       naCopyn(
         ret,
         base,
-        innerRect.pos.y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+        bottomPixelCount * retSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
     }
     // Simply copy the upper part of the base image
-    NAInt topPixelCount = baseSize.height - naGetRectiEndY(innerRect);
+    NAInt topPixelCount = naIsRectiEmpty(innerRect) ? baseSize.height : baseSize.height - innerEndY;
     if(topPixelCount > 0){
       naCopyn(
-        &ret[(baseSize.height - topPixelCount) * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
+        &ret[(retSize.height - topPixelCount) * retSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
         &base[(baseSize.height - topPixelCount) * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
-        topPixelCount * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+        topPixelCount * retSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
     }
-  }else if(topIsImage){
-    innerRect = naMakeRecti(naMakePosi(0, 0), topSize);
-  }else{
-    innerRect = naMakeRecti(naMakePosi(0, 0), baseSize);
   }
 
-  for(NAInt y = innerRect.pos.y; y < naGetRectiEndY(innerRect); ++y){
+  // Go through the inner part vertically.
+  for(NAInt y = innerRect.pos.y; y < innerEndY; ++y){
 
-    float* retPtr;    
-    const float* basePtr;
-    
+    // In case we have two images, fill up the trivial horizontal parts.
     if(topIsImage && baseIsImage){
-      retPtr = &ret[(y * baseSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
-      basePtr = &base[(y * baseSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
-
       // Simply copy the left part of the base image
       NAInt leftPixelCount = innerRect.pos.x;
       if(leftPixelCount > 0){
         if(leftPixelCount > baseSize.width){leftPixelCount = baseSize.width;}
         naCopyn(
-          &ret[y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
+          &ret[y * retSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
           &base[y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
           leftPixelCount * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
       }
       // Simply copy the right part of the base image
-      NAInt rightPixelCount = baseSize.width - naGetRectiEndX(innerRect);
+      NAInt rightPixelCount = baseSize.width - innerEndX;
       if(rightPixelCount > 0){
         if(rightPixelCount > baseSize.width){rightPixelCount = baseSize.width;}
         naCopyn(
-          &ret[(y * baseSize.width + baseSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
+          &ret[(y * retSize.width + retSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
           &base[(y * baseSize.width + baseSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
           rightPixelCount * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
       }
-    }else if(topIsImage){
-      retPtr = &ret[(y * topSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
-      basePtr = &base[(y * topSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
-    }else{
-      retPtr = &ret[(y * baseSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
-      basePtr = &base[(y * baseSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
     }
 
+    // Now for the actual interesting part of the image.
+
+    // Define the source and destination pointers
+    float* retPtr;    
+    const float* basePtr;
     const float* topPtr;
     if(topIsImage && baseIsImage){
+      retPtr = &ret[(y * retSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
+      basePtr = &base[(y * baseSize.width + innerRect.pos.x) * NA_BABY_COLOR_CHANNEL_COUNT];
       NAInt offsetX = 0;
       NAInt offsetY = 0;
       if(offset.x < 0) {offsetX = -offset.x;}
       if(offset.y < 0) {offsetY = -offset.y;}
       topPtr = &top[(((y - innerRect.pos.y + offsetY) * topSize.width) + offsetX) * NA_BABY_COLOR_CHANNEL_COUNT];
-      basePtr = &base[(y * topSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
     }else if(topIsImage){
-      topPtr = &top[(y * topSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
+      retPtr = &ret[(y * retSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
       basePtr = base;
+      topPtr = &top[(y * topSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
     }else{
+      retPtr = &ret[(y * retSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
+      basePtr = &base[(y * baseSize.width) * NA_BABY_COLOR_CHANNEL_COUNT];
       topPtr = top;
     }
 
-    for(NAInt x = innerRect.pos.x; x < naGetRectiEndX(innerRect); ++x){
+    for(NAInt x = innerRect.pos.x; x < innerEndX; ++x){
 
       float topblend;
       switch(mode){
@@ -395,33 +406,33 @@ NA_HDEF void na_BlendBabyImage(
       if(topIsImage){topPtr += NA_BABY_COLOR_CHANNEL_COUNT;}
     }
   }
+
+  return retImage;
 }
 
 
-NA_DEF NABabyImage* naCreateBabyImageWithTint(const NABabyImage* base, const NABabyColor top, NABlendMode mode, float blend){
+NA_DEF NABabyImage* naCreateBabyImageWithTint(
+  const NABabyImage* base,
+  const NABabyColor tint,
+  NABlendMode mode,
+  float blend){
   #if NA_DEBUG
     if(!base)
       naCrash("Given base image is a Null-Pointer");
-    if(!top)
-      naCrash("top is Null");
-    if(top[3] == 0.f && (top[0] != 0.f || top[1] != 0.f || top[2] != 0.f))
-      naError("insecure top color given");
+    if(!tint)
+      naCrash("tint is Null");
+    if(!naIsBabyColorSecure(tint))
+      naError("insecure tint color given");
   #endif
   
-  NABabyImage* retimage = naCreateBabyImage(naGetBabyImageSize(base), NA_NULL);
-  
-  na_BlendBabyImage(
-    naGetBabyImageSize(base),
-    naMakeSizei(1, 1),
-    retimage->data,
+  return na_CreateBlendedBabyImage(
     base->data,
-    top,
+    naGetBabyImageSize(base),
+    tint,
+    naMakeSizeiEmpty(),
     mode,
     blend,
-    NA_TRUE,
-    NA_FALSE,
     naMakePosi(0, 0));
-  return retimage;
 }
 
 
@@ -434,72 +445,43 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(
   NAPosi offset)
 {
   #if NA_DEBUG
-  if(!top)
-    naCrash("top is Null");
-  #endif
-
-  NABabyImage* retimage;
-
-  if(base){
-    retimage = naCreateBabyImage(naGetBabyImageSize(base), NA_NULL);
-    na_BlendBabyImage(
-      naGetBabyImageSize(base),
-      naGetBabyImageSize(top),
-      retimage->data,
-      base->data,
-      top->data,
-      mode,
-      blend,
-      NA_TRUE,
-      NA_TRUE,
-      offset);
-  }else{
-    NABabyColor transparent = {0.f, 0.f, 0.f, 0.f};
-    retimage = naCreateBabyImage(naGetBabyImageSize(top), NA_NULL);
-    na_BlendBabyImage(
-      naMakeSizei(1, 1),
-      naGetBabyImageSize(top),
-      retimage->data,
-      transparent,
-      top->data,
-      mode,
-      blend,
-      NA_FALSE,
-      NA_TRUE,
-      offset);
-  }
-
-  return retimage;
-}
-
-
-
-NA_DEF NABabyImage* naCreateBabyImageWithApply(const NABabyColor base, const NABabyImage* top, NABlendMode mode, float blend){
-  #if NA_DEBUG
   if(!base)
     naCrash("base is Null");
   if(!top)
     naCrash("top is Null");
-  if(base[3] == 0.f && (base[0] != 0.f || base[1] != 0.f || base[2] != 0.f))
-    naError("insecure base color given");
   #endif
 
-  NABabyImage* retimage = naCreateBabyImage(naGetBabyImageSize(top), NA_NULL);
-
-  const float* topptr = top->data;
-  na_BlendBabyImage(
-    naMakeSizei(1, 1),
+  return na_CreateBlendedBabyImage(
+    base->data,
+    naGetBabyImageSize(base),
+    top->data,
     naGetBabyImageSize(top),
-    retimage->data,
-    base,
-    topptr,
     mode,
     blend,
-    NA_FALSE,
-    NA_TRUE,
-    naMakePosi(0, 0));
+    offset);
+}
 
-  return retimage;
+
+
+NA_DEF NABabyImage* naCreateBabyImageWithApply(const NABabyColor ground, const NABabyImage* top, NABlendMode mode, float blend){
+  #if NA_DEBUG
+  if(!ground)
+    naCrash("ground is Null");
+  if(!top)
+    naCrash("top is Null");
+  if(!naIsBabyColorSecure(ground))
+    naError("insecure ground color given");
+  #endif
+
+  const float* topptr = top->data;
+  return na_CreateBlendedBabyImage(
+    ground,
+    naMakeSizeiEmpty(),
+    topptr,
+    naGetBabyImageSize(top),
+    mode,
+    blend,
+    naMakePosi(0, 0));
 }
 
 

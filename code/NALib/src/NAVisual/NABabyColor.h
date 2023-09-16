@@ -56,6 +56,9 @@ typedef enum{
 NA_IAPI float naLinearizeColorValue(float value);
 NA_IAPI float naUnlinearizeColorValue(float value);
 
+// Checks whether the given color is secure
+NA_API NABool naIsBabyColorSecure(const NABabyColor color);
+
 // Inverts the color
 NA_API void naInvertBabyColor(NABabyColor color);
 

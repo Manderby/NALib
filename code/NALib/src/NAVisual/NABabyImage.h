@@ -70,7 +70,7 @@ NA_API NABabyImage* naCreateBabyImageCopy(const NABabyImage* image);
 // is used instead.
 NA_API NABabyImage* naCreateBabyImageWithTint(
   const NABabyImage* base,
-  const NABabyColor  top,
+  const NABabyColor  tint,
   NABlendMode        mode,
   float              blend);
 NA_DEF NABabyImage* naCreateBabyImageWithBlend(
@@ -80,7 +80,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(
   float              blend,
   NAPosi             offset);
 NA_DEF NABabyImage* naCreateBabyImageWithApply(
-  const NABabyColor  base,
+  const NABabyColor  ground,
   const NABabyImage* top,
   NABlendMode        mode,
   float              blend);

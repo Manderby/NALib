@@ -195,6 +195,9 @@ NA_IAPI NAPosi   naMakePosiWithPos(NAPos  pos);
 NA_IAPI NAPosi   naMakePosiWithIntegerPos(NAPos  pos);
 NA_IAPI NAPos    naMakePosWithV2(double* v);
 
+NA_IAPI NAPos    naMakePosZero(void);
+NA_IAPI NAPosi   naMakePosiZero(void);
+
 NA_IAPI NASize   naMakeSize   (double width,  double  height);
 NA_IAPI NASizei  naMakeSizei  (NAInt  width,  NAInt   height);
 NA_IAPI NASize   naMakeSizeE  (double width,  double  height);

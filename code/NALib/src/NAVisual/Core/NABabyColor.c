@@ -17,7 +17,12 @@ NA_HIDEF void na_LinearizeRGB(float* outColor, const float* inColor){
 
 
 
-// Inverts the color
+NA_API NABool naIsBabyColorSecure(const NABabyColor color){
+  return color[3] != 0 || (color[0] == 0. && color[1] == 0. && color[2] == 0.);
+}
+
+
+
 NA_DEF void naInvertBabyColor(NABabyColor color){
   color[0] = naLinearizeColorValue(1.f - naUnlinearizeColorValue(color[0]));
   color[1] = naLinearizeColorValue(1.f - naUnlinearizeColorValue(color[1]));
