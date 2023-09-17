@@ -47,6 +47,7 @@ typedef enum{
   NA_BLEND_BLACK_GREEN, // Blends where base has opaque dark pixels measured on green channel.
   NA_BLEND_WHITE_GREEN, // Blends where base has opaque light pixels measured on green channel.
   NA_BLEND_MULTIPLY,    // Blends where base is opaque by multiplying the color.
+  NA_BLEND_SCREEN,      // Blends where base is opaque by inverse multiplying the color.
   NA_BLEND_ERASE_HUE    // Decolorizes the base and makes it transparent based on top hue.
                         // Useful for green-screening or blue-screening.
 } NABlendMode;

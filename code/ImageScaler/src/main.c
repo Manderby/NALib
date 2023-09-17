@@ -11,6 +11,7 @@ typedef enum{
   IMAGE_CAT_PINK,
   IMAGE_CAT_BLUE,
   IMAGE_CAT_GREEN,
+  IMAGE_CAT_SILHOUETTE,
   IMAGE_FEATHER,
   IMAGE_MOTOR,
   IMAGE_COUNT
@@ -21,6 +22,7 @@ const NAUTF8Char* imageNames[IMAGE_COUNT] = {
   "Cat Pink",
   "Cat Blue",
   "Cat Green",
+  "Cat Silhouette",
   "Feather",
   "Motor",
 };
@@ -30,6 +32,7 @@ const NAUTF8Char* imagePaths[IMAGE_COUNT] = {
   "res/catPink.png",
   "res/catBlue.png",
   "res/catGreen.png",
+  "res/catSilhouette.png",
   "res/feather.png",
   "res/motor.png",
 };
@@ -222,6 +225,7 @@ ImageTesterController* naAllocImageTestController(){
   addSinglePopupItem("BLACK_GREEN",con->blendModePopupButton, blendModeSelected, con);
   addSinglePopupItem("WHITE_GREEN",con->blendModePopupButton, blendModeSelected, con);
   addSinglePopupItem("MULTIPLY",con->blendModePopupButton, blendModeSelected, con);
+  addSinglePopupItem("SCREEN",con->blendModePopupButton, blendModeSelected, con);
   addSinglePopupItem("ERASE_HUE",con->blendModePopupButton, blendModeSelected, con);
 
   con->alphaLabel = naNewLabel("Blend:", 200);
