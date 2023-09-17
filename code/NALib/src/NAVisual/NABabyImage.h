@@ -47,8 +47,10 @@ typedef enum{
   NA_BLEND_MULTIPLY,      // Blends where base is opaque by multiplying the color.
   NA_BLEND_SCREEN,        // Blends where base is opaque by inverse multiplying the color.
   NA_BLEND_ERODE_LIGHT,   // Same as screen but makes light pixels of base transparent.
+                          // Useful for icon creation.
   NA_BLEND_ERODE_DARK,    // Same as multiply but makes dark pixels of base transparent.
-  NA_BLEND_ERASE_HUE      // Decolorizes the base and makes it transparent based on top hue.
+                          // Useful for icon creation.
+  NA_BLEND_ERASE_HUE      // Decolorizes and makes base transparent based on top hue.
                           // Useful for green-screening or blue-screening.
 } NABlendMode;
 
