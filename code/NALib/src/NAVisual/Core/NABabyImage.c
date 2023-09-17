@@ -479,7 +479,11 @@ NABabyImage* na_CreateBlendedBabyImage(
                 baseHSL[0] = topHSL[0] - 60.f;
               }else if((1.f - pixelBlend) > NA_SINGULARITYf){
                 float linearFactor = (strength - pixelBlend) / (1.f - pixelBlend);
-                baseHSL[0] = linearFactor * (baseHSL[0] - 360.f) + (1.f - linearFactor) * (topHSL[0] - 60.f);
+                if(topHSL[0] < 60.f){
+                  baseHSL[0] = linearFactor * (baseHSL[0] - 360.f) + (1.f - linearFactor) * (topHSL[0] - 60.f);
+                }else{
+                  baseHSL[0] = linearFactor * baseHSL[0] + (1.f - linearFactor) * (topHSL[0] - 60.f);
+                }
               }
               if(baseHSL[0] < 360.f){baseHSL[0] += 360.f;}
               na_ConvertHSLToHSV(baseHSV, baseHSL);
