@@ -40,16 +40,16 @@ typedef struct NABabyImage NABabyImage;
 
 // Note that BLACK_GREEN and WHITE_GREEN only work for opaque images.
 typedef enum{
-  NA_BLEND_ZERO,        // Does not blend at all. The base remains as it is.
-  NA_BLEND,             // Linear interpolation according blend factor.
-  NA_BLEND_OVERLAY,     // Blends where top is opaque.
-  NA_BLEND_OPAQUE,      // Blends where base is opaque.
-  NA_BLEND_BLACK_GREEN, // Blends where base has opaque dark pixels measured on green channel.
-  NA_BLEND_WHITE_GREEN, // Blends where base has opaque light pixels measured on green channel.
-  NA_BLEND_MULTIPLY,    // Blends where base is opaque by multiplying the color.
-  NA_BLEND_SCREEN,      // Blends where base is opaque by inverse multiplying the color.
-  NA_BLEND_ERASE_HUE    // Decolorizes the base and makes it transparent based on top hue.
-                        // Useful for green-screening or blue-screening.
+  NA_BLEND_ZERO,          // Does not blend at all. The base remains as it is.
+  NA_BLEND_LINEAR,        // Linear interpolation according blend factor.
+  NA_BLEND_OVERLAY,       // Blends where top is opaque.
+  NA_BLEND_OPAQUE,        // Blends where base is opaque.
+  NA_BLEND_MULTIPLY,      // Blends where base is opaque by multiplying the color.
+  NA_BLEND_SCREEN,        // Blends where base is opaque by inverse multiplying the color.
+  NA_BLEND_ERODE_LIGHT,   // Same as screen but makes light pixels of base transparent.
+  NA_BLEND_ERODE_DARK,    // Same as multiply but makes dark pixels of base transparent.
+  NA_BLEND_ERASE_HUE      // Decolorizes the base and makes it transparent based on top hue.
+                          // Useful for green-screening or blue-screening.
 } NABlendMode;
 
 // Creates an image with the specified size and fills it with the given color.

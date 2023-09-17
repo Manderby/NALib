@@ -222,10 +222,10 @@ ImageTesterController* naAllocImageTestController(){
   addSinglePopupItem("BLEND",con->blendModePopupButton, blendModeSelected, con);
   addSinglePopupItem("OVERLAY",con->blendModePopupButton, blendModeSelected, con);
   addSinglePopupItem("OPAQUE",con->blendModePopupButton, blendModeSelected, con);
-  addSinglePopupItem("BLACK_GREEN",con->blendModePopupButton, blendModeSelected, con);
-  addSinglePopupItem("WHITE_GREEN",con->blendModePopupButton, blendModeSelected, con);
   addSinglePopupItem("MULTIPLY",con->blendModePopupButton, blendModeSelected, con);
   addSinglePopupItem("SCREEN",con->blendModePopupButton, blendModeSelected, con);
+  addSinglePopupItem("ERODE_LIGHT",con->blendModePopupButton, blendModeSelected, con);
+  addSinglePopupItem("ERODE_DARK",con->blendModePopupButton, blendModeSelected, con);
   addSinglePopupItem("ERASE_HUE",con->blendModePopupButton, blendModeSelected, con);
 
   con->alphaLabel = naNewLabel("Blend:", 200);
