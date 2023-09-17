@@ -452,22 +452,36 @@ NABabyImage* na_CreateBlendedBabyImage(
           if(hDiff < -60.f || hDiff > 60.f){
             // Not near the hue, leave the color as it is.
             naCopyV3f(retPtr, baseRGB);
-            retPtr[3] = 1.;
+            retPtr[3] = basePtr[3];
           }else{
-            if(hDiff < 0.){
-              float factor = -hDiff / 60.f;
-              baseHSL[0] = topHSL[0] + 60.f;
+            if(hDiff <= 0.){
+              float strength = 1.f - -hDiff / 60.f;
+              float pixelBlend = blend * topPtr[3];
+              float factor = pixelBlend * strength;
+              retPtr[3] = (1.f - factor) * basePtr[3];
+              baseHSL[1] = (1.f - factor) * baseHSL[1];
+              if(strength < pixelBlend){
+                baseHSL[0] = topHSL[0] + 60.f;
+              }else if((1.f - pixelBlend) > NA_SINGULARITYf){
+                float linearFactor = (strength - pixelBlend) / (1.f - pixelBlend);
+                baseHSL[0] = linearFactor * baseHSL[0] + (1.f - linearFactor) * (topHSL[0] + 60.f);
+              }
               if(baseHSL[0] > 360.f){baseHSL[0] -= 360.f;}
-              retPtr[3] = 1.f - baseHSL[1];
-              baseHSL[1] *= factor;
               na_ConvertHSLToHSV(baseHSV, baseHSL);
               na_ConvertHSVToRGB(retPtr, baseHSV);
             }else{
-              float factor = hDiff / 60.f;
-              baseHSL[0] = topHSL[0] - 60.f + 360.f;
-              if(baseHSL[0] > 360.f){baseHSL[0] -= 360.f;}
-              retPtr[3] = 1.f - baseHSL[1];
-              baseHSL[1] *= factor;
+              float strength = 1.f - hDiff / 60.f;
+              float pixelBlend = blend * topPtr[3];
+              float factor = pixelBlend * strength;
+              retPtr[3] = (1.f - factor) * basePtr[3];
+              baseHSL[1] = (1.f - factor) * baseHSL[1];
+              if(strength < pixelBlend){
+                baseHSL[0] = topHSL[0] - 60.f;
+              }else if((1.f - pixelBlend) > NA_SINGULARITYf){
+                float linearFactor = (strength - pixelBlend) / (1.f - pixelBlend);
+                baseHSL[0] = linearFactor * (baseHSL[0] - 360.f) + (1.f - linearFactor) * (topHSL[0] - 60.f);
+              }
+              if(baseHSL[0] < 360.f){baseHSL[0] += 360.f;}
               na_ConvertHSLToHSV(baseHSV, baseHSL);
               na_ConvertHSVToRGB(retPtr, baseHSV);
             }
