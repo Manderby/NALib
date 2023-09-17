@@ -445,10 +445,6 @@ NABabyImage* na_CreateBlendedBabyImage(
           na_ConvertRGBToHSV(topHSV, topRGB);
           na_ConvertHSVToHSL(topHSL, topHSV);
 
-          if(baseHSV[1] != 1.)
-          {
-            int asdf = 1234;
-          }
           float hDiff = topHSL[0] - baseHSL[0];
           if(hDiff > 180.f){hDiff -= 360.f;}
           else if(hDiff < -180.f){hDiff += 360.f;}

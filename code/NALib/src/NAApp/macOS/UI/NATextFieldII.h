@@ -20,7 +20,7 @@
   }else{
     [[self cell] setLineBreakMode:NSLineBreakByTruncatingHead];
   }
-  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(naGetSystemFont()))];
+  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naGetSystemFont()))];
   [self setDelegate:self];
 
   cocoaTextField = newCocoaTextField;

@@ -125,7 +125,7 @@ void loadImage(size_t index, const NAUTF8Char* path){
   naDelete(png);
 }
 
-void naStartImageTestApplication(){
+void naStartImageTestApplication(void){
   app = naAlloc(ImageTesterApplication);
 
   NAPNG* gridPNG = naNewPNGWithPath("res/transparencyGrid.png");
@@ -144,7 +144,7 @@ void naStartImageTestApplication(){
 
 
 
-void naStopImageTestApplication(){
+void naStopImageTestApplication(void){
   naDeallocImageTestController(app->imageTestController);
   naReleaseBabyImage(app->transparencyGridImage);
   for(size_t i = 0; i < IMAGE_COUNT; ++i){
