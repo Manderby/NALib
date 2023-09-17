@@ -8,10 +8,9 @@ typedef struct ImageTesterController ImageTesterController;
 
 typedef enum{
   IMAGE_RAINBOW,
-  IMAGE_CAT_PINK,
-  IMAGE_CAT_BLUE,
-  IMAGE_CAT_GREEN,
+  IMAGE_LENZBURG,
   IMAGE_CAT_SILHOUETTE,
+  IMAGE_RUBIK,
   IMAGE_FEATHER,
   IMAGE_MOTOR,
   IMAGE_COUNT
@@ -19,20 +18,18 @@ typedef enum{
 
 const NAUTF8Char* imageNames[IMAGE_COUNT] = {
   "Rainbow",
-  "Cat Pink",
-  "Cat Blue",
-  "Cat Green",
+  "Lenzburg",
   "Cat Silhouette",
+  "Rubik",
   "Feather",
   "Motor",
 };
 
 const NAUTF8Char* imagePaths[IMAGE_COUNT] = {
   "res/rainbow.png",
-  "res/catPink.png",
-  "res/catBlue.png",
-  "res/catGreen.png",
+  "res/lenzburg.png",
   "res/catSilhouette.png",
+  "res/rubik.png",
   "res/feather.png",
   "res/motor.png",
 };

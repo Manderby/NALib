@@ -48,7 +48,7 @@ void poststartup(void* arg){
   NA_UNUSED(arg);
   
   // Load the image files
-  NAPNG* pngIcon = naNewPNGWithPath("res/catIcon.png");
+  NAPNG* pngIcon = naNewPNGWithPath("res/icon.png");
   if(!naIsSizeiUseful(naGetPNGSize(pngIcon))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
@@ -57,11 +57,11 @@ void poststartup(void* arg){
   app->iconImage = naCreateUIImage(
     originalIconImage,
     NA_UIIMAGE_RESOLUTION_SCREEN_2x,
-    NA_BLEND_BLACK_GREEN);
+    NA_BLEND_ERODE_LIGHT);
   naDelete(pngIcon);
   naReleaseBabyImage(originalIconImage);
 
-  NAPNG* png1 = naNewPNGWithPath("res/cat.png");
+  NAPNG* png1 = naNewPNGWithPath("res/man.png");
   if(!naIsSizeiUseful(naGetPNGSize(png1))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
@@ -74,7 +74,7 @@ void poststartup(void* arg){
   naDelete(png1);
   naReleaseBabyImage(originalState1Image);
 
-  NAPNG* png2 = naNewPNGWithPath("res/cat2.png");
+  NAPNG* png2 = naNewPNGWithPath("res/man2.png");
   if(!naIsSizeiUseful(naGetPNGSize(png2))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
