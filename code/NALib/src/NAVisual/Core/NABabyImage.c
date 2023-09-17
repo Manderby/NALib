@@ -354,23 +354,23 @@ NABabyImage* na_CreateBlendedBabyImage(
         //}
         break;
       case NA_BLEND_BLACK_GREEN:
-        baseColorFactor = 1.f - topPtr[3] * blend;
+        baseColorFactor = (1.f - blend) * topPtr[3];
         topColorFactor = blend * topPtr[3];
         colorSum = baseColorFactor + topColorFactor;
         if(colorSum > NA_SINGULARITYf){
           float baseBlend = baseColorFactor / colorSum;
           float topBlend = 1.f - baseBlend;
           naFillV4f(retPtr,
-            baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]) * naUnlinearizeColorValue(basePtr[0]),
-            baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]) * naUnlinearizeColorValue(basePtr[1]),
-            baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * naUnlinearizeColorValue(topPtr[2]) * naUnlinearizeColorValue(basePtr[2]),
-            (1.f - blend) * basePtr[3] + blend * (1.f - basePtr[1]) * basePtr[3]);
+            baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[0])) * (1.f - naUnlinearizeColorValue(basePtr[0]))),
+            baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[1])) * (1.f - naUnlinearizeColorValue(basePtr[1]))),
+            baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[2])) * (1.f - naUnlinearizeColorValue(basePtr[2]))),
+            (1.f - blend) * basePtr[3] + blend * (1.f - naUnlinearizeColorValue(basePtr[1])) * basePtr[3]);
         }else{
           naFillV4f(retPtr, 0., 0., 0., 0.);
         }
         break;
       case NA_BLEND_WHITE_GREEN:
-        baseColorFactor = 1.f - topPtr[3] * blend;
+        baseColorFactor = (1.f - blend) * topPtr[3];
         topColorFactor = blend * topPtr[3];
         colorSum = baseColorFactor + topColorFactor;
         if(colorSum > NA_SINGULARITYf){
@@ -380,7 +380,7 @@ NABabyImage* na_CreateBlendedBabyImage(
             baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]) * naUnlinearizeColorValue(basePtr[0]),
             baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]) * naUnlinearizeColorValue(basePtr[1]),
             baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * naUnlinearizeColorValue(topPtr[2]) * naUnlinearizeColorValue(basePtr[2]),
-            (1.f - blend) * basePtr[3] + blend * basePtr[1] * basePtr[3]);
+            (1.f - blend) * basePtr[3] + blend * naUnlinearizeColorValue(basePtr[1]) * basePtr[3]);
         }else{
           naFillV4f(retPtr, 0., 0., 0., 0.);
         }
