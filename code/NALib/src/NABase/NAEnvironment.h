@@ -65,16 +65,16 @@
   #define NA_ENDIANNESS_HOST NA_ENDIANNESS_LITTLE
   #if defined _M_ARM
     #define NA_ADDRESS_BITS NA_TYPE32_BITS
-    #define NA_SIZE_T_BITS NA_TYPE32_BITS
+    #define NA_SIZE_T_BITS  NA_TYPE32_BITS
   #elif defined _M_ARM64
     #define NA_ADDRESS_BITS NA_TYPE64_BITS
-    #define NA_SIZE_T_BITS NA_TYPE64_BITS
+    #define NA_SIZE_T_BITS  NA_TYPE64_BITS
   #elif defined _WIN64
     #define NA_ADDRESS_BITS NA_TYPE64_BITS
-    #define NA_SIZE_T_BITS NA_TYPE64_BITS
+    #define NA_SIZE_T_BITS  NA_TYPE64_BITS
   #else
     #define NA_ADDRESS_BITS NA_TYPE32_BITS
-    #define NA_SIZE_T_BITS NA_TYPE32_BITS
+    #define NA_SIZE_T_BITS  NA_TYPE32_BITS
   #endif
 
 #elif defined __APPLE__ && __MACH__
@@ -88,10 +88,10 @@
   #endif
   #if defined __LP64__
     #define NA_ADDRESS_BITS NA_TYPE64_BITS
-    #define NA_SIZE_T_BITS NA_TYPE64_BITS
+    #define NA_SIZE_T_BITS  NA_TYPE64_BITS
   #else
     #define NA_ADDRESS_BITS NA_TYPE32_BITS
-    #define NA_SIZE_T_BITS NA_TYPE32_BITS
+    #define NA_SIZE_T_BITS  NA_TYPE32_BITS
   #endif
 
   #if defined __has_feature
