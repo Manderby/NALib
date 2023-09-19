@@ -3,7 +3,7 @@
 #include "../../NAStruct/NATree.h"
 #include "../../NAStruct/NAList.h"
 #include "../../NAUtility/NAString.h"
-#include "../../NAApp.h"
+#include "../../NAApp/NAApp.h"
 #include "../../NAApp/Core/NAAppCore.h"
 #include <ctype.h>
 
