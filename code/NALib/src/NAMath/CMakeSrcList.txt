@@ -1,0 +1,50 @@
+
+set(NAMathDir "src/NAMath")
+
+set(headerFiles
+  ${NAMathDir}/CMakeSrcList.txt
+  ${NAMathDir}/NAComplex.h
+  ${NAMathDir}/NACoord.h
+  ${NAMathDir}/NAMath.h
+  ${NAMathDir}/NAMathConstants.h
+  ${NAMathDir}/NAMathOperators.h
+  ${NAMathDir}/NARandom.h
+  ${NAMathDir}/NAVectorAlgebra.h
+)
+
+set(coreImplementationFiles
+  ${NAMathDir}/Core/NAComplexII.h
+  ${NAMathDir}/Core/NACoordII.h
+  ${NAMathDir}/Core/NAMathOperators.c
+  ${NAMathDir}/Core/NAMathOperatorsII.h
+  ${NAMathDir}/Core/NARandomII.h
+)
+
+set(coreVectorAlgebraFiles
+  ${NAMathDir}/Core/NAVectorAlgebra/NAHomogeneousCoordinatesII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAMatrixAlgebraOperationsII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAMatrixBaseOperationsII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAMatrixComparisonII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAMatrixComponentwiseII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAMatrixFillerII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAMatrixMultiplicationII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAMatrixRotationsII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAVectorAlgebraII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAVectorBaseOperationsII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAVectorComparisonII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAVectorComponentwiseII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAVectorFillerII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAVectorGeometryII.h
+  ${NAMathDir}/Core/NAVectorAlgebra/NAVectorProductsII.h
+)
+
+
+source_group("NAMath" FILES ${headerFiles})
+target_sources(NALib PUBLIC ${headerFiles})
+
+source_group("NAMath/Core" FILES ${coreImplementationFiles})
+target_sources(NALib PRIVATE ${coreImplementationFiles})
+
+source_group("NAMath/Core/NAVectorAlgebra" FILES ${coreVectorAlgebraFiles})
+target_sources(NALib PRIVATE ${coreVectorAlgebraFiles})
+

@@ -117,7 +117,7 @@ set(winAPIUIFiles
 )
 
 source_group("NAApp" FILES ${headerFiles})
-target_sources(NALib PRIVATE ${headerFiles})
+target_sources(NALib PUBLIC ${headerFiles})
 
 source_group("NAApp/Core" FILES ${coreFiles})
 target_sources(NALib PRIVATE ${coreFiles})

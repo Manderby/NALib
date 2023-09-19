@@ -10,7 +10,9 @@ set(primaryHeaderFile
 )
 
 source_group("" FILES ${primaryHeaderFile})
-target_sources(NALib PRIVATE ${primaryHeaderFile})
+target_sources(NALib PUBLIC ${primaryHeaderFile})
 
 include(src/NAApp/CMakeSrcList.txt)
 include(src/NABase/CMakeSrcList.txt)
+include(src/NAMath/CMakeSrcList.txt)
+include(src/NAStruct/CMakeSrcList.txt)

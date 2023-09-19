@@ -1,0 +1,93 @@
+
+set(NAStructDir "src/NAStruct")
+
+set(headerFiles
+  ${NAStructDir}/CMakeSrcList.txt
+  ${NAStructDir}/NAArray.h
+  ${NAStructDir}/NABuffer.h
+  ${NAStructDir}/NACircularBuffer.h
+  ${NAStructDir}/NAHeap.h
+  ${NAStructDir}/NAList.h
+  ${NAStructDir}/NAPool.h
+  ${NAStructDir}/NAStack.h
+  ${NAStructDir}/NAStruct.h
+  ${NAStructDir}/NATree.h
+)
+
+set(coreImplementationFiles
+  ${NAStructDir}/Core/NAArrayII.h
+  ${NAStructDir}/Core/NACircularBufferII.h
+  ${NAStructDir}/Core/NAList.c
+  ${NAStructDir}/Core/NAListII.h
+  ${NAStructDir}/Core/NAPoolII.h
+)
+
+set(coreBufferFiles
+  ${NAStructDir}/Core/NABuffer/NABuffer.c
+  ${NAStructDir}/Core/NABuffer/NABufferHelperII.h
+  ${NAStructDir}/Core/NABuffer/NABufferII.h
+  ${NAStructDir}/Core/NABuffer/NABufferIteration.c
+  ${NAStructDir}/Core/NABuffer/NABufferIterationII.h
+  ${NAStructDir}/Core/NABuffer/NABufferManipulation.c
+  ${NAStructDir}/Core/NABuffer/NABufferParse.c
+  ${NAStructDir}/Core/NABuffer/NABufferParseII.h
+  ${NAStructDir}/Core/NABuffer/NABufferPart.c
+  ${NAStructDir}/Core/NABuffer/NABufferPartII.h
+  ${NAStructDir}/Core/NABuffer/NABufferRead.c
+  ${NAStructDir}/Core/NABuffer/NABufferReadII.h
+  ${NAStructDir}/Core/NABuffer/NABufferSource.c
+  ${NAStructDir}/Core/NABuffer/NABufferSourceII.h
+  ${NAStructDir}/Core/NABuffer/NABufferWrite.c
+  ${NAStructDir}/Core/NABuffer/NABufferWriteII.h
+  ${NAStructDir}/Core/NABuffer/NAMemoryBlock.c
+  ${NAStructDir}/Core/NABuffer/NAMemoryBlockII.h
+)
+
+set(coreHeapFiles
+  ${NAStructDir}/Core/NAHeap/NAHeap.c
+  ${NAStructDir}/Core/NAHeap/NAHeapII.h
+  ${NAStructDir}/Core/NAHeap/NAHeapT.h
+)
+
+set(coreStackFiles
+  ${NAStructDir}/Core/NAStack/NAStack.c
+  ${NAStructDir}/Core/NAStack/NAStackII.h
+)
+
+set(coreTreeFiles
+  ${NAStructDir}/Core/NATree/NATree.c
+  ${NAStructDir}/Core/NATree/NATreeAVL.c
+  ${NAStructDir}/Core/NATree/NATreeBin.c
+  ${NAStructDir}/Core/NATree/NATreeBin.h
+  ${NAStructDir}/Core/NATree/NATreeConfiguration.c
+  ${NAStructDir}/Core/NATree/NATreeConfigurationII.h
+  ${NAStructDir}/Core/NATree/NATreeII.h
+  ${NAStructDir}/Core/NATree/NATreeItemII.h
+  ${NAStructDir}/Core/NATree/NATreeIteration.c
+  ${NAStructDir}/Core/NATree/NATreeIterationII.h
+  ${NAStructDir}/Core/NATree/NATreeOct.c
+  ${NAStructDir}/Core/NATree/NATreeOct.h
+  ${NAStructDir}/Core/NATree/NATreeQuad.c
+  ${NAStructDir}/Core/NATree/NATreeQuad.h
+  ${NAStructDir}/Core/NATree/NATreeUtilitiesII.h
+)
+
+source_group("NAStruct" FILES ${headerFiles})
+target_sources(NALib PUBLIC ${headerFiles})
+
+source_group("NAStruct/Core" FILES ${coreImplementationFiles})
+target_sources(NALib PRIVATE ${coreImplementationFiles})
+
+source_group("NAStruct/Core/NABuffer" FILES ${coreBufferFiles})
+target_sources(NALib PRIVATE ${coreBufferFiles})
+
+source_group("NAStruct/Core/NAHeap" FILES ${coreHeapFiles})
+target_sources(NALib PRIVATE ${coreHeapFiles})
+
+source_group("NAStruct/Core/NAStack" FILES ${coreStackFiles})
+target_sources(NALib PRIVATE ${coreStackFiles})
+
+source_group("NAStruct/Core/NATree" FILES ${coreTreeFiles})
+target_sources(NALib PRIVATE ${coreTreeFiles})
+
+

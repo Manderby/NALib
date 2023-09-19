@@ -643,7 +643,7 @@ NA_DEF void naCenterMouse(void* uiElement){
   centerPos.x = rect.pos.x + rect.size.width * .5f;
   centerPos.y = rect.pos.y + rect.size.height * .5f;
 
-  na_SetMouseWarpedTo(centerpos);
+  na_SetMouseWarpedTo(centerPos);
   SetCursorPos((int)centerPos.x, (int)screenFrame.size.height - (int)centerPos.y);
 }
 
