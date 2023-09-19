@@ -455,37 +455,43 @@ NABabyImage* na_CreateBlendedBabyImage(
             retPtr[3] = basePtr[3];
           }else{
             if(hDiff <= 0.){
-              float strength = 1.f - -hDiff / 60.f;
-              float pixelBlend = blend * topPtr[3];
-              float factor = pixelBlend * strength;
-              retPtr[3] = (1.f - factor) * basePtr[3];
+              // fully saturated colors have L = .5
+              float factorL = 2.f * (topHSL[2] - baseHSL[2]);
+              if(factorL < 0.){factorL = -factorL;}
+              if(factorL > 1.f){factorL = 1.f;}
+              factorL = naLinearizeColorValue(1.f - factorL); // looks better with naLinearize
+              float hueStrength = 1.f - -hDiff / 60.f;
+              float factor = blend * topPtr[3] * hueStrength;
+              retPtr[3] = (1.f - factorL * factor) * basePtr[3];
               baseHSL[1] = (1.f - factor) * baseHSL[1];
-              if(strength < pixelBlend){
+              float decolorization = blend * topPtr[3];
+              if(hueStrength < decolorization){
                 baseHSL[0] = topHSL[0] + 60.f;
-              }else if((1.f - pixelBlend) > NA_SINGULARITYf){
-                float linearFactor = (strength - pixelBlend) / (1.f - pixelBlend);
+              }else if((1.f - decolorization) > NA_SINGULARITYf){
+                float linearFactor = (hueStrength - decolorization) / (1.f - decolorization);
                 baseHSL[0] = linearFactor * baseHSL[0] + (1.f - linearFactor) * (topHSL[0] + 60.f);
               }
               if(baseHSL[0] > 360.f){baseHSL[0] -= 360.f;}
               na_ConvertHSLToHSV(baseHSV, baseHSL);
               na_ConvertHSVToRGB(retPtr, baseHSV);
             }else{
-              float strength = 1.f - hDiff / 60.f;
-              float pixelBlend = blend * topPtr[3];
-              float factor = pixelBlend * strength;
-              retPtr[3] = (1.f - factor) * basePtr[3];
+              // fully saturated colors have L = .5
+              float factorL = 2.f * (topHSL[2] - baseHSL[2]);
+              if(factorL < 0.){factorL = -factorL;}
+              if(factorL > 1.f){factorL = 1.f;}
+              factorL = naLinearizeColorValue(1.f - factorL); // looks better with naLinearize
+              float hueStrength = 1.f - hDiff / 60.f;
+              float factor = blend * topPtr[3] * hueStrength;
+              retPtr[3] = (1.f - factorL * factor) * basePtr[3];
               baseHSL[1] = (1.f - factor) * baseHSL[1];
-              if(strength < pixelBlend){
+              float decolorization = blend * topPtr[3];
+              if(hueStrength < decolorization){
                 baseHSL[0] = topHSL[0] - 60.f;
-              }else if((1.f - pixelBlend) > NA_SINGULARITYf){
-                float linearFactor = (strength - pixelBlend) / (1.f - pixelBlend);
-                if(topHSL[0] < 60.f){
-                  baseHSL[0] = linearFactor * (baseHSL[0] - 360.f) + (1.f - linearFactor) * (topHSL[0] - 60.f);
-                }else{
-                  baseHSL[0] = linearFactor * baseHSL[0] + (1.f - linearFactor) * (topHSL[0] - 60.f);
-                }
+              }else if((1.f - decolorization) > NA_SINGULARITYf){
+                float linearFactor = (hueStrength - decolorization) / (1.f - decolorization);
+                baseHSL[0] = linearFactor * baseHSL[0] + (1.f - linearFactor) * (topHSL[0] - 60.f);
               }
-              if(baseHSL[0] < 360.f){baseHSL[0] += 360.f;}
+              if(baseHSL[0] < 0.f){baseHSL[0] += 360.f;}
               na_ConvertHSLToHSV(baseHSV, baseHSL);
               na_ConvertHSVToRGB(retPtr, baseHSV);
             }
