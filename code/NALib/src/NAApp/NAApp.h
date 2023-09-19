@@ -6,7 +6,7 @@
   extern "C"{
 #endif
 
-#include "NABase/NABase.h"
+#include "../NABase/NABase.h"
 #if NA_COMPILE_GUI == 1
 
 // NALib provides a simple implementation for Graphical User Interfaces (GUI).
@@ -31,36 +31,36 @@
 
 
 
-#include "NAUtility/NAString.h"
+#include "../NAUtility/NAString.h"
 
-#include "NAApp/NAFont.h"
-#include "NAApp/NAKeyboard.h"
-#include "NAApp/NAPreferences.h"
-#include "NAApp/NAReaction.h"
-#include "NAApp/NAUIImage.h"
-#include "NAApp/NAMouse.h"
+#include "NAFont.h"
+#include "NAKeyboard.h"
+#include "NAPreferences.h"
+#include "NAReaction.h"
+#include "NAUIImage.h"
+#include "NAMouse.h"
 
 // The base of every ui element.
-#include "NAApp/NAUIElement.h"
+#include "NAUIElement.h"
 
 // The acutal ui elements
-#include "NAApp/NAApplication.h"
-#include "NAApp/NAButton.h"
-#include "NAApp/NACheckBox.h"
-#include "NAApp/NAImageSpace.h"
-#include "NAApp/NALabel.h"
-#include "NAApp/NAMenu.h"
-#include "NAApp/NAMenuItem.h"
-#include "NAApp/NAMetalSpace.h"
-#include "NAApp/NAOpenGLSpace.h"
-#include "NAApp/NAPopupButton.h"
-#include "NAApp/NARadio.h"
-#include "NAApp/NAScreen.h"
-#include "NAApp/NASlider.h"
-#include "NAApp/NASpace.h"
-#include "NAApp/NATextBox.h"
-#include "NAApp/NATextField.h"
-#include "NAApp/NAWindow.h"
+#include "NAApplication.h"
+#include "NAButton.h"
+#include "NACheckBox.h"
+#include "NAImageSpace.h"
+#include "NALabel.h"
+#include "NAMenu.h"
+#include "NAMenuItem.h"
+#include "NAMetalSpace.h"
+#include "NAOpenGLSpace.h"
+#include "NAPopupButton.h"
+#include "NARadio.h"
+#include "NAScreen.h"
+#include "NASlider.h"
+#include "NASpace.h"
+#include "NATextBox.h"
+#include "NATextField.h"
+#include "NAWindow.h"
 
 
 

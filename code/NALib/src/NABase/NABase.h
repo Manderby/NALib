@@ -26,38 +26,38 @@
 // Include the configuration of NALib.
 // Have a look at this file to find out how you can configure NALib by adding
 // preprocessor macros to your compiler.
-#include "NABase/NAConfiguration.h"
+#include "NAConfiguration.h"
 
 // Gather information about where, how and what to compile.
-#include "NABase/NAEnvironment.h"
-#include "NABase/NACompiler.h"
-#include "NABase/NALanguage.h"
+#include "NAEnvironment.h"
+#include "NACompiler.h"
+#include "NALanguage.h"
 
 // declaring base types and related stuff
-#include "NABase/NAEncoding.h"
-#include "NABase/NAChar.h"
-#include "NABase/NAInteger.h"
+#include "NAEncoding.h"
+#include "NAChar.h"
+#include "NAInteger.h"
 
 // declaring integer emulation
-#include "NABase/NAInt64.h"
-#include "NABase/NAInt128.h"
-#include "NABase/NAInt256.h"
+#include "NAInt64.h"
+#include "NAInt128.h"
+#include "NAInt256.h"
 
 // Some helping macros and debugging
-#include "NABase/NAMacros.h"
-#include "NABase/NADebugging.h"
+#include "NAMacros.h"
+#include "NADebugging.h"
 
 // Adding some base mathematical implementations
-#include "NABase/NAPointerArithmetics.h"
-#include "NABase/NANumerics.h"
-#include "NABase/NAFloatingPoint.h"
+#include "NAPointerArithmetics.h"
+#include "NANumerics.h"
+#include "NAFloatingPoint.h"
 
 // Adding inline implementations of numerical types
-#include "NABase/Core/NAInt64II.h"
-#include "NABase/Core/NAInt128II.h"
-#include "NABase/Core/NAInt256II.h"
-#include "NABase/Core/NANumericsII.h"
-#include "NABase/Core/NAFloatingPointII.h"
+#include "Core/NAInt64II.h"
+#include "Core/NAInt128II.h"
+#include "Core/NAInt256II.h"
+#include "Core/NANumericsII.h"
+#include "Core/NAFloatingPointII.h"
 
 
 

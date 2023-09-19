@@ -1,7 +1,8 @@
 
 set(NABaseDir "src/NABase")
 
-set(baseHeaderFiles
+set(headerFiles
+  ${NABaseDir}/CMakeSrcList.txt
   ${NABaseDir}/NABase.h
   ${NABaseDir}/NAChar.h
   ${NABaseDir}/NACompiler.h
@@ -20,7 +21,7 @@ set(baseHeaderFiles
   ${NABaseDir}/NAPointerArithmetics.h
 )
 
-set(baseCoreImplementationFiles
+set(coreImplementationFiles
   ${NABaseDir}/Core/NADebugging.c
   ${NABaseDir}/Core/NADebuggingII.h
   ${NABaseDir}/Core/NAFloatingPointII.h
@@ -31,9 +32,9 @@ set(baseCoreImplementationFiles
   ${NABaseDir}/Core/NANumericsII.h
 )
 
-source_group("NABase" FILES ${baseHeaderFiles})
-target_sources(NALib PRIVATE ${baseHeaderFiles})
+source_group("NABase" FILES ${headerFiles})
+target_sources(NALib PRIVATE ${headerFiles})
 
-source_group("NABase/Core" FILES ${baseCoreImplementationFiles})
-target_sources(NALib PRIVATE ${baseCoreImplementationFiles})
+source_group("NABase/Core" FILES ${coreImplementationFiles})
+target_sources(NALib PRIVATE ${coreImplementationFiles})
 

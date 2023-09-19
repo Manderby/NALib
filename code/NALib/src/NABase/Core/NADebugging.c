@@ -1,5 +1,5 @@
 
-#include "../../NABase.h"
+#include "../NABase.h"
 
 #if NA_DEBUG
 

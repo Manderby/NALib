@@ -1,0 +1,140 @@
+
+set(NAAppDir "src/NAApp")
+
+set(headerFiles
+  ${NAAppDir}/CMakeSrcList.txt
+  ${NAAppDir}/NAApp.h
+  ${NAAppDir}/NAApplication.h
+  ${NAAppDir}/NAButton.h
+  ${NAAppDir}/NACheckBox.h
+  ${NAAppDir}/NAFont.h
+  ${NAAppDir}/NAImageSpace.h
+  ${NAAppDir}/NAKeyboard.h
+  ${NAAppDir}/NALabel.h
+  ${NAAppDir}/NAMenu.h
+  ${NAAppDir}/NAMenuItem.h
+  ${NAAppDir}/NAMetalSpace.h
+  ${NAAppDir}/NAMouse.h
+  ${NAAppDir}/NAOpenGLSpace.h
+  ${NAAppDir}/NAPopupButton.h
+  ${NAAppDir}/NAPreferences.h
+  ${NAAppDir}/NARadio.h
+  ${NAAppDir}/NAReaction.h
+  ${NAAppDir}/NAScreen.h
+  ${NAAppDir}/NASlider.h
+  ${NAAppDir}/NASpace.h
+  ${NAAppDir}/NATextBox.h
+  ${NAAppDir}/NATextField.h
+  ${NAAppDir}/NAUIElement.h
+  ${NAAppDir}/NAUIImage.h
+  ${NAAppDir}/NAWindow.h
+)
+
+set(coreFiles
+  ${NAAppDir}/Core/NAAppCore.h
+  ${NAAppDir}/Core/NAUIImage.c
+  ${NAAppDir}/Core/NAUIImageII.h
+)
+
+set(coreUIFiles
+  ${NAAppDir}/Core/UI/NAApplication.c
+  ${NAAppDir}/Core/UI/NAButton.c
+  ${NAAppDir}/Core/UI/NACheckBox.c
+  ${NAAppDir}/Core/UI/NAFont.c
+  ${NAAppDir}/Core/UI/NAImageSpace.c
+  ${NAAppDir}/Core/UI/NAKeyboard.c
+  ${NAAppDir}/Core/UI/NALabel.c
+  ${NAAppDir}/Core/UI/NAMenu.c
+  ${NAAppDir}/Core/UI/NAMenuItem.c
+  ${NAAppDir}/Core/UI/NAMetalSpace.c
+  ${NAAppDir}/Core/UI/NAMouse.c
+  ${NAAppDir}/Core/UI/NAOpenGLSpace.c
+  ${NAAppDir}/Core/UI/NAPopupButton.c
+  ${NAAppDir}/Core/UI/NARadio.c
+  ${NAAppDir}/Core/UI/NAScreen.c
+  ${NAAppDir}/Core/UI/NASlider.c
+  ${NAAppDir}/Core/UI/NASpace.c
+  ${NAAppDir}/Core/UI/NATextBox.c
+  ${NAAppDir}/Core/UI/NATextField.c
+  ${NAAppDir}/Core/UI/NAUIElement.c
+  ${NAAppDir}/Core/UI/NAWindow.c
+)
+
+set(macOSFiles
+  ${NAAppDir}/macOS/NACocoa.m
+  ${NAAppDir}/macOS/NAPreferencesCocoaII.h
+  ${NAAppDir}/macOS/NAUIImageCocoaII.h
+)
+
+set(macOSUIFiles
+  ${NAAppDir}/macOS/UI/NAApplicationII.h
+  ${NAAppDir}/macOS/UI/NAButtonII.h
+  ${NAAppDir}/macOS/UI/NACheckBoxII.h
+  ${NAAppDir}/macOS/UI/NAImageSpaceII.h
+  ${NAAppDir}/macOS/UI/NALabelII.h
+  ${NAAppDir}/macOS/UI/NAMenuII.h
+  ${NAAppDir}/macOS/UI/NAMenuItemII.h
+  ${NAAppDir}/macOS/UI/NAMetalSpaceII.h
+  ${NAAppDir}/macOS/UI/NAOpenGLSpaceII.h
+  ${NAAppDir}/macOS/UI/NAPopupButtonII.h
+  ${NAAppDir}/macOS/UI/NARadioII.h
+  ${NAAppDir}/macOS/UI/NASliderII.h
+  ${NAAppDir}/macOS/UI/NASpaceII.h
+  ${NAAppDir}/macOS/UI/NATextBoxII.h
+  ${NAAppDir}/macOS/UI/NATextFieldII.h
+  ${NAAppDir}/macOS/UI/NAUICocoaII.h
+  ${NAAppDir}/macOS/UI/NAUICocoaInterfaces.h
+  ${NAAppDir}/macOS/UI/NAUICocoaLegacy.h
+  ${NAAppDir}/macOS/UI/NAUICocoaLegacyII.h
+  ${NAAppDir}/macOS/UI/NAWindowII.h
+)
+
+set(winAPIFiles
+  ${NAAppDir}/winAPI/NAPreferencesWINAPIII.h
+  ${NAAppDir}/winAPI/NAUIImageWINAPIII.h
+  ${NAAppDir}/winAPI/NAUIWINAPI.c
+)
+
+set(winAPIUIFiles
+  ${NAAppDir}/winAPI/UI/NAApplicationII.h
+  ${NAAppDir}/winAPI/UI/NAButtonII.h
+  ${NAAppDir}/winAPI/UI/NACheckBoxII.h
+  ${NAAppDir}/winAPI/UI/NAImageSpaceII.h
+  ${NAAppDir}/winAPI/UI/NALabelII.h
+  ${NAAppDir}/winAPI/UI/NAMenuII.h
+  ${NAAppDir}/winAPI/UI/NAMenuItemII.h
+  ${NAAppDir}/winAPI/UI/NAMetalSpaceII.h
+  ${NAAppDir}/winAPI/UI/NAOpenGLSpaceII.h
+  ${NAAppDir}/winAPI/UI/NAPopupButtonII.h
+  ${NAAppDir}/winAPI/UI/NARadioII.h
+  ${NAAppDir}/winAPI/UI/NASliderII.h
+  ${NAAppDir}/winAPI/UI/NASpaceII.h
+  ${NAAppDir}/winAPI/UI/NATextBoxII.h
+  ${NAAppDir}/winAPI/UI/NATextFieldII.h
+  ${NAAppDir}/winAPI/UI/NAUIWINAPIII.h
+  ${NAAppDir}/winAPI/UI/NAUIWINAPIInterfaces.h
+  ${NAAppDir}/winAPI/UI/NAWindowII.h
+)
+
+source_group("NAApp" FILES ${headerFiles})
+target_sources(NALib PRIVATE ${headerFiles})
+
+source_group("NAApp/Core" FILES ${coreFiles})
+target_sources(NALib PRIVATE ${coreFiles})
+
+source_group("NAApp/Core/UI" FILES ${coreUIFiles})
+target_sources(NALib PRIVATE ${coreUIFiles})
+
+source_group("NAApp/macOS" FILES ${macOSFiles})
+target_sources(NALib PRIVATE ${macOSFiles})
+
+source_group("NAApp/macOS/UI" FILES ${macOSUIFiles})
+target_sources(NALib PRIVATE ${macOSUIFiles})
+
+source_group("NAApp/winAPI" FILES ${winAPIFiles})
+target_sources(NALib PRIVATE ${winAPIFiles})
+
+source_group("NAApp/winAPI/UI" FILES ${winAPIUIFiles})
+target_sources(NALib PRIVATE ${winAPIUIFiles})
+
+

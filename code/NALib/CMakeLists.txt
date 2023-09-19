@@ -12,4 +12,5 @@ set(primaryHeaderFile
 source_group("" FILES ${primaryHeaderFile})
 target_sources(NALib PRIVATE ${primaryHeaderFile})
 
+include(src/NAApp/CMakeSrcList.txt)
 include(src/NABase/CMakeSrcList.txt)

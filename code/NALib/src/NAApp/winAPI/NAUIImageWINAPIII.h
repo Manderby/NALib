@@ -6,7 +6,7 @@
 
 
 #include "../../NAVisual/NAPNG.h"
-#include "../../NAApp.h"
+#include "../../NAApp/NAApp.h"
 #include <wincodec.h>
 
 

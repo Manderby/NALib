@@ -13,7 +13,7 @@
 // one single file speeds up the compilation considerably!
 
 
-#include "../../NABase.h"
+#include "../../NABase/NABase.h"
 
 #if NA_OS == NA_OS_WINDOWS
 // Now, we are sure, we compile on Windows. The #if directives will be closed
