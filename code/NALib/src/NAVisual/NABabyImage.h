@@ -40,12 +40,18 @@ typedef struct NABabyImage NABabyImage;
 
 // Note that BLACK_GREEN and WHITE_GREEN only work for opaque images.
 typedef enum{
-  NA_BLEND_ZERO,        // Does not blend at all. The base remains as it is.
-  NA_BLEND,             // Linear interpolation according blend factor.
-  NA_BLEND_OVERLAY,     // Blends where top is opaque.
-  NA_BLEND_OPAQUE,      // Blends where base is opaque.
-  NA_BLEND_BLACK_GREEN, // Blends where base has dark green pixels
-  NA_BLEND_WHITE_GREEN  // Blends where base has light green pixels
+  NA_BLEND_ZERO,          // Does not blend at all. The base remains as it is.
+  NA_BLEND_LINEAR,        // Linear interpolation according blend factor.
+  NA_BLEND_OVERLAY,       // Blends where top is opaque.
+  NA_BLEND_OPAQUE,        // Blends where base is opaque.
+  NA_BLEND_MULTIPLY,      // Blends where base is opaque by multiplying the color.
+  NA_BLEND_SCREEN,        // Blends where base is opaque by inverse multiplying the color.
+  NA_BLEND_ERODE_LIGHT,   // Same as screen but makes light pixels of base transparent.
+                          // Useful for icon creation.
+  NA_BLEND_ERODE_DARK,    // Same as multiply but makes dark pixels of base transparent.
+                          // Useful for icon creation.
+  NA_BLEND_ERASE_HUE      // Decolorizes and makes base transparent based on top hue.
+                          // Useful for green-screening or blue-screening.
 } NABlendMode;
 
 // Creates an image with the specified size and fills it with the given color.
@@ -55,20 +61,29 @@ NA_API NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color);
 // Creates an image which is an exact duplicate of the image given.
 NA_API NABabyImage* naCreateBabyImageCopy(const NABabyImage* image);
 
-// Creates a new image with a semi-transparent one-color representation of
-// the base image. The mode defines, how the tint color will be applied. The
-// blend factor defines how strong the tinting is.
+// Creates a new image with blending. The mode defines, how the top will be
+// applied upon the base. The blend factor defines how strong the blending is.
+//
+//          Base:    Top:
+// Tint:    Image    Color
+// Blend:   Image    Image
+// Apply:   Color    Image
+//
+// For the Blend method, if NA_NULL is given for the base, transparent color
+// is used instead.
 NA_API NABabyImage* naCreateBabyImageWithTint(
   const NABabyImage* base,
   const NABabyColor  tint,
   NABlendMode        mode,
   float              blend);
-
-// Creates a new image blending the top image upon the base image using the
-// given blend factor and blend mode. If base is Null, mode is ignored and
-// the top image is just blended on top of a transparent background.
 NA_DEF NABabyImage* naCreateBabyImageWithBlend(
   const NABabyImage* base,
+  const NABabyImage* top,
+  NABlendMode        mode,
+  float              blend,
+  NAPosi             offset);
+NA_DEF NABabyImage* naCreateBabyImageWithApply(
+  const NABabyColor  ground,
   const NABabyImage* top,
   NABlendMode        mode,
   float              blend);

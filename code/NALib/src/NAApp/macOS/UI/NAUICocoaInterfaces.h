@@ -154,6 +154,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 @interface NACocoaNativeImageSpace : NSImageView{
   NACocoaImageSpace* cocoaImageSpace;
+  NSTrackingArea* trackingArea;
 }
 @end
 

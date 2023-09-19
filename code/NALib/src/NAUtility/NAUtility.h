@@ -7,17 +7,17 @@
 // Include this file to automatically include all APIs from the NAUtility
 // folder. You are free to include the files individually though.
 
-#include "NAUtility/NABinaryData.h"
-#include "NAUtility/NADateTime.h"
-#include "NAUtility/NAFile.h"
-#include "NAUtility/NAJSON.h"
-#include "NAUtility/NAKey.h"
-#include "NAUtility/NAMemory.h"
-#include "NAUtility/NAString.h"
-#include "NAUtility/NAThreading.h"
-#include "NAUtility/NATranslator.h"
-#include "NAUtility/NAURL.h"
-#include "NAUtility/NAValueHelper.h"
+#include "NABinaryData.h"
+#include "NADateTime.h"
+#include "NAFile.h"
+#include "NAJSON.h"
+#include "NAKey.h"
+#include "NAMemory.h"
+#include "NAString.h"
+#include "NAThreading.h"
+#include "NATranslator.h"
+#include "NAURL.h"
+#include "NAValueHelper.h"
 
 
 

@@ -83,7 +83,7 @@ TemperatureController* createTemperatureController(){
 
   // Create the main button, assign a press command and make it the default
   // button.
-  con->button = naNewTextButton("Compute", 100, 0);
+  con->button = naNewTextPushButton("Compute", 100);
   naAddSpaceChild(windowSpace, con->button, naMakePos(150, 20));
   naAddUIReaction(con->button, NA_UI_COMMAND_PRESSED, pressButton, con);
   naSetButtonSubmit(con->button, pressButton, con);
@@ -104,12 +104,12 @@ TemperatureController* createTemperatureController(){
   naAddSpaceChild(windowSpace, con->resutLabel, naMakePos(120, 70));
 
   // Create a + button for opening a new window.
-  con->newButton = naNewTextButton("+", 60, 0);
+  con->newButton = naNewTextPushButton("+", 60);
   naAddSpaceChild(windowSpace, con->newButton, naMakePos(20, 20));
   naAddUIReaction(con->newButton, NA_UI_COMMAND_PRESSED, newTemperatureController, con);
 
   // Create a Quit button for terminating the whole application.
-  con->quitButton = naNewTextButton("Quit", 60, 0);
+  con->quitButton = naNewTextPushButton("Quit", 60);
   naAddSpaceChild(windowSpace, con->quitButton, naMakePos(320, 20));
   naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, pressTemperatureButton, con);
 

@@ -43,7 +43,7 @@ NA_API NABool naIsWindowFullscreen(NAWindow* window);
 NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);
 
 // Get various properties of the window
-NA_API NAUIImageResolution naGetWindowUIResolution(const NAWindow* window);
+NA_API double naGetWindowUIResolution(const NAWindow* window);
 NA_API NABool naIsWindowResizeable(const NAWindow* window);
 
 // Get and set the outer (non-client) rect of the window. Note that the

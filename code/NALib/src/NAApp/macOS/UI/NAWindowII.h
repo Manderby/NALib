@@ -220,11 +220,11 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
 
 
 
-NA_DEF NAUIImageResolution naGetWindowUIResolution(const NAWindow* window){
+NA_DEF double naGetWindowUIResolution(const NAWindow* window){
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   CGFloat uiScale = naGetWindowBackingScaleFactor(nativePtr);
 
-  return (uiScale == 1.) ? NA_UIIMAGE_RESOLUTION_1x : NA_UIIMAGE_RESOLUTION_2x;
+  return (uiScale == 1.) ? NA_UIIMAGE_RESOLUTION_SCREEN_1x : NA_UIIMAGE_RESOLUTION_SCREEN_2x;
 }
 
 
@@ -259,20 +259,6 @@ NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window){
 
 
 
-//NA_HDEF NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window){
-//  NARect rect;
-//  NSRect windowFrame;
-//  naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
-//  windowFrame = [nativePtr frame];
-//  rect.pos.x = windowFrame.origin.x;
-//  rect.pos.y = windowFrame.origin.y;
-//  rect.size.width = windowFrame.size.width;
-//  rect.size.height = windowFrame.size.height;
-//  return rect;
-//}
-
-
-
 NA_HDEF void na_RenewWindowMouseTracking(NAWindow* window){
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   [nativePtr renewMouseTracking];
@@ -302,7 +288,13 @@ NA_HDEF void na_ClearWindowMouseTracking(NAWindow* window){
 
 
 NA_DEF NARect naGetMainScreenRect(){
-  return naMakeRectWithNSRect([[NSScreen mainScreen] frame]);
+  CGFloat uiScale = [[NSScreen mainScreen] backingScaleFactor];
+  NARect rect = naMakeRectWithNSRect([[NSScreen mainScreen] frame]);
+  rect.pos.x /= uiScale;
+  rect.pos.y /= uiScale;
+  rect.size.width /= uiScale;
+  rect.size.height /= uiScale;
+  return rect;
 }
 
 

@@ -95,7 +95,7 @@ NA_DEF NSColor* naGetLabelColor(){
   if(!color){
     color = [NSColor controlTextColor];
   }
-  return color;
+  return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
 
 NA_DEF NSColor* naGetLinkColor(){
@@ -110,7 +110,31 @@ NA_DEF NSColor* naGetLinkColor(){
   if(!color){
     color = [NSColor blueColor];
   }
-  return color;
+  return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+}
+
+NA_DEF NSColor* naGetAccentColor(){
+  NSColor* color = nil;
+
+  NA_MACOS_AVAILABILITY_GUARD_10_14(
+    if([NSColor respondsToSelector:@selector(controlAccentColor)]){
+      color = [NSColor controlAccentColor];
+    }
+  )
+  if(!color){
+    color = [NSColor blueColor];
+  }
+  return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+}
+
+NA_DEF NABool isAtLeastMacOSVersion(int major, int minor){
+  #if NA_DEBUG
+    NSOperatingSystemVersion curVer = [[NSProcessInfo processInfo] operatingSystemVersion];
+    NA_UNUSED(curVer);
+  #endif
+  
+  NSOperatingSystemVersion ver = {major, minor, 0};
+  return [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:ver];
 }
 
 

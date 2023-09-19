@@ -76,7 +76,6 @@ NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement){
 
   na_SetApplicationLastOpenedMenu(naGetApplication(), menu);
   NARect screenRect = naGetMainScreenRect();
-  NARect windowRect = naGetUIElementRect(naGetUIElementWindowConst(parentUIElement));
 
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
@@ -86,8 +85,8 @@ NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement){
   /*int selection = */TrackPopupMenu(
     winapiMenu->hMenu, 
     TPM_LEFTALIGN | TPM_RIGHTBUTTON/* | TPM_RETURNCMD*/, 
-    (int)((windowRect.pos.y + pos.x) * uiScale),
-    (int)(screenRect.size.height - (windowRect.pos.y + pos.y) * uiScale),
+    (int)(pos.x * uiScale),
+    (int)((screenRect.size.height - pos.y) * uiScale),
     0,
     naGetUIElementNativePtr(parentUIElement),
     NULL);

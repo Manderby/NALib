@@ -18,7 +18,6 @@ Future
 - Compression in NAPNG
 - Add ARM, Linux
 - MOB
-- Color
 - TimeZones
 - NASocket
 - URL

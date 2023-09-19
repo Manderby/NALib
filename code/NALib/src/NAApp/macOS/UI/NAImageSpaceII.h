@@ -8,18 +8,40 @@
 
 @implementation NACocoaNativeImageSpace
 
-- (id) initWithImageSpace:(NACocoaImageSpace*)newCocoaImageSpace frame:(NSRect)frame{
+- (id _Nonnull) initWithImageSpace:(NACocoaImageSpace* _Nonnull)newCocoaImageSpace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
+
+  // todo: make this dependent on whether tracking is needed or not.
+  trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
+      options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow)
+      owner:self userInfo:nil];
+  [self addTrackingArea:trackingArea];
+
   cocoaImageSpace = newCocoaImageSpace;
   return self;
 }
 
-- (void) setUIImage:(NAUIImage*)uiImage{
-  NSImage* image = naCreateResolutionIndependentNativeImage(
-    self,
-    uiImage,
-    NA_UIIMAGE_KIND_MAIN);
-  [self setImage:image];
+- (void)dealloc{
+  NA_COCOA_RELEASE(trackingArea);
+  NA_COCOA_SUPER_DEALLOC();
+}
+
+- (void) setUIImage:(NAUIImage* _Nullable)uiImage{
+  if(uiImage){
+    NSImage* image = na_CreateResolutionIndependentNativeImage(
+      self,
+      uiImage,
+      NA_UIIMAGE_INTERACTION_NONE,
+      NA_FALSE);
+    [self setImage:image];
+  }else{
+    [self setImage:nil];
+  }
+}
+
+- (void)mouseMoved:(NSEvent* _Nonnull)event{
+  na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaImageSpace, NA_UI_COMMAND_MOUSE_MOVED);
 }
 
 - (NARect) getInnerRect{
@@ -29,7 +51,7 @@
 
 
 
-NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
+NA_DEF NAImageSpace* _Nonnull naNewImageSpace(NAUIImage* _Nullable uiImage, NASize size){
   NACocoaImageSpace* cocoaImageSpace = naNew(NACocoaImageSpace);
 
   NACocoaNativeImageSpace* nativePtr = [[NACocoaNativeImageSpace alloc]
@@ -37,37 +59,49 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
     frame:naMakeNSRectWithSize(size)];
   na_InitImageSpace((NAImageSpace*)cocoaImageSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
-  cocoaImageSpace->imageSpace.uiImage = naRetain(uiImage);
+  if(uiImage){
+    cocoaImageSpace->imageSpace.uiImage = naRetain(uiImage);
+  }else{
+    cocoaImageSpace->imageSpace.uiImage = NA_NULL;
+  }
   [nativePtr setUIImage: uiImage];
-  
+
   return (NAImageSpace*)cocoaImageSpace;
 }
 
 
 
-NA_DEF void na_DestructCocoaImageSpace(NACocoaImageSpace* cocoaImageSpace){
-  naRelease(cocoaImageSpace->imageSpace.uiImage);
+NA_DEF void na_DestructCocoaImageSpace(NACocoaImageSpace* _Nonnull cocoaImageSpace){
+  if(cocoaImageSpace->imageSpace.uiImage){
+    naRelease(cocoaImageSpace->imageSpace.uiImage);
+  }
   na_ClearImageSpace((NAImageSpace*)cocoaImageSpace);
 }
 
 
 
-NA_DEF void naSetImageSpaceImage(NAImageSpace* imageSpace, NAUIImage* uiImage){
+NA_DEF void naSetImageSpaceImage(NAImageSpace* _Nonnull imageSpace, NAUIImage* _Nullable uiImage){
   naDefineCocoaObjectConst(NACocoaNativeImageSpace, nativePtr, imageSpace);
   
-  naRelease(imageSpace->uiImage);
-  imageSpace->uiImage = naRetain(uiImage);
+  if(imageSpace->uiImage){
+    naRelease(imageSpace->uiImage);
+  }
+  if(uiImage){
+    imageSpace->uiImage = naRetain(uiImage);
+  }else{
+    imageSpace->uiImage = NA_NULL;
+  }
   [nativePtr setUIImage: uiImage];
 }
 
 
 
-NA_HDEF NARect na_GetImageSpaceRect(const NA_UIElement* imageSpace){
+NA_HDEF NARect na_GetImageSpaceRect(const NA_UIElement* _Nonnull imageSpace){
   naDefineCocoaObjectConst(NACocoaNativeImageSpace, nativePtr, imageSpace);
   return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-NA_HDEF void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect){
+NA_HDEF void na_SetImageSpaceRect(NA_UIElement* _Nonnull imageSpace, NARect rect){
   naDefineCocoaObjectConst(NACocoaNativeImageSpace, nativePtr, imageSpace);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }

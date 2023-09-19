@@ -9,12 +9,12 @@
 
 
 
-#include "NAMath/NAComplex.h"
-#include "NAMath/NACoord.h"
-#include "NAMath/NAMathConstants.h"
-#include "NAMath/NAMathOperators.h"
-#include "NAMath/NARandom.h"
-#include "NAMath/NAVectorAlgebra.h"
+#include "NAComplex.h"
+#include "NACoord.h"
+#include "NAMathConstants.h"
+#include "NAMathOperators.h"
+#include "NARandom.h"
+#include "NAVectorAlgebra.h"
 
 
 

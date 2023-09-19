@@ -9,14 +9,14 @@
 
 
 
-#include "NAStruct/NAArray.h"
-#include "NAStruct/NABuffer.h"
-#include "NAStruct/NACircularBuffer.h"
-#include "NAStruct/NAHeap.h"
-#include "NAStruct/NAList.h"
-#include "NAStruct/NAPool.h"
-#include "NAStruct/NAStack.h"
-#include "NAStruct/NATree.h"
+#include "NAArray.h"
+#include "NABuffer.h"
+#include "NACircularBuffer.h"
+#include "NAHeap.h"
+#include "NAList.h"
+#include "NAPool.h"
+#include "NAStack.h"
+#include "NATree.h"
 
 
 

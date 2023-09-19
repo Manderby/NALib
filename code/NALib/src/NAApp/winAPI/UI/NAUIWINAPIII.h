@@ -66,34 +66,32 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 
 
 
-NA_HDEF double na_GetUIElementYOffset(NA_UIElement* elem){
+NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem){
   // Line height is considered to be 25 for an optimal display. In this
   // function, the UI elements are shifted in Y direction such that text
-  // always is displayed on a common baseline. The reference element is
-  // a stateful text button.
+  // always is displayed on a common baseline with 1x resolution. Higher
+  // resolutions might show different alignments out of our control.
+  // The reference element is a stateful text button.
   // All spaces and stateful/image buttons have offset 0.
 
   switch(naGetUIElementType(elem)){
-  case NA_UI_APPLICATION:  return  0.;
-  case NA_UI_BUTTON:{
-    NAButton* button = (NAButton*)elem;
-    return naIsButtonStateful(button) || !naIsButtonTextual(button) ? +0. : -2.;
-  }
-  case NA_UI_CHECKBOX:     return +1.;
-  case NA_UI_IMAGE_SPACE:  return  0.;
-  case NA_UI_LABEL:        return +2.;
-  case NA_UI_MENU:         return  0.;
-  case NA_UI_MENUITEM:     return  0.;
-  case NA_UI_METAL_SPACE:  return  0.;
-  case NA_UI_OPENGL_SPACE: return  0.;
-  case NA_UI_POPUP_BUTTON: return -3.;
-  case NA_UI_RADIO:        return +1.;
-  case NA_UI_SCREEN:       return  0.;
-  case NA_UI_SLIDER:       return -3.;
-  case NA_UI_SPACE:        return  0.;
-  case NA_UI_TEXTBOX:      return  2.;
-  case NA_UI_TEXTFIELD:    return  2.;
-  case NA_UI_WINDOW:       return  0.;
+  case NA_UI_APPLICATION:  return  0.0;
+  case NA_UI_BUTTON:       return  0.0;
+  case NA_UI_CHECKBOX:     return  2.5;
+  case NA_UI_IMAGE_SPACE:  return  0.0;
+  case NA_UI_LABEL:        return  4.0;
+  case NA_UI_MENU:         return  0.0;
+  case NA_UI_MENUITEM:     return  0.0;
+  case NA_UI_METAL_SPACE:  return  0.0;
+  case NA_UI_OPENGL_SPACE: return  0.0;
+  case NA_UI_POPUP_BUTTON: return -0.5;
+  case NA_UI_RADIO:        return  2.5;
+  case NA_UI_SCREEN:       return  0.0;
+  case NA_UI_SLIDER:       return  0.0;
+  case NA_UI_SPACE:        return  0.0;
+  case NA_UI_TEXTBOX:      return  4.0;
+  case NA_UI_TEXTFIELD:    return  4.0;
+  case NA_UI_WINDOW:       return  0.0;
   default: return 0.;
   }
 }
@@ -327,8 +325,8 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 
   // Capture specific messages
   if(message == WM_DRAWITEM){
-    info = naWINAPIDrawItemProc(wParam, lParam);
-  }else if(message == WM_COMMAND){
+      info = naWINAPIDrawItemProc(wParam, lParam);
+    }else if(message == WM_COMMAND){
     info = naWINAPINotificationProc(wParam, lParam);
   }else if(message == WM_HSCROLL){
     info = naWINAPIScrollItemProc(wParam, lParam);
@@ -474,6 +472,21 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
     if(handeled){
       info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
+    }
+    break;
+
+  case WM_CTLCOLORBTN:
+    {
+      const NA_UIElement* uiElement = na_GetUINALibEquivalent((void*)lParam);
+      if(naGetUIElementType(uiElement) == NA_UI_BUTTON){
+        const NAButton* button = (const NAButton*)uiElement;
+        if(naIsButtonBordered(button) && naIsButtonStateful(button) && naGetButtonState(button)){
+          // we choose yellow as background as this is probably the last color ever
+          // being used as a system UI style.
+          info.result = (LRESULT)CreateSolidBrush(RGB(255, 255, 0));
+          info.hasBeenHandeled = NA_TRUE;
+        }
+      }
     }
     break;
 
@@ -644,7 +657,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem){
 
 
 
-NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
+NA_DEF double naGetUIElementResolutionFactor(const void* uiElement){
   int dpi;
   HDC hDC;
   if (hDC = GetDC (NULL)) {
@@ -700,12 +713,14 @@ NA_API NARect naGetMainScreenRect(){
   screen = MonitorFromPoint(origin, MONITOR_DEFAULTTOPRIMARY);
   screeninfo.cbSize = sizeof(MONITORINFO);
   GetMonitorInfo(screen, &screeninfo);
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
   // The main monitor is by definition at (0,0) which in NALib is the bottom left corner.
-  NARect rect = {
-    {0, 0},
-    {(double)screeninfo.rcMonitor.right - (double)screeninfo.rcMonitor.left,
-    (double)screeninfo.rcMonitor.bottom - (double)screeninfo.rcMonitor.top}};
+  NARect rect = naMakeRectS(
+    0. / uiScale,
+    0. / uiScale,
+    ((double)screeninfo.rcMonitor.right - (double)screeninfo.rcMonitor.left) / uiScale,
+    ((double)screeninfo.rcMonitor.bottom - (double)screeninfo.rcMonitor.top) / uiScale);
   return rect;
 }
 

@@ -105,7 +105,6 @@ struct NAWINAPICheckBox {
 struct NAWINAPIImageSpace {
   NAImageSpace imageSpace;
   NARect       rect;
-  NAUIImage*   image;
 };
 
 struct NAWINAPILabel {

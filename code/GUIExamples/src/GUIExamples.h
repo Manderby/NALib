@@ -18,6 +18,11 @@ FontController* createFontController(void);
 void clearFontController(FontController* con);
 void showFontController(FontController* con);
 
+typedef struct ButtonController ButtonController;
+ButtonController* createButtonController(void);
+void clearButtonController(ButtonController* con);
+void showButtonController(ButtonController* con);
+
 
 
 typedef struct HelloWorldGUIApplication HelloWorldGUIApplication;
@@ -26,9 +31,14 @@ void poststartup(void* arg);
 void clearApplication(void);
 double getAndAdvanceNextWindowX(void);
 double getAndAdvanceNextWindowY(void);
+NAUIImage* getIconImage(void);
+NAUIImage* getState1Image(void);
+NAUIImage* getState2Image(void);
+
 
 void addTemperatureControllerToApplication(TemperatureController* con);
 void showFonts(void);
+void showButtons(void);
 
 
 

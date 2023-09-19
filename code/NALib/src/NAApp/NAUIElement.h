@@ -126,7 +126,7 @@ NA_API void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
 // Returns the resolution scale factor for the given element. Is 2 for example
 // on high resolution display settings. Returns 1 if no parent window or screen
 // can be found, as well as for NAApplication
-NA_API double naGetUIElementResolutionFactor(void* uiElement);
+NA_API double naGetUIElementResolutionFactor(const void* uiElement);
 
 // Native IDs
 //

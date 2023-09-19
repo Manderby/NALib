@@ -9,11 +9,11 @@
 
 
 
-#include "NAVisual/NA3DHelper.h"
-#include "NAVisual/NABabyColor.h"
-#include "NAVisual/NABabyImage.h"
-#include "NAVisual/NADeflate.h"
-#include "NAVisual/NAPNG.h"
+#include "NA3DHelper.h"
+#include "NABabyColor.h"
+#include "NABabyImage.h"
+#include "NADeflate.h"
+#include "NAPNG.h"
 
 
 

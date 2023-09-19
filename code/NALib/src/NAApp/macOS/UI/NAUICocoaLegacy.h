@@ -138,7 +138,7 @@
   #define NATextAlignmentCenter           NSCenterTextAlignment
 
   // Elements introduced in 10.7. No replacement possible.
-  #define NABezelStyleInline              NABezelStyleRounded
+  #define NABezelStyleInline              NABezelStylePush
   #define NAWindowCollectionBehaviorFullScreenAuxiliary 0
 #endif
 
@@ -209,8 +209,10 @@
 
 
 
+//#if defined __MAC_10_15
+//  #define NABezelStylePush                NSBezelStylePush
 #if defined __MAC_10_14
-  #define NABezelStyleRounded             NSBezelStyleRounded
+  #define NABezelStylePush                NSBezelStyleRounded
   #define NABezelStyleShadowlessSquare    NSBezelStyleShadowlessSquare
   #define NAButtonTypeMomentaryChange     NSButtonTypeMomentaryChange
   #define NAButtonTypeMomentaryPushIn     NSButtonTypeMomentaryPushIn
@@ -223,7 +225,7 @@
   #define NAStateOff                      NSControlStateValueOff
   #define NAStateOn                       NSControlStateValueOn
 #else // deprecated definitions before 10.14
-  #define NABezelStyleRounded             NSRoundedBezelStyle
+  #define NABezelStylePush                NSRoundedBezelStyle
   #define NABezelStyleShadowlessSquare    NSShadowlessSquareBezelStyle
   #define NAButtonTypeMomentaryChange     NSMomentaryChangeButton
   #define NAButtonTypePushOnPushOff       NSPushOnPushOffButton
@@ -242,7 +244,9 @@ NA_API CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement);
 NA_API CGFloat naGetWindowBackingScaleFactor(NSWindow* window);
 NA_API NSColor* naGetLabelColor(void);
 NA_API NSColor* naGetLinkColor(void);
+NA_API NSColor* naGetAccentColor(void);
 
+NA_API NABool isAtLeastMacOSVersion(int major, int minor);
 
 
 #ifdef __cplusplus

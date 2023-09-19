@@ -110,8 +110,8 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
 //      naError("Only windows can receyve KEYDOWN commands.");
 //    if((command == NA_UI_COMMAND_KEY_UP) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
 //      naError("Only windows can receyve KEYUP commands.");
-    if((command == NA_UI_COMMAND_MOUSE_MOVED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW) && (naGetUIElementType(uiElement) != NA_UI_OPENGL_SPACE))
-      naError("Only windows and openGLSpace can receyve MOUSE_MOVED commands.");
+    if((command == NA_UI_COMMAND_MOUSE_MOVED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW) && (naGetUIElementType(uiElement) != NA_UI_OPENGL_SPACE) && (naGetUIElementType(uiElement) != NA_UI_IMAGE_SPACE))
+      naError("Only windows, openGLSpace and imageSpace can receyve MOUSE_MOVED commands.");
 //    if((command == NA_UI_COMMAND_MOUSE_ENTERED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
 //      naError("Only windows can receyve MOUSE_ENTERED commands.");
 //    if((command == NA_UI_COMMAND_MOUSE_EXITED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
@@ -126,6 +126,10 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
       && (naGetUIElementType(uiElement) != NA_UI_MENUITEM)
       && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
       naError("Only buttons, checkBoxes, radios, menus, menuItems and sliders can receyve PRESSED commands.");
+    if((command == NA_UI_COMMAND_PRESSED) && (naGetUIElementType(uiElement) == NA_UI_BUTTON)){
+//      if(na_isButtonSpecial(uiElement))
+//        naError("Special buttons like Submit or Abort will not be called by a PRESSED command.");
+    }
     if((command == NA_UI_COMMAND_EDITED)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTBOX)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD)
@@ -196,18 +200,18 @@ NA_DEF NASpace* naGetUIElementParentSpace(void* uiElement){
 
 NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement){
   NARect rect;
-  NA_UIElement* elem = (NA_UIElement*)uiElement;
+  const NA_UIElement* elem = (const NA_UIElement*)uiElement;
 
   if(!elem)
     return naMakeRectZero();
 
-  rect = naGetUIElementRect(uiElement);
-  uiElement = naGetUIElementParentConst(uiElement);
-  while(uiElement){
-    NARect curRect = naGetUIElementRect(uiElement);
+  rect = naGetUIElementRect(elem);
+  elem = naGetUIElementParentConst(elem);
+  while(elem){
+    NARect curRect = naGetUIElementRect(elem);
     rect.pos.x += curRect.pos.x;
     rect.pos.y += curRect.pos.y;
-    uiElement = naGetUIElementParentConst(uiElement);
+    elem = naGetUIElementParentConst(elem);
   }
 
   return rect;

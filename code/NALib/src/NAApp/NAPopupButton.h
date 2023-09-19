@@ -28,11 +28,11 @@ NA_API void naAddPopupButtonMenuItem(
 // Returns the index of the given item. If not found, equals the item count of
 // the menu. 
 NA_API size_t naGetPopupButtonItemIndex(
-  NAPopupButton* popupButton,
+  const NAPopupButton* popupButton,
   const NAMenuItem* item);
 
 // returns the number of items in the popup Button menu.
-NA_API size_t naGetPopupButtonItemCount(NAPopupButton* popupButton);
+NA_API size_t naGetPopupButtonItemCount(const NAPopupButton* popupButton);
 
 NA_API const NAMenuItem* naGetPopupButtonItem(
   const NAPopupButton* popupButton,

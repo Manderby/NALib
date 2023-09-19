@@ -5,7 +5,7 @@
   extern "C"{
 #endif
 
-#include "NABase/NABase.h"
+#include "../NABase/NABase.h"
 #include <stdlib.h>
 
 // Threading, Sleeping

@@ -67,7 +67,10 @@ struct NAApplication{
 
 struct NAButton{
   NA_UIElement uiElement;
+  NAUTF8Char* text;
+  NAUTF8Char* text2;
   const NAUIImage* uiImage;
+  const NAUIImage* uiImage2;
   uint32 flags;
 };
 
@@ -155,14 +158,14 @@ struct NAWindow{
 
 struct NAEventReaction{
   void*             controller;
-  NAUICommand       command;
   NAReactionHandler handler;
+  NAUICommand       command;
 };
 
 struct NAKeyboardShortcutReaction{
   void*             controller;
-  NAKeyStroke       shortcut;
   NAReactionHandler handler;
+  NAKeyStroke       shortcut;
 };
 
 struct NAFont{
@@ -212,7 +215,8 @@ NA_HAPI void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
 NA_HAPI void na_ClearUIElement(NA_UIElement* uiElement);
 
 NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
-NA_HAPI double na_GetUIElementYOffset(NA_UIElement* elem);
+NA_HAPI double na_GetUIElementXOffset(const NA_UIElement* elem);
+NA_HAPI double na_GetUIElementYOffset(const NA_UIElement* elem);
 
 NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
 NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
@@ -256,9 +260,19 @@ NA_HAPI NARect na_GetApplicationRect(const NAApplication* application);
 NA_HAPI void na_SetApplicationRect(const NAApplication* application, NARect rect);
 
 // NAButton
-NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage, uint32 flags);
+#define NA_BUTTON_BORDERED   0x01
+#define NA_BUTTON_STATEFUL   0x02
+
+NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAUIImage* uiImage, const NAUIImage* uiImage2, uint32 flags);
 NA_HAPI void na_ClearButton(NAButton* button);
+NA_HAPI void na_setButtonText(NAButton* button, const NAUTF8Char* text);
+NA_HAPI void na_setButtonText2(NAButton* button, const NAUTF8Char* text);
 NA_HAPI void na_setButtonImage(NAButton* button, const NAUIImage* uiImage);
+NA_HAPI void na_setButtonImage2(NAButton* button, const NAUIImage* uiImage);
+NA_HAPI NABool na_isButtonSubmit(const NAButton* button);
+NA_HAPI void na_setButtonSubmit(NAButton* button);
+NA_HAPI NABool na_isButtonAbort(const NAButton* button);
+NA_HAPI void na_setButtonAbort(NAButton* button);
 NA_HAPI NARect na_GetButtonRect(const NA_UIElement* button);
 NA_HAPI void na_SetButtonRect(NA_UIElement* button, NARect rect);
 
@@ -356,7 +370,6 @@ NA_HAPI void na_SetTextFieldRect(NA_UIElement* textField, NARect rect);
 NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
 NA_HAPI void na_ClearWindow(NAWindow* window);
 NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
-//NA_HAPI NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window);
 NA_HAPI void na_SetWindowRect(NA_UIElement* window, NARect rect);

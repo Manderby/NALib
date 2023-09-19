@@ -190,6 +190,7 @@
     <Text Include="res\translationsGeneral.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ButtonController.c" />
     <ClCompile Include="src\ExperimentController.c" />
     <ClCompile Include="src\FontController.c" />
     <ClCompile Include="src\GUIExamplesApplication.c" />

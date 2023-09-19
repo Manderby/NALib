@@ -88,17 +88,17 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
 
   // Register the offscreen window class
   naZeron(&wndclass, sizeof(WNDCLASS));
-	wndclass.style = CS_HREDRAW | CS_VREDRAW;
-	wndclass.lpfnWndProc = naWINAPIWindowCallback;
-	wndclass.cbClsExtra = 0;
-	wndclass.cbWndExtra = 0;
-	wndclass.hInstance = GetModuleHandle(NULL);
-	wndclass.hIcon = NULL;
-	wndclass.hCursor = NULL;
-	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
-	wndclass.lpszMenuName = NULL;
-	wndclass.lpszClassName = TEXT("NAOffscreenWindow");
-	RegisterClass(&wndclass);
+  wndclass.style = CS_HREDRAW | CS_VREDRAW;
+  wndclass.lpfnWndProc = naWINAPIWindowCallback;
+  wndclass.cbClsExtra = 0;
+  wndclass.cbWndExtra = 0;
+  wndclass.hInstance = GetModuleHandle(NULL);
+  wndclass.hIcon = NULL;
+  wndclass.hCursor = NULL;
+  wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+  wndclass.lpszMenuName = NULL;
+  wndclass.lpszClassName = TEXT("NAOffscreenWindow");
+  RegisterClass(&wndclass);
 
   // Register the space class
   naZeron(&wndclass, sizeof(WNDCLASS));
@@ -179,7 +179,7 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
   userLocalId = GetUserDefaultLCID();
   numchars = GetLocaleInfoA(userLocalId, LOCALE_SISO639LANGNAME2, NA_NULL, 0);
-  languageBuf = naMalloc((numchars + 1) * sizeof(NAUTF8Char));
+  languageBuf = naMalloc((size_t)numchars + 1 * sizeof(NAUTF8Char));
   GetLocaleInfoA(userLocalId, LOCALE_SISO639LANGNAME2, languageBuf, numchars);
   languageCode = naGetLanguageCode(languageBuf);
 
@@ -204,10 +204,10 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
   naInitList(&(winapiApplication->timers));
 
-	winapiApplication->offscreenWindow = CreateWindow(
-		TEXT("NAOffscreenWindow"), TEXT("Offscreen window"), WS_OVERLAPPEDWINDOW,
-		0, 0, 0, 0,
-		NULL, NULL, GetModuleHandle(NULL), NULL);
+  winapiApplication->offscreenWindow = CreateWindow(
+    TEXT("NAOffscreenWindow"), TEXT("Offscreen window"), WS_OVERLAPPEDWINDOW,
+    0, 0, 0, 0,
+    NULL, NULL, GetModuleHandle(NULL), NULL);
 
   winapiApplication->appIcon = NA_NULL;
 
@@ -636,7 +636,9 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
 
 
 NA_DEF void naCenterMouse(void* uiElement){
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
   NARect rect = naGetUIElementRectAbsolute(uiElement);
+
   // todo: screen not defined
   NARect screenFrame = naGetMainScreenRect();
   NAPos centerPos;
@@ -644,7 +646,9 @@ NA_DEF void naCenterMouse(void* uiElement){
   centerPos.y = rect.pos.y + rect.size.height * .5f;
 
   na_SetMouseWarpedTo(centerPos);
-  SetCursorPos((int)centerPos.x, (int)screenFrame.size.height - (int)centerPos.y);
+  SetCursorPos(
+    (int)(centerPos.x * uiScale),
+    (int)((screenFrame.size.height - centerPos.y) * uiScale));
 }
 
 

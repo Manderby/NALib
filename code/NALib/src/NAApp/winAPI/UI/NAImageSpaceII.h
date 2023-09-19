@@ -27,10 +27,18 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   hMemDC = CreateCompatibleDC(paintStruct.hdc);
 
   imageSpace = (NAWINAPIImageSpace*)uiElement;
+  //FillRect(paintStruct.hdc, &paintStruct.rcPaint, CreateSolidBrush(RGB(240,240,240)));
 
   CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
 
-  size1x = naGetUIImage1xSize(imageSpace->image);
+  if(!imageSpace->imageSpace.uiImage)
+    return info;
+
+  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+
+  size1x = naGetUIImage1xSize(imageSpace->imageSpace.uiImage);
+  size1x.width = (NAInt)(size1x.width * uiScale);
+  size1x.height = (NAInt)(size1x.height * uiScale);
 
   spacesize = naMakeSizei(
     (NAInt)paintStruct.rcPaint.right - (NAInt)paintStruct.rcPaint.left,
@@ -39,7 +47,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
     (spacesize.width - size1x.width) / 2,
     (spacesize.height - size1x.height) / 2);
 
-  foreImage = na_GetUIImageBabyImage(imageSpace->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT);
+  foreImage = na_GetUIImageBabyImage(imageSpace->imageSpace.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, NA_FALSE);
 
   // We store the background where the image will be placed.
   backBuffer = naMalloc(size1x.width * size1x.height * 4);
@@ -49,7 +57,12 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
 
   // Now we blend manually the foreground to the background.
-  blendedImage = naCreateBabyImageWithBlend(backImage, foreImage, NA_BLEND_OVERLAY, 1.f);
+  blendedImage = naCreateBabyImageWithBlend(
+    backImage,
+    foreImage,
+    NA_BLEND_OVERLAY,
+    1.f,
+    naMakePosi(0, 0));
   blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
   naConvertBabyImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
   hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);
@@ -89,6 +102,8 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARA
   case WM_MOVE:
   case WM_SHOWWINDOW:
   case WM_NCPAINT:
+  break;
+
   case WM_ERASEBKGND:
     break;
 
@@ -128,8 +143,11 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
 
   na_InitImageSpace(&(winapiImageSpace->imageSpace), nativePtr);
 
-  winapiImageSpace->imageSpace.uiImage = naRetain(uiImage);
-  winapiImageSpace->image = uiImage;
+  if(uiImage){
+    winapiImageSpace->imageSpace.uiImage = naRetain(uiImage);
+  }else{
+    winapiImageSpace->imageSpace.uiImage = NA_NULL;
+  }
 
   return (NAImageSpace*)winapiImageSpace;
 }
@@ -146,9 +164,13 @@ NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace){
 NA_DEF void naSetImageSpaceImage(NAImageSpace* imageSpace, NAUIImage* uiImage){
   NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
   
-  naRelease(imageSpace->uiImage);
-  imageSpace->uiImage = naRetain(uiImage);
-  winapiImageSpace->image = uiImage;
+  if(imageSpace->uiImage){naRelease(imageSpace->uiImage);}
+  if(uiImage){
+    imageSpace->uiImage = naRetain(uiImage);
+  }
+  else{
+    imageSpace->uiImage = NA_NULL;
+  }
 
   InvalidateRect(naGetUIElementNativePtr(imageSpace), NULL, TRUE);
 }
