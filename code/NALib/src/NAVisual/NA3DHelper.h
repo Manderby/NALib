@@ -7,7 +7,7 @@
 
 
 
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include "../NAMath/NAVectorAlgebra.h"
 
 

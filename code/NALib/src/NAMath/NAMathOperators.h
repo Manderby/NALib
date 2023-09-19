@@ -6,7 +6,7 @@
 #endif
 
 
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include <stdlib.h>
 
 // /////////////////////////////////

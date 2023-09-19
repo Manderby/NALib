@@ -6,7 +6,7 @@
   extern "C"{
 #endif
 
-#include "NABase.h"
+#include "NABase/NABase.h"
 #if NA_COMPILE_GUI == 1
 
 // NALib provides a simple implementation for Graphical User Interfaces (GUI).

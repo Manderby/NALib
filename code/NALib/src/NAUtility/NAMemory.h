@@ -23,7 +23,7 @@
 
 
 
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include <stddef.h>
 
 

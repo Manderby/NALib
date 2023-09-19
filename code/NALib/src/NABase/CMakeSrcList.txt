@@ -1,0 +1,39 @@
+
+set(NABaseDir "src/NABase")
+
+set(baseHeaderFiles
+  ${NABaseDir}/NABase.h
+  ${NABaseDir}/NAChar.h
+  ${NABaseDir}/NACompiler.h
+  ${NABaseDir}/NAConfiguration.h
+  ${NABaseDir}/NADebugging.h
+  ${NABaseDir}/NAEncoding.h
+  ${NABaseDir}/NAEnvironment.h
+  ${NABaseDir}/NAFloatingPoint.h
+  ${NABaseDir}/NAInt64.h
+  ${NABaseDir}/NAInt128.h
+  ${NABaseDir}/NAInt256.h
+  ${NABaseDir}/NAInteger.h
+  ${NABaseDir}/NALanguage.h
+  ${NABaseDir}/NAMacros.h
+  ${NABaseDir}/NANumerics.h
+  ${NABaseDir}/NAPointerArithmetics.h
+)
+
+set(baseCoreImplementationFiles
+  ${NABaseDir}/Core/NADebugging.c
+  ${NABaseDir}/Core/NADebuggingII.h
+  ${NABaseDir}/Core/NAFloatingPointII.h
+  ${NABaseDir}/Core/NAInt64II.h
+  ${NABaseDir}/Core/NAInt128II.h
+  ${NABaseDir}/Core/NAInt256II.h
+  ${NABaseDir}/Core/NAMacrosII.h
+  ${NABaseDir}/Core/NANumericsII.h
+)
+
+source_group("NABase" FILES ${baseHeaderFiles})
+target_sources(NALib PRIVATE ${baseHeaderFiles})
+
+source_group("NABase/Core" FILES ${baseCoreImplementationFiles})
+target_sources(NALib PRIVATE ${baseCoreImplementationFiles})
+

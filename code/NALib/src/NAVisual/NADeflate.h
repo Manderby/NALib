@@ -11,7 +11,7 @@
 // Deflate algorithm specification:
 // http://www.ietf.org/rfc/rfc1951.txt
 
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include "../NAStruct/NABuffer.h"
 
 

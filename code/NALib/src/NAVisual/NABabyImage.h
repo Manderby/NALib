@@ -31,7 +31,7 @@
 // alpha channel is zero, all other channels must be zero as well.
 
 
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include "../NAMath/NACoord.h"
 #include "NABabyColor.h"
 

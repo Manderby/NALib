@@ -104,7 +104,7 @@
 // condition of a for-loop. Use the Max to access the last element.
 
 
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include <stdlib.h>
 
 

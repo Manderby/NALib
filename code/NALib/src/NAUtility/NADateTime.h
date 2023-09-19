@@ -5,7 +5,7 @@
   extern "C"{
 #endif
 
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include "NAString.h"
 #include "../NAStruct/NABuffer.h"
 
