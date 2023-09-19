@@ -5,11 +5,11 @@
 // Do not include this file anywhere else!
 
 
-#include "NAAppCore.h"
-#include "NAMemory.h"
-#include "NACoord.h"
-#include "NAThreading.h"
-#include "NATranslator.h"
+#include "../../Core/NAAppCore.h"
+#include "../../../NAUtility/NAMemory.h"
+#include "../../../NAMath/NACoord.h"
+#include "../../../NAUtility/NAThreading.h"
+#include "../../../NAUtility/NATranslator.h"
 
 // the following import is needed for UTType definitions.
 #import <UniformTypeIdentifiers/UTType.h>

@@ -16,8 +16,8 @@
 
 
 
-#include "NARandom.h"
-#include "NAMathOperators.h"
+#include "../../NARandom.h"
+#include "../../NAMathOperators.h"
 
 // ////////////////////////////////////////////
 // Vectors
