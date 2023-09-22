@@ -220,7 +220,7 @@ NABabyImage* na_CreateBlendedBabyImage(
       naCopyn(
         ret,
         base,
-        basePixelCount * retSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+        (size_t)basePixelCount * (size_t)retSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
     }
     // Simply copy the upper part of the base image
     NAInt topPixelCount = naIsRectiEmpty(innerRect) ? baseSize.height : baseSize.height - innerEndY;
@@ -228,7 +228,7 @@ NABabyImage* na_CreateBlendedBabyImage(
       naCopyn(
         &ret[(retSize.height - topPixelCount) * retSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
         &base[(baseSize.height - topPixelCount) * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
-        topPixelCount * retSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+        (size_t)topPixelCount * (size_t)retSize.width * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
     }
   }
 
@@ -244,7 +244,7 @@ NABabyImage* na_CreateBlendedBabyImage(
         naCopyn(
           &ret[y * retSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
           &base[y * baseSize.width * NA_BABY_COLOR_CHANNEL_COUNT],
-          leftPixelCount * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+          (size_t)leftPixelCount * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
       }
       // Simply copy the right part of the base image
       NAInt rightPixelCount = baseSize.width - innerEndX;
@@ -253,7 +253,7 @@ NABabyImage* na_CreateBlendedBabyImage(
         naCopyn(
           &ret[(y * retSize.width + retSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
           &base[(y * baseSize.width + baseSize.width - rightPixelCount) * NA_BABY_COLOR_CHANNEL_COUNT],
-          rightPixelCount * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
+          (size_t)rightPixelCount * NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float));
       }
     }
 
@@ -377,10 +377,12 @@ NABabyImage* na_CreateBlendedBabyImage(
         {
           float baseRGB[3];
           float baseHSV[3];
+          float baseHSL[3];
           baseRGB[0] = naUnlinearizeColorValue(basePtr[0]);
           baseRGB[1] = naUnlinearizeColorValue(basePtr[1]);
           baseRGB[2] = naUnlinearizeColorValue(basePtr[2]);
           na_ConvertRGBToHSV(baseHSV, baseRGB);
+          na_ConvertHSVToHSL(baseHSL, baseHSV);
 
           baseColorFactor = (1.f - blend) * topPtr[3];
           topColorFactor = blend * topPtr[3];
@@ -392,7 +394,10 @@ NABabyImage* na_CreateBlendedBabyImage(
               baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[0])) * (1.f - naUnlinearizeColorValue(basePtr[0]))),
               baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[1])) * (1.f - naUnlinearizeColorValue(basePtr[1]))),
               baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[2])) * (1.f - naUnlinearizeColorValue(basePtr[2]))),
-              (1.f - blend) * basePtr[3] + blend * (1.f - naUnlinearizeColorValue(baseHSV[2])) * basePtr[3] * topPtr[3]);
+              (1.f - blend) * basePtr[3] + blend * (1.f - naLinearizeColorValue(baseHSL[2])) * basePtr[3] * topPtr[3]);
+            // Note that naLinearizeColorValue is not mathematically correct
+            // but yields visually more pleasing results. There is no perfect
+            // solution as no colorspace is distance-preserving.
           }else{
             naFillV4f(retPtr, 0., 0., 0., 0.);
           }
@@ -402,10 +407,12 @@ NABabyImage* na_CreateBlendedBabyImage(
         {
           float baseRGB[3];
           float baseHSV[3];
+          float baseHSL[3];
           baseRGB[0] = naUnlinearizeColorValue(basePtr[0]);
           baseRGB[1] = naUnlinearizeColorValue(basePtr[1]);
           baseRGB[2] = naUnlinearizeColorValue(basePtr[2]);
           na_ConvertRGBToHSV(baseHSV, baseRGB);
+          na_ConvertHSVToHSL(baseHSL, baseHSV);
 
           baseColorFactor = (1.f - blend) * topPtr[3];
           topColorFactor = blend * topPtr[3];
@@ -417,10 +424,7 @@ NABabyImage* na_CreateBlendedBabyImage(
               baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]) * naUnlinearizeColorValue(basePtr[0]),
               baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]) * naUnlinearizeColorValue(basePtr[1]),
               baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * naUnlinearizeColorValue(topPtr[2]) * naUnlinearizeColorValue(basePtr[2]),
-              (1.f - blend) * basePtr[3] + blend * naLinearizeColorValue(baseHSV[2]) * basePtr[3] * topPtr[3]);
-            // Note that naLinearizeColorValue is not mathematically correct
-            // but yields visually more pleasing results. There is no perfect
-            // solution as no colorspace is distance-preserving.
+              (1.f - blend) * basePtr[3] + blend * baseHSL[2] * basePtr[3] * topPtr[3]);
           }else{
             naFillV4f(retPtr, 0., 0., 0., 0.);
           }
