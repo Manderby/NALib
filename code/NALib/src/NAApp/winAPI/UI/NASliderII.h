@@ -39,10 +39,14 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_CAPTURECHANGED:
   case WM_IME_NOTIFY:
   case WM_TIMER:
+
+#if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   case TBM_SETPOS:  // (WM_USER + 5)
   case TBM_GETPOS: // (WM_USER + 0)
   case TBM_GETTHUMBRECT:
   case TBM_GETTHUMBLENGTH:
+#endif
+
     break;
 
   case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
@@ -93,6 +97,7 @@ NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam){
 
 
 NA_DEF NASlider* naNewSlider(double width){
+#if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   NAWINAPISlider* winapiSlider = naNew(NAWINAPISlider);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String("Slider");
@@ -139,6 +144,9 @@ NA_DEF NASlider* naNewSlider(double width){
   na_InitSlider(&(winapiSlider->slider), nativePtr);
 
   return (NASlider*)winapiSlider;
+#else
+  return naNewLabel("Slider error", width);
+#endif
 }
 
 
@@ -162,9 +170,13 @@ NA_DEF void naSetSliderEnabled(NASlider* slider, NABool enabled){
 
 
 NA_API double naGetSliderValue(const NASlider* slider){
+#if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   int32 sliderValue = (int32)SendMessage(naGetUIElementNativePtrConst(slider), TBM_GETPOS, 0, 0); 
   double plainValue = (double)sliderValue / (double)NA_MAX_i32;
   return plainValue * (slider->max - slider->min) + slider->min;
+#else
+  return 0.;
+#endif
 }
 
 
@@ -176,6 +188,7 @@ NA_DEF double naGetSliderStaticValue(const NASlider* slider){
 
 
 NA_API void naSetSliderValue(NASlider* slider, double value){
+#if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   double plainValue = (value - slider->min) / (slider->max - slider->min);
   int32 sliderValue = (int32)(plainValue * (double)NA_MAX_i32);
   SendMessage(naGetUIElementNativePtr(slider), TBM_SETPOS, 
@@ -184,6 +197,7 @@ NA_API void naSetSliderValue(NASlider* slider, double value){
   if(!slider->sliderInMovement){
     slider->staticValue = value;
   }
+#endif
 }
 
 

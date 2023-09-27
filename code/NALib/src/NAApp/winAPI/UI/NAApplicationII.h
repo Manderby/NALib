@@ -566,19 +566,19 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
 
   //EnumFontFamilies(GetDC(NA_NULL), NA_NULL, enumFonts, NA_NULL);
 
-  #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
-
   const NONCLIENTMETRICS* metrics = naGetApplicationMetrics();
 
   LONG baseSize;
   switch(fontSize){
   case NA_FONT_SIZE_SMALL: baseSize = 12; break;
   case NA_FONT_SIZE_DEFAULT: baseSize = 16; break;
-  //case NA_FONT_SIZE_DEFAULT: baseSize = metrics->lfMessageFont.lfHeight; break;
+    //case NA_FONT_SIZE_DEFAULT: baseSize = metrics->lfMessageFont.lfHeight; break;
   case NA_FONT_SIZE_BIG: baseSize = 20; break;
   case NA_FONT_SIZE_HUGE: baseSize = 24; break;
   default: baseSize = metrics->lfMessageFont.lfHeight; break;
   }
+
+  #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
 
   NAString* fontFamilyName;
 
@@ -626,9 +626,16 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
       break;
   }
 
-  #endif
-
   naDelete(fontFamilyName);
+
+  #else
+
+  retFont = naCreateFont(
+    "default",
+    NA_FONT_FLAG_REGULAR,
+    baseSize);
+
+  #endif
 
   return retFont;
 }

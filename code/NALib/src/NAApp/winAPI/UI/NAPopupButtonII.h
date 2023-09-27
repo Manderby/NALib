@@ -74,6 +74,7 @@ NABool naPopupButtonWINAPINotify(void* uiElement, WORD notificationCode){
 
 
 NA_DEF NAPopupButton* naNewPopupButton(double width){
+#if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   NAWINAPIPopupButton* winapiPopupButton = naNew(NAWINAPIPopupButton);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String("Popup");
@@ -105,6 +106,9 @@ NA_DEF NAPopupButton* naNewPopupButton(double width){
   na_InitPopupButton((NAPopupButton*)winapiPopupButton, nativePtr);
 
   return (NAPopupButton*)winapiPopupButton;
+#else
+  return naNewLabel("Popup error", width);
+#endif
 }
 
 NA_DEF void na_DestructWINAPIPopupButton(NAWINAPIPopupButton* winapiPopupButton){
@@ -120,6 +124,8 @@ NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
 }
 
 NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, const NAMenuItem* atItem){
+#if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
+
   NAWINAPIPopupButton* winapiPopupButton = (NAWINAPIPopupButton*)popupButton;
   
   // todo: allow separators. Will crash currently.
@@ -132,6 +138,7 @@ NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* ite
   }
 
   na_AddPopupButtonChild(popupButton, item, atItem);
+#endif
 }
 
 NA_DEF void naSetPopupButtonIndexSelected(NAPopupButton* popupButton, size_t index){
