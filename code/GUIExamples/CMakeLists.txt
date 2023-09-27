@@ -1,14 +1,15 @@
-add_executable(GUIExamples)
+set(TARGET_NAME GUIExamples)
+add_executable(${TARGET_NAME})
 
 set(CMAKE_CXX_STANDARD 99)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_definitions(-DNA_COMPILE_GUI=1)
 add_definitions(-DNA_COMPILE_OPENGL=1)
-
-
+add_definitions(-DNA_USE_WINDOWS_COMMON_CONTROLS_6=0)
 
 set(sourceFiles
+  src/ButtonController.c
   src/ExperimentController.c
   src/FontController.c
   src/GUIExamples.h
@@ -30,13 +31,19 @@ set(macOSResourceFiles
 )
 
 source_group("src" FILES ${sourceFiles})
-target_sources(GUIExamples PRIVATE ${sourceFiles})
+target_sources(${TARGET_NAME} PRIVATE ${sourceFiles})
 
 source_group("res" FILES ${resourceFiles})
-target_sources(GUIExamples PRIVATE ${resourceFiles})
+target_sources(${TARGET_NAME} PRIVATE ${resourceFiles})
 
 source_group("res/macOS" FILES ${macOSResourceFiles})
-target_sources(GUIExamples PRIVATE ${macOSResourceFiles})
+target_sources(${TARGET_NAME} PRIVATE ${macOSResourceFiles})
 
 set(NALIB_DIR "../NALib")
 add_subdirectory(${NALIB_DIR} NALib)
+target_link_libraries(${TARGET_NAME} NALib)
+
+find_package(OpenGL REQUIRED)
+target_link_libraries(${TARGET_NAME} ${OPENGL_gl_LIBRARY})
+
+target_link_libraries(${TARGET_NAME} ComCtl32.lib)
