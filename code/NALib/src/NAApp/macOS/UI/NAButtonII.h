@@ -79,11 +79,18 @@
 }
 
 - (void) updateButtonBackground{
-  if([self getButtonState]){
-    [self setBezelColor:[NSColor controlAccentColor]];
-  }else{
-    [self setBezelColor:nil];
-  }
+  NA_MACOS_AVAILABILITY_GUARD_10_14(
+    // setBezelColor is 10.12.2 or newer
+    // controlAccentColor is 10.14 or newer
+    if([NSButton instancesRespondToSelector:@selector(setBezelColor:)]
+      && [NSColor respondsToSelector:@selector(controlAccentColor)]){
+      if([self getButtonState]){
+        [self setBezelColor:[NSColor controlAccentColor]];
+      }else{
+        [self setBezelColor:nil];
+      }
+    }
+  )
 }
 
 - (void) onPressed:(id)sender{
