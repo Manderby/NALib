@@ -178,7 +178,7 @@
   [self setState:state ? NAStateOn : NAStateOff];
   [self updateButtonBackground];
   [self updateButtonText];
-  //[self updateButtonImage]; // not needed on macOS
+  [self updateImages];
 }
 
 - (NABool) getButtonState{
