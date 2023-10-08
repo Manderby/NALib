@@ -104,7 +104,12 @@
 
 // Interesting read:
 // https://lapcatsoftware.com/blog/2007/03/10/everything-you-always-wanted-to-know-about-nsapplication/
-NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void* arg){  
+NA_DEF void naStartApplication(
+  NAMutator preStartup,
+  NAMutator postStartup,
+  NAMutator cleanup,
+  void* arg)
+{  
   // Start the shared application if not started already and set the nativePtr
   // of the application.
   [NSApplication sharedApplication];
@@ -157,6 +162,11 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
       [pool drain]; // also releases the pool. No separate release necessary.
     #endif
   }
+
+  // Before deleting the application, we cleanup whatever the user needs to
+  // clean up.
+  if(cleanup)
+    cleanup(arg);
 
   // When reaching here, the application had been stopped.
   naDelete(app);

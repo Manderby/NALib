@@ -269,10 +269,6 @@ NA_HAPI void na_setButtonText(NAButton* button, const NAUTF8Char* text);
 NA_HAPI void na_setButtonText2(NAButton* button, const NAUTF8Char* text);
 NA_HAPI void na_setButtonImage(NAButton* button, const NAUIImage* uiImage);
 NA_HAPI void na_setButtonImage2(NAButton* button, const NAUIImage* uiImage);
-NA_HAPI NABool na_isButtonSubmit(const NAButton* button);
-NA_HAPI void na_setButtonSubmit(NAButton* button);
-NA_HAPI NABool na_isButtonAbort(const NAButton* button);
-NA_HAPI void na_setButtonAbort(NAButton* button);
 NA_HAPI NARect na_GetButtonRect(const NA_UIElement* button);
 NA_HAPI void na_SetButtonRect(NA_UIElement* button, NARect rect);
 

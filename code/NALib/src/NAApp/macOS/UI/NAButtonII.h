@@ -523,7 +523,6 @@ NA_DEF void naSetButtonSubmit(
   
   NAWindow* window = naGetUIElementWindow(button);
   if(window){
-    na_setButtonSubmit(button);
     naAddUIKeyboardShortcut(
       window,
       naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
@@ -553,7 +552,6 @@ NA_DEF void naSetButtonAbort(
       naError("Abort functionality only works reliably for push buttons");
   #endif
   
-  na_setButtonAbort(button);
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
     naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
