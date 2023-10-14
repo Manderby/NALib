@@ -251,7 +251,11 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       if(pushed){
         foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_PRESSED, secondaryState);
       }else{
-        foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE, secondaryState);
+        if(winapiButton->button.uiElement.mouseInside){
+          foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_HOVER, secondaryState);
+        }else{
+          foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE, secondaryState);
+        }
       }
     }else{
       foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_DISABLED, secondaryState);
@@ -680,7 +684,6 @@ NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void*
   style = (style & ~SS_TYPEMASK) | BS_DEFPUSHBUTTON;
   SetWindowLongPtr(naGetUIElementNativePtr(winapiButton), GWL_STYLE, (LONG_PTR)style);
 
-  na_setButtonSubmit(button);
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
     naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
@@ -698,7 +701,6 @@ NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void*
 
 
 NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller){
-  na_setButtonAbort(button);
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
     naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),

@@ -395,6 +395,11 @@ void naWINAPICaptureMouseHover(){
     // Send a leave reaction to all elements which are not hovered anymore.
     while(curElement && curElement != commonParent){
       curElement->mouseInside = NA_FALSE;
+
+      if(naGetUIElementType(curElement) == NA_UI_BUTTON){
+        na_RefreshUIElementNow(curElement);
+      }
+
       na_DispatchUIElementCommand(curElement, NA_UI_COMMAND_MOUSE_EXITED);
       curElement = naGetUIElementParent(curElement);
     }
@@ -413,6 +418,11 @@ void naWINAPICaptureMouseHover(){
     // Send the entered message to all elements which are newly hovered.
     while(elementUnderMouse && elementUnderMouse != commonParent){
       elementUnderMouse->mouseInside = NA_TRUE;
+
+      if(naGetUIElementType(elementUnderMouse) == NA_UI_BUTTON){
+        na_RefreshUIElementNow(curElement);
+      }
+
       na_DispatchUIElementCommand(elementUnderMouse, NA_UI_COMMAND_MOUSE_ENTERED);
       elementUnderMouse = naGetUIElementParent(elementUnderMouse);
     }
@@ -431,7 +441,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
 
   switch(message){
   case WM_MOUSEHOVER: // being inside the hWND for a specified amout of time.
-    break;
+  break;
 
   case WM_MOUSEMOVE:
     // wParam: several special keys
