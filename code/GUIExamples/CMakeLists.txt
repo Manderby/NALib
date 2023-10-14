@@ -46,4 +46,10 @@ target_link_libraries(${TARGET_NAME} NALib)
 find_package(OpenGL REQUIRED)
 target_link_libraries(${TARGET_NAME} ${OPENGL_gl_LIBRARY})
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(MACOSX TRUE)
+else()
+
+endif()
+
 target_link_libraries(${TARGET_NAME} ComCtl32.lib)
