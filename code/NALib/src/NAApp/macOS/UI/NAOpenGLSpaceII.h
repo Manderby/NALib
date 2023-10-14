@@ -50,6 +50,11 @@
     return YES; // This is required to get keyboard input.
   }
   
+  - (void)viewDidChangeBackingProperties{
+    [super viewDidChangeBackingProperties];
+    [self reshape];
+  }
+
   - (void)prepareOpenGL{
     // When entering this function, the opengl context is set.
     [super prepareOpenGL];
