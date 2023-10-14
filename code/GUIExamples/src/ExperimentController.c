@@ -123,7 +123,7 @@ NABool redrawOpenGLSpace(NAReaction reaction){
   if(ang > NA_PI2f){ang = 0.f;}
 
 
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionFactor(con->openGLSpace);
   NASize viewSize = naGetUIElementRect(reaction.uiElement).size;
   glViewport(
     0,
