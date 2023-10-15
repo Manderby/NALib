@@ -6,12 +6,12 @@
 
 
 
-@implementation NACocoaNativePopupButton
+@implementation NACocoaNativeSelect
 
-- (id) initWithPopupButton:(NACocoaPopupButton*)newCocoaButton frame:(NSRect)frame{
+- (id) initWithSelect:(NACocoaSelect*)newCocoaSelect frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   
-  cocoaPopupButton = newCocoaButton;
+  cocoaSelect = newCocoaSelect;
 
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
@@ -31,9 +31,9 @@
 //}
 
 - (void) addMenuItem:(NSMenuItem*)item atItem:(const NAMenuItem*)atItem{  
-  size_t index = naGetPopupButtonItemIndex(&(cocoaPopupButton->popupButton), atItem);
+  size_t index = naGetSelectItemIndex(&(cocoaSelect->select), atItem);
   //int index = [self getMenuItemIndex:atItem];
-  if(index == naGetPopupButtonItemCount(&(cocoaPopupButton->popupButton))){
+  if(index == naGetSelectItemCount(&(cocoaSelect->select))){
     [[self menu] addItem:item];
   }else{
     [[self menu] insertItem:item atIndex: (NSInteger)index];
@@ -42,7 +42,7 @@
 
 //- (void) onPressed:(id)sender{
 //  NA_UNUSED(sender);
-//  na_DispatchUIElementCommand((NA_UIElement*)cocoaPopupButton, NA_UI_COMMAND_PRESSED);
+//  na_DispatchUIElementCommand((NA_UIElement*)cocoaSelect, NA_UI_COMMAND_PRESSED);
 //}
 
 - (void) setVisible:(NABool)visible{
@@ -56,34 +56,34 @@
 
 
 
-NA_DEF NAPopupButton* naNewPopupButton(double width){
-  NACocoaPopupButton* cocoaPopupButton = naNew(NACocoaPopupButton);
+NA_DEF NASelect* naNewSelect(double width){
+  NACocoaSelect* cocoaSelect = naNew(NACocoaSelect);
 
-  NACocoaNativePopupButton* nativePtr = [[NACocoaNativePopupButton alloc]
-    initWithPopupButton:cocoaPopupButton
+  NACocoaNativeSelect* nativePtr = [[NACocoaNativeSelect alloc]
+    initWithSelect:cocoaSelect
     frame:naMakeNSRectWithSize(naMakeSize(width, 25))];
-  na_InitPopupButton((NAPopupButton*)cocoaPopupButton, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitSelect((NASelect*)cocoaSelect, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
-  return (NAPopupButton*)cocoaPopupButton;
+  return (NASelect*)cocoaSelect;
 }
 
 
 
-NA_DEF void na_DestructCocoaPopupButton(NACocoaPopupButton* cocoaPopupButton){
-  na_ClearPopupButton((NAPopupButton*)cocoaPopupButton);
+NA_DEF void na_DestructCocoaSelect(NACocoaSelect* cocoaSelect){
+  na_ClearSelect((NASelect*)cocoaSelect);
 }
 
 
 
-NA_DEF void naSetPopupButtonVisible(NAPopupButton* popupButton, NABool visible){
-  naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
+NA_DEF void naSetSelectVisible(NASelect* select, NABool visible){
+  naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
   [nativePtr setVisible:visible];
 }
 
 
 
-NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, const NAMenuItem* atItem){
-  naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
+NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenuItem* atItem){
+  naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
   naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemPtr, item);
 
   if(atItem){
@@ -93,39 +93,39 @@ NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* ite
     [nativePtr addMenuItem:nativeItemPtr atItem:nil];
   }
   
-  na_AddPopupButtonChild(popupButton, item, atItem);
+  na_AddSelectChild(select, item, atItem);
 }
 
 
 
-NA_DEF void naSetPopupButtonIndexSelected(NAPopupButton* popupButton, size_t index){
-  naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
+NA_DEF void naSetSelectIndexSelected(NASelect* select, size_t index){
+  naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
   [nativePtr selectItemAtIndex:(NSInteger)index];
 }
 
 
 
-NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, const NAMenuItem* item){
-  naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
-  size_t index = naGetPopupButtonItemIndex(popupButton, item);
+NA_DEF void naSetSelectItemSelected(NASelect* select, const NAMenuItem* item){
+  naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
+  size_t index = naGetSelectItemIndex(select, item);
   [nativePtr selectItemAtIndex:(NSInteger)index];
 }
 
 
 
-NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
-  naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
+NA_DEF void naSetSelectEnabled(NASelect* select, NABool enabled){
+  naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
   [nativePtr setEnabled:(BOOL)enabled];
 }
 
 
-NA_HDEF NARect na_GetPopupButtonRect(const NA_UIElement* popupButton){
-  naDefineCocoaObjectConst(NACocoaNativePopupButton, nativePtr, popupButton);
+NA_HDEF NARect na_GetSelectRect(const NA_UIElement* select){
+  naDefineCocoaObjectConst(NACocoaNativeSelect, nativePtr, select);
   return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-NA_HDEF void na_SetPopupButtonRect(NA_UIElement* popupButton, NARect rect){
-  naDefineCocoaObject(NACocoaNativePopupButton, nativePtr, popupButton);
+NA_HDEF void na_SetSelectRect(NA_UIElement* select, NARect rect){
+  naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }
 

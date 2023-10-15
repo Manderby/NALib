@@ -26,9 +26,9 @@ struct ExperimentController{
   NALabel* label;
   NALabel* labelDisabled;
 
-  NALabel* popupButtonLabel;
-  NAPopupButton* popupButton;
-  NAPopupButton* popupButtonDisabled;
+  NALabel* selectLabel;
+  NASelect* select;
+  NASelect* selectDisabled;
 
   NALabel* checkBoxLabel;
   NACheckBox* checkBox;
@@ -206,12 +206,12 @@ NABool menuButtonPressed(NAReaction reaction){
   return NA_TRUE;
 }
 
-NABool popupButtonItemSelected(NAReaction reaction){
+NABool selectItemSelected(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(
     NA_TRUE,
-    "PopupButton item with index %d selected",
-    (int)naGetPopupButtonItemIndex(con->popupButton, reaction.uiElement));
+    "Select item with index %d selected",
+    (int)naGetSelectItemIndex(con->select, reaction.uiElement));
   naSetLabelText(con->outputLabel, outputText);
 
   return NA_TRUE;
@@ -230,7 +230,10 @@ NABool menuItemSelected(NAReaction reaction){
 
 NABool menuItemKeyboardSelected(NAReaction reaction){
   ExperimentController* con = reaction.controller;
-  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "MenuItem with index %d selected by keyboard shortcut", (int)naGetMenuItemIndex(con->menu, reaction.uiElement));
+  const NAUTF8Char* outputText = naAllocSprintf(
+    NA_TRUE,
+    "MenuItem with index %d selected by keyboard shortcut",
+    (int)naGetMenuItemIndex(con->menu, reaction.uiElement));
   naSetLabelText(con->outputLabel, outputText);
 
   return NA_TRUE;
@@ -304,22 +307,22 @@ ExperimentController* createExperimentController(){
   naAddSpaceChild(con->contentSpace, con->labelDisabled, naMakePos(left2, curPosY));
 
   curPosY -= 30;
-  con->popupButtonLabel = naNewLabel("NAPopupButton", descSize);
-  naAddSpaceChild(con->contentSpace, con->popupButtonLabel, naMakePos(20, curPosY));
-  con->popupButton = naNewPopupButton(200);
-  naAddSpaceChild(con->contentSpace, con->popupButton, naMakePos(left, curPosY));
+  con->selectLabel = naNewLabel("NASelect", descSize);
+  naAddSpaceChild(con->contentSpace, con->selectLabel, naMakePos(20, curPosY));
+  con->select = naNewSelect(200);
+  naAddSpaceChild(con->contentSpace, con->select, naMakePos(left, curPosY));
   for(size_t i = 0; i < 5; ++i){
-    NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Popup menu item %d", i));
-    naAddPopupButtonMenuItem(con->popupButton, item, NA_NULL);
-    naAddUIReaction(item, NA_UI_COMMAND_PRESSED, popupButtonItemSelected, con);
+    NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Select menu item %d", i));
+    naAddSelectMenuItem(con->select, item, NA_NULL);
+    naAddUIReaction(item, NA_UI_COMMAND_PRESSED, selectItemSelected, con);
   }
-  naSetPopupButtonIndexSelected(con->popupButton, 3);
+  naSetSelectIndexSelected(con->select, 3);
 
-  con->popupButtonDisabled = naNewPopupButton(200);
-  naSetPopupButtonEnabled(con->popupButtonDisabled, NA_FALSE);
-  NAMenuItem* disabledItem = naNewMenuItem(naAllocSprintf(NA_TRUE, "Disabled Popup Item", 0));
-  naAddPopupButtonMenuItem(con->popupButtonDisabled, disabledItem, NA_NULL);
-  naAddSpaceChild(con->contentSpace, con->popupButtonDisabled, naMakePos(left2, curPosY));
+  con->selectDisabled = naNewSelect(200);
+  naSetSelectEnabled(con->selectDisabled, NA_FALSE);
+  NAMenuItem* disabledItem = naNewMenuItem(naAllocSprintf(NA_TRUE, "Disabled Select Item", 0));
+  naAddSelectMenuItem(con->selectDisabled, disabledItem, NA_NULL);
+  naAddSpaceChild(con->contentSpace, con->selectDisabled, naMakePos(left2, curPosY));
 
   curPosY -= 30;
   con->checkBoxLabel = naNewLabel("NACheckBox", descSize);

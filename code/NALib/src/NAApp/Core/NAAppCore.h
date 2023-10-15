@@ -106,7 +106,7 @@ struct NAOpenGLSpace{
   NA_UIElement uiElement;
 };
 
-struct NAPopupButton{
+struct NASelect{
   NA_UIElement uiElement;
   NAList       childs;
 };
@@ -317,13 +317,6 @@ NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
 NA_HAPI NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace);
 NA_HAPI void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect);
 
-// NAPopupButton
-NA_HAPI void na_InitPopupButton(NAPopupButton* popupButton, void* nativePtr);
-NA_HAPI void na_ClearPopupButton(NAPopupButton* popupButton);
-NA_HAPI void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* child, const NAMenuItem* itemAt);
-NA_HAPI NARect na_GetPopupButtonRect(const NA_UIElement* popupButton);
-NA_HAPI void na_SetPopupButtonRect(NA_UIElement* popupButton, NARect rect);
-
 // NARadio
 NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
 NA_HAPI void na_ClearRadio(NARadio* radio);
@@ -335,6 +328,13 @@ NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr);
 NA_HAPI void na_ClearScreen(NAScreen* screen);
 NA_HAPI NARect na_GetScreenRect(const NA_UIElement* screen);
 NA_HAPI void na_SetScreenRect(NA_UIElement* screen, NARect rect);
+
+// NASelect
+NA_HAPI void na_InitSelect(NASelect* select, void* nativePtr);
+NA_HAPI void na_ClearSelect(NASelect* select);
+NA_HAPI void na_AddSelectChild(NASelect* select, NAMenuItem* child, const NAMenuItem* itemAt);
+NA_HAPI NARect na_GetSelectRect(const NA_UIElement* select);
+NA_HAPI void na_SetSelectRect(NA_UIElement* select, NARect rect);
 
 // NASlider
 NA_HAPI void na_InitSlider(NASlider* slider, void* nativePtr);

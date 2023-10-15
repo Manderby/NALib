@@ -24,11 +24,11 @@ WNDPROC na_GetApplicationOldCheckBoxWindowProc(){
 WNDPROC na_GetApplicationOldLabelWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldLabelWindowProc;
 }
-WNDPROC na_GetApplicationOldPopupButtonWindowProc(){
-  return ((NAWINAPIApplication*)naGetApplication())->oldPopupButtonWindowProc;
-}
 WNDPROC na_GetApplicationOldRadioWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldRadioWindowProc;
+}
+WNDPROC na_GetApplicationOldSelectWindowProc(){
+  return ((NAWINAPIApplication*)naGetApplication())->oldSelectWindowProc;
 }
 WNDPROC na_GetApplicationOldSliderWindowProc(){
   return ((NAWINAPIApplication*)naGetApplication())->oldSliderWindowProc;
@@ -218,7 +218,7 @@ NA_HDEF NAApplication* na_NewApplication(void){
   winapiApplication->oldButtonWindowProc = NA_NULL;
   winapiApplication->oldCheckBoxWindowProc = NA_NULL;
   winapiApplication->oldLabelWindowProc = NA_NULL;
-  winapiApplication->oldPopupButtonWindowProc = NA_NULL;
+  winapiApplication->oldSelectWindowProc = NA_NULL;
   winapiApplication->oldRadioWindowProc = NA_NULL;
   winapiApplication->oldSliderWindowProc = NA_NULL;
   winapiApplication->oldTextFieldWindowProc = NA_NULL;
