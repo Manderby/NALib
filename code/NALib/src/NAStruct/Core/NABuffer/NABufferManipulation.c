@@ -55,12 +55,12 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
 
   dstIter = naMakeBufferModifier(dstbuffer);
   while(!naIsBufferAtEnd(&dstIter)){
-    NAUTF8Char curchar = (NAUTF8Char)naGetBufferu8(&dstIter);
+    NAUTF8Char curChar = (NAUTF8Char)naGetBufferu8(&dstIter);
     NAUTF8Char newChar;
-    if      (curchar < 26) {newChar = curchar + 'A';}
-    else if (curchar < 52) {newChar = curchar + ('a' - 26);}
-    else if (curchar < 62) {newChar = curchar + ('0' - 52);}
-    else if (curchar == 62){newChar = '+';}
+    if      (curChar < 26) {newChar = curChar + 'A';}
+    else if (curChar < 52) {newChar = curChar + ('a' - 26);}
+    else if (curChar < 62) {newChar = curChar + ('0' - 52);}
+    else if (curChar == 62){newChar = '+';}
     else                   {newChar = '/';}
     naWriteBufferu8(&dstIter, (uint8)newChar);
   }
@@ -93,14 +93,14 @@ NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(NAString* string){
   NABufferIterator asciter = naMakeBufferModifier(ascbuffer);
 
   while(!naIsBufferAtEnd(&srcIter)){
-    NAUTF8Char curchar = (NAUTF8Char)naReadBufferu8(&srcIter);
+    NAUTF8Char curChar = (NAUTF8Char)naReadBufferu8(&srcIter);
     NAUTF8Char newChar;
-    if      (curchar == '+'){newChar = 62;}
-    else if (curchar == '/'){newChar = 63;}
-    else if (curchar <= '9'){newChar = curchar - ('0' - 52);}
-    else if (curchar == '='){break;}
-    else if (curchar <= 'Z'){newChar = curchar - 'A';}
-    else if (curchar <= 'z'){newChar = curchar - ('a' - 26);}
+    if      (curChar == '+'){newChar = 62;}
+    else if (curChar == '/'){newChar = 63;}
+    else if (curChar <= '9'){newChar = curChar - ('0' - 52);}
+    else if (curChar == '='){break;}
+    else if (curChar <= 'Z'){newChar = curChar - 'A';}
+    else if (curChar <= 'z'){newChar = curChar - ('a' - 26);}
     else{
       #if NA_DEBUG
         naError("Invalid character. This does not seem to be a Base64 encoding");
