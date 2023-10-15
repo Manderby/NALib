@@ -224,12 +224,12 @@ NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift)
 
 
 
-NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NABabyColor* _Nullable color){
+NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NABabyColor _Nullable color){
   if(color){
-    space->backgroundColor[0] = (*color)[0];
-    space->backgroundColor[1] = (*color)[1];
-    space->backgroundColor[2] = (*color)[2];
-    space->backgroundColor[3] = (*color)[3];
+    space->backgroundColor[0] = color[0];
+    space->backgroundColor[1] = color[1];
+    space->backgroundColor[2] = color[2];
+    space->backgroundColor[3] = color[3];
   }else{
     space->backgroundColor[3] = 0.;
   }
