@@ -14,6 +14,22 @@ if (MSVC)
   target_compile_options(${TARGET_NAME} PRIVATE /MP)
   # unicode. Theoretically, needs _MBCS to be undefined, but cmake does that.
   add_definitions(-D_UNICODE)
+  
+  # working directory
+  set_property(TARGET ${TARGET_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
+  
+  # copying the test images
+  add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/icon.png
+        \"$(OutDir)/icon.png\"
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/man.png
+        \"$(OutDir)/man.png\"
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/man2.png
+        \"$(OutDir)/man2.png\"
+  )
 else()
 endif()
 

@@ -32,6 +32,9 @@
 int main(){
 
   naStartRuntime();
+
+    //NAString* pwd = naNewStringWithCurWorkingDirectory();
+
     naStartApplication(prestartup, poststartup, NA_NULL, NA_NULL);
 
     // When returning from naStartApplication, the GUI has already been

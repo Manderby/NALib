@@ -7,6 +7,10 @@
 #include "../../NALib/src/NAVisual/NAPNG.h"
 
 
+#define RESOURCE_PATH ""
+//#define RESOURCE_PATH "res/"
+
+
 // Put GUI elements belonging together into a controller struct.
 struct HelloWorldGUIApplication{
   NAStack temperatureControllers;
@@ -48,7 +52,7 @@ void poststartup(void* arg){
   NA_UNUSED(arg);
   
   // Load the image files
-  NAPNG* pngIcon = naNewPNGWithPath("res/icon.png");
+  NAPNG* pngIcon = naNewPNGWithPath(RESOURCE_PATH "icon.png");
   if(!naIsSizeiUseful(naGetPNGSize(pngIcon))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
@@ -61,7 +65,7 @@ void poststartup(void* arg){
   naDelete(pngIcon);
   naReleaseBabyImage(originalIconImage);
 
-  NAPNG* png1 = naNewPNGWithPath("res/man.png");
+  NAPNG* png1 = naNewPNGWithPath(RESOURCE_PATH "man.png");
   if(!naIsSizeiUseful(naGetPNGSize(png1))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
@@ -74,7 +78,7 @@ void poststartup(void* arg){
   naDelete(png1);
   naReleaseBabyImage(originalState1Image);
 
-  NAPNG* png2 = naNewPNGWithPath("res/man2.png");
+  NAPNG* png2 = naNewPNGWithPath(RESOURCE_PATH "man2.png");
   if(!naIsSizeiUseful(naGetPNGSize(png2))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
