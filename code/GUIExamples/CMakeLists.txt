@@ -22,7 +22,7 @@ if (MSVC)
 
 else()
 
-  set(OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$CONFIGURATION)
+  set(OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$CONFIGURATION/)
 
 endif()
 
@@ -32,13 +32,13 @@ endif()
 add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_CURRENT_SOURCE_DIR}/res/icon.png
-      \"${OUTPUT_DIRECTORY}/icon.png\"
+      \"${OUTPUT_DIRECTORY}icon.png\"
   COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_CURRENT_SOURCE_DIR}/res/man.png
-      \"${OUTPUT_DIRECTORY}/man.png\"
+      \"${OUTPUT_DIRECTORY}man.png\"
   COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_CURRENT_SOURCE_DIR}/res/man2.png
-      \"${OUTPUT_DIRECTORY}/man2.png\"
+      \"${OUTPUT_DIRECTORY}man2.png\"
 )
 
 
