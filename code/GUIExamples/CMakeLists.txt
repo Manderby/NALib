@@ -14,24 +14,32 @@ if (MSVC)
   target_compile_options(${TARGET_NAME} PRIVATE /MP)
   # unicode. Theoretically, needs _MBCS to be undefined, but cmake does that.
   add_definitions(-D_UNICODE)
-  
+
   # working directory
-  set_property(TARGET ${TARGET_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
-  
-  # copying the test images
-  add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_CURRENT_SOURCE_DIR}/res/icon.png
-        \"$(OutDir)/icon.png\"
-    COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_CURRENT_SOURCE_DIR}/res/man.png
-        \"$(OutDir)/man.png\"
-    COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_CURRENT_SOURCE_DIR}/res/man2.png
-        \"$(OutDir)/man2.png\"
-  )
+  set_property(TARGET ${TARGET_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+  set(OUTPUT_DIRECTORY $(OutDir))
+
 else()
+
+  set(OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$CONFIGURATION)
+
 endif()
+
+
+
+# copying the test images
+add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/res/icon.png
+      \"${OUTPUT_DIRECTORY}/icon.png\"
+  COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/res/man.png
+      \"${OUTPUT_DIRECTORY}/man.png\"
+  COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/res/man2.png
+      \"${OUTPUT_DIRECTORY}/man2.png\"
+)
 
 
 
@@ -74,15 +82,35 @@ target_sources(${TARGET_NAME} PRIVATE ${macOSResourceFiles})
 
 set(NALIB_DIR "../NALib")
 add_subdirectory(${NALIB_DIR} NALib)
-target_link_libraries(${TARGET_NAME} NALib)
+target_link_libraries(${TARGET_NAME} PRIVATE NALib)
 
 find_package(OpenGL REQUIRED)
-target_link_libraries(${TARGET_NAME} ${OPENGL_gl_LIBRARY})
+target_link_libraries(${TARGET_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(MACOSX TRUE)
+if (MSVC)
+  target_link_libraries(${TARGET_NAME} PRIVATE ComCtl32.lib)
 else()
+  #find_library(CARBON_FRAMEWORK Carbon)
+  #if (NOT CARBON_FRAMEWORK)
+  #    message(FATAL_ERROR "Carbon not found")
+  #endif()
+  #target_link_libraries(${TARGET_NAME} PRIVATE ${CARBON_FRAMEWORK})
 
+  #find_library(COCOA_FRAMEWORK Cocoa)
+  #if (NOT COCOA_FRAMEWORK)
+  #    message(FATAL_ERROR "Cocoa not found")
+  #endif()
+  #target_link_libraries(${TARGET_NAME} PRIVATE ${COCOA_FRAMEWORK})
+
+  #target_link_libraries(${TARGET_NAME} PRIVATE Carbon/Carbon.h)
+  #target_link_libraries(${TARGET_NAME} PRIVATE Cocoa/Cocoa.h)
+  #target_link_libraries(${TARGET_NAME} PRIVATE UniformTypeIdentifiers)
+  
+  FIND_LIBRARY(CARBON_FRAMEWORK Carbon)
+  FIND_LIBRARY(COCOA_FRAMEWORK Cocoa)
+  FIND_LIBRARY(UTYPE_FRAMEWORK UniformTypeIdentifiers)
+  target_link_libraries(${TARGET_NAME} PRIVATE ${CARBON_FRAMEWORK})
+  target_link_libraries(${TARGET_NAME} PRIVATE ${COCOA_FRAMEWORK})
+  target_link_libraries(${TARGET_NAME} PRIVATE ${UTYPE_FRAMEWORK})
+  
 endif()
-
-target_link_libraries(${TARGET_NAME} ComCtl32.lib)
