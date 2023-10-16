@@ -83,9 +83,9 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem){
     case NA_UI_MENUITEM:     return  0.;
     case NA_UI_METAL_SPACE:  return  0.;
     case NA_UI_OPENGL_SPACE: return  0.;
-    case NA_UI_POPUP_BUTTON: return +2.;
     case NA_UI_RADIO:        return +5.;
     case NA_UI_SCREEN:       return  0.;
+    case NA_UI_SELECT:       return +2.;
     case NA_UI_SLIDER:       return +1.;
     case NA_UI_SPACE:        return  0.;
     case NA_UI_TEXTBOX:      return +1.;
@@ -104,9 +104,9 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem){
     case NA_UI_MENUITEM:     return  0.;
     case NA_UI_METAL_SPACE:  return  0.;
     case NA_UI_OPENGL_SPACE: return  0.;
-    case NA_UI_POPUP_BUTTON: return -1.;
     case NA_UI_RADIO:        return +5.;
     case NA_UI_SCREEN:       return  0.;
+    case NA_UI_SELECT:       return -1.;
     case NA_UI_SLIDER:       return -1.;
     case NA_UI_SPACE:        return  0.;
     case NA_UI_TEXTBOX:      return +1.;

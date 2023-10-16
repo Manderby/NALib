@@ -6,7 +6,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_definitions(-DNA_COMPILE_GUI=1)
 add_definitions(-DNA_COMPILE_OPENGL=1)
-add_definitions(-DNA_USE_WINDOWS_COMMON_CONTROLS_6=0)
+
+if (MSVC)
+  add_definitions(-DNA_USE_WINDOWS_COMMON_CONTROLS_6=1)
+  
+  # multi processor compilation
+  target_compile_options(${TARGET_NAME} PRIVATE /MP)
+  # unicode. Theoretically, needs _MBCS to be undefined, but cmake does that.
+  add_definitions(-D_UNICODE)
+else()
+endif()
+
+
+
+# ######### Sources ################
 
 set(sourceFiles
   src/ButtonController.c
@@ -38,6 +51,10 @@ target_sources(${TARGET_NAME} PRIVATE ${resourceFiles})
 
 source_group("res/macOS" FILES ${macOSResourceFiles})
 target_sources(${TARGET_NAME} PRIVATE ${macOSResourceFiles})
+
+
+
+# ######### Linking to libraries ################
 
 set(NALIB_DIR "../NALib")
 add_subdirectory(${NALIB_DIR} NALib)

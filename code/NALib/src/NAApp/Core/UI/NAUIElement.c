@@ -232,9 +232,9 @@ NA_DEF NARect naGetUIElementRect(const void* uiElement){
   case NA_UI_MENUITEM:     elemRect = na_GetMenuItemRect(uiElement); break;
   case NA_UI_METAL_SPACE:  elemRect = na_GetMetalSpaceRect(uiElement); break;
   case NA_UI_OPENGL_SPACE: elemRect = na_GetOpenGLSpaceRect(uiElement); break;
-  case NA_UI_POPUP_BUTTON: elemRect = na_GetPopupButtonRect(uiElement); break;
   case NA_UI_RADIO:        elemRect = na_GetRadioRect(uiElement); break;
   case NA_UI_SCREEN:       elemRect = na_GetScreenRect(uiElement); break;
+  case NA_UI_SELECT:       elemRect = na_GetSelectRect(uiElement); break;
   case NA_UI_SLIDER:       elemRect = na_GetSliderRect(uiElement); break;
   case NA_UI_SPACE:        elemRect = na_GetSpaceRect(uiElement); break;
   case NA_UI_TEXTBOX:      elemRect = na_GetTextBoxRect(uiElement); break;
@@ -259,9 +259,9 @@ NA_DEF void naSetUIElementRect(void* uiElement, NARect rect){
   case NA_UI_MENUITEM:     na_SetMenuItemRect(uiElement, rect); break;
   case NA_UI_METAL_SPACE:  na_SetMetalSpaceRect(uiElement, rect); break;
   case NA_UI_OPENGL_SPACE: na_SetOpenGLSpaceRect(uiElement, rect); break;
-  case NA_UI_POPUP_BUTTON: na_SetPopupButtonRect(uiElement, rect); break;
   case NA_UI_RADIO:        na_SetRadioRect(uiElement, rect); break;
   case NA_UI_SCREEN:       na_SetScreenRect(uiElement, rect); break;
+  case NA_UI_SELECT:       na_SetSelectRect(uiElement, rect); break;
   case NA_UI_SLIDER:       na_SetSliderRect(uiElement, rect); break;
   case NA_UI_SPACE:        na_SetSpaceRect(uiElement, rect); break;
   case NA_UI_TEXTBOX:      na_SetTextBoxRect(uiElement, rect); break;

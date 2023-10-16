@@ -5,6 +5,11 @@ set_target_properties(${TARGET_NAME} PROPERTIES LINKER_LANGUAGE C)
 set(CMAKE_CXX_STANDARD 99)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+if (MSVC)
+  # multi processor compilation
+  target_compile_options(${TARGET_NAME} PRIVATE /MP)
+else()
+endif()
 
 set(primaryHeaderFile
   src/NALib.h

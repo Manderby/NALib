@@ -6,7 +6,7 @@
 
 
 
-NAWINAPICallbackInfo naPopupButtonWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -42,7 +42,7 @@ NAWINAPICallbackInfo naPopupButtonWINAPIProc(void* uiElement, UINT message, WPAR
     break;
 
   default:
-    printf("Uncaught PopupButton message" NA_NL);
+    printf("Uncaught Select message" NA_NL);
     break;
   }
   
@@ -51,8 +51,8 @@ NAWINAPICallbackInfo naPopupButtonWINAPIProc(void* uiElement, UINT message, WPAR
 
 
 
-NABool naPopupButtonWINAPINotify(void* uiElement, WORD notificationCode){
-  NAWINAPIPopupButton* winapiPopupButton = (NAWINAPIPopupButton*)uiElement;
+NABool naSelectWINAPINotify(void* uiElement, WORD notificationCode){
+  NAWINAPISelect* winapiSelect = (NAWINAPISelect*)uiElement;
   NABool hasBeenHandeled = NA_FALSE;
   size_t itemIndex;
   const NAMenuItem* child;
@@ -64,8 +64,8 @@ NABool naPopupButtonWINAPINotify(void* uiElement, WORD notificationCode){
       CB_GETCURSEL, 
       0,
       0);
-      child = naGetPopupButtonItem(uiElement, itemIndex);
-      na_DispatchUIElementCommand(&(child->uiElement), NA_UI_COMMAND_PRESSED);
+    child = naGetSelectItem(uiElement, itemIndex);
+    na_DispatchUIElementCommand(&(child->uiElement), NA_UI_COMMAND_PRESSED);
     break;
   }
   return hasBeenHandeled;
@@ -73,14 +73,14 @@ NABool naPopupButtonWINAPINotify(void* uiElement, WORD notificationCode){
 
 
 
-NA_DEF NAPopupButton* naNewPopupButton(double width){
+NA_DEF NASelect* naNewSelect(double width){
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
-  NAWINAPIPopupButton* winapiPopupButton = naNew(NAWINAPIPopupButton);
+  NAWINAPISelect* winapiSelect = naNew(NAWINAPISelect);
 
-  TCHAR* systemText = naAllocSystemStringWithUTF8String("Popup");
+  TCHAR* systemText = naAllocSystemStringWithUTF8String("Select");
 
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-  winapiPopupButton->rect = naMakeRectS(0., 0., width, 24.);
+  winapiSelect->rect = naMakeRectS(0., 0., width, 24.);
 
   HWND nativePtr = CreateWindow(
     WC_COMBOBOX,
@@ -88,8 +88,8 @@ NA_DEF NAPopupButton* naNewPopupButton(double width){
     WS_CHILD | WS_VISIBLE | CBS_DROPDOWN | CBS_HASSTRINGS | WS_OVERLAPPED | CBS_SIMPLE,
     0,
     0,
-    (int)(winapiPopupButton->rect.size.width * uiScale),
-    (int)(winapiPopupButton->rect.size.height * uiScale),
+    (int)(winapiSelect->rect.size.width * uiScale),
+    (int)(winapiSelect->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -101,75 +101,73 @@ NA_DEF NAPopupButton* naNewPopupButton(double width){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldPopupButtonWindowProc){app->oldPopupButtonWindowProc = oldproc;}
+  if(!app->oldSelectWindowProc){app->oldSelectWindowProc = oldproc;}
 
-  na_InitPopupButton((NAPopupButton*)winapiPopupButton, nativePtr);
+  na_InitSelect((NASelect*)winapiSelect, nativePtr);
 
-  return (NAPopupButton*)winapiPopupButton;
+  return (NASelect*)winapiSelect;
 #else
-  return naNewLabel("Popup error", width);
+  // not a very good cast but things are broken in such a situation anyway.
+  return (NASelect*)naNewLabel("Slider error", width);
 #endif
 }
 
-NA_DEF void na_DestructWINAPIPopupButton(NAWINAPIPopupButton* winapiPopupButton){
-  na_ClearPopupButton((NAPopupButton*)winapiPopupButton);
+NA_DEF void na_DestructWINAPISelect(NAWINAPISelect* winapiSelect){
+  na_ClearSelect((NASelect*)winapiSelect);
 }
 
-NA_DEF void naSetPopupButtonVisible(NAPopupButton* popupButton, NABool visible){
+NA_DEF void naSetSelectVisible(NASelect* select, NABool visible){
   // todo
 }
 
-NA_DEF void naSetPopupButtonEnabled(NAPopupButton* popupButton, NABool enabled){
-  EnableWindow(naGetUIElementNativePtr(popupButton), enabled);
+NA_DEF void naSetSelectEnabled(NASelect* select, NABool enabled){
+  EnableWindow(naGetUIElementNativePtr(select), enabled);
 }
 
-NA_DEF void naAddPopupButtonMenuItem(NAPopupButton* popupButton, NAMenuItem* item, const NAMenuItem* atItem){
-#if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
-
-  NAWINAPIPopupButton* winapiPopupButton = (NAWINAPIPopupButton*)popupButton;
+NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenuItem* atItem){
+  NAWINAPISelect* winapiSelect = (NAWINAPISelect*)select;
   
   // todo: allow separators. Will crash currently.
   TCHAR* itemText = naAllocSystemStringWithUTF8String(naGetMenuItemText(item));
-  size_t index = naGetPopupButtonItemIndex(popupButton, atItem);
+  size_t index = naGetSelectItemIndex(select, atItem);
 
-  SendMessage(naGetUIElementNativePtr(popupButton), (UINT)CB_INSERTSTRING , (WPARAM)index, (LPARAM) itemText);
-  if(naGetListCount(&(popupButton->childs)) == 0){
-    SendMessage(naGetUIElementNativePtr(popupButton), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
+  SendMessage(naGetUIElementNativePtr(select), (UINT)CB_INSERTSTRING , (WPARAM)index, (LPARAM) itemText);
+  if(naGetListCount(&(select->childs)) == 0){
+    SendMessage(naGetUIElementNativePtr(select), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
   }
 
-  na_AddPopupButtonChild(popupButton, item, atItem);
-#endif
+  na_AddSelectChild(select, item, atItem);
 }
 
-NA_DEF void naSetPopupButtonIndexSelected(NAPopupButton* popupButton, size_t index){
-  SendMessage(naGetUIElementNativePtr(popupButton), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
+NA_DEF void naSetSelectIndexSelected(NASelect* select, size_t index){
+  SendMessage(naGetUIElementNativePtr(select), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
 }
 
-NA_DEF void naSetPopupButtonItemSelected(NAPopupButton* popupButton, const NAMenuItem* item){
-  size_t index = naGetPopupButtonItemIndex(popupButton, item);
-  SendMessage(naGetUIElementNativePtr(popupButton), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
+NA_DEF void naSetSelectItemSelected(NASelect* select, const NAMenuItem* item){
+  size_t index = naGetSelectItemIndex(select, item);
+  SendMessage(naGetUIElementNativePtr(select), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
 }
 
-NA_HDEF NARect na_GetPopupButtonRect(const NA_UIElement* popupButton)
+NA_HDEF NARect na_GetSelectRect(const NA_UIElement* select)
 {
-  const NAWINAPIPopupButton* winapiPopupButton = (const NAWINAPIPopupButton*)popupButton;
-  return winapiPopupButton->rect;
+  const NAWINAPISelect* winapiSelect = (const NAWINAPISelect*)select;
+  return winapiSelect->rect;
 }
 
-NA_HDEF void na_SetPopupButtonRect(NA_UIElement* popupButton, NARect rect){
-  NAWINAPIPopupButton* winapiPopupButton = (NAWINAPIPopupButton*)popupButton;
+NA_HDEF void na_SetSelectRect(NA_UIElement* select, NARect rect){
+  NAWINAPISelect* winapiSelect = (NAWINAPISelect*)select;
 
-  winapiPopupButton->rect = rect;
+  winapiSelect->rect = rect;
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParent(popupButton));
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(select));
 
   SetWindowPos(
-    naGetUIElementNativePtr(popupButton),
+    naGetUIElementNativePtr(select),
     HWND_TOP,
-    (int)(winapiPopupButton->rect.pos.x * uiScale),
-    (int)((parentRect.size.height - winapiPopupButton->rect.pos.y - winapiPopupButton->rect.size.height) * uiScale),
-    (int)(winapiPopupButton->rect.size.width * uiScale),
-    (int)(winapiPopupButton->rect.size.height * uiScale),
+    (int)(winapiSelect->rect.pos.x * uiScale),
+    (int)((parentRect.size.height - winapiSelect->rect.pos.y - winapiSelect->rect.size.height) * uiScale),
+    (int)(winapiSelect->rect.size.width * uiScale),
+    (int)(winapiSelect->rect.size.height * uiScale),
     0);
 }
 

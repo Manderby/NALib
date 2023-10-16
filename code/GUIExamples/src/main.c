@@ -32,7 +32,7 @@
 int main(){
 
   naStartRuntime();
-    naStartApplication(prestartup, poststartup, NA_NULL);
+    naStartApplication(prestartup, poststartup, NA_NULL, NA_NULL);
 
     // When returning from naStartApplication, the GUI has already been
     // released. But we need to free the memory allocated in the app and

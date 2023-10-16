@@ -145,6 +145,7 @@ NA_DEF NASlider* naNewSlider(double width){
 
   return (NASlider*)winapiSlider;
 #else
+  // not a very good cast but things are broken in such a situation anyway.
   return naNewLabel("Slider error", width);
 #endif
 }

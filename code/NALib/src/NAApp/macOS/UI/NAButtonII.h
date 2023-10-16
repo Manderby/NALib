@@ -79,11 +79,18 @@
 }
 
 - (void) updateButtonBackground{
-  if([self getButtonState]){
-    [self setBezelColor:[NSColor controlAccentColor]];
-  }else{
-    [self setBezelColor:nil];
-  }
+  NA_MACOS_AVAILABILITY_GUARD_10_14(
+    // setBezelColor is 10.12.2 or newer
+    // controlAccentColor is 10.14 or newer
+    if([NSButton instancesRespondToSelector:@selector(setBezelColor:)]
+      && [NSColor respondsToSelector:@selector(controlAccentColor)]){
+      if([self getButtonState]){
+        [self setBezelColor:[NSColor controlAccentColor]];
+      }else{
+        [self setBezelColor:nil];
+      }
+    }
+  )
 }
 
 - (void) onPressed:(id)sender{
@@ -171,7 +178,7 @@
   [self setState:state ? NAStateOn : NAStateOff];
   [self updateButtonBackground];
   [self updateButtonText];
-  //[self updateButtonImage]; // not needed on macOS
+  [self updateImages];
 }
 
 - (NABool) getButtonState{
@@ -516,7 +523,6 @@ NA_DEF void naSetButtonSubmit(
   
   NAWindow* window = naGetUIElementWindow(button);
   if(window){
-    na_setButtonSubmit(button);
     naAddUIKeyboardShortcut(
       window,
       naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
@@ -546,7 +552,6 @@ NA_DEF void naSetButtonAbort(
       naError("Abort functionality only works reliably for push buttons");
   #endif
   
-  na_setButtonAbort(button);
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
     naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),

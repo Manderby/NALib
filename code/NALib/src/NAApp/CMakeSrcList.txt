@@ -16,11 +16,11 @@ set(headerFiles
   ${NAAppDir}/NAMetalSpace.h
   ${NAAppDir}/NAMouse.h
   ${NAAppDir}/NAOpenGLSpace.h
-  ${NAAppDir}/NAPopupButton.h
   ${NAAppDir}/NAPreferences.h
   ${NAAppDir}/NARadio.h
   ${NAAppDir}/NAReaction.h
   ${NAAppDir}/NAScreen.h
+  ${NAAppDir}/NASelect.h
   ${NAAppDir}/NASlider.h
   ${NAAppDir}/NASpace.h
   ${NAAppDir}/NATextBox.h
@@ -49,9 +49,9 @@ set(coreUIFiles
   ${NAAppDir}/Core/UI/NAMetalSpace.c
   ${NAAppDir}/Core/UI/NAMouse.c
   ${NAAppDir}/Core/UI/NAOpenGLSpace.c
-  ${NAAppDir}/Core/UI/NAPopupButton.c
   ${NAAppDir}/Core/UI/NARadio.c
   ${NAAppDir}/Core/UI/NAScreen.c
+  ${NAAppDir}/Core/UI/NASelect.c
   ${NAAppDir}/Core/UI/NASlider.c
   ${NAAppDir}/Core/UI/NASpace.c
   ${NAAppDir}/Core/UI/NATextBox.c
@@ -76,8 +76,8 @@ set(macOSUIFiles
   ${NAAppDir}/macOS/UI/NAMenuItemII.h
   ${NAAppDir}/macOS/UI/NAMetalSpaceII.h
   ${NAAppDir}/macOS/UI/NAOpenGLSpaceII.h
-  ${NAAppDir}/macOS/UI/NAPopupButtonII.h
   ${NAAppDir}/macOS/UI/NARadioII.h
+  ${NAAppDir}/macOS/UI/NASelectII.h
   ${NAAppDir}/macOS/UI/NASliderII.h
   ${NAAppDir}/macOS/UI/NASpaceII.h
   ${NAAppDir}/macOS/UI/NATextBoxII.h
@@ -105,8 +105,8 @@ set(winAPIUIFiles
   ${NAAppDir}/winAPI/UI/NAMenuItemII.h
   ${NAAppDir}/winAPI/UI/NAMetalSpaceII.h
   ${NAAppDir}/winAPI/UI/NAOpenGLSpaceII.h
-  ${NAAppDir}/winAPI/UI/NAPopupButtonII.h
   ${NAAppDir}/winAPI/UI/NARadioII.h
+  ${NAAppDir}/winAPI/UI/NASelectII.h
   ${NAAppDir}/winAPI/UI/NASliderII.h
   ${NAAppDir}/winAPI/UI/NASpaceII.h
   ${NAAppDir}/winAPI/UI/NATextBoxII.h
