@@ -1,32 +1,50 @@
 
-#include "../../NATest.h"
-#include "NAUtility/NAString.h"
+#include "NATest.h"
+#include "NABase/NABase.h"
 #include <stdio.h>
 
 
 
-void testNAChar(void){
+void na_AccessorFunc(const void* param){
+  NA_UNUSED(param);
+}
+void na_MutatorFunc(void* param){
+  NA_UNUSED(param);
+}
+
+
+
+void testNALanguage(void){
   naTestGroup("typedefs"){
-    NAUTF8Char utf8Char = 'M';
-    naTest(utf8Char == 'M');
+    NAAccessor testAccessor = na_AccessorFunc;
+    NAMutator testMutator = na_MutatorFunc;
+    naTest(testAccessor == na_AccessorFunc);
+    naTest(testMutator == na_MutatorFunc);
   }
 }
 
 
 
-void printNAChar(void){
-  printf("NAChar.h fixed values:" NA_NL);
+void printNALanguage(void){
+  printf("NALanguage.h:" NA_NL);
+  
+  naPrintMacro(NA_RESTRICT);
+  naPrintMacro(NA_INLINE);
+  naPrintMacro(NA_LINKER_NO_EXPORT);
+  naPrintMacro(NA_LINKER_EXPORT);
 
-  naPrintMacro(NA_NL_UNIX);
-  naPrintMacro(NA_NL_MAC9);
-  naPrintMacro(NA_NL_WIN);
-  naPrintMacro(NA_TAB);
-  naPrintMacro(NA_PATH_DELIMITER_UNIX);
-  naPrintMacro(NA_PATH_DELIMITER_WIN);
-  naPrintMacro(NA_SUFFIX_DELIMITER);
+  naPrintMacro(NA_API);
+  naPrintMacro(NA_DEF);
+  naPrintMacro(NA_IAPI);
+  naPrintMacro(NA_IDEF);
+  naPrintMacro(NA_HAPI);
+  naPrintMacro(NA_HDEF);
+  naPrintMacro(NA_HIAPI);
+  naPrintMacro(NA_HIDEF);
 
-  printf(NA_NL "NAChar.h computed values:" NA_NL);
-  naPrintMacro(NA_NL);
+  naPrintMacro(NA_NULL);
+  naPrintMacro(NA_NORETURN);
+  naPrintMacro(NA_UNUSED(parameter));
 
   printf(NA_NL);
 }

@@ -6,7 +6,7 @@
 //   git submodule update
 // Or download the whole NALib package with the following command directly:
 //   git clone --recurse-submodules https://github.com/Manderby/NALib.git
-#include "NAUtility/NATest.h"
+#include "NATest.h"
 
 
 
@@ -65,8 +65,8 @@ int main(int argc, const char** argv){
   NABool testStartSuccessful = naStartTesting(
     "NALib",
     .01,
-    NA_TRUE,
-    NA_TRUE,
+    NA_FALSE,
+    NA_FALSE,
     argc,
     argv);
 

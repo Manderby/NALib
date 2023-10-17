@@ -1,4 +1,4 @@
-set(TARGET_NAME Tests)
+set(TARGET_NAME Test)
 add_executable(${TARGET_NAME})
 
 set(CMAKE_CXX_STANDARD 99)
@@ -75,11 +75,13 @@ target_sources(${TARGET_NAME} PRIVATE ${sourceFiles})
 
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../NAlib/src)
 
-set(NATest_DIR "../../lib/NATest")
-add_subdirectory(${NATest_DIR} NATest)
+set(NATEST_DIR "../../lib/NATest/code/NATest")
+target_include_directories(${TARGET_NAME} PRIVATE ${NATEST_DIR}/src)
+add_subdirectory(${NATEST_DIR} NATest)
 target_link_libraries(${TARGET_NAME} PRIVATE NATest)
 
 set(NALIB_DIR "../NALib")
+target_include_directories(${TARGET_NAME} PRIVATE ${NALIB_DIR}/src)
 add_subdirectory(${NALIB_DIR} NALib)
 target_link_libraries(${TARGET_NAME} PRIVATE NALib)
 

@@ -1,6 +1,6 @@
 
 #include "NATest.h"
-#include "NABase.h"
+#include "NABase/NABase.h"
 #include <stdio.h>
 
 
