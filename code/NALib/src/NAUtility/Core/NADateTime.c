@@ -9,7 +9,7 @@
 #if NA_OS == NA_OS_WINDOWS
   #include <time.h>
 //  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_s(storage, tme);}
-#elif NA_OS == NA_OS_MAC_OS_X
+#elif NA_IS_POSIX
   #include <sys/time.h>
 //  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_r(tme, storage);}
 #else
@@ -388,7 +388,7 @@ NA_DEF NADateTime naMakeDateTimeNow(){
     // Daylight saving is active if the function returns 2.
     NAInt daylightCode = GetTimeZoneInformation(&timeZone);
     return naMakeDateTimeFromFileTime(&fileTime, &timeZone, daylightCode == 2);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     struct timeval curtime;
     NATimeZone curTimeZone;
     gettimeofday(&curtime, &curTimeZone);
@@ -819,7 +819,11 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylight
     return dateTime;
   }
 
-#elif NA_OS == NA_OS_MAC_OS_X
+#elif NA_IS_POSIX
+
+  #if NA_OS == NA_OS_MAC_OS_X
+  #define time_t __darwin_time_t
+  #endif
 
   NA_DEF struct timespec naMakeTimeSpecFromDateTime(const NADateTime* dateTime, NABool daylightSaving){
     NA_UNUSED(daylightSaving);
@@ -832,11 +836,11 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylight
       #if !defined NA_TYPE_INT64
         // We fall back to 32 bits as there simply is no solution to this problem.
         #error "impossible to convert 64 bit integer. Falling back to 32 bits"
-        timeSpec.tv_sec = (__darwin_time_t)naCasti64Toi32(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
-        timeSpec.tv_sec -= (__darwin_time_t)naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
+        timeSpec.tv_sec = (time_t)naCasti64Toi32(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
+        timeSpec.tv_sec -= (time_t)naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
       #else
-        timeSpec.tv_sec = (__darwin_time_t)(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
-        timeSpec.tv_sec -= (__darwin_time_t)NA_DATETIME_SISEC_UNIX_YEAR_ZERO;
+        timeSpec.tv_sec = (time_t)(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
+        timeSpec.tv_sec -= (time_t)NA_DATETIME_SISEC_UNIX_YEAR_ZERO;
       #endif
     #endif
     timeSpec.tv_nsec = dateTime->nanoSecond;
