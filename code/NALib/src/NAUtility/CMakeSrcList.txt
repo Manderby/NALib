@@ -49,6 +49,10 @@ set(coreMemoryFiles
   ${NAUtilityDir}/Core/NAMemory/NASmartPtrII.h
 )
 
+set(jsonFiles
+  ${NAUtilityDir}/NAJSON/NAJSON.c
+)
+
 
 source_group("NAUtility" FILES ${headerFiles})
 target_sources(NALib PRIVATE ${headerFiles})
@@ -64,3 +68,6 @@ target_sources(NALib PRIVATE ${coreBinaryDataFiles})
 
 source_group("NAUtility/Core/Memory" FILES ${coreMemoryFiles})
 target_sources(NALib PRIVATE ${coreMemoryFiles})
+
+source_group("NAUtility/JSON" FILES ${jsonFiles})
+target_sources(NALib PRIVATE ${jsonFiles})

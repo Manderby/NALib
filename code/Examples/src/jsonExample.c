@@ -147,7 +147,7 @@ int jsonExample(void){
   
   // Loading the buffer from a file.
   NADateTime now1 = naMakeDateTimeNow();
-  NAFile* file = naCreateFileReadingPath("res/JSONinput.txt");
+  NAFile* file = naCreateFileReadingPath("JSONinput.txt");
   if(!naIsFileOpen(file)){
     printf("File not found. You must adjust the path on your machine for this example to work.\n");
     return 0;
