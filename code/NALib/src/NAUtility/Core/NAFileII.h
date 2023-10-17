@@ -15,7 +15,7 @@ NA_IDEF NAFileSize naLseek(int fd, NAFileSize byteOffset, int originType){
     #elif NA_ADDRESS_BITS == 32
       return _lseek(fd, byteOffset, originType);
     #endif
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return lseek(fd, byteOffset, originType);
   #endif
 }
@@ -32,7 +32,7 @@ NA_IDEF NAFileSize naTell(int fd){
     #elif NA_ADDRESS_BITS == 32
       return _lseek(fd, 0, SEEK_CUR);
     #endif
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return lseek(fd, 0, SEEK_CUR);
   #endif
 }
@@ -51,7 +51,7 @@ NA_IDEF int naOpen(const char* path, int flags, int mode){
     int handle;
     _sopen_s(&handle, path, flags, _SH_DENYNO, mode);
     return handle;
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return open(path, flags, mode);
   #endif
 }
@@ -60,7 +60,7 @@ NA_IDEF int naOpen(const char* path, int flags, int mode){
 NA_IDEF int naClose(int fd){
   #if NA_OS == NA_OS_WINDOWS
     return _close(fd);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return close(fd);
   #endif
 }
@@ -69,7 +69,7 @@ NA_IDEF int naClose(int fd){
 NA_IDEF NAFileSize naRead(int fd, void* buf, NAFileSize byteSize){
   #if NA_OS == NA_OS_WINDOWS
     return (NAFileSize)_read(fd, buf, (unsigned int)byteSize);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return (NAFileSize)read(fd, buf, (size_t)byteSize);
   #endif
 }
@@ -78,7 +78,7 @@ NA_IDEF NAFileSize naRead(int fd, void* buf, NAFileSize byteSize){
 NA_IDEF NAFileSize naWrite(int fd, const void* buf, NAFileSize byteSize){
   #if NA_OS == NA_OS_WINDOWS
     return (NAFileSize)_write(fd, buf, (unsigned int)byteSize);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return (NAFileSize)write(fd, buf, (size_t)byteSize);
   #endif
 }
@@ -89,7 +89,7 @@ NA_IDEF NAFileSize naWrite(int fd, const void* buf, NAFileSize byteSize){
 NA_IDEF int naMkDir(const char* path, int mode){
   #if NA_OS == NA_OS_WINDOWS
     return _mkdir(path);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return mkdir(path, (mode_t)mode);
   #endif
 }
@@ -98,7 +98,7 @@ NA_IDEF int naMkDir(const char* path, int mode){
 NA_IDEF int naChDir(const char* path){
   #if NA_OS == NA_OS_WINDOWS
     return _chdir(path);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return chdir(path);
   #endif
 }
@@ -107,7 +107,7 @@ NA_IDEF int naChDir(const char* path){
 NA_IDEF NABool naExists(const char* path){
   #if NA_OS == NA_OS_WINDOWS
     return !(_access(path, 0));
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return !(access(path, 0));
   #endif
 }
@@ -116,7 +116,7 @@ NA_IDEF NABool naExists(const char* path){
 NA_IDEF int naRemove(const char* path){
   #if NA_OS == NA_OS_WINDOWS
     return remove(path);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return remove(path);
   #endif
 }
@@ -129,6 +129,23 @@ NA_IDEF NABool naCopyFile(const char* dstPath, const char* srcPath){
                       NA_FALSE) != 0);
   #elif NA_OS == NA_OS_MAC_OS_X
     return (copyfile(srcPath, dstPath, NULL, COPYFILE_ALL) == 0);
+  #elif NA_OS == NA_OS_FREEBSD
+    int srcFd = open(srcPath, O_RDONLY);
+    if (srcFd < 0)
+	    return NA_FALSE;
+
+    int dstFd = open(dstPath, O_WRONLY|O_CREAT|O_TRUNC);
+    if (dstFd < 0) {
+	    close(srcFd);
+	    return NA_FALSE;
+    }
+
+    int rc = copy_file_range(srcFd, NULL, dstFd, NULL, NA_FILESIZE_MAX, 0);
+
+    close(dstFd);
+    close(srcFd);
+
+    return !rc;
   #endif
 }
 
@@ -142,7 +159,7 @@ NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NAB
     testMode |= (canWrite?02:0);
     NA_UNUSED(canExecute); // Under windows, the executable flag does not exist.
     return (_access(path, testMode) == 0);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     int testMode = 0;
     testMode |= (doesExists?F_OK:0);
     testMode |= (canRead?R_OK:0);
@@ -156,7 +173,7 @@ NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NAB
 NA_IDEF NAUTF8Char* naGetCwd(NAUTF8Char* buf, NAInt bufSize){
   #if NA_OS == NA_OS_WINDOWS
     return _getcwd(buf, (int)bufSize);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return getcwd(buf, (size_t)bufSize);
   #endif
 }
@@ -347,7 +364,7 @@ NA_IDEF int naScanDecimal(){
   int retValue;
   #if NA_OS == NA_OS_WINDOWS
     scanf_s("%d", &retValue);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     scanf("%d", &retValue);
   #else
     scanf("%d", &retValue);  // Might not compile on an undetected system.

@@ -78,10 +78,12 @@ typedef struct NAFile NAFile;
   #define NA_FILE_OPEN_FLAGS_READ (O_RDONLY | O_BINARY)
   #define NA_FILE_OPEN_FLAGS_WRITE (O_WRONLY | O_CREAT | O_TRUNC | O_BINARY)
   #define NA_FILE_OPEN_FLAGS_APPEND (O_WRONLY | O_CREAT | O_APPEND | O_BINARY)
-#elif NA_OS == NA_OS_MAC_OS_X
+#elif NA_IS_POSIX
   #include <unistd.h>
   #include <dirent.h>
-  #include <copyfile.h>
+  #if NA_OS == NA_OS_MACOS
+    #include <copyfile.h>
+  #endif
   typedef off_t NAFileSize;     // Is signed (Important for negative offsets)
   #define NA_FILESIZE_BITS 64
   #define NA_FILESIZE_MAX NA_MAX_i64
@@ -91,6 +93,8 @@ typedef struct NAFile NAFile;
   #define NA_FILE_OPEN_FLAGS_READ (O_RDONLY) // There is no binary flag in Unix.
   #define NA_FILE_OPEN_FLAGS_WRITE (O_WRONLY | O_CREAT | O_TRUNC)
   #define NA_FILE_OPEN_FLAGS_APPEND (O_WRONLY | O_CREAT | O_APPEND)
+#else
+  #warning File IO not implemented for this system
 #endif
 
 

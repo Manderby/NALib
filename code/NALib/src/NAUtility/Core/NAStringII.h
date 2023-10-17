@@ -20,7 +20,7 @@ NA_IDEF size_t naStrlen(const NAUTF8Char* str){
 NA_IDEF size_t naVsnprintf(NAUTF8Char* buffer, size_t length, const NAUTF8Char* newstr, va_list argumentList){
   #if NA_OS == NA_OS_WINDOWS
     return (size_t)_vsnprintf_s(buffer, (size_t)length, (size_t)length, newstr, argumentList);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return (size_t)vsnprintf((char*)buffer, (size_t)length, (const char*)newstr, argumentList);
   #endif
 }
@@ -32,7 +32,7 @@ NA_IDEF size_t naVsnprintf(NAUTF8Char* buffer, size_t length, const NAUTF8Char* 
 NA_IDEF size_t naVarargStringLength(const NAUTF8Char* string, va_list args){
 #if NA_OS == NA_OS_WINDOWS
   return (size_t)_vscprintf(string, args);
-#elif NA_OS == NA_OS_MAC_OS_X
+#elif NA_IS_POSIX
   return naVsnprintf(NA_NULL, 0, string, args);
 #endif
 }
