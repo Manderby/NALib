@@ -69,6 +69,7 @@ target_sources(${TARGET_NAME} PRIVATE ${sourceFiles})
 # ######### Linking to libraries ################
 
 set(NALIB_DIR "../NALib")
+target_include_directories(${TARGET_NAME} PRIVATE ${NALIB_DIR}/src)
 add_subdirectory(${NALIB_DIR} NALib)
 target_link_libraries(${TARGET_NAME} PRIVATE NALib)
 
