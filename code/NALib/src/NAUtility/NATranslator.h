@@ -38,8 +38,8 @@
 // 
 // void myInitTranslations(){
 //   myTranslatorGroup = naRegisterTranslatorGroup();
-//   #include "../res/translations/eng.txt"
-//   #include "../res/translations/deu.txt"
+//   #include "../translations/eng.txt"
+//   #include "../translations/deu.txt"
 // }
 //
 // The myTranslatorGroup is an NAInt identifying a group of strings belonging

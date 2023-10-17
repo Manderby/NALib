@@ -26,12 +26,12 @@ const NAUTF8Char* imageNames[IMAGE_COUNT] = {
 };
 
 const NAUTF8Char* imagePaths[IMAGE_COUNT] = {
-  "res/rainbow.png",
-  "res/lenzburg.png",
-  "res/catSilhouette.png",
-  "res/rubik.png",
-  "res/feather.png",
-  "res/motor.png",
+  "rainbow.png",
+  "lenzburg.png",
+  "catSilhouette.png",
+  "rubik.png",
+  "feather.png",
+  "motor.png",
 };
 
 typedef enum{
@@ -77,19 +77,19 @@ struct ImageTesterController{
   NAImageSpace* imageSpace;
 
   NALabel* topLabel;
-  NAPopupButton* topPopupButton;
+  NASelect* topSelect;
 
   NALabel* scaleLabel;
   NASlider* scaleSlider;
 
   NALabel* blendModeLabel;
-  NAPopupButton* blendModePopupButton;
+  NASelect* blendModeSelect;
 
   NALabel* alphaLabel;
   NASlider* alphaSlider;
 
   NALabel* bottomLabel;
-  NAPopupButton* bottomPopupButton;
+  NASelect* bottomSelect;
 
   const NABabyImage* topImage;
   NABabyColor topColor;
@@ -128,7 +128,7 @@ void loadImage(size_t index, const NAUTF8Char* path){
 void naStartImageTestApplication(void){
   app = naAlloc(ImageTesterApplication);
 
-  NAPNG* gridPNG = naNewPNGWithPath("res/transparencyGrid.png");
+  NAPNG* gridPNG = naNewPNGWithPath("transparencyGrid.png");
   NABabyImage* gridImage = naCreateBabyImageFromPNG(gridPNG);
   NASizei gridSize = naGetBabyImageSize(gridImage);
   app->transparencyGridImage = naCreateBabyImageWithResize(gridImage, naMakeSizei(gridSize.width * 2, gridSize.height * 2));
@@ -154,18 +154,18 @@ void naStopImageTestApplication(void){
 }
 
 
-void addSinglePopupItem(const NAUTF8Char* text, NAPopupButton* popup, NAReactionHandler handler, ImageTesterController* con){
+void addSingleSelectItem(const NAUTF8Char* text, NASelect* select, NAReactionHandler handler, ImageTesterController* con){
   NAMenuItem* item = naNewMenuItem(text);
-  naAddPopupButtonMenuItem(popup, item, NA_NULL);
+  naAddSelectMenuItem(select, item, NA_NULL);
   naAddUIReaction(item, NA_UI_COMMAND_PRESSED, handler, con);
 }
 
-void fillPopupButton(NAPopupButton* popup, NAReactionHandler handler, ImageTesterController* con){
+void fillSelect(NASelect* select, NAReactionHandler handler, ImageTesterController* con){
   for(size_t i = 0; i < COLOR_COUNT; ++i){
-    addSinglePopupItem(colorNames[i], popup, handler, con);
+    addSingleSelectItem(colorNames[i], select, handler, con);
   }
   for(size_t i = 0; i < IMAGE_COUNT; ++i){
-    addSinglePopupItem(imageNames[i], popup, handler, con);
+    addSingleSelectItem(imageNames[i], select, handler, con);
   }
 }
 
@@ -198,10 +198,10 @@ ImageTesterController* naAllocImageTestController(){
   naAddSpaceChild(contentSpace, con->imageSpace, naMakePos(20, 20));
 
   con->topLabel = naNewLabel("Top:", 200);
-  con->topPopupButton = naNewPopupButton(200);
+  con->topSelect = naNewSelect(200);
   naAddSpaceChild(contentSpace, con->topLabel, naMakePos(640, 325));
-  naAddSpaceChild(contentSpace, con->topPopupButton, naMakePos(640, 300));
-  fillPopupButton(con->topPopupButton, topSelected, con);
+  naAddSpaceChild(contentSpace, con->topSelect, naMakePos(640, 300));
+  fillSelect(con->topSelect, topSelected, con);
 
   con->scaleLabel = naNewLabel("Scale:", 200);
   con->scaleSlider = naNewSlider(200);
@@ -212,18 +212,18 @@ ImageTesterController* naAllocImageTestController(){
   naAddUIReaction(con->scaleSlider, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
   con->blendModeLabel = naNewLabel("Blend Mode:", 200);
-  con->blendModePopupButton = naNewPopupButton(200);
+  con->blendModeSelect = naNewSelect(200);
   naAddSpaceChild(contentSpace, con->blendModeLabel, naMakePos(640, 225));
-  naAddSpaceChild(contentSpace, con->blendModePopupButton, naMakePos(640, 200));
-  addSinglePopupItem("ZERO",con->blendModePopupButton, blendModeSelected, con);
-  addSinglePopupItem("BLEND",con->blendModePopupButton, blendModeSelected, con);
-  addSinglePopupItem("OVERLAY",con->blendModePopupButton, blendModeSelected, con);
-  addSinglePopupItem("OPAQUE",con->blendModePopupButton, blendModeSelected, con);
-  addSinglePopupItem("MULTIPLY",con->blendModePopupButton, blendModeSelected, con);
-  addSinglePopupItem("SCREEN",con->blendModePopupButton, blendModeSelected, con);
-  addSinglePopupItem("ERODE_LIGHT",con->blendModePopupButton, blendModeSelected, con);
-  addSinglePopupItem("ERODE_DARK",con->blendModePopupButton, blendModeSelected, con);
-  addSinglePopupItem("ERASE_HUE",con->blendModePopupButton, blendModeSelected, con);
+  naAddSpaceChild(contentSpace, con->blendModeSelect, naMakePos(640, 200));
+  addSingleSelectItem("ZERO",con->blendModeSelect, blendModeSelected, con);
+  addSingleSelectItem("BLEND",con->blendModeSelect, blendModeSelected, con);
+  addSingleSelectItem("OVERLAY",con->blendModeSelect, blendModeSelected, con);
+  addSingleSelectItem("OPAQUE",con->blendModeSelect, blendModeSelected, con);
+  addSingleSelectItem("MULTIPLY",con->blendModeSelect, blendModeSelected, con);
+  addSingleSelectItem("SCREEN",con->blendModeSelect, blendModeSelected, con);
+  addSingleSelectItem("ERODE_LIGHT",con->blendModeSelect, blendModeSelected, con);
+  addSingleSelectItem("ERODE_DARK",con->blendModeSelect, blendModeSelected, con);
+  addSingleSelectItem("ERASE_HUE",con->blendModeSelect, blendModeSelected, con);
 
   con->alphaLabel = naNewLabel("Blend:", 200);
   con->alphaSlider = naNewSlider(200);
@@ -234,10 +234,10 @@ ImageTesterController* naAllocImageTestController(){
   naAddUIReaction(con->alphaSlider, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
   con->bottomLabel = naNewLabel("Bottom:", 200);
-  con->bottomPopupButton = naNewPopupButton(200);
+  con->bottomSelect = naNewSelect(200);
   naAddSpaceChild(contentSpace, con->bottomLabel, naMakePos(640, 125));
-  naAddSpaceChild(contentSpace, con->bottomPopupButton, naMakePos(640, 100));
-  fillPopupButton(con->bottomPopupButton, bottomSelected, con);
+  naAddSpaceChild(contentSpace, con->bottomSelect, naMakePos(640, 100));
+  fillSelect(con->bottomSelect, bottomSelected, con);
 
   naShowWindow(con->window);
 
@@ -274,11 +274,11 @@ void updateImageTestController(ImageTesterController* con){
   selectionChanged(&con->topImage, con->topColor, con->selectedTop);
   selectionChanged(&con->bottomImage, con->bottomColor, con->selectedBottom);
 
-  naSetPopupButtonIndexSelected(con->topPopupButton, con->selectedTop);
+  naSetSelectIndexSelected(con->topSelect, con->selectedTop);
   naSetSliderValue(con->scaleSlider, con->scale);
   naSetSliderValue(con->alphaSlider, con->alpha);
-  naSetPopupButtonIndexSelected(con->blendModePopupButton, con->blendMode);
-  naSetPopupButtonIndexSelected(con->bottomPopupButton, con->selectedBottom);
+  naSetSelectIndexSelected(con->blendModeSelect, con->blendMode);
+  naSetSelectIndexSelected(con->bottomSelect, con->selectedBottom);
 
   NASizei gridSize = naGetBabyImageSize(app->transparencyGridImage);
 
@@ -355,21 +355,21 @@ void updateImageTestController(ImageTesterController* con){
 
 NABool topSelected(NAReaction reaction){
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
-  con->selectedTop = naGetPopupButtonItemIndex(con->topPopupButton, reaction.uiElement);
+  con->selectedTop = naGetSelectItemIndex(con->topSelect, reaction.uiElement);
   updateImageTestController(con);
   return NA_TRUE;
 }
 
 NABool bottomSelected(NAReaction reaction){
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
-  con->selectedBottom = naGetPopupButtonItemIndex(con->bottomPopupButton, reaction.uiElement);
+  con->selectedBottom = naGetSelectItemIndex(con->bottomSelect, reaction.uiElement);
   updateImageTestController(con);
   return NA_TRUE;
 }
 
 NABool blendModeSelected(NAReaction reaction){
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
-  size_t index = naGetPopupButtonItemIndex(con->blendModePopupButton, reaction.uiElement);
+  size_t index = naGetSelectItemIndex(con->blendModeSelect, reaction.uiElement);
   con->blendMode = (NABlendMode)index;
   updateImageTestController(con);
   return NA_TRUE;
@@ -412,7 +412,7 @@ void postStartup(void* arg){
 int main(void){
  
   naStartRuntime();
-  naStartApplication(NA_NULL, postStartup, NA_NULL);
+  naStartApplication(NA_NULL, postStartup, NA_NULL, NA_NULL);
   naStopImageTestApplication();
   naStopRuntime();
     
