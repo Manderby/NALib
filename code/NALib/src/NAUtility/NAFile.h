@@ -81,7 +81,7 @@ typedef struct NAFile NAFile;
 #elif NA_IS_POSIX
   #include <unistd.h>
   #include <dirent.h>
-  #if NA_OS == NA_OS_MACOS
+  #if NA_OS == NA_OS_MAC_OS_X
     #include <copyfile.h>
   #endif
   typedef off_t NAFileSize;     // Is signed (Important for negative offsets)
