@@ -16,7 +16,7 @@ if (MSVC)
   add_definitions(-D_UNICODE)
 
   # working directory
-  set_property(TARGET ${TARGET_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  set_property(TARGET ${TARGET_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $(OutDir))
 
   set(OUTPUT_DIRECTORY $(OutDir))
 
@@ -90,22 +90,6 @@ target_link_libraries(${TARGET_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
 if (MSVC)
   target_link_libraries(${TARGET_NAME} PRIVATE ComCtl32.lib)
 else()
-  #find_library(CARBON_FRAMEWORK Carbon)
-  #if (NOT CARBON_FRAMEWORK)
-  #    message(FATAL_ERROR "Carbon not found")
-  #endif()
-  #target_link_libraries(${TARGET_NAME} PRIVATE ${CARBON_FRAMEWORK})
-
-  #find_library(COCOA_FRAMEWORK Cocoa)
-  #if (NOT COCOA_FRAMEWORK)
-  #    message(FATAL_ERROR "Cocoa not found")
-  #endif()
-  #target_link_libraries(${TARGET_NAME} PRIVATE ${COCOA_FRAMEWORK})
-
-  #target_link_libraries(${TARGET_NAME} PRIVATE Carbon/Carbon.h)
-  #target_link_libraries(${TARGET_NAME} PRIVATE Cocoa/Cocoa.h)
-  #target_link_libraries(${TARGET_NAME} PRIVATE UniformTypeIdentifiers)
-  
   FIND_LIBRARY(CARBON_FRAMEWORK Carbon)
   FIND_LIBRARY(COCOA_FRAMEWORK Cocoa)
   FIND_LIBRARY(UTYPE_FRAMEWORK UniformTypeIdentifiers)
