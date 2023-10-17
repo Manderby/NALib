@@ -1,5 +1,5 @@
 
-#include "NAFile.h"
+#include "../../NALib/src/NAUtility/NAFile.h"
 
 
 // This project has the purpose to create a string of hexadecimal numbers
