@@ -73,7 +73,7 @@ set(coreTreeFiles
 )
 
 source_group("NAStruct" FILES ${headerFiles})
-target_sources(NALib PUBLIC ${headerFiles})
+target_sources(NALib PRIVATE ${headerFiles})
 
 source_group("NAStruct/Core" FILES ${coreImplementationFiles})
 target_sources(NALib PRIVATE ${coreImplementationFiles})

@@ -20,7 +20,7 @@ set(coreImplementationFiles
 )
 
 source_group("NAVisual" FILES ${headerFiles})
-target_sources(NALib PUBLIC ${headerFiles})
+target_sources(NALib PRIVATE ${headerFiles})
 
 source_group("NAVisual/Core" FILES ${coreImplementationFiles})
 target_sources(NALib PRIVATE ${coreImplementationFiles})

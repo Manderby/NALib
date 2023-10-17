@@ -16,7 +16,7 @@ set(primaryHeaderFile
 )
 
 source_group("" FILES ${primaryHeaderFile})
-target_sources(${TARGET_NAME} PUBLIC ${primaryHeaderFile})
+target_sources(${TARGET_NAME} PRIVATE ${primaryHeaderFile})
 
 include(src/NAApp/CMakeSrcList.txt)
 include(src/NABase/CMakeSrcList.txt)
