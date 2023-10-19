@@ -13,7 +13,6 @@ if (MSVC)
 else()
 endif()
 
-
 # ######### Sources ################
 
 set(testNABaseFiles
@@ -78,13 +77,14 @@ target_sources(${TARGET_NAME} PRIVATE ${sourceFiles})
 
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../NAlib/src)
 
-set(NATEST_DIR "../../lib/NATest/code/NATest")
-target_include_directories(${TARGET_NAME} PRIVATE ${NATEST_DIR}/src)
-add_subdirectory(${NATEST_DIR} NATest)
-target_link_libraries(${TARGET_NAME} PRIVATE NATest)
+set(ENABLE_NALIB_TESTING 1)
 
 set(NALIB_DIR "../NALib")
 target_include_directories(${TARGET_NAME} PRIVATE ${NALIB_DIR}/src)
 add_subdirectory(${NALIB_DIR} NALib)
 target_link_libraries(${TARGET_NAME} PRIVATE NALib)
 
+set(NATEST_DIR "../../lib/NATest/code/NATest")
+target_include_directories(${TARGET_NAME} PRIVATE ${NATEST_DIR}/src)
+#add_subdirectory(${NATEST_DIR} NATest) # will be added by NALib
+target_link_libraries(${TARGET_NAME} PRIVATE NATest)

@@ -6,21 +6,45 @@
 
 // To use the GUI implementation of NALib, you need to configure it. You can
 // do this by defining the preprocessor macro NA_COMPILE_GUI to be 1.
+// If you need OpenGL, do the same thing for DNA_COMPILE_OPENGL.
 //
-// You can define NA_COMPILE_GUI either directly in NAConfiguration.h or add
-// a preprocessor macro in your project settings. But the preferred ways are:
+// You can define NA_COMPILE_GUI by adding a preprocessor macro in your project
+// settings:
+// 
+// CMake:
+// add_definitions(-DNA_COMPILE_GUI=1)
+// add_definitions(-DNA_COMPILE_OPENGL=1)
 //
-// XCode: Add a preprocessor macro to your solution settings. Add NALib as 
-// a target. Add the Cocoa framework (and in this example the OpenGL framework)
-// to your linked libraries.
+// XCode:
+// Add the preprocessor macros to your project or target settings.
 //
-// VisualStudio: Provide a property sheet named NAConfiguration.props right
-// next to the solution (go see the example of this solution). Add the
-// following line using a text editor to your project (go see this project):
+// VisualStudio:
+// Add the preprocessor macros to your project settings.
+// Or:
+// Provide a property sheet named NAConfiguration.props right next to the
+// solution. Add the following lines at an appropriate place in the props file:
+//   <ItemDefinitionGroup>
+//     <ClCompile>
+//       <PreprocessorDefinitions>NA_COMPILE_GUI=1;NA_COMPILE_OPENGL=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+//     </ClCompile>
+//     <Link>
+//       <AdditionalDependencies>ComCtl32.lib;opengl32.lib;MSImg32.lib%(AdditionalDependencies)</AdditionalDependencies>
+//     </Link>
+//   </ItemDefinitionGroup>
+// Add the following line to your all jour projects (not the solution!):
 // <Import Project="$(SolutionDir)\NAConfiguration.props" Condition="Exists('$(SolutionDir)\NAConfiguration.props')" />
-// It is proposed to add this line right after the line which imports the
-// property sheet "Microsoft.Cpp.Default.props". Add the NALib project.
-
+// Use a text editor for that. It is proposed to add this line right after the
+// line which imports the property sheet "Microsoft.Cpp.Default.props".
+//
+// You need to link to the following libraries:
+// Windows:
+//   ComCtl32
+// macOS:
+//   Carbon
+//   Cocoa
+//   UniformTypeIdentifiers
+// any OS if needed:
+//   OpenGL
 
 
 // Note that you could add an include path in your project to access the

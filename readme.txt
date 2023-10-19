@@ -5,13 +5,12 @@ Quick Start:
   git clone --recurse-submodules https://github.com/Manderby/NALib.git
   There is a submodule for testing which you only need if you are testing.
   
-- HelloWorld examples are in proj folder.
-
-- To compile your own code, there are two ways:
+- To use NALib, there are two ways:
   1. Compile NALib as part of your own solution by simply dragging the whole
      code\NALib\src folder into your project.
-  2. Create a static library and reference it. VisualStudio project is in the
-     code\NALib folder. XCode project is in proj folder.
+  2. Use CMake to compile a static library of code/NALib
+
+- Use CMake to build any of the example projects in the code folder.
 
 
 

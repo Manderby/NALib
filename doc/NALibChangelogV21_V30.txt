@@ -13,6 +13,7 @@ Big changes:
 - Windows GUI is now resolution independent.
 - Images can be scaled arbitrariyly. Linear up and downscaling.
 - Reprogrammed NAButton.
+- Changed project structure to CMake
 
 Smaller things:
 - Deprecating NABounds4, replacing with NABezel4

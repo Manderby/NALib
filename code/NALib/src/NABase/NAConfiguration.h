@@ -5,6 +5,9 @@
 #ifndef NA_CONFIGURATION_INCLUDED
 #define NA_CONFIGURATION_INCLUDED
 
+// NAConfiguration.h is included at the beginning of the NABase.h file.
+// Do not include it anywhere else.
+
 
 
 // This file contains configurations of your installation of NALib. There are
@@ -14,27 +17,34 @@
 //
 // Note that preprocessor flags with values usually follow this scheme:
 // PREPROCESSOR_MACRO=value
-// Without spaces at the equal sign.
+// Without spaces at the equal sign. Here are some examples on how to do this:
 //
-// For Visual Studio users: When you add NALib as a project to your own .sln
-// file, the NALib project automatically searches for a property sheet named
-// NAConfiguration.props which should be located right next the .sln file.
-// You can configure NALib for your whole solution with that. See an example
-// in the proj folder. By doing so, the preprocessor macros for NALib will
-// inherit from you settings defined in there. If no such file exists, no
-// settings are imported but the ones defined in this file are used.
+// CMake:
+// add_definitions(-DNA_COMPILE_GUI=1)
+//
+// XCode:
+// Add the preprocessor macros to your project or target settings.
 // 
-// To use the same .props file in your own projects, search in the project
-// file in plain text for the following line and copy it to your project at
-// the appropriate position.
+// Visual Studio:
+// Add the preprocessor macros to your project settings.
+// Or:
+// Provide a property sheet named NAConfiguration.props right next to the
+// solution. Add the following lines at an appropriate place in the props file:
+//   <ItemDefinitionGroup>
+//     <ClCompile>
+//       <PreprocessorDefinitions>NA_COMPILE_GUI=1;NA_COMPILE_OPENGL=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+//     </ClCompile>
+//     <Link>
+//       <AdditionalDependencies>ComCtl32.lib;opengl32.lib;MSImg32.lib%(AdditionalDependencies)</AdditionalDependencies>
+//     </Link>
+//   </ItemDefinitionGroup>
+// Add the following line to your all jour projects (not the solution!):
 // <Import Project="$(SolutionDir)\NAConfiguration.props" Condition="Exists('$(SolutionDir)\NAConfiguration.props')" />
+// Use a text editor for that. It is proposed to add this line right after the
+// line which imports the property sheet "Microsoft.Cpp.Default.props".
 //
-// NAConfiguration.h is included at the beginning of the NABase.h file.
-// Do not include it anywhere else.
-//
-// Note that there is no possibility to platform-independently provide a
-// clean configuration structure without the need to configure either the
-// NALib, installation, project, or your compiler in one or another way.
+// The use of a cross compilation tool line CMake is encouraged!
+
 
 
 
