@@ -86,5 +86,7 @@ target_link_libraries(${TARGET_NAME} PRIVATE NALib)
 
 set(NATEST_DIR "../../lib/NATest/code/NATest")
 target_include_directories(${TARGET_NAME} PRIVATE ${NATEST_DIR}/src)
-#add_subdirectory(${NATEST_DIR} NATest) # will be added by NALib
+if (NOT TARGET NATest)
+  add_subdirectory(${NATEST_DIR} NATest)
+endif()
 target_link_libraries(${TARGET_NAME} PRIVATE NATest)
