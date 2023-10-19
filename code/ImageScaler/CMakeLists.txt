@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION 3.13)
+project(ImageScaler)
+
 set(TARGET_NAME ImageScaler)
 add_executable(${TARGET_NAME})
 

@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION 3.13)
+project(GUIExamples)
+
 set(TARGET_NAME GUIExamples)
 add_executable(${TARGET_NAME})
 

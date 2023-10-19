@@ -13,9 +13,9 @@ int jsonExample(void);
 
 int main(void){
 
-//  generalExample();
-//  listExample();
-//  stackExample();
+  generalExample();
+  listExample();
+  stackExample();
   jsonExample();
 
   printf("Finished." NA_NL);

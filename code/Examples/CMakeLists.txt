@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION 3.13)
+project(Examples)
+
 set(TARGET_NAME Examples)
 add_executable(${TARGET_NAME})
 
@@ -40,7 +43,7 @@ set(sourceFiles
   src/stackExample.c
 )
 
-source_group("src" FILES ${sourceFiles})
+source_group("" FILES ${sourceFiles})
 target_sources(${TARGET_NAME} PRIVATE ${sourceFiles})
 
 

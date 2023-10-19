@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION 3.13)
+project(PixelFontCreator)
+
 set(TARGET_NAME PixelFontCreator)
 add_executable(${TARGET_NAME})
 
