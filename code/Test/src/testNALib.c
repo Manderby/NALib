@@ -64,11 +64,16 @@ int main(int argc, const char** argv){
   // Start testing
   NABool testStartSuccessful = naStartTesting(
     "NALib",
-    .01,
-    NA_FALSE,
-    NA_FALSE,
     argc,
     argv);
+
+  // Only output tests which fail.
+  naSetTestPrintsAllTests(NA_FALSE);
+
+  #if NA_DEBUG == 0
+    naExecuteErrorTests(NA_FALSE);
+    naExecuteCrashTests(NA_FALSE);
+  #endif
 
   if(testStartSuccessful){
     testNALib();
