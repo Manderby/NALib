@@ -19,6 +19,7 @@
 NA_API void naStartApplication(
   NAMutator preStartup,
   NAMutator postStartup,
+  NAMutator cleanup,
   void* arg);
 
 // All arguments can be NA_NULL but the arguments allow you to ask NALib to
@@ -71,6 +72,12 @@ NA_API void naStartApplication(
 // you would like to control. You are of course free to do this in the
 // didFinishLaunching method of your NSApplication delegate on a Mac, if you
 // really want to.
+//
+// cleanup:
+// When the application loop is terminated, this function gets called right
+// before the application object itself gets erased from memory. Clean up
+// everything concerning UI or other business data you built up in preStartup
+// and postStartup here.
 
 
 

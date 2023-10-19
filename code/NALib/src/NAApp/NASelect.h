@@ -1,54 +1,55 @@
 
-#if defined NA_UI_POPUP_BUTTON_INCLUDED || !defined NA_APP_INCLUDED
+#if defined NA_UI_SELECT_INCLUDED || !defined NA_APP_INCLUDED
   #warning "Do not include this file directly. Use NAApp.h"
 #endif
-#ifndef NA_UI_POPUP_BUTTON_INCLUDED
-#define NA_UI_POPUP_BUTTON_INCLUDED
+#ifndef NA_UI_SELECT_INCLUDED
+#define NA_UI_SELECT_INCLUDED
 
 
 
-// Creates a new PopupButton. Default height is 23.
-NA_API NAPopupButton* naNewPopupButton(double width);
+// Creates a new select (also called popup button, dropdown menu etc.).
+// Default height is 23.
+NA_API NASelect* naNewSelect(double width);
 
-// Changes the visibility or enabled state of the button.
-NA_API void naSetPopupButtonVisible(
-  NAPopupButton* popupButton,
+// Changes the visibility or enabled state of the select.
+NA_API void naSetSelectVisible(
+  NASelect* select,
   NABool visible);
-NA_API void naSetPopupButtonEnabled(
-  NAPopupButton* popupButton,
+NA_API void naSetSelectEnabled(
+  NASelect* select,
   NABool enabled);
 
 // Adds a menu item before atItem. If atItem is Null,
 // it is added to the end of the menu.
-NA_API void naAddPopupButtonMenuItem(
-  NAPopupButton* popupButton,
+NA_API void naAddSelectMenuItem(
+  NASelect* select,
   NAMenuItem* item,
   const NAMenuItem* atItem);
 
 // Returns the index of the given item. If not found, equals the item count of
 // the menu. 
-NA_API size_t naGetPopupButtonItemIndex(
-  const NAPopupButton* popupButton,
+NA_API size_t naGetSelectItemIndex(
+  const NASelect* select,
   const NAMenuItem* item);
 
-// returns the number of items in the popup Button menu.
-NA_API size_t naGetPopupButtonItemCount(const NAPopupButton* popupButton);
+// returns the number of items in the select menu.
+NA_API size_t naGetSelectItemCount(const NASelect* select);
 
-NA_API const NAMenuItem* naGetPopupButtonItem(
-  const NAPopupButton* popupButton,
+NA_API const NAMenuItem* naGetSelectItem(
+  const NASelect* select,
   size_t index);
 
 // Sets which item is presented as the selected item.
-NA_API void naSetPopupButtonIndexSelected(
-  NAPopupButton* popupButton,
+NA_API void naSetSelectIndexSelected(
+  NASelect* select,
   size_t index);
-NA_API void naSetPopupButtonItemSelected(
-  NAPopupButton* popupButton,
+NA_API void naSetSelectItemSelected(
+  NASelect* select,
   const NAMenuItem* item);
 
 
 
-#endif // NA_UI_POPUP_BUTTON_INCLUDED
+#endif // NA_UI_SELECT_INCLUDED
 
 
 

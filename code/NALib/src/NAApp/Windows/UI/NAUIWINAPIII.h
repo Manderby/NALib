@@ -84,9 +84,9 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem){
   case NA_UI_MENUITEM:     return  0.0;
   case NA_UI_METAL_SPACE:  return  0.0;
   case NA_UI_OPENGL_SPACE: return  0.0;
-  case NA_UI_POPUP_BUTTON: return -0.5;
   case NA_UI_RADIO:        return  2.5;
   case NA_UI_SCREEN:       return  0.0;
+  case NA_UI_SELECT:       return -0.5;
   case NA_UI_SLIDER:       return  0.0;
   case NA_UI_SPACE:        return  0.0;
   case NA_UI_TEXTBOX:      return  4.0;
@@ -276,8 +276,8 @@ struct NAWINAPICallbackInfo{
 WNDPROC na_GetApplicationOldButtonWindowProc();
 WNDPROC na_GetApplicationOldCheckBoxWindowProc();
 WNDPROC na_GetApplicationOldLabelWindowProc();
-WNDPROC na_GetApplicationOldPopupButtonWindowProc();
 WNDPROC na_GetApplicationOldRadioWindowProc();
+WNDPROC na_GetApplicationOldSelectWindowProc();
 WNDPROC na_GetApplicationOldSliderWindowProc();
 WNDPROC na_GetApplicationOldTextFieldWindowProc();
 
@@ -296,8 +296,8 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc   (void* uiElement, UINT message, WPAR
 NAWINAPICallbackInfo naImageSpaceWINAPIProc (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naLabelWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naPopupButtonWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naRadioWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naSelectWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naSliderWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naSpaceWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naTextBoxWINAPIProc    (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
@@ -308,7 +308,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc     (void* uiElement, UINT message, WPAR
 NABool naButtonWINAPINotify      (void* uiElement, WORD notificationCode);
 NABool naCheckBoxWINAPINotify    (void* uiElement, WORD notificationCode);
 NABool naLabelWINAPINotify       (void* uiElement, WORD notificationCode);
-NABool naPopupButtonWINAPINotify (void* uiElement, WORD notificationCode);
+NABool naSelectWINAPINotify      (void* uiElement, WORD notificationCode);
 NABool naTextFieldWINAPINotify   (void* uiElement, WORD notificationCode);
 
 
@@ -346,9 +346,9 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     case NA_UI_IMAGE_SPACE:  info = naImageSpaceWINAPIProc (uiElement, message, wParam, lParam); break;
     case NA_UI_LABEL:        info = naLabelWINAPIProc      (uiElement, message, wParam, lParam); break;
     case NA_UI_OPENGL_SPACE: info = naOpenGLSpaceWINAPIProc(uiElement, message, wParam, lParam); break;
-    case NA_UI_POPUP_BUTTON: info = naPopupButtonWINAPIProc(uiElement, message, wParam, lParam); break;
     case NA_UI_RADIO:        info = naRadioWINAPIProc      (uiElement, message, wParam, lParam); break;
     case NA_UI_SLIDER:       info = naSliderWINAPIProc     (uiElement, message, wParam, lParam); break;
+    case NA_UI_SELECT:       info = naSelectWINAPIProc     (uiElement, message, wParam, lParam); break;
     case NA_UI_SPACE:        info = naSpaceWINAPIProc      (uiElement, message, wParam, lParam); break;
     case NA_UI_TEXTBOX:      info = naTextBoxWINAPIProc    (uiElement, message, wParam, lParam); break;
     case NA_UI_TEXTFIELD:    info = naTextFieldWINAPIProc  (uiElement, message, wParam, lParam); break;
@@ -368,8 +368,8 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     case NA_UI_BUTTON:       info.result = CallWindowProc(na_GetApplicationOldButtonWindowProc(), hWnd, message, wParam, lParam); break;
     case NA_UI_CHECKBOX:     info.result = CallWindowProc(na_GetApplicationOldCheckBoxWindowProc(), hWnd, message, wParam, lParam); break;
     case NA_UI_LABEL:        info.result = CallWindowProc(na_GetApplicationOldLabelWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_POPUP_BUTTON: info.result = CallWindowProc(na_GetApplicationOldPopupButtonWindowProc(), hWnd, message, wParam, lParam); break;
     case NA_UI_RADIO:        info.result = CallWindowProc(na_GetApplicationOldRadioWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_SELECT:       info.result = CallWindowProc(na_GetApplicationOldSelectWindowProc(), hWnd, message, wParam, lParam); break;
     case NA_UI_SLIDER:       info.result = CallWindowProc(na_GetApplicationOldSliderWindowProc(), hWnd, message, wParam, lParam); break;
     case NA_UI_TEXTFIELD:    info.result = CallWindowProc(na_GetApplicationOldTextFieldWindowProc(), hWnd, message, wParam, lParam); break;
     default:
@@ -559,7 +559,7 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
       case NA_UI_BUTTON:       hasBeenHandeled = naButtonWINAPINotify     (uiElement, notificationCode); break;
       case NA_UI_CHECKBOX:     hasBeenHandeled = naCheckBoxWINAPINotify   (uiElement, notificationCode); break;
       case NA_UI_LABEL:        hasBeenHandeled = naLabelWINAPINotify      (uiElement, notificationCode); break;
-      case NA_UI_POPUP_BUTTON: hasBeenHandeled = naPopupButtonWINAPINotify(uiElement, notificationCode); break;
+      case NA_UI_SELECT:       hasBeenHandeled = naSelectWINAPINotify     (uiElement, notificationCode); break;
       case NA_UI_TEXTFIELD:    hasBeenHandeled = naTextFieldWINAPINotify  (uiElement, notificationCode); break;
       default:
         //printf("Uncaught notification" NA_NL);

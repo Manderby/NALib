@@ -105,6 +105,7 @@ NA_HDEF void na_DecoupleBufferPart(NABufferPart* part){
     part->byteSize);
   naRelease(part->memBlock);
 
+  if(part->source){naRelease(part->source);}
   part->source = NA_NULL;
   part->sourceOffset = 0;
   part->blockOffset = 0;

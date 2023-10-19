@@ -37,7 +37,7 @@
 // DBL_MAX_EXP being 1024 instead of 1023 is because these macros are used
 // for the computation of the highest and lowest possible normalized numbers
 // using this formula:
-// max = 2^(exp_max+1) - 2^(exp_max+1 - sig_bitcount)
+// max = 2^(exp_max+1) - 2^(exp_max+1 - sig_bitCount)
 // In other words, for example for a floating point representation with
 // maximum exponent 12 and 4 bits of significand this formula looks like
 // this when written in binary integer form:
@@ -57,7 +57,7 @@
 // in [1, 2046]. The min and max values (0 and 255 or 2047 respectively) are
 // reserved for special numbers like Infinite, NaN or subnormals.
 //
-// The bias is by IEEE-754 defined to be (2^(exp_bitcount-1))-1. But why? Why
+// The bias is by IEEE-754 defined to be (2^(exp_bitCount-1))-1. But why? Why
 // is the bias 127 or 1023 respectively? Why not 128 and 1024? Or something
 // completely different? The reasons lie in history: In earlier times, many
 // chip manufacturors tried to make good floating point processors. Pretty

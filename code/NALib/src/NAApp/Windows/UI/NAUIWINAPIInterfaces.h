@@ -34,8 +34,8 @@ typedef struct NA_WINAPIMenuItem NA_WINAPIMenuItem;
 #if NA_COMPILE_OPENGL == 1
   typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
 #endif
-typedef struct NAWINAPIPopupButton NAWINAPIPopupButton;
 typedef struct NAWINAPIRadio NAWINAPIRadio;
+typedef struct NAWINAPISelect NAWINAPISelect;
 typedef struct NAWINAPISlider NAWINAPISlider;
 typedef struct NAWINAPISpace NAWINAPISpace;
 typedef struct NAWINAPITextBox NAWINAPITextBox;
@@ -55,8 +55,8 @@ NA_HAPI void na_DestructWINAPIMenuItem(NA_WINAPIMenuItem* winapiMenuItem);
 #if NA_COMPILE_OPENGL == 1
   NA_HAPI void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace);
 #endif
-NA_HAPI void na_DestructWINAPIPopupButton(NAWINAPIPopupButton* winapiPopupButton);
 NA_HAPI void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio);
+NA_HAPI void na_DestructWINAPISelect(NAWINAPISelect* winapiSelect);
 NA_HAPI void na_DestructWINAPISlider(NAWINAPISlider* winapiSlider);
 NA_HAPI void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace);
 NA_HAPI void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox);
@@ -79,8 +79,8 @@ struct NAWINAPIApplication {
   WNDPROC          oldButtonWindowProc;
   WNDPROC          oldCheckBoxWindowProc;
   WNDPROC          oldLabelWindowProc;
-  WNDPROC          oldPopupButtonWindowProc;
   WNDPROC          oldRadioWindowProc;
+  WNDPROC          oldSelectWindowProc;
   WNDPROC          oldSliderWindowProc;
   WNDPROC          oldTextFieldWindowProc;
 
@@ -133,14 +133,14 @@ struct NA_WINAPIMenuItem {
   };
 #endif
 
-struct NAWINAPIPopupButton {
-  NAPopupButton popupButton;
-  NARect        rect;
-};
-
 struct NAWINAPIRadio {
   NARadio radio;
   NARect  rect;
+};
+
+struct NAWINAPISelect {
+  NASelect select;
+  NARect   rect;
 };
 
 struct NAWINAPISlider {
@@ -186,8 +186,8 @@ NA_RUNTIME_TYPE(NA_WINAPIMenuItem, na_DestructWINAPIMenuItem, NA_FALSE);
 #if NA_COMPILE_OPENGL == 1
   NA_RUNTIME_TYPE(NAWINAPIOpenGLSpace, na_DestructWINAPIOpenGLSpace, NA_FALSE);
 #endif
-NA_RUNTIME_TYPE(NAWINAPIPopupButton, na_DestructWINAPIPopupButton, NA_FALSE);
 NA_RUNTIME_TYPE(NAWINAPIRadio, na_DestructWINAPIRadio, NA_FALSE);
+NA_RUNTIME_TYPE(NAWINAPISelect, na_DestructWINAPISelect, NA_FALSE);
 NA_RUNTIME_TYPE(NAWINAPISlider, na_DestructWINAPISlider, NA_FALSE);
 NA_RUNTIME_TYPE(NAWINAPISpace, na_DestructWINAPISpace, NA_FALSE);
 NA_RUNTIME_TYPE(NAWINAPITextBox, na_DestructWINAPITextBox, NA_FALSE);
