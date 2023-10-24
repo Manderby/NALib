@@ -69,12 +69,25 @@ target_sources(${TARGET_NAME} PRIVATE ${sourceFiles})
 
 
 
-# ######### Linking to libraries ################
+# ######### Linking to NALib ################
+
+# Define GUI and OpenGL to be in use and hide the CMake GUI options.
+add_definitions(-DNA_COMPILE_GUI=1)
+add_definitions(-DNA_COMPILE_OPENGL=1)
+set(COMPILE_NALIB_GUI 1 INTERNAL FORCE)
+set(COMPILE_NALIB_OPENGL 1 INTERNAL FORCE)
 
 set(NALIB_DIR "../NALib")
 target_include_directories(${TARGET_NAME} PRIVATE ${NALIB_DIR}/src)
 add_subdirectory(${NALIB_DIR} NALib)
 target_link_libraries(${TARGET_NAME} PRIVATE NALib)
+
+
+
+# ######### Linking to other libraries ################
+
+find_package(OpenGL REQUIRED)
+target_link_libraries(${TARGET_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
 
 if (MSVC)
   target_link_libraries(${TARGET_NAME} PRIVATE ComCtl32.lib)

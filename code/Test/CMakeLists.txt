@@ -72,10 +72,11 @@ target_sources(${TARGET_NAME} PRIVATE ${sourceFiles})
 
 
 
+# ######### Linking to NALib ################
 
-# ######### Linking to libraries ################
-
-target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../NAlib/src)
+# Define GUI and OpenGL to be not in use and hide the CMake GUI options.
+set(COMPILE_NALIB_GUI 0 INTERNAL FORCE)
+set(COMPILE_NALIB_OPENGL 0 INTERNAL FORCE)
 
 set(ENABLE_NALIB_TESTING 1)
 
@@ -83,6 +84,10 @@ set(NALIB_DIR "../NALib")
 target_include_directories(${TARGET_NAME} PRIVATE ${NALIB_DIR}/src)
 add_subdirectory(${NALIB_DIR} NALib)
 target_link_libraries(${TARGET_NAME} PRIVATE NALib)
+
+
+
+# ######### Linking to other libraries ################
 
 set(NATEST_DIR "../../lib/NATest/code/NATest")
 target_include_directories(${TARGET_NAME} PRIVATE ${NATEST_DIR}/src)

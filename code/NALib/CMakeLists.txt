@@ -28,6 +28,22 @@ include(src/NAStruct/CMakeSrcList.txt)
 include(src/NAUtility/CMakeSrcList.txt)
 include(src/NAVisual/CMakeSrcList.txt)
 
+
+
+# ############ Configure for GUI support ###################
+# Provide the two most common options for the CMake GUI.
+OPTION(COMPILE_NALIB_GUI "Compile GUI support" OFF)
+OPTION(COMPILE_NALIB_OPENGL "Compile OpenGL support" OFF)
+if(COMPILE_NALIB_GUI)
+  add_definitions(-DNA_COMPILE_GUI=1)
+endif()
+if(COMPILE_NALIB_OPENGL)
+  add_definitions(-DNA_COMPILE_OPENGL=1)
+endif()
+
+
+
+# ############ Enable testing ###################
 if(${ENABLE_NALIB_TESTING})
   add_definitions(-DNA_TESTING_ENABLED=1)
   set(NATEST_DIR "../../lib/NATest/code/NATest")
