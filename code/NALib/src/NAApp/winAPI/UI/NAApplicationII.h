@@ -519,7 +519,7 @@ NA_HDEF void na_DestructFont(NAFont* font){
 
 NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size){
   NAFont* font = naCreate(NAFont);
-  wchar_t* systemFontName = naAllocWideCharStringWithUTF8String(fontFamilyName);
+  TCHAR* systemFontName = naAllocSystemStringWithUTF8String(fontFamilyName);
 
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
@@ -584,35 +584,35 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
 
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
-      fontFamilyName = naNewStringFromWideCharString(metrics->lfMessageFont.lfFaceName);
+      fontFamilyName = naNewStringFromSystemString(metrics->lfMessageFont.lfFaceName);
       retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     case NA_FONT_KIND_TITLE:
-      fontFamilyName = naNewStringFromWideCharString(metrics->lfMessageFont.lfFaceName);
+      fontFamilyName = naNewStringFromSystemString(metrics->lfMessageFont.lfFaceName);
       retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_BOLD,
         baseSize);
       break;
     case NA_FONT_KIND_MONOSPACE:
-      fontFamilyName = naNewStringFromWideCharString(TEXT("Courier New"));
+      fontFamilyName = naNewStringFromSystemString(TEXT("Courier New"));
       retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     case NA_FONT_KIND_PARAGRAPH:
-      fontFamilyName = naNewStringFromWideCharString(TEXT("Palatino Linotype"));
+      fontFamilyName = naNewStringFromSystemString(TEXT("Palatino Linotype"));
       retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      fontFamilyName = naNewStringFromWideCharString(TEXT("Times New Roman"));
+      fontFamilyName = naNewStringFromSystemString(TEXT("Times New Roman"));
       retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_ITALIC,
@@ -648,9 +648,9 @@ NA_DEF void naCenterMouse(void* uiElement){
 
   // todo: screen not defined
   NARect screenFrame = naGetMainScreenRect();
-  NAPos centerPos;
-  centerPos.x = rect.pos.x + rect.size.width * .5f;
-  centerPos.y = rect.pos.y + rect.size.height * .5f;
+  NAPos centerPos = {
+    rect.pos.x + rect.size.width * .5f,
+    rect.pos.y + rect.size.height * .5f};
 
   na_SetMouseWarpedTo(centerPos);
   SetCursorPos(
