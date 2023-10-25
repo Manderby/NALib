@@ -31,10 +31,10 @@ HelloWorldGUIApplication* app;
 
 
 
-// prestartup is called before most system specific initialization takes place.
+// preStartup is called before most system specific initialization takes place.
 // Initialize all global and general values here.
 // See naStartApplication for a detailed explanation.
-void prestartup(void* arg){
+void preStartup(void* arg){
   NA_UNUSED(arg);
   app = naAlloc(HelloWorldGUIApplication);
   naInitStack(&(app->temperatureControllers), sizeof(TemperatureController*), 0, 0);
@@ -45,10 +45,10 @@ void prestartup(void* arg){
 
 
 
-// poststartup is called after base application stuff has been initialized.
+// postStartup is called after base application stuff has been initialized.
 // Build-up your GUI here.
 // See naStartApplication for a detailed explanation.
-void poststartup(void* arg){
+void postStartup(void* arg){
   NA_UNUSED(arg);
   
   // Load the image files
@@ -98,8 +98,11 @@ void poststartup(void* arg){
 }
 
 
+
 // Delete all controllers and finally, delete this application
-void clearApplication(void){
+void clearApplication(void* arg){
+  NA_UNUSED(arg);
+
   naForeachStackMutable(&(app->temperatureControllers), (NAMutator)clearTemperatureController);
   naClearStack(&(app->temperatureControllers));
   clearExperimentController(app->experimentController);

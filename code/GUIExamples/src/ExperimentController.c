@@ -452,6 +452,7 @@ void updateExperimentController(ExperimentController* con){
 void clearExperimentController(ExperimentController* con){
   // Note that all UI elements which are attached in some way to the root
   // application UIElement will be cleared automatically.
+  naDelete(con->menu);
   naFree(con);
 
   naShutdownPixelFont(con->fontId);

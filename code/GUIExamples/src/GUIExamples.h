@@ -26,9 +26,9 @@ void showButtonController(ButtonController* con);
 
 
 typedef struct HelloWorldGUIApplication HelloWorldGUIApplication;
-void prestartup(void* arg);
-void poststartup(void* arg);
-void clearApplication(void);
+void preStartup(void* arg);
+void postStartup(void* arg);
+void clearApplication(void* arg);
 double getAndAdvanceNextWindowX(void);
 double getAndAdvanceNextWindowY(void);
 NAUIImage* getIconImage(void);

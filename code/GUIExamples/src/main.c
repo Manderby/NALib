@@ -59,12 +59,12 @@ int main(){
 
     //NAString* pwd = naNewStringWithCurWorkingDirectory();
 
-    naStartApplication(prestartup, poststartup, NA_NULL, NA_NULL);
+    naStartApplication(preStartup, postStartup, clearApplication, NA_NULL);
 
     // When returning from naStartApplication, the GUI has already been
     // released. But we need to free the memory allocated in the app and
     // the controllers.
-    clearApplication();
+//    clearApplication();
   naStopRuntime();
 
   return 0;
