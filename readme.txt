@@ -9,6 +9,7 @@ Quick Start:
   1. Compile NALib as part of your own solution by simply dragging the whole
      code\NALib\src folder into your project.
   2. Use CMake to compile a static library of code/NALib
+     Then, link to that library in your project.
 
 - Use CMake to build any of the example projects in the code folder.
 
@@ -24,7 +25,8 @@ reference counting, a GUI implementation for Mac and Windows and many helpful
 comments.
 
 Email: nalib@manderc.com
-Follow on Twitter for latest developments: @Manderby52
+Follow on GitHub:
+https://github.com/Manderby/NALib/discussions
 
 - API is documented directly in the .h files.
 - Some design principles can be read in the doc/documentation.txt file.

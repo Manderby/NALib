@@ -19,7 +19,7 @@
 
 
 // The version number of this NALib distribution.
-#define NA_VERSION 26
+#define NA_VERSION 27
 
 
 

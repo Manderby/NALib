@@ -8,6 +8,9 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 27 (released 25. October 2023)
+==========
+
 Big changes:
 - Added NAJSON, a non-standard-conform but very fast JSON parser.
 - Windows GUI is now resolution independent.
