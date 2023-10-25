@@ -39,9 +39,8 @@ https://github.com/Manderby/NALib/discussions
 
 Contribute & License:
 ---------------------
-This project has till now not been designed with a community in mind, as it
-has been used as a private engineering code collection. But input is always
-welcome. Write Issues on GitHub or write Emails to nalib@manderc.com.
+- Write Issues and take part in the discussions on GitHub.
+- Write Emails to nalib@manderc.com.
 
 License: Public Domain
 
