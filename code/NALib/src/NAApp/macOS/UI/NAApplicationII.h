@@ -140,7 +140,7 @@ NA_DEF void naStartApplication(
   [nativeApp setOldDelegate:oldDelegate];
   [nativeApp setPostStartupFunction: postStartup];
   [nativeApp setPostStartupArg: arg];
-  [NSApp setDelegate:(NA_COCOA_BRIDGE id<NSApplicationDelegate> _Nullable)(naGetUIElementNativePtr(app))];
+  [NSApp setDelegate:nativeApp];
 
   // Start the event loop.
   NSDate* distantFuture = [NSDate distantFuture];

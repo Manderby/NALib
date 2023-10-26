@@ -47,8 +47,8 @@ target_sources(${TARGET_NAME} PRIVATE ${sourceFiles})
 # ######### Linking to NALib ################
 
 # Define GUI and OpenGL to be not in use and hide the CMake GUI options.
-set(COMPILE_NALIB_GUI 0 INTERNAL FORCE)
-set(COMPILE_NALIB_OPENGL 0 INTERNAL FORCE)
+set(COMPILE_NALIB_GUI 0 CACHE INTERNAL "GUI not required")
+set(COMPILE_NALIB_OPENGL 0 CACHE INTERNAL "OpenGL not required")
 
 set(NALIB_DIR "../NALib")
 target_include_directories(${TARGET_NAME} PRIVATE ${NALIB_DIR}/src)
