@@ -570,7 +570,8 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
         baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      fontFamilyName = naNewStringFromWideCharString(TEXT("Times New Roman"));
+      // Note: Times new roman would be better but unicode support is worse.
+      fontFamilyName = naNewStringFromWideCharString(TEXT("Palatino Linotype"));
       retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_ITALIC,

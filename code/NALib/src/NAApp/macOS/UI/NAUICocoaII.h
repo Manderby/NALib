@@ -356,7 +356,8 @@ NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
       retFont = naCreateFont("Palatino", NA_FONT_FLAG_REGULAR, baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      retFont = naCreateFont("Times New Roman", NA_FONT_FLAG_ITALIC, baseSize);
+      // Note: Times new roman would be better but unicode support is worse.
+      retFont = naCreateFont("Palatino", NA_FONT_FLAG_ITALIC, baseSize);
       break;
     default:
       #if NA_DEBUG
