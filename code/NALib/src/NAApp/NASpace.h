@@ -33,13 +33,14 @@ NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 // Set a specific background color.
 NA_API void naSetSpaceBackgroundColor(
   NASpace* space,
-  const NABabyColor* color);
+  const NABabyColor color);
 
 // Removes all children of a space
 NA_API void naRemoveSpaceChilds(NASpace* space);
 
-// Sets the rectangle of the space relative to its parent.
-NA_API void naSetSpaceRect(NASpace* space, NARect rect);
+// Moves all childs with the given x and y coordinates in direction
+// to the right and top.
+NA_API void naShiftSpaceChilds(NASpace* space, NAPos shift);
 
 // Changes the visibility of the space.
 NA_API void naSetSpaceVisible(

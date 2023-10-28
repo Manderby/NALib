@@ -1,0 +1,73 @@
+
+set(NAUtilityDir "src/NAUtility")
+
+set(headerFiles
+  ${NAUtilityDir}/CMakeSrcList.txt
+  ${NAUtilityDir}/NABinaryData.h
+  ${NAUtilityDir}/NADateTime.h
+  ${NAUtilityDir}/NAFile.h
+  ${NAUtilityDir}/NAJSON.h
+  ${NAUtilityDir}/NAKey.h
+  ${NAUtilityDir}/NAMemory.h
+  ${NAUtilityDir}/NAString.h
+  ${NAUtilityDir}/NAThreading.h
+  ${NAUtilityDir}/NATranslator.h
+  ${NAUtilityDir}/NAURL.h
+  ${NAUtilityDir}/NAUtility.h
+  ${NAUtilityDir}/NAValueHelper.h
+)
+
+set(coreImplementationFiles
+  ${NAUtilityDir}/Core/NADateTime.c
+  ${NAUtilityDir}/Core/NADateTimeII.h
+  ${NAUtilityDir}/Core/NAFile.c
+  ${NAUtilityDir}/Core/NAFileII.h
+  ${NAUtilityDir}/Core/NAKeyII.h
+  ${NAUtilityDir}/Core/NAString.c
+  ${NAUtilityDir}/Core/NAStringII.h
+  ${NAUtilityDir}/Core/NAThreadingII.h
+  ${NAUtilityDir}/Core/NATranslator.c
+  ${NAUtilityDir}/Core/NAURL.c
+  ${NAUtilityDir}/Core/NAURLII.h
+  ${NAUtilityDir}/Core/NAValueHelperII.h
+)
+
+set(coreBinaryDataFiles
+  ${NAUtilityDir}/Core/NABinaryData/NABinaryData.c
+  ${NAUtilityDir}/Core/NABinaryData/NABinaryDataII.h
+  ${NAUtilityDir}/Core/NABinaryData/NAEndiannessII.h
+)
+
+set(coreMemoryFiles
+  ${NAUtilityDir}/Core/NAMemory/NAMallocFreeII.h
+  ${NAUtilityDir}/Core/NAMemory/NAMemoryII.h
+  ${NAUtilityDir}/Core/NAMemory/NAPointerII.h
+  ${NAUtilityDir}/Core/NAMemory/NAPtrII.h
+  ${NAUtilityDir}/Core/NAMemory/NARefCountII.h
+  ${NAUtilityDir}/Core/NAMemory/NARuntime.c
+  ${NAUtilityDir}/Core/NAMemory/NARuntimeII.h
+  ${NAUtilityDir}/Core/NAMemory/NASmartPtrII.h
+)
+
+set(jsonFiles
+  ${NAUtilityDir}/NAJSON/NAJSON.c
+)
+
+
+source_group("NAUtility" FILES ${headerFiles})
+target_sources(NALib PRIVATE ${headerFiles})
+
+source_group("NAUtility" FILES ${headerFiles})
+target_sources(NALib PRIVATE ${headerFiles})
+
+source_group("NAUtility/Core" FILES ${coreImplementationFiles})
+target_sources(NALib PRIVATE ${coreImplementationFiles})
+
+source_group("NAUtility/Core/BinaryData" FILES ${coreBinaryDataFiles})
+target_sources(NALib PRIVATE ${coreBinaryDataFiles})
+
+source_group("NAUtility/Core/Memory" FILES ${coreMemoryFiles})
+target_sources(NALib PRIVATE ${coreMemoryFiles})
+
+source_group("NAUtility/JSON" FILES ${jsonFiles})
+target_sources(NALib PRIVATE ${jsonFiles})

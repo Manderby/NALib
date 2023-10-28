@@ -60,9 +60,19 @@ NA_DEF void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem){
 
 
 
-NA_HDEF NARect na_GetMenuItemAbsoluteInnerRect(const NA_UIElement* menuItem){
-  NA_UNUSED(menuItem);
-  return naMakeRectS(0, 0, 1, 1);
+NA_DEF void naSetMenuItemText(NAMenuItem* menuItem, const NAUTF8Char* text){
+  #if NA_DEBUG
+    if(!menuItem)
+      naError("Menu item is Null pointer");
+  #endif
+
+  naDefineCocoaObject(NACocoaNativeMenuItem, nativePtr, menuItem);
+  
+  NSString* nsString = [NSString stringWithUTF8String:text];
+  [nativePtr setTitle: nsString];
+  if([nativePtr hasSubmenu]){
+    [[nativePtr submenu] setTitle: nsString];
+  }
 }
 
 

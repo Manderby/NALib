@@ -7,7 +7,7 @@
 
 
 
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include "../NAMath/NAVectorAlgebra.h"
 
 
@@ -16,6 +16,15 @@ NA_API void naFillMatrixPerspective(
   NAMat44d matrix,
   double fovy,
   double aspect,
+  double nearZ,
+  double farZ);
+
+NA_API void naFillMatrixOrtho(
+  NAMat44d matrix,
+  double left,
+  double right,
+  double bottom,
+  double top,
   double nearZ,
   double farZ);
 

@@ -58,17 +58,17 @@
   }
   
 - (void)adjustLayerFrame{
-  double scaleFactor = naGetWindowBackingScaleFactor([self window]);
+  double uiScale = naGetWindowBackingScaleFactor([self window]);
   NSRect frame = [self frame];
-  frame.size.width *= scaleFactor;
-  frame.size.height *= scaleFactor;
+  frame.size.width *= uiScale;
+  frame.size.height *= uiScale;
   #if NA_DEBUG
     if(frame.size.width == 0 || frame.size.height == 0)
       naError("Frame size is zero");
   #endif
   NA_MACOS_AVAILABILITY_GUARD_10_11(
     [(CAMetalLayer*)[self layer] setDrawableSize:frame.size];
-    [(CAMetalLayer*)[self layer] setContentsScale:scaleFactor];
+    [(CAMetalLayer*)[self layer] setContentsScale:uiScale];
   )
 }
 
@@ -90,19 +90,19 @@
 //  }
   
   - (void)mouseMoved:(NSEvent*)event{
-    na_SetMouseMovedByDiff([event deltaX], -[event deltaY]);
+    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED);
     [NSEvent setMouseCoalescingEnabled:NO];
   }
   
   - (void)keyDown:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEYDOWN);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_DOWN);
   }
   
   - (void)keyUp:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEYUP);
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_UP);
   }
   
   - (void)flagsChanged:(NSEvent*)event{
@@ -111,10 +111,10 @@
     NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
     NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
 
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (shift ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (alt ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (control ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (command ? NA_UI_COMMAND_KEYDOWN : NA_UI_COMMAND_KEYUP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (shift ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (alt ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (control ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (command ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
   }
   
   @end
@@ -159,6 +159,20 @@
     [nativePtr setFrame: frame];
   }
 
+
+
+NA_HDEF NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace){
+  naDefineCocoaObjectConst(NACocoaNativeMetalSpace, nativePtr, metalSpace);
+  return naMakeRectWithNSRect([nativePtr frame]);
+}
+
+NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect){
+  naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
+
+
+
 #else
 
   NA_DEF NAMetalSpace* naNewMetalSpace(NASize size){
@@ -192,13 +206,23 @@
     #endif
   }
 
+  NA_HDEF NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace){
+    NA_UNUSED(metalSpace);
+    #if NA_DEBUG
+      naError("Metal has not been configured. See NAConfiguration.h");
+    #endif
+    return naMakeRectS(0., 0., 1., 1.);
+  }
+
+  NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect){
+    NA_UNUSED(metalSpace);
+    NA_UNUSED(rect);
+    #if NA_DEBUG
+      naError("Metal has not been configured. See NAConfiguration.h");
+    #endif
+  }
+
 #endif  // NA_COMPILE_METAL && defined __MAC_10_12
-
-
-
-NA_HDEF NARect na_GetMetalSpaceAbsoluteInnerRect(const NA_UIElement* metalSpace){
-  return na_GetSpaceAbsoluteInnerRect(metalSpace);
-}
 
 
 

@@ -13,7 +13,10 @@ typedef struct NAMouseStatus NAMouseStatus;
 struct NAMouseStatus{
   NAPos pos;
   NAPos prevPos;
+  NABool leftPressed;
 };
+
+typedef void* NACursorImage;
 
 
 
@@ -26,13 +29,17 @@ NA_API NAPos naGetMousePos(const NAMouseStatus* mousestatus);
 // Returns the difference between the current and last recorded position.
 NA_API NASize naGetMouseDelta(const NAMouseStatus* mousestatus);
 
-// Centers the mouse in the given uiElement with or without border.
-NA_API void naCenterMouse(void* uiElement, NABool includeBorder);
+// Centers the mouse in the given uiElement.
+NA_API void naCenterMouse(void* uiElement);
 
 // Shows or hides the mouse
 NA_API void naShowMouse(void);
 NA_API void naHideMouse(void);
+NA_API void naHideMouseUntilMovement(NABool hide);
 
+// Creates a resolution independent image for a cursor with a hotspot.
+// On macOS, NACursorImage is of type NSCursor*
+NA_API NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot);
 
 #endif // NA_MOUSE_INCLUDED
 

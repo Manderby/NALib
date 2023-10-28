@@ -13,26 +13,22 @@
 
 #include "../NAVisual/NABabyImage.h"
 
-typedef enum{
-  NA_UIIMAGE_RESOLUTION_1x,
-  NA_UIIMAGE_RESOLUTION_2x,
-  NA_UIIMAGE_RESOLUTION_COUNT
-} NAUIImageResolution;
+// These are the default resolutions given in points/meter.
+#define NA_UIIMAGE_RESOLUTION_SCREEN_1x 3779.52755905511811   // 96 ppi
+#define NA_UIIMAGE_RESOLUTION_SCREEN_2x 7559.05511811023622   // 192 ppi
 
 typedef enum{
-  NA_UIIMAGE_KIND_MAIN,
-  NA_UIIMAGE_KIND_ALT,
-  NA_UIIMAGE_KIND_COUNT
-} NAUIImageKind;
+  NA_UIIMAGE_INTERACTION_NONE,
+  NA_UIIMAGE_INTERACTION_PRESSED,
+  NA_UIIMAGE_INTERACTION_HOVER,
+  NA_UIIMAGE_INTERACTION_DISABLED,
+} NAUIImageInteraction;
 
 typedef enum{
   NA_UIIMAGE_SKIN_PLAIN,
   NA_UIIMAGE_SKIN_LIGHT,
   NA_UIIMAGE_SKIN_DARK,
-  NA_UIIMAGE_SKIN_COUNT
 } NAUIImageSkin;
-
-#define NA_UIIMAGE_SUBIMAGES_COUNT (NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT)
 
 typedef struct NAUIImage NAUIImage;
 
@@ -43,7 +39,7 @@ typedef struct NAUIImage NAUIImage;
 // You always provide the images in the highest resolution available. If you
 // have for example a 512x512 point image representing the double resolution
 // image of a 256x256 icon, you provide that 512x512 image with the resolution
-// NA_UIIMAGE_RESOLUTION_2x.
+// NA_UIIMAGE_RESOLUTION_SCREEN_2x.
 //
 // Downsampling will be done automatically by NALib.
 //
@@ -63,22 +59,31 @@ typedef struct NAUIImage NAUIImage;
 // NA_BLEND_OPAQUE       tints opaque parts of the image
 // NA_BLEND_BLACK_GREEN  tints black pixels (measured by the green channel)
 // NA_BLEND_WHITE_GREEN  tints white pixels (measured by the green channel)
-// Other NABlendMode values are applicable but will likely produce unuseful
+// Other NABlendMode values are applicable but will likely produce less useful
 // images.
 //
 // The NAUIImage has reference counting built in. Use naRetain and naRelease.
 NA_API NAUIImage* naCreateUIImage(
-  const NABabyImage* main,
-  const NABabyImage* alt,
-  NAUIImageResolution resolution,
+  const NABabyImage* baseImage,
+  double baseResolution,
   NABlendMode tintMode);
 
+// Creates a new uiImage with the primary subimage, resolution and tintMode
+// of the given one. All other subimages (different resolutions, pressed,
+// hover, ...) will be computed anew.
+NA_API NAUIImage* naRecreateUIImage(const NAUIImage* uiImage);
+
 // Returns the size of the 1x representation.
-NA_IAPI NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
+NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
+
+// Returns the Skin for the current Appearance. Either returns LIGHT or DARK.
+// Never returns PLAIN.
+NA_API NAUIImageSkin naGetSkinForCurrentAppearance(void);
 
 // Returns the default foreground color for the given skin.
 NA_API void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 NA_API void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin);
+NA_API void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 
 // Creates a new BabyImage with the given path. Can only be PNG on windows,
 // macOS allows for various kind of input files.
@@ -105,7 +110,7 @@ NA_API void naDeallocNativeImage(void* nativeImage);
 
 
 // Inline implementations are in a separate file: 
-#include "NAUIImageII.h"
+#include "Core/NAUIImageII.h"
 
 
 

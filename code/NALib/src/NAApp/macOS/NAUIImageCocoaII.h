@@ -6,7 +6,7 @@
 
 
 #include "Availability.h"
-#include "NAApp.h"
+#include "../NAApp.h"
 #include "../../NAVisual/NAPNG.h"
 
 
@@ -19,7 +19,7 @@
     typedef NSString* NSAppearanceName;
   #endif
 
-  NAUIImageSkin naGetSkinForCurrentAppearance(void){
+  NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(void){
     NAUIImageSkin skin = NA_UIIMAGE_SKIN_LIGHT;
     NSAppearanceName appearancename = NSAppearanceNameAqua;
 
@@ -52,10 +52,64 @@
     return skin;
   }
 #else
-  NAUIImageSkin naGetSkinForCurrentAppearance(void){
+  NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(void){
     return NA_UIIMAGE_SKIN_LIGHT;
   }
 #endif
+
+
+
+NA_DEF void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+  #if NA_DEBUG
+    NAUIImageSkin activeSkin = naGetSkinForCurrentAppearance();
+    if(skin != NA_UIIMAGE_SKIN_PLAIN && skin != activeSkin)
+      naError("Active skin is not equal to the desired skin.");
+  #else
+    NA_UNUSED(skin);
+  #endif
+
+  NSColor* labelColor = naGetLabelColor();
+  color[0] = naLinearizeColorValue((float)[labelColor redComponent]);
+  color[1] = naLinearizeColorValue((float)[labelColor greenComponent]);
+  color[2] = naLinearizeColorValue((float)[labelColor blueComponent]);
+  color[3] = 1.f;
+}
+
+
+
+NA_DEF void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+  #if NA_DEBUG
+    NAUIImageSkin activeSkin = naGetSkinForCurrentAppearance();
+    if(skin != NA_UIIMAGE_SKIN_PLAIN && skin != activeSkin)
+      naError("Active skin is not equal to the desired skin.");
+  #else
+    NA_UNUSED(skin);
+  #endif
+
+  NSColor* linkColor = naGetLinkColor();
+  color[0] = naLinearizeColorValue((float)[linkColor redComponent]);
+  color[1] = naLinearizeColorValue((float)[linkColor greenComponent]);
+  color[2] = naLinearizeColorValue((float)[linkColor blueComponent]);
+  color[3] = 1.f;
+}
+
+
+
+NA_DEF void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+  #if NA_DEBUG
+    NAUIImageSkin activeSkin = naGetSkinForCurrentAppearance();
+    if(skin != NA_UIIMAGE_SKIN_PLAIN && skin != activeSkin)
+      naError("Active skin is not equal to the desired skin.");
+  #else
+    NA_UNUSED(skin);
+  #endif
+
+  NSColor* accentColor = naGetAccentColor();
+  color[0] = naLinearizeColorValue((float)[accentColor redComponent]);
+  color[1] = naLinearizeColorValue((float)[accentColor greenComponent]);
+  color[2] = naLinearizeColorValue((float)[accentColor blueComponent]);
+  color[3] = 1.f;
+}
 
 
 
@@ -120,18 +174,13 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 }
 
 
-NA_HDEF BOOL na_createResolutionIndependentImage(const NSView* containingView, const NAUIImage* uiImage, NAUIImageKind kind, NSSize imageSize, NSRect dstRect){
+NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolution, NAUIImageInteraction interaction, NABool secondaryState, NSSize imageSize, NSRect dstRect){
   NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
   if(uiImage->tintMode != NA_BLEND_ZERO){
     skin = naGetSkinForCurrentAppearance();
   }
   
-  NAUIImageResolution resolution = naGetWindowBackingScaleFactor([containingView window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
-
-  CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, kind, skin);
-  if(!cocoaimage){
-    cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-  }
+  CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, skin, interaction, secondaryState);
 
   // Yes, we create a new NSImage which we draw into the NSImage which
   // calls this handler. It is unknown to me exactly why I need to do
@@ -152,13 +201,13 @@ NA_HDEF BOOL na_createResolutionIndependentImage(const NSView* containingView, c
 
 
 
-NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
+NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
   const NSView* containingView,
   const NAUIImage* uiImage,
-  NAUIImageKind kind)
+  NAUIImageInteraction interaction,
+  NABool secondaryState)
 {
   NSImage* image = nil;
-  NA_UNUSED(containingView);
 
   // modern method: Create an image which redraws itself automatically.
   // This is commented out as there have been severe problems with this working
@@ -169,7 +218,8 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
       NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
       image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
       {
-        return na_createResolutionIndependentImage(containingView, uiImage, kind, imageSize, dstRect);
+        double resolution = naGetWindowBackingScaleFactor([containingView window]) * NA_UIIMAGE_RESOLUTION_SCREEN_1x;
+        return na_drawFixedResolutionImage(uiImage, resolution, interaction, secondaryState, imageSize, dstRect);
       }];
     ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
   }
@@ -184,8 +234,8 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
       skin = naGetSkinForCurrentAppearance();
     }
 
-    CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-    CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
+    CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, skin, interaction, secondaryState);
+    CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_2x, skin, interaction, secondaryState);
     if(img1x){
       NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithCGImage:img1x];
       [image addRepresentation:rep];

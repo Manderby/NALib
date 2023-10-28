@@ -4,8 +4,8 @@
 // actually contains non-inlinenable code. See NACocoa.m for more information.
 // Do not include this file anywhere else!
 
-#include "NAPreferences.h"
-#include "NAApp.h"
+#include "../NAPreferences.h"
+#include "../NAApp.h"
 
 
 NA_HIDEF NSUserDefaults* na_GetNativePreferences(){

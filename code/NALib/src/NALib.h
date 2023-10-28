@@ -9,13 +9,13 @@
 
 
 
-#include "NABase.h"
+#include "NABase/NABase.h"
 
-#include "NAApp.h"
-#include "NAMath.h"
-#include "NAStruct.h"
-#include "NAUtility.h"
-#include "NAVisual.h"
+#include "NAApp/NAApp.h"
+#include "NAMath/NAMath.h"
+#include "NAStruct/NAStruct.h"
+#include "NAUtility/NAUtility.h"
+#include "NAVisual/NAVisual.h"
 
 
 

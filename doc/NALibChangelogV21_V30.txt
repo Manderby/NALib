@@ -8,6 +8,30 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 27 (released 25. October 2023)
+==========
+
+Big changes:
+- Added NAJSON, a non-standard-conform but very fast JSON parser.
+- Windows GUI is now resolution independent.
+- Images can be scaled arbitrariyly. Linear up and downscaling.
+- Improved blending algorithms
+- Reprogrammed NAButton.
+- Changed project structure to CMake
+
+Smaller things:
+- Deprecating NABounds4, replacing with NABezel4
+- Adding 3D orthographic projection matrix computation
+- Adding setEnabled and setVisible to some UIElements
+- Adding pixel font
+- Adding NAFont
+- Adding leap second information according to bulletin C 64 and 65
+- Adding binary pair sum method.
+- Rearranging GUI implementation files
+- Fixing macOS windows not appearing upon start of application
+- Tons of smaller corrections, improvements, etc.
+
+
 Version 26 (released 8. January 2022)
 ==========
 
@@ -23,6 +47,7 @@ Smaller Things:
 - Updated HelloWorldGUI.
 - Fixed a bug in QuadTree range detection.
 - Adding leap second information according to bulletin C 61, 62 and 63
+
 
 
 Version 25 (released 13. July 2020)
@@ -71,6 +96,7 @@ Version 24 (released 2020-Jan-09)
 - Adding Leap second information according bulletin C 58 and C 59
 
 
+
 Version 23 (first published 2019-Jun-30)
 ==========
 
@@ -89,6 +115,7 @@ Other things:
 - Extended NAList with naMoveListToLast and some debug checks
 - Completed some NABuffer functions and fixed some bugs.
 - Added CODATA 2018 physical constants. Warning: Macro names changed!
+
 
 
 Version 22 (first published 2018-Dec-14)
@@ -113,6 +140,7 @@ Version 22 (first published 2018-Dec-14)
 - Altering Endianness functions. No more NAEndiannessConverter.
 - Renaming all naNull functions to naZero
 - Removing all warning preprocessor directives.
+
 
 
 Version 21 (first published 2018-Mai-27)
@@ -161,6 +189,7 @@ Other things:
 - Cleaned up some h files.
 - Changed configuration to use posix_memalign by default.
 - Changed the license to the default MIT version.
+
 
 
 Version 20 (first published 2018-Jan-13):

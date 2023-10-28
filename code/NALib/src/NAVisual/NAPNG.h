@@ -6,7 +6,7 @@
 #endif
 
 
-#include "NACoord.h"
+#include "../NAMath/NACoord.h"
 #include "NABabyImage.h"
 
 

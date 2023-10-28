@@ -11,8 +11,8 @@
 // Deflate algorithm specification:
 // http://www.ietf.org/rfc/rfc1951.txt
 
-#include "NABase.h"
-#include "NABuffer.h"
+#include "../NABase/NABase.h"
+#include "../NAStruct/NABuffer.h"
 
 
 // NA_DEFLATE_COMPRESSION_FASTEST:  No compression at all. Storing bytes as is.

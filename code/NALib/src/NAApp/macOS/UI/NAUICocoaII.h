@@ -5,15 +5,15 @@
 // Do not include this file anywhere else!
 
 
-#include "NAAppCore.h"
-#include "NAMemory.h"
-#include "NACoord.h"
-#include "NAThreading.h"
-#include "NATranslator.h"
+#include "../../Core/NAAppCore.h"
+#include "../../../NAUtility/NAMemory.h"
+#include "../../../NAMath/NACoord.h"
+#include "../../../NAUtility/NAThreading.h"
+#include "../../../NAUtility/NATranslator.h"
 
 // the following import is needed for UTType definitions.
 #import <UniformTypeIdentifiers/UTType.h>
-
+#import <Carbon/Carbon.h>
 
 NA_HAPI void na_RenewWindowMouseTracking(NAWindow* window);
 NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);
@@ -47,7 +47,25 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
   #define NSAppKitVersionNumber11_0 2022
 #endif
 
-NA_HDEF double na_GetUIElementOffsetY(NA_UIElement* elem){
+
+
+NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* elem){
+  if(naGetUIElementType(elem) == NA_UI_BUTTON){
+    if(naIsButtonBordered((const NAButton*)elem)){
+      if(isAtLeastMacOSVersion(11, 0)){
+        // On newer systems bordered buttons are 5 units shorter than expected on
+        // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
+        // move the button 5 units to the left.
+        return -5.;
+      }
+    }
+  }
+  return 0.;
+}
+
+
+
+NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem){
   // Line height is considered to be 25 for an optimal display. In this
   // function, the UI elements are shifted in Y direction such that text
   // always is displayed on a common baseline. The reference element is
@@ -57,48 +75,44 @@ NA_HDEF double na_GetUIElementOffsetY(NA_UIElement* elem){
   if(NSAppKitVersionNumber < NSAppKitVersionNumber11_0){
     switch(naGetUIElementType(elem)){
     case NA_UI_APPLICATION:  return  0.;
-    case NA_UI_BUTTON:{
-      NAButton* button = (NAButton*)elem;
-      return naIsButtonStateful(button) || !naIsButtonTextual(button) ? +0. : -2.;
-    }
-    case NA_UI_CHECKBOX:     return +3.;
+    case NA_UI_BUTTON:       return  0.;
+    case NA_UI_CHECKBOX:     return +5.;
     case NA_UI_IMAGE_SPACE:  return  0.;
-    case NA_UI_LABEL:        return +4.;
+    case NA_UI_LABEL:        return +6.;
     case NA_UI_MENU:         return  0.;
     case NA_UI_MENUITEM:     return  0.;
     case NA_UI_METAL_SPACE:  return  0.;
     case NA_UI_OPENGL_SPACE: return  0.;
-    case NA_UI_POPUP_BUTTON: return +0.;
-    case NA_UI_RADIO:        return +3.;
+    case NA_UI_RADIO:        return +5.;
     case NA_UI_SCREEN:       return  0.;
-    case NA_UI_SLIDER:       return -1.;
+    case NA_UI_SELECT:       return +2.;
+    case NA_UI_SLIDER:       return +1.;
     case NA_UI_SPACE:        return  0.;
-    case NA_UI_TEXTBOX:      return -1.;
-    case NA_UI_TEXTFIELD:    return +2.;
+    case NA_UI_TEXTBOX:      return +1.;
+    case NA_UI_TEXTFIELD:    return +4.;
     case NA_UI_WINDOW:       return  0.;
+    default: return 0.;
     }
   }else{
     switch(naGetUIElementType(elem)){
     case NA_UI_APPLICATION:  return  0.;
-    case NA_UI_BUTTON:{
-      NAButton* button = (NAButton*)elem;
-      return naIsButtonStateful(button) || !naIsButtonTextual(button) ? +0. : -2.;
-    }
-    case NA_UI_CHECKBOX:     return +3.;
+    case NA_UI_BUTTON:       return  0.;
+    case NA_UI_CHECKBOX:     return +5.;
     case NA_UI_IMAGE_SPACE:  return  0.;
-    case NA_UI_LABEL:        return +4.;
+    case NA_UI_LABEL:        return +5.;
     case NA_UI_MENU:         return  0.;
     case NA_UI_MENUITEM:     return  0.;
     case NA_UI_METAL_SPACE:  return  0.;
     case NA_UI_OPENGL_SPACE: return  0.;
-    case NA_UI_POPUP_BUTTON: return -2.;
-    case NA_UI_RADIO:        return +3.;
+    case NA_UI_RADIO:        return +5.;
     case NA_UI_SCREEN:       return  0.;
-    case NA_UI_SLIDER:       return -2.;
+    case NA_UI_SELECT:       return -1.;
+    case NA_UI_SLIDER:       return -1.;
     case NA_UI_SPACE:        return  0.;
-    case NA_UI_TEXTBOX:      return -1.;
-    case NA_UI_TEXTFIELD:    return +2.;
+    case NA_UI_TEXTBOX:      return +1.;
+    case NA_UI_TEXTFIELD:    return +3.;
     case NA_UI_WINDOW:       return  0.;
+    default: return 0.;
     }
   }
 }
@@ -268,7 +282,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
 
 
 
-NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
+NA_DEF double naGetUIElementResolutionFactor(const void* uiElement){
   if(naGetUIElementType(uiElement) == NA_UI_APPLICATION){return 1.;}
   if(naGetUIElementType(uiElement) == NA_UI_SCREEN){
     #if NA_DEBUG
@@ -277,16 +291,16 @@ NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
     return 1.;
   }
   
-  void* parent = naGetUIElementParent(uiElement);
+  const void* parent = naGetUIElementParentConst(uiElement);
   while(naGetUIElementType(uiElement) != NA_UI_WINDOW && parent){
     uiElement = parent;
-    parent = naGetUIElementParent(uiElement);
+    parent = naGetUIElementParentConst(uiElement);
   }
   
   if(naGetUIElementType(uiElement) == NA_UI_WINDOW){
-    return naGetWindowBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(uiElement)));
+    return naGetWindowBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(uiElement)));
   }else{
-    return naGetUIElementBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(uiElement)));
+    return naGetUIElementBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(uiElement)));
   }
 }
 
@@ -329,9 +343,9 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
   return font;
 }
 
-NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
+NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
   CGFloat baseSize;
-  switch(size){
+  switch(fontSize){
   case NA_FONT_SIZE_SMALL: baseSize = 11; break;
   case NA_FONT_SIZE_DEFAULT: baseSize = [NSFont systemFontSize]; break;
   case NA_FONT_SIZE_BIG: baseSize = 18; break;
@@ -363,7 +377,7 @@ NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size){
       #if NA_DEBUG
         naError("Unknown font kind");
       #endif
-      retFont = naCreateFont("San Francisco", NA_FONT_FLAG_REGULAR, size);
+      retFont = naCreateFont("San Francisco", NA_FONT_FLAG_REGULAR, baseSize);
       break;
   }
   
@@ -386,26 +400,6 @@ NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment){
   }
   return nsalignment;
 }
-
-
-
-NA_HDEF NARect na_GetScreenAbsoluteRect(const NA_UIElement* screen){
-  NARect rect;
-  NSRect frame;
-  NSRect mainframe;
-  naDefineCocoaObjectConst(NSScreen, cocoascreen, screen);
-  mainframe = [[NSScreen mainScreen] frame];
-  frame = [cocoascreen frame];
-  rect.pos.x = frame.origin.x;
-  rect.pos.y = mainframe.size.height - frame.size.height - frame.origin.y;
-  rect.size.width = frame.size.width;
-  rect.size.height = frame.size.height;
-  return rect;
-}
-
-
-
-
 
 
 
@@ -461,15 +455,29 @@ NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* file
 }
 
 
+NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen){
+  NA_UNUSED(screen);
+  NARect rect = {{0, 0}, {1, 1}};
+  return rect;
+}
 
-NA_DEF void naCenterMouse(void* uiElement, NABool includeBorder){
-  NARect spacerect;
+NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect){
+  NA_UNUSED(screen);
+  NA_UNUSED(rect);
+  #if NA_DEBUG
+    naError("A screen can not be resized by software.");
+  #endif
+}
+
+
+NA_DEF void naCenterMouse(void* uiElement){
+  NARect spaceRect;
   NSRect screenframe;
   CGPoint centerpos;
-  spacerect = naGetUIElementRect(uiElement, naGetApplication(), includeBorder);
+  spaceRect = naGetUIElementRectAbsolute(uiElement);
   screenframe = [[NSScreen mainScreen] frame];
-  centerpos.x = (CGFloat)spacerect.pos.x + (CGFloat)spacerect.size.width * .5f;
-  centerpos.y = (CGFloat)screenframe.size.height - (CGFloat)(spacerect.pos.y + spacerect.size.height * .5f);
+  centerpos.x = (CGFloat)spaceRect.pos.x + (CGFloat)spaceRect.size.width * .5f;
+  centerpos.y = (CGFloat)screenframe.size.height - (CGFloat)(spaceRect.pos.y + spaceRect.size.height * .5f);
 
   CGWarpMouseCursorPosition(centerpos);
 }
@@ -495,90 +503,21 @@ NA_DEF void naHideMouse(){
 
 
 
-
-NA_DEF NARect naGetUIElementRect(const void* uiElement, const void* relativeuiElement, NABool includeBorder){
-  NARect rect;
-  NARect relRect;
-  NA_UIElement* element;
-  NA_UIElement* relElement;
-  NAApplication* app;
-
-  element = (NA_UIElement*)uiElement;
-  relElement = (NA_UIElement*)relativeuiElement;
-  app = naGetApplication();
-
-  // First, let's handle the root case: Returning the application rect.
-  if(element == (NA_UIElement*)app){
-    #if NA_DEBUG
-      if(relElement && (relElement != (NA_UIElement*)app))
-        naError("The relative element is invalid for the given uiElement, which seems to be the application.");
-    #endif
-    return na_GetApplicationAbsoluteRect();
-  }
-
-  switch(element->elementType){
-  case NA_UI_APPLICATION:  rect = na_GetApplicationAbsoluteRect(); break;
-  case NA_UI_BUTTON:       rect = na_GetButtonAbsoluteInnerRect(element); break;
-  case NA_UI_CHECKBOX:     rect = na_GetCheckBoxAbsoluteInnerRect(element); break;
-  case NA_UI_IMAGE_SPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_LABEL:        rect = na_GetLabelAbsoluteInnerRect(element); break;
-  case NA_UI_MENU:         rect = na_GetMenuAbsoluteInnerRect(element); break;
-  case NA_UI_MENUITEM:     rect = na_GetMenuItemAbsoluteInnerRect(element); break;
-  case NA_UI_METAL_SPACE:  rect = na_GetMetalSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_OPENGL_SPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_POPUP_BUTTON: rect = na_GetPopupButtonAbsoluteInnerRect(element); break;
-  case NA_UI_RADIO:        rect = na_GetRadioAbsoluteInnerRect(element); break;
-  case NA_UI_SCREEN:       rect = na_GetScreenAbsoluteRect(element); break;
-  case NA_UI_SLIDER:       rect = na_GetSliderAbsoluteInnerRect(element); break;
-  case NA_UI_SPACE:        rect = na_GetSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_TEXTBOX:      rect = na_GetTextBoxAbsoluteInnerRect(element); break;
-  case NA_UI_TEXTFIELD:    rect = na_GetTextFieldAbsoluteInnerRect(element); break;
-  case NA_UI_WINDOW:
-    if(includeBorder){
-      rect = na_GetWindowAbsoluteOuterRect(element);
-    }else{
-      rect = na_GetWindowAbsoluteInnerRect(element);
-    }
-    break;
-  }
-  rect.pos.y -= na_GetUIElementOffsetY(element);
-
-  // Now, we find the appropriate relative element.
-  if(!relElement){relElement = (NA_UIElement*)naGetUIElementParent(element);}
-
-  if(relElement){
-    switch(relElement->elementType){
-    case NA_UI_APPLICATION:  relRect = na_GetApplicationAbsoluteRect(); break;
-    case NA_UI_BUTTON:       relRect = na_GetButtonAbsoluteInnerRect(relElement); break;
-    case NA_UI_CHECKBOX:     relRect = na_GetCheckBoxAbsoluteInnerRect(relElement); break;
-    case NA_UI_IMAGE_SPACE:  relRect = na_GetImageSpaceAbsoluteInnerRect(relElement); break;
-    case NA_UI_LABEL:        relRect = na_GetLabelAbsoluteInnerRect(relElement); break;
-    case NA_UI_MENU:         relRect = na_GetMenuAbsoluteInnerRect(relElement); break;
-    case NA_UI_MENUITEM:     relRect = na_GetMenuItemAbsoluteInnerRect(relElement); break;
-    case NA_UI_METAL_SPACE:  relRect = na_GetMetalSpaceAbsoluteInnerRect(relElement); break;
-    case NA_UI_OPENGL_SPACE: relRect = na_GetOpenGLSpaceAbsoluteInnerRect(relElement); break;
-    case NA_UI_POPUP_BUTTON: relRect = na_GetPopupButtonAbsoluteInnerRect(relElement); break;
-    case NA_UI_RADIO:        relRect = na_GetRadioAbsoluteInnerRect(relElement); break;
-    case NA_UI_SCREEN:       relRect = na_GetScreenAbsoluteRect(relElement); break;
-    case NA_UI_SLIDER:       relRect = na_GetSliderAbsoluteInnerRect(relElement); break;
-    case NA_UI_SPACE:        relRect = na_GetSpaceAbsoluteInnerRect(relElement); break;
-    case NA_UI_TEXTBOX:      relRect = na_GetTextBoxAbsoluteInnerRect(relElement); break;
-    case NA_UI_TEXTFIELD:    relRect = na_GetTextFieldAbsoluteInnerRect(relElement); break;
-    case NA_UI_WINDOW:       relRect = na_GetWindowAbsoluteInnerRect(relElement); break;
-    }
-    relRect.pos.y -= na_GetUIElementOffsetY(relElement);
-
-    rect.pos.x = rect.pos.x - relRect.pos.x;
-    rect.pos.y = rect.pos.y - relRect.pos.y;
-  }
-
-//  rect.size.width = rect.size.width;
-//  rect.size.height = rect.size.height;
-
-  // Convert the rect into absolute coordinates.
-
-  return rect;
+NA_DEF void naHideMouseUntilMovement(NABool hide){
+  [NSCursor setHiddenUntilMouseMoves:hide ? YES : NO];
 }
+
+
+
+NA_DEF NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot){
+  NSImage* nsImage = na_CreateResolutionIndependentNativeImage(
+    NA_NULL,
+    uiImage,
+    NA_UIIMAGE_INTERACTION_NONE,
+    NA_FALSE);
+  return NA_COCOA_PTR_OBJC_TO_C([[NSCursor alloc] initWithImage:nsImage hotSpot:naMakeNSPointWithPos(hotspot)]);
+}
+
 
 
 NA_API void naOpenURLInBrowser(const NAUTF8Char* url){

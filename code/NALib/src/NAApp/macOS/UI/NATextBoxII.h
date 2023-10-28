@@ -84,6 +84,16 @@
   [scrollView setHasHorizontalScroller:YES];
 }
 
+- (void) setUseVerticalScrolling: (BOOL)use{
+//  float LargeNumberForText = 1.0e7f;
+//  NSTextContainer *textContainer = [self textContainer];
+//  [textContainer setContainerSize:NSMakeSize(LargeNumberForText, [textContainer containerSize].height)];
+//  [textContainer setWidthTracksTextView:NO];
+//  [self setMaxSize:NSMakeSize(LargeNumberForText, [self maxSize].height)];
+//  [self setHorizontallyResizable:YES];
+  [scrollView setHasVerticalScroller:use];
+}
+
 - (void) setReadOnly:(NABool)readonly{
   [self setEditable:!readonly];
 }
@@ -163,6 +173,13 @@ NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox){
 
 
 
+NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use){
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  [nativePtr setUseVerticalScrolling: use ? YES : NO];
+}
+
+
+
 NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setReadOnly:!editable];
@@ -176,17 +193,15 @@ NA_DEF void naSetTextBoxVisible(NATextBox* textBox, NABool visible){
 }
 
 
-
-NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(const NA_UIElement* textBox){
+NA_HDEF NARect na_GetTextBoxRect(const NA_UIElement* textBox){
   naDefineCocoaObjectConst(NACocoaNativeTextBox, nativePtr, textBox);
-  NARect parentRect = naGetUIElementRect(naGetUIElementParentConst(textBox), naGetApplication(), NA_FALSE);
-  NARect relRect = [nativePtr getInnerRect];
-  return naMakeRect(
-    naMakePos(parentRect.pos.x + relRect.pos.x, parentRect.pos.y + relRect.pos.y),
-    relRect.size);
+  return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-
+NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect){
+  naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
 
 // This is free and unencumbered software released into the public domain.
 

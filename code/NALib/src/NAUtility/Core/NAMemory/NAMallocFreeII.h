@@ -22,11 +22,9 @@ NA_IDEF void* naMalloc(size_t byteSize){
   #if NA_DEBUG
     if(byteSize == NA_ZERO)
       naCrash("size is zero.");
-    if(byteSize < NA_ZERO)
-      naCrash("size is negative.");
   #endif
 
-  ptr = malloc((size_t)byteSize);
+  ptr = malloc(byteSize);
 
   #if NA_DEBUG
   if(!ptr)
@@ -50,10 +48,10 @@ NA_IDEF void naFree(void* ptr){
 
 
 NA_IDEF void* naMallocAligned(size_t byteSize, size_t align){
-  void* retptr;
+  void* retPtr;
 
   #if NA_OS == NA_OS_WINDOWS
-    retptr = _aligned_malloc(byteSize, align);
+    retPtr = _aligned_malloc(byteSize, align);
   #else
     #if NA_MEMALIGN == NA_MEMALIGN_USE_CUSTOM
       // Allocate a full align and a pointer more than required.
@@ -68,15 +66,15 @@ NA_IDEF void* naMallocAligned(size_t byteSize, size_t align){
       // Store the pointer to the original allocation pointer in the element
       // right before the first returned byte.
       ptr[-1] = mem;
-      retptr = ptr;
+      retPtr = ptr;
     #elif NA_MEMALIGN == NA_MEMALIGN_USE_ALIGNED_ALLOC
-      retptr = aligned_alloc(align, byteSize);
+      retPtr = aligned_alloc(align, byteSize);
       #if NA_DEBUG
-      if(!retptr)
+      if(!retPtr)
         naCrash("Out of aligned memory");
       #endif
     #elif NA_MEMALIGN == NA_MEMALIGN_USE_POSIX
-      int error = posix_memalign(&retptr, align, byteSize);
+      int error = posix_memalign(&retPtr, align, byteSize);
       #if NA_DEBUG
       if(error)
         naCrash("Memory alignment failed");
@@ -89,11 +87,11 @@ NA_IDEF void* naMallocAligned(size_t byteSize, size_t align){
   #endif
 
   #if NA_DEBUG
-    if(((size_t)retptr & (size_t)(align - NA_ONE)) != NA_ZERO)
+    if(((size_t)retPtr & (size_t)(align - NA_ONE)) != NA_ZERO)
       naError("pointer misaligned.");
   #endif
 
-  return retptr;
+  return retPtr;
 }
 
 

@@ -4,7 +4,7 @@
 
 
 NA_DEF void naFillMatrixPerspective(NAMat44d matrix, double fovy, double aspect, double nearZ, double farZ){
-  double cotan = naInv(naTan(naDegToRad(fovy)  * .5));
+  double cotan = naInv(naTan(naDegToRad(fovy) * .5));
   matrix[ 0] = cotan / aspect;
   matrix[ 1] = 0.;
   matrix[ 2] = 0.;
@@ -16,12 +16,42 @@ NA_DEF void naFillMatrixPerspective(NAMat44d matrix, double fovy, double aspect,
   matrix[ 8] = 0.;
   matrix[ 9] = 0.;
   matrix[10] = (farZ + nearZ) / (nearZ - farZ);
-  matrix[11] = -1.;
+  matrix[11] = -1.; // I like right handed systems.
   matrix[12] = 0.;
   matrix[13] = 0.;
   matrix[14] = (2. * farZ * nearZ) / (nearZ - farZ);
   matrix[15] = 0.;
 }
+
+
+
+NA_DEF void naFillMatrixOrtho(NAMat44d matrix, double left, double right, double bottom, double top, double nearZ, double farZ){
+  double ral = right + left;
+  double rsl = right - left;
+  double tab = top + bottom;
+  double tsb = top - bottom;
+  double fan = farZ + nearZ;
+  double fsn = farZ - nearZ;
+    
+  matrix[ 0] = 2. / rsl;
+  matrix[ 1] = 0.;
+  matrix[ 2] = 0.;
+  matrix[ 3] = 0.;
+  matrix[ 4] = 0.;
+  matrix[ 5] = 2. / tsb;
+  matrix[ 6] = 0.;
+  matrix[ 7] = 0.;
+  matrix[ 8] = 0.;
+  matrix[ 9] = 0.;
+  matrix[10] = -2. / fsn;
+  matrix[11] = 0.;
+  matrix[12] = -ral / rsl;
+  matrix[13] = -tab / tsb;
+  matrix[14] = -fan / fsn;
+  matrix[15] = 1.;
+}
+
+
 
 NA_DEF void naFillMatrixLookAt(NAMat44d matrix, double eyeX, double eyeY, double eyeZ, double centerX, double centerY, double centerZ, double upX, double upY, double upZ){
   NAVec3d u;

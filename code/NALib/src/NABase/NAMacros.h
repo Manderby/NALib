@@ -28,61 +28,6 @@
 
 
 
-// //////////////////////////////////
-// Printout macros.
-// The following macros can be used to output some information to stdout.
-// Note that they require NA_ENABLE_PRINTOUTS to be 1, otherwise they just
-// do noting. And note that these macros call functions which will need the
-// NAString implementation and include the stdio.h header.
-
-// Prints the definition of the macro.
-// If undefined:            (Undefined)
-// If defined but empty:    (Defined)
-// If defined with content: The actual content
-#define naPrintMacro(macro)
-
-// Same naPrintMacro but will emit (Defined with content) instead of the
-// actual content.
-#define naPrintMacroDefined(macro)
-
-
-
-// All functions below expect a macro which is defined and having content.
-
-
-
-// Prints the value of the macro as as simple decimal int.
-#define naPrintMacroInt(macro)
-
-// Prints the value of the macro as a decimal or hexadecimal int but outputs
-// the given string if the given special Value occurs.
-#define naPrintMacroIntSpecial(macro, specialValue, specialString)
-#define naPrintMacroIntSpecialHex(macro, specialValue, specialString)
-
-// Prints the value of the macro as Yes (1) or No (0)
-#define naPrintMacroIntYesNo(macro)
-
-// Prints the string indexed by the value of the macro. Provide an array
-// of NAUTF8Char* and use maxValue to indicate what is the maximal possible
-// value of that array.
-#define naPrintMacroEnum(macro, strings, maxValue)
-
-// Prints the given macro as a hex number, interpreted with the given type.
-#define naPrintMacroux8(macro)
-#define naPrintMacroix8(macro)
-#define naPrintMacroux16(macro)
-#define naPrintMacroix16(macro)
-#define naPrintMacroux32(macro)
-#define naPrintMacroix32(macro)
-#define naPrintMacroux64(macro)
-#define naPrintMacroix64(macro)
-#define naPrintMacroux128(macro)
-#define naPrintMacroix128(macro)
-#define naPrintMacroux256(macro)
-#define naPrintMacroix256(macro)
-
-
-
 // Inline implementations are in a separate file:
 #include "Core/NAMacrosII.h"
 

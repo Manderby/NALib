@@ -1,8 +1,9 @@
 
-#include "NATesting.h"
+#include "NATest.h"
 #include <stdio.h>
 
-#include "NABuffer.h"
+#include "NALib.h"
+#include "NAStruct/NABuffer.h"
 
 
 void testMemoryBlock(void){

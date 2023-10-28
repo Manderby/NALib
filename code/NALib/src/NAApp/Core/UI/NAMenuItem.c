@@ -1,5 +1,5 @@
 
-#include "NAAppCore.h"
+#include "../NAAppCore.h"
 
 #if NA_COMPILE_GUI == 1
 
@@ -28,6 +28,24 @@ NA_HDEF void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id){
 
 NA_HDEF uint32 na_GetMenuItemId(const NAMenuItem* menuItem){
   return menuItem->id;
+}
+
+
+
+NA_HDEF NARect na_GetMenuItemRect(const NA_UIElement* menuItem)
+{
+  NA_UNUSED(menuItem);
+  return naMakeRectS(0, 0, 1, 1);
+}
+
+
+
+NA_HDEF void na_SetMenuItemRect(NA_UIElement* menuItem, NARect rect){
+  NA_UNUSED(menuItem);
+  NA_UNUSED(rect);
+  #if NA_DEBUG
+  naError("MenuItem rects can not be set.");
+  #endif
 }
 
 

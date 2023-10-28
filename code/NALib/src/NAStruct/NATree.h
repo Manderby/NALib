@@ -24,7 +24,7 @@
 //   other kind.
 // - Use iterators on the leafes.
 
-#include "NAMemory.h"
+#include "../NAUtility/NAMemory.h"
 
 
 

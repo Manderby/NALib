@@ -1,5 +1,5 @@
 
-#include "NAAppCore.h"
+#include "../NAAppCore.h"
 
 #if NA_COMPILE_GUI == 1
 
@@ -30,6 +30,34 @@ NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* 
   na_SetUIElementParent(&(child->uiElement), menu, NA_FALSE);
 }
 
+
+NA_DEF size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item){
+  return naGetListElemIndex(&(menu->childs), item);
+}
+
+
+
+NA_DEF size_t naGetMenuItemCount(const NAMenu* menu){
+  return naGetListCount(&(menu->childs));
+}
+
+
+
+NA_HDEF NARect na_GetMenuRect(const NA_UIElement* menu)
+{
+  NA_UNUSED(menu);
+  return naMakeRectS(0, 0, 1, 1);
+}
+
+
+
+NA_HDEF void na_SetMenuRect(NA_UIElement* menu, NARect rect){
+  NA_UNUSED(menu);
+  NA_UNUSED(rect);
+  #if NA_DEBUG
+  naError("Menu rects can not be set.");
+  #endif
+}
 
 
 #endif // NA_COMPILE_GUI == 1

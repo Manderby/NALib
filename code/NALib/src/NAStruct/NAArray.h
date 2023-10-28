@@ -25,7 +25,7 @@
 // pointers, get functions will return a pointer to a pointer.
 
 
-#include "NAMemory.h"
+#include "../NAUtility/NAMemory.h"
 
 
 // The full type definition is in the file "NAArrayII.h"

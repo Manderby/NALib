@@ -5,15 +5,15 @@
   extern "C"{
 #endif
 
-#include "NABase.h"
+#include "../NABase/NABase.h"
 #include "NAString.h"
-#include "NABuffer.h"
+#include "../NAStruct/NABuffer.h"
 
 
 #if NA_OS == NA_OS_WINDOWS
   #include "Windows.h"
   typedef TIME_ZONE_INFORMATION NATimeZone;
-#elif NA_OS == NA_OS_MAC_OS_X
+#elif NA_IS_POSIX
   typedef struct timezone NATimeZone;
 #endif
 
@@ -165,7 +165,7 @@ NA_API int16     naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool dayl
     const FILETIME* fileTime,
     const NATimeZone* timeZone,
     NABool daylightSaving);
-#elif NA_OS == NA_OS_MAC_OS_X
+#elif NA_IS_POSIX
   NA_API struct timespec naMakeTimeSpecFromDateTime(
     const NADateTime* dateTime,
     NABool daylightSaving);

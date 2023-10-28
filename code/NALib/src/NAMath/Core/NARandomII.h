@@ -6,13 +6,13 @@
 
 
 #include <stdlib.h>
-#include "NADateTime.h"
+#include "../../NAUtility/NADateTime.h"
 
 
 NA_IDEF NAInt naRand(){
   #if NA_OS == NA_OS_WINDOWS
     return rand();
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return rand();
   #endif
 }
@@ -21,7 +21,7 @@ NA_IDEF NAInt naRand(){
 NA_IDEF void naSRand(uint32 seed){
   #if NA_OS == NA_OS_WINDOWS
     srand(seed);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     srand(seed);
   #endif
 }

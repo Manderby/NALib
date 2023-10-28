@@ -159,7 +159,7 @@ NA_HDEF NAPNGChunk* na_AllocPNGChunkFromBuffer(NABufferIterator* iter){
   }
 
   chunk->type = NA_PNG_CHUNK_TYPE_UNKNOWN;
-  for(i = 0; i < NA_PNG_CHUNK_TYPE_COUNT; i++){
+  for(i = 0; i < NA_PNG_CHUNK_TYPE_COUNT; ++i){
     if(naEqual32(na_PngChunkTypeNames[i], chunk->typeName)){
       chunk->type = (NAChunkType)i;
       break;
@@ -878,29 +878,29 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath){
   NAChecksum checksum;
   NAFile* outFile;
   NAListIterator iter;
-  NABufferIterator iterout;
+  NABufferIterator iterOut;
 
   naAddListLastMutable(&(png->chunks), na_AllocPNGIHDRChunk(png));
   naAddListLastMutable(&(png->chunks), na_AllocPNGIDATChunk(png));
   naAddListLastMutable(&(png->chunks), na_AllocPNGIENDChunk(png));
 
   outbuffer = naCreateBuffer(NA_FALSE);
-  iterout = naMakeBufferMutator(outbuffer);
+  iterOut = naMakeBufferMutator(outbuffer);
   naSetBufferEndianness(outbuffer, NA_ENDIANNESS_NETWORK);
 
-  naWriteBufferBytes(&iterout, na_PngMagic, 8);
+  naWriteBufferBytes(&iterOut, na_PngMagic, 8);
 
   naBeginListMutatorIteration(NAPNGChunk* chunk, &(png->chunks), iter);
     naFixBufferRange(chunk->data);
 
     chunk->length = (uint32)naGetBufferRange(chunk->data).length;
-    naWriteBufferu32(&iterout, chunk->length);
+    naWriteBufferu32(&iterOut, chunk->length);
 
     naCopy32(chunk->typeName, na_PngChunkTypeNames[chunk->type]);
-    naWriteBufferBytes(&iterout, chunk->typeName, 4);
+    naWriteBufferBytes(&iterOut, chunk->typeName, 4);
 
     if(!naIsBufferEmpty(chunk->data)){
-      naWriteBufferBuffer(&iterout, chunk->data, naGetBufferRange(chunk->data));
+      naWriteBufferBuffer(&iterOut, chunk->data, naGetBufferRange(chunk->data));
     }
 
     naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
@@ -910,10 +910,10 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath){
     }
     chunk->crc = naGetChecksumResult(&checksum);
     naClearChecksum(&checksum);
-    naWriteBufferu32(&iterout, chunk->crc);
+    naWriteBufferu32(&iterOut, chunk->crc);
   naEndListIteration(iter);
 
-  naClearBufferIterator(&iterout);
+  naClearBufferIterator(&iterOut);
 
   outFile = naCreateFileWritingPath(filePath, NA_FILEMODE_DEFAULT);
   naFixBufferRange(outbuffer);

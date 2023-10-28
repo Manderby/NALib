@@ -9,7 +9,7 @@
 #if NA_OS == NA_OS_WINDOWS
   #include <time.h>
 //  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_s(storage, tme);}
-#elif NA_OS == NA_OS_MAC_OS_X
+#elif NA_IS_POSIX
   #include <sys/time.h>
 //  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_r(tme, storage);}
 #else
@@ -75,7 +75,7 @@ typedef struct{
 } NATAIPeriod;
 
 // Leap second information:
-#define NA_TAI_PERIODS_COUNT 105
+#define NA_TAI_PERIODS_COUNT 106
 
 // This table stores all leap second entries since 1958. Every year has at
 // least 1 entry. Every entry defines, what the number of its first second is.
@@ -189,7 +189,8 @@ NATAIPeriod naTAIPeriods[NA_TAI_PERIODS_COUNT] = {
   {naMakeu64WithLiteralLo(1956528000), naMakeu64WithLiteralLo(1956528037), 2020, NA_START_JANUARY_FIRST},
   {naMakeu64WithLiteralLo(1988150400), naMakeu64WithLiteralLo(1988150437), 2021, NA_START_JANUARY_FIRST},
   {naMakeu64WithLiteralLo(2019686400), naMakeu64WithLiteralLo(2019686437), 2022, NA_START_JANUARY_FIRST},
-  {naMakeu64WithLiteralLo(2035324800), naMakeu64WithLiteralLo(2035324837), 2022, NA_START_JULY_FIRST},
+  {naMakeu64WithLiteralLo(2051222400), naMakeu64WithLiteralLo(2051222437), 2023, NA_START_JANUARY_FIRST},
+  {naMakeu64WithLiteralLo(2066860800), naMakeu64WithLiteralLo(2066860838), 2023, NA_START_JULY_FIRST},
   // the last entry is the first date with unknown future leap seconds.
   // everything up and including that date is known.
 };
@@ -324,7 +325,7 @@ NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(NAi64 gregsecond){
 NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
   int32 i;
   int32 monthindex = -1;
-  for(i = 0; i < NA_MONTHS_PER_YEAR; i++){
+  for(i = 0; i < NA_MONTHS_PER_YEAR; ++i){
     if(naEqualStringToUTF8CString(str, na_MonthEnglishAbbreviationNames[i], NA_TRUE)){
       monthindex = i;
       break;
@@ -342,14 +343,14 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   int32 monthindex = -1;
   if(naStrlen(str)){
     int32 i;
-    for(i = 0; i<NA_MONTHS_PER_YEAR; i++){
+    for(i = 0; i<NA_MONTHS_PER_YEAR; ++i){
       if(naEqualUTF8CStringLiterals(str, na_MonthEnglishNames[i], 0, NA_FALSE)){
         monthindex = i;
         break;
       }
     }
     if(monthindex == -1){
-      for(i = 0; i<NA_MONTHS_PER_YEAR; i++){
+      for(i = 0; i<NA_MONTHS_PER_YEAR; ++i){
         if(naEqualUTF8CStringLiterals(str, na_MonthEnglishAbbreviationNames[i], 0, NA_FALSE)){
           monthindex = i;
           break;
@@ -387,7 +388,7 @@ NA_DEF NADateTime naMakeDateTimeNow(){
     // Daylight saving is active if the function returns 2.
     NAInt daylightCode = GetTimeZoneInformation(&timeZone);
     return naMakeDateTimeFromFileTime(&fileTime, &timeZone, daylightCode == 2);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     struct timeval curtime;
     NATimeZone curTimeZone;
     gettimeofday(&curtime, &curTimeZone);
@@ -818,7 +819,11 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylight
     return dateTime;
   }
 
-#elif NA_OS == NA_OS_MAC_OS_X
+#elif NA_IS_POSIX
+
+  #if NA_OS == NA_OS_MAC_OS_X
+  #define time_t __darwin_time_t
+  #endif
 
   NA_DEF struct timespec naMakeTimeSpecFromDateTime(const NADateTime* dateTime, NABool daylightSaving){
     NA_UNUSED(daylightSaving);
@@ -831,11 +836,11 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylight
       #if !defined NA_TYPE_INT64
         // We fall back to 32 bits as there simply is no solution to this problem.
         #error "impossible to convert 64 bit integer. Falling back to 32 bits"
-        timeSpec.tv_sec = (__darwin_time_t)naCasti64Toi32(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
-        timeSpec.tv_sec -= (__darwin_time_t)naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
+        timeSpec.tv_sec = (time_t)naCasti64Toi32(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
+        timeSpec.tv_sec -= (time_t)naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
       #else
-        timeSpec.tv_sec = (__darwin_time_t)(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
-        timeSpec.tv_sec -= (__darwin_time_t)NA_DATETIME_SISEC_UNIX_YEAR_ZERO;
+        timeSpec.tv_sec = (time_t)(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
+        timeSpec.tv_sec -= (time_t)NA_DATETIME_SISEC_UNIX_YEAR_ZERO;
       #endif
     #endif
     timeSpec.tv_nsec = dateTime->nanoSecond;
@@ -1090,7 +1095,7 @@ NA_DEF void naExtractDateTimeInformation(
     d = dts->day + 1;
     y = dts->year;
     mon = dts->mon + 1;
-    if(mon<3){mon+=12; naDeci64(y);}
+    if(mon<3){mon += 12; naDeci64(y);}
     K = naModi64(naAddi64(naModi64(y, naMakei64WithLo(100)), naMakei64WithLo(100)), naMakei64WithLo(100));
     if(naSmalleri64(y, NA_ZERO_i64)){
       J = naDivi64(naAddi64(y, NA_ONE_i64), naMakei64WithLo(100));

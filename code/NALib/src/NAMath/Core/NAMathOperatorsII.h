@@ -228,7 +228,7 @@ NA_IDEF double naCbrt(double x){
   #endif
   #if NA_OS == NA_OS_WINDOWS
     return pow(x, NA_THIRD);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return cbrt(x);
   #endif
 }
@@ -239,7 +239,7 @@ NA_IDEF float naCbrtf(float x){
   #endif
   #if NA_OS == NA_OS_WINDOWS
     return powf(x, NA_THIRDf);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return cbrtf(x);
   #endif
 }
@@ -285,14 +285,14 @@ NA_IDEF float naCeilf(float x){
 NA_IDEF double naRound(double x){
   #if NA_OS == NA_OS_WINDOWS
     return floor(x + .5);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return round(x);
   #endif
 }
 NA_IDEF float naRoundf(float x){
   #if NA_OS == NA_OS_WINDOWS
     return floorf(x + .5f);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return roundf(x);
   #endif
 }
@@ -451,7 +451,7 @@ NA_IDEF double naLog2(double x){
   #endif
   #if NA_OS == NA_OS_WINDOWS
     return log(x) * NA_INV_LOGOF2;
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return log2(x);
   #endif
 }
@@ -462,7 +462,7 @@ NA_IDEF float naLog2f(float x){
   #endif
   #if NA_OS == NA_OS_WINDOWS
     return logf(x) * NA_INV_LOGOF2f;
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return log2f(x);
   #endif
 }
@@ -503,14 +503,14 @@ NA_IDEF NAi64 naLog2i64(NAi64 x){
 NA_IDEF double naExp2(double x){
   #if NA_OS == NA_OS_WINDOWS
     return pow(2., x);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return exp2(x);
   #endif
 }
 NA_IDEF float naExp2f(float x){
   #if NA_OS == NA_OS_WINDOWS
     return powf(2.f, x);
-  #elif NA_OS == NA_OS_MAC_OS_X
+  #elif NA_IS_POSIX
     return exp2f(x);
   #endif
 }

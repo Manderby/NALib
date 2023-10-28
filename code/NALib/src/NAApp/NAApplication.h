@@ -19,13 +19,18 @@
 NA_API void naStartApplication(
   NAMutator preStartup,
   NAMutator postStartup,
+  NAMutator cleanup,
   void* arg);
 
 // All arguments can be NA_NULL but the arguments allow you to ask NALib to
 // call the given two startup functions with the given arg. The precise order
 // of the calls is described here:
 //
-// Mac: - NALib calls [NSApplication sharedApplication]
+// Mac: - NALib calls [NSApplication sharedApplication]. If you have already
+//        created an application (for example by using a XIB file), then that
+//        application is used. If you need your own delegate, you have to set
+//        it before calling naStartApplication, otherwise, the application
+//        startup might not work as expected.
 //      - NALib allocates some structures in the background to run the UI
 //        including the application internal translator.
 //      - NALib creates an NSAutoreleasePool (only when ARC is turned off)
@@ -34,12 +39,13 @@ NA_API void naStartApplication(
 //        * NALib calls [NSApp finishLaunching] which in turn will post an
 //          NSApplicationWillFinishLaunchingNotification to whatever
 //          application delegate you might have set.
-//        * NALib calls postStartup with arg.
 //      - NALib drains the autorelease pool. (only when ARC is turned off)
 //      - NALib will start a message loop. When ARC is turned off, a new
 //        NSAutoreleasePools is created for each and every message. At its
 //        first run, a message to NSApplicationDidFinishLaunchingNotification
 //        will be sent to your application delegate.
+//      - The first time an applicationDidBecomeActive notification is sent,
+//        The postStartup function is called with arg.
 //
 // Win: - NALib registers its window classes
 //      - NALib allocates some structures in the background to run the UI
@@ -66,6 +72,12 @@ NA_API void naStartApplication(
 // you would like to control. You are of course free to do this in the
 // didFinishLaunching method of your NSApplication delegate on a Mac, if you
 // really want to.
+//
+// cleanup:
+// When the application loop is terminated, this function gets called right
+// before the application object itself gets erased from memory. Clean up
+// everything concerning UI or other business data you built up in preStartup
+// and postStartup here.
 
 
 
@@ -86,7 +98,7 @@ NA_API void naStartApplication(
 //   naStartRuntime();
 //   [MyExistingApplication sharedApplication];
 //   naStartApplication(NA_NULL, postStartup, NA_NULL);
-//   naEndRundime();
+//   naStopRuntime();
 //   return 0;
 // }
 //
@@ -143,13 +155,25 @@ NA_API void naResetApplicationPreferredTranslatorLanguages(void);
 // can be extracted automatically from a plist file if not defined. On windows
 // though, one has to provide it using the following functions. Note that also
 // on Mac, the settings provided here override anything read from a plist.
-NA_API void naSetApplicationName(NAUTF8Char* name);
-NA_API void naSetApplicationCompanyName(NAUTF8Char* name);
-NA_API void naSetApplicationVersionString(NAUTF8Char* string);
-NA_API void naSetApplicationBuildString(NAUTF8Char* string);
-NA_API void naSetApplicationIconPath(NAUTF8Char* path);
+//
+// On windows, when creating an installer, you might want to set the resource
+// path to something like this to be able to locate resources relative to
+// the installation directory (best to do this in a preStartup function as
+// this needs an NAApplication to be running):
+// 
+// NAString* appPath = naNewApplicationPath();
+// naSetApplicationResourcePath(naGetStringUTF8Pointer(appPath));
+// naDelete(appPath);
+
+NA_API void naSetApplicationName(const NAUTF8Char* name);
+NA_API void naSetApplicationCompanyName(const NAUTF8Char* name);
+NA_API void naSetApplicationVersionString(const NAUTF8Char* string);
+NA_API void naSetApplicationBuildString(const NAUTF8Char* string);
+NA_API void naSetApplicationResourcePath(const NAUTF8Char* path);
+NA_API void naSetApplicationIconPath(const NAUTF8Char* path);
 
 // Retrieve the informations. All functions might return NA_NULL.
+NA_API NAString* naNewApplicationPath(void);
 NA_API NAString* naNewApplicationName(void);
 NA_API NAString* naNewApplicationCompanyName(void);
 NA_API NAString* naNewApplicationVersionString(void);
@@ -168,15 +192,23 @@ NA_API NAString* naNewApplicationResourcePath(
 
 
 // ////////////////////////////////
-// macOS nib loading.
+// macOS specific functions.
 
 #if NA_OS == NA_OS_MAC_OS_X
+
   // If you are on macOS and need to load in a NIB file, use the following
   // function. Note that this function also works on older systems.
-  NABool naLoadNib(const NAUTF8Char* nibName);
+  NABool naLoadNib(const NAUTF8Char* nibName, void* owner);
   // You usually load nibs after the application startup. A good idea is to
   // do it in the postStartup callback of naStartApplication.
-#endif
+
+  // Sets the macintosh application to graphite appearance. This only is
+  // possible before macOS 11. Requires an autorelease pool to be available.
+  // A good idea is to call this in the preStartup callback of
+  // naStartApplication.
+  void naSwitchApplicationToGraphiteAppearance(void);
+
+#endif // macOS specific functions
 
 
 

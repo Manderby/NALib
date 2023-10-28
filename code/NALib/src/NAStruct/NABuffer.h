@@ -13,10 +13,10 @@ typedef struct NABufferIterator NABufferIterator;
 
 
 
-#include "NABase.h"
-#include "NACoord.h"
-#include "NAFile.h"
-#include "NAString.h"
+#include "../NABase/NABase.h"
+#include "../NAMath/NACoord.h"
+#include "../NAUtility/NAFile.h"
+#include "../NAUtility/NAString.h"
 
 
 // This file contains the API for NABuffer.

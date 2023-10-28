@@ -6,7 +6,7 @@
 #endif
 
 
-#include "NAList.h"
+#include "../NAStruct/NAList.h"
 #include "NAString.h"
 
 

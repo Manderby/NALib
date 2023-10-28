@@ -3,8 +3,8 @@
 // Do not include this file directly! It will automatically be included when
 // including "NAKey.h"
 
-#include "NACoord.h"
-#include "NADateTime.h"
+#include "../../NAMath/NACoord.h"
+#include "../../NAUtility/NADateTime.h"
 
 
 

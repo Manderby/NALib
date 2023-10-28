@@ -14,15 +14,16 @@
   return self;
 }
 
-- (int) getMenuItemIndex:(NSMenuItem*)item{
-  if(!item){return -1;}
-  NSUInteger index = [[self itemArray] indexOfObject:item];
-  return index == NSNotFound ? -1 : (int)index;
-}
+//- (int) getMenuItemIndex:(NSMenuItem*)item{
+//  if(!item){return -1;}
+//  NSUInteger index = [[self itemArray] indexOfObject:item];
+//  return index == NSNotFound ? -1 : (int)index;
+//}
 
-- (void) addMenuItem:(NSMenuItem*)item atItem:(NSMenuItem*)atItem{  
-  int index = [self getMenuItemIndex:atItem];
-  if(index == -1){
+- (void) addMenuItem:(NSMenuItem*)item atItem:(const NAMenuItem*)atItem{
+  size_t index = naGetMenuItemIndex(&(cocoaMenu->menu), atItem);
+  //int index = [self getMenuItemIndex:atItem];
+  if(index == naGetMenuItemCount(&(cocoaMenu->menu))){
     [self addItem:item];
   }else{
     [self insertItem:item atIndex: (NSInteger)index];
@@ -68,8 +69,8 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
   naDefineCocoaObject(NACocoaNativeMenuItem, nativeItemPtr, item);
 
   if(atItem){
-    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
-    [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nativeItemAtPtr];
+//    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
+    [nativeMenuPtr addMenuItem:nativeItemPtr atItem:atItem];
   }else{
     [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];
   }
@@ -79,25 +80,11 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
 
 
 
-NA_DEF size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item){
-  return naGetListElemIndex(&(menu->childs), item);
-}
-
-
-
 NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement){
   NA_UNUSED(parentUIElement);
   naDefineCocoaObjectConst(NACocoaNativeMenu, nativePtr, menu);
   [nativePtr displayAt:pos];
 }
-
-
-
-NA_HDEF NARect na_GetMenuAbsoluteInnerRect(const NA_UIElement* menu){
-  NA_UNUSED(menu);
-  return naMakeRectS(0, 0, 1, 1);
-}
-
 
 
 

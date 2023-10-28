@@ -1,13 +1,14 @@
 
-#include "NATesting.h"
+#include "NATest.h"
+#include "NABase/NABase.h"
 #include <stdio.h>
 
 
 
 void testNAInteger(void){
   naTestGroup("NABool typedefs"){
-    NABool bool = NA_TRUE;
-    naTest(bool == NA_TRUE);
+    NABool boolean = NA_TRUE;
+    naTest(boolean == NA_TRUE);
   }
 
   naTestGroup("native typedefs"){

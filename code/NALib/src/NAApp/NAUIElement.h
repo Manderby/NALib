@@ -38,9 +38,9 @@ typedef struct NAMenu           NAMenu;
 typedef struct NAMenuItem       NAMenuItem;
 typedef struct NAMetalSpace     NAMetalSpace;
 typedef struct NAOpenGLSpace    NAOpenGLSpace;
-typedef struct NAPopupButton    NAPopupButton;
 typedef struct NARadio          NARadio;
 typedef struct NAScreen         NAScreen;
+typedef struct NASelect         NASelect;
 typedef struct NASlider         NASlider;
 typedef struct NASpace          NASpace;
 typedef struct NATextBox        NATextBox;
@@ -56,6 +56,7 @@ typedef struct NAWindow         NAWindow;
 // the following enum and function.
 
 typedef enum{
+  NA_UI_ELEMENT_UNDEFINED = 0,
   NA_UI_APPLICATION,
   NA_UI_BUTTON,
   NA_UI_CHECKBOX,
@@ -65,9 +66,9 @@ typedef enum{
   NA_UI_MENUITEM,
   NA_UI_METAL_SPACE,
   NA_UI_OPENGL_SPACE,
-  NA_UI_POPUP_BUTTON,
   NA_UI_RADIO,
   NA_UI_SCREEN,
+  NA_UI_SELECT,
   NA_UI_SLIDER,
   NA_UI_SPACE,
   NA_UI_TEXTBOX,
@@ -100,19 +101,14 @@ NA_API NASpace* naGetUIElementParentSpace(void* uiElement);
 // handed coordinate system. The origin of the global coordinate system is
 // at the lower left screen corner of the main screen.
 //
-// Using naGetUIElementRect, you can get the rect of any ui element relative
-// to another element. If you send the NAApplication instance as the relative
-// element, (using naGetApplication), you will get global coordinates. If you
-// send NA_NULL as the relative element, you will get coordinates relative to
-// the parent element.
+// Using naGetUIElementRect, you can get the rect of any ui element either
+// in absolute coordinates or in relative coordinates to its parent element.
 //
-// Note that the includeBorder argument only works for windows for now. It
-// returns either the content rectangle (client rectangle) or the window
-// outer frame.
-NA_API NARect naGetUIElementRect(
-  const void* uiElement,
-  const void* relativeuiElement,
-  NABool includeBorder);
+// Note that elements always return the inner (client) rect. For example
+// windows will not return their outer boundary.
+NA_API NARect naGetUIElementRect(const void* uiElement);
+NA_API NARect naGetUIElementRectAbsolute(const void* uiElement);
+NA_API void   naSetUIElementRect(void* uiElement, NARect rect);
 
 // You can ask any ui element to refresh its contents. This will cause the
 // element to be displayed anew. The time difference defines when the refresh
@@ -130,7 +126,7 @@ NA_API void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
 // Returns the resolution scale factor for the given element. Is 2 for example
 // on high resolution display settings. Returns 1 if no parent window or screen
 // can be found, as well as for NAApplication
-NA_API double naGetUIElementResolutionFactor(void* uiElement);
+NA_API double naGetUIElementResolutionFactor(const void* uiElement);
 
 // Native IDs
 //

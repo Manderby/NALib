@@ -95,7 +95,7 @@ NA_HDEF NABool na_AccumulateBufferLocation(void* token, NAPtr nodeData, NAInt ch
 NA_DEF NAInt naGetBufferLocation(const NABufferIterator* iter){
   #if NA_DEBUG
     if(iter->curBit != 0)
-      naError("Buffer bitcount is not Null.");
+      naError("Buffer bitCount is not Null.");
   #endif
   if(naIsTreeAtInitial(&(iter->partIter))){
     return (NAInt)iter->partOffset;
@@ -153,7 +153,7 @@ NA_HDEF NAInt na_SearchBufferLeaf(void* token, NAPtr data){
 NA_HDEF NABool na_LocateBufferStart(NABufferIterator* iter){
   #if NA_DEBUG
     if(iter->curBit != 0)
-      naError("Buffer bitcount is not Null.");
+      naError("Buffer bitCount is not Null.");
   #endif
   iter->curBit = 0;
   iter->lineNum = 0;
@@ -173,7 +173,7 @@ NA_HDEF NABool na_LocateBufferStart(NABufferIterator* iter){
 NA_HDEF NABool na_LocateBufferLastPart(NABufferIterator* iter){
   #if NA_DEBUG
     if(iter->curBit != 0)
-      naError("Buffer bitcount is not Null.");
+      naError("Buffer bitCount is not Null.");
   #endif
   iter->curBit = 0;
   iter->lineNum = 0;
@@ -193,7 +193,7 @@ NA_HDEF NABool na_LocateBufferLastPart(NABufferIterator* iter){
 NA_HDEF NABool na_LocateBufferNextPart(NABufferIterator* iter){
   #if NA_DEBUG
     if(iter->curBit != 0)
-      naError("Buffer bitcount is not Null.");
+      naError("Buffer bitCount is not Null.");
   #endif
   iter->curBit = 0;
   iter->lineNum = 0;
@@ -213,7 +213,7 @@ NA_HDEF NABool na_LocateBufferNextPart(NABufferIterator* iter){
 NA_HDEF NABool na_LocateBufferPrevPartMax(NABufferIterator* iter){
   #if NA_DEBUG
     if(iter->curBit != 0)
-      naError("Buffer bitcount is not Null.");
+      naError("Buffer bitCount is not Null.");
   #endif
   iter->curBit = 0;
   iter->lineNum = 0;
@@ -233,7 +233,7 @@ NA_HDEF NABool na_LocateBufferPrevPartMax(NABufferIterator* iter){
 NA_HDEF NABool na_LocateBufferMax(NABufferIterator* iter){
   #if NA_DEBUG
     if(iter->curBit != 0)
-      naError("Buffer bitcount is not Null.");
+      naError("Buffer bitCount is not Null.");
   #endif
   naLocateTreeLast(&(iter->partIter));
   if(naIsTreeAtInitial(&(iter->partIter))){
@@ -252,7 +252,7 @@ NA_HDEF NABool na_LocateBufferEnd(NABufferIterator* iter){
   const NABuffer* buffer;
   #if NA_DEBUG
     if(iter->curBit != 0)
-      naError("Buffer bitcount is not Null.");
+      naError("Buffer bitCount is not Null.");
   #endif
   buffer = na_GetBufferIteratorBufferConst(iter);
   if(buffer->range.length){
@@ -269,7 +269,7 @@ NA_HDEF NABool na_IterateBufferPart(NABufferIterator* iter){
   NABool success;
   #if NA_DEBUG
     if(iter->curBit != 0)
-      naError("Buffer bitcount is not Null.");
+      naError("Buffer bitCount is not Null.");
     if(iter->partOffset != 0)
       naError("partOffset is not Null.");
   #endif
@@ -346,11 +346,12 @@ NA_DEF NABool naIterateBuffer(NABufferIterator* iter, NAInt step){
   iter->partOffset += (size_t)step;
   if(step > 0){
     while(!naIsTreeAtInitial(&(iter->partIter)) && iter->partOffset >= (NAInt)na_GetBufferPartByteSize(part)){
-      iter->partOffset -= na_GetBufferPartByteSize(part);
       naIterateTree(&(iter->partIter), NA_NULL, NA_NULL);
       if(!naIsTreeAtInitial(&(iter->partIter))){
+        iter->partOffset -= na_GetBufferPartByteSize(part);
         part = naGetTreeCurLeafConst(&(iter->partIter));
       }else{
+        iter->partOffset = naGetRangeiEnd(buffer->range);
         part = NA_NULL;
       }
     }
@@ -358,9 +359,10 @@ NA_DEF NABool naIterateBuffer(NABufferIterator* iter, NAInt step){
     while(!naIsTreeAtInitial(&(iter->partIter)) && iter->partOffset < 0){
       naIterateTreeBack(&(iter->partIter), NA_NULL, NA_NULL);
       if(!naIsTreeAtInitial(&(iter->partIter))){
-        part = naGetTreeCurLeafConst(&(iter->partIter));
         iter->partOffset += na_GetBufferPartByteSize(part);
+        part = naGetTreeCurLeafConst(&(iter->partIter));
       }else{
+        iter->partOffset = naGetRangeiEnd(buffer->range);
         part = NA_NULL;
       }
     }
@@ -419,7 +421,7 @@ NA_HDEF void na_PrepareBuffer(NABufferIterator* iter, size_t byteCount){
   NATreeIterator firstBufIterator;
   #if NA_DEBUG
     if(naGetBufferCurBit(iter))
-      naError("bitcount should be 0");
+      naError("bitCount should be 0");
     if(byteCount == 0)
       naError("byteCount should be >= 1");
   #endif
