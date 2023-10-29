@@ -10,6 +10,7 @@ typedef enum{
   IMAGE_RAINBOW,
   IMAGE_LENZBURG,
   IMAGE_CAT_SILHOUETTE,
+  IMAGE_TEXT,
   IMAGE_RUBIK,
   IMAGE_FEATHER,
   IMAGE_MOTOR,
@@ -20,6 +21,7 @@ const NAUTF8Char* imageNames[IMAGE_COUNT] = {
   "Rainbow",
   "Lenzburg",
   "Cat Silhouette",
+  "Text",
   "Rubik",
   "Feather",
   "Motor",
@@ -29,6 +31,7 @@ const NAUTF8Char* imagePaths[IMAGE_COUNT] = {
   "rainbow.png",
   "lenzburg.png",
   "catSilhouette.png",
+  "text.png",
   "rubik.png",
   "feather.png",
   "motor.png",
@@ -42,6 +45,8 @@ typedef enum{
   COLOR_CYAN,
   COLOR_BLUE,
   COLOR_MAGENTA,
+  COLOR_WHITE,
+  COLOR_BLACK,
   COLOR_COUNT
 } Colors;
 
@@ -53,6 +58,8 @@ const NAUTF8Char* colorNames[COLOR_COUNT] = {
   "Cyan",
   "Blue",
   "Magenta",
+  "White",
+  "Black",
 };
 
 const NABabyColor colors[COLOR_COUNT] = {
@@ -63,6 +70,8 @@ const NABabyColor colors[COLOR_COUNT] = {
   {0., 1., 1., 1.},
   {0., 0., 1., 1.},
   {1., 0., 1., 1.},
+  {1., 1., 1., 1.},
+  {0., 0., 0., 1.},
 };
 
 struct ImageTesterApplication{

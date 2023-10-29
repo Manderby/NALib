@@ -391,13 +391,10 @@ NABabyImage* na_CreateBlendedBabyImage(
             float baseBlend = baseColorFactor / colorSum;
             float topBlend = 1.f - baseBlend;
             naFillV4f(retPtr,
-              baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[0])) * (1.f - naUnlinearizeColorValue(basePtr[0]))),
-              baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[1])) * (1.f - naUnlinearizeColorValue(basePtr[1]))),
-              baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[2])) * (1.f - naUnlinearizeColorValue(basePtr[2]))),
-              (1.f - blend) * basePtr[3] + blend * (1.f - naLinearizeColorValue(baseHSL[2])) * basePtr[3] * topPtr[3]);
-            // Note that naLinearizeColorValue is not mathematically correct
-            // but yields visually more pleasing results. There is no perfect
-            // solution as no colorspace is distance-preserving.
+              baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[0]))),
+              baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[1]))),
+              baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[2]))),
+              (1.f - blend) * basePtr[3] + blend * (1.f - baseHSL[2]) * basePtr[3] * topPtr[3]);
           }else{
             naFillV4f(retPtr, 0., 0., 0., 0.);
           }
@@ -421,9 +418,9 @@ NABabyImage* na_CreateBlendedBabyImage(
             float baseBlend = baseColorFactor / colorSum;
             float topBlend = 1.f - baseBlend;
             naFillV4f(retPtr,
-              baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]) * naUnlinearizeColorValue(basePtr[0]),
-              baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]) * naUnlinearizeColorValue(basePtr[1]),
-              baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * naUnlinearizeColorValue(topPtr[2]) * naUnlinearizeColorValue(basePtr[2]),
+              baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]),
+              baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]),
+              baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * naUnlinearizeColorValue(topPtr[2]),
               (1.f - blend) * basePtr[3] + blend * baseHSL[2] * basePtr[3] * topPtr[3]);
           }else{
             naFillV4f(retPtr, 0., 0., 0., 0.);

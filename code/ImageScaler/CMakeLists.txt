@@ -53,6 +53,9 @@ add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_CURRENT_SOURCE_DIR}/res/transparencyGrid.png
       \"${OUTPUT_DIRECTORY}transparencyGrid.png\"
+  COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/res/text.png
+      \"${OUTPUT_DIRECTORY}text.png\"
 )
 
 
