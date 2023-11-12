@@ -1143,10 +1143,10 @@ NA_DEF NAString* naNewStringFromSecondDifference(double difference,
   allseconds = naDivi64(allseconds, naMakei64WithLo(NA_HOURS_PER_DAY));
 
   if(decimalDigits){
-    NAString* decimalformatstring;
-    decimalformatstring = naNewStringWithFormat(".%%0%dlld", decimalDigits);
-    decimalstring = naNewStringWithFormat(naGetStringUTF8Pointer(decimalformatstring), decimals);
-    naDelete(decimalformatstring);
+    NAString* decimalformatString;
+    decimalformatString = naNewStringWithFormat(".%%0%dlld", decimalDigits);
+    decimalstring = naNewStringWithFormat(naGetStringUTF8Pointer(decimalformatString), decimals);
+    naDelete(decimalformatString);
   }else{
     decimalstring = naNewString();
   }

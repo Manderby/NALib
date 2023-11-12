@@ -752,9 +752,9 @@ NA_DEF void naAppendStringFormat(NAString* originalString, const NAUTF8Char* for
 
 
 NA_DEF void naAppendStringArguments(NAString* originalString, const NAUTF8Char* format, va_list argumentList){
-  NAString* formatstring = naNewStringWithArguments(format, argumentList);
-  naAppendBufferToBuffer(originalString->buffer, formatstring->buffer);
-  naDelete(formatstring);
+  NAString* formatString = naNewStringWithArguments(format, argumentList);
+  naAppendBufferToBuffer(originalString->buffer, formatString->buffer);
+  naDelete(formatString);
 }
 
 
