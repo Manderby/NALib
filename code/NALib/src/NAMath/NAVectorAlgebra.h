@@ -805,18 +805,18 @@ NA_IAPI void naCopyM44fE(float*  D, const float*  A);
 // Negates the matrix. D = -A
 // S shall not overlap D. Warnings will be emitted.
 // The E variant allows S and D to be equal.
-NA_IAPI void naNegM22d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naNegM33d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naNegM44d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naNegM22f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naNegM33f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naNegM44f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naNegM22dE(double* D, double* A);
-NA_IAPI void naNegM33dE(double* D, double* A);
-NA_IAPI void naNegM44dE(double* D, double* A);
-NA_IAPI void naNegM22fE(float*  D, float*  A);
-NA_IAPI void naNegM33fE(float*  D, float*  A);
-NA_IAPI void naNegM44fE(float*  D, float*  A);
+NA_IAPI void naNegM22d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naNegM33d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naNegM44d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naNegM22f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naNegM33f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naNegM44f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naNegM22dE(double* D, const double* A);
+NA_IAPI void naNegM33dE(double* D, const double* A);
+NA_IAPI void naNegM44dE(double* D, const double* A);
+NA_IAPI void naNegM22fE(float*  D, const float*  A);
+NA_IAPI void naNegM33fE(float*  D, const float*  A);
+NA_IAPI void naNegM44fE(float*  D, const float*  A);
 NA_IAPI void naNegM22dS(double* D);
 NA_IAPI void naNegM33dS(double* D);
 NA_IAPI void naNegM44dS(double* D);
