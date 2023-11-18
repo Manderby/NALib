@@ -370,8 +370,9 @@ NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
       retFont = naCreateFont("Palatino", NA_FONT_FLAG_REGULAR, baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      // Note: Times new roman would be better but unicode support is worse.
-      retFont = naCreateFont("Times new roman", NA_FONT_FLAG_ITALIC, baseSize);
+      // Note: Times new roman would be more traditional but unicode support is worse.
+      retFont = naCreateFont("STIX Two Math", NA_FONT_FLAG_REGULAR, baseSize);
+      //retFont = naCreateFont("STIX Two Text", NA_FONT_FLAG_ITALIC, baseSize);
       break;
     default:
       #if NA_DEBUG
