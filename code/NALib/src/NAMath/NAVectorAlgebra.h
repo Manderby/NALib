@@ -1059,25 +1059,25 @@ NA_IAPI NABool naEqualM33fE(const float*  a, const float*  b);
 NA_IAPI NABool naEqualM44fE(const float*  a, const float*  b);
 
 // Computes the determinant of a matrix.
-NA_IAPI double naDetM22d(double* A);
-NA_IAPI double naDetM33d(double* A);
-NA_IAPI double naDetM44d(double* A);
+NA_IAPI double naDetM22d(const double* A);
+NA_IAPI double naDetM33d(const double* A);
+NA_IAPI double naDetM44d(const double* A);
 
 // Transposes the matrix.
 // E variant allows both pointers to be equal
 // S variant transposes the matrix itself.
-NA_IAPI void naTransposeM22d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naTransposeM33d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naTransposeM44d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naTransposeM22f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naTransposeM33f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naTransposeM44f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naTransposeM22dE(double* D, double* A);
-NA_IAPI void naTransposeM33dE(double* D, double* A);
-NA_IAPI void naTransposeM44dE(double* D, double* A);
-NA_IAPI void naTransposeM22fE(float*  D, float*  A);
-NA_IAPI void naTransposeM33fE(float*  D, float*  A);
-NA_IAPI void naTransposeM44fE(float*  D, float*  A);
+NA_IAPI void naTransposeM22d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naTransposeM33d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naTransposeM44d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naTransposeM22f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naTransposeM33f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naTransposeM44f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naTransposeM22dE(double* D, const double* A);
+NA_IAPI void naTransposeM33dE(double* D, const double* A);
+NA_IAPI void naTransposeM44dE(double* D, const double* A);
+NA_IAPI void naTransposeM22fE(float*  D, const float*  A);
+NA_IAPI void naTransposeM33fE(float*  D, const float*  A);
+NA_IAPI void naTransposeM44fE(float*  D, const float*  A);
 NA_IAPI void naTransposeM22dS(double* D);
 NA_IAPI void naTransposeM33dS(double* D);
 NA_IAPI void naTransposeM44dS(double* D);
