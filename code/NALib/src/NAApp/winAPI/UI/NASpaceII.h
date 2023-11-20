@@ -197,6 +197,12 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color){
 
 
 
+NA_API void naRemoveSpaceChild(NASpace* space, void* child){
+  // todo
+}
+
+
+
 NA_DEF void naRemoveAllSpaceChilds(NASpace* space){
   // todo
 }
