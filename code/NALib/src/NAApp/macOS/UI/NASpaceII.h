@@ -198,8 +198,23 @@ NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos
 
 
 
-NA_DEF void naRemoveSpaceChilds(NASpace* _Nonnull space)
-{
+NA_DEF void naRemoveSpaceChild(NASpace* _Nonnull space, void* _Nonnull child){
+  NAListIterator iter = naMakeListModifier(&(space->childs));
+  NABool found = naLocateListData(&iter, child);
+  naClearListIterator(&iter);
+  if(found){
+    na_RemoveSpaceChild(space, child);
+    [(NA_COCOA_BRIDGE NSView*)(naGetUIElementNativePtr(child)) removeFromSuperview];
+  }else{
+    #if NA_DEBUG
+      naError("Child UI element not found in given space.");
+    #endif
+  }
+}
+
+
+
+NA_DEF void naRemoveAllSpaceChilds(NASpace* _Nonnull space){
   while(!naIsListEmpty(&(space->childs))){
     void* child = naGetListFirstMutable(&(space->childs));
     na_RemoveSpaceChild(space, child);
@@ -209,8 +224,7 @@ NA_DEF void naRemoveSpaceChilds(NASpace* _Nonnull space)
 
 
 
-NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift)
-{
+NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift){
   NAListIterator childIt = naMakeListMutator(&(space->childs));
   while(naIterateList(&childIt)){
     void* child = naGetListCurMutable(&childIt);
