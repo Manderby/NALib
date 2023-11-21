@@ -247,7 +247,7 @@ NABool pressExperimentButton(NAReaction reaction){
   }else if(reaction.uiElement == con->buttonButton){
     showButtons();
   }else if(reaction.uiElement == con->converterButton){
-    createTemperatureController();
+    allocTemperatureController();
   }else if(reaction.uiElement == con->quitButton){
     naStopApplication();
   }

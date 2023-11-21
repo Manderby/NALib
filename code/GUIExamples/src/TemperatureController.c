@@ -20,23 +20,19 @@ struct TemperatureController{
 
 
 // Will be called when the calculate Button or Enter is pressed.
-NABool pressButton(NAReaction reaction){
+NABool computeResults(NAReaction reaction){
   // The reaction parameter contains - amongst other things - the controller
   // provided with naAddUIReaction.
   TemperatureController* con = reaction.controller;
 
   // Read out the textField
-  NAString* celsiusString = naNewStringWithTextFieldText(con->textField);
-  double celsius = atof(naGetStringUTF8Pointer(celsiusString));
-  naDelete(celsiusString);
+  double celsius = naGetTextFieldDouble(con->textField);
 
   // Compute the model
   double fahrenheit = celsius * 1.8 + 32.;
 
   // Write the output to the resutLabel
-  NAString* fahrenheitString = naNewStringWithFormat("%f", fahrenheit);
-  naSetLabelText(con->resutLabel, naGetStringUTF8Pointer(fahrenheitString));
-  naDelete(fahrenheitString);
+  naSetLabelText(con->resutLabel, naAllocSprintf(NA_TRUE, "%f", fahrenheit));
 
   // By returning true, NALib knows that this event has been completely
   // handeled and it should stop propagating to other potential handlers.
@@ -45,20 +41,13 @@ NABool pressButton(NAReaction reaction){
 
 
 
-// Will be called when the + Button is pressed.
-NABool newTemperatureController(NAReaction reaction){
-  NA_UNUSED(reaction);
-  createTemperatureController();
-  return NA_TRUE;
-}
-
-
-
-// Will be called when the + Button is pressed.
-NABool pressTemperatureButton(NAReaction reaction){
+// Will be called when a button is pressed.
+NABool pressButton(NAReaction reaction){
   TemperatureController* con = reaction.controller;
   
-  if(reaction.uiElement == con->quitButton){
+  if(reaction.uiElement == con->newButton){
+    allocTemperatureController();
+  }else if(reaction.uiElement == con->quitButton){
     naStopApplication();
   }
 
@@ -67,15 +56,15 @@ NABool pressTemperatureButton(NAReaction reaction){
 
 
 
-TemperatureController* createTemperatureController(){
-  // Note for the sake of simplicity, the memory allocated here will leak.
-  // You should store this con pointer somewhere in the application and
-  // clean up properly upon application stop.
-
+TemperatureController* allocTemperatureController(){
   TemperatureController* con = naAlloc(TemperatureController);
 
   // Create a new window
-  NARect windowRect = naMakeRectS(getAndAdvanceNextWindowX(), getAndAdvanceNextWindowY(), 400, 200);
+  NARect windowRect = naMakeRectS(
+      getAndAdvanceNextWindowX(),
+      getAndAdvanceNextWindowY(),
+      400,
+      200);
   con->window = naNewWindow("Temperature Converter", windowRect, NA_FALSE, 0);
 
   // Every window has a space which defines its contents.
@@ -85,10 +74,10 @@ TemperatureController* createTemperatureController(){
   // button.
   con->button = naNewTextPushButton("Compute", 100);
   naAddSpaceChild(windowSpace, con->button, naMakePos(150, 20));
-  naAddUIReaction(con->button, NA_UI_COMMAND_PRESSED, pressButton, con);
-  naSetButtonSubmit(con->button, pressButton, con);
+  naAddUIReaction(con->button, NA_UI_COMMAND_PRESSED, computeResults, con);
+  naSetButtonSubmit(con->button, computeResults, con);
 
-    // Create the infoLabel containing informations.
+  // Create the infoLabel containing informations.
   con->infoLabel = naNewLabel("Temperature in Celsius", 160);
   naSetLabelTextAlignment(con->infoLabel, NA_TEXT_ALIGNMENT_CENTER);
   naAddSpaceChild(windowSpace, con->infoLabel, naMakePos(120, 130));
@@ -97,6 +86,11 @@ TemperatureController* createTemperatureController(){
   con->textField = naNewTextField(80);
   naSetTextFieldTextAlignment(con->textField, NA_TEXT_ALIGNMENT_CENTER);
   naAddSpaceChild(windowSpace, con->textField, naMakePos(160, 100));
+  naAddUIReaction(
+      con->textField,
+      NA_UI_COMMAND_EDIT_FINISHED,
+      computeResults,
+      con);
 
   // Create the resutLabel containing the results.
   con->resutLabel = naNewLabel("Result in Fahrenheit", 160);
@@ -106,16 +100,18 @@ TemperatureController* createTemperatureController(){
   // Create a + button for opening a new window.
   con->newButton = naNewTextPushButton("+", 60);
   naAddSpaceChild(windowSpace, con->newButton, naMakePos(20, 20));
-  naAddUIReaction(con->newButton, NA_UI_COMMAND_PRESSED, newTemperatureController, con);
+  naAddUIReaction(con->newButton, NA_UI_COMMAND_PRESSED, pressButton, con);
 
   // Create a Quit button for terminating the whole application.
   con->quitButton = naNewTextPushButton("Quit", 60);
   naAddSpaceChild(windowSpace, con->quitButton, naMakePos(320, 20));
-  naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, pressTemperatureButton, con);
+  naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, pressButton, con);
 
   // Show the current window.
   naShowWindow(con->window);
 
+  // This adds the current controller to a list in the application structure
+  // such that it can be safely erased upon quit.
   addTemperatureControllerToApplication(con);
 
   return con;
@@ -124,10 +120,10 @@ TemperatureController* createTemperatureController(){
 
 
 // Clear all allocated elements.
-void clearTemperatureController(TemperatureController* con){
-  NA_UNUSED(con);
+void deallocTemperatureController(TemperatureController* con){
   // Note that all UI elements which are attached in some way to the root
   // application UIElement will be cleared automatically.
+  naFree(con);
 }
 
 

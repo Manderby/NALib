@@ -103,7 +103,7 @@ void postStartup(void* arg){
 void clearApplication(void* arg){
   NA_UNUSED(arg);
 
-  naForeachStackMutable(&(app->temperatureControllers), (NAMutator)clearTemperatureController);
+  naForeachStackMutable(&(app->temperatureControllers), (NAMutator)deallocTemperatureController);
   naClearStack(&(app->temperatureControllers));
   clearExperimentController(app->experimentController);
   clearFontController(app->fontController);
