@@ -6,7 +6,7 @@
 
 // To use the GUI implementation of NALib, you need to configure it. You can
 // do this by defining the preprocessor macro NA_COMPILE_GUI to be 1.
-// If you need OpenGL, do the same thing for DNA_COMPILE_OPENGL.
+// If you need OpenGL, do the same thing for NA_COMPILE_OPENGL.
 //
 // You can define NA_COMPILE_GUI by adding a preprocessor macro in your project
 // settings:
@@ -47,8 +47,9 @@
 //   OpenGL
 
 
-// Note that you could add an include path in your project to access the
-// NAXXX.h files. But for the sake of simplicity, we use relative paths here.
+// Note that you should add an include path in your project to access the
+// NAXXX.h files.
+
 #include "GUIExamples.h"
 
 
@@ -60,12 +61,6 @@ int main(){
     //NAString* pwd = naNewStringWithCurWorkingDirectory();
 
     naStartApplication(preStartup, postStartup, clearApplication, NA_NULL);
-
-    // When returning from naStartApplication, the GUI has already been
-    // released. But we need to free the memory allocated in the app and
-    // the controllers.
-//    clearApplication();
-  naStopRuntime();
 
   return 0;
 }
