@@ -32,6 +32,10 @@ typedef NAInt  NAVec1i[1];
 typedef NAInt  NAVec2i[2];
 typedef NAInt  NAVec3i[3];
 typedef NAInt  NAVec4i[4];
+typedef size_t NAVec1s[1];
+typedef size_t NAVec2s[2];
+typedef size_t NAVec3s[3];
+typedef size_t NAVec4s[4];
 
 typedef double NAMat22d[ 4];
 typedef double NAMat33d[ 9];
@@ -133,6 +137,10 @@ NA_IAPI void naFillV1i(NAInt*  d, NAInt  a0);
 NA_IAPI void naFillV2i(NAInt*  d, NAInt  a0, NAInt  a1);
 NA_IAPI void naFillV3i(NAInt*  d, NAInt  a0, NAInt  a1, NAInt  a2);
 NA_IAPI void naFillV4i(NAInt*  d, NAInt  a0, NAInt  a1, NAInt  a2, NAInt  a3);
+NA_IAPI void naFillV1s(size_t* d, size_t a0);
+NA_IAPI void naFillV2s(size_t* d, size_t a0, size_t a1);
+NA_IAPI void naFillV3s(size_t* d, size_t a0, size_t a1, size_t a2);
+NA_IAPI void naFillV4s(size_t* d, size_t a0, size_t a1, size_t a2, size_t a3);
 
 // Sets all components to binary zero
 NA_IAPI void naZeroV1d(double* d);
@@ -147,6 +155,10 @@ NA_IAPI void naZeroV1i(NAInt*  d);
 NA_IAPI void naZeroV2i(NAInt*  d);
 NA_IAPI void naZeroV3i(NAInt*  d);
 NA_IAPI void naZeroV4i(NAInt*  d);
+NA_IAPI void naZeroV1s(size_t* d);
+NA_IAPI void naZeroV2s(size_t* d);
+NA_IAPI void naZeroV3s(size_t* d);
+NA_IAPI void naZeroV4s(size_t* d);
 
 // Fills vector d with random values in [0, 1)
 NA_IAPI void naFillV1dRandom(double* d);
