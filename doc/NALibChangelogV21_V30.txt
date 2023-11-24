@@ -8,6 +8,8 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+- Changeing main branch name to main instead of master.
+
 Version 27 (released 25. October 2023)
 ==========
 
