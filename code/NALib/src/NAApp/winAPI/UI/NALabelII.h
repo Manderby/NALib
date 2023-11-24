@@ -127,7 +127,7 @@ NA_DEF void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel){
 
 
 NA_DEF void naSetLabelVisible(NALabel* label, NABool visible){
-  // todo
+  ShowWindow(naGetUIElementNativePtr(label), visible ? SW_SHOW : SW_HIDE);
 }
 
 

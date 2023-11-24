@@ -159,7 +159,7 @@ NA_DEF void na_DestructWINAPISlider(NAWINAPISlider* winapiSlider){
 
 
 NA_DEF void naSetSliderVisible(NASlider* slider, NABool visible){
-  // todo
+  ShowWindow(naGetUIElementNativePtr(slider), visible ? SW_SHOW : SW_HIDE);
 }
 
 

@@ -95,7 +95,6 @@ struct NAMenu{
 
 struct NAMenuItem{
   NA_UIElement uiElement;
-  uint32       id;
 };
 
 struct NAMetalSpace{
@@ -300,8 +299,6 @@ NA_HAPI void na_SetMenuRect(NA_UIElement* menu, NARect rect);
 // NAMenuItem
 NA_HAPI void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent);
 NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);
-NA_HAPI void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id);
-NA_HAPI uint32 na_GetMenuItemId(const NAMenuItem* menuItem);
 NA_HAPI NARect na_GetMenuItemRect(const NA_UIElement* menuItem);
 NA_HAPI void na_SetMenuItemRect(NA_UIElement* menuItem, NARect rect);
 

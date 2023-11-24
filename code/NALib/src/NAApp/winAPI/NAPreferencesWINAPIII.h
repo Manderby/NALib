@@ -329,9 +329,11 @@ NA_DEF NABool naTogglePreferencesBool(const char* key){
   HKEY hKey = na_GetNativePreferences();
   LSTATUS errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, (LPDWORD)&valuesize);
   if(errorcode != ERROR_SUCCESS){storedvalue = naMakei64WithLo(-1);}
-  storedvalue = (!naEquali64(storedvalue, naMakei64WithLo(0)) ? naMakei64WithLo(-1) : naMakei64WithLo(1));
+
+  NABool value = naEquali64(storedvalue, naMakei64WithLo(1)) ? NA_TRUE : NA_FALSE;
+  storedvalue = value ? naMakei64WithLo(-1) : naMakei64WithLo(1);
   errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
-  return ((naEquali64(storedvalue, naMakei64WithLo(1))) ? NA_TRUE : NA_FALSE);
+  return (naEquali64(storedvalue, naMakei64WithLo(1))) ? NA_TRUE : NA_FALSE;
 }
 
 

@@ -11,6 +11,7 @@ NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text){
 
   winapiMenuItem->isSeparator = NA_FALSE;
   winapiMenuItem->text = naNewStringWithFormat("%s", text);
+  winapiMenuItem->state = NA_FALSE;
 
   na_InitMenuItem(&(winapiMenuItem->menuItem), winapiMenuItem, NA_NULL);
 
@@ -33,6 +34,7 @@ NA_DEF NAMenuItem* naNewMenuSeparator(){
 
 
 NA_DEF void na_DestructWINAPIMenuItem(NA_WINAPIMenuItem* winapiMenuItem){
+  naDelete(winapiMenuItem->text);
   na_ClearMenuItem((NAMenuItem*)winapiMenuItem);
 }
 
@@ -47,12 +49,33 @@ NA_DEF const NAUTF8Char* naGetMenuItemText(NAMenuItem* menuItem){
 
 NA_DEF void naSetMenuItemText(NAMenuItem* menuItem, const NAUTF8Char* text){
   // todo
+  //NA_WINAPIMenuItem* winapiMenuItem = (NA_WINAPIMenuItem*)menuItem;
+  //naDelete(winapiMenuItem->text);
+  //winapiMenuItem->text = naNewStringWithFormat("%s", text);
+  //na_updateMenuItem(winapiMenuItem->menu, &winapiMenuItem->menuItem);
 }
 
 
 
 NA_DEF void naSetMenuItemState(NAMenuItem* menuItem, NABool state){
-  // todo
+  NA_WINAPIMenuItem* winapiMenuItem = (NA_WINAPIMenuItem*)menuItem;
+  winapiMenuItem->state = state;
+  na_updateMenuItem(winapiMenuItem->menu, &winapiMenuItem->menuItem);
+}
+
+
+
+NA_HDEF void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id, NAMenu* menu){
+  NA_WINAPIMenuItem* winapiMenuItem = (NA_WINAPIMenuItem*)menuItem;
+  winapiMenuItem->id = id;
+  winapiMenuItem->menu = menu;
+}
+
+
+
+NA_HDEF uint32 na_GetMenuItemId(const NAMenuItem* menuItem){
+  NA_WINAPIMenuItem* winapiMenuItem = (NA_WINAPIMenuItem*)menuItem;
+  return winapiMenuItem->id;
 }
 
 

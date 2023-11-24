@@ -24,6 +24,10 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 NA_HAPI UINT na_GetApplicationNextMenuItemId(NAApplication* application);
 NA_HAPI void na_SetApplicationLastOpenedMenu(NAApplication* application, const NAMenu* menu);
 NA_HAPI const NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application);
+NA_HAPI void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id, NAMenu* menu);
+NA_HAPI uint32 na_GetMenuItemId(const NAMenuItem* menuItem);
+NA_HAPI void na_updateMenuItem(NAMenu* menu, const NAMenuItem* menuItem);
+
 
 
 

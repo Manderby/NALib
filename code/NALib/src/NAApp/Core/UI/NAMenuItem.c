@@ -20,18 +20,6 @@ NA_HDEF void na_ClearMenuItem(NAMenuItem* menuItem){
 
 
 
-NA_HDEF void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id){
-  menuItem->id = id;
-}
-
-
-
-NA_HDEF uint32 na_GetMenuItemId(const NAMenuItem* menuItem){
-  return menuItem->id;
-}
-
-
-
 NA_HDEF NARect na_GetMenuItemRect(const NA_UIElement* menuItem)
 {
   NA_UNUSED(menuItem);

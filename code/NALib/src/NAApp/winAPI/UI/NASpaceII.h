@@ -242,7 +242,7 @@ NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift){
 
 
 NA_DEF void naSetSpaceVisible(NASpace* space, NABool visible){
-  // todo
+  ShowWindow(naGetUIElementNativePtr(space), visible ? SW_SHOW : SW_HIDE);
 }
 
 
