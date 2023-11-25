@@ -15,6 +15,8 @@ NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
   uiElement->mouseInside = NA_FALSE;
   uiElement->allowNotifications = NA_TRUE;
   
+  if(elementType == NA_UI_BUTTON){uiElement->hoverReactionCount++;}
+  
   naAddListLastMutable(&(naGetApplication()->uiElements), uiElement);
 }
 
@@ -153,6 +155,11 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
   //  }
   //}
   naAddListLastMutable(&((element)->reactions), eventReaction);
+  if(command == NA_UI_COMMAND_MOUSE_MOVED
+  || command == NA_UI_COMMAND_MOUSE_ENTERED
+  || command == NA_UI_COMMAND_MOUSE_EXITED){
+    element->hoverReactionCount++;
+  }
 }
 
 
