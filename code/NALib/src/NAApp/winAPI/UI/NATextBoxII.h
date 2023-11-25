@@ -10,6 +10,12 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM w
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
+
+  case WM_ERASEBKGND:
+  info.hasBeenHandeled = NA_TRUE;
+  info.result = 1;
+  break;
+
   default:
     //printf("Uncaught TextBox message" NA_NL);
     break;

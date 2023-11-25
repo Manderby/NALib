@@ -28,7 +28,6 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_NCPAINT:
   case WM_PRINTCLIENT:
   case WM_CTLCOLORBTN:
-  case WM_CTLCOLOREDIT:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
   case WM_STYLECHANGING:
@@ -75,8 +74,9 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case EM_SETSEL:
     break;
 
+  case WM_CTLCOLOREDIT:
   case WM_CTLCOLORSTATIC:
-    // Message is sent to parent space.
+  // Message is sent to parent space.
     // wParam: device context
     // lParam HWND handle to actual control
     // return: background color brush
@@ -88,6 +88,8 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
       }else{
         SetTextColor((HDC)wParam, app->fgColorDisabled.color);
       }
+      // fall through:
+    case NA_UI_TEXTBOX:
       bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
       SetBkColor((HDC)wParam, bgColor->color);
       info.result = (LRESULT)bgColor->brush;
