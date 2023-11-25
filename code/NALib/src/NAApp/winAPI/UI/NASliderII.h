@@ -11,6 +11,9 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace);
 NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NASlider* slider = (NASlider*)uiElement;
+  NAWINAPISpace* winapiSpace;
+  NAWINAPIColor* bgColor;
+  RECT spaceRect;
 
   switch(message){
   case WM_WINDOWPOSCHANGING:
@@ -42,12 +45,12 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
     break;
 
   case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
-    //winapiSpace = (NAWINAPISpace*)naGetUIElementParentSpace(uiElement);
-    //GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
-    //bgColor = naGetWINAPISpaceBackgroundColor(winapiSpace);
-    //FillRect((HDC)wParam, &spaceRect, testColor.brush);
-    //info.hasBeenHandeled = NA_TRUE;
-    //info.result = 1;
+    winapiSpace = (NAWINAPISpace*)naGetUIElementParentSpace(uiElement);
+    GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
+    bgColor = naGetWINAPISpaceBackgroundColor(winapiSpace);
+    FillRect((HDC)wParam, &spaceRect, bgColor->brush);
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 1;
     break;
 
   case WM_SETFOCUS:

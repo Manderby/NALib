@@ -27,7 +27,6 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_PAINT:
   case WM_NCPAINT:
   case WM_PRINTCLIENT:
-  case WM_CTLCOLORBTN:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
   case WM_STYLECHANGING:
@@ -74,6 +73,21 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case EM_SETSEL:
     break;
 
+  case WM_CTLCOLORBTN:
+    {
+      const NA_UIElement* uiElement = na_GetUINALibEquivalent((void*)lParam);
+      if(naGetUIElementType(uiElement) == NA_UI_BUTTON){
+        const NAButton* button = (const NAButton*)uiElement;
+        if(naIsButtonBordered(button) && naIsButtonStateful(button) && naGetButtonState(button)){
+          // we choose yellow as background as this is probably the last color ever
+          // being used as a system UI style.
+          info.result = (LRESULT)CreateSolidBrush(RGB(255, 255, 0));
+          info.hasBeenHandeled = NA_TRUE;
+        }
+      }
+    }
+    break;
+
   case WM_CTLCOLOREDIT:
   case WM_CTLCOLORSTATIC:
   // Message is sent to parent space.
@@ -90,7 +104,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
       }
       // fall through:
     case NA_UI_TEXTBOX:
-      bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
+    bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
       SetBkColor((HDC)wParam, bgColor->color);
       info.result = (LRESULT)bgColor->brush;
       info.hasBeenHandeled = NA_TRUE;

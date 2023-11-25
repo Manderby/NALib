@@ -391,7 +391,7 @@ NABool naWINAPICaptureMouseHover(){
   POINT pt = {GET_X_LPARAM(msgpos), GET_Y_LPARAM(msgpos)};
   HWND hWndUnderMouse = WindowFromPoint(pt);
   NA_UIElement* elementUnderMouse = (NA_UIElement*)na_GetUINALibEquivalent(hWndUnderMouse);
-  if(elementUnderMouse->hoverReactionCount == 0){return NA_FALSE;}
+  if(elementUnderMouse && elementUnderMouse->hoverReactionCount == 0){return NA_FALSE;}
 
   NA_UIElement* curElement = naGetApplicationMouseHoverElement();
 
@@ -491,22 +491,6 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
       info.result = 0;
     }
     break;
-
-  case WM_CTLCOLORBTN:
-    {
-      const NA_UIElement* uiElement = na_GetUINALibEquivalent((void*)lParam);
-      if(naGetUIElementType(uiElement) == NA_UI_BUTTON){
-        const NAButton* button = (const NAButton*)uiElement;
-        if(naIsButtonBordered(button) && naIsButtonStateful(button) && naGetButtonState(button)){
-          // we choose yellow as background as this is probably the last color ever
-          // being used as a system UI style.
-          info.result = (LRESULT)CreateSolidBrush(RGB(255, 255, 0));
-          info.hasBeenHandeled = NA_TRUE;
-        }
-      }
-    }
-    break;
-
   }
 
   return info;

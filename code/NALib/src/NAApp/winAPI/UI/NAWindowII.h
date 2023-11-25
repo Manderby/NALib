@@ -12,6 +12,7 @@
 NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NAWINAPIWindow* windowMutable;
+  WINDOWPOS windowPos;
   NABool shouldClose;
   NARect screenRect;
   double uiScale;
@@ -78,7 +79,28 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_GETICON:
   case WM_ACTIVATE:
   case WM_IME_SETCONTEXT:
+    break;
+
   case WM_WINDOWPOSCHANGED:
+    // wParam: Unused
+    // lParam: pointer to WINDOWPOS structure
+    // result: 0 when handeled.
+    windowPos = *((WINDOWPOS*)lParam);
+    windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
+    screenRect = naGetMainScreenRect();
+    uiScale = naGetUIElementResolutionFactor(NA_NULL);
+    windowMutable->rect.size.width = (double)windowPos.cx / uiScale;
+    windowMutable->rect.size.height = (double)windowPos.cy / uiScale;
+    windowMutable->rect.pos.x = (double)windowPos.x / uiScale;
+    windowMutable->rect.pos.y = screenRect.size.height - (double)windowPos.y / uiScale - windowMutable->rect.size.height;
+    info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
+    if (info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
+    na_RememberWindowPosition(&windowMutable->window);
+    info.result = 0;
+    ////printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);
+    ////printf("size %f, %f\n", windowMutable->rect.size.width, windowMutable->rect.size.height);
+    break;
+
   case WM_SYNCPAINT:
   case WM_DWMNCRENDERINGCHANGED:
   case WM_GETMINMAXINFO:
@@ -419,10 +441,11 @@ NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window)
 NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect){
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
 
-  NARect currect = naGetUIElementRect(&(winapiWindow->window));
+  //NARect currect = naGetUIElementRect(&(winapiWindow->window));
   double yDiff = winapiWindow->rect.pos.y = rect.pos.y;
 
-  if(!naEqualRect(currect, rect)){
+  if(1){
+  //if(!naEqualRect(currect, rect)){
     POINT testPoint = {0, 0};
     RECT clientRect;
     RECT windowRect;
