@@ -40,6 +40,7 @@ struct NA_UIElement{
   void*           parent;
   NAList          reactions;
   NAList          shortcuts;
+  size_t          hoverReactionCount;
   NABool          mouseInside;
   NABool          allowNotifications;
   void*           nativePtr;         // The native pointer
