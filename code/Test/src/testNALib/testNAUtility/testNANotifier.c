@@ -1,11 +1,52 @@
 
 #include "NATest.h"
+#include "NAUtility/NANotifier.h"
 #include <stdio.h>
 
 
 
 void testNANotifier(void){
-    printf("asdf");
+  naTestGroup("Start and Stop"){
+    naTest(naGetCurrentNotifier() == NA_NULL);
+    NANotifier* notifier = naAllocNotifier();
+    naTest(naGetCurrentNotifier() == NA_NULL);
+    naSetCurrentNotifier(notifier);
+    naTest(naGetCurrentNotifier() == notifier);
+    naDeallocNotifier(notifier);
+    naTest(naGetCurrentNotifier() == NA_NULL);
+  }
+
+  naTestGroup("Define Topic and messages") {
+    // No notifier running -> crash
+    naTestCrash(naRegisterTopic(1234));
+    NANotifier* notifier = naAllocNotifier();
+    naSetCurrentNotifier(notifier);
+
+    // Zero messages not allowed.
+    naTestCrash(naRegisterTopic(0));
+
+    enum MyMessages{
+      msg0,
+      msg1,
+      count
+    };
+    size_t topicId = 0;
+
+    naTestVoid(topicId = naRegisterTopic(count));
+    naTest(topicId == 0);
+    naTestVoid(naSetMessageType(topicId, msg0, NA_MESSAGE_TYPE_CREATE));
+
+    naTestCrash(naSetMessageType(1234, 1234, 1234));
+    naTestCrash(naSetMessageType(topicId, 1234, 1234));
+    naTestError(naSetMessageType(topicId, msg0, 1234));
+
+    naTestVoid(topicId = naRegisterTopic(count));
+    naTest(topicId == 1);
+    naTestVoid(topicId = naRegisterTopic(count));
+    naTest(topicId == 2);
+
+    naDeallocNotifier(notifier);
+  }
 }
 
 

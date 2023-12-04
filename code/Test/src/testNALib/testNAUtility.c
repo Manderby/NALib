@@ -13,7 +13,7 @@ void printNAUtility(void){
 }
 
 void testNAUtility(void){
-  testNANotifier();
+  naTestFunction(testNANotifier);
 }
 
 
