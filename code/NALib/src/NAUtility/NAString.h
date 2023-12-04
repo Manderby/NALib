@@ -260,7 +260,7 @@ NA_API double   naParseStringDouble(const NAString* string);
 
 
 // Inline implementations are in a separate file:
-#include "Core/NAStringII.h"
+#include "NAString/NAStringII.h"
 
 
 

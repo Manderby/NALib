@@ -222,7 +222,7 @@ NA_API NAString* naNewStringWithCurWorkingDirectory(void);
 
 
 // Inline implementations are in a separate file:
-#include "Core/NAFileII.h"
+#include "NAFile/NAFileII.h"
 
 
 
