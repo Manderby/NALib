@@ -84,6 +84,12 @@ NA_DEF void naSetCurrentNotifier(NANotifier* notifier){
 
 
 
+NA_DEF void naRunNotifier(){
+  // todo
+}
+
+
+
 NA_DEF size_t naRegisterTopic(size_t messageCount){
   #if NA_DEBUG
     if(!na_notifier)
@@ -109,18 +115,18 @@ NA_DEF size_t naRegisterTopic(size_t messageCount){
 
 
 
-NA_DEF void naSetMessageType(size_t topicId, size_t message, NotifierMessageType type){
+NA_DEF void naSetMessageType(size_t topicId, size_t messageId, NotifierMessageType type){
   #if NA_DEBUG
     if (!na_notifier)
       naCrash("No current notifier present.");
     if (topicId >= na_notifier->topicsCount)
       naCrash("Unknown topicId.");
-    if (message >= na_notifier->topics[topicId]->messageCount)
-      naCrash("Unknown message.");
+    if (messageId >= na_notifier->topics[topicId]->messageCount)
+      naCrash("Unknown message id.");
     if(type < NA_MESSAGE_TYPE_UPDATE || type > NA_MESSAGE_TYPE_DELETE)
       naError("Unknown type");
 #endif
-  na_notifier->topics[topicId]->messages[message].type = type;
+  na_notifier->topics[topicId]->messages[messageId].type = type;
 }
 
 

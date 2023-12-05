@@ -16,7 +16,7 @@ void testNANotifier(void){
     naTest(naGetCurrentNotifier() == NA_NULL);
   }
 
-  naTestGroup("Define Topic and messages") {
+  naTestGroup("Register Topics") {
     // No notifier running -> crash
     naTestCrash(naRegisterTopic(1234));
     NANotifier* notifier = naAllocNotifier();
@@ -25,27 +25,43 @@ void testNANotifier(void){
     // Zero messages not allowed.
     naTestCrash(naRegisterTopic(0));
 
-    enum MyMessages{
-      msg0,
-      msg1,
-      count
-    };
     size_t topicId = 0;
+    const size_t count = 2;
 
     naTestVoid(topicId = naRegisterTopic(count));
     naTest(topicId == 0);
+
+    naTestVoid(
+      for(size_t i = 0; i < 20; ++i){
+        topicId = naRegisterTopic(count);
+      }
+    )
+    naTest(topicId == 20);
+
+    naTestVoid(naDeallocNotifier(notifier));
+  }
+
+  naTestGroup("Set messages") {
+    enum MyMessages {
+      msg0,
+      msg1,
+      COUNT
+    };
+    NANotifier* notifier = naAllocNotifier();
+    naSetCurrentNotifier(notifier);
+    size_t topicId = naRegisterTopic(COUNT);
+
     naTestVoid(naSetMessageType(topicId, msg0, NA_MESSAGE_TYPE_CREATE));
 
     naTestCrash(naSetMessageType(1234, 1234, 1234));
     naTestCrash(naSetMessageType(topicId, 1234, 1234));
     naTestError(naSetMessageType(topicId, msg0, 1234));
-
-    naTestVoid(topicId = naRegisterTopic(count));
-    naTest(topicId == 1);
-    naTestVoid(topicId = naRegisterTopic(count));
-    naTest(topicId == 2);
-
+    
     naDeallocNotifier(notifier);
+  }
+
+  naTestGroup("Running the notifier") {
+    naRunNotifier();
   }
 }
 
