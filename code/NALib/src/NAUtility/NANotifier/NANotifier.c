@@ -46,6 +46,7 @@ struct NANotifier{
 NANotifier* na_notifier = NA_NULL;
 
 
+
 NA_HDEF NA_MessageDispatch* na_NewMessageDispatch(
   void* reciever,
   void* sender,
@@ -231,7 +232,7 @@ NA_DEF void naSetSignalPriority(
     if (topicId >= na_notifier->topicsCount)
       naCrash("Unknown topicId.");
     if (signalId >= na_notifier->topics[topicId]->signalCount)
-      naCrash("Unknown signal id.");
+      naCrash("Unknown signalId.");
     if(priority < NA_SIGNAL_PRIORITY_UPDATE || priority > NA_SIGNAL_PRIORITY_DELETE)
       naError("Unknown type");
   #endif
@@ -240,7 +241,7 @@ NA_DEF void naSetSignalPriority(
 
 
 
-NA_DEF size_t naSubscribe(
+NA_DEF void* naSubscribe(
   void* object,
   size_t topicId,
   size_t signalId,
@@ -253,14 +254,46 @@ NA_DEF size_t naSubscribe(
     if (topicId >= na_notifier->topicsCount)
       naCrash("Unknown topicId.");
     if (signalId >= na_notifier->topics[topicId]->signalCount)
-      naCrash("Unknown signal id.");
+      naCrash("Unknown signalId.");
     if (callback == NA_NULL)
       naCrash("callback is Nullpointer");
   #endif
   
   NA_Signal* signal = &na_notifier->topics[topicId]->signals[signalId];
-  NA_Subscriber* subscriber = na_NewSubscriber(reciever, object, callback);
+  NA_Subscriber* subscriber = na_NewSubscriber(
+    reciever,
+    object,
+    callback);
   naAddListLastMutable(&signal->subscribers, subscriber);
+  
+  return subscriber;
+}
+
+
+
+NA_DEF void naUnsubscribe(
+  void* subscriber,
+  size_t topicId,
+  size_t signalId){
+  #if NA_DEBUG
+    if (!na_notifier)
+      naCrash("No current notifier present.");
+    if (topicId >= na_notifier->topicsCount)
+      naCrash("Unknown topicId.");
+    if (signalId >= na_notifier->topics[topicId]->signalCount)
+      naCrash("Unknown signalId.");
+  #endif
+  NA_Signal* signal = &na_notifier->topics[topicId]->signals[signalId];
+  NAListIterator it = naMakeListModifier(&signal->subscribers);
+  while(naIterateList(&it)){
+    NA_Subscriber* sub = naGetListCurMutable(&it);
+    if(sub == subscriber){
+      naRemoveListCurMutable(&it, NA_FALSE);
+      naDelete(sub);
+      break;
+    }
+  }
+  naClearListIterator(&it);
 }
 
 
@@ -277,7 +310,7 @@ NA_DEF size_t naPublish(
     if (topicId >= na_notifier->topicsCount)
       naCrash("Unknown topicId.");
     if (signalId >= na_notifier->topics[topicId]->signalCount)
-      naCrash("Unknown signal id.");
+      naCrash("Unknown signalId.");
   #endif
   
   NA_Signal* signal = &na_notifier->topics[topicId]->signals[signalId];

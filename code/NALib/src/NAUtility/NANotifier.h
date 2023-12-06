@@ -66,16 +66,19 @@ NA_API void naSetSignalPriority(
 //              the callback as the first parameter. Can be NULL if no specific
 //              object is needed.
 // - callback:  The callback function which will be called.
-// Returns a subscription id which can be used to unsubscribe again.
-NA_API size_t naSubscribe(
+// Returns a pointer to an internal opaque type. Use that to unsubscribe again.
+NA_API void* naSubscribe(
   void* object,
   size_t topicId,
   size_t signalId,
   void* reciever,
   NAMessageCallback callback);
 
-// Unsubscribes the given subscription.
-NA_API void naUnsubscribe(size_t subscriptionId);
+// Unsubscribes the given subscriber.
+NA_API void naUnsubscribe(
+  void* subscriber,
+  size_t topicId,
+  size_t signalId);
 
 // Sends a message which will be distributed to all listeners next time the
 // notifier is run.

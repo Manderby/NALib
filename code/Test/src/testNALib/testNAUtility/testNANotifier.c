@@ -78,7 +78,7 @@ void testNANotifier(void){
     NANotifier* notifier = naAllocNotifier();
     naSetCurrentNotifier(notifier);
     size_t topicId = naRegisterTopic(SIGNAL_COUNT);
-    int testObject;
+    int testObject = 9999;
 
     naTestCrash(naSubscribe(NA_NULL, 1234, 1234, NA_NULL, NA_NULL));
     naTestCrash(naSubscribe(NA_NULL, topicId, 1234, NA_NULL, NA_NULL));
@@ -91,6 +91,15 @@ void testNANotifier(void){
     naTestVoid(naPublish(&testObject, topicId, msg0, NA_NULL));
     naTestVoid(naRunNotifier());
     naTest(testValue == 1001);
+  }
+
+  naTestGroup("Unsubscribing") {
+    NANotifier* notifier = naAllocNotifier();
+    naSetCurrentNotifier(notifier);
+    size_t topicId = naRegisterTopic(SIGNAL_COUNT);
+  
+    void* subscription = naSubscribe(NA_NULL, topicId, msg0, NA_NULL, testMessageCallback);
+    naTestVoid(naUnsubscribe(subscription, topicId, msg0));
   }
 
   naTestGroup("Running the notifier") {
