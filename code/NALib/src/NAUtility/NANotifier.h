@@ -8,15 +8,22 @@
 #include "../NABase/NABase.h"
 
 
+
 typedef struct NANotifier NANotifier;
 
 typedef enum{
-  NA_MESSAGE_PRIORITY_UPDATE,   // lowest prio
-  NA_MESSAGE_PRIORITY_CREATE,
-  NA_MESSAGE_PRIORITY_DELETE,   // highest prio
-} NotifierMessagePriority;
+  NA_SIGNAL_PRIORITY_UPDATE,   // lowest prio
+  NA_SIGNAL_PRIORITY_CREATE,
+  NA_SIGNAL_PRIORITY_DELETE,   // highest prio
+} SignalPriority;
 
-typedef void(*NAMessageCallback)(void* reciever, void* sender, void* data);
+typedef enum{
+  void* reciever;
+  void* sender;
+  void* data;
+} NAMessage;
+
+typedef void(*NAMessageCallback)(NAMessage message);
 
 
 
@@ -26,7 +33,7 @@ NA_API NANotifier* naAllocNotifier(void);
 NA_API void naDeallocNotifier(NANotifier* notifier);
 
 // Get and set the current notifier. The current notifier will be used when
-// calling naPubMessage and naSubMessage.
+// calling naPublish and naSubscribe.
 NA_API NANotifier* naGetCurrentNotifier(void);
 NA_API void naSetCurrentNotifier(NANotifier* notifier);
 
@@ -35,25 +42,25 @@ NA_API void naSetCurrentNotifier(NANotifier* notifier);
 // loop on a regular basis.
 NA_API void naRunNotifier();
 
-// Registers a topic and returns a new topicId. You can have multiple messages
-// per topic, all numbered from 0 to messageCount - 1. This means, it is most
-// practical to use an enum to define the messages. By default, all messages
-// have the message type UPDATE.
-NA_API size_t naRegisterTopic(size_t messageCount);
+// Registers a topic and returns a new topicId. You can have multiple signals
+// per topic, all numbered from 0 to signalCount - 1. This means, it is most
+// practical to use an enum to define the signals. By default, all signals
+// have the signal priority UPDATE.
+NA_API size_t naRegisterTopic(size_t signalCount);
 
-// Sets the type of the message. The initial type of any message is UPDATE.
-NA_API void naSetMessagePriority(
+// Sets the priority of the signal. Initial priority of any signal is UPDATE.
+NA_API void naSetSignalPriority(
   size_t topicId,
-  size_t messageId,
-  NotifierMessagePriority priority);
+  size_t signalId,
+  SignalPriority priority);
 
-// Registers a subscription to a message.
+// Registers a subscription
 // - object:    Denotes the object to observe. If NULL, any object is observed
 //              which broadcast the message. The object actually sending the
 //              message will be provided as the sender parameter in the
 //              callback function.
-// - topicID:   The topic the message belongs to.
-// - messageId: The message id to listen to.
+// - topicID:   The topic the signal belongs to.
+// - signalId:  The signal id to listen to.
 // - reciever:  A pointer to the reciever. This information will be provided in
 //              the callback as the first parameter. Can be NULL if no specific
 //              object is needed.
@@ -62,7 +69,7 @@ NA_API void naSetMessagePriority(
 NA_API size_t naSubscribe(
   void* object,
   size_t topicID,
-  size_t messageId,
+  size_t signalId,
   void* reciever,
   NAMessageCallback callback);
 
@@ -74,8 +81,8 @@ NA_API void naUnsubscribe(size_t subscriptionId);
 // - sender:    The object which causes this message. This information will be
 //              provided in the callback as the sender parameter. Can be NULL
 //              if no specific object is responsible.
-// - topicID:   The topic the message belongs to.
-// - messageId: The message id to listen to.
+// - topicID:   The topic the signal belongs to.
+// - signalId:  The signal id to listen to.
 // - data:      A data package containing the data which shall be given the
 //              callback as the data parameter. Can be NULL.
 // Returns a publication id which is only valid until the notifier did send the
@@ -83,17 +90,17 @@ NA_API void naUnsubscribe(size_t subscriptionId);
 NA_API size_t naPublish(
   void* sender,
   size_t topicId,
-  size_t messageId,
+  size_t signalId,
   void* data);
 
 // Unpublishes the given publication
 NA_API void naUnpublish(size_t publicationID);
 
-// Publishes the given publication including all follow-up messages immediately.
-// This function does not return until all these messages are done. Other
-// messages which are still waiting in the notifier to be published remain
-// unpublished but messages which are handeled by the now published notification
-// will be removed automatically.
+// Publishes the message behind the given publication id including all
+// follow-up messages immediately. This function does not return until all of
+// these messages are done. Other messages which are still waiting in the
+// notifier to be published remain unpublished but messages which are handeled
+// by this call will be removed automatically.
 NA_API void naPublishNow(size_t publicationID);
 
 

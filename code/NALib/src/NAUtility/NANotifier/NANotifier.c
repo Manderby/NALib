@@ -7,46 +7,46 @@
 
 
 
-typedef struct NAMessage NAMessage;
-struct NAMessage{
-  NotifierMessagePriority priority;
+typedef struct NA_Signal NA_Signal;
+struct NA_Signal{
+  SignalPriority priority;
 };
 
-typedef struct NATopic NATopic;
-struct NATopic{
-  size_t messageCount;
-  NAMessage* messages;
+typedef struct NA_Topic NA_Topic;
+struct NA_Topic{
+  size_t signalCount;
+  NA_Signal* signals;
 };
 
 struct NANotifier{
   size_t nextTopicId;
   size_t topicsCount;
-  NATopic** topics;
-  NAList messageQueue;
+  NA_Topic** topics;
+  NAList signalQueue;
 };
 
 NANotifier* na_notifier = NA_NULL;
 
 
 
-NA_HDEF void naInitMessage(NAMessage* message){
-  message->priority = NA_MESSAGE_PRIORITY_UPDATE;
+NA_HDEF void naInitSignal(NA_Signal* signal){
+  signal->priority = NA_SIGNAL_PRIORITY_UPDATE;
 }
 
 
 
-NA_HDEF NATopic* naAllocTopic(size_t messageCount){
-  NATopic* topic = naAlloc(NATopic);
-  topic->messageCount = messageCount;
-  topic->messages = naMalloc(sizeof(NAMessage) * messageCount);
-  for(size_t i = 0; i < messageCount; ++i){
-    naInitMessage(&topic->messages[i]);
+NA_HDEF NA_Topic* naAllocTopic(size_t signalCount){
+  NA_Topic* topic = naAlloc(NA_Topic);
+  topic->signalCount = signalCount;
+  topic->signals = naMalloc(sizeof(NA_Signal) * signalCount);
+  for(size_t i = 0; i < signalCount; ++i){
+    naInitSignal(&topic->signals[i]);
   }
   return topic;
 }
 
-NA_HDEF void naDeallocTopic(NATopic* topic){
-  naFree(topic->messages);
+NA_HDEF void naDeallocTopic(NA_Topic* topic){
+  naFree(topic->signals);
   naFree(topic);
 }
 
@@ -58,7 +58,7 @@ NA_DEF NANotifier* naAllocNotifier(void){
 
   notifier->nextTopicId = 0;
   notifier->topicsCount = 1;
-  size_t topicsMemSize = sizeof(NATopic*) * notifier->topicsCount;
+  size_t topicsMemSize = sizeof(NA_Topic*) * notifier->topicsCount;
   notifier->topics = naMalloc(topicsMemSize);
   naZeron(notifier->topics, topicsMemSize);
 
@@ -92,47 +92,47 @@ NA_DEF void naRunNotifier(){
 
 
 
-NA_DEF size_t naRegisterTopic(size_t messageCount){
+NA_DEF size_t naRegisterTopic(size_t signalCount){
   #if NA_DEBUG
     if(!na_notifier)
       naCrash("No current notifier present.");
-    if(!messageCount)
-      naCrash("messageCount is zero.");
+    if(!signalCount)
+      naCrash("signalCount is zero.");
   #endif
   size_t newTopicId = na_notifier->nextTopicId;
   na_notifier->nextTopicId += 1;
   if(newTopicId >= na_notifier->topicsCount){
     // The array is too small. Double the array size and copy everything over.
-    size_t topicsMemSize = sizeof(NATopic*) * na_notifier->topicsCount;
-    NATopic** newArray = naMalloc(topicsMemSize * 2);
+    size_t topicsMemSize = sizeof(NA_Topic*) * na_notifier->topicsCount;
+    NA_Topic** newArray = naMalloc(topicsMemSize * 2);
     naCopyn(newArray, na_notifier->topics, topicsMemSize);
     naZeron(newArray + na_notifier->topicsCount, topicsMemSize);
     na_notifier->topicsCount *= 2;
     naFree(na_notifier->topics);
     na_notifier->topics = newArray;
   }
-  na_notifier->topics[newTopicId] = naAllocTopic(messageCount);
+  na_notifier->topics[newTopicId] = naAllocTopic(signalCount);
   return newTopicId;
 }
 
 
 
-NA_DEF void naSetMessagePriority(
+NA_DEF void naSetSignalPriority(
   size_t topicId,
-  size_t messageId,
-  NotifierMessagePriority priority)
+  size_t signalId,
+  SignalPriority priority)
 {
   #if NA_DEBUG
     if (!na_notifier)
       naCrash("No current notifier present.");
     if (topicId >= na_notifier->topicsCount)
       naCrash("Unknown topicId.");
-    if (messageId >= na_notifier->topics[topicId]->messageCount)
-      naCrash("Unknown message id.");
-    if(priority < NA_MESSAGE_PRIORITY_UPDATE || priority > NA_MESSAGE_PRIORITY_DELETE)
+    if (signalId >= na_notifier->topics[topicId]->signalCount)
+      naCrash("Unknown signal id.");
+    if(priority < NA_SIGNAL_PRIORITY_UPDATE || priority > NA_SIGNAL_PRIORITY_DELETE)
       naError("Unknown type");
   #endif
-  na_notifier->topics[topicId]->messages[messageId].priority = priority;
+  na_notifier->topics[topicId]->signals[signalId].priority = priority;
 }
 
 
@@ -140,7 +140,7 @@ NA_DEF void naSetMessagePriority(
 NA_DEF size_t naPublish(
   void* sender,
   size_t topicId,
-  size_t messageId,
+  size_t signalId,
   void* data)
 {
 

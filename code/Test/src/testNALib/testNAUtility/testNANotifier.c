@@ -42,7 +42,7 @@ void testNANotifier(void){
   }
 
   naTestGroup("Set message types") {
-    enum MyMessageTypes {
+    enum MySignals {
       msg0,
       msg1,
       COUNT
@@ -52,11 +52,11 @@ void testNANotifier(void){
     naSetCurrentNotifier(notifier);
     size_t topicId = naRegisterTopic(COUNT);
 
-    naTestVoid(naSetMessagePriority(topicId, msg0, NA_MESSAGE_PRIORITY_CREATE));
+    naTestVoid(naSetSignalPriority(topicId, msg0, NA_SIGNAL_PRIORITY_CREATE));
 
-    naTestCrash(naSetMessagePriority(1234, 1234, 1234));
-    naTestCrash(naSetMessagePriority(topicId, 1234, 1234));
-    naTestError(naSetMessagePriority(topicId, msg0, 1234));
+    naTestCrash(naSetSignalPriority(1234, 1234, 1234));
+    naTestCrash(naSetSignalPriority(topicId, 1234, 1234));
+    naTestError(naSetSignalPriority(topicId, msg0, 1234));
     
     naDeallocNotifier(notifier);
   }
