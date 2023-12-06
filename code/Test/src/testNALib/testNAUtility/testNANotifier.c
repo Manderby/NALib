@@ -3,9 +3,15 @@
 #include "NAUtility/NANotifier.h"
 #include <stdio.h>
 
+
+
+static int testValue;
 void testMessageCallback(NAMessage message){
-  printf("Message recieved from object %p.\n", message.sender);
+//  printf("Message recieved from object %p with data %p.\n", message.sender, message.data);
+  testValue++;
 }
+
+
 
 void testNANotifier(void){
   enum MySignals {
@@ -63,16 +69,28 @@ void testNANotifier(void){
     naDeallocNotifier(notifier);
   }
 
-  naTestGroup("Sending signals") {
+  naTestGroup("Simple roundtrip") {
+  
+    naTestCrash(naSubscribe(NA_NULL, 1234, 1234, NA_NULL, NA_NULL));
+    naTestCrash(naPublish(NA_NULL, 1234, 1234, NA_NULL));
+    naTestCrash(naRunNotifier());
+
     NANotifier* notifier = naAllocNotifier();
     naSetCurrentNotifier(notifier);
     size_t topicId = naRegisterTopic(SIGNAL_COUNT);
     int testObject;
 
-    naSubscribe(NA_NULL, topicId, msg0, NA_NULL, testMessageCallback);
-    naPublish(&testObject, topicId, msg0, NA_NULL);
-    
-    naRunNotifier();
+    naTestCrash(naSubscribe(NA_NULL, 1234, 1234, NA_NULL, NA_NULL));
+    naTestCrash(naSubscribe(NA_NULL, topicId, 1234, NA_NULL, NA_NULL));
+    naTestCrash(naSubscribe(NA_NULL, topicId, msg0, NA_NULL, NA_NULL));
+    naTestCrash(naPublish(NA_NULL, 1234, 1234, NA_NULL));
+    naTestCrash(naPublish(NA_NULL, topicId, 1234, NA_NULL));
+
+    testValue = 1000;
+    naTestVoid(naSubscribe(NA_NULL, topicId, msg0, NA_NULL, testMessageCallback));
+    naTestVoid(naPublish(&testObject, topicId, msg0, NA_NULL));
+    naTestVoid(naRunNotifier());
+    naTest(testValue == 1001);
   }
 
   naTestGroup("Running the notifier") {

@@ -165,6 +165,11 @@ NA_DEF void naSetCurrentNotifier(NANotifier* notifier){
 
 
 NA_DEF void naRunNotifier(){
+  #if NA_DEBUG
+    if(!na_notifier)
+      naCrash("No current notifier present.");
+  #endif
+
   while(NA_TRUE){
     if(!naIsListEmpty(&na_notifier->deleteQueue)){
       NA_MessageDispatch* messageDispatch = naRemoveListFirstMutable(&na_notifier->deleteQueue);
@@ -250,7 +255,7 @@ NA_DEF size_t naSubscribe(
     if (signalId >= na_notifier->topics[topicId]->signalCount)
       naCrash("Unknown signal id.");
     if (callback == NA_NULL)
-      naError("callback is Nullpointer");
+      naCrash("callback is Nullpointer");
   #endif
   
   NA_Signal* signal = &na_notifier->topics[topicId]->signals[signalId];
