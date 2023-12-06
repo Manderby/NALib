@@ -17,11 +17,12 @@ typedef enum{
   NA_SIGNAL_PRIORITY_DELETE,   // highest prio
 } SignalPriority;
 
-typedef enum{
+typedef struct NAMessage NAMessage;
+struct NAMessage {
   void* reciever;
   void* sender;
   void* data;
-} NAMessage;
+};
 
 typedef void(*NAMessageCallback)(NAMessage message);
 
@@ -68,7 +69,7 @@ NA_API void naSetSignalPriority(
 // Returns a subscription id which can be used to unsubscribe again.
 NA_API size_t naSubscribe(
   void* object,
-  size_t topicID,
+  size_t topicId,
   size_t signalId,
   void* reciever,
   NAMessageCallback callback);

@@ -3,9 +3,17 @@
 #include "NAUtility/NANotifier.h"
 #include <stdio.h>
 
-
+void testMessageCallback(NAMessage message){
+  printf("Message recieved from object %p.\n", message.sender);
+}
 
 void testNANotifier(void){
+  enum MySignals {
+    msg0,
+    msg1,
+    SIGNAL_COUNT
+  };
+
   naTestGroup("Start and Stop") {
     naTest(naGetCurrentNotifier() == NA_NULL);
     NANotifier* notifier = naAllocNotifier();
@@ -22,7 +30,7 @@ void testNANotifier(void){
     NANotifier* notifier = naAllocNotifier();
     naSetCurrentNotifier(notifier);
 
-    // Zero message types not allowed.
+    // Zero signals not allowed.
     naTestCrash(naRegisterTopic(0));
 
     size_t topicId = 0;
@@ -41,16 +49,10 @@ void testNANotifier(void){
     naTestVoid(naDeallocNotifier(notifier));
   }
 
-  naTestGroup("Set message types") {
-    enum MySignals {
-      msg0,
-      msg1,
-      COUNT
-    };
-    
+  naTestGroup("Set signals") {
     NANotifier* notifier = naAllocNotifier();
     naSetCurrentNotifier(notifier);
-    size_t topicId = naRegisterTopic(COUNT);
+    size_t topicId = naRegisterTopic(SIGNAL_COUNT);
 
     naTestVoid(naSetSignalPriority(topicId, msg0, NA_SIGNAL_PRIORITY_CREATE));
 
@@ -59,6 +61,18 @@ void testNANotifier(void){
     naTestError(naSetSignalPriority(topicId, msg0, 1234));
     
     naDeallocNotifier(notifier);
+  }
+
+  naTestGroup("Sending signals") {
+    NANotifier* notifier = naAllocNotifier();
+    naSetCurrentNotifier(notifier);
+    size_t topicId = naRegisterTopic(SIGNAL_COUNT);
+    int testObject;
+
+    naSubscribe(NA_NULL, topicId, msg0, NA_NULL, testMessageCallback);
+    naPublish(&testObject, topicId, msg0, NA_NULL);
+    
+    naRunNotifier();
   }
 
   naTestGroup("Running the notifier") {
