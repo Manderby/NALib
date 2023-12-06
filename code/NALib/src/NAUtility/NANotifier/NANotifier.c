@@ -3,12 +3,13 @@
 
 #include "../NABinaryData.h"
 #include "../NAMemory.h"
+#include "../../NAStruct/NAList.h"
 
 
 
 typedef struct NAMessage NAMessage;
 struct NAMessage{
-  NotifierMessageType type;
+  NotifierMessagePriority priority;
 };
 
 typedef struct NATopic NATopic;
@@ -21,14 +22,15 @@ struct NANotifier{
   size_t nextTopicId;
   size_t topicsCount;
   NATopic** topics;
+  NAList messageQueue;
 };
 
 NANotifier* na_notifier = NA_NULL;
 
 
 
-NA_HDEF naInitMessage(NAMessage* message){
-  message->type = NA_MESSAGE_TYPE_UPDATE;
+NA_HDEF void naInitMessage(NAMessage* message){
+  message->priority = NA_MESSAGE_PRIORITY_UPDATE;
 }
 
 
@@ -115,7 +117,11 @@ NA_DEF size_t naRegisterTopic(size_t messageCount){
 
 
 
-NA_DEF void naSetMessageType(size_t topicId, size_t messageId, NotifierMessageType type){
+NA_DEF void naSetMessagePriority(
+  size_t topicId,
+  size_t messageId,
+  NotifierMessagePriority priority)
+{
   #if NA_DEBUG
     if (!na_notifier)
       naCrash("No current notifier present.");
@@ -123,14 +129,22 @@ NA_DEF void naSetMessageType(size_t topicId, size_t messageId, NotifierMessageTy
       naCrash("Unknown topicId.");
     if (messageId >= na_notifier->topics[topicId]->messageCount)
       naCrash("Unknown message id.");
-    if(type < NA_MESSAGE_TYPE_UPDATE || type > NA_MESSAGE_TYPE_DELETE)
+    if(priority < NA_MESSAGE_PRIORITY_UPDATE || priority > NA_MESSAGE_PRIORITY_DELETE)
       naError("Unknown type");
-#endif
-  na_notifier->topics[topicId]->messages[messageId].type = type;
+  #endif
+  na_notifier->topics[topicId]->messages[messageId].priority = priority;
 }
 
 
 
+NA_DEF size_t naPublish(
+  void* sender,
+  size_t topicId,
+  size_t messageId,
+  void* data)
+{
+
+}
 
 
 

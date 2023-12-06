@@ -6,7 +6,7 @@
 
 
 void testNANotifier(void){
-  naTestGroup("Start and Stop"){
+  naTestGroup("Start and Stop") {
     naTest(naGetCurrentNotifier() == NA_NULL);
     NANotifier* notifier = naAllocNotifier();
     naTest(naGetCurrentNotifier() == NA_NULL);
@@ -22,7 +22,7 @@ void testNANotifier(void){
     NANotifier* notifier = naAllocNotifier();
     naSetCurrentNotifier(notifier);
 
-    // Zero messages not allowed.
+    // Zero message types not allowed.
     naTestCrash(naRegisterTopic(0));
 
     size_t topicId = 0;
@@ -41,21 +41,22 @@ void testNANotifier(void){
     naTestVoid(naDeallocNotifier(notifier));
   }
 
-  naTestGroup("Set messages") {
-    enum MyMessages {
+  naTestGroup("Set message types") {
+    enum MyMessageTypes {
       msg0,
       msg1,
       COUNT
     };
+    
     NANotifier* notifier = naAllocNotifier();
     naSetCurrentNotifier(notifier);
     size_t topicId = naRegisterTopic(COUNT);
 
-    naTestVoid(naSetMessageType(topicId, msg0, NA_MESSAGE_TYPE_CREATE));
+    naTestVoid(naSetMessagePriority(topicId, msg0, NA_MESSAGE_PRIORITY_CREATE));
 
-    naTestCrash(naSetMessageType(1234, 1234, 1234));
-    naTestCrash(naSetMessageType(topicId, 1234, 1234));
-    naTestError(naSetMessageType(topicId, msg0, 1234));
+    naTestCrash(naSetMessagePriority(1234, 1234, 1234));
+    naTestCrash(naSetMessagePriority(topicId, 1234, 1234));
+    naTestError(naSetMessagePriority(topicId, msg0, 1234));
     
     naDeallocNotifier(notifier);
   }
