@@ -62,16 +62,16 @@ NA_API NABool naIsButtonTextual(const NAButton* button);
 // button of a window, often times labeled 'Ok'. The abort button is a button
 // which is pressed when the window shall be dismissed (often times labeled as
 // 'Cancel'). The following keyboard shortcut reactions are mapped to the
-// given handler with the given controller argument:
+// given callback with the given controller argument:
 // - default/submit: Return + Enter
 // - abort/cancel:   Escape + Cmd-Dot (on macOS)
 NA_API void naSetButtonSubmit(
   NAButton* button,
-  NAReactionHandler handler,
+  NAReactionCallback callback,
   void* controller);
 NA_API void naSetButtonAbort(
   NAButton* button,
-  NAReactionHandler handler,
+  NAReactionCallback callback,
   void* controller);
 
 

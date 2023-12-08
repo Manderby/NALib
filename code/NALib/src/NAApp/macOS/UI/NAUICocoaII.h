@@ -194,7 +194,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
             reaction.uiElement = naGetApplication();
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
             reaction.controller = keyReaction->controller;
-            retValue = keyReaction->handler(reaction);
+            retValue = keyReaction->callback(reaction);
           }
         }
       }

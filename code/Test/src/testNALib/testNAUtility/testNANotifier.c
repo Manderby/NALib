@@ -91,6 +91,8 @@ void testNANotifier(void){
     naTestVoid(naPublish(&testObject, topicId, msg0, NA_NULL));
     naTestVoid(naRunNotifier());
     naTest(testValue == 1001);
+
+    naDeallocNotifier(notifier);
   }
 
   naTestGroup("Unsubscribing") {
@@ -100,11 +102,10 @@ void testNANotifier(void){
   
     void* subscription = naSubscribe(NA_NULL, topicId, msg0, NA_NULL, testMessageCallback);
     naTestVoid(naUnsubscribe(subscription, topicId, msg0));
+
+    naDeallocNotifier(notifier);
   }
 
-  naTestGroup("Running the notifier") {
-    naRunNotifier();
-  }
 }
 
 

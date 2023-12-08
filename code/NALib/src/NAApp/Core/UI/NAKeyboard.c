@@ -17,7 +17,7 @@ NA_DEF NAKeyStroke naMakeKeyStroke(uint32 modifiers, NAUIKeyCode keyCode){
 NA_DEF void naAddUIKeyboardShortcut(
   void* uiElement,
   NAKeyStroke shortcut,
-  NAReactionHandler handler,
+  NAReactionCallback callback,
   void* controller)
 {
   NAKeyboardShortcutReaction* keyReaction;
@@ -29,7 +29,7 @@ NA_DEF void naAddUIKeyboardShortcut(
   keyReaction = naAlloc(NAKeyboardShortcutReaction);
   keyReaction->controller = controller;
   keyReaction->shortcut = shortcut;
-  keyReaction->handler = handler;
+  keyReaction->callback = callback;
   naAddListLastMutable(&((element)->shortcuts), keyReaction);
 }
 

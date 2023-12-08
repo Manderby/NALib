@@ -249,7 +249,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
               elem,
               NA_UI_COMMAND_KEYBOARD_SHORTCUT,
               keyReaction->controller};
-            retValue = keyReaction->handler(reaction);
+            retValue = keyReaction->callback(reaction);
           }
         }
       }
@@ -281,7 +281,7 @@ WNDPROC na_GetApplicationOldSelectWindowProc();
 WNDPROC na_GetApplicationOldSliderWindowProc();
 WNDPROC na_GetApplicationOldTextFieldWindowProc();
 
-// Prototypes of specialized WindowProc event handlers
+// Prototypes of specialized WindowProc event procedures
 NAWINAPICallbackInfo naWINAPIDrawItemProc    (WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWINAPIScrollItemProc  (WPARAM wParam, LPARAM lParam);
@@ -289,7 +289,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc  (void* uiElement, UINT message, WPAR
 NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* drawitemstruct);
 NAWINAPICallbackInfo naSliderWINAPIScroll   (void* uiElement, WPARAM wParam);
 
-// Prototypes of the WindowProc handlers of the specific controls
+// Prototypes of the WindowProc procedures of the specific controls
 NAWINAPICallbackInfo naApplicationWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naButtonWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naCheckBoxWINAPIProc   (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
@@ -304,7 +304,7 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc    (void* uiElement, UINT message, WPAR
 NAWINAPICallbackInfo naTextFieldWINAPIProc  (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWindowWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 
-// Prototypes of WindowProc handlers which react to notifications
+// Prototypes of WindowProc procedures which react to notifications
 NABool naButtonWINAPINotify      (void* uiElement, WORD notificationCode);
 NABool naCheckBoxWINAPINotify    (void* uiElement, WORD notificationCode);
 NABool naLabelWINAPINotify       (void* uiElement, WORD notificationCode);

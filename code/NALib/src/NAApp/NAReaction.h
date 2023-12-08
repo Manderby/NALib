@@ -10,7 +10,7 @@
 // //////////////////////////////
 // Reacting to commands
 //
-// Working with the UI in NALib works by defining reaction handlers. Any user
+// Working with the UI in NALib works by defining reaction callbacks. Any user
 // interface element can react to several commands:
 
 typedef enum{
@@ -41,14 +41,14 @@ struct NAReaction{
   void* controller;
 };
 
-// This NAReaction package is then provided to reaction handlers with the
+// This NAReaction package is then provided to reaction callbacks with the
 // following prototype. See further below for a discussion of the parameter
 // and the return type.
 
-typedef NABool (*NAReactionHandler)(NAReaction reaction);
+typedef NABool (*NAReactionCallback)(NAReaction reaction);
 
 // By calling naAddUIReaction or naAddUIKeyboardShortcut, the programmer can
-// register, which reaction handler should be called when a certain uiElement
+// register, which reaction callback should be called when a certain uiElement
 // reacts to a certain command or when a certain keyboard shortcut is pressed.
 //
 // The controller given to these functions is an arbitrary void pointer which
@@ -60,16 +60,16 @@ typedef NABool (*NAReactionHandler)(NAReaction reaction);
 // be traversed sequentially forward from start to end.
 
 NA_API void naAddUIReaction(
-  void*             uiElement,
-  NAUICommand       command,
-  NAReactionHandler handler,
-  void*             controller);
+  void*              uiElement,
+  NAUICommand        command,
+  NAReactionCallback callback,
+  void*              controller);
 
 NA_API void naAddUIKeyboardShortcut(
-  void*             uiElement,
-  NAKeyStroke       keyStroke,
-  NAReactionHandler handler,
-  void*             controller);
+  void*              uiElement,
+  NAKeyStroke        keyStroke,
+  NAReactionCallback callback,
+  void*              controller);
 
 // Commands are somewhat specific. Not all commands work with all uiElement
 // types.
@@ -82,24 +82,24 @@ NA_API void naAddUIKeyboardShortcut(
 // function only works in conjunction with such a command and will emit an
 // error otherwise.
 
-// Parameter and return type of a reaction handler:
+// Parameter and return type of a reaction callback:
 //
-// When a reaction handler returns NA_TRUE, the command is considered handeled
+// When a reaction callback returns NA_TRUE, the command is considered handeled
 // and will not be processed any further. This means, if there are any other
-// reaction handlers registered which handle the same uiElement and command,
+// reaction callbacks registered which handle the same uiElement and command,
 // they will not be called. If NA_FALSE is returned however, the command will
-// be further processed. This means, if there are other handlers in the list
+// be further processed. This means, if there are other callbacks in the list
 // of the same uiElement or in any other element which is a parent of the one
 // the command occured, they will then be executed the same way until one of
-// the handlers returns NA_TRUE.
+// the callbacks returns NA_TRUE.
 //
 // This allows you to propagate reactions outwards until they are handeled by
-// an appropriate handler. If none of the registered handlers returns NA_TRUE,
+// an appropriate callback. If none of the registered callbacks returns NA_TRUE,
 // the default message handling of the current operation system takes over.
 //
-// The parameter of a reaction handler is a NAReaction package, provided as
-// a value copy. This means that reaction handlers can not alter the package
-// and provide it to an outer handler by returning NA_FALSE. This is by design.
+// The parameter of a reaction callback is a NAReaction package, provided as
+// a value copy. This means that reaction callbacks can not alter the package
+// and provide it to an outer callback by returning NA_FALSE. This is by design.
 
 
 #endif // NA_REACTION_INCLUDED

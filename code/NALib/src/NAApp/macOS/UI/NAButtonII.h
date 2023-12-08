@@ -510,7 +510,7 @@ NA_DEF void naSetButtonState(NAButton* button, NABool state){
 
 NA_DEF void naSetButtonSubmit(
   NAButton* button,
-  NAReactionHandler handler,
+  NAReactionCallback callback,
   void* controller)
 {
   #if NA_DEBUG
@@ -526,12 +526,12 @@ NA_DEF void naSetButtonSubmit(
     naAddUIKeyboardShortcut(
       window,
       naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
-      handler,
+      callback,
       controller);
     naAddUIKeyboardShortcut(
       window,
       naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_NUMPAD_ENTER),
-      handler,
+      callback,
       controller);
   }else{
     #if NA_DEBUG
@@ -544,7 +544,7 @@ NA_DEF void naSetButtonSubmit(
 
 NA_DEF void naSetButtonAbort(
   NAButton* button,
-  NAReactionHandler handler,
+  NAReactionCallback callback,
   void* controller)
 {
   #if NA_DEBUG
@@ -555,12 +555,12 @@ NA_DEF void naSetButtonAbort(
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
     naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
-    handler,
+    callback,
     controller);
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
     naMakeKeyStroke(NA_MODIFIER_FLAG_COMMAND, NA_KEYCODE_PERIOD),
-    handler,
+    callback,
     controller);
 }
 

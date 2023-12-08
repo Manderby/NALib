@@ -183,10 +183,10 @@ NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolu
   CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, skin, interaction, secondaryState);
 
   // Yes, we create a new NSImage which we draw into the NSImage which
-  // calls this handler. It is unknown to me exactly why I need to do
+  // calls this callback. It is unknown to me exactly why I need to do
   // that but otherwise the context just isn't there on all systems.
   // Potentially this has to do with threading which can only allocate
-  // memory in its own region as this handler may be called in a thread.
+  // memory in its own region as this callback may be called in a thread.
   [NSGraphicsContext saveGraphicsState];
   NSImage* drawImage = [[NSImage alloc] initWithSize:imageSize];
   [drawImage lockFocus];
