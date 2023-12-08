@@ -11,15 +11,24 @@ void testMessageCallback(NAMessage message){
   testValue++;
 }
 
+int valueArray[3];
+size_t valuePos = 0;
+void addValueCallback(NAMessage message){
+  int* data = (int*)message.data;
+  valueArray[valuePos] = *data;
+  valuePos++;
+}
+
+enum MySignals {
+  msgUpdate,
+  msgCreate,
+  msgDelete,
+  SIGNAL_COUNT
+};
 
 
-void testNANotifier(void){
-  enum MySignals {
-    msg0,
-    msg1,
-    SIGNAL_COUNT
-  };
 
+void testNANotifierCreationAndSetup(){
   naTestGroup("Start and Stop") {
     naTest(naGetCurrentNotifier() == NA_NULL);
     NANotifier* notifier = naAllocNotifier();
@@ -54,41 +63,45 @@ void testNANotifier(void){
 
     naTestVoid(naDeallocNotifier(notifier));
   }
+}
+
+
+
+void testNANotifierPublishAndSubscribe(){
+  naTestCrash(naSubscribe(NA_NULL, 1234, 1234, NA_NULL, NA_NULL));
+  naTestCrash(naPublish(NA_NULL, 1234, 1234, NA_NULL));
+  naTestCrash(naRunNotifier());
 
   naTestGroup("Set signals") {
     NANotifier* notifier = naAllocNotifier();
     naSetCurrentNotifier(notifier);
     size_t topicId = naRegisterTopic(SIGNAL_COUNT);
 
-    naTestVoid(naSetSignalPriority(topicId, msg0, NA_SIGNAL_PRIORITY_CREATE));
+    naTestVoid(naSetSignalPriority(topicId, msgCreate, NA_SIGNAL_PRIORITY_CREATE));
+    naTestVoid(naSetSignalPriority(topicId, msgDelete, NA_SIGNAL_PRIORITY_DELETE));
 
     naTestCrash(naSetSignalPriority(1234, 1234, 1234));
     naTestCrash(naSetSignalPriority(topicId, 1234, 1234));
-    naTestError(naSetSignalPriority(topicId, msg0, 1234));
-    
+    naTestError(naSetSignalPriority(topicId, msgCreate, 1234));
+
     naDeallocNotifier(notifier);
   }
 
   naTestGroup("Simple roundtrip") {
-  
-    naTestCrash(naSubscribe(NA_NULL, 1234, 1234, NA_NULL, NA_NULL));
-    naTestCrash(naPublish(NA_NULL, 1234, 1234, NA_NULL));
-    naTestCrash(naRunNotifier());
-
+    int testObject = 9999;
     NANotifier* notifier = naAllocNotifier();
     naSetCurrentNotifier(notifier);
     size_t topicId = naRegisterTopic(SIGNAL_COUNT);
-    int testObject = 9999;
 
     naTestCrash(naSubscribe(NA_NULL, 1234, 1234, NA_NULL, NA_NULL));
     naTestCrash(naSubscribe(NA_NULL, topicId, 1234, NA_NULL, NA_NULL));
-    naTestCrash(naSubscribe(NA_NULL, topicId, msg0, NA_NULL, NA_NULL));
+    naTestCrash(naSubscribe(NA_NULL, topicId, msgUpdate, NA_NULL, NA_NULL));
     naTestCrash(naPublish(NA_NULL, 1234, 1234, NA_NULL));
     naTestCrash(naPublish(NA_NULL, topicId, 1234, NA_NULL));
 
     testValue = 1000;
-    naTestVoid(naSubscribe(NA_NULL, topicId, msg0, NA_NULL, testMessageCallback));
-    naTestVoid(naPublish(&testObject, topicId, msg0, NA_NULL));
+    naTestVoid(naSubscribe(NA_NULL, topicId, msgUpdate, NA_NULL, testMessageCallback));
+    naTestVoid(naPublish(&testObject, topicId, msgUpdate, NA_NULL));
     naTestVoid(naRunNotifier());
     naTest(testValue == 1001);
 
@@ -99,13 +112,44 @@ void testNANotifier(void){
     NANotifier* notifier = naAllocNotifier();
     naSetCurrentNotifier(notifier);
     size_t topicId = naRegisterTopic(SIGNAL_COUNT);
-  
-    void* subscription = naSubscribe(NA_NULL, topicId, msg0, NA_NULL, testMessageCallback);
-    naTestVoid(naUnsubscribe(subscription, topicId, msg0));
+
+    void* subscription = naSubscribe(NA_NULL, topicId, msgUpdate, NA_NULL, testMessageCallback);
+    naTestVoid(naUnsubscribe(subscription, topicId, msgUpdate));
 
     naDeallocNotifier(notifier);
   }
 
+  naTestGroup("Priority messages") {
+    NANotifier* notifier = naAllocNotifier();
+    naSetCurrentNotifier(notifier);
+    size_t topicId = naRegisterTopic(SIGNAL_COUNT);
+
+    naTestVoid(naSetSignalPriority(topicId, msgUpdate, NA_SIGNAL_PRIORITY_UPDATE));
+    naTestVoid(naSetSignalPriority(topicId, msgCreate, NA_SIGNAL_PRIORITY_CREATE));
+    naTestVoid(naSetSignalPriority(topicId, msgDelete, NA_SIGNAL_PRIORITY_DELETE));
+    naSubscribe(NA_NULL, topicId, msgUpdate, NA_NULL, addValueCallback);
+    naSubscribe(NA_NULL, topicId, msgCreate, NA_NULL, addValueCallback);
+    naSubscribe(NA_NULL, topicId, msgDelete, NA_NULL, addValueCallback);
+    int value1 = 1;
+    int value2 = 2;
+    int value3 = 3;
+    naPublish(NA_NULL, topicId, msgUpdate, &value1);
+    naPublish(NA_NULL, topicId, msgCreate, &value2);
+    naPublish(NA_NULL, topicId, msgDelete, &value3);
+    naRunNotifier();
+    naTest(valueArray[0] == 3);
+    naTest(valueArray[1] == 2);
+    naTest(valueArray[2] == 1);
+
+    naDeallocNotifier(notifier);
+  }
+}
+
+
+
+void testNANotifier(void){
+  naTestFunction(testNANotifierCreationAndSetup);
+  naTestFunction(testNANotifierPublishAndSubscribe);
 }
 
 
