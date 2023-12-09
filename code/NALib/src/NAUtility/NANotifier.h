@@ -41,12 +41,13 @@ NA_API void naSetCurrentNotifier(NANotifier* notifier);
 // Performs a full run where all messages including follow-up messages will be
 // distributed. This function usually is called in some kind of application
 // loop on a regular basis.
-NA_API void naRunNotifier();
+NA_API void naRunNotifier(void);
 
 // Registers a topic and returns a new topicId. You can have multiple signals
 // per topic, all numbered from 0 to signalCount - 1. This means, it is most
 // practical to use an enum to define the signals. By default, all signals
 // have the signal priority UPDATE.
+// The returned topicId is always > 0.
 NA_API size_t naRegisterTopic(size_t signalCount);
 
 // Sets the priority of the signal. Initial priority of any signal is UPDATE.

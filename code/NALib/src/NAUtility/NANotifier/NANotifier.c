@@ -116,12 +116,12 @@ NA_HDEF void na_DeallocTopic(NA_Topic* topic){
 NA_DEF NANotifier* naAllocNotifier(void){
   NANotifier* notifier = naAlloc(NANotifier);
 
-  notifier->nextTopicId = 0;
+  notifier->nextTopicId = 1;
   notifier->topicsCount = 1;
   size_t topicsMemSize = sizeof(NA_Topic*) * notifier->topicsCount;
   notifier->topics = naMalloc(topicsMemSize);
   naZeron(notifier->topics, topicsMemSize);
-
+  
   naInitList(&notifier->updateQueue);
   naInitList(&notifier->createQueue);
   naInitList(&notifier->deleteQueue);

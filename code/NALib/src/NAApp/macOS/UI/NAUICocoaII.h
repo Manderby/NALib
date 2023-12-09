@@ -425,7 +425,14 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 
 
 
-NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* fileName, const NAUTF8Char* allowedFileSuffix, FilePanelCallback callback){
+NA_DEF void naPresentFilePanel(
+  void* window,
+  NABool load,
+  const NAUTF8Char* fileName,
+  const NAUTF8Char* allowedFileSuffix,
+  NAFilePanelCallback callback,
+  const void* data)
+{
   #if NA_DEBUG
     if(load)
       naError("Load panels are not implemented yet.");
@@ -451,7 +458,7 @@ NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* file
     #else
       NABool doPerform = result != NSFileHandlingPanelCancelButton;
     #endif
-    callback(doPerform, [[[savepanel URL] path] UTF8String]);
+    callback(doPerform, [[[savepanel URL] path] UTF8String], data);
   }];
 }
 

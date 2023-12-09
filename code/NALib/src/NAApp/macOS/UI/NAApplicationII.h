@@ -4,6 +4,8 @@
 // actually contains non-inlinenable code. See NACocoa.m for more information.
 // Do not include this file anywhere else!
 
+#include "NANotifier.h"
+
 
 
 @implementation NACocoaNativeApplicationDelegate
@@ -142,6 +144,9 @@ NA_DEF void naStartApplication(
   [nativeApp setPostStartupArg: arg];
   [NSApp setDelegate:nativeApp];
 
+  NANotifier* notifier = naAllocNotifier();
+  naSetCurrentNotifier(notifier);
+
   // Start the event loop.
   NSDate* distantFuture = [NSDate distantFuture];
   while(na_IsApplicationRunning()){
@@ -154,14 +159,20 @@ NA_DEF void naStartApplication(
 //      NSEventSubtype subtype = [curEvent subtype];
 //      printf("type %d, desc %s\n", (int)type, [[curEvent description] UTF8String]);
 //      NSEventSubtypeWindowMoved
+
       naCollectGarbage();
       if(!na_InterceptKeyboardShortcut(curEvent)){
         if(curEvent){[NSApp sendEvent:curEvent];}
       }
+
+      naRunNotifier();
+
     #if !NA_MACOS_USES_ARC
       [pool drain]; // also releases the pool. No separate release necessary.
     #endif
   }
+
+  naDeallocNotifier(notifier);
 
   // Before deleting the application, we cleanup whatever the user needs to
   // clean up.
