@@ -271,7 +271,7 @@ NA_DEF void* naSubscribe(
 
 
 
-NA_DEF void naUnsubscribe(
+NA_DEF void naUnsubscribeSignal(
   void* subscriber,
   size_t topicId,
   size_t signalId){
@@ -298,7 +298,7 @@ NA_DEF void naUnsubscribe(
 
 
 
-NA_DEF size_t naPublish(
+NA_DEF void naPublish(
   void* sender,
   size_t topicId,
   size_t signalId,

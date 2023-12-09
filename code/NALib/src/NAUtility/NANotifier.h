@@ -66,7 +66,8 @@ NA_API void naSetSignalPriority(
 //              the callback as the first parameter. Can be NULL if no specific
 //              object is needed.
 // - callback:  The callback function which will be called.
-// Returns a pointer to an internal opaque type. Use that to unsubscribe again.
+// Returns a subscription pointer to an internal opaque type. Use that to
+// unsubscribe again using naUnsubscribe.
 NA_API void* naSubscribe(
   void* object,
   size_t topicId,
@@ -75,8 +76,20 @@ NA_API void* naSubscribe(
   NAMessageCallback callback);
 
 // Unsubscribes the given subscriber.
-NA_API void naUnsubscribe(
-  void* subscriber,
+// Reciever: Unsubscribes from any subscription which has the given reciever.
+// Topic:    Unsubsribes from any subscription with the given reciever and
+//           topicId. Null is not allowed for the reciever.
+// Signal:   Unsubscribes from any subscription with the given reciever,
+//           topicId and signalId. Null is not allowed for the reciever.
+//NA_API void naUnsubscribe(
+//  void* subscription);
+//NA_API void naUnsubscribeReciever(
+//  void* reciever);
+//NA_API void naUnsubscribeTopic(
+//  void* reciever,
+//  size_t topicId);
+NA_API void naUnsubscribeSignal(
+  void* reciever,
   size_t topicId,
   size_t signalId);
 
@@ -89,23 +102,22 @@ NA_API void naUnsubscribe(
 // - signalId:  The signal id to listen to.
 // - data:      A data package containing the data which shall be given the
 //              callback as the data parameter. Can be NULL.
-// Returns a publication id which is only valid until the notifier did send the
-// message.
-NA_API size_t naPublish(
+// The Now-variant publishes the message including all follow-up messages
+// immediately. This function does not return until all of these messages are
+// done. Other messages which are still waiting in the notifier to be published
+// remain unpublished but messages which are handeled by this call will be
+// removed automatically.
+NA_API void naPublish(
   void* sender,
   size_t topicId,
   size_t signalId,
   void* data);
-
-// Unpublishes the given publication
-NA_API void naUnpublish(size_t publicationID);
-
-// Publishes the message behind the given publication id including all
-// follow-up messages immediately. This function does not return until all of
-// these messages are done. Other messages which are still waiting in the
-// notifier to be published remain unpublished but messages which are handeled
-// by this call will be removed automatically.
-NA_API void naPublishNow(size_t publicationID);
+  
+NA_API void naPublishNow(
+  void* sender,
+  size_t topicId,
+  size_t signalId,
+  void* data);
 
 
 
