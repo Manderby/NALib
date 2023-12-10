@@ -146,7 +146,8 @@ NA_DEF void naDeallocNotifier(NANotifier* notifier){
   naClearList(&notifier->deleteQueue);
   
   if(notifier == na_notifier){na_notifier = NA_NULL;}
-  for(size_t topicId = 0; topicId < notifier->nextTopicId; ++topicId){
+  // topicId 0 is invalid.
+  for(size_t topicId = 1; topicId < notifier->nextTopicId; ++topicId){
     na_DeallocTopic(notifier->topics[topicId]);
   }
   naFree(notifier->topics);
