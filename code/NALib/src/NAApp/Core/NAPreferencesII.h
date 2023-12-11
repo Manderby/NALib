@@ -5,6 +5,14 @@
 
 
 #if NA_OS == NA_OS_WINDOWS
+  typedef HKEY NA_PreferencesPtr;
+#else if NA_OS == NA_OS_MAC_OS_X
+typedef NSUserDefaults* NA_PreferencesPtr;
+#endif
+
+NA_HAPI NA_PreferencesPtr na_GetNativePreferences();
+
+#if NA_OS == NA_OS_WINDOWS
   #include "../winAPI/NAPreferencesWINAPIII.h"
 #else if NA_OS == NA_OS_MAC_OS_X
   #include "../macOS/NAPreferencesCocoaII.h"
@@ -17,63 +25,39 @@ NA_HIDEF NABool na_ConvertPreferencesBoolToNABool(NAi64 value){
 }
 
 NA_HIDEF NAi64 na_ConvertNABoolToPreferencesBool(NABool value){
-  return value ? naMakei64WithLo(1) : naMakei64WithLo(-1);
+  return (value != 0) ? naMakei64WithLo(1) : naMakei64WithLo(-1);
 }
 
-NA_DEF NABool naInitPreferencesBool(const char* key, NABool newValue){
-  NAi64 value;
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
-  if(!na_GetRawPreferencesBool(prefs, key, &value)){
-    value = na_ConvertNABoolToPreferencesBool(newValue);
-    if(!na_SetRawPreferencesBool(prefs, key, &value)){
-      #if NA_DEBUG
-      naError("Could not init bool preference");
-      #endif
-    }
-  }
-  return na_ConvertPreferencesBoolToNABool(value);
+
+
+NA_HIDEF NAInt na_ConvertPreferencesIntToNAInt(NAi64 value){
+  return (NAInt)((naEquali64(value, NA_MIN_i64)) ? 0 : naCasti64ToInt(value));
 }
 
-NA_DEF NABool naGetPreferencesBool(const char* key){
-  NAi64 value;
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
-  return na_GetRawPreferencesBool(prefs, key, &value)
-    ? na_ConvertPreferencesBoolToNABool(value)
-    : NA_FALSE;
+NA_HIDEF NAi64 na_ConvertNAIntToPreferencesInt(NAInt value){
+  return (value == 0) ? NA_MIN_i64 : naCastIntToi64(value);
 }
 
-NA_DEF NABool naSetPreferencesBool(const char* key, NABool newValue){
-  NAi64 value = na_ConvertNABoolToPreferencesBool(newValue);
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
-  NAi64 existingValue;
-  NABool isDifferent = na_GetRawPreferencesBool(prefs, key, &existingValue)
-    ? value != existingValue
-    : NA_TRUE;
 
-  if(isDifferent){
-    if(!na_SetRawPreferencesBool(prefs, key, &value)){
-      #if NA_DEBUG
-      naError("Could not store bool preference.");
-      #endif
-    }
-  }
 
-  return isDifferent;
+NA_HIDEF NAInt na_ConvertPreferencesEnumToNAEnum(NAi64 value){
+  return naCasti64ToInt(naSubi64(value, naMakei64WithLo(1)));
 }
 
-NA_DEF NABool naTogglePreferencesBool(const char* key){
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
-  NAi64 value;
-  na_GetRawPreferencesBool(prefs, key, &value);
-  NABool boolValue = na_ConvertPreferencesBoolToNABool(value);
-  value = na_ConvertNABoolToPreferencesBool(!boolValue);
-  if(!na_SetRawPreferencesBool(prefs, key, &value)){
-    #if NA_DEBUG
-    naError("Could not toggle bool preference.");
-    #endif
-  }
-  return na_ConvertPreferencesBoolToNABool(value);
+NA_HIDEF NAi64 na_ConvertNAEnumToPreferencesEnum(NAInt value){
+  return naAddi64(naCastIntToi64(value), naMakei64WithLo(1));
 }
+
+
+
+NA_HIDEF double na_ConvertPreferencesDoubleToNADouble(double value){
+  return naIsNaN(value) ? 0. : value;
+}
+
+NA_HIDEF double na_ConvertNADoubleToPreferencesDouble(double value){
+  return (value == 0.) ? NA_NAN : value;
+}
+
 
 
 // This is free and unencumbered software released into the public domain.
