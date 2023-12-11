@@ -32,6 +32,7 @@ set(headerFiles
 
 set(coreFiles
   ${NAAppDir}/Core/NAAppCore.h
+  ${NAAppDir}/Core/NAPreferencesII.h
   ${NAAppDir}/Core/NAUIImage.c
   ${NAAppDir}/Core/NAUIImageII.h
 )
