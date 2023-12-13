@@ -1,10 +1,11 @@
 
-#include "../NAPreferences.h"
+#include "../../NABase/NABase.h"
 
 #if NA_COMPILE_GUI == 1
 
-#include "../../NAApp/NAApp.h"
 #import <Cocoa/Cocoa.h>
+#include "../NAPreferences.h"
+#include "../../NAApp/NAApp.h"
 
 
 

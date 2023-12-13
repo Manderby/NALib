@@ -5,7 +5,7 @@
 
 
 
-NA_HAPI void* na_GetNativePreferences();
+NA_HAPI void* na_GetNativePreferences(void);
 NA_HAPI NABool na_GetRawPreferencesBool(void* prefs, const char* key, NAi64* valueStorage);
 NA_HAPI NABool na_SetRawPreferencesBool(void* prefs, const char* key, NAi64* valueStorage);
 NA_HAPI NABool na_GetRawPreferencesInt(void* prefs, const char* key, NAi64* valueStorage);

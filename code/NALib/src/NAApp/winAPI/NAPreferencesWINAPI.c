@@ -2,6 +2,7 @@
 #include "../NAPreferences.h"
 #include "../../NAApp/NAApp.h"
 
+#if NA_OS == NA_OS_WINDOWS
 #if NA_COMPILE_GUI == 1
 
 
@@ -152,6 +153,7 @@ NA_HDEF NABool na_SetRawPreferencesString(void* prefs, const char* key, NAString
 
 
 #endif // NA_COMPILE_GUI == 1
+#endif // NA_OS == NA_OS_WINDOWS
 
 // This is free and unencumbered software released into the public domain.
 
