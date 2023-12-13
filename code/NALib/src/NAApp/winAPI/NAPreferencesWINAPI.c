@@ -1,20 +1,15 @@
 
-// This file is an inline implmenentation (II) file which is included in the
-// NAWINAPI.c file. This is a bit special as it is marked as a .h file but
-// actually contains non-inlinenable code. See NAWINAPI.c for more information.
-// Do not include this file anywhere else!
-
 #include "../NAPreferences.h"
 #include "../../NAApp/NAApp.h"
 
 #if NA_COMPILE_GUI == 1
 
 
-NA_PreferencesPtr na_nativePreferences = NA_NULL;
+HKEY na_nativePreferences = NA_NULL;
 
 
 
-NA_HDEF NA_PreferencesPtr na_GetNativePreferences(){
+NA_HDEF void* na_GetNativePreferences(){
   #if NA_DEBUG
     if(!naGetApplication())
       naError("No application running. Use naStartApplication.");
@@ -42,6 +37,116 @@ NA_HDEF NA_PreferencesPtr na_GetNativePreferences(){
     naDelete(fullKeyName);
   }
   return na_nativePreferences;
+}
+
+
+
+NA_HDEF NABool na_GetRawPreferencesBool(void* prefs, const char* key, NAi64* valueStorage){
+  HKEY registry = (HKEY*)prefs;
+  DWORD valueSize = NA_TYPE64_BYTES;
+  DWORD type;
+  LSTATUS errorCode = RegGetValueA(registry, NULL, key, RRF_RT_ANY, &type, valueStorage, (LPDWORD)&valueSize);
+  return (errorCode == ERROR_SUCCESS);
+}
+
+NA_HDEF NABool na_SetRawPreferencesBool(void* prefs, const char* key, NAi64* valueStorage){
+  HKEY registry = (HKEY*)prefs;
+  DWORD valueSize = NA_TYPE64_BYTES;
+  LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, valueStorage, valueSize);
+  return (errorCode == ERROR_SUCCESS);
+}
+
+
+
+NA_HDEF NABool na_GetRawPreferencesInt(void* prefs, const char* key, NAi64* valueStorage){
+  HKEY registry = (HKEY*)prefs;
+  DWORD valueSize = NA_TYPE64_BYTES;
+  DWORD type;
+  LSTATUS errorCode = RegGetValueA(registry, NULL, key, RRF_RT_ANY, &type, valueStorage, (LPDWORD)&valueSize);
+  return (errorCode == ERROR_SUCCESS);
+}
+
+NA_HDEF NABool na_SetRawPreferencesInt(void* prefs, const char* key, NAi64* valueStorage){
+  HKEY registry = (HKEY*)prefs;
+  DWORD valueSize = NA_TYPE64_BYTES;
+  LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, valueStorage, valueSize);
+  return (errorCode == ERROR_SUCCESS);
+}
+
+
+
+NA_HDEF NABool na_GetRawPreferencesEnum(void* prefs, const char* key, NAi64* valueStorage){
+  HKEY registry = (HKEY*)prefs;
+  DWORD valueSize = NA_TYPE64_BYTES;
+  DWORD type;
+  LSTATUS errorCode = RegGetValueA(registry, NULL, key, RRF_RT_ANY, &type, valueStorage, (LPDWORD)&valueSize);
+  return (errorCode == ERROR_SUCCESS);
+}
+
+NA_HDEF NABool na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64* valueStorage){
+  HKEY registry = (HKEY*)prefs;
+  DWORD valueSize = NA_TYPE64_BYTES;
+  LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, valueStorage, valueSize);
+  return (errorCode == ERROR_SUCCESS);
+}
+
+
+
+NA_HDEF NABool na_GetRawPreferencesDouble(void* prefs, const char* key, double* valueStorage){
+  HKEY registry = (HKEY*)prefs;
+  DWORD valueSize = NA_TYPE64_BYTES;
+  DWORD type;
+  LSTATUS errorCode = RegGetValueA(registry, NULL, key, RRF_RT_ANY, &type, valueStorage, (LPDWORD)&valueSize);
+  return (errorCode == ERROR_SUCCESS);
+}
+
+NA_HDEF NABool na_SetRawPreferencesDouble(void* prefs, const char* key, double* valueStorage){
+  HKEY registry = (HKEY*)prefs;
+  DWORD valueSize = NA_TYPE64_BYTES;
+  LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, valueStorage, valueSize);
+  return (errorCode == ERROR_SUCCESS);
+}
+
+
+
+NA_HDEF NABool na_GetRawPreferencesString(void* prefs, const char* key, NAString** valueStorage){
+  HKEY registry = (HKEY*)prefs;
+  wchar_t* systemKey = naAllocWideCharStringWithUTF8String(key);
+  DWORD valueSize;
+  DWORD type;
+  LSTATUS errorCode = RegQueryValueExW(registry, systemKey, NULL, &type, NULL, &valueSize);
+  if(errorCode != ERROR_SUCCESS){
+    naFree(systemKey);
+    return NA_FALSE;
+  }
+
+  wchar_t* storedValue = naMalloc(valueSize);
+  errorCode = RegGetValueW(registry, NULL, systemKey, RRF_RT_ANY, &type, storedValue, (LPDWORD)&valueSize);
+  naFree(systemKey);
+
+  if(errorCode == ERROR_SUCCESS){
+    *valueStorage = naNewStringFromWideCharString(storedValue);
+    naFree(storedValue);
+    return NA_TRUE;
+  }else{
+    *valueStorage = NA_NULL;
+    return NA_FALSE;
+  }
+}
+
+NA_HDEF NABool na_SetRawPreferencesString(void* prefs, const char* key, NAString** valueStorage){
+  // Note that in this function it is necessary to convert the key to wchar_t
+  // format as only the W functions can store unicode strings.
+  // Stupid dog. You make this look bad.
+
+  HKEY registry = (HKEY*)prefs;
+  wchar_t* systemKey = naAllocWideCharStringWithUTF8String(key);
+  wchar_t* storedValue = naAllocWideCharStringWithUTF8String(naGetStringUTF8Pointer(*valueStorage));
+  DWORD valueSize = ((DWORD)wcslen(storedValue) + 1) * sizeof(wchar_t);
+  LSTATUS errorCode = RegSetKeyValueW(registry, NULL, systemKey, REG_SZ, storedValue, valueSize);
+  naFree(storedValue);
+  naFree(systemKey);
+  return errorCode == ERROR_SUCCESS;
 }
 
 

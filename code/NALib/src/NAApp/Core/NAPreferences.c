@@ -4,7 +4,7 @@
 
 NA_DEF NABool naInitPreferencesBool(const char* key, NABool newValue){
   NAi64 value;
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   if(!na_GetRawPreferencesBool(prefs, key, &value)){
     value = na_ConvertNABoolToPreferencesBool(newValue);
     if(!na_SetRawPreferencesBool(prefs, key, &value)){
@@ -18,7 +18,7 @@ NA_DEF NABool naInitPreferencesBool(const char* key, NABool newValue){
 
 NA_DEF NABool naGetPreferencesBool(const char* key){
   NAi64 value;
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   return na_GetRawPreferencesBool(prefs, key, &value)
     ? na_ConvertPreferencesBoolToNABool(value)
     : NA_FALSE;
@@ -26,7 +26,7 @@ NA_DEF NABool naGetPreferencesBool(const char* key){
 
 NA_DEF NABool naSetPreferencesBool(const char* key, NABool newValue){
   NAi64 value = na_ConvertNABoolToPreferencesBool(newValue);
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   NAi64 existingValue;
   NABool isDifferent = na_GetRawPreferencesBool(prefs, key, &existingValue)
     ? value != existingValue
@@ -44,7 +44,7 @@ NA_DEF NABool naSetPreferencesBool(const char* key, NABool newValue){
 }
 
 NA_DEF NABool naTogglePreferencesBool(const char* key){
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   NAi64 value;
   na_GetRawPreferencesBool(prefs, key, &value);
   NABool boolValue = na_ConvertPreferencesBoolToNABool(value);
@@ -61,7 +61,7 @@ NA_DEF NABool naTogglePreferencesBool(const char* key){
 
 NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt newValue){
   NAi64 value;
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   if(!na_GetRawPreferencesInt(prefs, key, &value)){
     value = na_ConvertNAIntToPreferencesInt(newValue);
     if(!na_SetRawPreferencesInt(prefs, key, &value)){
@@ -75,7 +75,7 @@ NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt newValue){
 
 NA_DEF NAInt naGetPreferencesInt(const char* key){
   NAi64 value;
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   return na_GetRawPreferencesInt(prefs, key, &value)
     ? na_ConvertPreferencesIntToNAInt(value)
     : NA_MIN_i64;
@@ -83,7 +83,7 @@ NA_DEF NAInt naGetPreferencesInt(const char* key){
 
 NA_DEF NABool naSetPreferencesInt(const char* key, NAInt newValue){
   NAi64 value = na_ConvertNAIntToPreferencesInt(newValue);
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   NAi64 existingValue;
   NABool isDifferent = na_GetRawPreferencesInt(prefs, key, &existingValue)
     ? value != existingValue
@@ -104,7 +104,7 @@ NA_DEF NABool naSetPreferencesInt(const char* key, NAInt newValue){
 
 NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt newValue){
   NAi64 value;
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   if(!na_GetRawPreferencesEnum(prefs, key, &value)){
     value = na_ConvertNAEnumToPreferencesEnum(newValue);
     if(!na_SetRawPreferencesEnum(prefs, key, &value)){
@@ -118,7 +118,7 @@ NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt newValue){
 
 NA_DEF NAInt naGetPreferencesEnum(const char* key){
   NAi64 value;
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   return na_GetRawPreferencesEnum(prefs, key, &value)
     ? na_ConvertPreferencesEnumToNAEnum(value)
     : NA_MIN_i64;
@@ -126,7 +126,7 @@ NA_DEF NAInt naGetPreferencesEnum(const char* key){
 
 NA_DEF NABool naSetPreferencesEnum(const char* key, NAInt newValue){
   NAi64 value = na_ConvertNAEnumToPreferencesEnum(newValue);
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   NAi64 existingValue;
   NABool isDifferent = na_GetRawPreferencesEnum(prefs, key, &existingValue)
     ? value != existingValue
@@ -147,7 +147,7 @@ NA_DEF NABool naSetPreferencesEnum(const char* key, NAInt newValue){
 
 NA_DEF double naInitPreferencesDouble(const char* key, double newValue){
   double value;
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   if(!na_GetRawPreferencesDouble(prefs, key, &value)){
     value = na_ConvertNADoubleToPreferencesDouble(newValue);
     if(!na_SetRawPreferencesDouble(prefs, key, &value)){
@@ -161,7 +161,7 @@ NA_DEF double naInitPreferencesDouble(const char* key, double newValue){
 
 NA_DEF double naGetPreferencesDouble(const char* key){
   double value;
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   return na_GetRawPreferencesDouble(prefs, key, &value)
     ? na_ConvertPreferencesDoubleToNADouble(value)
     : NA_MIN_i64;
@@ -169,7 +169,7 @@ NA_DEF double naGetPreferencesDouble(const char* key){
 
 NA_DEF NABool naSetPreferencesDouble(const char* key, double newValue){
   double value = na_ConvertNADoubleToPreferencesDouble(newValue);
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   double existingValue;
   NABool isDifferent = na_GetRawPreferencesDouble(prefs, key, &existingValue)
     ? value != existingValue
@@ -188,9 +188,9 @@ NA_DEF NABool naSetPreferencesDouble(const char* key, double newValue){
 
 
 
-NA_DEF NAString* naInitPreferencesString(const char* key, const NAString* newValue){
+NA_DEF NAString* naInitPreferencesString(const char* key, NAString* newValue){
   NAString* value;
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   if(!na_GetRawPreferencesString(prefs, key, &value)){
     value = naNewStringExtraction(newValue, 0, -1);
     if(!na_SetRawPreferencesString(prefs, key, &value)){
@@ -204,14 +204,14 @@ NA_DEF NAString* naInitPreferencesString(const char* key, const NAString* newVal
 
 NA_DEF NAString* naNewPreferencesString(const char* key){
   NAString* value;
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+  void* prefs = na_GetNativePreferences();
   return na_GetRawPreferencesString(prefs, key, &value)
     ? value
     : NA_NULL;
 }
 
-NA_DEF NABool naSetPreferencesString(const char* key, const NAString* newValue){
-  NA_PreferencesPtr prefs = na_GetNativePreferences();
+NA_DEF NABool naSetPreferencesString(const char* key, NAString* newValue){
+  void* prefs = na_GetNativePreferences();
   NAString* existingValue;
   NABool isDifferent = na_GetRawPreferencesString(prefs, key, &existingValue)
     ? !naEqualStringToString(newValue, existingValue, NA_TRUE)
@@ -228,6 +228,8 @@ NA_DEF NABool naSetPreferencesString(const char* key, const NAString* newValue){
 
   return isDifferent;
 }
+
+
 
 // This is free and unencumbered software released into the public domain.
 

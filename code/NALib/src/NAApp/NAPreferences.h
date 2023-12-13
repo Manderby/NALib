@@ -24,7 +24,7 @@ NA_API NABool    naInitPreferencesBool   (const char* key, NABool newValue);
 NA_API NAInt     naInitPreferencesInt    (const char* key, NAInt newValue);
 NA_API NAInt     naInitPreferencesEnum   (const char* key, NAInt newValue);
 NA_API double    naInitPreferencesDouble (const char* key, double newValue);
-NA_API NAString* naInitPreferencesString (const char* key, const NAString* newValue);
+NA_API NAString* naInitPreferencesString (const char* key, NAString* newValue);
 
 // Sets the preference. Returns true, if the preference was different before
 // or did not exist.
@@ -32,7 +32,7 @@ NA_API NABool naSetPreferencesBool       (const char* key, NABool newValue);
 NA_API NABool naSetPreferencesInt        (const char* key, NAInt newValue);
 NA_API NABool naSetPreferencesEnum       (const char* key, NAInt newValue);
 NA_API NABool naSetPreferencesDouble     (const char* key, double newValue);
-NA_API NABool naSetPreferencesString     (const char* key, const NAString* newValue);
+NA_API NABool naSetPreferencesString     (const char* key, NAString* newValue);
 
 // Toggles the boolean preference. Returns the value which is stored afterwards.
 NA_API NABool naTogglePreferencesBool    (const char* key);

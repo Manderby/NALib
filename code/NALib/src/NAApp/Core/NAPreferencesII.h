@@ -4,19 +4,18 @@
 // including "NAPreferences.h"
 
 
-#if NA_OS == NA_OS_WINDOWS
-  typedef HKEY NA_PreferencesPtr;
-#else if NA_OS == NA_OS_MAC_OS_X
-typedef NSUserDefaults* NA_PreferencesPtr;
-#endif
 
-NA_HAPI NA_PreferencesPtr na_GetNativePreferences();
-
-#if NA_OS == NA_OS_WINDOWS
-  #include "../winAPI/NAPreferencesWINAPIII.h"
-#else if NA_OS == NA_OS_MAC_OS_X
-  #include "../macOS/NAPreferencesCocoaII.h"
-#endif
+NA_HAPI void* na_GetNativePreferences();
+NA_HAPI NABool na_GetRawPreferencesBool(void* prefs, const char* key, NAi64* valueStorage);
+NA_HAPI NABool na_SetRawPreferencesBool(void* prefs, const char* key, NAi64* valueStorage);
+NA_HAPI NABool na_GetRawPreferencesInt(void* prefs, const char* key, NAi64* valueStorage);
+NA_HAPI NABool na_SetRawPreferencesInt(void* prefs, const char* key, NAi64* valueStorage);
+NA_HAPI NABool na_GetRawPreferencesEnum(void* prefs, const char* key, NAi64* valueStorage);
+NA_HAPI NABool na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64* valueStorage);
+NA_HAPI NABool na_GetRawPreferencesDouble(void* prefs, const char* key, double* valueStorage);
+NA_HAPI NABool na_SetRawPreferencesDouble(void* prefs, const char* key, double* valueStorage);
+NA_HAPI NABool na_GetRawPreferencesString(void* prefs, const char* key, NAString** valueStorage);
+NA_HAPI NABool na_SetRawPreferencesString(void* prefs, const char* key, NAString** valueStorage);
 
 
 
