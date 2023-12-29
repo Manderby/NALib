@@ -6,14 +6,14 @@
 
 
 
-NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace);
+NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace);
 
 
 
 NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   RECT spaceRect;
-  NA_UIElement* childelement;
+  NA_UIElement* childElement;
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)uiElement;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIColor* bgColor;
@@ -83,7 +83,14 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
           // being used as a system UI style.
           info.result = (LRESULT)CreateSolidBrush(RGB(255, 255, 0));
           info.hasBeenHandeled = NA_TRUE;
+        }else{
+          bgColor = naGetWINAPISpaceBackgroundColor((const NAWINAPISpace*)naGetUIElementParentSpaceConst(button));
+          info.result = (LRESULT)bgColor->brush;
+          info.hasBeenHandeled = NA_TRUE;
         }
+      }else{
+        info.result = (LRESULT)CreateSolidBrush(RGB(255, 128, 0));
+        info.hasBeenHandeled = NA_TRUE;
       }
     }
     break;
@@ -91,24 +98,33 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_CTLCOLOREDIT:
   case WM_CTLCOLORSTATIC:
   // Message is sent to parent space.
-    // wParam: device context
+    // wParam: device
     // lParam HWND handle to actual control
     // return: background color brush
-    childelement = (NA_UIElement*)na_GetUINALibEquivalent((HWND)lParam);
-    switch(childelement->elementType){
+    childElement = (NA_UIElement*)na_GetUINALibEquivalent((HWND)lParam);
+    switch(childElement->elementType){
     case NA_UI_LABEL:
-      if(naIsLabelEnabled((NALabel*)childelement)){
+      if(naIsLabelEnabled((NALabel*)childElement)){
         SetTextColor((HDC)wParam, app->fgColor.color);
       }else{
         SetTextColor((HDC)wParam, app->fgColorDisabled.color);
       }
-      // fall through:
-    case NA_UI_TEXTBOX:
-    bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
+      bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
       SetBkColor((HDC)wParam, bgColor->color);
       info.result = (LRESULT)bgColor->brush;
       info.hasBeenHandeled = NA_TRUE;
       break;
+    case NA_UI_TEXTBOX:
+    case NA_UI_TEXTFIELD:
+      // Background of a textfield or a textbox is really the back of the text,
+      // not the surrounding. So, leave it as it is.
+      break;
+    default:
+      // Radio, Checkbox, Select
+      bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
+      info.result = (LRESULT)bgColor->brush;
+      info.hasBeenHandeled = NA_TRUE;
+    break;
     }
     break;
 
@@ -134,14 +150,14 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
 
 
-NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace){
+NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIColor* retcolor;
   NAInt alternateLevel = 0;
-  void* parent = winapiSpace;
+  const void* parent = winapiSpace;
   while(parent){
     if(naGetSpaceAlternateBackground(parent)){alternateLevel++;}
-    parent = naGetUIElementParentSpace(parent);
+    parent = naGetUIElementParentSpaceConst(parent);
   }
   switch(alternateLevel){
   case 0: retcolor = &(app->bgColor); break;

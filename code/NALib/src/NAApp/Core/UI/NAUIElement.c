@@ -206,6 +206,16 @@ NA_DEF NASpace* naGetUIElementParentSpace(void* uiElement){
 
 
 
+NA_DEF const NASpace* naGetUIElementParentSpaceConst(const void* uiElement){
+  const NASpace* parent = naGetUIElementParentConst(uiElement);
+  while(parent && naGetUIElementType(parent) != NA_UI_SPACE){
+    parent = naGetUIElementParentConst(parent);
+  }
+  return parent;
+}
+
+
+
 NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement){
   NARect rect;
   const NA_UIElement* elem = (const NA_UIElement*)uiElement;

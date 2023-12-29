@@ -34,7 +34,7 @@ NA_API void naRemoveAllSpaceChilds(NASpace* space);
 
 // Switch between clear or an alternate color which adds a slight gray to the
 // background.
-NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
+NA_API NABool naGetSpaceAlternateBackground(const NASpace* space);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 
 // Set a specific background color.

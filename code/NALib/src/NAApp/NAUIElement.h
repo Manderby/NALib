@@ -96,6 +96,7 @@ NA_API const NAWindow* naGetUIElementWindowConst(const void* uiElement);
 // If there is no parental space, NA_NULL will be returned. Applications,
 // screens and windows will always return NA_NULL.
 NA_API NASpace* naGetUIElementParentSpace(void* uiElement);
+NA_API const NASpace* naGetUIElementParentSpaceConst(const void* uiElement);
 
 // In NALib, all coordinates of the UI are described in a mathematical, right-
 // handed coordinate system. The origin of the global coordinate system is

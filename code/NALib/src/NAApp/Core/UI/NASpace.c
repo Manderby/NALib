@@ -34,7 +34,7 @@ NA_HDEF void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child){
 
 
 
-NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
+NA_DEF NABool naGetSpaceAlternateBackground(const NASpace* space){
   return space->alternateBackground;
 }
 

@@ -329,8 +329,8 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 
   // Capture specific messages
   if(message == WM_DRAWITEM){
-      info = naWINAPIDrawItemProc(wParam, lParam);
-    }else if(message == WM_COMMAND){
+    info = naWINAPIDrawItemProc(wParam, lParam);
+  }else if(message == WM_COMMAND){
     info = naWINAPINotificationProc(wParam, lParam);
   }else if(message == WM_HSCROLL){
     info = naWINAPIScrollItemProc(wParam, lParam);

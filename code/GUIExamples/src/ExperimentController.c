@@ -272,6 +272,7 @@ ExperimentController* createExperimentController(){
     0);
 
   con->contentSpace = naNewSpace(naMakeSize(windowWidth, windowHeight));
+  naSetSpaceAlternateBackground(con->contentSpace, NA_TRUE);
   naAddUIReaction(con->experimentWindow, NA_UI_COMMAND_RESHAPE, windowReshaped, con);
 
   double curPosY = windowHeight - 42;
