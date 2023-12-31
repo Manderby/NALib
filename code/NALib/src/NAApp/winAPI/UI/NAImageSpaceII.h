@@ -6,6 +6,7 @@
 
 
 
+
 NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   PAINTSTRUCT paintStruct;
   HBITMAP hOldBitmap;
@@ -22,15 +23,16 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   NABabyImage* blendedImage;
   NAByte* blendedBuffer;
   HBITMAP hBlendedBitmap;
+  NAWINAPIColor* bgColor;
 
   BeginPaint(naGetUIElementNativePtr(uiElement), &paintStruct);
   hMemDC = CreateCompatibleDC(paintStruct.hdc);
 
   imageSpace = (NAWINAPIImageSpace*)uiElement;
-  //FillRect(paintStruct.hdc, &paintStruct.rcPaint, CreateSolidBrush(RGB(240,240,240)));
 
-  CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
-
+  bgColor = naGetWINAPISpaceBackgroundColor((const NAWINAPISpace*)naGetUIElementParentSpaceConst(uiElement));
+  FillRect(paintStruct.hdc, &paintStruct.rcPaint, bgColor->brush);
+  
   if(!imageSpace->imageSpace.uiImage)
     return info;
 

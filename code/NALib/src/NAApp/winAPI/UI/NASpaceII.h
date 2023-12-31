@@ -6,10 +6,6 @@
 
 
 
-NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace);
-
-
-
 NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   RECT spaceRect;
@@ -95,8 +91,11 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     }
     break;
 
-  case WM_CTLCOLOREDIT:
-  case WM_CTLCOLORSTATIC:
+  case WM_CTLCOLOREDIT: // TextBox
+    childElement = (NA_UIElement*)na_GetUINALibEquivalent((HWND)lParam);
+    break;
+
+  case WM_CTLCOLORSTATIC: // Label, TextField, Radio, CheckBox, Select
   // Message is sent to parent space.
     // wParam: device
     // lParam HWND handle to actual control
@@ -114,17 +113,16 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
       info.result = (LRESULT)bgColor->brush;
       info.hasBeenHandeled = NA_TRUE;
       break;
-    case NA_UI_TEXTBOX:
     case NA_UI_TEXTFIELD:
       // Background of a textfield or a textbox is really the back of the text,
       // not the surrounding. So, leave it as it is.
       break;
     default:
-      // Radio, Checkbox, Select
+      // Radio, CheckBox, Select
       bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
       info.result = (LRESULT)bgColor->brush;
       info.hasBeenHandeled = NA_TRUE;
-    break;
+      break;
     }
     break;
 

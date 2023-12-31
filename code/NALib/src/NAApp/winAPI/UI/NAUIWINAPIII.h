@@ -30,7 +30,6 @@ NA_HAPI void na_updateMenuItem(NAMenu* menu, const NAMenuItem* menuItem);
 
 
 
-
 NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr){
     DestroyWindow(nativePtr);
 }
