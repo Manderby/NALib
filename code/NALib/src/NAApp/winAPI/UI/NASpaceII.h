@@ -69,7 +69,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case EM_SETSEL:
     break;
 
-  case WM_CTLCOLORBTN:
+  case WM_CTLCOLORBTN: // Button
     {
       const NA_UIElement* uiElement = na_GetUINALibEquivalent((void*)lParam);
       if(naGetUIElementType(uiElement) == NA_UI_BUTTON){
@@ -85,6 +85,9 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
           info.hasBeenHandeled = NA_TRUE;
         }
       }else{
+        #if NA_DEBUG
+          naError("Unexpected ui element type");
+        #endif
         info.result = (LRESULT)CreateSolidBrush(RGB(255, 128, 0));
         info.hasBeenHandeled = NA_TRUE;
       }
