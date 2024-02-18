@@ -6,55 +6,114 @@
 
 
 NA_HAPI void* na_GetNativePreferences(void);
-NA_HAPI NABool na_GetRawPreferencesBool(void* prefs, const char* key, NAi64* valueStorage);
-NA_HAPI NABool na_SetRawPreferencesBool(void* prefs, const char* key, NAi64* valueStorage);
-NA_HAPI NABool na_GetRawPreferencesInt(void* prefs, const char* key, NAi64* valueStorage);
-NA_HAPI NABool na_SetRawPreferencesInt(void* prefs, const char* key, NAi64* valueStorage);
-NA_HAPI NABool na_GetRawPreferencesEnum(void* prefs, const char* key, NAi64* valueStorage);
-NA_HAPI NABool na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64* valueStorage);
-NA_HAPI NABool na_GetRawPreferencesDouble(void* prefs, const char* key, double* valueStorage);
-NA_HAPI NABool na_SetRawPreferencesDouble(void* prefs, const char* key, double* valueStorage);
-NA_HAPI NABool na_GetRawPreferencesString(void* prefs, const char* key, NAString** valueStorage);
-NA_HAPI NABool na_SetRawPreferencesString(void* prefs, const char* key, NAString** valueStorage);
+
+NA_HAPI NAi64     na_GetRawPreferencesBool  (void* prefs, const char* key);
+NA_HAPI NAi64     na_GetRawPreferencesInt   (void* prefs, const char* key);
+NA_HAPI NAi64     na_GetRawPreferencesEnum  (void* prefs, const char* key);
+NA_HAPI double    na_GetRawPreferencesDouble(void* prefs, const char* key);
+NA_HAPI NAString* na_GetRawPreferencesString(void* prefs, const char* key);
+
+NA_HAPI void na_SetRawPreferencesBool  (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesInt   (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesEnum  (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesDouble(void* prefs, const char* key, double valueStorage);
+NA_HAPI void na_SetRawPreferencesString(void* prefs, const char* key, NAString* valueStorage);
 
 
 
-NA_HIDEF NABool na_ConvertPreferencesBoolToNABool(NAi64 value){
-  return ((naEquali64(value, naMakei64WithLo(1))) ? NA_TRUE : NA_FALSE);
-}
+// Following are the conversion methods which convert between the values stored
+// in the preferences and those desired during runtime. They convert the values
+// such that the value 0 is not a valid entry and therefore can serve to detect
+// whether an entry already exists in the preferences.
 
+// Boolean values are stored as 1 for TRUE and -1 for FALSE
 NA_HIDEF NAi64 na_ConvertNABoolToPreferencesBool(NABool value){
-  return (value != 0) ? naMakei64WithLo(1) : naMakei64WithLo(-1);
+  #if NA_DEBUG
+    if(!naEquali64(value, NA_ZERO_i64) && !naEquali64(value, NA_ONE_i64))
+      naError("Trying to store invalid boolean value in preferences.");
+  #endif
+  return (value) ? NA_ONE_i64 : naMakei64WithLo(-1);
+}
+NA_HIDEF NABool na_ConvertPreferencesBoolToNABool(NAi64 value){
+  #if NA_DEBUG
+    if(naEquali64(value, NA_ZERO_i64))
+      naError("Value stored in preferences invalid or uninitialized.");
+    if(!naEquali64(value, NA_ONE_i64) && !naEquali64(value, naMakei64WithLo(-1)))
+      naError("Invalid boolean value stored in preferences.");
+  #endif
+  return ((naEquali64(value, NA_ONE_i64)) ? NA_TRUE : NA_FALSE);
 }
 
 
 
+// Int values are stored as is but the value 0 is stored as min_i64
+NA_HIDEF NAi64 na_ConvertNAIntToPreferencesInt(NAInt value){
+  #if NA_DEBUG
+    if(naEquali64(value, NA_MIN_i64))
+      naError("min_i64 is not a valid value which can be stored in preferences.");
+  #endif
+  return (value == 0) ? NA_MIN_i64 : naCastIntToi64(value);
+}
 NA_HIDEF NAInt na_ConvertPreferencesIntToNAInt(NAi64 value){
+  #if NA_DEBUG
+    if(naEquali64(value, NA_ZERO_i64))
+      naError("Value stored in preferences invalid or uninitialized.");
+  #endif
   return (NAInt)((naEquali64(value, NA_MIN_i64)) ? 0 : naCasti64ToInt(value));
 }
 
-NA_HIDEF NAi64 na_ConvertNAIntToPreferencesInt(NAInt value){
-  return (value == 0) ? NA_MIN_i64 : naCastIntToi64(value);
-}
 
 
-
-NA_HIDEF NAInt na_ConvertPreferencesEnumToNAEnum(NAi64 value){
-  return naCasti64ToInt(naSubi64(value, naMakei64WithLo(1)));
-}
-
+// Enum values are stored with their value increased by 1
 NA_HIDEF NAi64 na_ConvertNAEnumToPreferencesEnum(NAInt value){
-  return naAddi64(naCastIntToi64(value), naMakei64WithLo(1));
+  #if NA_DEBUG
+    if(naSmalleri64(value, 0))
+      naError("negative enum values can not be stored in preferences.");
+  #endif
+  return naAddi64(naCastIntToi64(value), NA_ONE_i64);
+}
+NA_HIDEF NAInt na_ConvertPreferencesEnumToNAEnum(NAi64 value){
+  #if NA_DEBUG
+    if(naEquali64(value, NA_ZERO_i64))
+      naError("Value stored in preferences invalid or uninitialized.");
+  #endif
+  return naCasti64ToInt(naSubi64(value, NA_ONE_i64));
 }
 
 
 
+// double values are stored as is but zero is converted to NaN.
+NA_HIDEF double na_ConvertNADoubleToPreferencesDouble(double value){
+  #if NA_DEBUG
+    if(naIsNaN(value))
+      naError("The value NaN can not be stored in preferences.");
+  #endif
+  return (value == 0.) ? NA_NAN : value;
+}
 NA_HIDEF double na_ConvertPreferencesDoubleToNADouble(double value){
+  #if NA_DEBUG
+    if(value == 0.)
+      naError("Value stored in preferences invalid or uninitialized.");
+  #endif
   return naIsNaN(value) ? 0. : value;
 }
 
-NA_HIDEF double na_ConvertNADoubleToPreferencesDouble(double value){
-  return (value == 0.) ? NA_NAN : value;
+
+
+// string values are returned as a copy and are checked for NULL.
+NA_HIDEF NAString* na_ConvertNAStringToPreferencesString(NAString* value){
+  #if NA_DEBUG
+    if(value == NA_NULL)
+      naError("A null string can not be stored in preferences.");
+  #endif
+  return naNewStringExtraction(value, 0, -1);
+}
+NA_HIDEF NAString* na_ConvertPreferencesStringToNAString(NAString* value){
+  #if NA_DEBUG
+    if(value == NA_NULL)
+      naError("Value stored in preferences invalid or uninitialized.");
+  #endif
+  return naNewStringExtraction(value, 0, -1);
 }
 
 

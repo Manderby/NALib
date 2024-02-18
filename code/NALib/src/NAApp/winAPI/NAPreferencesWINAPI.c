@@ -42,75 +42,100 @@ NA_HDEF void* na_GetNativePreferences(){
 
 
 
-NA_HDEF NABool na_GetRawPreferencesBool(void* prefs, const char* key, NAi64* valueStorage){
+NA_HDEF NAi64 na_GetRawPreferencesBool(void* prefs, const char* key){
+  NAi64 valueStorage;
+  HKEY registry = (HKEY*)prefs;
+  DWORD valueSize = NA_TYPE64_BYTES;
+  DWORD type;
+  LSTATUS errorCode = RegGetValueA(registry, NULL, key, RRF_RT_ANY, &type, &valueStorage, (LPDWORD)&valueSize);
+  return (errorCode == ERROR_SUCCESS)
+    ? valueStorage
+    : NA_ZERO_i64;
+}
+
+NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, NAi64 valueStorage){
+  HKEY registry = (HKEY*)prefs;
+  DWORD valueSize = NA_TYPE64_BYTES;
+  LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
+  #if NA_DEBUG
+    if (errorCode != ERROR_SUCCESS)
+      naError("Could not set bool preference");
+  #endif
+}
+
+
+
+NA_HDEF NAi64 na_GetRawPreferencesInt(void* prefs, const char* key){
+  NAi64 valueStorage;
+  HKEY registry = (HKEY*)prefs;
+  DWORD valueSize = NA_TYPE64_BYTES;
+  DWORD type;
+  LSTATUS errorCode = RegGetValueA(registry, NULL, key, RRF_RT_ANY, &type, &valueStorage, (LPDWORD)&valueSize);
+  return (errorCode == ERROR_SUCCESS)
+    ? valueStorage
+    : NA_ZERO_i64;
+}
+
+NA_HDEF void na_SetRawPreferencesInt(void* prefs, const char* key, NAi64 valueStorage){
+  HKEY registry = (HKEY*)prefs;
+  DWORD valueSize = NA_TYPE64_BYTES;
+  LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
+  #if NA_DEBUG
+    if (errorCode != ERROR_SUCCESS)
+      naError("Could not set int preference");
+  #endif
+}
+
+
+
+NA_HDEF NAi64 na_GetRawPreferencesEnum(void* prefs, const char* key){
+  NAi64 valueStorage;
   HKEY registry = (HKEY*)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
   DWORD type;
   LSTATUS errorCode = RegGetValueA(registry, NULL, key, RRF_RT_ANY, &type, valueStorage, (LPDWORD)&valueSize);
-  return (errorCode == ERROR_SUCCESS);
+  return (errorCode == ERROR_SUCCESS)
+    ? valueStorage
+    : NA_ZERO_i64;
 }
 
-NA_HDEF NABool na_SetRawPreferencesBool(void* prefs, const char* key, NAi64* valueStorage){
+NA_HDEF void na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64 valueStorage){
   HKEY registry = (HKEY*)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
-  LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, valueStorage, valueSize);
-  return (errorCode == ERROR_SUCCESS);
+  LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
+  #if NA_DEBUG
+    if (errorCode != ERROR_SUCCESS)
+      naError("Could not set enum preference");
+  #endif
 }
 
 
 
-NA_HDEF NABool na_GetRawPreferencesInt(void* prefs, const char* key, NAi64* valueStorage){
-  HKEY registry = (HKEY*)prefs;
-  DWORD valueSize = NA_TYPE64_BYTES;
-  DWORD type;
-  LSTATUS errorCode = RegGetValueA(registry, NULL, key, RRF_RT_ANY, &type, valueStorage, (LPDWORD)&valueSize);
-  return (errorCode == ERROR_SUCCESS);
-}
-
-NA_HDEF NABool na_SetRawPreferencesInt(void* prefs, const char* key, NAi64* valueStorage){
-  HKEY registry = (HKEY*)prefs;
-  DWORD valueSize = NA_TYPE64_BYTES;
-  LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, valueStorage, valueSize);
-  return (errorCode == ERROR_SUCCESS);
-}
-
-
-
-NA_HDEF NABool na_GetRawPreferencesEnum(void* prefs, const char* key, NAi64* valueStorage){
+NA_HDEF double na_GetRawPreferencesDouble(void* prefs, const char* key){
+  double valueStorage;
   HKEY registry = (HKEY*)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
   DWORD type;
   LSTATUS errorCode = RegGetValueA(registry, NULL, key, RRF_RT_ANY, &type, valueStorage, (LPDWORD)&valueSize);
-  return (errorCode == ERROR_SUCCESS);
+  return (errorCode == ERROR_SUCCESS)
+    ? valueStorage
+    : 0.;
 }
 
-NA_HDEF NABool na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64* valueStorage){
+NA_HDEF void na_SetRawPreferencesDouble(void* prefs, const char* key, double*valueStorage){
   HKEY registry = (HKEY*)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
-  LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, valueStorage, valueSize);
-  return (errorCode == ERROR_SUCCESS);
+  LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
+  #if NA_DEBUG
+    if (errorCode != ERROR_SUCCESS)
+      naError("Could not set double preference");
+  #endif
 }
 
 
 
-NA_HDEF NABool na_GetRawPreferencesDouble(void* prefs, const char* key, double* valueStorage){
-  HKEY registry = (HKEY*)prefs;
-  DWORD valueSize = NA_TYPE64_BYTES;
-  DWORD type;
-  LSTATUS errorCode = RegGetValueA(registry, NULL, key, RRF_RT_ANY, &type, valueStorage, (LPDWORD)&valueSize);
-  return (errorCode == ERROR_SUCCESS);
-}
-
-NA_HDEF NABool na_SetRawPreferencesDouble(void* prefs, const char* key, double* valueStorage){
-  HKEY registry = (HKEY*)prefs;
-  DWORD valueSize = NA_TYPE64_BYTES;
-  LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, valueStorage, valueSize);
-  return (errorCode == ERROR_SUCCESS);
-}
-
-
-
-NA_HDEF NABool na_GetRawPreferencesString(void* prefs, const char* key, NAString** valueStorage){
+NA_HDEF NAString* na_GetRawPreferencesString(void* prefs, const char* key){
+  NAString* valueStorage;
   HKEY registry = (HKEY*)prefs;
   wchar_t* systemKey = naAllocWideCharStringWithUTF8String(key);
   DWORD valueSize;
@@ -118,7 +143,7 @@ NA_HDEF NABool na_GetRawPreferencesString(void* prefs, const char* key, NAString
   LSTATUS errorCode = RegQueryValueExW(registry, systemKey, NULL, &type, NULL, &valueSize);
   if(errorCode != ERROR_SUCCESS){
     naFree(systemKey);
-    return NA_FALSE;
+    return NA_NULL;
   }
 
   wchar_t* storedValue = naMalloc(valueSize);
@@ -126,28 +151,30 @@ NA_HDEF NABool na_GetRawPreferencesString(void* prefs, const char* key, NAString
   naFree(systemKey);
 
   if(errorCode == ERROR_SUCCESS){
-    *valueStorage = naNewStringFromWideCharString(storedValue);
+    valueStorage = naNewStringFromWideCharString(storedValue);
     naFree(storedValue);
-    return NA_TRUE;
   }else{
-    *valueStorage = NA_NULL;
-    return NA_FALSE;
+    valueStorage = NA_NULL;
   }
+  return valueStorage;
 }
 
-NA_HDEF NABool na_SetRawPreferencesString(void* prefs, const char* key, NAString** valueStorage){
+NA_HDEF void na_SetRawPreferencesString(void* prefs, const char* key, NAString* valueStorage){
   // Note that in this function it is necessary to convert the key to wchar_t
   // format as only the W functions can store unicode strings.
   // Stupid dog. You make this look bad.
 
   HKEY registry = (HKEY*)prefs;
   wchar_t* systemKey = naAllocWideCharStringWithUTF8String(key);
-  wchar_t* storedValue = naAllocWideCharStringWithUTF8String(naGetStringUTF8Pointer(*valueStorage));
+  wchar_t* storedValue = naAllocWideCharStringWithUTF8String(naGetStringUTF8Pointer(valueStorage));
   DWORD valueSize = ((DWORD)wcslen(storedValue) + 1) * sizeof(wchar_t);
   LSTATUS errorCode = RegSetKeyValueW(registry, NULL, systemKey, REG_SZ, storedValue, valueSize);
   naFree(storedValue);
   naFree(systemKey);
-  return errorCode == ERROR_SUCCESS;
+  #if NA_DEBUG
+    if (errorCode != ERROR_SUCCESS)
+      naError("Could not set string preference");
+  #endif
 }
 
 

@@ -3,229 +3,182 @@
 
 
 NA_DEF NABool naInitPreferencesBool(const char* key, NABool newValue){
-  NAi64 value;
   void* prefs = na_GetNativePreferences();
-  if(!na_GetRawPreferencesBool(prefs, key, &value)){
+  NAi64 value = na_GetRawPreferencesBool(prefs, key);
+  if(value == NA_ZERO_i64){
     value = na_ConvertNABoolToPreferencesBool(newValue);
-    if(!na_SetRawPreferencesBool(prefs, key, &value)){
-      #if NA_DEBUG
-        naError("Could not init bool preference");
-      #endif
-    }
+    na_SetRawPreferencesBool(prefs, key, value);
   }
   return na_ConvertPreferencesBoolToNABool(value);
 }
 
 NA_DEF NABool naGetPreferencesBool(const char* key){
-  NAi64 value;
   void* prefs = na_GetNativePreferences();
-  return na_GetRawPreferencesBool(prefs, key, &value)
-    ? na_ConvertPreferencesBoolToNABool(value)
-    : NA_FALSE;
+  NAi64 value = na_GetRawPreferencesBool(prefs, key);
+  #if NA_DEBUG
+    if(value == NA_ZERO_i64)
+      naError("Preferences value not initialized.");
+  #endif
+  return na_ConvertPreferencesBoolToNABool(value);
 }
 
 NA_DEF NABool naSetPreferencesBool(const char* key, NABool newValue){
   NAi64 value = na_ConvertNABoolToPreferencesBool(newValue);
   void* prefs = na_GetNativePreferences();
-  NAi64 existingValue;
-  NABool isDifferent = na_GetRawPreferencesBool(prefs, key, &existingValue)
-    ? value != existingValue
-    : NA_TRUE;
-
-  if(isDifferent){
-    if(!na_SetRawPreferencesBool(prefs, key, &value)){
-      #if NA_DEBUG
-        naError("Could not store bool preference.");
-      #endif
-    }
+  NAi64 existingValue = na_GetRawPreferencesBool(prefs, key);
+  if(existingValue == NA_ZERO_i64 || value != existingValue){
+    na_SetRawPreferencesBool(prefs, key, value);
+    return NA_TRUE;
   }
-
-  return isDifferent;
+  return NA_FALSE;
 }
 
 NA_DEF NABool naTogglePreferencesBool(const char* key){
   void* prefs = na_GetNativePreferences();
-  NAi64 value;
-  na_GetRawPreferencesBool(prefs, key, &value);
+  NAi64 value = na_GetRawPreferencesBool(prefs, key);
+  #if NA_DEBUG
+    if(value == NA_ZERO_i64)
+      naError("Preferences value not initialized.");
+  #endif
   NABool boolValue = na_ConvertPreferencesBoolToNABool(value);
   value = na_ConvertNABoolToPreferencesBool(!boolValue);
-  if(!na_SetRawPreferencesBool(prefs, key, &value)){
-    #if NA_DEBUG
-      naError("Could not toggle bool preference.");
-    #endif
-  }
+  na_SetRawPreferencesBool(prefs, key, value);
   return na_ConvertPreferencesBoolToNABool(value);
 }
 
 
 
 NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt newValue){
-  NAi64 value;
   void* prefs = na_GetNativePreferences();
-  if(!na_GetRawPreferencesInt(prefs, key, &value)){
+  NAi64 value = na_GetRawPreferencesInt(prefs, key);
+  if(value == NA_ZERO_i64){
     value = na_ConvertNAIntToPreferencesInt(newValue);
-    if(!na_SetRawPreferencesInt(prefs, key, &value)){
-      #if NA_DEBUG
-        naError("Could not init int preference");
-      #endif
-    }
+    na_SetRawPreferencesInt(prefs, key, value);
   }
   return na_ConvertPreferencesIntToNAInt(value);
 }
 
 NA_DEF NAInt naGetPreferencesInt(const char* key){
-  NAi64 value;
   void* prefs = na_GetNativePreferences();
-  return na_GetRawPreferencesInt(prefs, key, &value)
-    ? na_ConvertPreferencesIntToNAInt(value)
-    : NA_MIN_i64;
+  NAi64 value = na_GetRawPreferencesInt(prefs, key);
+  #if NA_DEBUG
+    if(value == NA_ZERO_i64)
+      naError("Preferences value not initialized.");
+  #endif
+  return na_ConvertPreferencesIntToNAInt(value);
 }
 
 NA_DEF NABool naSetPreferencesInt(const char* key, NAInt newValue){
   NAi64 value = na_ConvertNAIntToPreferencesInt(newValue);
   void* prefs = na_GetNativePreferences();
-  NAi64 existingValue;
-  NABool isDifferent = na_GetRawPreferencesInt(prefs, key, &existingValue)
-    ? value != existingValue
-    : NA_TRUE;
-
-  if(isDifferent){
-    if(!na_SetRawPreferencesInt(prefs, key, &value)){
-      #if NA_DEBUG
-        naError("Could not store int preference.");
-      #endif
-    }
+  NAi64 existingValue = na_GetRawPreferencesInt(prefs, key);
+  if(existingValue == NA_ZERO_i64 || value != existingValue){
+    na_SetRawPreferencesInt(prefs, key, value);
+    return NA_TRUE;
   }
-
-  return isDifferent;
+  return NA_FALSE;
 }
 
 
 
 NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt newValue){
-  NAi64 value;
   void* prefs = na_GetNativePreferences();
-  if(!na_GetRawPreferencesEnum(prefs, key, &value)){
+  NAi64 value = na_GetRawPreferencesEnum(prefs, key);
+  if(value == NA_ZERO_i64){
     value = na_ConvertNAEnumToPreferencesEnum(newValue);
-    if(!na_SetRawPreferencesEnum(prefs, key, &value)){
-      #if NA_DEBUG
-        naError("Could not init enum preference");
-      #endif
-    }
+    na_SetRawPreferencesEnum(prefs, key, value);
   }
   return na_ConvertPreferencesEnumToNAEnum(value);
 }
 
 NA_DEF NAInt naGetPreferencesEnum(const char* key){
-  NAi64 value;
   void* prefs = na_GetNativePreferences();
-  return na_GetRawPreferencesEnum(prefs, key, &value)
-    ? na_ConvertPreferencesEnumToNAEnum(value)
-    : NA_MIN_i64;
+  NAi64 value = na_GetRawPreferencesEnum(prefs, key);
+  #if NA_DEBUG
+    if(value == NA_ZERO_i64)
+      naError("Preferences value not initialized.");
+  #endif
+  return na_ConvertPreferencesEnumToNAEnum(value);
 }
 
 NA_DEF NABool naSetPreferencesEnum(const char* key, NAInt newValue){
   NAi64 value = na_ConvertNAEnumToPreferencesEnum(newValue);
   void* prefs = na_GetNativePreferences();
-  NAi64 existingValue;
-  NABool isDifferent = na_GetRawPreferencesEnum(prefs, key, &existingValue)
-    ? value != existingValue
-    : NA_TRUE;
-
-  if(isDifferent){
-    if(!na_SetRawPreferencesEnum(prefs, key, &value)){
-      #if NA_DEBUG
-        naError("Could not store enum preference.");
-      #endif
-    }
+  NAi64 existingValue = na_GetRawPreferencesEnum(prefs, key);
+  if(existingValue == NA_ZERO_i64 || value != existingValue){
+    na_SetRawPreferencesEnum(prefs, key, value);
+    return NA_TRUE;
   }
-
-  return isDifferent;
+  return NA_FALSE;
 }
 
 
 
 NA_DEF double naInitPreferencesDouble(const char* key, double newValue){
-  double value;
   void* prefs = na_GetNativePreferences();
-  if(!na_GetRawPreferencesDouble(prefs, key, &value)){
+  double value = na_GetRawPreferencesDouble(prefs, key);
+  if(value == NA_ZERO_i64){
     value = na_ConvertNADoubleToPreferencesDouble(newValue);
-    if(!na_SetRawPreferencesDouble(prefs, key, &value)){
-      #if NA_DEBUG
-        naError("Could not init double preference");
-      #endif
-    }
+    na_SetRawPreferencesDouble(prefs, key, value);
   }
   return na_ConvertPreferencesDoubleToNADouble(value);
 }
 
 NA_DEF double naGetPreferencesDouble(const char* key){
-  double value;
   void* prefs = na_GetNativePreferences();
-  return na_GetRawPreferencesDouble(prefs, key, &value)
-    ? na_ConvertPreferencesDoubleToNADouble(value)
-    : NA_MIN_i64;
+  double value = na_GetRawPreferencesDouble(prefs, key);
+  #if NA_DEBUG
+    if(value == NA_ZERO_i64)
+      naError("Preferences value not initialized.");
+  #endif
+  return na_ConvertPreferencesDoubleToNADouble(value);
 }
 
 NA_DEF NABool naSetPreferencesDouble(const char* key, double newValue){
   double value = na_ConvertNADoubleToPreferencesDouble(newValue);
   void* prefs = na_GetNativePreferences();
-  double existingValue;
-  NABool isDifferent = na_GetRawPreferencesDouble(prefs, key, &existingValue)
-    ? value != existingValue
-    : NA_TRUE;
-
-  if(isDifferent){
-    if(!na_SetRawPreferencesDouble(prefs, key, &value)){
-      #if NA_DEBUG
-        naError("Could not store double preference.");
-      #endif
-    }
+  double existingValue = na_GetRawPreferencesDouble(prefs, key);
+  if(existingValue == 0. || value != existingValue){
+    na_SetRawPreferencesDouble(prefs, key, value);
+    return NA_TRUE;
   }
-
-  return isDifferent;
+  return NA_FALSE;
 }
 
 
 
 NA_DEF NAString* naInitPreferencesString(const char* key, NAString* newValue){
-  NAString* value;
   void* prefs = na_GetNativePreferences();
-  if(!na_GetRawPreferencesString(prefs, key, &value)){
-    value = naNewStringExtraction(newValue, 0, -1);
-    if(!na_SetRawPreferencesString(prefs, key, &value)){
-      #if NA_DEBUG
-      naError("Could not init string preference");
-      #endif
-    }
+  NAString* value = na_GetRawPreferencesString(prefs, key);
+  if(value == NA_NULL){
+    value = na_ConvertNAStringToPreferencesString(newValue);
+    na_SetRawPreferencesString(prefs, key, value);
   }
   return value;
 }
 
 NA_DEF NAString* naNewPreferencesString(const char* key){
-  NAString* value;
   void* prefs = na_GetNativePreferences();
-  return na_GetRawPreferencesString(prefs, key, &value)
-    ? value
-    : NA_NULL;
+  NAString* value = na_GetRawPreferencesString(prefs, key);
+  #if NA_DEBUG
+    if(value == NA_NULL)
+      naError("Preferences value not initialized.");
+  #endif
+  NAString* returnValue = na_ConvertPreferencesStringToNAString(value);
+  if(value){naDelete(value);}
+  return returnValue;
 }
 
 NA_DEF NABool naSetPreferencesString(const char* key, NAString* newValue){
+  NAString* value = na_ConvertNAStringToPreferencesString(newValue);
   void* prefs = na_GetNativePreferences();
-  NAString* existingValue;
-  NABool isDifferent = na_GetRawPreferencesString(prefs, key, &existingValue)
-    ? !naEqualStringToString(newValue, existingValue, NA_TRUE)
-    : NA_TRUE;
-  if(existingValue){naDelete(existingValue);}
-
+  NAString* existingValue = na_GetRawPreferencesString(prefs, key);
+  NABool isDifferent = existingValue == NA_NULL || !naEqualStringToString(value, existingValue, NA_TRUE);
   if(isDifferent){
-    if(!na_SetRawPreferencesString(prefs, key, &newValue)){
-      #if NA_DEBUG
-      naError("Could not store string preference.");
-      #endif
-    }
+    na_SetRawPreferencesString(prefs, key, value);
   }
-
+  if(value){naDelete(value);}
+  if(existingValue){naDelete(existingValue);}
   return isDifferent;
 }
 
