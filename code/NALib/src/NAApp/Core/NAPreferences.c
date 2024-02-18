@@ -5,11 +5,12 @@
 NA_DEF NABool naInitPreferencesBool(const char* key, NABool newValue){
   void* prefs = na_GetNativePreferences();
   NAi64 value = na_GetRawPreferencesBool(prefs, key);
-  if(value == NA_ZERO_i64){
-    value = na_ConvertNABoolToPreferencesBool(newValue);
-    na_SetRawPreferencesBool(prefs, key, value);
+  NABool retValue = na_ConvertPreferencesBoolToNABool(value);
+  if(value == NA_ZERO_i64 || !na_ValidNABoolFromPreferences(retValue)){
+    na_SetRawPreferencesBool(prefs, key, na_ConvertNABoolToPreferencesBool(newValue));
+    return newValue;
   }
-  return na_ConvertPreferencesBoolToNABool(value);
+  return retValue;
 }
 
 NA_DEF NABool naGetPreferencesBool(const char* key){
@@ -48,14 +49,15 @@ NA_DEF NABool naTogglePreferencesBool(const char* key){
 
 
 
-NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt newValue){
+NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt newValue, NAInt min, NAInt max){
   void* prefs = na_GetNativePreferences();
   NAi64 value = na_GetRawPreferencesInt(prefs, key);
-  if(value == NA_ZERO_i64){
-    value = na_ConvertNAIntToPreferencesInt(newValue);
-    na_SetRawPreferencesInt(prefs, key, value);
+  NAInt retValue = na_ConvertPreferencesIntToNAInt(value);
+  if(value == NA_ZERO_i64 || !na_ValidNAIntFromPreferences(retValue, min, max)){
+    na_SetRawPreferencesInt(prefs, key, na_ConvertNAIntToPreferencesInt(newValue));
+    return newValue;
   }
-  return na_ConvertPreferencesIntToNAInt(value);
+  return retValue;
 }
 
 NA_DEF NAInt naGetPreferencesInt(const char* key){
@@ -81,14 +83,15 @@ NA_DEF NABool naSetPreferencesInt(const char* key, NAInt newValue){
 
 
 
-NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt newValue){
+NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt newValue, NAInt count){
   void* prefs = na_GetNativePreferences();
   NAi64 value = na_GetRawPreferencesEnum(prefs, key);
-  if(value == NA_ZERO_i64){
-    value = na_ConvertNAEnumToPreferencesEnum(newValue);
-    na_SetRawPreferencesEnum(prefs, key, value);
+  NAInt retValue = na_ConvertPreferencesEnumToNAEnum(value);
+  if(value == NA_ZERO_i64 || !na_ValidEnumFromPreferences(retValue, count)){
+    na_SetRawPreferencesEnum(prefs, key, na_ConvertNAEnumToPreferencesEnum(newValue));
+    return newValue;
   }
-  return na_ConvertPreferencesEnumToNAEnum(value);
+  return retValue;
 }
 
 NA_DEF NAInt naGetPreferencesEnum(const char* key){
@@ -114,14 +117,15 @@ NA_DEF NABool naSetPreferencesEnum(const char* key, NAInt newValue){
 
 
 
-NA_DEF double naInitPreferencesDouble(const char* key, double newValue){
+NA_DEF double naInitPreferencesDouble(const char* key, double newValue, double min, double max){
   void* prefs = na_GetNativePreferences();
   double value = na_GetRawPreferencesDouble(prefs, key);
-  if(value == NA_ZERO_i64){
-    value = na_ConvertNADoubleToPreferencesDouble(newValue);
-    na_SetRawPreferencesDouble(prefs, key, value);
+  double retValue = na_ConvertPreferencesDoubleToNADouble(value);
+  if(value == NA_ZERO_i64 || !na_ValidDoubleFromPreferences(retValue, min, max)){
+    na_SetRawPreferencesDouble(prefs, key, na_ConvertNADoubleToPreferencesDouble(newValue));
+    return newValue;
   }
-  return na_ConvertPreferencesDoubleToNADouble(value);
+  return retValue;
 }
 
 NA_DEF double naGetPreferencesDouble(const char* key){

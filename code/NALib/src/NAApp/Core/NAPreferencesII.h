@@ -43,6 +43,9 @@ NA_HIDEF NABool na_ConvertPreferencesBoolToNABool(NAi64 value){
   #endif
   return ((naEquali64(value, NA_ONE_i64)) ? NA_TRUE : NA_FALSE);
 }
+NA_HIDEF NABool na_ValidNABoolFromPreferences(NABool value){
+  return value == NA_TRUE || value == NA_FALSE;
+}
 
 
 
@@ -60,6 +63,9 @@ NA_HIDEF NAInt na_ConvertPreferencesIntToNAInt(NAi64 value){
       naError("Value stored in preferences invalid or uninitialized.");
   #endif
   return (NAInt)((naEquali64(value, NA_MIN_i64)) ? 0 : naCasti64ToInt(value));
+}
+NA_HIDEF NABool na_ValidNAIntFromPreferences(NAi64 value, NAi64 min, NAi64 max){
+  return value >= min && value <= max;
 }
 
 
@@ -79,6 +85,9 @@ NA_HIDEF NAInt na_ConvertPreferencesEnumToNAEnum(NAi64 value){
   #endif
   return naCasti64ToInt(naSubi64(value, NA_ONE_i64));
 }
+NA_HIDEF NABool na_ValidEnumFromPreferences(NAi64 value, NAi64 count){
+  return value >= 0 && value < count;
+}
 
 
 
@@ -96,6 +105,9 @@ NA_HIDEF double na_ConvertPreferencesDoubleToNADouble(double value){
       naError("Value stored in preferences invalid or uninitialized.");
   #endif
   return naIsNaN(value) ? 0. : value;
+}
+NA_HIDEF NABool na_ValidDoubleFromPreferences(double value, double min, double max){
+  return value >= min && value <= max;
 }
 
 

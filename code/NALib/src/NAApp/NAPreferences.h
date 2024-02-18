@@ -15,16 +15,45 @@
 // Please only use ASCII-7 characters to encode keys. Otherwise, it might not
 // work.
 
+
+
+// Init functions:
 // If the given key does not exist yet, creates a preference for it and sets
-// the value. If it already exists, nothing happens. Returns the value which
-// is stored afterwards.
+// the value. If it already exists, it checkes whether the value is within
+// the given range as described further below and sets the value if not.
+// Returns the value which is stored afterwards.
+
+// Bool Range check: Value must be true or false.
+NA_API NABool naInitPreferencesBool(
+  const char* key,
+  NABool newValue);
+
+// Int Range check: Value must be within [min, max].
+NA_API NAInt naInitPreferencesInt(
+  const char* key,
+  NAInt newValue,
+  NAInt min,
+  NAInt max);
+
+// Enum Range check: The value must be non-negative and below count.
+NA_API NAInt naInitPreferencesEnum(
+  const char* key,
+  NAInt newValue,
+  NAInt count);
+
+// Int Range check: Value must be within [min, max].
+NA_API double naInitPreferencesDouble(
+  const char* key,
+  double newValue,
+  double min,
+  double max);
+
+// String range check: No range check.
 // Note: The string is always a new string, never the given value pointer. You
 // must use naDelete afterwards.
-NA_API NABool    naInitPreferencesBool   (const char* key, NABool newValue);
-NA_API NAInt     naInitPreferencesInt    (const char* key, NAInt newValue);
-NA_API NAInt     naInitPreferencesEnum   (const char* key, NAInt newValue);
-NA_API double    naInitPreferencesDouble (const char* key, double newValue);
-NA_API NAString* naInitPreferencesString (const char* key, NAString* newValue);
+NA_API NAString* naInitPreferencesString (
+  const char* key,
+  NAString* newValue);
 
 // Sets the preference. Returns true, if the preference was different before
 // or did not exist.
