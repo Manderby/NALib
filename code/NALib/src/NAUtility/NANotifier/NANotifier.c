@@ -14,18 +14,18 @@ struct NA_MessageDispatch{
 };
 NA_RUNTIME_TYPE(NA_MessageDispatch, NA_NULL, NA_FALSE);
 
-typedef struct NA_Subscriber NA_Subscriber;
-struct NA_Subscriber{
-  void* reciever;
+typedef struct NA_Subscription NA_Subscription;
+struct NA_Subscription{
   void* object;
+  void* reciever;
   NAMessageCallback callback;
 };
-NA_RUNTIME_TYPE(NA_Subscriber, NA_NULL, NA_FALSE);
+NA_RUNTIME_TYPE(NA_Subscription, NA_NULL, NA_FALSE);
 
 typedef struct NA_Signal NA_Signal;
 struct NA_Signal{
   SignalPriority priority;
-  NAList subscribers;
+  NAList subscriptions;
 };
 
 typedef struct NA_Topic NA_Topic;
@@ -63,28 +63,28 @@ NA_HDEF NA_MessageDispatch* na_NewMessageDispatch(
 
 
 
-NA_HDEF NA_Subscriber* na_NewSubscriber(
-  void* reciever,
+NA_HDEF NA_Subscription* na_NewSubscription(
   void* object,
+  void* reciever,
   NAMessageCallback callback)
 {
-  NA_Subscriber* subscriber = naNew(NA_Subscriber);
-  subscriber->reciever = reciever;
-  subscriber->object = object;
-  subscriber->callback = callback;
-  return subscriber;
+  NA_Subscription* subscription = naNew(NA_Subscription);
+  subscription->object = object;
+  subscription->reciever = reciever;
+  subscription->callback = callback;
+  return subscription;
 }
 
 
 
 NA_HDEF void na_InitSignal(NA_Signal* signal){
   signal->priority = NA_SIGNAL_PRIORITY_UPDATE;
-  naInitList(&signal->subscribers);
+  naInitList(&signal->subscriptions);
 }
 
 NA_HDEF void na_ClearSignal(NA_Signal* signal){
-  naForeachListMutable(&signal->subscribers, naDelete);
-  naClearList(&signal->subscribers);
+  naForeachListMutable(&signal->subscriptions, naDelete);
+  naClearList(&signal->subscriptions);
 }
 
 
@@ -261,19 +261,19 @@ NA_DEF void* naSubscribe(
   #endif
   
   NA_Signal* signal = &na_notifier->topics[topicId]->signals[signalId];
-  NA_Subscriber* subscriber = na_NewSubscriber(
-    reciever,
+  NA_Subscription* subscription = na_NewSubscription(
     object,
+    reciever,
     callback);
-  naAddListLastMutable(&signal->subscribers, subscriber);
+  naAddListLastMutable(&signal->subscriptions, subscription);
   
-  return subscriber;
+  return subscription;
 }
 
 
 
 NA_DEF void naUnsubscribeSignal(
-  void* subscriber,
+  void* subscription,
   size_t topicId,
   size_t signalId){
   #if NA_DEBUG
@@ -285,10 +285,10 @@ NA_DEF void naUnsubscribeSignal(
       naCrash("Unknown signalId.");
   #endif
   NA_Signal* signal = &na_notifier->topics[topicId]->signals[signalId];
-  NAListIterator it = naMakeListModifier(&signal->subscribers);
+  NAListIterator it = naMakeListModifier(&signal->subscriptions);
   while(naIterateList(&it)){
-    NA_Subscriber* sub = naGetListCurMutable(&it);
-    if(sub == subscriber){
+    NA_Subscription* sub = naGetListCurMutable(&it);
+    if(sub == subscription){
       naRemoveListCurMutable(&it, NA_FALSE);
       naDelete(sub);
       break;
@@ -323,10 +323,10 @@ NA_DEF void naPublish(
   case NA_SIGNAL_PRIORITY_DELETE: list = &na_notifier->deleteQueue; break;
   }
   
-  NAList* subscribers = &signal->subscribers;
-  NAListIterator it = naMakeListAccessor(subscribers);
+  NAList* subscriptions = &signal->subscriptions;
+  NAListIterator it = naMakeListAccessor(subscriptions);
   while(naIterateList(&it)){
-    const NA_Subscriber* sub = naGetListCurConst(&it);
+    const NA_Subscription* sub = naGetListCurConst(&it);
     if(sub->object == NA_NULL || sub->object == sender){
       NA_MessageDispatch* message = na_NewMessageDispatch(
         sub->reciever,

@@ -76,7 +76,7 @@ NA_API void* naSubscribe(
   void* reciever,
   NAMessageCallback callback);
 
-// Unsubscribes the given subscriber.
+// Unsubscribes the given subscription.
 // Reciever: Unsubscribes from any subscription which has the given reciever.
 // Topic:    Unsubsribes from any subscription with the given reciever and
 //           topicId. Null is not allowed for the reciever.
