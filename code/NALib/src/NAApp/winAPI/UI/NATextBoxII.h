@@ -95,7 +95,7 @@ NA_DEF void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox){
 
 
 NA_DEF void naSetTextBoxVisible(NATextBox* textBox, NABool visible){
-  // todo
+  ShowWindow(naGetUIElementNativePtr(textBox), visible ? SW_SHOW : SW_HIDE);
 }
 
 

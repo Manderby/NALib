@@ -24,6 +24,10 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 NA_HAPI UINT na_GetApplicationNextMenuItemId(NAApplication* application);
 NA_HAPI void na_SetApplicationLastOpenedMenu(NAApplication* application, const NAMenu* menu);
 NA_HAPI const NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application);
+NA_HAPI void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id, NAMenu* menu);
+NA_HAPI uint32 na_GetMenuItemId(const NAMenuItem* menuItem);
+NA_HAPI void na_updateMenuItem(NAMenu* menu, const NAMenuItem* menuItem);
+
 
 
 
@@ -382,11 +386,13 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 }
 
 
-void naWINAPICaptureMouseHover(){
+NABool naWINAPICaptureMouseHover(){
   DWORD msgpos = GetMessagePos();
   POINT pt = {GET_X_LPARAM(msgpos), GET_Y_LPARAM(msgpos)};
   HWND hWndUnderMouse = WindowFromPoint(pt);
   NA_UIElement* elementUnderMouse = (NA_UIElement*)na_GetUINALibEquivalent(hWndUnderMouse);
+  if(elementUnderMouse->hoverReactionCount == 0){return NA_FALSE;}
+
   NA_UIElement* curElement = naGetApplicationMouseHoverElement();
 
   if(curElement != elementUnderMouse){
@@ -427,6 +433,7 @@ void naWINAPICaptureMouseHover(){
       elementUnderMouse = naGetUIElementParent(elementUnderMouse);
     }
   }
+  return NA_TRUE;
 }
 
 
@@ -447,26 +454,26 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
     // wParam: several special keys
     // GET_X_LPARAM(lParam): x coord relative to top left
     // GET_Y_LPARAM(lParam): y coord relative to top left
-    naWINAPICaptureMouseHover();
+    if(naWINAPICaptureMouseHover()){
+      size.width = GET_X_LPARAM(lParam);
+      size.height = GET_Y_LPARAM(lParam);
+      rect = naGetUIElementRectAbsolute(uiElement);
+      size.width += rect.pos.x;
+      size.height = rect.pos.y + rect.size.height - size.height;
+      mouseStatus = naGetMouseStatus();
+      pos = naGetMousePos(mouseStatus);
+      na_SetMouseMovedByDiff(size.width - pos.x, size.height - pos.y);
 
-    size.width = GET_X_LPARAM(lParam);
-    size.height = GET_Y_LPARAM(lParam);
-    rect = naGetUIElementRectAbsolute(uiElement);
-    size.width += rect.pos.x;
-    size.height = rect.pos.y + rect.size.height - size.height;
-    mouseStatus = naGetMouseStatus();
-    pos = naGetMousePos(mouseStatus);
-    na_SetMouseMovedByDiff(size.width - pos.x, size.height - pos.y);
-
-    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED);
-    if(handeled){
-      info.hasBeenHandeled = NA_TRUE;
-      info.result = 0;
+      handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED);
+      if(handeled){
+        info.hasBeenHandeled = NA_TRUE;
+        info.result = 0;
+      }
     }
     break;
 
   case WM_MOUSELEAVE:
-    naWINAPICaptureMouseHover();
+    if(naWINAPICaptureMouseHover()){}
     break;
 
   case WM_KEYDOWN:

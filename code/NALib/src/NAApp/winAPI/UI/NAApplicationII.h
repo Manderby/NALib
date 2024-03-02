@@ -570,11 +570,11 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
 
   LONG baseSize;
   switch(fontSize){
-  case NA_FONT_SIZE_SMALL: baseSize = 12; break;
+  case NA_FONT_SIZE_SMALL: baseSize = 14; break;
   case NA_FONT_SIZE_DEFAULT: baseSize = 16; break;
     //case NA_FONT_SIZE_DEFAULT: baseSize = metrics->lfMessageFont.lfHeight; break;
   case NA_FONT_SIZE_BIG: baseSize = 20; break;
-  case NA_FONT_SIZE_HUGE: baseSize = 24; break;
+  case NA_FONT_SIZE_HUGE: baseSize = 30; break;
   default: baseSize = metrics->lfMessageFont.lfHeight; break;
   }
 
@@ -612,11 +612,10 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
         baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      // Note: Times new roman would be better but unicode support is worse.
       fontFamilyName = naNewStringFromWideCharString(TEXT("Palatino Linotype"));
       retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
-        NA_FONT_FLAG_ITALIC,
+        NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     default:

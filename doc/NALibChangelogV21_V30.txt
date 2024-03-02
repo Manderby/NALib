@@ -10,6 +10,7 @@ correct, complete or final.
 
 - Adding PubSub implementation NANotifier
 
+- Changeing main branch name to main instead of master.
 
 Version 27 (released 25. October 2023)
 ==========

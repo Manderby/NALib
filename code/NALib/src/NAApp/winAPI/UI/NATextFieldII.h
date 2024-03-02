@@ -118,9 +118,12 @@ NA_DEF NATextField* naNewTextField(double width){
   NAWINAPITextField* winapiTextField = naNew(NAWINAPITextField);
 
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-  winapiTextField->rect = naMakeRectS(0., 0., width, 16.);
+  winapiTextField->rect = naMakeRectS(0., 0., width, 20.);
 
-  HWND nativePtr = CreateWindow(
+  // If this is used before Win XP, it might fail. Use CreateWindow() instead
+  // and omit the first argument.
+  HWND nativePtr = CreateWindowEx(
+    WS_EX_CLIENTEDGE,
 	  TEXT("EDIT"),
     TEXT(""),
     WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL,

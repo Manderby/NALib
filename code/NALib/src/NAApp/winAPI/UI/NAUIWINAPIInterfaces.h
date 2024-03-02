@@ -121,8 +121,11 @@ struct NAWINAPIMenu {
 
 struct NA_WINAPIMenuItem {
   NAMenuItem   menuItem;
+  uint32       id;
+  NAMenu*      menu;
   NABool       isSeparator;
   NAString*    text;
+  NABool       state;
 };
 
 #if NA_COMPILE_OPENGL == 1
@@ -152,6 +155,7 @@ struct NAWINAPISpace {
   NASpace        space;
   NARect         rect;
   NAWINAPIColor* lastBgColor;
+  NABool         forceEraseBackground;
 };
 
 struct NAWINAPITextBox {

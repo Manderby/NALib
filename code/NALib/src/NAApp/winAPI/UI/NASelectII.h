@@ -117,7 +117,7 @@ NA_DEF void na_DestructWINAPISelect(NAWINAPISelect* winapiSelect){
 }
 
 NA_DEF void naSetSelectVisible(NASelect* select, NABool visible){
-  // todo
+  ShowWindow(naGetUIElementNativePtr(select), visible ? SW_SHOW : SW_HIDE);
 }
 
 NA_DEF void naSetSelectEnabled(NASelect* select, NABool enabled){

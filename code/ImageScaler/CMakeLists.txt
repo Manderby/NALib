@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.13)
 project(ImageScaler)
 
 set(TARGET_NAME ImageScaler)
+
 add_executable(${TARGET_NAME})
+
+set_target_properties(${TARGET_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
 set(CMAKE_CXX_STANDARD 99)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

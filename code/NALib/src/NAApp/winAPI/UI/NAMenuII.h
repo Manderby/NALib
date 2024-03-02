@@ -11,13 +11,6 @@ NA_DEF NAMenu* naNewMenu(){
 
   winapiMenu->hMenu = CreatePopupMenu();
 
-  //MENUINFO menuInfo;
-  //naZeron(&menuInfo, sizeof(MENUINFO));
-  //menuInfo.cbSize = sizeof(MENUINFO);
-  //menuInfo.fMask = MIM_STYLE;
-  //menuInfo.dwStyle = MNS_NOCHECK;
-  //SetMenuInfo(winapiMenu->hMenu, &menuInfo);
-
   na_InitMenu(&(winapiMenu->menu), winapiMenu->hMenu, NA_NULL);
 
   return (NAMenu*)winapiMenu;
@@ -54,7 +47,7 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
     menuItemInfo.fState = /*MFS_CHECKED | */MFS_ENABLED/* | MFS_DEFAULT*/;
   }
 
-  na_SetMenuItemId(&(winapiMenuItem->menuItem), menuItemInfo.wID);
+  na_SetMenuItemId(&(winapiMenuItem->menuItem), menuItemInfo.wID, menu);
 
   size_t index = naGetMenuItemIndex(menu, atItem);
 
@@ -65,6 +58,19 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
     &menuItemInfo);
 
   na_AddMenuChild(menu, item, atItem);
+}
+
+
+
+NA_DEF void na_updateMenuItem(NAMenu* menu, const NAMenuItem* menuItem){
+  
+  NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
+  NA_WINAPIMenuItem* winapiMenuItem = (NA_WINAPIMenuItem*)menuItem;
+
+  CheckMenuItem(
+    winapiMenu->hMenu,
+    winapiMenuItem->id,
+    MF_BYCOMMAND | (winapiMenuItem->state ? MF_CHECKED : MF_UNCHECKED));
 }
 
 

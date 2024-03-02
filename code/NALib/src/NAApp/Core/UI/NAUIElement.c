@@ -11,6 +11,7 @@ NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
   uiElement->nativePtr = nativePtr;
   naInitList(&(uiElement->reactions));
   naInitList(&(uiElement->shortcuts));
+  uiElement->hoverReactionCount = 0;
   uiElement->mouseInside = NA_FALSE;
   uiElement->allowNotifications = NA_TRUE;
   

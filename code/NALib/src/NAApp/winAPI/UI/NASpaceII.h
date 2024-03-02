@@ -99,9 +99,10 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
     GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
     bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
-    if(bgColor != winapiSpace->lastBgColor){ // Only draw if changed
+    if(winapiSpace->forceEraseBackground || bgColor != winapiSpace->lastBgColor){
       FillRect((HDC)wParam, &spaceRect, bgColor->brush);
       winapiSpace->lastBgColor = bgColor;
+      winapiSpace->forceEraseBackground = NA_FALSE;
     }
     info.hasBeenHandeled = NA_TRUE;
     info.result = 1;
@@ -161,6 +162,7 @@ NA_DEF NASpace* naNewSpace(NASize size){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   winapiSpace->lastBgColor = &(app->bgColor);
+  winapiSpace->forceEraseBackground = NA_FALSE;
 
   winapiSpace->space.backgroundColor[0] = 0.;
   winapiSpace->space.backgroundColor[1] = 0.;
@@ -197,14 +199,28 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color){
 
 
 
-NA_API void naRemoveSpaceChild(NASpace* space, void* child){
-  // todo
+NA_DEF void naRemoveSpaceChild(NASpace* space, void* child){
+  NAListIterator iter = naMakeListModifier(&(space->childs));
+  NABool found = naLocateListData(&iter, child);
+  naClearListIterator(&iter);
+  if(found){
+    na_RemoveSpaceChild(space, child);
+    ((NAWINAPISpace*)space)->forceEraseBackground = NA_TRUE;
+  }else{
+    #if NA_DEBUG
+    naError("Child UI element not found in given space.");
+    #endif
+  }
 }
 
 
 
 NA_DEF void naRemoveAllSpaceChilds(NASpace* space){
-  // todo
+  while(!naIsListEmpty(&(space->childs))){
+    void* child = naGetListFirstMutable(&(space->childs));
+    na_RemoveSpaceChild(space, child);
+  }
+  ((NAWINAPISpace*)space)->forceEraseBackground = NA_TRUE;
 }
 
 
@@ -226,7 +242,7 @@ NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift){
 
 
 NA_DEF void naSetSpaceVisible(NASpace* space, NABool visible){
-  // todo
+  ShowWindow(naGetUIElementNativePtr(space), visible ? SW_SHOW : SW_HIDE);
 }
 
 

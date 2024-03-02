@@ -106,7 +106,7 @@ NA_DEF void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio){
 
 
 NA_DEF void naSetRadioVisible(NARadio* radio, NABool visible){
-  // todo
+  ShowWindow(naGetUIElementNativePtr(radio), visible ? SW_SHOW : SW_HIDE);
 }
 
 

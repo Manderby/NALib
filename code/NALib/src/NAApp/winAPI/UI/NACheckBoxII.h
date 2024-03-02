@@ -114,7 +114,7 @@ NA_DEF void na_DestructWINAPICheckBox(NAWINAPICheckBox* winapiCheckBox){
 
 
 NA_DEF void naSetCheckBoxVisible(NACheckBox* checkBox, NABool visible){
-  //todo
+  ShowWindow(naGetUIElementNativePtr(checkBox), visible ? SW_SHOW : SW_HIDE);
 }
 
 

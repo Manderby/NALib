@@ -584,7 +584,7 @@ NA_DEF void na_DestructWINAPIButton(NAWINAPIButton* winapiButton){
 
 
 NA_DEF void naSetButtonVisible(NAButton* button, NABool visible){
-  //todo
+  ShowWindow(naGetUIElementNativePtr(button), visible ? SW_SHOW : SW_HIDE);
 }
 
 
