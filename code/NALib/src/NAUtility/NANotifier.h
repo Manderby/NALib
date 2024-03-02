@@ -90,18 +90,7 @@ NA_API void naUnsubscribe(
 // - signalId:  The signal id to listen to.
 // - data:      A data package containing the data which shall be given the
 //              callback as the data parameter. Can be NULL.
-// The Now-variant publishes the message including all follow-up messages
-// immediately. This function does not return until all of these messages are
-// done. Other messages which are still waiting in the notifier to be published
-// remain unpublished but messages which are handeled by this call will be
-// removed automatically.
 NA_API void naPublish(
-  void* sender,
-  size_t topicId,
-  size_t signalId,
-  void* data);
-  
-NA_API void naPublishNow(
   void* sender,
   size_t topicId,
   size_t signalId,
