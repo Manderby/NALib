@@ -306,34 +306,6 @@ NA_DEF void naUnsubscribe(
 
 
 
-//NA_DEF void naUnsubscribeSignal(
-//  void* reciever,
-//  size_t topicId,
-//  size_t signalId)
-//{
-//  #if NA_DEBUG
-//    if (!na_notifier)
-//      naCrash("No current notifier present.");
-//    if (topicId >= na_notifier->topicsCount)
-//      naCrash("Unknown topicId.");
-//    if (signalId >= na_notifier->topics[topicId]->signalCount)
-//      naCrash("Unknown signalId.");
-//  #endif
-//  NA_Signal* signal = &na_notifier->topics[topicId]->signals[signalId];
-//  NAListIterator it = naMakeListModifier(&signal->subscriptions);
-//  while(naIterateList(&it)){
-//    NA_Subscription* sub = naGetListCurMutable(&it);
-//    if(sub->reciever == reciever){
-//      naRemoveListCurMutable(&it, NA_FALSE);
-//      naDelete(sub);
-//      break;
-//    }
-//  }
-//  naClearListIterator(&it);
-//}
-
-
-
 NA_DEF void naPublish(
   void* sender,
   size_t topicId,

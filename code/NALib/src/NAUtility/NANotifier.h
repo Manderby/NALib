@@ -80,21 +80,6 @@ NA_API void* naSubscribe(
 // You can send Null as a subscription which does nothing.
 NA_API void naUnsubscribe(
   void* subscription);
-  
-//NA_API void naUnsubscribeReciever(
-//  void* reciever);
-//NA_API void naUnsubscribeTopic(
-//  void* reciever,
-//  size_t topicId);
-// Reciever: Unsubscribes from any subscription which has the given reciever.
-// Topic:    Unsubsribes from any subscription with the given reciever and
-//           topicId. Null is not allowed for the reciever.
-// Signal:   Unsubscribes from any subscription with the given reciever,
-//           topicId and signalId. Null is not allowed for the reciever.
-//NA_API void naUnsubscribeSignal(
-//  void* reciever,
-//  size_t topicId,
-//  size_t signalId);
 
 // Sends a message which will be distributed to all listeners next time the
 // notifier is run.
