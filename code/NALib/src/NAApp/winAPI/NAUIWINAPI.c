@@ -30,8 +30,6 @@
 
 #include "NAUIImageWINAPIII.h"
 
-#include "NAPreferencesWINAPIII.h"
-
 #include "UI/NAUIWINAPIII.h"
 #include "UI/NAUIWINAPIInterfaces.h"
 #include "UI/NAApplicationII.h"

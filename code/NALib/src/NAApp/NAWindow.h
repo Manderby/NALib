@@ -88,9 +88,18 @@ NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 // ////////////////////////////////
 // File panel
 
-typedef NABool (*FilePanelCallback)(NABool doPerform, const NAUTF8Char* path);
+typedef NABool (*NAFilePanelCallback)(
+  NABool doPerform,
+  const NAUTF8Char* path,
+  const void* data);
 
-NA_API void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* fileName, const NAUTF8Char* allowedFileSuffix, FilePanelCallback callback);
+NA_API void naPresentFilePanel(
+  void* window,
+  NABool load,
+  const NAUTF8Char* fileName,
+  const NAUTF8Char* allowedFileSuffix,
+  NAFilePanelCallback callback,
+  const void* data);
 
 
 

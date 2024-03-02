@@ -451,7 +451,7 @@ typedef struct NATypeInfo NATypeInfo;
 
 
 // Inline implementations are in separate files:
-#include "Core/NAMemory/NAMemoryII.h"
+#include "NAMemory/NAMemoryII.h"
 
 
 

@@ -287,7 +287,7 @@ NA_API void naCorrectDateTimeForLeapSeconds(NADateTime* dateTime,
 
 
 // Inline implementations are in a separate file:
-#include "Core/NADateTimeII.h"
+#include "NADateTime/NADateTimeII.h"
 
 
 

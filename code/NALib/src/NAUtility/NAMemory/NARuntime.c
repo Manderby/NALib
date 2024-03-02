@@ -1,6 +1,6 @@
 
-#include "../../NAMemory.h"
-#include "../../NABinaryData.h"
+#include "../NAMemory.h"
+#include "../NABinaryData.h"
 
 #if NA_DEBUG
   #include "stdio.h"

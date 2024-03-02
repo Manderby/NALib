@@ -1,6 +1,6 @@
 
-#include "../../NABinaryData.h"
-#include "../../NAMemory.h"
+#include "../NABinaryData.h"
+#include "../NAMemory.h"
 
 
 
@@ -52,7 +52,7 @@ NA_HIDEF void na_AccumulateCRCPNG(NAChecksumCRC* checksumcrc, const NAByte* buf,
 // Code stolen and adapted from the RFC 1950:
 // http://www.ietf.org/rfc/rfc1950.txt
 
-#include "../../../NAMath/NAMathConstants.h"
+#include "../../NAMath/NAMathConstants.h"
 #define NA_CHECKSUM_ADLER_BASE NA_PRIME_BEFORE_2_16;
 
 typedef struct NAChecksumAdler NAChecksumAdler;

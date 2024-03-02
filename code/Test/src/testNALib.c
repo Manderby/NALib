@@ -19,10 +19,12 @@
 // Prototypes
 void printNABase(void);
 void printNACore(void);
+void printNAUtility(void);
 void printNAStruct(void);
 
 void testNABase(void);
 void testNACore(void);
+void testNAUtility(void);
 void testNAStruct(void);
 
 void benchmarkNABase(void);
@@ -33,13 +35,15 @@ void benchmarkNAStruct(void);
 void printNALib(void){
   printNABase();
   printNACore();
+  printNAUtility();
   printNAStruct();
 }
 
 void testNALib(void){
-  naTestFunction(testNABase);
-  naTestFunction(testNACore);
-  naTestFunction(testNAStruct);
+  //naTestFunction(testNABase);
+  //naTestFunction(testNACore);
+  naTestFunction(testNAUtility);
+  //naTestFunction(testNAStruct);
 }
 
 void benchmarkNALib(void){

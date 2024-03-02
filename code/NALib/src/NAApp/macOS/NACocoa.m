@@ -36,7 +36,6 @@
 #include "UI/NAUICocoaLegacyII.h"
 
 #include "NAUIImageCocoaII.h"
-#include "NAPreferencesCocoaII.h"
 
 #include "UI/NAUICocoaII.h"
 #include "UI/NAUICocoaInterfaces.h"

@@ -1,48 +1,20 @@
 
-// This file contains inline implementations of the file NAUIImage
-// Do not include this file directly! It will automatically be included when
-// including "NAUIImage.h"
-
-#include "../../NAStruct/NAList.h"
-
-
-struct NAUIImage {
-  NAList subImages;
-  NABlendMode tintMode;
-};
-
-NA_EXTERN_RUNTIME_TYPE(NAUIImage);
-
-typedef struct NA_UISubImage NA_UISubImage;
-struct NA_UISubImage{
-  NABabyImage* image;
-  void* nativeImage;
-  double resolution;
-  NAUIImageSkin skin;
-  NAUIImageInteraction interaction;
-};
-
-NA_HAPI const NABabyImage* na_GetUIImageBabyImage(
-  const NAUIImage* uiImage,
-  double resolution,
-  NAUIImageSkin skin,
-  NAUIImageInteraction interaction,
-  NABool secondaryState);
-
-NA_HAPI void* na_GetUIImageNativeImage(
-  const NAUIImage* uiImage,
-  double resolution,
-  NAUIImageSkin skin,
-  NAUIImageInteraction interaction,
-  NABool secondaryState);
+#include "NATest.h"
+#include <stdio.h>
 
 
 
-// System dependent implementations
-NA_HAPI void na_FillDefaultTextColorWithSystemSkin(NABabyColor color);
-NA_HAPI void na_FillDefaultLinkColorWithSystemSkin(NABabyColor color);
-NA_HAPI void na_FillDefaultAccentColorWithSystemSkin(NABabyColor color);
+// Prototypes
+void testNANotifier(void);
 
+
+
+void printNAUtility(void){
+}
+
+void testNAUtility(void){
+  naTestFunction(testNANotifier);
+}
 
 
 

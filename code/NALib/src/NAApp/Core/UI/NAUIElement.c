@@ -56,8 +56,8 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
   naBeginListMutatorIteration(NAEventReaction* eventReaction, &(element->reactions), iter);
     if(eventReaction->command == command){
       reaction.controller = eventReaction->controller;
-      finished = eventReaction->handler(reaction);
-      // If the handler tells us to stop handling the command, we do so.
+      finished = eventReaction->callback(reaction);
+      // If the callback tells us to stop handling the command, we do so.
       if(finished){break;}
     }
   naEndListIteration(iter);
@@ -101,7 +101,7 @@ NA_DEF const NANativePtr naGetUIElementNativePtrConst(const void* uiElement){
 
 
 
-NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHandler handler, void* controller){
+NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCallback callback, void* controller){
   NAEventReaction* eventReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
   #if NA_DEBUG
@@ -144,7 +144,7 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
   eventReaction = naAlloc(NAEventReaction);
   eventReaction->controller = controller;
   eventReaction->command = command;
-  eventReaction->handler = handler;
+  eventReaction->callback = callback;
   // todo: this needs some attention on macOS
   //if(command == NA_UI_COMMAND_MOUSE_MOVED || command == NA_UI_COMMAND_MOUSE_ENTERED || command == NA_UI_COMMAND_MOUSE_EXITED){
   //  element->mouseTrackingCount++;

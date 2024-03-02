@@ -157,15 +157,15 @@ struct NAWindow{
 
 
 struct NAEventReaction{
-  void*             controller;
-  NAReactionHandler handler;
-  NAUICommand       command;
+  void*              controller;
+  NAReactionCallback callback;
+  NAUICommand        command;
 };
 
 struct NAKeyboardShortcutReaction{
-  void*             controller;
-  NAReactionHandler handler;
-  NAKeyStroke       shortcut;
+  void*              controller;
+  NAReactionCallback callback;
+  NAKeyStroke        shortcut;
 };
 
 struct NAFont{
@@ -232,7 +232,7 @@ NA_HAPI void* na_GetUINALibEquivalent(void* nativePtr);
 
 // Dispatches a command with the given uiElement.
 // As long as the command has not been finished using NA_TRUE as a return value
-// in the NAReactionHandler function handler, it will be bubbling upwards in
+// in the NAReactionCallback function callback, it will be bubbling upwards in
 // the following order:
 // - First responder
 // - containing space
