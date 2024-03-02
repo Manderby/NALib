@@ -79,7 +79,7 @@ NA_DEF void naSetMenuItemText(NAMenuItem* menuItem, const NAUTF8Char* text){
 
 NA_DEF void naSetMenuItemState(NAMenuItem* menuItem, NABool state){
   naDefineCocoaObject(NACocoaNativeMenuItem, nativePtr, menuItem);
-  [nativePtr setState:state ? NSOnState : NSOffState];
+  [nativePtr setState:state ? NAValueStateOn : NAValueStateOff];
 }
 
 
