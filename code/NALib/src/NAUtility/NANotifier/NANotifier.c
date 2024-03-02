@@ -265,6 +265,9 @@ NA_DEF void* naSubscribe(
     object,
     reciever,
     callback);
+
+  // Todo: Test whether the subscription already exists.
+  
   naAddListLastMutable(&signal->subscriptions, subscription);
   
   return subscription;
@@ -272,30 +275,62 @@ NA_DEF void* naSubscribe(
 
 
 
-NA_DEF void naUnsubscribeSignal(
-  void* reciever,
-  size_t topicId,
-  size_t signalId){
+NA_DEF void naUnsubscribe(
+  void* subscription)
+{
   #if NA_DEBUG
     if (!na_notifier)
       naCrash("No current notifier present.");
-    if (topicId >= na_notifier->topicsCount)
-      naCrash("Unknown topicId.");
-    if (signalId >= na_notifier->topics[topicId]->signalCount)
-      naCrash("Unknown signalId.");
   #endif
-  NA_Signal* signal = &na_notifier->topics[topicId]->signals[signalId];
-  NAListIterator it = naMakeListModifier(&signal->subscriptions);
-  while(naIterateList(&it)){
-    NA_Subscription* sub = naGetListCurMutable(&it);
-    if(sub->reciever == reciever){
-      naRemoveListCurMutable(&it, NA_FALSE);
-      naDelete(sub);
-      break;
+  if (!subscription) return;
+
+  NABool found = NA_FALSE;
+  for(size_t t = 1; t < na_notifier->topicsCount; ++t){
+    for(size_t s = 0; s < na_notifier->topics[t]->signalCount; ++s){
+      NA_Signal* signal = &na_notifier->topics[t]->signals[s];
+      NAListIterator it = naMakeListModifier(&signal->subscriptions);
+      while(naIterateList(&it)){
+        NA_Subscription* sub = naGetListCurMutable(&it);
+        if(sub == subscription){
+          naRemoveListCurMutable(&it, NA_FALSE);
+          naDelete(sub);
+          break;
+        }
+      }
+      naClearListIterator(&it);
+      if(found) break;
     }
+    if(found) break;
   }
-  naClearListIterator(&it);
 }
+
+
+
+//NA_DEF void naUnsubscribeSignal(
+//  void* reciever,
+//  size_t topicId,
+//  size_t signalId)
+//{
+//  #if NA_DEBUG
+//    if (!na_notifier)
+//      naCrash("No current notifier present.");
+//    if (topicId >= na_notifier->topicsCount)
+//      naCrash("Unknown topicId.");
+//    if (signalId >= na_notifier->topics[topicId]->signalCount)
+//      naCrash("Unknown signalId.");
+//  #endif
+//  NA_Signal* signal = &na_notifier->topics[topicId]->signals[signalId];
+//  NAListIterator it = naMakeListModifier(&signal->subscriptions);
+//  while(naIterateList(&it)){
+//    NA_Subscription* sub = naGetListCurMutable(&it);
+//    if(sub->reciever == reciever){
+//      naRemoveListCurMutable(&it, NA_FALSE);
+//      naDelete(sub);
+//      break;
+//    }
+//  }
+//  naClearListIterator(&it);
+//}
 
 
 
