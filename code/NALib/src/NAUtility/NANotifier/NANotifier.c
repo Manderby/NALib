@@ -273,7 +273,7 @@ NA_DEF void* naSubscribe(
 
 
 NA_DEF void naUnsubscribeSignal(
-  void* subscription,
+  void* reciever,
   size_t topicId,
   size_t signalId){
   #if NA_DEBUG
@@ -288,7 +288,7 @@ NA_DEF void naUnsubscribeSignal(
   NAListIterator it = naMakeListModifier(&signal->subscriptions);
   while(naIterateList(&it)){
     NA_Subscription* sub = naGetListCurMutable(&it);
-    if(sub == subscription){
+    if(sub->reciever == reciever){
       naRemoveListCurMutable(&it, NA_FALSE);
       naDelete(sub);
       break;
