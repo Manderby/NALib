@@ -58,9 +58,10 @@ NA_API void naSetSignalPriority(
 
 // Registers a subscription
 // - object:    Denotes the object to observe. If NULL, any object is observed
-//              which broadcast the message. The object actually sending the
-//              message will be provided as the sender parameter in the
-//              callback function.
+//              which broadcast the message. The object provided here is const
+//              The object later actually sending the message will be provided
+//              as the sender parameter in the callback function which might
+//              be non-const.
 // - topicID:   The topic the signal belongs to.
 // - signalId:  The signal id to listen to.
 // - reciever:  A pointer to the reciever. This information will be provided in
@@ -70,7 +71,7 @@ NA_API void naSetSignalPriority(
 // Returns a subscription pointer to an internal opaque type. Use that to
 // unsubscribe again using naUnsubscribe.
 NA_API void* naSubscribe(
-  void* object,
+  const void* object,
   size_t topicId,
   size_t signalId,
   void* reciever,

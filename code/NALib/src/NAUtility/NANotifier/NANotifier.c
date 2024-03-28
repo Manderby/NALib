@@ -16,7 +16,7 @@ NA_RUNTIME_TYPE(NA_MessageDispatch, NA_NULL, NA_FALSE);
 
 typedef struct NA_Subscription NA_Subscription;
 struct NA_Subscription{
-  void* object;
+  const void* object;
   void* reciever;
   NAMessageCallback callback;
 };
@@ -36,7 +36,7 @@ struct NA_Topic{
 
 struct NANotifier{
   size_t nextTopicId;
-  size_t topicsCount;
+  size_t reservedTopicsCount;
   NA_Topic** topics;
   NAList updateQueue;
   NAList createQueue;
@@ -64,7 +64,7 @@ NA_HDEF NA_MessageDispatch* na_NewMessageDispatch(
 
 
 NA_HDEF NA_Subscription* na_NewSubscription(
-  void* object,
+  const void* object,
   void* reciever,
   NAMessageCallback callback)
 {
@@ -117,8 +117,8 @@ NA_DEF NANotifier* naAllocNotifier(void){
   NANotifier* notifier = naAlloc(NANotifier);
 
   notifier->nextTopicId = 1;
-  notifier->topicsCount = 1;
-  size_t topicsMemSize = sizeof(NA_Topic*) * notifier->topicsCount;
+  notifier->reservedTopicsCount = 1;
+  size_t topicsMemSize = sizeof(NA_Topic*) * notifier->reservedTopicsCount;
   notifier->topics = naMalloc(topicsMemSize);
   naZeron(notifier->topics, topicsMemSize);
   
@@ -206,13 +206,13 @@ NA_DEF size_t naRegisterTopic(size_t signalCount){
   #endif
   size_t newTopicId = na_notifier->nextTopicId;
   na_notifier->nextTopicId += 1;
-  if(newTopicId >= na_notifier->topicsCount){
+  if(newTopicId >= na_notifier->reservedTopicsCount){
     // The array is too small. Double the array size and copy everything over.
-    size_t topicsMemSize = sizeof(NA_Topic*) * na_notifier->topicsCount;
+    size_t topicsMemSize = sizeof(NA_Topic*) * na_notifier->reservedTopicsCount;
     NA_Topic** newArray = naMalloc(topicsMemSize * 2);
     naCopyn(newArray, na_notifier->topics, topicsMemSize);
-    naZeron(newArray + na_notifier->topicsCount, topicsMemSize);
-    na_notifier->topicsCount *= 2;
+    naZeron(newArray + na_notifier->reservedTopicsCount, topicsMemSize);
+    na_notifier->reservedTopicsCount *= 2;
     naFree(na_notifier->topics);
     na_notifier->topics = newArray;
   }
@@ -230,7 +230,7 @@ NA_DEF void naSetSignalPriority(
   #if NA_DEBUG
     if (!na_notifier)
       naCrash("No current notifier present.");
-    if (topicId >= na_notifier->topicsCount)
+    if (topicId >= na_notifier->nextTopicId)
       naCrash("Unknown topicId.");
     if (signalId >= na_notifier->topics[topicId]->signalCount)
       naCrash("Unknown signalId.");
@@ -243,7 +243,7 @@ NA_DEF void naSetSignalPriority(
 
 
 NA_DEF void* naSubscribe(
-  void* object,
+  const void* object,
   size_t topicId,
   size_t signalId,
   void* reciever,
@@ -252,7 +252,7 @@ NA_DEF void* naSubscribe(
   #if NA_DEBUG
     if (!na_notifier)
       naCrash("No current notifier present.");
-    if (topicId >= na_notifier->topicsCount)
+    if (topicId >= na_notifier->nextTopicId)
       naCrash("Unknown topicId.");
     if (signalId >= na_notifier->topics[topicId]->signalCount)
       naCrash("Unknown signalId.");
@@ -315,7 +315,7 @@ NA_DEF void naPublish(
   #if NA_DEBUG
     if (!na_notifier)
       naCrash("No current notifier present.");
-    if (topicId >= na_notifier->topicsCount)
+    if (topicId >= na_notifier->nextTopicId)
       naCrash("Unknown topicId.");
     if (signalId >= na_notifier->topics[topicId]->signalCount)
       naCrash("Unknown signalId.");
