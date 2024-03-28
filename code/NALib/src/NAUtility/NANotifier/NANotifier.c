@@ -285,7 +285,7 @@ NA_DEF void naUnsubscribe(
   if (!subscription) return;
 
   NABool found = NA_FALSE;
-  for(size_t t = 1; t < na_notifier->topicsCount; ++t){
+  for(size_t t = 1; t < na_notifier->nextTopicId; ++t){
     for(size_t s = 0; s < na_notifier->topics[t]->signalCount; ++s){
       NA_Signal* signal = &na_notifier->topics[t]->signals[s];
       NAListIterator it = naMakeListModifier(&signal->subscriptions);
