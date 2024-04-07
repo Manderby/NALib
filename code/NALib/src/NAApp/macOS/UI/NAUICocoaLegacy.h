@@ -142,6 +142,14 @@
   #define NAWindowCollectionBehaviorFullScreenAuxiliary 0
 #endif
 
+#if defined __MAC_10_14
+  #define NAValueStateOn                  NSControlStateValueOn
+  #define NAValueStateOff                 NSControlStateValueOff
+#else // deprecated definitions before 10.14
+  #define NAValueStateOn                  NSOnState
+  #define NAValueStateOff                 NSOffState
+#endif
+
 
 
 #if defined __MAC_10_12
