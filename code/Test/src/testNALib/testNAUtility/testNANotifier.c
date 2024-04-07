@@ -115,7 +115,7 @@ void testNANotifierPublishAndSubscribe(){
     size_t topicId = naRegisterTopic(SIGNAL_COUNT);
 
     void* subscription = naSubscribe(NA_NULL, topicId, msgUpdate, NA_NULL, testMessageCallback);
-    naTestVoid(naUnsubscribeSignal(subscription, topicId, msgUpdate));
+    naTestVoid(naUnsubscribe(subscription));
 
     naDeallocNotifier(notifier);
   }
