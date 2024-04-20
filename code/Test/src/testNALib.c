@@ -29,6 +29,7 @@ void testNAUtility(void);
 void testNAStruct(void);
 
 void benchmarkNABase(void);
+void benchmarkNAMath(void);
 void benchmarkNAStruct(void);
 
 
@@ -50,8 +51,9 @@ void testNALib(void){
 
 void benchmarkNALib(void){
   printf(NA_NL "Benchmarking:" NA_NL);
-  benchmarkNABase();
-  benchmarkNAStruct();
+  //benchmarkNABase();
+  benchmarkNAMath();
+  //benchmarkNAStruct();
 }
 
 int main(int argc, const char** argv){
@@ -83,8 +85,8 @@ int main(int argc, const char** argv){
 
   if(testStartSuccessful){
     testNALib();
-    //    naPrintUntested();
-    //    benchmarkNALib();
+    //naPrintUntested();
+    benchmarkNALib();
   }else{
     printf("Could not start Testing.");
   }

@@ -5,75 +5,236 @@
 #include <stdio.h>
 
 
-#define INTEGRATION_ARRAY_SIZE 1000000
 
-float simpleSum(const float* array){
-  float result = 0.f;
-  for(size_t i = 0; i < INTEGRATION_ARRAY_SIZE; ++i){
-    result += array[i];
-  }
-  return result;
-}
+#define INTEGRATION_ARRAY_SIZE 100
+#define INTEGRATION_RESULT ((INTEGRATION_ARRAY_SIZE + 1) * (INTEGRATION_ARRAY_SIZE / 2))
 
-float arrayAccess(const void* arrayPtr, float x){
+
+
+float arrayAccessf(const void* arrayPtr, float x){
   const float* array = (const float*) arrayPtr;
   return array[(size_t)naRoundf(x * (INTEGRATION_ARRAY_SIZE - 1))];
 }
 
-void testNAMathOperators(void){
-  float* array = naMalloc(INTEGRATION_ARRAY_SIZE * sizeof(float));
+double arrayAccess(const void* arrayPtr, double x){
+  const double* array = (const double*) arrayPtr;
+  return array[(size_t)naRoundf(x * (INTEGRATION_ARRAY_SIZE - 1))];
+}
+
+
+
+float* createTestArrayf(size_t count){
+  float* array = naMalloc(count * sizeof(float));
   
-  for(size_t i = 0; i < INTEGRATION_ARRAY_SIZE; ++i){
-//    array[i] = i + 1;
-    array[i] = INTEGRATION_ARRAY_SIZE - i;
-//    array[i] = naUniformRandZEf();
+  // Fill the array with values from n to 1 (backwards)
+  for(size_t i = 0; i < count; ++i){
+    array[i] = count - i;
   }
-//  for(size_t i = 0; i < INTEGRATION_ARRAY_SIZE; ++i){
-//    float tmp = array[i];
-//    size_t randIndex = (size_t)(naUniformRandZE() * INTEGRATION_ARRAY_SIZE);
-//    array[i] = array[randIndex];
-//    array[randIndex] = tmp;
-//  }
+
+  return array;
+}
+
+double* createTestArray(size_t count){
+  double* array = naMalloc(count * sizeof(double));
   
-  volatile float simpleResult = simpleSum(array);
-  printf("Simple: %f\n", simpleResult);
+  // Fill the array with values from n to 1 (backwards)
+  for(size_t i = 0; i < count; ++i){
+    array[i] = count - i;
+  }
 
-  volatile float kahanSum = naKahanSum(INTEGRATION_ARRAY_SIZE, array);
-  printf("Kaham Sum: %f\n", kahanSum);
+  return array;
+}
 
-  volatile float kahanBabushkaNeumaierSum = naKahanBabushkaNeumaierSum(INTEGRATION_ARRAY_SIZE, array);
-  printf("Kaham Babushka Neumaier Sum: %f\n", kahanBabushkaNeumaierSum);
 
-  volatile float kahanBabushkaKleinSum = naKahanBabushkaKleinSum(INTEGRATION_ARRAY_SIZE, array);
-  printf("Kaham Babushka Klein Sum: %f\n", kahanBabushkaKleinSum);
+
+void testIntegrationFunctionsf(void){
+  float* array = createTestArrayf(INTEGRATION_ARRAY_SIZE);
   
-//  volatile float binaryPairsResult = naIntegratef(
-//    INTEGRATION_ARRAY_SIZE,
-//    arrayAccess,
-//    array,
-//    0.,
-//    1.);
-//  printf("Binary Pairs: %f\n", binaryPairsResult);
+  float simpleResult;
+  float kahanSum;
+  float kahanBabushkaNeumaierSum;
+  float kahanBabushkaKleinSum;
+  float binaryPairsResult;
+  float binaryPairsResult2;
   
-  volatile float binaryPairsResult2 = naSumf(INTEGRATION_ARRAY_SIZE, array);
-  printf("Binary Pairs2: %f\n", binaryPairsResult2);
+  naTestGroup("Check correctness of result"){
+    simpleResult = naSimpleSumf(INTEGRATION_ARRAY_SIZE, array);
+    naTest(simpleResult == INTEGRATION_RESULT);
 
-  naBenchmark((simpleResult += simpleSum(array)));
-  naBenchmark((kahanSum += naKahanSum(INTEGRATION_ARRAY_SIZE, array)));
-  naBenchmark((kahanBabushkaNeumaierSum += naKahanBabushkaNeumaierSum(INTEGRATION_ARRAY_SIZE, array)));
-  naBenchmark((kahanBabushkaKleinSum += naKahanBabushkaKleinSum(INTEGRATION_ARRAY_SIZE, array)));
-//  naBenchmark((binaryPairsResult += naIntegratef(INTEGRATION_ARRAY_SIZE, arrayAccess, array, 0., 1.)));
-  naBenchmark((binaryPairsResult2 += naSumf(INTEGRATION_ARRAY_SIZE, array)));
+    kahanSum = naKahanSumf(INTEGRATION_ARRAY_SIZE, array);
+    naTest(kahanSum == INTEGRATION_RESULT);
 
-//  printf("Simple: %f\n", simpleResult);
-//  printf("Binary Pairs: %f\n", binaryPairsResult);
-//  printf("Binary Pairs2: %f\n", binaryPairsResult2);
+    kahanBabushkaNeumaierSum = naKahanBabushkaNeumaierSumf(INTEGRATION_ARRAY_SIZE, array);
+    naTest(kahanBabushkaNeumaierSum == INTEGRATION_RESULT);
+
+    kahanBabushkaKleinSum = naKahanBabushkaKleinSumf(INTEGRATION_ARRAY_SIZE, array);
+    naTest(kahanBabushkaKleinSum == INTEGRATION_RESULT);
+    
+//    binaryPairsResult = naIntegratef(
+//      INTEGRATION_ARRAY_SIZE,
+//      arrayAccess,
+//      array,
+//      0.f,
+//      1.f);
+//    naTest(binaryPairsResult == INTEGRATION_RESULT);
+
+    binaryPairsResult2 = naSumf(INTEGRATION_ARRAY_SIZE, array);
+    naTest(binaryPairsResult2 == INTEGRATION_RESULT);
+  }
+
+  naTestGroup("Nullpointer array"){
+    naTestCrash(naSimpleSumf(INTEGRATION_ARRAY_SIZE, NA_NULL));
+    naTestCrash(naKahanSumf(INTEGRATION_ARRAY_SIZE, NA_NULL));
+    naTestCrash(naKahanBabushkaNeumaierSumf(INTEGRATION_ARRAY_SIZE, NA_NULL));
+    naTestCrash(naKahanBabushkaKleinSumf(INTEGRATION_ARRAY_SIZE, NA_NULL));
+//    naTestCrash(naIntegratef(INTEGRATION_ARRAY_SIZE, NA_NULL));
+    naTestCrash(naSumf(INTEGRATION_ARRAY_SIZE, NA_NULL));
+  }
+
+  naTestGroup("Zero size access"){
+    naTest(naSimpleSumf(0, NA_NULL) == 0.f);
+    naTest(naKahanSumf(0, NA_NULL) == 0.f);
+    naTest(naKahanBabushkaNeumaierSumf(0, NA_NULL) == 0.f);
+    naTest(naKahanBabushkaKleinSumf(0, NA_NULL) == 0.f);
+//    naTestCrash(naIntegratef(0, NA_NULL) == 0.f);
+    naTest(naSumf(0, NA_NULL) == 0.f);
+  }
+
+  naTestGroup("Size 1 access"){
+    naTest(naSimpleSumf(1, array) == INTEGRATION_ARRAY_SIZE);
+    naTest(naKahanSumf(1, array) == INTEGRATION_ARRAY_SIZE);
+    naTest(naKahanBabushkaNeumaierSumf(1, array) == INTEGRATION_ARRAY_SIZE);
+    naTest(naKahanBabushkaKleinSumf(1, array) == INTEGRATION_ARRAY_SIZE);
+//    naTestCrash(naIntegratef(1, array) == INTEGRATION_ARRAY_SIZE);
+    naTest(naSumf(1, array) == INTEGRATION_ARRAY_SIZE);
+  }
 
   naFree(array);
 }
 
+
+
+void testIntegrationFunctions(void){
+  double* array = createTestArray(INTEGRATION_ARRAY_SIZE);
+  
+  double simpleResult;
+  double kahanSum;
+  double kahanBabushkaNeumaierSum;
+  double kahanBabushkaKleinSum;
+  double binaryPairsResult;
+  double binaryPairsResult2;
+  
+  naTestGroup("Check correctness of result"){
+    simpleResult = naSimpleSum(INTEGRATION_ARRAY_SIZE, array);
+    naTest(simpleResult == INTEGRATION_RESULT);
+
+    kahanSum = naKahanSum(INTEGRATION_ARRAY_SIZE, array);
+    naTest(kahanSum == INTEGRATION_RESULT);
+
+    kahanBabushkaNeumaierSum = naKahanBabushkaNeumaierSum(INTEGRATION_ARRAY_SIZE, array);
+    naTest(kahanBabushkaNeumaierSum == INTEGRATION_RESULT);
+
+    kahanBabushkaKleinSum = naKahanBabushkaKleinSum(INTEGRATION_ARRAY_SIZE, array);
+    naTest(kahanBabushkaKleinSum == INTEGRATION_RESULT);
+    
+//    binaryPairsResult = naIntegrate(
+//      INTEGRATION_ARRAY_SIZE,
+//      arrayAccess,
+//      array,
+//      0.,
+//      1.);
+//    naTest(binaryPairsResult == INTEGRATION_RESULT);
+
+    binaryPairsResult2 = naSum(INTEGRATION_ARRAY_SIZE, array);
+    naTest(binaryPairsResult2 == INTEGRATION_RESULT);
+  }
+
+  naTestGroup("Nullpointer array"){
+    naTestCrash(naSimpleSum(INTEGRATION_ARRAY_SIZE, NA_NULL));
+    naTestCrash(naKahanSum(INTEGRATION_ARRAY_SIZE, NA_NULL));
+    naTestCrash(naKahanBabushkaNeumaierSum(INTEGRATION_ARRAY_SIZE, NA_NULL));
+    naTestCrash(naKahanBabushkaKleinSum(INTEGRATION_ARRAY_SIZE, NA_NULL));
+//    naTestCrash(naIntegrate(INTEGRATION_ARRAY_SIZE, NA_NULL));
+    naTestCrash(naSum(INTEGRATION_ARRAY_SIZE, NA_NULL));
+  }
+
+  naTestGroup("Zero size access"){
+    naTest(naSimpleSum(0, NA_NULL) == 0.f);
+    naTest(naKahanSum(0, NA_NULL) == 0.f);
+    naTest(naKahanBabushkaNeumaierSum(0, NA_NULL) == 0.f);
+    naTest(naKahanBabushkaKleinSum(0, NA_NULL) == 0.f);
+//    naTestCrash(naIntegrate(0, NA_NULL) == 0.f);
+    naTest(naSum(0, NA_NULL) == 0.f);
+  }
+
+  naTestGroup("Size 1 access"){
+    naTest(naSimpleSum(1, array) == INTEGRATION_ARRAY_SIZE);
+    naTest(naKahanSum(1, array) == INTEGRATION_ARRAY_SIZE);
+    naTest(naKahanBabushkaNeumaierSum(1, array) == INTEGRATION_ARRAY_SIZE);
+    naTest(naKahanBabushkaKleinSum(1, array) == INTEGRATION_ARRAY_SIZE);
+//    naTestCrash(naIntegrate(1, array) == INTEGRATION_ARRAY_SIZE);
+    naTest(naSum(1, array) == INTEGRATION_ARRAY_SIZE);
+  }
+
+  naFree(array);
+}
+
+
+
+void benchmarkIntegrationFunctionsf(void){
+  size_t count = 1000000;
+  float* array = createTestArrayf(count);
+
+  volatile float simpleResult;
+  volatile float kahanSum;
+  volatile float kahanBabushkaNeumaierSum;
+  volatile float kahanBabushkaKleinSum;
+  volatile float binaryPairsResult;
+  volatile float binaryPairsResult2;
+
+  naBenchmark((simpleResult += naSimpleSumf(count, array)));
+  naBenchmark((kahanSum += naKahanSumf(count, array)));
+  naBenchmark((kahanBabushkaNeumaierSum += naKahanBabushkaNeumaierSumf(count, array)));
+  naBenchmark((kahanBabushkaKleinSum += naKahanBabushkaKleinSumf(count, array)));
+  naBenchmark((binaryPairsResult += naIntegratef(count, arrayAccessf, array, 0.f, 1.f)));
+  naBenchmark((binaryPairsResult2 += naSumf(count, array)));
+
+  naFree(array);
+}
+
+void benchmarkIntegrationFunctions(void){
+  size_t count = 1000000;
+  double* array = createTestArray(count);
+
+  volatile double simpleResult;
+  volatile double kahanSum;
+  volatile double kahanBabushkaNeumaierSum;
+  volatile double kahanBabushkaKleinSum;
+  volatile double binaryPairsResult;
+  volatile double binaryPairsResult2;
+
+  naBenchmark((simpleResult += naSimpleSum(count, array)));
+  naBenchmark((kahanSum += naKahanSum(count, array)));
+  naBenchmark((kahanBabushkaNeumaierSum += naKahanBabushkaNeumaierSum(count, array)));
+  naBenchmark((kahanBabushkaKleinSum += naKahanBabushkaKleinSum(count, array)));
+  naBenchmark((binaryPairsResult += naIntegrate(count, arrayAccess, array, 0., 1.)));
+  naBenchmark((binaryPairsResult2 += naSum(count, array)));
+
+  naFree(array);
+}
+
+
+
 void testNAMath(void){
-  naTestFunction(testNAMathOperators);
+  naTestFunction(testIntegrationFunctionsf);
+  naTestFunction(testIntegrationFunctions);
+}
+
+
+
+void benchmarkNAMath(void){
+  naTestFunction(benchmarkIntegrationFunctionsf);
+  naTestFunction(benchmarkIntegrationFunctions);
 }
 
   
