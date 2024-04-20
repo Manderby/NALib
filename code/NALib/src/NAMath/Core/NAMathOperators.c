@@ -7,6 +7,114 @@
 #include "../NAMathOperators.h"
 
 
+// Copied and adapted from Wikipedia
+NA_DEF float naKahanSum(size_t sampleCount, float* array){
+  // Prepare the accumulator.
+  float sum = 0.f;
+  // A running compensation for lost low-order bits.
+  float c = 0.f;
+  // The array input has elements indexed input[1] to input[input.length].
+  for(size_t iStep = 0; iStep < sampleCount; ++iStep){
+    // c is zero the first time around.
+    float y = array[iStep] - c;
+    // Alas, sum is big, y small, so low-order digits of y are lost.         
+    float t = sum + y;
+    // (t - sum) cancels the high-order part of y;
+    // subtracting y recovers negative (low part of y)
+    c = (t - sum) - y;
+    // Algebraically, c should always be zero. Beware
+    // overly-aggressive optimizing compilers!
+    sum = t;
+  }// Next time around, the lost low part will be added to y in a fresh attempt.
+
+  return sum;
+}
+
+// Copied and adapted from Wikipedia
+NA_DEF float naKahanBabushkaNeumaierSum(size_t sampleCount, float* array){
+  float sum = 0.f;
+  float c = 0.f;                       // A running compensation for lost low-order bits.
+
+  for(size_t iStep = 0; iStep < sampleCount; ++iStep){
+    float t = sum + array[iStep];
+    if(naAbsf(sum) >= naAbsf(array[iStep]))
+      c += (sum - t) + array[iStep]; // If sum is bigger, low-order digits of input[iStep] are lost.
+    else
+      c += (array[iStep] - t) + sum; // Else low-order digits of sum are lost.
+    sum = t;
+  }
+
+  return sum + c;                   // Correction only applied once in the very end.
+}
+
+// Copied and adapted from Wikipedia
+NA_DEF float naKahanBabushkaKleinSum(size_t sampleCount, float* array){
+  float sum = 0.f;
+  float cs  = 0.f;
+  float ccs = 0.f;
+  float c   = 0.f;
+  float cc  = 0.f;
+
+  for(size_t iStep = 0; iStep < sampleCount; ++iStep){
+    float t = sum + array[iStep];
+    if(naAbsf(sum) >= naAbsf(array[iStep]))
+      c = (sum - t) + array[iStep];
+    else
+      c = (array[iStep] - t) + sum;
+
+    sum = t;
+    t = cs + c;
+    if(naAbsf(cs) >= naAbsf(c))
+      cc = (cs - t) + c;
+    else
+      cc = (c - t) + cs;
+
+    cs = t;
+    ccs = ccs + cc;
+  }
+
+  return sum + cs + ccs;
+}
+
+NA_DEF float naSumf(size_t sampleCount, float* array)
+{
+  float tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
+  memset(tmpSums, 0, sizeof(float) * (8 * sizeof(size_t))); // nullify.
+
+  if(sampleCount > 1){   
+    for(size_t iStep = 0; iStep < sampleCount; iStep += 2){
+      // Add two neighboring values together with the temp sums up to the
+      // position where the current iStep has its first binary 0.
+      float walkingSum = array[iStep] + array[iStep + 1];
+      char p = 1; // the current tmpSum as well as the current bit of iStep
+      size_t step = 2; // = 2^p
+      while(iStep & step){
+        walkingSum += tmpSums[p];
+        p++;
+        step <<= 1;
+      }
+      // Store the current sum at the position of the subsequent binary 1
+      tmpSums[p] = walkingSum;
+    }
+  }
+  
+  // If the count is odd, store the remaining value at position 0.
+  if(sampleCount & 1){
+    tmpSums[0] = array[sampleCount - 1];
+  }
+  
+  float sum = 0.f;
+  // Finally, go though all temp sums and add those to the final sum where
+  // sampleCount has a binary 1
+  for(size_t i = 0; i < 8 * sizeof(size_t); ++i){
+    if(sampleCount & ((size_t)1 << i)){
+      sum += tmpSums[i];
+    }
+  }
+  return sum;
+}
+
+
 
 NA_DEF float naIntegratef(size_t sampleCount, IntegrateFuncf eval, const void* obj, float min, float max)
 {

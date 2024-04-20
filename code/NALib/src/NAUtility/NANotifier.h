@@ -5,6 +5,7 @@
   extern "C"{
 #endif
 
+#include <stdlib.h>
 #include "../NABase/NABase.h"
 
 

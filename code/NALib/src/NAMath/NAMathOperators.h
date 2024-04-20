@@ -248,8 +248,19 @@ NA_IAPI void          naCartesianToPolarf(float*  rtheta, const float*  xy);
 
 
 
+// The evaluation functions will get the arbitrary object as const void* which
+// was given to the naIntegrate function as the first parameter and as the
+// second parameter, the coordinate at which to evaluate.
 typedef float (*IntegrateFuncf)(const void*, float);
 typedef double (*IntegrateFuncd)(const void*, double);
+
+NA_API float naKahanSum(size_t sampleCount, float* array);
+NA_API float naKahanBabushkaNeumaierSum(size_t sampleCount, float* array);
+NA_API float naKahanBabushkaKleinSum(size_t sampleCount, float* array);
+
+NA_API float naSumf(
+  size_t sampleCount,
+  float* array);
 
 NA_API float naIntegratef(
   size_t sampleCount,

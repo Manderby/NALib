@@ -6,6 +6,7 @@
 #endif
 
 
+#include <stdlib.h>
 #include "../NABase/NABase.h"
 
 // In this file, you find basic vector algebra functions for both

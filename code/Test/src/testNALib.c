@@ -23,6 +23,7 @@ void printNAUtility(void);
 void printNAStruct(void);
 
 void testNABase(void);
+void testNAMath(void);
 void testNACore(void);
 void testNAUtility(void);
 void testNAStruct(void);
@@ -41,8 +42,9 @@ void printNALib(void){
 
 void testNALib(void){
   //naTestFunction(testNABase);
+  naTestFunction(testNAMath);
   //naTestFunction(testNACore);
-  naTestFunction(testNAUtility);
+  //naTestFunction(testNAUtility);
   //naTestFunction(testNAStruct);
 }
 
