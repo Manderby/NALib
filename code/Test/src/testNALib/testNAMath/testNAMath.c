@@ -18,7 +18,7 @@ float arrayAccessf(const void* arrayPtr, float x){
 
 double arrayAccess(const void* arrayPtr, double x){
   const double* array = (const double*) arrayPtr;
-  return array[(size_t)naRoundf(x * (INTEGRATION_ARRAY_SIZE - 1))];
+  return array[(size_t)naRound(x * (INTEGRATION_ARRAY_SIZE - 1))];
 }
 
 
@@ -28,7 +28,7 @@ float* createTestArrayf(size_t count){
   
   // Fill the array with values from n to 1 (backwards)
   for(size_t i = 0; i < count; ++i){
-    array[i] = count - i;
+    array[i] = (float)(count - i);
   }
 
   return array;
@@ -39,7 +39,7 @@ double* createTestArray(size_t count){
   
   // Fill the array with values from n to 1 (backwards)
   for(size_t i = 0; i < count; ++i){
-    array[i] = count - i;
+    array[i] = (double)(count - i);
   }
 
   return array;
@@ -185,12 +185,12 @@ void benchmarkIntegrationFunctionsf(void){
   size_t count = 1000000;
   float* array = createTestArrayf(count);
 
-  volatile float simpleResult;
-  volatile float kahanSum;
-  volatile float kahanBabushkaNeumaierSum;
-  volatile float kahanBabushkaKleinSum;
-  volatile float binaryPairsResult;
-  volatile float binaryPairsResult2;
+  volatile float simpleResult = 0.f;
+  volatile float kahanSum = 0.f;
+  volatile float kahanBabushkaNeumaierSum = 0.f;
+  volatile float kahanBabushkaKleinSum = 0.f;
+  volatile float binaryPairsResult = 0.f;
+  volatile float binaryPairsResult2 = 0.f;
 
   naBenchmark((simpleResult += naSimpleSumf(count, array)));
   naBenchmark((kahanSum += naKahanSumf(count, array)));
@@ -206,12 +206,12 @@ void benchmarkIntegrationFunctions(void){
   size_t count = 1000000;
   double* array = createTestArray(count);
 
-  volatile double simpleResult;
-  volatile double kahanSum;
-  volatile double kahanBabushkaNeumaierSum;
-  volatile double kahanBabushkaKleinSum;
-  volatile double binaryPairsResult;
-  volatile double binaryPairsResult2;
+  volatile double simpleResult = 0.;
+  volatile double kahanSum = 0.;
+  volatile double kahanBabushkaNeumaierSum = 0.;
+  volatile double kahanBabushkaKleinSum = 0.;
+  volatile double binaryPairsResult = 0.;
+  volatile double binaryPairsResult2 = 0.;
 
   naBenchmark((simpleResult += naSimpleSum(count, array)));
   naBenchmark((kahanSum += naKahanSum(count, array)));

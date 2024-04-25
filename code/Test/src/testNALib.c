@@ -86,6 +86,7 @@ int main(int argc, const char** argv){
   if(testStartSuccessful){
     testNALib();
     //naPrintUntested();
+    naSetTimePerBenchmark(0.1);
     benchmarkNALib();
   }else{
     printf("Could not start Testing.");
