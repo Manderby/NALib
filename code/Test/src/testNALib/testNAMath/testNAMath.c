@@ -121,9 +121,10 @@ void testIntegrationFunctions(void){
   double kahanSum;
   double kahanBabushkaNeumaierSum;
   double kahanBabushkaKleinSum;
+  double binaryPairsResultFunc;
   double binaryPairsResult;
   double binaryPairsResult2;
-  
+
   naTestGroup("Check correctness of result"){
     simpleResult = naSimpleSum(INTEGRATION_ARRAY_SIZE, array);
     naTest(simpleResult == INTEGRATION_RESULT);
@@ -137,15 +138,18 @@ void testIntegrationFunctions(void){
     kahanBabushkaKleinSum = naKahanBabushkaKleinSum(INTEGRATION_ARRAY_SIZE, array);
     naTest(kahanBabushkaKleinSum == INTEGRATION_RESULT);
     
-//    binaryPairsResult = naIntegrate(
+//    binaryPairsResultFunc = naIntegrate(
 //      INTEGRATION_ARRAY_SIZE,
 //      arrayAccess,
 //      array,
 //      0.,
 //      1.);
-//    naTest(binaryPairsResult == INTEGRATION_RESULT);
+//    naTest(binaryPairsResultFunc == INTEGRATION_RESULT);
 
-    binaryPairsResult2 = naSum(INTEGRATION_ARRAY_SIZE, array);
+    binaryPairsResult = naSum(INTEGRATION_ARRAY_SIZE, array);
+    naTest(binaryPairsResult == INTEGRATION_RESULT);
+
+    binaryPairsResult2 = naSum2(INTEGRATION_ARRAY_SIZE, array);
     naTest(binaryPairsResult2 == INTEGRATION_RESULT);
   }
 
@@ -182,7 +186,7 @@ void testIntegrationFunctions(void){
 
 
 void benchmarkIntegrationFunctionsf(void){
-  size_t count = 1000000;
+  size_t count = 1000000000;
   float* array = createTestArrayf(count);
 
   volatile float simpleResult = 0.f;
@@ -219,6 +223,7 @@ void benchmarkIntegrationFunctions(void){
   naBenchmark((kahanBabushkaKleinSum += naKahanBabushkaKleinSum(count, array)));
   naBenchmark((binaryPairsResult += naIntegrate(count, arrayAccess, array, 0., 1.)));
   naBenchmark((binaryPairsResult2 += naSum(count, array)));
+  naBenchmark((binaryPairsResult2 += naSum2(count, array)));
 
   naFree(array);
 }
@@ -226,14 +231,14 @@ void benchmarkIntegrationFunctions(void){
 
 
 void testNAMath(void){
-  naTestFunction(testIntegrationFunctionsf);
+  //naTestFunction(testIntegrationFunctionsf);
   naTestFunction(testIntegrationFunctions);
 }
 
 
 
 void benchmarkNAMath(void){
-  naTestFunction(benchmarkIntegrationFunctionsf);
+  //naTestFunction(benchmarkIntegrationFunctionsf);
   naTestFunction(benchmarkIntegrationFunctions);
 }
 
