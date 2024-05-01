@@ -308,7 +308,7 @@ NA_DEF double naSum2(size_t sampleCount, const double* array) {
     memset(tmpSums, 0, sizeof(double) * (8 * sizeof(size_t))); // nullify.
 
     if (sampleCount > 1) {
-        double* arrayPtr = array;
+        const double* arrayPtr = array;
         for (size_t iStep = 0; iStep < sampleCount; iStep += 2) {
             // Add two neighboring values together with the temp sums up to the
             // position where the current iStep has its first binary 0.
