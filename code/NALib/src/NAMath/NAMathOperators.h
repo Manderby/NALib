@@ -268,6 +268,7 @@ NA_API double naKahanSum(size_t sampleCount, const double* array);
 NA_API double naKahanBabushkaNeumaierSum(size_t sampleCount, const double* array);
 NA_API double naKahanBabushkaKleinSum(size_t sampleCount, const double* array);
 NA_API double naSum(size_t sampleCount, const double* array);
+NA_API double naSum2(size_t sampleCount, const double* array);
 
 // Use the following integration methods to automatically call an evaluation
 // function with the given user object data in a defined range from min to max
