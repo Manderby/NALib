@@ -30,6 +30,10 @@
 
 - (void)drawRect:(NSRect)dirtyRect{
   [super drawRect:dirtyRect];
+
+  dirtyRect = [self frame];
+  dirtyRect.origin = NSMakePoint(0., 0.);
+
   if(cocoaSpace->space.backgroundColor[3] != 0.){
     [[NSColor colorWithDeviceRed:naUnlinearizeColorValue(cocoaSpace->space.backgroundColor[0])
       green:naUnlinearizeColorValue(cocoaSpace->space.backgroundColor[1])
