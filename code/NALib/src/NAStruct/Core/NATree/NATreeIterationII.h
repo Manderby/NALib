@@ -293,7 +293,7 @@ NA_IDEF NABool naIterateTree(NATreeIterator* iter, const void* lowerLimit, const
   #endif
   info.step = 1;
   info.startIndex = 0;
-  info.breakIndex = tree->config->childpernode;
+  info.breakIndex = tree->config->childPerNode;
   info.lowerLimit = lowerLimit;
   info.upperLimit = upperLimit;
   return na_IterateTreeWithInfo(iter, &info);
@@ -313,7 +313,7 @@ NA_IDEF NABool naIterateTreeBack(NATreeIterator* iter, const void* lowerLimit, c
       naError("Tree requires to have a key in order to use an upper limit.");
   #endif
   info.step = -1;
-  info.startIndex = tree->config->childpernode - 1;
+  info.startIndex = tree->config->childPerNode - 1;
   info.breakIndex = -1;
   info.lowerLimit = lowerLimit;
   info.upperLimit = upperLimit;

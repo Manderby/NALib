@@ -138,10 +138,10 @@ typedef NABool (*NATreeNodeUpdater)       (NAPtr parentData,
 #define NA_TREE_KEY_NOKEY     0x0000
 #define NA_TREE_KEY_DOUBLE    0x0001
 #define NA_TREE_KEY_NAINT     0x0002
-#define NA_TREE_BALANCE_AVL   0x0010
 #define NA_TREE_QUADTREE      0x0020
-#define NA_TREE_OCTTREE       0x0040
-#define NA_TREE_ROOT_NO_LEAF  0x0100
+#define NA_TREE_OCTTREE       0x0030
+#define NA_TREE_BALANCE_AVL   0x0100
+#define NA_TREE_ROOT_NO_LEAF  0x0200
 
 // This is the callback struct you can use to create an NATree. Please read the
 // extensive comments at the appropriate callback signatures to understand how

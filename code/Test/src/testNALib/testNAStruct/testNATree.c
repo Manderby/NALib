@@ -5,18 +5,116 @@
 #include "NAStruct/NATree.h"
 
 
+
+static NABool treeConCalled;
+static NABool treeDesCalled;
+static NABool leafConCalled;
+static NABool leafDesCalled;
+static NABool nodeConCalled;
+static NABool nodeDesCalled;
+static NABool nodeUpCalled;
+void treeCon(NAPtr userData){treeConCalled = NA_TRUE;}
+void treeDes(NAPtr userData){treeDesCalled = NA_TRUE;}
+NAPtr leafCon(const void* key, NAPtr content){leafConCalled = NA_TRUE; return naMakePtrNull();}
+void leafDes(NAPtr leafData){leafDesCalled = NA_TRUE;}
+NAPtr nodeCon(const void* key){nodeConCalled = NA_TRUE; return naMakePtrNull();}
+void nodeDes(NAPtr nodeData){nodeDesCalled = NA_TRUE;}
+NABool nodeUp(NAPtr parentData, NAPtr* childDatas, NAInt childIndex, NAInt childMask){nodeUpCalled = NA_TRUE; return NA_FALSE;}
+
+
+
 void testTreeConfiguration(void){
   naTestGroup("Create and release"){
     NATreeConfiguration* config = NA_NULL;
     naTestVoid(config = naCreateTreeConfiguration(0));
     naTestVoid(naReleaseTreeConfiguration(config));
     // Invalid flag combinations:
+    // QuadTree and OctTree only work with double keys.
     naTestError(config = naCreateTreeConfiguration(NA_TREE_QUADTREE | NA_TREE_KEY_NOKEY));
-    naTestError(config = naCreateTreeConfiguration(NA_TREE_QUADTREE | NA_TREE_BALANCE_AVL));
     naTestError(config = naCreateTreeConfiguration(NA_TREE_OCTTREE | NA_TREE_KEY_NOKEY));
+    // QuadTree and OctTree do not work with AVL balancing.
+    naTestError(config = naCreateTreeConfiguration(NA_TREE_QUADTREE | NA_TREE_BALANCE_AVL));
     naTestError(config = naCreateTreeConfiguration(NA_TREE_OCTTREE | NA_TREE_BALANCE_AVL));
     naTestError(config = naCreateTreeConfiguration(3)); // invalid key type
     naTestCrash(naReleaseTreeConfiguration(NA_NULL));
+  }
+  
+  naTestGroup("Config Setters"){
+    double dummyKey = 1.;
+    double dummyKey2 = 2.;
+    int dummyInt = 1234;
+
+    NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_DOUBLE);
+
+    naTestVoid(naSetTreeConfigurationUserData(config, naMakePtrWithDataConst(&dummyInt)));
+    naTestError(naSetTreeConfigurationUserData(config, naMakePtrWithDataConst(&dummyInt)));
+    
+    naTestVoid(naSetTreeConfigurationTreeCallbacks(config, treeCon, treeDes));
+    naTestVoid(naSetTreeConfigurationLeafCallbacks(config, leafCon, leafDes));
+    naTestVoid(naSetTreeConfigurationNodeCallbacks(config, nodeCon, nodeDes, nodeUp));
+
+    // Testing tree constructor
+    treeConCalled = NA_FALSE;
+    treeDesCalled = NA_FALSE;
+    NATree dummyTree;
+    naInitTree(&dummyTree, config);
+    naTest(treeConCalled);
+    
+    // Testing leaf constructor and destructor
+    leafConCalled = NA_FALSE;
+    leafDesCalled = NA_FALSE;
+    NATreeIterator iter = naMakeTreeModifier(&dummyTree);
+    naAddTreeKeyConst(&iter, &dummyKey, &dummyInt, NA_TRUE);
+    naTest(leafConCalled);
+    naClearTreeIterator(&iter);
+    naEmptyTree(&dummyTree);
+    naTest(leafDesCalled);
+
+    // Testing node constructor and destructor
+    nodeConCalled = NA_FALSE;
+    nodeDesCalled = NA_FALSE;
+    nodeUpCalled = NA_FALSE;
+    NATreeIterator iter2 = naMakeTreeModifier(&dummyTree);
+    naAddTreeKeyConst(&iter2, &dummyKey, &dummyInt, NA_TRUE);
+    naAddTreeKeyConst(&iter2, &dummyKey2, &dummyInt, NA_TRUE);
+    naTest(nodeConCalled);
+    naTest(nodeUpCalled);
+    naClearTreeIterator(&iter2);
+    naEmptyTree(&dummyTree);
+    naTest(nodeDesCalled);
+
+    // Testing tree destructor
+    naClearTree(&dummyTree);
+    naTest(treeDesCalled);
+
+    naTestError(naSetTreeConfigurationTreeCallbacks(config, treeCon, treeDes));
+    naTestError(naSetTreeConfigurationLeafCallbacks(config, leafCon, leafDes));
+    naTestError(naSetTreeConfigurationNodeCallbacks(config, nodeCon, nodeDes, nodeUp));
+
+    naReleaseTreeConfiguration(config);
+  }
+
+  naTestGroup("Quad and Octtree Setters"){
+    NATreeConfiguration* noneConfig = naCreateTreeConfiguration(0);
+    NATreeConfiguration* quadConfig = naCreateTreeConfiguration(NA_TREE_QUADTREE | NA_TREE_KEY_DOUBLE);
+    NATreeConfiguration* octConfig = naCreateTreeConfiguration(NA_TREE_OCTTREE | NA_TREE_KEY_DOUBLE);
+    naTestError(naSetTreeConfigurationBaseLeafExponent(noneConfig, 5));
+    naTestVoid(naSetTreeConfigurationBaseLeafExponent(quadConfig, 444));
+    naTestVoid(naSetTreeConfigurationBaseLeafExponent(octConfig, 888));
+
+    NATree quadTree;
+    NATree octTree;
+    naInitTree(&quadTree, quadConfig);
+    naInitTree(&octTree, octConfig);
+    naTestError(naGetTreeConfigurationBaseLeafExponent(noneConfig));
+    naTest(naGetTreeConfigurationBaseLeafExponent(quadConfig) == 444);
+    naTest(naGetTreeConfigurationBaseLeafExponent(octConfig) == 888);
+
+    naClearTree(&octTree);
+    naClearTree(&quadTree);
+    naReleaseTreeConfiguration(octConfig);
+    naReleaseTreeConfiguration(quadConfig);
+    naReleaseTreeConfiguration(noneConfig);
   }
 }
 
@@ -54,6 +152,7 @@ void printNATree(void){
   naPrintMacroux32(NA_TREE_NODE_AVL_MASK);
 
   naPrintMacro(NA_TREE_CONFIG_KEY_TYPE_MASK);
+  naPrintMacro(NA_TREE_CONFIG_STRUCTURE_MASK);
 
   naPrintMacro(NA_TREE_FLAG_ROOT_IS_LEAF);
   naPrintMacro(NA_TREE_FLAG_TMP_KEY_TAKEN);

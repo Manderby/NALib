@@ -38,7 +38,7 @@ void printNALib(void){
 //  printNABase();
 //  printNACore();
 //  printNAUtility();
-  printNAStruct();
+//  printNAStruct();
 }
 
 void testNALib(void){
@@ -84,6 +84,7 @@ int main(int argc, const char** argv){
   #endif
 
   if(testStartSuccessful){
+    naSetTestPrintsAllTests(NATEST_TRUE);
     testNALib();
     //naPrintUntested();
     //naSetTimePerBenchmark(1);

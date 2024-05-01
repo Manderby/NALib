@@ -3,7 +3,7 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
   tree->config = na_RetainTreeConfiguration(config);
 
   #if NA_DEBUG
-    if(((tree->config->flags & NA_TREE_QUADTREE) || (tree->config->flags & NA_TREE_OCTTREE)) && !tree->config->configdata)
+    if((((tree->config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_QUADTREE) || ((tree->config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_OCTTREE)) && !tree->config->configData)
       naError("Quadtree or Octtree configuration need more information. Use naSetTreeConfigurationBaseLeafExponent");
   #endif
 

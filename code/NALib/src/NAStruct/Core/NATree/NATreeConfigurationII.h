@@ -5,7 +5,7 @@
 
 
 NA_HIDEF void na_DeallocConfiguration(NATreeConfiguration* config){
-  if(config->configdata){naFree(config->configdata);}
+  if(config->configData){naFree(config->configData);}
   naFree(config);
 }
 
@@ -75,25 +75,25 @@ NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NA
 
 
 NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config, NAInt baseLeafExponent){
-  NAInt* configdata;
+  NAInt* configData;
   #if NA_DEBUG
-    if(!(config->flags & NA_TREE_QUADTREE) && !(config->flags & NA_TREE_OCTTREE))
+    if(!((config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_QUADTREE) && !((config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_OCTTREE))
       naError("This configuration is not for a quadtree and not for an octtree");
   #endif
-  if(config->configdata){naFree(config->configdata);}
-  configdata = (NAInt*)naMalloc(sizeof(NAInt));
-  *configdata = baseLeafExponent;
-  config->configdata = configdata;
+  if(config->configData){naFree(config->configData);}
+  configData = (NAInt*)naMalloc(sizeof(NAInt));
+  *configData = baseLeafExponent;
+  config->configData = configData;
 }
 
 
 
 NA_IDEF NAInt naGetTreeConfigurationBaseLeafExponent(const NATreeConfiguration* config){
   #if NA_DEBUG
-    if(!(config->flags & NA_TREE_QUADTREE) && !(config->flags & NA_TREE_OCTTREE))
+    if(!((config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_QUADTREE) && !((config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_OCTTREE))
       naError("This configuration is not for a quadtree and not for an octtree");
   #endif
-  return *((NAInt*)(config->configdata));
+  return *((NAInt*)(config->configData));
 }
 
 

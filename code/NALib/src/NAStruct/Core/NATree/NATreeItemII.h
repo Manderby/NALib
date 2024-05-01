@@ -62,7 +62,7 @@ NA_HIDEF void na_InitTreeNode(const NATreeConfiguration* config, NATreeNode* nod
     config->keyAssigner(na_GetTreeNodeKey(config, node), key);
   }
 
-  for(i = 0; i < config->childpernode; ++i){
+  for(i = 0; i < config->childPerNode; ++i){
     na_SetTreeNodeChildEmpty(node, i);
   }
 
@@ -97,7 +97,7 @@ NA_HIDEF void na_DestructTreeNode(const NATreeConfiguration* config, NATreeNode*
   
   if(recursive){
     NAInt i;
-    for(i = 0; i < config->childpernode; ++i){
+    for(i = 0; i < config->childPerNode; ++i){
       NATreeItem* child = na_GetTreeNodeChild(config, node, i);
       if(child){
         if(na_IsNodeChildLeaf(node, i)){
@@ -189,7 +189,7 @@ NA_HIDEF NATreeItem* na_GetTreeNodeChild(const NATreeConfiguration* config, NATr
   #if NA_DEBUG
     if(childIndex < 0)
       naError("childIndex must be >= 0");
-    if(childIndex >= config->childpernode)
+    if(childIndex >= config->childPerNode)
       naError("childIndex out of bounds");
   #else
     NA_UNUSED(config);
@@ -237,9 +237,9 @@ NA_HDEF NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATree
   childs = na_GetTreeNodeChildStorage(parent);
   
   // We assume, the child MUST be a child of this parent. Therefore we only
-  // search until childpernode - 1 and just return the last possibility in
+  // search until childPerNode - 1 and just return the last possibility in
   // good belief.
-  for(retValue = 0; retValue < config->childpernode - 1; retValue++){
+  for(retValue = 0; retValue < config->childPerNode - 1; retValue++){
     if(childs[retValue] == child){break;}
   }
   
