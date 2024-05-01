@@ -23,7 +23,7 @@
 
 
 
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include <stddef.h>
 
 
@@ -451,7 +451,7 @@ typedef struct NATypeInfo NATypeInfo;
 
 
 // Inline implementations are in separate files:
-#include "Core/NAMemory/NAMemoryII.h"
+#include "NAMemory/NAMemoryII.h"
 
 
 

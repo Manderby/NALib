@@ -13,7 +13,7 @@
 // Checksums.
 
 
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include <stddef.h>
 
 
@@ -201,7 +201,7 @@ NA_API uint32 naGetChecksumResult(NAChecksum* checksum);
 
 
 // Inline implementations are in a separate file:
-#include "Core/NABinaryData/NABinaryDataII.h"
+#include "NABinaryData/NABinaryDataII.h"
 
 
 

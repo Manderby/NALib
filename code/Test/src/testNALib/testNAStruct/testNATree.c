@@ -1,5 +1,5 @@
 
-#include "NAUtility/NATesting.h"
+#include "NATest.h"
 #include <stdio.h>
 
 #include "NAStruct/NATree.h"

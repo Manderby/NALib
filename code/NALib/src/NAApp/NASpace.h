@@ -25,6 +25,13 @@ NA_API NASpace* naNewSpace(NASize size);
 // of 24 points.
 NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
 
+// Removes the given child from the space. If the child is not a child of the
+// space, nothing happens. NALib will output a warning though.
+NA_API void naRemoveSpaceChild(NASpace* space, void* child);
+
+// Removes all children of a space
+NA_API void naRemoveAllSpaceChilds(NASpace* space);
+
 // Switch between clear or an alternate color which adds a slight gray to the
 // background.
 NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
@@ -34,9 +41,6 @@ NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 NA_API void naSetSpaceBackgroundColor(
   NASpace* space,
   const NABabyColor* color);
-
-// Removes all children of a space
-NA_API void naRemoveSpaceChilds(NASpace* space);
 
 // Moves all childs with the given x and y coordinates in direction
 // to the right and top.

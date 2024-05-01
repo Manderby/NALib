@@ -91,8 +91,8 @@
 #define NA_API    NA_LINKER_NO_EXPORT
 #define NA_DEF    NA_LINKER_NO_EXPORT
 #if NA_INLINE_DEFINITION_NON_STANDARD
-  #define NA_IAPI   static NA_INLINE
-  #define NA_IDEF   static NA_INLINE
+  #define NA_IAPI static NA_INLINE
+  #define NA_IDEF static NA_INLINE
 #else
   #define NA_IAPI   
   #define NA_IDEF   NA_INLINE
@@ -105,20 +105,20 @@
 // file not a header file. Again, in NALib, things are a little more
 // transparent so these macros are a mere hint for the programmer, not more.
 
-#define NA_HAPI   NA_LINKER_NO_EXPORT
-#define NA_HDEF   NA_LINKER_NO_EXPORT
+#define NA_HAPI    NA_LINKER_NO_EXPORT
+#define NA_HDEF    NA_LINKER_NO_EXPORT
 #if NA_INLINE_DEFINITION_NON_STANDARD
-  #define NA_HIAPI   static NA_INLINE
-  #define NA_HIDEF   static NA_INLINE
+  #define NA_HIAPI static NA_INLINE
+  #define NA_HIDEF static NA_INLINE
 #else
   #define NA_HIAPI   
   #define NA_HIDEF   NA_INLINE
 #endif
 
-#define NA_HAPI   NA_LINKER_NO_EXPORT
-#define NA_HAPI   NA_LINKER_NO_EXPORT
-#define NA_HIAPI   static NA_INLINE
-#define NA_HIDEF   static NA_INLINE
+#define NA_HAPI  NA_LINKER_NO_EXPORT
+#define NA_HAPI  NA_LINKER_NO_EXPORT
+#define NA_HIAPI static NA_INLINE
+#define NA_HIDEF static NA_INLINE
 
 // Authors comment: Note that all symbols are declared and defined very
 // restrictive. Meaning: No function or variable of NALib will show up in a

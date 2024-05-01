@@ -6,7 +6,7 @@
 
 
 #include "Availability.h"
-#include "NAApp.h"
+#include "../NAApp.h"
 #include "../../NAVisual/NAPNG.h"
 
 
@@ -19,7 +19,7 @@
     typedef NSString* NSAppearanceName;
   #endif
 
-  NAUIImageSkin naGetSkinForCurrentAppearance(void){
+  NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(void){
     NAUIImageSkin skin = NA_UIIMAGE_SKIN_LIGHT;
     NSAppearanceName appearancename = NSAppearanceNameAqua;
 
@@ -52,10 +52,40 @@
     return skin;
   }
 #else
-  NAUIImageSkin naGetSkinForCurrentAppearance(void){
+  NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(void){
     return NA_UIIMAGE_SKIN_LIGHT;
   }
 #endif
+
+
+
+NA_DEF void na_FillDefaultTextColorWithSystemSkin(NABabyColor color){
+  NSColor* labelColor = naGetLabelColor();
+  color[0] = naLinearizeColorValue((float)[labelColor redComponent]);
+  color[1] = naLinearizeColorValue((float)[labelColor greenComponent]);
+  color[2] = naLinearizeColorValue((float)[labelColor blueComponent]);
+  color[3] = 1.f;
+}
+
+
+
+NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NABabyColor color){
+  NSColor* linkColor = naGetLinkColor();
+  color[0] = naLinearizeColorValue((float)[linkColor redComponent]);
+  color[1] = naLinearizeColorValue((float)[linkColor greenComponent]);
+  color[2] = naLinearizeColorValue((float)[linkColor blueComponent]);
+  color[3] = 1.f;
+}
+
+
+
+NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NABabyColor color){
+  NSColor* accentColor = naGetAccentColor();
+  color[0] = naLinearizeColorValue((float)[accentColor redComponent]);
+  color[1] = naLinearizeColorValue((float)[accentColor greenComponent]);
+  color[2] = naLinearizeColorValue((float)[accentColor blueComponent]);
+  color[3] = 1.f;
+}
 
 
 
@@ -120,22 +150,19 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 }
 
 
-NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, NAUIImageResolution resolution, NAUIImageKind kind, NSSize imageSize, NSRect dstRect){
-  NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
+NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolution, NAUIImageInteraction interaction, NABool secondaryState, NSSize imageSize, NSRect dstRect){
+  NAUIImageSkin skin = NA_UIIMAGE_SKIN_SYSTEM;
   if(uiImage->tintMode != NA_BLEND_ZERO){
     skin = naGetSkinForCurrentAppearance();
   }
   
-  CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, kind, skin);
-  if(!cocoaimage){
-    cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-  }
+  CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, skin, interaction, secondaryState);
 
   // Yes, we create a new NSImage which we draw into the NSImage which
-  // calls this handler. It is unknown to me exactly why I need to do
+  // calls this callback. It is unknown to me exactly why I need to do
   // that but otherwise the context just isn't there on all systems.
   // Potentially this has to do with threading which can only allocate
-  // memory in its own region as this handler may be called in a thread.
+  // memory in its own region as this callback may be called in a thread.
   [NSGraphicsContext saveGraphicsState];
   NSImage* drawImage = [[NSImage alloc] initWithSize:imageSize];
   [drawImage lockFocus];
@@ -150,10 +177,11 @@ NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, NAUIImageReso
 
 
 
-NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
+NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
   const NSView* containingView,
   const NAUIImage* uiImage,
-  NAUIImageKind kind)
+  NAUIImageInteraction interaction,
+  NABool secondaryState)
 {
   NSImage* image = nil;
 
@@ -166,8 +194,8 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
       NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
       image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
       {
-        NAUIImageResolution resolution = (naGetWindowBackingScaleFactor([containingView window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x);
-        return na_drawFixedResolutionImage(uiImage, resolution, kind, imageSize, dstRect);
+        double resolution = naGetWindowBackingScaleFactor([containingView window]) * NA_UIIMAGE_RESOLUTION_SCREEN_1x;
+        return na_drawFixedResolutionImage(uiImage, resolution, interaction, secondaryState, imageSize, dstRect);
       }];
     ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
   }
@@ -182,8 +210,8 @@ NA_DEF NSImage* naCreateResolutionIndependentNativeImage(
       skin = naGetSkinForCurrentAppearance();
     }
 
-    CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-    CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
+    CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, skin, interaction, secondaryState);
+    CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_2x, skin, interaction, secondaryState);
     if(img1x){
       NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithCGImage:img1x];
       [image addRepresentation:rep];

@@ -20,7 +20,7 @@
   }else{
     [[self cell] setLineBreakMode:NSLineBreakByTruncatingHead];
   }
-  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(naGetSystemFont()))];
+  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naGetSystemFont()))];
   [self setDelegate:self];
 
   cocoaTextField = newCocoaTextField;
@@ -43,6 +43,18 @@
 
 - (NAString*) newStringWithText{
   return naNewStringWithFormat([[self stringValue] UTF8String]);
+}
+
+- (void) setColor:(const NABabyColor*)color{
+  NSColor* nsColor;
+  if(color){
+    uint8 buf[4];
+    naFillu8WithBabyColor(buf, *color, NA_COLOR_BUFFER_RGBA);
+    nsColor = [NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.];
+  }else{
+    nsColor = naGetLabelColor();
+  }
+  [self setTextColor:nsColor];
 }
 
 //- (void) setTextFieldEnabled:(NABool)enabled{
@@ -103,6 +115,13 @@ NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text){
 NA_DEF NAString* naNewStringWithTextFieldText(const NATextField* textField){
   naDefineCocoaObjectConst(NACocoaNativeTextField, nativePtr, textField);
   return [nativePtr newStringWithText];
+}
+
+
+
+NA_DEF void naSetTextFieldColor(NATextField* textField, const NABabyColor* color){
+  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
+  [nativePtr setColor:color];
 }
 
 

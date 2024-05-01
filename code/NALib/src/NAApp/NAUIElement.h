@@ -38,9 +38,9 @@ typedef struct NAMenu           NAMenu;
 typedef struct NAMenuItem       NAMenuItem;
 typedef struct NAMetalSpace     NAMetalSpace;
 typedef struct NAOpenGLSpace    NAOpenGLSpace;
-typedef struct NAPopupButton    NAPopupButton;
 typedef struct NARadio          NARadio;
 typedef struct NAScreen         NAScreen;
+typedef struct NASelect         NASelect;
 typedef struct NASlider         NASlider;
 typedef struct NASpace          NASpace;
 typedef struct NATextBox        NATextBox;
@@ -66,9 +66,9 @@ typedef enum{
   NA_UI_MENUITEM,
   NA_UI_METAL_SPACE,
   NA_UI_OPENGL_SPACE,
-  NA_UI_POPUP_BUTTON,
   NA_UI_RADIO,
   NA_UI_SCREEN,
+  NA_UI_SELECT,
   NA_UI_SLIDER,
   NA_UI_SPACE,
   NA_UI_TEXTBOX,
@@ -126,7 +126,7 @@ NA_API void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
 // Returns the resolution scale factor for the given element. Is 2 for example
 // on high resolution display settings. Returns 1 if no parent window or screen
 // can be found, as well as for NAApplication
-NA_API double naGetUIElementResolutionFactor(void* uiElement);
+NA_API double naGetUIElementResolutionFactor(const void* uiElement);
 
 // Native IDs
 //

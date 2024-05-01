@@ -13,7 +13,7 @@
 
 
 
-#include "../../NAApp.h"
+#include "../NAApp.h"
 
 #if NA_COMPILE_GUI == 1
 
@@ -40,6 +40,7 @@ struct NA_UIElement{
   void*           parent;
   NAList          reactions;
   NAList          shortcuts;
+  size_t          hoverReactionCount;
   NABool          mouseInside;
   NABool          allowNotifications;
   void*           nativePtr;         // The native pointer
@@ -67,7 +68,10 @@ struct NAApplication{
 
 struct NAButton{
   NA_UIElement uiElement;
+  NAUTF8Char* text;
+  NAUTF8Char* text2;
   const NAUIImage* uiImage;
+  const NAUIImage* uiImage2;
   uint32 flags;
 };
 
@@ -92,7 +96,6 @@ struct NAMenu{
 
 struct NAMenuItem{
   NA_UIElement uiElement;
-  uint32       id;
 };
 
 struct NAMetalSpace{
@@ -103,7 +106,7 @@ struct NAOpenGLSpace{
   NA_UIElement uiElement;
 };
 
-struct NAPopupButton{
+struct NASelect{
   NA_UIElement uiElement;
   NAList       childs;
 };
@@ -154,15 +157,15 @@ struct NAWindow{
 
 
 struct NAEventReaction{
-  void*             controller;
-  NAUICommand       command;
-  NAReactionHandler handler;
+  void*              controller;
+  NAReactionCallback callback;
+  NAUICommand        command;
 };
 
 struct NAKeyboardShortcutReaction{
-  void*             controller;
-  NAKeyStroke       shortcut;
-  NAReactionHandler handler;
+  void*              controller;
+  NAReactionCallback callback;
+  NAKeyStroke        shortcut;
 };
 
 struct NAFont{
@@ -212,7 +215,8 @@ NA_HAPI void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
 NA_HAPI void na_ClearUIElement(NA_UIElement* uiElement);
 
 NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
-NA_HAPI double na_GetUIElementYOffset(NA_UIElement* elem);
+NA_HAPI double na_GetUIElementXOffset(const NA_UIElement* elem);
+NA_HAPI double na_GetUIElementYOffset(const NA_UIElement* elem);
 
 NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
 NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
@@ -228,7 +232,7 @@ NA_HAPI void* na_GetUINALibEquivalent(void* nativePtr);
 
 // Dispatches a command with the given uiElement.
 // As long as the command has not been finished using NA_TRUE as a return value
-// in the NAReactionHandler function handler, it will be bubbling upwards in
+// in the NAReactionCallback function callback, it will be bubbling upwards in
 // the following order:
 // - First responder
 // - containing space
@@ -256,9 +260,15 @@ NA_HAPI NARect na_GetApplicationRect(const NAApplication* application);
 NA_HAPI void na_SetApplicationRect(const NAApplication* application, NARect rect);
 
 // NAButton
-NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUIImage* uiImage, uint32 flags);
+#define NA_BUTTON_BORDERED   0x01
+#define NA_BUTTON_STATEFUL   0x02
+
+NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAUIImage* uiImage, const NAUIImage* uiImage2, uint32 flags);
 NA_HAPI void na_ClearButton(NAButton* button);
+NA_HAPI void na_setButtonText(NAButton* button, const NAUTF8Char* text);
+NA_HAPI void na_setButtonText2(NAButton* button, const NAUTF8Char* text);
 NA_HAPI void na_setButtonImage(NAButton* button, const NAUIImage* uiImage);
+NA_HAPI void na_setButtonImage2(NAButton* button, const NAUIImage* uiImage);
 NA_HAPI NARect na_GetButtonRect(const NA_UIElement* button);
 NA_HAPI void na_SetButtonRect(NA_UIElement* button, NARect rect);
 
@@ -290,8 +300,6 @@ NA_HAPI void na_SetMenuRect(NA_UIElement* menu, NARect rect);
 // NAMenuItem
 NA_HAPI void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent);
 NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);
-NA_HAPI void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id);
-NA_HAPI uint32 na_GetMenuItemId(const NAMenuItem* menuItem);
 NA_HAPI NARect na_GetMenuItemRect(const NA_UIElement* menuItem);
 NA_HAPI void na_SetMenuItemRect(NA_UIElement* menuItem, NARect rect);
 
@@ -307,13 +315,6 @@ NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
 NA_HAPI NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace);
 NA_HAPI void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect);
 
-// NAPopupButton
-NA_HAPI void na_InitPopupButton(NAPopupButton* popupButton, void* nativePtr);
-NA_HAPI void na_ClearPopupButton(NAPopupButton* popupButton);
-NA_HAPI void na_AddPopupButtonChild(NAPopupButton* popupButton, NAMenuItem* child, const NAMenuItem* itemAt);
-NA_HAPI NARect na_GetPopupButtonRect(const NA_UIElement* popupButton);
-NA_HAPI void na_SetPopupButtonRect(NA_UIElement* popupButton, NARect rect);
-
 // NARadio
 NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
 NA_HAPI void na_ClearRadio(NARadio* radio);
@@ -325,6 +326,13 @@ NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr);
 NA_HAPI void na_ClearScreen(NAScreen* screen);
 NA_HAPI NARect na_GetScreenRect(const NA_UIElement* screen);
 NA_HAPI void na_SetScreenRect(NA_UIElement* screen, NARect rect);
+
+// NASelect
+NA_HAPI void na_InitSelect(NASelect* select, void* nativePtr);
+NA_HAPI void na_ClearSelect(NASelect* select);
+NA_HAPI void na_AddSelectChild(NASelect* select, NAMenuItem* child, const NAMenuItem* itemAt);
+NA_HAPI NARect na_GetSelectRect(const NA_UIElement* select);
+NA_HAPI void na_SetSelectRect(NA_UIElement* select, NARect rect);
 
 // NASlider
 NA_HAPI void na_InitSlider(NASlider* slider, void* nativePtr);
@@ -356,7 +364,6 @@ NA_HAPI void na_SetTextFieldRect(NA_UIElement* textField, NARect rect);
 NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
 NA_HAPI void na_ClearWindow(NAWindow* window);
 NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
-NA_HAPI NARect na_GetWindowAbsoluteOuterRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window);
 NA_HAPI void na_SetWindowRect(NA_UIElement* window, NARect rect);

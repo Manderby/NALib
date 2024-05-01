@@ -20,6 +20,8 @@ NA_API const NAUTF8Char* naGetMenuItemText(NAMenuItem* menuItem);
 // The nativePtr must be of type NSMenuItem.
 NA_API void naSetMenuItemText(NAMenuItem* menuItem, const NAUTF8Char* text);
 
+// Adds a checkbox in front of the entry if state is NA_TRUE.
+NA_API void naSetMenuItemState(NAMenuItem* menuItem, NABool state);
 
 
 #endif // NA_MENUITEM_INCLUDED

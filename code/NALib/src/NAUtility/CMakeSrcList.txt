@@ -1,0 +1,101 @@
+
+set(NAUtilityDir "src/NAUtility")
+
+set(headerFiles
+  ${NAUtilityDir}/CMakeSrcList.txt
+  ${NAUtilityDir}/NABinaryData.h
+  ${NAUtilityDir}/NADateTime.h
+  ${NAUtilityDir}/NAFile.h
+  ${NAUtilityDir}/NAJSON.h
+  ${NAUtilityDir}/NAKey.h
+  ${NAUtilityDir}/NAMemory.h
+  ${NAUtilityDir}/NANotifier.h
+  ${NAUtilityDir}/NAString.h
+  ${NAUtilityDir}/NAThreading.h
+  ${NAUtilityDir}/NATranslator.h
+  ${NAUtilityDir}/NAURL.h
+  ${NAUtilityDir}/NAUtility.h
+  ${NAUtilityDir}/NAValueHelper.h
+)
+
+set(binaryDataFiles
+  ${NAUtilityDir}/NABinaryData/NABinaryData.c
+  ${NAUtilityDir}/NABinaryData/NABinaryDataII.h
+  ${NAUtilityDir}/NABinaryData/NAEndiannessII.h
+)
+
+set(dateTimeFiles
+  ${NAUtilityDir}/NADateTime/NADateTime.c
+  ${NAUtilityDir}/NADateTime/NADateTimeII.h
+)
+
+set(coreFiles
+  ${NAUtilityDir}/Core/NAKeyII.h
+  ${NAUtilityDir}/Core/NAThreadingII.h
+  ${NAUtilityDir}/Core/NATranslator.c
+  ${NAUtilityDir}/Core/NAValueHelperII.h
+)
+
+set(fileFiles
+  ${NAUtilityDir}/NAFile/NAFile.c
+  ${NAUtilityDir}/NAFile/NAFileII.h
+)
+
+set(jsonFiles
+  ${NAUtilityDir}/NAJSON/NAJSON.c
+)
+
+set(notifierFiles
+  ${NAUtilityDir}/NANotifier/NANotifier.c
+)
+
+set(memoryFiles
+  ${NAUtilityDir}/NAMemory/NAMallocFreeII.h
+  ${NAUtilityDir}/NAMemory/NAMemoryII.h
+  ${NAUtilityDir}/NAMemory/NAPointerII.h
+  ${NAUtilityDir}/NAMemory/NAPtrII.h
+  ${NAUtilityDir}/NAMemory/NARefCountII.h
+  ${NAUtilityDir}/NAMemory/NARuntime.c
+  ${NAUtilityDir}/NAMemory/NARuntimeII.h
+  ${NAUtilityDir}/NAMemory/NASmartPtrII.h
+)
+
+set(stringFiles
+  ${NAUtilityDir}/NAString/NAString.c
+  ${NAUtilityDir}/NAString/NAStringII.h
+)
+
+set(urlFiles
+  ${NAUtilityDir}/NAURL/NAURL.c
+  ${NAUtilityDir}/NAURL/NAURLII.h
+)
+
+source_group("NAUtility" FILES ${headerFiles})
+target_sources(NALib PRIVATE ${headerFiles})
+
+source_group("NAUtility/Core" FILES ${coreFiles})
+target_sources(NALib PRIVATE ${coreFiles})
+
+source_group("NAUtility/NABinaryData" FILES ${binaryDataFiles})
+target_sources(NALib PRIVATE ${binaryDataFiles})
+
+source_group("NAUtility/NADateTime" FILES ${dateTimeFiles})
+target_sources(NALib PRIVATE ${dateTimeFiles})
+
+source_group("NAUtility/NAFile" FILES ${fileFiles})
+target_sources(NALib PRIVATE ${fileFiles})
+
+source_group("NAUtility/NAJSON" FILES ${jsonFiles})
+target_sources(NALib PRIVATE ${jsonFiles})
+
+source_group("NAUtility/NANotifier" FILES ${notifierFiles})
+target_sources(NALib PRIVATE ${notifierFiles})
+
+source_group("NAUtility/NAMemory" FILES ${memoryFiles})
+target_sources(NALib PRIVATE ${memoryFiles})
+
+source_group("NAUtility/NAString" FILES ${stringFiles})
+target_sources(NALib PRIVATE ${stringFiles})
+
+source_group("NAUtility/NAURL" FILES ${urlFiles})
+target_sources(NALib PRIVATE ${urlFiles})

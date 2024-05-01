@@ -46,7 +46,8 @@
 
 
 
-#include "../NABase.h"
+#include <stdlib.h>
+#include "../NABase/NABase.h"
 
 
 

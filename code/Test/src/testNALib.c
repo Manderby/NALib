@@ -1,5 +1,15 @@
 
-#include "NAUtility/NATesting.h"
+// You need the NATest package for this project!
+// It is located in the lib folder and can be optained as a git submodule. Run
+// the following commands in the base folder of NALib:
+//   git submodule init
+//   git submodule update
+// Or download the whole NALib package with the following command directly:
+//   git clone --recurse-submodules https://github.com/Manderby/NALib.git
+#include "NATest.h"
+
+
+
 #include "NAUtility/NAMemory.h"
 #include "NAUtility/NAString.h"
 #include <stdio.h>
@@ -9,63 +19,79 @@
 // Prototypes
 void printNABase(void);
 void printNACore(void);
+void printNAUtility(void);
 void printNAStruct(void);
 
 void testNABase(void);
+void testNAMath(void);
 void testNACore(void);
+void testNAUtility(void);
 void testNAStruct(void);
 
 void benchmarkNABase(void);
+void benchmarkNAMath(void);
 void benchmarkNAStruct(void);
 
 
 
 void printNALib(void){
-  #if NA_PRINTOUT_ENABLED == 1
-    //printNABase();
-    //printNACore();
-    printNAStruct();
-  #endif
+  printNABase();
+  printNACore();
+  printNAUtility();
+  printNAStruct();
 }
 
 void testNALib(void){
-//  naTestFunction(testNABase);
-//  naTestFunction(testNACore);
+  //naTestFunction(testNABase);
+  //naTestFunction(testNAMath);
+  //naTestFunction(testNACore);
+  //naTestFunction(testNAUtility);
   naTestFunction(testNAStruct);
 }
 
 void benchmarkNALib(void){
   printf(NA_NL "Benchmarking:" NA_NL);
-  benchmarkNABase();
-  benchmarkNAStruct();
+  //benchmarkNABase();
+  benchmarkNAMath();
+  //benchmarkNAStruct();
 }
-
-
 
 int main(int argc, const char** argv){
   printf("Testing NALib Version: %d ", NA_VERSION);
   #if NA_DEBUG
-    printf("(Debug)" NA_NL);
+  printf("(Debug)" NA_NL);
   #else
-    printf("(Release)" NA_NL);
+  printf("(Release)" NA_NL);
   #endif
 
   naStartRuntime();
 
   // Print macro information
-  printNALib();
+  //printNALib();
 
   // Start testing
-  NABool testStartSuccessful = naStartTesting("NALib", .01, NA_FALSE, argc, argv);
-  if(testStartSuccessful)
-  {
+  NABool testStartSuccessful = naStartTesting(
+    "NALib",
+    argc,
+    argv);
+
+  // Only output tests which fail.
+  naSetTestPrintsAllTests(NA_FALSE);
+
+  #if NA_DEBUG == 0
+    naExecuteErrorTests(NA_FALSE);
+    naExecuteCrashTests(NA_FALSE);
+  #endif
+
+  if(testStartSuccessful){
     testNALib();
-//    naPrintUntested();
-//    benchmarkNALib();
+    //naPrintUntested();
+    //naSetTimePerBenchmark(1);
+    //benchmarkNALib();
   }else{
     printf("Could not start Testing.");
   }
-  
+
   printf(NA_NL);
   naStopTesting();
 
@@ -100,5 +126,3 @@ int main(int argc, const char** argv){
 // OTHER DEALINGS IN THE SOFTWARE.
 
 // For more information, please refer to <http://unlicense.org/>
-
-

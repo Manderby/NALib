@@ -11,6 +11,7 @@ NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
   uiElement->nativePtr = nativePtr;
   naInitList(&(uiElement->reactions));
   naInitList(&(uiElement->shortcuts));
+  uiElement->hoverReactionCount = 0;
   uiElement->mouseInside = NA_FALSE;
   uiElement->allowNotifications = NA_TRUE;
   
@@ -55,8 +56,8 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
   naBeginListMutatorIteration(NAEventReaction* eventReaction, &(element->reactions), iter);
     if(eventReaction->command == command){
       reaction.controller = eventReaction->controller;
-      finished = eventReaction->handler(reaction);
-      // If the handler tells us to stop handling the command, we do so.
+      finished = eventReaction->callback(reaction);
+      // If the callback tells us to stop handling the command, we do so.
       if(finished){break;}
     }
   naEndListIteration(iter);
@@ -100,7 +101,7 @@ NA_DEF const NANativePtr naGetUIElementNativePtrConst(const void* uiElement){
 
 
 
-NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHandler handler, void* controller){
+NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCallback callback, void* controller){
   NAEventReaction* eventReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
   #if NA_DEBUG
@@ -110,8 +111,8 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
 //      naError("Only windows can receyve KEYDOWN commands.");
 //    if((command == NA_UI_COMMAND_KEY_UP) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
 //      naError("Only windows can receyve KEYUP commands.");
-    if((command == NA_UI_COMMAND_MOUSE_MOVED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW) && (naGetUIElementType(uiElement) != NA_UI_OPENGL_SPACE))
-      naError("Only windows and openGLSpace can receyve MOUSE_MOVED commands.");
+    if((command == NA_UI_COMMAND_MOUSE_MOVED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW) && (naGetUIElementType(uiElement) != NA_UI_OPENGL_SPACE) && (naGetUIElementType(uiElement) != NA_UI_IMAGE_SPACE))
+      naError("Only windows, openGLSpace and imageSpace can receyve MOUSE_MOVED commands.");
 //    if((command == NA_UI_COMMAND_MOUSE_ENTERED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
 //      naError("Only windows can receyve MOUSE_ENTERED commands.");
 //    if((command == NA_UI_COMMAND_MOUSE_EXITED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
@@ -126,6 +127,10 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
       && (naGetUIElementType(uiElement) != NA_UI_MENUITEM)
       && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
       naError("Only buttons, checkBoxes, radios, menus, menuItems and sliders can receyve PRESSED commands.");
+    if((command == NA_UI_COMMAND_PRESSED) && (naGetUIElementType(uiElement) == NA_UI_BUTTON)){
+//      if(na_isButtonSpecial(uiElement))
+//        naError("Special buttons like Submit or Abort will not be called by a PRESSED command.");
+    }
     if((command == NA_UI_COMMAND_EDITED)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTBOX)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD)
@@ -139,7 +144,7 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
   eventReaction = naAlloc(NAEventReaction);
   eventReaction->controller = controller;
   eventReaction->command = command;
-  eventReaction->handler = handler;
+  eventReaction->callback = callback;
   // todo: this needs some attention on macOS
   //if(command == NA_UI_COMMAND_MOUSE_MOVED || command == NA_UI_COMMAND_MOUSE_ENTERED || command == NA_UI_COMMAND_MOUSE_EXITED){
   //  element->mouseTrackingCount++;
@@ -196,18 +201,18 @@ NA_DEF NASpace* naGetUIElementParentSpace(void* uiElement){
 
 NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement){
   NARect rect;
-  NA_UIElement* elem = (NA_UIElement*)uiElement;
+  const NA_UIElement* elem = (const NA_UIElement*)uiElement;
 
   if(!elem)
     return naMakeRectZero();
 
-  rect = naGetUIElementRect(uiElement);
-  uiElement = naGetUIElementParentConst(uiElement);
-  while(uiElement){
-    NARect curRect = naGetUIElementRect(uiElement);
+  rect = naGetUIElementRect(elem);
+  elem = naGetUIElementParentConst(elem);
+  while(elem){
+    NARect curRect = naGetUIElementRect(elem);
     rect.pos.x += curRect.pos.x;
     rect.pos.y += curRect.pos.y;
-    uiElement = naGetUIElementParentConst(uiElement);
+    elem = naGetUIElementParentConst(elem);
   }
 
   return rect;
@@ -228,9 +233,9 @@ NA_DEF NARect naGetUIElementRect(const void* uiElement){
   case NA_UI_MENUITEM:     elemRect = na_GetMenuItemRect(uiElement); break;
   case NA_UI_METAL_SPACE:  elemRect = na_GetMetalSpaceRect(uiElement); break;
   case NA_UI_OPENGL_SPACE: elemRect = na_GetOpenGLSpaceRect(uiElement); break;
-  case NA_UI_POPUP_BUTTON: elemRect = na_GetPopupButtonRect(uiElement); break;
   case NA_UI_RADIO:        elemRect = na_GetRadioRect(uiElement); break;
   case NA_UI_SCREEN:       elemRect = na_GetScreenRect(uiElement); break;
+  case NA_UI_SELECT:       elemRect = na_GetSelectRect(uiElement); break;
   case NA_UI_SLIDER:       elemRect = na_GetSliderRect(uiElement); break;
   case NA_UI_SPACE:        elemRect = na_GetSpaceRect(uiElement); break;
   case NA_UI_TEXTBOX:      elemRect = na_GetTextBoxRect(uiElement); break;
@@ -255,9 +260,9 @@ NA_DEF void naSetUIElementRect(void* uiElement, NARect rect){
   case NA_UI_MENUITEM:     na_SetMenuItemRect(uiElement, rect); break;
   case NA_UI_METAL_SPACE:  na_SetMetalSpaceRect(uiElement, rect); break;
   case NA_UI_OPENGL_SPACE: na_SetOpenGLSpaceRect(uiElement, rect); break;
-  case NA_UI_POPUP_BUTTON: na_SetPopupButtonRect(uiElement, rect); break;
   case NA_UI_RADIO:        na_SetRadioRect(uiElement, rect); break;
   case NA_UI_SCREEN:       na_SetScreenRect(uiElement, rect); break;
+  case NA_UI_SELECT:       na_SetSelectRect(uiElement, rect); break;
   case NA_UI_SLIDER:       na_SetSliderRect(uiElement, rect); break;
   case NA_UI_SPACE:        na_SetSpaceRect(uiElement, rect); break;
   case NA_UI_TEXTBOX:      na_SetTextBoxRect(uiElement, rect); break;

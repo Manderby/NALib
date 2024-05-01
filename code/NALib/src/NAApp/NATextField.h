@@ -14,6 +14,10 @@ NA_API NATextField* naNewTextField(double width);
 NA_API NAString* naNewStringWithTextFieldText(const NATextField* textField);
 NA_API void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text);
 
+// Set the color of the textfield. Expects an NABabyColor. If color is NULL,
+// the default control color is set.
+NA_API void naSetTextFieldColor(NATextField* textField, const NABabyColor* color);
+
 // Get the desired value directly.
 NA_API double naGetTextFieldDouble(NATextField* textField);
 

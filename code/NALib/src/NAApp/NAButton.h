@@ -7,22 +7,33 @@
 
 
 
-#define NA_BUTTON_BORDERED   0x00
-#define NA_BUTTON_BORDERLESS 0x01
-#define NA_BUTTON_PUSH       0x00
-#define NA_BUTTON_STATEFUL   0x10
-
-// Creates either a text or image button.
-// The flags is a combination of the macros defined above.
-// Default height for TextButton is 24.
-NA_API NAButton* naNewTextButton(
+// Creates various kinds of buttons.
+//
+// You can use NA_NULL for the secondary entry for state buttons which will
+// automatically use the primary entry for the secondary state too.
+//
+// Default height for Text- and Icon-Button is 24.
+NA_API NAButton* naNewTextPushButton(
   const NAUTF8Char* text,
-  double width,
-  uint32 flags);
-NA_API NAButton* naNewImageButton(
+  double width);
+NA_API NAButton* naNewTextStateButton(
+  const NAUTF8Char* text,
+  const NAUTF8Char* text2,
+  double width);
+NA_API NAButton* naNewIconPushButton(
+  const NAUIImage* icon,
+  double width);
+NA_API NAButton* naNewIconStateButton(
+  const NAUIImage* icon,
+  const NAUIImage* icon2,
+  double width);
+NA_API NAButton* naNewImagePushButton(
   const NAUIImage* uiImage,
-  NASize size,
-  uint32 flags);
+  NASize size);
+NA_API NAButton* naNewImageStateButton(
+  const NAUIImage* uiImage,
+  const NAUIImage* uiImage2,
+  NASize size);
 
 // Changes the visibility or enabled state of the button.
 NA_API void naSetButtonVisible(NAButton* button, NABool visible);
@@ -33,31 +44,34 @@ NA_API void naSetButtonEnabled(NAButton* button, NABool enabled);
 NA_API NABool naGetButtonState(const NAButton* button);
 NA_API void naSetButtonState(NAButton* button, NABool state);
 
-// Sets the text or the image for the button.
+// Sets the text or the image for the button. The 2-functions will only work
+// for stateful buttons. Icon and Image buttons both use the image function.
 // Will emit an error if the button was not created with the matching type.
 NA_API void naSetButtonText(NAButton* button, const NAUTF8Char* text);
+NA_API void naSetButtonText2(NAButton* button, const NAUTF8Char* text);
 NA_API void naSetButtonImage(NAButton* button, const NAUIImage* uiImage);
+NA_API void naSetButtonImage2(NAButton* button, const NAUIImage* uiImage);
 
 // Returns the display flags of a button.
-NA_API NABool naIsButtonStateful(NAButton* button);
-NA_API NABool naIsButtonBorderless(NAButton* button);
-NA_API NABool naIsButtonTextual(NAButton* button);
+NA_API NABool naIsButtonStateful(const NAButton* button);
+NA_API NABool naIsButtonBordered(const NAButton* button);
+NA_API NABool naIsButtonTextual(const NAButton* button);
 
 // Defines this button to be a submit or abort button.
 // A submit button will be shown visually prominent and serves as the default
 // button of a window, often times labeled 'Ok'. The abort button is a button
 // which is pressed when the window shall be dismissed (often times labeled as
 // 'Cancel'). The following keyboard shortcut reactions are mapped to the
-// given handler with the given controller argument:
+// given callback with the given controller argument:
 // - default/submit: Return + Enter
 // - abort/cancel:   Escape + Cmd-Dot (on macOS)
 NA_API void naSetButtonSubmit(
   NAButton* button,
-  NAReactionHandler handler,
+  NAReactionCallback callback,
   void* controller);
 NA_API void naSetButtonAbort(
   NAButton* button,
-  NAReactionHandler handler,
+  NAReactionCallback callback,
   void* controller);
 
 

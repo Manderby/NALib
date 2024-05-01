@@ -4,6 +4,8 @@
 // actually contains non-inlinenable code. See NACocoa.m for more information.
 // Do not include this file anywhere else!
 
+#include "../../../NAUtility/NANotifier.h"
+
 
 
 @implementation NACocoaNativeApplicationDelegate
@@ -11,6 +13,9 @@
 - (id) initWithCocoaApplication:(NACocoaApplication*)newCocoaApplication{
   self = [super init];
   cocoaApplication = newCocoaApplication;
+  oldDelegate = NA_NULL;
+  postStartupFunction = NA_NULL;
+  postStartupArg = NA_NULL;
   return self;
 }
 
@@ -20,17 +25,93 @@
   return NSTerminateCancel;
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)notification{
-  if([NSApp delegate] && [NSApp delegate] != self){
-    [[NSApp delegate] applicationDidFinishLaunching:notification];
+- (void)setOldDelegate:(NSObject <NSApplicationDelegate>*)delegate {
+  oldDelegate = delegate;
+}
+
+- (void)setPostStartupFunction:(NAMutator)postUpdate {
+  postStartupFunction = postUpdate;
+}
+
+- (void)setPostStartupArg:(void*)arg {
+  postStartupArg = arg;
+}
+
+- (void)applicationWillFinishLaunching:(NSNotification *)notification{
+  // forward the notification to the oldDelegate
+  if(oldDelegate && oldDelegate != self
+    && [oldDelegate respondsToSelector:@selector(applicationWillFinishLaunching:)]){
+    [oldDelegate applicationWillFinishLaunching:notification];
   }
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notification{
+  // forward the notification to the oldDelegate
+  if(oldDelegate && oldDelegate != self
+    && [oldDelegate respondsToSelector:@selector(applicationDidFinishLaunching:)]){
+    [oldDelegate applicationDidFinishLaunching:notification];
+  }
+  
+  // If this is a bare application without XIB
+  if(!oldDelegate){
+    // Show with a dock icon:
+    [NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
+    // Without this event, the applicationDidBecomeActive will not be called.
+    NSEvent* activationEvent = [NSEvent
+      otherEventWithType: NSEventTypeAppKitDefined
+      location: NSMakePoint(0, 0)
+      modifierFlags: 0
+      timestamp: 0
+      windowNumber: 0
+      context: nil
+      subtype: NSEventSubtypeApplicationActivated
+      data1: 0
+      data2: 0];
+    [NSApp sendEvent:activationEvent];
+  }
+}
+
+- (void)applicationWillBecomeActive:(NSNotification *)notification{
+  // forward the notification to the oldDelegate
+  if(oldDelegate && oldDelegate != self
+    && [oldDelegate respondsToSelector:@selector(applicationWillBecomeActive:)]){
+    [oldDelegate applicationWillBecomeActive:notification];
+  }
+}
+
+- (void)applicationDidBecomeActive:(NSNotification *)notification{
+  // forward the notification to the oldDelegate
+  if(oldDelegate && oldDelegate != self
+    && [oldDelegate respondsToSelector:@selector(applicationDidBecomeActive:)]){
+    [oldDelegate applicationDidBecomeActive:notification];
+  }
+
+  // Call postStartup the first time if desired.
+  if(postStartupFunction){
+    postStartupFunction(postStartupArg);
+    
+    // If this is a bare application without XIB
+    if(!oldDelegate){
+      // Make the application active
+      [NSApp activateIgnoringOtherApps:YES];
+    }
+  }
+  
+  // Give up this delegate and return it to the previous delegate.
+  [NSApp setDelegate:oldDelegate];
 }
 
 @end
 
 
-
-NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void* arg){  
+// Interesting read:
+// https://lapcatsoftware.com/blog/2007/03/10/everything-you-always-wanted-to-know-about-nsapplication/
+NA_DEF void naStartApplication(
+  NAMutator preStartup,
+  NAMutator postStartup,
+  NAMutator cleanup,
+  void* arg)
+{  
   // Start the shared application if not started already and set the nativePtr
   // of the application.
   [NSApplication sharedApplication];
@@ -49,17 +130,22 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
     // Let the Macintosh System know that the app is ready to run.
     [NSApp finishLaunching];
     
-    // Call postStartup if desired.
-    if(postStartup){postStartup(arg);}
   #if !NA_MACOS_USES_ARC
     [pool drain]; // also releases the pool. No separate release necessary.
   #endif
 
-    // Setting this delegate changes the behaviour of applications which
-    // already have a delegate defined, for example in the XIB file. Be
-    // careful when implementing it and mention it in the naStartApplication
-    // comments.
-  // [NSApp setDelegate:naGetUIElementNativePtr(app)];
+  NACocoaNativeApplicationDelegate* nativeApp = (NA_COCOA_BRIDGE NACocoaNativeApplicationDelegate*)naGetUIElementNativePtr(app);
+
+  // Hijack the delegate during startup without losing the old delegate
+  // which might have already been set by the user or in a XIB file.
+  NSObject <NSApplicationDelegate>* oldDelegate = [NSApp delegate];
+  [nativeApp setOldDelegate:oldDelegate];
+  [nativeApp setPostStartupFunction: postStartup];
+  [nativeApp setPostStartupArg: arg];
+  [NSApp setDelegate:nativeApp];
+
+  NANotifier* notifier = naAllocNotifier();
+  naSetCurrentNotifier(notifier);
 
   // Start the event loop.
   NSDate* distantFuture = [NSDate distantFuture];
@@ -73,14 +159,25 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
 //      NSEventSubtype subtype = [curEvent subtype];
 //      printf("type %d, desc %s\n", (int)type, [[curEvent description] UTF8String]);
 //      NSEventSubtypeWindowMoved
+
       naCollectGarbage();
       if(!na_InterceptKeyboardShortcut(curEvent)){
         if(curEvent){[NSApp sendEvent:curEvent];}
       }
+
+      naRunNotifier();
+
     #if !NA_MACOS_USES_ARC
       [pool drain]; // also releases the pool. No separate release necessary.
     #endif
   }
+
+  naDeallocNotifier(notifier);
+
+  // Before deleting the application, we cleanup whatever the user needs to
+  // clean up.
+  if(cleanup)
+    cleanup(arg);
 
   // When reaching here, the application had been stopped.
   naDelete(app);

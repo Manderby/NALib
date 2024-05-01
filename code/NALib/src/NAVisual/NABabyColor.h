@@ -36,7 +36,7 @@
 // - Simplified conversion from/to uint8 is done with multiplication of 255.
 //   Clamps values below 0 and above 1 to 0 and 255 respectively. 
 
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include "../NAUtility/NAMemory.h"
 
 #define NA_BABY_COLOR_CHANNEL_COUNT 4
@@ -52,10 +52,18 @@ typedef enum{
   NA_COLOR_BUFFER_BGRA
 } NAColorBufferType;
 
-
 // Linearizes or unlinearizes a single float value using a baby transformation.
 NA_IAPI float naLinearizeColorValue(float value);
 NA_IAPI float naUnlinearizeColorValue(float value);
+
+// Fills the given BabyColor with the given values
+NA_IAPI void naFillBabyColor(NABabyColor color, float r, float g, float b, float a);
+
+// Checks whether the given color is secure
+NA_API NABool naIsBabyColorSecure(const NABabyColor color);
+
+// Inverts the color
+NA_API void naInvertBabyColor(NABabyColor color);
 
 // Converts between BabyColor and an uint8 representation.
 // When premultiplied is set to NA_TRUE, the uint8 variant is assumed to be
@@ -70,7 +78,6 @@ NA_API void naFillBabyColorWithu8(
   NAColorBufferType bufferType);
 
 
-
 // This factor is nice and easy to remember. There is no greater mathematical
 // purpose in this number. It's just nice.
 #define NA_BABY_FACTOR 0.75f
@@ -80,6 +87,13 @@ NA_IDEF float naUnlinearizeColorValue(float value){
 }
 NA_IDEF float naLinearizeColorValue(float value){
   return (1.f - NA_BABY_FACTOR) * value / (1.f - NA_BABY_FACTOR * value);
+}
+
+NA_IDEF void naFillBabyColor(NABabyColor color, float r, float g, float b, float a){
+  color[0] = r;
+  color[1] = g;
+  color[2] = b;
+  color[3] = a;
 }
 
 

@@ -1,0 +1,26 @@
+
+set(NAVisualDir "src/NAVisual")
+
+set(headerFiles
+  ${NAVisualDir}/CMakeSrcList.txt
+  ${NAVisualDir}/NA3DHelper.h
+  ${NAVisualDir}/NABabyColor.h
+  ${NAVisualDir}/NABabyImage.h
+  ${NAVisualDir}/NADeflate.h
+  ${NAVisualDir}/NAPNG.h
+  ${NAVisualDir}/NAVisual.h
+)
+
+set(coreImplementationFiles
+  ${NAVisualDir}/Core/NA3DHelper.c
+  ${NAVisualDir}/Core/NABabyColor.c
+  ${NAVisualDir}/Core/NABabyImage.c
+  ${NAVisualDir}/Core/NADeflate.c
+  ${NAVisualDir}/Core/NAPNG.c
+)
+
+source_group("NAVisual" FILES ${headerFiles})
+target_sources(NALib PRIVATE ${headerFiles})
+
+source_group("NAVisual/Core" FILES ${coreImplementationFiles})
+target_sources(NALib PRIVATE ${coreImplementationFiles})

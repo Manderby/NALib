@@ -5,11 +5,11 @@
 // Do not include this file anywhere else!
 
 
-#include "NAAppCore.h"
-#include "NAMemory.h"
-#include "NACoord.h"
-#include "NAThreading.h"
-#include "NATranslator.h"
+#include "../../Core/NAAppCore.h"
+#include "../../../NAUtility/NAMemory.h"
+#include "../../../NAMath/NACoord.h"
+#include "../../../NAUtility/NAThreading.h"
+#include "../../../NAUtility/NATranslator.h"
 
 // the following import is needed for UTType definitions.
 #import <UniformTypeIdentifiers/UTType.h>
@@ -47,7 +47,25 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
   #define NSAppKitVersionNumber11_0 2022
 #endif
 
-NA_HDEF double na_GetUIElementYOffset(NA_UIElement* elem){
+
+
+NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* elem){
+  if(naGetUIElementType(elem) == NA_UI_BUTTON){
+    if(naIsButtonBordered((const NAButton*)elem)){
+      if(isAtLeastMacOSVersion(11, 0)){
+        // On newer systems bordered buttons are 5 units shorter than expected on
+        // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
+        // move the button 5 units to the left.
+        return -5.;
+      }
+    }
+  }
+  return 0.;
+}
+
+
+
+NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem){
   // Line height is considered to be 25 for an optimal display. In this
   // function, the UI elements are shifted in Y direction such that text
   // always is displayed on a common baseline. The reference element is
@@ -57,48 +75,42 @@ NA_HDEF double na_GetUIElementYOffset(NA_UIElement* elem){
   if(NSAppKitVersionNumber < NSAppKitVersionNumber11_0){
     switch(naGetUIElementType(elem)){
     case NA_UI_APPLICATION:  return  0.;
-    case NA_UI_BUTTON:{
-      NAButton* button = (NAButton*)elem;
-      return naIsButtonStateful(button) || !naIsButtonTextual(button) ? +0. : -2.;
-    }
-    case NA_UI_CHECKBOX:     return +3.;
+    case NA_UI_BUTTON:       return  0.;
+    case NA_UI_CHECKBOX:     return +5.;
     case NA_UI_IMAGE_SPACE:  return  0.;
-    case NA_UI_LABEL:        return +4.;
+    case NA_UI_LABEL:        return +6.;
     case NA_UI_MENU:         return  0.;
     case NA_UI_MENUITEM:     return  0.;
     case NA_UI_METAL_SPACE:  return  0.;
     case NA_UI_OPENGL_SPACE: return  0.;
-    case NA_UI_POPUP_BUTTON: return +0.;
-    case NA_UI_RADIO:        return +3.;
+    case NA_UI_RADIO:        return +5.;
     case NA_UI_SCREEN:       return  0.;
-    case NA_UI_SLIDER:       return -1.;
+    case NA_UI_SELECT:       return +2.;
+    case NA_UI_SLIDER:       return +1.;
     case NA_UI_SPACE:        return  0.;
-    case NA_UI_TEXTBOX:      return -1.;
-    case NA_UI_TEXTFIELD:    return +2.;
+    case NA_UI_TEXTBOX:      return +1.;
+    case NA_UI_TEXTFIELD:    return +4.;
     case NA_UI_WINDOW:       return  0.;
     default: return 0.;
     }
   }else{
     switch(naGetUIElementType(elem)){
     case NA_UI_APPLICATION:  return  0.;
-    case NA_UI_BUTTON:{
-      NAButton* button = (NAButton*)elem;
-      return naIsButtonStateful(button) || !naIsButtonTextual(button) ? +0. : -2.;
-    }
-    case NA_UI_CHECKBOX:     return +3.;
+    case NA_UI_BUTTON:       return  0.;
+    case NA_UI_CHECKBOX:     return +5.;
     case NA_UI_IMAGE_SPACE:  return  0.;
-    case NA_UI_LABEL:        return +4.;
+    case NA_UI_LABEL:        return +5.;
     case NA_UI_MENU:         return  0.;
     case NA_UI_MENUITEM:     return  0.;
     case NA_UI_METAL_SPACE:  return  0.;
     case NA_UI_OPENGL_SPACE: return  0.;
-    case NA_UI_POPUP_BUTTON: return -3.;
-    case NA_UI_RADIO:        return +3.;
+    case NA_UI_RADIO:        return +5.;
     case NA_UI_SCREEN:       return  0.;
-    case NA_UI_SLIDER:       return -4.;
+    case NA_UI_SELECT:       return -1.;
+    case NA_UI_SLIDER:       return -1.;
     case NA_UI_SPACE:        return  0.;
-    case NA_UI_TEXTBOX:      return -1.;
-    case NA_UI_TEXTFIELD:    return +2.;
+    case NA_UI_TEXTBOX:      return +1.;
+    case NA_UI_TEXTFIELD:    return +3.;
     case NA_UI_WINDOW:       return  0.;
     default: return 0.;
     }
@@ -182,7 +194,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
             reaction.uiElement = naGetApplication();
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
             reaction.controller = keyReaction->controller;
-            retValue = keyReaction->handler(reaction);
+            retValue = keyReaction->callback(reaction);
           }
         }
       }
@@ -270,7 +282,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
 
 
 
-NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
+NA_DEF double naGetUIElementResolutionFactor(const void* uiElement){
   if(naGetUIElementType(uiElement) == NA_UI_APPLICATION){return 1.;}
   if(naGetUIElementType(uiElement) == NA_UI_SCREEN){
     #if NA_DEBUG
@@ -279,16 +291,16 @@ NA_DEF double naGetUIElementResolutionFactor(void* uiElement){
     return 1.;
   }
   
-  void* parent = naGetUIElementParent(uiElement);
+  const void* parent = naGetUIElementParentConst(uiElement);
   while(naGetUIElementType(uiElement) != NA_UI_WINDOW && parent){
     uiElement = parent;
-    parent = naGetUIElementParent(uiElement);
+    parent = naGetUIElementParentConst(uiElement);
   }
   
   if(naGetUIElementType(uiElement) == NA_UI_WINDOW){
-    return naGetWindowBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(uiElement)));
+    return naGetWindowBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(uiElement)));
   }else{
-    return naGetUIElementBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(uiElement)));
+    return naGetUIElementBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(uiElement)));
   }
 }
 
@@ -358,7 +370,9 @@ NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
       retFont = naCreateFont("Palatino", NA_FONT_FLAG_REGULAR, baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      retFont = naCreateFont("Times New Roman", NA_FONT_FLAG_ITALIC, baseSize);
+      // Note: Times new roman would be more traditional but unicode support is worse.
+      retFont = naCreateFont("STIX Two Math", NA_FONT_FLAG_REGULAR, baseSize);
+      //retFont = naCreateFont("STIX Two Text", NA_FONT_FLAG_ITALIC, baseSize);
       break;
     default:
       #if NA_DEBUG
@@ -411,7 +425,14 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 
 
 
-NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* fileName, const NAUTF8Char* allowedFileSuffix, FilePanelCallback callback){
+NA_DEF void naPresentFilePanel(
+  void* window,
+  NABool load,
+  const NAUTF8Char* fileName,
+  const NAUTF8Char* allowedFileSuffix,
+  NAFilePanelCallback callback,
+  const void* data)
+{
   #if NA_DEBUG
     if(load)
       naError("Load panels are not implemented yet.");
@@ -437,17 +458,20 @@ NA_DEF void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* file
     #else
       NABool doPerform = result != NSFileHandlingPanelCancelButton;
     #endif
-    callback(doPerform, [[[savepanel URL] path] UTF8String]);
+    callback(doPerform, [[[savepanel URL] path] UTF8String], data);
   }];
 }
 
 
 NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen){
+  NA_UNUSED(screen);
   NARect rect = {{0, 0}, {1, 1}};
   return rect;
 }
 
 NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect){
+  NA_UNUSED(screen);
+  NA_UNUSED(rect);
   #if NA_DEBUG
     naError("A screen can not be resized by software.");
   #endif
@@ -494,7 +518,11 @@ NA_DEF void naHideMouseUntilMovement(NABool hide){
 
 
 NA_DEF NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot){
-  NSImage* nsImage = naCreateResolutionIndependentNativeImage(NA_NULL, uiImage, NA_UIIMAGE_KIND_MAIN);
+  NSImage* nsImage = na_CreateResolutionIndependentNativeImage(
+    NA_NULL,
+    uiImage,
+    NA_UIIMAGE_INTERACTION_NONE,
+    NA_FALSE);
   return NA_COCOA_PTR_OBJC_TO_C([[NSCursor alloc] initWithImage:nsImage hotSpot:naMakeNSPointWithPos(hotspot)]);
 }
 

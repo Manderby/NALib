@@ -5,7 +5,7 @@
 
 
 
-#include "NAMathOperators.h"
+#include "NAMath/NAMathOperators.h"
 
 
 NA_IDEF NAComplex naMakeComplex(double re, double im){

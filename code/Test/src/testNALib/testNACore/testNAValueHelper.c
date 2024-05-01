@@ -1,7 +1,8 @@
 
-#include "NAUtility/NATesting.h"
+#include "NATest.h"
 #include <stdio.h>
 
+#include "NABase/NABase.h"
 #include "NAUtility/NAValueHelper.h"
 
 #include "NAUtility/NAThreading.h"

@@ -6,7 +6,7 @@
 #endif
 
 #include <stdio.h>
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include "../NAStruct/NAStack.h"
 
 // This file provides a very simple JSON parser.

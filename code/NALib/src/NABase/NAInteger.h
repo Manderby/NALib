@@ -21,9 +21,19 @@
 // never uses the bool type or the true and false keywords. Also the macros
 // available in C11 are unused.
 
-typedef int NABool;
-#define NA_TRUE    1
-#define NA_FALSE   0
+#if __cplusplus
+  typedef bool NABool;
+  #define NA_TRUE    true
+  #define NA_FALSE   false
+#elif defined NA_C99
+  typedef _Bool NABool;
+  #define NA_TRUE    1
+  #define NA_FALSE   0
+#else
+  typedef int NABool;
+  #define NA_TRUE    1
+  #define NA_FALSE   0
+#endif
 
 
 

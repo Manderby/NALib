@@ -68,12 +68,12 @@ struct NACocoaOpenGLSpace{
 NA_HAPI void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace);
 NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
 
-typedef struct NACocoaPopupButton NACocoaPopupButton;
-struct NACocoaPopupButton{
-  NAPopupButton popupButton;
+typedef struct NACocoaSelect NACocoaSelect;
+struct NACocoaSelect{
+  NASelect select;
 };
-NA_HAPI void na_DestructCocoaPopupButton(NACocoaPopupButton* cocoaPopupButton);
-NA_RUNTIME_TYPE(NACocoaPopupButton, na_DestructCocoaPopupButton, NA_FALSE);
+NA_HAPI void na_DestructCocoaSelect(NACocoaSelect* cocoaSelect);
+NA_RUNTIME_TYPE(NACocoaSelect, na_DestructCocoaSelect, NA_FALSE);
 
 typedef struct NACocoaRadio NACocoaRadio;
 struct NACocoaRadio{
@@ -130,7 +130,14 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 @interface NACocoaNativeApplicationDelegate : NSObject <NSApplicationDelegate>{
   NACocoaApplication* cocoaApplication;
+  NSObject <NSApplicationDelegate>* oldDelegate;
+  NAMutator postStartupFunction;
+  void* postStartupArg;
+  NABool atStartup;
 }
+- (void)setOldDelegate:(NSObject <NSApplicationDelegate>*)delegate;
+- (void)setPostStartupFunction:(NAMutator)postUpdate;
+- (void)setPostStartupArg:(void*)arg;
 @end
 
 @interface NACocoaNativeButton : NSButton{
@@ -147,6 +154,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 @interface NACocoaNativeImageSpace : NSImageView{
   NACocoaImageSpace* cocoaImageSpace;
+  NSTrackingArea* trackingArea;
 }
 @end
 
@@ -197,16 +205,16 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 #endif
 
-@interface NACocoaNativePopupButton : NSPopUpButton{
-  NACocoaPopupButton* cocoaPopupButton;
-}
-@end
-
 @interface NACocoaNativeRadio : NSButton <NACocoaNativeEncapsulatedElement>{
   NACocoaRadio* cocoaRadio;
   NSView*       containingView;
 }
 - (NSView*) getEncapsulatingView;
+@end
+
+@interface NACocoaNativeSelect : NSPopUpButton{
+  NACocoaSelect* cocoaSelect;
+}
 @end
 
 @interface NACocoaNativeSlider : NSSlider{

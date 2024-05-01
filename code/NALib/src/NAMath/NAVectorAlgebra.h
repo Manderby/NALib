@@ -6,7 +6,8 @@
 #endif
 
 
-#include "../NABase.h"
+#include <stdlib.h>
+#include "../NABase/NABase.h"
 
 // In this file, you find basic vector algebra functions for both
 // Vector and Matrix.
@@ -32,6 +33,10 @@ typedef NAInt  NAVec1i[1];
 typedef NAInt  NAVec2i[2];
 typedef NAInt  NAVec3i[3];
 typedef NAInt  NAVec4i[4];
+typedef size_t NAVec1s[1];
+typedef size_t NAVec2s[2];
+typedef size_t NAVec3s[3];
+typedef size_t NAVec4s[4];
 
 typedef double NAMat22d[ 4];
 typedef double NAMat33d[ 9];
@@ -133,6 +138,10 @@ NA_IAPI void naFillV1i(NAInt*  d, NAInt  a0);
 NA_IAPI void naFillV2i(NAInt*  d, NAInt  a0, NAInt  a1);
 NA_IAPI void naFillV3i(NAInt*  d, NAInt  a0, NAInt  a1, NAInt  a2);
 NA_IAPI void naFillV4i(NAInt*  d, NAInt  a0, NAInt  a1, NAInt  a2, NAInt  a3);
+NA_IAPI void naFillV1s(size_t* d, size_t a0);
+NA_IAPI void naFillV2s(size_t* d, size_t a0, size_t a1);
+NA_IAPI void naFillV3s(size_t* d, size_t a0, size_t a1, size_t a2);
+NA_IAPI void naFillV4s(size_t* d, size_t a0, size_t a1, size_t a2, size_t a3);
 
 // Sets all components to binary zero
 NA_IAPI void naZeroV1d(double* d);
@@ -147,6 +156,10 @@ NA_IAPI void naZeroV1i(NAInt*  d);
 NA_IAPI void naZeroV2i(NAInt*  d);
 NA_IAPI void naZeroV3i(NAInt*  d);
 NA_IAPI void naZeroV4i(NAInt*  d);
+NA_IAPI void naZeroV1s(size_t* d);
+NA_IAPI void naZeroV2s(size_t* d);
+NA_IAPI void naZeroV3s(size_t* d);
+NA_IAPI void naZeroV4s(size_t* d);
 
 // Fills vector d with random values in [0, 1)
 NA_IAPI void naFillV1dRandom(double* d);
@@ -805,18 +818,18 @@ NA_IAPI void naCopyM44fE(float*  D, const float*  A);
 // Negates the matrix. D = -A
 // S shall not overlap D. Warnings will be emitted.
 // The E variant allows S and D to be equal.
-NA_IAPI void naNegM22d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naNegM33d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naNegM44d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naNegM22f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naNegM33f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naNegM44f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naNegM22dE(double* D, double* A);
-NA_IAPI void naNegM33dE(double* D, double* A);
-NA_IAPI void naNegM44dE(double* D, double* A);
-NA_IAPI void naNegM22fE(float*  D, float*  A);
-NA_IAPI void naNegM33fE(float*  D, float*  A);
-NA_IAPI void naNegM44fE(float*  D, float*  A);
+NA_IAPI void naNegM22d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naNegM33d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naNegM44d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naNegM22f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naNegM33f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naNegM44f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naNegM22dE(double* D, const double* A);
+NA_IAPI void naNegM33dE(double* D, const double* A);
+NA_IAPI void naNegM44dE(double* D, const double* A);
+NA_IAPI void naNegM22fE(float*  D, const float*  A);
+NA_IAPI void naNegM33fE(float*  D, const float*  A);
+NA_IAPI void naNegM44fE(float*  D, const float*  A);
 NA_IAPI void naNegM22dS(double* D);
 NA_IAPI void naNegM33dS(double* D);
 NA_IAPI void naNegM44dS(double* D);
@@ -1059,25 +1072,25 @@ NA_IAPI NABool naEqualM33fE(const float*  a, const float*  b);
 NA_IAPI NABool naEqualM44fE(const float*  a, const float*  b);
 
 // Computes the determinant of a matrix.
-NA_IAPI double naDetM22d(double* A);
-NA_IAPI double naDetM33d(double* A);
-NA_IAPI double naDetM44d(double* A);
+NA_IAPI double naDetM22d(const double* A);
+NA_IAPI double naDetM33d(const double* A);
+NA_IAPI double naDetM44d(const double* A);
 
 // Transposes the matrix.
 // E variant allows both pointers to be equal
 // S variant transposes the matrix itself.
-NA_IAPI void naTransposeM22d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naTransposeM33d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naTransposeM44d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naTransposeM22f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naTransposeM33f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naTransposeM44f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naTransposeM22dE(double* D, double* A);
-NA_IAPI void naTransposeM33dE(double* D, double* A);
-NA_IAPI void naTransposeM44dE(double* D, double* A);
-NA_IAPI void naTransposeM22fE(float*  D, float*  A);
-NA_IAPI void naTransposeM33fE(float*  D, float*  A);
-NA_IAPI void naTransposeM44fE(float*  D, float*  A);
+NA_IAPI void naTransposeM22d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naTransposeM33d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naTransposeM44d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naTransposeM22f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naTransposeM33f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naTransposeM44f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naTransposeM22dE(double* D, const double* A);
+NA_IAPI void naTransposeM33dE(double* D, const double* A);
+NA_IAPI void naTransposeM44dE(double* D, const double* A);
+NA_IAPI void naTransposeM22fE(float*  D, const float*  A);
+NA_IAPI void naTransposeM33fE(float*  D, const float*  A);
+NA_IAPI void naTransposeM44fE(float*  D, const float*  A);
 NA_IAPI void naTransposeM22dS(double* D);
 NA_IAPI void naTransposeM33dS(double* D);
 NA_IAPI void naTransposeM44dS(double* D);

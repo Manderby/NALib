@@ -81,7 +81,7 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
 
   NA_DEF NAInt naStartupPixelFont(){
     GLuint fontTex = 0;
-    NAByte texBuf[5*16 * 9*6 * 4];
+    NAByte* texBuf = naMalloc(5*16 * 9*6 * 4);
 
     NAByte* byte = na_pixelFont5x9;
     NAByte* texPtr = texBuf;
@@ -110,6 +110,7 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     glBindTexture(GL_TEXTURE_2D, 0);
+    free(texBuf);
     return (NAInt)fontTex;
   }
 

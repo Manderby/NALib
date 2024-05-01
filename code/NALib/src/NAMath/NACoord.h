@@ -104,7 +104,7 @@
 // condition of a for-loop. Use the Max to access the last element.
 
 
-#include "../NABase.h"
+#include "../NABase/NABase.h"
 #include <stdlib.h>
 
 
@@ -194,6 +194,9 @@ NA_IAPI NAPosi   naMakePosiWithPos(NAPos  pos);
 // more advanced and quicker conversion. But pos must be integral to work.
 NA_IAPI NAPosi   naMakePosiWithIntegerPos(NAPos  pos);
 NA_IAPI NAPos    naMakePosWithV2(double* v);
+
+NA_IAPI NAPos    naMakePosZero(void);
+NA_IAPI NAPosi   naMakePosiZero(void);
 
 NA_IAPI NASize   naMakeSize   (double width,  double  height);
 NA_IAPI NASizei  naMakeSizei  (NAInt  width,  NAInt   height);

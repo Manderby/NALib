@@ -3,36 +3,46 @@
 // Do not include this file directly! It will automatically be included when
 // including "NAUIImage.h"
 
+#include "../../NAStruct/NAList.h"
 
 
 struct NAUIImage {
-  NASizei size1x;
+  NAList subImages;
   NABlendMode tintMode;
-  NABabyImage* babyImages[NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT];
-  void* nativeImages[NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT];
 };
 
 NA_EXTERN_RUNTIME_TYPE(NAUIImage);
 
-
+typedef struct NA_UISubImage NA_UISubImage;
+struct NA_UISubImage{
+  NABabyImage* image;
+  void* nativeImage;
+  double resolution;
+  NAUIImageSkin skin;
+  NAUIImageInteraction interaction;
+};
 
 NA_HAPI const NABabyImage* na_GetUIImageBabyImage(
   const NAUIImage* uiImage,
-  NAUIImageResolution resolution,
-  NAUIImageKind kind,
-  NAUIImageSkin skin);
+  double resolution,
+  NAUIImageSkin skin,
+  NAUIImageInteraction interaction,
+  NABool secondaryState);
 
 NA_HAPI void* na_GetUIImageNativeImage(
   const NAUIImage* uiImage,
-  NAUIImageResolution resolution,
-  NAUIImageKind kind,
-  NAUIImageSkin skin);
+  double resolution,
+  NAUIImageSkin skin,
+  NAUIImageInteraction interaction,
+  NABool secondaryState);
 
 
 
-NA_IDEF NASizei naGetUIImage1xSize(const NAUIImage* uiImage){
-  return uiImage->size1x;
-}
+// System dependent implementations
+NA_HAPI void na_FillDefaultTextColorWithSystemSkin(NABabyColor color);
+NA_HAPI void na_FillDefaultLinkColorWithSystemSkin(NABabyColor color);
+NA_HAPI void na_FillDefaultAccentColorWithSystemSkin(NABabyColor color);
+
 
 
 

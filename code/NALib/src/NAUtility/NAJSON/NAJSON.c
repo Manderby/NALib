@@ -299,6 +299,9 @@ NA_DEF NAJSONRule* naNewJSONRuleFixedArray(
   size_t structSize,
   NAJSONRule* subRule)
 {
+  #if !NA_DEBUG
+    NA_UNUSED(elementCount);
+  #endif
   NA_JSONFixedArrayRule* rule = naAlloc(NA_JSONFixedArrayRule);
   na_initJSONRule(&rule->baseRule, NA_JSON_RULE_FIXED_ARRAY);
   rule->arrayOffset = arrayOffset;
@@ -319,6 +322,9 @@ NA_DEF NAJSONRule* naNewJSONRuleFixedPointerArray(
   size_t structSize,
   NAJSONRule* subRule)
 {
+  #if !NA_DEBUG
+    NA_UNUSED(elementCount);
+  #endif
   NA_JSONFixedArrayRule* rule = naAlloc(NA_JSONFixedArrayRule);
   na_initJSONRule(&rule->baseRule, NA_JSON_RULE_FIXED_ARRAY);
   rule->arrayOffset = arrayOffset;
@@ -629,6 +635,8 @@ void naParseJSONBuffer(
       naCrash("buf is Nullptr");
     if(((NAByte*)buf)[byteCount - 1] != '\0')
       naError("buffer must end with a zero byte.");
+  #else
+    NA_UNUSED(byteCount);
   #endif
 
   parser->curPtr = buf;
@@ -701,15 +709,15 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser){
   
   if(curByte == '.'){
     curByte = na_NextJSONByte(parser);
-    const void* firstDecimalPtr = parser->curPtr;
+    const NAByte* firstDecimalPtr = parser->curPtr;
 
     while(isdigit(curByte)){
       decimals = (decimals << 1) + (decimals << 3) + (curByte & 0x0f);
       curByte = na_NextJSONByte(parser);
     }
 
-    const void* lastDecimalPtr = parser->curPtr;
-    decimalShift = (int32)((NAByte*)lastDecimalPtr - (NAByte*)firstDecimalPtr);
+    const NAByte* lastDecimalPtr = parser->curPtr;
+    decimalShift = (int32)(lastDecimalPtr - firstDecimalPtr);
   }
 
   if((curByte | 0x20) == 'e'){
@@ -743,7 +751,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONIdentifier(NAJSONParser* parser){
     curByte = na_NextJSONByte(parser);
   }
 
-  const size_t strLen = parser->curPtr - firstByte;
+  const size_t strLen = (size_t)(parser->curPtr - firstByte);
   if(strLen == 4 && !memcmp(firstByte, "null", 4)){
     parser->parseStatus = NA_JSON_PARSE_NULL;
     return parser->parseStatus;
@@ -782,9 +790,9 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONString(NAJSONParser* parser){
       na_NextJSONByte(parser);
     }else if(curByte == '\"'){
       if(stackStatus == NA_JSON_OBJECT_EXPECTING_KEY_OR_END){
-        parser->key.strLen = (const NAUTF8Char*)parser->curPtr - parser->key.ptr;
+        parser->key.strLen = (size_t)((const NAUTF8Char*)parser->curPtr - parser->key.ptr);
       }else{
-        parser->string.strLen = (const NAUTF8Char*)parser->curPtr - parser->string.ptr;
+        parser->string.strLen = (size_t)((const NAUTF8Char*)parser->curPtr - parser->string.ptr);
       }
       na_NextJSONByte(parser);
       parser->parseStatus = NA_JSON_PARSE_STRING;
@@ -1348,3 +1356,29 @@ NA_HDEF void na_ParseJSONObject(NAJSONParser* parser, void* object, const NAJSON
   }
 }
 
+
+
+// This is free and unencumbered software released into the public domain.
+
+// Anyone is free to copy, modify, publish, use, compile, sell, or
+// distribute this software, either in source code form or as a compiled
+// binary, for any purpose, commercial or non-commercial, and by any
+// means.
+
+// In jurisdictions that recognize copyright laws, the author or authors
+// of this software dedicate any and all copyright interest in the
+// software to the public domain. We make this dedication for the benefit
+// of the public at large and to the detriment of our heirs and
+// successors. We intend this dedication to be an overt act of
+// relinquishment in perpetuity of all present and future rights to this
+// software under copyright law.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+
+// For more information, please refer to <http://unlicense.org/>

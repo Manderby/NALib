@@ -45,6 +45,18 @@ NA_IDEF void naFillV3i(NAInt* d, NAInt a0, NAInt a1, NAInt a2){
 NA_IDEF void naFillV4i(NAInt* d, NAInt a0, NAInt a1, NAInt a2, NAInt a3){
   d[0] = a0; d[1] = a1; d[2] = a2; d[3] = a3;
 }
+NA_IDEF void naFillV1s(size_t* d, size_t a0){
+  d[0] = a0;
+}
+NA_IDEF void naFillV2s(size_t* d, size_t a0, size_t a1){
+  d[0] = a0; d[1] = a1;
+}
+NA_IDEF void naFillV3s(size_t* d, size_t a0, size_t a1, size_t a2){
+  d[0] = a0; d[1] = a1; d[2] = a2;
+}
+NA_IDEF void naFillV4s(size_t* d, size_t a0, size_t a1, size_t a2, size_t a3){
+  d[0] = a0; d[1] = a1; d[2] = a2; d[3] = a3;
+}
 
 
 
@@ -86,6 +98,18 @@ NA_IDEF void naZeroV3i(NAInt* d){
   d[0] = 0; d[1] = 0; d[2] = 0;
 }
 NA_IDEF void naZeroV4i(NAInt* d){
+  d[0] = 0; d[1] = 0; d[2] = 0; d[3] = 0;
+}
+NA_IDEF void naZeroV1s(size_t* d){
+  d[0] = 0;
+}
+NA_IDEF void naZeroV2s(size_t* d){
+  d[0] = 0; d[1] = 0;
+}
+NA_IDEF void naZeroV3s(size_t* d){
+  d[0] = 0; d[1] = 0; d[2] = 0;
+}
+NA_IDEF void naZeroV4s(size_t* d){
   d[0] = 0; d[1] = 0; d[2] = 0; d[3] = 0;
 }
 

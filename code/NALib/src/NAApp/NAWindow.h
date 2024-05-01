@@ -43,8 +43,14 @@ NA_API NABool naIsWindowFullscreen(NAWindow* window);
 NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);
 
 // Get various properties of the window
-NA_API NAUIImageResolution naGetWindowUIResolution(const NAWindow* window);
+NA_API double naGetWindowUIResolution(const NAWindow* window);
 NA_API NABool naIsWindowResizeable(const NAWindow* window);
+
+// Get and set the outer (non-client) rect of the window. Note that the
+// function naGetUIElementRect will always return the inner (clinet) rect of
+// the window.
+NA_API NARect naGetWindowOuterRect(const NAWindow* window);
+NA_API void naSetWindowOuterRect(NAWindow* window, NARect rect);
 
 // Set various properties of the window
 NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
@@ -82,9 +88,18 @@ NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 // ////////////////////////////////
 // File panel
 
-typedef NABool (*FilePanelCallback)(NABool doPerform, const NAUTF8Char* path);
+typedef NABool (*NAFilePanelCallback)(
+  NABool doPerform,
+  const NAUTF8Char* path,
+  const void* data);
 
-NA_API void naPresentFilePanel(void* window, NABool load, const NAUTF8Char* fileName, const NAUTF8Char* allowedFileSuffix, FilePanelCallback callback);
+NA_API void naPresentFilePanel(
+  void* window,
+  NABool load,
+  const NAUTF8Char* fileName,
+  const NAUTF8Char* allowedFileSuffix,
+  NAFilePanelCallback callback,
+  const void* data);
 
 
 

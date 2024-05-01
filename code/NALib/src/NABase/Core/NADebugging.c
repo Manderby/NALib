@@ -1,10 +1,13 @@
 
-#include "../../NABase.h"
+#include "../NABase.h"
 
 #if NA_DEBUG
 
+  #if NA_TESTING_ENABLED == 1
+    #include "NATest.h"
+  #endif
+
   #include <stdio.h>    // for the fprintf function
-  #include "../../NAUtility/NATesting.h"
 
 
 
@@ -14,8 +17,8 @@
   NA_HDEF void na_Error(const char* functionSymbol, const char* text){
     NABool doPrintOut = NA_TRUE;
     #if NA_TESTING_ENABLED == 1
-      doPrintOut = !na_GetTestCaseRunning();
-      na_IncErrorCount();
+      doPrintOut = !naIsTestCaseRunning();
+      naIncErrorCount();
     #endif
 
     if(doPrintOut){
@@ -35,7 +38,9 @@
   
   NA_HDEF void na_Crash(const char* functionSymbol, const char* text){
     #if NA_TESTING_ENABLED == 1
-      na_SetTestCaseRunning(NA_FALSE);
+      // Disable the testcase, such that a call to na_Error actually produces
+      // an output.
+      naSetTestCaseRunning(NA_FALSE);
     #endif
     na_Error(functionSymbol, text);
     fprintf(stderr, NA_NL "Stopping the application deliberately." NA_NL);

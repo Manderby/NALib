@@ -1,8 +1,9 @@
 
 #include "../NAAppCore.h"
-#include "../../NAPreferences.h"
 
 #if NA_COMPILE_GUI == 1
+
+#include "../../NAPreferences.h"
 
 
 
@@ -75,15 +76,31 @@ NA_DEF NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect r
   if(window->storageTag){
     NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, (int)window->storageTag);
     NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, (int)window->storageTag);
-    rect.pos.x = naInitPreferencesDouble(naGetStringUTF8Pointer(prefPosXString), rect.pos.x);
-    rect.pos.y = naInitPreferencesDouble(naGetStringUTF8Pointer(prefPosYString), rect.pos.y);
+    rect.pos.x = naInitPreferencesDouble(
+      naGetStringUTF8Pointer(prefPosXString),
+      rect.pos.x,
+      -NA_INFINITY,
+      NA_INFINITY);
+    rect.pos.y = naInitPreferencesDouble(
+      naGetStringUTF8Pointer(prefPosYString),
+      rect.pos.y,
+      -NA_INFINITY,
+      NA_INFINITY);
     naDelete(prefPosXString);
     naDelete(prefPosYString);
     if(resizeable){
       NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, (int)window->storageTag);
       NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, (int)window->storageTag);
-      rect.size.width = naInitPreferencesDouble(naGetStringUTF8Pointer(prefSizeWidthString), rect.size.width);
-      rect.size.height = naInitPreferencesDouble(naGetStringUTF8Pointer(prefSizeHeightString), rect.size.height);
+      rect.size.width = naInitPreferencesDouble(
+        naGetStringUTF8Pointer(prefSizeWidthString),
+        rect.size.width,
+        -NA_INFINITY,
+        NA_INFINITY);
+      rect.size.height = naInitPreferencesDouble(
+        naGetStringUTF8Pointer(prefSizeHeightString),
+        rect.size.height,
+        -NA_INFINITY,
+        NA_INFINITY);
       naDelete(prefSizeWidthString);
       naDelete(prefSizeHeightString);
     }

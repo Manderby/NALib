@@ -17,7 +17,7 @@
 // one single file speeds up the compilation considerably!
 
 
-#include "NABase.h"
+#include "../../NABase/NABase.h"
 
 #if NA_OS == NA_OS_MAC_OS_X
 
@@ -33,30 +33,29 @@
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 
-#include "NAUICocoaLegacyII.h"
+#include "UI/NAUICocoaLegacyII.h"
 
 #include "NAUIImageCocoaII.h"
-#include "NAPreferencesCocoaII.h"
 
-#include "NAUICocoaII.h"
-#include "NAUICocoaInterfaces.h"
-#include "NAApplicationII.h"
+#include "UI/NAUICocoaII.h"
+#include "UI/NAUICocoaInterfaces.h"
+#include "UI/NAApplicationII.h"
 
-#include "NAButtonII.h"
-#include "NACheckBoxII.h"
-#include "NAImageSpaceII.h"
-#include "NALabelII.h"
-#include "NAMenuII.h"
-#include "NAMenuItemII.h"
-#include "NAMetalSpaceII.h"
-#include "NAOpenGLSpaceII.h"
-#include "NAPopupButtonII.h"
-#include "NARadioII.h"
-#include "NASliderII.h"
-#include "NASpaceII.h"
-#include "NATextBoxII.h"
-#include "NATextFieldII.h"
-#include "NAWindowII.h"
+#include "UI/NAButtonII.h"
+#include "UI/NACheckBoxII.h"
+#include "UI/NAImageSpaceII.h"
+#include "UI/NALabelII.h"
+#include "UI/NAMenuII.h"
+#include "UI/NAMenuItemII.h"
+#include "UI/NAMetalSpaceII.h"
+#include "UI/NAOpenGLSpaceII.h"
+#include "UI/NARadioII.h"
+#include "UI/NASliderII.h"
+#include "UI/NASelectII.h"
+#include "UI/NASpaceII.h"
+#include "UI/NATextBoxII.h"
+#include "UI/NATextFieldII.h"
+#include "UI/NAWindowII.h"
 
 #endif // NA_COMPILE_GUI == 1
 #endif // defined __OBJC__
