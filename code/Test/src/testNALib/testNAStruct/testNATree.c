@@ -18,36 +18,6 @@ void testTreeConfiguration(void){
     naTestError(config = naCreateTreeConfiguration(3)); // invalid key type
     naTestCrash(naReleaseTreeConfiguration(NA_NULL));
   }
-
-  //naTestGroup("Create and release with data"){
-  //  int constData = 1234;
-  //  NAPtr constPtr = naMakePtrWithDataConst(&constData);
-  //  NAPtr mutablePtr = naMakePtrWithDataMutable(naAlloc(int));
-  //  NAMemoryBlock* block = NA_NULL;
-
-  //  naTestVoid(block = na_CreateMemoryBlockWithData(constPtr, sizeof(int), NA_NULL));
-  //  naTestVoid(naRelease(block));
-  //  naTestVoid(block = na_CreateMemoryBlockWithData(mutablePtr, sizeof(int), naFree));
-  //  naRelease(block);
-
-  //  naTestError(block = na_CreateMemoryBlockWithData(naMakePtrNull(), sizeof(int), NA_NULL); naRelease(block));
-  //  naTestError(block = na_CreateMemoryBlockWithData(constPtr, 0, NA_NULL); naRelease(block));
-  //  naTestCrash(block = na_CreateMemoryBlockWithData(constPtr, sizeof(int), naFree); naRelease(block));
-  //}
-
-  //naTestGroup("Accessing and Mutating"){
-  //  NAPtr mutablePtr = naMakePtrWithDataMutable(naAlloc(int));
-  //  NAMemoryBlock* block = na_CreateMemoryBlockWithData(mutablePtr, sizeof(int), naFree);
-  //  naTest(na_GetMemoryBlockDataPointerConst(block, 0) != NULL);
-  //  naTest(na_GetMemoryBlockDataPointerConst(block, sizeof(int) - 1) != NULL);
-  //  naTest(na_GetMemoryBlockDataPointerMutable(block, 0) != NULL);
-  //  naTest(na_GetMemoryBlockDataPointerMutable(block, sizeof(int) - 1) != NULL);
-  //  naTestCrash(na_GetMemoryBlockDataPointerConst(NA_NULL, 0));
-  //  naTestError(na_GetMemoryBlockDataPointerConst(block, 1000));
-  //  naTestCrash(na_GetMemoryBlockDataPointerMutable(NA_NULL, 0));
-  //  naTestError(na_GetMemoryBlockDataPointerMutable(block, 1000));
-  //  naRelease(block);
-  //}
 }
 
 

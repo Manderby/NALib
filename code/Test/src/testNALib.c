@@ -35,9 +35,9 @@ void benchmarkNAStruct(void);
 
 
 void printNALib(void){
-  printNABase();
-  printNACore();
-  printNAUtility();
+//  printNABase();
+//  printNACore();
+//  printNAUtility();
   printNAStruct();
 }
 
@@ -52,7 +52,7 @@ void testNALib(void){
 void benchmarkNALib(void){
   printf(NA_NL "Benchmarking:" NA_NL);
   //benchmarkNABase();
-  benchmarkNAMath();
+  //benchmarkNAMath();
   //benchmarkNAStruct();
 }
 
@@ -67,7 +67,7 @@ int main(int argc, const char** argv){
   naStartRuntime();
 
   // Print macro information
-  //printNALib();
+  printNALib();
 
   // Start testing
   NABool testStartSuccessful = naStartTesting(
