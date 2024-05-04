@@ -6,7 +6,7 @@
 
 
 #if NA_DEBUG
-  NATreeNode na_invalidParentNode;
+  extern NATreeNode na_invalidParentNode;
 #endif
 
 
@@ -170,7 +170,7 @@ NA_HIDEF void na_SetTreeNodeData(NATreeNode* node, NAPtr data, const NATreeConfi
 
 
 
-NA_HIDEF NABool na_GetNodeChildIsLeaf(NATreeNode* node, NAInt childIndex, const NATreeConfiguration* config){
+NA_HIDEF NABool na_GetNodeChildIsLeaf(NATreeNode* node, size_t childIndex, const NATreeConfiguration* config){
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -184,7 +184,7 @@ NA_HIDEF NABool na_GetNodeChildIsLeaf(NATreeNode* node, NAInt childIndex, const 
 
 
 
-NA_HIDEF void na_SetNodeChildIsLeaf(NATreeNode* node, NAInt childIndex, NABool isleaf, const NATreeConfiguration* config){
+NA_HIDEF void na_SetNodeChildIsLeaf(NATreeNode* node, size_t childIndex, NABool isleaf, const NATreeConfiguration* config){
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -214,7 +214,7 @@ NA_HIDEF NATreeItem* na_GetTreeNodeChild(NATreeNode* node, size_t childIndex, co
 
 
 
-NA_HIDEF void na_SetTreeNodeChild(NATreeNode* node, NATreeItem* child, NAInt childIndex, NABool isChildLeaf, const NATreeConfiguration* config){
+NA_HIDEF void na_SetTreeNodeChild(NATreeNode* node, NATreeItem* child, size_t childIndex, NABool isChildLeaf, const NATreeConfiguration* config){
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");

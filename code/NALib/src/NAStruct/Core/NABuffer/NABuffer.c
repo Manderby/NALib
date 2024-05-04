@@ -32,9 +32,9 @@ void naDestructBufferTreeNode(NAPtr nodeData){
 
 
 
-NABool naUpdateBufferTreeNode(NAPtr parentData, NAPtr* childDatas, NAInt childIndex, NAInt childMask){
+NABool naUpdateBufferTreeNode(NAPtr parentData, NAPtr* childDatas, size_t responsibleChildIndex, NAInt childMask){
   NABufferTreeNodeData* parentNodeData;
-  NA_UNUSED(childIndex);
+  NA_UNUSED(responsibleChildIndex);
   
   parentNodeData = (NABufferTreeNodeData*)naGetPtrMutable(parentData);
 

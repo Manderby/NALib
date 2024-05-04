@@ -60,7 +60,7 @@ NA_HDEF NAPos na_GetTreeNewRootOriginQuad(NAInt childExponent, NAPos childorigin
 
 
 
-NA_HDEF NAPos na_GetChildOriginQuad(NAPos parentorigin, NAInt childIndex, NAInt childExponent){
+NA_HDEF NAPos na_GetChildOriginQuad(NAPos parentorigin, size_t childIndex, NAInt childExponent){
   double childwidth = naMakeDoubleWithExponent((int32)childExponent);
   NAPos childorigin = parentorigin;
   if(childIndex & 1){childorigin.x += childwidth;}
@@ -106,16 +106,16 @@ NA_HDEF NATreeLeaf* na_NewTreeLeafQuad(const NATreeConfiguration* config, const 
 // ////////////////////////////
 
 
-NA_HDEF NAInt na_GetChildIndexQuadDouble(NATreeNode* parentNode, const void* childKey){
+NA_HDEF size_t na_GetChildIndexQuadDouble(NATreeNode* parentNode, const void* childKey){
   NATreeQuadNode* quadNode = (NATreeQuadNode*)(parentNode);
   return na_GetKeyIndexQuadDouble(na_GetQuadNodeKey(quadNode), childKey, &(quadNode->childExponent));
 }
 // The data parameter contains the leaf exponent of the children.
-NA_HDEF NAInt na_GetKeyIndexQuadDouble(const void* baseKey, const void* testKey, const void* data){
+NA_HDEF size_t na_GetKeyIndexQuadDouble(const void* baseKey, const void* testKey, const void* data){
   NAInt childExponent = *((NAInt*)data);
   NAPos* basePos = (NAPos*)baseKey;
   NAPos* testPos = (NAPos*)testKey;
-  NAInt index = 0;
+  size_t index = 0;
   double childwidth;
 
   #if NA_DEBUG
@@ -236,7 +236,7 @@ NA_HDEF NATreeNode* na_RemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
     #endif
     na_ClearTreeRoot(tree);
   }else{
-    NAInt leafIndex = na_GetTreeNodeChildIndex(parent, leafItem, tree->config);
+    size_t leafIndex = na_GetTreeNodeChildIndex(parent, leafItem, tree->config);
     #if NA_DEBUG
       if(!na_GetNodeChildIsLeaf(parent, leafIndex, tree->config))
         naError("Child is not marked as a leaf");
@@ -256,7 +256,6 @@ NA_HDEF NATreeNode* na_RemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
       // Search for a sibling and count if there is more than one.
       NATreeQuadNode* grandparent;
       NABool isSiblingLeaf;
-      NAInt parentindex;
       NATreeItem* sibling = NA_NULL;
       NAInt siblingCount = 0;
       NAInt siblingIndex;
@@ -322,8 +321,8 @@ NA_HDEF NATreeNode* na_RemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
       
       // There is a grandparent. Simply add the sibling at the place where
       // the parent was and delete the parent.
-      parentindex = na_GetTreeNodeChildIndex(na_GetQuadNodeNode(grandparent), na_GetTreeNodeItem(parent), tree->config);
-      na_SetTreeNodeChild(na_GetQuadNodeNode(grandparent), sibling, parentindex, isSiblingLeaf, tree->config);
+      size_t parentIndex = na_GetTreeNodeChildIndex(na_GetQuadNodeNode(grandparent), na_GetTreeNodeItem(parent), tree->config);
+      na_SetTreeNodeChild(na_GetQuadNodeNode(grandparent), sibling, parentIndex, isSiblingLeaf, tree->config);
       na_DestructTreeNode(parent, NA_FALSE, tree->config);
 
       // Repeat for the next parent.
@@ -382,7 +381,6 @@ NA_HDEF void naEnlargeTreeRootQuad(NATree* tree, const void* containedKey){
   NATreeQuadNode* newRoot;
   NAPos* newRootOrigin;
   NAInt newRootChildExponent;
-  NAInt prevRootIndex;
   
   if(naIsTreeRootLeaf(tree)){
     prevRootOrigin = na_GetQuadLeafKey((NATreeQuadLeaf*)tree->root);
@@ -397,7 +395,7 @@ NA_HDEF void naEnlargeTreeRootQuad(NATree* tree, const void* containedKey){
 
   // Now, we attach the previous root to the new root at the appropriate
   // child index.
-  prevRootIndex = tree->config->keyIndexGetter(newRootOrigin, prevRootOrigin, &newRootChildExponent);
+  size_t prevRootIndex = tree->config->keyIndexGetter(newRootOrigin, prevRootOrigin, &newRootChildExponent);
   na_SetTreeNodeChild(na_GetQuadNodeNode(newRoot), tree->root, prevRootIndex, naIsTreeRootLeaf(tree), tree->config);
 
   // Finally, we set the newRoot to be the root of the tree and mark
@@ -437,7 +435,6 @@ NA_HDEF NATreeLeaf* na_InsertLeafQuad(NATree* tree, NATreeItem* existingItem, co
     NATreeQuadNode* existingParent;
     NAInt existingParentChildExponent;
     NAPos* existingParentOrigin;
-    NAInt desiredChildIndex;
     NATreeItem* desiredChild;
     
     if(na_IsTreeItemLeaf(tree, existingItem)){
@@ -481,7 +478,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafQuad(NATree* tree, NATreeItem* existingItem, co
     
     // We test if the desired index is free. If so, we have found the final
     // place for tne new child.
-    desiredChildIndex = tree->config->keyIndexGetter(existingParentOrigin, newLeafOrigin, &existingParentChildExponent);
+    size_t desiredChildIndex = tree->config->keyIndexGetter(existingParentOrigin, newLeafOrigin, &existingParentChildExponent);
     desiredChild =  existingParent->childs[desiredChildIndex];
 
     if(!desiredChild){
@@ -492,16 +489,16 @@ NA_HDEF NATreeLeaf* na_InsertLeafQuad(NATree* tree, NATreeItem* existingItem, co
       // adjustments to the tree.
       // We store the child and the
       // index of the subtree which contains the existing child for later.
-      NAInt prevExistingChildIndex = tree->config->keyIndexGetter(existingParentOrigin, existingChildOrigin, &existingParentChildExponent);
+      size_t prevExistingChildIndex = tree->config->keyIndexGetter(existingParentOrigin, existingChildOrigin, &existingParentChildExponent);
       NATreeItem* prevExistingChild =  existingParent->childs[prevExistingChildIndex];
       // Starting from the current existingParent, find out what the smallest
       // possible parent would be which contains both existingChild and newLeaf
       // but with different childindex.
       NAPos smallestParentOrigin = *existingParentOrigin;
       NAInt smallestParentChildExponent = existingParentChildExponent;
-      NAInt smallestNewLeafIndex = -1;
+      size_t smallestNewLeafIndex;
       while(1){
-        NAInt smallestExistingChildIndex = tree->config->keyIndexGetter(&smallestParentOrigin, existingChildOrigin, &smallestParentChildExponent);
+        size_t smallestExistingChildIndex = tree->config->keyIndexGetter(&smallestParentOrigin, existingChildOrigin, &smallestParentChildExponent);
         smallestNewLeafIndex       = tree->config->keyIndexGetter(&smallestParentOrigin, newLeafOrigin,       &smallestParentChildExponent);
         if(smallestExistingChildIndex != smallestNewLeafIndex){break;}
         // The two items share the same child. Go further down.
@@ -520,14 +517,11 @@ NA_HDEF NATreeLeaf* na_InsertLeafQuad(NATree* tree, NATreeItem* existingItem, co
       // existingParent and existingChild.
       
       if(smallestParentChildExponent != existingParentChildExponent){
-        #if NA_DEBUG
-          NAInt testExistingIndex;
-        #endif
         NATreeQuadNode* smallestParent = na_NewTreeNodeQuad(tree->config, smallestParentOrigin, smallestParentChildExponent);
         
         // First, attach the previous item to the new parent.
         NABool isPrevExistingChildLeaf = na_IsTreeItemLeaf(tree, prevExistingChild);
-        NAInt smallestExistingIndex = tree->config->keyIndexGetter(&smallestParentOrigin, existingChildOrigin, &smallestParentChildExponent);
+        size_t smallestExistingIndex = tree->config->keyIndexGetter(&smallestParentOrigin, existingChildOrigin, &smallestParentChildExponent);
         na_SetTreeNodeChild(na_GetQuadNodeNode(smallestParent), prevExistingChild, smallestExistingIndex, isPrevExistingChildLeaf, tree->config);
               
         #if NA_DEBUG
@@ -537,7 +531,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafQuad(NATree* tree, NATreeItem* existingItem, co
         
         // Then, attach the new parent to the existing parent.
         #if NA_DEBUG
-          testExistingIndex = tree->config->keyIndexGetter(na_GetQuadNodeKey(existingParent), na_GetQuadNodeKey(smallestParent), &(existingParent->childExponent));
+          size_t testExistingIndex = tree->config->keyIndexGetter(na_GetQuadNodeKey(existingParent), na_GetQuadNodeKey(smallestParent), &(existingParent->childExponent));
           if(testExistingIndex != prevExistingChildIndex)
             naError("Newly computed index differs from previously computed index");
         #endif

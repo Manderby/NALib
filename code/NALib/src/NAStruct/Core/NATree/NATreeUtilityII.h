@@ -228,7 +228,7 @@ NA_HIDEF NABool na_IsTreeItemLeaf(const NATree* tree, NATreeItem* item){
     retValue = naIsTreeRootLeaf(tree);
   }else{
     NATreeNode* parent = na_GetTreeItemParent(item);
-    NAInt childIndex = na_GetTreeNodeChildIndex(parent, item, tree->config);
+    size_t childIndex = na_GetTreeNodeChildIndex(parent, item, tree->config);
     retValue = na_GetNodeChildIsLeaf(parent, childIndex, tree->config);
   }
   return retValue;

@@ -415,7 +415,7 @@ NA_IDEF void naRemoveTreeCurLeaf(NATreeIterator* iter){
   na_SetTreeIteratorCurItem(iter, NA_NULL);  // temporarily remove the iterator. // todo: make it advance, rev-advance or not.
   newParent = tree->config->leafRemover(tree, (NATreeLeaf*)(removeItem));
   if(newParent){na_SetTreeIteratorCurItem(iter, na_GetTreeNodeItem(newParent));}
-  na_UpdateTreeNodeBubbling(tree, newParent, -1);
+  na_UpdateTreeNodeBubbling(tree, newParent, NA_TREE_UNSPECIFIED_INDEX);
 }
 
 

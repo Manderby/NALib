@@ -27,8 +27,8 @@ NA_EXTERN_RUNTIME_TYPE(NATreeOctLeaf);
 #define LEAF_USERDATA_OFFSET_OCT   offsetof(NATreeOctLeaf, userData)
 #define NODE_USERDATA_OFFSET_OCT   offsetof(NATreeOctNode, userData)
 
-NA_HAPI  NAInt na_GetChildIndexOctDouble(NATreeNode* parentNode, const void* childKey);
-NA_HAPI  NAInt na_GetKeyIndexOctDouble(const void* baseKey, const void* testKey, const void* data);
+NA_HAPI  size_t na_GetChildIndexOctDouble(NATreeNode* parentNode, const void* childKey);
+NA_HAPI  size_t na_GetKeyIndexOctDouble(const void* baseKey, const void* testKey, const void* data);
 NA_HAPI  NABool na_TestKeyOctDouble(const void* lowerLimit, const void* upperLimit, const void* key);
 NA_HAPI  NABool na_TestKeyNodeContainOctDouble(NATreeNode* parentNode, const void* key);
 NA_HAPI  NABool na_TestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key);
