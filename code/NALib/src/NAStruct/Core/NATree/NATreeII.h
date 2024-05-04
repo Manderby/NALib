@@ -94,14 +94,14 @@ struct NATreeConfiguration{
   
   // Main settings
   NARefCount                    refCount;
-  NAInt                         flags;
+  int32                         flags;
 
   NAInt                         childPerNode;
   int                           leafKeyOffset;
   int                           nodeKeyOffset;
   int                           leafUserDataOffset;
   int                           nodeUserDataOffset;
-  void*                         configData;
+  void*                         configData; // currently only used for exponation of quad and oct tree.
 
   #if NA_DEBUG
     size_t                      sizeofNode;
@@ -185,7 +185,8 @@ struct NATreeIterationInfo{
 // Helper functions. Do not use as public API.
 
 // Configuration
-NA_HIAPI void na_DeallocConfiguration(NATreeConfiguration* config);
+NA_HIAPI NABool na_GetTreeConfigurationConst(NATreeConfiguration* config);
+NA_HIAPI void na_DeallocTreeConfiguration(NATreeConfiguration* config);
 NA_HIAPI NATreeConfiguration* na_RetainTreeConfiguration(NATreeConfiguration* config);
 
 // Item

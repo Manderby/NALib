@@ -151,7 +151,7 @@ typedef NABool (*NATreeNodeUpdater)       (NAPtr parentData,
 // If you try to change a configuration after it has been used for at least
 // one tree, you will get a warning if NA_DEBUG is 1.
 
-NA_API  NATreeConfiguration* naCreateTreeConfiguration(NAInt flags);
+NA_API  NATreeConfiguration* naCreateTreeConfiguration(int32 flags);
 NA_IAPI void naReleaseTreeConfiguration(NATreeConfiguration* config);
 
 NA_IAPI void naSetTreeConfigurationUserData(
@@ -447,6 +447,8 @@ NA_IAPI NABool naIsTreeAtInitial(const NATreeIterator* iter);
 #if NA_DEBUG
   void naDebugTree(NATree* tree);
 #endif 
+
+
 
 // Inline implementations are in a separate file:
 #include "Core/NATree/NATreeII.h"

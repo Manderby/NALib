@@ -42,6 +42,10 @@ NA_IDEF void naEmptyTree(NATree* tree){
 
 
 NA_IDEF void naClearTree(NATree* tree){
+  #if NA_DEBUG
+    if(!tree)
+      naCrash("tree is nullptr");
+  #endif
   naEmptyTree(tree);
   // If the config has a callback function for deleting a tree, call it.
   if(tree->config->treeDestructor){

@@ -13,8 +13,9 @@ static NABool leafDestructorCalled;
 static NABool nodeConstructorCalled;
 static NABool nodeDestructorCalled;
 static NABool nodeUpdaterCalled;
-void treeCon(NAPtr userData){treeConstructorCalled = NA_TRUE;}
-void treeDes(NAPtr userData){treeDestructorCalled = NA_TRUE;}
+static int32 debugData;
+void treeCon(NAPtr userData){debugData = *(int32*)naGetPtrConst(userData); treeConstructorCalled = NA_TRUE;}
+void treeDes(NAPtr userData){debugData = *(int32*)naGetPtrConst(userData); treeDestructorCalled = NA_TRUE;}
 NAPtr leafCon(const void* key, NAPtr content){leafConstructorCalled = NA_TRUE; return naMakePtrNull();}
 void leafDes(NAPtr leafData){leafDestructorCalled = NA_TRUE;}
 NAPtr nodeCon(const void* key){nodeConstructorCalled = NA_TRUE; return naMakePtrNull();}
@@ -24,6 +25,23 @@ NABool nodeUp(NAPtr parentData, NAPtr* childDatas, NAInt childIndex, NAInt child
 
 
 void testTreeConfiguration(void){
+  naTestGroup("Internal functions"){
+    naTestCrash(na_GetTreeConfigurationConst(NA_NULL));
+    naTestCrash(na_DeallocTreeConfiguration(NA_NULL));
+    naTestCrash(na_RetainTreeConfiguration(NA_NULL));
+    
+    NATreeConfiguration* config = naCreateTreeConfiguration(0);
+    naTest(!na_GetTreeConfigurationConst(config));
+    
+    naTestVoid(na_RetainTreeConfiguration(config));
+    naTest(na_GetTreeConfigurationConst(config));
+  
+    naTestVoid(na_RetainTreeConfiguration(config));
+    naTestVoid(naReleaseTreeConfiguration(config));
+   
+    naTestVoid(na_DeallocTreeConfiguration(config));
+  }
+
   naTestGroup("Create and release"){
     NATreeConfiguration* config = NA_NULL;
     naTestVoid(config = naCreateTreeConfiguration(0));
@@ -38,11 +56,12 @@ void testTreeConfiguration(void){
     naTestError(config = naCreateTreeConfiguration(3)); // invalid key type
     naTestCrash(naReleaseTreeConfiguration(NA_NULL));
   }
-  
+
   naTestGroup("Config Setters"){
     double dummyKey = 1.;
     double dummyKey2 = 2.;
-    int dummyInt = 1234;
+    int32 dummyInt = 1234;
+    NATree dummyTree;
 
     NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_DOUBLE);
 
@@ -53,40 +72,48 @@ void testTreeConfiguration(void){
     naTestVoid(naSetTreeConfigurationLeafCallbacks(config, leafCon, leafDes));
     naTestVoid(naSetTreeConfigurationNodeCallbacks(config, nodeCon, nodeDes, nodeUp));
 
-    // Testing tree constructor
-    treeConstructorCalled = NA_FALSE;
-    treeDestructorCalled = NA_FALSE;
-    NATree dummyTree;
-    naInitTree(&dummyTree, config);
-    naTest(treeConstructorCalled);
-    
-    // Testing leaf constructor and destructor
-    leafConstructorCalled = NA_FALSE;
-    leafDestructorCalled = NA_FALSE;
-    NATreeIterator iter = naMakeTreeModifier(&dummyTree);
-    naAddTreeKeyConst(&iter, &dummyKey, &dummyInt, NA_TRUE);
-    naTest(leafConstructorCalled);
-    naClearTreeIterator(&iter);
-    naEmptyTree(&dummyTree);
-    naTest(leafDestructorCalled);
+    naTestGroup("Tree constructor"){
+      debugData = 0;
+      treeConstructorCalled = NA_FALSE;
+      treeDestructorCalled = NA_FALSE;
+      naInitTree(&dummyTree, config);
+      naTest(treeConstructorCalled);
+      naTest(debugData = dummyInt);
+    }
 
-    // Testing node constructor and destructor
-    nodeConstructorCalled = NA_FALSE;
-    nodeDestructorCalled = NA_FALSE;
-    nodeUpdaterCalled = NA_FALSE;
-    NATreeIterator iter2 = naMakeTreeModifier(&dummyTree);
-    naAddTreeKeyConst(&iter2, &dummyKey, &dummyInt, NA_TRUE);
-    naAddTreeKeyConst(&iter2, &dummyKey2, &dummyInt, NA_TRUE);
-    naTest(nodeConstructorCalled);
-    naTest(nodeUpdaterCalled);
-    naClearTreeIterator(&iter2);
-    naEmptyTree(&dummyTree);
-    naTest(nodeDestructorCalled);
+    naTestGroup("Leaf callbacks"){
+      leafConstructorCalled = NA_FALSE;
+      leafDestructorCalled = NA_FALSE;
+      NATreeIterator iter = naMakeTreeModifier(&dummyTree);
+      naAddTreeKeyConst(&iter, &dummyKey, &dummyInt, NA_TRUE);
+      naTest(leafConstructorCalled);
+      naClearTreeIterator(&iter);
+      naEmptyTree(&dummyTree);
+      naTest(leafDestructorCalled);
+    }
 
-    // Testing tree destructor
-    naClearTree(&dummyTree);
-    naTest(treeDestructorCalled);
+    naTestGroup("Node callbacks"){
+      nodeConstructorCalled = NA_FALSE;
+      nodeDestructorCalled = NA_FALSE;
+      nodeUpdaterCalled = NA_FALSE;
+      NATreeIterator iter2 = naMakeTreeModifier(&dummyTree);
+      naAddTreeKeyConst(&iter2, &dummyKey, &dummyInt, NA_TRUE);
+      naAddTreeKeyConst(&iter2, &dummyKey2, &dummyInt, NA_TRUE);
+      naTest(nodeConstructorCalled);
+      naTest(nodeUpdaterCalled);
+      naClearTreeIterator(&iter2);
+      naEmptyTree(&dummyTree);
+      naTest(nodeDestructorCalled);
+    }
 
+    naTestGroup("Tree destructor"){
+      debugData = 0;
+      naClearTree(&dummyTree);
+      naTest(treeDestructorCalled);
+      naTest(debugData = dummyInt);
+    }
+
+    // Test for already set values.
     naTestError(naSetTreeConfigurationTreeCallbacks(config, treeCon, treeDes));
     naTestError(naSetTreeConfigurationLeafCallbacks(config, leafCon, leafDes));
     naTestError(naSetTreeConfigurationNodeCallbacks(config, nodeCon, nodeDes, nodeUp));
@@ -161,7 +188,7 @@ void printNATree(void){
 
   printf(NA_NL "NATreeConfigurationII.h:" NA_NL);
 
-  naPrintMacroux16(NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE);
+  naPrintMacroux16(NA_TREE_CONFIG_DEBUG_FLAG_CONST);
 
   printf(NA_NL "NATreeIteratorII.h:" NA_NL);
 
