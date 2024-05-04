@@ -6,20 +6,20 @@
 
 
 
-static NABool treeConCalled;
-static NABool treeDesCalled;
-static NABool leafConCalled;
-static NABool leafDesCalled;
-static NABool nodeConCalled;
-static NABool nodeDesCalled;
-static NABool nodeUpCalled;
-void treeCon(NAPtr userData){treeConCalled = NA_TRUE;}
-void treeDes(NAPtr userData){treeDesCalled = NA_TRUE;}
-NAPtr leafCon(const void* key, NAPtr content){leafConCalled = NA_TRUE; return naMakePtrNull();}
-void leafDes(NAPtr leafData){leafDesCalled = NA_TRUE;}
-NAPtr nodeCon(const void* key){nodeConCalled = NA_TRUE; return naMakePtrNull();}
-void nodeDes(NAPtr nodeData){nodeDesCalled = NA_TRUE;}
-NABool nodeUp(NAPtr parentData, NAPtr* childDatas, NAInt childIndex, NAInt childMask){nodeUpCalled = NA_TRUE; return NA_FALSE;}
+static NABool treeConstructorCalled;
+static NABool treeDestructorCalled;
+static NABool leafConstructorCalled;
+static NABool leafDestructorCalled;
+static NABool nodeConstructorCalled;
+static NABool nodeDestructorCalled;
+static NABool nodeUpdaterCalled;
+void treeCon(NAPtr userData){treeConstructorCalled = NA_TRUE;}
+void treeDes(NAPtr userData){treeDestructorCalled = NA_TRUE;}
+NAPtr leafCon(const void* key, NAPtr content){leafConstructorCalled = NA_TRUE; return naMakePtrNull();}
+void leafDes(NAPtr leafData){leafDestructorCalled = NA_TRUE;}
+NAPtr nodeCon(const void* key){nodeConstructorCalled = NA_TRUE; return naMakePtrNull();}
+void nodeDes(NAPtr nodeData){nodeDestructorCalled = NA_TRUE;}
+NABool nodeUp(NAPtr parentData, NAPtr* childDatas, NAInt childIndex, NAInt childMask){nodeUpdaterCalled = NA_TRUE; return NA_FALSE;}
 
 
 
@@ -54,38 +54,38 @@ void testTreeConfiguration(void){
     naTestVoid(naSetTreeConfigurationNodeCallbacks(config, nodeCon, nodeDes, nodeUp));
 
     // Testing tree constructor
-    treeConCalled = NA_FALSE;
-    treeDesCalled = NA_FALSE;
+    treeConstructorCalled = NA_FALSE;
+    treeDestructorCalled = NA_FALSE;
     NATree dummyTree;
     naInitTree(&dummyTree, config);
-    naTest(treeConCalled);
+    naTest(treeConstructorCalled);
     
     // Testing leaf constructor and destructor
-    leafConCalled = NA_FALSE;
-    leafDesCalled = NA_FALSE;
+    leafConstructorCalled = NA_FALSE;
+    leafDestructorCalled = NA_FALSE;
     NATreeIterator iter = naMakeTreeModifier(&dummyTree);
     naAddTreeKeyConst(&iter, &dummyKey, &dummyInt, NA_TRUE);
-    naTest(leafConCalled);
+    naTest(leafConstructorCalled);
     naClearTreeIterator(&iter);
     naEmptyTree(&dummyTree);
-    naTest(leafDesCalled);
+    naTest(leafDestructorCalled);
 
     // Testing node constructor and destructor
-    nodeConCalled = NA_FALSE;
-    nodeDesCalled = NA_FALSE;
-    nodeUpCalled = NA_FALSE;
+    nodeConstructorCalled = NA_FALSE;
+    nodeDestructorCalled = NA_FALSE;
+    nodeUpdaterCalled = NA_FALSE;
     NATreeIterator iter2 = naMakeTreeModifier(&dummyTree);
     naAddTreeKeyConst(&iter2, &dummyKey, &dummyInt, NA_TRUE);
     naAddTreeKeyConst(&iter2, &dummyKey2, &dummyInt, NA_TRUE);
-    naTest(nodeConCalled);
-    naTest(nodeUpCalled);
+    naTest(nodeConstructorCalled);
+    naTest(nodeUpdaterCalled);
     naClearTreeIterator(&iter2);
     naEmptyTree(&dummyTree);
-    naTest(nodeDesCalled);
+    naTest(nodeDestructorCalled);
 
     // Testing tree destructor
     naClearTree(&dummyTree);
-    naTest(treeDesCalled);
+    naTest(treeDestructorCalled);
 
     naTestError(naSetTreeConfigurationTreeCallbacks(config, treeCon, treeDes));
     naTestError(naSetTreeConfigurationLeafCallbacks(config, leafCon, leafDes));

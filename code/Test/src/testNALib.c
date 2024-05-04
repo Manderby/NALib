@@ -85,6 +85,8 @@ int main(int argc, const char** argv){
 
   if(testStartSuccessful){
     naSetTestPrintsAllTests(NATEST_TRUE);
+    naSetTestPrintsExpression(NATEST_FALSE);
+    naSetTestPrintsFullGroupName(NATEST_FALSE);
     testNALib();
     //naPrintUntested();
     //naSetTimePerBenchmark(1);
