@@ -176,7 +176,46 @@ void testTreeItems(){
     naTest(na_GetTreeItemIterCount(&item) == 0);
     naTestError(na_DecTreeItemIterCount(&item));
   }
+  
+  naTestGroup("Node"){
+    NATreeConfiguration* config = naCreateTreeConfiguration(0);
+    NATreeNode node;
+    NATreeItem item;
+
+    naTestCrash(na_GetTreeNodeItem(NA_NULL));
+    naTestCrash(na_GetTreeNodeKey(NA_NULL, NA_NULL));
+    naTestCrash(na_GetTreeNodeKey(&node, NA_NULL));
+    naTestCrash(na_GetTreeNodeChildStorage(NA_NULL));
+    naTestCrash(na_GetTreeNodeData(NA_NULL, NA_NULL));
+    naTestCrash(na_SetTreeNodeData(NA_NULL, naMakePtrNull(), NA_NULL));
+    naTestCrash(na_SetTreeNodeData(&node, naMakePtrNull(), NA_NULL));
+    naTestCrash(na_GetNodeChildIsLeaf(NA_NULL, 0, NA_NULL));
+    naTestCrash(na_GetNodeChildIsLeaf(&node, 0, NA_NULL));
+    naTestCrash(na_SetNodeChildIsLeaf(NA_NULL, 0, NA_FALSE, NA_NULL));
+    naTestCrash(na_SetNodeChildIsLeaf(&node, 0, NA_FALSE, NA_NULL));
+    naTestCrash(na_SetNodeChildIsLeaf(&node, 5555, NA_FALSE, config));
+    naTestCrash(na_GetTreeNodeChild(NA_NULL, 0, NA_NULL));
+    naTestCrash(na_GetTreeNodeChild(&node, 0, NA_NULL));
+    naTestCrash(na_GetTreeNodeChild(&node, 5555, config));
+    naTestCrash(na_SetTreeNodeChild(NA_NULL, NA_NULL, 0, NA_FALSE, NA_FALSE));
+    naTestCrash(na_SetTreeNodeChild(&node, NA_NULL, 0, NA_FALSE, NA_FALSE));
+    naTestCrash(na_SetTreeNodeChild(&node, &item, 5555, NA_FALSE, NA_FALSE));
+    naTestCrash(na_SetTreeNodeChild(&node, &item, 5555, NA_FALSE, config));
+    naTestCrash(na_InitTreeNode(NA_NULL, NA_NULL, NA_NULL));
+    naTestCrash(na_InitTreeNode(&node, NA_NULL, NA_NULL));
+    naTestCrash(na_ClearTreeNode(NA_NULL));
+    naTestCrash(na_DestructTreeNode(NA_NULL, NA_FALSE, NA_NULL));
+    naTestCrash(na_DestructTreeNode(&node, NA_FALSE, NA_NULL));
+    naTestCrash(na_GetTreeNodeChildIndex(NA_NULL, NA_NULL, NA_NULL));
+    naTestCrash(na_GetTreeNodeChildIndex(&node, NA_NULL, NA_NULL));
+
+    // Searching for nullptr as a child is not desired.
+    naTestError(na_GetTreeNodeChildIndex(&node, NA_NULL, config));
+    // item is not a child of node.
+    naTestError(na_GetTreeNodeChildIndex(&node, &item, config));
+  }
 }
+
 
 
 

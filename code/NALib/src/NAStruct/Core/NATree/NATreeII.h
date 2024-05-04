@@ -30,6 +30,8 @@ typedef struct NATreeIterationInfo NATreeIterationInfo;
 #define NA_TREE_FLAG_ROOT_IS_LEAF 0x01
 #define NA_TREE_FLAG_TMP_KEY_TAKEN 0x02
 
+#define NA_TREE_CONFIG_INVALID_OFFSET 0xffffffff
+
 typedef enum{
   NA_TREE_LEAF_INSERT_ORDER_KEY,
   NA_TREE_LEAF_INSERT_ORDER_PREV,
@@ -96,12 +98,13 @@ struct NATreeConfiguration{
   NARefCount                    refCount;
   int32                         flags;
 
-  NAInt                         childPerNode;
-  int                           leafKeyOffset;
-  int                           nodeKeyOffset;
-  int                           leafUserDataOffset;
-  int                           nodeUserDataOffset;
-  void*                         configData; // currently only used for exponation of quad and oct tree.
+  size_t                        childPerNode;
+  size_t                        leafKeyOffset;
+  size_t                        nodeKeyOffset;
+  size_t                        leafUserDataOffset;
+  size_t                        nodeUserDataOffset;
+  void*                         configData; // currently only used for
+                                            // exponation of quad and oct tree.
 
   #if NA_DEBUG
     size_t                      sizeofNode;
@@ -146,7 +149,8 @@ struct NATreeItem{
 
 struct NATreeNode{
   NATreeItem item;
-  uint32 flags;
+  uint32 flags; // bitfield storing whether childs are nodes or leafs as well
+                // as storing additional flags. For example AVL balance.
 };
 
 struct NATreeLeaf{
@@ -201,20 +205,18 @@ NA_HIAPI void na_DecTreeItemIterCount(NATreeItem* item);
 
 // Node
 NA_HIAPI NATreeItem* na_GetTreeNodeItem(NATreeNode* node);
-NA_HIAPI void na_InitTreeNode(const NATreeConfiguration* config, NATreeNode* node, const void* key);
+NA_HIAPI void* na_GetTreeNodeKey(NATreeNode* node, const NATreeConfiguration* config);
+NA_HIAPI NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* node);
+NA_HIAPI NAPtr na_GetTreeNodeData(NATreeNode* node, const NATreeConfiguration* config);
+NA_HIAPI void na_SetTreeNodeData(NATreeNode* node, NAPtr data, const NATreeConfiguration* config);
+NA_HIAPI NABool na_GetNodeChildIsLeaf(NATreeNode* node, NAInt childIndex, const NATreeConfiguration* config);
+NA_HIAPI void na_SetNodeChildIsLeaf(NATreeNode* node, NAInt childIndex, NABool isleaf, const NATreeConfiguration* config);
+NA_HIAPI NATreeItem* na_GetTreeNodeChild(NATreeNode* node, size_t childIndex, const NATreeConfiguration* config);
+NA_HIAPI void na_SetTreeNodeChild(NATreeNode* node, NATreeItem* child, NAInt childIndex, NABool isChildLeaf, const NATreeConfiguration* config);
+NA_HIAPI void na_InitTreeNode(NATreeNode* node, const void* key, const NATreeConfiguration* config);
 NA_HIAPI void na_ClearTreeNode(NATreeNode* node);
-NA_HIAPI void na_DestructNodeData(const NATreeConfiguration* config, NAPtr data);
-NA_HIAPI void na_DestructTreeNode(const NATreeConfiguration* config, NATreeNode* node, NABool recursive);
-NA_HIAPI NABool na_IsNodeChildLeaf(NATreeNode* node, NAInt childIndex);
-NA_HIAPI void na_MarkNodeChildLeaf(NATreeNode* node, NAInt childIndex, NABool isleaf);
-NA_HIAPI void* na_GetTreeNodeKey(const NATreeConfiguration* config, NATreeNode* node);
-NA_HIAPI NAPtr na_GetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node);
-NA_HIAPI void na_SetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node, NAPtr newData);
-NA_HIAPI NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* parent);
-NA_HIAPI NATreeItem* na_GetTreeNodeChild(const NATreeConfiguration* config, NATreeNode* parent, NAInt childIndex);
-NA_HIAPI void na_SetTreeNodeChildEmpty(NATreeNode* parent, NAInt childIndex);
-NA_HIAPI void na_SetTreeNodeChild(NATreeNode* parent, NATreeItem* child, NAInt childIndex, NABool isChildLeaf);
-NA_HIAPI NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, NATreeItem* child);
+NA_HIAPI void na_DestructTreeNode(NATreeNode* node, NABool recursive, const NATreeConfiguration* config);
+NA_HIAPI size_t na_GetTreeNodeChildIndex(NATreeNode* node, NATreeItem* child, const NATreeConfiguration* config);
 
 // Leaf
 NA_HIAPI NATreeItem* na_GetTreeLeafItem(NATreeLeaf* leaf);

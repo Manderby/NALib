@@ -182,8 +182,8 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
   continueBubbling = NA_TRUE;
   while(continueBubbling && !na_GetTreeItemIsRoot(item)){
     NATreeNode* parent = na_GetTreeItemParent(item);
-    NAInt childIndex = na_GetTreeNodeChildIndex(tree->config, parent, item);
-    continueBubbling = nodeTokenCallback(token, na_GetTreeNodeData(tree->config, parent), childIndex);
+    NAInt childIndex = na_GetTreeNodeChildIndex(parent, item, tree->config);
+    continueBubbling = nodeTokenCallback(token, na_GetTreeNodeData(parent, tree->config), childIndex);
     item = &(parent->item);
   }
 }
@@ -215,7 +215,7 @@ NA_IDEF const void* naGetTreeCurNodeKey(NATreeIterator* iter){
     if(na_IsTreeItemLeaf(tree, iter->item))
       naError("This iterator is not at a node.");
   #endif
-  return na_GetTreeNodeKey(tree->config, (NATreeNode*)iter->item);
+  return na_GetTreeNodeKey((NATreeNode*)iter->item, tree->config);
 }
 
 
@@ -245,7 +245,7 @@ NA_IDEF const void* naGetTreeCurNodeConst(NATreeIterator* iter){
     if(na_IsTreeItemLeaf(tree, iter->item))
       naError("This iterator is not at a node.");
   #endif
-  return naGetPtrConst(na_GetTreeNodeData(tree->config, (NATreeNode*)iter->item));
+  return naGetPtrConst(na_GetTreeNodeData((NATreeNode*)iter->item, tree->config));
 }
 
 
@@ -275,7 +275,7 @@ NA_IDEF void* naGetTreeCurNodeMutable(NATreeIterator* iter){
   if(na_IsTreeItemLeaf(tree, iter->item))
     naError("This iterator is not at a node.");
   #endif
-  return naGetPtrMutable(na_GetTreeNodeData(tree->config, (NATreeNode*)iter->item));
+  return naGetPtrMutable(na_GetTreeNodeData((NATreeNode*)iter->item, tree->config));
 }
 
 
@@ -431,7 +431,7 @@ NA_IDEF void naUpdateTreeLeaf(NATreeIterator* iter){
   tree = na_GetTreeIteratorTreeMutable(iter);
   parent = na_GetTreeItemParent(iter->item);
   if(!na_GetTreeItemIsRoot(iter->item)){
-    na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(tree->config, parent, iter->item));
+    na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(parent, iter->item, tree->config));
   }
 }
 

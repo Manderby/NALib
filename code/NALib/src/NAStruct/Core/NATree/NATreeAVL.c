@@ -33,7 +33,7 @@ NA_HIDEF void na_RotateLeftBin(NATree* tree, NATreeBinNode* parent, NATreeBinNod
   #endif
   grandparent = na_GetTreeItemParent(na_GetBinNodeItem(parent));
   if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(parent))){
-    NAInt parentIndex = na_GetTreeNodeChildIndex(tree->config, grandparent, na_GetBinNodeItem(parent));
+    NAInt parentIndex = na_GetTreeNodeChildIndex(grandparent, na_GetBinNodeItem(parent), tree->config);
     ((NATreeBinNode*)grandparent)->childs[parentIndex] = na_GetBinNodeItem(rightchild);
   }else{
     tree->root = na_GetBinNodeItem(rightchild);
@@ -41,11 +41,11 @@ NA_HIDEF void na_RotateLeftBin(NATree* tree, NATreeBinNode* parent, NATreeBinNod
 
   parent->childs[1] = rightchild->childs[0];
   parent->childs[1]->parent = na_GetBinNodeNode(parent);
-  na_MarkNodeChildLeaf(na_GetBinNodeNode(parent), 1, na_IsNodeChildLeaf(na_GetBinNodeNode(rightchild), 0));
+  na_SetNodeChildIsLeaf(na_GetBinNodeNode(parent), 1, na_GetNodeChildIsLeaf(na_GetBinNodeNode(rightchild), 0, tree->config), tree->config);
   na_SetTreeItemParent(na_GetBinNodeItem(parent), na_GetBinNodeNode(rightchild));
 
   rightchild->childs[0] = na_GetBinNodeItem(parent);
-  na_MarkNodeChildLeaf(na_GetBinNodeNode(rightchild), 0, NA_FALSE);
+  na_SetNodeChildIsLeaf(na_GetBinNodeNode(rightchild), 0, NA_FALSE, tree->config);
   na_SetTreeItemParent(na_GetBinNodeItem(rightchild), grandparent);
 
   na_UpdateTreeNodeBubbling(tree, na_GetBinNodeNode(parent), -1);
@@ -63,7 +63,7 @@ NA_HIDEF void na_RotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBi
   #endif
   grandparent = na_GetTreeItemParent(na_GetBinNodeItem(parent));
   if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(parent))){
-    NAInt parentIndex = na_GetTreeNodeChildIndex(tree->config, grandparent, na_GetBinNodeItem(parent));
+    NAInt parentIndex = na_GetTreeNodeChildIndex(grandparent, na_GetBinNodeItem(parent), tree->config);
     ((NATreeBinNode*)grandparent)->childs[parentIndex] = na_GetBinNodeItem(leftchild);
   }else{
     tree->root = na_GetBinNodeItem(leftchild);
@@ -71,11 +71,11 @@ NA_HIDEF void na_RotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBi
 
   parent->childs[0] = leftchild->childs[1];
   parent->childs[0]->parent = na_GetBinNodeNode(parent);
-  na_MarkNodeChildLeaf(na_GetBinNodeNode(parent), 0, na_IsNodeChildLeaf(na_GetBinNodeNode(leftchild), 1));
+  na_SetNodeChildIsLeaf(na_GetBinNodeNode(parent), 0, na_GetNodeChildIsLeaf(na_GetBinNodeNode(leftchild), 1, tree->config), tree->config);
   na_SetTreeItemParent(na_GetBinNodeItem(parent), na_GetBinNodeNode(leftchild));
 
   leftchild->childs[1] = na_GetBinNodeItem(parent);
-  na_MarkNodeChildLeaf(na_GetBinNodeNode(leftchild), 1, NA_FALSE);
+  na_SetNodeChildIsLeaf(na_GetBinNodeNode(leftchild), 1, NA_FALSE, tree->config);
   na_SetTreeItemParent(na_GetBinNodeItem(leftchild), grandparent);
 
   na_UpdateTreeNodeBubbling(tree, na_GetBinNodeNode(parent), -1);
@@ -86,7 +86,7 @@ NA_HIDEF void na_RotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBi
 NA_HIDEF void na_PropagateAVLGrow(NATree* tree, NATreeBinNode* binnode){
   if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(binnode))){
     NATreeNode* parent = na_GetTreeItemParent(na_GetBinNodeItem(binnode));
-    na_GrowAVL(tree, (NATreeBinNode*)parent, na_GetTreeNodeChildIndex(tree->config, parent, na_GetBinNodeItem(binnode)));
+    na_GrowAVL(tree, (NATreeBinNode*)parent, na_GetTreeNodeChildIndex(parent, na_GetBinNodeItem(binnode), tree->config));
   }
 }
 
@@ -95,7 +95,7 @@ NA_HIDEF void na_PropagateAVLGrow(NATree* tree, NATreeBinNode* binnode){
 NA_HIDEF void na_PropagateAVLShrink(NATree* tree, NATreeBinNode* binnode){
   if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(binnode))){
     NATreeNode* parent = na_GetTreeItemParent(na_GetBinNodeItem(binnode));
-    na_ShrinkAVL(tree, (NATreeBinNode*)parent, na_GetTreeNodeChildIndex(tree->config, parent, na_GetBinNodeItem(binnode)));
+    na_ShrinkAVL(tree, (NATreeBinNode*)parent, na_GetTreeNodeChildIndex(parent, na_GetBinNodeItem(binnode), tree->config));
   }
 }
 

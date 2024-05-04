@@ -22,10 +22,10 @@ NA_HDEF void na_IterateTreeCapture(NATreeIterator* iter, NAInt index, NATreeIter
   // Note: It is safe to assume that this loop is executed at least once.
   while(index != info->breakIndex){
     // We set the iterator to whatever is stored in the desired child.
-    na_SetTreeIteratorCurItem(iter, na_GetTreeNodeChild(tree->config, parentNode, index));
+    na_SetTreeIteratorCurItem(iter, na_GetTreeNodeChild(parentNode, index, tree->config));
 
     if(iter->item){
-      if(na_IsNodeChildLeaf(parentNode, index)){
+      if(na_GetNodeChildIsLeaf(parentNode, index, tree->config)){
         // The child is a leaf.
         if(
           (!info->lowerLimit && !info->upperLimit) ||
@@ -71,7 +71,7 @@ NA_HDEF void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* inf
 
   while(!na_GetTreeItemIsRoot(item)){
     NATreeNode* parent = na_GetTreeItemParent(item);
-    NAInt nextIndex = na_GetTreeNodeChildIndex(tree->config, parent, item) + info->step;
+    NAInt nextIndex = na_GetTreeNodeChildIndex(parent, item, tree->config) + info->step;
 
     // Capture the next sibling, if any.
     if(nextIndex != info->breakIndex){
@@ -153,12 +153,12 @@ NA_HDEF NATreeItem* na_LocateTreeKeyCapture(const NATree* tree, NATreeNode* node
   }
 
   childIndex = tree->config->childIndexGetter(node, key);
-  child = na_GetTreeNodeChild(tree->config, node, childIndex);
+  child = na_GetTreeNodeChild(node, childIndex, tree->config);
 
   if(!child){
     // No child at the desired position. Return the closest parent.
     return na_GetTreeNodeItem(node);
-  }else if(na_IsNodeChildLeaf(node, childIndex)){
+  }else if(na_GetNodeChildIsLeaf(node, childIndex, tree->config)){
     // When the subtree denotes a leaf, we test, if the key is equal and return
     // the result.
     *matchfound = tree->config->keyLeafContainTester((NATreeLeaf*)child, key);
@@ -234,7 +234,7 @@ NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTok
         nextIndex = leafSearcher(token, data);
       }else{
         // If the current item is a node, call the node searcher callback.
-        NAPtr data = na_GetTreeNodeData(tree->config, (NATreeNode*)iter->item);
+        NAPtr data = na_GetTreeNodeData((NATreeNode*)iter->item, tree->config);
         nextIndex = nodeSearcher(token, data);
       }
       
@@ -251,13 +251,13 @@ NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTok
       if(nextIndex == NA_TREE_SEARCH_PARENT){
         NATreeNode* parentNode = na_GetTreeItemParent(iter->item);
         if(parentNode){
-          na_SetTreeIteratorCurItem(iter, &(parentNode->item));
+          na_SetTreeIteratorCurItem(iter, na_GetTreeNodeItem(parentNode));
         }else{
           naResetTreeIterator(iter);
           nextIndex = NA_TREE_SEARCH_ABORT;
         }
       }else{
-        na_SetTreeIteratorCurItem(iter, na_GetTreeNodeChild(tree->config, (NATreeNode*)iter->item, nextIndex));
+        na_SetTreeIteratorCurItem(iter, na_GetTreeNodeChild((NATreeNode*)iter->item, nextIndex, tree->config));
       }
     }
   }

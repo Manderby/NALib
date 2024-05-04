@@ -33,7 +33,7 @@ NA_IDEF void naEmptyTree(NATree* tree){
     if(naIsTreeRootLeaf(tree)){
       na_DestructTreeLeaf(tree->config, (NATreeLeaf*)tree->root);
     }else{
-      na_DestructTreeNode(tree->config, (NATreeNode*)tree->root, NA_TRUE);
+      na_DestructTreeNode((NATreeNode*)tree->root, NA_TRUE, tree->config);
     }
   }
   tree->root = NA_NULL;
@@ -182,7 +182,7 @@ NA_IDEF NAPtr naGetRootNodeContent(NATree* tree)
       if(naIsTreeRootLeaf(tree))
         naError("Root of the tree is not a node");
     #endif
-    retdata = na_GetTreeNodeData(tree->config, (NATreeNode*)(tree->root));
+    retdata = na_GetTreeNodeData((NATreeNode*)(tree->root), tree->config);
   }else{
     retdata = naMakePtrNull();
   }
@@ -228,8 +228,8 @@ NA_HIDEF NABool na_IsTreeItemLeaf(const NATree* tree, NATreeItem* item){
     retValue = naIsTreeRootLeaf(tree);
   }else{
     NATreeNode* parent = na_GetTreeItemParent(item);
-    NAInt childIndex = na_GetTreeNodeChildIndex(tree->config, parent, item);
-    retValue = na_IsNodeChildLeaf(parent, childIndex);
+    NAInt childIndex = na_GetTreeNodeChildIndex(parent, item, tree->config);
+    retValue = na_GetNodeChildIsLeaf(parent, childIndex, tree->config);
   }
   return retValue;
 }

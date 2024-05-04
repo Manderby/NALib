@@ -101,135 +101,37 @@ NA_HIDEF void na_DecTreeItemIterCount(NATreeItem* item){
 // /////////////////////////////////////
 
 NA_HIDEF NATreeItem* na_GetTreeNodeItem(NATreeNode* node){
+  #if NA_DEBUG
+    if(!node)
+      naCrash("node is nullptr");
+  #endif
   return &(node->item);
 }
 
 
 
-NA_HIDEF void na_InitTreeNode(const NATreeConfiguration* config, NATreeNode* node, const void* key){
-  NAInt i;
-  na_InitTreeItem(na_GetTreeNodeItem(node));
-  node->flags = 0;
-
-  if(config->keyAssigner){
-    config->keyAssigner(na_GetTreeNodeKey(config, node), key);
-  }
-
-  for(i = 0; i < config->childPerNode; ++i){
-    na_SetTreeNodeChildEmpty(node, i);
-  }
-
-  if(config->nodeDataConstructor){
-    na_SetTreeNodeData(config, node, config->nodeDataConstructor(&key));
-  }else{
-    na_SetTreeNodeData(config, node, naMakePtrNull());
-  }
-}
-
-
-
-NA_HIDEF void na_ClearTreeNode(NATreeNode* node){
-  na_ClearTreeItem(na_GetTreeNodeItem(node));
-}
-
-
-
-NA_HIDEF void na_DestructNodeData(const NATreeConfiguration* config, NAPtr data){
-  if(config->nodeDataDestructor){
-    config->nodeDataDestructor(data);
-  }
-}
-
-
-
-NA_HIDEF void na_DestructTreeNode(const NATreeConfiguration* config, NATreeNode* node, NABool recursive){
+NA_HIDEF void* na_GetTreeNodeKey(NATreeNode* node, const NATreeConfiguration* config){
   #if NA_DEBUG
     if(!node)
-      naCrash("node shall not be Null");
-  #endif
-  
-  if(recursive){
-    NAInt i;
-    for(i = 0; i < config->childPerNode; ++i){
-      NATreeItem* child = na_GetTreeNodeChild(config, node, i);
-      if(child){
-        if(na_IsNodeChildLeaf(node, i)){
-          na_DestructTreeLeaf(config, (NATreeLeaf*)child);
-        }else{
-          na_DestructTreeNode(config, (NATreeNode*)child, NA_TRUE);
-        }
-      }
-    }
-  }
-
-  na_DestructNodeData(config, na_GetTreeNodeData(config, node));
-  na_ClearTreeNode(node);
-  config->nodeDestructor(node);
-}
-
-
-
-NA_HIDEF NABool na_IsNodeChildLeaf(NATreeNode* node, NAInt childIndex){
-  #if NA_DEBUG
-    if(!node)
-      naCrash("Node is Null Pointer.");
-  #endif
-  return (NABool)((node->flags >> childIndex) & 0x01);
-}
-
-
-
-NA_HIDEF void na_MarkNodeChildLeaf(NATreeNode* node, NAInt childIndex, NABool isleaf){
-  #if NA_DEBUG
-    if(!node)
-      naCrash("Node is Null Pointer.");
-  #endif
-  node->flags &= ~(1 << childIndex);
-  node->flags |= (NAInt)isleaf << childIndex;
-}
-
-
-
-NA_HIDEF void* na_GetTreeNodeKey(const NATreeConfiguration* config, NATreeNode* node){
-  #if NA_DEBUG
-    if(!node)
-      naCrash("Node is Null Pointer.");
+      naCrash("node is nullptr");
+    if(!config)
+      naCrash("config is nullptr");
+    if(config->nodeKeyOffset == NA_TREE_CONFIG_INVALID_OFFSET)
+      naError("config has an invalid node offset stored");
   #endif
   // We thank the power of pointer arithmetic!
-  return ((char*)node) + config->nodeKeyOffset; 
+  return ((NAByte*)node) + config->nodeKeyOffset; 
 }
 
 
 
-NA_HIDEF NAPtr na_GetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node){
+NA_HIDEF NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* node){
   #if NA_DEBUG
     if(!node)
-      naCrash("Node is Null Pointer.");
+      naCrash("node is nullptr");
   #endif
   // We thank the power of pointer arithmetic!
-  return *(NAPtr*)(((char*)node) + config->nodeUserDataOffset); 
-}
-
-
-
-NA_HIDEF void na_SetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node, NAPtr newData){
-  #if NA_DEBUG
-    if(!node)
-      naCrash("Node is Null Pointer.");
-  #endif
-  // We thank the power of pointer arithmetic!
-  *(NAPtr*)(((char*)node) + config->nodeUserDataOffset) = newData; 
-}
-
-
-
-NA_HIDEF NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* parent){
-  #if NA_DEBUG
-    if(!parent)
-      naCrash("Parent is Null Pointer.");
-  #endif
-  // We thank the power of pointer arithmetic!
-  return (NATreeItem**)(((char*)parent) + NA_TREE_NODE_CHILDS_OFFSET);
+  return (NATreeItem**)(((NAByte*)node) + NA_TREE_NODE_CHILDS_OFFSET);
   // Note that this computation has originally been done using an integer
   // stored in config. But as this is used so often and needs to be
   // available at all times, it simply had been defined that the storage for
@@ -238,62 +140,185 @@ NA_HIDEF NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* parent){
 
 
 
-NA_HIDEF NATreeItem* na_GetTreeNodeChild(const NATreeConfiguration* config, NATreeNode* parent, NAInt childIndex){
+NA_HIDEF NAPtr na_GetTreeNodeData(NATreeNode* node, const NATreeConfiguration* config){
   #if NA_DEBUG
-    if(childIndex < 0)
-      naError("childIndex must be >= 0");
+    if(!node)
+      naCrash("node is nullptr");
+    if(!config)
+      naCrash("config is nullptr");
+    if(config->nodeUserDataOffset == NA_TREE_CONFIG_INVALID_OFFSET)
+      naError("config has an invalid node offset stored");
+  #endif
+  // We thank the power of pointer arithmetic!
+  return *(NAPtr*)(((NAByte*)node) + config->nodeUserDataOffset); 
+}
+
+
+
+NA_HIDEF void na_SetTreeNodeData(NATreeNode* node, NAPtr data, const NATreeConfiguration* config){
+  #if NA_DEBUG
+    if(!node)
+      naCrash("node is nullptr");
+    if(!config)
+      naCrash("config is nullptr");
+    if(config->nodeUserDataOffset == NA_TREE_CONFIG_INVALID_OFFSET)
+      naError("config has an invalid node offset stored");
+  #endif
+  // We thank the power of pointer arithmetic!
+  *(NAPtr*)(((NAByte*)node) + config->nodeUserDataOffset) = data; 
+}
+
+
+
+NA_HIDEF NABool na_GetNodeChildIsLeaf(NATreeNode* node, NAInt childIndex, const NATreeConfiguration* config){
+  #if NA_DEBUG
+    if(!node)
+      naCrash("node is nullptr");
+    if(!config)
+      naCrash("config is nullptr");
     if(childIndex >= config->childPerNode)
-      naError("childIndex out of bounds");
+      naCrash("childIndex out of bounds");
+  #endif
+  return naGetFlagu32(node->flags, 1 << childIndex);
+}
+
+
+
+NA_HIDEF void na_SetNodeChildIsLeaf(NATreeNode* node, NAInt childIndex, NABool isleaf, const NATreeConfiguration* config){
+  #if NA_DEBUG
+    if(!node)
+      naCrash("node is nullptr");
+    if(!config)
+      naCrash("config is nullptr");
+    if(childIndex >= config->childPerNode)
+      naCrash("childIndex out of bounds");
+  #endif
+  naSetFlagu32(&node->flags, 1 << childIndex, isleaf);
+}
+
+
+
+NA_HIDEF NATreeItem* na_GetTreeNodeChild(NATreeNode* node, size_t childIndex, const NATreeConfiguration* config){
+  #if NA_DEBUG
+    if(!node)
+      naCrash("node is nullptr");
+    if(!config)
+      naCrash("config is nullptr");
+    if(childIndex >= config->childPerNode)
+      naCrash("childIndex out of bounds");
   #else
     NA_UNUSED(config);
   #endif
-  // We thank the power of pointer arithmetic!
-  return na_GetTreeNodeChildStorage(parent)[childIndex]; 
+  return na_GetTreeNodeChildStorage(node)[childIndex]; 
 }
 
 
 
-NA_HIDEF void na_SetTreeNodeChildEmpty(NATreeNode* parent, NAInt childIndex){
-  // We thank the power of pointer arithmetic!
-//  #if NA_DEBUG
-//    if(!(na_GetTreeNodeChildStorage(parent)[childIndex]))
-//      naError("Child was not existent before.");
-//  #endif
-  na_GetTreeNodeChildStorage(parent)[childIndex] = NA_NULL;
-}
-
-
-
-NA_HIDEF void na_SetTreeNodeChild(NATreeNode* parent, NATreeItem* child, NAInt childIndex, NABool isChildLeaf){
-  // We thank the power of pointer arithmetic!
-//  #if NA_DEBUG
-//    if((na_GetTreeNodeChildStorage(parent)[childIndex]))
-//      naError("Duplicate child assign.");
-//  #endif
-  na_SetTreeItemParent(child, parent);
-  na_MarkNodeChildLeaf(parent, childIndex, isChildLeaf);
-  na_GetTreeNodeChildStorage(parent)[childIndex] = child;
-}
-
-
-
-NA_HDEF NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, NATreeItem* child){
-  NAInt retValue;
-  NATreeItem** childs;
-
+NA_HIDEF void na_SetTreeNodeChild(NATreeNode* node, NATreeItem* child, NAInt childIndex, NABool isChildLeaf, const NATreeConfiguration* config){
   #if NA_DEBUG
+    if(!node)
+      naCrash("node is nullptr");
     if(!child)
-      naError("Child should not be Null");
+      naCrash("child is nullptr");
+    if(!config)
+      naCrash("config is nullptr");
+    if(childIndex >= config->childPerNode)
+      naCrash("childIndex out of bounds");
+  #endif
+  na_SetTreeItemParent(child, node);
+  na_SetNodeChildIsLeaf(node, childIndex, isChildLeaf, config);
+  na_GetTreeNodeChildStorage(node)[childIndex] = child;
+}
+
+
+
+NA_HIDEF void na_InitTreeNode(NATreeNode* node, const void* key, const NATreeConfiguration* config){
+  #if NA_DEBUG
+    if(!node)
+      naCrash("node is nullptr");
+    if(!config)
+      naCrash("config is nullptr");
   #endif
   
-  // We thank the power of pointer arithmetic!
-  childs = na_GetTreeNodeChildStorage(parent);
+  na_InitTreeItem(na_GetTreeNodeItem(node));
+  node->flags = 0;
+
+  if(config->keyAssigner){
+    config->keyAssigner(na_GetTreeNodeKey(node, config), key);
+  }
+
+  for(size_t i = 0; i < config->childPerNode; ++i){
+    na_GetTreeNodeChildStorage(node)[i] = NA_NULL;
+  }
+
+  if(config->nodeDataConstructor){
+    na_SetTreeNodeData(node, config->nodeDataConstructor(&key), config);
+  }else{
+    na_SetTreeNodeData(node, naMakePtrNull(), config);
+  }
+}
+
+
+
+NA_HIDEF void na_ClearTreeNode(NATreeNode* node){
+  #if NA_DEBUG
+    if(!node)
+      naCrash("node is nullptr");
+  #endif
+  na_ClearTreeItem(na_GetTreeNodeItem(node));
+}
+
+
+
+NA_HIDEF void na_DestructTreeNode(NATreeNode* node, NABool recursive, const NATreeConfiguration* config){
+  #if NA_DEBUG
+    if(!node)
+      naCrash("node is nullptr");
+    if(!config)
+      naCrash("config is nullptr");
+  #endif
+  
+  if(recursive){
+    for(size_t i = 0; i < config->childPerNode; ++i){
+      NATreeItem* child = na_GetTreeNodeChild(node, i, config);
+      if(child){
+        if(na_GetNodeChildIsLeaf(node, i, config)){
+          na_DestructTreeLeaf(config, (NATreeLeaf*)child);
+        }else{
+          na_DestructTreeNode((NATreeNode*)child, NA_TRUE, config);
+        }
+      }
+    }
+  }
+
+  if(config->nodeDataDestructor){
+    config->nodeDataDestructor(na_GetTreeNodeData(node, config));
+  }
+
+  config->nodeDestructor(node);
+}
+
+
+
+NA_HDEF size_t na_GetTreeNodeChildIndex(NATreeNode* node, NATreeItem* child, const NATreeConfiguration* config){
+  #if NA_DEBUG
+    if(!node)
+      naCrash("node is nullptr");
+    if(!config)
+      naCrash("config is nullptr");
+    if(!child)
+      naError("child should not be Null");
+  #endif
+
+  NATreeItem** childs = na_GetTreeNodeChildStorage(node);
   
   // We assume, the child MUST be a child of this parent. Therefore we only
   // search until childPerNode - 1 and just return the last possibility in
   // good belief.
+  size_t retValue;
   for(retValue = 0; retValue < config->childPerNode - 1; retValue++){
-    if(childs[retValue] == child){break;}
+    if(childs[retValue] == child)
+      break;
   }
   
   #if NA_DEBUG
@@ -364,21 +389,46 @@ NA_HIDEF NAPtr na_ConstructLeafData(const NATreeConfiguration* config, const voi
 
 
 NA_HIDEF void* na_GetTreeLeafKey(const NATreeConfiguration* config, NATreeLeaf* leaf){
-  return ((char*)leaf) + config->leafKeyOffset; 
+  #if NA_DEBUG
+    if(!config)
+      naCrash("config is nullptr");
+    if(!leaf)
+      naCrash("leaf is nullptr");
+    if(config->leafKeyOffset == NA_TREE_CONFIG_INVALID_OFFSET)
+      naError("config has an invalid leaf offset stored");
+  #endif
+  // We thank the power of pointer arithmetic!
+  return ((NAByte*)leaf) + config->leafKeyOffset; 
 }
 
 
 
 NA_HIDEF NAPtr na_GetTreeLeafData(const NATreeConfiguration* config, NATreeLeaf* leaf){
+  #if NA_DEBUG
+    if(!config)
+      naCrash("config is nullptr");
+    if(!leaf)
+      naCrash("leaf is nullptr");
+    if(config->leafUserDataOffset == NA_TREE_CONFIG_INVALID_OFFSET)
+      naError("config has an invalid leaf offset stored");
+  #endif
   // We thank the power of pointer arithmetic!
-  return *(NAPtr*)(((char*)leaf) + config->leafUserDataOffset); 
+  return *(NAPtr*)(((NAByte*)leaf) + config->leafUserDataOffset); 
 }
 
 
 
 NA_HIDEF void na_SetTreeLeafData(const NATreeConfiguration* config, NATreeLeaf* leaf, NAPtr newcontent){
+  #if NA_DEBUG
+    if(!config)
+      naCrash("config is nullptr");
+    if(!leaf)
+      naCrash("leaf is nullptr");
+    if(config->leafUserDataOffset == NA_TREE_CONFIG_INVALID_OFFSET)
+      naError("config has an invalid leaf offset stored");
+  #endif
   // We thank the power of pointer arithmetic!
-  *(NAPtr*)(((char*)leaf) + config->leafUserDataOffset) = newcontent; 
+  *(NAPtr*)(((NAByte*)leaf) + config->leafUserDataOffset) = newcontent; 
 }
 
 

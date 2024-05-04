@@ -99,8 +99,7 @@ typedef void  (*NATreeLeafDataDestructor) (NAPtr leafData);
 // This data pointer will then be available to other callback functions.
 //
 // The key parameter denotes the key of the node. If the tree does not use a
-// key, that parameter is Null. Note that the content parameter is here
-// just for information. You may or may not use it.
+// key, that parameter is Null.
 typedef NAPtr (*NATreeNodeDataConstructor)(const void* key);
 typedef void  (*NATreeNodeDataDestructor) (NAPtr nodeData);
 

@@ -20,11 +20,10 @@ NA_HIDEF void* na_GetBinLeafKey(NATreeBinLeaf* binleaf){
 
 NA_HIDEF void na_AddTreeNodeChildBin(NATree* tree, NATreeBinNode* parent, NATreeItem* child, NAInt childIndex, NABool isChildLeaf){
   NATreeNode* parentNode;
-  NA_UNUSED(tree);
   
   parent->childs[childIndex] = child;
   parentNode = na_GetBinNodeNode(parent);
-  na_MarkNodeChildLeaf(parentNode, childIndex, isChildLeaf);
+  na_SetNodeChildIsLeaf(parentNode, childIndex, isChildLeaf, tree->config);
   na_SetTreeItemParent(child, parentNode);
 }
 
@@ -32,7 +31,7 @@ NA_HIDEF void na_AddTreeNodeChildBin(NATree* tree, NATreeBinNode* parent, NATree
 
 NA_HDEF NATreeNode* na_NewTreeNodeBin(NATree* tree, const void* key, NATreeLeaf* leftleaf, NATreeLeaf* rightleaf){
   NATreeBinNode* binnode = naNew(NATreeBinNode);
-  na_InitTreeNode(tree->config, na_GetBinNodeNode(binnode), key);
+  na_InitTreeNode(na_GetBinNodeNode(binnode), key, tree->config);
 
   // Node-specific initialization
   na_AddTreeNodeChildBin(tree, binnode, na_GetTreeLeafItem(leftleaf),  0, NA_TRUE);
@@ -96,6 +95,7 @@ NA_HDEF NABool na_TestKeyLeafContainBinNAInt(NATreeLeaf* leaf, const void* key){
 
 
 NA_HDEF void na_DestructTreeNodeBin(NATreeNode* node){
+  na_ClearTreeNode(node);
   naDelete(node);
 }
 
@@ -123,7 +123,7 @@ NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode*
   // If we are at a node which stores the key itself, return this node.
   if(tree->config->keyEqualComparer(key, na_GetBinNodeKey(binnode))){return node;}
   // Otherwise, we set the limits dependent on the previous node.
-  if(na_GetTreeNodeChildIndex(tree->config, node, previtem) == 1){
+  if(na_GetTreeNodeChildIndex(node, previtem, tree->config) == 1){
     lowerLimit = na_GetBinNodeKey(binnode);
   }else{
     upperLimit = na_GetBinNodeKey(binnode);
@@ -154,15 +154,15 @@ NA_HDEF NATreeNode* na_RemoveLeafBin(NATree* tree, NATreeLeaf* leaf){
   NATreeNode* parent = na_GetTreeItemParent(na_GetTreeLeafItem(leaf));
   NATreeNode* grandparent = NA_NULL;
   if(!na_GetTreeItemIsRoot(na_GetTreeLeafItem(leaf))){
-    NAInt leafIndex = na_GetTreeNodeChildIndex(tree->config, parent, na_GetTreeLeafItem(leaf));
+    NAInt leafIndex = na_GetTreeNodeChildIndex(parent, na_GetTreeLeafItem(leaf), tree->config);
     NATreeItem* sibling = ((NATreeBinNode*)parent)->childs[1 - leafIndex];
-    NABool issiblingleaf = na_IsNodeChildLeaf(parent, 1 - leafIndex);
+    NABool issiblingleaf = na_GetNodeChildIsLeaf(parent, 1 - leafIndex, tree->config);
 
     grandparent = na_GetTreeItemParent(na_GetTreeNodeItem(parent));
     if(!na_GetTreeItemIsRoot(na_GetTreeNodeItem(parent))){
-      NAInt parentIndex = na_GetTreeNodeChildIndex(tree->config, grandparent, na_GetTreeNodeItem(parent));
+      NAInt parentIndex = na_GetTreeNodeChildIndex(grandparent, na_GetTreeNodeItem(parent), tree->config);
       ((NATreeBinNode*)grandparent)->childs[parentIndex] = sibling;
-      na_MarkNodeChildLeaf(grandparent, parentIndex, issiblingleaf);
+      na_SetNodeChildIsLeaf(grandparent, parentIndex, issiblingleaf, tree->config);
 
       if(tree->config->flags & NA_TREE_BALANCE_AVL){na_ShrinkAVL(tree, (NATreeBinNode*)grandparent, parentIndex);}
     }else{
@@ -171,7 +171,7 @@ NA_HDEF NATreeNode* na_RemoveLeafBin(NATree* tree, NATreeLeaf* leaf){
     }
     sibling->parent = grandparent;
 
-    na_DestructTreeNode(tree->config, parent, NA_FALSE);
+    na_DestructTreeNode(parent, NA_FALSE, tree->config);
   }else{
     tree->root = NA_NULL;
   }
@@ -253,8 +253,8 @@ NA_HDEF NATreeLeaf* na_InsertLeafBin(NATree* tree, NATreeItem* existingItem, con
     
     na_SetTreeItemParent(newParent, existingParent);
     if(!wasTreeItemRoot){
-      NAInt existingIndex = na_GetTreeNodeChildIndex(tree->config, existingParent, existingItem);
-      na_MarkNodeChildLeaf(existingParent, existingIndex, NA_FALSE);
+      NAInt existingIndex = na_GetTreeNodeChildIndex(existingParent, existingItem, tree->config);
+      na_SetNodeChildIsLeaf(existingParent, existingIndex, NA_FALSE, tree->config);
       ((NATreeBinNode*)existingParent)->childs[existingIndex] = newParent;
       if(tree->config->flags & NA_TREE_BALANCE_AVL){na_GrowAVL(tree, (NATreeBinNode*)existingParent, existingIndex);}
     }else{

@@ -14,18 +14,20 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(int32 flags){
     int nodeChildsOffset;
   #endif
 
+  // Create the configuration and set everything to zero.
   NATreeConfiguration* config = naAlloc(NATreeConfiguration);
   naZeron(config, sizeof(NATreeConfiguration));
-  config->flags = flags;
+  
   naInitRefCount(&(config->refCount));
+  config->flags = flags;
 
   #if NA_DEBUG
     // Just some security measures in case the programmer sees no purpose in
     // setting it.
-    config->leafKeyOffset        = -1;
-    config->nodeKeyOffset        = -1;
-    config->leafUserDataOffset   = -1;
-    config->nodeUserDataOffset   = -1;
+    config->leafKeyOffset        = NA_TREE_CONFIG_INVALID_OFFSET;
+    config->nodeKeyOffset        = NA_TREE_CONFIG_INVALID_OFFSET;
+    config->leafUserDataOffset   = NA_TREE_CONFIG_INVALID_OFFSET;
+    config->nodeUserDataOffset   = NA_TREE_CONFIG_INVALID_OFFSET;
   #endif
   
   if((flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_QUADTREE){
@@ -197,6 +199,10 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(int32 flags){
   #if NA_DEBUG
     if(nodeChildsOffset != NA_TREE_NODE_CHILDS_OFFSET)
       naError("The childs storage must come right after the node storage.");
+    if(config->childPerNode == 0)
+      naError("config has uninitialized childPerNode");
+    if(config->childPerNode > NA_TREE_NODE_MAX_CHILDS)
+      naError("childPerNode is too high");
   #endif
   
   return config;
