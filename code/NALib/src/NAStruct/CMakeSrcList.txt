@@ -69,7 +69,7 @@ set(coreTreeFiles
   ${NAStructDir}/Core/NATree/NATreeOct.h
   ${NAStructDir}/Core/NATree/NATreeQuad.c
   ${NAStructDir}/Core/NATree/NATreeQuad.h
-  ${NAStructDir}/Core/NATree/NATreeUtilitiesII.h
+  ${NAStructDir}/Core/NATree/NATreeUtilityII.h
 )
 
 source_group("NAStruct" FILES ${headerFiles})

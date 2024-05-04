@@ -3,10 +3,21 @@
 // Item
 // /////////////////////////////////////
 
+
+
+#if NA_DEBUG
+  NATreeNode na_invalidParentNode;
+#endif
+
+
+
 NA_HIDEF void na_InitTreeItem(NATreeItem* item){
   // We do not initialize the parent. Code must use na_SetTreeItemParent.
   #if NA_DEBUG
+    if(!item)
+      naCrash("item is nullptr");
     item->iterCount = 0;
+    item->parent = &na_invalidParentNode;
   #else
     NA_UNUSED(item);
   #endif
@@ -16,6 +27,8 @@ NA_HIDEF void na_InitTreeItem(NATreeItem* item){
 
 NA_HIDEF void na_ClearTreeItem(NATreeItem* item){
   #if NA_DEBUG
+    if(!item)
+      naCrash("item is nullptr");
     if(item->iterCount)
       naError("There are still iterators running on this item. Did you forget a call to naClearTreeIterator?");
   #else
@@ -26,19 +39,59 @@ NA_HIDEF void na_ClearTreeItem(NATreeItem* item){
 
 
 NA_HIDEF NATreeNode* na_GetTreeItemParent(const NATreeItem* item){
+  #if NA_DEBUG
+    if(!item)
+      naCrash("item is nullptr");
+    if(item->parent == &na_invalidParentNode)
+      naError("Item has an invalid parent.");
+  #endif
   return item->parent;
 }
 
 
 
 NA_HIDEF void na_SetTreeItemParent(NATreeItem* item, NATreeNode* parent){
+  #if NA_DEBUG
+    if(!item)
+      naCrash("item is nullptr");
+  #endif
   item->parent = parent;
 }
 
 
 
-NA_HIDEF NABool na_IsTreeItemRoot(const NATreeItem* item){
+NA_HIDEF NABool na_GetTreeItemIsRoot(const NATreeItem* item){
+  #if NA_DEBUG
+    if(!item)
+      naCrash("item is nullptr");
+  #endif
   return (na_GetTreeItemParent(item) == NA_NULL);
+}
+
+
+
+NA_HIDEF size_t na_GetTreeItemIterCount(const NATreeItem* item){
+  #if NA_DEBUG
+    if(!item)
+      naCrash("item is nullptr");
+  #endif
+  return item->iterCount;
+}
+NA_HIDEF void na_IncTreeItemIterCount(NATreeItem* item){
+  #if NA_DEBUG
+    if(!item)
+      naCrash("item is nullptr");
+  #endif
+  item->iterCount++;
+}
+NA_HIDEF void na_DecTreeItemIterCount(NATreeItem* item){
+  #if NA_DEBUG
+    if(!item)
+      naCrash("item is nullptr");
+    if(item->iterCount == 0)
+      naError("Too many iterator decrements");
+  #endif
+  item->iterCount--;
 }
 
 

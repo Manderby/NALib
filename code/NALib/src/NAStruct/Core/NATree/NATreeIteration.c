@@ -69,7 +69,7 @@ NA_HDEF void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* inf
   item = iter->item;
   na_SetTreeIteratorCurItem(iter, NA_NULL);
 
-  while(!na_IsTreeItemRoot(item)){
+  while(!na_GetTreeItemIsRoot(item)){
     NATreeNode* parent = na_GetTreeItemParent(item);
     NAInt nextIndex = na_GetTreeNodeChildIndex(tree->config, parent, item) + info->step;
 
@@ -195,7 +195,7 @@ NA_HDEF NABool na_LocateTreeKey(NATreeIterator* iter, const void* key, NABool us
   // If bubbling is requested, search for the topmost node which potentially
   // contains the given key. But make sure, the iterator is at a leaf and
   // not at the root.
-  if(usebubble && !naIsTreeAtInitial(iter) && !na_IsTreeItemRoot(iter->item)){
+  if(usebubble && !naIsTreeAtInitial(iter) && !na_GetTreeItemIsRoot(iter->item)){
     node = tree->config->bubbleLocator(tree, iter->item, key);
   }
 

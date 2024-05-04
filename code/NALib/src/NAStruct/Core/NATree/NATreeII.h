@@ -140,7 +140,7 @@ struct NATreeConfiguration{
 struct NATreeItem{
   NATreeNode* parent;
   #if NA_DEBUG
-    NAInt iterCount;
+    size_t iterCount;
   #endif
 };
 
@@ -164,7 +164,7 @@ struct NATreeIterator{
 struct NATree{
   NATreeConfiguration* config;
   NATreeItem* root;
-  NAInt flags;
+  int32 flags;
   #if NA_DEBUG
     NAInt iterCount;
   #endif
@@ -194,7 +194,10 @@ NA_HIAPI void na_InitTreeItem(NATreeItem* item);
 NA_HIAPI void na_ClearTreeItem(NATreeItem* item);
 NA_HIAPI NATreeNode* na_GetTreeItemParent(const NATreeItem* item);
 NA_HIAPI void na_SetTreeItemParent(NATreeItem* item, NATreeNode* parent);
-NA_HIAPI NABool na_IsTreeItemRoot(const NATreeItem* item);
+NA_HIAPI NABool na_GetTreeItemIsRoot(const NATreeItem* item);
+NA_HIAPI size_t na_GetTreeItemIterCount(const NATreeItem* item);
+NA_HIAPI void na_IncTreeItemIterCount(NATreeItem* item);
+NA_HIAPI void na_DecTreeItemIterCount(NATreeItem* item);
 
 // Node
 NA_HIAPI NATreeItem* na_GetTreeNodeItem(NATreeNode* node);
@@ -235,7 +238,7 @@ NA_HAPI  NABool na_IterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo
 NA_HAPI  NABool na_LocateTreeKey(NATreeIterator* iter, const void* key, NABool usebubble);
 NA_HAPI  NABool na_AddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
 
-// Utilities
+// Utility
 NA_HIAPI void na_SetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf);
 NA_HIAPI void na_ClearTreeRoot(NATree* tree);
 NA_HIAPI void na_MarkTreeRootLeaf(NATree* tree, NABool isleaf);
@@ -248,7 +251,7 @@ NA_HAPI  NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node);
 #include "NATreeConfigurationII.h"
 #include "NATreeItemII.h"
 #include "NATreeIterationII.h"
-#include "NATreeUtilitiesII.h"
+#include "NATreeUtilityII.h"
 
 
 

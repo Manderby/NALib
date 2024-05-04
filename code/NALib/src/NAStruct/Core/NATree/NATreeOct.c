@@ -215,7 +215,7 @@ NA_HDEF NATreeNode* na_LocateBubbleOctWithLimits(const NATree* tree, NATreeNode*
   }
   // Otherwise, go up if possible.
   item = na_GetTreeNodeItem(node);
-  if(!na_IsTreeItemRoot(item)){
+  if(!na_GetTreeItemIsRoot(item)){
     return na_LocateBubbleOctWithLimits(tree, na_GetTreeItemParent(item), origin, lowerLimit, upperLimit, item);
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
@@ -234,7 +234,7 @@ NA_HDEF NATreeNode* na_LocateBubbleOct(const NATree* tree, NATreeItem* item, con
 NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
   NATreeItem* leafItem = na_GetTreeLeafItem(leaf);
   NATreeNode* parent = na_GetTreeItemParent(leafItem);
-  if(na_IsTreeItemRoot(leafItem)){
+  if(na_GetTreeItemIsRoot(leafItem)){
     #if NA_DEBUG
       if(tree->config->flags & NA_TREE_ROOT_NO_LEAF)
         naError("Internal error: Tree root seems to be a leaf wheres there should be no leafes at the root");
@@ -280,7 +280,7 @@ NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
           // The siblingCount being zero can only happen if this parent is the
           // root, having no more leafes. Completely delete it and break.
           #if NA_DEBUG
-            if(!na_IsTreeItemRoot(na_GetTreeNodeItem(parent)))
+            if(!na_GetTreeItemIsRoot(na_GetTreeNodeItem(parent)))
               naError("This should be the root");
           #endif
           na_ClearTreeRoot(tree);
@@ -295,7 +295,7 @@ NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
       }else if(siblingCount == 1){
         // Only 1 sibling left.
         if(tree->config->flags & NA_TREE_ROOT_NO_LEAF){
-          if(na_IsTreeItemRoot(na_GetTreeNodeItem(parent))){
+          if(na_GetTreeItemIsRoot(na_GetTreeNodeItem(parent))){
             // If this is the root, we need to leave this node as it is, as it
             // is desired that the root always is a node.
             break;

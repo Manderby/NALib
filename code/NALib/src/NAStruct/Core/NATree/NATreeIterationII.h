@@ -77,14 +77,14 @@ NA_HIDEF void na_SetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newite
     if(!naIsTreeAtInitial(iter)){
       if(!iter->item)
         naCrash("No item stored in the current iterator");
-      if(iter->item->iterCount == 0)
+      if(na_GetTreeItemIterCount(iter->item) == 0)
         naError("The current item has zero iterators already");
-      iter->item->iterCount--;
+      na_DecTreeItemIterCount(iter->item);
     }
   #endif
   iter->item = newitem;
   #if NA_DEBUG
-    if(!naIsTreeAtInitial(iter)){iter->item->iterCount++;}
+    if(!naIsTreeAtInitial(iter)){na_IncTreeItemIterCount(iter->item);}
   #endif
 }
 
@@ -180,7 +180,7 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
   tree = na_GetTreeIteratorTreeConst(iter);
   item = iter->item;
   continueBubbling = NA_TRUE;
-  while(continueBubbling && !na_IsTreeItemRoot(item)){
+  while(continueBubbling && !na_GetTreeItemIsRoot(item)){
     NATreeNode* parent = na_GetTreeItemParent(item);
     NAInt childIndex = na_GetTreeNodeChildIndex(tree->config, parent, item);
     continueBubbling = nodeTokenCallback(token, na_GetTreeNodeData(tree->config, parent), childIndex);
@@ -430,7 +430,7 @@ NA_IDEF void naUpdateTreeLeaf(NATreeIterator* iter){
   #endif
   tree = na_GetTreeIteratorTreeMutable(iter);
   parent = na_GetTreeItemParent(iter->item);
-  if(!na_IsTreeItemRoot(iter->item)){
+  if(!na_GetTreeItemIsRoot(iter->item)){
     na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(tree->config, parent, iter->item));
   }
 }

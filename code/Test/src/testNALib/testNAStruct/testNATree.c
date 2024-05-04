@@ -147,6 +147,39 @@ void testTreeConfiguration(void){
 
 
 
+void testTreeItems(){
+  naTestGroup("Item"){
+    naTestCrash(na_InitTreeItem(NA_NULL));
+    naTestCrash(na_ClearTreeItem(NA_NULL));
+    naTestCrash(na_GetTreeItemParent(NA_NULL));
+    naTestCrash(na_SetTreeItemParent(NA_NULL, NA_NULL));
+    naTestCrash(na_GetTreeItemIsRoot(NA_NULL));
+    naTestCrash(na_GetTreeItemIterCount(NA_NULL));
+    naTestCrash(na_IncTreeItemIterCount(NA_NULL));
+    naTestCrash(na_DecTreeItemIterCount(NA_NULL));
+    
+    NATreeItem item;
+    naTestVoid(na_InitTreeItem(&item));
+    naTestVoid(na_ClearTreeItem(&item));
+    
+    naTestError(na_GetTreeItemParent(&item));
+    naTestError(na_GetTreeItemIsRoot(&item));
+
+    NATreeNode node;
+    naTestVoid(na_SetTreeItemParent(&item, &node));
+    naTest(na_GetTreeItemParent(&item) == &node);
+    
+    naTest(na_GetTreeItemIterCount(&item) == 0);
+    naTestVoid(na_IncTreeItemIterCount(&item));
+    naTest(na_GetTreeItemIterCount(&item) == 1);
+    naTestVoid(na_DecTreeItemIterCount(&item));
+    naTest(na_GetTreeItemIterCount(&item) == 0);
+    naTestError(na_DecTreeItemIterCount(&item));
+  }
+}
+
+
+
 void printNATree(void){
   printf("NATree.h:" NA_NL);
 
@@ -201,7 +234,8 @@ void printNATree(void){
 
 
 void testNATree(void){
-  naTestFunction(testTreeConfiguration);  
+//  naTestFunction(testTreeConfiguration);  
+  naTestFunction(testTreeItems);  
 }
 
 

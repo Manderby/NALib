@@ -134,7 +134,7 @@ NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode*
   }
   // Otherwise, go up if possible.
   item = na_GetTreeNodeItem(node);
-  if(!na_IsTreeItemRoot(item)){
+  if(!na_GetTreeItemIsRoot(item)){
     return na_LocateBubbleBinWithLimits(tree, na_GetTreeItemParent(item), key, lowerLimit, upperLimit, item);
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
@@ -153,13 +153,13 @@ NA_HDEF NATreeNode* na_LocateBubbleBin(const NATree* tree, NATreeItem* item, con
 NA_HDEF NATreeNode* na_RemoveLeafBin(NATree* tree, NATreeLeaf* leaf){
   NATreeNode* parent = na_GetTreeItemParent(na_GetTreeLeafItem(leaf));
   NATreeNode* grandparent = NA_NULL;
-  if(!na_IsTreeItemRoot(na_GetTreeLeafItem(leaf))){
+  if(!na_GetTreeItemIsRoot(na_GetTreeLeafItem(leaf))){
     NAInt leafIndex = na_GetTreeNodeChildIndex(tree->config, parent, na_GetTreeLeafItem(leaf));
     NATreeItem* sibling = ((NATreeBinNode*)parent)->childs[1 - leafIndex];
     NABool issiblingleaf = na_IsNodeChildLeaf(parent, 1 - leafIndex);
 
     grandparent = na_GetTreeItemParent(na_GetTreeNodeItem(parent));
-    if(!na_IsTreeItemRoot(na_GetTreeNodeItem(parent))){
+    if(!na_GetTreeItemIsRoot(na_GetTreeNodeItem(parent))){
       NAInt parentIndex = na_GetTreeNodeChildIndex(tree->config, grandparent, na_GetTreeNodeItem(parent));
       ((NATreeBinNode*)grandparent)->childs[parentIndex] = sibling;
       na_MarkNodeChildLeaf(grandparent, parentIndex, issiblingleaf);
@@ -248,7 +248,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafBin(NATree* tree, NATreeItem* existingItem, con
     }
 
     existingParent = na_GetTreeItemParent(existingItem);
-    wasTreeItemRoot = na_IsTreeItemRoot(existingItem);
+    wasTreeItemRoot = na_GetTreeItemIsRoot(existingItem);
     newParent = na_GetTreeNodeItem(na_NewTreeNodeBin(tree, na_GetBinLeafKey(((NATreeBinLeaf*)right)), left, right));
     
     na_SetTreeItemParent(newParent, existingParent);

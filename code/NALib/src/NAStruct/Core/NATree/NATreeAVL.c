@@ -32,7 +32,7 @@ NA_HIDEF void na_RotateLeftBin(NATree* tree, NATreeBinNode* parent, NATreeBinNod
       naError("given right child is not a node");
   #endif
   grandparent = na_GetTreeItemParent(na_GetBinNodeItem(parent));
-  if(!na_IsTreeItemRoot(na_GetBinNodeItem(parent))){
+  if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(parent))){
     NAInt parentIndex = na_GetTreeNodeChildIndex(tree->config, grandparent, na_GetBinNodeItem(parent));
     ((NATreeBinNode*)grandparent)->childs[parentIndex] = na_GetBinNodeItem(rightchild);
   }else{
@@ -62,7 +62,7 @@ NA_HIDEF void na_RotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBi
       naError("given parent is not a node");
   #endif
   grandparent = na_GetTreeItemParent(na_GetBinNodeItem(parent));
-  if(!na_IsTreeItemRoot(na_GetBinNodeItem(parent))){
+  if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(parent))){
     NAInt parentIndex = na_GetTreeNodeChildIndex(tree->config, grandparent, na_GetBinNodeItem(parent));
     ((NATreeBinNode*)grandparent)->childs[parentIndex] = na_GetBinNodeItem(leftchild);
   }else{
@@ -84,7 +84,7 @@ NA_HIDEF void na_RotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBi
 
 
 NA_HIDEF void na_PropagateAVLGrow(NATree* tree, NATreeBinNode* binnode){
-  if(!na_IsTreeItemRoot(na_GetBinNodeItem(binnode))){
+  if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(binnode))){
     NATreeNode* parent = na_GetTreeItemParent(na_GetBinNodeItem(binnode));
     na_GrowAVL(tree, (NATreeBinNode*)parent, na_GetTreeNodeChildIndex(tree->config, parent, na_GetBinNodeItem(binnode)));
   }
@@ -93,7 +93,7 @@ NA_HIDEF void na_PropagateAVLGrow(NATree* tree, NATreeBinNode* binnode){
 
 
 NA_HIDEF void na_PropagateAVLShrink(NATree* tree, NATreeBinNode* binnode){
-  if(!na_IsTreeItemRoot(na_GetBinNodeItem(binnode))){
+  if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(binnode))){
     NATreeNode* parent = na_GetTreeItemParent(na_GetBinNodeItem(binnode));
     na_ShrinkAVL(tree, (NATreeBinNode*)parent, na_GetTreeNodeChildIndex(tree->config, parent, na_GetBinNodeItem(binnode)));
   }
