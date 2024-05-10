@@ -89,8 +89,9 @@ typedef enum{
   NA_LANG_DEU = 0x646575,  // German
   NA_LANG_ENG = 0x656e67,  // English
   NA_LANG_FRA = 0x667261,  // French
+  NA_LANG_GSW = 0x677377,  // Swiss German
   NA_LANG_JPN = 0x6a706e,  // Japanese
-  NA_LANG_GSW = 0x677377   // Swiss German
+  NA_LANG_SPA = 0x737061,  // Spanish
 } NALanguageCode3;
 
 // These codes denote the standardized ISO 639-1 codes. They should not be
@@ -99,6 +100,7 @@ typedef enum{
 typedef enum{
   NA_LANG_DE = 0x6465,  // German hallo
   NA_LANG_EN = 0x656e,  // English
+  NA_LANG_ES = 0x6573,  // Spanish
   NA_LANG_FR = 0x6672,  // French
   NA_LANG_JA = 0x6a61   // Japanese
 } NALanguageCode1;
