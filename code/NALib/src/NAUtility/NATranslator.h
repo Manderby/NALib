@@ -86,6 +86,7 @@ typedef struct NATranslator NATranslator;
 
 // These codes denote the standardized ISO 639-3 codes.
 typedef enum{
+  NA_LANG_CHN = 0x63686e,  // Chinese
   NA_LANG_DEU = 0x646575,  // German
   NA_LANG_ENG = 0x656e67,  // English
   NA_LANG_FRA = 0x667261,  // French
@@ -98,7 +99,8 @@ typedef enum{
 // used, please use the 3 variant whenever possible or use the conversion
 // function naConvertLanguageCode1To3
 typedef enum{
-  NA_LANG_DE = 0x6465,  // German hallo
+  NA_LANG_CN = 0x636e,  // Chinese
+  NA_LANG_DE = 0x6465,  // German
   NA_LANG_EN = 0x656e,  // English
   NA_LANG_ES = 0x6573,  // Spanish
   NA_LANG_FR = 0x6672,  // French
