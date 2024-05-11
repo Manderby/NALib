@@ -41,8 +41,6 @@
 #include "UI/NAUICocoaInterfaces.h"
 #include "UI/NAApplicationII.h"
 
-NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace);
-
 #include "UI/NAButtonII.h"
 #include "UI/NACheckBoxII.h"
 #include "UI/NAImageSpaceII.h"
