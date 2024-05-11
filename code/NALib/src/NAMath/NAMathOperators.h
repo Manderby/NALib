@@ -248,9 +248,34 @@ NA_IAPI void          naCartesianToPolarf(float*  rtheta, const float*  xy);
 
 
 
+// The evaluation functions will get the arbitrary object as const void* which
+// was given to the naIntegrate function as the first parameter and as the
+// second parameter, the coordinate at which to evaluate.
 typedef float (*IntegrateFuncf)(const void*, float);
 typedef double (*IntegrateFuncd)(const void*, double);
 
+// These are standardized summation methods of values inside an array. While
+// the simple sum is just a simple for loop, it might result in numerical
+// errors. The naSum method is preferred as a very fast, very accurate method.
+NA_API float naSimpleSumf(size_t sampleCount, const float* array);
+NA_API float naKahanSumf(size_t sampleCount, const float* array);
+NA_API float naKahanBabushkaNeumaierSumf(size_t sampleCount, const float* array);
+NA_API float naKahanBabushkaKleinSumf(size_t sampleCount, const float* array);
+NA_API float naSumf(size_t sampleCount, const float* array);
+
+NA_API double naSimpleSum(size_t sampleCount, const double* array);
+NA_API double naKahanSum(size_t sampleCount, const double* array);
+NA_API double naKahanBabushkaNeumaierSum(size_t sampleCount, const double* array);
+NA_API double naKahanBabushkaKleinSum(size_t sampleCount, const double* array);
+NA_API double naSum(size_t sampleCount, const double* array);
+NA_API double naSum2(size_t sampleCount, const double* array);
+
+// Use the following integration methods to automatically call an evaluation
+// function with the given user object data in a defined range from min to max
+// with a defined number of samples.
+// This function will not normalize the result but is a simple sum of all
+// evaluated values instead. If you really need a proper integration, multiply
+// the result by the according weight.
 NA_API float naIntegratef(
   size_t sampleCount,
   IntegrateFuncf eval,
@@ -258,7 +283,7 @@ NA_API float naIntegratef(
   float min,
   float max);
 
-NA_API double naIntegrated(
+NA_API double naIntegrate(
   size_t sampleCount,
   IntegrateFuncd eval,
   const void* obj,

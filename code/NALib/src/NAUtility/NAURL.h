@@ -49,7 +49,7 @@ NA_API NAString* naNewStringWithURLFilename(NAURL* url);
 
 
 // Inline implementations are in a separate file:
-#include "Core/NAURLII.h"
+#include "NAURL/NAURLII.h"
 
 
 

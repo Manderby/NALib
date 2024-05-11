@@ -19,13 +19,17 @@
 // Prototypes
 void printNABase(void);
 void printNACore(void);
+void printNAUtility(void);
 void printNAStruct(void);
 
 void testNABase(void);
+void testNAMath(void);
 void testNACore(void);
+void testNAUtility(void);
 void testNAStruct(void);
 
 void benchmarkNABase(void);
+void benchmarkNAMath(void);
 void benchmarkNAStruct(void);
 
 
@@ -33,19 +37,23 @@ void benchmarkNAStruct(void);
 void printNALib(void){
   printNABase();
   printNACore();
+  printNAUtility();
   printNAStruct();
 }
 
 void testNALib(void){
-  naTestFunction(testNABase);
-  naTestFunction(testNACore);
-  naTestFunction(testNAStruct);
+  //naTestFunction(testNABase);
+  naTestFunction(testNAMath);
+  //naTestFunction(testNACore);
+  //naTestFunction(testNAUtility);
+  //naTestFunction(testNAStruct);
 }
 
 void benchmarkNALib(void){
   printf(NA_NL "Benchmarking:" NA_NL);
-  benchmarkNABase();
-  benchmarkNAStruct();
+  //benchmarkNABase();
+  benchmarkNAMath();
+  //benchmarkNAStruct();
 }
 
 int main(int argc, const char** argv){
@@ -77,8 +85,9 @@ int main(int argc, const char** argv){
 
   if(testStartSuccessful){
     testNALib();
-    //    naPrintUntested();
-    //    benchmarkNALib();
+    //naPrintUntested();
+    naSetTimePerBenchmark(1);
+    benchmarkNALib();
   }else{
     printf("Could not start Testing.");
   }

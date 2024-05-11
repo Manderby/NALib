@@ -8,7 +8,10 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+- Adding PubSub implementation NANotifier
+
 - Changeing main branch name to main instead of master.
+- Adding leap second information based on bulletin C 66 & 67
 
 Version 27 (released 25. October 2023)
 ==========

@@ -21,6 +21,7 @@
 // list. See below for a detailed explanation of the iteration functions.
 
 
+#include <stdlib.h>
 #include "../NABase/NABase.h"
 
 

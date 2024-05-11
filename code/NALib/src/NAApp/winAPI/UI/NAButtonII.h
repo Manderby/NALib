@@ -678,7 +678,7 @@ NA_DEF NABool naIsButtonTextual(const NAButton* button){
 
 
 
-NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller){
+NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionCallback callback, void* controller){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(winapiButton), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | BS_DEFPUSHBUTTON;
@@ -687,24 +687,24 @@ NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void*
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
     naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
-    handler,
+    callback,
     controller);
   // Windows can not distinguish between ENTER and NUMPAD_ENTER. So we do not
   // install another keystroke listener.
   //naAddUIKeyboardShortcut(
   //  naGetUIElementWindow(button),
   //  naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_NUMPAD_ENTER),
-  //  handler,
+  //  callback,
   //  controller);
 }
 
 
 
-NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller){
+NA_DEF void naSetButtonAbort(NAButton* button, NAReactionCallback callback, void* controller){
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
     naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
-    handler,
+    callback,
     controller);
 }
 

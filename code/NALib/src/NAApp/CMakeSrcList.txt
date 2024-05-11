@@ -32,6 +32,8 @@ set(headerFiles
 
 set(coreFiles
   ${NAAppDir}/Core/NAAppCore.h
+  ${NAAppDir}/Core/NAPreferences.c
+  ${NAAppDir}/Core/NAPreferencesII.h
   ${NAAppDir}/Core/NAUIImage.c
   ${NAAppDir}/Core/NAUIImageII.h
 )
@@ -62,7 +64,7 @@ set(coreUIFiles
 
 set(macOSFiles
   ${NAAppDir}/macOS/NACocoa.m
-  ${NAAppDir}/macOS/NAPreferencesCocoaII.h
+  ${NAAppDir}/macOS/NAPreferencesCocoa.m
   ${NAAppDir}/macOS/NAUIImageCocoaII.h
 )
 
@@ -90,7 +92,7 @@ set(macOSUIFiles
 )
 
 set(winAPIFiles
-  ${NAAppDir}/winAPI/NAPreferencesWINAPIII.h
+  ${NAAppDir}/winAPI/NAPreferencesWINAPI.c
   ${NAAppDir}/winAPI/NAUIImageWINAPIII.h
   ${NAAppDir}/winAPI/NAUIWINAPI.c
 )

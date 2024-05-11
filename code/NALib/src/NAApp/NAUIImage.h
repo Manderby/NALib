@@ -13,7 +13,7 @@
 
 #include "../NAVisual/NABabyImage.h"
 
-// These are the default resolutions given in points/meter.
+// These are the default resolutions given in rasterpositions/meter.
 #define NA_UIIMAGE_RESOLUTION_SCREEN_1x 3779.52755905511811   // 96 ppi
 #define NA_UIIMAGE_RESOLUTION_SCREEN_2x 7559.05511811023622   // 192 ppi
 
@@ -25,9 +25,11 @@ typedef enum{
 } NAUIImageInteraction;
 
 typedef enum{
-  NA_UIIMAGE_SKIN_PLAIN,
-  NA_UIIMAGE_SKIN_LIGHT,
-  NA_UIIMAGE_SKIN_DARK,
+  NA_UIIMAGE_SKIN_PLAIN,  // leave the image untouched
+  NA_UIIMAGE_SKIN_LIGHT,  // choose a representation for a light display
+  NA_UIIMAGE_SKIN_DARK,   // choose a representation for a dark display
+  NA_UIIMAGE_SKIN_SYSTEM, // choose a representation for a light or dark
+                          // display dependent on the current system settings.
 } NAUIImageSkin;
 
 typedef struct NAUIImage NAUIImage;
@@ -80,7 +82,8 @@ NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
 // Never returns PLAIN.
 NA_API NAUIImageSkin naGetSkinForCurrentAppearance(void);
 
-// Returns the default foreground color for the given skin.
+// Returns the default foreground color for the given skin. The skin PLAIN is
+// not allowed but will return the color for the LIGHT skin instead.
 NA_API void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 NA_API void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 NA_API void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin skin);

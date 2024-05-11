@@ -38,6 +38,14 @@ set(testNACoreFiles
   src/testNALib/testNACore/testNAValueHelper.c
 )
 
+set(testNAMathFiles
+  src/testNALib/testNAMath/testNAMath.c
+)
+
+set(testNAUtilityFiles
+  src/testNALib/testNAUtility/testNANotifier.c
+)
+
 set(testNAStructFiles
   src/testNALib/testNAStruct/testNABuffer.c
   src/testNALib/testNAStruct/testNAStack.c
@@ -46,6 +54,7 @@ set(testNAStructFiles
 set(testNALibFiles
   src/testNALib/testNABase.c
   src/testNALib/testNACore.c
+  src/testNALib/testNAUtility.c
   src/testNALib/testNAStruct.c
 )
 
@@ -60,6 +69,12 @@ target_sources(${TARGET_NAME} PRIVATE ${testNABaseFiles})
 
 source_group("src/testNALib/testNACore" FILES ${testNACoreFiles})
 target_sources(${TARGET_NAME} PRIVATE ${testNACoreFiles})
+
+source_group("src/testNALib/testNAMath" FILES ${testNAMathFiles})
+target_sources(${TARGET_NAME} PRIVATE ${testNAMathFiles})
+
+source_group("src/testNALib/testNAUtility" FILES ${testNAUtilityFiles})
+target_sources(${TARGET_NAME} PRIVATE ${testNAUtilityFiles})
 
 source_group("src/testNALib/testNAStruct" FILES ${testNAStructFiles})
 target_sources(${TARGET_NAME} PRIVATE ${testNAStructFiles})
