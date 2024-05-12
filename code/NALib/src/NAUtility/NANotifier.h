@@ -82,6 +82,10 @@ NA_API void* naSubscribe(
 // You can send Null as a subscription which does nothing.
 NA_API void naUnsubscribe(
   void* subscription);
+// Unsubscribes all subscriptions of the given receiver.
+// You can send Null as a receyver which does nothing.
+NA_API void naUnsubscribeAllOfReceyver(
+  void* reciever);
 
 // Sends a message which will be distributed to all listeners next time the
 // notifier is run.

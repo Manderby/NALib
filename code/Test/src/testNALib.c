@@ -43,16 +43,16 @@ void printNALib(void){
 
 void testNALib(void){
   //naTestFunction(testNABase);
-  naTestFunction(testNAMath);
+  //naTestFunction(testNAMath);
   //naTestFunction(testNACore);
-  //naTestFunction(testNAUtility);
+  naTestFunction(testNAUtility);
   //naTestFunction(testNAStruct);
 }
 
 void benchmarkNALib(void){
   printf(NA_NL "Benchmarking:" NA_NL);
   //benchmarkNABase();
-  benchmarkNAMath();
+  //benchmarkNAMath();
   //benchmarkNAStruct();
 }
 
@@ -76,7 +76,7 @@ int main(int argc, const char** argv){
     argv);
 
   // Only output tests which fail.
-  naSetTestPrintsAllTests(NA_FALSE);
+  naSetTestPrintsAllTests(NA_TRUE);
 
   #if NA_DEBUG == 0
     naExecuteErrorTests(NA_FALSE);
@@ -86,8 +86,8 @@ int main(int argc, const char** argv){
   if(testStartSuccessful){
     testNALib();
     //naPrintUntested();
-    naSetTimePerBenchmark(1);
-    benchmarkNALib();
+    //naSetTimePerBenchmark(1);
+    //benchmarkNALib();
   }else{
     printf("Could not start Testing.");
   }

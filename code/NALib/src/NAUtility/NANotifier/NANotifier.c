@@ -294,6 +294,7 @@ NA_DEF void naUnsubscribe(
         if(sub == subscription){
           naRemoveListCurMutable(&it, NA_FALSE);
           naDelete(sub);
+          found = NA_TRUE;
           break;
         }
       }
@@ -301,6 +302,33 @@ NA_DEF void naUnsubscribe(
       if(found) break;
     }
     if(found) break;
+  }
+}
+
+
+
+NA_DEF void naUnsubscribeAllOfReceyver(
+  void* reciever)
+{
+  #if NA_DEBUG
+    if (!na_notifier)
+      naCrash("No current notifier present.");
+  #endif
+  if (!reciever) return;
+
+  for(size_t t = 1; t < na_notifier->nextTopicId; ++t){
+    for(size_t s = 0; s < na_notifier->topics[t]->signalCount; ++s){
+      NA_Signal* signal = &na_notifier->topics[t]->signals[s];
+      NAListIterator it = naMakeListModifier(&signal->subscriptions);
+      while(naIterateList(&it)){
+        NA_Subscription* sub = naGetListCurMutable(&it);
+        if(sub->reciever == reciever){
+          naRemoveListCurMutable(&it, NA_FALSE);
+          naDelete(sub);
+        }
+      }
+      naClearListIterator(&it);
+    }
   }
 }
 
