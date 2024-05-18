@@ -447,11 +447,6 @@ NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, const NAUIImage* ic
 
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
 
-  NAUIImage* secondaryIcon = NA_NULL;
-  if(!icon2){
-    secondaryIcon = naRecreateUIImage(icon);
-  }
-
   winapiButton->rect = naMakeRectS(0., 0., width, 24.);
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
@@ -471,6 +466,11 @@ NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, const NAUIImage* ic
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+
+  NAUIImage* secondaryIcon = NA_NULL;
+  if(!icon2){
+    secondaryIcon = naRecreateUIImage(icon);
+  }
 
   na_InitButton(
     (NAButton*)winapiButton,

@@ -45,8 +45,24 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
   const NA_UISubImage* newSubImage = NA_NULL;
   NAUIImage* mutableUIImage = (NAUIImage*)uiImage;
 
+  // If the resolution does not match, we build a corresponding one.
+  double baseResolution = na_GetUIImageBaseResolution(mutableUIImage);
+  if(resolution != baseResolution){
+    const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, baseResolution, skin, interaction, secondaryState);
+    NASizei size = naGetBabyImageSize(originalImage->image);
+    size.width = (NAInt)((double)size.width * resolution / baseResolution);
+    size.height = (NAInt)((double)size.height * resolution / baseResolution);
+    NABabyImage* newImage = naCreateBabyImageWithResize(originalImage->image, size);
+    newSubImage = na_AddUISubImage(
+      mutableUIImage,
+      newImage,
+      resolution,
+      NA_UIIMAGE_SKIN_PLAIN,
+      NA_UIIMAGE_INTERACTION_NONE);
+    naReleaseBabyImage(newImage);
+
   // If the status is not NONE, we build an image out of it.
-  if(interaction != NA_UIIMAGE_INTERACTION_NONE){
+  }else if(interaction != NA_UIIMAGE_INTERACTION_NONE){
     switch(interaction){
     case NA_UIIMAGE_INTERACTION_PRESSED:
       {
@@ -114,7 +130,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
     }
   
   // If the skin is not PLAIN, we build an image out of it.
-  }else if(skin != NA_UIIMAGE_SKIN_PLAIN){
+  }else{
     NABabyColor tintColor;
     naFillDefaultTextColorWithSkin(tintColor, skin);
     if(secondaryState && naGetSkinForCurrentAppearance() != NA_UIIMAGE_SKIN_DARK){
@@ -129,25 +145,37 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
       skin,
       NA_UIIMAGE_INTERACTION_NONE);
     naReleaseBabyImage(newImage);
-
-  // If the resolution does not match, we build a corresponding one.
-  }else{
-    double baseResolution = na_GetUIImageBaseResolution(mutableUIImage);
-    const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, baseResolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
-    NASizei size = naGetBabyImageSize(originalImage->image);
-    size.width = (NAInt)((double)size.width * resolution / baseResolution);
-    size.height = (NAInt)((double)size.height * resolution / baseResolution);
-    NABabyImage* newImage = naCreateBabyImageWithResize(originalImage->image, size);
-    newSubImage = na_AddUISubImage(
-      mutableUIImage,
-      newImage,
-      resolution,
-      NA_UIIMAGE_SKIN_PLAIN,
-      NA_UIIMAGE_INTERACTION_NONE);
-    naReleaseBabyImage(newImage);
   }
   
   return newSubImage;
+}
+
+
+
+NA_DEF void naSetUIImageSubImage(
+  NAUIImage* uiImage,
+  const NABabyImage* subImage,
+  double resolution,
+  NAUIImageSkin skin,
+  NAUIImageInteraction interaction)
+{
+  NAListIterator listIter = naMakeListModifier(&uiImage->subImages);
+  while(naIterateList(&listIter)){
+    const NA_UISubImage* curSubImage = naGetListCurConst(&listIter);
+    if(curSubImage->resolution == resolution && curSubImage->skin == skin && curSubImage->interaction == interaction){
+      NA_UISubImage* oldImage = naRemoveListCurMutable(&listIter, NA_FALSE);
+      na_DeallocUISubImage(oldImage);
+      break;
+    }
+  }
+  naClearListIterator(&listIter);
+
+  na_AddUISubImage(
+    uiImage,
+    subImage,
+    resolution,
+    skin,
+    interaction);
 }
 
 

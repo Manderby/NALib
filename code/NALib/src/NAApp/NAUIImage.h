@@ -75,6 +75,14 @@ NA_API NAUIImage* naCreateUIImage(
 // hover, ...) will be computed anew.
 NA_API NAUIImage* naRecreateUIImage(const NAUIImage* uiImage);
 
+// Sets a custom image for the given parameters.
+NA_API void naSetUIImageSubImage(
+  NAUIImage* uiImage,
+  const NABabyImage* subImage,
+  double resolution,
+  NAUIImageSkin skin,
+  NAUIImageInteraction interaction);
+
 // Returns the size of the 1x representation.
 NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
 
