@@ -53,7 +53,7 @@ typedef enum{
 } NAColorBufferType;
 
 // Linearizes or unlinearizes a single float value using a baby transformation.
-NA_IAPI float naLinearizeColorValue(float value);
+NA_IAPI float naConvertToRadiometricColorValue(float value);
 NA_IAPI float naUnlinearizeColorValue(float value);
 
 // Fills the given BabyColor with the given values
@@ -82,10 +82,10 @@ NA_API void naFillBabyColorWithu8(
 // purpose in this number. It's just nice.
 #define NA_BABY_FACTOR 0.75f
 
-NA_IDEF float naUnlinearizeColorValue(float value){
+NA_IDEF float naConvertToPerceptualColorValue(float value){
   return value / (NA_BABY_FACTOR * value + (1.f - NA_BABY_FACTOR));
 }
-NA_IDEF float naLinearizeColorValue(float value){
+NA_IDEF float naConvertToRadiometricColorValue(float value){
   return (1.f - NA_BABY_FACTOR) * value / (1.f - NA_BABY_FACTOR * value);
 }
 

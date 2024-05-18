@@ -61,9 +61,9 @@
 
 NA_DEF void na_FillDefaultTextColorWithSystemSkin(NABabyColor color){
   NSColor* labelColor = naGetLabelColor();
-  color[0] = naLinearizeColorValue((float)[labelColor redComponent]);
-  color[1] = naLinearizeColorValue((float)[labelColor greenComponent]);
-  color[2] = naLinearizeColorValue((float)[labelColor blueComponent]);
+  color[0] = naConvertToRadiometricColorValue((float)[labelColor redComponent]);
+  color[1] = naConvertToRadiometricColorValue((float)[labelColor greenComponent]);
+  color[2] = naConvertToRadiometricColorValue((float)[labelColor blueComponent]);
   color[3] = 1.f;
 }
 
@@ -71,9 +71,9 @@ NA_DEF void na_FillDefaultTextColorWithSystemSkin(NABabyColor color){
 
 NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NABabyColor color){
   NSColor* linkColor = naGetLinkColor();
-  color[0] = naLinearizeColorValue((float)[linkColor redComponent]);
-  color[1] = naLinearizeColorValue((float)[linkColor greenComponent]);
-  color[2] = naLinearizeColorValue((float)[linkColor blueComponent]);
+  color[0] = naConvertToRadiometricColorValue((float)[linkColor redComponent]);
+  color[1] = naConvertToRadiometricColorValue((float)[linkColor greenComponent]);
+  color[2] = naConvertToRadiometricColorValue((float)[linkColor blueComponent]);
   color[3] = 1.f;
 }
 
@@ -81,9 +81,9 @@ NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NABabyColor color){
 
 NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NABabyColor color){
   NSColor* accentColor = naGetAccentColor();
-  color[0] = naLinearizeColorValue((float)[accentColor redComponent]);
-  color[1] = naLinearizeColorValue((float)[accentColor greenComponent]);
-  color[2] = naLinearizeColorValue((float)[accentColor blueComponent]);
+  color[0] = naConvertToRadiometricColorValue((float)[accentColor redComponent]);
+  color[1] = naConvertToRadiometricColorValue((float)[accentColor greenComponent]);
+  color[2] = naConvertToRadiometricColorValue((float)[accentColor blueComponent]);
   color[3] = 1.f;
 }
 

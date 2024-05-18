@@ -35,9 +35,9 @@
   dirtyRect.origin = NSMakePoint(0., 0.);
 
   if(cocoaSpace->space.backgroundColor[3] != 0.){
-    [[NSColor colorWithDeviceRed:naUnlinearizeColorValue(cocoaSpace->space.backgroundColor[0])
-      green:naUnlinearizeColorValue(cocoaSpace->space.backgroundColor[1])
-      blue:naUnlinearizeColorValue(cocoaSpace->space.backgroundColor[2])
+    [[NSColor colorWithDeviceRed:naConvertToPerceptualColorValue(cocoaSpace->space.backgroundColor[0])
+      green:naConvertToPerceptualColorValue(cocoaSpace->space.backgroundColor[1])
+      blue:naConvertToPerceptualColorValue(cocoaSpace->space.backgroundColor[2])
       alpha:cocoaSpace->space.backgroundColor[3]] setFill];
     NSRectFill(dirtyRect);
   }

@@ -3,16 +3,16 @@
 #include "../../NAMath/NAMathOperators.h"
 
 
-NA_HIDEF void na_UnlinearizeRGB(float* outColor, const float* inColor){
-  outColor[0] = naUnlinearizeColorValue(inColor[0]);
-  outColor[1] = naUnlinearizeColorValue(inColor[1]);
-  outColor[2] = naUnlinearizeColorValue(inColor[2]);
+NA_HIDEF void na_ConvertToPerceptualRGB(float* outColor, const float* inColor){
+  outColor[0] = naConvertToPerceptualColorValue(inColor[0]);
+  outColor[1] = naConvertToPerceptualColorValue(inColor[1]);
+  outColor[2] = naConvertToPerceptualColorValue(inColor[2]);
 }
 
-NA_HIDEF void na_LinearizeRGB(float* outColor, const float* inColor){
-  outColor[0] = naLinearizeColorValue(inColor[0]);
-  outColor[1] = naLinearizeColorValue(inColor[1]);
-  outColor[2] = naLinearizeColorValue(inColor[2]);
+NA_HIDEF void na_ConvertToRadiometricRGB(float* outColor, const float* inColor){
+  outColor[0] = naConvertToRadiometricColorValue(inColor[0]);
+  outColor[1] = naConvertToRadiometricColorValue(inColor[1]);
+  outColor[2] = naConvertToRadiometricColorValue(inColor[2]);
 }
 
 
@@ -24,9 +24,9 @@ NA_API NABool naIsBabyColorSecure(const NABabyColor color){
 
 
 NA_DEF void naInvertBabyColor(NABabyColor color){
-  color[0] = naLinearizeColorValue(1.f - naUnlinearizeColorValue(color[0]));
-  color[1] = naLinearizeColorValue(1.f - naUnlinearizeColorValue(color[1]));
-  color[2] = naLinearizeColorValue(1.f - naUnlinearizeColorValue(color[2]));
+  color[0] = naConvertToRadiometricColorValue(1.f - naConvertToPerceptualColorValue(color[0]));
+  color[1] = naConvertToRadiometricColorValue(1.f - naConvertToPerceptualColorValue(color[1]));
+  color[2] = naConvertToRadiometricColorValue(1.f - naConvertToPerceptualColorValue(color[2]));
 }
 
 NA_HIDEF void na_LimitColorComponentu8(uint8* outvalue, const float invalue){
@@ -41,7 +41,7 @@ NA_HIDEF void na_LimitColorComponentu8(uint8* outvalue, const float invalue){
 
 NA_DEF void naFillu8WithBabyColor(uint8* outColor, const NABabyColor inColor, NAColorBufferType bufferType){
   float tmpcolor[4];
-  na_UnlinearizeRGB(tmpcolor, inColor);
+  na_ConvertToPerceptualRGB(tmpcolor, inColor);
 
   switch(bufferType){
   case NA_COLOR_BUFFER_RGBA:
@@ -127,7 +127,7 @@ NA_DEF void naFillBabyColorWithu8(NABabyColor outColor, const uint8* inColor, NA
       tmpcolor[2] = (float)inColor[0] * inv;
       break;
     }
-    na_LinearizeRGB(outColor, tmpcolor);
+    na_ConvertToRadiometricRGB(outColor, tmpcolor);
   }
 }
 

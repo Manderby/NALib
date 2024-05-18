@@ -289,9 +289,9 @@ NABabyImage* na_CreateBlendedBabyImage(
       switch(mode){
       case NA_BLEND_ZERO:
         naCopyV4f(retPtr, basePtr);
-        retPtr[0] = naUnlinearizeColorValue(retPtr[0]);
-        retPtr[1] = naUnlinearizeColorValue(retPtr[1]);
-        retPtr[2] = naUnlinearizeColorValue(retPtr[2]);
+        retPtr[0] = naConvertToPerceptualColorValue(retPtr[0]);
+        retPtr[1] = naConvertToPerceptualColorValue(retPtr[1]);
+        retPtr[2] = naConvertToPerceptualColorValue(retPtr[2]);
         break;
       case NA_BLEND_LINEAR:
         baseColorFactor = (1.f - blend) * basePtr[3];
@@ -301,9 +301,9 @@ NABabyImage* na_CreateBlendedBabyImage(
           float baseBlend = baseColorFactor / colorSum;
           float topBlend = 1.f - baseBlend;
           naFillV4f(retPtr,
-            baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]),
-            baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]),
-            baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * naUnlinearizeColorValue(topPtr[2]),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[0]) + topBlend * naConvertToPerceptualColorValue(topPtr[0]),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[1]) + topBlend * naConvertToPerceptualColorValue(topPtr[1]),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[2]) + topBlend * naConvertToPerceptualColorValue(topPtr[2]),
             colorSum);
         }else{
           naFillV4f(retPtr, 0., 0., 0., 0.);
@@ -317,9 +317,9 @@ NABabyImage* na_CreateBlendedBabyImage(
           float baseBlend = baseColorFactor / colorSum;
           float topBlend = 1.f - baseBlend;
           naFillV4f(retPtr,
-            baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]),
-            baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]),
-            baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * naUnlinearizeColorValue(topPtr[2]),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[0]) + topBlend * naConvertToPerceptualColorValue(topPtr[0]),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[1]) + topBlend * naConvertToPerceptualColorValue(topPtr[1]),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[2]) + topBlend * naConvertToPerceptualColorValue(topPtr[2]),
             basePtr[3] + (1.f - basePtr[3]) * blend * topPtr[3]);
         }else{
           naFillV4f(retPtr, 0., 0., 0., 0.);
@@ -333,9 +333,9 @@ NABabyImage* na_CreateBlendedBabyImage(
           float baseBlend = baseColorFactor / colorSum;
           float topBlend = 1.f - baseBlend;
           naFillV4f(retPtr,
-            baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]),
-            baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]),
-            baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * naUnlinearizeColorValue(topPtr[2]),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[0]) + topBlend * naConvertToPerceptualColorValue(topPtr[0]),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[1]) + topBlend * naConvertToPerceptualColorValue(topPtr[1]),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[2]) + topBlend * naConvertToPerceptualColorValue(topPtr[2]),
             basePtr[3]);
         }else{
           naFillV4f(retPtr, 0., 0., 0., 0.);
@@ -349,9 +349,9 @@ NABabyImage* na_CreateBlendedBabyImage(
           float baseBlend = baseColorFactor / colorSum;
           float topBlend = 1.f - baseBlend;
           naFillV4f(retPtr,
-            baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]) * naUnlinearizeColorValue(basePtr[0]),
-            baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]) * naUnlinearizeColorValue(basePtr[1]),
-            baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * naUnlinearizeColorValue(topPtr[2]) * naUnlinearizeColorValue(basePtr[2]),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[0]) + topBlend * naConvertToPerceptualColorValue(topPtr[0]) * naConvertToPerceptualColorValue(basePtr[0]),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[1]) + topBlend * naConvertToPerceptualColorValue(topPtr[1]) * naConvertToPerceptualColorValue(basePtr[1]),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[2]) + topBlend * naConvertToPerceptualColorValue(topPtr[2]) * naConvertToPerceptualColorValue(basePtr[2]),
             basePtr[3]);
         }else{
           naFillV4f(retPtr, 0., 0., 0., 0.);
@@ -365,9 +365,9 @@ NABabyImage* na_CreateBlendedBabyImage(
           float baseBlend = baseColorFactor / colorSum;
           float topBlend = 1.f - baseBlend;
           naFillV4f(retPtr,
-            baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[0])) * (1.f - naUnlinearizeColorValue(basePtr[0]))),
-            baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[1])) * (1.f - naUnlinearizeColorValue(basePtr[1]))),
-            baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[2])) * (1.f - naUnlinearizeColorValue(basePtr[2]))),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[0]) + topBlend * (1.f - (1.f - naConvertToPerceptualColorValue(topPtr[0])) * (1.f - naConvertToPerceptualColorValue(basePtr[0]))),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[1]) + topBlend * (1.f - (1.f - naConvertToPerceptualColorValue(topPtr[1])) * (1.f - naConvertToPerceptualColorValue(basePtr[1]))),
+            baseBlend * naConvertToPerceptualColorValue(basePtr[2]) + topBlend * (1.f - (1.f - naConvertToPerceptualColorValue(topPtr[2])) * (1.f - naConvertToPerceptualColorValue(basePtr[2]))),
             basePtr[3]);
         }else{
           naFillV4f(retPtr, 0., 0., 0., 0.);
@@ -378,9 +378,9 @@ NABabyImage* na_CreateBlendedBabyImage(
           float baseRGB[3];
           float baseHSV[3];
           float baseHSL[3];
-          baseRGB[0] = naUnlinearizeColorValue(basePtr[0]);
-          baseRGB[1] = naUnlinearizeColorValue(basePtr[1]);
-          baseRGB[2] = naUnlinearizeColorValue(basePtr[2]);
+          baseRGB[0] = naConvertToPerceptualColorValue(basePtr[0]);
+          baseRGB[1] = naConvertToPerceptualColorValue(basePtr[1]);
+          baseRGB[2] = naConvertToPerceptualColorValue(basePtr[2]);
           na_ConvertRGBToHSV(baseHSV, baseRGB);
           na_ConvertHSVToHSL(baseHSL, baseHSV);
 
@@ -391,9 +391,9 @@ NABabyImage* na_CreateBlendedBabyImage(
             float baseBlend = baseColorFactor / colorSum;
             float topBlend = 1.f - baseBlend;
             naFillV4f(retPtr,
-              baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[0]))),
-              baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[1]))),
-              baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * (1.f - (1.f - naUnlinearizeColorValue(topPtr[2]))),
+              baseBlend * naConvertToPerceptualColorValue(basePtr[0]) + topBlend * (1.f - (1.f - naConvertToPerceptualColorValue(topPtr[0]))),
+              baseBlend * naConvertToPerceptualColorValue(basePtr[1]) + topBlend * (1.f - (1.f - naConvertToPerceptualColorValue(topPtr[1]))),
+              baseBlend * naConvertToPerceptualColorValue(basePtr[2]) + topBlend * (1.f - (1.f - naConvertToPerceptualColorValue(topPtr[2]))),
               (1.f - blend) * basePtr[3] + blend * (1.f - baseHSL[2]) * basePtr[3] * topPtr[3]);
           }else{
             naFillV4f(retPtr, 0., 0., 0., 0.);
@@ -405,9 +405,9 @@ NABabyImage* na_CreateBlendedBabyImage(
           float baseRGB[3];
           float baseHSV[3];
           float baseHSL[3];
-          baseRGB[0] = naUnlinearizeColorValue(basePtr[0]);
-          baseRGB[1] = naUnlinearizeColorValue(basePtr[1]);
-          baseRGB[2] = naUnlinearizeColorValue(basePtr[2]);
+          baseRGB[0] = naConvertToPerceptualColorValue(basePtr[0]);
+          baseRGB[1] = naConvertToPerceptualColorValue(basePtr[1]);
+          baseRGB[2] = naConvertToPerceptualColorValue(basePtr[2]);
           na_ConvertRGBToHSV(baseHSV, baseRGB);
           na_ConvertHSVToHSL(baseHSL, baseHSV);
 
@@ -418,9 +418,9 @@ NABabyImage* na_CreateBlendedBabyImage(
             float baseBlend = baseColorFactor / colorSum;
             float topBlend = 1.f - baseBlend;
             naFillV4f(retPtr,
-              baseBlend * naUnlinearizeColorValue(basePtr[0]) + topBlend * naUnlinearizeColorValue(topPtr[0]),
-              baseBlend * naUnlinearizeColorValue(basePtr[1]) + topBlend * naUnlinearizeColorValue(topPtr[1]),
-              baseBlend * naUnlinearizeColorValue(basePtr[2]) + topBlend * naUnlinearizeColorValue(topPtr[2]),
+              baseBlend * naConvertToPerceptualColorValue(basePtr[0]) + topBlend * naConvertToPerceptualColorValue(topPtr[0]),
+              baseBlend * naConvertToPerceptualColorValue(basePtr[1]) + topBlend * naConvertToPerceptualColorValue(topPtr[1]),
+              baseBlend * naConvertToPerceptualColorValue(basePtr[2]) + topBlend * naConvertToPerceptualColorValue(topPtr[2]),
               (1.f - blend) * basePtr[3] + blend * baseHSL[2] * basePtr[3] * topPtr[3]);
           }else{
             naFillV4f(retPtr, 0., 0., 0., 0.);
@@ -432,17 +432,17 @@ NABabyImage* na_CreateBlendedBabyImage(
           float baseRGB[3];
           float baseHSV[3];
           float baseHSL[3];
-          baseRGB[0] = naUnlinearizeColorValue(basePtr[0]);
-          baseRGB[1] = naUnlinearizeColorValue(basePtr[1]);
-          baseRGB[2] = naUnlinearizeColorValue(basePtr[2]);
+          baseRGB[0] = naConvertToPerceptualColorValue(basePtr[0]);
+          baseRGB[1] = naConvertToPerceptualColorValue(basePtr[1]);
+          baseRGB[2] = naConvertToPerceptualColorValue(basePtr[2]);
           na_ConvertRGBToHSV(baseHSV, baseRGB);
           na_ConvertHSVToHSL(baseHSL, baseHSV);
           float topRGB[3];
           float topHSV[3];
           float topHSL[3];
-          topRGB[0] = naUnlinearizeColorValue(topPtr[0]);
-          topRGB[1] = naUnlinearizeColorValue(topPtr[1]);
-          topRGB[2] = naUnlinearizeColorValue(topPtr[2]);
+          topRGB[0] = naConvertToPerceptualColorValue(topPtr[0]);
+          topRGB[1] = naConvertToPerceptualColorValue(topPtr[1]);
+          topRGB[2] = naConvertToPerceptualColorValue(topPtr[2]);
           na_ConvertRGBToHSV(topHSV, topRGB);
           na_ConvertHSVToHSL(topHSL, topHSV);
 
@@ -460,7 +460,7 @@ NABabyImage* na_CreateBlendedBabyImage(
               float factorL = 2.f * (topHSL[2] - baseHSL[2]);
               if(factorL < 0.){factorL = -factorL;}
               if(factorL > 1.f){factorL = 1.f;}
-              factorL = naLinearizeColorValue(1.f - factorL); // looks better with naLinearize
+              factorL = naConvertToRadiometricColorValue(1.f - factorL); // looks better with naLinearize
               float hueStrength = 1.f - -hDiff / 60.f;
               float factor = blend * topPtr[3] * hueStrength;
               retPtr[3] = (1.f - factorL * factor) * basePtr[3];
@@ -480,7 +480,7 @@ NABabyImage* na_CreateBlendedBabyImage(
               float factorL = 2.f * (topHSL[2] - baseHSL[2]);
               if(factorL < 0.){factorL = -factorL;}
               if(factorL > 1.f){factorL = 1.f;}
-              factorL = naLinearizeColorValue(1.f - factorL); // looks better with naLinearize
+              factorL = naConvertToRadiometricColorValue(1.f - factorL); // looks better with naLinearize
               float hueStrength = 1.f - hDiff / 60.f;
               float factor = blend * topPtr[3] * hueStrength;
               retPtr[3] = (1.f - factorL * factor) * basePtr[3];
@@ -504,9 +504,9 @@ NABabyImage* na_CreateBlendedBabyImage(
       if(retPtr[3] == 0.f){
         naFillV3f(retPtr, 0.f, 0.f, 0.f);
       }
-      retPtr[0] = naLinearizeColorValue(retPtr[0]);
-      retPtr[1] = naLinearizeColorValue(retPtr[1]);
-      retPtr[2] = naLinearizeColorValue(retPtr[2]);
+      retPtr[0] = naConvertToRadiometricColorValue(retPtr[0]);
+      retPtr[1] = naConvertToRadiometricColorValue(retPtr[1]);
+      retPtr[2] = naConvertToRadiometricColorValue(retPtr[2]);
 
       retPtr += NA_BABY_COLOR_CHANNEL_COUNT;
       if(baseIsImage){basePtr += NA_BABY_COLOR_CHANNEL_COUNT;}

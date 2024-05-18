@@ -163,18 +163,18 @@ void naStopImageTestApplication(void){
 }
 
 
-void addSingleSelectItem(const NAUTF8Char* text, NASelect* select, NAReactionHandler handler, ImageTesterController* con){
+void addSingleSelectItem(const NAUTF8Char* text, NASelect* select, NAReactionCallback callback, ImageTesterController* con){
   NAMenuItem* item = naNewMenuItem(text);
   naAddSelectMenuItem(select, item, NA_NULL);
-  naAddUIReaction(item, NA_UI_COMMAND_PRESSED, handler, con);
+  naAddUIReaction(item, NA_UI_COMMAND_PRESSED, callback, con);
 }
 
-void fillSelect(NASelect* select, NAReactionHandler handler, ImageTesterController* con){
+void fillSelect(NASelect* select, NAReactionCallback callback, ImageTesterController* con){
   for(size_t i = 0; i < COLOR_COUNT; ++i){
-    addSingleSelectItem(colorNames[i], select, handler, con);
+    addSingleSelectItem(colorNames[i], select, callback, con);
   }
   for(size_t i = 0; i < IMAGE_COUNT; ++i){
-    addSingleSelectItem(imageNames[i], select, handler, con);
+    addSingleSelectItem(imageNames[i], select, callback, con);
   }
 }
 
