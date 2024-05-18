@@ -34,11 +34,13 @@
   dirtyRect = [self frame];
   dirtyRect.origin = NSMakePoint(0., 0.);
 
-  if(cocoaSpace->space.backgroundColor[3] != 0.){
-    [[NSColor colorWithDeviceRed:naConvertToPerceptualColorValue(cocoaSpace->space.backgroundColor[0])
-      green:naConvertToPerceptualColorValue(cocoaSpace->space.backgroundColor[1])
-      blue:naConvertToPerceptualColorValue(cocoaSpace->space.backgroundColor[2])
-      alpha:cocoaSpace->space.backgroundColor[3]] setFill];
+  if(naGetABYColorAlpha(&cocoaSpace->space.backgroundColor) != 0.){
+    float rgba[4];
+    naFillSRGBAWithABYColor(rgba, &cocoaSpace->space.backgroundColor);
+    [[NSColor colorWithDeviceRed:rgba[0]
+      green:rgba[1]
+      blue:rgba[2]
+      alpha:rgba[3]] setFill];
     NSRectFill(dirtyRect);
   }
   if(cocoaSpace->space.alternateBackground){
@@ -120,10 +122,7 @@ NA_DEF NASpace* _Nonnull naNewSpace(NASize size){
     frame:naMakeNSRectWithSize(size)];  
   na_InitSpace((NASpace*)cocoaSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
-  cocoaSpace->space.backgroundColor[0] = 0.;
-  cocoaSpace->space.backgroundColor[1] = 0.;
-  cocoaSpace->space.backgroundColor[2] = 0.;
-  cocoaSpace->space.backgroundColor[3] = 0.;
+  naFillABYColorWithTransparent(&cocoaSpace->space.backgroundColor);
   cocoaSpace->space.alternateBackground = NA_FALSE;
   cocoaSpace->space.dragsWindow = NA_FALSE;
 
@@ -242,14 +241,11 @@ NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift){
 
 
 
-NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NABabyColor* _Nullable color){
+NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NAABYColor* _Nullable color){
   if(color){
-    space->backgroundColor[0] = (*color)[0];
-    space->backgroundColor[1] = (*color)[1];
-    space->backgroundColor[2] = (*color)[2];
-    space->backgroundColor[3] = (*color)[3];
+    naCopyABYColor(&space->backgroundColor, color);
   }else{
-    space->backgroundColor[3] = 0.;
+    naFillABYColorWithTransparent(&space->backgroundColor);
   }
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   [nativePtr setNeedsDisplay:YES];

@@ -92,9 +92,9 @@ NA_API NAUIImageSkin naGetSkinForCurrentAppearance(void);
 
 // Returns the default foreground color for the given skin. The skin PLAIN is
 // not allowed but will return the color for the LIGHT skin instead.
-NA_API void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin);
-NA_API void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin);
-NA_API void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin skin);
+NA_API void naFillDefaultTextColorWithSkin(NAABYColor* color, NAUIImageSkin skin);
+NA_API void naFillDefaultLinkColorWithSkin(NAABYColor* color, NAUIImageSkin skin);
+NA_API void naFillDefaultAccentColorWithSkin(NAABYColor* color, NAUIImageSkin skin);
 
 // Creates a new BabyImage with the given path. Can only be PNG on windows,
 // macOS allows for various kind of input files.
@@ -112,7 +112,7 @@ NA_API NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr);
 // Creates a new image out of a given native image.
 NA_API NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage);
 
-// Allocates a new native image with the content of the given babyImage.
+// Allocates a new native image with the content of the given image.
 NA_API void* naAllocNativeImageWithBabyImage(const NABabyImage* image);
 
 // Deallocates the native image.

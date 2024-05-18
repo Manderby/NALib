@@ -9,7 +9,7 @@ NA_API void na_DestructUIImage(NAUIImage* uiImage);
 NA_RUNTIME_TYPE(NAUIImage, na_DestructUIImage, NA_TRUE);
 
 
-// Will retain the babyImage.
+// Will retain the ABYImage.
 NA_HAPI NA_UISubImage* na_AddUISubImage(
   NAUIImage* uiImage,
   const NABabyImage* image,
@@ -67,11 +67,11 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
     case NA_UIIMAGE_INTERACTION_PRESSED:
       {
         const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
-        NABabyColor accentColor;
-        naFillDefaultAccentColorWithSkin(accentColor, skin);
+        NAABYColor accentColor;
+        naFillDefaultAccentColorWithSkin(&accentColor, skin);
         NABabyImage* newImage = naCreateBabyImageWithTint(
           originalImage->image,
-          accentColor,
+          &accentColor,
           NA_BLEND_OPAQUE,
           (mutableUIImage->tintMode == NA_BLEND_ZERO) ? .45f : 1.f);
         newSubImage = na_AddUISubImage(
@@ -87,11 +87,11 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
       {
         const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
         
-        NABabyColor hoverColor;
-        naFillDefaultAccentColorWithSkin(hoverColor, skin);
+        NAABYColor hoverColor;
+        naFillDefaultAccentColorWithSkin(&hoverColor, skin);
         NABabyImage* newImage = naCreateBabyImageWithTint(
           originalImage->image,
-          hoverColor,
+          &hoverColor,
           NA_BLEND_OPAQUE,
           (mutableUIImage->tintMode == NA_BLEND_ZERO) ? .15f : .5f);
 
@@ -110,7 +110,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
         #if NA_OS == NA_OS_MAC_OS_X
           newSubImage = originalImage;
         #else
-          NABabyColor transparent = {0., 0., 0., 0.};
+          NAABYColor transparent = {0., 0., 0., 0.};
           NABabyImage* newImage = naCreateBabyImageWithApply(
             transparent,
             originalImage->image,
@@ -131,13 +131,13 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
   
   // If the skin is not PLAIN, we build an image out of it.
   }else{
-    NABabyColor tintColor;
-    naFillDefaultTextColorWithSkin(tintColor, skin);
+    NAABYColor tintColor;
+    naFillDefaultTextColorWithSkin(&tintColor, skin);
     if(secondaryState && naGetSkinForCurrentAppearance() != NA_UIIMAGE_SKIN_DARK){
-      naInvertBabyColor(tintColor);
+      naInvertABYColor(&tintColor);
     }
     const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
-    NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, tintColor, uiImage->tintMode, 1.f);
+    NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, &tintColor, uiImage->tintMode, 1.f);
     newSubImage = na_AddUISubImage(
       mutableUIImage,
       newImage,
@@ -245,7 +245,7 @@ NA_DEF void na_DestructUIImage(NAUIImage* uiImage){
 
 
 
-NA_HDEF void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+NA_HDEF void naFillDefaultTextColorWithSkin(NAABYColor* color, NAUIImageSkin skin){
   uint8 skinColor[4];
   
   switch(skin){
@@ -272,12 +272,12 @@ NA_HDEF void naFillDefaultTextColorWithSkin(NABabyColor color, NAUIImageSkin ski
     return;
   }
   
-  naFillBabyColorWithu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
+  naFillABYColorWithSRGBu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
 }
 
 
 
-NA_DEF void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+NA_DEF void naFillDefaultLinkColorWithSkin(NAABYColor* color, NAUIImageSkin skin){
   uint8 skinColor[4];
   
   switch(skin){
@@ -304,12 +304,12 @@ NA_DEF void naFillDefaultLinkColorWithSkin(NABabyColor color, NAUIImageSkin skin
     return;
   }
   
-  naFillBabyColorWithu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
+  naFillABYColorWithSRGBu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
 }
 
 
 
-NA_DEF void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin skin){
+NA_DEF void naFillDefaultAccentColorWithSkin(NAABYColor* color, NAUIImageSkin skin){
   uint8 skinColor[4];
   
   switch(skin){
@@ -336,7 +336,7 @@ NA_DEF void naFillDefaultAccentColorWithSkin(NABabyColor color, NAUIImageSkin sk
     return;
   }
   
-  naFillBabyColorWithu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
+  naFillABYColorWithSRGBu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
 }
 
 

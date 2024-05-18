@@ -16,21 +16,21 @@ NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(){
 
 
 
-NA_DEF void na_FillDefaultTextColorWithSystemSkin(NABabyColor color){
+NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAABYColor color){
   // WinAPI has no notion of dark mode (yet), so we just return the light color.
   naFillDefaultTextColorWithSkin(color, NA_UIIMAGE_SKIN_LIGHT);
 }
 
 
 
-NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NABabyColor color){
+NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAABYColor color){
   // WinAPI has no notion of dark mode (yet), so we just return the light color.
   naFillDefaultLinkColorWithSkin(color, NA_UIIMAGE_SKIN_LIGHT);
 }
 
 
 
-NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NABabyColor color){
+NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAABYColor color){
   // WinAPI has no notion of dark mode (yet), so we just return the light color.
   naFillDefaultAccentColorWithSkin(color, NA_UIIMAGE_SKIN_LIGHT);
 }
@@ -39,7 +39,7 @@ NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NABabyColor color){
 
 NA_DEF NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
   BYTE* lpPixels;
-  NABabyImage* babyImage;
+  NABabyImage* abyImage;
 
   HDC hdcSource = GetDC(NA_NULL); // the source device context
   HBITMAP hSource = (HBITMAP)nativeImage; // the bitmap selected into the device context
@@ -60,14 +60,14 @@ NA_DEF NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
   // bitmap data (the "pixels") in the buffer lpPixels
   GetDIBits(hdcSource, hSource, 0, MyBMInfo.bmiHeader.biHeight, lpPixels, &MyBMInfo, DIB_RGB_COLORS);
 
-  babyImage = naCreateBabyImage(naMakeSizei(MyBMInfo.bmiHeader.biWidth, MyBMInfo.bmiHeader.biHeight), NA_NULL);
+  abyImage = naCreateBabyImage(naMakeSizei(MyBMInfo.bmiHeader.biWidth, MyBMInfo.bmiHeader.biHeight), NA_NULL);
   // Windows does store an alpha component but it is not in use and therefore zero.
   // We therefore ignore it in the following call and receyve a completely opaque image.
-  naFillBabyImageWithu8(babyImage, lpPixels, NA_FALSE, NA_COLOR_BUFFER_BGR0);
+  naFillBabyImageWithu8(abyImage, lpPixels, NA_FALSE, NA_COLOR_BUFFER_BGR0);
   naFree(lpPixels);
 
   // clean up: deselect bitmap from device context, close handles, delete buffer
-  return babyImage;
+  return abyImage;
 }
 
 
@@ -75,9 +75,9 @@ NA_DEF NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
 NA_DEF NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
   // Currently, only png is possible
   NAPNG* png = naNewPNGWithPath(pathStr);
-  NABabyImage* babyImage = naCreateBabyImageFromPNG(png);
+  NABabyImage* abyImage = naCreateBabyImageFromPNG(png);
   naDelete(png);
-  return babyImage;
+  return abyImage;
 }
 
 
@@ -87,7 +87,7 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 
   NASizei size = naGetBabyImageSize(image);
   NAByte* buffer = naMalloc(size.width * size.height * 4);
-  float* babyptr = naGetBabyImageData(image);
+  float* abyptr = naGetBabyImageData(image);
 
   naConvertBabyImageTou8(image, buffer, NA_TRUE, NA_COLOR_BUFFER_BGRA);
 

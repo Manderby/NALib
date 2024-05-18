@@ -140,10 +140,10 @@
   [self setStringValue:[NSString stringWithUTF8String:text]];
 }
 
-- (void) setColor:(const NABabyColor*)color{
+- (void) setColor:(const NAABYColor*)color{
   if(color){
     uint8 buf[4];
-    naFillu8WithBabyColor(buf, *color, NA_COLOR_BUFFER_RGBA);
+    naFillSRGBu8WithABYColor(buf, color, NA_COLOR_BUFFER_RGBA);
     [self setTextColor:[NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.]];
   }else{
     [self setTextColor:naGetLabelColor()];
@@ -244,7 +244,7 @@ NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
 
 
 
-NA_DEF void naSetLabelTextColor(NALabel* label, const NABabyColor* color){
+NA_DEF void naSetLabelTextColor(NALabel* label, const NAABYColor* color){
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
   [nativePtr setColor:color];
 }

@@ -201,7 +201,7 @@ NA_DEF void naSetLabelHeight(NALabel* label, double height){
 
 
 
-NA_DEF void naSetLabelTextColor(NALabel* label, const NABabyColor* color){
+NA_DEF void naSetLabelTextColor(NALabel* label, const NAABYColor* color){
   // todo
 }
 

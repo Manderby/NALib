@@ -21,7 +21,7 @@ NA_API void naSetCheckBoxState(NACheckBox* checkBox, NABool state);
 // Sets the color of the text of the checkBox
 NA_API void naSetCheckBoxTextColor(
   NACheckBox* checkBox,
-  const NABabyColor* color);
+  const NAABYColor* color);
 
 
 

@@ -59,32 +59,38 @@
 
 
 
-NA_DEF void na_FillDefaultTextColorWithSystemSkin(NABabyColor color){
+NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAABYColor* color){
   NSColor* labelColor = naGetLabelColor();
-  color[0] = naConvertToRadiometricColorValue((float)[labelColor redComponent]);
-  color[1] = naConvertToRadiometricColorValue((float)[labelColor greenComponent]);
-  color[2] = naConvertToRadiometricColorValue((float)[labelColor blueComponent]);
-  color[3] = 1.f;
+  naFillABYColorWithSRGB(
+    color,
+    (float)[labelColor redComponent],
+    (float)[labelColor greenComponent],
+    (float)[labelColor blueComponent],
+    1.f);
 }
 
 
 
-NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NABabyColor color){
+NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAABYColor* color){
   NSColor* linkColor = naGetLinkColor();
-  color[0] = naConvertToRadiometricColorValue((float)[linkColor redComponent]);
-  color[1] = naConvertToRadiometricColorValue((float)[linkColor greenComponent]);
-  color[2] = naConvertToRadiometricColorValue((float)[linkColor blueComponent]);
-  color[3] = 1.f;
+  naFillABYColorWithSRGB(
+    color,
+    (float)[linkColor redComponent],
+    (float)[linkColor greenComponent],
+    (float)[linkColor blueComponent],
+    1.f);
 }
 
 
 
-NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NABabyColor color){
+NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAABYColor* color){
   NSColor* accentColor = naGetAccentColor();
-  color[0] = naConvertToRadiometricColorValue((float)[accentColor redComponent]);
-  color[1] = naConvertToRadiometricColorValue((float)[accentColor greenComponent]);
-  color[2] = naConvertToRadiometricColorValue((float)[accentColor blueComponent]);
-  color[3] = 1.f;
+  naFillABYColorWithSRGB(
+    color,
+    (float)[accentColor redComponent],
+    (float)[accentColor greenComponent],
+    (float)[accentColor blueComponent],
+    1.f);
 }
 
 
@@ -108,8 +114,8 @@ NA_DEF NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
 
 //  // Currently, only png is possible
 //  NAPNG* png = naNewPNGWithPath(pathStr);
-//  NABabyImage* babyImage = naCreateBabyImageFromPNG(png);
-//  return babyImage;
+//  NABabyImage* abyImage = naCreateBabyImageFromPNG(png);
+//  return abyImage;
 
 //  CGDataProviderRef dataprovider = CGDataProviderCreateWithFilename(pathStr);
 //  if(dataprovider){

@@ -226,7 +226,7 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
 
 
 
-NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NABabyColor* color){
+NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NAABYColor* color){
   // todo
 }
 

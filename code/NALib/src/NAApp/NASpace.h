@@ -40,7 +40,7 @@ NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 // Set a specific background color.
 NA_API void naSetSpaceBackgroundColor(
   NASpace* space,
-  const NABabyColor* color);
+  const NAABYColor* color);
 
 // Moves all childs with the given x and y coordinates in direction
 // to the right and top.

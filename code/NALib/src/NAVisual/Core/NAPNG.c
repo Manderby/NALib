@@ -796,9 +796,9 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath){
 
 
 
-NA_API NAPNG* naNewPNGWithBabyImage(NABabyImage* babyImage){
-  NAPNG* png = naNewPNG(naGetBabyImageSize(babyImage), NA_PNG_COLORTYPE_TRUECOLOR_ALPHA, 8);
-  naConvertBabyImageTou8(babyImage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
+NA_API NAPNG* naNewPNGWithBabyImage(NABabyImage* abyImage){
+  NAPNG* png = naNewPNG(naGetBabyImageSize(abyImage), NA_PNG_COLORTYPE_TRUECOLOR_ALPHA, 8);
+  naConvertBabyImageTou8(abyImage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
   return png;
 }
 
@@ -818,30 +818,30 @@ NA_DEF size_t naGetPNGPixelDataByteSize(NAPNG* png){
 
 
 NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
-  NABabyImage* babyImage = naCreateBabyImage(png->size, NA_NULL);
-  NAByte* pngptr;
-  float* babyptr;
-  uint8 inbuf[4];
+  NABabyImage* abyImage = naCreateBabyImage(png->size, NA_NULL);
+  NAByte* pngPtr;
+  float* abyPtr;
+  uint8 inBuf[4];
   NAInt x, y;
 
   switch(png->colorType){
   case NA_PNG_COLORTYPE_TRUECOLOR:
-    pngptr = png->pixeldata;
-    inbuf[3] = 255;
+    pngPtr = png->pixeldata;
+    inBuf[3] = 255;
     for(y = 0; y < png->size.height; y++){
-      babyptr = &(naGetBabyImageData(babyImage)[(png->size.height - y - 1) * naGetBabyImageValuesPerLine(babyImage)]);
+      abyPtr = &(naGetBabyImageData(abyImage)[(png->size.height - y - 1) * naGetBabyImageValuesPerLine(abyImage)]);
       for(x = 0; x < png->size.width; x++){
-        inbuf[0] = pngptr[0];
-        inbuf[1] = pngptr[1];
-        inbuf[2] = pngptr[2];
-        naFillBabyColorWithu8(babyptr, inbuf, NA_COLOR_BUFFER_RGB);
-        babyptr += 4;
-        pngptr += 3;
+        inBuf[0] = pngPtr[0];
+        inBuf[1] = pngPtr[1];
+        inBuf[2] = pngPtr[2];
+        naFillABYColorWithSRGBu8(abyPtr, inBuf, NA_COLOR_BUFFER_RGB);
+        abyPtr += 4;
+        pngPtr += 3;
       }
     }
     break;
   case NA_PNG_COLORTYPE_TRUECOLOR_ALPHA:
-    naFillBabyImageWithu8(babyImage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
+    naFillBabyImageWithu8(abyImage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
     break;
   default:
     #if NA_DEBUG
@@ -849,7 +849,7 @@ NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
     #endif
     break;
   }
-  return babyImage;
+  return abyImage;
 }
 
 

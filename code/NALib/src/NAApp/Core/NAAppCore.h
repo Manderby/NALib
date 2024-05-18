@@ -130,7 +130,7 @@ struct NASlider{
 struct NASpace{
   NA_UIElement uiElement;
   NAList       childs;
-  NABabyColor  backgroundColor;
+  NAABYColor   backgroundColor;
   NABool       alternateBackground;
   NABool       dragsWindow;
 };

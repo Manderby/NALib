@@ -32,7 +32,7 @@ NA_HDEF void na_SetMenuItemRect(NA_UIElement* menuItem, NARect rect){
   NA_UNUSED(menuItem);
   NA_UNUSED(rect);
   #if NA_DEBUG
-  naError("MenuItem rects can not be set.");
+    naError("MenuItem rects can not be set.");
   #endif
 }
 

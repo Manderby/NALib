@@ -62,17 +62,7 @@ const NAUTF8Char* colorNames[COLOR_COUNT] = {
   "Black",
 };
 
-const NABabyColor colors[COLOR_COUNT] = {
-  {0., 0., 0., 0.},
-  {1., 0., 0., 1.},
-  {1., 1., 0., 1.},
-  {0., 1., 0., 1.},
-  {0., 1., 1., 1.},
-  {0., 0., 1., 1.},
-  {1., 0., 1., 1.},
-  {1., 1., 1., 1.},
-  {0., 0., 0., 1.},
-};
+NAABYColor colors[COLOR_COUNT];
 
 struct ImageTesterApplication{
   NABabyImage* transparencyGridImage;
@@ -101,9 +91,9 @@ struct ImageTesterController{
   NASelect* bottomSelect;
 
   const NABabyImage* topImage;
-  NABabyColor topColor;
+  const NAABYColor* topColor;
   const NABabyImage* bottomImage;
-  NABabyColor bottomColor;
+  const NAABYColor* bottomColor;
   
   NAPosi center;
   size_t selectedTop;
@@ -261,10 +251,10 @@ void naDeallocImageTestController(ImageTesterController* con){
 
 
 
-void selectionChanged(const NABabyImage** imagePtr, NABabyColor colorPtr, size_t index){
+void selectionChanged(const NABabyImage** imagePtr, const NAABYColor** abyColor, size_t index){
   if(index < COLOR_COUNT){
     *imagePtr = NA_NULL;
-    naCopyV4f(colorPtr, colors[index]);
+    *abyColor = &colors[index];
   }else{
     index -= COLOR_COUNT;
     if(!app->images[index]){
@@ -280,8 +270,8 @@ void updateImageTestController(ImageTesterController* con){
   if(!app->transparencyGridImage)
     return;
 
-  selectionChanged(&con->topImage, con->topColor, con->selectedTop);
-  selectionChanged(&con->bottomImage, con->bottomColor, con->selectedBottom);
+  selectionChanged(&con->topImage, &con->topColor, con->selectedTop);
+  selectionChanged(&con->bottomImage, &con->bottomColor, con->selectedBottom);
 
   naSetSelectIndexSelected(con->topSelect, con->selectedTop);
   naSetSliderValue(con->scaleSlider, con->scale);
@@ -411,6 +401,23 @@ NABool mouseMoved(NAReaction reaction){
 
 
 
+void preStartup(void* arg){
+  NA_UNUSED(arg);
+
+  naFillABYColorWithSRGB(&colors[0], 0., 0., 0., 0.);
+  naFillABYColorWithSRGB(&colors[1], 1., 0., 0., 1.);
+  naFillABYColorWithSRGB(&colors[2], 1., 1., 0., 1.);
+  naFillABYColorWithSRGB(&colors[3], 0., 1., 0., 1.);
+  naFillABYColorWithSRGB(&colors[4], 0., 1., 1., 1.);
+  naFillABYColorWithSRGB(&colors[5], 0., 0., 1., 1.);
+  naFillABYColorWithSRGB(&colors[6], 1., 0., 1., 1.);
+  naFillABYColorWithSRGB(&colors[7], 1., 1., 1., 1.);
+  naFillABYColorWithSRGB(&colors[8], 0., 0., 0., 1.);
+
+}
+
+
+
 void postStartup(void* arg){
   NA_UNUSED(arg);
   naStartImageTestApplication();
@@ -421,7 +428,7 @@ void postStartup(void* arg){
 int main(void){
  
   naStartRuntime();
-  naStartApplication(NA_NULL, postStartup, NA_NULL, NA_NULL);
+  naStartApplication(preStartup, postStartup, NA_NULL, NA_NULL);
   naStopImageTestApplication();
   naStopRuntime();
     

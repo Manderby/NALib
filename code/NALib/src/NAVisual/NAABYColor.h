@@ -1,28 +1,21 @@
 
-#ifndef NA_BABY_COLOR_INCLUDED
-#define NA_BABY_COLOR_INCLUDED
+#ifndef NA_ABY_COLOR_INCLUDED
+#define NA_ABY_COLOR_INCLUDED
 #ifdef __cplusplus
   extern "C"{
 #endif
 
-
-
-// What is NABabyColor?
+// What is NAABYColor?
 // After having worked for years in the color reproduction industry, the
 // author knows one thing: Colors are not easy. There is no such thing as
 // a simple color value. When you try to convert color values or compute
 // images, it always gets complicated. And if you want to be accurate,
 // performance might drop considerably. Therefore, the author decided to
-// use a very specific and simplified color computation. And with the term
-// "simple" came the name "baby". So simple, a baby could program it.
-// Basically, the author just needed a short, recognizable name which is not
-// generic.
+// use a very specific and simplified color computation.
 //
-// Could have used NALinSRGBPowSimpleGammaFloatColor instead. Like that better?
-//
-// So here's what NABabyColor is:
+// So here's what NAABYColor is:
 // - RGBA values. A is alpha. Stored in a simple float[4] array (4 * 32 bit).
-// - Default RGB range is [0, 1). Values below 0 are forbidden.
+// - Default RGB range is [0, 1]. Values below 0 are forbidden.
 // - RGB have primaries of sRGB.
 // - RGB are stored without gamma, meaning it's linear, meaning it's in
 //   densitometric space.
@@ -39,10 +32,16 @@
 #include "../NABase/NABase.h"
 #include "../NAUtility/NAMemory.h"
 
-#define NA_BABY_COLOR_CHANNEL_COUNT 4
-#define NA_BABY_COLOR_BYTES_PER_COMPONENT \
-  (NA_BABY_COLOR_CHANNEL_COUNT * sizeof(float))
-typedef float NABabyColor[NA_BABY_COLOR_CHANNEL_COUNT];
+#define NA_ABY_COLOR_CHANNEL_COUNT 4
+#define NA_ABY_COLOR_BYTES_PER_COMPONENT \
+  (NA_ABY_COLOR_CHANNEL_COUNT * sizeof(float))
+typedef struct NAABYColor NAABYColor;
+struct NAABYColor{
+  float a;
+  float b;
+  float y;
+  float alpha;
+};
 
 typedef enum{
   NA_COLOR_BUFFER_RGBA,
@@ -52,48 +51,54 @@ typedef enum{
   NA_COLOR_BUFFER_BGRA
 } NAColorBufferType;
 
-// Linearizes or unlinearizes a single float value using a baby transformation.
-NA_IAPI float naConvertToRadiometricColorValue(float value);
-NA_IAPI float naUnlinearizeColorValue(float value);
+NA_API void naCopyABYColor(NAABYColor* dstColor, const NAABYColor* srcColor);
 
-// Fills the given BabyColor with the given values
-NA_IAPI void naFillBabyColor(NABabyColor color, float r, float g, float b, float a);
+NA_API void naFillABYColorWithTransparent(NAABYColor* color);
+NA_API void naFillABYColorWithSRGB(NAABYColor* color, float r, float g, float b, float alpha);
+NA_API void naFillABYColorWithSRGBu8(NAABYColor* outColor, const uint8* inColor, NAColorBufferType bufferType);
 
-// Checks whether the given color is secure
-NA_API NABool naIsBabyColorSecure(const NABabyColor color);
-
-// Inverts the color
-NA_API void naInvertBabyColor(NABabyColor color);
-
+NA_API void naFillSRGBAWithABYColor(float rgba[4], const NAABYColor* color);
 // Converts between BabyColor and an uint8 representation.
 // When premultiplied is set to NA_TRUE, the uint8 variant is assumed to be
 // premultiplied with the alpha values.
-NA_API void naFillu8WithBabyColor(
+NA_API void naFillSRGBu8WithABYColor(
   uint8*            outColor,
-  const NABabyColor inColor,
+  const NAABYColor* inColor,
   NAColorBufferType bufferType);
-NA_API void naFillBabyColorWithu8(
-  NABabyColor       outColor,
-  const uint8*      inColor,
-  NAColorBufferType bufferType);
+
+
+
+NA_API float naGetABYColorAlpha(const NAABYColor* color);
+
+// Checks whether the given color is useful, meaning:
+// - All main channels a, b and y are 0.
+// - All main channels a, b and y are either positive or negative, not mixed.
+NA_API NABool naIsABYColorUseful(const NAABYColor* color);
+
+// Inverts the color
+NA_API void naInvertABYColor(NAABYColor* color);
+
+
+
+
+
+
+
+// Converts a single float value using an aby transformation.
+NA_IAPI float naConvertToPerceptualColorValue(float value);
+NA_IAPI float naConvertToRadiometricColorValue(float value);
+
 
 
 // This factor is nice and easy to remember. There is no greater mathematical
 // purpose in this number. It's just nice.
-#define NA_BABY_FACTOR 0.75f
+#define NA_ABY_FACTOR 0.75f
 
 NA_IDEF float naConvertToPerceptualColorValue(float value){
-  return value / (NA_BABY_FACTOR * value + (1.f - NA_BABY_FACTOR));
+  return value / (NA_ABY_FACTOR * value - (1.f - NA_ABY_FACTOR));
 }
 NA_IDEF float naConvertToRadiometricColorValue(float value){
-  return (1.f - NA_BABY_FACTOR) * value / (1.f - NA_BABY_FACTOR * value);
-}
-
-NA_IDEF void naFillBabyColor(NABabyColor color, float r, float g, float b, float a){
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
-  color[3] = a;
+  return -(1.f - NA_ABY_FACTOR) * value / (1.f + NA_ABY_FACTOR * value);
 }
 
 
@@ -101,7 +106,7 @@ NA_IDEF void naFillBabyColor(NABabyColor color, float r, float g, float b, float
 #ifdef __cplusplus
   } // extern "C"
 #endif
-#endif // NA_BABY_COLOR_INCLUDED
+#endif // NA_ABY_COLOR_INCLUDED
 
 
 

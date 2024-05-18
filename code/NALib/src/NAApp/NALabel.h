@@ -27,7 +27,7 @@ NA_API void naSetLabelSelectable(NALabel* label, NABool selectable);
 NA_API void naSetLabelHeight(NALabel* label, double height);
 
 // Sets font properties of a label.
-NA_API void naSetLabelTextColor(NALabel* label, const NABabyColor* color);
+NA_API void naSetLabelTextColor(NALabel* label, const NAABYColor* color);
 NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
 NA_API void naSetLabelFont(NALabel* label, NAFont* font);
 

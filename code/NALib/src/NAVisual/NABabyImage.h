@@ -1,6 +1,6 @@
 
-#ifndef NA_BABY_IMAGE_INCLUDED
-#define NA_BABY_IMAGE_INCLUDED
+#ifndef NA_ABY_IMAGE_INCLUDED
+#define NA_ABY_IMAGE_INCLUDED
 #ifdef __cplusplus
   extern "C"{
 #endif
@@ -12,12 +12,12 @@
 // image container. An NABabyImage contains only the very basic values of
 // an image storage, namely with, height and the data values.
 //
-// The data values are always of type NABabyColor and are arranged in a
+// The data values are always of type NAABYColor and are arranged in a
 // simple float array from left to right and then from bottom to top.
 // Note that this is different from most image formats which stor the pixels
 // from top to bottom.
 //
-// When serializing, A header is written with the ASCII characters "BABY1000".
+// When serializing, A header is written with the ASCII characters "ABY10000".
 // The 1 denotes the version number, the three 0 are reserved for the future.
 // After that, binary data is stored, all in big endian format. First, the
 // width and height are stored as int32 values. Both with and height must be
@@ -33,7 +33,7 @@
 
 #include "../NABase/NABase.h"
 #include "../NAMath/NACoord.h"
-#include "NABabyColor.h"
+#include "NAABYColor.h"
 
 
 typedef struct NABabyImage NABabyImage;
@@ -56,7 +56,7 @@ typedef enum{
 
 // Creates an image with the specified size and fills it with the given color.
 // If color is Null, the image contents will be uninitialized.
-NA_API NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color);
+NA_API NABabyImage* naCreateBabyImage(NASizei size, const NAABYColor* color);
 
 // Creates an image which is an exact duplicate of the image given.
 NA_API NABabyImage* naCreateBabyImageCopy(const NABabyImage* image);
@@ -73,7 +73,7 @@ NA_API NABabyImage* naCreateBabyImageCopy(const NABabyImage* image);
 // is used instead.
 NA_API NABabyImage* naCreateBabyImageWithTint(
   const NABabyImage* base,
-  const NABabyColor  tint,
+  const NAABYColor*  tint,
   NABlendMode        mode,
   float              blend);
 NA_DEF NABabyImage* naCreateBabyImageWithBlend(
@@ -83,7 +83,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(
   float              blend,
   NAPosi             offset);
 NA_DEF NABabyImage* naCreateBabyImageWithApply(
-  const NABabyColor  ground,
+  const NAABYColor*  ground,
   const NABabyImage* top,
   NABlendMode        mode,
   float              blend);
@@ -133,7 +133,7 @@ NA_API void naConvertBabyImageTou8(
 #ifdef __cplusplus
   } // extern "C"
 #endif
-#endif // NA_BABY_IMAGE_INCLUDED
+#endif // NA_ABY_IMAGE_INCLUDED
 
 
 
