@@ -340,6 +340,12 @@ NA_HIDEF void na_BlendColorEraseHue(
       dstPtr->alpha = (1.f - factorL * factor) * basePtr->alpha;
     }
   }
+
+  if(dstPtr->alpha == 0.f){
+    dstPtr->a = 0.f;
+    dstPtr->b = 0.f;
+    dstPtr->y = 0.f;
+  }
 }
 
 NA_DEF void naBlendColors(
@@ -382,12 +388,6 @@ NA_DEF void naBlendColors(
     case NA_BLEND_ERASE_HUE:
       na_BlendColorEraseHue(dstPtr, basePtr, topPtr, factor);
       break;
-    }
-
-    if(dstPtr->alpha == 0.f){
-      dstPtr->a = 0.f;
-      dstPtr->b = 0.f;
-      dstPtr->y = 0.f;
     }
 
     dstPtr += 1;

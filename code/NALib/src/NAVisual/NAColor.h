@@ -108,15 +108,6 @@ NA_API void naInvertColor(NAColor* color);
 
 
 
-
-
-
-
-
-
-
-
-
 #ifdef __cplusplus
   } // extern "C"
 #endif

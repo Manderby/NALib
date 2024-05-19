@@ -413,7 +413,6 @@ void preStartup(void* arg){
   naFillColorWithSRGB(&colors[6], 1., 0., 1., 1.);
   naFillColorWithSRGB(&colors[7], 1., 1., 1., 1.);
   naFillColorWithSRGB(&colors[8], 0., 0., 0., 1.);
-
 }
 
 
