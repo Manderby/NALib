@@ -11,7 +11,7 @@
 
 #include "NA3DHelper.h"
 #include "NAColor.h"
-#include "NAABYImage.h"
+#include "NAImage.h"
 #include "NADeflate.h"
 #include "NAPNG.h"
 

@@ -1,15 +1,15 @@
 
-#ifndef NA_ABY_IMAGE_INCLUDED
-#define NA_ABY_IMAGE_INCLUDED
+#ifndef NA_IMAGE_INCLUDED
+#define NA_IMAGE_INCLUDED
 #ifdef __cplusplus
   extern "C"{
 #endif
 
 
 
-// What is a NAABYImage?
+// What is an NAImage?
 // The name refers to the kind of color being stored in this very simple
-// image container. An NAABYImage contains only the very basic values of
+// image container. An NAImage contains only the very basic values of
 // an image storage, namely with, height and the data values.
 //
 // The data values are always of type NAColor and are arranged in a
@@ -36,14 +36,14 @@
 #include "NAColor.h"
 
 
-typedef struct NAABYImage NAABYImage;
+typedef struct NAImage NAImage;
 
 // Creates an image with the specified size and fills it with the given color.
 // If color is Null, the image contents will be uninitialized.
-NA_API NAABYImage* naCreateBabyImage(NASizei size, const NAColor* color);
+NA_API NAImage* naCreateImage(NASizei size, const NAColor* color);
 
 // Creates an image which is an exact duplicate of the image given.
-NA_API NAABYImage* naCreateBabyImageCopy(const NAABYImage* image);
+NA_API NAImage* naCreateImageCopy(const NAImage* image);
 
 // Creates a new image with blending. The mode defines, how the top will be
 // applied upon the base. The blend factor defines how strong the blending is.
@@ -55,66 +55,66 @@ NA_API NAABYImage* naCreateBabyImageCopy(const NAABYImage* image);
 //
 // For the Blend method, if NA_NULL is given for the base, transparent color
 // is used instead.
-NA_API NAABYImage* naCreateBabyImageWithTint(
-  const NAABYImage* base,
+NA_API NAImage* naCreateImageWithTint(
+  const NAImage* base,
   const NAColor* tint,
   NABlendMode mode,
   float factor);
-NA_DEF NAABYImage* naCreateBabyImageWithBlend(
-  const NAABYImage* base,
-  const NAABYImage* top,
+NA_DEF NAImage* naCreateImageWithBlend(
+  const NAImage* base,
+  const NAImage* top,
   NABlendMode mode,
   float factor,
   NAPosi offset);
-NA_DEF NAABYImage* naCreateBabyImageWithApply(
+NA_DEF NAImage* naCreateImageWithApply(
   const NAColor* ground,
-  const NAABYImage* top,
+  const NAImage* top,
   NABlendMode mode,
   float blend);
 
 // Creates an image half the size. Rescales data bilinearily.
-NA_API NAABYImage* naCreateBabyImageWithHalfSize(const NAABYImage* image);
+NA_API NAImage* naCreateImageWithHalfSize(const NAImage* image);
 
 // Creates an image which is a resize of the given image.
-NA_API NAABYImage* naCreateBabyImageWithResize(
-  const NAABYImage* image,
+NA_API NAImage* naCreateImageWithResize(
+  const NAImage* image,
   NASizei newSize);
 
 // Retains and Releases an image.
-NA_API NAABYImage* naRetainBabyImage(const NAABYImage* image);
-NA_API void naReleaseBabyImage(const NAABYImage* image);
+NA_API NAImage* naRetainImage(const NAImage* image);
+NA_API void naReleaseImage(const NAImage* image);
 
 // Returns the image dimensions.
-NA_API NASizei naGetBabyImageSize(const NAABYImage* image);
+NA_API NASizei naGetImageSize(const NAImage* image);
 
 // Returns the raw image data.
-NA_API NAColor* naGetBabyImageData(const NAABYImage* image);
+NA_API NAColor* naGetImageData(const NAImage* image);
 
 // Fills the image with the given data. The data is expected to contain as
 // many RGBA values stored as uint8 necessary for the whole image with no
 // padding. Depending on the topToBottom flag, the data is expected as such.
-// Note that a BabyImage internally always stores images bottom to top.
-NA_API void naFillBabyImageWithu8(
-  NAABYImage*      image,
-  const void*       data,
-  NABool            topToBottom,
+// Note that an NAImage internally always stores images bottom to top.
+NA_API void naFillImageWithu8(
+  NAImage* image,
+  const void* data,
+  NABool topToBottom,
   NAColorBufferType bufferType);
 
 // Writes the contents of the image into a buffer. The output data will be
 // RGBA values stored as uint8 with no padding. The data buffer must be big
 // enough. Depending on the topToBottom flag, the data is expected as such.
-// Note that a BabyImage internally always stores images bottom to top.
-NA_API void naConvertBabyImageTou8(
-  const NAABYImage* image,
-  void*              data,
-  NABool             topToBottom,
-  NAColorBufferType  bufferType);
+// Note that an NAImage internally always stores images bottom to top.
+NA_API void naConvertImageTou8(
+  const NAImage* image,
+  void* data,
+  NABool topToBottom,
+  NAColorBufferType bufferType);
 
 
 #ifdef __cplusplus
   } // extern "C"
 #endif
-#endif // NA_ABY_IMAGE_INCLUDED
+#endif // NA_IMAGE_INCLUDED
 
 
 

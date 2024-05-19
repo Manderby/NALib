@@ -95,13 +95,13 @@ NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color){
 
 
 
-NA_DEF NAABYImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
-  NAABYImage* image;
+NA_DEF NAImage* naCreateImageFromNativeImage(const void* nativeImage){
+  NAImage* image;
   
   CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)nativeImage));
-  image = naCreateBabyImage(naMakeSizei((NAInt)CGImageGetWidth((CGImageRef)nativeImage), (NAInt)CGImageGetHeight((CGImageRef)nativeImage)), NA_NULL);
+  image = naCreateImage(naMakeSizei((NAInt)CGImageGetWidth((CGImageRef)nativeImage), (NAInt)CGImageGetHeight((CGImageRef)nativeImage)), NA_NULL);
   // Note that reading PNG files directly does not premultiply alpha!
-  naFillBabyImageWithu8(image, CFDataGetBytePtr(rawData), NA_TRUE, NA_COLOR_BUFFER_RGBAPre);
+  naFillImageWithu8(image, CFDataGetBytePtr(rawData), NA_TRUE, NA_COLOR_BUFFER_RGBAPre);
   CFRelease(rawData);
   
   return image;
@@ -109,19 +109,19 @@ NA_DEF NAABYImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
 
 
 
-NA_DEF NAABYImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
-  NAABYImage* image = NA_NULL;
+NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr){
+  NAImage* image = NA_NULL;
 
 //  // Currently, only png is possible
 //  NAPNG* png = naNewPNGWithPath(pathStr);
-//  NAABYImage* abyImage = naCreateBabyImageFromPNG(png);
-//  return abyImage;
+//  NAImage* image = naCreateImageFromPNG(png);
+//  return image;
 
 //  CGDataProviderRef dataprovider = CGDataProviderCreateWithFilename(pathStr);
 //  if(dataprovider){
 //  
 //    CGImageRef nativeImage = CGImageCreateWithPNGDataProvider(dataprovider, NULL, NA_FALSE, kCGRenderingIntentAbsoluteColorimetric);
-//    image = naCreateBabyImageFromNativeImage(nativeImage);
+//    image = naCreateImageFromNativeImage(nativeImage);
 //    
 //    CGImageRelease(nativeImage);
 //    CGDataProviderRelease(dataprovider);
@@ -130,7 +130,7 @@ NA_DEF NAABYImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
   NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:pathStr]];
   NSImage* nsImage = [[NSImage alloc] initWithContentsOfURL:url];
   CGImageRef nativeImage = [nsImage CGImageForProposedRect:NA_NULL context:NA_NULL hints:NA_NULL];
-  image = naCreateBabyImageFromNativeImage(nativeImage);
+  image = naCreateImageFromNativeImage(nativeImage);
 
   NA_COCOA_RELEASE(nsImage);
   // Important: Do not use CGImageRelease on nativeImage. It is part of nsImage.
@@ -140,23 +140,23 @@ NA_DEF NAABYImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
 
 
 
-NA_DEF void* naAllocNativeImageWithBabyImage(const NAABYImage* image){
+NA_DEF void* naAllocNativeImageWithImage(const NAImage* image){
   CGImageRef nativeImage;
   CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-  NASizei imageSize = naGetBabyImageSize(image);
+  NASizei imageSize = naGetImageSize(image);
   CGContextRef cgContext = CGBitmapContextCreateWithData(
     NULL,
     (size_t)imageSize.width,
     (size_t)imageSize.height,
     NA_BITS_PER_BYTE,
-    (size_t)naGetBabyImageSize(image).width * 4, // 4 channels: RGBA
+    (size_t)naGetImageSize(image).width * 4, // 4 channels: RGBA
     colorSpace,
     kCGImageAlphaPremultipliedLast,
     NULL,
     NULL);
 
   uint8* imgData = CGBitmapContextGetData(cgContext);
-  naConvertBabyImageTou8(image, imgData, NA_TRUE, NA_COLOR_BUFFER_RGBAPre);
+  naConvertImageTou8(image, imgData, NA_TRUE, NA_COLOR_BUFFER_RGBAPre);
   
   nativeImage = CGBitmapContextCreateImage(cgContext);
   CGContextRelease(cgContext);

@@ -1,6 +1,6 @@
 
-#ifndef NA_ABY_COLOR_INCLUDED
-#define NA_ABY_COLOR_INCLUDED
+#ifndef NA_COLOR_INCLUDED
+#define NA_COLOR_INCLUDED
 #ifdef __cplusplus
   extern "C"{
 #endif
@@ -111,7 +111,7 @@ NA_API void naInvertColor(NAColor* color);
 #ifdef __cplusplus
   } // extern "C"
 #endif
-#endif // NA_ABY_COLOR_INCLUDED
+#endif // NA_COLOR_INCLUDED
 
 
 

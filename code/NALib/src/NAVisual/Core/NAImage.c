@@ -1,10 +1,10 @@
 
 #include "../NAColor.h"
-#include "../NAABYImage.h"
+#include "../NAImage.h"
 #include "../../NAMath/NAVectorAlgebra.h"
 
 
-struct NAABYImage{
+struct NAImage{
   NARefCount refCount;
   uint32 width;
   uint32 height;
@@ -14,7 +14,7 @@ struct NAABYImage{
 
 
 
-NA_HIDEF size_t na_GetABYImagePixelCount(const NAABYImage* image){
+NA_HIDEF size_t na_GetImagePixelCount(const NAImage* image){
   #if NA_DEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
@@ -24,17 +24,17 @@ NA_HIDEF size_t na_GetABYImagePixelCount(const NAABYImage* image){
 
 
 
-NA_HIDEF size_t na_GetABYImageDataSize(const NAABYImage* image){
+NA_HIDEF size_t na_GetImageDataSize(const NAImage* image){
   #if NA_DEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
-  return na_GetABYImagePixelCount(image) * sizeof(NAColor);
+  return na_GetImagePixelCount(image) * sizeof(NAColor);
 }
 
 
 
-NA_DEF NAColor* naGetBabyImageData(const NAABYImage* image){
+NA_DEF NAColor* naGetImageData(const NAImage* image){
   #if NA_DEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
@@ -44,7 +44,7 @@ NA_DEF NAColor* naGetBabyImageData(const NAABYImage* image){
 
 
 
-NA_DEF NASizei naGetBabyImageSize(const NAABYImage* image){
+NA_DEF NASizei naGetImageSize(const NAImage* image){
   #if NA_DEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
@@ -54,8 +54,8 @@ NA_DEF NASizei naGetBabyImageSize(const NAABYImage* image){
 
 
 
-NA_DEF NAABYImage* naCreateBabyImage(NASizei size, const NAColor* color){
-  NAABYImage* image;
+NA_DEF NAImage* naCreateImage(NASizei size, const NAColor* color){
+  NAImage* image;
   #if NA_DEBUG
     if(size.width <= 0 || size.height <= 0)
       naError("size must be > 0");
@@ -64,13 +64,13 @@ NA_DEF NAABYImage* naCreateBabyImage(NASizei size, const NAColor* color){
     if(color && !naIsColorUseful(color))
       naError("color is not useful");
   #endif
-  image = naAlloc(NAABYImage);
+  image = naAlloc(NAImage);
   naInitRefCount(&image->refCount);
   image->width = (int32)size.width;
   image->height = (int32)size.height;
-  image->data = naMalloc(na_GetABYImageDataSize(image));
+  image->data = naMalloc(na_GetImageDataSize(image));
   if(color){
-    size_t pixelCount = na_GetABYImagePixelCount(image);
+    size_t pixelCount = na_GetImagePixelCount(image);
     NAColor* ptr = image->data;
     for(size_t i = 0; i < pixelCount; ++i){
       naCopyColor(ptr, color);
@@ -82,17 +82,17 @@ NA_DEF NAABYImage* naCreateBabyImage(NASizei size, const NAColor* color){
 
 
 
-NA_HDEF NAABYImage* naCreateBabyImageCopy(const NAABYImage* image){
-  NAABYImage* newImage;
+NA_HDEF NAImage* naCreateImageCopy(const NAImage* image){
+  NAImage* newImage;
   #if NA_DEBUG
   if(!image)
     naCrash("given image is a Null pointer");
   #endif
-  newImage = naAlloc(NAABYImage);
+  newImage = naAlloc(NAImage);
   naInitRefCount(&newImage->refCount);
   newImage->width = image->width;
   newImage->height = image->height;
-  size_t dataSize = na_GetABYImageDataSize(newImage);
+  size_t dataSize = na_GetImageDataSize(newImage);
   newImage->data = naMalloc(dataSize);
   naCopyn(newImage->data, image->data, dataSize);
   return newImage;
@@ -105,7 +105,7 @@ NA_HDEF NAABYImage* naCreateBabyImageCopy(const NAABYImage* image){
 
 
 
-NAABYImage* na_CreateBlendedBabyImage(
+NAImage* na_CreateBlendedImage(
   const NAColor* base,
   NASizei baseSize,
   const NAColor* top,
@@ -135,8 +135,8 @@ NAABYImage* na_CreateBlendedBabyImage(
   NAInt innerEndX = naIsRectiEmpty(innerRect) ? 0 : naGetRectiEndX(innerRect);
 
   // Create the actual image to be filled.
-  NAABYImage* retImage = naCreateBabyImage(retSize, NA_NULL);
-  NAColor* ret = naGetBabyImageData(retImage);
+  NAImage* retImage = naCreateImage(retSize, NA_NULL);
+  NAColor* ret = naGetImageData(retImage);
 
   // In case we have two images, fill up the trivial vertical parts.
   if(topIsImage && baseIsImage){
@@ -222,8 +222,8 @@ NAABYImage* na_CreateBlendedBabyImage(
 }
 
 
-NA_DEF NAABYImage* naCreateBabyImageWithTint(
-  const NAABYImage* base,
+NA_DEF NAImage* naCreateImageWithTint(
+  const NAImage* base,
   const NAColor* tint,
   NABlendMode mode,
   float factor){
@@ -236,9 +236,9 @@ NA_DEF NAABYImage* naCreateBabyImageWithTint(
       naError("tint color is not useful");
   #endif
   
-  return na_CreateBlendedBabyImage(
+  return na_CreateBlendedImage(
     base->data,
-    naGetBabyImageSize(base),
+    naGetImageSize(base),
     tint,
     naMakeSizeiEmpty(),
     mode,
@@ -248,9 +248,9 @@ NA_DEF NAABYImage* naCreateBabyImageWithTint(
 
 
 
-NA_DEF NAABYImage* naCreateBabyImageWithBlend(
-  const NAABYImage* base,
-  const NAABYImage* top,
+NA_DEF NAImage* naCreateImageWithBlend(
+  const NAImage* base,
+  const NAImage* top,
   NABlendMode mode,
   float factor,
   NAPosi offset)
@@ -262,11 +262,11 @@ NA_DEF NAABYImage* naCreateBabyImageWithBlend(
     naCrash("top is Null");
   #endif
 
-  return na_CreateBlendedBabyImage(
+  return na_CreateBlendedImage(
     base->data,
-    naGetBabyImageSize(base),
+    naGetImageSize(base),
     top->data,
-    naGetBabyImageSize(top),
+    naGetImageSize(top),
     mode,
     factor,
     offset);
@@ -274,7 +274,7 @@ NA_DEF NAABYImage* naCreateBabyImageWithBlend(
 
 
 
-NA_DEF NAABYImage* naCreateBabyImageWithApply(const NAColor* ground, const NAABYImage* top, NABlendMode mode, float factor){
+NA_DEF NAImage* naCreateImageWithApply(const NAColor* ground, const NAImage* top, NABlendMode mode, float factor){
   #if NA_DEBUG
   if(!ground)
     naCrash("ground is Null");
@@ -285,11 +285,11 @@ NA_DEF NAABYImage* naCreateBabyImageWithApply(const NAColor* ground, const NAABY
   #endif
 
   const NAColor* topPtr = top->data;
-  return na_CreateBlendedBabyImage(
+  return na_CreateBlendedImage(
     ground,
     naMakeSizeiEmpty(),
     topPtr,
-    naGetBabyImageSize(top),
+    naGetImageSize(top),
     mode,
     factor,
     naMakePosi(0, 0));
@@ -297,10 +297,10 @@ NA_DEF NAABYImage* naCreateBabyImageWithApply(const NAColor* ground, const NAABY
 
 
 
-NA_DEF NAABYImage* naCreateBabyImageWithHalfSize(const NAABYImage* image){
+NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image){
   NASizei halfSize;
   NAInt x, y;
-  NAABYImage* outImage;
+  NAImage* outImage;
   NAColor* inPtr1;
   NAColor* inPtr2;
   NAColor* inPtr3;
@@ -313,7 +313,7 @@ NA_DEF NAABYImage* naCreateBabyImageWithHalfSize(const NAABYImage* image){
   #endif
   halfSize = naMakeSizei(image->width / 2, image->height / 2);
 
-  outImage = naCreateBabyImage(halfSize, NA_NULL);
+  outImage = naCreateImage(halfSize, NA_NULL);
   
   inPtr1 = image->data;
   inPtr2 = inPtr1 + 1;
@@ -392,8 +392,8 @@ NA_HDEF void naAccumulateResizeLine(NAColor* out, const NAColor* in, int32 outY,
 
 
 
-NA_DEF NAABYImage* naCreateBabyImageWithResize(const NAABYImage* image, NASizei newSize){
-  NAABYImage* outImage;
+NA_DEF NAImage* naCreateImageWithResize(const NAImage* image, NASizei newSize){
+  NAImage* outImage;
   
   #if NA_DEBUG
     if(!naIsSizeiUseful(newSize))
@@ -401,7 +401,7 @@ NA_DEF NAABYImage* naCreateBabyImageWithResize(const NAABYImage* image, NASizei 
   #endif
 
   NAColor blank = {0.f, 0.f, 0.f, 0.f};
-  outImage = naCreateBabyImage(newSize, &blank);
+  outImage = naCreateImage(newSize, &blank);
   
   int32 inY = 0;
   float subY = 0.f;
@@ -440,34 +440,34 @@ NA_DEF NAABYImage* naCreateBabyImageWithResize(const NAABYImage* image, NASizei 
 
 
 
-NA_HDEF void na_DestroyBabyImage(NAABYImage* image){
+NA_HDEF void na_DestroyImage(NAImage* image){
   naFree(image->data);
   naFree(image);
 }
 
-NA_API NAABYImage* naRetainBabyImage(const NAABYImage* image){
-  NAABYImage* mutableImage = (NAABYImage*)image; 
-  return (NAABYImage*)naRetainRefCount(&mutableImage->refCount);
+NA_API NAImage* naRetainImage(const NAImage* image){
+  NAImage* mutableImage = (NAImage*)image; 
+  return (NAImage*)naRetainRefCount(&mutableImage->refCount);
 }
 
-NA_DEF void naReleaseBabyImage(const NAABYImage* image){
-  NAABYImage* mutableImage = (NAABYImage*)image; 
-  naReleaseRefCount(&mutableImage->refCount, mutableImage, (NAMutator)na_DestroyBabyImage);
+NA_DEF void naReleaseImage(const NAImage* image){
+  NAImage* mutableImage = (NAImage*)image; 
+  naReleaseRefCount(&mutableImage->refCount, mutableImage, (NAMutator)na_DestroyImage);
 }
 
 
 
 #define NA_RGBA_COLOR_CHANNEL_COUNT 4
 
-NA_DEF void naFillBabyImageWithu8(NAABYImage* image, const void* data, NABool topToBottom, NAColorBufferType bufferType){
+NA_DEF void naFillImageWithu8(NAImage* image, const void* data, NABool topToBottom, NAColorBufferType bufferType){
   NAColor* imgPtr = image->data;
   const uint8* u8Ptr;
 
   if(topToBottom){
     NAInt x, y;
-    NASizei size = naGetBabyImageSize(image);
+    NASizei size = naGetImageSize(image);
     for(y = 0; y < size.height; y++){
-      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT]);
+      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT]);
       for(x = 0; x < size.width; x++){
         naFillColorWithSRGBu8(imgPtr, u8Ptr, bufferType);
         imgPtr += 1;
@@ -476,7 +476,7 @@ NA_DEF void naFillBabyImageWithu8(NAABYImage* image, const void* data, NABool to
     }
   }else{
     u8Ptr = data;
-    size_t pixelCount = na_GetABYImagePixelCount(image);
+    size_t pixelCount = na_GetImagePixelCount(image);
     for(size_t i = 0; i < pixelCount; ++i){
       naFillColorWithSRGBu8(imgPtr, u8Ptr, bufferType);
       imgPtr += 1;
@@ -487,15 +487,15 @@ NA_DEF void naFillBabyImageWithu8(NAABYImage* image, const void* data, NABool to
 
 
 
-NA_DEF void naConvertBabyImageTou8(const NAABYImage* image, void* data, NABool topToBottom, NAColorBufferType bufferType){
+NA_DEF void naConvertImageTou8(const NAImage* image, void* data, NABool topToBottom, NAColorBufferType bufferType){
   const NAColor* imgPtr = image->data;
   uint8* u8Ptr;
 
   if(topToBottom){
     NAInt x, y;
-    NASizei size = naGetBabyImageSize(image);
+    NASizei size = naGetImageSize(image);
     for(y = 0; y < size.height; y++){
-      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT]);
+      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT]);
       for(x = 0; x < size.width; x++){
         naFillSRGBu8WithColor(u8Ptr, imgPtr, bufferType);
         imgPtr += 1;
@@ -504,7 +504,7 @@ NA_DEF void naConvertBabyImageTou8(const NAABYImage* image, void* data, NABool t
     }
   }else{
     u8Ptr = data;
-    size_t pixelCount = na_GetABYImagePixelCount(image);
+    size_t pixelCount = na_GetImagePixelCount(image);
     for(size_t i = 0; i < pixelCount; ++i){
       naFillSRGBu8WithColor(u8Ptr, imgPtr, bufferType);
       imgPtr += 1;

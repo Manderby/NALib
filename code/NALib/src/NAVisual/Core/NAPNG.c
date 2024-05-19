@@ -3,7 +3,7 @@
 #include "../../NAStruct/NABuffer.h"
 #include "../NADeflate.h"
 #include "../../NAUtility/NAFile.h"
-#include "../NAABYImage.h"
+#include "../NAImage.h"
 
 // Reference: http://www.w3.org/TR/PNG
 
@@ -796,9 +796,9 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath){
 
 
 
-NA_API NAPNG* naNewPNGWithBabyImage(NAABYImage* abyImage){
-  NAPNG* png = naNewPNG(naGetBabyImageSize(abyImage), NA_PNG_COLORTYPE_TRUECOLOR_ALPHA, 8);
-  naConvertBabyImageTou8(abyImage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
+NA_API NAPNG* naNewPNGWithImage(NAImage* image){
+  NAPNG* png = naNewPNG(naGetImageSize(image), NA_PNG_COLORTYPE_TRUECOLOR_ALPHA, 8);
+  naConvertImageTou8(image, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
   return png;
 }
 
@@ -817,8 +817,8 @@ NA_DEF size_t naGetPNGPixelDataByteSize(NAPNG* png){
 
 
 
-NA_DEF NAABYImage* naCreateBabyImageFromPNG(NAPNG* png){
-  NAABYImage* abyImage = naCreateBabyImage(png->size, NA_NULL);
+NA_DEF NAImage* naCreateImageFromPNG(NAPNG* png){
+  NAImage* image = naCreateImage(png->size, NA_NULL);
   NAByte* pngPtr;
   NAColor* colorPtr;
   uint8 inBuf[4];
@@ -829,7 +829,7 @@ NA_DEF NAABYImage* naCreateBabyImageFromPNG(NAPNG* png){
     pngPtr = png->pixeldata;
     inBuf[3] = 255;
     for(y = 0; y < png->size.height; y++){
-      colorPtr = &(naGetBabyImageData(abyImage)[(png->size.height - y - 1) * naGetBabyImageSize(abyImage).width]);
+      colorPtr = &(naGetImageData(image)[(png->size.height - y - 1) * naGetImageSize(image).width]);
       for(x = 0; x < png->size.width; x++){
         inBuf[0] = pngPtr[0];
         inBuf[1] = pngPtr[1];
@@ -841,7 +841,7 @@ NA_DEF NAABYImage* naCreateBabyImageFromPNG(NAPNG* png){
     }
     break;
   case NA_PNG_COLORTYPE_TRUECOLOR_ALPHA:
-    naFillBabyImageWithu8(abyImage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
+    naFillImageWithu8(image, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
     break;
   default:
     #if NA_DEBUG
@@ -849,7 +849,7 @@ NA_DEF NAABYImage* naCreateBabyImageFromPNG(NAPNG* png){
     #endif
     break;
   }
-  return abyImage;
+  return image;
 }
 
 

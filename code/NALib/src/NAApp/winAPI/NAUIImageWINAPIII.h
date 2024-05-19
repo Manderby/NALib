@@ -37,9 +37,9 @@ NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor color){
 
 
 
-NA_DEF NAABYImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
+NA_DEF NAImage* naCreateImageFromNativeImage(const void* nativeImage){
   BYTE* lpPixels;
-  NAABYImage* abyImage;
+  NAImage* image;
 
   HDC hdcSource = GetDC(NA_NULL); // the source device context
   HBITMAP hSource = (HBITMAP)nativeImage; // the bitmap selected into the device context
@@ -60,36 +60,35 @@ NA_DEF NAABYImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
   // bitmap data (the "pixels") in the buffer lpPixels
   GetDIBits(hdcSource, hSource, 0, MyBMInfo.bmiHeader.biHeight, lpPixels, &MyBMInfo, DIB_RGB_COLORS);
 
-  abyImage = naCreateBabyImage(naMakeSizei(MyBMInfo.bmiHeader.biWidth, MyBMInfo.bmiHeader.biHeight), NA_NULL);
+  image = naCreateImage(naMakeSizei(MyBMInfo.bmiHeader.biWidth, MyBMInfo.bmiHeader.biHeight), NA_NULL);
   // Windows does store an alpha component but it is not in use and therefore zero.
   // We therefore ignore it in the following call and receyve a completely opaque image.
-  naFillBabyImageWithu8(abyImage, lpPixels, NA_FALSE, NA_COLOR_BUFFER_BGR0);
+  naFillImageWithu8(image, lpPixels, NA_FALSE, NA_COLOR_BUFFER_BGR0);
   naFree(lpPixels);
 
   // clean up: deselect bitmap from device context, close handles, delete buffer
-  return abyImage;
+  return image;
 }
 
 
 
-NA_DEF NAABYImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
+NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr){
   // Currently, only png is possible
   NAPNG* png = naNewPNGWithPath(pathStr);
-  NAABYImage* abyImage = naCreateBabyImageFromPNG(png);
+  NAImage* image = naCreateImageFromPNG(png);
   naDelete(png);
-  return abyImage;
+  return image;
 }
 
 
 
-NA_DEF void* naAllocNativeImageWithBabyImage(const NAABYImage* image){
+NA_DEF void* naAllocNativeImageWithImage(const NAImage* image){
   HBITMAP hNewBitmap;
 
-  NASizei size = naGetBabyImageSize(image);
+  NASizei size = naGetImageSize(image);
   NAByte* buffer = naMalloc(size.width * size.height * 4);
-  float* abyptr = naGetBabyImageData(image);
 
-  naConvertBabyImageTou8(image, buffer, NA_TRUE, NA_COLOR_BUFFER_BGRA);
+  naConvertImageTou8(image, buffer, NA_TRUE, NA_COLOR_BUFFER_BGRA);
 
   hNewBitmap = CreateBitmap((int)size.width, (int)size.height, 1, 32, buffer);
   naFree(buffer);

@@ -198,22 +198,22 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     if(customDraw){
       // We store the button as it is drawn by the system.
       BitBlt(hMemDC, 0, 0, (int)buttonsize.width, (int)buttonsize.height, hMemDC, 0, 0, SRCCOPY);
-      NAABYImage* buttonImage = naCreateBabyImageFromNativeImage(hButtonBitmap);
+      NAImage* buttonImage = naCreateImageFromNativeImage(hButtonBitmap);
 
       // Now we blend manually the foreground to the background.
       NAColor backColor = {.8f, .8f, .8f, 1.f};
       NAColor maskColor = {1.f, 1.f, 0.f, 1.f};
       NAColor accentColor;
       naFillDefaultAccentColorWithSkin(accentColor, NA_UIIMAGE_SKIN_LIGHT);
-      NAABYImage* alphaImage = naCreateBabyImageWithTint(buttonImage, maskColor, NA_BLEND_ERASE_HUE, 1.f);
-      NAABYImage* tintedImage = naCreateBabyImageWithTint(alphaImage, accentColor, NA_BLEND_MULTIPLY, .85f);
-      //NAABYImage* blendedImage = naCreateBabyImageCopy(tintedImage);
-      NAABYImage* blendedImage = naCreateBabyImageWithApply(backColor, tintedImage, NA_BLEND_OVERLAY, 1.f);
-      naReleaseBabyImage(alphaImage);
-      naReleaseBabyImage(tintedImage);
+      NAImage* alphaImage = naCreateImageWithTint(buttonImage, maskColor, NA_BLEND_ERASE_HUE, 1.f);
+      NAImage* tintedImage = naCreateImageWithTint(alphaImage, accentColor, NA_BLEND_MULTIPLY, .85f);
+      //NAImage* blendedImage = naCreateImageCopy(tintedImage);
+      NAImage* blendedImage = naCreateImageWithApply(backColor, tintedImage, NA_BLEND_OVERLAY, 1.f);
+      naReleaseImage(alphaImage);
+      naReleaseImage(tintedImage);
 
       NAByte* blendedBuffer = naMalloc(buttonsize.width * buttonsize.height * 4);
-      naConvertBabyImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
+      naConvertImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
       HBITMAP hBlendedBitmap = CreateBitmap((int)buttonsize.width, (int)buttonsize.height, 1, 32, blendedBuffer);
 
       // Finally, we put the blended image onscreen.
@@ -221,10 +221,10 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       BitBlt(drawitemstruct->hDC, 0, 0, (int)buttonsize.width, (int)buttonsize.height, hMemDC, 0, 0, SRCCOPY);
 
       // Deleting the blended objects and buffers
-      naReleaseBabyImage(buttonImage);
+      naReleaseImage(buttonImage);
       DeleteObject(hBlendedBitmap);
       naFree(blendedBuffer);
-      naReleaseBabyImage(blendedImage);
+      naReleaseImage(blendedImage);
     }
 
     DeleteObject(hButtonBitmap);
@@ -245,20 +245,20 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     LRESULT result = SendMessage(naGetUIElementNativePtr(winapiButton), BM_GETSTATE, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
     NABool pushed = (result & BST_PUSHED) == BST_PUSHED;
 
-    const NAABYImage* foreImage;
+    const NAImage* foreImage;
     NABool secondaryState = na_GetButtonState(winapiButton);
     if(IsWindowEnabled(naGetUIElementNativePtr(winapiButton))){
       if(pushed){
-        foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_PRESSED, secondaryState);
+        foreImage = na_GetUIImageImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_PRESSED, secondaryState);
       }else{
         if(winapiButton->button.uiElement.mouseInside){
-          foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_HOVER, secondaryState);
+          foreImage = na_GetUIImageImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_HOVER, secondaryState);
         }else{
-          foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE, secondaryState);
+          foreImage = na_GetUIImageImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE, secondaryState);
         }
       }
     }else{
-      foreImage = na_GetUIImageBabyImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_DISABLED, secondaryState);
+      foreImage = na_GetUIImageImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_DISABLED, secondaryState);
     }
 
     // We store the background where the image will be placed.
@@ -266,17 +266,17 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     HBITMAP hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
     HBITMAP hOldBitmap = SelectObject(hMemDC, hBackBitmap);
     BitBlt(hMemDC, 0, 0, (int)size1x.width, (int)size1x.height, drawitemstruct->hDC, (int)offset.x, (int)offset.y, SRCCOPY);
-    NAABYImage* backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
+    NAImage* backImage = naCreateImageFromNativeImage(hBackBitmap);
 
     // Now we blend manually the foreground to the background.
-    NAABYImage* blendedImage = naCreateBabyImageWithBlend(
+    NAImage* blendedImage = naCreateImageWithBlend(
       backImage,
       foreImage,
       NA_BLEND_OVERLAY,
       1.f,
       naMakePosi(0, 0));
     NAByte* blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
-    naConvertBabyImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
+    naConvertImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
     HBITMAP hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);
 
     // Finally, we put the blended image onscreen.
@@ -287,12 +287,12 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     // Deleting the blended objects and buffers
     DeleteObject(hBlendedBitmap);
     naFree(blendedBuffer);
-    naReleaseBabyImage(blendedImage);
+    naReleaseImage(blendedImage);
 
     // Deleting background objects and buffers
     DeleteObject(hBackBitmap);
     naFree(backBuffer);
-    naReleaseBabyImage(backImage);
+    naReleaseImage(backImage);
   }
 
   // Deleting device contexts

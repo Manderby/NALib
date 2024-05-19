@@ -16,11 +16,11 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   NASizei size1x;
   NASizei spacesize;
   NAPosi offset;
-  const NAABYImage* foreImage;
+  const NAImage* foreImage;
   NAByte* backBuffer;
   HBITMAP hBackBitmap;
-  NAABYImage* backImage;
-  NAABYImage* blendedImage;
+  NAImage* backImage;
+  NAImage* blendedImage;
   NAByte* blendedBuffer;
   HBITMAP hBlendedBitmap;
   NAWINAPIColor* bgColor;
@@ -49,24 +49,24 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
     (spacesize.width - size1x.width) / 2,
     (spacesize.height - size1x.height) / 2);
 
-  foreImage = na_GetUIImageBabyImage(imageSpace->imageSpace.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, NA_FALSE);
+  foreImage = na_GetUIImageImage(imageSpace->imageSpace.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, NA_FALSE);
 
   // We store the background where the image will be placed.
   backBuffer = naMalloc(size1x.width * size1x.height * 4);
   hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
   hOldBitmap = SelectObject(hMemDC, hBackBitmap);
   BitBlt(hMemDC, 0, 0, (int)size1x.width, (int)size1x.height, paintStruct.hdc, (int)offset.x, (int)offset.y, SRCCOPY);
-  backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
+  backImage = naCreateImageFromNativeImage(hBackBitmap);
 
   // Now we blend manually the foreground to the background.
-  blendedImage = naCreateBabyImageWithBlend(
+  blendedImage = naCreateImageWithBlend(
     backImage,
     foreImage,
     NA_BLEND_OVERLAY,
     1.f,
     naMakePosi(0, 0));
   blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
-  naConvertBabyImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
+  naConvertImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
   hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);
 
   // Finally, we put the blended image onscreen.
@@ -77,12 +77,12 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   // Deleting the blended objects and buffers
   DeleteObject(hBlendedBitmap);
   naFree(blendedBuffer);
-  naReleaseBabyImage(blendedImage);
+  naReleaseImage(blendedImage);
 
   // Deleting background objects and buffers
   DeleteObject(hBackBitmap);
   naFree(backBuffer);
-  naReleaseBabyImage(backImage);
+  naReleaseImage(backImage);
 
   // Deleting device contexts
   DeleteDC(hMemDC);

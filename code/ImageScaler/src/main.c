@@ -65,8 +65,8 @@ const NAUTF8Char* colorNames[COLOR_COUNT] = {
 NAColor colors[COLOR_COUNT];
 
 struct ImageTesterApplication{
-  NAABYImage* transparencyGridImage;
-  NAABYImage* images[IMAGE_COUNT];
+  NAImage* transparencyGridImage;
+  NAImage* images[IMAGE_COUNT];
 
   ImageTesterController* imageTestController;
 };
@@ -90,9 +90,9 @@ struct ImageTesterController{
   NALabel* bottomLabel;
   NASelect* bottomSelect;
 
-  const NAABYImage* topImage;
+  const NAImage* topImage;
   const NAColor* topColor;
-  const NAABYImage* bottomImage;
+  const NAImage* bottomImage;
   const NAColor* bottomColor;
   
   NAPosi center;
@@ -120,7 +120,7 @@ void updateImageTestController(ImageTesterController* con);
 
 void loadImage(size_t index, const NAUTF8Char* path){
   NAPNG* png = naNewPNGWithPath(path);
-  app->images[index] = naCreateBabyImageFromPNG(png);
+  app->images[index] = naCreateImageFromPNG(png);
   naDelete(png);
 }
 
@@ -128,10 +128,10 @@ void naStartImageTestApplication(void){
   app = naAlloc(ImageTesterApplication);
 
   NAPNG* gridPNG = naNewPNGWithPath("transparencyGrid.png");
-  NAABYImage* gridImage = naCreateBabyImageFromPNG(gridPNG);
-  NASizei gridSize = naGetBabyImageSize(gridImage);
-  app->transparencyGridImage = naCreateBabyImageWithResize(gridImage, naMakeSizei(gridSize.width * 2, gridSize.height * 2));
-  naReleaseBabyImage(gridImage);
+  NAImage* gridImage = naCreateImageFromPNG(gridPNG);
+  NASizei gridSize = naGetImageSize(gridImage);
+  app->transparencyGridImage = naCreateImageWithResize(gridImage, naMakeSizei(gridSize.width * 2, gridSize.height * 2));
+  naReleaseImage(gridImage);
 
   for(size_t i = 0; i < IMAGE_COUNT; ++i){
     app->images[i] = NA_NULL;
@@ -145,9 +145,9 @@ void naStartImageTestApplication(void){
 
 void naStopImageTestApplication(void){
   naDeallocImageTestController(app->imageTestController);
-  naReleaseBabyImage(app->transparencyGridImage);
+  naReleaseImage(app->transparencyGridImage);
   for(size_t i = 0; i < IMAGE_COUNT; ++i){
-    naReleaseBabyImage(app->images[i]);
+    naReleaseImage(app->images[i]);
   }
   naFree(app);
 }
@@ -251,7 +251,7 @@ void naDeallocImageTestController(ImageTesterController* con){
 
 
 
-void selectionChanged(const NAABYImage** imagePtr, const NAColor** color, size_t index){
+void selectionChanged(const NAImage** imagePtr, const NAColor** color, size_t index){
   if(index < COLOR_COUNT){
     *imagePtr = NA_NULL;
     *color = &colors[index];
@@ -279,71 +279,71 @@ void updateImageTestController(ImageTesterController* con){
   naSetSelectIndexSelected(con->blendModeSelect, con->blendMode);
   naSetSelectIndexSelected(con->bottomSelect, con->selectedBottom);
 
-  NASizei gridSize = naGetBabyImageSize(app->transparencyGridImage);
+  NASizei gridSize = naGetImageSize(app->transparencyGridImage);
 
-  NAABYImage* backImage;
+  NAImage* backImage;
   if(con->bottomImage){
-    NASizei newSize = naGetBabyImageSize(con->bottomImage);
+    NASizei newSize = naGetImageSize(con->bottomImage);
     newSize.width *= 2;
     newSize.height *= 2;
-    backImage = naCreateBabyImageWithResize(con->bottomImage, newSize);
+    backImage = naCreateImageWithResize(con->bottomImage, newSize);
   }else{
-    backImage = naCreateBabyImage(gridSize, con->bottomColor);
+    backImage = naCreateImage(gridSize, con->bottomColor);
   }
     
-  NAABYImage* blendedImage;
+  NAImage* blendedImage;
 
   if(con->topImage){
-    NASizei originalSize = naGetBabyImageSize(con->topImage);
+    NASizei originalSize = naGetImageSize(con->topImage);
     NASizei newSize = naMakeSizeiE((NAInt)(con->scale * originalSize.width), (NAInt)(con->scale * originalSize.height));
     if(naIsSizeiUseful(newSize)){
-      NAABYImage* scaledImage = naCreateBabyImageWithResize(con->topImage, newSize);
-      NASizei baseSize = naGetBabyImageSize(backImage);
+      NAImage* scaledImage = naCreateImageWithResize(con->topImage, newSize);
+      NASizei baseSize = naGetImageSize(backImage);
       NASize spaceSize = naGetUIElementRect(con->imageSpace).size;
 
       NAPosi origin = naMakePosi(
         con->center.x - (NAInt)((newSize.width / 2.) + ((spaceSize.width - baseSize.width) / 2.)),
         con->center.y - (NAInt)((newSize.height / 2.) + ((spaceSize.height - baseSize.height) / 2.)));
 
-      blendedImage = naCreateBabyImageWithBlend(
+      blendedImage = naCreateImageWithBlend(
         backImage,
         scaledImage,
         con->blendMode,
         con->alpha,
         origin);
-      naReleaseBabyImage(scaledImage);
+      naReleaseImage(scaledImage);
     }else{
-      blendedImage = naRetainBabyImage(backImage);
+      blendedImage = naRetainImage(backImage);
     }
   }else{
-    blendedImage = naCreateBabyImageWithTint(
+    blendedImage = naCreateImageWithTint(
       backImage,
       con->topColor,
       con->blendMode,
       con->alpha);
   }
 
-  naReleaseBabyImage(backImage);
+  naReleaseImage(backImage);
 
-  NASizei blendedSize = naGetBabyImageSize(blendedImage);
+  NASizei blendedSize = naGetImageSize(blendedImage);
   NAPosi origin = naMakePosi(
     (gridSize.width - blendedSize.width) / 2,
     (gridSize.height - blendedSize.height) / 2);
 
-  NAABYImage* fullImage = naCreateBabyImageWithBlend(
+  NAImage* fullImage = naCreateImageWithBlend(
     app->transparencyGridImage,
     blendedImage,
     NA_BLEND_OVERLAY,
     1.,
     origin);
 
-  naReleaseBabyImage(blendedImage);
+  naReleaseImage(blendedImage);
 
   NAUIImage* uiImage = naCreateUIImage(
     fullImage,
     NA_UIIMAGE_RESOLUTION_SCREEN_1x,
     NA_BLEND_ZERO);
-  naReleaseBabyImage(fullImage);
+  naReleaseImage(fullImage);
 
   naSetImageSpaceImage(con->imageSpace, uiImage);
   naRelease(uiImage);

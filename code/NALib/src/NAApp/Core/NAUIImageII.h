@@ -15,14 +15,14 @@ NA_EXTERN_RUNTIME_TYPE(NAUIImage);
 
 typedef struct NA_UISubImage NA_UISubImage;
 struct NA_UISubImage{
-  NAABYImage* image;
+  NAImage* image;
   void* nativeImage;
   double resolution;
   NAUIImageSkin skin;
   NAUIImageInteraction interaction;
 };
 
-NA_HAPI const NAABYImage* na_GetUIImageBabyImage(
+NA_HAPI const NAImage* na_GetUIImageImage(
   const NAUIImage* uiImage,
   double resolution,
   NAUIImageSkin skin,

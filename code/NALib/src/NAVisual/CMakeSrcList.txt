@@ -5,7 +5,7 @@ set(headerFiles
   ${NAVisualDir}/CMakeSrcList.txt
   ${NAVisualDir}/NA3DHelper.h
   ${NAVisualDir}/NAColor.h
-  ${NAVisualDir}/NAABYImage.h
+  ${NAVisualDir}/NAImage.h
   ${NAVisualDir}/NADeflate.h
   ${NAVisualDir}/NAPNG.h
   ${NAVisualDir}/NAVisual.h
@@ -14,7 +14,7 @@ set(headerFiles
 set(coreImplementationFiles
   ${NAVisualDir}/Core/NA3DHelper.c
   ${NAVisualDir}/Core/NAColor.c
-  ${NAVisualDir}/Core/NAABYImage.c
+  ${NAVisualDir}/Core/NAImage.c
   ${NAVisualDir}/Core/NAColorOperations.c
   ${NAVisualDir}/Core/NADeflate.c
   ${NAVisualDir}/Core/NAPNG.c
