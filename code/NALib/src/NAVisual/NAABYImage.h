@@ -7,9 +7,9 @@
 
 
 
-// What is a NABabyImage?
+// What is a NAABYImage?
 // The name refers to the kind of color being stored in this very simple
-// image container. An NABabyImage contains only the very basic values of
+// image container. An NAABYImage contains only the very basic values of
 // an image storage, namely with, height and the data values.
 //
 // The data values are always of type NAABYColor and are arranged in a
@@ -36,30 +36,14 @@
 #include "NAABYColor.h"
 
 
-typedef struct NABabyImage NABabyImage;
-
-// Note that BLACK_GREEN and WHITE_GREEN only work for opaque images.
-typedef enum{
-  NA_BLEND_ZERO,          // Does not blend at all. The base remains as it is.
-  NA_BLEND_LINEAR,        // Linear interpolation according blend factor.
-  NA_BLEND_OVERLAY,       // Blends where top is opaque.
-  NA_BLEND_OPAQUE,        // Blends where base is opaque.
-  NA_BLEND_MULTIPLY,      // Blends where base is opaque by multiplying the color.
-  NA_BLEND_SCREEN,        // Blends where base is opaque by inverse multiplying the color.
-  NA_BLEND_ERODE_LIGHT,   // Same as screen but makes light pixels of base transparent.
-                          // Useful for icon creation.
-  NA_BLEND_ERODE_DARK,    // Same as multiply but makes dark pixels of base transparent.
-                          // Useful for icon creation.
-  NA_BLEND_ERASE_HUE      // Decolorizes and makes base transparent based on top hue.
-                          // Useful for green-screening or blue-screening.
-} NABlendMode;
+typedef struct NAABYImage NAABYImage;
 
 // Creates an image with the specified size and fills it with the given color.
 // If color is Null, the image contents will be uninitialized.
-NA_API NABabyImage* naCreateBabyImage(NASizei size, const NAABYColor* color);
+NA_API NAABYImage* naCreateBabyImage(NASizei size, const NAABYColor* color);
 
 // Creates an image which is an exact duplicate of the image given.
-NA_API NABabyImage* naCreateBabyImageCopy(const NABabyImage* image);
+NA_API NAABYImage* naCreateBabyImageCopy(const NAABYImage* image);
 
 // Creates a new image with blending. The mode defines, how the top will be
 // applied upon the base. The blend factor defines how strong the blending is.
@@ -71,50 +55,50 @@ NA_API NABabyImage* naCreateBabyImageCopy(const NABabyImage* image);
 //
 // For the Blend method, if NA_NULL is given for the base, transparent color
 // is used instead.
-NA_API NABabyImage* naCreateBabyImageWithTint(
-  const NABabyImage* base,
+NA_API NAABYImage* naCreateBabyImageWithTint(
+  const NAABYImage* base,
   const NAABYColor*  tint,
   NABlendMode        mode,
   float              blend);
-NA_DEF NABabyImage* naCreateBabyImageWithBlend(
-  const NABabyImage* base,
-  const NABabyImage* top,
+NA_DEF NAABYImage* naCreateBabyImageWithBlend(
+  const NAABYImage* base,
+  const NAABYImage* top,
   NABlendMode        mode,
   float              blend,
   NAPosi             offset);
-NA_DEF NABabyImage* naCreateBabyImageWithApply(
+NA_DEF NAABYImage* naCreateBabyImageWithApply(
   const NAABYColor*  ground,
-  const NABabyImage* top,
+  const NAABYImage* top,
   NABlendMode        mode,
   float              blend);
 
 // Creates an image half the size. Rescales data bilinearily.
-NA_API NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image);
+NA_API NAABYImage* naCreateBabyImageWithHalfSize(const NAABYImage* image);
 
 // Creates an image which is a resize of the given image.
-NA_API NABabyImage* naCreateBabyImageWithResize(
-  const NABabyImage* image,
+NA_API NAABYImage* naCreateBabyImageWithResize(
+  const NAABYImage* image,
   NASizei newSize);
 
 // Retains and Releases an image.
-NA_API NABabyImage* naRetainBabyImage(const NABabyImage* image);
-NA_API void naReleaseBabyImage(const NABabyImage* image);
+NA_API NAABYImage* naRetainBabyImage(const NAABYImage* image);
+NA_API void naReleaseBabyImage(const NAABYImage* image);
 
 // Returns the number of float values per horizontal line.
-NA_API NAInt naGetBabyImageValuesPerLine(const NABabyImage* image);
+NA_API NAInt naGetABYImageValuesPerLine(const NAABYImage* image);
 
 // Returns the image dimensions.
-NA_API NASizei naGetBabyImageSize(const NABabyImage* image);
+NA_API NASizei naGetBabyImageSize(const NAABYImage* image);
 
 // Returns the raw image data.
-NA_API float* naGetBabyImageData(const NABabyImage* image);
+NA_API float* naGetBabyImageData(const NAABYImage* image);
 
 // Fills the image with the given data. The data is expected to contain as
 // many RGBA values stored as uint8 necessary for the whole image with no
 // padding. Depending on the topToBottom flag, the data is expected as such.
 // Note that a BabyImage internally always stores images bottom to top.
 NA_API void naFillBabyImageWithu8(
-  NABabyImage*      image,
+  NAABYImage*      image,
   const void*       data,
   NABool            topToBottom,
   NAColorBufferType bufferType);
@@ -124,7 +108,7 @@ NA_API void naFillBabyImageWithu8(
 // enough. Depending on the topToBottom flag, the data is expected as such.
 // Note that a BabyImage internally always stores images bottom to top.
 NA_API void naConvertBabyImageTou8(
-  const NABabyImage* image,
+  const NAABYImage* image,
   void*              data,
   NABool             topToBottom,
   NAColorBufferType  bufferType);

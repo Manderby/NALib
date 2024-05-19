@@ -7,7 +7,7 @@
 
 
 #include "../NAMath/NACoord.h"
-#include "NABabyImage.h"
+#include "NAABYImage.h"
 
 
 typedef struct NAPNG NAPNG;
@@ -24,11 +24,11 @@ typedef enum{
 
 NA_API NAPNG* naNewPNG(NASizei size, NAPNGColorType colorType, int8 bitDepth);
 NA_API NAPNG* naNewPNGWithPath(const char* filePath);
-NA_API NAPNG* naNewPNGWithBabyImage(NABabyImage* abyImage);
+NA_API NAPNG* naNewPNGWithBabyImage(NAABYImage* abyImage);
 
 NA_API void* naGetPNGPixelData(NAPNG* png);
 NA_API size_t naGetPNGPixelDataByteSize(NAPNG* png);
-NA_API NABabyImage* naCreateBabyImageFromPNG(NAPNG* png);
+NA_API NAABYImage* naCreateBabyImageFromPNG(NAPNG* png);
 NA_API NASizei naGetPNGSize(NAPNG* png);
 NA_API NAPNGColorType naGetPNGColorType(NAPNG* png);
 NA_API NAInt naGetPNGBitDepth(NAPNG* png);

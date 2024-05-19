@@ -65,8 +65,8 @@ const NAUTF8Char* colorNames[COLOR_COUNT] = {
 NAABYColor colors[COLOR_COUNT];
 
 struct ImageTesterApplication{
-  NABabyImage* transparencyGridImage;
-  NABabyImage* images[IMAGE_COUNT];
+  NAABYImage* transparencyGridImage;
+  NAABYImage* images[IMAGE_COUNT];
 
   ImageTesterController* imageTestController;
 };
@@ -90,9 +90,9 @@ struct ImageTesterController{
   NALabel* bottomLabel;
   NASelect* bottomSelect;
 
-  const NABabyImage* topImage;
+  const NAABYImage* topImage;
   const NAABYColor* topColor;
-  const NABabyImage* bottomImage;
+  const NAABYImage* bottomImage;
   const NAABYColor* bottomColor;
   
   NAPosi center;
@@ -128,7 +128,7 @@ void naStartImageTestApplication(void){
   app = naAlloc(ImageTesterApplication);
 
   NAPNG* gridPNG = naNewPNGWithPath("transparencyGrid.png");
-  NABabyImage* gridImage = naCreateBabyImageFromPNG(gridPNG);
+  NAABYImage* gridImage = naCreateBabyImageFromPNG(gridPNG);
   NASizei gridSize = naGetBabyImageSize(gridImage);
   app->transparencyGridImage = naCreateBabyImageWithResize(gridImage, naMakeSizei(gridSize.width * 2, gridSize.height * 2));
   naReleaseBabyImage(gridImage);
@@ -251,10 +251,10 @@ void naDeallocImageTestController(ImageTesterController* con){
 
 
 
-void selectionChanged(const NABabyImage** imagePtr, const NAABYColor** abyColor, size_t index){
+void selectionChanged(const NAABYImage** imagePtr, const NAABYColor** color, size_t index){
   if(index < COLOR_COUNT){
     *imagePtr = NA_NULL;
-    *abyColor = &colors[index];
+    *color = &colors[index];
   }else{
     index -= COLOR_COUNT;
     if(!app->images[index]){
@@ -281,7 +281,7 @@ void updateImageTestController(ImageTesterController* con){
 
   NASizei gridSize = naGetBabyImageSize(app->transparencyGridImage);
 
-  NABabyImage* backImage;
+  NAABYImage* backImage;
   if(con->bottomImage){
     NASizei newSize = naGetBabyImageSize(con->bottomImage);
     newSize.width *= 2;
@@ -291,13 +291,13 @@ void updateImageTestController(ImageTesterController* con){
     backImage = naCreateBabyImage(gridSize, con->bottomColor);
   }
     
-  NABabyImage* blendedImage;
+  NAABYImage* blendedImage;
 
   if(con->topImage){
     NASizei originalSize = naGetBabyImageSize(con->topImage);
     NASizei newSize = naMakeSizeiE((NAInt)(con->scale * originalSize.width), (NAInt)(con->scale * originalSize.height));
     if(naIsSizeiUseful(newSize)){
-      NABabyImage* scaledImage = naCreateBabyImageWithResize(con->topImage, newSize);
+      NAABYImage* scaledImage = naCreateBabyImageWithResize(con->topImage, newSize);
       NASizei baseSize = naGetBabyImageSize(backImage);
       NASize spaceSize = naGetUIElementRect(con->imageSpace).size;
 
@@ -330,7 +330,7 @@ void updateImageTestController(ImageTesterController* con){
     (gridSize.width - blendedSize.width) / 2,
     (gridSize.height - blendedSize.height) / 2);
 
-  NABabyImage* fullImage = naCreateBabyImageWithBlend(
+  NAABYImage* fullImage = naCreateBabyImageWithBlend(
     app->transparencyGridImage,
     blendedImage,
     NA_BLEND_OVERLAY,

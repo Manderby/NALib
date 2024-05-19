@@ -37,9 +37,9 @@ NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAABYColor color){
 
 
 
-NA_DEF NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
+NA_DEF NAABYImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
   BYTE* lpPixels;
-  NABabyImage* abyImage;
+  NAABYImage* abyImage;
 
   HDC hdcSource = GetDC(NA_NULL); // the source device context
   HBITMAP hSource = (HBITMAP)nativeImage; // the bitmap selected into the device context
@@ -72,17 +72,17 @@ NA_DEF NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
 
 
 
-NA_DEF NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
+NA_DEF NAABYImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
   // Currently, only png is possible
   NAPNG* png = naNewPNGWithPath(pathStr);
-  NABabyImage* abyImage = naCreateBabyImageFromPNG(png);
+  NAABYImage* abyImage = naCreateBabyImageFromPNG(png);
   naDelete(png);
   return abyImage;
 }
 
 
 
-NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
+NA_DEF void* naAllocNativeImageWithBabyImage(const NAABYImage* image){
   HBITMAP hNewBitmap;
 
   NASizei size = naGetBabyImageSize(image);

@@ -32,9 +32,14 @@
 #include "../NABase/NABase.h"
 #include "../NAUtility/NAMemory.h"
 
+
+
+NA_DEF void naConvertHSVToHSL(float out[3], const float in[3]);
+NA_DEF void naConvertHSLToHSV(float out[3], const float in[3]);
+
+
+
 #define NA_ABY_COLOR_CHANNEL_COUNT 4
-#define NA_ABY_COLOR_BYTES_PER_COMPONENT \
-  (NA_ABY_COLOR_CHANNEL_COUNT * sizeof(float))
 typedef struct NAABYColor NAABYColor;
 struct NAABYColor{
   float a;
@@ -51,6 +56,22 @@ typedef enum{
   NA_COLOR_BUFFER_BGRA
 } NAColorBufferType;
 
+// Note that BLACK_GREEN and WHITE_GREEN only work for opaque images.
+typedef enum{
+  NA_BLEND_ZERO,          // Does not blend at all. The base remains as it is.
+  NA_BLEND_LINEAR,        // Linear interpolation according blend factor.
+  NA_BLEND_OVERLAY,       // Blends where top is opaque.
+  NA_BLEND_OPAQUE,        // Blends where base is opaque.
+  NA_BLEND_MULTIPLY,      // Blends where base is opaque by multiplying the color.
+  NA_BLEND_SCREEN,        // Blends where base is opaque by inverse multiplying the color.
+  NA_BLEND_ERODE_LIGHT,   // Same as screen but makes light pixels of base transparent.
+                          // Useful for icon creation.
+  NA_BLEND_ERODE_DARK,    // Same as multiply but makes dark pixels of base transparent.
+                          // Useful for icon creation.
+  NA_BLEND_ERASE_HUE      // Decolorizes and makes base transparent based on top hue.
+                          // Useful for green-screening or blue-screening.
+} NABlendMode;
+
 NA_API void naCopyABYColor(NAABYColor* dstColor, const NAABYColor* srcColor);
 
 NA_API void naFillABYColorWithTransparent(NAABYColor* color);
@@ -58,7 +79,7 @@ NA_API void naFillABYColorWithSRGB(NAABYColor* color, float r, float g, float b,
 NA_API void naFillABYColorWithSRGBu8(NAABYColor* outColor, const uint8* inColor, NAColorBufferType bufferType);
 
 NA_API void naFillSRGBAWithABYColor(float rgba[4], const NAABYColor* color);
-// Converts between BabyColor and an uint8 representation.
+// Converts between NAABYColor and an uint8 representation.
 // When premultiplied is set to NA_TRUE, the uint8 variant is assumed to be
 // premultiplied with the alpha values.
 NA_API void naFillSRGBu8WithABYColor(
@@ -66,7 +87,15 @@ NA_API void naFillSRGBu8WithABYColor(
   const NAABYColor* inColor,
   NAColorBufferType bufferType);
 
-
+NA_API void naBlendABYColors(
+  NAABYColor* dstPtr,
+  const NAABYColor* basePtr,
+  const NAABYColor* topPtr,
+  float factor,
+  NABlendMode mode,
+  size_t count,
+  NABool baseIsImage,
+  NABool topIsImage);
 
 NA_API float naGetABYColorAlpha(const NAABYColor* color);
 

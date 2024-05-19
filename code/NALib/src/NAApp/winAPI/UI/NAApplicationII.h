@@ -382,7 +382,7 @@ NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path){
     app->application.iconPath = path;
 
   if(path){
-    NABabyImage* iconBabyImage = naCreateBabyImageFromFilePath(path);
+    NAABYImage* iconBabyImage = naCreateBabyImageFromFilePath(path);
     HBITMAP bitmap = naAllocNativeImageWithBabyImage(iconBabyImage);
    
     HBITMAP hbmMask = CreateCompatibleBitmap(

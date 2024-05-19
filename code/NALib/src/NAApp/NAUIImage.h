@@ -11,7 +11,7 @@
 
 
 
-#include "../NAVisual/NABabyImage.h"
+#include "../NAVisual/NAABYImage.h"
 
 // These are the default resolutions given in rasterpositions/meter.
 #define NA_UIIMAGE_RESOLUTION_SCREEN_1x 3779.52755905511811   // 96 ppi
@@ -66,7 +66,7 @@ typedef struct NAUIImage NAUIImage;
 //
 // The NAUIImage has reference counting built in. Use naRetain and naRelease.
 NA_API NAUIImage* naCreateUIImage(
-  const NABabyImage* baseImage,
+  const NAABYImage* baseImage,
   double baseResolution,
   NABlendMode tintMode);
 
@@ -78,7 +78,7 @@ NA_API NAUIImage* naRecreateUIImage(const NAUIImage* uiImage);
 // Sets a custom image for the given parameters.
 NA_API void naSetUIImageSubImage(
   NAUIImage* uiImage,
-  const NABabyImage* subImage,
+  const NAABYImage* subImage,
   double resolution,
   NAUIImageSkin skin,
   NAUIImageInteraction interaction);
@@ -98,22 +98,22 @@ NA_API void naFillDefaultAccentColorWithSkin(NAABYColor* color, NAUIImageSkin sk
 
 // Creates a new BabyImage with the given path. Can only be PNG on windows,
 // macOS allows for various kind of input files.
-NA_API NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr);
+NA_API NAABYImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr);
 
 // Working with system native images
 //
 // Operating systems have special types to represent an image. The following
-// functions allow to convert between NABabyImage and the native images which
+// functions allow to convert between NAABYImage and the native images which
 // are of the following type:
 //
 // macOS:   NSImage*
 // Windows: HBITMAP
 
 // Creates a new image out of a given native image.
-NA_API NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage);
+NA_API NAABYImage* naCreateBabyImageFromNativeImage(const void* nativeImage);
 
 // Allocates a new native image with the content of the given image.
-NA_API void* naAllocNativeImageWithBabyImage(const NABabyImage* image);
+NA_API void* naAllocNativeImageWithBabyImage(const NAABYImage* image);
 
 // Deallocates the native image.
 NA_API void naDeallocNativeImage(void* nativeImage);

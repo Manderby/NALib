@@ -12,7 +12,7 @@ NA_RUNTIME_TYPE(NAUIImage, na_DestructUIImage, NA_TRUE);
 // Will retain the ABYImage.
 NA_HAPI NA_UISubImage* na_AddUISubImage(
   NAUIImage* uiImage,
-  const NABabyImage* image,
+  const NAABYImage* image,
   double resolution,
   NAUIImageSkin skin,
   NAUIImageInteraction interaction);
@@ -52,7 +52,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
     NASizei size = naGetBabyImageSize(originalImage->image);
     size.width = (NAInt)((double)size.width * resolution / baseResolution);
     size.height = (NAInt)((double)size.height * resolution / baseResolution);
-    NABabyImage* newImage = naCreateBabyImageWithResize(originalImage->image, size);
+    NAABYImage* newImage = naCreateBabyImageWithResize(originalImage->image, size);
     newSubImage = na_AddUISubImage(
       mutableUIImage,
       newImage,
@@ -69,7 +69,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
         const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
         NAABYColor accentColor;
         naFillDefaultAccentColorWithSkin(&accentColor, skin);
-        NABabyImage* newImage = naCreateBabyImageWithTint(
+        NAABYImage* newImage = naCreateBabyImageWithTint(
           originalImage->image,
           &accentColor,
           NA_BLEND_OPAQUE,
@@ -89,7 +89,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
         
         NAABYColor hoverColor;
         naFillDefaultAccentColorWithSkin(&hoverColor, skin);
-        NABabyImage* newImage = naCreateBabyImageWithTint(
+        NAABYImage* newImage = naCreateBabyImageWithTint(
           originalImage->image,
           &hoverColor,
           NA_BLEND_OPAQUE,
@@ -111,7 +111,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
           newSubImage = originalImage;
         #else
           NAABYColor transparent = {0., 0., 0., 0.};
-          NABabyImage* newImage = naCreateBabyImageWithApply(
+          NAABYImage* newImage = naCreateBabyImageWithApply(
             transparent,
             originalImage->image,
             NA_BLEND_OVERLAY,
@@ -137,7 +137,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
       naInvertABYColor(&tintColor);
     }
     const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
-    NABabyImage* newImage = naCreateBabyImageWithTint(originalImage->image, &tintColor, uiImage->tintMode, 1.f);
+    NAABYImage* newImage = naCreateBabyImageWithTint(originalImage->image, &tintColor, uiImage->tintMode, 1.f);
     newSubImage = na_AddUISubImage(
       mutableUIImage,
       newImage,
@@ -154,7 +154,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
 
 NA_DEF void naSetUIImageSubImage(
   NAUIImage* uiImage,
-  const NABabyImage* subImage,
+  const NAABYImage* subImage,
   double resolution,
   NAUIImageSkin skin,
   NAUIImageInteraction interaction)
@@ -180,7 +180,7 @@ NA_DEF void naSetUIImageSubImage(
 
 
 
-NA_HDEF const NABabyImage* na_GetUIImageBabyImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction, NABool secondaryState){
+NA_HDEF const NAABYImage* na_GetUIImageBabyImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction, NABool secondaryState){
   // Let the following function do the hard work.
   const NA_UISubImage* subImage = na_GetUISubImage(uiImage, resolution, skin, interaction, secondaryState);
   return subImage->image;
@@ -197,7 +197,7 @@ NA_HDEF void* na_GetUIImageNativeImage(const NAUIImage* uiImage, double resoluti
 
 
 NA_DEF NAUIImage* naCreateUIImage(
-  const NABabyImage* baseImage,
+  const NAABYImage* baseImage,
   double baseResolution,
   NABlendMode tintMode)
 {
@@ -361,7 +361,7 @@ NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage){
 
 NA_HDEF NA_UISubImage* na_AddUISubImage(
   NAUIImage* uiImage,
-  const NABabyImage* image,
+  const NAABYImage* image,
   double resolution,
   NAUIImageSkin skin,
   NAUIImageInteraction interaction)

@@ -3,7 +3,7 @@
 #include "../../NAStruct/NABuffer.h"
 #include "../NADeflate.h"
 #include "../../NAUtility/NAFile.h"
-#include "../NABabyImage.h"
+#include "../NAABYImage.h"
 
 // Reference: http://www.w3.org/TR/PNG
 
@@ -796,7 +796,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath){
 
 
 
-NA_API NAPNG* naNewPNGWithBabyImage(NABabyImage* abyImage){
+NA_API NAPNG* naNewPNGWithBabyImage(NAABYImage* abyImage){
   NAPNG* png = naNewPNG(naGetBabyImageSize(abyImage), NA_PNG_COLORTYPE_TRUECOLOR_ALPHA, 8);
   naConvertBabyImageTou8(abyImage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
   return png;
@@ -817,8 +817,8 @@ NA_DEF size_t naGetPNGPixelDataByteSize(NAPNG* png){
 
 
 
-NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
-  NABabyImage* abyImage = naCreateBabyImage(png->size, NA_NULL);
+NA_DEF NAABYImage* naCreateBabyImageFromPNG(NAPNG* png){
+  NAABYImage* abyImage = naCreateBabyImage(png->size, NA_NULL);
   NAByte* pngPtr;
   float* abyPtr;
   uint8 inBuf[4];
@@ -829,7 +829,7 @@ NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
     pngPtr = png->pixeldata;
     inBuf[3] = 255;
     for(y = 0; y < png->size.height; y++){
-      abyPtr = &(naGetBabyImageData(abyImage)[(png->size.height - y - 1) * naGetBabyImageValuesPerLine(abyImage)]);
+      abyPtr = &(naGetBabyImageData(abyImage)[(png->size.height - y - 1) * naGetABYImageValuesPerLine(abyImage)]);
       for(x = 0; x < png->size.width; x++){
         inBuf[0] = pngPtr[0];
         inBuf[1] = pngPtr[1];

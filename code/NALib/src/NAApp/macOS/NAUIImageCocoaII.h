@@ -95,8 +95,8 @@ NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAABYColor* color){
 
 
 
-NA_DEF NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
-  NABabyImage* image;
+NA_DEF NAABYImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
+  NAABYImage* image;
   
   CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)nativeImage));
   image = naCreateBabyImage(naMakeSizei((NAInt)CGImageGetWidth((CGImageRef)nativeImage), (NAInt)CGImageGetHeight((CGImageRef)nativeImage)), NA_NULL);
@@ -109,12 +109,12 @@ NA_DEF NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
 
 
 
-NA_DEF NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
-  NABabyImage* image = NA_NULL;
+NA_DEF NAABYImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
+  NAABYImage* image = NA_NULL;
 
 //  // Currently, only png is possible
 //  NAPNG* png = naNewPNGWithPath(pathStr);
-//  NABabyImage* abyImage = naCreateBabyImageFromPNG(png);
+//  NAABYImage* abyImage = naCreateBabyImageFromPNG(png);
 //  return abyImage;
 
 //  CGDataProviderRef dataprovider = CGDataProviderCreateWithFilename(pathStr);
@@ -140,11 +140,11 @@ NA_DEF NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
 
 
 
-NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
+NA_DEF void* naAllocNativeImageWithBabyImage(const NAABYImage* image){
   CGImageRef nativeImage;
   CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
   NASizei imageSize = naGetBabyImageSize(image);
-  CGContextRef cgContext = CGBitmapContextCreateWithData(NULL, (size_t)imageSize.width, (size_t)imageSize.height, 8, (size_t)naGetBabyImageValuesPerLine(image), colorSpace, kCGImageAlphaPremultipliedLast, NULL, NULL);
+  CGContextRef cgContext = CGBitmapContextCreateWithData(NULL, (size_t)imageSize.width, (size_t)imageSize.height, 8, (size_t)naGetABYImageValuesPerLine(image), colorSpace, kCGImageAlphaPremultipliedLast, NULL, NULL);
 
   uint8* imgData = CGBitmapContextGetData(cgContext);
   naConvertBabyImageTou8(image, imgData, NA_TRUE, NA_COLOR_BUFFER_RGBAPre);

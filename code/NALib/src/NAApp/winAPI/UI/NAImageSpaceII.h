@@ -16,11 +16,11 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   NASizei size1x;
   NASizei spacesize;
   NAPosi offset;
-  const NABabyImage* foreImage;
+  const NAABYImage* foreImage;
   NAByte* backBuffer;
   HBITMAP hBackBitmap;
-  NABabyImage* backImage;
-  NABabyImage* blendedImage;
+  NAABYImage* backImage;
+  NAABYImage* blendedImage;
   NAByte* blendedBuffer;
   HBITMAP hBlendedBitmap;
   NAWINAPIColor* bgColor;

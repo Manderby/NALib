@@ -198,17 +198,17 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     if(customDraw){
       // We store the button as it is drawn by the system.
       BitBlt(hMemDC, 0, 0, (int)buttonsize.width, (int)buttonsize.height, hMemDC, 0, 0, SRCCOPY);
-      NABabyImage* buttonImage = naCreateBabyImageFromNativeImage(hButtonBitmap);
+      NAABYImage* buttonImage = naCreateBabyImageFromNativeImage(hButtonBitmap);
 
       // Now we blend manually the foreground to the background.
       NAABYColor backColor = {.8f, .8f, .8f, 1.f};
       NAABYColor maskColor = {1.f, 1.f, 0.f, 1.f};
       NAABYColor accentColor;
       naFillDefaultAccentColorWithSkin(accentColor, NA_UIIMAGE_SKIN_LIGHT);
-      NABabyImage* alphaImage = naCreateBabyImageWithTint(buttonImage, maskColor, NA_BLEND_ERASE_HUE, 1.f);
-      NABabyImage* tintedImage = naCreateBabyImageWithTint(alphaImage, accentColor, NA_BLEND_MULTIPLY, .85f);
-      //NABabyImage* blendedImage = naCreateBabyImageCopy(tintedImage);
-      NABabyImage* blendedImage = naCreateBabyImageWithApply(backColor, tintedImage, NA_BLEND_OVERLAY, 1.f);
+      NAABYImage* alphaImage = naCreateBabyImageWithTint(buttonImage, maskColor, NA_BLEND_ERASE_HUE, 1.f);
+      NAABYImage* tintedImage = naCreateBabyImageWithTint(alphaImage, accentColor, NA_BLEND_MULTIPLY, .85f);
+      //NAABYImage* blendedImage = naCreateBabyImageCopy(tintedImage);
+      NAABYImage* blendedImage = naCreateBabyImageWithApply(backColor, tintedImage, NA_BLEND_OVERLAY, 1.f);
       naReleaseBabyImage(alphaImage);
       naReleaseBabyImage(tintedImage);
 
@@ -245,7 +245,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     LRESULT result = SendMessage(naGetUIElementNativePtr(winapiButton), BM_GETSTATE, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
     NABool pushed = (result & BST_PUSHED) == BST_PUSHED;
 
-    const NABabyImage* foreImage;
+    const NAABYImage* foreImage;
     NABool secondaryState = na_GetButtonState(winapiButton);
     if(IsWindowEnabled(naGetUIElementNativePtr(winapiButton))){
       if(pushed){
@@ -266,10 +266,10 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     HBITMAP hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
     HBITMAP hOldBitmap = SelectObject(hMemDC, hBackBitmap);
     BitBlt(hMemDC, 0, 0, (int)size1x.width, (int)size1x.height, drawitemstruct->hDC, (int)offset.x, (int)offset.y, SRCCOPY);
-    NABabyImage* backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
+    NAABYImage* backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
 
     // Now we blend manually the foreground to the background.
-    NABabyImage* blendedImage = naCreateBabyImageWithBlend(
+    NAABYImage* blendedImage = naCreateBabyImageWithBlend(
       backImage,
       foreImage,
       NA_BLEND_OVERLAY,
