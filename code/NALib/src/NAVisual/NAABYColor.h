@@ -113,22 +113,8 @@ NA_API void naInvertABYColor(NAABYColor* color);
 
 
 
-// Converts a single float value using an aby transformation.
-NA_IAPI float naConvertToPerceptualColorValue(float value);
-NA_IAPI float naConvertToRadiometricColorValue(float value);
 
 
-
-// This factor is nice and easy to remember. There is no greater mathematical
-// purpose in this number. It's just nice.
-#define NA_ABY_FACTOR 0.75f
-
-NA_IDEF float naConvertToPerceptualColorValue(float value){
-  return value / (NA_ABY_FACTOR * value - (1.f - NA_ABY_FACTOR));
-}
-NA_IDEF float naConvertToRadiometricColorValue(float value){
-  return -(1.f - NA_ABY_FACTOR) * value / (1.f + NA_ABY_FACTOR * value);
-}
 
 
 

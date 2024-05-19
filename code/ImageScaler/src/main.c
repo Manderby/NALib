@@ -215,7 +215,7 @@ ImageTesterController* naAllocImageTestController(){
   naAddSpaceChild(contentSpace, con->blendModeLabel, naMakePos(640, 225));
   naAddSpaceChild(contentSpace, con->blendModeSelect, naMakePos(640, 200));
   addSingleSelectItem("ZERO",con->blendModeSelect, blendModeSelected, con);
-  addSingleSelectItem("BLEND",con->blendModeSelect, blendModeSelected, con);
+  addSingleSelectItem("LINEAR",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("OVERLAY",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("OPAQUE",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("MULTIPLY",con->blendModeSelect, blendModeSelected, con);

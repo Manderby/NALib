@@ -4,17 +4,6 @@
 
 
 
-NA_HIDEF void na_ConvertToPerceptualRGB(float* outColor, const float* inColor){
-  outColor[0] = naConvertToPerceptualColorValue(inColor[0]);
-  outColor[1] = naConvertToPerceptualColorValue(inColor[1]);
-  outColor[2] = naConvertToPerceptualColorValue(inColor[2]);
-}
-
-NA_HIDEF void na_ConvertToRadiometricRGB(float* outColor, const float* inColor){
-  outColor[0] = naConvertToRadiometricColorValue(inColor[0]);
-  outColor[1] = naConvertToRadiometricColorValue(inColor[1]);
-  outColor[2] = naConvertToRadiometricColorValue(inColor[2]);
-}
 
 NA_HIDEF NABool na_IsABYColorClearlyRadiometric(const NAABYColor* color){
   NABool allNegative = (color->a <= 0.f && color->b <= 0.f && color->y <= 0.f);
@@ -124,12 +113,12 @@ NA_HIDEF void na_LimitColorComponentu8(uint8* outvalue, const float inValue){
 }
 
 NA_DEF void naFillSRGBu8WithABYColor(uint8* outColor, const NAABYColor* inColor, NAColorBufferType bufferType){
-  #if NA_DEBUG
-    if(!naIsABYColorUseful(inColor))
-      naError("Using an ABYColor which is not useful");
-    if(na_IsABYColorClearlyRadiometric(inColor))
-      naError("Using a radiometric ABYColor");
-  #endif
+//  #if NA_DEBUG
+//    if(!naIsABYColorUseful(inColor))
+//      naError("Using an ABYColor which is not useful");
+//    if(na_IsABYColorClearlyRadiometric(inColor))
+//      naError("Using a radiometric ABYColor");
+//  #endif
 
   switch(bufferType){
   case NA_COLOR_BUFFER_RGBA:

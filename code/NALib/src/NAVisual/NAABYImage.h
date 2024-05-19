@@ -84,9 +84,6 @@ NA_API NAABYImage* naCreateBabyImageWithResize(
 NA_API NAABYImage* naRetainBabyImage(const NAABYImage* image);
 NA_API void naReleaseBabyImage(const NAABYImage* image);
 
-// Returns the number of float values per horizontal line.
-NA_API NAInt naGetABYImageValuesPerLine(const NAABYImage* image);
-
 // Returns the image dimensions.
 NA_API NASizei naGetBabyImageSize(const NAABYImage* image);
 

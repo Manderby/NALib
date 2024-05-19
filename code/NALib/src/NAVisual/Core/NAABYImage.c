@@ -6,30 +6,20 @@
 
 struct NAABYImage{
   NARefCount refCount;
-  int32 width;
-  int32 height;
+  uint32 width;
+  uint32 height;
   NAABYColor* data;
 };
 
 
 
 
-NA_DEF NAInt naGetABYImageValuesPerLine(const NAABYImage* image){
+NA_HIDEF size_t na_GetABYImagePixelCount(const NAABYImage* image){
   #if NA_DEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
-  return (NAInt)image->width * NA_ABY_COLOR_CHANNEL_COUNT;
-}
-
-
-
-NA_HIDEF NAInt na_GetABYImagePixelCount(const NAABYImage* image){
-  #if NA_DEBUG
-    if(!image)
-      naCrash("Given image is a Null-Pointer");
-  #endif
-  return (NAInt)image->width * (NAInt)image->height;
+  return (size_t)image->width * (size_t)image->height;
 }
 
 
@@ -39,7 +29,7 @@ NA_HIDEF size_t na_GetABYImageDataSize(const NAABYImage* image){
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
-  return (size_t)image->width * (size_t)image->height * sizeof(NAABYColor);
+  return na_GetABYImagePixelCount(image) * sizeof(NAABYColor);
 }
 
 
@@ -59,7 +49,7 @@ NA_DEF NASizei naGetBabyImageSize(const NAABYImage* image){
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
-  return naMakeSizei(image->width, image->height);
+  return naMakeSizei((NAInt)image->width, (NAInt)image->height);
 }
 
 
@@ -80,10 +70,9 @@ NA_DEF NAABYImage* naCreateBabyImage(NASizei size, const NAABYColor* color){
   image->height = (int32)size.height;
   image->data = naMalloc(na_GetABYImageDataSize(image));
   if(color){
-    NAInt i;
-    NAInt pixelCount = na_GetABYImagePixelCount(image);
+    size_t pixelCount = na_GetABYImagePixelCount(image);
     NAABYColor* ptr = image->data;
-    for(i = 0; i < pixelCount; ++i){
+    for(size_t i = 0; i < pixelCount; ++i){
       naCopyABYColor(ptr, color);
       ptr += 1;
     }
@@ -382,7 +371,7 @@ NA_HDEF void naAccumulateResizeLine(NAABYColor* out, const NAABYColor* in, int32
       outPtr->y += accumulateFactor * inPtr->y;
       outPtr->alpha += accumulateFactor * inPtr->alpha;
       remainerX -= counterSubX;
-      inPtr += NA_ABY_COLOR_CHANNEL_COUNT;
+      inPtr += 1;
       inX++;
       counterSubX = 1.f;
     }
@@ -395,7 +384,7 @@ NA_HDEF void naAccumulateResizeLine(NAABYColor* out, const NAABYColor* in, int32
       outPtr->alpha += accumulateFactor * inPtr->alpha;
     }
     subX += remainerX;
-    outPtr += NA_ABY_COLOR_CHANNEL_COUNT;
+    outPtr += 1;
     remainerX = factorX;
     remainerX = (outX + 2) * factorX - (inX + subX);
   }
@@ -414,7 +403,7 @@ NA_DEF NAABYImage* naCreateBabyImageWithResize(const NAABYImage* image, NASizei 
 
   NAABYColor blank = {0.f, 0.f, 0.f, 0.f};
   outImage = naCreateBabyImage(newSize, &blank);
-  valuesPerLine = naGetABYImageValuesPerLine(image);
+  valuesPerLine = naGetBabyImageSize(image).width * NA_ABY_COLOR_CHANNEL_COUNT;
   
   int32 inY = 0;
   float subY = 0.f;
@@ -478,7 +467,7 @@ NA_DEF void naFillBabyImageWithu8(NAABYImage* image, const void* data, NABool to
     NAInt x, y;
     NASizei size = naGetBabyImageSize(image);
     for(y = 0; y < size.height; y++){
-      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetABYImageValuesPerLine(image)]);
+      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageSize(image).width * NA_ABY_COLOR_CHANNEL_COUNT]);
       for(x = 0; x < size.width; x++){
         naFillABYColorWithSRGBu8(imgPtr, u8Ptr, bufferType);
         imgPtr += 1;
@@ -486,11 +475,9 @@ NA_DEF void naFillBabyImageWithu8(NAABYImage* image, const void* data, NABool to
       }
     }
   }else{
-    NAInt pixelCount;
-    NAInt i;
     u8Ptr = data;
-    pixelCount = na_GetABYImagePixelCount(image);
-    for(i = 0; i < pixelCount; ++i){
+    size_t pixelCount = na_GetABYImagePixelCount(image);
+    for(size_t i = 0; i < pixelCount; ++i){
       naFillABYColorWithSRGBu8(imgPtr, u8Ptr, bufferType);
       imgPtr += 1;
       u8Ptr += NA_ABY_COLOR_CHANNEL_COUNT;
@@ -508,7 +495,7 @@ NA_DEF void naConvertBabyImageTou8(const NAABYImage* image, void* data, NABool t
     NAInt x, y;
     NASizei size = naGetBabyImageSize(image);
     for(y = 0; y < size.height; y++){
-      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetABYImageValuesPerLine(image)]);
+      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageSize(image).width * NA_ABY_COLOR_CHANNEL_COUNT]);
       for(x = 0; x < size.width; x++){
         naFillSRGBu8WithABYColor(u8Ptr, imgPtr, bufferType);
         imgPtr += 1;
@@ -516,11 +503,9 @@ NA_DEF void naConvertBabyImageTou8(const NAABYImage* image, void* data, NABool t
       }
     }
   }else{
-    NAInt pixelCount;
-    NAInt i;
     u8Ptr = data;
-    pixelCount = na_GetABYImagePixelCount(image);
-    for(i = 0; i < pixelCount; ++i){
+    size_t pixelCount = na_GetABYImagePixelCount(image);
+    for(size_t i = 0; i < pixelCount; ++i){
       naFillSRGBu8WithABYColor(u8Ptr, imgPtr, bufferType);
       imgPtr += 1;
       u8Ptr += NA_ABY_COLOR_CHANNEL_COUNT;

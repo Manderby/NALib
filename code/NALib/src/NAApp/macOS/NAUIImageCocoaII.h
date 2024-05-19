@@ -144,7 +144,16 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NAABYImage* image){
   CGImageRef nativeImage;
   CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
   NASizei imageSize = naGetBabyImageSize(image);
-  CGContextRef cgContext = CGBitmapContextCreateWithData(NULL, (size_t)imageSize.width, (size_t)imageSize.height, 8, (size_t)naGetABYImageValuesPerLine(image), colorSpace, kCGImageAlphaPremultipliedLast, NULL, NULL);
+  CGContextRef cgContext = CGBitmapContextCreateWithData(
+    NULL,
+    (size_t)imageSize.width,
+    (size_t)imageSize.height,
+    NA_BITS_PER_BYTE,
+    (size_t)naGetBabyImageSize(image).width * NA_ABY_COLOR_CHANNEL_COUNT,
+    colorSpace,
+    kCGImageAlphaPremultipliedLast,
+    NULL,
+    NULL);
 
   uint8* imgData = CGBitmapContextGetData(cgContext);
   naConvertBabyImageTou8(image, imgData, NA_TRUE, NA_COLOR_BUFFER_RGBAPre);
