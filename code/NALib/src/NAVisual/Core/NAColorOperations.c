@@ -1,5 +1,5 @@
 
-#include "../NAABYColor.h"
+#include "../NAColor.h"
 #include "../../NAMath/NAMathOperators.h"
 
 
@@ -33,7 +33,7 @@ NA_DEF void naConvertHSLToHSV(float out[3], const float in[3]){
   }
 }
 
-void naFillHSVWithABYColor(float out[3], const NAABYColor* in){
+void naFillHSVWithColor(float out[3], const NAColor* in){
   float min;
   float range;
   float rgb[3];
@@ -60,7 +60,7 @@ void naFillHSVWithABYColor(float out[3], const NAABYColor* in){
   }
 }
 
-void naFillABYColorWithHSV(NAABYColor* out, const float in[3]){
+void naFillColorWithHSV(NAColor* out, const float in[3]){
   float hsv[3];
   hsv[0] = in[0];
   hsv[1] = in[1];
@@ -103,25 +103,25 @@ NA_HIDEF void na_ConvertToRadiometricRGB(float* outColor, const float* inColor){
 
 
 
-NA_HIDEF void na_BlendABYColorZero(
-  NAABYColor* dstPtr,
-  const NAABYColor* basePtr,
-  const NAABYColor* topPtr,
+NA_HIDEF void na_BlendColorZero(
+  NAColor* dstPtr,
+  const NAColor* basePtr,
+  const NAColor* topPtr,
   float factor)
 {
   NA_UNUSED(topPtr);
   NA_UNUSED(factor);
   if(basePtr->alpha > NA_SINGULARITYf){
-    naCopyABYColor(dstPtr, basePtr);
+    naCopyColor(dstPtr, basePtr);
   }else{
-    naFillABYColorWithTransparent(dstPtr);
+    naFillColorWithTransparent(dstPtr);
   }
 }
 
-NA_HIDEF void na_BlendABYColorLinear(
-  NAABYColor* dstPtr,
-  const NAABYColor* basePtr,
-  const NAABYColor* topPtr,
+NA_HIDEF void na_BlendColorLinear(
+  NAColor* dstPtr,
+  const NAColor* basePtr,
+  const NAColor* topPtr,
   float factor)
 {
   float baseColorFactor = (1.f - factor) * basePtr->alpha;
@@ -135,14 +135,14 @@ NA_HIDEF void na_BlendABYColorLinear(
     dstPtr->y = baseBlend * basePtr->y + topBlend * topPtr->y;
     dstPtr->alpha = colorSum;
   }else{
-    naFillABYColorWithTransparent(dstPtr);
+    naFillColorWithTransparent(dstPtr);
   }
 }
 
-NA_HIDEF void na_BlendABYColorOverlay(
-  NAABYColor* dstPtr,
-  const NAABYColor* basePtr,
-  const NAABYColor* topPtr,
+NA_HIDEF void na_BlendColorOverlay(
+  NAColor* dstPtr,
+  const NAColor* basePtr,
+  const NAColor* topPtr,
   float factor)
 {
   float baseColorFactor = (1.f - factor * topPtr->alpha) * basePtr->alpha;
@@ -156,14 +156,14 @@ NA_HIDEF void na_BlendABYColorOverlay(
     dstPtr->y = baseBlend * basePtr->y + topBlend * topPtr->y;
     dstPtr->alpha = basePtr->alpha + (1.f - basePtr->alpha) * factor * topPtr->alpha;
   }else{
-    naFillABYColorWithTransparent(dstPtr);
+    naFillColorWithTransparent(dstPtr);
   }
 }
 
-NA_HIDEF void na_BlendABYColorOpaque(
-  NAABYColor* dstPtr,
-  const NAABYColor* basePtr,
-  const NAABYColor* topPtr,
+NA_HIDEF void na_BlendColorOpaque(
+  NAColor* dstPtr,
+  const NAColor* basePtr,
+  const NAColor* topPtr,
   float factor)
 {
   float baseColorFactor = basePtr->alpha * (1.f - factor * topPtr->alpha);
@@ -177,14 +177,14 @@ NA_HIDEF void na_BlendABYColorOpaque(
     dstPtr->y = baseBlend * basePtr->y + topBlend * topPtr->y;
     dstPtr->alpha = basePtr->alpha;
   }else{
-    naFillABYColorWithTransparent(dstPtr);
+    naFillColorWithTransparent(dstPtr);
   }
 }
 
-NA_HIDEF void na_BlendABYColorMultiply(
-  NAABYColor* dstPtr,
-  const NAABYColor* basePtr,
-  const NAABYColor* topPtr,
+NA_HIDEF void na_BlendColorMultiply(
+  NAColor* dstPtr,
+  const NAColor* basePtr,
+  const NAColor* topPtr,
   float factor)
 {
   float baseColorFactor = 1.f - factor * topPtr->alpha;
@@ -198,14 +198,14 @@ NA_HIDEF void na_BlendABYColorMultiply(
     dstPtr->y = baseBlend * basePtr->y + topBlend * topPtr->y * basePtr->y;
     dstPtr->alpha = basePtr->alpha;
   }else{
-    naFillABYColorWithTransparent(dstPtr);
+    naFillColorWithTransparent(dstPtr);
   }
 }
 
-NA_HIDEF void na_BlendABYColorScreen(
-  NAABYColor* dstPtr,
-  const NAABYColor* basePtr,
-  const NAABYColor* topPtr,
+NA_HIDEF void na_BlendColorScreen(
+  NAColor* dstPtr,
+  const NAColor* basePtr,
+  const NAColor* topPtr,
   float factor)
 {
   float baseColorFactor = 1.f - topPtr->alpha * factor;
@@ -219,19 +219,19 @@ NA_HIDEF void na_BlendABYColorScreen(
     dstPtr->y = baseBlend * basePtr->y + topBlend * (1.f - (1.f - topPtr->y) * (1.f - basePtr->y));
     dstPtr->alpha = basePtr->alpha;
   }else{
-    naFillABYColorWithTransparent(dstPtr);
+    naFillColorWithTransparent(dstPtr);
   }
 }
 
-NA_HIDEF void na_BlendABYColorErodeLight(
-  NAABYColor* dstPtr,
-  const NAABYColor* basePtr,
-  const NAABYColor* topPtr,
+NA_HIDEF void na_BlendColorErodeLight(
+  NAColor* dstPtr,
+  const NAColor* basePtr,
+  const NAColor* topPtr,
   float factor)
 {
   float baseHSV[3];
   float baseHSL[3];
-  naFillHSVWithABYColor(baseHSV, basePtr);
+  naFillHSVWithColor(baseHSV, basePtr);
   naConvertHSVToHSL(baseHSL, baseHSV);
 
   float baseColorFactor = (1.f - factor) * topPtr->alpha;
@@ -245,19 +245,19 @@ NA_HIDEF void na_BlendABYColorErodeLight(
     dstPtr->y = baseBlend * basePtr->y + topBlend * topPtr->y;
     dstPtr->alpha = (1.f - factor) * basePtr->alpha + factor * (1.f - baseHSL[2]) * basePtr->alpha * topPtr->alpha;
   }else{
-    naFillABYColorWithTransparent(dstPtr);
+    naFillColorWithTransparent(dstPtr);
   }
 }
 
-NA_HIDEF void na_BlendABYColorErodeDark(
-  NAABYColor* dstPtr,
-  const NAABYColor* basePtr,
-  const NAABYColor* topPtr,
+NA_HIDEF void na_BlendColorErodeDark(
+  NAColor* dstPtr,
+  const NAColor* basePtr,
+  const NAColor* topPtr,
   float factor)
 {
   float baseHSV[3];
   float baseHSL[3];
-  naFillHSVWithABYColor(baseHSV, basePtr);
+  naFillHSVWithColor(baseHSV, basePtr);
   naConvertHSVToHSL(baseHSL, baseHSV);
 
   float baseColorFactor = (1.f - factor) * topPtr->alpha;
@@ -271,23 +271,23 @@ NA_HIDEF void na_BlendABYColorErodeDark(
     dstPtr->y = baseBlend * basePtr->y + topBlend * topPtr->y;
     dstPtr->alpha = (1.f - factor) * basePtr->alpha + factor * baseHSL[2] * basePtr->alpha * topPtr->alpha;
   }else{
-    naFillABYColorWithTransparent(dstPtr);
+    naFillColorWithTransparent(dstPtr);
   }
 }
 
-NA_HIDEF void na_BlendABYColorEraseHue(
-  NAABYColor* dstPtr,
-  const NAABYColor* basePtr,
-  const NAABYColor* topPtr,
+NA_HIDEF void na_BlendColorEraseHue(
+  NAColor* dstPtr,
+  const NAColor* basePtr,
+  const NAColor* topPtr,
   float factor)
 {
   float baseHSV[3];
   float baseHSL[3];
-  naFillHSVWithABYColor(baseHSV, basePtr);
+  naFillHSVWithColor(baseHSV, basePtr);
   naConvertHSVToHSL(baseHSL, baseHSV);
   float topHSV[3];
   float topHSL[3];
-  naFillHSVWithABYColor(topHSV, topPtr);
+  naFillHSVWithColor(topHSV, topPtr);
   naConvertHSVToHSL(topHSL, topHSV);
 
   float hDiff = topHSL[0] - baseHSL[0];
@@ -296,7 +296,7 @@ NA_HIDEF void na_BlendABYColorEraseHue(
 
   if(hDiff < -60.f || hDiff > 60.f){
     // Not near the hue, leave the color as it is.
-    naCopyABYColor(dstPtr, basePtr);
+    naCopyColor(dstPtr, basePtr);
   }else{
     if(hDiff <= 0.){
       // fully saturated colors have L = .5
@@ -316,7 +316,7 @@ NA_HIDEF void na_BlendABYColorEraseHue(
       }
       if(baseHSL[0] > 360.f){baseHSL[0] -= 360.f;}
       naConvertHSLToHSV(baseHSV, baseHSL);
-      naFillABYColorWithHSV(dstPtr, baseHSV);
+      naFillColorWithHSV(dstPtr, baseHSV);
       dstPtr->alpha = (1.f - factorL * factor) * basePtr->alpha;
     }else{
       // fully saturated colors have L = .5
@@ -336,16 +336,16 @@ NA_HIDEF void na_BlendABYColorEraseHue(
       }
       if(baseHSL[0] < 0.f){baseHSL[0] += 360.f;}
       naConvertHSLToHSV(baseHSV, baseHSL);
-      naFillABYColorWithHSV(dstPtr, baseHSV);
+      naFillColorWithHSV(dstPtr, baseHSV);
       dstPtr->alpha = (1.f - factorL * factor) * basePtr->alpha;
     }
   }
 }
 
-NA_DEF void naBlendABYColors(
-  NAABYColor* dstPtr,
-  const NAABYColor* basePtr,
-  const NAABYColor* topPtr,
+NA_DEF void naBlendColors(
+  NAColor* dstPtr,
+  const NAColor* basePtr,
+  const NAColor* topPtr,
   float factor,
   NABlendMode mode,
   size_t count,
@@ -356,31 +356,31 @@ NA_DEF void naBlendABYColors(
   {
     switch(mode){
     case NA_BLEND_ZERO:
-      na_BlendABYColorZero(dstPtr, basePtr, topPtr, factor);
+      na_BlendColorZero(dstPtr, basePtr, topPtr, factor);
       break;
     case NA_BLEND_LINEAR:
-      na_BlendABYColorLinear(dstPtr, basePtr, topPtr, factor);
+      na_BlendColorLinear(dstPtr, basePtr, topPtr, factor);
       break;
     case NA_BLEND_OVERLAY:
-      na_BlendABYColorOverlay(dstPtr, basePtr, topPtr, factor);
+      na_BlendColorOverlay(dstPtr, basePtr, topPtr, factor);
       break;
     case NA_BLEND_OPAQUE:
-      na_BlendABYColorOpaque(dstPtr, basePtr, topPtr, factor);
+      na_BlendColorOpaque(dstPtr, basePtr, topPtr, factor);
       break;
     case NA_BLEND_MULTIPLY:
-      na_BlendABYColorMultiply(dstPtr, basePtr, topPtr, factor);
+      na_BlendColorMultiply(dstPtr, basePtr, topPtr, factor);
       break;
     case NA_BLEND_SCREEN:
-      na_BlendABYColorScreen(dstPtr, basePtr, topPtr, factor);
+      na_BlendColorScreen(dstPtr, basePtr, topPtr, factor);
       break;
     case NA_BLEND_ERODE_LIGHT:
-      na_BlendABYColorErodeLight(dstPtr, basePtr, topPtr, factor);
+      na_BlendColorErodeLight(dstPtr, basePtr, topPtr, factor);
       break;
     case NA_BLEND_ERODE_DARK:
-      na_BlendABYColorErodeDark(dstPtr, basePtr, topPtr, factor);
+      na_BlendColorErodeDark(dstPtr, basePtr, topPtr, factor);
       break;
     case NA_BLEND_ERASE_HUE:
-      na_BlendABYColorEraseHue(dstPtr, basePtr, topPtr, factor);
+      na_BlendColorEraseHue(dstPtr, basePtr, topPtr, factor);
       break;
     }
 

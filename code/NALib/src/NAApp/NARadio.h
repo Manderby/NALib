@@ -19,7 +19,7 @@ NA_API NABool naGetRadioState(const NARadio* radio);
 NA_API void naSetRadioState(NARadio* radio, NABool state);
 
 // Sets the color of the text of the radio.
-NA_API void naSetRadioTextColor(NARadio* radio, const NAABYColor* color);
+NA_API void naSetRadioTextColor(NARadio* radio, const NAColor* color);
 
 
 

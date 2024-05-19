@@ -59,9 +59,9 @@
 
 
 
-NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAABYColor* color){
+NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor* color){
   NSColor* labelColor = naGetLabelColor();
-  naFillABYColorWithSRGB(
+  naFillColorWithSRGB(
     color,
     (float)[labelColor redComponent],
     (float)[labelColor greenComponent],
@@ -71,9 +71,9 @@ NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAABYColor* color){
 
 
 
-NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAABYColor* color){
+NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color){
   NSColor* linkColor = naGetLinkColor();
-  naFillABYColorWithSRGB(
+  naFillColorWithSRGB(
     color,
     (float)[linkColor redComponent],
     (float)[linkColor greenComponent],
@@ -83,9 +83,9 @@ NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAABYColor* color){
 
 
 
-NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAABYColor* color){
+NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color){
   NSColor* accentColor = naGetAccentColor();
-  naFillABYColorWithSRGB(
+  naFillColorWithSRGB(
     color,
     (float)[accentColor redComponent],
     (float)[accentColor greenComponent],
@@ -149,7 +149,7 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NAABYImage* image){
     (size_t)imageSize.width,
     (size_t)imageSize.height,
     NA_BITS_PER_BYTE,
-    (size_t)naGetBabyImageSize(image).width * NA_ABY_COLOR_CHANNEL_COUNT,
+    (size_t)naGetBabyImageSize(image).width * 4, // 4 channels: RGBA
     colorSpace,
     kCGImageAlphaPremultipliedLast,
     NULL,

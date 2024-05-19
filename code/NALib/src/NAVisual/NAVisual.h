@@ -10,7 +10,7 @@
 
 
 #include "NA3DHelper.h"
-#include "NAABYColor.h"
+#include "NAColor.h"
 #include "NAABYImage.h"
 #include "NADeflate.h"
 #include "NAPNG.h"

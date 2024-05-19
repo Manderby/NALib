@@ -34,9 +34,9 @@
   dirtyRect = [self frame];
   dirtyRect.origin = NSMakePoint(0., 0.);
 
-  if(naGetABYColorAlpha(&cocoaSpace->space.backgroundColor) != 0.){
+  if(naGetColorAlpha(&cocoaSpace->space.backgroundColor) != 0.){
     float rgba[4];
-    naFillSRGBAWithABYColor(rgba, &cocoaSpace->space.backgroundColor);
+    naFillSRGBAWithColor(rgba, &cocoaSpace->space.backgroundColor);
     [[NSColor colorWithDeviceRed:rgba[0]
       green:rgba[1]
       blue:rgba[2]
@@ -122,7 +122,7 @@ NA_DEF NASpace* _Nonnull naNewSpace(NASize size){
     frame:naMakeNSRectWithSize(size)];  
   na_InitSpace((NASpace*)cocoaSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
-  naFillABYColorWithTransparent(&cocoaSpace->space.backgroundColor);
+  naFillColorWithTransparent(&cocoaSpace->space.backgroundColor);
   cocoaSpace->space.alternateBackground = NA_FALSE;
   cocoaSpace->space.dragsWindow = NA_FALSE;
 
@@ -241,11 +241,11 @@ NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift){
 
 
 
-NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NAABYColor* _Nullable color){
+NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NAColor* _Nullable color){
   if(color){
-    naCopyABYColor(&space->backgroundColor, color);
+    naCopyColor(&space->backgroundColor, color);
   }else{
-    naFillABYColorWithTransparent(&space->backgroundColor);
+    naFillColorWithTransparent(&space->backgroundColor);
   }
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   [nativePtr setNeedsDisplay:YES];

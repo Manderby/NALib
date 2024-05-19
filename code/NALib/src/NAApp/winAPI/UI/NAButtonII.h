@@ -201,9 +201,9 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       NAABYImage* buttonImage = naCreateBabyImageFromNativeImage(hButtonBitmap);
 
       // Now we blend manually the foreground to the background.
-      NAABYColor backColor = {.8f, .8f, .8f, 1.f};
-      NAABYColor maskColor = {1.f, 1.f, 0.f, 1.f};
-      NAABYColor accentColor;
+      NAColor backColor = {.8f, .8f, .8f, 1.f};
+      NAColor maskColor = {1.f, 1.f, 0.f, 1.f};
+      NAColor accentColor;
       naFillDefaultAccentColorWithSkin(accentColor, NA_UIIMAGE_SKIN_LIGHT);
       NAABYImage* alphaImage = naCreateBabyImageWithTint(buttonImage, maskColor, NA_BLEND_ERASE_HUE, 1.f);
       NAABYImage* tintedImage = naCreateBabyImageWithTint(alphaImage, accentColor, NA_BLEND_MULTIPLY, .85f);

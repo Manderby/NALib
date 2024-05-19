@@ -1,5 +1,5 @@
 
-#include "../NAABYColor.h"
+#include "../NAColor.h"
 #include "../NAABYImage.h"
 #include "../../NAMath/NAVectorAlgebra.h"
 
@@ -8,7 +8,7 @@ struct NAABYImage{
   NARefCount refCount;
   uint32 width;
   uint32 height;
-  NAABYColor* data;
+  NAColor* data;
 };
 
 
@@ -29,12 +29,12 @@ NA_HIDEF size_t na_GetABYImageDataSize(const NAABYImage* image){
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
-  return na_GetABYImagePixelCount(image) * sizeof(NAABYColor);
+  return na_GetABYImagePixelCount(image) * sizeof(NAColor);
 }
 
 
 
-NA_DEF NAABYColor* naGetBabyImageData(const NAABYImage* image){
+NA_DEF NAColor* naGetBabyImageData(const NAABYImage* image){
   #if NA_DEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
@@ -54,14 +54,14 @@ NA_DEF NASizei naGetBabyImageSize(const NAABYImage* image){
 
 
 
-NA_DEF NAABYImage* naCreateBabyImage(NASizei size, const NAABYColor* color){
+NA_DEF NAABYImage* naCreateBabyImage(NASizei size, const NAColor* color){
   NAABYImage* image;
   #if NA_DEBUG
     if(size.width <= 0 || size.height <= 0)
       naError("size must be > 0");
     if(size.width > NA_MAX_i32 || size.height > NA_MAX_i32)
       naError("size is too big");
-    if(color && !naIsABYColorUseful(color))
+    if(color && !naIsColorUseful(color))
       naError("color is not useful");
   #endif
   image = naAlloc(NAABYImage);
@@ -71,9 +71,9 @@ NA_DEF NAABYImage* naCreateBabyImage(NASizei size, const NAABYColor* color){
   image->data = naMalloc(na_GetABYImageDataSize(image));
   if(color){
     size_t pixelCount = na_GetABYImagePixelCount(image);
-    NAABYColor* ptr = image->data;
+    NAColor* ptr = image->data;
     for(size_t i = 0; i < pixelCount; ++i){
-      naCopyABYColor(ptr, color);
+      naCopyColor(ptr, color);
       ptr += 1;
     }
   }
@@ -106,9 +106,9 @@ NA_HDEF NAABYImage* naCreateBabyImageCopy(const NAABYImage* image){
 
 
 NAABYImage* na_CreateBlendedBabyImage(
-  const NAABYColor* base,
+  const NAColor* base,
   NASizei baseSize,
-  const NAABYColor* top,
+  const NAColor* top,
   NASizei topSize,
   NABlendMode mode,
   float factor,
@@ -136,7 +136,7 @@ NAABYImage* na_CreateBlendedBabyImage(
 
   // Create the actual image to be filled.
   NAABYImage* retImage = naCreateBabyImage(retSize, NA_NULL);
-  NAABYColor* ret = naGetBabyImageData(retImage);
+  NAColor* ret = naGetBabyImageData(retImage);
 
   // In case we have two images, fill up the trivial vertical parts.
   if(topIsImage && baseIsImage){
@@ -146,7 +146,7 @@ NAABYImage* na_CreateBlendedBabyImage(
       naCopyn(
         ret,
         base,
-        (size_t)basePixelCount * (size_t)retSize.width * sizeof(NAABYColor));
+        (size_t)basePixelCount * (size_t)retSize.width * sizeof(NAColor));
     }
     // Simply copy the upper part of the base image
     NAInt topPixelCount = naIsRectiEmpty(innerRect) ? baseSize.height : baseSize.height - innerEndY;
@@ -154,7 +154,7 @@ NAABYImage* na_CreateBlendedBabyImage(
       naCopyn(
         &ret[(retSize.height - topPixelCount) * retSize.width],
         &base[(baseSize.height - topPixelCount) * baseSize.width],
-        (size_t)topPixelCount * (size_t)retSize.width * sizeof(NAABYColor));
+        (size_t)topPixelCount * (size_t)retSize.width * sizeof(NAColor));
     }
   }
 
@@ -170,7 +170,7 @@ NAABYImage* na_CreateBlendedBabyImage(
         naCopyn(
           &ret[y * retSize.width],
           &base[y * baseSize.width],
-          (size_t)leftPixelCount * sizeof(NAABYColor));
+          (size_t)leftPixelCount * sizeof(NAColor));
       }
       // Simply copy the right part of the base image
       NAInt rightPixelCount = baseSize.width - innerEndX;
@@ -179,16 +179,16 @@ NAABYImage* na_CreateBlendedBabyImage(
         naCopyn(
           &ret[(y * retSize.width + retSize.width - rightPixelCount)],
           &base[(y * baseSize.width + baseSize.width - rightPixelCount)],
-          (size_t)rightPixelCount * sizeof(NAABYColor));
+          (size_t)rightPixelCount * sizeof(NAColor));
       }
     }
 
     // Now for the actual interesting part of the image.
 
     // Define the source and destination pointers
-    NAABYColor* retPtr;    
-    const NAABYColor* basePtr;
-    const NAABYColor* topPtr;
+    NAColor* retPtr;    
+    const NAColor* basePtr;
+    const NAColor* topPtr;
     if(topIsImage && baseIsImage){
       retPtr = &ret[(y * retSize.width + innerRect.pos.x)];
       basePtr = &base[(y * baseSize.width + innerRect.pos.x)];
@@ -207,7 +207,7 @@ NAABYImage* na_CreateBlendedBabyImage(
       topPtr = top;
     }
 
-    naBlendABYColors(
+    naBlendColors(
       retPtr,
       basePtr,
       topPtr,
@@ -224,15 +224,15 @@ NAABYImage* na_CreateBlendedBabyImage(
 
 NA_DEF NAABYImage* naCreateBabyImageWithTint(
   const NAABYImage* base,
-  const NAABYColor* tint,
+  const NAColor* tint,
   NABlendMode mode,
-  float blend){
+  float factor){
   #if NA_DEBUG
     if(!base)
       naCrash("Given base image is a Null-Pointer");
     if(!tint)
       naCrash("tint is Null");
-    if(!naIsABYColorUseful(tint))
+    if(!naIsColorUseful(tint))
       naError("tint color is not useful");
   #endif
   
@@ -242,7 +242,7 @@ NA_DEF NAABYImage* naCreateBabyImageWithTint(
     tint,
     naMakeSizeiEmpty(),
     mode,
-    blend,
+    factor,
     naMakePosi(0, 0));
 }
 
@@ -252,7 +252,7 @@ NA_DEF NAABYImage* naCreateBabyImageWithBlend(
   const NAABYImage* base,
   const NAABYImage* top,
   NABlendMode mode,
-  float blend,
+  float factor,
   NAPosi offset)
 {
   #if NA_DEBUG
@@ -268,30 +268,30 @@ NA_DEF NAABYImage* naCreateBabyImageWithBlend(
     top->data,
     naGetBabyImageSize(top),
     mode,
-    blend,
+    factor,
     offset);
 }
 
 
 
-NA_DEF NAABYImage* naCreateBabyImageWithApply(const NAABYColor* ground, const NAABYImage* top, NABlendMode mode, float blend){
+NA_DEF NAABYImage* naCreateBabyImageWithApply(const NAColor* ground, const NAABYImage* top, NABlendMode mode, float factor){
   #if NA_DEBUG
   if(!ground)
     naCrash("ground is Null");
   if(!top)
     naCrash("top is Null");
-  if(!naIsABYColorUseful(ground))
+  if(!naIsColorUseful(ground))
     naError("ground color is not useful");
   #endif
 
-  const NAABYColor* topPtr = top->data;
+  const NAColor* topPtr = top->data;
   return na_CreateBlendedBabyImage(
     ground,
     naMakeSizeiEmpty(),
     topPtr,
     naGetBabyImageSize(top),
     mode,
-    blend,
+    factor,
     naMakePosi(0, 0));
 }
 
@@ -301,11 +301,11 @@ NA_DEF NAABYImage* naCreateBabyImageWithHalfSize(const NAABYImage* image){
   NASizei halfSize;
   NAInt x, y;
   NAABYImage* outImage;
-  NAABYColor* inPtr1;
-  NAABYColor* inPtr2;
-  NAABYColor* inPtr3;
-  NAABYColor* inPtr4;
-  NAABYColor* outDataPtr;
+  NAColor* inPtr1;
+  NAColor* inPtr2;
+  NAColor* inPtr3;
+  NAColor* inPtr4;
+  NAColor* outDataPtr;
   
   #if NA_DEBUG
     if((image->width % 2) || (image->height % 2))
@@ -343,7 +343,7 @@ NA_DEF NAABYImage* naCreateBabyImageWithHalfSize(const NAABYImage* image){
         outDataPtr->b = 0.f;
         outDataPtr->y = 0.f;
       }
-      outDataPtr += NA_ABY_COLOR_CHANNEL_COUNT;
+      outDataPtr += 1;
     }
     // Each line has advanced till the last pixel of the line, so we only
     // have to overjump one more line.
@@ -354,9 +354,9 @@ NA_DEF NAABYImage* naCreateBabyImageWithHalfSize(const NAABYImage* image){
 }
 
 
-NA_HDEF void naAccumulateResizeLine(NAABYColor* out, const NAABYColor* in, int32 outY, int32 inY, int32 outWidth, int32 inWidth, float factorY){
-  NAABYColor* outPtr = &out[outY * outWidth];
-  const NAABYColor* inPtr = &in[inY * inWidth];
+NA_HDEF void naAccumulateResizeLine(NAColor* out, const NAColor* in, int32 outY, int32 inY, int32 outWidth, int32 inWidth, float factorY){
+  NAColor* outPtr = &out[outY * outWidth];
+  const NAColor* inPtr = &in[inY * inWidth];
 
   int32 inX = 0;
   float subX = 0.f;
@@ -394,16 +394,14 @@ NA_HDEF void naAccumulateResizeLine(NAABYColor* out, const NAABYColor* in, int32
 
 NA_DEF NAABYImage* naCreateBabyImageWithResize(const NAABYImage* image, NASizei newSize){
   NAABYImage* outImage;
-  NAInt valuesPerLine;
   
   #if NA_DEBUG
     if(!naIsSizeiUseful(newSize))
       naError("Given size is not useful");
   #endif
 
-  NAABYColor blank = {0.f, 0.f, 0.f, 0.f};
+  NAColor blank = {0.f, 0.f, 0.f, 0.f};
   outImage = naCreateBabyImage(newSize, &blank);
-  valuesPerLine = naGetBabyImageSize(image).width * NA_ABY_COLOR_CHANNEL_COUNT;
   
   int32 inY = 0;
   float subY = 0.f;
@@ -428,7 +426,7 @@ NA_DEF NAABYImage* naCreateBabyImageWithResize(const NAABYImage* image, NASizei 
 
   // Normalize the whole output image;
   float divisor = (1.f / factorY) * (float)newSize.width / (float)image->width;
-  NAABYColor* outPtr = outImage->data;
+  NAColor* outPtr = outImage->data;
   for(uint32 i = 0; i < (uint32)(newSize.width * newSize.height); i += 1){
     outPtr->a *= divisor;
     outPtr->b *= divisor;
@@ -459,28 +457,30 @@ NA_DEF void naReleaseBabyImage(const NAABYImage* image){
 
 
 
+#define NA_RGBA_COLOR_CHANNEL_COUNT 4
+
 NA_DEF void naFillBabyImageWithu8(NAABYImage* image, const void* data, NABool topToBottom, NAColorBufferType bufferType){
-  NAABYColor* imgPtr = image->data;
+  NAColor* imgPtr = image->data;
   const uint8* u8Ptr;
 
   if(topToBottom){
     NAInt x, y;
     NASizei size = naGetBabyImageSize(image);
     for(y = 0; y < size.height; y++){
-      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageSize(image).width * NA_ABY_COLOR_CHANNEL_COUNT]);
+      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT]);
       for(x = 0; x < size.width; x++){
-        naFillABYColorWithSRGBu8(imgPtr, u8Ptr, bufferType);
+        naFillColorWithSRGBu8(imgPtr, u8Ptr, bufferType);
         imgPtr += 1;
-        u8Ptr += NA_ABY_COLOR_CHANNEL_COUNT;
+        u8Ptr += NA_RGBA_COLOR_CHANNEL_COUNT;
       }
     }
   }else{
     u8Ptr = data;
     size_t pixelCount = na_GetABYImagePixelCount(image);
     for(size_t i = 0; i < pixelCount; ++i){
-      naFillABYColorWithSRGBu8(imgPtr, u8Ptr, bufferType);
+      naFillColorWithSRGBu8(imgPtr, u8Ptr, bufferType);
       imgPtr += 1;
-      u8Ptr += NA_ABY_COLOR_CHANNEL_COUNT;
+      u8Ptr += NA_RGBA_COLOR_CHANNEL_COUNT;
     }
   }
 }
@@ -488,27 +488,27 @@ NA_DEF void naFillBabyImageWithu8(NAABYImage* image, const void* data, NABool to
 
 
 NA_DEF void naConvertBabyImageTou8(const NAABYImage* image, void* data, NABool topToBottom, NAColorBufferType bufferType){
-  const NAABYColor* imgPtr = image->data;
+  const NAColor* imgPtr = image->data;
   uint8* u8Ptr;
 
   if(topToBottom){
     NAInt x, y;
     NASizei size = naGetBabyImageSize(image);
     for(y = 0; y < size.height; y++){
-      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageSize(image).width * NA_ABY_COLOR_CHANNEL_COUNT]);
+      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT]);
       for(x = 0; x < size.width; x++){
-        naFillSRGBu8WithABYColor(u8Ptr, imgPtr, bufferType);
+        naFillSRGBu8WithColor(u8Ptr, imgPtr, bufferType);
         imgPtr += 1;
-        u8Ptr += NA_ABY_COLOR_CHANNEL_COUNT;
+        u8Ptr += NA_RGBA_COLOR_CHANNEL_COUNT;
       }
     }
   }else{
     u8Ptr = data;
     size_t pixelCount = na_GetABYImagePixelCount(image);
     for(size_t i = 0; i < pixelCount; ++i){
-      naFillSRGBu8WithABYColor(u8Ptr, imgPtr, bufferType);
+      naFillSRGBu8WithColor(u8Ptr, imgPtr, bufferType);
       imgPtr += 1;
-      u8Ptr += NA_ABY_COLOR_CHANNEL_COUNT;
+      u8Ptr += NA_RGBA_COLOR_CHANNEL_COUNT;
     }
   }
 }

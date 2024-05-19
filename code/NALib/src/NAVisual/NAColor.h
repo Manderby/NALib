@@ -5,7 +5,7 @@
   extern "C"{
 #endif
 
-// What is NAABYColor?
+// What is NAColor?
 // After having worked for years in the color reproduction industry, the
 // author knows one thing: Colors are not easy. There is no such thing as
 // a simple color value. When you try to convert color values or compute
@@ -13,7 +13,7 @@
 // performance might drop considerably. Therefore, the author decided to
 // use a very specific and simplified color computation.
 //
-// So here's what NAABYColor is:
+// So here's what NAColor is:
 // - RGBA values. A is alpha. Stored in a simple float[4] array (4 * 32 bit).
 // - Default RGB range is [0, 1]. Values below 0 are forbidden.
 // - RGB have primaries of sRGB.
@@ -39,9 +39,8 @@ NA_DEF void naConvertHSLToHSV(float out[3], const float in[3]);
 
 
 
-#define NA_ABY_COLOR_CHANNEL_COUNT 4
-typedef struct NAABYColor NAABYColor;
-struct NAABYColor{
+typedef struct NAColor NAColor;
+struct NAColor{
   float a;
   float b;
   float y;
@@ -72,40 +71,40 @@ typedef enum{
                           // Useful for green-screening or blue-screening.
 } NABlendMode;
 
-NA_API void naCopyABYColor(NAABYColor* dstColor, const NAABYColor* srcColor);
+NA_API void naCopyColor(NAColor* dstColor, const NAColor* srcColor);
 
-NA_API void naFillABYColorWithTransparent(NAABYColor* color);
-NA_API void naFillABYColorWithSRGB(NAABYColor* color, float r, float g, float b, float alpha);
-NA_API void naFillABYColorWithSRGBu8(NAABYColor* outColor, const uint8* inColor, NAColorBufferType bufferType);
+NA_API void naFillColorWithTransparent(NAColor* color);
+NA_API void naFillColorWithSRGB(NAColor* color, float r, float g, float b, float alpha);
+NA_API void naFillColorWithSRGBu8(NAColor* outColor, const uint8* inColor, NAColorBufferType bufferType);
 
-NA_API void naFillSRGBAWithABYColor(float rgba[4], const NAABYColor* color);
-// Converts between NAABYColor and an uint8 representation.
+NA_API void naFillSRGBAWithColor(float rgba[4], const NAColor* color);
+// Converts between NAColor and an uint8 representation.
 // When premultiplied is set to NA_TRUE, the uint8 variant is assumed to be
 // premultiplied with the alpha values.
-NA_API void naFillSRGBu8WithABYColor(
-  uint8*            outColor,
-  const NAABYColor* inColor,
+NA_API void naFillSRGBu8WithColor(
+  uint8* outColor,
+  const NAColor* inColor,
   NAColorBufferType bufferType);
 
-NA_API void naBlendABYColors(
-  NAABYColor* dstPtr,
-  const NAABYColor* basePtr,
-  const NAABYColor* topPtr,
+NA_API void naBlendColors(
+  NAColor* dstPtr,
+  const NAColor* basePtr,
+  const NAColor* topPtr,
   float factor,
   NABlendMode mode,
   size_t count,
   NABool baseIsImage,
   NABool topIsImage);
 
-NA_API float naGetABYColorAlpha(const NAABYColor* color);
+NA_API float naGetColorAlpha(const NAColor* color);
 
 // Checks whether the given color is useful, meaning:
 // - All main channels a, b and y are 0.
 // - All main channels a, b and y are either positive or negative, not mixed.
-NA_API NABool naIsABYColorUseful(const NAABYColor* color);
+NA_API NABool naIsColorUseful(const NAColor* color);
 
 // Inverts the color
-NA_API void naInvertABYColor(NAABYColor* color);
+NA_API void naInvertColor(NAColor* color);
 
 
 

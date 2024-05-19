@@ -39,9 +39,9 @@ NA_HAPI void* na_GetUIImageNativeImage(
 
 
 // System dependent implementations
-NA_HAPI void na_FillDefaultTextColorWithSystemSkin(NAABYColor* color);
-NA_HAPI void na_FillDefaultLinkColorWithSystemSkin(NAABYColor* color);
-NA_HAPI void na_FillDefaultAccentColorWithSystemSkin(NAABYColor* color);
+NA_HAPI void na_FillDefaultTextColorWithSystemSkin(NAColor* color);
+NA_HAPI void na_FillDefaultLinkColorWithSystemSkin(NAColor* color);
+NA_HAPI void na_FillDefaultAccentColorWithSystemSkin(NAColor* color);
 
 
 

@@ -139,7 +139,7 @@ NA_DEF void naSetCheckBoxState(NACheckBox* checkBox, NABool state){
 
 
 
-NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NAABYColor* color){
+NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NAColor* color){
   // todo
 }
 

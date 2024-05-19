@@ -92,9 +92,9 @@ NA_API NAUIImageSkin naGetSkinForCurrentAppearance(void);
 
 // Returns the default foreground color for the given skin. The skin PLAIN is
 // not allowed but will return the color for the LIGHT skin instead.
-NA_API void naFillDefaultTextColorWithSkin(NAABYColor* color, NAUIImageSkin skin);
-NA_API void naFillDefaultLinkColorWithSkin(NAABYColor* color, NAUIImageSkin skin);
-NA_API void naFillDefaultAccentColorWithSkin(NAABYColor* color, NAUIImageSkin skin);
+NA_API void naFillDefaultTextColorWithSkin(NAColor* color, NAUIImageSkin skin);
+NA_API void naFillDefaultLinkColorWithSkin(NAColor* color, NAUIImageSkin skin);
+NA_API void naFillDefaultAccentColorWithSkin(NAColor* color, NAUIImageSkin skin);
 
 // Creates a new BabyImage with the given path. Can only be PNG on windows,
 // macOS allows for various kind of input files.

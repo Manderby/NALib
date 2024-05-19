@@ -51,18 +51,18 @@ typedef enum{
 } Colors;
 
 const NAUTF8Char* colorNames[COLOR_COUNT] = {
-  "Transparent",
-  "Red",
-  "Yellow",
-  "Green",
-  "Cyan",
-  "Blue",
-  "Magenta",
-  "White",
-  "Black",
+  [COLOR_TRANSPARENT] = "Transparent",
+  [COLOR_RED]         = "Red",
+  [COLOR_YELLOW]      = "Yellow",
+  [COLOR_GREEN]       = "Green",
+  [COLOR_CYAN]        = "Cyan",
+  [COLOR_BLUE]        = "Blue",
+  [COLOR_MAGENTA]     = "Magenta",
+  [COLOR_WHITE]       = "White",
+  [COLOR_BLACK]       = "Black",
 };
 
-NAABYColor colors[COLOR_COUNT];
+NAColor colors[COLOR_COUNT];
 
 struct ImageTesterApplication{
   NAABYImage* transparencyGridImage;
@@ -91,9 +91,9 @@ struct ImageTesterController{
   NASelect* bottomSelect;
 
   const NAABYImage* topImage;
-  const NAABYColor* topColor;
+  const NAColor* topColor;
   const NAABYImage* bottomImage;
-  const NAABYColor* bottomColor;
+  const NAColor* bottomColor;
   
   NAPosi center;
   size_t selectedTop;
@@ -251,7 +251,7 @@ void naDeallocImageTestController(ImageTesterController* con){
 
 
 
-void selectionChanged(const NAABYImage** imagePtr, const NAABYColor** color, size_t index){
+void selectionChanged(const NAABYImage** imagePtr, const NAColor** color, size_t index){
   if(index < COLOR_COUNT){
     *imagePtr = NA_NULL;
     *color = &colors[index];
@@ -404,15 +404,15 @@ NABool mouseMoved(NAReaction reaction){
 void preStartup(void* arg){
   NA_UNUSED(arg);
 
-  naFillABYColorWithSRGB(&colors[0], 0., 0., 0., 0.);
-  naFillABYColorWithSRGB(&colors[1], 1., 0., 0., 1.);
-  naFillABYColorWithSRGB(&colors[2], 1., 1., 0., 1.);
-  naFillABYColorWithSRGB(&colors[3], 0., 1., 0., 1.);
-  naFillABYColorWithSRGB(&colors[4], 0., 1., 1., 1.);
-  naFillABYColorWithSRGB(&colors[5], 0., 0., 1., 1.);
-  naFillABYColorWithSRGB(&colors[6], 1., 0., 1., 1.);
-  naFillABYColorWithSRGB(&colors[7], 1., 1., 1., 1.);
-  naFillABYColorWithSRGB(&colors[8], 0., 0., 0., 1.);
+  naFillColorWithSRGB(&colors[0], 0., 0., 0., 0.);
+  naFillColorWithSRGB(&colors[1], 1., 0., 0., 1.);
+  naFillColorWithSRGB(&colors[2], 1., 1., 0., 1.);
+  naFillColorWithSRGB(&colors[3], 0., 1., 0., 1.);
+  naFillColorWithSRGB(&colors[4], 0., 1., 1., 1.);
+  naFillColorWithSRGB(&colors[5], 0., 0., 1., 1.);
+  naFillColorWithSRGB(&colors[6], 1., 0., 1., 1.);
+  naFillColorWithSRGB(&colors[7], 1., 1., 1., 1.);
+  naFillColorWithSRGB(&colors[8], 0., 0., 0., 1.);
 
 }
 

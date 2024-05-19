@@ -45,11 +45,11 @@
   return naNewStringWithFormat([[self stringValue] UTF8String]);
 }
 
-- (void) setColor:(const NAABYColor*)color{
+- (void) setColor:(const NAColor*)color{
   NSColor* nsColor;
   if(color){
     uint8 buf[4];
-    naFillSRGBu8WithABYColor(buf, color, NA_COLOR_BUFFER_RGBA);
+    naFillSRGBu8WithColor(buf, color, NA_COLOR_BUFFER_RGBA);
     nsColor = [NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.];
   }else{
     nsColor = naGetLabelColor();
@@ -119,7 +119,7 @@ NA_DEF NAString* naNewStringWithTextFieldText(const NATextField* textField){
 
 
 
-NA_DEF void naSetTextFieldColor(NATextField* textField, const NAABYColor* color){
+NA_DEF void naSetTextFieldColor(NATextField* textField, const NAColor* color){
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
   [nativePtr setColor:color];
 }
