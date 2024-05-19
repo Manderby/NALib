@@ -44,7 +44,7 @@ NA_HIDEF size_t na_GetABYImageDataSize(const NAABYImage* image){
 
 
 
-NA_DEF float* naGetBabyImageData(const NAABYImage* image){
+NA_DEF NAABYColor* naGetBabyImageData(const NAABYImage* image){
   #if NA_DEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
@@ -312,10 +312,11 @@ NA_DEF NAABYImage* naCreateBabyImageWithHalfSize(const NAABYImage* image){
   NASizei halfSize;
   NAInt x, y;
   NAABYImage* outImage;
-  NAInt valuesPerLine;
-  float* inPtr1;
-  float* inPtr2;
-  float* outDataPtr;
+  NAABYColor* inPtr1;
+  NAABYColor* inPtr2;
+  NAABYColor* inPtr3;
+  NAABYColor* inPtr4;
+  NAABYColor* outDataPtr;
   
   #if NA_DEBUG
     if((image->width % 2) || (image->height % 2))
@@ -324,44 +325,49 @@ NA_DEF NAABYImage* naCreateBabyImageWithHalfSize(const NAABYImage* image){
   halfSize = naMakeSizei(image->width / 2, image->height / 2);
 
   outImage = naCreateBabyImage(halfSize, NA_NULL);
-  valuesPerLine = naGetABYImageValuesPerLine(image);
   
   inPtr1 = image->data;
-  inPtr2 = image->data + valuesPerLine;
+  inPtr2 = inPtr1 + 1;
+  inPtr3 = image->data + image->width;
+  inPtr4 = inPtr3 + 1;
   outDataPtr = outImage->data;
   for(y = 0; y < image->height; y += 2){
     for(x = 0; x < image->width; x += 2){
-      outDataPtr[0] = inPtr1[0] * inPtr1[3] + inPtr1[4] * inPtr1[7];
-      outDataPtr[1] = inPtr1[1] * inPtr1[3] + inPtr1[5] * inPtr1[7];
-      outDataPtr[2] = inPtr1[2] * inPtr1[3] + inPtr1[6] * inPtr1[7];
-      outDataPtr[3] = inPtr1[3] + inPtr1[7];
-      inPtr1 += 8;
-      outDataPtr[0] += inPtr2[0] * inPtr2[3] + inPtr2[4] * inPtr2[7];
-      outDataPtr[1] += inPtr2[1] * inPtr2[3] + inPtr2[5] * inPtr2[7];
-      outDataPtr[2] += inPtr2[2] * inPtr2[3] + inPtr2[6] * inPtr2[7];
-      outDataPtr[3] += inPtr2[3] + inPtr2[7];
-      inPtr2 += 8;
-      if(outDataPtr[3] != 0.f){
-        float invweight = naInvf(outDataPtr[3]);
-        outDataPtr[0] *= invweight;
-        outDataPtr[1] *= invweight;
-        outDataPtr[2] *= invweight;
-        outDataPtr[3] *= .25f;
+      outDataPtr->a = inPtr1->a * inPtr1->alpha + inPtr2->a * inPtr2->alpha;
+      outDataPtr->b = inPtr1->b * inPtr1->alpha + inPtr2->b * inPtr2->alpha;
+      outDataPtr->y = inPtr1->y * inPtr1->alpha + inPtr2->y * inPtr2->alpha;
+      outDataPtr->alpha = inPtr1->alpha + inPtr2->alpha;
+      inPtr1 += 2;
+      outDataPtr->a += inPtr3->a * inPtr3->alpha + inPtr4->a * inPtr4->alpha;
+      outDataPtr->b += inPtr3->b * inPtr3->alpha + inPtr4->b * inPtr4->alpha;
+      outDataPtr->y += inPtr3->y * inPtr3->alpha + inPtr4->y * inPtr4->alpha;
+      outDataPtr->alpha += inPtr3->alpha + inPtr4->alpha;
+      inPtr3 += 2;
+      if(outDataPtr->alpha > NA_SINGULARITYf){
+        float invweight = naInvf(outDataPtr->alpha);
+        outDataPtr->a *= invweight;
+        outDataPtr->b *= invweight;
+        outDataPtr->y *= invweight;
+        outDataPtr->alpha *= .25f;
+      }else{
+        outDataPtr->a = 0.f;
+        outDataPtr->b = 0.f;
+        outDataPtr->y = 0.f;
       }
       outDataPtr += NA_ABY_COLOR_CHANNEL_COUNT;
     }
     // Each line has advanced till the last pixel of the line, so we only
     // have to overjump one more line.
-    inPtr1 += valuesPerLine;
-    inPtr2 += valuesPerLine;
+    inPtr1 += image->width;
+    inPtr3 += image->width;
   }
   return outImage;
 }
 
 
-NA_HDEF void naAccumulateResizeLine(float* out, const float* in, int32 outY, int32 inY, int32 outWidth, int32 inWidth, float factorY){
-  float* outPtr = &out[outY * outWidth * NA_ABY_COLOR_CHANNEL_COUNT];
-  const float* inPtr = &in[inY * inWidth * NA_ABY_COLOR_CHANNEL_COUNT];
+NA_HDEF void naAccumulateResizeLine(NAABYColor* out, const NAABYColor* in, int32 outY, int32 inY, int32 outWidth, int32 inWidth, float factorY){
+  NAABYColor* outPtr = &out[outY * outWidth];
+  const NAABYColor* inPtr = &in[inY * inWidth];
 
   int32 inX = 0;
   float subX = 0.f;
@@ -371,10 +377,10 @@ NA_HDEF void naAccumulateResizeLine(float* out, const float* in, int32 outY, int
     float counterSubX = 1.f - subX;
     while(counterSubX <= remainerX){
       float accumulateFactor = factorY * counterSubX;
-      outPtr[0] += accumulateFactor * inPtr[0];
-      outPtr[1] += accumulateFactor * inPtr[1];
-      outPtr[2] += accumulateFactor * inPtr[2];
-      outPtr[3] += accumulateFactor * inPtr[3];
+      outPtr->a += accumulateFactor * inPtr->a;
+      outPtr->b += accumulateFactor * inPtr->b;
+      outPtr->y += accumulateFactor * inPtr->y;
+      outPtr->alpha += accumulateFactor * inPtr->alpha;
       remainerX -= counterSubX;
       inPtr += NA_ABY_COLOR_CHANNEL_COUNT;
       inX++;
@@ -383,10 +389,10 @@ NA_HDEF void naAccumulateResizeLine(float* out, const float* in, int32 outY, int
     subX = 1.f - counterSubX;
     if(inX < inWidth){
       float accumulateFactor = factorY * remainerX;
-      outPtr[0] += accumulateFactor * inPtr[0];
-      outPtr[1] += accumulateFactor * inPtr[1];
-      outPtr[2] += accumulateFactor * inPtr[2];
-      outPtr[3] += accumulateFactor * inPtr[3];
+      outPtr->a += accumulateFactor * inPtr->a;
+      outPtr->b += accumulateFactor * inPtr->b;
+      outPtr->y += accumulateFactor * inPtr->y;
+      outPtr->alpha += accumulateFactor * inPtr->alpha;
     }
     subX += remainerX;
     outPtr += NA_ABY_COLOR_CHANNEL_COUNT;
@@ -433,11 +439,14 @@ NA_DEF NAABYImage* naCreateBabyImageWithResize(const NAABYImage* image, NASizei 
 
   // Normalize the whole output image;
   float divisor = (1.f / factorY) * (float)newSize.width / (float)image->width;
-  float* outPtr = outImage->data;
-  for(uint32 i = 0; i < (uint32)(newSize.width * newSize.height) * NA_ABY_COLOR_CHANNEL_COUNT; i += 1){
-    *outPtr++ *= divisor;
+  NAABYColor* outPtr = outImage->data;
+  for(uint32 i = 0; i < (uint32)(newSize.width * newSize.height); i += 1){
+    outPtr->a *= divisor;
+    outPtr->b *= divisor;
+    outPtr->y *= divisor;
+    outPtr->alpha *= divisor;
+    outPtr += 1;
   }
-
 
   return outImage;
 }
@@ -462,29 +471,29 @@ NA_DEF void naReleaseBabyImage(const NAABYImage* image){
 
 
 NA_DEF void naFillBabyImageWithu8(NAABYImage* image, const void* data, NABool topToBottom, NAColorBufferType bufferType){
-  float* imgptr = image->data;
-  const uint8* u8ptr;
+  NAABYColor* imgPtr = image->data;
+  const uint8* u8Ptr;
 
   if(topToBottom){
     NAInt x, y;
     NASizei size = naGetBabyImageSize(image);
     for(y = 0; y < size.height; y++){
-      u8ptr = &(((uint8*)data)[(size.height - y - 1) * naGetABYImageValuesPerLine(image)]);
+      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetABYImageValuesPerLine(image)]);
       for(x = 0; x < size.width; x++){
-        naFillABYColorWithSRGBu8(imgptr, u8ptr, bufferType);
-        imgptr += NA_ABY_COLOR_CHANNEL_COUNT;
-        u8ptr += NA_ABY_COLOR_CHANNEL_COUNT;
+        naFillABYColorWithSRGBu8(imgPtr, u8Ptr, bufferType);
+        imgPtr += 1;
+        u8Ptr += NA_ABY_COLOR_CHANNEL_COUNT;
       }
     }
   }else{
     NAInt pixelCount;
     NAInt i;
-    u8ptr = data;
+    u8Ptr = data;
     pixelCount = na_GetABYImagePixelCount(image);
     for(i = 0; i < pixelCount; ++i){
-      naFillABYColorWithSRGBu8(imgptr, u8ptr, bufferType);
-      imgptr += NA_ABY_COLOR_CHANNEL_COUNT;
-      u8ptr += NA_ABY_COLOR_CHANNEL_COUNT;
+      naFillABYColorWithSRGBu8(imgPtr, u8Ptr, bufferType);
+      imgPtr += 1;
+      u8Ptr += NA_ABY_COLOR_CHANNEL_COUNT;
     }
   }
 }
@@ -492,29 +501,29 @@ NA_DEF void naFillBabyImageWithu8(NAABYImage* image, const void* data, NABool to
 
 
 NA_DEF void naConvertBabyImageTou8(const NAABYImage* image, void* data, NABool topToBottom, NAColorBufferType bufferType){
-  const float* imgptr = image->data;
-  uint8* u8ptr;
+  const NAABYColor* imgPtr = image->data;
+  uint8* u8Ptr;
 
   if(topToBottom){
     NAInt x, y;
     NASizei size = naGetBabyImageSize(image);
     for(y = 0; y < size.height; y++){
-      u8ptr = &(((uint8*)data)[(size.height - y - 1) * naGetABYImageValuesPerLine(image)]);
+      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetABYImageValuesPerLine(image)]);
       for(x = 0; x < size.width; x++){
-        naFillSRGBu8WithABYColor(u8ptr, imgptr, bufferType);
-        imgptr += NA_ABY_COLOR_CHANNEL_COUNT;
-        u8ptr += NA_ABY_COLOR_CHANNEL_COUNT;
+        naFillSRGBu8WithABYColor(u8Ptr, imgPtr, bufferType);
+        imgPtr += 1;
+        u8Ptr += NA_ABY_COLOR_CHANNEL_COUNT;
       }
     }
   }else{
     NAInt pixelCount;
     NAInt i;
-    u8ptr = data;
+    u8Ptr = data;
     pixelCount = na_GetABYImagePixelCount(image);
     for(i = 0; i < pixelCount; ++i){
-      naFillSRGBu8WithABYColor(u8ptr, imgptr, bufferType);
-      imgptr += NA_ABY_COLOR_CHANNEL_COUNT;
-      u8ptr += NA_ABY_COLOR_CHANNEL_COUNT;
+      naFillSRGBu8WithABYColor(u8Ptr, imgPtr, bufferType);
+      imgPtr += 1;
+      u8Ptr += NA_ABY_COLOR_CHANNEL_COUNT;
     }
   }
 }

@@ -820,7 +820,7 @@ NA_DEF size_t naGetPNGPixelDataByteSize(NAPNG* png){
 NA_DEF NAABYImage* naCreateBabyImageFromPNG(NAPNG* png){
   NAABYImage* abyImage = naCreateBabyImage(png->size, NA_NULL);
   NAByte* pngPtr;
-  float* abyPtr;
+  NAABYColor* abyPtr;
   uint8 inBuf[4];
   NAInt x, y;
 
@@ -829,13 +829,13 @@ NA_DEF NAABYImage* naCreateBabyImageFromPNG(NAPNG* png){
     pngPtr = png->pixeldata;
     inBuf[3] = 255;
     for(y = 0; y < png->size.height; y++){
-      abyPtr = &(naGetBabyImageData(abyImage)[(png->size.height - y - 1) * naGetABYImageValuesPerLine(abyImage)]);
+      abyPtr = &(naGetBabyImageData(abyImage)[(png->size.height - y - 1) * naGetBabyImageSize(abyImage).width]);
       for(x = 0; x < png->size.width; x++){
         inBuf[0] = pngPtr[0];
         inBuf[1] = pngPtr[1];
         inBuf[2] = pngPtr[2];
         naFillABYColorWithSRGBu8(abyPtr, inBuf, NA_COLOR_BUFFER_RGB);
-        abyPtr += 4;
+        abyPtr += 1;
         pngPtr += 3;
       }
     }
