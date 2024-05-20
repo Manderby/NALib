@@ -1,6 +1,8 @@
 
 #include "../../NABase/NABase.h"
 
+#if NA_OS == NA_OS_MAC_OS_X
+#if defined __OBJC__
 #if NA_COMPILE_GUI == 1
 
 #import <Cocoa/Cocoa.h>
@@ -95,6 +97,8 @@ NA_HDEF void na_SetRawPreferencesString(void* prefs, const char* key, NAString* 
 
 
 #endif // NA_COMPILE_GUI == 1
+#endif // defined __OBJC__
+#endif // NA_OS == NA_OS_MAC_OS_X
 
 
 

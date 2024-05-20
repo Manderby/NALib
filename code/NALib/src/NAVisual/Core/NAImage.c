@@ -416,7 +416,7 @@ NA_DEF NAImage* naCreateImageWithResize(const NAImage* image, NASizei newSize){
       counterSubY = 1.f;
     }
     subY = 1.f - counterSubY;
-    if(inY < image->height){
+    if(inY < (int32)image->height){
       naAccumulateResizeLine(outImage->data, image->data, outY, inY, (int32)newSize.width, image->width, remainerY);
     }
     subY += remainerY;

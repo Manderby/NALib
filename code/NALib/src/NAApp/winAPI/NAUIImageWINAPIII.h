@@ -16,21 +16,21 @@ NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(){
 
 
 
-NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor color){
+NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor* color){
   // WinAPI has no notion of dark mode (yet), so we just return the light color.
   naFillDefaultTextColorWithSkin(color, NA_UIIMAGE_SKIN_LIGHT);
 }
 
 
 
-NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor color){
+NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color){
   // WinAPI has no notion of dark mode (yet), so we just return the light color.
   naFillDefaultLinkColorWithSkin(color, NA_UIIMAGE_SKIN_LIGHT);
 }
 
 
 
-NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor color){
+NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color){
   // WinAPI has no notion of dark mode (yet), so we just return the light color.
   naFillDefaultAccentColorWithSkin(color, NA_UIIMAGE_SKIN_LIGHT);
 }

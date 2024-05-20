@@ -112,7 +112,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
         #else
           NAColor transparent = {0., 0., 0., 0.};
           NAImage* newImage = naCreateImageWithApply(
-            transparent,
+            &transparent,
             originalImage->image,
             NA_BLEND_OVERLAY,
             .5f);

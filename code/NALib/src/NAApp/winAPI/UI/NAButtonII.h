@@ -204,11 +204,11 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       NAColor backColor = {.8f, .8f, .8f, 1.f};
       NAColor maskColor = {1.f, 1.f, 0.f, 1.f};
       NAColor accentColor;
-      naFillDefaultAccentColorWithSkin(accentColor, NA_UIIMAGE_SKIN_LIGHT);
-      NAImage* alphaImage = naCreateImageWithTint(buttonImage, maskColor, NA_BLEND_ERASE_HUE, 1.f);
-      NAImage* tintedImage = naCreateImageWithTint(alphaImage, accentColor, NA_BLEND_MULTIPLY, .85f);
+      naFillDefaultAccentColorWithSkin(&accentColor, NA_UIIMAGE_SKIN_LIGHT);
+      NAImage* alphaImage = naCreateImageWithTint(buttonImage, &maskColor, NA_BLEND_ERASE_HUE, 1.f);
+      NAImage* tintedImage = naCreateImageWithTint(alphaImage, &accentColor, NA_BLEND_MULTIPLY, .85f);
       //NAImage* blendedImage = naCreateImageCopy(tintedImage);
-      NAImage* blendedImage = naCreateImageWithApply(backColor, tintedImage, NA_BLEND_OVERLAY, 1.f);
+      NAImage* blendedImage = naCreateImageWithApply(&backColor, tintedImage, NA_BLEND_OVERLAY, 1.f);
       naReleaseImage(alphaImage);
       naReleaseImage(tintedImage);
 

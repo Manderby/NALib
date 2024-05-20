@@ -127,11 +127,17 @@ target_sources(NALib PRIVATE ${coreFiles})
 source_group("NAApp/Core/UI" FILES ${coreUIFiles})
 target_sources(NALib PRIVATE ${coreUIFiles})
 
-source_group("NAApp/macOS" FILES ${macOSFiles})
-target_sources(NALib PRIVATE ${macOSFiles})
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(MACOSX TRUE)
+endif()
 
-source_group("NAApp/macOS/UI" FILES ${macOSUIFiles})
-target_sources(NALib PRIVATE ${macOSUIFiles})
+if (MACOSX)
+  source_group("NAApp/macOS" FILES ${macOSFiles})
+  target_sources(NALib PRIVATE ${macOSFiles})
+
+  source_group("NAApp/macOS/UI" FILES ${macOSUIFiles})
+  target_sources(NALib PRIVATE ${macOSUIFiles})
+endif()
 
 source_group("NAApp/winAPI" FILES ${winAPIFiles})
 target_sources(NALib PRIVATE ${winAPIFiles})

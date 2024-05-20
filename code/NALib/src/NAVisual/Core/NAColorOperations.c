@@ -305,9 +305,9 @@ NA_HIDEF void na_BlendColorEraseHue(
       if(factorL > 1.f){factorL = 1.f;}
       factorL = naConvertToRadiometricColorValue(1.f - factorL); // looks better with naLinearize
       float hueStrength = 1.f - -hDiff / 60.f;
-      float factor = factor * topPtr->alpha * hueStrength;
-      baseHSL[1] = (1.f - factor) * baseHSL[1];
-      float decolorization = factor * topPtr->alpha;
+      float hueFactor = factor * topPtr->alpha * hueStrength;
+      baseHSL[1] = (1.f - hueFactor) * baseHSL[1];
+      float decolorization = hueFactor * topPtr->alpha;
       if(hueStrength < decolorization){
         baseHSL[0] = topHSL[0] + 60.f;
       }else if((1.f - decolorization) > NA_SINGULARITYf){
@@ -325,9 +325,9 @@ NA_HIDEF void na_BlendColorEraseHue(
       if(factorL > 1.f){factorL = 1.f;}
       factorL = naConvertToRadiometricColorValue(1.f - factorL); // looks better with naLinearize
       float hueStrength = 1.f - hDiff / 60.f;
-      float factor = factor * topPtr->alpha * hueStrength;
-      baseHSL[1] = (1.f - factor) * baseHSL[1];
-      float decolorization = factor * topPtr->alpha;
+      float hueFactor = factor * topPtr->alpha * hueStrength;
+      baseHSL[1] = (1.f - hueFactor) * baseHSL[1];
+      float decolorization = hueFactor * topPtr->alpha;
       if(hueStrength < decolorization){
         baseHSL[0] = topHSL[0] - 60.f;
       }else if((1.f - decolorization) > NA_SINGULARITYf){
