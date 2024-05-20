@@ -109,6 +109,11 @@ NA_API void naInvertColor(NAColor* color);
 
 
 
+// Inline implementations are in a separate file:
+#include "Core/NAColorII.h"
+
+
+
 #ifdef __cplusplus
   } // extern "C"
 #endif

@@ -318,17 +318,30 @@ NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image) {
   if((image->width % 2) || (image->height % 2))
     naError("Width or height not divisible by 2");
 #endif
+
   halfSize = naMakeSizei(image->width / 2, image->height / 2);
   
   outImage = naCreateImage(halfSize, NA_NULL);
   
-  inPtr1 = image->data;
+  // Create radiometric copy of image.
+  NAImage* radioImage = naCreateImageCopy(image);
+  size_t pixelCount = na_GetImagePixelCount(radioImage);
+  NAColor* inPtr = image->data;
+  NAColor* radioPtr = radioImage->data;
+  for(size_t i = 0; i < pixelCount; ++i) {
+    naCopyColor(radioPtr, inPtr);
+    na_ConvertToRadiometricRGB(radioPtr, radioPtr);
+    radioPtr++;
+    inPtr++;
+  }
+  
+  inPtr1 = radioImage->data;
   inPtr2 = inPtr1 + 1;
-  inPtr3 = image->data + image->width;
+  inPtr3 = radioImage->data + radioImage->width;
   inPtr4 = inPtr3 + 1;
   outDataPtr = outImage->data;
-  for(y = 0; y < image->height; y += 2) {
-    for(x = 0; x < image->width; x += 2) {
+  for(y = 0; y < radioImage->height; y += 2) {
+    for(x = 0; x < radioImage->width; x += 2) {
       outDataPtr->a = inPtr1->a * inPtr1->alpha + inPtr2->a * inPtr2->alpha;
       outDataPtr->b = inPtr1->b * inPtr1->alpha + inPtr2->b * inPtr2->alpha;
       outDataPtr->y = inPtr1->y * inPtr1->alpha + inPtr2->y * inPtr2->alpha;
@@ -352,18 +365,98 @@ NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image) {
         outDataPtr->b = 0.f;
         outDataPtr->y = 0.f;
       }
+
+      na_ConvertToPerceptualRGB(outDataPtr, outDataPtr);
       outDataPtr += 1;
     }
     // Each line has advanced till the last pixel of the line, so we only
     // have to overjump one more line.
-    inPtr1 += image->width;
-    inPtr2 += image->width;
-    inPtr3 += image->width;
-    inPtr4 += image->width;
+    inPtr1 += radioImage->width;
+    inPtr2 += radioImage->width;
+    inPtr3 += radioImage->width;
+    inPtr4 += radioImage->width;
   }
+  naReleaseImage(radioImage);
+  
   return outImage;
 }
 
+//NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image) {
+//  NASizei halfSize;
+//  NAInt x, y;
+//  NAImage* outImage;
+//  NAColor* outDataPtr;
+//  
+//#if NA_DEBUG
+//  if((image->width % 2) || (image->height % 2))
+//    naError("Width or height not divisible by 2");
+//#endif
+//
+//  halfSize = naMakeSizei(image->width / 2, image->height / 2);
+//  
+//  outImage = naCreateImage(halfSize, NA_NULL);
+//  
+//  // Create image in radiometic space
+//  float* radioImage = naMalloc(na_GetImagePixelCount(image) * sizeof(float));
+//  float* radioImagePtr = radioImage;
+//  const NAColor* inPtr = image->data;
+//
+//  for(size_t i = 0; i < na_GetImagePixelCount(image); ++i) {
+//    *radioImagePtr++ = inPtr->a;
+//    *radioImagePtr++ = inPtr->b;
+//    *radioImagePtr++ = inPtr->y;
+//    *radioImagePtr++ = inPtr->alpha;
+//    inPtr++;
+//  }
+//  
+//  const float* inPtr1 = radioImage;
+//  const float* inPtr2 = inPtr1 + 1 * 4;
+//  const float* inPtr3 = radioImage + image->width * 4;
+//  const float* inPtr4 = inPtr3 + 1 * 4;
+//  outDataPtr = outImage->data;
+//  for(y = 0; y < image->height; y += 2) {
+//    for(x = 0; x < image->width; x += 2) {
+//      float alpha1 = inPtr1[3];
+//      float alpha2 = inPtr2[3];
+//      outDataPtr->a = inPtr1[0] * alpha1 + inPtr2[0] * alpha2;
+//      outDataPtr->b = inPtr1[1] * alpha1 + inPtr2[1] * alpha2;
+//      outDataPtr->y = inPtr1[2] * alpha1 + inPtr2[2] * alpha2;
+//      outDataPtr->alpha = alpha1 + alpha2;
+//      inPtr1 += 2 * 4;
+//      inPtr2 += 2 * 4;
+//      float alpha3 = inPtr3[3];
+//      float alpha4 = inPtr4[3];
+//      outDataPtr->a += inPtr3[0] * alpha3 + inPtr4[0] * alpha4;
+//      outDataPtr->b += inPtr3[1] * alpha3 + inPtr4[1] * alpha4;
+//      outDataPtr->y += inPtr3[2] * alpha3 + inPtr4[2] * alpha4;
+//      outDataPtr->alpha += alpha3 + alpha4;
+//      inPtr3 += 2 * 4;
+//      inPtr4 += 2 * 4;
+//      if(outDataPtr->alpha > NA_SINGULARITYf) {
+//        float invweight = naInvf(outDataPtr->alpha);
+//        outDataPtr->a *= invweight;
+//        outDataPtr->b *= invweight;
+//        outDataPtr->y *= invweight;
+//        outDataPtr->alpha *= .25f;
+//      }else{
+//        outDataPtr->a = 0.f;
+//        outDataPtr->b = 0.f;
+//        outDataPtr->y = 0.f;
+//      }
+//      outDataPtr += 1;
+//    }
+//    // Each line has advanced till the last pixel of the line, so we only
+//    // have to overjump one more line.
+//    inPtr1 += image->width * 4;
+//    inPtr2 += image->width * 4;
+//    inPtr3 += image->width * 4;
+//    inPtr4 += image->width * 4;
+//  }
+//  
+//  naFree(radioImage);
+//  
+//  return outImage;
+//}
 
 NA_HDEF void naAccumulateResizeLine(
   NAColor* out,
