@@ -8,7 +8,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES LINKER_LANGUAGE C)
 set(CMAKE_CXX_STANDARD 99)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-if (MSVC)
+if(MSVC)
   # multi processor compilation
   target_compile_options(${TARGET_NAME} PRIVATE /MP)
 else()
@@ -17,6 +17,11 @@ endif()
 set(primaryHeaderFile
   src/NALib.h
 )
+
+# When on Windows, we use MSVC, when on macOS, we use MACOSX as switch.
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(MACOSX TRUE)
+endif()
 
 source_group("" FILES ${primaryHeaderFile})
 target_sources(${TARGET_NAME} PRIVATE ${primaryHeaderFile})
@@ -48,7 +53,7 @@ if(${ENABLE_NALIB_TESTING})
   add_definitions(-DNA_TESTING_ENABLED=1)
   set(NATEST_DIR "../../lib/NATest/code/NATest")
   target_include_directories(${TARGET_NAME} PRIVATE ${NATEST_DIR}/src)
-  if (NOT TARGET NATest)
+  if(NOT TARGET NATest)
     add_subdirectory(${NATEST_DIR} NATest)
    endif()
   target_link_libraries(${TARGET_NAME} PRIVATE NATest)

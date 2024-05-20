@@ -477,6 +477,8 @@ NA_DEF void naDelete(void* pointer){
   #if NA_DEBUG
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
+    if(!pointer)
+      naError("Deleting nullptr. Either use a guard or naDeleteE()");
   #endif
 
   #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
@@ -660,7 +662,7 @@ NA_DEF void naCollectGarbage(){
       naFree(na_Runtime->mallocGarbage);
       na_Runtime->mallocGarbage = nextGarbage;
     }else{
-      if (na_Runtime->mallocGarbage){
+      if(na_Runtime->mallocGarbage){
         na_Runtime->mallocGarbage->cur = 0;
       }else{
         #if NA_DEBUG

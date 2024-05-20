@@ -8,6 +8,8 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+- Changing NABabyColor to NAColor and changing its implementation.
+- Renaming NABabyImage to NAImage
 - Adding PubSub implementation NANotifier
 
 - Changeing main branch name to main instead of master.

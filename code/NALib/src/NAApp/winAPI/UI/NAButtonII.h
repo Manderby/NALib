@@ -333,7 +333,9 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+  if(!app->oldButtonWindowProc){
+    app->oldButtonWindowProc = oldproc;
+  }
 
   na_InitButton(
     (NAButton*)winapiButton,
@@ -381,7 +383,9 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+  if(!app->oldButtonWindowProc){
+    app->oldButtonWindowProc = oldproc;
+  }
 
   na_InitButton(
     (NAButton*)winapiButton,
@@ -423,7 +427,9 @@ NA_DEF NAButton* naNewIconPushButton(const NAUIImage* icon, double width){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+  if(!app->oldButtonWindowProc){
+    app->oldButtonWindowProc = oldproc;
+  }
 
   na_InitButton(
     (NAButton*)winapiButton,
@@ -465,7 +471,9 @@ NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, const NAUIImage* ic
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+  if(!app->oldButtonWindowProc){
+    app->oldButtonWindowProc = oldproc;
+  }
 
   NAUIImage* secondaryIcon = NA_NULL;
   if(!icon2){
@@ -516,7 +524,9 @@ NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+  if(!app->oldButtonWindowProc){
+    app->oldButtonWindowProc = oldproc;
+  }
 
   na_InitButton(
     (NAButton*)winapiButton,
@@ -558,7 +568,9 @@ NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+  if(!app->oldButtonWindowProc){
+    app->oldButtonWindowProc = oldproc;
+  }
 
   na_InitButton(
     (NAButton*)winapiButton,

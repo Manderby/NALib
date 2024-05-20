@@ -815,7 +815,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONPrimitives(NAJSONParser* parser){
     NAByte curByte = na_CurJSONByte(parser);
     
     // Skip any whitespace.
-    while (curByte > '\0' && curByte <= ' ') {
+    while (curByte > '\0' && curByte <= ' '){
       curByte = na_NextJSONByte(parser);
     }
     

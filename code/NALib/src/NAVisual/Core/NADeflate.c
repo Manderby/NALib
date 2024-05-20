@@ -61,7 +61,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
   // Prepare the next bit codes per codelength
   code = 0;
   codelengthcount[0] = 0;
-  for(a = 1; a < 17; a++) {
+  for(a = 1; a < 17; a++){
     #if NA_DEBUG
       if(codelengthcount[a] > (1<<a))
         // Note that the case of having exaclty 1<<a codelengths can actually
@@ -75,7 +75,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
   }
 
   // Compute the actual codes of the alphabet
-  for(a = 0; a < tree->alphabetcount; a++) {
+  for(a = 0; a < tree->alphabetcount; a++){
     if(tree->codelengths[a]){
       #if NA_DEBUG
         if(tree->codelengths[a] > 16)
@@ -145,7 +145,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
     if(openends != 0)
       naError("Tree incomplete");
 
-    for(a = 0; a < newtreeindex; a++) {
+    for(a = 0; a < newtreeindex; a++){
       if(tree->indextree[a] == 0)
         naError("undefined index in tree");
     }

@@ -40,13 +40,16 @@
     #endif
 
     NA_MACOS_AVAILABILITY_GUARD_10_10(
-      if(appearancename == NSAppearanceNameVibrantDark){skin = NA_UIIMAGE_SKIN_DARK;}
+      if(appearancename == NSAppearanceNameVibrantDark){
+        skin = NA_UIIMAGE_SKIN_DARK;
+      }
     )
     NA_MACOS_AVAILABILITY_GUARD_10_14(
       if(appearancename == NSAppearanceNameDarkAqua
       || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
       || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark){
-        skin = NA_UIIMAGE_SKIN_DARK;}
+        skin = NA_UIIMAGE_SKIN_DARK;
+      }
     )
 
     return skin;

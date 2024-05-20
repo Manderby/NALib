@@ -35,7 +35,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     windowMutable->rect.pos.x = (double)LOWORD(lParam) / uiScale;
     windowMutable->rect.pos.y = screenRect.size.height - (double)HIWORD(lParam) / uiScale - windowMutable->rect.size.height;
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-    if (info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
+    if(info.hasBeenHandeled){ na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
     //printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);
@@ -53,7 +53,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     windowMutable->rect.size.height = (double)HIWORD(lParam) / uiScale;
     windowMutable->rect.pos.y -= (windowMutable->rect.size.height - oldHeight);
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-    if (info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
+    if(info.hasBeenHandeled){ na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
     break;
@@ -94,7 +94,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     windowMutable->rect.pos.x = (double)windowPos.x / uiScale;
     windowMutable->rect.pos.y = screenRect.size.height - (double)windowPos.y / uiScale - windowMutable->rect.size.height;
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-    if (info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
+    if(info.hasBeenHandeled){ na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
     ////printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);

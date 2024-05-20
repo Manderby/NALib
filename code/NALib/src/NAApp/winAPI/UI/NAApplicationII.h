@@ -132,20 +132,26 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
   app = (NAWINAPIApplication*)na_NewApplication();
 
   // Call preStartup if desired.
-  if(preStartup){preStartup(arg);}
+  if(preStartup){
+    preStartup(arg);
+  }
 
   // Set the language of the translator
   naResetApplicationPreferredTranslatorLanguages();
 
   // Call postStartup if desired.
-  if(postStartup){postStartup(arg);}
+  if(postStartup){
+    postStartup(arg);
+  }
 
   // Start the event loop.
   while(na_IsApplicationRunning()){
     BOOL response = GetMessage(&message, 0, 0, 0);
     naCollectGarbage();
-    if(response == 0){break;}
-    if (response == -1){
+    
+    if(response == 0){
+      break;
+    }else if(response == -1){
       // handle the error and possibly exit
       break;
     }else{
@@ -292,7 +298,7 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void){
 // stored in that struct with the stored argument.
 //
 // Definitely not the fastest and best method. But as for now, it's ok. todo.
-NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
+NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime){
   //todo something is wrong here with the type.
   NAWINAPIApplication* app;
   NAListIterator iter;
@@ -301,7 +307,7 @@ NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT
   app = (NAWINAPIApplication*)naGetApplication();
 
   naBeginListModifierIteration(NAWINAPITimerStruct* timerStruct, &(app->timers), iter);
-    if(timerStruct->key == timerkey) {
+    if(timerStruct->key == timerkey){
       naRemoveListCurMutable(&iter, NA_FALSE);
       KillTimer(hwnd, idEvent);
       timerStruct->func(timerStruct->arg);

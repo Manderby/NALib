@@ -21,14 +21,15 @@ NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* 
 
 
 NA_HDEF void na_ClearButton(NAButton* button){
-  if(button->text){naFree(button->text);}
-  if(button->text2){naFree(button->text2);}
-  if(button->uiImage){
+  if(button->text)
+    naFree(button->text);
+  if(button->text2)
+    naFree(button->text2);
+  if(button->uiImage)
     naReleaseConst(button->uiImage);
-  }
-  if(button->uiImage2){
+  if(button->uiImage2)
     naReleaseConst(button->uiImage2);
-  }
+    
   na_ClearUIElement(&(button->uiElement));
 }
 

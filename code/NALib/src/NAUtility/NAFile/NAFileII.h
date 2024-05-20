@@ -131,11 +131,11 @@ NA_IDEF NABool naCopyFile(const char* dstPath, const char* srcPath){
     return (copyfile(srcPath, dstPath, NULL, COPYFILE_ALL) == 0);
   #elif NA_OS == NA_OS_FREEBSD
     int srcFd = open(srcPath, O_RDONLY);
-    if (srcFd < 0)
+    if(srcFd < 0)
 	    return NA_FALSE;
 
     int dstFd = open(dstPath, O_WRONLY|O_CREAT|O_TRUNC);
-    if (dstFd < 0) {
+    if(dstFd < 0){
 	    close(srcFd);
 	    return NA_FALSE;
     }

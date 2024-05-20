@@ -159,11 +159,21 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
   rect = naSetWindowStorageTag((NAWindow*)cocoaWindow, storageTag, rect, resizeable);
 
   NSUInteger styleMask = 0;
-  if(resizeable){styleMask |= NAWindowStyleMaskResizable;}
-  if(!titleless){styleMask |= NAWindowStyleMaskTitled;}
-  if(!noncloseable){styleMask |= NAWindowStyleMaskClosable;}
-  if(!nonminiaturizeable){styleMask |= NAWindowStyleMaskMiniaturizable;}
-//  if(auxiliary){styleMask |= NAWindowStyleMaskNonactivatingPanel | NAWindowStyleMaskUtilityWindow;}
+  if(resizeable){
+    styleMask |= NAWindowStyleMaskResizable;
+  }
+  if(!titleless){
+    styleMask |= NAWindowStyleMaskTitled;
+  }
+  if(!noncloseable){
+    styleMask |= NAWindowStyleMaskClosable;
+  }
+  if(!nonminiaturizeable){
+    styleMask |= NAWindowStyleMaskMiniaturizable;
+  }
+//  if(auxiliary){
+//    styleMask |= NAWindowStyleMaskNonactivatingPanel | NAWindowStyleMaskUtilityWindow;
+//  }
   
   NACocoaNativeWindow* nativePtr = [[NACocoaNativeWindow alloc]
     initWithWindow:cocoaWindow
@@ -324,15 +334,20 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
 
   naDefineCocoaObject(NACocoaNativeWindow, nativeWindowPtr, window);
   naDefineCocoaObjectConst(NSView, nativeUIElementPtr, space);
-  if([nativeWindowPtr trackingArea]){na_ClearWindowMouseTracking(window);}
+  if([nativeWindowPtr trackingArea]){
+    na_ClearWindowMouseTracking(window);
+  }
   [nativeWindowPtr setContentView:nativeUIElementPtr];
   [nativeWindowPtr setInitialFirstResponder:[nativeWindowPtr contentView]];
   
-  if(window->contentSpace){naDelete(window->contentSpace);}
+  naDeleteE(window->contentSpace);
+    
   window->contentSpace = space;
   na_SetUIElementParent(space, window, NA_TRUE);
   
-  if([nativeWindowPtr trackingCount]){na_RenewWindowMouseTracking(window);}
+  if([nativeWindowPtr trackingCount]){
+    na_RenewWindowMouseTracking(window);
+  }
 }
 
 

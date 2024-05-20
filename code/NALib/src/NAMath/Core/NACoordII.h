@@ -1810,10 +1810,10 @@ NA_IDEF NAPos naClampPosToRect(NAPos pos, NARect clampRect){
       naError("clampRect is invalid.");
   #endif
   newPos = pos;
-  if(newPos.x < clampRect.pos.x) {newPos.x = clampRect.pos.x;}
+  if(newPos.x < clampRect.pos.x){ newPos.x = clampRect.pos.x; }
   end = naGetRectEndX(clampRect);
   if(newPos.x > end){newPos.x = end;}
-  if(newPos.y < clampRect.pos.y) {newPos.y = clampRect.pos.y;}
+  if(newPos.y < clampRect.pos.y){ newPos.y = clampRect.pos.y; }
   end = naGetRectEndY(clampRect);
   if(newPos.y > end){newPos.y = end;}
   return newPos;
@@ -1830,10 +1830,10 @@ NA_IDEF NAPosi naClampPosiToRect(NAPosi pos, NARecti clampRect){
       naError("clampRect is invalid.");
   #endif
   newPos = pos;
-  if(newPos.x <  clampRect.pos.x) {newPos.x = clampRect.pos.x;}
+  if(newPos.x <  clampRect.pos.x){ newPos.x = clampRect.pos.x; }
   max = naGetRectiMaxX(clampRect);
   if(newPos.x > max){newPos.x = max;}
-  if(newPos.y <  clampRect.pos.y) {newPos.y = clampRect.pos.y;}
+  if(newPos.y <  clampRect.pos.y){ newPos.y = clampRect.pos.y; }
   max = naGetRectiMaxY(clampRect);
   if(newPos.y > max){newPos.y = max;}
   return newPos;
@@ -1935,13 +1935,13 @@ NA_IDEF NAVertex naClampVertexToBox(NAVertex vertex, NABox clampBox){
       naError("clampBox is invalid.");
   #endif
   newVertex = vertex;
-  if(newVertex.x < clampBox.vertex.x) {newVertex.x = clampBox.vertex.x;}
+  if(newVertex.x < clampBox.vertex.x){ newVertex.x = clampBox.vertex.x; }
   end = naGetBoxEndX(clampBox);
   if(newVertex.x > end){newVertex.x = end;}
-  if(newVertex.y < clampBox.vertex.y) {newVertex.y = clampBox.vertex.y;}
+  if(newVertex.y < clampBox.vertex.y){ newVertex.y = clampBox.vertex.y; }
   end = naGetBoxEndY(clampBox);
   if(newVertex.y > end){newVertex.y = end;}
-  if(newVertex.z < clampBox.vertex.z) {newVertex.z = clampBox.vertex.z;}
+  if(newVertex.z < clampBox.vertex.z){ newVertex.z = clampBox.vertex.z; }
   end = naGetBoxEndZ(clampBox);
   if(newVertex.z > end){newVertex.z = end;}
   return newVertex;
@@ -1958,13 +1958,13 @@ NA_IDEF NAVertexi naClampVertexiToBox(NAVertexi vertex, NABoxi clampBox){
       naError("clampBox is invalid.");
   #endif
   newVertex = vertex;
-  if(newVertex.x <  clampBox.vertex.x) {newVertex.x = clampBox.vertex.x;}
+  if(newVertex.x <  clampBox.vertex.x){ newVertex.x = clampBox.vertex.x; }
   max = naGetBoxiMaxX(clampBox);
   if(newVertex.x > max){newVertex.x = max;}
-  if(newVertex.y <  clampBox.vertex.y) {newVertex.y = clampBox.vertex.y;}
+  if(newVertex.y <  clampBox.vertex.y){ newVertex.y = clampBox.vertex.y; }
   max = naGetBoxiMaxY(clampBox);
   if(newVertex.y > max){newVertex.y = max;}
-  if(newVertex.z <  clampBox.vertex.z) {newVertex.z = clampBox.vertex.z;}
+  if(newVertex.z <  clampBox.vertex.z){ newVertex.z = clampBox.vertex.z; }
   max = naGetBoxiMaxZ(clampBox);
   if(newVertex.z > max){newVertex.z = max;}
   return newVertex;

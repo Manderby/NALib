@@ -320,7 +320,7 @@ NABool naTextFieldWINAPINotify   (void* uiElement, WORD notificationCode);
 // This is the one and only, master of destruction, defender of chaos and
 // pimp of the century function handling all and everything in WINAPI.
 
-LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
   NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(hWnd);
   NAUIElementType firsttype = uiElement ? naGetUIElementType(uiElement) : NA_UI_APPLICATION;
 
@@ -660,7 +660,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem){
 NA_DEF double naGetUIElementResolutionFactor(const void* uiElement){
   int dpi;
   HDC hDC;
-  if (hDC = GetDC (NULL)) {
+  if(hDC = GetDC (NULL)){
     dpi = GetDeviceCaps (hDC, LOGPIXELSX);
     ReleaseDC (NULL, hDC);
   }else{

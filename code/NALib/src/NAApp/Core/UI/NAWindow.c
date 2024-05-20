@@ -12,8 +12,8 @@ NA_HDEF void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSp
   naAddListLastMutable(&(naGetApplication()->windows), window);
   window->contentSpace = contentSpace;
   window->coreFlags = NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS;
-  if(fullScreen){window->coreFlags |= NA_CORE_WINDOW_FLAG_FULLSCREEN;}
-  if(resizeable){window->coreFlags |= NA_CORE_WINDOW_FLAG_RESIZEABLE;}
+  if(fullScreen){ window->coreFlags |= NA_CORE_WINDOW_FLAG_FULLSCREEN; }
+  if(resizeable){ window->coreFlags |= NA_CORE_WINDOW_FLAG_RESIZEABLE; }
   window->windowedFrame = windowedFrame;
 }
 
@@ -21,7 +21,7 @@ NA_HDEF void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSp
 
 NA_HDEF void na_ClearWindow(NAWindow* window){
   naRemoveListData(&(naGetApplication()->windows), window);
-  if(window->contentSpace){naDelete(window->contentSpace);}
+  naDeleteE(window->contentSpace);
   na_ClearUIElement(&(window->uiElement));
 }
 

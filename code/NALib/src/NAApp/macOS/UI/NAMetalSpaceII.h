@@ -14,7 +14,7 @@
   - (id)initWithMetalSpace:(NACocoaMetalSpace*)newCocoaMetalSpace frame:(NSRect)frameRect{
     self = [super initWithFrame:frameRect];
 
-    if (@available(macOS 10.11, *)) {
+    if(@available(macOS 10.11, *)){
       CAMetalLayer* metalLayer = NA_COCOA_AUTORELEASE([[CAMetalLayer alloc] init]);
       metalLayer.frame = [self frame];
       metalLayer.device = MTLCreateSystemDefaultDevice();

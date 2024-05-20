@@ -228,11 +228,11 @@ NA_DEF void naSetSignalPriority(
   SignalPriority priority)
 {
   #if NA_DEBUG
-    if (!na_notifier)
+    if(!na_notifier)
       naCrash("No current notifier present.");
-    if (topicId >= na_notifier->nextTopicId)
+    if(topicId >= na_notifier->nextTopicId)
       naCrash("Unknown topicId.");
-    if (signalId >= na_notifier->topics[topicId]->signalCount)
+    if(signalId >= na_notifier->topics[topicId]->signalCount)
       naCrash("Unknown signalId.");
     if(priority < NA_SIGNAL_PRIORITY_UPDATE || priority > NA_SIGNAL_PRIORITY_DELETE)
       naError("Unknown type");
@@ -250,13 +250,13 @@ NA_DEF void* naSubscribe(
   NAMessageCallback callback)
 {
   #if NA_DEBUG
-    if (!na_notifier)
+    if(!na_notifier)
       naCrash("No current notifier present.");
-    if (topicId >= na_notifier->nextTopicId)
+    if(topicId >= na_notifier->nextTopicId)
       naCrash("Unknown topicId.");
-    if (signalId >= na_notifier->topics[topicId]->signalCount)
+    if(signalId >= na_notifier->topics[topicId]->signalCount)
       naCrash("Unknown signalId.");
-    if (callback == NA_NULL)
+    if(callback == NA_NULL)
       naCrash("callback is Nullpointer");
   #endif
   
@@ -279,10 +279,10 @@ NA_DEF void naUnsubscribe(
   void* subscription)
 {
   #if NA_DEBUG
-    if (!na_notifier)
+    if(!na_notifier)
       naCrash("No current notifier present.");
   #endif
-  if (!subscription) return;
+  if(!subscription) return;
 
   NABool found = NA_FALSE;
   for(size_t t = 1; t < na_notifier->nextTopicId; ++t){
@@ -311,10 +311,10 @@ NA_DEF void naUnsubscribeAllOfReceyver(
   void* reciever)
 {
   #if NA_DEBUG
-    if (!na_notifier)
+    if(!na_notifier)
       naCrash("No current notifier present.");
   #endif
-  if (!reciever) return;
+  if(!reciever) return;
 
   for(size_t t = 1; t < na_notifier->nextTopicId; ++t){
     for(size_t s = 0; s < na_notifier->topics[t]->signalCount; ++s){
@@ -341,11 +341,11 @@ NA_DEF void naPublish(
   void* data)
 {
   #if NA_DEBUG
-    if (!na_notifier)
+    if(!na_notifier)
       naCrash("No current notifier present.");
-    if (topicId >= na_notifier->nextTopicId)
+    if(topicId >= na_notifier->nextTopicId)
       naCrash("Unknown topicId.");
-    if (signalId >= na_notifier->topics[topicId]->signalCount)
+    if(signalId >= na_notifier->topics[topicId]->signalCount)
       naCrash("Unknown signalId.");
   #endif
   

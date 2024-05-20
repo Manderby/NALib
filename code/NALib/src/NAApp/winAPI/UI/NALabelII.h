@@ -120,7 +120,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
 
 
 NA_DEF void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel){
-  if(winapiLabel->href){naDelete(winapiLabel->href);}
+  naDeleteE(winapiLabel->href);
   na_ClearLabel((NALabel*)winapiLabel);
 }
 
@@ -171,7 +171,7 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
 
   naRelease(underlineFont);
 
-  if(winapiLabel->href){naDelete(winapiLabel->href);}
+  naDeleteE(winapiLabel->href);
   winapiLabel->href = naNewStringWithFormat("start %s", url);
 }
 

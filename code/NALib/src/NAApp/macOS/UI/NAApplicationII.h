@@ -122,7 +122,9 @@ NA_DEF void naStartApplication(
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
   #endif
     // Call preStartup if desired.
-    if(preStartup){preStartup(arg);}
+    if(preStartup){
+      preStartup(arg);
+    }
 
     // Set the preferred translator languages.
     naResetApplicationPreferredTranslatorLanguages();
@@ -162,7 +164,9 @@ NA_DEF void naStartApplication(
 
       naCollectGarbage();
       if(!na_InterceptKeyboardShortcut(curEvent)){
-        if(curEvent){[NSApp sendEvent:curEvent];}
+        if(curEvent){
+          [NSApp sendEvent:curEvent];
+        }
       }
 
       naRunNotifier();

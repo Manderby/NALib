@@ -22,10 +22,10 @@ struct NAChecksumCRC{
 
 NA_HIDEF void na_PrepareCRCPNG(NAChecksumCRC* checksumcrc){
  int n, k;
- for (n = 0; n < 256; n++) {
+ for (n = 0; n < 256; n++){
    uint32 c = (uint32) n;
-   for (k = 0; k < 8; k++) {
-     if (c & 1)
+   for (k = 0; k < 8; k++){
+     if(c & 1)
        c = 0xedb88320 ^ (c >> 1);
      else
        c = c >> 1;

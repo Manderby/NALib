@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_definitions(-DNA_COMPILE_GUI=1)
 
-if (MSVC)
+if(MSVC)
   add_definitions(-DNA_USE_WINDOWS_COMMON_CONTROLS_6=1)
   
   # multi processor compilation
@@ -95,7 +95,7 @@ target_link_libraries(${TARGET_NAME} PRIVATE NALib)
 find_package(OpenGL REQUIRED)
 target_link_libraries(${TARGET_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
 
-if (MSVC)
+if(MSVC)
   target_link_libraries(${TARGET_NAME} PRIVATE ComCtl32.lib)
 else()
   FIND_LIBRARY(CARBON_FRAMEWORK Carbon)

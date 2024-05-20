@@ -34,7 +34,7 @@ NA_HDEF void* na_GetNativePreferences(){
 
     naFree(systemFullKeyName);
     naDelete(appname);
-    if(companyname){naDelete(companyname);}
+    naDeleteE(companyname);
     naDelete(fullKeyName);
   }
   return na_nativePreferences;
@@ -58,7 +58,7 @@ NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, NAi64 valueS
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
   #if NA_DEBUG
-    if (errorCode != ERROR_SUCCESS)
+    if(errorCode != ERROR_SUCCESS)
       naError("Could not set bool preference");
   #endif
 }
@@ -81,7 +81,7 @@ NA_HDEF void na_SetRawPreferencesInt(void* prefs, const char* key, NAi64 valueSt
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
   #if NA_DEBUG
-    if (errorCode != ERROR_SUCCESS)
+    if(errorCode != ERROR_SUCCESS)
       naError("Could not set int preference");
   #endif
 }
@@ -104,7 +104,7 @@ NA_HDEF void na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64 valueS
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
   #if NA_DEBUG
-    if (errorCode != ERROR_SUCCESS)
+    if(errorCode != ERROR_SUCCESS)
       naError("Could not set enum preference");
   #endif
 }
@@ -127,7 +127,7 @@ NA_HDEF void na_SetRawPreferencesDouble(void* prefs, const char* key, double val
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
   #if NA_DEBUG
-    if (errorCode != ERROR_SUCCESS)
+    if(errorCode != ERROR_SUCCESS)
       naError("Could not set double preference");
   #endif
 }
@@ -172,7 +172,7 @@ NA_HDEF void na_SetRawPreferencesString(void* prefs, const char* key, NAString* 
   naFree(storedValue);
   naFree(systemKey);
   #if NA_DEBUG
-    if (errorCode != ERROR_SUCCESS)
+    if(errorCode != ERROR_SUCCESS)
       naError("Could not set string preference");
   #endif
 }

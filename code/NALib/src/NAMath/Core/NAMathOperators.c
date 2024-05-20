@@ -256,93 +256,93 @@ NA_DEF float naSumf(size_t sampleCount, const float* array){
   return sum;
 }
 
-NA_DEF double naSum(size_t sampleCount, const double* array) {
-#if NA_DEBUG
-    if (!array && sampleCount)
-        naCrash("array is null pointer");
-#endif
+NA_DEF double naSum(size_t sampleCount, const double* array){
+  #if NA_DEBUG
+    if(!array && sampleCount)
+      naCrash("array is null pointer");
+  #endif
 
-    double tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
-    memset(tmpSums, 0, sizeof(double) * (8 * sizeof(size_t))); // nullify.
+  double tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
+  memset(tmpSums, 0, sizeof(double) * (8 * sizeof(size_t))); // nullify.
 
-    if (sampleCount > 1) {
-        for (size_t iStep = 0; iStep < sampleCount; iStep += 2) {
-            // Add two neighboring values together with the temp sums up to the
-            // position where the current iStep has its first binary 0.
-            double walkingSum = array[iStep] + array[iStep + 1];
-            char p = 1; // the current tmpSum as well as the current bit of iStep
-            size_t step = 2; // = 2^p
-            while (iStep & step) {
-                walkingSum += tmpSums[p];
-                p++;
-                step <<= 1;
-            }
-            // Store the current sum at the position of the subsequent binary 1
-            tmpSums[p] = walkingSum;
-        }
+  if(sampleCount > 1){
+    for (size_t iStep = 0; iStep < sampleCount; iStep += 2){
+      // Add two neighboring values together with the temp sums up to the
+      // position where the current iStep has its first binary 0.
+      double walkingSum = array[iStep] + array[iStep + 1];
+      char p = 1; // the current tmpSum as well as the current bit of iStep
+      size_t step = 2; // = 2^p
+      while (iStep & step){
+        walkingSum += tmpSums[p];
+        p++;
+        step <<= 1;
+      }
+      // Store the current sum at the position of the subsequent binary 1
+      tmpSums[p] = walkingSum;
     }
+  }
 
-    // If the count is odd, store the remaining value at position 0.
-    if (sampleCount & 1) {
-        tmpSums[0] = array[sampleCount - 1];
-    }
+  // If the count is odd, store the remaining value at position 0.
+  if(sampleCount & 1){
+    tmpSums[0] = array[sampleCount - 1];
+  }
 
-    double sum = 0.;
-    // Finally, go though all temp sums and add those to the final sum where
-    // sampleCount has a binary 1
-    for (size_t i = 0; i < 8 * sizeof(size_t); ++i) {
-        if (sampleCount & ((size_t)1 << i)) {
-            sum += tmpSums[i];
-        }
+  double sum = 0.;
+  // Finally, go though all temp sums and add those to the final sum where
+  // sampleCount has a binary 1
+  for (size_t i = 0; i < 8 * sizeof(size_t); ++i){
+    if(sampleCount & ((size_t)1 << i)){
+      sum += tmpSums[i];
     }
-    return sum;
+  }
+  return sum;
 }
 
-NA_DEF double naSum2(size_t sampleCount, const double* array) {
-#if NA_DEBUG
-    if (!array && sampleCount)
-        naCrash("array is null pointer");
-#endif
+NA_DEF double naSum2(size_t sampleCount, const double* array){
+  #if NA_DEBUG
+    if(!array && sampleCount)
+      naCrash("array is null pointer");
+  #endif
 
-    double tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
-    memset(tmpSums, 0, sizeof(double) * (8 * sizeof(size_t))); // nullify.
+  double tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
+  memset(tmpSums, 0, sizeof(double) * (8 * sizeof(size_t))); // nullify.
 
-    if (sampleCount > 1) {
-        const double* arrayPtr = array;
-        for (size_t iStep = 0; iStep < sampleCount; iStep += 2) {
-            // Add two neighboring values together with the temp sums up to the
-            // position where the current iStep has its first binary 0.
-            double walkingSum = *arrayPtr++;
-            walkingSum += *arrayPtr++;
+  if(sampleCount > 1){
+    const double* arrayPtr = array;
+    for (size_t iStep = 0; iStep < sampleCount; iStep += 2){
+      // Add two neighboring values together with the temp sums up to the
+      // position where the current iStep has its first binary 0.
+      double walkingSum = *arrayPtr++;
+      walkingSum += *arrayPtr++;
 
-            size_t step = 2;
-            double* tmpSum = &tmpSums[1];
-            while (iStep & step) {
-                walkingSum += *tmpSum++;
-                step <<= 1;
-            }
-            // Store the current sum at the position of the subsequent binary 1
-            *tmpSum = walkingSum;
+      size_t step = 2;
+      double* tmpSum = &tmpSums[1];
+      while (iStep & step){
+        walkingSum += *tmpSum++;
+        step <<= 1;
+      }
+      // Store the current sum at the position of the subsequent binary 1
+      *tmpSum = walkingSum;
 
-            //volatile register dummy = *arrayPtr;
-            //_mm_prefetch(arrayPtr, _MM_HINT_T0);
-        }
+      //volatile register dummy = *arrayPtr;
+      //_mm_prefetch(arrayPtr, _MM_HINT_T0);
     }
+  }
 
-    // If the count is odd, store the remaining value at position 0.
-    if (sampleCount & 1) {
-        tmpSums[0] = array[sampleCount - 1];
-    }
+  // If the count is odd, store the remaining value at position 0.
+  if(sampleCount & 1){
+    tmpSums[0] = array[sampleCount - 1];
+  }
 
-    double sum = 0.;
-    // Finally, go though all temp sums and add those to the final sum where
-    // sampleCount has a binary 1
-    for (size_t i = 0; i < 8 * sizeof(size_t); ++i) {
-        if (sampleCount & ((size_t)1 << i)) {
-            sum += tmpSums[i];
-        }
+  double sum = 0.;
+  // Finally, go though all temp sums and add those to the final sum where
+  // sampleCount has a binary 1
+  for (size_t i = 0; i < 8 * sizeof(size_t); ++i){
+    if(sampleCount & ((size_t)1 << i)){
+      sum += tmpSums[i];
     }
-    return sum;
+  }
+  return sum;
 }
 
 

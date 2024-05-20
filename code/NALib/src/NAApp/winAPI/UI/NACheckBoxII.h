@@ -96,7 +96,9 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldCheckBoxWindowProc){app->oldCheckBoxWindowProc = oldproc;}
+  if(!app->oldCheckBoxWindowProc){
+    app->oldCheckBoxWindowProc = oldproc;
+  }
 
   na_InitCheckBox(&(winapiCheckBox->checkBox), nativePtr);
 

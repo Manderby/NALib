@@ -53,9 +53,9 @@ void naFillHSVWithColor(float out[3], const NAColor* in){
     out[0] = 0.f;
   }else{
     float invrange = naInvf(range);
-    if(out[2] == rgb[0])      {out[0] = 60.f * (0.f + (rgb[1]-rgb[2]) * invrange);}
-    else if(out[2] == rgb[1]) {out[0] = 60.f * (2.f + (rgb[2]-rgb[0]) * invrange);}
-    else                      {out[0] = 60.f * (4.f + (rgb[0]-rgb[1]) * invrange);}
+    if(out[2] == rgb[0])     { out[0] = 60.f * (0.f + (rgb[1]-rgb[2]) * invrange); }
+    else if(out[2] == rgb[1]){ out[0] = 60.f * (2.f + (rgb[2]-rgb[0]) * invrange); }
+    else                     { out[0] = 60.f * (4.f + (rgb[0]-rgb[1]) * invrange); }
     if(out[0] < 0.f){out[0] += 360.f;}
   }
 }

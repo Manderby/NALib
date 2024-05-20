@@ -217,10 +217,10 @@ NAString* naNewKeyPressString(uint32 modifiers, NAUIKeyCode keyCode){
   UniCharCount realLength;
                 
   UInt32 modifierKeyState = 0;
-  if(modifiers & NA_MODIFIER_FLAG_SHIFT){modifierKeyState |= shiftKey;}
-  if(modifiers & NA_MODIFIER_FLAG_CONTROL){modifierKeyState |= controlKey;}
-  if(modifiers & NA_MODIFIER_FLAG_OPTION){modifierKeyState |= optionKey;}
-  if(modifiers & NA_MODIFIER_FLAG_COMMAND){modifierKeyState |= cmdKey;}
+  if(modifiers & NA_MODIFIER_FLAG_SHIFT)  { modifierKeyState |= shiftKey; }
+  if(modifiers & NA_MODIFIER_FLAG_CONTROL){ modifierKeyState |= controlKey; }
+  if(modifiers & NA_MODIFIER_FLAG_OPTION) { modifierKeyState |= optionKey; }
+  if(modifiers & NA_MODIFIER_FLAG_COMMAND){ modifierKeyState |= cmdKey; }
 
   UCKeyTranslate(
     keyboardLayout,
@@ -283,7 +283,9 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
 
 
 NA_DEF double naGetUIElementResolutionFactor(const void* uiElement){
-  if(naGetUIElementType(uiElement) == NA_UI_APPLICATION){return 1.;}
+  if(naGetUIElementType(uiElement) == NA_UI_APPLICATION)
+    return 1.;
+    
   if(naGetUIElementType(uiElement) == NA_UI_SCREEN){
     #if NA_DEBUG
       naError("Sorry, was too lazy to implement this. I mean, it's not hard, but as screens are not used anyway at the moment, who cares.");

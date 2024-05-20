@@ -187,7 +187,9 @@ NA_DEF NAString* naNewPreferencesString(const char* key){
       naError("Preferences value not initialized.");
   #endif
   NAString* returnValue = na_ConvertPreferencesStringToNAString(value);
-  if(value){naDelete(value);}
+  
+  naDeleteE(value);
+  
   return returnValue;
 }
 
@@ -199,8 +201,10 @@ NA_DEF NABool naSetPreferencesString(const char* key, NAString* newValue){
   if(isDifferent){
     na_SetRawPreferencesString(prefs, key, value);
   }
-  if(value){naDelete(value);}
-  if(existingValue){naDelete(existingValue);}
+  
+  naDeleteE(value);
+  naDeleteE(existingValue);
+    
   return isDifferent;
 }
 

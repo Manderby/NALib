@@ -202,7 +202,7 @@ NA_IDEF void naAddListLastMutable(NAList* list, void* content){
 ////////////////////////////
 // REMOVING ELEMENTS
 
-NA_HIDEF void na_EjectList(NAList* list, NAListElement* element, NABool deleteelement){
+NA_HIDEF void na_EjectList(NAList* list, NAListElement* element, NABool deleteElement){
   element->prev->next = element->next;
   element->next->prev = element->prev;
   #if NA_DEBUG
@@ -213,29 +213,29 @@ NA_HIDEF void na_EjectList(NAList* list, NAListElement* element, NABool deleteel
       naError("List count is zero already");
   #endif
   list->count--;
-  if(deleteelement){naDelete(element);}
+  if(deleteElement){naDelete(element);}
 }
 
 
 
-NA_HIDEF void na_EjectListConst(NAList* list, NAListElement* element, NABool deleteelement){
+NA_HIDEF void na_EjectListConst(NAList* list, NAListElement* element, NABool deleteElement){
   #if NA_DEBUG
     if(element == &(list->sentinel))
       naError("Trying to eject sentinel element. This should not happen.");
   #endif
-  na_EjectList(list, element, deleteelement);
+  na_EjectList(list, element, deleteElement);
 }
 
 
 
-NA_HIDEF void* na_EjectListMutable(NAList* list, NAListElement* element, NABool deleteelement){
+NA_HIDEF void* na_EjectListMutable(NAList* list, NAListElement* element, NABool deleteElement){
   void* contentpointer;
   #if NA_DEBUG
     if(element == &(list->sentinel))
       naError("Trying to eject sentinel element. This should not happen.");
   #endif
   contentpointer = naGetPtrMutable(element->ptr);
-  na_EjectList(list, element, deleteelement);
+  na_EjectList(list, element, deleteElement);
   return contentpointer;
 }
 
@@ -356,9 +356,9 @@ NA_IDEF size_t naGetListElemIndex(const NAList* list, const void* elem){
 NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor){
   NAListElement* cur;
   #if NA_DEBUG
-    if (!list)
+    if(!list)
       naCrash("list is Null-Pointer.");
-    if (!accessor)
+    if(!accessor)
       naCrash("accessor is Null-Pointer.");
   #endif
   cur = list->sentinel.next;

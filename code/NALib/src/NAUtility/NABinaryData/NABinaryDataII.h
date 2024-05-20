@@ -403,22 +403,22 @@ NA_IDEF NABool naEqual128WithBytes(const void* s,
       naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)s;
-  if(*p++ != b0) {return NA_FALSE;}
-  if(*p++ != b1) {return NA_FALSE;}
-  if(*p++ != b2) {return NA_FALSE;}
-  if(*p++ != b3) {return NA_FALSE;}
-  if(*p++ != b4) {return NA_FALSE;}
-  if(*p++ != b5) {return NA_FALSE;}
-  if(*p++ != b6) {return NA_FALSE;}
-  if(*p++ != b7) {return NA_FALSE;}
-  if(*p++ != b8) {return NA_FALSE;}
-  if(*p++ != b9) {return NA_FALSE;}
-  if(*p++ != b10){return NA_FALSE;}
-  if(*p++ != b11){return NA_FALSE;}
-  if(*p++ != b12){return NA_FALSE;}
-  if(*p++ != b13){return NA_FALSE;}
-  if(*p++ != b14){return NA_FALSE;}
-  if(*p   != b15){return NA_FALSE;}
+  if(*p++ !=  b0){ return NA_FALSE; }
+  if(*p++ !=  b1){ return NA_FALSE; }
+  if(*p++ !=  b2){ return NA_FALSE; }
+  if(*p++ !=  b3){ return NA_FALSE; }
+  if(*p++ !=  b4){ return NA_FALSE; }
+  if(*p++ !=  b5){ return NA_FALSE; }
+  if(*p++ !=  b6){ return NA_FALSE; }
+  if(*p++ !=  b7){ return NA_FALSE; }
+  if(*p++ !=  b8){ return NA_FALSE; }
+  if(*p++ !=  b9){ return NA_FALSE; }
+  if(*p++ != b10){ return NA_FALSE; }
+  if(*p++ != b11){ return NA_FALSE; }
+  if(*p++ != b12){ return NA_FALSE; }
+  if(*p++ != b13){ return NA_FALSE; }
+  if(*p++ != b14){ return NA_FALSE; }
+  if(*p   != b15){ return NA_FALSE; }
   return NA_TRUE;
 }
 

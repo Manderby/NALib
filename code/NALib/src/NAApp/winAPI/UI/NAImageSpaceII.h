@@ -166,7 +166,9 @@ NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace){
 NA_DEF void naSetImageSpaceImage(NAImageSpace* imageSpace, NAUIImage* uiImage){
   NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
   
-  if(imageSpace->uiImage){naRelease(imageSpace->uiImage);}
+  if(imageSpace->uiImage){
+    naRelease(imageSpace->uiImage);
+  }
   if(uiImage){
     imageSpace->uiImage = naRetain(uiImage);
   }

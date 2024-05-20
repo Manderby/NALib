@@ -15,7 +15,9 @@ NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
   uiElement->mouseInside = NA_FALSE;
   uiElement->allowNotifications = NA_TRUE;
   
-  if(elementType == NA_UI_BUTTON){uiElement->hoverReactionCount++;}
+  if(elementType == NA_UI_BUTTON){
+    uiElement->hoverReactionCount++;
+  }
   
   naAddListLastMutable(&(naGetApplication()->uiElements), uiElement);
 }
@@ -40,7 +42,10 @@ NA_HDEF void* na_GetUINALibEquivalent(NANativePtr nativePtr){
   NAListIterator iter;
   NA_UIElement* retelem = NA_NULL;
   naBeginListMutatorIteration(NA_UIElement* elem, &(na_App->uiElements), iter);
-    if(elem->nativePtr == nativePtr){retelem = elem; break;}
+    if(elem->nativePtr == nativePtr){
+      retelem = elem;
+      break;
+    }
   naEndListIteration(iter);
   return retelem;
 }
@@ -60,14 +65,17 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
       reaction.controller = eventReaction->controller;
       finished = eventReaction->callback(reaction);
       // If the callback tells us to stop handling the command, we do so.
-      if(finished){break;}
+      if(finished)
+        break;
     }
   naEndListIteration(iter);
 
   // If the command has not been finished, search for other reactions in the parent elements.
   if(!finished && command != NA_UI_COMMAND_MOUSE_ENTERED && command != NA_UI_COMMAND_MOUSE_EXITED){
     const NA_UIElement* parentelement = (const NA_UIElement*)naGetUIElementParentConst(element);
-    if(parentelement){finished = na_DispatchUIElementCommand(parentelement, command);}
+    if(parentelement){
+      finished = na_DispatchUIElementCommand(parentelement, command);
+    }
   }
 
   return finished;
