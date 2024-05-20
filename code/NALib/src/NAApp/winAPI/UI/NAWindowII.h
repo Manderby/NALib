@@ -64,7 +64,9 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES);
     shouldClose = !naGetFlagu32(windowMutable->window.flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
     naSetFlagu32(&(windowMutable->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
-    if(shouldClose){naCloseWindow(&windowMutable->window);}
+    if(shouldClose){
+      naCloseWindow(&windowMutable->window);
+    }
     info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;

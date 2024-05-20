@@ -240,7 +240,8 @@ NA_HDEF NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATree
   // search until childpernode - 1 and just return the last possibility in
   // good belief.
   for(retValue = 0; retValue < config->childpernode - 1; retValue++){
-    if(childs[retValue] == child){break;}
+    if(childs[retValue] == child)
+      break;
   }
   
   #if NA_DEBUG

@@ -107,10 +107,16 @@ NA_HDEF NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElem
   while(elem1){
     tmpelem2 = elem2;
     while(tmpelem2){
-      if(elem1 == tmpelem2){commonParent = elem1; break;}
+      if(elem1 == tmpelem2){
+        commonParent = elem1;
+        break;
+      }
       tmpelem2 = naGetUIElementParent(tmpelem2);
     }
-    if(commonParent){break;}
+    
+    if(commonParent)
+      break;
+      
     elem1 = naGetUIElementParent(elem1);
   }
   return commonParent;
@@ -339,24 +345,53 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
   while(uiElement && !info.hasBeenHandeled){
     // First, capture mouse and keyboard events if necessary.
     info = naUIElementWINAPIProc(uiElement, message, wParam, lParam);
-    if(info.hasBeenHandeled){break;}
+    
+    if(info.hasBeenHandeled)
+      break;
 
     // Then, go to the specialized window proc.
     switch(naGetUIElementType(uiElement)){
-    case NA_UI_APPLICATION:  info = naApplicationWINAPIProc(uiElement, message, wParam, lParam); break;
-    case NA_UI_CHECKBOX:     info = naCheckBoxWINAPIProc   (uiElement, message, wParam, lParam); break;
-    case NA_UI_BUTTON:       info = naButtonWINAPIProc     (uiElement, message, wParam, lParam); break;
-    case NA_UI_IMAGE_SPACE:  info = naImageSpaceWINAPIProc (uiElement, message, wParam, lParam); break;
-    case NA_UI_LABEL:        info = naLabelWINAPIProc      (uiElement, message, wParam, lParam); break;
-    case NA_UI_OPENGL_SPACE: info = naOpenGLSpaceWINAPIProc(uiElement, message, wParam, lParam); break;
-    case NA_UI_RADIO:        info = naRadioWINAPIProc      (uiElement, message, wParam, lParam); break;
-    case NA_UI_SLIDER:       info = naSliderWINAPIProc     (uiElement, message, wParam, lParam); break;
-    case NA_UI_SELECT:       info = naSelectWINAPIProc     (uiElement, message, wParam, lParam); break;
-    case NA_UI_SPACE:        info = naSpaceWINAPIProc      (uiElement, message, wParam, lParam); break;
-    case NA_UI_TEXTBOX:      info = naTextBoxWINAPIProc    (uiElement, message, wParam, lParam); break;
-    case NA_UI_TEXTFIELD:    info = naTextFieldWINAPIProc  (uiElement, message, wParam, lParam); break;
-    case NA_UI_WINDOW:       info = naWindowWINAPIProc     (uiElement, message, wParam, lParam); break;
-    default: break;
+    case NA_UI_APPLICATION:
+      info = naApplicationWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    case NA_UI_CHECKBOX:
+      info = naCheckBoxWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    case NA_UI_BUTTON:
+      info = naButtonWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    case NA_UI_IMAGE_SPACE:
+      info = naImageSpaceWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    case NA_UI_LABEL:
+      info = naLabelWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    case NA_UI_OPENGL_SPACE:
+      info = naOpenGLSpaceWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    case NA_UI_RADIO:
+      info = naRadioWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    case NA_UI_SLIDER:
+      info = naSliderWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    case NA_UI_SELECT:
+      info = naSelectWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    case NA_UI_SPACE:
+      info = naSpaceWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    case NA_UI_TEXTBOX:
+      info = naTextBoxWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    case NA_UI_TEXTFIELD:
+      info = naTextFieldWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    case NA_UI_WINDOW:
+      info = naWindowWINAPIProc(uiElement, message, wParam, lParam);
+      break;
+    default:
+      break;
     }
 
     // If the emitting uiElement does not handle the event, try its parent.
@@ -390,7 +425,9 @@ NABool naWINAPICaptureMouseHover(){
   POINT pt = {GET_X_LPARAM(msgpos), GET_Y_LPARAM(msgpos)};
   HWND hWndUnderMouse = WindowFromPoint(pt);
   NA_UIElement* elementUnderMouse = (NA_UIElement*)na_GetUINALibEquivalent(hWndUnderMouse);
-  if(elementUnderMouse && elementUnderMouse->hoverReactionCount == 0){return NA_FALSE;}
+  
+  if(elementUnderMouse && elementUnderMouse->hoverReactionCount == 0)
+    return NA_FALSE;
 
   NA_UIElement* curElement = naGetApplicationMouseHoverElement();
 

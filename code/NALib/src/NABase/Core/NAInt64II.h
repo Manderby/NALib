@@ -222,12 +222,18 @@
     NAu64 retValueu;
     NAi64 aSign = naSigni64(a);
     NAi64 bSign = naSigni64(b);
-    if(naSmalleri64(a, NA_ZERO_i64)){a = naNegi64(a);}
-    if(naSmalleri64(b, NA_ZERO_i64)){b = naNegi64(b);}
+    if(naSmalleri64(a, NA_ZERO_i64)){
+      a = naNegi64(a);
+    }
+    if(naSmalleri64(b, NA_ZERO_i64)){
+      b = naNegi64(b);
+    }
     retValueu = naMulu64(naCasti64Tou64(a), naCasti64Tou64(b));
     retValueu.hi &= ~NA_SIGN_MASK_32;
     retValuei = naCastu64Toi64(retValueu);
-    if(!naEquali64(aSign, bSign)){retValuei = naNegi64(retValuei);}
+    if(!naEquali64(aSign, bSign)){
+      retValuei = naNegi64(retValuei);
+    }
     // todo: overflow may lead to different result than built-in 64 bit integer
     return retValuei;
   }
@@ -236,24 +242,36 @@
     NAu64 retValueu;
     NAi64 aSign = naSigni64(a);
     NAi64 bSign = naSigni64(b);
-    if(naSmalleri64(a, NA_ZERO_i64)){a = naNegi64(a);}
-    if(naSmalleri64(b, NA_ZERO_i64)){b = naNegi64(b);}
+    if(naSmalleri64(a, NA_ZERO_i64)){
+      a = naNegi64(a);
+    }
+    if(naSmalleri64(b, NA_ZERO_i64)){
+      b = naNegi64(b);
+    }
     retValueu = naDivu64(naCasti64Tou64(a), naCasti64Tou64(b));
     retValueu.hi &= ~NA_SIGN_MASK_32;
     retValuei = naCastu64Toi64(retValueu);
-    if(!naEquali64(aSign, bSign)){retValuei = naNegi64(retValuei);}
+    if(!naEquali64(aSign, bSign)){
+      retValuei = naNegi64(retValuei);
+    }
     return retValuei;
   }
   NA_IDEF NAi64 naModi64(NAi64 a, NAi64 b){
     NAi64 retValuei;
     NAu64 retValueu;
     NAi64 aSign = naSigni64(a);
-    if(naSmalleri64(a, NA_ZERO_i64)){a = naNegi64(a);}
-    if(naSmalleri64(b, NA_ZERO_i64)){b = naNegi64(b);}
+    if(naSmalleri64(a, NA_ZERO_i64)){
+      a = naNegi64(a);
+    }
+    if(naSmalleri64(b, NA_ZERO_i64)){
+      b = naNegi64(b);
+    }
     retValueu = naModu64(naCasti64Tou64(a), naCasti64Tou64(b));
     retValueu.hi &= ~NA_SIGN_MASK_32;
     retValuei = naCastu64Toi64(retValueu);
-    if(!naEquali64(aSign, NA_ONE_i64)){retValuei = naNegi64(retValuei);}
+    if(!naEquali64(aSign, NA_ONE_i64)){
+      retValuei = naNegi64(retValuei);
+    }
     return retValuei;
   }
 

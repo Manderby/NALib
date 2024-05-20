@@ -44,12 +44,16 @@ NA_IDEF uint32 naSeedRand(uint32 seed){
 
 NA_IDEF double naUniformRandZE(){
   double rnd;
-  do{rnd = (double)naRand();} while(rnd == RAND_MAX);
+  do{
+    rnd = (double)naRand();
+  } while(rnd == RAND_MAX);
   return rnd * NA_INV_RAND_MAX;
 }
 NA_IDEF float naUniformRandZEf(){
   float rnd;
-  do{rnd = (float)naRand();} while(rnd == RAND_MAX);
+  do{
+    rnd = (float)naRand();
+  } while(rnd == RAND_MAX);
   return rnd * NA_INV_RAND_MAXf;
 }
 

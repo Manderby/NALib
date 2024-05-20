@@ -12,7 +12,10 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
     
     na_PrepareBuffer(iter, 1);
     part = na_GetBufferPart(iter);
-    if(naIsBufferAtInitial(iter)){break;}
+    
+    if(naIsBufferAtInitial(iter))
+      break;
+    
     curByte = na_GetBufferPartDataPointerConst(iter);
 
     while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)){
@@ -55,16 +58,25 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty){
 
     na_PrepareBuffer(iter, 1);
     part = na_GetBufferPart(iter);
-    if(naIsBufferAtInitial(iter)){break;}
+    
+    if(naIsBufferAtInitial(iter))
+      break;
+      
     curByte = na_GetBufferPartDataPointerConst(iter);
     
     // Note: Do not use NA_NL_XXX macros here. That is semantically wrong.
     while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)){
       if(checkWindowsEnd){
         checkWindowsEnd = NA_FALSE;
-        if(*curByte == '\n'){iter->partOffset++; break;}
+        if(*curByte == '\n'){
+          iter->partOffset++;
+          break;
+        }
       }
-      if(found){break;}
+      
+      if(found)
+        break;
+      
       if((*curByte == '\r') || (*curByte == '\n')){
         if(skipEmpty && ((cur - start) == 0)){
           start++;
@@ -126,7 +138,10 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
     
     na_PrepareBuffer(iter, 1);
     part = na_GetBufferPart(iter);
-    if(naIsBufferAtInitial(iter)){break;}
+    
+    if(naIsBufferAtInitial(iter))
+      break;
+    
     curByte = na_GetBufferPartDataPointerConst(iter);
 
     while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)){
@@ -169,7 +184,10 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
     
     na_PrepareBuffer(iter, 1);
     part = na_GetBufferPart(iter);
-    if(naIsBufferAtInitial(iter)){break;}
+    
+    if(naIsBufferAtInitial(iter))
+      break;
+    
     curByte = na_GetBufferPartDataPointerConst(iter);
 
     while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)){
@@ -218,7 +236,10 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
     
     na_PrepareBuffer(iter, 1);
     part = na_GetBufferPart(iter);
-    if(naIsBufferAtInitial(iter)){break;}
+    
+    if(naIsBufferAtInitial(iter))
+      break;
+    
     curByte = na_GetBufferPartDataPointerConst(iter);
 
     while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)){
@@ -258,7 +279,9 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
   *retValuei = NA_ZERO_u64;
   bytesused = 0;
   prevval = NA_ZERO_u64;
-  if(maxDigitCount == 0){maxDigitCount = naGetRangeiEnd(buffer->range) - start;}
+  if(maxDigitCount == 0){
+    maxDigitCount = naGetRangeiEnd(buffer->range) - start;
+  }
 
   while(!found && !naIsBufferAtEnd(iter)){
     const NAByte* curByte;
@@ -268,13 +291,20 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
     
     na_PrepareBuffer(iter, 1);
     part = na_GetBufferPart(iter);
-    if(naIsBufferAtInitial(iter)){break;}
+    
+    if(naIsBufferAtInitial(iter))
+      break;
+      
     curByte = na_GetBufferPartDataPointerConst(iter);
 
     while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)){
-      if(bytesused >= maxDigitCount){break;}
+      if(bytesused >= maxDigitCount)
+        break;
 
-      if((*curByte < '0') || (*curByte > '9')){found = NA_TRUE; break;}
+      if((*curByte < '0') || (*curByte > '9')){
+        found = NA_TRUE;
+        break;
+      }
       *retValuei = naAddu64(naMulu64(*retValuei, naMakeu64WithLo(10)), naMakeu64WithLo(*curByte - '0'));
       #if NA_DEBUG
         if(naGreateru64(*retValuei, max))
@@ -308,7 +338,10 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAi64* re
   *retValuei = NA_ZERO_i64;
 
   na_PrepareBuffer(iter, 1);
-  if(naIsBufferAtInitial(iter)){return 0;}
+  
+  if(naIsBufferAtInitial(iter))
+    return 0;
+  
   curByte = na_GetBufferPartDataPointerConst(iter);
 
   // Check for a potential sign at the first character
@@ -323,7 +356,9 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAi64* re
     maxDigitCount--;
     iter->partOffset++;
   }
-  if(maxDigitCount == -1){maxDigitCount = 0;}
+  if(maxDigitCount == -1){
+    maxDigitCount = 0;
+  }
 
   bytesused += naParseBufferDecimalUnsignedInteger(iter, &intValue, maxDigitCount, naCasti64Tou64(limit));
   *retValuei = naMuli64(sign, naCastu64Toi64(intValue));

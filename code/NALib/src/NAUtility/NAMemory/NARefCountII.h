@@ -100,7 +100,8 @@ NA_IDEF void naReleaseRefCount(NARefCount* refCount, void* data, NAMutator destr
 
   if(refCount->count == NA_ZERO){
     // Call the destructor on the data if available.
-    if(destructor){destructor(data);}
+    if(destructor)
+      destructor(data);
   }
   // Note that other programming languages have incorporated this very idea
   // of self-organized reference-counting pointers deeply within its core.

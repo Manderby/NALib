@@ -24,8 +24,10 @@ NA_DEF NABufferSource* naCreateBufferSource(NABufferFiller filler, NABuffer* cac
 
 
 NA_HDEF void na_DestructBufferSource(NABufferSource* source){
-  if(source->dataDestructor){source->dataDestructor(source->data);}
-  if(source->cache){naRelease(source->cache);}
+  if(source->dataDestructor)
+    source->dataDestructor(source->data);
+  if(source->cache)
+    naRelease(source->cache);
 }
 
 

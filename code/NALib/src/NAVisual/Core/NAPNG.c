@@ -240,9 +240,13 @@ NA_DEF NAByte naGetPaethPredictor(NAByte a, NAByte b, NAByte c){
   NAInt pa = naAbsi(p - (NAInt)a);
   NAInt pb = naAbsi(p - (NAInt)b);
   NAInt pc = naAbsi(p - (NAInt)c);
-  if((pa <= pb) && (pa <= pc)){retValue = a;}
-  else if(pb <= pc){retValue = b;}
-  else{retValue = c;}
+  if((pa <= pb) && (pa <= pc)){
+    retValue = a;
+  }else if(pb <= pc){
+    retValue = b;
+  }else{
+    retValue = c;
+  }
   return retValue;
 }
 
@@ -745,7 +749,9 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath){
   while(1){
     NAPNGChunk* chunk = na_AllocPNGChunkFromBuffer(&bufiter);
     naAddListLastMutable(&(png->chunks), chunk);
-    if(chunk->type == NA_PNG_CHUNK_TYPE_IEND){break;}
+    
+    if(chunk->type == NA_PNG_CHUNK_TYPE_IEND)
+      break;
   }
   naClearBufferIterator(&bufiter);
 
@@ -929,9 +935,13 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath){
 NA_HDEF void na_DestructPNG(NAPNG* png){
   naForeachListMutable(&(png->chunks), (NAMutator)na_DeallocPNGChunk);
   naClearList(&(png->chunks));
-  if(png->pixeldata){naFree(png->pixeldata);}
-  if(png->compresseddata){naRelease(png->compresseddata);}
-  if(png->filteredData){naRelease(png->filteredData);}
+  
+  if(png->pixeldata)
+    naFree(png->pixeldata);
+  if(png->compresseddata)
+    naRelease(png->compresseddata);
+  if(png->filteredData)
+    naRelease(png->filteredData);
 }
 
 

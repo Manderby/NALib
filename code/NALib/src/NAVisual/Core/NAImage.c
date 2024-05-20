@@ -106,13 +106,13 @@ NA_HDEF NAImage* naCreateImageCopy(const NAImage* image){
 
 
 NAImage* na_CreateBlendedImage(
-                               const NAColor* base,
-                               NASizei baseSize,
-                               const NAColor* top,
-                               NASizei topSize,
-                               NABlendMode mode,
-                               float factor,
-                               NAPosi offset)
+  const NAColor* base,
+  NASizei baseSize,
+  const NAColor* top,
+  NASizei topSize,
+  NABlendMode mode,
+  float factor,
+  NAPosi offset)
 {
   NABool baseIsImage = !naIsSizeiEmpty(baseSize);
   NABool topIsImage = !naIsSizeiEmpty(topSize);
@@ -123,7 +123,9 @@ NAImage* na_CreateBlendedImage(
   if(topIsImage && baseIsImage){
     retSize = baseSize;
     innerRect = naClampRectiToRect(naMakeRecti(offset, topSize), naMakeRecti(naMakePosiZero(), retSize));
-    if(!naIsRectiUseful(innerRect)){innerRect = naMakeRectiZero();}
+    if(!naIsRectiUseful(innerRect)){
+      innerRect = naMakeRectiZero();
+    }
   }else if(topIsImage){
     retSize = topSize;
     innerRect = naMakeRecti(naMakePosiZero(), retSize);
@@ -144,17 +146,17 @@ NAImage* na_CreateBlendedImage(
     NAInt basePixelCount = innerRect.pos.y;
     if(basePixelCount > 0){
       naCopyn(
-              ret,
-              base,
-              (size_t)basePixelCount * (size_t)retSize.width * sizeof(NAColor));
+        ret,
+        base,
+        (size_t)basePixelCount * (size_t)retSize.width * sizeof(NAColor));
     }
     // Simply copy the upper part of the base image
     NAInt topPixelCount = naIsRectiEmpty(innerRect) ? baseSize.height : baseSize.height - innerEndY;
     if(topPixelCount > 0){
       naCopyn(
-              &ret[(retSize.height - topPixelCount) * retSize.width],
-              &base[(baseSize.height - topPixelCount) * baseSize.width],
-              (size_t)topPixelCount * (size_t)retSize.width * sizeof(NAColor));
+        &ret[(retSize.height - topPixelCount) * retSize.width],
+        &base[(baseSize.height - topPixelCount) * baseSize.width],
+        (size_t)topPixelCount * (size_t)retSize.width * sizeof(NAColor));
     }
   }
   
@@ -166,20 +168,24 @@ NAImage* na_CreateBlendedImage(
       // Simply copy the left part of the base image
       NAInt leftPixelCount = innerRect.pos.x;
       if(leftPixelCount > 0){
-        if(leftPixelCount > baseSize.width){leftPixelCount = baseSize.width;}
+        if(leftPixelCount > baseSize.width){
+          leftPixelCount = baseSize.width;
+        }
         naCopyn(
-                &ret[y * retSize.width],
-                &base[y * baseSize.width],
-                (size_t)leftPixelCount * sizeof(NAColor));
+          &ret[y * retSize.width],
+          &base[y * baseSize.width],
+          (size_t)leftPixelCount * sizeof(NAColor));
       }
       // Simply copy the right part of the base image
       NAInt rightPixelCount = baseSize.width - innerEndX;
       if(rightPixelCount > 0){
-        if(rightPixelCount > baseSize.width){rightPixelCount = baseSize.width;}
+        if(rightPixelCount > baseSize.width){
+          rightPixelCount = baseSize.width;
+        }
         naCopyn(
-                &ret[(y * retSize.width + retSize.width - rightPixelCount)],
-                &base[(y * baseSize.width + baseSize.width - rightPixelCount)],
-                (size_t)rightPixelCount * sizeof(NAColor));
+          &ret[(y * retSize.width + retSize.width - rightPixelCount)],
+          &base[(y * baseSize.width + baseSize.width - rightPixelCount)],
+          (size_t)rightPixelCount * sizeof(NAColor));
       }
     }
     
@@ -208,14 +214,14 @@ NAImage* na_CreateBlendedImage(
     }
     
     naBlendColors(
-                  retPtr,
-                  basePtr,
-                  topPtr,
-                  factor,
-                  mode,
-                  innerEndX - innerRect.pos.x,
-                  baseIsImage,
-                  topIsImage);
+      retPtr,
+      basePtr,
+      topPtr,
+      factor,
+      mode,
+      innerEndX - innerRect.pos.x,
+      baseIsImage,
+      topIsImage);
   }
   
   return retImage;
@@ -223,10 +229,11 @@ NAImage* na_CreateBlendedImage(
 
 
 NA_DEF NAImage* naCreateImageWithTint(
-                                      const NAImage* base,
-                                      const NAColor* tint,
-                                      NABlendMode mode,
-                                      float factor){
+  const NAImage* base,
+  const NAColor* tint,
+  NABlendMode mode,
+  float factor)
+{
 #if NA_DEBUG
   if(!base)
     naCrash("Given base image is a Null-Pointer");
@@ -237,23 +244,23 @@ NA_DEF NAImage* naCreateImageWithTint(
 #endif
   
   return na_CreateBlendedImage(
-                               base->data,
-                               naGetImageSize(base),
-                               tint,
-                               naMakeSizeiEmpty(),
-                               mode,
-                               factor,
-                               naMakePosi(0, 0));
+    base->data,
+    naGetImageSize(base),
+    tint,
+    naMakeSizeiEmpty(),
+    mode,
+    factor,
+    naMakePosi(0, 0));
 }
 
 
 
 NA_DEF NAImage* naCreateImageWithBlend(
-                                       const NAImage* base,
-                                       const NAImage* top,
-                                       NABlendMode mode,
-                                       float factor,
-                                       NAPosi offset)
+  const NAImage* base,
+  const NAImage* top,
+  NABlendMode mode,
+  float factor,
+  NAPosi offset)
 {
 #if NA_DEBUG
   if(!base)
@@ -263,13 +270,13 @@ NA_DEF NAImage* naCreateImageWithBlend(
 #endif
   
   return na_CreateBlendedImage(
-                               base->data,
-                               naGetImageSize(base),
-                               top->data,
-                               naGetImageSize(top),
-                               mode,
-                               factor,
-                               offset);
+    base->data,
+    naGetImageSize(base),
+    top->data,
+    naGetImageSize(top),
+    mode,
+    factor,
+    offset);
 }
 
 
@@ -286,13 +293,13 @@ NA_DEF NAImage* naCreateImageWithApply(const NAColor* ground, const NAImage* top
   
   const NAColor* topPtr = top->data;
   return na_CreateBlendedImage(
-                               ground,
-                               naMakeSizeiEmpty(),
-                               topPtr,
-                               naGetImageSize(top),
-                               mode,
-                               factor,
-                               naMakePosi(0, 0));
+    ground,
+    naMakeSizeiEmpty(),
+    topPtr,
+    naGetImageSize(top),
+    mode,
+    factor,
+    naMakePosi(0, 0));
 }
 
 

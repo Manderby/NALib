@@ -88,7 +88,9 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}
+  if(!app->oldRadioWindowProc){
+    app->oldRadioWindowProc = oldproc;
+  }
 
   na_InitRadio(&(winapiRadio->radio), nativePtr);
 

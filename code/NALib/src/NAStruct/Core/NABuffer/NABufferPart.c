@@ -84,8 +84,10 @@ NA_HDEF NABufferPart* na_NewBufferPartWithMutableData(void* data, size_t byteSiz
 
 // The destructor method which will automatically be called by naRelease.
 NA_HDEF void na_DestructBufferPart(NABufferPart* part){
-  if(part->source){naRelease(part->source);}
-  if(part->memBlock){naRelease(part->memBlock);}
+  if(part->source)
+    naRelease(part->source);
+  if(part->memBlock)
+    naRelease(part->memBlock);
 }
 
 
@@ -105,7 +107,9 @@ NA_HDEF void na_DecoupleBufferPart(NABufferPart* part){
     part->byteSize);
   naRelease(part->memBlock);
 
-  if(part->source){naRelease(part->source);}
+  if(part->source)
+    naRelease(part->source);
+    
   part->source = NA_NULL;
   part->sourceOffset = 0;
   part->blockOffset = 0;
@@ -357,7 +361,9 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
     if(normedStart < 0)
       naError("normed start is negative");
   #endif
-  if(normedEnd > (NAInt)part->byteSize){normedEnd = (NAInt)part->byteSize;}
+  if(normedEnd > (NAInt)part->byteSize){
+    normedEnd = (NAInt)part->byteSize;
+  }
 
   // We split the sparse part as necessary.
   part = na_SplitBufferPart(partIter, (size_t)normedStart, (size_t)normedEnd);

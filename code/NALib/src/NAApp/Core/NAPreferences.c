@@ -188,7 +188,8 @@ NA_DEF NAString* naNewPreferencesString(const char* key){
   #endif
   NAString* returnValue = na_ConvertPreferencesStringToNAString(value);
   
-  naDeleteE(value);
+  if(value)
+    naDelete(value);
   
   return returnValue;
 }
@@ -202,8 +203,10 @@ NA_DEF NABool naSetPreferencesString(const char* key, NAString* newValue){
     na_SetRawPreferencesString(prefs, key, value);
   }
   
-  naDeleteE(value);
-  naDeleteE(existingValue);
+  if(value)
+    naDelete(value);
+  if(existingValue)
+    naDelete(existingValue);
     
   return isDifferent;
 }

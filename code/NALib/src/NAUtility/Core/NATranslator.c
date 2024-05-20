@@ -147,7 +147,9 @@ NA_DEF void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code){
   it = naMakeListAccessor(&(NA_TRANSLATOR->languagePreferences));
   while(naIterateList(&it)){
     const NALanguageCode3* curCode = naGetListCurConst(&it);
-    if(*curCode == code){codeFound = NA_TRUE;}
+    if(*curCode == code){
+      codeFound = NA_TRUE;
+    }
   }
   naClearListIterator(&it);
   
@@ -291,7 +293,9 @@ NA_DEF NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str){
     code |= tolower(str[i]);
     ++i;
   }
-  if(code <= 0xffff){code = naConvertLanguageCode1To3((NALanguageCode1)code);}
+  if(code <= 0xffff){
+    code = naConvertLanguageCode1To3((NALanguageCode1)code);
+  }
   return (NALanguageCode3)code;
 }
 

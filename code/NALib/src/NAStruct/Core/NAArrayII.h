@@ -474,7 +474,9 @@ NA_IDEF NABool naIterateArray(NAArrayIterator* iterator, size_t step){
 
 NA_IDEF NABool naIterateArrayBack(NAArrayIterator* iterator, size_t step){
   // todo: make IterateBack possible with a separate function
-  if(naIsArrayAtInitial(iterator)){iterator->index += naGetArrayCount(naGetPtrConst(iterator->array));}
+  if(naIsArrayAtInitial(iterator)){
+    iterator->index += naGetArrayCount(naGetPtrConst(iterator->array));
+  }
   if(iterator->index < step){
     iterator->index = NA_ARRAY_INVALID_INDEX;
   }else{

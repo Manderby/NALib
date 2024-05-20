@@ -8,10 +8,18 @@
 
 
 #if defined NA_TYPE_INT256
-  NA_IDEF NAi256 naMakei256(int128 hi, uint128 lo){return (NAi256)((NAu256)hi << 128) | lo;}
-  NA_IDEF NAi256 naMakei256WithLo(NAi128 lo){return (NAi256)lo;}
-  NA_IDEF NAi256 naMakei256WithDouble(double lo){return (NAi256)lo;}
-  NA_IDEF NAi256 naMakei256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0){return ((NAi256)b3 << 224) | (NAi256)b3 << 192) | (NAi256)b3 << 160) | (NAi256)b3 << 128) | (NAi256)b3 << 96) | ((NAi256)b2 << 64) | ((NAi256)b1 << 32) | b0;}
+  NA_IDEF NAi256 naMakei256(int128 hi, uint128 lo){
+    return (NAi256)((NAu256)hi << 128) | lo;
+  }
+  NA_IDEF NAi256 naMakei256WithLo(NAi128 lo){
+    return (NAi256)lo;
+  }
+  NA_IDEF NAi256 naMakei256WithDouble(double lo){
+    return (NAi256)lo;
+  }
+  NA_IDEF NAi256 naMakei256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0){
+    return ((NAi256)b3 << 224) | (NAi256)b3 << 192) | (NAi256)b3 << 160) | (NAi256)b3 << 128) | (NAi256)b3 << 96) | ((NAi256)b2 << 64) | ((NAi256)b1 << 32) | b0;
+  }
 #else
 
   NA_IDEF NAi256 naMakei256(NAi128 hi, NAu128 lo){
@@ -66,12 +74,18 @@
     NAu256 retValueu;
     NAi256 aSign = naSigni256(a);
     NAi256 bSign = naSigni256(b);
-    if(naSmalleri256(a, NA_ZERO_i256)){a = naNegi256(a);}
-    if(naSmalleri256(b, NA_ZERO_i256)){b = naNegi256(b);}
+    if(naSmalleri256(a, NA_ZERO_i256)){
+      a = naNegi256(a);
+    }
+    if(naSmalleri256(b, NA_ZERO_i256)){
+      b = naNegi256(b);
+    }
     retValueu = naMulu256(naCasti256Tou256(a), naCasti256Tou256(b));
     retValueu.hi = naAndu128(retValueu.hi, naNotu128(naCasti128Tou128(NA_SIGN_MASK_128)));
     retValuei = naCastu256Toi256(retValueu);
-    if(!naEquali256(aSign, bSign)){retValuei = naNegi256(retValuei);}
+    if(!naEquali256(aSign, bSign)){
+      retValuei = naNegi256(retValuei);
+    }
     // todo: overflow may lead to different result than built-in 256 bit integer
     return retValuei;
   }
@@ -80,24 +94,36 @@
     NAu256 retValueu;
     NAi256 aSign = naSigni256(a);
     NAi256 bSign = naSigni256(b);
-    if(naSmalleri256(a, NA_ZERO_i256)){a = naNegi256(a);}
-    if(naSmalleri256(b, NA_ZERO_i256)){b = naNegi256(b);}
+    if(naSmalleri256(a, NA_ZERO_i256)){
+      a = naNegi256(a);
+    }
+    if(naSmalleri256(b, NA_ZERO_i256)){
+      b = naNegi256(b);
+    }
     retValueu = naDivu256(naCasti256Tou256(a), naCasti256Tou256(b));
     retValueu.hi = naAndu128(retValueu.hi, naNotu128(naCasti128Tou128(NA_SIGN_MASK_128)));
     retValuei = naCastu256Toi256(retValueu);
-    if(!naEquali256(aSign, bSign)){retValuei = naNegi256(retValuei);}
+    if(!naEquali256(aSign, bSign)){
+      retValuei = naNegi256(retValuei);
+    }
     return retValuei;
   }
   NA_IDEF NAi256 naModi256(NAi256 a, NAi256 b){
     NAi256 retValuei;
     NAu256 retValueu;
     NAi256 aSign = naSigni256(a);
-    if(naSmalleri256(a, NA_ZERO_i256)){a = naNegi256(a);}
-    if(naSmalleri256(b, NA_ZERO_i256)){b = naNegi256(b);}
+    if(naSmalleri256(a, NA_ZERO_i256)){
+      a = naNegi256(a);
+    }
+    if(naSmalleri256(b, NA_ZERO_i256)){
+      b = naNegi256(b);
+    }
     retValueu = naModu256(naCasti256Tou256(a), naCasti256Tou256(b));
     retValueu.hi = naAndu128(retValueu.hi, naNotu128(naCasti128Tou128(NA_SIGN_MASK_128)));
     retValuei = naCastu256Toi256(retValueu);
-    if(!naEquali256(aSign, NA_ONE_i256)){retValuei = naNegi256(retValuei);}
+    if(!naEquali256(aSign, NA_ONE_i256)){
+      retValuei = naNegi256(retValuei);
+    }
     return retValuei;
   }
 

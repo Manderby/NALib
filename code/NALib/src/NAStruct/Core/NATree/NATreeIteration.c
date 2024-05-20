@@ -80,8 +80,11 @@ NA_HDEF void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* inf
       // unnecessary function call.
       na_SetTreeIteratorCurItem(iter, &(parent->item));
       na_IterateTreeCapture(iter, nextIndex, info);
+      
       // If we found a leaf, break.
-      if(!naIsTreeAtInitial(iter) && na_IsTreeItemLeaf(tree, iter->item)){break;}
+      if(!naIsTreeAtInitial(iter) && na_IsTreeItemLeaf(tree, iter->item))
+        break;
+      
       na_SetTreeIteratorCurItem(iter, NA_NULL);
     }
     item = &(parent->item);
@@ -225,7 +228,9 @@ NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTok
   
   // If the tree is empty, we do nothing.
   if(!naIsTreeEmpty(tree)){
-    if(!iter->item){na_SetTreeIteratorCurItem(iter, tree->root);}
+    if(!iter->item){
+      na_SetTreeIteratorCurItem(iter, tree->root);
+    }
     
     while(iter->item){
       if(na_IsTreeItemLeaf(tree, iter->item)){
@@ -247,8 +252,9 @@ NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTok
           naError("child index returned in callback is too high");
       #endif
       
-      if(nextIndex < NA_TREE_SEARCH_PARENT){break;}
-      if(nextIndex == NA_TREE_SEARCH_PARENT){
+      if(nextIndex < NA_TREE_SEARCH_PARENT){
+        break;
+      }else if(nextIndex == NA_TREE_SEARCH_PARENT){
         NATreeNode* parentNode = na_GetTreeItemParent(iter->item);
         if(parentNode){
           na_SetTreeIteratorCurItem(iter, &(parentNode->item));

@@ -479,10 +479,16 @@ NA_IDEF int32 naLog2i32(int32 x){
     if(x < 0)
       naError("Logarithm of negative number.");
   #endif
-  if(x <= 0){return 0;}
+  
+  if(x <= 0)
+    return 0;
+  
   x--;
   retValue = 0;
-  while(x){retValue++; x>>=1;}
+  while(x){
+    retValue++;
+    x>>=1;
+  }
   return retValue;
 }
 NA_IDEF NAi64 naLog2i64(NAi64 x){
@@ -491,10 +497,17 @@ NA_IDEF NAi64 naLog2i64(NAi64 x){
     if(naSmalleri64(x, NA_ZERO_i64))
       naError("Logarithm of negative number.");
   #endif
-  if(naSmallerEquali64(x, NA_ZERO_i64)){return NA_ZERO_i64;}
+  
+  if(naSmallerEquali64(x, NA_ZERO_i64)){
+    return NA_ZERO_i64;
+  }
+  
   naDeci64(x);
   retValue = NA_ZERO_i64;
-  while(!naEquali64(x, NA_ZERO_i64)){naInci64(retValue); x = naShri64(x, 1);}
+  while(!naEquali64(x, NA_ZERO_i64)){
+    naInci64(retValue);
+    x = naShri64(x, 1);
+  }
   return retValue;
 }
 
@@ -562,7 +575,10 @@ NA_IDEF int32 naExp10i32(int32 x){
       naError("Exponent of 10 exceeds integer range.");
   #endif
   i = 1;
-  while(x){i *= 10; x--;}
+  while(x){
+    i *= 10;
+    x--;
+  }
   return i;
 }
 NA_IDEF NAi64 naExp10i64(NAi64 x){
@@ -572,7 +588,10 @@ NA_IDEF NAi64 naExp10i64(NAi64 x){
       naError("Exponent of 10 exceeds integer range.");
   #endif
   i = NA_ONE_i64;
-  while(!naEquali64(x, NA_ZERO_i64)){i = naMuli64(i, naMakei64WithLo(10)); naDeci64(x);}
+  while(!naEquali64(x, NA_ZERO_i64)){
+    i = naMuli64(i, naMakei64WithLo(10));
+    naDeci64(x);
+  }
   return i;
 }
 
@@ -640,7 +659,9 @@ NA_IDEF size_t naPowerOf2s(size_t n){
 
 NA_IDEF NAInt naFactorize(NAInt x){
   NAInt result = 1;
-  while(x > 1){result *= x--;}
+  while(x > 1){
+    result *= x--;
+  }
   return result;
 }
 
@@ -652,14 +673,22 @@ NA_IDEF NAInt naBinom(NAInt n, NAInt k){
   NAInt x;
   NAInt nminuskfactor;
   NAInt nfactor;
-  if(k > nminusk){naSwapi(&k, &nminusk);}
+  if(k > nminusk){
+    naSwapi(&k, &nminusk);
+  }
   kfactor = 1;
   x = 2;
-  while(x <= k){kfactor *= x++;}
+  while(x <= k){
+    kfactor *= x++;
+  }
   nminuskfactor = kfactor;
-  while(x <= nminusk){nminuskfactor *= x++;}
+  while(x <= nminusk){
+    nminuskfactor *= x++;
+  }
   nfactor = nminuskfactor;
-  while(x <= n){nfactor *= x++;}
+  while(x <= n){
+    nfactor *= x++;
+  }
   return nfactor / (kfactor * nminuskfactor);
 }
 

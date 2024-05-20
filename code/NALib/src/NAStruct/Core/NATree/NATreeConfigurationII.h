@@ -4,7 +4,9 @@
 
 
 NA_HIDEF void na_DeallocConfiguration(NATreeConfiguration* config){
-  if(config->configdata){naFree(config->configdata);}
+  if(config->configdata)
+    naFree(config->configdata);
+
   naFree(config);
 }
 
@@ -75,7 +77,10 @@ NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config,
     if(!(config->flags & NA_TREE_QUADTREE) && !(config->flags & NA_TREE_OCTTREE))
       naError("This configuration is not for a quadtree and not for an octtree");
   #endif
-  if(config->configdata){naFree(config->configdata);}
+  
+  if(config->configdata)
+    naFree(config->configdata);
+    
   configdata = (NAInt*)naMalloc(sizeof(NAInt));
   *configdata = baseLeafExponent;
   config->configdata = configdata;

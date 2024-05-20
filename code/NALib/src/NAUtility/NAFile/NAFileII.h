@@ -325,6 +325,9 @@ NA_IDEF void naSeekFileRelative(NAFile* file, NAFileSize byteOffset){
 
 
 NA_IDEF NAFileSize naReadFileBytes(NAFile* file, void* buf, NAFileSize byteSize){
+  if(!byteSize)
+    return 0;
+
   #if NA_DEBUG
     if(!naIsFileOpen(file))
       naError("File is not open.");
@@ -333,12 +336,15 @@ NA_IDEF NAFileSize naReadFileBytes(NAFile* file, void* buf, NAFileSize byteSize)
     if(byteSize < 0)
       naError("Negative count.");
   #endif
-  if(!byteSize){return 0;}
+   
   return naRead(file->desc, buf, byteSize);
 }
 
 
 NA_IDEF NAFileSize naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize byteSize){
+  if(!byteSize)
+    return 0;
+
   #if NA_DEBUG
     if(!naIsFileOpen(file))
       naError("File is not open.");
@@ -347,7 +353,7 @@ NA_IDEF NAFileSize naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize by
     if(byteSize < 0)
       naError("Negative count.");
   #endif
-  if(!byteSize){return 0;}
+
   return naWrite(file->desc, ptr, byteSize);
 }
 

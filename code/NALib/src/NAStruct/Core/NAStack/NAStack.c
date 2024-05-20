@@ -214,7 +214,9 @@ NA_DEF void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive){
   naLocateListIterator(&arrayIter, &(stack->curArray));
 
   // If not aggressive, we look one paste this array.
-  if(!aggressive){naIterateList(&arrayIter);}
+  if(!aggressive){
+    naIterateList(&arrayIter);
+  }
   
   // Delete as long as there are arrays after this one.
   while(!naIsListAtInitial(&arrayIter) && !naIsListAtLast(&arrayIter)){

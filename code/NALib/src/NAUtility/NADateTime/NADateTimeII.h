@@ -71,9 +71,12 @@ NA_IDEF NABool naIsLeapYearJulian(NAi64 year){
 
 
 NA_IDEF NABool naIsLeapYearGregorian(NAi64 year){
-  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD), NA_ZERO_i64)){return NA_TRUE;}
-  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD), NA_ZERO_i64)){return NA_FALSE;}
-  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_i64)){return NA_TRUE;}
+  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD), NA_ZERO_i64))
+    return NA_TRUE;
+  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD), NA_ZERO_i64))
+    return NA_FALSE;
+  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_i64))
+    return NA_TRUE;
   return NA_FALSE;
 }
 
@@ -179,11 +182,17 @@ NA_IDEF void naAddDateTimeDifference(NADateTime* dateTime, double difference){
   dateTime->errorNum = NA_DATETIME_ERROR_NONE;
   if(difference < 0){
     dateTime->nanoSecond += nanoSeconds;
-    if(dateTime->nanoSecond < 0){naDeci64(fullSeconds); dateTime->nanoSecond += 1000000000;}
+    if(dateTime->nanoSecond < 0){
+      naDeci64(fullSeconds);
+      dateTime->nanoSecond += 1000000000;
+    }
     dateTime->siSecond = naAddi64(dateTime->siSecond, fullSeconds);
   }else{
     dateTime->nanoSecond += nanoSeconds;
-    if(dateTime->nanoSecond > 999999999){naInci64(fullSeconds); dateTime->nanoSecond -= 1000000000;}
+    if(dateTime->nanoSecond > 999999999){
+      naInci64(fullSeconds);
+      dateTime->nanoSecond -= 1000000000;
+    }
     dateTime->siSecond = naAddi64(dateTime->siSecond, fullSeconds);
   }
 }

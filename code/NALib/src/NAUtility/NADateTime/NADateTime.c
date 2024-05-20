@@ -8,10 +8,10 @@
 
 #if NA_OS == NA_OS_WINDOWS
   #include <time.h>
-//  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_s(storage, tme);}
+//  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){ localtime_s(storage, tme); }
 #elif NA_IS_POSIX
   #include <sys/time.h>
-//  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_r(tme, storage);}
+//  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){ localtime_r(tme, storage); }
 #else
   #error "System undefined"
 #endif
@@ -279,7 +279,11 @@ NA_DEF NAInt naGetTAIPeriodIndexForSISecond(NAi64 siSecondond){
     r = NA_TAI_PERIODS_COUNT - 4;
     while(l != r){  // binary search
       NAInt m = (l+r)/2;
-      if(naSmallerEquali64(naTAIPeriods[m + 1].startsiSecond, siSecondond)){l = m + 1;}else{r = m;}
+      if(naSmallerEquali64(naTAIPeriods[m + 1].startsiSecond, siSecondond)){
+        l = m + 1;
+      }else{
+        r = m;
+      }
     }
     // l or r now define the index of the latest NATAIPeriod.
   }
@@ -314,7 +318,11 @@ NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(NAi64 gregsecond){
     r = NA_TAI_PERIODS_COUNT - 4;
     while(l != r){  // binary search
       NAInt m = (l+r)/2;
-      if(naSmallerEquali64(naTAIPeriods[m + 1].startgregsec, gregsecond)){l = m + 1;}else{r = m;}
+      if(naSmallerEquali64(naTAIPeriods[m + 1].startgregsec, gregsecond)){
+        l = m + 1;
+      }else{
+        r = m;
+      }
     }
     // l or r now define the index of the latest NATAIPeriod.
   }
@@ -364,7 +372,9 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
         NAString* numberstring = naNewStringWithFormat(str);
         returnint = naParseStringi32(numberstring) - 1;
         naDelete(numberstring);
-        if(returnint >= 0 && returnint < 12){monthindex = returnint;}
+        if(returnint >= 0 && returnint < 12){
+          monthindex = returnint;
+        }
       }
     }
   }
@@ -438,24 +448,36 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
     }
   }
   years4 = naDivi64(remainingYears, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD);
-  if(naSmalleri64(remainingYears, NA_ZERO_i64)){naDeci64(years4);}
+  if(naSmalleri64(remainingYears, NA_ZERO_i64)){
+    naDeci64(years4);
+  }
   dateTime.siSecond = naAddi64(dateTime.siSecond, naMuli64(years4, NA_SECONDS_IN_4_YEAR_PERIOD));
   remainingYears = naSubi64(remainingYears, naMuli64(years4, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD));
   if(!naEquali64(remainingYears, NA_ZERO_i64)){
     dateTime.siSecond = naAddi64(dateTime.siSecond, NA_SECONDS_IN_LEAP_YEAR); naDeci64(remainingYears);
     dateTime.siSecond = naAddi64(dateTime.siSecond, naMuli64(remainingYears, NA_SECONDS_IN_NORMAL_YEAR));
   }
-  if((dts->mon < 0) || (dts->mon > 11)){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_MONTH_NUMBER;}
+  if((dts->mon < 0) || (dts->mon > 11)){
+    dateTime.errorNum = NA_DATETIME_ERROR_INVALID_MONTH_NUMBER;
+  }
   dateTime.siSecond = naAddi64(dateTime.siSecond, naMakei64WithLo(na_CumulativeMonthStartDays[2 * dts->mon + (int32)isleap] * (int32)NA_SECONDS_PER_DAY));
-  if((dts->day < 0) || ((na_CumulativeMonthStartDays[2 * dts->mon + (int32)isleap] + dts->day) >= na_CumulativeMonthStartDays[2 * (dts->mon + 1) + (int32)isleap])){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_DAY_NUMBER;}
+  if((dts->day < 0) || ((na_CumulativeMonthStartDays[2 * dts->mon + (int32)isleap] + dts->day) >= na_CumulativeMonthStartDays[2 * (dts->mon + 1) + (int32)isleap])){
+    dateTime.errorNum = NA_DATETIME_ERROR_INVALID_DAY_NUMBER;
+  }
   dateTime.siSecond = naAddi64(dateTime.siSecond, naMakei64WithLo(dts->day * (int32)NA_SECONDS_PER_DAY));
-  if((dts->hour < 0) || (dts->hour > 23)){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_HOUR_NUMBER;}
+  if((dts->hour < 0) || (dts->hour > 23)){
+    dateTime.errorNum = NA_DATETIME_ERROR_INVALID_HOUR_NUMBER;
+  }
   dateTime.siSecond = naAddi64(dateTime.siSecond, naMakei64WithLo(dts->hour * (int32)NA_SECONDS_PER_HOUR));
-  if((dts->min < 0) || (dts->min > 59)){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_MINUTE_NUMBER;}
+  if((dts->min < 0) || (dts->min > 59)){
+    dateTime.errorNum = NA_DATETIME_ERROR_INVALID_MINUTE_NUMBER;
+  }
   dateTime.siSecond = naAddi64(dateTime.siSecond, naMakei64WithLo(dts->min * (int32)NA_SECONDS_PER_MINUTE));
   if(calendarsystem == NA_CALENDAR_GREGORIAN_WITH_LEAP_SECONDS){
     if(naGreaterEquali64(dateTime.siSecond, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsiSecond)){
-      if((dts->sec < 0) || (dts->sec > 59)){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
+      if((dts->sec < 0) || (dts->sec > 59)){
+        dateTime.errorNum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;
+      }
       dateTime.siSecond = naAddi64(dateTime.siSecond, naSubi64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsiSecond, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startgregsec));
     }else{
       NAInt r = naGetLatestTAIPeriodIndexForGregorianSecond(dateTime.siSecond);
@@ -474,12 +496,16 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
           dateTime.errorNum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;
         }
       }else{
-        if((dts->sec < 0) || (dts->sec > 59)){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
+        if((dts->sec < 0) || (dts->sec > 59)){
+          dateTime.errorNum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;
+        }
       }
       dateTime.siSecond = naSubi64(dateTime.siSecond, naMakei64WithLo(dts->sec));
     }
   }else{
-    if((dts->sec < 0) || (dts->sec > 59)){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
+    if((dts->sec < 0) || (dts->sec > 59)){
+      dateTime.errorNum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;
+    }
   }
   dateTime.siSecond = naAddi64(dateTime.siSecond, naMakei64WithLo(dts->sec));
   dateTime.siSecond = naSubi64(dateTime.siSecond, naMakei64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE));
@@ -953,7 +979,9 @@ NA_DEF void naExtractDateTimeInformation(
     remainingSeconds = naSubi64(remainingSeconds, NA_DATETIME_SISEC_JULIAN_YEAR_ZERO);
 
     years4 = naDivi64(remainingSeconds, NA_SECONDS_IN_4_YEAR_PERIOD);
-    if(naSmalleri64(remainingSeconds, NA_ZERO_i64)){naDeci64(years4);}
+    if(naSmalleri64(remainingSeconds, NA_ZERO_i64)){
+      naDeci64(years4);
+    }
     dts->year = naAddi64(dts->year, naMuli64(years4, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD));
     remainingSeconds = naSubi64(remainingSeconds, naMuli64(years4, NA_SECONDS_IN_4_YEAR_PERIOD));
     if(naGreaterEquali64(remainingSeconds, NA_SECONDS_IN_LEAP_YEAR)){
@@ -1062,7 +1090,11 @@ NA_DEF void naExtractDateTimeInformation(
   r = 11;
   while(l != r){  // binary search
     NAInt m = (l+r)/2;
-    if(na_CumulativeMonthStartDays[2 * (m+1) + (NAInt)isLeapYear] <= dayOfYear){l = m + 1;}else{r = m;}
+    if(na_CumulativeMonthStartDays[2 * (m+1) + (NAInt)isLeapYear] <= dayOfYear){
+      l = m + 1;
+    }else{
+      r = m;
+    }
   }
   // r now defines the index of the month
   dts->mon = (int32)r;
@@ -1096,14 +1128,19 @@ NA_DEF void naExtractDateTimeInformation(
     d = dts->day + 1;
     y = dts->year;
     mon = dts->mon + 1;
-    if(mon<3){mon += 12; naDeci64(y);}
+    if(mon<3){
+      mon += 12;
+      naDeci64(y);
+    }
     K = naModi64(naAddi64(naModi64(y, naMakei64WithLo(100)), naMakei64WithLo(100)), naMakei64WithLo(100));
     if(naSmalleri64(y, NA_ZERO_i64)){
       J = naDivi64(naAddi64(y, NA_ONE_i64), naMakei64WithLo(100));
     }else{
       J = naDivi64(y, naMakei64WithLo(100));
     }
-    if(naSmalleri64(y, NA_ZERO_i64)){naDeci64(J);}
+    if(naSmalleri64(y, NA_ZERO_i64)){
+      naDeci64(J);
+    }
     firstterm = naAddi64(naAddi64(naMakei64WithLo(d + ((mon + (int32)1) * (int32)26) / (int32)10), K), naDivi64(K, naMakei64WithLo(4)));
     if(naSmalleri64(naAddi64(dateTime->siSecond, naMakei64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE)), NA_DATETIME_SISEC_START_GREGORIAN_PERIOD)){
       // Julian weedkday computation
@@ -1131,7 +1168,10 @@ NA_DEF NAString* naNewStringFromSecondDifference(double difference,
   NAString* string;
 
   NABool needsign = NA_FALSE;
-  if(difference < 0){needsign = NA_TRUE; difference = -difference;}
+  if(difference < 0){
+    needsign = NA_TRUE;
+    difference = -difference;
+  }
   powten = naExp10i64(naMakei64WithLo(decimalDigits));
   allseconds = naMakei64WithDouble(difference * naCasti64ToDouble(powten));
   decimals = naModi64(allseconds, powten);
@@ -1180,16 +1220,26 @@ NA_DEF NAString* naNewStringFromSecondDifference(double difference,
 
 NA_DEF NAInt naGetLeapSecondCorrectionConstant(NAi64 oldUncertainSecondNumber){
   NAInt taiperiod;
-  if(naSmalleri64(oldUncertainSecondNumber, NA_ZERO_i64)){return NA_DATETIME_INVALID_UNCERTAIN_SECOND_NUMBER;}
+  if(naSmalleri64(oldUncertainSecondNumber, NA_ZERO_i64)){
+    return NA_DATETIME_INVALID_UNCERTAIN_SECOND_NUMBER;
+  }
   // Note that the last entry of the structure storing all TAI periods always
   // is a non-leap-second-entry.
-  if(naEquali64(oldUncertainSecondNumber, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsiSecond)){return NA_DATETIME_NO_CORRECTION_NEEDED;}
-  if(naGreateri64(oldUncertainSecondNumber, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsiSecond)){return NA_DATETIME_NEW_LIBRARY_IS_OLDER_THAN_BEFORE;}
+  if(naEquali64(oldUncertainSecondNumber, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsiSecond)){
+    return NA_DATETIME_NO_CORRECTION_NEEDED;
+  }
+  if(naGreateri64(oldUncertainSecondNumber, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsiSecond)){
+    return NA_DATETIME_NEW_LIBRARY_IS_OLDER_THAN_BEFORE;
+  }
   taiperiod = naGetTAIPeriodIndexForSISecond(oldUncertainSecondNumber);
   // Find the earliest second which needs correction.
   while(taiperiod < NA_TAI_PERIODS_COUNT){
-    if(naTAIPeriods[taiperiod].indicator == NA_POSITIVE_LEAP_SECONDS_JUNE){return taiperiod;}
-    if(naTAIPeriods[taiperiod].indicator == NA_POSITIVE_LEAP_SECONDS_DECEMBER){return taiperiod;}
+    if(naTAIPeriods[taiperiod].indicator == NA_POSITIVE_LEAP_SECONDS_JUNE){
+      return taiperiod;
+    }
+    if(naTAIPeriods[taiperiod].indicator == NA_POSITIVE_LEAP_SECONDS_DECEMBER){
+      return taiperiod;
+    }
     taiperiod++;
   }
   // No leap second has been introduced in the meantime.

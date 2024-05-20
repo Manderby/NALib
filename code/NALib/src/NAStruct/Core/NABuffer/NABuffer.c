@@ -166,7 +166,8 @@ NA_DEF NABuffer* naCreateBufferCopy(const NABuffer* srcBuffer, NARangei range, N
   NATreeIterator partIter;
   NABuffer* buffer = naCreateBuffer(secureMemory);
 
-  if(range.length == 0){return buffer;}
+  if(range.length == 0)
+    return buffer;
 
   // Borrow the contents of the src buffer
   iter = naMakeBufferModifier(buffer);
@@ -327,7 +328,9 @@ NA_HDEF void na_DestructBuffer(NABuffer* buffer){
     if(buffer->iterCount)
       naError("There are still iterators running. Did you forgot naClearBufferIterator?");
   #endif
-  if(buffer->source){naRelease(buffer->source);}
+  if(buffer->source){
+    naRelease(buffer->source);
+  }
   naClearTree(&(buffer->parts));
 }
 
@@ -483,7 +486,9 @@ NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt start
   NAInt indexShift;
   NABool found;
 
-  if(naIsBufferEmpty(buffer)){return NA_INVALID_MEMORY_INDEX;}
+  if(naIsBufferEmpty(buffer))
+    return NA_INVALID_MEMORY_INDEX;
+    
   indexShift = 0;
   found = NA_FALSE;
 
@@ -523,7 +528,10 @@ NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt start
         remainingBytes--;
       }
     }
-    if(found){break;}
+    
+    if(found)
+      break;
+      
     if(forward){
       na_LocateBufferNextPart(&iter);
     }else{
@@ -543,8 +551,12 @@ NA_DEF NABool naEqualBufferToBuffer(const NABuffer* buffer1, const NABuffer* buf
   NABufferIterator iter1;
   NABufferIterator iter2;
 
-  if(buffer1 == buffer2){return NA_TRUE;}
-  if(naGetBufferRange(buffer1).length != naGetBufferRange(buffer2).length){return NA_FALSE;}
+  if(buffer1 == buffer2)
+    return NA_TRUE;
+    
+  if(naGetBufferRange(buffer1).length != naGetBufferRange(buffer2).length)
+    return NA_FALSE;
+    
   resultequal = NA_TRUE;
 
   iter1 = naMakeBufferAccessor(buffer1);
@@ -598,7 +610,8 @@ NA_DEF NABool naEqualBufferToData(NABuffer* buffer, const void* data, size_t dat
   const NAByte* bytes;
   NABufferIterator iter;
 
-  if(dataByteSize != (size_t)buffer->range.length){return NA_FALSE;}
+  if(dataByteSize != (size_t)buffer->range.length)
+    return NA_FALSE;
 
   bytes = (const NAByte*)data;
 

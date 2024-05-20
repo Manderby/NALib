@@ -100,7 +100,9 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
+  if(!app->oldLabelWindowProc){
+    app->oldLabelWindowProc = oldproc;
+  }
 
   na_InitLabel(&(winapiLabel->label), nativePtr);
 
@@ -120,7 +122,9 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
 
 
 NA_DEF void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel){
-  naDeleteE(winapiLabel->href);
+  if(winapiLabel->href){
+    naDelete(winapiLabel->href);
+  }
   na_ClearLabel((NALabel*)winapiLabel);
 }
 
@@ -171,7 +175,9 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
 
   naRelease(underlineFont);
 
-  naDeleteE(winapiLabel->href);
+  if(winapiLabel->href)
+    naDelete(winapiLabel->href);
+    
   winapiLabel->href = naNewStringWithFormat("start %s", url);
 }
 

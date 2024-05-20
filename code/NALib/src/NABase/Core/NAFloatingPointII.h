@@ -381,7 +381,9 @@ NA_IAPI int32 naGetFloatInteger(float f){
       fBits = NA_ZERO_i32;
     }else{
       fBits = fBits >> (NA_IEEE754_SINGLE_SIGNIFICAND_BITS - exponent);
-      if(f < 0){fBits = -fBits;}
+      if(f < 0){
+        fBits = -fBits;
+      }
     }
   }
   return fBits;
@@ -425,7 +427,9 @@ NA_IAPI NAi64 naGetDoubleInteger(double d){
       dBits = NA_ZERO_i64;
     }else{
       dBits = naShri64(dBits, NA_IEEE754_DOUBLE_SIGNIFICAND_BITS - exponent);
-      if(d < 0){dBits = naNegi64(dBits);}
+      if(d < 0){
+        dBits = naNegi64(dBits);
+      }
     }
   }
   return dBits;
@@ -516,7 +520,10 @@ NA_IAPI int32 naGetFloatFractionSlowE(float f){
       fbits = fbits << exponent;
       fbits = fbits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
       int32 i = naGetFloatInteger(f);
-      while(i){i /= 10; mul *= 10;}
+      while(i){
+        i /= 10;
+        mul *= 10;
+      }
       hyperTens = naMakei64(NA_ZERO_i32, 1000000 / mul);
     }
 
@@ -617,7 +624,10 @@ NA_IAPI NAi64 naGetDoubleFractionSlowE(double d){
       dbits = naShli64(dbits, exponent);
       dbits = naAndi64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
       int64 i = naGetDoubleInteger(d);
-      while(i){i /= 10; mul *= 10;}
+      while(i){
+        i /= 10;
+        mul *= 10;
+      }
       hyperTens = naMakei128(NA_ZERO_i64, 1000000000000000 / mul);
     }
 

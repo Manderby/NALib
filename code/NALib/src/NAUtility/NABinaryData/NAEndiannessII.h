@@ -8,34 +8,54 @@
 
 
 NA_IDEF  void naConvertEndianness8(NAInt endianness, void* buffer){
-  if(endianness != NA_ENDIANNESS_HOST){naConvertLittleBig8(buffer);}
+  if(endianness != NA_ENDIANNESS_HOST){
+    naConvertLittleBig8(buffer);
+  }
 }
 NA_IDEF  void naConvertEndianness16(NAInt endianness, void* buffer){
-  if(endianness != NA_ENDIANNESS_HOST){naConvertLittleBig16(buffer);}
+  if(endianness != NA_ENDIANNESS_HOST){
+    naConvertLittleBig16(buffer);
+  }
 }
 NA_IDEF  void naConvertEndianness32(NAInt endianness, void* buffer){
-  if(endianness != NA_ENDIANNESS_HOST){naConvertLittleBig32(buffer);}
+  if(endianness != NA_ENDIANNESS_HOST){
+    naConvertLittleBig32(buffer);
+  }
 }
 NA_IDEF  void naConvertEndianness64(NAInt endianness, void* buffer){
-  if(endianness != NA_ENDIANNESS_HOST){naConvertLittleBig64(buffer);}
+  if(endianness != NA_ENDIANNESS_HOST){
+    naConvertLittleBig64(buffer);
+  }
 }
 NA_IDEF  void naConvertEndianness128(NAInt endianness, void* buffer){
-  if(endianness != NA_ENDIANNESS_HOST){naConvertLittleBig128(buffer);}
+  if(endianness != NA_ENDIANNESS_HOST){
+    naConvertLittleBig128(buffer);
+  }
 }
 NA_IDEF  void naConvertEndianness8v(NAInt endianness, void* buffer, size_t count){
-  if(endianness != NA_ENDIANNESS_HOST){naConvertLittleBig8v(buffer, count);}
+  if(endianness != NA_ENDIANNESS_HOST){
+    naConvertLittleBig8v(buffer, count);
+  }
 }
 NA_IDEF  void naConvertEndianness16v(NAInt endianness, void* buffer, size_t count){
-  if(endianness != NA_ENDIANNESS_HOST){naConvertLittleBig16v(buffer, count);}
+  if(endianness != NA_ENDIANNESS_HOST){
+    naConvertLittleBig16v(buffer, count);
+  }
 }
 NA_IDEF  void naConvertEndianness32v(NAInt endianness, void* buffer, size_t count){
-  if(endianness != NA_ENDIANNESS_HOST){naConvertLittleBig32v(buffer, count);}
+  if(endianness != NA_ENDIANNESS_HOST){
+    naConvertLittleBig32v(buffer, count);
+  }
 }
 NA_IDEF  void naConvertEndianness64v(NAInt endianness, void* buffer, size_t count){
-  if(endianness != NA_ENDIANNESS_HOST){naConvertLittleBig64v(buffer, count);}
+  if(endianness != NA_ENDIANNESS_HOST){
+    naConvertLittleBig64v(buffer, count);
+  }
 }
 NA_IDEF  void naConvertEndianness128v(NAInt endianness, void* buffer, size_t count){
-  if(endianness != NA_ENDIANNESS_HOST){naConvertLittleBig128v(buffer, count);}
+  if(endianness != NA_ENDIANNESS_HOST){
+    naConvertLittleBig128v(buffer, count);
+  }
 }
 
 

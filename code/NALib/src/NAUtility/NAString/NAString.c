@@ -12,19 +12,34 @@ NA_DEF NABool naEqualUTF8CStringLiterals(const NAUTF8Char* string1, const NAUTF8
   if(!length){
     size_t length1 = naStrlen(string1);
     size_t length2 = naStrlen(string2);
-    if(length1 != length2){return NA_FALSE;}
+    if(length1 != length2){
+      return NA_FALSE;
+    }
     length = length1;
   }
   if(caseSensitive){
     int result = memcmp(string1, string2, length);
-    if(result){return NA_FALSE;}
+    if(result){
+      return NA_FALSE;
+    }
   }else{
     while(length){
       NAUTF8Char curChar1;
       NAUTF8Char curChar2;
-      if(isalpha((const char)*string1)){curChar1 = (NAUTF8Char)tolower(*string1);}else{curChar1 = *string1;}
-      if(isalpha((const char)*string2)){curChar2 = (NAUTF8Char)tolower(*string2);}else{curChar2 = *string2;}
-      if(curChar1 != curChar2){return NA_FALSE;}
+      if(isalpha((const char)*string1)){
+        curChar1 = (NAUTF8Char)tolower(*string1);
+      }else{
+        curChar1 = *string1;
+      }
+      if(isalpha((const char)*string2)){
+        curChar2 = (NAUTF8Char)tolower(*string2);
+      }else{
+        curChar2 = *string2;
+      }
+      
+      if(curChar1 != curChar2)
+        return NA_FALSE;
+      
       string1++;
       string2++;
       length--;
@@ -549,12 +564,17 @@ NA_DEF NAString* naNewStringXMLDecoded(const NAString* inputString){
     NAUTF8Char curChar = naReadBufferi8(&iter);
     if(curChar == '&'){
       NAString* token = naParseBufferTokenWithDelimiter(&iter, ';', NA_FALSE);
-      if     (naEqualStringToUTF8CString(token, "amp",   NA_TRUE)){naWriteBufferi8(&outiter, '&');}
-      else if(naEqualStringToUTF8CString(token, "lt",    NA_TRUE)){naWriteBufferi8(&outiter, '<');}
-      else if(naEqualStringToUTF8CString(token, "gt",    NA_TRUE)){naWriteBufferi8(&outiter, '>');}
-      else if(naEqualStringToUTF8CString(token, "quot",  NA_TRUE)){naWriteBufferi8(&outiter, '\"');}
-      else if(naEqualStringToUTF8CString(token, "apos",  NA_TRUE)){naWriteBufferi8(&outiter, '\'');}
-      else{
+      if(naEqualStringToUTF8CString(token, "amp",   NA_TRUE)){
+        naWriteBufferi8(&outiter, '&');
+      }else if(naEqualStringToUTF8CString(token, "lt",    NA_TRUE)){
+        naWriteBufferi8(&outiter, '<');
+      }else if(naEqualStringToUTF8CString(token, "gt",    NA_TRUE)){
+        naWriteBufferi8(&outiter, '>');
+      }else if(naEqualStringToUTF8CString(token, "quot",  NA_TRUE)){
+        naWriteBufferi8(&outiter, '\"');
+      }else if(naEqualStringToUTF8CString(token, "apos",  NA_TRUE)){
+        naWriteBufferi8(&outiter, '\'');
+      }else{
         #if NA_DEBUG
           naError("Could not decode entity");
         #endif

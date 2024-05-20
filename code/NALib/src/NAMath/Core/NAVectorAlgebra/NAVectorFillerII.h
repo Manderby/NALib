@@ -179,7 +179,9 @@ NA_IDEF void naFillV2dRandomSpherical(double* d, NABool filled){
     norm = naDotV2dE(d, d);
   }while((norm > 1.) || (norm == 0.));
   // note that test case (norm == 0) is very rare.
-  if(!filled){naDivV2dS(d, naSqrt(norm));}
+  if(!filled){
+    naDivV2dS(d, naSqrt(norm));
+  }
 }
 NA_IDEF void naFillV3dRandomSpherical(double* d, NABool filled){
   double norm;
@@ -190,7 +192,9 @@ NA_IDEF void naFillV3dRandomSpherical(double* d, NABool filled){
     norm = naDotV3dE(d, d);
   }while((norm > 1.) || (norm == 0.));
   // note that test case (norm == 0) is extremely! rare.
-  if(!filled){naDivV3dS(d, naSqrt(norm));}
+  if(!filled){
+    naDivV3dS(d, naSqrt(norm));
+  }
 }
 NA_IDEF void naFillV4dRandomSpherical(double* d, NABool filled){
   double norm;
@@ -207,7 +211,9 @@ NA_IDEF void naFillV4dRandomSpherical(double* d, NABool filled){
     // lazy.
   }while((norm > 1.) || (norm == 0.));
   // note that test case (norm == 0) is EXORBITANTLY rare.
-  if(!filled){naDivV4dS(d, naSqrt(norm));}
+  if(!filled){
+    naDivV4dS(d, naSqrt(norm));
+  }
 }
 NA_IDEF void naFillV1fRandomSpherical(float* d, NABool filled){
   if(filled){
@@ -226,7 +232,9 @@ NA_IDEF void naFillV2fRandomSpherical(float* d, NABool filled){
     norm = naDotV2fE(d, d);
   }while((norm > 1.f) || (norm == 0.f));
   // note that test case (norm == 0) is very rare.
-  if(!filled){naDivV2fS(d, naSqrtf(norm));}
+  if(!filled){
+    naDivV2fS(d, naSqrtf(norm));
+  }
 }
 NA_IDEF void naFillV3fRandomSpherical(float* d, NABool filled){
   float norm;
@@ -237,7 +245,9 @@ NA_IDEF void naFillV3fRandomSpherical(float* d, NABool filled){
     norm = naDotV3fE(d, d);
   }while((norm > 1.f) || (norm == 0.f));
   // note that test case (norm == 0) is extremely! rare.
-  if(!filled){naDivV3fS(d, naSqrtf(norm));}
+  if(!filled){
+    naDivV3fS(d, naSqrtf(norm));
+  }
 }
 NA_IDEF void naFillV4fRandomSpherical(float* d, NABool filled){
   float norm;
@@ -254,7 +264,9 @@ NA_IDEF void naFillV4fRandomSpherical(float* d, NABool filled){
     // lazy.
   }while((norm > 1.f) || (norm == 0.f));
   // note that test case (norm == 0) is EXORBITANTLY rare.
-  if(!filled){naDivV4fS(d, naSqrtf(norm));}
+  if(!filled){
+    naDivV4fS(d, naSqrtf(norm));
+  }
 }
 
 

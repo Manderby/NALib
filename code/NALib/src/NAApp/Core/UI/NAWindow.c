@@ -21,7 +21,10 @@ NA_HDEF void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSp
 
 NA_HDEF void na_ClearWindow(NAWindow* window){
   naRemoveListData(&(naGetApplication()->windows), window);
-  naDeleteE(window->contentSpace);
+  
+  if(window->contentSpace)
+    naDelete(window->contentSpace);
+  
   na_ClearUIElement(&(window->uiElement));
 }
 

@@ -9,7 +9,9 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
   NABufferIterator iter;
 
   url = naInitURL(url);
-  if(!string){return url;}
+  
+  if(!string)
+    return url;
 
   inputString = naNewStringWithFormat("%s", string);
 

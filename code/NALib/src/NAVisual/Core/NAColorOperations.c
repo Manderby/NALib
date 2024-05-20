@@ -40,9 +40,17 @@ void naFillHSVWithColor(float out[3], const NAColor* in){
   rgb[0] = in->a;
   rgb[1] = in->y;
   rgb[2] = in->b;
-  if(rgb[0] < rgb[1]){min = rgb[0]; out[2] = rgb[1];}else{min = rgb[1]; out[2] = rgb[0];}
-  if(rgb[2] < min){min = rgb[2];}
-  if(rgb[2] > out[2]){out[2] = rgb[2];}
+  if(rgb[0] < rgb[1]){
+    min = rgb[0]; out[2] = rgb[1];
+      }else{
+    min = rgb[1]; out[2] = rgb[0];
+  }
+  if(rgb[2] < min){
+    min = rgb[2];
+  }
+  if(rgb[2] > out[2]){
+    out[2] = rgb[2];
+  }
   range = out[2] - min;
   if(out[2] == 0.f){
     out[1] = 0.f;
@@ -56,7 +64,9 @@ void naFillHSVWithColor(float out[3], const NAColor* in){
     if(out[2] == rgb[0])     { out[0] = 60.f * (0.f + (rgb[1]-rgb[2]) * invrange); }
     else if(out[2] == rgb[1]){ out[0] = 60.f * (2.f + (rgb[2]-rgb[0]) * invrange); }
     else                     { out[0] = 60.f * (4.f + (rgb[0]-rgb[1]) * invrange); }
-    if(out[0] < 0.f){out[0] += 360.f;}
+    if(out[0] < 0.f){
+      out[0] += 360.f;
+    }
   }
 }
 
@@ -291,8 +301,11 @@ NA_HIDEF void na_BlendColorEraseHue(
   naConvertHSVToHSL(topHSL, topHSV);
 
   float hDiff = topHSL[0] - baseHSL[0];
-  if(hDiff > 180.f){hDiff -= 360.f;}
-  else if(hDiff < -180.f){hDiff += 360.f;}
+  if(hDiff > 180.f){
+    hDiff -= 360.f;
+  }else if(hDiff < -180.f){
+    hDiff += 360.f;
+  }
 
   if(hDiff < -60.f || hDiff > 60.f){
     // Not near the hue, leave the color as it is.
@@ -301,8 +314,12 @@ NA_HIDEF void na_BlendColorEraseHue(
     if(hDiff <= 0.){
       // fully saturated colors have L = .5
       float factorL = 2.f * (topHSL[2] - baseHSL[2]);
-      if(factorL < 0.){factorL = -factorL;}
-      if(factorL > 1.f){factorL = 1.f;}
+      if(factorL < 0.){
+        factorL = -factorL;
+      }
+      if(factorL > 1.f){
+        factorL = 1.f;
+      }
       factorL = naConvertToRadiometricColorValue(1.f - factorL); // looks better with naLinearize
       float hueStrength = 1.f - -hDiff / 60.f;
       float hueFactor = factor * topPtr->alpha * hueStrength;
@@ -314,15 +331,21 @@ NA_HIDEF void na_BlendColorEraseHue(
         float linearFactor = (hueStrength - decolorization) / (1.f - decolorization);
         baseHSL[0] = linearFactor * baseHSL[0] + (1.f - linearFactor) * (topHSL[0] + 60.f);
       }
-      if(baseHSL[0] > 360.f){baseHSL[0] -= 360.f;}
+      if(baseHSL[0] > 360.f){
+        baseHSL[0] -= 360.f;
+      }
       naConvertHSLToHSV(baseHSV, baseHSL);
       naFillColorWithHSV(dstPtr, baseHSV);
       dstPtr->alpha = (1.f - factorL * factor) * basePtr->alpha;
     }else{
       // fully saturated colors have L = .5
       float factorL = 2.f * (topHSL[2] - baseHSL[2]);
-      if(factorL < 0.){factorL = -factorL;}
-      if(factorL > 1.f){factorL = 1.f;}
+      if(factorL < 0.){
+        factorL = -factorL;
+      }
+      if(factorL > 1.f){
+        factorL = 1.f;
+      }
       factorL = naConvertToRadiometricColorValue(1.f - factorL); // looks better with naLinearize
       float hueStrength = 1.f - hDiff / 60.f;
       float hueFactor = factor * topPtr->alpha * hueStrength;
@@ -334,7 +357,9 @@ NA_HIDEF void na_BlendColorEraseHue(
         float linearFactor = (hueStrength - decolorization) / (1.f - decolorization);
         baseHSL[0] = linearFactor * baseHSL[0] + (1.f - linearFactor) * (topHSL[0] - 60.f);
       }
-      if(baseHSL[0] < 0.f){baseHSL[0] += 360.f;}
+      if(baseHSL[0] < 0.f){
+        baseHSL[0] += 360.f;
+      }
       naConvertHSLToHSV(baseHSV, baseHSL);
       naFillColorWithHSV(dstPtr, baseHSV);
       dstPtr->alpha = (1.f - factorL * factor) * basePtr->alpha;
@@ -391,7 +416,9 @@ NA_DEF void naBlendColors(
     }
 
     dstPtr += 1;
-    if(baseIsImage){basePtr += 1;}
-    if(topIsImage){topPtr += 1;}
+    if(baseIsImage)
+      basePtr += 1;
+    if(topIsImage)
+      topPtr += 1;
   }
 }

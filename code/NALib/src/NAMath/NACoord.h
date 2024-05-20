@@ -145,29 +145,29 @@ typedef struct NABezel4i  NABezel4i;
 //
 // Please excuse this formatting. It is usually not recommended but here, it
 // would be much more confusing if written otherwise.
-struct NARange{     double origin;   double length;};
-struct NARangef{    float  origin;   float  length;};
-struct NARangei{    NAInt  origin;   NAInt  length;};
+struct NARange{     double origin;   double length; };
+struct NARangef{    float  origin;   float  length; };
+struct NARangei{    NAInt  origin;   NAInt  length; };
 
-struct NAPos{       double x;     double  y;     };
-struct NAPosi{      NAInt  x;     NAInt   y;     };
-struct NASize{      double width; double  height;};
-struct NASizei{     NAInt  width; NAInt   height;};
-struct NARect{      NAPos  pos;   NASize  size;  };
-struct NARecti{     NAPosi pos;   NASizei size;  };
+struct NAPos{       double x;     double  y;      };
+struct NAPosi{      NAInt  x;     NAInt   y;      };
+struct NASize{      double width; double  height; };
+struct NASizei{     NAInt  width; NAInt   height; };
+struct NARect{      NAPos  pos;   NASize  size;   };
+struct NARecti{     NAPosi pos;   NASizei size;   };
 
-struct NAVertex{    double    x;      double    y;        double  z;   };
-struct NAVertexi{   NAInt     x;      NAInt     y;        NAInt   z;   };
-struct NAVolume{    double    width;  double    height;   double depth;};
-struct NAVolumei{   NAInt     width;  NAInt     height;   NAInt  depth;};
-struct NABox{       NAVertex  vertex; NAVolume  volume;};
-struct NABoxi{      NAVertexi vertex; NAVolumei volume;};
+struct NAVertex{    double    x;      double    y;        double  z;    };
+struct NAVertexi{   NAInt     x;      NAInt     y;        NAInt   z;    };
+struct NAVolume{    double    width;  double    height;   double depth; };
+struct NAVolumei{   NAInt     width;  NAInt     height;   NAInt  depth; };
+struct NABox{       NAVertex  vertex; NAVolume  volume; };
+struct NABoxi{      NAVertexi vertex; NAVolumei volume; };
 
-struct NABounds4{   double top;   double  right; double bottom; double left;};
-struct NABounds4i{  NAInt  top;   NAInt   right; NAInt  bottom; NAInt  left;};
+struct NABounds4{   double top;   double  right; double bottom; double left; };
+struct NABounds4i{  NAInt  top;   NAInt   right; NAInt  bottom; NAInt  left; };
 
-struct NABezel4{    double right; double top; double left; double bottom;};
-struct NABezel4i{   NAInt  right; NAInt  top; NAInt  left; NAInt  bottom;};
+struct NABezel4{    double right; double top; double left; double bottom; };
+struct NABezel4i{   NAInt  right; NAInt  top; NAInt  left; NAInt  bottom; };
 
 
 

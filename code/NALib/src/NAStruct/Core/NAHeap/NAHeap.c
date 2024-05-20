@@ -151,7 +151,9 @@ NA_HDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, con
     if(backPointer)
       naError("Heap dos not store backPointers. packpointer should be Null. Ignored.");
   #endif
-  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){na_GrowHeap(heap);}
+  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){
+    na_GrowHeap(heap);
+  }
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapEntry*)(heap->data);
   thedata[newindex].ptr = naMakePtrWithDataConst(data);
@@ -168,7 +170,9 @@ NA_HDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const
     if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
       naError("Heap overflow.");
   #endif
-  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){na_GrowHeap(heap);}
+  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){
+    na_GrowHeap(heap);
+  }
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
   thedata[newindex].ptr = naMakePtrWithDataConst(data);
@@ -198,7 +202,9 @@ NA_HDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const v
     if(backPointer)
       naError("Heap dos not store backPointers. packpointer should be Null. Ignored.");
   #endif
-  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){na_GrowHeap(heap);}
+  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){
+    na_GrowHeap(heap);
+  }
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapEntry*)(heap->data);
   thedata[newindex].ptr = naMakePtrWithDataMutable(data);
@@ -215,7 +221,9 @@ NA_HDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const voi
     if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
       naError("Heap overflow.");
   #endif
-  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){na_GrowHeap(heap);}
+  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){
+    na_GrowHeap(heap);
+  }
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
   thedata[newindex].ptr = naMakePtrWithDataMutable(data);

@@ -84,7 +84,10 @@ NA_IDEF void naCleanupPtr(NAPtr* ptr, NAMutator destructor){
     if(destructor && ptr->debugFlags & NA_PTR_CONST_DATA)
       naError("Calling a destructor on const data. This smells fishy.");
   #endif
-  if(destructor){destructor(ptr->data.d);}
+  
+  if(destructor)
+    destructor(ptr->data.d);
+  
   #if NA_DEBUG
     ptr->debugFlags |= NA_PTR_CLEANED;
   #endif

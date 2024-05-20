@@ -121,7 +121,9 @@ NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
 //    debugtoken = (NADebugTreeToken*)token;
 //    debugtoken->nodecount++;
 //    debugtoken->curdepth++;
-//    if(debugtoken->curdepth > debugtoken->maxdepth){debugtoken->maxdepth = debugtoken->curdepth;}
+//    if(debugtoken->curdepth > debugtoken->maxdepth){
+//      debugtoken->maxdepth = debugtoken->curdepth;
+//    }
 //
 //    debugtoken->prevIndex++;
 ////    if(debugtoken->prevIndex == tree->config->childcound){

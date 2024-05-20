@@ -95,13 +95,19 @@ NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(NAString* string){
   while(!naIsBufferAtEnd(&srcIter)){
     NAUTF8Char curChar = (NAUTF8Char)naReadBufferu8(&srcIter);
     NAUTF8Char newChar;
-    if     (curChar == '+'){newChar = 62;}
-    else if(curChar == '/'){newChar = 63;}
-    else if(curChar <= '9'){newChar = curChar - ('0' - 52);}
-    else if(curChar == '='){break;}
-    else if(curChar <= 'Z'){newChar = curChar - 'A';}
-    else if(curChar <= 'z'){newChar = curChar - ('a' - 26);}
-    else{
+    if     (curChar == '+'){
+      newChar = 62;
+    }else if(curChar == '/'){
+      newChar = 63;
+    }else if(curChar <= '9'){
+      newChar = curChar - ('0' - 52);
+    }else if(curChar == '='){
+      break;
+    }else if(curChar <= 'Z'){
+      newChar = curChar - 'A';
+    }else if(curChar <= 'z'){
+      newChar = curChar - ('a' - 26);
+    }else{
       #if NA_DEBUG
         naError("Invalid character. This does not seem to be a Base64 encoding");
       #endif

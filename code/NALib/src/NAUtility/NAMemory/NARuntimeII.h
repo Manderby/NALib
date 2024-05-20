@@ -118,12 +118,6 @@ NA_IDEF size_t naGetRuntimePoolPartSize(){
 
 
 
-NA_IDEF void naDeleteE(void* pointer){
-  if(pointer)
-    naDelete(pointer);
-}
-
-
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

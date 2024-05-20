@@ -84,6 +84,16 @@ NA_IAPI void naFill128WithBytes(
   NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
   NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
   NAByte b12, NAByte b13, NAByte b14, NAByte b15);
+NA_IAPI void naFill256WithBytes(
+  void* d,
+  NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
+  NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
+  NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
+  NAByte b12, NAByte b13, NAByte b14, NAByte b15,
+  NAByte b16, NAByte b17, NAByte b18, NAByte b19,
+  NAByte b20, NAByte b21, NAByte b22, NAByte b23,
+  NAByte b24, NAByte b25, NAByte b26, NAByte b27,
+  NAByte b28, NAByte b29, NAByte b30, NAByte b31);
 
 
 // Compares the array of the first argument with the given bytes in ascending
@@ -107,6 +117,16 @@ NA_IAPI NABool naEqual128WithBytes(
   NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
   NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
   NAByte b12, NAByte b13, NAByte b14, NAByte b15);
+NA_IAPI NABool naEqual256WithBytes(
+  const void* s,
+  NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
+  NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
+  NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
+  NAByte b12, NAByte b13, NAByte b14, NAByte b15,
+  NAByte b16, NAByte b17, NAByte b18, NAByte b19,
+  NAByte b20, NAByte b21, NAByte b22, NAByte b23,
+  NAByte b24, NAByte b25, NAByte b26, NAByte b27,
+  NAByte b28, NAByte b29, NAByte b30, NAByte b31);
 
 
 

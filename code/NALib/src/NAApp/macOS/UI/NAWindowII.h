@@ -340,7 +340,8 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
   [nativeWindowPtr setContentView:nativeUIElementPtr];
   [nativeWindowPtr setInitialFirstResponder:[nativeWindowPtr contentView]];
   
-  naDeleteE(window->contentSpace);
+  if(window->contentSpace)
+    naDelete(window->contentSpace);
     
   window->contentSpace = space;
   na_SetUIElementParent(space, window, NA_TRUE);

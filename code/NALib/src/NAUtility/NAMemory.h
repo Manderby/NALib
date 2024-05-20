@@ -119,9 +119,6 @@ NA_IAPI size_t naGetSystemMemoryPagesizeMask(void);
 //                      custom runtime system described further below.
 // naDelete             Deletes a pointer created with naNew by properly
 //                      calling the correct destructor.
-// naDeleteE            Convenience function which guards for nullptr before
-//                      calling naDelete. Only use this at places where you
-//                      would need a guard anyway. The E stands for Empty.
 //
 // Authors note:
 // Having only a handful allocation function helps detecting basic memory
@@ -142,7 +139,6 @@ NA_IAPI void        naFreeAligned      (void* ptr);
 NA_API  void*       naMallocTmp        (size_t byteSize);
 #define             naNew              (type)
 NA_API  void        naDelete           (void* pointer);
-NA_IAPI void        naDeleteE          (void* pointer);
       
 NA_API  void*       naRetain           (void* pointer);
 NA_API  void        naRelease          (void* pointer);

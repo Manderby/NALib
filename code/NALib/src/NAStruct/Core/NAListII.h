@@ -213,7 +213,9 @@ NA_HIDEF void na_EjectList(NAList* list, NAListElement* element, NABool deleteEl
       naError("List count is zero already");
   #endif
   list->count--;
-  if(deleteElement){naDelete(element);}
+  
+  if(deleteElement)
+    naDelete(element);
 }
 
 

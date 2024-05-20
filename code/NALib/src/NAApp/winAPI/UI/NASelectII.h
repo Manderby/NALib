@@ -101,7 +101,9 @@ NA_DEF NASelect* naNewSelect(double width){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldSelectWindowProc){app->oldSelectWindowProc = oldproc;}
+  if(!app->oldSelectWindowProc){
+    app->oldSelectWindowProc = oldproc;
+  }
 
   na_InitSelect((NASelect*)winapiSelect, nativePtr);
 

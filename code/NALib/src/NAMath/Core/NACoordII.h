@@ -1013,8 +1013,12 @@ NA_IDEF NARect naMakeRectWithRectAndRectE(NARect rect1, NARect rect2){
     if(!naIsRectEmpty(rect2) && !naIsRectValid(rect2))
       naError("rect2 is invalid.");
   #endif
-  if(naIsRectEmpty(rect1)){return rect2;}
-  if(naIsRectEmpty(rect2)){return rect1;}
+  
+  if(naIsRectEmpty(rect1))
+    return rect2;
+  if(naIsRectEmpty(rect2))
+    return rect1;
+  
   newRect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
   newRect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectEndX(rect1);
@@ -1128,8 +1132,12 @@ NA_IDEF NARecti naMakeRectiWithRectAndRectE(NARecti rect1, NARecti rect2){
     if(!naIsRectiValid(rect2))
       naError("rect2 is invalid.");
   #endif
-  if(naIsRectiEmpty(rect1)){return rect2;}
-  if(naIsRectiEmpty(rect2)){return rect1;}
+  
+  if(naIsRectiEmpty(rect1))
+    return rect2;
+  if(naIsRectiEmpty(rect2))
+    return rect1;
+  
   newRect.pos.x = naMini(rect1.pos.x, rect2.pos.x);
   newRect.pos.y = naMini(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectiEndX(rect1);
@@ -1234,8 +1242,12 @@ NA_IDEF NABox naMakeBoxWithBoxAndBoxE(NABox box1, NABox box2){
     if(!naIsBoxValid(box2))
       naError("box2 is invalid.");
   #endif
-  if(naIsBoxEmpty(box1)){return box2;}
-  if(naIsBoxEmpty(box2)){return box1;}
+  
+  if(naIsBoxEmpty(box1))
+    return box2;
+  if(naIsBoxEmpty(box2))
+    return box1;
+  
   newBox.vertex.x = naMin(box1.vertex.x, box2.vertex.x);
   newBox.vertex.y = naMin(box1.vertex.y, box2.vertex.y);
   newBox.vertex.z = naMin(box1.vertex.z, box2.vertex.z);
@@ -1370,8 +1382,12 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndBoxE(NABoxi box1, NABoxi box2){
     if(!naIsBoxiValid(box2))
       naError("box2 is invalid.");
   #endif
-  if(naIsBoxiEmpty(box1)){return box2;}
-  if(naIsBoxiEmpty(box2)){return box1;}
+  
+  if(naIsBoxiEmpty(box1))
+    return box2;
+  if(naIsBoxiEmpty(box2))
+    return box1;
+  
   newBox.vertex.x = naMini(box1.vertex.x, box2.vertex.x);
   newBox.vertex.y = naMini(box1.vertex.y, box2.vertex.y);
   newBox.vertex.z = naMini(box1.vertex.z, box2.vertex.z);
@@ -1812,10 +1828,14 @@ NA_IDEF NAPos naClampPosToRect(NAPos pos, NARect clampRect){
   newPos = pos;
   if(newPos.x < clampRect.pos.x){ newPos.x = clampRect.pos.x; }
   end = naGetRectEndX(clampRect);
-  if(newPos.x > end){newPos.x = end;}
+  if(newPos.x > end){
+    newPos.x = end;
+  }
   if(newPos.y < clampRect.pos.y){ newPos.y = clampRect.pos.y; }
   end = naGetRectEndY(clampRect);
-  if(newPos.y > end){newPos.y = end;}
+  if(newPos.y > end){
+    newPos.y = end;
+  }
   return newPos;
 }
 NA_IDEF NAPosi naClampPosiToRect(NAPosi pos, NARecti clampRect){
@@ -1832,10 +1852,14 @@ NA_IDEF NAPosi naClampPosiToRect(NAPosi pos, NARecti clampRect){
   newPos = pos;
   if(newPos.x <  clampRect.pos.x){ newPos.x = clampRect.pos.x; }
   max = naGetRectiMaxX(clampRect);
-  if(newPos.x > max){newPos.x = max;}
+  if(newPos.x > max){
+    newPos.x = max;
+  }
   if(newPos.y <  clampRect.pos.y){ newPos.y = clampRect.pos.y; }
   max = naGetRectiMaxY(clampRect);
-  if(newPos.y > max){newPos.y = max;}
+  if(newPos.y > max){
+    newPos.y = max;
+  }
   return newPos;
 }
 NA_IDEF NARect naClampRectToRect(NARect rect, NARect clampRect){
@@ -1897,26 +1921,34 @@ NA_IDEF NARecti naClampRectiToRect(NARecti rect, NARecti clampRect){
   value = clampRect.pos.x - newRect.pos.x;
   if(value > 0){
     newRect.size.width -= value;
-    if(newRect.size.width <= 0){return newRect;}
+    if(newRect.size.width <= 0){
+      return newRect;
+    }
     newRect.pos.x = clampRect.pos.x;
   }
   value = naGetRectiEndX(clampRect);
   if(naGetRectiEndX(newRect) > value){
     newRect.size.width = value - newRect.pos.x;
-    if(newRect.size.width <= 0){return newRect;}
+    if(newRect.size.width <= 0){
+      return newRect;
+    }
   }
 
   // Adjust in second dimension
   value = clampRect.pos.y - newRect.pos.y;
   if(value > 0){
     newRect.size.height -= value;
-    if(newRect.size.height <= 0){return newRect;}
+    if(newRect.size.height <= 0){
+      return newRect;
+    }
     newRect.pos.y = clampRect.pos.y;
   }
   value = naGetRectiEndY(clampRect);
   if(naGetRectiEndY(newRect) > value){
     newRect.size.height = value - newRect.pos.y;
-    if(newRect.size.height <= 0){return newRect;}
+    if(newRect.size.height <= 0){
+      return newRect;
+    }
   }
   return newRect;
 }
@@ -1937,13 +1969,19 @@ NA_IDEF NAVertex naClampVertexToBox(NAVertex vertex, NABox clampBox){
   newVertex = vertex;
   if(newVertex.x < clampBox.vertex.x){ newVertex.x = clampBox.vertex.x; }
   end = naGetBoxEndX(clampBox);
-  if(newVertex.x > end){newVertex.x = end;}
+  if(newVertex.x > end){
+    newVertex.x = end;
+  }
   if(newVertex.y < clampBox.vertex.y){ newVertex.y = clampBox.vertex.y; }
   end = naGetBoxEndY(clampBox);
-  if(newVertex.y > end){newVertex.y = end;}
+  if(newVertex.y > end){
+    newVertex.y = end;
+  }
   if(newVertex.z < clampBox.vertex.z){ newVertex.z = clampBox.vertex.z; }
   end = naGetBoxEndZ(clampBox);
-  if(newVertex.z > end){newVertex.z = end;}
+  if(newVertex.z > end){
+    newVertex.z = end;
+  }
   return newVertex;
 }
 NA_IDEF NAVertexi naClampVertexiToBox(NAVertexi vertex, NABoxi clampBox){
@@ -1960,13 +1998,19 @@ NA_IDEF NAVertexi naClampVertexiToBox(NAVertexi vertex, NABoxi clampBox){
   newVertex = vertex;
   if(newVertex.x <  clampBox.vertex.x){ newVertex.x = clampBox.vertex.x; }
   max = naGetBoxiMaxX(clampBox);
-  if(newVertex.x > max){newVertex.x = max;}
+  if(newVertex.x > max){
+    newVertex.x = max;
+  }
   if(newVertex.y <  clampBox.vertex.y){ newVertex.y = clampBox.vertex.y; }
   max = naGetBoxiMaxY(clampBox);
-  if(newVertex.y > max){newVertex.y = max;}
+  if(newVertex.y > max){
+    newVertex.y = max;
+  }
   if(newVertex.z <  clampBox.vertex.z){ newVertex.z = clampBox.vertex.z; }
   max = naGetBoxiMaxZ(clampBox);
-  if(newVertex.z > max){newVertex.z = max;}
+  if(newVertex.z > max){
+    newVertex.z = max;
+  }
   return newVertex;
 }
 NA_IDEF NABox naClampBoxToBox(NABox box, NABox clampBox){
@@ -2039,39 +2083,51 @@ NA_IDEF NABoxi naClampBoxiToBox(NABoxi box, NABoxi clampBox){
   value = clampBox.vertex.x - newBox.vertex.x;
   if(value > 0){
     newBox.volume.width -= value;
-    if(newBox.volume.width <= 0){return newBox;}
+    if(newBox.volume.width <= 0){
+      return newBox;
+    }
     newBox.vertex.x = clampBox.vertex.x;
   }
   value = naGetBoxiEndX(clampBox);
   if(naGetBoxiEndX(newBox) > value){
     newBox.volume.width = value - newBox.vertex.x;
-    if(newBox.volume.width <= 0){return newBox;}
+    if(newBox.volume.width <= 0){
+      return newBox;
+    }
   }
 
   // Adjust in second dimension
   value = clampBox.vertex.y - newBox.vertex.y;
   if(value > 0){
     newBox.volume.height -= value;
-    if(newBox.volume.height <= 0){return newBox;}
+    if(newBox.volume.height <= 0){
+      return newBox;
+    }
     newBox.vertex.y = clampBox.vertex.y;
   }
   value = naGetBoxiEndY(clampBox);
   if(naGetBoxiEndY(newBox) > value){
     newBox.volume.height = value - newBox.vertex.y;
-    if(newBox.volume.height <= 0){return newBox;}
+    if(newBox.volume.height <= 0){
+      return newBox;
+    }
   }
 
   // Adjust in third dimension
   value = clampBox.vertex.z - newBox.vertex.z;
   if(value > 0){
     newBox.volume.depth -= value;
-    if(newBox.volume.depth <= 0){return newBox;}
+    if(newBox.volume.depth <= 0){
+      return newBox;
+    }
     newBox.vertex.z = clampBox.vertex.z;
   }
   value = naGetBoxiEndZ(clampBox);
   if(naGetBoxiEndZ(newBox) > value){
     newBox.volume.depth = value - newBox.vertex.z;
-    if(newBox.volume.depth <= 0){return newBox;}
+    if(newBox.volume.depth <= 0){
+      return newBox;
+    }
   }
   return newBox;
 }

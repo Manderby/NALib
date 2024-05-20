@@ -157,7 +157,9 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace)
   NAInt alternateLevel = 0;
   const void* parent = winapiSpace;
   while(parent){
-    if(naGetSpaceAlternateBackground(parent)){alternateLevel++;}
+    if(naGetSpaceAlternateBackground(parent)){
+      alternateLevel++;
+    }
     parent = naGetUIElementParentSpaceConst(parent);
   }
   switch(alternateLevel){

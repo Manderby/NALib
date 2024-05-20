@@ -34,7 +34,9 @@ NA_HDEF void* na_GetNativePreferences(){
 
     naFree(systemFullKeyName);
     naDelete(appname);
-    naDeleteE(companyname);
+    if(companyname){
+      naDelete(companyname);
+    }
     naDelete(fullKeyName);
   }
   return na_nativePreferences;

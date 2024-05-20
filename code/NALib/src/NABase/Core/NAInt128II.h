@@ -2,17 +2,28 @@
 #if defined NA_INT_128_II_INCLUDED || !defined NA_BASE_INCLUDED
   #warning "Do not include this file directly. Use NABase.h"
 #endif
+
 #ifndef NA_INT_128_II_INCLUDED
 #define NA_INT_128_II_INCLUDED
 
 
 
 #if defined NA_TYPE_INT128
-  NA_IDEF NAi128 naMakei128(int64 hi, uint64 lo){return (NAi128)((NAu128)hi << 64) | lo;}
-  NA_IDEF NAi128 naMakei128WithLo(NAi64 lo){return (NAi128)lo;}
-  NA_IDEF NAi128 naMakei128WithDouble(double lo){return (NAi128)lo;}
-  NA_IDEF NAi128 naMakei128WithBinary(uint32 b3, uint32 b2, uint32 b1, uint32 b0){return ((NAi128)b3 << 96) | ((NAi128)b2 << 64) | ((NAi128)b1 << 32) | b0;}
-  #else
+
+  NA_IDEF NAi128 naMakei128(int64 hi, uint64 lo){
+    return (NAi128)((NAu128)hi << 64) | lo;
+  }
+  NA_IDEF NAi128 naMakei128WithLo(NAi64 lo){
+    return (NAi128)lo;
+  }
+  NA_IDEF NAi128 naMakei128WithDouble(double lo){
+    return (NAi128)lo;
+  }
+  NA_IDEF NAi128 naMakei128WithBinary(uint32 b3, uint32 b2, uint32 b1, uint32 b0){
+    return ((NAi128)b3 << 96) | ((NAi128)b2 << 64) | ((NAi128)b1 << 32) | b0;
+  }
+
+#else
 
   NA_IDEF NAi128 naMakei128(NAi64 hi, NAu64 lo){
     NAi128 retValuei;
@@ -66,12 +77,18 @@
     NAu128 retValueu;
     NAi128 aSign = naSigni128(a);
     NAi128 bSign = naSigni128(b);
-    if(naSmalleri128(a, NA_ZERO_i128)){a = naNegi128(a);}
-    if(naSmalleri128(b, NA_ZERO_i128)){b = naNegi128(b);}
+    if(naSmalleri128(a, NA_ZERO_i128)){
+      a = naNegi128(a);
+    }
+    if(naSmalleri128(b, NA_ZERO_i128)){
+      b = naNegi128(b);
+    }
     retValueu = naMulu128(naCasti128Tou128(a), naCasti128Tou128(b));
     retValueu.hi = naAndu64(retValueu.hi, naNotu64(naCasti64Tou64(NA_SIGN_MASK_64)));
     retValuei = naCastu128Toi128(retValueu);
-    if(!naEquali128(aSign, bSign)){retValuei = naNegi128(retValuei);}
+    if(!naEquali128(aSign, bSign)){
+      retValuei = naNegi128(retValuei);
+    }
     // todo: overflow may lead to different result than built-in 128 bit integer
     return retValuei;
   }
@@ -80,24 +97,36 @@
     NAu128 retValueu;
     NAi128 aSign = naSigni128(a);
     NAi128 bSign = naSigni128(b);
-    if(naSmalleri128(a, NA_ZERO_i128)){a = naNegi128(a);}
-    if(naSmalleri128(b, NA_ZERO_i128)){b = naNegi128(b);}
+    if(naSmalleri128(a, NA_ZERO_i128)){
+      a = naNegi128(a);
+    }
+    if(naSmalleri128(b, NA_ZERO_i128)){
+      b = naNegi128(b);
+    }
     retValueu = naDivu128(naCasti128Tou128(a), naCasti128Tou128(b));
     retValueu.hi = naAndu64(retValueu.hi, naNotu64(naCasti64Tou64(NA_SIGN_MASK_64)));
     retValuei = naCastu128Toi128(retValueu);
-    if(!naEquali128(aSign, bSign)){retValuei = naNegi128(retValuei);}
+    if(!naEquali128(aSign, bSign)){
+      retValuei = naNegi128(retValuei);
+    }
     return retValuei;
   }
   NA_IDEF NAi128 naModi128(NAi128 a, NAi128 b){
     NAi128 retValuei;
     NAu128 retValueu;
     NAi128 aSign = naSigni128(a);
-    if(naSmalleri128(a, NA_ZERO_i128)){a = naNegi128(a);}
-    if(naSmalleri128(b, NA_ZERO_i128)){b = naNegi128(b);}
+    if(naSmalleri128(a, NA_ZERO_i128)){
+      a = naNegi128(a);
+    }
+    if(naSmalleri128(b, NA_ZERO_i128)){
+      b = naNegi128(b);
+    }
     retValueu = naModu128(naCasti128Tou128(a), naCasti128Tou128(b));
     retValueu.hi = naAndu64(retValueu.hi, naNotu64(naCasti64Tou64(NA_SIGN_MASK_64)));
     retValuei = naCastu128Toi128(retValueu);
-    if(!naEquali128(aSign, NA_ONE_i128)){retValuei = naNegi128(retValuei);}
+    if(!naEquali128(aSign, NA_ONE_i128)){
+      retValuei = naNegi128(retValuei);
+    }
     return retValuei;
   }
 
@@ -217,7 +246,7 @@
   NA_IDEF NAu128 naMakeu128WithDouble(double d){
     return naMakeu128WithLo(naMakeu64WithDouble(d));
   }
-  
+
   NA_IDEF NAu128 naMakeu128WithBinary(uint32 b3, uint32 b2, uint32 b1, uint32 b0){
     NAu128 retValueu;
     retValueu.hi = naMakeu64WithBinary(b3, b2);
@@ -473,8 +502,6 @@
   }
 
 #endif // defined NA_TYPE_INT128
-
-
 
 #endif // NA_INT_128_II_INCLUDED
 

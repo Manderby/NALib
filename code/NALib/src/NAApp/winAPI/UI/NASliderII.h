@@ -139,7 +139,9 @@ NA_DEF NASlider* naNewSlider(double width){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldSliderWindowProc){app->oldSliderWindowProc = oldproc;}
+  if(!app->oldSliderWindowProc){
+    app->oldSliderWindowProc = oldproc;
+  }
 
   na_InitSlider(&(winapiSlider->slider), nativePtr);
 

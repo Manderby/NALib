@@ -169,7 +169,9 @@ NA_HIDEF void na_RegisterTypeInfo(NA_TypeInfo* typeInfo){
 
   // As this is the first time, the runtime type gets used, we correct the
   // typeSize to incorporate reference counting, if any.
-  if(typeInfo->refCounting){typeInfo->typeSize += sizeof(NARefCount);}
+  if(typeInfo->refCounting){
+    typeInfo->typeSize += sizeof(NARefCount);
+  }
 
   // We enlarge the na_Runtime info array by one. Yes, this is very bad
   // performance, but this code is usually called rather seldomly. If you
@@ -203,7 +205,9 @@ NA_HIDEF void na_UnregisterTypeInfo(NA_TypeInfo* typeInfo){
     // very fast, but does the job. See comment there.
     NAInt oldindex = 0;
     for(size_t i = 0; i < (na_Runtime->typeInfoCount - NA_ONE_s); ++i){
-      if(na_Runtime->typeInfos[i] == typeInfo){oldindex++;}
+      if(na_Runtime->typeInfos[i] == typeInfo){
+        oldindex++;
+      }
       newinfos[i] = na_Runtime->typeInfos[oldindex];
       oldindex++;
     }
@@ -217,7 +221,9 @@ NA_HIDEF void na_UnregisterTypeInfo(NA_TypeInfo* typeInfo){
 
   // We restore the original typeSize in case NA_MEMORY_POOL_AGGRESSIVE_CLEANUP
   // is set to 1 which means, the type might get re-registered.
-  if(typeInfo->refCounting){typeInfo->typeSize -= sizeof(NARefCount);}
+  if(typeInfo->refCounting){
+    typeInfo->typeSize -= sizeof(NARefCount);
+  }
 }
 
 
@@ -330,7 +336,9 @@ NA_DEF void* na_NewStructInternal(NATypeInfo* info){
     typeInfo->curPart = typeInfo->curPart->nextPart;
     // If the next in the part list is full too, no part in the list has any
     // space left and hence we must create a new part.
-    if(na_IsPoolPartFull(typeInfo->curPart)){na_EnhancePool(typeInfo);}
+    if(na_IsPoolPartFull(typeInfo->curPart)){
+      na_EnhancePool(typeInfo);
+    }
   }
 
   // Now, we can be sure that the current part has space.
@@ -478,7 +486,7 @@ NA_DEF void naDelete(void* pointer){
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!pointer)
-      naError("Deleting nullptr. Either use a guard or naDeleteE()");
+      naError("Deleting nullptr. Use a guard.");
   #endif
 
   #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
@@ -498,7 +506,9 @@ NA_DEF void naDelete(void* pointer){
     #endif
 
     // Erase the content of the space with the destructor if applicable
-    if(part->typeInfo->destructor){part->typeInfo->destructor(pointer);}
+    if(part->typeInfo->destructor){
+      part->typeInfo->destructor(pointer);
+    }
 
     na_EjectPoolPartObject(part, pointer);
 
@@ -614,7 +624,9 @@ NA_DEF void* naMallocTmp(size_t byteSize){
 #endif
 
 #if NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT != 0
-  if(na_Runtime->totalMallocGarbageByteCount > (size_t)NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT){naCollectGarbage();}
+  if(na_Runtime->totalMallocGarbageByteCount > (size_t)NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT){
+    naCollectGarbage();
+  }
 #endif
 
   na_Runtime->totalMallocGarbageByteCount += byteSize;
@@ -756,7 +768,10 @@ NA_DEF void naStopRuntime(){
     while(curPart){
       nextPart = curPart->nextPart;
       naFreeAligned(curPart);
-      if(nextPart == firstpart){break;}
+      
+      if(nextPart == firstpart)
+        break;
+      
       curPart = nextPart;
     }
 
