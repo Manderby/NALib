@@ -118,13 +118,13 @@ void updateImageTestController(ImageTesterController* con);
 
 
 
-void loadImage(size_t index, const NAUTF8Char* path){
+void loadImage(size_t index, const NAUTF8Char* path) {
   NAPNG* png = naNewPNGWithPath(path);
   app->images[index] = naCreateImageFromPNG(png);
   naDelete(png);
 }
 
-void naStartImageTestApplication(void){
+void naStartImageTestApplication(void) {
   app = naAlloc(ImageTesterApplication);
 
   NAPNG* gridPNG = naNewPNGWithPath("transparencyGrid.png");
@@ -133,7 +133,7 @@ void naStartImageTestApplication(void){
   app->transparencyGridImage = naCreateImageWithResize(gridImage, naMakeSizei(gridSize.width * 2, gridSize.height * 2));
   naReleaseImage(gridImage);
 
-  for(size_t i = 0; i < IMAGE_COUNT; ++i){
+  for(size_t i = 0; i < IMAGE_COUNT; ++i) {
     app->images[i] = NA_NULL;
   }
 
@@ -143,34 +143,34 @@ void naStartImageTestApplication(void){
 
 
 
-void naStopImageTestApplication(void){
+void naStopImageTestApplication(void) {
   naDeallocImageTestController(app->imageTestController);
   naReleaseImage(app->transparencyGridImage);
-  for(size_t i = 0; i < IMAGE_COUNT; ++i){
+  for(size_t i = 0; i < IMAGE_COUNT; ++i) {
     naReleaseImage(app->images[i]);
   }
   naFree(app);
 }
 
 
-void addSingleSelectItem(const NAUTF8Char* text, NASelect* select, NAReactionCallback callback, ImageTesterController* con){
+void addSingleSelectItem(const NAUTF8Char* text, NASelect* select, NAReactionCallback callback, ImageTesterController* con) {
   NAMenuItem* item = naNewMenuItem(text);
   naAddSelectMenuItem(select, item, NA_NULL);
   naAddUIReaction(item, NA_UI_COMMAND_PRESSED, callback, con);
 }
 
-void fillSelect(NASelect* select, NAReactionCallback callback, ImageTesterController* con){
-  for(size_t i = 0; i < COLOR_COUNT; ++i){
+void fillSelect(NASelect* select, NAReactionCallback callback, ImageTesterController* con) {
+  for(size_t i = 0; i < COLOR_COUNT; ++i) {
     addSingleSelectItem(colorNames[i], select, callback, con);
   }
-  for(size_t i = 0; i < IMAGE_COUNT; ++i){
+  for(size_t i = 0; i < IMAGE_COUNT; ++i) {
     addSingleSelectItem(imageNames[i], select, callback, con);
   }
 }
 
 
 
-ImageTesterController* naAllocImageTestController(){
+ImageTesterController* naAllocImageTestController() {
   ImageTesterController* con = naAlloc(ImageTesterController);
 
   con->window = naNewWindow(
@@ -245,19 +245,19 @@ ImageTesterController* naAllocImageTestController(){
 
 
 
-void naDeallocImageTestController(ImageTesterController* con){
+void naDeallocImageTestController(ImageTesterController* con) {
   naFree(con);
 }
 
 
 
-void selectionChanged(const NAImage** imagePtr, const NAColor** color, size_t index){
-  if(index < COLOR_COUNT){
+void selectionChanged(const NAImage** imagePtr, const NAColor** color, size_t index) {
+  if(index < COLOR_COUNT) {
     *imagePtr = NA_NULL;
     *color = &colors[index];
   }else{
     index -= COLOR_COUNT;
-    if(!app->images[index]){
+    if(!app->images[index]) {
       loadImage(index, imagePaths[index]);
     }
     *imagePtr = app->images[index];
@@ -266,7 +266,7 @@ void selectionChanged(const NAImage** imagePtr, const NAColor** color, size_t in
 
 
 
-void updateImageTestController(ImageTesterController* con){
+void updateImageTestController(ImageTesterController* con) {
   if(!app->transparencyGridImage)
     return;
 
@@ -282,7 +282,7 @@ void updateImageTestController(ImageTesterController* con){
   NASizei gridSize = naGetImageSize(app->transparencyGridImage);
 
   NAImage* backImage;
-  if(con->bottomImage){
+  if(con->bottomImage) {
     NASizei newSize = naGetImageSize(con->bottomImage);
     newSize.width *= 2;
     newSize.height *= 2;
@@ -293,10 +293,10 @@ void updateImageTestController(ImageTesterController* con){
     
   NAImage* blendedImage;
 
-  if(con->topImage){
+  if(con->topImage) {
     NASizei originalSize = naGetImageSize(con->topImage);
     NASizei newSize = naMakeSizeiE((NAInt)(con->scale * originalSize.width), (NAInt)(con->scale * originalSize.height));
-    if(naIsSizeiUseful(newSize)){
+    if(naIsSizeiUseful(newSize)) {
       NAImage* scaledImage = naCreateImageWithResize(con->topImage, newSize);
       NASizei baseSize = naGetImageSize(backImage);
       NASize spaceSize = naGetUIElementRect(con->imageSpace).size;
@@ -352,21 +352,21 @@ void updateImageTestController(ImageTesterController* con){
 
 
 
-NABool topSelected(NAReaction reaction){
+NABool topSelected(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   con->selectedTop = naGetSelectItemIndex(con->topSelect, reaction.uiElement);
   updateImageTestController(con);
   return NA_TRUE;
 }
 
-NABool bottomSelected(NAReaction reaction){
+NABool bottomSelected(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   con->selectedBottom = naGetSelectItemIndex(con->bottomSelect, reaction.uiElement);
   updateImageTestController(con);
   return NA_TRUE;
 }
 
-NABool blendModeSelected(NAReaction reaction){
+NABool blendModeSelected(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   size_t index = naGetSelectItemIndex(con->blendModeSelect, reaction.uiElement);
   con->blendMode = (NABlendMode)index;
@@ -376,11 +376,11 @@ NABool blendModeSelected(NAReaction reaction){
 
 
 
-NABool sliderEdited(NAReaction reaction){
+NABool sliderEdited(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
-  if(reaction.uiElement == con->alphaSlider){
+  if(reaction.uiElement == con->alphaSlider) {
     con->alpha = (float)naGetSliderValue(con->alphaSlider);
-  }else if(reaction.uiElement == con->scaleSlider){
+  }else if(reaction.uiElement == con->scaleSlider) {
     con->scale = (float)naGetSliderValue(con->scaleSlider);
   }
   updateImageTestController(con);
@@ -389,7 +389,7 @@ NABool sliderEdited(NAReaction reaction){
 
 
 
-NABool mouseMoved(NAReaction reaction){
+NABool mouseMoved(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   const NAMouseStatus* mouse = naGetMouseStatus();
   NARect spaceRect = naGetUIElementRectAbsolute(reaction.uiElement);
@@ -401,7 +401,7 @@ NABool mouseMoved(NAReaction reaction){
 
 
 
-void preStartup(void* arg){
+void preStartup(void* arg) {
   NA_UNUSED(arg);
 
   naFillColorWithSRGB(&colors[0], 0., 0., 0., 0.);
@@ -417,14 +417,14 @@ void preStartup(void* arg){
 
 
 
-void postStartup(void* arg){
+void postStartup(void* arg) {
   NA_UNUSED(arg);
   naStartImageTestApplication();
 }
 
 
 
-int main(void){
+int main(void) {
  
   naStartRuntime();
   naStartApplication(preStartup, postStartup, NA_NULL, NA_NULL);

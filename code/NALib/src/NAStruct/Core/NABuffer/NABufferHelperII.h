@@ -9,31 +9,31 @@
 
 
 
-NA_IDEF NABool naIsBufferEmpty(const NABuffer* buffer){
+NA_IDEF NABool naIsBufferEmpty(const NABuffer* buffer) {
   return naIsRangeiEmpty(buffer->range);
 }
 
 
 
-NA_IDEF NARangei naGetBufferRange(const NABuffer* buffer){
+NA_IDEF NARangei naGetBufferRange(const NABuffer* buffer) {
   return buffer->range;
 }
 
 
 
-NA_IDEF NABool naHasBufferFixedRange(const NABuffer* buffer){
+NA_IDEF NABool naHasBufferFixedRange(const NABuffer* buffer) {
   return (NABool)(buffer->flags & NA_BUFFER_FLAG_RANGE_FIXED);
 }
 
 
 
-NA_IDEF void naFixBufferRange(NABuffer* buffer){
+NA_IDEF void naFixBufferRange(NABuffer* buffer) {
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
 }
 
 
 
-NA_IDEF void naExtendBufferRange(NABuffer* buffer, NAInt bytesAtStart, NAInt bytesAtEnd){
+NA_IDEF void naExtendBufferRange(NABuffer* buffer, NAInt bytesAtStart, NAInt bytesAtEnd) {
   #if NA_DEBUG
     if(bytesAtStart < 0)
       naError("bytesAtStart should not be negative");
@@ -45,25 +45,25 @@ NA_IDEF void naExtendBufferRange(NABuffer* buffer, NAInt bytesAtStart, NAInt byt
 
 
 
-NA_IDEF NANewlineEncoding naGetBufferNewlineEncoding(NABuffer* buffer){
+NA_IDEF NANewlineEncoding naGetBufferNewlineEncoding(NABuffer* buffer) {
   return buffer->newlineEncoding;
 }
 
 
 
-NA_IDEF void naSetBufferNewlineEncoding(NABuffer* buffer, NANewlineEncoding newlineEncoding){
+NA_IDEF void naSetBufferNewlineEncoding(NABuffer* buffer, NANewlineEncoding newlineEncoding) {
   buffer->newlineEncoding = newlineEncoding;
 }
 
 
 
-NA_IDEF NAInt naGetBufferEndianness(NABuffer* buffer){
+NA_IDEF NAInt naGetBufferEndianness(NABuffer* buffer) {
   return buffer->endianness;
 }
 
 
 
-NA_IDEF void naSetBufferEndianness(NABuffer* buffer, NAInt endianness){
+NA_IDEF void naSetBufferEndianness(NABuffer* buffer, NAInt endianness) {
   buffer->endianness = endianness;
 }
 

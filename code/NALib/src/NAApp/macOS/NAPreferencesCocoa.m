@@ -11,7 +11,7 @@
 
 
 
-NA_HDEF void* na_GetNativePreferences(){
+NA_HDEF void* na_GetNativePreferences() {
   #if NA_DEBUG
     if(!naGetApplication())
       naError("No application running. Use naStartApplication.");
@@ -22,13 +22,13 @@ NA_HDEF void* na_GetNativePreferences(){
 
 
 
-NA_HDEF NAi64 na_GetRawPreferencesBool(void* prefs, const char* key){
+NA_HDEF NAi64 na_GetRawPreferencesBool(void* prefs, const char* key) {
   NSUserDefaults* userDefault = (NSUserDefaults*)NA_COCOA_PTR_C_TO_OBJC(prefs);
   NSString* nsKey = [NSString stringWithUTF8String:key];
   return (NAi64)[userDefault integerForKey:nsKey];
 }
 
-NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, NAi64 valueStorage){
+NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, NAi64 valueStorage) {
   NSUserDefaults* userDefault = (NSUserDefaults*)NA_COCOA_PTR_C_TO_OBJC(prefs);
   NSString* nsKey = [NSString stringWithUTF8String:key];
   [userDefault setInteger:(NSInteger)valueStorage forKey:nsKey];
@@ -36,13 +36,13 @@ NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, NAi64 valueS
 
 
 
-NA_HDEF NAi64 na_GetRawPreferencesInt(void* prefs, const char* key){
+NA_HDEF NAi64 na_GetRawPreferencesInt(void* prefs, const char* key) {
   NSUserDefaults* userDefault = (NSUserDefaults*)NA_COCOA_PTR_C_TO_OBJC(prefs);
   NSString* nsKey = [NSString stringWithUTF8String:key];
   return (NAi64)[userDefault integerForKey:nsKey];
 }
 
-NA_HDEF void na_SetRawPreferencesInt(void* prefs, const char* key, NAi64 valueStorage){
+NA_HDEF void na_SetRawPreferencesInt(void* prefs, const char* key, NAi64 valueStorage) {
   NSUserDefaults* userDefault = (NSUserDefaults*)NA_COCOA_PTR_C_TO_OBJC(prefs);
   NSString* nsKey = [NSString stringWithUTF8String:key];
   [userDefault setInteger:(NSInteger)valueStorage forKey:nsKey];
@@ -50,13 +50,13 @@ NA_HDEF void na_SetRawPreferencesInt(void* prefs, const char* key, NAi64 valueSt
 
 
 
-NA_HDEF NAi64 na_GetRawPreferencesEnum(void* prefs, const char* key){
+NA_HDEF NAi64 na_GetRawPreferencesEnum(void* prefs, const char* key) {
   NSUserDefaults* userDefault = (NSUserDefaults*)NA_COCOA_PTR_C_TO_OBJC(prefs);
   NSString* nsKey = [NSString stringWithUTF8String:key];
   return (NAi64)[userDefault integerForKey:nsKey];
 }
 
-NA_HDEF void na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64 valueStorage){
+NA_HDEF void na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64 valueStorage) {
   NSUserDefaults* userDefault = (NSUserDefaults*)NA_COCOA_PTR_C_TO_OBJC(prefs);
   NSString* nsKey = [NSString stringWithUTF8String:key];
   [userDefault setInteger:(NSInteger)valueStorage forKey:nsKey];
@@ -64,13 +64,13 @@ NA_HDEF void na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64 valueS
 
 
 
-NA_HDEF double na_GetRawPreferencesDouble(void* prefs, const char* key){
+NA_HDEF double na_GetRawPreferencesDouble(void* prefs, const char* key) {
   NSUserDefaults* userDefault = (NSUserDefaults*)NA_COCOA_PTR_C_TO_OBJC(prefs);
   NSString* nsKey = [NSString stringWithUTF8String:key];
   return [userDefault doubleForKey:nsKey];
 }
 
-NA_HDEF void na_SetRawPreferencesDouble(void* prefs, const char* key, double valueStorage){
+NA_HDEF void na_SetRawPreferencesDouble(void* prefs, const char* key, double valueStorage) {
   NSUserDefaults* userDefault = (NSUserDefaults*)NA_COCOA_PTR_C_TO_OBJC(prefs);
   NSString* nsKey = [NSString stringWithUTF8String:key];
   [userDefault setDouble:valueStorage forKey:nsKey];
@@ -78,7 +78,7 @@ NA_HDEF void na_SetRawPreferencesDouble(void* prefs, const char* key, double val
 
 
 
-NA_HDEF NAString* na_GetRawPreferencesString(void* prefs, const char* key){
+NA_HDEF NAString* na_GetRawPreferencesString(void* prefs, const char* key) {
   NSUserDefaults* userDefault = (NSUserDefaults*)NA_COCOA_PTR_C_TO_OBJC(prefs);
   NSString* nsKey = [NSString stringWithUTF8String:key];
   NSString* valueObj = [userDefault stringForKey:nsKey];
@@ -87,7 +87,7 @@ NA_HDEF NAString* na_GetRawPreferencesString(void* prefs, const char* key){
     : NA_NULL;
 }
 
-NA_HDEF void na_SetRawPreferencesString(void* prefs, const char* key, NAString* valueStorage){
+NA_HDEF void na_SetRawPreferencesString(void* prefs, const char* key, NAString* valueStorage) {
   NSUserDefaults* userDefault = (NSUserDefaults*)NA_COCOA_PTR_C_TO_OBJC(prefs);
   NSString* nsKey = [NSString stringWithUTF8String:key];
   NSString* valueObj = [NSString stringWithUTF8String:naGetStringUTF8Pointer(valueStorage)];

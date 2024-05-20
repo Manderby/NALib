@@ -14,14 +14,14 @@
   // The error printing method. Errors will be emitted to the stderr output.
   // When NA_DEBUG is 0, this function is OBSOLETE!
 
-  NA_HDEF void na_Error(const char* functionSymbol, const char* text){
+  NA_HDEF void na_Error(const char* functionSymbol, const char* text) {
     NABool doPrintOut = NA_TRUE;
     #if NA_TESTING_ENABLED == 1
       doPrintOut = !naIsTestCaseRunning();
       naIncErrorCount();
     #endif
 
-    if(doPrintOut){
+    if(doPrintOut) {
       fprintf(stderr, "Error in %s: %s", functionSymbol, text);
 
       // //////////////////////////
@@ -36,7 +36,7 @@
 
   
   
-  NA_HDEF void na_Crash(const char* functionSymbol, const char* text){
+  NA_HDEF void na_Crash(const char* functionSymbol, const char* text) {
     #if NA_TESTING_ENABLED == 1
       // Disable the testcase, such that a call to na_Error actually produces
       // an output.

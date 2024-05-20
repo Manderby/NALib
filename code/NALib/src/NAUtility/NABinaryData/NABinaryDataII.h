@@ -18,7 +18,7 @@ struct NAChecksum{
 #include <string.h>
 
 
-NA_IDEF void naCopy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCopy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s) {
   #if NA_DEBUG
     NAInt dist;
     if(!d)
@@ -26,7 +26,7 @@ NA_IDEF void naCopy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
     if(!s)
       naCrash("Pointer s is Null-Pointer.");
     dist = (NAInt)((NAByte*)d - (NAByte*)s);
-    if((NAByte*)d<(NAByte*)s){
+    if((NAByte*)d<(NAByte*)s) {
       dist = -dist;
     }
     if(dist < 1)
@@ -34,7 +34,7 @@ NA_IDEF void naCopy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #endif
   *(uint8*)d = *(uint8*)s;
 }
-NA_IDEF void naCopy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCopy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s) {
   #if NA_DEBUG
     NAInt dist;
     if(!d)
@@ -42,7 +42,7 @@ NA_IDEF void naCopy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
     if(!s)
       naCrash("Pointer s is Null-Pointer.");
     dist = (NAInt)((NAByte*)d - (NAByte*)s);
-    if((NAByte*)d<(NAByte*)s){
+    if((NAByte*)d<(NAByte*)s) {
       dist = -dist;
     }
     if(dist < 2)
@@ -50,7 +50,7 @@ NA_IDEF void naCopy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #endif
   *(uint16*)d = *(uint16*)s;
 }
-NA_IDEF void naCopy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCopy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s) {
   #if NA_DEBUG
     NAInt dist;
     if(!d)
@@ -58,7 +58,7 @@ NA_IDEF void naCopy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
     if(!s)
       naCrash("Pointer s is Null-Pointer.");
     dist = (NAInt)((NAByte*)d - (NAByte*)s);
-    if((NAByte*)d<(NAByte*)s){
+    if((NAByte*)d<(NAByte*)s) {
       dist = -dist;
     }
     if(dist < 4)
@@ -66,7 +66,7 @@ NA_IDEF void naCopy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #endif
   *(uint32*)d = *(uint32*)s;
 }
-NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s) {
   #if NA_DEBUG
     NAInt dist;
     if(!d)
@@ -74,7 +74,7 @@ NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
     if(!s)
       naCrash("Pointer s is Null-Pointer.");
     dist = (NAInt)((NAByte*)d - (NAByte*)s);
-    if((NAByte*)d<(NAByte*)s){
+    if((NAByte*)d<(NAByte*)s) {
       dist = -dist;
     }
     if(dist < 8)
@@ -82,7 +82,7 @@ NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #endif
   *(NAu64*)d = *(NAu64*)s;
 }
-NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s) {
   #if NA_DEBUG
     NAInt dist;
     if(!d)
@@ -90,7 +90,7 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
     if(!s)
       naCrash("Pointer s is Null-Pointer.");
     dist = (NAInt)((NAByte*)d - (NAByte*)s);
-    if((NAByte*)d<(NAByte*)s){
+    if((NAByte*)d<(NAByte*)s) {
       dist = -dist;
     }
     if(dist < 16)
@@ -102,7 +102,7 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
   *(NAu64*)d = *(NAu64*)s;
 }
 
-NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, size_t byteSize){
+NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, size_t byteSize) {
   #if NA_DEBUG
     if(!d)
       naCrash("Pointer d is Null-Pointer.");
@@ -121,7 +121,7 @@ NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, size_t byte
 // Swap multibyte-values
 // /////////////////////////////
 
-NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b) {
   #if NA_DEBUG
     NAInt dist;
     if(!a)
@@ -129,7 +129,7 @@ NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
     if(!b)
       naCrash("Pointer b is Null-Pointer");
     dist = (NAInt)((NAByte*)a - (NAByte*)b);
-    if((NAByte*)a<(NAByte*)b){
+    if((NAByte*)a<(NAByte*)b) {
       dist = -dist;
     }
     if(dist < 1)
@@ -142,7 +142,7 @@ NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
   *(uint8*)a ^= *(uint8*)b;
 }
 
-NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b) {
   #if NA_DEBUG
     NAInt dist;
     if(!a)
@@ -150,7 +150,7 @@ NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
     if(!b)
       naCrash("Pointer b is Null-Pointer");
     dist = (NAInt)((NAByte*)a - (NAByte*)b);
-    if((NAByte*)a<(NAByte*)b){
+    if((NAByte*)a<(NAByte*)b) {
       dist = -dist;
     }
     if(dist < 2)
@@ -163,7 +163,7 @@ NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
   *(uint16*)a ^= *(uint16*)b;
 }
 
-NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b) {
   #if NA_DEBUG
     NAInt dist;
     if(!a)
@@ -171,7 +171,7 @@ NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
     if(!b)
       naCrash("Pointer b is Null-Pointer");
     dist = (NAInt)((NAByte*)a - (NAByte*)b);
-    if((NAByte*)a<(NAByte*)b){
+    if((NAByte*)a<(NAByte*)b) {
       dist = -dist;
     }
     if(dist < 4)
@@ -184,7 +184,7 @@ NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
   *(uint32*)a ^= *(uint32*)b;
 }
 
-NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b) {
   #if NA_DEBUG
     NAInt dist;
     if(!a)
@@ -192,7 +192,7 @@ NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
     if(!b)
       naCrash("Pointer b is Null-Pointer");
     dist = (NAInt)((NAByte*)a - (NAByte*)b);
-    if((NAByte*)a<(NAByte*)b){
+    if((NAByte*)a<(NAByte*)b) {
       dist = -dist;
     }
     if(dist < 8)
@@ -205,7 +205,7 @@ NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
   *(NAu64*)a = naXoru64(*(NAu64*)a, *(NAu64*)b);
 }
 
-NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b) {
   #if NA_DEBUG
     NAInt dist;
     if(!a)
@@ -213,7 +213,7 @@ NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
     if(!b)
       naCrash("Pointer b is Null-Pointer");
     dist = (NAInt)((NAByte*)a - (NAByte*)b);
-    if((NAByte*)a < (NAByte*)b){
+    if((NAByte*)a < (NAByte*)b) {
       dist = -dist;
     }
     if(dist < 16)
@@ -227,15 +227,15 @@ NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 
 
-NA_IDEF void naSwap(double* NA_RESTRICT a, double* NA_RESTRICT b){
+NA_IDEF void naSwap(double* NA_RESTRICT a, double* NA_RESTRICT b) {
   naSwap64(a, b);
 }
 
-NA_IDEF void naSwapf(float* NA_RESTRICT a, float* NA_RESTRICT b){
+NA_IDEF void naSwapf(float* NA_RESTRICT a, float* NA_RESTRICT b) {
   naSwap32(a, b);
 }
 
-NA_IDEF void naSwapi(NAInt* NA_RESTRICT a, NAInt* NA_RESTRICT b){
+NA_IDEF void naSwapi(NAInt* NA_RESTRICT a, NAInt* NA_RESTRICT b) {
   #if NA_TYPE_NAINT_BITS == 32
     naSwap32(a, b);
   #elif NA_TYPE_NAINT_BITS == 64
@@ -245,19 +245,19 @@ NA_IDEF void naSwapi(NAInt* NA_RESTRICT a, NAInt* NA_RESTRICT b){
 
 
 
-NA_IDEF NABool naEqual8(  void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF NABool naEqual8(  void* NA_RESTRICT a, void* NA_RESTRICT b) {
   return (*((uint8*)a) == *((uint8*)b));
 }
-NA_IDEF NABool naEqual16( void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF NABool naEqual16( void* NA_RESTRICT a, void* NA_RESTRICT b) {
   return (*((uint16*)a) == *((uint16*)b));
 }
-NA_IDEF NABool naEqual32( void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF NABool naEqual32( void* NA_RESTRICT a, void* NA_RESTRICT b) {
   return (*((uint32*)a) == *((uint32*)b));
 }
-NA_IDEF NABool naEqual64( void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF NABool naEqual64( void* NA_RESTRICT a, void* NA_RESTRICT b) {
   return naEqualu64(*((NAu64*)a), *((NAu64*)b));
 }
-NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b) {
   return naEqualu128(*((NAu128*)a), *((NAu128*)b));
 }
 
@@ -268,13 +268,13 @@ NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
 // Fills all bytes with zero values
 // ///////////////////////////////////////////////////////////
 
-NA_IDEF void naZeron(void* d, size_t byteSize){
+NA_IDEF void naZeron(void* d, size_t byteSize) {
   memset(d, 0, byteSize);
 }
 
 
 
-NA_IDEF void naSetn(void* d, size_t byteSize, NAByte value){
+NA_IDEF void naSetn(void* d, size_t byteSize, NAByte value) {
   memset(d, value, byteSize);
 }
 
@@ -398,7 +398,7 @@ NA_IDEF NABool naEqual8WithBytes(
       naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)s;
-  if(*p   != b0){ return NA_FALSE; }
+  if(*p   != b0) { return NA_FALSE; }
   return NA_TRUE;
 }
 
@@ -412,8 +412,8 @@ NA_IDEF NABool naEqual16WithBytes(
       naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)s;
-  if(*p++ != b0){ return NA_FALSE; }
-  if(*p   != b1){ return NA_FALSE; }
+  if(*p++ != b0) { return NA_FALSE; }
+  if(*p   != b1) { return NA_FALSE; }
   return NA_TRUE;
 }
 
@@ -427,10 +427,10 @@ NA_IDEF NABool naEqual32WithBytes(
       naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)s;
-  if(*p++ != b0){ return NA_FALSE; }
-  if(*p++ != b1){ return NA_FALSE; }
-  if(*p++ != b2){ return NA_FALSE; }
-  if(*p   != b3){ return NA_FALSE; }
+  if(*p++ != b0) { return NA_FALSE; }
+  if(*p++ != b1) { return NA_FALSE; }
+  if(*p++ != b2) { return NA_FALSE; }
+  if(*p   != b3) { return NA_FALSE; }
   return NA_TRUE;
 }
 
@@ -445,14 +445,14 @@ NA_IDEF NABool naEqual64WithBytes(
       naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)s;
-  if(*p++ != b0){ return NA_FALSE; }
-  if(*p++ != b1){ return NA_FALSE; }
-  if(*p++ != b2){ return NA_FALSE; }
-  if(*p++ != b3){ return NA_FALSE; }
-  if(*p++ != b4){ return NA_FALSE; }
-  if(*p++ != b5){ return NA_FALSE; }
-  if(*p++ != b6){ return NA_FALSE; }
-  if(*p   != b7){ return NA_FALSE; }
+  if(*p++ != b0) { return NA_FALSE; }
+  if(*p++ != b1) { return NA_FALSE; }
+  if(*p++ != b2) { return NA_FALSE; }
+  if(*p++ != b3) { return NA_FALSE; }
+  if(*p++ != b4) { return NA_FALSE; }
+  if(*p++ != b5) { return NA_FALSE; }
+  if(*p++ != b6) { return NA_FALSE; }
+  if(*p   != b7) { return NA_FALSE; }
   return NA_TRUE;
 }
 
@@ -469,22 +469,22 @@ NA_IDEF NABool naEqual128WithBytes(
       naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)s;
-  if(*p++ !=  b0){ return NA_FALSE; }
-  if(*p++ !=  b1){ return NA_FALSE; }
-  if(*p++ !=  b2){ return NA_FALSE; }
-  if(*p++ !=  b3){ return NA_FALSE; }
-  if(*p++ !=  b4){ return NA_FALSE; }
-  if(*p++ !=  b5){ return NA_FALSE; }
-  if(*p++ !=  b6){ return NA_FALSE; }
-  if(*p++ !=  b7){ return NA_FALSE; }
-  if(*p++ !=  b8){ return NA_FALSE; }
-  if(*p++ !=  b9){ return NA_FALSE; }
-  if(*p++ != b10){ return NA_FALSE; }
-  if(*p++ != b11){ return NA_FALSE; }
-  if(*p++ != b12){ return NA_FALSE; }
-  if(*p++ != b13){ return NA_FALSE; }
-  if(*p++ != b14){ return NA_FALSE; }
-  if(*p   != b15){ return NA_FALSE; }
+  if(*p++ !=  b0) { return NA_FALSE; }
+  if(*p++ !=  b1) { return NA_FALSE; }
+  if(*p++ !=  b2) { return NA_FALSE; }
+  if(*p++ !=  b3) { return NA_FALSE; }
+  if(*p++ !=  b4) { return NA_FALSE; }
+  if(*p++ !=  b5) { return NA_FALSE; }
+  if(*p++ !=  b6) { return NA_FALSE; }
+  if(*p++ !=  b7) { return NA_FALSE; }
+  if(*p++ !=  b8) { return NA_FALSE; }
+  if(*p++ !=  b9) { return NA_FALSE; }
+  if(*p++ != b10) { return NA_FALSE; }
+  if(*p++ != b11) { return NA_FALSE; }
+  if(*p++ != b12) { return NA_FALSE; }
+  if(*p++ != b13) { return NA_FALSE; }
+  if(*p++ != b14) { return NA_FALSE; }
+  if(*p   != b15) { return NA_FALSE; }
   return NA_TRUE;
 }
 
@@ -505,38 +505,38 @@ NA_IDEF NABool naEqual256WithBytes(
       naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)s;
-  if(*p++ !=  b0){ return NA_FALSE; }
-  if(*p++ !=  b1){ return NA_FALSE; }
-  if(*p++ !=  b2){ return NA_FALSE; }
-  if(*p++ !=  b3){ return NA_FALSE; }
-  if(*p++ !=  b4){ return NA_FALSE; }
-  if(*p++ !=  b5){ return NA_FALSE; }
-  if(*p++ !=  b6){ return NA_FALSE; }
-  if(*p++ !=  b7){ return NA_FALSE; }
-  if(*p++ !=  b8){ return NA_FALSE; }
-  if(*p++ !=  b9){ return NA_FALSE; }
-  if(*p++ != b10){ return NA_FALSE; }
-  if(*p++ != b11){ return NA_FALSE; }
-  if(*p++ != b12){ return NA_FALSE; }
-  if(*p++ != b13){ return NA_FALSE; }
-  if(*p++ != b14){ return NA_FALSE; }
-  if(*p++ != b15){ return NA_FALSE; }
-  if(*p++ != b16){ return NA_FALSE; }
-  if(*p++ != b17){ return NA_FALSE; }
-  if(*p++ != b18){ return NA_FALSE; }
-  if(*p++ != b19){ return NA_FALSE; }
-  if(*p++ != b20){ return NA_FALSE; }
-  if(*p++ != b21){ return NA_FALSE; }
-  if(*p++ != b22){ return NA_FALSE; }
-  if(*p++ != b23){ return NA_FALSE; }
-  if(*p++ != b24){ return NA_FALSE; }
-  if(*p++ != b25){ return NA_FALSE; }
-  if(*p++ != b26){ return NA_FALSE; }
-  if(*p++ != b27){ return NA_FALSE; }
-  if(*p++ != b28){ return NA_FALSE; }
-  if(*p++ != b29){ return NA_FALSE; }
-  if(*p++ != b30){ return NA_FALSE; }
-  if(*p   != b31){ return NA_FALSE; }
+  if(*p++ !=  b0) { return NA_FALSE; }
+  if(*p++ !=  b1) { return NA_FALSE; }
+  if(*p++ !=  b2) { return NA_FALSE; }
+  if(*p++ !=  b3) { return NA_FALSE; }
+  if(*p++ !=  b4) { return NA_FALSE; }
+  if(*p++ !=  b5) { return NA_FALSE; }
+  if(*p++ !=  b6) { return NA_FALSE; }
+  if(*p++ !=  b7) { return NA_FALSE; }
+  if(*p++ !=  b8) { return NA_FALSE; }
+  if(*p++ !=  b9) { return NA_FALSE; }
+  if(*p++ != b10) { return NA_FALSE; }
+  if(*p++ != b11) { return NA_FALSE; }
+  if(*p++ != b12) { return NA_FALSE; }
+  if(*p++ != b13) { return NA_FALSE; }
+  if(*p++ != b14) { return NA_FALSE; }
+  if(*p++ != b15) { return NA_FALSE; }
+  if(*p++ != b16) { return NA_FALSE; }
+  if(*p++ != b17) { return NA_FALSE; }
+  if(*p++ != b18) { return NA_FALSE; }
+  if(*p++ != b19) { return NA_FALSE; }
+  if(*p++ != b20) { return NA_FALSE; }
+  if(*p++ != b21) { return NA_FALSE; }
+  if(*p++ != b22) { return NA_FALSE; }
+  if(*p++ != b23) { return NA_FALSE; }
+  if(*p++ != b24) { return NA_FALSE; }
+  if(*p++ != b25) { return NA_FALSE; }
+  if(*p++ != b26) { return NA_FALSE; }
+  if(*p++ != b27) { return NA_FALSE; }
+  if(*p++ != b28) { return NA_FALSE; }
+  if(*p++ != b29) { return NA_FALSE; }
+  if(*p++ != b30) { return NA_FALSE; }
+  if(*p   != b31) { return NA_FALSE; }
   return NA_TRUE;
 }
 

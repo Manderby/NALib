@@ -9,13 +9,13 @@ NAApplication* na_App = NA_NULL;
 
 
 
-NA_HDEF NABool na_IsApplicationRunning(void){
+NA_HDEF NABool na_IsApplicationRunning(void) {
   return (NABool)(na_App->flags & NA_APPLICATION_FLAG_RUNNING);
 }
 
 
 
-NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePtr){
+NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePtr) {
   na_App = application;
 
   naInitList(&(application->windows));
@@ -51,7 +51,7 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
 
 
 
-NA_HDEF void na_ClearApplication(NAApplication* application){
+NA_HDEF void na_ClearApplication(NAApplication* application) {
   #if NA_DEBUG
     if(!naGetApplication())
       naCrash("No Application running");
@@ -73,13 +73,13 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
 
 
 
-NA_HDEF NARect na_GetApplicationRect(const NAApplication* application){
+NA_HDEF NARect na_GetApplicationRect(const NAApplication* application) {
   NA_UNUSED(application);
   NARect rect = {{0., 0.}, {1., 1.}};
   return rect;
 }
 
-NA_HDEF void na_SetApplicationRect(const NAApplication* application, NARect rect){
+NA_HDEF void na_SetApplicationRect(const NAApplication* application, NARect rect) {
   NA_UNUSED(application);
   NA_UNUSED(rect);
   #if NA_DEBUG
@@ -88,13 +88,13 @@ NA_HDEF void na_SetApplicationRect(const NAApplication* application, NARect rect
 }
 
 
-NA_DEF void naStopApplication(void){
+NA_DEF void naStopApplication(void) {
   na_App->flags &= ~NA_APPLICATION_FLAG_RUNNING;
 }
 
 
 
-NA_DEF NAApplication* naGetApplication(void){
+NA_DEF NAApplication* naGetApplication(void) {
   #if NA_DEBUG
     if(!na_App)
       naError("Internal error: application is not in ui elements list");

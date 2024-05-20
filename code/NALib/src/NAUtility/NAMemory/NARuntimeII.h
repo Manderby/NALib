@@ -82,13 +82,13 @@ extern NARuntime* na_Runtime;
 
 
 
-NA_IDEF NABool naIsRuntimeRunning(){
+NA_IDEF NABool naIsRuntimeRunning() {
   return na_Runtime != NA_NULL;
 }
 
 
 
-NA_IDEF size_t naGetRuntimeGarbageByteSize(){
+NA_IDEF size_t naGetRuntimeGarbageByteSize() {
   #if NA_DEBUG
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
@@ -98,7 +98,7 @@ NA_IDEF size_t naGetRuntimeGarbageByteSize(){
 
 
 
-NA_IDEF size_t naGetRuntimeMemoryPageSize(){
+NA_IDEF size_t naGetRuntimeMemoryPageSize() {
   #if NA_DEBUG
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
@@ -108,7 +108,7 @@ NA_IDEF size_t naGetRuntimeMemoryPageSize(){
 
 
 
-NA_IDEF size_t naGetRuntimePoolPartSize(){
+NA_IDEF size_t naGetRuntimePoolPartSize() {
   #if NA_DEBUG
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");

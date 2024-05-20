@@ -19,7 +19,7 @@ set(primaryHeaderFile
 )
 
 # When on Windows, we use MSVC, when on macOS, we use MACOSX as switch.
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(MACOSX TRUE)
 endif()
 

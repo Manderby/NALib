@@ -29,13 +29,13 @@ NA_HAPI NARect na_GetNativeWindowAbsoluteInnerRect(const NSWindow* window);
   cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativePtrConst(uiElement))
 
 
-NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr){
+NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr) {
   NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(nativePtr));
 }
 
 
 
-NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable){
+NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable) {
   NA_UNUSED(isElementAttachable);
   NA_UIElement* elem = (NA_UIElement*)uiElement;
   // todo: remove from old parent
@@ -49,10 +49,10 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 
 
 
-NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* elem){
-  if(naGetUIElementType(elem) == NA_UI_BUTTON){
-    if(naIsButtonBordered((const NAButton*)elem)){
-      if(isAtLeastMacOSVersion(11, 0)){
+NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* elem) {
+  if(naGetUIElementType(elem) == NA_UI_BUTTON) {
+    if(naIsButtonBordered((const NAButton*)elem)) {
+      if(isAtLeastMacOSVersion(11, 0)) {
         // On newer systems bordered buttons are 5 units shorter than expected on
         // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
         // move the button 5 units to the left.
@@ -65,15 +65,15 @@ NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* elem){
 
 
 
-NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem){
+NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem) {
   // Line height is considered to be 25 for an optimal display. In this
   // function, the UI elements are shifted in Y direction such that text
   // always is displayed on a common baseline. The reference element is
   // a stateful text button.
   // All spaces and stateful/image buttons have offset 0.
   
-  if(NSAppKitVersionNumber < NSAppKitVersionNumber11_0){
-    switch(naGetUIElementType(elem)){
+  if(NSAppKitVersionNumber < NSAppKitVersionNumber11_0) {
+    switch(naGetUIElementType(elem)) {
     case NA_UI_APPLICATION:  return  0.;
     case NA_UI_BUTTON:       return  0.;
     case NA_UI_CHECKBOX:     return +5.;
@@ -94,7 +94,7 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem){
     default: return 0.;
     }
   }else{
-    switch(naGetUIElementType(elem)){
+    switch(naGetUIElementType(elem)) {
     case NA_UI_APPLICATION:  return  0.;
     case NA_UI_BUTTON:       return  0.;
     case NA_UI_CHECKBOX:     return +5.;
@@ -119,7 +119,7 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem){
 
 
 
-NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event){
+NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event) {
   NSUInteger flags;
   NABool hasShift;
   NABool hasControl;
@@ -142,9 +142,9 @@ NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event){
 
 
 
-NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
+NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
   NABool retValue = NA_FALSE;
-  if([event type] == NAEventTypeKeyDown || [event type] == NAEventTypeFlagsChanged){
+  if([event type] == NAEventTypeKeyDown || [event type] == NAEventTypeFlagsChanged) {
     NA_UIElement* elem;
     NSWindow* focusWindow;
     na_CaptureKeyboardStatus(event);
@@ -152,13 +152,13 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
     // Search for the first responder which is represented in NALib.
     elem = NA_NULL;
     focusWindow = [NSApp keyWindow];
-    if(focusWindow){
+    if(focusWindow) {
       NSResponder* firstResponder = [focusWindow firstResponder];
-      if(firstResponder){
-        while(!elem && firstResponder){
+      if(firstResponder) {
+        while(!elem && firstResponder) {
           elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativePtr)(firstResponder));
-          if(!elem){
-            if(firstResponder == focusWindow){
+          if(!elem) {
+            if(firstResponder == focusWindow) {
               elem = &(naGetApplication()->uiElement);
             }else{
               firstResponder = [(NSView*)firstResponder superview];
@@ -173,11 +173,11 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
     }
     
     // Search for a matching keyboard shortcut by bubbling.
-    while(!retValue && elem){
+    while(!retValue && elem) {
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
-      while(!retValue && naIterateList(&iter)){
+      while(!retValue && naIterateList(&iter)) {
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
-        if(keyReaction->shortcut.keyCode == naGetApplication()->curKeyStroke.keyCode){
+        if(keyReaction->shortcut.keyCode == naGetApplication()->curKeyStroke.keyCode) {
           NABool needsShift   = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
           NABool needsControl = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
           NABool needsOption  = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
@@ -189,7 +189,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
           if(needsShift   == hasShift
           && needsControl == hasControl
           && needsOption  == hasOption
-          && needsCommand == hasCommand){
+          && needsCommand == hasCommand) {
             NAReaction reaction;
             reaction.uiElement = naGetApplication();
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
@@ -207,7 +207,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
 
 
 
-NAString* naNewKeyPressString(uint32 modifiers, NAUIKeyCode keyCode){
+NAString* naNewKeyPressString(uint32 modifiers, NAUIKeyCode keyCode) {
   TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardLayoutInputSource();
   CFDataRef layoutData = TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
   const UCKeyboardLayout* keyboardLayout = (const UCKeyboardLayout*)CFDataGetBytePtr(layoutData);
@@ -218,9 +218,9 @@ NAString* naNewKeyPressString(uint32 modifiers, NAUIKeyCode keyCode){
                 
   UInt32 modifierKeyState = 0;
   if(modifiers & NA_MODIFIER_FLAG_SHIFT)  { modifierKeyState |= shiftKey; }
-  if(modifiers & NA_MODIFIER_FLAG_CONTROL){ modifierKeyState |= controlKey; }
+  if(modifiers & NA_MODIFIER_FLAG_CONTROL) { modifierKeyState |= controlKey; }
   if(modifiers & NA_MODIFIER_FLAG_OPTION) { modifierKeyState |= optionKey; }
-  if(modifiers & NA_MODIFIER_FLAG_COMMAND){ modifierKeyState |= cmdKey; }
+  if(modifiers & NA_MODIFIER_FLAG_COMMAND) { modifierKeyState |= cmdKey; }
 
   UCKeyTranslate(
     keyboardLayout,
@@ -249,7 +249,7 @@ NAString* naNewKeyPressString(uint32 modifiers, NAUIKeyCode keyCode){
 // ///////////////////////////////////
 
 
-NA_DEF void na_RefreshUIElementNow(void* uiElement){
+NA_DEF void na_RefreshUIElementNow(void* uiElement) {
   naDefineCocoaObjectConst(NSView, cocoaView, uiElement);
   [cocoaView setNeedsDisplay:YES];
 }
@@ -257,9 +257,9 @@ NA_DEF void na_RefreshUIElementNow(void* uiElement){
 
 
 
-NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabElem){
+NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabElem) {
   if(  naGetUIElementType(uiElement) != NA_UI_TEXTFIELD
-    && naGetUIElementType(uiElement) != NA_UI_TEXTBOX){
+    && naGetUIElementType(uiElement) != NA_UI_TEXTBOX) {
     #if NA_DEBUG
       naError("elem has a type which can not be used as a next tab.");
     #endif
@@ -267,7 +267,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
   }
 
   if(  naGetUIElementType(nextTabElem) != NA_UI_TEXTFIELD
-    && naGetUIElementType(nextTabElem) != NA_UI_TEXTBOX){
+    && naGetUIElementType(nextTabElem) != NA_UI_TEXTBOX) {
     #if NA_DEBUG
       naError("nextTabElem has a type which can not be used as a next tab.");
     #endif
@@ -282,11 +282,11 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
 
 
 
-NA_DEF double naGetUIElementResolutionFactor(const void* uiElement){
+NA_DEF double naGetUIElementResolutionFactor(const void* uiElement) {
   if(naGetUIElementType(uiElement) == NA_UI_APPLICATION)
     return 1.;
     
-  if(naGetUIElementType(uiElement) == NA_UI_SCREEN){
+  if(naGetUIElementType(uiElement) == NA_UI_SCREEN) {
     #if NA_DEBUG
       naError("Sorry, was too lazy to implement this. I mean, it's not hard, but as screens are not used anyway at the moment, who cares.");
     #endif
@@ -294,12 +294,12 @@ NA_DEF double naGetUIElementResolutionFactor(const void* uiElement){
   }
   
   const void* parent = naGetUIElementParentConst(uiElement);
-  while(naGetUIElementType(uiElement) != NA_UI_WINDOW && parent){
+  while(naGetUIElementType(uiElement) != NA_UI_WINDOW && parent) {
     uiElement = parent;
     parent = naGetUIElementParentConst(uiElement);
   }
   
-  if(naGetUIElementType(uiElement) == NA_UI_WINDOW){
+  if(naGetUIElementType(uiElement) == NA_UI_WINDOW) {
     return naGetWindowBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(uiElement)));
   }else{
     return naGetUIElementBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(uiElement)));
@@ -308,27 +308,27 @@ NA_DEF double naGetUIElementResolutionFactor(const void* uiElement){
 
 
 
-NA_HDEF void na_DestructFont(NAFont* font){
+NA_HDEF void na_DestructFont(NAFont* font) {
   NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(font->nativePtr));
   naDelete(font->name);
 }
 
-NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size){
+NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size) {
   NAFont* font = naCreate(NAFont);
   NSString* systemFontName = [NSString stringWithUTF8String: fontFamilyName];
 
   NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
   NSFont* retFont;
 
-  if(systemFontName == [systemFont familyName]){
+  if(systemFontName == [systemFont familyName]) {
     retFont = (naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) ?
       [NSFont systemFontOfSize:size] :
       [NSFont boldSystemFontOfSize:size];
   }else{
     NSFontTraitMask traits = 0;
-    if(naGetFlagu32(flags, NA_FONT_FLAG_BOLD)){ traits |= NSBoldFontMask; }
-    if(naGetFlagu32(flags, NA_FONT_FLAG_ITALIC)){ traits |= NSItalicFontMask; }
-    if(naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE)){ }
+    if(naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) { traits |= NSBoldFontMask; }
+    if(naGetFlagu32(flags, NA_FONT_FLAG_ITALIC)) { traits |= NSItalicFontMask; }
+    if(naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE)) { }
 
     retFont = [[NSFontManager sharedFontManager]
       fontWithFamily:systemFontName
@@ -345,9 +345,9 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
   return font;
 }
 
-NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
+NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
   CGFloat baseSize;
-  switch(fontSize){
+  switch(fontSize) {
   case NA_FONT_SIZE_SMALL: baseSize = 11; break;
   case NA_FONT_SIZE_DEFAULT: baseSize = [NSFont systemFontSize]; break;
   case NA_FONT_SIZE_BIG: baseSize = 18; break;
@@ -358,7 +358,7 @@ NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
   NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
 
   NAFont* retFont;
-  switch(kind){
+  switch(kind) {
     case NA_FONT_KIND_SYSTEM:
       retFont = naCreateFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_REGULAR, baseSize);
       break;
@@ -389,9 +389,9 @@ NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
 
 
 
-NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment){
+NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment) {
   NSTextAlignment nsalignment;
-  switch(alignment){
+  switch(alignment) {
     case NA_TEXT_ALIGNMENT_LEFT: nsalignment = NATextAlignmentLeft; break;
     case NA_TEXT_ALIGNMENT_RIGHT: nsalignment = NATextAlignmentRight; break;
     case NA_TEXT_ALIGNMENT_CENTER: nsalignment = NATextAlignmentCenter; break;
@@ -411,10 +411,10 @@ NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment){
 // ///////////////////
 
 
-NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText){
+NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText) {
     NSAlert* alert = NA_COCOA_AUTORELEASE([[NSAlert alloc] init]);
 
-    switch(alertBoxType){
+    switch(alertBoxType) {
     case NA_ALERT_BOX_INFO:    alert.alertStyle = NAAlertStyleWarning; break;
     case NA_ALERT_BOX_WARNING: alert.alertStyle = NAAlertStyleInfo; break;
     case NA_ALERT_BOX_ERROR:   alert.alertStyle = NAAlertStyleError; break;
@@ -454,7 +454,7 @@ NA_DEF void naPresentFilePanel(
     [savepanel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:allowedFileSuffix]]];
   #endif
   
-  [savepanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(window) completionHandler:^(NSInteger result){
+  [savepanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(window) completionHandler:^(NSInteger result) {
     #if defined __MAC_10_9
       NABool doPerform = result != NSModalResponseCancel;
     #else
@@ -465,13 +465,13 @@ NA_DEF void naPresentFilePanel(
 }
 
 
-NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen){
+NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen) {
   NA_UNUSED(screen);
   NARect rect = {{0, 0}, {1, 1}};
   return rect;
 }
 
-NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect){
+NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect) {
   NA_UNUSED(screen);
   NA_UNUSED(rect);
   #if NA_DEBUG
@@ -480,7 +480,7 @@ NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect){
 }
 
 
-NA_DEF void naCenterMouse(void* uiElement){
+NA_DEF void naCenterMouse(void* uiElement) {
   NARect spaceRect;
   NSRect screenframe;
   CGPoint centerpos;
@@ -494,18 +494,18 @@ NA_DEF void naCenterMouse(void* uiElement){
 
 
 
-NA_DEF void naShowMouse(){
+NA_DEF void naShowMouse() {
   NAApplication* app = naGetApplication();
-  if(!(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)){
+  if(!(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)) {
     CGDisplayShowCursor(kCGDirectMainDisplay);
     app->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   }
 }
 
 
-NA_DEF void naHideMouse(){
+NA_DEF void naHideMouse() {
   NAApplication* app = naGetApplication();
-  if(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE){
+  if(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE) {
     CGDisplayHideCursor(kCGDirectMainDisplay);
     app->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   }
@@ -513,13 +513,13 @@ NA_DEF void naHideMouse(){
 
 
 
-NA_DEF void naHideMouseUntilMovement(NABool hide){
+NA_DEF void naHideMouseUntilMovement(NABool hide) {
   [NSCursor setHiddenUntilMouseMoves:hide ? YES : NO];
 }
 
 
 
-NA_DEF NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot){
+NA_DEF NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot) {
   NSImage* nsImage = na_CreateResolutionIndependentNativeImage(
     NA_NULL,
     uiImage,
@@ -530,7 +530,7 @@ NA_DEF NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot)
 
 
 
-NA_API void naOpenURLInBrowser(const NAUTF8Char* url){
+NA_API void naOpenURLInBrowser(const NAUTF8Char* url) {
   [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithUTF8String:url]]];
 }
 

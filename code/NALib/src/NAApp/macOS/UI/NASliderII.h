@@ -34,7 +34,7 @@
   NA_UNUSED(sender);
   NSEvent *event = [[NSApplication sharedApplication] currentEvent];
  
-  if(event.type == NAEventTypeLeftMouseUp){
+  if(event.type == NAEventTypeLeftMouseUp) {
     na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDIT_FINISHED); 
     cocoaSlider->slider.sliderInMovement = false;
   }else{
@@ -57,7 +57,7 @@
 
 
 
-NA_DEF NASlider* naNewSlider(double width){
+NA_DEF NASlider* naNewSlider(double width) {
   NACocoaSlider* cocoaSlider = naNew(NACocoaSlider);
   
   NACocoaNativeSlider* nativePtr = [[NACocoaNativeSlider alloc]
@@ -70,20 +70,20 @@ NA_DEF NASlider* naNewSlider(double width){
 
 
 
-NA_DEF void na_DestructCocoaSlider(NACocoaSlider* cocoaSlider){
+NA_DEF void na_DestructCocoaSlider(NACocoaSlider* cocoaSlider) {
   na_ClearSlider((NASlider*)cocoaSlider);
 }
 
 
 
-NA_DEF void naSetSliderEnabled(NASlider* slider, NABool enabled){
+NA_DEF void naSetSliderEnabled(NASlider* slider, NABool enabled) {
   naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
   [nativePtr setEnabled:(BOOL)enabled];
 }
 
 
 
-NA_DEF void naSetSliderRange(NASlider* slider, double min, double max, NAInt tickCount){
+NA_DEF void naSetSliderRange(NASlider* slider, double min, double max, NAInt tickCount) {
   naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
   slider->min = min;
   slider->max = max;
@@ -92,7 +92,7 @@ NA_DEF void naSetSliderRange(NASlider* slider, double min, double max, NAInt tic
 
 
 
-NA_DEF double naGetSliderValue(const NASlider* slider){
+NA_DEF double naGetSliderValue(const NASlider* slider) {
   naDefineCocoaObjectConst(NACocoaNativeSlider, nativePtr, slider);
   double plainValue = [nativePtr getSliderValue];
   return plainValue * (slider->max - slider->min) + slider->min;
@@ -100,28 +100,28 @@ NA_DEF double naGetSliderValue(const NASlider* slider){
 
 
 
-NA_DEF double naGetSliderStaticValue(const NASlider* slider){
+NA_DEF double naGetSliderStaticValue(const NASlider* slider) {
   return slider->staticValue;
 }
 
 
 
-NA_DEF void naSetSliderValue(NASlider* slider, double value){
+NA_DEF void naSetSliderValue(NASlider* slider, double value) {
   naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
   double plainValue = (value - slider->min) / (slider->max - slider->min);
   [nativePtr setSliderValue:plainValue];
-  if(!slider->sliderInMovement){
+  if(!slider->sliderInMovement) {
     slider->staticValue = value;
   }
 }
 
 
-NA_HDEF NARect na_GetSliderRect(const NA_UIElement* slider){
+NA_HDEF NARect na_GetSliderRect(const NA_UIElement* slider) {
   naDefineCocoaObjectConst(NACocoaNativeSlider, nativePtr, slider);
   return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect){
+NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect) {
   naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }

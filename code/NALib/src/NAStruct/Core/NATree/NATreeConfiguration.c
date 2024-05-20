@@ -7,7 +7,7 @@
 
 
 
-NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
+NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags) {
   // This is just for testing if the implemented nodes "inheriting" from the
   // NATreeNode structure have their childs storage at the correct position.
   #if NA_DEBUG
@@ -28,7 +28,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->nodeUserDataOffset   = -1;
   #endif
   
-  if(flags & NA_TREE_QUADTREE){
+  if(flags & NA_TREE_QUADTREE) {
   
     #if NA_DEBUG
       config->sizeofNode = sizeof(NATreeQuadNode);
@@ -36,7 +36,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     #endif
     
     config->childpernode            = 4;
-    switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
+    switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK) {
     case NA_TREE_KEY_DOUBLE:
       config->childIndexGetter      = na_GetChildIndexQuadDouble;
       config->keyIndexGetter        = na_GetKeyIndexQuadDouble;
@@ -56,7 +56,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       #endif
       break;
     }
-    if(flags & NA_TREE_BALANCE_AVL){
+    if(flags & NA_TREE_BALANCE_AVL) {
       #if NA_DEBUG
         naError("Quadtree can not have AVL balance.");
       #endif
@@ -76,7 +76,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_QUAD;
     config->nodeUserDataOffset      = NODE_USERDATA_OFFSET_QUAD;
 
-  }else if(flags & NA_TREE_OCTTREE){
+  }else if(flags & NA_TREE_OCTTREE) {
   
     #if NA_DEBUG
       config->sizeofNode = sizeof(NATreeOctNode);
@@ -84,7 +84,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     #endif
 
     config->childpernode            = 8;
-    switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
+    switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK) {
     case NA_TREE_KEY_DOUBLE:
       config->childIndexGetter      = na_GetChildIndexOctDouble;
       config->keyIndexGetter        = na_GetKeyIndexOctDouble;
@@ -104,7 +104,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       #endif
       break;
     }
-    if(flags & NA_TREE_BALANCE_AVL){
+    if(flags & NA_TREE_BALANCE_AVL) {
       #if NA_DEBUG
         naError("Octtree can not have AVL balance.");
       #endif
@@ -132,7 +132,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     #endif
 
     config->childpernode            = 2;
-    switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
+    switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK) {
     case NA_TREE_KEY_NOKEY:
       config->keyIndexGetter        = NA_NULL;
       config->keyEqualComparer      = NA_NULL;

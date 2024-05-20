@@ -9,7 +9,7 @@
 
 
 
-NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NAWINAPIWindow* windowMutable;
   WINDOWPOS windowPos;
@@ -18,7 +18,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   double uiScale;
   double oldHeight;
 
-  switch(message){
+  switch(message) {
   case WM_SHOWWINDOW:
     // wParam: true for show, false for hide
     // lParam: status of window
@@ -35,7 +35,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     windowMutable->rect.pos.x = (double)LOWORD(lParam) / uiScale;
     windowMutable->rect.pos.y = screenRect.size.height - (double)HIWORD(lParam) / uiScale - windowMutable->rect.size.height;
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-    if(info.hasBeenHandeled){ na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
+    if(info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
     //printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);
@@ -53,7 +53,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     windowMutable->rect.size.height = (double)HIWORD(lParam) / uiScale;
     windowMutable->rect.pos.y -= (windowMutable->rect.size.height - oldHeight);
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-    if(info.hasBeenHandeled){ na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
+    if(info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
     break;
@@ -64,7 +64,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES);
     shouldClose = !naGetFlagu32(windowMutable->window.flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
     naSetFlagu32(&(windowMutable->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
-    if(shouldClose){
+    if(shouldClose) {
       naCloseWindow(&windowMutable->window);
     }
     info.hasBeenHandeled = NA_TRUE;
@@ -96,7 +96,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     windowMutable->rect.pos.x = (double)windowPos.x / uiScale;
     windowMutable->rect.pos.y = screenRect.size.height - (double)windowPos.y / uiScale - windowMutable->rect.size.height;
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-    if(info.hasBeenHandeled){ na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
+    if(info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
     ////printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);
@@ -185,9 +185,9 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
 
 
-NABool naHandleWindowTabOrder(NAReaction reaction){
+NABool naHandleWindowTabOrder(NAReaction reaction) {
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)reaction.uiElement;
-  if(winapiWindow->firstResponder){
+  if(winapiWindow->firstResponder) {
     SetFocus(naGetUIElementNativePtr(winapiWindow->firstResponder));
     return NA_TRUE;
   }
@@ -196,7 +196,7 @@ NABool naHandleWindowTabOrder(NAReaction reaction){
 
 
 
-NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, NAInt storageTag){
+NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, NAInt storageTag) {
   NAWINAPIWindow* winapiWindow = naNew(NAWINAPIWindow);
 
   NABool resizeable = naGetFlagu32(flags, NA_WINDOW_RESIZEABLE);
@@ -204,7 +204,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
   rect = naSetWindowStorageTag(&(winapiWindow->window), storageTag, rect, resizeable);
 
   DWORD style = WS_OVERLAPPEDWINDOW;
-  if(!resizeable){
+  if(!resizeable) {
     style &= ~WS_THICKFRAME;
     style &= ~WS_MAXIMIZEBOX;
   }
@@ -236,7 +236,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
     NULL);
 
   HICON hIcon = naGetWINAPIApplicationIcon();
-  if(hIcon){   
+  if(hIcon) {   
     SendMessage(nativePtr, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
     SendMessage(nativePtr, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
   }
@@ -268,13 +268,13 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
 
 
 
-NA_DEF void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow){
+NA_DEF void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow) {
   na_ClearWindow((NAWindow*)winapiWindow);
 }
 
 
 
-NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
+NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space) {
   #if NA_DEBUG
     if((naGetUIElementType(space) != NA_UI_SPACE) &&
       (naGetUIElementType(space) != NA_UI_IMAGE_SPACE) &&
@@ -288,28 +288,28 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
 
 
 
-NA_DEF void naShowWindow(const NAWindow* window){
+NA_DEF void naShowWindow(const NAWindow* window) {
   ShowWindow(naGetUIElementNativePtrConst(window), SW_SHOW);
   BringWindowToTop(naGetUIElementNativePtrConst(window));
 }
 
 
 
-NA_DEF void naCloseWindow(const NAWindow* window){
+NA_DEF void naCloseWindow(const NAWindow* window) {
   ShowWindow(naGetUIElementNativePtrConst(window), SW_HIDE);
 }
 
 
 
-NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
+NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
   DWORD style;
   NARect newRect;
   NARect screenRect;
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
-  if(fullScreen != naIsWindowFullscreen(window)){
+  if(fullScreen != naIsWindowFullscreen(window)) {
     screenRect = naGetMainScreenRect();
-    if(fullScreen){
+    if(fullScreen) {
       DEVMODE screenSettings;
       window->windowedFrame = naGetUIElementRectAbsolute(window);
 
@@ -356,13 +356,13 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
 
 
 
-NA_DEF double naGetWindowUIResolution(const NAWindow* window){
+NA_DEF double naGetWindowUIResolution(const NAWindow* window) {
   return NA_UIIMAGE_RESOLUTION_SCREEN_1x * naGetUIElementResolutionFactor(window);
 }
 
 
 
-NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title){
+NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title) {
   TCHAR* systemTitle = naAllocSystemStringWithUTF8String(title);
   SetWindowText(naGetUIElementNativePtr(window), systemTitle);
   naFree(systemTitle);
@@ -370,14 +370,14 @@ NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title){
 
 
 
-//NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
+//NA_DEF void naSetWindowRect(NAWindow* window, NARect rect) {
 //  NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
 //}
 
 
 
-NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
-  if(keepOnTop){
+NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop) {
+  if(keepOnTop) {
     SetWindowPos(naGetUIElementNativePtr(window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
   }else{
     SetWindowPos(naGetUIElementNativePtr(window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
@@ -386,20 +386,20 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
 
 
 
-NA_DEF void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts){
+NA_DEF void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts) {
   // todo
 }
 
 
 
-NA_DEF void* naGetWindowFirstTabElement(NAWindow* window){
+NA_DEF void* naGetWindowFirstTabElement(NAWindow* window) {
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
   return winapiWindow->firstResponder;
 }
 
 
 
-NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem){
+NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem) {
   NAWINAPIWindow* winapiWindow;
   
   #if NA_DEBUG
@@ -412,7 +412,7 @@ NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem){
 
 
 
-NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window){
+NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window) {
   NARect rect;
   NARect screenRect;
   RECT clientRect;
@@ -440,14 +440,14 @@ NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window)
   return winapiWindow->rect;
 }
 
-NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect){
+NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
 
   //NARect currect = naGetUIElementRect(&(winapiWindow->window));
   double yDiff = winapiWindow->rect.pos.y = rect.pos.y;
 
-  if(1){
-  //if(!naEqualRect(currect, rect)){
+  if(1) {
+  //if(!naEqualRect(currect, rect)) {
     POINT testPoint = {0, 0};
     RECT clientRect;
     RECT windowRect;

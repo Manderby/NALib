@@ -7,7 +7,7 @@
 
 
 
-NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
+NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   PAINTSTRUCT paintStruct;
   HBITMAP hOldBitmap;
   HDC hMemDC;
@@ -94,10 +94,10 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
 
 
 
-NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
-  switch(message){
+  switch(message) {
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
   case WM_WINDOWPOSCHANGED:
@@ -124,7 +124,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARA
 
 
 
-NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
+NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size) {
   NAWINAPIImageSpace* winapiImageSpace = naNew(NAWINAPIImageSpace);
 
   winapiImageSpace->rect = naMakeRect(naMakePos(0., 0.), size);
@@ -145,7 +145,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
 
   na_InitImageSpace(&(winapiImageSpace->imageSpace), nativePtr);
 
-  if(uiImage){
+  if(uiImage) {
     winapiImageSpace->imageSpace.uiImage = naRetain(uiImage);
   }else{
     winapiImageSpace->imageSpace.uiImage = NA_NULL;
@@ -156,23 +156,23 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
 
 
 
-NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace){
+NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace) {
   naRelease(winapiImageSpace->imageSpace.uiImage);
   na_ClearImageSpace((NAImageSpace*)winapiImageSpace);
 }
 
 
 
-NA_DEF void naSetImageSpaceImage(NAImageSpace* imageSpace, NAUIImage* uiImage){
+NA_DEF void naSetImageSpaceImage(NAImageSpace* imageSpace, NAUIImage* uiImage) {
   NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
   
-  if(imageSpace->uiImage){
+  if(imageSpace->uiImage) {
     naRelease(imageSpace->uiImage);
   }
-  if(uiImage){
+  if(uiImage) {
     imageSpace->uiImage = naRetain(uiImage);
   }
-  else{
+  else {
     imageSpace->uiImage = NA_NULL;
   }
 
@@ -187,7 +187,7 @@ NA_HDEF NARect na_GetImageSpaceRect(const NA_UIElement* imageSpace)
   return winapiImageSpace->rect;
 }
 
-NA_HDEF void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect){
+NA_HDEF void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect) {
   NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
 
   winapiImageSpace->rect = rect;

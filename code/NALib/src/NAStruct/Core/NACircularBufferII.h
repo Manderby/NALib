@@ -17,7 +17,7 @@ struct NACircularBuffer{
 };
 
 
-NACircularBuffer* naInitCircularBuffer(NACircularBuffer* buffer, NAInt count){
+NACircularBuffer* naInitCircularBuffer(NACircularBuffer* buffer, NAInt count) {
   buffer->space = count + 1;
   buffer->cur = 0;
   buffer->last = 0;
@@ -26,12 +26,12 @@ NACircularBuffer* naInitCircularBuffer(NACircularBuffer* buffer, NAInt count){
 }
 
 
-void naClearCircularBuffer(NACircularBuffer* buffer){
+void naClearCircularBuffer(NACircularBuffer* buffer) {
   naFree(buffer->data);
 }
 
 
-void* naPullCircularBuffer(NACircularBuffer* buffer){
+void* naPullCircularBuffer(NACircularBuffer* buffer) {
   #if NA_DEBUG
     if(buffer->last == buffer->cur)
       naError("Buffer is empty");
@@ -42,7 +42,7 @@ void* naPullCircularBuffer(NACircularBuffer* buffer){
 }
 
 
-void naPushCircularBuffer(NACircularBuffer* buffer, void* newData){
+void naPushCircularBuffer(NACircularBuffer* buffer, void* newData) {
   buffer->data[buffer->last] = newData;
   buffer->last = buffer->last % buffer->space;
   #if NA_DEBUG

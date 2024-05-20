@@ -26,7 +26,7 @@
 
 - (void) setColor:(const NAColor*)color{
   NSColor* nsColor;
-  if(color){
+  if(color) {
     uint8 buf[4];
     naFillSRGBu8WithColor(buf, color, NA_COLOR_BUFFER_RGBA);
     nsColor = [NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.];
@@ -72,7 +72,7 @@
 
 
 
-NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width){
+NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
   NACocoaCheckBox* cocoaCheckBox = naNew(NACocoaCheckBox);
 
   NACocoaNativeCheckBox* nativePtr = [[NACocoaNativeCheckBox alloc]
@@ -87,53 +87,53 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width){
 
 
 
-NA_HAPI void na_DestructCocoaCheckBox(NACocoaCheckBox* cocoaCheckBox){
+NA_HAPI void na_DestructCocoaCheckBox(NACocoaCheckBox* cocoaCheckBox) {
   na_ClearCheckBox((NACheckBox*)cocoaCheckBox);
 }
 
 
 
-NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NAColor* color){
+NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NAColor* color) {
   naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
   [nativePtr setColor:color];
 }
 
 
 
-NA_DEF void naSetCheckBoxState(NACheckBox* checkBox, NABool state){
+NA_DEF void naSetCheckBoxState(NACheckBox* checkBox, NABool state) {
   naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
   [nativePtr setCheckBoxState:state];
 }
 
 
 
-NA_DEF void naSetCheckBoxVisible(NACheckBox* checkBox, NABool visible){
+NA_DEF void naSetCheckBoxVisible(NACheckBox* checkBox, NABool visible) {
   naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
   [nativePtr setVisible:visible];
 }
 
 
 
-NA_DEF void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled){
+NA_DEF void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled) {
   naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
   [nativePtr setEnabled:(BOOL)enabled];
 }
 
 
 
-NA_DEF NABool naGetCheckBoxState(const NACheckBox* checkBox){
+NA_DEF NABool naGetCheckBoxState(const NACheckBox* checkBox) {
   naDefineCocoaObjectConst(NACocoaNativeCheckBox, nativePtr, checkBox);
   return [nativePtr checkBoxState];
 }
 
 
 
-NA_HDEF NARect na_GetCheckBoxRect(const NA_UIElement* checkBox){
+NA_HDEF NARect na_GetCheckBoxRect(const NA_UIElement* checkBox) {
   naDefineCocoaObjectConst(NACocoaNativeCheckBox, nativePtr, checkBox);
   return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-NA_HDEF void na_SetCheckBoxRect(NA_UIElement* checkBox, NARect rect){
+NA_HDEF void na_SetCheckBoxRect(NA_UIElement* checkBox, NARect rect) {
   naDefineCocoaObjectConst(NACocoaNativeCheckBox, nativePtr, checkBox);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }

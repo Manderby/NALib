@@ -6,10 +6,10 @@
 
 
 
-NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
-  switch(message){
+  switch(message) {
   case WM_SHOWWINDOW:
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
@@ -51,13 +51,13 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
 
 
-NABool naSelectWINAPINotify(void* uiElement, WORD notificationCode){
+NABool naSelectWINAPINotify(void* uiElement, WORD notificationCode) {
   NAWINAPISelect* winapiSelect = (NAWINAPISelect*)uiElement;
   NABool hasBeenHandeled = NA_FALSE;
   size_t itemIndex;
   const NAMenuItem* child;
 
-  switch(notificationCode){
+  switch(notificationCode) {
   case CBN_SELCHANGE:
     itemIndex = SendMessage(
       naGetUIElementNativePtr(uiElement),
@@ -73,7 +73,7 @@ NABool naSelectWINAPINotify(void* uiElement, WORD notificationCode){
 
 
 
-NA_DEF NASelect* naNewSelect(double width){
+NA_DEF NASelect* naNewSelect(double width) {
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   NAWINAPISelect* winapiSelect = naNew(NAWINAPISelect);
 
@@ -101,7 +101,7 @@ NA_DEF NASelect* naNewSelect(double width){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldSelectWindowProc){
+  if(!app->oldSelectWindowProc) {
     app->oldSelectWindowProc = oldproc;
   }
 
@@ -114,19 +114,19 @@ NA_DEF NASelect* naNewSelect(double width){
 #endif
 }
 
-NA_DEF void na_DestructWINAPISelect(NAWINAPISelect* winapiSelect){
+NA_DEF void na_DestructWINAPISelect(NAWINAPISelect* winapiSelect) {
   na_ClearSelect((NASelect*)winapiSelect);
 }
 
-NA_DEF void naSetSelectVisible(NASelect* select, NABool visible){
+NA_DEF void naSetSelectVisible(NASelect* select, NABool visible) {
   ShowWindow(naGetUIElementNativePtr(select), visible ? SW_SHOW : SW_HIDE);
 }
 
-NA_DEF void naSetSelectEnabled(NASelect* select, NABool enabled){
+NA_DEF void naSetSelectEnabled(NASelect* select, NABool enabled) {
   EnableWindow(naGetUIElementNativePtr(select), enabled);
 }
 
-NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenuItem* atItem){
+NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenuItem* atItem) {
   NAWINAPISelect* winapiSelect = (NAWINAPISelect*)select;
   
   // todo: allow separators. Will crash currently.
@@ -134,18 +134,18 @@ NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenu
   size_t index = naGetSelectItemIndex(select, atItem);
 
   SendMessage(naGetUIElementNativePtr(select), (UINT)CB_INSERTSTRING , (WPARAM)index, (LPARAM) itemText);
-  if(naGetListCount(&(select->childs)) == 0){
+  if(naGetListCount(&(select->childs)) == 0) {
     SendMessage(naGetUIElementNativePtr(select), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
   }
 
   na_AddSelectChild(select, item, atItem);
 }
 
-NA_DEF void naSetSelectIndexSelected(NASelect* select, size_t index){
+NA_DEF void naSetSelectIndexSelected(NASelect* select, size_t index) {
   SendMessage(naGetUIElementNativePtr(select), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
 }
 
-NA_DEF void naSetSelectItemSelected(NASelect* select, const NAMenuItem* item){
+NA_DEF void naSetSelectItemSelected(NASelect* select, const NAMenuItem* item) {
   size_t index = naGetSelectItemIndex(select, item);
   SendMessage(naGetUIElementNativePtr(select), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
 }
@@ -156,7 +156,7 @@ NA_HDEF NARect na_GetSelectRect(const NA_UIElement* select)
   return winapiSelect->rect;
 }
 
-NA_HDEF void na_SetSelectRect(NA_UIElement* select, NARect rect){
+NA_HDEF void na_SetSelectRect(NA_UIElement* select, NARect rect) {
   NAWINAPISelect* winapiSelect = (NAWINAPISelect*)select;
 
   winapiSelect->rect = rect;

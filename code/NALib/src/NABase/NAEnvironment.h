@@ -173,7 +173,7 @@
 
 
 
-#if (NA_SIZE_T_BITS != NA_ADDRESS_BITS)
+#if(NA_SIZE_T_BITS != NA_ADDRESS_BITS)
   #warning "size_t and address size do not match. Might cause problems."
 #endif
 

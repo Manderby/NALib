@@ -10,17 +10,17 @@ HKEY na_nativePreferences = NA_NULL;
 
 
 
-NA_HDEF void* na_GetNativePreferences(){
+NA_HDEF void* na_GetNativePreferences() {
   #if NA_DEBUG
     if(!naGetApplication())
       naError("No application running. Use naStartApplication.");
   #endif
-  if(!na_nativePreferences){
+  if(!na_nativePreferences) {
     NAString* appname = naNewApplicationName();
     NAString* companyname = naNewApplicationCompanyName();
 
     NAString* fullKeyName;
-    if(companyname){
+    if(companyname) {
       fullKeyName = naNewStringWithFormat("Software\\%s\\%s", naGetStringUTF8Pointer(companyname), naGetStringUTF8Pointer(appname));
     }else{
       fullKeyName = naNewStringWithFormat("Software\\%s", naGetStringUTF8Pointer(appname));
@@ -28,13 +28,13 @@ NA_HDEF void* na_GetNativePreferences(){
 
     WCHAR* systemFullKeyName = naAllocWideCharStringWithUTF8String(naGetStringUTF8Pointer(fullKeyName));
     LSTATUS errorCode = RegOpenKeyW(HKEY_CURRENT_USER, systemFullKeyName, &na_nativePreferences);
-    if(errorCode != ERROR_SUCCESS){
+    if(errorCode != ERROR_SUCCESS) {
       errorCode = RegCreateKeyW(HKEY_CURRENT_USER, systemFullKeyName, &na_nativePreferences);
     }
 
     naFree(systemFullKeyName);
     naDelete(appname);
-    if(companyname){
+    if(companyname) {
       naDelete(companyname);
     }
     naDelete(fullKeyName);
@@ -44,7 +44,7 @@ NA_HDEF void* na_GetNativePreferences(){
 
 
 
-NA_HDEF NAi64 na_GetRawPreferencesBool(void* prefs, const char* key){
+NA_HDEF NAi64 na_GetRawPreferencesBool(void* prefs, const char* key) {
   NAi64 valueStorage;
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
@@ -55,7 +55,7 @@ NA_HDEF NAi64 na_GetRawPreferencesBool(void* prefs, const char* key){
     : NA_ZERO_i64;
 }
 
-NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, NAi64 valueStorage){
+NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, NAi64 valueStorage) {
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
@@ -67,7 +67,7 @@ NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, NAi64 valueS
 
 
 
-NA_HDEF NAi64 na_GetRawPreferencesInt(void* prefs, const char* key){
+NA_HDEF NAi64 na_GetRawPreferencesInt(void* prefs, const char* key) {
   NAi64 valueStorage;
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
@@ -78,7 +78,7 @@ NA_HDEF NAi64 na_GetRawPreferencesInt(void* prefs, const char* key){
     : NA_ZERO_i64;
 }
 
-NA_HDEF void na_SetRawPreferencesInt(void* prefs, const char* key, NAi64 valueStorage){
+NA_HDEF void na_SetRawPreferencesInt(void* prefs, const char* key, NAi64 valueStorage) {
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
@@ -90,7 +90,7 @@ NA_HDEF void na_SetRawPreferencesInt(void* prefs, const char* key, NAi64 valueSt
 
 
 
-NA_HDEF NAi64 na_GetRawPreferencesEnum(void* prefs, const char* key){
+NA_HDEF NAi64 na_GetRawPreferencesEnum(void* prefs, const char* key) {
   NAi64 valueStorage;
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
@@ -101,7 +101,7 @@ NA_HDEF NAi64 na_GetRawPreferencesEnum(void* prefs, const char* key){
     : NA_ZERO_i64;
 }
 
-NA_HDEF void na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64 valueStorage){
+NA_HDEF void na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64 valueStorage) {
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
@@ -113,7 +113,7 @@ NA_HDEF void na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64 valueS
 
 
 
-NA_HDEF double na_GetRawPreferencesDouble(void* prefs, const char* key){
+NA_HDEF double na_GetRawPreferencesDouble(void* prefs, const char* key) {
   double valueStorage;
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
@@ -124,7 +124,7 @@ NA_HDEF double na_GetRawPreferencesDouble(void* prefs, const char* key){
     : 0.;
 }
 
-NA_HDEF void na_SetRawPreferencesDouble(void* prefs, const char* key, double valueStorage){
+NA_HDEF void na_SetRawPreferencesDouble(void* prefs, const char* key, double valueStorage) {
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
@@ -136,14 +136,14 @@ NA_HDEF void na_SetRawPreferencesDouble(void* prefs, const char* key, double val
 
 
 
-NA_HDEF NAString* na_GetRawPreferencesString(void* prefs, const char* key){
+NA_HDEF NAString* na_GetRawPreferencesString(void* prefs, const char* key) {
   NAString* valueStorage;
   HKEY registry = (HKEY)prefs;
   wchar_t* systemKey = naAllocWideCharStringWithUTF8String(key);
   DWORD valueSize;
   DWORD type;
   LSTATUS errorCode = RegQueryValueExW(registry, systemKey, NULL, &type, NULL, &valueSize);
-  if(errorCode != ERROR_SUCCESS){
+  if(errorCode != ERROR_SUCCESS) {
     naFree(systemKey);
     return NA_NULL;
   }
@@ -152,7 +152,7 @@ NA_HDEF NAString* na_GetRawPreferencesString(void* prefs, const char* key){
   errorCode = RegGetValueW(registry, NULL, systemKey, RRF_RT_ANY, &type, storedValue, (LPDWORD)&valueSize);
   naFree(systemKey);
 
-  if(errorCode == ERROR_SUCCESS){
+  if(errorCode == ERROR_SUCCESS) {
     valueStorage = naNewStringFromWideCharString(storedValue);
     naFree(storedValue);
   }else{
@@ -161,7 +161,7 @@ NA_HDEF NAString* na_GetRawPreferencesString(void* prefs, const char* key){
   return valueStorage;
 }
 
-NA_HDEF void na_SetRawPreferencesString(void* prefs, const char* key, NAString* valueStorage){
+NA_HDEF void na_SetRawPreferencesString(void* prefs, const char* key, NAString* valueStorage) {
   // Note that in this function it is necessary to convert the key to wchar_t
   // format as only the W functions can store unicode strings.
   // Stupid dog. You make this look bad.

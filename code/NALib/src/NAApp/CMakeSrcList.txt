@@ -127,7 +127,7 @@ target_sources(NALib PRIVATE ${coreFiles})
 source_group("NAApp/Core/UI" FILES ${coreUIFiles})
 target_sources(NALib PRIVATE ${coreUIFiles})
 
-if (MACOSX)
+if(MACOSX)
   source_group("NAApp/macOS" FILES ${macOSFiles})
   target_sources(NALib PRIVATE ${macOSFiles})
 
@@ -135,8 +135,8 @@ if (MACOSX)
   target_sources(NALib PRIVATE ${macOSUIFiles})
 endif()
 
-if (1)
-#if (MSVC)
+if(1)
+#if(MSVC)
   source_group("NAApp/winAPI" FILES ${winAPIFiles})
   target_sources(NALib PRIVATE ${winAPIFiles})
 

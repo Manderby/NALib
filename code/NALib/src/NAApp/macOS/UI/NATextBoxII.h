@@ -30,12 +30,12 @@
   [scrollView setDocumentView:self];
   NA_COCOA_RELEASE(clipView);
 
-  if([scrollView respondsToSelector:@selector(setAutomaticallyAdjustsContentInsets:)]){
+  if([scrollView respondsToSelector:@selector(setAutomaticallyAdjustsContentInsets:)]) {
     NA_MACOS_AVAILABILITY_GUARD_10_10(
       [scrollView setAutomaticallyAdjustsContentInsets:YES];
     )
   }
-  if([[scrollView contentView] respondsToSelector:@selector(setAutomaticallyAdjustsContentInsets:)]){
+  if([[scrollView contentView] respondsToSelector:@selector(setAutomaticallyAdjustsContentInsets:)]) {
     NA_MACOS_AVAILABILITY_GUARD_10_10(
       [[scrollView contentView] setAutomaticallyAdjustsContentInsets:YES];
     )
@@ -115,7 +115,7 @@
 
 
 
-NA_DEF NATextBox* naNewTextBox(NASize size){
+NA_DEF NATextBox* naNewTextBox(NASize size) {
   NACocoaTextBox* cocoaTextBox = naNew(NACocoaTextBox);
   
   NACocoaNativeTextBox* nativePtr = [[NACocoaNativeTextBox alloc]
@@ -130,34 +130,34 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 
 
 
-NA_DEF void na_DestructCocoaTextBox(NACocoaTextBox* cocoaTextBox){
+NA_DEF void na_DestructCocoaTextBox(NACocoaTextBox* cocoaTextBox) {
   na_ClearTextBox((NATextBox*)cocoaTextBox);
 }
 
 
 
-NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text){
+NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text) {
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setText:text];
 }
 
 
 
-NA_DEF NAString* naNewStringWithTextBoxText(const NATextBox* textBox){
+NA_DEF NAString* naNewStringWithTextBoxText(const NATextBox* textBox) {
   naDefineCocoaObjectConst(NACocoaNativeTextBox, nativePtr, textBox);
   return [nativePtr newStringWithText];
 }
 
 
 
-NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment){
+NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment) {
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setTextAlignment:alignment];
 }
 
 
 
-NA_DEF void naSetTextBoxFont(NATextBox* textBox, NAFont* font){
+NA_DEF void naSetTextBoxFont(NATextBox* textBox, NAFont* font) {
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setNAFont:font];
   naRelease(textBox->font);
@@ -166,39 +166,39 @@ NA_DEF void naSetTextBoxFont(NATextBox* textBox, NAFont* font){
 
 
 
-NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox){
+NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox) {
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setUseHorizontalScrolling];
 }
 
 
 
-NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use){
+NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use) {
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setUseVerticalScrolling: use ? YES : NO];
 }
 
 
 
-NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
+NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable) {
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setReadOnly:!editable];
 }
 
 
 
-NA_DEF void naSetTextBoxVisible(NATextBox* textBox, NABool visible){
+NA_DEF void naSetTextBoxVisible(NATextBox* textBox, NABool visible) {
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setHidden: !visible];
 }
 
 
-NA_HDEF NARect na_GetTextBoxRect(const NA_UIElement* textBox){
+NA_HDEF NARect na_GetTextBoxRect(const NA_UIElement* textBox) {
   naDefineCocoaObjectConst(NACocoaNativeTextBox, nativePtr, textBox);
   return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect){
+NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect) {
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }

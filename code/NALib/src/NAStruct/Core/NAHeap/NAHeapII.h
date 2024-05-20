@@ -59,7 +59,7 @@ struct NAHeapBackEntry{
 
 
 
-NA_IDEF void naClearHeap(NAHeap* heap){
+NA_IDEF void naClearHeap(NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
       naCrash("heap is Null-Pointer.");
@@ -68,12 +68,12 @@ NA_IDEF void naClearHeap(NAHeap* heap){
 }
 
 
-NA_IDEF void naEmptyHeap(NAHeap* heap){
+NA_IDEF void naEmptyHeap(NAHeap* heap) {
   heap->count = 0;
 }
 
 
-NA_IDEF NAInt naGetHeapCount (const NAHeap* heap){
+NA_IDEF NAInt naGetHeapCount (const NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
       naCrash("heap is Null-Pointer.");
@@ -82,7 +82,7 @@ NA_IDEF NAInt naGetHeapCount (const NAHeap* heap){
 }
 
 
-NA_IDEF NAInt naGetHeapMaxCount(const NAHeap* heap){
+NA_IDEF NAInt naGetHeapMaxCount(const NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
       naCrash("heap is Null-Pointer.");
@@ -94,18 +94,18 @@ NA_IDEF NAInt naGetHeapMaxCount(const NAHeap* heap){
 NA_IDEF void naInsertHeapElementConst(  NAHeap* heap,
                                     const void* ptr,
                                     const void* key,
-                                         NAInt* backPointer){
+                                         NAInt* backPointer) {
   heap->insertConst(heap, ptr, key, backPointer);
 }
 NA_IDEF void naInsertHeapElementMutable( NAHeap* heap,
                                           void* ptr,
                                     const void* key,
-                                         NAInt* backPointer){
+                                         NAInt* backPointer) {
   heap->insertMutable(heap, ptr, key, backPointer);
 }
 
 
-NA_IDEF const void* naGetHeapRootConst(const NAHeap* heap){
+NA_IDEF const void* naGetHeapRootConst(const NAHeap* heap) {
   // Note that it is irrelevant whether the heap stores elements with or
   // without backpoitners. The ptr and key field are always at the same
   // position.
@@ -118,7 +118,7 @@ NA_IDEF const void* naGetHeapRootConst(const NAHeap* heap){
 }
 
 
-NA_IDEF void* naGetHeapRootMutable(const NAHeap* heap){
+NA_IDEF void* naGetHeapRootMutable(const NAHeap* heap) {
   // Note that it is irrelevant whether the heap stores elements with or
   // without backpoitners. The ptr and key field are always at the same
   // position.
@@ -131,15 +131,15 @@ NA_IDEF void* naGetHeapRootMutable(const NAHeap* heap){
 }
 
 
-NA_IDEF const void* naRemoveHeapRootConst(NAHeap* heap){
+NA_IDEF const void* naRemoveHeapRootConst(NAHeap* heap) {
   return heap->removeConst(heap);
 }
-NA_IDEF void* naRemoveHeapRootMutable(NAHeap* heap){
+NA_IDEF void* naRemoveHeapRootMutable(NAHeap* heap) {
   return heap->removeMutable(heap);
 }
 
 
-NA_IDEF const void* naGetHeapRootKey(const NAHeap* heap){
+NA_IDEF const void* naGetHeapRootKey(const NAHeap* heap) {
   // Note that it is irrelevant whether the heap stores elements with or
   // without backpoitners. The ptr and key field are always at the same
   // position.
@@ -152,19 +152,19 @@ NA_IDEF const void* naGetHeapRootKey(const NAHeap* heap){
 }
 
 
-NA_IDEF void naUpdateHeapElement(NAHeap* heap, NAInt backPointer){
+NA_IDEF void naUpdateHeapElement(NAHeap* heap, NAInt backPointer) {
   heap->updateBack(heap, backPointer);
 }
 
 
 
-NA_IDEF const void* naRemoveHeapPosConst(NAHeap* heap, NAInt backPointer){
+NA_IDEF const void* naRemoveHeapPosConst(NAHeap* heap, NAInt backPointer) {
   return heap->removePosConst(heap, backPointer);
 }
 
 
 
-NA_IDEF void* naRemoveHeapPosMutable(NAHeap* heap, NAInt backPointer){
+NA_IDEF void* naRemoveHeapPosMutable(NAHeap* heap, NAInt backPointer) {
   return heap->removePosMutable(heap, backPointer);
 }
 

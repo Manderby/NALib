@@ -13,7 +13,7 @@
   [self setSelectable:YES];
   [self setEditable:YES];
 //  [self setBordered:YES];
-  if([self respondsToSelector:@selector(setLineBreakMode:)]){
+  if([self respondsToSelector:@selector(setLineBreakMode:)]) {
     NA_MACOS_AVAILABILITY_GUARD_10_10(
       [self setLineBreakMode:NSLineBreakByTruncatingHead];
     )
@@ -47,7 +47,7 @@
 
 - (void) setColor:(const NAColor*)color{
   NSColor* nsColor;
-  if(color){
+  if(color) {
     uint8 buf[4];
     naFillSRGBu8WithColor(buf, color, NA_COLOR_BUFFER_RGBA);
     nsColor = [NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.];
@@ -77,7 +77,7 @@
 
 
 
-NA_DEF NATextField* naNewTextField(double width){
+NA_DEF NATextField* naNewTextField(double width) {
   NACocoaTextField* cocoaTextField = naNew(NACocoaTextField);
   
   NACocoaNativeTextField* nativePtr = [[NACocoaNativeTextField alloc]
@@ -92,48 +92,48 @@ NA_DEF NATextField* naNewTextField(double width){
 
 
 
-NA_DEF void na_DestructCocoaTextField(NACocoaTextField* cocoaTextField){
+NA_DEF void na_DestructCocoaTextField(NACocoaTextField* cocoaTextField) {
   na_ClearTextField((NATextField*)cocoaTextField);
 }
 
 
 
-NA_DEF void naSetTextFieldEnabled(NATextField* textField, NABool enabled){
+NA_DEF void naSetTextFieldEnabled(NATextField* textField, NABool enabled) {
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
   [nativePtr setEnabled:(BOOL)enabled];
 }
 
 
 
-NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text){
+NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text) {
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
   [nativePtr setText:text];
 }
 
 
 
-NA_DEF NAString* naNewStringWithTextFieldText(const NATextField* textField){
+NA_DEF NAString* naNewStringWithTextFieldText(const NATextField* textField) {
   naDefineCocoaObjectConst(NACocoaNativeTextField, nativePtr, textField);
   return [nativePtr newStringWithText];
 }
 
 
 
-NA_DEF void naSetTextFieldColor(NATextField* textField, const NAColor* color){
+NA_DEF void naSetTextFieldColor(NATextField* textField, const NAColor* color) {
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
   [nativePtr setColor:color];
 }
 
 
 
-NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment alignment){
+NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment alignment) {
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
   [nativePtr setTextAlignment:alignment];
 }
 
 
 
-NA_DEF void naSetTextFieldFont(NATextField* textField, NAFont* font){
+NA_DEF void naSetTextFieldFont(NATextField* textField, NAFont* font) {
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
   [nativePtr setNAFont:font];
   naRelease(textField->font);
@@ -141,12 +141,12 @@ NA_DEF void naSetTextFieldFont(NATextField* textField, NAFont* font){
 }
 
 
-NA_HDEF NARect na_GetTextFieldRect(const NA_UIElement* textField){
+NA_HDEF NARect na_GetTextFieldRect(const NA_UIElement* textField) {
   naDefineCocoaObjectConst(NACocoaNativeTextField, nativePtr, textField);
   return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-NA_HDEF void na_SetTextFieldRect(NA_UIElement* textField, NARect rect){
+NA_HDEF void na_SetTextFieldRect(NA_UIElement* textField, NARect rect) {
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }

@@ -13,20 +13,20 @@ struct NAHuffmanCodeTree{
 };
 
 
-NAHuffmanCodeTree* naAllocHuffmanCodeTree(uint16 alphabetcount){
+NAHuffmanCodeTree* naAllocHuffmanCodeTree(uint16 alphabetcount) {
   NAHuffmanCodeTree* tree = naAlloc(NAHuffmanCodeTree);
   tree->alphabetcount = alphabetcount;
   tree->codes = naMalloc(alphabetcount * sizeof(uint16));
   tree->codelengths = naMalloc(alphabetcount * sizeof(uint16));
   tree->indextree = naMalloc((2 * (size_t)alphabetcount - 1) * sizeof(int32));
-  for(int16 i = 0; i < alphabetcount; ++i){
+  for(int16 i = 0; i < alphabetcount; ++i) {
     tree->codelengths[i] = 0;
   }
   return tree;
 }
 
 
-void naDeallocHuffmanCodeTree(NAHuffmanCodeTree* tree){
+void naDeallocHuffmanCodeTree(NAHuffmanCodeTree* tree) {
   naFree(tree->codes);
   naFree(tree->codelengths);
   naFree(tree->indextree);
@@ -34,7 +34,7 @@ void naDeallocHuffmanCodeTree(NAHuffmanCodeTree* tree){
 }
 
 
-void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
+void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree) {
   uint16 codelengthcount[17] = {0};
   uint16 nextcodes[17] = {0};
   uint16 a;
@@ -47,7 +47,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
   #endif
 
   // Count the number of code lengths
-  for(a = 0; a < tree->alphabetcount; a++){
+  for(a = 0; a < tree->alphabetcount; a++) {
     #if NA_DEBUG
       // Literals of the alphabet which are not in use have a codelength
       // of 0 and therefore, we need to allow that value.
@@ -63,7 +63,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
   // Prepare the next bit codes per codelength
   code = 0;
   codelengthcount[0] = 0;
-  for(a = 1; a < 17; a++){
+  for(a = 1; a < 17; a++) {
     #if NA_DEBUG
       if(codelengthcount[a] > (1<<a))
         // Note that the case of having exaclty 1<<a codelengths can actually
@@ -71,14 +71,14 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
         naError("Too many codelengths of the same length");
     #endif
     code = (uint16)((code + codelengthcount[a - 1]) << 1);
-    if(codelengthcount[a]){ // this if is not necessary but is easier to debug
+    if(codelengthcount[a]) { // this if is not necessary but is easier to debug
       nextcodes[a] = code;
     }
   }
 
   // Compute the actual codes of the alphabet
-  for(a = 0; a < tree->alphabetcount; a++){
-    if(tree->codelengths[a]){
+  for(a = 0; a < tree->alphabetcount; a++) {
+    if(tree->codelengths[a]) {
       #if NA_DEBUG
         if(tree->codelengths[a] > 16)
           naError("Suddenly found a codelength of more than 16");
@@ -94,7 +94,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
   #endif
   tree->indextree[0] = 0;
   newtreeindex = 1;
-  for(a = 0; a < tree->alphabetcount; a++){
+  for(a = 0; a < tree->alphabetcount; a++) {
     uint16 len;
     code = tree->codes[a];
     len = tree->codelengths[a];
@@ -104,9 +104,9 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
     
     curmask = (uint16)(1 << (len - 1));
     curIndex = 0;
-    while(curmask){
+    while(curmask) {
       // If there is no entry in the tree, create two branches.
-      if(tree->indextree[curIndex] == 0){
+      if(tree->indextree[curIndex] == 0) {
         #if NA_DEBUG
           if(newtreeindex >= (2 * tree->alphabetcount - 1))
             naError("tree index suddenly overflows");
@@ -122,7 +122,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
 
       curIndex = tree->indextree[curIndex];
 
-      if(code & curmask){
+      if(code & curmask) {
         curIndex++;
       }
 
@@ -152,7 +152,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
     if(openends != 0)
       naError("Tree incomplete");
 
-    for(a = 0; a < newtreeindex; a++){
+    for(a = 0; a < newtreeindex; a++) {
       if(tree->indextree[a] == 0)
         naError("undefined index in tree");
     }
@@ -162,15 +162,15 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
 
 
 
-void naResetHuffmanCodeTree(NAHuffmanCodeTree* tree){
+void naResetHuffmanCodeTree(NAHuffmanCodeTree* tree) {
   tree->curIndex = 0;
 }
 
 
 
-NABool naTraverseHuffmanCodeTree(NAHuffmanCodeTree* tree, NABool bit, uint16* alphabet){
+NABool naTraverseHuffmanCodeTree(NAHuffmanCodeTree* tree, NABool bit, uint16* alphabet) {
   tree->curIndex = tree->indextree[tree->curIndex];
-  if(bit){
+  if(bit) {
     tree->curIndex++;
   }
   *alphabet = (uint16)(-(tree->indextree[tree->curIndex] + 1));
@@ -179,31 +179,31 @@ NABool naTraverseHuffmanCodeTree(NAHuffmanCodeTree* tree, NABool bit, uint16* al
 
 
 
-uint16 naDecodeHuffman(NAHuffmanCodeTree* tree, NABufferIterator* iter){
+uint16 naDecodeHuffman(NAHuffmanCodeTree* tree, NABufferIterator* iter) {
   uint16 symbol;
   naResetHuffmanCodeTree(tree);
-  while(naTraverseHuffmanCodeTree(tree, naReadBufferBit(iter), &symbol)){}
+  while(naTraverseHuffmanCodeTree(tree, naReadBufferBit(iter), &symbol)) {}
   return symbol;
 }
 
 
 
-NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman, NABufferIterator* iter, uint16 alphabetcount){
+NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman, NABufferIterator* iter, uint16 alphabetcount) {
   NAHuffmanCodeTree* alphabethuffman = naAllocHuffmanCodeTree(alphabetcount);
   uint16 curalphabetcount = 0;
-  while(curalphabetcount < alphabetcount){
+  while(curalphabetcount < alphabetcount) {
     uint16 codelength;
     uint16 repeatcount;
     uint16 i;
     codelength = naDecodeHuffman(codelengthhuffman, iter);
-    switch(codelength){
+    switch(codelength) {
     case 16:
       repeatcount = (uint16)naReadBufferBits32(iter, 2) + 3;
       #if NA_DEBUG
         if((curalphabetcount + repeatcount) > alphabetcount)
           naError("Internal Error: Reading too many literals at codelength 16");
       #endif
-      for(i = 0; i < repeatcount; ++i){
+      for(i = 0; i < repeatcount; ++i) {
         alphabethuffman->codelengths[curalphabetcount + i] = alphabethuffman->codelengths[curalphabetcount - 1];
       }
       curalphabetcount += repeatcount;
@@ -214,7 +214,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
         if((curalphabetcount + repeatcount) > alphabetcount)
           naError("Internal Error: Reading too many literals at codelength 17");
       #endif
-      for(i = 0; i < repeatcount; ++i){
+      for(i = 0; i < repeatcount; ++i) {
         alphabethuffman->codelengths[curalphabetcount + i] = 0;
       }
       curalphabetcount += repeatcount;
@@ -225,7 +225,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
         if((curalphabetcount + repeatcount) > alphabetcount)
           naError("Internal Error: Reading too many literals at codelength 18");
       #endif
-      for(i = 0; i < repeatcount; ++i){
+      for(i = 0; i < repeatcount; ++i) {
         alphabethuffman->codelengths[curalphabetcount + i] = 0;
       }
       curalphabetcount += repeatcount;
@@ -243,9 +243,9 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
 
 
 
-uint16 naDecodeLiteralLength(NABufferIterator* iter, uint16 code){
+uint16 naDecodeLiteralLength(NABufferIterator* iter, uint16 code) {
   uint16 retValue;
-  switch(code){
+  switch(code) {
   case 257: retValue = 3; break;
   case 258: retValue = 4; break;
   case 259: retValue = 5; break;
@@ -286,9 +286,9 @@ uint16 naDecodeLiteralLength(NABufferIterator* iter, uint16 code){
 }
 
 
-uint16 naDecodeDistance(NABufferIterator* iter, uint16 code){
+uint16 naDecodeDistance(NABufferIterator* iter, uint16 code) {
   uint16 retValue;
-  switch(code){
+  switch(code) {
   case 0: retValue = 1; break;
   case 1: retValue = 2; break;
   case 2: retValue = 3; break;
@@ -331,7 +331,7 @@ uint16 naDecodeDistance(NABufferIterator* iter, uint16 code){
 
 
 
-NA_HDEF void na_ReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
+NA_HDEF void na_ReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman) {
   uint8 codeorder[19] = {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
   int c;
 
@@ -341,7 +341,7 @@ NA_HDEF void na_ReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTre
 
 //  naAlloc(NABuffer);
   NAHuffmanCodeTree* codelengthhuffman = naAllocHuffmanCodeTree(19);
-  for(c = 0; c < hclen; c++){
+  for(c = 0; c < hclen; c++) {
     codelengthhuffman->codelengths[codeorder[c]] = (uint16)naReadBufferBits32(iter, 3);
   }
   naBuildHuffmanCodeTree(codelengthhuffman);
@@ -356,20 +356,20 @@ NA_HDEF void na_ReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTre
 
 
 
-NA_HDEF void na_AllocFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
+NA_HDEF void na_AllocFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman) {
   uint16 i;
 
   *literalhuffman = naAllocHuffmanCodeTree(288);
-  for(i = 0; i <= 143; ++i){
+  for(i = 0; i <= 143; ++i) {
     (*literalhuffman)->codelengths[i] = 8;
   }
-  for(i = 144; i <= 255; ++i){
+  for(i = 144; i <= 255; ++i) {
     (*literalhuffman)->codelengths[i] = 9;
   }
-  for(i = 256; i <= 279; ++i){
+  for(i = 256; i <= 279; ++i) {
     (*literalhuffman)->codelengths[i] = 7;
   }
-  for(i = 280; i <= 287; ++i){
+  for(i = 280; i <= 287; ++i) {
     (*literalhuffman)->codelengths[i] = 8;
   }
   naBuildHuffmanCodeTree(*literalhuffman);
@@ -377,7 +377,7 @@ NA_HDEF void na_AllocFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuf
   // Note that only the values up to 29 are used but we fill up the remaining
   // thre values anyway as otherwise, the huffman tree will be incomplete.
   *distancehuffman = naAllocHuffmanCodeTree(32);
-  for(i = 0; i < 32; ++i){
+  for(i = 0; i < 32; ++i) {
     (*distancehuffman)->codelengths[i] = 5;
   }
   naBuildHuffmanCodeTree(*distancehuffman);
@@ -388,7 +388,7 @@ NA_HDEF void na_AllocFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuf
 #define NA_ZLIB_CMF_MAX_WINDOW_SIZE 7     // 2 ^ MAX_WINDOWSIZE + 8
 
 
-NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input){
+NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input) {
   uint8 compressionmethodflags;
   uint8 compressionmethod;
   uint8 compressioninfo;
@@ -446,7 +446,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
     NA_UNUSED(flagcheck);
   #endif
 
-  if(haspresetdict){
+  if(haspresetdict) {
     dictadler = naReadBufferu32(&iterIn);
     zbuffersize -= 4;
   }
@@ -466,14 +466,14 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   iterOut = naMakeBufferModifier(output);
   iterz = naMakeBufferModifier(zbuffer);
 
-  while(1){
+  while(1) {
     NAByte isblockfinal = (NAByte)naReadBufferBits32(&iterz, 1);
     NAByte blocktype = (NAByte)naReadBufferBits32(&iterz, 2);
     #if NA_DEBUG
       if(blocktype == 0x03)
       naError("Block compression invalid");
     #endif
-    if(blocktype == 0x00){
+    if(blocktype == 0x00) {
       // Blocktype 0x00 is an uncompressed block.
       uint16 len;
       uint16 nlen;
@@ -498,22 +498,22 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
     }else{
       NAHuffmanCodeTree* literalhuffman;
       NAHuffmanCodeTree* distancehuffman;
-      if(blocktype == 0x02){
+      if(blocktype == 0x02) {
         na_ReadDymanicHuffmanCodes(&iterz, &literalhuffman, &distancehuffman);
       }else{
         na_AllocFixedHuffmanCodes(&literalhuffman, &distancehuffman);
       }
       // Now, we have the literal and distance codes. Start reading until we
       // find the value 256.
-      while(1){
+      while(1) {
 
         uint16 curCode;
         uint16 length;
         uint16 dist;
         curCode = naDecodeHuffman(literalhuffman, &iterz);
-        if(curCode < 256){
+        if(curCode < 256) {
           naWriteBufferu8(&iterOut, (uint8)curCode);
-        }else if(curCode == 256){
+        }else if(curCode == 256) {
           break;
         }else{
           uint16 distcode;
@@ -555,7 +555,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
 
 #define NA_ZLIB_PRESET_DICT_AVAILABLE 0
 
-NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, NADeflateCompressionLevel level){
+NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, NADeflateCompressionLevel level) {
 
   uint8 cmf;
   uint8 flg;
@@ -588,10 +588,10 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
 //  naLocateBufferAbsolute(input, 0);
 
   curOffset = 0;
-  while(byteSize > 0){
+  while(byteSize > 0) {
     uint16 curByteSize;
     NAByte headbyte = (0 << 1);
-    if(byteSize >= (1 << 15)){
+    if(byteSize >= (1 << 15)) {
       curByteSize = (1 << 15) - 1;
     }else{
       curByteSize = (uint16)byteSize;

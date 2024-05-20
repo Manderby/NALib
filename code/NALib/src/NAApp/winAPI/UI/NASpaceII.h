@@ -6,7 +6,7 @@
 
 
 
-NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   RECT spaceRect;
   NA_UIElement* childElement;
@@ -14,7 +14,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIColor* bgColor;
 
-  switch(message){
+  switch(message) {
   case WM_SHOWWINDOW:
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
@@ -72,9 +72,9 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_CTLCOLORBTN: // Button
     {
       const NA_UIElement* uiElement = na_GetUINALibEquivalent((void*)lParam);
-      if(naGetUIElementType(uiElement) == NA_UI_BUTTON){
+      if(naGetUIElementType(uiElement) == NA_UI_BUTTON) {
         const NAButton* button = (const NAButton*)uiElement;
-        if(naIsButtonBordered(button) && naIsButtonStateful(button) && naGetButtonState(button)){
+        if(naIsButtonBordered(button) && naIsButtonStateful(button) && naGetButtonState(button)) {
           // we choose yellow as background as this is probably the last color ever
           // being used as a system UI style.
           info.result = (LRESULT)CreateSolidBrush(RGB(255, 255, 0));
@@ -104,9 +104,9 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     // lParam HWND handle to actual control
     // return: background color brush
     childElement = (NA_UIElement*)na_GetUINALibEquivalent((HWND)lParam);
-    switch(childElement->elementType){
+    switch(childElement->elementType) {
     case NA_UI_LABEL:
-      if(naIsLabelEnabled((NALabel*)childElement)){
+      if(naIsLabelEnabled((NALabel*)childElement)) {
         SetTextColor((HDC)wParam, app->fgColor.color);
       }else{
         SetTextColor((HDC)wParam, app->fgColorDisabled.color);
@@ -132,7 +132,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
     GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
     bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
-    if(winapiSpace->forceEraseBackground || bgColor != winapiSpace->lastBgColor){
+    if(winapiSpace->forceEraseBackground || bgColor != winapiSpace->lastBgColor) {
       FillRect((HDC)wParam, &spaceRect, bgColor->brush);
       winapiSpace->lastBgColor = bgColor;
       winapiSpace->forceEraseBackground = NA_FALSE;
@@ -151,18 +151,18 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
 
 
-NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace){
+NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIColor* retcolor;
   NAInt alternateLevel = 0;
   const void* parent = winapiSpace;
-  while(parent){
-    if(naGetSpaceAlternateBackground(parent)){
+  while(parent) {
+    if(naGetSpaceAlternateBackground(parent)) {
       alternateLevel++;
     }
     parent = naGetUIElementParentSpaceConst(parent);
   }
-  switch(alternateLevel){
+  switch(alternateLevel) {
   case 0: retcolor = &(app->bgColor); break;
   case 1: retcolor = &(app->bgColorAlternate); break;
   case 2:
@@ -174,7 +174,7 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace)
 
 
 
-NA_DEF NASpace* naNewSpace(NASize size){
+NA_DEF NASpace* naNewSpace(NASize size) {
   NAWINAPISpace* winapiSpace = naNew(NAWINAPISpace);
 
   winapiSpace->rect = naMakeRect(naMakePos(0., 0.), size);
@@ -207,13 +207,13 @@ NA_DEF NASpace* naNewSpace(NASize size){
 
 
 
-NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace){
+NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace) {
   na_ClearSpace((NASpace*)winapiSpace);
 }
 
 
 
-NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
+NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos) {
   na_AddSpaceChild(space, child);
 
   double offsetY = na_GetUIElementYOffset(child);
@@ -225,17 +225,17 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
 
 
 
-NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NAColor* color){
+NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
   // todo
 }
 
 
 
-NA_DEF void naRemoveSpaceChild(NASpace* space, void* child){
+NA_DEF void naRemoveSpaceChild(NASpace* space, void* child) {
   NAListIterator iter = naMakeListModifier(&(space->childs));
   NABool found = naLocateListData(&iter, child);
   naClearListIterator(&iter);
-  if(found){
+  if(found) {
     na_RemoveSpaceChild(space, child);
     ((NAWINAPISpace*)space)->forceEraseBackground = NA_TRUE;
   }else{
@@ -247,8 +247,8 @@ NA_DEF void naRemoveSpaceChild(NASpace* space, void* child){
 
 
 
-NA_DEF void naRemoveAllSpaceChilds(NASpace* space){
-  while(!naIsListEmpty(&(space->childs))){
+NA_DEF void naRemoveAllSpaceChilds(NASpace* space) {
+  while(!naIsListEmpty(&(space->childs))) {
     void* child = naGetListFirstMutable(&(space->childs));
     na_RemoveSpaceChild(space, child);
   }
@@ -257,11 +257,11 @@ NA_DEF void naRemoveAllSpaceChilds(NASpace* space){
 
 
 
-NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift){
+NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift) {
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
 
   NAListIterator childIt = naMakeListMutator(&(space->childs));
-  while(naIterateList(&childIt)){
+  while(naIterateList(&childIt)) {
     void* child = naGetListCurMutable(&childIt);
     NARect elementRect = naGetUIElementRect(child);
     elementRect.pos.x += shift.x;
@@ -273,26 +273,26 @@ NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift){
 
 
 
-NA_DEF void naSetSpaceVisible(NASpace* space, NABool visible){
+NA_DEF void naSetSpaceVisible(NASpace* space, NABool visible) {
   ShowWindow(naGetUIElementNativePtr(space), visible ? SW_SHOW : SW_HIDE);
 }
 
 
 
-NA_HDEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable){
+NA_HDEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable) {
   // todo
 }
 
 
 
-NA_HDEF NARect na_GetSpaceRect(const NA_UIElement* space){
+NA_HDEF NARect na_GetSpaceRect(const NA_UIElement* space) {
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
   return winapiSpace->rect;
 }
 
 
 
-NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect){
+NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
 
   winapiSpace->rect = rect;

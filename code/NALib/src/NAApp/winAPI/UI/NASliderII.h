@@ -6,14 +6,14 @@
 
 
 
-NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NASlider* slider = (NASlider*)uiElement;
   NAWINAPISpace* winapiSpace;
   NAWINAPIColor* bgColor;
   RECT sliderRect;
 
-  switch(message){
+  switch(message) {
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
   case WM_WINDOWPOSCHANGED:
@@ -85,7 +85,7 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
 
 
-NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam){
+NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam) {
   NAWINAPICallbackInfo info = {NA_TRUE, 0};
 
   naSetSliderValue(uiElement, naGetSliderValue(uiElement));
@@ -96,7 +96,7 @@ NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam){
 
 
 
-NA_DEF NASlider* naNewSlider(double width){
+NA_DEF NASlider* naNewSlider(double width) {
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   NAWINAPISlider* winapiSlider = naNew(NAWINAPISlider);
 
@@ -139,7 +139,7 @@ NA_DEF NASlider* naNewSlider(double width){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldSliderWindowProc){
+  if(!app->oldSliderWindowProc) {
     app->oldSliderWindowProc = oldproc;
   }
 
@@ -154,25 +154,25 @@ NA_DEF NASlider* naNewSlider(double width){
 
 
 
-NA_DEF void na_DestructWINAPISlider(NAWINAPISlider* winapiSlider){
+NA_DEF void na_DestructWINAPISlider(NAWINAPISlider* winapiSlider) {
   na_ClearSlider((NASlider*)winapiSlider);
 }
 
 
 
-NA_DEF void naSetSliderVisible(NASlider* slider, NABool visible){
+NA_DEF void naSetSliderVisible(NASlider* slider, NABool visible) {
   ShowWindow(naGetUIElementNativePtr(slider), visible ? SW_SHOW : SW_HIDE);
 }
 
 
 
-NA_DEF void naSetSliderEnabled(NASlider* slider, NABool enabled){
+NA_DEF void naSetSliderEnabled(NASlider* slider, NABool enabled) {
   EnableWindow(naGetUIElementNativePtr(slider), enabled);
 }
 
 
 
-NA_API double naGetSliderValue(const NASlider* slider){
+NA_API double naGetSliderValue(const NASlider* slider) {
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   int32 sliderValue = (int32)SendMessage(naGetUIElementNativePtrConst(slider), TBM_GETPOS, 0, 0); 
   double plainValue = (double)sliderValue / (double)NA_MAX_i32;
@@ -184,20 +184,20 @@ NA_API double naGetSliderValue(const NASlider* slider){
 
 
 
-NA_DEF double naGetSliderStaticValue(const NASlider* slider){
+NA_DEF double naGetSliderStaticValue(const NASlider* slider) {
   return slider->staticValue;
 }
 
 
 
-NA_API void naSetSliderValue(NASlider* slider, double value){
+NA_API void naSetSliderValue(NASlider* slider, double value) {
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   double plainValue = (value - slider->min) / (slider->max - slider->min);
   int32 sliderValue = (int32)(plainValue * (double)NA_MAX_i32);
   SendMessage(naGetUIElementNativePtr(slider), TBM_SETPOS, 
     (WPARAM) TRUE, // redraw flag 
     (LPARAM) sliderValue);
-  if(!slider->sliderInMovement){
+  if(!slider->sliderInMovement) {
     slider->staticValue = value;
   }
 #endif
@@ -205,7 +205,7 @@ NA_API void naSetSliderValue(NASlider* slider, double value){
 
 
 
-NA_API void naSetSliderRange(NASlider* slider, double min, double max, NAInt tickCount){
+NA_API void naSetSliderRange(NASlider* slider, double min, double max, NAInt tickCount) {
   // todo
   slider->min = min;
   slider->max = max;
@@ -219,7 +219,7 @@ NA_HDEF NARect na_GetSliderRect(const NA_UIElement* slider)
   return winapiSlider->rect;
 }
 
-NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect){
+NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect) {
   NAWINAPISlider* winapiSlider = (NAWINAPISlider*)slider;
 
   winapiSlider->rect = rect;

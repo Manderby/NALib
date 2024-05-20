@@ -55,7 +55,7 @@ NA_HIAPI void*         na_GetStackArrayAt(NAListIterator* iter, size_t index, si
 #endif
 
 
-NA_HIDEF void* na_AllocStackArray(size_t count, size_t typeSize){
+NA_HIDEF void* na_AllocStackArray(size_t count, size_t typeSize) {
   #if NA_DEBUG
     if(!count)
       naError("count must be > 0");
@@ -69,7 +69,7 @@ NA_HIDEF void* na_AllocStackArray(size_t count, size_t typeSize){
 
 
 
-NA_HIDEF void na_DeallocStackArray(void* array){
+NA_HIDEF void na_DeallocStackArray(void* array) {
   #if NA_DEBUG
     if(!array)
       naError("array is Null");
@@ -79,7 +79,7 @@ NA_HIDEF void na_DeallocStackArray(void* array){
 
 
 
-NA_HIDEF size_t na_GetStackArrayCount(const NAListIterator* iter){
+NA_HIDEF size_t na_GetStackArrayCount(const NAListIterator* iter) {
   #if NA_DEBUG
     if(!iter)
       naCrash("iter is Null");
@@ -91,7 +91,7 @@ NA_HIDEF size_t na_GetStackArrayCount(const NAListIterator* iter){
 
 
 
-NA_HIDEF const NAByte* na_GetStackArrayFirstConst(const NAListIterator* iter){
+NA_HIDEF const NAByte* na_GetStackArrayFirstConst(const NAListIterator* iter) {
   #if NA_DEBUG
     if(!iter)
       naCrash("iter is Null");
@@ -103,7 +103,7 @@ NA_HIDEF const NAByte* na_GetStackArrayFirstConst(const NAListIterator* iter){
 
 
 
-NA_HIDEF NAByte* na_GetStackArrayFirstMutable(NAListIterator* iter){
+NA_HIDEF NAByte* na_GetStackArrayFirstMutable(NAListIterator* iter) {
   #if NA_DEBUG
     if(!iter)
       naCrash("iter is Null");
@@ -115,7 +115,7 @@ NA_HIDEF NAByte* na_GetStackArrayFirstMutable(NAListIterator* iter){
 
 
 
-NA_HIDEF void* na_GetStackArrayAt(NAListIterator* iter, size_t index, size_t typeSize){
+NA_HIDEF void* na_GetStackArrayAt(NAListIterator* iter, size_t index, size_t typeSize) {
   #if NA_DEBUG
     if(!iter)
       naCrash("iter is Null");
@@ -131,7 +131,7 @@ NA_HIDEF void* na_GetStackArrayAt(NAListIterator* iter, size_t index, size_t typ
 
 
 
-NA_IDEF void* naTopStack(NAStack* stack){
+NA_IDEF void* naTopStack(NAStack* stack) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -147,13 +147,13 @@ NA_IDEF void* naTopStack(NAStack* stack){
 
 
 
-NA_IDEF void* naPushStack(NAStack* stack){
+NA_IDEF void* naPushStack(NAStack* stack) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
   #endif
 
-  if(stack->curCount == na_GetStackArrayCount(&(stack->curArray))){
+  if(stack->curCount == na_GetStackArrayCount(&(stack->curArray))) {
     na_GrowStack(stack);
   }
 
@@ -163,7 +163,7 @@ NA_IDEF void* naPushStack(NAStack* stack){
 
 
 
-NA_IDEF void* naPopStack(NAStack* stack){
+NA_IDEF void* naPopStack(NAStack* stack) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -174,7 +174,7 @@ NA_IDEF void* naPopStack(NAStack* stack){
   void* retValue = naTopStack(stack);
   stack->curCount--;
 
-  if(stack->curCount == 0){
+  if(stack->curCount == 0) {
     na_ShrinkStack(stack);
   }
 
@@ -183,7 +183,7 @@ NA_IDEF void* naPopStack(NAStack* stack){
 
 
 
-NA_IDEF size_t naGetStackCount(const NAStack* stack){
+NA_IDEF size_t naGetStackCount(const NAStack* stack) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -193,7 +193,7 @@ NA_IDEF size_t naGetStackCount(const NAStack* stack){
 
 
 
-NA_IDEF NAStackIterator naMakeStackAccessor(const NAStack* stack){
+NA_IDEF NAStackIterator naMakeStackAccessor(const NAStack* stack) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -217,7 +217,7 @@ NA_IDEF NAStackIterator naMakeStackAccessor(const NAStack* stack){
 
 
 
-NA_IDEF NAStackIterator naMakeStackMutator(const NAStack* stack){
+NA_IDEF NAStackIterator naMakeStackMutator(const NAStack* stack) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -241,7 +241,7 @@ NA_IDEF NAStackIterator naMakeStackMutator(const NAStack* stack){
 
 
 
-NA_IDEF void naClearStackIterator(NAStackIterator* iter){
+NA_IDEF void naClearStackIterator(NAStackIterator* iter) {
   #if NA_DEBUG
     if(!iter)
       naCrash("iterator is Null");
@@ -262,14 +262,14 @@ NA_IDEF void naClearStackIterator(NAStackIterator* iter){
 
 
 #if NA_DEBUG
-  NA_HIDEF NABool na_IsStackIteratorPastEnd(NAStackIterator* iter){
+  NA_HIDEF NABool na_IsStackIteratorPastEnd(NAStackIterator* iter) {
     return iter->curBaseIndex + iter->cur >= naGetStackCount(iter->stack);
   }
 #endif
 
 
 
-NA_IDEF NABool naIterateStack(NAStackIterator* iter){
+NA_IDEF NABool naIterateStack(NAStackIterator* iter) {
   #if NA_DEBUG
     if(!iter)
       naCrash("iterator is Null");
@@ -277,7 +277,7 @@ NA_IDEF NABool naIterateStack(NAStackIterator* iter){
       naError("iterator points past the end of the stack");
   #endif
 
-  if(naIsListAtInitial(&(iter->curArray))){
+  if(naIsListAtInitial(&(iter->curArray))) {
     naIterateList(&(iter->curArray));
   }else{
     iter->cur++;
@@ -290,7 +290,7 @@ NA_IDEF NABool naIterateStack(NAStackIterator* iter){
     return NA_FALSE;
   }
 
-  if(iter->cur == na_GetStackArrayCount(&(iter->curArray))){
+  if(iter->cur == na_GetStackArrayCount(&(iter->curArray))) {
     #if NA_DEBUG
       iter->curBaseIndex += na_GetStackArrayCount(&(iter->curArray));
     #endif
@@ -302,7 +302,7 @@ NA_IDEF NABool naIterateStack(NAStackIterator* iter){
 
 
 
-NA_IDEF void naResetStackIterator(NAStackIterator* iter){
+NA_IDEF void naResetStackIterator(NAStackIterator* iter) {
   #if NA_DEBUG
     if(!iter)
       naCrash("iterator is Null");
@@ -317,7 +317,7 @@ NA_IDEF void naResetStackIterator(NAStackIterator* iter){
 
 
 
-NA_IDEF NABool naIsStackAtInitial(NAStackIterator* iter){
+NA_IDEF NABool naIsStackAtInitial(NAStackIterator* iter) {
   #if NA_DEBUG
     if(!iter)
       naCrash("iterator is Null");
@@ -328,7 +328,7 @@ NA_IDEF NABool naIsStackAtInitial(NAStackIterator* iter){
 
 
 
- const void* naGetStackCurConst(NAStackIterator* iter){
+ const void* naGetStackCurConst(NAStackIterator* iter) {
   // If you experience an error somewhere after this function call and believe
   // that garbage values are returned, maybe you need to use the pointer-variant
   // of this function? naGetStackCurConst
@@ -346,7 +346,7 @@ NA_IDEF NABool naIsStackAtInitial(NAStackIterator* iter){
 
 
 
-NA_IDEF void* naGetStackCurMutable(NAStackIterator* iter){
+NA_IDEF void* naGetStackCurMutable(NAStackIterator* iter) {
   #if NA_DEBUG
   if(!iter)
     naCrash("iterator is Null");
@@ -367,7 +367,7 @@ NA_IDEF void* naGetStackCurMutable(NAStackIterator* iter){
 
 
 
-NA_IDEF const void* naGetStackCurpConst(NAStackIterator* iter){
+NA_IDEF const void* naGetStackCurpConst(NAStackIterator* iter) {
   #if NA_DEBUG
     if(!iter)
       naCrash("iterator is Null");
@@ -383,7 +383,7 @@ NA_IDEF const void* naGetStackCurpConst(NAStackIterator* iter){
 
 
 
-NA_IDEF void* naGetStackCurpMutable(NAStackIterator* iter){
+NA_IDEF void* naGetStackCurpMutable(NAStackIterator* iter) {
   #if NA_DEBUG
   if(!iter)
     naCrash("iterator is Null");
@@ -401,7 +401,7 @@ NA_IDEF void* naGetStackCurpMutable(NAStackIterator* iter){
 
 
 
-NA_IDEF void naForeachStackConst(const NAStack* stack, NAAccessor accessor){
+NA_IDEF void naForeachStackConst(const NAStack* stack, NAAccessor accessor) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -414,7 +414,7 @@ NA_IDEF void naForeachStackConst(const NAStack* stack, NAAccessor accessor){
   // naForeachStackpConst
 
   NAStackIterator iter = naMakeStackAccessor(stack);
-  while(naIterateStack(&iter)){
+  while(naIterateStack(&iter)) {
     const void* data = naGetStackCurConst(&iter);
     accessor(data);
   }
@@ -423,7 +423,7 @@ NA_IDEF void naForeachStackConst(const NAStack* stack, NAAccessor accessor){
 
 
 
-NA_IDEF void naForeachStackMutable(const NAStack* stack, NAMutator mutator){
+NA_IDEF void naForeachStackMutable(const NAStack* stack, NAMutator mutator) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -436,7 +436,7 @@ NA_IDEF void naForeachStackMutable(const NAStack* stack, NAMutator mutator){
   // naForeachStackpMutable
 
   NAStackIterator iter = naMakeStackMutator(stack);
-  while(naIterateStack(&iter)){
+  while(naIterateStack(&iter)) {
     void* data = naGetStackCurMutable(&iter);
     mutator(data);
   }
@@ -445,7 +445,7 @@ NA_IDEF void naForeachStackMutable(const NAStack* stack, NAMutator mutator){
 
 
 
-NA_IDEF void naForeachStackpConst(const NAStack* stack, NAAccessor accessor){
+NA_IDEF void naForeachStackpConst(const NAStack* stack, NAAccessor accessor) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -454,7 +454,7 @@ NA_IDEF void naForeachStackpConst(const NAStack* stack, NAAccessor accessor){
   #endif
 
   NAStackIterator iter = naMakeStackAccessor(stack);
-  while(naIterateStack(&iter)){
+  while(naIterateStack(&iter)) {
     const void* const* data = (const void* const*)naGetStackCurConst(&iter);
     accessor(*data);
   }
@@ -463,7 +463,7 @@ NA_IDEF void naForeachStackpConst(const NAStack* stack, NAAccessor accessor){
 
 
 
-NA_IDEF void naForeachStackpMutable(const NAStack* stack, NAMutator mutator){
+NA_IDEF void naForeachStackpMutable(const NAStack* stack, NAMutator mutator) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -472,7 +472,7 @@ NA_IDEF void naForeachStackpMutable(const NAStack* stack, NAMutator mutator){
   #endif
 
   NAStackIterator iter = naMakeStackMutator(stack);
-  while(naIterateStack(&iter)){
+  while(naIterateStack(&iter)) {
     void** data = (void**)naGetStackCurMutable(&iter);
     mutator(*data);
   }

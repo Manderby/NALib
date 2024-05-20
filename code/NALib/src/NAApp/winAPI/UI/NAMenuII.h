@@ -6,7 +6,7 @@
 
 
 
-NA_DEF NAMenu* naNewMenu(){
+NA_DEF NAMenu* naNewMenu() {
   NAWINAPIMenu* winapiMenu = naNew(NAWINAPIMenu);
 
   winapiMenu->hMenu = CreatePopupMenu();
@@ -18,14 +18,14 @@ NA_DEF NAMenu* naNewMenu(){
 
 
 
-NA_DEF void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu){
+NA_DEF void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu) {
   DestroyMenu(winapiMenu->hMenu);
   na_ClearMenu((NAMenu*)winapiMenu);
 }
 
 
 
-NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atItem){
+NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atItem) {
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
   NA_WINAPIMenuItem* winapiMenuItem = (NA_WINAPIMenuItem*)item;
 
@@ -33,7 +33,7 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
   naZeron(&menuItemInfo, sizeof(MENUITEMINFO));
   menuItemInfo.cbSize = sizeof(MENUITEMINFO);
 
-  if(winapiMenuItem->isSeparator){
+  if(winapiMenuItem->isSeparator) {
     menuItemInfo.fMask = MIIM_ID | MIIM_FTYPE;
     menuItemInfo.wID = na_GetApplicationNextMenuItemId(naGetApplication());
     menuItemInfo.fType = MFT_SEPARATOR;
@@ -62,7 +62,7 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
 
 
 
-NA_DEF void na_updateMenuItem(NAMenu* menu, const NAMenuItem* menuItem){
+NA_DEF void na_updateMenuItem(NAMenu* menu, const NAMenuItem* menuItem) {
   
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
   NA_WINAPIMenuItem* winapiMenuItem = (NA_WINAPIMenuItem*)menuItem;
@@ -75,7 +75,7 @@ NA_DEF void na_updateMenuItem(NAMenu* menu, const NAMenuItem* menuItem){
 
 
 
-NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement){
+NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement) {
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
   HMENU hMenu = CreatePopupMenu();

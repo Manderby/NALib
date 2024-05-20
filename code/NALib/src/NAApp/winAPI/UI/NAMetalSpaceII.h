@@ -13,14 +13,14 @@
 
 #endif  // NA_COMPILE_METAL == 1
 
-NA_HDEF NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace){
+NA_HDEF NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace) {
   #if NA_DEBUG
     naError("Metal does not work on windows");
   #endif
   return naMakeRectZero();
 }
 
-NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect){
+NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect) {
   #if NA_DEBUG
     naError("Metal does not work on windows");
   #endif

@@ -36,7 +36,7 @@
 // These textfiles are then simply included into your sourcecode like for
 // example:
 // 
-// void myInitTranslations(){
+// void myInitTranslations() {
 //   myTranslatorGroup = naRegisterTranslatorGroup();
 //   #include "../translations/eng.txt"
 //   #include "../translations/deu.txt"

@@ -11,11 +11,11 @@
 
 
 
-NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
 
-  switch(message){
+  switch(message) {
   case WM_PAINT:
 
   	wglMakeCurrent(GetDC(naGetUIElementNativePtr(winapiOpenGLSpace)), winapiOpenGLSpace->hRC);
@@ -39,7 +39,7 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
 
 typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
 
-NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
+NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData) {
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = naNew(NAWINAPIOpenGLSpace);
 
   winapiOpenGLSpace->rect = naMakeRect(naMakePos(0., 0.), size);
@@ -85,7 +85,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 	const char* extensions = (char*)glGetString(GL_EXTENSIONS);
 	PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
-	//if(wglSwapIntervalEXT){
+	//if(wglSwapIntervalEXT) {
   //  wglSwapIntervalEXT(1);
   //}
 
@@ -93,7 +93,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 
   // Now the OpenGL context is created and current. We can initialize it
   // if necessary.
-  if(initFunc){
+  if(initFunc) {
     initFunc(initData);
   }
 
@@ -103,26 +103,26 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 
 
 
-NA_DEF void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace){
+NA_DEF void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace) {
   na_ClearOpenGLSpace((NAOpenGLSpace*)winapiOpenGLSpace);
 }
 
 
 
-NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible){
+NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible) {
   ShowWindow(naGetUIElementNativePtr(openGLSpace), visible ? SW_SHOW : SW_HIDE);
 }
 
 
 
-NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
+NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace) {
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openGLSpace;
   SwapBuffers(GetDC((HWND)naGetUIElementNativePtr(&(winapiOpenGLSpace->openGLSpace.uiElement))));
 }
 
 
 
-//NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+//NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds) {
 //  SetWindowPos((HWND)naGetUIElementNativePtr(openGLSpace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
 //}
 
@@ -134,7 +134,7 @@ NA_API NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace)
   return winapiOpenGLSpace->rect;
 }
 
-NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect){
+NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openGLSpace;
 
   winapiOpenGLSpace->rect = rect;
@@ -155,7 +155,7 @@ NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect){
 
 #else
 
-  NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
@@ -163,45 +163,45 @@ NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect){
     return info;
   }
 
-  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData) {
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
     return NA_NULL;
   }
 
-  NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace){
+  NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace) {
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
   }
 
-  NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible){
+  NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible) {
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
   } 
 
-  NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
+  NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace) {
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
   }
 
-  //NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+  //NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds) {
   //  #if NA_DEBUG
   //    naError("OpenGL has not been configured. See NAConfiguration.h");
   //  #endif
   //}
 
-  NA_DEF NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace){
+  NA_DEF NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace) {
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
     return naMakeRectZero();
   }
 
-  NA_DEF void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect){
+  NA_DEF void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif

@@ -5,7 +5,7 @@
 // Whole Buffer Functions
 // /////////////////////////////////////
 
-NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool appendEndSign){
+NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool appendEndSign) {
   NAInt totalbyteSize;
   NAInt triples;
   NAInt sizeremainder;
@@ -27,7 +27,7 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
   dstIter = naMakeBufferModifier(dstbuffer);
   srcIter = naMakeBufferMutator(buffer);
 
-  while(triples){
+  while(triples) {
     naReadBufferBytes(&srcIter, srctriple, 3);
     dsttriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
     dsttriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4) | (NAUTF8Char)(srctriple[1] >> 4);
@@ -36,13 +36,13 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
     naWriteBufferBytes(&dstIter, dsttriple, 4);
     triples--;
   }
-  if(sizeremainder == 1){
+  if(sizeremainder == 1) {
     naReadBufferBytes(&srcIter, srctriple, 1);
     dsttriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
     dsttriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4);
     naWriteBufferBytes(&dstIter, dsttriple, 2);
   }
-  if(sizeremainder == 2){
+  if(sizeremainder == 2) {
     naReadBufferBytes(&srcIter, srctriple, 2);
     dsttriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
     dsttriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4) | (NAUTF8Char)(srctriple[1] >> 4);
@@ -54,21 +54,21 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
   naClearBufferIterator(&dstIter);
 
   dstIter = naMakeBufferModifier(dstbuffer);
-  while(!naIsBufferAtEnd(&dstIter)){
+  while(!naIsBufferAtEnd(&dstIter)) {
     NAUTF8Char curChar = (NAUTF8Char)naGetBufferu8(&dstIter);
     NAUTF8Char newChar;
-    if (curChar < 26){ newChar = curChar + 'A'; }
-    else if(curChar < 52){ newChar = curChar + ('a' - 26); }
-    else if(curChar < 62){ newChar = curChar + ('0' - 52); }
-    else if(curChar == 62){ newChar = '+'; }
+    if(curChar < 26) { newChar = curChar + 'A'; }
+    else if(curChar < 52) { newChar = curChar + ('a' - 26); }
+    else if(curChar < 62) { newChar = curChar + ('0' - 52); }
+    else if(curChar == 62) { newChar = '+'; }
     else { newChar = '/'; }
     naWriteBufferu8(&dstIter, (uint8)newChar);
   }
-  if(appendEndSign && sizeremainder == 1){
+  if(appendEndSign && sizeremainder == 1) {
     naWriteBufferu8(&dstIter, '=');
     naWriteBufferu8(&dstIter, '=');
   }
-  if(appendEndSign && sizeremainder == 2){
+  if(appendEndSign && sizeremainder == 2) {
     naWriteBufferu8(&dstIter, '=');
   }
 
@@ -80,7 +80,7 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
 
 
 
-NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(NAString* string){
+NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(NAString* string) {
   NAInt totalcharsize;
   NAInt triples;
   NAInt sizeremainder;
@@ -92,20 +92,20 @@ NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(NAString* string){
   NABuffer* ascbuffer = naCreateBuffer(NA_FALSE);
   NABufferIterator asciter = naMakeBufferModifier(ascbuffer);
 
-  while(!naIsBufferAtEnd(&srcIter)){
+  while(!naIsBufferAtEnd(&srcIter)) {
     NAUTF8Char curChar = (NAUTF8Char)naReadBufferu8(&srcIter);
     NAUTF8Char newChar;
-    if     (curChar == '+'){
+    if     (curChar == '+') {
       newChar = 62;
-    }else if(curChar == '/'){
+    }else if(curChar == '/') {
       newChar = 63;
-    }else if(curChar <= '9'){
+    }else if(curChar <= '9') {
       newChar = curChar - ('0' - 52);
-    }else if(curChar == '='){
+    }else if(curChar == '=') {
       break;
-    }else if(curChar <= 'Z'){
+    }else if(curChar <= 'Z') {
       newChar = curChar - 'A';
-    }else if(curChar <= 'z'){
+    }else if(curChar <= 'z') {
       newChar = curChar - ('a' - 26);
     }else{
       #if NA_DEBUG
@@ -127,7 +127,7 @@ NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(NAString* string){
   dstIter = naMakeBufferModifier(dstbuffer);
   asciter = naMakeBufferMutator(ascbuffer);
 
-  while(triples){
+  while(triples) {
     naReadBufferBytes(&asciter, asctriple, 4);
     dsttriple[0] = (NAByte) (asctriple[0] << 2)         | (NAByte)(asctriple[1] >> 4);
     dsttriple[1] = (NAByte)((asctriple[1] & 0x0f) << 4) | (NAByte)(asctriple[2] >> 2);
@@ -139,7 +139,7 @@ NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(NAString* string){
   if(sizeremainder == 1)
     naError("This sizeremainder should not happen");
   #endif
-  if(sizeremainder == 2){
+  if(sizeremainder == 2) {
     naReadBufferBytes(&asciter, asctriple, 2);
     dsttriple[0] = (NAByte) (asctriple[0] << 2)         | (NAByte)(asctriple[1] >> 4);
     #if NA_DEBUG
@@ -148,7 +148,7 @@ NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(NAString* string){
     #endif
     naWriteBufferBytes(&dstIter, dsttriple, 1);
   }
-  if(sizeremainder == 3){
+  if(sizeremainder == 3) {
     naReadBufferBytes(&asciter, asctriple, 3);
     dsttriple[0] = (NAByte) (asctriple[0] << 2)         | (NAByte)(asctriple[1] >> 4);
     dsttriple[1] = (NAByte)((asctriple[1] & 0x0f) << 4) | (NAByte)(asctriple[2] >> 2);
@@ -167,12 +167,12 @@ NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(NAString* string){
 
 
 
-NA_DEF void naAccumulateChecksumBuffer(NAChecksum* checksum, NABuffer* buffer){
+NA_DEF void naAccumulateChecksumBuffer(NAChecksum* checksum, NABuffer* buffer) {
   size_t byteSize = (size_t)buffer->range.length;
   NABufferIterator iter = naMakeBufferModifier(buffer);
   na_LocateBufferStart(&iter);
 
-  while(byteSize){
+  while(byteSize) {
     #if NA_DEBUG
       if(na_IsBufferIteratorSparse(&iter))
         naError("Buffer contains sparse parts. Can not compute checksum. Use naCacheBuffer.");
@@ -181,7 +181,7 @@ NA_DEF void naAccumulateChecksumBuffer(NAChecksum* checksum, NABuffer* buffer){
     size_t remainingBytes = na_GetBufferPartByteSize(na_GetBufferPart(&iter));
     const void* src = na_GetBufferPartDataPointerConst(&iter);
 
-    if(byteSize > remainingBytes){
+    if(byteSize > remainingBytes) {
       naAccumulateChecksum(checksum, src, remainingBytes);
       na_IterateBufferPart(&iter);
       byteSize -= remainingBytes;
@@ -197,7 +197,7 @@ NA_DEF void naAccumulateChecksumBuffer(NAChecksum* checksum, NABuffer* buffer){
 
 
 
-NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
+NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file) {
   NAInt byteSize;
   NABufferIterator iter;
 
@@ -207,11 +207,11 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
   #endif
 
   byteSize = buffer->range.length;
-  if(byteSize){
+  if(byteSize) {
     iter = naMakeBufferAccessor(buffer);
     na_LocateBufferStart(&iter);
 
-    while(byteSize){
+    while(byteSize) {
       NABufferPart* part = na_GetBufferPart(&iter);
       size_t remainingBytes = na_GetBufferPartByteSize(part);
       const NAByte* src = na_GetBufferPartDataPointerConst(&iter);
@@ -233,11 +233,11 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
 
 
 
-NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
+NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data) {
   naCacheBufferRange(buffer, naGetBufferRange(buffer));
   NABufferIterator iter = naMakeBufferModifier(buffer);
 
-  while(na_IterateBufferPart(&iter)){
+  while(na_IterateBufferPart(&iter)) {
     size_t byteSize = na_GetBufferPartByteSize(na_GetBufferPart(&iter));
     const void* src = na_GetBufferPartDataPointerConst(&iter);
     #if NA_DEBUG

@@ -163,7 +163,7 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 //
 // NAList* mylist;
 // NALIstIterator iter = naMakeListIterator(mylist);
-// while(naIterateList(&iter, 1)){
+// while(naIterateList(&iter, 1)) {
 //   void* curElement = naGetListCurMutable(iter);
 //   Do stuff with curElement.
 // }

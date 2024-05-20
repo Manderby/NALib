@@ -2,7 +2,7 @@
 #include "../NAURL.h"
 
 
-NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string){
+NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string) {
   NAUTF8Char curChar;
   NAString* inputString;
   NAString* pathComponent;
@@ -16,7 +16,7 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
   inputString = naNewStringWithFormat("%s", string);
 
   curChar = *naGetStringUTF8Pointer(inputString);
-  if((curChar == NA_PATH_DELIMITER_UNIX) || (curChar == NA_PATH_DELIMITER_WIN)){
+  if((curChar == NA_PATH_DELIMITER_UNIX) || (curChar == NA_PATH_DELIMITER_WIN)) {
     url->status |= NA_URL_PATH_ABSOLUTE;
     inputString = naNewStringExtraction(inputString, 1, -1);
   }
@@ -24,10 +24,10 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
   iter = naMakeBufferAccessor(naGetStringBufferMutable(inputString));
   na_LocateBufferStart(&iter);
 
-  while(!naIsBufferAtInitial(&iter)){
+  while(!naIsBufferAtInitial(&iter)) {
     // Test for erroneous duplicate or ending delimiters
     curChar = (NAUTF8Char)naGetBufferu8(&iter);
-    if((curChar == NA_PATH_DELIMITER_UNIX) || (curChar == NA_PATH_DELIMITER_WIN)){
+    if((curChar == NA_PATH_DELIMITER_UNIX) || (curChar == NA_PATH_DELIMITER_WIN)) {
       naIterateBuffer(&iter, 1);
       continue;
     }
@@ -44,8 +44,8 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
 
 
 
-NA_DEF NAString* naNewStringWithURLFilename(NAURL* url){
-  if(naGetListCount(&(url->path))){
+NA_DEF NAString* naNewStringWithURLFilename(NAURL* url) {
+  if(naGetListCount(&(url->path))) {
     const NAString* lastComponent = naGetListLastConst(&(url->path));
     return naNewStringExtraction(lastComponent, 0, -1);
   }else{

@@ -19,7 +19,7 @@
 // Now, we are sure, we compile on Windows. The #if directives will be closed
 // at the very bottom of this file.
 
-#if (NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1) && (NA_COMPILE_GUI == 1)
+#if(NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1) && (NA_COMPILE_GUI == 1)
   #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 

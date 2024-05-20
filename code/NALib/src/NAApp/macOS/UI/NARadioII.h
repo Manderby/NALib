@@ -45,7 +45,7 @@
 
 - (void) setColor:(const NAColor*)color{
   NSColor* nsColor;
-  if(color){
+  if(color) {
     uint8 buf[4];
     naFillSRGBu8WithColor(buf, color, NA_COLOR_BUFFER_RGBA);
     nsColor = [NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.];
@@ -88,7 +88,7 @@
 
 
 
-NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width){
+NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
   NACocoaRadio* cocoaRadio = naNew(NACocoaRadio);
 
   NACocoaNativeRadio* nativePtr = [[NACocoaNativeRadio alloc]
@@ -103,52 +103,52 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width){
 
 
 
-NA_DEF void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio){
+NA_DEF void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio) {
   na_ClearRadio((NARadio*)cocoaRadio);
 }
 
 
 
-NA_DEF void naSetRadioTextColor(NARadio* radio, const NAColor* color){
+NA_DEF void naSetRadioTextColor(NARadio* radio, const NAColor* color) {
   naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
   [nativePtr setColor:color];
 }
 
 
 
-NA_DEF void naSetRadioState(NARadio* radio, NABool state){
+NA_DEF void naSetRadioState(NARadio* radio, NABool state) {
   naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
   [nativePtr setRadioState:state];
 }
 
 
 
-NA_DEF void naSetRadioVisible(NARadio* radio, NABool visible){
+NA_DEF void naSetRadioVisible(NARadio* radio, NABool visible) {
   naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
   [nativePtr setHidden:(BOOL)!visible];
 }
 
 
 
-NA_DEF void naSetRadioEnabled(NARadio* radio, NABool enabled){
+NA_DEF void naSetRadioEnabled(NARadio* radio, NABool enabled) {
   naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
   [nativePtr setEnabled:(BOOL)enabled];
 }
 
 
 
-NA_DEF NABool naGetRadioState(const NARadio* radio){
+NA_DEF NABool naGetRadioState(const NARadio* radio) {
   naDefineCocoaObjectConst(NACocoaNativeRadio, nativePtr, radio);
   return [nativePtr radioState];
 }
 
 
-NA_HDEF NARect na_GetRadioRect(const NA_UIElement* radio){
+NA_HDEF NARect na_GetRadioRect(const NA_UIElement* radio) {
   naDefineCocoaObjectConst(NACocoaNativeRadio, nativePtr, radio);
   return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-NA_HDEF void na_SetRadioRect(NA_UIElement* radio, NARect rect){
+NA_HDEF void na_SetRadioRect(NA_UIElement* radio, NARect rect) {
   naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }

@@ -10,18 +10,18 @@
 // ///////////////////////////////
 
 
-NA_IDEF double naDetM22d(const double* A){
+NA_IDEF double naDetM22d(const double* A) {
   double determinant = A[0]*A[3] - A[2]*A[1];
   return determinant;
 }
-NA_IDEF double naDetM33d(const double* A){
+NA_IDEF double naDetM33d(const double* A) {
   double d0 = A[4] * A[8] - A[5] * A[7];
   double d1 = A[2] * A[7] - A[1] * A[8];
   double d2 = A[1] * A[5] - A[2] * A[4];
   double determinant = A[0]*d0 + A[3]*d1 + A[6]*d2;
   return determinant;
 }
-NA_IDEF double naDetM44d(const double* A){
+NA_IDEF double naDetM44d(const double* A) {
   double a01 = A[10]*A[15] - A[11]*A[14];
   double a02 = A[ 6]*A[15] - A[ 7]*A[14];
   double a03 = A[ 6]*A[11] - A[ 7]*A[10];
@@ -42,7 +42,7 @@ NA_IDEF double naDetM44d(const double* A){
 // Transpose
 // ///////////////////////////////
 
-NA_IDEF void naTransposeM22d( double* NA_RESTRICT D, const double* NA_RESTRICT A){
+NA_IDEF void naTransposeM22d( double* NA_RESTRICT D, const double* NA_RESTRICT A) {
   #if NA_DEBUG
     if(A == D)
       naError("A equals D. Use E or S variant.");
@@ -52,7 +52,7 @@ NA_IDEF void naTransposeM22d( double* NA_RESTRICT D, const double* NA_RESTRICT A
   D[0] = A[0]; D[2] = A[1];
   D[1] = A[2]; D[3] = A[3];
 }
-NA_IDEF void naTransposeM33d( double* NA_RESTRICT D, const double* NA_RESTRICT A){
+NA_IDEF void naTransposeM33d( double* NA_RESTRICT D, const double* NA_RESTRICT A) {
   #if NA_DEBUG
     if(A == D)
       naError("A equals D. Use E or S variant.");
@@ -63,7 +63,7 @@ NA_IDEF void naTransposeM33d( double* NA_RESTRICT D, const double* NA_RESTRICT A
   D[1] = A[3]; D[4] = A[4]; D[7] = A[5];
   D[2] = A[6]; D[5] = A[7]; D[8] = A[8];
 }
-NA_IDEF void naTransposeM44d( double* NA_RESTRICT D, const double* NA_RESTRICT A){
+NA_IDEF void naTransposeM44d( double* NA_RESTRICT D, const double* NA_RESTRICT A) {
   #if NA_DEBUG
     if(A == D)
       naError("A equals D. Use E or S variant.");
@@ -75,7 +75,7 @@ NA_IDEF void naTransposeM44d( double* NA_RESTRICT D, const double* NA_RESTRICT A
   D[2] = A[8]; D[6] = A[9]; D[10] = A[10]; D[14] = A[11];
   D[3] = A[12]; D[7] = A[13]; D[11] = A[14]; D[15] = A[15];
 }
-NA_IDEF void naTransposeM22f( float* NA_RESTRICT D, const float* NA_RESTRICT A){
+NA_IDEF void naTransposeM22f( float* NA_RESTRICT D, const float* NA_RESTRICT A) {
   #if NA_DEBUG
     if(A == D)
       naError("A equals D. Use E or S variant.");
@@ -85,7 +85,7 @@ NA_IDEF void naTransposeM22f( float* NA_RESTRICT D, const float* NA_RESTRICT A){
   D[0] = A[0]; D[2] = A[1];
   D[1] = A[2]; D[3] = A[3];
 }
-NA_IDEF void naTransposeM33f( float* NA_RESTRICT D, const float* NA_RESTRICT A){
+NA_IDEF void naTransposeM33f( float* NA_RESTRICT D, const float* NA_RESTRICT A) {
   #if NA_DEBUG
     if(A == D)
       naError("A equals D. Use E or S variant.");
@@ -96,7 +96,7 @@ NA_IDEF void naTransposeM33f( float* NA_RESTRICT D, const float* NA_RESTRICT A){
   D[1] = A[3]; D[4] = A[4]; D[7] = A[5];
   D[2] = A[6]; D[5] = A[7]; D[8] = A[8];
 }
-NA_IDEF void naTransposeM44f( float* NA_RESTRICT D, const float* NA_RESTRICT A){
+NA_IDEF void naTransposeM44f( float* NA_RESTRICT D, const float* NA_RESTRICT A) {
   #if NA_DEBUG
     if(A == D)
       naError("A equals D. Use E or S variant.");
@@ -108,7 +108,7 @@ NA_IDEF void naTransposeM44f( float* NA_RESTRICT D, const float* NA_RESTRICT A){
   D[2] = A[8]; D[6] = A[9]; D[10] = A[10]; D[14] = A[11];
   D[3] = A[12]; D[7] = A[13]; D[11] = A[14]; D[15] = A[15];
 }
-NA_IDEF void naTransposeM22dE( double* D, const double* A){
+NA_IDEF void naTransposeM22dE( double* D, const double* A) {
   #if NA_DEBUG
     if((A != D) && naElementOverlap(D, A, 4, 4))
       naError("A overlaps misaligned with D");
@@ -116,7 +116,7 @@ NA_IDEF void naTransposeM22dE( double* D, const double* A){
   D[0] = A[0]; D[2] = A[1];
   D[1] = A[2]; D[3] = A[3];
 }
-NA_IDEF void naTransposeM33dE( double* D, const double* A){
+NA_IDEF void naTransposeM33dE( double* D, const double* A) {
   #if NA_DEBUG
     if((A != D) && naElementOverlap(D, A, 9, 9))
       naError("A overlaps misaligned with D");
@@ -125,7 +125,7 @@ NA_IDEF void naTransposeM33dE( double* D, const double* A){
   D[1] = A[3]; D[4] = A[4]; D[7] = A[5];
   D[2] = A[6]; D[5] = A[7]; D[8] = A[8];
 }
-NA_IDEF void naTransposeM44dE( double* D, const double* A){
+NA_IDEF void naTransposeM44dE( double* D, const double* A) {
   #if NA_DEBUG
     if((A != D) && naElementOverlap(D, A, 16, 16))
       naError("A overlaps misaligned with D");
@@ -135,7 +135,7 @@ NA_IDEF void naTransposeM44dE( double* D, const double* A){
   D[2] = A[8]; D[6] = A[9]; D[10] = A[10]; D[14] = A[11];
   D[3] = A[12]; D[7] = A[13]; D[11] = A[14]; D[15] = A[15];
 }
-NA_IDEF void naTransposeM22fE( float* D, const float* A){
+NA_IDEF void naTransposeM22fE( float* D, const float* A) {
   #if NA_DEBUG
     if((A != D) && naElementOverlap(D, A, 4, 4))
       naError("A overlaps misaligned with D");
@@ -143,7 +143,7 @@ NA_IDEF void naTransposeM22fE( float* D, const float* A){
   D[0] = A[0]; D[2] = A[1];
   D[1] = A[2]; D[3] = A[3];
 }
-NA_IDEF void naTransposeM33fE( float* D, const float* A){
+NA_IDEF void naTransposeM33fE( float* D, const float* A) {
   #if NA_DEBUG
     if((A != D) && naElementOverlap(D, A, 9, 9))
       naError("A overlaps misaligned with D");
@@ -152,7 +152,7 @@ NA_IDEF void naTransposeM33fE( float* D, const float* A){
   D[1] = A[3]; D[4] = A[4]; D[7] = A[5];
   D[2] = A[6]; D[5] = A[7]; D[8] = A[8];
 }
-NA_IDEF void naTransposeM44fE( float* D, const float* A){
+NA_IDEF void naTransposeM44fE( float* D, const float* A) {
   #if NA_DEBUG
     if((A != D) && naElementOverlap(D, A, 16, 16))
       naError("A overlaps misaligned with D");
@@ -162,15 +162,15 @@ NA_IDEF void naTransposeM44fE( float* D, const float* A){
   D[2] = A[8]; D[6] = A[9]; D[10] = A[10]; D[14] = A[11];
   D[3] = A[12]; D[7] = A[13]; D[11] = A[14]; D[15] = A[15];
 }
-NA_IDEF void naTransposeM22dS(double* D){
+NA_IDEF void naTransposeM22dS(double* D) {
   naSwap64(&(D[1]),  &(D[2]));
 }
-NA_IDEF void naTransposeM33dS(double* D){
+NA_IDEF void naTransposeM33dS(double* D) {
   naSwap64(&(D[1]),  &(D[3]));
   naSwap64(&(D[2]),  &(D[6]));
   naSwap64(&(D[5]),  &(D[7]));
 }
-NA_IDEF void naTransposeM44dS(double* D){
+NA_IDEF void naTransposeM44dS(double* D) {
   naSwap64(&(D[1]),  &(D[4]));
   naSwap64(&(D[2]),  &(D[8]));
   naSwap64(&(D[3]),  &(D[12]));
@@ -178,15 +178,15 @@ NA_IDEF void naTransposeM44dS(double* D){
   naSwap64(&(D[7]),  &(D[13]));
   naSwap64(&(D[11]), &(D[14]));
 }
-NA_IDEF void naTransposeM22fS(float* D){
+NA_IDEF void naTransposeM22fS(float* D) {
   naSwap32(&(D[1]),  &(D[2]));
 }
-NA_IDEF void naTransposeM33fS(float* D){
+NA_IDEF void naTransposeM33fS(float* D) {
   naSwap32(&(D[1]),  &(D[3]));
   naSwap32(&(D[2]),  &(D[6]));
   naSwap32(&(D[5]),  &(D[7]));
 }
-NA_IDEF void naTransposeM44fS(float* D){
+NA_IDEF void naTransposeM44fS(float* D) {
   naSwap32(&(D[1]),  &(D[4]));
   naSwap32(&(D[2]),  &(D[8]));
   naSwap32(&(D[3]),  &(D[12]));
@@ -201,7 +201,7 @@ NA_IDEF void naTransposeM44fS(float* D){
 // Inverting
 // //////////////////////////////////////
 
-NA_IDEF void naInvM22d(double* NA_RESTRICT D, const double* NA_RESTRICT A){
+NA_IDEF void naInvM22d(double* NA_RESTRICT D, const double* NA_RESTRICT A) {
   double determinant = A[0]*A[3] - A[2]*A[1];
   double divisor = naInv(determinant);
   D[0] =    A[3] * divisor;
@@ -209,7 +209,7 @@ NA_IDEF void naInvM22d(double* NA_RESTRICT D, const double* NA_RESTRICT A){
   D[2] =  - A[2] * divisor;
   D[3] =    A[0] * divisor;
 }
-NA_IDEF void naInvM33d(double* NA_RESTRICT D, const double* NA_RESTRICT A){
+NA_IDEF void naInvM33d(double* NA_RESTRICT D, const double* NA_RESTRICT A) {
   double d0 = A[4] * A[8] - A[5] * A[7];
   double d1 = A[2] * A[7] - A[1] * A[8];
   double d2 = A[1] * A[5] - A[2] * A[4];
@@ -225,7 +225,7 @@ NA_IDEF void naInvM33d(double* NA_RESTRICT D, const double* NA_RESTRICT A){
   D[7] = (A[1]*A[6] - A[0]*A[7]) * divisor;
   D[8] = (A[0]*A[4] - A[1]*A[3]) * divisor;
 }
-NA_IDEF void naInvM44d(double* NA_RESTRICT D, const double* NA_RESTRICT A){
+NA_IDEF void naInvM44d(double* NA_RESTRICT D, const double* NA_RESTRICT A) {
   double a01 = A[10]*A[15] - A[11]*A[14];
   double a02 = A[ 6]*A[15] - A[ 7]*A[14];
   double a03 = A[ 6]*A[11] - A[ 7]*A[10];
@@ -267,7 +267,7 @@ NA_IDEF void naInvM44d(double* NA_RESTRICT D, const double* NA_RESTRICT A){
   D[14] = ( - A[ 0]*a14 + A[ 4]*a16 - A[12]*a18) * divisor;
   D[15] = ( + A[ 0]*a15 - A[ 4]*a17 + A[ 8]*a18) * divisor;
 }
-NA_IDEF void naInvM22f(float* NA_RESTRICT D, const float* NA_RESTRICT A){
+NA_IDEF void naInvM22f(float* NA_RESTRICT D, const float* NA_RESTRICT A) {
   float determinant = A[0]*A[3] - A[2]*A[1];
   float divisor = naInvf(determinant);
   D[0] =    A[3] * divisor;
@@ -275,7 +275,7 @@ NA_IDEF void naInvM22f(float* NA_RESTRICT D, const float* NA_RESTRICT A){
   D[2] =  - A[2] * divisor;
   D[3] =    A[0] * divisor;
 }
-NA_IDEF void naInvM33f(float* NA_RESTRICT D, const float* NA_RESTRICT A){
+NA_IDEF void naInvM33f(float* NA_RESTRICT D, const float* NA_RESTRICT A) {
   float d0 = A[4] * A[8] - A[5] * A[7];
   float d1 = A[2] * A[7] - A[1] * A[8];
   float d2 = A[1] * A[5] - A[2] * A[4];
@@ -291,7 +291,7 @@ NA_IDEF void naInvM33f(float* NA_RESTRICT D, const float* NA_RESTRICT A){
   D[7] = (A[1]*A[6] - A[0]*A[7]) * divisor;
   D[8] = (A[0]*A[4] - A[1]*A[3]) * divisor;
 }
-NA_IDEF void naInvM44f(float* NA_RESTRICT D, const float* NA_RESTRICT A){
+NA_IDEF void naInvM44f(float* NA_RESTRICT D, const float* NA_RESTRICT A) {
   float a01 = A[10]*A[15] - A[11]*A[14];
   float a02 = A[ 6]*A[15] - A[ 7]*A[14];
   float a03 = A[ 6]*A[11] - A[ 7]*A[10];

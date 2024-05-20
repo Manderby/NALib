@@ -9,7 +9,7 @@
 
 // Note that you must have NA_COMPILE_METAL configured in NAConfiguration.h
 // to use these functions. Also note that Metal is macOS only.
-#if (NA_COMPILE_METAL == 1)
+#if(NA_COMPILE_METAL == 1)
   #if NA_OS != NA_OS_MAC_OS_X
     #error "Metal is a macOS only framework. Does not work on windows."
   #endif

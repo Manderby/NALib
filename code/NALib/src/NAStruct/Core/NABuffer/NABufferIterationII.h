@@ -15,64 +15,64 @@ struct NABufferIterator{
 
 
 
-NA_HIDEF const NABuffer* na_GetBufferIteratorBufferConst(const NABufferIterator* iter){
+NA_HIDEF const NABuffer* na_GetBufferIteratorBufferConst(const NABufferIterator* iter) {
   return (const NABuffer*)naGetPtrConst(iter->bufferPtr);
 }
 
 
 
-NA_HIDEF NABuffer* na_GetBufferIteratorBufferMutable(NABufferIterator* iter){
+NA_HIDEF NABuffer* na_GetBufferIteratorBufferMutable(NABufferIterator* iter) {
   return (NABuffer*)naGetPtrMutable(iter->bufferPtr);
 }
 
 
 
-NA_IDEF NABool naLocateBufferRelative(NABufferIterator* iter, NAInt offset){
+NA_IDEF NABool naLocateBufferRelative(NABufferIterator* iter, NAInt offset) {
   NAInt abspos = naGetBufferLocation(iter);
   return naLocateBufferAbsolute(iter, abspos + offset);
 }
 
 
 
-NA_IDEF NABool naLocateBufferFromStart(NABufferIterator* iter, NAInt offset){
+NA_IDEF NABool naLocateBufferFromStart(NABufferIterator* iter, NAInt offset) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   return naLocateBufferAbsolute(iter, buffer->range.origin + offset);
 }
 
 
 
-NA_IDEF NABool naLocateBufferFromEnd(NABufferIterator* iter, NAInt offset){
+NA_IDEF NABool naLocateBufferFromEnd(NABufferIterator* iter, NAInt offset) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   return naLocateBufferAbsolute(iter, naGetRangeiEnd(buffer->range) + offset);
 }
 
 
 
-NA_HIDEF NAInt na_GetBufferIteratorPartOffset(NABufferIterator* iter){
+NA_HIDEF NAInt na_GetBufferIteratorPartOffset(NABufferIterator* iter) {
   return iter->partOffset;
 }
 
 
 
-NA_HIDEF NABufferPart* na_GetBufferPart(NABufferIterator* iter){
+NA_HIDEF NABufferPart* na_GetBufferPart(NABufferIterator* iter) {
   return (NABufferPart*)naGetTreeCurLeafMutable(&(iter->partIter));
 }
 
 
 
-NA_IDEF NABool naIsBufferAtInitial(NABufferIterator* iter){
+NA_IDEF NABool naIsBufferAtInitial(NABufferIterator* iter) {
   return naIsTreeAtInitial(&(iter->partIter));
 }
 
 
 
-NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter){
+NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter) {
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
-  if(!naIsBufferAtInitial(iter)){
+  if(!naIsBufferAtInitial(iter)) {
     NABufferPart* part = na_GetBufferPart(iter);
-    if(iter->partOffset < 0 || iter->partOffset >= (NAInt)na_GetBufferPartByteSize(part)){
+    if(iter->partOffset < 0 || iter->partOffset >= (NAInt)na_GetBufferPartByteSize(part)) {
       NABool found = naLocateBufferAbsolute(iter, naGetBufferLocation(iter));
-      if(!found){
+      if(!found) {
         naResetTreeIterator(&(iter->partIter));
         iter->partOffset = naGetRangeiEnd(buffer->range);
       }
@@ -84,13 +84,13 @@ NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter){
 
 
 
-NA_IDEF uint8 naGetBufferCurBit(NABufferIterator* iter){
+NA_IDEF uint8 naGetBufferCurBit(NABufferIterator* iter) {
   return iter->curBit;
 }
 
 
 
-NA_IDEF size_t naGetBufferLineNumber(NABufferIterator* iter){
+NA_IDEF size_t naGetBufferLineNumber(NABufferIterator* iter) {
   return iter->lineNum;
 }
 

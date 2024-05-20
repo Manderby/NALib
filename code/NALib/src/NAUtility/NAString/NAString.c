@@ -8,30 +8,30 @@
 
 
 
-NA_DEF NABool naEqualUTF8CStringLiterals(const NAUTF8Char* string1, const NAUTF8Char* string2, size_t length, NABool caseSensitive){
-  if(!length){
+NA_DEF NABool naEqualUTF8CStringLiterals(const NAUTF8Char* string1, const NAUTF8Char* string2, size_t length, NABool caseSensitive) {
+  if(!length) {
     size_t length1 = naStrlen(string1);
     size_t length2 = naStrlen(string2);
-    if(length1 != length2){
+    if(length1 != length2) {
       return NA_FALSE;
     }
     length = length1;
   }
-  if(caseSensitive){
+  if(caseSensitive) {
     int result = memcmp(string1, string2, length);
-    if(result){
+    if(result) {
       return NA_FALSE;
     }
   }else{
-    while(length){
+    while(length) {
       NAUTF8Char curChar1;
       NAUTF8Char curChar2;
-      if(isalpha((const char)*string1)){
+      if(isalpha((const char)*string1)) {
         curChar1 = (NAUTF8Char)tolower(*string1);
       }else{
         curChar1 = *string1;
       }
-      if(isalpha((const char)*string2)){
+      if(isalpha((const char)*string2)) {
         curChar2 = (NAUTF8Char)tolower(*string2);
       }else{
         curChar2 = *string2;
@@ -50,7 +50,7 @@ NA_DEF NABool naEqualUTF8CStringLiterals(const NAUTF8Char* string1, const NAUTF8
 
 
 
-NA_DEF NAUTF8Char* naAllocSprintf(NABool useTmp, const NAUTF8Char* format, ...){
+NA_DEF NAUTF8Char* naAllocSprintf(NABool useTmp, const NAUTF8Char* format, ...) {
   va_list argumentList;
   va_list argumentList2;
   va_start(argumentList, format);
@@ -69,49 +69,49 @@ NA_DEF NAUTF8Char* naAllocSprintf(NABool useTmp, const NAUTF8Char* format, ...){
 
 
 
-NA_DEF NAUTF8Char* naPriux8(uint8 value){
+NA_DEF NAUTF8Char* naPriux8(uint8 value) {
   return naAllocSprintf(NA_TRUE, "%02x", (int)(value & NA_MAX_u8));
 }
-NA_DEF NAUTF8Char* naPriix8(int8 value){
+NA_DEF NAUTF8Char* naPriix8(int8 value) {
   return naAllocSprintf(NA_TRUE, "%02x", (int)(value & NA_MAX_u8));
 }
-NA_DEF NAUTF8Char* naPriux16(uint16 value){
+NA_DEF NAUTF8Char* naPriux16(uint16 value) {
   return naAllocSprintf(NA_TRUE, "%04x", (int)(value & NA_MAX_u16));
 }
-NA_DEF NAUTF8Char* naPriix16(int16 value){
+NA_DEF NAUTF8Char* naPriix16(int16 value) {
   return naAllocSprintf(NA_TRUE, "%04x", (int)(value & NA_MAX_u16));
 }
-NA_DEF NAUTF8Char* naPriux32(uint32 value){
+NA_DEF NAUTF8Char* naPriux32(uint32 value) {
   return naAllocSprintf(NA_TRUE, "%08x", (int)value);
 }
-NA_DEF NAUTF8Char* naPriix32(int32 value){
+NA_DEF NAUTF8Char* naPriix32(int32 value) {
   return naAllocSprintf(NA_TRUE, "%08x", (int)value);
 }
-NA_DEF NAUTF8Char* naPriux64(NAu64 value){
+NA_DEF NAUTF8Char* naPriux64(NAu64 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x",
     naGetu64Hi(value),
     naGetu64Lo(value));
 }
-NA_DEF NAUTF8Char* naPriix64(NAi64 value){
+NA_DEF NAUTF8Char* naPriix64(NAi64 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x",
     naGeti64Hi(value),
     naGeti64Lo(value));
 }
-NA_DEF NAUTF8Char* naPriux128(NAu128 value){
+NA_DEF NAUTF8Char* naPriux128(NAu128 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x",
     naGetu64Hi(naGetu128Hi(value)),
     naGetu64Lo(naGetu128Hi(value)),
     naGetu64Hi(naGetu128Lo(value)),
     naGetu64Lo(naGetu128Lo(value)));
 }
-NA_DEF NAUTF8Char* naPriix128(NAi128 value){
+NA_DEF NAUTF8Char* naPriix128(NAi128 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x",
     naGeti64Hi(naGeti128Hi(value)),
     naGeti64Lo(naGeti128Hi(value)),
     naGetu64Hi(naGeti128Lo(value)),
     naGetu64Lo(naGeti128Lo(value)));
 }
-NA_DEF NAUTF8Char* naPriux256(NAu256 value){
+NA_DEF NAUTF8Char* naPriux256(NAu256 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x%08x%08x%08x%08x",
     naGetu64Hi(naGetu128Hi(naGetu256Hi(value))),
     naGetu64Lo(naGetu128Hi(naGetu256Hi(value))),
@@ -122,7 +122,7 @@ NA_DEF NAUTF8Char* naPriux256(NAu256 value){
     naGetu64Hi(naGetu128Lo(naGetu256Lo(value))),
     naGetu64Lo(naGetu128Lo(naGetu256Lo(value))));
 }
-NA_DEF NAUTF8Char* naPriix256(NAi256 value){
+NA_DEF NAUTF8Char* naPriix256(NAi256 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x%08x%08x%08x%08x",
     naGeti64Hi(naGeti128Hi(naGeti256Hi(value))),
     naGeti64Lo(naGeti128Hi(naGeti256Hi(value))),
@@ -150,7 +150,7 @@ NA_RUNTIME_TYPE(NAString, na_DestructString, NA_FALSE);
 
 
 // We especially inline this definition as it is used many times in this file.
-NA_DEF NAString* naNewString(){
+NA_DEF NAString* naNewString() {
   NAString* string = naNew(NAString);
   string->buffer = naCreateBuffer(NA_FALSE);
   #if NA_DEBUG
@@ -164,7 +164,7 @@ NA_DEF NAString* naNewString(){
 
 
 
-NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, size_t length, NAMutator destructor){
+NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, size_t length, NAMutator destructor) {
   #if NA_DEBUG
     if(!destructor)
       naError("You must specify a destructor, as this string becomes the owner of the provided buffer.");
@@ -182,7 +182,7 @@ NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, size_t len
 
 
 
-NA_DEF NAString* naNewStringWithFormat(const NAUTF8Char* format, ...){
+NA_DEF NAString* naNewStringWithFormat(const NAUTF8Char* format, ...) {
   NAString* string;
   va_list argumentList;
   va_start(argumentList, format);
@@ -196,14 +196,14 @@ NA_DEF NAString* naNewStringWithFormat(const NAUTF8Char* format, ...){
 
 
 
-NA_DEF NAString* naNewStringWithArguments(const NAUTF8Char* format, va_list argumentList){
+NA_DEF NAString* naNewStringWithArguments(const NAUTF8Char* format, va_list argumentList) {
   NAString* string;
   va_list argumentList2;
   va_list argumentList3;
   va_copy(argumentList2, argumentList);
   va_copy(argumentList3, argumentList);
   size_t stringLen = naVarargStringLength(format, argumentList2);
-  if(stringLen){
+  if(stringLen) {
     NAUTF8Char* stringBuf = naMalloc(stringLen + 1);
     naVsnprintf(stringBuf, stringLen + 1, format, argumentList3);
     stringBuf[stringLen] = '\0';
@@ -221,7 +221,7 @@ NA_DEF NAString* naNewStringWithArguments(const NAUTF8Char* format, va_list argu
 
 
 
-NA_DEF NAString* naNewStringExtraction(const NAString* srcString, NAInt offset, NAInt length){
+NA_DEF NAString* naNewStringExtraction(const NAString* srcString, NAInt offset, NAInt length) {
   NAString* string = naNewString();
 
   #if NA_DEBUG
@@ -244,7 +244,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcString, NAInt offset, 
 
 
 
-NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei range){
+NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei range) {
   NAString* string;
   #if NA_DEBUG
     if(!naIsLengthValueUsefuli(buffer->range.length))
@@ -265,9 +265,9 @@ NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei rang
 
 
 
-NA_API NAString* naNewStringWithNewlineSanitization( NAString* string, NANewlineEncoding encoding){
+NA_API NAString* naNewStringWithNewlineSanitization( NAString* string, NANewlineEncoding encoding) {
   NAString* newString;
-  if(naIsStringEmpty(string)){
+  if(naIsStringEmpty(string)) {
     newString = naNewString();
   }else{
     NABufferIterator readIter;
@@ -279,9 +279,9 @@ NA_API NAString* naNewStringWithNewlineSanitization( NAString* string, NANewline
     readIter = naMakeBufferAccessor(naGetStringBufferConst(string));
     writeIter = naMakeBufferModifier(newbuffer);
     writeNL = NA_FALSE;
-    while(!naIsBufferAtEnd(&readIter)){
+    while(!naIsBufferAtEnd(&readIter)) {
       NAString* line;
-      if(writeNL){
+      if(writeNL) {
         naWriteBufferNewLine(&writeIter);
       }else{
         writeNL = NA_TRUE;
@@ -300,27 +300,27 @@ NA_API NAString* naNewStringWithNewlineSanitization( NAString* string, NANewline
 
 
 
-NA_HDEF void na_DestructString(NAString* string){
+NA_HDEF void na_DestructString(NAString* string) {
   naRelease(string->buffer);
 }
 
 
 
-NA_DEF size_t naGetStringByteSize(const NAString* string){
+NA_DEF size_t naGetStringByteSize(const NAString* string) {
   return (size_t)naGetBufferRange(string->buffer).length;
 }
 
 
-NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
+NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string) {
   #if NA_DEBUG
     NAString* mutablestring = (NAString*)string;
-    if(!string){
+    if(!string) {
       naCrash("string is Null-Pointer.");
       return NA_NULL;
     }
   #endif
 
-  if(naIsStringEmpty(string)){
+  if(naIsStringEmpty(string)) {
     return (const NAUTF8Char*)"";
   }else{
     NAInt numchars;
@@ -343,9 +343,9 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
 
 
 
-NA_DEF NABool naIsStringEmpty(const NAString* string){
+NA_DEF NABool naIsStringEmpty(const NAString* string) {
   #if NA_DEBUG
-    if(!string){
+    if(!string) {
       naCrash("string is Null-Pointer.");
       return NA_TRUE;
     }
@@ -356,30 +356,30 @@ NA_DEF NABool naIsStringEmpty(const NAString* string){
 
 
 
-NA_API const NABuffer* naGetStringBufferConst(const NAString* string){
+NA_API const NABuffer* naGetStringBufferConst(const NAString* string) {
   return string->buffer;
 }
-NA_API NABuffer* naGetStringBufferMutable(NAString* string){
+NA_API NABuffer* naGetStringBufferMutable(NAString* string) {
   return string->buffer;
 }
 
 
 
-NA_DEF NAUTF8Char naGetStringChar(NAString* string, size_t index){
+NA_DEF NAUTF8Char naGetStringChar(NAString* string, size_t index) {
   return (NAUTF8Char)naGetBufferByteAtIndex(string->buffer, index);
 }
 
 
 
-NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath){
+NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath) {
   NAString* string;
   naCacheBufferRange(filePath->buffer, filePath->buffer->range);
   NAInt slashoffset = naSearchBufferByteOffset(filePath->buffer, NA_PATH_DELIMITER_UNIX, naGetRangeiMax(naGetBufferRange(filePath->buffer)), NA_FALSE);
-  if(slashoffset != NA_INVALID_MEMORY_INDEX){
+  if(slashoffset != NA_INVALID_MEMORY_INDEX) {
     string = naNewStringExtraction(filePath, 0, slashoffset);
   }else{
     NAInt backslashoffset = naSearchBufferByteOffset(filePath->buffer, NA_PATH_DELIMITER_WIN, naGetRangeiMax(naGetBufferRange(filePath->buffer)), NA_FALSE);
-    if(backslashoffset != NA_INVALID_MEMORY_INDEX){
+    if(backslashoffset != NA_INVALID_MEMORY_INDEX) {
       string = naNewStringExtraction(filePath, 0, backslashoffset);
     }else{
       // If no position is found, return the full string.
@@ -394,12 +394,12 @@ NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath){
 
 
 
-NA_DEF NAString* naNewStringWithBasenameOfPath(const NAString* filePath){
+NA_DEF NAString* naNewStringWithBasenameOfPath(const NAString* filePath) {
   NAString* string;
   naCacheBufferRange(filePath->buffer, filePath->buffer->range);
   NAInt dotoffset = naSearchBufferByteOffset(filePath->buffer, NA_SUFFIX_DELIMITER, naGetRangeiMax(naGetBufferRange(filePath->buffer)), NA_FALSE);
   // If dotpos is invalid, return the full string.
-  if(dotoffset == NA_INVALID_MEMORY_INDEX){
+  if(dotoffset == NA_INVALID_MEMORY_INDEX) {
     string = naNewStringExtraction(filePath, 0, -1);
   }else{
     string = naNewStringExtraction(filePath, 0, dotoffset);
@@ -412,10 +412,10 @@ NA_DEF NAString* naNewStringWithBasenameOfPath(const NAString* filePath){
 
 
 
-NA_DEF NAString* naNewStringWithSuffixOfPath(const NAString* filePath){
+NA_DEF NAString* naNewStringWithSuffixOfPath(const NAString* filePath) {
   NAString* string;
   NAInt dotoffset = naSearchBufferByteOffset(filePath->buffer, NA_SUFFIX_DELIMITER, naGetRangeiMax(naGetBufferRange(filePath->buffer)), NA_FALSE);
-  if(dotoffset == NA_INVALID_MEMORY_INDEX){
+  if(dotoffset == NA_INVALID_MEMORY_INDEX) {
     string = naNewString();
   }else{
     string = naNewStringExtraction(filePath, dotoffset + 1, -1);
@@ -428,21 +428,21 @@ NA_DEF NAString* naNewStringWithSuffixOfPath(const NAString* filePath){
 
 
 
-NA_DEF NAString* naNewStringCEscaped(const NAString* inputString){
+NA_DEF NAString* naNewStringCEscaped(const NAString* inputString) {
   NAString* string;
   NABuffer* buffer;
   NABufferIterator iter;
   NABufferIterator outiter;
-  if(naIsStringEmpty(inputString)){
+  if(naIsStringEmpty(inputString)) {
     return naNewString();
   }
   iter = naMakeBufferAccessor(inputString->buffer);
   na_LocateBufferStart(&iter);
   buffer = naCreateBuffer(NA_FALSE);
   outiter = naMakeBufferModifier(buffer);
-  while(!naIsBufferAtInitial(&iter)){
+  while(!naIsBufferAtInitial(&iter)) {
     NAUTF8Char curChar = naReadBufferi8(&iter);
-    switch(curChar){
+    switch(curChar) {
     case '\a': naWriteBufferBytes(&outiter, "\\a", 2); break;
     case '\b': naWriteBufferBytes(&outiter, "\\b", 2); break;
     case '\f': naWriteBufferBytes(&outiter, "\\f", 2); break;
@@ -467,23 +467,23 @@ NA_DEF NAString* naNewStringCEscaped(const NAString* inputString){
 
 
 
-NA_DEF NAString* naNewStringCUnescaped(const NAString* inputString){
+NA_DEF NAString* naNewStringCUnescaped(const NAString* inputString) {
   NAString* string;
   NABuffer* buffer;
   NABufferIterator iter;
   NABufferIterator outiter;
-  if(naIsStringEmpty(inputString)){
+  if(naIsStringEmpty(inputString)) {
     return naNewString();
   }
   buffer = naCreateBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputString->buffer);
   na_LocateBufferStart(&iter);
   outiter = naMakeBufferModifier(buffer);
-  while(!naIsBufferAtInitial(&iter)){
+  while(!naIsBufferAtInitial(&iter)) {
     NAUTF8Char curChar = naReadBufferi8(&iter);
-    if(curChar == '\\'){
+    if(curChar == '\\') {
       curChar = naReadBufferi8(&iter);
-      switch(curChar){
+      switch(curChar) {
       case 'a':  naWriteBufferi8(&outiter, '\a');  break;
       case 'b':  naWriteBufferi8(&outiter, '\b');  break;
       case 'f':  naWriteBufferi8(&outiter, '\f');  break;
@@ -516,21 +516,21 @@ NA_DEF NAString* naNewStringCUnescaped(const NAString* inputString){
 
 
 
-NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputString){
+NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputString) {
   NAString* string;
   NABuffer* buffer;
   NABufferIterator iter;
   NABufferIterator outiter;
-  if(naIsStringEmpty(inputString)){
+  if(naIsStringEmpty(inputString)) {
     return naNewString();
   }
   buffer = naCreateBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputString->buffer);
   naIterateBuffer(&iter, 1);
   outiter = naMakeBufferModifier(buffer);
-  while(!naIsBufferAtInitial(&iter)){
+  while(!naIsBufferAtInitial(&iter)) {
     NAUTF8Char curChar = naReadBufferi8(&iter);
-    switch(curChar){
+    switch(curChar) {
     case '&': naWriteBufferBytes(&outiter, "&amp;", 5); break;
     case '<': naWriteBufferBytes(&outiter, "&lt;", 4); break;
     case '>': naWriteBufferBytes(&outiter, "&gt;", 4); break;
@@ -549,30 +549,30 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputString){
 
 
 
-NA_DEF NAString* naNewStringXMLDecoded(const NAString* inputString){
+NA_DEF NAString* naNewStringXMLDecoded(const NAString* inputString) {
   NAString* string;
   NABuffer* buffer;
   NABufferIterator iter;
   NABufferIterator outiter;
-  if(naIsStringEmpty(inputString)){
+  if(naIsStringEmpty(inputString)) {
     return naNewString();
   }
   buffer = naCreateBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputString->buffer);
   outiter = naMakeBufferModifier(buffer);
-  while(!naIsBufferAtInitial(&iter)){
+  while(!naIsBufferAtInitial(&iter)) {
     NAUTF8Char curChar = naReadBufferi8(&iter);
-    if(curChar == '&'){
+    if(curChar == '&') {
       NAString* token = naParseBufferTokenWithDelimiter(&iter, ';', NA_FALSE);
-      if(naEqualStringToUTF8CString(token, "amp",   NA_TRUE)){
+      if(naEqualStringToUTF8CString(token, "amp",   NA_TRUE)) {
         naWriteBufferi8(&outiter, '&');
-      }else if(naEqualStringToUTF8CString(token, "lt",    NA_TRUE)){
+      }else if(naEqualStringToUTF8CString(token, "lt",    NA_TRUE)) {
         naWriteBufferi8(&outiter, '<');
-      }else if(naEqualStringToUTF8CString(token, "gt",    NA_TRUE)){
+      }else if(naEqualStringToUTF8CString(token, "gt",    NA_TRUE)) {
         naWriteBufferi8(&outiter, '>');
-      }else if(naEqualStringToUTF8CString(token, "quot",  NA_TRUE)){
+      }else if(naEqualStringToUTF8CString(token, "quot",  NA_TRUE)) {
         naWriteBufferi8(&outiter, '\"');
-      }else if(naEqualStringToUTF8CString(token, "apos",  NA_TRUE)){
+      }else if(naEqualStringToUTF8CString(token, "apos",  NA_TRUE)) {
         naWriteBufferi8(&outiter, '\'');
       }else{
         #if NA_DEBUG
@@ -596,20 +596,20 @@ NA_DEF NAString* naNewStringXMLDecoded(const NAString* inputString){
 
 
 
-NA_DEF NAString* naNewStringEPSEncoded(const NAString* inputString){
+NA_DEF NAString* naNewStringEPSEncoded(const NAString* inputString) {
   NAString* string;
   NABuffer* buffer;
   NABufferIterator iter;
   NABufferIterator outiter;
-  if(naIsStringEmpty(inputString)){
+  if(naIsStringEmpty(inputString)) {
     return naNewString();
   }
   buffer = naCreateBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputString->buffer);
   outiter = naMakeBufferModifier(buffer);
-  while(!naIsBufferAtInitial(&iter)){
+  while(!naIsBufferAtInitial(&iter)) {
     NAUTF8Char curChar = naReadBufferi8(&iter);
-    switch(curChar){
+    switch(curChar) {
     case '\\': naWriteBufferBytes(&outiter, "\\\\", 2); break;
     case '(':  naWriteBufferBytes(&outiter, "\\(", 2); break;
     case ')':  naWriteBufferBytes(&outiter, "\\)", 2); break;
@@ -624,22 +624,22 @@ NA_DEF NAString* naNewStringEPSEncoded(const NAString* inputString){
 }
 
 
-NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
+NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString) {
   NAString* string;
   NABuffer* buffer;
   NABufferIterator iter;
   NABufferIterator outiter;
-  if(naIsStringEmpty(inputString)){
+  if(naIsStringEmpty(inputString)) {
     return naNewString();
   }
   buffer = naCreateBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputString->buffer);
   outiter = naMakeBufferModifier(buffer);
-  while(!naIsBufferAtInitial(&iter)){
+  while(!naIsBufferAtInitial(&iter)) {
     NAUTF8Char curChar = naReadBufferi8(&iter);
-    if(curChar == '\\'){
+    if(curChar == '\\') {
       curChar = naReadBufferi8(&iter);
-      switch(curChar){
+      switch(curChar) {
       case '\\':  naWriteBufferi8(&outiter, '\\');  break;
       case '(':  naWriteBufferi8(&outiter, '(');  break;
       case ')':  naWriteBufferi8(&outiter, ')');  break;
@@ -664,7 +664,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
 
 
 #if NA_OS == NA_OS_WINDOWS
-  NA_DEF wchar_t* naAllocWideCharStringWithUTF8String(const NAUTF8Char* utf8String){
+  NA_DEF wchar_t* naAllocWideCharStringWithUTF8String(const NAUTF8Char* utf8String) {
     NAString* string = naNewStringWithFormat("%s", utf8String);
     NAString* newLineString = naNewStringWithNewlineSanitization(string, NA_NEWLINE_WIN);
 
@@ -678,7 +678,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
     return outStr;
   }
 
-  NA_DEF char* naAllocAnsiStringWithUTF8String(const NAUTF8Char* utf8String){
+  NA_DEF char* naAllocAnsiStringWithUTF8String(const NAUTF8Char* utf8String) {
     NAString* string = naNewStringWithFormat("%s", utf8String);
     NAString* newLineString = naNewStringWithNewlineSanitization(string, NA_NEWLINE_WIN);
     size_t length = naGetStringByteSize(newLineString);
@@ -701,7 +701,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
   // Returns a newly allocated memory block containing the system-encoded
   // string. If you do not provide the length, it will be automatically
   // computed. The resulting string must be freed manually. COPIES ALWAYS!
-  NA_DEF TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8String){
+  NA_DEF TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8String) {
     #ifdef UNICODE
       return naAllocWideCharStringWithUTF8String(utf8String);
     #else
@@ -709,7 +709,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
     #endif
   }
 
-  NA_DEF NAString* naNewStringFromWideCharString(const wchar_t* wcharString){
+  NA_DEF NAString* naNewStringFromWideCharString(const wchar_t* wcharString) {
     size_t length = wcslen(wcharString);
     NAInt utf8Length = WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, NULL, 0, NULL, NULL);
     NAUTF8Char* stringBuf = naMalloc((utf8Length + 1) * sizeof(NAUTF8Char));
@@ -720,7 +720,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
     return string;
   }
   
-  NA_DEF NAString* naNewStringFromAnsiString(const char* ansiString){
+  NA_DEF NAString* naNewStringFromAnsiString(const char* ansiString) {
     size_t length = strlen(ansiString);
     size_t wideLength = (size_t)MultiByteToWideChar(CP_ACP, 0, ansiString, (int)length, NULL, 0);
     wchar_t* wstr = naMalloc(((wideLength + 1) * sizeof(wchar_t)));
@@ -738,7 +738,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
   }
 
   // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
-  NA_DEF NAString* naNewStringFromSystemString(const TCHAR* systemString){
+  NA_DEF NAString* naNewStringFromSystemString(const TCHAR* systemString) {
     #ifdef UNICODE
       return naNewStringFromWideCharString(systemString);
     #else
@@ -749,13 +749,13 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
 
 
 
-NA_DEF void naAppendStringString(NAString* originalString, const NAString* string2){
+NA_DEF void naAppendStringString(NAString* originalString, const NAString* string2) {
   naAppendBufferToBuffer(originalString->buffer, string2->buffer);
 }
 
 
 
-NA_DEF void naAppendStringChar(NAString* originalString, NAUTF8Char newChar){
+NA_DEF void naAppendStringChar(NAString* originalString, NAUTF8Char newChar) {
   NAString* charstring = naNewStringWithFormat("%c", newChar);
   naAppendBufferToBuffer(originalString->buffer, charstring->buffer);
   naDelete(charstring);
@@ -763,7 +763,7 @@ NA_DEF void naAppendStringChar(NAString* originalString, NAUTF8Char newChar){
 
 
 
-NA_DEF void naAppendStringFormat(NAString* originalString, const NAUTF8Char* format, ...){
+NA_DEF void naAppendStringFormat(NAString* originalString, const NAUTF8Char* format, ...) {
   va_list argumentList;
   va_start(argumentList, format);
   naAppendStringArguments(originalString, format, argumentList);
@@ -771,7 +771,7 @@ NA_DEF void naAppendStringFormat(NAString* originalString, const NAUTF8Char* for
 }
 
 
-NA_DEF void naAppendStringArguments(NAString* originalString, const NAUTF8Char* format, va_list argumentList){
+NA_DEF void naAppendStringArguments(NAString* originalString, const NAUTF8Char* format, va_list argumentList) {
   NAString* formatString = naNewStringWithArguments(format, argumentList);
   naAppendBufferToBuffer(originalString->buffer, formatString->buffer);
   naDelete(formatString);
@@ -781,19 +781,19 @@ NA_DEF void naAppendStringArguments(NAString* originalString, const NAUTF8Char* 
 
 
 
-NA_DEF NABool naEqualStringToString(const NAString* string1, const NAString* string2, NABool caseSensitive){
+NA_DEF NABool naEqualStringToString(const NAString* string1, const NAString* string2, NABool caseSensitive) {
   return naEqualBufferToBuffer(string1->buffer, string2->buffer, caseSensitive);
 }
 
 
 
-NA_DEF NABool naEqualStringToUTF8CString(const NAString* string1, const NAUTF8Char* string2, NABool caseSensitive){
+NA_DEF NABool naEqualStringToUTF8CString(const NAString* string1, const NAUTF8Char* string2, NABool caseSensitive) {
   return naEqualBufferToData(string1->buffer, string2, naStrlen(string2), caseSensitive);
 }
 
 
 
-NA_DEF int8 naParseStringi8(const NAString* string){
+NA_DEF int8 naParseStringi8(const NAString* string) {
   int8 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
@@ -801,7 +801,7 @@ NA_DEF int8 naParseStringi8(const NAString* string){
   naClearBufferIterator(&iter);
   return retValue;
 }
-NA_DEF int16 naParseStringi16(const NAString* string){
+NA_DEF int16 naParseStringi16(const NAString* string) {
   int16 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
@@ -809,7 +809,7 @@ NA_DEF int16 naParseStringi16(const NAString* string){
   naClearBufferIterator(&iter);
   return retValue;
 }
-NA_DEF int32 naParseStringi32(const NAString* string){
+NA_DEF int32 naParseStringi32(const NAString* string) {
   int32 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
@@ -817,7 +817,7 @@ NA_DEF int32 naParseStringi32(const NAString* string){
   naClearBufferIterator(&iter);
   return retValue;
 }
-NA_DEF NAi64 naParseStringi64(const NAString* string){
+NA_DEF NAi64 naParseStringi64(const NAString* string) {
   NAi64 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
@@ -827,7 +827,7 @@ NA_DEF NAi64 naParseStringi64(const NAString* string){
 }
 
 
-NA_DEF uint8 naParseStringu8(const NAString* string){
+NA_DEF uint8 naParseStringu8(const NAString* string) {
   uint8 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
@@ -835,7 +835,7 @@ NA_DEF uint8 naParseStringu8(const NAString* string){
   naClearBufferIterator(&iter);
   return retValue;
 }
-NA_DEF uint16 naParseStringu16(const NAString* string){
+NA_DEF uint16 naParseStringu16(const NAString* string) {
   uint16 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
@@ -843,7 +843,7 @@ NA_DEF uint16 naParseStringu16(const NAString* string){
   naClearBufferIterator(&iter);
   return retValue;
 }
-NA_DEF uint32 naParseStringu32(const NAString* string){
+NA_DEF uint32 naParseStringu32(const NAString* string) {
   uint32 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
@@ -851,7 +851,7 @@ NA_DEF uint32 naParseStringu32(const NAString* string){
   naClearBufferIterator(&iter);
   return retValue;
 }
-NA_DEF NAu64 naParseStringu64(const NAString* string){
+NA_DEF NAu64 naParseStringu64(const NAString* string) {
   NAu64 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
@@ -860,12 +860,12 @@ NA_DEF NAu64 naParseStringu64(const NAString* string){
   return retValue;
 }
 
-NA_DEF float naParseStringFloat(const NAString* string){
+NA_DEF float naParseStringFloat(const NAString* string) {
   NAUTF8Char* buf;
   NABufferIterator bufiter;
   float retValue;
   size_t len = naGetStringByteSize(string);
-  if(len > 20){
+  if(len > 20) {
     len = 20;
     #if NA_DEBUG
       naError("String truncated to 20 characters");
@@ -880,12 +880,12 @@ NA_DEF float naParseStringFloat(const NAString* string){
   naFree(buf);
   return retValue;
 }
-NA_DEF double naParseStringDouble(const NAString* string){
+NA_DEF double naParseStringDouble(const NAString* string) {
   NAUTF8Char* buf;
   NABufferIterator bufiter;
   double retValue;
   size_t len = naGetStringByteSize(string);
-  if(len > 20){
+  if(len > 20) {
     len = 20;
     #if NA_DEBUG
       naError("String truncated to 20 characters");

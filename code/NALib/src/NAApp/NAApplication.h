@@ -88,13 +88,13 @@ NA_API void naStartApplication(
 // If you require a mix of both environments, here is a very simple scheme you
 // can use in your main.m file:
 //
-// void postStartup(void* arg){
+// void postStartup(void* arg) {
 //   [NSBundle loadNibNamed:@"MainMenu" owner:NSApp];
 //   // or use naLoadNib("MainMenu", NSApp);
 //   // Now, do UI stuff with NALib.
 // }
 //
-// int main(int argc, char *argv[]){
+// int main(int argc, char *argv[]) {
 //   naStartRuntime();
 //   [MyExistingApplication sharedApplication];
 //   naStartApplication(NA_NULL, postStartup, NA_NULL);

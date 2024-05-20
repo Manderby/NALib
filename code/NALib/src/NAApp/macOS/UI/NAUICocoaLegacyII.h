@@ -15,15 +15,15 @@
 
 
 
-NA_DEF CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext){
+NA_DEF CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext) {
   CGContextRef cgContext = nil;
 
   NA_MACOS_AVAILABILITY_GUARD_10_14(
-    if([NSGraphicsContext instancesRespondToSelector:@selector(CGContext)]){
+    if([NSGraphicsContext instancesRespondToSelector:@selector(CGContext)]) {
       cgContext = [graphicsContext CGContext];
     }
   )
-  if(!cgContext){
+  if(!cgContext) {
     cgContext = [graphicsContext graphicsPort];
   }
   return cgContext;
@@ -31,24 +31,24 @@ NA_DEF CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext){
 
 
 
-NA_DEF CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement){
+NA_DEF CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement) {
   return naGetWindowBackingScaleFactor([uiElement window]);
 }
 
 
 
-NA_DEF CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
+NA_DEF CGFloat naGetWindowBackingScaleFactor(NSWindow* window) {
   CGFloat uiScale = (CGFloat)1.;
 
   NA_MACOS_AVAILABILITY_GUARD_10_7(
-    if([NSWindow instancesRespondToSelector:@selector(backingScaleFactor)]){
+    if([NSWindow instancesRespondToSelector:@selector(backingScaleFactor)]) {
       uiScale = [window backingScaleFactor];
     }
   )
-  if(uiScale == 0.){
+  if(uiScale == 0.) {
     uiScale = [window userSpaceScaleFactor];
   }
-  if(uiScale == 0.){
+  if(uiScale == 0.) {
     uiScale = 1.;
   }
   
@@ -57,12 +57,12 @@ NA_DEF CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
 
 
 
-NA_DEF NABool naLoadNib(const NAUTF8Char* nibName, void* owner){
+NA_DEF NABool naLoadNib(const NAUTF8Char* nibName, void* owner) {
   NABool loaded = NA_FALSE;
   id cocoaOwner = owner ? (NA_COCOA_BRIDGE id)owner : NSApp;
 
   NA_MACOS_AVAILABILITY_GUARD_10_8(
-    if([NSBundle instancesRespondToSelector:@selector(loadNibNamed:owner:topLevelObjects:)]){
+    if([NSBundle instancesRespondToSelector:@selector(loadNibNamed:owner:topLevelObjects:)]) {
       NSArray * topLevelObjects;
       loaded = [[NSBundle mainBundle] loadNibNamed:[NSString stringWithUTF8String:nibName] owner:cocoaOwner topLevelObjects:&topLevelObjects];
       // Yes, we are retaining the topLevelObjects just like that. Upon closing the app,
@@ -70,7 +70,7 @@ NA_DEF NABool naLoadNib(const NAUTF8Char* nibName, void* owner){
       (void)NA_COCOA_RETAIN(topLevelObjects);
     }
   )
-  if(!loaded){
+  if(!loaded) {
     loaded = [NSBundle loadNibNamed:[NSString stringWithUTF8String:nibName] owner:cocoaOwner];
   }
   return loaded;
@@ -78,56 +78,56 @@ NA_DEF NABool naLoadNib(const NAUTF8Char* nibName, void* owner){
 
 
 
-NA_DEF void naSwitchApplicationToGraphiteAppearance(void){
+NA_DEF void naSwitchApplicationToGraphiteAppearance(void) {
   [[NSUserDefaults standardUserDefaults] setVolatileDomain:@{@"AppleAquaColorVariant": @6} forName:NSArgumentDomain];
 }
 
 
 
-NA_DEF NSColor* naGetLabelColor(){
+NA_DEF NSColor* naGetLabelColor() {
   NSColor* color = nil;
   
   NA_MACOS_AVAILABILITY_GUARD_10_10(
-    if([NSColor respondsToSelector:@selector(labelColor)]){
+    if([NSColor respondsToSelector:@selector(labelColor)]) {
       color = [NSColor labelColor];
     }
   )
-  if(!color){
+  if(!color) {
     color = [NSColor controlTextColor];
   }
   return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
 
-NA_DEF NSColor* naGetLinkColor(){
+NA_DEF NSColor* naGetLinkColor() {
   NSColor* color = nil;
 
   // documentation says available since 10.10 but that is not true. It is at least 10.12 but maybe even higher.
   NA_MACOS_AVAILABILITY_GUARD_10_12(
-    if([NSColor respondsToSelector:@selector(linkColor)]){
+    if([NSColor respondsToSelector:@selector(linkColor)]) {
       color = [NSColor linkColor];
     }
   )
-  if(!color){
+  if(!color) {
     color = [NSColor blueColor];
   }
   return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
 
-NA_DEF NSColor* naGetAccentColor(){
+NA_DEF NSColor* naGetAccentColor() {
   NSColor* color = nil;
 
   NA_MACOS_AVAILABILITY_GUARD_10_14(
-    if([NSColor respondsToSelector:@selector(controlAccentColor)]){
+    if([NSColor respondsToSelector:@selector(controlAccentColor)]) {
       color = [NSColor controlAccentColor];
     }
   )
-  if(!color){
+  if(!color) {
     color = [NSColor blueColor];
   }
   return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
 
-NA_DEF NABool isAtLeastMacOSVersion(int major, int minor){
+NA_DEF NABool isAtLeastMacOSVersion(int major, int minor) {
   #if NA_DEBUG
     NA_MACOS_AVAILABILITY_GUARD_10_10(
       NSOperatingSystemVersion curVer = [[NSProcessInfo processInfo] operatingSystemVersion];
@@ -137,7 +137,7 @@ NA_DEF NABool isAtLeastMacOSVersion(int major, int minor){
   
   NSOperatingSystemVersion ver = {major, minor, 0};
   NA_MACOS_AVAILABILITY_GUARD_10_10(
-    if([NSProcessInfo instancesRespondToSelector:@selector(isOperatingSystemAtLeastVersion:)]){
+    if([NSProcessInfo instancesRespondToSelector:@selector(isOperatingSystemAtLeastVersion:)]) {
       return [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:ver];
     }
   )

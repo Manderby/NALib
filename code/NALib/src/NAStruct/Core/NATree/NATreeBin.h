@@ -57,19 +57,19 @@ NA_HIAPI NATreeItem* na_GetBinNodeItem(NATreeBinNode* binnode);
 
 
 
-NA_HIDEF NATreeNode* na_GetBinNodeNode(NATreeBinNode* binnode){
+NA_HIDEF NATreeNode* na_GetBinNodeNode(NATreeBinNode* binnode) {
   return &(binnode->node);
 }
-NA_HIDEF NATreeLeaf* na_GetBinLeafLeaf(NATreeBinLeaf* binleaf){
+NA_HIDEF NATreeLeaf* na_GetBinLeafLeaf(NATreeBinLeaf* binleaf) {
   return &(binleaf->leaf);
 }
 
 
 
-NA_HIDEF NATreeItem* na_GetBinNodeItem(NATreeBinNode* binnode){
+NA_HIDEF NATreeItem* na_GetBinNodeItem(NATreeBinNode* binnode) {
   return na_GetTreeNodeItem(na_GetBinNodeNode(binnode));
 }
-NA_HIDEF NATreeItem* na_GetBinLeafItem(NATreeBinLeaf* binleaf){
+NA_HIDEF NATreeItem* na_GetBinLeafItem(NATreeBinLeaf* binleaf) {
   return na_GetTreeLeafItem(na_GetBinLeafLeaf(binleaf));
 }
 

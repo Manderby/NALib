@@ -5,7 +5,7 @@
 
 
 
-NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAUIImage* uiImage, const NAUIImage* uiImage2, uint32 flags){
+NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAUIImage* uiImage, const NAUIImage* uiImage2, uint32 flags) {
   na_InitUIElement(&(button->uiElement), NA_UI_BUTTON, nativePtr);
   button->text = NA_NULL;
   button->text2 = NA_NULL;
@@ -20,7 +20,7 @@ NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* 
 
 
 
-NA_HDEF void na_ClearButton(NAButton* button){
+NA_HDEF void na_ClearButton(NAButton* button) {
   if(button->text)
     naFree(button->text);
   if(button->text2)
@@ -35,11 +35,11 @@ NA_HDEF void na_ClearButton(NAButton* button){
 
 
 
-NA_HDEF void na_setButtonText(NAButton* button, const NAUTF8Char* text){
-  if(button->text){
+NA_HDEF void na_setButtonText(NAButton* button, const NAUTF8Char* text) {
+  if(button->text) {
     naFree(button->text);
   }
-  if(text){
+  if(text) {
     size_t len = strlen(text);
     button->text = naMalloc(len + 1);
     memcpy(button->text, text, len);
@@ -51,11 +51,11 @@ NA_HDEF void na_setButtonText(NAButton* button, const NAUTF8Char* text){
 
 
 
-NA_HDEF void na_setButtonText2(NAButton* button, const NAUTF8Char* text){
-  if(button->text2){
+NA_HDEF void na_setButtonText2(NAButton* button, const NAUTF8Char* text) {
+  if(button->text2) {
     naFree(button->text2);
   }
-  if(text){
+  if(text) {
     size_t len = strlen(text);
     button->text2 = naMalloc(len + 1);
     memcpy(button->text2, text, len);
@@ -67,11 +67,11 @@ NA_HDEF void na_setButtonText2(NAButton* button, const NAUTF8Char* text){
 
 
 
-NA_HDEF void na_setButtonImage(NAButton* button, const NAUIImage* uiImage){
-  if(button->uiImage){
+NA_HDEF void na_setButtonImage(NAButton* button, const NAUIImage* uiImage) {
+  if(button->uiImage) {
     naReleaseConst(button->uiImage);
   }
-  if(uiImage){
+  if(uiImage) {
     button->uiImage = naRetainConst(uiImage);
   }else{
     button->uiImage = NA_NULL;
@@ -80,11 +80,11 @@ NA_HDEF void na_setButtonImage(NAButton* button, const NAUIImage* uiImage){
 
 
 
-NA_HDEF void na_setButtonImage2(NAButton* button, const NAUIImage* uiImage){
-  if(button->uiImage2){
+NA_HDEF void na_setButtonImage2(NAButton* button, const NAUIImage* uiImage) {
+  if(button->uiImage2) {
     naReleaseConst(button->uiImage2);
   }
-  if(uiImage){
+  if(uiImage) {
     button->uiImage2 = naRetainConst(uiImage);
   }else{
     button->uiImage2 = NA_NULL;

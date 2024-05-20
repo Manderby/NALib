@@ -34,7 +34,7 @@
   dirtyRect = [self frame];
   dirtyRect.origin = NSMakePoint(0., 0.);
 
-  if(naGetColorAlpha(&cocoaSpace->space.backgroundColor) != 0.){
+  if(naGetColorAlpha(&cocoaSpace->space.backgroundColor) != 0.) {
     float rgba[4];
     naFillSRGBAWithColor(rgba, &cocoaSpace->space.backgroundColor);
     [[NSColor colorWithDeviceRed:rgba[0]
@@ -43,14 +43,14 @@
       alpha:rgba[3]] setFill];
     NSRectFill(dirtyRect);
   }
-  if(cocoaSpace->space.alternateBackground){
+  if(cocoaSpace->space.alternateBackground) {
     [[[NSColor controlTextColor] colorWithAlphaComponent:(CGFloat).075] setFill];
     NSRectFill(dirtyRect);
   }
 }
 
 - (void)mouseDown:(NSEvent* _Nonnull)event{
-  if(cocoaSpace->space.dragsWindow){
+  if(cocoaSpace->space.dragsWindow) {
     isMoving = NA_TRUE;
     originMousePos = naMakePosWithNSPoint([event locationInWindow]);
   }else{
@@ -60,7 +60,7 @@
 }
 
 - (void)mouseDragged:(NSEvent* _Nonnull)event{
-  if(cocoaSpace->space.dragsWindow && isMoving){
+  if(cocoaSpace->space.dragsWindow && isMoving) {
     NAPos curMousePos = naMakePosWithNSPoint([event locationInWindow]);
     NSRect frame = [[self window] frame];
     frame.origin.x += curMousePos.x - originMousePos.x;
@@ -73,7 +73,7 @@
 }
 
 - (void)mouseUp:(NSEvent* _Nonnull)event{
-  if(cocoaSpace->space.dragsWindow){
+  if(cocoaSpace->space.dragsWindow) {
     [self resetDrag];
   }else{
     [super mouseUp:event];
@@ -114,7 +114,7 @@
 
 
 
-NA_DEF NASpace* _Nonnull naNewSpace(NASize size){
+NA_DEF NASpace* _Nonnull naNewSpace(NASize size) {
   NACocoaSpace* cocoaSpace = naNew(NACocoaSpace);
 
   NACocoaNativeSpace* nativePtr = [[NACocoaNativeSpace alloc]
@@ -131,13 +131,13 @@ NA_DEF NASpace* _Nonnull naNewSpace(NASize size){
 
 
 
-NA_DEF void na_DestructCocoaSpace(NACocoaSpace* _Nonnull cocoaSpace){
+NA_DEF void na_DestructCocoaSpace(NACocoaSpace* _Nonnull cocoaSpace) {
   na_ClearSpace((NASpace*)cocoaSpace);
 }
 
 
 
-NA_DEF void naSetSpaceRect(NASpace* _Nonnull space, NARect rect){
+NA_DEF void naSetSpaceRect(NASpace* _Nonnull space, NARect rect) {
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   NSRect frame = naMakeNSRectWithRect(rect);
   [nativePtr setFrame: frame];
@@ -145,14 +145,14 @@ NA_DEF void naSetSpaceRect(NASpace* _Nonnull space, NARect rect){
 
 
 
-NA_DEF void naSetSpaceVisible(NASpace* _Nonnull space, NABool visible){
+NA_DEF void naSetSpaceVisible(NASpace* _Nonnull space, NABool visible) {
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   [nativePtr setHidden:visible ? NO : YES];
 }
 
 
 
-NA_DEF void naSetSpaceDragsWindow(NASpace* _Nonnull space, NABool isDraggable){
+NA_DEF void naSetSpaceDragsWindow(NASpace* _Nonnull space, NABool isDraggable) {
   space->dragsWindow = isDraggable;
 }
 
@@ -162,11 +162,11 @@ NA_DEF void naSetSpaceDragsWindow(NASpace* _Nonnull space, NABool isDraggable){
 @class NACocoaNativeTextBox;
 
 
-NA_HDEF NSView* _Nonnull na_getNSViewOfChild(void* _Nonnull child){
+NA_HDEF NSView* _Nonnull na_getNSViewOfChild(void* _Nonnull child) {
   naDefineCocoaObjectConst(NSView<NACocoaNativeEncapsulatedElement>, cocoaView, child);
 
   NSView* childView;  
-  switch(naGetUIElementType(child)){
+  switch(naGetUIElementType(child)) {
   case NA_UI_RADIO:
     childView = [cocoaView getEncapsulatingView];
     break;
@@ -183,7 +183,7 @@ NA_HDEF NSView* _Nonnull na_getNSViewOfChild(void* _Nonnull child){
 
 
 
-NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos){
+NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos) {
   naDefineCocoaObject(NACocoaNativeSpace, nativeSpacePtr, space);
 
   NSView* childView = na_getNSViewOfChild(child);  
@@ -201,11 +201,11 @@ NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos
 
 
 
-NA_DEF void naRemoveSpaceChild(NASpace* _Nonnull space, void* _Nonnull child){
+NA_DEF void naRemoveSpaceChild(NASpace* _Nonnull space, void* _Nonnull child) {
   NAListIterator iter = naMakeListModifier(&(space->childs));
   NABool found = naLocateListData(&iter, child);
   naClearListIterator(&iter);
-  if(found){
+  if(found) {
     na_RemoveSpaceChild(space, child);
     [(NA_COCOA_BRIDGE NSView*)(naGetUIElementNativePtr(child)) removeFromSuperview];
   }else{
@@ -217,8 +217,8 @@ NA_DEF void naRemoveSpaceChild(NASpace* _Nonnull space, void* _Nonnull child){
 
 
 
-NA_DEF void naRemoveAllSpaceChilds(NASpace* _Nonnull space){
-  while(!naIsListEmpty(&(space->childs))){
+NA_DEF void naRemoveAllSpaceChilds(NASpace* _Nonnull space) {
+  while(!naIsListEmpty(&(space->childs))) {
     void* child = naGetListFirstMutable(&(space->childs));
     na_RemoveSpaceChild(space, child);
     [(NA_COCOA_BRIDGE NSView*)(naGetUIElementNativePtr(child)) removeFromSuperview];
@@ -227,9 +227,9 @@ NA_DEF void naRemoveAllSpaceChilds(NASpace* _Nonnull space){
 
 
 
-NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift){
+NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift) {
   NAListIterator childIt = naMakeListMutator(&(space->childs));
-  while(naIterateList(&childIt)){
+  while(naIterateList(&childIt)) {
     void* child = naGetListCurMutable(&childIt);
     NSView* childView = na_getNSViewOfChild(child);  
     NSRect frame = [childView frame];
@@ -241,8 +241,8 @@ NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift){
 
 
 
-NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NAColor* _Nullable color){
-  if(color){
+NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NAColor* _Nullable color) {
+  if(color) {
     naCopyColor(&space->backgroundColor, color);
   }else{
     naFillColorWithTransparent(&space->backgroundColor);
@@ -252,12 +252,12 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NAColor* _N
 }
 
 
-NA_HDEF NARect na_GetSpaceRect(const NA_UIElement* _Nullable space){
+NA_HDEF NARect na_GetSpaceRect(const NA_UIElement* _Nullable space) {
   naDefineCocoaObjectConst(NACocoaNativeSpace, nativePtr, space);
   return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-NA_HDEF void na_SetSpaceRect(NA_UIElement* _Nullable space, NARect rect){
+NA_HDEF void na_SetSpaceRect(NA_UIElement* _Nullable space, NARect rect) {
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }

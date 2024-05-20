@@ -16,7 +16,7 @@ struct NAMemoryBlock{
 
 
 
-NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, size_t index){
+NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, size_t index) {
   #if NA_DEBUG
     if(!block)
       naCrash("block is Null");
@@ -28,7 +28,7 @@ NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, siz
 
 
 
-NA_HIDEF void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, size_t index){
+NA_HIDEF void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, size_t index) {
   #if NA_DEBUG
     if(!block)
       naCrash("block is Null");

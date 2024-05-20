@@ -138,7 +138,7 @@
 // PLANCK_2PIC         -> PLANCK_REDUCED_C
 // NA_PLANCK_MASS_GEV  -> PLANCK_MASS_EQU
 
-#if (NA_NIST_CODATA_YEAR == 2006)
+#if(NA_NIST_CODATA_YEAR == 2006)
   #define NA_LIGHT_SPEED_VAC     299792458.
   #define NA_CHAR_IMP_VAC        376.730313461
   #define NA_ELEC_CONST          8.854187817e-12
@@ -155,7 +155,7 @@
   #define NA_PLANCK_MASS_GEV     1.220892e19
   #define NA_PLANCK_TEMP         1.416785e32
   #define NA_PLANCK_TIME         5.39124e-44
-#elif (NA_NIST_CODATA_YEAR == 2010)
+#elif(NA_NIST_CODATA_YEAR == 2010)
   #define NA_LIGHT_SPEED_VAC     299792458.         // same as 2006
   #define NA_CHAR_IMP_VAC        376.730313461      // same as 2006
   #define NA_ELEC_CONST          8.854187817e-12    // same as 2006
@@ -172,7 +172,7 @@
   #define NA_PLANCK_MASS_GEV     1.220932e19
   #define NA_PLANCK_TEMP         1.416833e32
   #define NA_PLANCK_TIME         5.39106e-44
-#elif (NA_NIST_CODATA_YEAR == 2014)
+#elif(NA_NIST_CODATA_YEAR == 2014)
   #define NA_LIGHT_SPEED_VAC     299792458.         // same as 2010
   #define NA_CHAR_IMP_VAC        376.730313461      // same as 2010
   #define NA_ELEC_CONST          8.854187817e-12    // same as 2010
@@ -189,7 +189,7 @@
   #define NA_PLANCK_MASS_GEV     1.220910e19
   #define NA_PLANCK_TEMP         1.416808e32
   #define NA_PLANCK_TIME         5.39116e-44
-#elif (NA_NIST_CODATA_YEAR == 2018)
+#elif(NA_NIST_CODATA_YEAR == 2018)
   #define NA_LIGHT_SPEED_VAC     299792458.         // same as 2014
   #define NA_CHAR_IMP_VAC        376.730313668
   #define NA_VAC_ELEC_PERMET     8.8541878128e-12   // was NA_ELEC_CONST
@@ -231,7 +231,7 @@
 // - NUC_MAG_MHZT       nuclear magneton in MHz/T, mu_N/h in [MHzT-1]
 // - VON_KLITZING       von Klitzing constant, R_K in [Ohm]
 
-#if (NA_NIST_CODATA_YEAR == 2006)
+#if(NA_NIST_CODATA_YEAR == 2006)
   #define NA_BOHR                927.400915e-26
   #define NA_BOHR_EVT            5.7883817555e-5
   #define NA_BOHR_HZT            13.99624604e9
@@ -249,7 +249,7 @@
   #define NA_NUC_MAG_KT          3.6582637e-4
   #define NA_NUC_MAG_MHZT        7.62259384
   #define NA_VON_KLITZING        25812.807557
-#elif (NA_NIST_CODATA_YEAR == 2010)
+#elif(NA_NIST_CODATA_YEAR == 2010)
   #define NA_BOHR                927.400968e-26
   #define NA_BOHR_EVT            5.7883818066e-5
   #define NA_BOHR_HZT            13.99624555e9
@@ -267,7 +267,7 @@
   #define NA_NUC_MAG_KT          3.6582682e-4
   #define NA_NUC_MAG_MHZT        7.62259357
   #define NA_VON_KLITZING        25812.807
-#elif (NA_NIST_CODATA_YEAR == 2014)
+#elif(NA_NIST_CODATA_YEAR == 2014)
   #define NA_BOHR                927.4009994e-26
   #define NA_BOHR_EVT            5.7883818012e-5
   #define NA_BOHR_HZT            13.996245042e9
@@ -285,7 +285,7 @@
   #define NA_NUC_MAG_KT          3.6582690e-4
   #define NA_NUC_MAG_MHZT        7.622593285
   #define NA_VON_KLITZING        25812.8074555
-#elif (NA_NIST_CODATA_YEAR == 2018)
+#elif(NA_NIST_CODATA_YEAR == 2018)
   #define NA_BOHR                9.2740100783e-24
   #define NA_BOHR_EVT            5.7883818060e-5
   #define NA_BOHR_HZT            1.39962449361e10
@@ -340,7 +340,7 @@
 //                      in [HzK-1]
 // - WIEN_WAVE          Wien wavelength displacement law constant, b in [mK]
 
-#if (NA_NIST_CODATA_YEAR == 2006)
+#if(NA_NIST_CODATA_YEAR == 2006)
   #define NA_ATOM_MASS           1.660538782e-27
   #define NA_ATOM_MASS_ENERGY    1.492417830e-10
   #define NA_ATOM_MASS_MEV       931.494028
@@ -364,7 +364,7 @@
   #define NA_STEF_BOLTZ          5.670400e-8
   #define NA_WIEN_FREQ           5.878933e10
   #define NA_WIEN_WAVE           2.8977685e-3
-#elif (NA_NIST_CODATA_YEAR == 2010)
+#elif(NA_NIST_CODATA_YEAR == 2010)
   #define NA_ATOM_MASS           1.660538921e-27
   #define NA_ATOM_MASS_ENERGY    1.492417954e-10
   #define NA_ATOM_MASS_MEV       931.494061
@@ -389,7 +389,7 @@
   #define NA_STEF_BOLTZ          5.670373e-8
   #define NA_WIEN_FREQ           5.8789254e10
   #define NA_WIEN_WAVE           2.8977721e-3
-#elif (NA_NIST_CODATA_YEAR == 2014)
+#elif(NA_NIST_CODATA_YEAR == 2014)
   #define NA_ATOM_MASS           1.660539040e-27
   #define NA_ATOM_MASS_ENERGY    1.492418062e-10
   #define NA_ATOM_MASS_MEV       931.4940954
@@ -414,7 +414,7 @@
   #define NA_STEF_BOLTZ          5.670367e-8
   #define NA_WIEN_FREQ           5.8789238e10
   #define NA_WIEN_WAVE           2.8977729e-3
-#elif (NA_NIST_CODATA_YEAR == 2018)
+#elif(NA_NIST_CODATA_YEAR == 2018)
   #define NA_ATOM_MASS           1.66053906660e-27
   #define NA_ATOM_MASS_ENERGY    1.49241808560e-10
   #define NA_ATOM_MASS_MEV       931.49410242

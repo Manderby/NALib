@@ -22,7 +22,7 @@ NA_DEF NAStack* naInitStack(
   stack->flags = flags;
   naInitList(&(stack->arrays));
 
-  if(!initialCount){
+  if(!initialCount) {
     // Compute the initial count automatically such that the first array fits
     // inside a memory page if possible.
     initialCount = (naGetSystemMemoryPagesize() - sizeof(size_t)) / typeSize;
@@ -46,7 +46,7 @@ NA_DEF NAStack* naInitStack(
 
 
 
-NA_DEF void naClearStack(NAStack* stack){
+NA_DEF void naClearStack(NAStack* stack) {
   #if NA_DEBUG
   if(!stack)
     naCrash("stack is Null-Pointer.");
@@ -66,7 +66,7 @@ NA_DEF void naClearStack(NAStack* stack){
 
 
 
-NA_DEF void* naPeekStack(NAStack* stack, size_t index){
+NA_DEF void* naPeekStack(NAStack* stack, size_t index) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -77,7 +77,7 @@ NA_DEF void* naPeekStack(NAStack* stack, size_t index){
   NAListIterator iter = naMakeListMutator(&(stack->arrays));
   size_t curBaseIndex = 0;
   void* retValue = NA_NULL;
-  while(naIterateList(&iter)){
+  while(naIterateList(&iter)) {
     size_t nextBaseIndex = curBaseIndex + na_GetStackArrayCount(&iter);
     if(nextBaseIndex > index)
     {
@@ -92,7 +92,7 @@ NA_DEF void* naPeekStack(NAStack* stack, size_t index){
 
 
 
-NA_HDEF void na_GrowStack(NAStack* stack){
+NA_HDEF void na_GrowStack(NAStack* stack) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -100,11 +100,11 @@ NA_HDEF void na_GrowStack(NAStack* stack){
 
   size_t lastArrayCount = na_GetStackArrayCount(&(stack->curArray));
 
-  if(naIsListAtLast(&(stack->curArray))){
+  if(naIsListAtLast(&(stack->curArray))) {
     // If there is no more array in the list, we need to grow the stack.
     size_t newArrayCount;
 
-    switch(stack->flags & NA_STACK_GROW_MASK){
+    switch(stack->flags & NA_STACK_GROW_MASK) {
     case NA_STACK_GROW_LINEAR:
       newArrayCount = lastArrayCount;
       break;
@@ -145,13 +145,13 @@ NA_HDEF void na_GrowStack(NAStack* stack){
 
 
 
-NA_HDEF void na_ShrinkStack(NAStack* stack){
+NA_HDEF void na_ShrinkStack(NAStack* stack) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
   #endif
 
-  if(!naIsListAtFirst(&(stack->curArray))){
+  if(!naIsListAtFirst(&(stack->curArray))) {
     // We remember the position of the old array
     NAListIterator oldArrayIter = naMakeListAccessor(&(stack->arrays));
     naLocateListIterator(&oldArrayIter, &(stack->curArray));
@@ -162,10 +162,10 @@ NA_HDEF void na_ShrinkStack(NAStack* stack){
     stack->curBaseIndex -= stack->curCount;
 
     // After we positioned the stack anew, we can shrink if necessary.
-    switch(stack->flags & NA_STACK_SHRINK_MASK){
+    switch(stack->flags & NA_STACK_SHRINK_MASK) {
     case NA_STACK_SHRINK_AUTO:
       // Remove and deallocate all arrays which are after the old array iter.
-      while(!naIsListAtLast(&oldArrayIter)){
+      while(!naIsListAtLast(&oldArrayIter)) {
         na_DeallocStackArray(naRemoveListLastMutable(&(stack->arrays)));
       }
       break;
@@ -180,7 +180,7 @@ NA_HDEF void na_ShrinkStack(NAStack* stack){
 
 
 
-NA_DEF size_t naGetStackReservedCount(const NAStack* stack){
+NA_DEF size_t naGetStackReservedCount(const NAStack* stack) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -193,7 +193,7 @@ NA_DEF size_t naGetStackReservedCount(const NAStack* stack){
   naLocateListIterator(&curArray, &(stack->curArray));
   retSize += na_GetStackArrayCount(&curArray);
 
-  while(naIterateList(&curArray)){
+  while(naIterateList(&curArray)) {
     retSize += na_GetStackArrayCount(&curArray);
   }
 
@@ -203,7 +203,7 @@ NA_DEF size_t naGetStackReservedCount(const NAStack* stack){
 
 
 
-NA_DEF void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive){
+NA_DEF void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -214,12 +214,12 @@ NA_DEF void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive){
   naLocateListIterator(&arrayIter, &(stack->curArray));
 
   // If not aggressive, we look one paste this array.
-  if(!aggressive){
+  if(!aggressive) {
     naIterateList(&arrayIter);
   }
   
   // Delete as long as there are arrays after this one.
-  while(!naIsListAtInitial(&arrayIter) && !naIsListAtLast(&arrayIter)){
+  while(!naIsListAtInitial(&arrayIter) && !naIsListAtLast(&arrayIter)) {
     na_DeallocStackArray(naRemoveListLastMutable(&(stack->arrays)));
   }
   naClearListIterator(&arrayIter);
@@ -227,7 +227,7 @@ NA_DEF void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive){
 
 
 
-NA_DEF void naDumpStack(NAStack* stack, void* buf){
+NA_DEF void naDumpStack(NAStack* stack, void* buf) {
   #if NA_DEBUG
     if(!stack)
       naCrash("stack is Null");
@@ -236,11 +236,11 @@ NA_DEF void naDumpStack(NAStack* stack, void* buf){
   #endif
   NAByte* bufPtr = (NAByte*)buf;
   NAListIterator arrayIter = naMakeListAccessor(&(stack->arrays));
-  while(naIterateList(&arrayIter)){
+  while(naIterateList(&arrayIter)) {
     size_t count = naEqualListIterator(&arrayIter, &(stack->curArray)) ?
       stack->curCount :
       na_GetStackArrayCount(&arrayIter);
-    if(count){
+    if(count) {
       count *= stack->typeSize;
       naCopyn(
         bufPtr,

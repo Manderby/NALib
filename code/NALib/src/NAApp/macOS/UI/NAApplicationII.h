@@ -40,7 +40,7 @@
 - (void)applicationWillFinishLaunching:(NSNotification *)notification{
   // forward the notification to the oldDelegate
   if(oldDelegate && oldDelegate != self
-    && [oldDelegate respondsToSelector:@selector(applicationWillFinishLaunching:)]){
+    && [oldDelegate respondsToSelector:@selector(applicationWillFinishLaunching:)]) {
     [oldDelegate applicationWillFinishLaunching:notification];
   }
 }
@@ -48,12 +48,12 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)notification{
   // forward the notification to the oldDelegate
   if(oldDelegate && oldDelegate != self
-    && [oldDelegate respondsToSelector:@selector(applicationDidFinishLaunching:)]){
+    && [oldDelegate respondsToSelector:@selector(applicationDidFinishLaunching:)]) {
     [oldDelegate applicationDidFinishLaunching:notification];
   }
   
   // If this is a bare application without XIB
-  if(!oldDelegate){
+  if(!oldDelegate) {
     // Show with a dock icon:
     [NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
     // Without this event, the applicationDidBecomeActive will not be called.
@@ -74,7 +74,7 @@
 - (void)applicationWillBecomeActive:(NSNotification *)notification{
   // forward the notification to the oldDelegate
   if(oldDelegate && oldDelegate != self
-    && [oldDelegate respondsToSelector:@selector(applicationWillBecomeActive:)]){
+    && [oldDelegate respondsToSelector:@selector(applicationWillBecomeActive:)]) {
     [oldDelegate applicationWillBecomeActive:notification];
   }
 }
@@ -82,16 +82,16 @@
 - (void)applicationDidBecomeActive:(NSNotification *)notification{
   // forward the notification to the oldDelegate
   if(oldDelegate && oldDelegate != self
-    && [oldDelegate respondsToSelector:@selector(applicationDidBecomeActive:)]){
+    && [oldDelegate respondsToSelector:@selector(applicationDidBecomeActive:)]) {
     [oldDelegate applicationDidBecomeActive:notification];
   }
 
   // Call postStartup the first time if desired.
-  if(postStartupFunction){
+  if(postStartupFunction) {
     postStartupFunction(postStartupArg);
     
     // If this is a bare application without XIB
-    if(!oldDelegate){
+    if(!oldDelegate) {
       // Make the application active
       [NSApp activateIgnoringOtherApps:YES];
     }
@@ -122,7 +122,7 @@ NA_DEF void naStartApplication(
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
   #endif
     // Call preStartup if desired.
-    if(preStartup){
+    if(preStartup) {
       preStartup(arg);
     }
 
@@ -151,7 +151,7 @@ NA_DEF void naStartApplication(
 
   // Start the event loop.
   NSDate* distantFuture = [NSDate distantFuture];
-  while(na_IsApplicationRunning()){
+  while(na_IsApplicationRunning()) {
     #if !NA_MACOS_USES_ARC
       pool = [[NSAutoreleasePool alloc] init];
     #endif
@@ -163,8 +163,8 @@ NA_DEF void naStartApplication(
 //      NSEventSubtypeWindowMoved
 
       naCollectGarbage();
-      if(!na_InterceptKeyboardShortcut(curEvent)){
-        if(curEvent){
+      if(!na_InterceptKeyboardShortcut(curEvent)) {
+        if(curEvent) {
           [NSApp sendEvent:curEvent];
         }
       }
@@ -189,9 +189,9 @@ NA_DEF void naStartApplication(
 
 
 
-NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
+NA_DEF void naResetApplicationPreferredTranslatorLanguages(void) {
   NAInt langIndex = (NAInt)[[NSLocale preferredLanguages] count] - 1;
-  while(langIndex >= 0){
+  while(langIndex >= 0) {
     NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)langIndex];
     NALanguageCode3 langCode = naGetLanguageCode([language UTF8String]);
     naSetTranslatorLanguagePreference(langCode);
@@ -201,7 +201,7 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 
-NA_HDEF NAApplication* na_NewApplication(void){
+NA_HDEF NAApplication* na_NewApplication(void) {
   NACocoaApplication* cocoaApplication = naNew(NACocoaApplication);
 
   NACocoaNativeApplicationDelegate* nativePtr = [[NACocoaNativeApplicationDelegate alloc]
@@ -213,13 +213,13 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
 
 
-NA_DEF void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication){
+NA_DEF void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication) {
   na_ClearApplication((NAApplication*)cocoaApplication);
 }
 
 
 
-NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff){
+NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff) {
   dispatch_time_t nextTime = dispatch_time(DISPATCH_TIME_NOW, naMakei64WithDouble(1000000000. * timediff));
   dispatch_queue_t queue = dispatch_get_main_queue();
   dispatch_after_f(nextTime, queue, arg, function);
@@ -227,7 +227,7 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
 
 
 
-NA_DEF void naOpenConsoleWindow(void){
+NA_DEF void naOpenConsoleWindow(void) {
   // Does nothing on the Mac
 }
 
@@ -238,31 +238,31 @@ NA_DEF void naOpenConsoleWindow(void){
 #define NA_COCOA_BUNDLE_VERSION_KEY @"CFBundleVersion"
 #define NA_COCOA_BUNDLE_ICON_FILE_KEY @"CFBundleIconFile"
 
-NA_DEF NAString* naNewApplicationName(void){
+NA_DEF NAString* naNewApplicationName(void) {
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->application.name){
+  if(app->application.name) {
     return naNewStringWithFormat("%s", app->application.name);
   }else{
     NSString* applicationName = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
-    if(!applicationName){
+    if(!applicationName) {
       applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_APPLICATION_NAME];
     }
     return naNewStringWithFormat("%s", [applicationName UTF8String]);
   }
 }
 
-NA_DEF NAString* naNewApplicationCompanyName(void){
+NA_DEF NAString* naNewApplicationCompanyName(void) {
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->application.companyName){
+  if(app->application.companyName) {
     return naNewStringWithFormat("%s", app->application.companyName);
   }else{
     return NA_NULL;
   }
 }
 
-NA_DEF NAString* naNewApplicationVersionString(void){
+NA_DEF NAString* naNewApplicationVersionString(void) {
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->application.versionString){
+  if(app->application.versionString) {
     return naNewStringWithFormat("%s", app->application.versionString);
   }else{
     NSString* versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
@@ -270,9 +270,9 @@ NA_DEF NAString* naNewApplicationVersionString(void){
   }
 }
 
-NA_DEF NAString* naNewApplicationBuildString(void){
+NA_DEF NAString* naNewApplicationBuildString(void) {
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->application.buildString){
+  if(app->application.buildString) {
     return naNewStringWithFormat("%s", app->application.buildString);
   }else{
     NSString* buildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
@@ -280,9 +280,9 @@ NA_DEF NAString* naNewApplicationBuildString(void){
   }
 }
 
-NA_DEF NAString* naNewApplicationIconPath(void){
+NA_DEF NAString* naNewApplicationIconPath(void) {
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->application.iconPath){
+  if(app->application.iconPath) {
     return naNewStringWithFormat("%s", app->application.iconPath);
   }else{
     NSString* iconFilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
@@ -292,9 +292,9 @@ NA_DEF NAString* naNewApplicationIconPath(void){
   }
 }
 
-NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
+NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix) {
   NSURL* url;
-  if(dir){
+  if(dir) {
     url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:dir]];
   }else{
     url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix]];

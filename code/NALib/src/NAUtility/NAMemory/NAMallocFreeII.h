@@ -16,7 +16,7 @@
 
 
 
-NA_IDEF void* naMalloc(size_t byteSize){
+NA_IDEF void* naMalloc(size_t byteSize) {
   void* ptr;
 
   #if NA_DEBUG
@@ -41,13 +41,13 @@ NA_IDEF void* naMalloc(size_t byteSize){
 
 
 
-NA_IDEF void naFree(void* ptr){
+NA_IDEF void naFree(void* ptr) {
   free(ptr);
 }
 
 
 
-NA_IDEF void* naMallocAligned(size_t byteSize, size_t align){
+NA_IDEF void* naMallocAligned(size_t byteSize, size_t align) {
   void* retPtr;
 
   #if NA_OS == NA_OS_WINDOWS
@@ -96,7 +96,7 @@ NA_IDEF void* naMallocAligned(size_t byteSize, size_t align){
 
 
 
-NA_IDEF void* naMallocPageAligned(size_t byteSize){
+NA_IDEF void* naMallocPageAligned(size_t byteSize) {
   // Note that due to some strange reason, aligned_alloc and valloc not work
   // with clang. Therefore, a simple call to naMallocAligned is used.
   return naMallocAligned(byteSize, naGetSystemMemoryPagesize());
@@ -104,7 +104,7 @@ NA_IDEF void* naMallocPageAligned(size_t byteSize){
 
 
 
-NA_IDEF void naFreeAligned(void* ptr){
+NA_IDEF void naFreeAligned(void* ptr) {
   #if NA_OS == NA_OS_WINDOWS
     _aligned_free(ptr);
   #else

@@ -7,7 +7,7 @@
 
 // This function had to be moved here as it introcudes cyclic redundancies
 // when compiling.
-NA_DEF NAString* naNewStringWithCurWorkingDirectory(){
+NA_DEF NAString* naNewStringWithCurWorkingDirectory() {
   NAString* string;
   NAUTF8Char* cwdbuf = naGetCwd(NA_NULL, 0);
   string = naNewStringWithMutableUTF8Buffer(cwdbuf, naStrlen(cwdbuf), (NAMutator)naFree);
@@ -17,7 +17,7 @@ NA_DEF NAString* naNewStringWithCurWorkingDirectory(){
 
 
 
-NA_DEF NABool naIsDir(const char* path){
+NA_DEF NABool naIsDir(const char* path) {
   #if NA_OS == NA_OS_WINDOWS
     TCHAR* sysstring;
     NABool retValue;
@@ -33,7 +33,7 @@ NA_DEF NABool naIsDir(const char* path){
 }
 
 
-NA_DEF NABool naIsHidden(const char* path){
+NA_DEF NABool naIsHidden(const char* path) {
   #if NA_OS == NA_OS_WINDOWS
     TCHAR* sysstring;
     NABool retValue;
@@ -48,8 +48,8 @@ NA_DEF NABool naIsHidden(const char* path){
 
 
 
-NA_HDEF void na_DeallocFile(NAFile* file){
-  if(file->desc > 2){
+NA_HDEF void na_DeallocFile(NAFile* file) {
+  if(file->desc > 2) {
     naClose(file->desc);
   }
   file->desc = -1;

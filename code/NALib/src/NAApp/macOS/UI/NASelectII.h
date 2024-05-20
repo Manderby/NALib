@@ -35,7 +35,7 @@
 - (void) addMenuItem:(NSMenuItem*)item atItem:(const NAMenuItem*)atItem{  
   size_t index = naGetSelectItemIndex(&(cocoaSelect->select), atItem);
   //int index = [self getMenuItemIndex:atItem];
-  if(index == naGetSelectItemCount(&(cocoaSelect->select))){
+  if(index == naGetSelectItemCount(&(cocoaSelect->select))) {
     [[self menu] addItem:item];
   }else{
     [[self menu] insertItem:item atIndex: (NSInteger)index];
@@ -58,7 +58,7 @@
 
 
 
-NA_DEF NASelect* naNewSelect(double width){
+NA_DEF NASelect* naNewSelect(double width) {
   NACocoaSelect* cocoaSelect = naNew(NACocoaSelect);
 
   NACocoaNativeSelect* nativePtr = [[NACocoaNativeSelect alloc]
@@ -71,24 +71,24 @@ NA_DEF NASelect* naNewSelect(double width){
 
 
 
-NA_DEF void na_DestructCocoaSelect(NACocoaSelect* cocoaSelect){
+NA_DEF void na_DestructCocoaSelect(NACocoaSelect* cocoaSelect) {
   na_ClearSelect((NASelect*)cocoaSelect);
 }
 
 
 
-NA_DEF void naSetSelectVisible(NASelect* select, NABool visible){
+NA_DEF void naSetSelectVisible(NASelect* select, NABool visible) {
   naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
   [nativePtr setVisible:visible];
 }
 
 
 
-NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenuItem* atItem){
+NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenuItem* atItem) {
   naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
   naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemPtr, item);
 
-  if(atItem){
+  if(atItem) {
 //    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
     [nativePtr addMenuItem:nativeItemPtr atItem:atItem];
   }else{
@@ -100,14 +100,14 @@ NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenu
 
 
 
-NA_DEF void naSetSelectIndexSelected(NASelect* select, size_t index){
+NA_DEF void naSetSelectIndexSelected(NASelect* select, size_t index) {
   naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
   [nativePtr selectItemAtIndex:(NSInteger)index];
 }
 
 
 
-NA_DEF void naSetSelectItemSelected(NASelect* select, const NAMenuItem* item){
+NA_DEF void naSetSelectItemSelected(NASelect* select, const NAMenuItem* item) {
   naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
   size_t index = naGetSelectItemIndex(select, item);
   [nativePtr selectItemAtIndex:(NSInteger)index];
@@ -115,18 +115,18 @@ NA_DEF void naSetSelectItemSelected(NASelect* select, const NAMenuItem* item){
 
 
 
-NA_DEF void naSetSelectEnabled(NASelect* select, NABool enabled){
+NA_DEF void naSetSelectEnabled(NASelect* select, NABool enabled) {
   naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
   [nativePtr setEnabled:(BOOL)enabled];
 }
 
 
-NA_HDEF NARect na_GetSelectRect(const NA_UIElement* select){
+NA_HDEF NARect na_GetSelectRect(const NA_UIElement* select) {
   naDefineCocoaObjectConst(NACocoaNativeSelect, nativePtr, select);
   return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-NA_HDEF void na_SetSelectRect(NA_UIElement* select, NARect rect){
+NA_HDEF void na_SetSelectRect(NA_UIElement* select, NARect rect) {
   naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }

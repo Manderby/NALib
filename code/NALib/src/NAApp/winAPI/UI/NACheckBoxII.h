@@ -6,10 +6,10 @@
 
 
 
-NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
-  switch(message){
+  switch(message) {
   case WM_SETFONT:
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
@@ -52,11 +52,11 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM 
 
 
 
-NABool naCheckBoxWINAPINotify(void* uiElement, WORD notificationCode){
+NABool naCheckBoxWINAPINotify(void* uiElement, WORD notificationCode) {
   NABool hasBeenHandeled = NA_FALSE;
   NABool check;
 
-  switch(notificationCode){
+  switch(notificationCode) {
     case BN_CLICKED:
       ReleaseCapture();
       check = naGetCheckBoxState(uiElement);
@@ -71,7 +71,7 @@ NABool naCheckBoxWINAPINotify(void* uiElement, WORD notificationCode){
 
 
 
-NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width){
+NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
   NAWINAPICheckBox* winapiCheckBox = naNew(NAWINAPICheckBox);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
@@ -96,7 +96,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldCheckBoxWindowProc){
+  if(!app->oldCheckBoxWindowProc) {
     app->oldCheckBoxWindowProc = oldproc;
   }
 
@@ -109,39 +109,39 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width){
 
 
 
-NA_DEF void na_DestructWINAPICheckBox(NAWINAPICheckBox* winapiCheckBox){
+NA_DEF void na_DestructWINAPICheckBox(NAWINAPICheckBox* winapiCheckBox) {
   na_ClearCheckBox((NACheckBox*)winapiCheckBox);
 }
 
 
 
-NA_DEF void naSetCheckBoxVisible(NACheckBox* checkBox, NABool visible){
+NA_DEF void naSetCheckBoxVisible(NACheckBox* checkBox, NABool visible) {
   ShowWindow(naGetUIElementNativePtr(checkBox), visible ? SW_SHOW : SW_HIDE);
 }
 
 
 
-NA_DEF void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled){
+NA_DEF void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled) {
   EnableWindow(naGetUIElementNativePtr(checkBox), enabled);
 }
 
 
 
-NA_DEF NABool naGetCheckBoxState(const NACheckBox* checkBox){
+NA_DEF NABool naGetCheckBoxState(const NACheckBox* checkBox) {
   LPARAM state = SendMessage(naGetUIElementNativePtrConst(checkBox), BM_GETSTATE, 0, 0);
   return (state & BST_CHECKED) == BST_CHECKED;
 }
 
 
 
-NA_DEF void naSetCheckBoxState(NACheckBox* checkBox, NABool state){
+NA_DEF void naSetCheckBoxState(NACheckBox* checkBox, NABool state) {
   LPARAM lParam = state ? BST_CHECKED : BST_UNCHECKED;
   SendMessage(naGetUIElementNativePtr(checkBox), BM_SETCHECK, lParam, 0);
 }
 
 
 
-NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NAColor* color){
+NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NAColor* color) {
   // todo
 }
 
@@ -153,7 +153,7 @@ NA_HDEF NARect na_GetCheckBoxRect(const NA_UIElement* checkBox)
   return winapiCheckBox->rect;
 }
 
-NA_HDEF void na_SetCheckBoxRect(NA_UIElement* checkBox, NARect rect){
+NA_HDEF void na_SetCheckBoxRect(NA_UIElement* checkBox, NARect rect) {
   NAWINAPICheckBox* winapiCheckBox = (NAWINAPICheckBox*)checkBox;
 
   winapiCheckBox->rect = rect;

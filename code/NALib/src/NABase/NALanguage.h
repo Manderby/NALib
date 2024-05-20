@@ -133,7 +133,7 @@
 //
 // The NA_NORETURN macro expands to _Noreturn only in C11 or CPP11
 
-#if (defined NA_C11) || (defined NA_CPP11)
+#if(defined NA_C11) || (defined NA_CPP11)
   #ifdef __cplusplus
     #define NA_NULL nullptr
   #else

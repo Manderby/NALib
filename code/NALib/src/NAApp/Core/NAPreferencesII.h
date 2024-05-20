@@ -27,14 +27,14 @@ NA_HAPI void na_SetRawPreferencesString(void* prefs, const char* key, NAString* 
 // whether an entry already exists in the preferences.
 
 // Boolean values are stored as 1 for TRUE and -1 for FALSE
-NA_HIDEF NAi64 na_ConvertNABoolToPreferencesBool(NABool value){
+NA_HIDEF NAi64 na_ConvertNABoolToPreferencesBool(NABool value) {
   #if NA_DEBUG
     if(!naEquali64(value, NA_ZERO_i64) && !naEquali64(value, NA_ONE_i64))
       naError("Trying to store invalid boolean value in preferences.");
   #endif
   return (value) ? NA_ONE_i64 : naMakei64WithLo(-1);
 }
-NA_HIDEF NABool na_ConvertPreferencesBoolToNABool(NAi64 value){
+NA_HIDEF NABool na_ConvertPreferencesBoolToNABool(NAi64 value) {
   #if NA_DEBUG
     if(naEquali64(value, NA_ZERO_i64))
       naError("Value stored in preferences invalid or uninitialized.");
@@ -43,84 +43,84 @@ NA_HIDEF NABool na_ConvertPreferencesBoolToNABool(NAi64 value){
   #endif
   return ((naEquali64(value, NA_ONE_i64)) ? NA_TRUE : NA_FALSE);
 }
-NA_HIDEF NABool na_ValidNABoolFromPreferences(NABool value){
+NA_HIDEF NABool na_ValidNABoolFromPreferences(NABool value) {
   return value == NA_TRUE || value == NA_FALSE;
 }
 
 
 
 // Int values are stored as is but the value 0 is stored as min_i64
-NA_HIDEF NAi64 na_ConvertNAIntToPreferencesInt(NAInt value){
+NA_HIDEF NAi64 na_ConvertNAIntToPreferencesInt(NAInt value) {
   #if NA_DEBUG
     if(naEquali64(value, NA_MIN_i64))
       naError("min_i64 is not a valid value which can be stored in preferences.");
   #endif
   return (value == 0) ? NA_MIN_i64 : naCastIntToi64(value);
 }
-NA_HIDEF NAInt na_ConvertPreferencesIntToNAInt(NAi64 value){
+NA_HIDEF NAInt na_ConvertPreferencesIntToNAInt(NAi64 value) {
   #if NA_DEBUG
     if(naEquali64(value, NA_ZERO_i64))
       naError("Value stored in preferences invalid or uninitialized.");
   #endif
   return (NAInt)((naEquali64(value, NA_MIN_i64)) ? 0 : naCasti64ToInt(value));
 }
-NA_HIDEF NABool na_ValidNAIntFromPreferences(NAi64 value, NAi64 min, NAi64 max){
+NA_HIDEF NABool na_ValidNAIntFromPreferences(NAi64 value, NAi64 min, NAi64 max) {
   return value >= min && value <= max;
 }
 
 
 
 // Enum values are stored with their value increased by 1
-NA_HIDEF NAi64 na_ConvertNAEnumToPreferencesEnum(NAInt value){
+NA_HIDEF NAi64 na_ConvertNAEnumToPreferencesEnum(NAInt value) {
   #if NA_DEBUG
     if(naSmalleri64(value, 0))
       naError("negative enum values can not be stored in preferences.");
   #endif
   return naAddi64(naCastIntToi64(value), NA_ONE_i64);
 }
-NA_HIDEF NAInt na_ConvertPreferencesEnumToNAEnum(NAi64 value){
+NA_HIDEF NAInt na_ConvertPreferencesEnumToNAEnum(NAi64 value) {
   #if NA_DEBUG
     if(naEquali64(value, NA_ZERO_i64))
       naError("Value stored in preferences invalid or uninitialized.");
   #endif
   return naCasti64ToInt(naSubi64(value, NA_ONE_i64));
 }
-NA_HIDEF NABool na_ValidEnumFromPreferences(NAi64 value, NAi64 count){
+NA_HIDEF NABool na_ValidEnumFromPreferences(NAi64 value, NAi64 count) {
   return value >= 0 && value < count;
 }
 
 
 
 // double values are stored as is but zero is converted to NaN.
-NA_HIDEF double na_ConvertNADoubleToPreferencesDouble(double value){
+NA_HIDEF double na_ConvertNADoubleToPreferencesDouble(double value) {
   #if NA_DEBUG
     if(naIsNaN(value))
       naError("The value NaN can not be stored in preferences.");
   #endif
   return (value == 0.) ? NA_NAN : value;
 }
-NA_HIDEF double na_ConvertPreferencesDoubleToNADouble(double value){
+NA_HIDEF double na_ConvertPreferencesDoubleToNADouble(double value) {
   #if NA_DEBUG
     if(value == 0.)
       naError("Value stored in preferences invalid or uninitialized.");
   #endif
   return naIsNaN(value) ? 0. : value;
 }
-NA_HIDEF NABool na_ValidDoubleFromPreferences(double value, double min, double max){
+NA_HIDEF NABool na_ValidDoubleFromPreferences(double value, double min, double max) {
   return value >= min && value <= max;
 }
 
 
 
 // string values are returned as a copy and are checked for NULL.
-NA_HIDEF NAString* na_ConvertNAStringToPreferencesString(NAString* value){
+NA_HIDEF NAString* na_ConvertNAStringToPreferencesString(NAString* value) {
   #if NA_DEBUG
     if(value == NA_NULL)
       naError("A null string can not be stored in preferences.");
   #endif
   return naNewStringExtraction(value, 0, -1);
 }
-NA_HIDEF NAString* na_ConvertPreferencesStringToNAString(NAString* value){
+NA_HIDEF NAString* na_ConvertPreferencesStringToNAString(NAString* value) {
   #if NA_DEBUG
     if(value == NA_NULL)
       naError("Value stored in preferences invalid or uninitialized.");

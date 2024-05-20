@@ -6,10 +6,10 @@
 
 
 
-NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
-  switch(message){
+  switch(message) {
 
   case WM_ERASEBKGND:
   info.hasBeenHandeled = NA_TRUE;
@@ -26,9 +26,9 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM w
 
 
 
-NABool naHandleTextBoxTabOrder(NAReaction reaction){
+NABool naHandleTextBoxTabOrder(NAReaction reaction) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uiElement;
-  if(winapiTextBox->nextTabStop){
+  if(winapiTextBox->nextTabStop) {
     SetFocus(naGetUIElementNativePtr(winapiTextBox->nextTabStop));
     return NA_TRUE;
   }
@@ -37,9 +37,9 @@ NABool naHandleTextBoxTabOrder(NAReaction reaction){
 
 
 
-NABool naHandleTextBoxReverseTabOrder(NAReaction reaction){
+NABool naHandleTextBoxReverseTabOrder(NAReaction reaction) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uiElement;
-  if(winapiTextBox->prevTabStop){
+  if(winapiTextBox->prevTabStop) {
     SetFocus(naGetUIElementNativePtr(winapiTextBox->prevTabStop));
     return NA_TRUE;
   }
@@ -48,7 +48,7 @@ NABool naHandleTextBoxReverseTabOrder(NAReaction reaction){
 
 
 
-NA_DEF NATextBox* naNewTextBox(NASize size){
+NA_DEF NATextBox* naNewTextBox(NASize size) {
   NAWINAPITextBox* winapiTextBox = naNew(NAWINAPITextBox);
 
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
@@ -94,32 +94,32 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 
 
 
-NA_DEF void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox){
+NA_DEF void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox) {
   na_ClearTextBox((NATextBox*)winapiTextBox);
 }
 
 
 
-NA_DEF void naSetTextBoxVisible(NATextBox* textBox, NABool visible){
+NA_DEF void naSetTextBoxVisible(NATextBox* textBox, NABool visible) {
   ShowWindow(naGetUIElementNativePtr(textBox), visible ? SW_SHOW : SW_HIDE);
 }
 
 
 
-NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
+NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable) {
   SendMessage(naGetUIElementNativePtr(textBox), EM_SETREADONLY, (WPARAM)!editable, 0);
 }
 
 
 
-NA_DEF NAString* naNewStringWithTextBoxText(const NATextBox* textBox){
+NA_DEF NAString* naNewStringWithTextBoxText(const NATextBox* textBox) {
   return NA_NULL;
   // todo
 }
 
 
 
-NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text){
+NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text) {
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
   SendMessage(naGetUIElementNativePtr(textBox), WM_SETTEXT, 0, (LPARAM)systemText);
   naFree(systemText);
@@ -127,7 +127,7 @@ NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text){
 
 
 
-NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment){
+NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment) {
   long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(textBox), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
   SetWindowLongPtr(naGetUIElementNativePtr(textBox), GWL_STYLE, style);
@@ -135,7 +135,7 @@ NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignm
 
 
 
-NA_DEF void naSetTextBoxFont(NATextBox* textBox, NAFont* font){
+NA_DEF void naSetTextBoxFont(NATextBox* textBox, NAFont* font) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   SendMessage(naGetUIElementNativePtr(winapiTextBox), WM_SETFONT, (WPARAM)naGetFontNativePointer(font), MAKELPARAM(TRUE, 0));
   naRelease(textBox->font);
@@ -144,41 +144,41 @@ NA_DEF void naSetTextBoxFont(NATextBox* textBox, NAFont* font){
 
 
 
-NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox){
+NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox) {
   // todo
 }
 
 
 
-NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use){
+NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   ShowScrollBar(naGetUIElementNativePtr(textBox), SB_VERT, use);
 }
 
 
 
-NA_HDEF void** na_GetTextBoxNextTabReference(NATextBox* textBox){
+NA_HDEF void** na_GetTextBoxNextTabReference(NATextBox* textBox) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   return &(winapiTextBox->nextTabStop);
 }
 
 
 
-NA_HDEF void** na_GetTextBoxPrevTabReference(NATextBox* textBox){
+NA_HDEF void** na_GetTextBoxPrevTabReference(NATextBox* textBox) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   return &(winapiTextBox->prevTabStop);
 }
 
 
 
-NA_HDEF NARect na_GetTextBoxRect(const NA_UIElement* textBox){
+NA_HDEF NARect na_GetTextBoxRect(const NA_UIElement* textBox) {
   const NAWINAPITextBox* winapiTextBox = (const NAWINAPITextBox*)textBox;
   return winapiTextBox->rect;
 }
 
 
 
-NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect){
+NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
 
   winapiTextBox->rect = rect;

@@ -7,13 +7,13 @@
 
 
 
-NA_HDEF void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr){
+NA_HDEF void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr) {
   na_InitUIElement(&(openGLSpace->uiElement), NA_UI_OPENGL_SPACE, nativePtr);
 }
 
 
 
-NA_HDEF void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace){
+NA_HDEF void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace) {
   na_ClearUIElement(&(openGLSpace->uiElement));
 }
 
@@ -79,7 +79,7 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
 
 #if NA_COMPILE_OPENGL == 1
 
-  NA_DEF NAInt naStartupPixelFont(){
+  NA_DEF NAInt naStartupPixelFont() {
     GLuint fontTex = 0;
     NAByte* texBuf = naMalloc(5*16 * 9*6 * 4);
 
@@ -87,8 +87,8 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
     NAByte* texPtr = texBuf;
     
     int byteNum = 7;
-    for(int y = 0; y < 9*6; ++y){
-      for(int x = 0; x < 5*16; ++x){
+    for(int y = 0; y < 9*6; ++y) {
+      for(int x = 0; x < 5*16; ++x) {
         NAByte value = (*byte >> byteNum) & 0x01;
         *texPtr++ = 0xff * value;
         *texPtr++ = 0xff * value;
@@ -96,7 +96,7 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
         *texPtr++ = 0xff * value;
         
         --byteNum;
-        if(byteNum == -1){
+        if(byteNum == -1) {
           byteNum = 7;
           ++byte;
         }
@@ -116,13 +116,13 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
 
 
 
-  NA_DEF void naShutdownPixelFont(NAInt fontId){
+  NA_DEF void naShutdownPixelFont(NAInt fontId) {
     GLuint fontTex = (GLuint)fontId;
     glDeleteTextures(1, &fontTex);
   }
 
 
-  NA_DEF void naDrawASCIICharacters(NAInt fontId, const char* str, double x, double y, double z){
+  NA_DEF void naDrawASCIICharacters(NAInt fontId, const char* str, double x, double y, double z) {
     GLuint fontTex = (GLuint)fontId;
     NAMat44d modelViewMatrix;
     NAMat44d invModelViewMatrix;
@@ -161,10 +161,10 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
       glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
       int offsetX = 0;
-      for(size_t i = 0; i < strlen(str); ++i){
+      for(size_t i = 0; i < strlen(str); ++i) {
         char c = str[i];
         
-        if(c == '\n'){
+        if(c == '\n') {
           viewY -= 10;
           offsetX = 0;
         }
@@ -200,19 +200,19 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
 
 #else
 
-  NA_DEF NAInt naStartupPixelFont(void){
+  NA_DEF NAInt naStartupPixelFont(void) {
     #if NA_DEBUG
       naError("Function has no effect when NA_COMPILE_OPENGL is undefined.");
     #endif
     return 0;
   }
-  NA_DEF void naShutdownPixelFont(NAInt fontId){
+  NA_DEF void naShutdownPixelFont(NAInt fontId) {
     NA_UNUSED(fontId);
     #if NA_DEBUG
       naError("Function has no effect when NA_COMPILE_OPENGL is undefined.");
     #endif
   }
-  NA_DEF void naDrawASCIICharacter(NAInt fontId, char c, double x, double y, double z){
+  NA_DEF void naDrawASCIICharacter(NAInt fontId, char c, double x, double y, double z) {
     NA_UNUSED(fontId);
     NA_UNUSED(c);
     NA_UNUSED(x);

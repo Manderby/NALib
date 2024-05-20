@@ -3,7 +3,7 @@
 
 
 
-NA_HIDEF void na_DeallocConfiguration(NATreeConfiguration* config){
+NA_HIDEF void na_DeallocConfiguration(NATreeConfiguration* config) {
   if(config->configdata)
     naFree(config->configdata);
 
@@ -12,13 +12,13 @@ NA_HIDEF void na_DeallocConfiguration(NATreeConfiguration* config){
 
 
 
-NA_IDEF void naReleaseTreeConfiguration(NATreeConfiguration* config){
+NA_IDEF void naReleaseTreeConfiguration(NATreeConfiguration* config) {
   naReleaseRefCount(&config->refCount, config, (NAMutator)na_DeallocConfiguration);
 }
 
 
 
-NA_HIDEF NATreeConfiguration* na_RetainTreeConfiguration(NATreeConfiguration* config){
+NA_HIDEF NATreeConfiguration* na_RetainTreeConfiguration(NATreeConfiguration* config) {
   #if NA_DEBUG
     config->flags |= NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE;
   #endif
@@ -27,7 +27,7 @@ NA_HIDEF NATreeConfiguration* na_RetainTreeConfiguration(NATreeConfiguration* co
 
 
 
-NA_IDEF void naSetTreeConfigurationUserData(NATreeConfiguration* config, NAPtr userData){
+NA_IDEF void naSetTreeConfigurationUserData(NATreeConfiguration* config, NAPtr userData) {
   #if NA_DEBUG
     if(naGetPtrConst(config->userData))
       naError("Configuration already has userData");
@@ -37,7 +37,7 @@ NA_IDEF void naSetTreeConfigurationUserData(NATreeConfiguration* config, NAPtr u
 
 
 
-NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NATreeContructorCallback treeConstructor, NATreeDestructorCallback  treeDestructor){
+NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NATreeContructorCallback treeConstructor, NATreeDestructorCallback  treeDestructor) {
   #if NA_DEBUG
     if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("Configuration already used in a tree. Mayor problems may occur in the future");
@@ -48,7 +48,7 @@ NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NA
 
 
 
-NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafDataConstructor leafDataConstructor, NATreeLeafDataDestructor leafDataDestructor){
+NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafDataConstructor leafDataConstructor, NATreeLeafDataDestructor leafDataDestructor) {
   #if NA_DEBUG
     if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("Configuration already used in a tree. Mayor problems may occur in the future");
@@ -59,7 +59,7 @@ NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NA
 
 
 
-NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeDataConstructor nodeDataConstructor, NATreeNodeDataDestructor nodeDataDestructor, NATreeNodeUpdater nodeUpdater){
+NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeDataConstructor nodeDataConstructor, NATreeNodeDataDestructor nodeDataDestructor, NATreeNodeUpdater nodeUpdater) {
   #if NA_DEBUG
     if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("Configuration already used in a tree. Mayor problems may occur in the future");
@@ -71,7 +71,7 @@ NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NA
 
 
 
-NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config, NAInt baseLeafExponent){
+NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config, NAInt baseLeafExponent) {
   NAInt* configdata;
   #if NA_DEBUG
     if(!(config->flags & NA_TREE_QUADTREE) && !(config->flags & NA_TREE_OCTTREE))
@@ -88,7 +88,7 @@ NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config,
 
 
 
-NA_IDEF NAInt naGetTreeConfigurationBaseLeafExponent(const NATreeConfiguration* config){
+NA_IDEF NAInt naGetTreeConfigurationBaseLeafExponent(const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!(config->flags & NA_TREE_QUADTREE) && !(config->flags & NA_TREE_OCTTREE))
       naError("This configuration is not for a quadtree and not for an octtree");

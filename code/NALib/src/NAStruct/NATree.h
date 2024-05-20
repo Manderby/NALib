@@ -235,7 +235,7 @@ NA_IAPI NABool naIsTreeRootLeaf(const NATree* tree);
 // You can iterate over every leaf of a whole tree like this:
 //
 // NATreeIterator iter = naMakeTreeIteratorMutable(tree);
-// while(naIterateTree(&iter)){
+// while(naIterateTree(&iter)) {
 //   MyLeafData* leafData = naGetTreeCurLeafMutable(&iter);
 //   double* myKey = naGetTreeCurLeafKey(&iter);
 //   // do stuff with the leafData.

@@ -6,7 +6,7 @@
 
 
 
-#if (NA_COMPILE_OPENGL == 1)
+#if(NA_COMPILE_OPENGL == 1)
 
   #pragma GCC diagnostic push 
   #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -66,7 +66,7 @@
 
     // Now the OpenGL context is created and current. We can initialize it
     // if necessary.
-    if(initFunc){
+    if(initFunc) {
       initFunc(initData);
     }
   }
@@ -137,7 +137,7 @@
 
 
 
-  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData) {
     NACocoaOpenGLSpace* cocoaOpenGLSpace = naNew(NACocoaOpenGLSpace);
 
     NACocoaNativeOpenGLSpace* nativePtr = [[NACocoaNativeOpenGLSpace alloc]
@@ -147,7 +147,7 @@
       initData:initData];
     na_InitOpenGLSpace((NAOpenGLSpace*)cocoaOpenGLSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
-    if([nativePtr respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
+    if([nativePtr respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]) {
       NA_MACOS_AVAILABILITY_GUARD_10_7(
         [nativePtr setWantsBestResolutionOpenGLSurface:YES];
       )
@@ -158,41 +158,41 @@
 
 
 
-  NA_DEF void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace){
+  NA_DEF void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace) {
     na_ClearOpenGLSpace((NAOpenGLSpace*)cocoaOpenGLSpace);
   }
 
 
-  NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace){
+  NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace) {
     naDefineCocoaObjectConst(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
     return (NA_COCOA_BRIDGE void*)[nativePtr openGLContext];
   }
 
 
-  NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
+  NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace) {
     [[(NA_COCOA_BRIDGE NACocoaNativeOpenGLSpace*)(openGLSpace->uiElement.nativePtr) openGLContext] flushBuffer];
   }
 
 
 
-  NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible){
+  NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible) {
     naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
     [nativePtr setHidden:visible ? NO : YES];
   }
 
 
-  NA_HDEF NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace){
+  NA_HDEF NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace) {
     naDefineCocoaObjectConst(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
     return naMakeRectWithNSRect([nativePtr frame]);
   }
 
-  NA_HDEF void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect){
+  NA_HDEF void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
     naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
     [nativePtr setFrame:naMakeNSRectWithRect(rect)];
   }
 
 
-  //NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+  //NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds) {
   //  naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
   //  NSRect frame = naMakeNSRectWithRect(bounds);
   //  frame.origin = NSMakePoint(0, 0);
@@ -203,7 +203,7 @@
 
 #else
 
-  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData){
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData) {
     NA_UNUSED(size);
     NA_UNUSED(initFunc);
     NA_UNUSED(initData);
@@ -213,14 +213,14 @@
     return NA_NULL;
   }
 
-  NA_DEF void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace){
+  NA_DEF void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace) {
     NA_UNUSED(cocoaOpenGLSpace);
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
   }
 
-  NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace){
+  NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace) {
     NA_UNUSED(openGLSpace);
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
@@ -228,14 +228,14 @@
     return NA_NULL;
   }
 
-  NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace){
+  NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace) {
     NA_UNUSED(openGLSpace);
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
   }
 
-  NA_HDEF NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace){
+  NA_HDEF NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace) {
     NA_UNUSED(openGLSpace);
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
@@ -243,7 +243,7 @@
     return naMakeRectS(0., 0., 1., 1.);
   }
 
-  NA_HDEF void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect){
+  NA_HDEF void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
     NA_UNUSED(openGLSpace);
     NA_UNUSED(rect);
     #if NA_DEBUG
@@ -251,7 +251,7 @@
     #endif
   }
 
-  //NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+  //NA_DEF void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds) {
   //  NA_UNUSED(openGLSpace);
   //  NA_UNUSED(bounds);
   //  #if NA_DEBUG

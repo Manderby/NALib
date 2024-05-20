@@ -6,10 +6,10 @@
 
 
 
-NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
-  switch(message){
+  switch(message) {
   case WM_SETFONT:
   case WM_STYLECHANGING:
   case WM_WINDOWPOSCHANGING:
@@ -58,12 +58,12 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
 
 
-NABool naLabelWINAPINotify(void* uiElement, WORD notificationCode){
+NABool naLabelWINAPINotify(void* uiElement, WORD notificationCode) {
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)uiElement;
   NABool hasBeenHandeled = NA_FALSE;
-  switch(notificationCode){
+  switch(notificationCode) {
     case EN_SETFOCUS:
-      if(winapiLabel->href){
+      if(winapiLabel->href) {
         system(naGetStringUTF8Pointer(winapiLabel->href));
         hasBeenHandeled = NA_TRUE;
       }
@@ -74,7 +74,7 @@ NABool naLabelWINAPINotify(void* uiElement, WORD notificationCode){
 
 
 
-NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
+NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
   NAWINAPILabel* winapiLabel = naNew(NAWINAPILabel);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
@@ -100,7 +100,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
-  if(!app->oldLabelWindowProc){
+  if(!app->oldLabelWindowProc) {
     app->oldLabelWindowProc = oldproc;
   }
 
@@ -121,8 +121,8 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width){
 
 
 
-NA_DEF void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel){
-  if(winapiLabel->href){
+NA_DEF void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel) {
+  if(winapiLabel->href) {
     naDelete(winapiLabel->href);
   }
   na_ClearLabel((NALabel*)winapiLabel);
@@ -130,20 +130,20 @@ NA_DEF void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel){
 
 
 
-NA_DEF void naSetLabelVisible(NALabel* label, NABool visible){
+NA_DEF void naSetLabelVisible(NALabel* label, NABool visible) {
   ShowWindow(naGetUIElementNativePtr(label), visible ? SW_SHOW : SW_HIDE);
 }
 
 
 
-NA_DEF NABool naIsLabelEnabled(const NALabel* label){
+NA_DEF NABool naIsLabelEnabled(const NALabel* label) {
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
   return winapiLabel->enabled;
 }
 
 
 
-NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
+NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled) {
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
   winapiLabel->enabled = enabled;
   naRefreshUIElement(label, 0);
@@ -151,7 +151,7 @@ NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
 
 
 
-NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
+NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text) {
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
   SendMessage(naGetUIElementNativePtr(label), WM_SETTEXT, 0, (LPARAM)systemText);
   naFree(systemText);
@@ -159,7 +159,7 @@ NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
 
 
 
-NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
+NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url) {
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
   #if NA_DEBUG
     if(!url || !*url)
@@ -183,13 +183,13 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
 
 
 
-NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable){
+NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable) {
   // todo
 }
 
 
 
-NA_DEF void naSetLabelHeight(NALabel* label, double height){
+NA_DEF void naSetLabelHeight(NALabel* label, double height) {
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
 
@@ -207,13 +207,13 @@ NA_DEF void naSetLabelHeight(NALabel* label, double height){
 
 
 
-NA_DEF void naSetLabelTextColor(NALabel* label, const NAColor* color){
+NA_DEF void naSetLabelTextColor(NALabel* label, const NAColor* color) {
   // todo
 }
 
 
 
-NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
+NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment) {
   long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(label), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
   SetWindowLongPtr(naGetUIElementNativePtr(label), GWL_STYLE, style);
@@ -221,7 +221,7 @@ NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
 
 
 
-NA_DEF void naSetLabelFont(NALabel* label, NAFont* font){
+NA_DEF void naSetLabelFont(NALabel* label, NAFont* font) {
   SendMessage(naGetUIElementNativePtr(label), WM_SETFONT, (WPARAM)naGetFontNativePointer(font), MAKELPARAM(TRUE, 0));
   naRelease(label->font);
   label->font = naRetain(font);
@@ -235,7 +235,7 @@ NA_HDEF NARect na_GetLabelRect(const NA_UIElement* label)
   return winapiLabel->rect;
 }
 
-NA_HDEF void na_SetLabelRect(NA_UIElement* label, NARect rect){
+NA_HDEF void na_SetLabelRect(NA_UIElement* label, NARect rect) {
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
 
   winapiLabel->rect = rect;

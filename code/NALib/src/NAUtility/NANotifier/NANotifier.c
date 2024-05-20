@@ -77,32 +77,32 @@ NA_HDEF NA_Subscription* na_NewSubscription(
 
 
 
-NA_HDEF void na_InitSignal(NA_Signal* signal){
+NA_HDEF void na_InitSignal(NA_Signal* signal) {
   signal->priority = NA_SIGNAL_PRIORITY_UPDATE;
   naInitList(&signal->subscriptions);
 }
 
-NA_HDEF void na_ClearSignal(NA_Signal* signal){
+NA_HDEF void na_ClearSignal(NA_Signal* signal) {
   naForeachListMutable(&signal->subscriptions, naDelete);
   naClearList(&signal->subscriptions);
 }
 
 
 
-NA_HDEF NA_Topic* na_AllocTopic(size_t signalCount){
+NA_HDEF NA_Topic* na_AllocTopic(size_t signalCount) {
   NA_Topic* topic = naAlloc(NA_Topic);
   topic->signalCount = signalCount;
   topic->signals = naMalloc(sizeof(NA_Signal) * signalCount);
   
-  for(size_t i = 0; i < signalCount; ++i){
+  for(size_t i = 0; i < signalCount; ++i) {
     na_InitSignal(&topic->signals[i]);
   }
   
   return topic;
 }
 
-NA_HDEF void na_DeallocTopic(NA_Topic* topic){
-  for(size_t i = 0; i < topic->signalCount; ++i){
+NA_HDEF void na_DeallocTopic(NA_Topic* topic) {
+  for(size_t i = 0; i < topic->signalCount; ++i) {
     na_ClearSignal(&topic->signals[i]);
   }
 
@@ -113,7 +113,7 @@ NA_HDEF void na_DeallocTopic(NA_Topic* topic){
 
 
 
-NA_DEF NANotifier* naAllocNotifier(void){
+NA_DEF NANotifier* naAllocNotifier(void) {
   NANotifier* notifier = naAlloc(NANotifier);
 
   notifier->nextTopicId = 1;
@@ -129,7 +129,7 @@ NA_DEF NANotifier* naAllocNotifier(void){
   return notifier;
 }
 
-NA_DEF void naDeallocNotifier(NANotifier* notifier){
+NA_DEF void naDeallocNotifier(NANotifier* notifier) {
   #if NA_DEBUG
     if(!naIsListEmpty(&notifier->updateQueue))
       naError("There are still unscheduled messages in the update queue");
@@ -145,12 +145,12 @@ NA_DEF void naDeallocNotifier(NANotifier* notifier){
   naClearList(&notifier->createQueue);
   naClearList(&notifier->deleteQueue);
   
-  if(notifier == na_notifier){
+  if(notifier == na_notifier) {
     na_notifier = NA_NULL;
   }
     
   // topicId 0 is invalid.
-  for(size_t topicId = 1; topicId < notifier->nextTopicId; ++topicId){
+  for(size_t topicId = 1; topicId < notifier->nextTopicId; ++topicId) {
     na_DeallocTopic(notifier->topics[topicId]);
   }
   naFree(notifier->topics);
@@ -159,36 +159,36 @@ NA_DEF void naDeallocNotifier(NANotifier* notifier){
 
 
 
-NA_DEF NANotifier* naGetCurrentNotifier(void){
+NA_DEF NANotifier* naGetCurrentNotifier(void) {
   return na_notifier;
 }
 
-NA_DEF void naSetCurrentNotifier(NANotifier* notifier){
+NA_DEF void naSetCurrentNotifier(NANotifier* notifier) {
   na_notifier = notifier;
 }
 
 
 
-NA_DEF void naRunNotifier(){
+NA_DEF void naRunNotifier() {
   #if NA_DEBUG
     if(!na_notifier)
       naCrash("No current notifier present.");
   #endif
 
-  while(NA_TRUE){
-    if(!naIsListEmpty(&na_notifier->deleteQueue)){
+  while(NA_TRUE) {
+    if(!naIsListEmpty(&na_notifier->deleteQueue)) {
       NA_MessageDispatch* messageDispatch = naRemoveListFirstMutable(&na_notifier->deleteQueue);
       messageDispatch->callback(messageDispatch->message);
       naDelete(messageDispatch);
       continue;
     }
-    if(!naIsListEmpty(&na_notifier->createQueue)){
+    if(!naIsListEmpty(&na_notifier->createQueue)) {
       NA_MessageDispatch* messageDispatch = naRemoveListFirstMutable(&na_notifier->createQueue);
       messageDispatch->callback(messageDispatch->message);
       naDelete(messageDispatch);
       continue;
     }
-    if(!naIsListEmpty(&na_notifier->updateQueue)){
+    if(!naIsListEmpty(&na_notifier->updateQueue)) {
       NA_MessageDispatch* messageDispatch = naRemoveListFirstMutable(&na_notifier->updateQueue);
       messageDispatch->callback(messageDispatch->message);
       naDelete(messageDispatch);
@@ -200,7 +200,7 @@ NA_DEF void naRunNotifier(){
 
 
 
-NA_DEF size_t naRegisterTopic(size_t signalCount){
+NA_DEF size_t naRegisterTopic(size_t signalCount) {
   #if NA_DEBUG
     if(!na_notifier)
       naCrash("No current notifier present.");
@@ -209,7 +209,7 @@ NA_DEF size_t naRegisterTopic(size_t signalCount){
   #endif
   size_t newTopicId = na_notifier->nextTopicId;
   na_notifier->nextTopicId += 1;
-  if(newTopicId >= na_notifier->reservedTopicsCount){
+  if(newTopicId >= na_notifier->reservedTopicsCount) {
     // The array is too small. Double the array size and copy everything over.
     size_t topicsMemSize = sizeof(NA_Topic*) * na_notifier->reservedTopicsCount;
     NA_Topic** newArray = naMalloc(topicsMemSize * 2);
@@ -288,13 +288,13 @@ NA_DEF void naUnsubscribe(
   if(!subscription) return;
 
   NABool found = NA_FALSE;
-  for(size_t t = 1; t < na_notifier->nextTopicId; ++t){
-    for(size_t s = 0; s < na_notifier->topics[t]->signalCount; ++s){
+  for(size_t t = 1; t < na_notifier->nextTopicId; ++t) {
+    for(size_t s = 0; s < na_notifier->topics[t]->signalCount; ++s) {
       NA_Signal* signal = &na_notifier->topics[t]->signals[s];
       NAListIterator it = naMakeListModifier(&signal->subscriptions);
-      while(naIterateList(&it)){
+      while(naIterateList(&it)) {
         NA_Subscription* sub = naGetListCurMutable(&it);
-        if(sub == subscription){
+        if(sub == subscription) {
           naRemoveListCurMutable(&it, NA_FALSE);
           naDelete(sub);
           found = NA_TRUE;
@@ -319,13 +319,13 @@ NA_DEF void naUnsubscribeAllOfReceyver(
   #endif
   if(!reciever) return;
 
-  for(size_t t = 1; t < na_notifier->nextTopicId; ++t){
-    for(size_t s = 0; s < na_notifier->topics[t]->signalCount; ++s){
+  for(size_t t = 1; t < na_notifier->nextTopicId; ++t) {
+    for(size_t s = 0; s < na_notifier->topics[t]->signalCount; ++s) {
       NA_Signal* signal = &na_notifier->topics[t]->signals[s];
       NAListIterator it = naMakeListModifier(&signal->subscriptions);
-      while(naIterateList(&it)){
+      while(naIterateList(&it)) {
         NA_Subscription* sub = naGetListCurMutable(&it);
-        if(sub->reciever == reciever){
+        if(sub->reciever == reciever) {
           naRemoveListCurMutable(&it, NA_FALSE);
           naDelete(sub);
         }
@@ -355,7 +355,7 @@ NA_DEF void naPublish(
   NA_Signal* signal = &na_notifier->topics[topicId]->signals[signalId];
   
   NAList* list;
-  switch(signal->priority){
+  switch(signal->priority) {
   case NA_SIGNAL_PRIORITY_UPDATE: list = &na_notifier->updateQueue; break;
   case NA_SIGNAL_PRIORITY_CREATE: list = &na_notifier->createQueue; break;
   case NA_SIGNAL_PRIORITY_DELETE: list = &na_notifier->deleteQueue; break;
@@ -363,9 +363,9 @@ NA_DEF void naPublish(
   
   NAList* subscriptions = &signal->subscriptions;
   NAListIterator it = naMakeListAccessor(subscriptions);
-  while(naIterateList(&it)){
+  while(naIterateList(&it)) {
     const NA_Subscription* sub = naGetListCurConst(&it);
-    if(sub->object == NA_NULL || sub->object == sender){
+    if(sub->object == NA_NULL || sub->object == sender) {
       NA_MessageDispatch* message = na_NewMessageDispatch(
         sub->reciever,
         sender,

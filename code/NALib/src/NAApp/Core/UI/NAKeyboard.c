@@ -5,7 +5,7 @@
 
 
 
-NA_DEF NAKeyStroke naMakeKeyStroke(uint32 modifiers, NAUIKeyCode keyCode){
+NA_DEF NAKeyStroke naMakeKeyStroke(uint32 modifiers, NAUIKeyCode keyCode) {
   NAKeyStroke newStroke;
   newStroke.modifiers = modifiers;
   newStroke.keyCode = keyCode;
@@ -35,7 +35,7 @@ NA_DEF void naAddUIKeyboardShortcut(
 
 
 
-NA_DEF NAKeyStroke naGetCurrentKeyStroke(){
+NA_DEF NAKeyStroke naGetCurrentKeyStroke() {
   return na_App->curKeyStroke;
 }
 

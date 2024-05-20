@@ -5,7 +5,7 @@
 
 
 
-NA_HDEF void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent){
+NA_HDEF void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent) {
   na_InitUIElement(&(menu->uiElement), NA_UI_MENU, nativePtr);
   naInitList(&(menu->childs));
   na_SetUIElementParent(&(menu->uiElement), parent, NA_FALSE);
@@ -13,7 +13,7 @@ NA_HDEF void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent){
 
 
 
-NA_HDEF void na_ClearMenu(NAMenu* menu){
+NA_HDEF void na_ClearMenu(NAMenu* menu) {
   naForeachListMutable(&(menu->childs), (NAMutator)naDelete);
   naClearList(&(menu->childs));
   // todo
@@ -22,7 +22,7 @@ NA_HDEF void na_ClearMenu(NAMenu* menu){
 
 
 
-NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* itemAt){
+NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* itemAt) {
   NAListIterator iter = naMakeListModifier(&(menu->childs));
   naLocateListData(&iter, itemAt);
   naAddListBeforeMutable(&iter, child);
@@ -31,13 +31,13 @@ NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* 
 }
 
 
-NA_DEF size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item){
+NA_DEF size_t naGetMenuItemIndex(const NAMenu* menu, const NAMenuItem* item) {
   return naGetListElemIndex(&(menu->childs), item);
 }
 
 
 
-NA_DEF size_t naGetMenuItemCount(const NAMenu* menu){
+NA_DEF size_t naGetMenuItemCount(const NAMenu* menu) {
   return naGetListCount(&(menu->childs));
 }
 
@@ -51,7 +51,7 @@ NA_HDEF NARect na_GetMenuRect(const NA_UIElement* menu)
 
 
 
-NA_HDEF void na_SetMenuRect(NA_UIElement* menu, NARect rect){
+NA_HDEF void na_SetMenuRect(NA_UIElement* menu, NARect rect) {
   NA_UNUSED(menu);
   NA_UNUSED(rect);
   #if NA_DEBUG

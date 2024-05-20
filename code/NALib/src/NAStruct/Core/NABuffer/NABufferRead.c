@@ -3,7 +3,7 @@
 
 
 
-NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t byteSize, NABool advance){
+NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t byteSize, NABool advance) {
   const NABuffer* buffer;
   NAByte* dst = data;
   NATreeIterator firstBufIter;
@@ -30,7 +30,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
 
   // do as long as there is a byteSize remaining. Remember that the data may
   // be split into different buffer parts.
-  while(byteSize){
+  while(byteSize) {
     NABufferPart* part;
     const void* src;
 
@@ -55,7 +55,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
         naError("possible length invalid");
     #endif
 
-    if(possibleLength > byteSize){
+    if(possibleLength > byteSize) {
       // If we can get out more bytes than needed, we copy all remaining bytes
       // and stay on this part.
       possibleLength = byteSize;
@@ -69,7 +69,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
     byteSize -= possibleLength;
   }
   
-  if(!advance){
+  if(!advance) {
     iter->partOffset = (NAInt)firstPartOffset;
     naLocateTreeIterator(&(iter->partIter), &firstBufIter);
   }
@@ -78,7 +78,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
 
 
 
-NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, size_t index){
+NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, size_t index) {
   NAByte retbyte;
   NABufferIterator iter;
   NABool found;
@@ -90,7 +90,7 @@ NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, size_t index){
 
   iter = naMakeBufferAccessor(buffer);  
   found = naLocateBufferAbsolute(&iter, (NAInt)index);
-  if(found){
+  if(found) {
     retbyte = naGetBufferu8(&iter);
   }else{
     retbyte = '\0';
@@ -107,12 +107,12 @@ NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, size_t index){
 // BIT MANIPULATION
 // /////////////////////////////////
 
-NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
+NA_DEF NABool naReadBufferBit(NABufferIterator* iter) {
   const NAByte* src;
   NABool bit;
   NA_UNUSED(iter);
 
-  if(iter->curBit == 0){
+  if(iter->curBit == 0) {
     na_PrepareBuffer(iter, 1);
   }
 
@@ -120,7 +120,7 @@ NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
   bit = (*src >> iter->curBit) & 0x01;
   iter->curBit++;
 
-  if(iter->curBit == 8){
+  if(iter->curBit == 8) {
     iter->curBit = 0;
     iter->partOffset++;
   }
@@ -130,14 +130,14 @@ NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
 
 
 
-NA_DEF uint32 naReadBufferBits32(NABufferIterator* iter, uint8 count){
+NA_DEF uint32 naReadBufferBits32(NABufferIterator* iter, uint8 count) {
   uint32 retValue = 0;
   uint32 curmask = 1;
   #if NA_DEBUG
     if(count > 32)
       naError("Can read 32 Bits maximum.");
   #endif
-  while(count){
+  while(count) {
     NABool curBit = naReadBufferBit(iter);
     retValue |= curmask * (uint32)curBit;
     curmask <<= 1;
@@ -148,8 +148,8 @@ NA_DEF uint32 naReadBufferBits32(NABufferIterator* iter, uint8 count){
 
 
 
-NA_DEF void naPadBufferBits(NABufferIterator* iter){
-  if(iter->curBit != 0){
+NA_DEF void naPadBufferBits(NABufferIterator* iter) {
+  if(iter->curBit != 0) {
     iter->curBit = 0;
     iter->partOffset++;
   }

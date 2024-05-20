@@ -9,7 +9,7 @@
 
 // Note that you must have NA_COMPILE_OPENGL configured in NAConfiguration.h
 // to use these functions.
-#if (NA_COMPILE_OPENGL == 1)
+#if(NA_COMPILE_OPENGL == 1)
   #if NA_OS == NA_OS_WINDOWS
     #include <windows.h>
     #include <GL/GL.h>

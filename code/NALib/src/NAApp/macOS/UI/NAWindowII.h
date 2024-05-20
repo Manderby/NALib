@@ -63,7 +63,7 @@
 }
 
 - (void)setKeepOnTop:(NABool) keepOnTop{
-  if(keepOnTop){
+  if(keepOnTop) {
     [self setLevel:NSFloatingWindowLevel];
   }else{
     [self setLevel:NSNormalWindowLevel];
@@ -86,7 +86,7 @@
 
 - (void)retainMouseTracking{
   trackingCount++;
-  if(trackingCount == 1){
+  if(trackingCount == 1) {
     [self setAcceptsMouseMovedEvents:YES];
     na_RenewWindowMouseTracking((NAWindow*)cocoaWindow);
   }
@@ -94,7 +94,7 @@
 
 - (void)releaseMouseTracking{
   trackingCount--;
-  if(trackingCount == 0){
+  if(trackingCount == 0) {
     [self setAcceptsMouseMovedEvents:NO];
     na_ClearWindowMouseTracking((NAWindow*)cocoaWindow);
   }
@@ -147,7 +147,7 @@
 
 
 
-NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, NAInt storageTag){
+NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, NAInt storageTag) {
   NACocoaWindow* cocoaWindow = naNew(NACocoaWindow);
 
   NABool resizeable = naGetFlagu32(flags, NA_WINDOW_RESIZEABLE);
@@ -159,19 +159,19 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
   rect = naSetWindowStorageTag((NAWindow*)cocoaWindow, storageTag, rect, resizeable);
 
   NSUInteger styleMask = 0;
-  if(resizeable){
+  if(resizeable) {
     styleMask |= NAWindowStyleMaskResizable;
   }
-  if(!titleless){
+  if(!titleless) {
     styleMask |= NAWindowStyleMaskTitled;
   }
-  if(!noncloseable){
+  if(!noncloseable) {
     styleMask |= NAWindowStyleMaskClosable;
   }
-  if(!nonminiaturizeable){
+  if(!nonminiaturizeable) {
     styleMask |= NAWindowStyleMaskMiniaturizable;
   }
-//  if(auxiliary){
+//  if(auxiliary) {
 //    styleMask |= NAWindowStyleMaskNonactivatingPanel | NAWindowStyleMaskUtilityWindow;
 //  }
   
@@ -183,7 +183,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
     defer:NO
     screen:nil];
   
-  if(auxiliary){
+  if(auxiliary) {
     [nativePtr setKeepOnTop:YES];
     [nativePtr setHidesOnDeactivate:YES];
     [nativePtr setCollectionBehavior:NSWindowCollectionBehaviorTransient | NAWindowCollectionBehaviorFullScreenAuxiliary];
@@ -207,7 +207,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
 
 
 
-NA_DEF void na_DestructCocoaWindow(NACocoaWindow* cocoaWindow){
+NA_DEF void na_DestructCocoaWindow(NACocoaWindow* cocoaWindow) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, cocoaWindow);
   [nativePtr close];
   
@@ -216,21 +216,21 @@ NA_DEF void na_DestructCocoaWindow(NACocoaWindow* cocoaWindow){
 
 
 
-NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title){
+NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   [nativePtr setWindowTitle:title];
 }
 
 
 
-NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
+NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   [nativePtr setKeepOnTop:keepOnTop];
 }
 
 
 
-NA_DEF double naGetWindowUIResolution(const NAWindow* window){
+NA_DEF double naGetWindowUIResolution(const NAWindow* window) {
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   CGFloat uiScale = naGetWindowBackingScaleFactor(nativePtr);
 
@@ -239,7 +239,7 @@ NA_DEF double naGetWindowUIResolution(const NAWindow* window){
 
 
 
-NA_DEF void naSetWindowFirstTabElement(NAWindow* window, const void* firstTabElem){
+NA_DEF void naSetWindowFirstTabElement(NAWindow* window, const void* firstTabElem) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   naDefineCocoaObjectConst(NSView, cocoaFirstTab, firstTabElem);
   [nativePtr setInitialFirstResponder:cocoaFirstTab];
@@ -247,7 +247,7 @@ NA_DEF void naSetWindowFirstTabElement(NAWindow* window, const void* firstTabEle
 
 
 
-NA_HDEF NARect na_GetNativeWindowAbsoluteInnerRect(const NSWindow* window){
+NA_HDEF NARect na_GetNativeWindowAbsoluteInnerRect(const NSWindow* window) {
   NARect rect;
   NSRect contentRect;
   NSRect windowFrame;
@@ -262,42 +262,42 @@ NA_HDEF NARect na_GetNativeWindowAbsoluteInnerRect(const NSWindow* window){
 
 
 
-NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window){
+NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window) {
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   return na_GetNativeWindowAbsoluteInnerRect(nativePtr);
 }
 
 
 
-NA_HDEF void na_RenewWindowMouseTracking(NAWindow* window){
+NA_HDEF void na_RenewWindowMouseTracking(NAWindow* window) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   [nativePtr renewMouseTracking];
 }
 
 
 
-NA_HDEF void na_ClearWindowMouseTracking(NAWindow* window){
+NA_HDEF void na_ClearWindowMouseTracking(NAWindow* window) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   [nativePtr clearMouseTracking];
 }
 
 
 
-//NA_HDEF void* na_AllocMouseTracking(NAWindow* window){
+//NA_HDEF void* na_AllocMouseTracking(NAWindow* window) {
 //  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
 //  [nativePtr retainMouseTracking];
 //}
 //
 //
 //
-//NA_HDEF void na_DeallocMouseTracking(NAWindow* window){
+//NA_HDEF void na_DeallocMouseTracking(NAWindow* window) {
 //  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
 //  [nativePtr releaseMouseTracking];
 //}
 
 
 
-NA_DEF NARect naGetMainScreenRect(){
+NA_DEF NARect naGetMainScreenRect() {
   CGFloat uiScale = [[NSScreen mainScreen] backingScaleFactor];
   NARect rect = naMakeRectWithNSRect([[NSScreen mainScreen] frame]);
   rect.pos.x /= uiScale;
@@ -309,21 +309,21 @@ NA_DEF NARect naGetMainScreenRect(){
 
 
 
-NA_DEF void naShowWindow(const NAWindow* window){
+NA_DEF void naShowWindow(const NAWindow* window) {
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   [nativePtr makeKeyAndOrderFront:NA_NULL];
 }
 
 
 
-NA_DEF void naCloseWindow(const NAWindow* window){
+NA_DEF void naCloseWindow(const NAWindow* window) {
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   [nativePtr performClose:NA_NULL];
 }
 
 
 
-NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
+NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space) {
   #if NA_DEBUG
     if((naGetUIElementType(space) != NA_UI_SPACE) &&
       (naGetUIElementType(space) != NA_UI_IMAGE_SPACE) &&
@@ -334,7 +334,7 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
 
   naDefineCocoaObject(NACocoaNativeWindow, nativeWindowPtr, window);
   naDefineCocoaObjectConst(NSView, nativeUIElementPtr, space);
-  if([nativeWindowPtr trackingArea]){
+  if([nativeWindowPtr trackingArea]) {
     na_ClearWindowMouseTracking(window);
   }
   [nativeWindowPtr setContentView:nativeUIElementPtr];
@@ -346,17 +346,17 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space){
   window->contentSpace = space;
   na_SetUIElementParent(space, window, NA_TRUE);
   
-  if([nativeWindowPtr trackingCount]){
+  if([nativeWindowPtr trackingCount]) {
     na_RenewWindowMouseTracking(window);
   }
 }
 
 
 
-NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
+NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
-  if(fullScreen != naIsWindowFullscreen(window)){
-    if(fullScreen){
+  if(fullScreen != naIsWindowFullscreen(window)) {
+    if(fullScreen) {
       window->windowedFrame = naMakeRectWithNSRect([nativePtr frame]);
       [nativePtr setStyleMask:NAWindowStyleMaskBorderless];
       [nativePtr setFrame:[[NSScreen mainScreen] frame] display:YES];
@@ -375,27 +375,27 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
 
 
 
-NA_DEF void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts){
+NA_DEF void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts) {
   naSetFlagu32(&(window->coreFlags), NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS, accepts);
 }
 
 
-NA_HDEF NARect na_GetWindowRect(const NA_UIElement* window){
+NA_HDEF NARect na_GetWindowRect(const NA_UIElement* window) {
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   return [nativePtr getContentRect];
 }
 
-NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect){
+NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   [nativePtr setContentRect:rect];
 }
 
-NA_DEF NARect naGetWindowOuterRect(const NAWindow* window){
+NA_DEF NARect naGetWindowOuterRect(const NAWindow* window) {
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   return naMakeRectWithNSRect([nativePtr frame]);
 }
 
-NA_DEF void naSetWindowOuterRect(NAWindow* window, NARect rect){
+NA_DEF void naSetWindowOuterRect(NAWindow* window, NARect rect) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   [nativePtr setFrame:naMakeNSRectWithRect(rect) display:YES];
 }

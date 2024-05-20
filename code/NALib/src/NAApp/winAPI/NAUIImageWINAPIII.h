@@ -10,34 +10,34 @@
 #include <wincodec.h>
 
 
-NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(){
+NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance() {
   return NA_UIIMAGE_SKIN_LIGHT;
 }
 
 
 
-NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor* color){
+NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor* color) {
   // WinAPI has no notion of dark mode (yet), so we just return the light color.
   naFillDefaultTextColorWithSkin(color, NA_UIIMAGE_SKIN_LIGHT);
 }
 
 
 
-NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color){
+NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color) {
   // WinAPI has no notion of dark mode (yet), so we just return the light color.
   naFillDefaultLinkColorWithSkin(color, NA_UIIMAGE_SKIN_LIGHT);
 }
 
 
 
-NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color){
+NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color) {
   // WinAPI has no notion of dark mode (yet), so we just return the light color.
   naFillDefaultAccentColorWithSkin(color, NA_UIIMAGE_SKIN_LIGHT);
 }
 
 
 
-NA_DEF NAImage* naCreateImageFromNativeImage(const void* nativeImage){
+NA_DEF NAImage* naCreateImageFromNativeImage(const void* nativeImage) {
   BYTE* lpPixels;
   NAImage* image;
 
@@ -72,7 +72,7 @@ NA_DEF NAImage* naCreateImageFromNativeImage(const void* nativeImage){
 
 
 
-NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr){
+NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr) {
   // Currently, only png is possible
   NAPNG* png = naNewPNGWithPath(pathStr);
   NAImage* image = naCreateImageFromPNG(png);
@@ -82,7 +82,7 @@ NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr){
 
 
 
-NA_DEF void* naAllocNativeImageWithImage(const NAImage* image){
+NA_DEF void* naAllocNativeImageWithImage(const NAImage* image) {
   HBITMAP hNewBitmap;
 
   NASizei size = naGetImageSize(image);
@@ -98,7 +98,7 @@ NA_DEF void* naAllocNativeImageWithImage(const NAImage* image){
 
 
 
-NA_DEF void naDeallocNativeImage(void* nativeImage){
+NA_DEF void naDeallocNativeImage(void* nativeImage) {
   DeleteObject(nativeImage);
 } 
 

@@ -19,19 +19,19 @@
     typedef NSString* NSAppearanceName;
   #endif
 
-  NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(void){
+  NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(void) {
     NAUIImageSkin skin = NA_UIIMAGE_SKIN_LIGHT;
     NSAppearanceName appearancename = NSAppearanceNameAqua;
 
     #if defined __MAC_11_0
       NA_MACOS_AVAILABILITY_GUARD_11_0(
-        if([NSAppearance respondsToSelector:@selector(currentDrawingAppearance)]){
+        if([NSAppearance respondsToSelector:@selector(currentDrawingAppearance)]) {
           appearancename = [[NSAppearance currentDrawingAppearance] name];
         }
       )
     #else
-      if([NSAppearance respondsToSelector:@selector(currentAppearance)]){
-        if([[NSAppearance currentAppearance] respondsToSelector:@selector(name)]){
+      if([NSAppearance respondsToSelector:@selector(currentAppearance)]) {
+        if([[NSAppearance currentAppearance] respondsToSelector:@selector(name)]) {
           NA_MACOS_AVAILABILITY_GUARD_10_9(
             appearancename = [[NSAppearance currentAppearance] name];
           )
@@ -40,14 +40,14 @@
     #endif
 
     NA_MACOS_AVAILABILITY_GUARD_10_10(
-      if(appearancename == NSAppearanceNameVibrantDark){
+      if(appearancename == NSAppearanceNameVibrantDark) {
         skin = NA_UIIMAGE_SKIN_DARK;
       }
     )
     NA_MACOS_AVAILABILITY_GUARD_10_14(
       if(appearancename == NSAppearanceNameDarkAqua
       || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
-      || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark){
+      || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark) {
         skin = NA_UIIMAGE_SKIN_DARK;
       }
     )
@@ -55,14 +55,14 @@
     return skin;
   }
 #else
-  NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(void){
+  NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance(void) {
     return NA_UIIMAGE_SKIN_LIGHT;
   }
 #endif
 
 
 
-NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor* color){
+NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor* color) {
   NSColor* labelColor = naGetLabelColor();
   naFillColorWithSRGB(
     color,
@@ -74,7 +74,7 @@ NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor* color){
 
 
 
-NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color){
+NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color) {
   NSColor* linkColor = naGetLinkColor();
   naFillColorWithSRGB(
     color,
@@ -86,7 +86,7 @@ NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color){
 
 
 
-NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color){
+NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color) {
   NSColor* accentColor = naGetAccentColor();
   naFillColorWithSRGB(
     color,
@@ -98,7 +98,7 @@ NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color){
 
 
 
-NA_DEF NAImage* naCreateImageFromNativeImage(const void* nativeImage){
+NA_DEF NAImage* naCreateImageFromNativeImage(const void* nativeImage) {
   NAImage* image;
   
   CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)nativeImage));
@@ -112,7 +112,7 @@ NA_DEF NAImage* naCreateImageFromNativeImage(const void* nativeImage){
 
 
 
-NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr){
+NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr) {
   NAImage* image = NA_NULL;
 
 //  // Currently, only png is possible
@@ -121,7 +121,7 @@ NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr){
 //  return image;
 
 //  CGDataProviderRef dataprovider = CGDataProviderCreateWithFilename(pathStr);
-//  if(dataprovider){
+//  if(dataprovider) {
 //  
 //    CGImageRef nativeImage = CGImageCreateWithPNGDataProvider(dataprovider, NULL, NA_FALSE, kCGRenderingIntentAbsoluteColorimetric);
 //    image = naCreateImageFromNativeImage(nativeImage);
@@ -143,7 +143,7 @@ NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr){
 
 
 
-NA_DEF void* naAllocNativeImageWithImage(const NAImage* image){
+NA_DEF void* naAllocNativeImageWithImage(const NAImage* image) {
   CGImageRef nativeImage;
   CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
   NASizei imageSize = naGetImageSize(image);
@@ -168,9 +168,9 @@ NA_DEF void* naAllocNativeImageWithImage(const NAImage* image){
 }
 
 
-NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolution, NAUIImageInteraction interaction, NABool secondaryState, NSSize imageSize, NSRect dstRect){
+NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolution, NAUIImageInteraction interaction, NABool secondaryState, NSSize imageSize, NSRect dstRect) {
   NAUIImageSkin skin = NA_UIIMAGE_SKIN_SYSTEM;
-  if(uiImage->tintMode != NA_BLEND_ZERO){
+  if(uiImage->tintMode != NA_BLEND_ZERO) {
     skin = naGetSkinForCurrentAppearance();
   }
   
@@ -207,7 +207,7 @@ NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
   // This is commented out as there have been severe problems with this working
   // on different computers. The context sometimes simply does not seem to be
   // there and returns null, resulting in empty images.
-  if(containingView && [NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
+  if(containingView && [NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]) {
     NA_MACOS_AVAILABILITY_GUARD_10_8(
       NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
       image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
@@ -219,23 +219,23 @@ NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
   }
   
   // old method: Just create an image with multiple representations.
-  if(!image){
+  if(!image) {
     NASizei imageSize = naGetUIImage1xSize(uiImage);
     image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
 
     NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
-    if(uiImage->tintMode != NA_BLEND_ZERO){
+    if(uiImage->tintMode != NA_BLEND_ZERO) {
       skin = naGetSkinForCurrentAppearance();
     }
 
     CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x, skin, interaction, secondaryState);
     CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_2x, skin, interaction, secondaryState);
-    if(img1x){
+    if(img1x) {
       NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithCGImage:img1x];
       [image addRepresentation:rep];
       NA_COCOA_RELEASE(rep);
     }
-    if(img2x){
+    if(img2x) {
       NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithCGImage:img2x];
       [image addRepresentation:rep];
       NA_COCOA_RELEASE(rep);
@@ -247,7 +247,7 @@ NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
 
 
 
-NA_DEF void naDeallocNativeImage(void* nativeImage){
+NA_DEF void naDeallocNativeImage(void* nativeImage) {
   CGImageRelease(nativeImage);
 } 
 

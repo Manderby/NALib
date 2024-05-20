@@ -5,11 +5,11 @@
 
 
 // Every Add resulting in a change in the tree must go through this function.
-NA_HDEF NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
+NA_HDEF NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder) {
   // We need to create a node holding both the old leaf and the new one.
   NATreeLeaf* contentleaf = tree->config->leafInserter(tree, item, key, content, insertOrder);
   NATreeNode* parent = na_GetTreeItemParent(&(contentleaf->item));
-  if(parent){
+  if(parent) {
     na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(tree->config, parent, &(contentleaf->item)));
   }
   return contentleaf;
@@ -17,13 +17,13 @@ NA_HDEF NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, con
 
 
 
-NA_HDEF void na_FillTreeNodeChildData(const NATreeConfiguration* config, NAPtr childdata[NA_TREE_NODE_MAX_CHILDS], NATreeNode* node){
+NA_HDEF void na_FillTreeNodeChildData(const NATreeConfiguration* config, NAPtr childdata[NA_TREE_NODE_MAX_CHILDS], NATreeNode* node) {
   NAInt i;
-  for(i = 0; i < config->childpernode; ++i){
+  for(i = 0; i < config->childpernode; ++i) {
     NATreeItem* child = na_GetTreeNodeChild(config, node, i);
-    if(!child){
+    if(!child) {
       childdata[i] = naMakePtrNull();
-    }else if(na_IsNodeChildLeaf(node, i)){
+    }else if(na_IsNodeChildLeaf(node, i)) {
       childdata[i] = na_GetTreeLeafData(config, (NATreeLeaf*)child);
     }else{
       childdata[i] = na_GetTreeNodeData(config, (NATreeNode*)child);
@@ -36,19 +36,19 @@ NA_HDEF void na_FillTreeNodeChildData(const NATreeConfiguration* config, NAPtr c
 // Expects the parent node of a child which has changed. The segment indicates
 // which segment caused the trouble. If -1 is given, there is no particular
 // node.
-NA_HDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childIndex){
+NA_HDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childIndex) {
   NABool bubble = NA_TRUE;
 
-  while(bubble && parent){
+  while(bubble && parent) {
     // We call the update callback.
-    if(tree->config->nodeUpdater){
+    if(tree->config->nodeUpdater) {
       NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
       na_FillTreeNodeChildData(tree->config, childdata, parent);
       bubble = tree->config->nodeUpdater(na_GetTreeNodeData(tree->config, parent), childdata, childIndex, parent->flags & NA_TREE_NODE_CHILDS_MASK);
     }
 
     // Then we propagate the message towards the root if requested.
-    if(bubble && !na_IsTreeItemRoot(&(parent->item))){
+    if(bubble && !na_IsTreeItemRoot(&(parent->item))) {
       NATreeNode* grandparent = na_GetTreeItemParent(&(parent->item));
       childIndex = na_GetTreeNodeChildIndex(tree->config, grandparent, &(parent->item));
       parent = grandparent;
@@ -68,7 +68,7 @@ NA_HDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt c
 // upwards again so that every node in the path receives a childchanged
 // message which again can define if the message shall be bubbled even
 // further.
-NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
+NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node) {
   NABool bubble;
   NAInt i;
   #if NA_DEBUG
@@ -78,10 +78,10 @@ NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   bubble = NA_FALSE;
 
   // Go through all childs and call the capturing message recursively.
-  for(i = 0; i < tree->config->childpernode; ++i){
+  for(i = 0; i < tree->config->childpernode; ++i) {
     NATreeNode* subnode = (NATreeNode*)na_GetTreeNodeChild(tree->config, node, i);
-    if(subnode){
-      if(na_IsNodeChildLeaf(node, i)){
+    if(subnode) {
+      if(na_IsNodeChildLeaf(node, i)) {
         bubble |= NA_TRUE;
       }else{
         // this node stores subnodes
@@ -92,7 +92,7 @@ NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   
   // Only if at least one of the childs requested further bubbling, we update
   // this very node.
-  if(bubble){
+  if(bubble) {
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
     na_FillTreeNodeChildData(tree->config, childdata, node);
     bubble = tree->config->nodeUpdater(na_GetTreeNodeData(tree->config, node), childdata, -1, node->flags & NA_TREE_NODE_CHILDS_MASK);
@@ -115,18 +115,18 @@ NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
 //    NAInt prevIndex;
 //  };
 //  
-//  NAInt debugNode(void* token, NAPtr data){
+//  NAInt debugNode(void* token, NAPtr data) {
 //    NADebugTreeToken* debugtoken;
 //    NA_UNUSED(data);
 //    debugtoken = (NADebugTreeToken*)token;
 //    debugtoken->nodecount++;
 //    debugtoken->curdepth++;
-//    if(debugtoken->curdepth > debugtoken->maxdepth){
+//    if(debugtoken->curdepth > debugtoken->maxdepth) {
 //      debugtoken->maxdepth = debugtoken->curdepth;
 //    }
 //
 //    debugtoken->prevIndex++;
-////    if(debugtoken->prevIndex == tree->config->childcound){
+////    if(debugtoken->prevIndex == tree->config->childcound) {
 ////      // last child just has been visited. Go up to the parent.
 ////      if()
 ////    }else{
@@ -136,7 +136,7 @@ NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
 //    return NA_TREE_SEARCH_PARENT;
 //  }
 //
-//  NAInt debugLeaf(void* token, NAPtr data){
+//  NAInt debugLeaf(void* token, NAPtr data) {
 //    NADebugTreeToken* debugtoken;
 //    NA_UNUSED(data);
 //    debugtoken = (NADebugTreeToken*)token;
@@ -144,11 +144,11 @@ NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
 //    return NA_TREE_SEARCH_PARENT;
 //  }
 //
-//  void naDebugTree(NATree* tree){
+//  void naDebugTree(NATree* tree) {
 //    printf("Tree Debug:" NA_NL);
 //    printf(NA_TAB "Structure uses %d bytes." NA_NL, (int)sizeof(NATree));
 //    printf(NA_TAB "%d iterators running on the tree." NA_NL, (int)tree->iterCount);
-//    if(tree->root){
+//    if(tree->root) {
 //      NATreeIterator iter = naMakeTreeAccessor(tree);
 //      NADebugTreeToken token;
 //      naZeron(&token, sizeof(NADebugTreeToken));

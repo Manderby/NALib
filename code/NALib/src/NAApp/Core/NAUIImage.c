@@ -32,9 +32,12 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
 {
 
   NAListIterator listIter = naMakeListAccessor(&uiImage->subImages);
-  while(naIterateList(&listIter)){
+  while(naIterateList(&listIter)) {
     const NA_UISubImage* subImage = naGetListCurConst(&listIter);
-    if(subImage->resolution == resolution && subImage->skin == skin && subImage->interaction == interaction){
+    if(subImage->resolution == resolution
+      && subImage->skin == skin
+      && subImage->interaction == interaction)
+    {
       naClearListIterator(&listIter);
       return subImage;
     }
@@ -47,7 +50,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
 
   // If the resolution does not match, we build a corresponding one.
   double baseResolution = na_GetUIImageBaseResolution(mutableUIImage);
-  if(resolution != baseResolution){
+  if(resolution != baseResolution) {
     const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, baseResolution, skin, interaction, secondaryState);
     NASizei size = naGetImageSize(originalImage->image);
     size.width = (NAInt)((double)size.width * resolution / baseResolution);
@@ -62,8 +65,8 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
     naReleaseImage(newImage);
 
   // If the status is not NONE, we build an image out of it.
-  }else if(interaction != NA_UIIMAGE_INTERACTION_NONE){
-    switch(interaction){
+  }else if(interaction != NA_UIIMAGE_INTERACTION_NONE) {
+    switch(interaction) {
     case NA_UIIMAGE_INTERACTION_PRESSED:
       {
         const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
@@ -133,7 +136,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
   }else{
     NAColor tintColor;
     naFillDefaultTextColorWithSkin(&tintColor, skin);
-    if(secondaryState && naGetSkinForCurrentAppearance() != NA_UIIMAGE_SKIN_DARK){
+    if(secondaryState && naGetSkinForCurrentAppearance() != NA_UIIMAGE_SKIN_DARK) {
       naInvertColor(&tintColor);
     }
     const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
@@ -160,9 +163,9 @@ NA_DEF void naSetUIImageSubImage(
   NAUIImageInteraction interaction)
 {
   NAListIterator listIter = naMakeListModifier(&uiImage->subImages);
-  while(naIterateList(&listIter)){
+  while(naIterateList(&listIter)) {
     const NA_UISubImage* curSubImage = naGetListCurConst(&listIter);
-    if(curSubImage->resolution == resolution && curSubImage->skin == skin && curSubImage->interaction == interaction){
+    if(curSubImage->resolution == resolution && curSubImage->skin == skin && curSubImage->interaction == interaction) {
       NA_UISubImage* oldImage = naRemoveListCurMutable(&listIter, NA_FALSE);
       na_DeallocUISubImage(oldImage);
       break;
@@ -180,7 +183,7 @@ NA_DEF void naSetUIImageSubImage(
 
 
 
-NA_HDEF const NAImage* na_GetUIImageImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction, NABool secondaryState){
+NA_HDEF const NAImage* na_GetUIImageImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction, NABool secondaryState) {
   // Let the following function do the hard work.
   const NA_UISubImage* subImage = na_GetUISubImage(uiImage, resolution, skin, interaction, secondaryState);
   return subImage->image;
@@ -188,7 +191,7 @@ NA_HDEF const NAImage* na_GetUIImageImage(const NAUIImage* uiImage, double resol
 
 
 
-NA_HDEF void* na_GetUIImageNativeImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction, NABool secondaryState){
+NA_HDEF void* na_GetUIImageNativeImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction, NABool secondaryState) {
   // Let the following function do the hard work.
   const NA_UISubImage* subImage = na_GetUISubImage(uiImage, resolution, skin, interaction, secondaryState);
   return subImage->nativeImage;
@@ -218,7 +221,7 @@ NA_DEF NAUIImage* naCreateUIImage(
 
 
 
-NA_DEF NAUIImage* naRecreateUIImage(const NAUIImage* uiImage){
+NA_DEF NAUIImage* naRecreateUIImage(const NAUIImage* uiImage) {
   NAUIImage* newUIImage = naCreate(NAUIImage);
   
   naInitList(&newUIImage->subImages);
@@ -238,17 +241,17 @@ NA_DEF NAUIImage* naRecreateUIImage(const NAUIImage* uiImage){
 
 
 
-NA_DEF void na_DestructUIImage(NAUIImage* uiImage){
+NA_DEF void na_DestructUIImage(NAUIImage* uiImage) {
   naForeachListMutable(&uiImage->subImages, (NAMutator)na_DeallocUISubImage);
   naClearList(&uiImage->subImages);
 }
 
 
 
-NA_HDEF void naFillDefaultTextColorWithSkin(NAColor* color, NAUIImageSkin skin){
+NA_HDEF void naFillDefaultTextColorWithSkin(NAColor* color, NAUIImageSkin skin) {
   uint8 skinColor[4];
   
-  switch(skin){
+  switch(skin) {
   case NA_UIIMAGE_SKIN_PLAIN:
     #if NA_DEBUG
       naError("Cannot provide color for plain skin");
@@ -277,10 +280,10 @@ NA_HDEF void naFillDefaultTextColorWithSkin(NAColor* color, NAUIImageSkin skin){
 
 
 
-NA_DEF void naFillDefaultLinkColorWithSkin(NAColor* color, NAUIImageSkin skin){
+NA_DEF void naFillDefaultLinkColorWithSkin(NAColor* color, NAUIImageSkin skin) {
   uint8 skinColor[4];
   
-  switch(skin){
+  switch(skin) {
   case NA_UIIMAGE_SKIN_PLAIN:
     #if NA_DEBUG
       naError("Cannot provide color for plain skin");
@@ -309,10 +312,10 @@ NA_DEF void naFillDefaultLinkColorWithSkin(NAColor* color, NAUIImageSkin skin){
 
 
 
-NA_DEF void naFillDefaultAccentColorWithSkin(NAColor* color, NAUIImageSkin skin){
+NA_DEF void naFillDefaultAccentColorWithSkin(NAColor* color, NAUIImageSkin skin) {
   uint8 skinColor[4];
   
-  switch(skin){
+  switch(skin) {
   case NA_UIIMAGE_SKIN_PLAIN:
     #if NA_DEBUG
       naError("Cannot provide color for plain skin");
@@ -341,14 +344,14 @@ NA_DEF void naFillDefaultAccentColorWithSkin(NAColor* color, NAUIImageSkin skin)
 
 
 
-NA_HDEF double na_GetUIImageBaseResolution(const NAUIImage* uiImage){
+NA_HDEF double na_GetUIImageBaseResolution(const NAUIImage* uiImage) {
   const NA_UISubImage* subImage = naGetListFirstConst(&uiImage->subImages);
   return subImage->resolution;
 }
 
 
 
-NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage){
+NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage) {
   const NA_UISubImage* subImage = naGetListFirstConst(&uiImage->subImages);
   NASizei size = naGetImageSize(subImage->image);
   double factor = subImage->resolution / NA_UIIMAGE_RESOLUTION_SCREEN_1x;
@@ -378,7 +381,7 @@ NA_HDEF NA_UISubImage* na_AddUISubImage(
   return subImage;
 }
 
-NA_HDEF void na_DeallocUISubImage(NA_UISubImage* subImage){
+NA_HDEF void na_DeallocUISubImage(NA_UISubImage* subImage) {
   naReleaseImage(subImage->image);
   naFree(subImage);
 }

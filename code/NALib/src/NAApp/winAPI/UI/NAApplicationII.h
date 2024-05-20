@@ -15,34 +15,34 @@
 
 
 
-WNDPROC na_GetApplicationOldButtonWindowProc(){
+WNDPROC na_GetApplicationOldButtonWindowProc() {
   return ((NAWINAPIApplication*)naGetApplication())->oldButtonWindowProc;
 }
-WNDPROC na_GetApplicationOldCheckBoxWindowProc(){
+WNDPROC na_GetApplicationOldCheckBoxWindowProc() {
   return ((NAWINAPIApplication*)naGetApplication())->oldCheckBoxWindowProc;
 }
-WNDPROC na_GetApplicationOldLabelWindowProc(){
+WNDPROC na_GetApplicationOldLabelWindowProc() {
   return ((NAWINAPIApplication*)naGetApplication())->oldLabelWindowProc;
 }
-WNDPROC na_GetApplicationOldRadioWindowProc(){
+WNDPROC na_GetApplicationOldRadioWindowProc() {
   return ((NAWINAPIApplication*)naGetApplication())->oldRadioWindowProc;
 }
-WNDPROC na_GetApplicationOldSelectWindowProc(){
+WNDPROC na_GetApplicationOldSelectWindowProc() {
   return ((NAWINAPIApplication*)naGetApplication())->oldSelectWindowProc;
 }
-WNDPROC na_GetApplicationOldSliderWindowProc(){
+WNDPROC na_GetApplicationOldSliderWindowProc() {
   return ((NAWINAPIApplication*)naGetApplication())->oldSliderWindowProc;
 }
-WNDPROC na_GetApplicationOldTextFieldWindowProc(){
+WNDPROC na_GetApplicationOldTextFieldWindowProc() {
   return ((NAWINAPIApplication*)naGetApplication())->oldTextFieldWindowProc;
 }
 
 
 
-NAWINAPICallbackInfo naApplicationWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naApplicationWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
-  switch(message){
+  switch(message) {
   default:
     //printf("Uncaught Application message" NA_NL);
     break;
@@ -53,7 +53,7 @@ NAWINAPICallbackInfo naApplicationWINAPIProc(void* uiElement, UINT message, WPAR
 
 
 
-NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMutator cleanup, void* arg){
+NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMutator cleanup, void* arg) {
   NAWINAPIApplication* app;
   WNDCLASS wndclass;
   MSG message;
@@ -132,7 +132,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
   app = (NAWINAPIApplication*)na_NewApplication();
 
   // Call preStartup if desired.
-  if(preStartup){
+  if(preStartup) {
     preStartup(arg);
   }
 
@@ -140,30 +140,30 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
   naResetApplicationPreferredTranslatorLanguages();
 
   // Call postStartup if desired.
-  if(postStartup){
+  if(postStartup) {
     postStartup(arg);
   }
 
   // Start the event loop.
-  while(na_IsApplicationRunning()){
+  while(na_IsApplicationRunning()) {
     BOOL response = GetMessage(&message, 0, 0, 0);
     naCollectGarbage();
     
-    if(response == 0){
+    if(response == 0) {
       break;
-    }else if(response == -1){
+    }else if(response == -1) {
       // handle the error and possibly exit
       break;
     }else{
-      if(message.message == WM_QUIT){
+      if(message.message == WM_QUIT) {
         break;
       }
-      //if(!IsDialogMessage(message.hwnd, &message)){
+      //if(!IsDialogMessage(message.hwnd, &message)) {
       // Capture any keyboard shortcuts overridden by the NALib user
       // Note: Usually, the IsDialogMessage function is responsible for
       // capturing TAB events but it has proven to be difficult to handle
       // and therefore, everything is captured in na_InterceptKeyboardShortcut.
-      if(!na_InterceptKeyboardShortcut(&message)){
+      if(!na_InterceptKeyboardShortcut(&message)) {
         // Do the normal message dispatch.
         TranslateMessage(&message);
         DispatchMessage(&message);
@@ -177,7 +177,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
 }
 
 
-NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
+NA_DEF void naResetApplicationPreferredTranslatorLanguages(void) {
   int numchars;
   NAUTF8Char* languageBuf; 
   NALanguageCode3 languageCode;
@@ -199,7 +199,7 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 
-NA_HDEF NAApplication* na_NewApplication(void){
+NA_HDEF NAApplication* na_NewApplication(void) {
 
   NAWINAPIApplication* winapiApplication = naNew(NAWINAPIApplication);
 
@@ -246,7 +246,7 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
 
 
-NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication){
+NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication) {
   DestroyWindow(winapiApplication->offscreenWindow);
 
   DeleteObject(winapiApplication->fgColor.brush);
@@ -267,22 +267,22 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
 
 
 
-HWND naGetApplicationOffscreenWindow(void){
+HWND naGetApplicationOffscreenWindow(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   return app->offscreenWindow;
 }
 
-NA_UIElement* naGetApplicationMouseHoverElement(void){
+NA_UIElement* naGetApplicationMouseHoverElement(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   return app->mouseHoverElement;
 }
 
-void naSetApplicationMouseHoverElement(NA_UIElement* element){
+void naSetApplicationMouseHoverElement(NA_UIElement* element) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->mouseHoverElement = element;
 }
 
-const NONCLIENTMETRICS* naGetApplicationMetrics(void){
+const NONCLIENTMETRICS* naGetApplicationMetrics(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   return &(app->nonClientMetrics);
 }
@@ -298,7 +298,7 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void){
 // stored in that struct with the stored argument.
 //
 // Definitely not the fastest and best method. But as for now, it's ok. todo.
-NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime){
+NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
   //todo something is wrong here with the type.
   NAWINAPIApplication* app;
   NAListIterator iter;
@@ -307,7 +307,7 @@ NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT
   app = (NAWINAPIApplication*)naGetApplication();
 
   naBeginListModifierIteration(NAWINAPITimerStruct* timerStruct, &(app->timers), iter);
-    if(timerStruct->key == timerkey){
+    if(timerStruct->key == timerkey) {
       naRemoveListCurMutable(&iter, NA_FALSE);
       KillTimer(hwnd, idEvent);
       timerStruct->func(timerStruct->arg);
@@ -319,7 +319,7 @@ NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT
 
 
 
-NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff){
+NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff) {
   NAWINAPIApplication* app;
   NAWINAPITimerStruct* timerStruct = naAlloc(NAWINAPITimerStruct);
   timerStruct->func = function;
@@ -332,9 +332,9 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
 
 
 
-#if (NA_ADDRESS_BITS == 64)
+#if(NA_ADDRESS_BITS == 64)
   typedef intptr_t NAWINAPIHANDLE;
-#elif (NA_ADDRESS_BITS == 32)
+#elif(NA_ADDRESS_BITS == 32)
   typedef long NAWINAPIHANDLE;
 #else
   #error "Undefined system address byteSize"
@@ -344,7 +344,7 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
 
 #include <io.h>
 #include <fcntl.h>
-NA_DEF void naOpenConsoleWindow(void){
+NA_DEF void naOpenConsoleWindow(void) {
   FILE *outFile;
   FILE *errFile;
   FILE *inFile;
@@ -362,32 +362,32 @@ NA_DEF void naOpenConsoleWindow(void){
 
 
 
-NA_DEF void naSetApplicationName(const NAUTF8Char* name){
+NA_DEF void naSetApplicationName(const NAUTF8Char* name) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.name = name;
 }
-NA_DEF void naSetApplicationCompanyName(const NAUTF8Char* name){
+NA_DEF void naSetApplicationCompanyName(const NAUTF8Char* name) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.companyName = name;
 }
-NA_DEF void naSetApplicationVersionString(const NAUTF8Char* string){
+NA_DEF void naSetApplicationVersionString(const NAUTF8Char* string) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.versionString = string;
 }
-NA_DEF void naSetApplicationBuildString(const NAUTF8Char* string){
+NA_DEF void naSetApplicationBuildString(const NAUTF8Char* string) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.buildString = string;
 }
-NA_DEF void naSetApplicationResourcePath(const NAUTF8Char* path){
+NA_DEF void naSetApplicationResourcePath(const NAUTF8Char* path) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->application.resourcePath = path;
 }
 
-NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path){
+NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
     NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
     app->application.iconPath = path;
 
-  if(path){
+  if(path) {
     NAImage* iconImage = naCreateImageFromFilePath(path);
     HBITMAP bitmap = naAllocNativeImageWithImage(iconImage);
    
@@ -406,9 +406,9 @@ NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path){
 
 
 
-NA_DEF NAString* naNewApplicationPath(void){
+NA_DEF NAString* naNewApplicationPath(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->application.name){
+  if(app->application.name) {
     return naNewStringWithFormat("%s", app->application.name);
   }else{
     TCHAR modulePath[MAX_PATH];
@@ -427,9 +427,9 @@ NA_DEF NAString* naNewApplicationPath(void){
 
 
 
-NA_DEF NAString* naNewApplicationName(void){
+NA_DEF NAString* naNewApplicationName(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->application.name){
+  if(app->application.name) {
     return naNewStringWithFormat("%s", app->application.name);
   }else{
     TCHAR modulePath[MAX_PATH];
@@ -454,53 +454,53 @@ NA_DEF NAString* naNewApplicationName(void){
 
 
 
-NA_DEF NAString* naNewApplicationCompanyName(void){
+NA_DEF NAString* naNewApplicationCompanyName(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->application.companyName){
+  if(app->application.companyName) {
     return naNewStringWithFormat("%s", app->application.companyName);
   }else{
     return NA_NULL;
   }
 }
 
-NA_DEF NAString* naNewApplicationVersionString(void){
+NA_DEF NAString* naNewApplicationVersionString(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->application.versionString){
+  if(app->application.versionString) {
     return naNewStringWithFormat("%s", app->application.versionString);
   }else{
     return NA_NULL;
   }
 }
 
-NA_DEF NAString* naNewApplicationBuildString(void){
+NA_DEF NAString* naNewApplicationBuildString(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->application.buildString){
+  if(app->application.buildString) {
     return naNewStringWithFormat("%s", app->application.buildString);
   }else{
     return NA_NULL;
   }
 }
 
-NA_DEF NAString* naNewApplicationIconPath(void){
+NA_DEF NAString* naNewApplicationIconPath(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->application.iconPath){
+  if(app->application.iconPath) {
     return naNewStringWithFormat("%s", app->application.iconPath);
   }else{
     return NA_NULL;
   }
 }
 
-NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
+NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAString* retString;
-  if(dir){
-    if(app->application.resourcePath){
+  if(dir) {
+    if(app->application.resourcePath) {
       retString = naNewStringWithFormat("%s%c%s%c%s%c%s", app->application.resourcePath, NA_PATH_DELIMITER_WIN, dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
     }else{
       retString = naNewStringWithFormat("%s%c%s%c%s", dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
     }
   }else{
-    if(app->application.resourcePath){
+    if(app->application.resourcePath) {
       retString = naNewStringWithFormat("%s%c%s%c%s", app->application.resourcePath, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
     }else{
       retString = naNewStringWithFormat("%s%c%s", basename, NA_SUFFIX_DELIMITER, suffix);
@@ -511,19 +511,19 @@ NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF
 
 
 
-NA_DEF HICON naGetWINAPIApplicationIcon(void){
+NA_DEF HICON naGetWINAPIApplicationIcon(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   return app->appIcon;
 }
 
 
 
-NA_HDEF void na_DestructFont(NAFont* font){
+NA_HDEF void na_DestructFont(NAFont* font) {
   DeleteObject(font->nativePtr);
   naDelete(font->name);
 }
 
-NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size){
+NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size) {
   NAFont* font = naCreate(NAFont);
   TCHAR* systemFontName = naAllocSystemStringWithUTF8String(fontFamilyName);
 
@@ -560,12 +560,12 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
 //  _In_ NEWTEXTMETRIC *lpntm,
 //  _In_ DWORD         FontType,
 //  _In_ LPARAM        lParam
-//){
+//) {
 //  int x = 1234;
 //  printf("%ls" NA_NL, lpelf->elfFullName);
 //}
 
-NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
+NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   
   NAFont* retFont = NA_NULL;
@@ -575,7 +575,7 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
   const NONCLIENTMETRICS* metrics = naGetApplicationMetrics();
 
   LONG baseSize;
-  switch(fontSize){
+  switch(fontSize) {
   case NA_FONT_SIZE_SMALL: baseSize = 14; break;
   case NA_FONT_SIZE_DEFAULT: baseSize = 16; break;
     //case NA_FONT_SIZE_DEFAULT: baseSize = metrics->lfMessageFont.lfHeight; break;
@@ -588,7 +588,7 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
 
   NAString* fontFamilyName;
 
-  switch(kind){
+  switch(kind) {
     case NA_FONT_KIND_SYSTEM:
       fontFamilyName = naNewStringFromSystemString(metrics->lfMessageFont.lfFaceName);
       retFont = naCreateFont(
@@ -648,7 +648,7 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize){
 
 
 
-NA_DEF void naCenterMouse(void* uiElement){
+NA_DEF void naCenterMouse(void* uiElement) {
   double uiScale = naGetUIElementResolutionFactor(NA_NULL);
   NARect rect = naGetUIElementRectAbsolute(uiElement);
 
@@ -666,24 +666,24 @@ NA_DEF void naCenterMouse(void* uiElement){
 
 
 
-NA_DEF void naShowMouse(){
+NA_DEF void naShowMouse() {
   NAApplication* app = naGetApplication();
-  if(!(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)){
+  if(!(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)) {
     ShowCursor(1);
     app->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   }
 }
 
 
-NA_DEF void naHideMouse(){
+NA_DEF void naHideMouse() {
   NAApplication* app = naGetApplication();
-  if(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE){
+  if(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE) {
     ShowCursor(0);
     app->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   }
 }
 
-NA_DEF void naHideMouseUntilMovement(NABool hide){
+NA_DEF void naHideMouseUntilMovement(NABool hide) {
   // todo
 }
 

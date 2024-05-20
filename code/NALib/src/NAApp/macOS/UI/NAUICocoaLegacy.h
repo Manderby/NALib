@@ -13,96 +13,96 @@
 #include "Availability.h"
 
 #if __clang_major__ >= 8  // Supposedly, clang 8 is needed for @available.
-  #define NA_MACOS_AVAILABILITY_GUARD_10_6(code)  if(@available(macOS 10.6, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_7(code)  if(@available(macOS 10.7, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_8(code)  if(@available(macOS 10.8, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_9(code)  if(@available(macOS 10.9, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_10(code) if(@available(macOS 10.10, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_11(code) if(@available(macOS 10.11, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_12(code) if(@available(macOS 10.12, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_13(code) if(@available(macOS 10.13, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_14(code) if(@available(macOS 10.14, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_15(code) if(@available(macOS 10.15, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_16(code) if(@available(macOS 10.16, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_11_0(code)  if(@available(macOS 11.0, *)){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_11_1(code)  if(@available(macOS 11.1, *)){ code }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_6(code)  if(@available(macOS 10.6, *)) { code }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_7(code)  if(@available(macOS 10.7, *)) { code }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_8(code)  if(@available(macOS 10.8, *)) { code }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_9(code)  if(@available(macOS 10.9, *)) { code }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_10(code) if(@available(macOS 10.10, *)) { code }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_11(code) if(@available(macOS 10.11, *)) { code }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_12(code) if(@available(macOS 10.12, *)) { code }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_13(code) if(@available(macOS 10.13, *)) { code }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_14(code) if(@available(macOS 10.14, *)) { code }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_15(code) if(@available(macOS 10.15, *)) { code }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_16(code) if(@available(macOS 10.16, *)) { code }
+  #define NA_MACOS_AVAILABILITY_GUARD_11_0(code)  if(@available(macOS 11.0, *)) { code }
+  #define NA_MACOS_AVAILABILITY_GUARD_11_1(code)  if(@available(macOS 11.1, *)) { code }
 #else
   #if defined __MAC_10_6
-    #define NA_MACOS_AVAILABILITY_GUARD_10_6(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_6(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_10_6(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_6(code)  if(0) { }
   #endif
 
   #if defined __MAC_10_7
-    #define NA_MACOS_AVAILABILITY_GUARD_10_7(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_7(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_10_7(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_7(code)  if(0) { }
   #endif
 
   #if defined __MAC_10_8
-    #define NA_MACOS_AVAILABILITY_GUARD_10_8(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_8(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_10_8(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_8(code)  if(0) { }
   #endif
 
   #if defined __MAC_10_9
-    #define NA_MACOS_AVAILABILITY_GUARD_10_9(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_9(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_10_9(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_9(code)  if(0) { }
   #endif
 
   #if defined __MAC_10_10
-    #define NA_MACOS_AVAILABILITY_GUARD_10_10(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_10(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_10_10(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_10(code)  if(0) { }
   #endif
 
   #if defined __MAC_10_11
-    #define NA_MACOS_AVAILABILITY_GUARD_10_11(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_11(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_10_11(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_11(code)  if(0) { }
   #endif
 
   #if defined __MAC_10_12
-    #define NA_MACOS_AVAILABILITY_GUARD_10_12(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_12(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_10_12(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_12(code)  if(0) { }
   #endif
 
   #if defined __MAC_10_13
-    #define NA_MACOS_AVAILABILITY_GUARD_10_13(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_13(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_10_13(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_13(code)  if(0) { }
   #endif
 
   #if defined __MAC_10_14
-    #define NA_MACOS_AVAILABILITY_GUARD_10_14(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_14(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_10_14(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_14(code)  if(0) { }
   #endif
 
   #if defined __MAC_10_15
-    #define NA_MACOS_AVAILABILITY_GUARD_10_15(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_15(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_10_15(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_15(code)  if(0) { }
   #endif
 
   #if defined __MAC_10_16
-    #define NA_MACOS_AVAILABILITY_GUARD_10_16(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_16(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_10_16(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_10_16(code)  if(0) { }
   #endif
 
   #if defined __MAC_11_0
-    #define NA_MACOS_AVAILABILITY_GUARD_11_0(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_11_0(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_11_0(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_11_0(code)  if(0) { }
   #endif
 
   #if defined __MAC_11_1
-    #define NA_MACOS_AVAILABILITY_GUARD_11_1(code)  if(1){ code }
+    #define NA_MACOS_AVAILABILITY_GUARD_11_1(code)  if(1) { code }
   #else
-    #define NA_MACOS_AVAILABILITY_GUARD_11_1(code)  if(0){ }
+    #define NA_MACOS_AVAILABILITY_GUARD_11_1(code)  if(0) { }
   #endif
 #endif
 

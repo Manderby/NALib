@@ -21,7 +21,7 @@
 // //////////////////////////////////////
 
 
-NA_IDEF size_t naGetSystemMemoryPagesize(){
+NA_IDEF size_t naGetSystemMemoryPagesize() {
   #if NA_OS == NA_OS_WINDOWS
     SYSTEM_INFO info;
     GetSystemInfo(&info);
@@ -33,7 +33,7 @@ NA_IDEF size_t naGetSystemMemoryPagesize(){
 
 
 
-NA_IDEF size_t naGetSystemMemoryPagesizeMask(){
+NA_IDEF size_t naGetSystemMemoryPagesizeMask() {
   return ~(naGetSystemMemoryPagesize() - 1);
 }
 

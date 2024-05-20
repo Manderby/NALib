@@ -173,7 +173,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 }
 @end
 
-#if (NA_COMPILE_METAL == 1)
+#if(NA_COMPILE_METAL == 1)
 #ifdef __MAC_10_12  // Metal is only available since macOS 10.11, CALayerDelegate since 10.12
 
   #import <QuartzCore/CAMetalLayer.h>
@@ -188,7 +188,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 #endif
 #endif
 
-#if (NA_COMPILE_OPENGL == 1)
+#if(NA_COMPILE_OPENGL == 1)
 
   #pragma GCC diagnostic push 
   #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
