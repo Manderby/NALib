@@ -75,7 +75,8 @@ NA_API void naCopyColor(NAColor* dstColor, const NAColor* srcColor);
 
 NA_API void naFillColorWithTransparent(NAColor* color);
 NA_API void naFillColorWithSRGB(NAColor* color, float r, float g, float b, float alpha);
-NA_API void naFillColorWithSRGBu8(NAColor* outColor, const uint8* inColor, NAColorBufferType bufferType);
+NA_API void naFillColorWithSRGBv(NAColor* color, const float* srcColor);
+NA_API void naFillColorWithSRGBu8v(NAColor* outColor, const uint8* inColor, NAColorBufferType bufferType);
 
 NA_API void naFillSRGBAWithColor(float rgba[4], const NAColor* color);
 // Converts between NAColor and an uint8 representation.

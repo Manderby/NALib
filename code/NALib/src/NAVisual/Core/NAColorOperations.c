@@ -8,9 +8,9 @@
 // purpose in this number. It's just nice.
 #define NA_ABY_FACTOR 0.75f
 
-NA_IDEF float naConvertToPerceptualColorValue(float value) {
-  return value / (NA_ABY_FACTOR * value - (1.f - NA_ABY_FACTOR));
-}
+//NA_IDEF float naConvertToPerceptualColorValue(float value) {
+//  return value / (NA_ABY_FACTOR * value - (1.f - NA_ABY_FACTOR));
+//}
 NA_IDEF float naConvertToRadiometricColorValue(float value) {
   return -(1.f - NA_ABY_FACTOR) * value / (1.f + NA_ABY_FACTOR * value);
 }
@@ -99,17 +99,17 @@ void naFillColorWithHSV(NAColor* out, const float in[3]) {
 
 
 
-NA_HIDEF void na_ConvertToPerceptualRGB(float* outColor, const float* inColor) {
-  outColor[0] = naConvertToPerceptualColorValue(inColor[0]);
-  outColor[1] = naConvertToPerceptualColorValue(inColor[1]);
-  outColor[2] = naConvertToPerceptualColorValue(inColor[2]);
-}
-
-NA_HIDEF void na_ConvertToRadiometricRGB(float* outColor, const float* inColor) {
-  outColor[0] = naConvertToRadiometricColorValue(inColor[0]);
-  outColor[1] = naConvertToRadiometricColorValue(inColor[1]);
-  outColor[2] = naConvertToRadiometricColorValue(inColor[2]);
-}
+//NA_HIDEF void na_ConvertToPerceptualRGB(float* outColor, const float* inColor) {
+//  outColor[0] = naConvertToPerceptualColorValue(inColor[0]);
+//  outColor[1] = naConvertToPerceptualColorValue(inColor[1]);
+//  outColor[2] = naConvertToPerceptualColorValue(inColor[2]);
+//}
+//
+//NA_HIDEF void na_ConvertToRadiometricRGB(float* outColor, const float* inColor) {
+//  outColor[0] = naConvertToRadiometricColorValue(inColor[0]);
+//  outColor[1] = naConvertToRadiometricColorValue(inColor[1]);
+//  outColor[2] = naConvertToRadiometricColorValue(inColor[2]);
+//}
 
 
 

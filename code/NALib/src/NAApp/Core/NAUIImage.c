@@ -275,7 +275,7 @@ NA_HDEF void naFillDefaultTextColorWithSkin(NAColor* color, NAUIImageSkin skin) 
     return;
   }
   
-  naFillColorWithSRGBu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
+  naFillColorWithSRGBu8v(color, skinColor, NA_COLOR_BUFFER_RGBA);
 }
 
 
@@ -307,7 +307,7 @@ NA_DEF void naFillDefaultLinkColorWithSkin(NAColor* color, NAUIImageSkin skin) {
     return;
   }
   
-  naFillColorWithSRGBu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
+  naFillColorWithSRGBu8v(color, skinColor, NA_COLOR_BUFFER_RGBA);
 }
 
 
@@ -339,7 +339,7 @@ NA_DEF void naFillDefaultAccentColorWithSkin(NAColor* color, NAUIImageSkin skin)
     return;
   }
   
-  naFillColorWithSRGBu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
+  naFillColorWithSRGBu8v(color, skinColor, NA_COLOR_BUFFER_RGBA);
 }
 
 

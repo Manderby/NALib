@@ -66,8 +66,8 @@ NA_DEF NAImage* naCreateImage(NASizei size, const NAColor* color) {
 #endif
   image = naAlloc(NAImage);
   naInitRefCount(&image->refCount);
-  image->width = (int32)size.width;
-  image->height = (int32)size.height;
+  image->width = (uint32)size.width;
+  image->height = (uint32)size.height;
   image->data = naMalloc(na_GetImageDataSize(image));
   if(color) {
     size_t pixelCount = na_GetImagePixelCount(image);
@@ -219,7 +219,7 @@ NAImage* na_CreateBlendedImage(
       topPtr,
       factor,
       mode,
-      innerEndX - innerRect.pos.x,
+      (size_t)(innerEndX - innerRect.pos.x),
       baseIsImage,
       topIsImage);
   }
@@ -334,11 +334,13 @@ NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image) {
       outDataPtr->y = inPtr1->y * inPtr1->alpha + inPtr2->y * inPtr2->alpha;
       outDataPtr->alpha = inPtr1->alpha + inPtr2->alpha;
       inPtr1 += 2;
+      inPtr2 += 2;
       outDataPtr->a += inPtr3->a * inPtr3->alpha + inPtr4->a * inPtr4->alpha;
       outDataPtr->b += inPtr3->b * inPtr3->alpha + inPtr4->b * inPtr4->alpha;
       outDataPtr->y += inPtr3->y * inPtr3->alpha + inPtr4->y * inPtr4->alpha;
       outDataPtr->alpha += inPtr3->alpha + inPtr4->alpha;
       inPtr3 += 2;
+      inPtr4 += 2;
       if(outDataPtr->alpha > NA_SINGULARITYf) {
         float invweight = naInvf(outDataPtr->alpha);
         outDataPtr->a *= invweight;
@@ -355,13 +357,23 @@ NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image) {
     // Each line has advanced till the last pixel of the line, so we only
     // have to overjump one more line.
     inPtr1 += image->width;
+    inPtr2 += image->width;
     inPtr3 += image->width;
+    inPtr4 += image->width;
   }
   return outImage;
 }
 
 
-NA_HDEF void naAccumulateResizeLine(NAColor* out, const NAColor* in, int32 outY, int32 inY, int32 outWidth, int32 inWidth, float factorY) {
+NA_HDEF void naAccumulateResizeLine(
+  NAColor* out,
+  const NAColor* in,
+  int32 outY,
+  int32 inY,
+  int32 outWidth,
+  int32 inWidth,
+  float factorY)
+{
   NAColor* outPtr = &out[outY * outWidth];
   const NAColor* inPtr = &in[inY * inWidth];
   
@@ -417,14 +429,28 @@ NA_DEF NAImage* naCreateImageWithResize(const NAImage* image, NASizei newSize) {
   for(int32 outY = 0; outY < newSize.height; outY += 1) {
     float counterSubY = 1.f - subY;
     while(counterSubY <= remainerY) {
-      naAccumulateResizeLine(outImage->data, image->data, outY, inY, (int32)newSize.width, image->width, counterSubY);
+      naAccumulateResizeLine(
+        outImage->data,
+        image->data,
+        outY,
+        inY,
+        (int32)newSize.width,
+        (int32)image->width,
+        counterSubY);
       remainerY -= counterSubY;
       inY++;
       counterSubY = 1.f;
     }
     subY = 1.f - counterSubY;
     if(inY < (int32)image->height) {
-      naAccumulateResizeLine(outImage->data, image->data, outY, inY, (int32)newSize.width, image->width, remainerY);
+      naAccumulateResizeLine(
+        outImage->data,
+        image->data,
+        outY,
+        inY,
+        (int32)newSize.width,
+        (int32)image->width,
+        remainerY);
     }
     subY += remainerY;
     remainerY = factorY;
@@ -476,7 +502,7 @@ NA_DEF void naFillImageWithu8(NAImage* image, const void* data, NABool topToBott
     for(y = 0; y < size.height; y++) {
       u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT]);
       for(x = 0; x < size.width; x++) {
-        naFillColorWithSRGBu8(imgPtr, u8Ptr, bufferType);
+        naFillColorWithSRGBu8v(imgPtr, u8Ptr, bufferType);
         imgPtr += 1;
         u8Ptr += NA_RGBA_COLOR_CHANNEL_COUNT;
       }
@@ -485,7 +511,7 @@ NA_DEF void naFillImageWithu8(NAImage* image, const void* data, NABool topToBott
     u8Ptr = data;
     size_t pixelCount = na_GetImagePixelCount(image);
     for(size_t i = 0; i < pixelCount; ++i) {
-      naFillColorWithSRGBu8(imgPtr, u8Ptr, bufferType);
+      naFillColorWithSRGBu8v(imgPtr, u8Ptr, bufferType);
       imgPtr += 1;
       u8Ptr += NA_RGBA_COLOR_CHANNEL_COUNT;
     }

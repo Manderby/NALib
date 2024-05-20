@@ -33,9 +33,16 @@ NA_DEF void naFillColorWithSRGB(NAColor* color, float r, float g, float b, float
   color->alpha = alpha;
 }
 
+NA_DEF void naFillColorWithSRGBv(NAColor* color, const float* srcColor) {
+  color->a = srcColor[0];
+  color->b = srcColor[2];
+  color->y = srcColor[1];
+  color->alpha = srcColor[3];
+}
+
 #define NA_UINT8_INVERSE (1.f / 255.f)
 
-NA_DEF void naFillColorWithSRGBu8(
+NA_DEF void naFillColorWithSRGBu8v(
   NAColor* outColor,
   const uint8* inColor,
   NAColorBufferType bufferType)

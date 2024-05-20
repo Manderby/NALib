@@ -840,7 +840,7 @@ NA_DEF NAImage* naCreateImageFromPNG(NAPNG* png) {
         inBuf[0] = pngPtr[0];
         inBuf[1] = pngPtr[1];
         inBuf[2] = pngPtr[2];
-        naFillColorWithSRGBu8(colorPtr, inBuf, NA_COLOR_BUFFER_RGB);
+        naFillColorWithSRGBu8v(colorPtr, inBuf, NA_COLOR_BUFFER_RGB);
         colorPtr += 1;
         pngPtr += 3;
       }
