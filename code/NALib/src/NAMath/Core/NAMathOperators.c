@@ -154,10 +154,10 @@ NA_DEF float naKahanBabushkaKleinSumf(size_t sampleCount, const float* array) {
   float sum = 0.f;
   float cs  = 0.f;
   float ccs = 0.f;
-  float c   = 0.f;
-  float cc  = 0.f;
 
   for(size_t iStep = 0; iStep < sampleCount; ++iStep) {
+    float c;
+    float cc;
     float t = sum + array[iStep];
     if(naAbsf(sum) >= naAbsf(array[iStep]))
       c = (sum - t) + array[iStep];
@@ -188,10 +188,10 @@ NA_DEF double naKahanBabushkaKleinSum(size_t sampleCount, const double* array) {
   double sum = 0.;
   double cs  = 0.;
   double ccs = 0.;
-  double c   = 0.;
-  double cc  = 0.;
 
   for(size_t iStep = 0; iStep < sampleCount; ++iStep) {
+    double c;
+    double cc;
     double t = sum + array[iStep];
     if(naAbs(sum) >= naAbs(array[iStep]))
       c = (sum - t) + array[iStep];

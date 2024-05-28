@@ -224,7 +224,7 @@ NA_HIDEF void na_SetTreeNodeChild(NATreeNode* parent, NATreeItem* child, NAInt c
 
 
 
-NA_HDEF NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, NATreeItem* child) {
+NA_HDEF NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, const NATreeItem* child) {
   NAInt retValue;
   NATreeItem** childs;
 

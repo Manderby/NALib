@@ -192,8 +192,8 @@ NA_IAPI NAPos    naMakePosWithPosi(NAPosi pos);
 NA_IAPI NAPosi   naMakePosiWithPos(NAPos  pos);
 // The Integer variant assumes pos to only contain integers, hence using a
 // more advanced and quicker conversion. But pos must be integral to work.
-NA_IAPI NAPosi   naMakePosiWithIntegerPos(NAPos  pos);
-NA_IAPI NAPos    naMakePosWithV2(double* v);
+NA_IAPI NAPosi   naMakePosiWithIntegerPos(NAPos pos);
+NA_IAPI NAPos    naMakePosWithV2(const double* v);
 
 NA_IAPI NAPos    naMakePosZero(void);
 NA_IAPI NAPosi   naMakePosiZero(void);
@@ -206,7 +206,7 @@ NA_IAPI NASize   naMakeSizeWithSizei(NASizei size);
 NA_IAPI NASizei  naMakeSizeiWithSize(NASize  size);
 // The Integer variant assumes pos to only contain integers, hence using a
 // more advanced and quicker conversion. But pos must be integral to work.
-NA_IAPI NASizei  naMakeSizeiWithIntegerSize(NASize  size);
+NA_IAPI NASizei  naMakeSizeiWithIntegerSize(NASize size);
 
 // Empty only sets the width to zero while Zero sets all components to zero.
 NA_IAPI NASize   naMakeSizeEmpty(void);
@@ -247,7 +247,7 @@ NA_IAPI NAVertex    naMakeVertex      (double x, double y, double z);
 NA_IAPI NAVertexi   naMakeVertexi (NAInt  x, NAInt  y, NAInt  z);
 NA_IAPI NAVertex    naMakeVertexWithVertexi(NAVertexi vertex);
 NA_IAPI NAVertexi   naMakeVertexiWithVertex(NAVertex  vertex);
-NA_IAPI NAVertex    naMakeVertexWithV3(double* v);
+NA_IAPI NAVertex    naMakeVertexWithV3(const double* v);
 
 NA_IAPI NAVolume    naMakeVolume  (double  width, double height, double depth);
 NA_IAPI NAVolumei   naMakeVolumei (NAInt   width, NAInt  height, NAInt  depth);

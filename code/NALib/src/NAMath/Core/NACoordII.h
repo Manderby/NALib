@@ -142,7 +142,7 @@ NA_IDEF NAPosi naMakePosiWithIntegerPos(NAPos pos) {
   NAPosi newPos = naMakePosi((NAInt)naGetDoubleInteger(pos.x), (NAInt)naGetDoubleInteger(pos.y));
   return newPos;
 }
-NA_IDEF NAPos naMakePosWithV2(double* v) {
+NA_IDEF NAPos naMakePosWithV2(const double* v) {
   NAPos newPos;
   #if NA_DEBUG
     if(!(naIsOffsetValueValid(v[0]) && naIsOffsetValueValid(v[1])))
@@ -494,7 +494,7 @@ NA_IDEF NAVertexi naMakeVertexiWithVertex(NAVertex vertex) {
   NAVertexi newVertex = naMakeVertexi((NAInt)vertex.x, (NAInt)vertex.y, (NAInt)vertex.z);
   return newVertex;
 }
-NA_IDEF NAVertex naMakeVertexWithV3(double* v) {
+NA_IDEF NAVertex naMakeVertexWithV3(const double* v) {
   NAVertex newVertex;
   #if NA_DEBUG
     if(!(naIsOffsetValueValid(v[0]) && naIsOffsetValueValid(v[1]) && naIsOffsetValueValid(v[2])))

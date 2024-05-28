@@ -209,7 +209,7 @@ NA_HIAPI NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* parent);
 NA_HIAPI NATreeItem* na_GetTreeNodeChild(const NATreeConfiguration* config, NATreeNode* parent, NAInt childIndex);
 NA_HIAPI void na_SetTreeNodeChildEmpty(NATreeNode* parent, NAInt childIndex);
 NA_HIAPI void na_SetTreeNodeChild(NATreeNode* parent, NATreeItem* child, NAInt childIndex, NABool isChildLeaf);
-NA_HIAPI NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, NATreeItem* child);
+NA_HIAPI NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, const NATreeItem* child);
 
 // Leaf
 NA_HIAPI NATreeItem* na_GetTreeLeafItem(NATreeLeaf* leaf);

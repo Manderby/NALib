@@ -64,6 +64,9 @@ NA_DEF NAUTF8Char* naAllocSprintf(NABool useTmp, const NAUTF8Char* format, ...) 
   naVsnprintf(stringBuf, stringLen + 1, format, argumentList2);
   stringBuf[stringLen] = '\0';
 
+  va_end(argumentList);
+  va_end(argumentList2);
+
   return stringBuf;
 }
 

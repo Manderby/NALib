@@ -420,7 +420,6 @@ NA_HDEF void naAccumulateResizeLine(
     }
     subX += remainerX;
     outPtr += 1;
-    remainerX = factorX;
     remainerX = (outX + 2) * factorX - (inX + subX);
   }
 }
@@ -481,7 +480,6 @@ NA_DEF NAImage* naCreateImageWithResize(const NAImage* image, NASizei newSize) {
         remainerY);
     }
     subY += remainerY;
-    remainerY = factorY;
     remainerY = (outY + 2) * factorY - (inY + subY);
   }
   

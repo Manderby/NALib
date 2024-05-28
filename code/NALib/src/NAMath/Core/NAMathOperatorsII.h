@@ -16,11 +16,14 @@
 
 
 NA_IDEF NAInt naSigni(NAInt x) {
-#if NA_TYPE_NAINT_BITS == 32
-  return naSigni32(x);
-#elif NA_TYPE_NAINT_BITS == 64
-  return naSigni64(x);
-#endif
+  #if NA_TYPE_NAINT_BITS == 32
+    return naSigni32(x);
+  #elif NA_TYPE_NAINT_BITS == 64
+    return naSigni64(x);
+  #else
+    #error "NAInt size not supported"
+    return 0;
+  #endif
 }
 
 
@@ -255,11 +258,14 @@ NA_IDEF float naAbsf(float x) {
   return x;
 }
 NA_IDEF NAInt naAbsi(NAInt x) {
-#if NA_TYPE_NAINT_BITS == 32
-  return naAbsi32(x);
-#elif NA_TYPE_NAINT_BITS == 64
-  return naAbsi64(x);
-#endif
+  #if NA_TYPE_NAINT_BITS == 32
+    return naAbsi32(x);
+  #elif NA_TYPE_NAINT_BITS == 64
+    return naAbsi64(x);
+  #else
+    #error "NAInt size not supported"
+    return 0;
+  #endif
 }
 
 
@@ -468,9 +474,12 @@ NA_IDEF float naLog2f(float x) {
 }
 NA_IDEF NAInt naLog2i(NAInt x) {
   #if NA_TYPE_NAINT_BITS == 32
-  return naLog2i32(x);
+    return naLog2i32(x);
   #elif NA_TYPE_NAINT_BITS == 64
-  return naLog2i64(x);
+    return naLog2i64(x);
+  #else
+    #error "NAInt size not supported"
+    return 0;
   #endif
 }
 NA_IDEF int32 naLog2i32(int32 x) {
@@ -528,11 +537,14 @@ NA_IDEF float naExp2f(float x) {
   #endif
 }
 NA_IDEF NAInt naExp2i(NAInt x) {
-#if NA_TYPE_NAINT_BITS == 32
-  return naExp2i32(x);
-#elif NA_TYPE_NAINT_BITS == 64
-  return naExp2i64(x);
-#endif
+  #if NA_TYPE_NAINT_BITS == 32
+    return naExp2i32(x);
+  #elif NA_TYPE_NAINT_BITS == 64
+    return naExp2i64(x);
+  #else
+    #error "NAInt size not supported"
+    return 0;
+  #endif
 }
 NA_IDEF int32 naExp2i32(int32 x) {
   #if NA_DEBUG
@@ -562,11 +574,14 @@ NA_IDEF float naExp10f(float x) {
   return powf(10.f, x);
 }
 NA_IDEF NAInt naExp10i(NAInt x) {
-#if NA_TYPE_NAINT_BITS == 32
-  return naExp10i32(x);
-#elif NA_TYPE_NAINT_BITS == 64
-  return naExp10i64(x);
-#endif
+  #if NA_TYPE_NAINT_BITS == 32
+    return naExp10i32(x);
+  #elif NA_TYPE_NAINT_BITS == 64
+    return naExp10i64(x);
+  #else
+    #error "NAInt size not supported"
+    return 0;
+  #endif
 }
 NA_IDEF int32 naExp10i32(int32 x) {
   int32 i;
@@ -620,11 +635,14 @@ NA_IDEF double naPowerOf2(NAInt n) {
 NA_IDEF float naPowerOf2f(NAInt n) {
   return naMakeFloatWithExponent((int32)n);
 }
-NA_IDEF NAInt naPowerOf2i  (NAInt n) {
+NA_IDEF NAInt naPowerOf2i(NAInt n) {
   #if NA_TYPE_NAINT_BITS == 32
-  return naPowerOf2i32(n);
+    return naPowerOf2i32(n);
   #elif NA_TYPE_NAINT_BITS == 64
-  return naPowerOf2i64(n);
+    return naPowerOf2i64(n);
+  #else
+    #error "NAInt size not supported"
+    return 0;
   #endif
 }
 NA_IDEF int32 naPowerOf2i32(int32 n) {
@@ -808,11 +826,14 @@ NA_IDEF NABool naInsideEEf(float a, float b, float x) {
 
 
 NA_IDEF NABool naInsidei(NAInt a, NAInt b, NAInt x) {
-#if NA_TYPE_NAINT_BITS == 32
-  return naInsidei32(a, b, x);
-#elif NA_TYPE_NAINT_BITS == 64
-  return naInsidei64(a, b, x);
-#endif
+  #if NA_TYPE_NAINT_BITS == 32
+    return naInsidei32(a, b, x);
+  #elif NA_TYPE_NAINT_BITS == 64
+    return naInsidei64(a, b, x);
+  #else
+    #error "NAInt size not supported"
+    return 0;
+  #endif
 }
 NA_IDEF NABool naInsidei32(int32 a, int32 b, int32 x) {
   #if NA_DEBUG

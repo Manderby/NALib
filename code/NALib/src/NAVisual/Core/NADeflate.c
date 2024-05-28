@@ -332,7 +332,7 @@ uint16 naDecodeDistance(NABufferIterator* iter, uint16 code) {
 
 
 NA_HDEF void na_ReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman) {
-  uint8 codeorder[19] = {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
+  const uint8 codeorder[19] = {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
   int c;
 
   uint16 hlit = (uint16)naReadBufferBits32(iter, 5) + 257;

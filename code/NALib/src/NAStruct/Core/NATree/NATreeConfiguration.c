@@ -41,8 +41,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags) {
       config->childIndexGetter      = na_GetChildIndexQuadDouble;
       config->keyIndexGetter        = na_GetKeyIndexQuadDouble;
       config->keyEqualComparer      = NA_KEY_OP(Equal, NAPos);
-      config->keyLessComparer      = NA_KEY_OP(Less, NAPos);
-      config->keyLessEqualComparer = NA_KEY_OP(LessEqual, NAPos);
+      config->keyLessComparer       = NA_KEY_OP(Less, NAPos);
+      config->keyLessEqualComparer  = NA_KEY_OP(LessEqual, NAPos);
       config->keyAssigner           = NA_KEY_OP(Assign, NAPos);
       config->keyTester             = na_TestKeyQuadDouble;
       config->keyNodeContainTester  = na_TestKeyNodeContainQuadDouble;

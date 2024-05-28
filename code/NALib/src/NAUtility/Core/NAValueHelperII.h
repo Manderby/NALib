@@ -47,6 +47,9 @@ NA_IDEF NAInt naMakeMaxWithEndi(NAInt end) {
     return naMakeMaxWithEndi32(end);
   #elif NA_TYPE_NAINT_BITS == 64
     return naMakeMaxWithEndi64(end);
+  #else
+    #error "NAInt size not supported"
+    return 0;
   #endif
 }
 NA_IDEF size_t naMakeMaxWithEnds(size_t end) {
@@ -78,6 +81,9 @@ NA_IDEF NAInt naMakeEndWithMaxi(NAInt max) {
     return naMakeEndWithMaxi32(max);
   #elif NA_TYPE_NAINT_BITS == 64
     return naMakeEndWithMaxi64(max);
+  #else
+    #error "NAInt size not supported"
+    return 0;
   #endif
 }
 NA_IDEF size_t naMakeEndWithMaxs(size_t max) {

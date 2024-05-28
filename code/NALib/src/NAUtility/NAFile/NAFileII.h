@@ -14,6 +14,9 @@ NA_IDEF NAFileSize naLseek(int fd, NAFileSize byteOffset, int originType) {
       return _lseeki64(fd, byteOffset, originType);
     #elif NA_ADDRESS_BITS == 32
       return _lseek(fd, byteOffset, originType);
+    #else
+      #error "Address size not supported"
+      return 0;
     #endif
   #elif NA_IS_POSIX
     return lseek(fd, byteOffset, originType);
@@ -31,6 +34,9 @@ NA_IDEF NAFileSize naTell(int fd) {
       return _lseeki64(fd, 0, SEEK_CUR);
     #elif NA_ADDRESS_BITS == 32
       return _lseek(fd, 0, SEEK_CUR);
+    #else
+      #error "Address size not supported"
+      return 0;
     #endif
   #elif NA_IS_POSIX
     return lseek(fd, 0, SEEK_CUR);

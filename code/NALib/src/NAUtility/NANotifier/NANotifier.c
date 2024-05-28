@@ -311,7 +311,7 @@ NA_DEF void naUnsubscribe(
 
 
 NA_DEF void naUnsubscribeAllOfReceyver(
-  void* reciever)
+  const void* reciever)
 {
   #if NA_DEBUG
     if(!na_notifier)
@@ -359,6 +359,11 @@ NA_DEF void naPublish(
   case NA_SIGNAL_PRIORITY_UPDATE: list = &na_notifier->updateQueue; break;
   case NA_SIGNAL_PRIORITY_CREATE: list = &na_notifier->createQueue; break;
   case NA_SIGNAL_PRIORITY_DELETE: list = &na_notifier->deleteQueue; break;
+  default:
+    #if NA_DEBUG
+      naCrash("Unknown signal priority");
+    #endif
+    break;
   }
   
   NAList* subscriptions = &signal->subscriptions;
