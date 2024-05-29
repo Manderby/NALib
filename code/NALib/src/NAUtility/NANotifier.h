@@ -29,7 +29,7 @@ typedef void(*NAMessageCallback)(NAMessage message);
 
 
 
-// Starts and stops a notifier. You still need to call naGetCurrentNotifier if
+// Starts and stops a notifier. You still need to call naSetCurrentNotifier if
 // you want the new notifier to be the current one.
 NA_API NANotifier* naAllocNotifier(void);
 NA_API void naDeallocNotifier(NANotifier* notifier);
@@ -94,7 +94,7 @@ NA_API void naUnsubscribeAllOfReceyver(
 //              if no specific object is responsible.
 // - topicID:   The topic the signal belongs to.
 // - signalId:  The signal id to listen to.
-// - data:      A data package containing the data which shall be given the
+// - data:      A data package containing the data which shall be given to the
 //              callback as the data parameter. Can be NULL.
 NA_API void naPublish(
   void* sender,
