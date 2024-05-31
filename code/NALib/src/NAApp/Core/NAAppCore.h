@@ -56,7 +56,7 @@ struct NAApplication{
   NAFont*           systemFont;
   NAMouseStatus     mouseStatus;     // The mouse cursor status
   NAKeyStroke       curKeyStroke;    // The currently pressed key combination
-  NAInt             flags;
+  uint32            flags;
 
   const NAUTF8Char*       name;
   const NAUTF8Char*       companyName;
@@ -147,7 +147,7 @@ struct NATextBox{
 
 struct NAWindow{
   NA_UIElement uiElement;
-  NAInt        storageTag;
+  size_t       storageTag;
   void*        contentSpace;
   uint32       coreFlags;
   uint32       flags;
@@ -189,10 +189,10 @@ extern NAApplication* na_App;
 #define NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING  0x08
 #define NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS 0x10
 
-#define NA_WINDOW_PREF_STRING_POS_X "NAWindow_%d_Pos_x"
-#define NA_WINDOW_PREF_STRING_POS_Y "NAWindow_%d_Pos_y"
-#define NA_WINDOW_PREF_STRING_SIZE_WIDTH "NAWindow_%d_Size_Width"
-#define NA_WINDOW_PREF_STRING_SIZE_HEIGHT "NAWindow_%d_Size_Height"
+#define NA_WINDOW_PREF_STRING_POS_X "NAWindow_" NA_SIZE_T_PRI "_Pos_x"
+#define NA_WINDOW_PREF_STRING_POS_Y "NAWindow_" NA_SIZE_T_PRI "_Pos_y"
+#define NA_WINDOW_PREF_STRING_SIZE_WIDTH "NAWindow_" NA_SIZE_T_PRI "_Size_Width"
+#define NA_WINDOW_PREF_STRING_SIZE_HEIGHT "NAWindow_" NA_SIZE_T_PRI "_Size_Height"
 
 // //////////////////////////////////////////
 // Hidden API

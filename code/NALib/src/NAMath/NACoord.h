@@ -116,22 +116,29 @@
 typedef struct NARange    NARange;
 typedef struct NARangef   NARangef;
 typedef struct NARangei   NARangei;
+typedef struct NARanges   NARanges;
 
 // 2-D Coordinates: Pos, Size and Rect
 typedef struct NAPos      NAPos;
 typedef struct NAPosi     NAPosi;
+typedef struct NAPoss     NAPoss;
 typedef struct NASize     NASize;
 typedef struct NASizei    NASizei;
+typedef struct NASizes    NASizes;
 typedef struct NARect     NARect;
 typedef struct NARecti    NARecti;
+typedef struct NARects    NARects;
 
 // 3-D Coordinates: Vertex, Volume and Box
 typedef struct NAVertex   NAVertex;
 typedef struct NAVertexi  NAVertexi;
+typedef struct NAVertexs  NAVertexs;
 typedef struct NAVolume   NAVolume;
 typedef struct NAVolumei  NAVolumei;
+typedef struct NAVolumes  NAVolumes;
 typedef struct NABox      NABox;
 typedef struct NABoxi     NABoxi;
+typedef struct NABoxs     NABoxs;
 
 // 2-D Coordinates: Bounds (Top-Right-Bottom-Left) deprecated. Use NABezel.
 typedef struct NABounds4  NABounds4;
@@ -139,6 +146,9 @@ typedef struct NABounds4i NABounds4i;
 // 2-D Coordinates: Bezel (Right-Top-Left-Bottom)
 typedef struct NABezel4   NABezel4;
 typedef struct NABezel4i  NABezel4i;
+typedef struct NABezel4s  NABezel4s;
+
+
 
 // The types are presented as non-opaque as the programmer wants to access the
 // parts of the structs.
@@ -148,27 +158,34 @@ typedef struct NABezel4i  NABezel4i;
 struct NARange{     double origin;   double length; };
 struct NARangef{    float  origin;   float  length; };
 struct NARangei{    NAInt  origin;   NAInt  length; };
+struct NARanges{    size_t origin;   size_t length; };
 
-struct NAPos{       double x;     double  y;      };
-struct NAPosi{      NAInt  x;     NAInt   y;      };
+struct NAPos{       double x;     double  y; };
+struct NAPosi{      NAInt  x;     NAInt   y; };
+struct NAPoss{      size_t x;     size_t  y; };
 struct NASize{      double width; double  height; };
 struct NASizei{     NAInt  width; NAInt   height; };
+struct NASizes{     size_t width; size_t  height; };
 struct NARect{      NAPos  pos;   NASize  size;   };
-struct NARecti{     NAPosi pos;   NASizei size;   };
+struct NARecti{     NAPosi pos;   NASizei size; };
+struct NARects{     NAPoss pos;   NASizes size; };
 
-struct NAVertex{    double    x;      double    y;        double  z;    };
-struct NAVertexi{   NAInt     x;      NAInt     y;        NAInt   z;    };
+struct NAVertex{    double    x;      double    y;        double z; };
+struct NAVertexi{   NAInt     x;      NAInt     y;        NAInt  z; };
+struct NAVertexs{   size_t    x;      size_t    y;        size_t z; };
 struct NAVolume{    double    width;  double    height;   double depth; };
 struct NAVolumei{   NAInt     width;  NAInt     height;   NAInt  depth; };
+struct NAVolumes{   size_t    width;  size_t    height;   size_t depth; };
 struct NABox{       NAVertex  vertex; NAVolume  volume; };
 struct NABoxi{      NAVertexi vertex; NAVolumei volume; };
+struct NABoxs{      NAVertexs vertex; NAVolumes volume; };
 
 struct NABounds4{   double top;   double  right; double bottom; double left; };
 struct NABounds4i{  NAInt  top;   NAInt   right; NAInt  bottom; NAInt  left; };
 
 struct NABezel4{    double right; double top; double left; double bottom; };
 struct NABezel4i{   NAInt  right; NAInt  top; NAInt  left; NAInt  bottom; };
-
+struct NABezel4s{   size_t right; size_t top; size_t left; size_t bottom; };
 
 
 
@@ -198,10 +215,11 @@ NA_IAPI NAPos    naMakePosWithV2(const double* v);
 NA_IAPI NAPos    naMakePosZero(void);
 NA_IAPI NAPosi   naMakePosiZero(void);
 
-NA_IAPI NASize   naMakeSize   (double width,  double  height);
-NA_IAPI NASizei  naMakeSizei  (NAInt  width,  NAInt   height);
-NA_IAPI NASize   naMakeSizeE  (double width,  double  height);
-NA_IAPI NASizei  naMakeSizeiE (NAInt  width,  NAInt   height);
+NA_IAPI NASize   naMakeSize   (double width, double  height);
+NA_IAPI NASizei  naMakeSizei  (NAInt  width, NAInt   height);
+NA_IAPI NASizes  naMakeSizes  (size_t width, size_t  height);
+NA_IAPI NASize   naMakeSizeE  (double width, double  height);
+NA_IAPI NASizei  naMakeSizeiE (NAInt  width, NAInt   height);
 NA_IAPI NASize   naMakeSizeWithSizei(NASizei size);
 NA_IAPI NASizei  naMakeSizeiWithSize(NASize  size);
 // The Integer variant assumes pos to only contain integers, hence using a
@@ -366,19 +384,19 @@ NA_IAPI NABox     naMakeBoxPositive (NABox  box);
 NA_IAPI NABoxi    naMakeBoxiPositive(NABoxi box);
 
 // Copies the contents of source s to destination d
-NA_IAPI void      naCopyPos    (NAPos*   posd,   const NAPos*   poss);
-NA_IAPI void      naCopyPosi   (NAPosi*  posd,   const NAPosi*  poss);
-NA_IAPI void      naCopySize   (NASize*  sized,  const NASize*  sizes);
-NA_IAPI void      naCopySizei  (NASizei* sized,  const NASizei* sizes);
-NA_IAPI void      naCopyRect   (NARect*  rectd,  const NARect*  rects);
-NA_IAPI void      naCopyRecti  (NARecti* rectd,  const NARecti* rects);
+NA_IAPI void      naFillPosWithCopy    (NAPos*   posd,   const NAPos*   poss);
+NA_IAPI void      naFillPosiWithCopy   (NAPosi*  posd,   const NAPosi*  poss);
+NA_IAPI void      naFillSizeWithCopy   (NASize*  sized,  const NASize*  sizes);
+NA_IAPI void      naFillSizeiWithCopy  (NASizei* sized,  const NASizei* sizes);
+NA_IAPI void      naFillRectWithCopy   (NARect*  rectd,  const NARect*  rects);
+NA_IAPI void      naFillRectiWithCopy  (NARecti* rectd,  const NARecti* rects);
 
-NA_IAPI void      naCopyVertex (NAVertex*  vertexd,  const NAVertex*  vertexs);
-NA_IAPI void      naCopyVertexi(NAVertexi* vertexd,  const NAVertexi* vertexs);
-NA_IAPI void      naCopyVolume (NAVolume*  volumed,  const NAVolume*  volumes);
-NA_IAPI void      naCopyVolumei(NAVolumei* volumed,  const NAVolumei* volumes);
-NA_IAPI void      naCopyBox    (NABox*  boxd,  const NABox*  boxs);
-NA_IAPI void      naCopyBoxi   (NABoxi* boxd,  const NABoxi* boxs);
+NA_IAPI void      naFillVertexWithCopy (NAVertex*  vertexd,  const NAVertex*  vertexs);
+NA_IAPI void      naFillVertexiWithCopy(NAVertexi* vertexd,  const NAVertexi* vertexs);
+NA_IAPI void      naFillVolumeWithCopy (NAVolume*  volumed,  const NAVolume*  volumes);
+NA_IAPI void      naFillVolumeiWithCopy(NAVolumei* volumed,  const NAVolumei* volumes);
+NA_IAPI void      naFillBoxWithCopy    (NABox*  boxd,  const NABox*  boxs);
+NA_IAPI void      naFillBoxiWithCopy   (NABoxi* boxd,  const NABoxi* boxs);
 
 // Returns the center position / vertex
 NA_IAPI NAPos     naGetRectCenter (NARect rect);

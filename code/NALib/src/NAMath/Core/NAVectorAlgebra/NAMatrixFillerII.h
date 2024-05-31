@@ -327,7 +327,7 @@ NA_IDEF void naFillM44fWithDiagV4f(float* NA_RESTRICT D, const float* NA_RESTRIC
 // Copy
 // ///////////////////////////////
 
-NA_IDEF void naCopyM22d( double* NA_RESTRICT D, const double* NA_RESTRICT A) {
+NA_IDEF void naFillM22dWithCopy( double* NA_RESTRICT D, const double* NA_RESTRICT A) {
   #if NA_DEBUG
     if(D == A)
       naError("A is equal to D. Use E variant or povide strict pointer.");
@@ -337,7 +337,7 @@ NA_IDEF void naCopyM22d( double* NA_RESTRICT D, const double* NA_RESTRICT A) {
   D[0] = A[0]; D[2] = A[2];
   D[1] = A[1]; D[3] = A[3];
 }
-NA_IDEF void naCopyM33d( double* NA_RESTRICT D, const double* NA_RESTRICT A) {
+NA_IDEF void naFillM33dWithCopy( double* NA_RESTRICT D, const double* NA_RESTRICT A) {
   #if NA_DEBUG
     if(D == A)
       naError("A is equal to D. Use E variant or povide strict pointer.");
@@ -348,7 +348,7 @@ NA_IDEF void naCopyM33d( double* NA_RESTRICT D, const double* NA_RESTRICT A) {
   D[1] = A[1]; D[4] = A[4]; D[7] = A[7];
   D[2] = A[2]; D[5] = A[5]; D[8] = A[8];
 }
-NA_IDEF void naCopyM44d( double* NA_RESTRICT D, const double* NA_RESTRICT A) {
+NA_IDEF void naFillM44dWithCopy( double* NA_RESTRICT D, const double* NA_RESTRICT A) {
   #if NA_DEBUG
     if(D == A)
       naError("A is equal to D. Use E variant or povide strict pointer.");
@@ -360,7 +360,7 @@ NA_IDEF void naCopyM44d( double* NA_RESTRICT D, const double* NA_RESTRICT A) {
   D[2] = A[2]; D[6] = A[6]; D[10] = A[10]; D[14] = A[14];
   D[3] = A[3]; D[7] = A[7]; D[11] = A[11]; D[15] = A[15];
 }
-NA_IDEF void naCopyM22f( float* NA_RESTRICT D, const float* NA_RESTRICT A) {
+NA_IDEF void naFillM22fWithCopy( float* NA_RESTRICT D, const float* NA_RESTRICT A) {
   #if NA_DEBUG
     if(D == A)
       naError("A is equal to D. Use E variant or povide strict pointer.");
@@ -370,7 +370,7 @@ NA_IDEF void naCopyM22f( float* NA_RESTRICT D, const float* NA_RESTRICT A) {
   D[0] = A[0]; D[2] = A[2];
   D[1] = A[1]; D[3] = A[3];
 }
-NA_IDEF void naCopyM33f( float* NA_RESTRICT D, const float* NA_RESTRICT A) {
+NA_IDEF void naFillM33fWithCopy( float* NA_RESTRICT D, const float* NA_RESTRICT A) {
   #if NA_DEBUG
     if(D == A)
       naError("A is equal to D. Use E variant or povide strict pointer.");
@@ -381,7 +381,7 @@ NA_IDEF void naCopyM33f( float* NA_RESTRICT D, const float* NA_RESTRICT A) {
   D[1] = A[1]; D[4] = A[4]; D[7] = A[7];
   D[2] = A[2]; D[5] = A[5]; D[8] = A[8];
 }
-NA_IDEF void naCopyM44f( float* NA_RESTRICT D, const float* NA_RESTRICT A) {
+NA_IDEF void naFillM44fWithCopy( float* NA_RESTRICT D, const float* NA_RESTRICT A) {
   #if NA_DEBUG
     if(D == A)
       naError("A is equal to D. Use E variant or povide strict pointer.");
@@ -393,7 +393,7 @@ NA_IDEF void naCopyM44f( float* NA_RESTRICT D, const float* NA_RESTRICT A) {
   D[2] = A[2]; D[6] = A[6]; D[10] = A[10]; D[14] = A[14];
   D[3] = A[3]; D[7] = A[7]; D[11] = A[11]; D[15] = A[15];
 }
-NA_IDEF void naCopyM22dE( double* D, const double* A) {
+NA_IDEF void naFillM22dWithCopyE( double* D, const double* A) {
   #if NA_DEBUG
     if((D != A) && naElementOverlap(D, A, 4, 4))
       naError("A overlaps misaligned with D");
@@ -401,7 +401,7 @@ NA_IDEF void naCopyM22dE( double* D, const double* A) {
   D[0] = A[0]; D[2] = A[2];
   D[1] = A[1]; D[3] = A[3];
 }
-NA_IDEF void naCopyM33dE( double* D, const double* A) {
+NA_IDEF void naFillM33dWithCopyE( double* D, const double* A) {
   #if NA_DEBUG
     if((D != A) && naElementOverlap(D, A, 9, 9))
       naError("A overlaps misaligned with D");
@@ -410,7 +410,7 @@ NA_IDEF void naCopyM33dE( double* D, const double* A) {
   D[1] = A[1]; D[4] = A[4]; D[7] = A[7];
   D[2] = A[2]; D[5] = A[5]; D[8] = A[8];
 }
-NA_IDEF void naCopyM44dE( double* D, const double* A) {
+NA_IDEF void naFillM44dWithCopyE( double* D, const double* A) {
   #if NA_DEBUG
     if((D != A) && naElementOverlap(D, A, 16, 16))
       naError("A overlaps misaligned with D");
@@ -420,7 +420,7 @@ NA_IDEF void naCopyM44dE( double* D, const double* A) {
   D[2] = A[2]; D[6] = A[6]; D[10] = A[10]; D[14] = A[14];
   D[3] = A[3]; D[7] = A[7]; D[11] = A[11]; D[15] = A[15];
 }
-NA_IDEF void naCopyM22fE( float* D, const float* A) {
+NA_IDEF void naFillM22fWithCopyE( float* D, const float* A) {
   #if NA_DEBUG
     if((D != A) && naElementOverlap(D, A, 4, 4))
       naError("A overlaps misaligned with D");
@@ -428,7 +428,7 @@ NA_IDEF void naCopyM22fE( float* D, const float* A) {
   D[0] = A[0]; D[2] = A[2];
   D[1] = A[1]; D[3] = A[3];
 }
-NA_IDEF void naCopyM33fE( float* D, const float* A) {
+NA_IDEF void naFillM33fWithCopyE( float* D, const float* A) {
   #if NA_DEBUG
     if((D != A) && naElementOverlap(D, A, 9, 9))
       naError("A overlaps misaligned with D");
@@ -437,7 +437,7 @@ NA_IDEF void naCopyM33fE( float* D, const float* A) {
   D[1] = A[1]; D[4] = A[4]; D[7] = A[7];
   D[2] = A[2]; D[5] = A[5]; D[8] = A[8];
 }
-NA_IDEF void naCopyM44fE( float* D, const float* A) {
+NA_IDEF void naFillM44fWithCopyE( float* D, const float* A) {
   #if NA_DEBUG
     if((D != A) && naElementOverlap(D, A, 16, 16))
       naError("A overlaps misaligned with D");

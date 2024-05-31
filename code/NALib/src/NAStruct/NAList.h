@@ -42,7 +42,7 @@ NA_IAPI NAList* naInitList    (NAList* list);
 // and will still be marked as const or mutable. The two parameters must
 // not be the same. If you are using NAListIterator's  on the originalList,
 // these iterators will keep the location of the original list.
-NA_IAPI NAList* naCopyList    (NAList* list, NAList* originalList);
+NA_IAPI NAList* naInitListWithCopy    (NAList* list, NAList* originalList);
 
 // Clears or empties the given list. Note: This will free all list elements
 // but not the contents they store! Use naForeachList or iteration for that.

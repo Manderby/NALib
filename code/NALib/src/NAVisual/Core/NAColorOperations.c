@@ -96,7 +96,7 @@ NA_HIDEF void na_BlendColorZero(
   NA_UNUSED(topPtr);
   NA_UNUSED(factor);
   if(basePtr->alpha > NA_SINGULARITYf) {
-    naCopyColor(dstPtr, basePtr);
+    naFillColorWithCopy(dstPtr, basePtr);
   }else{
     naFillColorWithTransparent(dstPtr);
   }
@@ -283,7 +283,7 @@ NA_HIDEF void na_BlendColorEraseHue(
 
   if(hDiff < -60.f || hDiff > 60.f) {
     // Not near the hue, leave the color as it is.
-    naCopyColor(dstPtr, basePtr);
+    naFillColorWithCopy(dstPtr, basePtr);
   }else{
     if(hDiff <= 0.) {
       // fully saturated colors have L = .5

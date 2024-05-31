@@ -13,7 +13,7 @@ NA_HIDEF NABool na_IsColorClearlyRadiometric(const NAColor* color) {
 
 
 
-NA_DEF void naCopyColor(NAColor* dstColor, const NAColor* srcColor) {
+NA_DEF void naFillColorWithCopy(NAColor* dstColor, const NAColor* srcColor) {
   *dstColor = *srcColor;
 }
 

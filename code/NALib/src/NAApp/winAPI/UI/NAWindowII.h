@@ -196,7 +196,7 @@ NABool naHandleWindowTabOrder(NAReaction reaction) {
 
 
 
-NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, NAInt storageTag) {
+NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, size_t storageTag) {
   NAWINAPIWindow* winapiWindow = naNew(NAWINAPIWindow);
 
   NABool resizeable = naGetFlagu32(flags, NA_WINDOW_RESIZEABLE);

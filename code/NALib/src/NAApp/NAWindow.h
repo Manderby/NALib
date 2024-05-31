@@ -24,7 +24,7 @@ NA_API NAWindow* naNewWindow(
   const NAUTF8Char* title,
   NARect rect,
   uint32 flags,
-  NAInt storageTag);
+  size_t storageTag);
 
 // Get and set the content space.
 NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
@@ -66,7 +66,7 @@ NA_API void naSetWindowFirstTabElement(NAWindow* window, const void* firstTabEle
 // window.
 NA_API NARect naSetWindowStorageTag(
   NAWindow* window,
-  NAInt storageTag,
+  size_t storageTag,
   NARect rect,
   NABool resizeable);
 

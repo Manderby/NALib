@@ -275,7 +275,7 @@ NA_IDEF void naFillV4fRandomSpherical(float* d, NABool filled) {
 // Copier
 // ///////////////////////////////
 
-NA_IDEF void naCopyV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a) {
+NA_IDEF void naFillV1dWithCopy(double* NA_RESTRICT d, const double* NA_RESTRICT a) {
   #if NA_DEBUG
     if(d == a)
       naError("Pointers are equal. Use E variant.");
@@ -284,7 +284,7 @@ NA_IDEF void naCopyV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a) {
   #endif
   d[0] = a[0];
 }
-NA_IDEF void naCopyV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a) {
+NA_IDEF void naFillV2dWithCopy(double* NA_RESTRICT d, const double* NA_RESTRICT a) {
   #if NA_DEBUG
     if(d == a)
       naError("Pointers are equal. Use E variant.");
@@ -293,7 +293,7 @@ NA_IDEF void naCopyV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a) {
   #endif
   d[0] = a[0]; d[1] = a[1];
 }
-NA_IDEF void naCopyV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a) {
+NA_IDEF void naFillV3dWithCopy(double* NA_RESTRICT d, const double* NA_RESTRICT a) {
   #if NA_DEBUG
     if(d == a)
       naError("Pointers are equal. Use E variant.");
@@ -302,7 +302,7 @@ NA_IDEF void naCopyV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a) {
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2];
 }
-NA_IDEF void naCopyV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a) {
+NA_IDEF void naFillV4dWithCopy(double* NA_RESTRICT d, const double* NA_RESTRICT a) {
   #if NA_DEBUG
     if(d == a)
       naError("Pointers are equal. Use E variant.");
@@ -311,7 +311,7 @@ NA_IDEF void naCopyV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a) {
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2]; d[3] = a[3];
 }
-NA_IDEF void naCopyV1f(float* NA_RESTRICT d, const float* NA_RESTRICT a) {
+NA_IDEF void naFillV1fWithCopy(float* NA_RESTRICT d, const float* NA_RESTRICT a) {
   #if NA_DEBUG
     if(d == a)
       naError("Pointers are equal. Use E variant.");
@@ -320,7 +320,7 @@ NA_IDEF void naCopyV1f(float* NA_RESTRICT d, const float* NA_RESTRICT a) {
   #endif
   d[0] = a[0];
 }
-NA_IDEF void naCopyV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a) {
+NA_IDEF void naFillV2fWithCopy(float* NA_RESTRICT d, const float* NA_RESTRICT a) {
   #if NA_DEBUG
     if(d == a)
       naError("Pointers are equal. Use E variant.");
@@ -329,7 +329,7 @@ NA_IDEF void naCopyV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a) {
   #endif
   d[0] = a[0]; d[1] = a[1];
 }
-NA_IDEF void naCopyV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a) {
+NA_IDEF void naFillV3fWithCopy(float* NA_RESTRICT d, const float* NA_RESTRICT a) {
   #if NA_DEBUG
     if(d == a)
       naError("Pointers are equal. Use E variant.");
@@ -338,7 +338,7 @@ NA_IDEF void naCopyV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a) {
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2];
 }
-NA_IDEF void naCopyV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a) {
+NA_IDEF void naFillV4fWithCopy(float* NA_RESTRICT d, const float* NA_RESTRICT a) {
   #if NA_DEBUG
     if(d == a)
       naError("Pointers are equal. Use E variant.");
@@ -347,48 +347,48 @@ NA_IDEF void naCopyV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a) {
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2]; d[3] = a[3];
 }
-NA_IDEF void naCopyV1dE (double* d, const double* a) {
+NA_IDEF void naFillV1dWithCopyE (double* d, const double* a) {
   d[0] = a[0];
 }
-NA_IDEF void naCopyV2dE (double* d, const double* a) {
+NA_IDEF void naFillV2dWithCopyE (double* d, const double* a) {
   #if NA_DEBUG
     if((d != a) && (naElementOverlap(d, a, 2, 2)))
       naError("Pointers are overlapping misaligned. Result undefined.");
   #endif
   d[0] = a[0]; d[1] = a[1];
 }
-NA_IDEF void naCopyV3dE (double* d, const double* a) {
+NA_IDEF void naFillV3dWithCopyE (double* d, const double* a) {
   #if NA_DEBUG
     if((d != a) && (naElementOverlap(d, a, 3, 3)))
       naError("Pointers are overlapping misaligned. Result undefined.");
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2];
 }
-NA_IDEF void naCopyV4dE (double* d, const double* a) {
+NA_IDEF void naFillV4dWithCopyE (double* d, const double* a) {
   #if NA_DEBUG
     if((d != a) && (naElementOverlap(d, a, 4, 4)))
       naError("Pointers are overlapping misaligned. Result undefined.");
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2]; d[3] = a[3];
 }
-NA_IDEF void naCopyV1fE(float*  d, const float*  a) {
+NA_IDEF void naFillV1fWithCopyE(float*  d, const float*  a) {
   d[0] = a[0];
 }
-NA_IDEF void naCopyV2fE(float*  d, const float*  a) {
+NA_IDEF void naFillV2fWithCopyE(float*  d, const float*  a) {
   #if NA_DEBUG
     if((d != a) && (naElementOverlap(d, a, 2, 2)))
       naError("Pointers are overlapping misaligned. Result undefined.");
   #endif
   d[0] = a[0]; d[1] = a[1];
 }
-NA_IDEF void naCopyV3fE(float*  d, const float*  a) {
+NA_IDEF void naFillV3fWithCopyE(float*  d, const float*  a) {
   #if NA_DEBUG
     if((d != a) && (naElementOverlap(d, a, 3, 3)))
       naError("Pointers are overlapping misaligned. Result undefined.");
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2];
 }
-NA_IDEF void naCopyV4fE(float*  d, const float*  a) {
+NA_IDEF void naFillV4fWithCopyE(float*  d, const float*  a) {
   #if NA_DEBUG
     if((d != a) && (naElementOverlap(d, a, 4, 4)))
       naError("Pointers are overlapping misaligned. Result undefined.");

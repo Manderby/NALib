@@ -60,8 +60,8 @@ NA_API void naSwapOpenGLSpaceBuffer(
 // prepareOpenGL method of Cocoa.
 // Upon startup, you get an id which you need to store for later. When the
 // pixel font is no longer needed, you can shut it down again with the id.
-NA_API NAInt naStartupPixelFont(void);
-NA_API void naShutdownPixelFont(NAInt fontId);
+NA_API size_t naStartupPixelFont(void);
+NA_API void naShutdownPixelFont(size_t fontId);
 
 // Draws a series of characters at the specified world coordinates. Requires
 // naStartupPixelFont to be called somewhen in advance. The font used is a
@@ -71,7 +71,7 @@ NA_API void naShutdownPixelFont(NAInt fontId);
 // codes are overjumped. The given coordinates are the bottom left corner of
 // the first drawn character.
 NA_API void naDrawASCIICharacters(
-  NAInt fontId,
+  size_t fontId,
   const char* str,
   double x,
   double y,

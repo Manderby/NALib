@@ -73,7 +73,7 @@ NA_DEF NAImage* naCreateImage(NASizei size, const NAColor* color) {
     size_t pixelCount = na_GetImagePixelCount(image);
     NAColor* ptr = image->data;
     for(size_t i = 0; i < pixelCount; ++i) {
-      naCopyColor(ptr, color);
+      naFillColorWithCopy(ptr, color);
       ptr += 1;
     }
   }
@@ -329,7 +329,7 @@ NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image) {
   NAColor* inPtr = image->data;
   NAColor* radioPtr = radioImage->data;
   for(size_t i = 0; i < pixelCount; ++i) {
-    naCopyColor(radioPtr, inPtr);
+    naFillColorWithCopy(radioPtr, inPtr);
     na_ConvertToRadiometricRGB(radioPtr, radioPtr);
     radioPtr++;
     inPtr++;
@@ -443,7 +443,7 @@ NA_DEF NAImage* naCreateImageWithResize(const NAImage* image, NASizei newSize) {
   NAColor* inPtr = image->data;
   NAColor* radioPtr = radioImage->data;
   for(size_t i = 0; i < pixelCount; ++i) {
-    naCopyColor(radioPtr, inPtr);
+    naFillColorWithCopy(radioPtr, inPtr);
     na_ConvertToRadiometricRGB(radioPtr, radioPtr);
     radioPtr++;
     inPtr++;

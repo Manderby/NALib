@@ -71,7 +71,7 @@ NA_IDEF NABool NA_KEY_OP(Greater, NAInt)(const void* a, const void* b) {
 
 
 NA_IDEF void NA_KEY_OP(Assign, NAPos)(void* dst, const void* src) {
-  naCopyPos((NAPos*)dst, (const NAPos*)src);
+  naFillPosWithCopy((NAPos*)dst, (const NAPos*)src);
 }
 NA_IDEF NABool NA_KEY_OP(Less, NAPos)(const void* a, const void* b) {
   return naLessPos(*(const NAPos*)a, *(const NAPos*)b);
@@ -92,7 +92,7 @@ NA_IDEF NABool NA_KEY_OP(Greater, NAPos)(const void* a, const void* b) {
 
 
 NA_IDEF void NA_KEY_OP(Assign, NAVertex)(void* dst, const void* src) {
-  naCopyVertex((NAVertex*)dst, (const NAVertex*)src);
+  naFillVertexWithCopy((NAVertex*)dst, (const NAVertex*)src);
 }
 NA_IDEF NABool NA_KEY_OP(Less, NAVertex)(const void* a, const void* b) {
   return naLessVertex(*(const NAVertex*)a, *(const NAVertex*)b);

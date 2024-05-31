@@ -71,7 +71,7 @@ typedef enum{
                           // Useful for green-screening or blue-screening.
 } NABlendMode;
 
-NA_API void naCopyColor(NAColor* dstColor, const NAColor* srcColor);
+NA_API void naFillColorWithCopy(NAColor* dstColor, const NAColor* srcColor);
 
 NA_API void naFillColorWithTransparent(NAColor* color);
 NA_API void naFillColorWithSRGB(NAColor* color, float r, float g, float b, float alpha);

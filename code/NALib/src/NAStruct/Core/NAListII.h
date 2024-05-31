@@ -75,7 +75,7 @@ NA_IDEF NAList* naInitList(NAList* list) {
 
 
 
-NA_IDEF NAList* naCopyList(NAList* list, NAList* originalList) {
+NA_IDEF NAList* naInitListWithCopy(NAList* list, NAList* originalList) {
   NAListElement* cur;
   #if NA_DEBUG
     if(list == originalList)

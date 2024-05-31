@@ -79,7 +79,7 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
 
 #if NA_COMPILE_OPENGL == 1
 
-  NA_DEF NAInt naStartupPixelFont() {
+  NA_DEF size_t naStartupPixelFont() {
     GLuint fontTex = 0;
     NAByte* texBuf = naMalloc(5*16 * 9*6 * 4);
 
@@ -111,18 +111,18 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
 
     glBindTexture(GL_TEXTURE_2D, 0);
     free(texBuf);
-    return (NAInt)fontTex;
+    return (size_t)fontTex;
   }
 
 
 
-  NA_DEF void naShutdownPixelFont(NAInt fontId) {
+  NA_DEF void naShutdownPixelFont(size_t fontId) {
     GLuint fontTex = (GLuint)fontId;
     glDeleteTextures(1, &fontTex);
   }
 
 
-  NA_DEF void naDrawASCIICharacters(NAInt fontId, const char* str, double x, double y, double z) {
+  NA_DEF void naDrawASCIICharacters(size_t fontId, const char* str, double x, double y, double z) {
     GLuint fontTex = (GLuint)fontId;
     NAMat44d modelViewMatrix;
     NAMat44d invModelViewMatrix;
@@ -200,19 +200,19 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
 
 #else
 
-  NA_DEF NAInt naStartupPixelFont(void) {
+  NA_DEF size_t naStartupPixelFont(void) {
     #if NA_DEBUG
       naError("Function has no effect when NA_COMPILE_OPENGL is undefined.");
     #endif
     return 0;
   }
-  NA_DEF void naShutdownPixelFont(NAInt fontId) {
+  NA_DEF void naShutdownPixelFont(size_t fontId) {
     NA_UNUSED(fontId);
     #if NA_DEBUG
       naError("Function has no effect when NA_COMPILE_OPENGL is undefined.");
     #endif
   }
-  NA_DEF void naDrawASCIICharacter(NAInt fontId, char c, double x, double y, double z) {
+  NA_DEF void naDrawASCIICharacter(size_t fontId, char c, double x, double y, double z) {
     NA_UNUSED(fontId);
     NA_UNUSED(c);
     NA_UNUSED(x);
