@@ -147,14 +147,17 @@ NA_IDEF NARanges naMakeRangesE(size_t origin, size_t length) {
 
 
 
-NA_IDEF NARange naMakeRangeWithRangei(NARangei range) {
-  NARange newRange = naMakeRangeE((double)range.origin, (double)range.length);
-  return newRange;
-}
-NA_IDEF NARangei naMakeRangeiWithRange(NARange range) {
-  NARangei newRange = naMakeRangeiE((NAInt)range.origin, (NAInt)range.length);
-  return newRange;
-}
+//NA_IDEF NARange naMakeRangeWithRangei(NARangei range) {
+//  NARange newRange = naMakeRangeE((double)range.origin, (double)range.length);
+//  return newRange;
+//}
+//NA_IDEF NARangei naMakeRangeiWithRange(NARange range) {
+//  NARangei newRange = naMakeRangeiE((NAInt)range.origin, (NAInt)range.length);
+//  return newRange;
+//}
+
+
+
 NA_IDEF NARange naMakeRangeEmpty() {
   NARange newRange;
   newRange.length = 0.;
@@ -165,8 +168,18 @@ NA_IDEF NARangef naMakeRangefEmpty() {
   newRange.length = 0.f;
   return newRange;
 }
-NA_IDEF NARangei naMakeRangeiEmpty() {
-  NARangei newRange;
+NA_IDEF NARangei32 naMakeRangei32Empty() {
+  NARangei32 newRange;
+  newRange.length = 0;
+  return newRange;
+}
+NA_IDEF NARangei64 naMakeRangei64Empty() {
+  NARangei64 newRange;
+  newRange.length = 0;
+  return newRange;
+}
+NA_IDEF NARanges naMakeRangesEmpty() {
+  NARanges newRange;
   newRange.length = 0;
   return newRange;
 }
@@ -969,7 +982,7 @@ NA_IDEF NARangei naMakeRangeiWithRangeAndOffset(NARangei range, NAInt offset) {
   }
   return newRange;
 }
-NA_IDEF NARangei naMakeRangeiWithRangeAndRange (NARangei range1, NARangei range2) {
+NA_IDEF NARangei naMakeRangeiWithRangeUnion (NARangei range1, NARangei range2) {
   NARangei newRange;
   #if NA_DEBUG
     if(!naIsRangeiValid(range1))
@@ -1058,7 +1071,7 @@ NA_IDEF NARect naMakeRectWithRectAndPosE(NARect rect, NAPos pos) {
   }
   return newRect;
 }
-NA_IDEF NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2) {
+NA_IDEF NARect naMakeRectWithRectUnion(NARect rect1, NARect rect2) {
   NARect newRect;
   double end1;
   double end2;
@@ -1082,7 +1095,7 @@ NA_IDEF NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2) {
   newRect.size.height  = naMakeLengthWithStartAndEnd(newRect.pos.y, naMax(end1, end2));
   return newRect;
 }
-NA_IDEF NARect naMakeRectWithRectAndRectE(NARect rect1, NARect rect2) {
+NA_IDEF NARect naMakeRectWithRectUnionE(NARect rect1, NARect rect2) {
   NARect newRect;
   double end1;
   double end2;
@@ -1177,7 +1190,7 @@ NA_IDEF NARecti naMakeRectiWithRectAndPosE(NARecti rect, NAPosi pos) {
   }
   return newRect;
 }
-NA_IDEF NARecti naMakeRectiWithRectAndRect(NARecti rect1, NARecti rect2) {
+NA_IDEF NARecti naMakeRectiWithRectUnion(NARecti rect1, NARecti rect2) {
   NARecti newRect;
   NAInt end1;
   NAInt end2;
@@ -1201,7 +1214,7 @@ NA_IDEF NARecti naMakeRectiWithRectAndRect(NARecti rect1, NARecti rect2) {
   newRect.size.height = naMakeLengthWithStartAndEndi(newRect.pos.y, naMaxi(end1, end2));
   return newRect;
 }
-NA_IDEF NARecti naMakeRectiWithRectAndRectE(NARecti rect1, NARecti rect2) {
+NA_IDEF NARecti naMakeRectiWithRectUnionE(NARecti rect1, NARecti rect2) {
   NARecti newRect;
   NAInt end1;
   NAInt end2;
@@ -1311,7 +1324,7 @@ NA_IDEF NABox naMakeBoxWithBoxAndBox(NABox box1, NABox box2) {
   newBox.volume.depth  = naMakeLengthWithStartAndEnd(newBox.vertex.z, naMax(end1, end2));
   return newBox;
 }
-NA_IDEF NABox naMakeBoxWithBoxAndBoxE(NABox box1, NABox box2) {
+NA_IDEF NABox naMakeBoxWithBoxUnionE(NABox box1, NABox box2) {
   NABox newBox;
   double end1;
   double end2;
@@ -1423,7 +1436,7 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndVertexE(NABoxi box, NAVertexi vertex) {
   }
   return newBox;
 }
-NA_IDEF NABoxi naMakeBoxiWithBoxAndBox(NABoxi box1, NABoxi box2) {
+NA_IDEF NABoxi naMakeBoxiWithBoxUnion(NABoxi box1, NABoxi box2) {
   NABoxi newBox;
   NAInt end1;
   NAInt end2;
@@ -1451,7 +1464,7 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndBox(NABoxi box1, NABoxi box2) {
   newBox.volume.depth = naMakeLengthWithStartAndEndi(newBox.vertex.z, naMaxi(end1, end2));
   return newBox;
 }
-NA_IDEF NABoxi naMakeBoxiWithBoxAndBoxE(NABoxi box1, NABoxi box2) {
+NA_IDEF NABoxi naMakeBoxiWithBoxUnionE(NABoxi box1, NABoxi box2) {
   NABoxi newBox;
   NAInt end1;
   NAInt end2;

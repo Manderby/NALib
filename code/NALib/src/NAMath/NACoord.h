@@ -192,11 +192,11 @@ struct NABezel4i{   NAInt  right; NAInt  top; NAInt  left; NAInt  bottom; };
 struct NABezel4s{   size_t right; size_t top; size_t left; size_t bottom; };
 
 
-// Following API allows you to create and manipulate various coordinate structs.
+
+// Create the various elements
 // The Variants with E allow sizes and rects to be empty or negative.
 // The Variants with S expect scalar values instead of structs
 
-// Create the various elements
 NA_IAPI NARange    naMakeRange    (double origin, double length);
 NA_IAPI NARangef   naMakeRangef   (float  origin, float  length);
 NA_IAPI NARangei32 naMakeRangei32 (int32  origin, int32  length);
@@ -211,9 +211,12 @@ NA_IAPI NARanges   naMakeRangesE  (size_t origin, size_t length);
 
 //NA_IAPI NARange  naMakeRangeWithRangei(NARangei range);
 //NA_IAPI NARangei naMakeRangeiWithRange(NARange  range);
-NA_IAPI NARange  naMakeRangeEmpty(void);
-NA_IAPI NARangef naMakeRangefEmpty(void);
-//NA_IAPI NARangei naMakeRangeiEmpty(void);
+
+NA_IAPI NARange    naMakeRangeEmpty(void);
+NA_IAPI NARangef   naMakeRangefEmpty(void);
+NA_IAPI NARangei32 naMakeRangei32Empty(void);
+NA_IAPI NARangei64 naMakeRangei64Empty(void);
+NA_IAPI NARanges   naMakeRangesEmpty(void);
 
 NA_IAPI NAPos    naMakePos (double x, double y);
 NA_IAPI NAPosi   naMakePosi(NAInt  x, NAInt  y);
@@ -339,30 +342,30 @@ NA_IAPI NARangef naMakeRangefWithStartAndEnd   (float    start,  float    end);
 NA_IAPI NARangei naMakeRangeiWithStartAndEnd   (NAInt    start,  NAInt    end);
 NA_IAPI NARangei naMakeRangeiWithMinAndMax     (NAInt    min,    NAInt    max);
 NA_IAPI NARangei naMakeRangeiWithRangeAndOffset(NARangei range,  NAInt    offset);
-NA_IAPI NARangei naMakeRangeiWithRangeAndRange (NARangei range1, NARangei range2);
+NA_IAPI NARangei naMakeRangeiWithRangeUnion    (NARangei range1, NARangei range2);
 
 NA_IAPI NARect  naMakeRectWithPosAndPos    (NAPos   pos1,  NAPos   pos2);
 NA_IAPI NARect  naMakeRectWithRectAndPos   (NARect  rect,  NAPos   pos);
 NA_IAPI NARect  naMakeRectWithRectAndPosE  (NARect  rect,  NAPos   pos);
-NA_IAPI NARect  naMakeRectWithRectAndRect  (NARect  rect1, NARect  rect2);
-NA_IAPI NARect  naMakeRectWithRectAndRectE (NARect  rect1, NARect  rect2);
+NA_IAPI NARect  naMakeRectWithRectUnion    (NARect  rect1, NARect  rect2);
+NA_IAPI NARect  naMakeRectWithRectUnionE   (NARect  rect1, NARect  rect2);
 NA_IAPI NARecti naMakeRectiWithPosAndPos   (NAPosi  pos1,  NAPosi  pos2);
 NA_IAPI NARecti naMakeRectiWithRectAndPos  (NARecti rect,  NAPosi  pos);
 NA_IAPI NARecti naMakeRectiWithRectAndPosE (NARecti rect,  NAPosi  pos);
-NA_IAPI NARecti naMakeRectiWithRectAndRect (NARecti rect1, NARecti rect2);
-NA_IAPI NARecti naMakeRectiWithRectAndRectE(NARecti rect1, NARecti rect2);
+NA_IAPI NARecti naMakeRectiWithRectUnion   (NARecti rect1, NARecti rect2);
+NA_IAPI NARecti naMakeRectiWithRectUnionE  (NARecti rect1, NARecti rect2);
 
 NA_IAPI NABox  naMakeBoxWithVertexAndVertex (NAVertex  vertex1, NAVertex  vertex2);
 NA_IAPI NABox  naMakeBoxWithBoxAndVertex    (NABox     box,     NAVertex  vertex);
-NA_IAPI NABox  naMakeBoxWithBoxAndBoxE      (NABox     box1,    NABox     box2);
+NA_IAPI NABox  naMakeBoxWithBoxUnionE       (NABox     box1,    NABox     box2);
 NA_IAPI NABoxi naMakeBoxiWithVertexAndVertex(NAVertexi vertex1, NAVertexi vertex2);
 NA_IAPI NABoxi naMakeBoxiWithBoxAndVertex   (NABoxi    box,     NAVertexi vertex);
 NA_IAPI NABoxi naMakeBoxiWithBoxAndVertexE  (NABoxi    box,     NAVertexi vertex);
-NA_IAPI NABoxi naMakeBoxiWithBoxAndBox      (NABoxi    box1,    NABoxi    box2);
-NA_IAPI NABoxi naMakeBoxiWithBoxAndBoxE     (NABoxi    box1,    NABoxi    box2);
+NA_IAPI NABoxi naMakeBoxiWithBoxUnion       (NABoxi    box1,    NABoxi    box2);
+NA_IAPI NABoxi naMakeBoxiWithBoxUnionE      (NABoxi    box1,    NABoxi    box2);
 
 // Returns the intersection of the two elements. May be empty or negative.
-// Note: This is basically the inverse of naMakeBoxiWithBoxAndBox. Use
+// Note: This is basically the inverse of naMakeBoxiWithBoxUnion. Use
 // the naIsXXXUseful tests to test if the resulting element actually is a
 // valid intersection.
 NA_IAPI NARange  naMakeRangeWithRangeIntersection (NARange  range1, NARange  range2);
