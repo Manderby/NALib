@@ -301,6 +301,14 @@ NA_IDEF NABool naIsOffsetValueValidi(NAInt a) {
   NA_UNUSED(a);
   return NA_TRUE;
 }
+NA_IDEF NABool naIsOffsetValueValidi32(int32 a) {
+  NA_UNUSED(a);
+  return NA_TRUE;
+}
+NA_IDEF NABool naIsOffsetValueValidi64(int64 a) {
+  NA_UNUSED(a);
+  return NA_TRUE;
+}
 NA_IDEF NABool naIsOffsetValueValids(size_t a) {
   #if NA_DEBUG
     if((NAInt)a < 0)
@@ -318,6 +326,14 @@ NA_IDEF NABool naIsLengthValueValidf(float a) {
   return !naIsNaNf(a);
 }
 NA_IDEF NABool naIsLengthValueValidi(NAInt a) {
+  NA_UNUSED(a);
+  return NA_TRUE;
+}
+NA_IDEF NABool naIsLengthValueValidi32(int32 a) {
+  NA_UNUSED(a);
+  return NA_TRUE;
+}
+NA_IDEF NABool naIsLengthValueValidi64(int64 a) {
   NA_UNUSED(a);
   return NA_TRUE;
 }
@@ -340,6 +356,12 @@ NA_IDEF NABool naIsLengthValueEmptyf(float a) {
 NA_IDEF NABool naIsLengthValueEmptyi(NAInt a) {
   return (a == 0);
 }
+NA_IDEF NABool naIsLengthValueEmptyi32(int32 a) {
+  return (a == 0);
+}
+NA_IDEF NABool naIsLengthValueEmptyi64(int64 a) {
+return (a == 0);
+}
 NA_IDEF NABool naIsLengthValueEmptys(size_t a) {
   #if NA_DEBUG
     if((NAInt)a < 0)
@@ -356,6 +378,12 @@ NA_IDEF NABool naIsLengthValueNegativef(float a) {
   return (a < 0.f);
 }
 NA_IDEF NABool naIsLengthValueNegativei(NAInt a) {
+  return (a < 0);
+}
+NA_IDEF NABool naIsLengthValueNegativei32(int32 a) {
+  return (a < 0);
+}
+NA_IDEF NABool naIsLengthValueNegativei64(int64 a) {
   return (a < 0);
 }
 NA_IDEF NABool naIsLengthValueNegatives(size_t a) {
@@ -379,6 +407,14 @@ NA_IDEF NABool naIsOffsetValueUsefuli(NAInt a) {
   NA_UNUSED(a);
   return NA_TRUE;
 }
+NA_IDEF NABool naIsOffsetValueUsefuli32(int32 a) {
+    NA_UNUSED(a);
+    return NA_TRUE;
+}
+NA_IDEF NABool naIsOffsetValueUsefuli64(int64 a) {
+    NA_UNUSED(a);
+    return NA_TRUE;
+}
 NA_IDEF NABool naIsOffsetValueUsefuls(size_t a) {
   #if NA_DEBUG
     if((NAInt)a < 0)
@@ -400,6 +436,12 @@ NA_IDEF NABool naIsLengthValueUsefulf(float a) {
 }
 NA_IDEF NABool naIsLengthValueUsefuli(NAInt a) {
   return (a > 0);
+}
+NA_IDEF NABool naIsLengthValueUsefuli32(int32 a) {
+    return (a > 0);
+}
+NA_IDEF NABool naIsLengthValueUsefuli64(int64 a) {
+    return (a > 0);
 }
 NA_IDEF NABool naIsLengthValueUsefuls(size_t a) {
   #if NA_DEBUG

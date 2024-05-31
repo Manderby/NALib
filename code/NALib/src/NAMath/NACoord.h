@@ -116,6 +116,8 @@
 typedef struct NARange    NARange;
 typedef struct NARangef   NARangef;
 typedef struct NARangei   NARangei;
+typedef struct NARangei32 NARangei32;
+typedef struct NARangei64 NARangei64;
 typedef struct NARanges   NARanges;
 
 // 2-D Coordinates: Pos, Size and Rect
@@ -158,6 +160,8 @@ typedef struct NABezel4s  NABezel4s;
 struct NARange{     double origin;   double length; };
 struct NARangef{    float  origin;   float  length; };
 struct NARangei{    NAInt  origin;   NAInt  length; };
+struct NARangei32{  int32  origin;   int32  length; };
+struct NARangei64{  int64  origin;   int64  length; };
 struct NARanges{    size_t origin;   size_t length; };
 
 struct NAPos{       double x;     double  y; };
@@ -188,20 +192,28 @@ struct NABezel4i{   NAInt  right; NAInt  top; NAInt  left; NAInt  bottom; };
 struct NABezel4s{   size_t right; size_t top; size_t left; size_t bottom; };
 
 
+// Following API allows you to create and manipulate various coordinate structs.
+// The Variants with E allow sizes and rects to be empty or negative.
+// The Variants with S expect scalar values instead of structs
 
 // Create the various elements
-// The Variants with E also allow the sizes and rects to be empty or negative.
-// The Variants with S expect scalar values instead of structs
-NA_IAPI NARange  naMakeRange  (double origin, double length);
-NA_IAPI NARangef naMakeRangef (float  origin, float  length);
-NA_IAPI NARangei naMakeRangei (NAInt  origin, NAInt  length);
-NA_IAPI NARange  naMakeRangeE (double origin, double length);
-NA_IAPI NARangei naMakeRangeiE(NAInt  origin, NAInt  length);
-NA_IAPI NARange  naMakeRangeWithRangei(NARangei range);
-NA_IAPI NARangei naMakeRangeiWithRange(NARange  range);
+NA_IAPI NARange    naMakeRange    (double origin, double length);
+NA_IAPI NARangef   naMakeRangef   (float  origin, float  length);
+NA_IAPI NARangei32 naMakeRangei32 (int32  origin, int32  length);
+NA_IAPI NARangei64 naMakeRangei64 (int64  origin, int64  length);
+NA_IAPI NARanges   naMakeRanges   (size_t origin, size_t length);
+
+NA_IAPI NARange    naMakeRangeE   (double origin, double length);
+NA_IAPI NARangef   naMakeRangefE  (float  origin, float  length);
+NA_IAPI NARangei32 naMakeRangei32E(int32  origin, int32  length);
+NA_IAPI NARangei64 naMakeRangei64E(int64  origin, int64  length);
+NA_IAPI NARanges   naMakeRangesE  (size_t origin, size_t length);
+
+//NA_IAPI NARange  naMakeRangeWithRangei(NARangei range);
+//NA_IAPI NARangei naMakeRangeiWithRange(NARange  range);
 NA_IAPI NARange  naMakeRangeEmpty(void);
 NA_IAPI NARangef naMakeRangefEmpty(void);
-NA_IAPI NARangei naMakeRangeiEmpty(void);
+//NA_IAPI NARangei naMakeRangeiEmpty(void);
 
 NA_IAPI NAPos    naMakePos (double x, double y);
 NA_IAPI NAPosi   naMakePosi(NAInt  x, NAInt  y);
