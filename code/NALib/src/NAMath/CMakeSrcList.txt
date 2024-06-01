@@ -14,10 +14,19 @@ set(headerFiles
 
 set(coreImplementationFiles
   ${NAMathDir}/Core/NAComplexII.h
-  ${NAMathDir}/Core/NACoordII.h
   ${NAMathDir}/Core/NAMathOperators.c
   ${NAMathDir}/Core/NAMathOperatorsII.h
   ${NAMathDir}/Core/NARandomII.h
+)
+
+set(coreCoordFiles
+  ${NAMathDir}/Core/NACoord/NABezelII.h
+  ${NAMathDir}/Core/NACoord/NABoundsII.h
+  ${NAMathDir}/Core/NACoord/NACoordII.h
+  ${NAMathDir}/Core/NACoord/NAPosII.h
+  ${NAMathDir}/Core/NACoord/NARangeII.h
+  ${NAMathDir}/Core/NACoord/NARectII.h
+  ${NAMathDir}/Core/NACoord/NASizeII.h
 )
 
 set(coreVectorAlgebraFiles
@@ -38,12 +47,14 @@ set(coreVectorAlgebraFiles
   ${NAMathDir}/Core/NAVectorAlgebra/NAVectorProductsII.h
 )
 
-
 source_group("NAMath" FILES ${headerFiles})
 target_sources(NALib PRIVATE ${headerFiles})
 
 source_group("NAMath/Core" FILES ${coreImplementationFiles})
 target_sources(NALib PRIVATE ${coreImplementationFiles})
+
+source_group("NAMath/Core/NACoord" FILES ${coreCoordFiles})
+target_sources(NALib PRIVATE ${coreCoordFiles})
 
 source_group("NAMath/Core/NAVectorAlgebra" FILES ${coreVectorAlgebraFiles})
 target_sources(NALib PRIVATE ${coreVectorAlgebraFiles})

@@ -433,7 +433,7 @@ NA_HDEF void na_UnlinkBufferRange(NABuffer* buffer, NARangei64 range) {
 //  // containing the range.offset.
 //  while(range.length) {
 //    NABufferPart* part;
-//    NARangei partRange;
+//    NARangei64 partRange;
 //
 //    part = naGetListCurMutable(&iter);
 //    partRange = na_GetBufferPartRange(part);

@@ -16,697 +16,22 @@
 
 
 
-#include "../NAMathOperators.h"
-#include "../../NAUtility/NAValueHelper.h"
+#include "../../NAMathOperators.h"
+#include "../../../NAUtility/NAValueHelper.h"
 
 
-
-NA_IDEF NARange naMakeRange(double origin, double length) {
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValid(origin) && naIsLengthValueValid(length)))
-      naError("Invalid values given.");
-    if(!naIsLengthValueUseful(length))
-      naError("length is not useful.");
-  #endif
-  NARange newRange;
-  newRange.origin = origin;
-  newRange.length = length;
-  return newRange;
-}
-NA_IDEF NARangef naMakeRangef(float origin, float length) {
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValidf(origin) && naIsLengthValueValidf(length)))
-      naError("Invalid values given.");
-    if(!naIsLengthValueUsefulf(length))
-      naError("length is not useful.");
-  #endif
-  NARangef newRange;
-  newRange.origin = origin;
-  newRange.length = length;
-  return newRange;
-}
-NA_IDEF NARangei32 naMakeRangei32(int32 origin, int32 length) {
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValidi32(origin) && naIsLengthValueValidi32(length)))
-      naError("Invalid values given.");
-    if(!naIsLengthValueUsefuli32(length))
-      naError("length is not useful.");
-  #endif
-  NARangei32 newRange;
-  newRange.origin = origin;
-  newRange.length = length;
-  return newRange;
-}
-NA_IDEF NARangei64 naMakeRangei64(int64 origin, int64 length) {
-  #if NA_DEBUG
-  if(!(naIsOffsetValueValidi64(origin) && naIsLengthValueValidi64(length)))
-    naError("Invalid values given.");
-  if(!naIsLengthValueUsefuli64(length))
-    naError("length is not useful.");
-  #endif
-  NARangei64 newRange;
-  newRange.origin = origin;
-  newRange.length = length;
-  return newRange;
-}
-NA_IDEF NARanges naMakeRanges(size_t origin, size_t length) {
-  #if NA_DEBUG
-  if(!(naIsOffsetValueValids(origin) && naIsLengthValueValids(length)))
-    naError("Invalid values given.");
-  if(!naIsLengthValueUsefuls(length))
-    naError("length is not useful.");
-  #endif
-  NARanges newRange;
-  newRange.origin = origin;
-  newRange.length = length;
-  return newRange;
-}
-
-
-
-NA_IDEF NARange naMakeRangeE(double origin, double length) {
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValid(origin) && naIsLengthValueValid(length)))
-      naError("Invalid values given.");
-    if(!naIsLengthValueValid(length))
-      naError("length is not valid.");
-  #endif
-  NARange newRange;
-  newRange.origin = origin;
-  newRange.length = length;
-  return newRange;
-}
-NA_IDEF NARangef naMakeRangefE(float origin, float length) {
-  #if NA_DEBUG
-  if(!(naIsOffsetValueValidf(origin) && naIsLengthValueValidf(length)))
-    naError("Invalid values given.");
-  if(!naIsLengthValueValidf(length))
-    naError("length is not valid.");
-  #endif
-  NARangef newRange;
-  newRange.origin = origin;
-  newRange.length = length;
-  return newRange;
-}
-NA_IDEF NARangei32 naMakeRangei32E(int32 origin, int32 length) {
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValidi32(origin) && naIsLengthValueValidi32(length)))
-      naError("Invalid values given.");
-    if(!naIsLengthValueValidi32(length))
-      naError("length is not valid.");
-  #endif
-  NARangei32 newRange;
-  newRange.origin = origin;
-  newRange.length = length;
-  return newRange;
-}
-NA_IDEF NARangei64 naMakeRangei64E(int64 origin, int64 length) {
-  #if NA_DEBUG
-  if(!(naIsOffsetValueValidi64(origin) && naIsLengthValueValidi64(length)))
-    naError("Invalid values given.");
-  if(!naIsLengthValueValidi64(length))
-    naError("length is not valid.");
-  #endif
-  NARangei64 newRange;
-  newRange.origin = origin;
-  newRange.length = length;
-  return newRange;
-}
-NA_IDEF NARanges naMakeRangesE(size_t origin, size_t length) {
-  #if NA_DEBUG
-  if(!(naIsOffsetValueValids(origin) && naIsLengthValueValids(length)))
-    naError("Invalid values given.");
-  if(!naIsLengthValueValids(length))
-    naError("length is not valid.");
-  #endif
-  NARanges newRange;
-  newRange.origin = origin;
-  newRange.length = length;
-  return newRange;
-}
-
-
-
-//NA_IDEF NARange naMakeRangeWithRangei(NARangei range) {
-//  NARange newRange = naMakeRangeE((double)range.origin, (double)range.length);
-//  return newRange;
-//}
-//NA_IDEF NARangei naMakeRangeiWithRange(NARange range) {
-//  NARangei newRange = naMakeRangeiE((NAInt)range.origin, (NAInt)range.length);
-//  return newRange;
-//}
-
-
-
-NA_IDEF NARange naMakeRangeEmpty() {
-  NARange newRange;
-  newRange.length = 0.;
-  return newRange;
-}
-NA_IDEF NARangef naMakeRangefEmpty() {
-  NARangef newRange;
-  newRange.length = 0.f;
-  return newRange;
-}
-NA_IDEF NARangei32 naMakeRangei32Empty() {
-  NARangei32 newRange;
-  newRange.length = 0;
-  return newRange;
-}
-NA_IDEF NARangei64 naMakeRangei64Empty() {
-  NARangei64 newRange;
-  newRange.length = 0;
-  return newRange;
-}
-NA_IDEF NARanges naMakeRangesEmpty() {
-  NARanges newRange;
-  newRange.length = 0;
-  return newRange;
-}
-
-
-
-NA_IDEF NAPos naMakePos(double x, double y) {
-  NAPos newPos;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValid(x) && naIsOffsetValueValid(y)))
-      naError("Invalid values given.");
-    if(!(naIsOffsetValueUseful(x) && naIsOffsetValueUseful(y)))
-      naError("Values given are not useful.");
-  #endif
-  newPos.x = x;
-  newPos.y = y;
-  return newPos;
-}
-NA_IDEF NAPosf naMakePosf(float x, float y) {
-  NAPosf newPos;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValidf(x) && naIsOffsetValueValidf(y)))
-      naError("Invalid values given.");
-    if(!(naIsOffsetValueUsefulf(x) && naIsOffsetValueUsefulf(y)))
-      naError("Values given are not useful.");
-  #endif
-  newPos.x = x;
-  newPos.y = y;
-  return newPos;
-}
-NA_IDEF NAPosi32 naMakePosi32(int32 x, int32 y) {
-  NAPosi32 newPos;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValidi32(x) && naIsOffsetValueValidi32(y)))
-      naError("Invalid values given.");
-    if(!(naIsOffsetValueUsefuli32(x) && naIsOffsetValueUsefuli32(y)))
-      naError("Values given are not useful.");
-  #endif
-  newPos.x = x;
-  newPos.y = y;
-  return newPos;
-}
-NA_IDEF NAPosi64 naMakePosi64(int64 x, int64 y) {
-  NAPosi64 newPos;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValidi64(x) && naIsOffsetValueValidi64(y)))
-      naError("Invalid values given.");
-    if(!(naIsOffsetValueUsefuli64(x) && naIsOffsetValueUsefuli64(y)))
-      naError("Values given are not useful.");
-  #endif
-  newPos.x = x;
-  newPos.y = y;
-  return newPos;
-}
-NA_IDEF NAPoss naMakePoss(size_t x, size_t y) {
-  NAPoss newPos;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValids(x) && naIsOffsetValueValids(y)))
-      naError("Invalid values given.");
-    if(!(naIsOffsetValueUsefuls(x) && naIsOffsetValueUsefuls(y)))
-      naError("Values given are not useful.");
-  #endif
-  newPos.x = x;
-  newPos.y = y;
-  return newPos;
-}
+#include "NABoundsII.h"
+#include "NABezelII.h"
+#include "NAPosII.h"
+#include "NARangeII.h"
+#include "NARectII.h"
+#include "NASizeII.h"
 
 
 
 
-//NA_IDEF NAPos naMakePosWithPosi(NAPosi pos) {
-//  NAPos newPos = naMakePos((double)pos.x, (double)pos.y);
-//  return newPos;
-//}
-//NA_IDEF NAPosi naMakePosiWithPos(NAPos pos) {
-//  NAPosi newPos = naMakePosi((NAInt)pos.x, (NAInt)pos.y);
-//  return newPos;
-//}
-//NA_IDEF NAPosi naMakePosiWithIntegerPos(NAPos pos) {
-//  NAPosi newPos = naMakePosi((NAInt)naGetDoubleInteger(pos.x), (NAInt)naGetDoubleInteger(pos.y));
-//  return newPos;
-//}
-//NA_IDEF NAPos naMakePosWithV2(const double* v) {
-//  NAPos newPos;
-//  #if NA_DEBUG
-//    if(!(naIsOffsetValueValid(v[0]) && naIsOffsetValueValid(v[1])))
-//      naError("Invalid values given.");
-//    if(!(naIsOffsetValueUseful(v[0]) && naIsOffsetValueUseful(v[1])))
-//      naError("Values given are not useful.");
-//  #endif
-//  newPos.x = v[0];
-//  newPos.y = v[1];
-//  return newPos;
-//}
 
 
-NA_IDEF NAPos naMakePosZero() {
-  NAPos newPos;
-  newPos.x = 0.;
-  newPos.y = 0.;
-  return newPos;
-}
-NA_IDEF NAPosi32 naMakePosi32Zero() {
-  NAPosi32 newPos;
-  newPos.x = 0;
-  newPos.y = 0;
-  return newPos;
-}
-NA_IDEF NAPosi64 naMakePosi64Zero() {
-  NAPosi64 newPos;
-  newPos.x = 0;
-  newPos.y = 0;
-  return newPos;
-}
-
-
-
-NA_IDEF NASize naMakeSize(double width, double height) {
-  NASize newSize;
-  #if NA_DEBUG
-    if(!(naIsLengthValueValid(width) && naIsLengthValueValid(height)))
-      naError("Invalid values given.");
-    if(!(naIsLengthValueUseful(width) && naIsLengthValueUseful(height)))
-      naError("Values given are not useful.");
-  #endif
-  newSize.width = width;
-  newSize.height = height;
-  return newSize;
-}
-NA_IDEF NASizei32 naMakeSizei32(int32 width, int32 height) {
-  NASizei32 newSize;
-  #if NA_DEBUG
-    if(!(naIsLengthValueValidi32(width) && naIsLengthValueValidi32(height)))
-      naError("Invalid values given.");
-    if(!(naIsLengthValueUsefuli32(width) && naIsLengthValueUsefuli32(height)))
-      naError("Values given are not useful.");
-  #endif
-  newSize.width = width;
-  newSize.height = height;
-  return newSize;
-}
-NA_IDEF NASizei64 naMakeSizei64(int64 width, int64 height) {
-  NASizei64 newSize;
-  #if NA_DEBUG
-    if(!(naIsLengthValueValidi64(width) && naIsLengthValueValidi64(height)))
-      naError("Invalid values given.");
-    if(!(naIsLengthValueUsefuli64(width) && naIsLengthValueUsefuli64(height)))
-      naError("Values given are not useful.");
-  #endif
-  newSize.width = width;
-  newSize.height = height;
-  return newSize;
-}
-NA_IDEF NASizes naMakeSizes(size_t width, size_t height) {
-  NASizes newSize;
-  #if NA_DEBUG
-    if (!(naIsLengthValueValids(width) && naIsLengthValueValids(height)))
-      naError("Invalid values given.");
-    if (!(naIsLengthValueUsefuls(width) && naIsLengthValueUsefuls(height)))
-      naError("Values given are not useful.");
-  #endif
-  newSize.width = width;
-  newSize.height = height;
-  return newSize;
-}
-NA_IDEF NASize naMakeSizeE(double width, double height) {
-  NASize newSize;
-  #if NA_DEBUG
-    if(!(naIsLengthValueValid(width) && naIsLengthValueValid(height)))
-      naError("Invalid values given.");
-  #endif
-  newSize.width = width;
-  newSize.height = height;
-  return newSize;
-}
-NA_IDEF NASizei32 naMakeSizei32E(int32 width, int32 height) {
-  NASizei32 newSize;
-  #if NA_DEBUG
-    if(!(naIsLengthValueValidi32(width) && naIsLengthValueValidi32(height)))
-      naError("Invalid values given.");
-  #endif
-  newSize.width = width;
-  newSize.height = height;
-  return newSize;
-}
-NA_IDEF NASizei64 naMakeSizei64E(int64 width, int64 height) {
-  NASizei64 newSize;
-  #if NA_DEBUG
-    if(!(naIsLengthValueValidi64(width) && naIsLengthValueValidi64(height)))
-      naError("Invalid values given.");
-  #endif
-  newSize.width = width;
-  newSize.height = height;
-  return newSize;
-}
-NA_IDEF NASizes naMakeSizesE(size_t width, size_t height) {
-  NASizes newSize;
-  #if NA_DEBUG
-    if(!(naIsLengthValueValids(width) && naIsLengthValueValids(height)))
-      naError("Invalid values given.");
-  #endif
-  newSize.width = width;
-  newSize.height = height;
-  return newSize;
-}
-//NA_IDEF NASize naMakeSizeWithSizei(NASizei size) {
-//  NASize newSize = naMakeSizeE((double)size.width, (double)size.height);
-//  return newSize;
-//}
-//NA_IDEF NASizei naMakeSizeiWithSize(NASize size) {
-//  NASizei newSize = naMakeSizeiE((NAInt)size.width, (NAInt)size.height);
-//  return newSize;
-//}
-//NA_IDEF NASizei naMakeSizeiWithIntegerSize(NASize size) {
-//  NASizei newSize = naMakeSizeiE((NAInt)naGetDoubleInteger(size.width), (NAInt)naGetDoubleInteger(size.height));
-//  return newSize;
-//}
-NA_IDEF NASize naMakeSizeEmpty() {
-  NASize newSize;
-  newSize.width = 0.;
-  return newSize;
-}
-NA_IDEF NASizei naMakeSizeiEmpty() {
-  NASizei newSize;
-  newSize.width = 0;
-  return newSize;
-}
-NA_IDEF NASizei32 naMakeSizei32Empty() {
-  NASizei32 newSize;
-  newSize.width = 0;
-  return newSize;
-}
-NA_IDEF NASizei64 naMakeSizei64Empty() {
-  NASizei64 newSize;
-  newSize.width = 0;
-  return newSize;
-}
-NA_IDEF NASizes naMakeSizesEmpty() {
-  NASizes newSize;
-  newSize.width = 0;
-  return newSize;
-}
-NA_IDEF NASize naMakeSizeZero() {
-  NASize newSize;
-  newSize.width = 0.;
-  newSize.height = 0.;
-  return newSize;
-}
-NA_IDEF NASizei naMakeSizeiZero() {
-  NASizei newSize;
-  newSize.width = 0;
-  newSize.height = 0;
-  return newSize;
-}
-
-
-
-NA_IDEF NARect naMakeRect(NAPos pos, NASize size) {
-  NARect newRect;
-  #if NA_DEBUG
-    if(!naIsPosValid(pos) || !naIsSizeValid(size))
-      naError("Invalid values given.");
-    if(!naIsPosUseful(pos) || !naIsSizeUseful(size))
-      naError("Values given are not useful.");
-  #endif
-  newRect.pos = pos;
-  newRect.size = size;
-  return newRect;
-}
-NA_IDEF NARecti naMakeRecti(NAPosi pos, NASizei size) {
-  NARecti newRect;
-  #if NA_DEBUG
-    if(!naIsPosiValid(pos) || !naIsSizeiValid(size))
-      naError("Invalid values given.");
-    if(!naIsPosiUseful(pos) || !naIsSizeiUseful(size))
-      naError("Values given are not useful.");
-  #endif
-  newRect.pos = pos;
-  newRect.size = size;
-  return newRect;
-}
-NA_IDEF NARecti32 naMakeRecti32(NAPosi32 pos, NASizei32 size) {
-  NARecti32 newRect;
-  #if NA_DEBUG
-    if(!naIsPosi32Valid(pos) || !naIsSizei32Valid(size))
-      naError("Invalid values given.");
-    if(!naIsPosi32Useful(pos) || !naIsSizei32Useful(size))
-      naError("Values given are not useful.");
-  #endif
-  newRect.pos = pos;
-  newRect.size = size;
-  return newRect;
-}
-NA_IDEF NARecti64 naMakeRecti64(NAPosi64 pos, NASizei64 size) {
-  NARecti64 newRect;
-  #if NA_DEBUG
-    if(!naIsPosi64Valid(pos) || !naIsSizei64Valid(size))
-      naError("Invalid values given.");
-    if(!naIsPosi64Useful(pos) || !naIsSizei64Useful(size))
-      naError("Values given are not useful.");
-  #endif
-  newRect.pos = pos;
-  newRect.size = size;
-  return newRect;
-}
-NA_IDEF NARect naMakeRectE(NAPos pos, NASize size) {
-  NARect newRect;
-  #if NA_DEBUG
-    if(!naIsPosValid(pos) || !naIsSizeValid(size))
-      naError("Invalid values given.");
-  #endif
-  newRect.pos = pos;
-  newRect.size = size;
-  return newRect;
-}
-NA_IDEF NARecti naMakeRectiE(NAPosi pos, NASizei size) {
-  NARecti newRect;
-  #if NA_DEBUG
-    if(!naIsPosiValid(pos) || !naIsSizeiValid(size))
-      naError("Invalid values given.");
-  #endif
-  newRect.pos = pos;
-  newRect.size = size;
-  return newRect;
-}
-NA_IDEF NARect naMakeRectS(double x, double y, double width, double height) {
-  NARect newRect;
-  #if NA_DEBUG
-    if(!naIsOffsetValueValid(x) || !naIsOffsetValueValid(y) || !naIsLengthValueValid(width) || !naIsLengthValueValid(height))
-      naError("Invalid values given.");
-    if(!naIsOffsetValueUseful(x) || !naIsOffsetValueUseful(y) || !naIsLengthValueUseful(width) || !naIsLengthValueUseful(height))
-      naError("Values given are not useful.");
-  #endif
-  newRect.pos = naMakePos(x, y);
-  newRect.size = naMakeSize(width, height);
-  return newRect;
-}
-NA_IDEF NARecti32 naMakeRecti32S(int32 x, int32 y, int32 width, int32 height) {
-  NARecti32 newRect;
-  #if NA_DEBUG
-    if(!naIsOffsetValueValidi32(x) || !naIsOffsetValueValidi32(y) || !naIsLengthValueValidi32(width) || !naIsLengthValueValidi32(height))
-      naError("Invalid values given.");
-    if(!naIsOffsetValueUsefuli32(x) || !naIsOffsetValueUsefuli32(y) || !naIsLengthValueUsefuli32(width) || !naIsLengthValueUsefuli(height))
-      naError("Values given are not useful.");
-  #endif
-  newRect.pos = naMakePosi32(x, y);
-  newRect.size = naMakeSizei32(width, height);
-  return newRect;
-}
-NA_IDEF NARecti64 naMakeRecti64S(int64 x, int64 y, int64 width, int64 height) {
-  NARecti64 newRect;
-  #if NA_DEBUG
-    if(!naIsOffsetValueValidi64(x) || !naIsOffsetValueValidi64(y) || !naIsLengthValueValidi64(width) || !naIsLengthValueValidi64(height))
-      naError("Invalid values given.");
-    if(!naIsOffsetValueUsefuli64(x) || !naIsOffsetValueUsefuli64(y) || !naIsLengthValueUsefuli64(width) || !naIsLengthValueUsefuli(height))
-      naError("Values given are not useful.");
-  #endif
-  newRect.pos = naMakePosi64(x, y);
-  newRect.size = naMakeSizei64(width, height);
-  return newRect;
-}
-NA_IDEF NARect naMakeRectSE(double x, double y, double width, double height) {
-  NARect newRect;
-  #if NA_DEBUG
-    if(!naIsOffsetValueValid(x) || !naIsOffsetValueValid(y) || !naIsLengthValueValid(width) || !naIsLengthValueValid(height))
-      naError("Invalid values given.");
-  #endif
-  newRect.pos = naMakePos(x, y);
-  newRect.size = naMakeSizeE(width, height);
-  return newRect;
-}
-NA_IDEF NARecti32 naMakeRecti32SE(int32 x, int32 y, int32 width, int32 height) {
-  NARecti32 newRect;
-  #if NA_DEBUG
-    if(!naIsOffsetValueValidi32(x) || !naIsOffsetValueValidi32(y) || !naIsLengthValueValidi32(width) || !naIsLengthValueValidi32(height))
-      naError("Invalid values given.");
-  #endif
-  newRect.pos = naMakePosi32(x, y);
-  newRect.size = naMakeSizei32E(width, height);
-  return newRect;
-}
-NA_IDEF NARecti64 naMakeRecti64SE(int64 x, int64 y, int64 width, int64 height) {
-  NARecti64 newRect;
-  #if NA_DEBUG
-    if(!naIsOffsetValueValidi64(x) || !naIsOffsetValueValidi64(y) || !naIsLengthValueValidi64(width) || !naIsLengthValueValidi64(height))
-      naError("Invalid values given.");
-  #endif
-  newRect.pos = naMakePosi64(x, y);
-  newRect.size = naMakeSizei64E(width, height);
-  return newRect;
-}
-//NA_IDEF NARect naMakeRectWithRecti(NARecti rect) {
-//  NARect newRect = naMakeRectSE((double)rect.pos.x, (double)rect.pos.y, (double)rect.size.width, (double)rect.size.height);
-//  return newRect;
-//}
-//NA_IDEF NARecti naMakeRectiWithRect(NARect rect) {
-//  NARecti newRect = naMakeRectiSE((NAInt)rect.pos.x, (NAInt)rect.pos.y, (NAInt)rect.size.width, (NAInt)rect.size.height);
-//  return newRect;
-//}
-NA_IDEF NARect naMakeRectEmpty() {
-  NARect newRect;
-  newRect.size.width = 0.;
-  return newRect;
-}
-NA_IDEF NARecti naMakeRectiEmpty() {
-  NARecti newRect;
-  newRect.size.width = 0;
-  return newRect;
-}
-NA_IDEF NARect naMakeRectZero() {
-  NARect newRect;
-  newRect.pos.x = 0.;
-  newRect.pos.y = 0.;
-  newRect.size.width = 0.;
-  newRect.size.height = 0.;
-  return newRect;
-}
-NA_IDEF NARecti naMakeRectiZero() {
-  NARecti newRect;
-  newRect.pos.x = 0;
-  newRect.pos.y = 0;
-  newRect.size.width = 0;
-  newRect.size.height = 0;
-  return newRect;
-}
-NA_IDEF NARecti32 naMakeRecti32Zero() {
-  NARecti32 newRect;
-  newRect.pos.x = 0;
-  newRect.pos.y = 0;
-  newRect.size.width = 0;
-  newRect.size.height = 0;
-  return newRect;
-}
-NA_IDEF NARecti64 naMakeRecti64Zero() {
-  NARecti64 newRect;
-  newRect.pos.x = 0;
-  newRect.pos.y = 0;
-  newRect.size.width = 0;
-  newRect.size.height = 0;
-  return newRect;
-}
-
-
-
-NA_IDEF NABounds4 naMakeBounds4(double top, double right, double bottom, double left) {
-  NABounds4 newBounds;
-  #if NA_DEBUG
-    naError("NABounds4 is deprecated. Use NABezel4.");
-    if(!naIsLengthValueValid(top) || !naIsLengthValueValid(right) || !naIsLengthValueValid(bottom) || !naIsLengthValueValid(left))
-      naError("Invalid values given.");
-  #endif
-  newBounds.top = top;
-  newBounds.right = right;
-  newBounds.bottom = bottom;
-  newBounds.left = left;
-  return newBounds;
-}
-NA_IDEF NABounds4i naMakeBounds4i(NAInt top, NAInt right, NAInt bottom, NAInt left) {
-  NABounds4i newBounds;
-  #if NA_DEBUG
-    naError("NABounds4i is deprecated. Use NABezel4i.");
-    if(!naIsLengthValueValidi(top) || !naIsLengthValueValidi(right) || !naIsLengthValueValidi(bottom) || !naIsLengthValueValidi(left))
-      naError("Invalid values given.");
-  #endif
-  newBounds.top = top;
-  newBounds.right = right;
-  newBounds.bottom = bottom;
-  newBounds.left = left;
-  return newBounds;
-}
-NA_IDEF NABounds4 naMakeBounds4WithBounds4i(NABounds4i bounds) {
-  NABounds4 newBounds = naMakeBounds4((double)bounds.top, (double)bounds.right, (double)bounds.bottom, (double)bounds.left);
-  #if NA_DEBUG
-    naError("NABounds4 is deprecated. Use NABezel4.");
-  #endif
-  return newBounds;
-}
-NA_IDEF NABounds4i naMakeBounds4iWithBounds4(NABounds4 bounds) {
-  NABounds4i newBounds = naMakeBounds4i((NAInt)bounds.top, (NAInt)bounds.right, (NAInt)bounds.bottom, (NAInt)bounds.left);
-  #if NA_DEBUG
-    naError("NABounds4i is deprecated. Use NABezel4i.");
-  #endif
-  return newBounds;
-}
-
-
-
-NA_IDEF NABezel4 naMakeBezel4(double right, double top, double left, double bottom) {
-  NABezel4 newBezel;
-  #if NA_DEBUG
-    if(!naIsLengthValueValid(right) || !naIsLengthValueValid(top) || !naIsLengthValueValid(left) || !naIsLengthValueValid(bottom))
-      naError("Invalid values given.");
-  #endif
-  newBezel.right = right;
-  newBezel.top = top;
-  newBezel.left = left;
-  newBezel.bottom = bottom;
-  return newBezel;
-}
-NA_IDEF NABezel4i naMakeBezel4i(NAInt right, NAInt top, NAInt left, NAInt bottom) {
-  NABezel4i newBezel;
-  #if NA_DEBUG
-    if(!naIsLengthValueValidi(right) || !naIsLengthValueValidi(top) || !naIsLengthValueValidi(left) || !naIsLengthValueValidi(bottom))
-      naError("Invalid values given.");
-  #endif
-  newBezel.right = right;
-  newBezel.top = top;
-  newBezel.left = left;
-  newBezel.bottom = bottom;
-  return newBezel;
-}
-NA_IDEF NABezel4 naMakeBezel4WithBezel4i(NABezel4i bezel) {
-  NABezel4 newBezel = naMakeBezel4((double)bezel.right, (double)bezel.top, (double)bezel.left, (double)bezel.bottom);
-  return newBezel;
-}
-NA_IDEF NABezel4i naMakeBezel4iWithBezel4(NABezel4 bezel) {
-  NABezel4i newBezel = naMakeBezel4i((NAInt)bezel.right, (NAInt)bezel.top, (NAInt)bezel.left, (NAInt)bezel.bottom);
-  return newBezel;
-}
-NA_IDEF NABezel4 naMakeBezel4Zero() {
-  NABezel4 newBezel = naMakeBezel4(0., 0., 0., 0.);
-  return newBezel;
-}
-NA_IDEF NABezel4i naMakeBezel4iZero() {
-  NABezel4i newBezel = naMakeBezel4i(0, 0, 0, 0);
-  return newBezel;
-}
 
 
 NA_IDEF NAVertex naMakeVertex(double x, double y, double z) {
@@ -1177,16 +502,28 @@ NA_IDEF NARangei64 naMakeRangei64WithStartAndEnd(int64 start, int64 end) {
   newRange.length = naMakeLengthWithStartAndEndi64(start, end);
   return newRange;
 }
-NA_IDEF NARangei naMakeRangeiWithMinAndMax(NAInt min, NAInt max) {
-  NARangei newRange;
+NA_IDEF NARangei32 naMakeRangei32WithMinAndMax(int32 min, int32 max) {
+  NARangei32 newRange;
   #if NA_DEBUG
-    if(!(naIsOffsetValueValidi(min) && naIsOffsetValueValidi(max)))
+    if(!(naIsOffsetValueValidi32(min) && naIsOffsetValueValidi32(max)))
       naError("Invalid values given.");
     if(max < min)
       naError("min should be smallerequal to max.");
   #endif
   newRange.origin = min;
-  newRange.length = naMakeLengthWithMinAndMaxi(min, max);
+  newRange.length = naMakeLengthWithMinAndMaxi32(min, max);
+  return newRange;
+}
+NA_IDEF NARangei64 naMakeRangei64WithMinAndMax(int64 min, int64 max) {
+  NARangei64 newRange;
+  #if NA_DEBUG
+    if(!(naIsOffsetValueValidi64(min) && naIsOffsetValueValidi64(max)))
+      naError("Invalid values given.");
+    if(max < min)
+      naError("min should be smallerequal to max.");
+  #endif
+  newRange.origin = min;
+  newRange.length = naMakeLengthWithMinAndMaxi64(min, max);
   return newRange;
 }
 NA_IDEF NARangei32 naMakeRangei32WithRangeAndOffset(NARangei32 range, int32 offset) {
@@ -3946,6 +3283,9 @@ NA_IDEF NABool naIsRangei64Valid(NARangei64 range) {
 NA_IDEF NABool naIsPosValid(NAPos pos) {
   return naIsOffsetValueValid(pos.x) && naIsOffsetValueValid(pos.y);
 }
+NA_IDEF NABool naIsPosfValid(NAPosf pos) {
+  return naIsOffsetValueValidf(pos.x) && naIsOffsetValueValidf(pos.y);
+}
 NA_IDEF NABool naIsPosiValid(NAPosi pos) {
   return naIsOffsetValueValidi(pos.x) && naIsOffsetValueValidi(pos.y);
 }
@@ -3955,8 +3295,14 @@ NA_IDEF NABool naIsPosi32Valid(NAPosi32 pos) {
 NA_IDEF NABool naIsPosi64Valid(NAPosi64 pos) {
   return naIsOffsetValueValidi64(pos.x) && naIsOffsetValueValidi64(pos.y);
 }
+NA_IDEF NABool naIsPossValid(NAPoss pos) {
+  return naIsOffsetValueValids(pos.x) && naIsOffsetValueValids(pos.y);
+}
 NA_IDEF NABool naIsSizeValid(NASize size) {
   return naIsLengthValueValid(size.width) && naIsLengthValueValid(size.height);
+}
+NA_IDEF NABool naIsSizefValid(NASizef size) {
+  return naIsLengthValueValidf(size.width) && naIsLengthValueValidf(size.height);
 }
 NA_IDEF NABool naIsSizeiValid(NASizei size) {
   return naIsLengthValueValidi(size.width) && naIsLengthValueValidi(size.height);
@@ -4133,8 +3479,11 @@ NA_IDEF NABool naIsRangeNegative(NARange range) {
 NA_IDEF NABool naIsRangefNegative(NARangef range) {
   return naIsLengthValueNegativef(range.length);
 }
-NA_IDEF NABool naIsRangeiNegative(NARangei range) {
-  return naIsLengthValueNegativei(range.length);
+NA_IDEF NABool naIsRangei32Negative(NARangei32 range) {
+  return naIsLengthValueNegativei32(range.length);
+}
+NA_IDEF NABool naIsRangei64Negative(NARangei64 range) {
+  return naIsLengthValueNegativei64(range.length);
 }
 
 
@@ -4187,6 +3536,9 @@ NA_IDEF NABool naIsRangei64Useful(NARangei64 range) {
 NA_IDEF NABool naIsPosUseful(NAPos pos) {
   return naIsOffsetValueUseful(pos.x) && naIsOffsetValueUseful(pos.y);
 }
+NA_IDEF NABool naIsPosfUseful(NAPosf pos) {
+  return naIsOffsetValueUsefulf(pos.x) && naIsOffsetValueUsefulf(pos.y);
+}
 NA_IDEF NABool naIsPosiUseful(NAPosi pos) {
   return naIsOffsetValueUsefuli(pos.x) && naIsOffsetValueUsefuli(pos.y);
 }
@@ -4196,8 +3548,14 @@ NA_IDEF NABool naIsPosi32Useful(NAPosi32 pos) {
 NA_IDEF NABool naIsPosi64Useful(NAPosi64 pos) {
   return naIsOffsetValueUsefuli64(pos.x) && naIsOffsetValueUsefuli64(pos.y);
 }
+NA_IDEF NABool naIsPossUseful(NAPoss pos) {
+  return naIsOffsetValueUsefuls(pos.x) && naIsOffsetValueUsefuls(pos.y);
+}
 NA_IDEF NABool naIsSizeUseful(NASize size) {
   return naIsLengthValueUseful(size.width) && naIsLengthValueUseful(size.height);
+}
+NA_IDEF NABool naIsSizefUseful(NASizef size) {
+  return naIsLengthValueUsefulf(size.width) && naIsLengthValueUsefulf(size.height);
 }
 NA_IDEF NABool naIsSizeiUseful(NASizei size) {
   return naIsLengthValueUsefuli(size.width) && naIsLengthValueUsefuli(size.height);

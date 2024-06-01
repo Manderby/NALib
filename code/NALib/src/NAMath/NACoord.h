@@ -115,7 +115,6 @@
 // 1-D Coordinates: Range
 typedef struct NARange    NARange;
 typedef struct NARangef   NARangef;
-typedef struct NARangei   NARangei;
 typedef struct NARangei32 NARangei32;
 typedef struct NARangei64 NARangei64;
 typedef struct NARanges   NARanges;
@@ -129,12 +128,14 @@ typedef struct NAPosi64   NAPosi64;
 typedef struct NAPoss     NAPoss;
 
 typedef struct NASize     NASize;
+typedef struct NASizef    NASizef;
 typedef struct NASizei    NASizei;
 typedef struct NASizei32  NASizei32;
 typedef struct NASizei64  NASizei64;
 typedef struct NASizes    NASizes;
 
 typedef struct NARect     NARect;
+typedef struct NARectf    NARectf;
 typedef struct NARecti    NARecti;
 typedef struct NARecti32  NARecti32;
 typedef struct NARecti64  NARecti64;
@@ -160,10 +161,13 @@ typedef struct NABoxs      NABoxs;
 // 2-D Coordinates: Bounds (Top-Right-Bottom-Left) deprecated. Use NABezel.
 typedef struct NABounds4  NABounds4;
 typedef struct NABounds4i NABounds4i;
+
 // 2-D Coordinates: Bezel (Right-Top-Left-Bottom)
-typedef struct NABezel4   NABezel4;
-typedef struct NABezel4i  NABezel4i;
-typedef struct NABezel4s  NABezel4s;
+typedef struct NABezel4    NABezel4;
+typedef struct NABezel4f   NABezel4f;
+typedef struct NABezel4i32 NABezel4i32;
+typedef struct NABezel4i64 NABezel4i64;
+typedef struct NABezel4s   NABezel4s;
 
 
 
@@ -174,7 +178,6 @@ typedef struct NABezel4s  NABezel4s;
 // would be much more confusing if written otherwise.
 struct NARange{     double origin;   double length; };
 struct NARangef{    float  origin;   float  length; };
-struct NARangei{    NAInt  origin;   NAInt  length; };
 struct NARangei32{  int32  origin;   int32  length; };
 struct NARangei64{  int64  origin;   int64  length; };
 struct NARanges{    size_t origin;   size_t length; };
@@ -187,12 +190,14 @@ struct NAPosi64{    int64  x;     int64   y; };
 struct NAPoss{      size_t x;     size_t  y; };
 
 struct NASize{      double width; double  height; };
+struct NASizef{     float  width; float   height; };
 struct NASizei{     NAInt  width; NAInt   height; };
 struct NASizei32{   int32  width; int32   height; };
 struct NASizei64{   int64  width; int64   height; };
 struct NASizes{     size_t width; size_t  height; };
 
 struct NARect{      NAPos    pos; NASize    size; };
+struct NARectf{     NAPosf   pos; NASizef   size; };
 struct NARecti{     NAPosi   pos; NASizei   size; };
 struct NARecti32{   NAPosi32 pos; NASizei32 size; };
 struct NARecti64{   NAPosi64 pos; NASizei64 size; };
@@ -220,7 +225,9 @@ struct NABounds4{   double top;   double  right; double bottom; double left; };
 struct NABounds4i{  NAInt  top;   NAInt   right; NAInt  bottom; NAInt  left; };
 
 struct NABezel4{    double right; double top; double left; double bottom; };
-struct NABezel4i{   NAInt  right; NAInt  top; NAInt  left; NAInt  bottom; };
+struct NABezel4f{   float  right; float  top; float  left; float  bottom; };
+struct NABezel4i32{ int32  right; int32  top; int32  left; int32  bottom; };
+struct NABezel4i64{ int64  right; int64  top; int64  left; int64  bottom; };
 struct NABezel4s{   size_t right; size_t top; size_t left; size_t bottom; };
 
 
@@ -243,9 +250,6 @@ NA_IAPI NARangei32 naMakeRangei32E(int32  origin, int32  length);
 NA_IAPI NARangei64 naMakeRangei64E(int64  origin, int64  length);
 NA_IAPI NARanges   naMakeRangesE  (size_t origin, size_t length);
 
-//NA_IAPI NARange  naMakeRangeWithRangei(NARangei range);
-//NA_IAPI NARangei naMakeRangeiWithRange(NARange  range);
-
 NA_IAPI NARange    naMakeRangeEmpty(void);
 NA_IAPI NARangef   naMakeRangefEmpty(void);
 NA_IAPI NARangei32 naMakeRangei32Empty(void);
@@ -260,76 +264,88 @@ NA_IAPI NAPosi32 naMakePosi32(int32  x, int32  y);
 NA_IAPI NAPosi64 naMakePosi64(int64  x, int64  y);
 NA_IAPI NAPoss   naMakePoss  (size_t x, size_t y);
 
-//NA_IAPI NAPos    naMakePosWithPosi(NAPosi pos);
-//NA_IAPI NAPosi   naMakePosiWithPos(NAPos  pos);
 //// The Integer variant assumes pos to only contain integers, hence using a
 //// more advanced and quicker conversion. But pos must be integral to work.
 //NA_IAPI NAPosi   naMakePosiWithIntegerPos(NAPos pos);
 //NA_IAPI NAPos    naMakePosWithV2(const double* v);
 
 NA_IAPI NAPos    naMakePosZero(void);
+NA_IAPI NAPosf   naMakePosfZero(void);
 NA_IAPI NAPosi32 naMakePosi32Zero(void);
 NA_IAPI NAPosi64 naMakePosi64Zero(void);
+NA_IAPI NAPoss   naMakePossZero(void);
 
-NA_IAPI NASize    naMakeSize   (double width, double  height);
-NA_IAPI NASizei32 naMakeSizei32(int32  width, int32   height);
-NA_IAPI NASizei64 naMakeSizei64(int64  width, int64   height);
-NA_IAPI NASizes   naMakeSizes  (size_t width, size_t  height);
+// NASize
+
+NA_IAPI NASize    naMakeSize    (double width, double height);
+NA_IAPI NASizef   naMakeSizef   (float  width, float  height);
+NA_IAPI NASizei32 naMakeSizei32 (int32  width, int32  height);
+NA_IAPI NASizei64 naMakeSizei64 (int64  width, int64  height);
+NA_IAPI NASizes   naMakeSizes   (size_t width, size_t height);
 
 NA_IAPI NASize    naMakeSizeE   (double width, double height);
+NA_IAPI NASizef   naMakeSizefE  (float  width, float  height);
 NA_IAPI NASizei32 naMakeSizei32E(int32  width, int32  height);
 NA_IAPI NASizei64 naMakeSizei64E(int64  width, int64  height);
 NA_IAPI NASizes   naMakeSizesE  (size_t width, size_t height);
 
-//NA_IAPI NASize   naMakeSizeWithSizei(NASizei size);
-//NA_IAPI NASizei  naMakeSizeiWithSize(NASize  size);
 //// The Integer variant assumes pos to only contain integers, hence using a
 //// more advanced and quicker conversion. But pos must be integral to work.
 //NA_IAPI NASizei  naMakeSizeiWithIntegerSize(NASize size);
 
 // Empty only sets the width to zero while Zero sets all components to zero.
 NA_IAPI NASize    naMakeSizeEmpty(void);
-NA_IAPI NASizei   naMakeSizeiEmpty(void);
+NA_IAPI NASizef   naMakeSizefEmpty(void);
 NA_IAPI NASizei32 naMakeSizei32Empty(void);
 NA_IAPI NASizei64 naMakeSizei64Empty(void);
 NA_IAPI NASizes   naMakeSizesEmpty(void);
-NA_IAPI NASize    naMakeSizeZero(void);
-NA_IAPI NASizei   naMakeSizeiZero(void);
 
-NA_IAPI NARect    naMakeRect     (NAPos  pos, NASize  size);
-NA_IAPI NARecti   naMakeRecti    (NAPosi pos, NASizei size);
+NA_IAPI NASize    naMakeSizeZero(void);
+NA_IAPI NASizef   naMakeSizefZero(void);
+NA_IAPI NASizei32 naMakeSizei32Zero(void);
+NA_IAPI NASizei64 naMakeSizei64Zero(void);
+NA_IAPI NASizes   naMakeSizesZero(void);
+
+// NARect
+
+NA_IAPI NARect    naMakeRect     (NAPos    pos, NASize    size);
+NA_IAPI NARectf   naMakeRectf    (NAPosf   pos, NASizef   size);
 NA_IAPI NARecti32 naMakeRecti32  (NAPosi32 pos, NASizei32 size);
 NA_IAPI NARecti64 naMakeRecti64  (NAPosi64 pos, NASizei64 size);
-NA_IAPI NARect    naMakeRectE    (NAPos  pos, NASize  size);
-NA_IAPI NARecti   naMakeRectiE   (NAPosi pos, NASizei size);
+NA_IAPI NARects   naMakeRects    (NAPoss   pos, NASizes   size);
+
+NA_IAPI NARect    naMakeRectE    (NAPos    pos, NASize    size);
+NA_IAPI NARectf   naMakeRectfE   (NAPosf   pos, NASizef   size);
+NA_IAPI NARecti32 naMakeRecti32E (NAPosi32 pos, NASizei32 size);
+NA_IAPI NARecti64 naMakeRecti64E (NAPosi64 pos, NASizei64 size);
+NA_IAPI NARects   naMakeRectsE   (NAPoss   pos, NASizes   size);
+
 NA_IAPI NARect    naMakeRectS    (double x, double y, double width, double height);
+NA_IAPI NARectf   naMakeRectfS   (float  x, float  y, float  width, float  height);
 NA_IAPI NARecti32 naMakeRecti32S (int32  x, int32  y, int32  width, int32  height);
 NA_IAPI NARecti64 naMakeRecti64S (int64  x, int64  y, int64  width, int64  height);
+NA_IAPI NARects   naMakeRectsS   (size_t x, size_t y, size_t width, size_t height);
+
 NA_IAPI NARect    naMakeRectSE   (double x, double y, double width, double height);
+NA_IAPI NARectf   naMakeRectfSE  (float  x, float  y, float  width, float  height);
 NA_IAPI NARecti32 naMakeRecti32SE(int32  x, int32  y, int32  width, int32  height);
 NA_IAPI NARecti64 naMakeRecti64SE(int64  x, int64  y, int64  width, int64  height);
-//NA_IAPI NARect    naMakeRectWithRecti(NARecti rect);
-//NA_IAPI NARecti   naMakeRectiWithRect(NARect  rect);
+NA_IAPI NARects   naMakeRectsSE  (size_t x, size_t y, size_t width, size_t height);
 
 // Empty only sets the width to zero while Zero sets all components to zero.
 NA_IAPI NARect    naMakeRectEmpty(void);
-NA_IAPI NARecti   naMakeRectiEmpty(void);
+NA_IAPI NARectf   naMakeRectfEmpty(void);
+NA_IAPI NARecti32 naMakeRecti32Empty(void);
+NA_IAPI NARecti64 naMakeRecti64Empty(void);
+NA_IAPI NARects   naMakeRectsEmpty(void);
+
 NA_IAPI NARect    naMakeRectZero(void);
-NA_IAPI NARecti   naMakeRectiZero(void);
+NA_IAPI NARectf   naMakeRectfZero(void);
 NA_IAPI NARecti32 naMakeRecti32Zero(void);
 NA_IAPI NARecti64 naMakeRecti64Zero(void);
+NA_IAPI NARects   naMakeRectsZero(void);
 
-NA_IAPI NABounds4  naMakeBounds4 (double top, double right, double bottom, double left);
-NA_IAPI NABounds4i naMakeBounds4i(NAInt  top, NAInt  right, NAInt  bottom, NAInt  left);
-NA_IAPI NABounds4  naMakeBounds4WithBounds4i(NABounds4i bounds);
-NA_IAPI NABounds4i naMakeBounds4iWithBounds4(NABounds4  bounds);
-
-NA_IAPI NABezel4   naMakeBezel4 (double right, double top, double left, double bottom);
-NA_IAPI NABezel4i  naMakeBezel4i(NAInt  right, NAInt  top, NAInt  left, NAInt  bottom);
-NA_IAPI NABezel4   naMakeBezel4WithBezel4i(NABezel4i bezel);
-NA_IAPI NABezel4i  naMakeBezel4iWithBezel4(NABezel4  bezel);
-NA_IAPI NABezel4   naMakeBezel4Zero(void);
-NA_IAPI NABezel4i  naMakeBezel4iZero(void);
+// NAVertex
 
 NA_IAPI NAVertex    naMakeVertex      (double x, double y, double z);
 NA_IAPI NAVertexi   naMakeVertexi  (NAInt  x, NAInt  y, NAInt  z);
@@ -363,6 +379,29 @@ NA_IAPI NABox       naMakeBoxWithBoxi(NABoxi box);
 NA_IAPI NABoxi      naMakeBoxiWithBox(NABox  box);
 NA_IAPI NABox       naMakeBoxEmpty(void);
 NA_IAPI NABoxi      naMakeBoxiEmpty(void);
+
+// NABounds (deprecated)
+
+NA_IAPI NABounds4  naMakeBounds4 (double top, double right, double bottom, double left);
+NA_IAPI NABounds4i naMakeBounds4i(NAInt  top, NAInt  right, NAInt  bottom, NAInt  left);
+NA_IAPI NABounds4  naMakeBounds4WithBounds4i(NABounds4i bounds);
+NA_IAPI NABounds4i naMakeBounds4iWithBounds4(NABounds4  bounds);
+
+// NABezel
+
+NA_IAPI NABezel4    naMakeBezel4   (double right, double top, double left, double bottom);
+NA_IAPI NABezel4f   naMakeBezel4f  (float  right, float  top, float  left, float  bottom);
+NA_IAPI NABezel4i32 naMakeBezel4i32(int32  right, int32  top, int32  left, int32  bottom);
+NA_IAPI NABezel4i64 naMakeBezel4i64(int64  right, int64  top, int64  left, int64  bottom);
+NA_IAPI NABezel4s   naMakeBezel4s  (size_t right, size_t top, size_t left, size_t bottom);
+
+NA_IAPI NABezel4    naMakeBezel4Zero(void);
+NA_IAPI NABezel4f   naMakeBezel4fZero(void);
+NA_IAPI NABezel4i32 naMakeBezel4i32Zero(void);
+NA_IAPI NABezel4i64 naMakeBezel4i64Zero(void);
+NA_IAPI NABezel4s   naMakeBezel4sZero(void);
+
+
 
 
 // Mac OS X specific stuff
@@ -401,7 +440,8 @@ NA_IAPI NARange  naMakeRangeWithStartAndEnd    (double   start,  double   end);
 NA_IAPI NARangef naMakeRangefWithStartAndEnd   (float    start,  float    end);
 NA_IAPI NARangei32 naMakeRangei32WithStartAndEnd (int32    start,  int32    end);
 NA_IAPI NARangei64 naMakeRangei64WithStartAndEnd (int64    start,  int64    end);
-NA_IAPI NARangei naMakeRangeiWithMinAndMax     (NAInt    min,    NAInt    max);
+NA_IAPI NARangei32 naMakeRangei32WithMinAndMax     (int32    min,    int32    max);
+NA_IAPI NARangei64 naMakeRangei64WithMinAndMax     (int64    min,    int64    max);
 NA_IAPI NARangei32 naMakeRangei32WithRangeAndOffset(NARangei32 range,  int32    offset);
 NA_IAPI NARangei64 naMakeRangei64WithRangeAndOffset(NARangei64 range,  int64    offset);
 NA_IAPI NARangei32 naMakeRangei32WithRangeUnion  (NARangei32 range1, NARangei32 range2);
@@ -713,10 +753,13 @@ NA_IAPI NABool    naIsRangei32Valid (NARangei32 range);
 NA_IAPI NABool    naIsRangei64Valid (NARangei64 range);
 
 NA_IAPI NABool    naIsPosValid      (NAPos     pos);
+NA_IAPI NABool    naIsPosfValid     (NAPosf    pos);
 NA_IAPI NABool    naIsPosiValid     (NAPosi    pos);
 NA_IAPI NABool    naIsPosi32Valid   (NAPosi32  pos);
 NA_IAPI NABool    naIsPosi64Valid   (NAPosi64  pos);
+NA_IAPI NABool    naIsPossValid     (NAPoss    pos);
 NA_IAPI NABool    naIsSizeValid     (NASize    size);
+NA_IAPI NABool    naIsSizefValid    (NASizef   size);
 NA_IAPI NABool    naIsSizeiValid    (NASizei   size);
 NA_IAPI NABool    naIsSizei32Valid  (NASizei32 size);
 NA_IAPI NABool    naIsSizei64Valid  (NASizei64 size);
@@ -779,7 +822,8 @@ NA_IAPI NABool    naIsBoxiEmptySlow   (NABoxi    box);
 // rather than "Outside".
 NA_IAPI NABool    naIsRangeNegative  (NARange  range);
 NA_IAPI NABool    naIsRangefNegative (NARangef range);
-NA_IAPI NABool    naIsRangeiNegative (NARangei range);
+NA_IAPI NABool    naIsRangei32Negative (NARangei32 range);
+NA_IAPI NABool    naIsRangei64Negative (NARangei64 range);
 
 NA_IAPI NABool    naIsSizeNegative (NASize  size);
 NA_IAPI NABool    naIsSizeiNegative(NASizei size);
@@ -802,16 +846,19 @@ NA_IAPI NABool    naIsRangefUseful   (NARangef range);
 NA_IAPI NABool    naIsRangei32Useful (NARangei32 range);
 NA_IAPI NABool    naIsRangei64Useful (NARangei64 range);
 
-NA_IAPI NABool    naIsPosUseful  (NAPos   pos);
-NA_IAPI NABool    naIsPosiUseful (NAPosi  pos);
-NA_IAPI NABool    naIsPosi32Useful (NAPosi32  pos);
-NA_IAPI NABool    naIsPosi64Useful (NAPosi64  pos);
+NA_IAPI NABool    naIsPosUseful   (NAPos    pos);
+NA_IAPI NABool    naIsPosfUseful  (NAPosf   pos);
+NA_IAPI NABool    naIsPosiUseful  (NAPosi   pos);
+NA_IAPI NABool    naIsPosi32Useful(NAPosi32 pos);
+NA_IAPI NABool    naIsPosi64Useful(NAPosi64 pos);
+NA_IAPI NABool    naIsPossUseful  (NAPoss   pos);
 
-NA_IAPI NABool    naIsSizeUseful (NASize  size);
-NA_IAPI NABool    naIsSizeiUseful(NASizei size);
+NA_IAPI NABool    naIsSizeUseful   (NASize    size);
+NA_IAPI NABool    naIsSizefUseful  (NASizef   size);
+NA_IAPI NABool    naIsSizeiUseful  (NASizei   size);
 NA_IAPI NABool    naIsSizei32Useful(NASizei32 size);
 NA_IAPI NABool    naIsSizei64Useful(NASizei64 size);
-NA_IAPI NABool    naIsSizesUseful(NASizes size);
+NA_IAPI NABool    naIsSizesUseful  (NASizes   size);
 
 NA_IAPI NABool    naIsRectUseful (NARect  rect);
 NA_IAPI NABool    naIsRectiUseful(NARecti rect);
@@ -831,7 +878,7 @@ NA_IAPI NABool    naIsBoxiUseful (NABoxi box);
 
 
 // Inline implementations are in a separate file:
-#include "Core/NACoordII.h"
+#include "Core/NACoord/NACoordII.h"
 
 
 
