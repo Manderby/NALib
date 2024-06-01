@@ -139,7 +139,7 @@ NAImage* na_CreateBlendedImage(
   int32 innerEndX = naIsRecti32Empty(innerRect) ? 0 : naGetRecti32EndX(innerRect);
   
   // Create the actual image to be filled.
-  NAImage* retImage = naCreateImage(naMakeSizes(retSize.width, retSize.height), NA_NULL);
+  NAImage* retImage = naCreateImage(naMakeSizes((size_t)retSize.width, (size_t)retSize.height), NA_NULL);
   NAColor* ret = naGetImageData(retImage);
   
   // In case we have two images, fill up the trivial vertical parts.
@@ -153,40 +153,40 @@ NAImage* na_CreateBlendedImage(
         (size_t)basePixelCount * (size_t)retSize.width * sizeof(NAColor));
     }
     // Simply copy the upper part of the base image
-    NAInt topPixelCount = naIsRecti32Empty(innerRect) ? baseSize.height : baseSize.height - innerEndY;
+    int32 topPixelCount = naIsRecti32Empty(innerRect) ? (int32)baseSize.height : (int32)baseSize.height - innerEndY;
     if(topPixelCount > 0) {
       naCopyn(
         &ret[(retSize.height - topPixelCount) * retSize.width],
-        &base[(baseSize.height - topPixelCount) * baseSize.width],
+        &base[(baseSize.height - (size_t)topPixelCount) * baseSize.width],
         (size_t)topPixelCount * (size_t)retSize.width * sizeof(NAColor));
     }
   }
   
   // Go through the inner part vertically.
-  for(NAInt y = innerRect.pos.y; y < innerEndY; ++y) {
+  for(int32 y = innerRect.pos.y; y < innerEndY; ++y) {
     
     // In case we have two images, fill up the trivial horizontal parts.
     if(topIsImage && baseIsImage) {
       // Simply copy the left part of the base image
-      NAInt leftPixelCount = innerRect.pos.x;
+      int32 leftPixelCount = innerRect.pos.x;
       if(leftPixelCount > 0) {
-        if(leftPixelCount > baseSize.width) {
-          leftPixelCount = baseSize.width;
+        if(leftPixelCount > (int32)baseSize.width) {
+          leftPixelCount = (int32)baseSize.width;
         }
         naCopyn(
           &ret[y * retSize.width],
-          &base[y * baseSize.width],
+          &base[(size_t)y * baseSize.width],
           (size_t)leftPixelCount * sizeof(NAColor));
       }
       // Simply copy the right part of the base image
-      NAInt rightPixelCount = baseSize.width - innerEndX;
+      int32 rightPixelCount = (int32)baseSize.width - innerEndX;
       if(rightPixelCount > 0) {
-        if(rightPixelCount > baseSize.width) {
-          rightPixelCount = baseSize.width;
+        if(rightPixelCount > (int32)baseSize.width) {
+          rightPixelCount = (int32)baseSize.width;
         }
         naCopyn(
           &ret[(y * retSize.width + retSize.width - rightPixelCount)],
-          &base[(y * baseSize.width + baseSize.width - rightPixelCount)],
+          &base[((size_t)y * baseSize.width + baseSize.width - (size_t)rightPixelCount)],
           (size_t)rightPixelCount * sizeof(NAColor));
       }
     }
@@ -199,19 +199,19 @@ NAImage* na_CreateBlendedImage(
     const NAColor* topPtr;
     if(topIsImage && baseIsImage) {
       retPtr = &ret[(y * retSize.width + innerRect.pos.x)];
-      basePtr = &base[(y * baseSize.width + innerRect.pos.x)];
-      NAInt offsetX = 0;
-      NAInt offsetY = 0;
-      if(offset.x < 0) { offsetX = -offset.x; }
-      if(offset.y < 0) { offsetY = -offset.y; }
-      topPtr = &top[(((y - innerRect.pos.y + offsetY) * topSize.width) + offsetX)];
+      basePtr = &base[((size_t)y * baseSize.width + (size_t)innerRect.pos.x)];
+      size_t offsetX = 0;
+      size_t offsetY = 0;
+      if(offset.x < 0) { offsetX = (size_t)-offset.x; }
+      if(offset.y < 0) { offsetY = (size_t)-offset.y; }
+      topPtr = &top[((((size_t)(y - innerRect.pos.y) + offsetY) * topSize.width) + offsetX)];
     }else if(topIsImage) {
-      retPtr = &ret[(y * retSize.width)];
+      retPtr = &ret[((size_t)y * (size_t)retSize.width)];
       basePtr = base;
-      topPtr = &top[(y * topSize.width)];
+      topPtr = &top[((size_t)y * topSize.width)];
     }else{
-      retPtr = &ret[(y * retSize.width)];
-      basePtr = &base[(y * baseSize.width)];
+      retPtr = &ret[((size_t)y * (size_t)retSize.width)];
+      basePtr = &base[((size_t)y * baseSize.width)];
       topPtr = top;
     }
     
@@ -399,7 +399,7 @@ NA_HDEF void naAccumulateResizeLine(
   float subX = 0.f;
   float factorX = (float)inWidth / (float)outWidth;
   float remainerX = factorX;
-  for(int32 outX = 0; outX < outWidth; outX += 1) {
+  for(int32 outX = 0; outX < (int32)outWidth; outX += 1) {
     float counterSubX = 1.f - subX;
     while(counterSubX <= remainerX) {
       float accumulateFactor = factorY * counterSubX;
@@ -413,7 +413,7 @@ NA_HDEF void naAccumulateResizeLine(
       counterSubX = 1.f;
     }
     subX = 1.f - counterSubX;
-    if(inX < inWidth) {
+    if(inX < (int32)inWidth) {
       float accumulateFactor = factorY * remainerX;
       outPtr->a += accumulateFactor * inPtr->a;
       outPtr->b += accumulateFactor * inPtr->b;
@@ -471,7 +471,7 @@ NA_DEF NAImage* naCreateImageWithResize(const NAImage* image, NASizes newSize) {
       counterSubY = 1.f;
     }
     subY = 1.f - counterSubY;
-    if(inY < (int32)image->height) {
+    if(inY < (size_t)image->height) {
       naAccumulateResizeLine(
         outImage->data,
         radioImage->data,
@@ -530,11 +530,10 @@ NA_DEF void naFillImageWithu8(NAImage* image, const void* data, NABool topToBott
   const uint8* u8Ptr;
   
   if(topToBottom) {
-    NAInt x, y;
     NASizes size = naGetImageSize(image);
-    for(y = 0; y < size.height; y++) {
+    for(size_t y = 0; y < size.height; y++) {
       u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT]);
-      for(x = 0; x < size.width; x++) {
+      for(size_t x = 0; x < size.width; x++) {
         naFillColorWithSRGBu8v(imgPtr, u8Ptr, bufferType);
         imgPtr += 1;
         u8Ptr += NA_RGBA_COLOR_CHANNEL_COUNT;
@@ -558,11 +557,10 @@ NA_DEF void naConvertImageTou8(const NAImage* image, void* data, NABool topToBot
   uint8* u8Ptr;
   
   if(topToBottom) {
-    NAInt x, y;
     NASizes size = naGetImageSize(image);
-    for(y = 0; y < size.height; y++) {
+    for(size_t y = 0; y < size.height; y++) {
       u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT]);
-      for(x = 0; x < size.width; x++) {
+      for(size_t x = 0; x < size.width; x++) {
         naFillSRGBu8WithColor(u8Ptr, imgPtr, bufferType);
         imgPtr += 1;
         u8Ptr += NA_RGBA_COLOR_CHANNEL_COUNT;

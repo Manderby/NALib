@@ -72,11 +72,6 @@ NA_IDEF NAPoss naMakePoss(size_t x, size_t y) {
 
 
 
-//NA_IDEF NAPosi naMakePosiWithIntegerPos(NAPos pos) {
-//  NAPosi newPos = naMakePosi((NAInt)naGetDoubleInteger(pos.x), (NAInt)naGetDoubleInteger(pos.y));
-//  return newPos;
-//}
-//
 //NA_IDEF NAPos naMakePosWithV2(const double* v) {
 //  NAPos newPos;
 //  #if NA_DEBUG

@@ -10,6 +10,7 @@
 #include "../../../NAMath/NACoord.h"
 #include "../../../NAUtility/NAThreading.h"
 #include "../../../NAUtility/NATranslator.h"
+#include "../../../NAUtility/NAValueHelper.h"
 
 // the following import is needed for UTType definitions.
 #import <UniformTypeIdentifiers/UTType.h>
@@ -483,13 +484,13 @@ NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect) {
 NA_DEF void naCenterMouse(void* uiElement) {
   NARect spaceRect;
   NSRect screenframe;
-  CGPoint centerpos;
+  CGPoint centerPos;
   spaceRect = naGetUIElementRectAbsolute(uiElement);
   screenframe = [[NSScreen mainScreen] frame];
-  centerpos.x = (CGFloat)spaceRect.pos.x + (CGFloat)spaceRect.size.width * .5f;
-  centerpos.y = (CGFloat)screenframe.size.height - (CGFloat)(spaceRect.pos.y + spaceRect.size.height * .5f);
+  centerPos.x = (CGFloat)spaceRect.pos.x + (CGFloat)spaceRect.size.width * .5f;
+  centerPos.y = (CGFloat)screenframe.size.height - (CGFloat)(spaceRect.pos.y + spaceRect.size.height * .5f);
 
-  CGWarpMouseCursorPosition(centerpos);
+  CGWarpMouseCursorPosition(centerPos);
 }
 
 
@@ -498,7 +499,7 @@ NA_DEF void naShowMouse() {
   NAApplication* app = naGetApplication();
   if(!(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)) {
     CGDisplayShowCursor(kCGDirectMainDisplay);
-    app->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+    naSetFlagu32(&app->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE, NA_TRUE);
   }
 }
 
@@ -507,7 +508,7 @@ NA_DEF void naHideMouse() {
   NAApplication* app = naGetApplication();
   if(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE) {
     CGDisplayHideCursor(kCGDirectMainDisplay);
-    app->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+    naSetFlagu32(&app->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE, NA_FALSE);
   }
 }
 

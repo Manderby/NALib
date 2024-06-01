@@ -266,9 +266,6 @@ NA_IAPI NAPosi32 naMakePosi32(int32  x, int32  y);
 NA_IAPI NAPosi64 naMakePosi64(int64  x, int64  y);
 NA_IAPI NAPoss   naMakePoss  (size_t x, size_t y);
 
-//// The Integer variant assumes pos to only contain integers, hence using a
-//// more advanced and quicker conversion. But pos must be integral to work.
-//NA_IAPI NAPosi   naMakePosiWithIntegerPos(NAPos pos);
 //NA_IAPI NAPos    naMakePosWithV2(const double* v);
 
 NA_IAPI NAPos    naMakePosZero   (void);
@@ -473,7 +470,8 @@ NA_IAPI NARect  naMakeRectWithRectAndPos   (NARect  rect,  NAPos   pos);
 NA_IAPI NARect  naMakeRectWithRectAndPosE  (NARect  rect,  NAPos   pos);
 NA_IAPI NARect  naMakeRectWithRectUnion    (NARect  rect1, NARect  rect2);
 NA_IAPI NARect  naMakeRectWithRectUnionE   (NARect  rect1, NARect  rect2);
-NA_IAPI NARecti naMakeRectiWithPosAndPos   (NAPosi  pos1,  NAPosi  pos2);
+NA_IAPI NARecti32 naMakeRecti32WithPosAndPos   (NAPosi32  pos1,  NAPosi32  pos2);
+NA_IAPI NARecti64 naMakeRecti64WithPosAndPos   (NAPosi64  pos1,  NAPosi64  pos2);
 
 NA_IAPI NARecti32 naMakeRecti32WithRectAndPos  (NARecti32 rect,  NAPosi32  pos);
 NA_IAPI NARecti32 naMakeRecti32WithRectAndPosE (NARecti32 rect,  NAPosi32  pos);
@@ -551,6 +549,8 @@ NA_IAPI void      naFillBoxiWithCopy   (NABoxi* boxd,  const NABoxi* boxs);
 // Returns the center position / vertex
 NA_IAPI NAPos     naGetRectCenter (NARect rect);
 NA_IAPI NAPosi    naGetRectiCenter(NARecti rect);
+NA_IAPI NAPosi32  naGetRecti32Center(NARecti32 rect);
+NA_IAPI NAPosi64  naGetRecti64Center(NARecti64 rect);
 NA_IAPI NAVertex  naGetBoxCenter  (NABox box);
 NA_IAPI NAVertexi naGetBoxiCenter (NABoxi box);
 // Returns the offset of a size or volume being centered within a given rect
@@ -584,10 +584,17 @@ NA_IAPI NABool    naEqualRangei64(NARangei64 range1, NARangei64 range2);
 
 NA_IAPI NABool    naEqualPos  (NAPos   pos1,  NAPos   pos2);
 NA_IAPI NABool    naEqualPosi (NAPosi  pos1,  NAPosi  pos2);
+NA_IAPI NABool    naEqualPosi32 (NAPosi32  pos1,  NAPosi32  pos2);
+NA_IAPI NABool    naEqualPosi64 (NAPosi64  pos1,  NAPosi64  pos2);
 NA_IAPI NABool    naEqualSize (NASize  size1, NASize  size2);
 NA_IAPI NABool    naEqualSizei(NASizei size1, NASizei size2);
+NA_IAPI NABool    naEqualSizei32(NASizei32 size1, NASizei32 size2);
+NA_IAPI NABool    naEqualSizei64(NASizei64 size1, NASizei64 size2);
+NA_IAPI NABool    naEqualSizes(NASizes size1, NASizes size2);
 NA_IAPI NABool    naEqualRect (NARect  rect1, NARect  rect2);
 NA_IAPI NABool    naEqualRecti(NARecti rect1, NARecti rect2);
+NA_IAPI NABool    naEqualRecti32(NARecti32 rect1, NARecti32 rect2);
+NA_IAPI NABool    naEqualRecti64(NARecti64 rect1, NARecti64 rect2);
 
 NA_IAPI NABool    naEqualVertex (NAVertex  vertex1, NAVertex  vertex2);
 NA_IAPI NABool    naEqualVertexi(NAVertexi vertex1, NAVertexi vertex2);
@@ -712,15 +719,19 @@ NA_IAPI NAInt     naGetBoxiMaxZ  (NABoxi box);
 
 // Raw Index functions. Assuming a 2-dimensional or 3-dimensional array with
 // row-first or column-first ordering. Row-first is the default C ordering.
-NA_IAPI size_t naGetIndexWithOriginAndPosRowFirst(       NAPosi    origin, NAPosi    offset, NAInt width);
-NA_IAPI size_t naGetIndexWithOriginAndPosColumnFirst(    NAPosi    origin, NAPosi    offset, NAInt height);
-NA_IAPI size_t naGetIndexWithOriginAndVertexRowFirst(    NAVertexi origin, NAVertexi vertex, NAInt width, NAInt height);
-NA_IAPI size_t naGetIndexWithOriginAndVertexColumnFirst( NAVertexi origin, NAVertexi vertex, NAInt depth, NAInt height);
+NA_IAPI size_t naGetIndexWithOriginiAndPosRowFirst(       NAPosi    origin, NAPosi    offset, NAInt width);
+NA_IAPI size_t naGetIndexWithOrigini32AndPosRowFirst(     NAPosi32  origin, NAPosi32  offset, int32 width);
+NA_IAPI size_t naGetIndexWithOrigini64AndPosRowFirst(     NAPosi64  origin, NAPosi64  offset, int64 width);
+NA_IAPI size_t naGetIndexWithOriginiAndPosColumnFirst(    NAPosi    origin, NAPosi    offset, NAInt height);
+NA_IAPI size_t naGetIndexWithOriginiAndVertexRowFirst(    NAVertexi origin, NAVertexi vertex, NAInt width, NAInt height);
+NA_IAPI size_t naGetIndexWithOriginiAndVertexColumnFirst( NAVertexi origin, NAVertexi vertex, NAInt depth, NAInt height);
 
 // Count returns the total number of indices (width*height) within a size.
 // IndexOf returns the index of the corresponding 1-dimensional array.
 // Note that row-first is the default C ordering.
 NA_IAPI size_t naGetSizeiIndexCount             (NASizei size);
+NA_IAPI size_t naGetSizei32IndexCount           (NASizei32 size);
+NA_IAPI size_t naGetSizei64IndexCount           (NASizei64 size);
 NA_IAPI size_t naGetSizesIndexCount             (NASizes size);
 
 //NA_IAPI size_t naGetRectiIndexOfPosRowFirst     (NARecti rect, NAPosi pos);

@@ -161,14 +161,14 @@ const NAUIImage* currentImage(NAWINAPIButton* winapiButton) {
 
 
 NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* drawitemstruct) {
-  NASizei buttonsize = naMakeSizei(
+  NASizei buttonSize = naMakeSizei(
     (NAInt)drawitemstruct->rcItem.right - (NAInt)drawitemstruct->rcItem.left,
     (NAInt)drawitemstruct->rcItem.bottom - (NAInt)drawitemstruct->rcItem.top);
 
   // Create an offscreen device context and buffer
   HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);  
-  NAByte* buttonBuffer = naMalloc(buttonsize.width * buttonsize.height * 4);
-  HBITMAP hButtonBitmap = CreateBitmap((int)buttonsize.width, (int)buttonsize.height, 1, 32, buttonBuffer);
+  NAByte* buttonBuffer = naMalloc(buttonSize.width * buttonSize.height * 4);
+  HBITMAP hButtonBitmap = CreateBitmap((int)buttonSize.width, (int)buttonSize.height, 1, 32, buttonBuffer);
   SelectObject(hMemDC, hButtonBitmap);
 
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)uiElement;
@@ -197,7 +197,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
     if(customDraw) {
       // We store the button as it is drawn by the system.
-      BitBlt(hMemDC, 0, 0, (int)buttonsize.width, (int)buttonsize.height, hMemDC, 0, 0, SRCCOPY);
+      BitBlt(hMemDC, 0, 0, (int)buttonSize.width, (int)buttonSize.height, hMemDC, 0, 0, SRCCOPY);
       NAImage* buttonImage = naCreateImageFromNativeImage(hButtonBitmap);
 
       // Now we blend manually the foreground to the background.
@@ -212,13 +212,13 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       naReleaseImage(alphaImage);
       naReleaseImage(tintedImage);
 
-      NAByte* blendedBuffer = naMalloc(buttonsize.width * buttonsize.height * 4);
+      NAByte* blendedBuffer = naMalloc(buttonSize.width * buttonSize.height * 4);
       naConvertImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
-      HBITMAP hBlendedBitmap = CreateBitmap((int)buttonsize.width, (int)buttonsize.height, 1, 32, blendedBuffer);
+      HBITMAP hBlendedBitmap = CreateBitmap((int)buttonSize.width, (int)buttonSize.height, 1, 32, blendedBuffer);
 
       // Finally, we put the blended image onscreen.
       SelectObject(hMemDC, hBlendedBitmap);
-      BitBlt(drawitemstruct->hDC, 0, 0, (int)buttonsize.width, (int)buttonsize.height, hMemDC, 0, 0, SRCCOPY);
+      BitBlt(drawitemstruct->hDC, 0, 0, (int)buttonSize.width, (int)buttonSize.height, hMemDC, 0, 0, SRCCOPY);
 
       // Deleting the blended objects and buffers
       naReleaseImage(buttonImage);
@@ -239,8 +239,8 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     size1x.height = (NAInt)(size1x.height * uiScale);
 
     NAPosi offset = naMakePosi(
-      (buttonsize.width - size1x.width) / 2,
-      (buttonsize.height - size1x.height) / 2);
+      (buttonSize.width - size1x.width) / 2,
+      (buttonSize.height - size1x.height) / 2);
 
     LRESULT result = SendMessage(naGetUIElementNativePtr(winapiButton), BM_GETSTATE, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
     NABool pushed = (result & BST_PUSHED) == BST_PUSHED;

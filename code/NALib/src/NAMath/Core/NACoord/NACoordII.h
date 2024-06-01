@@ -428,27 +428,51 @@ NA_IDEF NARect naMakeRectWithRectUnionE(NARect rect1, NARect rect2) {
   newRect.size.height  = naMakeLengthWithStartAndEnd(newRect.pos.y, naMax(end1, end2));
   return newRect;
 }
-NA_IDEF NARecti naMakeRectiWithPosAndPos(NAPosi pos1, NAPosi pos2) {
-  NARecti newRect;
+NA_IDEF NARecti32 naMakeRecti32WithPosAndPos(NAPosi32 pos1, NAPosi32 pos2) {
+  NARecti32 newRect;
   #if NA_DEBUG
-    if(!naIsPosiValid(pos1))
+    if(!naIsPosi32Valid(pos1))
       naError("pos1 is invalid.");
-    if(!naIsPosiValid(pos2))
+    if(!naIsPosi32Valid(pos2))
       naError("pos2 is invalid.");
   #endif
   if(pos2.x > pos1.x) {
     newRect.pos.x = pos1.x;
-    newRect.size.width = naMakeLengthWithMinAndMaxi(pos1.x, pos2.x);
+    newRect.size.width = naMakeLengthWithMinAndMaxi32(pos1.x, pos2.x);
   }else{
     newRect.pos.x = pos2.x;
-    newRect.size.width = naMakeLengthWithMinAndMaxi(pos2.x, pos1.x);
+    newRect.size.width = naMakeLengthWithMinAndMaxi32(pos2.x, pos1.x);
   }
   if(pos2.y > pos1.y) {
     newRect.pos.y = pos1.y;
-    newRect.size.height = naMakeLengthWithMinAndMaxi(pos1.y, pos2.y);
+    newRect.size.height = naMakeLengthWithMinAndMaxi32(pos1.y, pos2.y);
   }else{
     newRect.pos.y = pos2.y;
-    newRect.size.height = naMakeLengthWithMinAndMaxi(pos2.y, pos1.y);
+    newRect.size.height = naMakeLengthWithMinAndMaxi32(pos2.y, pos1.y);
+  }
+  return newRect;
+}
+NA_IDEF NARecti64 naMakeRecti64WithPosAndPos(NAPosi64 pos1, NAPosi64 pos2) {
+  NARecti64 newRect;
+  #if NA_DEBUG
+    if(!naIsPosi64Valid(pos1))
+      naError("pos1 is invalid.");
+    if(!naIsPosi64Valid(pos2))
+      naError("pos2 is invalid.");
+  #endif
+  if(pos2.x > pos1.x) {
+    newRect.pos.x = pos1.x;
+    newRect.size.width = naMakeLengthWithMinAndMaxi64(pos1.x, pos2.x);
+  }else{
+    newRect.pos.x = pos2.x;
+    newRect.size.width = naMakeLengthWithMinAndMaxi64(pos2.x, pos1.x);
+  }
+  if(pos2.y > pos1.y) {
+    newRect.pos.y = pos1.y;
+    newRect.size.height = naMakeLengthWithMinAndMaxi64(pos1.y, pos2.y);
+  }else{
+    newRect.pos.y = pos2.y;
+    newRect.size.height = naMakeLengthWithMinAndMaxi64(pos2.y, pos1.y);
   }
   return newRect;
 }
@@ -1248,6 +1272,26 @@ NA_IDEF NAPosi naGetRectiCenter(NARecti rect) {
   newPos.y = rect.pos.y + rect.size.height / 2;
   return newPos;
 }
+NA_IDEF NAPosi32 naGetRecti32Center(NARecti32 rect) {
+  NAPosi32 newPos;
+  #if NA_DEBUG
+    if(!naIsRecti32Useful(rect))
+      naError("rect is not useful");
+  #endif
+  newPos.x = rect.pos.x + rect.size.width / 2;
+  newPos.y = rect.pos.y + rect.size.height / 2;
+  return newPos;
+}
+NA_IDEF NAPosi64 naGetRecti64Center(NARecti64 rect) {
+  NAPosi64 newPos;
+  #if NA_DEBUG
+    if(!naIsRecti64Useful(rect))
+      naError("rect is not useful");
+  #endif
+  newPos.x = rect.pos.x + rect.size.width / 2;
+  newPos.y = rect.pos.y + rect.size.height / 2;
+  return newPos;
+}
 NA_IDEF NAVertex naGetBoxCenter(NABox box) {
   NAVertex newVertex;
   #if NA_DEBUG
@@ -1844,6 +1888,24 @@ NA_IDEF NABool naEqualPosi(NAPosi pos1, NAPosi pos2) {
   #endif
   return ((pos1.x == pos2.x) && (pos1.y == pos2.y));
 }
+NA_IDEF NABool naEqualPosi32(NAPosi32 pos1, NAPosi32 pos2) {
+  #if NA_DEBUG
+    if(!naIsPosi32Valid(pos1))
+      naError("pos1 is invalid.");
+    if(!naIsPosi32Valid(pos2))
+      naError("pos2 is invalid.");
+  #endif
+  return ((pos1.x == pos2.x) && (pos1.y == pos2.y));
+}
+NA_IDEF NABool naEqualPosi64(NAPosi64 pos1, NAPosi64 pos2) {
+  #if NA_DEBUG
+    if(!naIsPosi64Valid(pos1))
+      naError("pos1 is invalid.");
+    if(!naIsPosi64Valid(pos2))
+      naError("pos2 is invalid.");
+  #endif
+  return ((pos1.x == pos2.x) && (pos1.y == pos2.y));
+}
 NA_IDEF NABool naEqualSize(NASize size1, NASize size2) {
   #if NA_DEBUG
     if(naIsSizeEmpty(size1) || naIsSizeEmpty(size2))
@@ -1866,6 +1928,39 @@ NA_IDEF NABool naEqualSizei(NASizei size1, NASizei size2) {
   #endif
   return ((size1.width == size2.width) && (size1.height == size2.height));
 }
+NA_IDEF NABool naEqualSizei32(NASizei32 size1, NASizei32 size2) {
+  #if NA_DEBUG
+    if(naIsSizei32Empty(size1) || naIsSizei32Empty(size2))
+      naError("Equality test not valid for empty sizes.");
+    if(!naIsSizei32Valid(size1))
+      naError("size1 is invalid.");
+    if(!naIsSizei32Valid(size2))
+      naError("size2 is invalid.");
+  #endif
+  return ((size1.width == size2.width) && (size1.height == size2.height));
+}
+NA_IDEF NABool naEqualSizei64(NASizei64 size1, NASizei64 size2) {
+  #if NA_DEBUG
+    if(naIsSizei64Empty(size1) || naIsSizei64Empty(size2))
+      naError("Equality test not valid for empty sizes.");
+    if(!naIsSizei64Valid(size1))
+      naError("size1 is invalid.");
+    if(!naIsSizei64Valid(size2))
+      naError("size2 is invalid.");
+  #endif
+  return ((size1.width == size2.width) && (size1.height == size2.height));
+}
+NA_IDEF NABool naEqualSizes(NASizes size1, NASizes size2) {
+  #if NA_DEBUG
+    if(naIsSizesEmpty(size1) || naIsSizesEmpty(size2))
+      naError("Equality test not valid for empty sizes.");
+    if(!naIsSizesValid(size1))
+      naError("size1 is invalid.");
+    if(!naIsSizesValid(size2))
+      naError("size2 is invalid.");
+  #endif
+  return ((size1.width == size2.width) && (size1.height == size2.height));
+}
 NA_IDEF NABool naEqualRect(NARect rect1, NARect rect2) {
   #if NA_DEBUG
     if(naIsRectEmpty(rect1) || naIsRectEmpty(rect2))
@@ -1875,8 +1970,8 @@ NA_IDEF NABool naEqualRect(NARect rect1, NARect rect2) {
     if(!naIsRectValid(rect2))
       naError("rect2 is invalid.");
   #endif
-  return     (naEqualPos (rect1.pos,  rect2.pos)
-          &&  naEqualSize(rect1.size, rect2.size));
+  return (naEqualPos (rect1.pos, rect2.pos)
+    &&  naEqualSize(rect1.size, rect2.size));
 }
 NA_IDEF NABool naEqualRecti(NARecti rect1, NARecti rect2) {
   #if NA_DEBUG
@@ -1887,8 +1982,32 @@ NA_IDEF NABool naEqualRecti(NARecti rect1, NARecti rect2) {
     if(!naIsRectiValid(rect2))
       naError("rect2 is invalid.");
   #endif
-  return    (naEqualPosi (rect1.pos,  rect2.pos)
-          && naEqualSizei(rect1.size, rect2.size));
+  return (naEqualPosi (rect1.pos, rect2.pos)
+    && naEqualSizei(rect1.size, rect2.size));
+}
+NA_IDEF NABool naEqualRecti32(NARecti32 rect1, NARecti32 rect2) {
+  #if NA_DEBUG
+    if(naIsRecti32Empty(rect1) || naIsRecti32Empty(rect2))
+      naError("Equality test not valid for empty rects.");
+    if(!naIsRecti32Valid(rect1))
+      naError("rect1 is invalid.");
+    if(!naIsRecti32Valid(rect2))
+      naError("rect2 is invalid.");
+  #endif
+  return (naEqualPosi32(rect1.pos, rect2.pos)
+    && naEqualSizei32(rect1.size, rect2.size));
+}
+NA_IDEF NABool naEqualRecti64(NARecti64 rect1, NARecti64 rect2) {
+  #if NA_DEBUG
+    if(naIsRecti64Empty(rect1) || naIsRecti64Empty(rect2))
+      naError("Equality test not valid for empty rects.");
+    if(!naIsRecti64Valid(rect1))
+      naError("rect1 is invalid.");
+    if(!naIsRecti64Valid(rect2))
+      naError("rect2 is invalid.");
+  #endif
+  return (naEqualPosi64(rect1.pos, rect2.pos)
+    && naEqualSizei64(rect1.size, rect2.size));
 }
 
 
@@ -2876,16 +2995,22 @@ NA_IDEF NAInt naGetBoxiMaxZ(NABoxi box) {
 
 
 
-NA_IDEF size_t naGetIndexWithOriginAndPosRowFirst(NAPosi origin, NAPosi offset, NAInt width) {
+NA_IDEF size_t naGetIndexWithOriginiAndPosRowFirst(NAPosi origin, NAPosi offset, NAInt width) {
   return (size_t)((offset.y - origin.y) * width + (offset.x - origin.x));
 }
-NA_IDEF size_t naGetIndexWithOriginAndPosColumnFirst(NAPosi origin, NAPosi offset, NAInt height) {
+NA_IDEF size_t naGetIndexWithOrigini32AndPosRowFirst(NAPosi32 origin, NAPosi32 offset, int32 width) {
+  return (size_t)((offset.y - origin.y) * width + (offset.x - origin.x));
+}
+NA_IDEF size_t naGetIndexWithOrigini64AndPosRowFirst(NAPosi64 origin, NAPosi64 offset, int64 width) {
+  return (size_t)((offset.y - origin.y) * width + (offset.x - origin.x));
+}
+NA_IDEF size_t naGetIndexWithOriginiAndPosColumnFirst(NAPosi origin, NAPosi offset, NAInt height) {
   return (size_t)((offset.x - origin.x) * height + (offset.y - origin.y));
 }
-NA_IDEF size_t naGetIndexWithOriginAndVertexRowFirst(NAVertexi origin, NAVertexi vertex, NAInt width, NAInt height) {
+NA_IDEF size_t naGetIndexWithOriginiAndVertexRowFirst(NAVertexi origin, NAVertexi vertex, NAInt width, NAInt height) {
   return (size_t)(((vertex.z - origin.z) * height + (vertex.y - origin.y)) * width + (vertex.x - origin.x));
 }
-NA_IDEF size_t naGetIndexWithOriginAndVertexColumnFirst(NAVertexi origin, NAVertexi vertex, NAInt depth, NAInt height) {
+NA_IDEF size_t naGetIndexWithOriginiAndVertexColumnFirst(NAVertexi origin, NAVertexi vertex, NAInt depth, NAInt height) {
   return (size_t)(((vertex.x - origin.x) * height + (vertex.y - origin.y)) * depth + (vertex.z - origin.z));
 }
 
@@ -2898,6 +3023,28 @@ NA_IDEF size_t naGetSizeiIndexCount(NASizei size) {
     if(!naIsSizeiValid(size))
       naError("size is invalid.");
     if(!naIsSizeiUseful(size))
+      naError("size is not useful.");
+  #endif
+  return (size_t)(size.width * size.height);
+}
+NA_IDEF size_t naGetSizei32IndexCount(NASizei32 size) {
+  #if NA_DEBUG
+    if(naIsSizei32EmptySlow(size))
+      naError("size is empty.");
+    if(!naIsSizei32Valid(size))
+      naError("size is invalid.");
+    if(!naIsSizei32Useful(size))
+      naError("size is not useful.");
+  #endif
+  return (size_t)(size.width * size.height);
+}
+NA_IDEF size_t naGetSizei64IndexCount(NASizei64 size) {
+  #if NA_DEBUG
+    if(naIsSizei64EmptySlow(size))
+      naError("size is empty.");
+    if(!naIsSizei64Valid(size))
+      naError("size is invalid.");
+    if(!naIsSizei64Useful(size))
       naError("size is not useful.");
   #endif
   return (size_t)(size.width * size.height);
@@ -2970,7 +3117,7 @@ NA_IDEF size_t naGetBoxiIndexOfVertexRowFirst(NABoxi box, NAVertexi vertex) {
     if(!naContainsBoxiVertex(box, vertex))
       naError("vertex is not inside box.");
   #endif
-  return naGetIndexWithOriginAndVertexRowFirst(box.vertex, vertex, box.volume.width, box.volume.height);
+  return naGetIndexWithOriginiAndVertexRowFirst(box.vertex, vertex, box.volume.width, box.volume.height);
 }
 NA_IDEF size_t naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex) {
   #if NA_DEBUG
@@ -2983,7 +3130,7 @@ NA_IDEF size_t naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex) {
     if(!naContainsBoxiVertex(box, vertex))
       naError("vertex is not inside box.");
   #endif
-  return naGetIndexWithOriginAndVertexColumnFirst(box.vertex, vertex, box.volume.depth, box.volume.height);
+  return naGetIndexWithOriginiAndVertexColumnFirst(box.vertex, vertex, box.volume.depth, box.volume.height);
 }
 
 

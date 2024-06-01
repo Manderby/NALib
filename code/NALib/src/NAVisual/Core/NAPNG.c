@@ -344,7 +344,6 @@ NA_DEF void naReconstructFilterData(NAPNG* png) {
 
 NA_DEF void naFilterData(NAPNG* png) {
   NAByte* pixeldata;
-  NAInt y;
   NABufferIterator iter;
 
   png->filteredData = naCreateBuffer(NA_FALSE);
@@ -354,7 +353,7 @@ NA_DEF void naFilterData(NAPNG* png) {
   pixeldata = naGetPNGPixelData(png);
 
   iter = naMakeBufferModifier(png->filteredData);
-  for(y = 0; y < png->size.height; y++) {
+  for(size_t y = 0; y < png->size.height; y++) {
     naWriteBufferu8(&iter, NA_PNG_FILTER_TYPE_NONE);
     naWriteBufferBytes(&iter, pixeldata, (size_t)png->size.width * bpp);
     pixeldata += (size_t)png->size.width * bpp;
@@ -379,8 +378,8 @@ NA_HDEF void na_ReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr) {
 
   iter = naMakeBufferModifier(ihdr->data);
 
-  png->size.width = (NAInt)naReadBufferu32(&iter);
-  png->size.height = (NAInt)naReadBufferu32(&iter);
+  png->size.width = (size_t)naReadBufferu32(&iter);
+  png->size.height = (size_t)naReadBufferu32(&iter);
   png->bitDepth = naReadBufferi8(&iter);
   png->colorType = (NAPNGColorType)naReadBufferi8(&iter);
   png->compressionmethod = naReadBufferi8(&iter);
@@ -828,15 +827,14 @@ NA_DEF NAImage* naCreateImageFromPNG(NAPNG* png) {
   NAByte* pngPtr;
   NAColor* colorPtr;
   uint8 inBuf[4];
-  NAInt x, y;
 
   switch(png->colorType) {
   case NA_PNG_COLORTYPE_TRUECOLOR:
     pngPtr = png->pixeldata;
     inBuf[3] = 255;
-    for(y = 0; y < png->size.height; y++) {
+    for(size_t y = 0; y < png->size.height; y++) {
       colorPtr = &(naGetImageData(image)[(png->size.height - y - 1) * naGetImageSize(image).width]);
-      for(x = 0; x < png->size.width; x++) {
+      for(size_t x = 0; x < png->size.width; x++) {
         inBuf[0] = pngPtr[0];
         inBuf[1] = pngPtr[1];
         inBuf[2] = pngPtr[2];

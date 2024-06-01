@@ -89,7 +89,7 @@ NA_HDEF void na_SetApplicationRect(const NAApplication* application, NARect rect
 
 
 NA_DEF void naStopApplication(void) {
-  na_App->flags &= ~NA_APPLICATION_FLAG_RUNNING;
+  naSetFlagu32(&na_App->flags, NA_APPLICATION_FLAG_RUNNING, NA_FALSE);
 }
 
 
