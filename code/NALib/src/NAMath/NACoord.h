@@ -700,9 +700,9 @@ NA_IAPI size_t naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex);
 
 
 
-// //////////////////////////////////////
-// TESTING FUNCTIONS
+// IsValid:
 //
+// Returns NA_TRUE when all values of the fields are valid.
 // Following are the definitions of "valid" elements used in NALib:
 // Pos:  A position is considered valid if none of the fields is NaN.
 //       Integer positions are always valid.
@@ -712,45 +712,33 @@ NA_IAPI size_t naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex);
 // Rect: A rectangle is considered valid, if its position and size is valid.
 //
 // The same holds true similarly for the 1D- and 3D-elements.
-//
-// When debugging, NALib checks if a size or rect is empty where it should
-// not be. Use the functions marked with E if you are sure empty sizes are ok.
-//
-// Negative sizes are not uncommon as well. While not forbidden and perfectly
-// meaningful, the functions of NALib only work properly with positive rects.
-// Use the naMakeRectPositive function to convert a negative rect into a
-// positive one.
 
-// IsValid:
-//
-// Returns NA_TRUE when all values of the fields are valid.
+NA_IAPI NABool    naIsRangeValid    (NARange     range);
+NA_IAPI NABool    naIsRangefValid   (NARangef    range);
+NA_IAPI NABool    naIsRangei32Valid (NARangei32  range);
+NA_IAPI NABool    naIsRangei64Valid (NARangei64  range);
+NA_IAPI NABool    naIsRangesValid   (NARanges    range);
 
-NA_IAPI NABool    naIsRangeValid    (NARange    range);
-NA_IAPI NABool    naIsRangefValid   (NARangef   range);
-NA_IAPI NABool    naIsRangei32Valid (NARangei32 range);
-NA_IAPI NABool    naIsRangei64Valid (NARangei64 range);
-NA_IAPI NABool    naIsRangesValid   (NARanges   range);
+NA_IAPI NABool    naIsPosValid      (NAPos       pos);
+NA_IAPI NABool    naIsPosfValid     (NAPosf      pos);
+NA_IAPI NABool    naIsPosiValid     (NAPosi      pos);
+NA_IAPI NABool    naIsPosi32Valid   (NAPosi32    pos);
+NA_IAPI NABool    naIsPosi64Valid   (NAPosi64    pos);
+NA_IAPI NABool    naIsPossValid     (NAPoss      pos);
 
-NA_IAPI NABool    naIsPosValid      (NAPos     pos);
-NA_IAPI NABool    naIsPosfValid     (NAPosf    pos);
-NA_IAPI NABool    naIsPosiValid     (NAPosi    pos);
-NA_IAPI NABool    naIsPosi32Valid   (NAPosi32  pos);
-NA_IAPI NABool    naIsPosi64Valid   (NAPosi64  pos);
-NA_IAPI NABool    naIsPossValid     (NAPoss    pos);
+NA_IAPI NABool    naIsSizeValid     (NASize      size);
+NA_IAPI NABool    naIsSizefValid    (NASizef     size);
+NA_IAPI NABool    naIsSizeiValid    (NASizei     size);
+NA_IAPI NABool    naIsSizei32Valid  (NASizei32   size);
+NA_IAPI NABool    naIsSizei64Valid  (NASizei64   size);
+NA_IAPI NABool    naIsSizesValid    (NASizes     size);
 
-NA_IAPI NABool    naIsSizeValid     (NASize    size);
-NA_IAPI NABool    naIsSizefValid    (NASizef   size);
-NA_IAPI NABool    naIsSizeiValid    (NASizei   size);
-NA_IAPI NABool    naIsSizei32Valid  (NASizei32 size);
-NA_IAPI NABool    naIsSizei64Valid  (NASizei64 size);
-NA_IAPI NABool    naIsSizesValid    (NASizes   size);
-
-NA_IAPI NABool    naIsRectValid     (NARect    rect);
-NA_IAPI NABool    naIsRectfValid    (NARectf   rect);
-NA_IAPI NABool    naIsRectiValid    (NARecti   rect);
-NA_IAPI NABool    naIsRecti32Valid  (NARecti32 rect);
-NA_IAPI NABool    naIsRecti64Valid  (NARecti64 rect);
-NA_IAPI NABool    naIsRectsValid    (NARects   rect);
+NA_IAPI NABool    naIsRectValid     (NARect      rect);
+NA_IAPI NABool    naIsRectfValid    (NARectf     rect);
+NA_IAPI NABool    naIsRectiValid    (NARecti     rect);
+NA_IAPI NABool    naIsRecti32Valid  (NARecti32   rect);
+NA_IAPI NABool    naIsRecti64Valid  (NARecti64   rect);
+NA_IAPI NABool    naIsRectsValid    (NARects     rect);
 
 NA_IAPI NABool    naIsVertexValid   (NAVertex    vertex);
 NA_IAPI NABool    naIsVertexfValid  (NAVertexf   vertex);
@@ -766,52 +754,85 @@ NA_IAPI NABool    naIsVolumei32Valid(NAVolumei32 volume);
 NA_IAPI NABool    naIsVolumei64Valid(NAVolumei64 volume);
 NA_IAPI NABool    naIsVolumesValid  (NAVolumes   volume);
 
-NA_IAPI NABool    naIsBoxValid      (NABox      box);
-NA_IAPI NABool    naIsBoxfValid     (NABoxf     box);
-NA_IAPI NABool    naIsBoxiValid     (NABoxi     box);
-NA_IAPI NABool    naIsBoxi32Valid   (NABoxi32   box);
-NA_IAPI NABool    naIsBoxi64Valid   (NABoxi64   box);
-NA_IAPI NABool    naIsBoxsValid     (NABoxs     box);
+NA_IAPI NABool    naIsBoxValid      (NABox       box);
+NA_IAPI NABool    naIsBoxfValid     (NABoxf      box);
+NA_IAPI NABool    naIsBoxiValid     (NABoxi      box);
+NA_IAPI NABool    naIsBoxi32Valid   (NABoxi32    box);
+NA_IAPI NABool    naIsBoxi64Valid   (NABoxi64    box);
+NA_IAPI NABool    naIsBoxsValid     (NABoxs      box);
 
 // IsEmpty:
 //
 // Tests whether the range, size of volume evaluates to zero.
 // The slow method might be necessary if you experience integer overflows.
 // NALib will tell you when debugging.
+//
+// When debugging, NALib checks if a size or rect is empty where it should
+// not be. Use the functions marked with E if you are sure empty sizes are ok.
+//
+// Negative sizes are not uncommon as well. While not forbidden and perfectly
+// meaningful, the functions of NALib only work properly with positive rects.
+// Use the naMakeRectPositive function to convert a negative rect into a
+// positive one.
 
-NA_IAPI NABool    naIsRangeEmpty    (NARange    range);
-NA_IAPI NABool    naIsRangefEmpty   (NARangef   range);
-NA_IAPI NABool    naIsRangei32Empty (NARangei32 range);
-NA_IAPI NABool    naIsRangei64Empty (NARangei64 range);
+NA_IAPI NABool    naIsRangeEmpty        (NARange     range);
+NA_IAPI NABool    naIsRangefEmpty       (NARangef    range);
+NA_IAPI NABool    naIsRangei32Empty     (NARangei32  range);
+NA_IAPI NABool    naIsRangei64Empty     (NARangei64  range);
+NA_IAPI NABool    naIsRangesEmpty       (NARanges    range);
 
-NA_IAPI NABool    naIsSizeEmpty       (NASize  size);
-NA_IAPI NABool    naIsSizeiEmpty      (NASizei size);
-NA_IAPI NABool    naIsSizeiEmptySlow  (NASizei size);
-NA_IAPI NABool    naIsSizei32Empty    (NASizei32 size);
-NA_IAPI NABool    naIsSizei32EmptySlow(NASizei32 size);
-NA_IAPI NABool    naIsSizei64Empty    (NASizei64 size);
-NA_IAPI NABool    naIsSizei64EmptySlow(NASizei64 size);
-NA_IAPI NABool    naIsSizesEmpty      (NASizes size);
-NA_IAPI NABool    naIsSizesEmptySlow  (NASizes size);
+NA_IAPI NABool    naIsSizeEmpty         (NASize      size);
+NA_IAPI NABool    naIsSizefEmpty        (NASizef     size);
+NA_IAPI NABool    naIsSizeiEmpty        (NASizei     size);
+NA_IAPI NABool    naIsSizei32Empty      (NASizei32   size);
+NA_IAPI NABool    naIsSizei64Empty      (NASizei64   size);
+NA_IAPI NABool    naIsSizesEmpty        (NASizes     size);
 
-NA_IAPI NABool    naIsRectEmpty       (NARect    rect);
-NA_IAPI NABool    naIsRectEmpty       (NARect    rect);
-NA_IAPI NABool    naIsRectiEmpty      (NARecti   rect);
-NA_IAPI NABool    naIsRecti32Empty    (NARecti32 rect);
-NA_IAPI NABool    naIsRecti64Empty    (NARecti64 rect);
-NA_IAPI NABool    naIsRectiEmptySlow  (NARecti   rect);
-NA_IAPI NABool    naIsRecti32EmptySlow(NARecti32 rect);
-NA_IAPI NABool    naIsRecti64EmptySlow(NARecti64 rect);
+NA_IAPI NABool    naIsSizeiEmptySlow    (NASizei     size);
+NA_IAPI NABool    naIsSizei32EmptySlow  (NASizei32   size);
+NA_IAPI NABool    naIsSizei64EmptySlow  (NASizei64   size);
+NA_IAPI NABool    naIsSizesEmptySlow    (NASizes     size);
 
-NA_IAPI NABool    naIsVolumeEmpty     (NAVolume  volume);
-NA_IAPI NABool    naIsVolumeiEmpty    (NAVolumei volume);
-NA_IDEF NABool    naIsVolumeiEmptySlow(NAVolumei volume);
-NA_IAPI NABool    naIsBoxEmpty        (NABox     box);
-NA_IAPI NABool    naIsBoxiEmpty       (NABoxi    box);
-NA_IAPI NABool    naIsBoxiEmptySlow   (NABoxi    box);
+NA_IAPI NABool    naIsRectEmpty         (NARect      rect);
+NA_IAPI NABool    naIsRectfEmpty        (NARectf     rect);
+NA_IAPI NABool    naIsRectiEmpty        (NARecti     rect);
+NA_IAPI NABool    naIsRecti32Empty      (NARecti32   rect);
+NA_IAPI NABool    naIsRecti64Empty      (NARecti64   rect);
+NA_IAPI NABool    naIsRectsEmpty        (NARects     rect);
 
-// Returns NA_TRUE for sizes with negative entries. Will not perform any
-// debugging tests.
+NA_IAPI NABool    naIsRectiEmptySlow    (NARecti     rect);
+NA_IAPI NABool    naIsRecti32EmptySlow  (NARecti32   rect);
+NA_IAPI NABool    naIsRecti64EmptySlow  (NARecti64   rect);
+NA_IAPI NABool    naIsRectsEmptySlow    (NARects     rect);
+
+NA_IAPI NABool    naIsVolumeEmpty       (NAVolume    volume);
+NA_IAPI NABool    naIsVolumefEmpty      (NAVolumef   volume);
+NA_IAPI NABool    naIsVolumeiEmpty      (NAVolumei   volume);
+NA_IAPI NABool    naIsVolumei32Empty    (NAVolumei32 volume);
+NA_IAPI NABool    naIsVolumei64Empty    (NAVolumei64 volume);
+NA_IAPI NABool    naIsVolumesEmpty      (NAVolumes   volume);
+
+NA_IAPI NABool    naIsVolumeiEmptySlow  (NAVolumei   volume);
+NA_IAPI NABool    naIsVolumei32EmptySlow(NAVolumei32 volume);
+NA_IAPI NABool    naIsVolumei64EmptySlow(NAVolumei64 volume);
+NA_IAPI NABool    naIsVolumesEmptySlow  (NAVolumes   volume);
+
+NA_IAPI NABool    naIsBoxEmpty          (NABox       box);
+NA_IAPI NABool    naIsBoxfEmpty         (NABoxf      box);
+NA_IAPI NABool    naIsBoxiEmpty         (NABoxi      box);
+NA_IAPI NABool    naIsBoxi32Empty       (NABoxi32    box);
+NA_IAPI NABool    naIsBoxi64Empty       (NABoxi64    box);
+NA_IAPI NABool    naIsBoxsEmpty         (NABoxs      box);
+
+NA_IAPI NABool    naIsBoxiEmptySlow     (NABoxi      box);
+NA_IAPI NABool    naIsBoxi32EmptySlow   (NABoxi32    box);
+NA_IAPI NABool    naIsBoxi64EmptySlow   (NABoxi64    box);
+NA_IAPI NABool    naIsBoxsEmptySlow     (NABoxs      box);
+
+// IsNegative:
+//
+// Returns NA_TRUE for sizes with negative entries.
+//
 // Note from the author: These functions test for Negativity, not Positivity.
 // Using a negative word in a function name is usually not good practice as it
 // tends to lead to double negatives when reading the source code. There are
@@ -820,68 +841,101 @@ NA_IAPI NABool    naIsBoxiEmptySlow   (NABoxi    box);
 // Or the "End of file" marker EOF for example. But such situations are rare.
 // Try to use positive words whenever possible! For example, test for "Inside"
 // rather than "Outside".
-NA_IAPI NABool    naIsRangeNegative  (NARange  range);
-NA_IAPI NABool    naIsRangefNegative (NARangef range);
-NA_IAPI NABool    naIsRangei32Negative (NARangei32 range);
-NA_IAPI NABool    naIsRangei64Negative (NARangei64 range);
 
-NA_IAPI NABool    naIsSizeNegative (NASize  size);
-NA_IAPI NABool    naIsSizeiNegative(NASizei size);
-NA_IAPI NABool    naIsRectNegative (NARect  rect);
-NA_IAPI NABool    naIsRectiNegative(NARecti rect);
+NA_IAPI NABool    naIsRangeNegative    (NARange     range);
+NA_IAPI NABool    naIsRangefNegative   (NARangef    range);
+NA_IAPI NABool    naIsRangei32Negative (NARangei32  range);
+NA_IAPI NABool    naIsRangei64Negative (NARangei64  range);
+NA_IAPI NABool    naIsRangesNegative   (NARanges    range);
 
-NA_IAPI NABool    naIsVolumeNegative (NAVolume  volume);
-NA_IAPI NABool    naIsVolumeiNegative(NAVolumei volume);
-NA_IAPI NABool    naIsBoxNegative (NABox  box);
-NA_IAPI NABool    naIsBoxiNegative(NABoxi box);
+NA_IAPI NABool    naIsSizeNegative     (NASize      size);
+NA_IAPI NABool    naIsSizefNegative    (NASizef     size);
+NA_IAPI NABool    naIsSizeiNegative    (NASizei     size);
+NA_IAPI NABool    naIsSizei32Negative  (NASizei32   size);
+NA_IAPI NABool    naIsSizei64Negative  (NASizei64   size);
+NA_IAPI NABool    naIsSizesNegative    (NASizes     size);
 
-// Returns NA_TRUE when all values of the element are useful. Will not perform
-// any debugging tests. Useful elements are defined to be not invalid, not
-// empty and not negative. Hence for example a rect is useful if it has no
-// invalid values, is positive and has a size greater than zero.
-// This function often is useful after an operation which might lead to
-// negative sizes, empty rects or otherwise invalid values.
-NA_IAPI NABool    naIsRangeUseful    (NARange  range);
-NA_IAPI NABool    naIsRangefUseful   (NARangef range);
-NA_IAPI NABool    naIsRangei32Useful (NARangei32 range);
-NA_IAPI NABool    naIsRangei64Useful (NARangei64 range);
+NA_IAPI NABool    naIsRectNegative     (NARect      rect);
+NA_IAPI NABool    naIsRectfNegative    (NARectf     rect);
+NA_IAPI NABool    naIsRectiNegative    (NARecti     rect);
+NA_IAPI NABool    naIsRecti32Negative  (NARecti32   rect);
+NA_IAPI NABool    naIsRecti64Negative  (NARecti64   rect);
+NA_IAPI NABool    naIsRectsNegative    (NARects     rect);
 
-NA_IAPI NABool    naIsPosUseful   (NAPos    pos);
-NA_IAPI NABool    naIsPosfUseful  (NAPosf   pos);
-NA_IAPI NABool    naIsPosiUseful  (NAPosi   pos);
-NA_IAPI NABool    naIsPosi32Useful(NAPosi32 pos);
-NA_IAPI NABool    naIsPosi64Useful(NAPosi64 pos);
-NA_IAPI NABool    naIsPossUseful  (NAPoss   pos);
+NA_IAPI NABool    naIsVolumeNegative   (NAVolume    volume);
+NA_IAPI NABool    naIsVolumefNegative  (NAVolumef   volume);
+NA_IAPI NABool    naIsVolumeiNegative  (NAVolumei   volume);
+NA_IAPI NABool    naIsVolumei32Negative(NAVolumei32 volume);
+NA_IAPI NABool    naIsVolumei64Negative(NAVolumei64 volume);
+NA_IAPI NABool    naIsVolumesNegative  (NAVolumes   volume);
 
-NA_IAPI NABool    naIsSizeUseful   (NASize    size);
-NA_IAPI NABool    naIsSizefUseful  (NASizef   size);
-NA_IAPI NABool    naIsSizeiUseful  (NASizei   size);
-NA_IAPI NABool    naIsSizei32Useful(NASizei32 size);
-NA_IAPI NABool    naIsSizei64Useful(NASizei64 size);
-NA_IAPI NABool    naIsSizesUseful  (NASizes   size);
+NA_IAPI NABool    naIsBoxNegative      (NABox       box);
+NA_IAPI NABool    naIsBoxfNegative     (NABoxf      box);
+NA_IAPI NABool    naIsBoxiNegative     (NABoxi      box);
+NA_IAPI NABool    naIsBoxi32Negative   (NABoxi32    box);
+NA_IAPI NABool    naIsBoxi64Negative   (NABoxi64    box);
+NA_IAPI NABool    naIsBoxsNegative     (NABoxs      box);
 
-NA_IAPI NABool    naIsRectUseful (NARect  rect);
-NA_IAPI NABool    naIsRectiUseful(NARecti rect);
-NA_IAPI NABool    naIsRecti32Useful(NARecti32 rect);
-NA_IAPI NABool    naIsRecti64Useful(NARecti64 rect);
+// IsUseful:
+//
+// Returns NA_TRUE when all values of the element are useful. Useful elements
+// are defined to be not invalid, not empty and not negative. Hence for example
+// a rect is useful if it has no invalid values, is positive and has a size
+// greater than zero. This function often is useful after an operation which
+// might lead to negative sizes, empty rects or otherwise invalid values.
 
-NA_IAPI NABool    naIsVertexUseful  (NAVertex  vertex);
-NA_IAPI NABool    naIsVertexiUseful (NAVertexi vertex);
-NA_IAPI NABool    naIsVolumeUseful  (NAVolume  volume);
-NA_IAPI NABool    naIsVolumeiUseful (NAVolumei volume);
-NA_IAPI NABool    naIsBoxUseful  (NABox  box);
-NA_IAPI NABool    naIsBoxiUseful (NABoxi box);
+NA_IAPI NABool    naIsRangeUseful    (NARange     range);
+NA_IAPI NABool    naIsRangefUseful   (NARangef    range);
+NA_IAPI NABool    naIsRangei32Useful (NARangei32  range);
+NA_IAPI NABool    naIsRangei64Useful (NARangei64  range);
+NA_IAPI NABool    naIsRangesUseful   (NARanges    range);
 
+NA_IAPI NABool    naIsPosUseful      (NAPos       pos);
+NA_IAPI NABool    naIsPosfUseful     (NAPosf      pos);
+NA_IAPI NABool    naIsPosiUseful     (NAPosi      pos);
+NA_IAPI NABool    naIsPosi32Useful   (NAPosi32    pos);
+NA_IAPI NABool    naIsPosi64Useful   (NAPosi64    pos);
+NA_IAPI NABool    naIsPossUseful     (NAPoss      pos);
 
+NA_IAPI NABool    naIsSizeUseful     (NASize      size);
+NA_IAPI NABool    naIsSizefUseful    (NASizef     size);
+NA_IAPI NABool    naIsSizeiUseful    (NASizei     size);
+NA_IAPI NABool    naIsSizei32Useful  (NASizei32   size);
+NA_IAPI NABool    naIsSizei64Useful  (NASizei64   size);
+NA_IAPI NABool    naIsSizesUseful    (NASizes     size);
 
+NA_IAPI NABool    naIsRectUseful     (NARect      rect);
+NA_IAPI NABool    naIsRectfUseful    (NARectf     rect);
+NA_IAPI NABool    naIsRectiUseful    (NARecti     rect);
+NA_IAPI NABool    naIsRecti32Useful  (NARecti32   rect);
+NA_IAPI NABool    naIsRecti64Useful  (NARecti64   rect);
+NA_IAPI NABool    naIsRectsUseful    (NARects     rect);
+
+NA_IAPI NABool    naIsVertexUseful   (NAVertex    vertex);
+NA_IAPI NABool    naIsVertexfUseful  (NAVertexf   vertex);
+NA_IAPI NABool    naIsVertexiUseful  (NAVertexi   vertex);
+NA_IAPI NABool    naIsVertexi32Useful(NAVertexi32 vertex);
+NA_IAPI NABool    naIsVertexi64Useful(NAVertexi64 vertex);
+NA_IAPI NABool    naIsVertexsUseful  (NAVertexs   vertex);
+
+NA_IAPI NABool    naIsVolumeUseful   (NAVolume    volume);
+NA_IAPI NABool    naIsVolumefUseful  (NAVolumef   volume);
+NA_IAPI NABool    naIsVolumeiUseful  (NAVolumei   volume);
+NA_IAPI NABool    naIsVolumei32Useful(NAVolumei32 volume);
+NA_IAPI NABool    naIsVolumei64Useful(NAVolumei64 volume);
+NA_IAPI NABool    naIsVolumesUseful  (NAVolumes   volume);
+
+NA_IAPI NABool    naIsBoxUseful      (NABox       box);
+NA_IAPI NABool    naIsBoxfUseful     (NABoxf      box);
+NA_IAPI NABool    naIsBoxiUseful     (NABoxi      box);
+NA_IAPI NABool    naIsBoxi32Useful   (NABoxi32    box);
+NA_IAPI NABool    naIsBoxi64Useful   (NABoxi64    box);
+NA_IAPI NABool    naIsBoxsUseful     (NABoxs      box);
 
 
 
 // Inline implementations are in a separate file:
 #include "Core/NACoord/NACoordII.h"
-
-
-
 
 
 
