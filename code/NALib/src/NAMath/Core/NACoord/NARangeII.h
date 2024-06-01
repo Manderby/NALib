@@ -139,32 +139,37 @@ NA_IDEF NARanges naMakeRangesE(size_t origin, size_t length) {
 
 
 
-NA_IDEF NARange naMakeRangeEmpty() {
+NA_IDEF NARange naMakeRangeZero() {
   NARange newRange;
+  newRange.origin = 0.;
   newRange.length = 0.;
   return newRange;
 }
 
-NA_IDEF NARangef naMakeRangefEmpty() {
+NA_IDEF NARangef naMakeRangefZero() {
   NARangef newRange;
+  newRange.origin = 0.f;
   newRange.length = 0.f;
   return newRange;
 }
 
-NA_IDEF NARangei32 naMakeRangei32Empty() {
+NA_IDEF NARangei32 naMakeRangei32Zero() {
   NARangei32 newRange;
+  newRange.origin = 0;
   newRange.length = 0;
   return newRange;
 }
 
-NA_IDEF NARangei64 naMakeRangei64Empty() {
+NA_IDEF NARangei64 naMakeRangei64Zero() {
   NARangei64 newRange;
+  newRange.origin = 0;
   newRange.length = 0;
   return newRange;
 }
 
-NA_IDEF NARanges naMakeRangesEmpty() {
+NA_IDEF NARanges naMakeRangesZero() {
   NARanges newRange;
+  newRange.origin = 0;
   newRange.length = 0;
   return newRange;
 }

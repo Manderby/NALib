@@ -5,8 +5,6 @@
 
 
 
-
-
 NA_IDEF NAPos naMakePos(double x, double y) {
   NAPos newPos;
   #if NA_DEBUG

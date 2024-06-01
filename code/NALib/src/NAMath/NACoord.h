@@ -143,24 +143,25 @@ typedef struct NARects    NARects;
 
 // 3-D Coordinates: Vertex, Volume and Box
 typedef struct NAVertex    NAVertex;
+typedef struct NAVertexf   NAVertexf;
 typedef struct NAVertexi   NAVertexi;
 typedef struct NAVertexi32 NAVertexi32;
 typedef struct NAVertexi64 NAVertexi64;
 typedef struct NAVertexs   NAVertexs;
+
 typedef struct NAVolume    NAVolume;
+typedef struct NAVolumef   NAVolumef;
 typedef struct NAVolumei   NAVolumei;
 typedef struct NAVolumei32 NAVolumei32;
 typedef struct NAVolumei64 NAVolumei64;
 typedef struct NAVolumes   NAVolumes;
+
 typedef struct NABox       NABox;
+typedef struct NABoxf      NABoxf;
 typedef struct NABoxi      NABoxi;
 typedef struct NABoxi32    NABoxi32;
 typedef struct NABoxi64    NABoxi64;
 typedef struct NABoxs      NABoxs;
-
-// 2-D Coordinates: Bounds (Top-Right-Bottom-Left) deprecated. Use NABezel.
-typedef struct NABounds4  NABounds4;
-typedef struct NABounds4i NABounds4i;
 
 // 2-D Coordinates: Bezel (Right-Top-Left-Bottom)
 typedef struct NABezel4    NABezel4;
@@ -204,25 +205,25 @@ struct NARecti64{   NAPosi64 pos; NASizei64 size; };
 struct NARects{     NAPoss   pos; NASizes   size; };
 
 struct NAVertex{    double      x;      double      y;        double z; };
+struct NAVertexf{   float       x;      float       y;        float  z; };
 struct NAVertexi{   NAInt       x;      NAInt       y;        NAInt  z; };
 struct NAVertexi32{ int32       x;      int32       y;        int32  z; };
 struct NAVertexi64{ int64       x;      int64       y;        int64  z; };
 struct NAVertexs{   size_t      x;      size_t      y;        size_t z; };
 
 struct NAVolume{    double      width;  double      height;   double depth; };
+struct NAVolumef{   float       width;  float       height;   float  depth; };
 struct NAVolumei{   NAInt       width;  NAInt       height;   NAInt  depth; };
 struct NAVolumei32{ int32       width;  int32       height;   int32  depth; };
 struct NAVolumei64{ int64       width;  int64       height;   int64  depth; };
 struct NAVolumes{   size_t      width;  size_t      height;   size_t depth; };
 
 struct NABox{       NAVertex    vertex; NAVolume    volume; };
+struct NABoxf{      NAVertexf   vertex; NAVolumef   volume; };
 struct NABoxi{      NAVertexi   vertex; NAVolumei   volume; };
 struct NABoxi32{    NAVertexi32 vertex; NAVolumei32 volume; };
 struct NABoxi64{    NAVertexi64 vertex; NAVolumei64 volume; };
 struct NABoxs{      NAVertexs   vertex; NAVolumes   volume; };
-
-struct NABounds4{   double top;   double  right; double bottom; double left; };
-struct NABounds4i{  NAInt  top;   NAInt   right; NAInt  bottom; NAInt  left; };
 
 struct NABezel4{    double right; double top; double left; double bottom; };
 struct NABezel4f{   float  right; float  top; float  left; float  bottom; };
@@ -235,6 +236,7 @@ struct NABezel4s{   size_t right; size_t top; size_t left; size_t bottom; };
 // Create the various elements
 // The Variants with E allow sizes and rects to be empty or negative.
 // The Variants with S expect scalar values instead of structs
+// The Variants with Zero initialize ALL members with the value zero.
 
 // NARange
 
@@ -250,11 +252,11 @@ NA_IAPI NARangei32 naMakeRangei32E(int32  origin, int32  length);
 NA_IAPI NARangei64 naMakeRangei64E(int64  origin, int64  length);
 NA_IAPI NARanges   naMakeRangesE  (size_t origin, size_t length);
 
-NA_IAPI NARange    naMakeRangeEmpty(void);
-NA_IAPI NARangef   naMakeRangefEmpty(void);
-NA_IAPI NARangei32 naMakeRangei32Empty(void);
-NA_IAPI NARangei64 naMakeRangei64Empty(void);
-NA_IAPI NARanges   naMakeRangesEmpty(void);
+NA_IAPI NARange    naMakeRangeZero   (void);
+NA_IAPI NARangef   naMakeRangefZero  (void);
+NA_IAPI NARangei32 naMakeRangei32Zero(void);
+NA_IAPI NARangei64 naMakeRangei64Zero(void);
+NA_IAPI NARanges   naMakeRangesZero  (void);
 
 // NAPos
 
@@ -269,11 +271,11 @@ NA_IAPI NAPoss   naMakePoss  (size_t x, size_t y);
 //NA_IAPI NAPosi   naMakePosiWithIntegerPos(NAPos pos);
 //NA_IAPI NAPos    naMakePosWithV2(const double* v);
 
-NA_IAPI NAPos    naMakePosZero(void);
-NA_IAPI NAPosf   naMakePosfZero(void);
+NA_IAPI NAPos    naMakePosZero   (void);
+NA_IAPI NAPosf   naMakePosfZero  (void);
 NA_IAPI NAPosi32 naMakePosi32Zero(void);
 NA_IAPI NAPosi64 naMakePosi64Zero(void);
-NA_IAPI NAPoss   naMakePossZero(void);
+NA_IAPI NAPoss   naMakePossZero  (void);
 
 // NASize
 
@@ -293,19 +295,12 @@ NA_IAPI NASizes   naMakeSizesE  (size_t width, size_t height);
 //// more advanced and quicker conversion. But pos must be integral to work.
 //NA_IAPI NASizei  naMakeSizeiWithIntegerSize(NASize size);
 
-// Empty only sets the width to zero while Zero sets all components to zero.
-NA_IAPI NASize    naMakeSizeEmpty(void);
-NA_IAPI NASizef   naMakeSizefEmpty(void);
-NA_IAPI NASizei32 naMakeSizei32Empty(void);
-NA_IAPI NASizei64 naMakeSizei64Empty(void);
-NA_IAPI NASizes   naMakeSizesEmpty(void);
-
-NA_IAPI NASize    naMakeSizeZero(void);
-NA_IAPI NASizef   naMakeSizefZero(void);
-NA_IAPI NASizei32 naMakeSizei32Zero(void);
-NA_IAPI NASizei64 naMakeSizei64Zero(void);
-NA_IAPI NASizes   naMakeSizesZero(void);
-
+NA_IAPI NASize    naMakeSizeZero    (void);
+NA_IAPI NASizef   naMakeSizefZero   (void);
+NA_IAPI NASizei32 naMakeSizei32Zero (void);
+NA_IAPI NASizei64 naMakeSizei64Zero (void);
+NA_IAPI NASizes   naMakeSizesZero   (void);
+ 
 // NARect
 
 NA_IAPI NARect    naMakeRect     (NAPos    pos, NASize    size);
@@ -332,37 +327,32 @@ NA_IAPI NARecti32 naMakeRecti32SE(int32  x, int32  y, int32  width, int32  heigh
 NA_IAPI NARecti64 naMakeRecti64SE(int64  x, int64  y, int64  width, int64  height);
 NA_IAPI NARects   naMakeRectsSE  (size_t x, size_t y, size_t width, size_t height);
 
-// Empty only sets the width to zero while Zero sets all components to zero.
-NA_IAPI NARect    naMakeRectEmpty(void);
-NA_IAPI NARectf   naMakeRectfEmpty(void);
-NA_IAPI NARecti32 naMakeRecti32Empty(void);
-NA_IAPI NARecti64 naMakeRecti64Empty(void);
-NA_IAPI NARects   naMakeRectsEmpty(void);
-
-NA_IAPI NARect    naMakeRectZero(void);
-NA_IAPI NARectf   naMakeRectfZero(void);
-NA_IAPI NARecti32 naMakeRecti32Zero(void);
-NA_IAPI NARecti64 naMakeRecti64Zero(void);
-NA_IAPI NARects   naMakeRectsZero(void);
+NA_IAPI NARect    naMakeRectZero    (void);
+NA_IAPI NARectf   naMakeRectfZero   (void);
+NA_IAPI NARecti32 naMakeRecti32Zero (void);
+NA_IAPI NARecti64 naMakeRecti64Zero (void);
+NA_IAPI NARects   naMakeRectsZero   (void);
 
 // NAVertex
 
-NA_IAPI NAVertex    naMakeVertex      (double x, double y, double z);
+NA_IAPI NAVertex    naMakeVertex   (double x, double y, double z);
+NA_IAPI NAVertexf   naMakeVertexf  (float  x, float  y, float  z);
 NA_IAPI NAVertexi   naMakeVertexi  (NAInt  x, NAInt  y, NAInt  z);
 NA_IAPI NAVertexi32 naMakeVertexi32(int32  x, int32  y, int32  z);
 NA_IAPI NAVertexi64 naMakeVertexi64(int64  x, int64  y, int64  z);
-NA_IAPI NAVertex    naMakeVertexWithVertexi(NAVertexi vertex);
-NA_IAPI NAVertexi   naMakeVertexiWithVertex(NAVertex  vertex);
-NA_IAPI NAVertex    naMakeVertexWithV3(const double* v);
+NA_IAPI NAVertexs   naMakeVertexs  (size_t x, size_t y, size_t z);
+
+//NA_IAPI NAVertex    naMakeVertexWithV3(const double* v);
+
+// NAVolume
 
 NA_IAPI NAVolume    naMakeVolume  (double  width, double height, double depth);
 NA_IAPI NAVolumei   naMakeVolumei (NAInt   width, NAInt  height, NAInt  depth);
 NA_IAPI NAVolumei32 naMakeVolumei32(int32   width, int32  height, int32  depth);
 NA_IAPI NAVolumei64 naMakeVolumei64(int64   width, int64  height, int64  depth);
 NA_IAPI NAVolume    naMakeVolumeE (double  width, double height, double depth);
-NA_IAPI NAVolumei   naMakeVolumeiE(NAInt   width, NAInt  height, NAInt  depth);
-NA_IAPI NAVolume    naMakeVolumeWithVolumei(NAVolumei volume);
-NA_IAPI NAVolumei   naMakeVolumeiWithVolume(NAVolume  volume);
+NA_IAPI NAVolumei32 naMakeVolumei32E(int32   width, int32  height, int32  depth);
+NA_IAPI NAVolumei64 naMakeVolumei64E(int64   width, int64  height, int64  depth);
 NA_IAPI NAVolume    naMakeVolumeEmpty(void);
 NA_IAPI NAVolumei   naMakeVolumeiEmpty(void);
 
@@ -374,18 +364,10 @@ NA_IAPI NABoxi64    naMakeBoxi64S (int64  x, int64  y, int64  z, int64  width, i
 NA_IAPI NABox       naMakeBoxE    (NAVertex  vertex,  NAVolume  volume);
 NA_IAPI NABoxi      naMakeBoxiE   (NAVertexi vertex,  NAVolumei volume);
 NA_IAPI NABox       naMakeBoxSE   (double x, double y, double z, double width, double height, double depth);
-NA_IAPI NABoxi      naMakeBoxiSE  (NAInt  x, NAInt  y, NAInt  z, NAInt  width, NAInt  height, NAInt  depth);
-NA_IAPI NABox       naMakeBoxWithBoxi(NABoxi box);
-NA_IAPI NABoxi      naMakeBoxiWithBox(NABox  box);
+NA_IAPI NABoxi32    naMakeBoxi32SE  (int32  x, int32  y, int32  z, int32  width, int32  height, int32  depth);
+NA_IAPI NABoxi64    naMakeBoxi64SE  (int64  x, int64  y, int64  z, int64  width, int64  height, int64  depth);
 NA_IAPI NABox       naMakeBoxEmpty(void);
 NA_IAPI NABoxi      naMakeBoxiEmpty(void);
-
-// NABounds (deprecated)
-
-NA_IAPI NABounds4  naMakeBounds4 (double top, double right, double bottom, double left);
-NA_IAPI NABounds4i naMakeBounds4i(NAInt  top, NAInt  right, NAInt  bottom, NAInt  left);
-NA_IAPI NABounds4  naMakeBounds4WithBounds4i(NABounds4i bounds);
-NA_IAPI NABounds4i naMakeBounds4iWithBounds4(NABounds4  bounds);
 
 // NABezel
 
@@ -726,31 +708,28 @@ NA_IAPI size_t naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex);
 //       Integer positions are always valid.
 // Size: A size is considered valid, if none of the fields is NaN.
 //       A size of zero is considered valid because this is commonly used to
-//       mark empty structures. But be careful! It is just NOT DEFINED as
-//       invalid. This means: No special code is executed for empty elements!
-//       Use the appropriate functions to check if an element is empty. And
-//       use the functions marked with E if you are sure empty elements are ok.
+//       mark empty sizes.
 // Rect: A rectangle is considered valid, if its position and size is valid.
 //
 // The same holds true similarly for the 1D- and 3D-elements.
 //
-// Sizes or rects with zero width or height are considered "empty". But no
-// special code will be executed! This might lead to unexpected behaviour.
 // When debugging, NALib checks if a size or rect is empty where it should
-// not be. But you as the programmer have to take care of that in your code!
+// not be. Use the functions marked with E if you are sure empty sizes are ok.
 //
 // Negative sizes are not uncommon as well. While not forbidden and perfectly
 // meaningful, the functions of NALib only work properly with positive rects.
 // Use the naMakeRectPositive function to convert a negative rect into a
 // positive one.
 
+// IsValid:
+//
+// Returns NA_TRUE when all values of the fields are valid.
 
-// Returns NA_TRUE when all values of the fields are valid. Will not perform
-// any debugging tests.
 NA_IAPI NABool    naIsRangeValid    (NARange    range);
 NA_IAPI NABool    naIsRangefValid   (NARangef   range);
 NA_IAPI NABool    naIsRangei32Valid (NARangei32 range);
 NA_IAPI NABool    naIsRangei64Valid (NARangei64 range);
+NA_IAPI NABool    naIsRangesValid   (NARanges   range);
 
 NA_IAPI NABool    naIsPosValid      (NAPos     pos);
 NA_IAPI NABool    naIsPosfValid     (NAPosf    pos);
@@ -758,32 +737,53 @@ NA_IAPI NABool    naIsPosiValid     (NAPosi    pos);
 NA_IAPI NABool    naIsPosi32Valid   (NAPosi32  pos);
 NA_IAPI NABool    naIsPosi64Valid   (NAPosi64  pos);
 NA_IAPI NABool    naIsPossValid     (NAPoss    pos);
+
 NA_IAPI NABool    naIsSizeValid     (NASize    size);
 NA_IAPI NABool    naIsSizefValid    (NASizef   size);
 NA_IAPI NABool    naIsSizeiValid    (NASizei   size);
 NA_IAPI NABool    naIsSizei32Valid  (NASizei32 size);
 NA_IAPI NABool    naIsSizei64Valid  (NASizei64 size);
 NA_IAPI NABool    naIsSizesValid    (NASizes   size);
+
 NA_IAPI NABool    naIsRectValid     (NARect    rect);
+NA_IAPI NABool    naIsRectfValid    (NARectf   rect);
 NA_IAPI NABool    naIsRectiValid    (NARecti   rect);
 NA_IAPI NABool    naIsRecti32Valid  (NARecti32 rect);
 NA_IAPI NABool    naIsRecti64Valid  (NARecti64 rect);
+NA_IAPI NABool    naIsRectsValid    (NARects   rect);
 
-NA_IAPI NABool    naIsVertexValid   (NAVertex   vertex);
-NA_IAPI NABool    naIsVertexiValid  (NAVertexi  vertex);
-NA_IAPI NABool    naIsVolumeValid   (NAVolume   volume);
-NA_IAPI NABool    naIsVolumeiValid  (NAVolumei  volume);
+NA_IAPI NABool    naIsVertexValid   (NAVertex    vertex);
+NA_IAPI NABool    naIsVertexfValid  (NAVertexf   vertex);
+NA_IAPI NABool    naIsVertexiValid  (NAVertexi   vertex);
+NA_IAPI NABool    naIsVertexi32Valid(NAVertexi32 vertex);
+NA_IAPI NABool    naIsVertexi64Valid(NAVertexi64 vertex);
+NA_IAPI NABool    naIsVertexsValid  (NAVertexs   vertex);
+
+NA_IAPI NABool    naIsVolumeValid   (NAVolume    volume);
+NA_IAPI NABool    naIsVolumefValid  (NAVolumef   volume);
+NA_IAPI NABool    naIsVolumeiValid  (NAVolumei   volume);
+NA_IAPI NABool    naIsVolumei32Valid(NAVolumei32 volume);
+NA_IAPI NABool    naIsVolumei64Valid(NAVolumei64 volume);
+NA_IAPI NABool    naIsVolumesValid  (NAVolumes   volume);
+
 NA_IAPI NABool    naIsBoxValid      (NABox      box);
+NA_IAPI NABool    naIsBoxfValid     (NABoxf     box);
 NA_IAPI NABool    naIsBoxiValid     (NABoxi     box);
+NA_IAPI NABool    naIsBoxi32Valid   (NABoxi32   box);
+NA_IAPI NABool    naIsBoxi64Valid   (NABoxi64   box);
+NA_IAPI NABool    naIsBoxsValid     (NABoxs     box);
 
-// Sizes with zero-entries.  Will not perform any debugging tests.
+// IsEmpty:
+//
+// Tests whether the range, size of volume evaluates to zero.
+// The slow method might be necessary if you experience integer overflows.
+// NALib will tell you when debugging.
+
 NA_IAPI NABool    naIsRangeEmpty    (NARange    range);
 NA_IAPI NABool    naIsRangefEmpty   (NARangef   range);
 NA_IAPI NABool    naIsRangei32Empty (NARangei32 range);
 NA_IAPI NABool    naIsRangei64Empty (NARangei64 range);
 
-// The slow method might be necessary if you experience integer overflows.
-// NALib will tell you when debugging.
 NA_IAPI NABool    naIsSizeEmpty       (NASize  size);
 NA_IAPI NABool    naIsSizeiEmpty      (NASizei size);
 NA_IAPI NABool    naIsSizeiEmptySlow  (NASizei size);

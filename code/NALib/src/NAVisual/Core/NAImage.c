@@ -249,7 +249,7 @@ NA_DEF NAImage* naCreateImageWithTint(
     base->data,
     naGetImageSize(base),
     tint,
-    naMakeSizesEmpty(),
+    naMakeSizesZero(),
     mode,
     factor,
     naMakePosi32(0, 0));
@@ -296,7 +296,7 @@ NA_DEF NAImage* naCreateImageWithApply(const NAColor* ground, const NAImage* top
   const NAColor* topPtr = top->data;
   return na_CreateBlendedImage(
     ground,
-    naMakeSizesEmpty(),
+    naMakeSizesZero(),
     topPtr,
     naGetImageSize(top),
     mode,

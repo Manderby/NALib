@@ -136,38 +136,6 @@ NA_IDEF NASizes naMakeSizesE(size_t width, size_t height) {
 
 
 
-NA_IDEF NASize naMakeSizeEmpty() {
-  NASize newSize;
-  newSize.width = 0.;
-  return newSize;
-}
-
-NA_IDEF NASizef naMakeSizefEmpty() {
-  NASizef newSize;
-  newSize.width = 0.f;
-  return newSize;
-}
-
-NA_IDEF NASizei32 naMakeSizei32Empty() {
-  NASizei32 newSize;
-  newSize.width = 0;
-  return newSize;
-}
-
-NA_IDEF NASizei64 naMakeSizei64Empty() {
-  NASizei64 newSize;
-  newSize.width = 0;
-  return newSize;
-}
-
-NA_IDEF NASizes naMakeSizesEmpty() {
-  NASizes newSize;
-  newSize.width = 0;
-  return newSize;
-}
-
-
-
 NA_IDEF NASize naMakeSizeZero() {
   NASize newSize;
   newSize.width = 0.;

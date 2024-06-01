@@ -5,15 +5,6 @@
 
 
 
-// The implementation of NABounds is deprectated. Use NABezel instead.
-//
-// The reason for the deprecation is that the sequence of the values has been
-// clockwise. An anti-clockwise fashion is much more in line of the concept of
-// NALib. Furthermore, NABounds started with "top", whereas NABezel starts with
-// "right" like in a right handed coordinate system.
-
-
-
 NA_IDEF NABezel4 naMakeBezel4(double right, double top, double left, double bottom) {
   NABezel4 newBezel;
   #if NA_DEBUG

@@ -5,7 +5,6 @@
 
 
 
-
 NA_IDEF NARect naMakeRect(NAPos pos, NASize size) {
   NARect newRect;
   #if NA_DEBUG
@@ -249,38 +248,6 @@ NA_IDEF NARects naMakeRectsSE(size_t x, size_t y, size_t width, size_t height) {
   #endif
   newRect.pos = naMakePoss(x, y);
   newRect.size = naMakeSizesE(width, height);
-  return newRect;
-}
-
-
-
-NA_IDEF NARect naMakeRectEmpty() {
-  NARect newRect;
-  newRect.size.width = 0.;
-  return newRect;
-}
-
-NA_IDEF NARectf naMakeRectfEmpty() {
-  NARectf newRect;
-  newRect.size.width = 0.f;
-  return newRect;
-}
-
-NA_IDEF NARecti32 naMakeRecti32Empty() {
-  NARecti32 newRect;
-  newRect.size.width = 0;
-  return newRect;
-}
-
-NA_IDEF NARecti64 naMakeRecti64Empty() {
-  NARecti64 newRect;
-  newRect.size.width = 0;
-  return newRect;
-}
-
-NA_IDEF NARects naMakeRectsEmpty() {
-  NARects newRect;
-  newRect.size.width = 0;
   return newRect;
 }
 

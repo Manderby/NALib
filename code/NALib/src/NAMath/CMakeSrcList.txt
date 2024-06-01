@@ -21,12 +21,13 @@ set(coreImplementationFiles
 
 set(coreCoordFiles
   ${NAMathDir}/Core/NACoord/NABezelII.h
-  ${NAMathDir}/Core/NACoord/NABoundsII.h
   ${NAMathDir}/Core/NACoord/NACoordII.h
+  ${NAMathDir}/Core/NACoord/NACoordTesterII.h
   ${NAMathDir}/Core/NACoord/NAPosII.h
   ${NAMathDir}/Core/NACoord/NARangeII.h
   ${NAMathDir}/Core/NACoord/NARectII.h
   ${NAMathDir}/Core/NACoord/NASizeII.h
+  ${NAMathDir}/Core/NACoord/NAVertexII.h
 )
 
 set(coreVectorAlgebraFiles
