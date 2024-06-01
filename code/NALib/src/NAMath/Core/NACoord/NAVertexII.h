@@ -91,6 +91,48 @@ NA_IDEF NAVertexs naMakeVertexs(size_t x, size_t y, size_t z) {
 
 
 
+NA_IDEF NAVertex naMakeVertexZero(void) {
+  NAVertex newVertex;
+  newVertex.x = 0.;
+  newVertex.y = 0.;
+  newVertex.z = 0.;
+  return newVertex;
+}
+
+NA_IDEF NAVertexf naMakeVertexfZero(void) {
+  NAVertexf newVertex;
+  newVertex.x = 0.f;
+  newVertex.y = 0.f;
+  newVertex.z = 0.f;
+  return newVertex;
+}
+
+NA_IDEF NAVertexi32 naMakeVertexi32Zero(void) {
+  NAVertexi32 newVertex;
+  newVertex.x = 0;
+  newVertex.y = 0;
+  newVertex.z = 0;
+  return newVertex;
+}
+
+NA_IDEF NAVertexi64 naMakeVertexi64Zero(void) {
+  NAVertexi64 newVertex;
+  newVertex.x = 0;
+  newVertex.y = 0;
+  newVertex.z = 0;
+  return newVertex;
+}
+
+NA_IDEF NAVertexs naMakeVertexsZero(void) {
+  NAVertexs newVertex;
+  newVertex.x = 0;
+  newVertex.y = 0;
+  newVertex.z = 0;
+  return newVertex;
+}
+
+
+
 //NA_IDEF NAVertex naMakeVertexWithV3(const double* v) {
 //  NAVertex newVertex;
 //  #if NA_DEBUG

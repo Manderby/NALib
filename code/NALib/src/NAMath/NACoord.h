@@ -344,30 +344,69 @@ NA_IAPI NAVertexs   naMakeVertexs  (size_t x, size_t y, size_t z);
 
 //NA_IAPI NAVertex    naMakeVertexWithV3(const double* v);
 
+NA_IAPI NAVertex    naMakeVertexZero   (void);
+NA_IAPI NAVertexf   naMakeVertexfZero  (void);
+NA_IAPI NAVertexi   naMakeVertexiZero  (void);
+NA_IAPI NAVertexi32 naMakeVertexi32Zero(void);
+NA_IAPI NAVertexi64 naMakeVertexi64Zero(void);
+NA_IAPI NAVertexs   naMakeVertexsZero  (void);
+
 // NAVolume
 
-NA_IAPI NAVolume    naMakeVolume  (double  width, double height, double depth);
-NA_IAPI NAVolumei   naMakeVolumei (NAInt   width, NAInt  height, NAInt  depth);
-NA_IAPI NAVolumei32 naMakeVolumei32(int32   width, int32  height, int32  depth);
-NA_IAPI NAVolumei64 naMakeVolumei64(int64   width, int64  height, int64  depth);
-NA_IAPI NAVolume    naMakeVolumeE (double  width, double height, double depth);
+NA_IAPI NAVolume    naMakeVolume    (double  width, double height, double depth);
+NA_IAPI NAVolumef   naMakeVolumef   (float   width, float  height, float  depth);
+NA_IAPI NAVolumei   naMakeVolumei   (NAInt   width, NAInt  height, NAInt  depth);
+NA_IAPI NAVolumei32 naMakeVolumei32 (int32   width, int32  height, int32  depth);
+NA_IAPI NAVolumei64 naMakeVolumei64 (int64   width, int64  height, int64  depth);
+NA_IAPI NAVolumes   naMakeVolumes   (size_t  width, size_t height, size_t depth);
+
+NA_IAPI NAVolume    naMakeVolumeE   (double  width, double height, double depth);
+NA_IAPI NAVolumef   naMakeVolumefE  (float   width, float  height, float  depth);
 NA_IAPI NAVolumei32 naMakeVolumei32E(int32   width, int32  height, int32  depth);
 NA_IAPI NAVolumei64 naMakeVolumei64E(int64   width, int64  height, int64  depth);
-NA_IAPI NAVolume    naMakeVolumeEmpty(void);
-NA_IAPI NAVolumei   naMakeVolumeiEmpty(void);
+NA_IAPI NAVolumes   naMakeVolumesE  (size_t  width, size_t height, size_t depth);
 
-NA_IAPI NABox       naMakeBox     (NAVertex  vertex,  NAVolume  volume);
-NA_IAPI NABoxi      naMakeBoxi    (NAVertexi vertex,  NAVolumei volume);
+NA_IAPI NAVolume    naMakeVolumeZero   (void);
+NA_IAPI NAVolumef   naMakeVolumefZero  (void);
+NA_IAPI NAVolumei   naMakeVolumeiZero  (void);
+NA_IAPI NAVolumei32 naMakeVolumei32Zero(void);
+NA_IAPI NAVolumei64 naMakeVolumei64Zero(void);
+NA_IAPI NAVolumes   naMakeVolumesZero  (void);
+
+// NABox
+
+NA_IAPI NABox       naMakeBox     (NAVertex    vertex,  NAVolume    volume);
+NA_IAPI NABoxf      naMakeBoxf    (NAVertexf   vertex,  NAVolumef   volume);
+NA_IAPI NABoxi      naMakeBoxi    (NAVertexi   vertex,  NAVolumei   volume);
+NA_IAPI NABoxi32    naMakeBoxi32  (NAVertexi32 vertex,  NAVolumei32 volume);
+NA_IAPI NABoxi64    naMakeBoxi64  (NAVertexi64 vertex,  NAVolumei64 volume);
+NA_IAPI NABoxs      naMakeBoxs    (NAVertexs   vertex,  NAVolumes   volume);
+
 NA_IAPI NABox       naMakeBoxS    (double x, double y, double z, double width, double height, double depth);
+NA_IAPI NABoxf      naMakeBoxfS   (float  x, float  y, float  z, float  width, float  height, float  depth);
 NA_IAPI NABoxi32    naMakeBoxi32S (int32  x, int32  y, int32  z, int32  width, int32  height, int32  depth);
 NA_IAPI NABoxi64    naMakeBoxi64S (int64  x, int64  y, int64  z, int64  width, int64  height, int64  depth);
-NA_IAPI NABox       naMakeBoxE    (NAVertex  vertex,  NAVolume  volume);
-NA_IAPI NABoxi      naMakeBoxiE   (NAVertexi vertex,  NAVolumei volume);
+NA_IAPI NABoxs      naMakeBoxsS   (size_t x, size_t y, size_t z, size_t width, size_t height, size_t depth);
+
+NA_IAPI NABox       naMakeBoxE    (NAVertex    vertex, NAVolume    volume);
+NA_IAPI NABoxf      naMakeBoxfE   (NAVertexf   vertex, NAVolumef   volume);
+NA_IAPI NABoxi      naMakeBoxiE   (NAVertexi   vertex, NAVolumei   volume);
+NA_IAPI NABoxi32    naMakeBoxi32E (NAVertexi32 vertex, NAVolumei32 volume);
+NA_IAPI NABoxi64    naMakeBoxi64E (NAVertexi64 vertex, NAVolumei64 volume);
+NA_IAPI NABoxs      naMakeBoxsE   (NAVertexs   vertex, NAVolumes   volume);
+
 NA_IAPI NABox       naMakeBoxSE   (double x, double y, double z, double width, double height, double depth);
-NA_IAPI NABoxi32    naMakeBoxi32SE  (int32  x, int32  y, int32  z, int32  width, int32  height, int32  depth);
-NA_IAPI NABoxi64    naMakeBoxi64SE  (int64  x, int64  y, int64  z, int64  width, int64  height, int64  depth);
-NA_IAPI NABox       naMakeBoxEmpty(void);
-NA_IAPI NABoxi      naMakeBoxiEmpty(void);
+NA_IAPI NABoxf      naMakeBoxfSE  (float  x, float  y, float  z, float  width, float  height, float  depth);
+NA_IAPI NABoxi32    naMakeBoxi32SE(int32  x, int32  y, int32  z, int32  width, int32  height, int32  depth);
+NA_IAPI NABoxi64    naMakeBoxi64SE(int64  x, int64  y, int64  z, int64  width, int64  height, int64  depth);
+NA_IAPI NABoxs      naMakeBoxsSE  (size_t x, size_t y, size_t z, size_t width, size_t height, size_t depth);
+
+NA_IAPI NABox       naMakeBoxEmpty   (void);
+NA_IAPI NABoxf      naMakeBoxfEmpty  (void);
+NA_IAPI NABoxi      naMakeBoxiEmpty  (void);
+NA_IAPI NABoxi32    naMakeBoxi32Empty(void);
+NA_IAPI NABoxi64    naMakeBoxi64Empty(void);
+NA_IAPI NABoxs      naMakeBoxsEmpty  (void);
 
 // NABezel
 
@@ -377,11 +416,11 @@ NA_IAPI NABezel4i32 naMakeBezel4i32(int32  right, int32  top, int32  left, int32
 NA_IAPI NABezel4i64 naMakeBezel4i64(int64  right, int64  top, int64  left, int64  bottom);
 NA_IAPI NABezel4s   naMakeBezel4s  (size_t right, size_t top, size_t left, size_t bottom);
 
-NA_IAPI NABezel4    naMakeBezel4Zero(void);
-NA_IAPI NABezel4f   naMakeBezel4fZero(void);
+NA_IAPI NABezel4    naMakeBezel4Zero   (void);
+NA_IAPI NABezel4f   naMakeBezel4fZero  (void);
 NA_IAPI NABezel4i32 naMakeBezel4i32Zero(void);
 NA_IAPI NABezel4i64 naMakeBezel4i64Zero(void);
-NA_IAPI NABezel4s   naMakeBezel4sZero(void);
+NA_IAPI NABezel4s   naMakeBezel4sZero  (void);
 
 
 
