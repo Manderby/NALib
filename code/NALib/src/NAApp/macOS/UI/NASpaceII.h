@@ -243,7 +243,7 @@ NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift) {
 
 NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NAColor* _Nullable color) {
   if(color) {
-    naCopyColor(&space->backgroundColor, color);
+    naFillColorWithCopy(&space->backgroundColor, color);
   }else{
     naFillColorWithTransparent(&space->backgroundColor);
   }

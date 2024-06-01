@@ -34,35 +34,45 @@ NA_IAPI NABool naToggleFlagu32(uint32* flags, uint32 flag);
 // Converts an integer denoting an end or max to its counterpart. Also does
 // some checks if the values over- or underflow.
 NA_IAPI int32  naMakeMaxWithEndi32          (int32  end);
-NA_IAPI NAi64  naMakeMaxWithEndi64          (NAi64  end);
+NA_IAPI NAi64  naMakeMaxWithEndi64          (int64  end);
 NA_IAPI NAInt  naMakeMaxWithEndi            (NAInt  end);
 NA_IAPI size_t naMakeMaxWithEnds            (size_t end);
 
 NA_IAPI int32  naMakeEndWithMaxi32          (int32  max);
-NA_IAPI NAi64  naMakeEndWithMaxi64          (NAi64  max);
+NA_IAPI NAi64  naMakeEndWithMaxi64          (int64  max);
 NA_IAPI NAInt  naMakeEndWithMaxi            (NAInt  max);
 NA_IAPI size_t naMakeEndWithMaxs            (size_t max);
 
-NA_IAPI double naMakeEndWithStartAndLength  (double start, double length);
-NA_IAPI float  naMakeEndWithStartAndLengthf (float  start, float  length);
-NA_IAPI NAInt  naMakeEndWithStartAndLengthi (NAInt  start, NAInt  length);
-NA_IAPI size_t naMakeEndWithStartAndLengths (size_t start, size_t length);
+NA_IAPI double naMakeEndWithStartAndLength   (double start, double length);
+NA_IAPI float  naMakeEndWithStartAndLengthf  (float  start, float  length);
+NA_IAPI NAInt  naMakeEndWithStartAndLengthi  (NAInt  start, NAInt  length);
+NA_IAPI int32  naMakeEndWithStartAndLengthi32(int32  start, int32  length);
+NA_IAPI int64  naMakeEndWithStartAndLengthi64(int64  start, int64  length);
+NA_IAPI size_t naMakeEndWithStartAndLengths  (size_t start, size_t length);
 
 NA_IAPI NAInt  naMakeMaxWithMinAndLengthi   (NAInt  min,   NAInt  length);
+NA_IAPI int32  naMakeMaxWithMinAndLengthi32 (int32  min,   int32  length);
+NA_IAPI int64  naMakeMaxWithMinAndLengthi64 (int64  min,   int64  length);
 NA_IAPI size_t naMakeMaxWithMinAndLengths   (size_t min,   size_t length);
 
 // The Variants with E also allow start to be greater than end,
 // resulting in a negative size.
-NA_IAPI double naMakeLengthWithStartAndEnd   (double start, double end);
-NA_IAPI double naMakeLengthWithStartAndEndE  (double start, double end);
-NA_IAPI float  naMakeLengthWithStartAndEndf  (float  start, float  end);
-NA_IAPI float  naMakeLengthWithStartAndEndfE (float  start, float  end);
-NA_IAPI NAInt  naMakeLengthWithStartAndEndi  (NAInt  start, NAInt  end);
-NA_IAPI NAInt  naMakeLengthWithStartAndEndiE (NAInt  start, NAInt  end);
-NA_IAPI size_t naMakeLengthWithStartAndEnds  (size_t start, size_t end);
-NA_IAPI size_t naMakeLengthWithStartAndEndsE (size_t start, size_t end);
+NA_IAPI double naMakeLengthWithStartAndEnd    (double start, double end);
+NA_IAPI double naMakeLengthWithStartAndEndE   (double start, double end);
+NA_IAPI float  naMakeLengthWithStartAndEndf   (float  start, float  end);
+NA_IAPI float  naMakeLengthWithStartAndEndfE  (float  start, float  end);
+NA_IAPI NAInt  naMakeLengthWithStartAndEndi   (NAInt  start, NAInt  end);
+NA_IAPI NAInt  naMakeLengthWithStartAndEndiE  (NAInt  start, NAInt  end);
+NA_IAPI int32  naMakeLengthWithStartAndEndi32 (int32  start, int32  end);
+NA_IAPI int32  naMakeLengthWithStartAndEndi32E(int32  start, int32  end);
+NA_IAPI int64  naMakeLengthWithStartAndEndi64 (int64  start, int64  end);
+NA_IAPI int64  naMakeLengthWithStartAndEndi64E(int64  start, int64  end);
+NA_IAPI size_t naMakeLengthWithStartAndEnds   (size_t start, size_t end);
+NA_IAPI size_t naMakeLengthWithStartAndEndsE  (size_t start, size_t end);
 
 NA_IAPI NAInt  naMakeLengthWithMinAndMaxi   (NAInt  min,   NAInt  max);
+NA_IAPI int32  naMakeLengthWithMinAndMaxi32 (int32  min,   int32  max);
+NA_IAPI int64  naMakeLengthWithMinAndMaxi64 (int64  min,   int64  max);
 NA_IAPI size_t naMakeLengthWithMinAndMaxs   (size_t min,   size_t max);
 
 

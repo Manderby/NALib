@@ -82,8 +82,8 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty) {
           start++;
         }else{
           found = NA_TRUE;
-          NARangei range = naMakeRangeiWithStartAndEnd(start, cur);
-          if(naIsRangeiUseful(range)) {
+          NARangei64 range = naMakeRangei64WithStartAndEnd(start, cur);
+          if(naIsRangei64Useful(range)) {
             string = naNewStringWithBufferExtraction(buffer, range);
           }else{
             string = naNewString();
@@ -98,8 +98,8 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty) {
   }
 
   if(!found) {
-    NARangei remainingrange = naMakeRangeiWithStartAndEnd(start, naGetRangeiEnd(buffer->range));
-    if(!naIsRangeiEmpty(remainingrange)) {
+    NARangei64 remainingrange = naMakeRangei64WithStartAndEnd(start, naGetRangei64End(buffer->range));
+    if(!naIsRangei64Empty(remainingrange)) {
       string = naNewStringWithBufferExtraction(buffer, remainingrange);
     }else{
       string = naNewString();
@@ -119,14 +119,14 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty) {
 NA_DEF NAString* naParseBufferRemainder(NABufferIterator* iter) {
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
   NAInt abspos = naGetBufferLocation(iter);
-  return naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(abspos, naGetRangeiEnd(buffer->range)));
+  return naNewStringWithBufferExtraction(buffer, naMakeRangei64WithStartAndEnd(abspos, naGetRangei64End(buffer->range)));
 }
 
 
 
 NA_DEF NAString* naParseBufferToken(NABufferIterator* iter) {
   NAString* string;
-  NARangei range;
+  NARangei64 range;
   NABool found = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
   NAInt end = start;
@@ -156,10 +156,10 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter) {
   }
 
   if(!found) {
-    end = naGetRangeiEnd(buffer->range);
+    end = naGetRangei64End(buffer->range);
   }
-  range = naMakeRangeiWithStartAndEnd(start, end);
-  if(!naIsRangeiEmpty(range)) {
+  range = naMakeRangei64WithStartAndEnd(start, end);
+  if(!naIsRangei64Empty(range)) {
     string = naNewStringWithBufferExtraction(buffer, range);
   }else{
     string = naNewString();
@@ -172,7 +172,7 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter) {
 
 NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8Char delimiter, NABool skipWhitespace) {
   NAString* string;
-  NARangei range;
+  NARangei64 range;
   NABool found = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
   NAInt end = start;
@@ -202,12 +202,12 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
   }
 
   if(!found) {
-    end = naGetRangeiEnd(buffer->range);
+    end = naGetRangei64End(buffer->range);
   }else{
     naIterateBuffer(iter, 1);
   }
-  range = naMakeRangeiWithStartAndEnd(start, end);
-  if(!naIsRangeiEmpty(range)) {
+  range = naMakeRangei64WithStartAndEnd(start, end);
+  if(!naIsRangei64Empty(range)) {
     string = naNewStringWithBufferExtraction(buffer, range);
   }else{
     string = naNewString();
@@ -224,7 +224,7 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
 
 NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter) {
   NAString* string;
-  NARangei range;
+  NARangei64 range;
   NABool found = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
   NAInt end = start;
@@ -254,10 +254,10 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter) {
   }
 
   if(!found) {
-    end = naGetRangeiEnd(buffer->range);
+    end = naGetRangei64End(buffer->range);
   }
-  range = naMakeRangeiWithStartAndEnd(start, end);
-  if(!naIsRangeiEmpty(range)) {
+  range = naMakeRangei64WithStartAndEnd(start, end);
+  if(!naIsRangei64Empty(range)) {
     string = naNewStringWithBufferExtraction(buffer, range);
   }else{
     string = naNewString();
@@ -280,7 +280,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
   bytesused = 0;
   prevval = NA_ZERO_u64;
   if(maxDigitCount == 0) {
-    maxDigitCount = naGetRangeiEnd(buffer->range) - start;
+    maxDigitCount = naGetRangei64End(buffer->range) - start;
   }
 
   while(!found && !naIsBufferAtEnd(iter)) {

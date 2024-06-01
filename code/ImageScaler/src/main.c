@@ -95,7 +95,7 @@ struct ImageTesterController{
   const NAImage* bottomImage;
   const NAColor* bottomColor;
   
-  NAPosi center;
+  NAPosi32 center;
   size_t selectedTop;
   float scale;
   float alpha;
@@ -129,8 +129,8 @@ void naStartImageTestApplication(void) {
 
   NAPNG* gridPNG = naNewPNGWithPath("transparencyGrid.png");
   NAImage* gridImage = naCreateImageFromPNG(gridPNG);
-  NASizei gridSize = naGetImageSize(gridImage);
-  app->transparencyGridImage = naCreateImageWithResize(gridImage, naMakeSizei(gridSize.width * 2, gridSize.height * 2));
+  NASizes gridSize = naGetImageSize(gridImage);
+  app->transparencyGridImage = naCreateImageWithResize(gridImage, naMakeSizes(gridSize.width * 2, gridSize.height * 2));
   naReleaseImage(gridImage);
 
   for(size_t i = 0; i < IMAGE_COUNT; ++i) {
@@ -279,11 +279,11 @@ void updateImageTestController(ImageTesterController* con) {
   naSetSelectIndexSelected(con->blendModeSelect, con->blendMode);
   naSetSelectIndexSelected(con->bottomSelect, con->selectedBottom);
 
-  NASizei gridSize = naGetImageSize(app->transparencyGridImage);
+  NASizes gridSize = naGetImageSize(app->transparencyGridImage);
 
   NAImage* backImage;
   if(con->bottomImage) {
-    NASizei newSize = naGetImageSize(con->bottomImage);
+    NASizes newSize = naGetImageSize(con->bottomImage);
     newSize.width *= 2;
     newSize.height *= 2;
     backImage = naCreateImageWithResize(con->bottomImage, newSize);
@@ -294,16 +294,16 @@ void updateImageTestController(ImageTesterController* con) {
   NAImage* blendedImage;
 
   if(con->topImage) {
-    NASizei originalSize = naGetImageSize(con->topImage);
-    NASizei newSize = naMakeSizeiE((NAInt)(con->scale * originalSize.width), (NAInt)(con->scale * originalSize.height));
-    if(naIsSizeiUseful(newSize)) {
+    NASizes originalSize = naGetImageSize(con->topImage);
+    NASizes newSize = naMakeSizesE(con->scale * originalSize.width, con->scale * originalSize.height);
+    if(naIsSizesUseful(newSize)) {
       NAImage* scaledImage = naCreateImageWithResize(con->topImage, newSize);
-      NASizei baseSize = naGetImageSize(backImage);
+      NASizes baseSize = naGetImageSize(backImage);
       NASize spaceSize = naGetUIElementRect(con->imageSpace).size;
 
-      NAPosi origin = naMakePosi(
-        con->center.x - (NAInt)((newSize.width / 2.) + ((spaceSize.width - baseSize.width) / 2.)),
-        con->center.y - (NAInt)((newSize.height / 2.) + ((spaceSize.height - baseSize.height) / 2.)));
+      NAPosi32 origin = naMakePosi32(
+        con->center.x - (((int32)newSize.width / 2) + (((int32)spaceSize.width - (int32)baseSize.width) / 2)),
+        con->center.y - (((int32)newSize.height / 2) + (((int32)spaceSize.height - (int32)baseSize.height) / 2)));
 
       blendedImage = naCreateImageWithBlend(
         backImage,
@@ -325,10 +325,10 @@ void updateImageTestController(ImageTesterController* con) {
 
   naReleaseImage(backImage);
 
-  NASizei blendedSize = naGetImageSize(blendedImage);
-  NAPosi origin = naMakePosi(
-    (gridSize.width - blendedSize.width) / 2,
-    (gridSize.height - blendedSize.height) / 2);
+  NASizes blendedSize = naGetImageSize(blendedImage);
+  NAPosi32 origin = naMakePosi32(
+    ((int32)gridSize.width - (int32)blendedSize.width) / 2,
+    ((int32)gridSize.height - (int32)blendedSize.height) / 2);
 
   NAImage* fullImage = naCreateImageWithBlend(
     app->transparencyGridImage,
@@ -393,8 +393,8 @@ NABool mouseMoved(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   const NAMouseStatus* mouse = naGetMouseStatus();
   NARect spaceRect = naGetUIElementRectAbsolute(reaction.uiElement);
-  con->center.x = (NAInt)(mouse->pos.x - spaceRect.pos.x);
-  con->center.y = (NAInt)(mouse->pos.y - spaceRect.pos.y);
+  con->center.x = (int32)(mouse->pos.x - spaceRect.pos.x);
+  con->center.y = (int32)(mouse->pos.y - spaceRect.pos.y);
   updateImageTestController(con);
   return NA_TRUE;
 }

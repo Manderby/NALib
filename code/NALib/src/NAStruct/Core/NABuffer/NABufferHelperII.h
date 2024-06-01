@@ -10,12 +10,12 @@
 
 
 NA_IDEF NABool naIsBufferEmpty(const NABuffer* buffer) {
-  return naIsRangeiEmpty(buffer->range);
+  return naIsRangei64Empty(buffer->range);
 }
 
 
 
-NA_IDEF NARangei naGetBufferRange(const NABuffer* buffer) {
+NA_IDEF NARangei64 naGetBufferRange(const NABuffer* buffer) {
   return buffer->range;
 }
 
@@ -40,7 +40,7 @@ NA_IDEF void naExtendBufferRange(NABuffer* buffer, NAInt bytesAtStart, NAInt byt
     if(bytesAtEnd < 0)
       naError("bytesAtEnd should not be negative");
   #endif
-  na_EnsureBufferRange(buffer, buffer->range.origin - bytesAtStart, naGetRangeiEnd(buffer->range) + bytesAtEnd);
+  na_EnsureBufferRange(buffer, buffer->range.origin - bytesAtStart, naGetRangei64End(buffer->range) + bytesAtEnd);
 }
 
 

@@ -52,9 +52,9 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
   double baseResolution = na_GetUIImageBaseResolution(mutableUIImage);
   if(resolution != baseResolution) {
     const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, baseResolution, skin, interaction, secondaryState);
-    NASizei size = naGetImageSize(originalImage->image);
-    size.width = (NAInt)((double)size.width * resolution / baseResolution);
-    size.height = (NAInt)((double)size.height * resolution / baseResolution);
+    NASizes size = naGetImageSize(originalImage->image);
+    size.width = (size_t)((double)size.width * resolution / baseResolution);
+    size.height = (size_t)((double)size.height * resolution / baseResolution);
     NAImage* newImage = naCreateImageWithResize(originalImage->image, size);
     newSubImage = na_AddUISubImage(
       mutableUIImage,
@@ -351,12 +351,12 @@ NA_HDEF double na_GetUIImageBaseResolution(const NAUIImage* uiImage) {
 
 
 
-NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage) {
+NA_API NASizes naGetUIImage1xSize(const NAUIImage* uiImage) {
   const NA_UISubImage* subImage = naGetListFirstConst(&uiImage->subImages);
-  NASizei size = naGetImageSize(subImage->image);
+  NASizes size = naGetImageSize(subImage->image);
   double factor = subImage->resolution / NA_UIIMAGE_RESOLUTION_SCREEN_1x;
-  size.width = (NAInt)naFloor(size.width / factor);
-  size.height = (NAInt)naFloor(size.height / factor);
+  size.width = (size_t)naFloor(size.width / factor);
+  size.height = (size_t)naFloor(size.height / factor);
   return size;
 }
 

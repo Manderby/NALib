@@ -600,7 +600,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
     naWriteBufferu8(&iterOut, headbyte);
     naWriteBufferu16(&iterOut, curByteSize);
     naWriteBufferu16(&iterOut, ~curByteSize);
-    naWriteBufferBuffer(&iterOut, input, naMakeRangei(curOffset, curByteSize));
+    naWriteBufferBuffer(&iterOut, input, naMakeRangei64(curOffset, curByteSize));
     byteSize -= curByteSize;
     curOffset += curByteSize;
   }

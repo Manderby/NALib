@@ -102,7 +102,9 @@ NA_DEF NAImage* naCreateImageFromNativeImage(const void* nativeImage) {
   NAImage* image;
   
   CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)nativeImage));
-  image = naCreateImage(naMakeSizei((NAInt)CGImageGetWidth((CGImageRef)nativeImage), (NAInt)CGImageGetHeight((CGImageRef)nativeImage)), NA_NULL);
+  image = naCreateImage(naMakeSizes(
+    (size_t)CGImageGetWidth((CGImageRef)nativeImage),
+    (size_t)CGImageGetHeight((CGImageRef)nativeImage)), NA_NULL);
   // Note that reading PNG files directly does not premultiply alpha!
   naFillImageWithu8(image, CFDataGetBytePtr(rawData), NA_TRUE, NA_COLOR_BUFFER_RGBAPre);
   CFRelease(rawData);
@@ -146,7 +148,7 @@ NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr) {
 NA_DEF void* naAllocNativeImageWithImage(const NAImage* image) {
   CGImageRef nativeImage;
   CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-  NASizei imageSize = naGetImageSize(image);
+  NASizes imageSize = naGetImageSize(image);
   CGContextRef cgContext = CGBitmapContextCreateWithData(
     NULL,
     (size_t)imageSize.width,
@@ -220,7 +222,7 @@ NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
   
   // old method: Just create an image with multiple representations.
   if(!image) {
-    NASizei imageSize = naGetUIImage1xSize(uiImage);
+    NASizes imageSize = naGetUIImage1xSize(uiImage);
     image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
 
     NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;

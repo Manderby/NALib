@@ -27,7 +27,7 @@ typedef enum{
 } NAPNGInterlaceMethod;
 
 struct NAPNG{
-  NASizei size;
+  NASizes size;
   NAList chunks;
   uint32 flags;
   int8 bitDepth;
@@ -261,7 +261,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png) {
   size_t bpp = naGetPNGBytesPerPixel(png->colorType);
   size_t bytesPerLine = (size_t)png->size.width * bpp;
 
-  png->pixeldata = naMalloc(sizeof(NAByte) * naGetSizeiIndexCount(png->size) * bpp);
+  png->pixeldata = naMalloc(sizeof(NAByte) * naGetSizesIndexCount(png->size) * bpp);
   curByte = png->pixeldata;
 
   upBuffer = naMalloc(bytesPerLine);
@@ -677,7 +677,7 @@ NA_HDEF void na_ReadPNGzTXtChunk(NAPNG* png, NAPNGChunk* ztxt) {
 
 
 
-NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colorType, int8 bitDepth) {
+NA_DEF NAPNG* naNewPNG(NASizes size, NAPNGColorType colorType, int8 bitDepth) {
   NAPNG* png = naNew(NAPNG);
 
   #if NA_DEBUG
@@ -700,7 +700,7 @@ NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colorType, int8 bitDepth) {
   png->colorType = colorType;
 
   size_t bpp = naGetPNGBytesPerPixel(colorType);
-  png->pixeldata = naMalloc(naGetSizeiIndexCount(size) * bpp);
+  png->pixeldata = naMalloc(naGetSizesIndexCount(size) * bpp);
   png->filteredData = NA_NULL;
 
   return png;
@@ -818,7 +818,7 @@ NA_DEF void* naGetPNGPixelData(NAPNG* png) {
 
 NA_DEF size_t naGetPNGPixelDataByteSize(NAPNG* png) {
   size_t bpp = naGetPNGBytesPerPixel(png->colorType);
-  return naGetSizeiIndexCount(png->size) * bpp;
+  return naGetSizesIndexCount(png->size) * bpp;
 }
 
 
@@ -860,7 +860,7 @@ NA_DEF NAImage* naCreateImageFromPNG(NAPNG* png) {
 
 
 
-NA_DEF NASizei naGetPNGSize(NAPNG* png) {
+NA_DEF NASizes naGetPNGSize(NAPNG* png) {
   return png->size;
 }
 

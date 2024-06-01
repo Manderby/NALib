@@ -9,7 +9,7 @@ NA_RUNTIME_TYPE(NABufferPart, na_DestructBufferPart, NA_FALSE);
 
 
 // Creates a buffer part with sparse memory.
-NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei sourceRange) {
+NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei64 sourceRange) {
   #if NA_DEBUG
     //if(!source)
     //  naError("source is Null");
@@ -23,7 +23,7 @@ NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei so
     part->sourceOffset = sourceRange.origin;
     if(na_HasBufferSourceCache(source)) {
       NABuffer* sourceCache = na_GetBufferSourceCache(source);
-      na_EnsureBufferRange(sourceCache, sourceRange.origin, naGetRangeiEnd(sourceRange));
+      na_EnsureBufferRange(sourceCache, sourceRange.origin, naGetRangei64End(sourceRange));
     }
   }else{
     part->source = NA_NULL;
@@ -156,7 +156,7 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start,
     naUpdateTreeLeaf(partIter);
 
     NAInt sourceOffset = na_GetBufferPartSourceOffset(part);
-    NABufferPart* newPart = na_NewBufferPartSparse(part->source, naMakeRangeiWithStartAndEnd(sourceOffset + (NAInt)end, sourceOffset + (NAInt)prevByteSize));
+    NABufferPart* newPart = na_NewBufferPartSparse(part->source, naMakeRangei64WithStartAndEnd(sourceOffset + (NAInt)end, sourceOffset + (NAInt)prevByteSize));
     naAddTreeNextMutable(partIter, newPart, NA_FALSE);
   }
 
@@ -167,7 +167,7 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start,
     naUpdateTreeLeaf(partIter);
 
     NAInt sourceOffset = na_GetBufferPartSourceOffset(part);
-    NABufferPart* newPart = na_NewBufferPartSparse(part->source, naMakeRangeiWithStartAndEnd(sourceOffset + (NAInt)start, sourceOffset + (NAInt)end));
+    NABufferPart* newPart = na_NewBufferPartSparse(part->source, naMakeRangei64WithStartAndEnd(sourceOffset + (NAInt)start, sourceOffset + (NAInt)end));
     naAddTreeNextMutable(partIter, newPart, NA_TRUE);
     // Note that using the NA_TRUE, we automatically move to the new part.
     // This means that iter now points to the desired part.
@@ -180,7 +180,7 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start,
 
 // This function prepares the current part by calling the prepare function
 // of the cache and referencing the memory block.
-NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARangei partRange) {  
+NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARangei64 partRange) {  
   NABufferPart* returnPart = naGetTreeCurLeafMutable(partIter);
 
   #if NA_DEBUG
@@ -198,7 +198,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
       naCrash("source has no buffer");
     if(!na_IsBufferPartSparse(returnPart))
       naError("part is not sparse");
-    if(na_HasBufferSourceLimit(returnPart->source) && !naContainsRangeiOffset(na_GetBufferSourceLimit(returnPart->source), sourceOffset))
+    if(na_HasBufferSourceLimit(returnPart->source) && !naContainsRangei64Offset(na_GetBufferSourceLimit(returnPart->source), sourceOffset))
       naError("offset is not in source limits");
   #endif
 
@@ -341,7 +341,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
 
 // This function expects a sparse buffer part, splits it such that a suitable
 // range can be made non-sparse and that range is filled with memory.
-NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARangei partRange) {
+NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARangei64 partRange) {
   NABufferPart* part = naGetTreeCurLeafMutable(partIter);
 
   #if NA_DEBUG
@@ -356,7 +356,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
   // possibly a few bytes more. We do this by aligning start and end at
   // NA_INTERNAL_BUFFER_PART_BYTESIZE.
   NAInt normedStart = na_GetBufferPartNormedStart(partRange.origin);
-  NAInt normedEnd = na_GetBufferPartNormedEnd(naGetRangeiEnd(partRange));
+  NAInt normedEnd = na_GetBufferPartNormedEnd(naGetRangei64End(partRange));
   #if NA_DEBUG
     if(normedStart < 0)
       naError("normed start is negative");
@@ -380,7 +380,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
     na_FillBufferSourceMemory(
       part->source,
       dst,
-      naMakeRangeiWithStartAndEnd(sourceOffset, sourceOffset + (NAInt)part->byteSize));
+      naMakeRangei64WithStartAndEnd(sourceOffset, sourceOffset + (NAInt)part->byteSize));
   }
 
   return part;
@@ -409,12 +409,12 @@ NA_HDEF size_t na_PrepareBufferPart(NABufferIterator* iter, size_t byteCount) {
       // There is a cache, so we try to fill the part with it.
       part = na_PrepareBufferPartCache(
         &(iter->partIter),
-        naMakeRangei(iter->partOffset, (NAInt)byteCount));
+        naMakeRangei64(iter->partOffset, (NAInt)byteCount));
     }else{
       // We have no cache, meaning, we prepare memory ourselfes.
       part = na_PrepareBufferPartMemory(
         &(iter->partIter),
-        naMakeRangei(iter->partOffset, (NAInt)byteCount));
+        naMakeRangei64(iter->partOffset, (NAInt)byteCount));
     }
   }
   

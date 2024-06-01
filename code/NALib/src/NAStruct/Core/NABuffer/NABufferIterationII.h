@@ -43,7 +43,7 @@ NA_IDEF NABool naLocateBufferFromStart(NABufferIterator* iter, NAInt offset) {
 
 NA_IDEF NABool naLocateBufferFromEnd(NABufferIterator* iter, NAInt offset) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-  return naLocateBufferAbsolute(iter, naGetRangeiEnd(buffer->range) + offset);
+  return naLocateBufferAbsolute(iter, naGetRangei64End(buffer->range) + offset);
 }
 
 
@@ -74,12 +74,12 @@ NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter) {
       NABool found = naLocateBufferAbsolute(iter, naGetBufferLocation(iter));
       if(!found) {
         naResetTreeIterator(&(iter->partIter));
-        iter->partOffset = naGetRangeiEnd(buffer->range);
+        iter->partOffset = naGetRangei64End(buffer->range);
       }
     }
   }
   return buffer->range.length == 0
-    || (naIsBufferAtInitial(iter) && (iter->partOffset == naGetRangeiEnd(buffer->range)));
+    || (naIsBufferAtInitial(iter) && (iter->partOffset == naGetRangei64End(buffer->range)));
 }
 
 

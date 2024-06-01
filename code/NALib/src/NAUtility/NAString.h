@@ -127,7 +127,7 @@ NA_API NAString* naNewStringExtraction(const NAString* srcString,
                                                  NAInt length);
 
 NA_API NAString* naNewStringWithBufferExtraction( NABuffer* buffer,
-                                                      NARangei range);
+                                                      NARangei64 range);
 
 // Returns a string equal to the given string but all newlines are
 // converted to the given newline encoding.

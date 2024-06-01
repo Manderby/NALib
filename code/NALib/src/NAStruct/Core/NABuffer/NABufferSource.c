@@ -16,7 +16,7 @@ NA_DEF NABufferSource* naCreateBufferSource(NABufferFiller filler, NABuffer* cac
   source->data = NA_NULL;
   source->dataDestructor = NA_NULL;
   source->flags = 0;
-  source->limit = naMakeRangeiWithStartAndEnd(0, 0);
+  source->limit = naMakeRangei64WithStartAndEnd(0, 0);
 
   return source;
 }

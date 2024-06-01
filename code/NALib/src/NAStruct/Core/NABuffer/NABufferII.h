@@ -189,7 +189,7 @@ struct NABuffer{
                              // origin. Add this offset to the desired pos to
                              // get the position within the source.
   uint32 flags;
-  NARangei range;
+  NARangei64 range;
 
   NANewlineEncoding newlineEncoding;  // The current newline encoding
   NAInt endianness;                   // The current endianness
@@ -226,15 +226,15 @@ NA_HIAPI void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, size_t 
 NA_HIAPI NABool na_HasBufferSourceCache(NABufferSource* source);
 NA_HIAPI NABuffer* na_GetBufferSourceCache(NABufferSource* source);
 NA_HIAPI NABool na_HasBufferSourceLimit(const NABufferSource* source);
-NA_HIAPI NARangei na_GetBufferSourceLimit(const NABufferSource* source);
-NA_HIAPI void na_FillBufferSourceMemory(const NABufferSource* source, void* dst, NARangei range);
+NA_HIAPI NARangei64 na_GetBufferSourceLimit(const NABufferSource* source);
+NA_HIAPI void na_FillBufferSourceMemory(const NABufferSource* source, void* dst, NARangei64 range);
 
 
 
 // NABufferPart
 NA_HIAPI NAInt na_GetBufferPartNormedStart(NAInt start);
 NA_HIAPI NAInt na_GetBufferPartNormedEnd(NAInt end);
-NA_HAPI NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei sourceRange);
+NA_HAPI NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei64 sourceRange);
 NA_HAPI NABufferPart* na_NewBufferPartWithConstData(const void* data, size_t byteSize);
 NA_HAPI NABufferPart* na_NewBufferPartWithMutableData(void* data, size_t byteSize, NAMutator destructor);
 NA_HIAPI NABufferSource* na_GetBufferPartSource(const NABufferPart* part);
@@ -270,8 +270,8 @@ NA_HAPI void na_PrepareBuffer(NABufferIterator* iter, size_t byteCount);
 
 // NABufferPart
 NA_HAPI NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start, size_t end);
-NA_HAPI NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARangei partRange);
-NA_HAPI NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARangei partRange);
+NA_HAPI NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARangei64 partRange);
+NA_HAPI NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARangei64 partRange);
 NA_HAPI size_t na_PrepareBufferPart(NABufferIterator* iter, size_t byteCount);
 
 NA_HIAPI size_t na_GetBufferPartRemainingBytes(NABufferIterator* iter);

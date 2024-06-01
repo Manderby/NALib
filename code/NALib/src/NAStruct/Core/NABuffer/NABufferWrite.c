@@ -218,8 +218,8 @@ NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, size_t co
 // BLOCK WRITING
 // ////////////////////////////////////
 
-NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcBuffer, NARangei srcRange) {
-  if(!naIsRangeiEmpty(srcRange)) {
+NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcBuffer, NARangei64 srcRange) {
+  if(!naIsRangei64Empty(srcRange)) {
     NABuffer* dstbuffer;
     NABufferSource* tmpsource;
     NAInt tmpsourceOffset;
@@ -235,7 +235,7 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcBuffe
     dstbuffer->source = naCreateBufferSource(NA_NULL, mutableSrcBuffer);
     dstbuffer->sourceOffset = srcRange.origin - curPos;
 
-    naCacheBufferRange(dstbuffer, naMakeRangei(curPos, srcRange.length));
+    naCacheBufferRange(dstbuffer, naMakeRangei64(curPos, srcRange.length));
     naLocateBufferAbsolute(iter, curPos + srcRange.length);
 
     naRelease(dstbuffer->source);
@@ -275,7 +275,7 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, size_t b
     }
 
     tmpbuffer = naCreateBufferWithMutableData(buf, byteSize, naFree);
-    naWriteBufferBuffer(iter, tmpbuffer, naMakeRangei(0, (NAInt)byteSize));
+    naWriteBufferBuffer(iter, tmpbuffer, naMakeRangei64(0, (NAInt)byteSize));
     naRelease(tmpbuffer);
 
   }else{

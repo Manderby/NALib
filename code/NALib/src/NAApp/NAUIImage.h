@@ -84,7 +84,7 @@ NA_API void naSetUIImageSubImage(
   NAUIImageInteraction interaction);
 
 // Returns the size of the 1x representation.
-NA_API NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
+NA_API NASizes naGetUIImage1xSize(const NAUIImage* uiImage);
 
 // Returns the Skin for the current Appearance. Either returns LIGHT or DARK.
 // Never returns PLAIN.

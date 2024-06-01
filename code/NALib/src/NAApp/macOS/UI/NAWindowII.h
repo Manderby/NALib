@@ -147,7 +147,7 @@
 
 
 
-NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, NAInt storageTag) {
+NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, size_t storageTag) {
   NACocoaWindow* cocoaWindow = naNew(NACocoaWindow);
 
   NABool resizeable = naGetFlagu32(flags, NA_WINDOW_RESIZEABLE);

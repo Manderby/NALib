@@ -40,7 +40,7 @@ typedef struct NAImage NAImage;
 
 // Creates an image with the specified size and fills it with the given color.
 // If color is Null, the image contents will be uninitialized.
-NA_API NAImage* naCreateImage(NASizei size, const NAColor* color);
+NA_API NAImage* naCreateImage(NASizes size, const NAColor* color);
 
 // Creates an image which is an exact duplicate of the image given.
 NA_API NAImage* naCreateImageCopy(const NAImage* image);
@@ -65,7 +65,7 @@ NA_DEF NAImage* naCreateImageWithBlend(
   const NAImage* top,
   NABlendMode mode,
   float factor,
-  NAPosi offset);
+  NAPosi32 offset);
 NA_DEF NAImage* naCreateImageWithApply(
   const NAColor* ground,
   const NAImage* top,
@@ -78,14 +78,14 @@ NA_API NAImage* naCreateImageWithHalfSize(const NAImage* image);
 // Creates an image which is a resize of the given image.
 NA_API NAImage* naCreateImageWithResize(
   const NAImage* image,
-  NASizei newSize);
+  NASizes newSize);
 
 // Retains and Releases an image.
 NA_API NAImage* naRetainImage(const NAImage* image);
 NA_API void naReleaseImage(const NAImage* image);
 
 // Returns the image dimensions.
-NA_API NASizei naGetImageSize(const NAImage* image);
+NA_API NASizes naGetImageSize(const NAImage* image);
 
 // Returns the raw image data.
 NA_API NAColor* naGetImageData(const NAImage* image);

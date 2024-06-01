@@ -137,6 +137,32 @@ NA_IDEF NAInt naMakeEndWithStartAndLengthi(NAInt start, NAInt length) {
   #endif
   return result;
 }
+NA_IDEF int32 naMakeEndWithStartAndLengthi32(int32 start, int32 length) {
+  #if NA_DEBUG
+    if(length < 0) {
+      naError("length is negative");
+    }
+  #endif
+  int32 result = start + length;
+  #if NA_DEBUG
+    if(length >= 0 && result < start)
+      naError("Integer overflow");
+  #endif
+  return result;
+}
+NA_IDEF int64 naMakeEndWithStartAndLengthi64(int64 start, int64 length) {
+  #if NA_DEBUG
+    if(length < 0) {
+      naError("length is negative");
+    }
+  #endif
+  int64 result = start + length;
+  #if NA_DEBUG
+    if(length >= 0 && result < start)
+      naError("Integer overflow");
+  #endif
+  return result;
+}
 NA_IDEF size_t naMakeEndWithStartAndLengths(size_t start, size_t length) {
   size_t result = start + length;
   #if NA_DEBUG
@@ -155,6 +181,32 @@ NA_IDEF NAInt naMakeMaxWithMinAndLengthi(NAInt min, NAInt length) {
     }
   #endif
   NAInt result = naMakeMaxWithEndi(min + length);
+  #if NA_DEBUG
+    if(length > 0 && result < min)
+      naError("Integer overflow");
+  #endif
+  return result;
+}
+NA_IDEF int32 naMakeMaxWithMinAndLengthi32(int32 min, int32 length) {
+  #if NA_DEBUG
+    if(length < 0) {
+      naError("length is negative");
+    }
+  #endif
+  int32 result = naMakeMaxWithEndi32(min + length);
+  #if NA_DEBUG
+    if(length > 0 && result < min)
+      naError("Integer overflow");
+  #endif
+  return result;
+}
+NA_IDEF int64 naMakeMaxWithMinAndLengthi64(int64 min, int64 length) {
+  #if NA_DEBUG
+    if(length < 0) {
+      naError("length is negative");
+    }
+  #endif
+  int64 result = naMakeMaxWithEndi64(min + length);
   #if NA_DEBUG
     if(length > 0 && result < min)
       naError("Integer overflow");
@@ -219,6 +271,36 @@ NA_IDEF NAInt naMakeLengthWithStartAndEndiE(NAInt start, NAInt end) {
   #endif
   return result;
 }
+NA_IDEF int32 naMakeLengthWithStartAndEndi32(int32 start, int32 end) {
+  #if NA_DEBUG
+    if(start > end)
+      naError("start is greater than end");
+  #endif
+  return naMakeLengthWithStartAndEndi32E(start, end);
+}
+NA_IDEF int32 naMakeLengthWithStartAndEndi32E(int32 start, int32 end) {
+  int32 result = end - start;
+  #if NA_DEBUG
+    if(end > start && result < 0)
+      naError("Integer overflow");
+  #endif
+  return result;
+}
+NA_IDEF int64 naMakeLengthWithStartAndEndi64(int64 start, int64 end) {
+  #if NA_DEBUG
+    if(start > end)
+      naError("start is greater than end");
+  #endif
+  return naMakeLengthWithStartAndEndi64E(start, end);
+}
+NA_IDEF int64 naMakeLengthWithStartAndEndi64E(int64 start, int64 end) {
+  int64 result = end - start;
+  #if NA_DEBUG
+    if(end > start && result < 0)
+      naError("Integer overflow");
+  #endif
+  return result;
+}
 NA_IDEF size_t naMakeLengthWithStartAndEnds(size_t start, size_t end) {
   #if NA_DEBUG
     if(start > end)
@@ -241,6 +323,34 @@ NA_IDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max) {
       naError("min is greater than max + 1");
   #endif
   NAInt result = naMakeEndWithMaxi(max) - min;
+  #if NA_DEBUG
+    if(max > min && result < 0)
+      naError("Integer overflow");
+  #endif
+  return result;
+}
+NA_IDEF int32 naMakeLengthWithMinAndMaxi32(int32 min, int32 max) {
+  #if NA_DEBUG
+    if(max == NA_MAX_i32)
+      naError("max being equal to the integer maximum will lead to an overflow");
+    if(min > max + 1)
+      naError("min is greater than max + 1");
+  #endif
+  int32 result = naMakeEndWithMaxi32(max) - min;
+  #if NA_DEBUG
+    if(max > min && result < 0)
+      naError("Integer overflow");
+  #endif
+  return result;
+}
+NA_IDEF int64 naMakeLengthWithMinAndMaxi64(int64 min, int64 max) {
+  #if NA_DEBUG
+    if(max == NA_MAX_i64)
+      naError("max being equal to the integer maximum will lead to an overflow");
+    if(min > max + 1)
+      naError("min is greater than max + 1");
+  #endif
+  int64 result = naMakeEndWithMaxi64(max) - min;
   #if NA_DEBUG
     if(max > min && result < 0)
       naError("Integer overflow");
