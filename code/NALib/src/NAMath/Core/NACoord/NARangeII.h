@@ -175,6 +175,29 @@ NA_IDEF NARanges naMakeRangesZero() {
 }
 
 
+
+NA_IDEF void naFillRangeWithCopy(NARange* ranged, const NARange* ranges) {
+  ranged->origin = ranges->origin;
+  ranged->length = ranges->length;
+}
+NA_IDEF void naFillRangefWithCopy(NARangef* ranged, const NARangef* ranges) {
+  ranged->origin = ranges->origin;
+  ranged->length = ranges->length;
+}
+NA_IDEF void naFillRangei32WithCopy(NARangei32* ranged, const NARangei32* ranges) {
+  ranged->origin = ranges->origin;
+  ranged->length = ranges->length;
+}
+NA_IDEF void naFillRangei64WithCopy(NARangei64* ranged, const NARangei64* ranges) {
+  ranged->origin = ranges->origin;
+  ranged->length = ranges->length;
+}
+NA_IDEF void naFillRangesWithCopy(NARanges* ranged, const NARanges* ranges) {
+  ranged->origin = ranges->origin;
+  ranged->length = ranges->length;
+}
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

@@ -177,6 +177,34 @@ NA_IDEF NAVolumes naMakeVolumesZero() {
 
 
 
+NA_IDEF void naFillVolumeWithCopy(NAVolume* volumed, const NAVolume* volumes) {
+  volumed->width  = volumes->width;
+  volumed->height = volumes->height;
+  volumed->depth  = volumes->depth;
+}
+NA_IDEF void naFillVolumefWithCopy(NAVolumef* volumed, const NAVolumef* volumes) {
+  volumed->width  = volumes->width;
+  volumed->height = volumes->height;
+  volumed->depth  = volumes->depth;
+}
+NA_IDEF void naFillVolumei32WithCopy(NAVolumei32* volumed, const NAVolumei32* volumes) {
+  volumed->width  = volumes->width;
+  volumed->height = volumes->height;
+  volumed->depth  = volumes->depth;
+}
+NA_IDEF void naFillVolumei64WithCopy(NAVolumei64* volumed, const NAVolumei64* volumes) {
+  volumed->width  = volumes->width;
+  volumed->height = volumes->height;
+  volumed->depth  = volumes->depth;
+}
+NA_IDEF void naFillVolumesWithCopy(NAVolumes* volumed, const NAVolumes* volumes) {
+  volumed->width  = volumes->width;
+  volumed->height = volumes->height;
+  volumed->depth  = volumes->depth;
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

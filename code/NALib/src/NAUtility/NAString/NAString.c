@@ -377,13 +377,21 @@ NA_DEF NAUTF8Char naGetStringChar(NAString* string, size_t index) {
 NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath) {
   NAString* string;
   naCacheBufferRange(filePath->buffer, filePath->buffer->range);
-  NAInt slashoffset = naSearchBufferByteOffset(filePath->buffer, NA_PATH_DELIMITER_UNIX, naGetRangei64Max(naGetBufferRange(filePath->buffer)), NA_FALSE);
-  if(slashoffset != NA_INVALID_MEMORY_INDEX) {
-    string = naNewStringExtraction(filePath, 0, slashoffset);
+  NAInt slashOffset = naSearchBufferByteOffset(
+    filePath->buffer,
+    NA_PATH_DELIMITER_UNIX,
+    naGetRangei64Max(naGetBufferRange(filePath->buffer)),
+    NA_FALSE);
+  if(slashOffset != NA_INVALID_MEMORY_INDEX) {
+    string = naNewStringExtraction(filePath, 0, slashOffset);
   }else{
-    NAInt backslashoffset = naSearchBufferByteOffset(filePath->buffer, NA_PATH_DELIMITER_WIN, naGetRangei64Max(naGetBufferRange(filePath->buffer)), NA_FALSE);
-    if(backslashoffset != NA_INVALID_MEMORY_INDEX) {
-      string = naNewStringExtraction(filePath, 0, backslashoffset);
+    NAInt backSlashOffset = naSearchBufferByteOffset(
+      filePath->buffer,
+      NA_PATH_DELIMITER_WIN,
+      naGetRangei64Max(naGetBufferRange(filePath->buffer)),
+      NA_FALSE);
+    if(backSlashOffset != NA_INVALID_MEMORY_INDEX) {
+      string = naNewStringExtraction(filePath, 0, backSlashOffset);
     }else{
       // If no position is found, return the full string.
       string = naNewStringExtraction(filePath, 0, -1);
@@ -400,12 +408,16 @@ NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath) {
 NA_DEF NAString* naNewStringWithBasenameOfPath(const NAString* filePath) {
   NAString* string;
   naCacheBufferRange(filePath->buffer, filePath->buffer->range);
-  NAInt dotoffset = naSearchBufferByteOffset(filePath->buffer, NA_SUFFIX_DELIMITER, naGetRangei64Max(naGetBufferRange(filePath->buffer)), NA_FALSE);
+  NAInt dotOffset = naSearchBufferByteOffset(
+    filePath->buffer,
+    NA_SUFFIX_DELIMITER,
+    naGetRangei64Max(naGetBufferRange(filePath->buffer)),
+    NA_FALSE);
   // If dotpos is invalid, return the full string.
-  if(dotoffset == NA_INVALID_MEMORY_INDEX) {
+  if(dotOffset == NA_INVALID_MEMORY_INDEX) {
     string = naNewStringExtraction(filePath, 0, -1);
   }else{
-    string = naNewStringExtraction(filePath, 0, dotoffset);
+    string = naNewStringExtraction(filePath, 0, dotOffset);
   }
   #if NA_STRING_ALWAYS_CACHE == 1
   naGetStringUTF8Pointer(string);
@@ -417,11 +429,15 @@ NA_DEF NAString* naNewStringWithBasenameOfPath(const NAString* filePath) {
 
 NA_DEF NAString* naNewStringWithSuffixOfPath(const NAString* filePath) {
   NAString* string;
-  NAInt dotoffset = naSearchBufferByteOffset(filePath->buffer, NA_SUFFIX_DELIMITER, naGetRangei64Max(naGetBufferRange(filePath->buffer)), NA_FALSE);
-  if(dotoffset == NA_INVALID_MEMORY_INDEX) {
+  NAInt dotOffset = naSearchBufferByteOffset(
+    filePath->buffer,
+    NA_SUFFIX_DELIMITER,
+    naGetRangei64Max(naGetBufferRange(filePath->buffer)),
+    NA_FALSE);
+  if(dotOffset == NA_INVALID_MEMORY_INDEX) {
     string = naNewString();
   }else{
-    string = naNewStringExtraction(filePath, dotoffset + 1, -1);
+    string = naNewStringExtraction(filePath, dotOffset + 1, -1);
   }
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(string);

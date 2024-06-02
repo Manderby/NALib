@@ -135,6 +135,34 @@ NA_IDEF NAVertexs naMakeVertexsZero(void) {
 
 
 
+NA_IDEF void naFillVertexWithCopy(NAVertex* vertexd, const NAVertex* vertexs) {
+  vertexd->x = vertexs->x;
+  vertexd->y = vertexs->y;
+  vertexd->z = vertexs->z;
+}
+NA_IDEF void naFillVertexfWithCopy(NAVertexf* vertexd, const NAVertexf* vertexs) {
+  vertexd->x = vertexs->x;
+  vertexd->y = vertexs->y;
+  vertexd->z = vertexs->z;
+}
+NA_IDEF void naFillVertexi32WithCopy(NAVertexi32* vertexd, const NAVertexi32* vertexs) {
+  vertexd->x = vertexs->x;
+  vertexd->y = vertexs->y;
+  vertexd->z = vertexs->z;
+}
+NA_IDEF void naFillVertexi64WithCopy(NAVertexi64* vertexd, const NAVertexi64* vertexs) {
+  vertexd->x = vertexs->x;
+  vertexd->y = vertexs->y;
+  vertexd->z = vertexs->z;
+}
+NA_IDEF void naFillVertexsWithCopy(NAVertexs* vertexd, const NAVertexs* vertexs) {
+  vertexd->x = vertexs->x;
+  vertexd->y = vertexs->y;
+  vertexd->z = vertexs->z;
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

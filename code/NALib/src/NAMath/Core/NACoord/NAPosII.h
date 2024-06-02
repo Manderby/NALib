@@ -124,6 +124,28 @@ NA_IDEF NAPoss naMakePossZero() {
 
 
 
+NA_IDEF void naFillPosWithCopy(NAPos* posd, const NAPos* poss) {
+  posd->x = poss->x;
+  posd->y = poss->y;
+}
+NA_IDEF void naFillPosfWithCopy(NAPosf* posd, const NAPosf* poss) {
+  posd->x = poss->x;
+  posd->y = poss->y;
+}
+NA_IDEF void naFillPosi32WithCopy(NAPosi32* posd, const NAPosi32* poss) {
+  posd->x = poss->x;
+  posd->y = poss->y;
+}
+NA_IDEF void naFillPosi64WithCopy(NAPosi64* posd, const NAPosi64* poss) {
+  posd->x = poss->x;
+  posd->y = poss->y;
+}
+NA_IDEF void naFillPossWithCopy(NAPoss* posd, const NAPoss* poss) {
+  posd->x = poss->x;
+  posd->y = poss->y;
+}
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
