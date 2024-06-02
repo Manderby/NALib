@@ -263,7 +263,7 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, size_t b
     
     NAByte* buf = naMalloc(byteSize);
     
-    NAInt segmentSize = naMini(distance, (NAInt)byteSize);
+    NAInt segmentSize = naMini64(distance, (int64)byteSize);
     naReadBufferBytes(&readIter, buf, (size_t)segmentSize);
     remainingByteSize = byteSize - (size_t)segmentSize;
     
@@ -300,7 +300,7 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, size_t b
 
       // We reduce the remainingRead such that it does not overflow either the
       // distance, the remainingWrite or the byteSize.
-      remainingRead = (size_t)naMini((NAInt)remainingRead, distance);
+      remainingRead = (size_t)naMini64((int64)remainingRead, distance);
       remainingRead = naMins(remainingRead, remainingWrite);
       remainingRead = naMins(remainingRead, byteSize);
 

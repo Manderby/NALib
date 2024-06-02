@@ -486,11 +486,18 @@ NA_IAPI NARecti64 naMakeRecti64WithRectUnionE  (NARecti64 rect1, NARecti64 rect2
 NA_IAPI NABox  naMakeBoxWithVertexAndVertex (NAVertex  vertex1, NAVertex  vertex2);
 NA_IAPI NABox  naMakeBoxWithBoxAndVertex    (NABox     box,     NAVertex  vertex);
 NA_IAPI NABox  naMakeBoxWithBoxUnionE       (NABox     box1,    NABox     box2);
-NA_IAPI NABoxi naMakeBoxiWithVertexAndVertex(NAVertexi vertex1, NAVertexi vertex2);
-NA_IAPI NABoxi naMakeBoxiWithBoxAndVertex   (NABoxi    box,     NAVertexi vertex);
-NA_IAPI NABoxi naMakeBoxiWithBoxAndVertexE  (NABoxi    box,     NAVertexi vertex);
-NA_IAPI NABoxi naMakeBoxiWithBoxUnion       (NABoxi    box1,    NABoxi    box2);
-NA_IAPI NABoxi naMakeBoxiWithBoxUnionE      (NABoxi    box1,    NABoxi    box2);
+
+NA_IAPI NABoxi32 naMakeBoxi32WithBoxAndVertex   (NABoxi32    box,     NAVertexi32 vertex);
+NA_IAPI NABoxi64 naMakeBoxi64WithBoxAndVertex   (NABoxi64    box,     NAVertexi64 vertex);
+
+NA_IAPI NABoxi32 naMakeBoxi32WithBoxAndVertexE  (NABoxi32    box,     NAVertexi32 vertex);
+NA_IAPI NABoxi64 naMakeBoxi64WithBoxAndVertexE  (NABoxi64    box,     NAVertexi64 vertex);
+
+NA_IAPI NABoxi32 naMakeBoxi32WithBoxUnion       (NABoxi32    box1,    NABoxi32    box2);
+NA_IAPI NABoxi64 naMakeBoxi64WithBoxUnion       (NABoxi64    box1,    NABoxi64    box2);
+
+NA_IAPI NABoxi32 naMakeBoxi32WithBoxUnionE      (NABoxi32    box1,    NABoxi32    box2);
+NA_IAPI NABoxi64 naMakeBoxi64WithBoxUnionE      (NABoxi64    box1,    NABoxi64    box2);
 
 // Returns the intersection of the two elements. May be empty or negative.
 // Note: This is basically the inverse of naMakeBoxiWithBoxUnion. Use
@@ -502,15 +509,19 @@ NA_IAPI NARangei64 naMakeRangei64WithRangeIntersection(NARangei64 range1, NARang
 NA_IAPI NARect   naMakeRectWithRectIntersection   (NARect   rect1,  NARect   rect2);
 NA_IAPI NARecti32  naMakeRecti32WithRectIntersection  (NARecti32  rect1,  NARecti32  rect2);
 NA_IAPI NARecti64  naMakeRecti64WithRectIntersection  (NARecti64  rect1,  NARecti64  rect2);
+
 NA_IAPI NABox    naMakeBoxWithBoxIntersection     (NABox    box1,   NABox    box2);
-NA_IAPI NABoxi   naMakeBoxiWithBoxIntersection    (NABoxi   box1,   NABoxi   box2);
+NA_IAPI NABoxi32   naMakeBoxi32WithBoxIntersection    (NABoxi32   box1,   NABoxi32   box2);
+NA_IAPI NABoxi64   naMakeBoxi64WithBoxIntersection    (NABoxi64   box1,   NABoxi64   box2);
 
 // Creates a new rect by adding the given border around the given rect.
 NA_IAPI NARect    naMakeRectWithRectAndBorder  (NARect  rect, double border);
-NA_IAPI NARecti   naMakeRectiWithRectAndBorder (NARecti rect, NAInt  border);
+NA_IAPI NARecti32   naMakeRecti32WithRectAndBorder (NARecti32 rect, int32  border);
+NA_IAPI NARecti64   naMakeRecti64WithRectAndBorder (NARecti64 rect, int64  border);
 
 NA_IAPI NABox     naMakeBoxWithBoxAndBorder    (NABox  box, double border);
-NA_IAPI NABoxi    naMakeBoxiWithBoxAndBorder   (NABoxi box, NAInt  border);
+NA_IAPI NABoxi32    naMakeBoxi32WithBoxAndBorder   (NABoxi32 box, int32  border);
+NA_IAPI NABoxi64    naMakeBoxi64WithBoxAndBorder   (NABoxi64 box, int64  border);
 
 // The naMakeXXXXAbsolute function ensures that the lengths/sizes/volumes of
 // the given struct are not negative. If the these already were positive or
@@ -519,15 +530,12 @@ NA_IAPI NABoxi    naMakeBoxiWithBoxAndBorder   (NABoxi box, NAInt  border);
 //            -> a rect with pos(2., 6.) and size ( 2., 7.) .
 // But: An integer rect with pos(4 , 6 ) and size (-2 , 7 ) will change to
 //            -> a rect with pos(3 , 6 ) and size ( 2 , 7 ) !
-NA_IAPI NARange    naMakeRangePositive (NARange  range);
 NA_IAPI NARangei32 naMakeRangei32Positive(NARangei32 range);
 NA_IAPI NARangei64 naMakeRangei64Positive(NARangei64 range);
 
-NA_IAPI NARect    naMakeRectPositive (NARect  rect);
 NA_IAPI NARecti32 naMakeRecti32Positive(NARecti32 rect);
 NA_IAPI NARecti64 naMakeRecti64Positive(NARecti64 rect);
 
-NA_IAPI NABox     naMakeBoxPositive (NABox  box);
 NA_IAPI NABoxi32  naMakeBoxi32Positive(NABoxi32 box);
 NA_IAPI NABoxi64  naMakeBoxi64Positive(NABoxi64 box);
 
@@ -567,16 +575,20 @@ NA_IAPI NARangei32 naClampRangei32ToEnd  (NARangei32 range, int32    end);
 NA_IAPI NARangei64 naClampRangei64ToEnd  (NARangei64 range, int64    end);
 
 NA_IAPI NAPos     naClampPosToRect  (NAPos   pos,  NARect  clampRect);
-NA_IAPI NAPosi    naClampPosiToRect (NAPosi  pos,  NARecti clampRect);
+NA_IAPI NAPosi32    naClampPosi32ToRect (NAPosi32  pos,  NARecti32 clampRect);
+NA_IAPI NAPosi64    naClampPosi64ToRect (NAPosi64  pos,  NARecti64 clampRect);
 
 NA_IAPI NARect    naClampRect (NARect  rect, NARect  clampRect);
 NA_IAPI NARecti32 naClampRecti32(NARecti32 rect, NARecti32 clampRect);
 NA_IAPI NARecti64 naClampRecti64(NARecti64 rect, NARecti64 clampRect);
 
 NA_IAPI NAVertex  naClampVertexToBox (NAVertex  vertex, NABox  clampBox);
-NA_IAPI NAVertexi naClampVertexiToBox(NAVertexi vertex, NABoxi clampBox);
+NA_IAPI NAVertexi32 naClampVertexi32ToBox(NAVertexi32 vertex, NABoxi32 clampBox);
+NA_IAPI NAVertexi64 naClampVertexi64ToBox(NAVertexi64 vertex, NABoxi64 clampBox);
+
 NA_IAPI NABox     naClampBoxToBox    (NABox     box,    NABox  clampBox);
-NA_IAPI NABoxi    naClampBoxiToBox   (NABoxi    box,    NABoxi clampBox);
+NA_IAPI NABoxi32    naClampBoxi32ToBox   (NABoxi32    box,    NABoxi32 clampBox);
+NA_IAPI NABoxi64    naClampBoxi64ToBox   (NABoxi64    box,    NABoxi64 clampBox);
 
 // Use the following functions to make equality tests (==) between elements.
 NA_IAPI NABool    naEqualRangei32(NARangei32 range1, NARangei32 range2);
@@ -662,15 +674,16 @@ NA_IAPI NABool    naContainsVolumeiVertex(NAVolumei outerVolume, NAVertexi verte
 
 NA_IAPI NABool    naContainsBoxVertex    (NABox     outerBox,    NAVertex  vertex);
 NA_IAPI NABool    naContainsBoxVertexE   (NABox     outerBox,    NAVertex  vertex);
-NA_IAPI NABool    naContainsBoxiVertex   (NABoxi    outerBox,    NAVertexi vertex);
 NA_IAPI NABool    naContainsBoxi32Vertex (NABoxi32  outerBox,    NAVertexi32 vertex);
 NA_IAPI NABool    naContainsBoxi64Vertex (NABoxi64  outerBox,    NAVertexi64 vertex);
 NA_IAPI NABool    naContainsBoxsVertex   (NABoxs    outerBox,    NAVertexs   vertex);
 
 NA_IAPI NABool    naContainsVolumeVolume (NAVolume  outerVolume, NAVolume  volume);
 NA_IAPI NABool    naContainsVolumeiVolume(NAVolumei outerVolume, NAVolumei volume);
+
 NA_IAPI NABool    naContainsBoxBox       (NABox     outerBox,    NABox     box);
-NA_IAPI NABool    naContainsBoxiBox      (NABoxi    outerBox,    NABoxi    box);
+NA_IAPI NABool    naContainsBoxi32Box      (NABoxi32    outerBox,    NABoxi32    box);
+NA_IAPI NABool    naContainsBoxi64Box      (NABoxi64    outerBox,    NABoxi64    box);
 
 // Get the End-Point of a rect. Is the same as origin + size.
 // The E variants allow the given struct to be empty.
@@ -711,34 +724,37 @@ NA_IAPI size_t    naGetRectsEndY   (NARects   rect);
 
 NA_IAPI NAPosi32  naGetRecti32Max  (NARecti32 rect);
 NA_IAPI NAPosi64  naGetRecti64Max  (NARecti64 rect);
-NA_IAPI NAInt     naGetRectiMaxX   (NARecti   rect);
 NA_IAPI int32     naGetRecti32MaxX (NARecti32 rect);
 NA_IAPI int64     naGetRecti64MaxX (NARecti64 rect);
-NA_IAPI NAInt     naGetRectiMaxY   (NARecti   rect);
 NA_IAPI int32     naGetRecti32MaxY (NARecti32 rect);
 NA_IAPI int64     naGetRecti64MaxY (NARecti64 rect);
 
-NA_IAPI NAVertexi naGetBoxiEnd   (NABoxi box);
+NA_IAPI NAVertexi32 naGetBoxi32End   (NABoxi32 box);
+NA_IAPI NAVertexi64 naGetBoxi64End   (NABoxi64 box);
 
-NA_IAPI NAInt     naGetBoxiEndX  (NABoxi box);
 NA_IAPI int32     naGetBoxi32EndX(NABoxi32 box);
 NA_IAPI int64     naGetBoxi64EndX(NABoxi64 box);
 NA_IAPI size_t    naGetBoxsEndX  (NABoxs box);
 
-NA_IAPI NAInt     naGetBoxiEndY  (NABoxi box);
 NA_IAPI int32     naGetBoxi32EndY(NABoxi32 box);
 NA_IAPI int64     naGetBoxi64EndY(NABoxi64 box);
 NA_IAPI size_t    naGetBoxsEndY  (NABoxs box);
 
-NA_IAPI NAInt     naGetBoxiEndZ  (NABoxi box);
 NA_IAPI int32     naGetBoxi32EndZ(NABoxi32 box);
 NA_IAPI int64     naGetBoxi64EndZ(NABoxi64 box);
 NA_IAPI size_t    naGetBoxsEndZ  (NABoxs box);
 
-NA_IAPI NAVertexi naGetBoxiMax   (NABoxi box);
-NA_IAPI NAInt     naGetBoxiMaxX  (NABoxi box);
-NA_IAPI NAInt     naGetBoxiMaxY  (NABoxi box);
-NA_IAPI NAInt     naGetBoxiMaxZ  (NABoxi box);
+NA_IAPI NAVertexi32 naGetBoxi32Max   (NABoxi32 box);
+NA_IAPI NAVertexi64 naGetBoxi64Max   (NABoxi64 box);
+
+NA_IAPI int32       naGetBoxi32MaxX  (NABoxi32 box);
+NA_IAPI int64       naGetBoxi64MaxX  (NABoxi64 box);
+
+NA_IAPI int32       naGetBoxi32MaxY  (NABoxi32 box);
+NA_IAPI int64       naGetBoxi64MaxY  (NABoxi64 box);
+
+NA_IAPI int32       naGetBoxi32MaxZ  (NABoxi32 box);
+NA_IAPI int64       naGetBoxi64MaxZ  (NABoxi64 box);
 
 
 

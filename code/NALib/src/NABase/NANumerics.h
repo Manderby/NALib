@@ -17,6 +17,11 @@ NA_IAPI NAu128 naGetSignum128(NAi128 i);
 NA_IAPI NAu256 naGetSignum256(NAi256 i);
 
 // Returns either 1 or -1. The value 0 returns 1. Never returns 0.
+// 
+// You can use the result of this function safely as a multiplication factor.
+// You can also subtract the result of this function from the comma ASCII
+// character and get a string representation of the sign:
+// NAUTF8Char signASCII = ',' - naSigni64(-1234);
 NA_IAPI int8   naSigni8  (int8   i);
 NA_IAPI int16  naSigni16 (int16  i);
 NA_IAPI int32  naSigni32 (int32  i);

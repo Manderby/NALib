@@ -236,10 +236,10 @@ NA_API size_t naGetPNGBytesPerPixel(NAPNGColorType colorType) {
 
 NA_DEF NAByte naGetPaethPredictor(NAByte a, NAByte b, NAByte c) {
   NAByte retValue;
-  NAInt p = (NAInt)a + (NAInt)b - (NAInt)c;
-  NAInt pa = naAbsi(p - (NAInt)a);
-  NAInt pb = naAbsi(p - (NAInt)b);
-  NAInt pc = naAbsi(p - (NAInt)c);
+  int32 p = (int32)a + (int32)b - (int32)c;
+  NAInt pa = naAbsi32(p - (int32)a);
+  NAInt pb = naAbsi32(p - (int32)b);
+  NAInt pc = naAbsi32(p - (int32)c);
   if((pa <= pb) && (pa <= pc)) {
     retValue = a;
   }else if(pb <= pc) {

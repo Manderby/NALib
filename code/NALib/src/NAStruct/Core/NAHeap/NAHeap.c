@@ -113,29 +113,29 @@
 
 NA_HDEF void na_GrowHeap(NAHeap* heap) {
   ptrdiff_t entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
-  void* newData = naMalloc((size_t)(-heap->maxcount * 2 + 1) * (size_t)entrysize);
+  void* newData = naMalloc((size_t)(-heap->maxCount * 2 + 1) * (size_t)entrysize);
   naCopyn(newData, heap->data, (size_t)((heap->count + 1) * entrysize));
   naFree(heap->data);
   heap->data = newData;
   heap->root = (NAByte*)(heap->data) + entrysize;
-  heap->maxcount *= 2;
+  heap->maxCount *= 2;
 }
 
 
 
 NA_DEF void naShrinkHeapIfNecessary(NAHeap* heap) {
   #if NA_DEBUG
-    if(heap->maxcount > 0)
+    if(heap->maxCount > 0)
       naError("Heap defined with a fixed count of elements.");
   #endif
-  if((NAInt)heap->count < -heap->maxcount / 4) {
+  if((NAInt)heap->count < -heap->maxCount / 4) {
     ptrdiff_t entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
-    void* newData = naMalloc((size_t)(-heap->maxcount / 2 + 1) * (size_t)entrysize);
+    void* newData = naMalloc((size_t)(-heap->maxCount / 2 + 1) * (size_t)entrysize);
     naCopyn(newData, heap->data, (size_t)((heap->count + 1) * entrysize));
     naFree(heap->data);
     heap->data = newData;
     heap->root = (NAByte*)(heap->data) + entrysize;
-    heap->maxcount /= 2;
+    heap->maxCount /= 2;
   }
 }
 
@@ -146,12 +146,12 @@ NA_HDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, con
   NAHeapEntry* thedata;
   NA_UNUSED(backPointer);
   #if NA_DEBUG
-    if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
+    if((heap->maxCount > 0) && ((NAInt)heap->count == heap->maxCount))
       naError("Heap overflow.");
     if(backPointer)
       naError("Heap dos not store backPointers. packpointer should be Null. Ignored.");
   #endif
-  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)) {
+  if(heap->maxCount < 0 && ((NAInt)heap->count == -heap->maxCount)) {
     na_GrowHeap(heap);
   }
   newindex = heap->movedown(heap, key, heap->count + 1);
@@ -167,10 +167,10 @@ NA_HDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const
   NAInt newindex;
   NAHeapBackEntry* thedata;
   #if NA_DEBUG
-    if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
+    if((heap->maxCount > 0) && ((NAInt)heap->count == heap->maxCount))
       naError("Heap overflow.");
   #endif
-  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)) {
+  if(heap->maxCount < 0 && ((NAInt)heap->count == -heap->maxCount)) {
     na_GrowHeap(heap);
   }
   newindex = heap->movedown(heap, key, heap->count + 1);
@@ -197,12 +197,12 @@ NA_HDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const v
   NAHeapEntry* thedata;
   NA_UNUSED(backPointer);
   #if NA_DEBUG
-    if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
+    if((heap->maxCount > 0) && ((NAInt)heap->count == heap->maxCount))
       naError("Heap overflow.");
     if(backPointer)
       naError("Heap dos not store backPointers. packpointer should be Null. Ignored.");
   #endif
-  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)) {
+  if(heap->maxCount < 0 && ((NAInt)heap->count == -heap->maxCount)) {
     na_GrowHeap(heap);
   }
   newindex = heap->movedown(heap, key, heap->count + 1);
@@ -218,10 +218,10 @@ NA_HDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const voi
   NAInt newindex;
   NAHeapBackEntry* thedata;
   #if NA_DEBUG
-    if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
+    if((heap->maxCount > 0) && ((NAInt)heap->count == heap->maxCount))
       naError("Heap overflow.");
   #endif
-  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)) {
+  if(heap->maxCount < 0 && ((NAInt)heap->count == -heap->maxCount)) {
     na_GrowHeap(heap);
   }
   newindex = heap->movedown(heap, key, heap->count + 1);
@@ -434,13 +434,13 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags) {
         naError("negative count must be a power of 2.");
     }
   #endif
-  heap->maxcount = count;
+  heap->maxCount = count;
 
   if(!(flags & NA_HEAP_STORES_BACKPOINTERS)) {
     // entries store no backPointers
 
     heap->count = 0;
-    heap->data = naMalloc((size_t)(naAbsi(heap->maxcount) + 1) * sizeof(NAHeapEntry));
+    heap->data = naMalloc((size_t)(naAbsi(heap->maxCount) + 1) * sizeof(NAHeapEntry));
     heap->root = &(((NAHeapEntry*)heap->data)[1]);
 
     heap->insertConst = na_InsertHeapElementConstNoBack;
@@ -501,7 +501,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags) {
     // Entries store backPointers
 
     heap->count = 0;
-    heap->data = naMalloc((size_t)(naAbsi(heap->maxcount) + 1) * sizeof(NAHeapBackEntry));
+    heap->data = naMalloc((size_t)(naAbsi(heap->maxCount) + 1) * sizeof(NAHeapBackEntry));
     heap->root = &(((NAHeapBackEntry*)heap->data)[1]);
 
     heap->insertConst = na_InsertHeapElementConstBack;

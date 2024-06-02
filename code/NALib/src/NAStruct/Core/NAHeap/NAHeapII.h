@@ -12,7 +12,7 @@ struct NAHeap{
   NAInt count;
   void* data;
   void* root; // Pointer to the first byte of the root element
-  NAInt maxcount; // heap holds max elements. If this value is < 0, the
+  NAInt maxCount; // heap holds max elements. If this value is < 0, the
                   // heap grows automatically.
   void        (*insertConst)      (NAHeap*, const void*, const void*, NAInt*);
   void        (*insertMutable)    (NAHeap*,       void*, const void*, NAInt*);
@@ -87,7 +87,7 @@ NA_IDEF NAInt naGetHeapMaxCount(const NAHeap* heap) {
     if(!heap)
       naCrash("heap is Null-Pointer.");
   #endif
-  return heap->maxcount;
+  return heap->maxCount;
 }
 
 

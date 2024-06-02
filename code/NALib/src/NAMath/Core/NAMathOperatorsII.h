@@ -15,19 +15,6 @@
 // (a >= b) will always be written as !(a < b)
 
 
-NA_IDEF NAInt naSigni(NAInt x) {
-  #if NA_TYPE_NAINT_BITS == 32
-    return naSigni32(x);
-  #elif NA_TYPE_NAINT_BITS == 64
-    return naSigni64(x);
-  #else
-    #error "NAInt size not supported"
-    return 0;
-  #endif
-}
-
-
-
 NA_IDEF NABool naAlmostZero(double x) {
   return ((x < NA_SINGULARITY) && (x > -NA_SINGULARITY));
 }
@@ -139,9 +126,6 @@ NA_IDEF double naMin(double a, double b) {
 NA_IDEF float naMinf(float a, float b) {
   return (a < b) ? a : b;
 }
-NA_IDEF NAInt naMini(NAInt a, NAInt b) {
-  return (a < b) ? a : b;
-}
 NA_IDEF size_t naMins(size_t a, size_t b) {
   return (a < b) ? a : b;
 }
@@ -163,9 +147,6 @@ NA_IDEF double naMax(double a, double b) {
   return (a > b) ? a : b;
 }
 NA_IDEF float naMaxf(float a, float b) {
-  return (a > b) ? a : b;
-}
-NA_IDEF NAInt naMaxi(NAInt a, NAInt b) {
   return (a > b) ? a : b;
 }
 NA_IDEF size_t naMaxs(size_t a, size_t b) {
