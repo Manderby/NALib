@@ -649,6 +649,8 @@ NA_IAPI NABool    naContainsRectPos    (NARect    outerRect, NAPos     pos);
 NA_IAPI NABool    naContainsRectPosE   (NARect    outerRect, NAPos     pos);
 NA_IAPI NABool    naContainsRecti32Pos (NARecti32 outerRect, NAPosi32  pos);
 NA_IAPI NABool    naContainsRecti64Pos (NARecti64 outerRect, NAPosi64  pos);
+NA_IAPI NABool    naContainsRectsPos   (NARects   outerRect, NAPoss    pos);
+
 NA_IAPI NABool    naContainsSizeSize   (NASize    outerSize, NASize    size);
 NA_IAPI NABool    naContainsSizeiSize  (NASizei   outerSize, NASizei   size);
 NA_IAPI NABool    naContainsRectRect   (NARect    outerRect, NARect    rect);
@@ -657,9 +659,14 @@ NA_IAPI NABool    naContainsRecti64Rect(NARecti64 outerRect, NARecti64 rect);
 
 NA_IAPI NABool    naContainsVolumeVertex (NAVolume  outerVolume, NAVertex  vertex);
 NA_IAPI NABool    naContainsVolumeiVertex(NAVolumei outerVolume, NAVertexi vertex);
+
 NA_IAPI NABool    naContainsBoxVertex    (NABox     outerBox,    NAVertex  vertex);
 NA_IAPI NABool    naContainsBoxVertexE   (NABox     outerBox,    NAVertex  vertex);
 NA_IAPI NABool    naContainsBoxiVertex   (NABoxi    outerBox,    NAVertexi vertex);
+NA_IAPI NABool    naContainsBoxi32Vertex (NABoxi32  outerBox,    NAVertexi32 vertex);
+NA_IAPI NABool    naContainsBoxi64Vertex (NABoxi64  outerBox,    NAVertexi64 vertex);
+NA_IAPI NABool    naContainsBoxsVertex   (NABoxs    outerBox,    NAVertexs   vertex);
+
 NA_IAPI NABool    naContainsVolumeVolume (NAVolume  outerVolume, NAVolume  volume);
 NA_IAPI NABool    naContainsVolumeiVolume(NAVolumei outerVolume, NAVolumei volume);
 NA_IAPI NABool    naContainsBoxBox       (NABox     outerBox,    NABox     box);
@@ -694,10 +701,13 @@ NA_IAPI int64     naGetRangei64End (NARangei64 range);
 NA_IAPI int32     naGetRangei32Max (NARangei32 range);
 NA_IAPI int64     naGetRangei64Max (NARangei64 range);
 
-NA_IAPI int32     naGetRecti32EndX(NARecti32 rect);
-NA_IAPI int64     naGetRecti64EndX(NARecti64 rect);
-NA_IAPI int32     naGetRecti32EndY  (NARecti32 rect);
-NA_IAPI int64     naGetRecti64EndY  (NARecti64 rect);
+NA_IAPI int32     naGetRecti32EndX (NARecti32 rect);
+NA_IAPI int64     naGetRecti64EndX (NARecti64 rect);
+NA_IAPI size_t    naGetRectsEndX   (NARects   rect);
+
+NA_IAPI int32     naGetRecti32EndY (NARecti32 rect);
+NA_IAPI int64     naGetRecti64EndY (NARecti64 rect);
+NA_IAPI size_t    naGetRectsEndY   (NARects   rect);
 
 NA_IAPI NAPosi32  naGetRecti32Max  (NARecti32 rect);
 NA_IAPI NAPosi64  naGetRecti64Max  (NARecti64 rect);
@@ -709,46 +719,87 @@ NA_IAPI int32     naGetRecti32MaxY (NARecti32 rect);
 NA_IAPI int64     naGetRecti64MaxY (NARecti64 rect);
 
 NA_IAPI NAVertexi naGetBoxiEnd   (NABoxi box);
+
 NA_IAPI NAInt     naGetBoxiEndX  (NABoxi box);
+NA_IAPI int32     naGetBoxi32EndX(NABoxi32 box);
+NA_IAPI int64     naGetBoxi64EndX(NABoxi64 box);
+NA_IAPI size_t    naGetBoxsEndX  (NABoxs box);
+
 NA_IAPI NAInt     naGetBoxiEndY  (NABoxi box);
+NA_IAPI int32     naGetBoxi32EndY(NABoxi32 box);
+NA_IAPI int64     naGetBoxi64EndY(NABoxi64 box);
+NA_IAPI size_t    naGetBoxsEndY  (NABoxs box);
+
 NA_IAPI NAInt     naGetBoxiEndZ  (NABoxi box);
+NA_IAPI int32     naGetBoxi32EndZ(NABoxi32 box);
+NA_IAPI int64     naGetBoxi64EndZ(NABoxi64 box);
+NA_IAPI size_t    naGetBoxsEndZ  (NABoxs box);
+
 NA_IAPI NAVertexi naGetBoxiMax   (NABoxi box);
 NA_IAPI NAInt     naGetBoxiMaxX  (NABoxi box);
 NA_IAPI NAInt     naGetBoxiMaxY  (NABoxi box);
 NA_IAPI NAInt     naGetBoxiMaxZ  (NABoxi box);
 
-// Raw Index functions. Assuming a 2-dimensional or 3-dimensional array with
-// row-first or column-first ordering. Row-first is the default C ordering.
-NA_IAPI size_t naGetIndexWithOriginiAndPosRowFirst(       NAPosi    origin, NAPosi    offset, NAInt width);
-NA_IAPI size_t naGetIndexWithOrigini32AndPosRowFirst(     NAPosi32  origin, NAPosi32  offset, int32 width);
-NA_IAPI size_t naGetIndexWithOrigini64AndPosRowFirst(     NAPosi64  origin, NAPosi64  offset, int64 width);
-NA_IAPI size_t naGetIndexWithOriginiAndPosColumnFirst(    NAPosi    origin, NAPosi    offset, NAInt height);
-NA_IAPI size_t naGetIndexWithOriginiAndVertexRowFirst(    NAVertexi origin, NAVertexi vertex, NAInt width, NAInt height);
-NA_IAPI size_t naGetIndexWithOriginiAndVertexColumnFirst( NAVertexi origin, NAVertexi vertex, NAInt depth, NAInt height);
+
+
+// //////////////////////
+// Index functions
 
 // Count returns the total number of indices (width*height) within a size.
-// IndexOf returns the index of the corresponding 1-dimensional array.
-// Note that row-first is the default C ordering.
-NA_IAPI size_t naGetSizeiIndexCount             (NASizei size);
 NA_IAPI size_t naGetSizei32IndexCount           (NASizei32 size);
 NA_IAPI size_t naGetSizei64IndexCount           (NASizei64 size);
-NA_IAPI size_t naGetSizesIndexCount             (NASizes size);
+NA_IAPI size_t naGetSizesIndexCount             (NASizes   size);
 
-//NA_IAPI size_t naGetRectiIndexOfPosRowFirst     (NARecti rect, NAPosi pos);
-//NA_IAPI size_t naGetRectiIndexOfPosColumnFirst  (NARecti rect, NAPosi pos);
+NA_IAPI size_t naGetVolumei32IndexCount         (NAVolumei32 volume);
+NA_IAPI size_t naGetVolumei64IndexCount         (NAVolumei64 volume);
+NA_IAPI size_t naGetVolumesIndexCount           (NAVolumes volume);
 
-NA_IAPI size_t naGetVolumeiIndexCount           (NAVolumei volume);
+// Raw Index functions. Assuming origin and width denote the indices in a
+// multi-dimensional array which is stored as a 1D-Array.
+// Note that row-first is the default C ordering.
+NA_IAPI size_t naGetIndexWithOrigini32AndPosRowFirst      (NAPosi32    origin, NAPosi32  offset, int32  width);
+NA_IAPI size_t naGetIndexWithOrigini64AndPosRowFirst      (NAPosi64    origin, NAPosi64  offset, int64  width);
+NA_IAPI size_t naGetIndexWithOriginsAndPosRowFirst        (NAPoss      origin, NAPoss    offset, size_t width);
 
-NA_IAPI size_t naGetBoxiIndexOfVertexRowFirst   (NABoxi box, NAVertexi vertex);
-NA_IAPI size_t naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex);
+NA_IAPI size_t naGetIndexWithOrigini32AndPosColumnFirst   (NAPosi32    origin, NAPosi32  offset, int32  height);
+NA_IAPI size_t naGetIndexWithOrigini64AndPosColumnFirst   (NAPosi64    origin, NAPosi64  offset, int64  height);
+NA_IAPI size_t naGetIndexWithOriginsAndPosColumnFirst     (NAPoss      origin, NAPoss    offset, size_t height);
+
+NA_IAPI size_t naGetIndexWithOrigini32AndVertexRowFirst   (NAVertexi32 origin, NAVertexi32 vertex, int32  width, int32  height);
+NA_IAPI size_t naGetIndexWithOrigini64AndVertexRowFirst   (NAVertexi64 origin, NAVertexi64 vertex, int64  width, int64  height);
+NA_IAPI size_t naGetIndexWithOriginsAndVertexRowFirst     (NAVertexs   origin, NAVertexs   vertex, size_t width, size_t height);
+
+NA_IAPI size_t naGetIndexWithOrigini32AndVertexColumnFirst(NAVertexi32 origin, NAVertexi32 vertex, int32  depth, int32  height);
+NA_IAPI size_t naGetIndexWithOrigini64AndVertexColumnFirst(NAVertexi64 origin, NAVertexi64 vertex, int64  depth, int64  height);
+NA_IAPI size_t naGetIndexWithOriginsAndVertexColumnFirst  (NAVertexs   origin, NAVertexs   vertex, size_t depth, size_t height);
+
+// IndexOf returns the index of the corresponding 1-dimensional array.
+//
 // Example:    Rect(Pos(2, 5), Size(4, 3)) describes a 2D-field. It stores
 //             a corresponding 1D-Array {a, b, c, d, e, f, g, h, i, j, k, l}.
 // (a b c d)   End is (6, 8), Max is (5, 7). Count is 3*4 = 12
 // (e f g h)   The result of naGetRectiIndexOfPosi with position (5, 6)
 // (i j k l)   returns 7, the index of 'h'
+NA_IAPI size_t naGetRecti32IndexOfPosRowFirst     (NARecti32 rect, NAPosi32 pos);
+NA_IAPI size_t naGetRecti64IndexOfPosRowFirst     (NARecti64 rect, NAPosi64 pos);
+NA_IAPI size_t naGetRectsIndexOfPosRowFirst       (NARects   rect, NAPoss   pos);
+
+NA_IAPI size_t naGetRecti32IndexOfPosColumnFirst  (NARecti32 rect, NAPosi32 pos);
+NA_IAPI size_t naGetRecti64IndexOfPosColumnFirst  (NARecti64 rect, NAPosi64 pos);
+NA_IAPI size_t naGetRectsIndexOfPosColumnFirst    (NARects   rect, NAPoss   pos);
+
+NA_IAPI size_t naGetBoxi32IndexOfVertexRowFirst   (NABoxi32  box, NAVertexi32 vertex);
+NA_IAPI size_t naGetBoxi64IndexOfVertexRowFirst   (NABoxi64  box, NAVertexi64 vertex);
+NA_IAPI size_t naGetBoxsIndexOfVertexRowFirst     (NABoxs    box, NAVertexs   vertex);
+
+NA_IAPI size_t naGetBoxi32IndexOfVertexColumnFirst(NABoxi32  box, NAVertexi32 vertex);
+NA_IAPI size_t naGetBoxi64IndexOfVertexColumnFirst(NABoxi64  box, NAVertexi64 vertex);
+NA_IAPI size_t naGetBoxsIndexOfVertexColumnFirst  (NABoxs    box, NAVertexs   vertex);
 
 
 
+// //////////////////////
+// Test functions
 
 // IsValid:
 //

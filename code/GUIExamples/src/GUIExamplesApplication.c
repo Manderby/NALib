@@ -53,7 +53,7 @@ void postStartup(void* arg){
   
   // Load the image files
   NAPNG* pngIcon = naNewPNGWithPath(RESOURCE_PATH "icon.png");
-  if(!naIsSizeiUseful(naGetPNGSize(pngIcon))){
+  if(!naIsSizesUseful(naGetPNGSize(pngIcon))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
@@ -66,7 +66,7 @@ void postStartup(void* arg){
   naReleaseBabyImage(originalIconImage);
 
   NAPNG* png1 = naNewPNGWithPath(RESOURCE_PATH "man.png");
-  if(!naIsSizeiUseful(naGetPNGSize(png1))){
+  if(!naIsSizesUseful(naGetPNGSize(png1))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
