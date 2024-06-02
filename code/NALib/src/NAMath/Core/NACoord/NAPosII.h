@@ -72,21 +72,6 @@ NA_IDEF NAPoss naMakePoss(size_t x, size_t y) {
 
 
 
-//NA_IDEF NAPos naMakePosWithV2(const double* v) {
-//  NAPos newPos;
-//  #if NA_DEBUG
-//    if(!(naIsOffsetValueValid(v[0]) && naIsOffsetValueValid(v[1])))
-//      naError("Invalid values given.");
-//    if(!(naIsOffsetValueUseful(v[0]) && naIsOffsetValueUseful(v[1])))
-//      naError("Values given are not useful.");
-//  #endif
-//  newPos.x = v[0];
-//  newPos.y = v[1];
-//  return newPos;
-//}
-
-
-
 NA_IDEF NAPos naMakePosZero() {
   NAPos newPos;
   newPos.x = 0.;

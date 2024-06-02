@@ -129,13 +129,6 @@ NA_IDEF NASizes naMakeSizesE(size_t width, size_t height) {
 
 
 
-//NA_IDEF NASizei naMakeSizeiWithIntegerSize(NASize size) {
-//  NASizei newSize = naMakeSizeiE((NAInt)naGetDoubleInteger(size.width), (NAInt)naGetDoubleInteger(size.height));
-//  return newSize;
-//}
-
-
-
 NA_IDEF NASize naMakeSizeZero() {
   NASize newSize;
   newSize.width = 0.;

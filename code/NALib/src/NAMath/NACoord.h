@@ -260,8 +260,6 @@ NA_IAPI NAPosi32 naMakePosi32(int32  x, int32  y);
 NA_IAPI NAPosi64 naMakePosi64(int64  x, int64  y);
 NA_IAPI NAPoss   naMakePoss  (size_t x, size_t y);
 
-//NA_IAPI NAPos    naMakePosWithV2(const double* v);
-
 NA_IAPI NAPos    naMakePosZero   (void);
 NA_IAPI NAPosf   naMakePosfZero  (void);
 NA_IAPI NAPosi32 naMakePosi32Zero(void);
@@ -287,10 +285,6 @@ NA_IAPI NASizef   naMakeSizefE  (float  width, float  height);
 NA_IAPI NASizei32 naMakeSizei32E(int32  width, int32  height);
 NA_IAPI NASizei64 naMakeSizei64E(int64  width, int64  height);
 NA_IAPI NASizes   naMakeSizesE  (size_t width, size_t height);
-
-//// The Integer variant assumes pos to only contain integers, hence using a
-//// more advanced and quicker conversion. But pos must be integral to work.
-//NA_IAPI NASizei  naMakeSizeiWithIntegerSize(NASize size);
 
 NA_IAPI NASize    naMakeSizeZero   (void);
 NA_IAPI NASizef   naMakeSizefZero  (void);
@@ -349,8 +343,6 @@ NA_IAPI NAVertexf   naMakeVertexf  (float  x, float  y, float  z);
 NA_IAPI NAVertexi32 naMakeVertexi32(int32  x, int32  y, int32  z);
 NA_IAPI NAVertexi64 naMakeVertexi64(int64  x, int64  y, int64  z);
 NA_IAPI NAVertexs   naMakeVertexs  (size_t x, size_t y, size_t z);
-
-//NA_IAPI NAVertex    naMakeVertexWithV3(const double* v);
 
 NA_IAPI NAVertex    naMakeVertexZero   (void);
 NA_IAPI NAVertexf   naMakeVertexfZero  (void);
@@ -444,34 +436,26 @@ NA_IAPI NABezel4s   naMakeBezel4sZero  (void);
 
 
 
-
-// Mac OS X specific stuff
-#ifdef CGGEOMETRY_H_
-NA_IAPI NAPos     naMakePosWithCGPoint(CGPoint cgPoint);
-NA_IAPI NASize    naMakeSizeWithCGSize(CGSize  cgSize);
-NA_IAPI NARect    naMakeRectWithCGRect(CGRect  cgRect);
-#endif
-#if defined __OBJC__ && defined __AVAILABILITYMACROS__
-// Note: In order to make this compile, you need to include "NACoord.h" AFTER
-// including <Cocoa/Cocoa.h>
-NA_IAPI NAPos     naMakePosWithNSPoint  (NSPoint nsPoint);
-NA_IAPI NSPoint   naMakeNSPointWithPos  (NAPos   naPos);
-NA_IAPI NASize    naMakeSizeWithNSSize  (NSSize  nsSize);
-NA_IAPI NSSize    naMakeNSSizeWithSize  (NASize  naSize);
-NA_IAPI NARect    naMakeRectWithNSRect  (NSRect  nsRect);
-NA_IAPI NSRect    naMakeNSRectWithSize  (NASize  naSize); // origin = (0, 0)
-NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  naRect);
-#endif
-
+// ////////////////
+// Aligned ranges
+//
 // Creates a new origin which is the given origin floored to a multiple of
-// the given alignment. Also works for negative input offsets.
-NA_IAPI NAPos     naMakePosWithAlignment    (NAPos     origin, NARect  alignRect);
+// the given alignment. Also works for negative input offsets (not for the
+// s-variant though).
+
+NA_IAPI NAPos       naMakePosWithAlignment      (NAPos       origin, NARect    alignRect);
+NA_IAPI NAPosf      naMakePosfWithAlignment     (NAPosf      origin, NARectf   alignRect);
 NA_IAPI NAPosi32    naMakePosi32WithAlignment   (NAPosi32    origin, NARecti32 alignRect);
 NA_IAPI NAPosi64    naMakePosi64WithAlignment   (NAPosi64    origin, NARecti64 alignRect);
+NA_IAPI NAPoss      naMakePossWithAlignment     (NAPoss      origin, NARects   alignRect);
 
-NA_IAPI NAVertex  naMakeVertexWithAlignment (NAVertex  origin, NABox   alignBox);
+NA_IAPI NAVertex    naMakeVertexWithAlignment   (NAVertex    origin, NABox     alignBox);
+NA_IAPI NAVertexf   naMakeVertexfWithAlignment  (NAVertexf   origin, NABoxf    alignBox);
 NA_IAPI NAVertexi32 naMakeVertexi32WithAlignment(NAVertexi32 origin, NABoxi32  alignBox);
 NA_IAPI NAVertexi64 naMakeVertexi64WithAlignment(NAVertexi64 origin, NABoxi64  alignBox);
+NA_IAPI NAVertexs   naMakeVertexsWithAlignment  (NAVertexs   origin, NABoxs    alignBox);
+
+
 
 // Create the bounding box of two elements. The range, size or volume of the
 // resulting struct will never be negative. Note that the integer variant of
@@ -718,12 +702,14 @@ NA_IAPI NABool    naContainsBoxBox       (NABox     outerBox,    NABox     box);
 NA_IAPI NABool    naContainsBoxi32Box      (NABoxi32    outerBox,    NABoxi32    box);
 NA_IAPI NABool    naContainsBoxi64Box      (NABoxi64    outerBox,    NABoxi64    box);
 
+
+
 // /////////////////////////
 // End and Max functions
 //
 // Computes the positions opposite to the origin of the rect.
 // End returns origin + size
-// Max returns oritin + size - 1
+// Max returns oritin + size - 1   (only useful for integer variants)
 // The E variants allow the given struct to be empty.
 
 NA_IAPI double    naGetRangeEnd    (NARange    range);
@@ -1114,6 +1100,28 @@ NA_IAPI NABool    naIsBoxfUseful     (NABoxf      box);
 NA_IAPI NABool    naIsBoxi32Useful   (NABoxi32    box);
 NA_IAPI NABool    naIsBoxi64Useful   (NABoxi64    box);
 NA_IAPI NABool    naIsBoxsUseful     (NABoxs      box);
+
+
+
+// /////////////////
+// macOS specific stuff
+
+#ifdef CGGEOMETRY_H_
+NA_IAPI NAPos     naMakePosWithCGPoint(CGPoint cgPoint);
+NA_IAPI NASize    naMakeSizeWithCGSize(CGSize  cgSize);
+NA_IAPI NARect    naMakeRectWithCGRect(CGRect  cgRect);
+#endif
+#if defined __OBJC__ && defined __AVAILABILITYMACROS__
+// Note: In order to make this compile, you need to include "NACoord.h" AFTER
+// including <Cocoa/Cocoa.h>
+NA_IAPI NAPos     naMakePosWithNSPoint  (NSPoint nsPoint);
+NA_IAPI NSPoint   naMakeNSPointWithPos  (NAPos   naPos);
+NA_IAPI NASize    naMakeSizeWithNSSize  (NSSize  nsSize);
+NA_IAPI NSSize    naMakeNSSizeWithSize  (NASize  naSize);
+NA_IAPI NARect    naMakeRectWithNSRect  (NSRect  nsRect);
+NA_IAPI NSRect    naMakeNSRectWithSize  (NASize  naSize); // origin = (0, 0)
+NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  naRect);
+#endif
 
 
 

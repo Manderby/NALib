@@ -7,8 +7,6 @@
 
 
 // /////////////////////////////////////|
-// Warning: This is one huge file!
-//
 // Coordinate functions are not especially difficult to understand or implement
 // but take a lot of code writing. You are free to explore all the inline code
 // underneath the API but there really isn't much to see.
@@ -22,8 +20,10 @@
 
 #include "NABezelII.h"
 #include "NABoxII.h"
+#include "NACoordAlignII.h"
 #include "NACoordEndMaxII.h"
 #include "NACoordIndexII.h"
+#include "NACoordMacOSII.h"
 #include "NACoordTesterII.h"
 #include "NAPosII.h"
 #include "NARangeII.h"
@@ -35,179 +35,7 @@
 
 
 
-#ifdef CGGEOMETRY_H_
-NA_IDEF NAPos naMakePosWithCGPoint(CGPoint cgPoint) {
-  NAPos newPos;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValid(cgPoint.x) && naIsOffsetValueValid(cgPoint.y)))
-      naError("Invalid values given.");
-    if(!(naIsOffsetValueUseful(cgPoint.x) && naIsOffsetValueUseful(cgPoint.y)))
-      naError("Values given are not useful.");
-  #endif
-  newPos.x = cgPoint.x;
-  newPos.y = cgPoint.y;
-  return newPos;
-}
-NA_IDEF NASize naMakeSizeWithCGSize(CGSize cgSize) {
-  NASize newSize;
-  #if NA_DEBUG
-    if(!(naIsLengthValueValid(cgSize.width) && naIsLengthValueValid(cgSize.height)))
-      naError("Invalid values given.");
-    if(!(naIsLengthValueUseful(cgSize.width) && naIsLengthValueUseful(cgSize.height)))
-      naError("Values given are not useful.");
-  #endif
-  newSize.width = cgSize.width;
-  newSize.height = cgSize.height;
-  return newSize;
-}
-NA_IDEF NARect naMakeRectWithCGRect(CGRect cgRect) {
-  NARect newRect;
-  newRect.pos = naMakePosWithCGPoint(cgRect.origin);
-  newRect.size = naMakeSizeWithCGSize(cgRect.size);
-  return newRect;
-}
-#endif
 
-
-
-#if defined __OBJC__ && defined __AVAILABILITYMACROS__
-NA_IDEF NAPos naMakePosWithNSPoint(NSPoint nsPoint) {
-  NAPos newPos;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValid(nsPoint.x) && naIsOffsetValueValid(nsPoint.y)))
-      naError("Invalid values given.");
-    if(!(naIsOffsetValueUseful(nsPoint.x) && naIsOffsetValueUseful(nsPoint.y)))
-      naError("Values given are not useful.");
-  #endif
-  newPos.x = nsPoint.x;
-  newPos.y = nsPoint.y;
-  return newPos;
-}
-NA_IDEF NSPoint naMakeNSPointWithPos(NAPos naPos) {
-  NSPoint newpoint;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValid(naPos.x) && naIsOffsetValueValid(naPos.y)))
-      naError("Invalid values given.");
-    if(!(naIsOffsetValueUseful(naPos.x) && naIsOffsetValueUseful(naPos.y)))
-      naError("Values given are not useful.");
-  #endif
-  newpoint.x = (CGFloat)naPos.x;
-  newpoint.y = (CGFloat)naPos.y;
-  return newpoint;
-}
-NA_IDEF NASize naMakeSizeWithNSSize(NSSize nsSize) {
-  NASize newSize;
-  #if NA_DEBUG
-    if(!(naIsLengthValueValid(nsSize.width) && naIsLengthValueValid(nsSize.height)))
-      naError("Invalid values given.");
-    if(!(naIsLengthValueUseful(nsSize.width) && naIsLengthValueUseful(nsSize.height)))
-      naError("Values given are not useful.");
-  #endif
-  newSize.width = nsSize.width;
-  newSize.height = nsSize.height;
-  return newSize;
-}
-NA_IDEF NSSize naMakeNSSizeWithSize(NASize naSize) {
-  NSSize newSize;
-  #if NA_DEBUG
-    if(!(naIsLengthValueValid(naSize.width) && naIsLengthValueValid(naSize.height)))
-      naError("Invalid values given.");
-    if(!(naIsLengthValueUseful(naSize.width) && naIsLengthValueUseful(naSize.height)))
-      naError("Values given are not useful.");
-  #endif
-  newSize.width = (CGFloat)naSize.width;
-  newSize.height = (CGFloat)naSize.height;
-  return newSize;
-}
-NA_IDEF NARect naMakeRectWithNSRect(NSRect nsRect) {
-  NARect newRect;
-  newRect.pos = naMakePosWithNSPoint(nsRect.origin);
-  newRect.size = naMakeSizeWithNSSize(nsRect.size);
-  return newRect;
-}
-NA_IDEF NSRect naMakeNSRectWithSize(NASize naSize) {
-  NSRect newRect;
-  newRect.origin = NSMakePoint(0., 0.);
-  newRect.size = naMakeNSSizeWithSize(naSize);
-  return newRect;
-}
-NA_IDEF NSRect naMakeNSRectWithRect(NARect naRect) {
-  return NSMakeRect(
-    (CGFloat)naRect.pos.x,
-    (CGFloat)naRect.pos.y,
-    (CGFloat)naRect.size.width,
-    (CGFloat)naRect.size.height);
-}
-#endif
-
-
-
-NA_IDEF NAPos naMakePosWithAlignment(NAPos origin, NARect alignRect) {
-  NAPos newOrigin;
-  #if NA_DEBUG
-    if(naIsRectEmpty(alignRect))
-      naCrash("alignment rect is empty.");
-  #endif
-  newOrigin.x = naAlignValued(origin.x, alignRect.pos.x, alignRect.size.width);
-  newOrigin.y = naAlignValued(origin.y, alignRect.pos.y, alignRect.size.height);
-  return newOrigin;
-}
-NA_IDEF NAPosi32 naMakePosi32WithAlignment(NAPosi32 origin, NARecti32 alignRect) {
-  NAPosi32 newOrigin;
-  #if NA_DEBUG
-    if(naIsRecti32EmptySlow(alignRect))
-      naCrash("alignment rect is empty.");
-  #endif
-  newOrigin.x = naAlignValuei32(origin.x, alignRect.pos.x, alignRect.size.width);
-  newOrigin.y = naAlignValuei32(origin.y, alignRect.pos.y, alignRect.size.height);
-  return newOrigin;
-}
-NA_IDEF NAPosi64 naMakePosi64WithAlignment(NAPosi64 origin, NARecti64 alignRect) {
-  NAPosi64 newOrigin;
-  #if NA_DEBUG
-    if(naIsRecti64EmptySlow(alignRect))
-      naCrash("alignment rect is empty.");
-  #endif
-  newOrigin.x = naAlignValuei64(origin.x, alignRect.pos.x, alignRect.size.width);
-  newOrigin.y = naAlignValuei64(origin.y, alignRect.pos.y, alignRect.size.height);
-  return newOrigin;
-}
-
-
-
-NA_IDEF NAVertex naMakeVertexWithAlignment(NAVertex origin, NABox alignBox) {
-  NAVertex newOrigin;
-  #if NA_DEBUG
-    if(naIsBoxEmpty(alignBox))
-      naCrash("alignment box is empty.");
-  #endif
-  newOrigin.x = naAlignValued(origin.x, alignBox.vertex.x, alignBox.volume.width);
-  newOrigin.y = naAlignValued(origin.y, alignBox.vertex.y, alignBox.volume.height);
-  newOrigin.z = naAlignValued(origin.z, alignBox.vertex.z, alignBox.volume.depth);
-  return newOrigin;
-}
-NA_IDEF NAVertexi32 naMakeVertexi32WithAlignment(NAVertexi32 origin, NABoxi32 alignBox) {
-  NAVertexi32 newOrigin;
-  #if NA_DEBUG
-    if(naIsBoxi32EmptySlow(alignBox))
-      naCrash("alignment box is empty.");
-  #endif
-  newOrigin.x = naAlignValuei32(origin.x, alignBox.vertex.x, alignBox.volume.width);
-  newOrigin.y = naAlignValuei32(origin.y, alignBox.vertex.y, alignBox.volume.height);
-  newOrigin.z = naAlignValuei32(origin.z, alignBox.vertex.z, alignBox.volume.depth);
-  return newOrigin;
-}
-NA_IDEF NAVertexi64 naMakeVertexi64WithAlignment(NAVertexi64 origin, NABoxi64 alignBox) {
-  NAVertexi64 newOrigin;
-  #if NA_DEBUG
-    if(naIsBoxi64EmptySlow(alignBox))
-      naCrash("alignment box is empty.");
-  #endif
-  newOrigin.x = naAlignValuei64(origin.x, alignBox.vertex.x, alignBox.volume.width);
-  newOrigin.y = naAlignValuei64(origin.y, alignBox.vertex.y, alignBox.volume.height);
-  newOrigin.z = naAlignValuei64(origin.z, alignBox.vertex.z, alignBox.volume.depth);
-  return newOrigin;
-}
 
 
 
