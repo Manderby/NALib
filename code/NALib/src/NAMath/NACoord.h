@@ -514,9 +514,11 @@ NA_IAPI NABoxi64    naMakeBoxi64WithBoxAndBorder   (NABoxi64 box, int64  border)
 //            -> a rect with pos(2., 6.) and size ( 2., 7.) .
 // But: An integer rect with pos(4 , 6 ) and size (-2 , 7 ) will change to
 //            -> a rect with pos(3 , 6 ) and size ( 2 , 7 ) !
+NA_IAPI NARange naMakeRangePositive(NARange range);
 NA_IAPI NARangei32 naMakeRangei32Positive(NARangei32 range);
 NA_IAPI NARangei64 naMakeRangei64Positive(NARangei64 range);
 
+NA_IAPI NARect naMakeRectPositive(NARect rect);
 NA_IAPI NARecti32 naMakeRecti32Positive(NARecti32 rect);
 NA_IAPI NARecti64 naMakeRecti64Positive(NARecti64 rect);
 

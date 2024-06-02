@@ -1292,6 +1292,12 @@ NA_IDEF NABoxi64 naMakeBoxi64WithBoxAndBorder(NABoxi64 box, int64 border) {
 
 
 
+NA_IDEF NARange naMakeRangePositive(NARange range) {
+  double rangeNegative = (range.length < 0) ? 1. : -1.;
+  range.origin += rangeNegative * range.length;
+  range.length -= rangeNegative * 2. * range.length;
+  return range;
+}
 NA_IDEF NARangei32 naMakeRangei32Positive(NARangei32 range) {
   int32 rangeNegative = (int32)(range.length < 0);
   range.origin += rangeNegative * range.length;
@@ -1307,6 +1313,11 @@ NA_IDEF NARangei64 naMakeRangei64Positive(NARangei64 range) {
 
 
 
+NA_IDEF NARect naMakeRectPositive(NARect rect) {
+  NARange range1 = naMakeRangePositive(naMakeRangeE(rect.pos.x, rect.size.width));
+  NARange range2 = naMakeRangePositive(naMakeRangeE(rect.pos.y, rect.size.height));
+  return naMakeRectS(range1.origin, range2.origin, range1.length, range2.length);
+}
 NA_IDEF NARecti32 naMakeRecti32Positive(NARecti32 rect) {
   NARangei32 range1 = naMakeRangei32Positive(naMakeRangei32E(rect.pos.x, rect.size.width));
   NARangei32 range2 = naMakeRangei32Positive(naMakeRangei32E(rect.pos.y, rect.size.height));
