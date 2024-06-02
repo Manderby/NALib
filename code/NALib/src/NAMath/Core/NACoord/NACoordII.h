@@ -141,16 +141,6 @@ NA_IDEF NSRect naMakeNSRectWithRect(NARect naRect) {
 
 
 
-NA_IDEF NAPosi naMakePosiWithAlignment(NAPosi origin, NARecti alignRect) {
-  NAPosi newOrigin;
-  #if NA_DEBUG
-    if(naIsRectiEmptySlow(alignRect))
-      naCrash("alignment rect is empty.");
-  #endif
-  newOrigin.x = naAlignValuei(origin.x, alignRect.pos.x, alignRect.size.width);
-  newOrigin.y = naAlignValuei(origin.y, alignRect.pos.y, alignRect.size.height);
-  return newOrigin;
-}
 NA_IDEF NAPos naMakePosWithAlignment(NAPos origin, NARect alignRect) {
   NAPos newOrigin;
   #if NA_DEBUG
@@ -161,17 +151,29 @@ NA_IDEF NAPos naMakePosWithAlignment(NAPos origin, NARect alignRect) {
   newOrigin.y = naAlignValued(origin.y, alignRect.pos.y, alignRect.size.height);
   return newOrigin;
 }
-NA_IDEF NAVertexi naMakeVertexiWithAlignment(NAVertexi origin, NABoxi alignBox) {
-  NAVertexi newOrigin;
+NA_IDEF NAPosi32 naMakePosi32WithAlignment(NAPosi32 origin, NARecti32 alignRect) {
+  NAPosi32 newOrigin;
   #if NA_DEBUG
-    if(naIsBoxiEmptySlow(alignBox))
-      naCrash("alignment box is empty.");
+    if(naIsRecti32EmptySlow(alignRect))
+      naCrash("alignment rect is empty.");
   #endif
-  newOrigin.x = naAlignValuei(origin.x, alignBox.vertex.x, alignBox.volume.width);
-  newOrigin.y = naAlignValuei(origin.y, alignBox.vertex.y, alignBox.volume.height);
-  newOrigin.z = naAlignValuei(origin.z, alignBox.vertex.z, alignBox.volume.depth);
+  newOrigin.x = naAlignValuei32(origin.x, alignRect.pos.x, alignRect.size.width);
+  newOrigin.y = naAlignValuei32(origin.y, alignRect.pos.y, alignRect.size.height);
   return newOrigin;
 }
+NA_IDEF NAPosi64 naMakePosi64WithAlignment(NAPosi64 origin, NARecti64 alignRect) {
+  NAPosi64 newOrigin;
+  #if NA_DEBUG
+    if(naIsRecti64EmptySlow(alignRect))
+      naCrash("alignment rect is empty.");
+  #endif
+  newOrigin.x = naAlignValuei64(origin.x, alignRect.pos.x, alignRect.size.width);
+  newOrigin.y = naAlignValuei64(origin.y, alignRect.pos.y, alignRect.size.height);
+  return newOrigin;
+}
+
+
+
 NA_IDEF NAVertex naMakeVertexWithAlignment(NAVertex origin, NABox alignBox) {
   NAVertex newOrigin;
   #if NA_DEBUG
@@ -181,6 +183,28 @@ NA_IDEF NAVertex naMakeVertexWithAlignment(NAVertex origin, NABox alignBox) {
   newOrigin.x = naAlignValued(origin.x, alignBox.vertex.x, alignBox.volume.width);
   newOrigin.y = naAlignValued(origin.y, alignBox.vertex.y, alignBox.volume.height);
   newOrigin.z = naAlignValued(origin.z, alignBox.vertex.z, alignBox.volume.depth);
+  return newOrigin;
+}
+NA_IDEF NAVertexi32 naMakeVertexi32WithAlignment(NAVertexi32 origin, NABoxi32 alignBox) {
+  NAVertexi32 newOrigin;
+  #if NA_DEBUG
+    if(naIsBoxi32EmptySlow(alignBox))
+      naCrash("alignment box is empty.");
+  #endif
+  newOrigin.x = naAlignValuei32(origin.x, alignBox.vertex.x, alignBox.volume.width);
+  newOrigin.y = naAlignValuei32(origin.y, alignBox.vertex.y, alignBox.volume.height);
+  newOrigin.z = naAlignValuei32(origin.z, alignBox.vertex.z, alignBox.volume.depth);
+  return newOrigin;
+}
+NA_IDEF NAVertexi64 naMakeVertexi64WithAlignment(NAVertexi64 origin, NABoxi64 alignBox) {
+  NAVertexi64 newOrigin;
+  #if NA_DEBUG
+    if(naIsBoxi64EmptySlow(alignBox))
+      naCrash("alignment box is empty.");
+  #endif
+  newOrigin.x = naAlignValuei64(origin.x, alignBox.vertex.x, alignBox.volume.width);
+  newOrigin.y = naAlignValuei64(origin.y, alignBox.vertex.y, alignBox.volume.height);
+  newOrigin.z = naAlignValuei64(origin.z, alignBox.vertex.z, alignBox.volume.depth);
   return newOrigin;
 }
 
@@ -1319,23 +1343,41 @@ NA_IDEF void naFillPosWithCopy(NAPos* posd, const NAPos* poss) {
   posd->x = poss->x;
   posd->y = poss->y;
 }
-NA_IDEF void naFillPosiWithCopy(NAPosi* posd, const NAPosi* poss) {
+NA_IDEF void naFillPosi32WithCopy(NAPosi32* posd, const NAPosi32* poss) {
   posd->x = poss->x;
   posd->y = poss->y;
 }
+NA_IDEF void naFillPosi64WithCopy(NAPosi64* posd, const NAPosi64* poss) {
+  posd->x = poss->x;
+  posd->y = poss->y;
+}
+
+
+
 NA_IDEF void naFillSizeWithCopy(NASize* sized, const NASize* sizes) {
   sized->width  = sizes->width;
   sized->height = sizes->height;
 }
-NA_IDEF void naFillSizeiWithCopy(NASizei* sized, const NASizei* sizes) {
+NA_IDEF void naFillSizei32WithCopy(NASizei32* sized, const NASizei32* sizes) {
   sized->width  = sizes->width;
   sized->height = sizes->height;
 }
+NA_IDEF void naFillSizei64WithCopy(NASizei64* sized, const NASizei64* sizes) {
+  sized->width  = sizes->width;
+  sized->height = sizes->height;
+}
+
+
+
 NA_IDEF void naFillRectWithCopy(NARect* rectd, const NARect* rects) {
   rectd->pos = rects->pos;
   rectd->size  = rects->size;
 }
-NA_IDEF void naFillRectiWithCopy(NARecti* rectd, const NARecti* rects) {
+NA_IDEF void naFillRecti32WithCopy(NARecti32* rectd, const NARecti32* rects) {
+  rectd->pos = rects->pos;
+  rectd->size  = rects->size;
+}
+NA_IDEF void naFillRecti64WithCopy(NARecti64* rectd, const NARecti64* rects) {
   rectd->pos = rects->pos;
   rectd->size  = rects->size;
 }
@@ -1347,26 +1389,46 @@ NA_IDEF void naFillVertexWithCopy(NAVertex* vertexd, const NAVertex* vertexs) {
   vertexd->y = vertexs->y;
   vertexd->z = vertexs->z;
 }
-NA_IDEF void naFillVertexiWithCopy(NAVertexi* vertexd, const NAVertexi* vertexs) {
+NA_IDEF void naFillVertexi32WithCopy(NAVertexi32* vertexd, const NAVertexi32* vertexs) {
   vertexd->x = vertexs->x;
   vertexd->y = vertexs->y;
   vertexd->z = vertexs->z;
 }
+NA_IDEF void naFillVertexi64WithCopy(NAVertexi64* vertexd, const NAVertexi64* vertexs) {
+  vertexd->x = vertexs->x;
+  vertexd->y = vertexs->y;
+  vertexd->z = vertexs->z;
+}
+
+
+
 NA_IDEF void naFillVolumeWithCopy(NAVolume* volumed, const NAVolume* volumes) {
   volumed->width  = volumes->width;
   volumed->height = volumes->height;
   volumed->depth  = volumes->depth;
 }
-NA_IDEF void naFillVolumeiWithCopy(NAVolumei* volumed, const NAVolumei* volumes) {
+NA_IDEF void naFillVolumei32WithCopy(NAVolumei32* volumed, const NAVolumei32* volumes) {
   volumed->width  = volumes->width;
   volumed->height = volumes->height;
   volumed->depth  = volumes->depth;
 }
+NA_IDEF void naFillVolumei64WithCopy(NAVolumei64* volumed, const NAVolumei64* volumes) {
+  volumed->width  = volumes->width;
+  volumed->height = volumes->height;
+  volumed->depth  = volumes->depth;
+}
+
+
+
 NA_IDEF void naFillBoxWithCopy(NABox* boxd, const NABox* boxs) {
   boxd->vertex = boxs->vertex;
   boxd->volume  = boxs->volume;
 }
-NA_IDEF void naFillBoxiWithCopy(NABoxi* boxd, const NABoxi* boxs) {
+NA_IDEF void naFillBoxi32WithCopy(NABoxi32* boxd, const NABoxi32* boxs) {
+  boxd->vertex = boxs->vertex;
+  boxd->volume  = boxs->volume;
+}
+NA_IDEF void naFillBoxi64WithCopy(NABoxi64* boxd, const NABoxi64* boxs) {
   boxd->vertex = boxs->vertex;
   boxd->volume  = boxs->volume;
 }
@@ -1385,16 +1447,6 @@ NA_IDEF NAPos naGetRectCenter(NARect rect) {
   #endif
   newPos.x = rect.pos.x + 0.5 * rect.size.width;
   newPos.y = rect.pos.y + 0.5 * rect.size.height;
-  return newPos;
-}
-NA_IDEF NAPosi naGetRectiCenter(NARecti rect) {
-  NAPosi newPos;
-  #if NA_DEBUG
-    if(!naIsRectiUseful(rect))
-      naError("rect is not useful");
-  #endif
-  newPos.x = rect.pos.x + rect.size.width / 2;
-  newPos.y = rect.pos.y + rect.size.height / 2;
   return newPos;
 }
 NA_IDEF NAPosi32 naGetRecti32Center(NARecti32 rect) {
@@ -1417,6 +1469,9 @@ NA_IDEF NAPosi64 naGetRecti64Center(NARecti64 rect) {
   newPos.y = rect.pos.y + rect.size.height / 2;
   return newPos;
 }
+
+
+
 NA_IDEF NAVertex naGetBoxCenter(NABox box) {
   NAVertex newVertex;
   #if NA_DEBUG
@@ -1428,10 +1483,21 @@ NA_IDEF NAVertex naGetBoxCenter(NABox box) {
   newVertex.z = box.vertex.z + 0.5 * box.volume.depth;
   return newVertex;
 }
-NA_IDEF NAVertexi naGetBoxiCenter(NABoxi box) {
-  NAVertexi newVertex;
+NA_IDEF NAVertexi32 naGetBoxi32Center(NABoxi32 box) {
+  NAVertexi32 newVertex;
   #if NA_DEBUG
-    if(!naIsBoxiUseful(box))
+    if(!naIsBoxi32Useful(box))
+      naError("box is not useful");
+  #endif
+  newVertex.x = box.vertex.x + box.volume.width / 2;
+  newVertex.y = box.vertex.y + box.volume.height / 2;
+  newVertex.z = box.vertex.z + box.volume.depth / 2;
+  return newVertex;
+}
+NA_IDEF NAVertexi64 naGetBoxi64Center(NABoxi64 box) {
+  NAVertexi64 newVertex;
+  #if NA_DEBUG
+    if(!naIsBoxi64Useful(box))
       naError("box is not useful");
   #endif
   newVertex.x = box.vertex.x + box.volume.width / 2;
@@ -2138,15 +2204,6 @@ NA_IDEF NABool naEqualPos(NAPos pos1, NAPos pos2) {
   #endif
   return ((pos1.x == pos2.x) && (pos1.y == pos2.y));
 }
-NA_IDEF NABool naEqualPosi(NAPosi pos1, NAPosi pos2) {
-  #if NA_DEBUG
-    if(!naIsPosiValid(pos1))
-      naError("pos1 is invalid.");
-    if(!naIsPosiValid(pos2))
-      naError("pos2 is invalid.");
-  #endif
-  return ((pos1.x == pos2.x) && (pos1.y == pos2.y));
-}
 NA_IDEF NABool naEqualPosi32(NAPosi32 pos1, NAPosi32 pos2) {
   #if NA_DEBUG
     if(!naIsPosi32Valid(pos1))
@@ -2165,6 +2222,9 @@ NA_IDEF NABool naEqualPosi64(NAPosi64 pos1, NAPosi64 pos2) {
   #endif
   return ((pos1.x == pos2.x) && (pos1.y == pos2.y));
 }
+
+
+
 NA_IDEF NABool naEqualSize(NASize size1, NASize size2) {
   #if NA_DEBUG
     if(naIsSizeEmpty(size1) || naIsSizeEmpty(size2))
@@ -2172,17 +2232,6 @@ NA_IDEF NABool naEqualSize(NASize size1, NASize size2) {
     if(!naIsSizeValid(size1))
       naError("size1 is invalid.");
     if(!naIsSizeValid(size2))
-      naError("size2 is invalid.");
-  #endif
-  return ((size1.width == size2.width) && (size1.height == size2.height));
-}
-NA_IDEF NABool naEqualSizei(NASizei size1, NASizei size2) {
-  #if NA_DEBUG
-    if(naIsSizeiEmpty(size1) || naIsSizeiEmpty(size2))
-      naError("Equality test not valid for empty sizes.");
-    if(!naIsSizeiValid(size1))
-      naError("size1 is invalid.");
-    if(!naIsSizeiValid(size2))
       naError("size2 is invalid.");
   #endif
   return ((size1.width == size2.width) && (size1.height == size2.height));
@@ -2220,6 +2269,9 @@ NA_IDEF NABool naEqualSizes(NASizes size1, NASizes size2) {
   #endif
   return ((size1.width == size2.width) && (size1.height == size2.height));
 }
+
+
+
 NA_IDEF NABool naEqualRect(NARect rect1, NARect rect2) {
   #if NA_DEBUG
     if(naIsRectEmpty(rect1) || naIsRectEmpty(rect2))
@@ -2232,18 +2284,7 @@ NA_IDEF NABool naEqualRect(NARect rect1, NARect rect2) {
   return (naEqualPos (rect1.pos, rect2.pos)
     &&  naEqualSize(rect1.size, rect2.size));
 }
-NA_IDEF NABool naEqualRecti(NARecti rect1, NARecti rect2) {
-  #if NA_DEBUG
-    if(naIsRectiEmpty(rect1) || naIsRectiEmpty(rect2))
-      naError("Equality test not valid for empty rects.");
-    if(!naIsRectiValid(rect1))
-      naError("rect1 is invalid.");
-    if(!naIsRectiValid(rect2))
-      naError("rect2 is invalid.");
-  #endif
-  return (naEqualPosi (rect1.pos, rect2.pos)
-    && naEqualSizei(rect1.size, rect2.size));
-}
+
 NA_IDEF NABool naEqualRecti32(NARecti32 rect1, NARecti32 rect2) {
   #if NA_DEBUG
     if(naIsRecti32Empty(rect1) || naIsRecti32Empty(rect2))
@@ -2280,15 +2321,27 @@ NA_IDEF NABool naEqualVertex(NAVertex vertex1, NAVertex vertex2) {
   #endif
   return ((vertex1.x == vertex2.x) && (vertex1.y == vertex2.y) && (vertex1.z == vertex2.z));
 }
-NA_IDEF NABool naEqualVertexi(NAVertexi vertex1, NAVertexi vertex2) {
+NA_IDEF NABool naEqualVertexi32(NAVertexi32 vertex1, NAVertexi32 vertex2) {
   #if NA_DEBUG
-    if(!naIsVertexiValid(vertex1))
+    if(!naIsVertexi32Valid(vertex1))
       naError("vertex1 is invalid.");
-    if(!naIsVertexiValid(vertex2))
+    if(!naIsVertexi32Valid(vertex2))
       naError("vertex2 is invalid.");
   #endif
   return ((vertex1.x == vertex2.x) && (vertex1.y == vertex2.y) && (vertex1.z == vertex2.z));
 }
+NA_IDEF NABool naEqualVertexi64(NAVertexi64 vertex1, NAVertexi64 vertex2) {
+  #if NA_DEBUG
+    if(!naIsVertexi64Valid(vertex1))
+      naError("vertex1 is invalid.");
+    if(!naIsVertexi64Valid(vertex2))
+      naError("vertex2 is invalid.");
+  #endif
+  return ((vertex1.x == vertex2.x) && (vertex1.y == vertex2.y) && (vertex1.z == vertex2.z));
+}
+
+
+
 NA_IDEF NABool naEqualVolume(NAVolume volume1, NAVolume volume2) {
   #if NA_DEBUG
     if(naIsVolumeEmpty(volume1) || naIsVolumeEmpty(volume2))
@@ -2300,17 +2353,31 @@ NA_IDEF NABool naEqualVolume(NAVolume volume1, NAVolume volume2) {
   #endif
   return ((volume1.width == volume2.width) && (volume1.height == volume2.height) && (volume1.depth == volume2.depth));
 }
-NA_IDEF NABool naEqualVolumei(NAVolumei volume1, NAVolumei volume2) {
+NA_IDEF NABool naEqualVolumei32(NAVolumei32 volume1, NAVolumei32 volume2) {
   #if NA_DEBUG
-    if(naIsVolumeiEmpty(volume1) || naIsVolumeiEmpty(volume2))
+    if(naIsVolumei32Empty(volume1) || naIsVolumei32Empty(volume2))
       naError("Equality test not valid for empty volumes.");
-    if(!naIsVolumeiValid(volume1))
+    if(!naIsVolumei32Valid(volume1))
       naError("volume1 is invalid.");
-    if(!naIsVolumeiValid(volume2))
+    if(!naIsVolumei32Valid(volume2))
       naError("volume2 is invalid.");
   #endif
   return ((volume1.width == volume2.width) && (volume1.height == volume2.height) && (volume1.depth == volume2.depth));
 }
+NA_IDEF NABool naEqualVolumei64(NAVolumei64 volume1, NAVolumei64 volume2) {
+  #if NA_DEBUG
+    if(naIsVolumei64Empty(volume1) || naIsVolumei64Empty(volume2))
+      naError("Equality test not valid for empty volumes.");
+    if(!naIsVolumei64Valid(volume1))
+      naError("volume1 is invalid.");
+    if(!naIsVolumei64Valid(volume2))
+      naError("volume2 is invalid.");
+  #endif
+  return ((volume1.width == volume2.width) && (volume1.height == volume2.height) && (volume1.depth == volume2.depth));
+}
+
+
+
 NA_IDEF NABool naEqualBox(NABox box1, NABox box2) {
   #if NA_DEBUG
     if(naIsBoxEmpty(box1) || naIsBoxEmpty(box2))
@@ -2323,17 +2390,29 @@ NA_IDEF NABool naEqualBox(NABox box1, NABox box2) {
   return     (naEqualVertex (box1.vertex,  box2.vertex)
           &&  naEqualVolume(box1.volume, box2.volume));
 }
-NA_IDEF NABool naEqualBoxi(NABoxi box1, NABoxi box2) {
+NA_IDEF NABool naEqualBoxi32(NABoxi32 box1, NABoxi32 box2) {
   #if NA_DEBUG
-    if(naIsBoxiEmpty(box1) || naIsBoxiEmpty(box2))
+    if(naIsBoxi32Empty(box1) || naIsBoxi32Empty(box2))
       naError("Equality test not valid for empty boxs.");
-    if(!naIsBoxiValid(box1))
+    if(!naIsBoxi32Valid(box1))
       naError("box1 is invalid.");
-    if(!naIsBoxiValid(box2))
+    if(!naIsBoxi32Valid(box2))
       naError("box2 is invalid.");
   #endif
-  return    (naEqualVertexi (box1.vertex,  box2.vertex)
-          && naEqualVolumei(box1.volume, box2.volume));
+  return    (naEqualVertexi32 (box1.vertex,  box2.vertex)
+          && naEqualVolumei32(box1.volume, box2.volume));
+}
+NA_IDEF NABool naEqualBoxi64(NABoxi64 box1, NABoxi64 box2) {
+  #if NA_DEBUG
+    if(naIsBoxi64Empty(box1) || naIsBoxi64Empty(box2))
+      naError("Equality test not valid for empty boxs.");
+    if(!naIsBoxi64Valid(box1))
+      naError("box1 is invalid.");
+    if(!naIsBoxi64Valid(box2))
+      naError("box2 is invalid.");
+  #endif
+  return    (naEqualVertexi64 (box1.vertex,  box2.vertex)
+          && naEqualVolumei64(box1.volume, box2.volume));
 }
 
 
@@ -2436,18 +2515,32 @@ NA_IDEF NAPos naAddPosSize(NAPos pos, NASize size) {
   newPos.y = pos.y + size.height;
   return newPos;
 }
-NA_IDEF NAPosi naAddPosiSize(NAPosi pos, NASizei size) {
-  NAPosi newPos;
+NA_IDEF NAPosi32 naAddPosi32Size(NAPosi32 pos, NASizei32 size) {
+  NAPosi32 newPos;
   #if NA_DEBUG
-    if(!naIsPosiValid(pos))
+    if(!naIsPosi32Valid(pos))
       naError("pos is invalid.");
-    if(!naIsSizeiValid(size))
+    if(!naIsSizei32Valid(size))
       naError("size is invalid.");
   #endif
   newPos.x = pos.x + size.width;
   newPos.y = pos.y + size.height;
   return newPos;
 }
+NA_IDEF NAPosi64 naAddPosi64Size(NAPosi64 pos, NASizei64 size) {
+  NAPosi64 newPos;
+  #if NA_DEBUG
+    if(!naIsPosi64Valid(pos))
+      naError("pos is invalid.");
+    if(!naIsSizei64Valid(size))
+      naError("size is invalid.");
+  #endif
+  newPos.x = pos.x + size.width;
+  newPos.y = pos.y + size.height;
+  return newPos;
+}
+
+
 
 NA_IDEF NASize naSubPosPos(NAPos pos1, NAPos pos2) {
   NASize newSize;
@@ -2461,12 +2554,24 @@ NA_IDEF NASize naSubPosPos(NAPos pos1, NAPos pos2) {
   newSize.height = pos1.y - pos2.y;
   return newSize;
 }
-NA_IDEF NASizei naSubPosiPos(NAPosi pos1, NAPosi pos2) {
-  NASizei newSize;
+NA_IDEF NASizei32 naSubPosi32Pos(NAPosi32 pos1, NAPosi32 pos2) {
+  NASizei32 newSize;
   #if NA_DEBUG
-    if(!naIsPosiValid(pos1))
+    if(!naIsPosi32Valid(pos1))
       naError("pos1 is invalid.");
-    if(!naIsPosiValid(pos2))
+    if(!naIsPosi32Valid(pos2))
+      naError("pos2 is invalid.");
+  #endif
+  newSize.width  = pos1.x - pos2.x;
+  newSize.height = pos1.y - pos2.y;
+  return newSize;
+}
+NA_IDEF NASizei64 naSubPosi64Pos(NAPosi64 pos1, NAPosi64 pos2) {
+  NASizei64 newSize;
+  #if NA_DEBUG
+    if(!naIsPosi64Valid(pos1))
+      naError("pos1 is invalid.");
+    if(!naIsPosi64Valid(pos2))
       naError("pos2 is invalid.");
   #endif
   newSize.width  = pos1.x - pos2.x;
@@ -2498,12 +2603,12 @@ NA_IDEF NAVertex naAddVertexVolume(NAVertex vertex, NAVolume volume) {
   newVertex.z = vertex.z + volume.depth;
   return newVertex;
 }
-NA_IDEF NAVertexi naAddVertexiVolume(NAVertexi vertex, NAVolumei volume) {
-  NAVertexi newVertex;
+NA_IDEF NAVertexi32 naAddVertexi32Volume(NAVertexi32 vertex, NAVolumei32 volume) {
+  NAVertexi32 newVertex;
   #if NA_DEBUG
-    if(!naIsVertexiValid(vertex))
+    if(!naIsVertexi32Valid(vertex))
       naError("vertex is invalid.");
-    if(!naIsVolumeiValid(volume))
+    if(!naIsVolumei32Valid(volume))
       naError("volume is invalid.");
   #endif
   newVertex.x = vertex.x + volume.width;
@@ -2511,6 +2616,21 @@ NA_IDEF NAVertexi naAddVertexiVolume(NAVertexi vertex, NAVolumei volume) {
   newVertex.z = vertex.z + volume.depth;
   return newVertex;
 }
+NA_IDEF NAVertexi64 naAddVertexi64Volume(NAVertexi64 vertex, NAVolumei64 volume) {
+  NAVertexi64 newVertex;
+  #if NA_DEBUG
+    if(!naIsVertexi64Valid(vertex))
+      naError("vertex is invalid.");
+    if(!naIsVolumei64Valid(volume))
+      naError("volume is invalid.");
+  #endif
+  newVertex.x = vertex.x + volume.width;
+  newVertex.y = vertex.y + volume.height;
+  newVertex.z = vertex.z + volume.depth;
+  return newVertex;
+}
+
+
 
 NA_IDEF NAVolume naSubVertexPos(NAVertex vertex1, NAVertex vertex2) {
   NAVolume newVolume;
@@ -2525,12 +2645,25 @@ NA_IDEF NAVolume naSubVertexPos(NAVertex vertex1, NAVertex vertex2) {
   newVolume.depth  = vertex1.z - vertex2.z;
   return newVolume;
 }
-NA_IDEF NAVolumei naSubVertexiVertex(NAVertexi vertex1, NAVertexi vertex2) {
-  NAVolumei newVolume;
+NA_IDEF NAVolumei32 naSubVertexi32Vertex(NAVertexi32 vertex1, NAVertexi32 vertex2) {
+  NAVolumei32 newVolume;
   #if NA_DEBUG
-    if(!naIsVertexiValid(vertex1))
+    if(!naIsVertexi32Valid(vertex1))
       naError("vertex1 is invalid.");
-    if(!naIsVertexiValid(vertex2))
+    if(!naIsVertexi32Valid(vertex2))
+      naError("vertex2 is invalid.");
+  #endif
+  newVolume.width  = vertex1.x - vertex2.x;
+  newVolume.height = vertex1.y - vertex2.y;
+  newVolume.depth  = vertex1.z - vertex2.y;
+  return newVolume;
+}
+NA_IDEF NAVolumei64 naSubVertexi64Vertex(NAVertexi64 vertex1, NAVertexi64 vertex2) {
+  NAVolumei64 newVolume;
+  #if NA_DEBUG
+    if(!naIsVertexi64Valid(vertex1))
+      naError("vertex1 is invalid.");
+    if(!naIsVertexi64Valid(vertex2))
       naError("vertex2 is invalid.");
   #endif
   newVolume.width  = vertex1.x - vertex2.x;
@@ -2622,11 +2755,11 @@ NA_IDEF NABool naContainsSizePos(NASize outerSize, NAPos pos) {
         || (pos.y < 0)
         || (pos.y > outerSize.height));
 }
-NA_IDEF NABool naContainsSizeiPos(NASizei outerSize, NAPosi pos) {
+NA_IDEF NABool naContainsSizei32Pos(NASizei32 outerSize, NAPosi32 pos) {
   #if NA_DEBUG
-    if(!naIsPosiValid(pos))
+    if(!naIsPosi32Valid(pos))
       naError("pos is invalid.");
-    if(naIsSizeiUseful(outerSize))
+    if(naIsSizei32Useful(outerSize))
       naError("Inside test not valid for sizes which are not useful.");
   #endif
   return  ((pos.x >= 0)
@@ -2634,6 +2767,21 @@ NA_IDEF NABool naContainsSizeiPos(NASizei outerSize, NAPosi pos) {
         && (pos.y >= 0)
         && (pos.y <  outerSize.height));
 }
+NA_IDEF NABool naContainsSizei64Pos(NASizei64 outerSize, NAPosi64 pos) {
+  #if NA_DEBUG
+    if(!naIsPosi64Valid(pos))
+      naError("pos is invalid.");
+    if(naIsSizei64Useful(outerSize))
+      naError("Inside test not valid for sizes which are not useful.");
+  #endif
+  return  ((pos.x >= 0)
+        && (pos.x <  outerSize.width)
+        && (pos.y >= 0)
+        && (pos.y <  outerSize.height));
+}
+
+
+
 NA_IDEF NABool naContainsRectPos(NARect outerRect, NAPos pos) {
   #if NA_DEBUG
     if(!naIsPosValid(pos))
@@ -2647,20 +2795,6 @@ NA_IDEF NABool naContainsRectPos(NARect outerRect, NAPos pos) {
         || (pos.x > naGetRectEndX(outerRect))
         || (pos.y < outerRect.pos.y)
         || (pos.y > naGetRectEndY(outerRect)));
-}
-NA_IDEF NABool naContainsRectPosE(NARect outerRect, NAPos pos) {
-  #if NA_DEBUG
-    if(!naIsPosValid(pos))
-      naError("pos is invalid.");
-    if(naIsRectEmpty(outerRect))
-      naError("Inside test not valid for empty rects.");
-    if(!naIsRectValid(outerRect))
-      naError("outerRect is invalid.");
-  #endif
-  return !((pos.x < outerRect.pos.x)
-        || (pos.x >= naGetRectEndX(outerRect))
-        || (pos.y < outerRect.pos.y)
-        || (pos.y >= naGetRectEndY(outerRect)));
 }
 NA_IDEF NABool naContainsRecti32Pos(NARecti32 outerRect, NAPosi32 pos) {
   #if NA_DEBUG
@@ -2704,6 +2838,26 @@ NA_IDEF NABool naContainsRectsPos(NARects outerRect, NAPoss pos) {
         && (pos.y >= outerRect.pos.y)
         && (pos.y <  naGetRectsEndY(outerRect)));
 }
+
+
+
+NA_IDEF NABool naContainsRectPosE(NARect outerRect, NAPos pos) {
+  #if NA_DEBUG
+    if(!naIsPosValid(pos))
+      naError("pos is invalid.");
+    if(naIsRectEmpty(outerRect))
+      naError("Inside test not valid for empty rects.");
+    if(!naIsRectValid(outerRect))
+      naError("outerRect is invalid.");
+  #endif
+  return !((pos.x < outerRect.pos.x)
+        || (pos.x >= naGetRectEndX(outerRect))
+        || (pos.y < outerRect.pos.y)
+        || (pos.y >= naGetRectEndY(outerRect)));
+}
+
+
+
 NA_IDEF NABool naContainsSizeSize(NASize outerSize, NASize size) {
   #if NA_DEBUG
     if(!naIsSizeUseful(size))
@@ -2714,16 +2868,29 @@ NA_IDEF NABool naContainsSizeSize(NASize outerSize, NASize size) {
   return !((size.width  > outerSize.width)
         || (size.height > outerSize.height));
 }
-NA_IDEF NABool naContainsSizeiSize(NASizei outerSize, NASizei size) {
+NA_IDEF NABool naContainsSizei32Size(NASizei32 outerSize, NASizei32 size) {
   #if NA_DEBUG
-    if(!naIsSizeiUseful(size))
+    if(!naIsSizei32Useful(size))
       naError("Inside test not valid if size is not useful.");
-    if(!naIsSizeiUseful(outerSize))
+    if(!naIsSizei32Useful(outerSize))
       naError("Inside test not valid if outerSize is not useful.");
   #endif
   return !((size.width  > outerSize.width)
         || (size.height > outerSize.height));
 }
+NA_IDEF NABool naContainsSizei64Size(NASizei64 outerSize, NASizei64 size) {
+  #if NA_DEBUG
+    if(!naIsSizei64Useful(size))
+      naError("Inside test not valid if size is not useful.");
+    if(!naIsSizei64Useful(outerSize))
+      naError("Inside test not valid if outerSize is not useful.");
+  #endif
+  return !((size.width  > outerSize.width)
+        || (size.height > outerSize.height));
+}
+
+
+
 NA_IDEF NABool naContainsRectRect(NARect outerRect, NARect rect) {
   #if NA_DEBUG
     if(naIsRectEmpty(rect) || naIsRectEmpty(outerRect))
@@ -2783,11 +2950,11 @@ NA_IDEF NABool naContainsVolumeVertex(NAVolume outerVolume, NAVertex vertex) {
         || (vertex.z < 0)
         || (vertex.z > outerVolume.depth));
 }
-NA_IDEF NABool naContainsVolumeiVertex(NAVolumei outerVolume, NAVertexi vertex) {
+NA_IDEF NABool naContainsVolumei32Vertex(NAVolumei32 outerVolume, NAVertexi32 vertex) {
   #if NA_DEBUG
-    if(!naIsVertexiValid(vertex))
+    if(!naIsVertexi32Valid(vertex))
       naError("vertex is invalid.");
-    if(naIsVolumeiUseful(outerVolume))
+    if(naIsVolumei32Useful(outerVolume))
       naError("Inside test not valid for volumes which are not useful.");
   #endif
   return  ((vertex.x >= 0)
@@ -2797,6 +2964,23 @@ NA_IDEF NABool naContainsVolumeiVertex(NAVolumei outerVolume, NAVertexi vertex) 
         && (vertex.z >= 0)
         && (vertex.z <  outerVolume.depth));
 }
+NA_IDEF NABool naContainsVolumei64Vertex(NAVolumei64 outerVolume, NAVertexi64 vertex) {
+  #if NA_DEBUG
+    if(!naIsVertexi64Valid(vertex))
+      naError("vertex is invalid.");
+    if(naIsVolumei64Useful(outerVolume))
+      naError("Inside test not valid for volumes which are not useful.");
+  #endif
+  return  ((vertex.x >= 0)
+        && (vertex.x <  outerVolume.width)
+        && (vertex.y >= 0)
+        && (vertex.y <  outerVolume.height)
+        && (vertex.z >= 0)
+        && (vertex.z <  outerVolume.depth));
+}
+
+
+
 NA_IDEF NABool naContainsBoxVertex(NABox outerBox, NAVertex vertex) {
   #if NA_DEBUG
     if(!naIsVertexValid(vertex))
@@ -2877,6 +3061,9 @@ NA_IDEF NABool naContainsBoxsVertex(NABoxs outerBox, NAVertexs vertex) {
         && (vertex.z >= outerBox.vertex.z)
         && (vertex.z <  naGetBoxsEndZ(outerBox)));
 }
+
+
+
 NA_IDEF NABool naContainsVolumeVolume(NAVolume outerVolume, NAVolume volume) {
   #if NA_DEBUG
     if(!naIsVolumeUseful(volume))
@@ -2888,11 +3075,22 @@ NA_IDEF NABool naContainsVolumeVolume(NAVolume outerVolume, NAVolume volume) {
         || (volume.height > outerVolume.height)
         || (volume.depth  > outerVolume.depth));
 }
-NA_IDEF NABool naContainsVolumeiVolume(NAVolumei outerVolume, NAVolumei volume) {
+NA_IDEF NABool naContainsVolumei32Volume(NAVolumei32 outerVolume, NAVolumei32 volume) {
   #if NA_DEBUG
-    if(!naIsVolumeiUseful(volume))
+    if(!naIsVolumei32Useful(volume))
       naError("Inside test not valid if volume is not useful.");
-    if(!naIsVolumeiUseful(outerVolume))
+    if(!naIsVolumei32Useful(outerVolume))
+      naError("Inside test not valid if outerVolume is not useful.");
+  #endif
+  return !((volume.width  > outerVolume.width)
+        || (volume.height > outerVolume.height)
+        || (volume.depth  > outerVolume.depth));
+}
+NA_IDEF NABool naContainsVolumei64Volume(NAVolumei64 outerVolume, NAVolumei64 volume) {
+  #if NA_DEBUG
+    if(!naIsVolumei64Useful(volume))
+      naError("Inside test not valid if volume is not useful.");
+    if(!naIsVolumei64Useful(outerVolume))
       naError("Inside test not valid if outerVolume is not useful.");
   #endif
   return !((volume.width  > outerVolume.width)

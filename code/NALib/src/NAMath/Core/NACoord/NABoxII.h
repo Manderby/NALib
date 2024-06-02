@@ -31,19 +31,6 @@ NA_IDEF NABoxf naMakeBoxf(NAVertexf vertex, NAVolumef volume) {
   return newBox;
 }
 
-NA_IDEF NABoxi naMakeBoxi(NAVertexi vertex, NAVolumei volume) {
-  NABoxi newBox;
-  #if NA_DEBUG
-    if(!naIsVertexiValid(vertex) || !naIsVolumeiValid(volume))
-      naError("Invalid values given.");
-    if(!naIsVertexiUseful(vertex) || !naIsVolumeiUseful(volume))
-      naError("Values given are not useful.");
-  #endif
-  newBox.vertex = vertex;
-  newBox.volume = volume;
-  return newBox;
-}
-
 NA_IDEF NABoxi32 naMakeBoxi32(NAVertexi32 vertex, NAVolumei32 volume) {
   NABoxi32 newBox;
   #if NA_DEBUG
@@ -154,17 +141,6 @@ NA_IDEF NABoxf naMakeBoxfE(NAVertexf vertex, NAVolumef volume) {
   return newBox;
 }
 
-NA_IDEF NABoxi naMakeBoxiE(NAVertexi vertex, NAVolumei volume) {
-  NABoxi newBox;
-  #if NA_DEBUG
-    if(!naIsVertexiValid(vertex) || !naIsVolumeiValid(volume))
-      naError("Invalid values given.");
-  #endif
-  newBox.vertex = vertex;
-  newBox.volume = volume;
-  return newBox;
-}
-
 NA_IDEF NABoxi32 naMakeBoxi32E(NAVertexi32 vertex, NAVolumei32 volume) {
   NABoxi32 newBox;
   #if NA_DEBUG
@@ -256,12 +232,6 @@ NA_IDEF NABox naMakeBoxEmpty() {
 NA_IDEF NABoxf naMakeBoxfEmpty() {
   NABoxf newBox;
   newBox.volume.width = 0.f;
-  return newBox;
-}
-
-NA_IDEF NABoxi naMakeBoxiEmpty() {
-  NABoxi newBox;
-  newBox.volume.width = 0;
   return newBox;
 }
 

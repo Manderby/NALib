@@ -33,20 +33,6 @@ NA_IDEF NAVolumef naMakeVolumef(float width, float height, float depth) {
   return newVolume;
 }
 
-NA_IDEF NAVolumei naMakeVolumei(NAInt width, NAInt height, NAInt depth) {
-  NAVolumei newVolume;
-  #if NA_DEBUG
-    if(!(naIsLengthValueValidi(width) && naIsLengthValueValidi(height) && naIsLengthValueValidi(depth)))
-      naError("Invalid values given.");
-    if(!(naIsLengthValueUsefuli(width) && naIsLengthValueUsefuli(height) && naIsLengthValueUsefuli(depth)))
-      naError("Values given are not useful.");
-  #endif
-  newVolume.width = width;
-  newVolume.height = height;
-  newVolume.depth = depth;
-  return newVolume;
-}
-
 NA_IDEF NAVolumei32 naMakeVolumei32(int32 width, int32 height, int32 depth) {
   NAVolumei32 newVolume;
   #if NA_DEBUG
@@ -165,13 +151,6 @@ NA_IDEF NAVolumef naMakeVolumefZero() {
   newVolume.width  = 0.f;
   newVolume.height = 0.f;
   newVolume.depth  = 0.f;
-  return newVolume;
-}
-NA_IDEF NAVolumei naMakeVolumeiZero() {
-  NAVolumei newVolume;
-  newVolume.width  = 0;
-  newVolume.height = 0;
-  newVolume.depth  = 0;
   return newVolume;
 }
 NA_IDEF NAVolumei32 naMakeVolumei32Zero() {

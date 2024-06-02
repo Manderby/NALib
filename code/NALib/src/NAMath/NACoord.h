@@ -122,21 +122,18 @@ typedef struct NARanges   NARanges;
 // 2-D Coordinates: Pos, Size and Rect
 typedef struct NAPos      NAPos;
 typedef struct NAPosf     NAPosf;
-typedef struct NAPosi     NAPosi;
 typedef struct NAPosi32   NAPosi32;
 typedef struct NAPosi64   NAPosi64;
 typedef struct NAPoss     NAPoss;
 
 typedef struct NASize     NASize;
 typedef struct NASizef    NASizef;
-typedef struct NASizei    NASizei;
 typedef struct NASizei32  NASizei32;
 typedef struct NASizei64  NASizei64;
 typedef struct NASizes    NASizes;
 
 typedef struct NARect     NARect;
 typedef struct NARectf    NARectf;
-typedef struct NARecti    NARecti;
 typedef struct NARecti32  NARecti32;
 typedef struct NARecti64  NARecti64;
 typedef struct NARects    NARects;
@@ -144,21 +141,18 @@ typedef struct NARects    NARects;
 // 3-D Coordinates: Vertex, Volume and Box
 typedef struct NAVertex    NAVertex;
 typedef struct NAVertexf   NAVertexf;
-typedef struct NAVertexi   NAVertexi;
 typedef struct NAVertexi32 NAVertexi32;
 typedef struct NAVertexi64 NAVertexi64;
 typedef struct NAVertexs   NAVertexs;
 
 typedef struct NAVolume    NAVolume;
 typedef struct NAVolumef   NAVolumef;
-typedef struct NAVolumei   NAVolumei;
 typedef struct NAVolumei32 NAVolumei32;
 typedef struct NAVolumei64 NAVolumei64;
 typedef struct NAVolumes   NAVolumes;
 
 typedef struct NABox       NABox;
 typedef struct NABoxf      NABoxf;
-typedef struct NABoxi      NABoxi;
 typedef struct NABoxi32    NABoxi32;
 typedef struct NABoxi64    NABoxi64;
 typedef struct NABoxs      NABoxs;
@@ -185,42 +179,36 @@ struct NARanges{    size_t origin;   size_t length; };
 
 struct NAPos{       double x;     double  y; };
 struct NAPosf{      float  x;     float   y; };
-struct NAPosi{      NAInt  x;     NAInt   y; };
 struct NAPosi32{    int32  x;     int32   y; };
 struct NAPosi64{    int64  x;     int64   y; };
 struct NAPoss{      size_t x;     size_t  y; };
 
 struct NASize{      double width; double  height; };
 struct NASizef{     float  width; float   height; };
-struct NASizei{     NAInt  width; NAInt   height; };
 struct NASizei32{   int32  width; int32   height; };
 struct NASizei64{   int64  width; int64   height; };
 struct NASizes{     size_t width; size_t  height; };
 
 struct NARect{      NAPos    pos; NASize    size; };
 struct NARectf{     NAPosf   pos; NASizef   size; };
-struct NARecti{     NAPosi   pos; NASizei   size; };
 struct NARecti32{   NAPosi32 pos; NASizei32 size; };
 struct NARecti64{   NAPosi64 pos; NASizei64 size; };
 struct NARects{     NAPoss   pos; NASizes   size; };
 
 struct NAVertex{    double      x;      double      y;        double z; };
 struct NAVertexf{   float       x;      float       y;        float  z; };
-struct NAVertexi{   NAInt       x;      NAInt       y;        NAInt  z; };
 struct NAVertexi32{ int32       x;      int32       y;        int32  z; };
 struct NAVertexi64{ int64       x;      int64       y;        int64  z; };
 struct NAVertexs{   size_t      x;      size_t      y;        size_t z; };
 
 struct NAVolume{    double      width;  double      height;   double depth; };
 struct NAVolumef{   float       width;  float       height;   float  depth; };
-struct NAVolumei{   NAInt       width;  NAInt       height;   NAInt  depth; };
 struct NAVolumei32{ int32       width;  int32       height;   int32  depth; };
 struct NAVolumei64{ int64       width;  int64       height;   int64  depth; };
 struct NAVolumes{   size_t      width;  size_t      height;   size_t depth; };
 
 struct NABox{       NAVertex    vertex; NAVolume    volume; };
 struct NABoxf{      NAVertexf   vertex; NAVolumef   volume; };
-struct NABoxi{      NAVertexi   vertex; NAVolumei   volume; };
 struct NABoxi32{    NAVertexi32 vertex; NAVolumei32 volume; };
 struct NABoxi64{    NAVertexi64 vertex; NAVolumei64 volume; };
 struct NABoxs{      NAVertexs   vertex; NAVolumes   volume; };
@@ -334,7 +322,6 @@ NA_IAPI NARects   naMakeRectsZero   (void);
 
 NA_IAPI NAVertex    naMakeVertex   (double x, double y, double z);
 NA_IAPI NAVertexf   naMakeVertexf  (float  x, float  y, float  z);
-NA_IAPI NAVertexi   naMakeVertexi  (NAInt  x, NAInt  y, NAInt  z);
 NA_IAPI NAVertexi32 naMakeVertexi32(int32  x, int32  y, int32  z);
 NA_IAPI NAVertexi64 naMakeVertexi64(int64  x, int64  y, int64  z);
 NA_IAPI NAVertexs   naMakeVertexs  (size_t x, size_t y, size_t z);
@@ -343,7 +330,6 @@ NA_IAPI NAVertexs   naMakeVertexs  (size_t x, size_t y, size_t z);
 
 NA_IAPI NAVertex    naMakeVertexZero   (void);
 NA_IAPI NAVertexf   naMakeVertexfZero  (void);
-NA_IAPI NAVertexi   naMakeVertexiZero  (void);
 NA_IAPI NAVertexi32 naMakeVertexi32Zero(void);
 NA_IAPI NAVertexi64 naMakeVertexi64Zero(void);
 NA_IAPI NAVertexs   naMakeVertexsZero  (void);
@@ -352,7 +338,6 @@ NA_IAPI NAVertexs   naMakeVertexsZero  (void);
 
 NA_IAPI NAVolume    naMakeVolume    (double  width, double height, double depth);
 NA_IAPI NAVolumef   naMakeVolumef   (float   width, float  height, float  depth);
-NA_IAPI NAVolumei   naMakeVolumei   (NAInt   width, NAInt  height, NAInt  depth);
 NA_IAPI NAVolumei32 naMakeVolumei32 (int32   width, int32  height, int32  depth);
 NA_IAPI NAVolumei64 naMakeVolumei64 (int64   width, int64  height, int64  depth);
 NA_IAPI NAVolumes   naMakeVolumes   (size_t  width, size_t height, size_t depth);
@@ -365,7 +350,6 @@ NA_IAPI NAVolumes   naMakeVolumesE  (size_t  width, size_t height, size_t depth)
 
 NA_IAPI NAVolume    naMakeVolumeZero   (void);
 NA_IAPI NAVolumef   naMakeVolumefZero  (void);
-NA_IAPI NAVolumei   naMakeVolumeiZero  (void);
 NA_IAPI NAVolumei32 naMakeVolumei32Zero(void);
 NA_IAPI NAVolumei64 naMakeVolumei64Zero(void);
 NA_IAPI NAVolumes   naMakeVolumesZero  (void);
@@ -374,7 +358,6 @@ NA_IAPI NAVolumes   naMakeVolumesZero  (void);
 
 NA_IAPI NABox       naMakeBox     (NAVertex    vertex,  NAVolume    volume);
 NA_IAPI NABoxf      naMakeBoxf    (NAVertexf   vertex,  NAVolumef   volume);
-NA_IAPI NABoxi      naMakeBoxi    (NAVertexi   vertex,  NAVolumei   volume);
 NA_IAPI NABoxi32    naMakeBoxi32  (NAVertexi32 vertex,  NAVolumei32 volume);
 NA_IAPI NABoxi64    naMakeBoxi64  (NAVertexi64 vertex,  NAVolumei64 volume);
 NA_IAPI NABoxs      naMakeBoxs    (NAVertexs   vertex,  NAVolumes   volume);
@@ -387,7 +370,6 @@ NA_IAPI NABoxs      naMakeBoxsS   (size_t x, size_t y, size_t z, size_t width, s
 
 NA_IAPI NABox       naMakeBoxE    (NAVertex    vertex, NAVolume    volume);
 NA_IAPI NABoxf      naMakeBoxfE   (NAVertexf   vertex, NAVolumef   volume);
-NA_IAPI NABoxi      naMakeBoxiE   (NAVertexi   vertex, NAVolumei   volume);
 NA_IAPI NABoxi32    naMakeBoxi32E (NAVertexi32 vertex, NAVolumei32 volume);
 NA_IAPI NABoxi64    naMakeBoxi64E (NAVertexi64 vertex, NAVolumei64 volume);
 NA_IAPI NABoxs      naMakeBoxsE   (NAVertexs   vertex, NAVolumes   volume);
@@ -400,7 +382,6 @@ NA_IAPI NABoxs      naMakeBoxsSE  (size_t x, size_t y, size_t z, size_t width, s
 
 NA_IAPI NABox       naMakeBoxEmpty   (void);
 NA_IAPI NABoxf      naMakeBoxfEmpty  (void);
-NA_IAPI NABoxi      naMakeBoxiEmpty  (void);
 NA_IAPI NABoxi32    naMakeBoxi32Empty(void);
 NA_IAPI NABoxi64    naMakeBoxi64Empty(void);
 NA_IAPI NABoxs      naMakeBoxsEmpty  (void);
@@ -442,10 +423,13 @@ NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  naRect);
 
 // Creates a new origin which is the given origin floored to a multiple of
 // the given alignment. Also works for negative input offsets.
-NA_IAPI NAPosi    naMakePosiWithAlignment   (NAPosi    origin, NARecti alignRect);
 NA_IAPI NAPos     naMakePosWithAlignment    (NAPos     origin, NARect  alignRect);
-NA_IAPI NAVertexi naMakeVertexiWithAlignment(NAVertexi origin, NABoxi  alignBox);
+NA_IAPI NAPosi32    naMakePosi32WithAlignment   (NAPosi32    origin, NARecti32 alignRect);
+NA_IAPI NAPosi64    naMakePosi64WithAlignment   (NAPosi64    origin, NARecti64 alignRect);
+
 NA_IAPI NAVertex  naMakeVertexWithAlignment (NAVertex  origin, NABox   alignBox);
+NA_IAPI NAVertexi32 naMakeVertexi32WithAlignment(NAVertexi32 origin, NABoxi32  alignBox);
+NA_IAPI NAVertexi64 naMakeVertexi64WithAlignment(NAVertexi64 origin, NABoxi64  alignBox);
 
 // Create the bounding box of two elements. The range, size or volume of the
 // resulting struct will never be negative. Note that the integer variant of
@@ -541,26 +525,38 @@ NA_IAPI NABoxi64  naMakeBoxi64Positive(NABoxi64 box);
 
 // Copies the contents of source s to destination d
 NA_IAPI void      naFillPosWithCopy    (NAPos*   posd,   const NAPos*   poss);
-NA_IAPI void      naFillPosiWithCopy   (NAPosi*  posd,   const NAPosi*  poss);
+NA_IAPI void      naFillPosi32WithCopy   (NAPosi32*  posd,   const NAPosi32*  poss);
+NA_IAPI void      naFillPosi64WithCopy   (NAPosi64*  posd,   const NAPosi64*  poss);
+
 NA_IAPI void      naFillSizeWithCopy   (NASize*  sized,  const NASize*  sizes);
-NA_IAPI void      naFillSizeiWithCopy  (NASizei* sized,  const NASizei* sizes);
+NA_IAPI void      naFillSizei32WithCopy  (NASizei32* sized,  const NASizei32* sizes);
+NA_IAPI void      naFillSizei64WithCopy  (NASizei64* sized,  const NASizei64* sizes);
+
 NA_IAPI void      naFillRectWithCopy   (NARect*  rectd,  const NARect*  rects);
-NA_IAPI void      naFillRectiWithCopy  (NARecti* rectd,  const NARecti* rects);
+NA_IAPI void      naFillRecti32WithCopy  (NARecti32* rectd,  const NARecti32* rects);
+NA_IAPI void      naFillRecti64WithCopy  (NARecti64* rectd,  const NARecti64* rects);
 
 NA_IAPI void      naFillVertexWithCopy (NAVertex*  vertexd,  const NAVertex*  vertexs);
-NA_IAPI void      naFillVertexiWithCopy(NAVertexi* vertexd,  const NAVertexi* vertexs);
+NA_IAPI void      naFillVertexi32WithCopy(NAVertexi32* vertexd,  const NAVertexi32* vertexs);
+NA_IAPI void      naFillVertexi64WithCopy(NAVertexi64* vertexd,  const NAVertexi64* vertexs);
+
 NA_IAPI void      naFillVolumeWithCopy (NAVolume*  volumed,  const NAVolume*  volumes);
-NA_IAPI void      naFillVolumeiWithCopy(NAVolumei* volumed,  const NAVolumei* volumes);
+NA_IAPI void      naFillVolumei32WithCopy(NAVolumei32* volumed,  const NAVolumei32* volumes);
+NA_IAPI void      naFillVolumei64WithCopy(NAVolumei64* volumed,  const NAVolumei64* volumes);
+
 NA_IAPI void      naFillBoxWithCopy    (NABox*  boxd,  const NABox*  boxs);
-NA_IAPI void      naFillBoxiWithCopy   (NABoxi* boxd,  const NABoxi* boxs);
+NA_IAPI void      naFillBoxi32WithCopy   (NABoxi32* boxd,  const NABoxi32* boxs);
+NA_IAPI void      naFillBoxi64WithCopy   (NABoxi64* boxd,  const NABoxi64* boxs);
 
 // Returns the center position / vertex
 NA_IAPI NAPos     naGetRectCenter (NARect rect);
-NA_IAPI NAPosi    naGetRectiCenter(NARecti rect);
 NA_IAPI NAPosi32  naGetRecti32Center(NARecti32 rect);
 NA_IAPI NAPosi64  naGetRecti64Center(NARecti64 rect);
+
 NA_IAPI NAVertex  naGetBoxCenter  (NABox box);
-NA_IAPI NAVertexi naGetBoxiCenter (NABoxi box);
+NA_IAPI NAVertexi32 naGetBoxi32Center (NABoxi32 box);
+NA_IAPI NAVertexi64 naGetBoxi64Center (NABoxi64 box);
+
 // Returns the offset of a size or volume being centered within a given rect
 // or box relative to the origin of that rect or box.
 NA_IAPI NAPos     naGetRectCenteredSizeOffset  (NARect rect, NASize   size);
@@ -595,25 +591,29 @@ NA_IAPI NABool    naEqualRangei32(NARangei32 range1, NARangei32 range2);
 NA_IAPI NABool    naEqualRangei64(NARangei64 range1, NARangei64 range2);
 
 NA_IAPI NABool    naEqualPos  (NAPos   pos1,  NAPos   pos2);
-NA_IAPI NABool    naEqualPosi (NAPosi  pos1,  NAPosi  pos2);
 NA_IAPI NABool    naEqualPosi32 (NAPosi32  pos1,  NAPosi32  pos2);
 NA_IAPI NABool    naEqualPosi64 (NAPosi64  pos1,  NAPosi64  pos2);
+
 NA_IAPI NABool    naEqualSize (NASize  size1, NASize  size2);
-NA_IAPI NABool    naEqualSizei(NASizei size1, NASizei size2);
 NA_IAPI NABool    naEqualSizei32(NASizei32 size1, NASizei32 size2);
 NA_IAPI NABool    naEqualSizei64(NASizei64 size1, NASizei64 size2);
 NA_IAPI NABool    naEqualSizes(NASizes size1, NASizes size2);
+
 NA_IAPI NABool    naEqualRect (NARect  rect1, NARect  rect2);
-NA_IAPI NABool    naEqualRecti(NARecti rect1, NARecti rect2);
 NA_IAPI NABool    naEqualRecti32(NARecti32 rect1, NARecti32 rect2);
 NA_IAPI NABool    naEqualRecti64(NARecti64 rect1, NARecti64 rect2);
 
 NA_IAPI NABool    naEqualVertex (NAVertex  vertex1, NAVertex  vertex2);
-NA_IAPI NABool    naEqualVertexi(NAVertexi vertex1, NAVertexi vertex2);
+NA_IAPI NABool    naEqualVertexi32(NAVertexi32 vertex1, NAVertexi32 vertex2);
+NA_IAPI NABool    naEqualVertexi64(NAVertexi64 vertex1, NAVertexi64 vertex2);
+
 NA_IAPI NABool    naEqualVolume (NAVolume  volume1, NAVolume  volume2);
+NA_IAPI NABool    naEqualVolumei32(NAVolumei32 volume1, NAVolumei32 volume2);
+NA_IAPI NABool    naEqualVolumei64(NAVolumei64 volume1, NAVolumei64 volume2);
+
 NA_IAPI NABool    naEqualBox    (NABox     box1,    NABox     box2);
-NA_IAPI NABool    naEqualVolumei(NAVolumei volume1, NAVolumei volume2);
-NA_IAPI NABool    naEqualBoxi   (NABoxi    box1,    NABoxi    box2);
+NA_IAPI NABool    naEqualBoxi32   (NABoxi32    box1,    NABoxi32    box2);
+NA_IAPI NABool    naEqualBoxi64   (NABoxi64    box1,    NABoxi64    box2);
 
 // Use the following functions to make comparison tests between elements.
 // They only return true if the condition is true for all components: xyz.
@@ -633,16 +633,22 @@ NA_IAPI NABool    naGreaterVertex      (NAVertex  vertex1, NAVertex  vertex2);
 //
 // The returned NASize can be negative or even invalid.
 NA_IAPI NAPos     naAddPosSize (NAPos   pos,   NASize  size);
-NA_IAPI NAPosi    naAddPosiSize(NAPosi  pos,   NASizei size);
+NA_IAPI NAPosi32    naAddPosi32Size(NAPosi32  pos,   NASizei32 size);
+NA_IAPI NAPosi64    naAddPosi64Size(NAPosi64  pos,   NASizei64 size);
+
 NA_IAPI NASize    naSubPosPos  (NAPos   pos1,  NAPos   pos2);
-NA_IAPI NASizei   naSubPosiPos (NAPosi  pos1,  NAPosi  pos2);
+NA_IAPI NASizei32   naSubPosi32Pos (NAPosi32  pos1,  NAPosi32  pos2);
+NA_IAPI NASizei64   naSubPosi64Pos (NAPosi64  pos1,  NAPosi64  pos2);
 
 NA_IAPI double    naDistancePosPos  (NAPos   pos1,  NAPos   pos2);
 
 NA_IAPI NAVertex  naAddVertexVolume (NAVertex   vertex,   NAVolume  volume);
-NA_IAPI NAVertexi naAddVertexiVolume(NAVertexi  vertex,   NAVolumei volume);
+NA_IAPI NAVertexi32 naAddVertexi32Volume(NAVertexi32  vertex,   NAVolumei32 volume);
+NA_IAPI NAVertexi64 naAddVertexi64Volume(NAVertexi64  vertex,   NAVolumei64 volume);
+
 NA_IAPI NAVolume  naSubVertexPos    (NAVertex   vertex1,  NAVertex  vertex2);
-NA_IAPI NAVolumei naSubVertexiVertex(NAVertexi  vertex1,  NAVertexi vertex2);
+NA_IAPI NAVolumei32 naSubVertexi32Vertex(NAVertexi32  vertex1,  NAVertexi32 vertex2);
+NA_IAPI NAVolumei64 naSubVertexi64Vertex(NAVertexi64  vertex1,  NAVertexi64 vertex2);
 
 // Containing functions. Test if an element is within another.
 // The E variant for the double types denotes an exclusive rangecheck [...)
@@ -656,21 +662,27 @@ NA_IAPI NABool naContainsRangei32Range (NARangei32 outerRange, NARangei32 range)
 NA_IAPI NABool naContainsRangei64Range (NARangei64 outerRange, NARangei64 range);
 
 NA_IAPI NABool    naContainsSizePos    (NASize    outerSize, NAPos     pos);
-NA_IAPI NABool    naContainsSizeiPos   (NASizei   outerSize, NAPosi    pos);
+NA_IAPI NABool    naContainsSizei32Pos   (NASizei32   outerSize, NAPosi32    pos);
+NA_IAPI NABool    naContainsSizei64Pos   (NASizei64   outerSize, NAPosi64    pos);
+
 NA_IAPI NABool    naContainsRectPos    (NARect    outerRect, NAPos     pos);
-NA_IAPI NABool    naContainsRectPosE   (NARect    outerRect, NAPos     pos);
 NA_IAPI NABool    naContainsRecti32Pos (NARecti32 outerRect, NAPosi32  pos);
 NA_IAPI NABool    naContainsRecti64Pos (NARecti64 outerRect, NAPosi64  pos);
 NA_IAPI NABool    naContainsRectsPos   (NARects   outerRect, NAPoss    pos);
 
+NA_IAPI NABool    naContainsRectPosE   (NARect    outerRect, NAPos     pos);
+
 NA_IAPI NABool    naContainsSizeSize   (NASize    outerSize, NASize    size);
-NA_IAPI NABool    naContainsSizeiSize  (NASizei   outerSize, NASizei   size);
+NA_IAPI NABool    naContainsSizei32Size  (NASizei32   outerSize, NASizei32   size);
+NA_IAPI NABool    naContainsSizei64Size  (NASizei64   outerSize, NASizei64   size);
+
 NA_IAPI NABool    naContainsRectRect   (NARect    outerRect, NARect    rect);
 NA_IAPI NABool    naContainsRecti32Rect(NARecti32 outerRect, NARecti32 rect);
 NA_IAPI NABool    naContainsRecti64Rect(NARecti64 outerRect, NARecti64 rect);
 
 NA_IAPI NABool    naContainsVolumeVertex (NAVolume  outerVolume, NAVertex  vertex);
-NA_IAPI NABool    naContainsVolumeiVertex(NAVolumei outerVolume, NAVertexi vertex);
+NA_IAPI NABool    naContainsVolumei32Vertex(NAVolumei32 outerVolume, NAVertexi32 vertex);
+NA_IAPI NABool    naContainsVolumei64Vertex(NAVolumei64 outerVolume, NAVertexi64 vertex);
 
 NA_IAPI NABool    naContainsBoxVertex    (NABox     outerBox,    NAVertex  vertex);
 NA_IAPI NABool    naContainsBoxVertexE   (NABox     outerBox,    NAVertex  vertex);
@@ -679,7 +691,8 @@ NA_IAPI NABool    naContainsBoxi64Vertex (NABoxi64  outerBox,    NAVertexi64 ver
 NA_IAPI NABool    naContainsBoxsVertex   (NABoxs    outerBox,    NAVertexs   vertex);
 
 NA_IAPI NABool    naContainsVolumeVolume (NAVolume  outerVolume, NAVolume  volume);
-NA_IAPI NABool    naContainsVolumeiVolume(NAVolumei outerVolume, NAVolumei volume);
+NA_IAPI NABool    naContainsVolumei32Volume(NAVolumei32 outerVolume, NAVolumei32 volume);
+NA_IAPI NABool    naContainsVolumei64Volume(NAVolumei64 outerVolume, NAVolumei64 volume);
 
 NA_IAPI NABool    naContainsBoxBox       (NABox     outerBox,    NABox     box);
 NA_IAPI NABool    naContainsBoxi32Box      (NABoxi32    outerBox,    NABoxi32    box);
@@ -838,42 +851,36 @@ NA_IAPI NABool    naIsRangesValid   (NARanges    range);
 
 NA_IAPI NABool    naIsPosValid      (NAPos       pos);
 NA_IAPI NABool    naIsPosfValid     (NAPosf      pos);
-NA_IAPI NABool    naIsPosiValid     (NAPosi      pos);
 NA_IAPI NABool    naIsPosi32Valid   (NAPosi32    pos);
 NA_IAPI NABool    naIsPosi64Valid   (NAPosi64    pos);
 NA_IAPI NABool    naIsPossValid     (NAPoss      pos);
 
 NA_IAPI NABool    naIsSizeValid     (NASize      size);
 NA_IAPI NABool    naIsSizefValid    (NASizef     size);
-NA_IAPI NABool    naIsSizeiValid    (NASizei     size);
 NA_IAPI NABool    naIsSizei32Valid  (NASizei32   size);
 NA_IAPI NABool    naIsSizei64Valid  (NASizei64   size);
 NA_IAPI NABool    naIsSizesValid    (NASizes     size);
 
 NA_IAPI NABool    naIsRectValid     (NARect      rect);
 NA_IAPI NABool    naIsRectfValid    (NARectf     rect);
-NA_IAPI NABool    naIsRectiValid    (NARecti     rect);
 NA_IAPI NABool    naIsRecti32Valid  (NARecti32   rect);
 NA_IAPI NABool    naIsRecti64Valid  (NARecti64   rect);
 NA_IAPI NABool    naIsRectsValid    (NARects     rect);
 
 NA_IAPI NABool    naIsVertexValid   (NAVertex    vertex);
 NA_IAPI NABool    naIsVertexfValid  (NAVertexf   vertex);
-NA_IAPI NABool    naIsVertexiValid  (NAVertexi   vertex);
 NA_IAPI NABool    naIsVertexi32Valid(NAVertexi32 vertex);
 NA_IAPI NABool    naIsVertexi64Valid(NAVertexi64 vertex);
 NA_IAPI NABool    naIsVertexsValid  (NAVertexs   vertex);
 
 NA_IAPI NABool    naIsVolumeValid   (NAVolume    volume);
 NA_IAPI NABool    naIsVolumefValid  (NAVolumef   volume);
-NA_IAPI NABool    naIsVolumeiValid  (NAVolumei   volume);
 NA_IAPI NABool    naIsVolumei32Valid(NAVolumei32 volume);
 NA_IAPI NABool    naIsVolumei64Valid(NAVolumei64 volume);
 NA_IAPI NABool    naIsVolumesValid  (NAVolumes   volume);
 
 NA_IAPI NABool    naIsBoxValid      (NABox       box);
 NA_IAPI NABool    naIsBoxfValid     (NABoxf      box);
-NA_IAPI NABool    naIsBoxiValid     (NABoxi      box);
 NA_IAPI NABool    naIsBoxi32Valid   (NABoxi32    box);
 NA_IAPI NABool    naIsBoxi64Valid   (NABoxi64    box);
 NA_IAPI NABool    naIsBoxsValid     (NABoxs      box);
@@ -900,48 +907,40 @@ NA_IAPI NABool    naIsRangesEmpty       (NARanges    range);
 
 NA_IAPI NABool    naIsSizeEmpty         (NASize      size);
 NA_IAPI NABool    naIsSizefEmpty        (NASizef     size);
-NA_IAPI NABool    naIsSizeiEmpty        (NASizei     size);
 NA_IAPI NABool    naIsSizei32Empty      (NASizei32   size);
 NA_IAPI NABool    naIsSizei64Empty      (NASizei64   size);
 NA_IAPI NABool    naIsSizesEmpty        (NASizes     size);
 
-NA_IAPI NABool    naIsSizeiEmptySlow    (NASizei     size);
 NA_IAPI NABool    naIsSizei32EmptySlow  (NASizei32   size);
 NA_IAPI NABool    naIsSizei64EmptySlow  (NASizei64   size);
 NA_IAPI NABool    naIsSizesEmptySlow    (NASizes     size);
 
 NA_IAPI NABool    naIsRectEmpty         (NARect      rect);
 NA_IAPI NABool    naIsRectfEmpty        (NARectf     rect);
-NA_IAPI NABool    naIsRectiEmpty        (NARecti     rect);
 NA_IAPI NABool    naIsRecti32Empty      (NARecti32   rect);
 NA_IAPI NABool    naIsRecti64Empty      (NARecti64   rect);
 NA_IAPI NABool    naIsRectsEmpty        (NARects     rect);
 
-NA_IAPI NABool    naIsRectiEmptySlow    (NARecti     rect);
 NA_IAPI NABool    naIsRecti32EmptySlow  (NARecti32   rect);
 NA_IAPI NABool    naIsRecti64EmptySlow  (NARecti64   rect);
 NA_IAPI NABool    naIsRectsEmptySlow    (NARects     rect);
 
 NA_IAPI NABool    naIsVolumeEmpty       (NAVolume    volume);
 NA_IAPI NABool    naIsVolumefEmpty      (NAVolumef   volume);
-NA_IAPI NABool    naIsVolumeiEmpty      (NAVolumei   volume);
 NA_IAPI NABool    naIsVolumei32Empty    (NAVolumei32 volume);
 NA_IAPI NABool    naIsVolumei64Empty    (NAVolumei64 volume);
 NA_IAPI NABool    naIsVolumesEmpty      (NAVolumes   volume);
 
-NA_IAPI NABool    naIsVolumeiEmptySlow  (NAVolumei   volume);
 NA_IAPI NABool    naIsVolumei32EmptySlow(NAVolumei32 volume);
 NA_IAPI NABool    naIsVolumei64EmptySlow(NAVolumei64 volume);
 NA_IAPI NABool    naIsVolumesEmptySlow  (NAVolumes   volume);
 
 NA_IAPI NABool    naIsBoxEmpty          (NABox       box);
 NA_IAPI NABool    naIsBoxfEmpty         (NABoxf      box);
-NA_IAPI NABool    naIsBoxiEmpty         (NABoxi      box);
 NA_IAPI NABool    naIsBoxi32Empty       (NABoxi32    box);
 NA_IAPI NABool    naIsBoxi64Empty       (NABoxi64    box);
 NA_IAPI NABool    naIsBoxsEmpty         (NABoxs      box);
 
-NA_IAPI NABool    naIsBoxiEmptySlow     (NABoxi      box);
 NA_IAPI NABool    naIsBoxi32EmptySlow   (NABoxi32    box);
 NA_IAPI NABool    naIsBoxi64EmptySlow   (NABoxi64    box);
 NA_IAPI NABool    naIsBoxsEmptySlow     (NABoxs      box);
@@ -967,28 +966,24 @@ NA_IAPI NABool    naIsRangesNegative   (NARanges    range);
 
 NA_IAPI NABool    naIsSizeNegative     (NASize      size);
 NA_IAPI NABool    naIsSizefNegative    (NASizef     size);
-NA_IAPI NABool    naIsSizeiNegative    (NASizei     size);
 NA_IAPI NABool    naIsSizei32Negative  (NASizei32   size);
 NA_IAPI NABool    naIsSizei64Negative  (NASizei64   size);
 NA_IAPI NABool    naIsSizesNegative    (NASizes     size);
 
 NA_IAPI NABool    naIsRectNegative     (NARect      rect);
 NA_IAPI NABool    naIsRectfNegative    (NARectf     rect);
-NA_IAPI NABool    naIsRectiNegative    (NARecti     rect);
 NA_IAPI NABool    naIsRecti32Negative  (NARecti32   rect);
 NA_IAPI NABool    naIsRecti64Negative  (NARecti64   rect);
 NA_IAPI NABool    naIsRectsNegative    (NARects     rect);
 
 NA_IAPI NABool    naIsVolumeNegative   (NAVolume    volume);
 NA_IAPI NABool    naIsVolumefNegative  (NAVolumef   volume);
-NA_IAPI NABool    naIsVolumeiNegative  (NAVolumei   volume);
 NA_IAPI NABool    naIsVolumei32Negative(NAVolumei32 volume);
 NA_IAPI NABool    naIsVolumei64Negative(NAVolumei64 volume);
 NA_IAPI NABool    naIsVolumesNegative  (NAVolumes   volume);
 
 NA_IAPI NABool    naIsBoxNegative      (NABox       box);
 NA_IAPI NABool    naIsBoxfNegative     (NABoxf      box);
-NA_IAPI NABool    naIsBoxiNegative     (NABoxi      box);
 NA_IAPI NABool    naIsBoxi32Negative   (NABoxi32    box);
 NA_IAPI NABool    naIsBoxi64Negative   (NABoxi64    box);
 NA_IAPI NABool    naIsBoxsNegative     (NABoxs      box);
@@ -1009,42 +1004,36 @@ NA_IAPI NABool    naIsRangesUseful   (NARanges    range);
 
 NA_IAPI NABool    naIsPosUseful      (NAPos       pos);
 NA_IAPI NABool    naIsPosfUseful     (NAPosf      pos);
-NA_IAPI NABool    naIsPosiUseful     (NAPosi      pos);
 NA_IAPI NABool    naIsPosi32Useful   (NAPosi32    pos);
 NA_IAPI NABool    naIsPosi64Useful   (NAPosi64    pos);
 NA_IAPI NABool    naIsPossUseful     (NAPoss      pos);
 
 NA_IAPI NABool    naIsSizeUseful     (NASize      size);
 NA_IAPI NABool    naIsSizefUseful    (NASizef     size);
-NA_IAPI NABool    naIsSizeiUseful    (NASizei     size);
 NA_IAPI NABool    naIsSizei32Useful  (NASizei32   size);
 NA_IAPI NABool    naIsSizei64Useful  (NASizei64   size);
 NA_IAPI NABool    naIsSizesUseful    (NASizes     size);
 
 NA_IAPI NABool    naIsRectUseful     (NARect      rect);
 NA_IAPI NABool    naIsRectfUseful    (NARectf     rect);
-NA_IAPI NABool    naIsRectiUseful    (NARecti     rect);
 NA_IAPI NABool    naIsRecti32Useful  (NARecti32   rect);
 NA_IAPI NABool    naIsRecti64Useful  (NARecti64   rect);
 NA_IAPI NABool    naIsRectsUseful    (NARects     rect);
 
 NA_IAPI NABool    naIsVertexUseful   (NAVertex    vertex);
 NA_IAPI NABool    naIsVertexfUseful  (NAVertexf   vertex);
-NA_IAPI NABool    naIsVertexiUseful  (NAVertexi   vertex);
 NA_IAPI NABool    naIsVertexi32Useful(NAVertexi32 vertex);
 NA_IAPI NABool    naIsVertexi64Useful(NAVertexi64 vertex);
 NA_IAPI NABool    naIsVertexsUseful  (NAVertexs   vertex);
 
 NA_IAPI NABool    naIsVolumeUseful   (NAVolume    volume);
 NA_IAPI NABool    naIsVolumefUseful  (NAVolumef   volume);
-NA_IAPI NABool    naIsVolumeiUseful  (NAVolumei   volume);
 NA_IAPI NABool    naIsVolumei32Useful(NAVolumei32 volume);
 NA_IAPI NABool    naIsVolumei64Useful(NAVolumei64 volume);
 NA_IAPI NABool    naIsVolumesUseful  (NAVolumes   volume);
 
 NA_IAPI NABool    naIsBoxUseful      (NABox       box);
 NA_IAPI NABool    naIsBoxfUseful     (NABoxf      box);
-NA_IAPI NABool    naIsBoxiUseful     (NABoxi      box);
 NA_IAPI NABool    naIsBoxi32Useful   (NABoxi32    box);
 NA_IAPI NABool    naIsBoxi64Useful   (NABoxi64    box);
 NA_IAPI NABool    naIsBoxsUseful     (NABoxs      box);

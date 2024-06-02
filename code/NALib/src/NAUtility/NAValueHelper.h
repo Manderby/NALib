@@ -86,8 +86,9 @@ NA_IAPI size_t naMakeLengthWithMinAndMaxs   (size_t min,   size_t max);
 // naAlignValuei(-75, 0, 20) == -80
 // naAlignValuei(15, 10, 20) == 10
 // naAlignValuei(35, 10, 20) == 30
-NA_IAPI NAInt naAlignValuei(NAInt value, NAInt offset, NAInt alignLength);
 NA_IAPI double naAlignValued(double value, double offset, double alignLength);
+NA_IAPI int32 naAlignValuei32(int32 value, int32 offset, int32 alignLength);
+NA_IAPI int64 naAlignValuei64(int64 value, int64 offset, int64 alignLength);
 
 
 

@@ -33,20 +33,6 @@ NA_IDEF NAVertexf naMakeVertexf(float x, float y, float z) {
   return newVertex;
 }
 
-NA_IDEF NAVertexi naMakeVertexi(NAInt x, NAInt y, NAInt z) {
-  NAVertexi newVertex;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValidi(x) && naIsOffsetValueValidi(y) && naIsOffsetValueValidi(z)))
-      naError("Invalid values given.");
-    if(!(naIsOffsetValueUsefuli(x) && naIsOffsetValueUsefuli(y) && naIsOffsetValueUsefuli(z)))
-      naError("Values given are not useful.");
-  #endif
-  newVertex.x = x;
-  newVertex.y = y;
-  newVertex.z = z;
-  return newVertex;
-}
-
 NA_IDEF NAVertexi32 naMakeVertexi32(int32 x, int32 y, int32 z) {
   NAVertexi32 newVertex;
   #if NA_DEBUG

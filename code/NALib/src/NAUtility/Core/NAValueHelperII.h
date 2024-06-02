@@ -372,22 +372,6 @@ NA_IDEF size_t naMakeLengthWithMinAndMaxs(size_t min, size_t max) {
 
 #include "../../NAMath/NAMathOperators.h"
 
-NA_IDEF NAInt naAlignValuei(NAInt value, NAInt offset, NAInt alignLength) {
-  NAInt shiftValue = value - offset;
-  #if NA_DEBUG
-    if(!naIsLengthValueUsefuli(alignLength))
-      naError("Length must be > 0");
-    if(offset > value && shiftValue > 0)
-      naError("Underflow");
-    if(value > offset && shiftValue < 0)
-      naError("Overflow");
-  #endif
-  if(shiftValue < 0) {
-    return (((NAInt)((shiftValue + 1) / alignLength) - 1) * alignLength) + offset;
-  }else{
-    return (((NAInt)((shiftValue + 0) / alignLength) - 0) * alignLength) + offset;
-  }
-}
 NA_IDEF double naAlignValued(double value, double offset, double alignLength) {
   double shiftValue = value - offset;
   #if NA_DEBUG
@@ -397,6 +381,38 @@ NA_IDEF double naAlignValued(double value, double offset, double alignLength) {
         naError("given offset results in a non-useful number.");
   #endif
   return ((naFloor((shiftValue) / alignLength)) * alignLength) + offset;
+}
+NA_IDEF int32 naAlignValuei32(int32 value, int32 offset, int32 alignLength) {
+  int32 shiftValue = value - offset;
+  #if NA_DEBUG
+    if(!naIsLengthValueUsefuli32(alignLength))
+      naError("Length must be > 0");
+    if(offset > value && shiftValue > 0)
+      naError("Underflow");
+    if(value > offset && shiftValue < 0)
+      naError("Overflow");
+  #endif
+  if(shiftValue < 0) {
+    return (((int32)((shiftValue + 1) / alignLength) - 1) * alignLength) + offset;
+  }else{
+    return (((int32)((shiftValue + 0) / alignLength) - 0) * alignLength) + offset;
+  }
+}
+NA_IDEF int64 naAlignValuei64(int64 value, int64 offset, int64 alignLength) {
+  int64 shiftValue = value - offset;
+  #if NA_DEBUG
+    if(!naIsLengthValueUsefuli64(alignLength))
+      naError("Length must be > 0");
+    if(offset > value && shiftValue > 0)
+      naError("Underflow");
+    if(value > offset && shiftValue < 0)
+      naError("Overflow");
+  #endif
+  if(shiftValue < 0) {
+    return (((int64)((shiftValue + 1) / alignLength) - 1) * alignLength) + offset;
+  }else{
+    return (((int64)((shiftValue + 0) / alignLength) - 0) * alignLength) + offset;
+  }
 }
 
 

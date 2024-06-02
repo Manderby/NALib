@@ -29,9 +29,6 @@ NA_IDEF NABool naIsPosValid(NAPos pos) {
 NA_IDEF NABool naIsPosfValid(NAPosf pos) {
   return naIsOffsetValueValidf(pos.x) && naIsOffsetValueValidf(pos.y);
 }
-NA_IDEF NABool naIsPosiValid(NAPosi pos) {
-  return naIsOffsetValueValidi(pos.x) && naIsOffsetValueValidi(pos.y);
-}
 NA_IDEF NABool naIsPosi32Valid(NAPosi32 pos) {
   return naIsOffsetValueValidi32(pos.x) && naIsOffsetValueValidi32(pos.y);
 }
@@ -49,9 +46,6 @@ NA_IDEF NABool naIsSizeValid(NASize size) {
 }
 NA_IDEF NABool naIsSizefValid(NASizef size) {
   return naIsLengthValueValidf(size.width) && naIsLengthValueValidf(size.height);
-}
-NA_IDEF NABool naIsSizeiValid(NASizei size) {
-  return naIsLengthValueValidi(size.width) && naIsLengthValueValidi(size.height);
 }
 NA_IDEF NABool naIsSizei32Valid(NASizei32 size) {
   return naIsLengthValueValidi32(size.width) && naIsLengthValueValidi32(size.height);
@@ -71,9 +65,6 @@ NA_IDEF NABool naIsRectValid(NARect rect) {
 NA_IDEF NABool naIsRectfValid(NARectf rect) {
   return (naIsPosfValid(rect.pos) && naIsSizefValid(rect.size));
 }
-NA_IDEF NABool naIsRectiValid(NARecti rect) {
-  return (naIsPosiValid(rect.pos) && naIsSizeiValid(rect.size));
-}
 NA_IDEF NABool naIsRecti32Valid(NARecti32 rect) {
   return (naIsPosi32Valid(rect.pos) && naIsSizei32Valid(rect.size));
 }
@@ -91,9 +82,6 @@ NA_IDEF NABool naIsVertexValid(NAVertex vertex) {
 }
 NA_IDEF NABool naIsVertexfValid(NAVertexf vertex) {
   return naIsOffsetValueValidf(vertex.x) && naIsOffsetValueValidf(vertex.y) && naIsOffsetValueValidf(vertex.z);
-}
-NA_IDEF NABool naIsVertexiValid(NAVertexi vertex) {
-  return naIsOffsetValueValidi(vertex.x) && naIsOffsetValueValidi(vertex.y) && naIsOffsetValueValidi(vertex.z);
 }
 NA_IDEF NABool naIsVertexi32Valid(NAVertexi32 vertex) {
   return naIsOffsetValueValidi32(vertex.x) && naIsOffsetValueValidi32(vertex.y) && naIsOffsetValueValidi32(vertex.z);
@@ -113,9 +101,6 @@ NA_IDEF NABool naIsVolumeValid(NAVolume volume) {
 NA_IDEF NABool naIsVolumefValid(NAVolumef volume) {
   return naIsLengthValueValidf(volume.width) && naIsLengthValueValidf(volume.height) && naIsLengthValueValidf(volume.depth);
 }
-NA_IDEF NABool naIsVolumeiValid(NAVolumei volume) {
-  return naIsLengthValueValidi(volume.width) && naIsLengthValueValidi(volume.height) && naIsLengthValueValidi(volume.depth);
-}
 NA_IDEF NABool naIsVolumei32Valid(NAVolumei32 volume) {
   return naIsLengthValueValidi32(volume.width) && naIsLengthValueValidi32(volume.height) && naIsLengthValueValidi32(volume.depth);
 }
@@ -133,9 +118,6 @@ NA_IDEF NABool naIsBoxValid(NABox box) {
 }
 NA_IDEF NABool naIsBoxfValid(NABoxf box) {
   return (naIsVertexfValid(box.vertex) && naIsVolumefValid(box.volume));
-}
-NA_IDEF NABool naIsBoxiValid(NABoxi box) {
-  return (naIsVertexiValid(box.vertex) && naIsVolumeiValid(box.volume));
 }
 NA_IDEF NABool naIsBoxi32Valid(NABoxi32 box) {
   return (naIsVertexi32Valid(box.vertex) && naIsVolumei32Valid(box.volume));
@@ -179,14 +161,6 @@ NA_IDEF NABool naIsSizefEmpty (NASizef size) {
   // multiplication might lead to non-zero if one of the components is NaN.
   return naIsLengthValueEmptyf(size.width) || naIsLengthValueEmptyf(size.height);
 }
-NA_IDEF NABool naIsSizeiEmpty(NASizei size) {
-  NAInt totalSize = size.width * size.height;
-  #if NA_DEBUG
-    if(naIsLengthValueEmptyi(totalSize) && !naIsLengthValueEmptyi(size.width) && !naIsLengthValueEmptyi(size.height))
-      naError("You experience a rare occasion of integer overflow. Consider using naIsSizeiEmptySlow");
-  #endif
-  return naIsLengthValueEmptyi(totalSize);
-}
 NA_IDEF NABool naIsSizei32Empty(NASizei32 size) {
   int32 totalSize = size.width * size.height;
   #if NA_DEBUG
@@ -214,9 +188,6 @@ NA_IDEF NABool naIsSizesEmpty(NASizes size) {
 
 
 
-NA_IDEF NABool naIsSizeiEmptySlow(NASizei size) {
-  return (naIsLengthValueEmptyi(size.width) || naIsLengthValueEmptyi(size.height));
-}
 NA_IDEF NABool naIsSizei32EmptySlow(NASizei32 size) {
   return (naIsLengthValueEmptyi32(size.width) || naIsLengthValueEmptyi32(size.height));
 }
@@ -235,9 +206,6 @@ NA_IDEF NABool naIsRectEmpty (NARect rect) {
 NA_IDEF NABool naIsRectfEmpty (NARectf rect) {
   return naIsSizefEmpty(rect.size);
 }
-NA_IDEF NABool naIsRectiEmpty(NARecti rect) {
-  return naIsSizeiEmpty(rect.size);
-}
 NA_IDEF NABool naIsRecti32Empty(NARecti32 rect) {
   return naIsSizei32Empty(rect.size);
 }
@@ -250,9 +218,6 @@ NA_IDEF NABool naIsRectsEmpty(NARects rect) {
 
 
 
-NA_IDEF NABool naIsRectiEmptySlow(NARecti rect) {
-  return naIsSizeiEmptySlow(rect.size);
-}
 NA_IDEF NABool naIsRecti32EmptySlow(NARecti32 rect) {
   return naIsSizei32EmptySlow(rect.size);
 }
@@ -276,14 +241,6 @@ NA_IDEF NABool naIsVolumefEmpty (NAVolumef volume) {
   // values rather than multiplying them. This is because a floating point
   // multiplication might lead to non-zero if one of the components is NaN.
   return naIsLengthValueEmptyf(volume.width) || naIsLengthValueEmptyf(volume.height) || naIsLengthValueEmptyf(volume.depth);
-}
-NA_IDEF NABool naIsVolumeiEmpty(NAVolumei volume) {
-  NAInt totalvolume = volume.width * volume.height * volume.depth;
-  #if NA_DEBUG
-    if(naIsLengthValueEmptyi(totalvolume) && !naIsLengthValueEmptyi(volume.width) && !naIsLengthValueEmptyi(volume.height) && !naIsLengthValueEmptyi(volume.depth))
-      naError("You experience a rare occasion of integer overflow. Consider using naIsVolumeiEmptySlow");
-  #endif
-  return naIsLengthValueEmptyi(totalvolume);
 }
 NA_IDEF NABool naIsVolumei32Empty(NAVolumei32 volume) {
   int32 totalvolume = volume.width * volume.height * volume.depth;
@@ -312,9 +269,6 @@ NA_IDEF NABool naIsVolumesEmpty(NAVolumes volume) {
 
 
 
-NA_IDEF NABool naIsVolumeiEmptySlow(NAVolumei volume) {
-  return (naIsLengthValueEmptyi(volume.width) || naIsLengthValueEmptyi(volume.height) || naIsLengthValueEmptyi(volume.depth));
-}
 NA_IDEF NABool naIsVolumei32EmptySlow(NAVolumei32 volume) {
   return (naIsLengthValueEmptyi32(volume.width) || naIsLengthValueEmptyi32(volume.height) || naIsLengthValueEmptyi32(volume.depth));
 }
@@ -333,9 +287,6 @@ NA_IDEF NABool naIsBoxEmpty (NABox box) {
 NA_IDEF NABool naIsBoxfEmpty (NABoxf box) {
   return naIsVolumefEmpty(box.volume);
 }
-NA_IDEF NABool naIsBoxiEmpty(NABoxi box) {
-  return naIsVolumeiEmpty(box.volume);
-}
 NA_IDEF NABool naIsBoxi32Empty(NABoxi32 box) {
   return naIsVolumei32Empty(box.volume);
 }
@@ -348,9 +299,6 @@ NA_IDEF NABool naIsBoxsEmpty(NABoxs box) {
 
 
 
-NA_IDEF NABool naIsBoxiEmptySlow(NABoxi box) {
-  return naIsVolumeiEmptySlow(box.volume);
-}
 NA_IDEF NABool naIsBoxi32EmptySlow(NABoxi32 box) {
   return naIsVolumei32EmptySlow(box.volume);
 }
@@ -387,9 +335,6 @@ NA_IDEF NABool naIsSizeNegative(NASize size) {
 NA_IDEF NABool naIsSizefNegative(NASizef size) {
   return (naIsLengthValueNegativef(size.width) || naIsLengthValueNegativef(size.height));
 }
-NA_IDEF NABool naIsSizeiNegative(NASizei size) {
-  return (naIsLengthValueNegativei(size.width) || naIsLengthValueNegativei(size.height));
-}
 NA_IDEF NABool naIsSizei32Negative(NASizei32 size) {
   return (naIsLengthValueNegativei32(size.width) || naIsLengthValueNegativei32(size.height));
 }
@@ -407,9 +352,6 @@ NA_IDEF NABool naIsRectNegative(NARect rect) {
 }
 NA_IDEF NABool naIsRectfNegative(NARectf rect) {
   return naIsSizefNegative(rect.size);
-}
-NA_IDEF NABool naIsRectiNegative(NARecti rect) {
-  return naIsSizeiNegative(rect.size);
 }
 NA_IDEF NABool naIsRecti32Negative(NARecti32 rect) {
   return naIsSizei32Negative(rect.size);
@@ -429,9 +371,6 @@ NA_IDEF NABool naIsVolumeNegative(NAVolume volume) {
 NA_IDEF NABool naIsVolumefNegative(NAVolumef volume) {
   return (naIsLengthValueNegativef(volume.width) || naIsLengthValueNegativef(volume.height) || naIsLengthValueNegativef(volume.depth));
 }
-NA_IDEF NABool naIsVolumeiNegative(NAVolumei volume) {
-  return (naIsLengthValueNegativei(volume.width) || naIsLengthValueNegativei(volume.height) || naIsLengthValueNegativei(volume.depth));
-}
 NA_IDEF NABool naIsVolumei32Negative(NAVolumei32 volume) {
   return (naIsLengthValueNegativei32(volume.width) || naIsLengthValueNegativei32(volume.height) || naIsLengthValueNegativei32(volume.depth));
 }
@@ -449,9 +388,6 @@ NA_IDEF NABool naIsBoxNegative(NABox box) {
 }
 NA_IDEF NABool naIsBoxfNegative(NABoxf box) {
   return naIsVolumefNegative(box.volume);
-}
-NA_IDEF NABool naIsBoxiNegative(NABoxi box) {
-  return naIsVolumeiNegative(box.volume);
 }
 NA_IDEF NABool naIsBoxi32Negative(NABoxi32 box) {
   return naIsVolumei32Negative(box.volume);
@@ -489,9 +425,6 @@ NA_IDEF NABool naIsPosUseful(NAPos pos) {
 NA_IDEF NABool naIsPosfUseful(NAPosf pos) {
   return naIsOffsetValueUsefulf(pos.x) && naIsOffsetValueUsefulf(pos.y);
 }
-NA_IDEF NABool naIsPosiUseful(NAPosi pos) {
-  return naIsOffsetValueUsefuli(pos.x) && naIsOffsetValueUsefuli(pos.y);
-}
 NA_IDEF NABool naIsPosi32Useful(NAPosi32 pos) {
   return naIsOffsetValueUsefuli32(pos.x) && naIsOffsetValueUsefuli32(pos.y);
 }
@@ -509,9 +442,6 @@ NA_IDEF NABool naIsSizeUseful(NASize size) {
 }
 NA_IDEF NABool naIsSizefUseful(NASizef size) {
   return naIsLengthValueUsefulf(size.width) && naIsLengthValueUsefulf(size.height);
-}
-NA_IDEF NABool naIsSizeiUseful(NASizei size) {
-  return naIsLengthValueUsefuli(size.width) && naIsLengthValueUsefuli(size.height);
 }
 NA_IDEF NABool naIsSizei32Useful(NASizei32 size) {
   return naIsLengthValueUsefuli32(size.width) && naIsLengthValueUsefuli32(size.height);
@@ -531,9 +461,6 @@ NA_IDEF NABool naIsRectUseful(NARect rect) {
 NA_IDEF NABool naIsRectfUseful(NARectf rect) {
   return (naIsPosfUseful(rect.pos) && naIsSizefUseful(rect.size));
 }
-NA_IDEF NABool naIsRectiUseful(NARecti rect) {
-  return (naIsPosiUseful(rect.pos) && naIsSizeiUseful(rect.size));
-}
 NA_IDEF NABool naIsRecti32Useful(NARecti32 rect) {
   return (naIsPosi32Useful(rect.pos) && naIsSizei32Useful(rect.size));
 }
@@ -551,9 +478,6 @@ NA_IDEF NABool naIsVertexUseful(NAVertex vertex) {
 }
 NA_IDEF NABool naIsVertexfUseful(NAVertexf vertex) {
   return naIsOffsetValueUsefulf(vertex.x) && naIsOffsetValueUsefulf(vertex.y) && naIsOffsetValueUsefulf(vertex.x);
-}
-NA_IDEF NABool naIsVertexiUseful(NAVertexi vertex) {
-  return naIsOffsetValueUsefuli(vertex.x) && naIsOffsetValueUsefuli(vertex.y) && naIsOffsetValueUsefuli(vertex.x);
 }
 NA_IDEF NABool naIsVertexi32Useful(NAVertexi32 vertex) {
   return naIsOffsetValueUsefuli32(vertex.x) && naIsOffsetValueUsefuli32(vertex.y) && naIsOffsetValueUsefuli32(vertex.x);
@@ -573,9 +497,6 @@ NA_IDEF NABool naIsVolumeUseful(NAVolume volume) {
 NA_IDEF NABool naIsVolumefUseful(NAVolumef volume) {
   return naIsLengthValueUsefulf(volume.width) && naIsLengthValueUsefulf(volume.height) && naIsLengthValueUsefulf(volume.depth);
 }
-NA_IDEF NABool naIsVolumeiUseful(NAVolumei volume) {
-  return naIsLengthValueUsefuli(volume.width) && naIsLengthValueUsefuli(volume.height) && naIsLengthValueUsefuli(volume.depth);
-}
 NA_IDEF NABool naIsVolumei32Useful(NAVolumei32 volume) {
   return naIsLengthValueUsefuli32(volume.width) && naIsLengthValueUsefuli32(volume.height) && naIsLengthValueUsefuli32(volume.depth);
 }
@@ -593,9 +514,6 @@ NA_IDEF NABool naIsBoxUseful(NABox box) {
 }
 NA_IDEF NABool naIsBoxfUseful(NABoxf box) {
   return (naIsVertexfUseful(box.vertex) && naIsVolumefUseful(box.volume));
-}
-NA_IDEF NABool naIsBoxiUseful(NABoxi box) {
-  return (naIsVertexiUseful(box.vertex) && naIsVolumeiUseful(box.volume));
 }
 NA_IDEF NABool naIsBoxi32Useful(NABoxi32 box) {
   return (naIsVertexi32Useful(box.vertex) && naIsVolumei32Useful(box.volume));
