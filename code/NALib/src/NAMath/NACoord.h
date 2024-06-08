@@ -462,38 +462,40 @@ NA_IAPI NAVertexs   naMakeVertexsWithAlignment  (NAVertexs   origin, NABoxs    a
 // ///////////////////////
 // Create structures by combining two elements
 //
-// All functions except the interception variants create the bounding box of
-// two elements. The integer variants assume the points to be inside the
-// desired structure.
+// The meaning in 2D is (1D and 3D accordingly):
+// Combination:  Creates a rect such that both points are inside.
+// Extension:    Enhances a rect such that the given point is inside.
+// Union:        Creates the bounding box of two rects, hence containing both.
+// Intersection: Returns the common rect when overlaying two rects.
 // 
 // The range, size or volume of the resulting struct will never be negative.
 // But it might be empty.
 //
 // The Variants with E also allow the rects to be empty.
 
-NA_IAPI NARange    naMakeRangeWithStartAndEnd    (double   start,  double   end);
-NA_IAPI NARangef   naMakeRangefWithStartAndEnd   (float    start,  float    end);
-NA_IAPI NARangei32 naMakeRangei32WithStartAndEnd (int32    start,  int32    end);
-NA_IAPI NARangei64 naMakeRangei64WithStartAndEnd (int64    start,  int64    end);
-NA_IAPI NARanges   naMakeRangesWithStartAndEnd   (size_t   start,  size_t   end);
+NA_IAPI NARange    naMakeRangeWithCombination    (double     point1, double point2);
+NA_IAPI NARangef   naMakeRangefWithCombination   (float      point1, float  point2);
+NA_IAPI NARangei32 naMakeRangei32WithCombination (int32      point1, int32  point2);
+NA_IAPI NARangei64 naMakeRangei64WithCombination (int64      point1, int64  point2);
+NA_IAPI NARanges   naMakeRangesWithCombination   (size_t     point1, size_t point2);
 
-NA_IAPI NARangei32 naMakeRangei32WithMinAndMax   (int32    min,    int32    max);
-NA_IAPI NARangei64 naMakeRangei64WithMinAndMax   (int64    min,    int64    max);
-NA_IAPI NARanges   naMakeRangesWithMinAndMax     (size_t   min,    size_t   max);
+NA_IAPI NARange    naMakeRangeWithExtension      (NARange    range,  double point);
+NA_IAPI NARangef   naMakeRangefWithExtension     (NARangef   range,  float  point);
+NA_IAPI NARangei32 naMakeRangei32WithExtension   (NARangei32 range,  int32  point);
+NA_IAPI NARangei64 naMakeRangei64WithExtension   (NARangei64 range,  int64  point);
+NA_IAPI NARanges   naMakeRangesWithExtension     (NARanges   range,  size_t point);
+   
+NA_IAPI NARange    naMakeRangeWithUnion          (NARange    range1, NARange    range2);
+NA_IAPI NARangef   naMakeRangefWithUnion         (NARangef   range1, NARangef   range2);
+NA_IAPI NARangei32 naMakeRangei32WithUnion       (NARangei32 range1, NARangei32 range2);
+NA_IAPI NARangei64 naMakeRangei64WithUnion       (NARangei64 range1, NARangei64 range2);
+NA_IAPI NARanges   naMakeRangesWithUnion         (NARanges   range1, NARanges   range2);
 
-NA_IAPI NARangei32 naMakeRangei32WithRangeAndOffset(NARangei32 range,  int32  offset);
-NA_IAPI NARangei64 naMakeRangei64WithRangeAndOffset(NARangei64 range,  int64  offset);
-NA_IAPI NARanges   naMakeRangesWithRangeAndOffset  (NARanges   range,  size_t offset);
-
-NA_IAPI NARangei32 naMakeRangei32WithRangeUnion    (NARangei32 range1, NARangei32 range2);
-NA_IAPI NARangei64 naMakeRangei64WithRangeUnion    (NARangei64 range1, NARangei64 range2);
-NA_IAPI NARanges   naMakeRangesWithRangeUnion      (NARanges   range1, NARanges   range2);
-
-NA_IAPI NARange    naMakeRangeWithRangeIntersection   (NARange    range1, NARange    range2);
-NA_IAPI NARangef   naMakeRangefWithRangeIntersection  (NARangef   range1, NARangef   range2);
-NA_IAPI NARangei32 naMakeRangei32WithRangeIntersection(NARangei32 range1, NARangei32 range2);
-NA_IAPI NARangei64 naMakeRangei64WithRangeIntersection(NARangei64 range1, NARangei64 range2);
-NA_IAPI NARanges   naMakeRangesWithRangeIntersection  (NARanges   range1, NARanges   range2);
+NA_IAPI NARange    naMakeRangeWithIntersection   (NARange    range1, NARange    range2);
+NA_IAPI NARangef   naMakeRangefWithIntersection  (NARangef   range1, NARangef   range2);
+NA_IAPI NARangei32 naMakeRangei32WithIntersection(NARangei32 range1, NARangei32 range2);
+NA_IAPI NARangei64 naMakeRangei64WithIntersection(NARangei64 range1, NARangei64 range2);
+NA_IAPI NARanges   naMakeRangesWithIntersection  (NARanges   range1, NARanges   range2);
 
 
 

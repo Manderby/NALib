@@ -107,7 +107,7 @@ NA_HIDEF void na_FillBufferSourceMemory(const NABufferSource* source, void* dst,
       naCrash("dst is Null");
     if(!naIsRangei64Useful(range))
       naError("range is not useful");
-    if(na_HasBufferSourceLimit(source) && !naEqualRangei64(naMakeRangei64WithRangeIntersection(range, source->limit), range))
+    if(na_HasBufferSourceLimit(source) && !naEqualRangei64(naMakeRangei64WithIntersection(range, source->limit), range))
       naError("range is out of limit");
   #endif
   if(source && source->bufFiller) {

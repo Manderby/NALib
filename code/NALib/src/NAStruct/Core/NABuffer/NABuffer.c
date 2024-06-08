@@ -65,7 +65,7 @@ NABool naUpdateBufferTreeNode(NAPtr parentData, NAPtr* childDatas, NAInt childIn
 NA_HDEF void na_InitBufferStruct(NABuffer* buffer) {
   NATreeConfiguration* config;
   buffer->flags = 0;
-  buffer->range = naMakeRangei64WithStartAndEnd(0, 0);
+  buffer->range = naMakeRangei64Zero();
   config = naCreateTreeConfiguration(NA_TREE_KEY_NOKEY | NA_TREE_BALANCE_AVL);
   naSetTreeConfigurationLeafCallbacks(config, NA_NULL, naDestructBufferTreeLeaf);
   naSetTreeConfigurationNodeCallbacks(config, naConstructBufferTreeNode, naDestructBufferTreeNode, naUpdateBufferTreeNode);
@@ -127,7 +127,7 @@ NA_HIAPI NARangei64 na_MakeRangei64Absolute(NAInt offset, NAInt length, NARangei
     if(end < start)
       naError("Resulting range has negative length.");
   #endif
-  return naMakeRangei64WithStartAndEnd(start, end);
+  return naMakeRangei64WithCombination(start, naMakeMaxWithEndi64(end));
 }
 
 
@@ -261,7 +261,7 @@ NA_DEF NABuffer* naCreateBufferWithConstData(const void* data, size_t byteSize) 
   NABuffer* buffer = naCreate(NABuffer);
   na_InitBufferStruct(buffer);
 
-  range = naMakeRangei64WithStartAndEnd(0, (int64)byteSize);
+  range = naMakeRangei64WithCombination(0, naMakeMaxWithEndi64((int64)byteSize));
 
   // Add the const data to the list.
   part = na_NewBufferPartWithConstData(data, byteSize);
@@ -288,7 +288,7 @@ NA_DEF NABuffer* naCreateBufferWithMutableData(void* data, size_t byteSize, NAMu
   NABuffer* buffer = naCreate(NABuffer);
   na_InitBufferStruct(buffer);
 
-  range = naMakeRangei64WithStartAndEnd(0, (int64)byteSize);
+  range = naMakeRangei64WithCombination(0, naMakeMaxWithEndi64((int64)byteSize));
 
   // Add the mutable data to the list.
   part = na_NewBufferPartWithMutableData(data, byteSize, destructor);
@@ -356,7 +356,7 @@ NA_HDEF void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end) {
     // whole range.
     NABufferPart* part = na_NewBufferPartSparse(buffer->source, naMakeRangei64(start + buffer->sourceOffset, length));
     naAddTreeFirstMutable(&(buffer->parts), part);
-    buffer->range = naMakeRangei64WithStartAndEnd(start, end);
+    buffer->range = naMakeRangei64WithCombination(start, naMakeMaxWithEndi64(end));
 
   }else{
 
@@ -376,7 +376,7 @@ NA_HDEF void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end) {
         NABufferPart* part = na_NewBufferPartSparse(buffer->source, naMakeRangei64(start + buffer->sourceOffset, additionalbytes));
         naAddTreeFirstMutable(&(buffer->parts), part);
       }
-      buffer->range = naMakeRangei64WithStartAndEnd(start, naGetRangei64End(buffer->range));
+      buffer->range = naMakeRangei64WithCombination(start, naGetRangei64Max(buffer->range));
     }
 
     // Then, we test if we need to add a sparse part at the end.
@@ -393,7 +393,7 @@ NA_HDEF void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end) {
         NABufferPart* part = na_NewBufferPartSparse(buffer->source, naMakeRangei64(naGetRangei64End(buffer->range) + buffer->sourceOffset, additionalbytes));
         naAddTreeLastMutable(&(buffer->parts), part);
       }
-      buffer->range = naMakeRangei64WithStartAndEnd(buffer->range.origin, end);
+      buffer->range = naMakeRangei64WithCombination(buffer->range.origin, naMakeMaxWithEndi64(end));
     }
 
     naClearBufferIterator(&iter);

@@ -156,7 +156,7 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start,
     naUpdateTreeLeaf(partIter);
 
     NAInt sourceOffset = na_GetBufferPartSourceOffset(part);
-    NABufferPart* newPart = na_NewBufferPartSparse(part->source, naMakeRangei64WithStartAndEnd(sourceOffset + (NAInt)end, sourceOffset + (NAInt)prevByteSize));
+    NABufferPart* newPart = na_NewBufferPartSparse(part->source, naMakeRangei64WithCombination(sourceOffset + (NAInt)end, naMakeMaxWithEndi64(sourceOffset + (NAInt)prevByteSize)));
     naAddTreeNextMutable(partIter, newPart, NA_FALSE);
   }
 
@@ -167,7 +167,7 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start,
     naUpdateTreeLeaf(partIter);
 
     NAInt sourceOffset = na_GetBufferPartSourceOffset(part);
-    NABufferPart* newPart = na_NewBufferPartSparse(part->source, naMakeRangei64WithStartAndEnd(sourceOffset + (NAInt)start, sourceOffset + (NAInt)end));
+    NABufferPart* newPart = na_NewBufferPartSparse(part->source, naMakeRangei64WithCombination(sourceOffset + (NAInt)start, naMakeMaxWithEndi64(sourceOffset + (NAInt)end)));
     naAddTreeNextMutable(partIter, newPart, NA_TRUE);
     // Note that using the NA_TRUE, we automatically move to the new part.
     // This means that iter now points to the desired part.
@@ -380,7 +380,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
     na_FillBufferSourceMemory(
       part->source,
       dst,
-      naMakeRangei64WithStartAndEnd(sourceOffset, sourceOffset + (NAInt)part->byteSize));
+      naMakeRangei64WithCombination(sourceOffset, naMakeMaxWithEndi64(sourceOffset + (NAInt)part->byteSize)));
   }
 
   return part;
