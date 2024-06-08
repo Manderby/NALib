@@ -442,6 +442,8 @@ NA_IAPI NABezel4s   naMakeBezel4sZero  (void);
 // Creates a new origin which is the given origin floored to a multiple of
 // the given alignment. Also works for negative input offsets (not for the
 // s-variant though).
+//
+// The 1D case is covered by the naAlignValue functions.
 
 NA_IAPI NAPos       naMakePosWithAlignment      (NAPos       origin, NARect    alignRect);
 NA_IAPI NAPosf      naMakePosfWithAlignment     (NAPosf      origin, NARectf   alignRect);
@@ -457,31 +459,54 @@ NA_IAPI NAVertexs   naMakeVertexsWithAlignment  (NAVertexs   origin, NABoxs    a
 
 
 
-// Create the bounding box of two elements. The range, size or volume of the
-// resulting struct will never be negative. Note that the integer variant of
-// NARange also allows to be made with min and max instead of start and end.
-// The naMakeRectiWithPosAndPos and naMakeBoxiWithVertexAndVertex functions
-// assume the two vertexes to be inside the desired rect or box.
+// ///////////////////////
+// Create structures by combining two elements
+//
+// All functions except the interception variants create the bounding box of
+// two elements. The integer variants assume the points to be inside the
+// desired structure.
+// 
+// The range, size or volume of the resulting struct will never be negative.
+// But it might be empty.
 //
 // The Variants with E also allow the rects to be empty.
-NA_IAPI NARange  naMakeRangeWithStartAndEnd    (double   start,  double   end);
-NA_IAPI NARangef naMakeRangefWithStartAndEnd   (float    start,  float    end);
+
+NA_IAPI NARange    naMakeRangeWithStartAndEnd    (double   start,  double   end);
+NA_IAPI NARangef   naMakeRangefWithStartAndEnd   (float    start,  float    end);
 NA_IAPI NARangei32 naMakeRangei32WithStartAndEnd (int32    start,  int32    end);
 NA_IAPI NARangei64 naMakeRangei64WithStartAndEnd (int64    start,  int64    end);
-NA_IAPI NARangei32 naMakeRangei32WithMinAndMax     (int32    min,    int32    max);
-NA_IAPI NARangei64 naMakeRangei64WithMinAndMax     (int64    min,    int64    max);
-NA_IAPI NARangei32 naMakeRangei32WithRangeAndOffset(NARangei32 range,  int32    offset);
-NA_IAPI NARangei64 naMakeRangei64WithRangeAndOffset(NARangei64 range,  int64    offset);
-NA_IAPI NARangei32 naMakeRangei32WithRangeUnion  (NARangei32 range1, NARangei32 range2);
-NA_IAPI NARangei64 naMakeRangei64WithRangeUnion  (NARangei64 range1, NARangei64 range2);
+NA_IAPI NARanges   naMakeRangesWithStartAndEnd   (size_t   start,  size_t   end);
 
-NA_IAPI NARect  naMakeRectWithPosAndPos    (NAPos   pos1,  NAPos   pos2);
+NA_IAPI NARangei32 naMakeRangei32WithMinAndMax   (int32    min,    int32    max);
+NA_IAPI NARangei64 naMakeRangei64WithMinAndMax   (int64    min,    int64    max);
+NA_IAPI NARanges   naMakeRangesWithMinAndMax     (size_t   min,    size_t   max);
+
+NA_IAPI NARangei32 naMakeRangei32WithRangeAndOffset(NARangei32 range,  int32  offset);
+NA_IAPI NARangei64 naMakeRangei64WithRangeAndOffset(NARangei64 range,  int64  offset);
+NA_IAPI NARanges   naMakeRangesWithRangeAndOffset  (NARanges   range,  size_t offset);
+
+NA_IAPI NARangei32 naMakeRangei32WithRangeUnion    (NARangei32 range1, NARangei32 range2);
+NA_IAPI NARangei64 naMakeRangei64WithRangeUnion    (NARangei64 range1, NARangei64 range2);
+NA_IAPI NARanges   naMakeRangesWithRangeUnion      (NARanges   range1, NARanges   range2);
+
+NA_IAPI NARange    naMakeRangeWithRangeIntersection   (NARange    range1, NARange    range2);
+NA_IAPI NARangef   naMakeRangefWithRangeIntersection  (NARangef   range1, NARangef   range2);
+NA_IAPI NARangei32 naMakeRangei32WithRangeIntersection(NARangei32 range1, NARangei32 range2);
+NA_IAPI NARangei64 naMakeRangei64WithRangeIntersection(NARangei64 range1, NARangei64 range2);
+NA_IAPI NARanges   naMakeRangesWithRangeIntersection  (NARanges   range1, NARanges   range2);
+
+
+
+NA_IAPI NARect    naMakeRectWithPosAndPos   (NAPos     pos1,  NAPos     pos2);
+NA_IAPI NARectf   naMakeRectfWithPosAndPos  (NAPosf    pos1,  NAPosf    pos2);
+NA_IAPI NARecti32 naMakeRecti32WithPosAndPos(NAPosi32  pos1,  NAPosi32  pos2);
+NA_IAPI NARecti64 naMakeRecti64WithPosAndPos(NAPosi64  pos1,  NAPosi64  pos2);
+NA_IAPI NARects   naMakeRectsWithPosAndPos  (NAPoss    pos1,  NAPoss    pos2);
+
 NA_IAPI NARect  naMakeRectWithRectAndPos   (NARect  rect,  NAPos   pos);
 NA_IAPI NARect  naMakeRectWithRectAndPosE  (NARect  rect,  NAPos   pos);
 NA_IAPI NARect  naMakeRectWithRectUnion    (NARect  rect1, NARect  rect2);
 NA_IAPI NARect  naMakeRectWithRectUnionE   (NARect  rect1, NARect  rect2);
-NA_IAPI NARecti32 naMakeRecti32WithPosAndPos   (NAPosi32  pos1,  NAPosi32  pos2);
-NA_IAPI NARecti64 naMakeRecti64WithPosAndPos   (NAPosi64  pos1,  NAPosi64  pos2);
 
 NA_IAPI NARecti32 naMakeRecti32WithRectAndPos  (NARecti32 rect,  NAPosi32  pos);
 NA_IAPI NARecti32 naMakeRecti32WithRectAndPosE (NARecti32 rect,  NAPosi32  pos);
@@ -509,13 +534,6 @@ NA_IAPI NABoxi64 naMakeBoxi64WithBoxUnion       (NABoxi64    box1,    NABoxi64  
 NA_IAPI NABoxi32 naMakeBoxi32WithBoxUnionE      (NABoxi32    box1,    NABoxi32    box2);
 NA_IAPI NABoxi64 naMakeBoxi64WithBoxUnionE      (NABoxi64    box1,    NABoxi64    box2);
 
-// Returns the intersection of the two elements. May be empty or negative.
-// Note: This is basically the inverse of naMakeBoxiWithBoxUnion. Use
-// the naIsXXXUseful tests to test if the resulting element actually is a
-// valid intersection.
-NA_IAPI NARange  naMakeRangeWithRangeIntersection (NARange  range1, NARange  range2);
-NA_IAPI NARangei32 naMakeRangei32WithRangeIntersection(NARangei32 range1, NARangei32 range2);
-NA_IAPI NARangei64 naMakeRangei64WithRangeIntersection(NARangei64 range1, NARangei64 range2);
 NA_IAPI NARect   naMakeRectWithRectIntersection   (NARect   rect1,  NARect   rect2);
 NA_IAPI NARecti32  naMakeRecti32WithRectIntersection  (NARecti32  rect1,  NARecti32  rect2);
 NA_IAPI NARecti64  naMakeRecti64WithRectIntersection  (NARecti64  rect1,  NARecti64  rect2);

@@ -21,6 +21,7 @@
 #include "NABezelII.h"
 #include "NABoxII.h"
 #include "NACoordAlignII.h"
+#include "NACoordCombinationII.h"
 #include "NACoordEndMaxII.h"
 #include "NACoordIndexII.h"
 #include "NACoordMacOSII.h"
@@ -39,156 +40,9 @@
 
 
 
-NA_IDEF NARange naMakeRangeWithStartAndEnd(double start, double end) {
-  NARange newRange;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValid(start) && naIsOffsetValueValid(end)))
-      naError("Invalid values given.");
-  #endif
-  newRange.origin = start;
-  newRange.length = naMakeLengthWithStartAndEnd(start, end);
-  return newRange;
-}
-NA_IDEF NARangef naMakeRangefWithStartAndEnd(float start, float end) {
-  NARangef newRange;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValidf(start) && naIsOffsetValueValidf(end)))
-      naError("Invalid values given.");
-  #endif
-  newRange.origin = start;
-  newRange.length = naMakeLengthWithStartAndEndf(start, end);
-  return newRange;
-}
-NA_IDEF NARangei32 naMakeRangei32WithStartAndEnd(int32 start, int32 end) {
-  NARangei32 newRange;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValidi32(start) && naIsOffsetValueValidi32(end)))
-      naError("Invalid values given.");
-  #endif
-  newRange.origin = start;
-  newRange.length = naMakeLengthWithStartAndEndi32(start, end);
-  return newRange;
-}
-NA_IDEF NARangei64 naMakeRangei64WithStartAndEnd(int64 start, int64 end) {
-  NARangei64 newRange;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValidi64(start) && naIsOffsetValueValidi64(end)))
-      naError("Invalid values given.");
-  #endif
-  newRange.origin = start;
-  newRange.length = naMakeLengthWithStartAndEndi64(start, end);
-  return newRange;
-}
-NA_IDEF NARangei32 naMakeRangei32WithMinAndMax(int32 min, int32 max) {
-  NARangei32 newRange;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValidi32(min) && naIsOffsetValueValidi32(max)))
-      naError("Invalid values given.");
-    if(max < min)
-      naError("min should be smallerequal to max.");
-  #endif
-  newRange.origin = min;
-  newRange.length = naMakeLengthWithMinAndMaxi32(min, max);
-  return newRange;
-}
-NA_IDEF NARangei64 naMakeRangei64WithMinAndMax(int64 min, int64 max) {
-  NARangei64 newRange;
-  #if NA_DEBUG
-    if(!(naIsOffsetValueValidi64(min) && naIsOffsetValueValidi64(max)))
-      naError("Invalid values given.");
-    if(max < min)
-      naError("min should be smallerequal to max.");
-  #endif
-  newRange.origin = min;
-  newRange.length = naMakeLengthWithMinAndMaxi64(min, max);
-  return newRange;
-}
-NA_IDEF NARangei32 naMakeRangei32WithRangeAndOffset(NARangei32 range, int32 offset) {
-  NARangei32 newRange;
-  #if NA_DEBUG
-    if(!naIsOffsetValueValidi32(offset))
-      naError("Invalid offset given.");
-  #endif
-  if(naIsRangei32Empty(range)) {
-    newRange.length = 1;
-    newRange.origin = offset;
-  }else if(offset < range.origin) {
-    newRange.length = naMakeLengthWithStartAndEndi32(offset, naGetRangei32End(range));
-    newRange.origin = offset;
-  }else if(offset > naGetRangei32Max(range)) {
-    newRange.length = naMakeLengthWithMinAndMaxi32(range.origin, offset);
-    newRange.origin = range.origin;
-  }else{
-    newRange = range;
-  }
-  return newRange;
-}
-NA_IDEF NARangei64 naMakeRangei64WithRangeAndOffset(NARangei64 range, int64 offset) {
-  NARangei64 newRange;
-  #if NA_DEBUG
-    if(!naIsOffsetValueValidi64(offset))
-      naError("Invalid offset given.");
-  #endif
-  if(naIsRangei64Empty(range)) {
-    newRange.length = 1;
-    newRange.origin = offset;
-  }else if(offset < range.origin) {
-    newRange.length = naMakeLengthWithStartAndEndi64(offset, naGetRangei64End(range));
-    newRange.origin = offset;
-  }else if(offset > naGetRangei64Max(range)) {
-    newRange.length = naMakeLengthWithMinAndMaxi64(range.origin, offset);
-    newRange.origin = range.origin;
-  }else{
-    newRange = range;
-  }
-  return newRange;
-}
-NA_IDEF NARangei32 naMakeRangeiWithRangeUnion (NARangei32 range1, NARangei32 range2) {
-  NARangei32 newRange;
-  #if NA_DEBUG
-    if(!naIsRangei32Valid(range1))
-      naError("Invalid range 1 given.");
-    if(!naIsRangei32Valid(range2))
-      naError("Invalid range 2 given.");
-  #endif
-  if(naIsRangei32Empty(range1) && naIsRangei32Empty(range2)) {
-    newRange = naMakeRangei32E(0, 0);
-  }else if(naIsRangei32Empty(range1)) {
-    newRange = range2;
-  }else if(naIsRangei32Empty(range2)) {
-    newRange = range1;
-  }else{
-    newRange = naMakeRangei32WithStartAndEnd(naMini32(range1.origin, range2.origin), naMaxi32(naGetRangei32End(range1), naGetRangei32End(range2)));
-  }
-  return newRange;
-}
 
 
 
-NA_IDEF NARect naMakeRectWithPosAndPos(NAPos pos1, NAPos pos2) {
-  NARect newRect;
-  #if NA_DEBUG
-    if(!naIsPosValid(pos1))
-      naError("pos1 is invalid.");
-    if(!naIsPosValid(pos2))
-      naError("pos2 is invalid.");
-  #endif
-  if(pos2.x > pos1.x) {
-    newRect.pos.x = pos1.x;
-    newRect.size.width = naMakeLengthWithStartAndEnd(pos1.x, pos2.x);
-  }else{
-    newRect.pos.x = pos2.x;
-    newRect.size.width = naMakeLengthWithStartAndEnd(pos2.x, pos1.x);
-  }
-  if(pos2.y > pos1.y) {
-    newRect.pos.y = pos1.y;
-    newRect.size.height = naMakeLengthWithStartAndEnd(pos1.y, pos2.y);
-  }else{
-    newRect.pos.y = pos2.y;
-    newRect.size.height = naMakeLengthWithStartAndEnd(pos2.y, pos1.y);
-  }
-  return newRect;
-}
 NA_IDEF NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos) {
   NARect newRect;
   double end;
@@ -280,54 +134,6 @@ NA_IDEF NARect naMakeRectWithRectUnionE(NARect rect1, NARect rect2) {
   end1 = naGetRectEndY(rect1);
   end2 = naGetRectEndY(rect2);
   newRect.size.height  = naMakeLengthWithStartAndEnd(newRect.pos.y, naMax(end1, end2));
-  return newRect;
-}
-NA_IDEF NARecti32 naMakeRecti32WithPosAndPos(NAPosi32 pos1, NAPosi32 pos2) {
-  NARecti32 newRect;
-  #if NA_DEBUG
-    if(!naIsPosi32Valid(pos1))
-      naError("pos1 is invalid.");
-    if(!naIsPosi32Valid(pos2))
-      naError("pos2 is invalid.");
-  #endif
-  if(pos2.x > pos1.x) {
-    newRect.pos.x = pos1.x;
-    newRect.size.width = naMakeLengthWithMinAndMaxi32(pos1.x, pos2.x);
-  }else{
-    newRect.pos.x = pos2.x;
-    newRect.size.width = naMakeLengthWithMinAndMaxi32(pos2.x, pos1.x);
-  }
-  if(pos2.y > pos1.y) {
-    newRect.pos.y = pos1.y;
-    newRect.size.height = naMakeLengthWithMinAndMaxi32(pos1.y, pos2.y);
-  }else{
-    newRect.pos.y = pos2.y;
-    newRect.size.height = naMakeLengthWithMinAndMaxi32(pos2.y, pos1.y);
-  }
-  return newRect;
-}
-NA_IDEF NARecti64 naMakeRecti64WithPosAndPos(NAPosi64 pos1, NAPosi64 pos2) {
-  NARecti64 newRect;
-  #if NA_DEBUG
-    if(!naIsPosi64Valid(pos1))
-      naError("pos1 is invalid.");
-    if(!naIsPosi64Valid(pos2))
-      naError("pos2 is invalid.");
-  #endif
-  if(pos2.x > pos1.x) {
-    newRect.pos.x = pos1.x;
-    newRect.size.width = naMakeLengthWithMinAndMaxi64(pos1.x, pos2.x);
-  }else{
-    newRect.pos.x = pos2.x;
-    newRect.size.width = naMakeLengthWithMinAndMaxi64(pos2.x, pos1.x);
-  }
-  if(pos2.y > pos1.y) {
-    newRect.pos.y = pos1.y;
-    newRect.size.height = naMakeLengthWithMinAndMaxi64(pos1.y, pos2.y);
-  }else{
-    newRect.pos.y = pos2.y;
-    newRect.size.height = naMakeLengthWithMinAndMaxi64(pos2.y, pos1.y);
-  }
   return newRect;
 }
 
@@ -873,54 +679,6 @@ NA_IDEF NABoxi64 naMakeBoxi64WithBoxUnionE(NABoxi64 box1, NABoxi64 box2) {
 
 
 
-NA_IDEF NARange naMakeRangeWithRangeIntersection(NARange range1, NARange range2) {
-  NARange newRange;
-  double end1;
-  double end2;
-  #if NA_DEBUG
-    if(!naIsRangeValid(range1))
-      naError("range1 is invalid.");
-    if(!naIsRangeValid(range2))
-      naError("range2 is invalid.");
-  #endif
-  newRange.origin = naMax(range1.origin, range2.origin);
-  end1 = naGetRangeEnd(range1);
-  end2 = naGetRangeEnd(range2);
-  newRange.length  = naMakeLengthWithStartAndEnd(newRange.origin, naMin(end1, end2));
-  return newRange;
-}
-NA_IDEF NARangei32 naMakeRangei32WithRangeIntersection(NARangei32 range1, NARangei32 range2) {
-  NARangei32 newRange;
-  int32 end1;
-  int32 end2;
-  #if NA_DEBUG
-    if(!naIsRangei32Valid(range1))
-      naError("range1 is invalid.");
-    if(!naIsRangei32Valid(range2))
-      naError("range2 is invalid.");
-  #endif
-  newRange.origin = naMaxi32(range1.origin, range2.origin);
-  end1 = naGetRangei32End(range1);
-  end2 = naGetRangei32End(range2);
-  newRange.length  = naMakeLengthWithStartAndEndi32(newRange.origin, naMini32(end1, end2));
-  return newRange;
-}
-NA_IDEF NARangei64 naMakeRangei64WithRangeIntersection(NARangei64 range1, NARangei64 range2) {
-  NARangei64 newRange;
-  int64 end1;
-  int64 end2;
-  #if NA_DEBUG
-    if(!naIsRangei64Valid(range1))
-      naError("range1 is invalid.");
-    if(!naIsRangei64Valid(range2))
-      naError("range2 is invalid.");
-  #endif
-  newRange.origin = naMaxi64(range1.origin, range2.origin);
-  end1 = naGetRangei64End(range1);
-  end2 = naGetRangei64End(range2);
-  newRange.length  = naMakeLengthWithStartAndEndi64(newRange.origin, naMini64(end1, end2));
-  return newRange;
-}
 NA_IDEF NARect naMakeRectWithRectIntersection(NARect rect1, NARect rect2) {
   NARect newRect;
   double end1;

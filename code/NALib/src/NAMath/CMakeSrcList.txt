@@ -24,6 +24,7 @@ set(coreCoordFiles
   ${NAMathDir}/Core/NACoord/NABoxII.h
   ${NAMathDir}/Core/NACoord/NACoordII.h
   ${NAMathDir}/Core/NACoord/NACoordAlignII.h
+  ${NAMathDir}/Core/NACoord/NACoordCombinationII.h
   ${NAMathDir}/Core/NACoord/NACoordEndMaxII.h
   ${NAMathDir}/Core/NACoord/NACoordIndexII.h
   ${NAMathDir}/Core/NACoord/NACoordMacOSII.h
