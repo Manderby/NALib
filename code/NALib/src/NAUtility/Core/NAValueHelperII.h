@@ -372,7 +372,7 @@ NA_IDEF size_t naMakeLengthWithMinAndMaxs(size_t min, size_t max) {
 
 #include "../../NAMath/NAMathOperators.h"
 
-NA_IDEF double naAlignValued(double value, double offset, double alignLength) {
+NA_IDEF double naAlignValue(double value, double offset, double alignLength) {
   double shiftValue = value - offset;
   #if NA_DEBUG
     if(!naIsLengthValueUseful(alignLength))
@@ -381,6 +381,16 @@ NA_IDEF double naAlignValued(double value, double offset, double alignLength) {
         naError("given offset results in a non-useful number.");
   #endif
   return ((naFloor((shiftValue) / alignLength)) * alignLength) + offset;
+}
+NA_IDEF float naAlignValuef(float value, float offset, float alignLength) {
+  float shiftValue = value - offset;
+  #if NA_DEBUG
+    if(!naIsLengthValueUsefulf(alignLength))
+        naError("Length must be > 0.");
+    if(!naIsOffsetValueUsefulf(shiftValue))
+        naError("given offset results in a non-useful number.");
+  #endif
+  return ((naFloorf((shiftValue) / alignLength)) * alignLength) + offset;
 }
 NA_IDEF int32 naAlignValuei32(int32 value, int32 offset, int32 alignLength) {
   int32 shiftValue = value - offset;
@@ -413,6 +423,18 @@ NA_IDEF int64 naAlignValuei64(int64 value, int64 offset, int64 alignLength) {
   }else{
     return (((int64)((shiftValue + 0) / alignLength) - 0) * alignLength) + offset;
   }
+}
+NA_IDEF size_t naAlignValues(size_t value, size_t offset, size_t alignLength) {
+  size_t shiftValue = value - offset;
+  #if NA_DEBUG
+    if(!naIsLengthValueUsefuls(alignLength))
+      naError("Length must be > 0");
+    if(offset > value)
+      naError("Underflow");
+    if(value > offset && shiftValue < 0)
+      naError("Overflow");
+  #endif
+  return (((size_t)((shiftValue + 0) / alignLength) - 0) * alignLength) + offset;
 }
 
 

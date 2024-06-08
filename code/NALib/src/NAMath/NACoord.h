@@ -246,6 +246,12 @@ NA_IAPI NARangei32 naMakeRangei32Zero(void);
 NA_IAPI NARangei64 naMakeRangei64Zero(void);
 NA_IAPI NARanges   naMakeRangesZero  (void);
 
+NA_IAPI void       naFillRangeWithCopy   (NARange*    ranged, const NARange*    ranges);
+NA_IAPI void       naFillRangefWithCopy  (NARangef*   ranged, const NARangef*   ranges);
+NA_IAPI void       naFillRangei32WithCopy(NARangei32* ranged, const NARangei32* ranges);
+NA_IAPI void       naFillRangei64WithCopy(NARangei64* ranged, const NARangei64* ranges);
+NA_IAPI void       naFillRangesWithCopy  (NARanges*   ranged, const NARanges*   ranges);
+
 // NAPos
 
 NA_IAPI NAPos    naMakePos   (double x, double y);
@@ -254,13 +260,17 @@ NA_IAPI NAPosi32 naMakePosi32(int32  x, int32  y);
 NA_IAPI NAPosi64 naMakePosi64(int64  x, int64  y);
 NA_IAPI NAPoss   naMakePoss  (size_t x, size_t y);
 
-//NA_IAPI NAPos    naMakePosWithV2(const double* v);
-
 NA_IAPI NAPos    naMakePosZero   (void);
 NA_IAPI NAPosf   naMakePosfZero  (void);
 NA_IAPI NAPosi32 naMakePosi32Zero(void);
 NA_IAPI NAPosi64 naMakePosi64Zero(void);
 NA_IAPI NAPoss   naMakePossZero  (void);
+
+NA_IAPI void     naFillPosWithCopy   (NAPos*    posd, const NAPos*    poss);
+NA_IAPI void     naFillPosfWithCopy  (NAPosf*   posd, const NAPosf*   poss);
+NA_IAPI void     naFillPosi32WithCopy(NAPosi32* posd, const NAPosi32* poss);
+NA_IAPI void     naFillPosi64WithCopy(NAPosi64* posd, const NAPosi64* poss);
+NA_IAPI void     naFillPossWithCopy  (NAPoss*   posd, const NAPoss*   poss);
 
 // NASize
 
@@ -276,16 +286,18 @@ NA_IAPI NASizei32 naMakeSizei32E(int32  width, int32  height);
 NA_IAPI NASizei64 naMakeSizei64E(int64  width, int64  height);
 NA_IAPI NASizes   naMakeSizesE  (size_t width, size_t height);
 
-//// The Integer variant assumes pos to only contain integers, hence using a
-//// more advanced and quicker conversion. But pos must be integral to work.
-//NA_IAPI NASizei  naMakeSizeiWithIntegerSize(NASize size);
+NA_IAPI NASize    naMakeSizeZero   (void);
+NA_IAPI NASizef   naMakeSizefZero  (void);
+NA_IAPI NASizei32 naMakeSizei32Zero(void);
+NA_IAPI NASizei64 naMakeSizei64Zero(void);
+NA_IAPI NASizes   naMakeSizesZero  (void);
 
-NA_IAPI NASize    naMakeSizeZero    (void);
-NA_IAPI NASizef   naMakeSizefZero   (void);
-NA_IAPI NASizei32 naMakeSizei32Zero (void);
-NA_IAPI NASizei64 naMakeSizei64Zero (void);
-NA_IAPI NASizes   naMakeSizesZero   (void);
- 
+NA_IAPI void      naFillSizeWithCopy   (NASize*    sized, const NASize*    sizes);
+NA_IAPI void      naFillSizefWithCopy  (NASizef*   sized, const NASizef*   sizes);
+NA_IAPI void      naFillSizei32WithCopy(NASizei32* sized, const NASizei32* sizes);
+NA_IAPI void      naFillSizei64WithCopy(NASizei64* sized, const NASizei64* sizes);
+NA_IAPI void      naFillSizesWithCopy  (NASizes*   sized, const NASizes*   sizes);
+
 // NARect
 
 NA_IAPI NARect    naMakeRect     (NAPos    pos, NASize    size);
@@ -312,11 +324,17 @@ NA_IAPI NARecti32 naMakeRecti32SE(int32  x, int32  y, int32  width, int32  heigh
 NA_IAPI NARecti64 naMakeRecti64SE(int64  x, int64  y, int64  width, int64  height);
 NA_IAPI NARects   naMakeRectsSE  (size_t x, size_t y, size_t width, size_t height);
 
-NA_IAPI NARect    naMakeRectZero    (void);
-NA_IAPI NARectf   naMakeRectfZero   (void);
-NA_IAPI NARecti32 naMakeRecti32Zero (void);
-NA_IAPI NARecti64 naMakeRecti64Zero (void);
-NA_IAPI NARects   naMakeRectsZero   (void);
+NA_IAPI NARect    naMakeRectZero   (void);
+NA_IAPI NARectf   naMakeRectfZero  (void);
+NA_IAPI NARecti32 naMakeRecti32Zero(void);
+NA_IAPI NARecti64 naMakeRecti64Zero(void);
+NA_IAPI NARects   naMakeRectsZero  (void);
+
+NA_IAPI void      naFillRectWithCopy   (NARect*    rectd, const NARect*    rects);
+NA_IAPI void      naFillRectfWithCopy  (NARectf*   rectd, const NARectf*   rects);
+NA_IAPI void      naFillRecti32WithCopy(NARecti32* rectd, const NARecti32* rects);
+NA_IAPI void      naFillRecti64WithCopy(NARecti64* rectd, const NARecti64* rects);
+NA_IAPI void      naFillRectsWithCopy  (NARects*   rectd, const NARects*   rects);
 
 // NAVertex
 
@@ -326,13 +344,17 @@ NA_IAPI NAVertexi32 naMakeVertexi32(int32  x, int32  y, int32  z);
 NA_IAPI NAVertexi64 naMakeVertexi64(int64  x, int64  y, int64  z);
 NA_IAPI NAVertexs   naMakeVertexs  (size_t x, size_t y, size_t z);
 
-//NA_IAPI NAVertex    naMakeVertexWithV3(const double* v);
-
 NA_IAPI NAVertex    naMakeVertexZero   (void);
 NA_IAPI NAVertexf   naMakeVertexfZero  (void);
 NA_IAPI NAVertexi32 naMakeVertexi32Zero(void);
 NA_IAPI NAVertexi64 naMakeVertexi64Zero(void);
 NA_IAPI NAVertexs   naMakeVertexsZero  (void);
+
+NA_IAPI void        naFillVertexWithCopy   (NAVertex*    vertexd, const NAVertex*    vertexs);
+NA_IAPI void        naFillVertexfWithCopy  (NAVertexf*   vertexd, const NAVertexf*   vertexs);
+NA_IAPI void        naFillVertexi32WithCopy(NAVertexi32* vertexd, const NAVertexi32* vertexs);
+NA_IAPI void        naFillVertexi64WithCopy(NAVertexi64* vertexd, const NAVertexi64* vertexs);
+NA_IAPI void        naFillVertexsWithCopy  (NAVertexs*   vertexd, const NAVertexs*   vertexs);
 
 // NAVolume
 
@@ -353,6 +375,12 @@ NA_IAPI NAVolumef   naMakeVolumefZero  (void);
 NA_IAPI NAVolumei32 naMakeVolumei32Zero(void);
 NA_IAPI NAVolumei64 naMakeVolumei64Zero(void);
 NA_IAPI NAVolumes   naMakeVolumesZero  (void);
+
+NA_IAPI void        naFillVolumeWithCopy   (NAVolume*    volumed, const NAVolume*    volumes);
+NA_IAPI void        naFillVolumefWithCopy  (NAVolumef*   volumed, const NAVolumef*   volumes);
+NA_IAPI void        naFillVolumei32WithCopy(NAVolumei32* volumed, const NAVolumei32* volumes);
+NA_IAPI void        naFillVolumei64WithCopy(NAVolumei64* volumed, const NAVolumei64* volumes);
+NA_IAPI void        naFillVolumesWithCopy  (NAVolumes*   volumed, const NAVolumes*   volumes);
 
 // NABox
 
@@ -386,6 +414,12 @@ NA_IAPI NABoxi32    naMakeBoxi32Empty(void);
 NA_IAPI NABoxi64    naMakeBoxi64Empty(void);
 NA_IAPI NABoxs      naMakeBoxsEmpty  (void);
 
+NA_IAPI void        naFillBoxWithCopy   (NABox*    boxd, const NABox*    boxs);
+NA_IAPI void        naFillBoxfWithCopy  (NABoxf*   boxd, const NABoxf*   boxs);
+NA_IAPI void        naFillBoxi32WithCopy(NABoxi32* boxd, const NABoxi32* boxs);
+NA_IAPI void        naFillBoxi64WithCopy(NABoxi64* boxd, const NABoxi64* boxs);
+NA_IAPI void        naFillBoxsWithCopy  (NABoxs*   boxd, const NABoxs*   boxs);
+
 // NABezel
 
 NA_IAPI NABezel4    naMakeBezel4   (double right, double top, double left, double bottom);
@@ -402,60 +436,77 @@ NA_IAPI NABezel4s   naMakeBezel4sZero  (void);
 
 
 
-
-// Mac OS X specific stuff
-#ifdef CGGEOMETRY_H_
-NA_IAPI NAPos     naMakePosWithCGPoint(CGPoint cgPoint);
-NA_IAPI NASize    naMakeSizeWithCGSize(CGSize  cgSize);
-NA_IAPI NARect    naMakeRectWithCGRect(CGRect  cgRect);
-#endif
-#if defined __OBJC__ && defined __AVAILABILITYMACROS__
-// Note: In order to make this compile, you need to include "NACoord.h" AFTER
-// including <Cocoa/Cocoa.h>
-NA_IAPI NAPos     naMakePosWithNSPoint  (NSPoint nsPoint);
-NA_IAPI NSPoint   naMakeNSPointWithPos  (NAPos   naPos);
-NA_IAPI NASize    naMakeSizeWithNSSize  (NSSize  nsSize);
-NA_IAPI NSSize    naMakeNSSizeWithSize  (NASize  naSize);
-NA_IAPI NARect    naMakeRectWithNSRect  (NSRect  nsRect);
-NA_IAPI NSRect    naMakeNSRectWithSize  (NASize  naSize); // origin = (0, 0)
-NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  naRect);
-#endif
-
+// ////////////////
+// Aligned ranges
+//
 // Creates a new origin which is the given origin floored to a multiple of
-// the given alignment. Also works for negative input offsets.
-NA_IAPI NAPos     naMakePosWithAlignment    (NAPos     origin, NARect  alignRect);
+// the given alignment. Also works for negative input offsets (not for the
+// s-variant though).
+//
+// The 1D case is covered by the naAlignValue functions.
+
+NA_IAPI NAPos       naMakePosWithAlignment      (NAPos       origin, NARect    alignRect);
+NA_IAPI NAPosf      naMakePosfWithAlignment     (NAPosf      origin, NARectf   alignRect);
 NA_IAPI NAPosi32    naMakePosi32WithAlignment   (NAPosi32    origin, NARecti32 alignRect);
 NA_IAPI NAPosi64    naMakePosi64WithAlignment   (NAPosi64    origin, NARecti64 alignRect);
+NA_IAPI NAPoss      naMakePossWithAlignment     (NAPoss      origin, NARects   alignRect);
 
-NA_IAPI NAVertex  naMakeVertexWithAlignment (NAVertex  origin, NABox   alignBox);
+NA_IAPI NAVertex    naMakeVertexWithAlignment   (NAVertex    origin, NABox     alignBox);
+NA_IAPI NAVertexf   naMakeVertexfWithAlignment  (NAVertexf   origin, NABoxf    alignBox);
 NA_IAPI NAVertexi32 naMakeVertexi32WithAlignment(NAVertexi32 origin, NABoxi32  alignBox);
 NA_IAPI NAVertexi64 naMakeVertexi64WithAlignment(NAVertexi64 origin, NABoxi64  alignBox);
+NA_IAPI NAVertexs   naMakeVertexsWithAlignment  (NAVertexs   origin, NABoxs    alignBox);
 
-// Create the bounding box of two elements. The range, size or volume of the
-// resulting struct will never be negative. Note that the integer variant of
-// NARange also allows to be made with min and max instead of start and end.
-// The naMakeRectiWithPosAndPos and naMakeBoxiWithVertexAndVertex functions
-// assume the two vertexes to be inside the desired rect or box.
+
+
+// ///////////////////////
+// Create structures by combining two elements
+//
+// All functions except the interception variants create the bounding box of
+// two elements. The integer variants assume the points to be inside the
+// desired structure.
+// 
+// The range, size or volume of the resulting struct will never be negative.
+// But it might be empty.
 //
 // The Variants with E also allow the rects to be empty.
-NA_IAPI NARange  naMakeRangeWithStartAndEnd    (double   start,  double   end);
-NA_IAPI NARangef naMakeRangefWithStartAndEnd   (float    start,  float    end);
+
+NA_IAPI NARange    naMakeRangeWithStartAndEnd    (double   start,  double   end);
+NA_IAPI NARangef   naMakeRangefWithStartAndEnd   (float    start,  float    end);
 NA_IAPI NARangei32 naMakeRangei32WithStartAndEnd (int32    start,  int32    end);
 NA_IAPI NARangei64 naMakeRangei64WithStartAndEnd (int64    start,  int64    end);
-NA_IAPI NARangei32 naMakeRangei32WithMinAndMax     (int32    min,    int32    max);
-NA_IAPI NARangei64 naMakeRangei64WithMinAndMax     (int64    min,    int64    max);
-NA_IAPI NARangei32 naMakeRangei32WithRangeAndOffset(NARangei32 range,  int32    offset);
-NA_IAPI NARangei64 naMakeRangei64WithRangeAndOffset(NARangei64 range,  int64    offset);
-NA_IAPI NARangei32 naMakeRangei32WithRangeUnion  (NARangei32 range1, NARangei32 range2);
-NA_IAPI NARangei64 naMakeRangei64WithRangeUnion  (NARangei64 range1, NARangei64 range2);
+NA_IAPI NARanges   naMakeRangesWithStartAndEnd   (size_t   start,  size_t   end);
 
-NA_IAPI NARect  naMakeRectWithPosAndPos    (NAPos   pos1,  NAPos   pos2);
+NA_IAPI NARangei32 naMakeRangei32WithMinAndMax   (int32    min,    int32    max);
+NA_IAPI NARangei64 naMakeRangei64WithMinAndMax   (int64    min,    int64    max);
+NA_IAPI NARanges   naMakeRangesWithMinAndMax     (size_t   min,    size_t   max);
+
+NA_IAPI NARangei32 naMakeRangei32WithRangeAndOffset(NARangei32 range,  int32  offset);
+NA_IAPI NARangei64 naMakeRangei64WithRangeAndOffset(NARangei64 range,  int64  offset);
+NA_IAPI NARanges   naMakeRangesWithRangeAndOffset  (NARanges   range,  size_t offset);
+
+NA_IAPI NARangei32 naMakeRangei32WithRangeUnion    (NARangei32 range1, NARangei32 range2);
+NA_IAPI NARangei64 naMakeRangei64WithRangeUnion    (NARangei64 range1, NARangei64 range2);
+NA_IAPI NARanges   naMakeRangesWithRangeUnion      (NARanges   range1, NARanges   range2);
+
+NA_IAPI NARange    naMakeRangeWithRangeIntersection   (NARange    range1, NARange    range2);
+NA_IAPI NARangef   naMakeRangefWithRangeIntersection  (NARangef   range1, NARangef   range2);
+NA_IAPI NARangei32 naMakeRangei32WithRangeIntersection(NARangei32 range1, NARangei32 range2);
+NA_IAPI NARangei64 naMakeRangei64WithRangeIntersection(NARangei64 range1, NARangei64 range2);
+NA_IAPI NARanges   naMakeRangesWithRangeIntersection  (NARanges   range1, NARanges   range2);
+
+
+
+NA_IAPI NARect    naMakeRectWithPosAndPos   (NAPos     pos1,  NAPos     pos2);
+NA_IAPI NARectf   naMakeRectfWithPosAndPos  (NAPosf    pos1,  NAPosf    pos2);
+NA_IAPI NARecti32 naMakeRecti32WithPosAndPos(NAPosi32  pos1,  NAPosi32  pos2);
+NA_IAPI NARecti64 naMakeRecti64WithPosAndPos(NAPosi64  pos1,  NAPosi64  pos2);
+NA_IAPI NARects   naMakeRectsWithPosAndPos  (NAPoss    pos1,  NAPoss    pos2);
+
 NA_IAPI NARect  naMakeRectWithRectAndPos   (NARect  rect,  NAPos   pos);
 NA_IAPI NARect  naMakeRectWithRectAndPosE  (NARect  rect,  NAPos   pos);
 NA_IAPI NARect  naMakeRectWithRectUnion    (NARect  rect1, NARect  rect2);
 NA_IAPI NARect  naMakeRectWithRectUnionE   (NARect  rect1, NARect  rect2);
-NA_IAPI NARecti32 naMakeRecti32WithPosAndPos   (NAPosi32  pos1,  NAPosi32  pos2);
-NA_IAPI NARecti64 naMakeRecti64WithPosAndPos   (NAPosi64  pos1,  NAPosi64  pos2);
 
 NA_IAPI NARecti32 naMakeRecti32WithRectAndPos  (NARecti32 rect,  NAPosi32  pos);
 NA_IAPI NARecti32 naMakeRecti32WithRectAndPosE (NARecti32 rect,  NAPosi32  pos);
@@ -483,13 +534,6 @@ NA_IAPI NABoxi64 naMakeBoxi64WithBoxUnion       (NABoxi64    box1,    NABoxi64  
 NA_IAPI NABoxi32 naMakeBoxi32WithBoxUnionE      (NABoxi32    box1,    NABoxi32    box2);
 NA_IAPI NABoxi64 naMakeBoxi64WithBoxUnionE      (NABoxi64    box1,    NABoxi64    box2);
 
-// Returns the intersection of the two elements. May be empty or negative.
-// Note: This is basically the inverse of naMakeBoxiWithBoxUnion. Use
-// the naIsXXXUseful tests to test if the resulting element actually is a
-// valid intersection.
-NA_IAPI NARange  naMakeRangeWithRangeIntersection (NARange  range1, NARange  range2);
-NA_IAPI NARangei32 naMakeRangei32WithRangeIntersection(NARangei32 range1, NARangei32 range2);
-NA_IAPI NARangei64 naMakeRangei64WithRangeIntersection(NARangei64 range1, NARangei64 range2);
 NA_IAPI NARect   naMakeRectWithRectIntersection   (NARect   rect1,  NARect   rect2);
 NA_IAPI NARecti32  naMakeRecti32WithRectIntersection  (NARecti32  rect1,  NARecti32  rect2);
 NA_IAPI NARecti64  naMakeRecti64WithRectIntersection  (NARecti64  rect1,  NARecti64  rect2);
@@ -525,30 +569,6 @@ NA_IAPI NARecti64 naMakeRecti64Positive(NARecti64 rect);
 NA_IAPI NABoxi32  naMakeBoxi32Positive(NABoxi32 box);
 NA_IAPI NABoxi64  naMakeBoxi64Positive(NABoxi64 box);
 
-// Copies the contents of source s to destination d
-NA_IAPI void      naFillPosWithCopy    (NAPos*   posd,   const NAPos*   poss);
-NA_IAPI void      naFillPosi32WithCopy   (NAPosi32*  posd,   const NAPosi32*  poss);
-NA_IAPI void      naFillPosi64WithCopy   (NAPosi64*  posd,   const NAPosi64*  poss);
-
-NA_IAPI void      naFillSizeWithCopy   (NASize*  sized,  const NASize*  sizes);
-NA_IAPI void      naFillSizei32WithCopy  (NASizei32* sized,  const NASizei32* sizes);
-NA_IAPI void      naFillSizei64WithCopy  (NASizei64* sized,  const NASizei64* sizes);
-
-NA_IAPI void      naFillRectWithCopy   (NARect*  rectd,  const NARect*  rects);
-NA_IAPI void      naFillRecti32WithCopy  (NARecti32* rectd,  const NARecti32* rects);
-NA_IAPI void      naFillRecti64WithCopy  (NARecti64* rectd,  const NARecti64* rects);
-
-NA_IAPI void      naFillVertexWithCopy (NAVertex*  vertexd,  const NAVertex*  vertexs);
-NA_IAPI void      naFillVertexi32WithCopy(NAVertexi32* vertexd,  const NAVertexi32* vertexs);
-NA_IAPI void      naFillVertexi64WithCopy(NAVertexi64* vertexd,  const NAVertexi64* vertexs);
-
-NA_IAPI void      naFillVolumeWithCopy (NAVolume*  volumed,  const NAVolume*  volumes);
-NA_IAPI void      naFillVolumei32WithCopy(NAVolumei32* volumed,  const NAVolumei32* volumes);
-NA_IAPI void      naFillVolumei64WithCopy(NAVolumei64* volumed,  const NAVolumei64* volumes);
-
-NA_IAPI void      naFillBoxWithCopy    (NABox*  boxd,  const NABox*  boxs);
-NA_IAPI void      naFillBoxi32WithCopy   (NABoxi32* boxd,  const NABoxi32* boxs);
-NA_IAPI void      naFillBoxi64WithCopy   (NABoxi64* boxd,  const NABoxi64* boxs);
 
 // Returns the center position / vertex
 NA_IAPI NAPos     naGetRectCenter (NARect rect);
@@ -700,76 +720,135 @@ NA_IAPI NABool    naContainsBoxBox       (NABox     outerBox,    NABox     box);
 NA_IAPI NABool    naContainsBoxi32Box      (NABoxi32    outerBox,    NABoxi32    box);
 NA_IAPI NABool    naContainsBoxi64Box      (NABoxi64    outerBox,    NABoxi64    box);
 
-// Get the End-Point of a rect. Is the same as origin + size.
-// The E variants allow the given struct to be empty.
-NA_IAPI double    naGetRangeEnd   (NARange  range);
-NA_IAPI float     naGetRangefEnd  (NARangef range);
-NA_IAPI double    naGetRangeEndE  (NARange  range);
-NA_IAPI float     naGetRangefEndE (NARangef range);
 
-NA_IAPI NAPos     naGetRectEnd    (NARect rect);
-NA_IAPI double    naGetRectEndX   (NARect  rect);
-NA_IAPI double    naGetRectEndY   (NARect  rect);
-NA_IAPI double    naGetRectEndXE  (NARect  rect);
-NA_IAPI double    naGetRectEndYE  (NARect  rect);
 
-NA_IAPI NAVertex  naGetBoxEnd     (NABox  box);
-NA_IAPI double    naGetBoxEndX    (NABox  box);
-NA_IAPI double    naGetBoxEndY    (NABox  box);
-NA_IAPI double    naGetBoxEndZ    (NABox  box);
-NA_IAPI double    naGetBoxEndXE   (NABox  box);
-NA_IAPI double    naGetBoxEndYE   (NABox  box);
-NA_IAPI double    naGetBoxEndZE   (NABox  box);
-
+// /////////////////////////
+// End and Max functions
+//
 // Computes the positions opposite to the origin of the rect.
 // End returns origin + size
-// Max returns oritin + size - 1
+// Max returns oritin + size - 1   (only useful for integer variants)
+// The E variants allow the given struct to be empty.
+
+NA_IAPI double    naGetRangeEnd    (NARange    range);
+NA_IAPI float     naGetRangefEnd   (NARangef   range);
 NA_IAPI int32     naGetRangei32End (NARangei32 range);
 NA_IAPI int64     naGetRangei64End (NARangei64 range);
+NA_IAPI size_t    naGetRangesEnd   (NARanges   range);
+
+NA_IAPI double    naGetRangeEndE   (NARange    range);
+NA_IAPI float     naGetRangefEndE  (NARangef   range);
+NA_IAPI int32     naGetRangei32EndE(NARangei32 range);
+NA_IAPI int64     naGetRangei64EndE(NARangei64 range);
+NA_IAPI size_t    naGetRangesEndE  (NARanges   range);
+
 NA_IAPI int32     naGetRangei32Max (NARangei32 range);
 NA_IAPI int64     naGetRangei64Max (NARangei64 range);
+NA_IAPI size_t    naGetRangesMax   (NARanges   range);
 
-NA_IAPI int32     naGetRecti32EndX (NARecti32 rect);
-NA_IAPI int64     naGetRecti64EndX (NARecti64 rect);
-NA_IAPI size_t    naGetRectsEndX   (NARects   rect);
 
-NA_IAPI int32     naGetRecti32EndY (NARecti32 rect);
-NA_IAPI int64     naGetRecti64EndY (NARecti64 rect);
-NA_IAPI size_t    naGetRectsEndY   (NARects   rect);
 
-NA_IAPI NAPosi32  naGetRecti32Max  (NARecti32 rect);
-NA_IAPI NAPosi64  naGetRecti64Max  (NARecti64 rect);
-NA_IAPI int32     naGetRecti32MaxX (NARecti32 rect);
-NA_IAPI int64     naGetRecti64MaxX (NARecti64 rect);
-NA_IAPI int32     naGetRecti32MaxY (NARecti32 rect);
-NA_IAPI int64     naGetRecti64MaxY (NARecti64 rect);
+NA_IAPI NAPos     naGetRectEnd     (NARect     rect);
+NA_IAPI NAPosf    naGetRectfEnd    (NARectf    rect);
+NA_IAPI NAPosi32  naGetRecti32End  (NARecti32  rect);
+NA_IAPI NAPosi64  naGetRecti64End  (NARecti64  rect);
+NA_IAPI NAPoss    naGetRectsEnd    (NARects    rect);
 
-NA_IAPI NAVertexi32 naGetBoxi32End   (NABoxi32 box);
-NA_IAPI NAVertexi64 naGetBoxi64End   (NABoxi64 box);
+NA_IAPI double    naGetRectEndX    (NARect     rect);
+NA_IAPI float     naGetRectfEndX   (NARectf    rect);
+NA_IAPI int32     naGetRecti32EndX (NARecti32  rect);
+NA_IAPI int64     naGetRecti64EndX (NARecti64  rect);
+NA_IAPI size_t    naGetRectsEndX   (NARects    rect);
 
-NA_IAPI int32     naGetBoxi32EndX(NABoxi32 box);
-NA_IAPI int64     naGetBoxi64EndX(NABoxi64 box);
-NA_IAPI size_t    naGetBoxsEndX  (NABoxs box);
+NA_IAPI double    naGetRectEndY    (NARect     rect);
+NA_IAPI float     naGetRectfEndY   (NARectf    rect);
+NA_IAPI int32     naGetRecti32EndY (NARecti32  rect);
+NA_IAPI int64     naGetRecti64EndY (NARecti64  rect);
+NA_IAPI size_t    naGetRectsEndY   (NARects    rect);
 
-NA_IAPI int32     naGetBoxi32EndY(NABoxi32 box);
-NA_IAPI int64     naGetBoxi64EndY(NABoxi64 box);
-NA_IAPI size_t    naGetBoxsEndY  (NABoxs box);
+NA_IAPI double    naGetRectEndXE   (NARect     rect);
+NA_IAPI float     naGetRectfEndXE  (NARectf    rect);
+NA_IAPI int32     naGetRecti32EndXE(NARecti32  rect);
+NA_IAPI int64     naGetRecti64EndXE(NARecti64  rect);
+NA_IAPI size_t    naGetRectsEndXE  (NARects    rect);
 
-NA_IAPI int32     naGetBoxi32EndZ(NABoxi32 box);
-NA_IAPI int64     naGetBoxi64EndZ(NABoxi64 box);
-NA_IAPI size_t    naGetBoxsEndZ  (NABoxs box);
+NA_IAPI double    naGetRectEndYE   (NARect     rect);
+NA_IAPI float     naGetRectfEndYE  (NARectf    rect);
+NA_IAPI int32     naGetRecti32EndYE(NARecti32  rect);
+NA_IAPI int64     naGetRecti64EndYE(NARecti64  rect);
+NA_IAPI size_t    naGetRectsEndYE  (NARects    rect);
 
-NA_IAPI NAVertexi32 naGetBoxi32Max   (NABoxi32 box);
-NA_IAPI NAVertexi64 naGetBoxi64Max   (NABoxi64 box);
+NA_IAPI NAPosi32  naGetRecti32Max  (NARecti32  rect);
+NA_IAPI NAPosi64  naGetRecti64Max  (NARecti64  rect);
+NA_IAPI NAPoss    naGetRectsMax    (NARects    rect);
 
-NA_IAPI int32       naGetBoxi32MaxX  (NABoxi32 box);
-NA_IAPI int64       naGetBoxi64MaxX  (NABoxi64 box);
+NA_IAPI int32     naGetRecti32MaxX (NARecti32  rect);
+NA_IAPI int64     naGetRecti64MaxX (NARecti64  rect);
+NA_IAPI size_t    naGetRectsMaxX   (NARects    rect);
 
-NA_IAPI int32       naGetBoxi32MaxY  (NABoxi32 box);
-NA_IAPI int64       naGetBoxi64MaxY  (NABoxi64 box);
+NA_IAPI int32     naGetRecti32MaxY (NARecti32  rect);
+NA_IAPI int64     naGetRecti64MaxY (NARecti64  rect);
+NA_IAPI size_t    naGetRectsMaxY   (NARects    rect);
 
-NA_IAPI int32       naGetBoxi32MaxZ  (NABoxi32 box);
-NA_IAPI int64       naGetBoxi64MaxZ  (NABoxi64 box);
+
+
+NA_IAPI NAVertex    naGetBoxEnd     (NABox    box);
+NA_IAPI NAVertexf   naGetBoxfEnd    (NABoxf   box);
+NA_IAPI NAVertexi32 naGetBoxi32End  (NABoxi32 box);
+NA_IAPI NAVertexi64 naGetBoxi64End  (NABoxi64 box);
+NA_IAPI NAVertexs   naGetBoxsEnd    (NABoxs   box);
+
+NA_IAPI double      naGetBoxEndX    (NABox    box);
+NA_IAPI float       naGetBoxfEndX   (NABoxf   box);
+NA_IAPI int32       naGetBoxi32EndX (NABoxi32 box);
+NA_IAPI int64       naGetBoxi64EndX (NABoxi64 box);
+NA_IAPI size_t      naGetBoxsEndX   (NABoxs   box);
+
+NA_IAPI double      naGetBoxEndY    (NABox    box);
+NA_IAPI float       naGetBoxfEndY   (NABoxf   box);
+NA_IAPI int32       naGetBoxi32EndY (NABoxi32 box);
+NA_IAPI int64       naGetBoxi64EndY (NABoxi64 box);
+NA_IAPI size_t      naGetBoxsEndY   (NABoxs   box);
+
+NA_IAPI double      naGetBoxEndZ    (NABox    box);
+NA_IAPI float       naGetBoxfEndZ   (NABoxf   box);
+NA_IAPI int32       naGetBoxi32EndZ (NABoxi32 box);
+NA_IAPI int64       naGetBoxi64EndZ (NABoxi64 box);
+NA_IAPI size_t      naGetBoxsEndZ   (NABoxs   box);
+
+NA_IAPI double      naGetBoxEndXE   (NABox    box);
+NA_IAPI float       naGetBoxfEndXE  (NABoxf   box);
+NA_IAPI int32       naGetBoxi32EndXE(NABoxi32 box);
+NA_IAPI int64       naGetBoxi64EndXE(NABoxi64 box);
+NA_IAPI size_t      naGetBoxsEndXE  (NABoxs   box);
+
+NA_IAPI double      naGetBoxEndYE   (NABox    box);
+NA_IAPI float       naGetBoxfEndYE  (NABoxf   box);
+NA_IAPI int32       naGetBoxi32EndYE(NABoxi32 box);
+NA_IAPI int64       naGetBoxi64EndYE(NABoxi64 box);
+NA_IAPI size_t      naGetBoxsEndYE  (NABoxs   box);
+
+NA_IAPI double      naGetBoxEndZE   (NABox    box);
+NA_IAPI float       naGetBoxfEndZE  (NABoxf   box);
+NA_IAPI int32       naGetBoxi32EndZE(NABoxi32 box);
+NA_IAPI int64       naGetBoxi64EndZE(NABoxi64 box);
+NA_IAPI size_t      naGetBoxsEndZE  (NABoxs   box);
+
+NA_IAPI NAVertexi32 naGetBoxi32Max  (NABoxi32 box);
+NA_IAPI NAVertexi64 naGetBoxi64Max  (NABoxi64 box);
+NA_IAPI NAVertexs   naGetBoxsMax    (NABoxs   box);
+
+NA_IAPI int32       naGetBoxi32MaxX (NABoxi32 box);
+NA_IAPI int64       naGetBoxi64MaxX (NABoxi64 box);
+NA_IAPI size_t      naGetBoxsMaxX   (NABoxs   box);
+
+NA_IAPI int32       naGetBoxi32MaxY (NABoxi32 box);
+NA_IAPI int64       naGetBoxi64MaxY (NABoxi64 box);
+NA_IAPI size_t      naGetBoxsMaxY   (NABoxs   box);
+
+NA_IAPI int32       naGetBoxi32MaxZ (NABoxi32 box);
+NA_IAPI int64       naGetBoxi64MaxZ (NABoxi64 box);
+NA_IAPI size_t      naGetBoxsMaxZ   (NABoxs   box);
 
 
 
@@ -777,13 +856,13 @@ NA_IAPI int64       naGetBoxi64MaxZ  (NABoxi64 box);
 // Index functions
 
 // Count returns the total number of indices (width*height) within a size.
-NA_IAPI size_t naGetSizei32IndexCount           (NASizei32 size);
-NA_IAPI size_t naGetSizei64IndexCount           (NASizei64 size);
-NA_IAPI size_t naGetSizesIndexCount             (NASizes   size);
+NA_IAPI size_t naGetSizei32IndexCount  (NASizei32 size);
+NA_IAPI size_t naGetSizei64IndexCount  (NASizei64 size);
+NA_IAPI size_t naGetSizesIndexCount    (NASizes   size);
 
-NA_IAPI size_t naGetVolumei32IndexCount         (NAVolumei32 volume);
-NA_IAPI size_t naGetVolumei64IndexCount         (NAVolumei64 volume);
-NA_IAPI size_t naGetVolumesIndexCount           (NAVolumes volume);
+NA_IAPI size_t naGetVolumei32IndexCount(NAVolumei32 volume);
+NA_IAPI size_t naGetVolumei64IndexCount(NAVolumei64 volume);
+NA_IAPI size_t naGetVolumesIndexCount  (NAVolumes volume);
 
 // Raw Index functions. Assuming origin and width denote the indices in a
 // multi-dimensional array which is stored as a 1D-Array.
@@ -1039,6 +1118,28 @@ NA_IAPI NABool    naIsBoxfUseful     (NABoxf      box);
 NA_IAPI NABool    naIsBoxi32Useful   (NABoxi32    box);
 NA_IAPI NABool    naIsBoxi64Useful   (NABoxi64    box);
 NA_IAPI NABool    naIsBoxsUseful     (NABoxs      box);
+
+
+
+// /////////////////
+// macOS specific stuff
+
+#ifdef CGGEOMETRY_H_
+NA_IAPI NAPos     naMakePosWithCGPoint(CGPoint cgPoint);
+NA_IAPI NASize    naMakeSizeWithCGSize(CGSize  cgSize);
+NA_IAPI NARect    naMakeRectWithCGRect(CGRect  cgRect);
+#endif
+#if defined __OBJC__ && defined __AVAILABILITYMACROS__
+// Note: In order to make this compile, you need to include "NACoord.h" AFTER
+// including <Cocoa/Cocoa.h>
+NA_IAPI NAPos     naMakePosWithNSPoint  (NSPoint nsPoint);
+NA_IAPI NSPoint   naMakeNSPointWithPos  (NAPos   naPos);
+NA_IAPI NASize    naMakeSizeWithNSSize  (NSSize  nsSize);
+NA_IAPI NSSize    naMakeNSSizeWithSize  (NASize  naSize);
+NA_IAPI NARect    naMakeRectWithNSRect  (NSRect  nsRect);
+NA_IAPI NSRect    naMakeNSRectWithSize  (NASize  naSize); // origin = (0, 0)
+NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  naRect);
+#endif
 
 
 

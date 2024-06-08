@@ -129,13 +129,6 @@ NA_IDEF NASizes naMakeSizesE(size_t width, size_t height) {
 
 
 
-//NA_IDEF NASizei naMakeSizeiWithIntegerSize(NASize size) {
-//  NASizei newSize = naMakeSizeiE((NAInt)naGetDoubleInteger(size.width), (NAInt)naGetDoubleInteger(size.height));
-//  return newSize;
-//}
-
-
-
 NA_IDEF NASize naMakeSizeZero() {
   NASize newSize;
   newSize.width = 0.;
@@ -169,6 +162,29 @@ NA_IDEF NASizes naMakeSizesZero() {
   newSize.width = 0;
   newSize.height = 0;
   return newSize;
+}
+
+
+
+NA_IDEF void naFillSizeWithCopy(NASize* sized, const NASize* sizes) {
+  sized->width  = sizes->width;
+  sized->height = sizes->height;
+}
+NA_IDEF void naFillSizefWithCopy(NASizef* sized, const NASizef* sizes) {
+  sized->width  = sizes->width;
+  sized->height = sizes->height;
+}
+NA_IDEF void naFillSizei32WithCopy(NASizei32* sized, const NASizei32* sizes) {
+  sized->width  = sizes->width;
+  sized->height = sizes->height;
+}
+NA_IDEF void naFillSizei64WithCopy(NASizei64* sized, const NASizei64* sizes) {
+  sized->width  = sizes->width;
+  sized->height = sizes->height;
+}
+NA_IDEF void naFillSizesWithCopy(NASizes* sized, const NASizes* sizes) {
+  sized->width  = sizes->width;
+  sized->height = sizes->height;
 }
 
 

@@ -72,21 +72,6 @@ NA_IDEF NAPoss naMakePoss(size_t x, size_t y) {
 
 
 
-//NA_IDEF NAPos naMakePosWithV2(const double* v) {
-//  NAPos newPos;
-//  #if NA_DEBUG
-//    if(!(naIsOffsetValueValid(v[0]) && naIsOffsetValueValid(v[1])))
-//      naError("Invalid values given.");
-//    if(!(naIsOffsetValueUseful(v[0]) && naIsOffsetValueUseful(v[1])))
-//      naError("Values given are not useful.");
-//  #endif
-//  newPos.x = v[0];
-//  newPos.y = v[1];
-//  return newPos;
-//}
-
-
-
 NA_IDEF NAPos naMakePosZero() {
   NAPos newPos;
   newPos.x = 0.;
@@ -122,6 +107,28 @@ NA_IDEF NAPoss naMakePossZero() {
   return newPos;
 }
 
+
+
+NA_IDEF void naFillPosWithCopy(NAPos* posd, const NAPos* poss) {
+  posd->x = poss->x;
+  posd->y = poss->y;
+}
+NA_IDEF void naFillPosfWithCopy(NAPosf* posd, const NAPosf* poss) {
+  posd->x = poss->x;
+  posd->y = poss->y;
+}
+NA_IDEF void naFillPosi32WithCopy(NAPosi32* posd, const NAPosi32* poss) {
+  posd->x = poss->x;
+  posd->y = poss->y;
+}
+NA_IDEF void naFillPosi64WithCopy(NAPosi64* posd, const NAPosi64* poss) {
+  posd->x = poss->x;
+  posd->y = poss->y;
+}
+NA_IDEF void naFillPossWithCopy(NAPoss* posd, const NAPoss* poss) {
+  posd->x = poss->x;
+  posd->y = poss->y;
+}
 
 
 // This is free and unencumbered software released into the public domain.

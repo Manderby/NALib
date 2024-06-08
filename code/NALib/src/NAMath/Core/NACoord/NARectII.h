@@ -300,6 +300,29 @@ NA_IDEF NARects naMakeRectsZero() {
 
 
 
+NA_IDEF void naFillRectWithCopy(NARect* rectd, const NARect* rects) {
+  rectd->pos  = rects->pos;
+  rectd->size = rects->size;
+}
+NA_IDEF void naFillRectfWithCopy(NARectf* rectd, const NARectf* rects) {
+  rectd->pos  = rects->pos;
+  rectd->size = rects->size;
+}
+NA_IDEF void naFillRecti32WithCopy(NARecti32* rectd, const NARecti32* rects) {
+  rectd->pos  = rects->pos;
+  rectd->size = rects->size;
+}
+NA_IDEF void naFillRecti64WithCopy(NARecti64* rectd, const NARecti64* rects) {
+  rectd->pos  = rects->pos;
+  rectd->size = rects->size;
+}
+NA_IDEF void naFillRectsWithCopy(NARects* rectd, const NARects* rects) {
+  rectd->pos  = rects->pos;
+  rectd->size = rects->size;
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

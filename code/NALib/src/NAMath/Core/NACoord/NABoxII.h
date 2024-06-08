@@ -255,6 +255,29 @@ NA_IDEF NABoxs naMakeBoxsEmpty() {
 
 
 
+NA_IDEF void naFillBoxWithCopy(NABox* boxd, const NABox* boxs) {
+  boxd->vertex = boxs->vertex;
+  boxd->volume = boxs->volume;
+}
+NA_IDEF void naFillBoxfWithCopy(NABoxf* boxd, const NABoxf* boxs) {
+  boxd->vertex = boxs->vertex;
+  boxd->volume = boxs->volume;
+}
+NA_IDEF void naFillBoxi32WithCopy(NABoxi32* boxd, const NABoxi32* boxs) {
+  boxd->vertex = boxs->vertex;
+  boxd->volume = boxs->volume;
+}
+NA_IDEF void naFillBoxi64WithCopy(NABoxi64* boxd, const NABoxi64* boxs) {
+  boxd->vertex = boxs->vertex;
+  boxd->volume = boxs->volume;
+}
+NA_IDEF void naFillBoxsWithCopy(NABoxs* boxd, const NABoxs* boxs) {
+  boxd->vertex = boxs->vertex;
+  boxd->volume = boxs->volume;
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

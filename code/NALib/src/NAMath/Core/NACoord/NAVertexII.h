@@ -119,19 +119,31 @@ NA_IDEF NAVertexs naMakeVertexsZero(void) {
 
 
 
-//NA_IDEF NAVertex naMakeVertexWithV3(const double* v) {
-//  NAVertex newVertex;
-//  #if NA_DEBUG
-//    if(!(naIsOffsetValueValid(v[0]) && naIsOffsetValueValid(v[1]) && naIsOffsetValueValid(v[2])))
-//      naError("Invalid values given.");
-//    if(!(naIsOffsetValueUseful(v[0]) && naIsOffsetValueUseful(v[1]) && naIsOffsetValueUseful(v[2])))
-//      naError("Values given are not useful.");
-//  #endif
-//  newVertex.x = v[0];
-//  newVertex.y = v[1];
-//  newVertex.z = v[2];
-//  return newVertex;
-//}
+NA_IDEF void naFillVertexWithCopy(NAVertex* vertexd, const NAVertex* vertexs) {
+  vertexd->x = vertexs->x;
+  vertexd->y = vertexs->y;
+  vertexd->z = vertexs->z;
+}
+NA_IDEF void naFillVertexfWithCopy(NAVertexf* vertexd, const NAVertexf* vertexs) {
+  vertexd->x = vertexs->x;
+  vertexd->y = vertexs->y;
+  vertexd->z = vertexs->z;
+}
+NA_IDEF void naFillVertexi32WithCopy(NAVertexi32* vertexd, const NAVertexi32* vertexs) {
+  vertexd->x = vertexs->x;
+  vertexd->y = vertexs->y;
+  vertexd->z = vertexs->z;
+}
+NA_IDEF void naFillVertexi64WithCopy(NAVertexi64* vertexd, const NAVertexi64* vertexs) {
+  vertexd->x = vertexs->x;
+  vertexd->y = vertexs->y;
+  vertexd->z = vertexs->z;
+}
+NA_IDEF void naFillVertexsWithCopy(NAVertexs* vertexd, const NAVertexs* vertexs) {
+  vertexd->x = vertexs->x;
+  vertexd->y = vertexs->y;
+  vertexd->z = vertexs->z;
+}
 
 
 
