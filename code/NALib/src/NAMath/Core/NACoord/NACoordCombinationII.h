@@ -287,8 +287,8 @@ NA_IDEF NARangef naMakeRangefUnion(NARangef range1, NARangef range2) {
   #endif
 
   NARangef newRange = naMakeRangefCombination(
-    naMin(range1.origin, range2.origin),
-    naMax(naGetRangefEnd(range1), naGetRangefEnd(range2)));
+    naMinf(range1.origin, range2.origin),
+    naMaxf(naGetRangefEnd(range1), naGetRangefEnd(range2)));
   return newRange;
 }
 NA_IDEF NARangei32 naMakeRangei32Union(NARangei32 range1, NARangei32 range2) {
@@ -437,10 +437,10 @@ NA_IDEF NARangef naMakeRangefIntersection(NARangef range1, NARangef range2) {
     if(!naIsRangefValid(range2))
       naError("range2 is invalid.");
   #endif
-  newRange.origin = naMax(range1.origin, range2.origin);
+  newRange.origin = naMaxf(range1.origin, range2.origin);
   end1 = naGetRangefEnd(range1);
   end2 = naGetRangefEnd(range2);
-  newRange.length  = naMakeLengthWithStartAndEndf(newRange.origin, naMin(end1, end2));
+  newRange.length  = naMakeLengthWithStartAndEndf(newRange.origin, naMinf(end1, end2));
   return newRange;
 }
 NA_IDEF NARangei32 naMakeRangei32Intersection(NARangei32 range1, NARangei32 range2) {
@@ -477,8 +477,8 @@ NA_IDEF NARangei64 naMakeRangei64Intersection(NARangei64 range1, NARangei64 rang
 }
 NA_IDEF NARanges naMakeRangesIntersection(NARanges range1, NARanges range2) {
   NARanges newRange;
-  int64 end1;
-  int64 end2;
+  size_t end1;
+  size_t end2;
   #if NA_DEBUG
     if(!naIsRangesValid(range1))
       naError("range1 is invalid.");
@@ -638,7 +638,7 @@ NA_IDEF NARect naMakeRectExtension(NARect rect, NAPos point) {
 }
 NA_IDEF NARectf naMakeRectfExtension(NARectf rect, NAPosf point) {
   NARectf newRect;
-  double end;
+  float end;
   #if NA_DEBUG
     if(naIsRectfEmpty(rect))
       naError("rect is empty.");
@@ -650,9 +650,9 @@ NA_IDEF NARectf naMakeRectfExtension(NARectf rect, NAPosf point) {
   newRect.pos.x = naMinf(rect.pos.x, point.x);
   newRect.pos.y = naMinf(rect.pos.y, point.y);
   end = naGetRectfEndX(rect);
-  newRect.size.width  = naMakeLengthWithStartAndEndf(newRect.pos.x, naMax(end, point.x));
+  newRect.size.width  = naMakeLengthWithStartAndEndf(newRect.pos.x, naMaxf(end, point.x));
   end = naGetRectfEndY(rect);
-  newRect.size.height = naMakeLengthWithStartAndEndf(newRect.pos.y, naMax(end, point.y));
+  newRect.size.height = naMakeLengthWithStartAndEndf(newRect.pos.y, naMaxf(end, point.y));
   return newRect;
 }
 NA_IDEF NARecti32 naMakeRecti32Extension(NARecti32 rect, NAPosi32 point) {
