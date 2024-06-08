@@ -1293,7 +1293,7 @@ NA_IDEF NABoxi64 naMakeBoxi64WithBoxAndBorder(NABoxi64 box, int64 border) {
 
 
 NA_IDEF NARange naMakeRangePositive(NARange range) {
-  double rangeNegative = (range.length < 0) ? 1. : -1.;
+  double rangeNegative = (range.length < 0) ? 1. : 0.;
   range.origin += rangeNegative * range.length;
   range.length -= rangeNegative * 2. * range.length;
   return range;
