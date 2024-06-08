@@ -82,7 +82,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty) {
           start++;
         }else{
           found = NA_TRUE;
-          NARangei64 range = naMakeRangei64WithCombination(start, naMakeMaxWithEndi64(cur));
+          NARangei64 range = naMakeRangei64Combination(start, naMakeMaxWithEndi64(cur));
           if(naIsRangei64Useful(range)) {
             string = naNewStringWithBufferExtraction(buffer, range);
           }else{
@@ -98,7 +98,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty) {
   }
 
   if(!found) {
-    NARangei64 remainingrange = naMakeRangei64WithCombination(start, naGetRangei64Max(buffer->range));
+    NARangei64 remainingrange = naMakeRangei64Combination(start, naGetRangei64Max(buffer->range));
     if(!naIsRangei64Empty(remainingrange)) {
       string = naNewStringWithBufferExtraction(buffer, remainingrange);
     }else{
@@ -119,7 +119,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty) {
 NA_DEF NAString* naParseBufferRemainder(NABufferIterator* iter) {
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
   NAInt abspos = naGetBufferLocation(iter);
-  return naNewStringWithBufferExtraction(buffer, naMakeRangei64WithCombination(abspos, naGetRangei64Max(buffer->range)));
+  return naNewStringWithBufferExtraction(buffer, naMakeRangei64Combination(abspos, naGetRangei64Max(buffer->range)));
 }
 
 
@@ -158,7 +158,7 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter) {
   if(!found) {
     end = naGetRangei64End(buffer->range);
   }
-  range = naMakeRangei64WithCombination(start, naMakeMaxWithEndi64(end));
+  range = naMakeRangei64Combination(start, naMakeMaxWithEndi64(end));
   if(!naIsRangei64Empty(range)) {
     string = naNewStringWithBufferExtraction(buffer, range);
   }else{
@@ -206,7 +206,7 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
   }else{
     naIterateBuffer(iter, 1);
   }
-  range = naMakeRangei64WithCombination(start, naMakeMaxWithEndi64(end));
+  range = naMakeRangei64Combination(start, naMakeMaxWithEndi64(end));
   if(!naIsRangei64Empty(range)) {
     string = naNewStringWithBufferExtraction(buffer, range);
   }else{
@@ -256,7 +256,7 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter) {
   if(!found) {
     end = naGetRangei64End(buffer->range);
   }
-  range = naMakeRangei64WithCombination(start, naMakeMaxWithEndi64(end));
+  range = naMakeRangei64Combination(start, naMakeMaxWithEndi64(end));
   if(!naIsRangei64Empty(range)) {
     string = naNewStringWithBufferExtraction(buffer, range);
   }else{

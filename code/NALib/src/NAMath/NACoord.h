@@ -473,52 +473,81 @@ NA_IAPI NAVertexs   naMakeVertexsWithAlignment  (NAVertexs   origin, NABoxs    a
 //
 // The Variants with E also allow the rects to be empty.
 
-NA_IAPI NARange    naMakeRangeWithCombination    (double     point1, double point2);
-NA_IAPI NARangef   naMakeRangefWithCombination   (float      point1, float  point2);
-NA_IAPI NARangei32 naMakeRangei32WithCombination (int32      point1, int32  point2);
-NA_IAPI NARangei64 naMakeRangei64WithCombination (int64      point1, int64  point2);
-NA_IAPI NARanges   naMakeRangesWithCombination   (size_t     point1, size_t point2);
+NA_IAPI NARange    naMakeRangeCombination    (double     point1, double point2);
+NA_IAPI NARangef   naMakeRangefCombination   (float      point1, float  point2);
+NA_IAPI NARangei32 naMakeRangei32Combination (int32      point1, int32  point2);
+NA_IAPI NARangei64 naMakeRangei64Combination (int64      point1, int64  point2);
+NA_IAPI NARanges   naMakeRangesCombination   (size_t     point1, size_t point2);
 
-NA_IAPI NARange    naMakeRangeWithExtension      (NARange    range,  double point);
-NA_IAPI NARangef   naMakeRangefWithExtension     (NARangef   range,  float  point);
-NA_IAPI NARangei32 naMakeRangei32WithExtension   (NARangei32 range,  int32  point);
-NA_IAPI NARangei64 naMakeRangei64WithExtension   (NARangei64 range,  int64  point);
-NA_IAPI NARanges   naMakeRangesWithExtension     (NARanges   range,  size_t point);
+NA_IAPI NARange    naMakeRangeExtension      (NARange    range,  double point);
+NA_IAPI NARangef   naMakeRangefExtension     (NARangef   range,  float  point);
+NA_IAPI NARangei32 naMakeRangei32Extension   (NARangei32 range,  int32  point);
+NA_IAPI NARangei64 naMakeRangei64Extension   (NARangei64 range,  int64  point);
+NA_IAPI NARanges   naMakeRangesExtension     (NARanges   range,  size_t point);
+
+NA_IAPI NARange    naMakeRangeExtensionE     (NARange    range,  double point);
+NA_IAPI NARangef   naMakeRangefExtensionE    (NARangef   range,  float  point);
+NA_IAPI NARangei32 naMakeRangei32ExtensionE  (NARangei32 range,  int32  point);
+NA_IAPI NARangei64 naMakeRangei64ExtensionE  (NARangei64 range,  int64  point);
+NA_IAPI NARanges   naMakeRangesExtensionE    (NARanges   range,  size_t point);
    
-NA_IAPI NARange    naMakeRangeWithUnion          (NARange    range1, NARange    range2);
-NA_IAPI NARangef   naMakeRangefWithUnion         (NARangef   range1, NARangef   range2);
-NA_IAPI NARangei32 naMakeRangei32WithUnion       (NARangei32 range1, NARangei32 range2);
-NA_IAPI NARangei64 naMakeRangei64WithUnion       (NARangei64 range1, NARangei64 range2);
-NA_IAPI NARanges   naMakeRangesWithUnion         (NARanges   range1, NARanges   range2);
+NA_IAPI NARange    naMakeRangeUnion          (NARange    range1, NARange    range2);
+NA_IAPI NARangef   naMakeRangefUnion         (NARangef   range1, NARangef   range2);
+NA_IAPI NARangei32 naMakeRangei32Union       (NARangei32 range1, NARangei32 range2);
+NA_IAPI NARangei64 naMakeRangei64Union       (NARangei64 range1, NARangei64 range2);
+NA_IAPI NARanges   naMakeRangesUnion         (NARanges   range1, NARanges   range2);
 
-NA_IAPI NARange    naMakeRangeWithIntersection   (NARange    range1, NARange    range2);
-NA_IAPI NARangef   naMakeRangefWithIntersection  (NARangef   range1, NARangef   range2);
-NA_IAPI NARangei32 naMakeRangei32WithIntersection(NARangei32 range1, NARangei32 range2);
-NA_IAPI NARangei64 naMakeRangei64WithIntersection(NARangei64 range1, NARangei64 range2);
-NA_IAPI NARanges   naMakeRangesWithIntersection  (NARanges   range1, NARanges   range2);
+NA_IAPI NARange    naMakeRangeUnionE         (NARange    range1, NARange    range2);
+NA_IAPI NARangef   naMakeRangefUnionE        (NARangef   range1, NARangef   range2);
+NA_IAPI NARangei32 naMakeRangei32UnionE      (NARangei32 range1, NARangei32 range2);
+NA_IAPI NARangei64 naMakeRangei64UnionE      (NARangei64 range1, NARangei64 range2);
+NA_IAPI NARanges   naMakeRangesUnionE        (NARanges   range1, NARanges   range2);
+
+NA_IAPI NARange    naMakeRangeIntersection   (NARange    range1, NARange    range2);
+NA_IAPI NARangef   naMakeRangefIntersection  (NARangef   range1, NARangef   range2);
+NA_IAPI NARangei32 naMakeRangei32Intersection(NARangei32 range1, NARangei32 range2);
+NA_IAPI NARangei64 naMakeRangei64Intersection(NARangei64 range1, NARangei64 range2);
+NA_IAPI NARanges   naMakeRangesIntersection  (NARanges   range1, NARanges   range2);
 
 
 
-NA_IAPI NARect    naMakeRectWithPosAndPos   (NAPos     pos1,  NAPos     pos2);
-NA_IAPI NARectf   naMakeRectfWithPosAndPos  (NAPosf    pos1,  NAPosf    pos2);
-NA_IAPI NARecti32 naMakeRecti32WithPosAndPos(NAPosi32  pos1,  NAPosi32  pos2);
-NA_IAPI NARecti64 naMakeRecti64WithPosAndPos(NAPosi64  pos1,  NAPosi64  pos2);
-NA_IAPI NARects   naMakeRectsWithPosAndPos  (NAPoss    pos1,  NAPoss    pos2);
+NA_IAPI NARect    naMakeRectCombination    (NAPos     point1, NAPos     point2);
+NA_IAPI NARectf   naMakeRectfCombination   (NAPosf    point1, NAPosf    point2);
+NA_IAPI NARecti32 naMakeRecti32Combination (NAPosi32  point1, NAPosi32  point2);
+NA_IAPI NARecti64 naMakeRecti64Combination (NAPosi64  point1, NAPosi64  point2);
+NA_IAPI NARects   naMakeRectsCombination   (NAPoss    point1, NAPoss    point2);
 
-NA_IAPI NARect  naMakeRectWithRectAndPos   (NARect  rect,  NAPos   pos);
-NA_IAPI NARect  naMakeRectWithRectAndPosE  (NARect  rect,  NAPos   pos);
-NA_IAPI NARect  naMakeRectWithRectUnion    (NARect  rect1, NARect  rect2);
-NA_IAPI NARect  naMakeRectWithRectUnionE   (NARect  rect1, NARect  rect2);
+NA_IAPI NARect    naMakeRectExtension      (NARect    rect,   NAPos     point);
+NA_IAPI NARectf   naMakeRectfExtension     (NARectf   rect,   NAPosf    point);
+NA_IAPI NARecti32 naMakeRecti32Extension   (NARecti32 rect,   NAPosi32  point);
+NA_IAPI NARecti64 naMakeRecti64Extension   (NARecti64 rect,   NAPosi64  point);
+NA_IAPI NARects   naMakeRectsExtension     (NARects   rect,   NAPoss    point);
 
-NA_IAPI NARecti32 naMakeRecti32WithRectAndPos  (NARecti32 rect,  NAPosi32  pos);
-NA_IAPI NARecti32 naMakeRecti32WithRectAndPosE (NARecti32 rect,  NAPosi32  pos);
-NA_IAPI NARecti64 naMakeRecti64WithRectAndPos  (NARecti64 rect,  NAPosi64  pos);
-NA_IAPI NARecti64 naMakeRecti64WithRectAndPosE (NARecti64 rect,  NAPosi64  pos);
+NA_IAPI NARect    naMakeRectExtensionE     (NARect    rect,   NAPos     point);
+NA_IAPI NARectf   naMakeRectfExtensionE    (NARectf   rect,   NAPosf    point);
+NA_IAPI NARecti32 naMakeRecti32ExtensionE  (NARecti32 rect,   NAPosi32  point);
+NA_IAPI NARecti64 naMakeRecti64ExtensionE  (NARecti64 rect,   NAPosi64  point);
+NA_IAPI NARects   naMakeRectsExtensionE    (NARects   rect,   NAPoss    point);
 
-NA_IAPI NARecti32 naMakeRecti32WithRectUnion   (NARecti32 rect1, NARecti32 rect2);
-NA_IAPI NARecti32 naMakeRecti32WithRectUnionE  (NARecti32 rect1, NARecti32 rect2);
-NA_IAPI NARecti64 naMakeRecti64WithRectUnion   (NARecti64 rect1, NARecti64 rect2);
-NA_IAPI NARecti64 naMakeRecti64WithRectUnionE  (NARecti64 rect1, NARecti64 rect2);
+NA_IAPI NARect    naMakeRectUnion          (NARect    rect1,  NARect    rect2);
+NA_IAPI NARectf   naMakeRectfUnion         (NARectf   rect1,  NARectf   rect2);
+NA_IAPI NARecti32 naMakeRecti32Union       (NARecti32 rect1,  NARecti32 rect2);
+NA_IAPI NARecti64 naMakeRecti64Union       (NARecti64 rect1,  NARecti64 rect2);
+NA_IAPI NARects   naMakeRectsUnion         (NARects   rect1,  NARects   rect2);
+
+NA_IAPI NARect    naMakeRectUnionE         (NARect    rect1,  NARect    rect2);
+NA_IAPI NARectf   naMakeRectfUnionE        (NARectf   rect1,  NARectf   rect2);
+NA_IAPI NARecti32 naMakeRecti32UnionE      (NARecti32 rect1,  NARecti32 rect2);
+NA_IAPI NARecti64 naMakeRecti64UnionE      (NARecti64 rect1,  NARecti64 rect2);
+NA_IAPI NARects   naMakeRectsUnionE        (NARects   rect1,  NARects   rect2);
+
+NA_IAPI NARect    naMakeRectIntersection   (NARect    rect1,  NARect    rect2);
+NA_IAPI NARectf   naMakeRectfIntersection  (NARectf   rect1,  NARectf   rect2);
+NA_IAPI NARecti32 naMakeRecti32Intersection(NARecti32 rect1,  NARecti32 rect2);
+NA_IAPI NARecti64 naMakeRecti64Intersection(NARecti64 rect1,  NARecti64 rect2);
+NA_IAPI NARects   naMakeRectsIntersection  (NARects   rect1,  NARects   rect2);
+
+
 
 NA_IAPI NABox  naMakeBoxWithVertexAndVertex (NAVertex  vertex1, NAVertex  vertex2);
 NA_IAPI NABox  naMakeBoxWithBoxAndVertex    (NABox     box,     NAVertex  vertex);
@@ -536,13 +565,12 @@ NA_IAPI NABoxi64 naMakeBoxi64WithBoxUnion       (NABoxi64    box1,    NABoxi64  
 NA_IAPI NABoxi32 naMakeBoxi32WithBoxUnionE      (NABoxi32    box1,    NABoxi32    box2);
 NA_IAPI NABoxi64 naMakeBoxi64WithBoxUnionE      (NABoxi64    box1,    NABoxi64    box2);
 
-NA_IAPI NARect   naMakeRectWithRectIntersection   (NARect   rect1,  NARect   rect2);
-NA_IAPI NARecti32  naMakeRecti32WithRectIntersection  (NARecti32  rect1,  NARecti32  rect2);
-NA_IAPI NARecti64  naMakeRecti64WithRectIntersection  (NARecti64  rect1,  NARecti64  rect2);
-
 NA_IAPI NABox    naMakeBoxWithBoxIntersection     (NABox    box1,   NABox    box2);
 NA_IAPI NABoxi32   naMakeBoxi32WithBoxIntersection    (NABoxi32   box1,   NABoxi32   box2);
 NA_IAPI NABoxi64   naMakeBoxi64WithBoxIntersection    (NABoxi64   box1,   NABoxi64   box2);
+
+
+
 
 // Creates a new rect by adding the given border around the given rect.
 NA_IAPI NARect    naMakeRectWithRectAndBorder  (NARect  rect, double border);
@@ -552,6 +580,9 @@ NA_IAPI NARecti64   naMakeRecti64WithRectAndBorder (NARecti64 rect, int64  borde
 NA_IAPI NABox     naMakeBoxWithBoxAndBorder    (NABox  box, double border);
 NA_IAPI NABoxi32    naMakeBoxi32WithBoxAndBorder   (NABoxi32 box, int32  border);
 NA_IAPI NABoxi64    naMakeBoxi64WithBoxAndBorder   (NABoxi64 box, int64  border);
+
+
+
 
 // The naMakeXXXXAbsolute function ensures that the lengths/sizes/volumes of
 // the given struct are not negative. If the these already were positive or
