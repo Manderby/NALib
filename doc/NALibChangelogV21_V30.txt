@@ -11,6 +11,7 @@ correct, complete or final.
 - Changing NABabyColor to NAColor and changing its implementation.
 - Renaming NABabyImage to NAImage
 - Adding PubSub implementation NANotifier
+- Adding latest NIST CODATA physical constants of 2022
 
 - Changeing main branch name to main instead of master.
 - Adding leap second information based on bulletin C 66 & 67
