@@ -22,16 +22,18 @@ set(coreImplementationFiles
 set(coreCoordFiles
   ${NAMathDir}/Core/NACoord/NABezelII.h
   ${NAMathDir}/Core/NACoord/NABoxII.h
+  ${NAMathDir}/Core/NACoord/NABoxCombinationII.h
   ${NAMathDir}/Core/NACoord/NACoordII.h
   ${NAMathDir}/Core/NACoord/NACoordAlignII.h
-  ${NAMathDir}/Core/NACoord/NACoordCombinationII.h
   ${NAMathDir}/Core/NACoord/NACoordEndMaxII.h
   ${NAMathDir}/Core/NACoord/NACoordIndexII.h
   ${NAMathDir}/Core/NACoord/NACoordMacOSII.h
   ${NAMathDir}/Core/NACoord/NACoordTesterII.h
   ${NAMathDir}/Core/NACoord/NAPosII.h
   ${NAMathDir}/Core/NACoord/NARangeII.h
+  ${NAMathDir}/Core/NACoord/NARangeCombinationII.h
   ${NAMathDir}/Core/NACoord/NARectII.h
+  ${NAMathDir}/Core/NACoord/NARectCombinationII.h
   ${NAMathDir}/Core/NACoord/NASizeII.h
   ${NAMathDir}/Core/NACoord/NAVertexII.h
   ${NAMathDir}/Core/NACoord/NAVolumeII.h

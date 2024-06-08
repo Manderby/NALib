@@ -20,74 +20,23 @@
 
 #include "NABezelII.h"
 #include "NABoxII.h"
+#include "NABoxCombinationII.h"
 #include "NACoordAlignII.h"
-#include "NACoordCombinationII.h"
 #include "NACoordEndMaxII.h"
 #include "NACoordIndexII.h"
 #include "NACoordMacOSII.h"
 #include "NACoordTesterII.h"
 #include "NAPosII.h"
 #include "NARangeII.h"
+#include "NARangeCombinationII.h"
 #include "NARectII.h"
+#include "NARectCombinationII.h"
 #include "NASizeII.h"
 #include "NAVertexII.h"
 #include "NAVolumeII.h"
 
 
 
-NA_IDEF NABox naMakeBoxWithVertexAndVertex(NAVertex vertex1, NAVertex vertex2) {
-  NABox newBox;
-  #if NA_DEBUG
-    if(!naIsVertexValid(vertex1))
-      naError("vertex1 is invalid.");
-    if(!naIsVertexValid(vertex2))
-      naError("vertex2 is invalid.");
-  #endif
-  if(vertex2.x > vertex1.x) {
-    newBox.vertex.x = vertex1.x;
-    newBox.volume.width = naMakeLengthWithStartAndEnd(vertex1.x, vertex2.x);
-  }else{
-    newBox.vertex.x = vertex2.x;
-    newBox.volume.width = naMakeLengthWithStartAndEnd(vertex2.x, vertex1.x);
-  }
-  if(vertex2.y > vertex1.y) {
-    newBox.vertex.y = vertex1.y;
-    newBox.volume.height = naMakeLengthWithStartAndEnd(vertex1.y, vertex2.y);
-  }else{
-    newBox.vertex.y = vertex2.y;
-    newBox.volume.height = naMakeLengthWithStartAndEnd(vertex2.y, vertex1.y);
-  }
-  if(vertex2.z > vertex1.z) {
-    newBox.vertex.z = vertex1.z;
-    newBox.volume.depth = naMakeLengthWithStartAndEnd(vertex1.z, vertex2.z);
-  }else{
-    newBox.vertex.z = vertex2.z;
-    newBox.volume.depth = naMakeLengthWithStartAndEnd(vertex2.z, vertex1.z);
-  }
-  return newBox;
-}
-NA_IDEF NABox naMakeBoxWithBoxAndVertex(NABox box, NAVertex vertex) {
-  NABox newBox;
-  double end;
-  #if NA_DEBUG
-    if(naIsBoxEmpty(box))
-      naError("box is empty.");
-    if(!naIsBoxUseful(box))
-      naError("box is not useful.");
-    if(!naIsVertexValid(vertex))
-      naError("vertex is invalid.");
-  #endif
-  newBox.vertex.x = naMin(box.vertex.x, vertex.x);
-  newBox.vertex.y = naMin(box.vertex.y, vertex.y);
-  newBox.vertex.z = naMin(box.vertex.z, vertex.z);
-  end = naGetBoxEndX(box);
-  newBox.volume.width  = naMakeLengthWithStartAndEnd(newBox.vertex.x, naMax(end, vertex.x));
-  end = naGetBoxEndY(box);
-  newBox.volume.height = naMakeLengthWithStartAndEnd(newBox.vertex.y, naMax(end, vertex.y));
-  end = naGetBoxEndZ(box);
-  newBox.volume.depth = naMakeLengthWithStartAndEnd(newBox.vertex.z, naMax(end, vertex.z));
-  return newBox;
-}
 NA_IDEF NABox naMakeBoxWithBoxAndBox(NABox box1, NABox box2) {
   NABox newBox;
   double end1;
@@ -116,350 +65,22 @@ NA_IDEF NABox naMakeBoxWithBoxAndBox(NABox box1, NABox box2) {
   newBox.volume.depth  = naMakeLengthWithStartAndEnd(newBox.vertex.z, naMax(end1, end2));
   return newBox;
 }
-NA_IDEF NABox naMakeBoxWithBoxUnionE(NABox box1, NABox box2) {
-  NABox newBox;
-  double end1;
-  double end2;
-  #if NA_DEBUG
-    if(!naIsBoxValid(box1))
-      naError("box1 is invalid.");
-    if(!naIsBoxValid(box2))
-      naError("box2 is invalid.");
-  #endif
-  
-  if(naIsBoxEmpty(box1))
-    return box2;
-  if(naIsBoxEmpty(box2))
-    return box1;
-  
-  newBox.vertex.x = naMin(box1.vertex.x, box2.vertex.x);
-  newBox.vertex.y = naMin(box1.vertex.y, box2.vertex.y);
-  newBox.vertex.z = naMin(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxEndX(box1);
-  end2 = naGetBoxEndX(box2);
-  newBox.volume.width  = naMakeLengthWithStartAndEnd(newBox.vertex.x, naMax(end1, end2));
-  end1 = naGetBoxEndY(box1);
-  end2 = naGetBoxEndY(box2);
-  newBox.volume.height  = naMakeLengthWithStartAndEnd(newBox.vertex.y, naMax(end1, end2));
-  end1 = naGetBoxEndZ(box1);
-  end2 = naGetBoxEndZ(box2);
-  newBox.volume.depth  = naMakeLengthWithStartAndEnd(newBox.vertex.z, naMax(end1, end2));
-  return newBox;
-}
-
-
-
-NA_IDEF NABoxi32 naMakeBoxi32WithBoxAndVertex(NABoxi32 box, NAVertexi32 vertex) {
-  NABoxi32 newBox;
-  int32 max;
-  #if NA_DEBUG
-    if(naIsBoxi32EmptySlow(box))
-      naError("box is empty.");
-    if(!naIsBoxi32Useful(box))
-      naError("box is not useful.");
-    if(!naIsVertexi32Valid(vertex))
-      naError("vertex is invalid.");
-  #endif
-  newBox.vertex.x = naMini32(box.vertex.x, vertex.x);
-  newBox.vertex.y = naMini32(box.vertex.y, vertex.y);
-  newBox.vertex.z = naMini32(box.vertex.z, vertex.z);
-  // Note: We do compute the end instead of the max, because this may require
-  // one less instruction. Save whatever you can!
-  max = naGetBoxi32MaxX(box);
-  newBox.volume.width  = naMakeLengthWithMinAndMaxi32(newBox.vertex.x, naMaxi32(max, vertex.x));
-  max = naGetBoxi32MaxY(box);
-  newBox.volume.height = naMakeLengthWithMinAndMaxi32(newBox.vertex.y, naMaxi32(max, vertex.y));
-  max = naGetBoxi32MaxZ(box);
-  newBox.volume.depth = naMakeLengthWithMinAndMaxi32(newBox.vertex.z, naMaxi32(max, vertex.z));
-  return newBox;
-}
-
-NA_IDEF NABoxi64 naMakeBoxi64WithBoxAndVertex(NABoxi64 box, NAVertexi64 vertex) {
-  NABoxi64 newBox;
-  int64 max;
-  #if NA_DEBUG
-    if(naIsBoxi64EmptySlow(box))
-      naError("box is empty.");
-    if(!naIsBoxi64Useful(box))
-      naError("box is not useful.");
-    if(!naIsVertexi64Valid(vertex))
-      naError("vertex is invalid.");
-  #endif
-  newBox.vertex.x = naMini64(box.vertex.x, vertex.x);
-  newBox.vertex.y = naMini64(box.vertex.y, vertex.y);
-  newBox.vertex.z = naMini64(box.vertex.z, vertex.z);
-  // Note: We do compute the end instead of the max, because this may require
-  // one less instruction. Save whatever you can!
-  max = naGetBoxi64MaxX(box);
-  newBox.volume.width  = naMakeLengthWithMinAndMaxi64(newBox.vertex.x, naMaxi64(max, vertex.x));
-  max = naGetBoxi64MaxY(box);
-  newBox.volume.height = naMakeLengthWithMinAndMaxi64(newBox.vertex.y, naMaxi64(max, vertex.y));
-  max = naGetBoxi64MaxZ(box);
-  newBox.volume.depth = naMakeLengthWithMinAndMaxi64(newBox.vertex.z, naMaxi64(max, vertex.z));
-  return newBox;
-}
-
-
-
-NA_IDEF NABoxi32 naMakeBoxi32WithBoxAndVertexE(NABoxi32 box, NAVertexi32 vertex) {
-  NABoxi32 newBox;
-  #if NA_DEBUG
-    if(!naIsBoxi32Valid(box))
-      naError("box is invalid.");
-    if(!naIsVertexi32Valid(vertex))
-      naError("vertex is invalid.");
-  #endif
-  if(naIsBoxi32Empty(box)) {
-    newBox.vertex = vertex;
-    newBox.volume = naMakeVolumei32(1, 1, 1);
-  }else{
-    int32 max;
-    newBox.vertex.x = naMini32(box.vertex.x, vertex.x);
-    newBox.vertex.y = naMini32(box.vertex.y, vertex.y);
-    newBox.vertex.z = naMini32(box.vertex.z, vertex.z);
-    // Note: We do compute the end instead of the max, because this may require
-    // one less instruction. Save whatever you can!
-    max = naGetBoxi32MaxX(box);
-    newBox.volume.width  = naMakeLengthWithMinAndMaxi32(newBox.vertex.x, naMaxi32(max, vertex.x));
-    max = naGetBoxi32MaxY(box);
-    newBox.volume.height = naMakeLengthWithMinAndMaxi32(newBox.vertex.y, naMaxi32(max, vertex.y));
-    max = naGetBoxi32MaxZ(box);
-    newBox.volume.depth = naMakeLengthWithMinAndMaxi32(newBox.vertex.z, naMaxi32(max, vertex.z));
-  }
-  return newBox;
-}
-
-NA_IDEF NABoxi64 naMakeBoxi64WithBoxAndVertexE(NABoxi64 box, NAVertexi64 vertex) {
-  NABoxi64 newBox;
-  #if NA_DEBUG
-    if(!naIsBoxi64Valid(box))
-      naError("box is invalid.");
-    if(!naIsVertexi64Valid(vertex))
-      naError("vertex is invalid.");
-  #endif
-  if(naIsBoxi64Empty(box)) {
-    newBox.vertex = vertex;
-    newBox.volume = naMakeVolumei64(1, 1, 1);
-  }else{
-    int64 max;
-    newBox.vertex.x = naMini64(box.vertex.x, vertex.x);
-    newBox.vertex.y = naMini64(box.vertex.y, vertex.y);
-    newBox.vertex.z = naMini64(box.vertex.z, vertex.z);
-    // Note: We do compute the end instead of the max, because this may require
-    // one less instruction. Save whatever you can!
-    max = naGetBoxi64MaxX(box);
-    newBox.volume.width  = naMakeLengthWithMinAndMaxi64(newBox.vertex.x, naMaxi64(max, vertex.x));
-    max = naGetBoxi64MaxY(box);
-    newBox.volume.height = naMakeLengthWithMinAndMaxi64(newBox.vertex.y, naMaxi64(max, vertex.y));
-    max = naGetBoxi64MaxZ(box);
-    newBox.volume.depth = naMakeLengthWithMinAndMaxi64(newBox.vertex.z, naMaxi64(max, vertex.z));
-  }
-  return newBox;
-}
-
-
-
-NA_IDEF NABoxi32 naMakeBoxi32WithBoxUnion(NABoxi32 box1, NABoxi32 box2) {
-  NABoxi32 newBox;
-  int32 end1;
-  int32 end2;
-  #if NA_DEBUG
-    if(naIsBoxi32EmptySlow(box1))
-      naError("box1 is empty.");
-    if(!naIsBoxi32Valid(box1))
-      naError("box1 is invalid.");
-    if(naIsBoxi32EmptySlow(box2))
-      naError("box2 is empty.");
-    if(!naIsBoxi32Valid(box2))
-      naError("box2 is invalid.");
-  #endif
-  newBox.vertex.x = naMini32(box1.vertex.x, box2.vertex.x);
-  newBox.vertex.y = naMini32(box1.vertex.y, box2.vertex.y);
-  newBox.vertex.z = naMini32(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxi32EndX(box1);
-  end2 = naGetBoxi32EndX(box2);
-  newBox.volume.width  = naMakeLengthWithStartAndEndi32(newBox.vertex.x, naMaxi32(end1, end2));
-  end1 = naGetBoxi32EndY(box1);
-  end2 = naGetBoxi32EndY(box2);
-  newBox.volume.height = naMakeLengthWithStartAndEndi32(newBox.vertex.y, naMaxi32(end1, end2));
-  end1 = naGetBoxi32EndZ(box1);
-  end2 = naGetBoxi32EndZ(box2);
-  newBox.volume.depth = naMakeLengthWithStartAndEndi32(newBox.vertex.z, naMaxi32(end1, end2));
-  return newBox;
-}
-
-NA_IDEF NABoxi64 naMakeBoxi64WithBoxUnion(NABoxi64 box1, NABoxi64 box2) {
-  NABoxi64 newBox;
-  int64 end1;
-  int64 end2;
-  #if NA_DEBUG
-    if(naIsBoxi64EmptySlow(box1))
-      naError("box1 is empty.");
-    if(!naIsBoxi64Valid(box1))
-      naError("box1 is invalid.");
-    if(naIsBoxi64EmptySlow(box2))
-      naError("box2 is empty.");
-    if(!naIsBoxi64Valid(box2))
-      naError("box2 is invalid.");
-  #endif
-  newBox.vertex.x = naMini64(box1.vertex.x, box2.vertex.x);
-  newBox.vertex.y = naMini64(box1.vertex.y, box2.vertex.y);
-  newBox.vertex.z = naMini64(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxi64EndX(box1);
-  end2 = naGetBoxi64EndX(box2);
-  newBox.volume.width  = naMakeLengthWithStartAndEndi64(newBox.vertex.x, naMaxi64(end1, end2));
-  end1 = naGetBoxi64EndY(box1);
-  end2 = naGetBoxi64EndY(box2);
-  newBox.volume.height = naMakeLengthWithStartAndEndi64(newBox.vertex.y, naMaxi64(end1, end2));
-  end1 = naGetBoxi64EndZ(box1);
-  end2 = naGetBoxi64EndZ(box2);
-  newBox.volume.depth = naMakeLengthWithStartAndEndi64(newBox.vertex.z, naMaxi64(end1, end2));
-  return newBox;
-}
-
-
-
-NA_IDEF NABoxi32 naMakeBoxi32WithBoxUnionE(NABoxi32 box1, NABoxi32 box2) {
-  NABoxi32 newBox;
-  int32 end1;
-  int32 end2;
-  #if NA_DEBUG
-    if(!naIsBoxi32Valid(box1))
-      naError("box1 is invalid.");
-    if(!naIsBoxi32Valid(box2))
-      naError("box2 is invalid.");
-  #endif
-  
-  if(naIsBoxi32Empty(box1))
-    return box2;
-  if(naIsBoxi32Empty(box2))
-    return box1;
-  
-  newBox.vertex.x = naMini32(box1.vertex.x, box2.vertex.x);
-  newBox.vertex.y = naMini32(box1.vertex.y, box2.vertex.y);
-  newBox.vertex.z = naMini32(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxi32EndX(box1);
-  end2 = naGetBoxi32EndX(box2);
-  newBox.volume.width  = naMakeLengthWithStartAndEndi32(newBox.vertex.x, naMaxi32(end1, end2));
-  end1 = naGetBoxi32EndY(box1);
-  end2 = naGetBoxi32EndY(box2);
-  newBox.volume.height = naMakeLengthWithStartAndEndi32(newBox.vertex.y, naMaxi32(end1, end2));
-  end1 = naGetBoxi32EndZ(box1);
-  end2 = naGetBoxi32EndZ(box2);
-  newBox.volume.depth = naMakeLengthWithStartAndEndi32(newBox.vertex.z, naMaxi32(end1, end2));
-  return newBox;
-}
-
-NA_IDEF NABoxi64 naMakeBoxi64WithBoxUnionE(NABoxi64 box1, NABoxi64 box2) {
-  NABoxi64 newBox;
-  int64 end1;
-  int64 end2;
-  #if NA_DEBUG
-    if(!naIsBoxi64Valid(box1))
-      naError("box1 is invalid.");
-    if(!naIsBoxi64Valid(box2))
-      naError("box2 is invalid.");
-  #endif
-  
-  if(naIsBoxi64Empty(box1))
-    return box2;
-  if(naIsBoxi64Empty(box2))
-    return box1;
-  
-  newBox.vertex.x = naMini64(box1.vertex.x, box2.vertex.x);
-  newBox.vertex.y = naMini64(box1.vertex.y, box2.vertex.y);
-  newBox.vertex.z = naMini64(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxi64EndX(box1);
-  end2 = naGetBoxi64EndX(box2);
-  newBox.volume.width  = naMakeLengthWithStartAndEndi64(newBox.vertex.x, naMaxi64(end1, end2));
-  end1 = naGetBoxi64EndY(box1);
-  end2 = naGetBoxi64EndY(box2);
-  newBox.volume.height = naMakeLengthWithStartAndEndi64(newBox.vertex.y, naMaxi64(end1, end2));
-  end1 = naGetBoxi64EndZ(box1);
-  end2 = naGetBoxi64EndZ(box2);
-  newBox.volume.depth = naMakeLengthWithStartAndEndi64(newBox.vertex.z, naMaxi64(end1, end2));
-  return newBox;
-}
 
 
 
 
 
 
-NA_IDEF NABox naMakeBoxWithBoxIntersection(NABox box1, NABox box2) {
-  NABox newBox;
-  double end1;
-  double end2;
-  #if NA_DEBUG
-    if(!naIsBoxValid(box1))
-      naError("box1 is invalid.");
-    if(!naIsBoxValid(box2))
-      naError("box2 is invalid.");
-  #endif
-  newBox.vertex.x = naMax(box1.vertex.x, box2.vertex.x);
-  newBox.vertex.y = naMax(box1.vertex.y, box2.vertex.y);
-  newBox.vertex.z = naMax(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxEndX(box1);
-  end2 = naGetBoxEndX(box2);
-  newBox.volume.width  = naMakeLengthWithStartAndEnd(newBox.vertex.x, naMin(end1, end2));
-  end1 = naGetBoxEndY(box1);
-  end2 = naGetBoxEndY(box2);
-  newBox.volume.height = naMakeLengthWithStartAndEnd(newBox.vertex.y, naMin(end1, end2));
-  end1 = naGetBoxEndZ(box1);
-  end2 = naGetBoxEndZ(box2);
-  newBox.volume.depth  = naMakeLengthWithStartAndEnd(newBox.vertex.z, naMin(end1, end2));
-  return newBox;
-}
 
-NA_IDEF NABoxi32 naMakeBoxi32WithBoxIntersection(NABoxi32 box1, NABoxi32 box2) {
-  NABoxi32 newBox;
-  int32 end1;
-  int32 end2;
-  #if NA_DEBUG
-    if(!naIsBoxi32Valid(box1))
-      naError("box1 is invalid.");
-    if(!naIsBoxi32Valid(box2))
-      naError("box2 is invalid.");
-  #endif
-  newBox.vertex.x = naMaxi32(box1.vertex.x, box2.vertex.x);
-  newBox.vertex.y = naMaxi32(box1.vertex.y, box2.vertex.y);
-  newBox.vertex.z = naMaxi32(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxi32EndX(box1);
-  end2 = naGetBoxi32EndX(box2);
-  newBox.volume.width  = naMakeLengthWithStartAndEndi32(newBox.vertex.x, naMini32(end1, end2));
-  end1 = naGetBoxi32EndY(box1);
-  end2 = naGetBoxi32EndY(box2);
-  newBox.volume.height  = naMakeLengthWithStartAndEndi32(newBox.vertex.y, naMini32(end1, end2));
-  end1 = naGetBoxi32EndZ(box1);
-  end2 = naGetBoxi32EndZ(box2);
-  newBox.volume.depth  = naMakeLengthWithStartAndEndi32(newBox.vertex.z, naMini32(end1, end2));
-  return newBox;
-}
 
-NA_IDEF NABoxi64 naMakeBoxi64WithBoxIntersection(NABoxi64 box1, NABoxi64 box2) {
-  NABoxi64 newBox;
-  int64 end1;
-  int64 end2;
-  #if NA_DEBUG
-    if(!naIsBoxi64Valid(box1))
-      naError("box1 is invalid.");
-    if(!naIsBoxi64Valid(box2))
-      naError("box2 is invalid.");
-  #endif
-  newBox.vertex.x = naMaxi64(box1.vertex.x, box2.vertex.x);
-  newBox.vertex.y = naMaxi64(box1.vertex.y, box2.vertex.y);
-  newBox.vertex.z = naMaxi64(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxi64EndX(box1);
-  end2 = naGetBoxi64EndX(box2);
-  newBox.volume.width  = naMakeLengthWithStartAndEndi64(newBox.vertex.x, naMini64(end1, end2));
-  end1 = naGetBoxi64EndY(box1);
-  end2 = naGetBoxi64EndY(box2);
-  newBox.volume.height  = naMakeLengthWithStartAndEndi64(newBox.vertex.y, naMini64(end1, end2));
-  end1 = naGetBoxi64EndZ(box1);
-  end2 = naGetBoxi64EndZ(box2);
-  newBox.volume.depth  = naMakeLengthWithStartAndEndi64(newBox.vertex.z, naMini64(end1, end2));
-  return newBox;
-}
+
+
+
+
+
+
+
+
 
 
 

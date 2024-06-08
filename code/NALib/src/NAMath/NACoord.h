@@ -473,23 +473,23 @@ NA_IAPI NAVertexs   naMakeVertexsWithAlignment  (NAVertexs   origin, NABoxs    a
 //
 // The Variants with E also allow the rects to be empty.
 
-NA_IAPI NARange    naMakeRangeCombination    (double     point1, double point2);
-NA_IAPI NARangef   naMakeRangefCombination   (float      point1, float  point2);
-NA_IAPI NARangei32 naMakeRangei32Combination (int32      point1, int32  point2);
-NA_IAPI NARangei64 naMakeRangei64Combination (int64      point1, int64  point2);
-NA_IAPI NARanges   naMakeRangesCombination   (size_t     point1, size_t point2);
+NA_IAPI NARange    naMakeRangeCombination    (double     point1, double     point2);
+NA_IAPI NARangef   naMakeRangefCombination   (float      point1, float      point2);
+NA_IAPI NARangei32 naMakeRangei32Combination (int32      point1, int32      point2);
+NA_IAPI NARangei64 naMakeRangei64Combination (int64      point1, int64      point2);
+NA_IAPI NARanges   naMakeRangesCombination   (size_t     point1, size_t     point2);
 
-NA_IAPI NARange    naMakeRangeExtension      (NARange    range,  double point);
-NA_IAPI NARangef   naMakeRangefExtension     (NARangef   range,  float  point);
-NA_IAPI NARangei32 naMakeRangei32Extension   (NARangei32 range,  int32  point);
-NA_IAPI NARangei64 naMakeRangei64Extension   (NARangei64 range,  int64  point);
-NA_IAPI NARanges   naMakeRangesExtension     (NARanges   range,  size_t point);
+NA_IAPI NARange    naMakeRangeExtension      (NARange    range,  double     point);
+NA_IAPI NARangef   naMakeRangefExtension     (NARangef   range,  float      point);
+NA_IAPI NARangei32 naMakeRangei32Extension   (NARangei32 range,  int32      point);
+NA_IAPI NARangei64 naMakeRangei64Extension   (NARangei64 range,  int64      point);
+NA_IAPI NARanges   naMakeRangesExtension     (NARanges   range,  size_t     point);
 
-NA_IAPI NARange    naMakeRangeExtensionE     (NARange    range,  double point);
-NA_IAPI NARangef   naMakeRangefExtensionE    (NARangef   range,  float  point);
-NA_IAPI NARangei32 naMakeRangei32ExtensionE  (NARangei32 range,  int32  point);
-NA_IAPI NARangei64 naMakeRangei64ExtensionE  (NARangei64 range,  int64  point);
-NA_IAPI NARanges   naMakeRangesExtensionE    (NARanges   range,  size_t point);
+NA_IAPI NARange    naMakeRangeExtensionE     (NARange    range,  double     point);
+NA_IAPI NARangef   naMakeRangefExtensionE    (NARangef   range,  float      point);
+NA_IAPI NARangei32 naMakeRangei32ExtensionE  (NARangei32 range,  int32      point);
+NA_IAPI NARangei64 naMakeRangei64ExtensionE  (NARangei64 range,  int64      point);
+NA_IAPI NARanges   naMakeRangesExtensionE    (NARanges   range,  size_t     point);
    
 NA_IAPI NARange    naMakeRangeUnion          (NARange    range1, NARange    range2);
 NA_IAPI NARangef   naMakeRangefUnion         (NARangef   range1, NARangef   range2);
@@ -549,26 +549,41 @@ NA_IAPI NARects   naMakeRectsIntersection  (NARects   rect1,  NARects   rect2);
 
 
 
-NA_IAPI NABox  naMakeBoxWithVertexAndVertex (NAVertex  vertex1, NAVertex  vertex2);
-NA_IAPI NABox  naMakeBoxWithBoxAndVertex    (NABox     box,     NAVertex  vertex);
-NA_IAPI NABox  naMakeBoxWithBoxUnionE       (NABox     box1,    NABox     box2);
+NA_IAPI NABox    naMakeBoxCombination    (NAVertex    point1, NAVertex    point2);
+NA_IAPI NABoxf   naMakeBoxfCombination   (NAVertexf   point1, NAVertexf   point2);
+NA_IAPI NABoxi32 naMakeBoxi32Combination (NAVertexi32 point1, NAVertexi32 point2);
+NA_IAPI NABoxi64 naMakeBoxi64Combination (NAVertexi64 point1, NAVertexi64 point2);
+NA_IAPI NABoxs   naMakeBoxsCombination   (NAVertexs   point1, NAVertexs   point2);
 
-NA_IAPI NABoxi32 naMakeBoxi32WithBoxAndVertex   (NABoxi32    box,     NAVertexi32 vertex);
-NA_IAPI NABoxi64 naMakeBoxi64WithBoxAndVertex   (NABoxi64    box,     NAVertexi64 vertex);
+NA_IAPI NABox    naMakeBoxExtension      (NABox       box,    NAVertex    vertex);
+NA_IAPI NABoxf   naMakeBoxfExtension     (NABoxf      box,    NAVertexf   vertex);
+NA_IAPI NABoxi32 naMakeBoxi32Extension   (NABoxi32    box,    NAVertexi32 vertex);
+NA_IAPI NABoxi64 naMakeBoxi64Extension   (NABoxi64    box,    NAVertexi64 vertex);
+NA_IAPI NABoxs   naMakeBoxsExtension     (NABoxs      box,    NAVertexs   vertex);
 
-NA_IAPI NABoxi32 naMakeBoxi32WithBoxAndVertexE  (NABoxi32    box,     NAVertexi32 vertex);
-NA_IAPI NABoxi64 naMakeBoxi64WithBoxAndVertexE  (NABoxi64    box,     NAVertexi64 vertex);
+NA_IAPI NABox    naMakeBoxExtensionE     (NABox       box,    NAVertex    vertex);
+NA_IAPI NABoxf   naMakeBoxfExtensionE    (NABoxf      box,    NAVertexf   vertex);
+NA_IAPI NABoxi32 naMakeBoxi32ExtensionE  (NABoxi32    box,    NAVertexi32 vertex);
+NA_IAPI NABoxi64 naMakeBoxi64ExtensionE  (NABoxi64    box,    NAVertexi64 vertex);
+NA_IAPI NABoxs   naMakeBoxsExtensionE    (NABoxs      box,    NAVertexs   vertex);
 
-NA_IAPI NABoxi32 naMakeBoxi32WithBoxUnion       (NABoxi32    box1,    NABoxi32    box2);
-NA_IAPI NABoxi64 naMakeBoxi64WithBoxUnion       (NABoxi64    box1,    NABoxi64    box2);
+NA_IAPI NABox    naMakeBoxUnion          (NABox       box1,   NABox       box2);
+NA_IAPI NABoxf   naMakeBoxfUnion         (NABoxf      box1,   NABoxf      box2);
+NA_IAPI NABoxi32 naMakeBoxi32Union       (NABoxi32    box1,   NABoxi32    box2);
+NA_IAPI NABoxi64 naMakeBoxi64Union       (NABoxi64    box1,   NABoxi64    box2);
+NA_IAPI NABoxs   naMakeBoxsUnion         (NABoxs      box1,   NABoxs      box2);
 
-NA_IAPI NABoxi32 naMakeBoxi32WithBoxUnionE      (NABoxi32    box1,    NABoxi32    box2);
-NA_IAPI NABoxi64 naMakeBoxi64WithBoxUnionE      (NABoxi64    box1,    NABoxi64    box2);
+NA_IAPI NABox    naMakeBoxUnionE         (NABox       box1,   NABox       box2);
+NA_IAPI NABoxf   naMakeBoxfUnionE        (NABoxf      box1,   NABoxf      box2);
+NA_IAPI NABoxi32 naMakeBoxi32UnionE      (NABoxi32    box1,   NABoxi32    box2);
+NA_IAPI NABoxi64 naMakeBoxi64UnionE      (NABoxi64    box1,   NABoxi64    box2);
+NA_IAPI NABoxs   naMakeBoxsUnionE        (NABoxs      box1,   NABoxs      box2);
 
-NA_IAPI NABox    naMakeBoxWithBoxIntersection     (NABox    box1,   NABox    box2);
-NA_IAPI NABoxi32   naMakeBoxi32WithBoxIntersection    (NABoxi32   box1,   NABoxi32   box2);
-NA_IAPI NABoxi64   naMakeBoxi64WithBoxIntersection    (NABoxi64   box1,   NABoxi64   box2);
-
+NA_IAPI NABox    naMakeBoxIntersection   (NABox       box1,   NABox       box2);
+NA_IAPI NABoxf   naMakeBoxfIntersection  (NABoxf      box1,   NABoxf      box2);
+NA_IAPI NABoxi32 naMakeBoxi32Intersection(NABoxi32    box1,   NABoxi32    box2);
+NA_IAPI NABoxi64 naMakeBoxi64Intersection(NABoxi64    box1,   NABoxi64    box2);
+NA_IAPI NABoxs   naMakeBoxsIntersection  (NABoxs      box1,   NABoxs      box2);
 
 
 
@@ -580,7 +595,6 @@ NA_IAPI NARecti64   naMakeRecti64WithRectAndBorder (NARecti64 rect, int64  borde
 NA_IAPI NABox     naMakeBoxWithBoxAndBorder    (NABox  box, double border);
 NA_IAPI NABoxi32    naMakeBoxi32WithBoxAndBorder   (NABoxi32 box, int32  border);
 NA_IAPI NABoxi64    naMakeBoxi64WithBoxAndBorder   (NABoxi64 box, int64  border);
-
 
 
 

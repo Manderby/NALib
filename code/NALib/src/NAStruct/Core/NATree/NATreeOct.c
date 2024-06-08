@@ -156,18 +156,18 @@ NA_HDEF NABool na_TestKeyNodeOverlapOctDouble(NATreeNode* parentNode, const void
   NATreeOctNode* octNode = (NATreeOctNode*)(parentNode);
   double childwidth = naMakeDoubleWithExponent((int32)octNode->childExponent);
   NAVertex upperLimit = naMakeVertex(octNode->origin.x + 2 * childwidth, octNode->origin.y + 2 * childwidth, octNode->origin.z + 2 * childwidth);
-  NABox nodeBox = naMakeBoxWithVertexAndVertex(octNode->origin, upperLimit);
-  NABox keyBox = naMakeBoxWithVertexAndVertex(*((NAVertex*)lowerKey), *((NAVertex*)upperKey));
-  NABox intersection = naMakeBoxWithBoxIntersection(nodeBox, keyBox);
+  NABox nodeBox = naMakeBoxCombination(octNode->origin, upperLimit);
+  NABox keyBox = naMakeBoxCombination(*((NAVertex*)lowerKey), *((NAVertex*)upperKey));
+  NABox intersection = naMakeBoxIntersection(nodeBox, keyBox);
   return !naIsBoxEmpty(intersection);
 }
 NA_HDEF NABool na_TestKeyLeafOverlapOctDouble(NATreeLeaf* leaf, const void* lowerKey, const void* upperKey) {
   NATreeOctLeaf* octLeaf = (NATreeOctLeaf*)(leaf);
   double leafwidth = naMakeDoubleWithExponent((int32)octLeaf->leafExponent);
   NAVertex upperLimit = naMakeVertex(octLeaf->origin.x + 2 * leafwidth, octLeaf->origin.y + 2 * leafwidth, octLeaf->origin.z + 2 * leafwidth);
-  NABox nodeBox = naMakeBoxWithVertexAndVertex(octLeaf->origin, upperLimit);
-  NABox keyBox = naMakeBoxWithVertexAndVertex(*((NAVertex*)lowerKey), *((NAVertex*)upperKey));
-  NABox intersection = naMakeBoxWithBoxIntersection(nodeBox, keyBox);
+  NABox nodeBox = naMakeBoxCombination(octLeaf->origin, upperLimit);
+  NABox keyBox = naMakeBoxCombination(*((NAVertex*)lowerKey), *((NAVertex*)upperKey));
+  NABox intersection = naMakeBoxIntersection(nodeBox, keyBox);
   return !naIsBoxEmpty(intersection);
 }
 
