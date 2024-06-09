@@ -95,7 +95,11 @@
 
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED);
+  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED);
+  #if NA_DEBUG
+    if(!handeled)
+      naError("Event not handeled.");
+  #endif
   [self updateButtonBackground];
   [self updateButtonText];
   [self updateImages];
@@ -156,7 +160,8 @@
       NA_UIIMAGE_INTERACTION_HOVER,
       secondaryState)];
   }
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_ENTERED);
+  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_ENTERED);
+  if(!handeled) { [super mouseEntered:event]; }
 }
 
 - (void) mouseExited:(NSEvent*)event{
@@ -171,7 +176,8 @@
       NA_UIIMAGE_INTERACTION_NONE,
       secondaryState)];
   }
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_EXITED);
+  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_EXITED);
+  if(!handeled) { [super mouseExited:event]; }
 }
 
 - (void) setButtonState:(NABool)state{
