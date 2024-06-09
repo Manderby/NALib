@@ -715,7 +715,7 @@ NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionCallback callback, voi
 NA_DEF void naSetButtonAbort(NAButton* button, NAReactionCallback callback, void* controller) {
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
-    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
+    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESCAPE),
     callback,
     controller);
 }

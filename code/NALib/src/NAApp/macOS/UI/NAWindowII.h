@@ -140,6 +140,7 @@
 }
 
 - (BOOL)canBecomeKeyWindow{
+//return YES;
   return (BOOL)naGetFlagu32(cocoaWindow->window.coreFlags, NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS);
 }
 

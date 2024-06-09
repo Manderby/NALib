@@ -28,6 +28,10 @@
   NA_COCOA_SUPER_DEALLOC();
 }
 
+- (BOOL)acceptsFirstResponder{
+  return YES; // This is required to get keyboard input.
+}
+
 - (void)drawRect:(NSRect)dirtyRect{
   [super drawRect:dirtyRect];
 
@@ -94,6 +98,16 @@
 - (void)mouseExited:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
   na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_EXITED);
+}
+
+- (void)keyDown:(NSEvent* _Nonnull)event{
+  na_CaptureKeyboardStatus(event);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_DOWN);
+}
+
+- (void)keyUp:(NSEvent* _Nonnull)event{
+  na_CaptureKeyboardStatus(event);
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_UP);
 }
 
 - (void)resetDrag{

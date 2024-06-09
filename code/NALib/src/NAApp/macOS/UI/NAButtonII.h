@@ -554,7 +554,7 @@ NA_DEF void naSetButtonAbort(
   
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
-    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
+    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESCAPE),
     callback,
     controller);
   naAddUIKeyboardShortcut(
