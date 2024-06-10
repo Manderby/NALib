@@ -18,7 +18,7 @@
 #include "../../../NAUtility/NAValueHelper.h"
 
 
-#include "NABezelII.h"
+#include "NABorderII.h"
 #include "NABoxII.h"
 #include "NABoxCombinationII.h"
 #include "NACoordAlignII.h"
@@ -66,81 +66,6 @@ NA_IDEF NABox naMakeBoxWithBoxAndBox(NABox box1, NABox box2) {
   return newBox;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-NA_IDEF NARect naMakeRectWithRectAndBorder(NARect rect, double border) {
-  NARect newRect;
-  newRect.pos.x = rect.pos.x - border;
-  newRect.pos.y = rect.pos.y - border;
-  newRect.size.width = rect.size.width + 2. * border;
-  newRect.size.height = rect.size.height + 2. * border;
-  return newRect;
-}
-NA_IDEF NARecti32 naMakeRecti32WithRectAndBorder(NARecti32 rect, int32 border) {
-  NARecti32 newRect;
-  newRect.pos.x = rect.pos.x - border;
-  newRect.pos.y = rect.pos.y - border;
-  newRect.size.width = rect.size.width + 2 * border;
-  newRect.size.height = rect.size.height + 2 * border;
-  return newRect;
-}
-NA_IDEF NARecti64 naMakeRecti64WithRectAndBorder(NARecti64 rect, int64 border) {
-  NARecti64 newRect;
-  newRect.pos.x = rect.pos.x - border;
-  newRect.pos.y = rect.pos.y - border;
-  newRect.size.width = rect.size.width + 2 * border;
-  newRect.size.height = rect.size.height + 2 * border;
-  return newRect;
-}
-
-
-
-NA_IDEF NABox naMakeBoxWithBoxAndBorder(NABox box, double border) {
-  NABox newBox;
-  newBox.vertex.x = box.vertex.x - border;
-  newBox.vertex.y = box.vertex.y - border;
-  newBox.vertex.z = box.vertex.z - border;
-  newBox.volume.width = box.volume.width + 2. * border;
-  newBox.volume.height = box.volume.height + 2. * border;
-  newBox.volume.depth = box.volume.depth + 2. * border;
-  return newBox;
-}
-NA_IDEF NABoxi32 naMakeBoxi32WithBoxAndBorder(NABoxi32 box, int32 border) {
-  NABoxi32 newBox;
-  newBox.vertex.x = box.vertex.x - border;
-  newBox.vertex.y = box.vertex.y - border;
-  newBox.vertex.z = box.vertex.z - border;
-  newBox.volume.width = box.volume.width + 2 * border;
-  newBox.volume.height = box.volume.height + 2 * border;
-  newBox.volume.depth = box.volume.depth + 2 * border;
-  return newBox;
-}
-NA_IDEF NABoxi64 naMakeBoxi64WithBoxAndBorder(NABoxi64 box, int64 border) {
-  NABoxi64 newBox;
-  newBox.vertex.x = box.vertex.x - border;
-  newBox.vertex.y = box.vertex.y - border;
-  newBox.vertex.z = box.vertex.z - border;
-  newBox.volume.width = box.volume.width + 2 * border;
-  newBox.volume.height = box.volume.height + 2 * border;
-  newBox.volume.depth = box.volume.depth + 2 * border;
-  return newBox;
-}
 
 
 

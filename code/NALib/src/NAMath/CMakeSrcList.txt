@@ -20,7 +20,7 @@ set(coreImplementationFiles
 )
 
 set(coreCoordFiles
-  ${NAMathDir}/Core/NACoord/NABezelII.h
+  ${NAMathDir}/Core/NACoord/NABorderII.h
   ${NAMathDir}/Core/NACoord/NABoxII.h
   ${NAMathDir}/Core/NACoord/NABoxCombinationII.h
   ${NAMathDir}/Core/NACoord/NACoordII.h

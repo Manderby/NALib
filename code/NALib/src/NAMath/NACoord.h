@@ -157,12 +157,30 @@ typedef struct NABoxi32    NABoxi32;
 typedef struct NABoxi64    NABoxi64;
 typedef struct NABoxs      NABoxs;
 
-// 2-D Coordinates: Bezel (Right-Top-Left-Bottom)
+// Bezel4 is deprecated. Use Border2D
 typedef struct NABezel4    NABezel4;
 typedef struct NABezel4f   NABezel4f;
 typedef struct NABezel4i32 NABezel4i32;
 typedef struct NABezel4i64 NABezel4i64;
 typedef struct NABezel4s   NABezel4s;
+
+typedef struct NABorder1D    NABorder1D;
+typedef struct NABorder1Df   NABorder1Df;
+typedef struct NABorder1Di32 NABorder1Di32;
+typedef struct NABorder1Di64 NABorder1Di64;
+typedef struct NABorder1Ds   NABorder1Ds;
+
+typedef struct NABorder2D    NABorder2D;
+typedef struct NABorder2Df   NABorder2Df;
+typedef struct NABorder2Di32 NABorder2Di32;
+typedef struct NABorder2Di64 NABorder2Di64;
+typedef struct NABorder2Ds   NABorder2Ds;
+
+typedef struct NABorder3D    NABorder3D;
+typedef struct NABorder3Df   NABorder3Df;
+typedef struct NABorder3Di32 NABorder3Di32;
+typedef struct NABorder3Di64 NABorder3Di64;
+typedef struct NABorder3Ds   NABorder3Ds;
 
 
 
@@ -171,23 +189,23 @@ typedef struct NABezel4s   NABezel4s;
 //
 // Please excuse this formatting. It is usually not recommended but here, it
 // would be much more confusing if written otherwise.
-struct NARange{     double origin;   double length; };
-struct NARangef{    float  origin;   float  length; };
-struct NARangei32{  int32  origin;   int32  length; };
-struct NARangei64{  int64  origin;   int64  length; };
-struct NARanges{    size_t origin;   size_t length; };
+struct NARange{     double origin; double length; };
+struct NARangef{    float  origin; float  length; };
+struct NARangei32{  int32  origin; int32  length; };
+struct NARangei64{  int64  origin; int64  length; };
+struct NARanges{    size_t origin; size_t length; };
 
-struct NAPos{       double x;     double  y; };
-struct NAPosf{      float  x;     float   y; };
-struct NAPosi32{    int32  x;     int32   y; };
-struct NAPosi64{    int64  x;     int64   y; };
-struct NAPoss{      size_t x;     size_t  y; };
+struct NAPos{       double x; double y; };
+struct NAPosf{      float  x; float  y; };
+struct NAPosi32{    int32  x; int32  y; };
+struct NAPosi64{    int64  x; int64  y; };
+struct NAPoss{      size_t x; size_t y; };
 
-struct NASize{      double width; double  height; };
-struct NASizef{     float  width; float   height; };
-struct NASizei32{   int32  width; int32   height; };
-struct NASizei64{   int64  width; int64   height; };
-struct NASizes{     size_t width; size_t  height; };
+struct NASize{      double width; double height; };
+struct NASizef{     float  width; float  height; };
+struct NASizei32{   int32  width; int32  height; };
+struct NASizei64{   int64  width; int64  height; };
+struct NASizes{     size_t width; size_t height; };
 
 struct NARect{      NAPos    pos; NASize    size; };
 struct NARectf{     NAPosf   pos; NASizef   size; };
@@ -195,17 +213,17 @@ struct NARecti32{   NAPosi32 pos; NASizei32 size; };
 struct NARecti64{   NAPosi64 pos; NASizei64 size; };
 struct NARects{     NAPoss   pos; NASizes   size; };
 
-struct NAVertex{    double      x;      double      y;        double z; };
-struct NAVertexf{   float       x;      float       y;        float  z; };
-struct NAVertexi32{ int32       x;      int32       y;        int32  z; };
-struct NAVertexi64{ int64       x;      int64       y;        int64  z; };
-struct NAVertexs{   size_t      x;      size_t      y;        size_t z; };
+struct NAVertex{    double x; double y; double z; };
+struct NAVertexf{   float  x; float  y; float  z; };
+struct NAVertexi32{ int32  x; int32  y; int32  z; };
+struct NAVertexi64{ int64  x; int64  y; int64  z; };
+struct NAVertexs{   size_t x; size_t y; size_t z; };
 
-struct NAVolume{    double      width;  double      height;   double depth; };
-struct NAVolumef{   float       width;  float       height;   float  depth; };
-struct NAVolumei32{ int32       width;  int32       height;   int32  depth; };
-struct NAVolumei64{ int64       width;  int64       height;   int64  depth; };
-struct NAVolumes{   size_t      width;  size_t      height;   size_t depth; };
+struct NAVolume{    double width; double height; double depth; };
+struct NAVolumef{   float  width; float  height; float  depth; };
+struct NAVolumei32{ int32  width; int32  height; int32  depth; };
+struct NAVolumei64{ int64  width; int64  height; int64  depth; };
+struct NAVolumes{   size_t width; size_t height; size_t depth; };
 
 struct NABox{       NAVertex    vertex; NAVolume    volume; };
 struct NABoxf{      NAVertexf   vertex; NAVolumef   volume; };
@@ -213,11 +231,30 @@ struct NABoxi32{    NAVertexi32 vertex; NAVolumei32 volume; };
 struct NABoxi64{    NAVertexi64 vertex; NAVolumei64 volume; };
 struct NABoxs{      NAVertexs   vertex; NAVolumes   volume; };
 
+// Bezel4 is deprecated. Use Border2D
 struct NABezel4{    double right; double top; double left; double bottom; };
 struct NABezel4f{   float  right; float  top; float  left; float  bottom; };
 struct NABezel4i32{ int32  right; int32  top; int32  left; int32  bottom; };
 struct NABezel4i64{ int64  right; int64  top; int64  left; int64  bottom; };
 struct NABezel4s{   size_t right; size_t top; size_t left; size_t bottom; };
+
+struct NABorder1D{    double left; double right; };
+struct NABorder1Df{   float  left; float  right; };
+struct NABorder1Di32{ int32  left; int32  right; };
+struct NABorder1Di64{ int64  left; int64  right; };
+struct NABorder1Ds{   size_t left; size_t right; };
+
+struct NABorder2D{    double left; double right; double bottom; double top; };
+struct NABorder2Df{   float  left; float  right; float  bottom; float  top; };
+struct NABorder2Di32{ int32  left; int32  right; int32  bottom; int32  top; };
+struct NABorder2Di64{ int64  left; int64  right; int64  bottom; int64  top; };
+struct NABorder2Ds{   size_t left; size_t right; size_t bottom; size_t top; };
+
+struct NABorder3D{    double left; double right; double bottom; double top; double back; double front; };
+struct NABorder3Df{   float  left; float  right; float  bottom; float  top; float  back; float  front; };
+struct NABorder3Di32{ int32  left; int32  right; int32  bottom; int32  top; int32  back; int32  front; };
+struct NABorder3Di64{ int64  left; int64  right; int64  bottom; int64  top; int64  back; int64  front; };
+struct NABorder3Ds{   size_t left; size_t right; size_t bottom; size_t top; size_t back; size_t front; };
 
 
 
@@ -420,7 +457,7 @@ NA_IAPI void        naFillBoxi32WithCopy(NABoxi32* boxd, const NABoxi32* boxs);
 NA_IAPI void        naFillBoxi64WithCopy(NABoxi64* boxd, const NABoxi64* boxs);
 NA_IAPI void        naFillBoxsWithCopy  (NABoxs*   boxd, const NABoxs*   boxs);
 
-// NABezel
+// NABezel (deprecated)
 
 NA_IAPI NABezel4    naMakeBezel4   (double right, double top, double left, double bottom);
 NA_IAPI NABezel4f   naMakeBezel4f  (float  right, float  top, float  left, float  bottom);
@@ -428,11 +465,43 @@ NA_IAPI NABezel4i32 naMakeBezel4i32(int32  right, int32  top, int32  left, int32
 NA_IAPI NABezel4i64 naMakeBezel4i64(int64  right, int64  top, int64  left, int64  bottom);
 NA_IAPI NABezel4s   naMakeBezel4s  (size_t right, size_t top, size_t left, size_t bottom);
 
-NA_IAPI NABezel4    naMakeBezel4Zero   (void);
-NA_IAPI NABezel4f   naMakeBezel4fZero  (void);
-NA_IAPI NABezel4i32 naMakeBezel4i32Zero(void);
-NA_IAPI NABezel4i64 naMakeBezel4i64Zero(void);
-NA_IAPI NABezel4s   naMakeBezel4sZero  (void);
+// NABorder
+
+NA_IAPI NABorder1D    naMakeBorder1D   (double left, double right);
+NA_IAPI NABorder1Df   naMakeBorder1Df  (float  left, float  right);
+NA_IAPI NABorder1Di32 naMakeBorder1Di32(int32  left, int32  right);
+NA_IAPI NABorder1Di64 naMakeBorder1Di64(int64  left, int64  right);
+NA_IAPI NABorder1Ds   naMakeBorder1Ds  (size_t left, size_t right);
+
+NA_IAPI NABorder2D    naMakeBorder2D   (double left, double right, double bottom, double top);
+NA_IAPI NABorder2Df   naMakeBorder2Df  (float  left, float  right, float  bottom, float  top);
+NA_IAPI NABorder2Di32 naMakeBorder2Di32(int32  left, int32  right, int32  bottom, int32  top);
+NA_IAPI NABorder2Di64 naMakeBorder2Di64(int64  left, int64  right, int64  bottom, int64  top);
+NA_IAPI NABorder2Ds   naMakeBorder2Ds  (size_t left, size_t right, size_t bottom, size_t top);
+
+NA_IAPI NABorder3D    naMakeBorder3D   (double left, double right, double bottom, double top, double back, double front);
+NA_IAPI NABorder3Df   naMakeBorder3Df  (float  left, float  right, float  bottom, float  top, float  back, float  front);
+NA_IAPI NABorder3Di32 naMakeBorder3Di32(int32  left, int32  right, int32  bottom, int32  top, int32  back, int32  front);
+NA_IAPI NABorder3Di64 naMakeBorder3Di64(int64  left, int64  right, int64  bottom, int64  top, int64  back, int64  front);
+NA_IAPI NABorder3Ds   naMakeBorder3Ds  (size_t left, size_t right, size_t bottom, size_t top, size_t back, size_t front);
+
+NA_IAPI NABorder1D    naMakeBorder1DWithThickness   (double thickness);
+NA_IAPI NABorder1Df   naMakeBorder1DfWithThickness  (float  thickness);
+NA_IAPI NABorder1Di32 naMakeBorder1Di32WithThickness(int32  thickness);
+NA_IAPI NABorder1Di64 naMakeBorder1Di64WithThickness(int64  thickness);
+NA_IAPI NABorder1Ds   naMakeBorder1DsWithThickness  (size_t thickness);
+
+NA_IAPI NABorder2D    naMakeBorder2DWithThickness   (double thickness);
+NA_IAPI NABorder2Df   naMakeBorder2DfWithThickness  (float  thickness);
+NA_IAPI NABorder2Di32 naMakeBorder2Di32WithThickness(int32  thickness);
+NA_IAPI NABorder2Di64 naMakeBorder2Di64WithThickness(int64  thickness);
+NA_IAPI NABorder2Ds   naMakeBorder2DsWithThickness  (size_t thickness);
+
+NA_IAPI NABorder3D    naMakeBorder3DWithThickness   (double thickness);
+NA_IAPI NABorder3Df   naMakeBorder3DfWithThickness  (float  thickness);
+NA_IAPI NABorder3Di32 naMakeBorder3Di32WithThickness(int32  thickness);
+NA_IAPI NABorder3Di64 naMakeBorder3Di64WithThickness(int64  thickness);
+NA_IAPI NABorder3Ds   naMakeBorder3DsWithThickness  (size_t thickness);
 
 
 
@@ -587,14 +656,24 @@ NA_IAPI NABoxs   naMakeBoxsIntersection  (NABoxs      box1,   NABoxs      box2);
 
 
 
-// Creates a new rect by adding the given border around the given rect.
-NA_IAPI NARect    naMakeRectWithRectAndBorder  (NARect  rect, double border);
-NA_IAPI NARecti32   naMakeRecti32WithRectAndBorder (NARecti32 rect, int32  border);
-NA_IAPI NARecti64   naMakeRecti64WithRectAndBorder (NARecti64 rect, int64  border);
+// Creates a new rect by adding the given border around the given struct.
+NA_IAPI NARange    naMakeRangeWithBorder   (NARange    range, NABorder2D    border);
+NA_IAPI NARangef   naMakeRangefWithBorder  (NARangef   range, NABorder2Df   border);
+NA_IAPI NARangei32 naMakeRangei32WithBorder(NARangei32 range, NABorder2Di32 border);
+NA_IAPI NARangei64 naMakeRangei64WithBorder(NARangei64 range, NABorder2Di64 border);
+NA_IAPI NARanges   naMakeRangesWithBorder  (NARanges   range, NABorder2Ds   border);
 
-NA_IAPI NABox     naMakeBoxWithBoxAndBorder    (NABox  box, double border);
-NA_IAPI NABoxi32    naMakeBoxi32WithBoxAndBorder   (NABoxi32 box, int32  border);
-NA_IAPI NABoxi64    naMakeBoxi64WithBoxAndBorder   (NABoxi64 box, int64  border);
+NA_IAPI NARect     naMakeRectWithBorder    (NARect     rect,  NABorder2D    border);
+NA_IAPI NARectf    naMakeRectfWithBorder   (NARectf    rect,  NABorder2Df   border);
+NA_IAPI NARecti32  naMakeRecti32WithBorder (NARecti32  rect,  NABorder2Di32 border);
+NA_IAPI NARecti64  naMakeRecti64WithBorder (NARecti64  rect,  NABorder2Di64 border);
+NA_IAPI NARects    naMakeRectsWithBorder   (NARects    rect,  NABorder2Ds   border);
+
+NA_IAPI NABox      naMakeBoxWithBorder     (NABox      box,   NABorder3D    border);
+NA_IAPI NABoxf     naMakeBoxfWithBorder    (NABoxf     box,   NABorder3Df   border);
+NA_IAPI NABoxi32   naMakeBoxi32WithBorder  (NABoxi32   box,   NABorder3Di32 border);
+NA_IAPI NABoxi64   naMakeBoxi64WithBorder  (NABoxi64   box,   NABorder3Di64 border);
+NA_IAPI NABoxs     naMakeBoxsWithBorder    (NABoxs     box,   NABorder3Ds   border);
 
 
 
