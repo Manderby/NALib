@@ -200,11 +200,11 @@ NA_IDEF NABoxf naMakeBoxfExtension(NABoxf box, NAVertexf vertex) {
   newBox.vertex.y = naMinf(box.vertex.y, vertex.y);
   newBox.vertex.z = naMinf(box.vertex.z, vertex.z);
   end = naGetBoxfEndX(box);
-  newBox.volume.width  = naMakeLengthWithStartAndEndf(newBox.vertex.x, naMax(end, vertex.x));
+  newBox.volume.width  = naMakeLengthWithStartAndEndf(newBox.vertex.x, naMaxf(end, vertex.x));
   end = naGetBoxfEndY(box);
-  newBox.volume.height = naMakeLengthWithStartAndEndf(newBox.vertex.y, naMax(end, vertex.y));
+  newBox.volume.height = naMakeLengthWithStartAndEndf(newBox.vertex.y, naMaxf(end, vertex.y));
   end = naGetBoxfEndZ(box);
-  newBox.volume.depth = naMakeLengthWithStartAndEndf(newBox.vertex.z, naMax(end, vertex.z));
+  newBox.volume.depth = naMakeLengthWithStartAndEndf(newBox.vertex.z, naMaxf(end, vertex.z));
   return newBox;
 }
 NA_IDEF NABoxi32 naMakeBoxi32Extension(NABoxi32 box, NAVertexi32 vertex) {
