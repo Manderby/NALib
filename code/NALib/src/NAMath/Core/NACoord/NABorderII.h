@@ -359,31 +359,31 @@ NA_IDEF NABorder3Ds naMakeBorder3DsWithThickness(size_t thickness) {
 
 
 
-NA_IDEF NARange naMakeRangeWithBorder(NARange range, NABorder2D border) {
+NA_IDEF NARange naMakeRangeWithBorder(NARange range, NABorder1D border) {
   NARange newRange;
   newRange.origin = range.origin - border.left;
   newRange.length = range.length + border.left + border.right;
   return newRange;
 }
-NA_IDEF NARangef naMakeRangefWithBorder(NARangef range, NABorder2Df border) {
+NA_IDEF NARangef naMakeRangefWithBorder(NARangef range, NABorder1Df border) {
   NARangef newRange;
   newRange.origin = range.origin - border.left;
   newRange.length = range.length + border.left + border.right;
   return newRange;
 }
-NA_IDEF NARangei32 naMakeRangei32WithBorder(NARangei32 range, NABorder2Di32 border) {
+NA_IDEF NARangei32 naMakeRangei32WithBorder(NARangei32 range, NABorder1Di32 border) {
   NARangei32 newRange;
   newRange.origin = range.origin - border.left;
   newRange.length = range.length + border.left + border.right;
   return newRange;
 }
-NA_IDEF NARangei64 naMakeRangei64WithBorder(NARangei64 range, NABorder2Di64 border) {
+NA_IDEF NARangei64 naMakeRangei64WithBorder(NARangei64 range, NABorder1Di64 border) {
   NARangei64 newRange;
   newRange.origin = range.origin - border.left;
   newRange.length = range.length + border.left + border.right;
   return newRange;
 }
-NA_IDEF NARanges naMakeRangesWithBorder(NARanges range, NABorder2Ds border) {
+NA_IDEF NARanges naMakeRangesWithBorder(NARanges range, NABorder1Ds border) {
   NARanges newRange;
   newRange.origin = range.origin - border.left;
   newRange.length = range.length + border.left + border.right;

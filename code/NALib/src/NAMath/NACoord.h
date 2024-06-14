@@ -656,12 +656,12 @@ NA_IAPI NABoxs   naMakeBoxsIntersection  (NABoxs      box1,   NABoxs      box2);
 
 
 
-// Creates a new rect by adding the given border around the given struct.
-NA_IAPI NARange    naMakeRangeWithBorder   (NARange    range, NABorder2D    border);
-NA_IAPI NARangef   naMakeRangefWithBorder  (NARangef   range, NABorder2Df   border);
-NA_IAPI NARangei32 naMakeRangei32WithBorder(NARangei32 range, NABorder2Di32 border);
-NA_IAPI NARangei64 naMakeRangei64WithBorder(NARangei64 range, NABorder2Di64 border);
-NA_IAPI NARanges   naMakeRangesWithBorder  (NARanges   range, NABorder2Ds   border);
+// Creates a new struct by adding the given border around the given struct.
+NA_IAPI NARange    naMakeRangeWithBorder   (NARange    range, NABorder1D    border);
+NA_IAPI NARangef   naMakeRangefWithBorder  (NARangef   range, NABorder1Df   border);
+NA_IAPI NARangei32 naMakeRangei32WithBorder(NARangei32 range, NABorder1Di32 border);
+NA_IAPI NARangei64 naMakeRangei64WithBorder(NARangei64 range, NABorder1Di64 border);
+NA_IAPI NARanges   naMakeRangesWithBorder  (NARanges   range, NABorder1Ds   border);
 
 NA_IAPI NARect     naMakeRectWithBorder    (NARect     rect,  NABorder2D    border);
 NA_IAPI NARectf    naMakeRectfWithBorder   (NARectf    rect,  NABorder2Df   border);
