@@ -55,6 +55,7 @@
   - (void) displayLayer:(CALayer *)layer {
     NA_UNUSED(layer);
     NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_REDRAW);
+    NA_UNUSED(handeled);
     // If it is not handeled, just do nothing. Note that calling displayLayer
     // of the CALayerDelegate would just recursively call this method again
     // leading to an infinite recursion.
