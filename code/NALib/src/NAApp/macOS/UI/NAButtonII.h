@@ -580,7 +580,15 @@ NA_API void naSetButtonVisible(NAButton* button, NABool visible) {
 
 NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
   naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
-  return naMakeRectWithNSRect([nativePtr frame]);
+  NARect rect = naMakeRectWithNSRect([nativePtr frame]);
+  if(isAtLeastMacOSVersion(11, 0)) {
+  // On newer systems bordered buttons are 5 units shorter than expected on
+  // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
+  // move the button 5 units to the left.
+    rect.pos.x += 5;
+    rect.size.width -= 10;
+  }
+  return rect;
 }
 
 NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect) {
