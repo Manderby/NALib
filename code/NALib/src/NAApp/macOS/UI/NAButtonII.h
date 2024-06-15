@@ -99,6 +99,8 @@
   #if NA_DEBUG
     if(!handeled)
       naError("Event not handeled.");
+  #else
+    NA_UNUSED(handeled);
   #endif
   [self updateButtonBackground];
   [self updateButtonText];
