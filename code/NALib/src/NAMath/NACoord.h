@@ -684,55 +684,98 @@ NA_IAPI NABoxs     naMakeBoxsWithBorder    (NABoxs     box,   NABorder3Ds   bord
 //            -> a rect with pos(2., 6.) and size ( 2., 7.) .
 // But: An integer rect with pos(4 , 6 ) and size (-2 , 7 ) will change to
 //            -> a rect with pos(3 , 6 ) and size ( 2 , 7 ) !
-NA_IAPI NARange naMakeRangePositive(NARange range);
+NA_IAPI NARange    naMakeRangePositive   (NARange    range);
+NA_IAPI NARangef   naMakeRangefPositive  (NARangef   range);
 NA_IAPI NARangei32 naMakeRangei32Positive(NARangei32 range);
 NA_IAPI NARangei64 naMakeRangei64Positive(NARangei64 range);
+NA_IAPI NARanges   naMakeRangesPositive  (NARanges   range);
 
-NA_IAPI NARect naMakeRectPositive(NARect rect);
-NA_IAPI NARecti32 naMakeRecti32Positive(NARecti32 rect);
-NA_IAPI NARecti64 naMakeRecti64Positive(NARecti64 rect);
+NA_IAPI NARect     naMakeRectPositive    (NARect    rect);
+NA_IAPI NARectf    naMakeRectfPositive   (NARectf   rect);
+NA_IAPI NARecti32  naMakeRecti32Positive (NARecti32 rect);
+NA_IAPI NARecti64  naMakeRecti64Positive (NARecti64 rect);
+NA_IAPI NARects    naMakeRectsPositive   (NARects   rect);
 
-NA_IAPI NABoxi32  naMakeBoxi32Positive(NABoxi32 box);
-NA_IAPI NABoxi64  naMakeBoxi64Positive(NABoxi64 box);
+NA_IAPI NABox      naMakeBoxPositive     (NABox    box);
+NA_IAPI NABoxf     naMakeBoxfPositive    (NABoxf   box);
+NA_IAPI NABoxi32   naMakeBoxi32Positive  (NABoxi32 box);
+NA_IAPI NABoxi64   naMakeBoxi64Positive  (NABoxi64 box);
+NA_IAPI NABoxs     naMakeBoxsPositive    (NABoxs   box);
+
 
 
 // Returns the center position / vertex
-NA_IAPI NAPos     naGetRectCenter (NARect rect);
-NA_IAPI NAPosi32  naGetRecti32Center(NARecti32 rect);
-NA_IAPI NAPosi64  naGetRecti64Center(NARecti64 rect);
+NA_IAPI double      naGetRangeCenter   (NARange    range);
+NA_IAPI float       naGetRangefCenter  (NARangef   range);
+NA_IAPI int32       naGetRangei32Center(NARangei32 range);
+NA_IAPI int64       naGetRangei64Center(NARangei64 range);
+NA_IAPI size_t      naGetRangesCenter  (NARanges   range);
 
-NA_IAPI NAVertex  naGetBoxCenter  (NABox box);
+NA_IAPI NAPos       naGetRectCenter   (NARect    rect);
+NA_IAPI NAPosf      naGetRectfCenter  (NARectf   rect);
+NA_IAPI NAPosi32    naGetRecti32Center(NARecti32 rect);
+NA_IAPI NAPosi64    naGetRecti64Center(NARecti64 rect);
+NA_IAPI NAPoss      naGetRectsCenter  (NARects   rect);
+
+NA_IAPI NAVertex    naGetBoxCenter    (NABox    box);
+NA_IAPI NAVertexf   naGetBoxfCenter   (NABoxf   box);
 NA_IAPI NAVertexi32 naGetBoxi32Center (NABoxi32 box);
 NA_IAPI NAVertexi64 naGetBoxi64Center (NABoxi64 box);
+NA_IAPI NAVertexs   naGetBoxsCenter   (NABoxs   box);
 
-// Returns the offset of a size or volume being centered within a given rect
-// or box relative to the origin of that rect or box.
-NA_IAPI NAPos     naGetRectCenteredSizeOffset  (NARect rect, NASize   size);
-NA_IAPI NAVertex  naGetBoxCeneteredVolumeOffset(NABox  box,  NAVolume volume);
 
-// Clamping functions. Returns the new range.
-NA_IAPI NARangei32 naClampRangei32ToRange(NARangei32 range, NARangei32 clampRange);
-NA_IAPI NARangei64 naClampRangei64ToRange(NARangei64 range, NARangei64 clampRange);
-NA_IAPI NARangei32 naClampRangei32ToMin  (NARangei32 range, int32    min);
-NA_IAPI NARangei64 naClampRangei64ToMin  (NARangei64 range, int64    min);
-NA_IAPI NARangei32 naClampRangei32ToEnd  (NARangei32 range, int32    end);
-NA_IAPI NARangei64 naClampRangei64ToEnd  (NARangei64 range, int64    end);
 
-NA_IAPI NAPos     naClampPosToRect  (NAPos   pos,  NARect  clampRect);
-NA_IAPI NAPosi32    naClampPosi32ToRect (NAPosi32  pos,  NARecti32 clampRect);
-NA_IAPI NAPosi64    naClampPosi64ToRect (NAPosi64  pos,  NARecti64 clampRect);
+// Returns the offset of a size being centered within a given rect relative to
+// the origin of that rect. Same for 1D and 3D.
+NA_IAPI double    naGetRangeCenteredOffset (NARange  range, double    length);
+NA_IAPI float     naGetRangefCenteredOffset(NARangef range, float     length);
 
-NA_IAPI NARect    naClampRect (NARect  rect, NARect  clampRect);
-NA_IAPI NARecti32 naClampRecti32(NARecti32 rect, NARecti32 clampRect);
-NA_IAPI NARecti64 naClampRecti64(NARecti64 rect, NARecti64 clampRect);
+NA_IAPI NAPos     naGetRectCenteredOffset  (NARect   rect,  NASize    size);
+NA_IAPI NAPosf    naGetRectfCenteredOffset (NARectf  rect,  NASizef   size);
 
-NA_IAPI NAVertex  naClampVertexToBox (NAVertex  vertex, NABox  clampBox);
-NA_IAPI NAVertexi32 naClampVertexi32ToBox(NAVertexi32 vertex, NABoxi32 clampBox);
-NA_IAPI NAVertexi64 naClampVertexi64ToBox(NAVertexi64 vertex, NABoxi64 clampBox);
+NA_IAPI NAVertex  naGetBoxCeneteredOffset  (NABox    box,   NAVolume  volume);
+NA_IAPI NAVertexf naGetBoxfCeneteredOffset (NABoxf   box,   NAVolumef volume);
 
-NA_IAPI NABox     naClampBoxToBox    (NABox     box,    NABox  clampBox);
-NA_IAPI NABoxi32    naClampBoxi32ToBox   (NABoxi32    box,    NABoxi32 clampBox);
-NA_IAPI NABoxi64    naClampBoxi64ToBox   (NABoxi64    box,    NABoxi64 clampBox);
+
+
+// Clamping functions.
+NA_IAPI NARange     naClampRange          (NARange     range, NARange    clampRange);
+NA_IAPI NARangef    naClampRangef         (NARangef    range, NARangef   clampRange);
+NA_IAPI NARangei32  naClampRangei32       (NARangei32  range, NARangei32 clampRange);
+NA_IAPI NARangei64  naClampRangei64       (NARangei64  range, NARangei64 clampRange);
+NA_IAPI NARanges    naClampRanges         (NARanges    range, NARanges   clampRange);
+
+NA_IAPI double      naClampPointToRange   (double      point, NARange    clampRange);
+NA_IAPI float       naClampPointToRangef  (float       point, NARangef   clampRange);
+NA_IAPI int32       naClampPointToRangei32(int32       point, NARangei32 clampRange);
+NA_IAPI int64       naClampPointToRangei64(int64       point, NARangei64 clampRange);
+NA_IAPI size_t      naClampPointToRanges  (size_t      point, NARanges   clampRange);
+
+NA_IAPI NARect      naClampRect           (NARect      rect, NARect      clampRect);
+NA_IAPI NARectf     naClampRectf          (NARectf     rect, NARectf     clampRect);
+NA_IAPI NARecti32   naClampRecti32        (NARecti32   rect, NARecti32   clampRect);
+NA_IAPI NARecti64   naClampRecti64        (NARecti64   rect, NARecti64   clampRect);
+NA_IAPI NARects     naClampRects          (NARects     rect, NARects     clampRect);
+
+NA_IAPI NAPos       naClampPointToRect    (NAPos       point, NARect     clampRect);
+NA_IAPI NAPosf      naClampPointToRectf   (NAPosf      point, NARectf    clampRect);
+NA_IAPI NAPosi32    naClampPointToRecti32 (NAPosi32    point, NARecti32  clampRect);
+NA_IAPI NAPosi64    naClampPointToRecti64 (NAPosi64    point, NARecti64  clampRect);
+NA_IAPI NAPoss      naClampPointToRects   (NAPoss      point, NARects    clampRect);
+
+NA_IAPI NABox       naClampBox            (NABox       box,   NABox      clampBox);
+NA_IAPI NABoxf      naClampBoxf           (NABoxf      box,   NABoxf     clampBox);
+NA_IAPI NABoxi32    naClampBoxi32         (NABoxi32    box,   NABoxi32   clampBox);
+NA_IAPI NABoxi64    naClampBoxi64         (NABoxi64    box,   NABoxi64   clampBox);
+NA_IAPI NABoxs      naClampBoxs           (NABoxs      box,   NABoxs     clampBox);
+
+NA_IAPI NAVertex    naClampPointToBox     (NAVertex    point, NABox      clampBox);
+NA_IAPI NAVertexf   naClampPointToBoxf    (NAVertexf   point, NABoxf     clampBox);
+NA_IAPI NAVertexi32 naClampPointToBoxi32  (NAVertexi32 point, NABoxi32   clampBox);
+NA_IAPI NAVertexi64 naClampPointToBoxi64  (NAVertexi64 point, NABoxi64   clampBox);
+NA_IAPI NAVertexs   naClampPointToBoxs    (NAVertexs   point, NABoxs     clampBox);
+
+
 
 // Use the following functions to make equality tests (==) between elements.
 NA_IAPI NABool    naEqualRangei32(NARangei32 range1, NARangei32 range2);
