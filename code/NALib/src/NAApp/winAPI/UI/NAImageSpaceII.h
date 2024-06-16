@@ -13,8 +13,8 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   HDC hMemDC;
   NAWINAPIImageSpace* imageSpace;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
-  NASizei size1x;
-  NASizei spacesize;
+  NASizei64 size1x;
+  NASizei64 spacesize;
   NAPosi offset;
   const NAImage* foreImage;
   NAByte* backBuffer;

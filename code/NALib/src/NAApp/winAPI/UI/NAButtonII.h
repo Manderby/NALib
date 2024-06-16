@@ -161,9 +161,9 @@ const NAUIImage* currentImage(NAWINAPIButton* winapiButton) {
 
 
 NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* drawitemstruct) {
-  NASizei buttonSize = naMakeSizei(
-    (NAInt)drawitemstruct->rcItem.right - (NAInt)drawitemstruct->rcItem.left,
-    (NAInt)drawitemstruct->rcItem.bottom - (NAInt)drawitemstruct->rcItem.top);
+  NASizei64 buttonSize = naMakeSizei(
+    (int64)drawitemstruct->rcItem.right - (int64)drawitemstruct->rcItem.left,
+    (int64)drawitemstruct->rcItem.bottom - (int64)drawitemstruct->rcItem.top);
 
   // Create an offscreen device context and buffer
   HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);  
@@ -234,7 +234,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   const NAUIImage* uiImage = currentImage(winapiButton);
   if(uiImage) {
     double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-    NASizei size1x = naGetUIImage1xSize(uiImage);
+    NASizei64 size1x = naGetUIImage1xSize(uiImage);
     size1x.width = (NAInt)(size1x.width * uiScale);
     size1x.height = (NAInt)(size1x.height * uiScale);
 

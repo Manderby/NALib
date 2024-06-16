@@ -85,7 +85,7 @@ NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr) {
 NA_DEF void* naAllocNativeImageWithImage(const NAImage* image) {
   HBITMAP hNewBitmap;
 
-  NASizei size = naGetImageSize(image);
+  NASizes size = naGetImageSize(image);
   NAByte* buffer = naMalloc(size.width * size.height * 4);
 
   naConvertImageTou8(image, buffer, NA_TRUE, NA_COLOR_BUFFER_BGRA);
