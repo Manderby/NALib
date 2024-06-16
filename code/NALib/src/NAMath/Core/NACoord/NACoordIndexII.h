@@ -137,7 +137,7 @@ NA_IDEF size_t naGetRecti32IndexOfPosRowFirst(NARecti32 rect, NAPosi32 pos) {
       naError("rect is invalid.");
     if(!naIsPosi32Valid(pos))
       naError("pos is invalid.");
-    if(!naContainsRecti32Pos(rect, pos))
+    if(!naContainsRecti32Point(rect, pos))
       naError("pos is not inside rect.");
   #endif
   return naGetIndexWithOrigini32AndPosRowFirst(rect.pos, pos, rect.size.width);
@@ -151,7 +151,7 @@ NA_IDEF size_t naGetRecti64IndexOfPosRowFirst(NARecti64 rect, NAPosi64 pos) {
       naError("rect is invalid.");
     if(!naIsPosi64Valid(pos))
       naError("pos is invalid.");
-    if(!naContainsRecti64Pos(rect, pos))
+    if(!naContainsRecti64Point(rect, pos))
       naError("pos is not inside rect.");
   #endif
   return naGetIndexWithOrigini64AndPosRowFirst(rect.pos, pos, rect.size.width);
@@ -165,7 +165,7 @@ NA_IDEF size_t naGetRectsIndexOfPosRowFirst(NARects rect, NAPoss pos) {
       naError("rect is invalid.");
     if(!naIsPossValid(pos))
       naError("pos is invalid.");
-    if(!naContainsRectsPos(rect, pos))
+    if(!naContainsRectsPoint(rect, pos))
       naError("pos is not inside rect.");
   #endif
   return naGetIndexWithOriginsAndPosRowFirst(rect.pos, pos, rect.size.width);
@@ -181,7 +181,7 @@ NA_IDEF size_t naGetRecti32IndexOfPosColumnFirst(NARecti32 rect, NAPosi32 pos) {
       naError("rect is invalid.");
     if(!naIsPosi32Valid(pos))
       naError("pos is invalid.");
-    if(!naContainsRecti32Pos(rect, pos))
+    if(!naContainsRecti32Point(rect, pos))
       naError("pos is not inside rect.");
   #endif
   return naGetIndexWithOrigini32AndPosColumnFirst(rect.pos, pos, rect.size.height);
@@ -195,7 +195,7 @@ NA_IDEF size_t naGetRecti64IndexOfPosColumnFirst(NARecti64 rect, NAPosi64 pos) {
       naError("rect is invalid.");
     if(!naIsPosi64Valid(pos))
       naError("pos is invalid.");
-    if(!naContainsRecti64Pos(rect, pos))
+    if(!naContainsRecti64Point(rect, pos))
       naError("pos is not inside rect.");
   #endif
   return naGetIndexWithOrigini64AndPosColumnFirst(rect.pos, pos, rect.size.height);
@@ -209,7 +209,7 @@ NA_IDEF size_t naGetRectsIndexOfPosColumnFirst(NARects rect, NAPoss pos) {
       naError("rect is invalid.");
     if(!naIsPossValid(pos))
       naError("pos is invalid.");
-    if(!naContainsRectsPos(rect, pos))
+    if(!naContainsRectsPoint(rect, pos))
       naError("pos is not inside rect.");
   #endif
   return naGetIndexWithOriginsAndPosColumnFirst(rect.pos, pos, rect.size.height);
@@ -225,7 +225,7 @@ NA_IDEF size_t naGetBoxi32IndexOfVertexRowFirst(NABoxi32 box, NAVertexi32 vertex
       naError("box is invalid.");
     if(!naIsVertexi32Valid(vertex))
       naError("vertex is invalid.");
-    if(!naContainsBoxi32Vertex(box, vertex))
+    if(!naContainsBoxi32Point(box, vertex))
       naError("vertex is not inside box.");
   #endif
   return naGetIndexWithOrigini32AndVertexRowFirst(box.vertex, vertex, box.volume.width, box.volume.height);
@@ -239,7 +239,7 @@ NA_IDEF size_t naGetBoxi64IndexOfVertexRowFirst(NABoxi64 box, NAVertexi64 vertex
       naError("box is invalid.");
     if(!naIsVertexi64Valid(vertex))
       naError("vertex is invalid.");
-    if(!naContainsBoxi64Vertex(box, vertex))
+    if(!naContainsBoxi64Point(box, vertex))
       naError("vertex is not inside box.");
   #endif
   return naGetIndexWithOrigini64AndVertexRowFirst(box.vertex, vertex, box.volume.width, box.volume.height);
@@ -253,7 +253,7 @@ NA_IDEF size_t naGetBoxsIndexOfVertexRowFirst(NABoxs box, NAVertexs vertex) {
       naError("box is invalid.");
     if(!naIsVertexsValid(vertex))
       naError("vertex is invalid.");
-    if(!naContainsBoxsVertex(box, vertex))
+    if(!naContainsBoxsPoint(box, vertex))
       naError("vertex is not inside box.");
   #endif
   return naGetIndexWithOriginsAndVertexRowFirst(box.vertex, vertex, box.volume.width, box.volume.height);
@@ -269,7 +269,7 @@ NA_IDEF size_t naGetBoxi32IndexOfVertexColumnFirst(NABoxi32 box, NAVertexi32 ver
       naError("box is invalid.");
     if(!naIsVertexi32Valid(vertex))
       naError("vertex is invalid.");
-    if(!naContainsBoxi32Vertex(box, vertex))
+    if(!naContainsBoxi32Point(box, vertex))
       naError("vertex is not inside box.");
   #endif
   return naGetIndexWithOrigini32AndVertexColumnFirst(box.vertex, vertex, box.volume.depth, box.volume.height);
@@ -283,7 +283,7 @@ NA_IDEF size_t naGetBoxi64IndexOfVertexColumnFirst(NABoxi64 box, NAVertexi64 ver
       naError("box is invalid.");
     if(!naIsVertexi64Valid(vertex))
       naError("vertex is invalid.");
-    if(!naContainsBoxi64Vertex(box, vertex))
+    if(!naContainsBoxi64Point(box, vertex))
       naError("vertex is not inside box.");
   #endif
   return naGetIndexWithOrigini64AndVertexColumnFirst(box.vertex, vertex, box.volume.depth, box.volume.height);
@@ -297,7 +297,7 @@ NA_IDEF size_t naGetBoxsIndexOfVertexColumnFirst(NABoxs box, NAVertexs vertex) {
       naError("box is invalid.");
     if(!naIsVertexsValid(vertex))
       naError("vertex is invalid.");
-    if(!naContainsBoxsVertex(box, vertex))
+    if(!naContainsBoxsPoint(box, vertex))
       naError("vertex is not inside box.");
   #endif
   return naGetIndexWithOriginsAndVertexColumnFirst(box.vertex, vertex, box.volume.depth, box.volume.height);

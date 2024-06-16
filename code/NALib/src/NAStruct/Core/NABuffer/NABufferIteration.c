@@ -404,7 +404,7 @@ NA_HDEF NABool na_IsBufferIteratorSparse(NABufferIterator* iter) {
 
 NA_HDEF void na_EnsureBufferRangeAndLocate(NABufferIterator* iter, NAInt abspos, size_t byteCount) {
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
-  if(naIsRangei64Empty(buffer->range) || !naContainsRangei64Offset(buffer->range, abspos)) {
+  if(naIsRangei64Empty(buffer->range) || !naContainsRangei64Point(buffer->range, abspos)) {
     // If the desired absolute offset was not inside the buffers range, we
     // enlarge the range.
     na_EnsureBufferRange(buffer, abspos, abspos + (NAInt)byteCount);

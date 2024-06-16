@@ -198,7 +198,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
       naCrash("source has no buffer");
     if(!na_IsBufferPartSparse(returnPart))
       naError("part is not sparse");
-    if(na_HasBufferSourceLimit(returnPart->source) && !naContainsRangei64Offset(na_GetBufferSourceLimit(returnPart->source), sourceOffset))
+    if(na_HasBufferSourceLimit(returnPart->source) && !naContainsRangei64Point(na_GetBufferSourceLimit(returnPart->source), sourceOffset))
       naError("offset is not in source limits");
   #endif
 

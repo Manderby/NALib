@@ -870,50 +870,77 @@ NA_IAPI NAVolumes   naSubVertexsVertex  (NAVertexs   vertex1,  NAVertexs   verte
 // Containing functions. Test if an element is within another.
 // The E variant for the double types denotes an exclusive rangecheck [...)
 // instead of an includsive [...]
-NA_IAPI NABool naContainsRangeOffset   (NARange  outerRange,   double     offset);
-NA_IAPI NABool naContainsRangefOffset  (NARangef outerRange,   float      offset);
-NA_IAPI NABool naContainsRangei32Offset(NARangei32 outerRange, int32      offset);
-NA_IAPI NABool naContainsRangei64Offset(NARangei64 outerRange, int64      offset);
+NA_IAPI NABool naContainsRangePoint     (NARange     outerRange,  double      point);
+NA_IAPI NABool naContainsRangefPoint    (NARangef    outerRange,  float       point);
+NA_IAPI NABool naContainsRangei32Point  (NARangei32  outerRange,  int32       point);
+NA_IAPI NABool naContainsRangei64Point  (NARangei64  outerRange,  int64       point);
+NA_IAPI NABool naContainsRangesPoint    (NARanges    outerRange,  size_t      point);
+  
+NA_IAPI NABool naContainsRangeRange     (NARange     outerRange,  NARange     range);
+NA_IAPI NABool naContainsRangeRangef    (NARangef    outerRange,  NARangef    range);
+NA_IAPI NABool naContainsRangei32Range  (NARangei32  outerRange,  NARangei32  range);
+NA_IAPI NABool naContainsRangei64Range  (NARangei64  outerRange,  NARangei64  range);
+NA_IAPI NABool naContainsRangesRange    (NARanges    outerRange,  NARanges    range);
+   
+NA_IAPI NABool naContainsSizePoint      (NASize      outerSize,   NAPos       point);
+NA_IAPI NABool naContainsSizefPoint     (NASizef     outerSize,   NAPosf      point);
+NA_IAPI NABool naContainsSizei32Point   (NASizei32   outerSize,   NAPosi32    point);
+NA_IAPI NABool naContainsSizei64Point   (NASizei64   outerSize,   NAPosi64    point);
+NA_IAPI NABool naContainsSizesPoint     (NASizes     outerSize,   NAPoss      point);
+    
+NA_IAPI NABool naContainsSizeSize       (NASize      outerSize,   NASize      size);
+NA_IAPI NABool naContainsSizeSizef      (NASizef     outerSize,   NASizef     size);
+NA_IAPI NABool naContainsSizei32Size    (NASizei32   outerSize,   NASizei32   size);
+NA_IAPI NABool naContainsSizei64Size    (NASizei64   outerSize,   NASizei64   size);
+NA_IAPI NABool naContainsSizesSize      (NASizes     outerSize,   NASizes     size);
+    
+NA_IAPI NABool naContainsRectPoint      (NARect      outerRect,   NAPos       point);
+NA_IAPI NABool naContainsRectfPoint     (NARectf     outerRect,   NAPosf      point);
+NA_IAPI NABool naContainsRecti32Point   (NARecti32   outerRect,   NAPosi32    point);
+NA_IAPI NABool naContainsRecti64Point   (NARecti64   outerRect,   NAPosi64    point);
+NA_IAPI NABool naContainsRectsPoint     (NARects     outerRect,   NAPoss      point);
+    
+NA_IAPI NABool naContainsRectPointE     (NARect      outerRect,   NAPos       point);
+NA_IAPI NABool naContainsRectfPointE    (NARectf     outerRect,   NAPosf      point);
+NA_IAPI NABool naContainsRecti32PointE  (NARecti32   outerRect,   NAPosi32    point);
+NA_IAPI NABool naContainsRecti64PointE  (NARecti64   outerRect,   NAPosi64    point);
+NA_IAPI NABool naContainsRectsPointE    (NARects     outerRect,   NAPoss      point);
+    
+NA_IAPI NABool naContainsRectRect       (NARect      outerRect,   NARect      rect);
+NA_IAPI NABool naContainsRectRectf      (NARectf     outerRect,   NARectf     rect);
+NA_IAPI NABool naContainsRecti32Rect    (NARecti32   outerRect,   NARecti32   rect);
+NA_IAPI NABool naContainsRecti64Rect    (NARecti64   outerRect,   NARecti64   rect);
+NA_IAPI NABool naContainsRectsRect      (NARects     outerRect,   NARects     rect);
+   
+NA_IAPI NABool naContainsVolumePoint    (NAVolume    outerVolume, NAVertex    point);
+NA_IAPI NABool naContainsVolumefPoint   (NAVolumef   outerVolume, NAVertexf   point);
+NA_IAPI NABool naContainsVolumei32Point (NAVolumei32 outerVolume, NAVertexi32 point);
+NA_IAPI NABool naContainsVolumei64Point (NAVolumei64 outerVolume, NAVertexi64 point);
+NA_IAPI NABool naContainsVolumesPoint   (NAVolumes   outerVolume, NAVertexs   point);
 
-NA_IAPI NABool naContainsRangei32Range (NARangei32 outerRange, NARangei32 range);
-NA_IAPI NABool naContainsRangei64Range (NARangei64 outerRange, NARangei64 range);
+NA_IAPI NABool naContainsVolumeVolume   (NAVolume    outerVolume, NAVolume    volume);
+NA_IAPI NABool naContainsVolumefVolume  (NAVolumef   outerVolume, NAVolumef   volume);
+NA_IAPI NABool naContainsVolumei32Volume(NAVolumei32 outerVolume, NAVolumei32 volume);
+NA_IAPI NABool naContainsVolumei64Volume(NAVolumei64 outerVolume, NAVolumei64 volume);
+NA_IAPI NABool naContainsVolumesVolume  (NAVolumes   outerVolume, NAVolumes   volume);
 
-NA_IAPI NABool    naContainsSizePos    (NASize    outerSize, NAPos     pos);
-NA_IAPI NABool    naContainsSizei32Pos   (NASizei32   outerSize, NAPosi32    pos);
-NA_IAPI NABool    naContainsSizei64Pos   (NASizei64   outerSize, NAPosi64    pos);
+NA_IAPI NABool naContainsBoxPoint       (NABox       outerBox,    NAVertex    point);
+NA_IAPI NABool naContainsBoxfPoint      (NABoxf      outerBox,    NAVertexf   point);
+NA_IAPI NABool naContainsBoxi32Point    (NABoxi32    outerBox,    NAVertexi32 point);
+NA_IAPI NABool naContainsBoxi64Point    (NABoxi64    outerBox,    NAVertexi64 point);
+NA_IAPI NABool naContainsBoxsPoint      (NABoxs      outerBox,    NAVertexs   point);
 
-NA_IAPI NABool    naContainsRectPos    (NARect    outerRect, NAPos     pos);
-NA_IAPI NABool    naContainsRecti32Pos (NARecti32 outerRect, NAPosi32  pos);
-NA_IAPI NABool    naContainsRecti64Pos (NARecti64 outerRect, NAPosi64  pos);
-NA_IAPI NABool    naContainsRectsPos   (NARects   outerRect, NAPoss    pos);
+NA_IAPI NABool naContainsBoxPointE      (NABox       outerBox,    NAVertex    point);
+NA_IAPI NABool naContainsBoxfPointE     (NABoxf      outerBox,    NAVertexf   point);
+NA_IAPI NABool naContainsBoxi32PointE   (NABoxi32    outerBox,    NAVertexi32 point);
+NA_IAPI NABool naContainsBoxi64PointE   (NABoxi64    outerBox,    NAVertexi64 point);
+NA_IAPI NABool naContainsBoxsPointE     (NABoxs      outerBox,    NAVertexs   point);
 
-NA_IAPI NABool    naContainsRectPosE   (NARect    outerRect, NAPos     pos);
-
-NA_IAPI NABool    naContainsSizeSize   (NASize    outerSize, NASize    size);
-NA_IAPI NABool    naContainsSizei32Size  (NASizei32   outerSize, NASizei32   size);
-NA_IAPI NABool    naContainsSizei64Size  (NASizei64   outerSize, NASizei64   size);
-
-NA_IAPI NABool    naContainsRectRect   (NARect    outerRect, NARect    rect);
-NA_IAPI NABool    naContainsRecti32Rect(NARecti32 outerRect, NARecti32 rect);
-NA_IAPI NABool    naContainsRecti64Rect(NARecti64 outerRect, NARecti64 rect);
-
-NA_IAPI NABool    naContainsVolumeVertex (NAVolume  outerVolume, NAVertex  vertex);
-NA_IAPI NABool    naContainsVolumei32Vertex(NAVolumei32 outerVolume, NAVertexi32 vertex);
-NA_IAPI NABool    naContainsVolumei64Vertex(NAVolumei64 outerVolume, NAVertexi64 vertex);
-
-NA_IAPI NABool    naContainsBoxVertex    (NABox     outerBox,    NAVertex  vertex);
-NA_IAPI NABool    naContainsBoxVertexE   (NABox     outerBox,    NAVertex  vertex);
-NA_IAPI NABool    naContainsBoxi32Vertex (NABoxi32  outerBox,    NAVertexi32 vertex);
-NA_IAPI NABool    naContainsBoxi64Vertex (NABoxi64  outerBox,    NAVertexi64 vertex);
-NA_IAPI NABool    naContainsBoxsVertex   (NABoxs    outerBox,    NAVertexs   vertex);
-
-NA_IAPI NABool    naContainsVolumeVolume (NAVolume  outerVolume, NAVolume  volume);
-NA_IAPI NABool    naContainsVolumei32Volume(NAVolumei32 outerVolume, NAVolumei32 volume);
-NA_IAPI NABool    naContainsVolumei64Volume(NAVolumei64 outerVolume, NAVolumei64 volume);
-
-NA_IAPI NABool    naContainsBoxBox       (NABox     outerBox,    NABox     box);
-NA_IAPI NABool    naContainsBoxi32Box      (NABoxi32    outerBox,    NABoxi32    box);
-NA_IAPI NABool    naContainsBoxi64Box      (NABoxi64    outerBox,    NABoxi64    box);
+NA_IAPI NABool naContainsBoxBox         (NABox       outerBox,    NABox       box);
+NA_IAPI NABool naContainsBoxfBox        (NABoxf      outerBox,    NABoxf      box);
+NA_IAPI NABool naContainsBoxi32Box      (NABoxi32    outerBox,    NABoxi32    box);
+NA_IAPI NABool naContainsBoxi64Box      (NABoxi64    outerBox,    NABoxi64    box);
+NA_IAPI NABool naContainsBoxsBox        (NABoxs      outerBox,    NABoxs      box);
 
 
 

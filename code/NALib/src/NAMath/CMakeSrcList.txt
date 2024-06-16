@@ -23,6 +23,7 @@ set(coreCoordFiles
   ${NAMathDir}/Core/NACoord/NABorderII.h
   ${NAMathDir}/Core/NACoord/NABoxII.h
   ${NAMathDir}/Core/NACoord/NABoxCombinationII.h
+  ${NAMathDir}/Core/NACoord/NAContainsTesterII.h
   ${NAMathDir}/Core/NACoord/NACoordII.h
   ${NAMathDir}/Core/NACoord/NACoordAlignII.h
   ${NAMathDir}/Core/NACoord/NACoordArithmeticII.h

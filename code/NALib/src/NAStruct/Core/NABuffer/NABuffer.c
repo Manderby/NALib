@@ -120,9 +120,9 @@ NA_HIAPI NARangei64 na_MakeRangei64Absolute(NAInt offset, NAInt length, NARangei
   start = containingRange.origin + (offset < 0) * containingRange.length + offset;
   end = ((length >= 0) ? start : (naGetRangei64End(containingRange) + 1)) + length;
   #if NA_DEBUG
-    if(!naContainsRangei64Offset(containingRange, start))
+    if(!naContainsRangei64Point(containingRange, start))
       naError("Resulting range underflows containing range.");
-    if(!naContainsRangei64Offset(containingRange, naMakeMaxWithEndi(end)))
+    if(!naContainsRangei64Point(containingRange, naMakeMaxWithEndi(end)))
       naError("Resulting range overflows containing range.");
     if(end < start)
       naError("Resulting range has negative length.");
