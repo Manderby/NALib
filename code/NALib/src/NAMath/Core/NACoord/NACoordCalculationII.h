@@ -258,12 +258,12 @@ NA_IDEF NAVertexs naGetBoxsCenter(NABoxs box) {
 
 
 
-NA_IDEF double naGetRangeCenteredSizeOffset(NARange range, double length) {
+NA_IDEF double naGetRangeCenteredOffset(NARange range, double length) {
   double offset;
   offset = range.origin + 0.5 * (range.length - length);
   return offset;
 }
-NA_IDEF float naGetRangefCenteredSizeOffset(NARangef range, float length) {
+NA_IDEF float naGetRangefCenteredOffset(NARangef range, float length) {
   float offset;
   offset = range.origin + 0.5f * (range.length - length);
   return offset;

@@ -27,6 +27,7 @@ set(coreCoordFiles
   ${NAMathDir}/Core/NACoord/NACoordAlignII.h
   ${NAMathDir}/Core/NACoord/NACoordCalculationII.h
   ${NAMathDir}/Core/NACoord/NACoordClampingII.h
+  ${NAMathDir}/Core/NACoord/NACoordComparisonII.h
   ${NAMathDir}/Core/NACoord/NACoordEndMaxII.h
   ${NAMathDir}/Core/NACoord/NACoordIndexII.h
   ${NAMathDir}/Core/NACoord/NACoordMacOSII.h

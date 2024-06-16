@@ -778,45 +778,63 @@ NA_IAPI NAVertexs   naClampPointToBoxs    (NAVertexs   point, NABoxs     clampBo
 
 
 // Use the following functions to make equality tests (==) between elements.
-NA_IAPI NABool    naEqualRangei32(NARangei32 range1, NARangei32 range2);
-NA_IAPI NABool    naEqualRangei64(NARangei64 range1, NARangei64 range2);
+NA_IAPI NABool naEqualRange    (NARange     range1,  NARange     range2);
+NA_IAPI NABool naEqualRangef   (NARangef    range1,  NARangef    range2);
+NA_IAPI NABool naEqualRangei32 (NARangei32  range1,  NARangei32  range2);
+NA_IAPI NABool naEqualRangei64 (NARangei64  range1,  NARangei64  range2);
+NA_IAPI NABool naEqualRanges   (NARanges    range1,  NARanges    range2);
 
-NA_IAPI NABool    naEqualPos  (NAPos   pos1,  NAPos   pos2);
-NA_IAPI NABool    naEqualPosi32 (NAPosi32  pos1,  NAPosi32  pos2);
-NA_IAPI NABool    naEqualPosi64 (NAPosi64  pos1,  NAPosi64  pos2);
+NA_IAPI NABool naEqualPos      (NAPos       pos1,    NAPos       pos2);
+NA_IAPI NABool naEqualPosf     (NAPosf      pos1,    NAPosf      pos2);
+NA_IAPI NABool naEqualPosi32   (NAPosi32    pos1,    NAPosi32    pos2);
+NA_IAPI NABool naEqualPosi64   (NAPosi64    pos1,    NAPosi64    pos2);
+NA_IAPI NABool naEqualPoss     (NAPoss      pos1,    NAPoss      pos2);
 
-NA_IAPI NABool    naEqualSize (NASize  size1, NASize  size2);
-NA_IAPI NABool    naEqualSizei32(NASizei32 size1, NASizei32 size2);
-NA_IAPI NABool    naEqualSizei64(NASizei64 size1, NASizei64 size2);
-NA_IAPI NABool    naEqualSizes(NASizes size1, NASizes size2);
+NA_IAPI NABool naEqualSize     (NASize      size1,   NASize      size2);
+NA_IAPI NABool naEqualSizef    (NASizef     size1,   NASizef     size2);
+NA_IAPI NABool naEqualSizei32  (NASizei32   size1,   NASizei32   size2);
+NA_IAPI NABool naEqualSizei64  (NASizei64   size1,   NASizei64   size2);
+NA_IAPI NABool naEqualSizes    (NASizes     size1,   NASizes     size2);
 
-NA_IAPI NABool    naEqualRect (NARect  rect1, NARect  rect2);
-NA_IAPI NABool    naEqualRecti32(NARecti32 rect1, NARecti32 rect2);
-NA_IAPI NABool    naEqualRecti64(NARecti64 rect1, NARecti64 rect2);
+NA_IAPI NABool naEqualRect     (NARect      rect1,   NARect      rect2);
+NA_IAPI NABool naEqualRectf    (NARectf     rect1,   NARectf     rect2);
+NA_IAPI NABool naEqualRecti32  (NARecti32   rect1,   NARecti32   rect2);
+NA_IAPI NABool naEqualRecti64  (NARecti64   rect1,   NARecti64   rect2);
+NA_IAPI NABool naEqualRects    (NARects     rect1,   NARects     rect2);
 
-NA_IAPI NABool    naEqualVertex (NAVertex  vertex1, NAVertex  vertex2);
-NA_IAPI NABool    naEqualVertexi32(NAVertexi32 vertex1, NAVertexi32 vertex2);
-NA_IAPI NABool    naEqualVertexi64(NAVertexi64 vertex1, NAVertexi64 vertex2);
+NA_IAPI NABool naEqualVertex   (NAVertex    vertex1, NAVertex    vertex2);
+NA_IAPI NABool naEqualVertexf  (NAVertexf   vertex1, NAVertexf   vertex2);
+NA_IAPI NABool naEqualVertexi32(NAVertexi32 vertex1, NAVertexi32 vertex2);
+NA_IAPI NABool naEqualVertexi64(NAVertexi64 vertex1, NAVertexi64 vertex2);
+NA_IAPI NABool naEqualVertexs  (NAVertexs   vertex1, NAVertexs   vertex2);
 
-NA_IAPI NABool    naEqualVolume (NAVolume  volume1, NAVolume  volume2);
-NA_IAPI NABool    naEqualVolumei32(NAVolumei32 volume1, NAVolumei32 volume2);
-NA_IAPI NABool    naEqualVolumei64(NAVolumei64 volume1, NAVolumei64 volume2);
+NA_IAPI NABool naEqualVolume   (NAVolume    volume1, NAVolume    volume2);
+NA_IAPI NABool naEqualVolumef  (NAVolumef   volume1, NAVolumef   volume2);
+NA_IAPI NABool naEqualVolumei32(NAVolumei32 volume1, NAVolumei32 volume2);
+NA_IAPI NABool naEqualVolumei64(NAVolumei64 volume1, NAVolumei64 volume2);
+NA_IAPI NABool naEqualVolumes  (NAVolumes   volume1, NAVolumes   volume2);
 
-NA_IAPI NABool    naEqualBox    (NABox     box1,    NABox     box2);
-NA_IAPI NABool    naEqualBoxi32   (NABoxi32    box1,    NABoxi32    box2);
-NA_IAPI NABool    naEqualBoxi64   (NABoxi64    box1,    NABoxi64    box2);
+NA_IAPI NABool naEqualBox      (NABox       box1,    NABox       box2);
+NA_IAPI NABool naEqualBoxf     (NABoxf      box1,    NABoxf      box2);
+NA_IAPI NABool naEqualBoxi32   (NABoxi32    box1,    NABoxi32    box2);
+NA_IAPI NABool naEqualBoxi64   (NABoxi64    box1,    NABoxi64    box2);
+NA_IAPI NABool naEqualBoxs     (NABoxs      box1,    NABoxs      box2);
+
+
 
 // Use the following functions to make comparison tests between elements.
-// They only return true if the condition is true for all components: xyz.
-NA_IAPI NABool    naLessPos       (NAPos   pos1,  NAPos   pos2);
-NA_IAPI NABool    naLessEqualPos  (NAPos   pos1,  NAPos   pos2);
-NA_IAPI NABool    naGreaterEqualPos(NAPos   pos1,  NAPos   pos2);
-NA_IAPI NABool    naGreaterPos     (NAPos   pos1,  NAPos   pos2);
+// They only return true if the condition is true for all components.
+NA_IAPI NABool naLessPos           (NAPos    pos1,    NAPos    pos2);
+NA_IAPI NABool naLessEqualPos      (NAPos    pos1,    NAPos    pos2);
+NA_IAPI NABool naGreaterEqualPos   (NAPos    pos1,    NAPos    pos2);
+NA_IAPI NABool naGreaterPos        (NAPos    pos1,    NAPos    pos2);
 
-NA_IAPI NABool    naLessVertex        (NAVertex  vertex1, NAVertex  vertex2);
-NA_IAPI NABool    naLessEqualVertex   (NAVertex  vertex1, NAVertex  vertex2);
-NA_IAPI NABool    naGreaterEqualVertex (NAVertex  vertex1, NAVertex  vertex2);
-NA_IAPI NABool    naGreaterVertex      (NAVertex  vertex1, NAVertex  vertex2);
+NA_IAPI NABool naLessVertex        (NAVertex vertex1, NAVertex vertex2);
+NA_IAPI NABool naLessEqualVertex   (NAVertex vertex1, NAVertex vertex2);
+NA_IAPI NABool naGreaterEqualVertex(NAVertex vertex1, NAVertex vertex2);
+NA_IAPI NABool naGreaterVertex     (NAVertex vertex1, NAVertex vertex2);
+
+
 
 // Adding and subtracting delta values: A delta is a size or volume.
 // Adding a size to a position returns a position. Subtracting two positions
