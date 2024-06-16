@@ -99,11 +99,6 @@ NA_API void naBlendColors(
 
 NA_API float naGetColorAlpha(const NAColor* color);
 
-// Checks whether the given color is useful, meaning:
-// - All main channels a, b and y are 0.
-// - All main channels a, b and y are either positive or negative, not mixed.
-NA_API NABool naIsColorUseful(const NAColor* color);
-
 // Inverts the color
 NA_API void naInvertColor(NAColor* color);
 

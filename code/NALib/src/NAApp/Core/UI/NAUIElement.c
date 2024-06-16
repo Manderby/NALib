@@ -72,9 +72,9 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
 
   // If the command has not been finished, search for other reactions in the parent elements.
   if(!finished && command != NA_UI_COMMAND_MOUSE_ENTERED && command != NA_UI_COMMAND_MOUSE_EXITED) {
-    const NA_UIElement* parentelement = (const NA_UIElement*)naGetUIElementParentConst(element);
-    if(parentelement) {
-      finished = na_DispatchUIElementCommand(parentelement, command);
+    const NA_UIElement* parentElement = (const NA_UIElement*)naGetUIElementParentConst(element);
+    if(parentElement) {
+      finished = na_DispatchUIElementCommand(parentElement, command);
     }
   }
 

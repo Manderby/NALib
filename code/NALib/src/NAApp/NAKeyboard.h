@@ -64,11 +64,21 @@ typedef size_t NAUIKeyCode;
   #define NA_KEYCODE_LEFT_COMMAND   0x5b // The windows key
   #define NA_KEYCODE_RIGHT_COMMAND  0x5c
   #define NA_KEYCODE_FN             0xff // Can not catch.
-  #define NA_KEYCODE_ESC            0x01
+  #define NA_KEYCODE_ESCAPE         0x01
   #define NA_KEYCODE_F11            0x57
   #define NA_KEYCODE_MINUS          0x0c
   #define NA_KEYCODE_EQUAL          0x0d
   #define NA_KEYCODE_PERIOD         0x34
+  #define NA_KEYCODE_NUMPAD_0       0xff // todo
+  #define NA_KEYCODE_NUMPAD_1       0xff // todo
+  #define NA_KEYCODE_NUMPAD_2       0xff // todo
+  #define NA_KEYCODE_NUMPAD_3       0xff // todo
+  #define NA_KEYCODE_NUMPAD_4       0xff // todo
+  #define NA_KEYCODE_NUMPAD_5       0xff // todo
+  #define NA_KEYCODE_NUMPAD_6       0xff // todo
+  #define NA_KEYCODE_NUMPAD_7       0xff // todo
+  #define NA_KEYCODE_NUMPAD_8       0xff // todo
+  #define NA_KEYCODE_NUMPAD_9       0xff // todo
   #define NA_KEYCODE_NUMPAD_MINUS   0x4a
   #define NA_KEYCODE_NUMPAD_PLUS    0x4e
   #define NA_KEYCODE_NUMPAD_ENTER   0x1c  // can not distinguish from ENTER
@@ -76,6 +86,8 @@ typedef size_t NAUIKeyCode;
   #define NA_KEYCODE_ARROW_RIGHT    0x4d
   #define NA_KEYCODE_ARROW_DOWN     0x50
   #define NA_KEYCODE_ARROW_UP       0x48
+  #define NA_KEYCODE_BACKSPACE      0xff // todo
+  #define NA_KEYCODE_DELETE         0xff // todo
 #elif NA_OS == NA_OS_MAC_OS_X
   #define NA_KEYCODE_0              0x1d
   #define NA_KEYCODE_1              0x12
@@ -124,11 +136,21 @@ typedef size_t NAUIKeyCode;
   #define NA_KEYCODE_LEFT_COMMAND   0x37
   #define NA_KEYCODE_RIGHT_COMMAND  0x36
   #define NA_KEYCODE_FN             0x3f
-  #define NA_KEYCODE_ESC            0x35
+  #define NA_KEYCODE_ESCAPE         0x35
   #define NA_KEYCODE_F11            0x67
   #define NA_KEYCODE_MINUS          0x1b
   #define NA_KEYCODE_EQUAL          0x18
   #define NA_KEYCODE_PERIOD         0x2f
+  #define NA_KEYCODE_NUMPAD_0       0x52
+  #define NA_KEYCODE_NUMPAD_1       0x53
+  #define NA_KEYCODE_NUMPAD_2       0x54
+  #define NA_KEYCODE_NUMPAD_3       0x55
+  #define NA_KEYCODE_NUMPAD_4       0x56
+  #define NA_KEYCODE_NUMPAD_5       0x57
+  #define NA_KEYCODE_NUMPAD_6       0x58
+  #define NA_KEYCODE_NUMPAD_7       0x59
+  #define NA_KEYCODE_NUMPAD_8       0x5b
+  #define NA_KEYCODE_NUMPAD_9       0x5c
   #define NA_KEYCODE_NUMPAD_MINUS   0x4e
   #define NA_KEYCODE_NUMPAD_PLUS    0x45
   #define NA_KEYCODE_NUMPAD_ENTER   0x4c
@@ -136,6 +158,8 @@ typedef size_t NAUIKeyCode;
   #define NA_KEYCODE_ARROW_RIGHT    0x7c
   #define NA_KEYCODE_ARROW_DOWN     0x7d
   #define NA_KEYCODE_ARROW_UP       0x7e
+  #define NA_KEYCODE_BACKSPACE      0x33
+  #define NA_KEYCODE_DELETE         0x75
 #endif
 
 // The modifier keys are stored as a bitmask with the following predefined

@@ -5,14 +5,6 @@
 
 
 
-NA_HIDEF NABool na_IsColorClearlyRadiometric(const NAColor* color) {
-  NABool allNegative = (color->a <= 0.f && color->b <= 0.f && color->y <= 0.f);
-  NABool allZero = (color->a == 0.f && color->b == 0.f && color->y == 0.f);
-  return allNegative && !allZero;
-}
-
-
-
 NA_DEF void naFillColorWithCopy(NAColor* dstColor, const NAColor* srcColor) {
   *dstColor = *srcColor;
 }
@@ -122,12 +114,6 @@ NA_HIDEF void na_LimitColorComponentu8(uint8* outvalue, const float inValue) {
 }
 
 NA_DEF void naFillSRGBu8WithColor(uint8* outColor, const NAColor* inColor, NAColorBufferType bufferType) {
-//  #if NA_DEBUG
-//    if(!naIsColorUseful(inColor))
-//      naError("Using an NAColor which is not useful");
-//    if(na_IsColorClearlyRadiometric(inColor))
-//      naError("Using a radiometric NAColor");
-//  #endif
 
   switch(bufferType) {
   case NA_COLOR_BUFFER_RGBA:
@@ -171,19 +157,7 @@ NA_DEF float naGetColorAlpha(const NAColor* color) {
   return color->alpha;
 }
 
-NA_DEF NABool naIsColorUseful(const NAColor* color) {
-  NABool allPositive = (color->a >= 0.f && color->b >= 0.f && color->y >= 0.f);
-  NABool allNegative = (color->a <= 0.f && color->b <= 0.f && color->y <= 0.f);
-  return allPositive || allNegative;
-}
-
 NA_DEF void naInvertColor(NAColor* color) {
-  #if NA_DEBUG
-    if(!naIsColorUseful(color))
-      naError("Inverting an NAColor which is not useful");
-    if(na_IsColorClearlyRadiometric(color))
-      naError("Inverting a radiometric NAColor");
-  #endif
   color->a = 1.f - color->a;
   color->b = 1.f - color->b;
   color->y = 1.f - color->y;

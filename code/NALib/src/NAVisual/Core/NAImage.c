@@ -63,8 +63,6 @@ NA_DEF NAImage* naCreateImage(NASizes size, const NAColor* color) {
     naError("size must be > 0");
   if(size.width > NA_MAX_i32 || size.height > NA_MAX_i32)
     naError("size is too big");
-  if(color && !naIsColorUseful(color))
-    naError("color is not useful");
 #endif
   image = naAlloc(NAImage);
   naInitRefCount(&image->refCount);
@@ -241,8 +239,6 @@ NA_DEF NAImage* naCreateImageWithTint(
     naCrash("Given base image is a Null-Pointer");
   if(!tint)
     naCrash("tint is Null");
-  if(!naIsColorUseful(tint))
-    naError("tint color is not useful");
 #endif
   
   return na_CreateBlendedImage(
@@ -289,8 +285,6 @@ NA_DEF NAImage* naCreateImageWithApply(const NAColor* ground, const NAImage* top
     naCrash("ground is Null");
   if(!top)
     naCrash("top is Null");
-  if(!naIsColorUseful(ground))
-    naError("ground color is not useful");
 #endif
   
   const NAColor* topPtr = top->data;

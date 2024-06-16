@@ -30,7 +30,7 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
   application->mouseStatus.prevPos = naMakePos(0, 0);
   application->mouseStatus.leftPressed = NA_FALSE;
   
-  application->curKeyStroke.keyCode = NA_KEYCODE_ESC;
+  application->curKeyStroke.keyCode = NA_KEYCODE_ESCAPE;
   application->curKeyStroke.modifiers = 0;
   
   application->flags = 0;

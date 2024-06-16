@@ -118,7 +118,7 @@ NA_IDEF NARangei64 naClampRangei64(NARangei64 range, NARangei64 clampRange) {
 }
 
 NA_IDEF NARanges naClampRanges(NARanges range, NARanges clampRange) {
-  int64 value;
+  size_t value;
   NARanges newRange;
   #if NA_DEBUG
     if(naIsRangesEmpty(range))

@@ -42,11 +42,6 @@
   }
 }
 
-//- (void) onPressed:(id)sender{
-//  NA_UNUSED(sender);
-//  na_DispatchUIElementCommand((NA_UIElement*)cocoaSelect, NA_UI_COMMAND_PRESSED);
-//}
-
 - (void) setVisible:(NABool)visible{
   [self setHidden:visible ? NO : YES];
 }

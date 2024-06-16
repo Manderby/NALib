@@ -95,7 +95,13 @@
 
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED);
+  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED);
+  #if NA_DEBUG
+    if(!handeled)
+      naError("Event not handeled.");
+  #else
+    NA_UNUSED(handeled);
+  #endif
   [self updateButtonBackground];
   [self updateButtonText];
   [self updateImages];
@@ -156,7 +162,8 @@
       NA_UIIMAGE_INTERACTION_HOVER,
       secondaryState)];
   }
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_ENTERED);
+  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_ENTERED);
+  if(!handeled) { [super mouseEntered:event]; }
 }
 
 - (void) mouseExited:(NSEvent*)event{
@@ -171,7 +178,8 @@
       NA_UIIMAGE_INTERACTION_NONE,
       secondaryState)];
   }
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_EXITED);
+  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_EXITED);
+  if(!handeled) { [super mouseExited:event]; }
 }
 
 - (void) setButtonState:(NABool)state{
@@ -554,7 +562,7 @@ NA_DEF void naSetButtonAbort(
   
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
-    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC),
+    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESCAPE),
     callback,
     controller);
   naAddUIKeyboardShortcut(
@@ -574,7 +582,15 @@ NA_API void naSetButtonVisible(NAButton* button, NABool visible) {
 
 NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
   naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
-  return naMakeRectWithNSRect([nativePtr frame]);
+  NARect rect = naMakeRectWithNSRect([nativePtr frame]);
+  if(isAtLeastMacOSVersion(11, 0)) {
+  // On newer systems bordered buttons are 5 units shorter than expected on
+  // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
+  // move the button 5 units to the left.
+    rect.pos.x += 5;
+    rect.size.width -= 10;
+  }
+  return rect;
 }
 
 NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect) {

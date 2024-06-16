@@ -54,67 +54,75 @@
   
   - (void) displayLayer:(CALayer *)layer {
     NA_UNUSED(layer);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_REDRAW);
+    NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_REDRAW);
+    NA_UNUSED(handeled);
+    // If it is not handeled, just do nothing. Note that calling displayLayer
+    // of the CALayerDelegate would just recursively call this method again
+    // leading to an infinite recursion.
   }
   
-- (void)adjustLayerFrame{
-  double uiScale = naGetWindowBackingScaleFactor([self window]);
-  NSRect frame = [self frame];
-  frame.size.width *= uiScale;
-  frame.size.height *= uiScale;
-  #if NA_DEBUG
-    if(frame.size.width == 0 || frame.size.height == 0)
-      naError("Frame size is zero");
-  #endif
-  NA_MACOS_AVAILABILITY_GUARD_10_11(
-    [(CAMetalLayer*)[self layer] setDrawableSize:frame.size];
-    [(CAMetalLayer*)[self layer] setContentsScale:uiScale];
-  )
-}
+  - (void)adjustLayerFrame{
+    double uiScale = naGetWindowBackingScaleFactor([self window]);
+    NSRect frame = [self frame];
+    frame.size.width *= uiScale;
+    frame.size.height *= uiScale;
+    #if NA_DEBUG
+      if(frame.size.width == 0 || frame.size.height == 0)
+        naError("Frame size is zero");
+    #endif
+    NA_MACOS_AVAILABILITY_GUARD_10_11(
+      [(CAMetalLayer*)[self layer] setDrawableSize:frame.size];
+      [(CAMetalLayer*)[self layer] setContentsScale:uiScale];
+    )
+  }
 
-- (void)setFrame:(NSRect) frame{
-  [super setFrame:frame];
-  [self adjustLayerFrame];
-}
-
-- (void)viewDidChangeBackingProperties{
-  [super viewDidChangeBackingProperties];
-  if([self layer]) {
+  - (void)setFrame:(NSRect) frame{
+    [super setFrame:frame];
     [self adjustLayerFrame];
   }
-}
 
-//  - (void) resizeSubviewsWithOldSize:(NSSize) oldSize{
-////    [super resizeSubviewsWithOldSize: oldSize];
-//    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_RESHAPE);
-//  }
-  
+  - (void)viewDidChangeBackingProperties{
+    [super viewDidChangeBackingProperties];
+    if([self layer]) {
+      [self adjustLayerFrame];
+    }
+  }
+
   - (void)mouseMoved:(NSEvent*)event{
     na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED);
-    [NSEvent setMouseCoalescingEnabled:NO];
+    NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED);
+    if(!handeled) {
+      [super mouseMoved:event]; 
+    }else{
+      [NSEvent setMouseCoalescingEnabled:NO];
+    }
   }
   
   - (void)keyDown:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_DOWN);
+    NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_DOWN);
+    if(!handeled) { [super keyDown:event]; }
   }
   
   - (void)keyUp:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_UP);
+    NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_UP);
+    if(!handeled) { [super keyUp:event]; }
   }
   
   - (void)flagsChanged:(NSEvent*)event{
-    NABool shift   = ([event modifierFlags] & NAEventModifierFlagShift)    ?NA_TRUE:NA_FALSE;
-    NABool alt     = ([event modifierFlags] & NAEventModifierFlagOption)   ?NA_TRUE:NA_FALSE;
-    NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
-    NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
+    NABool shift   = ([event modifierFlags] & NAEventModifierFlagShift)   ? NA_TRUE : NA_FALSE;
+    NABool alt     = ([event modifierFlags] & NAEventModifierFlagOption)  ? NA_TRUE : NA_FALSE;
+    NABool control = ([event modifierFlags] & NAEventModifierFlagControl) ? NA_TRUE : NA_FALSE;
+    NABool command = ([event modifierFlags] & NAEventModifierFlagCommand) ? NA_TRUE : NA_FALSE;
+    NABool handeled = NA_FALSE;
+    
+    handeled |= na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (shift ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    handeled |= na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (alt ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    handeled |= na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (control ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    handeled |= na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (command ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
 
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (shift ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (alt ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (control ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (command ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    if(!handeled) { [super flagsChanged:event]; }
   }
   
   @end

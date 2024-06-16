@@ -28,6 +28,10 @@
   NA_COCOA_SUPER_DEALLOC();
 }
 
+- (BOOL)acceptsFirstResponder{
+  return YES; // This is required to get keyboard input.
+}
+
 - (void)drawRect:(NSRect)dirtyRect{
   [super drawRect:dirtyRect];
 
@@ -83,17 +87,32 @@
 
 - (void)mouseMoved:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED);
+  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED);
+  if(!handeled) { [super mouseMoved:event]; }
 }
 
 - (void)mouseEntered:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_ENTERED);
+  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_ENTERED);
+  if(!handeled) { [super mouseEntered:event]; }
 }
 
 - (void)mouseExited:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_EXITED);
+  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_EXITED);
+  if(!handeled) { [super mouseExited:event]; }
+}
+
+- (void)keyDown:(NSEvent* _Nonnull)event{
+  na_CaptureKeyboardStatus(event);
+  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_DOWN);
+  if(!handeled) { [super keyDown:event]; }
+}
+
+- (void)keyUp:(NSEvent* _Nonnull)event{
+  na_CaptureKeyboardStatus(event);
+  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_UP);
+  if(!handeled) { [super keyUp:event]; }
 }
 
 - (void)resetDrag{

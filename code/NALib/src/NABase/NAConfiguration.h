@@ -345,12 +345,12 @@
 // http://physics.nist.gov/constants
 //
 // With the following macro, you define, what year of the CODATA you would
-// like to use. Possible values are 2006, 2010, 2014 and 2018.
+// like to use. Possible values are 2006, 2010, 2014, 2018 and 2022.
 //
 // By default, NALib uses the latest setting.
 
 #ifndef NA_NIST_CODATA_YEAR
-  #define NA_NIST_CODATA_YEAR 2018
+  #define NA_NIST_CODATA_YEAR 2022
 #endif
 
 
