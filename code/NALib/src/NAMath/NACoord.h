@@ -841,23 +841,31 @@ NA_IAPI NABool naGreaterVertex     (NAVertex vertex1, NAVertex vertex2);
 // from each other returns a size.
 //
 // The returned NASize can be negative or even invalid.
-NA_IAPI NAPos     naAddPosSize (NAPos   pos,   NASize  size);
-NA_IAPI NAPosi32    naAddPosi32Size(NAPosi32  pos,   NASizei32 size);
-NA_IAPI NAPosi64    naAddPosi64Size(NAPosi64  pos,   NASizei64 size);
+NA_IAPI NAPos       naAddPosSize        (NAPos       pos,      NASize      size);
+NA_IAPI NAPosf      naAddPosSizef       (NAPosf      pos,      NASizef     size);
+NA_IAPI NAPosi32    naAddPosi32Size     (NAPosi32    pos,      NASizei32   size);
+NA_IAPI NAPosi64    naAddPosi64Size     (NAPosi64    pos,      NASizei64   size);
+NA_IAPI NAPoss      naAddPossSize       (NAPoss      pos,      NASizes     size);
 
-NA_IAPI NASize    naSubPosPos  (NAPos   pos1,  NAPos   pos2);
-NA_IAPI NASizei32   naSubPosi32Pos (NAPosi32  pos1,  NAPosi32  pos2);
-NA_IAPI NASizei64   naSubPosi64Pos (NAPosi64  pos1,  NAPosi64  pos2);
+NA_IAPI NASize      naSubPosPos         (NAPos       pos1,     NAPos       pos2);
+NA_IAPI NASizef     naSubPosPosf        (NAPosf      pos1,     NAPosf      pos2);
+NA_IAPI NASizei32   naSubPosi32Pos      (NAPosi32    pos1,     NAPosi32    pos2);
+NA_IAPI NASizei64   naSubPosi64Pos      (NAPosi64    pos1,     NAPosi64    pos2);
+NA_IAPI NASizes     naSubPossPos        (NAPoss      pos1,     NAPoss      pos2);
 
-NA_IAPI double    naDistancePosPos  (NAPos   pos1,  NAPos   pos2);
+NA_IAPI NAVertex    naAddVertexVolume   (NAVertex    vertex,   NAVolume    volume);
+NA_IAPI NAVertexf   naAddVertexfVolume  (NAVertexf   vertex,   NAVolumef   volume);
+NA_IAPI NAVertexi32 naAddVertexi32Volume(NAVertexi32 vertex,   NAVolumei32 volume);
+NA_IAPI NAVertexi64 naAddVertexi64Volume(NAVertexi64 vertex,   NAVolumei64 volume);
+NA_IAPI NAVertexs   naAddVertexsVolume  (NAVertexs   vertex,   NAVolumes   volume);
 
-NA_IAPI NAVertex  naAddVertexVolume (NAVertex   vertex,   NAVolume  volume);
-NA_IAPI NAVertexi32 naAddVertexi32Volume(NAVertexi32  vertex,   NAVolumei32 volume);
-NA_IAPI NAVertexi64 naAddVertexi64Volume(NAVertexi64  vertex,   NAVolumei64 volume);
+NA_IAPI NAVolume    naSubVertexPos      (NAVertex    vertex1,  NAVertex    vertex2);
+NA_IAPI NAVolumef   naSubVertexfPos     (NAVertexf   vertex1,  NAVertexf   vertex2);
+NA_IAPI NAVolumei32 naSubVertexi32Vertex(NAVertexi32 vertex1,  NAVertexi32 vertex2);
+NA_IAPI NAVolumei64 naSubVertexi64Vertex(NAVertexi64 vertex1,  NAVertexi64 vertex2);
+NA_IAPI NAVolumes   naSubVertexsVertex  (NAVertexs   vertex1,  NAVertexs   vertex2);
 
-NA_IAPI NAVolume  naSubVertexPos    (NAVertex   vertex1,  NAVertex  vertex2);
-NA_IAPI NAVolumei32 naSubVertexi32Vertex(NAVertexi32  vertex1,  NAVertexi32 vertex2);
-NA_IAPI NAVolumei64 naSubVertexi64Vertex(NAVertexi64  vertex1,  NAVertexi64 vertex2);
+
 
 // Containing functions. Test if an element is within another.
 // The E variant for the double types denotes an exclusive rangecheck [...)
