@@ -14,7 +14,7 @@ NA_HDEF void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr) {
 
 
 NA_HDEF void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace) {
-  na_ClearUIElement(&(openGLSpace->uiElement));
+  na_ClearUIElement(&openGLSpace->uiElement);
 }
 
 

@@ -9,27 +9,75 @@
 
 #include "../../../NAUtility/NADateTime.h"
 
+static NAList* redrawList;
+static int redrawCount = 0;
+void na_drawAllOpenGLSpaces(void* data)
+{
+  printf("Redraw: %d\n", redrawCount);
+  redrawCount = 0;
+}
+
+//void na_drawOpenGL(void* uiElement) {
+//  NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
+//  wglMakeCurrent(GetDC(naGetUIElementNativePtr(winapiOpenGLSpace)), winapiOpenGLSpace->hRC);
+//  na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
+//  
+//  //RECT updateRegion;
+//  //GetUpdateRect(naGetUIElementNativePtr(uiElement), &updateRegion, NA_FALSE);
+//  //ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
+//
+//  // Drawing complete. Reset the status and return.
+//  naClearThread(winapiOpenGLSpace->openGLSpace.thread);
+//  naLockMutex(winapiOpenGLSpace->openGLSpace.mutex);
+//  winapiOpenGLSpace->openGLSpace.drawEngineStatus = NA_DRAW_ENGINE_IDLE;
+//  naUnlockMutex(winapiOpenGLSpace->openGLSpace.mutex);
+//}
+
+
+
+void na_tryDrawOpenGL(void* uiElement) {
+  NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
+
+  naAddOpenGLSpaceToRedrawList(winapiOpenGLSpace);
+
+  RECT updateRegion;
+  GetUpdateRect(naGetUIElementNativePtr(uiElement), &updateRegion, NA_FALSE);
+  ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
+}
+
 
 
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
 
   switch(message) {
+  case WM_NCHITTEST:
+  case WM_SHOWWINDOW:
+  case WM_WINDOWPOSCHANGING:
+  case WM_CHILDACTIVATE:
+  case WM_WINDOWPOSCHANGED:
+  case WM_MOVE:
+  case WM_SETCURSOR:
+  case WM_MOUSEFIRST:
+  case WM_MOUSELEAVE:
+  case WM_UPDATEUISTATE:
+  case WM_MOUSEACTIVATE:
+  case WM_LBUTTONDOWN:
+  case WM_LBUTTONUP:
+  case WM_NCPAINT:
+  case WM_ERASEBKGND:
+  case WM_NCCALCSIZE:
+  break;
+
   case WM_PAINT:
 
-  	wglMakeCurrent(GetDC(naGetUIElementNativePtr(winapiOpenGLSpace)), winapiOpenGLSpace->hRC);
-    info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
-    RECT updateRegion;
-    GetUpdateRect(naGetUIElementNativePtr(uiElement), &updateRegion, NA_FALSE);
-    ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
-
+    na_tryDrawOpenGL(uiElement);
     info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;
 
   default:
-    //printf("Uncaught OpenGL Space message" NA_NL);
+    printf("Uncaught OpenGL Space message" NA_NL);
     break;
   }
   

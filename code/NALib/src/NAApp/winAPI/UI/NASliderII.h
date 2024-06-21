@@ -39,6 +39,11 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_CAPTURECHANGED:
   case WM_IME_NOTIFY:
   case WM_TIMER:
+  case WM_CANCELMODE:
+  case WM_UPDATEUISTATE:
+  case WM_ENABLE:
+  case WM_MOUSEWHEEL:
+  case WM_KEYFIRST:
 
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   case TBM_SETPOS:  // (WM_USER + 5)

@@ -18,7 +18,8 @@
 #if NA_COMPILE_GUI == 1
 
 #include "../../NAStruct/NAList.h"
-#include "../../NAUtility/NATranslator.h"
+  #include "../../NAUtility/NAThreading.h"
+  #include "../../NAUtility/NATranslator.h"
 
 // Very much the same as the nativePtr, there are certain types which are
 // casted differently on the different systems and therefore they are
@@ -97,6 +98,7 @@ struct NAMenu{
 struct NAMenuItem{
   NA_UIElement uiElement;
 };
+
 
 struct NAMetalSpace{
   NA_UIElement uiElement;

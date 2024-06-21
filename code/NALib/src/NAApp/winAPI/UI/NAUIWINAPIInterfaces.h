@@ -68,6 +68,7 @@ NA_HAPI void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow);
 struct NAWINAPIApplication {
   NAApplication    application;
   NAList           timers;
+  NAList           openGLRedrawList;
   HWND             offscreenWindow;
   NONCLIENTMETRICS nonClientMetrics;
   HICON            appIcon;
@@ -197,6 +198,10 @@ NA_RUNTIME_TYPE(NAWINAPISpace, na_DestructWINAPISpace, NA_FALSE);
 NA_RUNTIME_TYPE(NAWINAPITextBox, na_DestructWINAPITextBox, NA_FALSE);
 NA_RUNTIME_TYPE(NAWINAPITextField, na_DestructWINAPITextField, NA_FALSE);
 NA_RUNTIME_TYPE(NAWINAPIWindow, na_DestructWINAPIWindow, NA_FALSE);
+
+
+
+NA_HAPI void naAddOpenGLSpaceToRedrawList(NAWINAPIOpenGLSpace* openGLSpace);
 
 
 

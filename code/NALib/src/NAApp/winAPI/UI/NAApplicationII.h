@@ -166,7 +166,15 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
       if(!na_InterceptKeyboardShortcut(&message)) {
         // Do the normal message dispatch.
         TranslateMessage(&message);
-        DispatchMessage(&message);
+        //if(message.message == WM_PAINT) {
+        //   naWINAPIWindowCallback(
+        //    message.hwnd,
+        //    message.message,
+        //    message.wParam,
+        //    message.lParam);
+        //}else{
+          DispatchMessage(&message);
+        //}
       }
       //}
     }
@@ -209,6 +217,7 @@ NA_HDEF NAApplication* na_NewApplication(void) {
   na_InitApplication(&(winapiApplication->application), GetModuleHandle(NULL));
 
   naInitList(&(winapiApplication->timers));
+  naInitList(&(winapiApplication->openGLRedrawList));
 
   winapiApplication->offscreenWindow = CreateWindow(
     TEXT("NAOffscreenWindow"), TEXT("Offscreen window"), WS_OVERLAPPEDWINDOW,
@@ -263,6 +272,8 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
   // safely release the timer structs. todo: Make killing the timers a sport.
   naForeachListMutable(&(winapiApplication->timers), (NAMutator)naFree);
   naClearList(&(winapiApplication->timers));
+
+  naClearList(&(winapiApplication->openGLRedrawList));
 }
 
 
@@ -328,6 +339,42 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
   timerStruct->key = (UINT)SetTimer((HWND)NA_NULL, (UINT_PTR)NA_NULL, (UINT)(1000 * timediff), na_TimerCallbackFunction);
   app = (NAWINAPIApplication*)naGetApplication();
   naAddListLastMutable(&(app->timers), timerStruct);
+}
+
+
+
+NA_HDEF na_redrawOpenGLSpaces(void* data) {
+  NA_UNUSED(data);
+
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  NAListIterator it = naMakeListMutator(&app->openGLRedrawList);
+
+  while(naIterateList(&it)) {
+    NAWINAPIOpenGLSpace* openGLSpace = naGetListCurMutable(&it);
+    wglMakeCurrent(GetDC(naGetUIElementNativePtr(openGLSpace)), openGLSpace->hRC);
+    na_DispatchUIElementCommand(&openGLSpace->openGLSpace.uiElement, NA_UI_COMMAND_REDRAW);
+
+    //RECT updateRegion;
+    //GetUpdateRect(naGetUIElementNativePtr(openGLSpace), &updateRegion, NA_FALSE);
+    //ValidateRect(naGetUIElementNativePtr(openGLSpace), &updateRegion);
+  }
+  naClearListIterator(&it);
+  naEmptyList(&app->openGLRedrawList);
+}
+
+
+
+NA_HDEF void naAddOpenGLSpaceToRedrawList(NAWINAPIOpenGLSpace* openGLSpace){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  NAListIterator it = naMakeListAccessor(&app->openGLRedrawList);
+  if(!naLocateListData(&it, openGLSpace)) {
+    if(naIsListEmpty(&app->openGLRedrawList)) {
+      naCallApplicationFunctionInSeconds(na_redrawOpenGLSpaces, NA_NULL, 0.);
+    }
+
+    naAddListLastMutable(&app->openGLRedrawList, openGLSpace);
+  }
+  naClearListIterator(&it);
 }
 
 

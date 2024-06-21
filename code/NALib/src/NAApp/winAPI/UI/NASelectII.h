@@ -39,6 +39,9 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case 0x131: // undocumented
   case WM_COMMAND:
   case CB_GETCURSEL:
+  case WM_CANCELMODE:
+  case WM_UPDATEUISTATE:
+  case WM_ENABLE:
     break;
 
   default:
