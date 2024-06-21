@@ -60,7 +60,7 @@ NA_DEF NAImage* naCreateImageFromNativeImage(const void* nativeImage) {
   // bitmap data (the "pixels") in the buffer lpPixels
   GetDIBits(hdcSource, hSource, 0, MyBMInfo.bmiHeader.biHeight, lpPixels, &MyBMInfo, DIB_RGB_COLORS);
 
-  image = naCreateImage(naMakeSizei(MyBMInfo.bmiHeader.biWidth, MyBMInfo.bmiHeader.biHeight), NA_NULL);
+  image = naCreateImage(naMakeSizes(MyBMInfo.bmiHeader.biWidth, MyBMInfo.bmiHeader.biHeight), NA_NULL);
   // Windows does store an alpha component but it is not in use and therefore zero.
   // We therefore ignore it in the following call and receyve a completely opaque image.
   naFillImageWithu8(image, lpPixels, NA_FALSE, NA_COLOR_BUFFER_BGR0);

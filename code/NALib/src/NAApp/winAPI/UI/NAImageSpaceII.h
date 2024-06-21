@@ -13,9 +13,9 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   HDC hMemDC;
   NAWINAPIImageSpace* imageSpace;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
-  NASizei64 size1x;
-  NASizei64 spacesize;
-  NAPosi offset;
+  NASizes size1x;
+  NASizei64 spaceSize;
+  NAPosi64 offset;
   const NAImage* foreImage;
   NAByte* backBuffer;
   HBITMAP hBackBitmap;
@@ -42,12 +42,12 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   size1x.width = (NAInt)(size1x.width * uiScale);
   size1x.height = (NAInt)(size1x.height * uiScale);
 
-  spacesize = naMakeSizei(
+  spaceSize = naMakeSizei64(
     (NAInt)paintStruct.rcPaint.right - (NAInt)paintStruct.rcPaint.left,
     (NAInt)paintStruct.rcPaint.bottom - (NAInt)paintStruct.rcPaint.top);
-  offset = naMakePosi(
-    (spacesize.width - size1x.width) / 2,
-    (spacesize.height - size1x.height) / 2);
+  offset = naMakePosi64(
+    (spaceSize.width - size1x.width) / 2,
+    (spaceSize.height - size1x.height) / 2);
 
   foreImage = na_GetUIImageImage(imageSpace->imageSpace.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, NA_FALSE);
 
@@ -64,7 +64,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
     foreImage,
     NA_BLEND_OVERLAY,
     1.f,
-    naMakePosi(0, 0));
+    naMakePosi32(0, 0));
   blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
   naConvertImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
   hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);

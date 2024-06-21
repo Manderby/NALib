@@ -161,7 +161,7 @@ const NAUIImage* currentImage(NAWINAPIButton* winapiButton) {
 
 
 NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* drawitemstruct) {
-  NASizei64 buttonSize = naMakeSizei(
+  NASizei64 buttonSize = naMakeSizei64(
     (int64)drawitemstruct->rcItem.right - (int64)drawitemstruct->rcItem.left,
     (int64)drawitemstruct->rcItem.bottom - (int64)drawitemstruct->rcItem.top);
 
@@ -234,11 +234,11 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   const NAUIImage* uiImage = currentImage(winapiButton);
   if(uiImage) {
     double uiScale = naGetUIElementResolutionFactor(NA_NULL);
-    NASizei64 size1x = naGetUIImage1xSize(uiImage);
+    NASizes size1x = naGetUIImage1xSize(uiImage);
     size1x.width = (NAInt)(size1x.width * uiScale);
     size1x.height = (NAInt)(size1x.height * uiScale);
 
-    NAPosi offset = naMakePosi(
+    NAPosi64 offset = naMakePosi64(
       (buttonSize.width - size1x.width) / 2,
       (buttonSize.height - size1x.height) / 2);
 
@@ -274,7 +274,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       foreImage,
       NA_BLEND_OVERLAY,
       1.f,
-      naMakePosi(0, 0));
+      naMakePosi32(0, 0));
     NAByte* blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
     naConvertImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
     HBITMAP hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);
