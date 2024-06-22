@@ -45,7 +45,7 @@ struct NAReaction{
 // following prototype. See further below for a discussion of the parameter
 // and the return type.
 
-typedef NABool (*NAReactionCallback)(NAReaction reaction);
+typedef void(*NAReactionCallback)(NAReaction reaction);
 
 // By calling naAddUIReaction or naAddUIKeyboardShortcut, the programmer can
 // register, which reaction callback should be called when a certain uiElement

@@ -233,21 +233,27 @@ NA_HAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
 // NALib struct. This function solves that. Slow, but does the job.
 NA_HAPI void* na_GetUINALibEquivalent(void* nativePtr);
 
+// Returns true if the given element has any reaction attached which responds
+// to the given command.
+NA_HAPI NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAUICommand command);
+
 // Dispatches a command with the given uiElement.
-// As long as the command has not been finished using NA_TRUE as a return value
-// in the NAReactionCallback function callback, it will be bubbling upwards in
-// the following order:
+// 
+// All reactions registered to the element will be called in the same order
+// they were added.
+// 
+// If there is at least one reaction, the command will NOT be bubbling upwards
+// afterward. If bubbling is desired, one has to do it manually by calling
+// the dispatch method with the parent element.
+//
+// If there are NO reactions registered for the given uiElement, the command
+// WILL be bubbling upwards the element tree in the following order:
 // - First responder
 // - containing space
 // - window
 // - application
-// - discard command as unhandled.
-// The function will return NA_TRUE if the event shall not be processed any
-// further. If this function returns NA_FALSE, the event shall still be
-// processed by the calling function. This is especially important on Windows
-// where non-handling of certain events might interrupt the whole messaging
-// chain.
-NA_HAPI NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command);
+// - WinAPI default function
+NA_HAPI void na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command);
 
 // To be implemented in the system dependent files:
 NA_HAPI void na_RefreshUIElementNow(void* uiElement);

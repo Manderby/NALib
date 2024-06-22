@@ -45,8 +45,8 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM
   case WM_CHAR:
   case WM_KEYDOWN: // capture enter and tab here.
   case WM_SYSKEYDOWN: // the alt key!
-  case WM_MOUSEMOVE: // captured in naUIElementWINAPIProc
-  case WM_MOUSELEAVE: // captured in naUIElementWINAPIProc
+  case WM_MOUSEMOVE: // captured in naUIElementWINAPIPreProc
+  case WM_MOUSELEAVE: // captured in naUIElementWINAPIPreProc
   // note that any change of the edit control is captured in naWINAPINotificationProc.
   break;
 
@@ -80,33 +80,28 @@ NABool naTextFieldWINAPINotify(void* uiElement, WORD notificationCode) {
 
 
 
-NABool naHandleTextFieldEnter(NAReaction reaction) {
+void naHandleTextFieldEnter(NAReaction reaction) {
   na_DispatchUIElementCommand(reaction.uiElement, NA_UI_COMMAND_EDIT_FINISHED);
-  return NA_TRUE;
 }
 
 
 
-NABool naHandleTextFieldTabOrder(NAReaction reaction) {
+void naHandleTextFieldTabOrder(NAReaction reaction) {
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)reaction.uiElement;
   if(winapiTextField->nextTabStop) {
     naHandleTextFieldEnter(reaction);
     SetFocus(naGetUIElementNativePtr(winapiTextField->nextTabStop));
-    return NA_TRUE;
   }
-  return NA_FALSE;
 }
 
 
 
-NABool naHandleTextFieldReverseTabOrder(NAReaction reaction) {
+void naHandleTextFieldReverseTabOrder(NAReaction reaction) {
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)reaction.uiElement;
   if(winapiTextField->prevTabStop) {
     naHandleTextFieldEnter(reaction);
     SetFocus(naGetUIElementNativePtr(winapiTextField->prevTabStop));
-    return NA_TRUE;
   }
-  return NA_FALSE;
 }
 
 

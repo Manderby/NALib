@@ -52,33 +52,45 @@ NA_HDEF void* na_GetUINALibEquivalent(NANativePtr nativePtr) {
 
 
 
-NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command) {
-  NABool finished = NA_FALSE;
+NA_HDEF NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAUICommand command) {
   NAListIterator iter;
+  naBeginListAccessorIteration(const NAEventReaction* eventReaction, &(element->reactions), iter);
+  if(eventReaction->command == command) {
+    return NA_TRUE;
+  }
+  naEndListIteration(iter);
+  return NA_FALSE;
+}
+
+
+
+NA_HDEF void na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command) {
+  NAListIterator iter;
+  NABool hasReaction = NA_FALSE;
 
   NAReaction reaction = {
     element,
     command,
     NA_NULL};
+
   naBeginListMutatorIteration(NAEventReaction* eventReaction, &(element->reactions), iter);
     if(eventReaction->command == command) {
       reaction.controller = eventReaction->controller;
-      finished = eventReaction->callback(reaction);
-      // If the callback tells us to stop handling the command, we do so.
-      if(finished)
-        break;
+      eventReaction->callback(reaction);
+      hasReaction = NA_TRUE;
     }
   naEndListIteration(iter);
 
-  // If the command has not been finished, search for other reactions in the parent elements.
-  if(!finished && command != NA_UI_COMMAND_MOUSE_ENTERED && command != NA_UI_COMMAND_MOUSE_EXITED) {
-    const NA_UIElement* parentElement = (const NA_UIElement*)naGetUIElementParentConst(element);
-    if(parentElement) {
-      finished = na_DispatchUIElementCommand(parentElement, command);
+  if(!hasReaction) {
+    // If the command has no reaction, search for other reactions in the
+    // parent elements.
+    if(command != NA_UI_COMMAND_MOUSE_ENTERED && command != NA_UI_COMMAND_MOUSE_EXITED) {
+      const NA_UIElement* parentElement = (const NA_UIElement*)naGetUIElementParentConst(element);
+      if(parentElement) {
+        na_DispatchUIElementCommand(parentElement, command);
+      }
     }
   }
-
-  return finished;
 }
 
 

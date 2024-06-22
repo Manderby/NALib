@@ -31,8 +31,8 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_SETFONT:
   case WM_GETTEXTLENGTH:
   case WM_GETTEXT:
-  case WM_MOUSEMOVE: // captured in naUIElementWINAPIProc
-  case WM_MOUSELEAVE: // captured in naUIElementWINAPIProc
+  case WM_MOUSEMOVE: // captured in naUIElementWINAPIPreProc
+  case WM_MOUSELEAVE: // captured in naUIElementWINAPIPreProc
   case WM_PARENTNOTIFY:
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:

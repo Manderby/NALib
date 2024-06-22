@@ -25,8 +25,8 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_GETTEXT:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
-  case WM_MOUSEMOVE: // captured in naUIElementWINAPIProc
-  case WM_MOUSELEAVE: // captured in naUIElementWINAPIProc
+  case WM_MOUSEMOVE: // captured in naUIElementWINAPIPreProc
+  case WM_MOUSELEAVE: // captured in naUIElementWINAPIPreProc
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
   case WM_IME_SETCONTEXT:

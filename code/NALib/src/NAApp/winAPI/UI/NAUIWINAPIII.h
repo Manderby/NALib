@@ -191,14 +191,14 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message) {
   rShift = (GetKeyState(VK_RSHIFT) & 0x8000) >> 15;
   // Note: Due to the right shift key not properly being detected by the extended key flag
   // of lParam, we have to rely on GetKeyState. Pity.
-  hasShift = lShift | rShift;
+  hasShift = lShift || rShift;
   lControl = (GetKeyState(VK_LCONTROL) & 0x8000) >> 15;
   rControl = (GetKeyState(VK_RCONTROL) & 0x8000) >> 15;
-  hasControl = lControl | rControl;
+  hasControl = lControl || rControl;
   lOption = (GetKeyState(VK_LMENU) & 0x8000) >> 15;
   rOption = (GetKeyState(VK_RMENU) & 0x8000) >> 15;
   // Note: AltGr actually sends first an rControl and then an rOption. Don't know why.
-  hasOption = lOption | rOption;
+  hasOption = lOption || rOption;
   hasCommand = scanCode == NA_KEYCODE_LEFT_COMMAND || scanCode == NA_KEYCODE_RIGHT_COMMAND;
 
   // Note, this implementation is far from finished. It does strange things, but that
@@ -257,7 +257,8 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
               elem,
               NA_UI_COMMAND_KEYBOARD_SHORTCUT,
               keyReaction->controller};
-            retValue = keyReaction->callback(reaction);
+            keyReaction->callback(reaction);
+            retValue = NA_TRUE;
           }
         }
       }
@@ -293,7 +294,7 @@ WNDPROC na_GetApplicationOldTextFieldWindowProc();
 NAWINAPICallbackInfo naWINAPIDrawItemProc    (WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWINAPIScrollItemProc  (WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naUIElementWINAPIProc  (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naUIElementWINAPIPreProc  (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* drawitemstruct);
 NAWINAPICallbackInfo naSliderWINAPIScroll   (void* uiElement, WPARAM wParam);
 
@@ -321,7 +322,7 @@ NABool naTextFieldWINAPINotify   (void* uiElement, WORD notificationCode);
 
 
 
-NAWINAPICallbackInfo na_GlobalWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+NAWINAPICallbackInfo naUIElementWINAPIPostProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message) {
@@ -360,8 +361,9 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 
   // Capture messages handeled by the actual UIElements or its parents.
   while(uiElement && !info.hasBeenHandeled) {
+
     // First, capture mouse and keyboard events if necessary.
-    info = naUIElementWINAPIProc(uiElement, message, wParam, lParam);
+    info = naUIElementWINAPIPreProc(uiElement, message, wParam, lParam);
     
     if(info.hasBeenHandeled)
       break;
@@ -414,7 +416,7 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     if(!info.hasBeenHandeled) {
       // If the element does not handle the event, try handling it with the
       // global handling function.
-      info = na_GlobalWINAPIProc(uiElement, message, wParam, lParam);
+      info = naUIElementWINAPIPostProc(uiElement, message, wParam, lParam);
       if(!info.hasBeenHandeled) {
         // If the default procedure does not handle the event, try its parent.
         uiElement = naGetUIElementParent(uiElement);
@@ -442,6 +444,7 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 }
 
 
+// Returns true if the element under the mouse must handle hovering events.
 NABool naWINAPICaptureMouseHover() {
   DWORD msgpos = GetMessagePos();
   POINT pt = {GET_X_LPARAM(msgpos), GET_Y_LPARAM(msgpos)};
@@ -495,10 +498,9 @@ NABool naWINAPICaptureMouseHover() {
 }
 
 
-NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NA_UIElement* elem = (NA_UIElement*)uiElement;
-  NABool handeled;
   NAPos pos;
   NASize size = {0};
   NARect rect = {0};
@@ -522,29 +524,27 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
       pos = naGetMousePos(mouseStatus);
       na_SetMouseMovedByDiff(size.width - pos.x, size.height - pos.y);
 
-      handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED);
-      if(handeled) {
-        info.hasBeenHandeled = NA_TRUE;
-        info.result = 0;
-      }
+      na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED);
+      info.hasBeenHandeled = NA_TRUE;
+      info.result = 0;
     }
     break;
 
   case WM_MOUSELEAVE:
-    if(naWINAPICaptureMouseHover()) {}
+    naWINAPICaptureMouseHover();
     break;
 
   case WM_KEYDOWN:
-    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_DOWN);
-    if(handeled) {
+    if(na_UIHasElementCommandDispatches(elem, NA_UI_COMMAND_KEY_DOWN)) {
+      na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_DOWN);
       info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
     }
     break;
 
   case WM_KEYUP:
-    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_UP);
-    if(handeled) {
+    if(na_UIHasElementCommandDispatches(elem, NA_UI_COMMAND_KEY_UP)) {
+      na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_UP);
       info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
     }

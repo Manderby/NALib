@@ -38,8 +38,8 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
       uiScale = naGetUIElementResolutionFactor(NA_NULL);
       windowMutable->rect.pos.x = (double)LOWORD(lParam) / uiScale;
       windowMutable->rect.pos.y = screenRect.size.height - (double)HIWORD(lParam) / uiScale - windowMutable->rect.size.height;
-      info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-      if(info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
+      na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
+      na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
       na_RememberWindowPosition(&windowMutable->window);
       info.result = 0;
       //printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);
@@ -60,8 +60,8 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     windowMutable->rect.size.width = (double)LOWORD(lParam) / uiScale;
     windowMutable->rect.size.height = (double)HIWORD(lParam) / uiScale;
     windowMutable->rect.pos.y -= (windowMutable->rect.size.height - oldHeight);
-    info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-    if(info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
+    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
+    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
     break;
@@ -105,8 +105,8 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
       windowMutable->rect.pos.x = (double)windowPos.x / uiScale;
       windowMutable->rect.pos.y = screenRect.size.height - (double)windowPos.y / uiScale - windowMutable->rect.size.height;
     }
-    info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-    if(info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
+    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
+    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
 
@@ -134,8 +134,8 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_SETCURSOR:
   case WM_NCMOUSEMOVE:
   case WM_NCMOUSELEAVE:
-  case WM_MOUSEMOVE: // captured in naUIElementWINAPIProc
-  case WM_MOUSELEAVE: // captured in naUIElementWINAPIProc
+  case WM_MOUSEMOVE: // captured in naUIElementWINAPIPreProc
+  case WM_MOUSELEAVE: // captured in naUIElementWINAPIPreProc
   case WM_PARENTNOTIFY:
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
@@ -197,13 +197,11 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
 
 
-NABool naHandleWindowTabOrder(NAReaction reaction) {
+void naHandleWindowTabOrder(NAReaction reaction) {
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)reaction.uiElement;
   if(winapiWindow->firstResponder) {
     SetFocus(naGetUIElementNativePtr(winapiWindow->firstResponder));
-    return NA_TRUE;
   }
-  return NA_FALSE;
 }
 
 

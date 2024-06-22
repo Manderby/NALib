@@ -26,24 +26,20 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM w
 
 
 
-NABool naHandleTextBoxTabOrder(NAReaction reaction) {
+void naHandleTextBoxTabOrder(NAReaction reaction) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uiElement;
   if(winapiTextBox->nextTabStop) {
     SetFocus(naGetUIElementNativePtr(winapiTextBox->nextTabStop));
-    return NA_TRUE;
   }
-  return NA_FALSE;
 }
 
 
 
-NABool naHandleTextBoxReverseTabOrder(NAReaction reaction) {
+void naHandleTextBoxReverseTabOrder(NAReaction reaction) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uiElement;
   if(winapiTextBox->prevTabStop) {
     SetFocus(naGetUIElementNativePtr(winapiTextBox->prevTabStop));
-    return NA_TRUE;
   }
-  return NA_FALSE;
 }
 
 
