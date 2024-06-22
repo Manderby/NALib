@@ -25,8 +25,6 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_GETTEXT:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
-  case WM_MOUSEMOVE: // captured in naUIElementWINAPIPreProc
-  case WM_MOUSELEAVE: // captured in naUIElementWINAPIPreProc
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
   case WM_IME_SETCONTEXT:
@@ -57,13 +55,6 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_ENABLE:
   case WM_SETTEXT:
   case WM_UPDATEUISTATE:
-    break;
-
-  case WM_SETFOCUS:
-  case WM_KILLFOCUS:
-    // We do not display any caret.
-    info.hasBeenHandeled = NA_TRUE;
-    info.result = 0;
     break;
 
   default:

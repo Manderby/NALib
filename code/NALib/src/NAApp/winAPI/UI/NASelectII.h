@@ -20,15 +20,12 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_NCHITTEST:
   case WM_SETCURSOR:
   case WM_MOUSEFIRST:
-  case WM_MOUSELEAVE:
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
   case WM_LBUTTONUP:
   case WM_GETTEXTLENGTH:
   case WM_GETTEXT:
   case WM_IME_SETCONTEXT:
-  case WM_SETFOCUS:
-  case WM_KILLFOCUS:
   case WM_NCCALCSIZE:
   case WM_SIZE:
   case CB_INSERTSTRING:
@@ -48,6 +45,13 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
     // when scrolling. Who designed that!
     info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
+    break;
+
+  case WM_SETFOCUS:
+  case WM_KILLFOCUS:
+    // Do not change the default behaviour of focus. Otherwise, this would cause
+    // labels and textFields to not display a cursor or selection.
+    info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
     break;
 
   default:

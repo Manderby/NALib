@@ -25,8 +25,6 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_NCDESTROY:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
-  case WM_MOUSEMOVE: // captured in naUIElementWINAPIPreProc
-  case WM_MOUSELEAVE: // captured in naUIElementWINAPIPreProc
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
   case WM_IME_SETCONTEXT:
@@ -40,6 +38,7 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_KILLFOCUS:
     // Do not change the default behaviour of focus. Otherwise, this would cause
     // labels to not display a selection.
+    info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
     break;
 
   case WM_ERASEBKGND:

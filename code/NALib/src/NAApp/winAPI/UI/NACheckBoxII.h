@@ -34,13 +34,6 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM 
   case WM_LBUTTONUP:
     break;
 
-  case WM_SETFOCUS:
-  case WM_KILLFOCUS:
-    // We do not display any caret.
-    info.hasBeenHandeled = NA_TRUE;
-    info.result = 0;
-    break;
-
   default:
     //printf("Uncaught CheckBox message" NA_NL);
     break;

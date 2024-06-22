@@ -31,8 +31,6 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_SETFONT:
   case WM_GETTEXTLENGTH:
   case WM_GETTEXT:
-  case WM_MOUSEMOVE: // captured in naUIElementWINAPIPreProc
-  case WM_MOUSELEAVE: // captured in naUIElementWINAPIPreProc
   case WM_PARENTNOTIFY:
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
@@ -41,9 +39,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_CANCELMODE:
   case WM_CAPTURECHANGED:
   case WM_LBUTTONUP:
-  case WM_KEYDOWN:
   case WM_CHAR:
-  case WM_KEYUP:
   case 0x43c: // undocumented
   case WM_NCCALCSIZE:
   case 0x14e: // undocumented
@@ -70,6 +66,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_KILLFOCUS:
     // Do not change the default behaviour of focus. Otherwise, this would cause
     // labels and textFields to not display a cursor or selection.
+    info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
     break;
 
   // Dialog messages

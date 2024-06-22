@@ -134,8 +134,6 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_SETCURSOR:
   case WM_NCMOUSEMOVE:
   case WM_NCMOUSELEAVE:
-  case WM_MOUSEMOVE: // captured in naUIElementWINAPIPreProc
-  case WM_MOUSELEAVE: // captured in naUIElementWINAPIPreProc
   case WM_PARENTNOTIFY:
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
@@ -143,9 +141,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_CAPTURECHANGED:
   case WM_LBUTTONUP:
   case WM_TIMER:
-  case WM_KEYDOWN:  // same as WM_KEYFIRST
   case WM_CHAR:
-  case WM_KEYUP:
   case WM_SYSKEYDOWN: // the alt key
   case WM_SYSKEYUP:
   case WM_SYSCOMMAND:
@@ -170,6 +166,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_KILLFOCUS:
     // Do not change the default behaviour of focus. Otherwise, this would cause
     // labels and textFields to not display a cursor or selection.
+    info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
     break;
 
   // Cases being called due to bubbling the message.

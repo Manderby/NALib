@@ -217,8 +217,10 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message) {
 // work... strange. I solved it using this function. 
 NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
   NABool retValue = NA_FALSE;
+
   if(message->message == WM_KEYUP || message->message == WM_SYSKEYDOWN || message->message == WM_SYSKEYUP) {
     na_CaptureKeyboardStatus(message);
+
   }else if(message->message == WM_KEYDOWN) {
     NA_UIElement* elem;
     HWND keyWindow;
@@ -266,20 +268,23 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
       elem = naGetUIElementParent(elem);
     }
   }
+
   return retValue;
 }
 
 
-
-// ///////////////////////////////////
-// WINDOW CALLBACK
-// ///////////////////////////////////
 
 typedef struct NAWINAPICallbackInfo NAWINAPICallbackInfo;
 struct NAWINAPICallbackInfo{
   NABool hasBeenHandeled;
   LRESULT result;
 };
+
+
+
+// ///////////////////////////////////
+// WINDOW CALLBACK
+// ///////////////////////////////////
 
 // Get overridden WindowProcs of specialized controls.
 WNDPROC na_GetApplicationOldButtonWindowProc();
@@ -322,135 +327,13 @@ NABool naTextFieldWINAPINotify   (void* uiElement, WORD notificationCode);
 
 
 
-NAWINAPICallbackInfo naUIElementWINAPIPostProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
-
-  switch(message) {
-  case WM_WINDOWPOSCHANGED:
-    // Always handle this message otherwise it will be given to the parents
-    // until someone implements it. But then, the coords are wrong.
-    info.result = 0;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
-
-  default:
-    // do nothing.
-    break;
-  }
-
-  return info;
-}
-
-// This is the one and only, master of destruction, defender of chaos and
-// pimp of the century function handling all and everything in WINAPI.
-
-LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-  NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(hWnd);
-  NAUIElementType firsttype = uiElement ? naGetUIElementType(uiElement) : NA_UI_APPLICATION;
-
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
-
-  // Capture specific messages
-  if(message == WM_DRAWITEM) {
-    info = naWINAPIDrawItemProc(wParam, lParam);
-  }else if(message == WM_COMMAND) {
-    info = naWINAPINotificationProc(wParam, lParam);
-  }else if(message == WM_HSCROLL) {
-    info = naWINAPIScrollItemProc(wParam, lParam);
-  }
-
-  // Capture messages handeled by the actual UIElements or its parents.
-  while(uiElement && !info.hasBeenHandeled) {
-
-    // First, capture mouse and keyboard events if necessary.
-    info = naUIElementWINAPIPreProc(uiElement, message, wParam, lParam);
-    
-    if(info.hasBeenHandeled)
-      break;
-
-    // Then, go to the specialized window proc.
-    switch(naGetUIElementType(uiElement)) {
-    case NA_UI_APPLICATION:
-      info = naApplicationWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    case NA_UI_CHECKBOX:
-      info = naCheckBoxWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    case NA_UI_BUTTON:
-      info = naButtonWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    case NA_UI_IMAGE_SPACE:
-      info = naImageSpaceWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    case NA_UI_LABEL:
-      info = naLabelWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    case NA_UI_OPENGL_SPACE:
-      info = naOpenGLSpaceWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    case NA_UI_RADIO:
-      info = naRadioWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    case NA_UI_SLIDER:
-      info = naSliderWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    case NA_UI_SELECT:
-      info = naSelectWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    case NA_UI_SPACE:
-      info = naSpaceWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    case NA_UI_TEXTBOX:
-      info = naTextBoxWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    case NA_UI_TEXTFIELD:
-      info = naTextFieldWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    case NA_UI_WINDOW:
-      info = naWindowWINAPIProc(uiElement, message, wParam, lParam);
-      break;
-    default:
-      break;
-    }
-
-    if(!info.hasBeenHandeled) {
-      // If the element does not handle the event, try handling it with the
-      // global handling function.
-      info = naUIElementWINAPIPostProc(uiElement, message, wParam, lParam);
-      if(!info.hasBeenHandeled) {
-        // If the default procedure does not handle the event, try its parent.
-        uiElement = naGetUIElementParent(uiElement);
-      }
-    }
-  }
-
-  // If the event has not been handeled, hand it over to the default procedure.
-  if(!info.hasBeenHandeled) {
-    switch(firsttype) {
-    case NA_UI_BUTTON:       info.result = CallWindowProc(na_GetApplicationOldButtonWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_CHECKBOX:     info.result = CallWindowProc(na_GetApplicationOldCheckBoxWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_LABEL:        info.result = CallWindowProc(na_GetApplicationOldLabelWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_RADIO:        info.result = CallWindowProc(na_GetApplicationOldRadioWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_SELECT:       info.result = CallWindowProc(na_GetApplicationOldSelectWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_SLIDER:       info.result = CallWindowProc(na_GetApplicationOldSliderWindowProc(), hWnd, message, wParam, lParam); break;
-    case NA_UI_TEXTFIELD:    info.result = CallWindowProc(na_GetApplicationOldTextFieldWindowProc(), hWnd, message, wParam, lParam); break;
-    default:
-      info.result = DefWindowProc(hWnd, message, wParam, lParam);
-      break;
-    }
-  }
-
-  return info.result;
-}
-
-
 // Returns true if the element under the mouse must handle hovering events.
 NABool naWINAPICaptureMouseHover() {
   DWORD msgpos = GetMessagePos();
   POINT pt = {GET_X_LPARAM(msgpos), GET_Y_LPARAM(msgpos)};
   HWND hWndUnderMouse = WindowFromPoint(pt);
   NA_UIElement* elementUnderMouse = (NA_UIElement*)na_GetUINALibEquivalent(hWndUnderMouse);
-  
+
   if(elementUnderMouse && elementUnderMouse->hoverReactionCount == 0)
     return NA_FALSE;
 
@@ -498,6 +381,9 @@ NABool naWINAPICaptureMouseHover() {
 }
 
 
+
+// Capture messages which shall be handeled globally the same no matter what
+// the object behind it is.
 NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NA_UIElement* elem = (NA_UIElement*)uiElement;
@@ -508,7 +394,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
 
   switch(message) {
   case WM_MOUSEHOVER: // being inside the hWND for a specified amout of time.
-  break;
+    break;
 
   case WM_MOUSEMOVE:
     // wParam: several special keys
@@ -552,6 +438,162 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
   }
 
   return info;
+}
+
+
+
+// Capture messages which shall be handeled globally, if and only if the
+// object behind the message does NOT provide a WINAPIProc handling.
+NAWINAPICallbackInfo naUIElementWINAPIPostProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+
+  switch(message) {
+  case WM_SETFOCUS:
+  case WM_KILLFOCUS:
+    // We do not display any caret.
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
+    break;
+
+  case WM_WINDOWPOSCHANGED:
+    // Always handle this message otherwise it will be given to the parents
+    // until someone implements it. But then, the coords are wrong.
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
+    break;
+
+  default:
+    // do nothing.
+    break;
+  }
+
+  return info;
+}
+
+
+
+// This method calls the default procedure given by WINAPI.
+NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+
+  NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(hWnd);
+  NAUIElementType uiType = uiElement ? naGetUIElementType(uiElement) : NA_UI_APPLICATION;
+
+  switch(uiType) {
+  case NA_UI_BUTTON:
+    info.result = CallWindowProc(na_GetApplicationOldButtonWindowProc(), hWnd, message, wParam, lParam);
+    break;
+  case NA_UI_CHECKBOX:
+    info.result = CallWindowProc(na_GetApplicationOldCheckBoxWindowProc(), hWnd, message, wParam, lParam);
+    break;
+  case NA_UI_LABEL:
+    info.result = CallWindowProc(na_GetApplicationOldLabelWindowProc(), hWnd, message, wParam, lParam);
+    break;
+  case NA_UI_RADIO:
+    info.result = CallWindowProc(na_GetApplicationOldRadioWindowProc(), hWnd, message, wParam, lParam);
+    break;
+  case NA_UI_SELECT:
+    info.result = CallWindowProc(na_GetApplicationOldSelectWindowProc(), hWnd, message, wParam, lParam);
+    break;
+  case NA_UI_SLIDER:
+    info.result = CallWindowProc(na_GetApplicationOldSliderWindowProc(), hWnd, message, wParam, lParam);
+    break;
+  case NA_UI_TEXTFIELD:
+    info.result = CallWindowProc(na_GetApplicationOldTextFieldWindowProc(), hWnd, message, wParam, lParam);
+    break;
+  default:
+    info.result = DefWindowProc(hWnd, message, wParam, lParam);
+    break;
+  }
+
+  return info;
+}
+
+
+
+// This is the one and only, master of destruction, defender of chaos and
+// pimp of the century function handling all and everything in WINAPI.
+
+LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(hWnd);
+
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+
+  // Capture specific messages
+  if(message == WM_DRAWITEM) {
+    info = naWINAPIDrawItemProc(wParam, lParam);
+  }else if(message == WM_COMMAND) {
+    info = naWINAPINotificationProc(wParam, lParam);
+  }else if(message == WM_HSCROLL) {
+    info = naWINAPIScrollItemProc(wParam, lParam);
+  }
+
+  // Capture messages handeled by the actual UIElements or its parents.
+  if(uiElement) {
+
+    // First, capture mouse and keyboard events if necessary.
+    info = naUIElementWINAPIPreProc(uiElement, message, wParam, lParam);
+    
+    if(!info.hasBeenHandeled) {
+      // Go to the specialized window proc.
+      switch(naGetUIElementType(uiElement)) {
+      case NA_UI_APPLICATION:
+        info = naApplicationWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      case NA_UI_CHECKBOX:
+        info = naCheckBoxWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      case NA_UI_BUTTON:
+        info = naButtonWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      case NA_UI_IMAGE_SPACE:
+        info = naImageSpaceWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      case NA_UI_LABEL:
+        info = naLabelWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      case NA_UI_OPENGL_SPACE:
+        info = naOpenGLSpaceWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      case NA_UI_RADIO:
+        info = naRadioWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      case NA_UI_SLIDER:
+        info = naSliderWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      case NA_UI_SELECT:
+        info = naSelectWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      case NA_UI_SPACE:
+        info = naSpaceWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      case NA_UI_TEXTBOX:
+        info = naTextBoxWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      case NA_UI_TEXTFIELD:
+        info = naTextFieldWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      case NA_UI_WINDOW:
+        info = naWindowWINAPIProc(uiElement, message, wParam, lParam);
+        break;
+      default:
+        break;
+    }
+    }
+
+    if(!info.hasBeenHandeled) {
+      // If the element does not handle the event, try handling it with the
+      // global post handling function.
+      info = naUIElementWINAPIPostProc(uiElement, message, wParam, lParam);
+    }
+  }
+
+  // If the event has not been handeled, hand it over to the default procedure.
+  if(!info.hasBeenHandeled) {
+    info = naUIElementWINAPIDefaultProc(hWnd, message, wParam, lParam);
+  }
+
+  return info.result;
 }
 
 

@@ -29,8 +29,6 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_NCPAINT:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
-  case WM_MOUSEMOVE:
-  case WM_MOUSELEAVE:
   case WM_MOUSEACTIVATE:
   case WM_IME_SETCONTEXT:
   case WM_DESTROY:
@@ -60,13 +58,6 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
     FillRect((HDC)wParam, &sliderRect, bgColor->brush);
     info.hasBeenHandeled = NA_TRUE;
     info.result = 1;
-    break;
-
-  case WM_SETFOCUS:
-  case WM_KILLFOCUS:
-    // We do not display any caret.
-    info.hasBeenHandeled = NA_TRUE;
-    info.result = 0;
     break;
 
   case WM_LBUTTONDOWN:

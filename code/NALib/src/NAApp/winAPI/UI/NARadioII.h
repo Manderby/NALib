@@ -36,13 +36,6 @@ NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case BM_SETCHECK: // when pressed the button or manually sends BM_SETCHECK
     break;
 
-  case WM_SETFOCUS:
-  case WM_KILLFOCUS:
-    // We do not display any caret.
-    info.hasBeenHandeled = NA_TRUE;
-    info.result = 0;
-    break;
-
   case WM_LBUTTONUP:
     ReleaseCapture();
     check = naGetRadioState(uiElement);

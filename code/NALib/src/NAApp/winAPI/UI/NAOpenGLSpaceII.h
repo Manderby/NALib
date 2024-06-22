@@ -32,7 +32,6 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
   case WM_MOVE:
   case WM_SETCURSOR:
   case WM_MOUSEFIRST:
-  case WM_MOUSELEAVE:
   case WM_UPDATEUISTATE:
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:

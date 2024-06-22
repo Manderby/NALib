@@ -40,13 +40,9 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM
   case WM_GETTEXT:
   case WM_SETTEXT:
   case EM_LINELENGTH:
-  case WM_KEYUP:
   case WM_SYSKEYUP:
   case WM_CHAR:
-  case WM_KEYDOWN: // capture enter and tab here.
   case WM_SYSKEYDOWN: // the alt key!
-  case WM_MOUSEMOVE: // captured in naUIElementWINAPIPreProc
-  case WM_MOUSELEAVE: // captured in naUIElementWINAPIPreProc
   // note that any change of the edit control is captured in naWINAPINotificationProc.
   break;
 
@@ -54,6 +50,7 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM
   case WM_KILLFOCUS:
     // Do not change the default behaviour of focus. Otherwise, this would cause
     // textFields to not display a cursor or selection.
+    info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
     break;
 
   default:
