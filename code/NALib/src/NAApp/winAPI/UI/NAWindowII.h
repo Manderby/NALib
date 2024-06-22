@@ -7,7 +7,10 @@
 
 #include "../../../NAApp/NAPreferences.h"
 
-
+#define NA_WINAPI_WINDOW_KEEP_POS 0x0100
+#if (NA_WINAPI_WINDOW_KEEP_POS < NA_WINDOW_FLAG_FIRST_SYSTEM_DEPENDENT_FLAG)
+  #error "System specific flags overlap with core flags"
+#endif
 
 NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
@@ -17,7 +20,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   NARect screenRect;
   double uiScale;
   double oldHeight;
-
+  
   switch(message) {
   case WM_SHOWWINDOW:
     // wParam: true for show, false for hide
@@ -30,16 +33,21 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     // lParam: (int)(short)LOWORD: x coordinate, (int)(short)HIWORD: y coordinate
     // result: 0 when handeled.
     windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
-    screenRect = naGetMainScreenRect();
-    uiScale = naGetUIElementResolutionFactor(NA_NULL);
-    windowMutable->rect.pos.x = (double)LOWORD(lParam) / uiScale;
-    windowMutable->rect.pos.y = screenRect.size.height - (double)HIWORD(lParam) / uiScale - windowMutable->rect.size.height;
-    info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-    if(info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
-    na_RememberWindowPosition(&windowMutable->window);
-    info.result = 0;
-    //printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);
-    //printf("size %f, %f\n", windowMutable->rect.size.width, windowMutable->rect.size.height);
+    if(!naGetFlagu32(windowMutable->window.flags, NA_WINAPI_WINDOW_KEEP_POS)) {
+      screenRect = naGetMainScreenRect();
+      uiScale = naGetUIElementResolutionFactor(NA_NULL);
+      windowMutable->rect.pos.x = (double)LOWORD(lParam) / uiScale;
+      windowMutable->rect.pos.y = screenRect.size.height - (double)HIWORD(lParam) / uiScale - windowMutable->rect.size.height;
+      info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
+      if(info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
+      na_RememberWindowPosition(&windowMutable->window);
+      info.result = 0;
+      //printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);
+      //printf("size %f, %f\n", windowMutable->rect.size.width, windowMutable->rect.size.height);
+    }else{
+      info.hasBeenHandeled = NA_TRUE;
+      info.result = 0;
+    }
     break;
 
   case WM_SIZE:
@@ -93,14 +101,15 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     uiScale = naGetUIElementResolutionFactor(NA_NULL);
     windowMutable->rect.size.width = (double)windowPos.cx / uiScale;
     windowMutable->rect.size.height = (double)windowPos.cy / uiScale;
-    windowMutable->rect.pos.x = (double)windowPos.x / uiScale;
-    windowMutable->rect.pos.y = screenRect.size.height - (double)windowPos.y / uiScale - windowMutable->rect.size.height;
+    if(!naGetFlagu32(windowMutable->window.flags, NA_WINAPI_WINDOW_KEEP_POS)) {
+      windowMutable->rect.pos.x = (double)windowPos.x / uiScale;
+      windowMutable->rect.pos.y = screenRect.size.height - (double)windowPos.y / uiScale - windowMutable->rect.size.height;
+    }
     info.hasBeenHandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
     if(info.hasBeenHandeled) { na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
-    ////printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);
-    ////printf("size %f, %f\n", windowMutable->rect.size.width, windowMutable->rect.size.height);
+
     break;
 
   case WM_SYNCPAINT:
@@ -258,7 +267,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
     naHandleWindowTabOrder,
     NA_NULL);
 
-  NASpace* contentSpace = naNewSpace(rect.size);
+  NASpace* contentSpace = naNewSpace(naMakeSize(rect.size.width, rect.size.height / 2));
   naSetWindowContentSpace(&(winapiWindow->window), contentSpace);
 
   na_SetUIElementParent((NA_UIElement*)winapiWindow, naGetApplication(), NA_TRUE);
@@ -283,7 +292,11 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space) {
       naError("Require a space, not any arbitrary ui element.");
   #endif
   window->contentSpace = space;
+
+  NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
+  naSetFlagu32(&winapiWindow->window.flags, NA_WINAPI_WINDOW_KEEP_POS, NA_TRUE);
   na_SetUIElementParent(space, window, NA_TRUE);
+  naSetFlagu32(&winapiWindow->window.flags, NA_WINAPI_WINDOW_KEEP_POS, NA_FALSE);
 }
 
 

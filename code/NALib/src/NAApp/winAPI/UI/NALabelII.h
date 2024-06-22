@@ -17,7 +17,6 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_MOVE:
   case WM_SHOWWINDOW:
   case WM_STYLECHANGED:
-  case WM_WINDOWPOSCHANGED:
   case WM_SETTEXT:
   case WM_PAINT:
   case WM_NCPAINT:
@@ -41,6 +40,13 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_KILLFOCUS:
     // Do not change the default behaviour of focus. Otherwise, this would cause
     // labels to not display a selection.
+    break;
+
+  case WM_WINDOWPOSCHANGED:
+    // Always handle this message otherwise it will be given to the parents
+    // until someone implements it. But then, the coords are wrong.
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   case WM_ERASEBKGND:

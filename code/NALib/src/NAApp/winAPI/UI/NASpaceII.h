@@ -18,7 +18,6 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_SHOWWINDOW:
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
-  case WM_WINDOWPOSCHANGED:
   case WM_MOVE:
   case WM_PAINT:
   case WM_NCPAINT:
@@ -46,12 +45,38 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_CHAR:
   case WM_KEYUP:
   case 0x43c: // undocumented
+  case WM_NCCALCSIZE:
+  case 0x14e: // undocumented
+  case 0x405: // undocumented
+  case WM_ENABLE:
+  case WM_NCMOUSEMOVE:
+  case 0xf2: // undocumented
+  case 0xf3: // undocumented
+  case WM_TIMER:
+  case WM_SYSKEYDOWN:
+  case WM_SYSKEYUP:
+  case WM_COMMAND:
+  case WM_CTLCOLORLISTBOX:
+  case 0x131: // undocumented
+  case CB_GETCURSEL:
+  break;
+
+  case WM_SIZE:
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
     // Do not change the default behaviour of focus. Otherwise, this would cause
     // labels and textFields to not display a cursor or selection.
+    break;
+
+  case WM_WINDOWPOSCHANGED:
+    // Always handle this message otherwise it will be given to the parents
+    // until someone implements it. But then, the coords are wrong.
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   // Dialog messages

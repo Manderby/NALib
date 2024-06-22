@@ -165,6 +165,10 @@ NA_API const NAUTF8Char* naTranslate(NAInt group, NAInt id);
 
 // Returns an enum denoting the provided ISO 639-3 string. For example "eng".
 NA_API NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str);
+#if NA_OS == NA_OS_WINDOWS
+  #include "windows.h"
+  NA_API NALanguageCode3 naGetLanguageCodeWithLANGID(LANGID langId);
+#endif
 
 // Converts a code of ISO 639-1 into ISO 639-3. For example, converts en to eng
 // or de to deu. Try to avoid this function, it's bloated. Use ISO 639-3.

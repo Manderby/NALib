@@ -184,25 +184,64 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
   naDelete(app);
 }
 
+#include "muiload.h"
 
 NA_DEF void naResetApplicationPreferredTranslatorLanguages(void) {
-  int numchars;
-  NAUTF8Char* languageBuf; 
+  //int numchars;
+  //NAUTF8Char* languageBuf; 
   NALanguageCode3 languageCode;
-  LCID userLocalId;
+  //LCID userLocalId;
 
-  userLocalId = GetUserDefaultLCID();
-  numchars = GetLocaleInfoA(userLocalId, LOCALE_SISO639LANGNAME2, NA_NULL, 0);
-  languageBuf = naMalloc((size_t)numchars + 1 * sizeof(NAUTF8Char));
-  GetLocaleInfoA(userLocalId, LOCALE_SISO639LANGNAME2, languageBuf, numchars);
-  languageCode = naGetLanguageCode(languageBuf);
+  LANGID langId1 = GetSystemDefaultUILanguage();
+  LANGID langId2 = GetUserDefaultUILanguage();
+  LANGID langId = GetUserDefaultLangID();
+  LANGID langId3 = GetSystemDefaultLangID();
+  LANGID langId4 = GetThreadUILanguage();
+  languageCode = naGetLanguageCodeWithLANGID(langId);
 
+  //GetUserPreferredUILanguages();
+  //GetUILanguageFallbackList();
+
+
+  //ULONG numberOfLanguages = 0;
+  //DWORD bufferLength = 0;
+  //const auto result1 = GetUserPreferredUILanguages  (MUI_LANGUAGE_NAME,
+  //  &numberOfLanguages,
+  //  NULL,
+  //  &bufferLength);
+
+  //wchar_t* languagesBuffer = malloc(bufferLength);
+  //const auto result2 = GetUserPreferredUILanguages  (MUI_LANGUAGE_NAME,
+  //  &numberOfLanguages,
+  //  languagesBuffer,
+  //  &bufferLength);
+
+  //free(languagesBuffer);
+
+
+
+  //wchar_t* pFallbackList = NULL;
+  //ULONG cchFallbackList = 0;
+  //ULONG cchFallbackOut = 0;
+  //GetUILanguageFallbackList(NULL, cchFallbackList, &cchFallbackOut);
+
+  //pFallbackList = malloc(cchFallbackOut);
+  //cchFallbackList = cchFallbackOut;
+  //GetUILanguageFallbackList(pFallbackList, cchFallbackList, &cchFallbackOut);
+
+  //free(pFallbackList);
+
+  //userLocalId = GetUserDefaultLCID();
+  //numchars = GetLocaleInfoA(userLocalId, LOCALE_SISO639LANGNAME2, NA_NULL, 0);
+  //languageBuf = naMalloc((size_t)numchars + 1 * sizeof(NAUTF8Char));
+  //GetLocaleInfoA(userLocalId, LOCALE_SISO639LANGNAME2, languageBuf, numchars);
+  //languageCode = naGetLanguageCode(languageBuf);
   // Tried to do this with GetUserPreferredUILanguages but it does not
   // work. Not reliably, not at all, not no nada.
 
   naSetTranslatorLanguagePreference(languageCode);
 
-  naFree(languageBuf);
+  //naFree(languageBuf);
 }
 
 

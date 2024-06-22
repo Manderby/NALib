@@ -13,7 +13,6 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM 
   case WM_SETFONT:
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
-  case WM_WINDOWPOSCHANGED:
   case WM_MOVE:
   case WM_SHOWWINDOW:
   case BM_SETCHECK:
@@ -40,6 +39,13 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM 
     // We do not display any caret.
     info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
+    break;
+
+  case WM_WINDOWPOSCHANGED:
+    // Always handle this message otherwise it will be given to the parents
+    // until someone implements it. But then, the coords are wrong.
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   default:

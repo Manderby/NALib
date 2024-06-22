@@ -1,4 +1,7 @@
 
+#ifndef NA_WINAPI_INTEFACES_DEFINED
+#define NA_WINAPI_INTEFACES_DEFINED
+
 // This file is an inline implmenentation (II) file which is included in the
 // NAWINAPI.c file. This is a bit special as it is marked as a .h file but
 // actually contains non-inlinenable code. See NAWINAPI.c for more information.
@@ -204,6 +207,7 @@ NA_RUNTIME_TYPE(NAWINAPIWindow, na_DestructWINAPIWindow, NA_FALSE);
 NA_HAPI void naAddOpenGLSpaceToRedrawList(NAWINAPIOpenGLSpace* openGLSpace);
 
 
+#endif // NA_WINAPI_INTEFACES_DEFINED
 
 // This is free and unencumbered software released into the public domain.
 

@@ -301,6 +301,31 @@ NA_DEF NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str) {
 
 
 
+#if NA_OS == NA_OS_WINDOWS
+
+  NA_DEF NALanguageCode3 naGetLanguageCodeWithLANGID(LANGID langId) {
+    switch(langId)
+    {
+    case 0x0807: return NA_LANG_GSW;
+    }
+
+    switch(langId & 0x01ff)
+    {
+    case 0x0004: return NA_LANG_ZHO;
+    case 0x0007: return NA_LANG_DEU;
+    case 0x0009: return NA_LANG_ENG;
+    case 0x000a: return NA_LANG_SPA;
+    case 0x000c: return NA_LANG_FRA;
+    case 0x0011: return NA_LANG_JPN;
+    }
+
+    // no Klingon, sorry.
+    return NA_LANG_ENG;
+  }
+
+#endif // NA_OS == NA_OS_WINDOWS
+
+
 NA_DEF NALanguageCode3 naConvertLanguageCode1To3(NALanguageCode1 code1) {
   switch(code1) {
   case NA_LANG_DE: return NA_LANG_DEU;

@@ -15,7 +15,6 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM
   case WM_STYLECHANGED:
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
-  case WM_WINDOWPOSCHANGED:
   case WM_MOVE:
   case WM_SHOWWINDOW:
   case WM_PAINT:
@@ -55,6 +54,13 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM
   case WM_KILLFOCUS:
     // Do not change the default behaviour of focus. Otherwise, this would cause
     // textFields to not display a cursor or selection.
+    break;
+
+  case WM_WINDOWPOSCHANGED:
+    // Always handle this message otherwise it will be given to the parents
+    // until someone implements it. But then, the coords are wrong.
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   default:

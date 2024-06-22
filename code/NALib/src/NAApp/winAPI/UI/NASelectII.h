@@ -13,7 +13,6 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_SHOWWINDOW:
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
-  case WM_WINDOWPOSCHANGED:
   case WM_MOVE:
   case WM_PAINT:
   case WM_NCPAINT:
@@ -42,6 +41,20 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_CANCELMODE:
   case WM_UPDATEUISTATE:
   case WM_ENABLE:
+    break;
+
+  case WM_WINDOWPOSCHANGED:
+    // Always handle this message otherwise it will be given to the parents
+    // until someone implements it. But then, the coords are wrong.
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
+    break;
+  
+  case WM_MOUSEWHEEL:
+    // Mousewheel events are discarded. This eliminates erroneous value changes
+    // when scrolling.
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   default:

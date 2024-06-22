@@ -17,37 +17,11 @@ void na_drawAllOpenGLSpaces(void* data)
   redrawCount = 0;
 }
 
-//void na_drawOpenGL(void* uiElement) {
-//  NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
-//  wglMakeCurrent(GetDC(naGetUIElementNativePtr(winapiOpenGLSpace)), winapiOpenGLSpace->hRC);
-//  na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
-//  
-//  //RECT updateRegion;
-//  //GetUpdateRect(naGetUIElementNativePtr(uiElement), &updateRegion, NA_FALSE);
-//  //ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
-//
-//  // Drawing complete. Reset the status and return.
-//  naClearThread(winapiOpenGLSpace->openGLSpace.thread);
-//  naLockMutex(winapiOpenGLSpace->openGLSpace.mutex);
-//  winapiOpenGLSpace->openGLSpace.drawEngineStatus = NA_DRAW_ENGINE_IDLE;
-//  naUnlockMutex(winapiOpenGLSpace->openGLSpace.mutex);
-//}
-
-
-
-void na_tryDrawOpenGL(void* uiElement) {
-  NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
-
-  naAddOpenGLSpaceToRedrawList(winapiOpenGLSpace);
-
-  RECT updateRegion;
-  GetUpdateRect(naGetUIElementNativePtr(uiElement), &updateRegion, NA_FALSE);
-  ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
-}
-
 
 
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NAWINAPIOpenGLSpace* winapiOpenGLSpace;
+
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message) {
@@ -55,7 +29,6 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
   case WM_SHOWWINDOW:
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
-  case WM_WINDOWPOSCHANGED:
   case WM_MOVE:
   case WM_SETCURSOR:
   case WM_MOUSEFIRST:
@@ -71,9 +44,23 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
 
   case WM_PAINT:
 
-    na_tryDrawOpenGL(uiElement);
+    winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
+
+    naAddOpenGLSpaceToRedrawList(winapiOpenGLSpace);
+
+    RECT updateRegion;
+    GetUpdateRect(naGetUIElementNativePtr(uiElement), &updateRegion, NA_FALSE);
+    ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
+  
     info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
+    break;
+
+  case WM_WINDOWPOSCHANGED:
+    // Always handle this message otherwise it will be given to the parents
+    // until someone implements it. But then, the coords are wrong.
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   default:

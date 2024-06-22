@@ -100,7 +100,6 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARA
   switch(message) {
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
-  case WM_WINDOWPOSCHANGED:
   case WM_MOVE:
   case WM_SHOWWINDOW:
   case WM_NCPAINT:
@@ -111,6 +110,13 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARA
 
   case WM_PAINT:
     naImageSpaceWINAPIDrawItem(uiElement);
+    info.hasBeenHandeled = NA_TRUE;
+    break;
+
+  case WM_WINDOWPOSCHANGED:
+    // Always handle this message otherwise it will be given to the parents
+    // until someone implements it. But then, the coords are wrong.
+    info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
     break;
 
