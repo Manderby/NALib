@@ -113,13 +113,6 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARA
     info.hasBeenHandeled = NA_TRUE;
     break;
 
-  case WM_WINDOWPOSCHANGED:
-    // Always handle this message otherwise it will be given to the parents
-    // until someone implements it. But then, the coords are wrong.
-    info.result = 0;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
-
   default:
     //printf("Uncaught Image Space message" NA_NL);
     break;

@@ -72,13 +72,6 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     // labels and textFields to not display a cursor or selection.
     break;
 
-  case WM_WINDOWPOSCHANGED:
-    // Always handle this message otherwise it will be given to the parents
-    // until someone implements it. But then, the coords are wrong.
-    info.result = 0;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
-
   // Dialog messages
   case WM_UPDATEUISTATE:
   case WM_GETDLGCODE:

@@ -110,6 +110,9 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
 
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = DefWindowProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
+
     break;
 
   case WM_SYNCPAINT:

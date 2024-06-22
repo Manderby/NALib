@@ -66,13 +66,6 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
     info.result = 0;
     break;
 
-  case WM_WINDOWPOSCHANGED:
-    // Always handle this message otherwise it will be given to the parents
-    // until someone implements it. But then, the coords are wrong.
-    info.result = 0;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
-
   default:
     printf("Uncaught Button message" NA_NL);
     break;

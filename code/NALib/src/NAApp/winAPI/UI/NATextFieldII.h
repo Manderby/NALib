@@ -56,13 +56,6 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM
     // textFields to not display a cursor or selection.
     break;
 
-  case WM_WINDOWPOSCHANGED:
-    // Always handle this message otherwise it will be given to the parents
-    // until someone implements it. But then, the coords are wrong.
-    info.result = 0;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
-
   default:
     //printf("Uncaught TextField message" NA_NL);
   break;

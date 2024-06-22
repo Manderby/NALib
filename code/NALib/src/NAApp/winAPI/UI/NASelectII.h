@@ -43,16 +43,9 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_ENABLE:
     break;
 
-  case WM_WINDOWPOSCHANGED:
-    // Always handle this message otherwise it will be given to the parents
-    // until someone implements it. But then, the coords are wrong.
-    info.result = 0;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
-  
   case WM_MOUSEWHEEL:
     // Mousewheel events are discarded. This eliminates erroneous value changes
-    // when scrolling.
+    // when scrolling. Who designed that!
     info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
     break;

@@ -42,13 +42,6 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     // labels to not display a selection.
     break;
 
-  case WM_WINDOWPOSCHANGED:
-    // Always handle this message otherwise it will be given to the parents
-    // until someone implements it. But then, the coords are wrong.
-    info.result = 0;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
-
   case WM_ERASEBKGND:
     info.hasBeenHandeled = NA_TRUE;
     info.result = 1;

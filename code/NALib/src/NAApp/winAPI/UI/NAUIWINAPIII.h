@@ -321,6 +321,24 @@ NABool naTextFieldWINAPINotify   (void* uiElement, WORD notificationCode);
 
 
 
+NAWINAPICallbackInfo na_GlobalWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+
+  switch(message) {
+  case WM_WINDOWPOSCHANGED:
+    // Always handle this message otherwise it will be given to the parents
+    // until someone implements it. But then, the coords are wrong.
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
+    break;
+
+  default:
+    // do nothing.
+    break;
+  }
+
+  return info;
+}
 
 // This is the one and only, master of destruction, defender of chaos and
 // pimp of the century function handling all and everything in WINAPI.
@@ -393,9 +411,14 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
       break;
     }
 
-    // If the emitting uiElement does not handle the event, try its parent.
     if(!info.hasBeenHandeled) {
-      uiElement = naGetUIElementParent(uiElement);
+      // If the element does not handle the event, try handling it with the
+      // global handling function.
+      info = na_GlobalWINAPIProc(uiElement, message, wParam, lParam);
+      if(!info.hasBeenHandeled) {
+        // If the default procedure does not handle the event, try its parent.
+        uiElement = naGetUIElementParent(uiElement);
+      }
     }
   }
 
