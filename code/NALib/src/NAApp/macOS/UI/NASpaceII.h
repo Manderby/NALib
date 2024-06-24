@@ -87,32 +87,27 @@
 
 - (void)mouseMoved:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED);
-  if(!handeled) { [super mouseMoved:event]; }
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED);
 }
 
 - (void)mouseEntered:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_ENTERED);
-  if(!handeled) { [super mouseEntered:event]; }
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_ENTERED);
 }
 
 - (void)mouseExited:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_EXITED);
-  if(!handeled) { [super mouseExited:event]; }
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_EXITED);
 }
 
 - (void)keyDown:(NSEvent* _Nonnull)event{
   na_CaptureKeyboardStatus(event);
-  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_DOWN);
-  if(!handeled) { [super keyDown:event]; }
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_DOWN);
 }
 
 - (void)keyUp:(NSEvent* _Nonnull)event{
   na_CaptureKeyboardStatus(event);
-  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_UP);
-  if(!handeled) { [super keyUp:event]; }
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_UP);
 }
 
 - (void)resetDrag{

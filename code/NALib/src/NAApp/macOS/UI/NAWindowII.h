@@ -102,38 +102,29 @@
 
 - (void)mouseMoved:(NSEvent*)event{
   na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
-  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_MOVED);
-  if(!handeled) {
-    [super mouseMoved:event];
-  }else{
-//  [NSEvent setMouseCoalescingEnabled:NO];
-  }
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_MOVED);
 }
 
 - (void)mouseEntered:(NSEvent*)event{
   NA_UNUSED(event);
   na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
-  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_ENTERED);
-  if(!handeled) { [super mouseEntered:event]; }
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_ENTERED);
 }
 
 - (void)mouseExited:(NSEvent*)event{
   NA_UNUSED(event);
   na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
-  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_EXITED);
-  if(!handeled) { [super mouseExited:event]; }
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_EXITED);
 }
 
 - (void)keyDown:(NSEvent*)event{
   NA_UNUSED(event);
-  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_DOWN);
-  if(!handeled) { [super keyDown:event]; }
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_DOWN);
 }
 
 - (void)keyUp:(NSEvent*)event{
   NA_UNUSED(event);
-  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_UP);
-  if(!handeled) { [super keyUp:event]; }
+  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_UP);
 }
 
 - (void)windowDidResize:(NSNotification *)notification{
