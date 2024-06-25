@@ -12,23 +12,23 @@ NA_DEF void naFillColorWithCopy(NAColor* dstColor, const NAColor* srcColor) {
 
 
 NA_DEF void naFillColorWithTransparent(NAColor* color) {
-  color->a = 0.f;
+  color->r = 0.f;
+  color->g = 0.f;
   color->b = 0.f;
-  color->y = 0.f;
   color->alpha = 0.f;
 }
 
 NA_DEF void naFillColorWithSRGB(NAColor* color, float r, float g, float b, float alpha) {
-  color->a = r;
+  color->r = r;
+  color->g = g;
   color->b = b;
-  color->y = g;
   color->alpha = alpha;
 }
 
 NA_DEF void naFillColorWithSRGBv(NAColor* color, const float* srcColor) {
-  color->a = srcColor[0];
+  color->r = srcColor[0];
+  color->g = srcColor[1];
   color->b = srcColor[2];
-  color->y = srcColor[1];
   color->alpha = srcColor[3];
 }
 
@@ -97,8 +97,8 @@ NA_DEF void naFillColorWithSRGBu8v(
 
 
 NA_DEF void naFillSRGBAWithColor(float rgba[4], const NAColor* color) {
-  rgba[0] = color->a;
-  rgba[1] = color->y;
+  rgba[0] = color->r;
+  rgba[1] = color->g;
   rgba[2] = color->b;
   rgba[3] = color->alpha;
 }
@@ -117,35 +117,35 @@ NA_DEF void naFillSRGBu8WithColor(uint8* outColor, const NAColor* inColor, NACol
 
   switch(bufferType) {
   case NA_COLOR_BUFFER_RGBA:
-    na_LimitColorComponentu8(&outColor[0], inColor->a);
-    na_LimitColorComponentu8(&outColor[1], inColor->y);
+    na_LimitColorComponentu8(&outColor[0], inColor->r);
+    na_LimitColorComponentu8(&outColor[1], inColor->g);
     na_LimitColorComponentu8(&outColor[2], inColor->b);
     na_LimitColorComponentu8(&outColor[3], inColor->alpha);
     break;
   case NA_COLOR_BUFFER_RGBAPre:
     {
     float inAlpha = inColor->alpha;
-    na_LimitColorComponentu8(&outColor[0], inColor->a * inAlpha);
-    na_LimitColorComponentu8(&outColor[1], inColor->y * inAlpha);
+    na_LimitColorComponentu8(&outColor[0], inColor->r * inAlpha);
+    na_LimitColorComponentu8(&outColor[1], inColor->g * inAlpha);
     na_LimitColorComponentu8(&outColor[2], inColor->b * inAlpha);
     na_LimitColorComponentu8(&outColor[3], inAlpha);
     break;
     }
   case NA_COLOR_BUFFER_RGB:
-    na_LimitColorComponentu8(&outColor[0], inColor->a);
-    na_LimitColorComponentu8(&outColor[1], inColor->y);
+    na_LimitColorComponentu8(&outColor[0], inColor->r);
+    na_LimitColorComponentu8(&outColor[1], inColor->g);
     na_LimitColorComponentu8(&outColor[2], inColor->b);
     break;
   case NA_COLOR_BUFFER_BGR0:
     na_LimitColorComponentu8(&outColor[0], inColor->b);
-    na_LimitColorComponentu8(&outColor[1], inColor->y);
-    na_LimitColorComponentu8(&outColor[2], inColor->a);
+    na_LimitColorComponentu8(&outColor[1], inColor->g);
+    na_LimitColorComponentu8(&outColor[2], inColor->r);
     na_LimitColorComponentu8(&outColor[3], 0);
     break;
   case NA_COLOR_BUFFER_BGRA:
     na_LimitColorComponentu8(&outColor[0], inColor->b);
-    na_LimitColorComponentu8(&outColor[1], inColor->y);
-    na_LimitColorComponentu8(&outColor[2], inColor->a);
+    na_LimitColorComponentu8(&outColor[1], inColor->g);
+    na_LimitColorComponentu8(&outColor[2], inColor->r);
     na_LimitColorComponentu8(&outColor[3], inColor->alpha);
     break;
   }
@@ -158,9 +158,9 @@ NA_DEF float naGetColorAlpha(const NAColor* color) {
 }
 
 NA_DEF void naInvertColor(NAColor* color) {
-  color->a = 1.f - color->a;
+  color->r = 1.f - color->r;
+  color->g = 1.f - color->g;
   color->b = 1.f - color->b;
-  color->y = 1.f - color->y;
 }
 
 

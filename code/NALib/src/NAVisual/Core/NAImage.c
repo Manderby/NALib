@@ -338,28 +338,28 @@ NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image) {
   outDataPtr = outImage->data;
   for(y = 0; y < radioImage->height; y += 2) {
     for(x = 0; x < radioImage->width; x += 2) {
-      outDataPtr->a = inPtr1->a * inPtr1->alpha + inPtr2->a * inPtr2->alpha;
+      outDataPtr->r = inPtr1->r * inPtr1->alpha + inPtr2->r * inPtr2->alpha;
+      outDataPtr->g = inPtr1->g * inPtr1->alpha + inPtr2->g * inPtr2->alpha;
       outDataPtr->b = inPtr1->b * inPtr1->alpha + inPtr2->b * inPtr2->alpha;
-      outDataPtr->y = inPtr1->y * inPtr1->alpha + inPtr2->y * inPtr2->alpha;
       outDataPtr->alpha = inPtr1->alpha + inPtr2->alpha;
       inPtr1 += 2;
       inPtr2 += 2;
-      outDataPtr->a += inPtr3->a * inPtr3->alpha + inPtr4->a * inPtr4->alpha;
+      outDataPtr->r += inPtr3->r * inPtr3->alpha + inPtr4->r * inPtr4->alpha;
+      outDataPtr->g += inPtr3->g * inPtr3->alpha + inPtr4->g * inPtr4->alpha;
       outDataPtr->b += inPtr3->b * inPtr3->alpha + inPtr4->b * inPtr4->alpha;
-      outDataPtr->y += inPtr3->y * inPtr3->alpha + inPtr4->y * inPtr4->alpha;
       outDataPtr->alpha += inPtr3->alpha + inPtr4->alpha;
       inPtr3 += 2;
       inPtr4 += 2;
       if(outDataPtr->alpha > NA_SINGULARITYf) {
         float invweight = naInvf(outDataPtr->alpha);
-        outDataPtr->a *= invweight;
+        outDataPtr->r *= invweight;
+        outDataPtr->g *= invweight;
         outDataPtr->b *= invweight;
-        outDataPtr->y *= invweight;
         outDataPtr->alpha *= .25f;
       }else{
-        outDataPtr->a = 0.f;
+        outDataPtr->r = 0.f;
+        outDataPtr->g = 0.f;
         outDataPtr->b = 0.f;
-        outDataPtr->y = 0.f;
       }
 
       na_ConvertToPerceptualRGB(outDataPtr, outDataPtr);
@@ -397,9 +397,9 @@ NA_HDEF void naAccumulateResizeLine(
     float counterSubX = 1.f - subX;
     while(counterSubX <= remainerX) {
       float accumulateFactor = factorY * counterSubX;
-      outPtr->a += accumulateFactor * inPtr->a;
+      outPtr->r += accumulateFactor * inPtr->r;
+      outPtr->g += accumulateFactor * inPtr->g;
       outPtr->b += accumulateFactor * inPtr->b;
-      outPtr->y += accumulateFactor * inPtr->y;
       outPtr->alpha += accumulateFactor * inPtr->alpha;
       remainerX -= counterSubX;
       inPtr += 1;
@@ -409,9 +409,9 @@ NA_HDEF void naAccumulateResizeLine(
     subX = 1.f - counterSubX;
     if(inX < (int32)inWidth) {
       float accumulateFactor = factorY * remainerX;
-      outPtr->a += accumulateFactor * inPtr->a;
+      outPtr->r += accumulateFactor * inPtr->r;
+      outPtr->g += accumulateFactor * inPtr->g;
       outPtr->b += accumulateFactor * inPtr->b;
-      outPtr->y += accumulateFactor * inPtr->y;
       outPtr->alpha += accumulateFactor * inPtr->alpha;
     }
     subX += remainerX;
@@ -483,9 +483,9 @@ NA_DEF NAImage* naCreateImageWithResize(const NAImage* image, NASizes newSize) {
   float divisor = (1.f / factorY) * (float)newSize.width / (float)image->width;
   NAColor* outPtr = outImage->data;
   for(size_t i = 0; i < (newSize.width * newSize.height); i += 1) {
-    outPtr->a *= divisor;
+    outPtr->r *= divisor;
+    outPtr->g *= divisor;
     outPtr->b *= divisor;
-    outPtr->y *= divisor;
     outPtr->alpha *= divisor;
 
     na_ConvertToPerceptualRGB(outPtr, outPtr);

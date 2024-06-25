@@ -21,9 +21,9 @@ NA_HIDEF void na_ConvertToPerceptualRGB(NAColor* outColor, const NAColor* inColo
 //  outColor->a = naPowf(inColor->a, 1.f / 2.2f);
 //  outColor->b = naPowf(inColor->b, 1.f / 2.2f);
 //  outColor->y = naPowf(inColor->y, 1.f / 2.2f);
-  outColor->a = naConvertToPerceptualColorValue(inColor->a);
+  outColor->r = naConvertToPerceptualColorValue(inColor->r);
+  outColor->g = naConvertToPerceptualColorValue(inColor->g);
   outColor->b = naConvertToPerceptualColorValue(inColor->b);
-  outColor->y = naConvertToPerceptualColorValue(inColor->y);
 //  outColor->a = inColor->a;
 //  outColor->b = inColor->b;
 //  outColor->y = inColor->y;
@@ -33,9 +33,9 @@ NA_HIDEF void na_ConvertToRadiometricRGB(NAColor* outColor, const NAColor* inCol
 //  outColor->a = naPowf(inColor->a, 2.2f);
 //  outColor->b = naPowf(inColor->b, 2.2f);
 //  outColor->y = naPowf(inColor->y, 2.2f);
-  outColor->a = naConvertToRadiometricColorValue(inColor->a);
+  outColor->r = naConvertToRadiometricColorValue(inColor->r);
+  outColor->g = naConvertToRadiometricColorValue(inColor->g);
   outColor->b = naConvertToRadiometricColorValue(inColor->b);
-  outColor->y = naConvertToRadiometricColorValue(inColor->y);
 //  outColor->a = inColor->a;
 //  outColor->b = inColor->b;
 //  outColor->y = inColor->y;

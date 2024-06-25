@@ -25,8 +25,8 @@ void naFillHSVWithColor(float out[3], const NAColor* in) {
   float min;
   float range;
   float rgb[3];
-  rgb[0] = in->a;
-  rgb[1] = in->y;
+  rgb[0] = in->r;
+  rgb[1] = in->g;
   rgb[2] = in->b;
   if(rgb[0] < rgb[1]) {
     min = rgb[0]; out[2] = rgb[1];
@@ -73,14 +73,14 @@ void naFillColorWithHSV(NAColor* out, const float in[3]) {
   inc += min;
   dec += min;
   switch(h1) {
-  case 0: out->a = hsv[2] ; out->y = inc    ; out->b = min    ; break;
-  case 1: out->a = dec    ; out->y = hsv[2] ; out->b = min    ; break;
-  case 2: out->a = min    ; out->y = hsv[2] ; out->b = inc    ; break;
-  case 3: out->a = min    ; out->y = dec    ; out->b = hsv[2] ; break;
-  case 4: out->a = inc    ; out->y = min    ; out->b = hsv[2] ; break;
-  case 5: out->a = hsv[2] ; out->y = min    ; out->b = dec    ; break;
+  case 0: out->r = hsv[2] ; out->g = inc    ; out->b = min    ; break;
+  case 1: out->r = dec    ; out->g = hsv[2] ; out->b = min    ; break;
+  case 2: out->r = min    ; out->g = hsv[2] ; out->b = inc    ; break;
+  case 3: out->r = min    ; out->g = dec    ; out->b = hsv[2] ; break;
+  case 4: out->r = inc    ; out->g = min    ; out->b = hsv[2] ; break;
+  case 5: out->r = hsv[2] ; out->g = min    ; out->b = dec    ; break;
   default:
-    out->a = 0.f ; out->y = 0.f ; out->b = 0.f; break;
+    out->r = 0.f ; out->g = 0.f ; out->b = 0.f; break;
   }
   out->alpha = 1.;
 }
@@ -114,9 +114,9 @@ NA_HIDEF void na_BlendColorLinear(
   if(colorSum > NA_SINGULARITYf) {
     float baseBlend = baseColorFactor / colorSum;
     float topBlend = 1.f - baseBlend;
-    dstPtr->a = baseBlend * basePtr->a + topBlend * topPtr->a;
+    dstPtr->r = baseBlend * basePtr->r + topBlend * topPtr->r;
+    dstPtr->g = baseBlend * basePtr->g + topBlend * topPtr->g;
     dstPtr->b = baseBlend * basePtr->b + topBlend * topPtr->b;
-    dstPtr->y = baseBlend * basePtr->y + topBlend * topPtr->y;
     dstPtr->alpha = colorSum;
   }else{
     naFillColorWithTransparent(dstPtr);
@@ -135,9 +135,9 @@ NA_HIDEF void na_BlendColorOverlay(
   if(colorSum > NA_SINGULARITYf) {
     float baseBlend = baseColorFactor / colorSum;
     float topBlend = 1.f - baseBlend;
-    dstPtr->a = baseBlend * basePtr->a + topBlend * topPtr->a;
+    dstPtr->r = baseBlend * basePtr->r + topBlend * topPtr->r;
+    dstPtr->g = baseBlend * basePtr->g + topBlend * topPtr->g;
     dstPtr->b = baseBlend * basePtr->b + topBlend * topPtr->b;
-    dstPtr->y = baseBlend * basePtr->y + topBlend * topPtr->y;
     dstPtr->alpha = basePtr->alpha + (1.f - basePtr->alpha) * factor * topPtr->alpha;
   }else{
     naFillColorWithTransparent(dstPtr);
@@ -156,9 +156,9 @@ NA_HIDEF void na_BlendColorOpaque(
   if(colorSum > NA_SINGULARITYf) {
     float baseBlend = baseColorFactor / colorSum;
     float topBlend = 1.f - baseBlend;
-    dstPtr->a = baseBlend * basePtr->a + topBlend * topPtr->a;
+    dstPtr->r = baseBlend * basePtr->r + topBlend * topPtr->r;
+    dstPtr->g = baseBlend * basePtr->g + topBlend * topPtr->g;
     dstPtr->b = baseBlend * basePtr->b + topBlend * topPtr->b;
-    dstPtr->y = baseBlend * basePtr->y + topBlend * topPtr->y;
     dstPtr->alpha = basePtr->alpha;
   }else{
     naFillColorWithTransparent(dstPtr);
@@ -177,9 +177,9 @@ NA_HIDEF void na_BlendColorMultiply(
   if(colorSum > NA_SINGULARITYf) {
     float baseBlend = baseColorFactor / colorSum;
     float topBlend = 1.f - baseBlend;
-    dstPtr->a = baseBlend * basePtr->a + topBlend * topPtr->a * basePtr->a;
+    dstPtr->r = baseBlend * basePtr->r + topBlend * topPtr->r * basePtr->r;
+    dstPtr->g = baseBlend * basePtr->g + topBlend * topPtr->g * basePtr->g;
     dstPtr->b = baseBlend * basePtr->b + topBlend * topPtr->b * basePtr->b;
-    dstPtr->y = baseBlend * basePtr->y + topBlend * topPtr->y * basePtr->y;
     dstPtr->alpha = basePtr->alpha;
   }else{
     naFillColorWithTransparent(dstPtr);
@@ -198,9 +198,9 @@ NA_HIDEF void na_BlendColorScreen(
   if(colorSum > NA_SINGULARITYf) {
     float baseBlend = baseColorFactor / colorSum;
     float topBlend = 1.f - baseBlend;
-    dstPtr->a = baseBlend * basePtr->a + topBlend * (1.f - (1.f - topPtr->a) * (1.f - basePtr->a));
+    dstPtr->r = baseBlend * basePtr->r + topBlend * (1.f - (1.f - topPtr->r) * (1.f - basePtr->r));
+    dstPtr->g = baseBlend * basePtr->g + topBlend * (1.f - (1.f - topPtr->g) * (1.f - basePtr->g));
     dstPtr->b = baseBlend * basePtr->b + topBlend * (1.f - (1.f - topPtr->b) * (1.f - basePtr->b));
-    dstPtr->y = baseBlend * basePtr->y + topBlend * (1.f - (1.f - topPtr->y) * (1.f - basePtr->y));
     dstPtr->alpha = basePtr->alpha;
   }else{
     naFillColorWithTransparent(dstPtr);
@@ -224,9 +224,9 @@ NA_HIDEF void na_BlendColorErodeLight(
   if(colorSum > NA_SINGULARITYf) {
     float baseBlend = baseColorFactor / colorSum;
     float topBlend = 1.f - baseBlend;
-    dstPtr->a = baseBlend * basePtr->a + topBlend * topPtr->a;
+    dstPtr->r = baseBlend * basePtr->r + topBlend * topPtr->r;
+    dstPtr->g = baseBlend * basePtr->g + topBlend * topPtr->g;
     dstPtr->b = baseBlend * basePtr->b + topBlend * topPtr->b;
-    dstPtr->y = baseBlend * basePtr->y + topBlend * topPtr->y;
     dstPtr->alpha = (1.f - factor) * basePtr->alpha + factor * (1.f - baseHSL[2]) * basePtr->alpha * topPtr->alpha;
   }else{
     naFillColorWithTransparent(dstPtr);
@@ -250,9 +250,9 @@ NA_HIDEF void na_BlendColorErodeDark(
   if(colorSum > NA_SINGULARITYf) {
     float baseBlend = baseColorFactor / colorSum;
     float topBlend = 1.f - baseBlend;
-    dstPtr->a = baseBlend * basePtr->a + topBlend * topPtr->a;
+    dstPtr->r = baseBlend * basePtr->r + topBlend * topPtr->r;
+    dstPtr->g = baseBlend * basePtr->g + topBlend * topPtr->g;
     dstPtr->b = baseBlend * basePtr->b + topBlend * topPtr->b;
-    dstPtr->y = baseBlend * basePtr->y + topBlend * topPtr->y;
     dstPtr->alpha = (1.f - factor) * basePtr->alpha + factor * baseHSL[2] * basePtr->alpha * topPtr->alpha;
   }else{
     naFillColorWithTransparent(dstPtr);
@@ -342,9 +342,9 @@ NA_HIDEF void na_BlendColorEraseHue(
   }
 
   if(dstPtr->alpha == 0.f) {
-    dstPtr->a = 0.f;
+    dstPtr->r = 0.f;
+    dstPtr->g = 0.f;
     dstPtr->b = 0.f;
-    dstPtr->y = 0.f;
   }
 }
 

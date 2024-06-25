@@ -41,9 +41,9 @@ NA_DEF void naConvertHSLToHSV(float out[3], const float in[3]);
 
 typedef struct NAColor NAColor;
 struct NAColor{
-  float a;
+  float r;
+  float g;
   float b;
-  float y;
   float alpha;
 };
 
