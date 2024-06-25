@@ -13,10 +13,13 @@ correct, complete or final.
 - Adding PubSub implementation NANotifier
 - Adding latest NIST CODATA physical constants of 2022
 
+- Changing NAReaction callback signature to return void.
 - Dprecating NABezel4. Using NABorder2D instead.
 - Deleting NABounds. Had been deprecated already in version 27
 - Changeing main branch name to main instead of master.
 - Adding leap second information based on bulletin C 66 & 67
+
+
 
 Version 27 (released 25. October 2023)
 ==========
@@ -40,6 +43,7 @@ Smaller things:
 - Rearranging GUI implementation files
 - Fixing macOS windows not appearing upon start of application
 - Tons of smaller corrections, improvements, etc.
+
 
 
 Version 26 (released 8. January 2022)
