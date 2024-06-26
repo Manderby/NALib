@@ -1117,6 +1117,9 @@ NA_IAPI void naScaleM44dS(double* D, double s1, double s2, double s3);
 NA_IAPI void naScaleM33fS(float* D, float s1, float s2);
 NA_IAPI void naScaleM44fS(float* D, float s1, float s2, float s3);
 
+// Homogeneous Coordinates Rotate
+NA_IAPI void naRotateM44XYfS(float* D, float ang);
+
 // Homogeneous Coordinates Translate
 NA_IAPI void naTranslateM33d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2);
 NA_IAPI void naTranslateM44d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2, double s3);

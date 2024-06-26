@@ -41,12 +41,7 @@ NA_IDEF NABool naAlmost(double x, double y) {
       return naAlmostZero(x-y);
     }
   }else{
-    double relativeerror = x/y;
-    if(relativeerror < 0.) {
-      return naAlmostOne(-relativeerror);
-    }else{
-      return naAlmostOne(relativeerror);
-    }
+    return naAlmostOne(x/y);
   }
 }
 NA_IDEF NABool naAlmostf(float x, float y) {
@@ -57,12 +52,7 @@ NA_IDEF NABool naAlmostf(float x, float y) {
       return naAlmostZerof(x-y);
     }
   }else{
-    float relativeerror = x/y;
-    if(relativeerror < 0.f) {
-      return naAlmostOnef(-relativeerror);
-    }else{
-      return naAlmostOnef(relativeerror);
-    }
+    return naAlmostOnef(x/y);
   }
 }
 
