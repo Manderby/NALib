@@ -69,7 +69,9 @@
 
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaRadio, NA_UI_COMMAND_PRESSED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaRadio, NA_UI_COMMAND_PRESSED)) {
+    // don't know what to do.
+  }
 }
 
 - (void) setRadioState:(NABool)state{

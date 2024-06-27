@@ -29,12 +29,16 @@
 
 - (void) controlTextDidEndEditing:(NSNotification *)notification{
   NA_UNUSED(notification);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDIT_FINISHED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDIT_FINISHED)) {
+    [super controlTextDidEndEditing:notification];
+  }
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification{
   NA_UNUSED(notification);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDITED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDITED)) {
+    [super controlTextDidChange:notification];
+  }
 }
 
 - (void) setText:(const NAUTF8Char*)text{

@@ -391,7 +391,9 @@ NA_HDEF na_redrawOpenGLSpaces(void* data) {
   while(naIterateList(&it)) {
     NAWINAPIOpenGLSpace* openGLSpace = naGetListCurMutable(&it);
     wglMakeCurrent(GetDC(naGetUIElementNativePtr(openGLSpace)), openGLSpace->hRC);
-    na_DispatchUIElementCommand(&openGLSpace->openGLSpace.uiElement, NA_UI_COMMAND_REDRAW);
+    if(!na_DispatchUIElementCommand(&openGLSpace->openGLSpace.uiElement, NA_UI_COMMAND_REDRAW)) {
+      // don't know what to do.
+    }
 
     //RECT updateRegion;
     //GetUpdateRect(naGetUIElementNativePtr(openGLSpace), &updateRegion, NA_FALSE);

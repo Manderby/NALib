@@ -40,7 +40,9 @@ NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     ReleaseCapture();
     check = naGetRadioState(uiElement);
     naSetRadioState(uiElement, !check);
-    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
+    if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED)) {
+      // don't know what to do.
+    }
     info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
     break;

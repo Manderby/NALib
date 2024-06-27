@@ -38,8 +38,12 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
       uiScale = naGetUIElementResolutionFactor(NA_NULL);
       windowMutable->rect.pos.x = (double)LOWORD(lParam) / uiScale;
       windowMutable->rect.pos.y = screenRect.size.height - (double)HIWORD(lParam) / uiScale - windowMutable->rect.size.height;
-      na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-      na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
+      if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE)) {
+        // don't know what to do.
+      }
+      if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW)) {
+        // don't know what to do.
+      }
       na_RememberWindowPosition(&windowMutable->window);
       info.result = 0;
       //printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);
@@ -60,8 +64,12 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     windowMutable->rect.size.width = (double)LOWORD(lParam) / uiScale;
     windowMutable->rect.size.height = (double)HIWORD(lParam) / uiScale;
     windowMutable->rect.pos.y -= (windowMutable->rect.size.height - oldHeight);
-    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
+    if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE)) {
+      // don't know what to do.
+    }
+    if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW)) {
+      // don't know what to do.
+    }
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
     break;
@@ -69,7 +77,9 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_CLOSE:
     windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
     naSetFlagu32(&(windowMutable->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
-    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES);
+    if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES)) {
+      // don't know what to do.
+    }
     shouldClose = !naGetFlagu32(windowMutable->window.flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
     naSetFlagu32(&(windowMutable->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
     if(shouldClose) {
@@ -105,8 +115,12 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
       windowMutable->rect.pos.x = (double)windowPos.x / uiScale;
       windowMutable->rect.pos.y = screenRect.size.height - (double)windowPos.y / uiScale - windowMutable->rect.size.height;
     }
-    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
-    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
+    if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE)) {
+      // don't know what to do.
+    }
+    if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW)) {
+      // don't know what to do.
+    }
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
 

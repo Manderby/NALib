@@ -67,7 +67,9 @@ NABool naTextFieldWINAPINotify(void* uiElement, WORD notificationCode) {
   NABool hasBeenHandeled = NA_FALSE;
   switch(notificationCode) {
   case EN_CHANGE:
-    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED);
+    if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED)) {
+      // don't know what to do.
+    }
     hasBeenHandeled = NA_TRUE;
     break;
   // todo: add code for NA_UI_COMMAND_EDIT_FINISHED
@@ -78,7 +80,9 @@ NABool naTextFieldWINAPINotify(void* uiElement, WORD notificationCode) {
 
 
 void naHandleTextFieldEnter(NAReaction reaction) {
-  na_DispatchUIElementCommand(reaction.uiElement, NA_UI_COMMAND_EDIT_FINISHED);
+  if(!na_DispatchUIElementCommand(reaction.uiElement, NA_UI_COMMAND_EDIT_FINISHED)) {
+    // don't know what to do.
+  }
 }
 
 

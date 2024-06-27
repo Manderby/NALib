@@ -19,7 +19,9 @@
 }
 
 - (void)itemSelected:(id)sender{
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaMenuItem, NA_UI_COMMAND_PRESSED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMenuItem, NA_UI_COMMAND_PRESSED)) {
+    // don't know what to do.
+  }
 }
 
 - (NARect) getInnerRect{

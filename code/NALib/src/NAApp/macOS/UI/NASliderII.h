@@ -35,17 +35,23 @@
   NSEvent *event = [[NSApplication sharedApplication] currentEvent];
 
   if(event.type == NAEventTypeLeftMouseUp) {
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDIT_FINISHED); 
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDIT_FINISHED)) {
+      // don't know what to do.
+    }
     cocoaSlider->slider.sliderInMovement = false;
   }else{
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDITED);  
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDITED)) {
+      // don't know what to do.
+    }
     cocoaSlider->slider.sliderInMovement = true;
   }
 }
 
 - (void) mouseDown:(id)sender{
   cocoaSlider->slider.sliderInMovement = true;
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_PRESSED);  
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_PRESSED)) {
+    // don't know what to do.
+  }
   [super mouseDown:sender];
 }
 

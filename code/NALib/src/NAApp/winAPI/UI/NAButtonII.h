@@ -125,7 +125,9 @@ NABool naButtonWINAPINotify(void* uiElement, WORD notificationCode) {
         updateButtonText(winapiButton);
       }
     }
-    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
+    if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED)) {
+      // don't know what to do.
+    }
     hasBeenHandeled = NA_TRUE;
     break;
   default:

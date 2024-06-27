@@ -59,7 +59,9 @@
     originMousePos = naMakePosWithNSPoint([event locationInWindow]);
   }else{
     [super mouseDown:event];
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_DOWN);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
+      // don't know what to do.
+    }
   }
 }
 
@@ -72,7 +74,9 @@
     [[self window] setFrame:frame display:YES];
   }else{
     [super mouseDragged:event];
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+      // don't know what to do.
+    }
   }
 }
 
@@ -81,33 +85,45 @@
     [self resetDrag];
   }else{
     [super mouseUp:event];
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_UP);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_UP)) {
+      // don't know what to do.
+    }
   }
 }
 
 - (void)mouseMoved:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+    [super mouseMoved:event];
+  }
 }
 
 - (void)mouseEntered:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_ENTERED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_ENTERED)) {
+    [super mouseEntered:event];
+  }
 }
 
 - (void)mouseExited:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_EXITED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_EXITED)) {
+    [super mouseExited:event];
+  }
 }
 
 - (void)keyDown:(NSEvent* _Nonnull)event{
   na_CaptureKeyboardStatus(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_DOWN);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_DOWN)) {
+    [super keyDown:event];
+  }
 }
 
 - (void)keyUp:(NSEvent* _Nonnull)event{
   na_CaptureKeyboardStatus(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_UP);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_UP)) {
+    [super keyUp:event];
+  }
 }
 
 - (void)resetDrag{

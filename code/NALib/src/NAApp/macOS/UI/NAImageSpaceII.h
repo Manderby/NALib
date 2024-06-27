@@ -41,7 +41,9 @@
 
 - (void)mouseMoved:(NSEvent* _Nonnull)event{
   na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaImageSpace, NA_UI_COMMAND_MOUSE_MOVED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaImageSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+    [super mouseMoved:event];
+  }
 }
 
 - (NARect) getInnerRect{

@@ -350,7 +350,9 @@ NABool naWINAPICaptureMouseHover() {
         na_RefreshUIElementNow(curElement);
       }
 
-      na_DispatchUIElementCommand(curElement, NA_UI_COMMAND_MOUSE_EXITED);
+      if(!na_DispatchUIElementCommand(curElement, NA_UI_COMMAND_MOUSE_EXITED)) {
+        // don't know what to do.
+      }
       curElement = naGetUIElementParent(curElement);
     }
 
@@ -373,7 +375,9 @@ NABool naWINAPICaptureMouseHover() {
         na_RefreshUIElementNow(curElement);
       }
 
-      na_DispatchUIElementCommand(elementUnderMouse, NA_UI_COMMAND_MOUSE_ENTERED);
+      if(!na_DispatchUIElementCommand(elementUnderMouse, NA_UI_COMMAND_MOUSE_ENTERED)) {
+        // don't know what to do.
+      }
       elementUnderMouse = naGetUIElementParent(elementUnderMouse);
     }
   }
@@ -410,7 +414,9 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
       pos = naGetMousePos(mouseStatus);
       na_SetMouseMovedByDiff(size.width - pos.x, size.height - pos.y);
 
-      na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED);
+      if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED)) {
+        // don't know what to do.
+      }
       info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
     }
@@ -422,7 +428,9 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
 
   case WM_KEYDOWN:
     if(na_UIHasElementCommandDispatches(elem, NA_UI_COMMAND_KEY_DOWN)) {
-      na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_DOWN);
+      if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_DOWN)) {
+        // don't know what to do.
+      }
       info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
     }
@@ -430,7 +438,9 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
 
   case WM_KEYUP:
     if(na_UIHasElementCommandDispatches(elem, NA_UI_COMMAND_KEY_UP)) {
-      na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_UP);
+      if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_UP)) {
+        // don't know what to do.
+      }
       info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
     }
@@ -637,7 +647,9 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam) {
     naClearListIterator(&iter);
 
     if(menuItem) {
-      na_DispatchUIElementCommand((const NA_UIElement*)menuItem, NA_UI_COMMAND_PRESSED);
+      if(!na_DispatchUIElementCommand((const NA_UIElement*)menuItem, NA_UI_COMMAND_PRESSED)) {
+        // don't know what to do.
+      }
       hasBeenHandeled = NA_TRUE;
     }
     na_SetApplicationLastOpenedMenu(naGetApplication(), NA_NULL);

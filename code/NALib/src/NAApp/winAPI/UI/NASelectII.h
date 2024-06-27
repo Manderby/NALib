@@ -78,7 +78,9 @@ NABool naSelectWINAPINotify(void* uiElement, WORD notificationCode) {
       0,
       0);
     child = naGetSelectItem(uiElement, itemIndex);
-    na_DispatchUIElementCommand(&(child->uiElement), NA_UI_COMMAND_PRESSED);
+    if(!na_DispatchUIElementCommand(&(child->uiElement), NA_UI_COMMAND_PRESSED)) {
+      // don't know what to do.
+    }
     break;
   }
   return hasBeenHandeled;

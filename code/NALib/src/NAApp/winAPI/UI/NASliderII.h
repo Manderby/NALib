@@ -84,7 +84,9 @@ NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam) {
   NAWINAPICallbackInfo info = {NA_TRUE, 0};
 
   naSetSliderValue(uiElement, naGetSliderValue(uiElement));
-  na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED);
+  if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED)) {
+    // don't know what to do.
+  }
 
   return info;
 }

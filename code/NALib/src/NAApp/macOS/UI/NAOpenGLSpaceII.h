@@ -74,50 +74,68 @@
   - (void)drawRect:(NSRect)dirtyRect{
     NA_UNUSED(dirtyRect);
     [[self openGLContext] makeCurrentContext];
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_REDRAW);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_REDRAW)) {
+      [super drawRect:dirtyRect];
+    }
   }
   
   - (void)reshape{
     [super reshape];
     [[self openGLContext] update];
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_RESHAPE);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_RESHAPE)) {
+      [super reshape];
+    }
   }
   
   - (void)mouseDown:(NSEvent*)event{
     na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_DOWN);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
+      [super mouseDown:event];
+    }
   }
 
   - (void)mouseUp:(NSEvent*)event{
     na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_UP);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_UP)) {
+      [super mouseUp:event];
+    }
   }
 
   - (void)mouseDragged:(NSEvent*)event{
     na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+      [super mouseDragged:event];
+    }
   }
 
   - (void)mouseMoved:(NSEvent*)event{
     na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+      [super mouseMoved:event];
+    }
   }
   
   - (void)scrollWheel:(NSEvent*)event{
     na_SetMouseScrolledByDiff([event deltaX], [event deltaY]);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_SCROLLED);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_SCROLLED)) {
+      [super scrollWheel:event];
+    }
   }
 
   - (void)keyDown:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEY_DOWN);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEY_DOWN)) {
+      [super keyDown:event];
+    }
   }
   
   - (void)keyUp:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEY_UP);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEY_UP)) {
+      [super keyUp:event];
+    }
   }
   
   - (void)flagsChanged:(NSEvent*)event{
@@ -126,10 +144,14 @@
     NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
     NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
 
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (shift   ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (alt     ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (control ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (command ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    NABool handeled = NA_FALSE;
+    
+    handeled |= na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (shift   ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    handeled |= na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (alt     ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    handeled |= na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (control ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    handeled |= na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, (command ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    
+    if(!handeled) { [super flagsChanged:event]; }
   }
   
   @end

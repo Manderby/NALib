@@ -100,7 +100,9 @@
 
 - (void)textDidChange:(NSNotification *)obj{
   NA_UNUSED(obj);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaTextBox, NA_UI_COMMAND_EDITED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaTextBox, NA_UI_COMMAND_EDITED)) {
+    // don't know what to do.
+  }
 }
 
 - (NSView*) getEncapsulatingView{

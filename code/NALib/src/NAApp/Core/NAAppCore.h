@@ -239,21 +239,22 @@ NA_HAPI NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAU
 
 // Dispatches a command with the given uiElement.
 // 
-// All reactions registered to the element will be called in the same order
-// they were added.
-// 
-// If there is at least one reaction, the command will NOT be bubbling upwards
-// afterward. If bubbling is desired, one has to do it manually by calling
-// the dispatch method with the parent element.
-//
-// If there are NO reactions registered for the given uiElement, the command
-// WILL be bubbling upwards the element tree in the following order:
-// - First responder
-// - containing space
-// - window
-// - application
-// - WinAPI default function
-NA_HAPI void na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command);
+// Dispatching happends according to the following rules:
+// - If the given element has at least 1 reaction fitting to the given command,
+//   these reaction will be called in the same order they were added. Afterwards
+//   the function returns with NA_TRUE. No bubbling towards parent elements
+//   happens automatically. If bubbling is desired, one has to do it manually by
+//   calling the dispatch method with the parent element in the reaction methd.
+// - If the given element has NO reactions fitting the given command, the
+//   dispatch method will be called for the parent element of the given element.
+//   The parent element is the parent given by the NALib structure, not the
+//   native parent! The return value of this function is determined by the
+//   return value of the recursive call.
+// - If there is no parent available in the NALib structure, the function
+//   returns NA_FALSE, meaning, the event has not been handeled at all.
+//   This in turn will usually cause the NALib GUI elements to call the event
+//   handling method given by the system or base class of the native element.
+NA_HAPI NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command);
 
 // To be implemented in the system dependent files:
 NA_HAPI void na_RefreshUIElementNow(void* uiElement);

@@ -50,7 +50,9 @@
 
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaCheckBox, NA_UI_COMMAND_PRESSED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaCheckBox, NA_UI_COMMAND_PRESSED)) {
+    // don't know what to do.
+  }
 }
 
 - (void) setVisible:(NABool)visible{

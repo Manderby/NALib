@@ -53,7 +53,9 @@ NABool naCheckBoxWINAPINotify(void* uiElement, WORD notificationCode) {
       ReleaseCapture();
       check = naGetCheckBoxState(uiElement);
       naSetCheckBoxState(uiElement, !check);
-      na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
+      if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED)) {
+        // don't know what to do.
+      }
       hasBeenHandeled = NA_TRUE;
       break;
   }

@@ -42,7 +42,10 @@
   NABool shouldClose;
   NA_UNUSED(sender);
   naSetFlagu32(&(cocoaWindow->window.coreFlags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_CLOSES);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_CLOSES))
+  {
+    // don't know what to do.
+  }
   shouldClose = !naGetFlagu32(cocoaWindow->window.coreFlags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
   naSetFlagu32(&(cocoaWindow->window.coreFlags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
   return (BOOL)shouldClose;
@@ -102,41 +105,55 @@
 
 - (void)mouseMoved:(NSEvent*)event{
   na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_MOVED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_MOVED)) {
+    [super mouseMoved:event];
+  }
 }
 
 - (void)mouseEntered:(NSEvent*)event{
   NA_UNUSED(event);
   na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_ENTERED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_ENTERED)) {
+    [super mouseEntered:event];
+  }
 }
 
 - (void)mouseExited:(NSEvent*)event{
   NA_UNUSED(event);
   na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_EXITED);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_EXITED)) {
+    [super mouseExited:event];
+  }
 }
 
 - (void)keyDown:(NSEvent*)event{
   NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_DOWN);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_DOWN)) {
+    [super keyDown:event];
+  }
 }
 
 - (void)keyUp:(NSEvent*)event{
   NA_UNUSED(event);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_UP);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_UP)) {
+    [super keyUp:event];
+  }
 }
 
 - (void)windowDidResize:(NSNotification *)notification{
   NA_UNUSED(notification);
   na_RememberWindowPosition((NAWindow*)cocoaWindow);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
+    // don't know what to do.
+  }
 }
 
 - (void)windowDidMove:(NSNotification *)notification{
   NA_UNUSED(notification);
   na_RememberWindowPosition((NAWindow*)cocoaWindow);
-  na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
+    // don't know what to do.
+  }
 }
 
 - (BOOL)canBecomeMainWindow{

@@ -54,10 +54,11 @@
   
   - (void) displayLayer:(CALayer *)layer {
     NA_UNUSED(layer);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_REDRAW);
-    // If it is not handeled, just do nothing. Note that calling displayLayer
-    // of the CALayerDelegate would just recursively call this method again
-    // leading to an infinite recursion.
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_REDRAW)) {
+      // If it is not handeled, just do nothing. Note that calling displayLayer
+      // of the CALayerDelegate would just recursively call this method again
+      // leading to an infinite recursion.
+    }
   }
   
   - (void)adjustLayerFrame{
@@ -89,18 +90,24 @@
 
   - (void)mouseMoved:(NSEvent*)event{
     na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+      [super mouseMoved:event];
+    }
     [NSEvent setMouseCoalescingEnabled:NO];
   }
   
   - (void)keyDown:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_DOWN);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_DOWN)) {
+      [super keyDown:event];
+    }
   }
   
   - (void)keyUp:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_UP);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_UP)) {
+      [super keyUp:event];
+    }
   }
   
   - (void)flagsChanged:(NSEvent*)event{
@@ -109,10 +116,15 @@
     NABool control = ([event modifierFlags] & NAEventModifierFlagControl) ? NA_TRUE : NA_FALSE;
     NABool command = ([event modifierFlags] & NAEventModifierFlagCommand) ? NA_TRUE : NA_FALSE;
     
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (shift ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (alt ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (control ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
-    na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (command ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    NABool handeled = NA_FALSE;
+    handeled |= na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (shift ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    handeled |= na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (alt ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    handeled |= na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (control ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    handeled |= na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, (command ? NA_UI_COMMAND_KEY_DOWN : NA_UI_COMMAND_KEY_UP));
+    
+    if(!handeled) {
+      [super flagsChanged:event];
+    }
   }
   
   @end
