@@ -74,6 +74,7 @@
       [(CAMetalLayer*)[self layer] setDrawableSize:frame.size];
       [(CAMetalLayer*)[self layer] setContentsScale:uiScale];
     )
+    [self setNeedsDisplay:YES];
   }
 
   - (void)setFrame:(NSRect) frame{
