@@ -140,6 +140,15 @@
   }
 }
 
+- (BOOL)performKeyEquivalent:(NSEvent*)event{
+  NA_UNUSED(event);
+  NABool handeled = na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_DOWN);
+  if(!handeled) {
+    [super keyUp:event];
+  }
+  return handeled ? YES : NO;
+}
+
 - (void)windowDidResize:(NSNotification *)notification{
   NA_UNUSED(notification);
   na_RememberWindowPosition((NAWindow*)cocoaWindow);
