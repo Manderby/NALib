@@ -138,9 +138,19 @@
     NACocoaNativeMetalSpace* nativePtr = [[NACocoaNativeMetalSpace alloc]
       initWithMetalSpace:cocoaMetalSpace
       frame:naMakeNSRectWithSize(size)];
+      
     na_InitMetalSpace((NAMetalSpace*)cocoaMetalSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
     return (NAMetalSpace*)cocoaMetalSpace;
+  }
+
+
+
+  NA_API NABool naIsMetalTechnologyAvailable(NAMetalSpace* metalSpace) {
+    naDefineCocoaObjectConst(NACocoaNativeMetalSpace, nativePtr, metalSpace);
+    // Security check for Sierra and High Sierra systems.
+    // Damnit Apple, get your shit together!
+    return [nativePtr layer] != nil;
   }
 
 
@@ -192,6 +202,10 @@ NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect) {
       naError("Metal has not been configured. See NAConfiguration.h");
     #endif
     return NA_NULL;
+  }
+
+  NA_API NABool naIsMetalTechnologyAvailable(NAMetalSpace* metalSpace) {
+    return NA_FALSE;
   }
 
   NA_DEF void na_DestructCocoaMetalSpace(NACocoaMetalSpace* cocoaMetalSpace) {

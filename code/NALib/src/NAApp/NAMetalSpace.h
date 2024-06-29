@@ -20,6 +20,9 @@
 // Creates a new metalSpace
 NA_API NAMetalSpace* naNewMetalSpace(NASize size);
 
+// Returns true, if the given metalSpace has allocated a valid Metal structure.
+NA_API NABool naIsMetalTechnologyAvailable(NAMetalSpace* metalSpace);
+
 // Changes the visibility of the metal space.
 NA_API void naSetMetalSpaceVisible(NAMetalSpace* metalSpace, NABool visible);
 
@@ -28,8 +31,6 @@ NA_API void* naGetMetalSpaceSystemContext(const NAMetalSpace* metalSpace);
 
 // Sets the inner bounds of the space.
 NA_API void naSetMetalSpaceInnerRect(NAMetalSpace* metalSpace, NARect bounds);
-
-
 
 #endif // NA_UI_METAL_SPACE_INCLUDED
 
