@@ -61,14 +61,14 @@ NA_DEF const NAMouseStatus* naGetMouseStatus() {
 
 
 
-NA_DEF NAPos naGetMousePos(const NAMouseStatus* mousestatus) {
-  return mousestatus->pos;
+NA_DEF NAPos naGetMousePos(const NAMouseStatus* mouseStatus) {
+  return mouseStatus->pos;
 }
 
 
 
-NA_DEF NASize naGetMouseDelta(const NAMouseStatus* mousestatus) {
-  return naMakeSizeE(mousestatus->pos.x - mousestatus->prevPos.x, mousestatus->pos.y - mousestatus->prevPos.y);
+NA_DEF NAPos naGetMouseDelta(const NAMouseStatus* mouseStatus) {
+  return naMakePos(mouseStatus->pos.x - mouseStatus->prevPos.x, mouseStatus->pos.y - mouseStatus->prevPos.y);
 }
 
 

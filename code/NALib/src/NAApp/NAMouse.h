@@ -24,10 +24,10 @@ typedef void* NACursorImage;
 NA_API const NAMouseStatus* naGetMouseStatus(void);
 
 // Returns the position of the mouse status.
-NA_API NAPos naGetMousePos(const NAMouseStatus* mousestatus);
+NA_API NAPos naGetMousePos(const NAMouseStatus* mouseStatus);
 
 // Returns the difference between the current and last recorded position.
-NA_API NASize naGetMouseDelta(const NAMouseStatus* mousestatus);
+NA_API NAPos naGetMouseDelta(const NAMouseStatus* mouseStatus);
 
 // Centers the mouse in the given uiElement.
 NA_API void naCenterMouse(void* uiElement);

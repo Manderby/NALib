@@ -63,13 +63,6 @@
   }
 }
 
-- (void)mouseMoved:(NSEvent*)event{
-  na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
-  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_MOUSE_MOVED)) {
-    [super mouseMoved:event];
-  }
-}
-
 - (void)mouseEntered:(NSEvent*)event{
   NA_UNUSED(event);
   na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
