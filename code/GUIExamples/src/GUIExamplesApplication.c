@@ -57,39 +57,39 @@ void postStartup(void* arg){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
-  NABabyImage* originalIconImage = naCreateBabyImageFromPNG(pngIcon);
+  NAImage* originalIconImage = naCreateImageFromPNG(pngIcon);
   app->iconImage = naCreateUIImage(
     originalIconImage,
     NA_UIIMAGE_RESOLUTION_SCREEN_2x,
     NA_BLEND_ERODE_LIGHT);
   naDelete(pngIcon);
-  naReleaseBabyImage(originalIconImage);
+  naReleaseImage(originalIconImage);
 
   NAPNG* png1 = naNewPNGWithPath(RESOURCE_PATH "man.png");
   if(!naIsSizesUseful(naGetPNGSize(png1))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
-  NABabyImage* originalState1Image = naCreateBabyImageFromPNG(png1);
+  NAImage* originalState1Image = naCreateImageFromPNG(png1);
   app->state1Image = naCreateUIImage(
     originalState1Image,
     NA_UIIMAGE_RESOLUTION_SCREEN_2x,
     NA_BLEND_ZERO);
   naDelete(png1);
-  naReleaseBabyImage(originalState1Image);
+  naReleaseImage(originalState1Image);
 
   NAPNG* png2 = naNewPNGWithPath(RESOURCE_PATH "man2.png");
-  if(!naIsSizeiUseful(naGetPNGSize(png2))){
+  if(!naIsSizesUseful(naGetPNGSize(png2))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
-  NABabyImage* originalState2Image = naCreateBabyImageFromPNG(png2);
+  NAImage* originalState2Image = naCreateImageFromPNG(png2);
   app->state2Image = naCreateUIImage(
     originalState2Image,
     NA_UIIMAGE_RESOLUTION_SCREEN_2x,
     NA_BLEND_ZERO);
   naDelete(png2);
-  naReleaseBabyImage(originalState2Image);
+  naReleaseImage(originalState2Image);
 
   // Create the controllers
   app->experimentController = createExperimentController();

@@ -42,11 +42,11 @@ void printNALib(void){
 }
 
 void testNALib(void){
-  //naTestFunction(testNABase);
-  //naTestFunction(testNAMath);
-  //naTestFunction(testNACore);
+  naTestFunction(testNABase);
+  naTestFunction(testNAMath);
+  naTestFunction(testNACore);
   naTestFunction(testNAUtility);
-  //naTestFunction(testNAStruct);
+  naTestFunction(testNAStruct);
 }
 
 void benchmarkNALib(void){
@@ -76,7 +76,8 @@ int main(int argc, const char** argv){
     argv);
 
   // Only output tests which fail.
-  naSetTestPrintsAllTests(NA_TRUE);
+  naSetTestPrintsAllTests(NA_FALSE);
+  naSetTestPrintsFullGroupName(NA_FALSE);
 
   #if NA_DEBUG == 0
     naExecuteErrorTests(NA_FALSE);

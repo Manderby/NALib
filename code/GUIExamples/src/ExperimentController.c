@@ -76,21 +76,17 @@ void updateExperimentController(ExperimentController* con);
 
 
 
-NABool windowReshaped(NAReaction reaction){
+void windowReshaped(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   NARect rect = naGetUIElementRect(con->experimentWindow);
   NARect borderRect = naGetUIElementRect(con->experimentWindow);
   const NAUTF8Char* labelString = naAllocSprintf(NA_TRUE, "Window reshaped.\nRect with border:    %.01f, %.01f, %.01f, %.01f\nRect without border: %.01f, %.01f, %.01f, %.01f", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height, borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
   naSetLabelText(con->outputLabel, labelString);
-
-  return NA_TRUE;
 }
 
-NABool checkBoxPressed(NAReaction reaction){
+void checkBoxPressed(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   naSetLabelText(con->outputLabel, "CheckBox Pressed");
-
-  return NA_TRUE;
 }
 
 void initOpenGL(void* initData)
@@ -99,7 +95,7 @@ void initOpenGL(void* initData)
   con->fontId = naStartupPixelFont();
 }
 
-NABool redrawOpenGLSpace(NAReaction reaction){
+void redrawOpenGLSpace(NAReaction reaction){
   // OpenGL is declared deprecated on macOS 10.14. These pragma directives
   // omit the nasty warnings. Do not forget the pragma pop at the end of this
   // function!
@@ -146,53 +142,42 @@ NABool redrawOpenGLSpace(NAReaction reaction){
    
   naSwapOpenGLSpaceBuffer(con->openGLSpace);
   
-
-  return NA_TRUE;
-
   #if NA_OS == NA_OS_MAC_OS_X
     #pragma GCC diagnostic pop
   #endif
 }
 
-NABool radioPressed(NAReaction reaction){
+void radioPressed(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   naSetLabelText(con->outputLabel, "Radio Pressed");
-
-  return NA_TRUE;
 }
 
-NABool sliderEdited(NAReaction reaction){
+void sliderEdited(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   const NASlider* slider = reaction.uiElement;
   const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "Slider Value Edited to %f", naGetSliderValue(slider));
   naSetLabelText(con->outputLabel, outputText);
-
-  return NA_TRUE;
 }
 
-NABool textFieldEdited(NAReaction reaction){
+void textFieldEdited(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   const NATextField* textField = reaction.uiElement;
   NAString* textFieldString = naNewStringWithTextFieldText(textField);
   const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "TextField Value Edited to %s", naGetStringUTF8Pointer(textFieldString));
   naSetLabelText(con->outputLabel, outputText);
   naDelete(textFieldString);
-
-  return NA_TRUE;
 }
 
-NABool textFieldEditFinished(NAReaction reaction){
+void textFieldEditFinished(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   const NATextField* textField = reaction.uiElement;
   NAString* textFieldString = naNewStringWithTextFieldText(textField);
   const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "TextField Value Finished Editing to %s", naGetStringUTF8Pointer(textFieldString));
   naSetLabelText(con->outputLabel, outputText);
   naDelete(textFieldString);
-
-  return NA_TRUE;
 }
 
-NABool menuButtonPressed(NAReaction reaction){
+void menuButtonPressed(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   
   NARect rect = naGetUIElementRectAbsolute(con->menuButton);
@@ -202,44 +187,36 @@ NABool menuButtonPressed(NAReaction reaction){
 
   naSetLabelText(con->outputLabel, "Menu button pressed");
   naPresentMenu(con->menu, menuPos, con->menuButton);
-
-  return NA_TRUE;
 }
 
-NABool selectItemSelected(NAReaction reaction){
+void selectItemSelected(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(
     NA_TRUE,
     "Select item with index %d selected",
     (int)naGetSelectItemIndex(con->select, reaction.uiElement));
   naSetLabelText(con->outputLabel, outputText);
-
-  return NA_TRUE;
 }
 
-NABool menuItemSelected(NAReaction reaction){
+void menuItemSelected(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(
     NA_TRUE,
     "MenuItem with index %d selected",
     (int)naGetMenuItemIndex(con->menu, reaction.uiElement));
   naSetLabelText(con->outputLabel, outputText);
-
-  return NA_TRUE;
 }
 
-NABool menuItemKeyboardSelected(NAReaction reaction){
+void menuItemKeyboardSelected(NAReaction reaction){
   ExperimentController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(
     NA_TRUE,
     "MenuItem with index %d selected by keyboard shortcut",
     (int)naGetMenuItemIndex(con->menu, reaction.uiElement));
   naSetLabelText(con->outputLabel, outputText);
-
-  return NA_TRUE;
 }
 
-NABool pressExperimentButton(NAReaction reaction){
+void pressExperimentButton(NAReaction reaction){
   ExperimentController* con = (ExperimentController*)reaction.controller;
 
   if(reaction.uiElement == con->fontButton){
@@ -251,8 +228,6 @@ NABool pressExperimentButton(NAReaction reaction){
   }else if(reaction.uiElement == con->quitButton){
     naStopApplication();
   }
-
-  return NA_TRUE;
 }
 
 ExperimentController* createExperimentController(){

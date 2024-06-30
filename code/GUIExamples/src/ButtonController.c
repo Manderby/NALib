@@ -47,7 +47,7 @@ struct ButtonController{
 
 
 
-NABool buttonPressed(NAReaction reaction){
+void buttonPressed(NAReaction reaction){
   ButtonController* con = reaction.controller;
 
   NAString* labelString;
@@ -73,24 +73,20 @@ NABool buttonPressed(NAReaction reaction){
 
   naSetLabelText(con->outputLabel, naGetStringUTF8Pointer(labelString));
   naDelete(labelString);
-
-  return NA_TRUE;
 }
 
 
 
-NABool submitPressed(NAReaction reaction){
+void submitPressed(NAReaction reaction){
   ButtonController* con = reaction.controller;
   naSetLabelText(con->outputLabel, "Submit pressed");
-  return NA_TRUE;
 }
 
 
 
-NABool abortPressed(NAReaction reaction){
+void abortPressed(NAReaction reaction){
   ButtonController* con = reaction.controller;
   naSetLabelText(con->outputLabel, "Abort pressed");
-  return NA_TRUE;
 }
 
 

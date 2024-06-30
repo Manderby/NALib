@@ -109,11 +109,11 @@ ImageTesterApplication* app = NA_NULL;
 
 ImageTesterController* naAllocImageTestController(void);
 void naDeallocImageTestController(ImageTesterController* con);
-NABool topSelected(NAReaction reaction);
-NABool bottomSelected(NAReaction reaction);
-NABool blendModeSelected(NAReaction reaction);
-NABool sliderEdited(NAReaction reaction);
-NABool mouseMoved(NAReaction reaction);
+void topSelected(NAReaction reaction);
+void bottomSelected(NAReaction reaction);
+void blendModeSelected(NAReaction reaction);
+void sliderEdited(NAReaction reaction);
+void mouseMoved(NAReaction reaction);
 void updateImageTestController(ImageTesterController* con);
 
 
@@ -352,31 +352,28 @@ void updateImageTestController(ImageTesterController* con) {
 
 
 
-NABool topSelected(NAReaction reaction) {
+void topSelected(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   con->selectedTop = naGetSelectItemIndex(con->topSelect, reaction.uiElement);
   updateImageTestController(con);
-  return NA_TRUE;
 }
 
-NABool bottomSelected(NAReaction reaction) {
+void bottomSelected(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   con->selectedBottom = naGetSelectItemIndex(con->bottomSelect, reaction.uiElement);
   updateImageTestController(con);
-  return NA_TRUE;
 }
 
-NABool blendModeSelected(NAReaction reaction) {
+void blendModeSelected(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   size_t index = naGetSelectItemIndex(con->blendModeSelect, reaction.uiElement);
   con->blendMode = (NABlendMode)index;
   updateImageTestController(con);
-  return NA_TRUE;
 }
 
 
 
-NABool sliderEdited(NAReaction reaction) {
+void sliderEdited(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   if(reaction.uiElement == con->alphaSlider) {
     con->alpha = (float)naGetSliderValue(con->alphaSlider);
@@ -384,19 +381,17 @@ NABool sliderEdited(NAReaction reaction) {
     con->scale = (float)naGetSliderValue(con->scaleSlider);
   }
   updateImageTestController(con);
-  return NA_TRUE;
 }
 
 
 
-NABool mouseMoved(NAReaction reaction) {
+void mouseMoved(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   const NAMouseStatus* mouse = naGetMouseStatus();
   NARect spaceRect = naGetUIElementRectAbsolute(reaction.uiElement);
   con->center.x = (int32)(mouse->pos.x - spaceRect.pos.x);
   con->center.y = (int32)(mouse->pos.y - spaceRect.pos.y);
   updateImageTestController(con);
-  return NA_TRUE;
 }
 
 
