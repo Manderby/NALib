@@ -11,21 +11,11 @@
 - (id _Nonnull) initWithSpace:(NACocoaSpace* _Nonnull)newCocoaSpace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
-  // todo: make this dependent on whether tracking is needed or not.
-  trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
-      options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow)
-      owner:self userInfo:nil];
-  [self addTrackingArea:trackingArea];
   [self setWantsLayer:YES];
   [self resetDrag];
 
   cocoaSpace = newCocoaSpace;
   return self;
-}
-
-- (void)dealloc{
-  NA_COCOA_RELEASE(trackingArea);
-  NA_COCOA_SUPER_DEALLOC();
 }
 
 - (BOOL)acceptsFirstResponder{

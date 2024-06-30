@@ -142,7 +142,6 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 @interface NACocoaNativeButton : NSButton{
   NACocoaButton* cocoaButton;
-  NSTrackingArea* trackingArea;
   bool isImage;
 }
 @end
@@ -154,7 +153,6 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 @interface NACocoaNativeImageSpace : NSImageView{
   NACocoaImageSpace* cocoaImageSpace;
-  NSTrackingArea* trackingArea;
 }
 @end
 
@@ -224,7 +222,6 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 @interface NACocoaNativeSpace : NSView{
   NACocoaSpace*   cocoaSpace;
-  NSTrackingArea* trackingArea;
   NABool isMoving;
   NAPos originMousePos;
 }
@@ -244,8 +241,6 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 @interface NACocoaNativeWindow : NSWindow <NSWindowDelegate>{
   NACocoaWindow* cocoaWindow;
-  size_t trackingCount;
-  NSTrackingArea* trackingArea;
 }
 @end
 

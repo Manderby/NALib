@@ -14,6 +14,9 @@ NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
   uiElement->hoverReactionCount = 0;
   uiElement->mouseInside = NA_FALSE;
   uiElement->allowNotifications = NA_TRUE;
+
+  uiElement->mouseTrackingCount = 0;
+  uiElement->mouseTracking = NA_NULL;
   
   if(elementType == NA_UI_BUTTON) {
     uiElement->hoverReactionCount++;
@@ -25,6 +28,10 @@ NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
 
 
 NA_HDEF void na_ClearUIElement(NA_UIElement* uiElement) {
+  if(uiElement->mouseTracking) {
+    na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
+  }
+  
   naForeachListMutable(&(uiElement->reactions), naFree);
   naForeachListMutable(&(uiElement->shortcuts), naFree);
   naClearList(&(uiElement->reactions));
@@ -127,20 +134,17 @@ NA_DEF const NANativePtr naGetUIElementNativePtrConst(const void* uiElement) {
 NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCallback callback, void* controller) {
   NAEventReaction* eventReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
+  
   #if NA_DEBUG
-    if((command == NA_UI_COMMAND_RESHAPE) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
+    if((command == NA_UI_COMMAND_RESHAPE)
+      && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
       naError("Only windows can receyve RESHAPE commands.");
-//    if((command == NA_UI_COMMAND_KEY_DOWN) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
-//      naError("Only windows can receyve KEYDOWN commands.");
-//    if((command == NA_UI_COMMAND_KEY_UP) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
-//      naError("Only windows can receyve KEYUP commands.");
-    if((command == NA_UI_COMMAND_MOUSE_MOVED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW) && (naGetUIElementType(uiElement) != NA_UI_OPENGL_SPACE) && (naGetUIElementType(uiElement) != NA_UI_IMAGE_SPACE))
-      naError("Only windows, openGLSpace and imageSpace can receyve MOUSE_MOVED commands.");
-//    if((command == NA_UI_COMMAND_MOUSE_ENTERED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
-//      naError("Only windows can receyve MOUSE_ENTERED commands.");
-//    if((command == NA_UI_COMMAND_MOUSE_EXITED) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
-//      naError("Only windows can receyve MOUSE_EXITED commands.");
-    if((command == NA_UI_COMMAND_CLOSES) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
+    if((command == NA_UI_COMMAND_MOUSE_MOVED)
+      && ((naGetUIElementType(uiElement) == NA_UI_APPLICATION)
+       || (naGetUIElementType(uiElement) == NA_UI_SCREEN)))
+      naError("Application and screen can NOT receyve MOUSE_MOVED commands.");
+    if((command == NA_UI_COMMAND_CLOSES)
+      && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
       naError("Only windows can receyve CLOSES commands.");
     if((command == NA_UI_COMMAND_PRESSED)
       && (naGetUIElementType(uiElement) != NA_UI_BUTTON)
@@ -150,10 +154,6 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCall
       && (naGetUIElementType(uiElement) != NA_UI_MENUITEM)
       && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
       naError("Only buttons, checkBoxes, radios, menus, menuItems and sliders can receyve PRESSED commands.");
-    if((command == NA_UI_COMMAND_PRESSED) && (naGetUIElementType(uiElement) == NA_UI_BUTTON)) {
-//      if(na_isButtonSpecial(uiElement))
-//        naError("Special buttons like Submit or Abort will not be called by a PRESSED command.");
-    }
     if((command == NA_UI_COMMAND_EDITED)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTBOX)
       && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD)
@@ -164,6 +164,7 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCall
       && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD))
       naError("Only textFields and sliders can receyve EDIT_FINISHED commands.");
   #endif
+  
   eventReaction = naAlloc(NAEventReaction);
   eventReaction->controller = controller;
   eventReaction->command = command;
@@ -180,6 +181,14 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCall
   || command == NA_UI_COMMAND_MOUSE_ENTERED
   || command == NA_UI_COMMAND_MOUSE_EXITED) {
     element->hoverReactionCount++;
+  }
+  
+  if(command == NA_UI_COMMAND_MOUSE_MOVED) {
+    NA_UIElement* trackedElement = element;
+    if(naGetUIElementType(uiElement) == NA_UI_WINDOW) {
+      trackedElement = &naGetWindowContentSpace((NAWindow*)uiElement)->uiElement;
+    }
+    na_RetainMouseTracking(trackedElement);
   }
 }
 
@@ -307,6 +316,30 @@ NA_DEF void naSetUIElementRect(void* uiElement, NARect rect) {
   case NA_UI_TEXTFIELD:    na_SetTextFieldRect(uiElement, rect); break;
   case NA_UI_WINDOW:       na_SetWindowRect(uiElement, rect); break;
   default:                 break;
+  }
+}
+
+
+
+NA_HDEF void na_RetainMouseTracking(NA_UIElement* uiElement) {
+  uiElement->mouseTrackingCount++;
+  if(uiElement->mouseTrackingCount == 1) {
+    uiElement->mouseTracking = na_AddMouseTracking(uiElement);
+  }
+}
+
+NA_HDEF void na_ReleaseMouseTracking(NA_UIElement* uiElement) {
+  uiElement->mouseTrackingCount--;
+  if(uiElement->mouseTrackingCount == 0) {
+    na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
+    uiElement->mouseTracking = NA_NULL;
+  }
+}
+
+NA_HDEF void na_UpdateMouseTracking(NA_UIElement* uiElement) {
+  if(uiElement->mouseTracking) {
+    na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
+    uiElement->mouseTracking = na_AddMouseTracking(uiElement);
   }
 }
 

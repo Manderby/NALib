@@ -39,18 +39,7 @@
   [self setAction:@selector(onPressed:)];
   [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naGetSystemFont()))];
 
-  // todo: make this dependent on whether tracking is needed or not.
-  trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
-      options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp)
-      owner:self userInfo:nil];
-  [self addTrackingArea:trackingArea];
-
   return self;
-}
-
-- (void)dealloc{
-  NA_COCOA_RELEASE(trackingArea);
-  NA_COCOA_SUPER_DEALLOC();
 }
 
 - (bool) isImage{
@@ -307,6 +296,9 @@ NA_DEF NAButton* naNewIconPushButton(const NAUIImage* icon, double width) {
     flags);
   
   [nativePtr updateImages];
+  
+  // For hovering effects:
+  na_RetainMouseTracking(&cocoaButton->button.uiElement);
 
   return (NAButton*)cocoaButton;
 }
@@ -351,6 +343,9 @@ NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, const NAUIImage* ic
   
   [nativePtr updateImages];
 
+  // For hovering effects:
+  na_RetainMouseTracking(&cocoaButton->button.uiElement);
+
   return (NAButton*)cocoaButton;
 }
 
@@ -377,6 +372,9 @@ NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size) {
   
   [nativePtr updateImages];
 
+  // For hovering effects:
+  na_RetainMouseTracking(&cocoaButton->button.uiElement);
+
   return (NAButton*)cocoaButton;
 }
 
@@ -402,6 +400,9 @@ NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage
     flags);
   
   [nativePtr updateImages];
+
+  // For hovering effects:
+  na_RetainMouseTracking(&cocoaButton->button.uiElement);
 
   return (NAButton*)cocoaButton;
 }

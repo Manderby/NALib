@@ -14,28 +14,13 @@
 - (id) initWithWindow:(NACocoaWindow*)newCocoaWindow contentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag screen:(NSScreen *)screen{
   self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag screen:screen];
   cocoaWindow = newCocoaWindow;
-  trackingCount = 0;
-  trackingArea = nil;
   [self setReleasedWhenClosed:NO];
   [self setHasShadow:YES];
   return self;
 }
 
-- (void)dealloc{
-  NA_COCOA_RELEASE(trackingArea);
-  NA_COCOA_SUPER_DEALLOC();
-}
-
 - (NACocoaWindow*) window{
   return cocoaWindow;
-}
-
-- (NSTrackingArea*) trackingArea{
-  return trackingArea;
-}
-
-- (size_t) trackingCount{
-  return trackingCount;
 }
 
 - (BOOL)windowShouldClose:(id)sender{
@@ -58,7 +43,12 @@
 
 - (void)setContentRect:(NARect)rect{
   NSRect frame = [NSWindow frameRectForContentRect:naMakeNSRectWithRect(rect) styleMask:[self styleMask]];
+  [self setFrame: frame];
+}
+
+- (void)setFrame:(NSRect)frame {
   [super setFrame:frame display:YES];
+  na_UpdateMouseTracking(&cocoaWindow->window.uiElement);
 }
 
 - (void)setWindowTitle:(const NAUTF8Char*) title{
@@ -70,36 +60,6 @@
     [self setLevel:NSFloatingWindowLevel];
   }else{
     [self setLevel:NSNormalWindowLevel];
-  }
-}
-
-- (void)renewMouseTracking{
-  NA_COCOA_RELEASE(trackingArea);
-  trackingArea = [[NSTrackingArea alloc] initWithRect:[[self contentView] bounds]
-      options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder)
-      owner:self userInfo:nil];
-  [[self contentView] addTrackingArea:trackingArea];
-}
-
-- (void)clearMouseTracking{
-  [[self contentView] removeTrackingArea:trackingArea];
-  NA_COCOA_RELEASE(trackingArea);
-  trackingArea = nil;
-}
-
-- (void)retainMouseTracking{
-  trackingCount++;
-  if(trackingCount == 1) {
-    [self setAcceptsMouseMovedEvents:YES];
-    na_RenewWindowMouseTracking((NAWindow*)cocoaWindow);
-  }
-}
-
-- (void)releaseMouseTracking{
-  trackingCount--;
-  if(trackingCount == 0) {
-    [self setAcceptsMouseMovedEvents:NO];
-    na_ClearWindowMouseTracking((NAWindow*)cocoaWindow);
   }
 }
 
@@ -299,34 +259,6 @@ NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window) {
 
 
 
-NA_HDEF void na_RenewWindowMouseTracking(NAWindow* window) {
-  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
-  [nativePtr renewMouseTracking];
-}
-
-
-
-NA_HDEF void na_ClearWindowMouseTracking(NAWindow* window) {
-  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
-  [nativePtr clearMouseTracking];
-}
-
-
-
-//NA_HDEF void* na_AllocMouseTracking(NAWindow* window) {
-//  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
-//  [nativePtr retainMouseTracking];
-//}
-//
-//
-//
-//NA_HDEF void na_DeallocMouseTracking(NAWindow* window) {
-//  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
-//  [nativePtr releaseMouseTracking];
-//}
-
-
-
 NA_DEF NARect naGetMainScreenRect() {
   CGFloat uiScale = [[NSScreen mainScreen] backingScaleFactor];
   NARect rect = naMakeRectWithNSRect([[NSScreen mainScreen] frame]);
@@ -364,21 +296,13 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space) {
 
   naDefineCocoaObject(NACocoaNativeWindow, nativeWindowPtr, window);
   naDefineCocoaObjectConst(NSView, nativeUIElementPtr, space);
-  if([nativeWindowPtr trackingArea]) {
-    na_ClearWindowMouseTracking(window);
-  }
+
   [nativeWindowPtr setContentView:nativeUIElementPtr];
   [nativeWindowPtr setInitialFirstResponder:[nativeWindowPtr contentView]];
-  
-  if(window->contentSpace)
-    naDelete(window->contentSpace);
     
+  if(window->contentSpace) { naDelete(window->contentSpace); }
   window->contentSpace = space;
   na_SetUIElementParent(space, window, NA_TRUE);
-  
-  if([nativeWindowPtr trackingCount]) {
-    na_RenewWindowMouseTracking(window);
-  }
 }
 
 
@@ -389,11 +313,11 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
     if(fullScreen) {
       window->windowedFrame = naMakeRectWithNSRect([nativePtr frame]);
       [nativePtr setStyleMask:NAWindowStyleMaskBorderless];
-      [nativePtr setFrame:[[NSScreen mainScreen] frame] display:YES];
+      [nativePtr setFrame:[[NSScreen mainScreen] frame]];
       [nativePtr setLevel:kCGScreenSaverWindowLevel];
     }else{
       [nativePtr setStyleMask:NAWindowStyleMaskTitled | NAWindowStyleMaskClosable | NAWindowStyleMaskMiniaturizable | NAWindowStyleMaskResizable];
-      [nativePtr setFrame:naMakeNSRectWithRect(window->windowedFrame) display:YES];
+      [nativePtr setFrame:naMakeNSRectWithRect(window->windowedFrame)];
       [nativePtr setLevel:NSNormalWindowLevel];
     }
     naSetFlagu32(&(window->coreFlags), NA_CORE_WINDOW_FLAG_FULLSCREEN, fullScreen);
@@ -427,7 +351,7 @@ NA_DEF NARect naGetWindowOuterRect(const NAWindow* window) {
 
 NA_DEF void naSetWindowOuterRect(NAWindow* window, NARect rect) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
-  [nativePtr setFrame:naMakeNSRectWithRect(rect) display:YES];
+  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }
 
 // This is free and unencumbered software released into the public domain.

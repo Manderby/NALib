@@ -16,9 +16,6 @@
 #import <UniformTypeIdentifiers/UTType.h>
 #import <Carbon/Carbon.h>
 
-NA_HAPI void na_RenewWindowMouseTracking(NAWindow* window);
-NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);
-
 NA_HAPI NARect na_GetNativeWindowAbsoluteInnerRect(const NSWindow* window);
 
 
@@ -534,6 +531,28 @@ NA_DEF NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot)
 
 NA_API void naOpenURLInBrowser(const NAUTF8Char* url) {
   [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithUTF8String:url]]];
+}
+
+
+
+NA_HDEF void* na_AddMouseTracking(NA_UIElement* uiElement) {
+  naDefineCocoaObject(NSView, nativePtr, uiElement);
+  NSTrackingArea* trackingArea = [[NSTrackingArea alloc]
+    initWithRect:naMakeNSRectWithRect(naGetUIElementRect(uiElement))
+    options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | /*NSTrackingActiveWhenFirstResponder | NSTrackingActiveInKeyWindow |*/ NSTrackingActiveInActiveApp)
+    owner:nativePtr
+    userInfo:nil];
+  [nativePtr addTrackingArea:trackingArea];
+  
+  return trackingArea;
+}
+
+
+
+NA_HDEF void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking) {
+  naDefineCocoaObject(NSView, nativePtr, uiElement);
+  [nativePtr removeTrackingArea:mouseTracking];
+  NA_COCOA_RELEASE(mouseTracking);
 }
 
 

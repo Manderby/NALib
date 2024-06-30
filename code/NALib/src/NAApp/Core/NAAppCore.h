@@ -45,6 +45,8 @@ struct NA_UIElement{
   NABool          mouseInside;
   NABool          allowNotifications;
   void*           nativePtr;         // The native pointer
+  size_t          mouseTrackingCount;
+  void*           mouseTracking;
 };
 
 struct NAApplication{
@@ -259,6 +261,13 @@ NA_HAPI NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
 // To be implemented in the system dependent files:
 NA_HAPI void na_RefreshUIElementNow(void* uiElement);
 
+// Ensures the mouse being tracked as soon as there is one reason to do so.
+NA_HAPI void na_RetainMouseTracking(NA_UIElement* uiElement);
+NA_HAPI void na_ReleaseMouseTracking(NA_UIElement* uiElement);
+NA_HAPI void na_UpdateMouseTracking(NA_UIElement* uiElement);
+// System dependent implementation for adding a new mouse tracking object:
+NA_HAPI void* na_AddMouseTracking(NA_UIElement* uiElement);
+NA_HAPI void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking);
 
 
 // NAApplication
@@ -374,6 +383,8 @@ NA_HAPI void na_SetTextFieldRect(NA_UIElement* textField, NARect rect);
 NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
 NA_HAPI void na_ClearWindow(NAWindow* window);
 NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
+NA_HAPI void na_RetainWindowMouseTracking(NAWindow* window);
+NA_HAPI void na_ReleaseWindowMouseTracking(NAWindow* window);
 NA_HAPI NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window);
 NA_HAPI void na_SetWindowRect(NA_UIElement* window, NARect rect);
