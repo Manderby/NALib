@@ -402,9 +402,6 @@ NA_HAPI void na_SetMouseScrolledByDiff(double deltaX, double deltaY);
 NA_HAPI void na_SetMouseEnteredAtPos(NAPos newpos);
 NA_HAPI void na_SetMouseExitedAtPos(NAPos newpos);
 
-NA_HAPI void* na_AllocMouseTracking(NANativePtr nativePtr); // todo
-NA_HAPI void na_DeallocMouseTracking(void* tracking);       // todo
-
 
 
 #endif // NA_COMPILE_GUI == 1

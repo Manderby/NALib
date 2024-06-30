@@ -279,7 +279,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
     naHandleWindowTabOrder,
     NA_NULL);
 
-  NASpace* contentSpace = naNewSpace(naMakeSize(rect.size.width, rect.size.height / 2));
+  NASpace* contentSpace = naNewSpace(naMakeSize(rect.size.width, rect.size.height));
   naSetWindowContentSpace(&(winapiWindow->window), contentSpace);
 
   na_SetUIElementParent((NA_UIElement*)winapiWindow, naGetApplication(), NA_TRUE);

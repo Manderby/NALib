@@ -797,28 +797,6 @@ NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect) {
 
 
 
-NA_HDEF void* na_AllocMouseTracking(NANativePtr nativePtr) {
-  NABool success;
-  TRACKMOUSEEVENT* winapiTracking = naAlloc(TRACKMOUSEEVENT);
-  winapiTracking->cbSize = sizeof(TRACKMOUSEEVENT);
-  winapiTracking->dwFlags = TME_LEAVE;
-  winapiTracking->hwndTrack = nativePtr;
-  winapiTracking->dwHoverTime = HOVER_DEFAULT;
-  success = TrackMouseEvent(winapiTracking);
-  return winapiTracking;
-}
-
-
-
-NA_HDEF void na_DeallocMouseTracking(void* tracking) {
-  TRACKMOUSEEVENT* winapiTracking = (TRACKMOUSEEVENT*)tracking;
-  winapiTracking->dwFlags |= TME_CANCEL;
-  TrackMouseEvent(winapiTracking);
-  naFree(winapiTracking);
-}
-
-
-
 NA_API NARect naGetMainScreenRect() {
   HMONITOR screen;
   MONITORINFO screeninfo = {0};
@@ -853,6 +831,28 @@ long getWINAPITextAlignmentWithAlignment(NATextAlignment alignment) {
     break;
   }
   return winapiAlignment;
+}
+
+
+
+NA_HDEF void* na_AddMouseTracking(NA_UIElement* uiElement) {
+  NABool success;
+  TRACKMOUSEEVENT* winapiTracking = naAlloc(TRACKMOUSEEVENT);
+  winapiTracking->cbSize = sizeof(TRACKMOUSEEVENT);
+  winapiTracking->dwFlags = TME_LEAVE;
+  winapiTracking->hwndTrack = naGetUIElementNativePtr(uiElement);
+  winapiTracking->dwHoverTime = HOVER_DEFAULT;
+  success = TrackMouseEvent(winapiTracking);
+  return winapiTracking;
+}
+
+
+
+NA_HDEF void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking) {
+  TRACKMOUSEEVENT* winapiTracking = (TRACKMOUSEEVENT*)mouseTracking;
+  winapiTracking->dwFlags |= TME_CANCEL;
+  TrackMouseEvent(winapiTracking);
+  naFree(winapiTracking);
 }
 
 

@@ -169,13 +169,7 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCall
   eventReaction->controller = controller;
   eventReaction->command = command;
   eventReaction->callback = callback;
-  // todo: this needs some attention on macOS
-  //if(command == NA_UI_COMMAND_MOUSE_MOVED || command == NA_UI_COMMAND_MOUSE_ENTERED || command == NA_UI_COMMAND_MOUSE_EXITED) {
-  //  element->mouseTrackingCount++;
-  //  if(element->mouseTrackingCount == 1) {
-  //    element->mouseTracking = na_AllocMouseTracking(naGetUIElementNativePtr(element));
-  //  }
-  //}
+
   naAddListLastMutable(&((element)->reactions), eventReaction);
   if(command == NA_UI_COMMAND_MOUSE_MOVED
   || command == NA_UI_COMMAND_MOUSE_ENTERED
