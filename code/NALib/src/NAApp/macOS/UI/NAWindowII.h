@@ -118,6 +118,13 @@
   }
 }
 
+- (void)windowDidChangeBackingProperties:(NSNotification *)notification{    
+  NA_UNUSED(notification);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
+    // don't know what to do.
+  }
+}
+
 - (BOOL)canBecomeMainWindow{
   return !naGetFlagu32(cocoaWindow->window.flags, NA_WINDOW_AUXILIARY);
 }

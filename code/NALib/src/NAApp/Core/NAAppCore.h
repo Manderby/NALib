@@ -42,8 +42,7 @@ struct NA_UIElement{
   NAList          reactions;
   NAList          shortcuts;
   size_t          hoverReactionCount;
-  NABool          mouseInside;
-  NABool          allowNotifications;
+  uint32          flags;
   void*           nativePtr;         // The native pointer
   size_t          mouseTrackingCount;
   void*           mouseTracking;

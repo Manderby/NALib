@@ -15,7 +15,7 @@
 // NA_UI_COMMAND_MOUSE_ENTERED When the mouse entered the content space
 // NA_UI_COMMAND_MOUSE_EXITED  When the mouse exited the content space
 // NA_UI_COMMAND_MOUSE_PRESSED When the window has been activated
-// NA_UI_COMMAND_RESHAPE       When the window is resized or repositioned
+// NA_UI_COMMAND_RESHAPE       Resizing, repositioning, UI scale changes
 
 
 
