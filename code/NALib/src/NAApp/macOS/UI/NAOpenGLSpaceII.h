@@ -68,14 +68,6 @@
     }
   }
   
-  - (void)reshape{
-    [super reshape];
-    [[self openGLContext] update];
-    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_RESHAPE)) {
-      [super reshape];
-    }
-  }
-  
   - (void)mouseDown:(NSEvent*)event{
     na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);

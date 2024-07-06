@@ -110,6 +110,13 @@
     [NSEvent setMouseCoalescingEnabled:NO];
   }
   
+  - (void)scrollWheel:(NSEvent*)event{
+    na_SetMouseScrolledByDiff([event deltaX], [event deltaY]);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_SCROLLED)) {
+      [super scrollWheel:event];
+    }
+  }
+
   - (void)keyDown:(NSEvent*)event{
     na_CaptureKeyboardStatus(event);
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_KEY_DOWN)) {

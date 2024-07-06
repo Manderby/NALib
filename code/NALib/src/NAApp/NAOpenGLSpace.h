@@ -7,6 +7,18 @@
 
 
 
+// An NAOpenGLSpace can react to the following commands:
+//
+// NA_UI_COMMAND_REDRAW        When the content shall be redrawn
+// NA_UI_COMMAND_MOUSE_DOWN    When a mouse button has been pressed
+// NA_UI_COMMAND_MOUSE_UP      When a mouse button has been released
+// NA_UI_COMMAND_MOUSE_MOVED   When the mouse moved withing the space
+// NA_UI_COMMAND_SCROLLED      When the scroll wheel has been used
+// NA_UI_COMMAND_KEY_DOWN      When a key has been pressed
+// NA_UI_COMMAND_KEY_UP        When a key has been released
+
+
+
 // Note that you must have NA_COMPILE_OPENGL configured in NAConfiguration.h
 // to use these functions.
 #if(NA_COMPILE_OPENGL == 1)

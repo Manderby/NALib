@@ -7,6 +7,11 @@
 
 
 
+// An NAMenu can does not react directly. Instead, the NAMenuItems attached
+// to the select will perform actions.
+
+
+
 // Creates a new menu
 NA_API NAMenu* naNewMenu(void);
 

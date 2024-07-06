@@ -7,6 +7,14 @@
 
 
 
+// An NAButton can react to the following commands:
+//
+// NA_UI_COMMAND_PRESSED       When the button was pressed
+// NA_UI_COMMAND_MOUSE_ENTERED When the mouse entered the button
+// NA_UI_COMMAND_MOUSE_EXITED  When the mouse exited the button
+
+
+
 // Creates various kinds of buttons.
 //
 // You can use NA_NULL for the secondary entry for state buttons which will

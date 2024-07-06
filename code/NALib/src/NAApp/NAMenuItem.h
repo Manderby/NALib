@@ -7,6 +7,12 @@
 
 
 
+// An NAMenuItem can react to the following commands:
+//
+// NA_UI_COMMAND_PRESSED       When the menu item was selected
+
+
+
 // Creates a new menuItem with a text entry
 NA_API NAMenuItem* naNewMenuItem(const NAUTF8Char* text);
 

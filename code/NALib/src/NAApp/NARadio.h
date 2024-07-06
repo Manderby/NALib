@@ -7,6 +7,12 @@
 
 
 
+// An NARadio can react to the following commands:
+//
+// NA_UI_COMMAND_PRESSED       When the item was selected
+
+
+
 // Creates a new Radio. Default height is 18.
 NA_API NARadio* naNewRadio(const NAUTF8Char* text, double width);
 

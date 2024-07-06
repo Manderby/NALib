@@ -7,6 +7,14 @@
 
 
 
+// An NASlider can react to the following commands:
+//
+// NA_UI_COMMAND_EDITED        When the knob position changes
+// NA_UI_COMMAND_EDIT_FINISHED When the knob loses focus
+// NA_UI_COMMAND_PRESSED       When the knob of the slider has been pressed
+
+
+
 // Creates a new Slider. Default height is 24.
 NA_API NASlider* naNewSlider(double width);
 

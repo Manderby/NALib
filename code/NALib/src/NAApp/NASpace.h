@@ -7,6 +7,18 @@
 
 
 
+// An NASpace can react to the following commands:
+//
+// NA_UI_COMMAND_KEY_DOWN      When a key has been pressed
+// NA_UI_COMMAND_KEY_UP        When a key has been released
+// NA_UI_COMMAND_MOUSE_DOWN    When a mouse button has been pressed
+// NA_UI_COMMAND_MOUSE_UP      When a mouse button has been released
+// NA_UI_COMMAND_MOUSE_MOVED   When the mouse moved withing the space
+// NA_UI_COMMAND_MOUSE_ENTERED When the mouse entered the space
+// NA_UI_COMMAND_MOUSE_EXITED  When the mouse exited the space
+
+
+
 // Creates a new Space
 // (In other frameworks called View, Frame, Area, Widget...)
 NA_API NASpace* naNewSpace(NASize size);

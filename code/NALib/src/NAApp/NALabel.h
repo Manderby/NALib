@@ -7,6 +7,10 @@
 
 
 
+// An NALabel does not reacts to any command.
+
+
+
 // Creates a new label. Default Height is 16.
 // A label is by default: Enabled, visible, selectable
 NA_API NALabel* naNewLabel(const NAUTF8Char* text, double width);

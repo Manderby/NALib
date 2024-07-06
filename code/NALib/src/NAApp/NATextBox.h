@@ -7,6 +7,13 @@
 
 
 
+// An NATextBox can react to the following commands:
+//
+// NA_UI_COMMAND_EDITED        When the content changes
+
+
+
+
 // Creates a new TextBox.
 NA_API NATextBox* naNewTextBox(NASize size);
 

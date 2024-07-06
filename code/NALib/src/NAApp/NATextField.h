@@ -7,6 +7,13 @@
 
 
 
+// An NATextField can react to the following commands:
+//
+// NA_UI_COMMAND_EDITED        When the content changes
+// NA_UI_COMMAND_EDIT_FINISHED When pressing enter or the element loses focus
+
+
+
 // Creates a new TextField. Default height is 21.
 NA_API NATextField* naNewTextField(double width);
 

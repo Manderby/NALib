@@ -7,6 +7,12 @@
 
 
 
+// An NAImageSpace can react to the following commands:
+//
+// NA_UI_COMMAND_MOUSE_MOVED   When the mouse moved withing the space
+
+
+
 // Creates a new imageSpace. Will retain the uiImage.
 // An imageSpace is a space which displays the given image.
 NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size);

@@ -7,6 +7,11 @@
 
 
 
+// An NASelect can does not react directly. Instead, the NAMenuItems attached
+// to the select will perform actions.
+
+
+
 // Creates a new select (also called popup button, dropdown menu etc.).
 // Default height is 23.
 NA_API NASelect* naNewSelect(double width);

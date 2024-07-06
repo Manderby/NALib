@@ -7,6 +7,12 @@
 
 
 
+// An NACheckBox can react to the following commands:
+//
+// NA_UI_COMMAND_PRESSED       When the item was activated or deactivated
+
+
+
 // Creates a new checkBox. Default height is 18.
 NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width);
 
