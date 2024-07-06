@@ -78,10 +78,34 @@
     }
   }
 
+  - (void)mouseDown:(NSEvent*)event{
+    na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
+      [super mouseDown:event];
+    }
+  }
+
+  - (void)mouseUp:(NSEvent*)event{
+    na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_UP)) {
+      [super mouseUp:event];
+    }
+  }
+
   - (void)mouseMoved:(NSEvent*)event{
     na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
       [super mouseMoved:event];
+    }
+    [NSEvent setMouseCoalescingEnabled:NO];
+  }
+  
+  - (void)mouseDragged:(NSEvent*)event{
+    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+      [super mouseDragged:event];
     }
     [NSEvent setMouseCoalescingEnabled:NO];
   }

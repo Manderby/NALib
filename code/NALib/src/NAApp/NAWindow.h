@@ -7,6 +7,18 @@
 
 
 
+// An NAWindow can react to the following commands:
+//
+// NA_UI_COMMAND_CLOSES        When the window tries to close
+// NA_UI_COMMAND_KEY_DOWN      When a key has been pressed
+// NA_UI_COMMAND_KEY_UP        When a key ahs been released
+// NA_UI_COMMAND_MOUSE_ENTERED When the mouse entered the content space
+// NA_UI_COMMAND_MOUSE_EXITED  When the mouse exited the content space
+// NA_UI_COMMAND_MOUSE_PRESSED When the window has been activated
+// NA_UI_COMMAND_RESHAPE       When the window is resized or repositioned
+
+
+
 // Window flags:
 #define NA_WINDOW_FIXED_SIZE             0x00
 #define NA_WINDOW_RESIZEABLE             0x01

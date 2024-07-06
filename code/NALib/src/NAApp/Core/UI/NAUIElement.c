@@ -143,6 +143,18 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCall
       && ((naGetUIElementType(uiElement) == NA_UI_APPLICATION)
        || (naGetUIElementType(uiElement) == NA_UI_SCREEN)))
       naError("Application and screen can NOT receyve MOUSE_MOVED commands.");
+    if((command == NA_UI_COMMAND_MOUSE_MOVED)
+      && ((naGetUIElementType(uiElement) == NA_UI_BUTTON)
+       || (naGetUIElementType(uiElement) == NA_UI_CHECKBOX)
+       || (naGetUIElementType(uiElement) == NA_UI_LABEL)
+       || (naGetUIElementType(uiElement) == NA_UI_MENU)
+       || (naGetUIElementType(uiElement) == NA_UI_MENUITEM)
+       || (naGetUIElementType(uiElement) == NA_UI_RADIO)
+       || (naGetUIElementType(uiElement) == NA_UI_SELECT)
+       || (naGetUIElementType(uiElement) == NA_UI_SLIDER)
+       || (naGetUIElementType(uiElement) == NA_UI_TEXTBOX)
+       || (naGetUIElementType(uiElement) == NA_UI_TEXTFIELD)))
+      naError("MOUSE_MOVED command not implemented yet for this element type.");
     if((command == NA_UI_COMMAND_CLOSES)
       && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
       naError("Only windows can receyve CLOSES commands.");

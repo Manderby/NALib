@@ -35,6 +35,13 @@
   }
 }
 
+- (void)mouseDragged:(NSEvent* _Nonnull)event{
+  na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaImageSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+    [super mouseDragged:event];
+  }
+}
+
 - (NARect) getInnerRect{
   return naMakeRectWithNSRect([self frame]);
 }

@@ -126,6 +126,13 @@
   return (BOOL)naGetFlagu32(cocoaWindow->window.coreFlags, NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS);
 }
 
+- (void)windowDidBecomeMain:(NSNotification *)notification{
+  NA_UNUSED(notification);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_PRESSED)) {
+    // don't know what to do.
+  }
+}
+
 @end
 
 

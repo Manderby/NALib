@@ -61,6 +61,12 @@ NA_DEF const NAMouseStatus* naGetMouseStatus() {
 
 
 
+NA_DEF NABool naGetMouseButtonPressed(const NAMouseStatus* mouseStatus) {
+  return mouseStatus->leftPressed;
+}
+
+
+
 NA_DEF NAPos naGetMousePos(const NAMouseStatus* mouseStatus) {
   return mouseStatus->pos;
 }

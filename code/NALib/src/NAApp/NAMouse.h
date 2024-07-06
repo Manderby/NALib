@@ -23,6 +23,9 @@ typedef void* NACursorImage;
 // Returns the current mouse status.
 NA_API const NAMouseStatus* naGetMouseStatus(void);
 
+// Returns whether the mouse button is pressed.
+NA_API NABool naGetMouseButtonPressed(const NAMouseStatus* mouseStatus);
+
 // Returns the position of the mouse status.
 NA_API NAPos naGetMousePos(const NAMouseStatus* mouseStatus);
 

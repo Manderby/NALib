@@ -44,13 +44,28 @@
 }
 
 - (void)mouseDown:(NSEvent* _Nonnull)event{
+  na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+  na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);
+
   if(cocoaSpace->space.dragsWindow) {
     isMoving = NA_TRUE;
     originMousePos = naMakePosWithNSPoint([event locationInWindow]);
   }else{
-    [super mouseDown:event];
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
-      // don't know what to do.
+      [super mouseDown:event];
+    }
+  }
+}
+
+- (void)mouseUp:(NSEvent* _Nonnull)event{
+  na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+  na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);
+
+  if(cocoaSpace->space.dragsWindow) {
+    [self resetDrag];
+  }else{
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_UP)) {
+      [super mouseUp:event];
     }
   }
 }
@@ -65,17 +80,6 @@
   }else{
     [super mouseDragged:event];
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
-      // don't know what to do.
-    }
-  }
-}
-
-- (void)mouseUp:(NSEvent* _Nonnull)event{
-  if(cocoaSpace->space.dragsWindow) {
-    [self resetDrag];
-  }else{
-    [super mouseUp:event];
-    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_UP)) {
       // don't know what to do.
     }
   }

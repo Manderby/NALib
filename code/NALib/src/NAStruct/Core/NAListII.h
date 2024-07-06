@@ -436,7 +436,7 @@ NA_HIDEF void na_InjectExistingListElement(NAList* list, NAListElement* element)
 // existing NAListElement and simply adjust the pointers. To not overcomplicate
 // the API, only specific elements can be transferred.
 NA_IDEF void naMoveListToLast(NAList* src, NAList* dst) {
-  NAListElement* firstelement;
+  NAListElement* firstElement;
   NAListElement* lastelement;
 
   #if NA_DEBUG
@@ -445,11 +445,11 @@ NA_IDEF void naMoveListToLast(NAList* src, NAList* dst) {
   #endif
 
   if(!naIsListEmpty(src)) {
-    firstelement = src->sentinel.next;
+    firstElement = src->sentinel.next;
     lastelement = src->sentinel.prev;
     
-    dst->sentinel.prev->next = firstelement;
-    firstelement->prev = dst->sentinel.prev;
+    dst->sentinel.prev->next = firstElement;
+    firstElement->prev = dst->sentinel.prev;
     lastelement->next = &(dst->sentinel);
     dst->sentinel.prev = lastelement;
     
