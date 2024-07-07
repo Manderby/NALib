@@ -5,11 +5,6 @@
 
 
 
-#define NA_UI_ELEMENT_FLAG_MOUSE_INSIDE                  0x01 // used in WinAPI
-#define NA_UI_ELEMENT_FLAG_ALLOW_NOTIFICATIONS           0x02 // used in WinAPI
-
-
-
 NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, NANativePtr nativePtr) {
   uiElement->parent = NA_NULL;
   uiElement->elementType = elementType;
@@ -19,8 +14,6 @@ NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
   uiElement->hoverReactionCount = 0;
   
   uiElement->flags = 0;
-  naSetFlagu32(&uiElement->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE, NA_FALSE);
-  naSetFlagu32(&uiElement->flags, NA_UI_ELEMENT_FLAG_ALLOW_NOTIFICATIONS, NA_TRUE);
 
   uiElement->mouseTrackingCount = 0;
   uiElement->mouseTracking = NA_NULL;

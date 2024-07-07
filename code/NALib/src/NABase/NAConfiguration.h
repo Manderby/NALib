@@ -108,7 +108,7 @@
 // If so, you MUST link your program to the appropriate library:
 //
 // OpenGL:
-// Windows: WinAPI (always available) and opengl32.lib
+// Windows: WINAPI (always available) and opengl32.lib
 // Macintosh: Cocoa and /System/Library/Frameworks/Metal.framework/OpenGL
 //
 // Metal:
@@ -136,7 +136,7 @@
 // If the following macro is set to 1, NALib compiles with GUI support.
 //
 // If so, you MUST link your program to the appropriate library:
-// Windows: WinAPI (always available) and ComCtl32.lib, see next macro.
+// Windows: WINAPI (always available) and ComCtl32.lib, see next macro.
 // Macintosh: Cocoa
 //
 // Default is 0

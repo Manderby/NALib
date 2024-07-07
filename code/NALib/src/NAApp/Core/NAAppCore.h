@@ -223,9 +223,11 @@ NA_HAPI double na_GetUIElementXOffset(const NA_UIElement* elem);
 NA_HAPI double na_GetUIElementYOffset(const NA_UIElement* elem);
 
 NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
-NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
-NA_HAPI void na_AllowUIElementNotifications(NA_UIElement* elem);
-NA_HAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
+
+NA_HAPI void na_SetUIElementMouseInside(NA_UIElement* elem, NABool inside);
+NA_HAPI NABool na_GetUIElementMouseInside(const NA_UIElement* elem);
+NA_HAPI void na_SetUIElementWINAPINotificationsBlocked(NA_UIElement* elem, NABool block);
+NA_HAPI NABool na_GetUIElementWINAPINotificationsBlocked(const NA_UIElement* elem);
 
 // Returns a pointer to the ui element which uses the given native pointer.
 // Every gui element which is handeled by NALib uses a native struct which is

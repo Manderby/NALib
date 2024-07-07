@@ -183,9 +183,9 @@ NA_DEF void naSetTextFieldEnabled(NATextField* textField, NABool enabled) {
 NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text) {
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
-  na_BlockUIElementNotifications(&(winapiTextField->textField.uiElement));
+  na_SetUIElementWINAPINotificationsBlocked(&(winapiTextField->textField.uiElement), NA_TRUE);
   SendMessage(naGetUIElementNativePtr(textField), WM_SETTEXT, 0, (LPARAM)systemText);
-  na_AllowUIElementNotifications(&(winapiTextField->textField.uiElement));
+  na_SetUIElementWINAPINotificationsBlocked(&(winapiTextField->textField.uiElement), NA_FALSE);
   naFree(systemText);
 }
 

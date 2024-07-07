@@ -9,6 +9,12 @@
 #include "../../../NAUtility/NAValueHelper.h"
 
 
+
+#define NA_UI_ELEMENT_FLAG_MOUSE_INSIDE                  0x01
+#define NA_UI_ELEMENT_FLAG_BLOCK_WINAPI_NOTIFICATIONS    0x02
+
+
+
 NA_HAPI void** na_GetUIElementNextTabReference(void* textField);
 NA_HAPI void** na_GetUIElementPrevTabReference(void* textField);
 NA_HAPI void** na_GetTextBoxNextTabReference(NATextBox* textBox);
@@ -123,26 +129,32 @@ NA_HDEF NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElem
 
 
 
-NA_HDEF void na_BlockUIElementNotifications(NA_UIElement* elem) {
+NA_HDEF void na_SetUIElementMouseInside(NA_UIElement* elem, NABool inside) {
   #if NA_DEBUG
-    if(elem->allowNotifications == NA_FALSE)
-      naError("Element already blocks notifications");
+  if(naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE) == inside)
+    naError("mouse inside flag already set");
   #endif
-  elem->allowNotifications = NA_FALSE;
+  naSetFlagu32(&elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE, inside);
 }
 
 
-NA_HDEF void na_AllowUIElementNotifications(NA_UIElement* elem) {
-  #if NA_DEBUG
-    if(elem->allowNotifications == NA_TRUE)
-      naError("Element already allows notifications");
-  #endif
-  elem->allowNotifications = NA_TRUE;
+NA_HDEF NABool na_GetUIElementMouseInside(const NA_UIElement* elem) {
+  return naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE);
 }
 
 
-NA_HDEF NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem) {
-  return elem->allowNotifications;
+
+NA_HDEF void na_SetUIElementWINAPINotificationsBlocked(NA_UIElement* elem, NABool block) {
+  #if NA_DEBUG
+  if(naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_BLOCK_WINAPI_NOTIFICATIONS) == block)
+    naError("WINAPI notifications block already set");
+  #endif
+  naSetFlagu32(&elem->flags, NA_UI_ELEMENT_FLAG_BLOCK_WINAPI_NOTIFICATIONS, block);
+}
+
+
+NA_HDEF NABool na_GetUIElementWINAPINotificationsBlocked(const NA_UIElement* elem) {
+  return naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_BLOCK_WINAPI_NOTIFICATIONS);
 }
 
 
@@ -344,7 +356,7 @@ NABool naWINAPICaptureMouseHover() {
 
     // Send a leave reaction to all elements which are not hovered anymore.
     while(curElement && curElement != commonParent) {
-      curElement->mouseInside = NA_FALSE;
+      na_SetUIElementMouseInside(curElement, NA_FALSE);
 
       if(naGetUIElementType(curElement) == NA_UI_BUTTON) {
         na_RefreshUIElementNow(curElement);
@@ -369,7 +381,7 @@ NABool naWINAPICaptureMouseHover() {
 
     // Send the entered message to all elements which are newly hovered.
     while(elementUnderMouse && elementUnderMouse != commonParent) {
-      elementUnderMouse->mouseInside = NA_TRUE;
+      na_SetUIElementMouseInside(elementUnderMouse, NA_TRUE);
 
       if(naGetUIElementType(elementUnderMouse) == NA_UI_BUTTON) {
         na_RefreshUIElementNow(curElement);
@@ -657,13 +669,23 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam) {
   }else{
     // This is a control message
     NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(controlWnd);
-    if(uiElement && na_AreUIElementNotificationsAllowed(uiElement)) {
+    if(uiElement && !na_GetUIElementWINAPINotificationsBlocked(uiElement)) {
       switch(naGetUIElementType(uiElement)) {
-      case NA_UI_BUTTON:       hasBeenHandeled = naButtonWINAPINotify     (uiElement, notificationCode); break;
-      case NA_UI_CHECKBOX:     hasBeenHandeled = naCheckBoxWINAPINotify   (uiElement, notificationCode); break;
-      case NA_UI_LABEL:        hasBeenHandeled = naLabelWINAPINotify      (uiElement, notificationCode); break;
-      case NA_UI_SELECT:       hasBeenHandeled = naSelectWINAPINotify     (uiElement, notificationCode); break;
-      case NA_UI_TEXTFIELD:    hasBeenHandeled = naTextFieldWINAPINotify  (uiElement, notificationCode); break;
+      case NA_UI_BUTTON:
+        hasBeenHandeled = naButtonWINAPINotify(uiElement, notificationCode);
+        break;
+      case NA_UI_CHECKBOX:
+        hasBeenHandeled = naCheckBoxWINAPINotify(uiElement, notificationCode);
+        break;
+      case NA_UI_LABEL:
+        hasBeenHandeled = naLabelWINAPINotify(uiElement, notificationCode);
+        break;
+      case NA_UI_SELECT:
+        hasBeenHandeled = naSelectWINAPINotify(uiElement, notificationCode);
+        break;
+      case NA_UI_TEXTFIELD:
+        hasBeenHandeled = naTextFieldWINAPINotify(uiElement, notificationCode);
+        break;
       default:
         //printf("Uncaught notification" NA_NL);
         break;
