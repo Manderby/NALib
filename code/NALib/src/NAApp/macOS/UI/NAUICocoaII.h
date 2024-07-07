@@ -518,7 +518,7 @@ NA_DEF void naHideMouseUntilMovement(NABool hide) {
 
 
 
-NA_DEF NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot) {
+NA_DEF NACursorImage* naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot) {
   NSImage* nsImage = na_CreateResolutionIndependentNativeImage(
     NA_NULL,
     uiImage,
@@ -529,7 +529,27 @@ NA_DEF NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot)
 
 
 
-NA_API void naOpenURLInBrowser(const NAUTF8Char* url) {
+NA_DEF void naDeallocCursorImage(NACursorImage* image) {
+  #if NA_DEBUG
+    if(!image)
+      naError("image is nullptr");
+  #endif
+  NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(image));
+}
+
+
+
+NA_DEF void naActivateCursorImage(const NACursorImage* image) {
+  if(!image){
+    [[NSCursor arrowCursor] set];
+  }else{
+    [(NSCursor*)NA_COCOA_PTR_C_TO_OBJC(image) set];
+  }
+}
+
+
+
+NA_DEF void naOpenURLInBrowser(const NAUTF8Char* url) {
   [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithUTF8String:url]]];
 }
 
