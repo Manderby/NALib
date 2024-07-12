@@ -394,7 +394,7 @@ NA_HAPI void na_SetWindowRect(NA_UIElement* window, NARect rect);
 
 
 // Mouse related functions
-NA_HAPI void na_SetMouseButtonPressed(NABool leftPressed);
+NA_HAPI void na_SetMouseButtonPressed(NAMouseButton button, NABool pressed);
 
 NA_HAPI void na_SetMouseWarpedTo(NAPos newpos);
 NA_HAPI void na_SetMouseMovedTo(NAPos newpos);

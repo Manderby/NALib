@@ -7,13 +7,23 @@
 
 
 
+
+typedef enum NAMouseButton {
+  NA_MOUSE_BUTTON_LEFT = 0,
+  NA_MOUSE_BUTTON_RIGHT = 1,
+  NA_MOUSE_BUTTON_MIDDLE = 2,
+  // additional mouse buttons have higher integer numbers are not implemented
+  // explicitely.
+} NAMouseButton;
+
+
 // A mouse status currently consists of the current position and the last one
 // recorded.
 typedef struct NAMouseStatus NAMouseStatus;
 struct NAMouseStatus{
   NAPos pos;
   NAPos prevPos;
-  NABool leftPressed;
+  uint32 buttonPressed;
 };
 
 // The actual type is system dependent.
@@ -26,7 +36,9 @@ typedef void NACursorImage;
 NA_API const NAMouseStatus* naGetMouseStatus(void);
 
 // Returns whether the mouse button is pressed.
-NA_API NABool naGetMouseButtonPressed(const NAMouseStatus* mouseStatus);
+NA_API NABool naGetMouseButtonPressed(
+  const NAMouseStatus* mouseStatus,
+  NAMouseButton button);
 
 // Returns the position of the mouse status.
 NA_API NAPos naGetMousePos(const NAMouseStatus* mouseStatus);

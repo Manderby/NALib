@@ -5,8 +5,8 @@
 
 
 
-NA_HDEF void na_SetMouseButtonPressed(NABool leftPressed) {
-  na_App->mouseStatus.leftPressed = leftPressed;
+NA_HDEF void na_SetMouseButtonPressed(NAMouseButton button, NABool pressed) {
+  naSetFlagu32(&(na_App->mouseStatus.buttonPressed), 1 << button, pressed);
 }
 
 
@@ -61,8 +61,11 @@ NA_DEF const NAMouseStatus* naGetMouseStatus() {
 
 
 
-NA_DEF NABool naGetMouseButtonPressed(const NAMouseStatus* mouseStatus) {
-  return mouseStatus->leftPressed;
+NA_DEF NABool naGetMouseButtonPressed(
+  const NAMouseStatus* mouseStatus,
+  NAMouseButton button)
+{
+  return naGetFlagu32(mouseStatus->buttonPressed, 1 << button);
 }
 
 

@@ -78,22 +78,6 @@
     }
   }
 
-  - (void)mouseDown:(NSEvent*)event{
-    na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
-    na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);
-    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
-      [super mouseDown:event];
-    }
-  }
-
-  - (void)mouseUp:(NSEvent*)event{
-    na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
-    na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);
-    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_UP)) {
-      [super mouseUp:event];
-    }
-  }
-
   - (void)mouseMoved:(NSEvent*)event{
     na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
@@ -101,7 +85,27 @@
     }
     [NSEvent setMouseCoalescingEnabled:NO];
   }
-  
+
+  - (void)mouseDown:(NSEvent*)event{
+    na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed(
+      NA_MOUSE_BUTTON_LEFT,
+      ([NSEvent pressedMouseButtons] & (1 << 0)) != 0);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
+      [super mouseDown:event];
+    }
+  }
+
+  - (void)mouseUp:(NSEvent*)event{
+    na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed(
+      NA_MOUSE_BUTTON_LEFT,
+      ([NSEvent pressedMouseButtons] & (1 << 0)) != 0);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_UP)) {
+      [super mouseUp:event];
+    }
+  }
+ 
   - (void)mouseDragged:(NSEvent*)event{
     na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
@@ -110,6 +114,62 @@
     [NSEvent setMouseCoalescingEnabled:NO];
   }
   
+  - (void)rightMouseDown:(NSEvent*)event{
+    na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed(
+      NA_MOUSE_BUTTON_RIGHT,
+      ([NSEvent pressedMouseButtons] & (1 << 1)) != 0);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
+      [super rightMouseDown:event];
+    }
+  }
+
+  - (void)rightMouseUp:(NSEvent*)event{
+    na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed(
+      NA_MOUSE_BUTTON_RIGHT,
+      ([NSEvent pressedMouseButtons] & (1 << 1)) != 0);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_UP)) {
+      [super rightMouseUp:event];
+    }
+  }
+
+  - (void)rightMouseDragged:(NSEvent*)event{
+    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+      [super rightMouseDragged:event];
+    }
+    [NSEvent setMouseCoalescingEnabled:NO];
+  }
+
+  - (void)otherMouseDown:(NSEvent*)event{
+    na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed(
+      NA_MOUSE_BUTTON_MIDDLE,
+      ([NSEvent pressedMouseButtons] & (1 << 2)) != 0);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
+      [super otherMouseDown:event];
+    }
+  }
+
+  - (void)otherMouseUp:(NSEvent*)event{
+    na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed(
+      NA_MOUSE_BUTTON_MIDDLE,
+      ([NSEvent pressedMouseButtons] & (1 << 2)) != 0);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_UP)) {
+      [super otherMouseUp:event];
+    }
+  }
+
+  - (void)otherMouseDragged:(NSEvent*)event{
+    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+      [super otherMouseDragged:event];
+    }
+    [NSEvent setMouseCoalescingEnabled:NO];
+  }
+
   - (void)scrollWheel:(NSEvent*)event{
     na_SetMouseScrolledByDiff([event deltaX], [event deltaY]);
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_SCROLLED)) {

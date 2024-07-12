@@ -68,9 +68,18 @@
     }
   }
   
+  - (void)mouseMoved:(NSEvent*)event{
+    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+      [super mouseMoved:event];
+    }
+  }
+
   - (void)mouseDown:(NSEvent*)event{
     na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
-    na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);
+    na_SetMouseButtonPressed(
+      NA_MOUSE_BUTTON_LEFT, 
+      ([NSEvent pressedMouseButtons] & (1 << 0)) != 0);
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
       [super mouseDown:event];
     }
@@ -78,16 +87,11 @@
 
   - (void)mouseUp:(NSEvent*)event{
     na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
-    na_SetMouseButtonPressed([NSEvent pressedMouseButtons] & 0x01);
+    na_SetMouseButtonPressed(
+      NA_MOUSE_BUTTON_LEFT,
+      ([NSEvent pressedMouseButtons] & (1 << 0)) != 0);
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_UP)) {
       [super mouseUp:event];
-    }
-  }
-
-  - (void)mouseMoved:(NSEvent*)event{
-    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
-    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
-      [super mouseMoved:event];
     }
   }
   
@@ -95,6 +99,60 @@
     na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
       [super mouseDragged:event];
+    }
+  }
+
+  - (void)rightMouseDown:(NSEvent*)event{
+    na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed(
+      NA_MOUSE_BUTTON_RIGHT, 
+      ([NSEvent pressedMouseButtons] & (1 << 1)) != 0);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
+      [super rightMouseDown:event];
+    }
+  }
+
+  - (void)rightMouseUp:(NSEvent*)event{
+    na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed(
+      NA_MOUSE_BUTTON_RIGHT,
+      ([NSEvent pressedMouseButtons] & (1 << 1)) != 0);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_UP)) {
+      [super rightMouseUp:event];
+    }
+  }
+  
+  - (void)rightMouseDragged:(NSEvent*)event{
+    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+      [super rightMouseDragged:event];
+    }
+  }
+
+  - (void)otherMouseDown:(NSEvent*)event{
+    na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed(
+      NA_MOUSE_BUTTON_MIDDLE, 
+      ([NSEvent pressedMouseButtons] & (1 << 2)) != 0);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
+      [super otherMouseDown:event];
+    }
+  }
+
+  - (void)otherMouseUp:(NSEvent*)event{
+    na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    na_SetMouseButtonPressed(
+      NA_MOUSE_BUTTON_MIDDLE,
+      ([NSEvent pressedMouseButtons] & (1 << 2)) != 0);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_UP)) {
+      [super otherMouseUp:event];
+    }
+  }
+  
+  - (void)otherMouseDragged:(NSEvent*)event{
+    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
+      [super rightMouseDragged:event];
     }
   }
 
