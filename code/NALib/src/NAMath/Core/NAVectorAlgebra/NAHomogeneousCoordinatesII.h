@@ -233,8 +233,7 @@ NA_IDEF NAPos naGetMat33dTranslation(const double* A) {
 
 
 NA_IDEF double naGetMat33dMagnification(const double* A) {
-  double firstTerm = (A[0] + A[4]) * 0.5;
-  return naSqrt(firstTerm * firstTerm - (A[0] * A[4] - A[1] * A[3]) * 0.5);
+  return naLengthV2d(A);
 }
 
 
