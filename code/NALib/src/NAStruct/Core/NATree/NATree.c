@@ -7,12 +7,12 @@
 // Every Add resulting in a change in the tree must go through this function.
 NA_HDEF NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder) {
   // We need to create a node holding both the old leaf and the new one.
-  NATreeLeaf* contentleaf = tree->config->leafInserter(tree, item, key, content, insertOrder);
-  NATreeNode* parent = na_GetTreeItemParent(&(contentleaf->item));
+  NATreeLeaf* contentLeaf = tree->config->leafInserter(tree, item, key, content, insertOrder);
+  NATreeNode* parent = na_GetTreeItemParent(&contentLeaf->item);
   if(parent) {
-    na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(tree->config, parent, &(contentleaf->item)));
+    na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(tree->config, parent, &contentLeaf->item));
   }
-  return contentleaf;
+  return contentLeaf;
 }
 
 
@@ -48,9 +48,9 @@ NA_HDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt c
     }
 
     // Then we propagate the message towards the root if requested.
-    if(bubble && !na_IsTreeItemRoot(&(parent->item))) {
-      NATreeNode* grandparent = na_GetTreeItemParent(&(parent->item));
-      childIndex = na_GetTreeNodeChildIndex(tree->config, grandparent, &(parent->item));
+    if(bubble && !na_IsTreeItemRoot(&parent->item)) {
+      NATreeNode* grandparent = na_GetTreeItemParent(&parent->item);
+      childIndex = na_GetTreeNodeChildIndex(tree->config, grandparent, &parent->item);
       parent = grandparent;
     }else{
       parent = NA_NULL;

@@ -23,7 +23,7 @@ NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, siz
     if(index >= block->byteSize)
       naError("index out of range");
   #endif
-  return (const void*)&(((const NAByte*)naGetPtrConst(block->data))[index]);
+  return (const void*)&((const NAByte*)naGetPtrConst(block->data))[index];
 }
 
 
@@ -35,7 +35,7 @@ NA_HIDEF void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, size_t 
     if(index >= block->byteSize)
       naError("index out of range");
   #endif
-  return (void*)&(((const NAByte*)naGetPtrMutable(block->data))[index]);
+  return (void*)&((const NAByte*)naGetPtrMutable(block->data))[index];
 }
 
 

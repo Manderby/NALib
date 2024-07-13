@@ -78,7 +78,7 @@ NABool naSelectWINAPINotify(void* uiElement, WORD notificationCode) {
       0,
       0);
     child = naGetSelectItem(uiElement, itemIndex);
-    if(!na_DispatchUIElementCommand(&(child->uiElement), NA_UI_COMMAND_PRESSED)) {
+    if(!na_DispatchUIElementCommand(&child->uiElement, NA_UI_COMMAND_PRESSED)) {
       // don't know what to do.
     }
     break;
@@ -149,7 +149,7 @@ NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenu
   size_t index = naGetSelectItemIndex(select, atItem);
 
   SendMessage(naGetUIElementNativePtr(select), (UINT)CB_INSERTSTRING , (WPARAM)index, (LPARAM) itemText);
-  if(naGetListCount(&(select->childs)) == 0) {
+  if(naGetListCount(&select->childs) == 0) {
     SendMessage(naGetUIElementNativePtr(select), CB_SETCURSEL, (WPARAM)index , (LPARAM)0);
   }
 

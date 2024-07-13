@@ -48,7 +48,7 @@ NA_HIDEF NABool na_IsTreeItemRoot(const NATreeItem* item) {
 // /////////////////////////////////////
 
 NA_HIDEF NATreeItem* na_GetTreeNodeItem(NATreeNode* node) {
-  return &(node->item);
+  return &node->item;
 }
 
 
@@ -258,7 +258,7 @@ NA_HDEF NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATree
 // /////////////////////////////////////
 
 NA_HIDEF NATreeItem* na_GetTreeLeafItem(NATreeLeaf* leaf) {
-  return &(leaf->item);
+  return &leaf->item;
 }
 
 

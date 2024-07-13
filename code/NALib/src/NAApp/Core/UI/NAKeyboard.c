@@ -30,7 +30,7 @@ NA_DEF void naAddUIKeyboardShortcut(
   keyReaction->controller = controller;
   keyReaction->shortcut = shortcut;
   keyReaction->callback = callback;
-  naAddListLastMutable(&((element)->shortcuts), keyReaction);
+  naAddListLastMutable(&element->shortcuts, keyReaction);
 }
 
 

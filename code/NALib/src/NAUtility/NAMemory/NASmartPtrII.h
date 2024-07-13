@@ -16,7 +16,7 @@ struct NASmartPtr{
 
 NA_IDEF NASmartPtr* naInitSmartPtrConst(NASmartPtr* sptr, const void* data) {
   sptr->ptr = naMakePtrWithDataConst(data);
-  naInitRefCount(&(sptr->refCount));
+  naInitRefCount(&sptr->refCount);
   return sptr;
 }
 
@@ -24,14 +24,14 @@ NA_IDEF NASmartPtr* naInitSmartPtrConst(NASmartPtr* sptr, const void* data) {
 
 NA_IDEF NASmartPtr* naInitSmartPtrMutable(NASmartPtr* sptr, void* data) {
   sptr->ptr = naMakePtrWithDataMutable(data);
-  naInitRefCount(&(sptr->refCount));
+  naInitRefCount(&sptr->refCount);
   return sptr;
 }
 
 
 
 NA_IDEF NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr) {
-  return (NASmartPtr*)naRetainRefCount(&(sptr->refCount));
+  return (NASmartPtr*)naRetainRefCount(&sptr->refCount);
 }
 
 

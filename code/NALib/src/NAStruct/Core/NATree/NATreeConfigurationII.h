@@ -22,7 +22,7 @@ NA_HIDEF NATreeConfiguration* na_RetainTreeConfiguration(NATreeConfiguration* co
   #if NA_DEBUG
     config->flags |= NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE;
   #endif
-  return (NATreeConfiguration*)naRetainRefCount(&(config->refCount));
+  return (NATreeConfiguration*)naRetainRefCount(&config->refCount);
 }
 
 

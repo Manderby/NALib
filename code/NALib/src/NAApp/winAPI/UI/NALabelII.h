@@ -102,7 +102,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
     app->oldLabelWindowProc = oldproc;
   }
 
-  na_InitLabel(&(winapiLabel->label), nativePtr);
+  na_InitLabel(&winapiLabel->label, nativePtr);
 
   winapiLabel->enabled = NA_TRUE;
   winapiLabel->href = NA_NULL;

@@ -86,7 +86,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
     app->oldRadioWindowProc = oldproc;
   }
 
-  na_InitRadio(&(winapiRadio->radio), nativePtr);
+  na_InitRadio(&winapiRadio->radio, nativePtr);
 
   SendMessage(nativePtr, WM_SETFONT, (WPARAM)naGetFontNativePointer(naGetSystemFont()), MAKELPARAM(TRUE, 0));
 

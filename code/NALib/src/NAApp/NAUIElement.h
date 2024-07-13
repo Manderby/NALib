@@ -124,15 +124,10 @@ NA_API void naRefreshUIElement(void* uiElement, double timediff);
 // naSetWindowFirstTabElement.
 NA_API void naSetUIElementNextTabElement(void* uiElement, const void* nextTabElem);
 
-// Returns the resolution or the ui scale for the given element. The scale is a
-// multiple of 1 whereas 1 standands for 96 ppi. The resolution is given in
-//  rasterpositions/meter. The following are predefined macros:
-// - NA_UI_RESOLUTION_1x
-// - NA_UI_RESOLUTION_2x
-// The scale 2 or the resolution NA_UI_RESOLUTION_2x respectively for example
-// is returned on high resolution display settings. Returns 1x if no parent
-// window or screen can be found, as well as for NAApplication.
-NA_API double naGetUIElementResolution(const void* uiElement);
+// Returns the resolution scale for the given element. The scale is a multiple
+// of 1 whereas 1 standands for 96 ppi. The scale 2 for example is returned
+// on high resolution display settings. Returns 1 if no parent window or screen
+// can be found, as well as for NAApplication.
 NA_API double naGetUIElementResolutionScale(const void* uiElement);
 
 // Native IDs

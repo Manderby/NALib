@@ -526,7 +526,7 @@ NA_DEF void naFillImageWithu8(NAImage* image, const void* data, NABool topToBott
   if(topToBottom) {
     NASizes size = naGetImageSize(image);
     for(size_t y = 0; y < size.height; y++) {
-      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT]);
+      u8Ptr = &((uint8*)data)[(size.height - y - 1) * naGetImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT];
       for(size_t x = 0; x < size.width; x++) {
         naFillColorWithSRGBu8v(imgPtr, u8Ptr, bufferType);
         imgPtr += 1;
@@ -553,7 +553,7 @@ NA_DEF void naConvertImageTou8(const NAImage* image, void* data, NABool topToBot
   if(topToBottom) {
     NASizes size = naGetImageSize(image);
     for(size_t y = 0; y < size.height; y++) {
-      u8Ptr = &(((uint8*)data)[(size.height - y - 1) * naGetImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT]);
+      u8Ptr = &((uint8*)data)[(size.height - y - 1) * naGetImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT];
       for(size_t x = 0; x < size.width; x++) {
         naFillSRGBu8WithColor(u8Ptr, imgPtr, bufferType);
         imgPtr += 1;

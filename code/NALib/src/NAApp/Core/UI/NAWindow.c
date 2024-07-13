@@ -8,8 +8,8 @@
 
 
 NA_HDEF void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame) {
-  na_InitUIElement(&(window->uiElement), NA_UI_WINDOW, nativePtr);
-  naAddListLastMutable(&(naGetApplication()->windows), window);
+  na_InitUIElement(&window->uiElement, NA_UI_WINDOW, nativePtr);
+  naAddListLastMutable(&naGetApplication()->windows, window);
   window->contentSpace = contentSpace;
   window->coreFlags = NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS;
   if(fullScreen) { window->coreFlags |= NA_CORE_WINDOW_FLAG_FULLSCREEN; }
@@ -20,19 +20,19 @@ NA_HDEF void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSp
 
 
 NA_HDEF void na_ClearWindow(NAWindow* window) {
-  naRemoveListData(&(naGetApplication()->windows), window);
+  naRemoveListData(&naGetApplication()->windows, window);
   
   if(window->contentSpace)
     naDelete(window->contentSpace);
   
-  na_ClearUIElement(&(window->uiElement));
+  na_ClearUIElement(&window->uiElement);
 }
 
 
 
 NA_HDEF void na_RememberWindowPosition(const NAWindow* window) {
   if(window->storageTag) {
-    NARect rect = na_GetWindowAbsoluteInnerRect(&(window->uiElement));
+    NARect rect = na_GetWindowAbsoluteInnerRect(&window->uiElement);
     NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, window->storageTag);
     NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, window->storageTag);
     naSetPreferencesDouble(naGetStringUTF8Pointer(prefPosXString), rect.pos.x);
@@ -57,7 +57,7 @@ NA_DEF void naPreventWindowFromClosing(NAWindow* window, NABool prevent) {
     if(!naGetFlagu32(window->coreFlags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE))
       naError("This function is only allowed during a \"CLOSES\" event");
   #endif
-  naSetFlagu32(&(window->coreFlags), NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, prevent);
+  naSetFlagu32(&window->coreFlags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, prevent);
 }
 
 NA_DEF NABool naIsWindowFullscreen(NAWindow* window) {

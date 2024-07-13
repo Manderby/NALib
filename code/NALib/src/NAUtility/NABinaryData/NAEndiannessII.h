@@ -89,31 +89,14 @@ NA_IDEF void naConvertLittleBig32(void* buffer) {
 }
 
 NA_IDEF void naConvertLittleBig64(void* buffer) {
-//  #if !defined NA_TYPE_INT64
-//    uint32* hi;
-//    uint32* lo;
-//  #endif
   #if NA_DEBUG
     if(!buffer)
       naCrash("Buffer is Null-Pointer");
   #endif
-//    naSwap8((&((NAByte*)buffer)[7]), (&((NAByte*)buffer)[0]));
-//    naSwap8((&((NAByte*)buffer)[6]), (&((NAByte*)buffer)[1]));
-//    naSwap8((&((NAByte*)buffer)[5]), (&((NAByte*)buffer)[2]));
-//    naSwap8((&((NAByte*)buffer)[4]), (&((NAByte*)buffer)[3]));
-//  #if defined NA_TYPE_INT64
     naSwap8(((NAByte*)buffer)+7, ((NAByte*)buffer)+0);
     naSwap8(((NAByte*)buffer)+6, ((NAByte*)buffer)+1);
     naSwap8(((NAByte*)buffer)+5, ((NAByte*)buffer)+2);
     naSwap8(((NAByte*)buffer)+4, ((NAByte*)buffer)+3);
-//  #else
-//    hi = &(((NAu64*)buffer)->hi);
-//    lo = &(((NAu64*)buffer)->lo);
-//    naSwap8(((NAByte*)hi)+3, ((NAByte*)lo)+0);
-//    naSwap8(((NAByte*)hi)+2, ((NAByte*)lo)+1);
-//    naSwap8(((NAByte*)hi)+1, ((NAByte*)lo)+2);
-//    naSwap8(((NAByte*)hi)+0, ((NAByte*)lo)+3);
-//  #endif
 }
 
 NA_IDEF void naConvertLittleBig128(void* buffer) {

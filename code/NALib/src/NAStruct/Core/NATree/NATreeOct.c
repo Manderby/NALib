@@ -11,19 +11,19 @@ NA_RUNTIME_TYPE(NATreeOctLeaf, NA_NULL, NA_FALSE);
 
 
 NA_HIDEF NATreeNode* na_GetOctNodeNode(NATreeOctNode* octNode) {
-  return &(octNode->node);
+  return &octNode->node;
 }
 NA_HIDEF NATreeLeaf* na_GetOctLeafLeaf(NATreeOctLeaf* octLeaf) {
-  return &(octLeaf->leaf);
+  return &octLeaf->leaf;
 }
 NA_HIDEF NATreeItem* na_GetOctNodeItem(NATreeOctNode* octnode) {
   return na_GetTreeNodeItem(na_GetOctNodeNode(octnode));
 }
 NA_HIDEF void* na_GetOctNodeKey(NATreeOctNode* octNode) {
-  return &(octNode->origin);
+  return &octNode->origin;
 }
 NA_HIDEF void* na_GetOctLeafKey(NATreeOctLeaf* octLeaf) {
-  return &(octLeaf->origin);
+  return &octLeaf->origin;
 }
 
 
@@ -112,7 +112,7 @@ NA_HDEF NATreeLeaf* na_NewTreeLeafOct(const NATreeConfiguration* config, const v
 
 NA_HDEF NAInt na_GetChildIndexOctDouble(NATreeNode* parentNode, const void* childKey) {
   NATreeOctNode* octNode = (NATreeOctNode*)(parentNode);
-  return na_GetKeyIndexOctDouble(na_GetOctNodeKey(octNode), childKey, &(octNode->childExponent));
+  return na_GetKeyIndexOctDouble(na_GetOctNodeKey(octNode), childKey, &octNode->childExponent);
 }
 // The data parameter contains the leaf exponent of the children.
 NA_HDEF NAInt na_GetKeyIndexOctDouble(const void* baseKey, const void* testKey, const void* data) {
@@ -141,7 +141,7 @@ NA_HDEF NABool na_TestKeyNodeContainOctDouble(NATreeNode* parentNode, const void
   double childwidth = naMakeDoubleWithExponent((int32)octNode->childExponent);
   NAVertex upperLimit = naMakeVertex(octNode->origin.x + 2 * childwidth, octNode->origin.y + 2 * childwidth, octNode->origin.z + 2 * childwidth);
   return
-    NA_KEY_OP(LessEqual, NAVertex)(&(octNode->origin), key) &&
+    NA_KEY_OP(LessEqual, NAVertex)(&octNode->origin, key) &&
     NA_KEY_OP(Less, NAVertex)(key, &upperLimit);
 }
 NA_HDEF NABool na_TestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key) {
@@ -149,7 +149,7 @@ NA_HDEF NABool na_TestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key)
   double leafwidth = naMakeDoubleWithExponent((int32)octLeaf->leafExponent);
   NAVertex upperLimit = naMakeVertex(octLeaf->origin.x + leafwidth, octLeaf->origin.y + leafwidth, octLeaf->origin.z + leafwidth);
   return
-    NA_KEY_OP(LessEqual, NAVertex)(&(octLeaf->origin), key) &&
+    NA_KEY_OP(LessEqual, NAVertex)(&octLeaf->origin, key) &&
     NA_KEY_OP(Less, NAVertex)(key, &upperLimit);
 }
 NA_HDEF NABool na_TestKeyNodeOverlapOctDouble(NATreeNode* parentNode, const void* lowerKey, const void* upperKey) {
@@ -586,7 +586,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, con
         
         // Then, attach the new parent to the existing parent.
         #if NA_DEBUG
-          testExistingIndex = tree->config->keyIndexGetter(na_GetOctNodeKey(existingParent), na_GetOctNodeKey(smallestParent), &(existingParent->childExponent));
+          testExistingIndex = tree->config->keyIndexGetter(na_GetOctNodeKey(existingParent), na_GetOctNodeKey(smallestParent), &existingParent->childExponent);
           if(testExistingIndex != prevExistingChildIndex)
             naError("Newly computed index differs from previously computed index");
         #endif

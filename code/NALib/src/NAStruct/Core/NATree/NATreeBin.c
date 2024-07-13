@@ -10,10 +10,10 @@ NA_RUNTIME_TYPE(NATreeBinLeaf, NA_NULL, NA_FALSE);
 
 
 NA_HIDEF void* na_GetBinNodeKey(NATreeBinNode* binnode) {
-  return &(binnode->key);
+  return &binnode->key;
 }
 NA_HIDEF void* na_GetBinLeafKey(NATreeBinLeaf* binleaf) {
-  return &(binleaf->key);
+  return &binleaf->key;
 }
 
 

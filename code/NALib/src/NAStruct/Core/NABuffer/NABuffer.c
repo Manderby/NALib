@@ -69,7 +69,7 @@ NA_HDEF void na_InitBufferStruct(NABuffer* buffer) {
   config = naCreateTreeConfiguration(NA_TREE_KEY_NOKEY | NA_TREE_BALANCE_AVL);
   naSetTreeConfigurationLeafCallbacks(config, NA_NULL, naDestructBufferTreeLeaf);
   naSetTreeConfigurationNodeCallbacks(config, naConstructBufferTreeNode, naDestructBufferTreeNode, naUpdateBufferTreeNode);
-  naInitTree(&(buffer->parts), config);
+  naInitTree(&buffer->parts, config);
   #if NA_DEBUG
     buffer->iterCount = 0;
   #endif
@@ -149,7 +149,7 @@ NA_DEF NABuffer* naCreateBufferExtraction(NABuffer* srcBuffer, NAInt offset, NAI
 
   // Add the const data to the list.
   part = na_NewBufferPartSparse(buffer->source, absoluteRange);
-  naAddTreeFirstMutable(&(buffer->parts), part);
+  naAddTreeFirstMutable(&buffer->parts, part);
 
   buffer->flags = srcBuffer->flags | NA_BUFFER_FLAG_RANGE_FIXED;
 
@@ -175,7 +175,7 @@ NA_DEF NABuffer* naCreateBufferCopy(const NABuffer* srcBuffer, NARangei64 range,
   naClearBufferIterator(&iter);
   
   // Make the parts of this buffer unique.
-  partIter = naMakeTreeMutator(&(buffer->parts));
+  partIter = naMakeTreeMutator(&buffer->parts);
   while(naIterateTree(&partIter, NA_NULL, NA_NULL)) {
     NABufferPart* part = naGetTreeCurLeafMutable(&partIter);
     na_DecoupleBufferPart(part);
@@ -265,7 +265,7 @@ NA_DEF NABuffer* naCreateBufferWithConstData(const void* data, size_t byteSize) 
 
   // Add the const data to the list.
   part = na_NewBufferPartWithConstData(data, byteSize);
-  naAddTreeFirstMutable(&(buffer->parts), part);
+  naAddTreeFirstMutable(&buffer->parts, part);
 
   buffer->source = NA_NULL;
   buffer->sourceOffset = 0;
@@ -292,7 +292,7 @@ NA_DEF NABuffer* naCreateBufferWithMutableData(void* data, size_t byteSize, NAMu
 
   // Add the mutable data to the list.
   part = na_NewBufferPartWithMutableData(data, byteSize, destructor);
-  naAddTreeFirstMutable(&(buffer->parts), part);
+  naAddTreeFirstMutable(&buffer->parts, part);
 
   buffer->source = NA_NULL;
   buffer->sourceOffset = 0;
@@ -331,7 +331,7 @@ NA_HDEF void na_DestructBuffer(NABuffer* buffer) {
   if(buffer->source) {
     naRelease(buffer->source);
   }
-  naClearTree(&(buffer->parts));
+  naClearTree(&buffer->parts);
 }
 
 
@@ -355,7 +355,7 @@ NA_HDEF void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end) {
     // If the buffer is empty, we just create one sparse part containing the
     // whole range.
     NABufferPart* part = na_NewBufferPartSparse(buffer->source, naMakeRangei64(start + buffer->sourceOffset, length));
-    naAddTreeFirstMutable(&(buffer->parts), part);
+    naAddTreeFirstMutable(&buffer->parts, part);
     buffer->range = naMakeRangei64Combination(start, naMakeMaxWithEndi64(end));
 
   }else{
@@ -374,7 +374,7 @@ NA_HDEF void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end) {
       }else{
         // We create a sparse part at the beginning.
         NABufferPart* part = na_NewBufferPartSparse(buffer->source, naMakeRangei64(start + buffer->sourceOffset, additionalbytes));
-        naAddTreeFirstMutable(&(buffer->parts), part);
+        naAddTreeFirstMutable(&buffer->parts, part);
       }
       buffer->range = naMakeRangei64Combination(start, naGetRangei64Max(buffer->range));
     }
@@ -391,7 +391,7 @@ NA_HDEF void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end) {
       }else{
         // We create a sparse part at the end.
         NABufferPart* part = na_NewBufferPartSparse(buffer->source, naMakeRangei64(naGetRangei64End(buffer->range) + buffer->sourceOffset, additionalbytes));
-        naAddTreeLastMutable(&(buffer->parts), part);
+        naAddTreeLastMutable(&buffer->parts, part);
       }
       buffer->range = naMakeRangei64Combination(buffer->range.origin, naMakeMaxWithEndi64(end));
     }
@@ -420,7 +420,7 @@ NA_HDEF void na_UnlinkBufferRange(NABuffer* buffer, NARangei64 range) {
 //      naError("na_UnlinkBufferRange", "Range of is not within buffer range");
 //  #endif
 //
-//  iter = naMakeListModifier(&(buffer->parts));
+//  iter = naMakeListModifier(&buffer->parts);
 //  naLocateBufferPartOffset(&iter, range.origin);
 //
 //  // We create a sparse part in place where the dismissed range lies.
@@ -495,7 +495,7 @@ NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt start
   iter = naMakeBufferAccessor(buffer);
   naLocateBufferAbsolute(&iter, startOffset);
 
-  while(!naIsTreeAtInitial(&(iter.partIter))) {
+  while(!naIsTreeAtInitial(&iter.partIter)) {
     const NABufferPart* part;
     const NAByte* curByte;
 

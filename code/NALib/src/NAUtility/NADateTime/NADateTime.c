@@ -669,22 +669,22 @@ NA_DEF const char* naGetDateTimeErrorString(uint8 errorNum) {
 //
 //    valueu16 = (uint16)dts.year;
 //    naConvertNativeBig16(&valueu16);
-//    naCopy16(&(ptr[ 0]), &valueu16);
+//    naCopy16(&ptr[ 0], &valueu16);
 //    valueu16 = (uint16)dts.mon;
 //    naConvertNativeBig16(&valueu16);
-//    naCopy16(&(ptr[ 2]), &valueu16);
+//    naCopy16(&ptr[ 2], &valueu16);
 //    valueu16 = (uint16)dts.day;
 //    naConvertNativeBig16(&valueu16);
-//    naCopy16(&(ptr[ 4]), &valueu16);
+//    naCopy16(&ptr[ 4], &valueu16);
 //    valueu16 = (uint16)dts.hour;
 //    naConvertNativeBig16(&valueu16);
-//    naCopy16(&(ptr[ 6]), &valueu16);
+//    naCopy16(&ptr[ 6], &valueu16);
 //    valueu16 = (uint16)dts.min;
 //    naConvertNativeBig16(&valueu16);
-//    naCopy16(&(ptr[ 8]), &valueu16);
+//    naCopy16(&ptr[ 8], &valueu16);
 //    valueu16 = (uint16)dts.sec;
 //    naConvertNativeBig16(&valueu16);
-//    naCopy16(&(ptr[10]), &valueu16);
+//    naCopy16(&ptr[10], &valueu16);
 //    break;
 //
 //  case NA_DATETIME_FORMAT_PNG:

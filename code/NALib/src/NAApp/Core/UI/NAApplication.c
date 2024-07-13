@@ -18,8 +18,8 @@ NA_HDEF NABool na_IsApplicationRunning(void) {
 NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePtr) {
   na_App = application;
 
-  naInitList(&(application->windows));
-  naInitList(&(application->uiElements));
+  naInitList(&application->windows);
+  naInitList(&application->uiElements);
 
   application->translator = NA_NULL;
   naStartTranslator();
@@ -46,7 +46,7 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
 
   // This is done at the very end of the InitApplication function as the
   // application must be fully functional before it can init any UIElements.
-  na_InitUIElement(&(application->uiElement), NA_UI_APPLICATION, nativePtr);
+  na_InitUIElement(&application->uiElement, NA_UI_APPLICATION, nativePtr);
 }
 
 
@@ -57,18 +57,18 @@ NA_HDEF void na_ClearApplication(NAApplication* application) {
       naCrash("No Application running");
   #endif
 
-  naForeachListMutable(&(naGetApplication()->windows), (NAMutator)naDelete);
-  naClearList(&(naGetApplication()->windows));
+  naForeachListMutable(&naGetApplication()->windows, (NAMutator)naDelete);
+  naClearList(&naGetApplication()->windows);
 
   naStopTranslator();
-  na_ClearUIElement(&(application->uiElement));
+  na_ClearUIElement(&application->uiElement);
 
   naRelease(application->systemFont);
 
   // This must be at the very end as the uiElements are used up until the last
   // ClearUIElement operation.
   // todo test if all uiElements are gone.
-  naClearList(&(naGetApplication()->uiElements));
+  naClearList(&naGetApplication()->uiElements);
 }
 
 

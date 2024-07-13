@@ -140,7 +140,7 @@ NA_DEF NASlider* naNewSlider(double width) {
     app->oldSliderWindowProc = oldproc;
   }
 
-  na_InitSlider(&(winapiSlider->slider), nativePtr);
+  na_InitSlider(&winapiSlider->slider, nativePtr);
 
   return (NASlider*)winapiSlider;
 #else

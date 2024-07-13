@@ -791,7 +791,7 @@ NA_DEF void naStopRuntime() {
 // a place here.
 NA_HDEF void na_DestructPointer(NAPointer* pointer) {
   if(pointer->destructor) {
-    pointer->destructor(naGetSmartPtrMutable(&(pointer->sptr)));
+    pointer->destructor(naGetSmartPtrMutable(&pointer->sptr));
   }
   naDelete(pointer);
 }

@@ -76,12 +76,12 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
   case WM_CLOSE:
     windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
-    naSetFlagu32(&(windowMutable->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
+    naSetFlagu32(&windowMutable->window.flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES)) {
       // don't know what to do.
     }
     shouldClose = !naGetFlagu32(windowMutable->window.flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
-    naSetFlagu32(&(windowMutable->window.flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
+    naSetFlagu32(&windowMutable->window.flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
     if(shouldClose) {
       naCloseWindow(&windowMutable->window);
     }
@@ -222,7 +222,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
 
   NABool resizeable = naGetFlagu32(flags, NA_WINDOW_RESIZEABLE);
 
-  rect = naSetWindowStorageTag(&(winapiWindow->window), storageTag, rect, resizeable);
+  rect = naSetWindowStorageTag(&winapiWindow->window, storageTag, rect, resizeable);
 
   DWORD style = WS_OVERLAPPEDWINDOW;
   if(!resizeable) {
@@ -264,7 +264,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
 
   naFree(systemTitle);
 
-  na_InitWindow(&(winapiWindow->window), nativePtr, NA_NULL, NA_FALSE, resizeable, rect);
+  na_InitWindow(&winapiWindow->window, nativePtr, NA_NULL, NA_FALSE, resizeable, rect);
   winapiWindow->firstResponder = NA_NULL;
   winapiWindow->window.flags = flags;
 
@@ -280,7 +280,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
     NA_NULL);
 
   NASpace* contentSpace = naNewSpace(naMakeSize(rect.size.width, rect.size.height));
-  naSetWindowContentSpace(&(winapiWindow->window), contentSpace);
+  naSetWindowContentSpace(&winapiWindow->window, contentSpace);
 
   na_SetUIElementParent((NA_UIElement*)winapiWindow, naGetApplication(), NA_TRUE);
 
@@ -375,7 +375,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
       //ChangeDisplaySettings(NULL, 0);
     }
 
-    naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_FULLSCREEN, fullScreen);
+    naSetFlagu32(&window->flags, NA_CORE_WINDOW_FLAG_FULLSCREEN, fullScreen);
   }
 }
 
@@ -462,7 +462,7 @@ NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window)
 NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
 
-  //NARect currect = naGetUIElementRect(&(winapiWindow->window));
+  //NARect currect = naGetUIElementRect(&winapiWindow->window);
   double yDiff = winapiWindow->rect.pos.y = rect.pos.y;
 
   if(1) {
@@ -507,7 +507,7 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
 
   // We need to trigger a repositioning of the content space. The position does not change,
   // it is always (0,0).
-  NASpace* contentSpace = naGetWindowContentSpace(&(winapiWindow->window));
+  NASpace* contentSpace = naGetWindowContentSpace(&winapiWindow->window);
   NARect contentRect = naGetUIElementRect(contentSpace);
   naSetUIElementRect(contentSpace, contentRect);
 }

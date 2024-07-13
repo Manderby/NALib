@@ -63,7 +63,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size) {
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL );
   
-  na_InitTextBox(&(winapiTextBox->textBox), nativePtr);
+  na_InitTextBox(&winapiTextBox->textBox, nativePtr);
   winapiTextBox->nextTabStop = winapiTextBox;
   winapiTextBox->prevTabStop = winapiTextBox;
 
@@ -155,14 +155,14 @@ NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use) {
 
 NA_HDEF void** na_GetTextBoxNextTabReference(NATextBox* textBox) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  return &(winapiTextBox->nextTabStop);
+  return &winapiTextBox->nextTabStop;
 }
 
 
 
 NA_HDEF void** na_GetTextBoxPrevTabReference(NATextBox* textBox) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  return &(winapiTextBox->prevTabStop);
+  return &winapiTextBox->prevTabStop;
 }
 
 

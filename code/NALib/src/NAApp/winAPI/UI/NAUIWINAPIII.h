@@ -246,12 +246,12 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
       keyWindow = GetParent(keyWindow);
     }
     if(!elem) {
-      elem = &(naGetApplication()->uiElement);
+      elem = &naGetApplication()->uiElement;
     }
 
     // Search for a matching keyboard shortcut by bubbling.
     while(!retValue && elem) {
-      NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
+      NAListIterator iter = naMakeListAccessor(&elem->shortcuts);
       while(!retValue && naIterateList(&iter)) {
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
         if(keyReaction->shortcut.keyCode == naGetApplication()->curKeyStroke.keyCode) {
@@ -648,7 +648,7 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam) {
     // This is a menu message
     const NAMenu* menu = na_GetApplicationLastOpenedMenu(naGetApplication());
     const NAMenuItem* menuItem = NA_NULL;
-    NAListIterator iter = naMakeListAccessor(&(menu->childs));
+    NAListIterator iter = naMakeListAccessor(&menu->childs);
     while(naIterateList(&iter)) {
       menuItem = naGetListCurConst(&iter);
       if(na_GetMenuItemId(menuItem) == controlIdentifier) {

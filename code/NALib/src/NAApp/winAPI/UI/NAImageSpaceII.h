@@ -142,7 +142,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size) {
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
 
-  na_InitImageSpace(&(winapiImageSpace->imageSpace), nativePtr);
+  na_InitImageSpace(&winapiImageSpace->imageSpace, nativePtr);
 
   if(uiImage) {
     winapiImageSpace->imageSpace.uiImage = naRetain(uiImage);

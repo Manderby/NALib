@@ -685,7 +685,7 @@ NA_DEF NAPNG* naNewPNG(NASizes size, NAPNGColorType colorType, int8 bitDepth) {
     if((colorType != NA_PNG_COLORTYPE_TRUECOLOR) && (colorType != NA_PNG_COLORTYPE_TRUECOLOR_ALPHA))
       naError("Sorry, colorType must be truecolor with or without alpha. Everything else will be implemented later.");
   #endif
-  naInitList(&(png->chunks));
+  naInitList(&png->chunks);
   png->flags = 0;
   png->bitDepth = (int8)bitDepth;
   png->compressionmethod = 0;
@@ -710,11 +710,10 @@ NA_DEF NAPNG* naNewPNG(NASizes size, NAPNGColorType colorType, int8 bitDepth) {
 NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
   NABuffer* buffer;
   NAByte magic[8];
-  NAListIterator iter;
   NABufferIterator bufiter;
 
   NAPNG* png = naNew(NAPNG);
-  naInitList(&(png->chunks));
+  naInitList(&png->chunks);
 
   // Set the default values. Needed if no appropriate chunk is available.
   png->flags = 0;
@@ -747,7 +746,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
   // Read the chunks until the IEND chunk is read.
   while(1) {
     NAPNGChunk* chunk = na_AllocPNGChunkFromBuffer(&bufiter);
-    naAddListLastMutable(&(png->chunks), chunk);
+    naAddListLastMutable(&png->chunks, chunk);
     
     if(chunk->type == NA_PNG_CHUNK_TYPE_IEND)
       break;
@@ -759,7 +758,10 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
   naSetBufferEndianness(png->compresseddata, NA_ENDIANNESS_NETWORK);
   png->filteredData = naCreateBuffer(NA_FALSE);
 
-  naBeginListMutatorIteration(NAPNGChunk* chunk, &(png->chunks), iter);
+  NAListIterator iter = naMakeListMutator(&png->chunks);
+  while(naIterateList(&iter)) {
+    NAPNGChunk* chunk = (NAPNGChunk*)naGetListCurMutable(&iter);
+
     switch(chunk->type) {
     case NA_PNG_CHUNK_TYPE_IHDR:  na_ReadPNGIHDRChunk(png, chunk);  break;
     case NA_PNG_CHUNK_TYPE_PLTE:  na_ReadPNGPLTEChunk(png, chunk);  break;
@@ -783,7 +785,8 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
     default:
       break;
     }
-  naEndListIteration(iter);
+  }
+  naClearListIterator(&iter);
 
 //  NAFile* outFile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
 //  naWriteBufferToFile(png->compresseddata, outFile);
@@ -881,12 +884,11 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath) {
   NABuffer* outbuffer;
   NAChecksum checksum;
   NAFile* outFile;
-  NAListIterator iter;
   NABufferIterator iterOut;
 
-  naAddListLastMutable(&(png->chunks), na_AllocPNGIHDRChunk(png));
-  naAddListLastMutable(&(png->chunks), na_AllocPNGIDATChunk(png));
-  naAddListLastMutable(&(png->chunks), na_AllocPNGIENDChunk(png));
+  naAddListLastMutable(&png->chunks, na_AllocPNGIHDRChunk(png));
+  naAddListLastMutable(&png->chunks, na_AllocPNGIDATChunk(png));
+  naAddListLastMutable(&png->chunks, na_AllocPNGIENDChunk(png));
 
   outbuffer = naCreateBuffer(NA_FALSE);
   iterOut = naMakeBufferMutator(outbuffer);
@@ -894,7 +896,10 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath) {
 
   naWriteBufferBytes(&iterOut, na_PngMagic, 8);
 
-  naBeginListMutatorIteration(NAPNGChunk* chunk, &(png->chunks), iter);
+  NAListIterator iter = naMakeListMutator(&png->chunks);
+  while(naIterateList(&iter)) {
+    NAPNGChunk* chunk = (NAPNGChunk*)naGetListCurMutable(&iter);
+
     naFixBufferRange(chunk->data);
 
     chunk->length = (uint32)naGetBufferRange(chunk->data).length;
@@ -915,7 +920,8 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath) {
     chunk->crc = naGetChecksumResult(&checksum);
     naClearChecksum(&checksum);
     naWriteBufferu32(&iterOut, chunk->crc);
-  naEndListIteration(iter);
+  }
+  naClearListIterator(&iter);
 
   naClearBufferIterator(&iterOut);
 
@@ -931,8 +937,8 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath) {
 // This is the destructor for a PNG. It is marked as a helper as it should
 // only be called by the runtime system
 NA_HDEF void na_DestructPNG(NAPNG* png) {
-  naForeachListMutable(&(png->chunks), (NAMutator)na_DeallocPNGChunk);
-  naClearList(&(png->chunks));
+  naForeachListMutable(&png->chunks, (NAMutator)na_DeallocPNGChunk);
+  naClearList(&png->chunks);
   
   if(png->pixeldata)
     naFree(png->pixeldata);

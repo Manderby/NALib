@@ -199,7 +199,7 @@ NA_IDEF NAMutex naMakeMutex(void) {
   #if NA_OS == NA_OS_WINDOWS
     NAWindowsMutex* windowsMutex = naAlloc(NAWindowsMutex);
     #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-      InitializeCriticalSection(&(windowsMutex->mutex));
+      InitializeCriticalSection(&windowsMutex->mutex);
     #else
       windowsMutex->mutex = CreateMutex(NULL, FALSE, NULL);
     #endif
@@ -228,7 +228,7 @@ NA_IDEF void naClearMutex(NAMutex mutex) {
   #if NA_OS == NA_OS_WINDOWS
     NAWindowsMutex* windowsMutex = (NAWindowsMutex*)mutex;
     #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-      DeleteCriticalSection(&(windowsMutex->mutex));
+      DeleteCriticalSection(&windowsMutex->mutex);
     #else
       CloseHandle(windowsMutex->mutex);
     #endif
@@ -262,7 +262,7 @@ NA_IDEF void naLockMutex(NAMutex mutex) {
   #if NA_OS == NA_OS_WINDOWS
     NAWindowsMutex* windowsMutex = (NAWindowsMutex*)mutex;
     #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-      EnterCriticalSection(&(windowsMutex->mutex));
+      EnterCriticalSection(&windowsMutex->mutex);
     #else
       WaitForSingleObject(windowsMutex->mutex, INFINITE);
     #endif
@@ -302,7 +302,7 @@ NA_IDEF void naUnlockMutex(NAMutex mutex) {
     #endif
     windowsMutex->islockedbythisthread = NA_FALSE;
     #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-      LeaveCriticalSection(&(windowsMutex->mutex));
+      LeaveCriticalSection(&windowsMutex->mutex);
     #else
       ReleaseMutex(windowsMutex->mutex);
     #endif
@@ -353,12 +353,12 @@ NA_IDEF NABool naTryMutex(NAMutex mutex) {
   #if NA_OS == NA_OS_WINDOWS
     NAWindowsMutex* windowsMutex = (NAWindowsMutex*)mutex;
     #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-      BOOL retValue = TryEnterCriticalSection(&(windowsMutex->mutex));
+      BOOL retValue = TryEnterCriticalSection(&windowsMutex->mutex);
       if(retValue == 0) {
         return NA_FALSE;
       }else{
         if(windowsMutex->islockedbythisthread) {
-          LeaveCriticalSection(&(windowsMutex->mutex));
+          LeaveCriticalSection(&windowsMutex->mutex);
           return NA_FALSE;
         }else{
           windowsMutex->islockedbythisthread = NA_TRUE;

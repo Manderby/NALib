@@ -206,7 +206,7 @@ NA_HDEF NAApplication* na_NewApplication(void) {
 
   NACocoaNativeApplicationDelegate* nativePtr = [[NACocoaNativeApplicationDelegate alloc]
     initWithCocoaApplication:cocoaApplication];
-  na_InitApplication(&(cocoaApplication->application), NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitApplication(&cocoaApplication->application, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
   return (NAApplication*)cocoaApplication;
 }

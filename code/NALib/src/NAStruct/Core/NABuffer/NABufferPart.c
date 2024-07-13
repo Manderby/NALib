@@ -408,12 +408,12 @@ NA_HDEF size_t na_PrepareBufferPart(NABufferIterator* iter, size_t byteCount) {
     if(cache) {
       // There is a cache, so we try to fill the part with it.
       part = na_PrepareBufferPartCache(
-        &(iter->partIter),
+        &iter->partIter,
         naMakeRangei64(iter->partOffset, (NAInt)byteCount));
     }else{
       // We have no cache, meaning, we prepare memory ourselfes.
       part = na_PrepareBufferPartMemory(
-        &(iter->partIter),
+        &iter->partIter,
         naMakeRangei64(iter->partOffset, (NAInt)byteCount));
     }
   }

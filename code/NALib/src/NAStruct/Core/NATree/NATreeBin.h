@@ -58,10 +58,10 @@ NA_HIAPI NATreeItem* na_GetBinNodeItem(NATreeBinNode* binnode);
 
 
 NA_HIDEF NATreeNode* na_GetBinNodeNode(NATreeBinNode* binnode) {
-  return &(binnode->node);
+  return &binnode->node;
 }
 NA_HIDEF NATreeLeaf* na_GetBinLeafLeaf(NATreeBinLeaf* binleaf) {
-  return &(binleaf->leaf);
+  return &binleaf->leaf;
 }
 
 

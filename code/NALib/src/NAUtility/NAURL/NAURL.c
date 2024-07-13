@@ -33,7 +33,7 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
     }
 
     pathComponent = naParseBufferPathComponent(&iter);
-    naAddListLastMutable(&(url->path), pathComponent);
+    naAddListLastMutable(&url->path, pathComponent);
   }
 
   naClearBufferIterator(&iter);
@@ -45,8 +45,8 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
 
 
 NA_DEF NAString* naNewStringWithURLFilename(NAURL* url) {
-  if(naGetListCount(&(url->path))) {
-    const NAString* lastComponent = naGetListLastConst(&(url->path));
+  if(naGetListCount(&url->path)) {
+    const NAString* lastComponent = naGetListLastConst(&url->path);
     return naNewStringExtraction(lastComponent, 0, -1);
   }else{
     return naNewString();

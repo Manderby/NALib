@@ -94,7 +94,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
     app->oldCheckBoxWindowProc = oldproc;
   }
 
-  na_InitCheckBox(&(winapiCheckBox->checkBox), nativePtr);
+  na_InitCheckBox(&winapiCheckBox->checkBox, nativePtr);
 
   SendMessage(nativePtr, WM_SETFONT, (WPARAM)naGetFontNativePointer(naGetSystemFont()), MAKELPARAM(TRUE, 0));
 

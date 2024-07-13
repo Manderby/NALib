@@ -8,7 +8,7 @@
 
 
 NA_HDEF void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr) {
-  na_InitUIElement(&(openGLSpace->uiElement), NA_UI_OPENGL_SPACE, nativePtr);
+  na_InitUIElement(&openGLSpace->uiElement, NA_UI_OPENGL_SPACE, nativePtr);
   naResetOpenGLSpaceTransformation(openGLSpace);
 }
 

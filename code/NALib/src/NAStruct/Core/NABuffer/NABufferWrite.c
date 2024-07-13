@@ -28,8 +28,8 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, size_
 
   // We store the current iterator to move back to it later on if necessary.
   size_t firstPartOffset = (size_t)iter->partOffset;
-  firstBufIter = naMakeTreeAccessor(&(buffer->parts));
-  naLocateTreeIterator(&firstBufIter, &(iter->partIter));
+  firstBufIter = naMakeTreeAccessor(&buffer->parts);
+  naLocateTreeIterator(&firstBufIter, &iter->partIter);
 
   // do as long as there is a byteSize remaining. Remember that the data may
   // be split into different buffer parts.
@@ -74,7 +74,7 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, size_
   
   if(!advance) {
     iter->partOffset = (NAInt)firstPartOffset;
-    naLocateTreeIterator(&(iter->partIter), &firstBufIter);
+    naLocateTreeIterator(&iter->partIter, &firstBufIter);
   }
   naClearTreeIterator(&firstBufIter);  
 }
@@ -267,7 +267,7 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, size_t b
     naReadBufferBytes(&readIter, buf, (size_t)segmentSize);
     remainingByteSize = byteSize - (size_t)segmentSize;
     
-    bufptr = &(buf[segmentSize]);
+    bufptr = &buf[segmentSize];
     while(remainingByteSize) {
       *bufptr = bufptr[-segmentSize]; //todo
       remainingByteSize--;

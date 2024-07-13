@@ -125,7 +125,7 @@ NA_IDEF void naClearTreeIterator(NATreeIterator* iter) {
     // Release should not do anything at all.
     na_SetTreeIteratorCurItem(iter, NA_NULL);
 
-    naSetFlagu32(&(iter->flags), NA_TREE_ITERATOR_CLEARED, NA_TRUE);
+    naSetFlagu32(&iter->flags, NA_TREE_ITERATOR_CLEARED, NA_TRUE);
   #else
     NA_UNUSED(iter);
   #endif
@@ -186,7 +186,7 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
     NATreeNode* parent = na_GetTreeItemParent(item);
     NAInt childIndex = na_GetTreeNodeChildIndex(tree->config, parent, item);
     continueBubbling = nodeTokenCallback(token, na_GetTreeNodeData(tree->config, parent), childIndex);
-    item = &(parent->item);
+    item = &parent->item;
   }
 }
 
@@ -353,7 +353,7 @@ NA_IDEF NABool naIsTreeAtInitial(const NATreeIterator* iter) {
 
 
 NA_HIDEF NABool na_AddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafInsertOrder insertOrder, NABool moveToNew) {
-  NATreeLeaf* contentleaf;
+  NATreeLeaf* contentLeaf;
   NATree* tree = na_GetTreeIteratorTreeMutable(iter);
   #if NA_DEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
@@ -380,9 +380,9 @@ NA_HIDEF NABool na_AddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLea
       break;
     }
   }
-  contentleaf = na_AddTreeContentInPlace(tree, iter->item, NA_NULL, content, insertOrder);
+  contentLeaf = na_AddTreeContentInPlace(tree, iter->item, NA_NULL, content, insertOrder);
   if(moveToNew) {
-    na_SetTreeIteratorCurItem(iter, &(contentleaf->item));
+    na_SetTreeIteratorCurItem(iter, &contentLeaf->item);
   }
   return NA_TRUE;
 }

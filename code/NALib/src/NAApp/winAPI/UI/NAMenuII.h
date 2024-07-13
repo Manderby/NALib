@@ -11,7 +11,7 @@ NA_DEF NAMenu* naNewMenu() {
 
   winapiMenu->hMenu = CreatePopupMenu();
 
-  na_InitMenu(&(winapiMenu->menu), winapiMenu->hMenu, NA_NULL);
+  na_InitMenu(&winapiMenu->menu, winapiMenu->hMenu, NA_NULL);
 
   return (NAMenu*)winapiMenu;
 }
@@ -47,7 +47,7 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
     menuItemInfo.fState = /*MFS_CHECKED | */MFS_ENABLED/* | MFS_DEFAULT*/;
   }
 
-  na_SetMenuItemId(&(winapiMenuItem->menuItem), menuItemInfo.wID, menu);
+  na_SetMenuItemId(&winapiMenuItem->menuItem, menuItemInfo.wID, menu);
 
   size_t index = naGetMenuItemIndex(menu, atItem);
 

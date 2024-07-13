@@ -62,7 +62,7 @@ NA_DEF NABool naLocateListIndex(NAListIterator* iter, size_t index) {
       naError("Index overflows the range of the list");
       iter->cur->iterCount--;
     #endif  
-    iter->cur = &(mutablelist->sentinel);
+    iter->cur = &mutablelist->sentinel;
     #if NA_DEBUG
       iter->cur->iterCount++;
     #endif
@@ -83,7 +83,7 @@ NA_DEF NABool naLocateListIndexBack(NAListIterator* iter, size_t index) {
       naError("Backwards index underflows the range of the list");
       iter->cur->iterCount--;
     #endif
-    iter->cur = &(mutablelist->sentinel);
+    iter->cur = &mutablelist->sentinel;
     #if NA_DEBUG
       iter->cur->iterCount++;
     #endif

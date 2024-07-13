@@ -251,12 +251,12 @@ NA_HDEF NAApplication* na_NewApplication(void) {
   NAWINAPIApplication* winapiApplication = naNew(NAWINAPIApplication);
 
   winapiApplication->nonClientMetrics.cbSize = sizeof(NONCLIENTMETRICS);
-  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiApplication->nonClientMetrics), 0);
+  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &winapiApplication->nonClientMetrics, 0);
 
-  na_InitApplication(&(winapiApplication->application), GetModuleHandle(NULL));
+  na_InitApplication(&winapiApplication->application, GetModuleHandle(NULL));
 
-  naInitList(&(winapiApplication->timers));
-  naInitList(&(winapiApplication->openGLRedrawList));
+  naInitList(&winapiApplication->timers);
+  naInitList(&winapiApplication->openGLRedrawList);
 
   winapiApplication->offscreenWindow = CreateWindow(
     TEXT("NAOffscreenWindow"), TEXT("Offscreen window"), WS_OVERLAPPEDWINDOW,
@@ -305,14 +305,14 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
 
   DestroyIcon(winapiApplication->appIcon);
 
-  na_ClearApplication(&(winapiApplication->application));  
+  na_ClearApplication(&winapiApplication->application);  
 
   // Now that all windows are destroyed, all dependent timers are deleted. We can
   // safely release the timer structs. todo: Make killing the timers a sport.
-  naForeachListMutable(&(winapiApplication->timers), (NAMutator)naFree);
-  naClearList(&(winapiApplication->timers));
+  naForeachListMutable(&winapiApplication->timers, (NAMutator)naFree);
+  naClearList(&winapiApplication->timers);
 
-  naClearList(&(winapiApplication->openGLRedrawList));
+  naClearList(&winapiApplication->openGLRedrawList);
 }
 
 
@@ -334,7 +334,7 @@ void naSetApplicationMouseHoverElement(NA_UIElement* element) {
 
 const NONCLIENTMETRICS* naGetApplicationMetrics(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  return &(app->nonClientMetrics);
+  return &app->nonClientMetrics;
 }
 
 
@@ -356,7 +356,7 @@ NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT
   UINT timerkey = (UINT)idEvent;
   app = (NAWINAPIApplication*)naGetApplication();
 
-  naBeginListModifierIteration(NAWINAPITimerStruct* timerStruct, &(app->timers), iter);
+  naBeginListModifierIteration(NAWINAPITimerStruct* timerStruct, &app->timers, iter);
     if(timerStruct->key == timerkey) {
       naRemoveListCurMutable(&iter, NA_FALSE);
       KillTimer(hwnd, idEvent);
@@ -377,7 +377,7 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
   // todo: Check type
   timerStruct->key = (UINT)SetTimer((HWND)NA_NULL, (UINT_PTR)NA_NULL, (UINT)(1000 * timediff), na_TimerCallbackFunction);
   app = (NAWINAPIApplication*)naGetApplication();
-  naAddListLastMutable(&(app->timers), timerStruct);
+  naAddListLastMutable(&app->timers, timerStruct);
 }
 
 

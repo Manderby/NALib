@@ -140,7 +140,7 @@ NA_IDEF void* naTopStack(NAStack* stack) {
   #endif
 
   return na_GetStackArrayAt(
-    &(stack->curArray),
+    &stack->curArray,
     stack->curCount - 1,
     stack->typeSize);
 }
@@ -153,7 +153,7 @@ NA_IDEF void* naPushStack(NAStack* stack) {
       naCrash("stack is Null");
   #endif
 
-  if(stack->curCount == na_GetStackArrayCount(&(stack->curArray))) {
+  if(stack->curCount == na_GetStackArrayCount(&stack->curArray)) {
     na_GrowStack(stack);
   }
 
@@ -204,7 +204,7 @@ NA_IDEF NAStackIterator naMakeStackAccessor(const NAStack* stack) {
     NAStack* mutablestack;
   #endif
   iter.stack = stack;
-  iter.curArray = naMakeListMutator(&(stack->arrays));
+  iter.curArray = naMakeListMutator(&stack->arrays);
   iter.cur = 0;
   #if NA_DEBUG
     iter.mutator = NA_FALSE;
@@ -228,7 +228,7 @@ NA_IDEF NAStackIterator naMakeStackMutator(const NAStack* stack) {
     NAStack* mutablestack;
   #endif
   iter.stack = stack;
-  iter.curArray = naMakeListMutator(&(stack->arrays));
+  iter.curArray = naMakeListMutator(&stack->arrays);
   iter.cur = 0;
   #if NA_DEBUG
     iter.mutator = NA_TRUE;
@@ -250,7 +250,7 @@ NA_IDEF void naClearStackIterator(NAStackIterator* iter) {
   #if NA_DEBUG
     NAStack* mutablestack;
   #endif
-  naClearListIterator(&(iter->curArray));
+  naClearListIterator(&iter->curArray);
   #if NA_DEBUG
     mutablestack = (NAStack*)iter->stack;
     mutablestack->iterCount--;
@@ -277,24 +277,24 @@ NA_IDEF NABool naIterateStack(NAStackIterator* iter) {
       naError("iterator points past the end of the stack");
   #endif
 
-  if(naIsListAtInitial(&(iter->curArray))) {
-    naIterateList(&(iter->curArray));
+  if(naIsListAtInitial(&iter->curArray)) {
+    naIterateList(&iter->curArray);
   }else{
     iter->cur++;
   }
 
-  if(naEqualListIterator(&(iter->curArray), &(iter->stack->curArray)) && iter->cur == iter->stack->curCount)
+  if(naEqualListIterator(&iter->curArray, &iter->stack->curArray) && iter->cur == iter->stack->curCount)
   {
     // We reached the end of iteration.
     naResetStackIterator(iter);
     return NA_FALSE;
   }
 
-  if(iter->cur == na_GetStackArrayCount(&(iter->curArray))) {
+  if(iter->cur == na_GetStackArrayCount(&iter->curArray)) {
     #if NA_DEBUG
-      iter->curBaseIndex += na_GetStackArrayCount(&(iter->curArray));
+      iter->curBaseIndex += na_GetStackArrayCount(&iter->curArray);
     #endif
-    naIterateList(&(iter->curArray));
+    naIterateList(&iter->curArray);
     iter->cur = 0;
   }
   return NA_TRUE;
@@ -308,7 +308,7 @@ NA_IDEF void naResetStackIterator(NAStackIterator* iter) {
       naCrash("iterator is Null");
   #endif
 
-  naResetListIterator(&(iter->curArray));
+  naResetListIterator(&iter->curArray);
   iter->cur = 0;
   #if NA_DEBUG
     iter->curBaseIndex = 0;
@@ -323,7 +323,7 @@ NA_IDEF NABool naIsStackAtInitial(NAStackIterator* iter) {
       naCrash("iterator is Null");
   #endif
 
-  return naIsListAtInitial(&(iter->curArray));
+  return naIsListAtInitial(&iter->curArray);
 }
 
 
@@ -341,7 +341,7 @@ NA_IDEF NABool naIsStackAtInitial(NAStackIterator* iter) {
       naError("iterator points past the end of the stack");
   #endif
 
-  return na_GetStackArrayAt(&(iter->curArray), iter->cur, iter->stack->typeSize);
+  return na_GetStackArrayAt(&iter->curArray, iter->cur, iter->stack->typeSize);
 }
 
 
@@ -362,7 +362,7 @@ NA_IDEF void* naGetStackCurMutable(NAStackIterator* iter) {
   // that garbage values are returned, maybe you need to use the pointer-variant
   // of this function? naGetStackCurpMutable
 
-  return na_GetStackArrayAt(&(iter->curArray), iter->cur, iter->stack->typeSize);
+  return na_GetStackArrayAt(&iter->curArray, iter->cur, iter->stack->typeSize);
 }
 
 

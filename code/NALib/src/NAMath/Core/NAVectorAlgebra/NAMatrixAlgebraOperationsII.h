@@ -163,36 +163,36 @@ NA_IDEF void naTransposeM44fE( float* D, const float* A) {
   D[3] = A[12]; D[7] = A[13]; D[11] = A[14]; D[15] = A[15];
 }
 NA_IDEF void naTransposeM22dS(double* D) {
-  naSwap64(&(D[1]),  &(D[2]));
+  naSwap64(&D[1],  &D[2]);
 }
 NA_IDEF void naTransposeM33dS(double* D) {
-  naSwap64(&(D[1]),  &(D[3]));
-  naSwap64(&(D[2]),  &(D[6]));
-  naSwap64(&(D[5]),  &(D[7]));
+  naSwap64(&D[1],  &D[3]);
+  naSwap64(&D[2],  &D[6]);
+  naSwap64(&D[5],  &D[7]);
 }
 NA_IDEF void naTransposeM44dS(double* D) {
-  naSwap64(&(D[1]),  &(D[4]));
-  naSwap64(&(D[2]),  &(D[8]));
-  naSwap64(&(D[3]),  &(D[12]));
-  naSwap64(&(D[6]),  &(D[9]));
-  naSwap64(&(D[7]),  &(D[13]));
-  naSwap64(&(D[11]), &(D[14]));
+  naSwap64(&D[1],  &D[4]);
+  naSwap64(&D[2],  &D[8]);
+  naSwap64(&D[3],  &D[12]);
+  naSwap64(&D[6],  &D[9]);
+  naSwap64(&D[7],  &D[13]);
+  naSwap64(&D[11], &D[14]);
 }
 NA_IDEF void naTransposeM22fS(float* D) {
-  naSwap32(&(D[1]),  &(D[2]));
+  naSwap32(&D[1],  &D[2]);
 }
 NA_IDEF void naTransposeM33fS(float* D) {
-  naSwap32(&(D[1]),  &(D[3]));
-  naSwap32(&(D[2]),  &(D[6]));
-  naSwap32(&(D[5]),  &(D[7]));
+  naSwap32(&D[1],  &D[3]);
+  naSwap32(&D[2],  &D[6]);
+  naSwap32(&D[5],  &D[7]);
 }
 NA_IDEF void naTransposeM44fS(float* D) {
-  naSwap32(&(D[1]),  &(D[4]));
-  naSwap32(&(D[2]),  &(D[8]));
-  naSwap32(&(D[3]),  &(D[12]));
-  naSwap32(&(D[6]),  &(D[9]));
-  naSwap32(&(D[7]),  &(D[13]));
-  naSwap32(&(D[11]), &(D[14]));
+  naSwap32(&D[1],  &D[4]);
+  naSwap32(&D[2],  &D[8]);
+  naSwap32(&D[3],  &D[12]);
+  naSwap32(&D[6],  &D[9]);
+  naSwap32(&D[7],  &D[13]);
+  naSwap32(&D[11], &D[14]);
 }
 
 

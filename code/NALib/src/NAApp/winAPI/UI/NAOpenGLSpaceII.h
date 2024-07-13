@@ -116,7 +116,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
   //  wglSwapIntervalEXT(1);
   //}
 
-  na_InitOpenGLSpace(&(winapiOpenGLSpace->openGLSpace), nativePtr);
+  na_InitOpenGLSpace(&winapiOpenGLSpace->openGLSpace, nativePtr);
 
   // Now the OpenGL context is created and current. We can initialize it
   // if necessary.
@@ -144,7 +144,7 @@ NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible) 
 
 NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace) {
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openGLSpace;
-  SwapBuffers(GetDC((HWND)naGetUIElementNativePtr(&(winapiOpenGLSpace->openGLSpace.uiElement))));
+  SwapBuffers(GetDC((HWND)naGetUIElementNativePtr(&winapiOpenGLSpace->openGLSpace.uiElement)));
 }
 
 

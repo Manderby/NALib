@@ -25,8 +25,8 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
   
   // We store the current iterator to move back to it later on if necessary.
   size_t firstPartOffset = (size_t)iter->partOffset;
-  firstBufIter = naMakeTreeAccessor(&(buffer->parts));
-  naLocateTreeIterator(&firstBufIter, &(iter->partIter));
+  firstBufIter = naMakeTreeAccessor(&buffer->parts);
+  naLocateTreeIterator(&firstBufIter, &iter->partIter);
 
   // do as long as there is a byteSize remaining. Remember that the data may
   // be split into different buffer parts.
@@ -71,7 +71,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
   
   if(!advance) {
     iter->partOffset = (NAInt)firstPartOffset;
-    naLocateTreeIterator(&(iter->partIter), &firstBufIter);
+    naLocateTreeIterator(&iter->partIter, &firstBufIter);
   }
   naClearTreeIterator(&firstBufIter);  
 }

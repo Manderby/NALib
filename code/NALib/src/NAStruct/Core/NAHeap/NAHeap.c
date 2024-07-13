@@ -441,7 +441,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags) {
 
     heap->count = 0;
     heap->data = naMalloc((size_t)(naAbsi(heap->maxCount) + 1) * sizeof(NAHeapEntry));
-    heap->root = &(((NAHeapEntry*)heap->data)[1]);
+    heap->root = &((NAHeapEntry*)heap->data)[1];
 
     heap->insertConst = na_InsertHeapElementConstNoBack;
     heap->insertMutable = na_InsertHeapElementMutableNoBack;
@@ -502,7 +502,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags) {
 
     heap->count = 0;
     heap->data = naMalloc((size_t)(naAbsi(heap->maxCount) + 1) * sizeof(NAHeapBackEntry));
-    heap->root = &(((NAHeapBackEntry*)heap->data)[1]);
+    heap->root = &((NAHeapBackEntry*)heap->data)[1];
 
     heap->insertConst = na_InsertHeapElementConstBack;
     heap->insertMutable = na_InsertHeapElementMutableBack;

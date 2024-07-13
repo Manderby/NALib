@@ -6,7 +6,7 @@
 
 
 NA_HDEF void na_SetMouseButtonPressed(NAMouseButton button, NABool pressed) {
-  naSetFlagu32(&(na_App->mouseStatus.buttonPressed), 1 << button, pressed);
+  naSetFlagu32(&na_App->mouseStatus.buttonPressed, 1 << button, pressed);
 }
 
 
@@ -48,7 +48,7 @@ NA_HDEF void na_SetMouseExitedAtPos(NAPos newpos) {
 
 
 NA_DEF const NAMouseStatus* naGetMouseStatus() {
-  return &(na_App->mouseStatus);
+  return &na_App->mouseStatus;
 }
 
 

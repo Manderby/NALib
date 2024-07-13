@@ -33,9 +33,9 @@
 //}
 
 - (void) addMenuItem:(NSMenuItem*)item atItem:(const NAMenuItem*)atItem{  
-  size_t index = naGetSelectItemIndex(&(cocoaSelect->select), atItem);
+  size_t index = naGetSelectItemIndex(&cocoaSelect->select, atItem);
   //int index = [self getMenuItemIndex:atItem];
-  if(index == naGetSelectItemCount(&(cocoaSelect->select))) {
+  if(index == naGetSelectItemCount(&cocoaSelect->select)) {
     [[self menu] addItem:item];
   }else{
     [[self menu] insertItem:item atIndex: (NSInteger)index];

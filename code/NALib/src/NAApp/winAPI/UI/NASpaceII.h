@@ -178,11 +178,11 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace)
     parent = naGetUIElementParentSpaceConst(parent);
   }
   switch(alternateLevel) {
-  case 0: retcolor = &(app->bgColor); break;
-  case 1: retcolor = &(app->bgColorAlternate); break;
+  case 0: retcolor = &app->bgColor; break;
+  case 1: retcolor = &app->bgColorAlternate; break;
   case 2:
   default:
-    retcolor = &(app->bgColorAlternate2); break;
+    retcolor = &app->bgColorAlternate2; break;
   }
   return retcolor;
 }
@@ -208,10 +208,10 @@ NA_DEF NASpace* naNewSpace(NASize size) {
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
 
-  na_InitSpace(&(winapiSpace->space), nativePtr);
+  na_InitSpace(&winapiSpace->space, nativePtr);
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  winapiSpace->lastBgColor = &(app->bgColor);
+  winapiSpace->lastBgColor = &app->bgColor;
   winapiSpace->forceEraseBackground = NA_FALSE;
 
   naFillColorWithTransparent(&winapiSpace->space.backgroundColor);
@@ -247,7 +247,7 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
 
 
 NA_DEF void naRemoveSpaceChild(NASpace* space, void* child) {
-  NAListIterator iter = naMakeListModifier(&(space->childs));
+  NAListIterator iter = naMakeListModifier(&space->childs);
   NABool found = naLocateListData(&iter, child);
   naClearListIterator(&iter);
   if(found) {
@@ -263,8 +263,8 @@ NA_DEF void naRemoveSpaceChild(NASpace* space, void* child) {
 
 
 NA_DEF void naRemoveAllSpaceChilds(NASpace* space) {
-  while(!naIsListEmpty(&(space->childs))) {
-    void* child = naGetListFirstMutable(&(space->childs));
+  while(!naIsListEmpty(&space->childs)) {
+    void* child = naGetListFirstMutable(&space->childs);
     na_RemoveSpaceChild(space, child);
   }
   ((NAWINAPISpace*)space)->forceEraseBackground = NA_TRUE;
@@ -275,7 +275,7 @@ NA_DEF void naRemoveAllSpaceChilds(NASpace* space) {
 NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift) {
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
 
-  NAListIterator childIt = naMakeListMutator(&(space->childs));
+  NAListIterator childIt = naMakeListMutator(&space->childs);
   while(naIterateList(&childIt)) {
     void* child = naGetListCurMutable(&childIt);
     NARect elementRect = naGetUIElementRect(child);

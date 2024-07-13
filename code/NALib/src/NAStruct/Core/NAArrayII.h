@@ -113,7 +113,7 @@ NA_IDEF void naClearArray(NAArray* array) {
     if(array->iterCount)
       naError("There are still some iterators operating upon this array. Did you use naClearArrayIterator?");
   #endif
-  naCleanupPtr(&(array->ptr), array->destructor);
+  naCleanupPtr(&array->ptr, array->destructor);
 }
 
 
@@ -224,7 +224,7 @@ NA_IDEF const void* naGetArrayElementConst(const NAArray* array, size_t index) {
     if(index >= naGetArrayCount(array))
       naError("array overflow.");
   #endif
-  return &(((NAByte*)naGetPtrConst(array->ptr))[index * array->typeSize]);
+  return &((NAByte*)naGetPtrConst(array->ptr))[index * array->typeSize];
 }
 
 
@@ -241,7 +241,7 @@ NA_IDEF void* naGetArrayElementMutable(NAArray* array, size_t index) {
     if(index >= naGetArrayCount(array))
       naError("array overflow.");
   #endif
-  return &(((NAByte*)naGetPtrMutable(array->ptr))[index * array->typeSize]);
+  return &((NAByte*)naGetPtrMutable(array->ptr))[index * array->typeSize];
 }
 
 
@@ -258,7 +258,7 @@ NA_IDEF const void* naGetArrayElementpConst(const NAArray* array, size_t index) 
     if(index >= naGetArrayCount(array))
       naError("array overflow.");
   #endif
-  return *((const void**)&(((NAByte*)naGetPtrConst(array->ptr))[index * array->typeSize]));
+  return *((const void**)&((NAByte*)naGetPtrConst(array->ptr))[index * array->typeSize]);
 }
 
 
@@ -275,7 +275,7 @@ NA_IDEF void* naGetArrayElementpMutable(NAArray* array, size_t index) {
     if(index >= naGetArrayCount(array))
       naError("array overflow.");
   #endif
-  return *((void**)&(((NAByte*)naGetPtrMutable(array->ptr))[index * array->typeSize]));
+  return *((void**)&((NAByte*)naGetPtrMutable(array->ptr))[index * array->typeSize]);
 }
 
 

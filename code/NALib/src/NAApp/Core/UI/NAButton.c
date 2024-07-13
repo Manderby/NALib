@@ -6,7 +6,7 @@
 
 
 NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAUIImage* uiImage, const NAUIImage* uiImage2, uint32 flags) {
-  na_InitUIElement(&(button->uiElement), NA_UI_BUTTON, nativePtr);
+  na_InitUIElement(&button->uiElement, NA_UI_BUTTON, nativePtr);
   button->text = NA_NULL;
   button->text2 = NA_NULL;
   button->uiImage = NA_NULL;
@@ -30,7 +30,7 @@ NA_HDEF void na_ClearButton(NAButton* button) {
   if(button->uiImage2)
     naReleaseConst(button->uiImage2);
     
-  na_ClearUIElement(&(button->uiElement));
+  na_ClearUIElement(&button->uiElement);
 }
 
 

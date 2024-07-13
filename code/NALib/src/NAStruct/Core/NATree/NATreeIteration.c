@@ -78,7 +78,7 @@ NA_HDEF void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* inf
       // Yes, it would be more beautiful to check for breakIndex in the
       // capture function. But with this if structure, we save one
       // unnecessary function call.
-      na_SetTreeIteratorCurItem(iter, &(parent->item));
+      na_SetTreeIteratorCurItem(iter, &parent->item);
       na_IterateTreeCapture(iter, nextIndex, info);
       
       // If we found a leaf, break.
@@ -87,7 +87,7 @@ NA_HDEF void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* inf
       
       na_SetTreeIteratorCurItem(iter, NA_NULL);
     }
-    item = &(parent->item);
+    item = &parent->item;
   }
 }
 
@@ -257,7 +257,7 @@ NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTok
       }else if(nextIndex == NA_TREE_SEARCH_PARENT) {
         NATreeNode* parentNode = na_GetTreeItemParent(iter->item);
         if(parentNode) {
-          na_SetTreeIteratorCurItem(iter, &(parentNode->item));
+          na_SetTreeIteratorCurItem(iter, &parentNode->item);
         }else{
           naResetTreeIterator(iter);
           nextIndex = NA_TREE_SEARCH_ABORT;
@@ -293,8 +293,8 @@ NA_HDEF NABool na_AddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conte
       na_SetTreeLeafData(tree->config, (NATreeLeaf*)(iter->item), na_ConstructLeafData(tree->config, key, content));
     }else{
       // Add the new data and set the iterator to that newly created position.
-      NATreeLeaf* contentleaf = na_AddTreeContentInPlace(tree, iter->item, key, content, NA_TREE_LEAF_INSERT_ORDER_KEY);
-      na_SetTreeIteratorCurItem(iter, &(contentleaf->item));
+      NATreeLeaf* contentLeaf = na_AddTreeContentInPlace(tree, iter->item, key, content, NA_TREE_LEAF_INSERT_ORDER_KEY);
+      na_SetTreeIteratorCurItem(iter, &contentLeaf->item);
     }
   }
   return found;

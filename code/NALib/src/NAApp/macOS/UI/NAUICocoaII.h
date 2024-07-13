@@ -157,7 +157,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
           elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativePtr)(firstResponder));
           if(!elem) {
             if(firstResponder == focusWindow) {
-              elem = &(naGetApplication()->uiElement);
+              elem = &naGetApplication()->uiElement;
             }else{
               firstResponder = [(NSView*)firstResponder superview];
             }
@@ -167,12 +167,12 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
         elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativePtr)(focusWindow));
       }
     }else{
-      elem = &(naGetApplication()->uiElement);
+      elem = &naGetApplication()->uiElement;
     }
     
     // Search for a matching keyboard shortcut by bubbling.
     while(!retValue && elem) {
-      NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
+      NAListIterator iter = naMakeListAccessor(&elem->shortcuts);
       while(!retValue && naIterateList(&iter)) {
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
         if(keyReaction->shortcut.keyCode == naGetApplication()->curKeyStroke.keyCode) {
@@ -278,12 +278,6 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
   [cocoaCurTabElem setNextKeyView:cocoaNextTabElem];
 }
 
-
-
-
-NA_DEF double naGetUIElementResolution(const void* uiElement) {
-  return naGetUIElementResolutionScale(uiElement) * NA_UI_RESOLUTION_1x;
-}
 
 
 

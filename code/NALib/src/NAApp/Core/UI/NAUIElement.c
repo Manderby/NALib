@@ -9,8 +9,8 @@ NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
   uiElement->parent = NA_NULL;
   uiElement->elementType = elementType;
   uiElement->nativePtr = nativePtr;
-  naInitList(&(uiElement->reactions));
-  naInitList(&(uiElement->shortcuts));
+  naInitList(&uiElement->reactions);
+  naInitList(&uiElement->shortcuts);
   uiElement->hoverReactionCount = 0;
   
   uiElement->flags = 0;
@@ -22,7 +22,7 @@ NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
     uiElement->hoverReactionCount++;
   }
   
-  naAddListLastMutable(&(naGetApplication()->uiElements), uiElement);
+  naAddListLastMutable(&naGetApplication()->uiElements, uiElement);
 }
 
 
@@ -32,28 +32,30 @@ NA_HDEF void na_ClearUIElement(NA_UIElement* uiElement) {
     na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
   }
   
-  naForeachListMutable(&(uiElement->reactions), naFree);
-  naForeachListMutable(&(uiElement->shortcuts), naFree);
-  naClearList(&(uiElement->reactions));
-  naClearList(&(uiElement->shortcuts));
+  naForeachListMutable(&uiElement->reactions, naFree);
+  naForeachListMutable(&uiElement->shortcuts, naFree);
+  naClearList(&uiElement->reactions);
+  naClearList(&uiElement->shortcuts);
   
   na_ClearUINativePtr(uiElement->nativePtr);
 
-  naRemoveListData(&(naGetApplication()->uiElements), uiElement);
+  naRemoveListData(&naGetApplication()->uiElements, uiElement);
 }
 
 
 
 // todo: find a faster way. Hash perhaps or something else.
 NA_HDEF void* na_GetUINALibEquivalent(NANativePtr nativePtr) {
-  NAListIterator iter;
   NA_UIElement* retelem = NA_NULL;
-  naBeginListMutatorIteration(NA_UIElement* elem, &(na_App->uiElements), iter);
+  NAListIterator iter = naMakeListMutator(&na_App->uiElements);
+  while(naIterateList(&iter)) {
+    NA_UIElement* elem = (NA_UIElement*)naGetListCurMutable(&iter);
     if(elem->nativePtr == nativePtr) {
       retelem = elem;
       break;
     }
-  naEndListIteration(iter);
+  }
+  naClearListIterator(&iter);
   return retelem;
 }
 
@@ -61,7 +63,7 @@ NA_HDEF void* na_GetUINALibEquivalent(NANativePtr nativePtr) {
 
 NA_HDEF NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAUICommand command) {
   NAListIterator iter;
-  naBeginListAccessorIteration(const NAEventReaction* eventReaction, &(element->reactions), iter);
+  naBeginListAccessorIteration(const NAEventReaction* eventReaction, &element->reactions, iter);
   if(eventReaction->command == command) {
     return NA_TRUE;
   }
@@ -72,7 +74,6 @@ NA_HDEF NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAU
 
 
 NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command) {
-  NAListIterator iter;
   NABool hasReaction = NA_FALSE;
 
   NAReaction reaction = {
@@ -80,13 +81,16 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
     command,
     NA_NULL};
 
-  naBeginListMutatorIteration(NAEventReaction* eventReaction, &(element->reactions), iter);
+  NAListIterator iter = naMakeListMutator(&element->reactions);
+  while(naIterateList(&iter)) {
+    NAEventReaction* eventReaction = (NAEventReaction*)naGetListCurMutable(&iter);
     if(eventReaction->command == command) {
       reaction.controller = eventReaction->controller;
       eventReaction->callback(reaction);
       hasReaction = NA_TRUE;
     }
-  naEndListIteration(iter);
+  }
+  naClearListIterator(&iter);
 
   if(!hasReaction) {
     // If the command has no reaction, search for other reactions in the
@@ -104,11 +108,7 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
 
 
 NA_DEF void naRefreshUIElement(void* uiElement, double timediff) {
-  //if(timediff == 0.) {
-  //  na_RefreshUIElementNow(uiElement);
-  //}else{
-    naCallApplicationFunctionInSeconds(na_RefreshUIElementNow, (NA_UIElement*)uiElement, timediff);
-  //}
+  naCallApplicationFunctionInSeconds(na_RefreshUIElementNow, (NA_UIElement*)uiElement, timediff);
 }
 
 
@@ -183,7 +183,7 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCall
   eventReaction->command = command;
   eventReaction->callback = callback;
 
-  naAddListLastMutable(&((element)->reactions), eventReaction);
+  naAddListLastMutable(&element->reactions, eventReaction);
   if(command == NA_UI_COMMAND_MOUSE_MOVED
   || command == NA_UI_COMMAND_MOUSE_ENTERED
   || command == NA_UI_COMMAND_MOUSE_EXITED) {

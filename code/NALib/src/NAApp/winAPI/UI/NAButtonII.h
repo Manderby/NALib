@@ -74,7 +74,7 @@ NA_HDEF NABool na_GetButtonState(const NAWINAPIButton* winapiButton) {
 
 
 NA_HDEF void na_SetButtonState(NAWINAPIButton* winapiButton, NABool state) {
-  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_STATE, state);
+  naSetFlagu32(&winapiButton->state, NA_WINAPI_BUTTON_STATE, state);
 }
 
 
@@ -339,7 +339,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
     flags);
   winapiButton->state = 0;
 
-  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_FALSE); 
+  naSetFlagu32(&winapiButton->state, NA_WINAPI_BUTTON_IMAGE, NA_FALSE); 
 
   return (NAButton*)winapiButton;
 }
@@ -389,7 +389,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
     flags);
   winapiButton->state = 0;
 
-  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_FALSE); 
+  naSetFlagu32(&winapiButton->state, NA_WINAPI_BUTTON_IMAGE, NA_FALSE); 
 
   return (NAButton*)winapiButton;
 }
@@ -433,7 +433,7 @@ NA_DEF NAButton* naNewIconPushButton(const NAUIImage* icon, double width) {
     flags);
   winapiButton->state = 0;
 
-  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
+  naSetFlagu32(&winapiButton->state, NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
 
   return (NAButton*)winapiButton;
 }
@@ -486,7 +486,7 @@ NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, const NAUIImage* ic
     naRelease(secondaryIcon);
   }
 
-  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
+  naSetFlagu32(&winapiButton->state, NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
 
   return (NAButton*)winapiButton;
 }
@@ -530,7 +530,7 @@ NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size) {
     flags);
   winapiButton->state = 0;
 
-  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
+  naSetFlagu32(&winapiButton->state, NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
 
   return (NAButton*)winapiButton;
 }
@@ -574,7 +574,7 @@ NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage
     flags);
   winapiButton->state = 0;
 
-  naSetFlagu32(&(winapiButton->state), NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
+  naSetFlagu32(&winapiButton->state, NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
 
   return (NAButton*)winapiButton;
 }

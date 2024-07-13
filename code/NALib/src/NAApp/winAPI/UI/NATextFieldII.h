@@ -136,7 +136,7 @@ NA_DEF NATextField* naNewTextField(double width) {
     app->oldTextFieldWindowProc = oldproc;
   }
 
-  na_InitTextField(&(winapiTextField->textField), nativePtr);
+  na_InitTextField(&winapiTextField->textField, nativePtr);
   winapiTextField->nextTabStop = winapiTextField;
   winapiTextField->prevTabStop = winapiTextField;
 
@@ -183,9 +183,9 @@ NA_DEF void naSetTextFieldEnabled(NATextField* textField, NABool enabled) {
 NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text) {
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
-  na_SetUIElementWINAPINotificationsBlocked(&(winapiTextField->textField.uiElement), NA_TRUE);
+  na_SetUIElementWINAPINotificationsBlocked(&winapiTextField->textField.uiElement, NA_TRUE);
   SendMessage(naGetUIElementNativePtr(textField), WM_SETTEXT, 0, (LPARAM)systemText);
-  na_SetUIElementWINAPINotificationsBlocked(&(winapiTextField->textField.uiElement), NA_FALSE);
+  na_SetUIElementWINAPINotificationsBlocked(&winapiTextField->textField.uiElement, NA_FALSE);
   naFree(systemText);
 }
 
@@ -223,14 +223,14 @@ NA_DEF void naSetTextFieldFont(NATextField* textField, NAFont* font) {
 
 NA_HDEF void** na_GetTextFieldNextTabReference(NATextField* textField) {
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
-  return &(winapiTextField->nextTabStop);
+  return &winapiTextField->nextTabStop;
 }
 
 
 
 NA_HDEF void** na_GetTextFieldPrevTabReference(NATextField* textField) {
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
-  return &(winapiTextField->prevTabStop);
+  return &winapiTextField->prevTabStop;
 }
 
 
