@@ -166,8 +166,7 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 // }
 // naClearListIterator(&iter);
 //
-// There are ways to iterate using const pointers and even iterators which
-// can be used to manipulate a list. See below when creating iterators.
+// You can choose to have an Accessor, a Mutator or a Modifier as Iterator.
 //
 // Be sure to not forget naClearListIterator. Otherwise when debugging, lists
 // will keep references to iterators which are no longer in use and will hence

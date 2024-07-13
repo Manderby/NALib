@@ -138,7 +138,7 @@
   [self setFrame: frame];
 }
 
-- (void) setText:(const NAUTF8Char*)text{\
+- (void) setText:(const NAUTF8Char*)text{
   [self setStringValue:[NSString stringWithUTF8String:text]];
 }
 

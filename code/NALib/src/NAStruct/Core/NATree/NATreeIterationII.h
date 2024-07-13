@@ -4,31 +4,6 @@
 
 
 
-#undef naBeginTreeAccessorIteration
-#define naBeginTreeAccessorIteration(typedElem, tree, lowerLimit, upperLimit, iter)\
-  iter = naMakeTreeAccessor(tree);\
-  while(naIterateTree(&iter, lowerLimit, upperLimit)) {\
-    typedElem = naGetTreeCurLeafConst(&iter)
-
-#undef naBeginTreeMutatorIteration
-#define naBeginTreeMutatorIteration(typedElem, tree, lowerLimit, upperLimit, iter)\
-  iter = naMakeTreeMutator(tree);\
-  while(naIterateTree(&iter, lowerLimit, upperLimit)) {\
-    typedElem = naGetTreeCurLeafMutable(&iter)
-
-#undef naBeginTreeModifierIteration
-#define naBeginTreeModifierIteration(typedElem, tree, lowerLimit, upperLimit, iter)\
-  iter = naMakeTreeModifier(tree);\
-  while(naIterateTree(&iter, lowerLimit, upperLimit)) {\
-    typedElem = naGetTreeCurLeafMutable(&iter)
-
-#undef naEndTreeIteration
-#define naEndTreeIteration(iter)\
-  }\
-  naClearTreeIterator(&iter)
-
-
-
 NA_IDEF NATreeIterator naMakeTreeAccessor(const NATree* tree) {
   NATreeIterator iter;
   #if NA_DEBUG

@@ -234,7 +234,7 @@ NA_IAPI NABool naIsTreeRootLeaf(const NATree* tree);
 //
 // You can iterate over every leaf of a whole tree like this:
 //
-// NATreeIterator iter = naMakeTreeIteratorMutable(tree);
+// NATreeIterator iter = naMakeTreeMutator(tree);
 // while(naIterateTree(&iter)) {
 //   MyLeafData* leafData = naGetTreeCurLeafMutable(&iter);
 //   double* myKey = naGetTreeCurLeafKey(&iter);
@@ -247,20 +247,8 @@ NA_IAPI NABool naIsTreeRootLeaf(const NATree* tree);
 // Beware to always use naClearTreeIterator. Otherwise NALib will emit
 // warnings that there are still iterators running on the struct if NA_DEBUG
 // is 1.
-//
-// You can also use the predefined Begin and End Iterator macros. Beware,
-// these are macros. They perform a simple one-by-one traversal of the tree.
-// Use them as follows:
-//
-// NATreeIterator iteratorname;
-// naBeginTreeMutatorIteration(MyLeaf* leaf, mytree, lowerLimit, upperLimit, iteratorname);
-//   doStuffWithLeaf(leaf);
-// naEndTreeIteration(iteratorname);
 
-#define naBeginTreeAccessorIteration(typedElem, tree, lowerLimit, upperLimit, iter)
-#define naBeginTreeMutatorIteration (typedElem, tree, lowerLimit, upperLimit, iter)
-#define naBeginTreeModifierIteration(typedElem, tree, lowerLimit, upperLimit, iter)
-#define naEndTreeIteration(iter)
+
 
 // ///////////////////////////////
 // Creating and positioning an iterator:
