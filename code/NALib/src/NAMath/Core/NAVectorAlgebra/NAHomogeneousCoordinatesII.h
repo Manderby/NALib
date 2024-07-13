@@ -226,6 +226,19 @@ NA_IDEF void naTranslateM44fS(float* D, float s1, float s2, float s3) {
 
 
 
+NA_IDEF NAPos naGetMat33dTranslation(const double* A) {
+  return naMakePos(A[6], A[7]);
+}
+
+
+
+NA_IDEF double naGetMat33dMagnification(const double* A) {
+  double firstTerm = (A[0] + A[4]) * 0.5;
+  return naSqrt(firstTerm * firstTerm - (A[0] * A[4] - A[1] * A[3]) * 0.5);
+}
+
+
+
 NA_IDEF void naFillV2WithM33Origin(double* NA_RESTRICT d, const double* NA_RESTRICT A) {
   d[0] = A[6] / A[8];
   d[1] = A[7] / A[8];

@@ -33,14 +33,6 @@ NA_HDEF void na_SetMouseMovedByDiff(double deltaX, double deltaY) {
 
 
 
-NA_HDEF void na_SetMouseScrolledByDiff(double deltaX, double deltaY) {
-  na_App->mouseStatus.prevPos = naMakePos(0., 0.);
-  na_App->mouseStatus.pos.x = deltaX;
-  na_App->mouseStatus.pos.y = deltaY;
-}
-
-
-
 NA_HDEF void na_SetMouseEnteredAtPos(NAPos newpos) {
   na_App->mouseStatus.prevPos = newpos;
   na_App->mouseStatus.pos = newpos;
@@ -77,7 +69,9 @@ NA_DEF NAPos naGetMousePos(const NAMouseStatus* mouseStatus) {
 
 
 NA_DEF NAPos naGetMouseDelta(const NAMouseStatus* mouseStatus) {
-  return naMakePos(mouseStatus->pos.x - mouseStatus->prevPos.x, mouseStatus->pos.y - mouseStatus->prevPos.y);
+  return naMakePos(
+    mouseStatus->pos.x - mouseStatus->prevPos.x,
+    mouseStatus->pos.y - mouseStatus->prevPos.y);
 }
 
 

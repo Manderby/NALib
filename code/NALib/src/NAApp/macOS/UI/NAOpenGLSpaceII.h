@@ -157,10 +157,20 @@
   }
 
   - (void)scrollWheel:(NSEvent*)event{
-    na_SetMouseScrolledByDiff([event deltaX], [event deltaY]);
-    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_SCROLLED)) {
+    naSetOpenGLSpaceTranslation(&cocoaOpenGLSpace->openGLSpace, [event deltaX], [event deltaY]);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_TRANSFORMED)) {
       [super scrollWheel:event];
     }
+    naResetOpenGLSpaceTransformation(&cocoaOpenGLSpace->openGLSpace);
+  }
+
+  - (void)magnifyWithEvent:(NSEvent*)event{
+    double mag = [event magnification];
+    naSetOpenGLSpaceMagnification(&cocoaOpenGLSpace->openGLSpace, 1. + mag);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_TRANSFORMED)) {
+      [super magnifyWithEvent:event];
+    }
+    naResetOpenGLSpaceTransformation(&cocoaOpenGLSpace->openGLSpace);
   }
 
   - (void)keyDown:(NSEvent*)event{

@@ -9,6 +9,7 @@
 
 NA_HDEF void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr) {
   na_InitUIElement(&(openGLSpace->uiElement), NA_UI_OPENGL_SPACE, nativePtr);
+  naResetOpenGLSpaceTransformation(openGLSpace);
 }
 
 
@@ -196,6 +197,35 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
 
       glBindTexture(GL_TEXTURE_2D, 0); 
     }
+  }
+
+  NA_DEF void naSetOpenGLSpaceTranslation(
+    NAOpenGLSpace* openGLSpace,
+    double dx,
+    double dy)
+  {
+    naTranslateM33dS(openGLSpace->transformation, dx, dy);
+  }
+
+
+
+  NA_DEF void naSetOpenGLSpaceMagnification(
+    NAOpenGLSpace* openGLSpace,
+    double magnification)
+  {
+    naScaleM33dS(openGLSpace->transformation, magnification, magnification);
+  }
+
+
+
+  NA_DEF const double* naGetOpenGLSpaceTransformation(const NAOpenGLSpace* openGLSpace) {
+    return openGLSpace->transformation;
+  }
+
+
+
+  NA_DEF void naResetOpenGLSpaceTransformation(NAOpenGLSpace* openGLSpace) {
+    naFillM33dWithDiag(openGLSpace->transformation, 1.);
   }
 
 #else

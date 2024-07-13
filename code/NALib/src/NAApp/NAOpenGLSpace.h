@@ -13,7 +13,7 @@
 // NA_UI_COMMAND_MOUSE_DOWN    When a mouse button has been pressed
 // NA_UI_COMMAND_MOUSE_UP      When a mouse button has been released
 // NA_UI_COMMAND_MOUSE_MOVED   When the mouse moved withing the space
-// NA_UI_COMMAND_SCROLLED      When the scroll wheel has been used
+// NA_UI_COMMAND_TRANSFORMED   When scrolled, zoomed, rotated
 // NA_UI_COMMAND_KEY_DOWN      When a key has been pressed
 // NA_UI_COMMAND_KEY_UP        When a key has been released
 
@@ -88,6 +88,28 @@ NA_API void naDrawASCIICharacters(
   double x,
   double y,
   double z);
+
+
+// Sets the transformation of the space to the depicted delta values.
+NA_API void naSetOpenGLSpaceTranslation(
+  NAOpenGLSpace* openGLSpace,
+  double dx,
+  double dy);
+  
+// Sets the magnification of the space.
+NA_API void naSetOpenGLSpaceMagnification(
+  NAOpenGLSpace* openGLSpace,
+  double magnification);
+
+// Returns the desired transformation of the space. The returned matrix is a
+// homogeneous 3x3 matrix which denotes the transformations since the last
+// reset.
+NA_API const double* naGetOpenGLSpaceTransformation(const NAOpenGLSpace* openGLSpace);
+
+// Resets the transformation to a unity matrix. Will be called automatically
+// after reacting to NA_UI_COMMAND_TRANSFORMED.
+NA_API void naResetOpenGLSpaceTransformation(NAOpenGLSpace* openGLSpace);
+
 
 
 #endif // NA_UI_OPENGL_SPACE_INCLUDED

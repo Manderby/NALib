@@ -171,10 +171,19 @@
   }
 
   - (void)scrollWheel:(NSEvent*)event{
-    na_SetMouseScrolledByDiff([event deltaX], [event deltaY]);
-    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_SCROLLED)) {
+    naSetMetalSpaceTranslation(&cocoaMetalSpace->metalSpace, [event deltaX], [event deltaY]);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_TRANSFORMED)) {
       [super scrollWheel:event];
     }
+    naResetMetalSpaceTransformation(&cocoaMetalSpace->metalSpace);
+  }
+
+  - (void)magnifyWithEvent:(NSEvent*)event{
+    naSetMetalSpaceMagnification(&cocoaMetalSpace->metalSpace, 1. + [event magnification]);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_TRANSFORMED)) {
+      [super magnifyWithEvent:event];
+    }
+    naResetMetalSpaceTransformation(&cocoaMetalSpace->metalSpace);
   }
 
   - (void)keyDown:(NSEvent*)event{

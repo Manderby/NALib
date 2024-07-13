@@ -13,6 +13,7 @@ correct, complete or final.
 - Adding PubSub implementation NANotifier
 - Adding latest NIST CODATA physical constants of 2022
 
+- Replacing scroll reactions with transform reactions.
 - Changing NAReaction callback signature to return void.
 - Dprecating NABezel4. Using NABorder2D instead.
 - Deleting NABounds. Had been deprecated already in version 27

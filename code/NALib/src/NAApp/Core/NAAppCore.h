@@ -18,8 +18,9 @@
 #if NA_COMPILE_GUI == 1
 
 #include "../../NAStruct/NAList.h"
-  #include "../../NAUtility/NAThreading.h"
-  #include "../../NAUtility/NATranslator.h"
+#include "../../NAUtility/NAThreading.h"
+#include "../../NAUtility/NATranslator.h"
+#include "../../NAMath/NAVectorAlgebra.h"
 
 // Very much the same as the nativePtr, there are certain types which are
 // casted differently on the different systems and therefore they are
@@ -103,10 +104,12 @@ struct NAMenuItem{
 
 struct NAMetalSpace{
   NA_UIElement uiElement;
+  NAMat33d transformation;
 };
 
 struct NAOpenGLSpace{
   NA_UIElement uiElement;
+  NAMat33d transformation;
 };
 
 struct NASelect{
@@ -399,7 +402,6 @@ NA_HAPI void na_SetMouseButtonPressed(NAMouseButton button, NABool pressed);
 NA_HAPI void na_SetMouseWarpedTo(NAPos newpos);
 NA_HAPI void na_SetMouseMovedTo(NAPos newpos);
 NA_HAPI void na_SetMouseMovedByDiff(double deltaX, double deltaY);
-NA_HAPI void na_SetMouseScrolledByDiff(double deltaX, double deltaY);
 NA_HAPI void na_SetMouseEnteredAtPos(NAPos newpos);
 NA_HAPI void na_SetMouseExitedAtPos(NAPos newpos);
 
