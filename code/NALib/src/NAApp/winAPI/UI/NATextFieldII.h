@@ -112,7 +112,7 @@ NA_DEF NATextField* naNewTextField(double width) {
 
   NAWINAPITextField* winapiTextField = naNew(NAWINAPITextField);
 
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
   winapiTextField->rect = naMakeRectS(0., 0., width, 20.);
 
   // If this is used before Win XP, it might fail. Use CreateWindow() instead
@@ -247,7 +247,7 @@ NA_HDEF void na_SetTextFieldRect(NA_UIElement* textField, NARect rect) {
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
 
   winapiTextField->rect = rect;
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(textField));
 
   SetWindowPos(

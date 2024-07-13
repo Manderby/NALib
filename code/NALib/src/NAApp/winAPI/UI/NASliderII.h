@@ -99,7 +99,7 @@ NA_DEF NASlider* naNewSlider(double width) {
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String("Slider");
 
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
   winapiSlider->rect = naMakeRectS(0., 0., width, 24.);
 
 	HWND nativePtr = CreateWindow(
@@ -220,7 +220,7 @@ NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect) {
   NAWINAPISlider* winapiSlider = (NAWINAPISlider*)slider;
 
   winapiSlider->rect = rect;
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(slider));
 
   SetWindowPos(

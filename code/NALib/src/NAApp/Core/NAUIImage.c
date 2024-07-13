@@ -354,7 +354,7 @@ NA_HDEF double na_GetUIImageBaseResolution(const NAUIImage* uiImage) {
 NA_API NASizes naGetUIImage1xSize(const NAUIImage* uiImage) {
   const NA_UISubImage* subImage = naGetListFirstConst(&uiImage->subImages);
   NASizes size = naGetImageSize(subImage->image);
-  double factor = subImage->resolution / NA_UIIMAGE_RESOLUTION_SCREEN_1x;
+  double factor = subImage->resolution / NA_UI_RESOLUTION_1x;
   size.width = (size_t)naFloor(size.width / factor);
   size.height = (size_t)naFloor(size.height / factor);
   return size;

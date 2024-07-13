@@ -227,15 +227,6 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop) {
 
 
 
-NA_DEF double naGetWindowUIResolution(const NAWindow* window) {
-  naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
-  CGFloat uiScale = naGetWindowBackingScaleFactor(nativePtr);
-
-  return (uiScale == 1.) ? NA_UIIMAGE_RESOLUTION_SCREEN_1x : NA_UIIMAGE_RESOLUTION_SCREEN_2x;
-}
-
-
-
 NA_DEF void naSetWindowFirstTabElement(NAWindow* window, const void* firstTabElem) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   naDefineCocoaObjectConst(NSView, cocoaFirstTab, firstTabElem);

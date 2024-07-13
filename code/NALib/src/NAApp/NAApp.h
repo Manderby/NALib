@@ -33,6 +33,10 @@
 
 #include "../NAUtility/NAString.h"
 
+// These are the default resolutions given in rasterpositions/meter.
+#define NA_UI_RESOLUTION_1x 3779.52755905511811   // 96 ppi
+#define NA_UI_RESOLUTION_2x 7559.05511811023622   // 192 ppi
+
 #include "NAFont.h"
 #include "NAKeyboard.h"
 #include "NAPreferences.h"

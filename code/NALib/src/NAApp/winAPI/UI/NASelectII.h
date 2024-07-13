@@ -94,7 +94,7 @@ NA_DEF NASelect* naNewSelect(double width) {
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String("Select");
 
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
   winapiSelect->rect = naMakeRectS(0., 0., width, 24.);
 
   HWND nativePtr = CreateWindow(
@@ -175,7 +175,7 @@ NA_HDEF void na_SetSelectRect(NA_UIElement* select, NARect rect) {
   NAWINAPISelect* winapiSelect = (NAWINAPISelect*)select;
 
   winapiSelect->rect = rect;
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(select));
 
   SetWindowPos(

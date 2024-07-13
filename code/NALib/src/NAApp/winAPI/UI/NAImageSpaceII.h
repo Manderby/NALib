@@ -36,7 +36,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   if(!imageSpace->imageSpace.uiImage)
     return info;
 
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
   size1x = naGetUIImage1xSize(imageSpace->imageSpace.uiImage);
   size1x.width = (NAInt)(size1x.width * uiScale);
@@ -49,7 +49,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
     (spaceSize.width - size1x.width) / 2,
     (spaceSize.height - size1x.height) / 2);
 
-  foreImage = na_GetUIImageImage(imageSpace->imageSpace.uiImage, NA_UIIMAGE_RESOLUTION_SCREEN_1x * uiScale, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, NA_FALSE);
+  foreImage = na_GetUIImageImage(imageSpace->imageSpace.uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, NA_FALSE);
 
   // We store the background where the image will be placed.
   backBuffer = naMalloc(size1x.width * size1x.height * 4);
@@ -127,7 +127,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size) {
   NAWINAPIImageSpace* winapiImageSpace = naNew(NAWINAPIImageSpace);
 
   winapiImageSpace->rect = naMakeRect(naMakePos(0., 0.), size);
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
 	HWND nativePtr = CreateWindow(
 		TEXT("NASpace"),
@@ -190,7 +190,7 @@ NA_HDEF void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect) {
   NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
 
   winapiImageSpace->rect = rect;
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(imageSpace));
 
   SetWindowPos(

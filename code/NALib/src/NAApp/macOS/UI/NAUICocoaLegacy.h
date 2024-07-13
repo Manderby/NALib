@@ -248,8 +248,7 @@
 
 
 NA_API CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext);
-NA_API CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement);
-NA_API CGFloat naGetWindowBackingScaleFactor(NSWindow* window);
+NA_API CGFloat naGetCocoaBackingScaleFactor(id uiElement);
 NA_API NSColor* naGetLabelColor(void);
 NA_API NSColor* naGetLinkColor(void);
 NA_API NSColor* naGetAccentColor(void);

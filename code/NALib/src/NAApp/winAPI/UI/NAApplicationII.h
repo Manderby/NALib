@@ -615,7 +615,7 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
   NAFont* font = naCreate(NAFont);
   TCHAR* systemFontName = naAllocSystemStringWithUTF8String(fontFamilyName);
 
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
   font->nativePtr = CreateFont(
     (int)(size * uiScale),
@@ -737,7 +737,7 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
 
 
 NA_DEF void naCenterMouse(void* uiElement) {
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect rect = naGetUIElementRectAbsolute(uiElement);
 
   // todo: screen not defined

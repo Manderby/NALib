@@ -193,7 +193,7 @@ NA_DEF NASpace* naNewSpace(NASize size) {
   NAWINAPISpace* winapiSpace = naNew(NAWINAPISpace);
 
   winapiSpace->rect = naMakeRect(naMakePos(0., 0.), size);
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
 	HWND nativePtr = CreateWindow(
 		TEXT("NASpace"),
@@ -311,7 +311,7 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
 
   winapiSpace->rect = rect;
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(space));
 
   SetWindowPos(

@@ -31,27 +31,30 @@ NA_DEF CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext) {
 
 
 
-NA_DEF CGFloat naGetUIElementBackingScaleFactor(NSView* uiElement) {
-  return naGetWindowBackingScaleFactor([uiElement window]);
-}
-
-
-
-NA_DEF CGFloat naGetWindowBackingScaleFactor(NSWindow* window) {
+NA_DEF CGFloat naGetCocoaBackingScaleFactor(id uiElement) {
   CGFloat uiScale = (CGFloat)1.;
 
-  NA_MACOS_AVAILABILITY_GUARD_10_7(
-    if([NSWindow instancesRespondToSelector:@selector(backingScaleFactor)]) {
-      uiScale = [window backingScaleFactor];
+  if ([uiElement isKindOfClass:[NSWindow class]]) {
+    NSWindow *window = uiElement;
+    NA_MACOS_AVAILABILITY_GUARD_10_7(
+      if([NSWindow instancesRespondToSelector:@selector(backingScaleFactor)]) {
+        uiScale = [window backingScaleFactor];
+      }
+    )
+    if(uiScale == 0.) {
+      uiScale = [window userSpaceScaleFactor];
     }
-  )
-  if(uiScale == 0.) {
-    uiScale = [window userSpaceScaleFactor];
-  }
-  if(uiScale == 0.) {
+    if(uiScale == 0.) {
+      uiScale = 1.;
+    }
+    
+  }else if ([uiElement isKindOfClass:[NSView class]]) {
+    NSView *view = uiElement;
+    uiScale = naGetCocoaBackingScaleFactor([view window]);
+  }else{
     uiScale = 1.;
   }
-  
+
   return uiScale;
 }
 

@@ -35,7 +35,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
     if(!naGetFlagu32(windowMutable->window.flags, NA_WINAPI_WINDOW_KEEP_POS)) {
       screenRect = naGetMainScreenRect();
-      uiScale = naGetUIElementResolutionFactor(NA_NULL);
+      uiScale = naGetUIElementResolutionScale(NA_NULL);
       windowMutable->rect.pos.x = (double)LOWORD(lParam) / uiScale;
       windowMutable->rect.pos.y = screenRect.size.height - (double)HIWORD(lParam) / uiScale - windowMutable->rect.size.height;
       if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE)) {
@@ -59,7 +59,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     // lParam: LOWORD: width, HIWORD: height
     // result: 0 when handeled.
     windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
-    uiScale = naGetUIElementResolutionFactor(NA_NULL);
+    uiScale = naGetUIElementResolutionScale(NA_NULL);
     oldHeight = windowMutable->rect.size.height;
     windowMutable->rect.size.width = (double)LOWORD(lParam) / uiScale;
     windowMutable->rect.size.height = (double)HIWORD(lParam) / uiScale;
@@ -108,7 +108,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     windowPos = *((WINDOWPOS*)lParam);
     windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
     screenRect = naGetMainScreenRect();
-    uiScale = naGetUIElementResolutionFactor(NA_NULL);
+    uiScale = naGetUIElementResolutionScale(NA_NULL);
     windowMutable->rect.size.width = (double)windowPos.cx / uiScale;
     windowMutable->rect.size.height = (double)windowPos.cy / uiScale;
     if(!naGetFlagu32(windowMutable->window.flags, NA_WINAPI_WINDOW_KEEP_POS)) {
@@ -231,7 +231,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
   }
 
   winapiWindow->rect = rect;
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
   NARect screenRect = naGetMainScreenRect();
   RECT windowRect;
@@ -330,7 +330,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
   DWORD style;
   NARect newRect;
   NARect screenRect;
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
   if(fullScreen != naIsWindowFullscreen(window)) {
     screenRect = naGetMainScreenRect();
@@ -377,12 +377,6 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
 
     naSetFlagu32(&(window->flags), NA_CORE_WINDOW_FLAG_FULLSCREEN, fullScreen);
   }
-}
-
-
-
-NA_DEF double naGetWindowUIResolution(const NAWindow* window) {
-  return NA_UIIMAGE_RESOLUTION_SCREEN_1x * naGetUIElementResolutionFactor(window);
 }
 
 
@@ -444,7 +438,7 @@ NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window) {
   POINT testPoint = {0, 0};
 
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
   GetClientRect(window->nativePtr, &clientRect);
   ClientToScreen(window->nativePtr, &testPoint);
@@ -482,7 +476,7 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
     LONG bottomdiff;
 
     winapiWindow->rect = rect;
-    double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+    double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
     NARect screenRect = naGetMainScreenRect();
     GetClientRect(naGetUIElementNativePtr(window), &clientRect);

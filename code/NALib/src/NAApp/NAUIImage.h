@@ -13,10 +13,6 @@
 
 #include "../NAVisual/NAImage.h"
 
-// These are the default resolutions given in rasterpositions/meter.
-#define NA_UIIMAGE_RESOLUTION_SCREEN_1x 3779.52755905511811   // 96 ppi
-#define NA_UIIMAGE_RESOLUTION_SCREEN_2x 7559.05511811023622   // 192 ppi
-
 typedef enum{
   NA_UIIMAGE_INTERACTION_NONE,
   NA_UIIMAGE_INTERACTION_PRESSED,
@@ -41,7 +37,7 @@ typedef struct NAUIImage NAUIImage;
 // You always provide the images in the highest resolution available. If you
 // have for example a 512x512 point image representing the double resolution
 // image of a 256x256 icon, you provide that 512x512 image with the resolution
-// NA_UIIMAGE_RESOLUTION_SCREEN_2x.
+// NA_UI_RESOLUTION_2x.
 //
 // Downsampling will be done automatically by NALib.
 //

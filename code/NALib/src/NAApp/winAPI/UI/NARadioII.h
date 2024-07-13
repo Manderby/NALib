@@ -62,7 +62,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
   winapiRadio->rect = naMakeRectS(0., 0., width, 18.);
 
 	HWND nativePtr = CreateWindow(
@@ -139,7 +139,7 @@ NA_HDEF void na_SetRadioRect(NA_UIElement* radio, NARect rect) {
   NAWINAPIRadio* winapiRadio = (NAWINAPIRadio*)radio;
 
   winapiRadio->rect = rect;
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(radio));
 
   SetWindowPos(

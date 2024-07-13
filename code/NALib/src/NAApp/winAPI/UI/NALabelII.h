@@ -78,7 +78,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
   winapiLabel->rect = naMakeRectS(0., 0., width, 16.);
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
   // We need a read only edit control here, otherwise on windows, the user is not able to select text.
 	HWND nativePtr = CreateWindow(
@@ -189,7 +189,7 @@ NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable) {
 
 NA_DEF void naSetLabelHeight(NALabel* label, double height) {
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
   winapiLabel->rect.size.height = height;
 
@@ -237,7 +237,7 @@ NA_HDEF void na_SetLabelRect(NA_UIElement* label, NARect rect) {
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
 
   winapiLabel->rect = rect;
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(label));
 
   SetWindowPos(

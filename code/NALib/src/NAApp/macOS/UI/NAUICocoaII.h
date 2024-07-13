@@ -281,7 +281,13 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
 
 
 
-NA_DEF double naGetUIElementResolutionFactor(const void* uiElement) {
+NA_DEF double naGetUIElementResolution(const void* uiElement) {
+  return naGetUIElementResolutionScale(uiElement) * NA_UI_RESOLUTION_1x;
+}
+
+
+
+NA_DEF double naGetUIElementResolutionScale(const void* uiElement) {
   if(naGetUIElementType(uiElement) == NA_UI_APPLICATION)
     return 1.;
     
@@ -292,17 +298,8 @@ NA_DEF double naGetUIElementResolutionFactor(const void* uiElement) {
     return 1.;
   }
   
-  const void* parent = naGetUIElementParentConst(uiElement);
-  while(naGetUIElementType(uiElement) != NA_UI_WINDOW && parent) {
-    uiElement = parent;
-    parent = naGetUIElementParentConst(uiElement);
-  }
-  
-  if(naGetUIElementType(uiElement) == NA_UI_WINDOW) {
-    return naGetWindowBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(uiElement)));
-  }else{
-    return naGetUIElementBackingScaleFactor(NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(uiElement)));
-  }
+  return naGetCocoaBackingScaleFactor(
+    NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(uiElement)));
 }
 
 

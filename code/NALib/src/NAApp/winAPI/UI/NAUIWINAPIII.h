@@ -792,7 +792,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem) {
 
 
 
-NA_DEF double naGetUIElementResolutionFactor(const void* uiElement) {
+NA_DEF double naGetUIElementResolutionScale(const void* uiElement) {
   int dpi;
   HDC hDC;
   if(hDC = GetDC (NULL)) {
@@ -826,7 +826,7 @@ NA_API NARect naGetMainScreenRect() {
   screen = MonitorFromPoint(origin, MONITOR_DEFAULTTOPRIMARY);
   screeninfo.cbSize = sizeof(MONITORINFO);
   GetMonitorInfo(screen, &screeninfo);
-  double uiScale = naGetUIElementResolutionFactor(NA_NULL);
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
   // The main monitor is by definition at (0,0) which in NALib is the bottom left corner.
   NARect rect = naMakeRectS(
