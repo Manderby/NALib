@@ -341,7 +341,7 @@ void updateImageTestController(ImageTesterController* con) {
 
   NAUIImage* uiImage = naCreateUIImage(
     fullImage,
-    NA_UIIMAGE_RESOLUTION_SCREEN_1x,
+    NA_UI_RESOLUTION_1x,
     NA_BLEND_ZERO);
   naReleaseImage(fullImage);
 

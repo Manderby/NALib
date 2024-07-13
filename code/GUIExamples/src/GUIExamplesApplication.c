@@ -60,7 +60,7 @@ void postStartup(void* arg){
   NAImage* originalIconImage = naCreateImageFromPNG(pngIcon);
   app->iconImage = naCreateUIImage(
     originalIconImage,
-    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
+    NA_UI_RESOLUTION_2x,
     NA_BLEND_ERODE_LIGHT);
   naDelete(pngIcon);
   naReleaseImage(originalIconImage);
@@ -73,7 +73,7 @@ void postStartup(void* arg){
   NAImage* originalState1Image = naCreateImageFromPNG(png1);
   app->state1Image = naCreateUIImage(
     originalState1Image,
-    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
+    NA_UI_RESOLUTION_2x,
     NA_BLEND_ZERO);
   naDelete(png1);
   naReleaseImage(originalState1Image);
@@ -86,7 +86,7 @@ void postStartup(void* arg){
   NAImage* originalState2Image = naCreateImageFromPNG(png2);
   app->state2Image = naCreateUIImage(
     originalState2Image,
-    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
+    NA_UI_RESOLUTION_2x,
     NA_BLEND_ZERO);
   naDelete(png2);
   naReleaseImage(originalState2Image);
