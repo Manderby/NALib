@@ -484,32 +484,6 @@ NA_IDEF void naMoveListFirstToLast(NAList* src, NAList* dst) {
 
 
 
-
-#undef naBeginListAccessorIteration
-#define naBeginListAccessorIteration(typedElem, list, iter)\
-  iter = naMakeListAccessor(list);\
-  while(naIterateList(&iter)) {\
-    typedElem = naGetListCurConst(&iter)
-
-#undef naBeginListMutatorIteration
-#define naBeginListMutatorIteration(typedElem, list, iter)\
-  iter = naMakeListMutator(list);\
-  while(naIterateList(&iter)) {\
-    typedElem = naGetListCurMutable(&iter)
-
-#undef naBeginListModifierIteration
-#define naBeginListModifierIteration(typedElem, list, iter)\
-  iter = naMakeListModifier(list);\
-  while(naIterateList(&iter)) {\
-    typedElem = naGetListCurMutable(&iter)
-
-#undef naEndListIteration
-#define naEndListIteration(iter)\
-  }\
-  naClearListIterator(&iter)
-
-
-
 NA_IDEF NAListIterator naMakeListAccessor(const NAList* list) {
   NAListIterator iter;
   iter.listptr = naMakePtrWithDataConst(list);

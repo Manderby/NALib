@@ -49,7 +49,7 @@ NA_HDEF void* na_GetUINALibEquivalent(NANativePtr nativePtr) {
   NA_UIElement* retelem = NA_NULL;
   NAListIterator iter = naMakeListMutator(&na_App->uiElements);
   while(naIterateList(&iter)) {
-    NA_UIElement* elem = (NA_UIElement*)naGetListCurMutable(&iter);
+    NA_UIElement* elem = naGetListCurMutable(&iter);
     if(elem->nativePtr == nativePtr) {
       retelem = elem;
       break;
@@ -62,12 +62,15 @@ NA_HDEF void* na_GetUINALibEquivalent(NANativePtr nativePtr) {
 
 
 NA_HDEF NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAUICommand command) {
-  NAListIterator iter;
-  naBeginListAccessorIteration(const NAEventReaction* eventReaction, &element->reactions, iter);
-  if(eventReaction->command == command) {
-    return NA_TRUE;
+  NAListIterator iter = naMakeListAccessor(&element->reactions);
+  while(naIterateList(&iter)) {
+    const NAEventReaction* eventReaction = naGetListCurConst(&iter);
+    if(eventReaction->command == command) {
+      return NA_TRUE;
+    }
   }
-  naEndListIteration(iter);
+  naClearListIterator(&iter);
+
   return NA_FALSE;
 }
 
@@ -83,7 +86,7 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
 
   NAListIterator iter = naMakeListMutator(&element->reactions);
   while(naIterateList(&iter)) {
-    NAEventReaction* eventReaction = (NAEventReaction*)naGetListCurMutable(&iter);
+    NAEventReaction* eventReaction = naGetListCurMutable(&iter);
     if(eventReaction->command == command) {
       reaction.controller = eventReaction->controller;
       eventReaction->callback(reaction);

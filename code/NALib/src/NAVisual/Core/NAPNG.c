@@ -760,7 +760,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
 
   NAListIterator iter = naMakeListMutator(&png->chunks);
   while(naIterateList(&iter)) {
-    NAPNGChunk* chunk = (NAPNGChunk*)naGetListCurMutable(&iter);
+    NAPNGChunk* chunk = naGetListCurMutable(&iter);
 
     switch(chunk->type) {
     case NA_PNG_CHUNK_TYPE_IHDR:  na_ReadPNGIHDRChunk(png, chunk);  break;
@@ -898,7 +898,7 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath) {
 
   NAListIterator iter = naMakeListMutator(&png->chunks);
   while(naIterateList(&iter)) {
-    NAPNGChunk* chunk = (NAPNGChunk*)naGetListCurMutable(&iter);
+    NAPNGChunk* chunk = naGetListCurMutable(&iter);
 
     naFixBufferRange(chunk->data);
 

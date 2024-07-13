@@ -255,7 +255,7 @@ NA_IAPI NABool naIsTreeRootLeaf(const NATree* tree);
 // NATreeIterator iteratorname;
 // naBeginTreeMutatorIteration(MyLeaf* leaf, mytree, lowerLimit, upperLimit, iteratorname);
 //   doStuffWithLeaf(leaf);
-// naEndListIteration(iteratorname);
+// naEndTreeIteration(iteratorname);
 
 #define naBeginTreeAccessorIteration(typedElem, tree, lowerLimit, upperLimit, iter)
 #define naBeginTreeMutatorIteration (typedElem, tree, lowerLimit, upperLimit, iter)

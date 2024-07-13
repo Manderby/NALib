@@ -351,12 +351,13 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void) {
 NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
   //todo something is wrong here with the type.
   NAWINAPIApplication* app;
-  NAListIterator iter;
 
   UINT timerkey = (UINT)idEvent;
   app = (NAWINAPIApplication*)naGetApplication();
 
-  naBeginListModifierIteration(NAWINAPITimerStruct* timerStruct, &app->timers, iter);
+  NAListIterator iter = naMakeListModifier(&app->timers);
+  while(naIterateList(&iter)) {
+    NAWINAPITimerStruct* timerStruct = naGetListCurMutable(&iter);
     if(timerStruct->key == timerkey) {
       naRemoveListCurMutable(&iter, NA_FALSE);
       KillTimer(hwnd, idEvent);
@@ -364,7 +365,8 @@ NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT
       naFree(timerStruct);
       break;
     }
-  naEndListIteration(iter);
+  }
+  naClearListIterator(&iter);
 }
 
 
