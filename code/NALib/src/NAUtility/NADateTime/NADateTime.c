@@ -191,10 +191,11 @@ NATAIPeriod naTAIPeriods[NA_TAI_PERIODS_COUNT] = {
   {naMakeu64WithLiteralLo(2019686400), naMakeu64WithLiteralLo(2019686437), 2022, NA_START_JANUARY_FIRST},
   {naMakeu64WithLiteralLo(2051222400), naMakeu64WithLiteralLo(2051222437), 2023, NA_START_JANUARY_FIRST},
   {naMakeu64WithLiteralLo(2082758400), naMakeu64WithLiteralLo(2082758437), 2024, NA_START_JANUARY_FIRST},
-  {naMakeu64WithLiteralLo(2098483200), naMakeu64WithLiteralLo(2098483237), 2024, NA_START_JULY_FIRST},
+  {naMakeu64WithLiteralLo(2114380800), naMakeu64WithLiteralLo(2114380837), 2025, NA_START_JANUARY_FIRST},
   // the last entry is the first date with unknown future leap seconds.
   // everything up and including that date is known.
 };
+
 
 
 // NA_DATETIME_SISEC_START_GREGORIAN_PERIOD denotes the siSecond relative to the
