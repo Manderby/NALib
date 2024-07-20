@@ -62,6 +62,8 @@
     NA_MACOS_AVAILABILITY_GUARD_10_11(
       [(CAMetalLayer*)[self layer] setDrawableSize:frame.size];
       [(CAMetalLayer*)[self layer] setContentsScale:uiScale];
+      [(CAMetalLayer*)[self layer] setMinificationFilter:kCAFilterNearest];
+      [(CAMetalLayer*)[self layer] setMagnificationFilter:kCAFilterNearest];
     )
     [self setNeedsDisplay:YES];
   }
