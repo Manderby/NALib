@@ -1,5 +1,6 @@
 
 #include "../NAAppCore.h"
+#include "../../../NAVisual/NA3DHelper.h"
 
 #if NA_COMPILE_GUI == 1
 
@@ -155,7 +156,10 @@ NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
       glMatrixMode(GL_PROJECTION);
       glPushMatrix();
       glLoadIdentity();
-      glOrtho(0, viewPort[2], 0, viewPort[3], -1., 1.);
+
+      NAMat44d ortho;
+      naFillMatrixOrtho(ortho, 0, viewPort[2], 0, viewPort[3], -1., 1.);
+      glMultMatrixd(ortho);
 
       glEnable(GL_TEXTURE_2D);
       glBindTexture(GL_TEXTURE_2D, fontTex);
