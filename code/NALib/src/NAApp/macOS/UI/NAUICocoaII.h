@@ -555,15 +555,16 @@ NA_HDEF void* na_AddMouseTracking(NA_UIElement* uiElement) {
     userInfo:nil];
   [nativePtr addTrackingArea:trackingArea];
   
-  return trackingArea;
+  return NA_COCOA_PTR_OBJC_TO_C(trackingArea);
 }
 
 
 
 NA_HDEF void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking) {
   naDefineCocoaObject(NSView, nativePtr, uiElement);
-  [nativePtr removeTrackingArea:mouseTracking];
-  NA_COCOA_RELEASE(mouseTracking);
+  NSTrackingArea* trackingArea = NA_COCOA_PTR_C_TO_OBJC(mouseTracking);
+  [nativePtr removeTrackingArea:trackingArea];
+  NA_COCOA_RELEASE(trackingArea);
 }
 
 

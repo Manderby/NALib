@@ -97,7 +97,7 @@ NA_DEF void naStopApplication(void) {
 NA_DEF NAApplication* naGetApplication(void) {
   #if NA_DEBUG
     if(!na_App)
-      naError("Internal error: application is not in ui elements list");
+      naError("Internal error: application not started. Use naStartApplication");
   #endif
   return na_App;
 }
