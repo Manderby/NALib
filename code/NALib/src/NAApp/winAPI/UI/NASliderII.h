@@ -39,8 +39,11 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_CANCELMODE:
   case WM_UPDATEUISTATE:
   case WM_ENABLE:
+  case WM_MOUSEFIRST:
   case WM_MOUSEWHEEL:
   case WM_KEYFIRST:
+  case WM_MOUSELEAVE:
+  case WM_WINDOWPOSCHANGED:
 
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   case TBM_SETPOS:  // (WM_USER + 5)
@@ -71,7 +74,7 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
     break;
 
   default:
-    printf("Uncaught Slider message" NA_NL);
+    //printf("Uncaught Slider message" NA_NL);
     break;
   }
   

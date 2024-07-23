@@ -48,7 +48,7 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
     naAddOpenGLSpaceToRedrawList(winapiOpenGLSpace);
 
     RECT updateRegion;
-    GetUpdateRect(naGetUIElementNativePtr(uiElement), &updateRegion, NA_FALSE);
+    GetClientRect(naGetUIElementNativePtr(uiElement), &updateRegion );
     ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
   
     info.hasBeenHandeled = NA_TRUE;
@@ -56,7 +56,7 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
     break;
 
   default:
-    printf("Uncaught OpenGL Space message" NA_NL);
+    //printf("Uncaught OpenGL Space message" NA_NL);
     break;
   }
   

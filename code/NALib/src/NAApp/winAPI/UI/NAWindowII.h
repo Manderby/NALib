@@ -154,7 +154,6 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_CANCELMODE:
   case WM_CAPTURECHANGED:
   case WM_LBUTTONUP:
-  case WM_TIMER:
   case WM_CHAR:
   case WM_SYSKEYDOWN: // the alt key
   case WM_SYSKEYUP:
@@ -168,6 +167,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_NCLBUTTONDOWN:
   case SPI_GETDOCKMOVING:
   case WM_DESTROY:
+  case WM_TIMER:
   case WM_NCDESTROY:
   case BM_SETSTATE:
   case 0xC0D6: // undocumented
