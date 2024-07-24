@@ -483,8 +483,6 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
   bottomdiff =  ((windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top) - topdiff);
   rect.pos.x -= leftdiff;
   rect.pos.y -= bottomdiff;
-  rect.size.width *= uiScale;
-  rect.size.height *= uiScale;
   rect.size.width += leftdiff;
   rect.size.height += bottomdiff;
   rect.size.width += rightdiff;
