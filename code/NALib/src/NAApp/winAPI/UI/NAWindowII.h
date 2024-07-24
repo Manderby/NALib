@@ -15,7 +15,8 @@
 NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NAWINAPIWindow* windowMutable;
-  WINDOWPOS windowPos;
+  NASpace* contentSpace;
+  NARect contentRect;
   NABool shouldClose;
   NARect screenRect;
   double uiScale;
@@ -38,6 +39,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
       uiScale = naGetUIElementResolutionScale(NA_NULL);
       windowMutable->rect.pos.x = (double)LOWORD(lParam) / uiScale;
       windowMutable->rect.pos.y = screenRect.size.height - (double)HIWORD(lParam) / uiScale - windowMutable->rect.size.height;
+
       if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE)) {
         // don't know what to do.
       }
@@ -64,6 +66,17 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     windowMutable->rect.size.width = (double)LOWORD(lParam) / uiScale;
     windowMutable->rect.size.height = (double)HIWORD(lParam) / uiScale;
     windowMutable->rect.pos.y -= (windowMutable->rect.size.height - oldHeight);
+
+    // We need to trigger a resizing of the content space. The position does not change,
+    // it is always (0,0).
+    contentSpace = naGetWindowContentSpace(&windowMutable->window);
+    contentRect = naMakeRectS(
+      0.,
+      0.,
+      windowMutable->rect.size.width,
+      windowMutable->rect.size.height);
+    naSetUIElementRect(contentSpace, contentRect);
+
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE)) {
       // don't know what to do.
     }
@@ -102,28 +115,11 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     break;
 
   case WM_WINDOWPOSCHANGED:
-    // wParam: Unused
-    // lParam: pointer to WINDOWPOS structure
-    // result: 0 when handeled.
-    windowPos = *((WINDOWPOS*)lParam);
-    windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
-    screenRect = naGetMainScreenRect();
-    uiScale = naGetUIElementResolutionScale(NA_NULL);
-    windowMutable->rect.size.width = (double)windowPos.cx / uiScale;
-    windowMutable->rect.size.height = (double)windowPos.cy / uiScale;
-    if(!naGetFlagu32(windowMutable->window.flags, NA_WINAPI_WINDOW_KEEP_POS)) {
-      windowMutable->rect.pos.x = (double)windowPos.x / uiScale;
-      windowMutable->rect.pos.y = screenRect.size.height - (double)windowPos.y / uiScale - windowMutable->rect.size.height;
-    }
-    if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE)) {
-      // don't know what to do.
-    }
-    if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW)) {
-      // don't know what to do.
-    }
-    na_RememberWindowPosition(&windowMutable->window);
-    info.result = 0;
-
+    // //wParam: Unused
+    // //lParam: pointer to WINDOWPOS structure
+    // //result: 0 when handeled.
+    // We let the default window procedure do its job which will emit the
+    // WM_MOVE and WM_SIZE messages in turn.
     info.hasBeenHandeled = NA_TRUE;
     info.result = DefWindowProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
 
@@ -465,50 +461,51 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
   //NARect currect = naGetUIElementRect(&winapiWindow->window);
   double yDiff = winapiWindow->rect.pos.y = rect.pos.y;
 
-  if(1) {
-  //if(!naEqualRect(currect, rect)) {
-    POINT testPoint = {0, 0};
-    RECT clientRect;
-    RECT windowRect;
-    LONG leftdiff;
-    LONG topdiff;
-    LONG rightdiff;
-    LONG bottomdiff;
+  POINT testPoint = {0, 0};
+  RECT clientRect;
+  RECT windowRect;
+  LONG leftdiff;
+  LONG topdiff;
+  LONG rightdiff;
+  LONG bottomdiff;
 
-    winapiWindow->rect = rect;
-    double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  winapiWindow->rect = rect;
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
-    NARect screenRect = naGetMainScreenRect();
-    GetClientRect(naGetUIElementNativePtr(window), &clientRect);
-    GetWindowRect(naGetUIElementNativePtr(window), &windowRect);
-    ClientToScreen(naGetUIElementNativePtr(window), &testPoint);
+  NARect screenRect = naGetMainScreenRect();
+  GetClientRect(naGetUIElementNativePtr(window), &clientRect);
+  GetWindowRect(naGetUIElementNativePtr(window), &windowRect);
+  ClientToScreen(naGetUIElementNativePtr(window), &testPoint);
 
-    leftdiff = (testPoint.x - windowRect.left);
-    topdiff =  (testPoint.y - windowRect.top);
-    rightdiff =  ((windowRect.right - windowRect.left) - (clientRect.right - clientRect.left) - leftdiff);
-    bottomdiff =  ((windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top) - topdiff);
-    rect.pos.x -= leftdiff;
-    rect.pos.y -= bottomdiff;
-    rect.size.width *= uiScale;
-    rect.size.height *= uiScale;
-    rect.size.width += leftdiff;
-    rect.size.height += bottomdiff;
-    rect.size.width += rightdiff;
-    rect.size.height += topdiff;
+  leftdiff = (testPoint.x - windowRect.left);
+  topdiff =  (testPoint.y - windowRect.top);
+  rightdiff =  ((windowRect.right - windowRect.left) - (clientRect.right - clientRect.left) - leftdiff);
+  bottomdiff =  ((windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top) - topdiff);
+  rect.pos.x -= leftdiff;
+  rect.pos.y -= bottomdiff;
+  rect.size.width *= uiScale;
+  rect.size.height *= uiScale;
+  rect.size.width += leftdiff;
+  rect.size.height += bottomdiff;
+  rect.size.width += rightdiff;
+  rect.size.height += topdiff;
 
-    MoveWindow(
-      naGetUIElementNativePtr(winapiWindow),
-      (LONG)(rect.pos.x * uiScale),
-      (LONG)((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale),
-      (LONG)(rect.size.width * uiScale),
-      (LONG)(rect.size.height * uiScale),
-      NA_FALSE);
-  }
+  MoveWindow(
+    naGetUIElementNativePtr(winapiWindow),
+    (LONG)(rect.pos.x * uiScale),
+    (LONG)((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale),
+    (LONG)(rect.size.width * uiScale),
+    (LONG)(rect.size.height * uiScale),
+    NA_FALSE);
 
-  // We need to trigger a repositioning of the content space. The position does not change,
+  // We need to trigger a resizing of the content space. The position does not change,
   // it is always (0,0).
   NASpace* contentSpace = naGetWindowContentSpace(&winapiWindow->window);
-  NARect contentRect = naGetUIElementRect(contentSpace);
+  NARect contentRect = naMakeRectS(
+    0.,
+    0.,
+    clientRect.right - clientRect.left,
+    clientRect.bottom - clientRect.top);
   naSetUIElementRect(contentSpace, contentRect);
 }
 
