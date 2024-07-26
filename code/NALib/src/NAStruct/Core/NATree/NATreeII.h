@@ -23,8 +23,8 @@ typedef struct NATreeIterationInfo NATreeIterationInfo;
 #define NA_TREE_NODE_AVL_MASK  (0x03 << NA_TREE_NODE_AVL_BITSHIFT)
 
 // This is directly linked to the types defined in NATree.h.
-// See NA_TREE_KEY_NAINT for example.
-#define NA_TREE_CONFIG_KEY_TYPE_MASK  0x07
+// See NA_TREE_KEY_i32 for example.
+#define NA_TREE_CONFIG_KEY_TYPE_MASK  0xff
 
 #define NA_TREE_FLAG_ROOT_IS_LEAF 0x01
 #define NA_TREE_FLAG_TMP_KEY_TAKEN 0x02

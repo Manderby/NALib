@@ -70,6 +70,48 @@ NA_IDEF NABool NA_KEY_OP(Greater, NAInt)(const void* a, const void* b) {
 
 
 
+NA_IDEF void NA_KEY_OP(Assign, i32)(void* dst, const void* src) {
+  *(int32*)dst = *(const int32*)src;
+}
+NA_IDEF NABool NA_KEY_OP(LessEqual, i32)(const void* a, const void* b) {
+  return *(const int32*)a <= *(const int32*)b;
+}
+NA_IDEF NABool NA_KEY_OP(Less, i32)(const void* a, const void* b) {
+  return *(const int32*)a < *(const int32*)b;
+}
+NA_IDEF NABool NA_KEY_OP(Equal, i32)(const void* a, const void* b) {
+  return *(const int32*)a == *(const int32*)b;
+}
+NA_IDEF NABool NA_KEY_OP(GreaterEqual, i32)(const void* a, const void* b) {
+  return *(const int32*)a >= *(const int32*)b;
+}
+NA_IDEF NABool NA_KEY_OP(Greater, i32)(const void* a, const void* b) {
+  return *(const int32*)a > *(const int32*)b;
+}
+
+
+
+NA_IDEF void NA_KEY_OP(Assign, u32)(void* dst, const void* src) {
+  *(uint32*)dst = *(const uint32*)src;
+}
+NA_IDEF NABool NA_KEY_OP(LessEqual, u32)(const void* a, const void* b) {
+  return *(const uint32*)a <= *(const uint32*)b;
+}
+NA_IDEF NABool NA_KEY_OP(Less, u32)(const void* a, const void* b) {
+  return *(const uint32*)a < *(const uint32*)b;
+}
+NA_IDEF NABool NA_KEY_OP(Equal, u32)(const void* a, const void* b) {
+  return *(const uint32*)a == *(const uint32*)b;
+}
+NA_IDEF NABool NA_KEY_OP(GreaterEqual, u32)(const void* a, const void* b) {
+  return *(const uint32*)a >= *(const uint32*)b;
+}
+NA_IDEF NABool NA_KEY_OP(Greater, u32)(const void* a, const void* b) {
+  return *(const uint32*)a > *(const uint32*)b;
+}
+
+
+
 NA_IDEF void NA_KEY_OP(Assign, NAPos)(void* dst, const void* src) {
   naFillPosWithCopy((NAPos*)dst, (const NAPos*)src);
 }

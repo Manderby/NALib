@@ -136,8 +136,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags) {
     case NA_TREE_KEY_NOKEY:
       config->keyIndexGetter        = NA_NULL;
       config->keyEqualComparer      = NA_NULL;
-      config->keyLessComparer      = NA_NULL;
-      config->keyLessEqualComparer = NA_NULL;
+      config->keyLessComparer       = NA_NULL;
+      config->keyLessEqualComparer  = NA_NULL;
       config->keyAssigner           = NA_NULL;
       config->keyTester             = NA_NULL;
       config->keyNodeContainTester  = NA_NULL;
@@ -149,8 +149,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags) {
       config->childIndexGetter      = na_GetChildIndexBinDouble;
       config->keyIndexGetter        = na_GetKeyIndexBinDouble;
       config->keyEqualComparer      = NA_KEY_OP(Equal, double);
-      config->keyLessComparer      = NA_KEY_OP(Less, double);
-      config->keyLessEqualComparer = NA_KEY_OP(LessEqual, double);
+      config->keyLessComparer       = NA_KEY_OP(Less, double);
+      config->keyLessEqualComparer  = NA_KEY_OP(LessEqual, double);
       config->keyAssigner           = NA_KEY_OP(Assign, double);
       config->keyTester             = na_TestKeyBinDouble;
       config->keyNodeContainTester  = NA_NULL;
@@ -162,12 +162,38 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags) {
       config->childIndexGetter      = na_GetChildIndexBinNAInt;
       config->keyIndexGetter        = na_GetKeyIndexBinNAInt;
       config->keyEqualComparer      = NA_KEY_OP(Equal, NAInt);
-      config->keyLessComparer      = NA_KEY_OP(Less, NAInt);
-      config->keyLessEqualComparer = NA_KEY_OP(LessEqual, NAInt);
+      config->keyLessComparer       = NA_KEY_OP(Less, NAInt);
+      config->keyLessEqualComparer  = NA_KEY_OP(LessEqual, NAInt);
       config->keyAssigner           = NA_KEY_OP(Assign, NAInt);
       config->keyTester             = na_TestKeyBinNAInt;
       config->keyNodeContainTester  = NA_NULL;
       config->keyLeafContainTester  = na_TestKeyLeafContainBinNAInt;
+      config->keyNodeOverlapTester  = NA_NULL;
+      config->keyLeafOverlapTester  = NA_NULL;
+      break;
+    case NA_TREE_KEY_i32:
+      config->childIndexGetter      = na_GetChildIndexBini32;
+      config->keyIndexGetter        = na_GetKeyIndexBini32;
+      config->keyEqualComparer      = NA_KEY_OP(Equal, i32);
+      config->keyLessComparer       = NA_KEY_OP(Less, i32);
+      config->keyLessEqualComparer  = NA_KEY_OP(LessEqual, i32);
+      config->keyAssigner           = NA_KEY_OP(Assign, i32);
+      config->keyTester             = na_TestKeyBini32;
+      config->keyNodeContainTester  = NA_NULL;
+      config->keyLeafContainTester  = na_TestKeyLeafContainBini32;
+      config->keyNodeOverlapTester  = NA_NULL;
+      config->keyLeafOverlapTester  = NA_NULL;
+      break;
+    case NA_TREE_KEY_u32:
+      config->childIndexGetter      = na_GetChildIndexBinu32;
+      config->keyIndexGetter        = na_GetKeyIndexBinu32;
+      config->keyEqualComparer      = NA_KEY_OP(Equal, u32);
+      config->keyLessComparer       = NA_KEY_OP(Less, u32);
+      config->keyLessEqualComparer  = NA_KEY_OP(LessEqual, u32);
+      config->keyAssigner           = NA_KEY_OP(Assign, u32);
+      config->keyTester             = na_TestKeyBinu32;
+      config->keyNodeContainTester  = NA_NULL;
+      config->keyLeafContainTester  = na_TestKeyLeafContainBinu32;
       config->keyNodeOverlapTester  = NA_NULL;
       config->keyLeafOverlapTester  = NA_NULL;
       break;
