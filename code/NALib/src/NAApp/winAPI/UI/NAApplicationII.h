@@ -398,7 +398,7 @@ NA_HDEF na_redrawOpenGLSpaces(void* data) {
     }
 
     //RECT updateRegion;
-    //GetUpdateRect(naGetUIElementNativePtr(openGLSpace), &updateRegion, NA_FALSE);
+    //GetClientRect(naGetUIElementNativePtr(uiElement), &updateRegion );
     //ValidateRect(naGetUIElementNativePtr(openGLSpace), &updateRegion);
   }
   naClearListIterator(&it);

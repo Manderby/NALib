@@ -37,7 +37,7 @@
 - (void)controlTextDidChange:(NSNotification *)notification{
   NA_UNUSED(notification);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDITED)) {
-    [super controlTextDidChange:notification];
+    // dont know what to do.
   }
 }
 

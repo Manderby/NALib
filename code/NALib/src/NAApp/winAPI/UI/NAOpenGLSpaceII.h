@@ -48,7 +48,7 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
     naAddOpenGLSpaceToRedrawList(winapiOpenGLSpace);
 
     RECT updateRegion;
-    GetUpdateRect(naGetUIElementNativePtr(uiElement), &updateRegion, NA_FALSE);
+    GetClientRect(naGetUIElementNativePtr(uiElement), &updateRegion );
     ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
   
     info.hasBeenHandeled = NA_TRUE;
@@ -56,7 +56,7 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
     break;
 
   default:
-    printf("Uncaught OpenGL Space message" NA_NL);
+    //printf("Uncaught OpenGL Space message" NA_NL);
     break;
   }
   
@@ -168,6 +168,15 @@ NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(openGLSpace));
 
+  //SetWindowPos(
+  //  naGetUIElementNativePtr(openGLSpace),
+  //  HWND_TOP,
+  //  (int)(winapiOpenGLSpace->rect.pos.x * uiScale),
+  //  (int)((parentRect.size.height - winapiOpenGLSpace->rect.pos.y - winapiOpenGLSpace->rect.size.height) * uiScale),
+  //  (int)(winapiOpenGLSpace->rect.size.width * uiScale),
+  //  (int)(winapiOpenGLSpace->rect.size.height * uiScale),
+  //  SWP_NOREDRAW);
+
   SetWindowPos(
     naGetUIElementNativePtr(openGLSpace),
     HWND_TOP,
@@ -175,7 +184,7 @@ NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
     (int)((parentRect.size.height - winapiOpenGLSpace->rect.pos.y - winapiOpenGLSpace->rect.size.height) * uiScale),
     (int)(winapiOpenGLSpace->rect.size.width * uiScale),
     (int)(winapiOpenGLSpace->rect.size.height * uiScale),
-    0);
+    SWP_NOREDRAW);
 }
 
 
