@@ -23,7 +23,6 @@ NA_API NAMenuItem* naNewMenuSeparator(void);
 NA_API const NAUTF8Char* naGetMenuItemText(NAMenuItem* menuItem);
 
 // Sets the text of a given menu item. Also works for submenus.
-// The nativePtr must be of type NSMenuItem.
 NA_API void naSetMenuItemText(NAMenuItem* menuItem, const NAUTF8Char* text);
 
 // Adds a checkbox in front of the entry if state is NA_TRUE.
