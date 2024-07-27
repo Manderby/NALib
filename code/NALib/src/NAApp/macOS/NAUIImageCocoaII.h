@@ -176,7 +176,7 @@ NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolu
     skin = naGetSkinForCurrentAppearance();
   }
   
-  CGImageRef cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, skin, interaction, secondaryState);
+  CGImageRef cocoaImage = na_GetUIImageNativeImage(uiImage, resolution, skin, interaction, secondaryState);
 
   // Yes, we create a new NSImage which we draw into the NSImage which
   // calls this callback. It is unknown to me exactly why I need to do
@@ -186,7 +186,7 @@ NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolu
   [NSGraphicsContext saveGraphicsState];
   NSImage* drawImage = [[NSImage alloc] initWithSize:imageSize];
   [drawImage lockFocus];
-    CGContextDrawImage(naGetCGContextRef([NSGraphicsContext currentContext]), dstRect, cocoaimage);
+    CGContextDrawImage(naGetCGContextRef([NSGraphicsContext currentContext]), dstRect, cocoaImage);
   [drawImage unlockFocus];
   [NSGraphicsContext restoreGraphicsState];
 

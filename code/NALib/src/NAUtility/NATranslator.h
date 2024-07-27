@@ -42,12 +42,12 @@
 //   #include "../translations/deu.txt"
 // }
 //
-// The myTranslatorGroup is an NAInt identifying a group of strings belonging
+// The myTranslatorGroup is an uint32 identifying a group of strings belonging
 // to the same execution unit. For example, your application has a group
 // "myAppTranslations" but you might compile this project together with a
 // separate project which definies and includes its own strings in a group
 // called "MyConverterTranslations". Later, you will identify the strings
-// using this NAInt group identifier.
+// using this uint32 group identifier.
 //
 // In order for the #includes to work, somewhere in your code, integer ids
 // must be provided, defining the identifiers of the translation items.
@@ -124,7 +124,7 @@ NA_API void naStopTranslator(void);
 // use. How you do this is up to you.
 // Note: Once you register a group, you have to insert all strings of that
 // group. You can not come back to it later.
-NA_API NAInt naRegisterTranslatorGroup(void);
+NA_API uint32 naRegisterTranslatorGroup(void);
 
 // Sets the given language as the current language for string insertion and
 // registers its availability in the current translator.
@@ -132,7 +132,7 @@ NA_API void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code);
 
 // Stores a given string for the given id in the current language and the
 // current group. If there already was a string, it will be replaced.
-NA_API void naInsertTranslatorString(NAInt id, NAUTF8Char* str);
+NA_API void naInsertTranslatorString(uint32 id, NAUTF8Char* str);
 
 // Usually, when working with translator files, you will be using the following
 // macros with the strings being encoded in UTF-8:
@@ -156,7 +156,7 @@ NA_API void naSetTranslatorLanguagePreference(NALanguageCode3 code);
 
 // Returns the UTF8-String of the given id in the given group, according to
 // the language preferences.
-NA_API const NAUTF8Char* naTranslate(NAInt group, NAInt id);
+NA_API const NAUTF8Char* naTranslate(uint32 group, uint32 id);
 
 
 

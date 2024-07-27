@@ -14,14 +14,6 @@
   return self;
 }
 
-//- (int) getMenuItemIndex:(NSMenuItem*)item{
-//  if(!item)
-//    return -1;
-//
-//  NSUInteger index = [[self itemArray] indexOfObject:item];
-//  return index == NSNotFound ? -1 : (int)index;
-//}
-
 - (void) addMenuItem:(NSMenuItem*)item atItem:(const NAMenuItem*)atItem{
   size_t index = naGetMenuItemIndex(&cocoaMenu->menu, atItem);
   //int index = [self getMenuItemIndex:atItem];
