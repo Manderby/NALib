@@ -42,9 +42,14 @@ NA_API NAWindow* naNewWindow(
 NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
 NA_API void naSetWindowContentSpace(NAWindow* window, void* space);
 
-// Show or close the window
+// Show or close the window.
 NA_API void naShowWindow(const NAWindow* window);
 NA_API void naCloseWindow(const NAWindow* window);
+
+// Handling modal windows. Opening such will block the rest of the app.
+// Close must be called explicitely.
+NA_API void naShowWindowModal(const NAWindow* window);
+NA_API void naCloseWindowModal(const NAWindow* window);
 
 // During a NA_UI_COMMAND_CLOSES command, call this function to prevent the
 // window from closing. If not called, the window will close.

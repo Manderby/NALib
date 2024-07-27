@@ -30,7 +30,7 @@
 - (void) controlTextDidEndEditing:(NSNotification *)notification{
   NA_UNUSED(notification);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDIT_FINISHED)) {
-    [super controlTextDidEndEditing:notification];
+    // dont know what to do.
   }
 }
 

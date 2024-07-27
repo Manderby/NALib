@@ -314,6 +314,14 @@ NA_DEF void naShowWindow(const NAWindow* window) {
   BringWindowToTop(naGetUIElementNativePtrConst(window));
 }
 
+NA_DEF void naShowWindowModal(const NAWindow* window) {
+  // todo
+}
+
+NA_DEF void naCloseWindowModal(const NAWindow* window) {
+  // todo
+}
+
 
 
 NA_DEF void naCloseWindow(const NAWindow* window) {
