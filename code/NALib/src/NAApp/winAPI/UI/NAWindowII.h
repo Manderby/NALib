@@ -314,12 +314,16 @@ NA_DEF void naShowWindow(const NAWindow* window) {
   BringWindowToTop(naGetUIElementNativePtrConst(window));
 }
 
-NA_DEF void naShowWindowModal(const NAWindow* window) {
-  // todo
+NA_DEF void naShowWindowModal(NAWindow* window, NAWindow* parentWindow) {
+  // todo: modal windows do not work yet on windows
+  //EnableWindow(naGetUIElementNativePtr(parentWindow), FALSE);
+  naShowWindow(window);
 }
 
-NA_DEF void naCloseWindowModal(const NAWindow* window) {
-  // todo
+NA_DEF void naCloseWindowModal(NAWindow* window) {
+  // todo: modal windows do not work yet on windows
+  //EnableWindow(naGetUIElementNativePtr(parentWindow), TRUE);
+  naCloseWindow(window);
 }
 
 

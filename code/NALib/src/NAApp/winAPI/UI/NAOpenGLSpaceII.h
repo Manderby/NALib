@@ -149,12 +149,6 @@ NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace) {
 
 
 
-//NA_API void naSetOpenGLSpaceInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds) {
-//  SetWindowPos((HWND)naGetUIElementNativePtr(openGLSpace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
-//}
-
-
-
 NA_API NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace)
 {
   const NAWINAPIOpenGLSpace* winapiOpenGLSpace = (const NAWINAPIOpenGLSpace*)openGLSpace;
@@ -167,15 +161,6 @@ NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
   winapiOpenGLSpace->rect = rect;
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(openGLSpace));
-
-  //SetWindowPos(
-  //  naGetUIElementNativePtr(openGLSpace),
-  //  HWND_TOP,
-  //  (int)(winapiOpenGLSpace->rect.pos.x * uiScale),
-  //  (int)((parentRect.size.height - winapiOpenGLSpace->rect.pos.y - winapiOpenGLSpace->rect.size.height) * uiScale),
-  //  (int)(winapiOpenGLSpace->rect.size.width * uiScale),
-  //  (int)(winapiOpenGLSpace->rect.size.height * uiScale),
-  //  SWP_NOREDRAW);
 
   SetWindowPos(
     naGetUIElementNativePtr(openGLSpace),
