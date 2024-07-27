@@ -274,12 +274,12 @@ NA_DEF void naShowWindow(const NAWindow* window) {
   [nativePtr makeKeyAndOrderFront:NA_NULL];
 }
 
-NA_DEF void naShowWindowModal(const NAWindow* window) {
+NA_DEF void naShowWindowModal(NAWindow* window, NAWindow* parentWindow) {
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   [NSApp runModalForWindow: nativePtr];
 }
 
-NA_DEF void naCloseWindowModal(const NAWindow* window) {
+NA_DEF void naCloseWindowModal(NAWindow* window) {
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   [NSApp endSheet: nativePtr];
 }
