@@ -136,7 +136,6 @@ struct NATreeConfiguration{
   NAPtr                         userData;
 };
 
-NA_HAPI void na_DestroyTreeConfiguration(NATreeConfiguration* config);
 NA_EXTERN_RUNTIME_TYPE(NATreeConfiguration);
 
 

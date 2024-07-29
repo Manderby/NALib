@@ -3,13 +3,6 @@
 
 
 
-NA_HIDEF void na_DestroyTreeConfiguration(NATreeConfiguration* config) {
-  if(config->configdata)
-    naFree(config->configdata);
-}
-
-
-
 NA_IDEF void naSetTreeConfigurationUserData(NATreeConfiguration* config, NAPtr userData) {
   #if NA_DEBUG
     if(naGetPtrConst(config->userData))

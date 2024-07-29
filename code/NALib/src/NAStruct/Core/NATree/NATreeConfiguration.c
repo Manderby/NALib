@@ -8,6 +8,7 @@
 
 
 
+NA_HAPI void na_DestroyTreeConfiguration(NATreeConfiguration* config);
 NA_RUNTIME_TYPE(NATreeConfiguration, na_DestroyTreeConfiguration, NA_TRUE);
 
 
@@ -231,6 +232,13 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags) {
   #endif
   
   return config;
+}
+
+
+
+NA_HDEF void na_DestroyTreeConfiguration(NATreeConfiguration* config) {
+  if(config->configdata)
+    naFree(config->configdata);
 }
 
 
