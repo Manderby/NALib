@@ -196,7 +196,7 @@ NA_DEF NAString* naNewStringWithTextFieldText(const NATextField* textField) {
   if(textlength) {
     TCHAR* buffer = naMalloc((textlength + 1) * sizeof(TCHAR));
     SendMessage(naGetUIElementNativePtrConst(textField), WM_GETTEXT, textlength + 1, (LPARAM)buffer);
-    return naNewStringFromSystemString(buffer);
+    return naNewStringWithSystemString(buffer);
   }else{
     return naNewString();
   }

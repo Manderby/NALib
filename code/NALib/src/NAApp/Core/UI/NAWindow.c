@@ -52,7 +52,7 @@ NA_HDEF void na_RememberWindowPosition(const NAWindow* window) {
 
 
 
-NA_DEF void naPreventWindowFromClosing(NAWindow* window, NABool prevent) {
+NA_DEF void naPreventWindowClosing(NAWindow* window, NABool prevent) {
   #if NA_DEBUG
     if(!naGetFlagu32(window->coreFlags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE))
       naError("This function is only allowed during a \"CLOSES\" event");

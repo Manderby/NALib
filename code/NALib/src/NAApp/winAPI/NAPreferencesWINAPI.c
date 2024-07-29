@@ -153,7 +153,7 @@ NA_HDEF NAString* na_GetRawPreferencesString(void* prefs, const char* key) {
   naFree(systemKey);
 
   if(errorCode == ERROR_SUCCESS) {
-    valueStorage = naNewStringFromWideCharString(storedValue);
+    valueStorage = naNewStringWithWideCharString(storedValue);
     naFree(storedValue);
   }else{
     valueStorage = NA_NULL;

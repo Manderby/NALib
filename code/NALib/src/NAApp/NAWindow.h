@@ -59,7 +59,7 @@ NA_API void naCloseWindowModal(NAWindow* window);
 
 // During a NA_UI_COMMAND_CLOSES command, call this function to prevent the
 // window from closing. If not called, the window will close.
-NA_API void naPreventWindowFromClosing(NAWindow* window, NABool prevent);
+NA_API void naPreventWindowClosing(NAWindow* window, NABool prevent);
 
 // Get and set the window fullscreen state.
 NA_API NABool naIsWindowFullscreen(NAWindow* window);

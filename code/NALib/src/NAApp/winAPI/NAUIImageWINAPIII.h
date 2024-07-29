@@ -72,10 +72,10 @@ NA_DEF NAImage* naCreateImageWithNativeImage(const void* nativeImage) {
 
 
 
-NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr) {
+NA_DEF NAImage* naCreateImageWithFilePath(const NAUTF8Char* pathStr) {
   // Currently, only png is possible
   NAPNG* png = naNewPNGWithPath(pathStr);
-  NAImage* image = naCreateImageFromPNG(png);
+  NAImage* image = naCreateImageWithPNG(png);
   naDelete(png);
   return image;
 }

@@ -43,7 +43,7 @@
 // The encoding of strings given by system calls though may be of
 // different kind. Especially on windows, one should use TCHAR which is
 // either CHAR or WCHAR depending on the project settings and then use
-// naAllocSystemStringWithUTF8String and naNewStringFromSystemString.
+// naAllocSystemStringWithUTF8String and naNewStringWithSystemString.
 //
 // Note that NAUTF8Char is defined as char to simplify debugging.
 // Types like NAByte, int8 or uint8 can not be used as it these are

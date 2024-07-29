@@ -113,11 +113,11 @@
 
 
 // 1-D Coordinates: Range
-typedef struct NARange    NARange;
-typedef struct NARangef   NARangef;
-typedef struct NARangei32 NARangei32;
-typedef struct NARangei64 NARangei64;
-typedef struct NARanges   NARanges;
+NA_PROTOTYPE(NARange);
+NA_PROTOTYPE(NARangef);
+NA_PROTOTYPE(NARangei32);
+NA_PROTOTYPE(NARangei64);
+NA_PROTOTYPE(NARanges);
 
 // 2-D Coordinates: Pos, Size and Rect
 typedef struct NAPos      NAPos;

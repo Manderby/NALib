@@ -100,7 +100,7 @@ NA_API void naFillDefaultAccentColorWithSkin(NAColor* color, NAUIImageSkin skin)
 
 // Creates a new NAImage with the given path. Can only be PNG on windows,
 // macOS allows for various kind of input files.
-NA_API NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr);
+NA_API NAImage* naCreateImageWithFilePath(const NAUTF8Char* pathStr);
 
 
 

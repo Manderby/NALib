@@ -478,7 +478,7 @@ NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
     app->application.iconPath = path;
 
   if(path) {
-    NAImage* iconImage = naCreateImageFromFilePath(path);
+    NAImage* iconImage = naCreateImageWithFilePath(path);
     HBITMAP bitmap = naAllocNativeImageWithImage(iconImage);
    
     HBITMAP hbmMask = CreateCompatibleBitmap(
@@ -506,7 +506,7 @@ NA_DEF NAString* naNewApplicationPath(void) {
     NAString* utf8ModuleBasePath;
 
     GetModuleFileName(NULL, modulePath, MAX_PATH);
-    utf8ModulePath = naNewStringFromSystemString(modulePath);
+    utf8ModulePath = naNewStringWithSystemString(modulePath);
     utf8ModuleBasePath = naNewStringWithParentOfPath(utf8ModulePath);
 
     naDelete(utf8ModulePath);
@@ -529,7 +529,7 @@ NA_DEF NAString* naNewApplicationName(void) {
     NAString* applicationbasename;
 
     GetModuleFileName(NULL, modulePath, MAX_PATH);
-    utf8ModulePath = naNewStringFromSystemString(modulePath);
+    utf8ModulePath = naNewStringWithSystemString(modulePath);
 
     naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8ModulePath));
     naDelete(utf8ModulePath);
@@ -680,35 +680,35 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
 
   switch(kind) {
     case NA_FONT_KIND_SYSTEM:
-      fontFamilyName = naNewStringFromSystemString(metrics->lfMessageFont.lfFaceName);
+      fontFamilyName = naNewStringWithSystemString(metrics->lfMessageFont.lfFaceName);
       retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     case NA_FONT_KIND_TITLE:
-      fontFamilyName = naNewStringFromSystemString(metrics->lfMessageFont.lfFaceName);
+      fontFamilyName = naNewStringWithSystemString(metrics->lfMessageFont.lfFaceName);
       retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_BOLD,
         baseSize);
       break;
     case NA_FONT_KIND_MONOSPACE:
-      fontFamilyName = naNewStringFromSystemString(TEXT("Courier New"));
+      fontFamilyName = naNewStringWithSystemString(TEXT("Courier New"));
       retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     case NA_FONT_KIND_PARAGRAPH:
-      fontFamilyName = naNewStringFromSystemString(TEXT("Palatino Linotype"));
+      fontFamilyName = naNewStringWithSystemString(TEXT("Palatino Linotype"));
       retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,
         baseSize);
       break;
     case NA_FONT_KIND_MATH:
-      fontFamilyName = naNewStringFromWideCharString(TEXT("Palatino Linotype"));
+      fontFamilyName = naNewStringWithWideCharString(TEXT("Palatino Linotype"));
       retFont = naCreateFont(
         naGetStringUTF8Pointer(fontFamilyName),
         NA_FONT_FLAG_REGULAR,

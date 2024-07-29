@@ -8,7 +8,7 @@ NA_DEF NABool naInitPreferencesBool(const char* key, NABool newValue) {
   
   if(value != NA_ZERO_i64) {
     NABool retValue = na_ConvertPreferencesBoolToNABool(value);
-    if(na_ValidNABoolFromPreferences(retValue)) {
+    if(na_IsPreferencesBoolValid(retValue)) {
       return retValue;
     }
   }
@@ -59,7 +59,7 @@ NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt newValue, NAInt min, NA
   
   if(value != NA_ZERO_i64) {
     NAInt retValue = na_ConvertPreferencesIntToNAInt(value);
-    if(na_ValidNAIntFromPreferences(retValue, min, max)) {
+    if(na_IsPreferencesNAIntValid(retValue, min, max)) {
       return retValue;
     }
   }
@@ -97,7 +97,7 @@ NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt newValue, NAInt count)
   
   if(value != NA_ZERO_i64) {
     NAInt retValue = na_ConvertPreferencesEnumToNAEnum(value);
-    if(na_ValidEnumFromPreferences(retValue, count)) {
+    if(na_IsPreferencesEnumValid(retValue, count)) {
       return retValue;
     }
   }
@@ -135,7 +135,7 @@ NA_DEF double naInitPreferencesDouble(const char* key, double newValue, double m
   
   if(value != 0.) {
     double retValue = na_ConvertPreferencesDoubleToNADouble(value);
-    if(na_ValidDoubleFromPreferences(retValue, min, max)) {
+    if(na_IsPreferencesDoubleValid(retValue, min, max)) {
       return retValue;
     }
   }

@@ -78,7 +78,7 @@ NA_API void naAddUIKeyboardShortcut(
 // propagate to parent elements.
 //
 // The CLOSES command will be called when a window tries to close. You can
-// prevent it from closing by calling naPreventWindowFromClosing. That
+// prevent it from closing by calling naPreventWindowClosing. That
 // function only works in conjunction with such a command and will emit an
 // error otherwise.
 

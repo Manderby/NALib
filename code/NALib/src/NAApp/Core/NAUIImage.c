@@ -233,7 +233,7 @@ NA_DEF NAUIImage* naRecreateUIImage(const NAUIImage* uiImage) {
   
   na_AddUISubImage(
     newUIImage,
-    naRetain(subImage->image),
+    naRetainConst(subImage->image),
     subImage->resolution,
     NA_UIIMAGE_SKIN_PLAIN,
     NA_UIIMAGE_INTERACTION_NONE);
@@ -384,7 +384,7 @@ NA_HDEF NA_UISubImage* na_AddUISubImage(
 }
 
 NA_HDEF void na_DeallocUISubImage(NA_UISubImage* subImage) {
-  naRelease(subImage->image);
+  naReleaseConst(subImage->image);
   naFree(subImage);
 }
 

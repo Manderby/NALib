@@ -114,12 +114,12 @@ NA_DEF NAImage* naCreateImageWithNativeImage(const void* nativeImage) {
 
 
 
-NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr) {
+NA_DEF NAImage* naCreateImageWithFilePath(const NAUTF8Char* pathStr) {
   NAImage* image = NA_NULL;
 
 //  // Currently, only png is possible
 //  NAPNG* png = naNewPNGWithPath(pathStr);
-//  NAImage* image = naCreateImageFromPNG(png);
+//  NAImage* image = naCreateImageWithPNG(png);
 //  return image;
 
 //  CGDataProviderRef dataprovider = CGDataProviderCreateWithFilename(pathStr);
