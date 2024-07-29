@@ -41,15 +41,21 @@ typedef enum{
 
 typedef struct NAFont NAFont;
 
-// Use NARelease to release the font again.
+// Use naRelease to release the font again.
 NA_API NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size);
 NA_API NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size);
 
+// Getter
 NA_API const NAString* naGetFontName(const NAFont* font);
 NA_API uint32 naGetFontFlags(const NAFont* font);
 NA_API double naGetFontSize(const NAFont* font);
 
+// Returns the native representation of the font.
+// HFONT on windows
+// NSFont* on macOS
 NA_API void* naGetFontNativePointer(const NAFont* font);
+
+// Returns the default font for the system.
 NA_API NAFont* naGetSystemFont(void);
 
 #endif // NA_FONT_INCLUDED

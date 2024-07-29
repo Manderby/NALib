@@ -12,7 +12,7 @@
 // NA_UI_COMMAND_REDRAW        When the content shall be redrawn
 // NA_UI_COMMAND_MOUSE_DOWN    When a mouse button has been pressed
 // NA_UI_COMMAND_MOUSE_UP      When a mouse button has been released
-// NA_UI_COMMAND_MOUSE_MOVED   When the mouse moved withing the space
+// NA_UI_COMMAND_MOUSE_MOVED   When the mouse moved within the space
 // NA_UI_COMMAND_TRANSFORMED   When scrolled, zoomed, rotated
 // NA_UI_COMMAND_KEY_DOWN      When a key has been pressed
 // NA_UI_COMMAND_KEY_UP        When a key has been released

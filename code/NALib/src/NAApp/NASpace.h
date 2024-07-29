@@ -13,7 +13,7 @@
 // NA_UI_COMMAND_KEY_UP        When a key has been released
 // NA_UI_COMMAND_MOUSE_DOWN    When a mouse button has been pressed
 // NA_UI_COMMAND_MOUSE_UP      When a mouse button has been released
-// NA_UI_COMMAND_MOUSE_MOVED   When the mouse moved withing the space
+// NA_UI_COMMAND_MOUSE_MOVED   When the mouse moved within the space
 // NA_UI_COMMAND_MOUSE_ENTERED When the mouse entered the space
 // NA_UI_COMMAND_MOUSE_EXITED  When the mouse exited the space
 

@@ -372,7 +372,7 @@ NA_HDEF NA_UISubImage* na_AddUISubImage(
   NAUIImageInteraction interaction)
 {
   NA_UISubImage* subImage = naAlloc(NA_UISubImage);
-  subImage->image = naRetain(image);
+  subImage->image = naRetainConst(image);
   subImage->nativeImage = naAllocNativeImageWithImage(image);
   subImage->resolution = resolution;
   subImage->skin = skin;

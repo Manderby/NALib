@@ -11,6 +11,9 @@ NA_RUNTIME_TYPE(NAFont, na_DestructFont, NA_TRUE);
 
 
 NA_DEF NAFont* naGetSystemFont() {
+  if(!na_App->systemFont) {
+    na_App->systemFont = naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT);
+  }
   return na_App->systemFont;
 }
 

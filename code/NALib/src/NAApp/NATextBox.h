@@ -13,7 +13,6 @@
 
 
 
-
 // Creates a new TextBox.
 NA_API NATextBox* naNewTextBox(NASize size);
 

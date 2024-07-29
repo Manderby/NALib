@@ -171,7 +171,7 @@ typedef enum{
   NA_MODIFIER_FLAG_OPTION        = 0x0030,
   NA_MODIFIER_FLAG_COMMAND       = 0x00c0
 
-  // The following flags will be available in the future. Please be patient.
+  // The following flags might be available in the future. Please be patient.
 //  NA_MODIFIER_FLAG_LEFT_SHIFT    = 0x0001,
 //  NA_MODIFIER_FLAG_RIGHT_SHIFT   = 0x0002,
 //  NA_MODIFIER_FLAG_LEFT_CONTROL  = 0x0004,
@@ -204,6 +204,8 @@ NA_API NAKeyStroke naMakeKeyStroke(uint32 modifiers, NAUIKeyCode keyCode);
 // Returns a string which represents what the user would see when pressing
 // the given key with the given modifiers. Implemented system-specific.
 NAString* naNewKeyPressString(uint32 modifiers, NAUIKeyCode keyCode);
+
+
 
 #endif // NA_KEYBOARD_INCLUDED
 

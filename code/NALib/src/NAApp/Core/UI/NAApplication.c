@@ -24,7 +24,8 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
   application->translator = NA_NULL;
   naStartTranslator();
   
-  application->systemFont = naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT);
+  // todo: make this a singleton.
+  application->systemFont = NA_NULL;
 
   application->mouseStatus.pos = naMakePos(0, 0);
   application->mouseStatus.prevPos = naMakePos(0, 0);
@@ -63,7 +64,8 @@ NA_HDEF void na_ClearApplication(NAApplication* application) {
   naStopTranslator();
   na_ClearUIElement(&application->uiElement);
 
-  naRelease(application->systemFont);
+  if(application->systemFont)
+    naRelease(application->systemFont);
 
   // This must be at the very end as the uiElements are used up until the last
   // ClearUIElement operation.

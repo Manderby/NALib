@@ -6,6 +6,7 @@
 #define NA_UI_ELEMENT_INCLUDED
 
 
+
 // ///////////////////////////////////
 // User Interface Elements
 //
@@ -28,24 +29,26 @@
 //
 // These are the core structs:
 
-typedef struct NAApplication    NAApplication;
+NA_PROTOTYPE(NAApplication);
 
-typedef struct NAButton         NAButton;
-typedef struct NACheckBox       NACheckBox;
-typedef struct NAImageSpace     NAImageSpace;
-typedef struct NALabel          NALabel;
-typedef struct NAMenu           NAMenu;
-typedef struct NAMenuItem       NAMenuItem;
-typedef struct NAMetalSpace     NAMetalSpace;
-typedef struct NAOpenGLSpace    NAOpenGLSpace;
-typedef struct NARadio          NARadio;
-typedef struct NAScreen         NAScreen;
-typedef struct NASelect         NASelect;
-typedef struct NASlider         NASlider;
-typedef struct NASpace          NASpace;
-typedef struct NATextBox        NATextBox;
-typedef struct NATextField      NATextField;
-typedef struct NAWindow         NAWindow;
+NA_PROTOTYPE(NAButton);
+NA_PROTOTYPE(NACheckBox);
+NA_PROTOTYPE(NAImageSpace);
+NA_PROTOTYPE(NALabel);
+NA_PROTOTYPE(NAMenu);
+NA_PROTOTYPE(NAMenuItem);
+NA_PROTOTYPE(NAMetalSpace);
+NA_PROTOTYPE(NAOpenGLSpace);
+NA_PROTOTYPE(NARadio);
+NA_PROTOTYPE(NAScreen);
+NA_PROTOTYPE(NASelect);
+NA_PROTOTYPE(NASlider);
+NA_PROTOTYPE(NASpace);
+NA_PROTOTYPE(NATextBox);
+NA_PROTOTYPE(NATextField);
+NA_PROTOTYPE(NAWindow);
+
+
 
 // As the C programming language has no notion of inheritance, the functions
 // listed further below which expect an arbitrary uiElement will expect it as
@@ -77,6 +80,8 @@ typedef enum{
 } NAUIElementType;
 
 NA_API NAUIElementType naGetUIElementType(const void* uiElement);
+
+
 
 // Any ui element has a strict hierarchical ordering: Application - Screen -
 // Window - Space - Subspace - Subsubspace ... You can get the parent element

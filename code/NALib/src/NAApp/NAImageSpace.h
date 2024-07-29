@@ -9,7 +9,7 @@
 
 // An NAImageSpace can react to the following commands:
 //
-// NA_UI_COMMAND_MOUSE_MOVED   When the mouse moved withing the space
+// NA_UI_COMMAND_MOUSE_MOVED   When the mouse moved within the space
 
 
 
@@ -18,6 +18,7 @@
 NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size);
 
 NA_API void naSetImageSpaceImage(NAImageSpace* imageSpace, NAUIImage* uiImage);
+
 
 
 #endif // NA_IMAGESPACE_INCLUDED

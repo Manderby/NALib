@@ -57,6 +57,7 @@ NA_API void naHideMouseUntilMovement(NABool hide);
 // Creates a resolution independent image for a cursor with a hotspot.
 NA_API NACursorImage* naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot);
 NA_API void naDeallocCursorImage(NACursorImage* image);
+
 // Sets the current cursor image to the image provided. If null is sent, the
 // default cursor is set.
 NA_API void naActivateCursorImage(const NACursorImage* image);
