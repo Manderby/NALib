@@ -127,7 +127,8 @@ target_sources(NALib PRIVATE ${coreFiles})
 source_group("NAApp/Core/UI" FILES ${coreUIFiles})
 target_sources(NALib PRIVATE ${coreUIFiles})
 
-if(MACOSX)
+if(1)
+#if(MACOSX)
   source_group("NAApp/macOS" FILES ${macOSFiles})
   target_sources(NALib PRIVATE ${macOSFiles})
 

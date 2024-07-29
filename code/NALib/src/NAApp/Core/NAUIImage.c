@@ -3,6 +3,8 @@
 
 #if NA_COMPILE_GUI == 1
 
+#include "../../NAVisual/NAImage.h"
+
 
 
 NA_API void na_DestructUIImage(NAUIImage* uiImage);
@@ -62,7 +64,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
       resolution,
       NA_UIIMAGE_SKIN_PLAIN,
       NA_UIIMAGE_INTERACTION_NONE);
-    naReleaseImage(newImage);
+    naRelease(newImage);
 
   // If the status is not NONE, we build an image out of it.
   }else if(interaction != NA_UIIMAGE_INTERACTION_NONE) {
@@ -83,7 +85,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
           resolution,
           skin,
           interaction);
-        naReleaseImage(newImage);
+        naRelease(newImage);
       }
       break;
     case NA_UIIMAGE_INTERACTION_HOVER:
@@ -104,7 +106,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
           resolution,
           skin,
           interaction);
-        naReleaseImage(newImage);
+        naRelease(newImage);
       }
       break;
     case NA_UIIMAGE_INTERACTION_DISABLED:
@@ -125,7 +127,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
             resolution,
             skin,
             interaction);
-          naReleaseImage(newImage);
+          naRelease(newImage);
         #endif
       }
       break;
@@ -147,7 +149,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
       resolution,
       skin,
       NA_UIIMAGE_INTERACTION_NONE);
-    naReleaseImage(newImage);
+    naRelease(newImage);
   }
   
   return newSubImage;
@@ -231,7 +233,7 @@ NA_DEF NAUIImage* naRecreateUIImage(const NAUIImage* uiImage) {
   
   na_AddUISubImage(
     newUIImage,
-    naRetainImage(subImage->image),
+    naRetain(subImage->image),
     subImage->resolution,
     NA_UIIMAGE_SKIN_PLAIN,
     NA_UIIMAGE_INTERACTION_NONE);
@@ -370,7 +372,7 @@ NA_HDEF NA_UISubImage* na_AddUISubImage(
   NAUIImageInteraction interaction)
 {
   NA_UISubImage* subImage = naAlloc(NA_UISubImage);
-  subImage->image = naRetainImage(image);
+  subImage->image = naRetain(image);
   subImage->nativeImage = naAllocNativeImageWithImage(image);
   subImage->resolution = resolution;
   subImage->skin = skin;
@@ -382,7 +384,7 @@ NA_HDEF NA_UISubImage* na_AddUISubImage(
 }
 
 NA_HDEF void na_DeallocUISubImage(NA_UISubImage* subImage) {
-  naReleaseImage(subImage->image);
+  naRelease(subImage->image);
   naFree(subImage);
 }
 

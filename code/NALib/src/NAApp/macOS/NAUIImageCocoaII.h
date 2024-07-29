@@ -98,7 +98,7 @@ NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color) {
 
 
 
-NA_DEF NAImage* naCreateImageFromNativeImage(const void* nativeImage) {
+NA_DEF NAImage* naCreateImageWithNativeImage(const void* nativeImage) {
   NAImage* image;
   
   CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)nativeImage));
@@ -126,7 +126,7 @@ NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr) {
 //  if(dataprovider) {
 //  
 //    CGImageRef nativeImage = CGImageCreateWithPNGDataProvider(dataprovider, NULL, NA_FALSE, kCGRenderingIntentAbsoluteColorimetric);
-//    image = naCreateImageFromNativeImage(nativeImage);
+//    image = naCreateImageWithNativeImage(nativeImage);
 //    
 //    CGImageRelease(nativeImage);
 //    CGDataProviderRelease(dataprovider);
@@ -135,7 +135,7 @@ NA_DEF NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr) {
   NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:pathStr]];
   NSImage* nsImage = [[NSImage alloc] initWithContentsOfURL:url];
   CGImageRef nativeImage = [nsImage CGImageForProposedRect:NA_NULL context:NA_NULL hints:NA_NULL];
-  image = naCreateImageFromNativeImage(nativeImage);
+  image = naCreateImageWithNativeImage(nativeImage);
 
   NA_COCOA_RELEASE(nsImage);
   // Important: Do not use CGImageRelease on nativeImage. It is part of nsImage.

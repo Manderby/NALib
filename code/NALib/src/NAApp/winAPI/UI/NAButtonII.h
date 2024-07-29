@@ -190,7 +190,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     if(customDraw) {
       // We store the button as it is drawn by the system.
       BitBlt(hMemDC, 0, 0, (int)buttonSize.width, (int)buttonSize.height, hMemDC, 0, 0, SRCCOPY);
-      NAImage* buttonImage = naCreateImageFromNativeImage(hButtonBitmap);
+      NAImage* buttonImage = naCreateImageWithNativeImage(hButtonBitmap);
 
       // Now we blend manually the foreground to the background.
       NAColor backColor = {.8f, .8f, .8f, 1.f};
@@ -201,8 +201,8 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       NAImage* tintedImage = naCreateImageWithTint(alphaImage, &accentColor, NA_BLEND_MULTIPLY, .85f);
       //NAImage* blendedImage = naCreateImageCopy(tintedImage);
       NAImage* blendedImage = naCreateImageWithApply(&backColor, tintedImage, NA_BLEND_OVERLAY, 1.f);
-      naReleaseImage(alphaImage);
-      naReleaseImage(tintedImage);
+      naRelease(alphaImage);
+      naRelease(tintedImage);
 
       NAByte* blendedBuffer = naMalloc(buttonSize.width * buttonSize.height * 4);
       naConvertImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
@@ -213,10 +213,10 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       BitBlt(drawitemstruct->hDC, 0, 0, (int)buttonSize.width, (int)buttonSize.height, hMemDC, 0, 0, SRCCOPY);
 
       // Deleting the blended objects and buffers
-      naReleaseImage(buttonImage);
+      naRelease(buttonImage);
       DeleteObject(hBlendedBitmap);
       naFree(blendedBuffer);
-      naReleaseImage(blendedImage);
+      naRelease(blendedImage);
     }
 
     DeleteObject(hButtonBitmap);
@@ -258,7 +258,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     HBITMAP hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
     HBITMAP hOldBitmap = SelectObject(hMemDC, hBackBitmap);
     BitBlt(hMemDC, 0, 0, (int)size1x.width, (int)size1x.height, drawitemstruct->hDC, (int)offset.x, (int)offset.y, SRCCOPY);
-    NAImage* backImage = naCreateImageFromNativeImage(hBackBitmap);
+    NAImage* backImage = naCreateImageWithNativeImage(hBackBitmap);
 
     // Now we blend manually the foreground to the background.
     NAImage* blendedImage = naCreateImageWithBlend(
@@ -279,12 +279,12 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     // Deleting the blended objects and buffers
     DeleteObject(hBlendedBitmap);
     naFree(blendedBuffer);
-    naReleaseImage(blendedImage);
+    naRelease(blendedImage);
 
     // Deleting background objects and buffers
     DeleteObject(hBackBitmap);
     naFree(backBuffer);
-    naReleaseImage(backImage);
+    naRelease(backImage);
   }
 
   // Deleting device contexts

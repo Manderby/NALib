@@ -5,6 +5,10 @@
 
 
 
+NA_RUNTIME_TYPE(NAFile, na_DestroyFile, NA_TRUE);
+
+
+
 // This function had to be moved here as it introcudes cyclic redundancies
 // when compiling.
 NA_DEF NAString* naNewStringWithCurWorkingDirectory() {
@@ -48,12 +52,11 @@ NA_DEF NABool naIsHidden(const char* path) {
 
 
 
-NA_HDEF void na_DeallocFile(NAFile* file) {
+NA_HDEF void na_DestroyFile(NAFile* file) {
   if(file->desc > 2) {
     naClose(file->desc);
   }
   file->desc = -1;
-  naFree(file);
 }
 
 

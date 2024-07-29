@@ -11,6 +11,11 @@ struct NAImage{
   NAColor* data;
 };
 
+NA_HAPI void na_DestroyImage(NAImage* image);
+NA_RUNTIME_TYPE(NAImage, na_DestroyImage, NA_TRUE);
+
+
+
 #if NA_SIZE_T_BITS < 32
   #error "Size of size_t is too small for the NAImage struct"
 #endif
@@ -64,7 +69,7 @@ NA_DEF NAImage* naCreateImage(NASizes size, const NAColor* color) {
   if(size.width > NA_MAX_i32 || size.height > NA_MAX_i32)
     naError("size is too big");
 #endif
-  image = naAlloc(NAImage);
+  image = naCreate(NAImage);
   naInitRefCount(&image->refCount);
   image->width = (uint32)size.width;
   image->height = (uint32)size.height;
@@ -88,7 +93,7 @@ NA_HDEF NAImage* naCreateImageCopy(const NAImage* image) {
   if(!image)
     naCrash("given image is a Null pointer");
 #endif
-  newImage = naAlloc(NAImage);
+  newImage = naCreate(NAImage);
   naInitRefCount(&newImage->refCount);
   newImage->width = image->width;
   newImage->height = image->height;
@@ -372,7 +377,7 @@ NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image) {
     inPtr3 += radioImage->width;
     inPtr4 += radioImage->width;
   }
-  naReleaseImage(radioImage);
+  naRelease(radioImage);
   
   return outImage;
 }
@@ -493,7 +498,7 @@ NA_DEF NAImage* naCreateImageWithResize(const NAImage* image, NASizes newSize) {
     outPtr += 1;
   }
   
-  naReleaseImage(radioImage);
+  naRelease(radioImage);
   
   return outImage;
 }
@@ -502,17 +507,6 @@ NA_DEF NAImage* naCreateImageWithResize(const NAImage* image, NASizes newSize) {
 
 NA_HDEF void na_DestroyImage(NAImage* image) {
   naFree(image->data);
-  naFree(image);
-}
-
-NA_API NAImage* naRetainImage(const NAImage* image) {
-  NAImage* mutableImage = (NAImage*)image; 
-  return (NAImage*)naRetainRefCount(&mutableImage->refCount);
-}
-
-NA_DEF void naReleaseImage(const NAImage* image) {
-  NAImage* mutableImage = (NAImage*)image; 
-  naReleaseRefCount(&mutableImage->refCount, mutableImage, (NAMutator)na_DestroyImage);
 }
 
 

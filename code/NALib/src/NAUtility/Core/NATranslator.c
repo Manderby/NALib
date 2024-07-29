@@ -103,9 +103,9 @@ NA_DEF void naStopTranslator(void) {
   naForeachListMutable(&NA_TRANSLATOR->languagePreferences, naFree);
   naClearList(&NA_TRANSLATOR->languagePreferences);
 
-  naReleaseTreeConfiguration(NA_TRANSLATOR->groupsConfig);
-  naReleaseTreeConfiguration(NA_TRANSLATOR->languagesConfig);
-  naReleaseTreeConfiguration(NA_TRANSLATOR->stringsConfig);
+  naRelease(NA_TRANSLATOR->groupsConfig);
+  naRelease(NA_TRANSLATOR->languagesConfig);
+  naRelease(NA_TRANSLATOR->stringsConfig);
 
   naFree(NA_TRANSLATOR);
 }

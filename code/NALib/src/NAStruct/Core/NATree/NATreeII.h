@@ -136,6 +136,11 @@ struct NATreeConfiguration{
   NAPtr                         userData;
 };
 
+NA_HAPI void na_DestroyTreeConfiguration(NATreeConfiguration* config);
+NA_EXTERN_RUNTIME_TYPE(NATreeConfiguration);
+
+
+
 struct NATreeItem{
   NATreeNode* parent;
   #if NA_DEBUG
@@ -182,10 +187,6 @@ struct NATreeIterationInfo{
 
 
 // Helper functions. Do not use as public API.
-
-// Configuration
-NA_HIAPI void na_DeallocConfiguration(NATreeConfiguration* config);
-NA_HIAPI NATreeConfiguration* na_RetainTreeConfiguration(NATreeConfiguration* config);
 
 // Item
 NA_HIAPI void na_InitTreeItem(NATreeItem* item);

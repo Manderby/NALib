@@ -413,7 +413,7 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop) {
 
 
 
-NA_DEF void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts) {
+NA_DEF void naSetWindowAcceptsKeyboardReactions(NAWindow* window, NABool accepts) {
   // todo
 }
 

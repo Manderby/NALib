@@ -1,6 +1,7 @@
 
 NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config) {
-  tree->config = na_RetainTreeConfiguration(config);
+  config->flags |= NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE;
+  tree->config = naRetain(config);
 
   #if NA_DEBUG
     if(((tree->config->flags & NA_TREE_QUADTREE) || (tree->config->flags & NA_TREE_OCTTREE)) && !tree->config->configdata)
@@ -47,7 +48,7 @@ NA_IDEF void naClearTree(NATree* tree) {
   if(tree->config->treeDestructor) {
     tree->config->treeDestructor(tree->config->userData);
   }
-  naReleaseTreeConfiguration(tree->config);
+  naRelease(tree->config);
 }
 
 

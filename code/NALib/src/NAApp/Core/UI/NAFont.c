@@ -8,6 +8,8 @@
 NA_HAPI void na_DestructFont(NAFont* font);
 NA_RUNTIME_TYPE(NAFont, na_DestructFont, NA_TRUE);
 
+
+
 NA_DEF NAFont* naGetSystemFont() {
   return na_App->systemFont;
 }

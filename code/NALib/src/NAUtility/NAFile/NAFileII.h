@@ -200,11 +200,13 @@ struct NAFile{
   int desc;   // The descriptor
 };
 
+NA_HAPI void na_DestroyFile(NAFile* file);
+NA_EXTERN_RUNTIME_TYPE(NAFile);
 
 
 
 NA_IDEF NAFile* naCreateFileReadingPath(const char* filePath) {
-  NAFile* file = naAlloc(NAFile);
+  NAFile* file = naCreate(NAFile);
   naInitRefCount(&file->refCount);
   file->desc = naOpen(filePath, NA_FILE_OPEN_FLAGS_READ, NA_FILEMODE_DEFAULT);
   #if NA_DEBUG
@@ -217,7 +219,7 @@ NA_IDEF NAFile* naCreateFileReadingPath(const char* filePath) {
 
 
 NA_IDEF NAFile* naCreateFileWritingPath(const char* filePath, NAFileMode mode) {
-  NAFile* file = naAlloc(NAFile);
+  NAFile* file = naCreate(NAFile);
   naInitRefCount(&file->refCount);
   file->desc = naOpen(filePath, NA_FILE_OPEN_FLAGS_WRITE, mode);
   #if NA_DEBUG
@@ -230,7 +232,7 @@ NA_IDEF NAFile* naCreateFileWritingPath(const char* filePath, NAFileMode mode) {
 
 
 NA_IDEF NAFile* naCreateFileAppendingPath(const char* filePath, NAFileMode mode) {
-  NAFile* file = naAlloc(NAFile);
+  NAFile* file = naCreate(NAFile);
   naInitRefCount(&file->refCount);
   file->desc = naOpen(filePath, NA_FILE_OPEN_FLAGS_APPEND, mode);
   #if NA_DEBUG
@@ -243,7 +245,7 @@ NA_IDEF NAFile* naCreateFileAppendingPath(const char* filePath, NAFileMode mode)
 
 
 NA_IDEF NAFile* naCreateFileReadingStdin() {
-  NAFile* file = naAlloc(NAFile);
+  NAFile* file = naCreate(NAFile);
   naInitRefCount(&file->refCount);
   file->desc = 0;
   return file;
@@ -252,7 +254,7 @@ NA_IDEF NAFile* naCreateFileReadingStdin() {
 
 
 NA_IDEF NAFile* naCreateFileWritingStdout() {
-  NAFile* file = naAlloc(NAFile);
+  NAFile* file = naCreate(NAFile);
   naInitRefCount(&file->refCount);
   file->desc = 1;
   return file;
@@ -261,20 +263,10 @@ NA_IDEF NAFile* naCreateFileWritingStdout() {
 
 
 NA_IDEF NAFile* naCreateFileWritingStderr() {
-  NAFile* file = naAlloc(NAFile);
+  NAFile* file = naCreate(NAFile);
   naInitRefCount(&file->refCount);
   file->desc = 2;
   return file;
-}
-
-
-
-NA_HAPI void na_DeallocFile(NAFile* file);
-
-
-
-NA_IDEF void naReleaseFile(NAFile* file) {
-  naReleaseRefCount(&file->refCount, file, (NAMutator)na_DeallocFile);
 }
 
 

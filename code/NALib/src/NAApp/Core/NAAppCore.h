@@ -21,6 +21,7 @@
 #include "../../NAUtility/NAThreading.h"
 #include "../../NAUtility/NATranslator.h"
 #include "../../NAMath/NAVectorAlgebra.h"
+#include "../../NAVisual/NAColor.h"
 
 // Very much the same as the nativePtr, there are certain types which are
 // casted differently on the different systems and therefore they are

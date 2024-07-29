@@ -107,6 +107,12 @@
 
 
 
+// A macro marking a given type as a struct type without the need of including
+// its definition.
+#define NA_PROTOTYPE(type) typedef struct type type
+
+
+
 #endif // NA_COMPILER_INCLUDED
 
 

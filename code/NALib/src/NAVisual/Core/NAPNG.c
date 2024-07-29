@@ -333,7 +333,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png) {
 
 //  outFile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
 //  naWriteFileBytes(outFile, png->pixeldata, png->size.width * png->size.height * bpp);
-//  naReleaseFile(outFile);
+//  naRelease(outFile);
 
   naClearBufferIterator(&iterFilter);
   naFree(upBuffer);
@@ -790,7 +790,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
 
 //  NAFile* outFile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
 //  naWriteBufferToFile(png->compresseddata, outFile);
-//  naReleaseFile(outFile);
+//  naRelease(outFile);
 
   naFixBufferRange(png->compresseddata);
   naFillBufferWithZLIBDecompression(png->filteredData, png->compresseddata);
@@ -928,7 +928,7 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath) {
   outFile = naCreateFileWritingPath(filePath, NA_FILEMODE_DEFAULT);
   naFixBufferRange(outbuffer);
   naWriteBufferToFile(outbuffer, outFile);
-  naReleaseFile(outFile);
+  naRelease(outFile);
   naRelease(outbuffer);
 }
 

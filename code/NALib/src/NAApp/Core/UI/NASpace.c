@@ -1,7 +1,9 @@
 
-#include "../NAAppCore.h"
+#include "../../NAApp.h"
 
 #if NA_COMPILE_GUI == 1
+
+#include "../NAAppCore.h"
 
 
 

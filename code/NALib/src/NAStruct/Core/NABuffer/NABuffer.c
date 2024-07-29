@@ -73,7 +73,7 @@ NA_HDEF void na_InitBufferStruct(NABuffer* buffer) {
   #if NA_DEBUG
     buffer->iterCount = 0;
   #endif
-  naReleaseTreeConfiguration(config);
+  naRelease(config);
 }
 
 
@@ -231,7 +231,7 @@ NA_DEF NABuffer* naCreateBufferWithInputPath(const char* filePath) {
 
   fileBuffer = naCreateBuffer(NA_FALSE);
   readSource = naCreateBufferSource(na_FillBufferPartFile, NA_NULL);
-    naSetBufferSourceData(readSource, file, (NAMutator)naReleaseFile);
+    naSetBufferSourceData(readSource, file, (NAMutator)naRelease);
     naSetBufferSourceLimit(readSource, range);
     fileBuffer->source = naRetain(readSource);
     fileBuffer->sourceOffset = 0;

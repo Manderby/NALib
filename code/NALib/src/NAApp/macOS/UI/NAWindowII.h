@@ -337,7 +337,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
 
 
 
-NA_DEF void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts) {
+NA_DEF void naSetWindowAcceptsKeyboardReactions(NAWindow* window, NABool accepts) {
   naSetFlagu32(&window->coreFlags, NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS, accepts);
 }
 

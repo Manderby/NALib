@@ -184,6 +184,19 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 }
 
 
+NA_HDEF void naPresentFilePanel(
+  void* window,
+  NABool load,
+  const NAUTF8Char* fileName,
+  const NAUTF8Char* allowedFileSuffix,
+  NAFilePanelCallback callback,
+  const void* data)
+{
+  // todo
+}
+
+
+
 NA_HDEF void na_CaptureKeyboardStatus(MSG* message) {  
   NABool lShift;
   NABool rShift;

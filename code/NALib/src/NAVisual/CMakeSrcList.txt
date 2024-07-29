@@ -16,6 +16,7 @@ set(coreImplementationFiles
   ${NAVisualDir}/Core/NAColor.c
   ${NAVisualDir}/Core/NAColorII.h
   ${NAVisualDir}/Core/NAImage.c
+  ${NAVisualDir}/Core/NAColorDefinitions.h
   ${NAVisualDir}/Core/NAColorOperations.c
   ${NAVisualDir}/Core/NADeflate.c
   ${NAVisualDir}/Core/NAPNG.c

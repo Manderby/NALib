@@ -22,14 +22,20 @@
 // Window flags:
 #define NA_WINDOW_FIXED_SIZE             0x00
 #define NA_WINDOW_RESIZEABLE             0x01
+
 #define NA_WINDOW_DEFAULT                0x00
 #define NA_WINDOW_AUXILIARY              0x02
+
 #define NA_WINDOW_TITLED                 0x00
 #define NA_WINDOW_TITLELESS              0x04
+
 #define NA_WINDOW_CLOSEABLE              0x00
 #define NA_WINDOW_NON_CLOSEABLE          0x08
+
 #define NA_WINDOW_MINIATURIZEABLE        0x00
 #define NA_WINDOW_NON_MINIATURIZEABLE    0x10
+
+
 
 // Creates a new window.
 NA_API NAWindow* naNewWindow(
@@ -46,7 +52,7 @@ NA_API void naSetWindowContentSpace(NAWindow* window, void* space);
 NA_API void naShowWindow(const NAWindow* window);
 NA_API void naCloseWindow(const NAWindow* window);
 
-// Handling modal windows. Opening such will block the rest of the app.
+// Handling modal windows. Opening such will block the parent window. (not fully functional yet)
 // Close must be called explicitely.
 NA_API void naShowWindowModal(NAWindow* window, NAWindow* parentWindow);
 NA_API void naCloseWindowModal(NAWindow* window);
@@ -65,14 +71,13 @@ NA_API NABool naIsWindowResizeable(const NAWindow* window);
 // Get and set the outer (non-client) rect of the window. Note that the
 // function naGetUIElementRect will always return the inner (clinet) rect of
 // the window.
-NA_API NARect naGetWindowOuterRect(const NAWindow* window);
-NA_API void naSetWindowOuterRect(NAWindow* window, NARect rect);
+NA_API NARect naGetWindowOuterRect(const NAWindow * window);
+NA_API void naSetWindowOuterRect(NAWindow * window, NARect rect);
 
 // Set various properties of the window
 NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
-//NA_API void naSetWindowRect(NAWindow* window, NARect rect);
 NA_API void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
-NA_API void naSetWindowAcceptsKeyReactions(NAWindow* window, NABool accepts);
+NA_API void naSetWindowAcceptsKeyboardReactions(NAWindow* window, NABool accepts);
 
 // Get and set the first tab element of the window.
 NA_API void* naGetWindowFirstTabElement(NAWindow* window);
@@ -97,7 +102,10 @@ typedef enum{
   NA_ALERT_BOX_ERROR
 } NAAlertBoxType;
 
-NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText);
+NA_API void naPresentAlertBox(
+  NAAlertBoxType alertBoxType,
+  const NAUTF8Char* titleText,
+  const NAUTF8Char* infoText);
 
 
 

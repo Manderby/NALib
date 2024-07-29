@@ -56,7 +56,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
   hOldBitmap = SelectObject(hMemDC, hBackBitmap);
   BitBlt(hMemDC, 0, 0, (int)size1x.width, (int)size1x.height, paintStruct.hdc, (int)offset.x, (int)offset.y, SRCCOPY);
-  backImage = naCreateImageFromNativeImage(hBackBitmap);
+  backImage = naCreateImageWithNativeImage(hBackBitmap);
 
   // Now we blend manually the foreground to the background.
   blendedImage = naCreateImageWithBlend(
@@ -77,12 +77,12 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   // Deleting the blended objects and buffers
   DeleteObject(hBlendedBitmap);
   naFree(blendedBuffer);
-  naReleaseImage(blendedImage);
+  naRelease(blendedImage);
 
   // Deleting background objects and buffers
   DeleteObject(hBackBitmap);
   naFree(backBuffer);
-  naReleaseImage(backImage);
+  naRelease(backImage);
 
   // Deleting device contexts
   DeleteDC(hMemDC);

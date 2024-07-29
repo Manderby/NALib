@@ -37,7 +37,7 @@ NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color) {
 
 
 
-NA_DEF NAImage* naCreateImageFromNativeImage(const void* nativeImage) {
+NA_DEF NAImage* naCreateImageWithNativeImage(const void* nativeImage) {
   BYTE* lpPixels;
   NAImage* image;
 

@@ -11,7 +11,12 @@
 
 
 
-#include "../NAVisual/NAImage.h"
+NA_PROTOTYPE(NAColor);
+NA_PROTOTYPE(NAImage);
+
+#include "../NAVisual/Core/NAColorDefinitions.h"
+
+
 
 typedef enum{
   NA_UIIMAGE_INTERACTION_NONE,
@@ -24,22 +29,23 @@ typedef enum{
   NA_UIIMAGE_SKIN_PLAIN,  // leave the image untouched
   NA_UIIMAGE_SKIN_LIGHT,  // choose a representation for a light display
   NA_UIIMAGE_SKIN_DARK,   // choose a representation for a dark display
-  NA_UIIMAGE_SKIN_SYSTEM, // choose a representation for a light or dark
-                          // display dependent on the current system settings.
+  NA_UIIMAGE_SKIN_SYSTEM, // choose dependent on the current system settings
 } NAUIImageSkin;
 
 typedef struct NAUIImage NAUIImage;
 
 
-// naCreateUIImage creates a new UIImage with a given main and alternative
-// image.
+
+// naCreateUIImage creates a new UIImage which stores multiple representations
+// of an image depending on resolution, theme, interaction.
 //
 // You always provide the images in the highest resolution available. If you
 // have for example a 512x512 point image representing the double resolution
 // image of a 256x256 icon, you provide that 512x512 image with the resolution
 // NA_UI_RESOLUTION_2x.
 //
-// Downsampling will be done automatically by NALib.
+// Downsampling will be done automatically by NALib in case you do not provide
+// a subimage yourself using naSetUIImageSubImage.
 //
 // Note that a UIImage is here to solve the issue of different resolutions,
 // not the issue of different representations depending on the visual size
@@ -96,6 +102,8 @@ NA_API void naFillDefaultAccentColorWithSkin(NAColor* color, NAUIImageSkin skin)
 // macOS allows for various kind of input files.
 NA_API NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr);
 
+
+
 // Working with system native images
 //
 // Operating systems have special types to represent an image. The following
@@ -106,7 +114,7 @@ NA_API NAImage* naCreateImageFromFilePath(const NAUTF8Char* pathStr);
 // Windows: HBITMAP
 
 // Creates a new image out of a given native image.
-NA_API NAImage* naCreateImageFromNativeImage(const void* nativeImage);
+NA_API NAImage* naCreateImageWithNativeImage(const void* nativeImage);
 
 // Allocates a new native image with the content of the given image.
 NA_API void* naAllocNativeImageWithImage(const NAImage* image);
