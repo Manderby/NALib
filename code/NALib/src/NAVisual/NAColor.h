@@ -21,11 +21,6 @@
 
 
 
-NA_DEF void naConvertHSVToHSL(float out[3], const float in[3]);
-NA_DEF void naConvertHSLToHSV(float out[3], const float in[3]);
-
-
-
 typedef struct NAColor NAColor;
 struct NAColor{
   float r;

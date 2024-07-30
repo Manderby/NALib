@@ -111,7 +111,6 @@
 // /////////////////////////////////
 // TYPE DEFINITIONS
 
-
 // 1-D Coordinates: Range
 NA_PROTOTYPE(NARange);
 NA_PROTOTYPE(NARangef);
@@ -120,67 +119,67 @@ NA_PROTOTYPE(NARangei64);
 NA_PROTOTYPE(NARanges);
 
 // 2-D Coordinates: Pos, Size and Rect
-typedef struct NAPos      NAPos;
-typedef struct NAPosf     NAPosf;
-typedef struct NAPosi32   NAPosi32;
-typedef struct NAPosi64   NAPosi64;
-typedef struct NAPoss     NAPoss;
+NA_PROTOTYPE(NAPos);
+NA_PROTOTYPE(NAPosf);
+NA_PROTOTYPE(NAPosi32);
+NA_PROTOTYPE(NAPosi64);
+NA_PROTOTYPE(NAPoss);
 
-typedef struct NASize     NASize;
-typedef struct NASizef    NASizef;
-typedef struct NASizei32  NASizei32;
-typedef struct NASizei64  NASizei64;
-typedef struct NASizes    NASizes;
+NA_PROTOTYPE(NASize);
+NA_PROTOTYPE(NASizef);
+NA_PROTOTYPE(NASizei32);
+NA_PROTOTYPE(NASizei64);
+NA_PROTOTYPE(NASizes);
 
-typedef struct NARect     NARect;
-typedef struct NARectf    NARectf;
-typedef struct NARecti32  NARecti32;
-typedef struct NARecti64  NARecti64;
-typedef struct NARects    NARects;
+NA_PROTOTYPE(NARect);
+NA_PROTOTYPE(NARectf);
+NA_PROTOTYPE(NARecti32);
+NA_PROTOTYPE(NARecti64);
+NA_PROTOTYPE(NARects);
 
 // 3-D Coordinates: Vertex, Volume and Box
-typedef struct NAVertex    NAVertex;
-typedef struct NAVertexf   NAVertexf;
-typedef struct NAVertexi32 NAVertexi32;
-typedef struct NAVertexi64 NAVertexi64;
-typedef struct NAVertexs   NAVertexs;
+NA_PROTOTYPE(NAVertex);
+NA_PROTOTYPE(NAVertexf);
+NA_PROTOTYPE(NAVertexi32);
+NA_PROTOTYPE(NAVertexi64);
+NA_PROTOTYPE(NAVertexs);
 
-typedef struct NAVolume    NAVolume;
-typedef struct NAVolumef   NAVolumef;
-typedef struct NAVolumei32 NAVolumei32;
-typedef struct NAVolumei64 NAVolumei64;
-typedef struct NAVolumes   NAVolumes;
+NA_PROTOTYPE(NAVolume);
+NA_PROTOTYPE(NAVolumef);
+NA_PROTOTYPE(NAVolumei32);
+NA_PROTOTYPE(NAVolumei64);
+NA_PROTOTYPE(NAVolumes);
 
-typedef struct NABox       NABox;
-typedef struct NABoxf      NABoxf;
-typedef struct NABoxi32    NABoxi32;
-typedef struct NABoxi64    NABoxi64;
-typedef struct NABoxs      NABoxs;
+NA_PROTOTYPE(NABox);
+NA_PROTOTYPE(NABoxf);
+NA_PROTOTYPE(NABoxi32);
+NA_PROTOTYPE(NABoxi64);
+NA_PROTOTYPE(NABoxs);
 
 // Bezel4 is deprecated. Use Border2D
-typedef struct NABezel4    NABezel4;
-typedef struct NABezel4f   NABezel4f;
-typedef struct NABezel4i32 NABezel4i32;
-typedef struct NABezel4i64 NABezel4i64;
-typedef struct NABezel4s   NABezel4s;
+NA_PROTOTYPE(NABezel4);
+NA_PROTOTYPE(NABezel4f);
+NA_PROTOTYPE(NABezel4i32);
+NA_PROTOTYPE(NABezel4i64);
+NA_PROTOTYPE(NABezel4s);
 
-typedef struct NABorder1D    NABorder1D;
-typedef struct NABorder1Df   NABorder1Df;
-typedef struct NABorder1Di32 NABorder1Di32;
-typedef struct NABorder1Di64 NABorder1Di64;
-typedef struct NABorder1Ds   NABorder1Ds;
+NA_PROTOTYPE(NABorder1D);
+NA_PROTOTYPE(NABorder1Df);
+NA_PROTOTYPE(NABorder1Di32);
+NA_PROTOTYPE(NABorder1Di64);
+NA_PROTOTYPE(NABorder1Ds);
 
-typedef struct NABorder2D    NABorder2D;
-typedef struct NABorder2Df   NABorder2Df;
-typedef struct NABorder2Di32 NABorder2Di32;
-typedef struct NABorder2Di64 NABorder2Di64;
-typedef struct NABorder2Ds   NABorder2Ds;
+NA_PROTOTYPE(NABorder2D);
+NA_PROTOTYPE(NABorder2Df);
+NA_PROTOTYPE(NABorder2Di32);
+NA_PROTOTYPE(NABorder2Di64);
+NA_PROTOTYPE(NABorder2Ds);
 
-typedef struct NABorder3D    NABorder3D;
-typedef struct NABorder3Df   NABorder3Df;
-typedef struct NABorder3Di32 NABorder3Di32;
-typedef struct NABorder3Di64 NABorder3Di64;
-typedef struct NABorder3Ds   NABorder3Ds;
+NA_PROTOTYPE(NABorder3D);
+NA_PROTOTYPE(NABorder3Df);
+NA_PROTOTYPE(NABorder3Di32);
+NA_PROTOTYPE(NABorder3Di64);
+NA_PROTOTYPE(NABorder3Ds);
 
 
 

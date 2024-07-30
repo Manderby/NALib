@@ -5,13 +5,13 @@
 
 
 
-NA_DEF void naConvertHSVToHSL(float out[3], const float in[3]) {
+NA_HDEF void na_ConvertHSVToHSL(float out[3], const float in[3]) {
   out[0] = in[0];
   out[1] = in[1] * in[2];
   out[2] = in[2] - 0.5f * out[1];
 }
 
-NA_DEF void naConvertHSLToHSV(float out[3], const float in[3]) {
+NA_HDEF void na_ConvertHSLToHSV(float out[3], const float in[3]) {
   out[0] = in[0];
   out[2] = in[2] + .5f * in[1];
   if(out[2] == 0.f) {
@@ -21,7 +21,7 @@ NA_DEF void naConvertHSLToHSV(float out[3], const float in[3]) {
   }
 }
 
-void naFillHSVWithColor(float out[3], const NAColor* in) {
+NA_HDEF void na_FillHSVWithColor(float out[3], const NAColor* in) {
   float min;
   float range;
   float rgb[3];
@@ -58,7 +58,7 @@ void naFillHSVWithColor(float out[3], const NAColor* in) {
   }
 }
 
-void naFillColorWithHSV(NAColor* out, const float in[3]) {
+NA_HDEF void na_FillColorWithHSV(NAColor* out, const float in[3]) {
   float hsv[3];
   hsv[0] = in[0];
   hsv[1] = in[1];
@@ -215,8 +215,8 @@ NA_HIDEF void na_BlendColorErodeLight(
 {
   float baseHSV[3];
   float baseHSL[3];
-  naFillHSVWithColor(baseHSV, basePtr);
-  naConvertHSVToHSL(baseHSL, baseHSV);
+  na_FillHSVWithColor(baseHSV, basePtr);
+  na_ConvertHSVToHSL(baseHSL, baseHSV);
 
   float baseColorFactor = (1.f - factor) * topPtr->alpha;
   float topColorFactor = factor * topPtr->alpha;
@@ -241,8 +241,8 @@ NA_HIDEF void na_BlendColorErodeDark(
 {
   float baseHSV[3];
   float baseHSL[3];
-  naFillHSVWithColor(baseHSV, basePtr);
-  naConvertHSVToHSL(baseHSL, baseHSV);
+  na_FillHSVWithColor(baseHSV, basePtr);
+  na_ConvertHSVToHSL(baseHSL, baseHSV);
 
   float baseColorFactor = (1.f - factor) * topPtr->alpha;
   float topColorFactor = factor * topPtr->alpha;
@@ -267,12 +267,12 @@ NA_HIDEF void na_BlendColorEraseHue(
 {
   float baseHSV[3];
   float baseHSL[3];
-  naFillHSVWithColor(baseHSV, basePtr);
-  naConvertHSVToHSL(baseHSL, baseHSV);
+  na_FillHSVWithColor(baseHSV, basePtr);
+  na_ConvertHSVToHSL(baseHSL, baseHSV);
   float topHSV[3];
   float topHSL[3];
-  naFillHSVWithColor(topHSV, topPtr);
-  naConvertHSVToHSL(topHSL, topHSV);
+  na_FillHSVWithColor(topHSV, topPtr);
+  na_ConvertHSVToHSL(topHSL, topHSV);
 
   float hDiff = topHSL[0] - baseHSL[0];
   if(hDiff > 180.f) {
@@ -308,8 +308,8 @@ NA_HIDEF void na_BlendColorEraseHue(
       if(baseHSL[0] > 360.f) {
         baseHSL[0] -= 360.f;
       }
-      naConvertHSLToHSV(baseHSV, baseHSL);
-      naFillColorWithHSV(dstPtr, baseHSV);
+      na_ConvertHSLToHSV(baseHSV, baseHSL);
+      na_FillColorWithHSV(dstPtr, baseHSV);
       dstPtr->alpha = (1.f - factorL * factor) * basePtr->alpha;
       
     }else{
@@ -335,8 +335,8 @@ NA_HIDEF void na_BlendColorEraseHue(
       if(baseHSL[0] < 0.f) {
         baseHSL[0] += 360.f;
       }
-      naConvertHSLToHSV(baseHSV, baseHSL);
-      naFillColorWithHSV(dstPtr, baseHSV);
+      na_ConvertHSLToHSV(baseHSV, baseHSL);
+      na_FillColorWithHSV(dstPtr, baseHSV);
       dstPtr->alpha = (1.f - factorL * factor) * basePtr->alpha;
     }
   }

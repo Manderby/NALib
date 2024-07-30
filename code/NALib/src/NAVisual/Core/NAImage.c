@@ -105,11 +105,6 @@ NA_HDEF NAImage* naCreateImageCopy(const NAImage* image) {
 
 
 
-
-
-
-
-
 NAImage* na_CreateBlendedImage(
   const NAColor* base,
   NASizes baseSize,

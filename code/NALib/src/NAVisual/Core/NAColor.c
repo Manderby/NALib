@@ -114,7 +114,6 @@ NA_HIDEF void na_LimitColorComponentu8(uint8* outvalue, const float inValue) {
 }
 
 NA_DEF void naFillSRGBu8WithColor(uint8* outColor, const NAColor* inColor, NAColorBufferType bufferType) {
-
   switch(bufferType) {
   case NA_COLOR_BUFFER_RGBA:
     na_LimitColorComponentu8(&outColor[0], inColor->r);
