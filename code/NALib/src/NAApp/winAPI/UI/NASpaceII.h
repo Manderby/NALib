@@ -310,9 +310,12 @@ NA_HDEF NARect na_GetSpaceRect(const NA_UIElement* space) {
 NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
 
+  double prevHeight = winapiSpace->rect.size.height;
   winapiSpace->rect = rect;
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(space));
+
+  double test = parentRect.size.height - winapiSpace->rect.pos.y - winapiSpace->rect.size.height;
 
   SetWindowPos(
     naGetUIElementNativePtr(space),
@@ -322,6 +325,13 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
     (int)(winapiSpace->rect.size.width * uiScale),
     (int)(winapiSpace->rect.size.height * uiScale),
     SWP_NOZORDER);
+
+  // We need to trigger a repositioning because in WinAPI, the coordinates
+  // are computed from the top left instead of the bottom right. Simply
+  // setting the rect anew does the trick.
+  if(prevHeight != rect.size.height) {
+    naShiftSpaceChilds(space, naMakePos(0., 0.));
+  }
 }
 
 

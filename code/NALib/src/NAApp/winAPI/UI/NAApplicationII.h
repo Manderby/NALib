@@ -180,6 +180,11 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
     }
   }
 
+  // Before deleting the application, we cleanup whatever the user needs to
+  // clean up.
+  if (cleanup)
+    cleanup(arg);
+
   // When reaching here, the application had been stopped.
   naDelete(app);
 }

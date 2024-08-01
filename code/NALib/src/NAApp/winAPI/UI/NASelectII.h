@@ -38,7 +38,9 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_CANCELMODE:
   case WM_UPDATEUISTATE:
   case WM_ENABLE:
-    break;
+  case WM_WINDOWPOSCHANGED:
+  case WM_MOUSELEAVE:
+      break;
 
   case WM_MOUSEWHEEL:
     // Mousewheel events are discarded. This eliminates erroneous value changes

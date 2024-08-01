@@ -40,6 +40,8 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case BM_SETSTATE:
   case BM_SETCHECK:
   case BM_GETSTATE:
+  case WM_WINDOWPOSCHANGED:
+  case WM_MOUSELEAVE:
     break;
 
   // Menu messages
