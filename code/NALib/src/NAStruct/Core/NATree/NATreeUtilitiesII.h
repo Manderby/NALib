@@ -1,7 +1,7 @@
 
 NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config) {
   config->flags |= NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE;
-  tree->config = naRetain(config);
+  tree->config = (NATreeConfiguration*)naRetain(config);
 
   #if NA_DEBUG
     if(((tree->config->flags & NA_TREE_QUADTREE) || (tree->config->flags & NA_TREE_OCTTREE)) && !tree->config->configdata)
