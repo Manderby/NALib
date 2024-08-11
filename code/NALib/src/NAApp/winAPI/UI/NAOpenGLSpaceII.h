@@ -35,7 +35,11 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
   case WM_MOUSEFIRST:
   case WM_UPDATEUISTATE:
   case WM_MOUSEACTIVATE:
+    break;
+
   case WM_LBUTTONDOWN:
+    break;
+
   case WM_LBUTTONUP:
   case WM_NCPAINT:
   case WM_ERASEBKGND:
@@ -44,8 +48,8 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
 
   case WM_MOUSEWHEEL:
 
-  winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
-  wheelDelta = (int)(-20. * GET_WHEEL_DELTA_WPARAM(wParam) / (double)WHEEL_DELTA);
+    winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
+    wheelDelta = (int)(-8. * GET_WHEEL_DELTA_WPARAM(wParam) / (double)WHEEL_DELTA);
     naSetOpenGLSpaceTranslation(&winapiOpenGLSpace->openGLSpace, 0, wheelDelta);
     if(!na_DispatchUIElementCommand((NA_UIElement*)winapiOpenGLSpace, NA_UI_COMMAND_TRANSFORMED)) {
       // don't know what to do.

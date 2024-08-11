@@ -109,18 +109,37 @@ NA_DEF NAApplication* naGetApplication(void) {
 
 
 
-NA_DEF NABool naGetDefaultWindowSystemKeyHandling() {
+NA_HDEF NABool na_GetApplicationMouseVisible() {
+  #if NA_DEBUG
+    if(!na_App)
+      naCrash("Internal error: application not started. Use naStartApplication");
+  #endif
+  return naGetFlagu32(na_App->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE);
+}
+
+
+NA_HDEF void na_SetApplicationMouseVisible(NABool visible) {
   #if NA_DEBUG
   if(!na_App)
-    naError("Internal error: application not started. Use naStartApplication");
+    naCrash("Internal error: application not started. Use naStartApplication");
+  #endif
+  naSetFlagu32(&na_App->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE, visible);
+}
+
+
+
+NA_DEF NABool naGetDefaultWindowSystemKeyHandling() {
+  #if NA_DEBUG
+    if(!na_App)
+      naCrash("Internal error: application not started. Use naStartApplication");
   #endif
   return naGetFlagu32(na_App->flags, NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING);
 }
 
 NA_DEF void naSetDefaultWindowSystemKeyHandling(NABool enable) {
   #if NA_DEBUG
-  if(!na_App)
-    naError("Internal error: application not started. Use naStartApplication");
+    if(!na_App)
+      naCrash("Internal error: application not started. Use naStartApplication");
   #endif
   naSetFlagu32(&na_App->flags, NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING, enable);
 }

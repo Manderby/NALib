@@ -230,6 +230,9 @@ NA_HAPI double na_GetUIElementYOffset(const NA_UIElement* elem);
 
 NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
 
+NA_HDEF NABool na_GetApplicationMouseVisible();
+NA_HDEF void na_SetApplicationMouseVisible(NABool visible);
+
 NA_HAPI void na_SetUIElementMouseInside(NA_UIElement* elem, NABool inside);
 NA_HAPI NABool na_GetUIElementMouseInside(const NA_UIElement* elem);
 NA_HAPI void na_SetUIElementWINAPINotificationsBlocked(NA_UIElement* elem, NABool block);

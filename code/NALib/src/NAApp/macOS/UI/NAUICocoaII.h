@@ -486,18 +486,18 @@ NA_DEF void naCenterMouse(void* uiElement) {
 
 NA_DEF void naShowMouse() {
   NAApplication* app = naGetApplication();
-  if(!(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)) {
+  if(!na_GetApplicationMouseVisible()) {
     CGDisplayShowCursor(kCGDirectMainDisplay);
-    naSetFlagu32(&app->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE, NA_TRUE);
+    na_SetApplicationMouseVisible(NA_TRUE);
   }
 }
 
 
 NA_DEF void naHideMouse() {
   NAApplication* app = naGetApplication();
-  if(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE) {
+  if(na_GetApplicationMouseVisible()) {
     CGDisplayHideCursor(kCGDirectMainDisplay);
-    naSetFlagu32(&app->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE, NA_FALSE);
+    na_SetApplicationMouseVisible(NA_FALSE);
   }
 }
 

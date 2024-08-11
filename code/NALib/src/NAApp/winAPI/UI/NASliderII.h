@@ -42,7 +42,6 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_MOUSEFIRST:
   case WM_MOUSEWHEEL:
   case WM_KEYFIRST:
-  case WM_MOUSELEAVE:
   case WM_WINDOWPOSCHANGED:
 
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1

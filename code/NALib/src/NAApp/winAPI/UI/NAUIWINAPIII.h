@@ -427,6 +427,61 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
   const NAMouseStatus* mouseStatus;
 
   switch(message) {
+
+  case WM_LBUTTONDOWN:
+    na_SetMouseButtonPressed(NA_MOUSE_BUTTON_LEFT, NA_TRUE);
+    if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_DOWN)) {
+      // don't know what to do.
+    }
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
+    break;
+
+  case WM_RBUTTONDOWN:
+    na_SetMouseButtonPressed(NA_MOUSE_BUTTON_RIGHT, NA_TRUE);
+    if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_DOWN)) {
+      // don't know what to do.
+    }
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
+    break;
+
+  case WM_MBUTTONDOWN:
+    na_SetMouseButtonPressed(NA_MOUSE_BUTTON_MIDDLE, NA_TRUE);
+    if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_DOWN)) {
+      // don't know what to do.
+    }
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
+    break;
+
+  case WM_LBUTTONUP:
+    na_SetMouseButtonPressed(NA_MOUSE_BUTTON_LEFT, NA_FALSE);
+    if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_UP)) {
+      // don't know what to do.
+    }
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
+    break;
+
+  case WM_RBUTTONUP:
+    na_SetMouseButtonPressed(NA_MOUSE_BUTTON_RIGHT, NA_FALSE);
+    if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_UP)) {
+      // don't know what to do.
+    }
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
+    break;
+
+  case WM_MBUTTONUP:
+    na_SetMouseButtonPressed(NA_MOUSE_BUTTON_MIDDLE, NA_FALSE);
+    if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_UP)) {
+      // don't know what to do.
+    }
+    info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
+    break;
+
   case WM_MOUSEHOVER: // being inside the hWND for a specified amout of time.
     break;
 

@@ -763,20 +763,21 @@ NA_DEF void naCenterMouse(void* uiElement) {
 
 NA_DEF void naShowMouse() {
   NAApplication* app = naGetApplication();
-  if(!(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)) {
+  if(!na_GetApplicationMouseVisible()) {
     ShowCursor(1);
-    app->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+    na_SetApplicationMouseVisible(NA_TRUE);
   }
 }
-
 
 NA_DEF void naHideMouse() {
   NAApplication* app = naGetApplication();
-  if(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE) {
+  if(na_GetApplicationMouseVisible()) {
     ShowCursor(0);
-    app->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+    na_SetApplicationMouseVisible(NA_FALSE);
   }
 }
+
+
 
 NA_DEF void naHideMouseUntilMovement(NABool hide) {
   // todo
