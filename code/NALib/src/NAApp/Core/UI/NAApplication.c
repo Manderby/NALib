@@ -37,6 +37,9 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePt
   application->flags = 0;
   application->flags |= NA_APPLICATION_FLAG_RUNNING;
   application->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+  #if NA_OS == NA_OS_WINDOWS
+    application->flags |= NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING;
+  #endif
 
   application->name = NA_NULL;
   application->companyName = NA_NULL;
@@ -104,6 +107,23 @@ NA_DEF NAApplication* naGetApplication(void) {
   return na_App;
 }
 
+
+
+NA_DEF NABool naGetDefaultWindowSystemKeyHandling() {
+  #if NA_DEBUG
+  if(!na_App)
+    naError("Internal error: application not started. Use naStartApplication");
+  #endif
+  return naGetFlagu32(na_App->flags, NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING);
+}
+
+NA_DEF void naSetDefaultWindowSystemKeyHandling(NABool enable) {
+  #if NA_DEBUG
+  if(!na_App)
+    naError("Internal error: application not started. Use naStartApplication");
+  #endif
+  naSetFlagu32(&na_App->flags, NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING, enable);
+}
 
 
 #endif // NA_COMPILE_GUI == 1

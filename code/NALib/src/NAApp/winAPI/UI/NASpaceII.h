@@ -330,7 +330,7 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
   // are computed from the top left instead of the bottom right. Simply
   // setting the rect anew does the trick.
   if(prevHeight != rect.size.height) {
-    naShiftSpaceChilds(space, naMakePos(0., 0.));
+    naShiftSpaceChilds(&winapiSpace->space, naMakePos(0., 0.));
   }
 }
 

@@ -238,6 +238,11 @@ NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
 
 NA_API void naOpenConsoleWindow(void);
 
+// Only on windows:
+// Enable or disable the default system handling of system keys such as the
+// alt key triggering the menu.
+NA_API NABool naGetDefaultWindowSystemKeyHandling();
+NA_API void naSetDefaultWindowSystemKeyHandling(NABool enable); 
 
 #endif // NA_APPLICATION_INCLUDED
 

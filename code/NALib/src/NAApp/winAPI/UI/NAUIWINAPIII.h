@@ -9,9 +9,10 @@
 #include "../../../NAUtility/NAValueHelper.h"
 
 
-
-#define NA_UI_ELEMENT_FLAG_MOUSE_INSIDE                  0x01
-#define NA_UI_ELEMENT_FLAG_BLOCK_WINAPI_NOTIFICATIONS    0x02
+// UI_Element flags:
+// Note that flags will always be initialized with 0
+#define NA_UI_ELEMENT_FLAG_MOUSE_INSIDE                    0x01
+#define NA_UI_ELEMENT_FLAG_BLOCK_WINAPI_NOTIFICATIONS      0x02
 
 
 
@@ -129,6 +130,10 @@ NA_HDEF NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElem
 
 
 
+NA_HDEF NABool na_GetUIElementMouseInside(const NA_UIElement* elem) {
+  return naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE);
+}
+
 NA_HDEF void na_SetUIElementMouseInside(NA_UIElement* elem, NABool inside) {
   #if NA_DEBUG
   if(naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE) == inside)
@@ -138,11 +143,10 @@ NA_HDEF void na_SetUIElementMouseInside(NA_UIElement* elem, NABool inside) {
 }
 
 
-NA_HDEF NABool na_GetUIElementMouseInside(const NA_UIElement* elem) {
-  return naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE);
+
+NA_HDEF NABool na_GetUIElementWINAPINotificationsBlocked(const NA_UIElement* elem) {
+  return naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_BLOCK_WINAPI_NOTIFICATIONS);
 }
-
-
 
 NA_HDEF void na_SetUIElementWINAPINotificationsBlocked(NA_UIElement* elem, NABool block) {
   #if NA_DEBUG
@@ -151,12 +155,6 @@ NA_HDEF void na_SetUIElementWINAPINotificationsBlocked(NA_UIElement* elem, NABoo
   #endif
   naSetFlagu32(&elem->flags, NA_UI_ELEMENT_FLAG_BLOCK_WINAPI_NOTIFICATIONS, block);
 }
-
-
-NA_HDEF NABool na_GetUIElementWINAPINotificationsBlocked(const NA_UIElement* elem) {
-  return naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_BLOCK_WINAPI_NOTIFICATIONS);
-}
-
 
 
 
@@ -216,6 +214,7 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message) {
   rShift = (GetKeyState(VK_RSHIFT) & 0x8000) >> 15;
   // Note: Due to the right shift key not properly being detected by the extended key flag
   // of lParam, we have to rely on GetKeyState. Pity.
+  // of lParam, we have to rely on GetKeyState. Pity.
   hasShift = lShift || rShift;
   lControl = (GetKeyState(VK_LCONTROL) & 0x8000) >> 15;
   rControl = (GetKeyState(VK_RCONTROL) & 0x8000) >> 15;
@@ -244,7 +243,13 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
   NABool retValue = NA_FALSE;
 
   if(message->message == WM_KEYUP || message->message == WM_SYSKEYDOWN || message->message == WM_SYSKEYUP) {
+    NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(message->hwnd);
     na_CaptureKeyboardStatus(message);
+    if(!naGetDefaultWindowSystemKeyHandling(uiElement)) {
+      // We mark the key stroke to be handeled such that Windows will not
+      // do any funny business.
+      retValue = NA_TRUE;
+    }
 
   }else if(message->message == WM_KEYDOWN) {
     NA_UIElement* elem;

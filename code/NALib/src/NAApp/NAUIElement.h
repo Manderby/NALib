@@ -156,13 +156,12 @@ NA_API double naGetUIElementResolutionScale(const void* uiElement);
 // corresponds to NSResponder*. Note that also NSApplication inherits from
 // NSResponder.
 //
-// Use the following function to retrieve the nativePtr for any ui element:
+// Use the following function to retrieve the nativePtr for any ui element:jb
 
 typedef void* NANativePtr;
 
 NA_API NANativePtr naGetUIElementNativePtr(void* uiElement);
 NA_API const NANativePtr naGetUIElementNativePtrConst(const void* uiElement);
-
 
 #endif // NA_UI_ELEMENT_INCLUDED
 

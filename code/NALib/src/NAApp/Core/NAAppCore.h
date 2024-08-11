@@ -44,7 +44,7 @@ struct NA_UIElement{
   NAList          reactions;
   NAList          shortcuts;
   size_t          hoverReactionCount;
-  uint32          flags;
+  uint32          flags;             // Currently only used in winAPI
   void*           nativePtr;         // The native pointer
   size_t          mouseTrackingCount;
   void*           mouseTracking;
@@ -187,8 +187,10 @@ NA_EXTERN_RUNTIME_TYPE(NAFont);
 
 extern NAApplication* na_App;
 
-#define NA_APPLICATION_FLAG_RUNNING                0x01
-#define NA_APPLICATION_FLAG_MOUSE_VISIBLE          0x02
+#define NA_APPLICATION_FLAG_RUNNING                 0x01
+#define NA_APPLICATION_FLAG_MOUSE_VISIBLE           0x02
+#define NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING 0x04 // only for winAPI
+
 
 #define NA_CORE_WINDOW_FLAG_FULLSCREEN             0x01
 #define NA_CORE_WINDOW_FLAG_RESIZEABLE             0x02

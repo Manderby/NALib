@@ -21,6 +21,7 @@ void na_drawAllOpenGLSpaces(void* data)
 
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPIOpenGLSpace* winapiOpenGLSpace;
+  int wheelDelta;
 
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
@@ -40,6 +41,19 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
   case WM_ERASEBKGND:
   case WM_NCCALCSIZE:
   break;
+
+  case WM_MOUSEWHEEL:
+
+  winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
+  wheelDelta = (int)(-20. * GET_WHEEL_DELTA_WPARAM(wParam) / (double)WHEEL_DELTA);
+    naSetOpenGLSpaceTranslation(&winapiOpenGLSpace->openGLSpace, 0, wheelDelta);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)winapiOpenGLSpace, NA_UI_COMMAND_TRANSFORMED)) {
+      // don't know what to do.
+    }
+    naResetOpenGLSpaceTransformation(&winapiOpenGLSpace->openGLSpace);
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
+    break;
 
   case WM_PAINT:
 
