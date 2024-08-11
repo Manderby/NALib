@@ -54,7 +54,7 @@ void testIntegrationFunctionsf(void){
   float kahanSum;
   float kahanBabushkaNeumaierSum;
   float kahanBabushkaKleinSum;
-  float binaryPairsResult;
+  //float binaryPairsResult;
   float binaryPairsResult2;
   
   naTestGroup("Check correctness of result"){
@@ -121,7 +121,7 @@ void testIntegrationFunctions(void){
   double kahanSum;
   double kahanBabushkaNeumaierSum;
   double kahanBabushkaKleinSum;
-  double binaryPairsResultFunc;
+  //double binaryPairsResultFunc;
   double binaryPairsResult;
   double binaryPairsResult2;
 
