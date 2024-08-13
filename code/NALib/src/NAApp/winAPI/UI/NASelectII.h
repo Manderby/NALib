@@ -41,6 +41,10 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_WINDOWPOSCHANGED:
       break;
 
+  // Handeled in naUIElementWINAPIPreProc:
+  case WM_MOUSELEAVE:
+  break;
+
   case WM_MOUSEWHEEL:
     // Mousewheel events are discarded. This eliminates erroneous value changes
     // when scrolling. Who designed that!

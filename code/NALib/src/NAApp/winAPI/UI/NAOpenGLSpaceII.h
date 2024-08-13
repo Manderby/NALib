@@ -66,7 +66,7 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
     naAddOpenGLSpaceToRedrawList(winapiOpenGLSpace);
 
     RECT updateRegion;
-    GetClientRect(naGetUIElementNativePtr(uiElement), &updateRegion );
+    GetClientRect(naGetUIElementNativePtr(uiElement), &updateRegion);
     ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
   
     info.hasBeenHandeled = NA_TRUE;

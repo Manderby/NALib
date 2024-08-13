@@ -58,6 +58,12 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_UPDATEUISTATE:
     break;
 
+  // Handeled in naUIElementWINAPIPreProc:
+  case WM_MOUSELEAVE:
+  case WM_SETFOCUS:
+  case WM_KILLFOCUS:
+  break;
+
   default:
     printf("Uncaught Button message" NA_NL);
     break;
