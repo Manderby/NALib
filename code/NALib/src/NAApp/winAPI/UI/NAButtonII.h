@@ -203,7 +203,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       NAColor backColor = {.8f, .8f, .8f, 1.f};
       NAColor maskColor = {1.f, 1.f, 0.f, 1.f};
       NAColor accentColor;
-      naFillDefaultAccentColorWithSkin(&accentColor, NA_UIIMAGE_SKIN_LIGHT);
+      naFillDefaultAccentColorWithSkin(&accentColor, NA_UIIMAGE_SKIN_SYSTEM);
       NAImage* alphaImage = naCreateImageWithTint(buttonImage, &maskColor, NA_BLEND_ERASE_HUE, 1.f);
       NAImage* tintedImage = naCreateImageWithTint(alphaImage, &accentColor, NA_BLEND_MULTIPLY, .85f);
       //NAImage* blendedImage = naCreateImageCopy(tintedImage);
@@ -248,16 +248,16 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     NABool secondaryState = na_GetButtonState(winapiButton);
     if(IsWindowEnabled(naGetUIElementNativePtr(winapiButton))) {
       if(pushed) {
-        foreImage = na_GetUIImageImage(uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT, NA_UIIMAGE_INTERACTION_PRESSED, secondaryState);
+        foreImage = na_GetUIImageImage(uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_UIIMAGE_SKIN_SYSTEM, NA_UIIMAGE_INTERACTION_PRESSED, secondaryState);
       }else{
         if(na_GetUIElementMouseInside(&winapiButton->button.uiElement)) {
-          foreImage = na_GetUIImageImage(uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_HOVER, secondaryState);
+          foreImage = na_GetUIImageImage(uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_UIIMAGE_SKIN_SYSTEM,  NA_UIIMAGE_INTERACTION_HOVER, secondaryState);
         }else{
-          foreImage = na_GetUIImageImage(uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_NONE, secondaryState);
+          foreImage = na_GetUIImageImage(uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_UIIMAGE_SKIN_SYSTEM,  NA_UIIMAGE_INTERACTION_NONE, secondaryState);
         }
       }
     }else{
-      foreImage = na_GetUIImageImage(uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_UIIMAGE_SKIN_LIGHT,  NA_UIIMAGE_INTERACTION_DISABLED, secondaryState);
+      foreImage = na_GetUIImageImage(uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_UIIMAGE_SKIN_SYSTEM,  NA_UIIMAGE_INTERACTION_DISABLED, secondaryState);
     }
 
     // We store the background where the image will be placed.

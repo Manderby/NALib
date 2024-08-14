@@ -7,6 +7,8 @@
 
 #include "../../../NAApp/NAPreferences.h"
 
+
+
 #define NA_WINAPI_WINDOW_KEEP_POS 0x0100
 #if (NA_WINAPI_WINDOW_KEEP_POS < NA_WINDOW_FLAG_FIRST_SYSTEM_DEPENDENT_FLAG)
   #error "System specific flags overlap with core flags"

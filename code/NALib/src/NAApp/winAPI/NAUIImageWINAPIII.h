@@ -17,22 +17,49 @@ NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance() {
 
 
 NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor* color) {
-  // WINAPI has no notion of dark mode (yet), so we just return the light color.
-  naFillDefaultTextColorWithSkin(color, NA_UIIMAGE_SKIN_LIGHT);
+  COLORREF colorRef = GetSysColor(COLOR_BTNTEXT);
+  naFillColorWithSRGB(
+    color,
+    GetRValue(colorRef) / 255.f,
+    GetGValue(colorRef) / 255.f,
+    GetBValue(colorRef) / 255.f,
+    1.f);
 }
 
 
 
 NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color) {
-  // WINAPI has no notion of dark mode (yet), so we just return the light color.
-  naFillDefaultLinkColorWithSkin(color, NA_UIIMAGE_SKIN_LIGHT);
+  COLORREF colorRef = GetSysColor(COLOR_HOTLIGHT);
+  naFillColorWithSRGB(
+    color,
+    GetRValue(colorRef) / 255.f,
+    GetGValue(colorRef) / 255.f,
+    GetBValue(colorRef) / 255.f,
+    1.f);
 }
 
 
 
 NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color) {
-  // WINAPI has no notion of dark mode (yet), so we just return the light color.
-  naFillDefaultAccentColorWithSkin(color, NA_UIIMAGE_SKIN_LIGHT);
+  COLORREF colorRef;
+
+  if(!na_GetWINRegistryEntry(
+    HKEY_CURRENT_USER,
+    "Software\\Microsoft\\Windows\\DWM",
+    "ColorizationColor",
+    //"AccentColor",
+    sizeof(COLORREF),
+    &colorRef))
+  {
+    colorRef = GetSysColor(COLOR_HIGHLIGHT);
+  }
+
+  naFillColorWithSRGB(
+    color,
+    GetRValue(colorRef) / 255.f,
+    GetGValue(colorRef) / 255.f,
+    GetBValue(colorRef) / 255.f,
+    1.f);
 }
 
 

@@ -6,6 +6,16 @@
 
 
 NA_HAPI void* na_GetNativePreferences(void);
+NA_HAPI na_ShutdownPreferences(void);
+
+#if NA_OS == NA_OS_WINDOWS
+  NA_HDEF NABool na_GetWINRegistryEntry(
+    HKEY rootKey,
+    const NAUTF8Char* path,
+    const NAUTF8Char* key,
+    size_t valueSize,
+    void* value);
+#endif
 
 NA_HAPI NAi64     na_GetRawPreferencesBool  (void* prefs, const char* key);
 NA_HAPI NAi64     na_GetRawPreferencesInt   (void* prefs, const char* key);

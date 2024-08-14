@@ -44,6 +44,51 @@ NA_HDEF void* na_GetNativePreferences() {
 
 
 
+NA_HDEF na_ShutdownPreferences() {
+  if(na_nativePreferences) {
+    RegCloseKey(na_nativePreferences);
+    na_nativePreferences = NA_NULL;
+  }
+}
+
+
+
+NA_HDEF NABool na_GetWINRegistryEntry(
+  HKEY rootKey,
+  const NAUTF8Char* path,
+  const NAUTF8Char* key,
+  size_t valueSize,
+  void* value)
+{
+  NABool success = NA_FALSE;
+  HKEY registry;
+  LSTATUS errorCode;
+  wchar_t* pathKey = naAllocWideCharStringWithUTF8String(path);
+  errorCode = RegOpenKeyW(
+    rootKey,
+    pathKey,
+    &registry);
+
+  if(errorCode == ERROR_SUCCESS) {
+    wchar_t* systemKey = naAllocWideCharStringWithUTF8String(key);
+    DWORD expectedSize;
+    DWORD type;
+    errorCode = RegQueryValueExW(registry, systemKey, NULL, &type, NULL, &expectedSize);
+    
+    if(errorCode == ERROR_SUCCESS && expectedSize == valueSize) {
+      errorCode = RegGetValueW(registry, NULL, systemKey, RRF_RT_ANY, &type, value, (LPDWORD)&expectedSize);
+      success = errorCode == ERROR_SUCCESS;
+    }
+
+    naFree(systemKey);
+    RegCloseKey(registry);
+  }
+  naFree(pathKey);
+  return success;
+}
+
+
+
 NA_HDEF NAi64 na_GetRawPreferencesBool(void* prefs, const char* key) {
   NAi64 valueStorage;
   HKEY registry = (HKEY)prefs;

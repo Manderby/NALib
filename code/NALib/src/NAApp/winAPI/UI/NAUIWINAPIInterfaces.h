@@ -204,7 +204,9 @@ NA_RUNTIME_TYPE(NAWINAPIWindow, na_DestructWINAPIWindow, NA_FALSE);
 
 
 
-NA_HAPI void naAddOpenGLSpaceToRedrawList(NAWINAPIOpenGLSpace* openGLSpace);
+#if NA_COMPILE_OPENGL == 1
+  NA_HAPI void naAddOpenGLSpaceToRedrawList(NAWINAPIOpenGLSpace* openGLSpace);
+#endif
 
 
 #endif // NA_WINAPI_INTEFACES_DEFINED

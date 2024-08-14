@@ -185,6 +185,9 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
   if (cleanup)
     cleanup(arg);
 
+  // Close the preferences handle
+  na_ShutdownPreferences();
+
   // When reaching here, the application had been stopped.
   naDelete(app);
 }
@@ -389,6 +392,8 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
 
 
 
+#if NA_COMPILE_OPENGL == 1
+
 NA_HDEF na_redrawOpenGLSpaces(void* data) {
   NA_UNUSED(data);
 
@@ -410,8 +415,6 @@ NA_HDEF na_redrawOpenGLSpaces(void* data) {
   naEmptyList(&app->openGLRedrawList);
 }
 
-
-
 NA_HDEF void naAddOpenGLSpaceToRedrawList(NAWINAPIOpenGLSpace* openGLSpace){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAListIterator it = naMakeListAccessor(&app->openGLRedrawList);
@@ -424,6 +427,8 @@ NA_HDEF void naAddOpenGLSpaceToRedrawList(NAWINAPIOpenGLSpace* openGLSpace){
   }
   naClearListIterator(&it);
 }
+
+#endif // NA_COMPILE_OPENGL == 1
 
 
 
