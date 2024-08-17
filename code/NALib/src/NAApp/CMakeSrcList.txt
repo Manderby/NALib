@@ -4,30 +4,34 @@ set(NAAppDir "src/NAApp")
 set(headerFiles
   ${NAAppDir}/CMakeSrcList.txt
   ${NAAppDir}/NAApp.h
-  ${NAAppDir}/NAApplication.h
-  ${NAAppDir}/NAButton.h
-  ${NAAppDir}/NACheckBox.h
+  ${NAAppDir}/NAClipboard.h
   ${NAAppDir}/NAFont.h
-  ${NAAppDir}/NAImageSpace.h
   ${NAAppDir}/NAKeyboard.h
-  ${NAAppDir}/NALabel.h
-  ${NAAppDir}/NAMenu.h
-  ${NAAppDir}/NAMenuItem.h
-  ${NAAppDir}/NAMetalSpace.h
   ${NAAppDir}/NAMouse.h
-  ${NAAppDir}/NAOpenGLSpace.h
   ${NAAppDir}/NAPreferences.h
-  ${NAAppDir}/NARadio.h
   ${NAAppDir}/NAReaction.h
-  ${NAAppDir}/NAScreen.h
-  ${NAAppDir}/NASelect.h
-  ${NAAppDir}/NASlider.h
-  ${NAAppDir}/NASpace.h
-  ${NAAppDir}/NATextBox.h
-  ${NAAppDir}/NATextField.h
-  ${NAAppDir}/NAUIElement.h
   ${NAAppDir}/NAUIImage.h
-  ${NAAppDir}/NAWindow.h
+)
+
+set(uiHeaderFiles
+  ${NAAppDir}/uiHeader/NAApplication.h
+  ${NAAppDir}/uiHeader/NAButton.h
+  ${NAAppDir}/uiHeader/NACheckBox.h
+  ${NAAppDir}/uiHeader/NAImageSpace.h
+  ${NAAppDir}/uiHeader/NALabel.h
+  ${NAAppDir}/uiHeader/NAMenu.h
+  ${NAAppDir}/uiHeader/NAMenuItem.h
+  ${NAAppDir}/uiHeader/NAMetalSpace.h
+  ${NAAppDir}/uiHeader/NAOpenGLSpace.h
+  ${NAAppDir}/uiHeader/NARadio.h
+  ${NAAppDir}/uiHeader/NAScreen.h
+  ${NAAppDir}/uiHeader/NASelect.h
+  ${NAAppDir}/uiHeader/NASlider.h
+  ${NAAppDir}/uiHeader/NASpace.h
+  ${NAAppDir}/uiHeader/NATextBox.h
+  ${NAAppDir}/uiHeader/NATextField.h
+  ${NAAppDir}/uiHeader/NAUIElement.h
+  ${NAAppDir}/uiHeader/NAWindow.h
 )
 
 set(coreFiles
@@ -120,6 +124,9 @@ set(winAPIUIFiles
 
 source_group("NAApp" FILES ${headerFiles})
 target_sources(NALib PRIVATE ${headerFiles})
+
+source_group("NAApp/uiHeaders" FILES ${uiHeaderFiles})
+target_sources(NALib PRIVATE ${uiHeaderFiles})
 
 source_group("NAApp/Core" FILES ${coreFiles})
 target_sources(NALib PRIVATE ${coreFiles})

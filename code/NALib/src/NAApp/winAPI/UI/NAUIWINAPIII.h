@@ -948,6 +948,53 @@ NA_HDEF void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking)
 
 
 
+NAString* naNewStringFromClipboard(){
+  NAString* string = NA_NULL;
+  OpenClipboard(NA_NULL); // NA_NULL means: Current task becomes owner instead of a hWnd
+
+  HGLOBAL clipboardHandle = GetClipboardData(CF_UNICODETEXT);
+  if(clipboardHandle) {
+    LPTSTR globalMemory = GlobalLock(clipboardHandle);
+    if(globalMemory) {
+      size_t stringLength = wcslen(globalMemory);
+      wchar_t* unicodeString = naMalloc(stringLength * sizeof(wchar_t));
+      memcpy(unicodeString, globalMemory, stringLength * sizeof(wchar_t)); 
+      unicodeString[stringLength] = (wchar_t) 0;    // null character 
+      GlobalUnlock(clipboardHandle);
+      string = naNewStringWithWideCharString(unicodeString);
+    }
+  }
+
+  CloseClipboard();
+  return string;
+}
+
+
+
+void naPutStringToClipboard(const NAString* string){
+  OpenClipboard(NA_NULL); // NA_NULL means: Current task becomes owner instead of a hWnd
+
+  size_t stringLength = naGetStringByteSize(string);
+  wchar_t* unicodeString = naAllocWideCharStringWithUTF8String(naGetStringUTF8Pointer(string));
+
+  HGLOBAL clipboardHandle = GlobalAlloc(GMEM_MOVEABLE, (stringLength + 1) * sizeof(wchar_t));
+  if(clipboardHandle) {
+    LPTSTR globalMemory = GlobalLock(clipboardHandle);
+    if(globalMemory) {
+      memcpy(globalMemory, unicodeString, stringLength * sizeof(wchar_t)); 
+      globalMemory[stringLength] = (wchar_t) 0;    // null character 
+      GlobalUnlock(clipboardHandle);
+      SetClipboardData(CF_UNICODETEXT, clipboardHandle);
+    }
+  }
+
+  naFree(unicodeString);
+
+  CloseClipboard();
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
