@@ -42,13 +42,12 @@ NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color) {
 
 NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color) {
   COLORREF colorRef;
-
-  if(!na_GetWINRegistryEntry(
+  if(!na_GetWINRegistryFixedEntry(
     HKEY_CURRENT_USER,
     "Software\\Microsoft\\Windows\\DWM",
     "AccentColor",
-    sizeof(COLORREF),
-    &colorRef))
+    &colorRef,
+    sizeof(COLORREF)))
   {
     colorRef = GetSysColor(COLOR_HIGHLIGHT);
   }

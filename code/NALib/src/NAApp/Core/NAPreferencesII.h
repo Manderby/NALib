@@ -9,13 +9,28 @@ NA_HAPI void* na_GetNativePreferences(void);
 NA_HAPI void na_ShutdownPreferences(void);
 
 #if NA_OS == NA_OS_WINDOWS
-  NA_HDEF NABool na_GetWINRegistryEntry(
+  // Returns a value from the windows registry.
+  // The "Variable" method will allocate sufficient memory with malloc for you
+  // and return the size allocated in valueSize if available.
+  // The "Fixed" method expects a pointer to an existing memory location and
+  // the size in bytes available at that location. The requested value will
+  // be stored at that location if and only if the value size is equal to the
+  // one retrieved from the registry.
+  // Both methods will return NA_NULL if something went wrong.
+  NA_HDEF void* na_GetWINRegistryVariableEntry(
     HKEY rootKey,
     const NAUTF8Char* path,
     const NAUTF8Char* key,
-    size_t valueSize,
-    void* value);
-#endif
+    size_t* valueSize);
+
+  NA_HDEF void* na_GetWINRegistryFixedEntry(
+    HKEY rootKey,
+    const NAUTF8Char* path,
+    const NAUTF8Char* key,
+    void* value,
+    size_t valueSize);
+
+  #endif
 
 NA_HAPI NAi64     na_GetRawPreferencesBool  (void* prefs, const char* key);
 NA_HAPI NAi64     na_GetRawPreferencesInt   (void* prefs, const char* key);

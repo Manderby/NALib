@@ -53,13 +53,67 @@ NA_HDEF void na_ShutdownPreferences() {
 
 
 
-NA_HDEF NABool na_GetWINRegistryEntry(
+NA_HDEF void* na_GetWINRegistryVariableEntry(
   HKEY rootKey,
   const NAUTF8Char* path,
   const NAUTF8Char* key,
-  size_t valueSize,
-  void* value)
+  size_t* valueSize)
 {
+  void* retValue = NA_NULL;
+
+  NABool success = NA_FALSE;
+  HKEY registry;
+  LSTATUS errorCode;
+  wchar_t* pathKey = naAllocWideCharStringWithUTF8String(path);
+  errorCode = RegOpenKeyW(
+    rootKey,
+    pathKey,
+    &registry);
+
+  if(errorCode == ERROR_SUCCESS) {
+    wchar_t* systemKey = naAllocWideCharStringWithUTF8String(key);
+    DWORD expectedSize;
+    DWORD type;
+    errorCode = RegQueryValueExW(registry, systemKey, NULL, &type, NULL, &expectedSize);
+
+    if(errorCode == ERROR_SUCCESS) {
+      retValue = naMalloc(expectedSize);
+      if(valueSize) { *valueSize = expectedSize; }
+
+      errorCode = RegGetValueW(registry, NULL, systemKey, RRF_RT_ANY, &type, retValue, (LPDWORD)&expectedSize);
+
+      if(errorCode != ERROR_SUCCESS) {
+        naFree(retValue);
+        retValue = NA_NULL;
+      }
+    }
+
+    naFree(systemKey);
+  }
+
+  RegCloseKey(registry);
+  naFree(pathKey);
+  return retValue;
+}
+
+
+
+NA_HDEF void* na_GetWINRegistryFixedEntry(
+  HKEY rootKey,
+  const NAUTF8Char* path,
+  const NAUTF8Char* key,
+  void* value,
+  size_t valueSize)
+{
+  #if NA_DEBUG
+    if(!value)
+      naError("You must provide a place to store the value.");
+    if(!valueSize)
+      naError("You must provide the memory size of the given value");
+  #endif
+
+  void* retValue = NA_NULL;
+
   NABool success = NA_FALSE;
   HKEY registry;
   LSTATUS errorCode;
@@ -75,16 +129,22 @@ NA_HDEF NABool na_GetWINRegistryEntry(
     DWORD type;
     errorCode = RegQueryValueExW(registry, systemKey, NULL, &type, NULL, &expectedSize);
     
-    if(errorCode == ERROR_SUCCESS && expectedSize == valueSize) {
-      errorCode = RegGetValueW(registry, NULL, systemKey, RRF_RT_ANY, &type, value, (LPDWORD)&expectedSize);
-      success = errorCode == ERROR_SUCCESS;
+    if(errorCode == ERROR_SUCCESS) {
+      if(expectedSize == valueSize) {
+        errorCode = RegGetValueW(registry, NULL, systemKey, RRF_RT_ANY, &type, value, (LPDWORD)&expectedSize);
+
+        if(errorCode == ERROR_SUCCESS) {
+          retValue = value;
+        }
+      }
     }
 
     naFree(systemKey);
-    RegCloseKey(registry);
   }
+
+  RegCloseKey(registry);
   naFree(pathKey);
-  return success;
+  return retValue;
 }
 
 

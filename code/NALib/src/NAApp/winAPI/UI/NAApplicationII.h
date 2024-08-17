@@ -8,6 +8,7 @@
 
 #include "../../../NAUtility/NAString.h"
 #include "../../../NAUtility/NAURL.h"
+#include "../../../NAStruct/NAStack.h"
 
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   #include <commctrl.h>
@@ -195,61 +196,54 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
 #include "muiload.h"
 
 NA_DEF void naResetApplicationPreferredTranslatorLanguages(void) {
-  //int numchars;
-  //NAUTF8Char* languageBuf; 
-  NALanguageCode3 languageCode;
-  //LCID userLocalId;
+  // As cryptic as it seems, windows stores the preferred user languages
+  // in the windows registry under the following keys, denoted by hex numbers
+  // stored in string values, starting with 00000000.
+  //
+  // The returned values are also string hex values, denoting a LANGID.
 
-  LANGID langId1 = GetSystemDefaultUILanguage();
-  LANGID langId2 = GetUserDefaultUILanguage();
-  LANGID langId = GetUserDefaultLangID();
-  LANGID langId3 = GetSystemDefaultLangID();
-  LANGID langId4 = GetThreadUILanguage();
-  languageCode = naGetLanguageCodeWithLANGID(langId);
+  NAStack langStack;
+  naInitStack(&langStack, sizeof(NALanguageCode3), 0, 0);
 
-  //GetUserPreferredUILanguages();
-  //GetUILanguageFallbackList();
+  size_t index = 0;
+  while(1) {
+    NAUTF8Char* keyString = naAllocSprintf(NA_TRUE, "%08X", (int)index);
 
+    size_t valueSize;
+    wchar_t* idString = na_GetWINRegistryVariableEntry(
+      HKEY_CURRENT_USER,
+      "Software\\Microsoft\\CTF\\SortOrder\\Language",
+      keyString,
+      &valueSize);
 
-  //ULONG numberOfLanguages = 0;
-  //DWORD bufferLength = 0;
-  //const auto result1 = GetUserPreferredUILanguages  (MUI_LANGUAGE_NAME,
-  //  &numberOfLanguages,
-  //  NULL,
-  //  &bufferLength);
+    if(!idString) { break; }
 
-  //wchar_t* languagesBuffer = malloc(bufferLength);
-  //const auto result2 = GetUserPreferredUILanguages  (MUI_LANGUAGE_NAME,
-  //  &numberOfLanguages,
-  //  languagesBuffer,
-  //  &bufferLength);
+    LANGID langId = 0;
+    for(size_t i = 0; i < (valueSize / sizeof(wchar_t) - 1); ++i) {
+      if(idString[i] >= L'0' && idString[i] <= L'9') {
+        langId = langId * 16 + (idString[i] - L'0');
+      }
+      if(idString[i] >= L'a' && idString[i] <= L'f') {
+        langId = langId * 16 + (idString[i] - L'a' + 10);
+      }
+      if(idString[i] >= L'A' && idString[i] <= L'F') {
+        langId = langId * 16 + (idString[i] - L'F' + 10);
+      }
+    }
 
-  //free(languagesBuffer);
+    *(NALanguageCode3*)naPushStack(&langStack) = naGetLanguageCodeWithLANGID(langId);
 
+    naFree(idString);
+    index++;
+  }
 
+  // Apply the preferred languages from back to front.
+  while(naGetStackCount(&langStack)) {
+    NALanguageCode3 languageCode = *(NALanguageCode3*)naPopStack(&langStack);
+    naSetTranslatorLanguagePreference(languageCode);
+  }
 
-  //wchar_t* pFallbackList = NULL;
-  //ULONG cchFallbackList = 0;
-  //ULONG cchFallbackOut = 0;
-  //GetUILanguageFallbackList(NULL, cchFallbackList, &cchFallbackOut);
-
-  //pFallbackList = malloc(cchFallbackOut);
-  //cchFallbackList = cchFallbackOut;
-  //GetUILanguageFallbackList(pFallbackList, cchFallbackList, &cchFallbackOut);
-
-  //free(pFallbackList);
-
-  //userLocalId = GetUserDefaultLCID();
-  //numchars = GetLocaleInfoA(userLocalId, LOCALE_SISO639LANGNAME2, NA_NULL, 0);
-  //languageBuf = naMalloc((size_t)numchars + 1 * sizeof(NAUTF8Char));
-  //GetLocaleInfoA(userLocalId, LOCALE_SISO639LANGNAME2, languageBuf, numchars);
-  //languageCode = naGetLanguageCode(languageBuf);
-  // Tried to do this with GetUserPreferredUILanguages but it does not
-  // work. Not reliably, not at all, not no nada.
-
-  naSetTranslatorLanguagePreference(languageCode);
-
-  //naFree(languageBuf);
+  naClearStack(&langStack);
 }
 
 
