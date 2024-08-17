@@ -44,7 +44,7 @@ NA_HDEF void* na_GetNativePreferences() {
 
 
 
-NA_HDEF na_ShutdownPreferences() {
+NA_HDEF void na_ShutdownPreferences() {
   if(na_nativePreferences) {
     RegCloseKey(na_nativePreferences);
     na_nativePreferences = NA_NULL;

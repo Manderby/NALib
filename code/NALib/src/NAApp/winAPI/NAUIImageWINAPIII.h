@@ -46,8 +46,7 @@ NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color) {
   if(!na_GetWINRegistryEntry(
     HKEY_CURRENT_USER,
     "Software\\Microsoft\\Windows\\DWM",
-    "ColorizationColor",
-    //"AccentColor",
+    "AccentColor",
     sizeof(COLORREF),
     &colorRef))
   {

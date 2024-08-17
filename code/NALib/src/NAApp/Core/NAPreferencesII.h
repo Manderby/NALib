@@ -6,7 +6,7 @@
 
 
 NA_HAPI void* na_GetNativePreferences(void);
-NA_HAPI na_ShutdownPreferences(void);
+NA_HAPI void na_ShutdownPreferences(void);
 
 #if NA_OS == NA_OS_WINDOWS
   NA_HDEF NABool na_GetWINRegistryEntry(
