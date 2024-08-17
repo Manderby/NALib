@@ -40,10 +40,10 @@
 #include "NAClipboard.h"
 #include "NAFont.h"
 #include "NAKeyboard.h"
-#include "NAUIImage.h"
 #include "NAMouse.h"
 #include "NAPreferences.h"
 #include "NAReaction.h"
+#include "NAUIImage.h"
 
 // The base of every ui element.
 #include "uiHeader/NAUIElement.h"

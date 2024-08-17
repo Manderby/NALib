@@ -7,6 +7,9 @@
 
 
 
+NA_PROTOTYPE(NAUIImage);
+
+
 
 typedef enum NAMouseButton {
   NA_MOUSE_BUTTON_LEFT = 0,
