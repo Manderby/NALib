@@ -150,6 +150,8 @@ NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenu
   NAWINAPISelect* winapiSelect = (NAWINAPISelect*)select;
   
   // todo: allow separators. Will crash currently.
+  if(naGetMenuItemIsSeparator(item)) { return; }
+
   TCHAR* itemText = naAllocSystemStringWithUTF8String(naGetMenuItemText(item));
   size_t index = naGetSelectItemIndex(select, atItem);
 

@@ -28,6 +28,8 @@ NA_API void naSetMenuItemText(NAMenuItem* menuItem, const NAUTF8Char* text);
 // Adds a checkbox in front of the entry if state is NA_TRUE.
 NA_API void naSetMenuItemState(NAMenuItem* menuItem, NABool state);
 
+// Returns true for separators.
+NA_API NABool naGetMenuItemIsSeparator(const NAMenuItem* menuItem);
 
 #endif // NA_MENUITEM_INCLUDED
 

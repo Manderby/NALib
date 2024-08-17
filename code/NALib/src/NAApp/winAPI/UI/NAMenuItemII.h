@@ -80,6 +80,13 @@ NA_HDEF uint32 na_GetMenuItemId(const NAMenuItem* menuItem) {
 
 
 
+NA_DEF NABool naGetMenuItemIsSeparator(const NAMenuItem* menuItem) {
+  NA_WINAPIMenuItem* winapiMenuItem = (NA_WINAPIMenuItem*)menuItem;
+  return winapiMenuItem->isSeparator;
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
