@@ -78,7 +78,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size) {
     naHandleTextBoxReverseTabOrder,
     NA_NULL);
 
-  winapiTextBox->textBox.font = naRetain(naGetSystemFont());
+  winapiTextBox->textBox.font = naRetain(naCreateSystemFont());
   SendMessage(
     nativePtr,
     WM_SETFONT,

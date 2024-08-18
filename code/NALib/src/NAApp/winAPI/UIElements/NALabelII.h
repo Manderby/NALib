@@ -73,6 +73,7 @@ NABool naLabelWINAPINotify(void* uiElement, WORD notificationCode) {
 
 
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPILabel* winapiLabel = naNew(NAWINAPILabel);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
@@ -96,7 +97,6 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
   
   naFree(systemText);
 
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldLabelWindowProc) {
     app->oldLabelWindowProc = oldproc;
@@ -107,7 +107,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
   winapiLabel->enabled = NA_TRUE;
   winapiLabel->href = NA_NULL;
 
-  winapiLabel->label.font = naRetain(naGetSystemFont());
+  winapiLabel->label.font = naCreateSystemFont();
   SendMessage(
     nativePtr,
     WM_SETFONT,

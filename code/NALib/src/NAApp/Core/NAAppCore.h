@@ -14,7 +14,7 @@
 
 
     #include "../NAAppDefinitions.h"
-    #include "../NAApp.h"
+    //#include "../NAApp.h"
 
 #if NA_COMPILE_GUI == 1
 
@@ -25,6 +25,7 @@
 #include "../../NAVisual/NAColor.h"
 
     NA_PROTOTYPE(NAFont);
+    NA_PROTOTYPE(NAMouseStatus);
 
     NA_PROTOTYPE(NAUIImage);
     NA_PROTOTYPE(NAApplication);
@@ -301,6 +302,7 @@ NA_HAPI void na_InitApplication(NAApplication* application, void* nativePtr);
 NA_HAPI void na_ClearApplication(NAApplication* application);
 NA_HAPI NARect na_GetApplicationRect(const NAApplication* application);
 NA_HAPI void na_SetApplicationRect(const NAApplication* application, NARect rect);
+NA_HAPI const NAFont* na_GetApplicationSystemFont(const NAApplication* app);
 NA_HAPI NAMouseStatus* na_getApplicationMouseStatus(NAApplication* application);
 
 // NAButton

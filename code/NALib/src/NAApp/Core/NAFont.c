@@ -36,11 +36,8 @@ NA_HDEF void na_DestructFont(NAFont* font) {
 
 
 
-NA_DEF NAFont* naGetSystemFont() {
-  if(!na_App->systemFont) {
-    na_App->systemFont = naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT);
-  }
-  return na_App->systemFont;
+NA_DEF NAFont* naCreateSystemFont(void) {
+  return naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT);
 }
 
 NA_DEF void* naGetFontNativePointer(const NAFont* font) {

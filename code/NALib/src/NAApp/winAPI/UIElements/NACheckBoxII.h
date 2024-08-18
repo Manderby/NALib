@@ -66,6 +66,7 @@ NABool naCheckBoxWINAPINotify(void* uiElement, WORD notificationCode) {
 
 
 NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPICheckBox* winapiCheckBox = naNew(NAWINAPICheckBox);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
@@ -88,7 +89,6 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
 
   naFree(systemText);
 
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldCheckBoxWindowProc) {
     app->oldCheckBoxWindowProc = oldproc;
@@ -96,7 +96,12 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
 
   na_InitCheckBox(&winapiCheckBox->checkBox, nativePtr);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)naGetFontNativePointer(naGetSystemFont()), MAKELPARAM(TRUE, 0));
+  const NAFont* systemFont = na_GetApplicationSystemFont(&app->application);
+  SendMessage(
+    nativePtr,
+    WM_SETFONT,
+    (WPARAM)naGetFontNativePointer(systemFont),
+    MAKELPARAM(TRUE, 0));
 
   return (NACheckBox*)winapiCheckBox;
 }

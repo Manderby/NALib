@@ -95,10 +95,19 @@ NA_HDEF void na_SetApplicationRect(const NAApplication* app, NARect rect) {
 
 
 
+NA_HDEF const NAFont* na_GetApplicationSystemFont(const NAApplication* app) {
+  if(!app->systemFont) {
+    NAApplication* mutableApp = (NAApplication*)app;
+    mutableApp->systemFont = naCreateSystemFont();
+  }
+  return app->systemFont;
+}
+
+
+
 NA_HDEF NAMouseStatus* na_getApplicationMouseStatus(NAApplication* app) {
   return app->mouseStatus;
 }
-
 
 
 

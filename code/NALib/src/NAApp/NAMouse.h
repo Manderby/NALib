@@ -14,11 +14,6 @@ NA_PROTOTYPE(NAUIImage);
 // A mouse status currently consists of the current position and the last one
 // recorded.
 typedef struct NAMouseStatus NAMouseStatus;
-struct NAMouseStatus{
-  NAPos pos;
-  NAPos prevPos;
-  uint32 buttonPressed;
-};
 
 // The actual type is system dependent.
 // macOS: NSCursor

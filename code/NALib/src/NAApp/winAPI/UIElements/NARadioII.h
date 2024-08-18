@@ -58,6 +58,7 @@ NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
 
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIRadio* winapiRadio = naNew(NAWINAPIRadio);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
@@ -80,7 +81,6 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
   
   naFree(systemText);
 
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldRadioWindowProc) {
     app->oldRadioWindowProc = oldproc;
@@ -88,7 +88,12 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
 
   na_InitRadio(&winapiRadio->radio, nativePtr);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)naGetFontNativePointer(naGetSystemFont()), MAKELPARAM(TRUE, 0));
+  const NAFont* systemFont = na_GetApplicationSystemFont(&app->application);
+  SendMessage(
+    nativePtr,
+    WM_SETFONT,
+    (WPARAM)naGetFontNativePointer(systemFont),
+    MAKELPARAM(TRUE, 0));
 
   return (NARadio*)winapiRadio;
 }

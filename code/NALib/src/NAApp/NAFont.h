@@ -65,8 +65,8 @@ NA_API double naGetFontSize(const NAFont* font);
 // NSFont* on macOS
 NA_API void* naGetFontNativePointer(const NAFont* font);
 
-// Returns the default font for the system.
-NA_API NAFont* naGetSystemFont(void);
+// Creates a new font object with the default font for the system.
+NA_API NAFont* naCreateSystemFont(void);
 
 #endif // NA_FONT_INCLUDED
 

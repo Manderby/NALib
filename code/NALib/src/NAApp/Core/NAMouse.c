@@ -7,6 +7,14 @@
 
 
 
+struct NAMouseStatus{
+  NAPos pos;
+  NAPos prevPos;
+  uint32 buttonPressed;
+};
+
+
+
 NA_HDEF NAMouseStatus* na_AllocMouseStatus() {
   NAMouseStatus* status = naAlloc(NAMouseStatus);
   status->pos = naMakePos(0, 0);

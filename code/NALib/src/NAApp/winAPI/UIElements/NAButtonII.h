@@ -304,6 +304,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
 
 NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
   uint32 flags = NA_BUTTON_BORDERED;
@@ -328,9 +329,13 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
 
   naFree(systemText);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)naGetFontNativePointer(naGetSystemFont()), MAKELPARAM(TRUE, 0));
+  const NAFont* systemFont = na_GetApplicationSystemFont(&app->application);
+  SendMessage(
+    nativePtr,
+    WM_SETFONT,
+    (WPARAM)naGetFontNativePointer(systemFont),
+    MAKELPARAM(TRUE, 0));
 
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc) {
     app->oldButtonWindowProc = oldproc;
@@ -354,6 +359,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
 
 
 NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* text2, double width) {
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
   uint32 flags = NA_BUTTON_BORDERED | NA_BUTTON_STATEFUL;
@@ -378,9 +384,13 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
   naFree(systemText);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)naGetFontNativePointer(naGetSystemFont()), MAKELPARAM(TRUE, 0));
+  const NAFont* systemFont = na_GetApplicationSystemFont(&app->application);
+  SendMessage(
+    nativePtr,
+    WM_SETFONT,
+    (WPARAM)naGetFontNativePointer(systemFont),
+    MAKELPARAM(TRUE, 0));
 
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc) {
     app->oldButtonWindowProc = oldproc;

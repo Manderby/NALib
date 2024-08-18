@@ -95,6 +95,7 @@ NABool naSelectWINAPINotify(void* uiElement, WORD notificationCode) {
 
 NA_DEF NASelect* naNewSelect(double width) {
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPISelect* winapiSelect = naNew(NAWINAPISelect);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String("Select");
@@ -115,11 +116,15 @@ NA_DEF NASelect* naNewSelect(double width) {
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
 
-  SendMessage(nativePtr, WM_SETFONT, (WPARAM)naGetFontNativePointer(naGetSystemFont()), MAKELPARAM(TRUE, 0));
+  const NAFont* systemFont = na_GetApplicationSystemFont(&app->application);
+  SendMessage(
+    nativePtr,
+    WM_SETFONT,
+    (WPARAM)naGetFontNativePointer(systemFont),
+    MAKELPARAM(TRUE, 0));
 
   naFree(systemText);
 
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldSelectWindowProc) {
     app->oldSelectWindowProc = oldproc;

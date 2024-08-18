@@ -156,7 +156,7 @@ NA_DEF NATextField* naNewTextField(double width) {
     naHandleTextFieldReverseTabOrder,
     NA_NULL);
 
-  winapiTextField->textField.font = naRetain(naGetSystemFont());
+  winapiTextField->textField.font = naRetain(naCreateSystemFont());
   SendMessage(
     nativePtr,
     WM_SETFONT,
