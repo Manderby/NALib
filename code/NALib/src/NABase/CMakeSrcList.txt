@@ -3,7 +3,6 @@ set(NABaseDir "src/NABase")
 
 set(headerFiles
   ${NABaseDir}/CMakeSrcList.txt
-  ${NABaseDir}/NAAPI.h
   ${NABaseDir}/NABase.h
   ${NABaseDir}/NAChar.h
   ${NABaseDir}/NACompiler.h

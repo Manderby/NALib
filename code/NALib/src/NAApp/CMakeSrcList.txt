@@ -68,6 +68,7 @@ set(coreUIFiles
 )
 
 set(macOSFiles
+  ${NAAppDir}/macOS/NAClipboardII.h
   ${NAAppDir}/macOS/NACocoa.m
   ${NAAppDir}/macOS/NAUICocoaII.h
   ${NAAppDir}/macOS/NAUICocoaInterfaces.h
@@ -99,6 +100,7 @@ set(macOSUIFiles
 )
 
 set(winAPIFiles
+  ${NAAppDir}/winAPI/NAClipboardII.h
   ${NAAppDir}/winAPI/NAFont.c
   ${NAAppDir}/winAPI/NAPreferencesWINAPI.c
   ${NAAppDir}/winAPI/NAUIImageWINAPIII.h

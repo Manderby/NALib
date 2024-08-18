@@ -1,9 +1,9 @@
 
 // This file combines all necessary implementations regarding the WINAPI
 // framework. It is a collection of #include directives including code from
-// inline implementation files. These files are .h files and hence will not
+// inline implementation II files. These files are .h files and hence will not
 // be compiled by the IDEs by default. They do contain non-inlineable code
-// though so don't threat them like normal .h files. Do not include them
+// though so don't threat them like normal .h files. Do not include these
 // files anywhere else but here in this file.
 
 // This file itself is a .c file which is an implementation file.
@@ -13,21 +13,24 @@
 // one single file speeds up the compilation considerably!
 
 
-#include "../../NABase/NABase.h"
-
+#include "../../NABase/NAConfiguration.h"
 #if NA_OS == NA_OS_WINDOWS
-// Now, we are sure, we compile on Windows. The #if directives will be closed
-// at the very bottom of this file.
+#if NA_COMPILE_GUI == 1
 
-#if(NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1) && (NA_COMPILE_GUI == 1)
+
+
+#if(NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1)
   #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
+
+
 
 #include <windows.h>
 #include <windowsx.h>
 
-#if NA_COMPILE_GUI == 1
+#include "../../NAUtility/NAString.h"
 
+#include "NAClipboardII.h"
 #include "NAUIImageWINAPIII.h"
 
 #include "NAUIWINAPIII.h"
@@ -51,6 +54,8 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace)
 #include "UIElements/NATextBoxII.h"
 #include "UIElements/NATextFieldII.h"
 #include "UIElements/NAWindowII.h"
+
+
 
 #endif // NA_COMPILE_GUI == 1
 #endif // NA_OS == NA_OS_WINDOWS

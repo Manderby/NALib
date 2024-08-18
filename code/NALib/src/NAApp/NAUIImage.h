@@ -8,6 +8,7 @@
 
 
 
+// ///////////////////////////////
 // An NAUIImage stores a collection of images ready to be presented to a user.
 // Such an image might be based on a single image but can have different
 // representations based on the systems skin, the resolution of the screen
@@ -15,7 +16,8 @@
 
 typedef struct NAUIImage NAUIImage;
 
-// A NAUIImage has reference counting built-in. Use naRetain and naRelease.
+// An NAUIImage has reference counting built-in. Use naRetain and naRelease.
+// ///////////////////////////////
 
     
 

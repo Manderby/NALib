@@ -2,8 +2,23 @@
 #ifndef NA_FONT_INCLUDED
 #define NA_FONT_INCLUDED
 
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
+
+// ///////////////////////////////
+// An NAFont stores information about a specific font with family, size and
+// style.
+
+typedef struct NAFont NAFont;
+
+// An NAFont has reference counting built-in. Use naRetain and naRelease.
+// ///////////////////////////////
+
+  
+  
 NA_PROTOTYPE(NAString);
 #include "../NABase/NABase.h"
 
@@ -35,12 +50,6 @@ typedef enum{
 
 
 
-
-
-typedef struct NAFont NAFont;
-
-
-
 // Creates a custom font. Use a combination of NA_FONT_FLAG_??? for flags.
 NA_API NAFont* naCreateFont(
   const NAUTF8Char* fontFamilyName,
@@ -67,6 +76,9 @@ NA_API void* naGetFontNativePointer(const NAFont* font);
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_FONT_INCLUDED
 
 
