@@ -15,47 +15,45 @@ NA_HDEF NABool na_IsApplicationRunning(void) {
 
 
 
-NA_HDEF void na_InitApplication(NAApplication* application, NANativePtr nativePtr) {
-  na_App = application;
+NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
+  na_App = app;
 
-  naInitList(&application->windows);
-  naInitList(&application->uiElements);
+  naInitList(&app->windows);
+  naInitList(&app->uiElements);
 
-  application->translator = NA_NULL;
+  app->translator = NA_NULL;
   naStartTranslator();
   
   // todo: make this a singleton.
-  application->systemFont = NA_NULL;
+  app->systemFont = NA_NULL;
 
-  application->mouseStatus.pos = naMakePos(0, 0);
-  application->mouseStatus.prevPos = naMakePos(0, 0);
-  application->mouseStatus.buttonPressed = 0;
+  app->mouseStatus = na_AllocMouseStatus();
   
-  application->curKeyStroke.keyCode = NA_KEYCODE_ESCAPE;
-  application->curKeyStroke.modifiers = 0;
+  app->curKeyStroke.keyCode = NA_KEYCODE_ESCAPE;
+  app->curKeyStroke.modifiers = 0;
   
-  application->flags = 0;
-  application->flags |= NA_APPLICATION_FLAG_RUNNING;
-  application->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+  app->flags = 0;
+  app->flags |= NA_APPLICATION_FLAG_RUNNING;
+  app->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   #if NA_OS == NA_OS_WINDOWS
-    application->flags |= NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING;
+  app->flags |= NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING;
   #endif
 
-  application->name = NA_NULL;
-  application->companyName = NA_NULL;
-  application->versionString = NA_NULL;
-  application->buildString = NA_NULL;
-  application->resourcePath = NA_NULL;
-  application->iconPath = NA_NULL;
+  app->name = NA_NULL;
+  app->companyName = NA_NULL;
+  app->versionString = NA_NULL;
+  app->buildString = NA_NULL;
+  app->resourcePath = NA_NULL;
+  app->iconPath = NA_NULL;
 
   // This is done at the very end of the InitApplication function as the
   // application must be fully functional before it can init any UIElements.
-  na_InitUIElement(&application->uiElement, NA_UI_APPLICATION, nativePtr);
+  na_InitUIElement(&app->uiElement, NA_UI_APPLICATION, nativePtr);
 }
 
 
 
-NA_HDEF void na_ClearApplication(NAApplication* application) {
+NA_HDEF void na_ClearApplication(NAApplication* app) {
   #if NA_DEBUG
     if(!naGetApplication())
       naCrash("No Application running");
@@ -65,10 +63,12 @@ NA_HDEF void na_ClearApplication(NAApplication* application) {
   naClearList(&naGetApplication()->windows);
 
   naStopTranslator();
-  na_ClearUIElement(&application->uiElement);
+  na_ClearUIElement(&app->uiElement);
 
-  if(application->systemFont)
-    naRelease(application->systemFont);
+  na_DeallocMouseStatus(app->mouseStatus);
+
+  if(app->systemFont)
+    naRelease(app->systemFont);
 
   // This must be at the very end as the uiElements are used up until the last
   // ClearUIElement operation.
@@ -78,19 +78,28 @@ NA_HDEF void na_ClearApplication(NAApplication* application) {
 
 
 
-NA_HDEF NARect na_GetApplicationRect(const NAApplication* application) {
-  NA_UNUSED(application);
+NA_HDEF NARect na_GetApplicationRect(const NAApplication* app) {
+  NA_UNUSED(app);
   NARect rect = {{0., 0.}, {1., 1.}};
   return rect;
 }
 
-NA_HDEF void na_SetApplicationRect(const NAApplication* application, NARect rect) {
-  NA_UNUSED(application);
+NA_HDEF void na_SetApplicationRect(const NAApplication* app, NARect rect) {
+  NA_UNUSED(app);
   NA_UNUSED(rect);
   #if NA_DEBUG
     naError("Application rect can not be set.");
   #endif
 }
+
+
+
+
+NA_HDEF NAMouseStatus* na_getApplicationMouseStatus(NAApplication* app) {
+  return app->mouseStatus;
+}
+
+
 
 
 NA_DEF void naStopApplication(void) {

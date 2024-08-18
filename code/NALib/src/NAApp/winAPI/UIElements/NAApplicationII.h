@@ -612,42 +612,6 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void) {
 
 
 
-NA_HDEF void na_DestructFont(NAFont* font) {
-  DeleteObject(font->nativePtr);
-  naDelete(font->name);
-}
-
-NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size) {
-  NAFont* font = naCreate(NAFont);
-  TCHAR* systemFontName = naAllocSystemStringWithUTF8String(fontFamilyName);
-
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
-
-  font->nativePtr = CreateFont(
-    (int)(size * uiScale),
-    0,
-    0,
-    0,
-    naGetFlagu32(flags, NA_FONT_FLAG_BOLD) ? FW_BOLD : FW_NORMAL,
-    naGetFlagu32(flags, NA_FONT_FLAG_ITALIC),
-    naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE),
-    NA_FALSE,
-    DEFAULT_CHARSET,
-    OUT_DEFAULT_PRECIS,
-    CLIP_DEFAULT_PRECIS,
-    CLEARTYPE_QUALITY,
-    DEFAULT_PITCH | FF_DONTCARE,
-    systemFontName);
-
-  font->name = naNewStringWithFormat("%s", fontFamilyName);
-  font->flags = flags;
-  font->size = size;
-  
-  naFree(systemFontName);
-
-  return font;
-}
-
 //// This is just a small code snipplet useful for debugging. See call to EnumFontFamilies below.
 //int CALLBACK enumFonts(
 //  _In_ ENUMLOGFONT   *lpelf,
@@ -752,7 +716,8 @@ NA_DEF void naCenterMouse(void* uiElement) {
     rect.pos.x + rect.size.width * .5f,
     rect.pos.y + rect.size.height * .5f};
 
-  na_SetMouseWarpedTo(centerPos);
+  NAApplication* app = naGetApplication();
+  na_SetMouseWarpedTo(na_getApplicationMouseStatus(app), centerPos);
   SetCursorPos(
     (int)(centerPos.x * uiScale),
     (int)((screenFrame.size.height - centerPos.y) * uiScale));

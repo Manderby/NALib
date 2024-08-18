@@ -5,7 +5,7 @@
 
 
 
-NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, NANativePtr nativePtr) {
+NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, void* nativePtr) {
   uiElement->parent = NA_NULL;
   uiElement->elementType = elementType;
   uiElement->nativePtr = nativePtr;
@@ -45,7 +45,7 @@ NA_HDEF void na_ClearUIElement(NA_UIElement* uiElement) {
 
 
 // todo: find a faster way. Hash perhaps or something else.
-NA_HDEF void* na_GetUINALibEquivalent(NANativePtr nativePtr) {
+NA_HDEF void* na_GetUINALibEquivalent(void* nativePtr) {
   NA_UIElement* retelem = NA_NULL;
   NAListIterator iter = naMakeListMutator(&na_App->uiElements);
   while(naIterateList(&iter)) {
@@ -122,13 +122,13 @@ NA_DEF NAUIElementType naGetUIElementType(const void* uiElement) {
 
 
 
-NA_DEF NANativePtr naGetUIElementNativePtr(void* uiElement) {
+NA_DEF void* naGetUIElementNativePtr(void* uiElement) {
   return uiElement ? ((NA_UIElement*)uiElement)->nativePtr : NA_NULL;
 }
 
 
 
-NA_DEF const NANativePtr naGetUIElementNativePtrConst(const void* uiElement) {
+NA_DEF void* naGetUIElementNativePtrConst(const void* uiElement) {
   return uiElement ? ((NA_UIElement*)uiElement)->nativePtr : NA_NULL;
 }
 

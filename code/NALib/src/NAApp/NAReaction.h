@@ -11,41 +11,7 @@
 // Reacting to commands
 //
 // Working with the UI in NALib works by defining reaction callbacks. Any user
-// interface element can react to several commands:
-
-typedef enum{
-  NA_UI_COMMAND_REDRAW = 0,
-  NA_UI_COMMAND_RESHAPE,
-  NA_UI_COMMAND_KEY_DOWN,
-  NA_UI_COMMAND_KEY_UP,
-  NA_UI_COMMAND_MOUSE_DOWN,
-  NA_UI_COMMAND_MOUSE_UP,
-  NA_UI_COMMAND_MOUSE_MOVED,
-  NA_UI_COMMAND_MOUSE_ENTERED,
-  NA_UI_COMMAND_MOUSE_EXITED,
-  NA_UI_COMMAND_TRANSFORMED,
-  NA_UI_COMMAND_CLOSES,
-  NA_UI_COMMAND_PRESSED,
-  NA_UI_COMMAND_EDITED,
-  NA_UI_COMMAND_EDIT_FINISHED,
-  NA_UI_COMMAND_KEYBOARD_SHORTCUT
-} NAUICommand;
-
-// When a command occurs in a certain uiElement, an information package with
-// the NAReaction type will be created:
-
-typedef struct NAReaction NAReaction;
-struct NAReaction{
-  const void* uiElement;
-  NAUICommand command;
-  void* controller;
-};
-
-// This NAReaction package is then provided to reaction callbacks with the
-// following prototype. See further below for a discussion of the parameter
-// and the return type.
-
-typedef void(*NAReactionCallback)(NAReaction reaction);
+// interface element can react to several commands.
 
 // By calling naAddUIReaction or naAddUIKeyboardShortcut, the programmer can
 // register, which reaction callback should be called when a certain uiElement

@@ -6,7 +6,7 @@
 
 
 #include "../Core/NAAppCore.h"
-#include "../../../NAUtility/NAValueHelper.h"
+#include "../../NAUtility/NAValueHelper.h"
 
 
 // UI_Element flags:
@@ -37,7 +37,7 @@ NA_HAPI void na_updateMenuItem(NAMenu* menu, const NAMenuItem* menuItem);
 
 
 
-NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr) {
+NA_HDEF void na_ClearUINativePtr(void* nativePtr) {
     DestroyWindow(nativePtr);
 }
 
@@ -430,7 +430,8 @@ NAWINAPICallbackInfo na_HandleMousePress(
     || type == NA_UI_SCREEN
     || type == NA_UI_SPACE)
   {
-    na_SetMouseButtonPressed(button, press);
+    NAApplication* app = naGetApplication();
+    na_SetMouseButtonPressed(na_getApplicationMouseStatus(app), button, press);
     if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_DOWN)) {
       // don't know what to do.
     }
@@ -493,7 +494,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
       size.height = rect.pos.y + rect.size.height - size.height;
       mouseStatus = naGetMouseStatus();
       pos = naGetMousePos(mouseStatus);
-      na_SetMouseMovedByDiff(size.width - pos.x, size.height - pos.y);
+      na_SetMouseMovedByDiff(na_getApplicationMouseStatus(naGetApplication()), size.width - pos.x, size.height - pos.y);
 
       if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED)) {
         // don't know what to do.

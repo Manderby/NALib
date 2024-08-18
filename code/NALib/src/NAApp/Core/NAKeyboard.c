@@ -1,7 +1,9 @@
 
-#include "../NAAppCore.h"
+#include "NAAppCore.h"
 
 #if NA_COMPILE_GUI == 1
+
+#include "../NAKeyboard.h"
 
 
 

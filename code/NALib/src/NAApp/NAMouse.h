@@ -1,7 +1,7 @@
 
-#if defined NA_MOUSE_INCLUDED || !defined NA_APP_INCLUDED
-  #warning "Do not include this file directly. Use NAApp.h"
-#endif
+//#if defined NA_MOUSE_INCLUDED || !defined NA_APP_INCLUDED
+//  #warning "Do not include this file directly. Use NAApp.h"
+//#endif
 #ifndef NA_MOUSE_INCLUDED
 #define NA_MOUSE_INCLUDED
 
@@ -9,15 +9,6 @@
 
 NA_PROTOTYPE(NAUIImage);
 
-
-
-typedef enum NAMouseButton {
-  NA_MOUSE_BUTTON_LEFT = 0,
-  NA_MOUSE_BUTTON_RIGHT = 1,
-  NA_MOUSE_BUTTON_MIDDLE = 2,
-  // additional mouse buttons have higher integer numbers are not implemented
-  // explicitely.
-} NAMouseButton;
 
 
 // A mouse status currently consists of the current position and the last one

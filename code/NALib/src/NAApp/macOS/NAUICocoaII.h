@@ -5,12 +5,12 @@
 // Do not include this file anywhere else!
 
 
-#include "../../Core/NAAppCore.h"
-#include "../../../NAUtility/NAMemory.h"
-#include "../../../NAMath/NACoord.h"
-#include "../../../NAUtility/NAThreading.h"
-#include "../../../NAUtility/NATranslator.h"
-#include "../../../NAUtility/NAValueHelper.h"
+#include "../Core/NAAppCore.h"
+#include "../../NAUtility/NAMemory.h"
+#include "../../NAMath/NACoord.h"
+#include "../../NAUtility/NAThreading.h"
+#include "../../NAUtility/NATranslator.h"
+#include "../../NAUtility/NAValueHelper.h"
 
 // the following import is needed for UTType definitions.
 #import <UniformTypeIdentifiers/UTType.h>
@@ -27,7 +27,7 @@ NA_HAPI NARect na_GetNativeWindowAbsoluteInnerRect(const NSWindow* window);
   cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativePtrConst(uiElement))
 
 
-NA_HDEF void na_ClearUINativePtr(NANativePtr nativePtr) {
+NA_HDEF void na_ClearUINativePtr(void* nativePtr) {
   NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(nativePtr));
 }
 
@@ -154,7 +154,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
       NSResponder* firstResponder = [focusWindow firstResponder];
       if(firstResponder) {
         while(!elem && firstResponder) {
-          elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativePtr)(firstResponder));
+          elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE void*)(firstResponder));
           if(!elem) {
             if(firstResponder == focusWindow) {
               elem = &naGetApplication()->uiElement;
@@ -164,7 +164,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
           }
         }
       }else{
-        elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativePtr)(focusWindow));
+        elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE void*)(focusWindow));
       }
     }else{
       elem = &naGetApplication()->uiElement;

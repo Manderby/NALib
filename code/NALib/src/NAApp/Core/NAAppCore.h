@@ -13,7 +13,8 @@
 
 
 
-#include "../NAApp.h"
+    #include "../NAAppDefinitions.h"
+    #include "../NAApp.h"
 
 #if NA_COMPILE_GUI == 1
 
@@ -22,6 +23,27 @@
 #include "../../NAUtility/NATranslator.h"
 #include "../../NAMath/NAVectorAlgebra.h"
 #include "../../NAVisual/NAColor.h"
+
+    NA_PROTOTYPE(NAFont);
+
+    NA_PROTOTYPE(NAUIImage);
+    NA_PROTOTYPE(NAApplication);
+    NA_PROTOTYPE(NAButton);
+    NA_PROTOTYPE(NACheckBox);
+    NA_PROTOTYPE(NAImageSpace);
+    NA_PROTOTYPE(NALabel);
+    NA_PROTOTYPE(NAMenu);
+    NA_PROTOTYPE(NAMenuItem);
+    NA_PROTOTYPE(NAMetalSpace);
+    NA_PROTOTYPE(NAOpenGLSpace);
+    NA_PROTOTYPE(NARadio);
+    NA_PROTOTYPE(NAScreen);
+    NA_PROTOTYPE(NASelect);
+    NA_PROTOTYPE(NASlider);
+    NA_PROTOTYPE(NASpace);
+    NA_PROTOTYPE(NATextBox);
+    NA_PROTOTYPE(NATextField);
+    NA_PROTOTYPE(NAWindow);
 
 // Very much the same as the nativePtr, there are certain types which are
 // casted differently on the different systems and therefore they are
@@ -58,7 +80,7 @@ struct NAApplication{
   
   NATranslator*     translator;
   NAFont*           systemFont;
-  NAMouseStatus     mouseStatus;     // The mouse cursor status
+  NAMouseStatus*    mouseStatus;     // The mouse cursor status
   NAKeyStroke       curKeyStroke;    // The currently pressed key combination
   uint32            flags;
 
@@ -175,14 +197,6 @@ struct NAKeyboardShortcutReaction{
   NAKeyStroke        shortcut;
 };
 
-struct NAFont{
-  void* nativePtr;  // HFONT on Windows, NSFont* on Mac
-  NAString* name;
-  uint32 flags;
-  double size;
-};
-NA_EXTERN_RUNTIME_TYPE(NAFont);
-
 
 
 extern NAApplication* na_App;
@@ -216,12 +230,12 @@ extern NAApplication* na_App;
 
 // Native UI Pointer
 // Calls the system specific method to clear/deallocate the given nativePtr.
-NA_HAPI void na_ClearUINativePtr(NANativePtr nativePtr);
+NA_HAPI void na_ClearUINativePtr(void* nativePtr);
 
 
 
 // NAUIElement
-NA_HAPI void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, NANativePtr nativePtr);
+NA_HAPI void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, void* nativePtr);
 NA_HAPI void na_ClearUIElement(NA_UIElement* uiElement);
 
 NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
@@ -283,10 +297,11 @@ NA_HAPI void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking)
 // NAApplication
 NA_HAPI NAApplication* na_NewApplication(void);
 NA_HAPI NABool na_IsApplicationRunning(void);
-NA_HAPI void na_InitApplication(NAApplication* application, NANativePtr nativePtr);
+NA_HAPI void na_InitApplication(NAApplication* application, void* nativePtr);
 NA_HAPI void na_ClearApplication(NAApplication* application);
 NA_HAPI NARect na_GetApplicationRect(const NAApplication* application);
 NA_HAPI void na_SetApplicationRect(const NAApplication* application, NARect rect);
+NA_HAPI NAMouseStatus* na_getApplicationMouseStatus(NAApplication* application);
 
 // NAButton
 #define NA_BUTTON_BORDERED   0x01
@@ -403,13 +418,23 @@ NA_HAPI void na_SetWindowRect(NA_UIElement* window, NARect rect);
 
 
 // Mouse related functions
-NA_HAPI void na_SetMouseButtonPressed(NAMouseButton button, NABool pressed);
+NA_HAPI NAMouseStatus* na_AllocMouseStatus();
+NA_HAPI void na_DeallocMouseStatus(NAMouseStatus* status);
 
-NA_HAPI void na_SetMouseWarpedTo(NAPos newpos);
-NA_HAPI void na_SetMouseMovedTo(NAPos newpos);
-NA_HAPI void na_SetMouseMovedByDiff(double deltaX, double deltaY);
-NA_HAPI void na_SetMouseEnteredAtPos(NAPos newpos);
-NA_HAPI void na_SetMouseExitedAtPos(NAPos newpos);
+NA_HAPI void na_SetMouseButtonPressed(NAMouseStatus* status, NAMouseButton button, NABool pressed);
+
+NA_HAPI void na_SetMouseWarpedTo(NAMouseStatus* status, NAPos newpos);
+NA_HAPI void na_SetMouseMovedTo(NAMouseStatus* status, NAPos newpos);
+NA_HAPI void na_SetMouseMovedByDiff(NAMouseStatus* status, double deltaX, double deltaY);
+NA_HAPI void na_SetMouseEnteredAtPos(NAMouseStatus* status, NAPos newpos);
+NA_HAPI void na_SetMouseExitedAtPos(NAMouseStatus* status, NAPos newpos);
+
+
+
+
+// Font related functions
+NA_HAPI NAFont* na_CreateFont(void* nativePtr, const NAString* name, uint32 flags, double size);
+NA_HAPI void na_DestructFontNativePtr(void* nativePtr);
 
 
 

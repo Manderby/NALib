@@ -37,6 +37,8 @@
 #define NA_UI_RESOLUTION_1x 3779.52755905511811   // 96 ppi
 #define NA_UI_RESOLUTION_2x 7559.05511811023622   // 192 ppi
 
+#include "NAAppDefinitions.h"
+
 #include "NAClipboard.h"
 #include "NAFont.h"
 #include "NAKeyboard.h"
@@ -46,26 +48,26 @@
 #include "NAUIImage.h"
 
 // The base of every ui element.
-#include "uiHeader/NAUIElement.h"
+#include "UIElements/NAUIElement.h"
 
 // The acutal ui elements
-#include "uiHeader/NAApplication.h"
-#include "uiHeader/NAButton.h"
-#include "uiHeader/NACheckBox.h"
-#include "uiHeader/NAImageSpace.h"
-#include "uiHeader/NALabel.h"
-#include "uiHeader/NAMenu.h"
-#include "uiHeader/NAMenuItem.h"
-#include "uiHeader/NAMetalSpace.h"
-#include "uiHeader/NAOpenGLSpace.h"
-#include "uiHeader/NARadio.h"
-#include "uiHeader/NAScreen.h"
-#include "uiHeader/NASelect.h"
-#include "uiHeader/NASlider.h"
-#include "uiHeader/NASpace.h"
-#include "uiHeader/NATextBox.h"
-#include "uiHeader/NATextField.h"
-#include "uiHeader/NAWindow.h"
+#include "UIElements/NAApplication.h"
+#include "UIElements/NAButton.h"
+#include "UIElements/NACheckBox.h"
+#include "UIElements/NAImageSpace.h"
+#include "UIElements/NALabel.h"
+#include "UIElements/NAMenu.h"
+#include "UIElements/NAMenuItem.h"
+#include "UIElements/NAMetalSpace.h"
+#include "UIElements/NAOpenGLSpace.h"
+#include "UIElements/NARadio.h"
+#include "UIElements/NAScreen.h"
+#include "UIElements/NASelect.h"
+#include "UIElements/NASlider.h"
+#include "UIElements/NASpace.h"
+#include "UIElements/NATextBox.h"
+#include "UIElements/NATextField.h"
+#include "UIElements/NAWindow.h"
 
 
 

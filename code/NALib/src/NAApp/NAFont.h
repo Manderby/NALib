@@ -1,9 +1,14 @@
 
-#if defined NA_FONT_INCLUDED || !defined NA_APP_INCLUDED
-  #warning "Do not include this file directly. Use NAApp.h"
-#endif
+//#if defined NA_FONT_INCLUDED || !defined NA_APP_INCLUDED
+//  #warning "Do not include this file directly. Use NAApp.h"
+//#endif
 #ifndef NA_FONT_INCLUDED
 #define NA_FONT_INCLUDED
+
+//#include "../NAUtility/NAMemory.h"
+
+NA_PROTOTYPE(NAString);
+
 
 
 // NALib defines a set of well working fonts with different sizes. They have
@@ -39,7 +44,12 @@ typedef enum{
 
 
 
+
 typedef struct NAFont NAFont;
+NA_EXTERN_RUNTIME_TYPE(NAFont);
+
+
+
 
 // Use naRelease to release the font again.
 NA_API NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size);

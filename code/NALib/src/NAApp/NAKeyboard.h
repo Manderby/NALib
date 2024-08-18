@@ -1,7 +1,7 @@
 
-#if defined NA_KEYBOARD_INCLUDED || !defined NA_APP_INCLUDED
-  #warning "Do not include this file directly. Use NAApp.h"
-#endif
+//#if defined NA_KEYBOARD_INCLUDED || !defined NA_APP_INCLUDED
+//  #warning "Do not include this file directly. Use NAApp.h"
+//#endif
 #ifndef NA_KEYBOARD_INCLUDED
 #define NA_KEYBOARD_INCLUDED
 
