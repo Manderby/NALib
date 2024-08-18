@@ -11,7 +11,7 @@
 
 
 NA_DEF NASkin naGetCurrentSkin() {
-  return NA_UIIMAGE_SKIN_LIGHT;
+  return NA_SKIN_LIGHT;
 }
 
 

@@ -36,12 +36,6 @@
 #define NA_ENDIANNESS_NETWORK 2
 // NA_ENDIANNESS_HOST will be defined below.
 
-// The various Operating Systems:
-#define NA_OS_UNKNOWN   0
-#define NA_OS_MAC_OS_X  1
-#define NA_OS_WINDOWS   2
-#define NA_OS_FREEBSD   3
-
 // Figuring out what system this is. The following macros will be defined:
 //
 // NA_OS                   One of the system macros above
@@ -60,8 +54,7 @@
 // Interesting read: http://sourceforge.net/p/predef/wiki/OperatingSystems/
 //
 // In the future, there might be more or different macros
-#if defined _WIN32
-  #define NA_OS NA_OS_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
   #define NA_IS_POSIX 0
   #undef  NA_ENDIANNESS_HOST
   #define NA_ENDIANNESS_HOST NA_ENDIANNESS_LITTLE
@@ -79,8 +72,7 @@
     #define NA_SIZE_T_BITS  NA_TYPE32_BITS
   #endif
 
-#elif defined __APPLE__ && __MACH__
-  #define NA_OS NA_OS_MAC_OS_X
+#elif NA_OS == NA_OS_MAC_OS_X
   #define NA_IS_POSIX 1
   #if defined __LITTLE_ENDIAN__
     #undef  NA_ENDIANNESS_HOST
@@ -123,8 +115,7 @@
     #define NA_COCOA_SUPER_DEALLOC() [super dealloc]
   #endif
 
-#elif defined __FreeBSD__
-  #define NA_OS NA_OS_FREEBSD
+#elif NA_OS == NA_OS_FREEBSD
   #define NA_IS_POSIX 1
 
   #if defined __LITTLE_ENDIAN__
@@ -144,7 +135,6 @@
 
 #else
   #warning "System unknown. Assuming 32bit Addr, 32bit Int, little endian"
-  #define NA_OS NA_OS_UNKNOWN
   #define NA_ENDIANNESS_HOST NA_ENDIANNESS_LITTLE
   #define NA_ADDRESS_BITS NA_TYPE32_BITS
   #define NA_SIZE_T_BITS NA_TYPE32_BITS

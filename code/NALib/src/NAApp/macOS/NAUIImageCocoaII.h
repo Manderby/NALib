@@ -20,7 +20,7 @@
   #endif
 
   NA_DEF NASkin naGetCurrentSkin(void) {
-    NASkin skin = NA_UIIMAGE_SKIN_LIGHT;
+    NASkin skin = NA_SKIN_LIGHT;
     NSAppearanceName appearancename = NSAppearanceNameAqua;
 
     #if defined __MAC_11_0
@@ -41,14 +41,14 @@
 
     NA_MACOS_AVAILABILITY_GUARD_10_10(
       if(appearancename == NSAppearanceNameVibrantDark) {
-        skin = NA_UIIMAGE_SKIN_DARK;
+        skin = NA_SKIN_DARK;
       }
     )
     NA_MACOS_AVAILABILITY_GUARD_10_14(
       if(appearancename == NSAppearanceNameDarkAqua
       || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
       || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark) {
-        skin = NA_UIIMAGE_SKIN_DARK;
+        skin = NA_SKIN_DARK;
       }
     )
 
@@ -56,7 +56,7 @@
   }
 #else
   NA_DEF NASkin naGetCurrentSkin(void) {
-    return NA_UIIMAGE_SKIN_LIGHT;
+    return NA_SKIN_LIGHT;
   }
 #endif
 
@@ -171,8 +171,8 @@ NA_DEF void* naAllocNativeImageWithImage(const NAImage* image) {
 
 
 NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolution, NAUIImageInteraction interaction, NABool secondaryState, NSSize imageSize, NSRect dstRect) {
-  NASkin skin = NA_UIIMAGE_SKIN_SYSTEM;
-  if(uiImage->tintMode != NA_BLEND_ZERO) {
+  NASkin skin = NA_SKIN_SYSTEM;
+  if(uiImage->tinting != NA_BLEND_ZERO) {
     skin = naGetCurrentSkin();
   }
   
@@ -225,8 +225,8 @@ NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
     NASizes imageSize = naGetUIImage1xSize(uiImage);
     image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
 
-    NASkin skin = NA_UIIMAGE_SKIN_PLAIN;
-    if(uiImage->tintMode != NA_BLEND_ZERO) {
+    NASkin skin = NA_SKIN_PLAIN;
+    if(uiImage->tinting != NA_BLEND_ZERO) {
       skin = naGetCurrentSkin();
     }
 

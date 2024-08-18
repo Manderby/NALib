@@ -31,14 +31,6 @@ typedef enum{
   NA_UIIMAGE_INTERACTION_DISABLED,
 } NAUIImageInteraction;
 
-// The systems main skin
-typedef enum{
-  NA_UIIMAGE_SKIN_PLAIN,  // leave the image untouched
-  NA_UIIMAGE_SKIN_LIGHT,  // choose a representation for a light skin
-  NA_UIIMAGE_SKIN_DARK,   // choose a representation for a dark skin
-  NA_UIIMAGE_SKIN_SYSTEM, // choose dependent on the current system settings
-} NASkin;
-
 
 
 // naCreateUIImage creates a new UIImage which stores multiple representations
@@ -59,7 +51,7 @@ typedef enum{
 // different representation with less detail. In such a case, you create a
 // separate UIImage for that representation, not use the same UIImage.
 //
-// The tintMode defines how the images are preprocessed with the system default
+// The tinting defines how the images are preprocessed with the system default
 // control color which is dependent on the current color scheme of the system.
 // For example, in dark mode, the images get tinted with a white color.
 //
@@ -73,9 +65,9 @@ typedef enum{
 NA_API NAUIImage* naCreateUIImage(
   const NAImage* baseImage,
   double baseResolution,
-  NABlendMode tintMode);
+  NABlendMode tinting);
 
-// Creates a new uiImage with the primary subimage, resolution and tintMode
+// Creates a new uiImage with the primary subimage, resolution and tinting
 // of the given one. All other subimages (different resolutions, pressed,
 // hover, ...) will be computed anew.
 NA_API NAUIImage* naRecreateUIImage(const NAUIImage* uiImage);
@@ -90,19 +82,6 @@ NA_API void naSetUIImageSubImage(
   double resolution,
   NASkin skin,
   NAUIImageInteraction interaction);
-
-
-
-// Returns the Skin for the current Appearance. Either returns LIGHT or DARK.
-// Never returns PLAIN.
-NA_API NASkin naGetCurrentSkin(void);
-
-// Fills the colors dependent on the given skin. The skin PLAIN is not allowed
-// but will return the color for the LIGHT skin instead.
-NA_API void naFillColorWithSkinTextColor(NAColor* color, NASkin skin);
-NA_API void naFillColorWithSkinLinkColor(NAColor* color, NASkin skin);
-NA_API void naFillColorWithSkinAccentColor(NAColor* color, NASkin skin);
-
 
 
 

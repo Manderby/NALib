@@ -49,7 +49,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
     (spaceSize.width - size1x.width) / 2,
     (spaceSize.height - size1x.height) / 2);
 
-  foreImage = na_GetUIImageImage(imageSpace->imageSpace.uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, NA_FALSE);
+  foreImage = na_GetUIImageImage(imageSpace->imageSpace.uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, NA_FALSE);
 
   // We store the background where the image will be placed.
   backBuffer = naMalloc(size1x.width * size1x.height * 4);

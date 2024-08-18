@@ -196,6 +196,18 @@ NA_API const NAKeyStroke* naGetApplicationKeyStroke(
 
 
 
+// Returns the Skin for the current Appearance. Either returns LIGHT or DARK.
+// Never returns PLAIN.
+NA_API NASkin naGetCurrentSkin(void);
+
+// Fills the colors dependent on the given skin. The skin PLAIN is not allowed
+// but will return the color for the LIGHT skin instead.
+NA_API void naFillColorWithSkinTextColor(NAColor* color, NASkin skin);
+NA_API void naFillColorWithSkinLinkColor(NAColor* color, NASkin skin);
+NA_API void naFillColorWithSkinAccentColor(NAColor* color, NASkin skin);
+
+
+
 // ////////////////////////////////
 // macOS specific functions.
 

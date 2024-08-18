@@ -55,6 +55,16 @@ typedef enum{
 
 
 
+// The different skins
+typedef enum{
+  NA_SKIN_PLAIN,  // leave all colors untouched
+  NA_SKIN_LIGHT,  // choose a representation for a light theme
+  NA_SKIN_DARK,   // choose a representation for a dark theme
+  NA_SKIN_SYSTEM, // choose dependent on the current system settings
+} NASkin;
+
+
+
 // When a command occurs in a certain uiElement, an information package with
 // the NAReaction type will be created:
 typedef struct NAReaction NAReaction;

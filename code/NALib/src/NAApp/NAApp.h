@@ -6,7 +6,7 @@
   extern "C"{
 #endif
 
-#include "../NABase/NABase.h"
+#include "../NABase/NAAPI.h"
 #if NA_COMPILE_GUI == 1
 
 

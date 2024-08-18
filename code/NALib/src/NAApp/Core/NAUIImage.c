@@ -13,7 +13,7 @@
 
 struct NAUIImage {
   NAList subImages;
-  NABlendMode tintMode;
+  NABlendMode tinting;
 };
 
 NA_API void na_DestructUIImage(NAUIImage* uiImage);
@@ -83,7 +83,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
       mutableUIImage,
       newImage,
       resolution,
-      NA_UIIMAGE_SKIN_PLAIN,
+      NA_SKIN_PLAIN,
       NA_UIIMAGE_INTERACTION_NONE);
     naRelease(newImage);
 
@@ -99,7 +99,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
           originalImage->image,
           &accentColor,
           NA_BLEND_OPAQUE,
-          (mutableUIImage->tintMode == NA_BLEND_ZERO) ? .45f : 1.f);
+          (mutableUIImage->tinting == NA_BLEND_ZERO) ? .45f : 1.f);
         newSubImage = na_AddUISubImage(
           mutableUIImage,
           newImage,
@@ -119,7 +119,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
           originalImage->image,
           &hoverColor,
           NA_BLEND_OPAQUE,
-          (mutableUIImage->tintMode == NA_BLEND_ZERO) ? .15f : .5f);
+          (mutableUIImage->tinting == NA_BLEND_ZERO) ? .15f : .5f);
 
         newSubImage = na_AddUISubImage(
           mutableUIImage,
@@ -159,11 +159,11 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
   }else{
     NAColor tintColor;
     naFillColorWithSkinTextColor(&tintColor, skin);
-    if(secondaryState && naGetCurrentSkin() != NA_UIIMAGE_SKIN_DARK) {
+    if(secondaryState && naGetCurrentSkin() != NA_SKIN_DARK) {
       naInvertColor(&tintColor);
     }
-    const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
-    NAImage* newImage = naCreateImageWithTint(originalImage->image, &tintColor, uiImage->tintMode, 1.f);
+    const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, NA_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
+    NAImage* newImage = naCreateImageWithTint(originalImage->image, &tintColor, uiImage->tinting, 1.f);
     newSubImage = na_AddUISubImage(
       mutableUIImage,
       newImage,
@@ -225,18 +225,18 @@ NA_HDEF void* na_GetUIImageNativeImage(const NAUIImage* uiImage, double resoluti
 NA_DEF NAUIImage* naCreateUIImage(
   const NAImage* baseImage,
   double baseResolution,
-  NABlendMode tintMode)
+  NABlendMode tinting)
 {
   NAUIImage* uiImage = naCreate(NAUIImage);
   
   naInitList(&uiImage->subImages);
-  uiImage->tintMode = tintMode;
+  uiImage->tinting = tinting;
   
   na_AddUISubImage(
     uiImage,
     baseImage,
     baseResolution,
-    NA_UIIMAGE_SKIN_PLAIN,
+    NA_SKIN_PLAIN,
     NA_UIIMAGE_INTERACTION_NONE);
   
   return uiImage;
@@ -248,7 +248,7 @@ NA_DEF NAUIImage* naRecreateUIImage(const NAUIImage* uiImage) {
   NAUIImage* newUIImage = naCreate(NAUIImage);
   
   naInitList(&newUIImage->subImages);
-  newUIImage->tintMode = uiImage->tintMode;
+  newUIImage->tinting = uiImage->tinting;
   
   const NA_UISubImage* subImage = naGetListFirstConst(&uiImage->subImages);
   
@@ -256,7 +256,7 @@ NA_DEF NAUIImage* naRecreateUIImage(const NAUIImage* uiImage) {
     newUIImage,
     naRetainConst(subImage->image),
     subImage->resolution,
-    NA_UIIMAGE_SKIN_PLAIN,
+    NA_SKIN_PLAIN,
     NA_UIIMAGE_INTERACTION_NONE);
   
   return newUIImage;
@@ -275,25 +275,25 @@ NA_HDEF void naFillColorWithSkinTextColor(NAColor* color, NASkin skin) {
   uint8 skinColor[4];
   
   switch(skin) {
-  case NA_UIIMAGE_SKIN_PLAIN:
+  case NA_SKIN_PLAIN:
     #if NA_DEBUG
       naError("Cannot provide color for plain skin");
     #endif
     // Fallthrough to light.
 
-  case NA_UIIMAGE_SKIN_LIGHT:
+  case NA_SKIN_LIGHT:
     skinColor[0] = 16;
     skinColor[1] = 16;
     skinColor[2] = 16;
     skinColor[3] = 255;
     break;
-  case NA_UIIMAGE_SKIN_DARK:
+  case NA_SKIN_DARK:
     skinColor[0] = 240;
     skinColor[1] = 240;
     skinColor[2] = 240;
     skinColor[3] = 255;
     break;
-  case NA_UIIMAGE_SKIN_SYSTEM:
+  case NA_SKIN_SYSTEM:
     na_FillDefaultTextColorWithSystemSkin(color);
     return;
   }
@@ -307,25 +307,25 @@ NA_DEF void naFillColorWithSkinLinkColor(NAColor* color, NASkin skin) {
   uint8 skinColor[4];
   
   switch(skin) {
-  case NA_UIIMAGE_SKIN_PLAIN:
+  case NA_SKIN_PLAIN:
     #if NA_DEBUG
       naError("Cannot provide color for plain skin");
     #endif
     // Fallthrough to light.
     
-  case NA_UIIMAGE_SKIN_LIGHT:
+  case NA_SKIN_LIGHT:
     skinColor[0] = 16;
     skinColor[1] = 128;
     skinColor[2] = 240;
     skinColor[3] = 255;
     break;
-  case NA_UIIMAGE_SKIN_DARK:
+  case NA_SKIN_DARK:
     skinColor[0] = 64;
     skinColor[1] = 196;
     skinColor[2] = 240;
     skinColor[3] = 255;
     break;
-  case NA_UIIMAGE_SKIN_SYSTEM:
+  case NA_SKIN_SYSTEM:
     na_FillDefaultLinkColorWithSystemSkin(color);
     return;
   }
@@ -339,25 +339,25 @@ NA_DEF void naFillColorWithSkinAccentColor(NAColor* color, NASkin skin) {
   uint8 skinColor[4];
   
   switch(skin) {
-  case NA_UIIMAGE_SKIN_PLAIN:
+  case NA_SKIN_PLAIN:
     #if NA_DEBUG
       naError("Cannot provide color for plain skin");
     #endif
     // Fallthrough to light.
     
-  case NA_UIIMAGE_SKIN_LIGHT:
+  case NA_SKIN_LIGHT:
     skinColor[0] = 255;
     skinColor[1] = 128;
     skinColor[2] = 16;
     skinColor[3] = 255;
     break;
-  case NA_UIIMAGE_SKIN_DARK:
+  case NA_SKIN_DARK:
     skinColor[0] = 255;
     skinColor[1] = 128;
     skinColor[2] = 16;
     skinColor[3] = 255;
     break;
-  case NA_UIIMAGE_SKIN_SYSTEM:
+  case NA_SKIN_SYSTEM:
     na_FillDefaultAccentColorWithSystemSkin(color);
     return;
   }
