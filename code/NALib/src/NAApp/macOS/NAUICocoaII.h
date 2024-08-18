@@ -206,7 +206,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
 
 
 
-NAString* naNewKeyPressString(NAKeyCode keyCode, uint32 modifiers) {
+NAString* naNewStringWithKeyStroke(const NAKeyStroke* keyStroke) {
   TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardLayoutInputSource();
   CFDataRef layoutData = TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
   const UCKeyboardLayout* keyboardLayout = (const UCKeyboardLayout*)CFDataGetBytePtr(layoutData);

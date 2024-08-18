@@ -1,9 +1,13 @@
 
-#include "NAAppCore.h"
-
+#include "../../NABase/NAConfiguration.h"
 #if NA_COMPILE_GUI == 1
 
+
+
 #include "../NAFont.h"
+#include "../../NAUtility/NAString.h"
+#include "../../NAUtility/NAMemory.h"
+#include "NAAppCore.h"
 
 
 
@@ -53,6 +57,7 @@ NA_DEF uint32 naGetFontFlags(const NAFont* font) {
 NA_DEF double naGetFontSize(const NAFont* font) {
   return font->size;
 }
+
 
 
 #endif // NA_COMPILE_GUI == 1

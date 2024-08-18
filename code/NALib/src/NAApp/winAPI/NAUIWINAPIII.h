@@ -272,7 +272,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
       elem = &naGetApplication()->uiElement;
     }
 
-    const NAKeyStroke* keyStroke = naGetApplicationKeyStroke(naGetApplication());
+    const NAKeyStroke* keyStroke = naGetCurrentKeyStroke();
 
     // Search for a matching keyboard shortcut by bubbling.
     while(!retValue && elem) {
@@ -463,7 +463,6 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
   NASize size = {0};
   NARect rect = {0};
   const NAMouseStatus* mouseStatus;
-  NAApplication* app = naGetApplication();
 
   switch(message) {
 
@@ -504,7 +503,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
       rect = naGetUIElementRectAbsolute(uiElement);
       size.width += rect.pos.x;
       size.height = rect.pos.y + rect.size.height - size.height;
-      mouseStatus = naGetApplicationMouseStatus(app);
+      mouseStatus = naGetCurrentMouseStatus();
       pos = naGetMousePos(mouseStatus);
       na_SetMouseMovedByDiff(na_GetApplicationMouseStatus(naGetApplication()), size.width - pos.x, size.height - pos.y);
 

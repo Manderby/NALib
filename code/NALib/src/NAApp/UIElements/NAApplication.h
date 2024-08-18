@@ -189,14 +189,6 @@ NA_API NAString* naNewApplicationResourcePath(
   const NAUTF8Char* basename,
   const NAUTF8Char* suffix);
 
-// Returns the current mouse status.
-NA_API const NAMouseStatus* naGetApplicationMouseStatus(
-  const NAApplication* app);
-
-// Returns the current key stroke.
-NA_API const NAKeyStroke* naGetApplicationKeyStroke(
-  const NAApplication* app);
-
 
 
 // Returns the Skin for the current Appearance. Either returns LIGHT or DARK.

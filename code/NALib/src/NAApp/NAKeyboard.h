@@ -18,6 +18,11 @@ typedef struct NAKeyStroke NAKeyStroke;
 
 
 
+#include "../NABase/NABase.h"
+NA_PROTOTYPE(NAString);
+
+
+
 // When handling keyboard input, NALib captures the keys pressed and provides
 // you commands for KeyDown and KeyUp. The key pressed is stored in the
 // following type:
@@ -175,9 +180,8 @@ typedef size_t NAKeyCode;
 
 
 
-// ////////////////////////////////////
-// Key stroke
-// ////////////////////////////////////
+// Returns the current key stroke.
+NA_API const NAKeyStroke* naGetCurrentKeyStroke(void);
 
 // Allocates a new keyStroke.
 NA_API NAKeyStroke* naNewKeyStroke(
@@ -193,17 +197,10 @@ NABool naGetKeyStrokeModifierPressed(
   const NAKeyStroke* keyStroke,
   uint32 modifierFlags);
 
-
-
-// ////////////////////////////////////
-// String representation
-// ////////////////////////////////////
-
 // Returns a string which represents what the user would see when pressing
 // the given key with the given modifiers. Implemented system-specific.
-NAString* naNewKeyPressString(
-  NAKeyCode keyCode,
-  uint32 modifiers);
+NAString* naNewStringWithKeyStroke(
+  const NAKeyStroke* keyStroke);
 
 
 

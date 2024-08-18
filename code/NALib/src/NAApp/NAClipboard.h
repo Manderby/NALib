@@ -7,6 +7,7 @@
 
 
 
+#include "../NABase/NABase.h"
 NA_PROTOTYPE(NAString);
 
 

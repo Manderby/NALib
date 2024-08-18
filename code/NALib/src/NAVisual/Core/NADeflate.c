@@ -201,7 +201,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
       repeatcount = (uint16)naReadBufferBits32(iter, 2) + 3;
       #if NA_DEBUG
         if((curalphabetcount + repeatcount) > alphabetcount)
-          naError("Internal Error: Reading too many literals at codelength 16");
+          naError("Reading too many literals at codelength 16");
       #endif
       for(i = 0; i < repeatcount; ++i) {
         alphabethuffman->codelengths[curalphabetcount + i] = alphabethuffman->codelengths[curalphabetcount - 1];
@@ -212,7 +212,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
       repeatcount = (uint16)naReadBufferBits32(iter, 3) + 3;
       #if NA_DEBUG
         if((curalphabetcount + repeatcount) > alphabetcount)
-          naError("Internal Error: Reading too many literals at codelength 17");
+          naError("Reading too many literals at codelength 17");
       #endif
       for(i = 0; i < repeatcount; ++i) {
         alphabethuffman->codelengths[curalphabetcount + i] = 0;
@@ -223,7 +223,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
       repeatcount = (uint16)naReadBufferBits32(iter, 7) + 11;
       #if NA_DEBUG
         if((curalphabetcount + repeatcount) > alphabetcount)
-          naError("Internal Error: Reading too many literals at codelength 18");
+          naError("Reading too many literals at codelength 18");
       #endif
       for(i = 0; i < repeatcount; ++i) {
         alphabethuffman->codelengths[curalphabetcount + i] = 0;

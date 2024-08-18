@@ -37,6 +37,7 @@ set(uiHeaderFiles
 
 set(coreFiles
   ${NAAppDir}/Core/NAAppCore.h
+  ${NAAppDir}/Core/NAClipboard.c
   ${NAAppDir}/Core/NAFont.c
   ${NAAppDir}/Core/NAKeyboard.c
   ${NAAppDir}/Core/NAMouse.c

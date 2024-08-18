@@ -1,9 +1,11 @@
 
-#include "NAAppCore.h"
-
+#include "../../NABase/NAConfiguration.h"
 #if NA_COMPILE_GUI == 1
 
+
+
 #include "../NAMouse.h"
+#include "../../NAUtility/NAMemory.h"
 
 
 

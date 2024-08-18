@@ -7,6 +7,7 @@
 
 
 
+#include "NAAppDefinitions.h"
 #include "../NAMath/NACoord.h"
 NA_PROTOTYPE(NAUIImage);
 
@@ -17,8 +18,10 @@ NA_PROTOTYPE(NAUIImage);
 // ////////////////////////////////////
 
 // A mouse status stores various position data of the mouse.
-// Une naGetApplicationMouseStatus to get the current mouse status.
 typedef struct NAMouseStatus NAMouseStatus;
+
+// Returns the current mouse status.
+NA_API const NAMouseStatus* naGetCurrentMouseStatus(void);
 
 // Returns whether the mouse button is pressed.
 NA_API NABool naGetMouseButtonPressed(

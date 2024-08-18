@@ -423,7 +423,7 @@ NA_HDEF size_t na_PrepareBufferPart(NABufferIterator* iter, size_t byteCount) {
   NAInt preparedByteCount = (NAInt)part->byteSize - iter->partOffset;
   #if NA_DEBUG
     if(preparedByteCount <= 0)
-      naError("Internal error: Returned value should be greater zero");
+      naError("Returned value should be greater zero");
   #endif
   return (size_t)preparedByteCount;
 }
