@@ -90,12 +90,6 @@ NA_HDEF void na_SetMouseExitedAtPos(
 
 
 
-NA_DEF const NAMouseStatus* naGetMouseStatus() {
-  return na_App->mouseStatus;
-}
-
-
-
 NA_DEF NABool naGetMouseButtonPressed(
   const NAMouseStatus* mouseStatus,
   NAMouseButton button)

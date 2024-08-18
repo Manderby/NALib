@@ -14,7 +14,7 @@
 
 
     #include "../NAAppDefinitions.h"
-    //#include "../NAApp.h"
+    #include "../NAApp.h"
 
 #if NA_COMPILE_GUI == 1
 
@@ -26,6 +26,7 @@
 
     NA_PROTOTYPE(NAFont);
     NA_PROTOTYPE(NAMouseStatus);
+    NA_PROTOTYPE(NAKeyStroke);
 
     NA_PROTOTYPE(NAUIImage);
     NA_PROTOTYPE(NAApplication);
@@ -82,7 +83,7 @@ struct NAApplication{
   NATranslator*     translator;
   NAFont*           systemFont;
   NAMouseStatus*    mouseStatus;     // The mouse cursor status
-  NAKeyStroke       curKeyStroke;    // The currently pressed key combination
+  NAKeyStroke*      keyStroke;       // The currently pressed key combination
   uint32            flags;
 
   const NAUTF8Char*       name;
@@ -195,7 +196,7 @@ struct NAEventReaction{
 struct NAKeyboardShortcutReaction{
   void*              controller;
   NAReactionCallback callback;
-  NAKeyStroke        shortcut;
+  NAKeyStroke*       shortcut;
 };
 
 
@@ -303,7 +304,9 @@ NA_HAPI void na_ClearApplication(NAApplication* application);
 NA_HAPI NARect na_GetApplicationRect(const NAApplication* application);
 NA_HAPI void na_SetApplicationRect(const NAApplication* application, NARect rect);
 NA_HAPI const NAFont* na_GetApplicationSystemFont(const NAApplication* app);
-NA_HAPI NAMouseStatus* na_getApplicationMouseStatus(NAApplication* application);
+NA_HAPI NAMouseStatus* na_GetApplicationMouseStatus(NAApplication* application);
+// Takes the ownership of the keyStroke. Do not call naDelete on it!
+NA_HAPI void na_SetApplicationKeyStroke(NAApplication* app, NAKeyStroke* keyStroke);
 
 // NAButton
 #define NA_BUTTON_BORDERED   0x01

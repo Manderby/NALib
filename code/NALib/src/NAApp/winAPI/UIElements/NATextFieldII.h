@@ -142,17 +142,17 @@ NA_DEF NATextField* naNewTextField(double width) {
 
   naAddUIKeyboardShortcut(
     winapiTextField,
-    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
+    naNewKeyStroke(NA_KEYCODE_ENTER, NA_KEY_MODIFIER_NONE),
     naHandleTextFieldEnter,
     NA_NULL);
   naAddUIKeyboardShortcut(
     winapiTextField,
-    naMakeKeyStroke(0, NA_KEYCODE_TAB),
+    naNewKeyStroke(NA_KEYCODE_TAB, 0),
     naHandleTextFieldTabOrder,
     NA_NULL);
   naAddUIKeyboardShortcut(
     winapiTextField,
-    naMakeKeyStroke(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB),
+    naNewKeyStroke(NA_KEYCODE_TAB, NA_KEY_MODIFIER_SHIFT),
     naHandleTextFieldReverseTabOrder,
     NA_NULL);
 

@@ -1,7 +1,4 @@
 
-#if defined NA_REACTION_INCLUDED || !defined NA_APP_INCLUDED
-  #warning "Do not include this file directly. Use NAApp.h"
-#endif
 #ifndef NA_REACTION_INCLUDED
 #define NA_REACTION_INCLUDED
 
@@ -31,9 +28,10 @@ NA_API void naAddUIReaction(
   NAReactionCallback callback,
   void*              controller);
 
+// Takes the ownership of the keyStroke. Do not call naDelete on it!
 NA_API void naAddUIKeyboardShortcut(
   void*              uiElement,
-  NAKeyStroke        keyStroke,
+  NAKeyStroke*       keyStroke,
   NAReactionCallback callback,
   void*              controller);
 

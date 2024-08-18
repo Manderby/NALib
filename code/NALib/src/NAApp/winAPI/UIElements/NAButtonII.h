@@ -707,14 +707,14 @@ NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionCallback callback, voi
 
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
-    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
+    naNewKeyStroke(NA_KEYCODE_ENTER, NA_KEY_MODIFIER_NONE),
     callback,
     controller);
   // Windows can not distinguish between ENTER and NUMPAD_ENTER. So we do not
   // install another keystroke listener.
   //naAddUIKeyboardShortcut(
   //  naGetUIElementWindow(button),
-  //  naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_NUMPAD_ENTER),
+  //  naNewKeyStroke(NA_KEYCODE_NUMPAD_ENTER, NA_KEY_MODIFIER_NONE),
   //  callback,
   //  controller);
 }
@@ -724,7 +724,7 @@ NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionCallback callback, voi
 NA_DEF void naSetButtonAbort(NAButton* button, NAReactionCallback callback, void* controller) {
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
-    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESCAPE),
+    naNewKeyStroke(NA_KEYCODE_ESCAPE, NA_KEY_MODIFIER_NONE),
     callback,
     controller);
 }

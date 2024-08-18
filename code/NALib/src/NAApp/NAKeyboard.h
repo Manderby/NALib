@@ -1,7 +1,4 @@
 
-//#if defined NA_KEYBOARD_INCLUDED || !defined NA_APP_INCLUDED
-//  #warning "Do not include this file directly. Use NAApp.h"
-//#endif
 #ifndef NA_KEYBOARD_INCLUDED
 #define NA_KEYBOARD_INCLUDED
 
@@ -10,9 +7,9 @@
 // When handling keyboard input, NALib captures the keys pressed and provides
 // you commands for KeyDown and KeyUp. The key pressed is stored in the
 // following type:
-typedef size_t NAUIKeyCode;
+typedef size_t NAKeyCode;
 
-// A NAUIKeyCode can have the following values. These values correspond to the
+// A NAKeyCode can have the following values. These values correspond to the
 // "US extended" keyboard layout. They represent the physical keys and not the
 // characters they might result in.
 #if NA_OS == NA_OS_WINDOWS
@@ -162,48 +159,43 @@ typedef size_t NAUIKeyCode;
   #define NA_KEYCODE_DELETE         0x75
 #endif
 
-// The modifier keys are stored as a bitmask with the following predefined
-// elements:
-typedef enum{
-  NA_MODIFIER_FLAG_NONE          = 0x0000,
-  NA_MODIFIER_FLAG_SHIFT         = 0x0003,
-  NA_MODIFIER_FLAG_CONTROL       = 0x000c,
-  NA_MODIFIER_FLAG_OPTION        = 0x0030,
-  NA_MODIFIER_FLAG_COMMAND       = 0x00c0
-
-  // The following flags might be available in the future. Please be patient.
-//  NA_MODIFIER_FLAG_LEFT_SHIFT    = 0x0001,
-//  NA_MODIFIER_FLAG_RIGHT_SHIFT   = 0x0002,
-//  NA_MODIFIER_FLAG_LEFT_CONTROL  = 0x0004,
-//  NA_MODIFIER_FLAG_RIGHT_CONTROL = 0x0008,
-//  NA_MODIFIER_FLAG_LEFT_OPTION   = 0x0010,
-//  NA_MODIFIER_FLAG_RIGHT_OPTION  = 0x0020,
-//  NA_MODIFIER_FLAG_LEFT_COMMAND  = 0x0040,
-//  NA_MODIFIER_FLAG_RIGHT_COMMAND = 0x0080,
-} NAModifierFlag;
 
 
+// ////////////////////////////////////
+// Key stroke
+// ////////////////////////////////////
 
-// A key stroke stores a key combination consisting of modifier flags and a
-// single key.
+// A key stroke stores a key combination consisting of a single key and
+// modifier flags.
 typedef struct NAKeyStroke NAKeyStroke;
-struct NAKeyStroke{
-  uint32 modifiers;
-  NAUIKeyCode keyCode;
-};
+
+// Allocates a new keyStroke. Usually used for naAddUIKeyboardShortcut will
+// take ownership of the object. If no ownership transfer is taking place,
+// naDelete is necessary to clean up the keyStroke.
+NA_API NAKeyStroke* naNewKeyStroke(
+  NAKeyCode keyCode,
+  uint32 modifiers);
+
+// Returns the keyCode of the pressed key.
+NAKeyCode naGetKeyStrokeKeyCode(
+  const NAKeyStroke* keyStroke);
+
+// Tests whether the given modifier key combination is pressed.
+NABool naGetKeyStrokeModifierPressed(
+  const NAKeyStroke* keyStroke,
+  uint32 modifierFlags);
 
 
 
-// Returns the currently pressed key combination
-NA_API NAKeyStroke naGetCurrentKeyStroke(void);
-
-// Returns a key stroke which depicts a single key pressed in combination with
-// modifier keys. Can for example be used as input for naAddUIKeyboardShortcut.
-NA_API NAKeyStroke naMakeKeyStroke(uint32 modifiers, NAUIKeyCode keyCode);
+// ////////////////////////////////////
+// String representation
+// ////////////////////////////////////
 
 // Returns a string which represents what the user would see when pressing
 // the given key with the given modifiers. Implemented system-specific.
-NAString* naNewKeyPressString(uint32 modifiers, NAUIKeyCode keyCode);
+NAString* naNewKeyPressString(
+  NAKeyCode keyCode,
+  uint32 modifiers);
 
 
 

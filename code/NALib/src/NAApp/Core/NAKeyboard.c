@@ -7,40 +7,64 @@
 
 
 
-NA_DEF NAKeyStroke naMakeKeyStroke(uint32 modifiers, NAUIKeyCode keyCode) {
-  NAKeyStroke newStroke;
-  newStroke.modifiers = modifiers;
-  newStroke.keyCode = keyCode;
+struct NAKeyStroke{
+  NAKeyCode keyCode;
+  uint32 modifiers;
+};
+
+NA_RUNTIME_TYPE(NAKeyStroke, NA_NULL, NA_FALSE);
+
+
+
+NA_API NAKeyStroke* naNewKeyStroke(NAKeyCode keyCode, uint32 modifiers) {
+  NAKeyStroke* newStroke = naNew(NAKeyStroke);
+  newStroke->modifiers = modifiers;
+  newStroke->keyCode = keyCode;
   return newStroke;
 }
 
 
 
-NA_DEF void naAddUIKeyboardShortcut(
-  void* uiElement,
-  NAKeyStroke shortcut,
-  NAReactionCallback callback,
-  void* controller)
-{
-  NAKeyboardShortcutReaction* keyReaction;
-  NA_UIElement* element = (NA_UIElement*)uiElement;
-  //#if NA_DEBUG
-  //  if((naGetUIElementType(uiElement) != NA_UI_APPLICATION) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
-  //    naError("Currently, only applications and windows are allowed as uiElement. Use naGetApplication() for the app.");
-  //#endif
-  keyReaction = naAlloc(NAKeyboardShortcutReaction);
-  keyReaction->controller = controller;
-  keyReaction->shortcut = shortcut;
-  keyReaction->callback = callback;
-  naAddListLastMutable(&element->shortcuts, keyReaction);
+NAKeyCode naGetKeyStrokeKeyCode(const NAKeyStroke* keyStroke) {
+  return keyStroke->keyCode;
 }
 
 
 
-NA_DEF NAKeyStroke naGetCurrentKeyStroke() {
-  return na_App->curKeyStroke;
+NABool naGetKeyStrokeModifierPressed(
+  const NAKeyStroke* keyStroke,
+  uint32 modifierFlags)
+{
+  return naGetFlagu32(keyStroke->modifiers, modifierFlags);
 }
 
 
 
 #endif // NA_COMPILE_GUI == 1
+
+
+
+// This is free and unencumbered software released into the public domain.
+
+// Anyone is free to copy, modify, publish, use, compile, sell, or
+// distribute this software, either in source code form or as a compiled
+// binary, for any purpose, commercial or non-commercial, and by any
+// means.
+
+// In jurisdictions that recognize copyright laws, the author or authors
+// of this software dedicate any and all copyright interest in the
+// software to the public domain. We make this dedication for the benefit
+// of the public at large and to the detriment of our heirs and
+// successors. We intend this dedication to be an overt act of
+// relinquishment in perpetuity of all present and future rights to this
+// software under copyright law.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+
+// For more information, please refer to <http://unlicense.org/>

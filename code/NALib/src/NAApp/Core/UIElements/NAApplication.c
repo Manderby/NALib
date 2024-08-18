@@ -28,9 +28,7 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
   app->systemFont = NA_NULL;
 
   app->mouseStatus = na_AllocMouseStatus();
-  
-  app->curKeyStroke.keyCode = NA_KEYCODE_ESCAPE;
-  app->curKeyStroke.modifiers = 0;
+  app->keyStroke = naNewKeyStroke(NA_KEYCODE_ESCAPE, 0); // 0 is not defined, just use esc.
   
   app->flags = 0;
   app->flags |= NA_APPLICATION_FLAG_RUNNING;
@@ -66,6 +64,7 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
   na_ClearUIElement(&app->uiElement);
 
   na_DeallocMouseStatus(app->mouseStatus);
+  if(app->keyStroke) { naDelete(app->keyStroke); }
 
   if(app->systemFont)
     naRelease(app->systemFont);
@@ -105,8 +104,27 @@ NA_HDEF const NAFont* na_GetApplicationSystemFont(const NAApplication* app) {
 
 
 
-NA_HDEF NAMouseStatus* na_getApplicationMouseStatus(NAApplication* app) {
+NA_DEF const NAMouseStatus* naGetApplicationMouseStatus(const NAApplication* app) {
   return app->mouseStatus;
+}
+
+
+
+NA_HDEF NAMouseStatus* na_GetApplicationMouseStatus(NAApplication* app) {
+  return app->mouseStatus;
+}
+
+
+
+NA_HDEF const NAKeyStroke* naGetApplicationKeyStroke(const NAApplication* app) {
+  return app->keyStroke;
+}
+
+
+
+NA_HDEF void na_SetApplicationKeyStroke(NAApplication* app, NAKeyStroke* keyStroke) {
+  if(app->keyStroke) { naDelete(app->keyStroke); }
+  app->keyStroke = keyStroke;
 }
 
 

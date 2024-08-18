@@ -123,19 +123,19 @@ NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event) {
   NABool hasControl;
   NABool hasOption;
   NABool hasCommand;
-  NAUIKeyCode keyCode = [event keyCode];
-  naGetApplication()->curKeyStroke.keyCode = keyCode;
+  NAKeyCode keyCode = [event keyCode];
+  naGetApplication()->keyStroke.keyCode = keyCode;
   [event modifierFlags];
   flags = (NSUInteger)[event modifierFlags];
   hasShift     = (flags & NAEventModifierFlagShift)   != 0;
   hasControl   = (flags & NAEventModifierFlagControl) != 0;
   hasOption    = (flags & NAEventModifierFlagOption)  != 0;
   hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
-  naGetApplication()->curKeyStroke.modifiers = 0;
-  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
-  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
-  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
-  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
+  naGetApplication()->keyStroke.modifiers = 0;
+  naGetApplication()->keyStroke.modifiers |= (uint32)hasShift * NA_KEY_MODIFIER_SHIFT;
+  naGetApplication()->keyStroke.modifiers |= (uint32)hasControl * NA_KEY_MODIFIER_CONTROL;
+  naGetApplication()->keyStroke.modifiers |= (uint32)hasOption * NA_KEY_MODIFIER_OPTION;
+  naGetApplication()->keyStroke.modifiers |= (uint32)hasCommand * NA_KEY_MODIFIER_COMMAND;
 }
 
 
@@ -175,15 +175,15 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
       NAListIterator iter = naMakeListAccessor(&elem->shortcuts);
       while(!retValue && naIterateList(&iter)) {
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
-        if(keyReaction->shortcut.keyCode == naGetApplication()->curKeyStroke.keyCode) {
-          NABool needsShift   = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool needsControl = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool needsOption  = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool needsCommand = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
-          NABool hasShift   = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool hasControl = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool hasOption  = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool hasCommand = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
+        if(keyReaction->shortcut.keyCode == naGetApplication()->keyStroke.keyCode) {
+          NABool needsShift   = naGetFlagu32(keyReaction->shortcut.modifiers, NA_KEY_MODIFIER_SHIFT);
+          NABool needsControl = naGetFlagu32(keyReaction->shortcut.modifiers, NA_KEY_MODIFIER_CONTROL);
+          NABool needsOption  = naGetFlagu32(keyReaction->shortcut.modifiers, NA_KEY_MODIFIER_OPTION);
+          NABool needsCommand = naGetFlagu32(keyReaction->shortcut.modifiers, NA_KEY_MODIFIER_COMMAND);
+          NABool hasShift   = naGetFlagu32(naGetApplication()->keyStroke.modifiers, NA_KEY_MODIFIER_SHIFT);
+          NABool hasControl = naGetFlagu32(naGetApplication()->keyStroke.modifiers, NA_KEY_MODIFIER_CONTROL);
+          NABool hasOption  = naGetFlagu32(naGetApplication()->keyStroke.modifiers, NA_KEY_MODIFIER_OPTION);
+          NABool hasCommand = naGetFlagu32(naGetApplication()->keyStroke.modifiers, NA_KEY_MODIFIER_COMMAND);
           if(needsShift   == hasShift
           && needsControl == hasControl
           && needsOption  == hasOption
@@ -206,7 +206,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
 
 
 
-NAString* naNewKeyPressString(uint32 modifiers, NAUIKeyCode keyCode) {
+NAString* naNewKeyPressString(NAKeyCode keyCode, uint32 modifiers) {
   TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardLayoutInputSource();
   CFDataRef layoutData = TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
   const UCKeyboardLayout* keyboardLayout = (const UCKeyboardLayout*)CFDataGetBytePtr(layoutData);
@@ -216,10 +216,10 @@ NAString* naNewKeyPressString(uint32 modifiers, NAUIKeyCode keyCode) {
   UniCharCount realLength;
                 
   UInt32 modifierKeyState = 0;
-  if(modifiers & NA_MODIFIER_FLAG_SHIFT)  { modifierKeyState |= shiftKey; }
-  if(modifiers & NA_MODIFIER_FLAG_CONTROL) { modifierKeyState |= controlKey; }
-  if(modifiers & NA_MODIFIER_FLAG_OPTION) { modifierKeyState |= optionKey; }
-  if(modifiers & NA_MODIFIER_FLAG_COMMAND) { modifierKeyState |= cmdKey; }
+  if(modifiers & NA_KEY_MODIFIER_SHIFT)  { modifierKeyState |= shiftKey; }
+  if(modifiers & NA_KEY_MODIFIER_CONTROL) { modifierKeyState |= controlKey; }
+  if(modifiers & NA_KEY_MODIFIER_OPTION) { modifierKeyState |= optionKey; }
+  if(modifiers & NA_KEY_MODIFIER_COMMAND) { modifierKeyState |= cmdKey; }
 
   UCKeyTranslate(
     keyboardLayout,

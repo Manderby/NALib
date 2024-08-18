@@ -1,7 +1,4 @@
 
-#if defined NA_UI_WINDOW_INCLUDED || !defined NA_APP_INCLUDED
-  #warning "Do not include this file directly. Use NAApp.h"
-#endif
 #ifndef NA_UI_WINDOW_INCLUDED
 #define NA_UI_WINDOW_INCLUDED
 

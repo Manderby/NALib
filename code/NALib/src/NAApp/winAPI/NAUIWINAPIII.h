@@ -202,37 +202,42 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message) {
   NABool rControl;
   NABool lOption;
   NABool rOption;
-  NABool hasShift   = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
-  NABool hasControl = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
-  NABool hasOption  = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
-  NABool hasCommand = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
+
   NABool isExtendedKey = (message->lParam >> 24) & 0x01;  // Extended keys usually are the ones on the right.
 
-  NAUIKeyCode scanCode = (NAUIKeyCode)MapVirtualKey((UINT)message->wParam, MAPVK_VK_TO_VSC);
-  naGetApplication()->curKeyStroke.keyCode = scanCode;
+  NAKeyCode keyCode = (NAKeyCode)MapVirtualKey((UINT)message->wParam, MAPVK_VK_TO_VSC);
+
   lShift = (GetKeyState(VK_LSHIFT) & 0x8000) >> 15;
   rShift = (GetKeyState(VK_RSHIFT) & 0x8000) >> 15;
   // Note: Due to the right shift key not properly being detected by the extended key flag
   // of lParam, we have to rely on GetKeyState. Pity.
   // of lParam, we have to rely on GetKeyState. Pity.
-  hasShift = lShift || rShift;
+  
+  NABool hasShift = lShift || rShift;
   lControl = (GetKeyState(VK_LCONTROL) & 0x8000) >> 15;
   rControl = (GetKeyState(VK_RCONTROL) & 0x8000) >> 15;
-  hasControl = lControl || rControl;
+  
+  NABool hasControl = lControl || rControl;
   lOption = (GetKeyState(VK_LMENU) & 0x8000) >> 15;
   rOption = (GetKeyState(VK_RMENU) & 0x8000) >> 15;
+  
   // Note: AltGr actually sends first an rControl and then an rOption. Don't know why.
-  hasOption = lOption || rOption;
-  hasCommand = scanCode == NA_KEYCODE_LEFT_COMMAND || scanCode == NA_KEYCODE_RIGHT_COMMAND;
+  NABool hasOption = lOption || rOption;
+  
+  NABool hasCommand = keyCode == NA_KEYCODE_LEFT_COMMAND || keyCode == NA_KEYCODE_RIGHT_COMMAND;
+
+  uint32 modifierFlags =
+    (uint32)hasShift * NA_KEY_MODIFIER_SHIFT |
+    (uint32)hasControl * NA_KEY_MODIFIER_CONTROL |
+    (uint32)hasOption * NA_KEY_MODIFIER_OPTION |
+    (uint32)hasCommand * NA_KEY_MODIFIER_COMMAND;
 
   // Note, this implementation is far from finished. It does strange things, but that
   // just seems to be a thing with windows key mappings. :(
 
-  naGetApplication()->curKeyStroke.modifiers = 0;
-  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasShift * NA_MODIFIER_FLAG_SHIFT;
-  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasControl * NA_MODIFIER_FLAG_CONTROL;
-  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasOption * NA_MODIFIER_FLAG_OPTION;
-  naGetApplication()->curKeyStroke.modifiers |= (uint32)hasCommand * NA_MODIFIER_FLAG_COMMAND;
+  NAKeyStroke* keyStroke = naNewKeyStroke(keyCode, modifierFlags);
+  NAApplication* app = naGetApplication();
+  na_SetApplicationKeyStroke(app, keyStroke);
 }
 
 
@@ -267,31 +272,37 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
       elem = &naGetApplication()->uiElement;
     }
 
+    const NAKeyStroke* keyStroke = naGetApplicationKeyStroke(naGetApplication());
+
     // Search for a matching keyboard shortcut by bubbling.
     while(!retValue && elem) {
       NAListIterator iter = naMakeListAccessor(&elem->shortcuts);
+
       while(!retValue && naIterateList(&iter)) {
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
-        if(keyReaction->shortcut.keyCode == naGetApplication()->curKeyStroke.keyCode) {
-          NABool needsShift   = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool needsControl = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool needsOption  = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool needsCommand = naGetFlagu32(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
-          NABool hasShift   = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool hasControl = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool hasOption  = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool hasCommand = naGetFlagu32(naGetApplication()->curKeyStroke.modifiers, NA_MODIFIER_FLAG_COMMAND);
-          if(needsShift   == hasShift
-          && needsControl == hasControl
-          && needsOption  == hasOption
-          && needsCommand == hasCommand) {
-            NAReaction reaction = {
-              elem,
-              NA_UI_COMMAND_KEYBOARD_SHORTCUT,
-              keyReaction->controller};
-            keyReaction->callback(reaction);
-            retValue = NA_TRUE;
-          }
+        const NAKeyStroke* shortcut = keyReaction->shortcut;
+        NABool needsShift   = naGetKeyStrokeModifierPressed(shortcut, NA_KEY_MODIFIER_SHIFT);
+        NABool needsControl = naGetKeyStrokeModifierPressed(shortcut, NA_KEY_MODIFIER_CONTROL);
+        NABool needsOption  = naGetKeyStrokeModifierPressed(shortcut, NA_KEY_MODIFIER_OPTION);
+        NABool needsCommand = naGetKeyStrokeModifierPressed(shortcut, NA_KEY_MODIFIER_COMMAND);
+        NABool hasShift   = naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_SHIFT);
+        NABool hasControl = naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_CONTROL);
+        NABool hasOption  = naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_OPTION);
+        NABool hasCommand = naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_COMMAND);
+
+        if(naGetKeyStrokeKeyCode(shortcut) == naGetKeyStrokeKeyCode(keyStroke) &&
+          needsShift   == hasShift &&
+          needsControl == hasControl &&
+          needsOption  == hasOption &&
+          needsCommand == hasCommand)
+        {
+          NAReaction reaction = {
+            elem,
+            NA_UI_COMMAND_KEYBOARD_SHORTCUT,
+            keyReaction->controller};
+
+          keyReaction->callback(reaction);
+          retValue = NA_TRUE;
         }
       }
       naClearListIterator(&iter);
@@ -431,7 +442,7 @@ NAWINAPICallbackInfo na_HandleMousePress(
     || type == NA_UI_SPACE)
   {
     NAApplication* app = naGetApplication();
-    na_SetMouseButtonPressed(na_getApplicationMouseStatus(app), button, press);
+    na_SetMouseButtonPressed(na_GetApplicationMouseStatus(app), button, press);
     if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_DOWN)) {
       // don't know what to do.
     }
@@ -452,6 +463,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
   NASize size = {0};
   NARect rect = {0};
   const NAMouseStatus* mouseStatus;
+  NAApplication* app = naGetApplication();
 
   switch(message) {
 
@@ -492,9 +504,9 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
       rect = naGetUIElementRectAbsolute(uiElement);
       size.width += rect.pos.x;
       size.height = rect.pos.y + rect.size.height - size.height;
-      mouseStatus = naGetMouseStatus();
+      mouseStatus = naGetApplicationMouseStatus(app);
       pos = naGetMousePos(mouseStatus);
-      na_SetMouseMovedByDiff(na_getApplicationMouseStatus(naGetApplication()), size.width - pos.x, size.height - pos.y);
+      na_SetMouseMovedByDiff(na_GetApplicationMouseStatus(naGetApplication()), size.width - pos.x, size.height - pos.y);
 
       if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED)) {
         // don't know what to do.

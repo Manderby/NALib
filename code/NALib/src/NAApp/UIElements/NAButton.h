@@ -1,7 +1,4 @@
 
-#if defined NA_BUTTON_INCLUDED || !defined NA_APP_INCLUDED
-  #warning "Do not include this file directly. Use NAApp.h"
-#endif
 #ifndef NA_BUTTON_INCLUDED
 #define NA_BUTTON_INCLUDED
 

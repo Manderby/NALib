@@ -532,12 +532,12 @@ NA_DEF void naSetButtonSubmit(
   if(window) {
     naAddUIKeyboardShortcut(
       window,
-      naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER),
+      naNewKeyStroke(NA_KEYCODE_ENTER, NA_KEY_MODIFIER_NONE),
       callback,
       controller);
     naAddUIKeyboardShortcut(
       window,
-      naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_NUMPAD_ENTER),
+      naNewKeyStroke(NA_KEYCODE_NUMPAD_ENTER, NA_KEY_MODIFIER_NONE),
       callback,
       controller);
   }else{
@@ -561,12 +561,12 @@ NA_DEF void naSetButtonAbort(
   
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
-    naMakeKeyStroke(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESCAPE),
+    naNewKeyStroke(NA_KEYCODE_ESCAPE, NA_KEY_MODIFIER_NONE),
     callback,
     controller);
   naAddUIKeyboardShortcut(
     naGetUIElementWindow(button),
-    naMakeKeyStroke(NA_MODIFIER_FLAG_COMMAND, NA_KEYCODE_PERIOD),
+    naNewKeyStroke(NA_KEYCODE_PERIOD, NA_KEY_MODIFIER_COMMAND),
     callback,
     controller);
 }

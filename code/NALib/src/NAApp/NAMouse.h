@@ -1,28 +1,21 @@
 
-//#if defined NA_MOUSE_INCLUDED || !defined NA_APP_INCLUDED
-//  #warning "Do not include this file directly. Use NAApp.h"
-//#endif
 #ifndef NA_MOUSE_INCLUDED
 #define NA_MOUSE_INCLUDED
 
 
 
+#include "../NAMath/NACoord.h"
 NA_PROTOTYPE(NAUIImage);
 
 
 
+// ////////////////////////////////////
+// Mouse status
+// ////////////////////////////////////
+
 // A mouse status currently consists of the current position and the last one
 // recorded.
 typedef struct NAMouseStatus NAMouseStatus;
-
-// The actual type is system dependent.
-// macOS: NSCursor
-typedef void NACursorImage;
-
-
-
-// Returns the current mouse status.
-NA_API const NAMouseStatus* naGetMouseStatus(void);
 
 // Returns whether the mouse button is pressed.
 NA_API NABool naGetMouseButtonPressed(
@@ -43,6 +36,16 @@ NA_API void naShowMouse(void);
 NA_API void naHideMouse(void);
 NA_API void naHideMouseUntilMovement(NABool hide);
 
+
+
+// ////////////////////////////////////
+// Mouse cursor
+// ////////////////////////////////////
+
+// The actual type is system dependent.
+// macOS: NSCursor
+typedef void NACursorImage;
+
 // Creates a resolution independent image for a cursor with a hotspot.
 NA_API NACursorImage* naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot);
 NA_API void naDeallocCursorImage(NACursorImage* image);
@@ -50,6 +53,8 @@ NA_API void naDeallocCursorImage(NACursorImage* image);
 // Sets the current cursor image to the image provided. If null is sent, the
 // default cursor is set.
 NA_API void naActivateCursorImage(const NACursorImage* image);
+
+
 
 #endif // NA_MOUSE_INCLUDED
 

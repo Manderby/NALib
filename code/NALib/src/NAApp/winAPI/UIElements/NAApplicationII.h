@@ -717,7 +717,7 @@ NA_DEF void naCenterMouse(void* uiElement) {
     rect.pos.y + rect.size.height * .5f};
 
   NAApplication* app = naGetApplication();
-  na_SetMouseWarpedTo(na_getApplicationMouseStatus(app), centerPos);
+  na_SetMouseWarpedTo(na_GetApplicationMouseStatus(app), centerPos);
   SetCursorPos(
     (int)(centerPos.x * uiScale),
     (int)((screenFrame.size.height - centerPos.y) * uiScale));

@@ -1,7 +1,4 @@
 
-#if defined NA_APPLICATION_INCLUDED || !defined NA_APP_INCLUDED
-  #warning "Do not include this file directly. Use NAApp.h"
-#endif
 #ifndef NA_APPLICATION_INCLUDED
 #define NA_APPLICATION_INCLUDED
 
@@ -188,6 +185,14 @@ NA_API NAString* naNewApplicationResourcePath(
   const NAUTF8Char* dir,
   const NAUTF8Char* basename,
   const NAUTF8Char* suffix);
+
+// Returns the current mouse status.
+NA_API const NAMouseStatus* naGetApplicationMouseStatus(
+  const NAApplication* app);
+
+// Returns the current key stroke.
+NA_API const NAKeyStroke* naGetApplicationKeyStroke(
+  const NAApplication* app);
 
 
 

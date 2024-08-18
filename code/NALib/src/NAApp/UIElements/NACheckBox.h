@@ -1,7 +1,4 @@
 
-#if defined NA_CHECKBOX_INCLUDED || !defined NA_APP_INCLUDED
-  #warning "Do not include this file directly. Use NAApp.h"
-#endif
 #ifndef NA_CHECKBOX_INCLUDED
 #define NA_CHECKBOX_INCLUDED
 
