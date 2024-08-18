@@ -5,6 +5,7 @@
 
 
 NA_PROTOTYPE(NAString);
+#include "../NABase/NABase.h"
 
 
 
@@ -37,7 +38,6 @@ typedef enum{
 
 
 typedef struct NAFont NAFont;
-NA_EXTERN_RUNTIME_TYPE(NAFont);
 
 
 

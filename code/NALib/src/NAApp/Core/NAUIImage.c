@@ -3,12 +3,33 @@
 
 #if NA_COMPILE_GUI == 1
 
+#include "NAUIImageCore.h"
 #include "../../NAVisual/NAImage.h"
+#include "../NAUIImage.h"
+#include "../UIElements/NAScreen.h"
+#include "../../NAStruct/NAList.h"
 
 
+
+struct NAUIImage {
+  NAList subImages;
+  NABlendMode tintMode;
+};
 
 NA_API void na_DestructUIImage(NAUIImage* uiImage);
 NA_RUNTIME_TYPE(NAUIImage, na_DestructUIImage, NA_TRUE);
+
+
+
+typedef struct NA_UISubImage NA_UISubImage;
+struct NA_UISubImage{
+  const NAImage* image;
+  void* nativeImage;
+  double resolution;
+  NASkin skin;
+  NAUIImageInteraction interaction;
+};
+
 
 
 // Will retain the image.
@@ -16,7 +37,7 @@ NA_HAPI NA_UISubImage* na_AddUISubImage(
   NAUIImage* uiImage,
   const NAImage* image,
   double resolution,
-  NAUIImageSkin skin,
+  NASkin skin,
   NAUIImageInteraction interaction);
   
 NA_HAPI void na_DeallocUISubImage(NA_UISubImage* subImage);
@@ -28,7 +49,7 @@ NA_HAPI double na_GetUIImageBaseResolution(const NAUIImage* uiImage);
 NA_HDEF const NA_UISubImage* na_GetUISubImage(
   const NAUIImage* uiImage,
   double resolution,
-  NAUIImageSkin skin,
+  NASkin skin,
   NAUIImageInteraction interaction,
   NABool secondaryState)
 {
@@ -73,7 +94,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
       {
         const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
         NAColor accentColor;
-        naFillDefaultAccentColorWithSkin(&accentColor, skin);
+        naFillColorWithSkinAccentColor(&accentColor, skin);
         NAImage* newImage = naCreateImageWithTint(
           originalImage->image,
           &accentColor,
@@ -93,7 +114,7 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
         const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, skin, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
         
         NAColor hoverColor;
-        naFillDefaultAccentColorWithSkin(&hoverColor, skin);
+        naFillColorWithSkinAccentColor(&hoverColor, skin);
         NAImage* newImage = naCreateImageWithTint(
           originalImage->image,
           &hoverColor,
@@ -137,8 +158,8 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
   // If the skin is not PLAIN, we build an image out of it.
   }else{
     NAColor tintColor;
-    naFillDefaultTextColorWithSkin(&tintColor, skin);
-    if(secondaryState && naGetSkinForCurrentAppearance() != NA_UIIMAGE_SKIN_DARK) {
+    naFillColorWithSkinTextColor(&tintColor, skin);
+    if(secondaryState && naGetCurrentSkin() != NA_UIIMAGE_SKIN_DARK) {
       naInvertColor(&tintColor);
     }
     const NA_UISubImage* originalImage = na_GetUISubImage(mutableUIImage, resolution, NA_UIIMAGE_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, secondaryState);
@@ -161,7 +182,7 @@ NA_DEF void naSetUIImageSubImage(
   NAUIImage* uiImage,
   const NAImage* subImage,
   double resolution,
-  NAUIImageSkin skin,
+  NASkin skin,
   NAUIImageInteraction interaction)
 {
   NAListIterator listIter = naMakeListModifier(&uiImage->subImages);
@@ -185,7 +206,7 @@ NA_DEF void naSetUIImageSubImage(
 
 
 
-NA_HDEF const NAImage* na_GetUIImageImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction, NABool secondaryState) {
+NA_HDEF const NAImage* na_GetUIImageImage(const NAUIImage* uiImage, double resolution, NASkin skin, NAUIImageInteraction interaction, NABool secondaryState) {
   // Let the following function do the hard work.
   const NA_UISubImage* subImage = na_GetUISubImage(uiImage, resolution, skin, interaction, secondaryState);
   return subImage->image;
@@ -193,7 +214,7 @@ NA_HDEF const NAImage* na_GetUIImageImage(const NAUIImage* uiImage, double resol
 
 
 
-NA_HDEF void* na_GetUIImageNativeImage(const NAUIImage* uiImage, double resolution, NAUIImageSkin skin, NAUIImageInteraction interaction, NABool secondaryState) {
+NA_HDEF void* na_GetUIImageNativeImage(const NAUIImage* uiImage, double resolution, NASkin skin, NAUIImageInteraction interaction, NABool secondaryState) {
   // Let the following function do the hard work.
   const NA_UISubImage* subImage = na_GetUISubImage(uiImage, resolution, skin, interaction, secondaryState);
   return subImage->nativeImage;
@@ -250,7 +271,7 @@ NA_DEF void na_DestructUIImage(NAUIImage* uiImage) {
 
 
 
-NA_HDEF void naFillDefaultTextColorWithSkin(NAColor* color, NAUIImageSkin skin) {
+NA_HDEF void naFillColorWithSkinTextColor(NAColor* color, NASkin skin) {
   uint8 skinColor[4];
   
   switch(skin) {
@@ -282,7 +303,7 @@ NA_HDEF void naFillDefaultTextColorWithSkin(NAColor* color, NAUIImageSkin skin) 
 
 
 
-NA_DEF void naFillDefaultLinkColorWithSkin(NAColor* color, NAUIImageSkin skin) {
+NA_DEF void naFillColorWithSkinLinkColor(NAColor* color, NASkin skin) {
   uint8 skinColor[4];
   
   switch(skin) {
@@ -314,7 +335,7 @@ NA_DEF void naFillDefaultLinkColorWithSkin(NAColor* color, NAUIImageSkin skin) {
 
 
 
-NA_DEF void naFillDefaultAccentColorWithSkin(NAColor* color, NAUIImageSkin skin) {
+NA_DEF void naFillColorWithSkinAccentColor(NAColor* color, NASkin skin) {
   uint8 skinColor[4];
   
   switch(skin) {
@@ -368,7 +389,7 @@ NA_HDEF NA_UISubImage* na_AddUISubImage(
   NAUIImage* uiImage,
   const NAImage* image,
   double resolution,
-  NAUIImageSkin skin,
+  NASkin skin,
   NAUIImageInteraction interaction)
 {
   NA_UISubImage* subImage = naAlloc(NA_UISubImage);

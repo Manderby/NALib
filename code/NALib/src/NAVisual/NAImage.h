@@ -83,6 +83,34 @@ NA_API void naConvertImageTou8(
   NAColorBufferType bufferType);
 
 
+
+
+// Creates a new NAImage with the given path. Can only be PNG on windows,
+// macOS allows for various kind of input files.
+NA_API NAImage* naCreateImageWithFilePath(const NAUTF8Char* pathStr);
+
+
+
+// Working with system native images
+//
+// Operating systems have special types to represent an image. The following
+// functions allow to convert between NAImage and the native images which
+// are of the following type:
+//
+// macOS:   NSImage*
+// Windows: HBITMAP
+
+// Creates a new image out of a given native image.
+NA_API NAImage* naCreateImageWithNativeImage(const void* nativeImage);
+
+// Allocates a new native image with the content of the given image.
+NA_API void* naAllocNativeImageWithImage(const NAImage* image);
+
+// Deallocates the native image.
+NA_API void naDeallocNativeImage(void* nativeImage);
+
+
+
 #ifdef __cplusplus
   } // extern "C"
 #endif

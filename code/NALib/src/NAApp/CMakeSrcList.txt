@@ -43,7 +43,7 @@ set(coreFiles
   ${NAAppDir}/Core/NAPreferences.c
   ${NAAppDir}/Core/NAPreferencesII.h
   ${NAAppDir}/Core/NAUIImage.c
-  ${NAAppDir}/Core/NAUIImageII.h
+  ${NAAppDir}/Core/NAUIImageCore.h
 )
 
 set(coreUIFiles

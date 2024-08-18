@@ -8,13 +8,22 @@
 
 
 
+// An NAUIImage stores a collection of images ready to be presented to a user.
+// Such an image might be based on a single image but can have different
+// representations based on the systems skin, the resolution of the screen
+// or the interaction the user has with the image.
+
+typedef struct NAUIImage NAUIImage;
+
+// A NAUIImage has reference counting built-in. Use naRetain and naRelease.
+
+    
+
 NA_PROTOTYPE(NAColor);
 NA_PROTOTYPE(NAImage);
-
 #include "../NAVisual/Core/NAColorDefinitions.h"
 
-
-
+// Interaction status a user can have with an image
 typedef enum{
   NA_UIIMAGE_INTERACTION_NONE,
   NA_UIIMAGE_INTERACTION_PRESSED,
@@ -22,19 +31,18 @@ typedef enum{
   NA_UIIMAGE_INTERACTION_DISABLED,
 } NAUIImageInteraction;
 
+// The systems main skin
 typedef enum{
   NA_UIIMAGE_SKIN_PLAIN,  // leave the image untouched
-  NA_UIIMAGE_SKIN_LIGHT,  // choose a representation for a light display
-  NA_UIIMAGE_SKIN_DARK,   // choose a representation for a dark display
+  NA_UIIMAGE_SKIN_LIGHT,  // choose a representation for a light skin
+  NA_UIIMAGE_SKIN_DARK,   // choose a representation for a dark skin
   NA_UIIMAGE_SKIN_SYSTEM, // choose dependent on the current system settings
-} NAUIImageSkin;
-
-typedef struct NAUIImage NAUIImage;
+} NASkin;
 
 
 
 // naCreateUIImage creates a new UIImage which stores multiple representations
-// of an image depending on resolution, theme, interaction.
+// of an image depending on resolution, skin, interaction.
 //
 // You always provide the images in the highest resolution available. If you
 // have for example a 512x512 point image representing the double resolution
@@ -62,8 +70,6 @@ typedef struct NAUIImage NAUIImage;
 // NA_BLEND_WHITE_GREEN  tints white pixels (measured by the green channel)
 // Other NABlendMode values are applicable but will likely produce less useful
 // images.
-//
-// The NAUIImage has reference counting built in. Use naRetain and naRelease.
 NA_API NAUIImage* naCreateUIImage(
   const NAImage* baseImage,
   double baseResolution,
@@ -74,55 +80,29 @@ NA_API NAUIImage* naCreateUIImage(
 // hover, ...) will be computed anew.
 NA_API NAUIImage* naRecreateUIImage(const NAUIImage* uiImage);
 
+// Returns the size of the 1x representation.
+NA_API NASizes naGetUIImage1xSize(const NAUIImage* uiImage);
+
 // Sets a custom image for the given parameters.
 NA_API void naSetUIImageSubImage(
   NAUIImage* uiImage,
   const NAImage* subImage,
   double resolution,
-  NAUIImageSkin skin,
+  NASkin skin,
   NAUIImageInteraction interaction);
 
-// Returns the size of the 1x representation.
-NA_API NASizes naGetUIImage1xSize(const NAUIImage* uiImage);
+
 
 // Returns the Skin for the current Appearance. Either returns LIGHT or DARK.
 // Never returns PLAIN.
-NA_API NAUIImageSkin naGetSkinForCurrentAppearance(void);
+NA_API NASkin naGetCurrentSkin(void);
 
-// Returns the default foreground color for the given skin. The skin PLAIN is
-// not allowed but will return the color for the LIGHT skin instead.
-NA_API void naFillDefaultTextColorWithSkin(NAColor* color, NAUIImageSkin skin);
-NA_API void naFillDefaultLinkColorWithSkin(NAColor* color, NAUIImageSkin skin);
-NA_API void naFillDefaultAccentColorWithSkin(NAColor* color, NAUIImageSkin skin);
+// Fills the colors dependent on the given skin. The skin PLAIN is not allowed
+// but will return the color for the LIGHT skin instead.
+NA_API void naFillColorWithSkinTextColor(NAColor* color, NASkin skin);
+NA_API void naFillColorWithSkinLinkColor(NAColor* color, NASkin skin);
+NA_API void naFillColorWithSkinAccentColor(NAColor* color, NASkin skin);
 
-// Creates a new NAImage with the given path. Can only be PNG on windows,
-// macOS allows for various kind of input files.
-NA_API NAImage* naCreateImageWithFilePath(const NAUTF8Char* pathStr);
-
-
-
-// Working with system native images
-//
-// Operating systems have special types to represent an image. The following
-// functions allow to convert between NAImage and the native images which
-// are of the following type:
-//
-// macOS:   NSImage*
-// Windows: HBITMAP
-
-// Creates a new image out of a given native image.
-NA_API NAImage* naCreateImageWithNativeImage(const void* nativeImage);
-
-// Allocates a new native image with the content of the given image.
-NA_API void* naAllocNativeImageWithImage(const NAImage* image);
-
-// Deallocates the native image.
-NA_API void naDeallocNativeImage(void* nativeImage);
-
-
-
-// Inline implementations are in a separate file: 
-#include "Core/NAUIImageII.h"
 
 
 

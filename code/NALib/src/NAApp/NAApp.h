@@ -9,6 +9,8 @@
 #include "../NABase/NABase.h"
 #if NA_COMPILE_GUI == 1
 
+
+
 // NALib provides a simple implementation for Graphical User Interfaces (GUI).
 //
 // GUIs are implemented in various ways across all systems and there is no
@@ -30,12 +32,6 @@
 // On Windows, the default WINAPI threads will be used.
 
 
-
-#include "../NAUtility/NAString.h"
-
-// These are the default resolutions given in rasterpositions/meter.
-#define NA_UI_RESOLUTION_1x 3779.52755905511811   // 96 ppi
-#define NA_UI_RESOLUTION_2x 7559.05511811023622   // 192 ppi
 
 #include "NAAppDefinitions.h"
 

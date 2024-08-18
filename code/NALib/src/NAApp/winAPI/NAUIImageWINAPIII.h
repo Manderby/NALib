@@ -10,7 +10,7 @@
 #include <wincodec.h>
 
 
-NA_DEF NAUIImageSkin naGetSkinForCurrentAppearance() {
+NA_DEF NASkin naGetCurrentSkin() {
   return NA_UIIMAGE_SKIN_LIGHT;
 }
 

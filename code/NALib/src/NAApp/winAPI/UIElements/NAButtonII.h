@@ -4,6 +4,9 @@
 // actually contains non-inlinenable code. See NAWINAPI.c for more information.
 // Do not include this file anywhere else!
 
+
+#include "../../Core/NAUIImageCore.h"
+
 #define NA_WINAPI_BUTTON_IMAGE      0x04
 #define NA_WINAPI_BUTTON_STATE      0x08
 
@@ -203,7 +206,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       NAColor backColor = {.8f, .8f, .8f, 1.f};
       NAColor maskColor = {1.f, 1.f, 0.f, 1.f};
       NAColor accentColor;
-      naFillDefaultAccentColorWithSkin(&accentColor, NA_UIIMAGE_SKIN_SYSTEM);
+      naFillColorWithSkinAccentColor(&accentColor, NA_UIIMAGE_SKIN_SYSTEM);
       NAImage* alphaImage = naCreateImageWithTint(buttonImage, &maskColor, NA_BLEND_ERASE_HUE, 1.f);
       NAImage* tintedImage = naCreateImageWithTint(alphaImage, &accentColor, NA_BLEND_MULTIPLY, .85f);
       //NAImage* blendedImage = naCreateImageCopy(tintedImage);

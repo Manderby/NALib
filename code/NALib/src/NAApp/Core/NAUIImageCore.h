@@ -1,48 +1,30 @@
 
-// This file contains inline implementations of the file NAUIImage
-// Do not include this file directly! It will automatically be included when
-// including "NAUIImage.h"
-
-#include "../../NAStruct/NAList.h"
+#ifndef NA_UIIMAGE_CORE_INCLUDED
+#define NA_UIIMAGE_CORE_INCLUDED
 
 
-struct NAUIImage {
-  NAList subImages;
-  NABlendMode tintMode;
-};
-
-NA_EXTERN_RUNTIME_TYPE(NAUIImage);
-
-typedef struct NA_UISubImage NA_UISubImage;
-struct NA_UISubImage{
-  const NAImage* image;
-  void* nativeImage;
-  double resolution;
-  NAUIImageSkin skin;
-  NAUIImageInteraction interaction;
-};
 
 NA_HAPI const NAImage* na_GetUIImageImage(
   const NAUIImage* uiImage,
   double resolution,
-  NAUIImageSkin skin,
+  NASkin skin,
   NAUIImageInteraction interaction,
   NABool secondaryState);
 
 NA_HAPI void* na_GetUIImageNativeImage(
   const NAUIImage* uiImage,
   double resolution,
-  NAUIImageSkin skin,
+  NASkin skin,
   NAUIImageInteraction interaction,
   NABool secondaryState);
 
-
-
-// System dependent implementations
 NA_HAPI void na_FillDefaultTextColorWithSystemSkin(NAColor* color);
 NA_HAPI void na_FillDefaultLinkColorWithSystemSkin(NAColor* color);
 NA_HAPI void na_FillDefaultAccentColorWithSystemSkin(NAColor* color);
 
+
+
+#endif // NA_UIIMAGE_CORE_INCLUDED
 
 
 

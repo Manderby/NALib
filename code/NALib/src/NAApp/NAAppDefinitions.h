@@ -25,6 +25,8 @@ typedef enum{
   NA_UI_WINDOW
 } NAUIElementType;
 
+
+
 typedef enum{
   NA_UI_COMMAND_REDRAW = 0,
   NA_UI_COMMAND_RESHAPE,
@@ -43,6 +45,8 @@ typedef enum{
   NA_UI_COMMAND_KEYBOARD_SHORTCUT
 } NAUICommand;
 
+
+
 typedef enum{
   NA_TEXT_ALIGNMENT_LEFT,
   NA_TEXT_ALIGNMENT_RIGHT,
@@ -60,6 +64,8 @@ struct NAReaction{
   void* controller;
 };
 
+
+
 // This NAReaction package is then provided to reaction callbacks with the
 // following prototype.
 typedef void(*NAReactionCallback)(NAReaction reaction);
@@ -74,6 +80,8 @@ typedef enum NAMouseButton {
   // explicitely.
 } NAMouseButton;
 
+
+
 // The modifier keys are stored as a bitmask with the following predefined
 // elements:
 typedef enum{
@@ -84,19 +92,21 @@ typedef enum{
   NA_KEY_MODIFIER_COMMAND       = 0x00c0
 
   // The following flags might be available in the future. Please be patient.
-  //  NA_KEY_MODIFIER_LEFT_SHIFT    = 0x0001,
-  //  NA_KEY_MODIFIER_RIGHT_SHIFT   = 0x0002,
-  //  NA_KEY_MODIFIER_LEFT_CONTROL  = 0x0004,
-  //  NA_KEY_MODIFIER_RIGHT_CONTROL = 0x0008,
-  //  NA_KEY_MODIFIER_LEFT_OPTION   = 0x0010,
-  //  NA_KEY_MODIFIER_RIGHT_OPTION  = 0x0020,
-  //  NA_KEY_MODIFIER_LEFT_COMMAND  = 0x0040,
-  //  NA_KEY_MODIFIER_RIGHT_COMMAND = 0x0080,
+  //  NA_KEY_MODIFIER_SHIFT_LEFT    = 0x0001,
+  //  NA_KEY_MODIFIER_SHIFT_RIGHT   = 0x0002,
+  //  NA_KEY_MODIFIER_CONTROL_LEFT  = 0x0004,
+  //  NA_KEY_MODIFIER_CONTROL_RIGHT = 0x0008,
+  //  NA_KEY_MODIFIER_OPTION_LEFT   = 0x0010,
+  //  NA_KEY_MODIFIER_OPTION_RIGHT  = 0x0020,
+  //  NA_KEY_MODIFIER_COMMAND_LEFT  = 0x0040,
+  //  NA_KEY_MODIFIER_COMMAND_RIGHT = 0x0080,
 } NAKeyModifier;
 
 
 
 #endif // NA_APP_DEFINITIONS_INCLUDED
+
+
 
 // This is free and unencumbered software released into the public domain.
 
