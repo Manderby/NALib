@@ -1,6 +1,9 @@
 
 #ifndef NA_UI_SCREEN_INCLUDED
 #define NA_UI_SCREEN_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -19,6 +22,9 @@ NA_API NARect naGetMainScreenRect(void);
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_UI_SCREEN_INCLUDED
 
 

@@ -1,6 +1,9 @@
 
 #ifndef NA_UI_SPACE_INCLUDED
 #define NA_UI_SPACE_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -65,6 +68,9 @@ NA_API void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable);
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_UI_SPACE_INCLUDED
 
 

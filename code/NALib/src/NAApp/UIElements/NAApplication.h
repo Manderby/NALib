@@ -1,6 +1,9 @@
 
 #ifndef NA_APPLICATION_INCLUDED
 #define NA_APPLICATION_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -261,6 +264,11 @@ NA_API void naOpenConsoleWindow(void);
 NA_API NABool naGetDefaultWindowSystemKeyHandling();
 NA_API void naSetDefaultWindowSystemKeyHandling(NABool enable); 
 
+
+
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_APPLICATION_INCLUDED
 
 

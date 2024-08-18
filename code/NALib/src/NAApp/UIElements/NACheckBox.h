@@ -1,6 +1,9 @@
 
 #ifndef NA_CHECKBOX_INCLUDED
 #define NA_CHECKBOX_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -28,6 +31,9 @@ NA_API void naSetCheckBoxTextColor(
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_CHECKBOX_INCLUDED
 
 

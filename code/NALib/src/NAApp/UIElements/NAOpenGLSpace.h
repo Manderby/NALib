@@ -1,6 +1,9 @@
 
 #ifndef NA_UI_OPENGL_SPACE_INCLUDED
 #define NA_UI_OPENGL_SPACE_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -109,6 +112,9 @@ NA_API void naResetOpenGLSpaceTransformation(NAOpenGLSpace* openGLSpace);
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+  #endif
 #endif // NA_UI_OPENGL_SPACE_INCLUDED
 
 

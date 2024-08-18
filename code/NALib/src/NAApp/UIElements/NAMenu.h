@@ -1,6 +1,9 @@
 
 #ifndef NA_MENU_INCLUDED
 #define NA_MENU_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -29,6 +32,9 @@ NA_API void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement);
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_MENU_INCLUDED
 
 

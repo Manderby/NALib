@@ -1,6 +1,9 @@
 
 #ifndef NA_UI_SELECT_INCLUDED
 #define NA_UI_SELECT_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -51,6 +54,9 @@ NA_API void naSetSelectItemSelected(
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_UI_SELECT_INCLUDED
 
 

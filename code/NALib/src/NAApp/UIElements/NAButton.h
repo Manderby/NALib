@@ -1,6 +1,9 @@
 
 #ifndef NA_BUTTON_INCLUDED
 #define NA_BUTTON_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -81,6 +84,9 @@ NA_API void naSetButtonAbort(
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_BUTTON_INCLUDED
 
 

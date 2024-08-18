@@ -1,6 +1,9 @@
 
 #ifndef NA_UI_METAL_SPACE_INCLUDED
 #define NA_UI_METAL_SPACE_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -61,6 +64,11 @@ NA_API const double* naGetMetalSpaceTransformation(const NAMetalSpace* metalSpac
 // after reacting to NA_UI_COMMAND_TRANSFORMED.
 NA_API void naResetMetalSpaceTransformation(NAMetalSpace* metalSpace);
 
+
+
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_UI_METAL_SPACE_INCLUDED
 
 

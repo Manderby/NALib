@@ -1,6 +1,9 @@
 
 #ifndef NA_APP_DEFINITIONS_INCLUDED
 #define NA_APP_DEFINITIONS_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -114,6 +117,9 @@ typedef enum{
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_APP_DEFINITIONS_INCLUDED
 
 

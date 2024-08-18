@@ -1,6 +1,9 @@
 
 #ifndef NA_UI_WINDOW_INCLUDED
 #define NA_UI_WINDOW_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -124,6 +127,9 @@ NA_API void naPresentFilePanel(
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_UI_WINDOW_INCLUDED
 
 

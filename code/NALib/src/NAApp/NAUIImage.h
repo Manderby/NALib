@@ -1,7 +1,6 @@
 
 #ifndef NA_UI_IMAGE_INCLUDED
 #define NA_UI_IMAGE_INCLUDED
-
 #ifdef __cplusplus
   extern "C"{
 #endif

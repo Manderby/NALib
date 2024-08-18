@@ -1,7 +1,6 @@
 
 #ifndef NA_FONT_INCLUDED
 #define NA_FONT_INCLUDED
-
 #ifdef __cplusplus
   extern "C"{
 #endif
@@ -19,8 +18,8 @@ typedef struct NAFont NAFont;
 
   
   
-NA_PROTOTYPE(NAString);
 #include "../NABase/NABase.h"
+NA_PROTOTYPE(NAString);
 
 
 

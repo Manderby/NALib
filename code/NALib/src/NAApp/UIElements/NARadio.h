@@ -1,6 +1,9 @@
 
 #ifndef NA_UI_RADIO_INCLUDED
 #define NA_UI_RADIO_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -26,6 +29,9 @@ NA_API void naSetRadioTextColor(NARadio* radio, const NAColor* color);
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_UI_RADIO_INCLUDED
 
 

@@ -1,6 +1,9 @@
 
 #ifndef NA_REACTION_INCLUDED
 #define NA_REACTION_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -66,6 +69,10 @@ NA_API void naAddUIKeyboardShortcut(
 // and provide it to an outer callback by returning NA_FALSE. This is by design.
 
 
+
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_REACTION_INCLUDED
 
 

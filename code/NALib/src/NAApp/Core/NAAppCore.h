@@ -12,8 +12,10 @@
 // ///////////////////////////
 
 
-
+#include "../../NABase/NAConfiguration.h"
 #if NA_COMPILE_GUI == 1
+
+
 
 #include "../NAAppDefinitions.h"
     

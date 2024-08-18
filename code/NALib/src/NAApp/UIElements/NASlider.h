@@ -1,6 +1,9 @@
 
 #ifndef NA_UI_SLIDER_INCLUDED
 #define NA_UI_SLIDER_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -31,6 +34,9 @@ NA_API void naSetSliderRange(NASlider* slider, double min, double max, NAInt tic
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_UI_SLIDER_INCLUDED
 
 

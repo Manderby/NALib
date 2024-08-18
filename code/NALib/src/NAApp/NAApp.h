@@ -1,14 +1,12 @@
 
 #ifndef NA_APP_INCLUDED
 #define NA_APP_INCLUDED
-
 #ifdef __cplusplus
   extern "C"{
 #endif
 
 #include "../NABase/NAConfiguration.h"
 #if NA_COMPILE_GUI == 1
-#include "../NABase/NABase.h"
 
 
 
@@ -32,6 +30,9 @@
 // grand central dispatch (GCD) will automatically be included.
 // On Windows, the default WINAPI threads will be used.
 
+
+
+#include "../NABase/NABase.h"
 
 
 #include "NAAppDefinitions.h"

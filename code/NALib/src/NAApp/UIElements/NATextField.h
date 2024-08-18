@@ -1,6 +1,9 @@
 
 #ifndef NA_UI_TEXTFIELD_INCLUDED
 #define NA_UI_TEXTFIELD_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -38,6 +41,9 @@ NA_API void naSetTextFieldTextAlignment(
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_UI_TEXTFIELD_INCLUDED
 
 

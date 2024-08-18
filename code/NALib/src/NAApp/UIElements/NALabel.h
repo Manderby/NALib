@@ -1,6 +1,9 @@
 
 #ifndef NA_LABEL_INCLUDED
 #define NA_LABEL_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -34,6 +37,9 @@ NA_API void naSetLabelFont(NALabel* label, NAFont* font);
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_LABEL_INCLUDED
 
 

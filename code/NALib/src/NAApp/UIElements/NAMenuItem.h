@@ -1,6 +1,9 @@
 
 #ifndef NA_MENUITEM_INCLUDED
 #define NA_MENUITEM_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -28,6 +31,11 @@ NA_API void naSetMenuItemState(NAMenuItem* menuItem, NABool state);
 // Returns true for separators.
 NA_API NABool naGetMenuItemIsSeparator(const NAMenuItem* menuItem);
 
+
+
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_MENUITEM_INCLUDED
 
 

@@ -1,6 +1,20 @@
 
 #ifndef NA_KEYBOARD_INCLUDED
 #define NA_KEYBOARD_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
+
+
+
+// ///////////////////////////////
+// A key stroke consists of a single key and modifier flags.
+
+typedef struct NAKeyStroke NAKeyStroke;
+
+// An NAKeyStroke must be deleted with naDelete. Unless used for a method
+// like naAddUIKeyboardShortcut which will take ownership.
+// ///////////////////////////////
 
 
 
@@ -165,12 +179,7 @@ typedef size_t NAKeyCode;
 // Key stroke
 // ////////////////////////////////////
 
-// A key stroke consists of a single key and modifier flags.
-typedef struct NAKeyStroke NAKeyStroke;
-
-// Allocates a new keyStroke. Usually needed for naAddUIKeyboardShortcut which
-// will take ownership of the object. Otherwise, naDelete is necessary to
-// delete the object.
+// Allocates a new keyStroke.
 NA_API NAKeyStroke* naNewKeyStroke(
   NAKeyCode keyCode,
   uint32 modifiers);
@@ -198,6 +207,9 @@ NAString* naNewKeyPressString(
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_KEYBOARD_INCLUDED
 
 

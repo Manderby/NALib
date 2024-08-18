@@ -1,6 +1,9 @@
 
 #ifndef NA_IMAGESPACE_INCLUDED
 #define NA_IMAGESPACE_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -18,6 +21,9 @@ NA_API void naSetImageSpaceImage(NAImageSpace* imageSpace, NAUIImage* uiImage);
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_IMAGESPACE_INCLUDED
 
 

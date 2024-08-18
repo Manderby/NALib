@@ -1,6 +1,9 @@
 
 #ifndef NA_UI_ELEMENT_INCLUDED
 #define NA_UI_ELEMENT_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -136,6 +139,11 @@ NA_API double naGetUIElementResolutionScale(const void* uiElement);
 NA_API void* naGetUIElementNativePtr(void* uiElement);
 NA_API void* naGetUIElementNativePtrConst(const void* uiElement);
 
+
+
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_UI_ELEMENT_INCLUDED
 
 

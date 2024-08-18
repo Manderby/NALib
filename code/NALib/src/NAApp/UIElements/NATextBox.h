@@ -1,6 +1,9 @@
 
 #ifndef NA_UI_TEXTBOX_INCLUDED
 #define NA_UI_TEXTBOX_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -35,6 +38,9 @@ NA_API void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use);
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_UI_TEXTBOX_INCLUDED
 
 

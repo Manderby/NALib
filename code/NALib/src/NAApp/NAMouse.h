@@ -1,6 +1,9 @@
 
 #ifndef NA_MOUSE_INCLUDED
 #define NA_MOUSE_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -56,6 +59,9 @@ NA_API void naActivateCursorImage(const NACursorImage* image);
 
 
 
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_MOUSE_INCLUDED
 
 
