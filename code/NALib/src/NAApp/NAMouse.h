@@ -13,8 +13,8 @@ NA_PROTOTYPE(NAUIImage);
 // Mouse status
 // ////////////////////////////////////
 
-// A mouse status currently consists of the current position and the last one
-// recorded.
+// A mouse status stores various position data of the mouse.
+// Une naGetApplicationMouseStatus to get the current mouse status.
 typedef struct NAMouseStatus NAMouseStatus;
 
 // Returns whether the mouse button is pressed.

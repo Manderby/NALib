@@ -165,13 +165,12 @@ typedef size_t NAKeyCode;
 // Key stroke
 // ////////////////////////////////////
 
-// A key stroke stores a key combination consisting of a single key and
-// modifier flags.
+// A key stroke consists of a single key and modifier flags.
 typedef struct NAKeyStroke NAKeyStroke;
 
-// Allocates a new keyStroke. Usually used for naAddUIKeyboardShortcut will
-// take ownership of the object. If no ownership transfer is taking place,
-// naDelete is necessary to clean up the keyStroke.
+// Allocates a new keyStroke. Usually needed for naAddUIKeyboardShortcut which
+// will take ownership of the object. Otherwise, naDelete is necessary to
+// delete the object.
 NA_API NAKeyStroke* naNewKeyStroke(
   NAKeyCode keyCode,
   uint32 modifiers);
