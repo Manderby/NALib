@@ -3,6 +3,10 @@
 
 #if NA_COMPILE_GUI == 1
 
+#include "../../UIElements/NAApplication.h"
+#include "../../NAKeyboard.h"
+#include "../../NAFont.h"
+
 
 // The pointer storing the app if any.
 NAApplication* na_App = NA_NULL;

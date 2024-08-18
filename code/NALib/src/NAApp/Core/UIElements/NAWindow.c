@@ -4,6 +4,8 @@
 #if NA_COMPILE_GUI == 1
 
 #include "../../NAPreferences.h"
+#include "../../UIElements/NAApplication.h"
+#include "../../UIElements/NAWindow.h"
 
 
 

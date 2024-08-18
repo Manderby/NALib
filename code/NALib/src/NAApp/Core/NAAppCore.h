@@ -13,39 +13,38 @@
 
 
 
-    #include "../NAAppDefinitions.h"
-    #include "../NAApp.h"
-
 #if NA_COMPILE_GUI == 1
 
+#include "../NAAppDefinitions.h"
+    
 #include "../../NAStruct/NAList.h"
 #include "../../NAUtility/NAThreading.h"
 #include "../../NAUtility/NATranslator.h"
 #include "../../NAMath/NAVectorAlgebra.h"
 #include "../../NAVisual/NAColor.h"
 
-    NA_PROTOTYPE(NAFont);
-    NA_PROTOTYPE(NAMouseStatus);
-    NA_PROTOTYPE(NAKeyStroke);
+NA_PROTOTYPE(NAFont);
+NA_PROTOTYPE(NAMouseStatus);
+NA_PROTOTYPE(NAKeyStroke);
 
-    NA_PROTOTYPE(NAUIImage);
-    NA_PROTOTYPE(NAApplication);
-    NA_PROTOTYPE(NAButton);
-    NA_PROTOTYPE(NACheckBox);
-    NA_PROTOTYPE(NAImageSpace);
-    NA_PROTOTYPE(NALabel);
-    NA_PROTOTYPE(NAMenu);
-    NA_PROTOTYPE(NAMenuItem);
-    NA_PROTOTYPE(NAMetalSpace);
-    NA_PROTOTYPE(NAOpenGLSpace);
-    NA_PROTOTYPE(NARadio);
-    NA_PROTOTYPE(NAScreen);
-    NA_PROTOTYPE(NASelect);
-    NA_PROTOTYPE(NASlider);
-    NA_PROTOTYPE(NASpace);
-    NA_PROTOTYPE(NATextBox);
-    NA_PROTOTYPE(NATextField);
-    NA_PROTOTYPE(NAWindow);
+NA_PROTOTYPE(NAUIImage);
+NA_PROTOTYPE(NAApplication);
+NA_PROTOTYPE(NAButton);
+NA_PROTOTYPE(NACheckBox);
+NA_PROTOTYPE(NAImageSpace);
+NA_PROTOTYPE(NALabel);
+NA_PROTOTYPE(NAMenu);
+NA_PROTOTYPE(NAMenuItem);
+NA_PROTOTYPE(NAMetalSpace);
+NA_PROTOTYPE(NAOpenGLSpace);
+NA_PROTOTYPE(NARadio);
+NA_PROTOTYPE(NAScreen);
+NA_PROTOTYPE(NASelect);
+NA_PROTOTYPE(NASlider);
+NA_PROTOTYPE(NASpace);
+NA_PROTOTYPE(NATextBox);
+NA_PROTOTYPE(NATextField);
+NA_PROTOTYPE(NAWindow);
 
 // Very much the same as the nativePtr, there are certain types which are
 // casted differently on the different systems and therefore they are

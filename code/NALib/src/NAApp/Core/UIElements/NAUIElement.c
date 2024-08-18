@@ -3,6 +3,10 @@
 
 #if NA_COMPILE_GUI == 1
 
+#include "../../UIElements/NAApplication.h"
+#include "../../UIElements/NAWindow.h"
+#include "../../UIElements/NAUIElement.h"
+
 
 
 NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, void* nativePtr) {

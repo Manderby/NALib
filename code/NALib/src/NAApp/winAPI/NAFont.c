@@ -5,6 +5,7 @@
 
 #include <windows.h>
 
+#include "../UIElements/NAUIElement.h"
 
 NA_HDEF void na_DestructFontNativePtr(void* nativePtr) {
   DeleteObject(nativePtr);

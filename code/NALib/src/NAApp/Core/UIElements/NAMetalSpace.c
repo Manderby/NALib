@@ -3,6 +3,7 @@
 
 #if NA_COMPILE_GUI == 1
 
+#include "../../UIElements/NAMetalSpace.h"
 
 
 NA_HDEF void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr) {

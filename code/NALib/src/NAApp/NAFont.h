@@ -32,11 +32,6 @@ typedef enum{
 #define NA_FONT_FLAG_ITALIC     0x02
 #define NA_FONT_FLAG_UNDERLINE  0x04
 
-typedef enum{
-  NA_TEXT_ALIGNMENT_LEFT,
-  NA_TEXT_ALIGNMENT_RIGHT,
-  NA_TEXT_ALIGNMENT_CENTER
-} NATextAlignment;
 
 
 

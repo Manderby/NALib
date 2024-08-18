@@ -1,5 +1,6 @@
 
 #include "../NAAppCore.h"
+#include "../../UIElements/NAOpenGLSpace.h"
 #include "../../../NAVisual/NA3DHelper.h"
 
 #if NA_COMPILE_GUI == 1

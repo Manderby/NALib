@@ -43,6 +43,12 @@ typedef enum{
   NA_UI_COMMAND_KEYBOARD_SHORTCUT
 } NAUICommand;
 
+typedef enum{
+  NA_TEXT_ALIGNMENT_LEFT,
+  NA_TEXT_ALIGNMENT_RIGHT,
+  NA_TEXT_ALIGNMENT_CENTER
+} NATextAlignment;
+
 
 
 // When a command occurs in a certain uiElement, an information package with
