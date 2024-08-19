@@ -30,7 +30,6 @@
 // These are the core structs:
 
 NA_PROTOTYPE(NAApplication);
-
 NA_PROTOTYPE(NAButton);
 NA_PROTOTYPE(NACheckBox);
 NA_PROTOTYPE(NAImageSpace);
@@ -48,8 +47,6 @@ NA_PROTOTYPE(NATextBox);
 NA_PROTOTYPE(NATextField);
 NA_PROTOTYPE(NAWindow);
 
-
-
 // As the C programming language has no notion of inheritance, the functions
 // listed further below which expect an arbitrary uiElement will expect it as
 // a void pointer.
@@ -59,6 +56,28 @@ NA_PROTOTYPE(NAWindow);
 // Each of the UI elements can identify themselves as what they are.
 // In order to find out what a specific UI element is, you can use the
 // the following enum and function.
+
+typedef enum{
+  NA_UI_ELEMENT_UNDEFINED = 0,
+  NA_UI_APPLICATION,
+  NA_UI_BUTTON,
+  NA_UI_CHECKBOX,
+  NA_UI_IMAGE_SPACE,
+  NA_UI_LABEL,
+  NA_UI_MENU,
+  NA_UI_MENUITEM,
+  NA_UI_METAL_SPACE,
+  NA_UI_OPENGL_SPACE,
+  NA_UI_RADIO,
+  NA_UI_SCREEN,
+  NA_UI_SELECT,
+  NA_UI_SLIDER,
+  NA_UI_SPACE,
+  NA_UI_TEXTBOX,
+  NA_UI_TEXTFIELD,
+  NA_UI_WINDOW
+} NAUIElementType;
+
 NA_API NAUIElementType naGetUIElementType(const void* uiElement);
 
 // Any ui element has a strict hierarchical ordering: Application - Screen -

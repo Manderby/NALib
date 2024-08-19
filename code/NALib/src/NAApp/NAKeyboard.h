@@ -178,6 +178,26 @@ typedef size_t NAKeyCode;
   #define NA_KEYCODE_DELETE         0x75
 #endif
 
+// The modifier keys are stored as a bitmask with the following predefined
+// elements:
+typedef enum{
+  NA_KEY_MODIFIER_NONE          = 0x0000,
+  NA_KEY_MODIFIER_SHIFT         = 0x0003,
+  NA_KEY_MODIFIER_CONTROL       = 0x000c,
+  NA_KEY_MODIFIER_OPTION        = 0x0030,
+  NA_KEY_MODIFIER_COMMAND       = 0x00c0
+
+  // The following flags might be available in the future. Please be patient.
+  //  NA_KEY_MODIFIER_SHIFT_LEFT    = 0x0001,
+  //  NA_KEY_MODIFIER_SHIFT_RIGHT   = 0x0002,
+  //  NA_KEY_MODIFIER_CONTROL_LEFT  = 0x0004,
+  //  NA_KEY_MODIFIER_CONTROL_RIGHT = 0x0008,
+  //  NA_KEY_MODIFIER_OPTION_LEFT   = 0x0010,
+  //  NA_KEY_MODIFIER_OPTION_RIGHT  = 0x0020,
+  //  NA_KEY_MODIFIER_COMMAND_LEFT  = 0x0040,
+  //  NA_KEY_MODIFIER_COMMAND_RIGHT = 0x0080,
+} NAKeyModifier;
+
 
 
 // Returns the current key stroke.

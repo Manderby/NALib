@@ -7,6 +7,8 @@
 
 
 HKEY na_nativePreferences = NA_NULL;
+#include "../../NAUtility/NAMemory.h"
+#include "../../NAUtility/NAString.h"
 
 
 

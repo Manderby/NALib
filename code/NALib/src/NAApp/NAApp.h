@@ -34,9 +34,6 @@
 
 #include "../NABase/NABase.h"
 
-
-#include "NAAppDefinitions.h"
-
 #include "NAClipboard.h"
 #include "NAFont.h"
 #include "NAKeyboard.h"
@@ -45,10 +42,17 @@
 #include "NAReaction.h"
 #include "NAUIImage.h"
 
+
+
+// //////////////////////////
+// Definition of the UI elements
+// //////////////////////////
+
+    
 // The base of every ui element.
 #include "UIElements/NAUIElement.h"
 
-// The acutal ui elements
+// The acutal ui elements and their API
 #include "UIElements/NAApplication.h"
 #include "UIElements/NAButton.h"
 #include "UIElements/NACheckBox.h"

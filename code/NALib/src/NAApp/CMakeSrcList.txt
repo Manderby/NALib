@@ -4,7 +4,6 @@ set(NAAppDir "src/NAApp")
 set(headerFiles
   ${NAAppDir}/CMakeSrcList.txt
   ${NAAppDir}/NAApp.h
-  ${NAAppDir}/NAAppDefinitions.h
   ${NAAppDir}/NAClipboard.h
   ${NAAppDir}/NAFont.h
   ${NAAppDir}/NAKeyboard.h
@@ -42,7 +41,7 @@ set(coreFiles
   ${NAAppDir}/Core/NAKeyboard.c
   ${NAAppDir}/Core/NAMouse.c
   ${NAAppDir}/Core/NAPreferences.c
-  ${NAAppDir}/Core/NAPreferencesII.h
+  ${NAAppDir}/Core/NAPreferencesCore.h
   ${NAAppDir}/Core/NAUIImage.c
   ${NAAppDir}/Core/NAUIImageCore.h
 )

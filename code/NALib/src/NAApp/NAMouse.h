@@ -7,9 +7,18 @@
 
 
 
-#include "NAAppDefinitions.h"
 #include "../NAMath/NACoord.h"
 NA_PROTOTYPE(NAUIImage);
+
+
+
+typedef enum NAMouseButton {
+  NA_MOUSE_BUTTON_LEFT = 0,
+  NA_MOUSE_BUTTON_RIGHT = 1,
+  NA_MOUSE_BUTTON_MIDDLE = 2,
+  // additional mouse buttons have higher integer numbers are not implemented
+  // explicitely.
+} NAMouseButton;
 
 
 

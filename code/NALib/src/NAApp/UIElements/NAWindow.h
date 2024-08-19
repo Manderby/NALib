@@ -9,7 +9,7 @@
 
 // An NAWindow can react to the following commands:
 //
-// NA_UI_COMMAND_CLOSES        When the window tries to close
+// NA_UI_COMMAND_CLOSES        When the window tries to close.
 // NA_UI_COMMAND_KEY_DOWN      When a key has been pressed
 // NA_UI_COMMAND_KEY_UP        When a key has been released
 // NA_UI_COMMAND_MOUSE_ENTERED When the mouse entered the content space
@@ -17,6 +17,10 @@
 // NA_UI_COMMAND_MOUSE_PRESSED When the window has been activated
 // NA_UI_COMMAND_RESHAPE       Resizing, repositioning, UI scale changes
 
+// The CLOSES command will be called when a window tries to close. You can
+// prevent it from closing by calling naPreventWindowClosing. That
+// function only works in conjunction with such a command and will emit an
+// error otherwise.
 
 
 // Window flags:

@@ -9,6 +9,7 @@
 #include "../../../NAUtility/NAString.h"
 #include "../../../NAUtility/NAURL.h"
 #include "../../../NAStruct/NAStack.h"
+#include "../../Core/NAPreferencesCore.h"
 
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   #include <commctrl.h>

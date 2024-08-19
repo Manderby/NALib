@@ -17,7 +17,7 @@
 
 
 
-#include "../NAAppDefinitions.h"
+#include "../NAApp.h"
     
 #include "../../NAStruct/NAList.h"
 #include "../../NAUtility/NAThreading.h"
