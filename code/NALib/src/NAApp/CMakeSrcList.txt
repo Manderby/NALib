@@ -104,9 +104,9 @@ set(winAPIFiles
   ${NAAppDir}/winAPI/NAFont.c
   ${NAAppDir}/winAPI/NAPreferencesWINAPI.c
   ${NAAppDir}/winAPI/NAUIImageWINAPIII.h
-  ${NAAppDir}/winAPI/NAUIWINAPI.c
   ${NAAppDir}/winAPI/NAUIWINAPIII.h
   ${NAAppDir}/winAPI/NAUIWINAPIInterfaces.h
+  ${NAAppDir}/winAPI/NAWINAPI.c
 )
 
 set(winAPIUIFiles

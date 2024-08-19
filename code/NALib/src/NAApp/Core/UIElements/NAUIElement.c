@@ -16,16 +16,16 @@ NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
   uiElement->nativePtr = nativePtr;
   naInitList(&uiElement->reactions);
   naInitList(&uiElement->shortcuts);
-  uiElement->hoverReactionCount = 0;
   
   uiElement->flags = 0;
 
-  uiElement->mouseTrackingCount = 0;
-  uiElement->mouseTracking = NA_NULL;
-  
+  uiElement->hoverReactionCount = 0;
   if(elementType == NA_UI_BUTTON) {
     uiElement->hoverReactionCount++;
   }
+
+  uiElement->mouseTrackingCount = 0;
+  uiElement->mouseTracking = NA_NULL;
   
   naAddListLastMutable(&naGetApplication()->uiElements, uiElement);
 }
@@ -69,7 +69,7 @@ NA_HDEF void* na_GetUINALibEquivalent(void* nativePtr) {
 NA_HDEF NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAUICommand command) {
   NAListIterator iter = naMakeListAccessor(&element->reactions);
   while(naIterateList(&iter)) {
-    const NAEventReaction* eventReaction = naGetListCurConst(&iter);
+    const NA_EventReaction* eventReaction = naGetListCurConst(&iter);
     if(eventReaction->command == command) {
       return NA_TRUE;
     }
@@ -91,7 +91,7 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
 
   NAListIterator iter = naMakeListMutator(&element->reactions);
   while(naIterateList(&iter)) {
-    NAEventReaction* eventReaction = naGetListCurMutable(&iter);
+    NA_EventReaction* eventReaction = naGetListCurMutable(&iter);
     if(eventReaction->command == command) {
       reaction.controller = eventReaction->controller;
       eventReaction->callback(reaction);
@@ -140,7 +140,7 @@ NA_DEF void* naGetUIElementNativePtrConst(const void* uiElement) {
 
 
 NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCallback callback, void* controller) {
-  NAEventReaction* eventReaction;
+  NA_EventReaction* eventReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
   
   #if NA_DEBUG
@@ -186,7 +186,7 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCall
       naError("Only textFields and sliders can receyve EDIT_FINISHED commands.");
   #endif
   
-  eventReaction = naAlloc(NAEventReaction);
+  eventReaction = naAlloc(NA_EventReaction);
   eventReaction->controller = controller;
   eventReaction->command = command;
   eventReaction->callback = callback;
@@ -366,13 +366,13 @@ NA_DEF void naAddUIKeyboardShortcut(
   NAReactionCallback callback,
   void* controller)
 {
-  NAKeyboardShortcutReaction* keyReaction;
+  NA_KeyboardShortcutReaction* keyReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
   //#if NA_DEBUG
   //  if((naGetUIElementType(uiElement) != NA_UI_APPLICATION) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
   //    naError("Currently, only applications and windows are allowed as uiElement. Use naGetApplication() for the app.");
   //#endif
-  keyReaction = naAlloc(NAKeyboardShortcutReaction);
+  keyReaction = naAlloc(NA_KeyboardShortcutReaction);
   keyReaction->controller = controller;
   keyReaction->shortcut = shortcut; // takes ownership
   keyReaction->callback = callback;

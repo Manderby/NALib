@@ -47,7 +47,6 @@
 // //////////////////////////
 // Definition of the UI elements
 // //////////////////////////
-
     
 // The base of every ui element.
 #include "UIElements/NAUIElement.h"

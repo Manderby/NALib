@@ -279,7 +279,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
       NAListIterator iter = naMakeListAccessor(&elem->shortcuts);
 
       while(!retValue && naIterateList(&iter)) {
-        const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
+        const NA_KeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
         const NAKeyStroke* shortcut = keyReaction->shortcut;
         NABool needsShift   = naGetKeyStrokeModifierPressed(shortcut, NA_KEY_MODIFIER_SHIFT);
         NABool needsControl = naGetKeyStrokeModifierPressed(shortcut, NA_KEY_MODIFIER_CONTROL);
@@ -867,7 +867,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem) {
   *nextPrevRef = uiElement;
   *elemNextRef = nextTabElem;
 
-  // This is how it is supposed to work on windows, but it doesn't.
+  // This is how it is supposed to work on windows, but it doesn't. todo.
   //SetWindowPos(((NA_UIElement*)nextTabElem)->nativePtr, ((NA_UIElement*)elem)->nativePtr, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE); 
 }
 

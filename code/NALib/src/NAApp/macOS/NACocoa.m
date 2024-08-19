@@ -32,29 +32,31 @@
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 
-#include "UI/NAUICocoaLegacyII.h"
+#include "NAUICocoaLegacyII.h"
 
 #include "NAUIImageCocoaII.h"
 
-#include "UI/NAUICocoaII.h"
-#include "UI/NAUICocoaInterfaces.h"
-#include "UI/NAApplicationII.h"
+#include "NAUICocoaII.h"
+#include "NAUICocoaInterfaces.h"
 
-#include "UI/NAButtonII.h"
-#include "UI/NACheckBoxII.h"
-#include "UI/NAImageSpaceII.h"
-#include "UI/NALabelII.h"
-#include "UI/NAMenuII.h"
-#include "UI/NAMenuItemII.h"
-#include "UI/NAMetalSpaceII.h"
-#include "UI/NAOpenGLSpaceII.h"
-#include "UI/NARadioII.h"
-#include "UI/NASliderII.h"
-#include "UI/NASelectII.h"
-#include "UI/NASpaceII.h"
-#include "UI/NATextBoxII.h"
-#include "UI/NATextFieldII.h"
-#include "UI/NAWindowII.h"
+#include "UIElements/NAApplicationII.h"
+#include "UIElements/NAButtonII.h"
+#include "UIElements/NACheckBoxII.h"
+#include "UIElements/NAImageSpaceII.h"
+#include "UIElements/NALabelII.h"
+#include "UIElements/NAMenuII.h"
+#include "UIElements/NAMenuItemII.h"
+#include "UIElements/NAMetalSpaceII.h"
+#include "UIElements/NAOpenGLSpaceII.h"
+#include "UIElements/NARadioII.h"
+#include "UIElements/NAScreenII.h"
+#include "UIElements/NASelectII.h"
+#include "UIElements/NASliderII.h"
+#include "UIElements/NASpaceII.h"
+#include "UIElements/NATextBoxII.h"
+#include "UIElements/NATextFieldII.h"
+#include "UIElements/NAUIElementII.h"
+#include "UIElements/NAWindowII.h"
 
 #endif // NA_COMPILE_GUI == 1
 #endif // defined __OBJC__

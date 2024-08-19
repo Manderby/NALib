@@ -174,7 +174,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
     while(!retValue && elem) {
       NAListIterator iter = naMakeListAccessor(&elem->shortcuts);
       while(!retValue && naIterateList(&iter)) {
-        const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
+        const NA_KeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
         if(keyReaction->shortcut.keyCode == naGetApplication()->keyStroke.keyCode) {
           NABool needsShift   = naGetFlagu32(keyReaction->shortcut.modifiers, NA_KEY_MODIFIER_SHIFT);
           NABool needsControl = naGetFlagu32(keyReaction->shortcut.modifiers, NA_KEY_MODIFIER_CONTROL);

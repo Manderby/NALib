@@ -25,52 +25,21 @@
 #include "../../NAMath/NAVectorAlgebra.h"
 #include "../../NAVisual/NAColor.h"
 
-NA_PROTOTYPE(NAFont);
-NA_PROTOTYPE(NAMouseStatus);
-NA_PROTOTYPE(NAKeyStroke);
 
-NA_PROTOTYPE(NAUIImage);
-NA_PROTOTYPE(NAApplication);
-NA_PROTOTYPE(NAButton);
-NA_PROTOTYPE(NACheckBox);
-NA_PROTOTYPE(NAImageSpace);
-NA_PROTOTYPE(NALabel);
-NA_PROTOTYPE(NAMenu);
-NA_PROTOTYPE(NAMenuItem);
-NA_PROTOTYPE(NAMetalSpace);
-NA_PROTOTYPE(NAOpenGLSpace);
-NA_PROTOTYPE(NARadio);
-NA_PROTOTYPE(NAScreen);
-NA_PROTOTYPE(NASelect);
-NA_PROTOTYPE(NASlider);
-NA_PROTOTYPE(NASpace);
-NA_PROTOTYPE(NATextBox);
-NA_PROTOTYPE(NATextField);
-NA_PROTOTYPE(NAWindow);
-
-// Very much the same as the nativePtr, there are certain types which are
-// casted differently on the different systems and therefore they are
-// declared with a global void* or integer big enough to encapsulate all
-// possible casts on all systems. Internally, they are caseted to these
-// types:
-
-typedef struct NA_UIElement NA_UIElement;
-
-typedef struct NAEventReaction NAEventReaction;
-typedef struct NAKeyboardShortcutReaction NAKeyboardShortcutReaction;
 
 // //////////////////////////////
 // NA_UIElement is the base type of any ui element. All ui element struct
 // definitions have an NA_UIElement as the first entry:
 
+typedef struct NA_UIElement NA_UIElement;
 struct NA_UIElement{
   NAUIElementType elementType;
   void*           parent;
   NAList          reactions;
   NAList          shortcuts;
-  size_t          hoverReactionCount;
   uint32          flags;             // Currently only used in winAPI
   void*           nativePtr;         // The native pointer
+  size_t          hoverReactionCount;
   size_t          mouseTrackingCount;
   void*           mouseTracking;
 };
@@ -188,13 +157,15 @@ struct NAWindow{
 
 
 
-struct NAEventReaction{
+typedef struct NA_EventReaction NA_EventReaction;
+struct NA_EventReaction{
   void*              controller;
   NAReactionCallback callback;
   NAUICommand        command;
 };
 
-struct NAKeyboardShortcutReaction{
+typedef struct NA_KeyboardShortcutReaction NA_KeyboardShortcutReaction;
+struct NA_KeyboardShortcutReaction{
   void*              controller;
   NAReactionCallback callback;
   NAKeyStroke*       shortcut;
