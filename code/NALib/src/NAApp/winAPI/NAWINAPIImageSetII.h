@@ -5,10 +5,9 @@
 // Do not include this file anywhere else!
 
 
+
 #include "../../NAVisual/NAPNG.h"
-#include "../NAApp.h"
-#include "../Core/NAAppCore.h"
-#include <wincodec.h>
+
 
 
 NA_DEF NASkin naGetCurrentSkin() {

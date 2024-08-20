@@ -1,21 +1,24 @@
 
-#include "../NAPreferences.h"
-#include "../../NAApp/NAApp.h"
+// This file is an inline implmenentation (II) file which is included in the
+// NAWINAPI.c file. This is a bit special as it is marked as a .h file but
+// actually contains non-inlinenable code. See NAWINAPI.c for more information.
+// Do not include this file anywhere else!
 
-#if NA_OS == NA_OS_WINDOWS
-#if NA_COMPILE_GUI == 1
+//#include "../NAPreferences.h"
+//#include "../../NAApp/NAApp.h"
+
 
 
 HKEY na_nativePreferences = NA_NULL;
-#include "../../NAUtility/NAMemory.h"
-#include "../../NAUtility/NAString.h"
+//#include "../../NAUtility/NAMemory.h"
+//#include "../../NAUtility/NAString.h"
 
 
 
 NA_HDEF void* na_GetNativePreferences() {
   #if NA_DEBUG
-    if(!naGetApplication())
-      naError("No application running. Use naStartApplication.");
+  if(!naGetApplication())
+    naError("No application running. Use naStartApplication.");
   #endif
   if(!na_nativePreferences) {
     NAString* appname = naNewApplicationName();
@@ -108,10 +111,10 @@ NA_HDEF void* na_GetWINRegistryFixedEntry(
   size_t valueSize)
 {
   #if NA_DEBUG
-    if(!value)
-      naError("You must provide a place to store the value.");
-    if(!valueSize)
-      naError("You must provide the memory size of the given value");
+  if(!value)
+    naError("You must provide a place to store the value.");
+  if(!valueSize)
+    naError("You must provide the memory size of the given value");
   #endif
 
   void* retValue = NA_NULL;
@@ -130,7 +133,7 @@ NA_HDEF void* na_GetWINRegistryFixedEntry(
     DWORD expectedSize;
     DWORD type;
     errorCode = RegQueryValueExW(registry, systemKey, NULL, &type, NULL, &expectedSize);
-    
+
     if(errorCode == ERROR_SUCCESS) {
       if(expectedSize == valueSize) {
         errorCode = RegGetValueW(registry, NULL, systemKey, RRF_RT_ANY, &type, value, (LPDWORD)&expectedSize);
@@ -167,8 +170,8 @@ NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, NAi64 valueS
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
   #if NA_DEBUG
-    if(errorCode != ERROR_SUCCESS)
-      naError("Could not set bool preference");
+  if(errorCode != ERROR_SUCCESS)
+    naError("Could not set bool preference");
   #endif
 }
 
@@ -190,8 +193,8 @@ NA_HDEF void na_SetRawPreferencesInt(void* prefs, const char* key, NAi64 valueSt
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
   #if NA_DEBUG
-    if(errorCode != ERROR_SUCCESS)
-      naError("Could not set int preference");
+  if(errorCode != ERROR_SUCCESS)
+    naError("Could not set int preference");
   #endif
 }
 
@@ -213,8 +216,8 @@ NA_HDEF void na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64 valueS
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
   #if NA_DEBUG
-    if(errorCode != ERROR_SUCCESS)
-      naError("Could not set enum preference");
+  if(errorCode != ERROR_SUCCESS)
+    naError("Could not set enum preference");
   #endif
 }
 
@@ -236,8 +239,8 @@ NA_HDEF void na_SetRawPreferencesDouble(void* prefs, const char* key, double val
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
   #if NA_DEBUG
-    if(errorCode != ERROR_SUCCESS)
-      naError("Could not set double preference");
+  if(errorCode != ERROR_SUCCESS)
+    naError("Could not set double preference");
   #endif
 }
 
@@ -281,15 +284,12 @@ NA_HDEF void na_SetRawPreferencesString(void* prefs, const char* key, NAString* 
   naFree(storedValue);
   naFree(systemKey);
   #if NA_DEBUG
-    if(errorCode != ERROR_SUCCESS)
-      naError("Could not set string preference");
+  if(errorCode != ERROR_SUCCESS)
+    naError("Could not set string preference");
   #endif
 }
 
 
-
-#endif // NA_COMPILE_GUI == 1
-#endif // NA_OS == NA_OS_WINDOWS
 
 // This is free and unencumbered software released into the public domain.
 

@@ -103,10 +103,11 @@ set(winAPIFiles
   ${NAAppDir}/winAPI/NAWINAPIII.h
   ${NAAppDir}/winAPI/NAWINAPIInterfaces.h
   ${NAAppDir}/winAPI/NAWINAPIClipboardII.h
-  ${NAAppDir}/winAPI/NAWINAPIFont.c
+  ${NAAppDir}/winAPI/NAWINAPIFontII.h
   ${NAAppDir}/winAPI/NAWINAPIImageSetII.h
-  ${NAAppDir}/winAPI/NAWINAPIPreferences.c
-  ${NAAppDir}/winAPI/NAWINAPIPreferences.h
+  ${NAAppDir}/winAPI/NAWINAPIKeyboardII.h
+  ${NAAppDir}/winAPI/NAWINAPIMouseII.h
+  ${NAAppDir}/winAPI/NAWINAPIPreferencesII.h
 )
 
 set(winAPIUIFiles

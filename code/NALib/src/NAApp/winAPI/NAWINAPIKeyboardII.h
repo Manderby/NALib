@@ -1,43 +1,12 @@
 
-#include "../../NABase/NABase.h"
-#include "../NAFont.h"
-#include "../Core/NAAppCore.h"
+// This file is an inline implmenentation (II) file which is included in the
+// NAWINAPI.c file. This is a bit special as it is marked as a .h file but
+// actually contains non-inlinenable code. See NAWINAPI.c for more information.
+// Do not include this file anywhere else!
 
-#include <windows.h>
 
-#include "../UIElements/NAUIElement.h"
 
-NA_HDEF void na_DestructFontNativePtr(void* nativePtr) {
-  DeleteObject(nativePtr);
-}
-
-NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size) {
-  TCHAR* systemFontName = naAllocSystemStringWithUTF8String(fontFamilyName);
-
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
-
-  HFONT nativePtr = CreateFont(
-    (int)(size * uiScale),
-    0,
-    0,
-    0,
-    naGetFlagu32(flags, NA_FONT_FLAG_BOLD) ? FW_BOLD : FW_NORMAL,
-    naGetFlagu32(flags, NA_FONT_FLAG_ITALIC),
-    naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE),
-    NA_FALSE,
-    DEFAULT_CHARSET,
-    OUT_DEFAULT_PRECIS,
-    CLIP_DEFAULT_PRECIS,
-    CLEARTYPE_QUALITY,
-    DEFAULT_PITCH | FF_DONTCARE,
-    systemFontName);
-
-  NAString* name = naNewStringWithFormat("%s", fontFamilyName);
-
-  naFree(systemFontName);
-
-  return na_CreateFont(nativePtr, name, flags, size);
-}
+// All implementations are in the core. Nothing to see here.
 
 
 

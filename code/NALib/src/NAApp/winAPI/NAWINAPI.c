@@ -27,10 +27,16 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include "../Core/NAAppCore.h"
 #include "../../NAUtility/NAString.h"
 
+
 #include "NAWINAPIClipboardII.h"
+#include "NAWINAPIFontII.h"
 #include "NAWINAPIImageSetII.h"
+//#include "NAWINAPIKeyboardII.h"
+//#include "NAWINAPIMouseII.h"
+#include "NAWINAPIPreferencesII.h"
 
 #include "NAWINAPIII.h"
 #include "NAWINAPIInterfaces.h"
