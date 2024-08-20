@@ -35,15 +35,14 @@ set(uiHeaderFiles
 )
 
 set(coreFiles
+  ${NAAppDir}/Core/NAAppCore.c
   ${NAAppDir}/Core/NAAppCore.h
-  ${NAAppDir}/Core/NAClipboard.c
-  ${NAAppDir}/Core/NAFont.c
-  ${NAAppDir}/Core/NAKeyboard.c
-  ${NAAppDir}/Core/NAMouse.c
-  ${NAAppDir}/Core/NAPreferences.c
-  ${NAAppDir}/Core/NAPreferencesCore.h
-  ${NAAppDir}/Core/NAUIImage.c
-  ${NAAppDir}/Core/NAUIImageCore.h
+  ${NAAppDir}/Core/NACoreClipboardII.h
+  ${NAAppDir}/Core/NACoreFontII.h
+  ${NAAppDir}/Core/NACoreKeyboardII.h
+  ${NAAppDir}/Core/NACoreMouseII.h
+  ${NAAppDir}/Core/NACorePreferencesII.h
+  ${NAAppDir}/Core/NACoreUIImageII.h
 )
 
 set(coreUIFiles

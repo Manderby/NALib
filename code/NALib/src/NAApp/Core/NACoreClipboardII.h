@@ -1,30 +1,12 @@
 
-#ifndef NA_UIIMAGE_CORE_INCLUDED
-#define NA_UIIMAGE_CORE_INCLUDED
+// This file is an inline implmenentation (II) file which is included in the
+// NAAppCore.c file. This is a bit special as it is marked as a .h file but
+// actually contains non-inlinenable code. See NAAppCore.c for more information.
+// Do not include this file anywhere else!
 
 
 
-NA_HAPI const NAImage* na_GetUIImageImage(
-  const NAUIImage* uiImage,
-  double resolution,
-  NASkin skin,
-  NAUIImageInteraction interaction,
-  NABool secondaryState);
-
-NA_HAPI void* na_GetUIImageNativeImage(
-  const NAUIImage* uiImage,
-  double resolution,
-  NASkin skin,
-  NAUIImageInteraction interaction,
-  NABool secondaryState);
-
-NA_HAPI void na_FillDefaultTextColorWithSystemSkin(NAColor* color);
-NA_HAPI void na_FillDefaultLinkColorWithSystemSkin(NAColor* color);
-NA_HAPI void na_FillDefaultAccentColorWithSystemSkin(NAColor* color);
-
-
-
-#endif // NA_UIIMAGE_CORE_INCLUDED
+// All implementations are system dependent. Nothing to see here.
 
 
 

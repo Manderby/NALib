@@ -5,7 +5,6 @@
 // Do not include this file anywhere else!
 
 
-#include "../../Core/NAUIImageCore.h"
 
 #define NA_WINAPI_BUTTON_IMAGE      0x04
 #define NA_WINAPI_BUTTON_STATE      0x08

@@ -6,8 +6,8 @@
 
 
 #include "../../NAVisual/NAPNG.h"
-#include "../../NAApp/NAApp.h"
-#include "../Core/NAPreferencesCore.h"
+#include "../NAApp.h"
+#include "../Core/NAAppCore.h"
 #include <wincodec.h>
 
 

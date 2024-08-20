@@ -17,13 +17,18 @@
 
 
 
-#include "../NAApp.h"
-    
 #include "../../NAStruct/NAList.h"
-#include "../../NAUtility/NAThreading.h"
-#include "../../NAUtility/NATranslator.h"
 #include "../../NAMath/NAVectorAlgebra.h"
+NA_PROTOTYPE(NATranslator);
+
+#include "../NAApp.h"
+
+
+
+
+// todo: replace with prototype?
 #include "../../NAVisual/NAColor.h"
+
 
 
 
@@ -407,11 +412,78 @@ NA_HAPI void na_SetMouseEnteredAtPos(NAMouseStatus* status, NAPos newpos);
 NA_HAPI void na_SetMouseExitedAtPos(NAMouseStatus* status, NAPos newpos);
 
 
-
-
-// Font related functions
+// Font
 NA_HAPI NAFont* na_CreateFont(void* nativePtr, const NAString* name, uint32 flags, double size);
 NA_HAPI void na_DestructFontNativePtr(void* nativePtr);
+
+
+// Preferences
+NA_HAPI void* na_GetNativePreferences(void);
+NA_HAPI void na_ShutdownPreferences(void);
+
+NA_HAPI NAi64     na_GetRawPreferencesBool  (void* prefs, const char* key);
+NA_HAPI NAi64     na_GetRawPreferencesInt   (void* prefs, const char* key);
+NA_HAPI NAi64     na_GetRawPreferencesEnum  (void* prefs, const char* key);
+NA_HAPI double    na_GetRawPreferencesDouble(void* prefs, const char* key);
+NA_HAPI NAString* na_GetRawPreferencesString(void* prefs, const char* key);
+
+NA_HAPI void na_SetRawPreferencesBool  (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesInt   (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesEnum  (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesDouble(void* prefs, const char* key, double valueStorage);
+NA_HAPI void na_SetRawPreferencesString(void* prefs, const char* key, NAString* valueStorage);
+
+#if NA_OS == NA_OS_WINDOWS
+
+#include <windows.h>
+
+  // Returns a value from the windows registry.
+  // 
+  // The "Variable" method will allocate sufficient memory with malloc for you
+  // and return the size allocated in valueSize if available.
+  // 
+  // The "Fixed" method expects a pointer to an existing memory location and
+  // the size in bytes available at that location. The requested value will
+  // be stored at that location if and only if the value size is equal to the
+  // one retrieved from the registry.
+  // 
+  // Both methods will return NA_NULL if something went wrong.
+  NA_HAPI void* na_GetWINRegistryVariableEntry(
+    HKEY rootKey,
+    const NAUTF8Char* path,
+    const NAUTF8Char* key,
+    size_t* valueSize);
+
+  NA_HAPI void* na_GetWINRegistryFixedEntry(
+    HKEY rootKey,
+    const NAUTF8Char* path,
+    const NAUTF8Char* key,
+    void* value,
+    size_t valueSize);
+
+#endif
+
+
+// UIImage
+NA_HAPI const NAImage* na_GetUIImageImage(
+  const NAUIImage* uiImage,
+  double resolution,
+  NASkin skin,
+  NAUIImageInteraction interaction,
+  NABool secondaryState);
+
+NA_HAPI void* na_GetUIImageNativeImage(
+  const NAUIImage* uiImage,
+  double resolution,
+  NASkin skin,
+  NAUIImageInteraction interaction,
+  NABool secondaryState);
+
+NA_HAPI void na_FillDefaultTextColorWithSystemSkin(NAColor* color);
+NA_HAPI void na_FillDefaultLinkColorWithSystemSkin(NAColor* color);
+NA_HAPI void na_FillDefaultAccentColorWithSystemSkin(NAColor* color);
+
+
 
 
 

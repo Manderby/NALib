@@ -6,6 +6,7 @@
 #include "../../UIElements/NAApplication.h"
 #include "../../NAKeyboard.h"
 #include "../../NAFont.h"
+#include "../../../NAUtility/NATranslator.h"
 
 
 // The pointer storing the app if any.

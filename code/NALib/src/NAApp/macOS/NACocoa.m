@@ -3,7 +3,7 @@
 // framework. It is a collection of #include directives including code from
 // inline implementation files. These files are .h files and hence will not
 // be compiled by the IDEs by default. They do contain non-inlineable code
-// though so don't threat them like normal .h files. Do not include them
+// though so don't treat them like normal .h files. Do not include them
 // files anywhere else but here in this file.
 
 // This file itself is a .m file which is an implementation file in
@@ -13,8 +13,7 @@
 // remove the .m File from your source tree.
 
 // The whole cocoa implementation has been combined into this single file
-// because compiling an .m file is very slow compared to C files. Using only
-// one single file speeds up the compilation considerably!
+// because using only one single file speeds up the compilation considerably!
 
 
 #include "../../NABase/NABase.h"

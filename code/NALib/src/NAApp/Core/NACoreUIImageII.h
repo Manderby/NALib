@@ -1,13 +1,8 @@
 
-#include "../NAApp.h"
-
-#if NA_COMPILE_GUI == 1
-
-#include "NAUIImageCore.h"
-#include "../../NAVisual/NAImage.h"
-#include "../NAUIImage.h"
-#include "../UIElements/NAScreen.h"
-#include "../../NAStruct/NAList.h"
+// This file is an inline implmenentation (II) file which is included in the
+// NAAppCore.c file. This is a bit special as it is marked as a .h file but
+// actually contains non-inlinenable code. See NAAppCore.c for more information.
+// Do not include this file anywhere else!
 
 
 
@@ -409,7 +404,6 @@ NA_HDEF void na_DeallocUISubImage(NA_UISubImage* subImage) {
   naFree(subImage);
 }
 
-#endif // NA_COMPILE_GUI == 1
 
 
 // This is free and unencumbered software released into the public domain.

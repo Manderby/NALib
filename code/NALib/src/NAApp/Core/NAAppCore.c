@@ -1,5 +1,5 @@
 
-// This file combines all necessary implementations regarding the WINAPI
+// This file combines all necessary implementations regarding the AppCore
 // framework. It is a collection of #include directives including code from
 // inline implementation II files. These files are .h files and hence will not
 // be compiled by the IDEs by default. They do contain non-inlineable code
@@ -8,56 +8,32 @@
 
 // This file itself is a .c file which is an implementation file.
 
-// The whole WINAPI implementation has been combined into this single file
+// The whole AppCore implementation has been combined into this single file
 // because using only one single file speeds up the compilation considerably!
 
 
+
 #include "../../NABase/NAConfiguration.h"
-#if NA_OS == NA_OS_WINDOWS
 #if NA_COMPILE_GUI == 1
 
 
 
-#if(NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1)
-  #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
-#endif
+#include "../../NAVisual/NAImage.h"
 
 
 
-#include <windows.h>
-#include <windowsx.h>
+#include "NAAppCore.h"
 
-#include "../../NAUtility/NAString.h"
-
-#include "NAClipboardII.h"
-#include "NAUIImageWINAPIII.h"
-
-#include "NAUIWINAPIII.h"
-#include "NAUIWINAPIInterfaces.h"
-
-NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace);
-
-#include "UIElements/NAApplicationII.h"
-#include "UIElements/NAButtonII.h"
-#include "UIElements/NACheckBoxII.h"
-#include "UIElements/NAImageSpaceII.h"
-#include "UIElements/NALabelII.h"
-#include "UIElements/NAMenuII.h"
-#include "UIElements/NAMenuItemII.h"
-#include "UIElements/NAMetalSpaceII.h"
-#include "UIElements/NAOpenGLSpaceII.h"
-#include "UIElements/NARadioII.h"
-#include "UIElements/NASelectII.h"
-#include "UIElements/NASliderII.h"
-#include "UIElements/NASpaceII.h"
-#include "UIElements/NATextBoxII.h"
-#include "UIElements/NATextFieldII.h"
-#include "UIElements/NAWindowII.h"
+#include "NACoreClipboardII.h"
+#include "NACoreFontII.h"
+#include "NACoreKeyboardII.h"
+#include "NACoreMouseII.h"
+#include "NACorePreferencesII.h"
+#include "NACoreUIImageII.h"
 
 
 
 #endif // NA_COMPILE_GUI == 1
-#endif // NA_OS == NA_OS_WINDOWS
 
 
 

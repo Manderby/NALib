@@ -8,8 +8,9 @@
 
 #include "../../../NAUtility/NAString.h"
 #include "../../../NAUtility/NAURL.h"
+#include "../../../NAUtility/NATranslator.h"
 #include "../../../NAStruct/NAStack.h"
-#include "../../Core/NAPreferencesCore.h"
+#include "../../../NAVisual/NAImage.h"
 
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   #include <commctrl.h>

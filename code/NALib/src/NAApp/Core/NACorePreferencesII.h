@@ -1,12 +1,8 @@
 
-#include "../../NABase/NAConfiguration.h"
-#if NA_COMPILE_GUI == 1
-
-
-
-#include "../NAPreferences.h"
-#include "NAPreferencesCore.h"
-#include "../../NAUtility/NAString.h"
+// This file is an inline implmenentation (II) file which is included in the
+// NAAppCore.c file. This is a bit special as it is marked as a .h file but
+// actually contains non-inlinenable code. See NAAppCore.c for more information.
+// Do not include this file anywhere else!
 
 
 
@@ -350,10 +346,6 @@ NA_DEF NABool naSetPreferencesString(const char* key, NAString* newValue) {
     
   return isDifferent;
 }
-
-
-
-#endif // NA_COMPILE_GUI == 1
 
 
 
