@@ -26,10 +26,10 @@
 
 #include "NACoreClipboardII.h"
 #include "NACoreFontII.h"
+#include "NACoreImageSetII.h"
 #include "NACoreKeyboardII.h"
 #include "NACoreMouseII.h"
 #include "NACorePreferencesII.h"
-#include "NACoreUIImageII.h"
 
 
 

@@ -4,17 +4,21 @@
 #if NA_COMPILE_GUI == 1
 
 #include "../NAAppCore.h"
+#include "../../../NAVisual/NAColor.h"
 
 
 
 NA_HDEF void na_InitSpace(NASpace* space, void* nativePtr) {
   na_InitUIElement(&space->uiElement, NA_UI_SPACE, nativePtr);
   naInitList(&space->childs);
+  space->backgroundColor = naAlloc(NAColor);
+  naFillColorWithTransparent(space->backgroundColor);
 }
 
 
 
 NA_HDEF void na_ClearSpace(NASpace* space) {
+  naFree(space->backgroundColor);
   naForeachListMutable(&space->childs, (NAMutator)naDelete);
   naClearList(&space->childs);
   na_ClearUIElement(&space->uiElement);

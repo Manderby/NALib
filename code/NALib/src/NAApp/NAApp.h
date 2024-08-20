@@ -40,7 +40,7 @@
 #include "NAMouse.h"
 #include "NAPreferences.h"
 #include "NAReaction.h"
-#include "NAUIImage.h"
+#include "NAImageSet.h"
 
 
 

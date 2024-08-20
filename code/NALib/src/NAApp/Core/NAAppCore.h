@@ -25,13 +25,6 @@ NA_PROTOTYPE(NATranslator);
 
 
 
-
-// todo: replace with prototype?
-#include "../../NAVisual/NAColor.h"
-
-
-
-
 // //////////////////////////////
 // NA_UIElement is the base type of any ui element. All ui element struct
 // definitions have an NA_UIElement as the first entry:
@@ -73,8 +66,8 @@ struct NAButton{
   NA_UIElement uiElement;
   NAUTF8Char* text;
   NAUTF8Char* text2;
-  const NAUIImage* uiImage;
-  const NAUIImage* uiImage2;
+  const NAImageSet* imageSet;
+  const NAImageSet* imageSet2;
   uint32 flags;
 };
 
@@ -84,7 +77,7 @@ struct NACheckBox{
 
 struct NAImageSpace{
   NA_UIElement uiElement;
-  NAUIImage* uiImage;
+  NAImageSet* imageSet;
 };
 
 struct NALabel{
@@ -136,7 +129,7 @@ struct NASlider{
 struct NASpace{
   NA_UIElement uiElement;
   NAList       childs;
-  NAColor      backgroundColor;
+  NAColor*     backgroundColor;
   NABool       alternateBackground;
   NABool       dragsWindow;
 };
@@ -289,12 +282,12 @@ NA_HAPI void na_SetApplicationKeyStroke(NAApplication* app, NAKeyStroke* keyStro
 #define NA_BUTTON_BORDERED   0x01
 #define NA_BUTTON_STATEFUL   0x02
 
-NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAUIImage* uiImage, const NAUIImage* uiImage2, uint32 flags);
+NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAImageSet* imageSet, const NAImageSet* imageSet2, uint32 flags);
 NA_HAPI void na_ClearButton(NAButton* button);
 NA_HAPI void na_setButtonText(NAButton* button, const NAUTF8Char* text);
 NA_HAPI void na_setButtonText2(NAButton* button, const NAUTF8Char* text);
-NA_HAPI void na_setButtonImage(NAButton* button, const NAUIImage* uiImage);
-NA_HAPI void na_setButtonImage2(NAButton* button, const NAUIImage* uiImage);
+NA_HAPI void na_setButtonImage(NAButton* button, const NAImageSet* imageSet);
+NA_HAPI void na_setButtonImage2(NAButton* button, const NAImageSet* imageSet);
 NA_HAPI NARect na_GetButtonRect(const NA_UIElement* button);
 NA_HAPI void na_SetButtonRect(NA_UIElement* button, NARect rect);
 
@@ -464,19 +457,19 @@ NA_HAPI void na_SetRawPreferencesString(void* prefs, const char* key, NAString* 
 #endif
 
 
-// UIImage
-NA_HAPI const NAImage* na_GetUIImageImage(
-  const NAUIImage* uiImage,
+// ImageSet
+NA_HAPI const NAImage* na_GetImageSetSubImage(
+  const NAImageSet* imageSet,
   double resolution,
   NASkin skin,
-  NAUIImageInteraction interaction,
+  NAImageSetInteraction interaction,
   NABool secondaryState);
 
-NA_HAPI void* na_GetUIImageNativeImage(
-  const NAUIImage* uiImage,
+NA_HAPI void* na_GetImageSetNativeSubImage(
+  const NAImageSet* imageSet,
   double resolution,
   NASkin skin,
-  NAUIImageInteraction interaction,
+  NAImageSetInteraction interaction,
   NABool secondaryState);
 
 NA_HAPI void na_FillDefaultTextColorWithSystemSkin(NAColor* color);

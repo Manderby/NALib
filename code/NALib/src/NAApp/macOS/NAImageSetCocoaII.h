@@ -170,13 +170,13 @@ NA_DEF void* naAllocNativeImageWithImage(const NAImage* image) {
 }
 
 
-NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolution, NAUIImageInteraction interaction, NABool secondaryState, NSSize imageSize, NSRect dstRect) {
+NA_HDEF BOOL na_drawFixedResolutionImage(const NAImageSet* imageSet, double resolution, NAImageSetInteraction interaction, NABool secondaryState, NSSize imageSize, NSRect dstRect) {
   NASkin skin = NA_SKIN_SYSTEM;
-  if(uiImage->tinting != NA_BLEND_ZERO) {
+  if(imageSet->tinting != NA_BLEND_ZERO) {
     skin = naGetCurrentSkin();
   }
   
-  CGImageRef cocoaImage = na_GetUIImageNativeImage(uiImage, resolution, skin, interaction, secondaryState);
+  CGImageRef cocoaImage = na_GetImageSetNativeSubImage(imageSet, resolution, skin, interaction, secondaryState);
 
   // Yes, we create a new NSImage which we draw into the NSImage which
   // calls this callback. It is unknown to me exactly why I need to do
@@ -199,8 +199,8 @@ NA_HDEF BOOL na_drawFixedResolutionImage(const NAUIImage* uiImage, double resolu
 
 NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
   const NSView* containingView,
-  const NAUIImage* uiImage,
-  NAUIImageInteraction interaction,
+  const NAImageSet* imageSet,
+  NAImageSetInteraction interaction,
   NABool secondaryState)
 {
   NSImage* image = nil;
@@ -211,27 +211,27 @@ NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
   // there and returns null, resulting in empty images.
   if(containingView && [NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]) {
     NA_MACOS_AVAILABILITY_GUARD_10_8(
-      NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
+      NSSize imageSize = NSMakeSize(naGetImageSet1xSize(imageSet).width, naGetImageSet1xSize(imageSet).height);
       image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
       {
         double resolution = naGetCocoaBackingScaleFactor(containingView) * NA_UI_RESOLUTION_1x;
-        return na_drawFixedResolutionImage(uiImage, resolution, interaction, secondaryState, imageSize, dstRect);
+        return na_drawFixedResolutionImage(imageSet, resolution, interaction, secondaryState, imageSize, dstRect);
       }];
     ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
   }
   
   // old method: Just create an image with multiple representations.
   if(!image) {
-    NASizes imageSize = naGetUIImage1xSize(uiImage);
+    NASizes imageSize = naGetImageSet1xSize(imageSet);
     image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
 
     NASkin skin = NA_SKIN_PLAIN;
-    if(uiImage->tinting != NA_BLEND_ZERO) {
+    if(imageSet->tinting != NA_BLEND_ZERO) {
       skin = naGetCurrentSkin();
     }
 
-    CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UI_RESOLUTION_1x, skin, interaction, secondaryState);
-    CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UI_RESOLUTION_2x, skin, interaction, secondaryState);
+    CGImageRef img1x = na_GetImageSetNativeSubImage(imageSet, NA_UI_RESOLUTION_1x, skin, interaction, secondaryState);
+    CGImageRef img2x = na_GetImageSetNativeSubImage(imageSet, NA_UI_RESOLUTION_2x, skin, interaction, secondaryState);
     if(img1x) {
       NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithCGImage:img1x];
       [image addRepresentation:rep];

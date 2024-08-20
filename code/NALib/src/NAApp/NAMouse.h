@@ -8,7 +8,7 @@
 
 
 #include "../NAMath/NACoord.h"
-NA_PROTOTYPE(NAUIImage);
+NA_PROTOTYPE(NAImageSet);
 
 
 
@@ -62,7 +62,7 @@ NA_API void naHideMouseUntilMovement(NABool hide);
 typedef void NACursorImage;
 
 // Creates a resolution independent image for a cursor with a hotspot.
-NA_API NACursorImage* naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot);
+NA_API NACursorImage* naAllocCursorImage(const NAImageSet* imageSet, NAPos hotspot);
 NA_API void naDeallocCursorImage(NACursorImage* image);
 
 // Sets the current cursor image to the image provided. If null is sent, the

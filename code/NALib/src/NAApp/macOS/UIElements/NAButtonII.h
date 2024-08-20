@@ -92,39 +92,39 @@
   [self updateImages];
 }
 
-- (const NAUIImage*) currentImage{
+- (const NAImageSet*) currentImage{
   NABool secondaryState = [self getButtonState];
-  const NAUIImage* uiImage = secondaryState
-    ? cocoaButton->button.uiImage2
-    : cocoaButton->button.uiImage; 
-  if(secondaryState && !uiImage) {
-    uiImage = cocoaButton->button.uiImage;
+  const NAImageSet* imageSet = secondaryState
+    ? cocoaButton->button.imageSet2
+    : cocoaButton->button.imageSet; 
+  if(secondaryState && !imageSet) {
+    imageSet = cocoaButton->button.imageSet;
   }
-  return uiImage;
+  return imageSet;
 }
 
 - (void) updateImages{
-  const NAUIImage* uiImage = [self currentImage];
+  const NAImageSet* imageSet = [self currentImage];
   NABool secondaryState = [self getButtonState];
 
-  if(uiImage) {
+  if(imageSet) {
     if([self isEnabled]) {
       [self setImage:na_CreateResolutionIndependentNativeImage(
         self,
-        uiImage,
-        NA_UIIMAGE_INTERACTION_NONE,
+        imageSet,
+        NA_IMAGE_SET_INTERACTION_NONE,
         secondaryState)];
         
       [self setAlternateImage:na_CreateResolutionIndependentNativeImage(
         self,
-        uiImage,
-        NA_UIIMAGE_INTERACTION_PRESSED,
+        imageSet,
+        NA_IMAGE_SET_INTERACTION_PRESSED,
         secondaryState)];
     }else{
       [self setImage:na_CreateResolutionIndependentNativeImage(
         self,
-        uiImage,
-        NA_UIIMAGE_INTERACTION_DISABLED,
+        imageSet,
+        NA_IMAGE_SET_INTERACTION_DISABLED,
         secondaryState)];
         
       [self setAlternateImage:nil];
@@ -137,14 +137,14 @@
 
 - (void) mouseEntered:(NSEvent*)event{
   NA_UNUSED(event);
-  const NAUIImage* uiImage = [self currentImage];
+  const NAImageSet* imageSet = [self currentImage];
   NABool secondaryState = [self getButtonState];
 
-  if(uiImage && [self isEnabled]) {
+  if(imageSet && [self isEnabled]) {
     [self setImage:na_CreateResolutionIndependentNativeImage(
       self,
-      uiImage,
-      NA_UIIMAGE_INTERACTION_HOVER,
+      imageSet,
+      NA_IMAGE_SET_INTERACTION_HOVER,
       secondaryState)];
   }
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_ENTERED)) {
@@ -154,14 +154,14 @@
 
 - (void) mouseExited:(NSEvent*)event{
   NA_UNUSED(event);
-  const NAUIImage* uiImage = [self currentImage];
+  const NAImageSet* imageSet = [self currentImage];
   NABool secondaryState = [self getButtonState];
 
-  if(uiImage) {
+  if(imageSet) {
     [self setImage:na_CreateResolutionIndependentNativeImage(
       self,
-      uiImage,
-      NA_UIIMAGE_INTERACTION_NONE,
+      imageSet,
+      NA_IMAGE_SET_INTERACTION_NONE,
       secondaryState)];
   }
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_EXITED)) {
@@ -268,7 +268,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
 
 
-NA_DEF NAButton* naNewIconPushButton(const NAUIImage* icon, double width) {
+NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   uint32 flags = NA_BUTTON_BORDERED;
@@ -305,14 +305,14 @@ NA_DEF NAButton* naNewIconPushButton(const NAUIImage* icon, double width) {
 
 
 
-NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, const NAUIImage* icon2, double width) {
+NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* icon2, double width) {
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
 
-  NAUIImage* secondaryIcon = NA_NULL;
+  NAImageSet* secondaryIcon = NA_NULL;
   if(!icon2) {
-    secondaryIcon = naRecreateUIImage(icon);
+    secondaryIcon = naRecreateImageSet(icon);
   }
 
   double widthSupplement = 0.;
@@ -351,7 +351,7 @@ NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, const NAUIImage* ic
 
 
 
-NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size) {
+NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet, NASize size) {
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   uint32 flags = 0;
@@ -366,7 +366,7 @@ NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size) {
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
     NA_NULL,
     NA_NULL,
-    uiImage,
+    imageSet,
     NA_NULL,
     flags);
   
@@ -380,7 +380,7 @@ NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size) {
 
 
 
-NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage* uiImage2, NASize size) {
+NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImageSet* imageSet2, NASize size) {
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   uint32 flags = NA_BUTTON_STATEFUL;
@@ -395,8 +395,8 @@ NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
     NA_NULL,
     NA_NULL,
-    uiImage,
-    uiImage2,
+    imageSet,
+    imageSet2,
     flags);
   
   [nativePtr updateImages];
@@ -447,25 +447,25 @@ NA_DEF void naSetButtonText2(NAButton* button, const NAUTF8Char* text) {
 
 
 
-NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage) {
+NA_DEF void naSetButtonImage(NAButton* button, const NAImageSet* imageSet) {
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   #if NA_DEBUG
     if(![nativePtr isImage])
       naError("This is not an image button.");
   #endif
-  na_setButtonImage(button, uiImage);
+  na_setButtonImage(button, imageSet);
   [nativePtr updateImages];
 }
 
 
 
-NA_DEF void naSetButtonImage2(NAButton* button, const NAUIImage* uiImage) {
+NA_DEF void naSetButtonImage2(NAButton* button, const NAImageSet* imageSet) {
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   #if NA_DEBUG
     if(![nativePtr isImage])
       naError("This is not an image button.");
   #endif
-  na_setButtonImage2(button, uiImage);
+  na_setButtonImage2(button, imageSet);
   [nativePtr updateImages];
 }
 

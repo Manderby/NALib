@@ -148,15 +148,15 @@ NABool naButtonWINAPINotify(void* uiElement, WORD notificationCode) {
 
 
 
-const NAUIImage* currentImage(NAWINAPIButton* winapiButton) {
+const NAImageSet* currentImage(NAWINAPIButton* winapiButton) {
   NABool secondaryState = na_GetButtonState(winapiButton);
-  const NAUIImage* uiImage = secondaryState
-    ? winapiButton->button.uiImage2
-    : winapiButton->button.uiImage; 
-  if(secondaryState && !uiImage) {
-    uiImage = winapiButton->button.uiImage;
+  const NAImageSet* imageSet = secondaryState
+    ? winapiButton->button.imageSet2
+    : winapiButton->button.imageSet; 
+  if(secondaryState && !imageSet) {
+    imageSet = winapiButton->button.imageSet;
   }
-  return uiImage;
+  return imageSet;
 }
 
 
@@ -232,10 +232,10 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     naFree(buttonBuffer);
   }
 
-  const NAUIImage* uiImage = currentImage(winapiButton);
-  if(uiImage) {
+  const NAImageSet* imageSet = currentImage(winapiButton);
+  if(imageSet) {
     double uiScale = naGetUIElementResolutionScale(NA_NULL);
-    NASizes size1x = naGetUIImage1xSize(uiImage);
+    NASizes size1x = naGetImageSet1xSize(imageSet);
     size1x.width = (NAInt)(size1x.width * uiScale);
     size1x.height = (NAInt)(size1x.height * uiScale);
 
@@ -250,16 +250,16 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     NABool secondaryState = na_GetButtonState(winapiButton);
     if(IsWindowEnabled(naGetUIElementNativePtr(winapiButton))) {
       if(pushed) {
-        foreImage = na_GetUIImageImage(uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_UIIMAGE_INTERACTION_PRESSED, secondaryState);
+        foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_PRESSED, secondaryState);
       }else{
         if(na_GetUIElementMouseInside(&winapiButton->button.uiElement)) {
-          foreImage = na_GetUIImageImage(uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM,  NA_UIIMAGE_INTERACTION_HOVER, secondaryState);
+          foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM,  NA_IMAGE_SET_INTERACTION_HOVER, secondaryState);
         }else{
-          foreImage = na_GetUIImageImage(uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM,  NA_UIIMAGE_INTERACTION_NONE, secondaryState);
+          foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM,  NA_IMAGE_SET_INTERACTION_NONE, secondaryState);
         }
       }
     }else{
-      foreImage = na_GetUIImageImage(uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM,  NA_UIIMAGE_INTERACTION_DISABLED, secondaryState);
+      foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM,  NA_IMAGE_SET_INTERACTION_DISABLED, secondaryState);
     }
 
     // We store the background where the image will be placed.
@@ -415,7 +415,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
 
 
-NA_DEF NAButton* naNewIconPushButton(const NAUIImage* icon, double width) {
+NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
   uint32 flags = NA_BUTTON_BORDERED;
@@ -459,7 +459,7 @@ NA_DEF NAButton* naNewIconPushButton(const NAUIImage* icon, double width) {
 
 
 
-NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, const NAUIImage* icon2, double width) {
+NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* icon2, double width) {
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
@@ -486,9 +486,9 @@ NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, const NAUIImage* ic
     app->oldButtonWindowProc = oldproc;
   }
 
-  NAUIImage* secondaryIcon = NA_NULL;
+  NAImageSet* secondaryIcon = NA_NULL;
   if(!icon2) {
-    secondaryIcon = naRecreateUIImage(icon);
+    secondaryIcon = naRecreateImageSet(icon);
   }
 
   na_InitButton(
@@ -512,7 +512,7 @@ NA_DEF NAButton* naNewIconStateButton(const NAUIImage* icon, const NAUIImage* ic
 
 
 
-NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size) {
+NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet, NASize size) {
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
   uint32 flags = 0;
@@ -544,7 +544,7 @@ NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size) {
     nativePtr,
     NA_NULL,
     NA_NULL,
-    uiImage,
+    imageSet,
     NA_NULL,
     flags);
   winapiButton->state = 0;
@@ -556,7 +556,7 @@ NA_DEF NAButton* naNewImagePushButton(const NAUIImage* uiImage, NASize size) {
 
 
 
-NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage* uiImage2, NASize size) {
+NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImageSet* imageSet2, NASize size) {
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
   uint32 flags = NA_BUTTON_STATEFUL;
@@ -588,8 +588,8 @@ NA_DEF NAButton* naNewImageStateButton(const NAUIImage* uiImage, const NAUIImage
     nativePtr,
     NA_NULL,
     NA_NULL,
-    uiImage,
-    uiImage2,
+    imageSet,
+    imageSet2,
     flags);
   winapiButton->state = 0;
 
@@ -671,7 +671,7 @@ NA_DEF void naSetButtonText2(NAButton* button, const NAUTF8Char* text) {
 
 
 
-NA_DEF void naSetButtonImage(NAButton* button, const NAUIImage* uiImage) {
+NA_DEF void naSetButtonImage(NAButton* button, const NAImageSet* imageSet) {
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   #if NA_DEBUG
     if(!naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))

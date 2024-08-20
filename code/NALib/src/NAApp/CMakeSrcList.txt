@@ -6,11 +6,11 @@ set(headerFiles
   ${NAAppDir}/NAApp.h
   ${NAAppDir}/NAClipboard.h
   ${NAAppDir}/NAFont.h
+  ${NAAppDir}/NAImageSet.h
   ${NAAppDir}/NAKeyboard.h
   ${NAAppDir}/NAMouse.h
   ${NAAppDir}/NAPreferences.h
   ${NAAppDir}/NAReaction.h
-  ${NAAppDir}/NAUIImage.h
 )
 
 set(uiHeaderFiles
@@ -39,10 +39,10 @@ set(coreFiles
   ${NAAppDir}/Core/NAAppCore.h
   ${NAAppDir}/Core/NACoreClipboardII.h
   ${NAAppDir}/Core/NACoreFontII.h
+  ${NAAppDir}/Core/NACoreImageSetII.h
   ${NAAppDir}/Core/NACoreKeyboardII.h
   ${NAAppDir}/Core/NACoreMouseII.h
   ${NAAppDir}/Core/NACorePreferencesII.h
-  ${NAAppDir}/Core/NACoreUIImageII.h
 )
 
 set(coreUIFiles
@@ -71,10 +71,10 @@ set(macOSFiles
   ${NAAppDir}/macOS/NACocoa.m
   ${NAAppDir}/macOS/NAUICocoaII.h
   ${NAAppDir}/macOS/NAUICocoaInterfaces.h
+  ${NAAppDir}/macOS/NAImageSetCocoaII.h
   ${NAAppDir}/macOS/NAUICocoaLegacy.h
   ${NAAppDir}/macOS/NAUICocoaLegacyII.h
   ${NAAppDir}/macOS/NAPreferencesCocoa.m
-  ${NAAppDir}/macOS/NAUIImageCocoaII.h
 )
 
 set(macOSUIFiles
@@ -99,13 +99,14 @@ set(macOSUIFiles
 )
 
 set(winAPIFiles
-  ${NAAppDir}/winAPI/NAClipboardII.h
-  ${NAAppDir}/winAPI/NAFont.c
-  ${NAAppDir}/winAPI/NAPreferencesWINAPI.c
-  ${NAAppDir}/winAPI/NAUIImageWINAPIII.h
-  ${NAAppDir}/winAPI/NAUIWINAPIII.h
-  ${NAAppDir}/winAPI/NAUIWINAPIInterfaces.h
   ${NAAppDir}/winAPI/NAWINAPI.c
+  ${NAAppDir}/winAPI/NAWINAPIII.h
+  ${NAAppDir}/winAPI/NAWINAPIInterfaces.h
+  ${NAAppDir}/winAPI/NAWINAPIClipboardII.h
+  ${NAAppDir}/winAPI/NAWINAPIFont.c
+  ${NAAppDir}/winAPI/NAWINAPIImageSetII.h
+  ${NAAppDir}/winAPI/NAWINAPIPreferences.c
+  ${NAAppDir}/winAPI/NAWINAPIPreferences.h
 )
 
 set(winAPIUIFiles

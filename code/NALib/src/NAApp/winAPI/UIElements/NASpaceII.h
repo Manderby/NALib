@@ -214,7 +214,6 @@ NA_DEF NASpace* naNewSpace(NASize size) {
   winapiSpace->lastBgColor = &app->bgColor;
   winapiSpace->forceEraseBackground = NA_FALSE;
 
-  naFillColorWithTransparent(&winapiSpace->space.backgroundColor);
   winapiSpace->space.alternateBackground = NA_FALSE;
 
   return (NASpace*)winapiSpace;

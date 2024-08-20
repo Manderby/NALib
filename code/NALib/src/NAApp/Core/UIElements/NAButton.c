@@ -5,16 +5,16 @@
 
 
 
-NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAUIImage* uiImage, const NAUIImage* uiImage2, uint32 flags) {
+NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAImageSet* imageSet, const NAImageSet* imageSet2, uint32 flags) {
   na_InitUIElement(&button->uiElement, NA_UI_BUTTON, nativePtr);
   button->text = NA_NULL;
   button->text2 = NA_NULL;
-  button->uiImage = NA_NULL;
-  button->uiImage2 = NA_NULL;
+  button->imageSet = NA_NULL;
+  button->imageSet2 = NA_NULL;
   na_setButtonText(button, text);
   na_setButtonText2(button, text2);
-  na_setButtonImage(button, uiImage);
-  na_setButtonImage2(button, uiImage2);
+  na_setButtonImage(button, imageSet);
+  na_setButtonImage2(button, imageSet2);
   button->flags = flags;
 }
 
@@ -25,10 +25,10 @@ NA_HDEF void na_ClearButton(NAButton* button) {
     naFree(button->text);
   if(button->text2)
     naFree(button->text2);
-  if(button->uiImage)
-    naReleaseConst(button->uiImage);
-  if(button->uiImage2)
-    naReleaseConst(button->uiImage2);
+  if(button->imageSet)
+    naReleaseConst(button->imageSet);
+  if(button->imageSet2)
+    naReleaseConst(button->imageSet2);
     
   na_ClearUIElement(&button->uiElement);
 }
@@ -67,27 +67,27 @@ NA_HDEF void na_setButtonText2(NAButton* button, const NAUTF8Char* text) {
 
 
 
-NA_HDEF void na_setButtonImage(NAButton* button, const NAUIImage* uiImage) {
-  if(button->uiImage) {
-    naReleaseConst(button->uiImage);
+NA_HDEF void na_setButtonImage(NAButton* button, const NAImageSet* imageSet) {
+  if(button->imageSet) {
+    naReleaseConst(button->imageSet);
   }
-  if(uiImage) {
-    button->uiImage = naRetainConst(uiImage);
+  if(imageSet) {
+    button->imageSet = naRetainConst(imageSet);
   }else{
-    button->uiImage = NA_NULL;
+    button->imageSet = NA_NULL;
   }
 }
 
 
 
-NA_HDEF void na_setButtonImage2(NAButton* button, const NAUIImage* uiImage) {
-  if(button->uiImage2) {
-    naReleaseConst(button->uiImage2);
+NA_HDEF void na_setButtonImage2(NAButton* button, const NAImageSet* imageSet) {
+  if(button->imageSet2) {
+    naReleaseConst(button->imageSet2);
   }
-  if(uiImage) {
-    button->uiImage2 = naRetainConst(uiImage);
+  if(imageSet) {
+    button->imageSet2 = naRetainConst(imageSet);
   }else{
-    button->uiImage2 = NA_NULL;
+    button->imageSet2 = NA_NULL;
   }
 }
 

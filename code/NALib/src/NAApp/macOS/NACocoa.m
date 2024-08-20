@@ -33,7 +33,7 @@
 
 #include "NAUICocoaLegacyII.h"
 
-#include "NAUIImageCocoaII.h"
+#include "NAImageSetCocoaII.h"
 
 #include "NAUICocoaII.h"
 #include "NAUICocoaInterfaces.h"

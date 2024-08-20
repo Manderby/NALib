@@ -29,11 +29,11 @@
 
 #include "../../NAUtility/NAString.h"
 
-#include "NAClipboardII.h"
-#include "NAUIImageWINAPIII.h"
+#include "NAWINAPIClipboardII.h"
+#include "NAWINAPIImageSetII.h"
 
-#include "NAUIWINAPIII.h"
-#include "NAUIWINAPIInterfaces.h"
+#include "NAWINAPIII.h"
+#include "NAWINAPIInterfaces.h"
 
 NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace);
 

@@ -33,12 +33,12 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   bgColor = naGetWINAPISpaceBackgroundColor((const NAWINAPISpace*)naGetUIElementParentSpaceConst(uiElement));
   FillRect(paintStruct.hdc, &paintStruct.rcPaint, bgColor->brush);
   
-  if(!imageSpace->imageSpace.uiImage)
+  if(!imageSpace->imageSpace.imageSet)
     return info;
 
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
-  size1x = naGetUIImage1xSize(imageSpace->imageSpace.uiImage);
+  size1x = naGetImageSet1xSize(imageSpace->imageSpace.imageSet);
   size1x.width = (NAInt)(size1x.width * uiScale);
   size1x.height = (NAInt)(size1x.height * uiScale);
 
@@ -49,7 +49,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
     (spaceSize.width - size1x.width) / 2,
     (spaceSize.height - size1x.height) / 2);
 
-  foreImage = na_GetUIImageImage(imageSpace->imageSpace.uiImage, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_PLAIN, NA_UIIMAGE_INTERACTION_NONE, NA_FALSE);
+  foreImage = na_GetImageSetSubImage(imageSpace->imageSpace.imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_PLAIN, NA_IMAGE_SET_INTERACTION_NONE, NA_FALSE);
 
   // We store the background where the image will be placed.
   backBuffer = naMalloc(size1x.width * size1x.height * 4);
@@ -123,7 +123,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARA
 
 
 
-NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size) {
+NA_DEF NAImageSpace* naNewImageSpace(NAImageSet* imageSet, NASize size) {
   NAWINAPIImageSpace* winapiImageSpace = naNew(NAWINAPIImageSpace);
 
   winapiImageSpace->rect = naMakeRect(naMakePos(0., 0.), size);
@@ -144,10 +144,10 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size) {
 
   na_InitImageSpace(&winapiImageSpace->imageSpace, nativePtr);
 
-  if(uiImage) {
-    winapiImageSpace->imageSpace.uiImage = naRetain(uiImage);
+  if(imageSet) {
+    winapiImageSpace->imageSpace.imageSet = naRetain(imageSet);
   }else{
-    winapiImageSpace->imageSpace.uiImage = NA_NULL;
+    winapiImageSpace->imageSpace.imageSet = NA_NULL;
   }
 
   return (NAImageSpace*)winapiImageSpace;
@@ -156,23 +156,23 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size) {
 
 
 NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace) {
-  naRelease(winapiImageSpace->imageSpace.uiImage);
+  naRelease(winapiImageSpace->imageSpace.imageSet);
   na_ClearImageSpace((NAImageSpace*)winapiImageSpace);
 }
 
 
 
-NA_DEF void naSetImageSpaceImage(NAImageSpace* imageSpace, NAUIImage* uiImage) {
+NA_DEF void naSetImageSpaceImage(NAImageSpace* imageSpace, NAImageSet* imageSet) {
   NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
   
-  if(imageSpace->uiImage) {
-    naRelease(imageSpace->uiImage);
+  if(imageSpace->imageSet) {
+    naRelease(imageSpace->imageSet);
   }
-  if(uiImage) {
-    imageSpace->uiImage = naRetain(uiImage);
+  if(imageSet) {
+    imageSpace->imageSet = naRetain(imageSet);
   }
   else {
-    imageSpace->uiImage = NA_NULL;
+    imageSpace->imageSet = NA_NULL;
   }
 
   InvalidateRect(naGetUIElementNativePtr(imageSpace), NULL, TRUE);

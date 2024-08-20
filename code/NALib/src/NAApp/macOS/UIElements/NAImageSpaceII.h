@@ -15,12 +15,12 @@
   return self;
 }
 
-- (void) setUIImage:(NAUIImage* _Nullable)uiImage{
-  if(uiImage) {
+- (void) setImageSet:(NAImageSet* _Nullable)imageSet{
+  if(imageSet) {
     NSImage* image = na_CreateResolutionIndependentNativeImage(
       self,
-      uiImage,
-      NA_UIIMAGE_INTERACTION_NONE,
+      imageSet,
+      NA_IMAGE_SET_INTERACTION_NONE,
       NA_FALSE);
     [self setImage:image];
   }else{
@@ -49,7 +49,7 @@
 
 
 
-NA_DEF NAImageSpace* _Nonnull naNewImageSpace(NAUIImage* _Nullable uiImage, NASize size) {
+NA_DEF NAImageSpace* _Nonnull naNewImageSpace(NAImageSet* _Nullable imageSet, NASize size) {
   NACocoaImageSpace* cocoaImageSpace = naNew(NACocoaImageSpace);
 
   NACocoaNativeImageSpace* nativePtr = [[NACocoaNativeImageSpace alloc]
@@ -57,12 +57,12 @@ NA_DEF NAImageSpace* _Nonnull naNewImageSpace(NAUIImage* _Nullable uiImage, NASi
     frame:naMakeNSRectWithSize(size)];
   na_InitImageSpace((NAImageSpace*)cocoaImageSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
-  if(uiImage) {
-    cocoaImageSpace->imageSpace.uiImage = naRetain(uiImage);
+  if(imageSet) {
+    cocoaImageSpace->imageSpace.imageSet = naRetain(imageSet);
   }else{
-    cocoaImageSpace->imageSpace.uiImage = NA_NULL;
+    cocoaImageSpace->imageSpace.imageSet = NA_NULL;
   }
-  [nativePtr setUIImage: uiImage];
+  [nativePtr setImageSet: imageSet];
 
   return (NAImageSpace*)cocoaImageSpace;
 }
@@ -70,26 +70,26 @@ NA_DEF NAImageSpace* _Nonnull naNewImageSpace(NAUIImage* _Nullable uiImage, NASi
 
 
 NA_DEF void na_DestructCocoaImageSpace(NACocoaImageSpace* _Nonnull cocoaImageSpace) {
-  if(cocoaImageSpace->imageSpace.uiImage) {
-    naRelease(cocoaImageSpace->imageSpace.uiImage);
+  if(cocoaImageSpace->imageSpace.imageSet) {
+    naRelease(cocoaImageSpace->imageSpace.imageSet);
   }
   na_ClearImageSpace((NAImageSpace*)cocoaImageSpace);
 }
 
 
 
-NA_DEF void naSetImageSpaceImage(NAImageSpace* _Nonnull imageSpace, NAUIImage* _Nullable uiImage) {
+NA_DEF void naSetImageSpaceImage(NAImageSpace* _Nonnull imageSpace, NAImageSet* _Nullable imageSet) {
   naDefineCocoaObjectConst(NACocoaNativeImageSpace, nativePtr, imageSpace);
   
-  if(imageSpace->uiImage) {
-    naRelease(imageSpace->uiImage);
+  if(imageSpace->imageSet) {
+    naRelease(imageSpace->imageSet);
   }
-  if(uiImage) {
-    imageSpace->uiImage = naRetain(uiImage);
+  if(imageSet) {
+    imageSpace->imageSet = naRetain(imageSet);
   }else{
-    imageSpace->uiImage = NA_NULL;
+    imageSpace->imageSet = NA_NULL;
   }
-  [nativePtr setUIImage: uiImage];
+  [nativePtr setImageSet: imageSet];
 }
 
 

@@ -28,9 +28,9 @@
   dirtyRect = [self frame];
   dirtyRect.origin = NSMakePoint(0., 0.);
 
-  if(naGetColorAlpha(&cocoaSpace->space.backgroundColor) != 0.) {
+  if(naGetColorAlpha(cocoaSpace->space.backgroundColor) != 0.) {
     float rgba[4];
-    naFillSRGBAWithColor(rgba, &cocoaSpace->space.backgroundColor);
+    naFillSRGBAWithColor(rgba, cocoaSpace->space.backgroundColor);
     [[NSColor colorWithDeviceRed:rgba[0]
       green:rgba[1]
       blue:rgba[2]
@@ -153,7 +153,6 @@ NA_DEF NASpace* _Nonnull naNewSpace(NASize size) {
     frame:naMakeNSRectWithSize(size)];  
   na_InitSpace((NASpace*)cocoaSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
-  naFillColorWithTransparent(&cocoaSpace->space.backgroundColor);
   cocoaSpace->space.alternateBackground = NA_FALSE;
   cocoaSpace->space.dragsWindow = NA_FALSE;
 

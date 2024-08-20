@@ -29,18 +29,18 @@ NA_API NAButton* naNewTextStateButton(
   const NAUTF8Char* text2,
   double width);
 NA_API NAButton* naNewIconPushButton(
-  const NAUIImage* icon,
+  const NAImageSet* icon,
   double width);
 NA_API NAButton* naNewIconStateButton(
-  const NAUIImage* icon,
-  const NAUIImage* icon2,
+  const NAImageSet* icon,
+  const NAImageSet* icon2,
   double width);
 NA_API NAButton* naNewImagePushButton(
-  const NAUIImage* uiImage,
+  const NAImageSet* imageSet,
   NASize size);
 NA_API NAButton* naNewImageStateButton(
-  const NAUIImage* uiImage,
-  const NAUIImage* uiImage2,
+  const NAImageSet* imageSet,
+  const NAImageSet* imageSet2,
   NASize size);
 
 // Changes the visibility or enabled state of the button.
@@ -57,8 +57,8 @@ NA_API void naSetButtonState(NAButton* button, NABool state);
 // Will emit an error if the button was not created with the matching type.
 NA_API void naSetButtonText(NAButton* button, const NAUTF8Char* text);
 NA_API void naSetButtonText2(NAButton* button, const NAUTF8Char* text);
-NA_API void naSetButtonImage(NAButton* button, const NAUIImage* uiImage);
-NA_API void naSetButtonImage2(NAButton* button, const NAUIImage* uiImage);
+NA_API void naSetButtonImage(NAButton* button, const NAImageSet* imageSet);
+NA_API void naSetButtonImage2(NAButton* button, const NAImageSet* imageSet);
 
 // Returns the display flags of a button.
 NA_API NABool naIsButtonStateful(const NAButton* button);
