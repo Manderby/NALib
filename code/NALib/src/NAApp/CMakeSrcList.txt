@@ -46,24 +46,24 @@ set(coreFiles
 )
 
 set(coreUIFiles
-  ${NAAppDir}/Core/UIElements/NAApplication.c
-  ${NAAppDir}/Core/UIElements/NAButton.c
-  ${NAAppDir}/Core/UIElements/NACheckBox.c
-  ${NAAppDir}/Core/UIElements/NAImageSpace.c
-  ${NAAppDir}/Core/UIElements/NALabel.c
-  ${NAAppDir}/Core/UIElements/NAMenu.c
-  ${NAAppDir}/Core/UIElements/NAMenuItem.c
-  ${NAAppDir}/Core/UIElements/NAMetalSpace.c
-  ${NAAppDir}/Core/UIElements/NAOpenGLSpace.c
-  ${NAAppDir}/Core/UIElements/NARadio.c
-  ${NAAppDir}/Core/UIElements/NAScreen.c
-  ${NAAppDir}/Core/UIElements/NASelect.c
-  ${NAAppDir}/Core/UIElements/NASlider.c
-  ${NAAppDir}/Core/UIElements/NASpace.c
-  ${NAAppDir}/Core/UIElements/NATextBox.c
-  ${NAAppDir}/Core/UIElements/NATextField.c
-  ${NAAppDir}/Core/UIElements/NAUIElement.c
-  ${NAAppDir}/Core/UIElements/NAWindow.c
+  ${NAAppDir}/Core/UIElements/NACoreApplicationII.h
+  ${NAAppDir}/Core/UIElements/NACoreButtonII.h
+  ${NAAppDir}/Core/UIElements/NACoreCheckBoxII.h
+  ${NAAppDir}/Core/UIElements/NACoreImageSpaceII.h
+  ${NAAppDir}/Core/UIElements/NACoreLabelII.h
+  ${NAAppDir}/Core/UIElements/NACoreMenuII.h
+  ${NAAppDir}/Core/UIElements/NACoreMenuItemII.h
+  ${NAAppDir}/Core/UIElements/NACoreMetalSpaceII.h
+  ${NAAppDir}/Core/UIElements/NACoreOpenGLSpaceII.h
+  ${NAAppDir}/Core/UIElements/NACoreRadioII.h
+  ${NAAppDir}/Core/UIElements/NACoreScreenII.h
+  ${NAAppDir}/Core/UIElements/NACoreSelectII.h
+  ${NAAppDir}/Core/UIElements/NACoreSliderII.h
+  ${NAAppDir}/Core/UIElements/NACoreSpaceII.h
+  ${NAAppDir}/Core/UIElements/NACoreTextBoxII.h
+  ${NAAppDir}/Core/UIElements/NACoreTextFieldII.h
+  ${NAAppDir}/Core/UIElements/NACoreUIElementII.h
+  ${NAAppDir}/Core/UIElements/NACoreWindowII.h
 )
 
 set(macOSFiles

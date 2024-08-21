@@ -31,6 +31,25 @@
 #include "NACoreMouseII.h"
 #include "NACorePreferencesII.h"
 
+#include "UIElements/NACoreApplicationII.h"
+#include "UIElements/NACoreButtonII.h"
+#include "UIElements/NACoreCheckBoxII.h"
+#include "UIElements/NACoreImageSpaceII.h"
+#include "UIElements/NACoreLabelII.h"
+#include "UIElements/NACoreMenuII.h"
+#include "UIElements/NACoreMenuItemII.h"
+#include "UIElements/NACoreMetalSpaceII.h"
+#include "UIElements/NACoreOpenGLSpaceII.h"
+#include "UIElements/NACoreRadioII.h"
+#include "UIElements/NACoreScreenII.h"
+#include "UIElements/NACoreSelectII.h"
+#include "UIElements/NACoreSliderII.h"
+#include "UIElements/NACoreSpaceII.h"
+#include "UIElements/NACoreTextBoxII.h"
+#include "UIElements/NACoreTextFieldII.h"
+#include "UIElements/NACoreUIElementII.h"
+#include "UIElements/NACoreWindowII.h"
+
 
 
 #endif // NA_COMPILE_GUI == 1
