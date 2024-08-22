@@ -164,6 +164,11 @@ NA_DEF void naInvertColor(NAColor* color) {
 
 
 
+// Including the color blend operations
+#include "NAColorOperationsII.h"
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

@@ -14,10 +14,9 @@ set(headerFiles
 set(coreImplementationFiles
   ${NAVisualDir}/Core/NA3DHelper.c
   ${NAVisualDir}/Core/NAColor.c
-  ${NAVisualDir}/Core/NAColorII.h
   ${NAVisualDir}/Core/NAImage.c
   ${NAVisualDir}/Core/NAColorDefinitions.h
-  ${NAVisualDir}/Core/NAColorOperations.c
+  ${NAVisualDir}/Core/NAColorOperationsII.h
   ${NAVisualDir}/Core/NADeflate.c
   ${NAVisualDir}/Core/NAPNG.c
 )
