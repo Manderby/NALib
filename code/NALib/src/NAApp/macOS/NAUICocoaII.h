@@ -6,6 +6,7 @@
 
 
 #include "../Core/NAAppCore.h"
+#include "../NAKeyboard.h"
 #include "../../NAUtility/NAMemory.h"
 #include "../../NAMath/NACoord.h"
 #include "../../NAUtility/NAThreading.h"
@@ -124,18 +125,23 @@ NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event) {
   NABool hasOption;
   NABool hasCommand;
   NAKeyCode keyCode = [event keyCode];
-  naGetApplication()->keyStroke.keyCode = keyCode;
+
   [event modifierFlags];
   flags = (NSUInteger)[event modifierFlags];
   hasShift     = (flags & NAEventModifierFlagShift)   != 0;
   hasControl   = (flags & NAEventModifierFlagControl) != 0;
   hasOption    = (flags & NAEventModifierFlagOption)  != 0;
   hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
-  naGetApplication()->keyStroke.modifiers = 0;
-  naGetApplication()->keyStroke.modifiers |= (uint32)hasShift * NA_KEY_MODIFIER_SHIFT;
-  naGetApplication()->keyStroke.modifiers |= (uint32)hasControl * NA_KEY_MODIFIER_CONTROL;
-  naGetApplication()->keyStroke.modifiers |= (uint32)hasOption * NA_KEY_MODIFIER_OPTION;
-  naGetApplication()->keyStroke.modifiers |= (uint32)hasCommand * NA_KEY_MODIFIER_COMMAND;
+
+  uint32 modifierFlags =
+    (uint32)hasShift * NA_KEY_MODIFIER_SHIFT |
+    (uint32)hasControl * NA_KEY_MODIFIER_CONTROL |
+    (uint32)hasOption * NA_KEY_MODIFIER_OPTION |
+    (uint32)hasCommand * NA_KEY_MODIFIER_COMMAND;
+
+  NAKeyStroke* keyStroke = naNewKeyStroke(keyCode, modifierFlags);
+  NAApplication* app = naGetApplication();
+  na_SetApplicationKeyStroke(app, keyStroke);
 }
 
 
@@ -171,30 +177,34 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
     }
     
     // Search for a matching keyboard shortcut by bubbling.
+    const NAKeyStroke* keyStroke = naGetCurrentKeyStroke();
+
     while(!retValue && elem) {
       NAListIterator iter = naMakeListAccessor(&elem->shortcuts);
       while(!retValue && naIterateList(&iter)) {
         const NA_KeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
-        if(keyReaction->shortcut.keyCode == naGetApplication()->keyStroke.keyCode) {
-          NABool needsShift   = naGetFlagu32(keyReaction->shortcut.modifiers, NA_KEY_MODIFIER_SHIFT);
-          NABool needsControl = naGetFlagu32(keyReaction->shortcut.modifiers, NA_KEY_MODIFIER_CONTROL);
-          NABool needsOption  = naGetFlagu32(keyReaction->shortcut.modifiers, NA_KEY_MODIFIER_OPTION);
-          NABool needsCommand = naGetFlagu32(keyReaction->shortcut.modifiers, NA_KEY_MODIFIER_COMMAND);
-          NABool hasShift   = naGetFlagu32(naGetApplication()->keyStroke.modifiers, NA_KEY_MODIFIER_SHIFT);
-          NABool hasControl = naGetFlagu32(naGetApplication()->keyStroke.modifiers, NA_KEY_MODIFIER_CONTROL);
-          NABool hasOption  = naGetFlagu32(naGetApplication()->keyStroke.modifiers, NA_KEY_MODIFIER_OPTION);
-          NABool hasCommand = naGetFlagu32(naGetApplication()->keyStroke.modifiers, NA_KEY_MODIFIER_COMMAND);
-          if(needsShift   == hasShift
+        const NAKeyStroke* shortcut = keyReaction->shortcut;
+        
+        NABool needsShift   = naGetKeyStrokeModifierPressed(shortcut, NA_KEY_MODIFIER_SHIFT);
+        NABool needsControl = naGetKeyStrokeModifierPressed(shortcut, NA_KEY_MODIFIER_CONTROL);
+        NABool needsOption  = naGetKeyStrokeModifierPressed(shortcut, NA_KEY_MODIFIER_OPTION);
+        NABool needsCommand = naGetKeyStrokeModifierPressed(shortcut, NA_KEY_MODIFIER_COMMAND);
+        NABool hasShift   = naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_SHIFT);
+        NABool hasControl = naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_CONTROL);
+        NABool hasOption  = naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_OPTION);
+        NABool hasCommand = naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_COMMAND);
+
+        if(needsShift   == hasShift
           && needsControl == hasControl
           && needsOption  == hasOption
-          && needsCommand == hasCommand) {
-            NAReaction reaction;
-            reaction.uiElement = naGetApplication();
-            reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
-            reaction.controller = keyReaction->controller;
-            keyReaction->callback(reaction);
-            retValue = NA_TRUE;
-          }
+          && needsCommand == hasCommand)
+        {
+          NAReaction reaction;
+          reaction.uiElement = naGetApplication();
+          reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
+          reaction.controller = keyReaction->controller;
+          keyReaction->callback(reaction);
+          retValue = NA_TRUE;
         }
       }
       naClearListIterator(&iter);
@@ -216,14 +226,15 @@ NAString* naNewStringWithKeyStroke(const NAKeyStroke* keyStroke) {
   UniCharCount realLength;
                 
   UInt32 modifierKeyState = 0;
-  if(modifiers & NA_KEY_MODIFIER_SHIFT)  { modifierKeyState |= shiftKey; }
-  if(modifiers & NA_KEY_MODIFIER_CONTROL) { modifierKeyState |= controlKey; }
-  if(modifiers & NA_KEY_MODIFIER_OPTION) { modifierKeyState |= optionKey; }
-  if(modifiers & NA_KEY_MODIFIER_COMMAND) { modifierKeyState |= cmdKey; }
+  
+  if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_SHIFT)){ modifierKeyState |= shiftKey; }
+  if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_CONTROL)){ modifierKeyState |= controlKey; }
+  if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_OPTION)){ modifierKeyState |= optionKey; }
+  if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_COMMAND)){ modifierKeyState |= cmdKey; }
 
   UCKeyTranslate(
     keyboardLayout,
-    (UInt16)keyCode,
+    (UInt16)naGetKeyStrokeKeyCode(keyStroke),
     kUCKeyActionDisplay,
     modifierKeyState >> 8,
     LMGetKbdType(),
@@ -298,13 +309,11 @@ NA_DEF double naGetUIElementResolutionScale(const void* uiElement) {
 
 
 
-NA_HDEF void na_DestructFont(NAFont* font) {
-  NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(font->nativePtr));
-  naDelete(font->name);
+NA_HDEF void na_DestructFontNativePtr(void* nativePtr) {
+  NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(nativePtr));
 }
 
 NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size) {
-  NAFont* font = naCreate(NAFont);
   NSString* systemFontName = [NSString stringWithUTF8String: fontFamilyName];
 
   NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
@@ -326,13 +335,12 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
       weight:5  // ignored if NSBoldFontMask is set.
       size:size];
   }
-  font->nativePtr = NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(retFont));
-
-  font->name = naNewStringWithFormat("%s", fontFamilyName);
-  font->flags = flags;
-  font->size = size;
   
-  return font;
+  return na_CreateFont(
+    NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(retFont)),
+    naNewStringWithFormat("%s", fontFamilyName),
+    flags,
+    size);
 }
 
 NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {

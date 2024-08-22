@@ -5,6 +5,9 @@
 // Do not include this file anywhere else!
 
 
+#include "NAAppCore.h"
+#include "../../NAStruct/NAList.h"
+
 
 struct NAImageSet {
   NAList subImages;

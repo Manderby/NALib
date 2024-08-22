@@ -15,7 +15,7 @@
 
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naGetSystemFont()))];
+  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
 
   return self;
 }

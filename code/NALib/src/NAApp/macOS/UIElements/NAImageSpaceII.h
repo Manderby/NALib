@@ -29,14 +29,18 @@
 }
 
 - (void)mouseMoved:(NSEvent* _Nonnull)event{
-  na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+  na_SetMouseMovedTo(
+    na_GetApplicationMouseStatus(naGetApplication()),
+    naMakePosWithNSPoint([NSEvent mouseLocation]));
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaImageSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
     [super mouseMoved:event];
   }
 }
 
 - (void)mouseDragged:(NSEvent* _Nonnull)event{
-  na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+  na_SetMouseMovedTo(
+    na_GetApplicationMouseStatus(naGetApplication()),
+    naMakePosWithNSPoint([NSEvent mouseLocation]));
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaImageSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
     [super mouseDragged:event];
   }

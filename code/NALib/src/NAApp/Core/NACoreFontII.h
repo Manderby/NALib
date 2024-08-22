@@ -27,7 +27,7 @@ NA_HDEF NAFont* na_CreateFont(
   NAFont* font = naCreate(NAFont);
   font->nativePtr = nativePtr;
   font->name = naNewStringExtraction(name, 0, -1);
-  font->flags = flags,
+  font->flags = flags;
   font->size = size;
   return font;
 }

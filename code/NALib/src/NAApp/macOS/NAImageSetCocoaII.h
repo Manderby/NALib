@@ -8,7 +8,7 @@
 #include "Availability.h"
 #include "../NAApp.h"
 #include "../../NAVisual/NAPNG.h"
-
+#include "../Core/NACoreImageSetII.h"
 
 
 // NSAppearance and drawInRect exists since 10.9

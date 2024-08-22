@@ -8,6 +8,7 @@
 #import <Cocoa/Cocoa.h>
 #include "../NAPreferences.h"
 #include "../../NAApp/NAApp.h"
+#include "../../NAUtility/NAString.h"
 
 
 

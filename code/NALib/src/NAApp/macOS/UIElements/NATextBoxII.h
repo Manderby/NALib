@@ -125,7 +125,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size) {
     frame:naMakeNSRectWithSize(size)];
   na_InitTextBox((NATextBox*)cocoaTextBox, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
-  cocoaTextBox->textBox.font = naRetain(naGetSystemFont());
+  cocoaTextBox->textBox.font = naRetain(naCreateSystemFont());
 
   return (NATextBox*)cocoaTextBox;
 }

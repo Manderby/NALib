@@ -7,7 +7,6 @@
 #include "../../../NAUtility/NANotifier.h"
 
 
-
 @implementation NACocoaNativeApplicationDelegate
 
 - (id) initWithCocoaApplication:(NACocoaApplication*)newCocoaApplication{

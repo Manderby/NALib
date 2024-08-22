@@ -13,8 +13,10 @@
 
 
 #include "../../NABase/NAConfiguration.h"
-#if NA_OS == NA_OS_WINDOWS
 #if NA_COMPILE_GUI == 1
+
+#include "../../NABase/NABase.h"
+#if NA_OS == NA_OS_WINDOWS
 
 
 

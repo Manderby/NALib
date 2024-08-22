@@ -45,15 +45,22 @@
 
 - (void)mouseMoved:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+  NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+  na_SetMouseMovedTo(
+    mouseStatus,
+    naMakePosWithNSPoint([NSEvent mouseLocation]));
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
     [super mouseMoved:event];
   }
 }
 
 - (void)mouseDown:(NSEvent* _Nonnull)event{
-  na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+  NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+  na_SetMouseEnteredAtPos(
+    mouseStatus,
+    naMakePosWithNSPoint([NSEvent mouseLocation]));
   na_SetMouseButtonPressed(
+    mouseStatus,
     NA_MOUSE_BUTTON_LEFT,
     ([NSEvent pressedMouseButtons] & (1 << 0)) != 0);
 
@@ -68,8 +75,12 @@
 }
 
 - (void)mouseUp:(NSEvent* _Nonnull)event{
-  na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+  NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+  na_SetMouseExitedAtPos(
+    mouseStatus,
+    naMakePosWithNSPoint([NSEvent mouseLocation]));
   na_SetMouseButtonPressed(
+    mouseStatus,
     NA_MOUSE_BUTTON_LEFT,
     ([NSEvent pressedMouseButtons] & (1 << 0)) != 0);
 
@@ -99,7 +110,10 @@
 
 - (void)mouseEntered:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+  NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+  na_SetMouseEnteredAtPos(
+    mouseStatus,
+    naMakePosWithNSPoint([NSEvent mouseLocation]));
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_ENTERED)) {
     [super mouseEntered:event];
   }
@@ -107,7 +121,10 @@
 
 - (void)mouseExited:(NSEvent* _Nonnull)event{
   NA_UNUSED(event);
-  na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+  NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+  na_SetMouseExitedAtPos(
+    mouseStatus,
+    naMakePosWithNSPoint([NSEvent mouseLocation]));
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_EXITED)) {
     [super mouseExited:event];
   }
@@ -273,9 +290,9 @@ NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift) {
 
 NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NAColor* _Nullable color) {
   if(color) {
-    naFillColorWithCopy(&space->backgroundColor, color);
+    naFillColorWithCopy(space->backgroundColor, color);
   }else{
-    naFillColorWithTransparent(&space->backgroundColor);
+    naFillColorWithTransparent(space->backgroundColor);
   }
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   [nativePtr setNeedsDisplay:YES];
