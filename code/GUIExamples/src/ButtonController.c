@@ -1,5 +1,6 @@
 
 #include "GUIExamples.h"
+#include "NAUtility/NAString.h"
 
 
 
@@ -157,11 +158,11 @@ ButtonController* createButtonController(){
   con->iconPushButtonLabel = naNewLabel("Icon Push", labelWidth);
   naAddSpaceChild(windowSpace, con->iconPushButtonLabel, naMakePos(20, curPosY));
 
-  con->iconPushButton = naNewIconPushButton(getIconImage(), buttonWidth);
+  con->iconPushButton = naNewIconPushButton(getIconImageSet(), buttonWidth);
   naAddUIReaction(con->iconPushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->iconPushButton, naMakePos(left1, curPosY));
 
-  con->iconPushButtonDisabled = naNewIconPushButton(getIconImage(), buttonWidth);
+  con->iconPushButtonDisabled = naNewIconPushButton(getIconImageSet(), buttonWidth);
   naSetButtonEnabled(con->iconPushButtonDisabled, NA_FALSE);
   naAddUIReaction(con->iconPushButtonDisabled, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->iconPushButtonDisabled, naMakePos(left2, curPosY));
@@ -171,16 +172,16 @@ ButtonController* createButtonController(){
   con->iconStateButtonLabel = naNewLabel("Icon Two States", labelWidth);
   naAddSpaceChild(windowSpace, con->iconStateButtonLabel, naMakePos(20, curPosY));
 
-  con->iconStateButton = naNewIconStateButton(getIconImage(), NA_NULL, buttonWidth);
+  con->iconStateButton = naNewIconStateButton(getIconImageSet(), NA_NULL, buttonWidth);
   naAddUIReaction(con->iconStateButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->iconStateButton, naMakePos(left1, curPosY));
 
-  con->iconStateButtonDisabled1 = naNewIconStateButton(getIconImage(), NA_NULL, buttonWidth / 2);
+  con->iconStateButtonDisabled1 = naNewIconStateButton(getIconImageSet(), NA_NULL, buttonWidth / 2);
   naSetButtonEnabled(con->iconStateButtonDisabled1, NA_FALSE);
   naAddUIReaction(con->iconStateButtonDisabled1, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->iconStateButtonDisabled1, naMakePos(left2, curPosY));
 
-  con->iconStateButtonDisabled2 = naNewIconStateButton(getIconImage(), NA_NULL, buttonWidth / 2);
+  con->iconStateButtonDisabled2 = naNewIconStateButton(getIconImageSet(), NA_NULL, buttonWidth / 2);
   naSetButtonState(con->iconStateButtonDisabled2, NA_TRUE);
   naSetButtonEnabled(con->iconStateButtonDisabled2, NA_FALSE);
   naAddUIReaction(con->iconStateButtonDisabled2, NA_UI_COMMAND_PRESSED, buttonPressed, con);
@@ -191,11 +192,11 @@ ButtonController* createButtonController(){
   con->imagePushButtonLabel = naNewLabel("Image Push", labelWidth);
   naAddSpaceChild(windowSpace, con->imagePushButtonLabel, naMakePos(20, curPosY + 15));
 
-  con->imagePushButton = naNewImagePushButton(getState1Image(), naMakeSize(buttonWidth, buttonHeight));
+  con->imagePushButton = naNewImagePushButton(getState1ImageSet(), naMakeSize(buttonWidth, buttonHeight));
   naAddUIReaction(con->imagePushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imagePushButton, naMakePos(left1, curPosY));
 
-  con->imagePushButtonDisabled = naNewImagePushButton(getState1Image(), naMakeSize(buttonWidth, buttonHeight));
+  con->imagePushButtonDisabled = naNewImagePushButton(getState1ImageSet(), naMakeSize(buttonWidth, buttonHeight));
   naSetButtonEnabled(con->imagePushButtonDisabled, NA_FALSE);
   naAddUIReaction(con->imagePushButtonDisabled, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imagePushButtonDisabled, naMakePos(left2, curPosY));
@@ -205,16 +206,16 @@ ButtonController* createButtonController(){
   con->imageStateButtonLabel = naNewLabel("Image Two states", labelWidth);
   naAddSpaceChild(windowSpace, con->imageStateButtonLabel, naMakePos(20, curPosY + 15));
 
-  con->imageStateButton = naNewImageStateButton(getState1Image(), getState2Image(), naMakeSize(buttonWidth, buttonHeight));
+  con->imageStateButton = naNewImageStateButton(getState1ImageSet(), getState2ImageSet(), naMakeSize(buttonWidth, buttonHeight));
   naAddUIReaction(con->imageStateButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imageStateButton, naMakePos(left1, curPosY));
 
-  con->imageStateButtonDisabled1 = naNewImageStateButton(getState1Image(), NA_NULL, naMakeSize(buttonWidth / 2, buttonHeight));
+  con->imageStateButtonDisabled1 = naNewImageStateButton(getState1ImageSet(), NA_NULL, naMakeSize(buttonWidth / 2, buttonHeight));
   naSetButtonEnabled(con->imageStateButtonDisabled1, NA_FALSE);
   naAddUIReaction(con->imageStateButtonDisabled1, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(windowSpace, con->imageStateButtonDisabled1, naMakePos(left2, curPosY));
 
-  con->imageStateButtonDisabled2 = naNewImageStateButton(NA_NULL, getState2Image(), naMakeSize(buttonWidth / 2, buttonHeight));
+  con->imageStateButtonDisabled2 = naNewImageStateButton(NA_NULL, getState2ImageSet(), naMakeSize(buttonWidth / 2, buttonHeight));
   naSetButtonState(con->imageStateButtonDisabled2, NA_TRUE);
   naSetButtonEnabled(con->imageStateButtonDisabled2, NA_FALSE);
   naAddUIReaction(con->imageStateButtonDisabled2, NA_UI_COMMAND_PRESSED, buttonPressed, con);

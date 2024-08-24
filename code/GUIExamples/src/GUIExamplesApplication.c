@@ -5,7 +5,7 @@
 #include "GUIExamples.h"
 #include "../../NALib/src/NAStruct/NAStack.h"
 #include "../../NALib/src/NAVisual/NAPNG.h"
-
+#include "NAUtility/NAString.h"
 
 #define RESOURCE_PATH ""
 //#define RESOURCE_PATH "res/"
@@ -17,9 +17,9 @@ struct HelloWorldGUIApplication{
   int nextWindowX;
   int nextWindowY;
   
-  NAUIImage* iconImage;
-  NAUIImage* state1Image;
-  NAUIImage* state2Image;
+  NAImageSet* iconImageSet;
+  NAImageSet* state1ImageSet;
+  NAImageSet* state2ImageSet;
   
   ExperimentController* experimentController;
   FontController* fontController;
@@ -58,7 +58,7 @@ void postStartup(void* arg){
     exit(1);
   }
   NAImage* originalIconImage = naCreateImageWithPNG(pngIcon);
-  app->iconImage = naCreateUIImage(
+  app->iconImageSet = naCreateImageSet(
     originalIconImage,
     NA_UI_RESOLUTION_2x,
     NA_BLEND_ERODE_LIGHT);
@@ -71,7 +71,7 @@ void postStartup(void* arg){
     exit(1);
   }
   NAImage* originalState1Image = naCreateImageWithPNG(png1);
-  app->state1Image = naCreateUIImage(
+  app->state1ImageSet = naCreateImageSet(
     originalState1Image,
     NA_UI_RESOLUTION_2x,
     NA_BLEND_ZERO);
@@ -84,7 +84,7 @@ void postStartup(void* arg){
     exit(1);
   }
   NAImage* originalState2Image = naCreateImageWithPNG(png2);
-  app->state2Image = naCreateUIImage(
+  app->state2ImageSet = naCreateImageSet(
     originalState2Image,
     NA_UI_RESOLUTION_2x,
     NA_BLEND_ZERO);
@@ -108,9 +108,9 @@ void clearApplication(void* arg){
   clearExperimentController(app->experimentController);
   clearFontController(app->fontController);
   clearButtonController(app->buttonController);
-  naRelease(app->iconImage);
-  naRelease(app->state1Image);
-  naRelease(app->state2Image);
+  naRelease(app->iconImageSet);
+  naRelease(app->state1ImageSet);
+  naRelease(app->state2ImageSet);
   naFree(app);
   naStopRuntime();
 }
@@ -129,14 +129,14 @@ double getAndAdvanceNextWindowY(void){
   return curWindowY;
 }
 
-NAUIImage* getIconImage(void){
-  return app->iconImage;
+NAImageSet* getIconImageSet(void){
+  return app->iconImageSet;
 }
-NAUIImage* getState1Image(void){
-  return app->state1Image;
+NAImageSet* getState1ImageSet(void){
+  return app->state1ImageSet;
 }
-NAUIImage* getState2Image(void){
-  return app->state2Image;
+NAImageSet* getState2ImageSet(void){
+  return app->state2ImageSet;
 }
 
 void addTemperatureControllerToApplication(TemperatureController* con){

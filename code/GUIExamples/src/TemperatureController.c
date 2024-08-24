@@ -3,6 +3,7 @@
 // converts temperatures from Degree Celsius to Degree Fahrenheit.
 
 #include "GUIExamples.h"
+#include "NAUtility/NAString.h"
 
 
 
