@@ -889,7 +889,7 @@ NA_IDEF void* naRemoveListCurMutable(NAListIterator* iter, NABool advance) {
     if(iter->cur == &list->sentinel)
       naError("No current internal pointer is set. Major memory corruption expected...");
     if(iter->cur->iterCount == 0)
-      naError("Internal error. No iterators registered at element which iterator is located at now");
+      naError("No iterators registered at element which iterator is located at now");
   #endif
   newelem = advance ? iter->cur->next : iter->cur->prev;
   #if NA_DEBUG
@@ -1102,7 +1102,7 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* srcIter, NAList* dst) {
 
     #if NA_DEBUG
       if(src->count < movecount)
-        naError("Internal error: List count negative.");
+        naError("List count negative.");
       if(src->count + movecount < src->count)
         naError("Integer overflow");
     #endif

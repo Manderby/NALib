@@ -103,9 +103,9 @@ NA_DEF void naStopTranslator(void) {
   naForeachListMutable(&NA_TRANSLATOR->languagePreferences, naFree);
   naClearList(&NA_TRANSLATOR->languagePreferences);
 
-  naReleaseTreeConfiguration(NA_TRANSLATOR->groupsConfig);
-  naReleaseTreeConfiguration(NA_TRANSLATOR->languagesConfig);
-  naReleaseTreeConfiguration(NA_TRANSLATOR->stringsConfig);
+  naRelease(NA_TRANSLATOR->groupsConfig);
+  naRelease(NA_TRANSLATOR->languagesConfig);
+  naRelease(NA_TRANSLATOR->stringsConfig);
 
   naFree(NA_TRANSLATOR);
 }
@@ -306,10 +306,13 @@ NA_DEF NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str) {
 #if NA_OS == NA_OS_WINDOWS
 
   NA_DEF NALanguageCode3 naGetLanguageCodeWithLANGID(LANGID langId) {
-    switch(langId)
-    {
-    case 0x0807: return NA_LANG_GSW;
-    }
+    // One could search for specific languages like the following but then,
+    // no fallback is defined. So unless one specifies an explicit fallback,
+    // one might never see the language in the UI.
+    //switch(langId)
+    //{
+    //case 0x0807: return NA_LANG_GSW;
+    //}
 
     switch(langId & 0x01ff)
     {

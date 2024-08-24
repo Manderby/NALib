@@ -34,14 +34,14 @@ NA_IDEF NABool naLocateBufferRelative(NABufferIterator* iter, NAInt offset) {
 
 
 
-NA_IDEF NABool naLocateBufferFromStart(NABufferIterator* iter, NAInt offset) {
+NA_IDEF NABool naLocateBufferAtStart(NABufferIterator* iter, NAInt offset) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   return naLocateBufferAbsolute(iter, buffer->range.origin + offset);
 }
 
 
 
-NA_IDEF NABool naLocateBufferFromEnd(NABufferIterator* iter, NAInt offset) {
+NA_IDEF NABool naLocateBufferAtEnd(NABufferIterator* iter, NAInt offset) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   return naLocateBufferAbsolute(iter, naGetRangei64End(buffer->range) + offset);
 }

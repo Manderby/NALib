@@ -3,30 +3,6 @@
 
 
 
-NA_HIDEF void na_DeallocConfiguration(NATreeConfiguration* config) {
-  if(config->configdata)
-    naFree(config->configdata);
-
-  naFree(config);
-}
-
-
-
-NA_IDEF void naReleaseTreeConfiguration(NATreeConfiguration* config) {
-  naReleaseRefCount(&config->refCount, config, (NAMutator)na_DeallocConfiguration);
-}
-
-
-
-NA_HIDEF NATreeConfiguration* na_RetainTreeConfiguration(NATreeConfiguration* config) {
-  #if NA_DEBUG
-    config->flags |= NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE;
-  #endif
-  return (NATreeConfiguration*)naRetainRefCount(&config->refCount);
-}
-
-
-
 NA_IDEF void naSetTreeConfigurationUserData(NATreeConfiguration* config, NAPtr userData) {
   #if NA_DEBUG
     if(naGetPtrConst(config->userData))

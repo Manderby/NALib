@@ -1,9 +1,9 @@
 
-#if defined NA_REACTION_INCLUDED || !defined NA_APP_INCLUDED
-  #warning "Do not include this file directly. Use NAApp.h"
-#endif
 #ifndef NA_REACTION_INCLUDED
 #define NA_REACTION_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
@@ -11,7 +11,7 @@
 // Reacting to commands
 //
 // Working with the UI in NALib works by defining reaction callbacks. Any user
-// interface element can react to several commands:
+// interface element can react to several commands.
 
 typedef enum{
   NA_UI_COMMAND_REDRAW = 0,
@@ -31,9 +31,10 @@ typedef enum{
   NA_UI_COMMAND_KEYBOARD_SHORTCUT
 } NAUICommand;
 
+
+
 // When a command occurs in a certain uiElement, an information package with
 // the NAReaction type will be created:
-
 typedef struct NAReaction NAReaction;
 struct NAReaction{
   const void* uiElement;
@@ -41,11 +42,15 @@ struct NAReaction{
   void* controller;
 };
 
+
+
 // This NAReaction package is then provided to reaction callbacks with the
-// following prototype. See further below for a discussion of the parameter
-// and the return type.
+// following prototype. The parameter of a reaction callback is an NAReaction
+// package, provided as a value copy.
 
 typedef void(*NAReactionCallback)(NAReaction reaction);
+
+
 
 // By calling naAddUIReaction or naAddUIKeyboardShortcut, the programmer can
 // register, which reaction callback should be called when a certain uiElement
@@ -65,43 +70,21 @@ NA_API void naAddUIReaction(
   NAReactionCallback callback,
   void*              controller);
 
+// Takes the ownership of the keyStroke. Do not call naDelete on it!
 NA_API void naAddUIKeyboardShortcut(
   void*              uiElement,
-  NAKeyStroke        keyStroke,
+  NAKeyStroke*       keyStroke,
   NAReactionCallback callback,
   void*              controller);
 
 // Commands are somewhat specific. Not all commands work with all uiElement
-// types.
-//
-// The KEYDOWN and KEYUP commands will only be called to a window but may
-// propagate to parent elements.
-//
-// The CLOSES command will be called when a window tries to close. You can
-// prevent it from closing by calling naPreventWindowFromClosing. That
-// function only works in conjunction with such a command and will emit an
-// error otherwise.
-
-// Parameter and return type of a reaction callback:
-//
-// When a reaction callback returns NA_TRUE, the command is considered handeled
-// and will not be processed any further. This means, if there are any other
-// reaction callbacks registered which handle the same uiElement and command,
-// they will not be called. If NA_FALSE is returned however, the command will
-// be further processed. This means, if there are other callbacks in the list
-// of the same uiElement or in any other element which is a parent of the one
-// the command occured, they will then be executed the same way until one of
-// the callbacks returns NA_TRUE.
-//
-// This allows you to propagate reactions outwards until they are handeled by
-// an appropriate callback. If none of the registered callbacks returns NA_TRUE,
-// the default message handling of the current operation system takes over.
-//
-// The parameter of a reaction callback is a NAReaction package, provided as
-// a value copy. This means that reaction callbacks can not alter the package
-// and provide it to an outer callback by returning NA_FALSE. This is by design.
+// types. See header files of the elements for more information.
 
 
+
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_REACTION_INCLUDED
 
 

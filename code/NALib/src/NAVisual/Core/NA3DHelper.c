@@ -3,14 +3,20 @@
 
 
 
-NA_DEF void naFillMatrixPerspective(NAMat44d matrix, double fovy, double aspect, double nearZ, double farZ) {
-  double cotan = naInv(naTan(naDegToRad(fovy) * .5));
-  matrix[ 0] = cotan / aspect;
+NA_DEF void naFillMatrixPerspective(
+  NAMat44d matrix,
+  double fovy,
+  double aspect,
+  double nearZ,
+  double farZ)
+{
+  double coTan = naInv(naTan(naDegToRad(fovy) * .5));
+  matrix[ 0] = coTan / aspect;
   matrix[ 1] = 0.;
   matrix[ 2] = 0.;
   matrix[ 3] = 0.;
   matrix[ 4] = 0.;
-  matrix[ 5] = cotan;
+  matrix[ 5] = coTan;
   matrix[ 6] = 0.;
   matrix[ 7] = 0.;
   matrix[ 8] = 0.;
@@ -25,7 +31,15 @@ NA_DEF void naFillMatrixPerspective(NAMat44d matrix, double fovy, double aspect,
 
 
 
-NA_DEF void naFillMatrixOrtho(NAMat44d matrix, double left, double right, double bottom, double top, double nearZ, double farZ) {
+NA_DEF void naFillMatrixOrtho(
+  NAMat44d matrix,
+  double left,
+  double right,
+  double bottom,
+  double top,
+  double nearZ,
+  double farZ)
+{
   double ral = right + left;
   double rsl = right - left;
   double tab = top + bottom;
@@ -53,7 +67,18 @@ NA_DEF void naFillMatrixOrtho(NAMat44d matrix, double left, double right, double
 
 
 
-NA_DEF void naFillMatrixLookAt(NAMat44d matrix, double eyeX, double eyeY, double eyeZ, double centerX, double centerY, double centerZ, double upX, double upY, double upZ) {
+NA_DEF void naFillMatrixLookAt(
+  NAMat44d matrix,
+  double eyeX,
+  double eyeY,
+  double eyeZ,
+  double centerX,
+  double centerY,
+  double centerZ,
+  double upX,
+  double upY,
+  double upZ)
+{
   NAVec3d u;
   NAVec3d v;
 

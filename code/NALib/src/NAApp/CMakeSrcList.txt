@@ -4,134 +4,154 @@ set(NAAppDir "src/NAApp")
 set(headerFiles
   ${NAAppDir}/CMakeSrcList.txt
   ${NAAppDir}/NAApp.h
-  ${NAAppDir}/NAApplication.h
-  ${NAAppDir}/NAButton.h
-  ${NAAppDir}/NACheckBox.h
+  ${NAAppDir}/NAClipboard.h
   ${NAAppDir}/NAFont.h
-  ${NAAppDir}/NAImageSpace.h
+  ${NAAppDir}/NAImageSet.h
   ${NAAppDir}/NAKeyboard.h
-  ${NAAppDir}/NALabel.h
-  ${NAAppDir}/NAMenu.h
-  ${NAAppDir}/NAMenuItem.h
-  ${NAAppDir}/NAMetalSpace.h
   ${NAAppDir}/NAMouse.h
-  ${NAAppDir}/NAOpenGLSpace.h
   ${NAAppDir}/NAPreferences.h
-  ${NAAppDir}/NARadio.h
   ${NAAppDir}/NAReaction.h
-  ${NAAppDir}/NAScreen.h
-  ${NAAppDir}/NASelect.h
-  ${NAAppDir}/NASlider.h
-  ${NAAppDir}/NASpace.h
-  ${NAAppDir}/NATextBox.h
-  ${NAAppDir}/NATextField.h
-  ${NAAppDir}/NAUIElement.h
-  ${NAAppDir}/NAUIImage.h
-  ${NAAppDir}/NAWindow.h
+)
+
+set(uiHeaderFiles
+  ${NAAppDir}/UIElements/NAApplication.h
+  ${NAAppDir}/UIElements/NAButton.h
+  ${NAAppDir}/UIElements/NACheckBox.h
+  ${NAAppDir}/UIElements/NAImageSpace.h
+  ${NAAppDir}/UIElements/NALabel.h
+  ${NAAppDir}/UIElements/NAMenu.h
+  ${NAAppDir}/UIElements/NAMenuItem.h
+  ${NAAppDir}/UIElements/NAMetalSpace.h
+  ${NAAppDir}/UIElements/NAOpenGLSpace.h
+  ${NAAppDir}/UIElements/NARadio.h
+  ${NAAppDir}/UIElements/NAScreen.h
+  ${NAAppDir}/UIElements/NASelect.h
+  ${NAAppDir}/UIElements/NASlider.h
+  ${NAAppDir}/UIElements/NASpace.h
+  ${NAAppDir}/UIElements/NATextBox.h
+  ${NAAppDir}/UIElements/NATextField.h
+  ${NAAppDir}/UIElements/NAUIElement.h
+  ${NAAppDir}/UIElements/NAWindow.h
 )
 
 set(coreFiles
+  ${NAAppDir}/Core/NAAppCore.c
   ${NAAppDir}/Core/NAAppCore.h
-  ${NAAppDir}/Core/NAPreferences.c
-  ${NAAppDir}/Core/NAPreferencesII.h
-  ${NAAppDir}/Core/NAUIImage.c
-  ${NAAppDir}/Core/NAUIImageII.h
+  ${NAAppDir}/Core/NACoreClipboardII.h
+  ${NAAppDir}/Core/NACoreFontII.h
+  ${NAAppDir}/Core/NACoreImageSetII.h
+  ${NAAppDir}/Core/NACoreKeyboardII.h
+  ${NAAppDir}/Core/NACoreMouseII.h
+  ${NAAppDir}/Core/NACorePreferencesII.h
 )
 
 set(coreUIFiles
-  ${NAAppDir}/Core/UI/NAApplication.c
-  ${NAAppDir}/Core/UI/NAButton.c
-  ${NAAppDir}/Core/UI/NACheckBox.c
-  ${NAAppDir}/Core/UI/NAFont.c
-  ${NAAppDir}/Core/UI/NAImageSpace.c
-  ${NAAppDir}/Core/UI/NAKeyboard.c
-  ${NAAppDir}/Core/UI/NALabel.c
-  ${NAAppDir}/Core/UI/NAMenu.c
-  ${NAAppDir}/Core/UI/NAMenuItem.c
-  ${NAAppDir}/Core/UI/NAMetalSpace.c
-  ${NAAppDir}/Core/UI/NAMouse.c
-  ${NAAppDir}/Core/UI/NAOpenGLSpace.c
-  ${NAAppDir}/Core/UI/NARadio.c
-  ${NAAppDir}/Core/UI/NAScreen.c
-  ${NAAppDir}/Core/UI/NASelect.c
-  ${NAAppDir}/Core/UI/NASlider.c
-  ${NAAppDir}/Core/UI/NASpace.c
-  ${NAAppDir}/Core/UI/NATextBox.c
-  ${NAAppDir}/Core/UI/NATextField.c
-  ${NAAppDir}/Core/UI/NAUIElement.c
-  ${NAAppDir}/Core/UI/NAWindow.c
+  ${NAAppDir}/Core/UIElements/NACoreApplicationII.h
+  ${NAAppDir}/Core/UIElements/NACoreButtonII.h
+  ${NAAppDir}/Core/UIElements/NACoreCheckBoxII.h
+  ${NAAppDir}/Core/UIElements/NACoreImageSpaceII.h
+  ${NAAppDir}/Core/UIElements/NACoreLabelII.h
+  ${NAAppDir}/Core/UIElements/NACoreMenuII.h
+  ${NAAppDir}/Core/UIElements/NACoreMenuItemII.h
+  ${NAAppDir}/Core/UIElements/NACoreMetalSpaceII.h
+  ${NAAppDir}/Core/UIElements/NACoreOpenGLSpaceII.h
+  ${NAAppDir}/Core/UIElements/NACoreRadioII.h
+  ${NAAppDir}/Core/UIElements/NACoreScreenII.h
+  ${NAAppDir}/Core/UIElements/NACoreSelectII.h
+  ${NAAppDir}/Core/UIElements/NACoreSliderII.h
+  ${NAAppDir}/Core/UIElements/NACoreSpaceII.h
+  ${NAAppDir}/Core/UIElements/NACoreTextBoxII.h
+  ${NAAppDir}/Core/UIElements/NACoreTextFieldII.h
+  ${NAAppDir}/Core/UIElements/NACoreUIElementII.h
+  ${NAAppDir}/Core/UIElements/NACoreWindowII.h
 )
 
 set(macOSFiles
+  ${NAAppDir}/macOS/NAClipboardII.h
   ${NAAppDir}/macOS/NACocoa.m
-  ${NAAppDir}/macOS/NAPreferencesCocoa.m
-  ${NAAppDir}/macOS/NAUIImageCocoaII.h
+  ${NAAppDir}/macOS/NACocoaFontII.h
+  ${NAAppDir}/macOS/NACocoaImageSetII.h
+  ${NAAppDir}/macOS/NACocoaKeyboardII.h
+  ${NAAppDir}/macOS/NACocoaMouseII.h
+  ${NAAppDir}/macOS/NACocoaPreferences.m
+  ${NAAppDir}/macOS/NACocoaII.h
+  ${NAAppDir}/macOS/NACocoaInterfaces.h
+  ${NAAppDir}/macOS/NACocoaLegacy.h
+  ${NAAppDir}/macOS/NACocoaLegacyII.h
 )
 
 set(macOSUIFiles
-  ${NAAppDir}/macOS/UI/NAApplicationII.h
-  ${NAAppDir}/macOS/UI/NAButtonII.h
-  ${NAAppDir}/macOS/UI/NACheckBoxII.h
-  ${NAAppDir}/macOS/UI/NAImageSpaceII.h
-  ${NAAppDir}/macOS/UI/NALabelII.h
-  ${NAAppDir}/macOS/UI/NAMenuII.h
-  ${NAAppDir}/macOS/UI/NAMenuItemII.h
-  ${NAAppDir}/macOS/UI/NAMetalSpaceII.h
-  ${NAAppDir}/macOS/UI/NAOpenGLSpaceII.h
-  ${NAAppDir}/macOS/UI/NARadioII.h
-  ${NAAppDir}/macOS/UI/NASelectII.h
-  ${NAAppDir}/macOS/UI/NASliderII.h
-  ${NAAppDir}/macOS/UI/NASpaceII.h
-  ${NAAppDir}/macOS/UI/NATextBoxII.h
-  ${NAAppDir}/macOS/UI/NATextFieldII.h
-  ${NAAppDir}/macOS/UI/NAUICocoaII.h
-  ${NAAppDir}/macOS/UI/NAUICocoaInterfaces.h
-  ${NAAppDir}/macOS/UI/NAUICocoaLegacy.h
-  ${NAAppDir}/macOS/UI/NAUICocoaLegacyII.h
-  ${NAAppDir}/macOS/UI/NAWindowII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaApplicationII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaButtonII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaCheckBoxII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaImageSpaceII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaLabelII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaMenuII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaMenuItemII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaMetalSpaceII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaOpenGLSpaceII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaRadioII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaScreenII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaSelectII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaSliderII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaSpaceII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaTextBoxII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaTextFieldII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaUIElementII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaWindowII.h
 )
 
 set(winAPIFiles
-  ${NAAppDir}/winAPI/NAPreferencesWINAPI.c
-  ${NAAppDir}/winAPI/NAUIImageWINAPIII.h
-  ${NAAppDir}/winAPI/NAUIWINAPI.c
+  ${NAAppDir}/winAPI/NAWINAPI.c
+  ${NAAppDir}/winAPI/NAWINAPIII.h
+  ${NAAppDir}/winAPI/NAWINAPIInterfaces.h
+  ${NAAppDir}/winAPI/NAWINAPIClipboardII.h
+  ${NAAppDir}/winAPI/NAWINAPIFontII.h
+  ${NAAppDir}/winAPI/NAWINAPIImageSetII.h
+  ${NAAppDir}/winAPI/NAWINAPIKeyboardII.h
+  ${NAAppDir}/winAPI/NAWINAPIMouseII.h
+  ${NAAppDir}/winAPI/NAWINAPIPreferencesII.h
 )
 
 set(winAPIUIFiles
-  ${NAAppDir}/winAPI/UI/NAApplicationII.h
-  ${NAAppDir}/winAPI/UI/NAButtonII.h
-  ${NAAppDir}/winAPI/UI/NACheckBoxII.h
-  ${NAAppDir}/winAPI/UI/NAImageSpaceII.h
-  ${NAAppDir}/winAPI/UI/NALabelII.h
-  ${NAAppDir}/winAPI/UI/NAMenuII.h
-  ${NAAppDir}/winAPI/UI/NAMenuItemII.h
-  ${NAAppDir}/winAPI/UI/NAMetalSpaceII.h
-  ${NAAppDir}/winAPI/UI/NAOpenGLSpaceII.h
-  ${NAAppDir}/winAPI/UI/NARadioII.h
-  ${NAAppDir}/winAPI/UI/NASelectII.h
-  ${NAAppDir}/winAPI/UI/NASliderII.h
-  ${NAAppDir}/winAPI/UI/NASpaceII.h
-  ${NAAppDir}/winAPI/UI/NATextBoxII.h
-  ${NAAppDir}/winAPI/UI/NATextFieldII.h
-  ${NAAppDir}/winAPI/UI/NAUIWINAPIII.h
-  ${NAAppDir}/winAPI/UI/NAUIWINAPIInterfaces.h
-  ${NAAppDir}/winAPI/UI/NAWindowII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIApplicationII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIButtonII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPICheckBoxII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIImageSpaceII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPILabelII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIMenuII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIMenuItemII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIMetalSpaceII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIOpenGLSpaceII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIRadioII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIScreenII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPISelectII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPISliderII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPISpaceII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPITextBoxII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPITextFieldII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIUIElementII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIWindowII.h
 )
 
 source_group("NAApp" FILES ${headerFiles})
 target_sources(NALib PRIVATE ${headerFiles})
 
+source_group("NAApp/UIElements" FILES ${uiHeaderFiles})
+target_sources(NALib PRIVATE ${uiHeaderFiles})
+
 source_group("NAApp/Core" FILES ${coreFiles})
 target_sources(NALib PRIVATE ${coreFiles})
 
-source_group("NAApp/Core/UI" FILES ${coreUIFiles})
+source_group("NAApp/Core/UIElements" FILES ${coreUIFiles})
 target_sources(NALib PRIVATE ${coreUIFiles})
 
-if(MACOSX)
+if(1)
+#if(MACOSX)
   source_group("NAApp/macOS" FILES ${macOSFiles})
   target_sources(NALib PRIVATE ${macOSFiles})
 
-  source_group("NAApp/macOS/UI" FILES ${macOSUIFiles})
+  source_group("NAApp/macOS/UIElements" FILES ${macOSUIFiles})
   target_sources(NALib PRIVATE ${macOSUIFiles})
 endif()
 
@@ -140,7 +160,7 @@ if(1)
   source_group("NAApp/winAPI" FILES ${winAPIFiles})
   target_sources(NALib PRIVATE ${winAPIFiles})
 
-  source_group("NAApp/winAPI/UI" FILES ${winAPIUIFiles})
+  source_group("NAApp/winAPI/UIElements" FILES ${winAPIUIFiles})
   target_sources(NALib PRIVATE ${winAPIUIFiles})
 endif()
 

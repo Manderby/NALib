@@ -157,6 +157,8 @@ int jsonExample(void){
   naReadFileBytes(file, buf, bufferSize);
   // Buffer needs to be closed with a \0 byte.
   buf[bufferSize] = '\0';
+  naRelease(file);
+
   NADateTime now2 = naMakeDateTimeNow();
 
   printf("Time: %f milliseconds to read file\n", 1000. * naGetDateTimeDifference(&now2, &now1));

@@ -11,10 +11,12 @@ correct, complete or final.
 Big changes:
 - Changing NABabyColor to NAColor and changing its implementation.
 - Renaming NABabyImage to NAImage
+- Renaming NAUIImage to NAImageSet
 - Adding PubSub implementation NANotifier
 - Adding latest NIST CODATA physical constants of 2022
 
 Smaller things:
+- Great NAApp cleanup
 - Removing list and tree iterator macros.
 - Replacing scroll reactions with transform reactions.
 - Changing NAReaction callback signature to return void.

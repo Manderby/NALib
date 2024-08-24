@@ -1,9 +1,15 @@
 
 #include "../../NATree.h"
 #include "../../../NAUtility/NAKey.h"
+#include "../../../NAUtility/NAMemory.h"
 #include "NATreeBin.h"
 #include "NATreeQuad.h"
 #include "NATreeOct.h"
+
+
+
+NA_HAPI void na_DestroyTreeConfiguration(NATreeConfiguration* config);
+NA_RUNTIME_TYPE(NATreeConfiguration, na_DestroyTreeConfiguration, NA_TRUE);
 
 
 
@@ -14,7 +20,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags) {
     int nodeChildsOffset;
   #endif
 
-  NATreeConfiguration* config = naAlloc(NATreeConfiguration);
+  NATreeConfiguration* config = naCreate(NATreeConfiguration);
   naZeron(config, sizeof(NATreeConfiguration));
   config->flags = flags;
   naInitRefCount(&config->refCount);
@@ -226,6 +232,13 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags) {
   #endif
   
   return config;
+}
+
+
+
+NA_HDEF void na_DestroyTreeConfiguration(NATreeConfiguration* config) {
+  if(config->configdata)
+    naFree(config->configdata);
 }
 
 

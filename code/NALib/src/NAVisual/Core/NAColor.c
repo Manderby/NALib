@@ -114,7 +114,6 @@ NA_HIDEF void na_LimitColorComponentu8(uint8* outvalue, const float inValue) {
 }
 
 NA_DEF void naFillSRGBu8WithColor(uint8* outColor, const NAColor* inColor, NAColorBufferType bufferType) {
-
   switch(bufferType) {
   case NA_COLOR_BUFFER_RGBA:
     na_LimitColorComponentu8(&outColor[0], inColor->r);
@@ -162,6 +161,11 @@ NA_DEF void naInvertColor(NAColor* color) {
   color->g = 1.f - color->g;
   color->b = 1.f - color->b;
 }
+
+
+
+// Including the color blend operations
+#include "NAColorOperationsII.h"
 
 
 

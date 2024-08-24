@@ -36,7 +36,8 @@
 #define NA_ENDIANNESS_NETWORK 2
 // NA_ENDIANNESS_HOST will be defined below.
 
-// The various Operating Systems:
+
+
 #define NA_OS_UNKNOWN   0
 #define NA_OS_MAC_OS_X  1
 #define NA_OS_WINDOWS   2
@@ -143,8 +144,8 @@
   #endif
 
 #else
-  #warning "System unknown. Assuming 32bit Addr, 32bit Int, little endian"
   #define NA_OS NA_OS_UNKNOWN
+  #warning "System unknown. Assuming 32bit Addr, 32bit Int, little endian"
   #define NA_ENDIANNESS_HOST NA_ENDIANNESS_LITTLE
   #define NA_ADDRESS_BITS NA_TYPE32_BITS
   #define NA_SIZE_T_BITS NA_TYPE32_BITS

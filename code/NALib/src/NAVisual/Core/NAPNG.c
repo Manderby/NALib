@@ -138,7 +138,7 @@ NA_HDEF void na_SetPNGsRGBColorimetry(NAPNG* png) {
 }
 
 
-NA_HDEF NAPNGChunk* na_AllocPNGChunkFromBuffer(NABufferIterator* iter) {
+NA_HDEF NAPNGChunk* na_AllocPNGChunkWithBuffer(NABufferIterator* iter) {
   NAInt i;
   NAChecksum checksum;
   uint32 crc;
@@ -333,7 +333,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png) {
 
 //  outFile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
 //  naWriteFileBytes(outFile, png->pixeldata, png->size.width * png->size.height * bpp);
-//  naReleaseFile(outFile);
+//  naRelease(outFile);
 
   naClearBufferIterator(&iterFilter);
   naFree(upBuffer);
@@ -636,7 +636,7 @@ NA_HDEF void na_ReadPNGsPLTChunk(NAPNG* png, NAPNGChunk* splt) {
 
 
 NA_HDEF void na_ReadPNGtIMEChunk(NAPNG* png, NAPNGChunk* time) {
-  png->modificationdate = naMakeDateTimeFromBuffer(time->data, NA_DATETIME_FORMAT_PNG);
+  png->modificationdate = naMakeDateTimeWithBuffer(time->data, NA_DATETIME_FORMAT_PNG);
 }
 
 
@@ -745,7 +745,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
 
   // Read the chunks until the IEND chunk is read.
   while(1) {
-    NAPNGChunk* chunk = na_AllocPNGChunkFromBuffer(&bufiter);
+    NAPNGChunk* chunk = na_AllocPNGChunkWithBuffer(&bufiter);
     naAddListLastMutable(&png->chunks, chunk);
     
     if(chunk->type == NA_PNG_CHUNK_TYPE_IEND)
@@ -790,7 +790,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
 
 //  NAFile* outFile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
 //  naWriteBufferToFile(png->compresseddata, outFile);
-//  naReleaseFile(outFile);
+//  naRelease(outFile);
 
   naFixBufferRange(png->compresseddata);
   naFillBufferWithZLIBDecompression(png->filteredData, png->compresseddata);
@@ -825,7 +825,7 @@ NA_DEF size_t naGetPNGPixelDataByteSize(NAPNG* png) {
 
 
 
-NA_DEF NAImage* naCreateImageFromPNG(NAPNG* png) {
+NA_DEF NAImage* naCreateImageWithPNG(NAPNG* png) {
   NAImage* image = naCreateImage(png->size, NA_NULL);
   NAByte* pngPtr;
   NAColor* colorPtr;
@@ -928,7 +928,7 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath) {
   outFile = naCreateFileWritingPath(filePath, NA_FILEMODE_DEFAULT);
   naFixBufferRange(outbuffer);
   naWriteBufferToFile(outbuffer, outFile);
-  naReleaseFile(outFile);
+  naRelease(outFile);
   naRelease(outbuffer);
 }
 

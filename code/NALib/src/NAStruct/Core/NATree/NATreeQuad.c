@@ -231,7 +231,7 @@ NA_HDEF NATreeNode* na_RemoveLeafQuad(NATree* tree, NATreeLeaf* leaf) {
   if(na_IsTreeItemRoot(leafItem)) {
     #if NA_DEBUG
       if(tree->config->flags & NA_TREE_ROOT_NO_LEAF)
-        naError("Internal error: Tree root seems to be a leaf wheres there should be no leafes at the root");
+        naError("Tree root seems to be a leaf wheres there should be no leafes at the root");
     #endif
     na_ClearTreeRoot(tree);
   }else{

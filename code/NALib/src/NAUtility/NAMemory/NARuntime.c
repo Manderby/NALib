@@ -263,6 +263,8 @@ NA_HIDEF void na_EnhancePool(NA_TypeInfo* typeInfo) {
   // NA_PoolPart to access the first bytes.
   part = (NA_PoolPart*)naMallocAligned(na_Runtime->partSize, na_Runtime->partSize);
   #if NA_DEBUG
+    if(!typeInfo)
+      naError("typeInfo is null");
     // Do you think the following check is not necessary? You'd be surprised
     // how many systems do not align memory correctly!
     if(((size_t)part & ~na_Runtime->partSizeMask) != 0)
@@ -397,6 +399,8 @@ NA_DEF void* na_NewStructInternal(NATypeInfo* info) {
 
 NA_DEF void* na_NewStruct(NATypeInfo* info) {
   #if NA_DEBUG
+    if (!info)
+      naCrash("info is null");
     NA_TypeInfo* typeInfo = (NA_TypeInfo*)info;
     if(typeInfo->refCounting)
       naError("Do not use naNew for reference-counting types. Use naCreate.");
@@ -405,6 +409,8 @@ NA_DEF void* na_NewStruct(NATypeInfo* info) {
 }
 NA_DEF void* na_CreateStruct(NATypeInfo* info) {
   #if NA_DEBUG
+    if (!info)
+      naCrash("info is null");
     NA_TypeInfo* typeInfo = (NA_TypeInfo*)info;
     if(!typeInfo->refCounting)
       naError("Do not use naCreate for non-reference-counting types. Use naNew.");

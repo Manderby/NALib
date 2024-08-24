@@ -349,7 +349,7 @@ NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str) {
 }
 
 
-NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str) {
+NA_DEF int32 naGetMonthNumberWithUTF8CStringLiteral(const NAUTF8Char* str) {
   int32 monthindex = -1;
   if(naStrlen(str)) {
     int32 i;
@@ -399,12 +399,12 @@ NA_DEF NADateTime naMakeDateTimeNow() {
     GetSystemTimeAsFileTime(&fileTime);
     // Daylight saving is active if the function returns 2.
     NAInt daylightCode = GetTimeZoneInformation(&timeZone);
-    return naMakeDateTimeFromFileTime(&fileTime, &timeZone, daylightCode == 2);
+    return naMakeDateTimeWithFileTime(&fileTime, &timeZone, daylightCode == 2);
   #elif NA_IS_POSIX
     struct timeval curtime;
     NATimeZone curTimeZone;
     gettimeofday(&curtime, &curTimeZone);
-    return naMakeDateTimeFromTimeVal(&curtime, &curTimeZone);
+    return naMakeDateTimeWithTimeVal(&curtime, &curTimeZone);
   #endif
 }
 
@@ -522,7 +522,7 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts) 
 
 
 
-NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTimeFormat format) {
+NA_DEF NADateTime naMakeDateTimeWithString(const NAString* string, NAAscDateTimeFormat format) {
   NAString* str;
   NADateTimeStruct dts;
   NAString* token;
@@ -606,7 +606,7 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
 
 
 
-NA_DEF NADateTime naMakeDateTimeFromBuffer(NABuffer* buffer, NABinDateTimeFormat format) {
+NA_DEF NADateTime naMakeDateTimeWithBuffer(NABuffer* buffer, NABinDateTimeFormat format) {
   NADateTimeStruct dts;
   NABufferIterator iter = naMakeBufferAccessor(buffer);
 
@@ -655,7 +655,7 @@ NA_DEF const char* naGetDateTimeErrorString(uint8 errorNum) {
 
 
 
-//NA_DEF NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray, const NADateTime* dateTime, NABinDateTimeFormat format) {
+//NA_DEF NAByteArray* naInitByteArrayWithDateTime( NAByteArray* bytearray, const NADateTime* dateTime, NABinDateTimeFormat format) {
 //  uint16 valueu16;
 //  NAByte* ptr;
 //  NADateTimeStruct dts;
@@ -799,7 +799,7 @@ NA_DEF struct tm naMakeTMfromDateTime(const NADateTime* dateTime) {
 
 
 
-NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylightSaving) {
+NA_DEF int16 naMakeShiftWithTimeZone(const NATimeZone* timeZone, NABool daylightSaving) {
   int16 shift;
   #if NA_OS == NA_OS_WINDOWS
     shift = -(int16)timeZone->Bias;
@@ -825,7 +825,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylight
 
 #if NA_OS == NA_OS_WINDOWS
 
-  NA_DEF NADateTime naMakeDateTimeFromFileTime(const FILETIME* fileTime, const NATimeZone* timeZone, NABool daylightSaving) {
+  NA_DEF NADateTime naMakeDateTimeWithFileTime(const FILETIME* fileTime, const NATimeZone* timeZone, NABool daylightSaving) {
     NADateTime dateTime;
     NAi64 nanoSeconds = naCastu64Toi64(naMakeu64(fileTime->dwHighDateTime, fileTime->dwLowDateTime));
 
@@ -838,7 +838,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylight
     }
 
     if(timeZone) {
-      dateTime.shift = naMakeShiftFromTimeZone(timeZone, daylightSaving);
+      dateTime.shift = naMakeShiftWithTimeZone(timeZone, daylightSaving);
       dateTime.flags = (daylightSaving ? NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME : 0);
     }else{
       dateTime.shift = na_GlobalTimeShift;
@@ -853,7 +853,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylight
   #define time_t __darwin_time_t
   #endif
 
-  NA_DEF struct timespec naMakeTimeSpecFromDateTime(const NADateTime* dateTime, NABool daylightSaving) {
+  NA_DEF struct timespec naMakeTimeSpecWithDateTime(const NADateTime* dateTime, NABool daylightSaving) {
     NA_UNUSED(daylightSaving);
     struct timespec timeSpec;
     NAInt taiperiod = naGetTAIPeriodIndexForSISecond(dateTime->siSecond);
@@ -876,16 +876,16 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylight
   }
 
 
-  NA_DEF struct timeval naMakeTimeValFromDateTime(const NADateTime* dateTime) {
+  NA_DEF struct timeval naMakeTimeValWithDateTime(const NADateTime* dateTime) {
     struct timeval timeVal;
-    struct timespec timeSpec = naMakeTimeSpecFromDateTime(dateTime, NA_FALSE /*unused on mac*/);
+    struct timespec timeSpec = naMakeTimeSpecWithDateTime(dateTime, NA_FALSE /*unused on mac*/);
     timeVal.tv_sec = timeSpec.tv_sec;
     timeVal.tv_usec = (int)(timeSpec.tv_nsec / 1000);
     return timeVal;
   }
 
 
-  NA_DEF NATimeZone naMakeTimeZoneFromDateTime(const NADateTime* dateTime) {
+  NA_DEF NATimeZone naMakeTimeZoneWithDateTime(const NADateTime* dateTime) {
     NATimeZone timeZone;
     timeZone.tz_minuteswest = -dateTime->shift; // yes, its inverted.
     if(naHasDateTimeDaylightSavingTime(dateTime)) {
@@ -900,7 +900,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylight
   }
 
 
-  NA_DEF NADateTime naMakeDateTimeFromTimeSpec(const struct timespec* timeSpec, const NATimeZone* timeZone) {
+  NA_DEF NADateTime naMakeDateTimeWithTimeSpec(const struct timespec* timeSpec, const NATimeZone* timeZone) {
     NADateTime dateTime;
     NAi64 dateTimesec;
     dateTime.errorNum = NA_DATETIME_ERROR_NONE;
@@ -925,7 +925,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylight
     if(timeZone) {
       // todo: Maybe find a better method than this old timezone struct.
       NABool daylightSaving = timeZone->tz_dsttime;
-      dateTime.shift = naMakeShiftFromTimeZone(timeZone, daylightSaving);
+      dateTime.shift = naMakeShiftWithTimeZone(timeZone, daylightSaving);
       dateTime.flags = (daylightSaving ? NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME : 0);
     }else{
       dateTime.shift = na_GlobalTimeShift;
@@ -935,11 +935,11 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylight
   }
 
 
-  NA_DEF NADateTime naMakeDateTimeFromTimeVal(const struct timeval* timeVal, const NATimeZone* timeZone) {
+  NA_DEF NADateTime naMakeDateTimeWithTimeVal(const struct timeval* timeVal, const NATimeZone* timeZone) {
     struct timespec timeSpec;
     timeSpec.tv_sec  = timeVal->tv_sec;
     timeSpec.tv_nsec = timeVal->tv_usec * 1000;
-    return naMakeDateTimeFromTimeSpec(&timeSpec, timeZone);
+    return naMakeDateTimeWithTimeSpec(&timeSpec, timeZone);
   }
 
 
@@ -1158,7 +1158,7 @@ NA_DEF void naExtractDateTimeInformation(
 
 
 
-NA_DEF NAString* naNewStringFromSecondDifference(double difference,
+NA_DEF NAString* naNewStringWithSecondDifference(double difference,
                                                  uint8 decimalDigits) {
   NAi64 allseconds, powten, decimals;
   uint8 seconds, minutes, hours;
@@ -1255,13 +1255,13 @@ NA_DEF void naSetGlobalTimeShiftToSystemSettings() {
     // Daylight saving is active if the function returns 2.
     NAInt daylightCode = GetTimeZoneInformation(&curTimeZone);
     NABool daylightSaving = (daylightCode == 2);
-    na_GlobalTimeShift = naMakeShiftFromTimeZone(&curTimeZone, daylightSaving);
+    na_GlobalTimeShift = naMakeShiftWithTimeZone(&curTimeZone, daylightSaving);
     na_GlobalDaylightSavingTime = (daylightSaving ? NA_TRUE : NA_FALSE);
   #elif NA_OS == NA_OS_MAC_OS_X
     NATimeZone curTimeZone;
     gettimeofday(NULL, &curTimeZone);
     NABool daylightSaving = curTimeZone.tz_dsttime;
-    na_GlobalTimeShift = naMakeShiftFromTimeZone(&curTimeZone, daylightSaving);
+    na_GlobalTimeShift = naMakeShiftWithTimeZone(&curTimeZone, daylightSaving);
     na_GlobalDaylightSavingTime = (daylightSaving ? NA_TRUE : NA_FALSE);
   #endif
 }

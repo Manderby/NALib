@@ -7,30 +7,6 @@
 
 
 
-// What is an NAImage?
-// The name refers to the kind of color being stored in this very simple
-// image container. An NAImage contains only the very basic values of
-// an image storage, namely with, height and the data values.
-//
-// The data values are always of type NAColor and are arranged in a
-// simple float array from left to right and then from bottom to top.
-// Note that this is different from most image formats which stor the pixels
-// from top to bottom.
-//
-// When serializing, A header is written with the ASCII characters "ABY10000".
-// The 1 denotes the version number, the three 0 are reserved for the future.
-// After that, binary data is stored, all in big endian format. First, the
-// width and height are stored as int32 values. Both with and height must be
-// greater than 0 and must not exceed 2^31-1. After that, the data follows
-// immediately without padding. This means regarding to the beginning of the
-// file, data starts at byte number 16. The color values are stored plainly
-// as IEEE-754 single precision floating point values. Any float values with
-// highest or lowest exponent are forbidden. There are never any padding bytes
-// at the end of a horizontal line, meaning, all bytes are packed. Also at the
-// end of the data, there are no padding bytes. For each color value, if the
-// alpha channel is zero, all other channels must be zero as well.
-
-
 #include "../NABase/NABase.h"
 #include "../NAMath/NACoord.h"
 #include "NAColor.h"
@@ -80,10 +56,6 @@ NA_API NAImage* naCreateImageWithResize(
   const NAImage* image,
   NASizes newSize);
 
-// Retains and Releases an image.
-NA_API NAImage* naRetainImage(const NAImage* image);
-NA_API void naReleaseImage(const NAImage* image);
-
 // Returns the image dimensions.
 NA_API NASizes naGetImageSize(const NAImage* image);
 
@@ -109,6 +81,34 @@ NA_API void naConvertImageTou8(
   void* data,
   NABool topToBottom,
   NAColorBufferType bufferType);
+
+
+
+
+// Creates a new NAImage with the given path. Can only be PNG on windows,
+// macOS allows for various kind of input files.
+NA_API NAImage* naCreateImageWithFilePath(const NAUTF8Char* pathStr);
+
+
+
+// Working with system native images
+//
+// Operating systems have special types to represent an image. The following
+// functions allow to convert between NAImage and the native images which
+// are of the following type:
+//
+// macOS:   NSImage*
+// Windows: HBITMAP
+
+// Creates a new image out of a given native image.
+NA_API NAImage* naCreateImageWithNativeImage(const void* nativeImage);
+
+// Allocates a new native image with the content of the given image.
+NA_API void* naAllocNativeImageWithImage(const NAImage* image);
+
+// Deallocates the native image.
+NA_API void naDeallocNativeImage(void* nativeImage);
+
 
 
 #ifdef __cplusplus

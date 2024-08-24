@@ -22,7 +22,6 @@
 #define NA_VERSION 27
 
 
-
 // Include the configuration of NALib.
 // Have a look at this file to find out how you can configure NALib by adding
 // preprocessor macros to your compiler.

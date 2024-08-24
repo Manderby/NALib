@@ -1,13 +1,14 @@
 
 #ifndef NA_APP_INCLUDED
 #define NA_APP_INCLUDED
-
 #ifdef __cplusplus
   extern "C"{
 #endif
 
-#include "../NABase/NABase.h"
+#include "../NABase/NAConfiguration.h"
 #if NA_COMPILE_GUI == 1
+
+
 
 // NALib provides a simple implementation for Graphical User Interfaces (GUI).
 //
@@ -31,40 +32,43 @@
 
 
 
-#include "../NAUtility/NAString.h"
+#include "../NABase/NABase.h"
 
-// These are the default resolutions given in rasterpositions/meter.
-#define NA_UI_RESOLUTION_1x 3779.52755905511811   // 96 ppi
-#define NA_UI_RESOLUTION_2x 7559.05511811023622   // 192 ppi
-
+#include "NAClipboard.h"
 #include "NAFont.h"
 #include "NAKeyboard.h"
+#include "NAMouse.h"
 #include "NAPreferences.h"
 #include "NAReaction.h"
-#include "NAUIImage.h"
-#include "NAMouse.h"
+#include "NAImageSet.h"
 
+
+
+// //////////////////////////
+// Definition of the UI elements
+// //////////////////////////
+    
 // The base of every ui element.
-#include "NAUIElement.h"
+#include "UIElements/NAUIElement.h"
 
-// The acutal ui elements
-#include "NAApplication.h"
-#include "NAButton.h"
-#include "NACheckBox.h"
-#include "NAImageSpace.h"
-#include "NALabel.h"
-#include "NAMenu.h"
-#include "NAMenuItem.h"
-#include "NAMetalSpace.h"
-#include "NAOpenGLSpace.h"
-#include "NARadio.h"
-#include "NAScreen.h"
-#include "NASelect.h"
-#include "NASlider.h"
-#include "NASpace.h"
-#include "NATextBox.h"
-#include "NATextField.h"
-#include "NAWindow.h"
+// The acutal ui elements and their API
+#include "UIElements/NAApplication.h"
+#include "UIElements/NAButton.h"
+#include "UIElements/NACheckBox.h"
+#include "UIElements/NAImageSpace.h"
+#include "UIElements/NALabel.h"
+#include "UIElements/NAMenu.h"
+#include "UIElements/NAMenuItem.h"
+#include "UIElements/NAMetalSpace.h"
+#include "UIElements/NAOpenGLSpace.h"
+#include "UIElements/NARadio.h"
+#include "UIElements/NAScreen.h"
+#include "UIElements/NASelect.h"
+#include "UIElements/NASlider.h"
+#include "UIElements/NASpace.h"
+#include "UIElements/NATextBox.h"
+#include "UIElements/NATextField.h"
+#include "UIElements/NAWindow.h"
 
 
 

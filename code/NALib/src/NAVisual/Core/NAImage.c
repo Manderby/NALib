@@ -4,6 +4,7 @@
 #include "../../NAMath/NAVectorAlgebra.h"
 
 
+
 struct NAImage{
   NARefCount refCount;
   uint32 width;
@@ -11,9 +12,50 @@ struct NAImage{
   NAColor* data;
 };
 
+NA_HAPI void na_DestroyImage(NAImage* image);
+NA_RUNTIME_TYPE(NAImage, na_DestroyImage, NA_TRUE);
+
+
+
 #if NA_SIZE_T_BITS < 32
   #error "Size of size_t is too small for the NAImage struct"
 #endif
+
+
+
+// Simplified conversion from and to perceyved space uses the following
+// formulas:   y = .25x / (1 - .75x)   and   y = x / (.75x + .25)
+// Both formulas try to anneal the Lab L* response curve standard, hence are
+// visually pleasing but also have no numerical problems around 0 and 1.
+// And they are very fast to compute.
+
+
+
+// This factor is nice and easy to remember. There is no greater mathematical
+// purpose in this number. It's just nice.
+#define NA_ABY_FACTOR 0.75f
+
+NA_HIDEF float naConvertToPerceptualColorValue(float value) {
+  return value / (NA_ABY_FACTOR * value + (1.f - NA_ABY_FACTOR));
+}
+NA_HIDEF float naConvertToRadiometricColorValue(float value) {
+  return (1.f - NA_ABY_FACTOR) * value / (1.f - NA_ABY_FACTOR * value);
+}
+
+
+
+NA_HIDEF void na_ConvertToPerceptualRGB(NAColor* outColor, const NAColor* inColor) {
+  outColor->r = naConvertToPerceptualColorValue(inColor->r);
+  outColor->g = naConvertToPerceptualColorValue(inColor->g);
+  outColor->b = naConvertToPerceptualColorValue(inColor->b);
+}
+
+NA_HIDEF void na_ConvertToRadiometricRGB(NAColor* outColor, const NAColor* inColor) {
+  outColor->r = naConvertToRadiometricColorValue(inColor->r);
+  outColor->g = naConvertToRadiometricColorValue(inColor->g);
+  outColor->b = naConvertToRadiometricColorValue(inColor->b);
+}
+
 
 
 NA_HIDEF size_t na_GetImagePixelCount(const NAImage* image) {
@@ -64,7 +106,7 @@ NA_DEF NAImage* naCreateImage(NASizes size, const NAColor* color) {
   if(size.width > NA_MAX_i32 || size.height > NA_MAX_i32)
     naError("size is too big");
 #endif
-  image = naAlloc(NAImage);
+  image = naCreate(NAImage);
   naInitRefCount(&image->refCount);
   image->width = (uint32)size.width;
   image->height = (uint32)size.height;
@@ -88,7 +130,7 @@ NA_HDEF NAImage* naCreateImageCopy(const NAImage* image) {
   if(!image)
     naCrash("given image is a Null pointer");
 #endif
-  newImage = naAlloc(NAImage);
+  newImage = naCreate(NAImage);
   naInitRefCount(&newImage->refCount);
   newImage->width = image->width;
   newImage->height = image->height;
@@ -97,11 +139,6 @@ NA_HDEF NAImage* naCreateImageCopy(const NAImage* image) {
   naCopyn(newImage->data, image->data, dataSize);
   return newImage;
 }
-
-
-
-
-
 
 
 
@@ -372,7 +409,7 @@ NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image) {
     inPtr3 += radioImage->width;
     inPtr4 += radioImage->width;
   }
-  naReleaseImage(radioImage);
+  naRelease(radioImage);
   
   return outImage;
 }
@@ -493,7 +530,7 @@ NA_DEF NAImage* naCreateImageWithResize(const NAImage* image, NASizes newSize) {
     outPtr += 1;
   }
   
-  naReleaseImage(radioImage);
+  naRelease(radioImage);
   
   return outImage;
 }
@@ -502,17 +539,6 @@ NA_DEF NAImage* naCreateImageWithResize(const NAImage* image, NASizes newSize) {
 
 NA_HDEF void na_DestroyImage(NAImage* image) {
   naFree(image->data);
-  naFree(image);
-}
-
-NA_API NAImage* naRetainImage(const NAImage* image) {
-  NAImage* mutableImage = (NAImage*)image; 
-  return (NAImage*)naRetainRefCount(&mutableImage->refCount);
-}
-
-NA_DEF void naReleaseImage(const NAImage* image) {
-  NAImage* mutableImage = (NAImage*)image; 
-  naReleaseRefCount(&mutableImage->refCount, mutableImage, (NAMutator)na_DestroyImage);
 }
 
 

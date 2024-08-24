@@ -14,7 +14,7 @@ NA_IDEF NAComplex naMakeComplex(double re, double im) {
 }
 
 
-NA_IDEF NAComplex naMakeComplexFromPolar(double r, double phi) {
+NA_IDEF NAComplex naMakeComplexWithPolar(double r, double phi) {
   NAComplex newcomplex;
   #if NA_DEBUG
     if(r < 0.)

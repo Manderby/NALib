@@ -91,7 +91,7 @@ NA_API int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str);
 // Reads Strings like "November", abbreviations like "Nov" and numbers like "11"
 // and returns the 0-indexed month number. So, an input like "11" returns 10.
 // Comparison is done case-insensitive.
-NA_API int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str);
+NA_API int32 naGetMonthNumberWithUTF8CStringLiteral(const NAUTF8Char* str);
 
 // Returns true if the given year number is a leap year.
 NA_IAPI NABool naIsLeapYearJulian      (NAi64 year);
@@ -134,11 +134,11 @@ NA_IAPI NADateTime naMakeDateTimeWithNALibSecondNumber(NAi64 secondNumber);
 NA_API NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts);
 
 // Creates a new NADateTime struct from a given string with a given format.
-NA_API NADateTime naMakeDateTimeFromString( const NAString* string,
+NA_API NADateTime naMakeDateTimeWithString( const NAString* string,
                                           NAAscDateTimeFormat format);
 
 // Creates a new NADateTime struct from a given buffer with a given format.
-NA_API NADateTime naMakeDateTimeFromBuffer(  NABuffer* buffer,
+NA_API NADateTime naMakeDateTimeWithBuffer(  NABuffer* buffer,
                                         NABinDateTimeFormat format);
 
 // Returns a pointer to a C-string containing an error message corresponding
@@ -146,7 +146,7 @@ NA_API NADateTime naMakeDateTimeFromBuffer(  NABuffer* buffer,
 NA_API const char* naGetDateTimeErrorString(uint8 errorNum);
 
 // Creates a byte array with the given format.
-//NA_API NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray,
+//NA_API NAByteArray* naInitByteArrayWithDateTime( NAByteArray* bytearray,
 //                                              const NADateTime* dateTime,
 //                                            NABinDateTimeFormat format);
 
@@ -157,26 +157,26 @@ NA_API NAString* naNewStringWithDateTime(const NADateTime* dateTime,
 // Converts between the systems time formats and NADateTime
 NA_API struct tm naMakeTMfromDateTime   (const NADateTime* dateTime);
 // Computes the time shift in minutes including daylight saving time, if applicable.
-NA_API int16     naMakeShiftFromTimeZone(const NATimeZone* timeZone, NABool daylightSaving);
+NA_API int16     naMakeShiftWithTimeZone(const NATimeZone* timeZone, NABool daylightSaving);
 // if timeZone is a Null-Pointer, the global timeZone settings are used.
 
 #if NA_OS == NA_OS_WINDOWS
-  NA_API NADateTime naMakeDateTimeFromFileTime(
+  NA_API NADateTime naMakeDateTimeWithFileTime(
     const FILETIME* fileTime,
     const NATimeZone* timeZone,
     NABool daylightSaving);
 #elif NA_IS_POSIX
-  NA_API struct timespec naMakeTimeSpecFromDateTime(
+  NA_API struct timespec naMakeTimeSpecWithDateTime(
     const NADateTime* dateTime,
     NABool daylightSaving);
-  NA_API struct timeval  naMakeTimeValFromDateTime(
+  NA_API struct timeval  naMakeTimeValWithDateTime(
     const NADateTime* dateTime);
-  NA_API NATimeZone naMakeTimeZoneFromDateTime(
+  NA_API NATimeZone naMakeTimeZoneWithDateTime(
     const NADateTime* dateTime);
-  NA_API NADateTime naMakeDateTimeFromTimeSpec(
+  NA_API NADateTime naMakeDateTimeWithTimeSpec(
     const struct timespec* timeSpec,
     const NATimeZone* timeZone);
-  NA_API NADateTime naMakeDateTimeFromTimeVal(
+  NA_API NADateTime naMakeDateTimeWithTimeVal(
     const struct timeval* timeVal,
     const NATimeZone* timeZone);
 #endif
@@ -217,9 +217,9 @@ NA_IAPI double naGetDateTimeDifference( const NADateTime* end,
 NA_IAPI void naAddDateTimeDifference(NADateTime* dateTime, double difference);
 
 // Returns a human readable string of a second counter (including decimals)
-// For example: naNewStringFromSecondDifference(12345678.12345678, 6)
+// For example: naNewStringWithSecondDifference(12345678.12345678, 6)
 // creates the string "142d 21:21:18.123456"
-NA_API NAString* naNewStringFromSecondDifference(       double difference,
+NA_API NAString* naNewStringWithSecondDifference(       double difference,
                                                          uint8 decimalDigits);
 
 // Returns NA_TRUE if the date has daylightSavingTime.

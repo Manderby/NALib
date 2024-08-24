@@ -22,7 +22,7 @@ struct NAComplex{
 NA_IAPI NAComplex  naMakeComplex(double re, double im);
 
 // Returns a new struct filled with complex values computed from polar values.
-NA_IAPI NAComplex  naMakeComplexFromPolar(double r, double phi);
+NA_IAPI NAComplex  naMakeComplexWithPolar(double r, double phi);
 
 // Performs base operations with a real number
 NA_IAPI NAComplex  naAddComplexReal(NAComplex a, double b);
