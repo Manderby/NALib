@@ -296,6 +296,7 @@ NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect) {
   }
 
   NA_API NABool naIsMetalTechnologyAvailable(NAMetalSpace* metalSpace) {
+    NA_UNUSED(metalSpace);
     return NA_FALSE;
   }
 

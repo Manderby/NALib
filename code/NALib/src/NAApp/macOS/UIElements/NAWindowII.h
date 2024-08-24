@@ -281,6 +281,7 @@ NA_DEF void naShowWindow(const NAWindow* window) {
 }
 
 NA_DEF void naShowWindowModal(NAWindow* window, NAWindow* parentWindow) {
+  NA_UNUSED(parentWindow);
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   [NSApp runModalForWindow: nativePtr];
 }
