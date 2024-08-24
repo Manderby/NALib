@@ -341,14 +341,14 @@ void updateImageTestController(ImageTesterController* con) {
 
   naRelease(blendedImage);
 
-  NAUIImage* uiImage = naCreateUIImage(
+  NAImageSet* imageSet = naCreateImageSet(
     fullImage,
     NA_UI_RESOLUTION_1x,
     NA_BLEND_ZERO);
   naRelease(fullImage);
 
-  naSetImageSpaceImage(con->imageSpace, uiImage);
-  naRelease(uiImage);
+  naSetImageSpaceImage(con->imageSpace, imageSet);
+  naRelease(imageSet);
 
 }
 
@@ -389,10 +389,11 @@ void sliderEdited(NAReaction reaction) {
 
 void mouseMoved(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
-  const NAMouseStatus* mouse = naGetMouseStatus();
+  const NAMouseStatus* mouseStatus = naGetCurrentMouseStatus();
+  NAPos mousePos = naGetMousePos(mouseStatus);
   NARect spaceRect = naGetUIElementRectAbsolute(reaction.uiElement);
-  con->center.x = (int32)(mouse->pos.x - spaceRect.pos.x);
-  con->center.y = (int32)(mouse->pos.y - spaceRect.pos.y);
+  con->center.x = (int32)(mousePos.x - spaceRect.pos.x);
+  con->center.y = (int32)(mousePos.y - spaceRect.pos.y);
   updateImageTestController(con);
 }
 

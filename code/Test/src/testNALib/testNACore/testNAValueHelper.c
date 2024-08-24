@@ -16,6 +16,7 @@ void testFlags(void){
   uint32 testMultiFlagu2 = 0x00000404; // all set
 
   naTestGroup("Querying uint32 flags"){
+    flagsu = 0xcccccccc;
     naTest(!naGetFlagu32(flagsu, testFlagu1));
     naTest( naGetFlagu32(flagsu, testFlagu2));
     naTest(!naGetFlagu32(flagsu, testMultiFlagu1));
@@ -23,6 +24,7 @@ void testFlags(void){
   }
 
   naTestGroup("Setting uint32 flags"){
+    flagsu = 0xcccccccc;
     naTest((naSetFlagu32(&flagsu, testFlagu1, NA_TRUE), flagsu == 0xcccccccd));
     naTest((naSetFlagu32(&flagsu, testFlagu1, NA_FALSE), flagsu == 0xcccccccc));
     naTest((naSetFlagu32(&flagsu, testFlagu2, NA_TRUE), flagsu == 0xcccccccc));
@@ -30,10 +32,12 @@ void testFlags(void){
     naTest((naSetFlagu32(&flagsu, testMultiFlagu1, NA_FALSE), flagsu == 0xccccccc8));
     naTest((naSetFlagu32(&flagsu, testMultiFlagu2, NA_TRUE), flagsu == 0xcccccccc));
     naTestCrash(naSetFlagu32(NA_NULL, 1234, NA_TRUE));
-    naTestError(naSetFlagu32(&flagsu, testFlagu1, 1234));
+    // Testing a value neither 0 nor 1 does not work on all compilers.
+    //naTestError(naSetFlagu32(&flagsu, testFlagu1, 1234));
   }
 
   naTestGroup("Toggling uint32 flags"){
+    flagsu = 0xcccccccc;
     naTest( naToggleFlagu32(&flagsu, testFlagu1));
     naTest(!naToggleFlagu32(&flagsu, testFlagu1));
     naTest(!naToggleFlagu32(&flagsu, testFlagu2));
@@ -196,13 +200,14 @@ void testAlign(void){
   }
 
   naTestGroup("naAlignValues"){
+    // The commented out tests will not work as size_t is unsigned.
     naTest(naAlignValues(0, 0, 20) == 0);
     naTest(naAlignValues(5, 0, 20) == 0);
     naTest(naAlignValues(65, 0, 20) == 60);
-    naTest(naAlignValues(-75, 0, 20) == -80);
+    //naTest(naAlignValues(-75, 0, 20) == -80);
     naTest(naAlignValues(10, 10, 20) == 10);
     naTest(naAlignValues(55, 10, 20) == 50);
-    naTest(naAlignValues(5, 10, 20) == -10);
+    //naTest(naAlignValues(5, 10, 20) == -10);
     naTestError(naAlignValues(5, 0, -20));
     naTestError(naAlignValues(-5, NA_MAX_s, 20));
   }
