@@ -64,6 +64,8 @@ NA_HDEF void na_FillColorWithHSV(NAColor* out, const float in[3]) {
   hsv[0] = in[0];
   hsv[1] = in[1];
   hsv[2] = in[2];
+//  if(hsv[0] > 360.f){hsv[0] -= 360.f;}
+//  if(hsv[0] < 0.f){hsv[0] += 360.f;}
   size_t h0 = (size_t)floorf(hsv[0] / 60.f);
   uint8 h1 = (uint8)((h0 % 6) + 6) % 6;
   float f = (hsv[0] / 60.f) - h0;
@@ -214,10 +216,10 @@ NA_HIDEF void na_BlendColorErodeLight(
   const NAColor* topPtr,
   float factor)
 {
-  float baseHSV[3];
+  float HSV[3];
   float baseHSL[3];
-  na_FillHSVWithColor(baseHSV, basePtr);
-  na_ConvertHSVToHSL(baseHSL, baseHSV);
+  na_FillHSVWithColor(HSV, basePtr);
+  na_ConvertHSVToHSL(baseHSL, HSV);
 
   float baseColorFactor = (1.f - factor) * topPtr->alpha;
   float topColorFactor = factor * topPtr->alpha;
@@ -240,10 +242,10 @@ NA_HIDEF void na_BlendColorErodeDark(
   const NAColor* topPtr,
   float factor)
 {
-  float baseHSV[3];
+  float HSV[3];
   float baseHSL[3];
-  na_FillHSVWithColor(baseHSV, basePtr);
-  na_ConvertHSVToHSL(baseHSL, baseHSV);
+  na_FillHSVWithColor(HSV, basePtr);
+  na_ConvertHSVToHSL(baseHSL, HSV);
 
   float baseColorFactor = (1.f - factor) * topPtr->alpha;
   float topColorFactor = factor * topPtr->alpha;
@@ -260,20 +262,21 @@ NA_HIDEF void na_BlendColorErodeDark(
   }
 }
 
+#include <stdio.h>
+
 NA_HIDEF void na_BlendColorEraseHue(
   NAColor* dstPtr,
   const NAColor* basePtr,
   const NAColor* topPtr,
   float factor)
 {
-  float baseHSV[3];
+  float HSV[3];
   float baseHSL[3];
-  na_FillHSVWithColor(baseHSV, basePtr);
-  na_ConvertHSVToHSL(baseHSL, baseHSV);
-  float topHSV[3];
   float topHSL[3];
-  na_FillHSVWithColor(topHSV, topPtr);
-  na_ConvertHSVToHSL(topHSL, topHSV);
+  na_FillHSVWithColor(HSV, basePtr);
+  na_ConvertHSVToHSL(baseHSL, HSV);
+  na_FillHSVWithColor(HSV, topPtr);
+  na_ConvertHSVToHSL(topHSL, HSV);
 
   float hDiff = topHSL[0] - baseHSL[0];
   if(hDiff > 180.f) {
@@ -286,63 +289,49 @@ NA_HIDEF void na_BlendColorEraseHue(
     // Not near the hue, leave the color as it is.
     naFillColorWithCopy(dstPtr, basePtr);
   }else{
-    if(hDiff <= 0.) {
-      // fully saturated colors have L = .5
-      float factorL = 2.f * (topHSL[2] - baseHSL[2]);
-      if(factorL < 0.) {
-        factorL = -factorL;
-      }
-      if(factorL > 1.f) {
-        factorL = 1.f;
-      }
-      factorL = 1.f - factorL; // looks better with when linearizing
-      float hueStrength = 1.f - -hDiff / 60.f;
-      float hueFactor = factor * topPtr->alpha * hueStrength;
-      baseHSL[1] = (1.f - hueFactor) * baseHSL[1];
-      float decolorization = hueFactor * topPtr->alpha;
-      if(hueStrength < decolorization) {
-        baseHSL[0] = topHSL[0] + 60.f;
-      }else if((1.f - decolorization) > NA_SINGULARITYf) {
-        float linearFactor = (hueStrength - decolorization) / (1.f - decolorization);
-        baseHSL[0] = linearFactor * baseHSL[0] + (1.f - linearFactor) * (topHSL[0] + 60.f);
-      }
-      if(baseHSL[0] > 360.f) {
-        baseHSL[0] -= 360.f;
-      }
-      na_ConvertHSLToHSV(baseHSV, baseHSL);
-      na_FillColorWithHSV(dstPtr, baseHSV);
-      dstPtr->alpha = (1.f - factorL * factor) * basePtr->alpha;
+    float hueCloseness = 1.f - naAbsf(hDiff / 60.f);
+    
+    float discolorizationHue = baseHSL[0];
+  
+    if(hDiff < 0.f){
+      // distance to the safe color
+      float safeDist = (1.f + hDiff / 60.f);
       
+      if(safeDist < factor || factor > NA_SUB_NORMf){
+        discolorizationHue = topHSL[0] + 60.f;
+      }else{
+        float linFactor = (1.f - safeDist) / (1.f - factor);
+        discolorizationHue = linFactor * (topHSL[0] + 60.f) + (1.f - linFactor) * baseHSL[0];
+      }
     }else{
-      // fully saturated colors have L = .5
-      float factorL = 2.f * (topHSL[2] - baseHSL[2]);
-      if(factorL < 0.) {
-        factorL = -factorL;
+      // distance to the safe color
+      float safeDist = (1.f - hDiff / 60.f);
+      
+      if(safeDist < factor || factor > NA_SUB_NORMf){
+        discolorizationHue = topHSL[0] - 60.f;
+        if(discolorizationHue < 0.f && baseHSL[0] > 180.f)
+          discolorizationHue += 360.f;
+      }else{
+        float linFactor = (1.f - safeDist) / (1.f - factor);
+        float discolorHue = topHSL[0] - 60.f;
+        if(discolorHue < 0.f && baseHSL[0] > 180.f)
+          discolorHue += 360.f;
+        discolorizationHue = linFactor * discolorHue + (1.f - linFactor) * baseHSL[0];
       }
-      if(factorL > 1.f) {
-        factorL = 1.f;
-      }
-      factorL = 1.f - factorL; // looks better when linearizing
-      float hueStrength = 1.f - hDiff / 60.f;
-      float hueFactor = factor * topPtr->alpha * hueStrength;
-      baseHSL[1] = (1.f - hueFactor) * baseHSL[1];
-      float decolorization = hueFactor * topPtr->alpha;
-      if(hueStrength < decolorization) {
-        baseHSL[0] = topHSL[0] - 60.f;
-      }else if((1.f - decolorization) > NA_SINGULARITYf) {
-        float linearFactor = (hueStrength - decolorization) / (1.f - decolorization);
-        baseHSL[0] = linearFactor * baseHSL[0] + (1.f - linearFactor) * (topHSL[0] - 60.f);
-      }
-      if(baseHSL[0] < 0.f) {
-        baseHSL[0] += 360.f;
-      }
-      na_ConvertHSLToHSV(baseHSV, baseHSL);
-      na_FillColorWithHSV(dstPtr, baseHSV);
-      dstPtr->alpha = (1.f - factorL * factor) * basePtr->alpha;
     }
-  }
+    
+    float prevSaturation = baseHSL[1];
+    
+    baseHSL[0] = factor * discolorizationHue + (1.f - factor) * baseHSL[0];
+    baseHSL[1] *= (1.f - hueCloseness * factor);
+    
+    na_ConvertHSLToHSV(HSV, baseHSL);
+    na_FillColorWithHSV(dstPtr, HSV);
 
-  if(dstPtr->alpha == 0.f) {
+    dstPtr->alpha = basePtr->alpha * (1.f - prevSaturation * hueCloseness * factor);
+  }
+   
+   if(dstPtr->alpha == 0.f) {
     dstPtr->r = 0.f;
     dstPtr->g = 0.f;
     dstPtr->b = 0.f;

@@ -186,11 +186,11 @@ ImageTesterController* naAllocImageTestController() {
 
   con->center.x = 0;
   con->center.y = 0;
-  con->selectedTop = COLOR_COUNT + IMAGE_FEATHER;
+  con->selectedTop = COLOR_CYAN;
   con->scale = 1.;
   con->alpha = 1.;
-  con->blendMode = NA_BLEND_OVERLAY;
-  con->selectedBottom = COLOR_TRANSPARENT;
+  con->blendMode = NA_BLEND_ERASE_HUE;
+  con->selectedBottom = COLOR_COUNT + IMAGE_RAINBOW;
 
   con->imageSpace = naNewImageSpace(NA_NULL, naMakeSize(600, 400));
   naAddUIReaction(con->imageSpace, NA_UI_COMMAND_MOUSE_MOVED, mouseMoved, con);
