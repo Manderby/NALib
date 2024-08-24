@@ -83,6 +83,9 @@ NA_API NAImageSet* naRecreateImageSet(const NAImageSet* imageSet);
 // Returns the size of the 1x representation.
 NA_API NASizes naGetImageSet1xSize(const NAImageSet* imageSet);
 
+// Returns the tinting of the image set.
+NA_API NABlendMode naGetImageSetTinting(const NAImageSet* imageSet);
+
 // Sets a custom image for the given parameters.
 NA_API void naSetImageSetSubImage(
   NAImageSet* imageSet,

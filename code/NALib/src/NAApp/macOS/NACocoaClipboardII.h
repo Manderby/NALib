@@ -1,29 +1,40 @@
 
-#ifndef NA_CLIPBOARD_INCLUDED
-#define NA_CLIPBOARD_INCLUDED
-#ifdef __cplusplus
-  extern "C"{
-#endif
+// This file is an inline implmenentation (II) file which is included in the
+// NACocoa.m file. This is a bit special as it is marked as a .h file but
+// actually contains non-inlinenable code. See NACocoa.m for more information.
+// Do not include this file anywhere else!
 
 
 
-#include "../NABase/NABase.h"
-NA_PROTOTYPE(NAString);
+#include "../../NAUtility/NAString.h"
 
 
 
-// Gets a standard string from the systems clipboard.
-NA_API NAString* naNewStringFromClipboard(void);
+NAString* naNewStringFromClipboard(){
+  NAString* string = NA_NULL;
+  NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
+  NSArray *classes = [[NSArray alloc] initWithObjects:[NSString class], nil];
+  NSDictionary *options = [NSDictionary dictionary];
+  NSArray *copiedItems = [pasteboard readObjectsForClasses:classes options:options];
+  if ([copiedItems count]) {
+    NSString* nsString = [copiedItems objectAtIndex:0];
+    string = naNewStringWithFormat("%s", [nsString UTF8String]);
+  }else{
+    string = naNewString();
+  }
+  NA_COCOA_RELEASE(classes);
+  return string;
+}
 
-// Puts the given string on the systems clipboard in a standard string format.
-NA_API void naPutStringToClipboard(const NAString* string);
 
 
-
-#ifdef __cplusplus
-  } // extern "C"
-#endif
-#endif // NA_CLIPBOARD_INCLUDED
+void naPutStringToClipboard(const NAString* string){
+  NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
+  [pasteboard clearContents];
+  [pasteboard writeObjects:
+  [NSArray arrayWithObject:
+  [NSString stringWithUTF8String:naGetStringUTF8Pointer(string)]]];
+}
 
 
 

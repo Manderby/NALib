@@ -5,10 +5,11 @@
 // Do not include this file anywhere else!
 
 
-#include "Availability.h"
-#include "../NAApp.h"
-#include "../../NAVisual/NAPNG.h"
-#include "../Core/NACoreImageSetII.h"
+
+#include "../../NAVisual/NAColor.h"
+#include "../../NAVisual/NAImage.h"
+#include "../Core/NAAppCore.h"
+
 
 
 // NSAppearance and drawInRect exists since 10.9
@@ -172,7 +173,7 @@ NA_DEF void* naAllocNativeImageWithImage(const NAImage* image) {
 
 NA_HDEF BOOL na_drawFixedResolutionImage(const NAImageSet* imageSet, double resolution, NAImageSetInteraction interaction, NABool secondaryState, NSSize imageSize, NSRect dstRect) {
   NASkin skin = NA_SKIN_SYSTEM;
-  if(imageSet->tinting != NA_BLEND_ZERO) {
+  if(naGetImageSetTinting(imageSet) != NA_BLEND_ZERO) {
     skin = naGetCurrentSkin();
   }
   
@@ -226,7 +227,7 @@ NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
     image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
 
     NASkin skin = NA_SKIN_PLAIN;
-    if(imageSet->tinting != NA_BLEND_ZERO) {
+    if(naGetImageSetTinting(imageSet) != NA_BLEND_ZERO) {
       skin = naGetCurrentSkin();
     }
 

@@ -1,29 +1,12 @@
 
-#ifndef NA_CLIPBOARD_INCLUDED
-#define NA_CLIPBOARD_INCLUDED
-#ifdef __cplusplus
-  extern "C"{
-#endif
+// This file is an inline implmenentation (II) file which is included in the
+// NACocoa.m file. This is a bit special as it is marked as a .h file but
+// actually contains non-inlinenable code. See NACocoa.m for more information.
+// Do not include this file anywhere else!
 
 
 
-#include "../NABase/NABase.h"
-NA_PROTOTYPE(NAString);
-
-
-
-// Gets a standard string from the systems clipboard.
-NA_API NAString* naNewStringFromClipboard(void);
-
-// Puts the given string on the systems clipboard in a standard string format.
-NA_API void naPutStringToClipboard(const NAString* string);
-
-
-
-#ifdef __cplusplus
-  } // extern "C"
-#endif
-#endif // NA_CLIPBOARD_INCLUDED
+// All implementations are in the core. Nothing to see here.
 
 
 

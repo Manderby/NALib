@@ -4,7 +4,7 @@
 // actually contains non-inlinenable code. See NACocoa.m for more information.
 // Do not include this file anywhere else!
 
-#include "NAUICocoaLegacy.h"
+#include "NACocoaLegacy.h"
 
 
 // Damnit Apple or clang or whoever responsible for this mess!

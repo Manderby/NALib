@@ -31,12 +31,17 @@
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 
-#include "NAUICocoaLegacyII.h"
+#include "NACocoaLegacyII.h"
 
-#include "NAImageSetCocoaII.h"
+#include "NACocoaClipboardII.h"
+#include "NACocoaFontII.h"
+#include "NACocoaImageSetII.h"
+#include "NACocoaMouseII.h"
+#include "NACocoaKeyboardII.h"
+#include "NACocoaPreferencesII.h"
 
-#include "NAUICocoaII.h"
-#include "NAUICocoaInterfaces.h"
+#include "NACocoaII.h"
+#include "NACocoaInterfaces.h"
 
 #include "UIElements/NAApplicationII.h"
 #include "UIElements/NAButtonII.h"

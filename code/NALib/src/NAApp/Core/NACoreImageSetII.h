@@ -383,6 +383,12 @@ NA_API NASizes naGetImageSet1xSize(const NAImageSet* imageSet) {
 
 
 
+NA_API NABlendMode naGetImageSetTinting(const NAImageSet* imageSet) {
+  return imageSet->tinting;
+}
+
+
+
 NA_HDEF NA_UISubImage* na_AddImageSetSubImage(
   NAImageSet* imageSet,
   const NAImage* image,

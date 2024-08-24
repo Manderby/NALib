@@ -69,12 +69,15 @@ set(coreUIFiles
 set(macOSFiles
   ${NAAppDir}/macOS/NAClipboardII.h
   ${NAAppDir}/macOS/NACocoa.m
-  ${NAAppDir}/macOS/NAUICocoaII.h
-  ${NAAppDir}/macOS/NAUICocoaInterfaces.h
-  ${NAAppDir}/macOS/NAImageSetCocoaII.h
-  ${NAAppDir}/macOS/NAUICocoaLegacy.h
-  ${NAAppDir}/macOS/NAUICocoaLegacyII.h
-  ${NAAppDir}/macOS/NAPreferencesCocoa.m
+  ${NAAppDir}/macOS/NACocoaFontII.h
+  ${NAAppDir}/macOS/NACocoaImageSetII.h
+  ${NAAppDir}/macOS/NACocoaKeyboardII.h
+  ${NAAppDir}/macOS/NACocoaMouseII.h
+  ${NAAppDir}/macOS/NACocoaPreferences.m
+  ${NAAppDir}/macOS/NACocoaII.h
+  ${NAAppDir}/macOS/NACocoaInterfaces.h
+  ${NAAppDir}/macOS/NACocoaLegacy.h
+  ${NAAppDir}/macOS/NACocoaLegacyII.h
 )
 
 set(macOSUIFiles
@@ -111,24 +114,24 @@ set(winAPIFiles
 )
 
 set(winAPIUIFiles
-  ${NAAppDir}/winAPI/UIElements/NAApplicationII.h
-  ${NAAppDir}/winAPI/UIElements/NAButtonII.h
-  ${NAAppDir}/winAPI/UIElements/NACheckBoxII.h
-  ${NAAppDir}/winAPI/UIElements/NAImageSpaceII.h
-  ${NAAppDir}/winAPI/UIElements/NALabelII.h
-  ${NAAppDir}/winAPI/UIElements/NAMenuII.h
-  ${NAAppDir}/winAPI/UIElements/NAMenuItemII.h
-  ${NAAppDir}/winAPI/UIElements/NAMetalSpaceII.h
-  ${NAAppDir}/winAPI/UIElements/NAOpenGLSpaceII.h
-  ${NAAppDir}/winAPI/UIElements/NARadioII.h
-  ${NAAppDir}/winAPI/UIElements/NAScreenII.h
-  ${NAAppDir}/winAPI/UIElements/NASelectII.h
-  ${NAAppDir}/winAPI/UIElements/NASliderII.h
-  ${NAAppDir}/winAPI/UIElements/NASpaceII.h
-  ${NAAppDir}/winAPI/UIElements/NATextBoxII.h
-  ${NAAppDir}/winAPI/UIElements/NATextFieldII.h
-  ${NAAppDir}/winAPI/UIElements/NAUIElementII.h
-  ${NAAppDir}/winAPI/UIElements/NAWindowII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIApplicationII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIButtonII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPICheckBoxII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIImageSpaceII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPILabelII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIMenuII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIMenuItemII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIMetalSpaceII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIOpenGLSpaceII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIRadioII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIScreenII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPISelectII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPISliderII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPISpaceII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPITextBoxII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPITextFieldII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIUIElementII.h
+  ${NAAppDir}/winAPI/UIElements/NAWINAPIWindowII.h
 )
 
 source_group("NAApp" FILES ${headerFiles})

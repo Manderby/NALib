@@ -575,10 +575,6 @@ NA_HDEF void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking)
 
 
 
-#include "NAClipboardII.h"
-
-
-
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

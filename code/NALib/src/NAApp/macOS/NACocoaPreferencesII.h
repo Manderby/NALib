@@ -1,14 +1,8 @@
 
-#include "../../NABase/NABase.h"
-
-#if NA_OS == NA_OS_MAC_OS_X
-#if defined __OBJC__
-#if NA_COMPILE_GUI == 1
-
-#import <Cocoa/Cocoa.h>
-#include "../NAPreferences.h"
-#include "../../NAApp/NAApp.h"
-#include "../../NAUtility/NAString.h"
+// This file is an inline implmenentation (II) file which is included in the
+// NACocoa.m file. This is a bit special as it is marked as a .h file but
+// actually contains non-inlinenable code. See NACocoa.m for more information.
+// Do not include this file anywhere else!
 
 
 
@@ -94,12 +88,6 @@ NA_HDEF void na_SetRawPreferencesString(void* prefs, const char* key, NAString* 
   NSString* valueObj = [NSString stringWithUTF8String:naGetStringUTF8Pointer(valueStorage)];
   [userDefault setObject:valueObj forKey:nsKey];
 }
-
-
-
-#endif // NA_COMPILE_GUI == 1
-#endif // defined __OBJC__
-#endif // NA_OS == NA_OS_MAC_OS_X
 
 
 
