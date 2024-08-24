@@ -194,10 +194,11 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
         NABool hasOption  = naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_OPTION);
         NABool hasCommand = naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_COMMAND);
 
-        if(needsShift   == hasShift
-          && needsControl == hasControl
-          && needsOption  == hasOption
-          && needsCommand == hasCommand)
+        if(naGetKeyStrokeKeyCode(shortcut) == naGetKeyStrokeKeyCode(keyStroke) &&
+          needsShift   == hasShift &&
+          needsControl == hasControl &&
+          needsOption  == hasOption &&
+          needsCommand == hasCommand)
         {
           NAReaction reaction;
           reaction.uiElement = naGetApplication();
