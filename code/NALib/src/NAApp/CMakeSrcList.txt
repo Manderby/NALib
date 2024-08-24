@@ -81,24 +81,24 @@ set(macOSFiles
 )
 
 set(macOSUIFiles
-  ${NAAppDir}/macOS/UIElements/NAApplicationII.h
-  ${NAAppDir}/macOS/UIElements/NAButtonII.h
-  ${NAAppDir}/macOS/UIElements/NACheckBoxII.h
-  ${NAAppDir}/macOS/UIElements/NAImageSpaceII.h
-  ${NAAppDir}/macOS/UIElements/NALabelII.h
-  ${NAAppDir}/macOS/UIElements/NAMenuII.h
-  ${NAAppDir}/macOS/UIElements/NAMenuItemII.h
-  ${NAAppDir}/macOS/UIElements/NAMetalSpaceII.h
-  ${NAAppDir}/macOS/UIElements/NAOpenGLSpaceII.h
-  ${NAAppDir}/macOS/UIElements/NARadioII.h
-  ${NAAppDir}/macOS/UIElements/NAScreenII.h
-  ${NAAppDir}/macOS/UIElements/NASelectII.h
-  ${NAAppDir}/macOS/UIElements/NASliderII.h
-  ${NAAppDir}/macOS/UIElements/NASpaceII.h
-  ${NAAppDir}/macOS/UIElements/NATextBoxII.h
-  ${NAAppDir}/macOS/UIElements/NATextFieldII.h
-  ${NAAppDir}/macOS/UIElements/NAUIElementII.h
-  ${NAAppDir}/macOS/UIElements/NAWindowII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaApplicationII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaButtonII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaCheckBoxII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaImageSpaceII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaLabelII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaMenuII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaMenuItemII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaMetalSpaceII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaOpenGLSpaceII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaRadioII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaScreenII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaSelectII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaSliderII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaSpaceII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaTextBoxII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaTextFieldII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaUIElementII.h
+  ${NAAppDir}/macOS/UIElements/NACocoaWindowII.h
 )
 
 set(winAPIFiles

@@ -81,7 +81,10 @@
   }
 
   - (void)mouseMoved:(NSEvent*)event{
-    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+    na_SetMouseMovedTo(
+      mouseStatus,
+      naMakePosWithNSPoint([NSEvent mouseLocation]));
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
       [super mouseMoved:event];
     }
@@ -89,8 +92,12 @@
   }
 
   - (void)mouseDown:(NSEvent*)event{
-    na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+    na_SetMouseEnteredAtPos(
+      mouseStatus,
+      naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_SetMouseButtonPressed(
+      mouseStatus,
       NA_MOUSE_BUTTON_LEFT,
       ([NSEvent pressedMouseButtons] & (1 << 0)) != 0);
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
@@ -99,8 +106,12 @@
   }
 
   - (void)mouseUp:(NSEvent*)event{
-    na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+    na_SetMouseExitedAtPos(
+      mouseStatus,
+      naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_SetMouseButtonPressed(
+      mouseStatus,
       NA_MOUSE_BUTTON_LEFT,
       ([NSEvent pressedMouseButtons] & (1 << 0)) != 0);
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_UP)) {
@@ -109,7 +120,10 @@
   }
  
   - (void)mouseDragged:(NSEvent*)event{
-    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+    na_SetMouseMovedTo(
+      mouseStatus,
+      naMakePosWithNSPoint([NSEvent mouseLocation]));
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
       [super mouseDragged:event];
     }
@@ -117,8 +131,12 @@
   }
   
   - (void)rightMouseDown:(NSEvent*)event{
-    na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+    na_SetMouseEnteredAtPos(
+      mouseStatus,
+      naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_SetMouseButtonPressed(
+      mouseStatus,
       NA_MOUSE_BUTTON_RIGHT,
       ([NSEvent pressedMouseButtons] & (1 << 1)) != 0);
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
@@ -127,8 +145,12 @@
   }
 
   - (void)rightMouseUp:(NSEvent*)event{
-    na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+    na_SetMouseExitedAtPos(
+      mouseStatus,
+      naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_SetMouseButtonPressed(
+      mouseStatus,
       NA_MOUSE_BUTTON_RIGHT,
       ([NSEvent pressedMouseButtons] & (1 << 1)) != 0);
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_UP)) {
@@ -137,7 +159,10 @@
   }
 
   - (void)rightMouseDragged:(NSEvent*)event{
-    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+    na_SetMouseMovedTo(
+      mouseStatus,
+      naMakePosWithNSPoint([NSEvent mouseLocation]));
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
       [super rightMouseDragged:event];
     }
@@ -145,8 +170,12 @@
   }
 
   - (void)otherMouseDown:(NSEvent*)event{
-    na_SetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+    na_SetMouseEnteredAtPos(
+      mouseStatus,
+      naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_SetMouseButtonPressed(
+      mouseStatus,
       NA_MOUSE_BUTTON_MIDDLE,
       ([NSEvent pressedMouseButtons] & (1 << 2)) != 0);
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_DOWN)) {
@@ -155,8 +184,12 @@
   }
 
   - (void)otherMouseUp:(NSEvent*)event{
-    na_SetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+    na_SetMouseExitedAtPos(
+      mouseStatus,
+      naMakePosWithNSPoint([NSEvent mouseLocation]));
     na_SetMouseButtonPressed(
+      mouseStatus,
       NA_MOUSE_BUTTON_MIDDLE,
       ([NSEvent pressedMouseButtons] & (1 << 2)) != 0);
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_UP)) {
@@ -165,7 +198,10 @@
   }
 
   - (void)otherMouseDragged:(NSEvent*)event{
-    na_SetMouseMovedTo(naMakePosWithNSPoint([NSEvent mouseLocation]));
+    NAMouseStatus* mouseStatus = na_GetApplicationMouseStatus(naGetApplication());
+    na_SetMouseMovedTo(
+      mouseStatus,
+      naMakePosWithNSPoint([NSEvent mouseLocation]));
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
       [super otherMouseDragged:event];
     }
