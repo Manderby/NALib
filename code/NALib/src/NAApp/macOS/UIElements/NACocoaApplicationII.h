@@ -154,6 +154,9 @@ NA_DEF void naStartApplication(
     #if !NA_MACOS_USES_ARC
       pool = [[NSAutoreleasePool alloc] init];
     #endif
+
+      naCollectGarbage();
+
       NSEvent* curEvent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantFuture inMode:NSDefaultRunLoopMode dequeue:YES];
 //      NSEventType type = [curEvent type];
 //      [curevent description]
@@ -161,7 +164,6 @@ NA_DEF void naStartApplication(
 //      printf("type %d, desc %s\n", (int)type, [[curEvent description] UTF8String]);
 //      NSEventSubtypeWindowMoved
 
-      naCollectGarbage();
       if(!na_InterceptKeyboardShortcut(curEvent)) {
         if(curEvent) {
           [NSApp sendEvent:curEvent];

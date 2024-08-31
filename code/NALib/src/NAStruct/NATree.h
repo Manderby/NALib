@@ -35,7 +35,7 @@ typedef struct NATreeConfiguration NATreeConfiguration;
 
 
 // ///////////////////////////////////////////
-// CALLBACKS
+// Callbacks
 //
 // When creating an NATree, you can define various callbacks which are stored
 // in an NATreeConfiguration structure. Here are the signatures for these

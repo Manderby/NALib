@@ -112,7 +112,11 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
 
 
 NA_DEF void naRefreshUIElement(void* uiElement, double timediff) {
-  naCallApplicationFunctionInSeconds(na_RefreshUIElementNow, (NA_UIElement*)uiElement, timediff);
+  if(timediff == 0.) {
+    na_RefreshUIElementNow(uiElement);
+  }else{
+    naCallApplicationFunctionInSeconds(na_RefreshUIElementNow, (NA_UIElement*)uiElement, timediff);
+  }
 }
 
 

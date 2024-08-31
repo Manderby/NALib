@@ -17,6 +17,7 @@ Big changes:
 
 Smaller things:
 - Great NAApp cleanup
+- naRefreshUIElement now executes immediately if timediff = 0
 - Removing list and tree iterator macros.
 - Replacing scroll reactions with transform reactions.
 - Changing NAReaction callback signature to return void.

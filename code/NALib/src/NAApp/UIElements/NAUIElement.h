@@ -115,10 +115,8 @@ NA_API void   naSetUIElementRect(void* uiElement, NARect rect);
 
 // You can ask any ui element to refresh its contents. This will cause the
 // element to be displayed anew. The time difference defines when the refresh
-// shall occur in seconds. Note that even when using 0 as timediff, the redraw
-// method will not execute immediately but put a message to the default message
-// queue of the application. Therefore, this function will always return
-// immediately.
+// shall occur in seconds. Note that when using 0 as timediff, the redraw
+// method will execute immediately!
 NA_API void naRefreshUIElement(void* uiElement, double timediff);
 
 // When navigating with the tab key, this method defines, which will be the

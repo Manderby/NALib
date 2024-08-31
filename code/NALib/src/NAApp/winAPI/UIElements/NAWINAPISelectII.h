@@ -41,6 +41,15 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_WINDOWPOSCHANGED:
       break;
 
+  case WM_TIMER:
+    // Note that there is a WM_TIMER message being sent to a select when
+    // unhovering with the mouse. That message is being converted by the
+    // DispatchMessage call into a WM_PAINT message automatically with
+    // no way of interfering. I don't know what's up with that but is just
+    // something good to know if there ever is something strange going on
+    // with timers and selects.
+    break;
+
   // Handeled in naUIElementWINAPIPreProc:
   case WM_MOUSELEAVE:
   break;

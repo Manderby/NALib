@@ -149,8 +149,51 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
 
   // Start the event loop.
   while(na_IsApplicationRunning()) {
-    BOOL response = GetMessage(&message, 0, 0, 0);
+    BOOL response = FALSE;
+
     naCollectGarbage();
+
+    // Note about the WM_TIMER and WM_PAINT messages: UI elements like
+    // especially OpenGLSpace will take some time to compute and hence block
+    // the whole application from being responsive.
+    //
+    // To overcome this issue, ther are several ways. There is coalescing,
+    // done with naAddOpenGLSpaceToRedrawList, currently commented out. And
+    // there is naRefreshUIElement which may or may not redraw immediately
+    // if the timeDiff is set to zero. Both ways introduce a timer which needs
+    // to be sent through the message queue. That leads to a small delay which
+    // has been observed to skip one frame on windows most of the time, hence
+    // making the UI behave sluggish. Therefore, at this point in time, both
+    // methods are turned off and redraws happen immediately when timediff is
+    // set to zero.
+    //
+    // If this part of the code gets revisited one day, be aware: GetMessage
+    // will return WM_TIMER and WM_PAINT messages last when no filter is
+    // applied. This means when for example new mouse inputs have occured in
+    // the meantime between painting, those elements get never painted until
+    // the mouse stops.
+    //
+    // This whole timing and painting thing is a bit tricky but as up to now,
+    // the best solution was to just paint immediately and let the application
+    // lag. So be it.
+
+    response = PeekMessage(&message, 0, WM_TIMER, WM_TIMER, PM_REMOVE);
+    if(response) {
+      // Do timer messages immediately.
+      TranslateMessage(&message);
+      DispatchMessage(&message);
+      continue;
+    }
+
+    response = PeekMessage(&message, 0, 0, 0, PM_REMOVE | PM_QS_PAINT);
+    if(response) {
+      // Do paint messages immediately.
+      TranslateMessage(&message);
+      DispatchMessage(&message);
+      continue;
+    }
+
+    response = GetMessage(&message, 0, 0, 0);
     
     if(response == 0) {
       break;
@@ -161,7 +204,6 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
       if(message.message == WM_QUIT) {
         break;
       }
-      //if(!IsDialogMessage(message.hwnd, &message)) {
       // Capture any keyboard shortcuts overridden by the NALib user
       // Note: Usually, the IsDialogMessage function is responsible for
       // capturing TAB events but it has proven to be difficult to handle
@@ -169,17 +211,8 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
       if(!na_InterceptKeyboardShortcut(&message)) {
         // Do the normal message dispatch.
         TranslateMessage(&message);
-        //if(message.message == WM_PAINT) {
-        //   naWINAPIWindowCallback(
-        //    message.hwnd,
-        //    message.message,
-        //    message.wParam,
-        //    message.lParam);
-        //}else{
-          DispatchMessage(&message);
-        //}
+        DispatchMessage(&message);
       }
-      //}
     }
   }
 
