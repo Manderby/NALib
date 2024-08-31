@@ -7,9 +7,7 @@
 
 
 
-#include "../NABase/NABase.h"
 NA_PROTOTYPE(NAString);
-
 
 
 // Gets a standard string from the systems clipboard.
