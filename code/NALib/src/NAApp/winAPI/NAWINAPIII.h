@@ -498,8 +498,9 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
     // GET_X_LPARAM(lParam): x coord relative to top left
     // GET_Y_LPARAM(lParam): y coord relative to top left
     if(naWINAPICaptureMouseHover()) {
-      size.width = GET_X_LPARAM(lParam);
-      size.height = GET_Y_LPARAM(lParam);
+      double uiScale = naGetUIElementResolutionScale(elem);
+      size.width = GET_X_LPARAM(lParam) / uiScale;
+      size.height = GET_Y_LPARAM(lParam) / uiScale;
       rect = naGetUIElementRectAbsolute(uiElement);
       size.width += rect.pos.x;
       size.height = rect.pos.y + rect.size.height - size.height;
