@@ -366,6 +366,7 @@ NABool naLabelWINAPINotify       (void* uiElement, WORD notificationCode);
 NABool naSelectWINAPINotify      (void* uiElement, WORD notificationCode);
 NABool naTextFieldWINAPINotify   (void* uiElement, WORD notificationCode);
 
+NA_HAPI HICON na_GetWINAPIApplicationIcon(void);
 
 
 // Returns true if the element under the mouse must handle hovering events.

@@ -54,11 +54,11 @@ struct NAApplication{
   NAKeyStroke*      keyStroke;       // The currently pressed key combination
   uint32            flags;
 
-  const NAUTF8Char*       name;
+  const NAUTF8Char*       appName;
   const NAUTF8Char*       companyName;
   const NAUTF8Char*       versionString;
   const NAUTF8Char*       buildString;
-  const NAUTF8Char*       resourcePath;
+  const NAUTF8Char*       resourceBasePath;
   const NAUTF8Char*       iconPath;
 };
 
@@ -216,8 +216,9 @@ NA_HAPI double na_GetUIElementYOffset(const NA_UIElement* elem);
 
 NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
 
-NA_HDEF NABool na_GetApplicationMouseVisible();
-NA_HDEF void na_SetApplicationMouseVisible(NABool visible);
+NA_HAPI NABool na_GetApplicationMouseVisible();
+NA_HAPI void na_SetApplicationMouseVisible(NABool visible);
+NA_HAPI void na_SetApplicationIconPath(void);
 
 NA_HAPI void na_SetUIElementMouseInside(NA_UIElement* elem, NABool inside);
 NA_HAPI NABool na_GetUIElementMouseInside(const NA_UIElement* elem);

@@ -43,11 +43,11 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
   app->flags |= NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING;
   #endif
 
-  app->name = NA_NULL;
+  app->appName = NA_NULL;
   app->companyName = NA_NULL;
   app->versionString = NA_NULL;
   app->buildString = NA_NULL;
-  app->resourcePath = NA_NULL;
+  app->resourceBasePath = NA_NULL;
   app->iconPath = NA_NULL;
 
   // This is done at the very end of the InitApplication function as the
@@ -59,12 +59,12 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
 
 NA_HDEF void na_ClearApplication(NAApplication* app) {
   #if NA_DEBUG
-    if(!naGetApplication())
+    if(!na_App)
       naCrash("No Application running");
   #endif
 
-  naForeachListMutable(&naGetApplication()->windows, (NAMutator)naDelete);
-  naClearList(&naGetApplication()->windows);
+  naForeachListMutable(&na_App->windows, (NAMutator)naDelete);
+  naClearList(&na_App->windows);
 
   naStopTranslator();
   na_ClearUIElement(&app->uiElement);
@@ -78,8 +78,37 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
   // This must be at the very end as the uiElements are used up until the last
   // ClearUIElement operation.
   // todo test if all uiElements are gone.
-  naClearList(&naGetApplication()->uiElements);
+  naClearList(&na_App->uiElements);
 }
+
+
+
+NA_DEF void naSetApplicationName(const NAUTF8Char* name) {
+  NAApplication* app = naGetApplication();
+  app->appName = name;
+}
+NA_DEF void naSetApplicationCompanyName(const NAUTF8Char* name) {
+  NAApplication* app = naGetApplication();
+  app->companyName = name;
+}
+NA_DEF void naSetApplicationVersionString(const NAUTF8Char* string) {
+  NAApplication* app = naGetApplication();
+  app->versionString = string;
+}
+NA_DEF void naSetApplicationBuildString(const NAUTF8Char* string) {
+  NAApplication* app = naGetApplication();
+  app->buildString = string;
+}
+NA_DEF void naSetApplicationResourceBasePath(const NAUTF8Char* path) {
+  NAApplication* app = naGetApplication();
+  app->resourceBasePath = path;
+}
+NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
+  NAApplication* app = naGetApplication();
+  app->iconPath = path;
+  na_SetApplicationIconPath();
+}
+
 
 
 

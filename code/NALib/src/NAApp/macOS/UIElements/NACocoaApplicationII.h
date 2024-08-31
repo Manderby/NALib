@@ -240,9 +240,9 @@ NA_DEF void naOpenConsoleWindow(void) {
 #define NA_COCOA_BUNDLE_ICON_FILE_KEY @"CFBundleIconFile"
 
 NA_DEF NAString* naNewApplicationName(void) {
-  NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->application.name) {
-    return naNewStringWithFormat("%s", app->application.name);
+  NAApplication* app = naGetApplication();
+  if(app->appName) {
+    return naNewStringWithFormat("%s", app->appName);
   }else{
     NSString* applicationName = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
     if(!applicationName) {
@@ -253,18 +253,18 @@ NA_DEF NAString* naNewApplicationName(void) {
 }
 
 NA_DEF NAString* naNewApplicationCompanyName(void) {
-  NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->application.companyName) {
-    return naNewStringWithFormat("%s", app->application.companyName);
+  NAApplication* app = naGetApplication();
+  if(app->companyName) {
+    return naNewStringWithFormat("%s", app->companyName);
   }else{
     return NA_NULL;
   }
 }
 
 NA_DEF NAString* naNewApplicationVersionString(void) {
-  NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->application.versionString) {
-    return naNewStringWithFormat("%s", app->application.versionString);
+  NAApplication* app = naGetApplication();
+  if(app->versionString) {
+    return naNewStringWithFormat("%s", app->versionString);
   }else{
     NSString* versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
     return naNewStringWithFormat("%s", [versionString UTF8String]);
@@ -272,19 +272,28 @@ NA_DEF NAString* naNewApplicationVersionString(void) {
 }
 
 NA_DEF NAString* naNewApplicationBuildString(void) {
-  NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->application.buildString) {
-    return naNewStringWithFormat("%s", app->application.buildString);
+  NAApplication* app = naGetApplication();
+  if(app->buildString) {
+    return naNewStringWithFormat("%s", app->buildString);
   }else{
     NSString* buildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
     return naNewStringWithFormat("%s", [buildString UTF8String]);
   }
 }
 
+NA_DEF NAString* naNewApplicationResourceBasePath(void) {
+  NAApplication* app = naGetApplication();
+  if(app->resourceBasePath) {
+    return naNewStringWithFormat("%s", app->resourceBasePath);
+  }else{
+    return naNewExecutablePath();
+  }
+}
+
 NA_DEF NAString* naNewApplicationIconPath(void) {
-  NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->application.iconPath) {
-    return naNewStringWithFormat("%s", app->application.iconPath);
+  NAApplication* app = naGetApplication();
+  if(app->iconPath) {
+    return naNewStringWithFormat("%s", app->iconPath);
   }else{
     NSString* iconFilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
     NSString* iconBasename = [iconFilename stringByDeletingPathExtension];
@@ -301,6 +310,14 @@ NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF
     url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix]];
   }
   return naNewStringWithFormat("%s", [[url path] UTF8String]);
+}
+
+NA_HDEF void na_SetApplicationIconPath() {
+  // nothing to be done on macOS
+}
+
+NA_DEF NAString* naNewExecutablePath(void) {
+  return naNewStringWithFormat("%s", [[[NSBundle mainBundle] bundlePath] UTF8String]);
 }
 
 // This is free and unencumbered software released into the public domain.

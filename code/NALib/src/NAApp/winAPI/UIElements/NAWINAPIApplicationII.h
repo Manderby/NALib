@@ -491,33 +491,10 @@ NA_DEF void naOpenConsoleWindow(void) {
 
 
 
-NA_DEF void naSetApplicationName(const NAUTF8Char* name) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->application.name = name;
-}
-NA_DEF void naSetApplicationCompanyName(const NAUTF8Char* name) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->application.companyName = name;
-}
-NA_DEF void naSetApplicationVersionString(const NAUTF8Char* string) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->application.versionString = string;
-}
-NA_DEF void naSetApplicationBuildString(const NAUTF8Char* string) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->application.buildString = string;
-}
-NA_DEF void naSetApplicationResourcePath(const NAUTF8Char* path) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->application.resourcePath = path;
-}
 
-NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
-    NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-    app->application.iconPath = path;
-
-  if(path) {
-    NAImage* iconImage = naCreateImageWithFilePath(path);
+NA_HDEF void na_SetApplicationIconPath() {
+  if(app->iconPath) {
+    NAImage* iconImage = naCreateImageWithFilePath(app->iconPath);
     HBITMAP bitmap = naAllocNativeImageWithImage(iconImage);
    
     HBITMAP hbmMask = CreateCompatibleBitmap(
@@ -535,31 +512,10 @@ NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
 
 
 
-NA_DEF NAString* naNewApplicationPath(void) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->application.name) {
-    return naNewStringWithFormat("%s", app->application.name);
-  }else{
-    TCHAR modulePath[MAX_PATH];
-    NAString* utf8ModulePath;
-    NAString* utf8ModuleBasePath;
-
-    GetModuleFileName(NULL, modulePath, MAX_PATH);
-    utf8ModulePath = naNewStringWithSystemString(modulePath);
-    utf8ModuleBasePath = naNewStringWithParentOfPath(utf8ModulePath);
-
-    naDelete(utf8ModulePath);
-
-    return utf8ModuleBasePath;
-  }
-}
-
-
-
 NA_DEF NAString* naNewApplicationName(void) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->application.name) {
-    return naNewStringWithFormat("%s", app->application.name);
+  NAApplication* app = naGetApplication();
+  if(app->appName) {
+    return naNewStringWithFormat("%s", app->appName);
   }else{
     TCHAR modulePath[MAX_PATH];
     NAString* utf8ModulePath;
@@ -584,53 +540,53 @@ NA_DEF NAString* naNewApplicationName(void) {
 
 
 NA_DEF NAString* naNewApplicationCompanyName(void) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->application.companyName) {
-    return naNewStringWithFormat("%s", app->application.companyName);
+  NAApplication* app = naGetApplication();
+  if(app->companyName) {
+    return naNewStringWithFormat("%s", app->companyName);
   }else{
     return NA_NULL;
   }
 }
 
 NA_DEF NAString* naNewApplicationVersionString(void) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->application.versionString) {
-    return naNewStringWithFormat("%s", app->application.versionString);
+  NAApplication* app = naGetApplication();
+  if(app->versionString) {
+    return naNewStringWithFormat("%s", app->versionString);
   }else{
     return NA_NULL;
   }
 }
 
 NA_DEF NAString* naNewApplicationBuildString(void) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->application.buildString) {
-    return naNewStringWithFormat("%s", app->application.buildString);
+  NAApplication* app = naGetApplication();
+  if(app->buildString) {
+    return naNewStringWithFormat("%s", app->buildString);
   }else{
     return NA_NULL;
   }
 }
 
 NA_DEF NAString* naNewApplicationIconPath(void) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->application.iconPath) {
-    return naNewStringWithFormat("%s", app->application.iconPath);
+  NAApplication* app = naGetApplication();
+  if(app->iconPath) {
+    return naNewStringWithFormat("%s", app->iconPath);
   }else{
     return NA_NULL;
   }
 }
 
 NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  NAApplication* app = naGetApplication();
   NAString* retString;
   if(dir) {
-    if(app->application.resourcePath) {
-      retString = naNewStringWithFormat("%s%c%s%c%s%c%s", app->application.resourcePath, NA_PATH_DELIMITER_WIN, dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
+    if(app->resourceBasePath) {
+      retString = naNewStringWithFormat("%s%c%s%c%s%c%s", app->resourceBasePath, NA_PATH_DELIMITER_WIN, dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
     }else{
       retString = naNewStringWithFormat("%s%c%s%c%s", dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
     }
   }else{
-    if(app->application.resourcePath) {
-      retString = naNewStringWithFormat("%s%c%s%c%s", app->application.resourcePath, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
+    if(app->resourceBasePath) {
+      retString = naNewStringWithFormat("%s%c%s%c%s", app->resourceBasePath, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
     }else{
       retString = naNewStringWithFormat("%s%c%s", basename, NA_SUFFIX_DELIMITER, suffix);
     }
@@ -640,7 +596,23 @@ NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF
 
 
 
-NA_DEF HICON naGetWINAPIApplicationIcon(void) {
+NA_DEF NAString* naNewExecutablePath(void) {
+  TCHAR modulePath[MAX_PATH];
+  NAString* utf8ModulePath;
+  NAString* utf8ModuleBasePath;
+
+  GetModuleFileName(NULL, modulePath, MAX_PATH);
+  utf8ModulePath = naNewStringWithSystemString(modulePath);
+  utf8ModuleBasePath = naNewStringWithParentOfPath(utf8ModulePath);
+
+  naDelete(utf8ModulePath);
+
+  return utf8ModuleBasePath;
+}
+
+
+
+NA_DEF HICON na_GetWINAPIApplicationIcon(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   return app->appIcon;
 }
@@ -659,8 +631,6 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void) {
 //}
 
 NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  
   NAFont* retFont = NA_NULL;
 
   //EnumFontFamilies(GetDC(NA_NULL), NA_NULL, enumFonts, NA_NULL);
@@ -761,7 +731,6 @@ NA_DEF void naCenterMouse(void* uiElement) {
 
 
 NA_DEF void naShowMouse() {
-  NAApplication* app = naGetApplication();
   if(!na_GetApplicationMouseVisible()) {
     ShowCursor(1);
     na_SetApplicationMouseVisible(NA_TRUE);
@@ -769,7 +738,6 @@ NA_DEF void naShowMouse() {
 }
 
 NA_DEF void naHideMouse() {
-  NAApplication* app = naGetApplication();
   if(na_GetApplicationMouseVisible()) {
     ShowCursor(0);
     na_SetApplicationMouseVisible(NA_FALSE);

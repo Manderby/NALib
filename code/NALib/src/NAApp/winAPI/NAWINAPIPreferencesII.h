@@ -21,14 +21,14 @@ NA_HDEF void* na_GetNativePreferences() {
     naError("No application running. Use naStartApplication.");
   #endif
   if(!na_nativePreferences) {
-    NAString* appname = naNewApplicationName();
-    NAString* companyname = naNewApplicationCompanyName();
+    NAString* appName = naNewApplicationName();
+    NAString* companyName = naNewApplicationCompanyName();
 
     NAString* fullKeyName;
-    if(companyname) {
-      fullKeyName = naNewStringWithFormat("Software\\%s\\%s", naGetStringUTF8Pointer(companyname), naGetStringUTF8Pointer(appname));
+    if(companyName) {
+      fullKeyName = naNewStringWithFormat("Software\\%s\\%s", naGetStringUTF8Pointer(companyName), naGetStringUTF8Pointer(appName));
     }else{
-      fullKeyName = naNewStringWithFormat("Software\\%s", naGetStringUTF8Pointer(appname));
+      fullKeyName = naNewStringWithFormat("Software\\%s", naGetStringUTF8Pointer(appName));
     }
 
     WCHAR* systemFullKeyName = naAllocWideCharStringWithUTF8String(naGetStringUTF8Pointer(fullKeyName));
@@ -38,9 +38,9 @@ NA_HDEF void* na_GetNativePreferences() {
     }
 
     naFree(systemFullKeyName);
-    naDelete(appname);
-    if(companyname) {
-      naDelete(companyname);
+    naDelete(appName);
+    if(companyName) {
+      naDelete(companyName);
     }
     naDelete(fullKeyName);
   }

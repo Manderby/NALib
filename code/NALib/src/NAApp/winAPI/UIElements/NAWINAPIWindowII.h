@@ -254,7 +254,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
     naGetUIElementNativePtr(naGetApplication()),
     NULL);
 
-  HICON hIcon = naGetWINAPIApplicationIcon();
+  HICON hIcon = na_GetWINAPIApplicationIcon();
   if(hIcon) {   
     SendMessage(nativePtr, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
     SendMessage(nativePtr, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
