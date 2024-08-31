@@ -11,19 +11,21 @@
 
 
 
-NA_HDEF void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr) {
-  na_InitUIElement(&openGLSpace->uiElement, NA_UI_OPENGL_SPACE, nativePtr);
-  naResetOpenGLSpaceTransformation(openGLSpace);
-}
-
-
-
-NA_HDEF void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace) {
-  na_ClearUIElement(&openGLSpace->uiElement);
-}
-
-
 #if NA_COMPILE_OPENGL == 1
+
+
+
+  NA_HDEF void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr) {
+    na_InitUIElement(&openGLSpace->uiElement, NA_UI_OPENGL_SPACE, nativePtr);
+    naResetOpenGLSpaceTransformation(openGLSpace);
+  }
+
+
+
+  NA_HDEF void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace) {
+    na_ClearUIElement(&openGLSpace->uiElement);
+  }
+
 
 
   NAByte na_pixelFont5x9[(5*16/8)*9*6] = {
