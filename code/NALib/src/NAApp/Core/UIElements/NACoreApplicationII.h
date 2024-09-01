@@ -106,7 +106,7 @@ NA_DEF void naSetApplicationResourceBasePath(const NAUTF8Char* path) {
 NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
   NAApplication* app = naGetApplication();
   app->iconPath = path;
-  na_SetApplicationIconPath();
+  na_SetApplicationIconPath(path);
 }
 
 

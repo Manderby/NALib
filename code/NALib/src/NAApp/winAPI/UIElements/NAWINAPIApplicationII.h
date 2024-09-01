@@ -492,9 +492,10 @@ NA_DEF void naOpenConsoleWindow(void) {
 
 
 
-NA_HDEF void na_SetApplicationIconPath() {
-  if(app->iconPath) {
-    NAImage* iconImage = naCreateImageWithFilePath(app->iconPath);
+NA_HDEF void na_SetApplicationIconPath(const NAUTF8Char* path) {  
+  if(path) {
+    NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+    NAImage* iconImage = naCreateImageWithFilePath(path);
     HBITMAP bitmap = naAllocNativeImageWithImage(iconImage);
    
     HBITMAP hbmMask = CreateCompatibleBitmap(
