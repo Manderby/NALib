@@ -6,38 +6,45 @@
 
 
 
+// Theoretically, it should be 24, but due to some strange reason, starting
+// with one of the newer systems, the button mouse capture are did shrink.
+// Setting this value to 10 points more does the trick.
+#define NA_COCOA_DEFAULT_BUTTON_HEIGHT (24 + 10)
+
+
+
 @implementation NACocoaNativeButton
 
 - (id) initWithButton:(NACocoaButton*)newCocoaButton flags:(uint32)flags isImage:(bool)newIsImage frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
-  isImage = newIsImage;
-
-  if(naGetFlagu32(flags, NA_BUTTON_BORDERED)) {
-//    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NSBezelStyleShadowlessSquare : NABezelStylePush]; 
-    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NABezelStylePush : NABezelStylePush]; 
-    [self setBordered:YES];
-  }else{
-    if(!isImage && naGetFlagu32(flags, NA_BUTTON_STATEFUL)) {
-      [self setBezelStyle:NABezelStyleInline]; 
-      [self setBordered:YES];
-    }else{
-      [self setBezelStyle:NABezelStylePush]; 
-      [self setBordered:NO];
-    }
-  }
-
-  if(isImage) {
-    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NSButtonTypeMomentaryChange];
-    [[self cell] setImageScaling:NSImageScaleNone];
-  }else{
-    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
-  }
+//  isImage = newIsImage;
+//
+//  if(naGetFlagu32(flags, NA_BUTTON_BORDERED)) {
+////    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NSBezelStyleShadowlessSquare : NABezelStylePush]; 
+//    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NABezelStylePush : NABezelStylePush]; 
+//    [self setBordered:YES];
+//  }else{
+//    if(!isImage && naGetFlagu32(flags, NA_BUTTON_STATEFUL)) {
+//      [self setBezelStyle:NABezelStyleInline]; 
+//      [self setBordered:YES];
+//    }else{
+//      [self setBezelStyle:NABezelStylePush]; 
+//      [self setBordered:NO];
+//    }
+//  }
+//
+//  if(isImage) {
+//    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NSButtonTypeMomentaryChange];
+//    [[self cell] setImageScaling:NSImageScaleNone];
+//  }else{
+//    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
+//  }
     
   cocoaButton = newCocoaButton;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
+//  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
 
   return self;
 }
@@ -216,7 +223,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
-    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, 24))];
+    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -251,7 +258,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
-    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, 24))];
+    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -285,7 +292,7 @@ NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
-    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, 24))];
+    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -327,7 +334,7 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
-    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, 24))];
+    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
