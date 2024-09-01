@@ -229,7 +229,6 @@ NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace) {
 
 NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos) {
   na_AddSpaceChild(space, child);
-
   double offsetY = na_GetUIElementYOffset(child);
 
   NARect childRect = naGetUIElementRect(child);

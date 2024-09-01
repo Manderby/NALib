@@ -9,7 +9,7 @@
 // Theoretically, it should be 24, but due to some strange reason, starting
 // with one of the newer systems, the button mouse capture are did shrink.
 // Setting this value to 10 points more does the trick.
-#define NA_COCOA_DEFAULT_BUTTON_HEIGHT (24 + 10)
+#define NA_COCOA_DEFAULT_BUTTON_HEIGHT 24
 
 
 
@@ -18,33 +18,33 @@
 - (id) initWithButton:(NACocoaButton*)newCocoaButton flags:(uint32)flags isImage:(bool)newIsImage frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
-//  isImage = newIsImage;
-//
-//  if(naGetFlagu32(flags, NA_BUTTON_BORDERED)) {
-////    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NSBezelStyleShadowlessSquare : NABezelStylePush]; 
-//    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NABezelStylePush : NABezelStylePush]; 
-//    [self setBordered:YES];
-//  }else{
-//    if(!isImage && naGetFlagu32(flags, NA_BUTTON_STATEFUL)) {
-//      [self setBezelStyle:NABezelStyleInline]; 
-//      [self setBordered:YES];
-//    }else{
-//      [self setBezelStyle:NABezelStylePush]; 
-//      [self setBordered:NO];
-//    }
-//  }
-//
-//  if(isImage) {
-//    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NSButtonTypeMomentaryChange];
-//    [[self cell] setImageScaling:NSImageScaleNone];
-//  }else{
-//    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
-//  }
+  isImage = newIsImage;
+
+  if(naGetFlagu32(flags, NA_BUTTON_BORDERED)) {
+//    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NSBezelStyleShadowlessSquare : NABezelStylePush]; 
+    [self setBezelStyle:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NABezelStylePush : NABezelStylePush]; 
+    [self setBordered:YES];
+  }else{
+    if(!isImage && naGetFlagu32(flags, NA_BUTTON_STATEFUL)) {
+      [self setBezelStyle:NABezelStyleInline]; 
+      [self setBordered:YES];
+    }else{
+      [self setBezelStyle:NABezelStylePush]; 
+      [self setBordered:NO];
+    }
+  }
+
+  if(isImage) {
+    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NSButtonTypeMomentaryChange];
+    [[self cell] setImageScaling:NSImageScaleNone];
+  }else{
+    [self setButtonType:naGetFlagu32(flags, NA_BUTTON_STATEFUL) ? NAButtonTypePushOnPushOff : NAButtonTypeMomentaryLight];
+  }
     
   cocoaButton = newCocoaButton;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-//  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
+  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
 
   return self;
 }
@@ -211,19 +211,23 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
 
   uint32 flags = NA_BUTTON_BORDERED;
   
-  double widthSupplement = 0.;
+  double sizeSupplement = 0.;
   if(isAtLeastMacOSVersion(11, 0)) {
   // On newer systems bordered buttons are 5 units shorter than expected on
-  // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
-  // move the button 5 units to the left.
-    widthSupplement = 10.;
+  // the left and right. At the same time, the top and bottom mouse capture
+  // area is also 5 units shorter. Therefore, we add 10 units and in
+  // naAddSpaceChild we move the button 5 units to the left and bottom and
+  // enlarge the frame accordingly.
+    sizeSupplement = 10.;
   }
   
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
-    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
+    frame:naMakeNSRectWithSize(naMakeSize(
+      width + sizeSupplement,
+      NA_COCOA_DEFAULT_BUTTON_HEIGHT + sizeSupplement))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -246,19 +250,23 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
 
-  double widthSupplement = 0.;
+  double sizeSupplement = 0.;
   if(isAtLeastMacOSVersion(11, 0)) {
   // On newer systems bordered buttons are 5 units shorter than expected on
-  // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
-  // move the button 5 units to the left.
-    widthSupplement = 10.;
+  // the left and right. At the same time, the top and bottom mouse capture
+  // area is also 5 units shorter. Therefore, we add 10 units and in
+  // naAddSpaceChild we move the button 5 units to the left and bottom and
+  // enlarge the frame accordingly.
+    sizeSupplement = 10.;
   }
 
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
-    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
+    frame:naMakeNSRectWithSize(naMakeSize(
+      width + sizeSupplement,
+      NA_COCOA_DEFAULT_BUTTON_HEIGHT + sizeSupplement))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -280,19 +288,23 @@ NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
   
   uint32 flags = NA_BUTTON_BORDERED;
 
-  double widthSupplement = 0.;
+  double sizeSupplement = 0.;
   if(isAtLeastMacOSVersion(11, 0)) {
   // On newer systems bordered buttons are 5 units shorter than expected on
-  // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
-  // move the button 5 units to the left.
-    widthSupplement = 10.;
+  // the left and right. At the same time, the top and bottom mouse capture
+  // area is also 5 units shorter. Therefore, we add 10 units and in
+  // naAddSpaceChild we move the button 5 units to the left and bottom and
+  // enlarge the frame accordingly.
+    sizeSupplement = 10.;
   }
 
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
-    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
+    frame:naMakeNSRectWithSize(naMakeSize(
+      width + sizeSupplement,
+      NA_COCOA_DEFAULT_BUTTON_HEIGHT + sizeSupplement))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -322,19 +334,23 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
     secondaryIcon = naRecreateImageSet(icon);
   }
 
-  double widthSupplement = 0.;
+  double sizeSupplement = 0.;
   if(isAtLeastMacOSVersion(11, 0)) {
   // On newer systems bordered buttons are 5 units shorter than expected on
-  // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
-  // move the button 5 units to the left.
-    widthSupplement = 10.;
+  // the left and right. At the same time, the top and bottom mouse capture
+  // area is also 5 units shorter. Therefore, we add 10 units and in
+  // naAddSpaceChild we move the button 5 units to the left and bottom and
+  // enlarge the frame accordingly.
+    sizeSupplement = 10.;
   }
 
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
-    frame:naMakeNSRectWithSize(naMakeSize(width + widthSupplement, NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
+    frame:naMakeNSRectWithSize(naMakeSize(
+      width + sizeSupplement,
+      NA_COCOA_DEFAULT_BUTTON_HEIGHT + sizeSupplement))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -591,8 +607,10 @@ NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
   NARect rect = naMakeRectWithNSRect([nativePtr frame]);
   if(isAtLeastMacOSVersion(11, 0)) {
   // On newer systems bordered buttons are 5 units shorter than expected on
-  // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
-  // move the button 5 units to the left.
+  // the left and right. At the same time, the top and bottom mouse capture
+  // area is also 5 units shorter. Therefore, we add 10 units and in
+  // naAddSpaceChild we move the button 5 units to the left and bottom and
+  // enlarge the frame accordingly.
     rect.pos.x += 5;
     rect.size.width -= 10;
   }

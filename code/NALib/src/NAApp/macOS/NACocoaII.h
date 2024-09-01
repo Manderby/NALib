@@ -74,7 +74,7 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem) {
   if(NSAppKitVersionNumber < NSAppKitVersionNumber11_0) {
     switch(naGetUIElementType(elem)) {
     case NA_UI_APPLICATION:  return  0.;
-    case NA_UI_BUTTON:       return  0.;
+    case NA_UI_BUTTON:       return 0.;
     case NA_UI_CHECKBOX:     return +5.;
     case NA_UI_IMAGE_SPACE:  return  0.;
     case NA_UI_LABEL:        return +6.;
@@ -95,7 +95,18 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem) {
   }else{
     switch(naGetUIElementType(elem)) {
     case NA_UI_APPLICATION:  return  0.;
-    case NA_UI_BUTTON:       return  0.;
+    case NA_UI_BUTTON:
+    {
+      if(naIsButtonBordered((const NAButton*)elem)) {
+        if(isAtLeastMacOSVersion(11, 0)) {
+          // On newer systems bordered buttons are 5 units smaller than expected 
+          // concerning the mouse capture area. Therefore, we add 10 units and
+          // move the button 5 units to the bottom.
+          return -5.;
+        }
+      }
+      return  0.;
+    }
     case NA_UI_CHECKBOX:     return +5.;
     case NA_UI_IMAGE_SPACE:  return  0.;
     case NA_UI_LABEL:        return +5.;
