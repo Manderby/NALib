@@ -435,10 +435,6 @@ NA_HDEF na_redrawOpenGLSpaces(void* data) {
     if(!na_DispatchUIElementCommand(&openGLSpace->openGLSpace.uiElement, NA_UI_COMMAND_REDRAW)) {
       // don't know what to do.
     }
-
-    //RECT updateRegion;
-    //GetClientRect(naGetUIElementNativePtr(uiElement), &updateRegion );
-    //ValidateRect(naGetUIElementNativePtr(openGLSpace), &updateRegion);
   }
   naClearListIterator(&it);
   naEmptyList(&app->openGLRedrawList);

@@ -63,16 +63,9 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
 
     winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
 
-    // Activating the redraw list is using a timer to update the openGL spaces.
-    // That might become useful in the future again, but for now, we directly
-    // draw the elements with the risk of skipping a few frames. But at least
-    // everything will be drawn in sync and at the moment of execution.
-    //naAddOpenGLSpaceToRedrawList(winapiOpenGLSpace);
-
-    wglMakeCurrent(GetDC(naGetUIElementNativePtr(winapiOpenGLSpace)), winapiOpenGLSpace->hRC);
-    if(!na_DispatchUIElementCommand(&winapiOpenGLSpace->openGLSpace.uiElement, NA_UI_COMMAND_REDRAW)) {
-      // don't know what to do.
-    }
+    // Activating the redraw list is using a timer to update all openGL spaces
+    // at once.
+    naAddOpenGLSpaceToRedrawList(winapiOpenGLSpace);
 
     RECT updateRegion;
     GetClientRect(naGetUIElementNativePtr(uiElement), &updateRegion);
