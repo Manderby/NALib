@@ -62,6 +62,8 @@ NA_IAPI NAThread naMakeThread( const char* threadName,
 NA_IAPI void naClearThread(NAThread thread);
 // Calling this function will execute the thread once.
 NA_IAPI void naRunThread(NAThread thread);
+// Waits for the given thread to be finished.
+NA_IAPI void naAwaitThread(NAThread thread);
 
 // //////////////////////////////////
 // Mutex

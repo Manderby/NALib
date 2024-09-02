@@ -148,6 +148,17 @@ NA_IDEF void naRunThread(NAThread thread) {
 
 
 
+NA_IDEF void naAwaitThread(NAThread thread) {
+  NAThreadStruct* threadstruct = (NAThreadStruct*)thread;
+  #if NA_OS == NA_OS_WINDOWS
+    WaitForSingleObject(threadstruct->nativeThread, INFINITE);
+  #else
+    #error not implemented yet
+  //    dispatch_async_f(threadstruct->nativeThread, threadstruct->arg, threadstruct->function);
+  #endif
+}
+
+
 // ////////////////////////////
 // MUTEXES
 // ////////////////////////////
