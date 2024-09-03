@@ -87,6 +87,9 @@ NA_IDEF int naSleepS(double seconds) {
 typedef struct NAThreadStruct NAThreadStruct;
 struct NAThreadStruct{
   const char* name;
+  #if NA_OS == NA_OS_MAC_OS_X
+    dispatch_group_t dispatchGroup; // Needed to wait for threads.
+  #endif
   NANativeThread nativeThread;  // If you experience an error here when working
   NAMutator function;           // with plain C files on a Mac: Turn off the
   void* arg;                    // automatic reference counting in project
@@ -100,6 +103,7 @@ NA_IDEF NAThread naMakeThread(const char* threadName, NAMutator function, void* 
   #if NA_OS == NA_OS_WINDOWS
     threadstruct->nativeThread = NA_NULL; // Note that on windows, creating the thread would immediately start it.
   #else
+    threadstruct->dispatchGroup = dispatch_group_create();
     threadstruct->nativeThread = dispatch_queue_create(threadName, DISPATCH_QUEUE_SERIAL);
   #endif
   threadstruct->function = function;
@@ -118,6 +122,7 @@ NA_IDEF void naClearThread(NAThread thread) {
       // Thread will be released automatically when ARC is turned on.
     #else
       dispatch_release(threadstruct->nativeThread);
+      dispatch_release(threadstruct->dispatchGroup);
     #endif
   #endif
   naFree(threadstruct);
@@ -142,7 +147,7 @@ NA_IDEF void naRunThread(NAThread thread) {
   #if NA_OS == NA_OS_WINDOWS
     threadstruct->nativeThread = CreateThread(NULL, 0, na_RunWindowsThread, threadstruct, 0, 0);
   #else
-    dispatch_async_f(threadstruct->nativeThread, threadstruct->arg, threadstruct->function);
+    dispatch_group_async_f(threadstruct->dispatchGroup, threadstruct->nativeThread, threadstruct->arg, threadstruct->function);
   #endif
 }
 
@@ -153,8 +158,7 @@ NA_IDEF void naAwaitThread(NAThread thread) {
   #if NA_OS == NA_OS_WINDOWS
     WaitForSingleObject(threadstruct->nativeThread, INFINITE);
   #else
-    #error not implemented yet
-  //    dispatch_async_f(threadstruct->nativeThread, threadstruct->arg, threadstruct->function);
+    dispatch_group_wait(threadstruct->dispatchGroup, DISPATCH_TIME_FOREVER);
   #endif
 }
 

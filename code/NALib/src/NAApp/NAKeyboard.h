@@ -18,6 +18,7 @@ typedef struct NAKeyStroke NAKeyStroke;
 
 
 
+#include <stdlib.h>
 #include "../NABase/NABase.h"
 NA_PROTOTYPE(NAString);
 
