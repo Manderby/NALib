@@ -175,7 +175,7 @@ NA_IDEF const void* naGetTreeCurLeafKey(NATreeIterator* iter) {
     if(!na_IsTreeItemLeaf(tree, iter->item))
       naError("This iterator is not at a leaf.");
   #endif
-  return na_GetTreeLeafKey(tree->config, (NATreeLeaf*)iter->item);
+  return na_GetTreeLeafKey((NATreeLeaf*)iter->item, tree->config);
 }
 
 
@@ -205,7 +205,7 @@ NA_IDEF const void* naGetTreeCurLeafConst(NATreeIterator* iter) {
     if(!na_IsTreeItemLeaf(tree, iter->item))
       naError("This iterator is not at a leaf.");
   #endif
-  return naGetPtrConst(na_GetTreeLeafData(tree->config, (NATreeLeaf*)iter->item));
+  return naGetPtrConst(na_GetTreeLeafData((NATreeLeaf*)iter->item, tree->config));
 }
 
 
@@ -235,7 +235,7 @@ NA_IDEF void* naGetTreeCurLeafMutable(NATreeIterator* iter) {
   if(!na_IsTreeItemLeaf(tree, iter->item))
     naError("This iterator is not at a leaf.");
   #endif
-  return naGetPtrMutable(na_GetTreeLeafData(tree->config, (NATreeLeaf*)iter->item));
+  return naGetPtrMutable(na_GetTreeLeafData((NATreeLeaf*)iter->item, tree->config));
 }
 
 

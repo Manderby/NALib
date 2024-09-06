@@ -32,7 +32,7 @@ NA_IDEF void naEmptyTree(NATree* tree) {
   #endif
   if(tree->root) {
     if(naIsTreeRootLeaf(tree)) {
-      na_DestructTreeLeaf(tree->config, (NATreeLeaf*)tree->root);
+      na_DestructTreeLeaf((NATreeLeaf*)tree->root, tree->config);
     }else{
       na_DestructTreeNode((NATreeNode*)tree->root, NA_TRUE, tree->config);
     }

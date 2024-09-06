@@ -98,7 +98,7 @@ NA_HDEF NATreeLeaf* na_NewTreeLeafOct(const NATreeConfiguration* config, const v
   NAInt leafExponent = naGetTreeConfigurationBaseLeafExponent(config);
   NATreeOctLeaf* octLeaf = naNew(NATreeOctLeaf);
   NAVertex alignedVertex = na_GetOctTreeAlignedVertex(leafExponent, key);
-  na_InitTreeLeaf(config, na_GetOctLeafLeaf(octLeaf), &alignedVertex, content);
+  na_InitTreeLeaf(na_GetOctLeafLeaf(octLeaf), &alignedVertex, content, config);
   octLeaf->leafExponent = leafExponent;
   return na_GetOctLeafLeaf(octLeaf);
 }
@@ -373,7 +373,7 @@ NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf) {
   }
   
   // The finally, destruct the leaf.
-  na_DestructTreeLeaf(tree->config, leaf);
+  na_DestructTreeLeaf(leaf, tree->config);
   return parent;
 }
 

@@ -94,7 +94,7 @@ NA_HDEF NATreeLeaf* na_NewTreeLeafQuad(const NATreeConfiguration* config, const 
   NAInt leafExponent = naGetTreeConfigurationBaseLeafExponent(config);
   NATreeQuadLeaf* quadLeaf = naNew(NATreeQuadLeaf);
   NAPos alignedPos = na_GetQuadTreeAlignedPos(leafExponent, key);
-  na_InitTreeLeaf(config, na_GetQuadLeafLeaf(quadLeaf), &alignedPos, content);
+  na_InitTreeLeaf(na_GetQuadLeafLeaf(quadLeaf), &alignedPos, content, config);
   quadLeaf->leafExponent = leafExponent;
   return na_GetQuadLeafLeaf(quadLeaf);
 }
@@ -348,7 +348,7 @@ NA_HDEF NATreeNode* na_RemoveLeafQuad(NATree* tree, NATreeLeaf* leaf) {
   }
   
   // The finally, destruct the leaf.
-  na_DestructTreeLeaf(tree->config, leaf);
+  na_DestructTreeLeaf(leaf, tree->config);
   return parent;
 }
 

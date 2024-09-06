@@ -221,14 +221,14 @@ NA_HIAPI size_t na_GetTreeNodeChildIndex(NATreeNode* node, NATreeItem* child, co
 
 // Leaf
 NA_HIAPI NATreeItem* na_GetTreeLeafItem(NATreeLeaf* leaf);
-NA_HIAPI void na_InitTreeLeaf(const NATreeConfiguration* config, NATreeLeaf* leaf, const void* key, NAPtr content);
+NA_HIAPI void na_InitTreeLeaf(NATreeLeaf* leaf, const void* key, NAPtr content, const NATreeConfiguration* config);
 NA_HIAPI void na_ClearTreeLeaf(NATreeLeaf* leaf);
-NA_HIAPI void na_DestructLeafData(const NATreeConfiguration* config, NAPtr data);
-NA_HIAPI void na_DestructTreeLeaf(const NATreeConfiguration* config, NATreeLeaf* leaf);
-NA_HIAPI NAPtr na_ConstructLeafData(const NATreeConfiguration* config, const void* key, NAPtr content);
-NA_HIAPI void* na_GetTreeLeafKey(const NATreeConfiguration* config, NATreeLeaf* leaf);
-NA_HIAPI NAPtr na_GetTreeLeafData(const NATreeConfiguration* config, NATreeLeaf* leaf);
-NA_HIAPI void na_SetTreeLeafData(const NATreeConfiguration* config, NATreeLeaf* leaf, NAPtr newcontent);
+NA_HIAPI void na_DestructLeafData(NAPtr data, const NATreeConfiguration* config);
+NA_HIAPI void na_DestructTreeLeaf(NATreeLeaf* leaf, const NATreeConfiguration* config);
+NA_HIAPI NAPtr na_ConstructLeafData(const void* key, NAPtr content, const NATreeConfiguration* config);
+NA_HIAPI void* na_GetTreeLeafKey(NATreeLeaf* leaf, const NATreeConfiguration* config);
+NA_HIAPI NAPtr na_GetTreeLeafData(NATreeLeaf* leaf, const NATreeConfiguration* config);
+NA_HIAPI void na_SetTreeLeafData(NATreeLeaf* leaf, NAPtr newcontent, const NATreeConfiguration* config);
 
 // Iterator
 NA_HIAPI void na_SetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newitem);

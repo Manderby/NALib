@@ -235,7 +235,7 @@ NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTok
     while(iter->item) {
       if(na_IsTreeItemLeaf(tree, iter->item)) {
         // If the current item is a leaf, call the leaf searcher callback.
-        NAPtr data = na_GetTreeLeafData(tree->config, (NATreeLeaf*)iter->item);
+        NAPtr data = na_GetTreeLeafData((NATreeLeaf*)iter->item, tree->config);
         nextIndex = leafSearcher(token, data);
       }else{
         // If the current item is a node, call the node searcher callback.
@@ -289,8 +289,8 @@ NA_HDEF NABool na_AddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conte
   if(!found || replace) {
     if(found) {
       // Destruct the leaf and recreate it again.
-      na_DestructLeafData(tree->config, na_GetTreeLeafData(tree->config, (NATreeLeaf*)(iter->item)));
-      na_SetTreeLeafData(tree->config, (NATreeLeaf*)(iter->item), na_ConstructLeafData(tree->config, key, content));
+      na_DestructLeafData(na_GetTreeLeafData((NATreeLeaf*)(iter->item), tree->config), tree->config);
+      na_SetTreeLeafData((NATreeLeaf*)(iter->item), na_ConstructLeafData(key, content, tree->config), tree->config);
     }else{
       // Add the new data and set the iterator to that newly created position.
       NATreeLeaf* contentLeaf = na_AddTreeContentInPlace(tree, iter->item, key, content, NA_TREE_LEAF_INSERT_ORDER_KEY);

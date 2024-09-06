@@ -222,6 +222,31 @@ void testTreeItems(){
     
     naRelease(config);
   }
+
+  naTestGroup("Leaf"){
+    NATreeConfiguration* config = naCreateTreeConfiguration(0);
+    NATreeNode node;
+    NATreeItem item;
+
+    naTestCrash(na_GetTreeLeafItem(NA_NULL));
+    naTestCrash(na_InitTreeLeaf(NA_NULL, NA_NULL, naMakePtrNull(), NA_NULL));
+    naTestCrash(na_ClearTreeLeaf(NA_NULL));
+    
+    naRelease(config);
+
+
+//NA_HIAPI void na_InitTreeLeaf(NATreeLeaf* leaf, const void* key, NAPtr content, const NATreeConfiguration* config);
+//
+//NA_HIAPI void na_DestructLeafData(NAPtr data, const NATreeConfiguration* config);
+//NA_HIAPI void na_DestructTreeLeaf(NATreeLeaf* leaf, const NATreeConfiguration* config);
+//NA_HIAPI NAPtr na_ConstructLeafData(const void* key, NAPtr content, const NATreeConfiguration* config);
+//NA_HIAPI void* na_GetTreeLeafKey(NATreeLeaf* leaf, const NATreeConfiguration* config);
+//NA_HIAPI NAPtr na_GetTreeLeafData(NATreeLeaf* leaf, const NATreeConfiguration* config);
+//NA_HIAPI void na_SetTreeLeafData(NATreeLeaf* leaf, NAPtr newcontent, const NATreeConfiguration* config);
+
+
+
+  }
 }
 
 

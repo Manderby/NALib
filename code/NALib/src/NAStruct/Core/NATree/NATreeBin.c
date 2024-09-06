@@ -47,7 +47,7 @@ NA_HDEF NATreeNode* na_NewTreeNodeBin(NATree* tree, const void* key, NATreeLeaf*
 
 NA_HDEF NATreeLeaf* na_NewTreeLeafBin(NATree* tree, const void* key, NAPtr content) {
   NATreeBinLeaf* binleaf = naNew(NATreeBinLeaf);
-  na_InitTreeLeaf(tree->config, na_GetBinLeafLeaf(binleaf), key, content);
+  na_InitTreeLeaf(na_GetBinLeafLeaf(binleaf), key, content, tree->config);
   return na_GetBinLeafLeaf(binleaf);
 }
 
@@ -222,7 +222,7 @@ NA_HDEF NATreeNode* na_RemoveLeafBin(NATree* tree, NATreeLeaf* leaf) {
   }else{
     tree->root = NA_NULL;
   }
-  na_DestructTreeLeaf(tree->config, leaf);
+  na_DestructTreeLeaf(leaf, tree->config);
   return grandparent;
 }
 
