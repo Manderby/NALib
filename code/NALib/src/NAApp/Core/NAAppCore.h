@@ -12,38 +12,34 @@
 // ///////////////////////////
 
 
+#include "../../NABase/NAConfiguration.h"
+#if NA_COMPILE_GUI == 1
+
+
+
+#include "../../NAStruct/NAList.h"
+#include "../../NAMath/NAVectorAlgebra.h"
+NA_PROTOTYPE(NATranslator);
 
 #include "../NAApp.h"
 
-#if NA_COMPILE_GUI == 1
 
-#include "../../NAStruct/NAList.h"
-#include "../../NAUtility/NATranslator.h"
-
-// Very much the same as the nativePtr, there are certain types which are
-// casted differently on the different systems and therefore they are
-// declared with a global void* or integer big enough to encapsulate all
-// possible casts on all systems. Internally, they are caseted to these
-// types:
-
-typedef struct NA_UIElement NA_UIElement;
-
-typedef struct NAEventReaction NAEventReaction;
-typedef struct NAKeyboardShortcutReaction NAKeyboardShortcutReaction;
 
 // //////////////////////////////
 // NA_UIElement is the base type of any ui element. All ui element struct
 // definitions have an NA_UIElement as the first entry:
 
+typedef struct NA_UIElement NA_UIElement;
 struct NA_UIElement{
   NAUIElementType elementType;
   void*           parent;
   NAList          reactions;
   NAList          shortcuts;
-  size_t          hoverReactionCount;
-  NABool          mouseInside;
-  NABool          allowNotifications;
+  uint32          flags;             // Currently only used in winAPI
   void*           nativePtr;         // The native pointer
+  size_t          hoverReactionCount;
+  size_t          mouseTrackingCount;
+  void*           mouseTracking;
 };
 
 struct NAApplication{
@@ -54,15 +50,15 @@ struct NAApplication{
   
   NATranslator*     translator;
   NAFont*           systemFont;
-  NAMouseStatus     mouseStatus;     // The mouse cursor status
-  NAKeyStroke       curKeyStroke;    // The currently pressed key combination
-  NAInt             flags;
+  NAMouseStatus*    mouseStatus;     // The mouse cursor status
+  NAKeyStroke*      keyStroke;       // The currently pressed key combination
+  uint32            flags;
 
-  const NAUTF8Char*       name;
+  const NAUTF8Char*       appName;
   const NAUTF8Char*       companyName;
   const NAUTF8Char*       versionString;
   const NAUTF8Char*       buildString;
-  const NAUTF8Char*       resourcePath;
+  const NAUTF8Char*       resourceBasePath;
   const NAUTF8Char*       iconPath;
 };
 
@@ -70,8 +66,8 @@ struct NAButton{
   NA_UIElement uiElement;
   NAUTF8Char* text;
   NAUTF8Char* text2;
-  const NAUIImage* uiImage;
-  const NAUIImage* uiImage2;
+  const NAImageSet* imageSet;
+  const NAImageSet* imageSet2;
   uint32 flags;
 };
 
@@ -81,7 +77,7 @@ struct NACheckBox{
 
 struct NAImageSpace{
   NA_UIElement uiElement;
-  NAUIImage* uiImage;
+  NAImageSet* imageSet;
 };
 
 struct NALabel{
@@ -98,12 +94,15 @@ struct NAMenuItem{
   NA_UIElement uiElement;
 };
 
+
 struct NAMetalSpace{
   NA_UIElement uiElement;
+  NAMat33d transformation;
 };
 
 struct NAOpenGLSpace{
   NA_UIElement uiElement;
+  NAMat33d transformation;
 };
 
 struct NASelect{
@@ -130,7 +129,7 @@ struct NASlider{
 struct NASpace{
   NA_UIElement uiElement;
   NAList       childs;
-  NABabyColor  backgroundColor;
+  NAColor*     backgroundColor;
   NABool       alternateBackground;
   NABool       dragsWindow;
 };
@@ -147,7 +146,7 @@ struct NATextBox{
 
 struct NAWindow{
   NA_UIElement uiElement;
-  NAInt        storageTag;
+  size_t       storageTag;
   void*        contentSpace;
   uint32       coreFlags;
   uint32       flags;
@@ -156,43 +155,40 @@ struct NAWindow{
 
 
 
-struct NAEventReaction{
+typedef struct NA_EventReaction NA_EventReaction;
+struct NA_EventReaction{
   void*              controller;
   NAReactionCallback callback;
   NAUICommand        command;
 };
 
-struct NAKeyboardShortcutReaction{
+typedef struct NA_KeyboardShortcutReaction NA_KeyboardShortcutReaction;
+struct NA_KeyboardShortcutReaction{
   void*              controller;
   NAReactionCallback callback;
-  NAKeyStroke        shortcut;
+  NAKeyStroke*       shortcut;
 };
-
-struct NAFont{
-  void* nativePtr;  // HFONT on Windows, NSFont* on Mac
-  NAString* name;
-  uint32 flags;
-  double size;
-};
-NA_EXTERN_RUNTIME_TYPE(NAFont);
 
 
 
 extern NAApplication* na_App;
 
-#define NA_APPLICATION_FLAG_RUNNING               0x01
-#define NA_APPLICATION_FLAG_MOUSE_VISIBLE         0x02
+#define NA_APPLICATION_FLAG_RUNNING                 0x01
+#define NA_APPLICATION_FLAG_MOUSE_VISIBLE           0x02
+#define NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING 0x04 // only for winAPI
 
-#define NA_CORE_WINDOW_FLAG_FULLSCREEN            0x01
-#define NA_CORE_WINDOW_FLAG_RESIZEABLE            0x02
-#define NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE        0x04
-#define NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING  0x08
-#define NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS 0x10
 
-#define NA_WINDOW_PREF_STRING_POS_X "NAWindow_%d_Pos_x"
-#define NA_WINDOW_PREF_STRING_POS_Y "NAWindow_%d_Pos_y"
-#define NA_WINDOW_PREF_STRING_SIZE_WIDTH "NAWindow_%d_Size_Width"
-#define NA_WINDOW_PREF_STRING_SIZE_HEIGHT "NAWindow_%d_Size_Height"
+#define NA_CORE_WINDOW_FLAG_FULLSCREEN             0x01
+#define NA_CORE_WINDOW_FLAG_RESIZEABLE             0x02
+#define NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE         0x04
+#define NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING   0x08
+#define NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS  0x10
+#define NA_WINDOW_FLAG_FIRST_SYSTEM_DEPENDENT_FLAG 0x100
+
+#define NA_WINDOW_PREF_STRING_POS_X "NAWindow_" NA_SIZE_T_PRI "_Pos_x"
+#define NA_WINDOW_PREF_STRING_POS_Y "NAWindow_" NA_SIZE_T_PRI "_Pos_y"
+#define NA_WINDOW_PREF_STRING_SIZE_WIDTH "NAWindow_" NA_SIZE_T_PRI "_Size_Width"
+#define NA_WINDOW_PREF_STRING_SIZE_HEIGHT "NAWindow_" NA_SIZE_T_PRI "_Size_Height"
 
 // //////////////////////////////////////////
 // Hidden API
@@ -206,12 +202,12 @@ extern NAApplication* na_App;
 
 // Native UI Pointer
 // Calls the system specific method to clear/deallocate the given nativePtr.
-NA_HAPI void na_ClearUINativePtr(NANativePtr nativePtr);
+NA_HAPI void na_ClearUINativePtr(void* nativePtr);
 
 
 
 // NAUIElement
-NA_HAPI void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, NANativePtr nativePtr);
+NA_HAPI void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, void* nativePtr);
 NA_HAPI void na_ClearUIElement(NA_UIElement* uiElement);
 
 NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
@@ -219,9 +215,15 @@ NA_HAPI double na_GetUIElementXOffset(const NA_UIElement* elem);
 NA_HAPI double na_GetUIElementYOffset(const NA_UIElement* elem);
 
 NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
-NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
-NA_HAPI void na_AllowUIElementNotifications(NA_UIElement* elem);
-NA_HAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
+
+NA_HAPI NABool na_GetApplicationMouseVisible();
+NA_HAPI void na_SetApplicationMouseVisible(NABool visible);
+NA_HAPI void na_SetApplicationIconPath(const NAUTF8Char* path);
+
+NA_HAPI void na_SetUIElementMouseInside(NA_UIElement* elem, NABool inside);
+NA_HAPI NABool na_GetUIElementMouseInside(const NA_UIElement* elem);
+NA_HAPI void na_SetUIElementWINAPINotificationsBlocked(NA_UIElement* elem, NABool block);
+NA_HAPI NABool na_GetUIElementWINAPINotificationsBlocked(const NA_UIElement* elem);
 
 // Returns a pointer to the ui element which uses the given native pointer.
 // Every gui element which is handeled by NALib uses a native struct which is
@@ -230,45 +232,63 @@ NA_HAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
 // NALib struct. This function solves that. Slow, but does the job.
 NA_HAPI void* na_GetUINALibEquivalent(void* nativePtr);
 
+// Returns true if the given element has any reaction attached which responds
+// to the given command.
+NA_HAPI NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAUICommand command);
+
 // Dispatches a command with the given uiElement.
-// As long as the command has not been finished using NA_TRUE as a return value
-// in the NAReactionCallback function callback, it will be bubbling upwards in
-// the following order:
-// - First responder
-// - containing space
-// - window
-// - application
-// - discard command as unhandled.
-// The function will return NA_TRUE if the event shall not be processed any
-// further. If this function returns NA_FALSE, the event shall still be
-// processed by the calling function. This is especially important on Windows
-// where non-handling of certain events might interrupt the whole messaging
-// chain.
+// 
+// Dispatching happends according to the following rules:
+// - If the given element has at least 1 reaction fitting to the given command,
+//   these reaction will be called in the same order they were added. Afterwards
+//   the function returns with NA_TRUE. No bubbling towards parent elements
+//   happens automatically. If bubbling is desired, one has to do it manually by
+//   calling the dispatch method with the parent element in the reaction methd.
+// - If the given element has NO reactions fitting the given command, the
+//   dispatch method will be called for the parent element of the given element.
+//   The parent element is the parent given by the NALib structure, not the
+//   native parent! The return value of this function is determined by the
+//   return value of the recursive call.
+// - If there is no parent available in the NALib structure, the function
+//   returns NA_FALSE, meaning, the event has not been handeled at all.
+//   This in turn will usually cause the NALib GUI elements to call the event
+//   handling method given by the system or base class of the native element.
 NA_HAPI NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command);
 
 // To be implemented in the system dependent files:
 NA_HAPI void na_RefreshUIElementNow(void* uiElement);
 
+// Ensures the mouse being tracked as soon as there is one reason to do so.
+NA_HAPI void na_RetainMouseTracking(NA_UIElement* uiElement);
+NA_HAPI void na_ReleaseMouseTracking(NA_UIElement* uiElement);
+NA_HAPI void na_UpdateMouseTracking(NA_UIElement* uiElement);
+// System dependent implementation for adding a new mouse tracking object:
+NA_HAPI void* na_AddMouseTracking(NA_UIElement* uiElement);
+NA_HAPI void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking);
 
 
 // NAApplication
 NA_HAPI NAApplication* na_NewApplication(void);
 NA_HAPI NABool na_IsApplicationRunning(void);
-NA_HAPI void na_InitApplication(NAApplication* application, NANativePtr nativePtr);
+NA_HAPI void na_InitApplication(NAApplication* application, void* nativePtr);
 NA_HAPI void na_ClearApplication(NAApplication* application);
 NA_HAPI NARect na_GetApplicationRect(const NAApplication* application);
 NA_HAPI void na_SetApplicationRect(const NAApplication* application, NARect rect);
+NA_HAPI const NAFont* na_GetApplicationSystemFont(const NAApplication* app);
+NA_HAPI NAMouseStatus* na_GetApplicationMouseStatus(NAApplication* application);
+// Takes the ownership of the keyStroke. Do not call naDelete on it!
+NA_HAPI void na_SetApplicationKeyStroke(NAApplication* app, NAKeyStroke* keyStroke);
 
 // NAButton
 #define NA_BUTTON_BORDERED   0x01
 #define NA_BUTTON_STATEFUL   0x02
 
-NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAUIImage* uiImage, const NAUIImage* uiImage2, uint32 flags);
+NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAImageSet* imageSet, const NAImageSet* imageSet2, uint32 flags);
 NA_HAPI void na_ClearButton(NAButton* button);
 NA_HAPI void na_setButtonText(NAButton* button, const NAUTF8Char* text);
 NA_HAPI void na_setButtonText2(NAButton* button, const NAUTF8Char* text);
-NA_HAPI void na_setButtonImage(NAButton* button, const NAUIImage* uiImage);
-NA_HAPI void na_setButtonImage2(NAButton* button, const NAUIImage* uiImage);
+NA_HAPI void na_setButtonImage(NAButton* button, const NAImageSet* imageSet);
+NA_HAPI void na_setButtonImage2(NAButton* button, const NAImageSet* imageSet);
 NA_HAPI NARect na_GetButtonRect(const NA_UIElement* button);
 NA_HAPI void na_SetButtonRect(NA_UIElement* button, NARect rect);
 
@@ -364,6 +384,8 @@ NA_HAPI void na_SetTextFieldRect(NA_UIElement* textField, NARect rect);
 NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
 NA_HAPI void na_ClearWindow(NAWindow* window);
 NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
+NA_HAPI void na_RetainWindowMouseTracking(NAWindow* window);
+NA_HAPI void na_ReleaseWindowMouseTracking(NAWindow* window);
 NA_HAPI NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window);
 NA_HAPI void na_SetWindowRect(NA_UIElement* window, NARect rect);
@@ -372,17 +394,90 @@ NA_HAPI void na_SetWindowRect(NA_UIElement* window, NARect rect);
 
 
 // Mouse related functions
-NA_HAPI void na_SetMouseButtonPressed(NABool leftPressed);
+NA_HAPI NAMouseStatus* na_AllocMouseStatus();
+NA_HAPI void na_DeallocMouseStatus(NAMouseStatus* status);
 
-NA_HAPI void na_SetMouseWarpedTo(NAPos newpos);
-NA_HAPI void na_SetMouseMovedTo(NAPos newpos);
-NA_HAPI void na_SetMouseMovedByDiff(double deltaX, double deltaY);
-NA_HAPI void na_SetMouseScrolledByDiff(double deltaX, double deltaY);
-NA_HAPI void na_SetMouseEnteredAtPos(NAPos newpos);
-NA_HAPI void na_SetMouseExitedAtPos(NAPos newpos);
+NA_HAPI void na_SetMouseButtonPressed(NAMouseStatus* status, NAMouseButton button, NABool pressed);
 
-NA_HAPI void* na_AllocMouseTracking(NANativePtr nativePtr); // todo
-NA_HAPI void na_DeallocMouseTracking(void* tracking);       // todo
+NA_HAPI void na_SetMouseWarpedTo(NAMouseStatus* status, NAPos newpos);
+NA_HAPI void na_SetMouseMovedTo(NAMouseStatus* status, NAPos newpos);
+NA_HAPI void na_SetMouseMovedByDiff(NAMouseStatus* status, double deltaX, double deltaY);
+NA_HAPI void na_SetMouseEnteredAtPos(NAMouseStatus* status, NAPos newpos);
+NA_HAPI void na_SetMouseExitedAtPos(NAMouseStatus* status, NAPos newpos);
+
+
+// Font
+NA_HAPI NAFont* na_CreateFont(void* nativePtr, const NAString* name, uint32 flags, double size);
+NA_HAPI void na_DestructFontNativePtr(void* nativePtr);
+
+
+// Preferences
+NA_HAPI void* na_GetNativePreferences(void);
+NA_HAPI void na_ShutdownPreferences(void);
+
+NA_HAPI NAi64     na_GetRawPreferencesBool  (void* prefs, const char* key);
+NA_HAPI NAi64     na_GetRawPreferencesInt   (void* prefs, const char* key);
+NA_HAPI NAi64     na_GetRawPreferencesEnum  (void* prefs, const char* key);
+NA_HAPI double    na_GetRawPreferencesDouble(void* prefs, const char* key);
+NA_HAPI NAString* na_GetRawPreferencesString(void* prefs, const char* key);
+
+NA_HAPI void na_SetRawPreferencesBool  (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesInt   (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesEnum  (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesDouble(void* prefs, const char* key, double valueStorage);
+NA_HAPI void na_SetRawPreferencesString(void* prefs, const char* key, NAString* valueStorage);
+
+#if NA_OS == NA_OS_WINDOWS
+
+#include <windows.h>
+
+  // Returns a value from the windows registry.
+  // 
+  // The "Variable" method will allocate sufficient memory with malloc for you
+  // and return the size allocated in valueSize if available.
+  // 
+  // The "Fixed" method expects a pointer to an existing memory location and
+  // the size in bytes available at that location. The requested value will
+  // be stored at that location if and only if the value size is equal to the
+  // one retrieved from the registry.
+  // 
+  // Both methods will return NA_NULL if something went wrong.
+  NA_HAPI void* na_GetWINRegistryVariableEntry(
+    HKEY rootKey,
+    const NAUTF8Char* path,
+    const NAUTF8Char* key,
+    size_t* valueSize);
+
+  NA_HAPI void* na_GetWINRegistryFixedEntry(
+    HKEY rootKey,
+    const NAUTF8Char* path,
+    const NAUTF8Char* key,
+    void* value,
+    size_t valueSize);
+
+#endif
+
+
+// ImageSet
+NA_HAPI const NAImage* na_GetImageSetSubImage(
+  const NAImageSet* imageSet,
+  double resolution,
+  NASkin skin,
+  NAImageSetInteraction interaction,
+  NABool secondaryState);
+
+NA_HAPI void* na_GetImageSetNativeSubImage(
+  const NAImageSet* imageSet,
+  double resolution,
+  NASkin skin,
+  NAImageSetInteraction interaction,
+  NABool secondaryState);
+
+NA_HAPI void na_FillDefaultTextColorWithSystemSkin(NAColor* color);
+NA_HAPI void na_FillDefaultLinkColorWithSystemSkin(NAColor* color);
+NA_HAPI void na_FillDefaultAccentColorWithSystemSkin(NAColor* color);
+
+
 
 
 

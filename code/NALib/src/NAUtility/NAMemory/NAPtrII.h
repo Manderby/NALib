@@ -65,7 +65,7 @@ struct NAPtr{
 
 
 
-NA_IDEF NAPtr naMakePtrNull(){
+NA_IDEF NAPtr naMakePtrNull() {
   NAPtr ptr;
   ptr.data.d = NA_NULL;
   #if NA_DEBUG
@@ -77,14 +77,17 @@ NA_IDEF NAPtr naMakePtrNull(){
 
 
 
-NA_IDEF void naCleanupPtr(NAPtr* ptr, NAMutator destructor){
+NA_IDEF void naCleanupPtr(NAPtr* ptr, NAMutator destructor) {
   #if NA_DEBUG
     if(ptr->debugFlags & NA_PTR_CLEANED)
       naError("NAPtr has already been cleaned once.");
     if(destructor && ptr->debugFlags & NA_PTR_CONST_DATA)
       naError("Calling a destructor on const data. This smells fishy.");
   #endif
-  if(destructor){destructor(ptr->data.d);}
+  
+  if(destructor)
+    destructor(ptr->data.d);
+  
   #if NA_DEBUG
     ptr->debugFlags |= NA_PTR_CLEANED;
   #endif
@@ -92,7 +95,7 @@ NA_IDEF void naCleanupPtr(NAPtr* ptr, NAMutator destructor){
 
 
 
-NA_IDEF NAPtr naMakePtrWithDataConst(const void* data){
+NA_IDEF NAPtr naMakePtrWithDataConst(const void* data) {
   NAPtr ptr;
   ptr.data.constd = data;
   #if NA_DEBUG
@@ -103,7 +106,7 @@ NA_IDEF NAPtr naMakePtrWithDataConst(const void* data){
 
 
 
-NA_IDEF NAPtr naMakePtrWithDataMutable(void* data){
+NA_IDEF NAPtr naMakePtrWithDataMutable(void* data) {
   NAPtr ptr;
   ptr.data.d = data;
   #if NA_DEBUG
@@ -114,25 +117,25 @@ NA_IDEF NAPtr naMakePtrWithDataMutable(void* data){
 
 
 
-NA_IDEF const void* naGetPtrConst(NAPtr ptr){
+NA_IDEF const void* naGetPtrConst(NAPtr ptr) {
   return ptr.data.constd;
 }
 
 
 
-NA_IDEF void* naGetPtrMutable(NAPtr ptr){
+NA_IDEF void* naGetPtrMutable(NAPtr ptr) {
   return ptr.data.d;
 }
 
 
 
-NA_IDEF NABool naIsPtrValid(NAPtr ptr){
+NA_IDEF NABool naIsPtrValid(NAPtr ptr) {
   return ptr.data.d != NA_NULL;
 }
 
 
 
-NA_IDEF NABool naIsPtrConst(NAPtr ptr){
+NA_IDEF NABool naIsPtrConst(NAPtr ptr) {
   #if NA_DEBUG
     return (NABool)(ptr.debugFlags & NA_PTR_CONST_DATA);
   #else

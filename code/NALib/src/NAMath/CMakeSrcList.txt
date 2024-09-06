@@ -14,10 +14,34 @@ set(headerFiles
 
 set(coreImplementationFiles
   ${NAMathDir}/Core/NAComplexII.h
-  ${NAMathDir}/Core/NACoordII.h
   ${NAMathDir}/Core/NAMathOperators.c
   ${NAMathDir}/Core/NAMathOperatorsII.h
   ${NAMathDir}/Core/NARandomII.h
+)
+
+set(coreCoordFiles
+  ${NAMathDir}/Core/NACoord/NABorderII.h
+  ${NAMathDir}/Core/NACoord/NABoxII.h
+  ${NAMathDir}/Core/NACoord/NABoxCombinationII.h
+  ${NAMathDir}/Core/NACoord/NAContainsTesterII.h
+  ${NAMathDir}/Core/NACoord/NACoordII.h
+  ${NAMathDir}/Core/NACoord/NACoordAlignII.h
+  ${NAMathDir}/Core/NACoord/NACoordArithmeticII.h
+  ${NAMathDir}/Core/NACoord/NACoordCalculationII.h
+  ${NAMathDir}/Core/NACoord/NACoordClampingII.h
+  ${NAMathDir}/Core/NACoord/NACoordComparisonII.h
+  ${NAMathDir}/Core/NACoord/NACoordEndMaxII.h
+  ${NAMathDir}/Core/NACoord/NACoordIndexII.h
+  ${NAMathDir}/Core/NACoord/NACoordMacOSII.h
+  ${NAMathDir}/Core/NACoord/NACoordTesterII.h
+  ${NAMathDir}/Core/NACoord/NAPosII.h
+  ${NAMathDir}/Core/NACoord/NARangeII.h
+  ${NAMathDir}/Core/NACoord/NARangeCombinationII.h
+  ${NAMathDir}/Core/NACoord/NARectII.h
+  ${NAMathDir}/Core/NACoord/NARectCombinationII.h
+  ${NAMathDir}/Core/NACoord/NASizeII.h
+  ${NAMathDir}/Core/NACoord/NAVertexII.h
+  ${NAMathDir}/Core/NACoord/NAVolumeII.h
 )
 
 set(coreVectorAlgebraFiles
@@ -38,12 +62,14 @@ set(coreVectorAlgebraFiles
   ${NAMathDir}/Core/NAVectorAlgebra/NAVectorProductsII.h
 )
 
-
 source_group("NAMath" FILES ${headerFiles})
 target_sources(NALib PRIVATE ${headerFiles})
 
 source_group("NAMath/Core" FILES ${coreImplementationFiles})
 target_sources(NALib PRIVATE ${coreImplementationFiles})
+
+source_group("NAMath/Core/NACoord" FILES ${coreCoordFiles})
+target_sources(NALib PRIVATE ${coreCoordFiles})
 
 source_group("NAMath/Core/NAVectorAlgebra" FILES ${coreVectorAlgebraFiles})
 target_sources(NALib PRIVATE ${coreVectorAlgebraFiles})

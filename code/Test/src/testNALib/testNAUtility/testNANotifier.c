@@ -116,6 +116,12 @@ void testNANotifierPublishAndSubscribe(){
 
     void* subscription = naSubscribe(NA_NULL, topicId, msgUpdate, NA_NULL, testMessageCallback);
     naTestVoid(naUnsubscribe(subscription));
+    naTestVoid(naUnsubscribe(NA_NULL));
+
+    int dummy;
+    void* receyverSubscription = naSubscribe(NA_NULL, topicId, msgUpdate, &dummy, testMessageCallback);
+    naTestVoid(naUnsubscribeAllOfReceyver(receyverSubscription));
+    naTestVoid(naUnsubscribeAllOfReceyver(NA_NULL));
 
     naDeallocNotifier(notifier);
   }

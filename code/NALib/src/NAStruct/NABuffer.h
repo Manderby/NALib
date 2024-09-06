@@ -104,7 +104,7 @@ NA_API NABuffer* naCreateBufferExtraction( NABuffer* srcBuffer,
 // All content will be loaded in the new buffer. If there are sparse parts
 // in the src buffer, they will be filled with the current source.
 NA_API NABuffer* naCreateBufferCopy(const NABuffer* srcBuffer,
-                                        NARangei range,
+                                        NARangei64 range,
                                           NABool secureMemory);
 
 // Creates a buffer sharing the same source as the given buffer. Also uses
@@ -158,7 +158,7 @@ NA_API NABuffer* naCreateBufferWithCustomSource( NABufferSource* source,
 // parameter will be the data pointer given to naSetBufferSourceData.
 typedef void (*NABufferFiller)(
   void* dst,
-  NARangei sourceRange,
+  NARangei64 sourceRange,
   void* sourceData);
 
 // Creates a new custom source.
@@ -191,7 +191,7 @@ NA_IAPI void naSetBufferSourceData(
 // function can only be called once per source!
 NA_IAPI void naSetBufferSourceLimit(
   NABufferSource* source,
-  NARangei limit);
+  NARangei64 limit);
 
 
 
@@ -209,11 +209,11 @@ NA_IAPI void naSetBufferSourceLimit(
 // both ends.
 // Note that extending does not automatically allocates memory. It just
 // changes the range the buffer is allowed to address.
-NA_IAPI NABool   naIsBufferEmpty            (const NABuffer* buffer);
-NA_IAPI NARangei naGetBufferRange           (const NABuffer* buffer);
-NA_IAPI NABool   naHasBufferFixedRange      (const NABuffer* buffer);
-NA_IAPI void     naFixBufferRange           (NABuffer*       buffer);
-NA_IAPI void     naExtendBufferRange        (NABuffer*       buffer,
+NA_IAPI NABool     naIsBufferEmpty            (const NABuffer* buffer);
+NA_IAPI NARangei64 naGetBufferRange           (const NABuffer* buffer);
+NA_IAPI NABool     naHasBufferFixedRange      (const NABuffer* buffer);
+NA_IAPI void       naFixBufferRange           (NABuffer*       buffer);
+NA_IAPI void       naExtendBufferRange        (NABuffer*       buffer,
                                                        NAInt bytesAtStart,
                                                        NAInt bytesAtEnd);
 
@@ -247,9 +247,9 @@ NA_API NAInt naSearchBufferByteOffset(        NABuffer* buffer,
 //          declare the denoted bytes to be no longer in use by this buffer.
 //          This gives NALib the possibility to deallocate memory.
 NA_API void naCacheBufferRange(   NABuffer* buffer,
-                                   NARangei range);
+                                   NARangei64 range);
 NA_API void naDismissBufferRange( NABuffer* buffer,
-                                   NARangei range);
+                                   NARangei64 range);
 
 // ////////////////////////////////
 // WHOLE BUFFER FUNCTIONS
@@ -306,17 +306,17 @@ NA_API void naClearBufferIterator(NABufferIterator* iter);
 // Absolute  searches relative to the zero-point of this buffer.
 // Relative  searches relative to the current position of this buffer.
 // Source    searches relative to the zero-point of the source.
-// FromStart searches relative to the start of the buffers range.
-// FromEnd   searches relative to the end of the buffers range.
+// AtStart   searches relative to the start of the buffers range.
+// AtEnd     searches relative to the end of the buffers range.
 //
 // Important: The offset parameter ist always expected to be forward-oriented.
 // If you want to seek to the last byte, you would need to write
-// naLocateBufferFromEnd(buffer, -1).
+// naLocateBufferAtEnd(buffer, -1).
 NA_API  NAInt  naGetBufferLocation     (const NABufferIterator* iter);
 NA_API  NABool naLocateBufferAbsolute  (NABufferIterator* iter, NAInt offset);
 NA_IAPI NABool naLocateBufferRelative  (NABufferIterator* iter, NAInt offset);
-NA_IAPI NABool naLocateBufferFromStart (NABufferIterator* iter, NAInt offset);
-NA_IAPI NABool naLocateBufferFromEnd   (NABufferIterator* iter, NAInt offset);
+NA_IAPI NABool naLocateBufferAtStart   (NABufferIterator* iter, NAInt offset);
+NA_IAPI NABool naLocateBufferAtEnd     (NABufferIterator* iter, NAInt offset);
 
 NA_API  NABool naIterateBuffer(         NABufferIterator* iter, NAInt step);
 
@@ -438,7 +438,7 @@ NA_IAPI void naWriteBufferBytes(
 NA_API void naWriteBufferBuffer(
   NABufferIterator* iter,
   const NABuffer* srcBuffer,
-  NARangei srcRange);
+  NARangei64 srcRange);
 
 // Repeats all bytes at the current position which have the given distance
 // to the current position (towards the start). Examples:

@@ -8,13 +8,13 @@
 #include "NAMath/NAMathOperators.h"
 
 
-NA_IDEF NAComplex naMakeComplex(double re, double im){
+NA_IDEF NAComplex naMakeComplex(double re, double im) {
   NAComplex newcomplex = {re, im};
   return newcomplex;
 }
 
 
-NA_IDEF NAComplex naMakeComplexFromPolar(double r, double phi){
+NA_IDEF NAComplex naMakeComplexWithPolar(double r, double phi) {
   NAComplex newcomplex;
   #if NA_DEBUG
     if(r < 0.)
@@ -26,7 +26,7 @@ NA_IDEF NAComplex naMakeComplexFromPolar(double r, double phi){
 }
 
 
-NA_IDEF NAComplex naAddComplexReal(NAComplex a, double b){
+NA_IDEF NAComplex naAddComplexReal(NAComplex a, double b) {
   NAComplex newcomplex = {
     a.re + b,
     a.im
@@ -35,7 +35,7 @@ NA_IDEF NAComplex naAddComplexReal(NAComplex a, double b){
 }
 
 
-NA_IDEF NAComplex naSubComplexReal(NAComplex a, double b){
+NA_IDEF NAComplex naSubComplexReal(NAComplex a, double b) {
   NAComplex newcomplex = {
     a.re - b,
     a.im
@@ -44,7 +44,7 @@ NA_IDEF NAComplex naSubComplexReal(NAComplex a, double b){
 }
 
 
-NA_IDEF NAComplex naMulComplexReal(NAComplex a, double b){
+NA_IDEF NAComplex naMulComplexReal(NAComplex a, double b) {
   NAComplex newcomplex = {
     a.re * b,
     a.im * b
@@ -53,7 +53,7 @@ NA_IDEF NAComplex naMulComplexReal(NAComplex a, double b){
 }
 
 
-NA_IDEF NAComplex naDivComplexReal(NAComplex a, double b){
+NA_IDEF NAComplex naDivComplexReal(NAComplex a, double b) {
   double divisor = naInv(b);
   NAComplex newcomplex = {
     a.re * divisor,
@@ -63,7 +63,7 @@ NA_IDEF NAComplex naDivComplexReal(NAComplex a, double b){
 }
 
 
-NA_IDEF NAComplex naAddComplexComplex(NAComplex a, NAComplex b){
+NA_IDEF NAComplex naAddComplexComplex(NAComplex a, NAComplex b) {
   NAComplex newcomplex = {
     a.re + b.re,
     a.im + b.im
@@ -72,7 +72,7 @@ NA_IDEF NAComplex naAddComplexComplex(NAComplex a, NAComplex b){
 }
 
 
-NA_IDEF NAComplex naSubComplexComplex(NAComplex a, NAComplex b){
+NA_IDEF NAComplex naSubComplexComplex(NAComplex a, NAComplex b) {
   NAComplex newcomplex = {
     a.re - b.re,
     a.im - b.im
@@ -81,7 +81,7 @@ NA_IDEF NAComplex naSubComplexComplex(NAComplex a, NAComplex b){
 }
 
 
-NA_IDEF NAComplex naMulComplexComplex(NAComplex a, NAComplex b){
+NA_IDEF NAComplex naMulComplexComplex(NAComplex a, NAComplex b) {
   NAComplex newcomplex = {
     a.re * b.re - a.im * b.im,
     a.re * b.im + a.im * b.re
@@ -90,7 +90,7 @@ NA_IDEF NAComplex naMulComplexComplex(NAComplex a, NAComplex b){
 }
 
 
-NA_IDEF NAComplex naDivComplexComplex(NAComplex a, NAComplex b){
+NA_IDEF NAComplex naDivComplexComplex(NAComplex a, NAComplex b) {
   double divisor = naInv(naNormComplex(b));
   NAComplex newcomplex = {
     divisor * (a.re * b.re + a.im * b.im),
@@ -100,7 +100,7 @@ NA_IDEF NAComplex naDivComplexComplex(NAComplex a, NAComplex b){
 }
 
 
-NA_IDEF NAComplex naNegComplex(NAComplex a){
+NA_IDEF NAComplex naNegComplex(NAComplex a) {
   NAComplex newcomplex = {
     -a.re,
     -a.im
@@ -109,7 +109,7 @@ NA_IDEF NAComplex naNegComplex(NAComplex a){
 }
 
 
-NA_IDEF NAComplex naInvComplex(NAComplex a){
+NA_IDEF NAComplex naInvComplex(NAComplex a) {
   double divisor = naInv(naNormComplex(a));
   NAComplex newcomplex = {
     divisor * a.re,
@@ -119,7 +119,7 @@ NA_IDEF NAComplex naInvComplex(NAComplex a){
 }
 
 
-NA_IDEF NAComplex naConjComplex(NAComplex a){
+NA_IDEF NAComplex naConjComplex(NAComplex a) {
   NAComplex newcomplex = {
     a.re,
     -a.im
@@ -128,22 +128,22 @@ NA_IDEF NAComplex naConjComplex(NAComplex a){
 }
 
 
-NA_IDEF double naNormComplex(NAComplex a){
+NA_IDEF double naNormComplex(NAComplex a) {
   return a.re * a.re + a.im * a.im;
 }
 
 
-NA_IDEF double naAbsComplex(NAComplex a){
+NA_IDEF double naAbsComplex(NAComplex a) {
   return naSqrt(naNormComplex(a));
 }
 
 
-NA_IDEF double naArgComplex(NAComplex a){
+NA_IDEF double naArgComplex(NAComplex a) {
   return naAtan2(a.im, a.re);
 }
 
 
-NA_IDEF NAComplex naExpComplex(NAComplex a){
+NA_IDEF NAComplex naExpComplex(NAComplex a) {
   double exponent = naExp(a.re);
   NAComplex newcomplex = {
     exponent * naCos(a.im),
@@ -153,7 +153,7 @@ NA_IDEF NAComplex naExpComplex(NAComplex a){
 }
 
 
-NA_IDEF NAComplex naSinComplex(NAComplex a){
+NA_IDEF NAComplex naSinComplex(NAComplex a) {
   double exponent1 = naExp(-a.im);
   double exponent2 = naExp(a.im);
   NAComplex newcomplex = {
@@ -164,7 +164,7 @@ NA_IDEF NAComplex naSinComplex(NAComplex a){
 }
 
 
-NA_IDEF NAComplex naCosComplex(NAComplex a){
+NA_IDEF NAComplex naCosComplex(NAComplex a) {
   double exponent1 = naExp(-a.im);
   double exponent2 = naExp(a.im);
   NAComplex newcomplex = {

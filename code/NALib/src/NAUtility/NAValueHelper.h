@@ -34,35 +34,45 @@ NA_IAPI NABool naToggleFlagu32(uint32* flags, uint32 flag);
 // Converts an integer denoting an end or max to its counterpart. Also does
 // some checks if the values over- or underflow.
 NA_IAPI int32  naMakeMaxWithEndi32          (int32  end);
-NA_IAPI NAi64  naMakeMaxWithEndi64          (NAi64  end);
+NA_IAPI NAi64  naMakeMaxWithEndi64          (int64  end);
 NA_IAPI NAInt  naMakeMaxWithEndi            (NAInt  end);
 NA_IAPI size_t naMakeMaxWithEnds            (size_t end);
 
 NA_IAPI int32  naMakeEndWithMaxi32          (int32  max);
-NA_IAPI NAi64  naMakeEndWithMaxi64          (NAi64  max);
+NA_IAPI NAi64  naMakeEndWithMaxi64          (int64  max);
 NA_IAPI NAInt  naMakeEndWithMaxi            (NAInt  max);
 NA_IAPI size_t naMakeEndWithMaxs            (size_t max);
 
-NA_IAPI double naMakeEndWithStartAndLength  (double start, double length);
-NA_IAPI float  naMakeEndWithStartAndLengthf (float  start, float  length);
-NA_IAPI NAInt  naMakeEndWithStartAndLengthi (NAInt  start, NAInt  length);
-NA_IAPI size_t naMakeEndWithStartAndLengths (size_t start, size_t length);
+NA_IAPI double naMakeEndWithStartAndLength   (double start, double length);
+NA_IAPI float  naMakeEndWithStartAndLengthf  (float  start, float  length);
+NA_IAPI NAInt  naMakeEndWithStartAndLengthi  (NAInt  start, NAInt  length);
+NA_IAPI int32  naMakeEndWithStartAndLengthi32(int32  start, int32  length);
+NA_IAPI int64  naMakeEndWithStartAndLengthi64(int64  start, int64  length);
+NA_IAPI size_t naMakeEndWithStartAndLengths  (size_t start, size_t length);
 
 NA_IAPI NAInt  naMakeMaxWithMinAndLengthi   (NAInt  min,   NAInt  length);
+NA_IAPI int32  naMakeMaxWithMinAndLengthi32 (int32  min,   int32  length);
+NA_IAPI int64  naMakeMaxWithMinAndLengthi64 (int64  min,   int64  length);
 NA_IAPI size_t naMakeMaxWithMinAndLengths   (size_t min,   size_t length);
 
 // The Variants with E also allow start to be greater than end,
 // resulting in a negative size.
-NA_IAPI double naMakeLengthWithStartAndEnd   (double start, double end);
-NA_IAPI double naMakeLengthWithStartAndEndE  (double start, double end);
-NA_IAPI float  naMakeLengthWithStartAndEndf  (float  start, float  end);
-NA_IAPI float  naMakeLengthWithStartAndEndfE (float  start, float  end);
-NA_IAPI NAInt  naMakeLengthWithStartAndEndi  (NAInt  start, NAInt  end);
-NA_IAPI NAInt  naMakeLengthWithStartAndEndiE (NAInt  start, NAInt  end);
-NA_IAPI size_t naMakeLengthWithStartAndEnds  (size_t start, size_t end);
-NA_IAPI size_t naMakeLengthWithStartAndEndsE (size_t start, size_t end);
+NA_IAPI double naMakeLengthWithStartAndEnd    (double start, double end);
+NA_IAPI double naMakeLengthWithStartAndEndE   (double start, double end);
+NA_IAPI float  naMakeLengthWithStartAndEndf   (float  start, float  end);
+NA_IAPI float  naMakeLengthWithStartAndEndfE  (float  start, float  end);
+NA_IAPI NAInt  naMakeLengthWithStartAndEndi   (NAInt  start, NAInt  end);
+NA_IAPI NAInt  naMakeLengthWithStartAndEndiE  (NAInt  start, NAInt  end);
+NA_IAPI int32  naMakeLengthWithStartAndEndi32 (int32  start, int32  end);
+NA_IAPI int32  naMakeLengthWithStartAndEndi32E(int32  start, int32  end);
+NA_IAPI int64  naMakeLengthWithStartAndEndi64 (int64  start, int64  end);
+NA_IAPI int64  naMakeLengthWithStartAndEndi64E(int64  start, int64  end);
+NA_IAPI size_t naMakeLengthWithStartAndEnds   (size_t start, size_t end);
+NA_IAPI size_t naMakeLengthWithStartAndEndsE  (size_t start, size_t end);
 
 NA_IAPI NAInt  naMakeLengthWithMinAndMaxi   (NAInt  min,   NAInt  max);
+NA_IAPI int32  naMakeLengthWithMinAndMaxi32 (int32  min,   int32  max);
+NA_IAPI int64  naMakeLengthWithMinAndMaxi64 (int64  min,   int64  max);
 NA_IAPI size_t naMakeLengthWithMinAndMaxs   (size_t min,   size_t max);
 
 
@@ -76,8 +86,11 @@ NA_IAPI size_t naMakeLengthWithMinAndMaxs   (size_t min,   size_t max);
 // naAlignValuei(-75, 0, 20) == -80
 // naAlignValuei(15, 10, 20) == 10
 // naAlignValuei(35, 10, 20) == 30
-NA_IAPI NAInt naAlignValuei(NAInt value, NAInt offset, NAInt alignLength);
-NA_IAPI double naAlignValued(double value, double offset, double alignLength);
+NA_IAPI double naAlignValue   (double value, double offset, double alignLength);
+NA_IAPI float  naAlignValuef  (float  value, float  offset, float  alignLength);
+NA_IAPI int32  naAlignValuei32(int32  value, int32  offset, int32  alignLength);
+NA_IAPI int64  naAlignValuei64(int64  value, int64  offset, int64  alignLength);
+NA_IAPI size_t naAlignValues  (size_t value, size_t offset, size_t alignLength);
 
 
 
@@ -96,37 +109,51 @@ NA_IAPI double naAlignValued(double value, double offset, double alignLength);
 // For example, test for "Inside" rather than "Outside".
 
 // VALID means: Anything but NaN. Integer values therefore are always valid.
-NA_IAPI NABool naIsOffsetValueValid  (double a);
-NA_IAPI NABool naIsOffsetValueValidf (float  a);
-NA_IAPI NABool naIsOffsetValueValidi (NAInt  a);
-NA_IAPI NABool naIsOffsetValueValids (size_t a);
-NA_IAPI NABool naIsLengthValueValid  (double a);
-NA_IAPI NABool naIsLengthValueValidf (float  a);
-NA_IAPI NABool naIsLengthValueValidi (NAInt  a);
-NA_IAPI NABool naIsLengthValueValids (size_t a);
+NA_IAPI NABool naIsOffsetValueValid   (double a);
+NA_IAPI NABool naIsOffsetValueValidf  (float  a);
+NA_IAPI NABool naIsOffsetValueValidi  (NAInt  a);
+NA_IAPI NABool naIsOffsetValueValidi32(int32  a);
+NA_IAPI NABool naIsOffsetValueValidi64(int64  a);
+NA_IAPI NABool naIsOffsetValueValids  (size_t a);
+
+NA_IAPI NABool naIsLengthValueValid   (double a);
+NA_IAPI NABool naIsLengthValueValidf  (float  a);
+NA_IAPI NABool naIsLengthValueValidi  (NAInt  a);
+NA_IAPI NABool naIsLengthValueValidi32(int32  a);
+NA_IAPI NABool naIsLengthValueValidi64(int64  a);
+NA_IAPI NABool naIsLengthValueValids  (size_t a);
 
 // EMPTY means: Precisely Zero.
-NA_IAPI NABool naIsLengthValueEmpty  (double a);
-NA_IAPI NABool naIsLengthValueEmptyf (float  a);
-NA_IAPI NABool naIsLengthValueEmptyi (NAInt  a);
-NA_IAPI NABool naIsLengthValueEmptys (size_t a);
+NA_IAPI NABool naIsLengthValueEmpty   (double a);
+NA_IAPI NABool naIsLengthValueEmptyf  (float  a);
+NA_IAPI NABool naIsLengthValueEmptyi  (NAInt  a);
+NA_IAPI NABool naIsLengthValueEmptyi32(int32  a);
+NA_IAPI NABool naIsLengthValueEmptyi64(int64  a);
+NA_IAPI NABool naIsLengthValueEmptys  (size_t a);
 
 // NEGATIVE means: Smaller than Zero.
-NA_IAPI NABool naIsLengthValueNegative  (double a);
-NA_IAPI NABool naIsLengthValueNegativef (float  a);
-NA_IAPI NABool naIsLengthValueNegativei (NAInt  a);
-NA_IAPI NABool naIsLengthValueNegatives (size_t a);
+NA_IAPI NABool naIsLengthValueNegative   (double a);
+NA_IAPI NABool naIsLengthValueNegativef  (float  a);
+NA_IAPI NABool naIsLengthValueNegativei  (NAInt  a);
+NA_IAPI NABool naIsLengthValueNegativei32(int32  a);
+NA_IAPI NABool naIsLengthValueNegativei64(int64  a);
+NA_IAPI NABool naIsLengthValueNegatives  (size_t a);
 
 // USEFUL means: Positions must be deterministic (infinity is not).
 // Lengths must be deterministic and greater than zero.
-NA_IAPI NABool naIsOffsetValueUseful  (double a);
-NA_IAPI NABool naIsOffsetValueUsefulf (float  a);
-NA_IAPI NABool naIsOffsetValueUsefuli (NAInt  a);
-NA_IAPI NABool naIsOffsetValueUsefuls (size_t a);
-NA_IAPI NABool naIsLengthValueUseful  (double a);
-NA_IAPI NABool naIsLengthValueUsefulf (float  a);
-NA_IAPI NABool naIsLengthValueUsefuli (NAInt  a);
-NA_IAPI NABool naIsLengthValueUsefuls (size_t a);
+NA_IAPI NABool naIsOffsetValueUseful   (double a);
+NA_IAPI NABool naIsOffsetValueUsefulf  (float  a);
+NA_IAPI NABool naIsOffsetValueUsefuli  (NAInt  a);
+NA_IAPI NABool naIsOffsetValueUsefuli32(int32  a);
+NA_IAPI NABool naIsOffsetValueUsefuli64(int64  a);
+NA_IAPI NABool naIsOffsetValueUsefuls  (size_t a);
+
+NA_IAPI NABool naIsLengthValueUseful   (double a);
+NA_IAPI NABool naIsLengthValueUsefulf  (float  a);
+NA_IAPI NABool naIsLengthValueUsefuli  (NAInt  a);
+NA_IAPI NABool naIsLengthValueUsefuli32(int32  a);
+NA_IAPI NABool naIsLengthValueUsefuli64(int64  a);
+NA_IAPI NABool naIsLengthValueUsefuls  (size_t a);
 
 
 

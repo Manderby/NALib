@@ -1,14 +1,30 @@
 
-#if defined NA_FONT_INCLUDED || !defined NA_APP_INCLUDED
-  #warning "Do not include this file directly. Use NAApp.h"
-#endif
 #ifndef NA_FONT_INCLUDED
 #define NA_FONT_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
+
+
+
+// ///////////////////////////////
+// An NAFont stores information about a specific font with family, size and
+// style.
+
+typedef struct NAFont NAFont;
+
+// An NAFont has reference counting built-in. Use naRetain and naRelease.
+// ///////////////////////////////
+
+  
+  
+#include "../NABase/NABase.h"
+NA_PROTOTYPE(NAString);
+
 
 
 // NALib defines a set of well working fonts with different sizes. They have
 // been tested on different systems and provide a consistent appearance.
-
 typedef enum{
   NA_FONT_KIND_SYSTEM,      // The default system font
   NA_FONT_KIND_TITLE,       // A bolder kind of the default system font
@@ -39,19 +55,35 @@ typedef enum{
 
 
 
-typedef struct NAFont NAFont;
+// Creates a custom font. Use a combination of NA_FONT_FLAG_??? for flags.
+NA_API NAFont* naCreateFont(
+  const NAUTF8Char* fontFamilyName,
+  uint32 flags,
+  double size);
 
-// Use NARelease to release the font again.
-NA_API NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size);
-NA_API NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize size);
+// Creates a preset font.
+NA_API NAFont* naCreateFontWithPreset(
+  NAFontKind kind,
+  NAFontSize size);
 
+// Creates a new font with the default font of the system.
+NA_API NAFont* naCreateSystemFont(void);
+
+// Getter
 NA_API const NAString* naGetFontName(const NAFont* font);
 NA_API uint32 naGetFontFlags(const NAFont* font);
 NA_API double naGetFontSize(const NAFont* font);
 
+// Returns the native representation of the font.
+// HFONT on windows
+// NSFont* on macOS
 NA_API void* naGetFontNativePointer(const NAFont* font);
-NA_API NAFont* naGetSystemFont(void);
 
+
+
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_FONT_INCLUDED
 
 

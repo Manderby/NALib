@@ -1,5 +1,6 @@
 
 #include "GUIExamples.h"
+#include "NAUtility/NAMemory.h"
 
 
 

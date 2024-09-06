@@ -23,7 +23,7 @@
 #endif
 // We test if the current system has a (positive) integer encoding suitable
 // for NALib. Some obscure compilers might handle this differently.
-#if (0x0100 >> 8) != 0x01
+#if(0x0100 >> 8) != 0x01
   #error "Unknown integer number encoding. NALib might not compile or run."
 #endif
 
@@ -41,9 +41,9 @@
 // certain tasks can be speeded up a bit.
 #if   (-1 & 3) == 3
   #define NA_SIGN_ENCODING NA_SIGN_ENCODING_TWOS_COMPLEMENT
-#elif (-1 & 3) == 2
+#elif(-1 & 3) == 2
   #define NA_SIGN_ENCODING NA_SIGN_ENCODING_ONES_COMPLEMENT
-#elif (-1 & 3) == 1
+#elif(-1 & 3) == 1
   #define NA_SIGN_ENCODING NA_SIGN_ENCODING_SIGN_MAGNITUDE
 #else
   #define NA_SIGN_ENCODING NA_SIGN_ENCODING_UNKNOWN

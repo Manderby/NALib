@@ -34,13 +34,13 @@ struct NARefCount{
 
 
 
-NA_HIDEF size_t na_GetRefCountCount(const NARefCount* refCount){
+NA_HIDEF size_t na_GetRefCountCount(const NARefCount* refCount) {
   return refCount->count;
 }
 
 
 
-NA_IDEF NARefCount* naInitRefCount(NARefCount* refCount){
+NA_IDEF NARefCount* naInitRefCount(NARefCount* refCount) {
   refCount->count = 1;
   #if NA_DEBUG
     refCount->dummy = NA_REFCOUNT_DUMMY_VALUE;
@@ -50,15 +50,15 @@ NA_IDEF NARefCount* naInitRefCount(NARefCount* refCount){
 
 
 
-NA_IDEF NABool naIsRefCountZero(NARefCount* refCount){
+NA_IDEF NABool naIsRefCountZero(NARefCount* refCount) {
   return refCount->count == 0;
 }
 
 
 
-NA_IDEF NARefCount* naRetainRefCount(NARefCount* refCount){
+NA_IDEF NARefCount* naRetainRefCount(NARefCount* refCount) {
   #if NA_DEBUG
-    if(!refCount){
+    if(!refCount) {
       naCrash("refCount is Null-Pointer.");
       return NA_NULL;
     }else{
@@ -79,7 +79,7 @@ NA_IDEF NARefCount* naRetainRefCount(NARefCount* refCount){
 
 
 
-NA_IDEF void naReleaseRefCount(NARefCount* refCount, void* data, NAMutator destructor){
+NA_IDEF void naReleaseRefCount(NARefCount* refCount, void* data, NAMutator destructor) {
   #if NA_DEBUG
     if(!refCount)
       naCrash("refCount is Null-Pointer.");
@@ -98,9 +98,10 @@ NA_IDEF void naReleaseRefCount(NARefCount* refCount, void* data, NAMutator destr
   // and NA_DEBUG is 1, this can be detected!
   refCount->count--;
 
-  if(refCount->count == NA_ZERO){
+  if(refCount->count == NA_ZERO) {
     // Call the destructor on the data if available.
-    if(destructor){destructor(data);}
+    if(destructor)
+      destructor(data);
   }
   // Note that other programming languages have incorporated this very idea
   // of self-organized reference-counting pointers deeply within its core.

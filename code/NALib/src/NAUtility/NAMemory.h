@@ -50,29 +50,6 @@ NA_IAPI size_t naGetSystemMemoryPagesizeMask(void);
 #define NA_INVALID_MEMORY_INDEX     NA_MIN_i
 
 
-// Usually, aligned memory can be created in unix like systems using several
-// methods. Unfortunately, none of them did work reliably on the Mac OS X
-// version Snow Leopard back around the year 2015. It looks though as since
-// then, the error got corrected and now, the default method is Posix.
-//
-// These are some notes about the different methods:
-// - Custom uses a rather large chunk of memory to ensure there is enough
-//   space for aligned memory. It works but may lead to false positives
-//   with memory-leak detection tools.
-// - aligned_alloc under C11 is possibly unavailable in macOS. See
-//   https://stackoverflow.com/questions/44841574/aligned-alloc-not-found-for-clang
-// - posix_memalign as well as malloc_zone_memalign are non-C-standard and
-//   did return misaligned pointers in Snow Leopard some years back.
-// - __attribute ((aligned(#))) is unsuitable (because it is not usable at
-//   runtine) and is non-standard
-// - _Alignas is again unsuitable (because not available at runtime) and
-//    only available since C11.
-// Therefore, a custom implementation is provided which is costly but always
-// works.
-// Use the following macros in the NAConfiguration.h file.
-#define NA_MEMALIGN_USE_CUSTOM         0
-#define NA_MEMALIGN_USE_ALIGNED_ALLOC  1
-#define NA_MEMALIGN_USE_POSIX 2
 
 // //////////////////////////////////////
 // Basic Memory allocation and freeing
@@ -128,22 +105,22 @@ NA_IAPI size_t naGetSystemMemoryPagesizeMask(void);
 //
 // Note that the actual definitions of the macros are in NAMemoryII.h
 
-NA_IAPI void* naMalloc             (size_t byteSize);
-#define       naAlloc              (type)
-NA_IAPI void  naFree               (void* ptr);
-
-NA_IAPI void* naMallocAligned      (size_t byteSize, size_t align);
-NA_IAPI void* naMallocPageAligned  (size_t byteSize);
-NA_IAPI void  naFreeAligned        (void* ptr);
-
-NA_API  void* naMallocTmp          (size_t byteSize);
-#define       naNew                (type)
-NA_API  void  naDelete             (void* pointer);
-
-NA_API  void* naRetain             (void* pointer);
-NA_API  void  naRelease            (void* pointer);
-NA_API  const void* naRetainConst  (const void* pointer);
-NA_API  void        naReleaseConst (const void* pointer);
+NA_IAPI void*       naMalloc           (size_t byteSize);
+#define             naAlloc            (type)
+NA_IAPI void        naFree             (void* ptr);
+      
+NA_IAPI void*       naMallocAligned    (size_t byteSize, size_t align);
+NA_IAPI void*       naMallocPageAligned(size_t byteSize);
+NA_IAPI void        naFreeAligned      (void* ptr);
+      
+NA_API  void*       naMallocTmp        (size_t byteSize);
+#define             naNew              (type)
+NA_API  void        naDelete           (void* pointer);
+      
+NA_API  void*       naRetain           (void* pointer);
+NA_API  void        naRelease          (void* pointer);
+NA_API  const void* naRetainConst      (const void* pointer);
+NA_API  void        naReleaseConst     (const void* pointer);
 
 NA_API size_t naGetRuntimeTypeRefCount(const void* pointer);
 

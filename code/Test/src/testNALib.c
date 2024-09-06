@@ -77,6 +77,7 @@ int main(int argc, const char** argv){
 
   // Only output tests which fail.
   naSetTestPrintsAllTests(NA_FALSE);
+  naSetTestPrintsFullGroupName(NA_FALSE);
 
   #if NA_DEBUG == 0
     naExecuteErrorTests(NA_FALSE);

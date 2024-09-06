@@ -148,7 +148,7 @@
 // the <float.h> or <cfloat> header files and has been useful to the author
 // many times already.
 // The sub- and sup-norm macros correspond to 1 minus or 1 plus NA_SINGULARITY.
-#if (FLT_DIG < 6) || (DBL_DIG < 15)
+#if(FLT_DIG < 6) || (DBL_DIG < 15)
   #warning "FLT and DBL digits for NA_SINGULARITY not achieved on this system"
 #endif
 
@@ -160,7 +160,7 @@
 #define NA_SUB_NORM        0.99999999999999
 #define NA_SUP_NORM        1.00000000000001
 
-#if (LDBL_DIG < 18)
+#if(LDBL_DIG < 18)
   #if(LDBL_DIG == DBL_DIG)
     // On some systems, long doubles are supported but only have the
     // accuracy of doubles.
@@ -235,7 +235,7 @@
 
 
 
-NA_IDEF float naMakeFloat(int32 signedSignificand, int32 signedExponent){
+NA_IDEF float naMakeFloat(int32 signedSignificand, int32 signedExponent) {
   #if NA_DEBUG
     if(signedExponent < NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL)
       naError("exponent too low for single precision");
@@ -258,7 +258,7 @@ NA_IDEF float naMakeFloat(int32 signedSignificand, int32 signedExponent){
 
 
 
-NA_IDEF float naMakeFloatWithExponent(int32 signedExponent){
+NA_IDEF float naMakeFloatWithExponent(int32 signedExponent) {
   #if NA_DEBUG
     if(signedExponent < NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL)
       naError("exponent too low for single precision");
@@ -278,7 +278,7 @@ NA_IDEF float naMakeFloatWithExponent(int32 signedExponent){
 
 NA_IDEF float naMakeFloatSubnormal(int32 signedSignificand) {
   #if NA_DEBUG
-  if ((naAbsi32(signedSignificand) > NA_IEEE754_SINGLE_SIGNIFICAND_MASK))
+  if((naAbsi32(signedSignificand) > NA_IEEE754_SINGLE_SIGNIFICAND_MASK))
     naError("significand out of range");
   #endif
   int32 dBits = (int32)(
@@ -290,15 +290,15 @@ NA_IDEF float naMakeFloatSubnormal(int32 signedSignificand) {
 
 NA_IDEF double naMakeDouble(NAi64 signedSignificand, int32 signedExponent) {
   #if NA_DEBUG
-  if (signedExponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
+  if(signedExponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
     naError("exponent too low for double precision");
-  if (!naEquali64(signedSignificand, NA_ZERO_i64) && (signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL))
+  if(!naEquali64(signedSignificand, NA_ZERO_i64) && (signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL))
     naError("exponent creates subnormal number");
-  if (signedExponent > NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
+  if(signedExponent > NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
     naError("exponent too high for double precision");
-  if (signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
+  if(signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
     naError("exponent equals max exponent which is reserved for special values");
-  if (naGreateru64(naCasti64Tou64(naAbsi64(signedSignificand)), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
+  if(naGreateru64(naCasti64Tou64(naAbsi64(signedSignificand)), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
     naError("significand out of range");
   #endif
   NAi64 dBits =
@@ -312,7 +312,7 @@ NA_IDEF double naMakeDouble(NAi64 signedSignificand, int32 signedExponent) {
 
 
 
-NA_IDEF double naMakeDoubleWithExponent(int32 signedExponent){
+NA_IDEF double naMakeDoubleWithExponent(int32 signedExponent) {
   #if NA_DEBUG
     if(signedExponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
       naError("exponent too low for double precision");
@@ -330,7 +330,7 @@ NA_IDEF double naMakeDoubleWithExponent(int32 signedExponent){
 
 
 
-NA_IDEF double naMakeDoubleSubnormal(NAi64 signedSignificand){
+NA_IDEF double naMakeDoubleSubnormal(NAi64 signedSignificand) {
   #if NA_DEBUG
     if(naGreateri64(naAbsi64(signedSignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
       naError("significand out of range");
@@ -345,7 +345,7 @@ NA_IDEF double naMakeDoubleSubnormal(NAi64 signedSignificand){
 
 
 
-NA_IAPI int32 naGetFloatExponent(float f){
+NA_IAPI int32 naGetFloatExponent(float f) {
   #if NA_DEBUG
     if(f == 0.)
       naError("Given number is 0. Result will be subnormal exponent");
@@ -364,7 +364,7 @@ NA_IAPI int32 naGetFloatExponent(float f){
 
 
 
-NA_IAPI int32 naGetFloatInteger(float f){
+NA_IAPI int32 naGetFloatInteger(float f) {
   #if NA_DEBUG
     if(f == NA_INFINITYf || f == -NA_INFINITYf)
       naError("Given number is +-Infinity. Result will be undefined");
@@ -372,16 +372,18 @@ NA_IAPI int32 naGetFloatInteger(float f){
       naError("Given numbers absolute value is too large. Result will be undefined");
   #endif
   int32 fBits = 0;
-  if(f != 0.f){
+  if(f != 0.f) {
     fBits = *((int32*)(void*)&f);
     fBits = fBits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
     fBits = fBits | NA_IEEE754_SINGLE_SIGNIFICAND_NORM;
     int32 exponent = naGetFloatExponent(f);
-    if(exponent == NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL || exponent < 0){
+    if(exponent == NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL || exponent < 0) {
       fBits = NA_ZERO_i32;
     }else{
       fBits = fBits >> (NA_IEEE754_SINGLE_SIGNIFICAND_BITS - exponent);
-      if(f < 0){fBits = -fBits;}
+      if(f < 0) {
+        fBits = -fBits;
+      }
     }
   }
   return fBits;
@@ -389,7 +391,7 @@ NA_IAPI int32 naGetFloatInteger(float f){
 
 
 
-NA_IAPI int32 naGetDoubleExponent(double d){
+NA_IAPI int32 naGetDoubleExponent(double d) {
   #if NA_DEBUG
     if(d == 0.)
       naError("Given number is 0. Result will be subnormal exponent");
@@ -408,7 +410,7 @@ NA_IAPI int32 naGetDoubleExponent(double d){
 
 
 
-NA_IAPI NAi64 naGetDoubleInteger(double d){
+NA_IAPI NAi64 naGetDoubleInteger(double d) {
   #if NA_DEBUG
     if(d == NA_INFINITY || d == -NA_INFINITY)
       naError("Given number is +-Infinity. Result will be undefined");
@@ -416,16 +418,18 @@ NA_IAPI NAi64 naGetDoubleInteger(double d){
       naError("Given numbers absolute value is too large. Result will be undefined");
     #endif
   NAi64 dBits = NA_ZERO_u64;
-  if(d != 0){
+  if(d != 0) {
     dBits = *((NAi64*)(void*)&d);
     dBits = naAndi64(dBits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
     dBits = naOri64(dBits, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);
     int32 exponent = naGetDoubleExponent(d);
-    if(exponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL || exponent < 0){
+    if(exponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL || exponent < 0) {
       dBits = NA_ZERO_i64;
     }else{
       dBits = naShri64(dBits, NA_IEEE754_DOUBLE_SIGNIFICAND_BITS - exponent);
-      if(d < 0){dBits = naNegi64(dBits);}
+      if(d < 0) {
+        dBits = naNegi64(dBits);
+      }
     }
   }
   return dBits;
@@ -433,7 +437,7 @@ NA_IAPI NAi64 naGetDoubleInteger(double d){
 
 
 
-NA_IAPI int32 naGetFloatFraction(float f){
+NA_IAPI int32 naGetFloatFraction(float f) {
   #if NA_DEBUG
     if(naGetFloatInteger(f))
       naError("Less than 6 decimal digits available for accuracy. Result may contain rounding errors. Use E or Slow variant.");
@@ -448,14 +452,14 @@ NA_IAPI int32 naGetFloatFraction(float f){
 
 
 
-NA_IAPI int32 naGetFloatFractionE(float f){
+NA_IAPI int32 naGetFloatFractionE(float f) {
   int32 exponent;
   int32 fbits = *((int32*)(void*)&f);
-  if(f == 0.){
+  if(f == 0.) {
     fbits = NA_ZERO_i32;
   }else{
     exponent = naGetFloatExponent(f);
-    if(exponent < 0){
+    if(exponent < 0) {
       fbits = fbits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
       fbits = fbits | NA_IEEE754_SINGLE_SIGNIFICAND_NORM;
       fbits = fbits >> (-exponent - 1);
@@ -471,12 +475,12 @@ NA_IAPI int32 naGetFloatFractionE(float f){
     hyperBits = naMuli64(hyperBits, hyperTens);
     fbits = naGeti64Hi(hyperBits);
 
-    if(exponent > 0){
+    if(exponent > 0) {
       fbits = fbits >> exponent;
     }
     fbits++;
     fbits = fbits >> 1;
-    if(exponent > 0){
+    if(exponent > 0) {
       fbits = fbits << exponent;
     }
   }
@@ -485,7 +489,7 @@ NA_IAPI int32 naGetFloatFractionE(float f){
 
 
 
-NA_IAPI int32 naGetFloatFractionSlow(float f){
+NA_IAPI int32 naGetFloatFractionSlow(float f) {
   int32 result = naGetFloatFractionSlowE(f);
   #if NA_DEBUG
   if(result == 1000000)
@@ -496,16 +500,16 @@ NA_IAPI int32 naGetFloatFractionSlow(float f){
 
 
 
-NA_IAPI int32 naGetFloatFractionSlowE(float f){
+NA_IAPI int32 naGetFloatFractionSlowE(float f) {
   int32 exponent;
   int32 fbits = *((int32*)(void*)&f);
-  if(f == 0.){
+  if(f == 0.) {
     fbits = NA_ZERO_i32;
   }else{
     NAi64 hyperTens;
     uint32 mul = 1;
     exponent = naGetFloatExponent(f);
-    if(exponent < 0){
+    if(exponent < 0) {
       fbits = fbits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
       fbits = fbits | NA_IEEE754_SINGLE_SIGNIFICAND_NORM;
       fbits = fbits >> (-exponent - 1);
@@ -516,7 +520,10 @@ NA_IAPI int32 naGetFloatFractionSlowE(float f){
       fbits = fbits << exponent;
       fbits = fbits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
       int32 i = naGetFloatInteger(f);
-      while(i){i /= 10; mul *= 10;}
+      while(i) {
+        i /= 10;
+        mul *= 10;
+      }
       hyperTens = naMakei64(NA_ZERO_i32, 1000000 / mul);
     }
 
@@ -534,7 +541,7 @@ NA_IAPI int32 naGetFloatFractionSlowE(float f){
 
 
 
-NA_IAPI NAi64 naGetDoubleFraction(double d){
+NA_IAPI NAi64 naGetDoubleFraction(double d) {
   #if NA_DEBUG
   if(naGetDoubleInteger(d))
     naError("Less than 15 decimal digits available for accuracy. Result may contain rounding errors. Use E or Slow variant.");
@@ -549,14 +556,14 @@ NA_IAPI NAi64 naGetDoubleFraction(double d){
 
 
 
-NA_IAPI NAi64 naGetDoubleFractionE(double d){
+NA_IAPI NAi64 naGetDoubleFractionE(double d) {
   int32 exponent;
   NAi64 dbits = *((NAi64*)(void*)&d);
-  if(d == 0.){
+  if(d == 0.) {
     dbits = NA_ZERO_i64;
   }else{
     exponent = naGetDoubleExponent(d);
-    if(exponent < 0){
+    if(exponent < 0) {
       dbits = naAndi64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
       dbits = naOri64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);
       dbits = naShri64(dbits, -exponent - 1);
@@ -572,12 +579,12 @@ NA_IAPI NAi64 naGetDoubleFractionE(double d){
     hyperBits = naMuli128(hyperBits, hyperTens);
     dbits = naGeti128Hi(hyperBits);
 
-    if(exponent > 0){
+    if(exponent > 0) {
       dbits = naShri64(dbits, exponent);
     }
     naInci64(dbits);
     dbits = naShri64(dbits, 1);
-    if(exponent > 0){
+    if(exponent > 0) {
       dbits = naShli64(dbits, exponent);
     }
   }
@@ -586,7 +593,7 @@ NA_IAPI NAi64 naGetDoubleFractionE(double d){
 
 
 
-NA_IAPI NAi64 naGetDoubleFractionSlow(double d){
+NA_IAPI NAi64 naGetDoubleFractionSlow(double d) {
   NAi64 result = naGetDoubleFractionSlowE(d);
   #if NA_DEBUG
     if(result == 1000000000000000)
@@ -597,16 +604,16 @@ NA_IAPI NAi64 naGetDoubleFractionSlow(double d){
 
 
 
-NA_IAPI NAi64 naGetDoubleFractionSlowE(double d){
+NA_IAPI NAi64 naGetDoubleFractionSlowE(double d) {
   int32 exponent;
   NAi64 dbits = *((NAi64*)(void*)&d);
-  if(d == 0.){
+  if(d == 0.) {
     dbits = NA_ZERO_i64;
   }else{
     NAi128 hyperTens;
     NAu64 mul = 1;
     exponent = naGetDoubleExponent(d);
-    if(exponent < 0){
+    if(exponent < 0) {
       dbits = naAndi64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
       dbits = naOri64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);
       dbits = naShri64(dbits, -exponent - 1);
@@ -617,7 +624,10 @@ NA_IAPI NAi64 naGetDoubleFractionSlowE(double d){
       dbits = naShli64(dbits, exponent);
       dbits = naAndi64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
       int64 i = naGetDoubleInteger(d);
-      while(i){i /= 10; mul *= 10;}
+      while(i) {
+        i /= 10;
+        mul *= 10;
+      }
       hyperTens = naMakei128(NA_ZERO_i64, 1000000000000000 / mul);
     }
 

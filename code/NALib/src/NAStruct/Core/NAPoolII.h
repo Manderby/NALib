@@ -16,7 +16,7 @@ struct NAPool{
 
 
 
-NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, size_t count){
+NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, size_t count) {
   #if NA_DEBUG
     if(!pool)
       naCrash("pool is Null-Pointer");
@@ -32,7 +32,7 @@ NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, size_t count){
 
 
 
-NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, size_t count, size_t typeSize){
+NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, size_t count, size_t typeSize) {
   #if NA_DEBUG
     if(!pool)
       naCrash("pool is Null-Pointer");
@@ -52,7 +52,7 @@ NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, size_t count, size_t typeSize){
   // Insert all elements to the drop array.
   NAByte** dropptr = pool->drops;
   NAByte* storageptr = (NAByte*)pool->storagearray;
-  for(size_t i = 0; i < pool->count; ++i){
+  for(size_t i = 0; i < pool->count; ++i) {
     *dropptr = storageptr;
     dropptr++;
     storageptr += typeSize;
@@ -62,8 +62,8 @@ NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, size_t count, size_t typeSize){
 
 
 
-NA_IDEF void naClearPool(NAPool* pool){
-  if(pool->storagearray){
+NA_IDEF void naClearPool(NAPool* pool) {
+  if(pool->storagearray) {
     #if NA_DEBUG
       if(pool->cur != pool->count)
         naError("Pool was created filled but is not filled now.");
@@ -80,7 +80,7 @@ NA_IDEF void naClearPool(NAPool* pool){
 
 
 
-NA_IDEF void* naSuckPool(NAPool* pool){
+NA_IDEF void* naSuckPool(NAPool* pool) {
   #if NA_DEBUG
     if(pool->cur == 0)
       naError("Pool is empty");
@@ -91,7 +91,7 @@ NA_IDEF void* naSuckPool(NAPool* pool){
 
 
 
-NA_IDEF void naSpitPool(NAPool* pool, void* drop){
+NA_IDEF void naSpitPool(NAPool* pool, void* drop) {
   #if NA_DEBUG
     if(pool->cur == pool->count)
       naError("Pool is full");
@@ -104,24 +104,24 @@ NA_IDEF void naSpitPool(NAPool* pool, void* drop){
 
 
 
-NA_IDEF size_t naGetPoolCount(NAPool* pool){
+NA_IDEF size_t naGetPoolCount(NAPool* pool) {
   return pool->cur;
 }
-NA_IDEF size_t naGetPoolRemainingCount(NAPool* pool){
+NA_IDEF size_t naGetPoolRemainingCount(NAPool* pool) {
   return pool->count - pool->cur;
 }
-NA_IDEF NABool naIsPoolEmpty(NAPool* pool){
+NA_IDEF NABool naIsPoolEmpty(NAPool* pool) {
   return (pool->cur == 0);
 }
-NA_IDEF NABool na_IsPoolPartFull(NAPool* pool){
+NA_IDEF NABool na_IsPoolPartFull(NAPool* pool) {
   return (pool->count == pool->cur);
 }
 
 
 
-NA_IDEF void naForeachPool(const NAPool* pool, NAMutator mutator){
+NA_IDEF void naForeachPool(const NAPool* pool, NAMutator mutator) {
   NAByte** curptr = pool->drops;
-  for(size_t i = 0; i < pool->cur; ++i){
+  for(size_t i = 0; i < pool->cur; ++i) {
     mutator(*curptr);
     curptr++;
   }

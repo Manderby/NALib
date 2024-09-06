@@ -140,6 +140,10 @@ struct NATreeConfiguration{
   NAPtr                         userData;
 };
 
+NA_EXTERN_RUNTIME_TYPE(NATreeConfiguration);
+
+
+
 struct NATreeItem{
   NATreeNode* parent;
   #if NA_DEBUG

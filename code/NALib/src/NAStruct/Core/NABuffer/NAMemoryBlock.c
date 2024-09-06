@@ -8,7 +8,7 @@ NA_RUNTIME_TYPE(NAMemoryBlock, na_DestructMemoryBlock, NA_TRUE);
 
 
 
-NA_HDEF NAMemoryBlock* na_CreateMemoryBlock(size_t byteSize){
+NA_HDEF NAMemoryBlock* na_CreateMemoryBlock(size_t byteSize) {
   #if NA_DEBUG
     if(byteSize == 0)
       naError("byteSize is zero");
@@ -25,7 +25,7 @@ NA_HDEF NAMemoryBlock* na_CreateMemoryBlock(size_t byteSize){
 
 
 
-NA_HDEF NAMemoryBlock* na_CreateMemoryBlockWithData(NAPtr data, size_t byteSize, NAMutator destructor){
+NA_HDEF NAMemoryBlock* na_CreateMemoryBlockWithData(NAPtr data, size_t byteSize, NAMutator destructor) {
   NAMemoryBlock* block;
   #if NA_DEBUG
     if(!naIsPtrValid(data))
@@ -48,8 +48,8 @@ NA_HDEF NAMemoryBlock* na_CreateMemoryBlockWithData(NAPtr data, size_t byteSize,
 
 
 
-NA_HDEF void na_DestructMemoryBlock(NAMemoryBlock* block){
-  if(block->destructor){
+NA_HDEF void na_DestructMemoryBlock(NAMemoryBlock* block) {
+  if(block->destructor) {
     block->destructor(naGetPtrMutable(block->data));
   }
 }

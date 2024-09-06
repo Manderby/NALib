@@ -14,25 +14,25 @@
 
 
 
-NA_DEF float naSimpleSumf(size_t sampleCount, const float* array){
+NA_DEF float naSimpleSumf(size_t sampleCount, const float* array) {
   #if NA_DEBUG
     if(!array && sampleCount)
       naCrash("array is null pointer");
   #endif
   float result = 0.f;
-  for(size_t i = 0; i < sampleCount; ++i){
+  for(size_t i = 0; i < sampleCount; ++i) {
     result += array[i];
   }
   return result;
 }
 
-NA_DEF double naSimpleSum(size_t sampleCount, const double* array){
+NA_DEF double naSimpleSum(size_t sampleCount, const double* array) {
   #if NA_DEBUG
     if(!array && sampleCount)
       naCrash("array is null pointer");
   #endif
   double result = 0.;
-  for(size_t i = 0; i < sampleCount; ++i){
+  for(size_t i = 0; i < sampleCount; ++i) {
     result += array[i];
   }
   return result;
@@ -41,7 +41,7 @@ NA_DEF double naSimpleSum(size_t sampleCount, const double* array){
 
 
 // Copied and adapted from Wikipedia
-NA_DEF float naKahanSumf(size_t sampleCount, const float* array){
+NA_DEF float naKahanSumf(size_t sampleCount, const float* array) {
   #if NA_DEBUG
     if(!array && sampleCount)
       naCrash("array is null pointer");
@@ -52,7 +52,7 @@ NA_DEF float naKahanSumf(size_t sampleCount, const float* array){
   // A running compensation for lost low-order bits.
   float c = 0.f;
   // The array input has elements indexed input[1] to input[input.length].
-  for(size_t iStep = 0; iStep < sampleCount; ++iStep){
+  for(size_t iStep = 0; iStep < sampleCount; ++iStep) {
     // c is zero the first time around.
     float y = array[iStep] - c;
     // Alas, sum is big, y small, so low-order digits of y are lost.         
@@ -69,7 +69,7 @@ NA_DEF float naKahanSumf(size_t sampleCount, const float* array){
 }
 
 // Copied and adapted from Wikipedia
-NA_DEF double naKahanSum(size_t sampleCount, const double* array){
+NA_DEF double naKahanSum(size_t sampleCount, const double* array) {
   #if NA_DEBUG
     if(!array && sampleCount)
       naCrash("array is null pointer");
@@ -80,7 +80,7 @@ NA_DEF double naKahanSum(size_t sampleCount, const double* array){
   // A running compensation for lost low-order bits.
   double c = 0.;
   // The array input has elements indexed input[1] to input[input.length].
-  for(size_t iStep = 0; iStep < sampleCount; ++iStep){
+  for(size_t iStep = 0; iStep < sampleCount; ++iStep) {
     // c is zero the first time around.
     double y = array[iStep] - c;
     // Alas, sum is big, y small, so low-order digits of y are lost.         
@@ -99,7 +99,7 @@ NA_DEF double naKahanSum(size_t sampleCount, const double* array){
 
 
 // Copied and adapted from Wikipedia
-NA_DEF float naKahanBabushkaNeumaierSumf(size_t sampleCount, const float* array){
+NA_DEF float naKahanBabushkaNeumaierSumf(size_t sampleCount, const float* array) {
   #if NA_DEBUG
     if(!array && sampleCount)
       naCrash("array is null pointer");
@@ -108,7 +108,7 @@ NA_DEF float naKahanBabushkaNeumaierSumf(size_t sampleCount, const float* array)
   float sum = 0.f;
   float c = 0.f;                       // A running compensation for lost low-order bits.
 
-  for(size_t iStep = 0; iStep < sampleCount; ++iStep){
+  for(size_t iStep = 0; iStep < sampleCount; ++iStep) {
     float t = sum + array[iStep];
     if(naAbsf(sum) >= naAbsf(array[iStep]))
       c += (sum - t) + array[iStep]; // If sum is bigger, low-order digits of input[iStep] are lost.
@@ -121,7 +121,7 @@ NA_DEF float naKahanBabushkaNeumaierSumf(size_t sampleCount, const float* array)
 }
 
 // Copied and adapted from Wikipedia
-NA_DEF double naKahanBabushkaNeumaierSum(size_t sampleCount, const double* array){
+NA_DEF double naKahanBabushkaNeumaierSum(size_t sampleCount, const double* array) {
   #if NA_DEBUG
     if(!array && sampleCount)
       naCrash("array is null pointer");
@@ -130,7 +130,7 @@ NA_DEF double naKahanBabushkaNeumaierSum(size_t sampleCount, const double* array
   double sum = 0.;
   double c = 0.;                       // A running compensation for lost low-order bits.
 
-  for(size_t iStep = 0; iStep < sampleCount; ++iStep){
+  for(size_t iStep = 0; iStep < sampleCount; ++iStep) {
     double t = sum + array[iStep];
     if(naAbs(sum) >= naAbs(array[iStep]))
       c += (sum - t) + array[iStep]; // If sum is bigger, low-order digits of input[iStep] are lost.
@@ -145,7 +145,7 @@ NA_DEF double naKahanBabushkaNeumaierSum(size_t sampleCount, const double* array
 
 
 // Copied and adapted from Wikipedia
-NA_DEF float naKahanBabushkaKleinSumf(size_t sampleCount, const float* array){
+NA_DEF float naKahanBabushkaKleinSumf(size_t sampleCount, const float* array) {
   #if NA_DEBUG
     if(!array && sampleCount)
       naCrash("array is null pointer");
@@ -154,10 +154,10 @@ NA_DEF float naKahanBabushkaKleinSumf(size_t sampleCount, const float* array){
   float sum = 0.f;
   float cs  = 0.f;
   float ccs = 0.f;
-  float c   = 0.f;
-  float cc  = 0.f;
 
-  for(size_t iStep = 0; iStep < sampleCount; ++iStep){
+  for(size_t iStep = 0; iStep < sampleCount; ++iStep) {
+    float c;
+    float cc;
     float t = sum + array[iStep];
     if(naAbsf(sum) >= naAbsf(array[iStep]))
       c = (sum - t) + array[iStep];
@@ -179,7 +179,7 @@ NA_DEF float naKahanBabushkaKleinSumf(size_t sampleCount, const float* array){
 }
 
 // Copied and adapted from Wikipedia
-NA_DEF double naKahanBabushkaKleinSum(size_t sampleCount, const double* array){
+NA_DEF double naKahanBabushkaKleinSum(size_t sampleCount, const double* array) {
   #if NA_DEBUG
     if(!array && sampleCount)
       naCrash("array is null pointer");
@@ -188,10 +188,10 @@ NA_DEF double naKahanBabushkaKleinSum(size_t sampleCount, const double* array){
   double sum = 0.;
   double cs  = 0.;
   double ccs = 0.;
-  double c   = 0.;
-  double cc  = 0.;
 
-  for(size_t iStep = 0; iStep < sampleCount; ++iStep){
+  for(size_t iStep = 0; iStep < sampleCount; ++iStep) {
+    double c;
+    double cc;
     double t = sum + array[iStep];
     if(naAbs(sum) >= naAbs(array[iStep]))
       c = (sum - t) + array[iStep];
@@ -214,7 +214,7 @@ NA_DEF double naKahanBabushkaKleinSum(size_t sampleCount, const double* array){
 
 
 
-NA_DEF float naSumf(size_t sampleCount, const float* array){
+NA_DEF float naSumf(size_t sampleCount, const float* array) {
   #if NA_DEBUG
     if(!array && sampleCount)
       naCrash("array is null pointer");
@@ -223,14 +223,14 @@ NA_DEF float naSumf(size_t sampleCount, const float* array){
   float tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
   memset(tmpSums, 0, sizeof(float) * (8 * sizeof(size_t))); // nullify.
 
-  if(sampleCount > 1){   
-    for(size_t iStep = 0; iStep < sampleCount; iStep += 2){
+  if(sampleCount > 1) {   
+    for(size_t iStep = 0; iStep < sampleCount; iStep += 2) {
       // Add two neighboring values together with the temp sums up to the
       // position where the current iStep has its first binary 0.
       float walkingSum = array[iStep] + array[iStep + 1];
       char p = 1; // the current tmpSum as well as the current bit of iStep
       size_t step = 2; // = 2^p
-      while(iStep & step){
+      while(iStep & step) {
         walkingSum += tmpSums[p];
         p++;
         step <<= 1;
@@ -241,15 +241,15 @@ NA_DEF float naSumf(size_t sampleCount, const float* array){
   }
   
   // If the count is odd, store the remaining value at position 0.
-  if(sampleCount & 1){
+  if(sampleCount & 1) {
     tmpSums[0] = array[sampleCount - 1];
   }
   
   float sum = 0.f;
   // Finally, go though all temp sums and add those to the final sum where
   // sampleCount has a binary 1
-  for(size_t i = 0; i < 8 * sizeof(size_t); ++i){
-    if(sampleCount & ((size_t)1 << i)){
+  for(size_t i = 0; i < 8 * sizeof(size_t); ++i) {
+    if(sampleCount & ((size_t)1 << i)) {
       sum += tmpSums[i];
     }
   }
@@ -257,55 +257,55 @@ NA_DEF float naSumf(size_t sampleCount, const float* array){
 }
 
 NA_DEF double naSum(size_t sampleCount, const double* array) {
-#if NA_DEBUG
-    if (!array && sampleCount)
-        naCrash("array is null pointer");
-#endif
+  #if NA_DEBUG
+    if(!array && sampleCount)
+      naCrash("array is null pointer");
+  #endif
 
-    double tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
-    memset(tmpSums, 0, sizeof(double) * (8 * sizeof(size_t))); // nullify.
+  double tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
+  memset(tmpSums, 0, sizeof(double) * (8 * sizeof(size_t))); // nullify.
 
-    if (sampleCount > 1) {
-        for (size_t iStep = 0; iStep < sampleCount; iStep += 2) {
-            // Add two neighboring values together with the temp sums up to the
-            // position where the current iStep has its first binary 0.
-            double walkingSum = array[iStep] + array[iStep + 1];
-            char p = 1; // the current tmpSum as well as the current bit of iStep
-            size_t step = 2; // = 2^p
-            while (iStep & step) {
-                walkingSum += tmpSums[p];
-                p++;
-                step <<= 1;
-            }
-            // Store the current sum at the position of the subsequent binary 1
-            tmpSums[p] = walkingSum;
-        }
+  if(sampleCount > 1) {
+    for(size_t iStep = 0; iStep < sampleCount; iStep += 2) {
+      // Add two neighboring values together with the temp sums up to the
+      // position where the current iStep has its first binary 0.
+      double walkingSum = array[iStep] + array[iStep + 1];
+      char p = 1; // the current tmpSum as well as the current bit of iStep
+      size_t step = 2; // = 2^p
+      while(iStep & step) {
+        walkingSum += tmpSums[p];
+        p++;
+        step <<= 1;
+      }
+      // Store the current sum at the position of the subsequent binary 1
+      tmpSums[p] = walkingSum;
     }
+  }
 
-    // If the count is odd, store the remaining value at position 0.
-    if (sampleCount & 1) {
-        tmpSums[0] = array[sampleCount - 1];
-    }
+  // If the count is odd, store the remaining value at position 0.
+  if(sampleCount & 1) {
+    tmpSums[0] = array[sampleCount - 1];
+  }
 
-    double sum = 0.;
-    // Finally, go though all temp sums and add those to the final sum where
-    // sampleCount has a binary 1
-    for (size_t i = 0; i < 8 * sizeof(size_t); ++i) {
-        if (sampleCount & ((size_t)1 << i)) {
-            sum += tmpSums[i];
-        }
+  double sum = 0.;
+  // Finally, go though all temp sums and add those to the final sum where
+  // sampleCount has a binary 1
+  for(size_t i = 0; i < 8 * sizeof(size_t); ++i) {
+    if(sampleCount & ((size_t)1 << i)) {
+      sum += tmpSums[i];
     }
-    return sum;
+  }
+  return sum;
 }
 
 NA_DEF double naSum2(size_t sampleCount, const double* array) {
-#if NA_DEBUG
-    if (!array && sampleCount)
-        naCrash("array is null pointer");
-#endif
+  #if NA_DEBUG
+    if(!array && sampleCount)
+      naCrash("array is null pointer");
+  #endif
 
-    double tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
-    memset(tmpSums, 0, sizeof(double) * (8 * sizeof(size_t))); // nullify.
+  double tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
+  memset(tmpSums, 0, sizeof(double) * (8 * sizeof(size_t))); // nullify.
 
     if (sampleCount > 1) {
         const double* arrayPtr = array;
@@ -315,34 +315,34 @@ NA_DEF double naSum2(size_t sampleCount, const double* array) {
             double walkingSum = *arrayPtr++;
             walkingSum += *arrayPtr++;
 
-            size_t step = 2;
-            double* tmpSum = &tmpSums[1];
-            while (iStep & step) {
-                walkingSum += *tmpSum++;
-                step <<= 1;
-            }
-            // Store the current sum at the position of the subsequent binary 1
-            *tmpSum = walkingSum;
+      size_t step = 2;
+      double* tmpSum = &tmpSums[1];
+      while(iStep & step) {
+        walkingSum += *tmpSum++;
+        step <<= 1;
+      }
+      // Store the current sum at the position of the subsequent binary 1
+      *tmpSum = walkingSum;
 
-            //volatile register dummy = *arrayPtr;
-            //_mm_prefetch(arrayPtr, _MM_HINT_T0);
-        }
+      //volatile register dummy = *arrayPtr;
+      //_mm_prefetch(arrayPtr, _MM_HINT_T0);
     }
+  }
 
-    // If the count is odd, store the remaining value at position 0.
-    if (sampleCount & 1) {
-        tmpSums[0] = array[sampleCount - 1];
-    }
+  // If the count is odd, store the remaining value at position 0.
+  if(sampleCount & 1) {
+    tmpSums[0] = array[sampleCount - 1];
+  }
 
-    double sum = 0.;
-    // Finally, go though all temp sums and add those to the final sum where
-    // sampleCount has a binary 1
-    for (size_t i = 0; i < 8 * sizeof(size_t); ++i) {
-        if (sampleCount & ((size_t)1 << i)) {
-            sum += tmpSums[i];
-        }
+  double sum = 0.;
+  // Finally, go though all temp sums and add those to the final sum where
+  // sampleCount has a binary 1
+  for(size_t i = 0; i < 8 * sizeof(size_t); ++i) {
+    if(sampleCount & ((size_t)1 << i)) {
+      sum += tmpSums[i];
     }
-    return sum;
+  }
+  return sum;
 }
 
 
@@ -363,10 +363,10 @@ NA_DEF float naIntegratef(
   float tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
   memset(tmpSums, 0, sizeof(float) * (8 * sizeof(size_t))); // nullify.
 
-  if(sampleCount > 1){
+  if(sampleCount > 1) {
     float stepSize = (max - min) / (sampleCount - 1);
     
-    for(size_t iStep = 0; iStep < sampleCount; iStep += 2){
+    for(size_t iStep = 0; iStep < sampleCount; iStep += 2) {
 
       // Compute two neighboring values.
       float x1 = min + stepSize * iStep;
@@ -379,7 +379,7 @@ NA_DEF float naIntegratef(
       float walkingSum = value1 + value2;
       char p = 1; // the current tmpSum as well as the current bit of iStep
       size_t step = 2; // = 2^p
-      while(iStep & step){
+      while(iStep & step) {
         walkingSum += tmpSums[p];
         p++;
         step <<= 1;
@@ -390,15 +390,15 @@ NA_DEF float naIntegratef(
   }
   
   // If the count is odd, store the remaining value at position 0.
-  if(sampleCount & 1){
+  if(sampleCount & 1) {
     tmpSums[0] = eval(obj, max);
   }
   
   float sum = 0.f;
   // Finally, go though all temp sums and add those to the final sum where
   // sampleCount has a binary 1
-  for(size_t i = 0; i < 8 * sizeof(size_t); ++i){
-    if(sampleCount & ((size_t)1 << i)){
+  for(size_t i = 0; i < 8 * sizeof(size_t); ++i) {
+    if(sampleCount & ((size_t)1 << i)) {
       sum += tmpSums[i];
     }
   }
@@ -423,10 +423,10 @@ NA_DEF double naIntegrate(
   double tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
   memset(tmpSums, 0, sizeof(double) * (8 * sizeof(size_t))); // nullify.
 
-  if(sampleCount > 1){
+  if(sampleCount > 1) {
     double stepSize = (max - min) / (sampleCount - 1);
     
-    for(size_t iStep = 0; iStep < sampleCount; iStep += 2){
+    for(size_t iStep = 0; iStep < sampleCount; iStep += 2) {
 
       // Compute two neighboring values.
       double x1 = min + stepSize * iStep;
@@ -439,7 +439,7 @@ NA_DEF double naIntegrate(
       double walkingSum = value1 + value2;
       char p = 1; // the current tmpSum as well as the current bit of iStep
       size_t step = 2; // = 2^p
-      while(iStep & step){
+      while(iStep & step) {
         walkingSum += tmpSums[p];
         p++;
         step <<= 1;
@@ -450,15 +450,15 @@ NA_DEF double naIntegrate(
   }
   
   // If the count is odd, store the remaining value at position 0.
-  if(sampleCount & 1){
+  if(sampleCount & 1) {
     tmpSums[0] = eval(obj, max);
   }
   
   double sum = 0.f;
   // Finally, go though all temp sums and add those to the final sum where
   // sampleCount has a binary 1
-  for(size_t i = 0; i < 8 * sizeof(size_t); ++i){
-    if(sampleCount & ((size_t)1 << i)){
+  for(size_t i = 0; i < 8 * sizeof(size_t); ++i) {
+    if(sampleCount & ((size_t)1 << i)) {
       sum += tmpSums[i];
     }
   }

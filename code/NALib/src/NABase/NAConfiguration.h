@@ -1,12 +1,9 @@
 
-#if defined NA_CONFIGURATION_INCLUDED || !defined NA_BASE_INCLUDED
-  #warning "Do not include this file directly. Use NABase.h"
-#endif
 #ifndef NA_CONFIGURATION_INCLUDED
 #define NA_CONFIGURATION_INCLUDED
 
 // NAConfiguration.h is included at the beginning of the NABase.h file.
-// Do not include it anywhere else.
+// You may include it preemptively to safe some compile time.
 
 
 
@@ -108,7 +105,7 @@
 // If so, you MUST link your program to the appropriate library:
 //
 // OpenGL:
-// Windows: WinAPI (always available) and opengl32.lib
+// Windows: WINAPI (always available) and opengl32.lib
 // Macintosh: Cocoa and /System/Library/Frameworks/Metal.framework/OpenGL
 //
 // Metal:
@@ -136,7 +133,7 @@
 // If the following macro is set to 1, NALib compiles with GUI support.
 //
 // If so, you MUST link your program to the appropriate library:
-// Windows: WinAPI (always available) and ComCtl32.lib, see next macro.
+// Windows: WINAPI (always available) and ComCtl32.lib, see next macro.
 // Macintosh: Cocoa
 //
 // Default is 0
@@ -187,13 +184,29 @@
 // ////////////////////////////////
 
 // Usually, aligned memory can be created in unix like systems using several
-// methods. See the definitions of the following macros in NAMemory.h file
-// for more information.
+// methods. Unfortunately, none of them did work reliably on the Mac OS X
+// version Snow Leopard back around the year 2015. It looks though as since
+// then, the error got corrected and now, the default method is Posix.
 //
-// - NA_MEMALIGN_USE_CUSTOM
-// - NA_MEMALIGN_USE_ALIGNED_ALLOC (needs full C11 support)
-// - NA_MEMALIGN_USE_POSIX
-//
+// These are some notes about the different methods:
+// - Custom uses a rather large chunk of memory to ensure there is enough
+//   space for aligned memory. It works but may lead to false positives
+//   with memory-leak detection tools.
+// - aligned_alloc under C11 is possibly unavailable in macOS. See
+//   https://stackoverflow.com/questions/44841574/aligned-alloc-not-found-for-clang
+// - posix_memalign as well as malloc_zone_memalign are non-C-standard and
+//   did return misaligned pointers in Snow Leopard some years back.
+// - __attribute ((aligned(#))) is unsuitable (because it is not usable at
+//   runtine) and is non-standard
+// - _Alignas is again unsuitable (because not available at runtime) and
+//    only available since C11.
+// Therefore, a custom implementation is provided which is costly but always
+// works.
+
+#define NA_MEMALIGN_USE_CUSTOM         0
+#define NA_MEMALIGN_USE_ALIGNED_ALLOC  1
+#define NA_MEMALIGN_USE_POSIX          2
+
 // Default is POSIX
 
 #ifndef NA_MEMALIGN
@@ -345,12 +358,12 @@
 // http://physics.nist.gov/constants
 //
 // With the following macro, you define, what year of the CODATA you would
-// like to use. Possible values are 2006, 2010, 2014 and 2018.
+// like to use. Possible values are 2006, 2010, 2014, 2018 and 2022.
 //
 // By default, NALib uses the latest setting.
 
 #ifndef NA_NIST_CODATA_YEAR
-  #define NA_NIST_CODATA_YEAR 2018
+  #define NA_NIST_CODATA_YEAR 2022
 #endif
 
 

@@ -42,7 +42,7 @@ NA_IAPI NAList* naInitList    (NAList* list);
 // and will still be marked as const or mutable. The two parameters must
 // not be the same. If you are using NAListIterator's  on the originalList,
 // these iterators will keep the location of the original list.
-NA_IAPI NAList* naCopyList    (NAList* list, NAList* originalList);
+NA_IAPI NAList* naInitListWithCopy    (NAList* list, NAList* originalList);
 
 // Clears or empties the given list. Note: This will free all list elements
 // but not the contents they store! Use naForeachList or iteration for that.
@@ -146,10 +146,7 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 // ////////////////////////////////////
 // Iterating a list
 //
-// Up to NALib verison 16, NAList contained a built-in iterator. But starting
-// with NALib Version 17, there exists NAListIterator, a structure separate
-// from a list. It gives the programmer way more flexibility to move freely
-// within a list.
+// An NAListIterator allows to move freely within a list.
 //
 // To keep the API clean, the function names do not use "listIterator" but
 // instead simply use "List" as if the iterators would denote the list per se.
@@ -162,31 +159,20 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 // The easiest way to implement an iteration is using a while loop:
 //
 // NAList* mylist;
-// NALIstIterator iter = naMakeListIterator(mylist);
-// while(naIterateList(&iter, 1)){
+// NALIstIterator iter = naMakeListMutator(mylist);
+// while(naIterateList(&iter)) {
 //   void* curElement = naGetListCurMutable(iter);
 //   Do stuff with curElement.
 // }
 // naClearListIterator(&iter);
 //
+// You can choose to have an Accessor, a Mutator or a Modifier as Iterator.
+//
 // Be sure to not forget naClearListIterator. Otherwise when debugging, lists
 // will keep references to iterators which are no longer in use and will hence
 // emit a warning when they are cleared. When NA_DEBUG is 0 however, no such
 // checks will be performed.
-//
-// You can also use the predefined Begin and End Iterator macros. Beware,
-// these are macros. They perform a simple one-by-one traversal of the list
-// from first to last. Use them as follows:
-//
-// NAListIterator iteratorname;
-// naBeginListMutatorIteration(MyElem* elem, mylist, iteratorname);
-//   doStuffWithElem(elem);
-// naEndListIteration(iteratorname);
 
-#define naBeginListAccessorIteration(typedElem, list, iter)
-#define naBeginListMutatorIteration (typedElem, list, iter)
-#define naBeginListModifierIteration(typedElem, list, iter)
-#define naEndListIteration(iter)
 
 
 // ///////////////////////////////

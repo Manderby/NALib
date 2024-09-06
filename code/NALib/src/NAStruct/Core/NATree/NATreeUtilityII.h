@@ -1,6 +1,7 @@
 
-NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
-  tree->config = na_RetainTreeConfiguration(config);
+NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config) {
+  config->flags |= NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE;
+  tree->config = (NATreeConfiguration*)naRetain(config);
 
   #if NA_DEBUG
     if((((tree->config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_QUADTREE) || ((tree->config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_OCTTREE)) && !tree->config->configData)
@@ -8,7 +9,7 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
   #endif
 
   // If the config has a callback for constructing a tree, call it.
-  if(tree->config->treeConstructor){
+  if(tree->config->treeConstructor) {
     tree->config->treeConstructor(tree->config->userData);
   }
 
@@ -24,13 +25,13 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
 
 
 
-NA_IDEF void naEmptyTree(NATree* tree){
+NA_IDEF void naEmptyTree(NATree* tree) {
   #if NA_DEBUG
     if(tree->iterCount != 0)
       naError("There are still iterators running on this tree. Did you miss a naClearTreeIterator call?");
   #endif
-  if(tree->root){
-    if(naIsTreeRootLeaf(tree)){
+  if(tree->root) {
+    if(naIsTreeRootLeaf(tree)) {
       na_DestructTreeLeaf(tree->config, (NATreeLeaf*)tree->root);
     }else{
       na_DestructTreeNode((NATreeNode*)tree->root, NA_TRUE, tree->config);
@@ -48,21 +49,21 @@ NA_IDEF void naClearTree(NATree* tree){
   #endif
   naEmptyTree(tree);
   // If the config has a callback function for deleting a tree, call it.
-  if(tree->config->treeDestructor){
+  if(tree->config->treeDestructor) {
     tree->config->treeDestructor(tree->config->userData);
   }
-  naReleaseTreeConfiguration(tree->config);
+  naRelease(tree->config);
 }
 
 
 
-NA_IDEF NABool naIsTreeEmpty(const NATree* tree){
+NA_IDEF NABool naIsTreeEmpty(const NATree* tree) {
   return (tree->root == NA_NULL);
 }
 
 
 
-NA_IDEF NABool naAddTreeFirstConst(NATree* tree, const void* content){
+NA_IDEF NABool naAddTreeFirstConst(NATree* tree, const void* content) {
   NATreeIterator iter;
   #if NA_DEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
@@ -76,7 +77,7 @@ NA_IDEF NABool naAddTreeFirstConst(NATree* tree, const void* content){
 
 
 
-NA_IDEF NABool naAddTreeFirstMutable(NATree* tree, void* content){
+NA_IDEF NABool naAddTreeFirstMutable(NATree* tree, void* content) {
   NATreeIterator iter;
   #if NA_DEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
@@ -90,7 +91,7 @@ NA_IDEF NABool naAddTreeFirstMutable(NATree* tree, void* content){
 
 
 
-NA_IDEF NABool naAddTreeLastConst(NATree* tree, const void* content){
+NA_IDEF NABool naAddTreeLastConst(NATree* tree, const void* content) {
   NATreeIterator iter;
   #if NA_DEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
@@ -104,7 +105,7 @@ NA_IDEF NABool naAddTreeLastConst(NATree* tree, const void* content){
 
 
 
-NA_IDEF NABool naAddTreeLastMutable(NATree* tree, void* content){
+NA_IDEF NABool naAddTreeLastMutable(NATree* tree, void* content) {
   NATreeIterator iter;
   #if NA_DEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
@@ -118,7 +119,7 @@ NA_IDEF NABool naAddTreeLastMutable(NATree* tree, void* content){
 
 
 
-NA_IDEF const void* naGetTreeFirstConst(const NATree* tree){
+NA_IDEF const void* naGetTreeFirstConst(const NATree* tree) {
   const void* retValue;
   NATreeIterator iter = naMakeTreeAccessor(tree);
   naLocateTreeFirst(&iter);
@@ -129,7 +130,7 @@ NA_IDEF const void* naGetTreeFirstConst(const NATree* tree){
 
 
 
-NA_IDEF void* naGetTreeFirstMutable(const NATree* tree){
+NA_IDEF void* naGetTreeFirstMutable(const NATree* tree) {
   void* retValue;
   NATreeIterator iter = naMakeTreeAccessor(tree);
   naLocateTreeFirst(&iter);
@@ -140,7 +141,7 @@ NA_IDEF void* naGetTreeFirstMutable(const NATree* tree){
 
 
 
-NA_IDEF const void* naGetTreeLastConst(const NATree* tree){
+NA_IDEF const void* naGetTreeLastConst(const NATree* tree) {
   const void* retValue;
   NATreeIterator iter = naMakeTreeAccessor(tree);
   naLocateTreeLast(&iter);
@@ -151,7 +152,7 @@ NA_IDEF const void* naGetTreeLastConst(const NATree* tree){
 
 
 
-NA_IDEF void* naGetTreeLastMutable(const NATree* tree){
+NA_IDEF void* naGetTreeLastMutable(const NATree* tree) {
   void* retValue;
   NATreeIterator iter = naMakeTreeAccessor(tree);
   naLocateTreeLast(&iter);
@@ -162,12 +163,12 @@ NA_IDEF void* naGetTreeLastMutable(const NATree* tree){
 
 
 
-NA_IDEF void naUpdateTree(NATree* tree){
+NA_IDEF void naUpdateTree(NATree* tree) {
   #if NA_DEBUG
     if(!tree->config->nodeUpdater)
       naError("tree is configured without nodeUpdater callback");
   #endif
-  if(tree->root && !naIsTreeRootLeaf(tree)){
+  if(tree->root && !naIsTreeRootLeaf(tree)) {
     na_UpdateTreeNodeCapturing(tree, (NATreeNode*)tree->root);
   }
 }
@@ -177,7 +178,7 @@ NA_IDEF void naUpdateTree(NATree* tree){
 NA_IDEF NAPtr naGetRootNodeContent(NATree* tree)
 {
   NAPtr retdata;
-  if(tree->root){
+  if(tree->root) {
     #if NA_DEBUG
       if(naIsTreeRootLeaf(tree))
         naError("Root of the tree is not a node");
@@ -191,13 +192,13 @@ NA_IDEF NAPtr naGetRootNodeContent(NATree* tree)
 
 
 
-NA_IDEF NABool naIsTreeRootLeaf(const NATree* tree){
+NA_IDEF NABool naIsTreeRootLeaf(const NATree* tree) {
   return (NABool)((tree->flags & NA_TREE_FLAG_ROOT_IS_LEAF) == NA_TREE_FLAG_ROOT_IS_LEAF);
 }
 
 
 
-NA_HIDEF void na_SetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf){
+NA_HIDEF void na_SetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf) {
   #if NA_DEBUG
     if(!newroot)
       naCrash("Do not send Null as new root. Use na_ClearTreeRoot for that.");
@@ -209,20 +210,20 @@ NA_HIDEF void na_SetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf){
 
 
 
-NA_HIDEF void na_ClearTreeRoot(NATree* tree){
+NA_HIDEF void na_ClearTreeRoot(NATree* tree) {
   tree->root = NA_NULL;
 }
 
 
 
-NA_HIDEF void na_MarkTreeRootLeaf(NATree* tree, NABool isleaf){
+NA_HIDEF void na_MarkTreeRootLeaf(NATree* tree, NABool isleaf) {
   tree->flags &= ~NA_TREE_FLAG_ROOT_IS_LEAF;
   tree->flags |= (isleaf * NA_TREE_FLAG_ROOT_IS_LEAF);
 }
 
 
 // todo: If this shows up in performance, adding rootparent again? Or adding childIndex as flag in every item?
-NA_HIDEF NABool na_IsTreeItemLeaf(const NATree* tree, NATreeItem* item){
+NA_HIDEF NABool na_IsTreeItemLeaf(const NATree* tree, NATreeItem* item) {
   NABool retValue;
   if(na_GetTreeItemIsRoot(item)){
     retValue = naIsTreeRootLeaf(tree);

@@ -16,6 +16,7 @@ void testFlags(void){
   uint32 testMultiFlagu2 = 0x00000404; // all set
 
   naTestGroup("Querying uint32 flags"){
+    flagsu = 0xcccccccc;
     naTest(!naGetFlagu32(flagsu, testFlagu1));
     naTest( naGetFlagu32(flagsu, testFlagu2));
     naTest(!naGetFlagu32(flagsu, testMultiFlagu1));
@@ -23,6 +24,7 @@ void testFlags(void){
   }
 
   naTestGroup("Setting uint32 flags"){
+    flagsu = 0xcccccccc;
     naTest((naSetFlagu32(&flagsu, testFlagu1, NA_TRUE), flagsu == 0xcccccccd));
     naTest((naSetFlagu32(&flagsu, testFlagu1, NA_FALSE), flagsu == 0xcccccccc));
     naTest((naSetFlagu32(&flagsu, testFlagu2, NA_TRUE), flagsu == 0xcccccccc));
@@ -30,10 +32,12 @@ void testFlags(void){
     naTest((naSetFlagu32(&flagsu, testMultiFlagu1, NA_FALSE), flagsu == 0xccccccc8));
     naTest((naSetFlagu32(&flagsu, testMultiFlagu2, NA_TRUE), flagsu == 0xcccccccc));
     naTestCrash(naSetFlagu32(NA_NULL, 1234, NA_TRUE));
-    naTestError(naSetFlagu32(&flagsu, testFlagu1, 1234));
+    // Testing a value neither 0 nor 1 does not work on all compilers.
+    //naTestError(naSetFlagu32(&flagsu, testFlagu1, 1234));
   }
 
   naTestGroup("Toggling uint32 flags"){
+    flagsu = 0xcccccccc;
     naTest( naToggleFlagu32(&flagsu, testFlagu1));
     naTest(!naToggleFlagu32(&flagsu, testFlagu1));
     naTest(!naToggleFlagu32(&flagsu, testFlagu2));
@@ -143,30 +147,69 @@ void testRange(void){
 
 
 void testAlign(void){
-  naTestGroup("naAlignValuei"){
-    naTest(naAlignValuei(0, 0, 20) == 0);
-    naTest(naAlignValuei(5, 0, 20) == 0);
-    naTest(naAlignValuei(65, 0, 20) == 60);
-    naTest(naAlignValuei(-75, 0, 20) == -80);
-    naTest(naAlignValuei(10, 10, 20) == 10);
-    naTest(naAlignValuei(55, 10, 20) == 50);
-    naTest(naAlignValuei(5, 10, 20) == -10);
-    naTestError(naAlignValuei(5, 0, -20));
-    naTestError(naAlignValuei(5, NA_MIN_i, 20));
-    naTestError(naAlignValuei(-5, NA_MAX_i, 20));
+  naTestGroup("naAlignValue"){
+    naTest(naAlignValue(0., 0., 20.) == 0.);
+    naTest(naAlignValue(5., 0., 20.) == 0.);
+    naTest(naAlignValue(65., 0., 20.) == 60.);
+    naTest(naAlignValue(-75., 0., 20.) == -80.);
+    naTest(naAlignValue(10., 10., 20.) == 10.);
+    naTest(naAlignValue(55., 10., 20.) == 50.);
+    naTest(naAlignValue(5., 10., 20.) == -10.);
+    naTestError(naAlignValue(5., 0., -20.));
+    naTestError(naAlignValue(5., -NA_INFINITY, 20.));
+    naTestError(naAlignValue(-5., NA_INFINITY, 20.));
   }
 
-  naTestGroup("naAlignValued"){
-    naTest(naAlignValued(0., 0., 20.) == 0.);
-    naTest(naAlignValued(5., 0., 20.) == 0.);
-    naTest(naAlignValued(65., 0., 20.) == 60.);
-    naTest(naAlignValued(-75., 0., 20.) == -80.);
-    naTest(naAlignValued(10., 10., 20.) == 10.);
-    naTest(naAlignValued(55., 10., 20.) == 50.);
-    naTest(naAlignValued(5., 10., 20.) == -10.);
-    naTestError(naAlignValued(5., 0., -20.));
-    naTestError(naAlignValued(5., -NA_INFINITY, 20.));
-    naTestError(naAlignValued(-5., NA_INFINITY, 20.));
+  naTestGroup("naAlignValuef"){
+    naTest(naAlignValuef(0.f, 0.f, 20.f) == 0.f);
+    naTest(naAlignValuef(5.f, 0.f, 20.f) == 0.f);
+    naTest(naAlignValuef(65.f, 0.f, 20.f) == 60.f);
+    naTest(naAlignValuef(-75.f, 0.f, 20.f) == -80.f);
+    naTest(naAlignValuef(10.f, 10.f, 20.f) == 10.f);
+    naTest(naAlignValuef(55.f, 10.f, 20.f) == 50.f);
+    naTest(naAlignValuef(5.f, 10.f, 20.f) == -10.f);
+    naTestError(naAlignValuef(5.f, 0.f, -20.f));
+    naTestError(naAlignValuef(5.f, -NA_INFINITYf, 20.f));
+    naTestError(naAlignValuef(-5.f, NA_INFINITYf, 20.f));
+  }
+
+  naTestGroup("naAlignValuei64"){
+    naTest(naAlignValuei64(0, 0, 20) == 0);
+    naTest(naAlignValuei64(5, 0, 20) == 0);
+    naTest(naAlignValuei64(65, 0, 20) == 60);
+    naTest(naAlignValuei64(-75, 0, 20) == -80);
+    naTest(naAlignValuei64(10, 10, 20) == 10);
+    naTest(naAlignValuei64(55, 10, 20) == 50);
+    naTest(naAlignValuei64(5, 10, 20) == -10);
+    naTestError(naAlignValuei64(5, 0, -20));
+    naTestError(naAlignValuei64(5, NA_MIN_i64, 20));
+    naTestError(naAlignValuei64(-5, NA_MAX_i64, 20));
+  }
+
+  naTestGroup("naAlignValuei32"){
+    naTest(naAlignValuei32(0, 0, 20) == 0);
+    naTest(naAlignValuei32(5, 0, 20) == 0);
+    naTest(naAlignValuei32(65, 0, 20) == 60);
+    naTest(naAlignValuei32(-75, 0, 20) == -80);
+    naTest(naAlignValuei32(10, 10, 20) == 10);
+    naTest(naAlignValuei32(55, 10, 20) == 50);
+    naTest(naAlignValuei32(5, 10, 20) == -10);
+    naTestError(naAlignValuei32(5, 0, -20));
+    naTestError(naAlignValuei32(5, NA_MIN_i32, 20));
+    naTestError(naAlignValuei32(-5, NA_MAX_i32, 20));
+  }
+
+  naTestGroup("naAlignValues"){
+    // The commented out tests will not work as size_t is unsigned.
+    naTest(naAlignValues(0, 0, 20) == 0);
+    naTest(naAlignValues(5, 0, 20) == 0);
+    naTest(naAlignValues(65, 0, 20) == 60);
+    //naTest(naAlignValues(-75, 0, 20) == -80);
+    naTest(naAlignValues(10, 10, 20) == 10);
+    naTest(naAlignValues(55, 10, 20) == 50);
+    //naTest(naAlignValues(5, 10, 20) == -10);
+    naTestError(naAlignValues(5, 0, -20));
+    naTestError(naAlignValues(-5, NA_MAX_s, 20));
   }
 }
 

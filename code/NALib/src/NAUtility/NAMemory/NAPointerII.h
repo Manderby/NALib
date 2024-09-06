@@ -18,30 +18,30 @@ struct NAPointer{
 
 
 
-NA_IDEF NAPointer* naInitPointerConst(NAPointer* pointer, const void* data){
+NA_IDEF NAPointer* naInitPointerConst(NAPointer* pointer, const void* data) {
   // As sptr is the first entry of pointer, we can trick sptr to delete the
   // object when refCount becomes zero and delete the whole NAPointer object
   // in the end.
-  naInitSmartPtrConst(&(pointer->sptr), data);
+  naInitSmartPtrConst(&pointer->sptr, data);
   pointer->destructor = NA_NULL;
   return pointer;
 }
 
 
 
-NA_IDEF NAPointer* naInitPointerMutable(NAPointer* pointer, void* data, NAMutator destructor){
+NA_IDEF NAPointer* naInitPointerMutable(NAPointer* pointer, void* data, NAMutator destructor) {
   // As sptr is the first entry of pointer, we can trick sptr to delete the
   // object when refCount becomes zero and delete the whole NAPointer object
   // in the end.
-  naInitSmartPtrMutable(&(pointer->sptr), data);
+  naInitSmartPtrMutable(&pointer->sptr, data);
   pointer->destructor = destructor;
   return pointer;
 }
 
 
 
-NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
-  return (NAPointer*)naRetainSmartPtr(&(pointer->sptr));
+NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer) {
+  return (NAPointer*)naRetainSmartPtr(&pointer->sptr);
 }
 
 
@@ -51,25 +51,25 @@ NA_HAPI void na_DestructPointer(NAPointer* pointer);
 
 
 
-NA_IDEF void naReleasePointer(NAPointer* pointer){
+NA_IDEF void naReleasePointer(NAPointer* pointer) {
   #if NA_DEBUG
     if(!pointer)
       naCrash("pointer is Null-Pointer.");
   #endif
-  naReleaseSmartPtr(&(pointer->sptr), (NAMutator)na_DestructPointer, NA_FALSE);
+  naReleaseSmartPtr(&pointer->sptr, (NAMutator)na_DestructPointer, NA_FALSE);
 }
 
 
 
 
-NA_IDEF const void* naGetPointerConst(const NAPointer* pointer){
-  return naGetSmartPtrConst(&(pointer->sptr));
+NA_IDEF const void* naGetPointerConst(const NAPointer* pointer) {
+  return naGetSmartPtrConst(&pointer->sptr);
 }
 
 
 
-NA_IDEF void* naGetPointerMutable(NAPointer* pointer){
-  return naGetSmartPtrMutable(&(pointer->sptr));
+NA_IDEF void* naGetPointerMutable(NAPointer* pointer) {
+  return naGetSmartPtrMutable(&pointer->sptr);
 }
 
 

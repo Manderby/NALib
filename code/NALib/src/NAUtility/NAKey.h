@@ -5,6 +5,7 @@
   extern "C"{
 #endif
 
+#include "../NABase/NABase.h"
 
 // This file contains helper functions for creating functions very similar to
 // template functions in C++. To create a template-like behaviour, certain
@@ -23,7 +24,7 @@
 // macros which expanded to functions which then could be used to fill the
 // interiour of a function body with very specific source code snipplets.
 // The drawback of that method is that the actual implementation of the logic
-// is hidden withing a complicated macro and is not debuggable.
+// is hidden within a complicated macro and is not debuggable.
 //
 // The advantage of macros is their speed. A direct comparison was made
 // between an implementation of NAHeap with the traditional macros and a

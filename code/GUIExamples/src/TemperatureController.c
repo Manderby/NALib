@@ -3,6 +3,7 @@
 // converts temperatures from Degree Celsius to Degree Fahrenheit.
 
 #include "GUIExamples.h"
+#include "NAUtility/NAString.h"
 
 
 
@@ -20,7 +21,7 @@ struct TemperatureController{
 
 
 // Will be called when the calculate Button or Enter is pressed.
-NABool computeResults(NAReaction reaction){
+void computeResults(NAReaction reaction){
   // The reaction parameter contains - amongst other things - the controller
   // provided with naAddUIReaction.
   TemperatureController* con = reaction.controller;
@@ -33,16 +34,12 @@ NABool computeResults(NAReaction reaction){
 
   // Write the output to the resutLabel
   naSetLabelText(con->resutLabel, naAllocSprintf(NA_TRUE, "%f", fahrenheit));
-
-  // By returning true, NALib knows that this event has been completely
-  // handeled and it should stop propagating to other potential handlers.
-  return NA_TRUE;
 }
 
 
 
 // Will be called when a button is pressed.
-NABool pressButton(NAReaction reaction){
+void pressButton(NAReaction reaction){
   TemperatureController* con = reaction.controller;
   
   if(reaction.uiElement == con->newButton){
@@ -50,8 +47,6 @@ NABool pressButton(NAReaction reaction){
   }else if(reaction.uiElement == con->quitButton){
     naStopApplication();
   }
-
-  return NA_TRUE;
 }
 
 

@@ -56,7 +56,7 @@ NA_IDEF void naSetTreeConfigurationUserData(NATreeConfiguration* config, NAPtr u
 
 
 
-NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NATreeContructorCallback treeConstructor, NATreeDestructorCallback  treeDestructor){
+NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NATreeContructorCallback treeConstructor, NATreeDestructorCallback  treeDestructor) {
   #if NA_DEBUG
     if(na_GetTreeConfigurationConst(config))
       naError("Configuration already used in a tree. Mayor problems may occur in the future");
@@ -67,7 +67,7 @@ NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NA
 
 
 
-NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafDataConstructor leafDataConstructor, NATreeLeafDataDestructor leafDataDestructor){
+NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafDataConstructor leafDataConstructor, NATreeLeafDataDestructor leafDataDestructor) {
   #if NA_DEBUG
     if(na_GetTreeConfigurationConst(config))
       naError("Configuration already used in a tree. Mayor problems may occur in the future");
@@ -78,7 +78,7 @@ NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NA
 
 
 
-NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeDataConstructor nodeDataConstructor, NATreeNodeDataDestructor nodeDataDestructor, NATreeNodeUpdater nodeUpdater){
+NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeDataConstructor nodeDataConstructor, NATreeNodeDataDestructor nodeDataDestructor, NATreeNodeUpdater nodeUpdater) {
   #if NA_DEBUG
     if(na_GetTreeConfigurationConst(config))
       naError("Configuration already used in a tree. Mayor problems may occur in the future");
@@ -104,7 +104,7 @@ NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config,
 
 
 
-NA_IDEF NAInt naGetTreeConfigurationBaseLeafExponent(const NATreeConfiguration* config){
+NA_IDEF NAInt naGetTreeConfigurationBaseLeafExponent(const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!((config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_QUADTREE) && !((config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_OCTTREE))
       naError("This configuration is not for a quadtree and not for an octtree");

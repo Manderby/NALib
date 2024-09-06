@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include "../NABase/NABase.h"
+#include "NACoord.h"
 
 // In this file, you find basic vector algebra functions for both
 // Vector and Matrix.
@@ -185,22 +186,22 @@ NA_IAPI void naFillV4fRandomSpherical(float*  d, NABool filled);
 
 // Copies vector a to d
 // E-variant allow the pointers to be equal without warning.
-NA_IAPI void naCopyV1d (double* NA_RESTRICT d, const double* NA_RESTRICT a);
-NA_IAPI void naCopyV2d (double* NA_RESTRICT d, const double* NA_RESTRICT a);
-NA_IAPI void naCopyV3d (double* NA_RESTRICT d, const double* NA_RESTRICT a);
-NA_IAPI void naCopyV4d (double* NA_RESTRICT d, const double* NA_RESTRICT a);
-NA_IAPI void naCopyV1f (float*  NA_RESTRICT d, const float*  NA_RESTRICT a);
-NA_IAPI void naCopyV2f (float*  NA_RESTRICT d, const float*  NA_RESTRICT a);
-NA_IAPI void naCopyV3f (float*  NA_RESTRICT d, const float*  NA_RESTRICT a);
-NA_IAPI void naCopyV4f (float*  NA_RESTRICT d, const float*  NA_RESTRICT a);
-NA_IAPI void naCopyV1dE(double* d, const double* a);
-NA_IAPI void naCopyV2dE(double* d, const double* a);
-NA_IAPI void naCopyV3dE(double* d, const double* a);
-NA_IAPI void naCopyV4dE(double* d, const double* a);
-NA_IAPI void naCopyV1fE(float*  d, const float*  a);
-NA_IAPI void naCopyV2fE(float*  d, const float*  a);
-NA_IAPI void naCopyV3fE(float*  d, const float*  a);
-NA_IAPI void naCopyV4fE(float*  d, const float*  a);
+NA_IAPI void naFillV1dWithCopy (double* NA_RESTRICT d, const double* NA_RESTRICT a);
+NA_IAPI void naFillV2dWithCopy (double* NA_RESTRICT d, const double* NA_RESTRICT a);
+NA_IAPI void naFillV3dWithCopy (double* NA_RESTRICT d, const double* NA_RESTRICT a);
+NA_IAPI void naFillV4dWithCopy (double* NA_RESTRICT d, const double* NA_RESTRICT a);
+NA_IAPI void naFillV1fWithCopy (float*  NA_RESTRICT d, const float*  NA_RESTRICT a);
+NA_IAPI void naFillV2fWithCopy (float*  NA_RESTRICT d, const float*  NA_RESTRICT a);
+NA_IAPI void naFillV3fWithCopy (float*  NA_RESTRICT d, const float*  NA_RESTRICT a);
+NA_IAPI void naFillV4fWithCopy (float*  NA_RESTRICT d, const float*  NA_RESTRICT a);
+NA_IAPI void naFillV1dWithCopyE(double* d, const double* a);
+NA_IAPI void naFillV2dWithCopyE(double* d, const double* a);
+NA_IAPI void naFillV3dWithCopyE(double* d, const double* a);
+NA_IAPI void naFillV4dWithCopyE(double* d, const double* a);
+NA_IAPI void naFillV1fWithCopyE(float*  d, const float*  a);
+NA_IAPI void naFillV2fWithCopyE(float*  d, const float*  a);
+NA_IAPI void naFillV3fWithCopyE(float*  d, const float*  a);
+NA_IAPI void naFillV4fWithCopyE(float*  d, const float*  a);
 
 // Negates the Vector. d = -a
 // E-variant allow the pointers to be equal without warning.
@@ -802,18 +803,18 @@ NA_IAPI void naFillM44fWithDiagV4f( float* NA_RESTRICT D, const float* NA_RESTRI
 // Copies the values of S to D.
 // S shall not overlap D. Warnings will be emitted.
 // The E variant allows S and D to be equal.
-NA_IAPI void naCopyM22d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
-NA_IAPI void naCopyM33d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
-NA_IAPI void naCopyM44d (double* NA_RESTRICT D, const double* NA_RESTRICT A);
-NA_IAPI void naCopyM22f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
-NA_IAPI void naCopyM33f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
-NA_IAPI void naCopyM44f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
-NA_IAPI void naCopyM22dE(double* D, const double* A);
-NA_IAPI void naCopyM33dE(double* D, const double* A);
-NA_IAPI void naCopyM44dE(double* D, const double* A);
-NA_IAPI void naCopyM22fE(float*  D, const float*  A);
-NA_IAPI void naCopyM33fE(float*  D, const float*  A);
-NA_IAPI void naCopyM44fE(float*  D, const float*  A);
+NA_IAPI void naFillM22dWithCopy (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naFillM33dWithCopy (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naFillM44dWithCopy (double* NA_RESTRICT D, const double* NA_RESTRICT A);
+NA_IAPI void naFillM22fWithCopy (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naFillM33fWithCopy (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naFillM44fWithCopy (float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
+NA_IAPI void naFillM22dWithCopyE(double* D, const double* A);
+NA_IAPI void naFillM33dWithCopyE(double* D, const double* A);
+NA_IAPI void naFillM44dWithCopyE(double* D, const double* A);
+NA_IAPI void naFillM22fWithCopyE(float*  D, const float*  A);
+NA_IAPI void naFillM33fWithCopyE(float*  D, const float*  A);
+NA_IAPI void naFillM44fWithCopyE(float*  D, const float*  A);
 
 // Negates the matrix. D = -A
 // S shall not overlap D. Warnings will be emitted.
@@ -1117,6 +1118,9 @@ NA_IAPI void naScaleM44dS(double* D, double s1, double s2, double s3);
 NA_IAPI void naScaleM33fS(float* D, float s1, float s2);
 NA_IAPI void naScaleM44fS(float* D, float s1, float s2, float s3);
 
+// Homogeneous Coordinates Rotate
+NA_IAPI void naRotateM44ZfS(float* D, float ang);
+
 // Homogeneous Coordinates Translate
 NA_IAPI void naTranslateM33d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2);
 NA_IAPI void naTranslateM44d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2, double s3);
@@ -1126,6 +1130,9 @@ NA_IAPI void naTranslateM33dS(double* D, double s1, double s2);
 NA_IAPI void naTranslateM44dS(double* D, double s1, double s2, double s3);
 NA_IAPI void naTranslateM33fS(float* D, float s1, float s2);
 NA_IAPI void naTranslateM44fS(float* D, float s1, float s2, float s3);
+
+NA_IAPI NAPos naGetMat33dTranslation(const double* A);
+NA_IAPI double naGetMat33dMagnification(const double* A);
 
 NA_IAPI void naFillV2WithM33Origin(double* NA_RESTRICT d, const double* NA_RESTRICT A);
 NA_IAPI void naFillV2WithM33Coord2(double* NA_RESTRICT d, const double* NA_RESTRICT A, const double* NA_RESTRICT v);

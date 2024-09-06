@@ -161,6 +161,8 @@ typedef int32_t               int32;
 #endif
 
 
+#define NA_SIZE_T_PRI "%zu"
+
 
 #if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS
   #if !defined NA_TYPE_INT64

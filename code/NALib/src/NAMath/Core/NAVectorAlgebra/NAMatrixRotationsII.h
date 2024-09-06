@@ -9,7 +9,7 @@
 // Rotation Matrix
 // ///////////////////////////////
 
-NA_IDEF void naFillM33dWithRotationAlongAxis(double* NA_RESTRICT d, const double* NA_RESTRICT axis, double angle){
+NA_IDEF void naFillM33dWithRotationAlongAxis(double* NA_RESTRICT d, const double* NA_RESTRICT axis, double angle) {
   double sinang    = naSin(.5 * angle);
   double sinang2   = sinang * sinang;
   double sinangT2  = 2. * sinang;
@@ -37,7 +37,7 @@ NA_IDEF void naFillM33dWithRotationAlongAxis(double* NA_RESTRICT d, const double
 }
 
 
-NA_IDEF void naFillM33fWithRotationAlongAxis(float* NA_RESTRICT d, const float* NA_RESTRICT axis, float angle){
+NA_IDEF void naFillM33fWithRotationAlongAxis(float* NA_RESTRICT d, const float* NA_RESTRICT axis, float angle) {
   float sinang    = naSinf(.5f * angle);
   float sinang2   = sinang * sinang;
   float sinangT2  = 2.f * sinang;
@@ -66,7 +66,7 @@ NA_IDEF void naFillM33fWithRotationAlongAxis(float* NA_RESTRICT d, const float* 
 
 
 
-NA_IDEF void naFillM33dWithRotationAngles(double* d, double roll, double pitch, double yaw){
+NA_IDEF void naFillM33dWithRotationAngles(double* d, double roll, double pitch, double yaw) {
   double q1 = - naCos(.5 * (roll - yaw)) * naSin(.5 * pitch);
   double q2 = naSin(.5 * (roll - yaw)) * naSin(.5 * pitch);
   double q3 = - naSin(.5 * (roll + yaw)) * naCos(.5 * pitch);
@@ -84,7 +84,7 @@ NA_IDEF void naFillM33dWithRotationAngles(double* d, double roll, double pitch, 
           1. - 2. * ( q1*q1 - q2*q2));
 }
 
-NA_IDEF void naFillM33fWithRotationAngles(float* d, float roll, float pitch, float yaw){
+NA_IDEF void naFillM33fWithRotationAngles(float* d, float roll, float pitch, float yaw) {
   float q1 = - naCosf(.5f * (roll - yaw)) * naSinf(.5f * pitch);
   float q2 = naSinf(.5f * (roll - yaw)) * naSinf(.5f * pitch);
   float q3 = - naSinf(.5f * (roll + yaw)) * naCosf(.5f * pitch);

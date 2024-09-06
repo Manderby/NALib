@@ -36,18 +36,18 @@
 // These textfiles are then simply included into your sourcecode like for
 // example:
 // 
-// void myInitTranslations(){
+// void myInitTranslations() {
 //   myTranslatorGroup = naRegisterTranslatorGroup();
 //   #include "../translations/eng.txt"
 //   #include "../translations/deu.txt"
 // }
 //
-// The myTranslatorGroup is an NAInt identifying a group of strings belonging
+// The myTranslatorGroup is an uint32 identifying a group of strings belonging
 // to the same execution unit. For example, your application has a group
 // "myAppTranslations" but you might compile this project together with a
 // separate project which definies and includes its own strings in a group
 // called "MyConverterTranslations". Later, you will identify the strings
-// using this NAInt group identifier.
+// using this uint32 group identifier.
 //
 // In order for the #includes to work, somewhere in your code, integer ids
 // must be provided, defining the identifiers of the translation items.
@@ -89,18 +89,23 @@ typedef enum{
   NA_LANG_DEU = 0x646575,  // German
   NA_LANG_ENG = 0x656e67,  // English
   NA_LANG_FRA = 0x667261,  // French
+  NA_LANG_GSW = 0x677377,  // Swiss German
   NA_LANG_JPN = 0x6a706e,  // Japanese
-  NA_LANG_GSW = 0x677377   // Swiss German
+  NA_LANG_SPA = 0x737061,  // Spanish
+  NA_LANG_TLH = 0x746c68,  // Klingon
+  NA_LANG_ZHO = 0x7a686f,  // Chinese
 } NALanguageCode3;
 
 // These codes denote the standardized ISO 639-1 codes. They should not be
 // used, please use the 3 variant whenever possible or use the conversion
 // function naConvertLanguageCode1To3
 typedef enum{
-  NA_LANG_DE = 0x6465,  // German hallo
+  NA_LANG_DE = 0x6465,  // German
   NA_LANG_EN = 0x656e,  // English
+  NA_LANG_ES = 0x6573,  // Spanish
   NA_LANG_FR = 0x6672,  // French
-  NA_LANG_JA = 0x6a61   // Japanese
+  NA_LANG_JA = 0x6a61,  // Japanese
+  NA_LANG_ZH = 0x7a68,  // Chinese
 } NALanguageCode1;
 
 
@@ -119,7 +124,7 @@ NA_API void naStopTranslator(void);
 // use. How you do this is up to you.
 // Note: Once you register a group, you have to insert all strings of that
 // group. You can not come back to it later.
-NA_API NAInt naRegisterTranslatorGroup(void);
+NA_API uint32 naRegisterTranslatorGroup(void);
 
 // Sets the given language as the current language for string insertion and
 // registers its availability in the current translator.
@@ -127,7 +132,7 @@ NA_API void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code);
 
 // Stores a given string for the given id in the current language and the
 // current group. If there already was a string, it will be replaced.
-NA_API void naInsertTranslatorString(NAInt id, NAUTF8Char* str);
+NA_API void naInsertTranslatorString(uint32 id, NAUTF8Char* str);
 
 // Usually, when working with translator files, you will be using the following
 // macros with the strings being encoded in UTF-8:
@@ -151,7 +156,7 @@ NA_API void naSetTranslatorLanguagePreference(NALanguageCode3 code);
 
 // Returns the UTF8-String of the given id in the given group, according to
 // the language preferences.
-NA_API const NAUTF8Char* naTranslate(NAInt group, NAInt id);
+NA_API const NAUTF8Char* naTranslate(uint32 group, uint32 id);
 
 
 
@@ -160,6 +165,10 @@ NA_API const NAUTF8Char* naTranslate(NAInt group, NAInt id);
 
 // Returns an enum denoting the provided ISO 639-3 string. For example "eng".
 NA_API NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str);
+#if NA_OS == NA_OS_WINDOWS
+  #include "windows.h"
+  NA_API NALanguageCode3 naGetLanguageCodeWithLANGID(LANGID langId);
+#endif
 
 // Converts a code of ISO 639-1 into ISO 639-3. For example, converts en to eng
 // or de to deu. Try to avoid this function, it's bloated. Use ISO 639-3.

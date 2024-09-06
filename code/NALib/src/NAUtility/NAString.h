@@ -127,7 +127,7 @@ NA_API NAString* naNewStringExtraction(const NAString* srcString,
                                                  NAInt length);
 
 NA_API NAString* naNewStringWithBufferExtraction( NABuffer* buffer,
-                                                      NARangei range);
+                                                      NARangei64 range);
 
 // Returns a string equal to the given string but all newlines are
 // converted to the given newline encoding.
@@ -194,13 +194,13 @@ NA_API NAString* naNewStringEPSDecoded(const NAString* inputString);
   NA_API char* naAllocAnsiStringWithUTF8String(const NAUTF8Char* utf8String);
 
   // Creates a new NAString from an encoded string. COPIES ALWAYS!
-  NA_API NAString* naNewStringFromWideCharString(const wchar_t* wcharString);
-  NA_API NAString* naNewStringFromAnsiString(const char* ansiString);
+  NA_API NAString* naNewStringWithWideCharString(const wchar_t* wcharString);
+  NA_API NAString* naNewStringWithAnsiString(const char* ansiString);
 
   // Conversions based on the application setting.
   // (See project properties, character set)
   NA_API TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8String);
-  NA_API NAString* naNewStringFromSystemString(const TCHAR* systemString);
+  NA_API NAString* naNewStringWithSystemString(const TCHAR* systemString);
 
 #endif
 

@@ -51,32 +51,22 @@ typedef enum{
 } Colors;
 
 const NAUTF8Char* colorNames[COLOR_COUNT] = {
-  "Transparent",
-  "Red",
-  "Yellow",
-  "Green",
-  "Cyan",
-  "Blue",
-  "Magenta",
-  "White",
-  "Black",
+  [COLOR_TRANSPARENT] = "Transparent",
+  [COLOR_RED]         = "Red",
+  [COLOR_YELLOW]      = "Yellow",
+  [COLOR_GREEN]       = "Green",
+  [COLOR_CYAN]        = "Cyan",
+  [COLOR_BLUE]        = "Blue",
+  [COLOR_MAGENTA]     = "Magenta",
+  [COLOR_WHITE]       = "White",
+  [COLOR_BLACK]       = "Black",
 };
 
-const NABabyColor colors[COLOR_COUNT] = {
-  {0., 0., 0., 0.},
-  {1., 0., 0., 1.},
-  {1., 1., 0., 1.},
-  {0., 1., 0., 1.},
-  {0., 1., 1., 1.},
-  {0., 0., 1., 1.},
-  {1., 0., 1., 1.},
-  {1., 1., 1., 1.},
-  {0., 0., 0., 1.},
-};
+NAColor colors[COLOR_COUNT];
 
 struct ImageTesterApplication{
-  NABabyImage* transparencyGridImage;
-  NABabyImage* images[IMAGE_COUNT];
+  NAImage* transparencyGridImage;
+  NAImage* images[IMAGE_COUNT];
 
   ImageTesterController* imageTestController;
 };
@@ -100,12 +90,12 @@ struct ImageTesterController{
   NALabel* bottomLabel;
   NASelect* bottomSelect;
 
-  const NABabyImage* topImage;
-  NABabyColor topColor;
-  const NABabyImage* bottomImage;
-  NABabyColor bottomColor;
+  const NAImage* topImage;
+  const NAColor* topColor;
+  const NAImage* bottomImage;
+  const NAColor* bottomColor;
   
-  NAPosi center;
+  NAPosi32 center;
   size_t selectedTop;
   float scale;
   float alpha;
@@ -119,31 +109,31 @@ ImageTesterApplication* app = NA_NULL;
 
 ImageTesterController* naAllocImageTestController(void);
 void naDeallocImageTestController(ImageTesterController* con);
-NABool topSelected(NAReaction reaction);
-NABool bottomSelected(NAReaction reaction);
-NABool blendModeSelected(NAReaction reaction);
-NABool sliderEdited(NAReaction reaction);
-NABool mouseMoved(NAReaction reaction);
+void topSelected(NAReaction reaction);
+void bottomSelected(NAReaction reaction);
+void blendModeSelected(NAReaction reaction);
+void sliderEdited(NAReaction reaction);
+void mouseMoved(NAReaction reaction);
 void updateImageTestController(ImageTesterController* con);
 
 
 
-void loadImage(size_t index, const NAUTF8Char* path){
+void loadImage(size_t index, const NAUTF8Char* path) {
   NAPNG* png = naNewPNGWithPath(path);
-  app->images[index] = naCreateBabyImageFromPNG(png);
+  app->images[index] = naCreateImageWithPNG(png);
   naDelete(png);
 }
 
-void naStartImageTestApplication(void){
+void naStartImageTestApplication(void) {
   app = naAlloc(ImageTesterApplication);
 
   NAPNG* gridPNG = naNewPNGWithPath("transparencyGrid.png");
-  NABabyImage* gridImage = naCreateBabyImageFromPNG(gridPNG);
-  NASizei gridSize = naGetBabyImageSize(gridImage);
-  app->transparencyGridImage = naCreateBabyImageWithResize(gridImage, naMakeSizei(gridSize.width * 2, gridSize.height * 2));
-  naReleaseBabyImage(gridImage);
+  NAImage* gridImage = naCreateImageWithPNG(gridPNG);
+  NASizes gridSize = naGetImageSize(gridImage);
+  app->transparencyGridImage = naCreateImageWithResize(gridImage, naMakeSizes(gridSize.width * 2, gridSize.height * 2));
+  naRelease(gridImage);
 
-  for(size_t i = 0; i < IMAGE_COUNT; ++i){
+  for(size_t i = 0; i < IMAGE_COUNT; ++i) {
     app->images[i] = NA_NULL;
   }
 
@@ -153,34 +143,34 @@ void naStartImageTestApplication(void){
 
 
 
-void naStopImageTestApplication(void){
+void naStopImageTestApplication(void) {
   naDeallocImageTestController(app->imageTestController);
-  naReleaseBabyImage(app->transparencyGridImage);
-  for(size_t i = 0; i < IMAGE_COUNT; ++i){
-    naReleaseBabyImage(app->images[i]);
+  naRelease(app->transparencyGridImage);
+  for(size_t i = 0; i < IMAGE_COUNT; ++i) {
+    naRelease(app->images[i]);
   }
   naFree(app);
 }
 
 
-void addSingleSelectItem(const NAUTF8Char* text, NASelect* select, NAReactionHandler handler, ImageTesterController* con){
+void addSingleSelectItem(const NAUTF8Char* text, NASelect* select, NAReactionCallback callback, ImageTesterController* con) {
   NAMenuItem* item = naNewMenuItem(text);
   naAddSelectMenuItem(select, item, NA_NULL);
-  naAddUIReaction(item, NA_UI_COMMAND_PRESSED, handler, con);
+  naAddUIReaction(item, NA_UI_COMMAND_PRESSED, callback, con);
 }
 
-void fillSelect(NASelect* select, NAReactionHandler handler, ImageTesterController* con){
-  for(size_t i = 0; i < COLOR_COUNT; ++i){
-    addSingleSelectItem(colorNames[i], select, handler, con);
+void fillSelect(NASelect* select, NAReactionCallback callback, ImageTesterController* con) {
+  for(size_t i = 0; i < COLOR_COUNT; ++i) {
+    addSingleSelectItem(colorNames[i], select, callback, con);
   }
-  for(size_t i = 0; i < IMAGE_COUNT; ++i){
-    addSingleSelectItem(imageNames[i], select, handler, con);
+  for(size_t i = 0; i < IMAGE_COUNT; ++i) {
+    addSingleSelectItem(imageNames[i], select, callback, con);
   }
 }
 
 
 
-ImageTesterController* naAllocImageTestController(){
+ImageTesterController* naAllocImageTestController() {
   ImageTesterController* con = naAlloc(ImageTesterController);
 
   con->window = naNewWindow(
@@ -196,11 +186,11 @@ ImageTesterController* naAllocImageTestController(){
 
   con->center.x = 0;
   con->center.y = 0;
-  con->selectedTop = COLOR_COUNT + IMAGE_FEATHER;
+  con->selectedTop = COLOR_CYAN;
   con->scale = 1.;
   con->alpha = 1.;
-  con->blendMode = NA_BLEND_OVERLAY;
-  con->selectedBottom = COLOR_TRANSPARENT;
+  con->blendMode = NA_BLEND_ERASE_HUE;
+  con->selectedBottom = COLOR_COUNT + IMAGE_RAINBOW;
 
   con->imageSpace = naNewImageSpace(NA_NULL, naMakeSize(600, 400));
   naAddUIReaction(con->imageSpace, NA_UI_COMMAND_MOUSE_MOVED, mouseMoved, con);
@@ -225,7 +215,7 @@ ImageTesterController* naAllocImageTestController(){
   naAddSpaceChild(contentSpace, con->blendModeLabel, naMakePos(640, 225));
   naAddSpaceChild(contentSpace, con->blendModeSelect, naMakePos(640, 200));
   addSingleSelectItem("ZERO",con->blendModeSelect, blendModeSelected, con);
-  addSingleSelectItem("BLEND",con->blendModeSelect, blendModeSelected, con);
+  addSingleSelectItem("LINEAR",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("OVERLAY",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("OPAQUE",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("MULTIPLY",con->blendModeSelect, blendModeSelected, con);
@@ -255,19 +245,19 @@ ImageTesterController* naAllocImageTestController(){
 
 
 
-void naDeallocImageTestController(ImageTesterController* con){
+void naDeallocImageTestController(ImageTesterController* con) {
   naFree(con);
 }
 
 
 
-void selectionChanged(const NABabyImage** imagePtr, NABabyColor colorPtr, size_t index){
-  if(index < COLOR_COUNT){
+void selectionChanged(const NAImage** imagePtr, const NAColor** color, size_t index) {
+  if(index < COLOR_COUNT) {
     *imagePtr = NA_NULL;
-    naCopyV4f(colorPtr, colors[index]);
+    *color = &colors[index];
   }else{
     index -= COLOR_COUNT;
-    if(!app->images[index]){
+    if(!app->images[index]) {
       loadImage(index, imagePaths[index]);
     }
     *imagePtr = app->images[index];
@@ -276,12 +266,12 @@ void selectionChanged(const NABabyImage** imagePtr, NABabyColor colorPtr, size_t
 
 
 
-void updateImageTestController(ImageTesterController* con){
+void updateImageTestController(ImageTesterController* con) {
   if(!app->transparencyGridImage)
     return;
 
-  selectionChanged(&con->topImage, con->topColor, con->selectedTop);
-  selectionChanged(&con->bottomImage, con->bottomColor, con->selectedBottom);
+  selectionChanged(&con->topImage, &con->topColor, con->selectedTop);
+  selectionChanged(&con->bottomImage, &con->bottomColor, con->selectedBottom);
 
   naSetSelectIndexSelected(con->topSelect, con->selectedTop);
   naSetSliderValue(con->scaleSlider, con->scale);
@@ -289,139 +279,153 @@ void updateImageTestController(ImageTesterController* con){
   naSetSelectIndexSelected(con->blendModeSelect, con->blendMode);
   naSetSelectIndexSelected(con->bottomSelect, con->selectedBottom);
 
-  NASizei gridSize = naGetBabyImageSize(app->transparencyGridImage);
+  NASizes gridSize = naGetImageSize(app->transparencyGridImage);
 
-  NABabyImage* backImage;
-  if(con->bottomImage){
-    NASizei newSize = naGetBabyImageSize(con->bottomImage);
+  NAImage* backImage;
+  if(con->bottomImage) {
+    NASizes newSize = naGetImageSize(con->bottomImage);
     newSize.width *= 2;
     newSize.height *= 2;
-    backImage = naCreateBabyImageWithResize(con->bottomImage, newSize);
+    backImage = naCreateImageWithResize(con->bottomImage, newSize);
   }else{
-    backImage = naCreateBabyImage(gridSize, con->bottomColor);
+    backImage = naCreateImage(gridSize, con->bottomColor);
   }
     
-  NABabyImage* blendedImage;
+  NAImage* blendedImage;
 
-  if(con->topImage){
-    NASizei originalSize = naGetBabyImageSize(con->topImage);
-    NASizei newSize = naMakeSizeiE((NAInt)(con->scale * originalSize.width), (NAInt)(con->scale * originalSize.height));
-    if(naIsSizeiUseful(newSize)){
-      NABabyImage* scaledImage = naCreateBabyImageWithResize(con->topImage, newSize);
-      NASizei baseSize = naGetBabyImageSize(backImage);
+  if(con->topImage) {
+    NASizes originalSize = naGetImageSize(con->topImage);
+    NASizes newSize = naMakeSizesE(
+      (size_t)(con->scale * originalSize.width),
+      (size_t)(con->scale * originalSize.height));
+    if(naIsSizesUseful(newSize)) {
+      NAImage* scaledImage = naCreateImageWithResize(con->topImage, newSize);
+      NASizes baseSize = naGetImageSize(backImage);
       NASize spaceSize = naGetUIElementRect(con->imageSpace).size;
 
-      NAPosi origin = naMakePosi(
-        con->center.x - (NAInt)((newSize.width / 2.) + ((spaceSize.width - baseSize.width) / 2.)),
-        con->center.y - (NAInt)((newSize.height / 2.) + ((spaceSize.height - baseSize.height) / 2.)));
+      NAPosi32 origin = naMakePosi32(
+        con->center.x - (((int32)newSize.width / 2) + (((int32)spaceSize.width - (int32)baseSize.width) / 2)),
+        con->center.y - (((int32)newSize.height / 2) + (((int32)spaceSize.height - (int32)baseSize.height) / 2)));
 
-      blendedImage = naCreateBabyImageWithBlend(
+      blendedImage = naCreateImageWithBlend(
         backImage,
         scaledImage,
         con->blendMode,
         con->alpha,
         origin);
-      naReleaseBabyImage(scaledImage);
+      naRelease(scaledImage);
     }else{
-      blendedImage = naRetainBabyImage(backImage);
+      blendedImage = naRetain(backImage);
     }
   }else{
-    blendedImage = naCreateBabyImageWithTint(
+    blendedImage = naCreateImageWithTint(
       backImage,
       con->topColor,
       con->blendMode,
       con->alpha);
   }
 
-  naReleaseBabyImage(backImage);
+  naRelease(backImage);
 
-  NASizei blendedSize = naGetBabyImageSize(blendedImage);
-  NAPosi origin = naMakePosi(
-    (gridSize.width - blendedSize.width) / 2,
-    (gridSize.height - blendedSize.height) / 2);
+  NASizes blendedSize = naGetImageSize(blendedImage);
+  NAPosi32 origin = naMakePosi32(
+    ((int32)gridSize.width - (int32)blendedSize.width) / 2,
+    ((int32)gridSize.height - (int32)blendedSize.height) / 2);
 
-  NABabyImage* fullImage = naCreateBabyImageWithBlend(
+  NAImage* fullImage = naCreateImageWithBlend(
     app->transparencyGridImage,
     blendedImage,
     NA_BLEND_OVERLAY,
     1.,
     origin);
 
-  naReleaseBabyImage(blendedImage);
+  naRelease(blendedImage);
 
-  NAUIImage* uiImage = naCreateUIImage(
+  NAImageSet* imageSet = naCreateImageSet(
     fullImage,
-    NA_UIIMAGE_RESOLUTION_SCREEN_1x,
+    NA_UI_RESOLUTION_1x,
     NA_BLEND_ZERO);
-  naReleaseBabyImage(fullImage);
+  naRelease(fullImage);
 
-  naSetImageSpaceImage(con->imageSpace, uiImage);
-  naRelease(uiImage);
+  naSetImageSpaceImage(con->imageSpace, imageSet);
+  naRelease(imageSet);
 
 }
 
 
 
-NABool topSelected(NAReaction reaction){
+void topSelected(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   con->selectedTop = naGetSelectItemIndex(con->topSelect, reaction.uiElement);
   updateImageTestController(con);
-  return NA_TRUE;
 }
 
-NABool bottomSelected(NAReaction reaction){
+void bottomSelected(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   con->selectedBottom = naGetSelectItemIndex(con->bottomSelect, reaction.uiElement);
   updateImageTestController(con);
-  return NA_TRUE;
 }
 
-NABool blendModeSelected(NAReaction reaction){
+void blendModeSelected(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
   size_t index = naGetSelectItemIndex(con->blendModeSelect, reaction.uiElement);
   con->blendMode = (NABlendMode)index;
   updateImageTestController(con);
-  return NA_TRUE;
 }
 
 
 
-NABool sliderEdited(NAReaction reaction){
+void sliderEdited(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
-  if(reaction.uiElement == con->alphaSlider){
+  if(reaction.uiElement == con->alphaSlider) {
     con->alpha = (float)naGetSliderValue(con->alphaSlider);
-  }else if(reaction.uiElement == con->scaleSlider){
+  }else if(reaction.uiElement == con->scaleSlider) {
     con->scale = (float)naGetSliderValue(con->scaleSlider);
   }
   updateImageTestController(con);
-  return NA_TRUE;
 }
 
 
 
-NABool mouseMoved(NAReaction reaction){
+void mouseMoved(NAReaction reaction) {
   ImageTesterController* con = (ImageTesterController*)reaction.controller;
-  const NAMouseStatus* mouse = naGetMouseStatus();
+  const NAMouseStatus* mouseStatus = naGetCurrentMouseStatus();
+  NAPos mousePos = naGetMousePos(mouseStatus);
   NARect spaceRect = naGetUIElementRectAbsolute(reaction.uiElement);
-  con->center.x = (NAInt)(mouse->pos.x - spaceRect.pos.x);
-  con->center.y = (NAInt)(mouse->pos.y - spaceRect.pos.y);
+  con->center.x = (int32)(mousePos.x - spaceRect.pos.x);
+  con->center.y = (int32)(mousePos.y - spaceRect.pos.y);
   updateImageTestController(con);
-  return NA_TRUE;
 }
 
 
 
-void postStartup(void* arg){
+void preStartup(void* arg) {
+  NA_UNUSED(arg);
+
+  naFillColorWithSRGB(&colors[0], 0., 0., 0., 0.);
+  naFillColorWithSRGB(&colors[1], 1., 0., 0., 1.);
+  naFillColorWithSRGB(&colors[2], 1., 1., 0., 1.);
+  naFillColorWithSRGB(&colors[3], 0., 1., 0., 1.);
+  naFillColorWithSRGB(&colors[4], 0., 1., 1., 1.);
+  naFillColorWithSRGB(&colors[5], 0., 0., 1., 1.);
+  naFillColorWithSRGB(&colors[6], 1., 0., 1., 1.);
+  naFillColorWithSRGB(&colors[7], 1., 1., 1., 1.);
+  naFillColorWithSRGB(&colors[8], 0., 0., 0., 1.);
+}
+
+
+
+void postStartup(void* arg) {
   NA_UNUSED(arg);
   naStartImageTestApplication();
 }
 
 
 
-int main(void){
+int main(void) {
  
   naStartRuntime();
-  naStartApplication(NA_NULL, postStartup, NA_NULL, NA_NULL);
+  naStartApplication(preStartup, postStartup, NA_NULL, NA_NULL);
   naStopImageTestApplication();
   naStopRuntime();
     

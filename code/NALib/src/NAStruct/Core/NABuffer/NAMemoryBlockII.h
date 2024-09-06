@@ -16,26 +16,26 @@ struct NAMemoryBlock{
 
 
 
-NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, size_t index){
+NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, size_t index) {
   #if NA_DEBUG
     if(!block)
       naCrash("block is Null");
     if(index >= block->byteSize)
       naError("index out of range");
   #endif
-  return (const void*)&(((const NAByte*)naGetPtrConst(block->data))[index]);
+  return (const void*)&((const NAByte*)naGetPtrConst(block->data))[index];
 }
 
 
 
-NA_HIDEF void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, size_t index){
+NA_HIDEF void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, size_t index) {
   #if NA_DEBUG
     if(!block)
       naCrash("block is Null");
     if(index >= block->byteSize)
       naError("index out of range");
   #endif
-  return (void*)&(((const NAByte*)naGetPtrMutable(block->data))[index]);
+  return (void*)&((const NAByte*)naGetPtrMutable(block->data))[index];
 }
 
 

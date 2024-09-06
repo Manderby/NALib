@@ -3,6 +3,7 @@
 // converts temperatures from Degree Celsius to Degree Fahrenheit.
 
 #include "../../NALib/src/NAApp/NAApp.h"
+#include "NAApp/NAImageSet.h"
 
 
 typedef struct TemperatureController TemperatureController;
@@ -31,9 +32,9 @@ void postStartup(void* arg);
 void clearApplication(void* arg);
 double getAndAdvanceNextWindowX(void);
 double getAndAdvanceNextWindowY(void);
-NAUIImage* getIconImage(void);
-NAUIImage* getState1Image(void);
-NAUIImage* getState2Image(void);
+NAImageSet* getIconImageSet(void);
+NAImageSet* getState1ImageSet(void);
+NAImageSet* getState2ImageSet(void);
 
 
 void addTemperatureControllerToApplication(TemperatureController* con);

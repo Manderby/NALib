@@ -15,8 +15,8 @@ struct NATranslator{
   NATreeConfiguration* languagesConfig;
   NATreeConfiguration* stringsConfig;
   NAList languagePreferences;
-  NAInt curGroup;
-  NAInt curLang;
+  uint32 curGroup;
+  uint32 curLang;
 };
 
 #if NA_COMPILE_GUI == 1
@@ -27,7 +27,7 @@ struct NATranslator{
 #endif
 
 
-NA_HDEF NAPtr na_ConstructLanguages(const void* key, NAPtr content){
+NA_HDEF NAPtr na_ConstructLanguages(const void* key, NAPtr content) {
   NATree* strings;
   NA_UNUSED(key);
   NA_UNUSED(content);
@@ -36,7 +36,7 @@ NA_HDEF NAPtr na_ConstructLanguages(const void* key, NAPtr content){
   return naMakePtrWithDataMutable(strings);
 }
 
-NA_HDEF void na_DestructLanguages(NAPtr leafData){
+NA_HDEF void na_DestructLanguages(NAPtr leafData) {
   NATree* strings = naGetPtrMutable(leafData);
   naClearTree(strings);
   naFree(strings);
@@ -44,7 +44,7 @@ NA_HDEF void na_DestructLanguages(NAPtr leafData){
 
 
 
-NA_HDEF NAPtr na_ConstructGroups(const void* key, NAPtr content){
+NA_HDEF NAPtr na_ConstructGroups(const void* key, NAPtr content) {
   NATree* languages;
   NA_UNUSED(key);
   NA_UNUSED(content);
@@ -53,7 +53,7 @@ NA_HDEF NAPtr na_ConstructGroups(const void* key, NAPtr content){
   return naMakePtrWithDataMutable(languages);
 }
 
-NA_HDEF void na_DestructGroups(NAPtr leafData){
+NA_HDEF void na_DestructGroups(NAPtr leafData) {
   NATree* languages = naGetPtrMutable(leafData);
   naClearTree(languages);
   naFree(languages);
@@ -61,7 +61,7 @@ NA_HDEF void na_DestructGroups(NAPtr leafData){
 
 
 
-NA_DEF void naStartTranslator(void){
+NA_DEF void naStartTranslator(void) {
   #if NA_DEBUG
     #if NA_COMPILE_GUI == 1
       if(!naGetApplication())
@@ -75,21 +75,21 @@ NA_DEF void naStartTranslator(void){
   #endif
   NA_TRANSLATOR = naAlloc(NATranslator);
 
-  NA_TRANSLATOR->groupsConfig = naCreateTreeConfiguration(NA_TREE_KEY_NAINT | NA_TREE_BALANCE_AVL);
+  NA_TRANSLATOR->groupsConfig = naCreateTreeConfiguration(NA_TREE_KEY_u32 | NA_TREE_BALANCE_AVL);
   naSetTreeConfigurationLeafCallbacks(NA_TRANSLATOR->groupsConfig, na_ConstructGroups, na_DestructGroups);
-  NA_TRANSLATOR->languagesConfig = naCreateTreeConfiguration(NA_TREE_KEY_NAINT | NA_TREE_BALANCE_AVL);
+  NA_TRANSLATOR->languagesConfig = naCreateTreeConfiguration(NA_TREE_KEY_u32 | NA_TREE_BALANCE_AVL);
   naSetTreeConfigurationLeafCallbacks(NA_TRANSLATOR->languagesConfig, na_ConstructLanguages, na_DestructLanguages);
-  NA_TRANSLATOR->stringsConfig = naCreateTreeConfiguration(NA_TREE_KEY_NAINT | NA_TREE_BALANCE_AVL);
+  NA_TRANSLATOR->stringsConfig = naCreateTreeConfiguration(NA_TREE_KEY_u32 | NA_TREE_BALANCE_AVL);
 
-  naInitTree(&(NA_TRANSLATOR->groups), NA_TRANSLATOR->groupsConfig);
-  naInitList(&(NA_TRANSLATOR->languagePreferences));
-  NA_TRANSLATOR->curGroup = -1;
+  naInitTree(&NA_TRANSLATOR->groups, NA_TRANSLATOR->groupsConfig);
+  naInitList(&NA_TRANSLATOR->languagePreferences);
+  NA_TRANSLATOR->curGroup = NA_MAX_u32;
   NA_TRANSLATOR->curLang = 0;
 }
 
 
 
-NA_DEF void naStopTranslator(void){
+NA_DEF void naStopTranslator(void) {
   #if NA_DEBUG
     #if NA_COMPILE_GUI == 1
       if(!naGetApplication())
@@ -99,20 +99,20 @@ NA_DEF void naStopTranslator(void){
         naCrash("No translator running. Please use naStartTranslator.");
     #endif
   #endif
-  naClearTree(&(NA_TRANSLATOR->groups));
-  naForeachListMutable(&(NA_TRANSLATOR->languagePreferences), naFree);
-  naClearList(&(NA_TRANSLATOR->languagePreferences));
+  naClearTree(&NA_TRANSLATOR->groups);
+  naForeachListMutable(&NA_TRANSLATOR->languagePreferences, naFree);
+  naClearList(&NA_TRANSLATOR->languagePreferences);
 
-  naReleaseTreeConfiguration(NA_TRANSLATOR->groupsConfig);
-  naReleaseTreeConfiguration(NA_TRANSLATOR->languagesConfig);
-  naReleaseTreeConfiguration(NA_TRANSLATOR->stringsConfig);
+  naRelease(NA_TRANSLATOR->groupsConfig);
+  naRelease(NA_TRANSLATOR->languagesConfig);
+  naRelease(NA_TRANSLATOR->stringsConfig);
 
   naFree(NA_TRANSLATOR);
 }
 
 
 
-NA_DEF NAInt naRegisterTranslatorGroup(void){
+NA_DEF uint32 naRegisterTranslatorGroup(void) {
   #if NA_DEBUG
     #if NA_COMPILE_GUI == 1
       if(!naGetApplication())
@@ -122,13 +122,15 @@ NA_DEF NAInt naRegisterTranslatorGroup(void){
         naCrash("No translator running. Please use naStartTranslator.");
     #endif
   #endif
-  NA_TRANSLATOR->curGroup++;
+  NA_TRANSLATOR->curGroup = (NA_TRANSLATOR->curGroup == NA_MAX_u32)
+    ? 0
+    : NA_TRANSLATOR->curGroup + 1;
   return NA_TRANSLATOR->curGroup;
 }
 
 
 
-NA_DEF void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code){
+NA_DEF void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code) {
   NABool codeFound;
   NAListIterator it;
   
@@ -144,23 +146,25 @@ NA_DEF void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code){
   NA_TRANSLATOR->curLang = code;
   
   codeFound = NA_FALSE;
-  it = naMakeListAccessor(&(NA_TRANSLATOR->languagePreferences));
-  while(naIterateList(&it)){
+  it = naMakeListAccessor(&NA_TRANSLATOR->languagePreferences);
+  while(naIterateList(&it)) {
     const NALanguageCode3* curCode = naGetListCurConst(&it);
-    if(*curCode == code){codeFound = NA_TRUE;}
+    if(*curCode == code) {
+      codeFound = NA_TRUE;
+    }
   }
   naClearListIterator(&it);
   
-  if(!codeFound){
-    NAInt* newCode = naAlloc(NAInt);  // No, not TranslatorCode3, enums may have not the same size!!!
+  if(!codeFound) {
+    uint32* newCode = naAlloc(uint32);  // No, not TranslatorCode3, enums may have not the same size!!!
     *newCode = code;
-    naAddListLastMutable(&(NA_TRANSLATOR->languagePreferences), newCode);
+    naAddListLastMutable(&NA_TRANSLATOR->languagePreferences, newCode);
   }
 }
 
 
 
-NA_DEF void naInsertTranslatorString(NAInt id, NAUTF8Char* str){
+NA_DEF void naInsertTranslatorString(uint32 id, NAUTF8Char* str) {
   NATreeIterator groupIter;
   NATree* groupPack;
   NATreeIterator languageIter;
@@ -178,14 +182,14 @@ NA_DEF void naInsertTranslatorString(NAInt id, NAUTF8Char* str){
   #endif
   
   // Search for the group pack and create it if necessary.
-  groupIter = naMakeTreeModifier(&(NA_TRANSLATOR->groups));
-  naAddTreeKeyConst(&groupIter, &(NA_TRANSLATOR->curGroup), NA_NULL, NA_FALSE);
+  groupIter = naMakeTreeModifier(&NA_TRANSLATOR->groups);
+  naAddTreeKeyConst(&groupIter, &NA_TRANSLATOR->curGroup, NA_NULL, NA_FALSE);
   groupPack = naGetTreeCurLeafMutable(&groupIter);
   naClearTreeIterator(&groupIter);
 
   // Search for the language pack and create it if necessary.
   languageIter = naMakeTreeModifier(groupPack);
-  naAddTreeKeyConst(&languageIter, &(NA_TRANSLATOR->curLang), NA_NULL, NA_FALSE);
+  naAddTreeKeyConst(&languageIter, &NA_TRANSLATOR->curLang, NA_NULL, NA_FALSE);
   languagePack = naGetTreeCurLeafMutable(&languageIter);
   naClearTreeIterator(&languageIter);
   
@@ -197,7 +201,7 @@ NA_DEF void naInsertTranslatorString(NAInt id, NAUTF8Char* str){
 
 
 
-NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code){
+NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code) {
   NABool codeFound;
   NAListIterator it;
   
@@ -211,26 +215,26 @@ NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code){
     #endif
   #endif
   codeFound = NA_FALSE;
-  it = naMakeListModifier(&(NA_TRANSLATOR->languagePreferences));
-  while(!codeFound && naIterateList(&it)){
+  it = naMakeListModifier(&NA_TRANSLATOR->languagePreferences);
+  while(!codeFound && naIterateList(&it)) {
     const NALanguageCode3* curCode = naGetListCurConst(&it);
-    if(*curCode == code){
+    if(*curCode == code) {
       codeFound = NA_TRUE;
-      naMoveListCurToFirst(&it, NA_FALSE, &(NA_TRANSLATOR->languagePreferences));
+      naMoveListCurToFirst(&it, NA_FALSE, &NA_TRANSLATOR->languagePreferences);
     }
   }
   naClearListIterator(&it);
   
-  if(!codeFound){
-    NAInt* newCode = naAlloc(NAInt);  // No, not TranslatorCode3, enums may have not the same size!!!
+  if(!codeFound) {
+    uint32* newCode = naAlloc(uint32);  // No, not TranslatorCode3, enums may have not the same size!!!
     *newCode = code;
-    naAddListFirstMutable(&(NA_TRANSLATOR->languagePreferences), newCode);
+    naAddListFirstMutable(&NA_TRANSLATOR->languagePreferences, newCode);
   }
 }
 
 
 
-NA_DEF const NAUTF8Char* naTranslate(NAInt group, NAInt id){
+NA_DEF const NAUTF8Char* naTranslate(uint32 group, uint32 id) {
   const NAUTF8Char* retValue = "String not found";
   NATreeIterator groupIter;
   NABool groupFound;
@@ -246,27 +250,27 @@ NA_DEF const NAUTF8Char* naTranslate(NAInt group, NAInt id){
   #endif
   
   // Search for the group pack.
-  groupIter = naMakeTreeModifier(&(NA_TRANSLATOR->groups));
+  groupIter = naMakeTreeModifier(&NA_TRANSLATOR->groups);
   groupFound = naLocateTreeKey(&groupIter, &group, NA_TRUE);
-  if(groupFound){
+  if(groupFound) {
     NATree* groupPack = naGetTreeCurLeafMutable(&groupIter);
 
     // Go through the list of preferred languages
-    NAListIterator prefLangIter = naMakeListAccessor(&(NA_TRANSLATOR->languagePreferences));
+    NAListIterator prefLangIter = naMakeListAccessor(&NA_TRANSLATOR->languagePreferences);
     NABool found = NA_FALSE;
-    while(!found && naIterateList(&prefLangIter)){
+    while(!found && naIterateList(&prefLangIter)) {
       const NALanguageCode3* curLang = naGetListCurConst(&prefLangIter);
     
       // Search for the language pack.
       NATreeIterator languageIter = naMakeTreeModifier(groupPack);
       NABool langFound = naLocateTreeKey(&languageIter, curLang, NA_TRUE);
-      if(langFound){
+      if(langFound) {
         NATree* languagePack = naGetTreeCurLeafMutable(&languageIter);
         
         // Search for the string entry.
         NATreeIterator stringIter = naMakeTreeModifier(languagePack);
         found = naLocateTreeKey(&stringIter, &id, NA_FALSE);
-        if(found){
+        if(found) {
           retValue = naGetTreeCurLeafConst(&stringIter);
         }
         naClearTreeIterator(&stringIter);
@@ -282,27 +286,59 @@ NA_DEF const NAUTF8Char* naTranslate(NAInt group, NAInt id){
 
 
 
-NA_DEF NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str){
+NA_DEF NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str) {
   size_t strlength = naStrlen(str);
-  NAInt code = 0;
+  uint32 code = 0;
   size_t i = 0;
-  while(i < strlength && i < 3 && isalpha((unsigned char)str[i])){
+  while(i < strlength && i < 3 && isalpha((unsigned char)str[i])) {
     code = code << 8;
-    code |= tolower(str[i]);
+    code |= (uint32)tolower(str[i]);
     ++i;
   }
-  if(code <= 0xffff){code = naConvertLanguageCode1To3((NALanguageCode1)code);}
+  if(code <= 0xffff) {
+    code = naConvertLanguageCode1To3((NALanguageCode1)code);
+  }
   return (NALanguageCode3)code;
 }
 
 
 
-NA_DEF NALanguageCode3 naConvertLanguageCode1To3(NALanguageCode1 code1){
-  switch(code1){
+#if NA_OS == NA_OS_WINDOWS
+
+  NA_DEF NALanguageCode3 naGetLanguageCodeWithLANGID(LANGID langId) {
+    // One could search for specific languages like the following but then,
+    // no fallback is defined. So unless one specifies an explicit fallback,
+    // one might never see the language in the UI.
+    //switch(langId)
+    //{
+    //case 0x0807: return NA_LANG_GSW;
+    //}
+
+    switch(langId & 0x01ff)
+    {
+    case 0x0004: return NA_LANG_ZHO;
+    case 0x0007: return NA_LANG_DEU;
+    case 0x0009: return NA_LANG_ENG;
+    case 0x000a: return NA_LANG_SPA;
+    case 0x000c: return NA_LANG_FRA;
+    case 0x0011: return NA_LANG_JPN;
+    }
+
+    // no Klingon, sorry.
+    return NA_LANG_ENG;
+  }
+
+#endif // NA_OS == NA_OS_WINDOWS
+
+
+NA_DEF NALanguageCode3 naConvertLanguageCode1To3(NALanguageCode1 code1) {
+  switch(code1) {
   case NA_LANG_DE: return NA_LANG_DEU;
   case NA_LANG_EN: return NA_LANG_ENG;
+  case NA_LANG_ES: return NA_LANG_SPA;
   case NA_LANG_FR: return NA_LANG_FRA;
   case NA_LANG_JA: return NA_LANG_JPN;
+  case NA_LANG_ZH: return NA_LANG_ZHO;
   default: return NA_LANG_ENG;
   }
 }

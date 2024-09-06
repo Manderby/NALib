@@ -81,16 +81,16 @@
 
   // Native
 
-  NA_IDEF NAi64 na_Makei64(int32 hi, uint32 lo){
+  NA_IDEF NAi64 na_Makei64(int32 hi, uint32 lo) {
     return ((NAi64)((NAu64)hi << 32)) | lo;
   }
-  NA_IDEF NAi64 na_Makei64WithLo(int32 lo){
+  NA_IDEF NAi64 na_Makei64WithLo(int32 lo) {
     return (NAi64)lo;
   }
-  NA_IDEF NAi64 na_Makei64WithDouble(double lo){
+  NA_IDEF NAi64 na_Makei64WithDouble(double lo) {
     return (NAi64)lo;
   }
-  NA_IDEF NAi64 na_Makei64WithBinary(uint32 b1, uint32 b0){
+  NA_IDEF NAi64 na_Makei64WithBinary(uint32 b1, uint32 b0) {
     return ((NAi64)((NAu64)b1 << 32)) | b0;
   }
 
@@ -176,22 +176,22 @@
 
   // Emulated
 
-  NA_IDEF NAi64 naMakei64(int32 hi, uint32 lo){
+  NA_IDEF NAi64 naMakei64(int32 hi, uint32 lo) {
     NAi64 retValuei;
     retValuei.hi = hi;
     retValuei.lo = lo;
     return retValuei;
   }
-  NA_IDEF NAi64 naMakei64WithLo(int32 lo){
+  NA_IDEF NAi64 naMakei64WithLo(int32 lo) {
     NAi64 retValuei;
     retValuei.hi = (int32)naGetSignum32(lo);
     retValuei.lo = (uint32)lo;
     return retValuei;
   }
-  NA_IDEF NAi64 naMakei64WithDouble(double d){
+  NA_IDEF NAi64 naMakei64WithDouble(double d) {
     return naGetDoubleInteger(d);
   }
-  NA_IDEF NAi64 naMakei64WithBinary(uint32 b1, uint32 b0){
+  NA_IDEF NAi64 naMakei64WithBinary(uint32 b1, uint32 b0) {
     NAi64 retValuei;
     retValuei.hi = (int32)b1;
     retValuei.lo = b0;
@@ -206,82 +206,100 @@
   #define naDeci64(i) (i.hi -= (i.lo == NA_ZERO_u32), i.lo--, i)
 
 
-  NA_IDEF NAi64 naNegi64(NAi64 i){
+  NA_IDEF NAi64 naNegi64(NAi64 i) {
     NAi64 retValuei = naNoti64(i);
     naInci64(retValuei);
     return retValuei;
   }
-  NA_IDEF NAi64 naAddi64(NAi64 a, NAi64 b){
+  NA_IDEF NAi64 naAddi64(NAi64 a, NAi64 b) {
     return naCastu64Toi64(naAddu64(naCasti64Tou64(a), naCasti64Tou64(b)));
   }
-  NA_IDEF NAi64 naSubi64(NAi64 a, NAi64 b){
+  NA_IDEF NAi64 naSubi64(NAi64 a, NAi64 b) {
     return naCastu64Toi64(naSubu64(naCasti64Tou64(a), naCasti64Tou64(b)));
   }
-  NA_IDEF NAi64 naMuli64(NAi64 a, NAi64 b){
+  NA_IDEF NAi64 naMuli64(NAi64 a, NAi64 b) {
     NAi64 retValuei;
     NAu64 retValueu;
     NAi64 aSign = naSigni64(a);
     NAi64 bSign = naSigni64(b);
-    if(naSmalleri64(a, NA_ZERO_i64)){a = naNegi64(a);}
-    if(naSmalleri64(b, NA_ZERO_i64)){b = naNegi64(b);}
+    if(naSmalleri64(a, NA_ZERO_i64)) {
+      a = naNegi64(a);
+    }
+    if(naSmalleri64(b, NA_ZERO_i64)) {
+      b = naNegi64(b);
+    }
     retValueu = naMulu64(naCasti64Tou64(a), naCasti64Tou64(b));
     retValueu.hi &= ~NA_SIGN_MASK_32;
     retValuei = naCastu64Toi64(retValueu);
-    if(!naEquali64(aSign, bSign)){retValuei = naNegi64(retValuei);}
+    if(!naEquali64(aSign, bSign)) {
+      retValuei = naNegi64(retValuei);
+    }
     // todo: overflow may lead to different result than built-in 64 bit integer
     return retValuei;
   }
-  NA_IDEF NAi64 naDivi64(NAi64 a, NAi64 b){
+  NA_IDEF NAi64 naDivi64(NAi64 a, NAi64 b) {
     NAi64 retValuei;
     NAu64 retValueu;
     NAi64 aSign = naSigni64(a);
     NAi64 bSign = naSigni64(b);
-    if(naSmalleri64(a, NA_ZERO_i64)){a = naNegi64(a);}
-    if(naSmalleri64(b, NA_ZERO_i64)){b = naNegi64(b);}
+    if(naSmalleri64(a, NA_ZERO_i64)) {
+      a = naNegi64(a);
+    }
+    if(naSmalleri64(b, NA_ZERO_i64)) {
+      b = naNegi64(b);
+    }
     retValueu = naDivu64(naCasti64Tou64(a), naCasti64Tou64(b));
     retValueu.hi &= ~NA_SIGN_MASK_32;
     retValuei = naCastu64Toi64(retValueu);
-    if(!naEquali64(aSign, bSign)){retValuei = naNegi64(retValuei);}
+    if(!naEquali64(aSign, bSign)) {
+      retValuei = naNegi64(retValuei);
+    }
     return retValuei;
   }
-  NA_IDEF NAi64 naModi64(NAi64 a, NAi64 b){
+  NA_IDEF NAi64 naModi64(NAi64 a, NAi64 b) {
     NAi64 retValuei;
     NAu64 retValueu;
     NAi64 aSign = naSigni64(a);
-    if(naSmalleri64(a, NA_ZERO_i64)){a = naNegi64(a);}
-    if(naSmalleri64(b, NA_ZERO_i64)){b = naNegi64(b);}
+    if(naSmalleri64(a, NA_ZERO_i64)) {
+      a = naNegi64(a);
+    }
+    if(naSmalleri64(b, NA_ZERO_i64)) {
+      b = naNegi64(b);
+    }
     retValueu = naModu64(naCasti64Tou64(a), naCasti64Tou64(b));
     retValueu.hi &= ~NA_SIGN_MASK_32;
     retValuei = naCastu64Toi64(retValueu);
-    if(!naEquali64(aSign, NA_ONE_i64)){retValuei = naNegi64(retValuei);}
+    if(!naEquali64(aSign, NA_ONE_i64)) {
+      retValuei = naNegi64(retValuei);
+    }
     return retValuei;
   }
 
 
 
-  NA_IDEF NAi64 naNoti64(NAi64 i){
+  NA_IDEF NAi64 naNoti64(NAi64 i) {
     return naCastu64Toi64(naNotu64(naCasti64Tou64(i)));
   }
-  NA_IDEF NAi64 naOri64(NAi64 a, NAi64 b){
+  NA_IDEF NAi64 naOri64(NAi64 a, NAi64 b) {
     return naCastu64Toi64(naOru64(naCasti64Tou64(a), naCasti64Tou64(b)));
   }
-  NA_IDEF NAi64 naAndi64(NAi64 a, NAi64 b){
+  NA_IDEF NAi64 naAndi64(NAi64 a, NAi64 b) {
     return naCastu64Toi64(naAndu64(naCasti64Tou64(a), naCasti64Tou64(b)));
   }
-  NA_IDEF NAi64 naXori64(NAi64 a, NAi64 b){
+  NA_IDEF NAi64 naXori64(NAi64 a, NAi64 b) {
     return naCastu64Toi64(naXoru64(naCasti64Tou64(a), naCasti64Tou64(b)));
   }
-  NA_IDEF NAi64 naShli64(NAi64 a, int n){
+  NA_IDEF NAi64 naShli64(NAi64 a, int n) {
     return naCastu64Toi64(naShlu64(naCasti64Tou64(a), n));
   }
-  NA_IDEF NAi64 naShri64(NAi64 a, int n){
+  NA_IDEF NAi64 naShri64(NAi64 a, int n) {
     NAi64 retValuei;
-    if(n < 0){
+    if(n < 0) {
       retValuei = naShli64(a, -n);
     }else{
     // Beware, do not use <= as some processors will result
     // in garbage when the shift is equal to the type size.
-      if(n < 32){
+      if(n < 32) {
         retValuei.lo = a.lo >> n;
         retValuei.lo |= ((uint32)a.hi << (32 - n));
         retValuei.hi = a.hi >> n;
@@ -296,49 +314,49 @@
 
 
 
-  NA_IDEF NABool naEquali64(NAi64 a, NAi64 b){
+  NA_IDEF NABool naEquali64(NAi64 a, NAi64 b) {
     return naEqualu64(naCasti64Tou64(a), naCasti64Tou64(b));
   }
-  NA_IDEF NABool naGreateri64(NAi64 a, NAi64 b){
+  NA_IDEF NABool naGreateri64(NAi64 a, NAi64 b) {
     return ((a.hi > b.hi) || ((a.hi == b.hi) && ((a.hi < NA_ZERO_i32) ? (a.lo < b.lo) : (a.lo > b.lo))));
   }
-  NA_IDEF NABool naGreaterEquali64(NAi64 a, NAi64 b){
+  NA_IDEF NABool naGreaterEquali64(NAi64 a, NAi64 b) {
     return ((a.hi > b.hi) || ((a.hi == b.hi) && ((a.hi < NA_ZERO_i32) ? (a.lo <= b.lo) : (a.lo >= b.lo))));
   }
-  NA_IDEF NABool naSmalleri64(NAi64 a, NAi64 b){
+  NA_IDEF NABool naSmalleri64(NAi64 a, NAi64 b) {
     return ((a.hi < b.hi) || ((a.hi == b.hi) && ((a.hi < NA_ZERO_i32) ? (a.lo > b.lo) : (a.lo < b.lo))));
   }
-  NA_IDEF NABool naSmallerEquali64(NAi64 a, NAi64 b){
+  NA_IDEF NABool naSmallerEquali64(NAi64 a, NAi64 b) {
     return ((a.hi < b.hi) || ((a.hi == b.hi) && ((a.hi < NA_ZERO_i32) ? (a.lo >= b.lo) : (a.lo <= b.lo))));
   }
 
 
 
-  NA_IDEF uint8 naCasti64Tou8(NAi64 i){
+  NA_IDEF uint8 naCasti64Tou8(NAi64 i) {
     return naCastu64Tou8(naCasti64Tou64(i));
   }
-  NA_IDEF uint16 naCasti64Tou16(NAi64 i){
+  NA_IDEF uint16 naCasti64Tou16(NAi64 i) {
     return naCastu64Tou16(naCasti64Tou64(i));
   }
-  NA_IDEF uint32 naCasti64Tou32(NAi64 i){
+  NA_IDEF uint32 naCasti64Tou32(NAi64 i) {
     return naCastu64Tou32(naCasti64Tou64(i));
   }
-  NA_IDEF NAu64 naCasti64Tou64(NAi64 i){
+  NA_IDEF NAu64 naCasti64Tou64(NAi64 i) {
     NAu64 retValuei;
     retValuei.hi = (uint32)i.hi;
     retValuei.lo = i.lo;
     return retValuei;
   }
-  NA_IDEF int8 naCasti64Toi8(NAi64 i){
+  NA_IDEF int8 naCasti64Toi8(NAi64 i) {
     return naCastu64Toi8(naCasti64Tou64(i));
   }
-  NA_IDEF int16 naCasti64Toi16(NAi64 i){
+  NA_IDEF int16 naCasti64Toi16(NAi64 i) {
     return naCastu64Toi16(naCasti64Tou64(i));
   }
-  NA_IDEF int32 naCasti64Toi32(NAi64 i){
+  NA_IDEF int32 naCasti64Toi32(NAi64 i) {
     return naCastu64Toi32(naCasti64Tou64(i));
   }
-  NA_IDEF double naCasti64ToDouble(NAi64 i){
+  NA_IDEF double naCasti64ToDouble(NAi64 i) {
     // warning: this seems to be troublesome in the lower part. Find a
     // better solution in the future by using bit manipulation. todo
     return (double)i.hi * naMakeDoubleWithExponent(32) + ((i.hi < 0) ? -(double)i.lo : (double)i.lo);
@@ -346,19 +364,19 @@
 
 
 
-  NA_IDEF NAu64 naMakeu64(uint32 hi, uint32 lo){
+  NA_IDEF NAu64 naMakeu64(uint32 hi, uint32 lo) {
     NAu64 retValuei;
     retValuei.hi = hi;
     retValuei.lo = lo;
     return retValuei;
   }
-  NA_IDEF NAu64 naMakeu64WithLo(uint32 lo){
+  NA_IDEF NAu64 naMakeu64WithLo(uint32 lo) {
     NAu64 retValuei;
     retValuei.hi = NA_ZERO_u32;
     retValuei.lo = lo;
     return retValuei;
   }
-  NA_IDEF NAu64 naMakeu64WithDouble(double d){
+  NA_IDEF NAu64 naMakeu64WithDouble(double d) {
     NAu64 retValuei;
     // note: this is somewhat cumbersome. Do it with bit manipulation. todo.
     retValuei.hi = (uint32)(d / naMakeDoubleWithExponent(32));
@@ -373,7 +391,7 @@
     #define naMakeu64WithLiteralLo(lo)  {lo, 0}
   #endif
 
-  NA_IDEF NAu64 naMakeu64WithBinary(uint32 b1, uint32 b0){
+  NA_IDEF NAu64 naMakeu64WithBinary(uint32 b1, uint32 b0) {
     NAu64 retValuei;
     retValuei.hi = b1;
     retValuei.lo = b0;
@@ -389,17 +407,17 @@
 
 
 
-  NA_IDEF NAu64 naAddu64(NAu64 a, NAu64 b){
+  NA_IDEF NAu64 naAddu64(NAu64 a, NAu64 b) {
     NAu64 retValuei;
     retValuei.lo = a.lo + b.lo;
     retValuei.hi = a.hi + b.hi;
     retValuei.hi += (retValuei.lo < a.lo); // add a carry if there was an overflow.
     return retValuei;
   }
-  NA_IDEF NAu64 naSubu64(NAu64 a, NAu64 b){
+  NA_IDEF NAu64 naSubu64(NAu64 a, NAu64 b) {
     return naAddu64(a, naCasti64Tou64(naNegi64(naCastu64Toi64(b))));
   }
-  NA_IDEF NAu64 naMulu64(NAu64 a, NAu64 b){
+  NA_IDEF NAu64 naMulu64(NAu64 a, NAu64 b) {
     NAu64 retValuei = NA_ZERO_u64;
 
     uint32 a0 = a.lo & NA_MAX_u16;
@@ -439,17 +457,17 @@
 
     return retValuei;
   }
-  NA_HIDEF void na_Computeu64Division(NAu64 a, NAu64 b, NAu64* div, NAu64* rem){
+  NA_HIDEF void na_Computeu64Division(NAu64 a, NAu64 b, NAu64* div, NAu64* rem) {
     NAu64 bTmp;
     NAu64 aHighestBit;
     NAu64 bHighestBit;
     *div = NA_ZERO_u64;
     *rem = a;
-    if(naEqualu64(b, NA_ZERO_u64)){
+    if(naEqualu64(b, NA_ZERO_u64)) {
       #if NA_DEBUG
         naCrash("Integer Division by 0");
       #endif
-    }else if(naSmalleru64(a, b)){
+    }else if(naSmalleru64(a, b)) {
       // b is larger than a and hence the result is zero.
       // Do nothing here and just return with the values set above.
     }else{
@@ -457,19 +475,19 @@
 
       // search for the highest bit of b.
       aHighestBit = naMakeu64(NA_SIGN_MASK_32, NA_ZERO_u32);
-      while(!naEqualu64(naAndu64(a, aHighestBit), aHighestBit)){
+      while(!naEqualu64(naAndu64(a, aHighestBit), aHighestBit)) {
         aHighestBit = naShru64(aHighestBit, 1);
       }
       bHighestBit = naMakeu64(NA_SIGN_MASK_32, NA_ZERO_u32);
-      while(!naEqualu64(naAndu64(b, bHighestBit), bHighestBit)){
+      while(!naEqualu64(naAndu64(b, bHighestBit), bHighestBit)) {
         bHighestBit = naShru64(bHighestBit, 1);
       }
 
       bTmp = b;
       shiftCount = 0;
       // Make the dividend big enough
-      while(!naEqualu64(aHighestBit, bHighestBit)){
-        if(naEqualu64(bTmp, NA_ZERO_u64)){
+      while(!naEqualu64(aHighestBit, bHighestBit)) {
+        if(naEqualu64(bTmp, NA_ZERO_u64)) {
           // b is larger than a and hence the result is zero.
           #if NA_DEBUG
             naError("This should not happen.");
@@ -480,9 +498,9 @@
         shiftCount++;
       }
 
-      while(shiftCount >= 0){
+      while(shiftCount >= 0) {
         *div = naShlu64(*div, 1);
-        if(naGreaterEqualu64(*rem, bTmp)){
+        if(naGreaterEqualu64(*rem, bTmp)) {
           *div = naOru64(*div, NA_ONE_u64);
           *rem = naSubu64(*rem, bTmp);
         }
@@ -491,13 +509,13 @@
       }
     }
   }
-  NA_IDEF NAu64 naDivu64(NAu64 a, NAu64 b){
+  NA_IDEF NAu64 naDivu64(NAu64 a, NAu64 b) {
     NAu64 divInt;
     NAu64 remInt;
     na_Computeu64Division(a, b, &divInt, &remInt);
     return divInt;
   }
-  NA_IDEF NAu64 naModu64(NAu64 a, NAu64 b){
+  NA_IDEF NAu64 naModu64(NAu64 a, NAu64 b) {
     NAu64 divInt;
     NAu64 remInt;
     na_Computeu64Division(a, b, &divInt, &remInt);
@@ -506,38 +524,38 @@
 
 
 
-  NA_IDEF NAu64  naNotu64(NAu64 i){
+  NA_IDEF NAu64  naNotu64(NAu64 i) {
     NAu64 retValuei;
     retValuei.hi = ~i.hi;
     retValuei.lo = ~i.lo;
     return retValuei;
   }
-  NA_IDEF NAu64  naOru64 (NAu64 a, NAu64 b){
+  NA_IDEF NAu64  naOru64 (NAu64 a, NAu64 b) {
     NAu64 retValuei;
     retValuei.hi = a.hi | b.hi;
     retValuei.lo = a.lo | b.lo;
     return retValuei;
   }
-  NA_IDEF NAu64  naAndu64(NAu64 a, NAu64 b){
+  NA_IDEF NAu64  naAndu64(NAu64 a, NAu64 b) {
     NAu64 retValuei;
     retValuei.hi = a.hi & b.hi;
     retValuei.lo = a.lo & b.lo;
     return retValuei;
   }
-  NA_IDEF NAu64  naXoru64(NAu64 a, NAu64 b){
+  NA_IDEF NAu64  naXoru64(NAu64 a, NAu64 b) {
     NAu64 retValuei;
     retValuei.hi = a.hi ^ b.hi;
     retValuei.lo = a.lo ^ b.lo;
     return retValuei;
   }
-  NA_IDEF NAu64 naShlu64(NAu64 a, int n){
+  NA_IDEF NAu64 naShlu64(NAu64 a, int n) {
     NAu64 retValuei;
-    if(n < 0){
+    if(n < 0) {
       retValuei = naShru64(a, -n);
     }else{
       // Beware, do not use <= as some processors will result
       // in garbage when the shift is equal to the type size.
-      if(n < 32){
+      if(n < 32) {
         retValuei.hi = a.hi << n;
         retValuei.hi |= a.lo >> (32 - n);
         retValuei.lo = a.lo << n;
@@ -548,14 +566,14 @@
     }
     return retValuei;
   }
-  NA_IDEF NAu64 naShru64(NAu64 a, int n){
+  NA_IDEF NAu64 naShru64(NAu64 a, int n) {
     NAu64 retValuei;
-    if(n < 0){
+    if(n < 0) {
       retValuei = naShlu64(a, -n);
     }else{
       // Beware, do not use <= as some processors will result
       // in garbage when the shift is equal to the type size.
-      if(n < 32){
+      if(n < 32) {
         retValuei.lo = a.lo >> n;
         retValuei.lo |= a.hi << (32 - n);
         retValuei.hi = a.hi >> n;
@@ -569,49 +587,49 @@
 
 
 
-  NA_IDEF NABool naEqualu64(NAu64 a, NAu64 b){
+  NA_IDEF NABool naEqualu64(NAu64 a, NAu64 b) {
     return ((a.hi == b.hi) && (a.lo == b.lo));
   }
-  NA_IDEF NABool naGreateru64(NAu64 a, NAu64 b){
+  NA_IDEF NABool naGreateru64(NAu64 a, NAu64 b) {
     return ((a.hi > b.hi) || ((a.hi == b.hi) && (a.lo > b.lo)));
   }
-  NA_IDEF NABool naGreaterEqualu64(NAu64 a, NAu64 b){
+  NA_IDEF NABool naGreaterEqualu64(NAu64 a, NAu64 b) {
     return ((a.hi > b.hi) || ((a.hi == b.hi) && (a.lo >= b.lo)));
   }
-  NA_IDEF NABool naSmalleru64(NAu64 a, NAu64 b){
+  NA_IDEF NABool naSmalleru64(NAu64 a, NAu64 b) {
     return ((a.hi < b.hi) || ((a.hi == b.hi) && (a.lo < b.lo)));
   }
-  NA_IDEF NABool naSmallerEqualu64(NAu64 a, NAu64 b){
+  NA_IDEF NABool naSmallerEqualu64(NAu64 a, NAu64 b) {
     return ((a.hi < b.hi) || ((a.hi == b.hi) && (a.lo <= b.lo)));
   }
 
 
 
-  NA_IDEF int8 naCastu64Toi8(NAu64 i){
+  NA_IDEF int8 naCastu64Toi8(NAu64 i) {
     return (int8)i.lo;
   }
-  NA_IDEF int16 naCastu64Toi16(NAu64 i){
+  NA_IDEF int16 naCastu64Toi16(NAu64 i) {
     return (int16)i.lo;
   }
-  NA_IDEF int32 naCastu64Toi32(NAu64 i){
+  NA_IDEF int32 naCastu64Toi32(NAu64 i) {
     return (int32)i.lo;
   }
-  NA_IDEF NAi64 naCastu64Toi64(NAu64 i){
+  NA_IDEF NAi64 naCastu64Toi64(NAu64 i) {
     NAi64 retValuei;
     retValuei.hi = (int32)i.hi;
     retValuei.lo = i.lo;
     return retValuei;
   }
-  NA_IDEF uint8 naCastu64Tou8(NAu64 i){
+  NA_IDEF uint8 naCastu64Tou8(NAu64 i) {
     return (uint8)i.lo;
   }
-  NA_IDEF uint16 naCastu64Tou16(NAu64 i){
+  NA_IDEF uint16 naCastu64Tou16(NAu64 i) {
     return (uint16)i.lo;
   }
-  NA_IDEF uint32 naCastu64Tou32(NAu64 i){
+  NA_IDEF uint32 naCastu64Tou32(NAu64 i) {
     return i.lo;
   }
-  NA_IDEF double naCastu64ToDouble(NAu64 i){
+  NA_IDEF double naCastu64ToDouble(NAu64 i) {
     return (double)i.hi * naMakeDoubleWithExponent(32) + (double)i.lo;
   }
 

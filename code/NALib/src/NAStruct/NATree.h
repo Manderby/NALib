@@ -35,7 +35,7 @@ typedef struct NATreeConfiguration NATreeConfiguration;
 
 
 // ///////////////////////////////////////////
-// CALLBACKS
+// Callbacks
 //
 // When creating an NATree, you can define various callbacks which are stored
 // in an NATreeConfiguration structure. Here are the signatures for these
@@ -129,6 +129,8 @@ typedef NABool (*NATreeNodeUpdater)       (NAPtr parentData,
 // KEY_NOKEY        Set this flag for your nodes and leafes to have no key.
 // KEY_DOUBLE       Set this flag for your keys to have the double type.
 // KEY_NAINT        Set this flag for your keys to have the NAInt type.
+// KEY_i32          Set this flag for your keys to have the int32 type.
+// KEY_u32          Set this flag for your keys to have the uint32 type.
 // BALANCE_AVL      Makes the tree a self-balancing tree using the AVL method
 // NA_TREE_QUADTREE Makes the tree a quadtree using 2-dimensional keys.
 // NA_TREE_OCTTREE  Makes the tree an octtree using 3-dimensional keys.
@@ -233,8 +235,8 @@ NA_IAPI NABool naIsTreeRootLeaf(const NATree* tree);
 //
 // You can iterate over every leaf of a whole tree like this:
 //
-// NATreeIterator iter = naMakeTreeIteratorMutable(tree);
-// while(naIterateTree(&iter)){
+// NATreeIterator iter = naMakeTreeMutator(tree);
+// while(naIterateTree(&iter)) {
 //   MyLeafData* leafData = naGetTreeCurLeafMutable(&iter);
 //   double* myKey = naGetTreeCurLeafKey(&iter);
 //   // do stuff with the leafData.
@@ -246,20 +248,8 @@ NA_IAPI NABool naIsTreeRootLeaf(const NATree* tree);
 // Beware to always use naClearTreeIterator. Otherwise NALib will emit
 // warnings that there are still iterators running on the struct if NA_DEBUG
 // is 1.
-//
-// You can also use the predefined Begin and End Iterator macros. Beware,
-// these are macros. They perform a simple one-by-one traversal of the tree.
-// Use them as follows:
-//
-// NATreeIterator iteratorname;
-// naBeginTreeMutatorIteration(MyLeaf* leaf, mytree, lowerLimit, upperLimit, iteratorname);
-//   doStuffWithLeaf(leaf);
-// naEndListIteration(iteratorname);
 
-#define naBeginTreeAccessorIteration(typedElem, tree, lowerLimit, upperLimit, iter)
-#define naBeginTreeMutatorIteration (typedElem, tree, lowerLimit, upperLimit, iter)
-#define naBeginTreeModifierIteration(typedElem, tree, lowerLimit, upperLimit, iter)
-#define naEndTreeIteration(iter)
+
 
 // ///////////////////////////////
 // Creating and positioning an iterator:

@@ -8,12 +8,15 @@
 // Use this function with originType = SEEK_SET, SEEK_CUR or SEEK_END.
 // Note that all systems define NAFileSize to be a signed integer. Therefore
 // searching backwards with SEEK_CUR is possible.
-NA_IDEF NAFileSize naLseek(int fd, NAFileSize byteOffset, int originType){
+NA_IDEF NAFileSize naLseek(int fd, NAFileSize byteOffset, int originType) {
   #if NA_OS == NA_OS_WINDOWS
     #if NA_ADDRESS_BITS == 64
       return _lseeki64(fd, byteOffset, originType);
     #elif NA_ADDRESS_BITS == 32
       return _lseek(fd, byteOffset, originType);
+    #else
+      #error "Address size not supported"
+      return 0;
     #endif
   #elif NA_IS_POSIX
     return lseek(fd, byteOffset, originType);
@@ -25,12 +28,15 @@ NA_IDEF NAFileSize naLseek(int fd, NAFileSize byteOffset, int originType){
 // Use this function with originType = SEEK_SET, SEEK_CUR or SEEK_END.
 // Note that all systems define NAFileSize to be a signed integer. Therefore
 // searching backwards with SEEK_CUR is possible.
-NA_IDEF NAFileSize naTell(int fd){
+NA_IDEF NAFileSize naTell(int fd) {
   #if NA_OS == NA_OS_WINDOWS
     #if NA_ADDRESS_BITS == 64
       return _lseeki64(fd, 0, SEEK_CUR);
     #elif NA_ADDRESS_BITS == 32
       return _lseek(fd, 0, SEEK_CUR);
+    #else
+      #error "Address size not supported"
+      return 0;
     #endif
   #elif NA_IS_POSIX
     return lseek(fd, 0, SEEK_CUR);
@@ -46,7 +52,7 @@ NA_IDEF NAFileSize naTell(int fd){
 //
 // For writing files, use NA_FILEMODE_DEFAULT if you don't know what to use
 // for the mode argument.
-NA_IDEF int naOpen(const char* path, int flags, int mode){
+NA_IDEF int naOpen(const char* path, int flags, int mode) {
   #if NA_OS == NA_OS_WINDOWS
     int handle;
     _sopen_s(&handle, path, flags, _SH_DENYNO, mode);
@@ -57,7 +63,7 @@ NA_IDEF int naOpen(const char* path, int flags, int mode){
 }
 
 
-NA_IDEF int naClose(int fd){
+NA_IDEF int naClose(int fd) {
   #if NA_OS == NA_OS_WINDOWS
     return _close(fd);
   #elif NA_IS_POSIX
@@ -66,7 +72,7 @@ NA_IDEF int naClose(int fd){
 }
 
 
-NA_IDEF NAFileSize naRead(int fd, void* buf, NAFileSize byteSize){
+NA_IDEF NAFileSize naRead(int fd, void* buf, NAFileSize byteSize) {
   #if NA_OS == NA_OS_WINDOWS
     return (NAFileSize)_read(fd, buf, (unsigned int)byteSize);
   #elif NA_IS_POSIX
@@ -75,7 +81,7 @@ NA_IDEF NAFileSize naRead(int fd, void* buf, NAFileSize byteSize){
 }
 
 
-NA_IDEF NAFileSize naWrite(int fd, const void* buf, NAFileSize byteSize){
+NA_IDEF NAFileSize naWrite(int fd, const void* buf, NAFileSize byteSize) {
   #if NA_OS == NA_OS_WINDOWS
     return (NAFileSize)_write(fd, buf, (unsigned int)byteSize);
   #elif NA_IS_POSIX
@@ -86,7 +92,7 @@ NA_IDEF NAFileSize naWrite(int fd, const void* buf, NAFileSize byteSize){
 
 // Use NA_DIRMODE_DEFAULT if you don't know what to use for the mode
 // argument.
-NA_IDEF int naMkDir(const char* path, int mode){
+NA_IDEF int naMkDir(const char* path, int mode) {
   #if NA_OS == NA_OS_WINDOWS
     return _mkdir(path);
   #elif NA_IS_POSIX
@@ -95,7 +101,7 @@ NA_IDEF int naMkDir(const char* path, int mode){
 }
 
 
-NA_IDEF int naChDir(const char* path){
+NA_IDEF int naChDir(const char* path) {
   #if NA_OS == NA_OS_WINDOWS
     return _chdir(path);
   #elif NA_IS_POSIX
@@ -104,7 +110,7 @@ NA_IDEF int naChDir(const char* path){
 }
 
 
-NA_IDEF NABool naExists(const char* path){
+NA_IDEF NABool naExists(const char* path) {
   #if NA_OS == NA_OS_WINDOWS
     return !(_access(path, 0));
   #elif NA_IS_POSIX
@@ -113,7 +119,7 @@ NA_IDEF NABool naExists(const char* path){
 }
 
 
-NA_IDEF int naRemove(const char* path){
+NA_IDEF int naRemove(const char* path) {
   #if NA_OS == NA_OS_WINDOWS
     return remove(path);
   #elif NA_IS_POSIX
@@ -122,7 +128,7 @@ NA_IDEF int naRemove(const char* path){
 }
 
 
-NA_IDEF NABool naCopyFile(const char* dstPath, const char* srcPath){
+NA_IDEF NABool naCopyFile(const char* dstPath, const char* srcPath) {
   #if NA_OS == NA_OS_WINDOWS
     return (CopyFile( (LPCTSTR)(const char*)srcPath,
                       (LPCTSTR)(const char*)dstPath,
@@ -131,11 +137,11 @@ NA_IDEF NABool naCopyFile(const char* dstPath, const char* srcPath){
     return (copyfile(srcPath, dstPath, NULL, COPYFILE_ALL) == 0);
   #elif NA_OS == NA_OS_FREEBSD
     int srcFd = open(srcPath, O_RDONLY);
-    if (srcFd < 0)
+    if(srcFd < 0)
 	    return NA_FALSE;
 
     int dstFd = open(dstPath, O_WRONLY|O_CREAT|O_TRUNC);
-    if (dstFd < 0) {
+    if(dstFd < 0) {
 	    close(srcFd);
 	    return NA_FALSE;
     }
@@ -151,7 +157,7 @@ NA_IDEF NABool naCopyFile(const char* dstPath, const char* srcPath){
 
 
 
-NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NABool canWrite, NABool canExecute){
+NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NABool canWrite, NABool canExecute) {
   #if NA_OS == NA_OS_WINDOWS
     int testMode = 0;
     // testMode |= (exists?00:0); // This line has been commented out because of static code analysis.
@@ -170,7 +176,7 @@ NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NAB
 }
 
 
-NA_IDEF NAUTF8Char* naGetCwd(NAUTF8Char* buf, NAInt bufSize){
+NA_IDEF NAUTF8Char* naGetCwd(NAUTF8Char* buf, NAInt bufSize) {
   #if NA_OS == NA_OS_WINDOWS
     return _getcwd(buf, (int)bufSize);
   #elif NA_IS_POSIX
@@ -194,12 +200,14 @@ struct NAFile{
   int desc;   // The descriptor
 };
 
+NA_HAPI void na_DestroyFile(NAFile* file);
+NA_EXTERN_RUNTIME_TYPE(NAFile);
 
 
 
-NA_IDEF NAFile* naCreateFileReadingPath(const char* filePath){
-  NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refCount));
+NA_IDEF NAFile* naCreateFileReadingPath(const char* filePath) {
+  NAFile* file = naCreate(NAFile);
+  naInitRefCount(&file->refCount);
   file->desc = naOpen(filePath, NA_FILE_OPEN_FLAGS_READ, NA_FILEMODE_DEFAULT);
   #if NA_DEBUG
     if(file->desc < 0)
@@ -210,9 +218,9 @@ NA_IDEF NAFile* naCreateFileReadingPath(const char* filePath){
 
 
 
-NA_IDEF NAFile* naCreateFileWritingPath(const char* filePath, NAFileMode mode){
-  NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refCount));
+NA_IDEF NAFile* naCreateFileWritingPath(const char* filePath, NAFileMode mode) {
+  NAFile* file = naCreate(NAFile);
+  naInitRefCount(&file->refCount);
   file->desc = naOpen(filePath, NA_FILE_OPEN_FLAGS_WRITE, mode);
   #if NA_DEBUG
     if(file->desc < 0)
@@ -223,9 +231,9 @@ NA_IDEF NAFile* naCreateFileWritingPath(const char* filePath, NAFileMode mode){
 
 
 
-NA_IDEF NAFile* naCreateFileAppendingPath(const char* filePath, NAFileMode mode){
-  NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refCount));
+NA_IDEF NAFile* naCreateFileAppendingPath(const char* filePath, NAFileMode mode) {
+  NAFile* file = naCreate(NAFile);
+  naInitRefCount(&file->refCount);
   file->desc = naOpen(filePath, NA_FILE_OPEN_FLAGS_APPEND, mode);
   #if NA_DEBUG
     if(file->desc < 0)
@@ -236,44 +244,34 @@ NA_IDEF NAFile* naCreateFileAppendingPath(const char* filePath, NAFileMode mode)
 
 
 
-NA_IDEF NAFile* naCreateFileReadingStdin(){
-  NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refCount));
+NA_IDEF NAFile* naCreateFileReadingStdin() {
+  NAFile* file = naCreate(NAFile);
+  naInitRefCount(&file->refCount);
   file->desc = 0;
   return file;
 }
 
 
 
-NA_IDEF NAFile* naCreateFileWritingStdout(){
-  NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refCount));
+NA_IDEF NAFile* naCreateFileWritingStdout() {
+  NAFile* file = naCreate(NAFile);
+  naInitRefCount(&file->refCount);
   file->desc = 1;
   return file;
 }
 
 
 
-NA_IDEF NAFile* naCreateFileWritingStderr(){
-  NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refCount));
+NA_IDEF NAFile* naCreateFileWritingStderr() {
+  NAFile* file = naCreate(NAFile);
+  naInitRefCount(&file->refCount);
   file->desc = 2;
   return file;
 }
 
 
 
-NA_HAPI void na_DeallocFile(NAFile* file);
-
-
-
-NA_IDEF void naReleaseFile(NAFile* file){
-  naReleaseRefCount(&file->refCount, file, (NAMutator)na_DeallocFile);
-}
-
-
-
-NA_IDEF NAFileSize naComputeFileByteSize(const NAFile* file){
+NA_IDEF NAFileSize naComputeFileByteSize(const NAFile* file) {
   NAFileSize curOffset;
   NAFileSize fileSize;
   curOffset = naLseek(file->desc, 0, SEEK_CUR);
@@ -288,13 +286,13 @@ NA_IDEF NAFileSize naComputeFileByteSize(const NAFile* file){
 
 
 
-NA_IDEF NABool naIsFileOpen(const NAFile* file){
+NA_IDEF NABool naIsFileOpen(const NAFile* file) {
   return (file->desc >= 0);
 }
 
 
 
-NA_IDEF void naSeekFileAbsolute(NAFile* file, NAFileSize byteOffset){
+NA_IDEF void naSeekFileAbsolute(NAFile* file, NAFileSize byteOffset) {
   NAFileSize newOffset;
   #if NA_DEBUG
     if(byteOffset < 0)
@@ -311,7 +309,7 @@ NA_IDEF void naSeekFileAbsolute(NAFile* file, NAFileSize byteOffset){
 
 
 
-NA_IDEF void naSeekFileRelative(NAFile* file, NAFileSize byteOffset){
+NA_IDEF void naSeekFileRelative(NAFile* file, NAFileSize byteOffset) {
   NAFileSize newOffset;
   newOffset = naLseek(file->desc, byteOffset, SEEK_CUR);
   #if NA_DEBUG
@@ -324,7 +322,10 @@ NA_IDEF void naSeekFileRelative(NAFile* file, NAFileSize byteOffset){
 
 
 
-NA_IDEF NAFileSize naReadFileBytes(NAFile* file, void* buf, NAFileSize byteSize){
+NA_IDEF NAFileSize naReadFileBytes(NAFile* file, void* buf, NAFileSize byteSize) {
+  if(!byteSize)
+    return 0;
+
   #if NA_DEBUG
     if(!naIsFileOpen(file))
       naError("File is not open.");
@@ -333,12 +334,15 @@ NA_IDEF NAFileSize naReadFileBytes(NAFile* file, void* buf, NAFileSize byteSize)
     if(byteSize < 0)
       naError("Negative count.");
   #endif
-  if(!byteSize){return 0;}
+   
   return naRead(file->desc, buf, byteSize);
 }
 
 
-NA_IDEF NAFileSize naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize byteSize){
+NA_IDEF NAFileSize naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize byteSize) {
+  if(!byteSize)
+    return 0;
+
   #if NA_DEBUG
     if(!naIsFileOpen(file))
       naError("File is not open.");
@@ -347,7 +351,7 @@ NA_IDEF NAFileSize naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize by
     if(byteSize < 0)
       naError("Negative count.");
   #endif
-  if(!byteSize){return 0;}
+
   return naWrite(file->desc, ptr, byteSize);
 }
 
@@ -360,7 +364,7 @@ NA_IDEF NAFileSize naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize by
 
 
 
-NA_IDEF int naScanDecimal(){
+NA_IDEF int naScanDecimal() {
   int retValue;
   #if NA_OS == NA_OS_WINDOWS
     scanf_s("%d", &retValue);

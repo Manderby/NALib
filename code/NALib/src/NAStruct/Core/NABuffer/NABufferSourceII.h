@@ -17,12 +17,12 @@ struct NABufferSource{
   void*             data;           // data sent to filler and destructor.
   NAMutator         dataDestructor; // Data destructor.
   uint32            flags;          // Flags for the source
-  NARangei          limit;          // Range limit (used if flag set)
+  NARangei64        limit;          // Range limit (used if flag set)
 };
 
 
 
-NA_DEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator dataDestructor){
+NA_DEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator dataDestructor) {
   #if NA_DEBUG
     if(!source)
       naCrash("Source is Null");
@@ -39,13 +39,13 @@ NA_DEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator 
 
 
 
-NA_DEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
+NA_DEF void naSetBufferSourceLimit(NABufferSource* source, NARangei64 limit) {
   #if NA_DEBUG
     if(!source)
       naCrash("Source is Null");
     if(source->flags & NA_BUFFER_SOURCE_RANGE_LIMITED)
       naError("Source already has a limit");
-    if(!naIsRangeiUseful(limit))
+    if(!naIsRangei64Useful(limit))
       naError("Given limit is not useful");
   #endif
   source->flags |= NA_BUFFER_SOURCE_RANGE_LIMITED;
@@ -54,7 +54,7 @@ NA_DEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
 
 
 
-NA_HIDEF NABool na_HasBufferSourceCache(NABufferSource* source){
+NA_HIDEF NABool na_HasBufferSourceCache(NABufferSource* source) {
   #if NA_DEBUG
     if(!source)
       naCrash("Source is Null");
@@ -64,7 +64,7 @@ NA_HIDEF NABool na_HasBufferSourceCache(NABufferSource* source){
 
 
 
-NA_HIDEF NABuffer* na_GetBufferSourceCache(NABufferSource* source){
+NA_HIDEF NABuffer* na_GetBufferSourceCache(NABufferSource* source) {
   #if NA_DEBUG
     if(!source)
       naCrash("Source is Null");
@@ -77,7 +77,7 @@ NA_HIDEF NABuffer* na_GetBufferSourceCache(NABufferSource* source){
 
 
 // Returns NA_TRUE if the range is a valid limiting range.
-NA_HIDEF NABool na_HasBufferSourceLimit(const NABufferSource* source){
+NA_HIDEF NABool na_HasBufferSourceLimit(const NABufferSource* source) {
   #if NA_DEBUG
     if(!source)
       naCrash("Source is Null");
@@ -87,7 +87,7 @@ NA_HIDEF NABool na_HasBufferSourceLimit(const NABufferSource* source){
 
 
 
-NA_HIDEF NARangei na_GetBufferSourceLimit(const NABufferSource* source){
+NA_HIDEF NARangei64 na_GetBufferSourceLimit(const NABufferSource* source) {
   #if NA_DEBUG
     if(!source)
       naCrash("Source is Null");
@@ -99,18 +99,18 @@ NA_HIDEF NARangei na_GetBufferSourceLimit(const NABufferSource* source){
 
 
 
-NA_HIDEF void na_FillBufferSourceMemory(const NABufferSource* source, void* dst, NARangei range){
+NA_HIDEF void na_FillBufferSourceMemory(const NABufferSource* source, void* dst, NARangei64 range) {
   #if NA_DEBUG
     if(!source)
       naCrash("Source is Null");
     if(!dst)
       naCrash("dst is Null");
-    if(!naIsRangeiUseful(range))
+    if(!naIsRangei64Useful(range))
       naError("range is not useful");
-    if(na_HasBufferSourceLimit(source) && !naEqualRangei(naMakeRangeiWithRangeIntersection(range, source->limit), range))
+    if(na_HasBufferSourceLimit(source) && !naEqualRangei64(naMakeRangei64Intersection(range, source->limit), range))
       naError("range is out of limit");
   #endif
-  if(source && source->bufFiller){
+  if(source && source->bufFiller) {
     source->bufFiller(dst, range, source->data);
   }
 }

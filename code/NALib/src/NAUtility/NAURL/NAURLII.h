@@ -5,21 +5,21 @@
 
 
 
-NA_IDEF NAURL* naInitURL(NAURL* url){
+NA_IDEF NAURL* naInitURL(NAURL* url) {
   #if NA_DEBUG
     if(!url)
       naCrash("url is Null-Pointer");
   #endif
   url->status = 0;
-  naInitList(&(url->path));
+  naInitList(&url->path);
   return url;
 }
 
 
 
-NA_IDEF void naClearURL(NAURL* url){
-  naForeachListMutable(&(url->path), naDelete);
-  naClearList(&(url->path));
+NA_IDEF void naClearURL(NAURL* url) {
+  naForeachListMutable(&url->path, naDelete);
+  naClearList(&url->path);
 }
 
 

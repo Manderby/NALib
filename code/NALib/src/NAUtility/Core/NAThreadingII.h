@@ -25,13 +25,13 @@
 // SLEEPING
 // ////////////////////////////
 
-NA_IDEF int naSleepN(size_t nanoSeconds){
+NA_IDEF int naSleepN(size_t nanoSeconds) {
   return naSleepU(nanoSeconds / 1000);
 }
 
 
 
-NA_IDEF int naSleepU(size_t microSeconds){
+NA_IDEF int naSleepU(size_t microSeconds) {
   #if NA_OS == NA_OS_WINDOWS
     Sleep((DWORD)(microSeconds / 1000));
     return 0;
@@ -42,7 +42,7 @@ NA_IDEF int naSleepU(size_t microSeconds){
 
 
 
-NA_IDEF int naSleepM(size_t milliSeconds){
+NA_IDEF int naSleepM(size_t milliSeconds) {
   #if NA_OS == NA_OS_WINDOWS
     Sleep((DWORD)(milliSeconds));
     return 0;
@@ -53,7 +53,7 @@ NA_IDEF int naSleepM(size_t milliSeconds){
 
 
 
-NA_IDEF int naSleepS(double seconds){
+NA_IDEF int naSleepS(double seconds) {
   #if NA_OS == NA_OS_WINDOWS
     Sleep((DWORD)(seconds * 1000));
     return 0;
@@ -87,6 +87,9 @@ NA_IDEF int naSleepS(double seconds){
 typedef struct NAThreadStruct NAThreadStruct;
 struct NAThreadStruct{
   const char* name;
+  #if NA_OS == NA_OS_MAC_OS_X
+    dispatch_group_t dispatchGroup; // Needed to wait for threads.
+  #endif
   NANativeThread nativeThread;  // If you experience an error here when working
   NAMutator function;           // with plain C files on a Mac: Turn off the
   void* arg;                    // automatic reference counting in project
@@ -94,12 +97,13 @@ struct NAThreadStruct{
 
 
 
-NA_IDEF NAThread naMakeThread(const char* threadName, NAMutator function, void* arg){
+NA_IDEF NAThread naMakeThread(const char* threadName, NAMutator function, void* arg) {
   NAThreadStruct* threadstruct = naAlloc(NAThreadStruct);
   threadstruct->name = threadName;
   #if NA_OS == NA_OS_WINDOWS
     threadstruct->nativeThread = NA_NULL; // Note that on windows, creating the thread would immediately start it.
   #else
+    threadstruct->dispatchGroup = dispatch_group_create();
     threadstruct->nativeThread = dispatch_queue_create(threadName, DISPATCH_QUEUE_SERIAL);
   #endif
   threadstruct->function = function;
@@ -109,7 +113,7 @@ NA_IDEF NAThread naMakeThread(const char* threadName, NAMutator function, void* 
 
 
 
-NA_IDEF void naClearThread(NAThread thread){
+NA_IDEF void naClearThread(NAThread thread) {
   NAThreadStruct* threadstruct = (NAThreadStruct*)thread;
   #if NA_OS == NA_OS_WINDOWS
     CloseHandle(threadstruct->nativeThread);
@@ -118,6 +122,7 @@ NA_IDEF void naClearThread(NAThread thread){
       // Thread will be released automatically when ARC is turned on.
     #else
       dispatch_release(threadstruct->nativeThread);
+      dispatch_release(threadstruct->dispatchGroup);
     #endif
   #endif
   naFree(threadstruct);
@@ -128,7 +133,7 @@ NA_IDEF void naClearThread(NAThread thread){
 #if NA_OS == NA_OS_WINDOWS
   // Windows has a different callback type. We need to call this function first
   // in order to call our true callback function.
-  NA_HDEF static DWORD __stdcall na_RunWindowsThread(LPVOID arg){
+  NA_HDEF static DWORD __stdcall na_RunWindowsThread(LPVOID arg) {
     NAThreadStruct* thread = (NAThreadStruct*)arg;
     thread->function(thread->arg);
     return 0;
@@ -137,15 +142,25 @@ NA_IDEF void naClearThread(NAThread thread){
 
 
 
-NA_IDEF void naRunThread(NAThread thread){
+NA_IDEF void naRunThread(NAThread thread) {
   NAThreadStruct* threadstruct = (NAThreadStruct*)thread;
   #if NA_OS == NA_OS_WINDOWS
     threadstruct->nativeThread = CreateThread(NULL, 0, na_RunWindowsThread, threadstruct, 0, 0);
   #else
-    dispatch_async_f(threadstruct->nativeThread, threadstruct->arg, threadstruct->function);
+    dispatch_group_async_f(threadstruct->dispatchGroup, threadstruct->nativeThread, threadstruct->arg, threadstruct->function);
   #endif
 }
 
+
+
+NA_IDEF void naAwaitThread(NAThread thread) {
+  NAThreadStruct* threadstruct = (NAThreadStruct*)thread;
+  #if NA_OS == NA_OS_WINDOWS
+    WaitForSingleObject(threadstruct->nativeThread, INFINITE);
+  #else
+    dispatch_group_wait(threadstruct->dispatchGroup, DISPATCH_TIME_FOREVER);
+  #endif
+}
 
 
 // ////////////////////////////
@@ -160,7 +175,7 @@ NA_IDEF void naRunThread(NAThread thread){
   typedef struct NAWindowsMutex NAWindowsMutex;
 
   struct NAWindowsMutex{
-    #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
+    #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
       CRITICAL_SECTION mutex;
     #else
       HANDLE mutex;
@@ -195,11 +210,11 @@ NA_IDEF void naRunThread(NAThread thread){
 
 
 
-NA_IDEF NAMutex naMakeMutex(void){
+NA_IDEF NAMutex naMakeMutex(void) {
   #if NA_OS == NA_OS_WINDOWS
     NAWindowsMutex* windowsMutex = naAlloc(NAWindowsMutex);
-    #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-      InitializeCriticalSection(&(windowsMutex->mutex));
+    #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
+      InitializeCriticalSection(&windowsMutex->mutex);
     #else
       windowsMutex->mutex = CreateMutex(NULL, FALSE, NULL);
     #endif
@@ -224,11 +239,11 @@ NA_IDEF NAMutex naMakeMutex(void){
 
 
 
-NA_IDEF void naClearMutex(NAMutex mutex){
+NA_IDEF void naClearMutex(NAMutex mutex) {
   #if NA_OS == NA_OS_WINDOWS
     NAWindowsMutex* windowsMutex = (NAWindowsMutex*)mutex;
-    #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-      DeleteCriticalSection(&(windowsMutex->mutex));
+    #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
+      DeleteCriticalSection(&windowsMutex->mutex);
     #else
       CloseHandle(windowsMutex->mutex);
     #endif
@@ -255,14 +270,14 @@ NA_IDEF void naClearMutex(NAMutex mutex){
 
 
 
-#if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
+#if(NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
   _Acquires_lock_(((NAWindowsMutex*)mutex)->mutex)
 #endif
-NA_IDEF void naLockMutex(NAMutex mutex){
+NA_IDEF void naLockMutex(NAMutex mutex) {
   #if NA_OS == NA_OS_WINDOWS
     NAWindowsMutex* windowsMutex = (NAWindowsMutex*)mutex;
-    #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-      EnterCriticalSection(&(windowsMutex->mutex));
+    #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
+      EnterCriticalSection(&windowsMutex->mutex);
     #else
       WaitForSingleObject(windowsMutex->mutex, INFINITE);
     #endif
@@ -287,10 +302,10 @@ NA_IDEF void naLockMutex(NAMutex mutex){
 
 
 
-#if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
+#if(NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
   _Releases_lock_(((NAWindowsMutex*)mutex)->mutex)
 #endif
-NA_IDEF void naUnlockMutex(NAMutex mutex){
+NA_IDEF void naUnlockMutex(NAMutex mutex) {
   #if NA_OS == NA_OS_WINDOWS
     NAWindowsMutex* windowsMutex = (NAWindowsMutex*)mutex;
     #if NA_DEBUG
@@ -301,8 +316,8 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
       windowsMutex->seemslocked = NA_FALSE;
     #endif
     windowsMutex->islockedbythisthread = NA_FALSE;
-    #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-      LeaveCriticalSection(&(windowsMutex->mutex));
+    #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
+      LeaveCriticalSection(&windowsMutex->mutex);
     #else
       ReleaseMutex(windowsMutex->mutex);
     #endif
@@ -320,7 +335,7 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
 
 
 #if NA_DEBUG
-  NA_IDEF NABool naIsMutexLocked(NAMutex mutex){
+  NA_IDEF NABool naIsMutexLocked(NAMutex mutex) {
     #if NA_OS == NA_OS_WINDOWS
       NAWindowsMutex* windowsMutex = (NAWindowsMutex*)mutex;
       return windowsMutex->seemslocked;
@@ -335,7 +350,7 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
     // special type only available when debugging.
     //
     //  NABool hasjustbeenlocked = naTryMutex(mutex);
-    //  if(hasjustbeenlocked){
+    //  if(hasjustbeenlocked) {
     //    naUnlockMutex(mutex);
     //    return NA_FALSE;
     //  }else{
@@ -346,19 +361,19 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
 
 
 
-#if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
+#if(NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
   _When_(return == NA_TRUE, _Acquires_lock_(((NAWindowsMutex*)mutex)->mutex))
 #endif
-NA_IDEF NABool naTryMutex(NAMutex mutex){
+NA_IDEF NABool naTryMutex(NAMutex mutex) {
   #if NA_OS == NA_OS_WINDOWS
     NAWindowsMutex* windowsMutex = (NAWindowsMutex*)mutex;
-    #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-      BOOL retValue = TryEnterCriticalSection(&(windowsMutex->mutex));
-      if(retValue == 0){
+    #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
+      BOOL retValue = TryEnterCriticalSection(&windowsMutex->mutex);
+      if(retValue == 0) {
         return NA_FALSE;
       }else{
-        if(windowsMutex->islockedbythisthread){
-          LeaveCriticalSection(&(windowsMutex->mutex));
+        if(windowsMutex->islockedbythisthread) {
+          LeaveCriticalSection(&windowsMutex->mutex);
           return NA_FALSE;
         }else{
           windowsMutex->islockedbythisthread = NA_TRUE;
@@ -367,11 +382,11 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
       }
     #else
       DWORD retValue = WaitForSingleObject(windowsMutex->mutex, 0);
-      if(retValue == WAIT_OBJECT_0){
+      if(retValue == WAIT_OBJECT_0) {
         return NA_FALSE;
       }else{
         // somehow, this does not work yet. use Critical section.
-        if(windowsMutex->islockedbythisthread){
+        if(windowsMutex->islockedbythisthread) {
           ReleaseMutex(windowsMutex->mutex);
           return NA_FALSE;
         }else{
@@ -384,7 +399,7 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
     #if NA_DEBUG
       NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
       long retValue = dispatch_semaphore_wait(macintoshmutex->mutex, DISPATCH_TIME_NOW);
-      if(retValue){
+      if(retValue) {
         return NA_FALSE;
       }else{
         return NA_TRUE;
@@ -412,7 +427,7 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
 
 
 
-NA_IDEF NAAlarm naMakeAlarm(void){
+NA_IDEF NAAlarm naMakeAlarm(void) {
   NANativeAlarm alarmer;
   #if NA_OS == NA_OS_WINDOWS
     alarmer = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -425,7 +440,7 @@ NA_IDEF NAAlarm naMakeAlarm(void){
 
 
 
-NA_IDEF void naClearAlarm(NAAlarm alarmer){
+NA_IDEF void naClearAlarm(NAAlarm alarmer) {
   #if NA_OS == NA_OS_WINDOWS
     CloseHandle(alarmer);
   #else
@@ -440,7 +455,7 @@ NA_IDEF void naClearAlarm(NAAlarm alarmer){
 
 
 
-NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxWaitTime){
+NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxWaitTime) {
   #if NA_OS == NA_OS_WINDOWS
     DWORD result;
     #if NA_DEBUG
@@ -448,7 +463,7 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxWaitTime){
         naError("maxWaitTime should not be negative. Beware of the zero!");
     #endif
     ResetEvent(alarmer);
-    if(maxWaitTime == 0){
+    if(maxWaitTime == 0) {
       result = WaitForSingleObject(alarmer, INFINITE);
     }else{
       result = WaitForSingleObject(alarmer, (DWORD)(1000. * maxWaitTime));
@@ -460,7 +475,7 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxWaitTime){
       if(maxWaitTime < 0.)
         naError("maxWaitTime should not be negative. Beware of the zero!");
     #endif
-    if(maxWaitTime == 0){
+    if(maxWaitTime == 0) {
       result = dispatch_semaphore_wait((NA_COCOA_BRIDGE dispatch_semaphore_t)alarmer, DISPATCH_TIME_FOREVER);
     }else{
       dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1000000000 * maxWaitTime));
@@ -472,7 +487,7 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxWaitTime){
 
 
 
-NA_IDEF void naTriggerAlarm(NAAlarm alarmer){
+NA_IDEF void naTriggerAlarm(NAAlarm alarmer) {
   #if NA_OS == NA_OS_WINDOWS
     SetEvent(alarmer);
   #else

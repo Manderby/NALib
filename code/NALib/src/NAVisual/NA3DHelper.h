@@ -30,9 +30,15 @@ NA_API void naFillMatrixOrtho(
 
 NA_API void naFillMatrixLookAt(
   NAMat44d matrix,
-  double eyeX, double eyeY, double eyeZ,
-  double centerX, double centerY, double centerZ,
-  double upX, double upY, double upZ);
+  double eyeX,
+  double eyeY,
+  double eyeZ,
+  double centerX,
+  double centerY,
+  double centerZ,
+  double upX,
+  double upY,
+  double upZ);
 
 
 

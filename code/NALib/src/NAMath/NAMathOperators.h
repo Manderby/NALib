@@ -41,13 +41,6 @@
 // Value attributes
 // ///////////////////////////////////
 
-// Returns the sign as a multiplicator. x < 0 returns -1, x >= 0 returns 1.
-// Never returns 0!  You can use the result of this function safely as a
-// multiplication factor. You can also subtract the result of this function
-// from the comma ASCII character and get a string representation of the sign:
-// NAUTF8Char signASCII = ',' - naSigni(-1234);
-NA_IAPI NAInt         naSigni  (NAInt x);
-
 // naAlmostZero   Returns NA_TRUE, if the ABSOLUTE discance between x and 0 is
 //                smaller than NA_SINGULARITY.
 // naAlmostOne    Returns NA_TRUE, if the ABSOLUTE discance between x and 1 is
@@ -82,7 +75,6 @@ NA_IAPI NABool        naIsInfinitef(float  x);
 // inside the min or max function.
 NA_IAPI double       naMin   (double  a, double  b);
 NA_IAPI float        naMinf  (float   a, float   b);
-NA_IAPI NAInt        naMini  (NAInt   a, NAInt   b);
 NA_IAPI size_t       naMins  (size_t  a, size_t  b);
 NA_IAPI int8         naMini8 (int8    a, int8    b);
 NA_IAPI int16        naMini16(int16   a, int16   b);
@@ -91,7 +83,6 @@ NA_IAPI NAi64        naMini64(NAi64 a, NAi64 b);
 
 NA_IAPI double       naMax   (double  a, double  b);
 NA_IAPI float        naMaxf  (float   a, float   b);
-NA_IAPI NAInt        naMaxi  (NAInt   a, NAInt   b);
 NA_IAPI size_t       naMaxs  (size_t  a, size_t  b);
 NA_IAPI int8         naMaxi8 (int8    a, int8    b);
 NA_IAPI int16        naMaxi16(int16   a, int16   b);

@@ -1,6 +1,7 @@
 
 #include "../../NATree.h"
 #include "../../../NAUtility/NAKey.h"
+#include "../../../NAUtility/NAMemory.h"
 #include "NATreeBin.h"
 #include "NATreeQuad.h"
 #include "NATreeOct.h"
@@ -58,7 +59,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(int32 flags){
       #endif
       break;
     }
-    if(flags & NA_TREE_BALANCE_AVL){
+    if(flags & NA_TREE_BALANCE_AVL) {
       #if NA_DEBUG
         naError("Quadtree can not have AVL balance.");
       #endif
@@ -106,7 +107,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(int32 flags){
       #endif
       break;
     }
-    if(flags & NA_TREE_BALANCE_AVL){
+    if(flags & NA_TREE_BALANCE_AVL) {
       #if NA_DEBUG
         naError("Octtree can not have AVL balance.");
       #endif
@@ -173,6 +174,32 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(int32 flags){
       config->keyNodeOverlapTester  = NA_NULL;
       config->keyLeafOverlapTester  = NA_NULL;
       break;
+    case NA_TREE_KEY_i32:
+      config->childIndexGetter      = na_GetChildIndexBini32;
+      config->keyIndexGetter        = na_GetKeyIndexBini32;
+      config->keyEqualComparer      = NA_KEY_OP(Equal, i32);
+      config->keyLessComparer       = NA_KEY_OP(Less, i32);
+      config->keyLessEqualComparer  = NA_KEY_OP(LessEqual, i32);
+      config->keyAssigner           = NA_KEY_OP(Assign, i32);
+      config->keyTester             = na_TestKeyBini32;
+      config->keyNodeContainTester  = NA_NULL;
+      config->keyLeafContainTester  = na_TestKeyLeafContainBini32;
+      config->keyNodeOverlapTester  = NA_NULL;
+      config->keyLeafOverlapTester  = NA_NULL;
+      break;
+    case NA_TREE_KEY_u32:
+      config->childIndexGetter      = na_GetChildIndexBinu32;
+      config->keyIndexGetter        = na_GetKeyIndexBinu32;
+      config->keyEqualComparer      = NA_KEY_OP(Equal, u32);
+      config->keyLessComparer       = NA_KEY_OP(Less, u32);
+      config->keyLessEqualComparer  = NA_KEY_OP(LessEqual, u32);
+      config->keyAssigner           = NA_KEY_OP(Assign, u32);
+      config->keyTester             = na_TestKeyBinu32;
+      config->keyNodeContainTester  = NA_NULL;
+      config->keyLeafContainTester  = na_TestKeyLeafContainBinu32;
+      config->keyNodeOverlapTester  = NA_NULL;
+      config->keyLeafOverlapTester  = NA_NULL;
+      break;
     default:
       #if NA_DEBUG
         naError("Invalid key type in flags");
@@ -206,6 +233,13 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(int32 flags){
   #endif
   
   return config;
+}
+
+
+
+NA_HDEF void na_DestroyTreeConfiguration(NATreeConfiguration* config) {
+  if(config->configdata)
+    naFree(config->configdata);
 }
 
 

@@ -3,7 +3,7 @@
 // framework. It is a collection of #include directives including code from
 // inline implementation files. These files are .h files and hence will not
 // be compiled by the IDEs by default. They do contain non-inlineable code
-// though so don't threat them like normal .h files. Do not include them
+// though so don't treat them like normal .h files. Do not include them
 // files anywhere else but here in this file.
 
 // This file itself is a .m file which is an implementation file in
@@ -13,14 +13,12 @@
 // remove the .m File from your source tree.
 
 // The whole cocoa implementation has been combined into this single file
-// because compiling an .m file is very slow compared to C files. Using only
-// one single file speeds up the compilation considerably!
+// because using only one single file speeds up the compilation considerably!
 
 
 #include "../../NABase/NABase.h"
 
 #if NA_OS == NA_OS_MAC_OS_X
-
 #if defined __OBJC__
 #if NA_COMPILE_GUI == 1
 // Now, we are sure, we compile with Objective-C and on MacOSX. The
@@ -33,29 +31,36 @@
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 
-#include "UI/NAUICocoaLegacyII.h"
+#include "NACocoaLegacyII.h"
 
-#include "NAUIImageCocoaII.h"
+#include "NACocoaClipboardII.h"
+#include "NACocoaFontII.h"
+#include "NACocoaImageSetII.h"
+#include "NACocoaMouseII.h"
+#include "NACocoaKeyboardII.h"
+#include "NACocoaPreferencesII.h"
 
-#include "UI/NAUICocoaII.h"
-#include "UI/NAUICocoaInterfaces.h"
-#include "UI/NAApplicationII.h"
+#include "NACocoaII.h"
+#include "NACocoaInterfaces.h"
 
-#include "UI/NAButtonII.h"
-#include "UI/NACheckBoxII.h"
-#include "UI/NAImageSpaceII.h"
-#include "UI/NALabelII.h"
-#include "UI/NAMenuII.h"
-#include "UI/NAMenuItemII.h"
-#include "UI/NAMetalSpaceII.h"
-#include "UI/NAOpenGLSpaceII.h"
-#include "UI/NARadioII.h"
-#include "UI/NASliderII.h"
-#include "UI/NASelectII.h"
-#include "UI/NASpaceII.h"
-#include "UI/NATextBoxII.h"
-#include "UI/NATextFieldII.h"
-#include "UI/NAWindowII.h"
+#include "UIElements/NACocoaApplicationII.h"
+#include "UIElements/NACocoaButtonII.h"
+#include "UIElements/NACocoaCheckBoxII.h"
+#include "UIElements/NACocoaImageSpaceII.h"
+#include "UIElements/NACocoaLabelII.h"
+#include "UIElements/NACocoaMenuII.h"
+#include "UIElements/NACocoaMenuItemII.h"
+#include "UIElements/NACocoaMetalSpaceII.h"
+#include "UIElements/NACocoaOpenGLSpaceII.h"
+#include "UIElements/NACocoaRadioII.h"
+#include "UIElements/NACocoaScreenII.h"
+#include "UIElements/NACocoaSelectII.h"
+#include "UIElements/NACocoaSliderII.h"
+#include "UIElements/NACocoaSpaceII.h"
+#include "UIElements/NACocoaTextBoxII.h"
+#include "UIElements/NACocoaTextFieldII.h"
+#include "UIElements/NACocoaUIElementII.h"
+#include "UIElements/NACocoaWindowII.h"
 
 #endif // NA_COMPILE_GUI == 1
 #endif // defined __OBJC__

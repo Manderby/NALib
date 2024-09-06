@@ -65,21 +65,24 @@ struct NADateTime{
 };
 
 
-NA_IDEF NABool naIsLeapYearJulian(NAi64 year){
+NA_IDEF NABool naIsLeapYearJulian(NAi64 year) {
   return naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_i64);
 }
 
 
-NA_IDEF NABool naIsLeapYearGregorian(NAi64 year){
-  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD), NA_ZERO_i64)){return NA_TRUE;}
-  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD), NA_ZERO_i64)){return NA_FALSE;}
-  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_i64)){return NA_TRUE;}
+NA_IDEF NABool naIsLeapYearGregorian(NAi64 year) {
+  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD), NA_ZERO_i64))
+    return NA_TRUE;
+  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD), NA_ZERO_i64))
+    return NA_FALSE;
+  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_i64))
+    return NA_TRUE;
   return NA_FALSE;
 }
 
 
-NA_IDEF NABool naIsLeapYear(NAi64 year){
-  if(naSmallerEquali64(year, NA_DATETIME_YEAR_1582)){
+NA_IDEF NABool naIsLeapYear(NAi64 year) {
+  if(naSmallerEquali64(year, NA_DATETIME_YEAR_1582)) {
     return naIsLeapYearJulian(year);
   }else{
     return naIsLeapYearGregorian(year);
@@ -88,7 +91,7 @@ NA_IDEF NABool naIsLeapYear(NAi64 year){
 
 
 
-NA_IDEF NADateTime naMakeDateTime(NAi64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec){
+NA_IDEF NADateTime naMakeDateTime(NAi64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec) {
   NADateTimeStruct dts;
   dts.year = year;
   dts.mon = mon - 1;
@@ -105,7 +108,7 @@ NA_IDEF NADateTime naMakeDateTime(NAi64 year, int32 mon, int32 day, int32 hour, 
 
 
 
-NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(NAi64 secondNumber){
+NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(NAi64 secondNumber) {
   NADateTime dateTime;
   dateTime.siSecond = secondNumber;
   dateTime.nanoSecond = 0;
@@ -137,7 +140,7 @@ NA_IDEF void naSetDateTimeZone(
 {
   dateTime->errorNum = NA_DATETIME_ERROR_NONE;
   dateTime->shift = newShift;
-  if(daylightSavingTime){
+  if(daylightSavingTime) {
     dateTime->flags |= NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME;
   }else{
     dateTime->flags &= ~NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME;
@@ -148,7 +151,7 @@ NA_IDEF void naSetDateTimeZone(
 
 NA_IDEF void naCorrectDateTimeZone( NADateTime* dateTime,
                                   int16 newShift,
-                                 NABool daylightSavingTime){
+                                 NABool daylightSavingTime) {
   dateTime->errorNum = NA_DATETIME_ERROR_NONE;
   dateTime->siSecond = naSubi64(dateTime->siSecond, naMakei64WithLo(dateTime->shift * (int32)NA_SECONDS_PER_MINUTE));
   dateTime->siSecond = naAddi64(dateTime->siSecond, naMakei64WithLo(newShift * (int32)NA_SECONDS_PER_MINUTE));
@@ -157,11 +160,11 @@ NA_IDEF void naCorrectDateTimeZone( NADateTime* dateTime,
 
 
 
-NA_DEF double naGetDateTimeDifference(const NADateTime* end, const NADateTime* begin){
+NA_DEF double naGetDateTimeDifference(const NADateTime* end, const NADateTime* begin) {
   double sign = 1.;
   double diffSeconds;
   double diffNanoSeconds;
-  if(naSmalleri64(end->siSecond, begin->siSecond)){
+  if(naSmalleri64(end->siSecond, begin->siSecond)) {
     sign = -1;
     diffSeconds = naCasti64ToDouble(naSubi64(begin->siSecond, end->siSecond));
   }else{
@@ -173,38 +176,44 @@ NA_DEF double naGetDateTimeDifference(const NADateTime* end, const NADateTime* b
 
 
 
-NA_IDEF void naAddDateTimeDifference(NADateTime* dateTime, double difference){
+NA_IDEF void naAddDateTimeDifference(NADateTime* dateTime, double difference) {
   NAi64 fullSeconds = naMakei64WithDouble(difference);
   int32 nanoSeconds = (int32)((difference - naCasti64ToDouble(fullSeconds)) * 1e9);
   dateTime->errorNum = NA_DATETIME_ERROR_NONE;
-  if(difference < 0){
+  if(difference < 0) {
     dateTime->nanoSecond += nanoSeconds;
-    if(dateTime->nanoSecond < 0){naDeci64(fullSeconds); dateTime->nanoSecond += 1000000000;}
+    if(dateTime->nanoSecond < 0) {
+      naDeci64(fullSeconds);
+      dateTime->nanoSecond += 1000000000;
+    }
     dateTime->siSecond = naAddi64(dateTime->siSecond, fullSeconds);
   }else{
     dateTime->nanoSecond += nanoSeconds;
-    if(dateTime->nanoSecond > 999999999){naInci64(fullSeconds); dateTime->nanoSecond -= 1000000000;}
+    if(dateTime->nanoSecond > 999999999) {
+      naInci64(fullSeconds);
+      dateTime->nanoSecond -= 1000000000;
+    }
     dateTime->siSecond = naAddi64(dateTime->siSecond, fullSeconds);
   }
 }
 
 
 
-NA_IDEF NABool naHasDateTimeDaylightSavingTime(const NADateTime* dateTime){
+NA_IDEF NABool naHasDateTimeDaylightSavingTime(const NADateTime* dateTime) {
   return (dateTime->flags & NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME) ? NA_TRUE : NA_FALSE;
 }
 
 
 
-NA_IDEF void naSetDateTimeDaylightSavingTime(NADateTime* dateTime, NABool daylightSavingTime){
+NA_IDEF void naSetDateTimeDaylightSavingTime(NADateTime* dateTime, NABool daylightSavingTime) {
   dateTime->errorNum = NA_DATETIME_ERROR_NONE;
-  if(daylightSavingTime){
-    if((dateTime->flags & NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME) == 0){
+  if(daylightSavingTime) {
+    if((dateTime->flags & NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME) == 0) {
       dateTime->flags |= NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME;
       dateTime->shift += NA_MINUTES_PER_HOUR;
     }
   }else{
-    if((dateTime->flags & NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME) != 0){
+    if((dateTime->flags & NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME) != 0) {
       dateTime->flags &= ~NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME;
       dateTime->shift -= NA_MINUTES_PER_HOUR;
     }
@@ -213,7 +222,7 @@ NA_IDEF void naSetDateTimeDaylightSavingTime(NADateTime* dateTime, NABool daylig
 
 
 
-NA_IDEF void naSetGlobalTimeShift(int16 shiftMinutes, NABool daylightSavingTime){
+NA_IDEF void naSetGlobalTimeShift(int16 shiftMinutes, NABool daylightSavingTime) {
   na_GlobalTimeShift = shiftMinutes;
   na_GlobalDaylightSavingTime = daylightSavingTime;
 }

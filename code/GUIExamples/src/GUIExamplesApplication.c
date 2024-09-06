@@ -5,7 +5,7 @@
 #include "GUIExamples.h"
 #include "../../NALib/src/NAStruct/NAStack.h"
 #include "../../NALib/src/NAVisual/NAPNG.h"
-
+#include "NAUtility/NAString.h"
 
 #define RESOURCE_PATH ""
 //#define RESOURCE_PATH "res/"
@@ -17,9 +17,9 @@ struct HelloWorldGUIApplication{
   int nextWindowX;
   int nextWindowY;
   
-  NAUIImage* iconImage;
-  NAUIImage* state1Image;
-  NAUIImage* state2Image;
+  NAImageSet* iconImageSet;
+  NAImageSet* state1ImageSet;
+  NAImageSet* state2ImageSet;
   
   ExperimentController* experimentController;
   FontController* fontController;
@@ -53,43 +53,43 @@ void postStartup(void* arg){
   
   // Load the image files
   NAPNG* pngIcon = naNewPNGWithPath(RESOURCE_PATH "icon.png");
-  if(!naIsSizeiUseful(naGetPNGSize(pngIcon))){
+  if(!naIsSizesUseful(naGetPNGSize(pngIcon))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
-  NABabyImage* originalIconImage = naCreateBabyImageFromPNG(pngIcon);
-  app->iconImage = naCreateUIImage(
+  NAImage* originalIconImage = naCreateImageWithPNG(pngIcon);
+  app->iconImageSet = naCreateImageSet(
     originalIconImage,
-    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
+    NA_UI_RESOLUTION_2x,
     NA_BLEND_ERODE_LIGHT);
   naDelete(pngIcon);
-  naReleaseBabyImage(originalIconImage);
+  naRelease(originalIconImage);
 
   NAPNG* png1 = naNewPNGWithPath(RESOURCE_PATH "man.png");
-  if(!naIsSizeiUseful(naGetPNGSize(png1))){
+  if(!naIsSizesUseful(naGetPNGSize(png1))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
-  NABabyImage* originalState1Image = naCreateBabyImageFromPNG(png1);
-  app->state1Image = naCreateUIImage(
+  NAImage* originalState1Image = naCreateImageWithPNG(png1);
+  app->state1ImageSet = naCreateImageSet(
     originalState1Image,
-    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
+    NA_UI_RESOLUTION_2x,
     NA_BLEND_ZERO);
   naDelete(png1);
-  naReleaseBabyImage(originalState1Image);
+  naRelease(originalState1Image);
 
   NAPNG* png2 = naNewPNGWithPath(RESOURCE_PATH "man2.png");
-  if(!naIsSizeiUseful(naGetPNGSize(png2))){
+  if(!naIsSizesUseful(naGetPNGSize(png2))){
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
-  NABabyImage* originalState2Image = naCreateBabyImageFromPNG(png2);
-  app->state2Image = naCreateUIImage(
+  NAImage* originalState2Image = naCreateImageWithPNG(png2);
+  app->state2ImageSet = naCreateImageSet(
     originalState2Image,
-    NA_UIIMAGE_RESOLUTION_SCREEN_2x,
+    NA_UI_RESOLUTION_2x,
     NA_BLEND_ZERO);
   naDelete(png2);
-  naReleaseBabyImage(originalState2Image);
+  naRelease(originalState2Image);
 
   // Create the controllers
   app->experimentController = createExperimentController();
@@ -108,9 +108,9 @@ void clearApplication(void* arg){
   clearExperimentController(app->experimentController);
   clearFontController(app->fontController);
   clearButtonController(app->buttonController);
-  naRelease(app->iconImage);
-  naRelease(app->state1Image);
-  naRelease(app->state2Image);
+  naRelease(app->iconImageSet);
+  naRelease(app->state1ImageSet);
+  naRelease(app->state2ImageSet);
   naFree(app);
   naStopRuntime();
 }
@@ -129,14 +129,14 @@ double getAndAdvanceNextWindowY(void){
   return curWindowY;
 }
 
-NAUIImage* getIconImage(void){
-  return app->iconImage;
+NAImageSet* getIconImageSet(void){
+  return app->iconImageSet;
 }
-NAUIImage* getState1Image(void){
-  return app->state1Image;
+NAImageSet* getState1ImageSet(void){
+  return app->state1ImageSet;
 }
-NAUIImage* getState2Image(void){
-  return app->state2Image;
+NAImageSet* getState2ImageSet(void){
+  return app->state2ImageSet;
 }
 
 void addTemperatureControllerToApplication(TemperatureController* con){

@@ -20,12 +20,12 @@ struct NAChecksumCRC{
 
 
 
-NA_HIDEF void na_PrepareCRCPNG(NAChecksumCRC* checksumcrc){
+NA_HIDEF void na_PrepareCRCPNG(NAChecksumCRC* checksumcrc) {
  int n, k;
- for (n = 0; n < 256; n++) {
+ for(n = 0; n < 256; n++) {
    uint32 c = (uint32) n;
-   for (k = 0; k < 8; k++) {
-     if (c & 1)
+   for(k = 0; k < 8; k++) {
+     if(c & 1)
        c = 0xedb88320 ^ (c >> 1);
      else
        c = c >> 1;
@@ -36,9 +36,9 @@ NA_HIDEF void na_PrepareCRCPNG(NAChecksumCRC* checksumcrc){
 
 
 
-NA_HIDEF void na_AccumulateCRCPNG(NAChecksumCRC* checksumcrc, const NAByte* buf, size_t byteSize){
+NA_HIDEF void na_AccumulateCRCPNG(NAChecksumCRC* checksumcrc, const NAByte* buf, size_t byteSize) {
  uint32 c = checksumcrc->value;
- for(size_t n = 0; n < byteSize; n++){
+ for(size_t n = 0; n < byteSize; n++) {
    c = checksumcrc->table[(c ^ buf[n]) & 0xff] ^ (c >> 8);
  }
  checksumcrc->value = c;
@@ -63,8 +63,8 @@ struct NAChecksumAdler{
 
 
 
-NA_HIDEF void na_AccumulateAdler(NAChecksumAdler* checksumadler, const NAByte* buf, size_t byteSize){
-  for(size_t n = 0; n < byteSize; n++){
+NA_HIDEF void na_AccumulateAdler(NAChecksumAdler* checksumadler, const NAByte* buf, size_t byteSize) {
+  for(size_t n = 0; n < byteSize; n++) {
     checksumadler->s1 = (checksumadler->s1 + buf[n]) % NA_CHECKSUM_ADLER_BASE;
     checksumadler->s2 = (checksumadler->s2 + checksumadler->s1) % NA_CHECKSUM_ADLER_BASE;
   }
@@ -77,9 +77,9 @@ NA_HIDEF void na_AccumulateAdler(NAChecksumAdler* checksumadler, const NAByte* b
 // /////////////////////////////
 // General NAChecksum implementation
 
-NA_DEF NAChecksum* naInitChecksum(NAChecksum* checksum, NAChecksumType type){
+NA_DEF NAChecksum* naInitChecksum(NAChecksum* checksum, NAChecksumType type) {
   checksum->type = type;
-  switch(type){
+  switch(type) {
   case NA_CHECKSUM_TYPE_CRC_PNG:
     checksum->data = naAlloc(NAChecksumCRC);
     na_PrepareCRCPNG((NAChecksumCRC*)(checksum->data));
@@ -100,14 +100,14 @@ NA_DEF NAChecksum* naInitChecksum(NAChecksum* checksum, NAChecksumType type){
 
 
 
-NA_DEF void naClearChecksum(NAChecksum* checksum){
+NA_DEF void naClearChecksum(NAChecksum* checksum) {
   naFree(checksum->data);
 }
 
 
 
-NA_DEF void naResetChecksum(NAChecksum* checksum){
-  switch(checksum->type){
+NA_DEF void naResetChecksum(NAChecksum* checksum) {
+  switch(checksum->type) {
   case NA_CHECKSUM_TYPE_CRC_PNG:
     ((NAChecksumCRC*)(checksum->data))->value = 0xffffffff;
     break;
@@ -125,8 +125,8 @@ NA_DEF void naResetChecksum(NAChecksum* checksum){
 
 
 
-NA_DEF void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, size_t byteSize){
-  switch(checksum->type){
+NA_DEF void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, size_t byteSize) {
+  switch(checksum->type) {
   case NA_CHECKSUM_TYPE_CRC_PNG:
     na_AccumulateCRCPNG(((NAChecksumCRC*)(checksum->data)), buf, byteSize);
     break;
@@ -143,9 +143,9 @@ NA_DEF void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, size_t
 
 
 
-NA_DEF uint32 naGetChecksumResult(NAChecksum* checksum){
+NA_DEF uint32 naGetChecksumResult(NAChecksum* checksum) {
   uint32 retValue;
-  switch(checksum->type){
+  switch(checksum->type) {
   case NA_CHECKSUM_TYPE_CRC_PNG:
     retValue = ((NAChecksumCRC*)(checksum->data))->value ^ 0xffffffff;
     break;

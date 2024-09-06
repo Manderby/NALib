@@ -1,33 +1,47 @@
 
-#if defined NA_MOUSE_INCLUDED || !defined NA_APP_INCLUDED
-  #warning "Do not include this file directly. Use NAApp.h"
-#endif
 #ifndef NA_MOUSE_INCLUDED
 #define NA_MOUSE_INCLUDED
+#ifdef __cplusplus
+  extern "C"{
+#endif
 
 
 
-// A mouse status currently consists of the current position and the last one
-// recorded.
+#include "../NAMath/NACoord.h"
+NA_PROTOTYPE(NAImageSet);
+
+
+
+typedef enum NAMouseButton {
+  NA_MOUSE_BUTTON_LEFT = 0,
+  NA_MOUSE_BUTTON_RIGHT = 1,
+  NA_MOUSE_BUTTON_MIDDLE = 2,
+  // additional mouse buttons have higher integer numbers are not implemented
+  // explicitely.
+} NAMouseButton;
+
+
+
+// ////////////////////////////////////
+// Mouse status
+// ////////////////////////////////////
+
+// A mouse status stores various position data of the mouse.
 typedef struct NAMouseStatus NAMouseStatus;
-struct NAMouseStatus{
-  NAPos pos;
-  NAPos prevPos;
-  NABool leftPressed;
-};
-
-typedef void* NACursorImage;
-
-
 
 // Returns the current mouse status.
-NA_API const NAMouseStatus* naGetMouseStatus(void);
+NA_API const NAMouseStatus* naGetCurrentMouseStatus(void);
+
+// Returns whether the mouse button is pressed.
+NA_API NABool naGetMouseButtonPressed(
+  const NAMouseStatus* mouseStatus,
+  NAMouseButton button);
 
 // Returns the position of the mouse status.
-NA_API NAPos naGetMousePos(const NAMouseStatus* mousestatus);
+NA_API NAPos naGetMousePos(const NAMouseStatus* mouseStatus);
 
 // Returns the difference between the current and last recorded position.
-NA_API NASize naGetMouseDelta(const NAMouseStatus* mousestatus);
+NA_API NAPos naGetMouseDelta(const NAMouseStatus* mouseStatus);
 
 // Centers the mouse in the given uiElement.
 NA_API void naCenterMouse(void* uiElement);
@@ -37,10 +51,29 @@ NA_API void naShowMouse(void);
 NA_API void naHideMouse(void);
 NA_API void naHideMouseUntilMovement(NABool hide);
 
-// Creates a resolution independent image for a cursor with a hotspot.
-// On macOS, NACursorImage is of type NSCursor*
-NA_API NACursorImage naAllocCursorImage(const NAUIImage* uiImage, NAPos hotspot);
 
+
+// ////////////////////////////////////
+// Mouse cursor
+// ////////////////////////////////////
+
+// The actual type is system dependent.
+// macOS: NSCursor
+typedef void NACursorImage;
+
+// Creates a resolution independent image for a cursor with a hotspot.
+NA_API NACursorImage* naAllocCursorImage(const NAImageSet* imageSet, NAPos hotspot);
+NA_API void naDeallocCursorImage(NACursorImage* image);
+
+// Sets the current cursor image to the image provided. If null is sent, the
+// default cursor is set.
+NA_API void naActivateCursorImage(const NACursorImage* image);
+
+
+
+#ifdef __cplusplus
+  } // extern "C"
+#endif
 #endif // NA_MOUSE_INCLUDED
 
 

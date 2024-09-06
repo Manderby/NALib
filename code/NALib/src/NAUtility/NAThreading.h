@@ -62,6 +62,8 @@ NA_IAPI NAThread naMakeThread( const char* threadName,
 NA_IAPI void naClearThread(NAThread thread);
 // Calling this function will execute the thread once.
 NA_IAPI void naRunThread(NAThread thread);
+// Waits for the given thread to be finished.
+NA_IAPI void naAwaitThread(NAThread thread);
 
 // //////////////////////////////////
 // Mutex
@@ -82,12 +84,12 @@ NA_IAPI void naClearMutex(NAMutex mutex);
 #endif
 
 // Locks and unlocks a mutex. Waiting threads wait forever.
-#if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
+#if(NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
   _Acquires_lock_(((NAWindowsMutex*)mutex)->mutex)
 #endif
 NA_IAPI void naLockMutex(NAMutex mutex);
 
-#if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
+#if(NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
   _Releases_lock_(((NAWindowsMutex*)mutex)->mutex)
 #endif
 NA_IAPI void naUnlockMutex(NAMutex mutex);
@@ -98,7 +100,7 @@ NA_IAPI void naUnlockMutex(NAMutex mutex);
 // NA_FALSE even if it is the current thread which has locked a mutex. This
 // is a difference to the behaviour of Mutexes in WINAPI but is now solved
 // consistently along all systems.
-#if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
+#if(NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
   _When_(return == NA_TRUE, _Acquires_lock_(((NAWindowsMutex*)mutex)->mutex))
 #endif
 NA_IAPI NABool naTryMutex(NAMutex mutex);

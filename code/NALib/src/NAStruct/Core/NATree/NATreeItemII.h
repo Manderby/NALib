@@ -25,7 +25,7 @@ NA_HIDEF void na_InitTreeItem(NATreeItem* item){
 
 
 
-NA_HIDEF void na_ClearTreeItem(NATreeItem* item){
+NA_HIDEF void na_ClearTreeItem(NATreeItem* item) {
   #if NA_DEBUG
     if(!item)
       naCrash("item is nullptr");
@@ -334,16 +334,16 @@ NA_HDEF size_t na_GetTreeNodeChildIndex(NATreeNode* node, NATreeItem* child, con
 // Leaf
 // /////////////////////////////////////
 
-NA_HIDEF NATreeItem* na_GetTreeLeafItem(NATreeLeaf* leaf){
-  return &(leaf->item);
+NA_HIDEF NATreeItem* na_GetTreeLeafItem(NATreeLeaf* leaf) {
+  return &leaf->item;
 }
 
 
 
-NA_HIDEF void na_InitTreeLeaf(const NATreeConfiguration* config, NATreeLeaf* leaf, const void* key, NAPtr content){
+NA_HIDEF void na_InitTreeLeaf(const NATreeConfiguration* config, NATreeLeaf* leaf, const void* key, NAPtr content) {
   na_InitTreeItem(na_GetTreeLeafItem(leaf));
   
-  if(config->keyAssigner){
+  if(config->keyAssigner) {
     config->keyAssigner(na_GetTreeLeafKey(config, leaf), key);
   }
   na_SetTreeLeafData(config, leaf, na_ConstructLeafData(config, key, content));
@@ -351,21 +351,21 @@ NA_HIDEF void na_InitTreeLeaf(const NATreeConfiguration* config, NATreeLeaf* lea
 
 
 
-NA_HIDEF void na_ClearTreeLeaf(NATreeLeaf* leaf){
+NA_HIDEF void na_ClearTreeLeaf(NATreeLeaf* leaf) {
   na_ClearTreeItem(na_GetTreeLeafItem(leaf));
 }
 
 
 
-NA_HIDEF void na_DestructLeafData(const NATreeConfiguration* config, NAPtr data){
-  if(config->leafDataDestructor){
+NA_HIDEF void na_DestructLeafData(const NATreeConfiguration* config, NAPtr data) {
+  if(config->leafDataDestructor) {
     config->leafDataDestructor(data);
   }
 }
 
 
 
-NA_HIDEF void na_DestructTreeLeaf(const NATreeConfiguration* config, NATreeLeaf* leaf){
+NA_HIDEF void na_DestructTreeLeaf(const NATreeConfiguration* config, NATreeLeaf* leaf) {
   #if NA_DEBUG
     if(!leaf)
       naCrash("leaf shall not be Null");
@@ -377,8 +377,8 @@ NA_HIDEF void na_DestructTreeLeaf(const NATreeConfiguration* config, NATreeLeaf*
 
 
 
-NA_HIDEF NAPtr na_ConstructLeafData(const NATreeConfiguration* config, const void* key, NAPtr content){
-  if(config->leafDataConstructor){
+NA_HIDEF NAPtr na_ConstructLeafData(const NATreeConfiguration* config, const void* key, NAPtr content) {
+  if(config->leafDataConstructor) {
     return config->leafDataConstructor(key, content);
   }else{
     // If there is no constructor, we plainly store the given content.
