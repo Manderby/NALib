@@ -14,7 +14,7 @@ NA_RUNTIME_TYPE(NATreeConfiguration, na_DestroyTreeConfiguration, NA_TRUE);
 
 
 
-NA_DEF NATreeConfiguration* naCreateTreeConfiguration(int32 flags){
+NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags){
   // This is just for testing if the implemented nodes "inheriting" from the
   // NATreeNode structure have their childs storage at the correct position.
   #if NA_DEBUG

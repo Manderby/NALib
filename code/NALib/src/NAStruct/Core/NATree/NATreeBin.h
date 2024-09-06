@@ -29,23 +29,23 @@ NA_EXTERN_RUNTIME_TYPE(NATreeBinLeaf);
 #define LEAF_USERDATA_OFFSET_BIN   offsetof(NATreeBinLeaf, userData)
 #define NODE_USERDATA_OFFSET_BIN   offsetof(NATreeBinNode, userData)
 
-NA_HAPI NAInt na_GetChildIndexBinDouble(NATreeNode* parentNode, const void* childKey);
-NA_HAPI NAInt na_GetKeyIndexBinDouble(const void* baseKey, const void* testKey, const void* data);
+NA_HAPI size_t na_GetChildIndexBinDouble(NATreeNode* parentNode, const void* childKey);
+NA_HAPI size_t na_GetKeyIndexBinDouble(const void* baseKey, const void* testKey, const void* data);
 NA_HAPI NABool na_TestKeyBinDouble(const void* lowerLimit, const void* upperLimit, const void* key);
 NA_HAPI NABool na_TestKeyLeafContainBinDouble(NATreeLeaf* leaf, const void* key);
 
-NA_HAPI NAInt na_GetChildIndexBinNAInt(NATreeNode* parentNode, const void* childKey);
-NA_HAPI NAInt na_GetKeyIndexBinNAInt(const void* baseKey, const void* key, const void* data);
+NA_HAPI size_t na_GetChildIndexBinNAInt(NATreeNode* parentNode, const void* childKey);
+NA_HAPI size_t na_GetKeyIndexBinNAInt(const void* baseKey, const void* key, const void* data);
 NA_HAPI NABool na_TestKeyBinNAInt(const void* lowerLimit, const void* upperLimit, const void* key);
 NA_HAPI NABool na_TestKeyLeafContainBinNAInt(NATreeLeaf* leaf, const void* key);
 
-NA_HAPI NAInt na_GetChildIndexBini32(NATreeNode* parentNode, const void* childKey);
-NA_HAPI NAInt na_GetKeyIndexBini32(const void* baseKey, const void* key, const void* data);
+NA_HAPI size_t na_GetChildIndexBini32(NATreeNode* parentNode, const void* childKey);
+NA_HAPI size_t na_GetKeyIndexBini32(const void* baseKey, const void* key, const void* data);
 NA_HAPI NABool na_TestKeyBini32(const void* lowerLimit, const void* upperLimit, const void* key);
 NA_HAPI NABool na_TestKeyLeafContainBini32(NATreeLeaf* leaf, const void* key);
 
-NA_HAPI NAInt na_GetChildIndexBinu32(NATreeNode* parentNode, const void* childKey);
-NA_HAPI NAInt na_GetKeyIndexBinu32(const void* baseKey, const void* key, const void* data);
+NA_HAPI size_t na_GetChildIndexBinu32(NATreeNode* parentNode, const void* childKey);
+NA_HAPI size_t na_GetKeyIndexBinu32(const void* baseKey, const void* key, const void* data);
 NA_HAPI NABool na_TestKeyBinu32(const void* lowerLimit, const void* upperLimit, const void* key);
 NA_HAPI NABool na_TestKeyLeafContainBinu32(NATreeLeaf* leaf, const void* key);
 
@@ -57,8 +57,8 @@ NA_HAPI  NATreeNode* na_RemoveLeafBin(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI  NATreeLeaf* na_InsertLeafBin(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 
 NA_HAPI  void na_InitNodeAVL(NATreeBinNode* binnode);
-NA_HAPI  void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex);
-NA_HAPI  void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex);
+NA_HAPI  void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex);
+NA_HAPI  void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex);
 
 NA_HIAPI NATreeItem* na_GetBinNodeItem(NATreeBinNode* binnode);
 

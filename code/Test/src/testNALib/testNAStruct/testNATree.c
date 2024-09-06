@@ -20,7 +20,7 @@ NAPtr leafCon(const void* key, NAPtr content){leafConstructorCalled = NA_TRUE; r
 void leafDes(NAPtr leafData){leafDestructorCalled = NA_TRUE;}
 NAPtr nodeCon(const void* key){nodeConstructorCalled = NA_TRUE; return naMakePtrNull();}
 void nodeDes(NAPtr nodeData){nodeDestructorCalled = NA_TRUE;}
-NABool nodeUp(NAPtr parentData, NAPtr* childDatas, NAInt childIndex, NAInt childMask){nodeUpdaterCalled = NA_TRUE; return NA_FALSE;}
+NABool nodeUp(NAPtr parentData, NAPtr* childDatas, size_t childIndex, size_t childMask){nodeUpdaterCalled = NA_TRUE; return NA_FALSE;}
 
 
 

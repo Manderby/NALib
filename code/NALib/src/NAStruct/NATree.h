@@ -107,16 +107,16 @@ typedef void  (*NATreeNodeDataDestructor) (NAPtr nodeData);
 // Gets called whenever childs of a parent node change. The parent data is the
 // data stored in the parent node. The childDatas parameter contains an
 // array of the datas stored in all children. The childIndex parameter denotes
-// which child caused the call or is -1 if no particular child caused the
-// update. The childMask parameter is a bitfield denoting 1 for the child
-// being a leaf and 0 for being an inner node.
+// which child caused the call or is NA_TREE_UNSPECIFIED_INDEX if no particular
+// child caused the update. The childMask parameter is a bitfield denoting 1
+// for the child being a leaf and 0 for being an inner node.
 //
 // When returning NA_TRUE, the update will propagate to the next parent. When
 // returning NA_FALSE, propagation stops.
 typedef NABool (*NATreeNodeUpdater)       (NAPtr parentData,
                                            NAPtr* childDatas,
-                                           NAInt childIndex,
-                                           NAInt childMask);
+                                           size_t childIndex,
+                                           size_t childMask);
 
 
 
@@ -155,7 +155,7 @@ typedef NABool (*NATreeNodeUpdater)       (NAPtr parentData,
 // If you try to change a configuration after it has been used for at least
 // one tree, you will get a warning if NA_DEBUG is 1.
 
-NA_API  NATreeConfiguration* naCreateTreeConfiguration(int32 flags);
+NA_API  NATreeConfiguration* naCreateTreeConfiguration(uint32 flags);
 
 NA_IAPI void naSetTreeConfigurationUserData(
   NATreeConfiguration*       config,

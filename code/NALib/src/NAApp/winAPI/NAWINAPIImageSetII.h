@@ -7,12 +7,7 @@
 
 
 #include "../../NAVisual/NAPNG.h"
-<<<<<<< HEAD:code/NALib/src/NAApp/Windows/NAUIImageWINAPIII.h
-#include "../../NAApp.h"
-#include "../NAUIImage.h"
-=======
 #include "../../NAApp/NAApp.h"
->>>>>>> main:code/NALib/src/NAApp/winAPI/NAUIImageWINAPIII.h
 #include <wincodec.h>
 
 
