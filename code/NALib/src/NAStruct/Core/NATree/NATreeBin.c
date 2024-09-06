@@ -96,6 +96,46 @@ NA_HDEF NABool na_TestKeyLeafContainBinNAInt(NATreeLeaf* leaf, const void* key) 
 
 
 
+NA_HDEF NAInt na_GetChildIndexBini32(NATreeNode* parentNode, const void* childKey) {
+  NATreeBinNode* binnode = (NATreeBinNode*)(parentNode);
+  return na_GetKeyIndexBini32(na_GetBinNodeKey(binnode), childKey, NA_NULL);
+}
+NA_HDEF NAInt na_GetKeyIndexBini32(const void* baseKey, const void* key, const void* data) {
+  NA_UNUSED(data);
+  // if key is equal to baseKey, the return value must be 1.
+  return !(*(const int32*)key < *(const int32*)baseKey); // results in 0 or 1
+}
+NA_HDEF NABool na_TestKeyBini32(const void* lowerLimit, const void* upperLimit, const void* key) {
+  return ((*(const int32*)lowerLimit <= *(const int32*)key) && (*(const int32*)key <= *(const int32*)upperLimit));
+}
+NA_HDEF NABool na_TestKeyLeafContainBini32(NATreeLeaf* leaf, const void* key) {
+  int32* key1 = (int32*)na_GetBinLeafKey((NATreeBinLeaf*)leaf);
+  int32* key2 = (int32*)key;
+  return *key1 == *key2;
+}
+
+
+
+NA_HDEF NAInt na_GetChildIndexBinu32(NATreeNode* parentNode, const void* childKey) {
+  NATreeBinNode* binnode = (NATreeBinNode*)(parentNode);
+  return na_GetKeyIndexBinu32(na_GetBinNodeKey(binnode), childKey, NA_NULL);
+}
+NA_HDEF NAInt na_GetKeyIndexBinu32(const void* baseKey, const void* key, const void* data) {
+  NA_UNUSED(data);
+  // if key is equal to baseKey, the return value must be 1.
+  return !(*(const uint32*)key < *(const uint32*)baseKey); // results in 0 or 1
+}
+NA_HDEF NABool na_TestKeyBinu32(const void* lowerLimit, const void* upperLimit, const void* key) {
+  return ((*(const uint32*)lowerLimit <= *(const uint32*)key) && (*(const uint32*)key <= *(const uint32*)upperLimit));
+}
+NA_HDEF NABool na_TestKeyLeafContainBinu32(NATreeLeaf* leaf, const void* key) {
+  uint32* key1 = (uint32*)na_GetBinLeafKey((NATreeBinLeaf*)leaf);
+  uint32* key2 = (uint32*)key;
+  return *key1 == *key2;
+}
+
+
+
 NA_HDEF void na_DestructTreeNodeBin(NATreeNode* node){
   na_ClearTreeNode(node);
   naDelete(node);

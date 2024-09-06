@@ -407,8 +407,8 @@ NA_IDEF void naUpdateTreeLeaf(NATreeIterator* iter) {
     if(naIsTreeAtInitial(iter))
       naError("Iterator is not at a leaf");
   #endif
-  tree = na_GetTreeIteratorTreeMutable(iter);
-  parent = na_GetTreeItemParent(iter->item);
+  NATree* tree = na_GetTreeIteratorTreeMutable(iter);
+  NATreeNode* parent = na_GetTreeItemParent(iter->item);
   if(!na_GetTreeItemIsRoot(iter->item)){
     na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(parent, iter->item, tree->config));
   }

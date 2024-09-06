@@ -238,8 +238,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(int32 flags){
 
 
 NA_HDEF void na_DestroyTreeConfiguration(NATreeConfiguration* config) {
-  if(config->configdata)
-    naFree(config->configdata);
+  if(config->configData)
+    naFree(config->configData);
 }
 
 
