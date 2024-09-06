@@ -8,6 +8,12 @@
 
 
 
+NA_HAPI void na_DestroyTreeConfiguration(NATreeConfiguration* config);
+
+NA_RUNTIME_TYPE(NATreeConfiguration, na_DestroyTreeConfiguration, NA_TRUE);
+
+
+
 NA_DEF NATreeConfiguration* naCreateTreeConfiguration(int32 flags){
   // This is just for testing if the implemented nodes "inheriting" from the
   // NATreeNode structure have their childs storage at the correct position.
@@ -16,10 +22,9 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(int32 flags){
   #endif
 
   // Create the configuration and set everything to zero.
-  NATreeConfiguration* config = naAlloc(NATreeConfiguration);
+  NATreeConfiguration* config = naCreate(NATreeConfiguration);
   naZeron(config, sizeof(NATreeConfiguration));
   
-  naInitRefCount(&(config->refCount));
   config->flags = flags;
 
   #if NA_DEBUG
@@ -31,7 +36,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(int32 flags){
     config->nodeUserDataOffset   = NA_TREE_CONFIG_INVALID_OFFSET;
   #endif
   
-  if((flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_QUADTREE){
+  if(flags & NA_TREE_QUADTREE) {
   
     #if NA_DEBUG
       config->sizeofNode = sizeof(NATreeQuadNode);
@@ -79,7 +84,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(int32 flags){
     config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_QUAD;
     config->nodeUserDataOffset      = NODE_USERDATA_OFFSET_QUAD;
 
-  }else if((flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_OCTTREE){
+  }else if(flags & NA_TREE_OCTTREE) {
   
     #if NA_DEBUG
       config->sizeofNode = sizeof(NATreeOctNode);

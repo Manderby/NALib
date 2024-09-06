@@ -24,8 +24,7 @@ typedef struct NATreeIterationInfo NATreeIterationInfo;
 
 // This is directly linked to the types defined in NATree.h.
 // See NA_TREE_KEY_NAINT for example.
-#define NA_TREE_CONFIG_KEY_TYPE_MASK   0x000f
-#define NA_TREE_CONFIG_STRUCTURE_MASK  0x00f0
+#define NA_TREE_CONFIG_KEY_TYPE_MASK  0xff
 
 #define NA_TREE_FLAG_ROOT_IS_LEAF 0x01
 #define NA_TREE_FLAG_TMP_KEY_TAKEN 0x02
@@ -95,8 +94,7 @@ typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 struct NATreeConfiguration{
   
   // Main settings
-  NARefCount                    refCount;
-  int32                         flags;
+  uint32                        flags;
 
   size_t                        childPerNode;
   size_t                        leafKeyOffset;
@@ -194,8 +192,6 @@ struct NATreeIterationInfo{
 
 // Configuration
 NA_HIAPI NABool na_GetTreeConfigurationConst(NATreeConfiguration* config);
-NA_HIAPI void na_DeallocTreeConfiguration(NATreeConfiguration* config);
-NA_HIAPI NATreeConfiguration* na_RetainTreeConfiguration(NATreeConfiguration* config);
 
 // Item
 NA_HIAPI void na_InitTreeItem(NATreeItem* item);

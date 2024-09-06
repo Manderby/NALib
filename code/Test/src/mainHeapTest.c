@@ -152,7 +152,7 @@
 //  printf("Tree Insert/Remove: %f" NA_NL, naGetDateTimeDifference(&t2, &t1));
 //
 //  naClearTree(&tree);
-//  naReleaseTreeConfiguration(config);
+//  naRelease(config);
 //}
 //
 //

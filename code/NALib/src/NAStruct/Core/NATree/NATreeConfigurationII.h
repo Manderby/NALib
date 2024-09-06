@@ -12,36 +12,12 @@ NA_HIDEF NABool na_GetTreeConfigurationConst(NATreeConfiguration* config){
   return naGetFlagu32(config->flags, NA_TREE_CONFIG_DEBUG_FLAG_CONST);
 }
 
-
-
-NA_HIDEF void na_DeallocTreeConfiguration(NATreeConfiguration* config){
+NA_HIDEF void na_SetTreeConfigurationConst(NATreeConfiguration* config){
   #if NA_DEBUG
     if(!config)
       naCrash("config is Nullptr");
   #endif
-  if(config->configData){naFree(config->configData);}
-  naFree(config);
-}
-
-
-
-NA_IDEF void naReleaseTreeConfiguration(NATreeConfiguration* config){
-  #if NA_DEBUG
-    if(!config)
-      naCrash("config is Nullptr");
-  #endif
-  naReleaseRefCount(&config->refCount, config, (NAMutator)na_DeallocTreeConfiguration);
-}
-
-
-
-NA_HIDEF NATreeConfiguration* na_RetainTreeConfiguration(NATreeConfiguration* config){
-  #if NA_DEBUG
-    if(!config)
-      naCrash("config is nullptr");
-    config->flags |= NA_TREE_CONFIG_DEBUG_FLAG_CONST;
-  #endif
-  return (NATreeConfiguration*)naRetainRefCount(&(config->refCount));
+  naSetFlagu32(&config->flags, NA_TREE_CONFIG_DEBUG_FLAG_CONST, NA_TRUE);
 }
 
 
@@ -93,7 +69,7 @@ NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NA
 NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config, NAInt baseLeafExponent){
   NAInt* configData;
   #if NA_DEBUG
-    if(!((config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_QUADTREE) && !((config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_OCTTREE))
+    if(!(config->flags & NA_TREE_QUADTREE) && !(config->flags & NA_TREE_OCTTREE))
       naError("This configuration is not for a quadtree and not for an octtree");
   #endif
   if(config->configData){naFree(config->configData);}
@@ -106,7 +82,7 @@ NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config,
 
 NA_IDEF NAInt naGetTreeConfigurationBaseLeafExponent(const NATreeConfiguration* config) {
   #if NA_DEBUG
-    if(!((config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_QUADTREE) && !((config->flags & NA_TREE_CONFIG_STRUCTURE_MASK) == NA_TREE_OCTTREE))
+    if(!(config->flags & NA_TREE_QUADTREE) && !(config->flags & NA_TREE_OCTTREE))
       naError("This configuration is not for a quadtree and not for an octtree");
   #endif
   return *((NAInt*)(config->configData));

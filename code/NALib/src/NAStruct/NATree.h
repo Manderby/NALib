@@ -156,7 +156,6 @@ typedef NABool (*NATreeNodeUpdater)       (NAPtr parentData,
 // one tree, you will get a warning if NA_DEBUG is 1.
 
 NA_API  NATreeConfiguration* naCreateTreeConfiguration(int32 flags);
-NA_IAPI void naReleaseTreeConfiguration(NATreeConfiguration* config);
 
 NA_IAPI void naSetTreeConfigurationUserData(
   NATreeConfiguration*       config,
