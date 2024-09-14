@@ -145,6 +145,7 @@ NA_API double naGetUIElementResolutionScale(const void* uiElement);
 // usually is a HWND handle. There are some special cases though where you
 // get a different pointer:
 // Application: HINSTANCE handle
+// Screen:      HMONITOR handle
 // Menu:        HMENU handle
 // MenuItem:    NA_WINAPIMenuItem* (opaque, internal structure)
 //

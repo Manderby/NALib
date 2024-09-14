@@ -785,6 +785,7 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam) {
 
 NAWINAPICallbackInfo naWINAPIScrollItemProc(WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  // lParam is the control which has the event. Sliders for example. Is a HWND.
   NA_UIElement* scrollElem = (NA_UIElement*)na_GetUINALibEquivalent((void*)lParam);
   if(naGetUIElementType(scrollElem) == NA_UI_SLIDER) {
     info = naSliderWINAPIScroll(scrollElem, wParam);
