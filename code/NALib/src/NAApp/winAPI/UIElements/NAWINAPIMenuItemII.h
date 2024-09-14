@@ -34,7 +34,9 @@ NA_DEF NAMenuItem* naNewMenuSeparator() {
 
 
 NA_DEF void na_DestructWINAPIMenuItem(NA_WINAPIMenuItem* winapiMenuItem) {
-  naDelete(winapiMenuItem->text);
+  if(winapiMenuItem->text) {
+    naDelete(winapiMenuItem->text);
+  }
   na_ClearMenuItem((NAMenuItem*)winapiMenuItem);
 }
 
