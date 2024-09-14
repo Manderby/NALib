@@ -207,8 +207,12 @@ NA_HAPI void na_ClearUINativePtr(void* nativePtr);
 
 
 // NAUIElement
-NA_HAPI void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, void* nativePtr);
-NA_HAPI void na_ClearUIElement(NA_UIElement* uiElement);
+NA_HAPI void na_InitCoreUIElement(NA_UIElement* uiElement, NAUIElementType elementType, void* nativePtr);
+NA_HAPI void na_ClearCoreUIElement(NA_UIElement* uiElement);
+
+// System dependent implementations:
+NA_HAPI void na_InitSystemUIElement(NA_UIElement* uiElement, void* nativePtr);
+NA_HAPI void na_ClearSystemUIElement(void* nativePtr);
 
 NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
 NA_HAPI double na_GetUIElementXOffset(const NA_UIElement* elem);

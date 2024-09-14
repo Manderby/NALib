@@ -52,7 +52,7 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
 
   // This is done at the very end of the InitApplication function as the
   // application must be fully functional before it can init any UIElements.
-  na_InitUIElement(&app->uiElement, NA_UI_APPLICATION, nativePtr);
+  na_InitCoreUIElement(&app->uiElement, NA_UI_APPLICATION, nativePtr);
 }
 
 
@@ -67,7 +67,7 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
   naClearList(&na_App->windows);
 
   naStopTranslator();
-  na_ClearUIElement(&app->uiElement);
+  na_ClearCoreUIElement(&app->uiElement);
 
   na_DeallocMouseStatus(app->mouseStatus);
   if(app->keyStroke) { naDelete(app->keyStroke); }

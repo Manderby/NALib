@@ -7,14 +7,14 @@
 
 
 NA_HDEF void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr) {
-  na_InitUIElement(&metalSpace->uiElement, NA_UI_METAL_SPACE, nativePtr);
+  na_InitCoreUIElement(&metalSpace->uiElement, NA_UI_METAL_SPACE, nativePtr);
   naResetMetalSpaceTransformation(metalSpace);
 }
 
 
 
 NA_HDEF void na_ClearMetalSpace(NAMetalSpace* metalSpace) {
-  na_ClearUIElement(&metalSpace->uiElement);
+  na_ClearCoreUIElement(&metalSpace->uiElement);
 }
 
 
