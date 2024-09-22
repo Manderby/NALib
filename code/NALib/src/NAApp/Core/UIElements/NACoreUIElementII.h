@@ -6,12 +6,14 @@
 
 
 
-NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementType, void* nativePtr) {
+NA_HDEF void na_InitCoreUIElement(NA_UIElement* uiElement, NAUIElementType elementType, void* nativePtr) {
   uiElement->parent = NA_NULL;
   uiElement->elementType = elementType;
   uiElement->nativePtr = nativePtr;
   naInitList(&uiElement->reactions);
   naInitList(&uiElement->shortcuts);
+  
+  na_InitSystemUIElement(uiElement, nativePtr);
   
   uiElement->flags = 0;
 
@@ -28,7 +30,7 @@ NA_HDEF void na_InitUIElement(NA_UIElement* uiElement, NAUIElementType elementTy
 
 
 
-NA_HDEF void na_ClearUIElement(NA_UIElement* uiElement) {
+NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
   if(uiElement->mouseTracking) {
     na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
   }
@@ -38,26 +40,10 @@ NA_HDEF void na_ClearUIElement(NA_UIElement* uiElement) {
   naClearList(&uiElement->reactions);
   naClearList(&uiElement->shortcuts);
   
+  na_ClearSystemUIElement(uiElement->nativePtr);
   na_ClearUINativePtr(uiElement->nativePtr);
 
   naRemoveListData(&naGetApplication()->uiElements, uiElement);
-}
-
-
-
-// todo: find a faster way. Hash perhaps or something else.
-NA_HDEF void* na_GetUINALibEquivalent(void* nativePtr) {
-  NA_UIElement* retelem = NA_NULL;
-  NAListIterator iter = naMakeListMutator(&na_App->uiElements);
-  while(naIterateList(&iter)) {
-    NA_UIElement* elem = naGetListCurMutable(&iter);
-    if(elem->nativePtr == nativePtr) {
-      retelem = elem;
-      break;
-    }
-  }
-  naClearListIterator(&iter);
-  return retelem;
 }
 
 

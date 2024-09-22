@@ -147,7 +147,8 @@ typedef size_t NAKeyCode;
   #define NA_KEYCODE_ENTER          0x24
   #define NA_KEYCODE_LEFT_SHIFT     0x38
   #define NA_KEYCODE_RIGHT_SHIFT    0x3c
-  #define NA_KEYCODE_CONTROL        0x3b
+  #define NA_KEYCODE_LEFT_CONTROL   0x3b
+  #define NA_KEYCODE_RIGHT_CONTROL  0x3e
   #define NA_KEYCODE_LEFT_OPTION    0x3a
   #define NA_KEYCODE_RIGHT_OPTION   0x3d
   #define NA_KEYCODE_LEFT_COMMAND   0x37

@@ -8,7 +8,7 @@
 
 
 NA_HDEF void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame) {
-  na_InitUIElement(&window->uiElement, NA_UI_WINDOW, nativePtr);
+  na_InitCoreUIElement(&window->uiElement, NA_UI_WINDOW, nativePtr);
   naAddListLastMutable(&naGetApplication()->windows, window);
   window->contentSpace = contentSpace;
   window->coreFlags = NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS;
@@ -25,7 +25,7 @@ NA_HDEF void na_ClearWindow(NAWindow* window) {
   if(window->contentSpace)
     naDelete(window->contentSpace);
   
-  na_ClearUIElement(&window->uiElement);
+  na_ClearCoreUIElement(&window->uiElement);
 }
 
 

@@ -7,7 +7,7 @@
 
 
 NA_HDEF void na_InitSelect(NASelect* select, void* nativePtr) {
-  na_InitUIElement(&select->uiElement, NA_UI_SELECT, nativePtr);
+  na_InitCoreUIElement(&select->uiElement, NA_UI_SELECT, nativePtr);
   naInitList(&select->childs);
 }
 
@@ -16,7 +16,7 @@ NA_HDEF void na_InitSelect(NASelect* select, void* nativePtr) {
 NA_HDEF void na_ClearSelect(NASelect* select) {
   naForeachListMutable(&select->childs, (NAMutator)naDelete);
   naClearList(&select->childs);
-  na_ClearUIElement(&select->uiElement);
+  na_ClearCoreUIElement(&select->uiElement);
 }
 
 

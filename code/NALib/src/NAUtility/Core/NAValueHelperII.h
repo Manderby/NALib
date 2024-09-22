@@ -5,25 +5,25 @@
 
 
 
-NA_IDEF NABool naGetFlagu32(uint32 flags, uint32 flag) {
-  return ((flags & flag) == flag);
+NA_IDEF NABool naGetFlagu32(uint32 flags, uint32 mask) {
+  return ((flags & mask) != 0);
 }
-NA_IDEF void naSetFlagu32(uint32* flags, uint32 flag, NABool set) {
+NA_IDEF void naSetFlagu32(uint32* flags, uint32 mask, NABool set) {
   #if NA_DEBUG
     if(flags == NA_NULL)
       naCrash("flags is Nullpointer");
     if(set != NA_FALSE && set != NA_TRUE)
       naError("Boolean value invalid");
   #endif
-  *flags = (*flags & ~flag) | ((uint32)set * flag);
+  *flags = (*flags & ~mask) | ((uint32)set * mask);
 }
-NA_IDEF NABool naToggleFlagu32(uint32* flags, uint32 flag) {
+NA_IDEF NABool naToggleFlagu32(uint32* flags, uint32 mask) {
   #if NA_DEBUG
     if(flags == NA_NULL)
       naCrash("flags is Nullpointer");
   #endif
-  (*flags) ^= flag;
-  return naGetFlagu32(*flags, flag);
+  (*flags) ^= mask;
+  return naGetFlagu32(*flags, mask);
 }
 
 

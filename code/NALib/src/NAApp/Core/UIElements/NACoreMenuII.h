@@ -7,7 +7,7 @@
 
 
 NA_HDEF void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent) {
-  na_InitUIElement(&menu->uiElement, NA_UI_MENU, nativePtr);
+  na_InitCoreUIElement(&menu->uiElement, NA_UI_MENU, nativePtr);
   naInitList(&menu->childs);
   na_SetUIElementParent(&menu->uiElement, parent, NA_FALSE);
 }
@@ -18,7 +18,7 @@ NA_HDEF void na_ClearMenu(NAMenu* menu) {
   naForeachListMutable(&menu->childs, (NAMutator)naDelete);
   naClearList(&menu->childs);
   // todo
-  // na_ClearUIElement(&menu->uiElement);
+  // na_ClearCoreUIElement(&menu->uiElement);
 }
 
 
