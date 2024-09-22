@@ -171,7 +171,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
       NSResponder* firstResponder = [focusWindow firstResponder];
       if(firstResponder) {
         while(!elem && firstResponder) {
-          elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE void*)(firstResponder));
+          elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE void*)firstResponder);
           if(!elem) {
             if(firstResponder == focusWindow) {
               elem = &naGetApplication()->uiElement;
@@ -181,7 +181,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
           }
         }
       }else{
-        elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE void*)(focusWindow));
+        elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE void*)focusWindow);
       }
     }else{
       elem = &naGetApplication()->uiElement;

@@ -112,7 +112,6 @@ void clearApplication(void* arg){
   naRelease(app->state1ImageSet);
   naRelease(app->state2ImageSet);
   naFree(app);
-  naStopRuntime();
 }
 
 

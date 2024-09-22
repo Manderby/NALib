@@ -60,6 +60,7 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace)
 #include "UIElements/NAWINAPISpaceII.h"
 #include "UIElements/NAWINAPITextBoxII.h"
 #include "UIElements/NAWINAPITextFieldII.h"
+#include "UIElements/NAWINAPIUIElementII.h"
 #include "UIElements/NAWINAPIWindowII.h"
 
 

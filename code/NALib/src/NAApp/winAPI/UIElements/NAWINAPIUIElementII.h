@@ -6,15 +6,30 @@
 
 // todo: find a faster way. Hash perhaps or something else.
 NA_HDEF void* na_GetUINALibEquivalent(void* nativePtr) {
-  NA_UIElement* retelem = NA_NULL;
-  NAListIterator iter = naMakeListMutator(&na_App->uiElements);
-  while(naIterateList(&iter)) {
-    NA_UIElement* elem = naGetListCurMutable(&iter);
-    if(elem->nativePtr == nativePtr) {
-      retelem = elem;
-      break;
-    }
+  return (NA_UIElement*)GetWindowLongPtr(nativePtr, GWLP_USERDATA);
+}
+
+
+
+NA_HDEF void na_InitSystemUIElement(NA_UIElement* uiElement, void* nativePtr) {
+  switch(naGetUIElementType(uiElement)) {
+  case NA_UI_APPLICATION:
+  case NA_UI_SCREEN:
+  case NA_UI_MENU:
+  case NA_UI_MENUITEM:
+    // These UI elements have a different native pointer than HWND. They are
+    // not handeled at this point in time and maybe never have to as the
+    // winAPI procedures will only call na_GetUINALibEquivalent for HWND
+    // objects anyway.
+    break;
+  default:
+    SetWindowLongPtr(nativePtr, GWLP_USERDATA, (LONG_PTR)uiElement);
+    break;
   }
-  naClearListIterator(&iter);
-  return retelem;
+}
+
+
+
+NA_HAPI void na_ClearSystemUIElement(void* nativePtr) {
+  SetWindowLongPtr(nativePtr, GWLP_USERDATA, (LONG_PTR)NA_NULL);
 }

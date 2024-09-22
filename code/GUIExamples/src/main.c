@@ -63,6 +63,8 @@ int main(){
 
     naStartApplication(preStartup, postStartup, clearApplication, NA_NULL);
 
+  naStopRuntime();
+
   return 0;
 }
 
