@@ -53,9 +53,9 @@ NA_HDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, size_t 
 
     // Then we propagate the message towards the root if requested.
     if(bubble && !na_GetTreeItemIsRoot(&(parent->item))){
-      NATreeNode* grandparent = na_GetTreeItemParent(&(parent->item));
-      responsibleChildIndex = na_GetTreeNodeChildIndex(grandparent, &(parent->item), tree->config);
-      parent = grandparent;
+      NATreeNode* grandParent = na_GetTreeItemParent(&(parent->item));
+      responsibleChildIndex = na_GetTreeNodeChildIndex(grandParent, &(parent->item), tree->config);
+      parent = grandParent;
     }else{
       parent = NA_NULL;
     }

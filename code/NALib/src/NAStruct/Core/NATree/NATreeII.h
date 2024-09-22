@@ -52,7 +52,7 @@ typedef enum{
 // NATreeLeafAdder           Sets the given child with the given type to the
 //                           parent at the given index.
 // NATreeLeafRemover         Removes the given leaf from the tree.
-// NATreeLeafInserter        Expects the child ad childIndex of grandparent to
+// NATreeLeafInserter        Expects the child ad childIndex of grandParent to
 //                           be a leaf which will be split to a node containing
 //                           both that leaf and the new sibling.
 //

@@ -54,8 +54,8 @@ NA_HIDEF NATreeNode* na_GetOctNodeNode(NATreeOctNode* octNode) {
 NA_HIDEF NATreeLeaf* na_GetOctLeafLeaf(NATreeOctLeaf* octLeaf) {
   return &octLeaf->leaf;
 }
-NA_HIDEF NATreeItem* na_GetOctNodeItem(NATreeOctNode* octnode) {
-  return na_GetTreeNodeItem(na_GetOctNodeNode(octnode));
+NA_HIDEF NATreeItem* na_GetOctNodeItem(NATreeOctNode* octNode) {
+  return na_GetTreeNodeItem(na_GetOctNodeNode(octNode));
 }
 NA_HIDEF void* na_GetOctNodeKey(NATreeOctNode* octNode) {
   return &octNode->origin;
@@ -298,7 +298,7 @@ NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf) {
     while(parent)
     {
       // Search for a sibling and count if there is more than one.
-      NATreeOctNode* grandparent;
+      NATreeOctNode* grandParent;
       NABool isSiblingLeaf;
       NATreeItem* sibling = NA_NULL;
       NAInt siblingCount = 0;
@@ -390,23 +390,23 @@ NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf) {
       if(siblingCount == 0)
         break; // This is only here for code sanity checks.
       
-      grandparent = (NATreeOctNode*)na_GetTreeItemParent(na_GetTreeNodeItem(parent));
+      grandParent = (NATreeOctNode*)na_GetTreeItemParent(na_GetTreeNodeItem(parent));
       isSiblingLeaf = na_IsTreeItemLeaf(tree, sibling);
-      if(!grandparent) {
+      if(!grandParent) {
         // This was the last parent before being a root. Attach the sibling as
         // the new root.
         na_SetTreeRoot(tree, sibling, isSiblingLeaf);
         break;
       }
       
-      // There is a grandparent. Simply add the sibling at the place where
+      // There is a grandParent. Simply add the sibling at the place where
       // the parent was and delete the parent.
-      size_t parentIndex = na_GetTreeNodeChildIndex(na_GetOctNodeNode(grandparent), na_GetTreeNodeItem(parent), tree->config);
-      na_SetTreeNodeChild(na_GetOctNodeNode(grandparent), sibling, parentIndex, isSiblingLeaf, tree->config);
+      size_t parentIndex = na_GetTreeNodeChildIndex(na_GetOctNodeNode(grandParent), na_GetTreeNodeItem(parent), tree->config);
+      na_SetTreeNodeChild(na_GetOctNodeNode(grandParent), sibling, parentIndex, isSiblingLeaf, tree->config);
       na_DestructTreeNode(parent, NA_FALSE, tree->config);
 
       // Repeat for the next parent.
-      parent = na_GetOctNodeNode(grandparent);
+      parent = na_GetOctNodeNode(grandParent);
     }
   }
   

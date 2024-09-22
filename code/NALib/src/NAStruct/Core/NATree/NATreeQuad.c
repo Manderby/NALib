@@ -54,8 +54,8 @@ NA_HIDEF NATreeNode* na_GetQuadNodeNode(NATreeQuadNode* quadNode) {
 NA_HIDEF NATreeLeaf* na_GetQuadLeafLeaf(NATreeQuadLeaf* quadLeaf) {
   return &quadLeaf->leaf;
 }
-NA_HIDEF NATreeItem* na_GetQuadNodeItem(NATreeQuadNode* quadnode) {
-  return na_GetTreeNodeItem(na_GetQuadNodeNode(quadnode));
+NA_HIDEF NATreeItem* na_GetQuadNodeItem(NATreeQuadNode* quadNode) {
+  return na_GetTreeNodeItem(na_GetQuadNodeNode(quadNode));
 }
 NA_HIDEF void* na_GetQuadNodeKey(NATreeQuadNode* quadNode) {
   return &quadNode->origin;
@@ -292,7 +292,7 @@ NA_HDEF NATreeNode* na_RemoveLeafQuad(NATree* tree, NATreeLeaf* leaf) {
     while(parent)
     {
       // Search for a sibling and count if there is more than one.
-      NATreeQuadNode* grandparent;
+      NATreeQuadNode* grandParent;
       NABool isSiblingLeaf;
       NATreeItem* sibling = NA_NULL;
       NAInt siblingCount = 0;
@@ -365,23 +365,23 @@ NA_HDEF NATreeNode* na_RemoveLeafQuad(NATree* tree, NATreeLeaf* leaf) {
       if(siblingCount == 0)
         break; // This is only here for code sanity checks.
 
-      grandparent = (NATreeQuadNode*)na_GetTreeItemParent(na_GetTreeNodeItem(parent));
+      grandParent = (NATreeQuadNode*)na_GetTreeItemParent(na_GetTreeNodeItem(parent));
       isSiblingLeaf = na_IsTreeItemLeaf(tree, sibling);
-      if(!grandparent) {
+      if(!grandParent) {
         // This was the last parent before being a root. Attach the sibling as
         // the new root.
         na_SetTreeRoot(tree, sibling, isSiblingLeaf);
         break;
       }
       
-      // There is a grandparent. Simply add the sibling at the place where
+      // There is a grandParent. Simply add the sibling at the place where
       // the parent was and delete the parent.
-      size_t parentIndex = na_GetTreeNodeChildIndex(na_GetQuadNodeNode(grandparent), na_GetTreeNodeItem(parent), tree->config);
-      na_SetTreeNodeChild(na_GetQuadNodeNode(grandparent), sibling, parentIndex, isSiblingLeaf, tree->config);
+      size_t parentIndex = na_GetTreeNodeChildIndex(na_GetQuadNodeNode(grandParent), na_GetTreeNodeItem(parent), tree->config);
+      na_SetTreeNodeChild(na_GetQuadNodeNode(grandParent), sibling, parentIndex, isSiblingLeaf, tree->config);
       na_DestructTreeNode(parent, NA_FALSE, tree->config);
 
       // Repeat for the next parent.
-      parent = na_GetQuadNodeNode(grandparent);
+      parent = na_GetQuadNodeNode(grandParent);
     }
   }
   
