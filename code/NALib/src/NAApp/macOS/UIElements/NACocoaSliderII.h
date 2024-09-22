@@ -17,8 +17,8 @@
   return self;
 }
 
-- (void) setTickCount:(NAInt)tickCount{
-  self.numberOfTickMarks = tickCount;
+- (void) setTickCount:(size_t)tickCount{
+  self.numberOfTickMarks = (NSInteger)tickCount;
   self.allowsTickMarkValuesOnly = tickCount > 0;
 }
 
@@ -89,7 +89,7 @@ NA_DEF void naSetSliderEnabled(NASlider* slider, NABool enabled) {
 
 
 
-NA_DEF void naSetSliderRange(NASlider* slider, double min, double max, NAInt tickCount) {
+NA_DEF void naSetSliderRange(NASlider* slider, double min, double max, size_t tickCount) {
   naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
   slider->min = min;
   slider->max = max;

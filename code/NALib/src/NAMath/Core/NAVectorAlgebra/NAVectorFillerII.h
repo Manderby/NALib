@@ -33,16 +33,28 @@ NA_IDEF void naFillV3f(float* d, float a0, float a1, float a2) {
 NA_IDEF void naFillV4f(float* d, float a0, float a1, float a2, float a3) {
   d[0] = a0; d[1] = a1; d[2] = a2; d[3] = a3;
 }
-NA_IDEF void naFillV1i(NAInt* d, NAInt a0) {
+NA_IDEF void naFillV1i32(int32* d, int32 a0) {
   d[0] = a0;
 }
-NA_IDEF void naFillV2i(NAInt* d, NAInt a0, NAInt a1) {
+NA_IDEF void naFillV2i32(int32* d, int32 a0, int32 a1) {
   d[0] = a0; d[1] = a1;
 }
-NA_IDEF void naFillV3i(NAInt* d, NAInt a0, NAInt a1, NAInt a2) {
+NA_IDEF void naFillV3i32(int32* d, int32 a0, int32 a1, int32 a2) {
   d[0] = a0; d[1] = a1; d[2] = a2;
 }
-NA_IDEF void naFillV4i(NAInt* d, NAInt a0, NAInt a1, NAInt a2, NAInt a3) {
+NA_IDEF void naFillV4i32(int32* d, int32 a0, int32 a1, int32 a2, int32 a3) {
+  d[0] = a0; d[1] = a1; d[2] = a2; d[3] = a3;
+}
+NA_IDEF void naFillV1i64(int64* d, int64 a0) {
+  d[0] = a0;
+}
+NA_IDEF void naFillV2i64(int64* d, int64 a0, int64 a1) {
+  d[0] = a0; d[1] = a1;
+}
+NA_IDEF void naFillV3i64(int64* d, int64 a0, int64 a1, int64 a2) {
+  d[0] = a0; d[1] = a1; d[2] = a2;
+}
+NA_IDEF void naFillV4i64(int64* d, int64 a0, int64 a1, int64 a2, int64 a3) {
   d[0] = a0; d[1] = a1; d[2] = a2; d[3] = a3;
 }
 NA_IDEF void naFillV1s(size_t* d, size_t a0) {
@@ -88,17 +100,29 @@ NA_IDEF void naZeroV3f(float* d) {
 NA_IDEF void naZeroV4f(float* d) {
   d[0] = 0.f; d[1] = 0.f; d[2] = 0.f; d[3] = 0.f;
 }
-NA_IDEF void naZeroV1i(NAInt* d) {
-  d[0] = 0;
+NA_IDEF void naZeroV1i32(int32* d) {
+  d[0] = NA_ZERO_i32;
 }
-NA_IDEF void naZeroV2i(NAInt* d) {
-  d[0] = 0; d[1] = 0;
+NA_IDEF void naZeroV2i32(int32* d) {
+  d[0] = NA_ZERO_i32; d[1] = NA_ZERO_i32;
 }
-NA_IDEF void naZeroV3i(NAInt* d) {
-  d[0] = 0; d[1] = 0; d[2] = 0;
+NA_IDEF void naZeroV3i32(int32* d) {
+  d[0] = NA_ZERO_i32; d[1] = NA_ZERO_i32; d[2] = NA_ZERO_i32;
 }
-NA_IDEF void naZeroV4i(NAInt* d) {
-  d[0] = 0; d[1] = 0; d[2] = 0; d[3] = 0;
+NA_IDEF void naZeroV4i32(int32* d) {
+  d[0] = NA_ZERO_i32; d[1] = NA_ZERO_i32; d[2] = NA_ZERO_i32; d[3] = NA_ZERO_i32;
+}
+NA_IDEF void naZeroV1i64(int64* d) {
+  d[0] = NA_ZERO_i64;
+}
+NA_IDEF void naZeroV2i64(int64* d) {
+  d[0] = NA_ZERO_i64; d[1] = NA_ZERO_i64;
+}
+NA_IDEF void naZeroV3i64(int64* d) {
+  d[0] = NA_ZERO_i64; d[1] = NA_ZERO_i64; d[2] = NA_ZERO_i64;
+}
+NA_IDEF void naZeroV4i64(int64* d) {
+  d[0] = NA_ZERO_i64; d[1] = NA_ZERO_i64; d[2] = NA_ZERO_i64; d[3] = NA_ZERO_i64;
 }
 NA_IDEF void naZeroV1s(size_t* d) {
   d[0] = 0;
