@@ -7,20 +7,24 @@
 // Prototypes
 void printNABuffer(void);
 void printNAStack(void);
+void printNATree(void);
 
 void testNABuffer(void);
 void testNAStack(void);
+void testNATree(void);
 
 void benchmarkNAStack(void);
 
 void printNAStruct(void){
-  printNABuffer();
-  printNAStack();
+  //printNABuffer();
+  //printNAStack();
+  printNATree();
 }
 
 void testNAStruct(void){
-  naTestFunction(testNABuffer);
-  naTestFunction(testNAStack);
+  //naTestFunction(testNABuffer);
+  //naTestFunction(testNAStack);
+  naTestFunction(testNATree);
 }
 
 void benchmarkNAStruct(void){

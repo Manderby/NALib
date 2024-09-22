@@ -3,54 +3,58 @@
 
 
 
+#if NA_DEBUG
+  NATreeNode na_invalidParentNode;
+#endif
+
 
 // Every Add resulting in a change in the tree must go through this function.
 NA_HDEF NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder) {
   // We need to create a node holding both the old leaf and the new one.
   NATreeLeaf* contentLeaf = tree->config->leafInserter(tree, item, key, content, insertOrder);
-  NATreeNode* parent = na_GetTreeItemParent(&contentLeaf->item);
-  if(parent) {
-    na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(tree->config, parent, &contentLeaf->item));
+  NATreeNode* parent = na_GetTreeItemParent(&(contentLeaf->item));
+  if(parent){
+    na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(parent, &(contentLeaf->item), tree->config));
   }
   return contentLeaf;
 }
 
 
 
-NA_HDEF void na_FillTreeNodeChildData(const NATreeConfiguration* config, NAPtr childdata[NA_TREE_NODE_MAX_CHILDS], NATreeNode* node) {
-  NAInt i;
-  for(i = 0; i < config->childpernode; ++i) {
-    NATreeItem* child = na_GetTreeNodeChild(config, node, i);
-    if(!child) {
+NA_HDEF void na_FillTreeNodeChildData(const NATreeConfiguration* config, NAPtr childdata[NA_TREE_NODE_MAX_CHILDS], NATreeNode* node){
+  for(size_t i = 0; i < config->childPerNode; ++i){
+    NATreeItem* child = na_GetTreeNodeChild(node, i, config);
+    if(!child){
       childdata[i] = naMakePtrNull();
-    }else if(na_IsNodeChildLeaf(node, i)) {
-      childdata[i] = na_GetTreeLeafData(config, (NATreeLeaf*)child);
+    }else if(na_GetNodeChildIsLeaf(node, i, config)){
+      childdata[i] = na_GetTreeLeafData((NATreeLeaf*)child, config);
     }else{
-      childdata[i] = na_GetTreeNodeData(config, (NATreeNode*)child);
+      childdata[i] = na_GetTreeNodeData((NATreeNode*)child, config);
     }
   }
 }
 
 
 
-// Expects the parent node of a child which has changed. The segment indicates
-// which segment caused the trouble. If -1 is given, there is no particular
-// node.
-NA_HDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childIndex) {
+// Expects the parent node of a child which has changed. The index indicates
+// which child of the parent node caused the trouble.
+// If NA_TREE_UNSPECIFIED_INDEX is given, there is no particular child being
+// responsible for the change.
+NA_HDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, size_t responsibleChildIndex){
   NABool bubble = NA_TRUE;
-
-  while(bubble && parent) {
+  
+  while(bubble && parent){
     // We call the update callback.
     if(tree->config->nodeUpdater) {
       NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
       na_FillTreeNodeChildData(tree->config, childdata, parent);
-      bubble = tree->config->nodeUpdater(na_GetTreeNodeData(tree->config, parent), childdata, childIndex, parent->flags & NA_TREE_NODE_CHILDS_MASK);
+      bubble = tree->config->nodeUpdater(na_GetTreeNodeData(parent, tree->config), childdata, responsibleChildIndex, parent->flags & NA_TREE_NODE_CHILDS_MASK);
     }
 
     // Then we propagate the message towards the root if requested.
-    if(bubble && !na_IsTreeItemRoot(&parent->item)) {
-      NATreeNode* grandparent = na_GetTreeItemParent(&parent->item);
-      childIndex = na_GetTreeNodeChildIndex(tree->config, grandparent, &parent->item);
+    if(bubble && !na_GetTreeItemIsRoot(&(parent->item))){
+      NATreeNode* grandparent = na_GetTreeItemParent(&(parent->item));
+      responsibleChildIndex = na_GetTreeNodeChildIndex(grandparent, &(parent->item), tree->config);
       parent = grandparent;
     }else{
       parent = NA_NULL;
@@ -70,7 +74,6 @@ NA_HDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt c
 // further.
 NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node) {
   NABool bubble;
-  NAInt i;
   #if NA_DEBUG
     if(!tree->config->nodeUpdater)
       naCrash("tree is configured without nodeUpdater callback");
@@ -78,10 +81,10 @@ NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node) {
   bubble = NA_FALSE;
 
   // Go through all childs and call the capturing message recursively.
-  for(i = 0; i < tree->config->childpernode; ++i) {
-    NATreeNode* subnode = (NATreeNode*)na_GetTreeNodeChild(tree->config, node, i);
-    if(subnode) {
-      if(na_IsNodeChildLeaf(node, i)) {
+  for(size_t i = 0; i < tree->config->childPerNode; ++i){
+    NATreeNode* subnode = (NATreeNode*)na_GetTreeNodeChild(node, i, tree->config);
+    if(subnode){
+      if(na_GetNodeChildIsLeaf(node, i, tree->config)){
         bubble |= NA_TRUE;
       }else{
         // this node stores subnodes
@@ -95,7 +98,7 @@ NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node) {
   if(bubble) {
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
     na_FillTreeNodeChildData(tree->config, childdata, node);
-    bubble = tree->config->nodeUpdater(na_GetTreeNodeData(tree->config, node), childdata, -1, node->flags & NA_TREE_NODE_CHILDS_MASK);
+    bubble = tree->config->nodeUpdater(na_GetTreeNodeData(node, tree->config), childdata, NA_TREE_UNSPECIFIED_INDEX, node->flags & NA_TREE_NODE_CHILDS_MASK);
   }
 
   return bubble;

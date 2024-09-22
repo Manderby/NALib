@@ -7,14 +7,14 @@
 
 
 void testMemoryBlock(void){
-  naTestGroup("New and release"){
+  naTestGroup("Create and release"){
     NAMemoryBlock* block = NA_NULL;
     naTestVoid(block = na_CreateMemoryBlock(10));
     naTestVoid(naRelease(block));
     naTestCrash(block = na_CreateMemoryBlock(0); naRelease(block));
   }
 
-  naTestGroup("New and release with data"){
+  naTestGroup("Create and release with data"){
     int constData = 1234;
     NAPtr constPtr = naMakePtrWithDataConst(&constData);
     NAPtr mutablePtr = naMakePtrWithDataMutable(naAlloc(int));
@@ -55,7 +55,7 @@ void na_DummyBufferFiller(void* dst, NARangei64 sourceRange, void* sourceData){
 }
 
 void testBufferSource(void){
-  naTestGroup("New and release"){
+  naTestGroup("Create and release"){
     NABuffer* cache = naCreateBuffer(NA_FALSE);
     NABufferSource* source = NA_NULL;
     naTestVoid(source = naCreateBufferSource(NA_NULL, NA_NULL));

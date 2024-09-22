@@ -307,13 +307,13 @@ NA_DEF double naSum2(size_t sampleCount, const double* array) {
   double tmpSums[8 * sizeof(size_t)];  // 8 denotes bits per Byte
   memset(tmpSums, 0, sizeof(double) * (8 * sizeof(size_t))); // nullify.
 
-  if(sampleCount > 1) {
-    const double* arrayPtr = array;
-    for(size_t iStep = 0; iStep < sampleCount; iStep += 2) {
-      // Add two neighboring values together with the temp sums up to the
-      // position where the current iStep has its first binary 0.
-      double walkingSum = *arrayPtr++;
-      walkingSum += *arrayPtr++;
+    if (sampleCount > 1) {
+        const double* arrayPtr = array;
+        for (size_t iStep = 0; iStep < sampleCount; iStep += 2) {
+            // Add two neighboring values together with the temp sums up to the
+            // position where the current iStep has its first binary 0.
+            double walkingSum = *arrayPtr++;
+            walkingSum += *arrayPtr++;
 
       size_t step = 2;
       double* tmpSum = &tmpSums[1];

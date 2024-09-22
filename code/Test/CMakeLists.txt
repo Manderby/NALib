@@ -49,6 +49,7 @@ set(testNAUtilityFiles
 set(testNAStructFiles
   src/testNALib/testNAStruct/testNABuffer.c
   src/testNALib/testNAStruct/testNAStack.c
+  src/testNALib/testNAStruct/testNATree.c
 )
 
 set(testNALibFiles

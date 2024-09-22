@@ -4,7 +4,7 @@
 typedef struct NATreeQuadNode NATreeQuadNode;
 struct NATreeQuadNode{
   NATreeNode node;
-  NATreeItem* childs[4];
+  NATreeItem* childs[4]; // must come right after the node.
   NAPos origin;
   NAPtr userData;
   NAInt childExponent;
@@ -27,8 +27,8 @@ NA_EXTERN_RUNTIME_TYPE(NATreeQuadLeaf);
 #define LEAF_USERDATA_OFFSET_QUAD   offsetof(NATreeQuadLeaf, userData)
 #define NODE_USERDATA_OFFSET_QUAD   offsetof(NATreeQuadNode, userData)
 
-NA_HAPI  NAInt na_GetChildIndexQuadDouble(NATreeNode* parentNode, const void* childKey);
-NA_HAPI  NAInt na_GetKeyIndexQuadDouble(const void* baseKey, const void* testKey, const void* data);
+NA_HAPI  size_t na_GetChildIndexQuadDouble(NATreeNode* parentNode, const void* childKey);
+NA_HAPI  size_t na_GetKeyIndexQuadDouble(const void* baseKey, const void* testKey, const void* data);
 NA_HAPI  NABool na_TestKeyQuadDouble(const void* lowerLimit, const void* upperLimit, const void* key);
 NA_HAPI  NABool na_TestKeyNodeContainQuadDouble(NATreeNode* parentNode, const void* key);
 NA_HAPI  NABool na_TestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key);

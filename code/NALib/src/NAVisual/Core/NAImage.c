@@ -6,7 +6,6 @@
 
 
 struct NAImage{
-  NARefCount refCount;
   uint32 width;
   uint32 height;
   NAColor* data;
@@ -107,7 +106,6 @@ NA_DEF NAImage* naCreateImage(NASizes size, const NAColor* color) {
     naError("size is too big");
 #endif
   image = naCreate(NAImage);
-  naInitRefCount(&image->refCount);
   image->width = (uint32)size.width;
   image->height = (uint32)size.height;
   image->data = naMalloc(na_GetImageDataSize(image));
@@ -131,7 +129,6 @@ NA_HDEF NAImage* naCreateImageCopy(const NAImage* image) {
     naCrash("given image is a Null pointer");
 #endif
   newImage = naCreate(NAImage);
-  naInitRefCount(&newImage->refCount);
   newImage->width = image->width;
   newImage->height = image->height;
   size_t dataSize = na_GetImageDataSize(newImage);

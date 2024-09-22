@@ -1,10 +1,10 @@
 
 NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config) {
-  config->flags |= NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE;
   tree->config = (NATreeConfiguration*)naRetain(config);
+  na_SetTreeConfigurationConst(config);
 
   #if NA_DEBUG
-    if(((tree->config->flags & NA_TREE_QUADTREE) || (tree->config->flags & NA_TREE_OCTTREE)) && !tree->config->configdata)
+    if(((tree->config->flags & NA_TREE_QUADTREE) || (tree->config->flags & NA_TREE_OCTTREE)) && !tree->config->configData)
       naError("Quadtree or Octtree configuration need more information. Use naSetTreeConfigurationBaseLeafExponent");
   #endif
 
@@ -32,9 +32,9 @@ NA_IDEF void naEmptyTree(NATree* tree) {
   #endif
   if(tree->root) {
     if(naIsTreeRootLeaf(tree)) {
-      na_DestructTreeLeaf(tree->config, (NATreeLeaf*)tree->root);
+      na_DestructTreeLeaf((NATreeLeaf*)tree->root, tree->config);
     }else{
-      na_DestructTreeNode(tree->config, (NATreeNode*)tree->root, NA_TRUE);
+      na_DestructTreeNode((NATreeNode*)tree->root, NA_TRUE, tree->config);
     }
   }
   tree->root = NA_NULL;
@@ -42,7 +42,11 @@ NA_IDEF void naEmptyTree(NATree* tree) {
 
 
 
-NA_IDEF void naClearTree(NATree* tree) {
+NA_IDEF void naClearTree(NATree* tree){
+  #if NA_DEBUG
+    if(!tree)
+      naCrash("tree is nullptr");
+  #endif
   naEmptyTree(tree);
   // If the config has a callback function for deleting a tree, call it.
   if(tree->config->treeDestructor) {
@@ -179,7 +183,7 @@ NA_IDEF NAPtr naGetRootNodeContent(NATree* tree)
       if(naIsTreeRootLeaf(tree))
         naError("Root of the tree is not a node");
     #endif
-    retdata = na_GetTreeNodeData(tree->config, (NATreeNode*)(tree->root));
+    retdata = na_GetTreeNodeData((NATreeNode*)(tree->root), tree->config);
   }else{
     retdata = naMakePtrNull();
   }
@@ -221,12 +225,12 @@ NA_HIDEF void na_MarkTreeRootLeaf(NATree* tree, NABool isleaf) {
 // todo: If this shows up in performance, adding rootparent again? Or adding childIndex as flag in every item?
 NA_HIDEF NABool na_IsTreeItemLeaf(const NATree* tree, NATreeItem* item) {
   NABool retValue;
-  if(na_IsTreeItemRoot(item)) {
+  if(na_GetTreeItemIsRoot(item)){
     retValue = naIsTreeRootLeaf(tree);
   }else{
     NATreeNode* parent = na_GetTreeItemParent(item);
-    NAInt childIndex = na_GetTreeNodeChildIndex(tree->config, parent, item);
-    retValue = na_IsNodeChildLeaf(parent, childIndex);
+    size_t childIndex = na_GetTreeNodeChildIndex(parent, item, tree->config);
+    retValue = na_GetNodeChildIsLeaf(parent, childIndex, tree->config);
   }
   return retValue;
 }

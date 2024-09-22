@@ -52,16 +52,14 @@ NA_HIDEF void na_SetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newite
     if(!naIsTreeAtInitial(iter)) {
       if(!iter->item)
         naCrash("No item stored in the current iterator");
-      if(iter->item->iterCount == 0)
+      if(na_GetTreeItemIterCount(iter->item) == 0)
         naError("The current item has zero iterators already");
-      iter->item->iterCount--;
+      na_DecTreeItemIterCount(iter->item);
     }
   #endif
   iter->item = newitem;
   #if NA_DEBUG
-    if(!naIsTreeAtInitial(iter)) {
-      iter->item->iterCount++;
-    }
+    if(!naIsTreeAtInitial(iter)){na_IncTreeItemIterCount(iter->item);}
   #endif
 }
 
@@ -157,11 +155,11 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
   tree = na_GetTreeIteratorTreeConst(iter);
   item = iter->item;
   continueBubbling = NA_TRUE;
-  while(continueBubbling && !na_IsTreeItemRoot(item)) {
+  while(continueBubbling && !na_GetTreeItemIsRoot(item)){
     NATreeNode* parent = na_GetTreeItemParent(item);
-    NAInt childIndex = na_GetTreeNodeChildIndex(tree->config, parent, item);
-    continueBubbling = nodeTokenCallback(token, na_GetTreeNodeData(tree->config, parent), childIndex);
-    item = &parent->item;
+    NAInt childIndex = na_GetTreeNodeChildIndex(parent, item, tree->config);
+    continueBubbling = nodeTokenCallback(token, na_GetTreeNodeData(parent, tree->config), childIndex);
+    item = &(parent->item);
   }
 }
 
@@ -177,7 +175,7 @@ NA_IDEF const void* naGetTreeCurLeafKey(NATreeIterator* iter) {
     if(!na_IsTreeItemLeaf(tree, iter->item))
       naError("This iterator is not at a leaf.");
   #endif
-  return na_GetTreeLeafKey(tree->config, (NATreeLeaf*)iter->item);
+  return na_GetTreeLeafKey((NATreeLeaf*)iter->item, tree->config);
 }
 
 
@@ -192,7 +190,7 @@ NA_IDEF const void* naGetTreeCurNodeKey(NATreeIterator* iter) {
     if(na_IsTreeItemLeaf(tree, iter->item))
       naError("This iterator is not at a node.");
   #endif
-  return na_GetTreeNodeKey(tree->config, (NATreeNode*)iter->item);
+  return na_GetTreeNodeKey((NATreeNode*)iter->item, tree->config);
 }
 
 
@@ -207,7 +205,7 @@ NA_IDEF const void* naGetTreeCurLeafConst(NATreeIterator* iter) {
     if(!na_IsTreeItemLeaf(tree, iter->item))
       naError("This iterator is not at a leaf.");
   #endif
-  return naGetPtrConst(na_GetTreeLeafData(tree->config, (NATreeLeaf*)iter->item));
+  return naGetPtrConst(na_GetTreeLeafData((NATreeLeaf*)iter->item, tree->config));
 }
 
 
@@ -222,7 +220,7 @@ NA_IDEF const void* naGetTreeCurNodeConst(NATreeIterator* iter) {
     if(na_IsTreeItemLeaf(tree, iter->item))
       naError("This iterator is not at a node.");
   #endif
-  return naGetPtrConst(na_GetTreeNodeData(tree->config, (NATreeNode*)iter->item));
+  return naGetPtrConst(na_GetTreeNodeData((NATreeNode*)iter->item, tree->config));
 }
 
 
@@ -237,7 +235,7 @@ NA_IDEF void* naGetTreeCurLeafMutable(NATreeIterator* iter) {
   if(!na_IsTreeItemLeaf(tree, iter->item))
     naError("This iterator is not at a leaf.");
   #endif
-  return naGetPtrMutable(na_GetTreeLeafData(tree->config, (NATreeLeaf*)iter->item));
+  return naGetPtrMutable(na_GetTreeLeafData((NATreeLeaf*)iter->item, tree->config));
 }
 
 
@@ -252,7 +250,7 @@ NA_IDEF void* naGetTreeCurNodeMutable(NATreeIterator* iter) {
   if(na_IsTreeItemLeaf(tree, iter->item))
     naError("This iterator is not at a node.");
   #endif
-  return naGetPtrMutable(na_GetTreeNodeData(tree->config, (NATreeNode*)iter->item));
+  return naGetPtrMutable(na_GetTreeNodeData((NATreeNode*)iter->item, tree->config));
 }
 
 
@@ -270,7 +268,7 @@ NA_IDEF NABool naIterateTree(NATreeIterator* iter, const void* lowerLimit, const
   #endif
   info.step = 1;
   info.startIndex = 0;
-  info.breakIndex = tree->config->childpernode;
+  info.breakIndex = tree->config->childPerNode;
   info.lowerLimit = lowerLimit;
   info.upperLimit = upperLimit;
   return na_IterateTreeWithInfo(iter, &info);
@@ -290,7 +288,7 @@ NA_IDEF NABool naIterateTreeBack(NATreeIterator* iter, const void* lowerLimit, c
       naError("Tree requires to have a key in order to use an upper limit.");
   #endif
   info.step = -1;
-  info.startIndex = tree->config->childpernode - 1;
+  info.startIndex = tree->config->childPerNode - 1;
   info.breakIndex = -1;
   info.lowerLimit = lowerLimit;
   info.upperLimit = upperLimit;
@@ -393,10 +391,8 @@ NA_IDEF void naRemoveTreeCurLeaf(NATreeIterator* iter) {
   removeItem = iter->item;
   na_SetTreeIteratorCurItem(iter, NA_NULL);  // temporarily remove the iterator. // todo: make it advance, rev-advance or not.
   newParent = tree->config->leafRemover(tree, (NATreeLeaf*)(removeItem));
-  if(newParent) {
-    na_SetTreeIteratorCurItem(iter, na_GetTreeNodeItem(newParent));
-  }
-  na_UpdateTreeNodeBubbling(tree, newParent, -1);
+  if(newParent){na_SetTreeIteratorCurItem(iter, na_GetTreeNodeItem(newParent));}
+  na_UpdateTreeNodeBubbling(tree, newParent, NA_TREE_UNSPECIFIED_INDEX);
 }
 
 
@@ -409,11 +405,10 @@ NA_IDEF void naUpdateTreeLeaf(NATreeIterator* iter) {
     if(naIsTreeAtInitial(iter))
       naError("Iterator is not at a leaf");
   #endif
-  
   NATree* tree = na_GetTreeIteratorTreeMutable(iter);
   NATreeNode* parent = na_GetTreeItemParent(iter->item);
-  if(!na_IsTreeItemRoot(iter->item)) {
-    na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(tree->config, parent, iter->item));
+  if(!na_GetTreeItemIsRoot(iter->item)){
+    na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(parent, iter->item, tree->config));
   }
 }
 

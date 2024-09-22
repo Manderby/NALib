@@ -35,17 +35,17 @@ void benchmarkNAStruct(void);
 
 
 void printNALib(void){
-  printNABase();
-  printNACore();
-  printNAUtility();
-  printNAStruct();
+//  printNABase();
+//  printNACore();
+//  printNAUtility();
+//  printNAStruct();
 }
 
 void testNALib(void){
-  naTestFunction(testNABase);
-  naTestFunction(testNAMath);
-  naTestFunction(testNACore);
-  naTestFunction(testNAUtility);
+  //naTestFunction(testNABase);
+  //naTestFunction(testNAMath);
+  //naTestFunction(testNACore);
+  //naTestFunction(testNAUtility);
   naTestFunction(testNAStruct);
 }
 
@@ -67,7 +67,7 @@ int main(int argc, const char** argv){
   naStartRuntime();
 
   // Print macro information
-  //printNALib();
+  printNALib();
 
   // Start testing
   NABool testStartSuccessful = naStartTesting(
@@ -85,6 +85,9 @@ int main(int argc, const char** argv){
   #endif
 
   if(testStartSuccessful){
+    naSetTestPrintsAllTests(NATEST_TRUE);
+    naSetTestPrintsExpression(NATEST_FALSE);
+    naSetTestPrintsFullGroupName(NATEST_FALSE);
     testNALib();
     //naPrintUntested();
     //naSetTimePerBenchmark(1);
