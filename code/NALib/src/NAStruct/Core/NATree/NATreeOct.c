@@ -5,8 +5,46 @@
 
 
 
+struct NATreeOctNode{
+  NATreeNode node;
+  NATreeItem* childs[8];  // must come right after the node.
+  NAVertex origin;
+  NAPtr userData;
+  NAInt childExponent;
+};
 NA_RUNTIME_TYPE(NATreeOctNode, NA_NULL, NA_FALSE);
+
+struct NATreeOctLeaf{
+  NATreeLeaf leaf;
+  NAVertex origin;  // todo remove this maybe?
+  NAPtr userData;
+  NAInt leafExponent; // todo remove this maybe?
+};
 NA_RUNTIME_TYPE(NATreeOctLeaf, NA_NULL, NA_FALSE);
+
+
+
+#include <stddef.h>
+#define NODE_CHILDS_OFFSET_OCT     offsetof(NATreeOctNode, childs)
+#define LEAF_KEY_OFFSET_OCT        offsetof(NATreeOctLeaf, origin)
+#define NODE_KEY_OFFSET_OCT        offsetof(NATreeOctNode, origin)
+#define LEAF_USERDATA_OFFSET_OCT   offsetof(NATreeOctLeaf, userData)
+#define NODE_USERDATA_OFFSET_OCT   offsetof(NATreeOctNode, userData)
+
+
+
+NA_HDEF void na_fillTreeNodeOctABI(NATreeNodeABI* abi) {
+  #if NA_DEBUG
+    abi->sizeofNode = sizeof(NATreeOctNode);
+    abi->sizeofLeaf = sizeof(NATreeOctLeaf);
+    abi->nodeChildsOffset = NODE_CHILDS_OFFSET_OCT;
+  #endif
+
+  abi->leafKeyOffset           = LEAF_KEY_OFFSET_OCT;
+  abi->nodeKeyOffset           = NODE_KEY_OFFSET_OCT;
+  abi->leafUserDataOffset      = LEAF_USERDATA_OFFSET_OCT;
+  abi->nodeUserDataOffset      = NODE_USERDATA_OFFSET_OCT;
+}
 
 
 

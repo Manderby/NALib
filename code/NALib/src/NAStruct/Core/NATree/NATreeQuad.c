@@ -5,8 +5,46 @@
 
 
 
+struct NATreeQuadNode{
+  NATreeNode node;
+  NATreeItem* childs[4]; // must come right after the node.
+  NAPos origin;
+  NAPtr userData;
+  NAInt childExponent;
+};
 NA_RUNTIME_TYPE(NATreeQuadNode, NA_NULL, NA_FALSE);
+
+struct NATreeQuadLeaf{
+  NATreeLeaf leaf;
+  NAPos origin;  // todo remove this maybe?
+  NAPtr userData;
+  NAInt leafExponent; // todo remove this maybe?
+};
 NA_RUNTIME_TYPE(NATreeQuadLeaf, NA_NULL, NA_FALSE);
+
+
+
+#include <stddef.h>
+#define NODE_CHILDS_OFFSET_QUAD     offsetof(NATreeQuadNode, childs)
+#define LEAF_KEY_OFFSET_QUAD        offsetof(NATreeQuadLeaf, origin)
+#define NODE_KEY_OFFSET_QUAD        offsetof(NATreeQuadNode, origin)
+#define LEAF_USERDATA_OFFSET_QUAD   offsetof(NATreeQuadLeaf, userData)
+#define NODE_USERDATA_OFFSET_QUAD   offsetof(NATreeQuadNode, userData)
+
+
+
+NA_HDEF void na_fillTreeNodeQuadABI(NATreeNodeABI* abi) {
+  #if NA_DEBUG
+    abi->sizeofNode = sizeof(NATreeQuadNode);
+    abi->sizeofLeaf = sizeof(NATreeQuadLeaf);
+    abi->nodeChildsOffset = NODE_CHILDS_OFFSET_QUAD;
+  #endif
+
+  abi->leafKeyOffset           = LEAF_KEY_OFFSET_QUAD;
+  abi->nodeKeyOffset           = NODE_KEY_OFFSET_QUAD;
+  abi->leafUserDataOffset      = LEAF_USERDATA_OFFSET_QUAD;
+  abi->nodeUserDataOffset      = NODE_USERDATA_OFFSET_QUAD;
+}
 
 
 

@@ -116,11 +116,11 @@ NA_HIDEF void* na_GetTreeNodeKey(NATreeNode* node, const NATreeConfiguration* co
       naCrash("node is nullptr");
     if(!config)
       naCrash("config is nullptr");
-    if(config->nodeKeyOffset == NA_TREE_CONFIG_INVALID_OFFSET)
+    if(config->abi.nodeKeyOffset == NA_TREE_CONFIG_INVALID_OFFSET)
       naError("config has an invalid node offset stored");
   #endif
   // We thank the power of pointer arithmetic!
-  return ((NAByte*)node) + config->nodeKeyOffset; 
+  return ((NAByte*)node) + config->abi.nodeKeyOffset; 
 }
 
 
@@ -146,11 +146,11 @@ NA_HIDEF NAPtr na_GetTreeNodeData(NATreeNode* node, const NATreeConfiguration* c
       naCrash("node is nullptr");
     if(!config)
       naCrash("config is nullptr");
-    if(config->nodeUserDataOffset == NA_TREE_CONFIG_INVALID_OFFSET)
+    if(config->abi.nodeUserDataOffset == NA_TREE_CONFIG_INVALID_OFFSET)
       naError("config has an invalid node offset stored");
   #endif
   // We thank the power of pointer arithmetic!
-  return *(NAPtr*)(((NAByte*)node) + config->nodeUserDataOffset); 
+  return *(NAPtr*)(((NAByte*)node) + config->abi.nodeUserDataOffset); 
 }
 
 
@@ -161,11 +161,11 @@ NA_HIDEF void na_SetTreeNodeData(NATreeNode* node, NAPtr data, const NATreeConfi
       naCrash("node is nullptr");
     if(!config)
       naCrash("config is nullptr");
-    if(config->nodeUserDataOffset == NA_TREE_CONFIG_INVALID_OFFSET)
+    if(config->abi.nodeUserDataOffset == NA_TREE_CONFIG_INVALID_OFFSET)
       naError("config has an invalid node offset stored");
   #endif
   // We thank the power of pointer arithmetic!
-  *(NAPtr*)(((NAByte*)node) + config->nodeUserDataOffset) = data; 
+  *(NAPtr*)(((NAByte*)node) + config->abi.nodeUserDataOffset) = data; 
 }
 
 
@@ -176,7 +176,7 @@ NA_HIDEF NABool na_GetNodeChildIsLeaf(NATreeNode* node, size_t childIndex, const
       naCrash("node is nullptr");
     if(!config)
       naCrash("config is nullptr");
-    if(childIndex >= config->childPerNode)
+    if(childIndex >= config->abi.childPerNode)
       naCrash("childIndex out of bounds");
   #endif
   return naGetFlagu32(node->flags, 1 << childIndex);
@@ -190,7 +190,7 @@ NA_HIDEF void na_SetNodeChildIsLeaf(NATreeNode* node, size_t childIndex, NABool 
       naCrash("node is nullptr");
     if(!config)
       naCrash("config is nullptr");
-    if(childIndex >= config->childPerNode)
+    if(childIndex >= config->abi.childPerNode)
       naCrash("childIndex out of bounds");
   #endif
   naSetFlagu32(&node->flags, 1 << childIndex, isleaf);
@@ -204,7 +204,7 @@ NA_HIDEF NATreeItem* na_GetTreeNodeChild(NATreeNode* node, size_t childIndex, co
       naCrash("node is nullptr");
     if(!config)
       naCrash("config is nullptr");
-    if(childIndex >= config->childPerNode)
+    if(childIndex >= config->abi.childPerNode)
       naCrash("childIndex out of bounds");
   #else
     NA_UNUSED(config);
@@ -222,7 +222,7 @@ NA_HIDEF void na_SetTreeNodeChild(NATreeNode* node, NATreeItem* child, size_t ch
       naCrash("child is nullptr");
     if(!config)
       naCrash("config is nullptr");
-    if(childIndex >= config->childPerNode)
+    if(childIndex >= config->abi.childPerNode)
       naCrash("childIndex out of bounds");
   #endif
   na_SetTreeItemParent(child, node);
@@ -247,7 +247,7 @@ NA_HIDEF void na_InitTreeNode(NATreeNode* node, const void* key, const NATreeCon
     config->keyAssigner(na_GetTreeNodeKey(node, config), key);
   }
 
-  for(size_t i = 0; i < config->childPerNode; ++i){
+  for(size_t i = 0; i < config->abi.childPerNode; ++i){
     na_GetTreeNodeChildStorage(node)[i] = NA_NULL;
   }
 
@@ -279,7 +279,7 @@ NA_HIDEF void na_DestructTreeNode(NATreeNode* node, NABool recursive, const NATr
   #endif
   
   if(recursive){
-    for(size_t i = 0; i < config->childPerNode; ++i){
+    for(size_t i = 0; i < config->abi.childPerNode; ++i){
       NATreeItem* child = na_GetTreeNodeChild(node, i, config);
       if(child){
         if(na_GetNodeChildIsLeaf(node, i, config)){
@@ -316,7 +316,7 @@ NA_HDEF size_t na_GetTreeNodeChildIndex(NATreeNode* node, NATreeItem* child, con
   // search until childPerNode - 1 and just return the last possibility in
   // good belief.
   size_t retValue;
-  for(retValue = 0; retValue < config->childPerNode - 1; retValue++){
+  for(retValue = 0; retValue < config->abi.childPerNode - 1; retValue++){
     if(childs[retValue] == child)
       break;
   }
@@ -408,11 +408,11 @@ NA_HIDEF void* na_GetTreeLeafKey(NATreeLeaf* leaf, const NATreeConfiguration* co
       naCrash("config is nullptr");
     if(!leaf)
       naCrash("leaf is nullptr");
-    if(config->leafKeyOffset == NA_TREE_CONFIG_INVALID_OFFSET)
+    if(config->abi.leafKeyOffset == NA_TREE_CONFIG_INVALID_OFFSET)
       naError("config has an invalid leaf offset stored");
   #endif
   // We thank the power of pointer arithmetic!
-  return ((NAByte*)leaf) + config->leafKeyOffset; 
+  return ((NAByte*)leaf) + config->abi.leafKeyOffset; 
 }
 
 
@@ -423,11 +423,11 @@ NA_HIDEF NAPtr na_GetTreeLeafData(NATreeLeaf* leaf, const NATreeConfiguration* c
       naCrash("config is nullptr");
     if(!leaf)
       naCrash("leaf is nullptr");
-    if(config->leafUserDataOffset == NA_TREE_CONFIG_INVALID_OFFSET)
+    if(config->abi.leafUserDataOffset == NA_TREE_CONFIG_INVALID_OFFSET)
       naError("config has an invalid leaf offset stored");
   #endif
   // We thank the power of pointer arithmetic!
-  return *(NAPtr*)(((NAByte*)leaf) + config->leafUserDataOffset); 
+  return *(NAPtr*)(((NAByte*)leaf) + config->abi.leafUserDataOffset); 
 }
 
 
@@ -438,11 +438,11 @@ NA_HIDEF void na_SetTreeLeafData(NATreeLeaf* leaf, NAPtr newcontent, const NATre
       naCrash("config is nullptr");
     if(!leaf)
       naCrash("leaf is nullptr");
-    if(config->leafUserDataOffset == NA_TREE_CONFIG_INVALID_OFFSET)
+    if(config->abi.leafUserDataOffset == NA_TREE_CONFIG_INVALID_OFFSET)
       naError("config has an invalid leaf offset stored");
   #endif
   // We thank the power of pointer arithmetic!
-  *(NAPtr*)(((NAByte*)leaf) + config->leafUserDataOffset) = newcontent; 
+  *(NAPtr*)(((NAByte*)leaf) + config->abi.leafUserDataOffset) = newcontent; 
 }
 
 

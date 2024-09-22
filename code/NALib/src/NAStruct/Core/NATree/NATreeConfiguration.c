@@ -17,9 +17,6 @@ NA_RUNTIME_TYPE(NATreeConfiguration, na_DestroyTreeConfiguration, NA_TRUE);
 NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags){
   // This is just for testing if the implemented nodes "inheriting" from the
   // NATreeNode structure have their childs storage at the correct position.
-  #if NA_DEBUG
-    int nodeChildsOffset;
-  #endif
 
   // Create the configuration and set everything to zero.
   NATreeConfiguration* config = naCreate(NATreeConfiguration);
@@ -30,20 +27,17 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags){
   #if NA_DEBUG
     // Just some security measures in case the programmer sees no purpose in
     // setting it.
-    config->leafKeyOffset        = NA_TREE_CONFIG_INVALID_OFFSET;
-    config->nodeKeyOffset        = NA_TREE_CONFIG_INVALID_OFFSET;
-    config->leafUserDataOffset   = NA_TREE_CONFIG_INVALID_OFFSET;
-    config->nodeUserDataOffset   = NA_TREE_CONFIG_INVALID_OFFSET;
+    config->abi.leafKeyOffset        = NA_TREE_CONFIG_INVALID_OFFSET;
+    config->abi.nodeKeyOffset        = NA_TREE_CONFIG_INVALID_OFFSET;
+    config->abi.leafUserDataOffset   = NA_TREE_CONFIG_INVALID_OFFSET;
+    config->abi.nodeUserDataOffset   = NA_TREE_CONFIG_INVALID_OFFSET;
   #endif
   
   if(flags & NA_TREE_QUADTREE) {
   
-    #if NA_DEBUG
-      config->sizeofNode = sizeof(NATreeQuadNode);
-      config->sizeofLeaf = sizeof(NATreeQuadLeaf);
-    #endif
-    
-    config->childPerNode            = 4;
+    na_fillTreeNodeQuadABI(&config->abi);
+
+    config->abi.childPerNode            = 4;
     switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
     case NA_TREE_KEY_DOUBLE:
       config->childIndexGetter      = na_GetChildIndexQuadDouble;
@@ -76,22 +70,11 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags){
     config->leafRemover             = na_RemoveLeafQuad;
     config->leafInserter            = na_InsertLeafQuad;
 
-    #if NA_DEBUG
-      nodeChildsOffset                = NODE_CHILDS_OFFSET_QUAD;
-    #endif
-    config->leafKeyOffset           = LEAF_KEY_OFFSET_QUAD;
-    config->nodeKeyOffset           = NODE_KEY_OFFSET_QUAD;
-    config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_QUAD;
-    config->nodeUserDataOffset      = NODE_USERDATA_OFFSET_QUAD;
-
   }else if(flags & NA_TREE_OCTTREE) {
   
-    #if NA_DEBUG
-      config->sizeofNode = sizeof(NATreeOctNode);
-      config->sizeofLeaf = sizeof(NATreeOctLeaf);
-    #endif
-
-    config->childPerNode            = 8;
+    na_fillTreeNodeOctABI(&config->abi);
+    
+    config->abi.childPerNode            = 8;
     switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
     case NA_TREE_KEY_DOUBLE:
       config->childIndexGetter      = na_GetChildIndexOctDouble;
@@ -124,22 +107,14 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags){
     config->leafRemover             = na_RemoveLeafOct;
     config->leafInserter            = na_InsertLeafOct;
 
-    #if NA_DEBUG
-      nodeChildsOffset                = NODE_CHILDS_OFFSET_OCT;
-    #endif
-    config->leafKeyOffset           = LEAF_KEY_OFFSET_OCT;
-    config->nodeKeyOffset           = NODE_KEY_OFFSET_OCT;
-    config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_OCT;
-    config->nodeUserDataOffset      = NODE_USERDATA_OFFSET_OCT;
-
   }else{
 
     #if NA_DEBUG
-      config->sizeofNode = sizeof(NATreeBinNode);
-      config->sizeofLeaf = sizeof(NATreeBinLeaf);
+      config->abi.sizeofNode = sizeof(NATreeBinNode);
+      config->abi.sizeofLeaf = sizeof(NATreeBinLeaf);
     #endif
 
-    config->childPerNode            = 2;
+    config->abi.childPerNode            = 2;
     switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
     case NA_TREE_KEY_NOKEY:
       config->keyIndexGetter        = NA_NULL;
@@ -220,20 +195,20 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags){
     config->leafInserter            = na_InsertLeafBin;
     
     #if NA_DEBUG
-      nodeChildsOffset                = NODE_CHILDS_OFFSET_BIN;
+      config->abi.nodeChildsOffset                = NODE_CHILDS_OFFSET_BIN;
     #endif
-    config->leafKeyOffset           = LEAF_KEY_OFFSET_BIN;
-    config->nodeKeyOffset           = NODE_KEY_OFFSET_BIN;
-    config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_BIN;
-    config->nodeUserDataOffset      = NODE_USERDATA_OFFSET_BIN;
+    config->abi.leafKeyOffset           = LEAF_KEY_OFFSET_BIN;
+    config->abi.nodeKeyOffset           = NODE_KEY_OFFSET_BIN;
+    config->abi.leafUserDataOffset      = LEAF_USERDATA_OFFSET_BIN;
+    config->abi.nodeUserDataOffset      = NODE_USERDATA_OFFSET_BIN;
   }
   
   #if NA_DEBUG
-    if(nodeChildsOffset != NA_TREE_NODE_CHILDS_OFFSET)
+    if(config->abi.nodeChildsOffset != NA_TREE_NODE_CHILDS_OFFSET)
       naError("The childs storage must come right after the node storage.");
-    if(config->childPerNode == 0)
+    if(config->abi.childPerNode == 0)
       naError("config has uninitialized childPerNode");
-    if(config->childPerNode > NA_TREE_NODE_MAX_CHILDS)
+    if(config->abi.childPerNode > NA_TREE_NODE_MAX_CHILDS)
       naError("childPerNode is too high");
   #endif
   

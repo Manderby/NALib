@@ -1,31 +1,13 @@
 
-#include "../../../NAMath/NACoord.h"
+#ifndef NA_TREE_OCT_INCLUDED
+#define NA_TREE_OCT_INCLUDED
+
+
 
 typedef struct NATreeOctNode NATreeOctNode;
-struct NATreeOctNode{
-  NATreeNode node;
-  NATreeItem* childs[8];  // must come right after the node.
-  NAVertex origin;
-  NAPtr userData;
-  NAInt childExponent;
-};
-NA_EXTERN_RUNTIME_TYPE(NATreeOctNode);
-
 typedef struct NATreeOctLeaf NATreeOctLeaf;
-struct NATreeOctLeaf{
-  NATreeLeaf leaf;
-  NAVertex origin;  // todo remove this maybe?
-  NAPtr userData;
-  NAInt leafExponent; // todo remove this maybe?
-};
-NA_EXTERN_RUNTIME_TYPE(NATreeOctLeaf);
 
-#include <stddef.h>
-#define NODE_CHILDS_OFFSET_OCT     offsetof(NATreeOctNode, childs)
-#define LEAF_KEY_OFFSET_OCT        offsetof(NATreeOctLeaf, origin)
-#define NODE_KEY_OFFSET_OCT        offsetof(NATreeOctNode, origin)
-#define LEAF_USERDATA_OFFSET_OCT   offsetof(NATreeOctLeaf, userData)
-#define NODE_USERDATA_OFFSET_OCT   offsetof(NATreeOctNode, userData)
+NA_HAPI void na_fillTreeNodeOctABI(NATreeNodeABI* abi);
 
 NA_HAPI  size_t na_GetChildIndexOctDouble(NATreeNode* parentNode, const void* childKey);
 NA_HAPI  size_t na_GetKeyIndexOctDouble(const void* baseKey, const void* testKey, const void* data);
@@ -43,6 +25,8 @@ NA_HAPI  NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI  NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 
 
+
+#endif // NA_TREE_OCT_INCLUDED
 
 // This is free and unencumbered software released into the public domain.
 

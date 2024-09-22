@@ -92,23 +92,30 @@ typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 
 
 
-struct NATreeConfiguration{
-  
-  // Main settings
-  uint32                        flags;
-
+typedef struct NATreeNodeABI NATreeNodeABI;
+struct NATreeNodeABI{
   size_t                        childPerNode;
   size_t                        leafKeyOffset;
   size_t                        nodeKeyOffset;
   size_t                        leafUserDataOffset;
   size_t                        nodeUserDataOffset;
-  void*                         configData; // currently only used for
-                                            // exponation of quad and oct tree.
 
   #if NA_DEBUG
     size_t                      sizeofNode;
     size_t                      sizeofLeaf;
+    size_t                      nodeChildsOffset;
   #endif
+};
+
+
+struct NATreeConfiguration{
+  
+  // Main settings
+  uint32                        flags;
+
+  NATreeNodeABI                 abi;
+  void*                         configData; // currently only used for
+                                            // exponation of quad and oct tree.
 
   NAKeyIndexGetter              keyIndexGetter;
   NAChildIndexGetter            childIndexGetter;

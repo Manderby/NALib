@@ -1,31 +1,9 @@
 
-#include "../../../NAMath/NACoord.h"
 
 typedef struct NATreeQuadNode NATreeQuadNode;
-struct NATreeQuadNode{
-  NATreeNode node;
-  NATreeItem* childs[4]; // must come right after the node.
-  NAPos origin;
-  NAPtr userData;
-  NAInt childExponent;
-};
-NA_EXTERN_RUNTIME_TYPE(NATreeQuadNode);
-
 typedef struct NATreeQuadLeaf NATreeQuadLeaf;
-struct NATreeQuadLeaf{
-  NATreeLeaf leaf;
-  NAPos origin;  // todo remove this maybe?
-  NAPtr userData;
-  NAInt leafExponent; // todo remove this maybe?
-};
-NA_EXTERN_RUNTIME_TYPE(NATreeQuadLeaf);
 
-#include <stddef.h>
-#define NODE_CHILDS_OFFSET_QUAD     offsetof(NATreeQuadNode, childs)
-#define LEAF_KEY_OFFSET_QUAD        offsetof(NATreeQuadLeaf, origin)
-#define NODE_KEY_OFFSET_QUAD        offsetof(NATreeQuadNode, origin)
-#define LEAF_USERDATA_OFFSET_QUAD   offsetof(NATreeQuadLeaf, userData)
-#define NODE_USERDATA_OFFSET_QUAD   offsetof(NATreeQuadNode, userData)
+NA_HAPI void na_fillTreeNodeQuadABI(NATreeNodeABI* abi);
 
 NA_HAPI  size_t na_GetChildIndexQuadDouble(NATreeNode* parentNode, const void* childKey);
 NA_HAPI  size_t na_GetKeyIndexQuadDouble(const void* baseKey, const void* testKey, const void* data);
