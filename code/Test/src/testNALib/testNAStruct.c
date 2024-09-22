@@ -6,10 +6,12 @@
 
 // Prototypes
 void printNABuffer(void);
+void printNAHeap(void);
 void printNAStack(void);
 void printNATree(void);
 
 void testNABuffer(void);
+void testNAHeap(void);
 void testNAStack(void);
 void testNATree(void);
 
@@ -17,14 +19,16 @@ void benchmarkNAStack(void);
 
 void printNAStruct(void){
   //printNABuffer();
+  printNAHeap();
   //printNAStack();
-  printNATree();
+  //printNATree();
 }
 
 void testNAStruct(void){
   //naTestFunction(testNABuffer);
+  naTestFunction(testNAHeap);
   //naTestFunction(testNAStack);
-  naTestFunction(testNATree);
+  //naTestFunction(testNATree);
 }
 
 void benchmarkNAStruct(void){

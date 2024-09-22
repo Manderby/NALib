@@ -9,11 +9,12 @@
 // Note that this implementation uses a lot of function pointers. See
 // implementation file for more information.
 struct NAHeap{
-  NAInt count;
+  size_t count;
   void* data;
   void* root; // Pointer to the first byte of the root element
-  NAInt maxCount; // heap holds max elements. If this value is < 0, the
-                  // heap grows automatically.
+  size_t maxCount; // heap holds max elements.
+  NABool autoGrow;
+  
   void        (*insertConst)      (NAHeap*, const void*, const void*, NAInt*);
   void        (*insertMutable)    (NAHeap*,       void*, const void*, NAInt*);
   const void* (*removeConst)      (NAHeap*);
@@ -21,8 +22,8 @@ struct NAHeap{
   const void* (*removePosConst)   (NAHeap*, NAInt);
   void*       (*removePosMutable) (NAHeap*, NAInt);
   void        (*updateBack)       (NAHeap*, NAInt);
-  NAInt       (*moveup)           (NAHeap*, const void*, NAInt);
-  NAInt       (*movedown)         (NAHeap*, const void*, NAInt);
+  NAInt       (*moveUp)           (NAHeap*, const void*, NAInt);
+  NAInt       (*moveDown)         (NAHeap*, const void*, NAInt);
 };
 // The root field is needed because the inline functions below have no idea
 // whether the heap stores backPointers or not. But as the root element is
@@ -47,13 +48,11 @@ typedef struct NAHeapEntry NAHeapEntry;
 struct NAHeapEntry{
   const void*       key;
   NAPtr             ptr;
-//  NABool            importantindex;
 };
 typedef struct NAHeapBackEntry NAHeapBackEntry;
 struct NAHeapBackEntry{
   const void*       key;
   NAPtr             ptr;
-//  NABool            importantindex;
   NAInt*            backPointer;
 };
 
@@ -69,11 +68,15 @@ NA_IDEF void naClearHeap(NAHeap* heap) {
 
 
 NA_IDEF void naEmptyHeap(NAHeap* heap) {
+  #if NA_DEBUG
+    if(!heap)
+      naCrash("heap is Null-Pointer.");
+  #endif
   heap->count = 0;
 }
 
 
-NA_IDEF NAInt naGetHeapCount (const NAHeap* heap) {
+NA_IDEF NAInt naGetHeapCount(const NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
       naCrash("heap is Null-Pointer.");
@@ -91,64 +94,106 @@ NA_IDEF NAInt naGetHeapMaxCount(const NAHeap* heap) {
 }
 
 
-NA_IDEF void naInsertHeapElementConst(  NAHeap* heap,
-                                    const void* ptr,
-                                    const void* key,
-                                         NAInt* backPointer) {
+NA_IDEF void naInsertHeapElementConst(
+  NAHeap* heap,
+  const void* ptr,
+  const void* key,
+  NAInt* backPointer)
+{
+  #if NA_DEBUG
+    if(!heap)
+      naCrash("heap is nullptr");
+    if(!key)
+      naError("Key is nullptr");
+  #endif
   heap->insertConst(heap, ptr, key, backPointer);
 }
-NA_IDEF void naInsertHeapElementMutable( NAHeap* heap,
-                                          void* ptr,
-                                    const void* key,
-                                         NAInt* backPointer) {
+
+NA_IDEF void naInsertHeapElementMutable(
+  NAHeap* heap,
+  void* ptr,
+  const void* key,
+  NAInt* backPointer)
+{
+  #if NA_DEBUG
+    if(!heap)
+      naCrash("heap is nullptr");
+    if(!key)
+      naError("Key is nullptr");
+  #endif
   heap->insertMutable(heap, ptr, key, backPointer);
 }
 
 
 NA_IDEF const void* naGetHeapRootConst(const NAHeap* heap) {
+  #if NA_DEBUG
+    if(!heap)
+      naCrash("Heap is nullptr.");
+  #endif
   // Note that it is irrelevant whether the heap stores elements with or
-  // without backpoitners. The ptr and key field are always at the same
+  // without backpointers. The ptr and key field are always at the same
   // position.
-  NAHeapEntry* rootelem = (NAHeapEntry*)(heap->root);
+  NAHeapEntry* rootElem = (NAHeapEntry*)(heap->root);
   #if NA_DEBUG
     if(heap->count == 0)
       naError("Heap is empty.");
   #endif
-  return naGetPtrConst(rootelem->ptr);
+  return naGetPtrConst(rootElem->ptr);
 }
 
 
 NA_IDEF void* naGetHeapRootMutable(const NAHeap* heap) {
+  #if NA_DEBUG
+    if(!heap)
+      naCrash("Heap is nullptr.");
+  #endif
   // Note that it is irrelevant whether the heap stores elements with or
-  // without backpoitners. The ptr and key field are always at the same
+  // without backpointers. The ptr and key field are always at the same
   // position.
-  NAHeapEntry* rootelem = (NAHeapEntry*)(heap->root);
+  NAHeapEntry* rootElem = (NAHeapEntry*)(heap->root);
   #if NA_DEBUG
     if(heap->count == 0)
       naError("Heap is empty.");
+    if(naIsPtrConst(rootElem->ptr))
+      naError("Trying to mutate a const element");
   #endif
-  return naGetPtrMutable(rootelem->ptr);
+  return naGetPtrMutable(rootElem->ptr);
 }
 
 
 NA_IDEF const void* naRemoveHeapRootConst(NAHeap* heap) {
+  #if NA_DEBUG
+    if(!heap)
+      naCrash("Heap is nullptr.");
+    if(heap->count == 0)
+      naCrash("Heap is empty.");
+  #endif
   return heap->removeConst(heap);
 }
 NA_IDEF void* naRemoveHeapRootMutable(NAHeap* heap) {
+  #if NA_DEBUG
+    if(!heap)
+      naCrash("Heap is nullptr.");
+    NAHeapEntry* rootElem = (NAHeapEntry*)(heap->root);
+    if(heap->count == 0)
+      naCrash("Heap is empty.");
+    if(naIsPtrConst(rootElem->ptr))
+      naError("Trying to mutate a const element");
+  #endif
   return heap->removeMutable(heap);
 }
 
 
 NA_IDEF const void* naGetHeapRootKey(const NAHeap* heap) {
   // Note that it is irrelevant whether the heap stores elements with or
-  // without backpoitners. The ptr and key field are always at the same
+  // without backpointers. The ptr and key field are always at the same
   // position.
-  NAHeapEntry* rootelem = (NAHeapEntry*)(heap->root);
+  NAHeapEntry* rootElem = (NAHeapEntry*)(heap->root);
   #if NA_DEBUG
     if(heap->count == 0)
       naError("Heap is empty.");
   #endif
-  return rootelem->key;
+  return rootElem->key;
 }
 
 

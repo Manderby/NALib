@@ -15,16 +15,16 @@ NA_HDEF NAInt NA_T3(na_HeapMoveDown, NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE, 
   #else
     NAHeapEntry* entries = heap->data;
   #endif
-  NAInt nextindex = curIndex / 2;
+  NAInt nextIndex = curIndex / 2;
   
   // Go from the leaf to the root and test, where the new element shall lie.
-  while((nextindex > 0) && NA_KEY_OP(NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE)(entries[nextindex].key, key)) {
-    entries[curIndex] = entries[nextindex];
+  while((nextIndex > 0) && NA_KEY_OP(NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE)(entries[nextIndex].key, key)) {
+    entries[curIndex] = entries[nextIndex];
     #if NA_T_USE_BACKPOINTERS
       *(entries[curIndex].backPointer) = curIndex;
     #endif
-    curIndex = nextindex;
-    nextindex /= 2;
+    curIndex = nextIndex;
+    nextIndex /= 2;
   }
   
   return curIndex;

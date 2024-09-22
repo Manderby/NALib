@@ -38,7 +38,7 @@ void printNALib(void){
 //  printNABase();
 //  printNACore();
 //  printNAUtility();
-//  printNAStruct();
+  printNAStruct();
 }
 
 void testNALib(void){
@@ -75,17 +75,13 @@ int main(int argc, const char** argv){
     argc,
     argv);
 
-  // Only output tests which fail.
-  naSetTestPrintsAllTests(NA_FALSE);
-  naSetTestPrintsFullGroupName(NA_FALSE);
-
   #if NA_DEBUG == 0
     naExecuteErrorTests(NA_FALSE);
     naExecuteCrashTests(NA_FALSE);
   #endif
 
   if(testStartSuccessful){
-    naSetTestPrintsAllTests(NATEST_TRUE);
+    naSetTestPrintsAllTests(NA_FALSE);
     naSetTestPrintsExpression(NATEST_FALSE);
     naSetTestPrintsFullGroupName(NATEST_FALSE);
     testNALib();
