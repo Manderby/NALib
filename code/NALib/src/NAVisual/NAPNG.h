@@ -31,7 +31,7 @@ NA_API size_t naGetPNGPixelDataByteSize(NAPNG* png);
 NA_API NAImage* naCreateImageWithPNG(NAPNG* png);
 NA_API NASizes naGetPNGSize(NAPNG* png);
 NA_API NAPNGColorType naGetPNGColorType(NAPNG* png);
-NA_API NAInt naGetPNGBitDepth(NAPNG* png);
+NA_API int8 naGetPNGBitDepth(NAPNG* png);
 NA_API size_t naGetPNGBytesPerPixel(NAPNGColorType colorType);
 
 

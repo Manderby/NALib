@@ -11,6 +11,7 @@ int na_naUIElementKey = 42; // Arbitrarily but carefully chosen number.
 
 NA_HDEF void* na_GetUINALibEquivalent(void* nativePtr) {
   NA_UIElement* obj = NA_COCOA_PTR_OBJC_TO_C(objc_getAssociatedObject(nativePtr, &na_naUIElementKey));
+  return obj;
 }
 
 

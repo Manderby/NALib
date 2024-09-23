@@ -197,6 +197,10 @@ NA_IDEF NAUTF8Char* naGetCwd(NAUTF8Char* buf, NAInt bufSize) {
 
 struct NAFile{
   int desc;   // The descriptor
+  #if NA_ADDRESS_BITS != NA_TYPE_NATIVE_INT_BITS
+    void* dummy;  // We need more bytes otherwise the runtime system can not
+                  // properly store the values.
+  #endif
 };
 
 NA_HAPI void na_DestroyFile(NAFile* file);

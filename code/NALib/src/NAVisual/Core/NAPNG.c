@@ -139,7 +139,6 @@ NA_HDEF void na_SetPNGsRGBColorimetry(NAPNG* png) {
 
 
 NA_HDEF NAPNGChunk* na_AllocPNGChunkWithBuffer(NABufferIterator* iter) {
-  NAInt i;
   NAChecksum checksum;
   uint32 crc;
 
@@ -159,7 +158,7 @@ NA_HDEF NAPNGChunk* na_AllocPNGChunkWithBuffer(NABufferIterator* iter) {
   }
 
   chunk->type = NA_PNG_CHUNK_TYPE_UNKNOWN;
-  for(i = 0; i < NA_PNG_CHUNK_TYPE_COUNT; ++i) {
+  for(size_t i = 0; i < NA_PNG_CHUNK_TYPE_COUNT; ++i) {
     if(naEqual32(na_PngChunkTypeNames[i], chunk->typeName)) {
       chunk->type = (NAChunkType)i;
       break;
@@ -237,9 +236,9 @@ NA_API size_t naGetPNGBytesPerPixel(NAPNGColorType colorType) {
 NA_DEF NAByte naGetPaethPredictor(NAByte a, NAByte b, NAByte c) {
   NAByte retValue;
   int32 p = (int32)a + (int32)b - (int32)c;
-  NAInt pa = naAbsi32(p - (int32)a);
-  NAInt pb = naAbsi32(p - (int32)b);
-  NAInt pc = naAbsi32(p - (int32)c);
+  int32 pa = naAbsi32(p - (int32)a);
+  int32 pb = naAbsi32(p - (int32)b);
+  int32 pc = naAbsi32(p - (int32)c);
   if((pa <= pb) && (pa <= pc)) {
     retValue = a;
   }else if(pb <= pc) {
@@ -873,8 +872,8 @@ NA_DEF NAPNGColorType naGetPNGColorType(NAPNG* png) {
 
 
 
-NA_DEF NAInt naGetPNGBitDepth(NAPNG* png) {
-  return (NAInt)png->bitDepth;
+NA_DEF int8 naGetPNGBitDepth(NAPNG* png) {
+  return png->bitDepth;
 }
 
 
