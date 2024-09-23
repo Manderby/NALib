@@ -6,7 +6,7 @@
 
 
 
-NAString* naNewStringFromClipboard(){
+NAString* naNewStringFromClipboard() {
   NAString* string = NA_NULL;
   OpenClipboard(NA_NULL); // NA_NULL means: Current task becomes owner instead of a hWnd
 
@@ -29,7 +29,7 @@ NAString* naNewStringFromClipboard(){
 
 
 
-void naPutStringToClipboard(const NAString* string){
+void naPutStringToClipboard(const NAString* string) {
   OpenClipboard(NA_NULL); // NA_NULL means: Current task becomes owner instead of a hWnd
 
   size_t stringLength = naGetStringByteSize(string);

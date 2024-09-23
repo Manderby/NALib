@@ -18,7 +18,7 @@ NA_HIDEF void* na_GetBinLeafKey(NATreeBinLeaf* binleaf) {
 
 
 
-NA_HIDEF void na_AddTreeNodeChildBin(NATree* tree, NATreeBinNode* parent, NATreeItem* child, size_t childIndex, NABool isChildLeaf){
+NA_HIDEF void na_AddTreeNodeChildBin(NATree* tree, NATreeBinNode* parent, NATreeItem* child, size_t childIndex, NABool isChildLeaf) {
   NATreeNode* parentNode;
   
   parent->childs[childIndex] = child;
@@ -58,11 +58,11 @@ NA_HDEF NATreeLeaf* na_NewTreeLeafBin(NATree* tree, const void* key, NAPtr conte
 // ////////////////////////////
 
 
-NA_HDEF size_t na_GetChildIndexBinDouble(NATreeNode* parentNode, const void* childKey){
+NA_HDEF size_t na_GetChildIndexBinDouble(NATreeNode* parentNode, const void* childKey) {
   NATreeBinNode* binnode = (NATreeBinNode*)(parentNode);
   return na_GetKeyIndexBinDouble(na_GetBinNodeKey(binnode), childKey, NA_NULL);
 }
-NA_HDEF size_t na_GetKeyIndexBinDouble(const void* baseKey, const void* testKey, const void* data){
+NA_HDEF size_t na_GetKeyIndexBinDouble(const void* baseKey, const void* testKey, const void* data) {
   NA_UNUSED(data);
   return !(*(const double*)testKey < *(const double*)baseKey); // results in 0 or 1
 }
@@ -76,11 +76,11 @@ NA_HDEF NABool na_TestKeyLeafContainBinDouble(NATreeLeaf* leaf, const void* key)
 }
 
 
-NA_HDEF size_t na_GetChildIndexBinNAInt(NATreeNode* parentNode, const void* childKey){
+NA_HDEF size_t na_GetChildIndexBinNAInt(NATreeNode* parentNode, const void* childKey) {
   NATreeBinNode* binnode = (NATreeBinNode*)(parentNode);
   return na_GetKeyIndexBinNAInt(na_GetBinNodeKey(binnode), childKey, NA_NULL);
 }
-NA_HDEF size_t na_GetKeyIndexBinNAInt(const void* baseKey, const void* key, const void* data){
+NA_HDEF size_t na_GetKeyIndexBinNAInt(const void* baseKey, const void* key, const void* data) {
   NA_UNUSED(data);
   // if key is equal to baseKey, the return value must be 1.
   return !(*(const NAInt*)key < *(const NAInt*)baseKey); // results in 0 or 1
@@ -136,7 +136,7 @@ NA_HDEF NABool na_TestKeyLeafContainBinu32(NATreeLeaf* leaf, const void* key) {
 
 
 
-NA_HDEF void na_DestructTreeNodeBin(NATreeNode* node){
+NA_HDEF void na_DestructTreeNodeBin(NATreeNode* node) {
   na_ClearTreeNode(node);
   naDelete(node);
 }
@@ -168,7 +168,7 @@ NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode*
     return node;
   
   // Otherwise, we set the limits dependent on the previous node.
-  if(na_GetTreeNodeChildIndex(node, previtem, tree->config) == 1){
+  if(na_GetTreeNodeChildIndex(node, previtem, tree->config) == 1) {
     lowerLimit = na_GetBinNodeKey(binnode);
   }else{
     upperLimit = na_GetBinNodeKey(binnode);
@@ -179,7 +179,7 @@ NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode*
   }
   // Otherwise, go up if possible.
   item = na_GetTreeNodeItem(node);
-  if(!na_GetTreeItemIsRoot(item)){
+  if(!na_GetTreeItemIsRoot(item)) {
     return na_LocateBubbleBinWithLimits(tree, na_GetTreeItemParent(item), key, lowerLimit, upperLimit, item);
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
@@ -198,13 +198,13 @@ NA_HDEF NATreeNode* na_LocateBubbleBin(const NATree* tree, NATreeItem* item, con
 NA_HDEF NATreeNode* na_RemoveLeafBin(NATree* tree, NATreeLeaf* leaf) {
   NATreeNode* parent = na_GetTreeItemParent(na_GetTreeLeafItem(leaf));
   NATreeNode* grandparent = NA_NULL;
-  if(!na_GetTreeItemIsRoot(na_GetTreeLeafItem(leaf))){
+  if(!na_GetTreeItemIsRoot(na_GetTreeLeafItem(leaf))) {
     size_t leafIndex = na_GetTreeNodeChildIndex(parent, na_GetTreeLeafItem(leaf), tree->config);
     NATreeItem* sibling = ((NATreeBinNode*)parent)->childs[1 - leafIndex];
     NABool issiblingleaf = na_GetNodeChildIsLeaf(parent, 1 - leafIndex, tree->config);
 
     grandparent = na_GetTreeItemParent(na_GetTreeNodeItem(parent));
-    if(!na_GetTreeItemIsRoot(na_GetTreeNodeItem(parent))){
+    if(!na_GetTreeItemIsRoot(na_GetTreeNodeItem(parent))) {
       size_t parentIndex = na_GetTreeNodeChildIndex(grandparent, na_GetTreeNodeItem(parent), tree->config);
       ((NATreeBinNode*)grandparent)->childs[parentIndex] = sibling;
       na_SetNodeChildIsLeaf(grandparent, parentIndex, issiblingleaf, tree->config);
@@ -299,7 +299,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafBin(NATree* tree, NATreeItem* existingItem, con
     newParent = na_GetTreeNodeItem(na_NewTreeNodeBin(tree, na_GetBinLeafKey(((NATreeBinLeaf*)right)), left, right));
     
     na_SetTreeItemParent(newParent, existingParent);
-    if(!wasTreeItemRoot){
+    if(!wasTreeItemRoot) {
       size_t existingIndex = na_GetTreeNodeChildIndex(existingParent, existingItem, tree->config);
       na_SetNodeChildIsLeaf(existingParent, existingIndex, NA_FALSE, tree->config);
       ((NATreeBinNode*)existingParent)->childs[existingIndex] = newParent;

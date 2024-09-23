@@ -64,8 +64,8 @@ NA_HDEF void na_FillColorWithHSV(NAColor* out, const float in[3]) {
   hsv[0] = in[0];
   hsv[1] = in[1];
   hsv[2] = in[2];
-//  if(hsv[0] > 360.f){hsv[0] -= 360.f;}
-//  if(hsv[0] < 0.f){hsv[0] += 360.f;}
+//  if(hsv[0] > 360.f) {hsv[0] -= 360.f;}
+//  if(hsv[0] < 0.f) {hsv[0] += 360.f;}
   size_t h0 = (size_t)floorf(hsv[0] / 60.f);
   uint8 h1 = (uint8)((h0 % 6) + 6) % 6;
   float f = (hsv[0] / 60.f) - h0;
@@ -291,13 +291,13 @@ NA_HIDEF void na_BlendColorEraseHue(
   }else{
     float hueCloseness = 1.f - naAbsf(hDiff / 60.f);
     
-    float discolorizationHue = baseHSL[0];
+    float discolorizationHue;
   
-    if(hDiff < 0.f){
+    if(hDiff < 0.f) {
       // distance to the safe color
       float safeDist = (1.f + hDiff / 60.f);
       
-      if(safeDist < factor || factor > NA_SUB_NORMf){
+      if(safeDist < factor || factor > NA_SUB_NORMf) {
         discolorizationHue = topHSL[0] + 60.f;
       }else{
         float linFactor = (1.f - safeDist) / (1.f - factor);
@@ -307,7 +307,7 @@ NA_HIDEF void na_BlendColorEraseHue(
       // distance to the safe color
       float safeDist = (1.f - hDiff / 60.f);
       
-      if(safeDist < factor || factor > NA_SUB_NORMf){
+      if(safeDist < factor || factor > NA_SUB_NORMf) {
         discolorizationHue = topHSL[0] - 60.f;
         if(discolorizationHue < 0.f && baseHSL[0] > 180.f)
           discolorizationHue += 360.f;

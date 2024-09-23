@@ -6,15 +6,15 @@
 #include "NAStruct/NABuffer.h"
 
 
-void testMemoryBlock(void){
-  naTestGroup("Create and release"){
+void testMemoryBlock(void) {
+  naTestGroup("Create and release") {
     NAMemoryBlock* block = NA_NULL;
     naTestVoid(block = na_CreateMemoryBlock(10));
     naTestVoid(naRelease(block));
     naTestCrash(block = na_CreateMemoryBlock(0); naRelease(block));
   }
 
-  naTestGroup("Create and release with data"){
+  naTestGroup("Create and release with data") {
     int constData = 1234;
     NAPtr constPtr = naMakePtrWithDataConst(&constData);
     NAPtr mutablePtr = naMakePtrWithDataMutable(naAlloc(int));
@@ -30,7 +30,7 @@ void testMemoryBlock(void){
     naTestCrash(block = na_CreateMemoryBlockWithData(constPtr, sizeof(int), naFree); naRelease(block));
   }
 
-  naTestGroup("Accessing and Mutating"){
+  naTestGroup("Accessing and Mutating") {
     NAPtr mutablePtr = naMakePtrWithDataMutable(naAlloc(int));
     NAMemoryBlock* block = na_CreateMemoryBlockWithData(mutablePtr, sizeof(int), naFree);
     naTest(na_GetMemoryBlockDataPointerConst(block, 0) != NULL);
@@ -48,14 +48,14 @@ void testMemoryBlock(void){
 
 
 // dummy function to fill a buffer source
-void na_DummyBufferFiller(void* dst, NARangei64 sourceRange, void* sourceData){
+void na_DummyBufferFiller(void* dst, NARangei64 sourceRange, void* sourceData) {
   NA_UNUSED(dst);
   NA_UNUSED(sourceRange);
   NA_UNUSED(sourceData);
 }
 
-void testBufferSource(void){
-  naTestGroup("Create and release"){
+void testBufferSource(void) {
+  naTestGroup("Create and release") {
     NABuffer* cache = naCreateBuffer(NA_FALSE);
     NABufferSource* source = NA_NULL;
     naTestVoid(source = naCreateBufferSource(NA_NULL, NA_NULL));
@@ -70,7 +70,7 @@ void testBufferSource(void){
     naRelease(cache);
   }
 
-  naTestGroup("Set data"){
+  naTestGroup("Set data") {
     int* data = naAlloc(int);
     NABufferSource* fillingSource = naCreateBufferSource(na_DummyBufferFiller, NA_NULL);
     naTestVoid(naSetBufferSourceData(fillingSource, data, naFree));
@@ -94,7 +94,7 @@ void testBufferSource(void){
     naRelease(fillingSource);
   }
 
-  naTestGroup("Set limit"){
+  naTestGroup("Set limit") {
     NABufferSource* source = naCreateBufferSource(NA_NULL, NA_NULL);
     naTestVoid(naSetBufferSourceLimit(source, naMakeRangei64(0, 10)));
     // trying to set it twice:
@@ -109,7 +109,7 @@ void testBufferSource(void){
     naRelease(source);
   }
 
-  naTestGroup("Accessors"){
+  naTestGroup("Accessors") {
     NABufferSource* source = naCreateBufferSource(na_DummyBufferFiller, NA_NULL);
     naTest(!na_HasBufferSourceCache(source));
     naRelease(source);
@@ -132,7 +132,7 @@ void testBufferSource(void){
     naTestCrash(na_GetBufferSourceLimit(NA_NULL));
   }
 
-  naTestGroup("Filling data"){
+  naTestGroup("Filling data") {
     NAByte buf[10];
 
     NABufferSource* source = naCreateBufferSource(NA_NULL, NA_NULL);
@@ -153,10 +153,10 @@ void testBufferSource(void){
 
 
   
-void testBufferPart(void){
+void testBufferPart(void) {
   NABufferSource* source = naCreateBufferSource(NA_NULL, NA_NULL);
 
-  naTestGroup("Normed start and end"){
+  naTestGroup("Normed start and end") {
     naTest(na_GetBufferPartNormedStart(0) == 0);
     naTest(na_GetBufferPartNormedStart(NA_INTERNAL_BUFFER_PART_BYTESIZE - 1) == 0);
     naTest(na_GetBufferPartNormedStart(NA_INTERNAL_BUFFER_PART_BYTESIZE) == NA_INTERNAL_BUFFER_PART_BYTESIZE);
@@ -171,7 +171,7 @@ void testBufferPart(void){
     naTest(na_GetBufferPartNormedEnd(-NA_INTERNAL_BUFFER_PART_BYTESIZE) == -NA_INTERNAL_BUFFER_PART_BYTESIZE);
   }
 
-  naTestGroup("New and delete sparse part"){
+  naTestGroup("New and delete sparse part") {
     NABufferPart* part = NA_NULL;
     naTestVoid(part = na_NewBufferPartSparse(source, naMakeRangei64(0, 1)));
     naTestVoid(naDelete(part));
@@ -183,7 +183,7 @@ void testBufferPart(void){
     naTestError(part = na_NewBufferPartSparse(source, naMakeRangei64(0, 0)); naDelete(part));
   }
 
-  naTestGroup("New and delete data part"){
+  naTestGroup("New and delete data part") {
     NABufferPart* part = NA_NULL;
     NAByte dataConst[] = {0, 1, 2, 3};
     naTestVoid(part = na_NewBufferPartWithConstData(dataConst, 4));
@@ -200,7 +200,7 @@ void testBufferPart(void){
     naTestError(part = na_NewBufferPartWithMutableData(dataMutable, 0, NA_NULL); naDelete(part));
   }
 
-  naTestGroup("Accessors"){
+  naTestGroup("Accessors") {
     NAByte dataConst[] = {0, 1, 2, 3};
     NABufferPart* sparsePart = na_NewBufferPartSparse(source, naMakeRangei64(2, 8));
     NABufferPart* dataPart = na_NewBufferPartWithConstData(dataConst, 4);
@@ -224,7 +224,7 @@ void testBufferPart(void){
     naDelete(sparsePart);
   }
 
-  naTestGroup("Part enlarging"){
+  naTestGroup("Part enlarging") {
     NABufferPart* sparsePart = na_NewBufferPartSparse(source, naMakeRangei64(2, 6));
     naTestVoid(na_EnlargeBufferPart(sparsePart, 0, 0));
     naTest(na_GetBufferPartSourceOffset(sparsePart) == 2);
@@ -241,7 +241,7 @@ void testBufferPart(void){
     naDelete(sparsePart);
   }
 
-  naTestGroup("Part decoupling"){
+  naTestGroup("Part decoupling") {
     NAByte dataConst[] = {0, 1, 2, 3};
     NABufferPart* part = na_NewBufferPartWithConstData(dataConst, 2);
     naTest(na_GetMemoryBlockDataPointerMutable(na_GetBufferPartMemoryBlock(part), 0) == dataConst);
@@ -252,19 +252,19 @@ void testBufferPart(void){
     naTestCrash(na_DecoupleBufferPart(NA_NULL));
   }
 
-  naTestGroup("Sparse Part splitting"){
+  naTestGroup("Sparse Part splitting") {
     //na_SplitBufferPart
   }
 
-  naTestGroup("Preparing buffer part of a cache"){
+  naTestGroup("Preparing buffer part of a cache") {
     //na_PrepareBufferPartCache
   }
 
-  naTestGroup("Preparing memory for a buffer part"){
+  naTestGroup("Preparing memory for a buffer part") {
     //na_PrepareBufferPartMemory
   }
 
-  naTestGroup("Preparing a buffer part"){
+  naTestGroup("Preparing a buffer part") {
     //na_PrepareBufferPart
   }
 
@@ -274,7 +274,7 @@ void testBufferPart(void){
 
 
 
-void printNABuffer(void){
+void printNABuffer(void) {
   printf("NABuffer.h:" NA_NL);
 
   naPrintMacro(NA_BUFFER_SOURCE_RANGE_LIMITED);
@@ -285,7 +285,7 @@ void printNABuffer(void){
 
 
 
-void testNABuffer(void){
+void testNABuffer(void) {
   naTestFunction(testMemoryBlock);  
   naTestFunction(testBufferSource);  
   naTestFunction(testBufferPart);  

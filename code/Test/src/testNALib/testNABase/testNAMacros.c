@@ -5,7 +5,7 @@
 
 
 
-void testNAMacros(void){
+void testNAMacros(void) {
   naTest(strcmp(NA_STRINGIFY(AsDf), "AsDf") == 0);
 
   int AB = 12;
@@ -40,7 +40,7 @@ void testNAMacros(void){
 
 
 
-void printNAMacros(void){
+void printNAMacros(void) {
   printf("NAMacros.h:" NA_NL);
 
   #define M1 A

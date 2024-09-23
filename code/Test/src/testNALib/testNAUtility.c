@@ -9,10 +9,10 @@ void testNANotifier(void);
 
 
 
-void printNAUtility(void){
+void printNAUtility(void) {
 }
 
-void testNAUtility(void){
+void testNAUtility(void) {
   naTestFunction(testNANotifier);
 }
 

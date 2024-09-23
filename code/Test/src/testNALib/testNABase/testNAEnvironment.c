@@ -18,7 +18,7 @@ const char* na_EndiannessEnumStrings[] = {
   "Network"
 };
 
-void printNAEnvironment(void){
+void printNAEnvironment(void) {
   printf("NAEnvironment.h fixed values:" NA_NL);
   naPrintMacroInt          (NA_BITS_PER_BYTE);
   naPrintMacroInt          (NA_TYPE8_BITS);

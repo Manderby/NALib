@@ -14,7 +14,7 @@ struct NANumericsTestValues{
   int256 v256;
 };
 
-NANumericsTestValues naMakePositiveNumericsTestValues(void){
+NANumericsTestValues naMakePositiveNumericsTestValues(void) {
   NANumericsTestValues p;
   p.v8 = 42;
   p.v16 = (int16)p.v8;
@@ -25,7 +25,7 @@ NANumericsTestValues naMakePositiveNumericsTestValues(void){
   return p;
 }
 
-NANumericsTestValues naMakeNegativeNumericsTestValues(const NANumericsTestValues* positiveValues){
+NANumericsTestValues naMakeNegativeNumericsTestValues(const NANumericsTestValues* positiveValues) {
   NANumericsTestValues n;
   n.v8 = -positiveValues->v8;
   n.v16 = -positiveValues->v16;
@@ -36,7 +36,7 @@ NANumericsTestValues naMakeNegativeNumericsTestValues(const NANumericsTestValues
   return n;
 }
 
-NANumericsTestValues naMakeSignFlippedNumericsTestValues(const NANumericsTestValues* positiveValues){
+NANumericsTestValues naMakeSignFlippedNumericsTestValues(const NANumericsTestValues* positiveValues) {
   NANumericsTestValues s;
   s.v8 = positiveValues->v8 | NA_SIGN_MASK_8;
   s.v16 = positiveValues->v16 | NA_SIGN_MASK_16;
@@ -47,7 +47,7 @@ NANumericsTestValues naMakeSignFlippedNumericsTestValues(const NANumericsTestVal
   return s;
 }
 
-void testGetSignum(void){
+void testGetSignum(void) {
   NANumericsTestValues p = naMakePositiveNumericsTestValues();
   NANumericsTestValues n = naMakeNegativeNumericsTestValues(&p);
 
@@ -102,7 +102,7 @@ void testGetSignum(void){
 
 
 
-void testGetSigni(void){
+void testGetSigni(void) {
   NANumericsTestValues p = naMakePositiveNumericsTestValues();
   NANumericsTestValues n = naMakeNegativeNumericsTestValues(&p);
 
@@ -157,7 +157,7 @@ void testGetSigni(void){
 
 
 
-void testSetUnsetSign(void){
+void testSetUnsetSign(void) {
   NANumericsTestValues p = naMakePositiveNumericsTestValues();
   NANumericsTestValues s = naMakeSignFlippedNumericsTestValues(&p);
 
@@ -241,7 +241,7 @@ void testSetUnsetSign(void){
 }
 
 
-void testGetAbsi(void){
+void testGetAbsi(void) {
   NANumericsTestValues p = naMakePositiveNumericsTestValues();
   NANumericsTestValues n = naMakeNegativeNumericsTestValues(&p);
 
@@ -296,7 +296,7 @@ void testGetAbsi(void){
 }
 
 
-void testNANumerics(void){
+void testNANumerics(void) {
   naTestFunction(testGetSignum);
   naTestFunction(testGetSigni);
   naTestFunction(testSetUnsetSign);
@@ -305,7 +305,7 @@ void testNANumerics(void){
 
 
 
-void printNANumerics(void){
+void printNANumerics(void) {
   printf("NANumerics.h:" NA_NL);
 
   naPrintMacroix8(NA_SIGN_MASK_8);

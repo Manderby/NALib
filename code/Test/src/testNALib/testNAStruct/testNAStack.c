@@ -8,25 +8,43 @@
 #define NA_TEST_STACK_TYPE_SIZE 20
 #define NA_BENCHMARK_STACK_SIZE 1000
 
-void testStackArray(void){
-  void* array = NA_NULL;
+void testStackArray(void) {
   
-  naTestGroup("Allocating Stack Array"){
-    void* dummyArray = NA_NULL;
-    naTest((array = na_AllocStackArray(NA_TEST_STACK_INIT_COUNT, NA_TEST_STACK_TYPE_SIZE)) != NA_NULL);
-    naTestError(dummyArray = na_AllocStackArray(0, NA_TEST_STACK_TYPE_SIZE));
-    na_DeallocStackArray(dummyArray);
-    naTestError(dummyArray = na_AllocStackArray(NA_TEST_STACK_INIT_COUNT, 0));
-    na_DeallocStackArray(dummyArray);
+  naTestGroup("Allocating Stack Array") {
+    {
+      void* dummyArray = NA_NULL;
+      naTest((dummyArray = na_AllocStackArray(NA_TEST_STACK_INIT_COUNT, NA_TEST_STACK_TYPE_SIZE)) != NA_NULL);
+      na_DeallocStackArray(dummyArray);
+    }
+    {
+      void* dummyArray = NA_NULL;
+      naTestError(dummyArray = na_AllocStackArray(0, NA_TEST_STACK_TYPE_SIZE));
+      na_DeallocStackArray(dummyArray);
+    }
+    {
+      void* dummyArray = NA_NULL;
+      naTestError(dummyArray = na_AllocStackArray(NA_TEST_STACK_INIT_COUNT, 0));
+      na_DeallocStackArray(dummyArray);
+    }
+  }
+
+  naTestGroup("Freeing Stack Array") {
+    void* dummyArray = na_AllocStackArray(NA_TEST_STACK_INIT_COUNT, NA_TEST_STACK_TYPE_SIZE);
+    naTestVoid(na_DeallocStackArray(dummyArray); dummyArray = NA_NULL);
+    naTestError(na_DeallocStackArray(NA_NULL));
+    // We add this check so that static code analysis tools will not report
+    // potential memory leaks.
+    if(dummyArray) { na_DeallocStackArray(dummyArray); }
   }
 
   NAList list;
   naInitList(&list);
+  void* array = na_AllocStackArray(NA_TEST_STACK_INIT_COUNT, NA_TEST_STACK_TYPE_SIZE);
   naAddListLastMutable(&list, array);
   NAListIterator listIter = naMakeListMutator(&list);
   naIterateList(&listIter);
 
-  naTestGroup("Get Stack Array count"){
+  naTestGroup("Get Stack Array count") {
     naTest(na_GetStackArrayCount(&listIter) == NA_TEST_STACK_INIT_COUNT);
 
     // Testing iterator at initial and Null
@@ -38,7 +56,7 @@ void testStackArray(void){
   naResetListIterator(&listIter);
   naIterateList(&listIter);
 
-  naTestGroup("Get Stack Array First"){
+  naTestGroup("Get Stack Array First") {
     naTest(na_GetStackArrayFirstConst(&listIter) == (const NAByte*)array + sizeof(size_t));
     naTest(na_GetStackArrayFirstMutable(&listIter) == (NAByte*)array + sizeof(size_t));
 
@@ -53,7 +71,7 @@ void testStackArray(void){
   naResetListIterator(&listIter);
   naIterateList(&listIter);
 
-  naTestGroup("Get Stack Array at"){
+  naTestGroup("Get Stack Array at") {
     naTest(na_GetStackArrayAt(&listIter, 0, NA_TEST_STACK_TYPE_SIZE) == (NAByte*)array + sizeof(size_t));
     naTestError(na_GetStackArrayAt(&listIter, NA_TEST_STACK_INIT_COUNT, NA_TEST_STACK_TYPE_SIZE)); // index out of bound
     naTestError(na_GetStackArrayAt(&listIter, 0, 0)); // bad typeSize
@@ -63,45 +81,41 @@ void testStackArray(void){
     naTestCrash(na_GetStackArrayAt(&listIter, 0, NA_TEST_STACK_TYPE_SIZE));
     naTestCrash(na_GetStackArrayAt(NA_NULL, 0, NA_TEST_STACK_TYPE_SIZE));
   }
-
-  naTestGroup("Freeing Stack Array"){
-    naTestVoid(na_DeallocStackArray(array));
-    naTestError(na_DeallocStackArray(NA_NULL));
-  }
   
+  na_DeallocStackArray(array);
   naClearListIterator(&listIter);
   naClearList(&list);
 }
 
 
   
-void testStackInitClear(void){
+void testStackInitClear(void) {
   NAStack stack;
 
-  naTestGroup("With initial count"){
+  naTestGroup("With initial count") {
     naTest(naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, 0) != NA_NULL);
     naTestVoid(naClearStack(&stack));
   }
 
-  naTestGroup("With automatic initial count"){
+  naTestGroup("With automatic initial count") {
     naTest(naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, 0, 0) != NA_NULL);
     naClearStack(&stack);
   }
 
-  naTestGroup("Null pointer"){
+  naTestGroup("Null pointer") {
     naTestCrash(naInitStack(NA_NULL, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, 0));
     naTestCrash(naClearStack(NA_NULL));
   }
 
-  naTestGroup("Bad typeSize"){
+  naTestGroup("Bad typeSize") {
     naTestCrash(naInitStack(&stack, 0, NA_TEST_STACK_INIT_COUNT, 0); naClearStack(&stack));
   }
 
-  naTestGroup("Missing initialCount when fixed size"){
+  naTestGroup("Missing initialCount when fixed size") {
     naTestError(naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, 0, NA_STACK_FIXED_SIZE); naClearStack(&stack));
   }
 
-  naTestGroup("Too many iterators"){
+  naTestGroup("Too many iterators") {
     // untested as struct will leak
     naUntested("naClearStack with iterators still running");
   }
@@ -109,11 +123,11 @@ void testStackInitClear(void){
 
 
 
-void testStackPushTopPopPeek(void){
+void testStackPushTopPopPeek(void) {
   NAStack stack;
   void* data = NA_NULL;
 
-  naTestGroup("Adding, Removing 1 element"){
+  naTestGroup("Adding, Removing 1 element") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, 0);
     naTest((data = naPushStack(&stack)) != NA_NULL);
     naTest(naTopStack(&stack) == data);
@@ -121,20 +135,20 @@ void testStackPushTopPopPeek(void){
     naClearStack(&stack);
   }
 
-  naTestGroup("Adding, Removing 1 element more than available"){
+  naTestGroup("Adding, Removing 1 element more than available") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, 0);
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT; i++){naPushStack(&stack);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT; i++) {naPushStack(&stack);}
     naTest((data = naPushStack(&stack)) != NA_NULL);
     naTest(naTopStack(&stack) == data);
     naTest(naPopStack(&stack) == data);
     // Pushing even more on the stack and see if clearing works fine.
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT * 10; i++){naPushStack(&stack);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT * 10; i++) {naPushStack(&stack);}
     naTestVoid(naClearStack(&stack));
   }
 
-  naTestGroup("Peeking"){
+  naTestGroup("Peeking") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, 0);
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++){naPushStack(&stack);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++) {naPushStack(&stack);}
     naTest((data = naPeekStack(&stack, 0)) != NA_NULL);
     naTest((data = naPeekStack(&stack, NA_TEST_STACK_INIT_COUNT - 1)) != NA_NULL);
     naTest((data = naPeekStack(&stack, NA_TEST_STACK_INIT_COUNT + 0)) != NA_NULL);
@@ -142,14 +156,14 @@ void testStackPushTopPopPeek(void){
     naClearStack(&stack);
   }
 
-  naTestGroup("Null pointer"){
+  naTestGroup("Null pointer") {
     naTestCrash(naPushStack(NA_NULL));
     naTestCrash(naTopStack(NA_NULL));
     naTestCrash(naPopStack(NA_NULL));
     naTestCrash(naPeekStack(NA_NULL, 0));
   }
 
-  naTestGroup("Empty stack"){
+  naTestGroup("Empty stack") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, 0);
     naTestError(naTopStack(&stack));
     naClearStack(&stack);
@@ -166,34 +180,34 @@ void testStackPushTopPopPeek(void){
 
 
 
-void testStackCount(void){
+void testStackCount(void) {
   NAStack stack;
 
-  naTestGroup("get count"){
+  naTestGroup("get count") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, 0);
     naTest(naGetStackCount(&stack) == 0);
     naPushStack(&stack);
     naTest(naGetStackCount(&stack) == 1);
     naPopStack(&stack);
     naTest(naGetStackCount(&stack) == 0);
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT; i++){naPushStack(&stack);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT; i++) {naPushStack(&stack);}
     naTest(naGetStackCount(&stack) == NA_TEST_STACK_INIT_COUNT);
     naPushStack(&stack);
     naTest(naGetStackCount(&stack) == NA_TEST_STACK_INIT_COUNT + 1);
     naClearStack(&stack);
   }
 
-  naTestGroup("get reserved count"){
+  naTestGroup("get reserved count") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, 0);
     naTest(naGetStackReservedCount(&stack) == NA_TEST_STACK_INIT_COUNT);
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT; i++){naPushStack(&stack);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT; i++) {naPushStack(&stack);}
     naTest(naGetStackReservedCount(&stack) == NA_TEST_STACK_INIT_COUNT);
     naPushStack(&stack);
     naTest(naGetStackReservedCount(&stack) > NA_TEST_STACK_INIT_COUNT);
     naClearStack(&stack);
   }
 
-  naTestGroup("Null pointer"){
+  naTestGroup("Null pointer") {
     naTestCrash(naGetStackCount(NA_NULL));
     naTestCrash(naGetStackReservedCount(NA_NULL));
   }
@@ -201,70 +215,70 @@ void testStackCount(void){
 
 
 
-void testStackGrow(void){
+void testStackGrow(void) {
   NAStack stack;
 
-  naTestGroup("Linear Growing"){
+  naTestGroup("Linear Growing") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, NA_STACK_GROW_LINEAR);
 
     // push one more onto the stack than initial
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++){naPushStack(&stack);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++) {naPushStack(&stack);}
     naTest(naGetStackReservedCount(&stack) == (1 + 1) * NA_TEST_STACK_INIT_COUNT);
 
     naClearStack(&stack);
   }
 
-  naTestGroup("Fibonacci Growing"){
+  naTestGroup("Fibonacci Growing") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, NA_STACK_GROW_FIBONACCI);
 
     // push one more onto the stack than initial
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++){naPushStack(&stack);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++) {naPushStack(&stack);}
     naTest((double)naGetStackReservedCount(&stack) > (1. + 1.618) * (double)NA_TEST_STACK_INIT_COUNT);
 
     naClearStack(&stack);
   }
 
-  naTestGroup("Exponential Growing"){
+  naTestGroup("Exponential Growing") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, NA_STACK_GROW_EXPONENTIAL);
 
     // push one more onto the stack than initial
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++){naPushStack(&stack);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++) {naPushStack(&stack);}
     naTest(naGetStackReservedCount(&stack) == (1 + 2) * NA_TEST_STACK_INIT_COUNT);
 
     naClearStack(&stack);
   }
 
-  naTestGroup("Fixed size stack"){
+  naTestGroup("Fixed size stack") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, NA_STACK_FIXED_SIZE);
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT; i++){naPushStack(&stack);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT; i++) {naPushStack(&stack);}
     naTestError(naPushStack(&stack));
     naClearStack(&stack);
   }
 
 }  
   
-void testStackShrink(void){
+void testStackShrink(void) {
   NAStack stack;
 
-  naTestGroup("Automatic shrinking"){
+  naTestGroup("Automatic shrinking") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, NA_STACK_GROW_LINEAR);
 
     // push 5 times more onto the stack than initial
-    for(int i = 0; i < 5 * NA_TEST_STACK_INIT_COUNT; i++){naPushStack(&stack);}
+    for(int i = 0; i < 5 * NA_TEST_STACK_INIT_COUNT; i++) {naPushStack(&stack);}
     // Pop 4 times
-    for(int i = 0; i < 4 * NA_TEST_STACK_INIT_COUNT; i++){naPopStack(&stack);}
+    for(int i = 0; i < 4 * NA_TEST_STACK_INIT_COUNT; i++) {naPopStack(&stack);}
 
     naTest(naGetStackReservedCount(&stack) == 2 * NA_TEST_STACK_INIT_COUNT);
     naClearStack(&stack);
   }
 
-  naTestGroup("No shrinking"){
+  naTestGroup("No shrinking") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, NA_STACK_GROW_LINEAR | NA_STACK_NO_SHRINKING);
 
     // push 5 times more onto the stack than initial
-    for(int i = 0; i < 5 * NA_TEST_STACK_INIT_COUNT; i++){naPushStack(&stack);}
+    for(int i = 0; i < 5 * NA_TEST_STACK_INIT_COUNT; i++) {naPushStack(&stack);}
     // Pop 4 times
-    for(int i = 0; i < 4 * NA_TEST_STACK_INIT_COUNT; i++){naPopStack(&stack);}
+    for(int i = 0; i < 4 * NA_TEST_STACK_INIT_COUNT; i++) {naPopStack(&stack);}
 
     naTest(naGetStackReservedCount(&stack) == 5 * NA_TEST_STACK_INIT_COUNT);
     naClearStack(&stack);
@@ -273,14 +287,14 @@ void testStackShrink(void){
 
 
 
-void testStackShrinkIfNecessary(void){
+void testStackShrinkIfNecessary(void) {
   NAStack stack;
 
-  naTestGroup("Nothing to shrink"){
+  naTestGroup("Nothing to shrink") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, NA_STACK_GROW_LINEAR | NA_STACK_NO_SHRINKING);
 
     // push one more onto the stack than initial
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++){naPushStack(&stack);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++) {naPushStack(&stack);}
 
     naTest(naGetStackReservedCount(&stack) == 2 * NA_TEST_STACK_INIT_COUNT);
     naTestVoid(naShrinkStackIfNecessary(&stack, NA_FALSE));
@@ -289,11 +303,11 @@ void testStackShrinkIfNecessary(void){
     naClearStack(&stack);
   }
 
-  naTestGroup("Only aggressive shrinking"){
+  naTestGroup("Only aggressive shrinking") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, NA_STACK_GROW_LINEAR | NA_STACK_NO_SHRINKING);
 
     // push one more onto the stack than initial
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++){naPushStack(&stack);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++) {naPushStack(&stack);}
     // Pop one
     naPopStack(&stack);
 
@@ -305,13 +319,13 @@ void testStackShrinkIfNecessary(void){
     naClearStack(&stack);
   }
 
-  naTestGroup("Full Shrinking"){
+  naTestGroup("Full Shrinking") {
     naInitStack(&stack, NA_TEST_STACK_TYPE_SIZE, NA_TEST_STACK_INIT_COUNT, NA_STACK_GROW_LINEAR | NA_STACK_NO_SHRINKING);
 
     // push 5 times more onto the stack than initial
-    for(int i = 0; i < 5 * NA_TEST_STACK_INIT_COUNT; i++){naPushStack(&stack);}
+    for(int i = 0; i < 5 * NA_TEST_STACK_INIT_COUNT; i++) {naPushStack(&stack);}
     // Pop 4 times
-    for(int i = 0; i < 4 * NA_TEST_STACK_INIT_COUNT; i++){naPopStack(&stack);}
+    for(int i = 0; i < 4 * NA_TEST_STACK_INIT_COUNT; i++) {naPopStack(&stack);}
 
     naTest(naGetStackReservedCount(&stack) == 5 * NA_TEST_STACK_INIT_COUNT);
     naTestVoid(naShrinkStackIfNecessary(&stack, NA_FALSE));
@@ -321,17 +335,17 @@ void testStackShrinkIfNecessary(void){
     naClearStack(&stack);
   }
 
-  naTestGroup("Null pointer"){
+  naTestGroup("Null pointer") {
     naTestCrash(naShrinkStackIfNecessary(NA_NULL, NA_FALSE));
   }
 }
 
 
-void testStackDump(void){
+void testStackDump(void) {
   NAStack stack;
   int dmp[] = {99, 99, 99, 99, 99};
 
-  naTestGroup("Dumping empty stack"){
+  naTestGroup("Dumping empty stack") {
     naInitStack(&stack, sizeof(int), 0, 0);
     naDumpStack(&stack, dmp);
     naClearStack(&stack);
@@ -339,7 +353,7 @@ void testStackDump(void){
     naTest(dmp[0] == 99);
   }
 
-  naTestGroup("Dumping stack"){
+  naTestGroup("Dumping stack") {
     naInitStack(&stack, sizeof(int), 0, 0);
     *(int*)naPushStack(&stack) = 1;
     *(int*)naPushStack(&stack) = 2;
@@ -354,7 +368,7 @@ void testStackDump(void){
   dmp[0] = 99;
   dmp[1] = 99;
 
-  naTestGroup("Dumping stack with multiple arrays"){
+  naTestGroup("Dumping stack with multiple arrays") {
     naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
     *(int*)naPushStack(&stack) = 1;
     *(int*)naPushStack(&stack) = 2;
@@ -366,7 +380,7 @@ void testStackDump(void){
     naTest(dmp[2] == 99);
   }
 
-  naTestGroup("Null pointer"){
+  naTestGroup("Null pointer") {
     naInitStack(&stack, sizeof(int), 0, 0);
 
     naTestCrash(naDumpStack(NA_NULL, dmp));
@@ -378,23 +392,21 @@ void testStackDump(void){
 
 
 
-void testStackIterator(void){
+void testStackIterator(void) {
   NAStack stack;
   naInitStack(&stack, sizeof(int), 0, 0);
   *(int*)naPushStack(&stack) = 1;
   *(int*)naPushStack(&stack) = 2;
 
-  naTestGroup("Creating and Clearing"){
+  naTestGroup("Creating and Clearing") {
     NAStackIterator iterConst;
     NAStackIterator iterMutable;
 
-    naTestVoid(iterConst = naMakeStackAccessor(&stack));
-    naTestVoid(iterMutable = naMakeStackMutator(&stack));
-    naTestVoid(naClearStackIterator(&iterConst));
-    naTestVoid(naClearStackIterator(&iterMutable));
+    naTestVoid(iterConst = naMakeStackAccessor(&stack); naClearStackIterator(&iterConst));
+    naTestVoid(iterMutable = naMakeStackMutator(&stack); naClearStackIterator(&iterMutable));
   }
 
-  naTestGroup("Iterating"){
+  naTestGroup("Iterating") {
     NAStackIterator iter = naMakeStackAccessor(&stack);
     naTest(naIterateStack(&iter));
     naTest(naIterateStack(&iter));
@@ -402,7 +414,7 @@ void testStackIterator(void){
     naClearStackIterator(&iter);
   }
 
-  naTestGroup("Initial position"){
+  naTestGroup("Initial position") {
     NAStackIterator iter = naMakeStackAccessor(&stack);
     naTest(naIsStackAtInitial(&iter));
     naIterateStack(&iter);
@@ -414,7 +426,7 @@ void testStackIterator(void){
     naClearStackIterator(&iter);
   }
 
-  naTestGroup("Resetting"){
+  naTestGroup("Resetting") {
     NAStackIterator iter = naMakeStackAccessor(&stack);
     naIterateStack(&iter);
     naTestVoid(naResetStackIterator(&iter))
@@ -422,7 +434,7 @@ void testStackIterator(void){
     naClearStackIterator(&iter);
   }
 
-  naTestGroup("Null pointer"){
+  naTestGroup("Null pointer") {
     naTestCrash(naMakeStackAccessor(NA_NULL));
     naTestCrash(naMakeStackMutator(NA_NULL));
     naTestCrash(naClearStackIterator(NA_NULL));
@@ -431,13 +443,13 @@ void testStackIterator(void){
     naTestCrash(naIsStackAtInitial(NA_NULL));
   }
 
-  naTestGroup("Too few iterators"){
+  naTestGroup("Too few iterators") {
     naUntested("naClearStackIterator with no iterators on the stack");
   }
 
   naClearStack(&stack);
 
-  naTestGroup("Out of bound iterator"){
+  naTestGroup("Out of bound iterator") {
     naInitStack(&stack, sizeof(int), NA_TEST_STACK_INIT_COUNT, 0);
     naPushStack(&stack);
     NAStackIterator iter = naMakeStackAccessor(&stack);
@@ -448,11 +460,11 @@ void testStackIterator(void){
     naClearStack(&stack);
   }
 
-  naTestGroup("Iterating over more than the initial count"){
+  naTestGroup("Iterating over more than the initial count") {
     naInitStack(&stack, sizeof(int), NA_TEST_STACK_INIT_COUNT, NA_STACK_GROW_LINEAR);
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++){naPushStack(&stack);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT + 1; i++) {naPushStack(&stack);}
     NAStackIterator iter = naMakeStackAccessor(&stack);
-    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT; i++){naIterateStack(&iter);}
+    for(int i = 0; i < NA_TEST_STACK_INIT_COUNT; i++) {naIterateStack(&iter);}
     naTest(naIterateStack(&iter));
     naTest(!naIterateStack(&iter));
     naClearStackIterator(&iter);
@@ -462,7 +474,7 @@ void testStackIterator(void){
 
 
 
-void testStackIteratorAccessAndMutate(void){
+void testStackIteratorAccessAndMutate(void) {
   NAStack stack;
   naInitStack(&stack, sizeof(int), 0, 0);
   *(int*)naPushStack(&stack) = 1;
@@ -474,7 +486,7 @@ void testStackIteratorAccessAndMutate(void){
   *(int**)naPushStack(&pStack) = &x1;
   *(int**)naPushStack(&pStack) = &x2;
 
-  naTestGroup("Accessor"){
+  naTestGroup("Accessor") {
     NAStackIterator iter = naMakeStackAccessor(&stack);
     naIterateStack(&iter);
     naTest(*(const int*)naGetStackCurConst(&iter) == 1);
@@ -486,7 +498,7 @@ void testStackIteratorAccessAndMutate(void){
     naClearStackIterator(&iter);
   }
 
-  naTestGroup("Mutator"){
+  naTestGroup("Mutator") {
     NAStackIterator iter = naMakeStackMutator(&stack);
     naIterateStack(&iter);
     naTest(*(const int*)naGetStackCurConst(&iter) == 1);
@@ -498,7 +510,7 @@ void testStackIteratorAccessAndMutate(void){
     naClearStackIterator(&iter);
   }
 
-  naTestGroup("Accessor pointer"){
+  naTestGroup("Accessor pointer") {
     NAStackIterator iter = naMakeStackAccessor(&pStack);
     naIterateStack(&iter);
     naTest(*(const int*)naGetStackCurpConst(&iter) == 1);
@@ -510,7 +522,7 @@ void testStackIteratorAccessAndMutate(void){
     naClearStackIterator(&iter);
   }
 
-  naTestGroup("Mutator pointer"){
+  naTestGroup("Mutator pointer") {
     NAStackIterator iter = naMakeStackMutator(&pStack);
     naIterateStack(&iter);
     naTest(*(const int*)naGetStackCurpConst(&iter) == 1);
@@ -522,7 +534,7 @@ void testStackIteratorAccessAndMutate(void){
     naClearStackIterator(&iter);
   }
 
-  naTestGroup("Iterator at initial"){
+  naTestGroup("Iterator at initial") {
     NAStackIterator iter = naMakeStackMutator(&pStack);
     naTestCrash(naGetStackCurConst(&iter));
     naTestCrash(naGetStackCurMutable(&iter));
@@ -531,7 +543,7 @@ void testStackIteratorAccessAndMutate(void){
     naClearStackIterator(&iter);
   }
 
-  naTestGroup("Null pointer"){
+  naTestGroup("Null pointer") {
     naTestCrash(naGetStackCurConst(NA_NULL));
     naTestCrash(naGetStackCurMutable(NA_NULL));
     naTestCrash(naGetStackCurpConst(NA_NULL));
@@ -541,7 +553,7 @@ void testStackIteratorAccessAndMutate(void){
   naClearStack(&stack);
   naClearStack(&pStack);
 
-  naTestGroup("Out of bound iterator"){
+  naTestGroup("Out of bound iterator") {
     naInitStack(&stack, sizeof(int), NA_TEST_STACK_INIT_COUNT, 0);
     naPushStack(&stack);
     NAStackIterator iter = naMakeStackAccessor(&stack);
@@ -559,14 +571,14 @@ void testStackIteratorAccessAndMutate(void){
 
 
 int na_DummyStackSum;
-void na_DummyIncreaseSumConst(const void* elem){
+void na_DummyIncreaseSumConst(const void* elem) {
   na_DummyStackSum += *(const int*)elem;
 }
-void na_DummyIncreaseSumMutable(void* elem){
+void na_DummyIncreaseSumMutable(void* elem) {
   na_DummyStackSum += *(int*)elem;
 }
 
-void testStackForeach(void){
+void testStackForeach(void) {
   NAStack stack;
   naInitStack(&stack, sizeof(int), 0, 0);
   *(int*)naPushStack(&stack) = 1;
@@ -578,7 +590,7 @@ void testStackForeach(void){
   *(int**)naPushStack(&pStack) = &x1;
   *(int**)naPushStack(&pStack) = &x2;
 
-  naTestGroup("Foreach with int"){
+  naTestGroup("Foreach with int") {
     na_DummyStackSum = 0;
     naTestVoid(naForeachStackConst(&stack, (NAAccessor)na_DummyIncreaseSumConst));
     naTest(na_DummyStackSum == 3);
@@ -587,7 +599,7 @@ void testStackForeach(void){
     naTest(na_DummyStackSum == 3);
   }
 
-  naTestGroup("Foreach with int pointer"){
+  naTestGroup("Foreach with int pointer") {
     na_DummyStackSum = 0;
     naTestVoid(naForeachStackpConst(&pStack, (NAAccessor)na_DummyIncreaseSumConst));
     naTest(na_DummyStackSum == 3);
@@ -596,7 +608,7 @@ void testStackForeach(void){
     naTest(na_DummyStackSum == 3);
   }
 
-  naTestGroup("Null pointer"){
+  naTestGroup("Null pointer") {
     naTestCrash(naForeachStackConst(NA_NULL, na_DummyIncreaseSumConst));
     naTestCrash(naForeachStackMutable(NA_NULL, na_DummyIncreaseSumMutable));
     naTestCrash(naForeachStackpConst(NA_NULL, na_DummyIncreaseSumConst));
@@ -613,7 +625,7 @@ void testStackForeach(void){
 
 
 
-void printNAStack(void){
+void printNAStack(void) {
   printf("NAStack.h:" NA_NL);
 
   naPrintMacro(NA_STACK_GROW_AUTO);
@@ -633,7 +645,7 @@ void printNAStack(void){
 
 
 
-void testNAStack(void){
+void testNAStack(void) {
   naTestFunction(testStackArray);  
   naTestFunction(testStackInitClear);  
   naTestFunction(testStackPushTopPopPeek);  
@@ -648,12 +660,12 @@ void testNAStack(void){
 }
 
 
-NA_HIDEF void na_DummyPushAndPopManyItemsOnStack(NAStack* stack){
-  for(size_t i = 0; i < NA_BENCHMARK_STACK_SIZE; i++){naPushStack(stack);}
-  for(size_t i = 0; i < NA_BENCHMARK_STACK_SIZE; i++){naPopStack(stack);}
+NA_HIDEF void na_DummyPushAndPopManyItemsOnStack(NAStack* stack) {
+  for(size_t i = 0; i < NA_BENCHMARK_STACK_SIZE; i++) {naPushStack(stack);}
+  for(size_t i = 0; i < NA_BENCHMARK_STACK_SIZE; i++) {naPopStack(stack);}
 }
 
-void benchmarkNAStack(void){
+void benchmarkNAStack(void) {
   printf(NA_NL "NAStack:" NA_NL);
 
   NAStack stack;
@@ -737,7 +749,7 @@ void benchmarkNAStack(void){
   // Dump linear stack
   naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
   buf = naMalloc(sizeof(int) * NA_BENCHMARK_STACK_SIZE);
-  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);}
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++) {naPushStack(&stack);}
   naBenchmark(naDumpStack(&stack, buf));
   naFree(buf);
   naClearStack(&stack);
@@ -745,7 +757,7 @@ void benchmarkNAStack(void){
   // Dump fibonacci stack
   naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
   buf = naMalloc(sizeof(int) * NA_BENCHMARK_STACK_SIZE);
-  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);}
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++) {naPushStack(&stack);}
   naBenchmark(naDumpStack(&stack, buf));
   naFree(buf);
   naClearStack(&stack);
@@ -760,7 +772,7 @@ void benchmarkNAStack(void){
 
   // Iterate linear
   naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
-  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);}
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++) {naPushStack(&stack);}
   iter = naMakeStackAccessor(&stack);
   naBenchmark(naIterateStack(&iter));
   naClearStackIterator(&iter);
@@ -768,7 +780,7 @@ void benchmarkNAStack(void){
 
   // Iterate fibonacci
   naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
-  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){naPushStack(&stack);}
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++) {naPushStack(&stack);}
   iter = naMakeStackAccessor(&stack);
   naBenchmark(naIterateStack(&iter));
   naClearStackIterator(&iter);
@@ -804,28 +816,28 @@ void benchmarkNAStack(void){
 
   // foreach on linear stack with int
   naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_LINEAR);
-  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){*(int*)naPushStack(&stack) = 1;}
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++) {*(int*)naPushStack(&stack) = 1;}
   naBenchmark(naForeachStackConst(&stack, (NAAccessor)na_DummyIncreaseSumConst));
   naBenchmark(naForeachStackMutable(&stack, (NAMutator)na_DummyIncreaseSumMutable));
   naClearStack(&stack);
 
   // foreach on fibonacci stack with int
   naInitStack(&stack, sizeof(int), 1, NA_STACK_GROW_FIBONACCI);
-  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){*(int*)naPushStack(&stack) = 1;}
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++) {*(int*)naPushStack(&stack) = 1;}
   naBenchmark(naForeachStackConst(&stack, (NAAccessor)na_DummyIncreaseSumConst));
   naBenchmark(naForeachStackMutable(&stack, (NAMutator)na_DummyIncreaseSumMutable));
   naClearStack(&stack);
 
     // foreach on linear stack with int
   naInitStack(&stack, sizeof(int*), 1, NA_STACK_GROW_LINEAR);
-  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){*(int**)naPushStack(&stack) = &myInteger;}
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++) {*(int**)naPushStack(&stack) = &myInteger;}
   naBenchmark(naForeachStackpConst(&stack, (NAAccessor)na_DummyIncreaseSumConst));
   naBenchmark(naForeachStackpMutable(&stack, (NAMutator)na_DummyIncreaseSumMutable));
   naClearStack(&stack);
 
     // foreach on fibonacci stack with int
   naInitStack(&stack, sizeof(int*), 1, NA_STACK_GROW_FIBONACCI);
-  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++){*(int**)naPushStack(&stack) = &myInteger;}
+  for(int i=0;i<NA_BENCHMARK_STACK_SIZE;i++) {*(int**)naPushStack(&stack) = &myInteger;}
   naBenchmark(naForeachStackpConst(&stack, (NAAccessor)na_DummyIncreaseSumConst));
   naBenchmark(naForeachStackpMutable(&stack, (NAMutator)na_DummyIncreaseSumMutable));
   naClearStack(&stack);

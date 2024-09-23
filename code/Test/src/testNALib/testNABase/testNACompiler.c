@@ -5,7 +5,7 @@
 
 
 
-void printNACompiler(void){
+void printNACompiler(void) {
   printf("NACompiler.h:" NA_NL);
   
   naPrintMacro(NA_C90);

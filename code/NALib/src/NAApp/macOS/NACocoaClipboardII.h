@@ -10,7 +10,7 @@
 
 
 
-NA_DEF NAString* naNewStringFromClipboard(){
+NA_DEF NAString* naNewStringFromClipboard() {
   NAString* string = NA_NULL;
   NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
   NSArray *classes = [[NSArray alloc] initWithObjects:[NSString class], nil];
@@ -28,7 +28,7 @@ NA_DEF NAString* naNewStringFromClipboard(){
 
 
 
-NA_DEF void naPutStringToClipboard(const NAString* string){
+NA_DEF void naPutStringToClipboard(const NAString* string) {
   NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
   [pasteboard clearContents];
   [pasteboard writeObjects:

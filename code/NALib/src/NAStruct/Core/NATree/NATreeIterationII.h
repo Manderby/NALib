@@ -59,7 +59,7 @@ NA_HIDEF void na_SetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newite
   #endif
   iter->item = newitem;
   #if NA_DEBUG
-    if(!naIsTreeAtInitial(iter)){na_IncTreeItemIterCount(iter->item);}
+    if(!naIsTreeAtInitial(iter)) {na_IncTreeItemIterCount(iter->item);}
   #endif
 }
 
@@ -155,7 +155,7 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
   tree = na_GetTreeIteratorTreeConst(iter);
   item = iter->item;
   continueBubbling = NA_TRUE;
-  while(continueBubbling && !na_GetTreeItemIsRoot(item)){
+  while(continueBubbling && !na_GetTreeItemIsRoot(item)) {
     NATreeNode* parent = na_GetTreeItemParent(item);
     NAInt childIndex = na_GetTreeNodeChildIndex(parent, item, tree->config);
     continueBubbling = nodeTokenCallback(token, na_GetTreeNodeData(parent, tree->config), childIndex);
@@ -391,7 +391,7 @@ NA_IDEF void naRemoveTreeCurLeaf(NATreeIterator* iter) {
   removeItem = iter->item;
   na_SetTreeIteratorCurItem(iter, NA_NULL);  // temporarily remove the iterator. // todo: make it advance, rev-advance or not.
   newParent = tree->config->leafRemover(tree, (NATreeLeaf*)(removeItem));
-  if(newParent){na_SetTreeIteratorCurItem(iter, na_GetTreeNodeItem(newParent));}
+  if(newParent) {na_SetTreeIteratorCurItem(iter, na_GetTreeNodeItem(newParent));}
   na_UpdateTreeNodeBubbling(tree, newParent, NA_TREE_UNSPECIFIED_INDEX);
 }
 
@@ -407,7 +407,7 @@ NA_IDEF void naUpdateTreeLeaf(NATreeIterator* iter) {
   #endif
   NATree* tree = na_GetTreeIteratorTreeMutable(iter);
   NATreeNode* parent = na_GetTreeItemParent(iter->item);
-  if(!na_GetTreeItemIsRoot(iter->item)){
+  if(!na_GetTreeItemIsRoot(iter->item)) {
     na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(parent, iter->item, tree->config));
   }
 }

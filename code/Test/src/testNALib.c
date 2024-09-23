@@ -34,14 +34,14 @@ void benchmarkNAStruct(void);
 
 
 
-void printNALib(void){
+void printNALib(void) {
 //  printNABase();
 //  printNACore();
 //  printNAUtility();
-  printNAStruct();
+//  printNAStruct();
 }
 
-void testNALib(void){
+void testNALib(void) {
   //naTestFunction(testNABase);
   //naTestFunction(testNAMath);
   //naTestFunction(testNACore);
@@ -49,14 +49,14 @@ void testNALib(void){
   naTestFunction(testNAStruct);
 }
 
-void benchmarkNALib(void){
+void benchmarkNALib(void) {
   printf(NA_NL "Benchmarking:" NA_NL);
   //benchmarkNABase();
   //benchmarkNAMath();
   //benchmarkNAStruct();
 }
 
-int main(int argc, const char** argv){
+int main(int argc, const char** argv) {
   printf("Testing NALib Version: %d ", NA_VERSION);
   #if NA_DEBUG
   printf("(Debug)" NA_NL);
@@ -80,10 +80,10 @@ int main(int argc, const char** argv){
     naExecuteCrashTests(NA_FALSE);
   #endif
 
-  if(testStartSuccessful){
-    naSetTestPrintsAllTests(NA_FALSE);
-    naSetTestPrintsExpression(NATEST_FALSE);
-    naSetTestPrintsFullGroupName(NATEST_FALSE);
+  if(testStartSuccessful) {
+    naSetTestPrintsAllTests(NA_TRUE);
+    naSetTestPrintsExpression(NA_FALSE);
+    naSetTestPrintsFullGroupName(NA_FALSE);
     testNALib();
     //naPrintUntested();
     //naSetTimePerBenchmark(1);

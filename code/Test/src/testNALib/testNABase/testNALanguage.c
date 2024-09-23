@@ -5,17 +5,17 @@
 
 
 
-void na_AccessorFunc(const void* param){
+void na_AccessorFunc(const void* param) {
   NA_UNUSED(param);
 }
-void na_MutatorFunc(void* param){
+void na_MutatorFunc(void* param) {
   NA_UNUSED(param);
 }
 
 
 
-void testNALanguage(void){
-  naTestGroup("typedefs"){
+void testNALanguage(void) {
+  naTestGroup("typedefs") {
     NAAccessor testAccessor = na_AccessorFunc;
     NAMutator testMutator = na_MutatorFunc;
     naTest(testAccessor == na_AccessorFunc);
@@ -25,7 +25,7 @@ void testNALanguage(void){
 
 
 
-void printNALanguage(void){
+void printNALanguage(void) {
   printf("NALanguage.h:" NA_NL);
   
   naPrintMacro(NA_RESTRICT);

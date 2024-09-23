@@ -14,18 +14,18 @@ static NABool nodeConstructorCalled;
 static NABool nodeDestructorCalled;
 static NABool nodeUpdaterCalled;
 static int32 debugData;
-void treeCon(NAPtr userData){debugData = *(int32*)naGetPtrConst(userData); treeConstructorCalled = NA_TRUE;}
-void treeDes(NAPtr userData){debugData = *(int32*)naGetPtrConst(userData); treeDestructorCalled = NA_TRUE;}
-NAPtr leafCon(const void* key, NAPtr content){leafConstructorCalled = NA_TRUE; return naMakePtrNull();}
-void leafDes(NAPtr leafData){leafDestructorCalled = NA_TRUE;}
-NAPtr nodeCon(const void* key){nodeConstructorCalled = NA_TRUE; return naMakePtrNull();}
-void nodeDes(NAPtr nodeData){nodeDestructorCalled = NA_TRUE;}
-NABool nodeUp(NAPtr parentData, NAPtr* childDatas, size_t childIndex, size_t childMask){nodeUpdaterCalled = NA_TRUE; return NA_FALSE;}
+void treeCon(NAPtr userData) {debugData = *(int32*)naGetPtrConst(userData); treeConstructorCalled = NA_TRUE;}
+void treeDes(NAPtr userData) {debugData = *(int32*)naGetPtrConst(userData); treeDestructorCalled = NA_TRUE;}
+NAPtr leafCon(const void* key, NAPtr content) {leafConstructorCalled = NA_TRUE; return naMakePtrNull();}
+void leafDes(NAPtr leafData) {leafDestructorCalled = NA_TRUE;}
+NAPtr nodeCon(const void* key) {nodeConstructorCalled = NA_TRUE; return naMakePtrNull();}
+void nodeDes(NAPtr nodeData) {nodeDestructorCalled = NA_TRUE;}
+NABool nodeUp(NAPtr parentData, NAPtr* childDatas, size_t childIndex, size_t childMask) {nodeUpdaterCalled = NA_TRUE; return NA_FALSE;}
 
 
 
-void testTreeConfiguration(void){
-  naTestGroup("Internal functions"){
+void testTreeConfiguration(void) {
+  naTestGroup("Internal functions") {
     naTestCrash(na_GetTreeConfigurationConst(NA_NULL));
     
     NATreeConfiguration* config = naCreateTreeConfiguration(0);
@@ -39,7 +39,7 @@ void testTreeConfiguration(void){
     naRelease(config);
   }
 
-  naTestGroup("Create and release"){
+  naTestGroup("Create and release") {
     NATreeConfiguration* config = NA_NULL;
     naTestVoid(config = naCreateTreeConfiguration(0));
     naRelease(config);
@@ -63,7 +63,7 @@ void testTreeConfiguration(void){
     naRelease(config);
   }
 
-  naTestGroup("Config Setters"){
+  naTestGroup("Config Setters") {
     double dummyKey = 1.;
     double dummyKey2 = 2.;
     int32 dummyInt = 1234;
@@ -78,7 +78,7 @@ void testTreeConfiguration(void){
     naTestVoid(naSetTreeConfigurationLeafCallbacks(config, leafCon, leafDes));
     naTestVoid(naSetTreeConfigurationNodeCallbacks(config, nodeCon, nodeDes, nodeUp));
 
-    naTestGroup("Tree constructor"){
+    naTestGroup("Tree constructor") {
       debugData = 0;
       treeConstructorCalled = NA_FALSE;
       treeDestructorCalled = NA_FALSE;
@@ -87,7 +87,7 @@ void testTreeConfiguration(void){
       naTest(debugData = dummyInt);
     }
 
-    naTestGroup("Leaf callbacks"){
+    naTestGroup("Leaf callbacks") {
       leafConstructorCalled = NA_FALSE;
       leafDestructorCalled = NA_FALSE;
       NATreeIterator iter = naMakeTreeModifier(&dummyTree);
@@ -98,7 +98,7 @@ void testTreeConfiguration(void){
       naTest(leafDestructorCalled);
     }
 
-    naTestGroup("Node callbacks"){
+    naTestGroup("Node callbacks") {
       nodeConstructorCalled = NA_FALSE;
       nodeDestructorCalled = NA_FALSE;
       nodeUpdaterCalled = NA_FALSE;
@@ -112,7 +112,7 @@ void testTreeConfiguration(void){
       naTest(nodeDestructorCalled);
     }
 
-    naTestGroup("Tree destructor"){
+    naTestGroup("Tree destructor") {
       debugData = 0;
       naClearTree(&dummyTree);
       naTest(treeDestructorCalled);
@@ -127,7 +127,7 @@ void testTreeConfiguration(void){
     naRelease(config);
   }
 
-  naTestGroup("Quad and Octtree Setters"){
+  naTestGroup("Quad and Octtree Setters") {
     NATreeConfiguration* noneConfig = naCreateTreeConfiguration(0);
     NATreeConfiguration* quadConfig = naCreateTreeConfiguration(NA_TREE_QUADTREE | NA_TREE_KEY_DOUBLE);
     NATreeConfiguration* octConfig = naCreateTreeConfiguration(NA_TREE_OCTTREE | NA_TREE_KEY_DOUBLE);
@@ -153,8 +153,8 @@ void testTreeConfiguration(void){
 
 
 
-void testTreeItems(){
-  naTestGroup("Item"){
+void testTreeItems() {
+  naTestGroup("Item") {
     naTestCrash(na_InitTreeItem(NA_NULL));
     naTestCrash(na_ClearTreeItem(NA_NULL));
     naTestCrash(na_GetTreeItemParent(NA_NULL));
@@ -183,7 +183,7 @@ void testTreeItems(){
     naTestError(na_DecTreeItemIterCount(&item));
   }
   
-  naTestGroup("Node"){
+  naTestGroup("Node") {
     NATreeConfiguration* config = naCreateTreeConfiguration(0);
     NATreeNode node;
     NATreeItem item;
@@ -223,7 +223,7 @@ void testTreeItems(){
     naRelease(config);
   }
 
-  naTestGroup("Leaf"){
+  naTestGroup("Leaf") {
     NATreeConfiguration* config = naCreateTreeConfiguration(0);
     NATreeNode node;
     NATreeItem item;
@@ -252,7 +252,7 @@ void testTreeItems(){
 
 
 
-void printNATree(void){
+void printNATree(void) {
   printf("NATree.h:" NA_NL);
 
   naPrintMacro(NA_TREE_KEY_NOKEY);
@@ -304,7 +304,7 @@ void printNATree(void){
 
 
 
-void testNATree(void){
+void testNATree(void) {
   naTestFunction(testTreeConfiguration);  
   naTestFunction(testTreeItems);  
 }

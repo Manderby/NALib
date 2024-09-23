@@ -11,17 +11,17 @@
 //
 //int compare(const void* a, const void* b)
 //{
-//  if(*(double*)a > *(double*)b){return 1;}
-//  else if(*(double*)a < *(double*)b){return -1;}
+//  if(*(double*)a > *(double*)b) {return 1;}
+//  else if(*(double*)a < *(double*)b) {return -1;}
 //  return 0;
 //}
 //
-//void testQSort(){
+//void testQSort() {
 //  NADateTime t1, t2;
 //  int i;
 //
 //  double* keys = naMalloc(TESTSIZE * sizeof(double));
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 //    keys[i] = naUniformRandZE();
 //  }
 //
@@ -35,7 +35,7 @@
 //
 //
 //
-//void testHeap(){
+//void testHeap() {
 //  NAHeap heap;
 //  NADateTime t1, t2;
 //  int i;
@@ -45,7 +45,7 @@
 //
 //  t1 = naMakeDateTimeNow();
 ////  iter = naMakeTreeModifier(&tree);
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 //    keys[i] = naUniformRandZE();
 ////    keys[i] = (double)i / TESTSIZE;
 ////    printf("%f" NA_NL, key);
@@ -57,9 +57,9 @@
 //
 ////  double prevkey = -1;
 //  t1 = naMakeDateTimeNow();
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 ////    const double* key = naGetHeapRootKey(&heap);
-////    if(*key < prevkey){
+////    if(*key < prevkey) {
 ////      printf("Wrong sorting: %d: %f, %f" NA_NL, i, *key, prevkey);
 ////    }
 ////    prevkey = *key;
@@ -74,7 +74,7 @@
 //
 //
 //
-//void testTree(){
+//void testTree() {
 //  NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_DOUBLE | NA_TREE_BALANCE_AVL);
 //  NATree tree;
 //  NADateTime t1, t2;
@@ -86,7 +86,7 @@
 //
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 ////    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
 //    double key = naUniformRandZE();
 ////    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
@@ -100,7 +100,7 @@
 //
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeAccessor(&tree);
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 ////    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
 ////    double key = naUniformRandZE();
 //    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
@@ -119,22 +119,22 @@
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
 //  i = 0;
-//  while(naIterateTree(&iter, NA_NULL, NA_NULL)){
+//  while(naIterateTree(&iter, NA_NULL, NA_NULL)) {
 //    const double* key;
 //    i++;
 ////    const NAInt* key = naGetTreeCurKey(&iter);
-////    if(*key < prevkey){
+////    if(*key < prevkey) {
 ////      printf("Wrong sorting: %d: %"NA_PRIi", %"NA_PRIi NA_NL, i, *key, prevkey);
 ////    }
 ////    prevkey = *key;
-////    if(i < 5){printf("%"NA_PRIi NA_NL, *key);}
+////    if(i < 5) {printf("%"NA_PRIi NA_NL, *key);}
 //
 //    key = naGetTreeCurLeafKey(&iter);
-//    if(*key < prevkey){
+//    if(*key < prevkey) {
 //      printf("Wrong sorting: %d: %f, %f" NA_NL, i, *key, prevkey);
 //    }
 //    prevkey = *key;
-////    if(i < 5){printf("%f" NA_NL, *key);}
+////    if(i < 5) {printf("%f" NA_NL, *key);}
 //  }
 //  naClearTreeIterator(&iter);
 //  t2 = naMakeDateTimeNow();
@@ -145,15 +145,15 @@
 ////  naEmptyTree(&tree);
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 ////    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
 //    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
 ////    double key = (double)i / TESTSIZE;
-//    if(i%5 != 0){
+//    if(i%5 != 0) {
 //      naAddTreeKeyConst(&iter, &key, NA_NULL, NA_TRUE);
 //    }else{
 //      NABool found = naLocateTreeKey(&iter, &key, NA_FALSE);
-//      if(found){naRemoveTreeCurLeaf(&iter);}
+//      if(found) {naRemoveTreeCurLeaf(&iter);}
 //    }
 //  }
 //  naClearTreeIterator(&iter);
@@ -169,7 +169,7 @@
 //
 //#include <stdio.h>
 //
-//int main(void){
+//int main(void) {
 //  printf("NALib Version: %d ", NA_VERSION);
 //  #if NA_DEBUG
 //    printf("(Debug ");

@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 
-NABool equalu256(NAu256 u, uint32 goal7, uint32 goal6, uint32 goal5, uint32 goal4, uint32 goal3, uint32 goal2, uint32 goal1, uint32 goal0){
+NABool equalu256(NAu256 u, uint32 goal7, uint32 goal6, uint32 goal5, uint32 goal4, uint32 goal3, uint32 goal2, uint32 goal1, uint32 goal0) {
   return (naGetu64Hi(naGetu128Hi(naGetu256Hi(u))) == goal7
        && naGetu64Lo(naGetu128Hi(naGetu256Hi(u))) == goal6
        && naGetu64Hi(naGetu128Lo(naGetu256Hi(u))) == goal5
@@ -15,13 +15,13 @@ NABool equalu256(NAu256 u, uint32 goal7, uint32 goal6, uint32 goal5, uint32 goal
        && naGetu64Lo(naGetu128Lo(naGetu256Lo(u))) == goal0);
 }
 
-NABool equali256(NAi256 i, uint32 goal7, uint32 goal6, uint32 goal5, uint32 goal4, uint32 goal3, uint32 goal2, uint32 goal1, uint32 goal0){
+NABool equali256(NAi256 i, uint32 goal7, uint32 goal6, uint32 goal5, uint32 goal4, uint32 goal3, uint32 goal2, uint32 goal1, uint32 goal0) {
   return equalu256(naCasti256Tou256(i), goal7, goal6, goal5, goal4, goal3, goal2, goal1, goal0);
 }
 
 
 
-void testNAInt256Make(void){
+void testNAInt256Make(void) {
   NAi256 i1 = naMakei256(naMakei128(naMakei64(-0x11223344, 0xffeeddcc), naMakeu64(0x98765432, 0x12345678)), naMakeu128(naMakei64(0xfedcba98, 0xabcabcde), naMakeu64(0x54345676, 0x11224488)));
   NAi256 i2 = naMakei256WithLo(naMakei128WithLo(naNegi64(naMakei64(0x12345678, 0x12345678))));
   NAi256 i3 = naMakei256WithDouble(-123456789012345.);
@@ -50,7 +50,7 @@ void testNAInt256Make(void){
 
 
 
-void benchmarkNAInt256Make(void){
+void benchmarkNAInt256Make(void) {
   naBenchmark(naMakei256(naNegi128(randi128), randu128));
   naBenchmark(naMakei256WithLo(naNegi128(randi128)));
   naBenchmark(naMakei256WithDouble(-((int32)naTestIn / NA_MAX_i32)));
@@ -63,7 +63,7 @@ void benchmarkNAInt256Make(void){
 
 
 
-void testNAInt256Binary(void){
+void testNAInt256Binary(void) {
   NAi256 i =      naMakei256WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
   NAi256 term =   naMakei256WithBinary(0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555);
   NAu256 u =    naMakeu256WithBinary(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
@@ -99,7 +99,7 @@ void testNAInt256Binary(void){
 
 
 
-void benchmarkNAInt256Binary(void){
+void benchmarkNAInt256Binary(void) {
   naBenchmark(naNoti256(randi256));
   naBenchmark(naOri256(randi256, randi256));
   naBenchmark(naAndi256(randi256, randi256));
@@ -117,7 +117,7 @@ void benchmarkNAInt256Binary(void){
 
 
 
-void testNAInt256Comparison(void){
+void testNAInt256Comparison(void) {
   NAi256 i1 =   naMakei256WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
   NAi256 i2 =   naMakei256WithBinary(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6, 0xf2461b44, 0x945472ea, 0xf3516735, 0x7ce3a145);
   NAu256 u1 = naMakeu256WithBinary(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
@@ -154,7 +154,7 @@ void testNAInt256Comparison(void){
 
 
 
-void benchmarkNAInt256Comparison(void){
+void benchmarkNAInt256Comparison(void) {
   naBenchmark(naEquali256(randi256, randi256));
   naBenchmark(naGreateri256(randi256, randi256));
   naBenchmark(naGreaterEquali256(randi256, randi256));
@@ -170,7 +170,7 @@ void benchmarkNAInt256Comparison(void){
 
 
 
-void testNAInt256Arithmetic(void){
+void testNAInt256Arithmetic(void) {
   NAi256 i01 =   naMakei256WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
   NAi256 i02 =   naMakei256WithBinary(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6, 0xf2461b44, 0x945472ea, 0xf3516735, 0x7ce3a145);
   NAi256 i03 =   NA_ZERO_i256;
@@ -242,7 +242,7 @@ void testNAInt256Arithmetic(void){
 
 
 
-void benchmarkNAInt256Arithmetic(void){
+void benchmarkNAInt256Arithmetic(void) {
   NAi256 i;
   NAu256 u;
 
@@ -268,7 +268,7 @@ void benchmarkNAInt256Arithmetic(void){
 
 
 
-void testNAInt256(void){
+void testNAInt256(void) {
   naTestFunction(testNAInt256Make);
   naTestFunction(testNAInt256Binary);
   naTestFunction(testNAInt256Comparison);
@@ -277,7 +277,7 @@ void testNAInt256(void){
 
 
 
-void benchmarkNAInt256(void){
+void benchmarkNAInt256(void) {
   printf(NA_NL "NAInt256:" NA_NL);
   benchmarkNAInt256Make();
   benchmarkNAInt256Binary();

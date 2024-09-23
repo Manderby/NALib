@@ -32,7 +32,7 @@ NA_HIDEF void na_RotateLeftBin(NATree* tree, NATreeBinNode* parent, NATreeBinNod
       naError("given right child is not a node");
   #endif
   grandparent = na_GetTreeItemParent(na_GetBinNodeItem(parent));
-  if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(parent))){
+  if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(parent))) {
     size_t parentIndex = na_GetTreeNodeChildIndex(grandparent, na_GetBinNodeItem(parent), tree->config);
     ((NATreeBinNode*)grandparent)->childs[parentIndex] = na_GetBinNodeItem(rightchild);
   }else{
@@ -62,7 +62,7 @@ NA_HIDEF void na_RotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBi
       naError("given parent is not a node");
   #endif
   grandparent = na_GetTreeItemParent(na_GetBinNodeItem(parent));
-  if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(parent))){
+  if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(parent))) {
     size_t parentIndex = na_GetTreeNodeChildIndex(grandparent, na_GetBinNodeItem(parent), tree->config);
     ((NATreeBinNode*)grandparent)->childs[parentIndex] = na_GetBinNodeItem(leftchild);
   }else{
@@ -83,8 +83,8 @@ NA_HIDEF void na_RotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBi
 
 
 
-NA_HIDEF void na_PropagateAVLGrow(NATree* tree, NATreeBinNode* binnode){
-  if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(binnode))){
+NA_HIDEF void na_PropagateAVLGrow(NATree* tree, NATreeBinNode* binnode) {
+  if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(binnode))) {
     NATreeNode* parent = na_GetTreeItemParent(na_GetBinNodeItem(binnode));
     na_GrowAVL(tree, (NATreeBinNode*)parent, na_GetTreeNodeChildIndex(parent, na_GetBinNodeItem(binnode), tree->config));
   }
@@ -92,8 +92,8 @@ NA_HIDEF void na_PropagateAVLGrow(NATree* tree, NATreeBinNode* binnode){
 
 
 
-NA_HIDEF void na_PropagateAVLShrink(NATree* tree, NATreeBinNode* binnode){
-  if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(binnode))){
+NA_HIDEF void na_PropagateAVLShrink(NATree* tree, NATreeBinNode* binnode) {
+  if(!na_GetTreeItemIsRoot(na_GetBinNodeItem(binnode))) {
     NATreeNode* parent = na_GetTreeItemParent(na_GetBinNodeItem(binnode));
     na_ShrinkAVL(tree, (NATreeBinNode*)parent, na_GetTreeNodeChildIndex(parent, na_GetBinNodeItem(binnode), tree->config));
   }
@@ -101,10 +101,10 @@ NA_HIDEF void na_PropagateAVLShrink(NATree* tree, NATreeBinNode* binnode){
 
 
 
-NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex){
+NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex) {
   NAInt nodebalance = na_GetNodeAVL(binnode);
   nodebalance += ((NAInt)childIndex * 2) - 1;
-  if(nodebalance == 0){
+  if(nodebalance == 0) {
     na_SetNodeAVL(binnode, nodebalance);
   }else if(nodebalance == 1 || nodebalance == -1) {
     na_SetNodeAVL(binnode, nodebalance);
@@ -190,10 +190,10 @@ NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex)
 
 
 
-NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex){
+NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex) {
   NAInt nodebalance = na_GetNodeAVL(binnode);
   nodebalance -= ((NAInt)childIndex * 2) - 1;
-  if(nodebalance == 0){
+  if(nodebalance == 0) {
     na_SetNodeAVL(binnode, nodebalance);
     na_PropagateAVLShrink(tree, binnode);
   }else if(nodebalance == 1 || nodebalance == -1) {

@@ -29,12 +29,14 @@ void testHeapConstructionAndDestruction() {
     naTestCrash(naClearHeap(NA_NULL));
   }
   
-  naTestGroup("Creating and destroying heaps without flags") {
+  naTestGroup("Creating and destroying fixed heap without flags") {
     NAHeap heap;
-    // Fixed heap
     naTest(naInitHeap(&heap, HEAP_TEST_SIZE, 0));
     naTestVoid(naClearHeap(&heap));
-    // dynamic heap
+  }
+
+  naTestGroup("Creating and destroying dynamic heap without flags") {
+    NAHeap heap;
     naTest(naInitHeap(&heap, 0, 0));
     naTestVoid(naClearHeap(&heap));
   }
@@ -157,7 +159,7 @@ void testHeapFilling() {
 
 
 
-void testNAHeap(void){
+void testNAHeap(void) {
   naTestFunction(testHeapConstructionAndDestruction);  
   naTestFunction(testHeapGetters);  
   naTestFunction(testHeapFilling);  
@@ -165,7 +167,7 @@ void testNAHeap(void){
 
 
 
-void printNAHeap(void){
+void printNAHeap(void) {
   printf("NAHeap.h:" NA_NL);
 
   naPrintMacroux16(NA_HEAP_USES_DOUBLE_KEY);

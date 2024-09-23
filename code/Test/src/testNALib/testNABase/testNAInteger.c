@@ -5,13 +5,13 @@
 
 
 
-void testNAInteger(void){
-  naTestGroup("NABool typedefs"){
+void testNAInteger(void) {
+  naTestGroup("NABool typedefs") {
     NABool boolean = NA_TRUE;
     naTest(boolean == NA_TRUE);
   }
 
-  naTestGroup("native typedefs"){
+  naTestGroup("native typedefs") {
     uint8   u8   = 42;
     int8    i8   = -42;
     uint16  u16  = 42;
@@ -38,7 +38,7 @@ void testNAInteger(void){
     naTest(naEquali256(i256, naMakei256WithLo(i128)));
   }
 
-  naTestGroup("emulated typedefs"){
+  naTestGroup("emulated typedefs") {
     NAu64  u64  = naMakeu64WithLo(42);
     NAi64  i64  = naMakei64WithLo(-42);
     NAu128 u128 = naMakeu128WithLo(u64);
@@ -53,7 +53,7 @@ void testNAInteger(void){
     naTest(naEquali256(i256, naMakei256WithLo(i128)));
   }
 
-  naTestGroup("NAInt typedefs"){
+  naTestGroup("NAInt typedefs") {
     NAInt  i  = -42;
     naTest(i == -42);
   }
@@ -61,7 +61,7 @@ void testNAInteger(void){
 
 
 
-void printNAInteger(void){
+void printNAInteger(void) {
   printf("NAInteger.h:" NA_NL);
   
   naPrintMacroInt(NA_FALSE);

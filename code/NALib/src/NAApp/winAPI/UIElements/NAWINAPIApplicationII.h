@@ -440,7 +440,7 @@ NA_HDEF na_redrawOpenGLSpaces(void* data) {
   naEmptyList(&app->openGLRedrawList);
 }
 
-NA_HDEF void naAddOpenGLSpaceToRedrawList(NAWINAPIOpenGLSpace* openGLSpace){
+NA_HDEF void naAddOpenGLSpaceToRedrawList(NAWINAPIOpenGLSpace* openGLSpace) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAListIterator it = naMakeListAccessor(&app->openGLRedrawList);
   if(!naLocateListData(&it, openGLSpace)) {

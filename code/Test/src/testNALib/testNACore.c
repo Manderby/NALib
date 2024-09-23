@@ -12,11 +12,11 @@ void testNAValueHelper(void);
 
 
 
-void printNACore(void){
+void printNACore(void) {
   printNATesting();
 }
 
-void testNACore(void){
+void testNACore(void) {
   naTestFunction(testNATesting);
   naTestFunction(testNAValueHelper);
 }

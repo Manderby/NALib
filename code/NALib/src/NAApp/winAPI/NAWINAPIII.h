@@ -578,7 +578,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPostProc(void* uiElement, UINT message, WP
 
 
 // This method calls the default procedure given by WINAPI.
-NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(hWnd);

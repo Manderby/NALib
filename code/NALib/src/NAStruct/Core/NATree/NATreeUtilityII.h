@@ -42,7 +42,7 @@ NA_IDEF void naEmptyTree(NATree* tree) {
 
 
 
-NA_IDEF void naClearTree(NATree* tree){
+NA_IDEF void naClearTree(NATree* tree) {
   #if NA_DEBUG
     if(!tree)
       naCrash("tree is nullptr");
@@ -225,7 +225,7 @@ NA_HIDEF void na_MarkTreeRootLeaf(NATree* tree, NABool isleaf) {
 // todo: If this shows up in performance, adding rootparent again? Or adding childIndex as flag in every item?
 NA_HIDEF NABool na_IsTreeItemLeaf(const NATree* tree, NATreeItem* item) {
   NABool retValue;
-  if(na_GetTreeItemIsRoot(item)){
+  if(na_GetTreeItemIsRoot(item)) {
     retValue = naIsTreeRootLeaf(tree);
   }else{
     NATreeNode* parent = na_GetTreeItemParent(item);

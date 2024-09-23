@@ -14,7 +14,7 @@ NA_RUNTIME_TYPE(NATreeConfiguration, na_DestroyTreeConfiguration, NA_TRUE);
 
 
 
-NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags){
+NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags) {
   // This is just for testing if the implemented nodes "inheriting" from the
   // NATreeNode structure have their childs storage at the correct position.
 
@@ -38,7 +38,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags){
     na_fillTreeNodeQuadABI(&config->abi);
 
     config->abi.childPerNode            = 4;
-    switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
+    switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK) {
     case NA_TREE_KEY_DOUBLE:
       config->childIndexGetter      = na_GetChildIndexQuadDouble;
       config->keyIndexGetter        = na_GetKeyIndexQuadDouble;
@@ -75,7 +75,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags){
     na_fillTreeNodeOctABI(&config->abi);
     
     config->abi.childPerNode            = 8;
-    switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
+    switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK) {
     case NA_TREE_KEY_DOUBLE:
       config->childIndexGetter      = na_GetChildIndexOctDouble;
       config->keyIndexGetter        = na_GetKeyIndexOctDouble;
@@ -115,7 +115,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags){
     #endif
 
     config->abi.childPerNode            = 2;
-    switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
+    switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK) {
     case NA_TREE_KEY_NOKEY:
       config->keyIndexGetter        = NA_NULL;
       config->keyEqualComparer      = NA_NULL;

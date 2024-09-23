@@ -11,34 +11,34 @@
 
 
 
-float arrayAccessf(const void* arrayPtr, float x){
+float arrayAccessf(const void* arrayPtr, float x) {
   const float* array = (const float*) arrayPtr;
   return array[(size_t)naRoundf(x * (INTEGRATION_ARRAY_SIZE - 1))];
 }
 
-double arrayAccess(const void* arrayPtr, double x){
+double arrayAccess(const void* arrayPtr, double x) {
   const double* array = (const double*) arrayPtr;
   return array[(size_t)naRound(x * (INTEGRATION_ARRAY_SIZE - 1))];
 }
 
 
 
-float* createTestArrayf(size_t count){
+float* createTestArrayf(size_t count) {
   float* array = naMalloc(count * sizeof(float));
   
   // Fill the array with values from n to 1 (backwards)
-  for(size_t i = 0; i < count; ++i){
+  for(size_t i = 0; i < count; ++i) {
     array[i] = (float)(count - i);
   }
 
   return array;
 }
 
-double* createTestArray(size_t count){
+double* createTestArray(size_t count) {
   double* array = naMalloc(count * sizeof(double));
   
   // Fill the array with values from n to 1 (backwards)
-  for(size_t i = 0; i < count; ++i){
+  for(size_t i = 0; i < count; ++i) {
     array[i] = (double)(count - i);
   }
 
@@ -47,7 +47,7 @@ double* createTestArray(size_t count){
 
 
 
-void testIntegrationFunctionsf(void){
+void testIntegrationFunctionsf(void) {
   float* array = createTestArrayf(INTEGRATION_ARRAY_SIZE);
   
   float simpleResult;
@@ -57,7 +57,7 @@ void testIntegrationFunctionsf(void){
   //float binaryPairsResult;
   float binaryPairsResult2;
   
-  naTestGroup("Check correctness of result"){
+  naTestGroup("Check correctness of result") {
     simpleResult = naSimpleSumf(INTEGRATION_ARRAY_SIZE, array);
     naTest(simpleResult == INTEGRATION_RESULT);
 
@@ -82,7 +82,7 @@ void testIntegrationFunctionsf(void){
     naTest(binaryPairsResult2 == INTEGRATION_RESULT);
   }
 
-  naTestGroup("Nullpointer array"){
+  naTestGroup("Nullpointer array") {
     naTestCrash(naSimpleSumf(INTEGRATION_ARRAY_SIZE, NA_NULL));
     naTestCrash(naKahanSumf(INTEGRATION_ARRAY_SIZE, NA_NULL));
     naTestCrash(naKahanBabushkaNeumaierSumf(INTEGRATION_ARRAY_SIZE, NA_NULL));
@@ -91,7 +91,7 @@ void testIntegrationFunctionsf(void){
     naTestCrash(naSumf(INTEGRATION_ARRAY_SIZE, NA_NULL));
   }
 
-  naTestGroup("Zero size access"){
+  naTestGroup("Zero size access") {
     naTest(naSimpleSumf(0, NA_NULL) == 0.f);
     naTest(naKahanSumf(0, NA_NULL) == 0.f);
     naTest(naKahanBabushkaNeumaierSumf(0, NA_NULL) == 0.f);
@@ -100,7 +100,7 @@ void testIntegrationFunctionsf(void){
     naTest(naSumf(0, NA_NULL) == 0.f);
   }
 
-  naTestGroup("Size 1 access"){
+  naTestGroup("Size 1 access") {
     naTest(naSimpleSumf(1, array) == INTEGRATION_ARRAY_SIZE);
     naTest(naKahanSumf(1, array) == INTEGRATION_ARRAY_SIZE);
     naTest(naKahanBabushkaNeumaierSumf(1, array) == INTEGRATION_ARRAY_SIZE);
@@ -114,7 +114,7 @@ void testIntegrationFunctionsf(void){
 
 
 
-void testIntegrationFunctions(void){
+void testIntegrationFunctions(void) {
   double* array = createTestArray(INTEGRATION_ARRAY_SIZE);
   
   double simpleResult;
@@ -125,7 +125,7 @@ void testIntegrationFunctions(void){
   double binaryPairsResult;
   double binaryPairsResult2;
 
-  naTestGroup("Check correctness of result"){
+  naTestGroup("Check correctness of result") {
     simpleResult = naSimpleSum(INTEGRATION_ARRAY_SIZE, array);
     naTest(simpleResult == INTEGRATION_RESULT);
 
@@ -153,7 +153,7 @@ void testIntegrationFunctions(void){
     naTest(binaryPairsResult2 == INTEGRATION_RESULT);
   }
 
-  naTestGroup("Nullpointer array"){
+  naTestGroup("Nullpointer array") {
     naTestCrash(naSimpleSum(INTEGRATION_ARRAY_SIZE, NA_NULL));
     naTestCrash(naKahanSum(INTEGRATION_ARRAY_SIZE, NA_NULL));
     naTestCrash(naKahanBabushkaNeumaierSum(INTEGRATION_ARRAY_SIZE, NA_NULL));
@@ -162,7 +162,7 @@ void testIntegrationFunctions(void){
     naTestCrash(naSum(INTEGRATION_ARRAY_SIZE, NA_NULL));
   }
 
-  naTestGroup("Zero size access"){
+  naTestGroup("Zero size access") {
     naTest(naSimpleSum(0, NA_NULL) == 0.f);
     naTest(naKahanSum(0, NA_NULL) == 0.f);
     naTest(naKahanBabushkaNeumaierSum(0, NA_NULL) == 0.f);
@@ -171,7 +171,7 @@ void testIntegrationFunctions(void){
     naTest(naSum(0, NA_NULL) == 0.f);
   }
 
-  naTestGroup("Size 1 access"){
+  naTestGroup("Size 1 access") {
     naTest(naSimpleSum(1, array) == INTEGRATION_ARRAY_SIZE);
     naTest(naKahanSum(1, array) == INTEGRATION_ARRAY_SIZE);
     naTest(naKahanBabushkaNeumaierSum(1, array) == INTEGRATION_ARRAY_SIZE);
@@ -185,7 +185,7 @@ void testIntegrationFunctions(void){
 
 
 
-void benchmarkIntegrationFunctionsf(void){
+void benchmarkIntegrationFunctionsf(void) {
   size_t count = 1000000000;
   float* array = createTestArrayf(count);
 
@@ -206,7 +206,7 @@ void benchmarkIntegrationFunctionsf(void){
   naFree(array);
 }
 
-void benchmarkIntegrationFunctions(void){
+void benchmarkIntegrationFunctions(void) {
   size_t count = 1000000;
   double* array = createTestArray(count);
 
@@ -230,14 +230,14 @@ void benchmarkIntegrationFunctions(void){
 
 
 
-void testNAMath(void){
+void testNAMath(void) {
   //naTestFunction(testIntegrationFunctionsf);
   naTestFunction(testIntegrationFunctions);
 }
 
 
 
-void benchmarkNAMath(void){
+void benchmarkNAMath(void) {
   //naTestFunction(benchmarkIntegrationFunctionsf);
   naTestFunction(benchmarkIntegrationFunctions);
 }

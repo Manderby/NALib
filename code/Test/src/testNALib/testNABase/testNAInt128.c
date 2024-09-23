@@ -4,20 +4,20 @@
 #include <stdio.h>
 
 
-NABool equalu128(NAu128 u, uint32 goal3, uint32 goal2, uint32 goal1, uint32 goal0){
+NABool equalu128(NAu128 u, uint32 goal3, uint32 goal2, uint32 goal1, uint32 goal0) {
   return (naGetu64Hi(naGetu128Hi(u)) == goal3
        && naGetu64Lo(naGetu128Hi(u)) == goal2
        && naGetu64Hi(naGetu128Lo(u)) == goal1
        && naGetu64Lo(naGetu128Lo(u)) == goal0);
 }
 
-NABool equali128(NAi128 i, uint32 goal3, uint32 goal2, uint32 goal1, uint32 goal0){
+NABool equali128(NAi128 i, uint32 goal3, uint32 goal2, uint32 goal1, uint32 goal0) {
   return equalu128(naCasti128Tou128(i), goal3, goal2, goal1, goal0);
 }
 
 
 
-void testNAInt128Make(void){
+void testNAInt128Make(void) {
   NAi128 i1 = naMakei128(naMakei64(-0x11223344, 0xffeeddcc), naMakeu64(0x98765432, 0x12345678));
   NAi128 i2 = naMakei128WithLo(naNegi64(naMakei64(0x12345678, 0x12345678)));
   NAi128 i3 = naMakei128WithDouble(-123456789012345.);
@@ -44,7 +44,7 @@ void testNAInt128Make(void){
 #define randi128 naMakei128WithBinary(naTestIn, naTestIn, naTestIn, naTestIn)
 #define randu128 naMakeu128WithBinary(naTestIn, naTestIn, naTestIn, naTestIn)
 
-void benchmarkNAInt128Make(void){
+void benchmarkNAInt128Make(void) {
   naBenchmark(naMakei128(-randi64, randu64));
   naBenchmark(naMakei128WithLo(-randi64));
   naBenchmark(naMakei128WithDouble(-((int32)naTestIn / NA_MAX_i32)));
@@ -57,7 +57,7 @@ void benchmarkNAInt128Make(void){
 
 
 
-void testNAInt128Binary(void){
+void testNAInt128Binary(void) {
   NAi128 i =     naMakei128WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
   NAi128 term =  naMakei128WithBinary(0x55555555, 0x55555555, 0x55555555, 0x55555555);
   NAu128 u =     naMakeu128WithBinary(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
@@ -94,7 +94,7 @@ void testNAInt128Binary(void){
 
 
 
-void benchmarkNAInt128Binary(void){
+void benchmarkNAInt128Binary(void) {
   naBenchmark(naNoti128(randi128));
   naBenchmark(naOri128(randi128, randi128));
   naBenchmark(naAndi128(randi128, randi128));
@@ -112,7 +112,7 @@ void benchmarkNAInt128Binary(void){
 
 
 
-void testNAInt128Comparison(void){
+void testNAInt128Comparison(void) {
   NAi128 i1 =   naMakei128WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
   NAi128 i2 =   naMakei128WithBinary(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
   NAu128 u1 = naMakeu128WithBinary(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
@@ -149,7 +149,7 @@ void testNAInt128Comparison(void){
 
 
 
-void benchmarkNAInt128Comparison(void){
+void benchmarkNAInt128Comparison(void) {
   naBenchmark(naEquali128(randi128, randi128));
   naBenchmark(naGreateri128(randi128, randi128));
   naBenchmark(naGreaterEquali128(randi128, randi128));
@@ -165,7 +165,7 @@ void benchmarkNAInt128Comparison(void){
 
 
 
-void testNAInt128Arithmetic(void){
+void testNAInt128Arithmetic(void) {
   NAi128 i01 =   naMakei128WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
   NAi128 i02 =   naMakei128WithBinary(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
   NAi128 i03 =   NA_ZERO_i128;
@@ -237,7 +237,7 @@ void testNAInt128Arithmetic(void){
 
 
 
-void benchmarkNAInt128Arithmetic(void){
+void benchmarkNAInt128Arithmetic(void) {
   NAi128 i;
   NAu128 u;
 
@@ -263,7 +263,7 @@ void benchmarkNAInt128Arithmetic(void){
 
 
 
-void testNAInt128(void){
+void testNAInt128(void) {
   naTestFunction(testNAInt128Make);
   naTestFunction(testNAInt128Binary);
   naTestFunction(testNAInt128Comparison);
@@ -272,7 +272,7 @@ void testNAInt128(void){
 
 
 
-void benchmarkNAInt128(void){
+void benchmarkNAInt128(void) {
   printf(NA_NL "NAInt128:" NA_NL);
   benchmarkNAInt128Make();
   benchmarkNAInt128Binary();

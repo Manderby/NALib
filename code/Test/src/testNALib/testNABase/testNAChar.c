@@ -5,8 +5,8 @@
 
 
 
-void testNAChar(void){
-  naTestGroup("typedefs"){
+void testNAChar(void) {
+  naTestGroup("typedefs") {
     NAUTF8Char utf8Char = 'M';
     naTest(utf8Char == 'M');
   }
@@ -14,7 +14,7 @@ void testNAChar(void){
 
 
 
-void printNAChar(void){
+void printNAChar(void) {
   printf("NAChar.h fixed values:" NA_NL);
 
   naPrintMacro(NA_NL_UNIX);

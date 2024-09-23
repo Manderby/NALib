@@ -6,14 +6,14 @@
 
 
 static int testValue;
-void testMessageCallback(NAMessage message){
+void testMessageCallback(NAMessage message) {
 //  printf("Message recieved from object %p with data %p.\n", message.sender, message.data);
   testValue++;
 }
 
 int valueArray[3];
 size_t valuePos = 0;
-void addValueCallback(NAMessage message){
+void addValueCallback(NAMessage message) {
   int* data = (int*)message.data;
   valueArray[valuePos] = *data;
   valuePos++;
@@ -28,7 +28,7 @@ enum MySignals {
 
 
 
-void testNANotifierCreationAndSetup(){
+void testNANotifierCreationAndSetup() {
   naTestGroup("Start and Stop") {
     naTest(naGetCurrentNotifier() == NA_NULL);
     NANotifier* notifier = naAllocNotifier();
@@ -56,7 +56,7 @@ void testNANotifierCreationAndSetup(){
     naTest(topicId == 1);
 
     naTestVoid(
-      for(size_t i = 0; i < 20; ++i){
+      for(size_t i = 0; i < 20; ++i) {
         topicId = naRegisterTopic(count);
       }
     )
@@ -68,7 +68,7 @@ void testNANotifierCreationAndSetup(){
 
 
 
-void testNANotifierPublishAndSubscribe(){
+void testNANotifierPublishAndSubscribe() {
   naTestCrash(naSubscribe(NA_NULL, 1234, 1234, NA_NULL, NA_NULL));
   naTestCrash(naPublish(NA_NULL, 1234, 1234, NA_NULL));
   naTestCrash(naRunNotifier());
@@ -154,7 +154,7 @@ void testNANotifierPublishAndSubscribe(){
 
 
 
-void testNANotifier(void){
+void testNANotifier(void) {
   naTestFunction(testNANotifierCreationAndSetup);
   naTestFunction(testNANotifierPublishAndSubscribe);
 }

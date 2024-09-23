@@ -13,12 +13,12 @@
 //
 //int compare(const void* a, const void* b)
 //{
-//  if(*(double*)a > *(double*)b){return 1;}
-//  else if(*(double*)a < *(double*)b){return -1;}
+//  if(*(double*)a > *(double*)b) {return 1;}
+//  else if(*(double*)a < *(double*)b) {return -1;}
 //  return 0;  
 //}
 //
-//void testQSort(double* keys){
+//void testQSort(double* keys) {
 //  NADateTime t1, t2;
 //
 //  t1 = naMakeDateTimeNow();
@@ -30,7 +30,7 @@
 //
 //
 //
-//void testHeap(const double* keys){
+//void testHeap(const double* keys) {
 //  NAHeap heap;
 //  NADateTime t1;
 //  NADateTime t2;
@@ -41,15 +41,15 @@
 //  naInitHeap(&heap, -1, NA_HEAP_USES_DOUBLE_KEY);
 //  
 //  t1 = naMakeDateTimeNow();
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 //    naInsertHeapElementConst(&heap, &(keys[i]), &(keys[i]), NA_NULL);
 //  }
 //
 //  t2 = naMakeDateTimeNow();
 //
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 //    const double* curkey = naRemoveHeapRootConst(&heap);
-//    if(prevkey > *curkey){
+//    if(prevkey > *curkey) {
 //      printf("Error in sorting");
 //    }
 //    prevkey = *curkey;
@@ -66,7 +66,7 @@
 //
 //
 //
-//void testTree(){
+//void testTree() {
 //  NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_DOUBLE | NA_TREE_BALANCE_AVL);
 //  NATree tree;
 //  NADateTime t1, t2;
@@ -78,7 +78,7 @@
 //
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 ////    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
 //    double key = naUniformRandZE();
 ////    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
@@ -92,7 +92,7 @@
 //
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeAccessor(&tree);
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 ////    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
 ////    double key = naUniformRandZE();
 //    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
@@ -110,22 +110,22 @@
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
 //  i = 0;
-//  while(naIterateTree(&iter, NA_NULL, NA_NULL)){
+//  while(naIterateTree(&iter, NA_NULL, NA_NULL)) {
 //    const double* key;
 //    i++;
 ////    const NAInt* key = naGetTreeCurKey(&iter);
-////    if(*key < prevkey){
+////    if(*key < prevkey) {
 ////      printf("Wrong sorting: %d: %"NA_PRIi", %"NA_PRIi NA_NL, i, *key, prevkey);
 ////    }
 ////    prevkey = *key;
-////    if(i < 5){printf("%"NA_PRIi NA_NL, *key);}
+////    if(i < 5) {printf("%"NA_PRIi NA_NL, *key);}
 //
 //    key = naGetTreeCurLeafKey(&iter);
-//    if(*key < prevkey){
+//    if(*key < prevkey) {
 //      printf("Wrong sorting: %d: %f, %f" NA_NL, i, *key, prevkey);
 //    }
 //    prevkey = *key;
-////    if(i < 50){printf("%f" NA_NL, *key);}
+////    if(i < 50) {printf("%f" NA_NL, *key);}
 //  }
 //  naClearTreeIterator(&iter);
 //  t2 = naMakeDateTimeNow();
@@ -136,15 +136,15 @@
 ////  naEmptyTree(&tree);
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 ////    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
 //    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
 ////    double key = (double)i / TESTSIZE;
-//    if(i%5 != 0){
+//    if(i%5 != 0) {
 //      naAddTreeKeyConst(&iter, &key, NA_NULL, NA_TRUE);
 //    }else{
 //      NABool found = naLocateTreeKey(&iter, &key, NA_FALSE);
-//      if(found){naRemoveTreeCurLeaf(&iter);}
+//      if(found) {naRemoveTreeCurLeaf(&iter);}
 //    }
 //  }
 //  naClearTreeIterator(&iter);
@@ -159,7 +159,7 @@
 //
 //#include NA_TEST_NALIB_PATH(NAKey.h)
 //
-//void testDateTimeHeap(){
+//void testDateTimeHeap() {
 //  NAHeap heap;
 //  NADateTime t1;
 //  NADateTime t2;
@@ -169,22 +169,22 @@
 //  NADateTime* keys;
 //
 //  keys = (NADateTime*)naMalloc(TESTSIZE * sizeof(NADateTime));
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 //    keys[i] = naMakeDateTimeWithNALibSecondNumber((int64)(naUniformRandZE() * 1.E12 - 1.E11));
 //  }
 //
 //  naInitHeap(&heap, -1, NA_HEAP_USES_DATETIME_KEY);
 //  
 //  t1 = naMakeDateTimeNow();
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 //    naInsertHeapElementConst(&heap, &(keys[i]), &(keys[i]), NA_NULL);
 //  }
 //
 //  t2 = naMakeDateTimeNow();
 //
-//  for(i = 0; i < TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++) {
 //    const NADateTime* curkey = naRemoveHeapRootConst(&heap);
-//    if(NA_KEY_OP(Greater, NADateTime)(&prevkey, curkey)){
+//    if(NA_KEY_OP(Greater, NADateTime)(&prevkey, curkey)) {
 //      printf("Error in sorting");
 //    }
 //    prevkey = *curkey;
@@ -208,7 +208,7 @@
 //
 //#include <stdio.h>
 //
-//int main(void){
+//int main(void) {
 //  double* keys;
 //  int i;
 //
@@ -225,7 +225,7 @@
 //    testDateTimeHeap();
 //
 //    keys = (double*)naMalloc(TESTSIZE * sizeof(double));
-//    for(i = 0; i < TESTSIZE; i++){
+//    for(i = 0; i < TESTSIZE; i++) {
 //      keys[i] = naUniformRandZE();
 ////      keys[i] = TESTSIZE - i;
 ////      keys[i] = i;

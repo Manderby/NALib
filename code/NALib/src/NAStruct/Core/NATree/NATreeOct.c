@@ -101,7 +101,7 @@ NA_HDEF NAVertex na_GetTreeNewRootOriginOct(NAInt childExponent, NAVertex childo
 
 
 
-NA_HDEF NAVertex na_GetChildOriginOct(NAVertex parentorigin, size_t childIndex, NAInt childExponent){
+NA_HDEF NAVertex na_GetChildOriginOct(NAVertex parentorigin, size_t childIndex, NAInt childExponent) {
   double childwidth = naMakeDoubleWithExponent((int32)childExponent);
   NAVertex childorigin = parentorigin;
   if(childIndex & 1) { childorigin.x += childwidth; }
@@ -148,12 +148,12 @@ NA_HDEF NATreeLeaf* na_NewTreeLeafOct(const NATreeConfiguration* config, const v
 // ////////////////////////////
 
 
-NA_HDEF size_t na_GetChildIndexOctDouble(NATreeNode* parentNode, const void* childKey){
+NA_HDEF size_t na_GetChildIndexOctDouble(NATreeNode* parentNode, const void* childKey) {
   NATreeOctNode* octNode = (NATreeOctNode*)(parentNode);
   return na_GetKeyIndexOctDouble(na_GetOctNodeKey(octNode), childKey, &octNode->childExponent);
 }
 // The data parameter contains the leaf exponent of the children.
-NA_HDEF size_t na_GetKeyIndexOctDouble(const void* baseKey, const void* testKey, const void* data){
+NA_HDEF size_t na_GetKeyIndexOctDouble(const void* baseKey, const void* testKey, const void* data) {
   NAInt childExponent = *((NAInt*)data);
   NAVertex* baseVertex = (NAVertex*)baseKey;
   NAVertex* testVertex = (NAVertex*)testKey;
@@ -212,7 +212,7 @@ NA_HDEF NABool na_TestKeyLeafOverlapOctDouble(NATreeLeaf* leaf, const void* lowe
 
 
 // Callback. Do not call directly.
-NA_HDEF void na_DestructTreeNodeOct(NATreeNode* node){
+NA_HDEF void na_DestructTreeNodeOct(NATreeNode* node) {
   na_ClearTreeNode(node);
   naDelete(node);
 }
@@ -243,7 +243,7 @@ NA_HDEF NATreeNode* na_LocateBubbleOctWithLimits(const NATree* tree, NATreeNode*
   // If we are at a node which stores the key itself, return this node.
 //  if(tree->config->keyEqualComparer(origin, na_GetOctNodeKey(octNode))) { return node; }  // Wrong! todo
   // Otherwise, we set the limits dependent on the previous node.
-  if(na_GetTreeNodeChildIndex(node, previtem, tree->config) == 1){ // for octtrees, that is of course wrong.
+  if(na_GetTreeNodeChildIndex(node, previtem, tree->config) == 1) { // for octtrees, that is of course wrong.
     lowerLimit = na_GetOctNodeKey(octNode);
   }else{
     upperLimit = na_GetOctNodeKey(octNode);
@@ -254,7 +254,7 @@ NA_HDEF NATreeNode* na_LocateBubbleOctWithLimits(const NATree* tree, NATreeNode*
   }
   // Otherwise, go up if possible.
   item = na_GetTreeNodeItem(node);
-  if(!na_GetTreeItemIsRoot(item)){
+  if(!na_GetTreeItemIsRoot(item)) {
     return na_LocateBubbleOctWithLimits(tree, na_GetTreeItemParent(item), origin, lowerLimit, upperLimit, item);
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
@@ -273,7 +273,7 @@ NA_HDEF NATreeNode* na_LocateBubbleOct(const NATree* tree, NATreeItem* item, con
 NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf) {
   NATreeItem* leafItem = na_GetTreeLeafItem(leaf);
   NATreeNode* parent = na_GetTreeItemParent(leafItem);
-  if(na_GetTreeItemIsRoot(leafItem)){
+  if(na_GetTreeItemIsRoot(leafItem)) {
     #if NA_DEBUG
       if(tree->config->flags & NA_TREE_ROOT_NO_LEAF)
         naError("Tree root seems to be a leaf wheres there should be no leafes at the root");
@@ -364,8 +364,8 @@ NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf) {
         
       }else if(siblingCount == 1) {
         // Only 1 sibling left.
-        if(tree->config->flags & NA_TREE_ROOT_NO_LEAF){
-          if(na_GetTreeItemIsRoot(na_GetTreeNodeItem(parent))){
+        if(tree->config->flags & NA_TREE_ROOT_NO_LEAF) {
+          if(na_GetTreeItemIsRoot(na_GetTreeNodeItem(parent))) {
             // If this is the root, we need to leave this node as it is, as it
             // is desired that the root always is a node.
             break;
@@ -582,7 +582,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, con
       NAVertex smallestParentOrigin = *existingParentOrigin;
       NAInt smallestParentChildExponent = existingParentChildExponent;
       size_t smallestNewLeafIndex;
-      while(1){
+      while(1) {
         size_t smallestExistingChildIndex = tree->config->keyIndexGetter(&smallestParentOrigin, existingChildOrigin, &smallestParentChildExponent);
         smallestNewLeafIndex       = tree->config->keyIndexGetter(&smallestParentOrigin, newLeafOrigin,       &smallestParentChildExponent);
         
@@ -604,7 +604,7 @@ NA_HDEF NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, con
       // If these exponents differ, we have to create a node between the
       // existingParent and existingChild.
       
-      if(smallestParentChildExponent != existingParentChildExponent){
+      if(smallestParentChildExponent != existingParentChildExponent) {
         NATreeOctNode* smallestParent = na_NewTreeNodeOct(tree->config, smallestParentOrigin, smallestParentChildExponent);
         
         // First, attach the previous item to the new parent.

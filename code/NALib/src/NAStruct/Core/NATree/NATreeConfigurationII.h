@@ -4,7 +4,7 @@
 
 
 
-NA_HIDEF NABool na_GetTreeConfigurationConst(NATreeConfiguration* config){
+NA_HIDEF NABool na_GetTreeConfigurationConst(NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!config)
       naCrash("config is Nullptr");
@@ -12,7 +12,7 @@ NA_HIDEF NABool na_GetTreeConfigurationConst(NATreeConfiguration* config){
   return naGetFlagu32(config->flags, NA_TREE_CONFIG_DEBUG_FLAG_CONST);
 }
 
-NA_HIDEF void na_SetTreeConfigurationConst(NATreeConfiguration* config){
+NA_HIDEF void na_SetTreeConfigurationConst(NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!config)
       naCrash("config is Nullptr");
@@ -22,7 +22,7 @@ NA_HIDEF void na_SetTreeConfigurationConst(NATreeConfiguration* config){
 
 
 
-NA_IDEF void naSetTreeConfigurationUserData(NATreeConfiguration* config, NAPtr userData){
+NA_IDEF void naSetTreeConfigurationUserData(NATreeConfiguration* config, NAPtr userData) {
   #if NA_DEBUG
     if(naGetPtrConst(config->userData))
       naError("Configuration already has userData");
@@ -66,13 +66,13 @@ NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NA
 
 
 
-NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config, NAInt baseLeafExponent){
+NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config, NAInt baseLeafExponent) {
   NAInt* configData;
   #if NA_DEBUG
     if(!(config->flags & NA_TREE_QUADTREE) && !(config->flags & NA_TREE_OCTTREE))
       naError("This configuration is not for a quadtree and not for an octtree");
   #endif
-  if(config->configData){naFree(config->configData);}
+  if(config->configData) {naFree(config->configData);}
   configData = (NAInt*)naMalloc(sizeof(NAInt));
   *configData = baseLeafExponent;
   config->configData = configData;

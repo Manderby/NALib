@@ -22,7 +22,7 @@ const char* na_NativeTypesEnumStrings[] = {
   "native int256 type"
 };
 
-void printNAEncoding(void){
+void printNAEncoding(void) {
   printf("NAEncoding.h fixed values:" NA_NL);
   naPrintMacroInt          (NA_SIGN_ENCODING_UNKNOWN);
   naPrintMacroInt          (NA_SIGN_ENCODING_SIGN_MAGNITUDE);

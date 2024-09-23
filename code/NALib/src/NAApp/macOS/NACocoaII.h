@@ -239,10 +239,10 @@ NAString* naNewStringWithKeyStroke(const NAKeyStroke* keyStroke) {
                 
   UInt32 modifierKeyState = 0;
   
-  if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_SHIFT)){ modifierKeyState |= shiftKey; }
-  if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_CONTROL)){ modifierKeyState |= controlKey; }
-  if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_OPTION)){ modifierKeyState |= optionKey; }
-  if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_COMMAND)){ modifierKeyState |= cmdKey; }
+  if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_SHIFT)) { modifierKeyState |= shiftKey; }
+  if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_CONTROL)) { modifierKeyState |= controlKey; }
+  if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_OPTION)) { modifierKeyState |= optionKey; }
+  if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_COMMAND)) { modifierKeyState |= cmdKey; }
 
   UCKeyTranslate(
     keyboardLayout,
@@ -549,7 +549,7 @@ NA_DEF void naDeallocCursorImage(NACursorImage* image) {
 
 
 NA_DEF void naActivateCursorImage(const NACursorImage* image) {
-  if(!image){
+  if(!image) {
     [[NSCursor arrowCursor] set];
   }else{
     [(NSCursor*)NA_COCOA_PTR_C_TO_OBJC(image) set];

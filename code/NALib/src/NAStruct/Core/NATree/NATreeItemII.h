@@ -11,7 +11,7 @@
 
 
 
-NA_HIDEF void na_InitTreeItem(NATreeItem* item){
+NA_HIDEF void na_InitTreeItem(NATreeItem* item) {
   // We do not initialize the parent. Code must use na_SetTreeItemParent.
   #if NA_DEBUG
     if(!item)
@@ -38,7 +38,7 @@ NA_HIDEF void na_ClearTreeItem(NATreeItem* item) {
 
 
 
-NA_HIDEF NATreeNode* na_GetTreeItemParent(const NATreeItem* item){
+NA_HIDEF NATreeNode* na_GetTreeItemParent(const NATreeItem* item) {
   #if NA_DEBUG
     if(!item)
       naCrash("item is nullptr");
@@ -50,7 +50,7 @@ NA_HIDEF NATreeNode* na_GetTreeItemParent(const NATreeItem* item){
 
 
 
-NA_HIDEF void na_SetTreeItemParent(NATreeItem* item, NATreeNode* parent){
+NA_HIDEF void na_SetTreeItemParent(NATreeItem* item, NATreeNode* parent) {
   #if NA_DEBUG
     if(!item)
       naCrash("item is nullptr");
@@ -60,7 +60,7 @@ NA_HIDEF void na_SetTreeItemParent(NATreeItem* item, NATreeNode* parent){
 
 
 
-NA_HIDEF NABool na_GetTreeItemIsRoot(const NATreeItem* item){
+NA_HIDEF NABool na_GetTreeItemIsRoot(const NATreeItem* item) {
   #if NA_DEBUG
     if(!item)
       naCrash("item is nullptr");
@@ -70,21 +70,21 @@ NA_HIDEF NABool na_GetTreeItemIsRoot(const NATreeItem* item){
 
 
 
-NA_HIDEF size_t na_GetTreeItemIterCount(const NATreeItem* item){
+NA_HIDEF size_t na_GetTreeItemIterCount(const NATreeItem* item) {
   #if NA_DEBUG
     if(!item)
       naCrash("item is nullptr");
   #endif
   return item->iterCount;
 }
-NA_HIDEF void na_IncTreeItemIterCount(NATreeItem* item){
+NA_HIDEF void na_IncTreeItemIterCount(NATreeItem* item) {
   #if NA_DEBUG
     if(!item)
       naCrash("item is nullptr");
   #endif
   item->iterCount++;
 }
-NA_HIDEF void na_DecTreeItemIterCount(NATreeItem* item){
+NA_HIDEF void na_DecTreeItemIterCount(NATreeItem* item) {
   #if NA_DEBUG
     if(!item)
       naCrash("item is nullptr");
@@ -100,7 +100,7 @@ NA_HIDEF void na_DecTreeItemIterCount(NATreeItem* item){
 // Node
 // /////////////////////////////////////
 
-NA_HIDEF NATreeItem* na_GetTreeNodeItem(NATreeNode* node){
+NA_HIDEF NATreeItem* na_GetTreeNodeItem(NATreeNode* node) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -110,7 +110,7 @@ NA_HIDEF NATreeItem* na_GetTreeNodeItem(NATreeNode* node){
 
 
 
-NA_HIDEF void* na_GetTreeNodeKey(NATreeNode* node, const NATreeConfiguration* config){
+NA_HIDEF void* na_GetTreeNodeKey(NATreeNode* node, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -125,7 +125,7 @@ NA_HIDEF void* na_GetTreeNodeKey(NATreeNode* node, const NATreeConfiguration* co
 
 
 
-NA_HIDEF NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* node){
+NA_HIDEF NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* node) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -140,7 +140,7 @@ NA_HIDEF NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* node){
 
 
 
-NA_HIDEF NAPtr na_GetTreeNodeData(NATreeNode* node, const NATreeConfiguration* config){
+NA_HIDEF NAPtr na_GetTreeNodeData(NATreeNode* node, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -155,7 +155,7 @@ NA_HIDEF NAPtr na_GetTreeNodeData(NATreeNode* node, const NATreeConfiguration* c
 
 
 
-NA_HIDEF void na_SetTreeNodeData(NATreeNode* node, NAPtr data, const NATreeConfiguration* config){
+NA_HIDEF void na_SetTreeNodeData(NATreeNode* node, NAPtr data, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -170,7 +170,7 @@ NA_HIDEF void na_SetTreeNodeData(NATreeNode* node, NAPtr data, const NATreeConfi
 
 
 
-NA_HIDEF NABool na_GetNodeChildIsLeaf(NATreeNode* node, size_t childIndex, const NATreeConfiguration* config){
+NA_HIDEF NABool na_GetNodeChildIsLeaf(NATreeNode* node, size_t childIndex, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -184,7 +184,7 @@ NA_HIDEF NABool na_GetNodeChildIsLeaf(NATreeNode* node, size_t childIndex, const
 
 
 
-NA_HIDEF void na_SetNodeChildIsLeaf(NATreeNode* node, size_t childIndex, NABool isleaf, const NATreeConfiguration* config){
+NA_HIDEF void na_SetNodeChildIsLeaf(NATreeNode* node, size_t childIndex, NABool isleaf, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -198,7 +198,7 @@ NA_HIDEF void na_SetNodeChildIsLeaf(NATreeNode* node, size_t childIndex, NABool 
 
 
 
-NA_HIDEF NATreeItem* na_GetTreeNodeChild(NATreeNode* node, size_t childIndex, const NATreeConfiguration* config){
+NA_HIDEF NATreeItem* na_GetTreeNodeChild(NATreeNode* node, size_t childIndex, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -214,7 +214,7 @@ NA_HIDEF NATreeItem* na_GetTreeNodeChild(NATreeNode* node, size_t childIndex, co
 
 
 
-NA_HIDEF void na_SetTreeNodeChild(NATreeNode* node, NATreeItem* child, size_t childIndex, NABool isChildLeaf, const NATreeConfiguration* config){
+NA_HIDEF void na_SetTreeNodeChild(NATreeNode* node, NATreeItem* child, size_t childIndex, NABool isChildLeaf, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -232,7 +232,7 @@ NA_HIDEF void na_SetTreeNodeChild(NATreeNode* node, NATreeItem* child, size_t ch
 
 
 
-NA_HIDEF void na_InitTreeNode(NATreeNode* node, const void* key, const NATreeConfiguration* config){
+NA_HIDEF void na_InitTreeNode(NATreeNode* node, const void* key, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -243,15 +243,15 @@ NA_HIDEF void na_InitTreeNode(NATreeNode* node, const void* key, const NATreeCon
   na_InitTreeItem(na_GetTreeNodeItem(node));
   node->flags = 0;
 
-  if(config->keyAssigner){
+  if(config->keyAssigner) {
     config->keyAssigner(na_GetTreeNodeKey(node, config), key);
   }
 
-  for(size_t i = 0; i < config->abi.childPerNode; ++i){
+  for(size_t i = 0; i < config->abi.childPerNode; ++i) {
     na_GetTreeNodeChildStorage(node)[i] = NA_NULL;
   }
 
-  if(config->nodeDataConstructor){
+  if(config->nodeDataConstructor) {
     na_SetTreeNodeData(node, config->nodeDataConstructor(&key), config);
   }else{
     na_SetTreeNodeData(node, naMakePtrNull(), config);
@@ -260,7 +260,7 @@ NA_HIDEF void na_InitTreeNode(NATreeNode* node, const void* key, const NATreeCon
 
 
 
-NA_HIDEF void na_ClearTreeNode(NATreeNode* node){
+NA_HIDEF void na_ClearTreeNode(NATreeNode* node) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -270,7 +270,7 @@ NA_HIDEF void na_ClearTreeNode(NATreeNode* node){
 
 
 
-NA_HIDEF void na_DestructTreeNode(NATreeNode* node, NABool recursive, const NATreeConfiguration* config){
+NA_HIDEF void na_DestructTreeNode(NATreeNode* node, NABool recursive, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -278,11 +278,11 @@ NA_HIDEF void na_DestructTreeNode(NATreeNode* node, NABool recursive, const NATr
       naCrash("config is nullptr");
   #endif
   
-  if(recursive){
-    for(size_t i = 0; i < config->abi.childPerNode; ++i){
+  if(recursive) {
+    for(size_t i = 0; i < config->abi.childPerNode; ++i) {
       NATreeItem* child = na_GetTreeNodeChild(node, i, config);
-      if(child){
-        if(na_GetNodeChildIsLeaf(node, i, config)){
+      if(child) {
+        if(na_GetNodeChildIsLeaf(node, i, config)) {
           na_DestructTreeLeaf((NATreeLeaf*)child, config);
         }else{
           na_DestructTreeNode((NATreeNode*)child, NA_TRUE, config);
@@ -291,7 +291,7 @@ NA_HIDEF void na_DestructTreeNode(NATreeNode* node, NABool recursive, const NATr
     }
   }
 
-  if(config->nodeDataDestructor){
+  if(config->nodeDataDestructor) {
     config->nodeDataDestructor(na_GetTreeNodeData(node, config));
   }
 
@@ -300,7 +300,7 @@ NA_HIDEF void na_DestructTreeNode(NATreeNode* node, NABool recursive, const NATr
 
 
 
-NA_HDEF size_t na_GetTreeNodeChildIndex(NATreeNode* node, NATreeItem* child, const NATreeConfiguration* config){
+NA_HDEF size_t na_GetTreeNodeChildIndex(NATreeNode* node, NATreeItem* child, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
@@ -316,7 +316,7 @@ NA_HDEF size_t na_GetTreeNodeChildIndex(NATreeNode* node, NATreeItem* child, con
   // search until childPerNode - 1 and just return the last possibility in
   // good belief.
   size_t retValue;
-  for(retValue = 0; retValue < config->abi.childPerNode - 1; retValue++){
+  for(retValue = 0; retValue < config->abi.childPerNode - 1; retValue++) {
     if(childs[retValue] == child)
       break;
   }
@@ -402,7 +402,7 @@ NA_HIDEF NAPtr na_ConstructLeafData(const void* key, NAPtr content, const NATree
 
 
 
-NA_HIDEF void* na_GetTreeLeafKey(NATreeLeaf* leaf, const NATreeConfiguration* config){
+NA_HIDEF void* na_GetTreeLeafKey(NATreeLeaf* leaf, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!config)
       naCrash("config is nullptr");
@@ -417,7 +417,7 @@ NA_HIDEF void* na_GetTreeLeafKey(NATreeLeaf* leaf, const NATreeConfiguration* co
 
 
 
-NA_HIDEF NAPtr na_GetTreeLeafData(NATreeLeaf* leaf, const NATreeConfiguration* config){
+NA_HIDEF NAPtr na_GetTreeLeafData(NATreeLeaf* leaf, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!config)
       naCrash("config is nullptr");
@@ -432,7 +432,7 @@ NA_HIDEF NAPtr na_GetTreeLeafData(NATreeLeaf* leaf, const NATreeConfiguration* c
 
 
 
-NA_HIDEF void na_SetTreeLeafData(NATreeLeaf* leaf, NAPtr newcontent, const NATreeConfiguration* config){
+NA_HIDEF void na_SetTreeLeafData(NATreeLeaf* leaf, NAPtr newcontent, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!config)
       naCrash("config is nullptr");
