@@ -6,6 +6,9 @@
 
 
 NA_IDEF NABool naGetFlagu32(uint32 flags, uint32 mask) {
+  return ((flags & mask) == mask);
+}
+NA_IDEF NABool naGetFlagu32Or(uint32 flags, uint32 mask) {
   return ((flags & mask) != 0);
 }
 NA_IDEF void naSetFlagu32(uint32* flags, uint32 mask, NABool set) {

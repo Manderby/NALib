@@ -25,10 +25,10 @@ void printNAStruct(void) {
 }
 
 void testNAStruct(void) {
-  //naTestFunction(testNABuffer);
+  naTestFunction(testNABuffer);
   naTestFunction(testNAHeap);
-  //naTestFunction(testNAStack);
-  //naTestFunction(testNATree);
+  naTestFunction(testNAStack);
+  naTestFunction(testNATree);
 }
 
 void benchmarkNAStruct(void) {

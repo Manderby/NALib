@@ -139,7 +139,7 @@ NA_HDEF void na_SetUIElementMouseInside(NA_UIElement* elem, NABool inside) {
   if(naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE) == inside)
     naError("mouse inside flag already set");
   #endif
-  naSetFlagu32(&elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE, inside);
+  naGetFlagu32(&elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE, inside);
 }
 
 

@@ -17,10 +17,11 @@ void testFlags(void) {
 
   naTestGroup("Querying uint32 flags") {
     flagsu = 0xcccccccc;
-    naTest(!naGetFlagu32(flagsu, testFlagu1));
-    naTest( naGetFlagu32(flagsu, testFlagu2));
-    naTest(!naGetFlagu32(flagsu, testMultiFlagu1));
-    naTest( naGetFlagu32(flagsu, testMultiFlagu2));
+    naTest(!naGetFlagu32  (flagsu, testFlagu1));
+    naTest( naGetFlagu32  (flagsu, testFlagu2));
+    naTest(!naGetFlagu32  (flagsu, testMultiFlagu1));
+    naTest( naGetFlagu32Or(flagsu, testMultiFlagu1));
+    naTest( naGetFlagu32  (flagsu, testMultiFlagu2));
   }
 
   naTestGroup("Setting uint32 flags") {

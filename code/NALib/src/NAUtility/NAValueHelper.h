@@ -19,16 +19,18 @@
 
 
 
-// Tests flags for the specified mask and returns NA_TRUE if at least one of
-// the bits is set.
-NA_IAPI NABool naGetFlagu32(uint32 flags, uint32 mask);
+// Tests flags for the specified mask and returns NA_TRUE if all of the
+// masked bits are set. When using the Or variant, NA_TRUE is returned if
+// at least one of the bits is set.
+NA_IAPI NABool naGetFlagu32  (uint32 flags, uint32 mask);
+NA_IAPI NABool naGetFlagu32Or(uint32 flags, uint32 mask);
 
 // Sets the bits of flags indicated by the mask either to 0 or 1 according to
 // the boolean parameter set.
 NA_IAPI void naSetFlagu32(uint32* flags, uint32 mask, NABool set);
 
-// Toggles the bits of flags indicated by the mask and returns NA_TRUE if the
-// at least one of the resulting bits (indicated by mask) is set.
+// Toggles the bits of flags indicated by the mask and returns NA_TRUE if 
+// all of the resulting bits (indicated by mask) are set.
 NA_IAPI NABool naToggleFlagu32(uint32* flags, uint32 mask);
 
 

@@ -42,10 +42,10 @@ void printNALib(void) {
 }
 
 void testNALib(void) {
-  //naTestFunction(testNABase);
-  //naTestFunction(testNAMath);
-  //naTestFunction(testNACore);
-  //naTestFunction(testNAUtility);
+  naTestFunction(testNABase);
+  naTestFunction(testNAMath);
+  naTestFunction(testNACore);
+  naTestFunction(testNAUtility);
   naTestFunction(testNAStruct);
 }
 
@@ -81,7 +81,7 @@ int main(int argc, const char** argv) {
   #endif
 
   if(testStartSuccessful) {
-    naSetTestPrintsAllTests(NA_TRUE);
+    naSetTestPrintsAllTests(NA_FALSE);
     naSetTestPrintsExpression(NA_FALSE);
     naSetTestPrintsFullGroupName(NA_FALSE);
     testNALib();
