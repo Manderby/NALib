@@ -7,6 +7,7 @@
 
 
 #include "../NABase/NABase.h"
+#include <stdlib.h>
 
 
 // A heap is a datastructure, storing arbirtrary elements with a key value.

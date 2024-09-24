@@ -5,6 +5,7 @@
 
 
 
+
 // The NAHeap structure. This would normally be hidden to the user.
 // Note that this implementation uses a lot of function pointers. See
 // implementation file for more information.

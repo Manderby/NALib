@@ -74,15 +74,19 @@ NA_HIDEF size_t na_GetTreeItemIterCount(const NATreeItem* item) {
   #if NA_DEBUG
     if(!item)
       naCrash("item is nullptr");
+    return item->iterCount;
+  #else
+    return 0;
   #endif
-  return item->iterCount;
 }
 NA_HIDEF void na_IncTreeItemIterCount(NATreeItem* item) {
   #if NA_DEBUG
     if(!item)
       naCrash("item is nullptr");
+    item->iterCount++;
+  #else
+    return 0;
   #endif
-  item->iterCount++;
 }
 NA_HIDEF void na_DecTreeItemIterCount(NATreeItem* item) {
   #if NA_DEBUG
@@ -90,8 +94,10 @@ NA_HIDEF void na_DecTreeItemIterCount(NATreeItem* item) {
       naCrash("item is nullptr");
     if(item->iterCount == 0)
       naError("Too many iterator decrements");
+    item->iterCount--;
+  #else
+    return 0;
   #endif
-  item->iterCount--;
 }
 
 

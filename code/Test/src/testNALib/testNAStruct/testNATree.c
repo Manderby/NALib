@@ -175,12 +175,14 @@ void testTreeItems() {
     naTestVoid(na_SetTreeItemParent(&item, &node));
     naTest(na_GetTreeItemParent(&item) == &node);
     
-    naTest(na_GetTreeItemIterCount(&item) == 0);
-    naTestVoid(na_IncTreeItemIterCount(&item));
-    naTest(na_GetTreeItemIterCount(&item) == 1);
-    naTestVoid(na_DecTreeItemIterCount(&item));
-    naTest(na_GetTreeItemIterCount(&item) == 0);
-    naTestError(na_DecTreeItemIterCount(&item));
+    #if NA_DEBUG
+      naTest(na_GetTreeItemIterCount(&item) == 0);
+      naTestVoid(na_IncTreeItemIterCount(&item));
+      naTest(na_GetTreeItemIterCount(&item) == 1);
+      naTestVoid(na_DecTreeItemIterCount(&item));
+      naTest(na_GetTreeItemIterCount(&item) == 0);
+      naTestError(na_DecTreeItemIterCount(&item));
+    #endif 
   }
   
   naTestGroup("Node") {
