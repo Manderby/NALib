@@ -82,7 +82,7 @@ NA_IDEF NAInt naGetHeapCount(const NAHeap* heap) {
     if(!heap)
       naCrash("heap is Null-Pointer.");
   #endif
-  return heap->count;
+  return (NAInt)heap->count;
 }
 
 
@@ -91,7 +91,7 @@ NA_IDEF NAInt naGetHeapMaxCount(const NAHeap* heap) {
     if(!heap)
       naCrash("heap is Null-Pointer.");
   #endif
-  return heap->maxCount;
+  return (NAInt)heap->maxCount;
 }
 
 

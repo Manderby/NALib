@@ -116,9 +116,14 @@ NA_HDEF void na_GrowHeap(NAHeap* heap) {
     if(!heap->autoGrow)
       naError("Heap defined with a fixed count of elements.");
   #endif
-  ptrdiff_t entrySize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
-  void* newData = naMalloc((heap->maxCount * 2 + 1) * (size_t)entrySize);
-  naCopyn(newData, heap->data, (size_t)((heap->count + 1) * entrySize));
+  ptrdiff_t entryDiff = (NAByte*)(heap->root) - (NAByte*)(heap->data);
+  #if NA_DEBUG
+    if(entryDiff <= 0)
+      naError("Invalid entry computation.");
+  #endif
+  size_t entrySize = (size_t)entryDiff;
+  void* newData = naMalloc((heap->maxCount * 2 + 1) * entrySize);
+  naCopyn(newData, heap->data, (heap->count + 1) * entrySize);
   naFree(heap->data);
   heap->data = newData;
   heap->root = (NAByte*)(heap->data) + entrySize;
@@ -132,10 +137,15 @@ NA_DEF void naShrinkHeapIfNecessary(NAHeap* heap) {
     if(!heap->autoGrow)
       naError("Heap defined with a fixed count of elements.");
   #endif
-  if((NAInt)heap->count < heap->maxCount / 4) {
-    ptrdiff_t entrySize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
-    void* newData = naMalloc((heap->maxCount / 2 + 1) * (size_t)entrySize);
-    naCopyn(newData, heap->data, (size_t)((heap->count + 1) * entrySize));
+  if(heap->count < heap->maxCount / 4) {
+    ptrdiff_t entryDiff = (NAByte*)(heap->root) - (NAByte*)(heap->data);
+    #if NA_DEBUG
+      if(entryDiff <= 0)
+        naError("Invalid entry computation.");
+    #endif
+    size_t entrySize = (size_t)entryDiff;
+    void* newData = naMalloc((heap->maxCount / 2 + 1) * entrySize);
+    naCopyn(newData, heap->data, (heap->count + 1) * entrySize);
     naFree(heap->data);
     heap->data = newData;
     heap->root = (NAByte*)(heap->data) + entrySize;
@@ -150,15 +160,15 @@ NA_HDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, con
   NAHeapEntry* theData;
   NA_UNUSED(backPointer);
   #if NA_DEBUG
-    if(!heap->autoGrow && ((NAInt)heap->count == heap->maxCount))
+    if(!heap->autoGrow && (heap->count == heap->maxCount))
       naCrash("Heap overflow.");
     if(backPointer)
       naError("Heap dos not store backPointers. packpointer should be Null. Ignored.");
   #endif
-  if(heap->autoGrow && ((NAInt)heap->count == heap->maxCount)) {
+  if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
   }
-  newIndex = heap->moveDown(heap, key, heap->count + 1);
+  newIndex = heap->moveDown(heap, key, (NAInt)(heap->count + 1));
   theData = (NAHeapEntry*)(heap->data);
   theData[newIndex].ptr = naMakePtrWithDataConst(data);
   theData[newIndex].key = key;
@@ -171,13 +181,13 @@ NA_HDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const
   NAInt newIndex;
   NAHeapBackEntry* theData;
   #if NA_DEBUG
-    if(!heap->autoGrow && ((NAInt)heap->count == heap->maxCount))
+    if(!heap->autoGrow && (heap->count == heap->maxCount))
       naCrash("Heap overflow.");
   #endif
-  if(heap->autoGrow && ((NAInt)heap->count == heap->maxCount)) {
+  if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
   }
-  newIndex = heap->moveDown(heap, key, heap->count + 1);
+  newIndex = heap->moveDown(heap, key, (NAInt)(heap->count + 1));
   theData = (NAHeapBackEntry*)(heap->data);
   theData[newIndex].ptr = naMakePtrWithDataConst(data);
   theData[newIndex].key = key;
@@ -201,15 +211,15 @@ NA_HDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const v
   NAHeapEntry* theData;
   NA_UNUSED(backPointer);
   #if NA_DEBUG
-    if(!heap->autoGrow && ((NAInt)heap->count == heap->maxCount))
+    if(!heap->autoGrow && (heap->count == heap->maxCount))
       naCrash("Heap overflow.");
     if(backPointer)
       naError("Heap does not store backPointers. packpointer should be Null. Ignored.");
   #endif
-  if(heap->autoGrow && ((NAInt)heap->count == heap->maxCount)) {
+  if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
   }
-  newIndex = heap->moveDown(heap, key, heap->count + 1);
+  newIndex = heap->moveDown(heap, key, (NAInt)(heap->count + 1));
   theData = (NAHeapEntry*)(heap->data);
   theData[newIndex].ptr = naMakePtrWithDataMutable(data);
   theData[newIndex].key = key;
@@ -222,13 +232,13 @@ NA_HDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const voi
   NAInt newIndex;
   NAHeapBackEntry* theData;
   #if NA_DEBUG
-    if(!heap->autoGrow && ((NAInt)heap->count == heap->maxCount))
+    if(!heap->autoGrow && (heap->count == heap->maxCount))
       naCrash("Heap overflow.");
   #endif
-  if(heap->autoGrow && ((NAInt)heap->count == heap->maxCount)) {
+  if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
   }
-  newIndex = heap->moveDown(heap, key, heap->count + 1);
+  newIndex = heap->moveDown(heap, key, (NAInt)(heap->count + 1));
   theData = (NAHeapBackEntry*)(heap->data);
   theData[newIndex].ptr = naMakePtrWithDataMutable(data);
   theData[newIndex].key = key;
@@ -337,7 +347,7 @@ NA_HDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, NAInt backPointer) {
   NAHeapBackEntry* theData = (NAHeapBackEntry*)(heap->data);
   const void* returnvalue;
   #if NA_DEBUG
-    if(backPointer > heap->count)
+    if(backPointer > (NAInt)heap->count)
       naError("backPointer makes no sense.");
     if(backPointer == 0)
       naError("backPointer says that element is not part of the heap.");
@@ -369,7 +379,7 @@ NA_HDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, NAInt backPointer) {
   NAHeapBackEntry* theData = (NAHeapBackEntry*)(heap->data);
   void* returnvalue;
   #if NA_DEBUG
-    if(backPointer > heap->count)
+    if(backPointer > (NAInt)heap->count)
       naError("backPointer makes no sense.");
     if(backPointer == 0)
       naError("backPointer says that element is not part of the heap.");
@@ -401,7 +411,7 @@ NA_HDEF void na_UpdateHeapElementBack(NAHeap* heap, NAInt backPointer) {
   NAHeapBackEntry tmp;
   NAInt curIndex;
   #if NA_DEBUG
-    if(backPointer > heap->count)
+    if(backPointer > (NAInt)heap->count)
       naError("backPointer makes no sense.");
     if(backPointer == 0)
       naError("backPointer says that element is not part of the heap.");

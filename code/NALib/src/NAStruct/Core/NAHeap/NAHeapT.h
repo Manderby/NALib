@@ -48,10 +48,10 @@ NA_HDEF NAInt NA_T3(na_HeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T
   // as long as there is at least one possible position... 
   while(NA_TRUE) {
   
-    if(indexr > heap->count) {
+    if(indexr > (NAInt)heap->count) {
       // There is at least one of the elements out of bounds.
       
-      if(indexl <= heap->count) {
+      if(indexl <= (NAInt)heap->count) {
         // only the left element must be checked. 
         if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexl].key, key)) {
           entries[curIndex] = entries[indexl];
