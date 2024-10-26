@@ -268,7 +268,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
 
   naAddUIKeyboardShortcut(
     winapiWindow,
-    naNewKeyStroke(NA_KEYCODE_TAB, 0),
+    naNewKeyStroke(NA_KEYCODE_TAB, NA_KEY_MODIFIER_NONE),
     naHandleWindowTabOrder,
     NA_NULL);
   naAddUIKeyboardShortcut(

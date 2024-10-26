@@ -69,7 +69,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size) {
 
   naAddUIKeyboardShortcut(
     winapiTextBox,
-    naNewKeyStroke(NA_KEYCODE_TAB, 0),
+    naNewKeyStroke(NA_KEYCODE_TAB, NA_KEY_MODIFIER_NONE),
     naHandleTextBoxTabOrder,
     NA_NULL);
   naAddUIKeyboardShortcut(

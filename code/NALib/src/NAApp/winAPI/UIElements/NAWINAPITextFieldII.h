@@ -147,7 +147,7 @@ NA_DEF NATextField* naNewTextField(double width) {
     NA_NULL);
   naAddUIKeyboardShortcut(
     winapiTextField,
-    naNewKeyStroke(NA_KEYCODE_TAB, 0),
+    naNewKeyStroke(NA_KEYCODE_TAB, NA_KEY_MODIFIER_NONE),
     naHandleTextFieldTabOrder,
     NA_NULL);
   naAddUIKeyboardShortcut(

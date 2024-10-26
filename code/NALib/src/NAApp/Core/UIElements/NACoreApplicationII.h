@@ -34,7 +34,7 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
   app->systemFont = NA_NULL;
 
   app->mouseStatus = na_AllocMouseStatus();
-  app->keyStroke = naNewKeyStroke(NA_KEYCODE_ESCAPE, 0); // 0 is not defined, just use esc.
+  app->keyStroke = naNewKeyStroke(NA_KEYCODE_ESCAPE, NA_KEY_MODIFIER_NONE); // 0 is not defined, just use esc.
   
   app->flags = 0;
   app->flags |= NA_APPLICATION_FLAG_RUNNING;
