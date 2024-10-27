@@ -18,7 +18,7 @@ NA_HDEF void* na_GetUINALibEquivalent(void* nativePtr) {
 
 NA_HDEF void na_InitSystemUIElement(NA_UIElement* uiElement, void* nativePtr) {
   objc_setAssociatedObject(
-    nativePtr,
+    NA_COCOA_PTR_C_TO_OBJC(nativePtr),
     &na_naUIElementKey,
     NA_COCOA_PTR_C_TO_OBJC(uiElement),
     OBJC_ASSOCIATION_ASSIGN);
@@ -30,7 +30,7 @@ NA_HAPI void na_ClearSystemUIElement(void* nativePtr) {
   // note: do not use objc_removeAssociatedObject as this will not use the key
   // to identify the poper associated object.
   objc_setAssociatedObject(
-    nativePtr,
+    NA_COCOA_PTR_C_TO_OBJC(nativePtr),
     &na_naUIElementKey,
     nil,
     OBJC_ASSOCIATION_ASSIGN);
