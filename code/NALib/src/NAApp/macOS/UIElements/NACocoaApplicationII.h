@@ -116,6 +116,9 @@ NA_DEF void naStartApplication(
   [NSApplication sharedApplication];
   NAApplication* app = na_NewApplication();
 
+  NANotifier* notifier = naAllocNotifier();
+  naSetCurrentNotifier(notifier);
+
   // Put an autorelease pool in place for the startup sequence.
   #if !NA_MACOS_USES_ARC
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
@@ -144,9 +147,6 @@ NA_DEF void naStartApplication(
   [nativeApp setPostStartupFunction: postStartup];
   [nativeApp setPostStartupArg: arg];
   [NSApp setDelegate:nativeApp];
-
-  NANotifier* notifier = naAllocNotifier();
-  naSetCurrentNotifier(notifier);
 
   // Start the event loop.
   NSDate* distantFuture = [NSDate distantFuture];
