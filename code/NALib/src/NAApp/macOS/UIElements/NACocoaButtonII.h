@@ -433,6 +433,9 @@ NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImage
 
 
 NA_DEF void na_DestructCocoaButton(NACocoaButton* cocoaButton) {
+  if(cocoaButton->button.imageSet) {
+    na_ReleaseMouseTracking(&cocoaButton->button.uiElement);
+  }
   na_ClearButton((NAButton*)cocoaButton);
 }
 

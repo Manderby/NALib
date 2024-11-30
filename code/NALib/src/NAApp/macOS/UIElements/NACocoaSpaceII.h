@@ -99,6 +99,7 @@
     NSRect frame = [[self window] frame];
     frame.origin.x += curMousePos.x - originMousePos.x;
     frame.origin.y += curMousePos.y - originMousePos.y;
+
     [[self window] setFrame:frame display:YES];
   }else{
     [super mouseDragged:event];
