@@ -367,11 +367,13 @@ NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor) {
   while(cur != &list->sentinel) {
     #if NA_DEBUG
       NAListElement* next = cur->next;
+      cur->iterCount++; // Trigger iterator testing during debug
     #endif
     accessor(naGetPtrConst(cur->ptr));
     #if NA_DEBUG
       if(cur->next != next)
         naError("List changed during iteration. Unexpected behaviour.");
+      cur->iterCount--; // Untrigger iterator testing during debug
     #endif
     cur = cur->next;
   }
@@ -390,11 +392,13 @@ NA_IDEF void naForeachListMutable(const NAList* list, NAMutator mutator) {
   while(cur != &list->sentinel) {
     #if NA_DEBUG
       NAListElement* next = cur->next;
+      cur->iterCount++; // Trigger iterator testing during debug
     #endif
     mutator(naGetPtrMutable(cur->ptr));
     #if NA_DEBUG
       if(cur->next != next)
         naError("List changed during iteration. Unexpected behaviour.");
+      cur->iterCount--; // Untrigger iterator testing during debug
     #endif
     cur = cur->next;
   }
@@ -859,6 +863,10 @@ NA_IDEF void naRemoveListCurConst(NAListIterator* iter, NABool advance) {
       naError("List is empty");
     if(iter->cur == &list->sentinel)
       naError("No current internal pointer is set. Major memory corruption expected...");
+    if(iter->cur->iterCount == 0)
+      naError("No iterators registered at element which iterator is located at now");
+    if(iter->cur->iterCount > 1)
+      naError("Other iterators registered at element which iterator is located at now");
   #endif
   newelem = advance ? iter->cur->next : iter->cur->prev;
   #if NA_DEBUG
@@ -890,6 +898,8 @@ NA_IDEF void* naRemoveListCurMutable(NAListIterator* iter, NABool advance) {
       naError("No current internal pointer is set. Major memory corruption expected...");
     if(iter->cur->iterCount == 0)
       naError("No iterators registered at element which iterator is located at now");
+    if(iter->cur->iterCount > 1)
+      naError("Other iterators registered at element which iterator is located at now");
   #endif
   newelem = advance ? iter->cur->next : iter->cur->prev;
   #if NA_DEBUG

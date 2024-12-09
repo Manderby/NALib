@@ -63,7 +63,11 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
       naCrash("No Application running");
   #endif
 
-  naForeachListMutable(&na_App->windows, (NAMutator)naDelete);
+  // An NAWindow removes itself from the windows array automatically. So
+  // no naForeach is allowed here.
+  while(!naIsListEmpty(&na_App->windows)) {
+    naDelete(naGetListFirstMutable(&na_App->windows));
+  }
   naClearList(&na_App->windows);
 
   naStopTranslator();
