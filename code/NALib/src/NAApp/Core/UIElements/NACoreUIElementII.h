@@ -30,13 +30,36 @@ NA_HDEF void na_InitCoreUIElement(NA_UIElement* uiElement, NAUIElementType eleme
 
 
 
+// Takes ownership of shortcut
+NA_KeyboardShortcutReaction* na_AllocKeyboardShortcutReaction(
+  void* controller,
+  NAKeyStroke* shortcut,
+  NAReactionCallback callback)
+{
+  NA_KeyboardShortcutReaction* keyReaction;
+  keyReaction = naAlloc(NA_KeyboardShortcutReaction);
+  keyReaction->controller = controller;
+  keyReaction->shortcut = shortcut; // takes ownership
+  keyReaction->callback = callback;
+  return keyReaction;
+}
+
+
+
+void na_DeallocKeyboardShortcutReaction(NA_KeyboardShortcutReaction* keyReaction) {
+  naDelete(keyReaction->shortcut);
+  naFree(keyReaction);
+}
+
+
+
 NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
   if(uiElement->mouseTracking) {
     na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
   }
   
   naClearList(&uiElement->reactions, (NAMutator)naFree);
-  naClearList(&uiElement->shortcuts, (NAMutator)naFree);
+  naClearList(&uiElement->shortcuts, (NAMutator)na_DeallocKeyboardShortcutReaction);
   
   na_ClearSystemUIElement(uiElement->nativePtr);
   na_ClearUINativePtr(uiElement->nativePtr);
@@ -350,18 +373,17 @@ NA_DEF void naAddUIKeyboardShortcut(
   NAReactionCallback callback,
   void* controller)
 {
-  NA_KeyboardShortcutReaction* keyReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
   //#if NA_DEBUG
   //  if((naGetUIElementType(uiElement) != NA_UI_APPLICATION) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
   //    naError("Currently, only applications and windows are allowed as uiElement. Use naGetApplication() for the app.");
   //#endif
-  keyReaction = naAlloc(NA_KeyboardShortcutReaction);
-  keyReaction->controller = controller;
-  keyReaction->shortcut = shortcut; // takes ownership
-  keyReaction->callback = callback;
-  naAddListLastMutable(&element->shortcuts, keyReaction);
+  naAddListLastMutable(&element->shortcuts, na_AllocKeyboardShortcutReaction(
+    controller,
+    shortcut, // takes ownership
+    callback));
 }
+
 
 
 
