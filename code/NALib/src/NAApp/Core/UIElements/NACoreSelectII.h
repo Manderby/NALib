@@ -9,6 +9,7 @@
 NA_HDEF void na_InitSelect(NASelect* select, void* nativePtr) {
   na_InitCoreUIElement(&select->uiElement, NA_UI_SELECT, nativePtr);
   naInitList(&select->childs);
+  select->font = naCreateSystemFont();
 }
 
 
@@ -17,6 +18,7 @@ NA_HDEF void na_ClearSelect(NASelect* select) {
   naForeachListMutable(&select->childs, (NAMutator)naDelete);
   naClearList(&select->childs);
   na_ClearCoreUIElement(&select->uiElement);
+  naRelease(select->font);
 }
 
 

@@ -44,9 +44,12 @@
   cocoaButton = newCocoaButton;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
 
   return self;
+}
+
+- (void) dealloc{
+  [super dealloc];
 }
 
 - (bool) isImage{

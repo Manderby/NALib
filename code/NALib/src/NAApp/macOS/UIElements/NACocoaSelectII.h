@@ -15,7 +15,6 @@
 
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
 
   return self;
 }
@@ -32,6 +31,10 @@
   }else{
     [[self menu] insertItem:item atIndex: (NSInteger)index];
   }
+}
+
+- (void) setNAFont:(NAFont*)font{
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
 }
 
 - (void) setVisible:(NABool)visible{
@@ -51,8 +54,11 @@ NA_DEF NASelect* naNewSelect(double width) {
   NACocoaNativeSelect* nativePtr = [[NACocoaNativeSelect alloc]
     initWithSelect:cocoaSelect
     frame:naMakeNSRectWithSize(naMakeSize(width, 25))];
+    
   na_InitSelect((NASelect*)cocoaSelect, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
+  [nativePtr setNAFont:cocoaSelect->select.font];
+
   return (NASelect*)cocoaSelect;
 }
 

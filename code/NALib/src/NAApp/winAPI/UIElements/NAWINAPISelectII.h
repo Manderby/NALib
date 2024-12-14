@@ -125,13 +125,6 @@ NA_DEF NASelect* naNewSelect(double width) {
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
 
-  const NAFont* systemFont = na_GetApplicationSystemFont(&app->application);
-  SendMessage(
-    nativePtr,
-    WM_SETFONT,
-    (WPARAM)naGetFontNativePointer(systemFont),
-    MAKELPARAM(TRUE, 0));
-
   naFree(systemText);
 
   WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(nativePtr, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
@@ -140,6 +133,12 @@ NA_DEF NASelect* naNewSelect(double width) {
   }
 
   na_InitSelect((NASelect*)winapiSelect, nativePtr);
+
+  SendMessage(
+    nativePtr,
+    WM_SETFONT,
+    (WPARAM)naGetFontNativePointer(winapiSelect->select.font),
+    MAKELPARAM(TRUE, 0));
 
   return (NASelect*)winapiSelect;
 #else

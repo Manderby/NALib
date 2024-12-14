@@ -127,7 +127,6 @@
   [self setDrawsBackground:NO];
   [self setTextColor:naGetLabelColor()];
   [[self cell] setLineBreakMode:NSLineBreakByWordWrapping];
-  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
   cocoaLabel = newCocoaLabel;
   return self;
 }
@@ -215,11 +214,12 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
   NACocoaNativeLabel* nativePtr = [[NACocoaNativeLabel alloc]
     initWithLabel:cocoaLabel
     frame:naMakeNSRectWithSize(naMakeSize(width, 17))];
+    
   na_InitLabel((NALabel*)cocoaLabel, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
-  
+
+  [nativePtr setNAFont:cocoaLabel->label.font];
+
   naSetLabelText((NALabel*)cocoaLabel, text);
-  
-  cocoaLabel->label.font = naRetain(naCreateSystemFont());
 
   return (NALabel*)cocoaLabel;
 }

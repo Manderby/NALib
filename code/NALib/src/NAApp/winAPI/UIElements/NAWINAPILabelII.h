@@ -104,15 +104,14 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
 
   na_InitLabel(&winapiLabel->label, nativePtr);
 
-  winapiLabel->enabled = NA_TRUE;
-  winapiLabel->href = NA_NULL;
-
-  winapiLabel->label.font = naCreateSystemFont();
   SendMessage(
     nativePtr,
     WM_SETFONT,
     (WPARAM)naGetFontNativePointer(winapiLabel->label.font),
     MAKELPARAM(TRUE, 0));
+
+  winapiLabel->enabled = NA_TRUE;
+  winapiLabel->href = NA_NULL;
 
   return (NALabel*)winapiLabel;
 }

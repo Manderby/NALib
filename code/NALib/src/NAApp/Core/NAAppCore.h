@@ -66,6 +66,7 @@ struct NAButton{
   NA_UIElement uiElement;
   NAUTF8Char* text;
   NAUTF8Char* text2;
+  NAFont* font;
   const NAImageSet* imageSet;
   const NAImageSet* imageSet2;
   uint32 flags;
@@ -73,6 +74,7 @@ struct NAButton{
 
 struct NACheckBox{
   NA_UIElement uiElement;
+  NAFont* font;
 };
 
 struct NAImageSpace{
@@ -108,10 +110,12 @@ struct NAOpenGLSpace{
 struct NASelect{
   NA_UIElement uiElement;
   NAList       childs;
+  NAFont*      font;
 };
 
 struct NARadio{
   NA_UIElement uiElement;
+  NAFont* font;
 };
 
 struct NAScreen{

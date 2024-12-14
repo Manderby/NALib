@@ -8,12 +8,14 @@
 
 NA_HDEF void na_InitRadio(NARadio* radio, void* nativePtr) {
   na_InitCoreUIElement(&radio->uiElement, NA_UI_RADIO, nativePtr);
+  radio->font = naCreateSystemFont();
 }
 
 
 
 NA_HDEF void na_ClearRadio(NARadio* radio) {
   na_ClearCoreUIElement(&radio->uiElement);
+  naRelease(radio->font);
 }
 
 

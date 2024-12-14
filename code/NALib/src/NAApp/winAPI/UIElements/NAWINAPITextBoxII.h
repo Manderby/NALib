@@ -64,6 +64,13 @@ NA_DEF NATextBox* naNewTextBox(NASize size) {
     NULL );
   
   na_InitTextBox(&winapiTextBox->textBox, nativePtr);
+  
+  SendMessage(
+    nativePtr,
+    WM_SETFONT,
+    (WPARAM)naGetFontNativePointer(winapiTextBox->textBox.font),
+    MAKELPARAM(TRUE, 0));
+
   winapiTextBox->nextTabStop = winapiTextBox;
   winapiTextBox->prevTabStop = winapiTextBox;
 
@@ -77,13 +84,6 @@ NA_DEF NATextBox* naNewTextBox(NASize size) {
     naNewKeyStroke(NA_KEYCODE_TAB, NA_KEY_MODIFIER_SHIFT),
     naHandleTextBoxReverseTabOrder,
     NA_NULL);
-
-  winapiTextBox->textBox.font = naRetain(naCreateSystemFont());
-  SendMessage(
-    nativePtr,
-    WM_SETFONT,
-    (WPARAM)naGetFontNativePointer(winapiTextBox->textBox.font),
-    MAKELPARAM(TRUE, 0));
 
   return (NATextBox*)winapiTextBox;
 }

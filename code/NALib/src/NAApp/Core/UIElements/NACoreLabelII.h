@@ -8,6 +8,7 @@
 
 NA_HDEF void na_InitLabel(NALabel* label, void* nativePtr) {
   na_InitCoreUIElement(&label->uiElement, NA_UI_LABEL, nativePtr);
+  label->font = naCreateSystemFont();
 }
 
 
