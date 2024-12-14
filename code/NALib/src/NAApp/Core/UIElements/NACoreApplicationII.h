@@ -7,6 +7,7 @@
 
 
 #include "../../../NAUtility/NATranslator.h"
+#include "../../../NAUtility/NANotifier.h"
 
 
 
@@ -30,6 +31,9 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
   app->translator = NA_NULL;
   naStartTranslator();
   
+  app->notifier = naAllocNotifier();
+  naSetCurrentNotifier(app->notifier);
+
   // todo: make this a singleton.
   app->systemFont = NA_NULL;
 
@@ -62,6 +66,8 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
     if(!na_App)
       naCrash("No Application running");
   #endif
+
+  naDeallocNotifier(na_App->notifier);
 
   // An NAWindow removes itself from the windows array automatically. So
   // no naForeach is allowed here.

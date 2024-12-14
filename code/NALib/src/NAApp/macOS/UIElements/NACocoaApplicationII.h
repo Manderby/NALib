@@ -116,9 +116,6 @@ NA_DEF void naStartApplication(
   [NSApplication sharedApplication];
   NAApplication* app = na_NewApplication();
 
-  NANotifier* notifier = naAllocNotifier();
-  naSetCurrentNotifier(notifier);
-
   // Put an autorelease pool in place for the startup sequence.
   #if !NA_MACOS_USES_ARC
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
@@ -176,8 +173,6 @@ NA_DEF void naStartApplication(
       [pool drain]; // also releases the pool. No separate release necessary.
     #endif
   }
-
-  naDeallocNotifier(notifier);
 
   // Before deleting the application, we cleanup whatever the user needs to
   // clean up.

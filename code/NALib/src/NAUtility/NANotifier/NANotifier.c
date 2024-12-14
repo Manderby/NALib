@@ -62,7 +62,6 @@ NA_HDEF NA_MessageDispatch* na_NewMessageDispatch(
 }
 
 
-
 NA_HDEF NA_Subscription* na_NewSubscription(
   const void* object,
   void* reciever,

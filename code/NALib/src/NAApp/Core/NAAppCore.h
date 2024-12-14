@@ -19,6 +19,8 @@
 
 #include "../../NAStruct/NAList.h"
 #include "../../NAMath/NAVectorAlgebra.h"
+
+NA_PROTOTYPE(NANotifier);
 NA_PROTOTYPE(NATranslator);
 
 #include "../NAApp.h"
@@ -49,6 +51,7 @@ struct NAApplication{
   NAList            uiElements;      // A list of all ui elements in use.
   
   NATranslator*     translator;
+  NANotifier*       notifier;
   NAFont*           systemFont;
   NAMouseStatus*    mouseStatus;     // The mouse cursor status
   NAKeyStroke*      keyStroke;       // The currently pressed key combination
