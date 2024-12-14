@@ -329,10 +329,10 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
   NSString* systemFontName = [NSString stringWithUTF8String: fontFamilyName];
 
   NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
-  NSFont* retFont;
+  NSFont* nsFont;
 
   if(systemFontName == [systemFont familyName]) {
-    retFont = (naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) ?
+    nsFont = (naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) ?
       [NSFont systemFontOfSize:size] :
       [NSFont boldSystemFontOfSize:size];
   }else{
@@ -341,18 +341,24 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
     if(naGetFlagu32(flags, NA_FONT_FLAG_ITALIC)) { traits |= NSItalicFontMask; }
     if(naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE)) { }
 
-    retFont = [[NSFontManager sharedFontManager]
+    nsFont = [[NSFontManager sharedFontManager]
       fontWithFamily:systemFontName
       traits:traits
       weight:5  // ignored if NSBoldFontMask is set.
       size:size];
   }
   
-  return na_CreateFont(
-    NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(retFont)),
-    naNewStringWithFormat("%s", fontFamilyName),
+  NAString* fontName = naNewStringWithFormat("%s", fontFamilyName);
+  
+  NAFont* retFont = na_CreateFont(
+    NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(nsFont)),
+    fontName,
     flags,
     size);
+    
+  naDelete(fontName);
+  
+  return retFont;
 }
 
 NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
