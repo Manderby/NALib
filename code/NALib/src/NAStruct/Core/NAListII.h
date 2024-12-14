@@ -97,25 +97,32 @@ NA_IDEF NAList* naInitListWithCopy(NAList* list, NAList* originalList) {
 
 
 
-NA_IDEF void naClearList(NAList* list) {
+NA_IDEF void naClearList(NAList* list, NAMutator elementDestructor) {
   #if NA_DEBUG
     if(!list)
       naCrash("list is Null-Pointer.");
     if(list->iterCount)
       naError("Iterators still running on the list. Did you use naClearListIterator?");
   #endif
-  naEmptyList(list);
+
+  naEmptyList(list, elementDestructor);
 }
 
 
 
-NA_IDEF void naEmptyList(NAList* list) {
-  NAListElement* cur;
-  NAListElement* next;
+NA_IDEF void naEmptyList(NAList* list, NAMutator elementDestructor) {
   #if NA_DEBUG
     if(!list)
       naCrash("list is Null-Pointer.");
   #endif
+
+  if(elementDestructor) {
+    naForeachListMutable(list, elementDestructor);
+  }
+
+  NAListElement* cur;
+  NAListElement* next;
+
   cur = list->sentinel.next;
   while(cur != &list->sentinel) {
     #if NA_DEBUG

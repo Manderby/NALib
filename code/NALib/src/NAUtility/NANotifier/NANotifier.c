@@ -83,8 +83,7 @@ NA_HDEF void na_InitSignal(NA_Signal* signal) {
 }
 
 NA_HDEF void na_ClearSignal(NA_Signal* signal) {
-  naForeachListMutable(&signal->subscriptions, naDelete);
-  naClearList(&signal->subscriptions);
+  naClearList(&signal->subscriptions, (NAMutator)naDelete);
 }
 
 
@@ -138,12 +137,9 @@ NA_DEF void naDeallocNotifier(NANotifier* notifier) {
     if(!naIsListEmpty(&notifier->deleteQueue))
       naError("There are still unscheduled messages in the delete queue");
   #endif
-  naForeachListMutable(&notifier->updateQueue, naDelete);
-  naForeachListMutable(&notifier->createQueue, naDelete);
-  naForeachListMutable(&notifier->deleteQueue, naDelete);
-  naClearList(&notifier->updateQueue);
-  naClearList(&notifier->createQueue);
-  naClearList(&notifier->deleteQueue);
+  naClearList(&notifier->updateQueue, (NAMutator)naDelete);
+  naClearList(&notifier->createQueue, (NAMutator)naDelete);
+  naClearList(&notifier->deleteQueue, (NAMutator)naDelete);
   
   if(notifier == na_notifier) {
     na_notifier = NA_NULL;

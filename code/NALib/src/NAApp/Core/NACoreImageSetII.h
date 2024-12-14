@@ -263,8 +263,7 @@ NA_DEF NAImageSet* naRecreateImageSet(const NAImageSet* imageSet) {
 
 
 NA_DEF void na_DestructImageSet(NAImageSet* imageSet) {
-  naForeachListMutable(&imageSet->subImages, (NAMutator)na_DeallocUISubImage);
-  naClearList(&imageSet->subImages);
+  naClearList(&imageSet->subImages, (NAMutator)na_DeallocUISubImage);
 }
 
 

@@ -68,7 +68,7 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
   while(!naIsListEmpty(&na_App->windows)) {
     naDelete(naGetListFirstMutable(&na_App->windows));
   }
-  naClearList(&na_App->windows);
+  naClearList(&na_App->windows, NA_NULL);
 
   naStopTranslator();
   na_ClearCoreUIElement(&app->uiElement);
@@ -82,7 +82,7 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
   // This must be at the very end as the uiElements are used up until the last
   // ClearUIElement operation.
   // todo test if all uiElements are gone.
-  naClearList(&na_App->uiElements);
+  naClearList(&na_App->uiElements, NA_NULL);
 }
 
 

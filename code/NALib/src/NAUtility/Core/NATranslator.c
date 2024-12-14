@@ -100,8 +100,7 @@ NA_DEF void naStopTranslator(void) {
     #endif
   #endif
   naClearTree(&NA_TRANSLATOR->groups);
-  naForeachListMutable(&NA_TRANSLATOR->languagePreferences, naFree);
-  naClearList(&NA_TRANSLATOR->languagePreferences);
+  naClearList(&NA_TRANSLATOR->languagePreferences, (NAMutator)naFree);
 
   naRelease(NA_TRANSLATOR->groupsConfig);
   naRelease(NA_TRANSLATOR->languagesConfig);

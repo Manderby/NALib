@@ -35,10 +35,8 @@ NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
     na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
   }
   
-  naForeachListMutable(&uiElement->reactions, naFree);
-  naForeachListMutable(&uiElement->shortcuts, naFree);
-  naClearList(&uiElement->reactions);
-  naClearList(&uiElement->shortcuts);
+  naClearList(&uiElement->reactions, (NAMutator)naFree);
+  naClearList(&uiElement->shortcuts, (NAMutator)naFree);
   
   na_ClearSystemUIElement(uiElement->nativePtr);
   na_ClearUINativePtr(uiElement->nativePtr);

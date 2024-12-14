@@ -18,8 +18,7 @@ NA_IDEF NAURL* naInitURL(NAURL* url) {
 
 
 NA_IDEF void naClearURL(NAURL* url) {
-  naForeachListMutable(&url->path, naDelete);
-  naClearList(&url->path);
+  naClearList(&url->path, (NAMutator)naDelete);
 }
 
 

@@ -17,8 +17,7 @@ NA_HDEF void na_InitSpace(NASpace* space, void* nativePtr) {
 
 NA_HDEF void na_ClearSpace(NASpace* space) {
   naFree(space->backgroundColor);
-  naForeachListMutable(&space->childs, (NAMutator)naDelete);
-  naClearList(&space->childs);
+  naClearList(&space->childs, (NAMutator)naDelete);
   na_ClearCoreUIElement(&space->uiElement);
 }
 
