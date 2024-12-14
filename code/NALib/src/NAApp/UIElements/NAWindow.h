@@ -73,7 +73,7 @@ NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);
 NA_API NABool naIsWindowResizeable(const NAWindow* window);
 
 // Get and set the outer (non-client) rect of the window. Note that the
-// function naGetUIElementRect will always return the inner (clinet) rect of
+// function naGetUIElementRect will always return the inner (client) rect of
 // the window.
 NA_API NARect naGetWindowOuterRect(const NAWindow * window);
 NA_API void naSetWindowOuterRect(NAWindow * window, NARect rect);

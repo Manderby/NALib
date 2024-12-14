@@ -159,6 +159,11 @@
   [self resetDrag];
 }
 
+- (void)setFrame:(NSRect)frame {
+  [super setFrame:frame];
+  na_UpdateMouseTracking(&cocoaSpace->space.uiElement);
+}
+
 @end
 
 

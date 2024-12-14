@@ -48,7 +48,7 @@
 
 - (void)setFrame:(NSRect)frame {
   [super setFrame:frame display:YES];
-  na_UpdateMouseTracking(&cocoaWindow->window.uiElement);
+  // mouse tracking will be updated in windowDidResize
 }
 
 - (void)setWindowTitle:(const NAUTF8Char*) title{
@@ -111,6 +111,7 @@
 - (void)windowDidResize:(NSNotification *)notification{
   NA_UNUSED(notification);
   na_RememberWindowPosition((NAWindow*)cocoaWindow);
+  na_UpdateMouseTracking(&cocoaWindow->window.uiElement);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
     // don't know what to do.
   }

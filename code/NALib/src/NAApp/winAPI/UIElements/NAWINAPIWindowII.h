@@ -510,6 +510,8 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
     (LONG)(rect.size.height * uiScale),
     NA_FALSE);
 
+  na_UpdateMouseTracking(&winapiWindow->window.uiElement);
+
   // We need to trigger a resizing of the content space. The position does not change,
   // it is always (0,0).
   NASpace* contentSpace = naGetWindowContentSpace(&winapiWindow->window);
