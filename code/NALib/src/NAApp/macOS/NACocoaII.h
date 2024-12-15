@@ -444,7 +444,7 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 
 
 NA_DEF void naPresentFilePanel(
-  void* window,
+  void* nativeWindow,
   NABool load,
   const NAUTF8Char* fileName,
   const NAUTF8Char* allowedFileSuffix,
@@ -470,7 +470,7 @@ NA_DEF void naPresentFilePanel(
     [savepanel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:allowedFileSuffix]]];
   #endif
   
-  [savepanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(window) completionHandler:^(NSInteger result) {
+  [savepanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(nativeWindow) completionHandler:^(NSInteger result) {
     #if defined __MAC_10_9
       NABool doPerform = result != NSModalResponseCancel;
     #else

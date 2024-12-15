@@ -122,7 +122,7 @@ typedef NABool (*NAFilePanelCallback)(
   const void* data);
 
 NA_API void naPresentFilePanel(
-  void* window,
+  void* nativeWindow,
   NABool load,
   const NAUTF8Char* fileName,
   const NAUTF8Char* allowedFileSuffix,
