@@ -84,7 +84,7 @@ void testStackArray(void) {
   
   na_DeallocStackArray(array);
   naClearListIterator(&listIter);
-  naClearList(&list);
+  naClearList(&list, NA_NULL);
 }
 
 

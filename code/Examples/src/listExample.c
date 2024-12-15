@@ -19,7 +19,7 @@ int listExample(void){
     printf("%d ", *(const int*)naGetListCurConst(&listIter));
   }
   naClearListIterator(&listIter);
-  naClearList(&list);
+  naClearList(&list, NA_NULL);
 
   printf(NA_NL NA_NL);
   

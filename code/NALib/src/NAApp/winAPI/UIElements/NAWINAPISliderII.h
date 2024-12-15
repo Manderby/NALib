@@ -204,7 +204,7 @@ NA_API void naSetSliderValue(NASlider* slider, double value) {
 
 
 
-NA_API void naSetSliderRange(NASlider* slider, double min, double max, NAInt tickCount) {
+NA_API void naSetSliderRange(NASlider* slider, double min, double max, size_t tickCount) {
   // todo
   slider->min = min;
   slider->max = max;

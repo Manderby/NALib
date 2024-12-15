@@ -346,10 +346,9 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
 
   // Now that all windows are destroyed, all dependent timers are deleted. We can
   // safely release the timer structs. todo: Make killing the timers a sport.
-  naForeachListMutable(&winapiApplication->timers, (NAMutator)naFree);
-  naClearList(&winapiApplication->timers);
+  naClearList(&winapiApplication->timers, (NAMutator)naFree);
 
-  naClearList(&winapiApplication->openGLRedrawList);
+  naClearList(&winapiApplication->openGLRedrawList, NA_NULL);
 }
 
 
@@ -437,7 +436,7 @@ NA_HDEF na_redrawOpenGLSpaces(void* data) {
     }
   }
   naClearListIterator(&it);
-  naEmptyList(&app->openGLRedrawList);
+  naEmptyList(&app->openGLRedrawList, NA_NULL);
 }
 
 NA_HDEF void naAddOpenGLSpaceToRedrawList(NAWINAPIOpenGLSpace* openGLSpace) {

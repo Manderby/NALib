@@ -7,7 +7,7 @@
 
 #define HEAP_TEST_SIZE 10
 int values[HEAP_TEST_SIZE] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-int keys[HEAP_TEST_SIZE] = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
+double keys[HEAP_TEST_SIZE] = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
 
 void test_FillHeapWithConstElements(NAHeap* heap, size_t count) {
   for(int i = 0; i < count; ++i) {
@@ -31,13 +31,13 @@ void testHeapConstructionAndDestruction() {
   
   naTestGroup("Creating and destroying fixed heap without flags") {
     NAHeap heap;
-    naTest(naInitHeap(&heap, HEAP_TEST_SIZE, 0));
+    naTestVoid(naInitHeap(&heap, HEAP_TEST_SIZE, 0));
     naTestVoid(naClearHeap(&heap));
   }
 
   naTestGroup("Creating and destroying dynamic heap without flags") {
     NAHeap heap;
-    naTest(naInitHeap(&heap, 0, 0));
+    naTestVoid(naInitHeap(&heap, 0, 0));
     naTestVoid(naClearHeap(&heap));
   }
 }

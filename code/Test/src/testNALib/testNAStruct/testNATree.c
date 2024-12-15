@@ -227,8 +227,8 @@ void testTreeItems() {
 
   naTestGroup("Leaf") {
     NATreeConfiguration* config = naCreateTreeConfiguration(0);
-    NATreeNode node;
-    NATreeItem item;
+    //NATreeNode node;
+    //NATreeItem item;
 
     naTestCrash(na_GetTreeLeafItem(NA_NULL));
     naTestCrash(na_InitTreeLeaf(NA_NULL, NA_NULL, naMakePtrNull(), NA_NULL));
