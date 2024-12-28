@@ -18,6 +18,23 @@ NA_HDEF void na_ClearScreen(NAScreen* screen) {
 
 
 
+NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen) {
+  NA_UNUSED(screen);
+  NARect rect = {{0, 0}, {1, 1}};
+  return rect;
+}
+
+
+
+NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect) {
+  NA_UNUSED(screen);
+  NA_UNUSED(rect);
+  #if NA_DEBUG
+    naError("A screen can not be resized by software.");
+  #endif
+}
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

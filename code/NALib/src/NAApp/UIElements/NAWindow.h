@@ -65,6 +65,10 @@ NA_API void naCloseWindowModal(NAWindow* window);
 // window from closing. If not called, the window will close.
 NA_API void naPreventWindowClosing(NAWindow* window, NABool prevent);
 
+// Use this method to mark the window as changed.
+// On macOS, this adds a small bubble in the red closing icon.
+NA_API void naMarkWindowChanged(NAWindow* window, NABool changed);
+
 // Get and set the window fullscreen state.
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);

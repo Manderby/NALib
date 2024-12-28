@@ -890,19 +890,6 @@ NA_DEF double naGetUIElementResolutionScale(const void* uiElement) {
 
 
 
-NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen) {
-  NARect rect = {{0, 0}, {1, 1}};
-  return rect;
-}
-
-NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect) {
-  #if NA_DEBUG
-    naError("A screen can not be resized by software.");
-  #endif
-}
-
-
-
 NA_API NARect naGetMainScreenRect() {
   HMONITOR screen;
   MONITORINFO screeninfo = {0};

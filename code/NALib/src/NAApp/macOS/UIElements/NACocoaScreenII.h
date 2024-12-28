@@ -1,3 +1,4 @@
 
-// This file is left intentionally empty until there is a system dependent
-// implementation necessary.
+NA_DEF NARect naGetMainScreenRect() {
+  return naMakeRectWithNSRect([[NSScreen mainScreen] frame]);
+}

@@ -336,6 +336,12 @@ NA_DEF void naCloseWindow(const NAWindow* window) {
 
 
 
+NA_DEF void naMarkWindowChanged(NAWindow* window, NABool changed){
+  // todo
+}
+
+
+
 NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
   DWORD style;
   NARect newRect;

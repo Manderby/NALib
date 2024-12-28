@@ -55,6 +55,10 @@
   [self setTitle:[NSString stringWithUTF8String:title]];
 }
 
+- (void)markAsChanged:(NABool) changed{
+  [self setDocumentEdited:changed ? YES : NO];
+}
+
 - (void)setKeepOnTop:(NABool) keepOnTop{
   if(keepOnTop) {
     [self setLevel:NSFloatingWindowLevel];
@@ -264,18 +268,6 @@ NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window) {
 
 
 
-NA_DEF NARect naGetMainScreenRect() {
-  CGFloat uiScale = [[NSScreen mainScreen] backingScaleFactor];
-  NARect rect = naMakeRectWithNSRect([[NSScreen mainScreen] frame]);
-  rect.pos.x /= uiScale;
-  rect.pos.y /= uiScale;
-  rect.size.width /= uiScale;
-  rect.size.height /= uiScale;
-  return rect;
-}
-
-
-
 NA_DEF void naShowWindow(const NAWindow* window) {
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   [nativePtr makeKeyAndOrderFront:NA_NULL];
@@ -297,6 +289,13 @@ NA_DEF void naCloseWindowModal(NAWindow* window) {
 NA_DEF void naCloseWindow(const NAWindow* window) {
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   [nativePtr performClose:NA_NULL];
+}
+
+
+
+NA_DEF void naMarkWindowChanged(NAWindow* window, NABool changed){
+  naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
+  [nativePtr markAsChanged:changed];
 }
 
 
