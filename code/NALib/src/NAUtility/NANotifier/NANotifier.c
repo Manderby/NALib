@@ -16,7 +16,7 @@ NA_RUNTIME_TYPE(NA_MessageDispatch, NA_NULL, NA_FALSE);
 
 typedef struct NA_Subscription NA_Subscription;
 struct NA_Subscription{
-  const void* object;
+  const void* sender;
   void* reciever;
   NAMessageCallback callback;
 };
@@ -63,12 +63,12 @@ NA_HDEF NA_MessageDispatch* na_NewMessageDispatch(
 
 
 NA_HDEF NA_Subscription* na_NewSubscription(
-  const void* object,
+  const void* sender,
   void* reciever,
   NAMessageCallback callback)
 {
   NA_Subscription* subscription = naNew(NA_Subscription);
-  subscription->object = object;
+  subscription->sender = sender;
   subscription->reciever = reciever;
   subscription->callback = callback;
   return subscription;
@@ -241,7 +241,7 @@ NA_DEF void naSetSignalPriority(
 
 
 NA_DEF void* naSubscribe(
-  const void* object,
+  const void* sender,
   size_t topicId,
   size_t signalId,
   void* reciever,
@@ -260,7 +260,7 @@ NA_DEF void* naSubscribe(
   
   NA_Signal* signal = &na_notifier->topics[topicId]->signals[signalId];
   NA_Subscription* subscription = na_NewSubscription(
-    object,
+    sender,
     reciever,
     callback);
 
@@ -270,6 +270,36 @@ NA_DEF void* naSubscribe(
   
   return subscription;
 }
+
+
+
+NA_HDEF void na_RemoveMessagesWithSubscription(NAList* list, NA_Subscription* subscription) {
+  NAListIterator it = naMakeListModifier(list);
+  while(naIterateList(&it)) {
+    NA_MessageDispatch* message = naGetListCurMutable(&it);
+    if(message->message.reciever == subscription->reciever
+      && message->message.sender == subscription->sender) {
+      naRemoveListCurMutable(&it, NA_FALSE);
+      naDelete(message);
+    }
+  }
+  naClearListIterator(&it);
+}
+
+
+
+NA_HDEF void na_RemoveMessagesWithReceyver(NAList* list, const void* reciever) {
+  NAListIterator it = naMakeListModifier(list);
+  while(naIterateList(&it)) {
+    NA_MessageDispatch* message = naGetListCurMutable(&it);
+    if(message->message.reciever == reciever) {
+      naRemoveListCurMutable(&it, NA_FALSE);
+      naDelete(message);
+    }
+  }
+  naClearListIterator(&it);
+}
+
 
 
 
@@ -301,6 +331,10 @@ NA_DEF void naUnsubscribe(
     }
     if(found) break;
   }
+
+  na_RemoveMessagesWithSubscription(&na_notifier->updateQueue, (NA_Subscription*)subscription);
+  na_RemoveMessagesWithSubscription(&na_notifier->createQueue, (NA_Subscription*)subscription);
+  na_RemoveMessagesWithSubscription(&na_notifier->deleteQueue, (NA_Subscription*)subscription);
 }
 
 
@@ -328,6 +362,10 @@ NA_DEF void naUnsubscribeAllOfReceyver(
       naClearListIterator(&it);
     }
   }
+  
+  na_RemoveMessagesWithReceyver(&na_notifier->updateQueue, reciever);
+  na_RemoveMessagesWithReceyver(&na_notifier->createQueue, reciever);
+  na_RemoveMessagesWithReceyver(&na_notifier->deleteQueue, reciever);
 }
 
 
@@ -365,7 +403,7 @@ NA_DEF void naPublish(
   NAListIterator it = naMakeListAccessor(subscriptions);
   while(naIterateList(&it)) {
     const NA_Subscription* sub = naGetListCurConst(&it);
-    if(sub->object == NA_NULL || sub->object == sender) {
+    if(sub->sender == NA_NULL || sub->sender == sender) {
       NA_MessageDispatch* message = na_NewMessageDispatch(
         sub->reciever,
         sender,
