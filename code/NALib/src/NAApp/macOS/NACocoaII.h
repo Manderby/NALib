@@ -443,6 +443,50 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 
 
 
+NA_DEF size_t naPresentOptionBox(
+  const NAUTF8Char* titleText,
+  const NAUTF8Char* infoText,
+  const NAUTF8Char* buttonTextPrimary,
+  const NAUTF8Char* buttonTextSecondary,
+  const NAUTF8Char* buttonTextTernary)
+{
+  #if NA_DEBUG
+    if(!buttonTextPrimary)
+      naError("Primary button must be present");
+    if(!buttonTextSecondary)
+      naError("Secondary button must be present");
+  #endif
+
+  // Create the alert
+  NSAlert* alert = [[NSAlert alloc] init];
+  [alert setMessageText:[NSString stringWithUTF8String:titleText]];
+  [alert setInformativeText:[NSString stringWithUTF8String:infoText]];
+  [alert addButtonWithTitle:[NSString stringWithUTF8String:buttonTextPrimary]];
+  [alert addButtonWithTitle:[NSString stringWithUTF8String:buttonTextSecondary]];
+  if(buttonTextTernary) {
+    [alert addButtonWithTitle:[NSString stringWithUTF8String:buttonTextTernary]];
+  }
+  [alert setAlertStyle:NSAlertStyleWarning];
+  
+  // Display the alert
+  NSModalResponse response = [alert runModal];
+  
+  // Handle the button response
+  if (response == NSAlertFirstButtonReturn) {
+    return 0;
+  } else if (response == NSAlertSecondButtonReturn) {
+    return 1;
+  } else if (response == NSAlertThirdButtonReturn) {
+    return 2;
+  }
+//  #if NA_DEBUG
+//    naError("Invalid return code given");
+//  #endif
+  return 0;
+}
+
+
+
 NA_DEF void naPresentFilePanel(
   void* nativeWindow,
   NABool load,

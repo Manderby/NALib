@@ -115,6 +115,19 @@ NA_API void naPresentAlertBox(
   const NAUTF8Char* titleText,
   const NAUTF8Char* infoText);
 
+// Third button is optional and can be NA_NULL.
+// Returns the button index which was pressed.
+// 0 = Primary
+// 1 = Secondary
+// 2 = Ternary
+// Note taht the primary option is the one used for pressing enter.
+NA_API size_t naPresentOptionBox(
+  const NAUTF8Char* titleText,
+  const NAUTF8Char* infoText,
+  const NAUTF8Char* buttonTextPrimary,
+  const NAUTF8Char* buttonTextSecondary,
+  const NAUTF8Char* buttonTextTernary);
+
 
 
 // ////////////////////////////////
