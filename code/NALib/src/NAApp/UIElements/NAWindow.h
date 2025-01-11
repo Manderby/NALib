@@ -133,13 +133,17 @@ NA_API size_t naPresentOptionBox(
 // ////////////////////////////////
 // File panel
 
+// The callback can return false, if the operation did not succeed, which in
+// turn will result in naPresentFilePanel returning false, which is equivalent
+// to a cancel operation.
 typedef NABool (*NAFilePanelCallback)(
   NABool doPerform,
   const NAUTF8Char* path,
   const void* data);
 
-NA_API void naPresentFilePanel(
-  void* nativeWindow,
+// Returns true, if the callback returns true.
+// Returns false if cancel was pressed.
+NA_API NABool naPresentFilePanel(
   NABool load,
   const NAUTF8Char* fileName,
   const NAUTF8Char* allowedFileSuffix,

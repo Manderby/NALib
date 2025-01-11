@@ -487,8 +487,7 @@ NA_DEF size_t naPresentOptionBox(
 
 
 
-NA_DEF void naPresentFilePanel(
-  void* nativeWindow,
+NA_DEF NABool naPresentFilePanel(
   NABool load,
   const NAUTF8Char* fileName,
   const NAUTF8Char* allowedFileSuffix,
@@ -514,14 +513,23 @@ NA_DEF void naPresentFilePanel(
     [savepanel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:allowedFileSuffix]]];
   #endif
   
-  [savepanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(nativeWindow) completionHandler:^(NSInteger result) {
-    #if defined __MAC_10_9
-      NABool doPerform = result != NSModalResponseCancel;
-    #else
-      NABool doPerform = result != NSFileHandlingPanelCancelButton;
-    #endif
-    callback(doPerform, [[[savepanel URL] path] UTF8String], data);
-  }];
+  NSModalResponse response = [savepanel runModal];
+  
+  // Handle the button response
+  if (response == NSModalResponseOK) {
+    return callback(NA_TRUE, [[[savepanel URL] path] UTF8String], data);
+  }
+  
+  return NA_FALSE;
+  
+//  [savepanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(nativeWindow) completionHandler:^(NSInteger result) {
+//    #if defined __MAC_10_9
+//      NABool doPerform = result != NSModalResponseCancel;
+//    #else
+//      NABool doPerform = result != NSFileHandlingPanelCancelButton;
+//    #endif
+//    callback(doPerform, [[[savepanel URL] path] UTF8String], data);
+//  }];
 }
 
 

@@ -182,8 +182,7 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 }
 
 
-NA_HDEF void naPresentFilePanel(
-  void* nativeWindow,
+NA_HDEF NABool naPresentFilePanel(
   NABool load,
   const NAUTF8Char* fileName,
   const NAUTF8Char* allowedFileSuffix,
