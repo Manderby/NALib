@@ -525,7 +525,7 @@ NA_DEF NAString* naNewApplicationName(void) {
     naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8ModulePath));
     naDelete(utf8ModulePath);
     applicationName = naNewStringWithURLFilename(&url);
-    applicationbasename = naNewStringWithBasenameOfPath(applicationName);
+    applicationbasename = naNewStringWithBaseNameOfPath(applicationName);
     naClearURL(&url);
     naDelete(applicationName);
 

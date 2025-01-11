@@ -25,6 +25,7 @@ Smaller things:
 - Deleting NABounds. Had been deprecated already in version 27
 - Changeing main branch name to main instead of master.
 - Adding leap second information based on bulletin C 66, 67, 68
+- Changed behaviour of naNewStringWithBaseNameOfPath
 
 
 

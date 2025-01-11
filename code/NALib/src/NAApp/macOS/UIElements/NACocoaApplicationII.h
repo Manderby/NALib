@@ -291,8 +291,8 @@ NA_DEF NAString* naNewApplicationIconPath(void) {
     return naNewStringWithFormat("%s", app->iconPath);
   }else{
     NSString* iconFilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
-    NSString* iconBasename = [iconFilename stringByDeletingPathExtension];
-    NSURL* url = [[NSBundle mainBundle] URLForResource:iconBasename withExtension:@"icns"];
+    NSString* iconBaseName = [iconFilename stringByDeletingPathExtension];
+    NSURL* url = [[NSBundle mainBundle] URLForResource:iconBaseName withExtension:@"icns"];
     return naNewStringWithFormat("%s", [[url path] UTF8String]);
   }
 }

@@ -161,7 +161,7 @@ NA_API NAUTF8Char naGetStringChar(NAString* string, size_t index);
 // such dot is found, suffix is empty. Both path delimiters / and \ are
 // detected.
 NA_API NAString* naNewStringWithParentOfPath(const NAString* filePath);
-NA_API NAString* naNewStringWithBasenameOfPath(const NAString* filePath);
+NA_API NAString* naNewStringWithBaseNameOfPath(const NAString* filePath);
 NA_API NAString* naNewStringWithSuffixOfPath  (const NAString* filePath);
 
 
