@@ -204,6 +204,14 @@ NA_API NAString* naNewStringEPSDecoded(const NAString* inputString);
 
 #endif
 
+// Converts one single character from lower to upper or vice versa.
+// This also contains all non-ASCII letters like ä and Ä for example.
+// Note that these functions only work on single characters.
+// Beware, these function are slow!
+NA_API const NAUTF8Char* naConvertUTF8CharToUppercase(const NAUTF8Char* lower);
+NA_API const NAUTF8Char* naConvertUTF8CharToLowercase(const NAUTF8Char* upper);
+
+
 
 // Appending functions: Appends something at the end of originalString.
 // The storage of originalString will be detached and deleted if necessary.
@@ -258,8 +266,6 @@ NA_API NAu64 naParseStringu64(const NAString* string);
 NA_API float    naParseStringFloat (const NAString* string);
 NA_API double   naParseStringDouble(const NAString* string);
 
-NA_API const NAUTF8Char* u8ToUpper(const NAUTF8Char* lower);
-NA_API const NAUTF8Char* u8ToLower(const NAUTF8Char* upper);
 
 // Inline implementations are in a separate file:
 #include "NAString/NAStringII.h"

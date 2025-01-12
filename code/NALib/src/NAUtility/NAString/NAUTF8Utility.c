@@ -335,7 +335,8 @@ const NAUTF8Char* na_u8Lowers[NA_U8_UPPER_LOWER_COUNT] = {
 
 
 
-NA_DEF const NAUTF8Char* u8ToUpper(const NAUTF8Char* lower) {
+// This is not a very fast method. It uses brute force over 1500 strings.
+NA_DEF const NAUTF8Char* naConvertUTF8CharToUppercase(const NAUTF8Char* lower) {
   for(size_t i = 0; i < NA_U8_UPPER_LOWER_COUNT; ++i){
     if(naEqualUTF8CStringLiterals(lower, na_u8Lowers[i], 0, NA_TRUE)) {
       return na_u8Uppers[i];
@@ -346,7 +347,8 @@ NA_DEF const NAUTF8Char* u8ToUpper(const NAUTF8Char* lower) {
 
 
 
-NA_DEF const NAUTF8Char* u8ToLower(const NAUTF8Char* upper) {
+// This is not a very fast method. It uses brute force over 1500 strings.
+NA_DEF const NAUTF8Char* naConvertUTF8CharToLowercase(const NAUTF8Char* upper) {
   for(size_t i = 0; i < NA_U8_UPPER_LOWER_COUNT; ++i){
     if(naEqualUTF8CStringLiterals(upper, na_u8Uppers[i], 0, NA_TRUE)) {
       return na_u8Lowers[i];
