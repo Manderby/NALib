@@ -25,6 +25,10 @@
   typedef bool NABool;
   #define NA_TRUE    true
   #define NA_FALSE   false
+#elif defined NA_C23
+  typedef bool NABool;
+  #define NA_TRUE    true
+  #define NA_FALSE   false
 #elif defined NA_C99
   typedef _Bool NABool;
   #define NA_TRUE    1

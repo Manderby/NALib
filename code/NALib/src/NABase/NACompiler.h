@@ -49,6 +49,9 @@
       #if __STDC_VERSION__ >= 201710L
         #define NA_C17
       #endif
+      #if __STDC_VERSION__ >= 202311L
+        #define NA_C23
+      #endif
     #endif
 
   #elif defined _MSC_VER
