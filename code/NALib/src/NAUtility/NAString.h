@@ -258,6 +258,8 @@ NA_API NAu64 naParseStringu64(const NAString* string);
 NA_API float    naParseStringFloat (const NAString* string);
 NA_API double   naParseStringDouble(const NAString* string);
 
+NA_API const NAUTF8Char* u8ToUpper(const NAUTF8Char* lower);
+NA_API const NAUTF8Char* u8ToLower(const NAUTF8Char* upper);
 
 // Inline implementations are in a separate file:
 #include "NAString/NAStringII.h"

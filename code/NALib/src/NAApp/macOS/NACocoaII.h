@@ -261,7 +261,7 @@ NAString* naNewStringWithKeyStroke(const NAKeyStroke* keyStroke) {
   CFStringRef letterCFString = CFStringCreateWithCharacters(kCFAllocatorDefault, chars, 1);
   CFStringGetCString(letterCFString, utf8String, 10, kCFStringEncodingUTF8);
   CFRelease(letterCFString);
-  return naNewStringWithFormat("%s", utf8String);
+  return naNewStringWithFormat("%s", u8ToUpper(utf8String));
 }
 
 
