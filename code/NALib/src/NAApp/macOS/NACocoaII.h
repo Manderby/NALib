@@ -494,42 +494,48 @@ NA_DEF NABool naPresentFilePanel(
   NAFilePanelCallback callback,
   const void* data)
 {
-  #if NA_DEBUG
-    if(load)
-      naError("Load panels are not implemented yet.");
-  #else
-    NA_UNUSED(load);
-  #endif
+  if(load) {
+    NSOpenPanel* openPanel = [NSOpenPanel openPanel];
+    NSModalResponse response = [openPanel runModal];
+    
+    // Handle the button response
+    if (response == NSModalResponseOK) {
+      return callback(NA_TRUE, [[[openPanel URL] path] UTF8String], data);
+    }
 
-  NSSavePanel* savepanel = [NSSavePanel savePanel];
+  }else { // save panel
 
-  [savepanel setNameFieldStringValue:[NSString stringWithUTF8String:fileName]];
-  [savepanel setExtensionHidden:NO];
-  #if defined __MAC_11_0
-    NA_MACOS_AVAILABILITY_GUARD_11_0(
-      [savepanel setAllowedContentTypes:[NSArray arrayWithObject:[UTType typeWithFilenameExtension:[NSString stringWithUTF8String:allowedFileSuffix]]]];
-    )
-  #else
-    [savepanel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:allowedFileSuffix]]];
-  #endif
+    NSSavePanel* savePanel = [NSSavePanel savePanel];
+
+    [savePanel setNameFieldStringValue:[NSString stringWithUTF8String:fileName]];
+    [savePanel setExtensionHidden:NO];
+    #if defined __MAC_11_0
+      NA_MACOS_AVAILABILITY_GUARD_11_0(
+        [savePanel setAllowedContentTypes:[NSArray arrayWithObject:[UTType typeWithFilenameExtension:[NSString stringWithUTF8String:allowedFileSuffix]]]];
+      )
+    #else
+      [savePanel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:allowedFileSuffix]]];
+    #endif
+    
+    NSModalResponse response = [savePanel runModal];
+    
+    // Handle the button response
+    if (response == NSModalResponseOK) {
+      return callback(NA_TRUE, [[[savePanel URL] path] UTF8String], data);
+    }
+    
+  //  [savePanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(nativeWindow) completionHandler:^(NSInteger result) {
+  //    #if defined __MAC_10_9
+  //      NABool doPerform = result != NSModalResponseCancel;
+  //    #else
+  //      NABool doPerform = result != NSFileHandlingPanelCancelButton;
+  //    #endif
+  //    callback(doPerform, [[[savePanel URL] path] UTF8String], data);
+  //  }];
   
-  NSModalResponse response = [savepanel runModal];
-  
-  // Handle the button response
-  if (response == NSModalResponseOK) {
-    return callback(NA_TRUE, [[[savepanel URL] path] UTF8String], data);
   }
-  
+
   return NA_FALSE;
-  
-//  [savepanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(nativeWindow) completionHandler:^(NSInteger result) {
-//    #if defined __MAC_10_9
-//      NABool doPerform = result != NSModalResponseCancel;
-//    #else
-//      NABool doPerform = result != NSFileHandlingPanelCancelButton;
-//    #endif
-//    callback(doPerform, [[[savepanel URL] path] UTF8String], data);
-//  }];
 }
 
 
