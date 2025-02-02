@@ -490,9 +490,15 @@ NA_DEF void naOpenConsoleWindow(void) {
 NA_HDEF void na_SetApplicationIconPath(const NAUTF8Char* path) {  
   if(path) {
     NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-    NAImage* iconImage = naCreateImageWithFilePath(path);
+
+    NAString* resPath = naNewApplicationResourcePath(NA_NULL, path, NA_NULL);
+    //printf("OUTPUT %s", naGetStringUTF8Pointer(resPath));
+    
+    NAImage* iconImage = naCreateImageWithFilePath(naGetStringUTF8Pointer(resPath));
     HBITMAP bitmap = naAllocNativeImageWithImage(iconImage);
    
+    naDelete(resPath);
+
     HBITMAP hbmMask = CreateCompatibleBitmap(
       GetDC(NULL), 
       (int)naGetImageSize(iconImage).width,
@@ -517,7 +523,7 @@ NA_DEF NAString* naNewApplicationName(void) {
     NAString* utf8ModulePath;
     NAURL url;
     NAString* applicationName;
-    NAString* applicationbasename;
+    NAString* applicationbaseBame;
 
     GetModuleFileName(NULL, modulePath, MAX_PATH);
     utf8ModulePath = naNewStringWithSystemString(modulePath);
@@ -525,11 +531,11 @@ NA_DEF NAString* naNewApplicationName(void) {
     naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8ModulePath));
     naDelete(utf8ModulePath);
     applicationName = naNewStringWithURLFilename(&url);
-    applicationbasename = naNewStringWithBaseNameOfPath(applicationName);
+    applicationbaseBame = naNewStringWithBaseNameOfPath(applicationName);
     naClearURL(&url);
     naDelete(applicationName);
 
-    return applicationbasename;
+    return applicationbaseBame;
   }
 }
 
@@ -565,29 +571,25 @@ NA_DEF NAString* naNewApplicationBuildString(void) {
 NA_DEF NAString* naNewApplicationIconPath(void) {
   NAApplication* app = naGetApplication();
   if(app->iconPath) {
-    return naNewStringWithFormat("%s", app->iconPath);
+    return naNewApplicationResourcePath(NA_NULL, app->iconPath, NA_NULL);
   }else{
     return NA_NULL;
   }
 }
 
-NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix) {
+NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* path, const NAUTF8Char* baseBame, const NAUTF8Char* suffix) {
   NAApplication* app = naGetApplication();
-  NAString* retString;
-  if(dir) {
-    if(app->resourceBasePath) {
-      retString = naNewStringWithFormat("%s%c%s%c%s%c%s", app->resourceBasePath, NA_PATH_DELIMITER_WIN, dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
-    }else{
-      retString = naNewStringWithFormat("%s%c%s%c%s", dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
-    }
-  }else{
-    if(app->resourceBasePath) {
-      retString = naNewStringWithFormat("%s%c%s%c%s", app->resourceBasePath, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
-    }else{
-      retString = naNewStringWithFormat("%s%c%s", basename, NA_SUFFIX_DELIMITER, suffix);
-    }
-  }
-  return retString;
+  NAUTF8Char* basePathStr = app->resourceBasePath
+    ? naAllocSprintf(NA_TRUE, "%s%c", app->resourceBasePath, NA_PATH_DELIMITER_WIN)
+    : "";
+  NAUTF8Char* pathStr = (path && *path)
+    ? naAllocSprintf(NA_TRUE, "%s%c", path, NA_PATH_DELIMITER_WIN)
+    : "";
+  NAUTF8Char* suffixStr = (suffix && *suffix)
+    ? naAllocSprintf(NA_TRUE, "%c%s", NA_SUFFIX_DELIMITER, suffix)
+    : "";
+
+  return naNewStringWithFormat("%s%s%s%s", basePathStr, pathStr, baseBame, suffixStr);
 }
 
 
