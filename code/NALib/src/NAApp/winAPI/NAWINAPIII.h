@@ -190,6 +190,7 @@ NA_HDEF NABool naPresentFilePanel(
   const void* data)
 {
   // todo
+  return NA_FALSE;
 }
 
 
