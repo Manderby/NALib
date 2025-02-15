@@ -81,7 +81,8 @@
 - (void)applicationDidBecomeActive:(NSNotification *)notification{
   // forward the notification to the oldDelegate
   if(oldDelegate && oldDelegate != self
-    && [oldDelegate respondsToSelector:@selector(applicationDidBecomeActive:)]) {
+    && [oldDelegate respondsToSelector:@selector(applicationDidBecomeActive:)])
+  {
     [oldDelegate applicationDidBecomeActive:notification];
   }
 
@@ -98,6 +99,16 @@
   
   // Give up this delegate and return it to the previous delegate.
   [NSApp setDelegate:oldDelegate];
+}
+
+- (BOOL)application:(NSApplication *)sender openFile:(NSString *) filename{
+  // forward the call to the oldDelegate
+  if(oldDelegate && oldDelegate != self
+    && [oldDelegate respondsToSelector:@selector(application:openFile:)])
+  {
+    [oldDelegate application:sender openFile:filename];
+  }
+  return YES;
 }
 
 @end
