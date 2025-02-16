@@ -336,7 +336,7 @@ NA_DEF void naCloseWindow(const NAWindow* window) {
 
 
 
-NA_DEF void naMarkWindowChanged(NAWindow* window, NABool changed){
+NA_DEF void naMarkWindowChanged(NAWindow* window, NABool changed) {
   // todo
 }
 

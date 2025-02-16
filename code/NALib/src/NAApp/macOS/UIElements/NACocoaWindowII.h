@@ -293,7 +293,7 @@ NA_DEF void naCloseWindow(const NAWindow* window) {
 
 
 
-NA_DEF void naMarkWindowChanged(NAWindow* window, NABool changed){
+NA_DEF void naMarkWindowChanged(NAWindow* window, NABool changed) {
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   [nativePtr markAsChanged:changed];
 }
