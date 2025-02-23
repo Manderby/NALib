@@ -39,6 +39,8 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_UPDATEUISTATE:
   case WM_ENABLE:
   case WM_WINDOWPOSCHANGED:
+  case WM_SETFONT:
+  case WM_IME_NOTIFY:
       break;
 
   case WM_TIMER:

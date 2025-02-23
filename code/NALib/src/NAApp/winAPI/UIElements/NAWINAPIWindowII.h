@@ -461,7 +461,7 @@ NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window) {
 
   screenRect = naGetMainScreenRect();
 
-  rect.pos.x = testPoint.x;
+  rect.pos.x = testPoint.x / uiScale;
   rect.pos.y = (double)screenRect.size.height - (double)testPoint.y / uiScale - ((double)clientRect.bottom - (double)clientRect.top) / uiScale;
   rect.size = winapiWindow->rect.size;
   return rect;

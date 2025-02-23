@@ -57,12 +57,12 @@ struct NAApplication{
   NAKeyStroke*      keyStroke;       // The currently pressed key combination
   uint32            flags;
 
-  const NAUTF8Char*       appName;
-  const NAUTF8Char*       companyName;
-  const NAUTF8Char*       versionString;
-  const NAUTF8Char*       buildString;
-  const NAUTF8Char*       resourceBasePath;
-  const NAUTF8Char*       iconPath;
+  NAString*       appName;
+  NAString*       companyName;
+  NAString*       versionString;
+  NAString*       buildString;
+  NAString*       resourceBasePath;
+  NAString*       iconPath;
 };
 
 struct NAButton{

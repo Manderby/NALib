@@ -5,6 +5,7 @@
 // Do not include this file anywhere else!
 
 #include "../../../NAUtility/NANotifier.h"
+#include "../../../NAUtility/NAString.h"
 
 
 @implementation NACocoaNativeApplicationDelegate
@@ -248,7 +249,7 @@ NA_DEF void naOpenConsoleWindow(void) {
 NA_DEF NAString* naNewApplicationName(void) {
   NAApplication* app = naGetApplication();
   if(app->appName) {
-    return naNewStringWithFormat("%s", app->appName);
+    return naNewStringExtraction(app->appName, 0, -1);
   }else{
     NSString* applicationName = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
     if(!applicationName) {
@@ -261,7 +262,7 @@ NA_DEF NAString* naNewApplicationName(void) {
 NA_DEF NAString* naNewApplicationCompanyName(void) {
   NAApplication* app = naGetApplication();
   if(app->companyName) {
-    return naNewStringWithFormat("%s", app->companyName);
+    return naNewStringExtraction(app->companyName, 0, -1);
   }else{
     return NA_NULL;
   }
@@ -270,7 +271,7 @@ NA_DEF NAString* naNewApplicationCompanyName(void) {
 NA_DEF NAString* naNewApplicationVersionString(void) {
   NAApplication* app = naGetApplication();
   if(app->versionString) {
-    return naNewStringWithFormat("%s", app->versionString);
+    return naNewStringExtraction(app->versionString, 0, -1);
   }else{
     NSString* versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
     return naNewStringWithFormat("%s", [versionString UTF8String]);
@@ -280,7 +281,7 @@ NA_DEF NAString* naNewApplicationVersionString(void) {
 NA_DEF NAString* naNewApplicationBuildString(void) {
   NAApplication* app = naGetApplication();
   if(app->buildString) {
-    return naNewStringWithFormat("%s", app->buildString);
+    return naNewStringExtraction(app->buildString, 0, -1);
   }else{
     NSString* buildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
     return naNewStringWithFormat("%s", [buildString UTF8String]);
@@ -290,7 +291,7 @@ NA_DEF NAString* naNewApplicationBuildString(void) {
 NA_DEF NAString* naNewApplicationResourceBasePath(void) {
   NAApplication* app = naGetApplication();
   if(app->resourceBasePath) {
-    return naNewStringWithFormat("%s", app->resourceBasePath);
+    return naNewStringExtraction(app->resourceBasePath, 0, -1);
   }else{
     return naNewExecutablePath();
   }
@@ -299,7 +300,7 @@ NA_DEF NAString* naNewApplicationResourceBasePath(void) {
 NA_DEF NAString* naNewApplicationIconPath(void) {
   NAApplication* app = naGetApplication();
   if(app->iconPath) {
-    return naNewStringWithFormat("%s", app->iconPath);
+    return naNewStringExtraction(app->iconPath, 0, -1);
   }else{
     NSString* iconFilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
     NSString* iconBaseName = [iconFilename stringByDeletingPathExtension];

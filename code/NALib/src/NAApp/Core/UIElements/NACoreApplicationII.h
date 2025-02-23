@@ -95,28 +95,57 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
 
 NA_DEF void naSetApplicationName(const NAUTF8Char* name) {
   NAApplication* app = naGetApplication();
-  app->appName = name;
+  if(app->appName)
+    naDelete(app->appName);
+
+  app->appName = name
+    ? naNewStringWithFormat("%s", name)
+    : NA_NULL;
 }
 NA_DEF void naSetApplicationCompanyName(const NAUTF8Char* name) {
   NAApplication* app = naGetApplication();
-  app->companyName = name;
+  if(app->companyName)
+    naDelete(app->companyName);
+
+  app->companyName = name
+    ? naNewStringWithFormat("%s", name)
+    : NA_NULL;
 }
 NA_DEF void naSetApplicationVersionString(const NAUTF8Char* string) {
   NAApplication* app = naGetApplication();
-  app->versionString = string;
+  if(app->versionString)
+    naDelete(app->versionString);
+
+  app->versionString = string
+    ? naNewStringWithFormat("%s", string)
+    : NA_NULL;
 }
 NA_DEF void naSetApplicationBuildString(const NAUTF8Char* string) {
   NAApplication* app = naGetApplication();
-  app->buildString = string;
+  if(app->buildString)
+    naDelete(app->buildString);
+
+  app->buildString = string
+    ? naNewStringWithFormat("%s", string)
+    : NA_NULL;
 }
 NA_DEF void naSetApplicationResourceBasePath(const NAUTF8Char* path) {
   NAApplication* app = naGetApplication();
-  app->resourceBasePath = path;
+  if(app->resourceBasePath)
+    naDelete(app->resourceBasePath);
+
+  app->resourceBasePath = path
+    ? naNewStringWithFormat("%s", path)
+    : NA_NULL;
 }
 NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
   NAApplication* app = naGetApplication();
-  app->iconPath = path;
-  na_SetApplicationIconPath(path);
+  if(app->iconPath)
+    naDelete(app->iconPath);
+
+  app->iconPath = path
+    ? naNewStringWithFormat("%s", path)
+    : NA_NULL;
 }
 
 
