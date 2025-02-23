@@ -66,6 +66,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
   // Uncommented for future use.
   //DPI_AWARENESS awareness = DPI_AWARENESS_SYSTEM_AWARE;
   //SetProcessDpiAwarenessContext(&awareness);
+  SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2); 
 
   #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
     InitCommonControls();   // enable visual styles
