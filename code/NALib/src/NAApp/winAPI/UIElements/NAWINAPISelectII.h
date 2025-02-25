@@ -41,7 +41,9 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_WINDOWPOSCHANGED:
   case WM_SETFONT:
   case WM_IME_NOTIFY:
-      break;
+  case 0x98:  // undocumented. When screen resolution changes
+  case 0x31a: // undocumented.
+  break;
 
   case WM_TIMER:
     // Note that there is a WM_TIMER message being sent to a select when

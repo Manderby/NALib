@@ -395,6 +395,8 @@ NA_DEF void naPublish(
   default:
     #if NA_DEBUG
       naCrash("Unknown signal priority");
+    #else
+      return;
     #endif
     break;
   }
