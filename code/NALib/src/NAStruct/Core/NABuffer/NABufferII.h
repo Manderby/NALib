@@ -192,7 +192,7 @@ struct NABuffer{
   NARangei64 range;
 
   NANewlineEncoding newlineEncoding;  // The current newline encoding
-  NAInt endianness;                   // The current endianness
+  uint32 endianness;                  // The current endianness
 
   NATree parts;             // Tree with all parts in this buffer
 

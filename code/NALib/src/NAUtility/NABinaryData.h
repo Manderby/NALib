@@ -149,16 +149,16 @@ NA_IAPI NABool naEqual256WithBytes(
 
 // Conversion from host to the desired endianness. If endianness is the same
 // as the host endianness, nothing happends.
-NA_IAPI void naConvertEndianness8   (NAInt endianness, void* buffer);
-NA_IAPI void naConvertEndianness16  (NAInt endianness, void* buffer);
-NA_IAPI void naConvertEndianness32  (NAInt endianness, void* buffer);
-NA_IAPI void naConvertEndianness64  (NAInt endianness, void* buffer);
-NA_IAPI void naConvertEndianness128 (NAInt endianness, void* buffer);
-NA_IAPI void naConvertEndianness8v  (NAInt endianness, void* buffer, size_t count);
-NA_IAPI void naConvertEndianness16v (NAInt endianness, void* buffer, size_t count);
-NA_IAPI void naConvertEndianness32v (NAInt endianness, void* buffer, size_t count);
-NA_IAPI void naConvertEndianness64v (NAInt endianness, void* buffer, size_t count);
-NA_IAPI void naConvertEndianness128v(NAInt endianness, void* buffer, size_t count);
+NA_IAPI void naConvertEndianness8   (uint32 endianness, void* buffer);
+NA_IAPI void naConvertEndianness16  (uint32 endianness, void* buffer);
+NA_IAPI void naConvertEndianness32  (uint32 endianness, void* buffer);
+NA_IAPI void naConvertEndianness64  (uint32 endianness, void* buffer);
+NA_IAPI void naConvertEndianness128 (uint32 endianness, void* buffer);
+NA_IAPI void naConvertEndianness8v  (uint32 endianness, void* buffer, size_t count);
+NA_IAPI void naConvertEndianness16v (uint32 endianness, void* buffer, size_t count);
+NA_IAPI void naConvertEndianness32v (uint32 endianness, void* buffer, size_t count);
+NA_IAPI void naConvertEndianness64v (uint32 endianness, void* buffer, size_t count);
+NA_IAPI void naConvertEndianness128v(uint32 endianness, void* buffer, size_t count);
 
 // Conversion between Little and Big Endianness
 NA_IAPI void naConvertLittleBig8   (void* buffer);
@@ -177,7 +177,7 @@ NA_IAPI void naConvertLittleBig128v(void* buffer, size_t count);
 // unknown endianness. This function is useful for dynamically checking for
 // endiannesses. If you simply are interested in the endianness of this host,
 // check the NA_ENDIANNESS_HOST macro.
-NA_IAPI NABool naIsEndiannessHost(NAInt endianness);
+NA_IAPI NABool naIsEndiannessHost(uint32 endianness);
 
 // Use the following functions to write and read a 4-byte endianness
 // marker. This is useful for files which state what endianness they
@@ -188,8 +188,8 @@ NA_IAPI NABool naIsEndiannessHost(NAInt endianness);
 // - "BDdb" for Big Endian
 // - "bdDB" for Little Endian
 // Note that the marker will not likely change in the future.
-NA_IAPI void  naFillEndiannessMarker (NAByte marker[4], NAInt endianness);
-NA_IAPI NAInt naParseEndiannessMarker(const NAByte marker[4]);
+NA_IAPI void  naFillEndiannessMarker (NAByte marker[4], uint32 endianness);
+NA_IAPI uint32 naParseEndiannessMarker(const NAByte marker[4]);
 
 
 

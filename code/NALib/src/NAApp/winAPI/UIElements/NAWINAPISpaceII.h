@@ -169,7 +169,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIColor* retcolor;
-  NAInt alternateLevel = 0;
+  size_t alternateLevel = 0;
   const void* parent = winapiSpace;
   while(parent) {
     if(naGetSpaceAlternateBackground(parent)) {

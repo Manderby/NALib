@@ -236,8 +236,8 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   if(imageSet) {
     double uiScale = naGetUIElementResolutionScale(NA_NULL);
     NASizes size1x = naGetImageSet1xSize(imageSet);
-    size1x.width = (NAInt)(size1x.width * uiScale);
-    size1x.height = (NAInt)(size1x.height * uiScale);
+    size1x.width = (size_t)(size1x.width * uiScale);
+    size1x.height = (size_t)(size1x.height * uiScale);
 
     NAPosi64 offset = naMakePosi64(
       (buttonSize.width - size1x.width) / 2,

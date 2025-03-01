@@ -111,7 +111,8 @@ NA_IAPI float         naCbrtf(float  x);
 // Returns the absolute value
 NA_IAPI double        naAbs   (double x);
 NA_IAPI float         naAbsf  (float  x);
-NA_IAPI NAInt         naAbsi  (NAInt  x);
+// The absolute value functions for integers are naAbsi32 and naAbsi64
+// They are defined in NANumerics.h
 
 // Returns the rounded down value
 NA_IAPI double        naFloor (double x);
@@ -126,9 +127,8 @@ NA_IAPI double        naRound (double x);
 NA_IAPI float         naRoundf(float  x);
 
 // Returns the modular value. Return value is always positive.
-NA_IAPI double        naMod (double x, double mod);
-NA_IAPI float         naModf(float  x, float  mod);
-NA_IAPI NAInt         naModi(NAInt  x, NAInt  mod);
+NA_IAPI double        naMod   (double x, double mod);
+NA_IAPI float         naModf  (float  x, float  mod);
 
 // Returns the sinus
 NA_IAPI double        naSin (double x);
@@ -182,9 +182,9 @@ NA_IAPI float         naLog10f(float  x);
 // - ...
 NA_IAPI double        naLog2   (double  x);
 NA_IAPI float         naLog2f  (float   x);
-NA_IAPI NAInt         naLog2i  (NAInt   x);
 NA_IAPI int32         naLog2i32(int32   x);
 NA_IAPI NAi64         naLog2i64(NAi64 x);
+NA_IAPI size_t        naLog2s (size_t x);
 
 // Returns the exponential function e^x
 NA_IAPI double        naExp (double x);
@@ -193,14 +193,12 @@ NA_IAPI float         naExpf(float  x);
 // Returns the exponent of 2 function 2^x
 NA_IAPI float         naExp2f  (float   x);
 NA_IAPI double        naExp2   (double  x);
-NA_IAPI NAInt         naExp2i  (NAInt   x);
 NA_IAPI int32         naExp2i32(int32   x);
 NA_IAPI NAi64         naExp2i64(NAi64 x);
 
 // Returns the exponent of 10 function 10^x
 NA_IAPI float         naExp10f  (float   x);
 NA_IAPI double        naExp10   (double  x);
-NA_IAPI NAInt         naExp10i  (NAInt   x);
 NA_IAPI int32         naExp10i32(int32   x);
 NA_IAPI NAi64         naExp10i64(NAi64 x);
 
@@ -209,12 +207,11 @@ NA_IAPI double        naPow (double b, double x);
 NA_IAPI float         naPowf(float  b, float  x);
 
 // Returns the power of 2 function 2^n with n being an integer
-NA_IAPI double        naPowerOf2   (NAInt n);
-NA_IAPI float         naPowerOf2f  (NAInt n);
-NA_IAPI NAInt         naPowerOf2i  (NAInt n);
+NA_IAPI double        naPowerOf2   (int32 n);
+NA_IAPI float         naPowerOf2f  (int32 n);
 NA_IAPI int32         naPowerOf2i32(int32 n);
-NA_IAPI int64         naPowerOf2i64(NAi64 n);
-NA_IAPI size_t        naPowerOf2s  (size_t n);
+NA_IAPI int64         naPowerOf2i64(int32 n);
+NA_IAPI size_t        naPowerOf2s  (int32 n);
 
 // Factorizes the given value. !-Operator
 NA_IAPI NAInt         naFactorize(NAInt x);
