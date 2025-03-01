@@ -14,15 +14,28 @@
 // The pointer storing the app if any.
 NAApplication* na_App = NA_NULL;
 
+NA_DEF NAApplication* naGetApplication(void) {
+  #if NA_DEBUG
+    if(!na_App)
+      naError("Application not started. Use naStartApplication");
+  #endif
+  return na_App;
+}
+
 
 
 NA_HDEF NABool na_IsApplicationRunning(void) {
-  return (NABool)(na_App->flags & NA_APPLICATION_FLAG_RUNNING);
+  NAApplication* app = naGetApplication();
+  return (NABool)(app->flags & NA_APPLICATION_FLAG_RUNNING);
 }
 
 
 
 NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
+  #if NA_DEBUG
+    if(na_App)
+      naError("Application already started.");
+  #endif
   na_App = app;
 
   naInitList(&app->windows);
@@ -179,11 +192,8 @@ NA_HDEF const NAFont* na_GetApplicationSystemFont(const NAApplication* app) {
 
 
 NA_DEF const NAMouseStatus* naGetCurrentMouseStatus() {
-  #if NA_DEBUG
-    if(!na_App)
-      naCrash("Application not started. Use naStartApplication");
-  #endif
-  return na_App->mouseStatus;
+  NAApplication* app = naGetApplication();
+  return app->mouseStatus;
 }
 
 
@@ -195,11 +205,8 @@ NA_HDEF NAMouseStatus* na_GetApplicationMouseStatus(NAApplication* app) {
 
 
 NA_HDEF const NAKeyStroke* naGetCurrentKeyStroke() {
-  #if NA_DEBUG
-    if(!na_App)
-      naCrash("Application not started. Use naStartApplication");
-  #endif
-  return na_App->keyStroke;
+  NAApplication* app = naGetApplication();
+  return app->keyStroke;
 }
 
 
@@ -212,54 +219,33 @@ NA_HDEF void na_SetApplicationKeyStroke(NAApplication* app, NAKeyStroke* keyStro
 
 
 NA_DEF void naStopApplication(void) {
-  naSetFlagu32(&na_App->flags, NA_APPLICATION_FLAG_RUNNING, NA_FALSE);
-}
-
-
-
-NA_DEF NAApplication* naGetApplication(void) {
-  #if NA_DEBUG
-    if(!na_App)
-      naError("Application not started. Use naStartApplication");
-  #endif
-  return na_App;
+  NAApplication* app = naGetApplication();
+  naSetFlagu32(&app->flags, NA_APPLICATION_FLAG_RUNNING, NA_FALSE);
 }
 
 
 
 NA_HDEF NABool na_GetApplicationMouseVisible() {
-  #if NA_DEBUG
-    if(!na_App)
-      naCrash("Application not started. Use naStartApplication");
-  #endif
-  return naGetFlagu32(na_App->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE);
+  NAApplication* app = naGetApplication();
+  return naGetFlagu32(app->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE);
 }
 
 
 NA_HDEF void na_SetApplicationMouseVisible(NABool visible) {
-  #if NA_DEBUG
-  if(!na_App)
-    naCrash("Application not started. Use naStartApplication");
-  #endif
-  naSetFlagu32(&na_App->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE, visible);
+  NAApplication* app = naGetApplication();
+  naSetFlagu32(&app->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE, visible);
 }
 
 
 
 NA_DEF NABool naGetDefaultWindowSystemKeyHandling() {
-  #if NA_DEBUG
-    if(!na_App)
-      naCrash("Application not started. Use naStartApplication");
-  #endif
-  return naGetFlagu32(na_App->flags, NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING);
+  NAApplication* app = naGetApplication();
+  return naGetFlagu32(app->flags, NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING);
 }
 
 NA_DEF void naSetDefaultWindowSystemKeyHandling(NABool enable) {
-  #if NA_DEBUG
-    if(!na_App)
-      naCrash("Application not started. Use naStartApplication");
-  #endif
-  naSetFlagu32(&na_App->flags, NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING, enable);
+  NAApplication* app = naGetApplication();
+  naSetFlagu32(&app->flags, NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING, enable);
 }
 
 
