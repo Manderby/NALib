@@ -32,7 +32,6 @@
 #include "../Core/NAAppCore.h"
 #include "../../NAUtility/NAString.h"
 
-
 #include "NAWINAPIClipboardII.h"
 #include "NAWINAPIFontII.h"
 #include "NAWINAPIImageSetII.h"

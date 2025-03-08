@@ -9,15 +9,45 @@
 NA_HDEF void na_InitLabel(NALabel* label, void* nativePtr) {
   na_InitCoreUIElement(&label->uiElement, NA_UI_LABEL, nativePtr);
   label->font = naCreateSystemFont();
+  label->textColor = NA_NULL;
 }
 
 
 
 NA_HDEF void na_ClearLabel(NALabel* label) {
   na_ClearCoreUIElement(&label->uiElement);
+  if(label->textColor) { naFree(label->textColor); }
   naRelease(label->font);
 }
 
+
+
+NA_HDEF void na_SetLabelTextColor(NALabel* label, const NAColor* color) {
+  if(label->textColor) { naFree(label->textColor); }
+  if(color) {
+    label->textColor = naAlloc(NAColor);
+    naFillColorWithCopy(label->textColor, color);
+  }else{
+    label->textColor = NA_NULL;
+  }
+}
+
+
+
+void naFillLabelTextColor(NAColor* color, const NALabel* label) {
+  #if NA_DEBUG
+  if(!label)
+    naError("label is nullptr");
+  #endif
+
+  if(label->textColor) {
+    naFillColorWithCopy(color, label->textColor);
+  }else{
+    naFillColorWithSystemSkinDefaultTextColor(color);
+  }
+
+  color->alpha *= naIsLabelEnabled(label) ? 1.f : .49f;
+}
 
 
 // This is free and unencumbered software released into the public domain.

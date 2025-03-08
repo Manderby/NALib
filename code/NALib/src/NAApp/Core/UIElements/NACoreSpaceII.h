@@ -54,6 +54,41 @@ NA_HDEF void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
 
 
 
+NA_DEF void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
+  #if NA_DEBUG
+  if(!space)
+    naError("space is nullptr");
+  #endif
+
+  NAColor parentBgColor;
+  const NASpace* parentSpace = naGetUIElementParentSpaceConst(space);
+  if(parentSpace) {
+    naFillSpaceBackgroundColor(&parentBgColor, parentSpace);
+  }else{
+    naFillColorWithSystemSkinDefaultBackgroundColor(&parentBgColor);
+  }
+
+  NAColor thisBgColor;
+  if(space->backgroundColor) {
+    naFillColorWithCopy(&thisBgColor, space->backgroundColor);
+  }else{
+    naFillColorWithTransparent(&thisBgColor);
+  }
+
+  NAColor fgColor;
+  if(naGetSpaceAlternateBackground(space)) {
+    naFillColorWithSystemSkinDefaultTextColor(&fgColor);
+  }else{
+    naFillColorWithTransparent(&fgColor);
+  }
+
+  NAColor alternatedColor;
+  naBlendColors(&alternatedColor, &thisBgColor, &fgColor, 0.075f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
+  naBlendColors(color, &parentBgColor, &alternatedColor, 1.f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
+}
+
+
+
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate) {
   space->alternateBackground = alternate;
   naRefreshUIElement(space, 0.);

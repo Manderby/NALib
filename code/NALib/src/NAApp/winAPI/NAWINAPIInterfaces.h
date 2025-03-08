@@ -81,9 +81,6 @@ struct NAWINAPIApplication {
   WNDPROC          oldSelectWindowProc;
   WNDPROC          oldSliderWindowProc;
   WNDPROC          oldTextFieldWindowProc;
-
-  NAWINAPIColor    fgColor;
-  NAWINAPIColor    fgColorDisabled;
 };
 
 struct NAWINAPIButton{

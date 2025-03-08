@@ -12,9 +12,16 @@ struct NAWINAPIColor {
   HBRUSH   brush;
 };
 
-NA_DEF NAUIColor* naAllocUIColor(const NAColor* color) {
+NA_DEF NAUIColor* naAllocUIColor(const NAColor* color, const NAColor* bgColor) {
   NAWINAPIColor* winapiColor = naAlloc(NAWINAPIColor);
-  naFillColorRefWithColor(&winapiColor->colorRef, color);
+
+  if(bgColor) {
+    NAColor blendedColor;
+    naBlendColors(&blendedColor, bgColor, color, 1.f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
+    naFillColorRefWithColor(&winapiColor->colorRef, &blendedColor);
+  }else{
+    naFillColorRefWithColor(&winapiColor->colorRef, color);
+  }
   winapiColor->brush = CreateSolidBrush(winapiColor->colorRef);
   return winapiColor;
 }

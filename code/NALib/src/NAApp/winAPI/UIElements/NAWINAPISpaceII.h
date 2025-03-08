@@ -12,7 +12,9 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   NA_UIElement* childElement;
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)uiElement;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  NAColor fgColor;
   NAColor bgColor;
+  NAWINAPIColor* winapiFgColor;
 
   switch(message) {
   case WM_SHOWWINDOW:
@@ -130,11 +132,12 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     childElement = (NA_UIElement*)na_GetUINALibEquivalent((HWND)lParam);
     switch(childElement->elementType) {
     case NA_UI_LABEL:
-      if(naIsLabelEnabled((NALabel*)childElement)) {
-        SetTextColor((HDC)wParam, app->fgColor.colorRef);
-      }else{
-        SetTextColor((HDC)wParam, app->fgColorDisabled.colorRef);
-      }
+      naFillLabelTextColor(&fgColor, (NALabel*)childElement);
+      naFillSpaceBackgroundColor(&bgColor, uiElement);
+      winapiFgColor = naAllocUIColor(&fgColor, &bgColor);
+      SetTextColor((HDC)wParam, winapiFgColor->colorRef);
+      naDeallocUIColor(winapiFgColor);
+
       SetBkColor((HDC)wParam, winapiSpace->curBgColor->colorRef);
       info.result = (LRESULT)winapiSpace->curBgColor->brush;
       info.hasBeenHandeled = NA_TRUE;
@@ -156,7 +159,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     if(winapiSpace->forceEraseBackground) {
       if(winapiSpace->curBgColor) { naDeallocUIColor(winapiSpace->curBgColor); }
       naFillSpaceBackgroundColor(&bgColor, uiElement);
-      winapiSpace->curBgColor = naAllocUIColor(&bgColor);
+      winapiSpace->curBgColor = naAllocUIColor(&bgColor, NA_NULL);
       FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
       winapiSpace->forceEraseBackground = NA_FALSE;
       info.result = 1;
@@ -172,41 +175,6 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   }
   
   return info;
-}
-
-
-
-void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
-  #if NA_DEBUG
-    if(!space)
-      naError("space is nullptr");
-  #endif
-
-  NAColor parentBgColor;
-  const NASpace* parentSpace = naGetUIElementParentSpaceConst(space);
-  if(parentSpace) {
-    naFillSpaceBackgroundColor(&parentBgColor, parentSpace);
-  }else{
-    naFillColorWithSystemSkinDefaultBackgroundColor(&parentBgColor);
-  }
-
-  NAColor thisBgColor;
-  if(space->backgroundColor) {
-    naFillColorWithCopy(&thisBgColor, space->backgroundColor);
-  }else{
-    naFillColorWithTransparent(&thisBgColor);
-  }
-
-  NAColor fgColor;
-  if(naGetSpaceAlternateBackground(space)) {
-    naFillColorWithSystemSkinDefaultTextColor(&fgColor);
-  }else{
-    naFillColorWithTransparent(&fgColor);
-  }
-
-  NAColor alternatedColor;
-  naBlendColors(&alternatedColor, &thisBgColor, &fgColor, 0.075f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
-  naBlendColors(color, &parentBgColor, &alternatedColor, 1.f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
 }
 
 

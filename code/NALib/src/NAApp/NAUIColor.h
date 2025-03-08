@@ -12,8 +12,10 @@
 // macOS:   NSColor class.
 typedef void NAUIColor;
 
-// Allocate and deallocate colors used for system dependent
-NA_API NAUIColor* naAllocUIColor(const NAColor* color);
+// Allocate and deallocate colors used for system dependent visualization.
+// Some systems have no notion of transparency, so converting an NAColor
+// properly requires the background color. Can be nullptr to make it opaque.
+NA_API NAUIColor* naAllocUIColor(const NAColor* color, const NAColor* bgColor);
 NA_API void naDeallocUIColor(NAUIColor* uiColor);
 
 // Other application and system dependent color functions:

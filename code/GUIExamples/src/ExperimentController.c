@@ -25,6 +25,8 @@ struct ExperimentController{
   NALabel* labelLabel;
   NALabel* label;
   NALabel* labelDisabled;
+  NALabel* labelColor;
+  NALabel* labelColorDisabled;
 
   NALabel* selectLabel;
   NASelect* select;
@@ -254,7 +256,7 @@ ExperimentController* createExperimentController(){
 
   con->contentSpace = naNewSpace(naMakeSize(windowWidth, windowHeight));
   //NAColor windowBackColor;
-  //naFillColorWithSRGB(&windowBackColor, .4f, .8f, .2f, 1.f);
+  //naFillColorWithSRGB(&windowBackColor, .4f, .8f, .2f, .5f);
   //naSetSpaceBackgroundColor(con->contentSpace, &windowBackColor);
   //naSetSpaceAlternateBackground(con->contentSpace, NA_TRUE);
   naAddUIReaction(con->experimentWindow, NA_UI_COMMAND_RESHAPE, windowReshaped, con);
@@ -285,11 +287,22 @@ ExperimentController* createExperimentController(){
   curPosY -= 30;
   con->labelLabel = naNewLabel("NALabel", descSize);
   naAddSpaceChild(con->contentSpace, con->labelLabel, naMakePos(20, curPosY));
-  con->label = naNewLabel("I am a Label", 200);
+  con->label = naNewLabel("Normal Label", 100);
   naAddSpaceChild(con->contentSpace, con->label, naMakePos(left, curPosY));
-  con->labelDisabled = naNewLabel("I am a disabled Label", 200);
+  con->labelColor = naNewLabel("Colored Label", 100);
+  naAddSpaceChild(con->contentSpace, con->labelColor, naMakePos(left + 100, curPosY));
+  
+  con->labelDisabled = naNewLabel("Disabled Label", 100);
   naSetLabelEnabled(con->labelDisabled, NA_FALSE);
+  con->labelColorDisabled = naNewLabel("Disabled Color Label", 100);
+  naSetLabelEnabled(con->labelColorDisabled, NA_FALSE);
   naAddSpaceChild(con->contentSpace, con->labelDisabled, naMakePos(left2, curPosY));
+  naAddSpaceChild(con->contentSpace, con->labelColorDisabled, naMakePos(left2 + 100, curPosY));
+
+  NAColor textColor;
+  naFillColorWithSRGB(&textColor, .1f, .2f, 1.f, 1.f);
+  naSetLabelTextColor(con->labelColor, &textColor);
+  naSetLabelTextColor(con->labelColorDisabled, &textColor);
 
   curPosY -= 30;
   con->selectLabel = naNewLabel("NASelect", descSize);
@@ -403,7 +416,7 @@ ExperimentController* createExperimentController(){
   con->subSpace4 = naNewSpace(naMakeSize(300, 30));
 
   NAColor backColor;
-  naFillColorWithSRGB(&backColor, .8f, .5f, .2f, 1.f);
+  naFillColorWithSRGB(&backColor, .8f, .5f, .2f, .25f);
   naSetSpaceBackgroundColor(con->subSpace3, &backColor);
   naSetSpaceBackgroundColor(con->subSpace4, &backColor);
   

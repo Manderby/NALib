@@ -88,6 +88,7 @@ struct NAImageSpace{
 struct NALabel{
   NA_UIElement uiElement;
   NAFont* font;
+  NAColor* textColor;
 };
 
 struct NAMenu{
@@ -135,10 +136,10 @@ struct NASlider{
 
 struct NASpace{
   NA_UIElement uiElement;
-  NAList       childs;
-  NAColor*     backgroundColor;
-  NABool       alternateBackground;
-  NABool       dragsWindow;
+  NAList childs;
+  NAColor* backgroundColor;
+  NABool alternateBackground;
+  NABool dragsWindow;
 };
 
 struct NATextField{

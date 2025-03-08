@@ -315,12 +315,6 @@ NA_HDEF NAApplication* na_NewApplication(void) {
   winapiApplication->oldSliderWindowProc = NA_NULL;
   winapiApplication->oldTextFieldWindowProc = NA_NULL;
 
-  winapiApplication->fgColor.colorRef = GetSysColor(COLOR_WINDOWTEXT);
-  winapiApplication->fgColorDisabled.colorRef = GetSysColor(COLOR_GRAYTEXT);
-
-  winapiApplication->fgColor.brush = CreateSolidBrush(winapiApplication->fgColor.colorRef);
-  winapiApplication->fgColorDisabled.brush = CreateSolidBrush(winapiApplication->fgColorDisabled.colorRef);
-
   return (NAApplication*)winapiApplication;
 }
 
@@ -328,9 +322,6 @@ NA_HDEF NAApplication* na_NewApplication(void) {
 
 NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication) {
   DestroyWindow(winapiApplication->offscreenWindow);
-
-  DeleteObject(winapiApplication->fgColor.brush);
-  DeleteObject(winapiApplication->fgColorDisabled.brush);
 
   DestroyIcon(winapiApplication->appIcon);
 

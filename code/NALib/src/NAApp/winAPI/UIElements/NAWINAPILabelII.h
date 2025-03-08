@@ -205,16 +205,17 @@ NA_DEF void naSetLabelHeight(NALabel* label, double height) {
 
 
 NA_DEF void naSetLabelTextColor(NALabel* label, const NAColor* color) {
-  HDC hDC = GetDC(naGetUIElementNativePtr(label));
-  COLORREF colorRef;
-  if(color) {
-    naFillColorRefWithColor(&colorRef, color);
-  }else{
-    NAColor defaultColor;
-    naFillColorWithSystemSkinDefaultTextColor(&defaultColor);
-    naFillColorRefWithColor(&colorRef, &defaultColor);
-  }
-  SetTextColor(hDC, colorRef);
+  na_SetLabelTextColor(label, color);
+  //HDC hDC = GetDC(naGetUIElementNativePtr(label));
+  //COLORREF colorRef;
+  //if(color) {
+  //  naFillColorRefWithColor(&colorRef, color);
+  //}else{
+  //  NAColor defaultColor;
+  //  naFillColorWithSystemSkinDefaultTextColor(&defaultColor);
+  //  naFillColorRefWithColor(&colorRef, &defaultColor);
+  //}
+  //SetTextColor(hDC, colorRef);
 }
 
 
