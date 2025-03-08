@@ -315,17 +315,17 @@ NA_HDEF NAApplication* na_NewApplication(void) {
   winapiApplication->oldSliderWindowProc = NA_NULL;
   winapiApplication->oldTextFieldWindowProc = NA_NULL;
 
-  winapiApplication->fgColor.color = GetSysColor(COLOR_WINDOWTEXT);
-  winapiApplication->fgColorDisabled.color = GetSysColor(COLOR_GRAYTEXT);
-  winapiApplication->bgColor.color = GetSysColor(COLOR_BTNFACE);
-  winapiApplication->bgColorAlternate.color = RGB(226, 226, 226);
-  winapiApplication->bgColorAlternate2.color = RGB(205, 205, 205);
+  winapiApplication->fgColor.colorRef = GetSysColor(COLOR_WINDOWTEXT);
+  winapiApplication->fgColorDisabled.colorRef = GetSysColor(COLOR_GRAYTEXT);
+  winapiApplication->bgColor.colorRef = GetSysColor(COLOR_BTNFACE);
+  winapiApplication->bgColorAlternate.colorRef = RGB(226, 226, 226);
+  winapiApplication->bgColorAlternate2.colorRef = RGB(205, 205, 205);
 
-  winapiApplication->fgColor.brush = CreateSolidBrush(winapiApplication->fgColor.color);
-  winapiApplication->fgColorDisabled.brush = CreateSolidBrush(winapiApplication->fgColorDisabled.color);
-  winapiApplication->bgColor.brush = CreateSolidBrush(winapiApplication->bgColor.color);
-  winapiApplication->bgColorAlternate.brush = CreateSolidBrush(winapiApplication->bgColorAlternate.color);
-  winapiApplication->bgColorAlternate2.brush = CreateSolidBrush(winapiApplication->bgColorAlternate2.color);
+  winapiApplication->fgColor.brush = CreateSolidBrush(winapiApplication->fgColor.colorRef);
+  winapiApplication->fgColorDisabled.brush = CreateSolidBrush(winapiApplication->fgColorDisabled.colorRef);
+  winapiApplication->bgColor.brush = CreateSolidBrush(winapiApplication->bgColor.colorRef);
+  winapiApplication->bgColorAlternate.brush = CreateSolidBrush(winapiApplication->bgColorAlternate.colorRef);
+  winapiApplication->bgColorAlternate2.brush = CreateSolidBrush(winapiApplication->bgColorAlternate2.colorRef);
 
   return (NAApplication*)winapiApplication;
 }

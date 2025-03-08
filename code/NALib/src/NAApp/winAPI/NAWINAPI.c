@@ -41,8 +41,10 @@
 #include "NAWINAPIPreferencesII.h"
 
 #include "NAWINAPIII.h"
+#include "NAWINAPIColorII.h"
 #include "NAWINAPIInterfaces.h"
 
+void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space);
 NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace);
 
 #include "UIElements/NAWINAPIApplicationII.h"

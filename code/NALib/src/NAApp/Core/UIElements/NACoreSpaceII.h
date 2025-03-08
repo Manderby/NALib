@@ -9,14 +9,13 @@
 NA_HDEF void na_InitSpace(NASpace* space, void* nativePtr) {
   na_InitCoreUIElement(&space->uiElement, NA_UI_SPACE, nativePtr);
   naInitList(&space->childs);
-  space->backgroundColor = naAlloc(NAColor);
-  naFillColorWithTransparent(space->backgroundColor);
+  space->backgroundColor = NA_NULL;
 }
 
 
 
 NA_HDEF void na_ClearSpace(NASpace* space) {
-  naFree(space->backgroundColor);
+  if(space->backgroundColor) { naFree(space->backgroundColor); }
   naClearList(&space->childs, (NAMutator)naDelete);
   na_ClearCoreUIElement(&space->uiElement);
 }
@@ -39,6 +38,18 @@ NA_HDEF void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child) {
 
 NA_DEF NABool naGetSpaceAlternateBackground(const NASpace* space) {
   return space->alternateBackground;
+}
+
+
+
+NA_HDEF void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
+  if(space->backgroundColor) { naFree(space->backgroundColor); }
+  if(color) {
+    space->backgroundColor = naAlloc(NAColor);
+    naFillColorWithCopy(space->backgroundColor, color);
+  }else{
+    space->backgroundColor = NA_NULL;
+  }
 }
 
 

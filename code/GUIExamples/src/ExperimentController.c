@@ -61,8 +61,14 @@ struct ExperimentController{
   NAOpenGLSpace* openGLSpace;
   int openGLSpaceRefreshCount;
 
-  NASpace* subSpace;
-  NALabel* subSpaceLabel;
+  NASpace* subSpace1;
+  NASpace* subSpace2;
+  NASpace* subSpace3;
+  NASpace* subSpace4;
+  NALabel* subSpace1Label;
+  NALabel* subSpace2Label;
+  NALabel* subSpace3Label;
+  NALabel* subSpace4Label;
 
   NAButton* converterButton;
   NAButton* quitButton;
@@ -247,7 +253,10 @@ ExperimentController* createExperimentController(){
     0);
 
   con->contentSpace = naNewSpace(naMakeSize(windowWidth, windowHeight));
-  naSetSpaceAlternateBackground(con->contentSpace, NA_TRUE);
+  //NAColor windowBackColor;
+  //naFillColorWithSRGB(&windowBackColor, .4f, .8f, .2f, 1.f);
+  //naSetSpaceBackgroundColor(con->contentSpace, &windowBackColor);
+  //naSetSpaceAlternateBackground(con->contentSpace, NA_TRUE);
   naAddUIReaction(con->experimentWindow, NA_UI_COMMAND_RESHAPE, windowReshaped, con);
 
   double curPosY = windowHeight - 42;
@@ -388,11 +397,31 @@ ExperimentController* createExperimentController(){
   con->openGLSpaceRefreshCount = 1;
 
   curPosY -= 60;
-  con->subSpace = naNewSpace(naMakeSize(600, 50));
-  naSetSpaceAlternateBackground(con->subSpace, NA_TRUE);
-  con->subSpaceLabel = naNewLabel("Subspace with alternate background", 520);
-  naAddSpaceChild(con->subSpace, con->subSpaceLabel, naMakePos(20, 10));
-  naAddSpaceChild(con->contentSpace, con->subSpace, naMakePos(0, curPosY));
+  con->subSpace1 = naNewSpace(naMakeSize(300, 30));
+  con->subSpace2 = naNewSpace(naMakeSize(300, 30));
+  con->subSpace3 = naNewSpace(naMakeSize(300, 30));
+  con->subSpace4 = naNewSpace(naMakeSize(300, 30));
+
+  NAColor backColor;
+  naFillColorWithSRGB(&backColor, .8f, .5f, .2f, 1.f);
+  naSetSpaceBackgroundColor(con->subSpace3, &backColor);
+  naSetSpaceBackgroundColor(con->subSpace4, &backColor);
+  
+  naSetSpaceAlternateBackground(con->subSpace2, NA_TRUE);
+  naSetSpaceAlternateBackground(con->subSpace4, NA_TRUE);
+  con->subSpace1Label = naNewLabel("Subspace with normal background", 520);
+  con->subSpace2Label = naNewLabel("Subspace with alternate background", 520);
+  con->subSpace3Label = naNewLabel("Subspace with colored background", 520);
+  con->subSpace4Label = naNewLabel("Subspace with colored and alternate background", 520);
+  naAddSpaceChild(con->subSpace1, con->subSpace1Label, naMakePos(20, 0));
+  naAddSpaceChild(con->subSpace2, con->subSpace2Label, naMakePos(20, 0));
+  naAddSpaceChild(con->subSpace3, con->subSpace3Label, naMakePos(20, 0));
+  naAddSpaceChild(con->subSpace4, con->subSpace4Label, naMakePos(20, 0));
+  naAddSpaceChild(con->contentSpace, con->subSpace1, naMakePos(0, curPosY));
+  naAddSpaceChild(con->contentSpace, con->subSpace2, naMakePos(300, curPosY));
+  curPosY -= 30;
+  naAddSpaceChild(con->contentSpace, con->subSpace3, naMakePos(0, curPosY));
+  naAddSpaceChild(con->contentSpace, con->subSpace4, naMakePos(300, curPosY));
 
   curPosY -= 50;
   con->converterButton = naNewTextPushButton("Example: Temp. Converter", 200);

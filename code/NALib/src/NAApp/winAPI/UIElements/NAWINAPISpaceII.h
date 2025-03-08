@@ -12,7 +12,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   NA_UIElement* childElement;
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)uiElement;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  NAWINAPIColor* bgColor;
+  NAColor bgColor;
 
   switch(message) {
   case WM_SHOWWINDOW:
@@ -92,11 +92,10 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
         if(naIsButtonBordered(button) && naIsButtonStateful(button) && naGetButtonState(button)) {
           // we choose yellow as background as this is probably the last color ever
           // being used as a system UI style.
-          info.result = (LRESULT)CreateSolidBrush(RGB(255, 255, 0));
+          info.result = (LRESULT)CreateSolidBrush(RGB(255, 255, 0)); // todo: memory leak
           info.hasBeenHandeled = NA_TRUE;
         }else{
-          bgColor = naGetWINAPISpaceBackgroundColor((const NAWINAPISpace*)naGetUIElementParentSpaceConst(button));
-          info.result = (LRESULT)bgColor->brush;
+          info.result = (LRESULT)winapiSpace->curBgColor->brush;
           info.hasBeenHandeled = NA_TRUE;
         }
       }else{
@@ -111,7 +110,17 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
   case WM_CTLCOLOREDIT: // TextBox
     childElement = (NA_UIElement*)na_GetUINALibEquivalent((HWND)lParam);
+    //SetTextColor((HDC)wParam, RGB(255, 128, 0));
+    //bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
+    //SetBkMode( (HDC)wParam, TRANSPARENT ); 
+    //SetBkColor((HDC)wParam, bgColor->color);
+    //info.result = (LRESULT)bgColor->brush;
+    //info.hasBeenHandeled = NA_TRUE;
     break;
+
+  // Note that an NALabel is declared as an "EDIT" control but as it is
+  // marked with "ES_READONLY", it answers to WM_CTLCOLORSTATIC rathern than
+  // WM_CTLCOLOREDIT.
 
   case WM_CTLCOLORSTATIC: // Label, TextField, Radio, CheckBox, Select
   // Message is sent to parent space.
@@ -122,13 +131,12 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     switch(childElement->elementType) {
     case NA_UI_LABEL:
       if(naIsLabelEnabled((NALabel*)childElement)) {
-        SetTextColor((HDC)wParam, app->fgColor.color);
+        SetTextColor((HDC)wParam, app->fgColor.colorRef);
       }else{
-        SetTextColor((HDC)wParam, app->fgColorDisabled.color);
+        SetTextColor((HDC)wParam, app->fgColorDisabled.colorRef);
       }
-      bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
-      SetBkColor((HDC)wParam, bgColor->color);
-      info.result = (LRESULT)bgColor->brush;
+      SetBkColor((HDC)wParam, winapiSpace->curBgColor->colorRef);
+      info.result = (LRESULT)winapiSpace->curBgColor->brush;
       info.hasBeenHandeled = NA_TRUE;
       break;
     case NA_UI_TEXTFIELD:
@@ -137,23 +145,25 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
       break;
     default:
       // Radio, CheckBox, Select
-      bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
-      info.result = (LRESULT)bgColor->brush;
+      info.result = (LRESULT)winapiSpace->curBgColor->brush;
       info.hasBeenHandeled = NA_TRUE;
       break;
     }
     break;
 
-  case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
+  case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
     GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
-    bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
-    if(winapiSpace->forceEraseBackground || bgColor != winapiSpace->lastBgColor) {
-      FillRect((HDC)wParam, &spaceRect, bgColor->brush);
-      winapiSpace->lastBgColor = bgColor;
+    //if(winapiSpace->forceEraseBackground) {
+      if(winapiSpace->curBgColor) { naDeallocUIColor(winapiSpace->curBgColor); }
+      naFillSpaceBackgroundColor(&bgColor, uiElement);
+      winapiSpace->curBgColor = naAllocUIColor(&bgColor);
+      FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
       winapiSpace->forceEraseBackground = NA_FALSE;
-    }
+      info.result = 1;
+    //}else{
+    //  info.result = 0;
+    //}
     info.hasBeenHandeled = NA_TRUE;
-    info.result = 1;
     break;
 
   default:
@@ -166,9 +176,39 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
 
 
+void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
+  #if NA_DEBUG
+    if(!space)
+      naError("space is nullptr");
+  #endif
+  NAColor bgColor;
+  NAColor fgColor;
+  naFillColorWithSystemSkinDefaultTextColor(&fgColor);
+  naFillColorWithSystemSkinDefaultBackgroundColor(&bgColor);
+
+  if(space->backgroundColor) {
+    naFillColorWithCopy(&bgColor, space->backgroundColor);
+  }else{
+    const NASpace* parentSpace = naGetUIElementParentSpaceConst(space);
+    if(parentSpace) {
+      naFillSpaceBackgroundColor(&bgColor, parentSpace);
+    }else{
+      // do nothing. We already have filled fg and bg color.
+    }
+  }
+
+  if(naGetSpaceAlternateBackground(space)) {
+    bgColor.r = bgColor.r * (1.f - 0.075f) + fgColor.r * 0.075f;
+    bgColor.g = bgColor.g * (1.f - 0.075f) + fgColor.g * 0.075f;
+    bgColor.b = bgColor.b * (1.f - 0.075f) + fgColor.b * 0.075f;
+  }
+
+  naFillColorWithCopy(color, &bgColor);
+}
+
 NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  NAWINAPIColor* retcolor;
+  NAWINAPIColor* retColor;
   NAInt alternateLevel = 0;
   const void* parent = winapiSpace;
   while(parent) {
@@ -178,13 +218,13 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace)
     parent = naGetUIElementParentSpaceConst(parent);
   }
   switch(alternateLevel) {
-  case 0: retcolor = &app->bgColor; break;
-  case 1: retcolor = &app->bgColorAlternate; break;
+  case 0: retColor = &app->bgColor; break;
+  case 1: retColor = &app->bgColorAlternate; break;
   case 2:
   default:
-    retcolor = &app->bgColorAlternate2; break;
+    retColor = &app->bgColorAlternate2; break;
   }
-  return retcolor;
+  return retColor;
 }
 
 
@@ -211,7 +251,8 @@ NA_DEF NASpace* naNewSpace(NASize size) {
   na_InitSpace(&winapiSpace->space, nativePtr);
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  winapiSpace->lastBgColor = &app->bgColor;
+  winapiSpace->curBgColor = NA_NULL;
+
   winapiSpace->forceEraseBackground = NA_FALSE;
 
   winapiSpace->space.alternateBackground = NA_FALSE;
@@ -222,6 +263,7 @@ NA_DEF NASpace* naNewSpace(NASize size) {
 
 
 NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace) {
+  if(winapiSpace->curBgColor) { naDeallocUIColor(winapiSpace->curBgColor); }
   na_ClearSpace((NASpace*)winapiSpace);
 }
 
@@ -231,6 +273,11 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos) {
   na_AddSpaceChild(space, child);
   double offsetY = na_GetUIElementYOffset(child);
 
+  if(naGetUIElementType(child) == NA_UI_SPACE) {
+    NAWINAPISpace* childElem = (NAWINAPISpace*)child;
+    childElem->forceEraseBackground = NA_TRUE;
+  }
+
   NARect childRect = naGetUIElementRect(child);
   childRect.pos = naMakePos(pos.x, pos.y + offsetY);
   naSetUIElementRect(child, childRect);
@@ -239,7 +286,10 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos) {
 
 
 NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
-  // todo
+  na_SetSpaceBackgroundColor(space, color);
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
+  winapiSpace->forceEraseBackground = NA_TRUE;
+  naRefreshUIElement(space, 0);
 }
 
 
@@ -314,6 +364,8 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(space));
 
   double test = parentRect.size.height - winapiSpace->rect.pos.y - winapiSpace->rect.size.height;
+
+  winapiSpace->forceEraseBackground = NA_TRUE;
 
   SetWindowPos(
     naGetUIElementNativePtr(space),

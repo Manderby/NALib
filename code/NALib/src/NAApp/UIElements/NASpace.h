@@ -49,7 +49,7 @@ NA_API void naRemoveAllSpaceChilds(NASpace* space);
 NA_API NABool naGetSpaceAlternateBackground(const NASpace* space);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 
-// Set a specific background color.
+// Set a specific background color. (copies the contents of color)
 NA_API void naSetSpaceBackgroundColor(
   NASpace* space,
   const NAColor* color);

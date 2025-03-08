@@ -23,16 +23,18 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   NAImage* blendedImage;
   NAByte* blendedBuffer;
   HBITMAP hBlendedBitmap;
-  NAWINAPIColor* bgColor;
 
   BeginPaint(naGetUIElementNativePtr(uiElement), &paintStruct);
   hMemDC = CreateCompatibleDC(paintStruct.hdc);
 
   imageSpace = (NAWINAPIImageSpace*)uiElement;
 
-  bgColor = naGetWINAPISpaceBackgroundColor((const NAWINAPISpace*)naGetUIElementParentSpaceConst(uiElement));
-  FillRect(paintStruct.hdc, &paintStruct.rcPaint, bgColor->brush);
-  
+  NAColor bgColor;
+  naFillSpaceBackgroundColor(&bgColor, naGetUIElementParentSpaceConst(uiElement));
+  NAWINAPIColor* bgWinapiColor = naAllocUIColor(&bgColor);
+  FillRect(paintStruct.hdc, &paintStruct.rcPaint, bgWinapiColor->brush);
+  naDeallocUIColor(bgWinapiColor);
+
   if(!imageSpace->imageSpace.imageSet)
     return info;
 

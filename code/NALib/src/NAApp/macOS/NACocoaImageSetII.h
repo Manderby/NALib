@@ -63,7 +63,7 @@
 
 
 
-NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor* color) {
+NA_DEF void naFillColorWithSystemSkinDefaultTextColor(NAColor* color) {
   NSColor* labelColor = naGetLabelColor();
   naFillColorWithSRGB(
     color,
@@ -75,7 +75,7 @@ NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor* color) {
 
 
 
-NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color) {
+NA_DEF void naFillColorWithSystemSkinDefaultLinkColor(NAColor* color) {
   NSColor* linkColor = naGetLinkColor();
   naFillColorWithSRGB(
     color,
@@ -87,7 +87,7 @@ NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color) {
 
 
 
-NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color) {
+NA_DEF void naFillColorWithSystemSkinDefaultAccentColor(NAColor* color) {
   NSColor* accentColor = naGetAccentColor();
   naFillColorWithSRGB(
     color,

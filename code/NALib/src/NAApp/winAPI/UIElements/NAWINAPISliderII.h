@@ -9,8 +9,9 @@
 NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NASlider* slider = (NASlider*)uiElement;
-  NAWINAPISpace* winapiSpace;
-  NAWINAPIColor* bgColor;
+  NASpace* space;
+  NAColor bgColor;
+  NAWINAPIColor* bgWinapiColor;
   RECT sliderRect;
 
   switch(message) {
@@ -19,13 +20,6 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_MOVE:
   case WM_SHOWWINDOW:
   case WM_PAINT:
-    //winapiSpace = (NAWINAPISpace*)naGetUIElementParentSpace(uiElement);
-    //GetClientRect(naGetUIElementNativePtr(uiElement), &sliderRect);
-    //bgColor = naGetWINAPISpaceBackgroundColor(winapiSpace);
-    //FillRect((HDC)wParam, &sliderRect, bgColor->brush);
-    //info.hasBeenHandeled = NA_TRUE;
-    //break;
-
   case WM_NCPAINT:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
@@ -53,11 +47,15 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
     break;
 
-  case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
-    winapiSpace = (NAWINAPISpace*)naGetUIElementParentSpace(uiElement);
+  case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
+    space = naGetUIElementParentSpace(uiElement);
     GetClientRect(naGetUIElementNativePtr(uiElement), &sliderRect);
-    bgColor = naGetWINAPISpaceBackgroundColor(winapiSpace);
-    FillRect((HDC)wParam, &sliderRect, bgColor->brush);
+
+    naFillSpaceBackgroundColor(&bgColor, space);
+    bgWinapiColor = naAllocUIColor(&bgColor);
+    FillRect((HDC)wParam, &sliderRect, bgWinapiColor->brush);
+    naDeallocUIColor(bgWinapiColor);
+
     info.hasBeenHandeled = NA_TRUE;
     info.result = 1;
     break;

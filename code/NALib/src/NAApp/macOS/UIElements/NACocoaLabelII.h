@@ -255,7 +255,7 @@ NA_DEF void naSetLabelTextColor(NALabel* label, const NAColor* color) {
 
 NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url) {
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setLink: url];
+  [nativePtr setLink:url];
 }
 
 

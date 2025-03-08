@@ -133,7 +133,6 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_IME_NOTIFY:
   case WM_PAINT:
   case WM_NCPAINT:
-  case WM_ERASEBKGND:
   case WM_GETFONT:
   case WM_SETFONT:
   case WM_NCHITTEST:
@@ -172,6 +171,13 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_ENTERSIZEMOVE:
   case WM_MOVING:
   case WM_EXITSIZEMOVE:
+    break;
+
+  case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
+    // We pretend to have erased, although it will be the content space which
+    // erases the background.
+    info.result = 1;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   case WM_SETFOCUS:
@@ -301,6 +307,8 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space) {
       (naGetUIElementType(space) != NA_UI_METAL_SPACE))
       naError("Require a space, not any arbitrary ui element.");
   #endif
+
+  if(window->contentSpace) { naDelete(window->contentSpace); }
   window->contentSpace = space;
 
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;

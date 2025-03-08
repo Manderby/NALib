@@ -28,7 +28,9 @@
   dirtyRect = [self frame];
   dirtyRect.origin = NSMakePoint(0., 0.);
 
-  if(naGetColorAlpha(cocoaSpace->space.backgroundColor) != 0.) {
+  if(cocoaSpace->space.backgroundColor &&
+    naGetColorAlpha(cocoaSpace->space.backgroundColor) != 0.)
+  {
     float rgba[4];
     naFillSRGBAWithColor(rgba, cocoaSpace->space.backgroundColor);
     [[NSColor colorWithDeviceRed:rgba[0]
@@ -295,11 +297,7 @@ NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift) {
 
 
 NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NAColor* _Nullable color) {
-  if(color) {
-    naFillColorWithCopy(space->backgroundColor, color);
-  }else{
-    naFillColorWithTransparent(space->backgroundColor);
-  }
+  na_SetSpaceBackgroundColor(space, color);
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   [nativePtr setNeedsDisplay:YES];
 }

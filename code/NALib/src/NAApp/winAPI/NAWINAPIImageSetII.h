@@ -18,52 +18,6 @@ NA_DEF NASkin naGetCurrentSkin() {
 
 
 
-NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor* color) {
-  COLORREF colorRef = GetSysColor(COLOR_BTNTEXT);
-  naFillColorWithSRGB(
-    color,
-    GetRValue(colorRef) / 255.f,
-    GetGValue(colorRef) / 255.f,
-    GetBValue(colorRef) / 255.f,
-    1.f);
-}
-
-
-
-NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color) {
-  COLORREF colorRef = GetSysColor(COLOR_HOTLIGHT);
-  naFillColorWithSRGB(
-    color,
-    GetRValue(colorRef) / 255.f,
-    GetGValue(colorRef) / 255.f,
-    GetBValue(colorRef) / 255.f,
-    1.f);
-}
-
-
-
-NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color) {
-  COLORREF colorRef;
-  if(!na_GetWINRegistryFixedEntry(
-    HKEY_CURRENT_USER,
-    "Software\\Microsoft\\Windows\\DWM",
-    "AccentColor",
-    &colorRef,
-    sizeof(COLORREF)))
-  {
-    colorRef = GetSysColor(COLOR_HIGHLIGHT);
-  }
-
-  naFillColorWithSRGB(
-    color,
-    GetRValue(colorRef) / 255.f,
-    GetGValue(colorRef) / 255.f,
-    GetBValue(colorRef) / 255.f,
-    1.f);
-}
-
-
-
 NA_DEF NAImage* naCreateImageWithNativeImage(const void* nativeImage) {
   BYTE* lpPixels;
   NAImage* image;
