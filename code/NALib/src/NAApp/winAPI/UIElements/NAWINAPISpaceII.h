@@ -109,7 +109,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     break;
 
   case WM_CTLCOLOREDIT: // TextBox
-    childElement = (NA_UIElement*)na_GetUINALibEquivalent((HWND)lParam);
+    //childElement = (NA_UIElement*)na_GetUINALibEquivalent((HWND)lParam);
     //SetTextColor((HDC)wParam, RGB(255, 128, 0));
     //bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
     //SetBkMode( (HDC)wParam, TRANSPARENT ); 
@@ -153,16 +153,16 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
   case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
     GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
-    //if(winapiSpace->forceEraseBackground) {
+    if(winapiSpace->forceEraseBackground) {
       if(winapiSpace->curBgColor) { naDeallocUIColor(winapiSpace->curBgColor); }
       naFillSpaceBackgroundColor(&bgColor, uiElement);
       winapiSpace->curBgColor = naAllocUIColor(&bgColor);
       FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
       winapiSpace->forceEraseBackground = NA_FALSE;
       info.result = 1;
-    //}else{
-    //  info.result = 0;
-    //}
+    }else{
+      info.result = 0;
+    }
     info.hasBeenHandeled = NA_TRUE;
     break;
 
@@ -181,50 +181,32 @@ void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
     if(!space)
       naError("space is nullptr");
   #endif
-  NAColor bgColor;
-  NAColor fgColor;
-  naFillColorWithSystemSkinDefaultTextColor(&fgColor);
-  naFillColorWithSystemSkinDefaultBackgroundColor(&bgColor);
 
-  if(space->backgroundColor) {
-    naFillColorWithCopy(&bgColor, space->backgroundColor);
+  NAColor parentBgColor;
+  const NASpace* parentSpace = naGetUIElementParentSpaceConst(space);
+  if(parentSpace) {
+    naFillSpaceBackgroundColor(&parentBgColor, parentSpace);
   }else{
-    const NASpace* parentSpace = naGetUIElementParentSpaceConst(space);
-    if(parentSpace) {
-      naFillSpaceBackgroundColor(&bgColor, parentSpace);
-    }else{
-      // do nothing. We already have filled fg and bg color.
-    }
+    naFillColorWithSystemSkinDefaultBackgroundColor(&parentBgColor);
   }
 
+  NAColor thisBgColor;
+  if(space->backgroundColor) {
+    naFillColorWithCopy(&thisBgColor, space->backgroundColor);
+  }else{
+    naFillColorWithTransparent(&thisBgColor);
+  }
+
+  NAColor fgColor;
   if(naGetSpaceAlternateBackground(space)) {
-    bgColor.r = bgColor.r * (1.f - 0.075f) + fgColor.r * 0.075f;
-    bgColor.g = bgColor.g * (1.f - 0.075f) + fgColor.g * 0.075f;
-    bgColor.b = bgColor.b * (1.f - 0.075f) + fgColor.b * 0.075f;
+    naFillColorWithSystemSkinDefaultTextColor(&fgColor);
+  }else{
+    naFillColorWithTransparent(&fgColor);
   }
 
-  naFillColorWithCopy(color, &bgColor);
-}
-
-NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  NAWINAPIColor* retColor;
-  NAInt alternateLevel = 0;
-  const void* parent = winapiSpace;
-  while(parent) {
-    if(naGetSpaceAlternateBackground(parent)) {
-      alternateLevel++;
-    }
-    parent = naGetUIElementParentSpaceConst(parent);
-  }
-  switch(alternateLevel) {
-  case 0: retColor = &app->bgColor; break;
-  case 1: retColor = &app->bgColorAlternate; break;
-  case 2:
-  default:
-    retColor = &app->bgColorAlternate2; break;
-  }
-  return retColor;
+  NAColor alternatedColor;
+  naBlendColors(&alternatedColor, &thisBgColor, &fgColor, 0.075f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
+  naBlendColors(color, &parentBgColor, &alternatedColor, 1.f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
 }
 
 

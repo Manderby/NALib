@@ -84,9 +84,6 @@ struct NAWINAPIApplication {
 
   NAWINAPIColor    fgColor;
   NAWINAPIColor    fgColorDisabled;
-  NAWINAPIColor    bgColor;
-  NAWINAPIColor    bgColorAlternate;
-  NAWINAPIColor    bgColorAlternate2;
 };
 
 struct NAWINAPIButton{

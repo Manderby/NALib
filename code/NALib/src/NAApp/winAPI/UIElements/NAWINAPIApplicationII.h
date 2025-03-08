@@ -317,15 +317,9 @@ NA_HDEF NAApplication* na_NewApplication(void) {
 
   winapiApplication->fgColor.colorRef = GetSysColor(COLOR_WINDOWTEXT);
   winapiApplication->fgColorDisabled.colorRef = GetSysColor(COLOR_GRAYTEXT);
-  winapiApplication->bgColor.colorRef = GetSysColor(COLOR_BTNFACE);
-  winapiApplication->bgColorAlternate.colorRef = RGB(226, 226, 226);
-  winapiApplication->bgColorAlternate2.colorRef = RGB(205, 205, 205);
 
   winapiApplication->fgColor.brush = CreateSolidBrush(winapiApplication->fgColor.colorRef);
   winapiApplication->fgColorDisabled.brush = CreateSolidBrush(winapiApplication->fgColorDisabled.colorRef);
-  winapiApplication->bgColor.brush = CreateSolidBrush(winapiApplication->bgColor.colorRef);
-  winapiApplication->bgColorAlternate.brush = CreateSolidBrush(winapiApplication->bgColorAlternate.colorRef);
-  winapiApplication->bgColorAlternate2.brush = CreateSolidBrush(winapiApplication->bgColorAlternate2.colorRef);
 
   return (NAApplication*)winapiApplication;
 }
@@ -337,9 +331,6 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
 
   DeleteObject(winapiApplication->fgColor.brush);
   DeleteObject(winapiApplication->fgColorDisabled.brush);
-  DeleteObject(winapiApplication->bgColor.brush);
-  DeleteObject(winapiApplication->bgColorAlternate.brush);
-  DeleteObject(winapiApplication->bgColorAlternate2.brush);
 
   DestroyIcon(winapiApplication->appIcon);
 

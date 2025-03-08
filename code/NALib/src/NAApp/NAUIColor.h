@@ -16,8 +16,6 @@ typedef void NAUIColor;
 NA_API NAUIColor* naAllocUIColor(const NAColor* color);
 NA_API void naDeallocUIColor(NAUIColor* uiColor);
 
-
-
 // Other application and system dependent color functions:
 
 #if NA_OS == NA_OS_WINDOWS

@@ -53,6 +53,8 @@ NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 NA_API void naSetSpaceBackgroundColor(
   NASpace* space,
   const NAColor* color);
+// Fills the given color with the background acutally used for displaying.
+void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space);
 
 // Moves all childs with the given x and y coordinates in direction
 // to the right and top.
