@@ -262,6 +262,7 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url) {
 
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled) {
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
+  na_SetLabelEnabled(label, enabled);
   [nativePtr setLabelEnabled:enabled];
 }
 

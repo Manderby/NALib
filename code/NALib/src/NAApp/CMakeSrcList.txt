@@ -70,6 +70,7 @@ set(coreUIFiles
 set(macOSFiles
   ${NAAppDir}/macOS/NACocoaClipboardII.h
   ${NAAppDir}/macOS/NACocoa.m
+  ${NAAppDir}/macOS/NACocoaColorII.h
   ${NAAppDir}/macOS/NACocoaFontII.h
   ${NAAppDir}/macOS/NACocoaImageSetII.h
   ${NAAppDir}/macOS/NACocoaKeyboardII.h

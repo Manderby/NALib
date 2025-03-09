@@ -63,42 +63,6 @@
 
 
 
-NA_DEF void naFillColorWithSystemSkinDefaultTextColor(NAColor* color) {
-  NSColor* labelColor = naGetLabelColor();
-  naFillColorWithSRGB(
-    color,
-    (float)[labelColor redComponent],
-    (float)[labelColor greenComponent],
-    (float)[labelColor blueComponent],
-    1.f);
-}
-
-
-
-NA_DEF void naFillColorWithSystemSkinDefaultLinkColor(NAColor* color) {
-  NSColor* linkColor = naGetLinkColor();
-  naFillColorWithSRGB(
-    color,
-    (float)[linkColor redComponent],
-    (float)[linkColor greenComponent],
-    (float)[linkColor blueComponent],
-    1.f);
-}
-
-
-
-NA_DEF void naFillColorWithSystemSkinDefaultAccentColor(NAColor* color) {
-  NSColor* accentColor = naGetAccentColor();
-  naFillColorWithSRGB(
-    color,
-    (float)[accentColor redComponent],
-    (float)[accentColor greenComponent],
-    (float)[accentColor blueComponent],
-    1.f);
-}
-
-
-
 NA_DEF NAImage* naCreateImageWithNativeImage(const void* nativeImage) {
   NAImage* image;
   

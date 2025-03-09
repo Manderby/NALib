@@ -89,6 +89,7 @@ struct NALabel{
   NA_UIElement uiElement;
   NAFont* font;
   NAColor* textColor;
+  NABool enabled;
 };
 
 struct NAMenu{
@@ -319,6 +320,7 @@ NA_HAPI void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect);
 // NALabel
 NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
 NA_HAPI void na_ClearLabel(NALabel* label);
+NA_HAPI void na_SetLabelEnabled(NALabel* label, NABool enabled);
 NA_HAPI void na_SetLabelTextColor(NALabel* label, const NAColor* color);
 NA_HAPI NARect na_GetLabelRect(const NA_UIElement* space);
 NA_HAPI void na_SetLabelRect(NA_UIElement* label, NARect rect);

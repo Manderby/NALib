@@ -142,16 +142,8 @@ NA_DEF void naSetLabelVisible(NALabel* label, NABool visible) {
 
 
 
-NA_DEF NABool naIsLabelEnabled(const NALabel* label) {
-  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
-  return winapiLabel->enabled;
-}
-
-
-
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled) {
-  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
-  winapiLabel->enabled = enabled;
+  na_SetLabelEnabled(label, enabled);
   naRefreshUIElement(label, 0);
 }
 

@@ -87,6 +87,20 @@ NA_DEF void naSwitchApplicationToGraphiteAppearance(void) {
 
 
 
+NA_DEF NSColor* naGetWindowBackColor() {
+  NSColor* color = nil;
+  
+  NA_MACOS_AVAILABILITY_GUARD_10_10(
+    if([NSColor respondsToSelector:@selector(windowBackgroundColor)]) {
+      color = [NSColor windowBackgroundColor];
+    }
+  )
+  if(!color) {
+    color = [NSColor whiteColor];
+  }
+  return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+}
+
 NA_DEF NSColor* naGetLabelColor() {
   NSColor* color = nil;
   
@@ -94,6 +108,9 @@ NA_DEF NSColor* naGetLabelColor() {
     if([NSColor respondsToSelector:@selector(labelColor)]) {
       color = [NSColor labelColor];
     }
+//    if([NSColor respondsToSelector:@selector(labelColor)]) {
+//      color = [NSColor labelColor];
+//    }
   )
   if(!color) {
     color = [NSColor controlTextColor];

@@ -28,21 +28,14 @@
   dirtyRect = [self frame];
   dirtyRect.origin = NSMakePoint(0., 0.);
 
-  if(cocoaSpace->space.backgroundColor &&
-    naGetColorAlpha(cocoaSpace->space.backgroundColor) != 0.)
-  {
-    float rgba[4];
-    naFillSRGBAWithColor(rgba, cocoaSpace->space.backgroundColor);
-    [[NSColor colorWithDeviceRed:rgba[0]
-      green:rgba[1]
-      blue:rgba[2]
-      alpha:rgba[3]] setFill];
-    NSRectFill(dirtyRect);
-  }
-  if(cocoaSpace->space.alternateBackground) {
-    [[[NSColor controlTextColor] colorWithAlphaComponent:(CGFloat).075] setFill];
-    NSRectFill(dirtyRect);
-  }
+  NAColor bgColor;
+  naFillSpaceBackgroundColor(&bgColor, &cocoaSpace->space);
+  NSColor* curBgColor = naAllocUIColor(&bgColor, NA_NULL);
+  [curBgColor setFill];
+
+  NSRectFill(dirtyRect);
+
+  naDeallocUIColor(curBgColor);
 }
 
 - (void)mouseMoved:(NSEvent* _Nonnull)event{

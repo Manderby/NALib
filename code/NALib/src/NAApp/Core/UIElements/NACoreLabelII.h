@@ -10,6 +10,7 @@ NA_HDEF void na_InitLabel(NALabel* label, void* nativePtr) {
   na_InitCoreUIElement(&label->uiElement, NA_UI_LABEL, nativePtr);
   label->font = naCreateSystemFont();
   label->textColor = NA_NULL;
+  label->enabled = NA_TRUE;
 }
 
 
@@ -18,6 +19,18 @@ NA_HDEF void na_ClearLabel(NALabel* label) {
   na_ClearCoreUIElement(&label->uiElement);
   if(label->textColor) { naFree(label->textColor); }
   naRelease(label->font);
+}
+
+
+
+NA_DEF NABool naIsLabelEnabled(const NALabel* label) {
+  return label->enabled;
+}
+
+
+
+NA_HDEF void na_SetLabelEnabled(NALabel* label, NABool enabled) {
+  label->enabled = enabled;
 }
 
 
