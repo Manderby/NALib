@@ -7,7 +7,6 @@
 
 
 #include "../../../NAUtility/NAString.h"
-#include "../../../NAUtility/NAURL.h"
 #include "../../../NAUtility/NATranslator.h"
 #include "../../../NAStruct/NAStack.h"
 #include "../../../NAVisual/NAImage.h"
@@ -504,19 +503,11 @@ NA_DEF NAString* naNewApplicationName(void) {
   }else{
     TCHAR modulePath[MAX_PATH];
     NAString* utf8ModulePath;
-    NAURL url;
-    NAString* applicationName;
     NAString* applicationbaseBame;
 
     GetModuleFileName(NULL, modulePath, MAX_PATH);
     utf8ModulePath = naNewStringWithSystemString(modulePath);
-
-    naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8ModulePath));
-    naDelete(utf8ModulePath);
-    applicationName = naNewStringWithURLFilename(&url);
-    applicationbaseBame = naNewStringWithBaseNameOfPath(applicationName);
-    naClearURL(&url);
-    naDelete(applicationName);
+    applicationbaseBame = naNewStringWithBaseNameOfPath(utf8ModulePath);
 
     return applicationbaseBame;
   }

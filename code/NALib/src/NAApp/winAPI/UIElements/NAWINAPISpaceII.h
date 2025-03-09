@@ -133,7 +133,9 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     switch(childElement->elementType) {
     case NA_UI_LABEL:
       naFillLabelTextColor(&fgColor, (NALabel*)childElement);
+      if(winapiSpace->curBgColor) { naDeallocUIColor(winapiSpace->curBgColor); }
       naFillSpaceBackgroundColor(&bgColor, uiElement);
+      winapiSpace->curBgColor = naAllocUIColor(&bgColor, NA_NULL);
       winapiFgColor = naAllocUIColor(&fgColor, &bgColor);
       SetTextColor((HDC)wParam, winapiFgColor->colorRef);
       naDeallocUIColor(winapiFgColor);

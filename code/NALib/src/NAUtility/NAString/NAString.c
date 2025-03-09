@@ -2,7 +2,6 @@
 #include "../../NAStruct/NABuffer.h"
 #include "../../NAUtility/NABinaryData.h"
 #include "../../NAUtility/NAString.h"
-#include "../../NAUtility/NAURL.h"
 #include <string.h>
 #include <ctype.h>
 
@@ -420,7 +419,7 @@ NA_DEF NAString* naNewStringWithBaseNameOfPath(const NAString* filePath) {
   NAInt slashOffset = naGetLastSlashOffset(filePath);
   // If slashOffset is invalid, return all leading.
   if(slashOffset == NA_INVALID_MEMORY_INDEX) {
-    slashOffset = 0;
+    slashOffset = -1;
   }
   NAInt dotOffset = naSearchBufferByteOffset(
     filePath->buffer,

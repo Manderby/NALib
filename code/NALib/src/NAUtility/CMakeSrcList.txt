@@ -13,7 +13,6 @@ set(headerFiles
   ${NAUtilityDir}/NAString.h
   ${NAUtilityDir}/NAThreading.h
   ${NAUtilityDir}/NATranslator.h
-  ${NAUtilityDir}/NAURL.h
   ${NAUtilityDir}/NAUtility.h
   ${NAUtilityDir}/NAValueHelper.h
 )
@@ -65,11 +64,6 @@ set(stringFiles
   ${NAUtilityDir}/NAString/NAStringII.h
 )
 
-set(urlFiles
-  ${NAUtilityDir}/NAURL/NAURL.c
-  ${NAUtilityDir}/NAURL/NAURLII.h
-)
-
 source_group("NAUtility" FILES ${headerFiles})
 target_sources(NALib PRIVATE ${headerFiles})
 
@@ -97,5 +91,3 @@ target_sources(NALib PRIVATE ${memoryFiles})
 source_group("NAUtility/NAString" FILES ${stringFiles})
 target_sources(NALib PRIVATE ${stringFiles})
 
-source_group("NAUtility/NAURL" FILES ${urlFiles})
-target_sources(NALib PRIVATE ${urlFiles})
