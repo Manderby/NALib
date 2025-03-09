@@ -14,9 +14,9 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_STYLECHANGING:
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
-  case WM_MOVE:
   case WM_SHOWWINDOW:
   case WM_STYLECHANGED:
+  case WM_MOVE:
   case WM_SETTEXT:
   case WM_PAINT:
   case WM_NCPAINT:
@@ -32,18 +32,27 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_CAPTURECHANGED:
   case WM_IME_NOTIFY:
   case WM_LBUTTONUP:
+  case WM_NCCALCSIZE:
+  case EM_SETRECT:
+  break;
+
+  case WM_WINDOWPOSCHANGED:
+    // NALib by default ignores this message but for labels, we need it.
+    // Otherwise, the rect of the wnd will not be computed properly. More
+    // explizitely, the bottom coordinate will be incorrect.
+    info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
     break;
 
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
-    // Do not change the default behaviour of focus. Otherwise, this would cause
-    // labels to not display a selection.
+    // NALib by default ignores focus but for labels, we need it. Otherwise,
+    // this would cause labels to not display a selection.
     info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
     break;
 
   case WM_ERASEBKGND:
-    info.hasBeenHandeled = NA_TRUE;
     info.result = 1;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   default:
@@ -191,14 +200,16 @@ NA_DEF void naSetLabelHeight(NALabel* label, double height) {
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
   winapiLabel->rect.size.height = height;
+  
+  NARect parentRect = naGetUIElementRect(naGetUIElementParent(label));
 
   SetWindowPos(
-    label->uiElement.nativePtr,
+    naGetUIElementNativePtr(label),
     HWND_TOP,
     (int)(winapiLabel->rect.pos.x * uiScale),
-    (int)(naGetRectEndY(winapiLabel->rect) * uiScale),
+    (int)((parentRect.size.height - winapiLabel->rect.pos.y - winapiLabel->rect.size.height) * uiScale),
     (int)(winapiLabel->rect.size.width * uiScale),
-    (int)(winapiLabel->rect.size.height * uiScale),
+    (int)(winapiLabel->rect.size.height * 2 * uiScale),
     0);
 }
 
@@ -206,16 +217,6 @@ NA_DEF void naSetLabelHeight(NALabel* label, double height) {
 
 NA_DEF void naSetLabelTextColor(NALabel* label, const NAColor* color) {
   na_SetLabelTextColor(label, color);
-  //HDC hDC = GetDC(naGetUIElementNativePtr(label));
-  //COLORREF colorRef;
-  //if(color) {
-  //  naFillColorRefWithColor(&colorRef, color);
-  //}else{
-  //  NAColor defaultColor;
-  //  naFillColorWithSystemSkinDefaultTextColor(&defaultColor);
-  //  naFillColorRefWithColor(&colorRef, &defaultColor);
-  //}
-  //SetTextColor(hDC, colorRef);
 }
 
 

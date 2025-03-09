@@ -59,7 +59,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case CB_GETCURSEL:
   break;
 
-  case WM_SIZE:
+  case WM_SIZE: // todo: never called? why handeled?
     info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
     break;
@@ -137,7 +137,6 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
       winapiFgColor = naAllocUIColor(&fgColor, &bgColor);
       SetTextColor((HDC)wParam, winapiFgColor->colorRef);
       naDeallocUIColor(winapiFgColor);
-
       SetBkColor((HDC)wParam, winapiSpace->curBgColor->colorRef);
       info.result = (LRESULT)winapiSpace->curBgColor->brush;
       info.hasBeenHandeled = NA_TRUE;

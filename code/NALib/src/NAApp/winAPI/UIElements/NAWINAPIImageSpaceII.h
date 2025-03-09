@@ -112,6 +112,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARA
 
   case WM_PAINT:
     naImageSpaceWINAPIDrawItem(uiElement);
+    info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
     break;
 

@@ -71,8 +71,8 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
     GetClientRect(naGetUIElementNativePtr(uiElement), &updateRegion);
     ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
   
-    info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   default:

@@ -52,8 +52,8 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
     //FillRect((HDC)wParam, &sliderRect, bgWinapiColor->brush);
     //naDeallocUIColor(bgWinapiColor);
 
-    //info.hasBeenHandeled = NA_TRUE;
     //info.result = 1;
+    //info.hasBeenHandeled = NA_TRUE;
     break;
 
   case WM_LBUTTONDOWN:

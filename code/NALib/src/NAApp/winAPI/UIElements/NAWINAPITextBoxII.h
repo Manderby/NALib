@@ -12,8 +12,8 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM w
   switch(message) {
 
   case WM_ERASEBKGND:
-  info.hasBeenHandeled = NA_TRUE;
   info.result = 1;
+  info.hasBeenHandeled = NA_TRUE;
   break;
 
   default:
@@ -132,8 +132,7 @@ NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignm
 
 
 NA_DEF void naSetTextBoxFont(NATextBox* textBox, NAFont* font) {
-  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  SendMessage(naGetUIElementNativePtr(winapiTextBox), WM_SETFONT, (WPARAM)naGetFontNativePointer(font), MAKELPARAM(TRUE, 0));
+  SendMessage(naGetUIElementNativePtr(textBox), WM_SETFONT, (WPARAM)naGetFontNativePointer(font), MAKELPARAM(TRUE, 0));
   naRelease(textBox->font);
   textBox->font = naRetain(font);
 }
