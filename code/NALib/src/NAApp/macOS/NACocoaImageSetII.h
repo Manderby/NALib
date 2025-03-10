@@ -137,9 +137,9 @@ NA_DEF void* naAllocNativeImageWithImage(const NAImage* image) {
 
 NA_HDEF BOOL na_drawFixedResolutionImage(const NAImageSet* imageSet, double resolution, NAImageSetInteraction interaction, NABool secondaryState, NSSize imageSize, NSRect dstRect) {
   NASkin skin = NA_SKIN_SYSTEM;
-  if(naGetImageSetTinting(imageSet) != NA_BLEND_ZERO) {
-    skin = naGetCurrentSkin();
-  }
+//  if(naGetImageSetTinting(imageSet) != NA_BLEND_ZERO) {
+//    skin = naGetCurrentSkin();
+//  }
   
   CGImageRef cocoaImage = na_GetImageSetNativeSubImage(imageSet, resolution, skin, interaction, secondaryState);
 

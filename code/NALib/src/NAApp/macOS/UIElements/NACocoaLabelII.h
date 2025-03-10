@@ -123,7 +123,6 @@
   [self setSelectable:YES];
   [self setEditable:NO];
   [self setBordered:NO];
-//  [self setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)0. green:(CGFloat)0. blue:(CGFloat)1. alpha:(CGFloat).1]];
   [self setDrawsBackground:NO];
   [self setTextColor:naGetLabelColor()];
   [[self cell] setLineBreakMode:NSLineBreakByWordWrapping];
