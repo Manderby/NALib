@@ -427,13 +427,13 @@ NA_HAPI void* na_GetNativePreferences(void);
 NA_HAPI void na_ShutdownPreferences(void);
 
 NA_HAPI NAi64     na_GetRawPreferencesBool  (void* prefs, const char* key);
-NA_HAPI NAi64     na_GetRawPreferencesInt   (void* prefs, const char* key);
+NA_HAPI int64     na_GetRawPreferencesi64   (void* prefs, const char* key);
 NA_HAPI NAi64     na_GetRawPreferencesEnum  (void* prefs, const char* key);
 NA_HAPI double    na_GetRawPreferencesDouble(void* prefs, const char* key);
 NA_HAPI NAString* na_GetRawPreferencesString(void* prefs, const char* key);
 
 NA_HAPI void na_SetRawPreferencesBool  (void* prefs, const char* key, NAi64 valueStorage);
-NA_HAPI void na_SetRawPreferencesInt   (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesi64   (void* prefs, const char* key, int64 valueStorage);
 NA_HAPI void na_SetRawPreferencesEnum  (void* prefs, const char* key, NAi64 valueStorage);
 NA_HAPI void na_SetRawPreferencesDouble(void* prefs, const char* key, double valueStorage);
 NA_HAPI void na_SetRawPreferencesString(void* prefs, const char* key, NAString* valueStorage);

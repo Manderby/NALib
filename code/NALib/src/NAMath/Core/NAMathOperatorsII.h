@@ -612,8 +612,8 @@ NA_IDEF size_t naPowerOf2s(int32 n) {
 
 
 
-NA_IDEF NAInt naFactorize(NAInt x) {
-  NAInt result = 1;
+NA_IDEF int32 naFactorize(int32 x) {
+  int32 result = 1;
   while(x > 1) {
     result *= x--;
   }
@@ -622,14 +622,14 @@ NA_IDEF NAInt naFactorize(NAInt x) {
 
 
 
-NA_IDEF NAInt naBinom(NAInt n, NAInt k) {
-  NAInt nminusk = n - k;
-  NAInt kfactor;
-  NAInt x;
-  NAInt nminuskfactor;
-  NAInt nfactor;
+NA_IDEF int32 naBinom(int32 n, int32 k) {
+  int32 nminusk = n - k;
+  int32 kfactor;
+  int32 x;
+  int32 nminuskfactor;
+  int32 nfactor;
   if(k > nminusk) {
-    naSwapi(&k, &nminusk);
+    naSwap32(&k, &nminusk);
   }
   kfactor = 1;
   x = 2;
@@ -762,16 +762,6 @@ NA_IDEF NABool naInsideEEf(float a, float b, float x) {
 
 
 
-NA_IDEF NABool naInsidei(NAInt a, NAInt b, NAInt x) {
-  #if NA_TYPE_NAINT_BITS == 32
-    return naInsidei32(a, b, x);
-  #elif NA_TYPE_NAINT_BITS == 64
-    return naInsidei64(a, b, x);
-  #else
-    #error "NAInt size not supported"
-    return 0;
-  #endif
-}
 NA_IDEF NABool naInsidei32(int32 a, int32 b, int32 x) {
   #if NA_DEBUG
     if(a > b)

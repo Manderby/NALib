@@ -214,10 +214,10 @@ NA_IAPI int64         naPowerOf2i64(int32 n);
 NA_IAPI size_t        naPowerOf2s  (int32 n);
 
 // Factorizes the given value. !-Operator
-NA_IAPI NAInt         naFactorize(NAInt x);
+NA_IAPI int32         naFactorize(int32 x);
 
 // Returns the binomial coefficient n over k
-NA_IAPI NAInt         naBinom(NAInt n, NAInt k);
+NA_IAPI int32         naBinom(int32 n, int32 k);
 
 // Returns the the angle converted to radiants
 NA_IAPI double        naDegToRad (double deg);
@@ -304,7 +304,6 @@ NA_IAPI NABool naInsideEEf(float  a, float  b, float  x);
 
 // Integer variants. a denotes Min, b denotes Max. Comparison is always
 // inclusive - inclusive.
-NA_IAPI NABool naInsidei  (NAInt  a, NAInt  b, NAInt  x);
 NA_IAPI NABool naInsidei32(int32  a, int32  b, int32  x);
 NA_IAPI NABool naInsidei64(NAi64 a, NAi64 b, NAi64 x);
 

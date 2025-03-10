@@ -40,12 +40,6 @@ NA_IAPI void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b);
 // only works if the two pointers do not point to the same location. Therefore
 // restrict pointers make prefectly sense here.
 
-// Swaps two Variables
-NA_IAPI void naSwap (double* NA_RESTRICT a, double* NA_RESTRICT b);
-NA_IAPI void naSwapf(float*  NA_RESTRICT a, float*  NA_RESTRICT b);
-NA_IAPI void naSwapi(NAInt*  NA_RESTRICT a, NAInt*  NA_RESTRICT b);
-
-
 // Compares the array of the first argument with the array of the second
 // argument and returns NA_TRUE only if they are all equal.
 NA_IAPI NABool naEqual8  (void* NA_RESTRICT a, void* NA_RESTRICT b);

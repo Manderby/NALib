@@ -9,11 +9,11 @@
 #include "../../NAUtility/NADateTime.h"
 
 
-NA_IDEF NAInt naRand() {
+NA_IDEF int32 naRand() {
   #if NA_OS == NA_OS_WINDOWS
-    return rand();
+    return (int32)rand();
   #elif NA_IS_POSIX
-    return rand();
+    return (int32)rand();
   #endif
 }
 
