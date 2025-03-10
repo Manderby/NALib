@@ -1,62 +1,44 @@
 
-#ifndef NA_URL_INCLUDED
-#define NA_URL_INCLUDED
+#ifndef NA_UI_COLOR_INCLUDED
+#define NA_UI_COLOR_INCLUDED
 #ifdef __cplusplus
   extern "C"{
 #endif
 
 
-#include "../NAStruct/NAList.h"
-#include "NAString.h"
 
+// Windows and macOS have different internal structures to represent color.
+// Windows: NAWINAPIColor struct consisting of a COLORREF and HBRUSH.
+// macOS:   NSColor class.
+typedef void NAUIColor;
+
+// Allocate and deallocate colors used for system dependent visualization.
+// Some systems have no notion of transparency, so converting an NAColor
+// properly requires the background color. Can be nullptr to make it opaque.
+NA_API NAUIColor* naAllocUIColor(const NAColor* color, const NAColor* bgColor);
+NA_API void naDeallocUIColor(NAUIColor* uiColor);
+
+// Other application and system dependent color functions:
 
 #if NA_OS == NA_OS_WINDOWS
-  #define NA_PATH_DELIMITER_SYSTEM NA_PATH_DELIMITER_WIN
-#elif NA_OS == NA_OS_MAC_OS_X
-  #define NA_PATH_DELIMITER_SYSTEM NA_PATH_DELIMITER_UNIX
+  // Conversion functions for COLORREF value used in WinAPI.
+  NA_API void naFillColorWithColorRef(NAColor* color, const void* colorRef);
+  NA_API void naFillColorRefWithColor(void* colorRef, const NAColor* color);
+
+  NA_API NAUIColor* naAllocUIColorWithColorRef(const void* colorRef);
 #endif
 
-
-#define NA_URL_PATH_ABSOLUTE 0x01
-
-typedef struct NAURL NAURL;
-struct NAURL{
-  uint32 status;
-  NAList path;
-};
-
-
-// Creates an empty URL
-NA_IAPI NAURL* naInitURL(NAURL* url);
-
-// - Both delimiters / and \ will be detected.
-// - If the path starts with a path delimiter, it is considered absolute.
-//   Example: /usr/local is an absolute path, src/NALib is not.
-// - Erroneous duplicate path delimiters or ending delimiters will be ignored.
-//   Example: /usr//local/ results in /usr/local
-NA_API NAURL* naInitURLWithUTF8CStringLiteral( NAURL* url,
-                                     const NAUTF8Char* string);
-NA_IAPI void naClearURL(NAURL* url);
-
-// Creates a new string containing just the last path component.
-// Note that there is no distinction if the last component is the name of a
-// folder or of a file. If the file has a suffix, it is contained in the
-// returned string.
-NA_API NAString* naNewStringWithURLFilename(NAURL* url);
-
-
-
-
-
-// Inline implementations are in a separate file:
-#include "NAURL/NAURLII.h"
+NA_API void naFillColorWithSystemSkinDefaultBackgroundColor(NAColor* color);
+NA_API void naFillColorWithSystemSkinDefaultTextColor(NAColor* color);
+NA_API void naFillColorWithSystemSkinDefaultLinkColor(NAColor* color);
+NA_API void naFillColorWithSystemSkinDefaultAccentColor(NAColor* color);
 
 
 
 #ifdef __cplusplus
   } // extern "C"
 #endif
-#endif // NA_ARRAY_INCLUDED
+#endif // NA_UI_COLOR_INCLUDED
 
 
 

@@ -18,12 +18,6 @@ struct NAWINAPITimerStruct {
   void*     arg;
 };
 
-typedef struct NAWINAPIColor NAWINAPIColor;
-struct NAWINAPIColor {
-  COLORREF color;
-  HBRUSH   brush;
-};
-
 
 
 // Typedefs of all ui elements
@@ -87,12 +81,6 @@ struct NAWINAPIApplication {
   WNDPROC          oldSelectWindowProc;
   WNDPROC          oldSliderWindowProc;
   WNDPROC          oldTextFieldWindowProc;
-
-  NAWINAPIColor    fgColor;
-  NAWINAPIColor    fgColorDisabled;
-  NAWINAPIColor    bgColor;
-  NAWINAPIColor    bgColorAlternate;
-  NAWINAPIColor    bgColorAlternate2;
 };
 
 struct NAWINAPIButton{
@@ -158,7 +146,7 @@ struct NAWINAPISlider {
 struct NAWINAPISpace {
   NASpace        space;
   NARect         rect;
-  NAWINAPIColor* lastBgColor;
+  NAWINAPIColor* curBgColor;
   NABool         forceEraseBackground;
 };
 

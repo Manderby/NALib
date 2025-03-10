@@ -291,7 +291,7 @@ NA_HDEF void naFillColorWithSkinTextColor(NAColor* color, NASkin skin) {
     skinColor[3] = 255;
     break;
   case NA_SKIN_SYSTEM:
-    na_FillDefaultTextColorWithSystemSkin(color);
+    naFillColorWithSystemSkinDefaultTextColor(color);
     return;
   }
   
@@ -323,7 +323,7 @@ NA_DEF void naFillColorWithSkinLinkColor(NAColor* color, NASkin skin) {
     skinColor[3] = 255;
     break;
   case NA_SKIN_SYSTEM:
-    na_FillDefaultLinkColorWithSystemSkin(color);
+    naFillColorWithSystemSkinDefaultLinkColor(color);
     return;
   }
   
@@ -355,7 +355,7 @@ NA_DEF void naFillColorWithSkinAccentColor(NAColor* color, NASkin skin) {
     skinColor[3] = 255;
     break;
   case NA_SKIN_SYSTEM:
-    na_FillDefaultAccentColorWithSystemSkin(color);
+    naFillColorWithSystemSkinDefaultAccentColor(color);
     return;
   }
   

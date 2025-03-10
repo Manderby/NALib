@@ -35,6 +35,7 @@ NA_API void naSetLabelTextColor(NALabel* label, const NAColor* color);
 NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
 NA_API void naSetLabelFont(NALabel* label, NAFont* font);
 
+void naFillLabelTextColor(NAColor* color, const NALabel* label);
 
 
 #ifdef __cplusplus

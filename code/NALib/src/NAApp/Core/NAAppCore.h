@@ -88,6 +88,8 @@ struct NAImageSpace{
 struct NALabel{
   NA_UIElement uiElement;
   NAFont* font;
+  NAColor* textColor;
+  NABool enabled;
 };
 
 struct NAMenu{
@@ -135,10 +137,10 @@ struct NASlider{
 
 struct NASpace{
   NA_UIElement uiElement;
-  NAList       childs;
-  NAColor*     backgroundColor;
-  NABool       alternateBackground;
-  NABool       dragsWindow;
+  NAList childs;
+  NAColor* backgroundColor;
+  NABool alternateBackground;
+  NABool dragsWindow;
 };
 
 struct NATextField{
@@ -318,6 +320,8 @@ NA_HAPI void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect);
 // NALabel
 NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
 NA_HAPI void na_ClearLabel(NALabel* label);
+NA_HAPI void na_SetLabelEnabled(NALabel* label, NABool enabled);
+NA_HAPI void na_SetLabelTextColor(NALabel* label, const NAColor* color);
 NA_HAPI NARect na_GetLabelRect(const NA_UIElement* space);
 NA_HAPI void na_SetLabelRect(NA_UIElement* label, NARect rect);
 
@@ -376,6 +380,7 @@ NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);
 NA_HAPI void na_ClearSpace(NASpace* space);
 NA_HAPI void na_AddSpaceChild(NASpace*, NA_UIElement* child);
 NA_HAPI void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child);
+NA_HAPI void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color);
 NA_HAPI NARect na_GetSpaceRect(const NA_UIElement* space);
 NA_HAPI void na_SetSpaceRect(NA_UIElement* space, NARect rect);
 
@@ -483,12 +488,6 @@ NA_HAPI void* na_GetImageSetNativeSubImage(
   NASkin skin,
   NAImageSetInteraction interaction,
   NABool secondaryState);
-
-NA_HAPI void na_FillDefaultTextColorWithSystemSkin(NAColor* color);
-NA_HAPI void na_FillDefaultLinkColorWithSystemSkin(NAColor* color);
-NA_HAPI void na_FillDefaultAccentColorWithSystemSkin(NAColor* color);
-
-
 
 
 

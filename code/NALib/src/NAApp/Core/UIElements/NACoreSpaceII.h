@@ -9,14 +9,13 @@
 NA_HDEF void na_InitSpace(NASpace* space, void* nativePtr) {
   na_InitCoreUIElement(&space->uiElement, NA_UI_SPACE, nativePtr);
   naInitList(&space->childs);
-  space->backgroundColor = naAlloc(NAColor);
-  naFillColorWithTransparent(space->backgroundColor);
+  space->backgroundColor = NA_NULL;
 }
 
 
 
 NA_HDEF void na_ClearSpace(NASpace* space) {
-  naFree(space->backgroundColor);
+  if(space->backgroundColor) { naFree(space->backgroundColor); }
   naClearList(&space->childs, (NAMutator)naDelete);
   na_ClearCoreUIElement(&space->uiElement);
 }
@@ -39,6 +38,53 @@ NA_HDEF void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child) {
 
 NA_DEF NABool naGetSpaceAlternateBackground(const NASpace* space) {
   return space->alternateBackground;
+}
+
+
+
+NA_HDEF void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
+  if(space->backgroundColor) { naFree(space->backgroundColor); }
+  if(color) {
+    space->backgroundColor = naAlloc(NAColor);
+    naFillColorWithCopy(space->backgroundColor, color);
+  }else{
+    space->backgroundColor = NA_NULL;
+  }
+}
+
+
+
+NA_DEF void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
+  #if NA_DEBUG
+  if(!space)
+    naError("space is nullptr");
+  #endif
+
+  NAColor parentBgColor;
+  const NASpace* parentSpace = naGetUIElementParentSpaceConst(space);
+  if(parentSpace) {
+    naFillSpaceBackgroundColor(&parentBgColor, parentSpace);
+  }else{
+    naFillColorWithSystemSkinDefaultBackgroundColor(&parentBgColor);
+  }
+
+  NAColor thisBgColor;
+  if(space->backgroundColor) {
+    naFillColorWithCopy(&thisBgColor, space->backgroundColor);
+  }else{
+    naFillColorWithTransparent(&thisBgColor);
+  }
+
+  NAColor fgColor;
+  if(naGetSpaceAlternateBackground(space)) {
+    naFillColorWithSystemSkinDefaultTextColor(&fgColor);
+  }else{
+    naFillColorWithTransparent(&fgColor);
+  }
+
+  NAColor alternatedColor;
+  naBlendColors(&alternatedColor, &thisBgColor, &fgColor, 0.075f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
+  naBlendColors(color, &parentBgColor, &alternatedColor, 1.f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
 }
 
 

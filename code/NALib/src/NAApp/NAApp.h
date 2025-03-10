@@ -41,6 +41,7 @@
 #include "NAPreferences.h"
 #include "NAReaction.h"
 #include "NAImageSet.h"
+#include "NAUIColor.h"
 
 
 

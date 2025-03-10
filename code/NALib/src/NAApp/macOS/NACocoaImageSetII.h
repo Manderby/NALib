@@ -63,42 +63,6 @@
 
 
 
-NA_DEF void na_FillDefaultTextColorWithSystemSkin(NAColor* color) {
-  NSColor* labelColor = naGetLabelColor();
-  naFillColorWithSRGB(
-    color,
-    (float)[labelColor redComponent],
-    (float)[labelColor greenComponent],
-    (float)[labelColor blueComponent],
-    1.f);
-}
-
-
-
-NA_DEF void na_FillDefaultLinkColorWithSystemSkin(NAColor* color) {
-  NSColor* linkColor = naGetLinkColor();
-  naFillColorWithSRGB(
-    color,
-    (float)[linkColor redComponent],
-    (float)[linkColor greenComponent],
-    (float)[linkColor blueComponent],
-    1.f);
-}
-
-
-
-NA_DEF void na_FillDefaultAccentColorWithSystemSkin(NAColor* color) {
-  NSColor* accentColor = naGetAccentColor();
-  naFillColorWithSRGB(
-    color,
-    (float)[accentColor redComponent],
-    (float)[accentColor greenComponent],
-    (float)[accentColor blueComponent],
-    1.f);
-}
-
-
-
 NA_DEF NAImage* naCreateImageWithNativeImage(const void* nativeImage) {
   NAImage* image;
   
@@ -173,9 +137,9 @@ NA_DEF void* naAllocNativeImageWithImage(const NAImage* image) {
 
 NA_HDEF BOOL na_drawFixedResolutionImage(const NAImageSet* imageSet, double resolution, NAImageSetInteraction interaction, NABool secondaryState, NSSize imageSize, NSRect dstRect) {
   NASkin skin = NA_SKIN_SYSTEM;
-  if(naGetImageSetTinting(imageSet) != NA_BLEND_ZERO) {
-    skin = naGetCurrentSkin();
-  }
+//  if(naGetImageSetTinting(imageSet) != NA_BLEND_ZERO) {
+//    skin = naGetCurrentSkin();
+//  }
   
   CGImageRef cocoaImage = na_GetImageSetNativeSubImage(imageSet, resolution, skin, interaction, secondaryState);
 

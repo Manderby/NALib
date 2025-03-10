@@ -123,7 +123,6 @@
   [self setSelectable:YES];
   [self setEditable:NO];
   [self setBordered:NO];
-//  [self setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)0. green:(CGFloat)0. blue:(CGFloat)1. alpha:(CGFloat).1]];
   [self setDrawsBackground:NO];
   [self setTextColor:naGetLabelColor()];
   [[self cell] setLineBreakMode:NSLineBreakByWordWrapping];
@@ -255,13 +254,14 @@ NA_DEF void naSetLabelTextColor(NALabel* label, const NAColor* color) {
 
 NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url) {
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setLink: url];
+  [nativePtr setLink:url];
 }
 
 
 
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled) {
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
+  na_SetLabelEnabled(label, enabled);
   [nativePtr setLabelEnabled:enabled];
 }
 

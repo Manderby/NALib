@@ -34,7 +34,7 @@ NA_API NASpace* naNewSpace(NASize size);
 // The tallest items are 24 points in height. But the visual representation is
 // often times shifted in vertical position such that some elements are even
 // overlapping when displayed line by line. The author recommends a line height
-// of 24 points.
+// of 25 points.
 NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
 
 // Removes the given child from the space. If the child is not a child of the
@@ -49,10 +49,12 @@ NA_API void naRemoveAllSpaceChilds(NASpace* space);
 NA_API NABool naGetSpaceAlternateBackground(const NASpace* space);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 
-// Set a specific background color.
+// Set a specific background color. (copies the contents of color)
 NA_API void naSetSpaceBackgroundColor(
   NASpace* space,
   const NAColor* color);
+// Fills the given color with the background acutally used for displaying.
+NA_API void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space);
 
 // Moves all childs with the given x and y coordinates in direction
 // to the right and top.
@@ -60,7 +62,7 @@ NA_API void naShiftSpaceChilds(NASpace* space, NAPos shift);
 
 // Changes the visibility of the space.
 NA_API void naSetSpaceVisible(
-  NASpace* ospace,
+  NASpace* space,
   NABool visible);
 
 // Makes the space react to mouse drags in order to move the window.
