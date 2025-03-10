@@ -29,8 +29,9 @@ NA_DEF NAUIColor* naAllocUIColor(const NAColor* color, const NAColor* bgColor) {
 }
 
 NA_DEF void naDeallocUIColor(NAUIColor* uiColor) {
-  NSColor* nsColor = (NSColor*)uiColor;
-  NA_COCOA_RELEASE(nsColor);
+  NA_UNUSED(uiColor);
+//  NSColor* nsColor = (NSColor*)uiColor;
+//  NA_COCOA_RELEASE(nsColor);
 }
 
 
