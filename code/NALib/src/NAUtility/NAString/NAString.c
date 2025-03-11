@@ -788,9 +788,9 @@ NA_DEF void naAppendStringString(NAString* originalString, const NAString* strin
 
 
 NA_DEF void naAppendStringChar(NAString* originalString, NAUTF8Char newChar) {
-  NAString* charstring = naNewStringWithFormat("%c", newChar);
-  naAppendBufferToBuffer(originalString->buffer, charstring->buffer);
-  naDelete(charstring);
+  NAString* charString = naNewStringWithFormat("%c", newChar);
+  naAppendBufferToBuffer(originalString->buffer, charString->buffer);
+  naDelete(charString);
 }
 
 

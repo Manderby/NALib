@@ -616,8 +616,14 @@ NA_DEF void naOpenURLInBrowser(const NAUTF8Char* url) {
 
 NA_HDEF void* na_AddMouseTracking(NA_UIElement* uiElement) {
   naDefineCocoaObject(NSView, nativePtr, uiElement);
+  double uiScale = naGetUIElementResolutionScale(uiElement);
+  NARect trackingRect = naGetUIElementRect(uiElement);
+  trackingRect.pos.x *= uiScale;
+  trackingRect.pos.y *= uiScale;
+  trackingRect.size.width *= uiScale;
+  trackingRect.size.height *= uiScale;
   NSTrackingArea* trackingArea = [[NSTrackingArea alloc]
-    initWithRect:naMakeNSRectWithRect(naGetUIElementRect(uiElement))
+    initWithRect:naMakeNSRectWithRect(trackingRect)
     options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | /*NSTrackingActiveWhenFirstResponder | NSTrackingActiveInKeyWindow |*/ NSTrackingActiveInActiveApp)
     owner:nativePtr
     userInfo:nil];

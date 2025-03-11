@@ -609,9 +609,10 @@ NA_API void naSetButtonVisible(NAButton* button, NABool visible) {
 
 
 NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
+  NAButton* naButton = (NAButton*)button;
   naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
   NARect rect = naMakeRectWithNSRect([nativePtr frame]);
-  if(isAtLeastMacOSVersion(11, 0)) {
+  if(naIsButtonBordered(naButton) && isAtLeastMacOSVersion(11, 0)) {
   // On newer systems bordered buttons are 5 units shorter than expected on
   // the left and right. At the same time, the top and bottom mouse capture
   // area is also 5 units shorter. Therefore, we add 10 units and in

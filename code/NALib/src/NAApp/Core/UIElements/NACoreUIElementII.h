@@ -105,7 +105,7 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
 
   if(!hasReaction) {
     // If the command has no reaction, search for other reactions in the
-    // parent elements.
+    // parent elements.  
     if(command != NA_UI_COMMAND_MOUSE_ENTERED && command != NA_UI_COMMAND_MOUSE_EXITED) {
       const NA_UIElement* parentElement = (const NA_UIElement*)naGetUIElementParentConst(element);
       return parentElement
@@ -203,15 +203,21 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCall
   || command == NA_UI_COMMAND_MOUSE_ENTERED
   || command == NA_UI_COMMAND_MOUSE_EXITED) {
     element->hoverReactionCount++;
-  }
   
-  if(command == NA_UI_COMMAND_MOUSE_MOVED) {
     NA_UIElement* trackedElement = element;
     if(naGetUIElementType(uiElement) == NA_UI_WINDOW) {
       trackedElement = &naGetWindowContentSpace((NAWindow*)uiElement)->uiElement;
     }
     na_RetainMouseTracking(trackedElement);
   }
+  
+//  if(command == NA_UI_COMMAND_MOUSE_MOVED) {
+//    NA_UIElement* trackedElement = element;
+//    if(naGetUIElementType(uiElement) == NA_UI_WINDOW) {
+//      trackedElement = &naGetWindowContentSpace((NAWindow*)uiElement)->uiElement;
+//    }
+//    na_RetainMouseTracking(trackedElement);
+//  }
 }
 
 
@@ -360,8 +366,10 @@ NA_HDEF void na_ReleaseMouseTracking(NA_UIElement* uiElement) {
 
 NA_HDEF void na_UpdateMouseTracking(NA_UIElement* uiElement) {
   if(uiElement->mouseTracking) {
-    na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
-    uiElement->mouseTracking = na_AddMouseTracking(uiElement);
+    #if NA_OS == NA_WINDOWS
+      na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
+      uiElement->mouseTracking = na_AddMouseTracking(uiElement);
+    #endif
   }
 }
 
