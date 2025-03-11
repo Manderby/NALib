@@ -7,52 +7,52 @@
 #include <stddef.h>
 
 
-NA_IDEF  void naConvertEndianness8(NAInt endianness, void* buffer) {
+NA_IDEF  void naConvertEndianness8(uint32 endianness, void* buffer) {
   if(endianness != NA_ENDIANNESS_HOST) {
     naConvertLittleBig8(buffer);
   }
 }
-NA_IDEF  void naConvertEndianness16(NAInt endianness, void* buffer) {
+NA_IDEF  void naConvertEndianness16(uint32 endianness, void* buffer) {
   if(endianness != NA_ENDIANNESS_HOST) {
     naConvertLittleBig16(buffer);
   }
 }
-NA_IDEF  void naConvertEndianness32(NAInt endianness, void* buffer) {
+NA_IDEF  void naConvertEndianness32(uint32 endianness, void* buffer) {
   if(endianness != NA_ENDIANNESS_HOST) {
     naConvertLittleBig32(buffer);
   }
 }
-NA_IDEF  void naConvertEndianness64(NAInt endianness, void* buffer) {
+NA_IDEF  void naConvertEndianness64(uint32 endianness, void* buffer) {
   if(endianness != NA_ENDIANNESS_HOST) {
     naConvertLittleBig64(buffer);
   }
 }
-NA_IDEF  void naConvertEndianness128(NAInt endianness, void* buffer) {
+NA_IDEF  void naConvertEndianness128(uint32 endianness, void* buffer) {
   if(endianness != NA_ENDIANNESS_HOST) {
     naConvertLittleBig128(buffer);
   }
 }
-NA_IDEF  void naConvertEndianness8v(NAInt endianness, void* buffer, size_t count) {
+NA_IDEF  void naConvertEndianness8v(uint32 endianness, void* buffer, size_t count) {
   if(endianness != NA_ENDIANNESS_HOST) {
     naConvertLittleBig8v(buffer, count);
   }
 }
-NA_IDEF  void naConvertEndianness16v(NAInt endianness, void* buffer, size_t count) {
+NA_IDEF  void naConvertEndianness16v(uint32 endianness, void* buffer, size_t count) {
   if(endianness != NA_ENDIANNESS_HOST) {
     naConvertLittleBig16v(buffer, count);
   }
 }
-NA_IDEF  void naConvertEndianness32v(NAInt endianness, void* buffer, size_t count) {
+NA_IDEF  void naConvertEndianness32v(uint32 endianness, void* buffer, size_t count) {
   if(endianness != NA_ENDIANNESS_HOST) {
     naConvertLittleBig32v(buffer, count);
   }
 }
-NA_IDEF  void naConvertEndianness64v(NAInt endianness, void* buffer, size_t count) {
+NA_IDEF  void naConvertEndianness64v(uint32 endianness, void* buffer, size_t count) {
   if(endianness != NA_ENDIANNESS_HOST) {
     naConvertLittleBig64v(buffer, count);
   }
 }
-NA_IDEF  void naConvertEndianness128v(NAInt endianness, void* buffer, size_t count) {
+NA_IDEF  void naConvertEndianness128v(uint32 endianness, void* buffer, size_t count) {
   if(endianness != NA_ENDIANNESS_HOST) {
     naConvertLittleBig128v(buffer, count);
   }
@@ -181,7 +181,7 @@ NA_IDEF void naConvertLittleBig128v(void* buffer, size_t count) {
 
 
 
-NA_IAPI NABool naIsEndiannessHost(NAInt endianness) {
+NA_IAPI NABool naIsEndiannessHost(uint32 endianness) {
   #if NA_DEBUG
     if((endianness != 1) && (endianness != 2))
       naError("endianness is invalid. Result is undefined.");
@@ -201,7 +201,7 @@ NA_IAPI NABool naIsEndiannessHost(NAInt endianness) {
 #endif
 
 
-NA_IDEF void naFillEndiannessMarker(NAByte marker[4], NAInt endianness) {
+NA_IDEF void naFillEndiannessMarker(NAByte marker[4], uint32 endianness) {
   switch(endianness) {
   case NA_ENDIANNESS_LITTLE:
     (*((uint32*)marker)) = NA_LITTLE_ENDIANNESS_MARKER;
@@ -215,7 +215,7 @@ NA_IDEF void naFillEndiannessMarker(NAByte marker[4], NAInt endianness) {
   }
 }
 
-NA_IDEF NAInt naParseEndiannessMarker(const NAByte marker[4]) {
+NA_IDEF uint32 naParseEndiannessMarker(const NAByte marker[4]) {
   switch(*((uint32*)marker)) {
   case NA_LITTLE_ENDIANNESS_MARKER:
     return NA_ENDIANNESS_LITTLE;

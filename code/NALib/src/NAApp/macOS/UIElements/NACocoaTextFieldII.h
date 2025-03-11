@@ -20,7 +20,6 @@
   }else{
     [[self cell] setLineBreakMode:NSLineBreakByTruncatingHead];
   }
-  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
   [self setDelegate:self];
 
   cocoaTextField = newCocoaTextField;
@@ -87,9 +86,10 @@ NA_DEF NATextField* naNewTextField(double width) {
   NACocoaNativeTextField* nativePtr = [[NACocoaNativeTextField alloc]
     initWithTextField:cocoaTextField
     frame:naMakeNSRectWithSize(naMakeSize(width, 21))];
+    
   na_InitTextField((NATextField*)cocoaTextField, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
 
-  cocoaTextField->textField.font = naRetain(naCreateSystemFont());
+  [nativePtr setNAFont:cocoaTextField->textField.font];
 
   return (NATextField*)cocoaTextField;
 }

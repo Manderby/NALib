@@ -377,8 +377,8 @@ NA_IDEF const void* naGetStackCurpConst(NAStackIterator* iter) {
       naError("iterator points past the end of the stack");
   #endif
 
-  const void** dataptr = (const void**)naGetStackCurConst(iter);
-  return *dataptr;
+  const void** dataPtr = (const void**)naGetStackCurConst(iter);
+  return *dataPtr;
 }
 
 
@@ -395,8 +395,8 @@ NA_IDEF void* naGetStackCurpMutable(NAStackIterator* iter) {
     naError("iterator points past the end of the stack");
 #endif
 
-  void** dataptr = (void**)naGetStackCurConst(iter);
-  return *dataptr;
+  void** dataPtr = (void**)naGetStackCurConst(iter);
+  return *dataPtr;
 }
 
 

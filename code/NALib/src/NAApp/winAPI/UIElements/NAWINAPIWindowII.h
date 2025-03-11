@@ -53,8 +53,8 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
       //printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);
       //printf("size %f, %f\n", windowMutable->rect.size.width, windowMutable->rect.size.height);
     }else{
-      info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
+      info.hasBeenHandeled = NA_TRUE;
     }
     break;
 
@@ -100,8 +100,8 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     if(shouldClose) {
       naCloseWindow(&windowMutable->window);
     }
-    info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   case WM_CHILDACTIVATE:
@@ -122,8 +122,8 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     // //result: 0 when handeled.
     // We let the default window procedure do its job which will emit the
     // WM_MOVE and WM_SIZE messages in turn.
-    info.hasBeenHandeled = NA_TRUE;
     info.result = DefWindowProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
+    info.hasBeenHandeled = NA_TRUE;
 
     break;
 
@@ -133,7 +133,6 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_IME_NOTIFY:
   case WM_PAINT:
   case WM_NCPAINT:
-  case WM_ERASEBKGND:
   case WM_GETFONT:
   case WM_SETFONT:
   case WM_NCHITTEST:
@@ -172,6 +171,13 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_ENTERSIZEMOVE:
   case WM_MOVING:
   case WM_EXITSIZEMOVE:
+    break;
+
+  case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
+    // We pretend to have erased, although it will be the content space which
+    // erases the background.
+    info.result = 1;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   case WM_SETFOCUS:
@@ -268,7 +274,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
 
   naAddUIKeyboardShortcut(
     winapiWindow,
-    naNewKeyStroke(NA_KEYCODE_TAB, 0),
+    naNewKeyStroke(NA_KEYCODE_TAB, NA_KEY_MODIFIER_NONE),
     naHandleWindowTabOrder,
     NA_NULL);
   naAddUIKeyboardShortcut(
@@ -301,6 +307,8 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space) {
       (naGetUIElementType(space) != NA_UI_METAL_SPACE))
       naError("Require a space, not any arbitrary ui element.");
   #endif
+
+  if(window->contentSpace) { naDelete(window->contentSpace); }
   window->contentSpace = space;
 
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
@@ -332,6 +340,12 @@ NA_DEF void naCloseWindowModal(NAWindow* window) {
 
 NA_DEF void naCloseWindow(const NAWindow* window) {
   ShowWindow(naGetUIElementNativePtrConst(window), SW_HIDE);
+}
+
+
+
+NA_DEF void naMarkWindowChanged(NAWindow* window, NABool changed) {
+  // todo
 }
 
 
@@ -455,7 +469,7 @@ NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window) {
 
   screenRect = naGetMainScreenRect();
 
-  rect.pos.x = testPoint.x;
+  rect.pos.x = testPoint.x / uiScale;
   rect.pos.y = (double)screenRect.size.height - (double)testPoint.y / uiScale - ((double)clientRect.bottom - (double)clientRect.top) / uiScale;
   rect.size = winapiWindow->rect.size;
   return rect;
@@ -509,6 +523,8 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
     (LONG)(rect.size.width * uiScale),
     (LONG)(rect.size.height * uiScale),
     NA_FALSE);
+
+  na_UpdateMouseTracking(&winapiWindow->window.uiElement);
 
   // We need to trigger a resizing of the content space. The position does not change,
   // it is always (0,0).

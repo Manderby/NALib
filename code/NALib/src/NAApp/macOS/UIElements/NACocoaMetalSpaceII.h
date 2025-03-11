@@ -88,7 +88,6 @@
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
       [super mouseMoved:event];
     }
-    [NSEvent setMouseCoalescingEnabled:NO];
   }
 
   - (void)mouseDown:(NSEvent*)event{
@@ -127,7 +126,6 @@
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
       [super mouseDragged:event];
     }
-    [NSEvent setMouseCoalescingEnabled:NO];
   }
   
   - (void)rightMouseDown:(NSEvent*)event{
@@ -166,7 +164,6 @@
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
       [super rightMouseDragged:event];
     }
-    [NSEvent setMouseCoalescingEnabled:NO];
   }
 
   - (void)otherMouseDown:(NSEvent*)event{
@@ -205,7 +202,6 @@
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
       [super otherMouseDragged:event];
     }
-    [NSEvent setMouseCoalescingEnabled:NO];
   }
 
   - (void)scrollWheel:(NSEvent*)event{

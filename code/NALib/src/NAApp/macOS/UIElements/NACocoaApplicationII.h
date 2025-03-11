@@ -5,6 +5,7 @@
 // Do not include this file anywhere else!
 
 #include "../../../NAUtility/NANotifier.h"
+#include "../../../NAUtility/NAString.h"
 
 
 @implementation NACocoaNativeApplicationDelegate
@@ -81,7 +82,8 @@
 - (void)applicationDidBecomeActive:(NSNotification *)notification{
   // forward the notification to the oldDelegate
   if(oldDelegate && oldDelegate != self
-    && [oldDelegate respondsToSelector:@selector(applicationDidBecomeActive:)]) {
+    && [oldDelegate respondsToSelector:@selector(applicationDidBecomeActive:)])
+  {
     [oldDelegate applicationDidBecomeActive:notification];
   }
 
@@ -98,6 +100,16 @@
   
   // Give up this delegate and return it to the previous delegate.
   [NSApp setDelegate:oldDelegate];
+}
+
+- (BOOL)application:(NSApplication *)sender openFile:(NSString *) filename{
+  // forward the call to the oldDelegate
+  if(oldDelegate && oldDelegate != self
+    && [oldDelegate respondsToSelector:@selector(application:openFile:)])
+  {
+    [oldDelegate application:sender openFile:filename];
+  }
+  return YES;
 }
 
 @end
@@ -145,9 +157,6 @@ NA_DEF void naStartApplication(
   [nativeApp setPostStartupArg: arg];
   [NSApp setDelegate:nativeApp];
 
-  NANotifier* notifier = naAllocNotifier();
-  naSetCurrentNotifier(notifier);
-
   // Start the event loop.
   NSDate* distantFuture = [NSDate distantFuture];
   while(na_IsApplicationRunning()) {
@@ -177,8 +186,6 @@ NA_DEF void naStartApplication(
     #endif
   }
 
-  naDeallocNotifier(notifier);
-
   // Before deleting the application, we cleanup whatever the user needs to
   // clean up.
   if(cleanup)
@@ -191,8 +198,8 @@ NA_DEF void naStartApplication(
 
 
 NA_DEF void naResetApplicationPreferredTranslatorLanguages(void) {
-  NAInt langIndex = (NAInt)[[NSLocale preferredLanguages] count] - 1;
-  while(langIndex >= 0) {
+  size_t langIndex = (size_t)[[NSLocale preferredLanguages] count] - 1;
+  while(langIndex) {
     NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)langIndex];
     NALanguageCode3 langCode = naGetLanguageCode([language UTF8String]);
     naSetTranslatorLanguagePreference(langCode);
@@ -242,7 +249,7 @@ NA_DEF void naOpenConsoleWindow(void) {
 NA_DEF NAString* naNewApplicationName(void) {
   NAApplication* app = naGetApplication();
   if(app->appName) {
-    return naNewStringWithFormat("%s", app->appName);
+    return naNewStringExtraction(app->appName, 0, -1);
   }else{
     NSString* applicationName = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
     if(!applicationName) {
@@ -255,7 +262,7 @@ NA_DEF NAString* naNewApplicationName(void) {
 NA_DEF NAString* naNewApplicationCompanyName(void) {
   NAApplication* app = naGetApplication();
   if(app->companyName) {
-    return naNewStringWithFormat("%s", app->companyName);
+    return naNewStringExtraction(app->companyName, 0, -1);
   }else{
     return NA_NULL;
   }
@@ -264,7 +271,7 @@ NA_DEF NAString* naNewApplicationCompanyName(void) {
 NA_DEF NAString* naNewApplicationVersionString(void) {
   NAApplication* app = naGetApplication();
   if(app->versionString) {
-    return naNewStringWithFormat("%s", app->versionString);
+    return naNewStringExtraction(app->versionString, 0, -1);
   }else{
     NSString* versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
     return naNewStringWithFormat("%s", [versionString UTF8String]);
@@ -274,7 +281,7 @@ NA_DEF NAString* naNewApplicationVersionString(void) {
 NA_DEF NAString* naNewApplicationBuildString(void) {
   NAApplication* app = naGetApplication();
   if(app->buildString) {
-    return naNewStringWithFormat("%s", app->buildString);
+    return naNewStringExtraction(app->buildString, 0, -1);
   }else{
     NSString* buildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
     return naNewStringWithFormat("%s", [buildString UTF8String]);
@@ -284,7 +291,7 @@ NA_DEF NAString* naNewApplicationBuildString(void) {
 NA_DEF NAString* naNewApplicationResourceBasePath(void) {
   NAApplication* app = naGetApplication();
   if(app->resourceBasePath) {
-    return naNewStringWithFormat("%s", app->resourceBasePath);
+    return naNewStringExtraction(app->resourceBasePath, 0, -1);
   }else{
     return naNewExecutablePath();
   }
@@ -293,21 +300,21 @@ NA_DEF NAString* naNewApplicationResourceBasePath(void) {
 NA_DEF NAString* naNewApplicationIconPath(void) {
   NAApplication* app = naGetApplication();
   if(app->iconPath) {
-    return naNewStringWithFormat("%s", app->iconPath);
+    return naNewStringExtraction(app->iconPath, 0, -1);
   }else{
     NSString* iconFilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
-    NSString* iconBasename = [iconFilename stringByDeletingPathExtension];
-    NSURL* url = [[NSBundle mainBundle] URLForResource:iconBasename withExtension:@"icns"];
+    NSString* iconBaseName = [iconFilename stringByDeletingPathExtension];
+    NSURL* url = [[NSBundle mainBundle] URLForResource:iconBaseName withExtension:@"icns"];
     return naNewStringWithFormat("%s", [[url path] UTF8String]);
   }
 }
 
-NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix) {
+NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* path, const NAUTF8Char* baseBame, const NAUTF8Char* suffix) {
   NSURL* url;
-  if(dir) {
-    url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:dir]];
+  if(path && *path) {
+    url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:baseBame] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:path]];
   }else{
-    url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix]];
+    url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:baseBame] withExtension:[NSString stringWithUTF8String:suffix]];
   }
   return naNewStringWithFormat("%s", [[url path] UTF8String]);
 }

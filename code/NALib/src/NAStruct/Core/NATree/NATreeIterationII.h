@@ -157,8 +157,8 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
   continueBubbling = NA_TRUE;
   while(continueBubbling && !na_GetTreeItemIsRoot(item)) {
     NATreeNode* parent = na_GetTreeItemParent(item);
-    NAInt childIndex = na_GetTreeNodeChildIndex(parent, item, tree->config);
-    continueBubbling = nodeTokenCallback(token, na_GetTreeNodeData(parent, tree->config), childIndex);
+    size_t childIndex = na_GetTreeNodeChildIndex(parent, item, tree->config);
+    continueBubbling = nodeTokenCallback(token, na_GetTreeNodeData(parent, tree->config), (NAInt)childIndex);
     item = &(parent->item);
   }
 }
@@ -268,7 +268,7 @@ NA_IDEF NABool naIterateTree(NATreeIterator* iter, const void* lowerLimit, const
   #endif
   info.step = 1;
   info.startIndex = 0;
-  info.breakIndex = tree->config->abi.childPerNode;
+  info.breakIndex = (NAInt)(tree->config->abi.childPerNode);
   info.lowerLimit = lowerLimit;
   info.upperLimit = upperLimit;
   return na_IterateTreeWithInfo(iter, &info);
@@ -288,7 +288,7 @@ NA_IDEF NABool naIterateTreeBack(NATreeIterator* iter, const void* lowerLimit, c
       naError("Tree requires to have a key in order to use an upper limit.");
   #endif
   info.step = -1;
-  info.startIndex = tree->config->abi.childPerNode - 1;
+  info.startIndex = (NAInt)(tree->config->abi.childPerNode - 1);
   info.breakIndex = -1;
   info.lowerLimit = lowerLimit;
   info.upperLimit = upperLimit;

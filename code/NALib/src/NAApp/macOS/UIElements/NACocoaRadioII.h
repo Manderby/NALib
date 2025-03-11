@@ -22,7 +22,6 @@
   cocoaRadio = newCocoaRadio;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
 
   containingView = [[NSView alloc] initWithFrame:frame];
   [containingView addSubview:self];
@@ -67,6 +66,10 @@
   NA_COCOA_RELEASE(attrString);
 }
 
+- (void) setNAFont:(NAFont*)font{
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
+}
+
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaRadio, NA_UI_COMMAND_PRESSED)) {
@@ -96,8 +99,11 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
   NACocoaNativeRadio* nativePtr = [[NACocoaNativeRadio alloc]
     initWithRadio:cocoaRadio
     frame:naMakeNSRectWithSize(naMakeSize(width, 18))];
+    
   na_InitRadio((NARadio*)cocoaRadio, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
+  [nativePtr setNAFont:cocoaRadio->radio.font];
+
   [nativePtr setText:text];
   
   return (NARadio*)cocoaRadio;

@@ -32,7 +32,6 @@
 #include "../Core/NAAppCore.h"
 #include "../../NAUtility/NAString.h"
 
-
 #include "NAWINAPIClipboardII.h"
 #include "NAWINAPIFontII.h"
 #include "NAWINAPIImageSetII.h"
@@ -41,9 +40,8 @@
 #include "NAWINAPIPreferencesII.h"
 
 #include "NAWINAPIII.h"
+#include "NAWINAPIColorII.h"
 #include "NAWINAPIInterfaces.h"
-
-NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace);
 
 #include "UIElements/NAWINAPIApplicationII.h"
 #include "UIElements/NAWINAPIButtonII.h"

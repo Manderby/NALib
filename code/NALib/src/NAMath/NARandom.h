@@ -28,7 +28,7 @@
 // Mapping of the standard rand() and srand() functions. The rand function
 // returns a pseudo random number in [0, RAND_MAX]. The srand function sets
 // a new seed for the pseudo random generator.
-NA_IAPI NAInt naRand(void);
+NA_IAPI int32 naRand(void);
 NA_IAPI void  naSRand(uint32 seed);
 
 // Seeds the random generator with the provided seed. If seed is 0, a seed will

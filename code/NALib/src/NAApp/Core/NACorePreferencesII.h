@@ -95,61 +95,61 @@ NA_DEF NABool naTogglePreferencesBool(const char* key) {
 
 
 // ////////////////////////
-// NAInt
+// int64
 // ////////////////////////
 
 // Int values are stored as is but the value 0 is stored as min_i64
-NA_HIDEF NAi64 na_ConvertNAIntToPreferencesInt(NAInt value) {
+NA_HIDEF NAi64 na_Converti64ToPreferencesInt(int64 value) {
   #if NA_DEBUG
-  if(naEquali64(value, NA_MIN_i64))
+  if(value == NA_MIN_i64)
     naError("min_i64 is not a valid value which can be stored in preferences.");
   #endif
-  return (value == 0) ? NA_MIN_i64 : naCastIntToi64(value);
+  return (value == 0) ? NA_MIN_i64 : value;
 }
 
-NA_HIDEF NAInt na_ConvertPreferencesIntToNAInt(NAi64 value) {
+NA_HIDEF int64 na_ConvertPreferencesIntToi64(int64 value) {
   #if NA_DEBUG
-  if(naEquali64(value, NA_ZERO_i64))
+  if(value == NA_ZERO_i64)
     naError("Value stored in preferences invalid or uninitialized.");
   #endif
-  return (NAInt)((naEquali64(value, NA_MIN_i64)) ? 0 : naCasti64ToInt(value));
+  return (value == NA_MIN_i64) ? 0 : value;
 }
 
-NA_HIDEF NABool na_IsPreferencesNAIntValid(NAi64 value, NAi64 min, NAi64 max) {
+NA_HIDEF NABool na_IsPreferencesi64Valid(int64 value, int64 min, int64 max) {
   return value >= min && value <= max;
 }
 
-NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt newValue, NAInt min, NAInt max) {
+NA_DEF int64 naInitPreferencesi64(const char* key, int64 newValue, int64 min, int64 max) {
   void* prefs = na_GetNativePreferences();
-  NAi64 value = na_GetRawPreferencesInt(prefs, key);
+  NAi64 value = na_GetRawPreferencesi64(prefs, key);
   
   if(value != NA_ZERO_i64) {
-    NAInt retValue = na_ConvertPreferencesIntToNAInt(value);
-    if(na_IsPreferencesNAIntValid(retValue, min, max)) {
+    int64 retValue = na_ConvertPreferencesIntToi64(value);
+    if(na_IsPreferencesi64Valid(retValue, min, max)) {
       return retValue;
     }
   }
 
-  na_SetRawPreferencesInt(prefs, key, na_ConvertNAIntToPreferencesInt(newValue));
+  na_SetRawPreferencesi64(prefs, key, na_Converti64ToPreferencesInt(newValue));
   return newValue;
 }
 
-NA_DEF NAInt naGetPreferencesInt(const char* key) {
+NA_DEF int64 naGetPreferencesi64(const char* key) {
   void* prefs = na_GetNativePreferences();
-  NAi64 value = na_GetRawPreferencesInt(prefs, key);
+  int64 value = na_GetRawPreferencesi64(prefs, key);
   #if NA_DEBUG
     if(value == NA_ZERO_i64)
       naError("Preferences value not initialized.");
   #endif
-  return na_ConvertPreferencesIntToNAInt(value);
+  return na_ConvertPreferencesIntToi64(value);
 }
 
-NA_DEF NABool naSetPreferencesInt(const char* key, NAInt newValue) {
-  NAi64 value = na_ConvertNAIntToPreferencesInt(newValue);
+NA_DEF NABool naSetPreferencesi64(const char* key, int64 newValue) {
+  int64 value = na_Converti64ToPreferencesInt(newValue);
   void* prefs = na_GetNativePreferences();
-  NAi64 existingValue = na_GetRawPreferencesInt(prefs, key);
+  int64 existingValue = na_GetRawPreferencesi64(prefs, key);
   if(existingValue == NA_ZERO_i64 || value != existingValue) {
-    na_SetRawPreferencesInt(prefs, key, value);
+    na_SetRawPreferencesi64(prefs, key, value);
     return NA_TRUE;
   }
   return NA_FALSE;
@@ -162,32 +162,28 @@ NA_DEF NABool naSetPreferencesInt(const char* key, NAInt newValue) {
 // ////////////////////////
 
 // Enum values are stored with their value increased by 1
-NA_HIDEF NAi64 na_ConvertNAEnumToPreferencesEnum(NAInt value) {
-  #if NA_DEBUG
-  if(naSmalleri64(value, 0))
-    naError("negative enum values can not be stored in preferences.");
-  #endif
-  return naAddi64(naCastIntToi64(value), NA_ONE_i64);
+NA_HIDEF int64 na_ConvertNAEnumToPreferencesEnum(uint32 value) {
+  return (int64)value + 1;
 }
 
-NA_HIDEF NAInt na_ConvertPreferencesEnumToNAEnum(NAi64 value) {
+NA_HIDEF uint32 na_ConvertPreferencesEnumToNAEnum(NAi64 value) {
   #if NA_DEBUG
-  if(naEquali64(value, NA_ZERO_i64))
-    naError("Value stored in preferences invalid or uninitialized.");
+    if(naEquali64(value, NA_ZERO_i64))
+      naError("Value stored in preferences invalid or uninitialized.");
   #endif
-  return naCasti64ToInt(naSubi64(value, NA_ONE_i64));
+  return (uint32)(value - 1);
 }
 
 NA_HIDEF NABool na_IsPreferencesEnumValid(NAi64 value, NAi64 count) {
   return value >= 0 && value < count;
 }
 
-NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt newValue, NAInt count) {
+NA_DEF uint32 naInitPreferencesEnum(const char* key, uint32 newValue, uint32 count) {
   void* prefs = na_GetNativePreferences();
   NAi64 value = na_GetRawPreferencesEnum(prefs, key);
   
   if(value != NA_ZERO_i64) {
-    NAInt retValue = na_ConvertPreferencesEnumToNAEnum(value);
+    uint32 retValue = na_ConvertPreferencesEnumToNAEnum(value);
     if(na_IsPreferencesEnumValid(retValue, count)) {
       return retValue;
     }
@@ -197,7 +193,7 @@ NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt newValue, NAInt count)
   return newValue;
 }
 
-NA_DEF NAInt naGetPreferencesEnum(const char* key) {
+NA_DEF uint32 naGetPreferencesEnum(const char* key) {
   void* prefs = na_GetNativePreferences();
   NAi64 value = na_GetRawPreferencesEnum(prefs, key);
   #if NA_DEBUG
@@ -207,7 +203,7 @@ NA_DEF NAInt naGetPreferencesEnum(const char* key) {
   return na_ConvertPreferencesEnumToNAEnum(value);
 }
 
-NA_DEF NABool naSetPreferencesEnum(const char* key, NAInt newValue) {
+NA_DEF NABool naSetPreferencesEnum(const char* key, uint32 newValue) {
   NAi64 value = na_ConvertNAEnumToPreferencesEnum(newValue);
   void* prefs = na_GetNativePreferences();
   NAi64 existingValue = na_GetRawPreferencesEnum(prefs, key);

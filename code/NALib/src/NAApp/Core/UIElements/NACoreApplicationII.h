@@ -7,21 +7,35 @@
 
 
 #include "../../../NAUtility/NATranslator.h"
+#include "../../../NAUtility/NANotifier.h"
 
 
 
 // The pointer storing the app if any.
 NAApplication* na_App = NA_NULL;
 
+NA_DEF NAApplication* naGetApplication(void) {
+  #if NA_DEBUG
+    if(!na_App)
+      naError("Application not started. Use naStartApplication");
+  #endif
+  return na_App;
+}
+
 
 
 NA_HDEF NABool na_IsApplicationRunning(void) {
-  return (NABool)(na_App->flags & NA_APPLICATION_FLAG_RUNNING);
+  NAApplication* app = naGetApplication();
+  return (NABool)(app->flags & NA_APPLICATION_FLAG_RUNNING);
 }
 
 
 
 NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
+  #if NA_DEBUG
+    if(na_App)
+      naError("Application already started.");
+  #endif
   na_App = app;
 
   naInitList(&app->windows);
@@ -30,11 +44,14 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
   app->translator = NA_NULL;
   naStartTranslator();
   
+  app->notifier = naAllocNotifier();
+  naSetCurrentNotifier(app->notifier);
+
   // todo: make this a singleton.
   app->systemFont = NA_NULL;
 
   app->mouseStatus = na_AllocMouseStatus();
-  app->keyStroke = naNewKeyStroke(NA_KEYCODE_ESCAPE, 0); // 0 is not defined, just use esc.
+  app->keyStroke = naNewKeyStroke(NA_KEYCODE_ESCAPE, NA_KEY_MODIFIER_NONE); // 0 is not defined, just use esc.
   
   app->flags = 0;
   app->flags |= NA_APPLICATION_FLAG_RUNNING;
@@ -63,8 +80,14 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
       naCrash("No Application running");
   #endif
 
-  naForeachListMutable(&na_App->windows, (NAMutator)naDelete);
-  naClearList(&na_App->windows);
+  naDeallocNotifier(na_App->notifier);
+
+  // An NAWindow removes itself from the windows array automatically. So
+  // no naForeach is allowed here.
+  while(!naIsListEmpty(&na_App->windows)) {
+    naDelete(naGetListFirstMutable(&na_App->windows));
+  }
+  naClearList(&na_App->windows, NA_NULL);
 
   naStopTranslator();
   na_ClearCoreUIElement(&app->uiElement);
@@ -78,35 +101,64 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
   // This must be at the very end as the uiElements are used up until the last
   // ClearUIElement operation.
   // todo test if all uiElements are gone.
-  naClearList(&na_App->uiElements);
+  naClearList(&na_App->uiElements, NA_NULL);
 }
 
 
 
 NA_DEF void naSetApplicationName(const NAUTF8Char* name) {
   NAApplication* app = naGetApplication();
-  app->appName = name;
+  if(app->appName)
+    naDelete(app->appName);
+
+  app->appName = name
+    ? naNewStringWithFormat("%s", name)
+    : NA_NULL;
 }
 NA_DEF void naSetApplicationCompanyName(const NAUTF8Char* name) {
   NAApplication* app = naGetApplication();
-  app->companyName = name;
+  if(app->companyName)
+    naDelete(app->companyName);
+
+  app->companyName = name
+    ? naNewStringWithFormat("%s", name)
+    : NA_NULL;
 }
 NA_DEF void naSetApplicationVersionString(const NAUTF8Char* string) {
   NAApplication* app = naGetApplication();
-  app->versionString = string;
+  if(app->versionString)
+    naDelete(app->versionString);
+
+  app->versionString = string
+    ? naNewStringWithFormat("%s", string)
+    : NA_NULL;
 }
 NA_DEF void naSetApplicationBuildString(const NAUTF8Char* string) {
   NAApplication* app = naGetApplication();
-  app->buildString = string;
+  if(app->buildString)
+    naDelete(app->buildString);
+
+  app->buildString = string
+    ? naNewStringWithFormat("%s", string)
+    : NA_NULL;
 }
 NA_DEF void naSetApplicationResourceBasePath(const NAUTF8Char* path) {
   NAApplication* app = naGetApplication();
-  app->resourceBasePath = path;
+  if(app->resourceBasePath)
+    naDelete(app->resourceBasePath);
+
+  app->resourceBasePath = path
+    ? naNewStringWithFormat("%s", path)
+    : NA_NULL;
 }
 NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
   NAApplication* app = naGetApplication();
-  app->iconPath = path;
-  na_SetApplicationIconPath(path);
+  if(app->iconPath)
+    naDelete(app->iconPath);
+
+  app->iconPath = path
+    ? naNewStringWithFormat("%s", path)
+    : NA_NULL;
 }
 
 
@@ -140,11 +192,8 @@ NA_HDEF const NAFont* na_GetApplicationSystemFont(const NAApplication* app) {
 
 
 NA_DEF const NAMouseStatus* naGetCurrentMouseStatus() {
-  #if NA_DEBUG
-    if(!na_App)
-      naCrash("Application not started. Use naStartApplication");
-  #endif
-  return na_App->mouseStatus;
+  NAApplication* app = naGetApplication();
+  return app->mouseStatus;
 }
 
 
@@ -156,11 +205,8 @@ NA_HDEF NAMouseStatus* na_GetApplicationMouseStatus(NAApplication* app) {
 
 
 NA_HDEF const NAKeyStroke* naGetCurrentKeyStroke() {
-  #if NA_DEBUG
-    if(!na_App)
-      naCrash("Application not started. Use naStartApplication");
-  #endif
-  return na_App->keyStroke;
+  NAApplication* app = naGetApplication();
+  return app->keyStroke;
 }
 
 
@@ -173,54 +219,33 @@ NA_HDEF void na_SetApplicationKeyStroke(NAApplication* app, NAKeyStroke* keyStro
 
 
 NA_DEF void naStopApplication(void) {
-  naSetFlagu32(&na_App->flags, NA_APPLICATION_FLAG_RUNNING, NA_FALSE);
-}
-
-
-
-NA_DEF NAApplication* naGetApplication(void) {
-  #if NA_DEBUG
-    if(!na_App)
-      naError("Application not started. Use naStartApplication");
-  #endif
-  return na_App;
+  NAApplication* app = naGetApplication();
+  naSetFlagu32(&app->flags, NA_APPLICATION_FLAG_RUNNING, NA_FALSE);
 }
 
 
 
 NA_HDEF NABool na_GetApplicationMouseVisible() {
-  #if NA_DEBUG
-    if(!na_App)
-      naCrash("Application not started. Use naStartApplication");
-  #endif
-  return naGetFlagu32(na_App->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE);
+  NAApplication* app = naGetApplication();
+  return naGetFlagu32(app->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE);
 }
 
 
 NA_HDEF void na_SetApplicationMouseVisible(NABool visible) {
-  #if NA_DEBUG
-  if(!na_App)
-    naCrash("Application not started. Use naStartApplication");
-  #endif
-  naSetFlagu32(&na_App->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE, visible);
+  NAApplication* app = naGetApplication();
+  naSetFlagu32(&app->flags, NA_APPLICATION_FLAG_MOUSE_VISIBLE, visible);
 }
 
 
 
 NA_DEF NABool naGetDefaultWindowSystemKeyHandling() {
-  #if NA_DEBUG
-    if(!na_App)
-      naCrash("Application not started. Use naStartApplication");
-  #endif
-  return naGetFlagu32(na_App->flags, NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING);
+  NAApplication* app = naGetApplication();
+  return naGetFlagu32(app->flags, NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING);
 }
 
 NA_DEF void naSetDefaultWindowSystemKeyHandling(NABool enable) {
-  #if NA_DEBUG
-    if(!na_App)
-      naCrash("Application not started. Use naStartApplication");
-  #endif
-  naSetFlagu32(&na_App->flags, NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING, enable);
+  NAApplication* app = naGetApplication();
+  naSetFlagu32(&app->flags, NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING, enable);
 }
 
 

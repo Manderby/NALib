@@ -57,13 +57,13 @@ NA_IDEF void naSetBufferNewlineEncoding(NABuffer* buffer, NANewlineEncoding newl
 
 
 
-NA_IDEF NAInt naGetBufferEndianness(NABuffer* buffer) {
+NA_IDEF uint32 naGetBufferEndianness(NABuffer* buffer) {
   return buffer->endianness;
 }
 
 
 
-NA_IDEF void naSetBufferEndianness(NABuffer* buffer, NAInt endianness) {
+NA_IDEF void naSetBufferEndianness(NABuffer* buffer, uint32 endianness) {
   buffer->endianness = endianness;
 }
 

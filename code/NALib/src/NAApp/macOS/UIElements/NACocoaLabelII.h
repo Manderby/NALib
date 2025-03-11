@@ -123,11 +123,9 @@
   [self setSelectable:YES];
   [self setEditable:NO];
   [self setBordered:NO];
-//  [self setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)0. green:(CGFloat)0. blue:(CGFloat)1. alpha:(CGFloat).1]];
   [self setDrawsBackground:NO];
   [self setTextColor:naGetLabelColor()];
   [[self cell] setLineBreakMode:NSLineBreakByWordWrapping];
-  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
   cocoaLabel = newCocoaLabel;
   return self;
 }
@@ -215,11 +213,12 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
   NACocoaNativeLabel* nativePtr = [[NACocoaNativeLabel alloc]
     initWithLabel:cocoaLabel
     frame:naMakeNSRectWithSize(naMakeSize(width, 17))];
+    
   na_InitLabel((NALabel*)cocoaLabel, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
-  
+
+  [nativePtr setNAFont:cocoaLabel->label.font];
+
   naSetLabelText((NALabel*)cocoaLabel, text);
-  
-  cocoaLabel->label.font = naRetain(naCreateSystemFont());
 
   return (NALabel*)cocoaLabel;
 }
@@ -255,13 +254,14 @@ NA_DEF void naSetLabelTextColor(NALabel* label, const NAColor* color) {
 
 NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url) {
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setLink: url];
+  [nativePtr setLink:url];
 }
 
 
 
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled) {
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
+  na_SetLabelEnabled(label, enabled);
   [nativePtr setLabelEnabled:enabled];
 }
 

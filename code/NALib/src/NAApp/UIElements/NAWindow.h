@@ -65,6 +65,10 @@ NA_API void naCloseWindowModal(NAWindow* window);
 // window from closing. If not called, the window will close.
 NA_API void naPreventWindowClosing(NAWindow* window, NABool prevent);
 
+// Use this method to mark the window as changed.
+// On macOS, this adds a small bubble in the red closing icon.
+NA_API void naMarkWindowChanged(NAWindow* window, NABool changed);
+
 // Get and set the window fullscreen state.
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);
@@ -73,7 +77,7 @@ NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);
 NA_API NABool naIsWindowResizeable(const NAWindow* window);
 
 // Get and set the outer (non-client) rect of the window. Note that the
-// function naGetUIElementRect will always return the inner (clinet) rect of
+// function naGetUIElementRect will always return the inner (client) rect of
 // the window.
 NA_API NARect naGetWindowOuterRect(const NAWindow * window);
 NA_API void naSetWindowOuterRect(NAWindow * window, NARect rect);
@@ -111,18 +115,35 @@ NA_API void naPresentAlertBox(
   const NAUTF8Char* titleText,
   const NAUTF8Char* infoText);
 
+// Third button is optional and can be NA_NULL.
+// Returns the button index which was pressed.
+// 0 = Primary
+// 1 = Secondary
+// 2 = Ternary
+// Note taht the primary option is the one used for pressing enter.
+NA_API size_t naPresentOptionBox(
+  const NAUTF8Char* titleText,
+  const NAUTF8Char* infoText,
+  const NAUTF8Char* buttonTextPrimary,
+  const NAUTF8Char* buttonTextSecondary,
+  const NAUTF8Char* buttonTextTernary);
+
 
 
 // ////////////////////////////////
 // File panel
 
+// The callback can return false, if the operation did not succeed, which in
+// turn will result in naPresentFilePanel returning false, which is equivalent
+// to a cancel operation.
 typedef NABool (*NAFilePanelCallback)(
   NABool doPerform,
   const NAUTF8Char* path,
   const void* data);
 
-NA_API void naPresentFilePanel(
-  void* window,
+// Returns true, if the callback returns true.
+// Returns false if cancel was pressed.
+NA_API NABool naPresentFilePanel(
   NABool load,
   const NAUTF8Char* fileName,
   const NAUTF8Char* allowedFileSuffix,

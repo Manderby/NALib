@@ -49,8 +49,11 @@
 // Types like NAByte, int8 or uint8 can not be used as it these are
 // defined to be incompatible with char. But at least we can be sure that
 // a char consists of 8 Bits. See definition of NAByte for that.
-typedef char NAUTF8Char;
-
+#if (defined NA_C23)
+  typedef char8_t NAUTF8Char;
+#else
+  typedef char NAUTF8Char;
+#endif
 
 
 #endif // NA_CHAR_INCLUDED

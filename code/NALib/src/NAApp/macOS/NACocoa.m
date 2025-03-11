@@ -41,6 +41,7 @@
 #include "NACocoaPreferencesII.h"
 
 #include "NACocoaII.h"
+#include "NACocoaColorII.h"
 #include "NACocoaInterfaces.h"
 
 #include "UIElements/NACocoaApplicationII.h"

@@ -936,8 +936,7 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath) {
 // This is the destructor for a PNG. It is marked as a helper as it should
 // only be called by the runtime system
 NA_HDEF void na_DestructPNG(NAPNG* png) {
-  naForeachListMutable(&png->chunks, (NAMutator)na_DeallocPNGChunk);
-  naClearList(&png->chunks);
+  naClearList(&png->chunks, (NAMutator)na_DeallocPNGChunk);
   
   if(png->pixeldata)
     naFree(png->pixeldata);

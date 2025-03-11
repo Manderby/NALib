@@ -15,7 +15,6 @@
   cocoaCheckBox = newCocoaCheckBox;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
 
   return self;
 }
@@ -59,6 +58,10 @@
   [self setHidden:visible ? NO : YES];
 }
 
+- (void) setNAFont:(NAFont*)font{
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
+}
+
 - (void) setCheckBoxState:(NABool)state{
   [self setState:state ? NAStateOn : NAStateOff];
 }
@@ -80,8 +83,11 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
   NACocoaNativeCheckBox* nativePtr = [[NACocoaNativeCheckBox alloc]
     initWithCheckBox:cocoaCheckBox
     frame:naMakeNSRectWithSize(naMakeSize(width, 18))];    
+
   na_InitCheckBox((NACheckBox*)cocoaCheckBox, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
   
+  [nativePtr setNAFont:cocoaCheckBox->checkBox.font];
+
   [nativePtr setText:text];
   
   return (NACheckBox*)cocoaCheckBox;

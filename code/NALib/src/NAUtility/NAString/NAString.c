@@ -2,7 +2,6 @@
 #include "../../NAStruct/NABuffer.h"
 #include "../../NAUtility/NABinaryData.h"
 #include "../../NAUtility/NAString.h"
-#include "../../NAUtility/NAURL.h"
 #include <string.h>
 #include <ctype.h>
 
@@ -374,29 +373,38 @@ NA_DEF NAUTF8Char naGetStringChar(NAString* string, size_t index) {
 
 
 
-NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath) {
-  NAString* string;
-  naCacheBufferRange(filePath->buffer, filePath->buffer->range);
+NA_HDEF NAInt naGetLastSlashOffset(const NAString* filePath) {
   NAInt slashOffset = naSearchBufferByteOffset(
     filePath->buffer,
     NA_PATH_DELIMITER_UNIX,
     naGetRangei64Max(naGetBufferRange(filePath->buffer)),
     NA_FALSE);
-  if(slashOffset != NA_INVALID_MEMORY_INDEX) {
-    string = naNewStringExtraction(filePath, 0, slashOffset);
-  }else{
+    
+  if(slashOffset == NA_INVALID_MEMORY_INDEX) {
     NAInt backSlashOffset = naSearchBufferByteOffset(
       filePath->buffer,
       NA_PATH_DELIMITER_WIN,
       naGetRangei64Max(naGetBufferRange(filePath->buffer)),
       NA_FALSE);
-    if(backSlashOffset != NA_INVALID_MEMORY_INDEX) {
-      string = naNewStringExtraction(filePath, 0, backSlashOffset);
-    }else{
-      // If no position is found, return the full string.
-      string = naNewStringExtraction(filePath, 0, -1);
-    }
+      
+    return backSlashOffset;
   }
+
+  return slashOffset;
+}
+
+
+
+NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath) {
+  NAString* string;
+  naCacheBufferRange(filePath->buffer, filePath->buffer->range);
+  NAInt slashOffset = naGetLastSlashOffset(filePath);
+  if(slashOffset != NA_INVALID_MEMORY_INDEX) {
+    string = naNewStringExtraction(filePath, 0, slashOffset);
+  }else{
+    string = naNewStringExtraction(filePath, 0, -1);
+  }
+
   #if NA_STRING_ALWAYS_CACHE == 1
   naGetStringUTF8Pointer(string);
   #endif
@@ -405,19 +413,24 @@ NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath) {
 
 
 
-NA_DEF NAString* naNewStringWithBasenameOfPath(const NAString* filePath) {
+NA_DEF NAString* naNewStringWithBaseNameOfPath(const NAString* filePath) {
   NAString* string;
   naCacheBufferRange(filePath->buffer, filePath->buffer->range);
+  NAInt slashOffset = naGetLastSlashOffset(filePath);
+  // If slashOffset is invalid, return all leading.
+  if(slashOffset == NA_INVALID_MEMORY_INDEX) {
+    slashOffset = -1;
+  }
   NAInt dotOffset = naSearchBufferByteOffset(
     filePath->buffer,
     NA_SUFFIX_DELIMITER,
     naGetRangei64Max(naGetBufferRange(filePath->buffer)),
     NA_FALSE);
-  // If dotpos is invalid, return the full string.
+  // If dotpos is invalid, return the tailing characters.
   if(dotOffset == NA_INVALID_MEMORY_INDEX) {
-    string = naNewStringExtraction(filePath, 0, -1);
+    string = naNewStringExtraction(filePath, slashOffset + 1, -1);
   }else{
-    string = naNewStringExtraction(filePath, 0, dotOffset);
+    string = naNewStringExtraction(filePath, slashOffset + 1, dotOffset - slashOffset - 1);
   }
   #if NA_STRING_ALWAYS_CACHE == 1
   naGetStringUTF8Pointer(string);
@@ -775,9 +788,9 @@ NA_DEF void naAppendStringString(NAString* originalString, const NAString* strin
 
 
 NA_DEF void naAppendStringChar(NAString* originalString, NAUTF8Char newChar) {
-  NAString* charstring = naNewStringWithFormat("%c", newChar);
-  naAppendBufferToBuffer(originalString->buffer, charstring->buffer);
-  naDelete(charstring);
+  NAString* charString = naNewStringWithFormat("%c", newChar);
+  naAppendBufferToBuffer(originalString->buffer, charString->buffer);
+  naDelete(charString);
 }
 
 

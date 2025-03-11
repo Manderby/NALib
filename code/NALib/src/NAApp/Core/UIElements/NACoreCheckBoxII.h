@@ -8,12 +8,14 @@
 
 NA_HDEF void na_InitCheckBox(NACheckBox* checkBox, void* nativePtr) {
   na_InitCoreUIElement(&checkBox->uiElement, NA_UI_CHECKBOX, nativePtr);
+  checkBox->font = naCreateSystemFont();
 }
 
 
 
 NA_HDEF void na_ClearCheckBox(NACheckBox* checkBox) {
   na_ClearCoreUIElement(&checkBox->uiElement);
+  naRelease(checkBox->font);
 }
 
 

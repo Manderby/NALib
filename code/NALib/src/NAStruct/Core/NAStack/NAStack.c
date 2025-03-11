@@ -55,8 +55,7 @@ NA_DEF void naClearStack(NAStack* stack) {
   #endif
 
   naClearListIterator(&stack->curArray);
-  naForeachListMutable(&stack->arrays, na_DeallocStackArray);
-  naClearList(&stack->arrays);
+  naClearList(&stack->arrays, (NAMutator)na_DeallocStackArray);
 }
 
 

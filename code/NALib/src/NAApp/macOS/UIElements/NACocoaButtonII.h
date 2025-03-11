@@ -44,9 +44,12 @@
   cocoaButton = newCocoaButton;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
-  [self setFont:(NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(naCreateSystemFont()))];
 
   return self;
+}
+
+- (void) dealloc{
+  [super dealloc];
 }
 
 - (bool) isImage{
@@ -433,6 +436,9 @@ NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImage
 
 
 NA_DEF void na_DestructCocoaButton(NACocoaButton* cocoaButton) {
+  if(cocoaButton->button.imageSet) {
+    na_ReleaseMouseTracking(&cocoaButton->button.uiElement);
+  }
   na_ClearButton((NAButton*)cocoaButton);
 }
 
@@ -603,9 +609,10 @@ NA_API void naSetButtonVisible(NAButton* button, NABool visible) {
 
 
 NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
+  NAButton* naButton = (NAButton*)button;
   naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
   NARect rect = naMakeRectWithNSRect([nativePtr frame]);
-  if(isAtLeastMacOSVersion(11, 0)) {
+  if(naIsButtonBordered(naButton) && isAtLeastMacOSVersion(11, 0)) {
   // On newer systems bordered buttons are 5 units shorter than expected on
   // the left and right. At the same time, the top and bottom mouse capture
   // area is also 5 units shorter. Therefore, we add 10 units and in

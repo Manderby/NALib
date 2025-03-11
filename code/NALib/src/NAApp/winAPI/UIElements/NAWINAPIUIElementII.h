@@ -6,7 +6,15 @@
 
 // todo: find a faster way. Hash perhaps or something else.
 NA_HDEF void* na_GetUINALibEquivalent(void* nativePtr) {
-  return (NA_UIElement*)GetWindowLongPtr(nativePtr, GWLP_USERDATA);
+  HINSTANCE appPtr = (HINSTANCE)GetWindowLongPtr(nativePtr, GWLP_HINSTANCE);
+
+  // We need to test for the hinstance. Otherwise HWND of other applications
+  // might be used erroneously as NA_UIElement instances, resulting in crashes.
+  if(appPtr == (HINSTANCE)naGetUIElementNativePtr(naGetApplication())) {
+    return (NA_UIElement*)GetWindowLongPtr(nativePtr, GWLP_USERDATA);
+  }
+  
+  return NA_NULL;
 }
 
 

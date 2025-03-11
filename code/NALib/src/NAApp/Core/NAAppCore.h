@@ -19,6 +19,8 @@
 
 #include "../../NAStruct/NAList.h"
 #include "../../NAMath/NAVectorAlgebra.h"
+
+NA_PROTOTYPE(NANotifier);
 NA_PROTOTYPE(NATranslator);
 
 #include "../NAApp.h"
@@ -49,23 +51,25 @@ struct NAApplication{
   NAList            uiElements;      // A list of all ui elements in use.
   
   NATranslator*     translator;
+  NANotifier*       notifier;
   NAFont*           systemFont;
   NAMouseStatus*    mouseStatus;     // The mouse cursor status
   NAKeyStroke*      keyStroke;       // The currently pressed key combination
   uint32            flags;
 
-  const NAUTF8Char*       appName;
-  const NAUTF8Char*       companyName;
-  const NAUTF8Char*       versionString;
-  const NAUTF8Char*       buildString;
-  const NAUTF8Char*       resourceBasePath;
-  const NAUTF8Char*       iconPath;
+  NAString*       appName;
+  NAString*       companyName;
+  NAString*       versionString;
+  NAString*       buildString;
+  NAString*       resourceBasePath;
+  NAString*       iconPath;
 };
 
 struct NAButton{
   NA_UIElement uiElement;
   NAUTF8Char* text;
   NAUTF8Char* text2;
+  NAFont* font;
   const NAImageSet* imageSet;
   const NAImageSet* imageSet2;
   uint32 flags;
@@ -73,6 +77,7 @@ struct NAButton{
 
 struct NACheckBox{
   NA_UIElement uiElement;
+  NAFont* font;
 };
 
 struct NAImageSpace{
@@ -83,6 +88,8 @@ struct NAImageSpace{
 struct NALabel{
   NA_UIElement uiElement;
   NAFont* font;
+  NAColor* textColor;
+  NABool enabled;
 };
 
 struct NAMenu{
@@ -108,10 +115,12 @@ struct NAOpenGLSpace{
 struct NASelect{
   NA_UIElement uiElement;
   NAList       childs;
+  NAFont*      font;
 };
 
 struct NARadio{
   NA_UIElement uiElement;
+  NAFont* font;
 };
 
 struct NAScreen{
@@ -128,10 +137,10 @@ struct NASlider{
 
 struct NASpace{
   NA_UIElement uiElement;
-  NAList       childs;
-  NAColor*     backgroundColor;
-  NABool       alternateBackground;
-  NABool       dragsWindow;
+  NAList childs;
+  NAColor* backgroundColor;
+  NABool alternateBackground;
+  NABool dragsWindow;
 };
 
 struct NATextField{
@@ -311,6 +320,8 @@ NA_HAPI void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect);
 // NALabel
 NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
 NA_HAPI void na_ClearLabel(NALabel* label);
+NA_HAPI void na_SetLabelEnabled(NALabel* label, NABool enabled);
+NA_HAPI void na_SetLabelTextColor(NALabel* label, const NAColor* color);
 NA_HAPI NARect na_GetLabelRect(const NA_UIElement* space);
 NA_HAPI void na_SetLabelRect(NA_UIElement* label, NARect rect);
 
@@ -369,6 +380,7 @@ NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);
 NA_HAPI void na_ClearSpace(NASpace* space);
 NA_HAPI void na_AddSpaceChild(NASpace*, NA_UIElement* child);
 NA_HAPI void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child);
+NA_HAPI void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color);
 NA_HAPI NARect na_GetSpaceRect(const NA_UIElement* space);
 NA_HAPI void na_SetSpaceRect(NA_UIElement* space, NARect rect);
 
@@ -420,13 +432,13 @@ NA_HAPI void* na_GetNativePreferences(void);
 NA_HAPI void na_ShutdownPreferences(void);
 
 NA_HAPI NAi64     na_GetRawPreferencesBool  (void* prefs, const char* key);
-NA_HAPI NAi64     na_GetRawPreferencesInt   (void* prefs, const char* key);
+NA_HAPI int64     na_GetRawPreferencesi64   (void* prefs, const char* key);
 NA_HAPI NAi64     na_GetRawPreferencesEnum  (void* prefs, const char* key);
 NA_HAPI double    na_GetRawPreferencesDouble(void* prefs, const char* key);
 NA_HAPI NAString* na_GetRawPreferencesString(void* prefs, const char* key);
 
 NA_HAPI void na_SetRawPreferencesBool  (void* prefs, const char* key, NAi64 valueStorage);
-NA_HAPI void na_SetRawPreferencesInt   (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesi64   (void* prefs, const char* key, int64 valueStorage);
 NA_HAPI void na_SetRawPreferencesEnum  (void* prefs, const char* key, NAi64 valueStorage);
 NA_HAPI void na_SetRawPreferencesDouble(void* prefs, const char* key, double valueStorage);
 NA_HAPI void na_SetRawPreferencesString(void* prefs, const char* key, NAString* valueStorage);
@@ -476,12 +488,6 @@ NA_HAPI void* na_GetImageSetNativeSubImage(
   NASkin skin,
   NAImageSetInteraction interaction,
   NABool secondaryState);
-
-NA_HAPI void na_FillDefaultTextColorWithSystemSkin(NAColor* color);
-NA_HAPI void na_FillDefaultLinkColorWithSystemSkin(NAColor* color);
-NA_HAPI void na_FillDefaultAccentColorWithSystemSkin(NAColor* color);
-
-
 
 
 

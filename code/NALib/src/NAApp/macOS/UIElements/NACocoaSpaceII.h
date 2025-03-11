@@ -28,19 +28,14 @@
   dirtyRect = [self frame];
   dirtyRect.origin = NSMakePoint(0., 0.);
 
-  if(naGetColorAlpha(cocoaSpace->space.backgroundColor) != 0.) {
-    float rgba[4];
-    naFillSRGBAWithColor(rgba, cocoaSpace->space.backgroundColor);
-    [[NSColor colorWithDeviceRed:rgba[0]
-      green:rgba[1]
-      blue:rgba[2]
-      alpha:rgba[3]] setFill];
-    NSRectFill(dirtyRect);
-  }
-  if(cocoaSpace->space.alternateBackground) {
-    [[[NSColor controlTextColor] colorWithAlphaComponent:(CGFloat).075] setFill];
-    NSRectFill(dirtyRect);
-  }
+  NAColor bgColor;
+  naFillSpaceBackgroundColor(&bgColor, &cocoaSpace->space);
+  NSColor* curBgColor = naAllocUIColor(&bgColor, NA_NULL);
+  [curBgColor setFill];
+
+  NSRectFill(dirtyRect);
+
+  naDeallocUIColor(curBgColor);
 }
 
 - (void)mouseMoved:(NSEvent* _Nonnull)event{
@@ -99,6 +94,7 @@
     NSRect frame = [[self window] frame];
     frame.origin.x += curMousePos.x - originMousePos.x;
     frame.origin.y += curMousePos.y - originMousePos.y;
+
     [[self window] setFrame:frame display:YES];
   }else{
     [super mouseDragged:event];
@@ -156,6 +152,11 @@
 
 - (void)cancelOperation:(nullable id)sender{
   [self resetDrag];
+}
+
+- (void)setFrame:(NSRect)frame {
+  [super setFrame:frame];
+  na_UpdateMouseTracking(&cocoaSpace->space.uiElement);
 }
 
 @end
@@ -289,11 +290,7 @@ NA_DEF void naShiftSpaceChilds(NASpace* _Nonnull space, NAPos shift) {
 
 
 NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NAColor* _Nullable color) {
-  if(color) {
-    naFillColorWithCopy(space->backgroundColor, color);
-  }else{
-    naFillColorWithTransparent(space->backgroundColor);
-  }
+  na_SetSpaceBackgroundColor(space, color);
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   [nativePtr setNeedsDisplay:YES];
 }

@@ -29,7 +29,7 @@
 // NA_ENDIANNESS_NETWORK is defined to be the same as NA_ENDIANNESS_BIG.
 // NA_ENDIANNESS_HOST will be set to whatever this host endianness is.
 // Note that when expecting the endianness as an argument, it will have the
-// type NAInt. Unfortunately, these macros can not be defined as enums.
+// type uint32. Unfortunately, these macros can not be defined as enums.
 #define NA_ENDIANNESS_UNKNOWN 0
 #define NA_ENDIANNESS_LITTLE  1
 #define NA_ENDIANNESS_BIG     2

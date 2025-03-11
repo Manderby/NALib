@@ -76,6 +76,7 @@ NA_HIDEF size_t na_GetTreeItemIterCount(const NATreeItem* item) {
       naCrash("item is nullptr");
     return item->iterCount;
   #else
+    NA_UNUSED(item);
     return 0;
   #endif
 }
@@ -85,7 +86,8 @@ NA_HIDEF void na_IncTreeItemIterCount(NATreeItem* item) {
       naCrash("item is nullptr");
     item->iterCount++;
   #else
-    return 0;
+    NA_UNUSED(item);
+    return;
   #endif
 }
 NA_HIDEF void na_DecTreeItemIterCount(NATreeItem* item) {
@@ -96,7 +98,8 @@ NA_HIDEF void na_DecTreeItemIterCount(NATreeItem* item) {
       naError("Too many iterator decrements");
     item->iterCount--;
   #else
-    return 0;
+    NA_UNUSED(item);
+    return;
   #endif
 }
 
@@ -184,6 +187,8 @@ NA_HIDEF NABool na_GetNodeChildIsLeaf(NATreeNode* node, size_t childIndex, const
       naCrash("config is nullptr");
     if(childIndex >= config->abi.childPerNode)
       naCrash("childIndex out of bounds");
+  #else
+    NA_UNUSED(config);
   #endif
   return naGetFlagu32(node->flags, 1 << childIndex);
 }
@@ -198,6 +203,8 @@ NA_HIDEF void na_SetNodeChildIsLeaf(NATreeNode* node, size_t childIndex, NABool 
       naCrash("config is nullptr");
     if(childIndex >= config->abi.childPerNode)
       naCrash("childIndex out of bounds");
+  #else
+    NA_UNUSED(config);
   #endif
   naSetFlagu32(&node->flags, 1 << childIndex, isleaf);
 }

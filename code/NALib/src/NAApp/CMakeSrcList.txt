@@ -11,6 +11,7 @@ set(headerFiles
   ${NAAppDir}/NAMouse.h
   ${NAAppDir}/NAPreferences.h
   ${NAAppDir}/NAReaction.h
+  ${NAAppDir}/NAUIColor.h
 )
 
 set(uiHeaderFiles
@@ -69,6 +70,7 @@ set(coreUIFiles
 set(macOSFiles
   ${NAAppDir}/macOS/NACocoaClipboardII.h
   ${NAAppDir}/macOS/NACocoa.m
+  ${NAAppDir}/macOS/NACocoaColorII.h
   ${NAAppDir}/macOS/NACocoaFontII.h
   ${NAAppDir}/macOS/NACocoaImageSetII.h
   ${NAAppDir}/macOS/NACocoaKeyboardII.h
@@ -104,6 +106,7 @@ set(macOSUIFiles
 set(winAPIFiles
   ${NAAppDir}/winAPI/NAWINAPI.c
   ${NAAppDir}/winAPI/NAWINAPIII.h
+  ${NAAppDir}/winAPI/NAWINAPIColorII.h
   ${NAAppDir}/winAPI/NAWINAPIInterfaces.h
   ${NAAppDir}/winAPI/NAWINAPIClipboardII.h
   ${NAAppDir}/winAPI/NAWINAPIFontII.h

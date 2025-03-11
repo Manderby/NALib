@@ -154,14 +154,14 @@ NA_API NABuffer* naGetStringBufferMutable(NAString* string);
 NA_API NAUTF8Char naGetStringChar(NAString* string, size_t index);
 
 
-// The following functions allow you to get the parent, the basename or the
+// The following functions allow you to get the parent, the baseBame or the
 // suffix of a path. For example, the file "bin/folder/document.txt" returns
-// the parent "bin/folder", the basename "bin/folder/document" and the suffix
+// the parent "bin/folder", the baseBame "bin/folder/document" and the suffix
 // "txt". The suffix is detected by the first dot '.' from the right. If no
 // such dot is found, suffix is empty. Both path delimiters / and \ are
 // detected.
 NA_API NAString* naNewStringWithParentOfPath(const NAString* filePath);
-NA_API NAString* naNewStringWithBasenameOfPath(const NAString* filePath);
+NA_API NAString* naNewStringWithBaseNameOfPath(const NAString* filePath);
 NA_API NAString* naNewStringWithSuffixOfPath  (const NAString* filePath);
 
 
@@ -203,6 +203,14 @@ NA_API NAString* naNewStringEPSDecoded(const NAString* inputString);
   NA_API NAString* naNewStringWithSystemString(const TCHAR* systemString);
 
 #endif
+
+// Converts one single character from lower to upper or vice versa.
+// This also contains all non-ASCII letters like ä and Ä for example.
+// Note that these functions only work on single characters.
+// Beware, these function are slow!
+NA_API const NAUTF8Char* naConvertUTF8CharToUppercase(const NAUTF8Char* lower);
+NA_API const NAUTF8Char* naConvertUTF8CharToLowercase(const NAUTF8Char* upper);
+
 
 
 // Appending functions: Appends something at the end of originalString.

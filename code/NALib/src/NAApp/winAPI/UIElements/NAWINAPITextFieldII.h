@@ -137,6 +137,13 @@ NA_DEF NATextField* naNewTextField(double width) {
   }
 
   na_InitTextField(&winapiTextField->textField, nativePtr);
+  
+  SendMessage(
+    nativePtr,
+    WM_SETFONT,
+    (WPARAM)naGetFontNativePointer(winapiTextField->textField.font),
+    MAKELPARAM(TRUE, 0));
+
   winapiTextField->nextTabStop = winapiTextField;
   winapiTextField->prevTabStop = winapiTextField;
 
@@ -147,7 +154,7 @@ NA_DEF NATextField* naNewTextField(double width) {
     NA_NULL);
   naAddUIKeyboardShortcut(
     winapiTextField,
-    naNewKeyStroke(NA_KEYCODE_TAB, 0),
+    naNewKeyStroke(NA_KEYCODE_TAB, NA_KEY_MODIFIER_NONE),
     naHandleTextFieldTabOrder,
     NA_NULL);
   naAddUIKeyboardShortcut(
@@ -155,14 +162,7 @@ NA_DEF NATextField* naNewTextField(double width) {
     naNewKeyStroke(NA_KEYCODE_TAB, NA_KEY_MODIFIER_SHIFT),
     naHandleTextFieldReverseTabOrder,
     NA_NULL);
-
-  winapiTextField->textField.font = naRetain(naCreateSystemFont());
-  SendMessage(
-    nativePtr,
-    WM_SETFONT,
-    (WPARAM)naGetFontNativePointer(winapiTextField->textField.font),
-    MAKELPARAM(TRUE, 0));
-
+  
   return (NATextField*)winapiTextField;
 }
 

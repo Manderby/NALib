@@ -329,10 +329,10 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
   NSString* systemFontName = [NSString stringWithUTF8String: fontFamilyName];
 
   NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
-  NSFont* retFont;
+  NSFont* nsFont;
 
   if(systemFontName == [systemFont familyName]) {
-    retFont = (naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) ?
+    nsFont = (naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) ?
       [NSFont systemFontOfSize:size] :
       [NSFont boldSystemFontOfSize:size];
   }else{
@@ -341,18 +341,24 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
     if(naGetFlagu32(flags, NA_FONT_FLAG_ITALIC)) { traits |= NSItalicFontMask; }
     if(naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE)) { }
 
-    retFont = [[NSFontManager sharedFontManager]
+    nsFont = [[NSFontManager sharedFontManager]
       fontWithFamily:systemFontName
       traits:traits
       weight:5  // ignored if NSBoldFontMask is set.
       size:size];
   }
   
-  return na_CreateFont(
-    NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(retFont)),
-    naNewStringWithFormat("%s", fontFamilyName),
+  NAString* fontName = naNewStringWithFormat("%s", fontFamilyName);
+  
+  NAFont* retFont = na_CreateFont(
+    NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(nsFont)),
+    fontName,
     flags,
     size);
+    
+  naDelete(fontName);
+  
+  return retFont;
 }
 
 NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
@@ -437,57 +443,101 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 
 
 
-NA_DEF void naPresentFilePanel(
-  void* window,
+NA_DEF size_t naPresentOptionBox(
+  const NAUTF8Char* titleText,
+  const NAUTF8Char* infoText,
+  const NAUTF8Char* buttonTextPrimary,
+  const NAUTF8Char* buttonTextSecondary,
+  const NAUTF8Char* buttonTextTernary)
+{
+  #if NA_DEBUG
+    if(!buttonTextPrimary)
+      naError("Primary button must be present");
+    if(!buttonTextSecondary)
+      naError("Secondary button must be present");
+  #endif
+
+  // Create the alert
+  NSAlert* alert = [[NSAlert alloc] init];
+  [alert setMessageText:[NSString stringWithUTF8String:titleText]];
+  [alert setInformativeText:[NSString stringWithUTF8String:infoText]];
+  [alert addButtonWithTitle:[NSString stringWithUTF8String:buttonTextPrimary]];
+  [alert addButtonWithTitle:[NSString stringWithUTF8String:buttonTextSecondary]];
+  if(buttonTextTernary) {
+    [alert addButtonWithTitle:[NSString stringWithUTF8String:buttonTextTernary]];
+  }
+  [alert setAlertStyle:NSAlertStyleWarning];
+  
+  // Display the alert
+  NSModalResponse response = [alert runModal];
+  
+  // Handle the button response
+  if (response == NSAlertFirstButtonReturn) {
+    return 0;
+  } else if (response == NSAlertSecondButtonReturn) {
+    return 1;
+  } else if (response == NSAlertThirdButtonReturn) {
+    return 2;
+  }
+//  #if NA_DEBUG
+//    naError("Invalid return code given");
+//  #endif
+  return 0;
+}
+
+
+
+NA_DEF NABool naPresentFilePanel(
   NABool load,
   const NAUTF8Char* fileName,
   const NAUTF8Char* allowedFileSuffix,
   NAFilePanelCallback callback,
   const void* data)
 {
-  #if NA_DEBUG
-    if(load)
-      naError("Load panels are not implemented yet.");
-  #else
-    NA_UNUSED(load);
-  #endif
+  if(load) {
+    NSOpenPanel* openPanel = [NSOpenPanel openPanel];
+    NSModalResponse response = [openPanel runModal];
+    
+    // Handle the button response
+    if (response == NSModalResponseOK) {
+      return callback(NA_TRUE, [[[openPanel URL] path] UTF8String], data);
+    }
 
-  NSSavePanel* savepanel = [NSSavePanel savePanel];
+  }else { // save panel
 
-  [savepanel setNameFieldStringValue:[NSString stringWithUTF8String:fileName]];
-  [savepanel setExtensionHidden:NO];
-  #if defined __MAC_11_0
-    NA_MACOS_AVAILABILITY_GUARD_11_0(
-      [savepanel setAllowedContentTypes:[NSArray arrayWithObject:[UTType typeWithFilenameExtension:[NSString stringWithUTF8String:allowedFileSuffix]]]];
-    )
-  #else
-    [savepanel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:allowedFileSuffix]]];
-  #endif
-  
-  [savepanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(window) completionHandler:^(NSInteger result) {
-    #if defined __MAC_10_9
-      NABool doPerform = result != NSModalResponseCancel;
+    NSSavePanel* savePanel = [NSSavePanel savePanel];
+
+    [savePanel setNameFieldStringValue:[NSString stringWithUTF8String:fileName]];
+    [savePanel setExtensionHidden:NO];
+    #if defined __MAC_11_0
+      NA_MACOS_AVAILABILITY_GUARD_11_0(
+        [savePanel setAllowedContentTypes:[NSArray arrayWithObject:[UTType typeWithFilenameExtension:[NSString stringWithUTF8String:allowedFileSuffix]]]];
+      )
     #else
-      NABool doPerform = result != NSFileHandlingPanelCancelButton;
+      [savePanel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:allowedFileSuffix]]];
     #endif
-    callback(doPerform, [[[savepanel URL] path] UTF8String], data);
-  }];
+    
+    NSModalResponse response = [savePanel runModal];
+    
+    // Handle the button response
+    if (response == NSModalResponseOK) {
+      return callback(NA_TRUE, [[[savePanel URL] path] UTF8String], data);
+    }
+    
+  //  [savePanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(nativeWindow) completionHandler:^(NSInteger result) {
+  //    #if defined __MAC_10_9
+  //      NABool doPerform = result != NSModalResponseCancel;
+  //    #else
+  //      NABool doPerform = result != NSFileHandlingPanelCancelButton;
+  //    #endif
+  //    callback(doPerform, [[[savePanel URL] path] UTF8String], data);
+  //  }];
+  
+  }
+
+  return NA_FALSE;
 }
 
-
-NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen) {
-  NA_UNUSED(screen);
-  NARect rect = {{0, 0}, {1, 1}};
-  return rect;
-}
-
-NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect) {
-  NA_UNUSED(screen);
-  NA_UNUSED(rect);
-  #if NA_DEBUG
-    naError("A screen can not be resized by software.");
-  #endif
-}
 
 
 NA_DEF void naCenterMouse(void* uiElement) {
@@ -566,8 +616,14 @@ NA_DEF void naOpenURLInBrowser(const NAUTF8Char* url) {
 
 NA_HDEF void* na_AddMouseTracking(NA_UIElement* uiElement) {
   naDefineCocoaObject(NSView, nativePtr, uiElement);
+  double uiScale = naGetUIElementResolutionScale(uiElement);
+  NARect trackingRect = naGetUIElementRect(uiElement);
+  trackingRect.pos.x *= uiScale;
+  trackingRect.pos.y *= uiScale;
+  trackingRect.size.width *= uiScale;
+  trackingRect.size.height *= uiScale;
   NSTrackingArea* trackingArea = [[NSTrackingArea alloc]
-    initWithRect:naMakeNSRectWithRect(naGetUIElementRect(uiElement))
+    initWithRect:naMakeNSRectWithRect(trackingRect)
     options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | /*NSTrackingActiveWhenFirstResponder | NSTrackingActiveInKeyWindow |*/ NSTrackingActiveInActiveApp)
     owner:nativePtr
     userInfo:nil];

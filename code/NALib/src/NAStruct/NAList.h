@@ -44,20 +44,20 @@ NA_IAPI NAList* naInitList    (NAList* list);
 // these iterators will keep the location of the original list.
 NA_IAPI NAList* naInitListWithCopy    (NAList* list, NAList* originalList);
 
-// Clears or empties the given list. Note: This will free all list elements
-// but not the contents they store! Use naForeachList or iteration for that.
+// Clears or empties the given list. The given destructor is called for every
+// element if not Null.
 //
 // The difference between naEmptyList and naClearList is that Clear should be
 // called with a semantic of invalidating the list whereas Empty simply empties
 // the list. Due to the implementation in NALib, this makes no difference but
 // should nontheless be distinguished. For other container structs like NAHeap,
 // this equality does not hold.
-NA_IAPI void    naClearList   (NAList* list);
-NA_IAPI void    naEmptyList   (NAList* list);
+NA_IAPI void naClearList(NAList* list, NAMutator elementDestructor);
+NA_IAPI void naEmptyList(NAList* list, NAMutator elementDestructor);
 
 // Returns informations about the number of elements in this list.
-NA_IAPI size_t  naGetListCount(const NAList* list);
-NA_IAPI NABool  naIsListEmpty (const NAList* list);
+NA_IAPI size_t naGetListCount(const NAList* list);
+NA_IAPI NABool naIsListEmpty (const NAList* list);
 
 
 // ///////////////////////////

@@ -7,7 +7,6 @@
 
 
 #include "../../../NAUtility/NAString.h"
-#include "../../../NAUtility/NAURL.h"
 #include "../../../NAUtility/NATranslator.h"
 #include "../../../NAStruct/NAStack.h"
 #include "../../../NAVisual/NAImage.h"
@@ -66,6 +65,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
   // Uncommented for future use.
   //DPI_AWARENESS awareness = DPI_AWARENESS_SYSTEM_AWARE;
   //SetProcessDpiAwarenessContext(&awareness);
+  SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2); 
 
   #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
     InitCommonControls();   // enable visual styles
@@ -314,18 +314,6 @@ NA_HDEF NAApplication* na_NewApplication(void) {
   winapiApplication->oldSliderWindowProc = NA_NULL;
   winapiApplication->oldTextFieldWindowProc = NA_NULL;
 
-  winapiApplication->fgColor.color = GetSysColor(COLOR_WINDOWTEXT);
-  winapiApplication->fgColorDisabled.color = GetSysColor(COLOR_GRAYTEXT);
-  winapiApplication->bgColor.color = GetSysColor(COLOR_BTNFACE);
-  winapiApplication->bgColorAlternate.color = RGB(226, 226, 226);
-  winapiApplication->bgColorAlternate2.color = RGB(205, 205, 205);
-
-  winapiApplication->fgColor.brush = CreateSolidBrush(winapiApplication->fgColor.color);
-  winapiApplication->fgColorDisabled.brush = CreateSolidBrush(winapiApplication->fgColorDisabled.color);
-  winapiApplication->bgColor.brush = CreateSolidBrush(winapiApplication->bgColor.color);
-  winapiApplication->bgColorAlternate.brush = CreateSolidBrush(winapiApplication->bgColorAlternate.color);
-  winapiApplication->bgColorAlternate2.brush = CreateSolidBrush(winapiApplication->bgColorAlternate2.color);
-
   return (NAApplication*)winapiApplication;
 }
 
@@ -334,22 +322,15 @@ NA_HDEF NAApplication* na_NewApplication(void) {
 NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication) {
   DestroyWindow(winapiApplication->offscreenWindow);
 
-  DeleteObject(winapiApplication->fgColor.brush);
-  DeleteObject(winapiApplication->fgColorDisabled.brush);
-  DeleteObject(winapiApplication->bgColor.brush);
-  DeleteObject(winapiApplication->bgColorAlternate.brush);
-  DeleteObject(winapiApplication->bgColorAlternate2.brush);
-
   DestroyIcon(winapiApplication->appIcon);
 
   na_ClearApplication(&winapiApplication->application);  
 
   // Now that all windows are destroyed, all dependent timers are deleted. We can
   // safely release the timer structs. todo: Make killing the timers a sport.
-  naForeachListMutable(&winapiApplication->timers, (NAMutator)naFree);
-  naClearList(&winapiApplication->timers);
+  naClearList(&winapiApplication->timers, (NAMutator)naFree);
 
-  naClearList(&winapiApplication->openGLRedrawList);
+  naClearList(&winapiApplication->openGLRedrawList, NA_NULL);
 }
 
 
@@ -437,7 +418,7 @@ NA_HDEF na_redrawOpenGLSpaces(void* data) {
     }
   }
   naClearListIterator(&it);
-  naEmptyList(&app->openGLRedrawList);
+  naEmptyList(&app->openGLRedrawList, NA_NULL);
 }
 
 NA_HDEF void naAddOpenGLSpaceToRedrawList(NAWINAPIOpenGLSpace* openGLSpace) {
@@ -491,9 +472,15 @@ NA_DEF void naOpenConsoleWindow(void) {
 NA_HDEF void na_SetApplicationIconPath(const NAUTF8Char* path) {  
   if(path) {
     NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-    NAImage* iconImage = naCreateImageWithFilePath(path);
+
+    NAString* resPath = naNewApplicationResourcePath(NA_NULL, path, NA_NULL);
+    //printf("OUTPUT %s", naGetStringUTF8Pointer(resPath));
+    
+    NAImage* iconImage = naCreateImageWithFilePath(naGetStringUTF8Pointer(resPath));
     HBITMAP bitmap = naAllocNativeImageWithImage(iconImage);
    
+    naDelete(resPath);
+
     HBITMAP hbmMask = CreateCompatibleBitmap(
       GetDC(NULL), 
       (int)naGetImageSize(iconImage).width,
@@ -512,25 +499,17 @@ NA_HDEF void na_SetApplicationIconPath(const NAUTF8Char* path) {
 NA_DEF NAString* naNewApplicationName(void) {
   NAApplication* app = naGetApplication();
   if(app->appName) {
-    return naNewStringWithFormat("%s", app->appName);
+    return naNewStringExtraction(app->appName, 0, -1);
   }else{
     TCHAR modulePath[MAX_PATH];
     NAString* utf8ModulePath;
-    NAURL url;
-    NAString* applicationName;
-    NAString* applicationbasename;
+    NAString* applicationbaseBame;
 
     GetModuleFileName(NULL, modulePath, MAX_PATH);
     utf8ModulePath = naNewStringWithSystemString(modulePath);
+    applicationbaseBame = naNewStringWithBaseNameOfPath(utf8ModulePath);
 
-    naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8ModulePath));
-    naDelete(utf8ModulePath);
-    applicationName = naNewStringWithURLFilename(&url);
-    applicationbasename = naNewStringWithBasenameOfPath(applicationName);
-    naClearURL(&url);
-    naDelete(applicationName);
-
-    return applicationbasename;
+    return applicationbaseBame;
   }
 }
 
@@ -539,7 +518,7 @@ NA_DEF NAString* naNewApplicationName(void) {
 NA_DEF NAString* naNewApplicationCompanyName(void) {
   NAApplication* app = naGetApplication();
   if(app->companyName) {
-    return naNewStringWithFormat("%s", app->companyName);
+    return naNewStringExtraction(app->companyName, 0, -1);
   }else{
     return NA_NULL;
   }
@@ -548,7 +527,7 @@ NA_DEF NAString* naNewApplicationCompanyName(void) {
 NA_DEF NAString* naNewApplicationVersionString(void) {
   NAApplication* app = naGetApplication();
   if(app->versionString) {
-    return naNewStringWithFormat("%s", app->versionString);
+    return naNewStringExtraction(app->versionString, 0, -1);
   }else{
     return NA_NULL;
   }
@@ -557,38 +536,46 @@ NA_DEF NAString* naNewApplicationVersionString(void) {
 NA_DEF NAString* naNewApplicationBuildString(void) {
   NAApplication* app = naGetApplication();
   if(app->buildString) {
-    return naNewStringWithFormat("%s", app->buildString);
+    return naNewStringExtraction(app->buildString, 0, -1);
   }else{
     return NA_NULL;
+  }
+}
+
+NA_DEF NAString* naNewApplicationResourceBasePath(void) {
+  NAApplication* app = naGetApplication();
+  if(app->resourceBasePath) {
+    return naNewStringExtraction(app->resourceBasePath, 0, -1);
+  }else{
+    return naNewExecutablePath();
   }
 }
 
 NA_DEF NAString* naNewApplicationIconPath(void) {
   NAApplication* app = naGetApplication();
   if(app->iconPath) {
-    return naNewStringWithFormat("%s", app->iconPath);
+    return naNewApplicationResourcePath(
+      NA_NULL,
+      naGetStringUTF8Pointer(app->iconPath),
+      NA_NULL);
   }else{
     return NA_NULL;
   }
 }
 
-NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix) {
+NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* path, const NAUTF8Char* baseBame, const NAUTF8Char* suffix) {
   NAApplication* app = naGetApplication();
-  NAString* retString;
-  if(dir) {
-    if(app->resourceBasePath) {
-      retString = naNewStringWithFormat("%s%c%s%c%s%c%s", app->resourceBasePath, NA_PATH_DELIMITER_WIN, dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
-    }else{
-      retString = naNewStringWithFormat("%s%c%s%c%s", dir, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
-    }
-  }else{
-    if(app->resourceBasePath) {
-      retString = naNewStringWithFormat("%s%c%s%c%s", app->resourceBasePath, NA_PATH_DELIMITER_WIN, basename, NA_SUFFIX_DELIMITER, suffix);
-    }else{
-      retString = naNewStringWithFormat("%s%c%s", basename, NA_SUFFIX_DELIMITER, suffix);
-    }
-  }
-  return retString;
+  NAUTF8Char* basePathStr = app->resourceBasePath
+    ? naAllocSprintf(NA_TRUE, "%s%c", naGetStringUTF8Pointer(app->resourceBasePath), NA_PATH_DELIMITER_WIN)
+    : "";
+  NAUTF8Char* pathStr = (path && *path)
+    ? naAllocSprintf(NA_TRUE, "%s%c", path, NA_PATH_DELIMITER_WIN)
+    : "";
+  NAUTF8Char* suffixStr = (suffix && *suffix)
+    ? naAllocSprintf(NA_TRUE, "%c%s", NA_SUFFIX_DELIMITER, suffix)
+    : "";
+
+  return naNewStringWithFormat("%s%s%s%s", basePathStr, pathStr, baseBame, suffixStr);
 }
 
 

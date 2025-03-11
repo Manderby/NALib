@@ -139,7 +139,7 @@ NA_HDEF void na_SetUIElementMouseInside(NA_UIElement* elem, NABool inside) {
   if(naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE) == inside)
     naError("mouse inside flag already set");
   #endif
-  naGetFlagu32(&elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE, inside);
+  naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE);
 }
 
 
@@ -182,8 +182,7 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 }
 
 
-NA_HDEF void naPresentFilePanel(
-  void* window,
+NA_HDEF NABool naPresentFilePanel(
   NABool load,
   const NAUTF8Char* fileName,
   const NAUTF8Char* allowedFileSuffix,
@@ -191,6 +190,7 @@ NA_HDEF void naPresentFilePanel(
   const void* data)
 {
   // todo
+  return NA_FALSE;
 }
 
 
@@ -317,8 +317,8 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
 
 typedef struct NAWINAPICallbackInfo NAWINAPICallbackInfo;
 struct NAWINAPICallbackInfo{
-  NABool hasBeenHandeled;
   LRESULT result;
+  NABool hasBeenHandeled;
 };
 
 
@@ -447,8 +447,8 @@ NAWINAPICallbackInfo na_HandleMousePress(
     if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_DOWN)) {
       // don't know what to do.
     }
-    info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
   }
 
   return info;
@@ -512,8 +512,8 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
       if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED)) {
         // don't know what to do.
       }
-      info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
+      info.hasBeenHandeled = NA_TRUE;
     }
     break;
 
@@ -526,8 +526,8 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
       if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_DOWN)) {
         // don't know what to do.
       }
-      info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
+      info.hasBeenHandeled = NA_TRUE;
     }
     break;
 
@@ -536,8 +536,8 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
       if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_UP)) {
         // don't know what to do.
       }
-      info.hasBeenHandeled = NA_TRUE;
       info.result = 0;
+      info.hasBeenHandeled = NA_TRUE;
     }
     break;
   }
@@ -556,8 +556,8 @@ NAWINAPICallbackInfo naUIElementWINAPIPostProc(void* uiElement, UINT message, WP
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
     // We do not display any caret.
-    info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   case WM_WINDOWPOSCHANGED:
@@ -777,8 +777,8 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam) {
   }
 
   if(hasBeenHandeled) {
-    info.hasBeenHandeled = NA_TRUE;
     info.result = 0; // Must be zero. See documentation.
+    info.hasBeenHandeled = NA_TRUE;
   }
   return info;
 }
@@ -886,19 +886,6 @@ NA_DEF double naGetUIElementResolutionScale(const void* uiElement) {
     dpi = USER_DEFAULT_SCREEN_DPI;
   }
   return (double)dpi / (double)USER_DEFAULT_SCREEN_DPI;
-}
-
-
-
-NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen) {
-  NARect rect = {{0, 0}, {1, 1}};
-  return rect;
-}
-
-NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect) {
-  #if NA_DEBUG
-    naError("A screen can not be resized by software.");
-  #endif
 }
 
 

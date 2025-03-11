@@ -43,8 +43,8 @@ NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED)) {
       // don't know what to do.
     }
-    info.hasBeenHandeled = NA_TRUE;
     info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   default:
@@ -88,11 +88,10 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
 
   na_InitRadio(&winapiRadio->radio, nativePtr);
 
-  const NAFont* systemFont = na_GetApplicationSystemFont(&app->application);
   SendMessage(
     nativePtr,
     WM_SETFONT,
-    (WPARAM)naGetFontNativePointer(systemFont),
+    (WPARAM)naGetFontNativePointer(winapiRadio->radio.font),
     MAKELPARAM(TRUE, 0));
 
   return (NARadio*)winapiRadio;

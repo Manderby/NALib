@@ -19,6 +19,13 @@
 
 
 #include "../NABase/NABase.h"
+
+#if NA_DEBUG
+  #if NA_TYPE_INT64_REPRESENTATION == NA_TYPE_NATIVE_NONE
+    #warning "Preferences require a native 64 bit integer type"
+  #endif
+#endif
+
 NA_PROTOTYPE(NAString);
 
 
@@ -35,17 +42,17 @@ NA_API NABool naInitPreferencesBool(
   NABool newValue);
 
 // Int Range check: Value must be within [min, max].
-NA_API NAInt naInitPreferencesInt(
+NA_API int64 naInitPreferencesi64(
   const char* key,
-  NAInt newValue,
-  NAInt min,
-  NAInt max);
+  int64 newValue,
+  int64 min,
+  int64 max);
 
 // Enum Range check: The value must be non-negative and below count.
-NA_API NAInt naInitPreferencesEnum(
+NA_API uint32 naInitPreferencesEnum(
   const char* key,
-  NAInt newValue,
-  NAInt count);
+  uint32 newValue,
+  uint32 count);
 
 // Int Range check: Value must be within [min, max].
 NA_API double naInitPreferencesDouble(
@@ -64,8 +71,8 @@ NA_API NAString* naInitPreferencesString (
 // Sets the preference.
 // Returns true, if the preference was different before or did not exist.
 NA_API NABool naSetPreferencesBool       (const char* key, NABool newValue);
-NA_API NABool naSetPreferencesInt        (const char* key, NAInt newValue);
-NA_API NABool naSetPreferencesEnum       (const char* key, NAInt newValue);
+NA_API NABool naSetPreferencesi64        (const char* key, int64 newValue);
+NA_API NABool naSetPreferencesEnum       (const char* key, uint32 newValue);
 NA_API NABool naSetPreferencesDouble     (const char* key, double newValue);
 NA_API NABool naSetPreferencesString     (const char* key, NAString* newValue);
 
@@ -76,8 +83,8 @@ NA_API NABool naTogglePreferencesBool    (const char* key);
 // Gets the preference.
 // Beware with strings, naDelete must be called afterwards.
 NA_API NABool    naGetPreferencesBool    (const char* key);
-NA_API NAInt     naGetPreferencesInt     (const char* key);
-NA_API NAInt     naGetPreferencesEnum    (const char* key);
+NA_API int64     naGetPreferencesi64     (const char* key);
+NA_API uint32    naGetPreferencesEnum    (const char* key);
 NA_API double    naGetPreferencesDouble  (const char* key);
 NA_API NAString* naNewPreferencesString  (const char* key);
 

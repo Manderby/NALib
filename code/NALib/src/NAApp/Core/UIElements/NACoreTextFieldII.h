@@ -8,6 +8,7 @@
 
 NA_HDEF void na_InitTextField(NATextField* textField, void* nativePtr) {
   na_InitCoreUIElement(&textField->uiElement, NA_UI_TEXTFIELD, nativePtr);
+  textField->font = naCreateSystemFont();
 }
 
 

@@ -30,15 +30,36 @@ NA_HDEF void na_InitCoreUIElement(NA_UIElement* uiElement, NAUIElementType eleme
 
 
 
+// Takes ownership of shortcut
+NA_KeyboardShortcutReaction* na_AllocKeyboardShortcutReaction(
+  void* controller,
+  NAKeyStroke* shortcut,
+  NAReactionCallback callback)
+{
+  NA_KeyboardShortcutReaction* keyReaction;
+  keyReaction = naAlloc(NA_KeyboardShortcutReaction);
+  keyReaction->controller = controller;
+  keyReaction->shortcut = shortcut; // takes ownership
+  keyReaction->callback = callback;
+  return keyReaction;
+}
+
+
+
+void na_DeallocKeyboardShortcutReaction(NA_KeyboardShortcutReaction* keyReaction) {
+  naDelete(keyReaction->shortcut);
+  naFree(keyReaction);
+}
+
+
+
 NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
   if(uiElement->mouseTracking) {
     na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
   }
   
-  naForeachListMutable(&uiElement->reactions, naFree);
-  naForeachListMutable(&uiElement->shortcuts, naFree);
-  naClearList(&uiElement->reactions);
-  naClearList(&uiElement->shortcuts);
+  naClearList(&uiElement->reactions, (NAMutator)naFree);
+  naClearList(&uiElement->shortcuts, (NAMutator)na_DeallocKeyboardShortcutReaction);
   
   na_ClearSystemUIElement(uiElement->nativePtr);
   na_ClearUINativePtr(uiElement->nativePtr);
@@ -84,7 +105,7 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
 
   if(!hasReaction) {
     // If the command has no reaction, search for other reactions in the
-    // parent elements.
+    // parent elements.  
     if(command != NA_UI_COMMAND_MOUSE_ENTERED && command != NA_UI_COMMAND_MOUSE_EXITED) {
       const NA_UIElement* parentElement = (const NA_UIElement*)naGetUIElementParentConst(element);
       return parentElement
@@ -182,15 +203,21 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCall
   || command == NA_UI_COMMAND_MOUSE_ENTERED
   || command == NA_UI_COMMAND_MOUSE_EXITED) {
     element->hoverReactionCount++;
-  }
   
-  if(command == NA_UI_COMMAND_MOUSE_MOVED) {
     NA_UIElement* trackedElement = element;
     if(naGetUIElementType(uiElement) == NA_UI_WINDOW) {
       trackedElement = &naGetWindowContentSpace((NAWindow*)uiElement)->uiElement;
     }
     na_RetainMouseTracking(trackedElement);
   }
+  
+//  if(command == NA_UI_COMMAND_MOUSE_MOVED) {
+//    NA_UIElement* trackedElement = element;
+//    if(naGetUIElementType(uiElement) == NA_UI_WINDOW) {
+//      trackedElement = &naGetWindowContentSpace((NAWindow*)uiElement)->uiElement;
+//    }
+//    na_RetainMouseTracking(trackedElement);
+//  }
 }
 
 
@@ -339,8 +366,10 @@ NA_HDEF void na_ReleaseMouseTracking(NA_UIElement* uiElement) {
 
 NA_HDEF void na_UpdateMouseTracking(NA_UIElement* uiElement) {
   if(uiElement->mouseTracking) {
-    na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
-    uiElement->mouseTracking = na_AddMouseTracking(uiElement);
+    #if NA_OS == NA_WINDOWS
+      na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
+      uiElement->mouseTracking = na_AddMouseTracking(uiElement);
+    #endif
   }
 }
 
@@ -352,18 +381,17 @@ NA_DEF void naAddUIKeyboardShortcut(
   NAReactionCallback callback,
   void* controller)
 {
-  NA_KeyboardShortcutReaction* keyReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
   //#if NA_DEBUG
   //  if((naGetUIElementType(uiElement) != NA_UI_APPLICATION) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
   //    naError("Currently, only applications and windows are allowed as uiElement. Use naGetApplication() for the app.");
   //#endif
-  keyReaction = naAlloc(NA_KeyboardShortcutReaction);
-  keyReaction->controller = controller;
-  keyReaction->shortcut = shortcut; // takes ownership
-  keyReaction->callback = callback;
-  naAddListLastMutable(&element->shortcuts, keyReaction);
+  naAddListLastMutable(&element->shortcuts, na_AllocKeyboardShortcutReaction(
+    controller,
+    shortcut, // takes ownership
+    callback));
 }
+
 
 
 

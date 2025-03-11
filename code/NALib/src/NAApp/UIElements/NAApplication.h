@@ -192,11 +192,11 @@ NA_API NAString* naNewExecutablePath(void);
 
 // The application binary usually resides in some kind of base package folder
 // and resources are located relative to that location. Using the following
-// function, you can retrieve files with a basename and a suffix. dir can be
+// function, you can retrieve files with a baseBame and a suffix. dir can be
 // NA_NULL to search in the base package folder.
 NA_API NAString* naNewApplicationResourcePath(
   const NAUTF8Char* dir,
-  const NAUTF8Char* basename,
+  const NAUTF8Char* baseBame,
   const NAUTF8Char* suffix);
 
 
