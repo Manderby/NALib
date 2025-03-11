@@ -156,7 +156,7 @@
 
 - (void)setFrame:(NSRect)frame {
   [super setFrame:frame];
-  na_UpdateMouseTracking(&cocoaSpace->space.uiElement);
+//  na_UpdateMouseTracking(&cocoaSpace->space.uiElement);
 }
 
 @end

@@ -366,10 +366,8 @@ NA_HDEF void na_ReleaseMouseTracking(NA_UIElement* uiElement) {
 
 NA_HDEF void na_UpdateMouseTracking(NA_UIElement* uiElement) {
   if(uiElement->mouseTracking) {
-    #if NA_OS == NA_WINDOWS
-      na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
-      uiElement->mouseTracking = na_AddMouseTracking(uiElement);
-    #endif
+    na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
+    uiElement->mouseTracking = na_AddMouseTracking(uiElement);
   }
 }
 

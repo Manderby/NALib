@@ -251,7 +251,7 @@ ExperimentController* createExperimentController(){
   con->experimentWindow = naNewWindow(
     "Experiment",
     naMakeRectS(150, 150, windowWidth, windowHeight),
-    NA_TRUE,
+    NA_WINDOW_RESIZEABLE,
     0);
 
   con->contentSpace = naNewSpace(naMakeSize(windowWidth, windowHeight));

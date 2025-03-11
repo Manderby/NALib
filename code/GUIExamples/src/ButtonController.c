@@ -106,7 +106,7 @@ ButtonController* createButtonController(){
   double buttonHeight = 50;
 
   NARect windowRect = naMakeRectS(500, 400, windowWidth, windowHeight);
-  con->window = naNewWindow("Buttons", windowRect, NA_FALSE, 0);
+  con->window = naNewWindow("Buttons", windowRect, 0, 0);
   NASpace* windowSpace = naGetWindowContentSpace(con->window);
 
   double curPosY = windowHeight - 42;
