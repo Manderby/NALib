@@ -41,12 +41,12 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
   size1x = naGetImageSet1xSize(imageSpace->imageSpace.imageSet);
-  size1x.width = (NAInt)(size1x.width * uiScale);
-  size1x.height = (NAInt)(size1x.height * uiScale);
+  size1x.width = (size_t)(size1x.width * uiScale);
+  size1x.height = (size_t)(size1x.height * uiScale);
 
   spaceSize = naMakeSizei64(
-    (NAInt)paintStruct.rcPaint.right - (NAInt)paintStruct.rcPaint.left,
-    (NAInt)paintStruct.rcPaint.bottom - (NAInt)paintStruct.rcPaint.top);
+    (int64)paintStruct.rcPaint.right - (int64)paintStruct.rcPaint.left,
+    (int64)paintStruct.rcPaint.bottom - (int64)paintStruct.rcPaint.top);
   offset = naMakePosi64(
     (spaceSize.width - size1x.width) / 2,
     (spaceSize.height - size1x.height) / 2);

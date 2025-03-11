@@ -227,8 +227,8 @@ NA_IAPI void naSetBufferNewlineEncoding(             NABuffer* buffer,
 
 // Get or set the endianness setting of this buffer. If not stated otherwise,
 // the endianness of a new buffer is NA_ENDIANNESS_HOST.
-NA_IAPI NAInt  naGetBufferEndianness(NABuffer* buffer);
-NA_IAPI void   naSetBufferEndianness(NABuffer* buffer, NAInt endianness);
+NA_IAPI uint32 naGetBufferEndianness(NABuffer* buffer);
+NA_IAPI void   naSetBufferEndianness(NABuffer* buffer, uint32 endianness);
 
 // Returns the byte at the given index. Warning: This function is costly. You
 // might want to use one of the Reading or Parsing functions instead.

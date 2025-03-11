@@ -31,13 +31,13 @@ NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, NAi64 valueS
 
 
 
-NA_HDEF NAi64 na_GetRawPreferencesInt(void* prefs, const char* key) {
+NA_HDEF int64 na_GetRawPreferencesi64(void* prefs, const char* key) {
   NSUserDefaults* userDefault = (NSUserDefaults*)NA_COCOA_PTR_C_TO_OBJC(prefs);
   NSString* nsKey = [NSString stringWithUTF8String:key];
-  return (NAi64)[userDefault integerForKey:nsKey];
+  return (int64)[userDefault integerForKey:nsKey];
 }
 
-NA_HDEF void na_SetRawPreferencesInt(void* prefs, const char* key, NAi64 valueStorage) {
+NA_HDEF void na_SetRawPreferencesi64(void* prefs, const char* key, int64 valueStorage) {
   NSUserDefaults* userDefault = (NSUserDefaults*)NA_COCOA_PTR_C_TO_OBJC(prefs);
   NSString* nsKey = [NSString stringWithUTF8String:key];
   [userDefault setInteger:(NSInteger)valueStorage forKey:nsKey];

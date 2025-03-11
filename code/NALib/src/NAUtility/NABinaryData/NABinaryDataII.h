@@ -227,24 +227,6 @@ NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b) {
 
 
 
-NA_IDEF void naSwap(double* NA_RESTRICT a, double* NA_RESTRICT b) {
-  naSwap64(a, b);
-}
-
-NA_IDEF void naSwapf(float* NA_RESTRICT a, float* NA_RESTRICT b) {
-  naSwap32(a, b);
-}
-
-NA_IDEF void naSwapi(NAInt* NA_RESTRICT a, NAInt* NA_RESTRICT b) {
-  #if NA_TYPE_NAINT_BITS == 32
-    naSwap32(a, b);
-  #elif NA_TYPE_NAINT_BITS == 64
-    naSwap64(a, b);
-  #endif
-}
-
-
-
 NA_IDEF NABool naEqual8(  void* NA_RESTRICT a, void* NA_RESTRICT b) {
   return (*((uint8*)a) == *((uint8*)b));
 }
