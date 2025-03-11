@@ -16,7 +16,6 @@
 #include "NAString.h"
 #include "NAThreading.h"
 #include "NATranslator.h"
-#include "NAURL.h"
 #include "NAValueHelper.h"
 
 
