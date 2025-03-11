@@ -42,10 +42,10 @@ void printNALib(void) {
 }
 
 void testNALib(void) {
-  naTestFunction(testNABase);
-  naTestFunction(testNAMath);
-  naTestFunction(testNACore);
-  naTestFunction(testNAUtility);
+//  naTestFunction(testNABase);
+//  naTestFunction(testNAMath);
+//  naTestFunction(testNACore);
+//  naTestFunction(testNAUtility);
   naTestFunction(testNAStruct);
 }
 

@@ -249,30 +249,30 @@ NA_HDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const voi
 
 NA_HDEF const void* na_RemoveHeapRootConstNoBack(NAHeap* heap) {
   NAHeapEntry* theData = (NAHeapEntry*)(heap->data);
-  const void* returnvalue;
+  const void* returnValue;
   #if NA_DEBUG
     if(heap->count == 0)
       naError("Heap is empty.");
   #endif
-  returnvalue = naGetPtrConst(theData[1].ptr);
+  returnValue = naGetPtrConst(theData[1].ptr);
   heap->count--;
   if(heap->count) {
     NAInt curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
     theData[curIndex] = theData[heap->count + 1];
   }
-  return returnvalue;
+  return returnValue;
 }
 
 
 
 NA_HDEF const void* na_RemoveHeapRootConstBack(NAHeap* heap) {
   NAHeapBackEntry* theData = (NAHeapBackEntry*)(heap->data);
-  const void* returnvalue;
+  const void* returnValue;
   #if NA_DEBUG
     if(heap->count == 0)
       naError("Heap is empty.");
   #endif
-  returnvalue = naGetPtrConst(theData[1].ptr);
+  returnValue = naGetPtrConst(theData[1].ptr);
   *(theData[1].backPointer) = 0;
   heap->count--;
   if(heap->count) {
@@ -280,36 +280,36 @@ NA_HDEF const void* na_RemoveHeapRootConstBack(NAHeap* heap) {
     theData[curIndex] = theData[heap->count + 1];
     *(theData[curIndex].backPointer) = curIndex;
   }
-  return returnvalue;
+  return returnValue;
 }
 
 
 
 NA_HDEF void* na_RemoveHeapRootMutableNoBack(NAHeap* heap) {
   NAHeapEntry* theData = (NAHeapEntry*)(heap->data);
-  void* returnvalue;
+  void* returnValue;
   #if NA_DEBUG
     if(heap->count == 0)
       naError("Heap is empty.");
   #endif
-  returnvalue = naGetPtrMutable(theData[1].ptr);
+  returnValue = naGetPtrMutable(theData[1].ptr);
   heap->count--;
   if(heap->count) {
     NAInt curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
     theData[curIndex] = theData[heap->count + 1];
   }
-  return returnvalue;
+  return returnValue;
 }
 
 
 NA_HDEF void* na_RemoveHeapRootMutableBack(NAHeap* heap) {
   NAHeapBackEntry* theData = (NAHeapBackEntry*)(heap->data);
-  void* returnvalue;
+  void* returnValue;
   #if NA_DEBUG
     if(heap->count == 0)
       naError("Heap is empty.");
   #endif
-  returnvalue = naGetPtrMutable(theData[1].ptr);
+  returnValue = naGetPtrMutable(theData[1].ptr);
   *(theData[1].backPointer) = 0;
   heap->count--;
   if(heap->count) {
@@ -317,7 +317,7 @@ NA_HDEF void* na_RemoveHeapRootMutableBack(NAHeap* heap) {
     theData[curIndex] = theData[heap->count + 1];
     *(theData[curIndex].backPointer) = curIndex;
   }
-  return returnvalue;
+  return returnValue;
 }
 
 
@@ -335,14 +335,14 @@ NA_HDEF const void* na_RemoveHeapPosConstNoBack(NAHeap* heap, NAInt backPointer)
 
 NA_HDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, NAInt backPointer) {
   NAHeapBackEntry* theData = (NAHeapBackEntry*)(heap->data);
-  const void* returnvalue;
+  const void* returnValue;
   #if NA_DEBUG
     if(backPointer > heap->count)
       naError("backPointer makes no sense.");
     if(backPointer == 0)
       naError("backPointer says that element is not part of the heap.");
   #endif
-  returnvalue = naGetPtrConst(theData[backPointer].ptr);
+  returnValue = naGetPtrConst(theData[backPointer].ptr);
   *(theData[backPointer].backPointer) = 0;
   heap->count--;
   if(heap->count) {
@@ -350,7 +350,7 @@ NA_HDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, NAInt backPointer) {
     theData[curIndex] = theData[heap->count + 1];
     *(theData[curIndex].backPointer) = curIndex;
   }
-  return returnvalue;
+  return returnValue;
 }
 
 
@@ -367,14 +367,14 @@ NA_HDEF void* na_RemoveHeapPosMutableNoBack(NAHeap* heap, NAInt backPointer) {
 
 NA_HDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, NAInt backPointer) {
   NAHeapBackEntry* theData = (NAHeapBackEntry*)(heap->data);
-  void* returnvalue;
+  void* returnValue;
   #if NA_DEBUG
     if(backPointer > heap->count)
       naError("backPointer makes no sense.");
     if(backPointer == 0)
       naError("backPointer says that element is not part of the heap.");
   #endif
-  returnvalue = naGetPtrMutable(theData[backPointer].ptr);
+  returnValue = naGetPtrMutable(theData[backPointer].ptr);
   *(theData[backPointer].backPointer) = 0;
   heap->count--;
   if(heap->count) {
@@ -382,7 +382,7 @@ NA_HDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, NAInt backPointer) {
     theData[curIndex] = theData[heap->count + 1];
     *(theData[curIndex].backPointer) = curIndex;
   }
-  return returnvalue;
+  return returnValue;
 }
 
 

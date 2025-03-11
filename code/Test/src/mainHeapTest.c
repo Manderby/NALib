@@ -1,10 +1,7 @@
 //
-//#define NA_TEST_NALIB_PATH(x) #x;
-//
-//#include NA_TEST_NALIB_PATH(NATree.h)
-//#include NA_TEST_NALIB_PATH(NAHeap.h)
-//#include NA_TEST_NALIB_PATH(NAHeap.h)
-//#include NA_TEST_NALIB_PATH(NARandom.h)
+//#include "NAStruct/NATree.h"
+//#include "NAStruct/NAHeap.h"
+//#include "NAMath/NARandom.h"
 //
 //#define TESTSIZE    1000000
 //#define SUBTESTSIZE  10000.
@@ -36,9 +33,9 @@
 //  NADateTime t2;
 //  NADateTime t3;
 //  int i;
-//  double prevkey = 0.;
+//  double prevKey = 0.;
 //
-//  naInitHeap(&heap, -1, NA_HEAP_USES_DOUBLE_KEY);
+//  naInitHeap(&heap, 0, NA_HEAP_USES_DOUBLE_KEY);
 //  
 //  t1 = naMakeDateTimeNow();
 //  for(i = 0; i < TESTSIZE; i++) {
@@ -48,12 +45,12 @@
 //  t2 = naMakeDateTimeNow();
 //
 //  for(i = 0; i < TESTSIZE; i++) {
-//    const double* curkey = naRemoveHeapRootConst(&heap);
-//    if(prevkey > *curkey) {
+//    const double* curKey = naRemoveHeapRootConst(&heap);
+//    if(prevKey > *curKey) {
 //      printf("Error in sorting");
 //    }
-//    prevkey = *curkey;
-////    printf("%f" NA_NL, *curkey);
+//    prevKey = *curKey;
+////    printf("%f" NA_NL, *curKey);
 //  }
 //
 //  t3 = naMakeDateTimeNow();
@@ -72,7 +69,7 @@
 //  NADateTime t1, t2;
 //  NATreeIterator iter;
 //  int i;
-//  double prevkey = -1.;
+//  double prevKey = -1.;
 //
 //  naInitTree(&tree, config); 
 //
@@ -106,7 +103,7 @@
 //  t2 = naMakeDateTimeNow();
 //  printf("Tree Locate: %f" NA_NL, naGetDateTimeDifference(&t2, &t1));
 //
-////  NAInt prevkey = -1.;
+////  NAInt prevKey = -1.;
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
 //  i = 0;
@@ -114,17 +111,17 @@
 //    const double* key;
 //    i++;
 ////    const NAInt* key = naGetTreeCurKey(&iter);
-////    if(*key < prevkey) {
-////      printf("Wrong sorting: %d: %"NA_PRIi", %"NA_PRIi NA_NL, i, *key, prevkey);
+////    if(*key < prevKey) {
+////      printf("Wrong sorting: %d: %"NA_PRIi", %"NA_PRIi NA_NL, i, *key, prevKey);
 ////    }
-////    prevkey = *key;
+////    prevKey = *key;
 ////    if(i < 5) {printf("%"NA_PRIi NA_NL, *key);}
 //
 //    key = naGetTreeCurLeafKey(&iter);
-//    if(*key < prevkey) {
-//      printf("Wrong sorting: %d: %f, %f" NA_NL, i, *key, prevkey);
+//    if(*key < prevKey) {
+//      printf("Wrong sorting: %d: %f, %f" NA_NL, i, *key, prevKey);
 //    }
-//    prevkey = *key;
+//    prevKey = *key;
 ////    if(i < 50) {printf("%f" NA_NL, *key);}
 //  }
 //  naClearTreeIterator(&iter);
@@ -157,7 +154,7 @@
 //
 //
 //
-//#include NA_TEST_NALIB_PATH(NAKey.h)
+//#include "NAUtility/NAKey.h"
 //
 //void testDateTimeHeap() {
 //  NAHeap heap;
@@ -165,7 +162,7 @@
 //  NADateTime t2;
 //  NADateTime t3;
 //  int i;
-//  NADateTime prevkey = naMakeDateTimeWithNALibSecondNumber(-1E20);
+//  NADateTime prevKey = naMakeDateTimeWithNALibSecondNumber(-1E18);
 //  NADateTime* keys;
 //
 //  keys = (NADateTime*)naMalloc(TESTSIZE * sizeof(NADateTime));
@@ -173,7 +170,7 @@
 //    keys[i] = naMakeDateTimeWithNALibSecondNumber((int64)(naUniformRandZE() * 1.E12 - 1.E11));
 //  }
 //
-//  naInitHeap(&heap, -1, NA_HEAP_USES_DATETIME_KEY);
+//  naInitHeap(&heap, 0, NA_HEAP_USES_DATETIME_KEY);
 //  
 //  t1 = naMakeDateTimeNow();
 //  for(i = 0; i < TESTSIZE; i++) {
@@ -183,12 +180,12 @@
 //  t2 = naMakeDateTimeNow();
 //
 //  for(i = 0; i < TESTSIZE; i++) {
-//    const NADateTime* curkey = naRemoveHeapRootConst(&heap);
-//    if(NA_KEY_OP(Greater, NADateTime)(&prevkey, curkey)) {
+//    const NADateTime* curKey = naRemoveHeapRootConst(&heap);
+//    if(NA_KEY_OP(Greater, NADateTime)(&prevKey, curKey)) {
 //      printf("Error in sorting");
 //    }
-//    prevkey = *curkey;
-//    //NAString* datestring = naNewStringWithDateTime(curkey, NA_DATETIME_FORMAT_NATURAL);
+//    prevKey = *curKey;
+//    //NAString* datestring = naNewStringWithDateTime(curKey, NA_DATETIME_FORMAT_NATURAL);
 //    //printf("%s" NA_NL, naGetStringUTF8Pointer(datestring));
 //    //naDelete(datestring);
 //  }
@@ -207,8 +204,10 @@
 //
 //
 //#include <stdio.h>
+//#include "NATest.h"
 //
-//int main(void) {
+//
+//int main(int argc, const char** argv) {
 //  double* keys;
 //  int i;
 //
@@ -221,6 +220,7 @@
 //  printf("%d Bits Addresses, %d Bits Integers)" NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 //
 //  naStartRuntime();
+//  naStartTesting("heapTest", argc, argv);
 //
 //    testDateTimeHeap();
 //
@@ -234,6 +234,8 @@
 //    testHeap(keys);
 //    testQSort(keys);
 //    naFree(keys);
+//
+//  naStopTesting();
 //  naStopRuntime();
 //
 //  #if NA_OS == NA_OS_WINDOWS

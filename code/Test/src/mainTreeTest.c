@@ -55,14 +55,14 @@
 //  t2 = naMakeDateTimeNow();
 //  printf("Heap Insert: %f" NA_NL, naGetDateTimeDifference(&t2, &t1));
 //
-////  double prevkey = -1;
+////  double prevKey = -1;
 //  t1 = naMakeDateTimeNow();
 //  for(i = 0; i < TESTSIZE; i++) {
 ////    const double* key = naGetHeapRootKey(&heap);
-////    if(*key < prevkey) {
-////      printf("Wrong sorting: %d: %f, %f" NA_NL, i, *key, prevkey);
+////    if(*key < prevKey) {
+////      printf("Wrong sorting: %d: %f, %f" NA_NL, i, *key, prevKey);
 ////    }
-////    prevkey = *key;
+////    prevKey = *key;
 //    naRemoveHeapRootConst(&heap);
 //  }
 //  t2 = naMakeDateTimeNow();
@@ -80,7 +80,7 @@
 //  NADateTime t1, t2;
 //  NATreeIterator iter;
 //  int i;
-//  double prevkey;
+//  double prevKey;
 //
 //  naInitTree(&tree, config);
 //
@@ -114,8 +114,8 @@
 //  t2 = naMakeDateTimeNow();
 //  printf("Tree Locate: %f" NA_NL, naGetDateTimeDifference(&t2, &t1));
 //
-////  NAInt prevkey = -1.;
-//  prevkey = -1.;
+////  NAInt prevKey = -1.;
+//  prevKey = -1.;
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
 //  i = 0;
@@ -123,17 +123,17 @@
 //    const double* key;
 //    i++;
 ////    const NAInt* key = naGetTreeCurKey(&iter);
-////    if(*key < prevkey) {
-////      printf("Wrong sorting: %d: %"NA_PRIi", %"NA_PRIi NA_NL, i, *key, prevkey);
+////    if(*key < prevKey) {
+////      printf("Wrong sorting: %d: %"NA_PRIi", %"NA_PRIi NA_NL, i, *key, prevKey);
 ////    }
-////    prevkey = *key;
+////    prevKey = *key;
 ////    if(i < 5) {printf("%"NA_PRIi NA_NL, *key);}
 //
 //    key = naGetTreeCurLeafKey(&iter);
-//    if(*key < prevkey) {
-//      printf("Wrong sorting: %d: %f, %f" NA_NL, i, *key, prevkey);
+//    if(*key < prevKey) {
+//      printf("Wrong sorting: %d: %f, %f" NA_NL, i, *key, prevKey);
 //    }
-//    prevkey = *key;
+//    prevKey = *key;
 ////    if(i < 5) {printf("%f" NA_NL, *key);}
 //  }
 //  naClearTreeIterator(&iter);
