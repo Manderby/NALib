@@ -296,6 +296,14 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NAColor* _N
 }
 
 
+
+NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate) {
+  space->alternateBackground = alternate;
+  naRefreshUIElement(space, 0.);
+}
+
+
+
 NA_HDEF NARect na_GetSpaceRect(const NA_UIElement* _Nullable space) {
   naDefineCocoaObjectConst(NACocoaNativeSpace, nativePtr, space);
   return naMakeRectWithNSRect([nativePtr frame]);

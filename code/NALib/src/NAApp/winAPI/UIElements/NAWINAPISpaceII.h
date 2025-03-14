@@ -245,6 +245,14 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
 
 
 
+NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate) {
+  space->alternateBackground = alternate;
+  ((NAWINAPISpace*)space)->forceEraseBackground = NA_TRUE;
+  naRefreshUIElement(space, 0.);
+}
+
+
+
 NA_DEF void naRemoveSpaceChild(NASpace* space, void* child) {
   NAListIterator iter = naMakeListModifier(&space->childs);
   NABool found = naLocateListData(&iter, child);
