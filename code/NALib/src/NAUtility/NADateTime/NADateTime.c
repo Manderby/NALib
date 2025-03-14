@@ -1165,7 +1165,7 @@ NA_DEF NAString* naNewStringWithSecondDifference(double difference,
   NAString* decimalstring;
   NAString* timestring;
   NAString* daystring;
-  NAString* signstring;
+  NAString* signString;
   NAString* string;
 
   NABool needsign = NA_FALSE;
@@ -1202,16 +1202,16 @@ NA_DEF NAString* naNewStringWithSecondDifference(double difference,
   }
 
   if(needsign) {
-    signstring = naNewStringWithFormat("-");
+    signString = naNewStringWithFormat("-");
   }else{
-    signstring = naNewString();
+    signString = naNewString();
   }
 
-  string = naNewStringWithFormat("%s%s%s%s", naGetStringUTF8Pointer(signstring), naGetStringUTF8Pointer(daystring), naGetStringUTF8Pointer(timestring), naGetStringUTF8Pointer(decimalstring));
+  string = naNewStringWithFormat("%s%s%s%s", naGetStringUTF8Pointer(signString), naGetStringUTF8Pointer(daystring), naGetStringUTF8Pointer(timestring), naGetStringUTF8Pointer(decimalstring));
   naDelete(decimalstring);
   naDelete(timestring);
   naDelete(daystring);
-  naDelete(signstring);
+  naDelete(signString);
   return string;
 }
 
