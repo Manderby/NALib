@@ -202,7 +202,14 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       NAImage* buttonImage = naCreateImageWithNativeImage(hButtonBitmap);
 
       // Now we blend manually the foreground to the background.
-      NAColor backColor = {.8f, .8f, .8f, 1.f};
+
+      NAColor backColor;
+      NASpace* parentSpace = naGetUIElementParentSpace(uiElement);
+      if(parentSpace) {
+        naFillSpaceBackgroundColor(&backColor, parentSpace);
+      }else{
+        naFillColorWithSystemSkinDefaultBackgroundColor(&backColor);
+      }
       NAColor maskColor = {1.f, 1.f, 0.f, 1.f};
       NAColor accentColor;
       naFillColorWithSkinAccentColor(&accentColor, NA_SKIN_SYSTEM);
