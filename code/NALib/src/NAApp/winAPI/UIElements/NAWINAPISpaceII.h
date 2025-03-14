@@ -180,29 +180,6 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
 
 
-NAWINAPIColor* naGetWINAPISpaceBackgroundColor(const NAWINAPISpace* winapiSpace) {
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  NAWINAPIColor* retcolor;
-  size_t alternateLevel = 0;
-  const void* parent = winapiSpace;
-  while(parent) {
-    if(naGetSpaceAlternateBackground(parent)) {
-      alternateLevel++;
-    }
-    parent = naGetUIElementParentSpaceConst(parent);
-  }
-  switch(alternateLevel) {
-  case 0: retcolor = &app->bgColor; break;
-  case 1: retcolor = &app->bgColorAlternate; break;
-  case 2:
-  default:
-    retcolor = &app->bgColorAlternate2; break;
-  }
-  return retcolor;
-}
-
-
-
 NA_DEF NASpace* naNewSpace(NASize size) {
   NAWINAPISpace* winapiSpace = naNew(NAWINAPISpace);
 
