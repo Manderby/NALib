@@ -110,11 +110,18 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     break;
 
   case WM_PRINTCLIENT: // wParam = HDC
-    GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
-    FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
-    info.result = 0;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
+    {
+      // The default procedure for the slider draws an always the same gray
+      // background. We need to manually override this.
+      const NA_UIElement* uiElement = na_GetUINALibEquivalent((void*)lParam);
+      if(naGetUIElementType(uiElement) == NA_UI_SLIDER) {
+        GetClientRect(naGetUIElementNativePtrConst(uiElement), &spaceRect);
+        FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
+        info.result = 0;
+        info.hasBeenHandeled = NA_TRUE;
+      }
+      break;
+    }
 
   case WM_CTLCOLOREDIT: // TextBox
     //childElement = (NA_UIElement*)na_GetUINALibEquivalent((HWND)lParam);
