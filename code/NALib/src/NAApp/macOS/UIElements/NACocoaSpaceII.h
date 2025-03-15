@@ -293,6 +293,15 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* _Nonnull space, const NAColor* _N
   na_SetSpaceBackgroundColor(space, color);
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   [nativePtr setNeedsDisplay:YES];
+
+  NAListIterator iter = naMakeListModifier(&space->childs);
+  while(naIterateList(&iter)) {
+    NA_UIElement* elem = naGetListCurMutable(&iter);
+    if(elem->elementType == NA_UI_SPACE) {
+      naRefreshUIElement(elem, 0);
+    }
+  }
+  naClearListIterator(&iter);
 }
 
 
@@ -313,6 +322,23 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* _Nullable space, NARect rect) {
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }
+
+
+
+NA_HDEF void na_ForceSpaceToRedrawBackground(NA_UIElement* _Nullable space) {
+  naRefreshUIElement(space, 0);
+
+  NASpace* naSpace = (NASpace*)space;
+  NAListIterator iter = naMakeListModifier(&naSpace->childs);
+  while(naIterateList(&iter)) {
+    NA_UIElement* elem = naGetListCurMutable(&iter);
+    if(elem->elementType == NA_UI_SPACE) {
+      na_ForceSpaceToRedrawBackground(elem);
+    }
+  }
+  naClearListIterator(&iter);
+}
+
 
 
 // This is free and unencumbered software released into the public domain.

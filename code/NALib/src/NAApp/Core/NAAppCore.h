@@ -383,6 +383,7 @@ NA_HAPI void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child);
 NA_HAPI void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color);
 NA_HAPI NARect na_GetSpaceRect(const NA_UIElement* space);
 NA_HAPI void na_SetSpaceRect(NA_UIElement* space, NARect rect);
+NA_HAPI void na_ForceSpaceToRedrawBackground(NA_UIElement* space);
 
 // NATextBox
 NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);
