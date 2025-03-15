@@ -144,7 +144,6 @@ NA_DEF void naSetLabelVisible(NALabel* label, NABool visible) {
 
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled) {
   na_SetLabelEnabled(label, enabled);
-  naRefreshUIElement(label, 0);
 }
 
 

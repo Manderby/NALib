@@ -234,6 +234,8 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos) {
     childElem->forceEraseBackground = NA_TRUE;
   }
 
+  ((NAWINAPISpace*)space)->forceEraseBackground = NA_TRUE;
+
   NARect childRect = naGetUIElementRect(child);
   childRect.pos = naMakePos(pos.x, pos.y + offsetY);
   naSetUIElementRect(child, childRect);
