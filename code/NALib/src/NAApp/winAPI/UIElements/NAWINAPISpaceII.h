@@ -363,6 +363,12 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
 
 
 
+NA_HDEF void na_ForceWINAPISpaceToEraseBackground(NASpace* space) {
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
+  winapiSpace->forceEraseBackground = NA_TRUE;
+}
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

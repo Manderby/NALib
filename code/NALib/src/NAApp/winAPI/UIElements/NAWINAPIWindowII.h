@@ -26,6 +26,10 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   
   switch(message) {
   case WM_SHOWWINDOW:
+    // We force the content space to redraw the proper background colors.
+    windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
+    na_ForceWINAPISpaceToEraseBackground(naGetWindowContentSpace(&windowMutable->window));
+
     // wParam: true for show, false for hide
     // lParam: status of window
     // result: 0 when handeled.
