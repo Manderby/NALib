@@ -86,40 +86,20 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     break;
 
   case WM_CTLCOLORBTN: // Button
-    {
-      const NA_UIElement* uiElement = na_GetUINALibEquivalent((void*)lParam);
-      if(naGetUIElementType(uiElement) == NA_UI_BUTTON) {
-        const NAButton* button = (const NAButton*)uiElement;
-        if(naIsButtonBordered(button) && naIsButtonStateful(button) && naGetButtonState(button)) {
-          // we choose yellow as background as this is probably the last color ever
-          // being used as a system UI style.
-          info.result = (LRESULT)CreateSolidBrush(RGB(255, 255, 0)); // todo: memory leak.
-          info.hasBeenHandeled = NA_TRUE;
-        }else{
-          info.result = (LRESULT)winapiSpace->curBgColor->brush;
-          info.hasBeenHandeled = NA_TRUE;
-        }
-      }else{
-        #if NA_DEBUG
-          naError("Unexpected ui element type");
-        #endif
-        info.result = (LRESULT)CreateSolidBrush(RGB(255, 128, 0));
-        info.hasBeenHandeled = NA_TRUE;
-      }
-    }
+    // This was used once to draw a custom yellow background for state buttons
+    // in order to properly alpha blend them. But with WM_PRINTCLIENT, this
+    // can be done a little more betterer.
     break;
 
   case WM_PRINTCLIENT: // wParam = HDC
     {
       // The default procedure for the slider draws an always the same gray
       // background. We need to manually override this.
-      const NA_UIElement* uiElement = na_GetUINALibEquivalent((void*)lParam);
-      if(naGetUIElementType(uiElement) == NA_UI_SLIDER) {
-        GetClientRect(naGetUIElementNativePtrConst(uiElement), &spaceRect);
-        FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
-        info.result = 0;
-        info.hasBeenHandeled = NA_TRUE;
-      }
+      //const NA_UIElement* uiElement = na_GetUINALibEquivalent((void*)lParam);
+      GetClientRect(naGetUIElementNativePtrConst(uiElement), &spaceRect);
+      FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
+      info.result = 0;
+      info.hasBeenHandeled = NA_TRUE;
       break;
     }
 
@@ -373,6 +353,13 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
 NA_HDEF void na_ForceWINAPISpaceToEraseBackground(NASpace* space) {
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
   winapiSpace->forceEraseBackground = NA_TRUE;
+}
+
+NA_HDEF NAUIColor* na_SwapWINAPISpaceBackgroundColor(NASpace* space, NAUIColor* bgColor) {
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
+  NAUIColor* prevColor = winapiSpace->curBgColor;
+  winapiSpace->curBgColor = bgColor;
+  return prevColor;
 }
 
 

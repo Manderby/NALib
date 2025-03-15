@@ -59,7 +59,7 @@ void naFillLabelTextColor(NAColor* color, const NALabel* label) {
     naFillColorWithSystemSkinDefaultTextColor(color);
   }
 
-  color->alpha *= naIsLabelEnabled(label) ? 1.f : .49f;
+  color->alpha *= naIsLabelEnabled(label) ? 1.f : .35f;
 }
 
 

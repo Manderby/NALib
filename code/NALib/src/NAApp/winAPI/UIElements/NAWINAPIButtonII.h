@@ -175,11 +175,18 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)uiElement;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
 
-  //CallWindowProc(na_GetApplicationOldButtonWindowProc(), naGetUIElementNativePtr(uiElement), WM_ERASEBKGND, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
-
   if(naIsButtonBordered(&winapiButton->button)) {
     HWND hwnd = naGetUIElementNativePtr(uiElement);
     NABool customDraw = naIsButtonStateful(&winapiButton->button) && naGetButtonState(&winapiButton->button);
+
+    NASpace* parentSpace = naGetUIElementParentSpace(uiElement);
+    NAColor maskColor = {1.f, 1.f, 0.f, 1.f};
+    NAUIColor* tmpBgColor = naAllocUIColor(&maskColor, NA_NULL);
+    NAUIColor* prevBgColor;
+
+    if(customDraw) {
+      prevBgColor = na_SwapWINAPISpaceBackgroundColor(parentSpace, tmpBgColor);
+    }
 
     long oldstyle = (long)GetWindowLongPtr(hwnd, GWL_STYLE);
     long newstyle = (oldstyle & ~BS_OWNERDRAW) | BS_TEXT | BS_CENTER | BS_VCENTER;
@@ -204,13 +211,11 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       // Now we blend manually the foreground to the background.
 
       NAColor backColor;
-      NASpace* parentSpace = naGetUIElementParentSpace(uiElement);
       if(parentSpace) {
         naFillSpaceBackgroundColor(&backColor, parentSpace);
       }else{
         naFillColorWithSystemSkinDefaultBackgroundColor(&backColor);
       }
-      NAColor maskColor = {1.f, 1.f, 0.f, 1.f};
       NAColor accentColor;
       naFillColorWithSkinAccentColor(&accentColor, NA_SKIN_SYSTEM);
       NAImage* alphaImage = naCreateImageWithTint(buttonImage, &maskColor, NA_BLEND_ERASE_HUE, 1.f);
@@ -227,6 +232,11 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       // Finally, we put the blended image onscreen.
       SelectObject(hMemDC, hBlendedBitmap);
       BitBlt(drawitemstruct->hDC, 0, 0, (int)buttonSize.width, (int)buttonSize.height, hMemDC, 0, 0, SRCCOPY);
+
+      if(customDraw) {
+        na_SwapWINAPISpaceBackgroundColor(parentSpace, prevBgColor);
+      }
+      naDeallocUIColor(tmpBgColor);
 
       // Deleting the blended objects and buffers
       naRelease(buttonImage);
