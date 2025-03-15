@@ -42,9 +42,14 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
 
   case WM_LBUTTONUP:
   case WM_NCPAINT:
-  case WM_ERASEBKGND:
   case WM_NCCALCSIZE:
   break;
+
+  case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
+    // not called.
+    //info.result = 0;
+    //info.hasBeenHandeled = NA_TRUE;
+    break;
 
   case WM_MOUSEWHEEL:
 

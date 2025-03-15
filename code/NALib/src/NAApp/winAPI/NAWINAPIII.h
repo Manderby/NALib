@@ -444,7 +444,10 @@ NAWINAPICallbackInfo na_HandleMousePress(
   {
     NAApplication* app = naGetApplication();
     na_SetMouseButtonPressed(na_GetApplicationMouseStatus(app), button, press);
-    if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_DOWN)) {
+    NAUICommand command = press
+      ? NA_UI_COMMAND_MOUSE_DOWN
+      : NA_UI_COMMAND_MOUSE_UP;
+    if(!na_DispatchUIElementCommand(elem, command)) {
       // don't know what to do.
     }
     info.result = 0;
