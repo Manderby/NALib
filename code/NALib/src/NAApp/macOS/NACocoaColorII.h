@@ -36,19 +36,19 @@ NA_DEF void naDeallocUIColor(NAUIColor* uiColor) {
 
 
 
-NA_DEF void naFillColorWithSystemSkinDefaultBackgroundColor(NAColor* color) {
-  NSColor* labelColor = naGetWindowBackColor();
+NA_DEF void naFillColorWithDefaultWindowBackgroundColor(NAColor* color) {
+  NSColor* backColor = naGetWindowBackColor();
   naFillColorWithSRGB(
     color,
-    (float)[labelColor redComponent],
-    (float)[labelColor greenComponent],
-    (float)[labelColor blueComponent],
+    (float)[backColor redComponent],
+    (float)[backColor greenComponent],
+    (float)[backColor blueComponent],
     1.f);
 }
 
 
 
-NA_DEF void naFillColorWithSystemSkinDefaultTextColor(NAColor* color) {
+NA_DEF void naFillColorWithDefaultTextColor(NAColor* color) {
   NSColor* labelColor = naGetLabelColor();
   naFillColorWithSRGB(
     color,
@@ -60,7 +60,7 @@ NA_DEF void naFillColorWithSystemSkinDefaultTextColor(NAColor* color) {
 
 
 
-NA_DEF void naFillColorWithSystemSkinDefaultLinkColor(NAColor* color) {
+NA_DEF void naFillColorWithDefaultLinkColor(NAColor* color) {
   NSColor* linkColor = naGetLinkColor();
   naFillColorWithSRGB(
     color,
@@ -72,7 +72,7 @@ NA_DEF void naFillColorWithSystemSkinDefaultLinkColor(NAColor* color) {
 
 
 
-NA_DEF void naFillColorWithSystemSkinDefaultAccentColor(NAColor* color) {
+NA_DEF void naFillColorWithDefaultAccentColor(NAColor* color) {
   NSColor* accentColor = naGetAccentColor();
   naFillColorWithSRGB(
     color,

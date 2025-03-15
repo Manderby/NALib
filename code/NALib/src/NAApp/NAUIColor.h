@@ -28,10 +28,10 @@ NA_API void naDeallocUIColor(NAUIColor* uiColor);
   NA_API NAUIColor* naAllocUIColorWithColorRef(const void* colorRef);
 #endif
 
-NA_API void naFillColorWithSystemSkinDefaultBackgroundColor(NAColor* color);
-NA_API void naFillColorWithSystemSkinDefaultTextColor(NAColor* color);
-NA_API void naFillColorWithSystemSkinDefaultLinkColor(NAColor* color);
-NA_API void naFillColorWithSystemSkinDefaultAccentColor(NAColor* color);
+NA_API void naFillColorWithDefaultWindowBackgroundColor(NAColor* color);
+NA_API void naFillColorWithDefaultTextColor(NAColor* color);
+NA_API void naFillColorWithDefaultLinkColor(NAColor* color);
+NA_API void naFillColorWithDefaultAccentColor(NAColor* color);
 
 
 

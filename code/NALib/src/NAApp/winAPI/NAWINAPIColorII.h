@@ -67,22 +67,24 @@ NA_DEF void naFillColorRefWithColor(void* colorRef, const NAColor* color) {
 
 
 
-NA_DEF void naFillColorWithSystemSkinDefaultBackgroundColor(NAColor* color) {
-  COLORREF colorRef = GetSysColor(COLOR_WINDOW);
+NA_DEF void naFillColorWithDefaultWindowBackgroundColor(NAColor* color) {
+  // Although officially in the documentation, COLOR_WINDOW is the background
+  // color of choice, the acutally used color is the BTNFACE color.
+  COLORREF colorRef = GetSysColor(COLOR_BTNFACE);
   naFillColorWithColorRef(color, &colorRef);
 }
 
-NA_DEF void naFillColorWithSystemSkinDefaultTextColor(NAColor* color) {
+NA_DEF void naFillColorWithDefaultTextColor(NAColor* color) {
   COLORREF colorRef = GetSysColor(COLOR_BTNTEXT);
   naFillColorWithColorRef(color, &colorRef);
 }
 
-NA_DEF void naFillColorWithSystemSkinDefaultLinkColor(NAColor* color) {
+NA_DEF void naFillColorWithDefaultLinkColor(NAColor* color) {
   COLORREF colorRef = GetSysColor(COLOR_HOTLIGHT);
   naFillColorWithColorRef(color, &colorRef);
 }
 
-NA_DEF void naFillColorWithSystemSkinDefaultAccentColor(NAColor* color) {
+NA_DEF void naFillColorWithDefaultAccentColor(NAColor* color) {
   COLORREF colorRef;
   if(!na_GetWINRegistryFixedEntry(
     HKEY_CURRENT_USER,

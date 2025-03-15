@@ -214,7 +214,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       if(parentSpace) {
         naFillSpaceBackgroundColor(&backColor, parentSpace);
       }else{
-        naFillColorWithSystemSkinDefaultBackgroundColor(&backColor);
+        naFillColorWithDefaultWindowBackgroundColor(&backColor);
       }
       NAColor accentColor;
       naFillColorWithSkinAccentColor(&accentColor, NA_SKIN_SYSTEM);

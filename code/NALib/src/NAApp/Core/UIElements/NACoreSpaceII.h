@@ -65,7 +65,7 @@ NA_DEF void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
   if(parentSpace) {
     naFillSpaceBackgroundColor(&parentBgColor, parentSpace);
   }else{
-    naFillColorWithSystemSkinDefaultBackgroundColor(&parentBgColor);
+    naFillColorWithDefaultWindowBackgroundColor(&parentBgColor);
   }
 
   NAColor thisBgColor;
@@ -77,7 +77,7 @@ NA_DEF void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
 
   NAColor fgColor;
   if(naGetSpaceAlternateBackground(space)) {
-    naFillColorWithSystemSkinDefaultTextColor(&fgColor);
+    naFillColorWithDefaultTextColor(&fgColor);
   }else{
     naFillColorWithTransparent(&fgColor);
   }
