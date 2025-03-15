@@ -67,7 +67,7 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   break;
 
   default:
-    printf("Uncaught Button message" NA_NL);
+    //printf("Uncaught Button message" NA_NL);
     break;
   }
   
@@ -140,7 +140,7 @@ NABool naButtonWINAPINotify(void* uiElement, WORD notificationCode) {
     hasBeenHandeled = NA_TRUE;
     break;
   default:
-    printf("Uncaught Button notification" NA_NL);
+    //printf("Uncaught Button notification" NA_NL);
     break;
   }
   return hasBeenHandeled;

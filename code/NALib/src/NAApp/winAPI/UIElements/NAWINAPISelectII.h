@@ -73,7 +73,7 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
     break;
 
   default:
-    printf("Uncaught Select message" NA_NL);
+    //printf("Uncaught Select message" NA_NL);
     break;
   }
   

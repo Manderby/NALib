@@ -23,7 +23,6 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_MOVE:
   case WM_PAINT:
   case WM_NCPAINT:
-  case WM_PRINTCLIENT:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
   case WM_STYLECHANGING:
@@ -94,7 +93,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
         if(naIsButtonBordered(button) && naIsButtonStateful(button) && naGetButtonState(button)) {
           // we choose yellow as background as this is probably the last color ever
           // being used as a system UI style.
-          info.result = (LRESULT)CreateSolidBrush(RGB(255, 255, 0)); // todo: memory leak
+          info.result = (LRESULT)CreateSolidBrush(RGB(255, 255, 0)); // todo: memory leak.
           info.hasBeenHandeled = NA_TRUE;
         }else{
           info.result = (LRESULT)winapiSpace->curBgColor->brush;
@@ -108,6 +107,13 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
         info.hasBeenHandeled = NA_TRUE;
       }
     }
+    break;
+
+  case WM_PRINTCLIENT: // wParam = HDC
+    GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
+    FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   case WM_CTLCOLOREDIT: // TextBox
@@ -163,6 +169,18 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
       winapiSpace->curBgColor = naAllocUIColor(&bgColor, NA_NULL);
       FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
       winapiSpace->forceEraseBackground = NA_FALSE;
+
+      NAListIterator iter = naMakeListModifier(&winapiSpace->space.childs);
+      while(naIterateList(&iter)) {
+        NA_UIElement* elem = naGetListCurMutable(&iter);
+        if(elem->elementType == NA_UI_SPACE) {
+          NAWINAPISpace* winapiSpace = (NAWINAPISpace*)elem;
+          winapiSpace->forceEraseBackground = NA_TRUE;
+          naRefreshUIElement(elem, 0);
+        }
+      }
+      naClearListIterator(&iter);
+
       info.result = 1;
     }else{
       info.result = 0;

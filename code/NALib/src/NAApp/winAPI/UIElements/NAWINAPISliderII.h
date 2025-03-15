@@ -9,13 +9,16 @@
 NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NASlider* slider = (NASlider*)uiElement;
+  NASpace* space;
+  NAColor bgColor;
+  NAWINAPIColor* bgWinapiColor;
+  RECT sliderRect;
 
   switch(message) {
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
   case WM_MOVE:
   case WM_SHOWWINDOW:
-  case WM_PAINT:
   case WM_NCPAINT:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
@@ -43,6 +46,16 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
     break;
 
+  case WM_PAINT:
+    space = naGetUIElementParentSpace(uiElement);
+    GetClientRect(naGetUIElementNativePtr(uiElement), &sliderRect);
+
+    naFillSpaceBackgroundColor(&bgColor, space);
+    bgWinapiColor = naAllocUIColor(&bgColor, NA_NULL);
+    FillRect((HDC)wParam, &sliderRect, bgWinapiColor->brush);
+    naDeallocUIColor(bgWinapiColor);
+    break;
+
   case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
     //space = naGetUIElementParentSpace(uiElement);
     //GetClientRect(naGetUIElementNativePtr(uiElement), &sliderRect);
@@ -52,8 +65,8 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
     //FillRect((HDC)wParam, &sliderRect, bgWinapiColor->brush);
     //naDeallocUIColor(bgWinapiColor);
 
-    //info.result = 1;
-    //info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
+    info.hasBeenHandeled = NA_TRUE;
     break;
 
   case WM_LBUTTONDOWN:
@@ -93,15 +106,16 @@ NA_DEF NASlider* naNewSlider(double width) {
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   NAWINAPISlider* winapiSlider = naNew(NAWINAPISlider);
 
-  TCHAR* systemText = naAllocSystemStringWithUTF8String("Slider");
-
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
   winapiSlider->rect = naMakeRectS(0., 0., width, 24.);
 
+  // TBS_TRANSPARENTBKGND is necessary to call WM_PRINTCLIENT of the parent
+  // space.
+
 	HWND nativePtr = CreateWindow(
-		TRACKBAR_CLASS,
-    systemText,
-    WS_CHILD | WS_VISIBLE | TBS_NOTICKS,
+    TRACKBAR_CLASS,
+    NULL,
+    WS_CHILD | WS_VISIBLE | TBS_NOTICKS | TBS_TRANSPARENTBKGND,
 		0,
     0,
     (int)(winapiSlider->rect.size.width * uiScale),
@@ -111,8 +125,6 @@ NA_DEF NASlider* naNewSlider(double width) {
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
   
-  naFree(systemText);
-
   SendMessage(nativePtr, TBM_SETRANGEMIN , 
     (WPARAM) TRUE,
     (LPARAM) NA_ZERO_u32);

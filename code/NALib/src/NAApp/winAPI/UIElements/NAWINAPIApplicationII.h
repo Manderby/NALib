@@ -117,21 +117,21 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
 	wndclass.lpszClassName = TEXT("NASpace");
 	RegisterClass(&wndclass);
 
-    // Register the OpenGL space class
+  // Register the OpenGL space class
   naZeron(&wndclass, sizeof(WNDCLASS));
-	wndclass.style = CS_OWNDC;
-	wndclass.lpfnWndProc = naWINAPIWindowCallback;
-	wndclass.cbClsExtra = 0;
-	wndclass.cbWndExtra = 0;
-	wndclass.hInstance = GetModuleHandle(NULL);
-	wndclass.hIcon = LoadIcon( NULL, IDI_APPLICATION );
-	wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
-	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
-	wndclass.lpszMenuName = NULL;
-	wndclass.lpszClassName = TEXT("NAOpenGLSpace");
-	RegisterClass(&wndclass);
+  wndclass.style = CS_OWNDC;
+  wndclass.lpfnWndProc = naWINAPIWindowCallback;
+  wndclass.cbClsExtra = 0;
+  wndclass.cbWndExtra = 0;
+  wndclass.hInstance = GetModuleHandle(NULL);
+  wndclass.hIcon = LoadIcon( NULL, IDI_APPLICATION );
+  wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
+  wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+  wndclass.lpszMenuName = NULL;
+  wndclass.lpszClassName = TEXT("NAOpenGLSpace");
+  RegisterClass(&wndclass);
 
-    // Start the WINAPI application and set the nativePtr of the application.
+  // Start the WINAPI application and set the nativePtr of the application.
   app = (NAWINAPIApplication*)na_NewApplication();
 
   // Call preStartup if desired.
