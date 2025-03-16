@@ -14,6 +14,7 @@ Big changes:
 - Renaming NAUIImage to NAImageSet
 - Adding PubSub implementation NANotifier
 - Adding latest NIST CODATA physical constants of 2022
+- Improving GUI on Windows drastically
 
 Smaller things:
 - Great NAApp cleanup
@@ -27,6 +28,7 @@ Smaller things:
 - Adding leap second information based on bulletin C 66, 67, 68
 - Changed behaviour of naNewStringWithBaseNameOfPath
 - Adding conversion of upper and lower cases for all kind of characters.
+- Removung NAURL
 
 
 

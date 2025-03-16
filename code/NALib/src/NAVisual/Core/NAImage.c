@@ -177,7 +177,7 @@ NAImage* na_CreateBlendedImage(
   // In case we have two images, fill up the trivial vertical parts.
   if(topIsImage && baseIsImage) {
     // Simply copy the lower part of the base image
-    NAInt basePixelCount = innerRect.pos.y;
+    size_t basePixelCount = innerRect.pos.y;
     if(basePixelCount > 0) {
       naCopyn(
         ret,
@@ -336,7 +336,6 @@ NA_DEF NAImage* naCreateImageWithApply(const NAColor* ground, const NAImage* top
 
 NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image) {
   NASizes halfSize;
-  NAInt x, y;
   NAImage* outImage;
   NAColor* inPtr1;
   NAColor* inPtr2;
@@ -370,8 +369,8 @@ NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image) {
   inPtr3 = radioImage->data + radioImage->width;
   inPtr4 = inPtr3 + 1;
   outDataPtr = outImage->data;
-  for(y = 0; y < radioImage->height; y += 2) {
-    for(x = 0; x < radioImage->width; x += 2) {
+  for(uint32 y = 0; y < radioImage->height; y += 2) {
+    for(uint32 x = 0; x < radioImage->width; x += 2) {
       outDataPtr->r = inPtr1->r * inPtr1->alpha + inPtr2->r * inPtr2->alpha;
       outDataPtr->g = inPtr1->g * inPtr1->alpha + inPtr2->g * inPtr2->alpha;
       outDataPtr->b = inPtr1->b * inPtr1->alpha + inPtr2->b * inPtr2->alpha;

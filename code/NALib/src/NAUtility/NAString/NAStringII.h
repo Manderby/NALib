@@ -17,11 +17,11 @@ NA_IDEF size_t naStrlen(const NAUTF8Char* str) {
 
 
 
-NA_IDEF size_t naVsnprintf(NAUTF8Char* buffer, size_t length, const NAUTF8Char* newstr, va_list argumentList) {
+NA_IDEF size_t naVsnprintf(NAUTF8Char* buffer, size_t length, const NAUTF8Char* newStr, va_list argumentList) {
   #if NA_OS == NA_OS_WINDOWS
-    return (size_t)_vsnprintf_s(buffer, (size_t)length, (size_t)length, newstr, argumentList);
+    return (size_t)_vsnprintf_s(buffer, (size_t)length, (size_t)length, newStr, argumentList);
   #elif NA_IS_POSIX
-    return (size_t)vsnprintf((char*)buffer, (size_t)length, (const char*)newstr, argumentList);
+    return (size_t)vsnprintf((char*)buffer, (size_t)length, (const char*)newStr, argumentList);
   #endif
 }
 

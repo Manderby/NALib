@@ -26,37 +26,38 @@ typedef enum{
 
 
 
-
-
-
-
 // Remapping of some starndard functions.
-NA_IAPI size_t naStrlen(               const NAUTF8Char* str);
-NA_IAPI size_t naVsnprintf(                  NAUTF8Char* buffer,
-                                                 size_t length,
-                                      const NAUTF8Char* newstr,
-                                                va_list argumentList);
+NA_IAPI size_t naStrlen(
+  const NAUTF8Char* str);
+NA_IAPI size_t naVsnprintf(
+  NAUTF8Char* buffer,
+  size_t length,
+  const NAUTF8Char* newStr,
+  va_list argumentList);
 
 // Returns the number of characters needed to transform the given string and
 // arguments using sprintf.
-NA_IAPI size_t naVarargStringLength(   const NAUTF8Char* string,
+NA_IAPI size_t naVarargStringLength(
+  const NAUTF8Char* string,
   va_list args);
 
 // Compares the string content of the two pointers being equal.
 // if length is 0, the two strings are expected to be zero-terminated and
 // the length of the two strings is computed automatically.
 // If caseSensitive is NA_TRUE, an exact match is tested.
-NA_API NABool naEqualUTF8CStringLiterals( const NAUTF8Char* string1,
-                                          const NAUTF8Char* string2,
-                                                      size_t length,
-                                                     NABool caseSensitive);
+NA_API NABool naEqualUTF8CStringLiterals(
+  const NAUTF8Char* string1,
+  const NAUTF8Char* string2,
+  size_t length,
+  NABool caseSensitive);
 
 // Allocates and returns memory and formats the given string like printf.
 // When useTmp is true, the returned pointer will be automatically collected
 // by the garbage collector of NARuntime.
-NA_API NAUTF8Char* naAllocSprintf( NABool useTmp,
-                         const NAUTF8Char* format,
-                                           ...);
+NA_API NAUTF8Char* naAllocSprintf(
+  NABool useTmp,
+  const NAUTF8Char* format,
+  ...);
 
 // Returns a garbage collected pointer to a formatted string of the value.
 NA_API NAUTF8Char* naPriux8(uint8 value);
@@ -85,17 +86,20 @@ NA_API NAString* naNewString(void);
 // buffer will be cleaned up when eventually it is no longer in use.
 // When length is negative, the absolute value will be used but the buffer is
 // expected to be null-terminated (the null character is not in length).
-NA_API NAString* naNewStringWithMutableUTF8Buffer(  NAUTF8Char* buffer,
-                                                          size_t length,
-                                                      NAMutator destructor);
+NA_API NAString* naNewStringWithMutableUTF8Buffer(
+  NAUTF8Char* buffer,
+  size_t length,
+  NAMutator destructor);
 
 // Creates an NAString just like sprintf.
-NA_API NAString* naNewStringWithFormat(const NAUTF8Char* format,
-                                                          ...);
+NA_API NAString* naNewStringWithFormat(
+  const NAUTF8Char* format,
+  ...);
 // Does the same thing but with an existing va_list argument. The argumentList
 // argument will not be altered by this function.
-NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
-                                                    va_list argumentList);
+NA_API NAString* naNewStringWithArguments(
+  const NAUTF8Char* format,
+  va_list argumentList);
 
 
 // Fills deststring with a desired part of srcString.
@@ -122,17 +126,20 @@ NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
 // - ( 1,  0)   ->        (empty string because of desired byteSize == 0)
 // - ( 2, -5)   ->        (empty string because of resulting byteSize == 0)
 // - (-9,  9)   ->        (empty string with warning when debugging)
-NA_API NAString* naNewStringExtraction(const NAString* srcString,
-                                                 NAInt offset,
-                                                 NAInt length);
+NA_API NAString* naNewStringExtraction(
+  const NAString* srcString,
+  int64 offset,
+  int64 length);
 
-NA_API NAString* naNewStringWithBufferExtraction( NABuffer* buffer,
-                                                      NARangei64 range);
+NA_API NAString* naNewStringWithBufferExtraction(
+  NABuffer* buffer,
+  NARangei64 range);
 
 // Returns a string equal to the given string but all newlines are
 // converted to the given newline encoding.
-NA_API NAString* naNewStringWithNewlineSanitization( NAString* string,
-                                             NANewlineEncoding encoding);
+NA_API NAString* naNewStringWithNewlineSanitization(
+  NAString* string,
+  NANewlineEncoding encoding);
 
 
 // Returns the length of the string in bytes.
@@ -162,7 +169,7 @@ NA_API NAUTF8Char naGetStringChar(NAString* string, size_t index);
 // detected.
 NA_API NAString* naNewStringWithParentOfPath(const NAString* filePath);
 NA_API NAString* naNewStringWithBaseNameOfPath(const NAString* filePath);
-NA_API NAString* naNewStringWithSuffixOfPath  (const NAString* filePath);
+NA_API NAString* naNewStringWithSuffixOfPath(const NAString* filePath);
 
 
 
@@ -219,37 +226,39 @@ NA_API const NAUTF8Char* naConvertUTF8CharToLowercase(const NAUTF8Char* upper);
 // Null-terminated.
 
 // Appends another NAString
-NA_API void naAppendStringString(       NAString* originalString,
-                                  const NAString* string2);
+NA_API void naAppendStringString(
+  NAString* originalString,
+  const NAString* string2);
 // Appends an UTF-8 character
 NA_API void naAppendStringChar(
-                                        NAString* originalString,
-                                       NAUTF8Char newChar);
+    NAString* originalString,
+    NAUTF8Char newChar);
 // Appends an UTF-8 C-String formatted just like sprintf. You can use this
 // function to append C-Strings without arguments as well.
 NA_API void naAppendStringFormat(
-                                         NAString* originalString,
-                                 const NAUTF8Char* format,
-                                                   ...);
+  NAString* originalString,
+  const NAUTF8Char* format,
+  ...);
 // Does the same thing but with an existing va_list argument. The argumentList
 // argument will not be altered by this function.
 NA_API void naAppendStringArguments(
-                                         NAString* originalString,
-                                 const NAUTF8Char* format,
-                                           va_list argumentList);
-
+  NAString* originalString,
+  const NAUTF8Char* format,
+  va_list argumentList);
 
 
 
 // Compares two strings and returns NA_TRUE if they are equal.
-NA_API NABool naEqualStringToString(            const NAString* string1,
-                                                const NAString* string2,
-                                                         NABool caseSensitive);
+NA_API NABool naEqualStringToString(
+  const NAString* string1,
+  const NAString* string2,
+  NABool caseSensitive);
 // Compares a string with a C string literal and returns NA_TRUE if they are
 // equal.
-NA_API NABool naEqualStringToUTF8CString(const NAString* string1,
-                                              const NAUTF8Char* string2,
-                                                         NABool caseSensitive);
+NA_API NABool naEqualStringToUTF8CString(
+  const NAString* string1,
+  const NAUTF8Char* string2,
+  NABool caseSensitive);
 
 
 // These functions provide basic functionality for parsing numbers from a given
@@ -258,11 +267,11 @@ NA_API NABool naEqualStringToUTF8CString(const NAString* string1,
 NA_API int8     naParseStringi8  (const NAString* string);
 NA_API int16    naParseStringi16 (const NAString* string);
 NA_API int32    naParseStringi32 (const NAString* string);
-NA_API NAi64  naParseStringi64 (const NAString* string);
+NA_API NAi64    naParseStringi64 (const NAString* string);
 NA_API uint8    naParseStringu8 (const NAString* string);
 NA_API uint16   naParseStringu16(const NAString* string);
 NA_API uint32   naParseStringu32(const NAString* string);
-NA_API NAu64 naParseStringu64(const NAString* string);
+NA_API NAu64    naParseStringu64(const NAString* string);
 NA_API float    naParseStringFloat (const NAString* string);
 NA_API double   naParseStringDouble(const NAString* string);
 

@@ -6,14 +6,14 @@
 // /////////////////////////////////////
 
 NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool appendEndSign) {
-  NAInt totalbyteSize;
-  NAInt triples;
-  NAInt sizeremainder;
-  NABuffer* dstbuffer;
+  int64 totalbyteSize;
+  int64 triples;
+  int64 sizeRemainder;
+  NABuffer* dstBuffer;
   NABufferIterator srcIter;
   NABufferIterator dstIter;
   NAByte      srctriple[3];
-  NAUTF8Char  dsttriple[4];
+  NAUTF8Char  dstTriple[4];
   NAString* retString;
   #if NA_DEBUG
     if(!naHasBufferFixedRange(buffer))
@@ -21,39 +21,39 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
   #endif
   totalbyteSize = buffer->range.length;
   triples = totalbyteSize / 3;
-  sizeremainder = totalbyteSize % 3;
+  sizeRemainder = totalbyteSize % 3;
 
-  dstbuffer = naCreateBuffer(NA_FALSE);
-  dstIter = naMakeBufferModifier(dstbuffer);
+  dstBuffer = naCreateBuffer(NA_FALSE);
+  dstIter = naMakeBufferModifier(dstBuffer);
   srcIter = naMakeBufferMutator(buffer);
 
   while(triples) {
     naReadBufferBytes(&srcIter, srctriple, 3);
-    dsttriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
-    dsttriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4) | (NAUTF8Char)(srctriple[1] >> 4);
-    dsttriple[2] = (NAUTF8Char)((srctriple[1] & 0x0f) << 2) | (NAUTF8Char)(srctriple[2] >> 6);
-    dsttriple[3] = (NAUTF8Char) (srctriple[2] & 0x3f);
-    naWriteBufferBytes(&dstIter, dsttriple, 4);
+    dstTriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
+    dstTriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4) | (NAUTF8Char)(srctriple[1] >> 4);
+    dstTriple[2] = (NAUTF8Char)((srctriple[1] & 0x0f) << 2) | (NAUTF8Char)(srctriple[2] >> 6);
+    dstTriple[3] = (NAUTF8Char) (srctriple[2] & 0x3f);
+    naWriteBufferBytes(&dstIter, dstTriple, 4);
     triples--;
   }
-  if(sizeremainder == 1) {
+  if(sizeRemainder == 1) {
     naReadBufferBytes(&srcIter, srctriple, 1);
-    dsttriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
-    dsttriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4);
-    naWriteBufferBytes(&dstIter, dsttriple, 2);
+    dstTriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
+    dstTriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4);
+    naWriteBufferBytes(&dstIter, dstTriple, 2);
   }
-  if(sizeremainder == 2) {
+  if(sizeRemainder == 2) {
     naReadBufferBytes(&srcIter, srctriple, 2);
-    dsttriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
-    dsttriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4) | (NAUTF8Char)(srctriple[1] >> 4);
-    dsttriple[2] = (NAUTF8Char)((srctriple[1] & 0x0f) << 2);
-    naWriteBufferBytes(&dstIter, dsttriple, 3);
+    dstTriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
+    dstTriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4) | (NAUTF8Char)(srctriple[1] >> 4);
+    dstTriple[2] = (NAUTF8Char)((srctriple[1] & 0x0f) << 2);
+    naWriteBufferBytes(&dstIter, dstTriple, 3);
   }
 
   naClearBufferIterator(&srcIter);
   naClearBufferIterator(&dstIter);
 
-  dstIter = naMakeBufferModifier(dstbuffer);
+  dstIter = naMakeBufferModifier(dstBuffer);
   while(!naIsBufferAtEnd(&dstIter)) {
     NAUTF8Char curChar = (NAUTF8Char)naGetBufferu8(&dstIter);
     NAUTF8Char newChar;
@@ -64,33 +64,33 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
     else { newChar = '/'; }
     naWriteBufferu8(&dstIter, (uint8)newChar);
   }
-  if(appendEndSign && sizeremainder == 1) {
+  if(appendEndSign && sizeRemainder == 1) {
     naWriteBufferu8(&dstIter, '=');
     naWriteBufferu8(&dstIter, '=');
   }
-  if(appendEndSign && sizeremainder == 2) {
+  if(appendEndSign && sizeRemainder == 2) {
     naWriteBufferu8(&dstIter, '=');
   }
 
   naClearBufferIterator(&dstIter);
-  retString = naNewStringWithBufferExtraction(dstbuffer, dstbuffer->range);
-  naRelease(dstbuffer);
+  retString = naNewStringWithBufferExtraction(dstBuffer, dstBuffer->range);
+  naRelease(dstBuffer);
   return retString;
 }
 
 
 
 NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(NAString* string) {
-  NAInt totalcharsize;
-  NAInt triples;
-  NAInt sizeremainder;
-  NABuffer* dstbuffer;
+  int64 totalCharSize;
+  int64 triples;
+  int64 sizeRemainder;
+  NABuffer* dstBuffer;
   NABufferIterator dstIter;
-  NAUTF8Char  asctriple[4];
-  NAByte      dsttriple[3];
+  NAUTF8Char  ascTriple[4];
+  NAByte      dstTriple[3];
   NABufferIterator srcIter = naMakeBufferMutator(naGetStringBufferMutable(string));
   NABuffer* ascbuffer = naCreateBuffer(NA_FALSE);
-  NABufferIterator asciter = naMakeBufferModifier(ascbuffer);
+  NABufferIterator ascIter = naMakeBufferModifier(ascbuffer);
 
   while(!naIsBufferAtEnd(&srcIter)) {
     NAUTF8Char curChar = (NAUTF8Char)naReadBufferu8(&srcIter);
@@ -113,56 +113,56 @@ NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(NAString* string) {
       #endif
       newChar = '\0';
     }
-    naWriteBufferu8(&asciter, (uint8)newChar);
+    naWriteBufferu8(&ascIter, (uint8)newChar);
   }
 
   naClearBufferIterator(&srcIter);
-  naClearBufferIterator(&asciter);
+  naClearBufferIterator(&ascIter);
 
-  totalcharsize = ascbuffer->range.length;
-  triples = totalcharsize / 4;
-  sizeremainder = totalcharsize % 4;
+  totalCharSize = ascbuffer->range.length;
+  triples = totalCharSize / 4;
+  sizeRemainder = totalCharSize % 4;
 
-  dstbuffer = naCreateBuffer(NA_FALSE);
-  dstIter = naMakeBufferModifier(dstbuffer);
-  asciter = naMakeBufferMutator(ascbuffer);
+  dstBuffer = naCreateBuffer(NA_FALSE);
+  dstIter = naMakeBufferModifier(dstBuffer);
+  ascIter = naMakeBufferMutator(ascbuffer);
 
   while(triples) {
-    naReadBufferBytes(&asciter, asctriple, 4);
-    dsttriple[0] = (NAByte) (asctriple[0] << 2)         | (NAByte)(asctriple[1] >> 4);
-    dsttriple[1] = (NAByte)((asctriple[1] & 0x0f) << 4) | (NAByte)(asctriple[2] >> 2);
-    dsttriple[2] = (NAByte)((asctriple[2] & 0x03) << 6) | (NAByte)(asctriple[3]);
+    naReadBufferBytes(&ascIter, ascTriple, 4);
+    dstTriple[0] = (NAByte) (ascTriple[0] << 2)         | (NAByte)(ascTriple[1] >> 4);
+    dstTriple[1] = (NAByte)((ascTriple[1] & 0x0f) << 4) | (NAByte)(ascTriple[2] >> 2);
+    dstTriple[2] = (NAByte)((ascTriple[2] & 0x03) << 6) | (NAByte)(ascTriple[3]);
     triples--;
-    naWriteBufferBytes(&dstIter, dsttriple, 3);
+    naWriteBufferBytes(&dstIter, dstTriple, 3);
   }
   #if NA_DEBUG
-  if(sizeremainder == 1)
-    naError("This sizeremainder should not happen");
+  if(sizeRemainder == 1)
+    naError("This sizeRemainder should not happen");
   #endif
-  if(sizeremainder == 2) {
-    naReadBufferBytes(&asciter, asctriple, 2);
-    dsttriple[0] = (NAByte) (asctriple[0] << 2)         | (NAByte)(asctriple[1] >> 4);
+  if(sizeRemainder == 2) {
+    naReadBufferBytes(&ascIter, ascTriple, 2);
+    dstTriple[0] = (NAByte) (ascTriple[0] << 2)         | (NAByte)(ascTriple[1] >> 4);
     #if NA_DEBUG
-    if((asctriple[1] & 0x0f) << 4)
+    if((ascTriple[1] & 0x0f) << 4)
       naError("Security breach: Data in unobserved bits of second character");
     #endif
-    naWriteBufferBytes(&dstIter, dsttriple, 1);
+    naWriteBufferBytes(&dstIter, dstTriple, 1);
   }
-  if(sizeremainder == 3) {
-    naReadBufferBytes(&asciter, asctriple, 3);
-    dsttriple[0] = (NAByte) (asctriple[0] << 2)         | (NAByte)(asctriple[1] >> 4);
-    dsttriple[1] = (NAByte)((asctriple[1] & 0x0f) << 4) | (NAByte)(asctriple[2] >> 2);
+  if(sizeRemainder == 3) {
+    naReadBufferBytes(&ascIter, ascTriple, 3);
+    dstTriple[0] = (NAByte) (ascTriple[0] << 2)         | (NAByte)(ascTriple[1] >> 4);
+    dstTriple[1] = (NAByte)((ascTriple[1] & 0x0f) << 4) | (NAByte)(ascTriple[2] >> 2);
     #if NA_DEBUG
-    if((asctriple[2] & 0x03) << 6)
+    if((ascTriple[2] & 0x03) << 6)
       naError("Security breach: Data in unobserved bits of third character");
     #endif
-    naWriteBufferBytes(&dstIter, dsttriple, 2);
+    naWriteBufferBytes(&dstIter, dstTriple, 2);
   }
 
-  naClearBufferIterator(&asciter);
+  naClearBufferIterator(&ascIter);
   naClearBufferIterator(&dstIter);
   naRelease(ascbuffer);
-  return dstbuffer;
+  return dstBuffer;
 }
 
 
@@ -198,7 +198,7 @@ NA_DEF void naAccumulateChecksumBuffer(NAChecksum* checksum, NABuffer* buffer) {
 
 
 NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file) {
-  NAInt byteSize;
+  int64 byteSize;
   NABufferIterator iter;
 
   #if NA_DEBUG

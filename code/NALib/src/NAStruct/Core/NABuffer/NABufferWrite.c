@@ -73,7 +73,7 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, size_
   }
   
   if(!advance) {
-    iter->partOffset = (NAInt)firstPartOffset;
+    iter->partOffset = (int64)firstPartOffset;
     naLocateTreeIterator(&iter->partIter, &firstBufIter);
   }
   naClearTreeIterator(&firstBufIter);  
@@ -220,39 +220,39 @@ NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, size_t co
 
 NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcBuffer, NARangei64 srcRange) {
   if(!naIsRangei64Empty(srcRange)) {
-    NABuffer* dstbuffer;
+    NABuffer* dstBuffer;
     NABufferSource* tmpsource;
-    NAInt tmpsourceOffset;
+    int64 tmpsourceOffset;
     NABuffer* mutableSrcBuffer;
-    NAInt curPos;
+    int64 curPos;
 
-    dstbuffer = na_GetBufferIteratorBufferMutable(iter);
+    dstBuffer = na_GetBufferIteratorBufferMutable(iter);
     curPos = naGetBufferLocation(iter);
     mutableSrcBuffer = (NABuffer*)srcBuffer;
 
-    tmpsource = dstbuffer->source;
-    tmpsourceOffset = dstbuffer->sourceOffset;
-    dstbuffer->source = naCreateBufferSource(NA_NULL, mutableSrcBuffer);
-    dstbuffer->sourceOffset = srcRange.origin - curPos;
+    tmpsource = dstBuffer->source;
+    tmpsourceOffset = dstBuffer->sourceOffset;
+    dstBuffer->source = naCreateBufferSource(NA_NULL, mutableSrcBuffer);
+    dstBuffer->sourceOffset = srcRange.origin - curPos;
 
-    naCacheBufferRange(dstbuffer, naMakeRangei64(curPos, srcRange.length));
+    naCacheBufferRange(dstBuffer, naMakeRangei64(curPos, srcRange.length));
     naLocateBufferAbsolute(iter, curPos + srcRange.length);
 
-    naRelease(dstbuffer->source);
-    dstbuffer->source = tmpsource;
-    dstbuffer->sourceOffset = tmpsourceOffset;
+    naRelease(dstBuffer->source);
+    dstBuffer->source = tmpsource;
+    dstBuffer->sourceOffset = tmpsourceOffset;
   }
 }
 
 
 
-NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, size_t byteSize, NABool useCopy) {
+NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, int64 distance, size_t byteSize, NABool useCopy) {
   NABufferIterator readIter;
   NABuffer* buffer;
   NAByte* bufptr;
 
   // Create the read iterator
-  NAInt writeoffset = naGetBufferLocation(iter);
+  int64 writeoffset = naGetBufferLocation(iter);
   buffer = na_GetBufferIteratorBufferMutable(iter);
   readIter = naMakeBufferAccessor(buffer);
   naLocateBufferAbsolute(&readIter, writeoffset - distance);
@@ -263,7 +263,7 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, size_t b
     
     NAByte* buf = naMalloc(byteSize);
     
-    NAInt segmentSize = naMini64(distance, (int64)byteSize);
+    int64 segmentSize = naMini64(distance, (int64)byteSize);
     naReadBufferBytes(&readIter, buf, (size_t)segmentSize);
     remainingByteSize = byteSize - (size_t)segmentSize;
     
@@ -275,7 +275,7 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, size_t b
     }
 
     tmpbuffer = naCreateBufferWithMutableData(buf, byteSize, naFree);
-    naWriteBufferBuffer(iter, tmpbuffer, naMakeRangei64(0, (NAInt)byteSize));
+    naWriteBufferBuffer(iter, tmpbuffer, naMakeRangei64(0, (int64)byteSize));
     naRelease(tmpbuffer);
 
   }else{

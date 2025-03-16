@@ -226,7 +226,7 @@ ButtonController* createButtonController(){
   con->submitLabel = naNewLabel("Submit (Enter)", labelWidth);
   naAddSpaceChild(windowSpace, con->submitLabel, naMakePos(20, curPosY));
 
-  con->textButtonSubmit = naNewTextPushButton("Ok", buttonWidth);
+  con->textButtonSubmit = naNewTextPushButton("Ok Button", buttonWidth);
   naAddUIReaction(con->textButtonSubmit, NA_UI_COMMAND_PRESSED, submitPressed, con);
   naAddSpaceChild(windowSpace, con->textButtonSubmit, naMakePos(left1, curPosY));
   naSetButtonSubmit(con->textButtonSubmit, submitPressed, con);
@@ -236,7 +236,7 @@ ButtonController* createButtonController(){
   con->abortLabel = naNewLabel("Abort (Esc)", labelWidth);
   naAddSpaceChild(windowSpace, con->abortLabel, naMakePos(20, curPosY));
 
-  con->textButtonAbort = naNewTextPushButton("Cancel", buttonWidth);
+  con->textButtonAbort = naNewTextPushButton("Cancel Button", buttonWidth);
   naAddUIReaction(con->textButtonAbort, NA_UI_COMMAND_PRESSED, abortPressed, con);
   naAddSpaceChild(windowSpace, con->textButtonAbort, naMakePos(left1, curPosY));
   naSetButtonAbort(con->textButtonAbort, abortPressed, con);

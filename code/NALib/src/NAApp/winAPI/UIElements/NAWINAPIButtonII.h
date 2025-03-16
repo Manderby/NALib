@@ -168,7 +168,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
   // Create an offscreen device context and buffer
   HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);  
-  NAByte* buttonBuffer = naMalloc(buttonSize.width * buttonSize.height * 4);
+  NAByte* buttonBuffer = naMalloc((size_t)(buttonSize.width * buttonSize.height) * 4);
   HBITMAP hButtonBitmap = CreateBitmap((int)buttonSize.width, (int)buttonSize.height, 1, 32, buttonBuffer);
   SelectObject(hMemDC, hButtonBitmap);
 
@@ -226,7 +226,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       naRelease(alphaImage);
       naRelease(tintedImage);
 
-      NAByte* blendedBuffer = naMalloc(buttonSize.width * buttonSize.height * 4);
+      NAByte* blendedBuffer = naMalloc((size_t)(buttonSize.width * buttonSize.height) * 4);
       naConvertImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
       HBITMAP hBlendedBitmap = CreateBitmap((int)buttonSize.width, (int)buttonSize.height, 1, 32, blendedBuffer);
 

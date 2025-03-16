@@ -8,7 +8,7 @@
 struct NABufferIterator{
   NAPtr bufferPtr;
   NATreeIterator partIter;
-  NAInt partOffset; // The current byte offset in the referenced part.
+  int64 partOffset; // The current byte offset in the referenced part.
   uint8 curBit;     // The current bit number
   size_t lineNum;   // The line number, starting with 1 after first line read.
 };
@@ -27,28 +27,28 @@ NA_HIDEF NABuffer* na_GetBufferIteratorBufferMutable(NABufferIterator* iter) {
 
 
 
-NA_IDEF NABool naLocateBufferRelative(NABufferIterator* iter, NAInt offset) {
-  NAInt abspos = naGetBufferLocation(iter);
+NA_IDEF NABool naLocateBufferRelative(NABufferIterator* iter, int64 offset) {
+  int64 abspos = naGetBufferLocation(iter);
   return naLocateBufferAbsolute(iter, abspos + offset);
 }
 
 
 
-NA_IDEF NABool naLocateBufferAtStart(NABufferIterator* iter, NAInt offset) {
+NA_IDEF NABool naLocateBufferAtStart(NABufferIterator* iter, int64 offset) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   return naLocateBufferAbsolute(iter, buffer->range.origin + offset);
 }
 
 
 
-NA_IDEF NABool naLocateBufferAtEnd(NABufferIterator* iter, NAInt offset) {
+NA_IDEF NABool naLocateBufferAtEnd(NABufferIterator* iter, int64 offset) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   return naLocateBufferAbsolute(iter, naGetRangei64End(buffer->range) + offset);
 }
 
 
 
-NA_HIDEF NAInt na_GetBufferIteratorPartOffset(NABufferIterator* iter) {
+NA_HIDEF int64 na_GetBufferIteratorPartOffset(NABufferIterator* iter) {
   return iter->partOffset;
 }
 
@@ -70,7 +70,7 @@ NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter) {
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
   if(!naIsBufferAtInitial(iter)) {
     NABufferPart* part = na_GetBufferPart(iter);
-    if(iter->partOffset < 0 || iter->partOffset >= (NAInt)na_GetBufferPartByteSize(part)) {
+    if(iter->partOffset < 0 || iter->partOffset >= (int64)na_GetBufferPartByteSize(part)) {
       NABool found = naLocateBufferAbsolute(iter, naGetBufferLocation(iter));
       if(!found) {
         naResetTreeIterator(&iter->partIter);

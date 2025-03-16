@@ -18,7 +18,7 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter) {
     
     curByte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)) {
+    while(iter->partOffset < (int64)na_GetBufferPartByteSize(part)) {
       if(*curByte > ' ') {
         found = NA_TRUE;
         break;
@@ -48,8 +48,8 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty) {
   NAString* string = NA_NULL;
   NABool found = NA_FALSE;
   NABool checkWindowsEnd = NA_FALSE;
-  NAInt start = naGetBufferLocation(iter);
-  NAInt cur = start;
+  int64 start = naGetBufferLocation(iter);
+  int64 cur = start;
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
 
   while((!found || checkWindowsEnd) && !naIsBufferAtEnd(iter)) {
@@ -65,7 +65,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty) {
     curByte = na_GetBufferPartDataPointerConst(iter);
     
     // Note: Do not use NA_NL_XXX macros here. That is semantically wrong.
-    while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)) {
+    while(iter->partOffset < (int64)na_GetBufferPartByteSize(part)) {
       if(checkWindowsEnd) {
         checkWindowsEnd = NA_FALSE;
         if(*curByte == '\n') {
@@ -118,7 +118,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty) {
 
 NA_DEF NAString* naParseBufferRemainder(NABufferIterator* iter) {
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
-  NAInt abspos = naGetBufferLocation(iter);
+  int64 abspos = naGetBufferLocation(iter);
   return naNewStringWithBufferExtraction(buffer, naMakeRangei64Combination(abspos, naGetRangei64Max(buffer->range)));
 }
 
@@ -128,8 +128,8 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter) {
   NAString* string;
   NARangei64 range;
   NABool found = NA_FALSE;
-  NAInt start = naGetBufferLocation(iter);
-  NAInt end = start;
+  int64 start = naGetBufferLocation(iter);
+  int64 end = start;
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
 
   while(!found && !naIsBufferAtEnd(iter)) {
@@ -144,7 +144,7 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter) {
     
     curByte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)) {
+    while(iter->partOffset < (int64)na_GetBufferPartByteSize(part)) {
       if(*curByte <= ' ') {
         found = NA_TRUE;
         break;
@@ -174,8 +174,8 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
   NAString* string;
   NARangei64 range;
   NABool found = NA_FALSE;
-  NAInt start = naGetBufferLocation(iter);
-  NAInt end = start;
+  int64 start = naGetBufferLocation(iter);
+  int64 end = start;
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
 
   while(!found && !naIsBufferAtEnd(iter)) {
@@ -190,7 +190,7 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
     
     curByte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)) {
+    while(iter->partOffset < (int64)na_GetBufferPartByteSize(part)) {
       if(*curByte == delimiter) {
         found = NA_TRUE;
         break;
@@ -226,8 +226,8 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter) {
   NAString* string;
   NARangei64 range;
   NABool found = NA_FALSE;
-  NAInt start = naGetBufferLocation(iter);
-  NAInt end = start;
+  int64 start = naGetBufferLocation(iter);
+  int64 end = start;
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
 
   while(!found && !naIsBufferAtEnd(iter)) {
@@ -242,7 +242,7 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter) {
     
     curByte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)) {
+    while(iter->partOffset < (int64)na_GetBufferPartByteSize(part)) {
       if(*curByte == '/' || *curByte == '\\') {
         found = NA_TRUE;
         break;
@@ -268,12 +268,12 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter) {
 
 
 
-NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* retValuei, NAInt maxDigitCount, NAu64 max) {
-  NAInt bytesused;
+NA_DEF int64 naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* retValuei, int64 maxDigitCount, NAu64 max) {
+  int64 bytesused;
   NAu64 prevval;
   NABool found = NA_FALSE;
-  NAInt start = naGetBufferLocation(iter);
-  NAInt end = start;
+  int64 start = naGetBufferLocation(iter);
+  int64 end = start;
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
 
   *retValuei = NA_ZERO_u64;
@@ -297,7 +297,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
       
     curByte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partOffset < (NAInt)na_GetBufferPartByteSize(part)) {
+    while(iter->partOffset < (int64)na_GetBufferPartByteSize(part)) {
       if(bytesused >= maxDigitCount)
         break;
 
@@ -328,9 +328,9 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
 
 
 
-NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAi64* retValuei, NAInt maxDigitCount, NAi64 min, NAi64 max) {
+NA_DEF int64 naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAi64* retValuei, int64 maxDigitCount, NAi64 min, NAi64 max) {
   NAi64 sign = NA_ONE_i64;
-  NAInt bytesused = 0;
+  int64 bytesused = 0;
   NAi64 limit = max;
   NAu64 intValue;
   const NAByte* curByte;

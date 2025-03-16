@@ -13,7 +13,7 @@ NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei64 
   #if NA_DEBUG
     //if(!source)
     //  naError("source is Null");
-    if(!naIsLengthValueUsefuli(sourceRange.length))
+    if(!naIsLengthValueUsefuli64(sourceRange.length))
       naError("range length is not useful");
   #endif
 
@@ -155,8 +155,8 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start,
     part->byteSize = end;
     naUpdateTreeLeaf(partIter);
 
-    NAInt sourceOffset = na_GetBufferPartSourceOffset(part);
-    NABufferPart* newPart = na_NewBufferPartSparse(part->source, naMakeRangei64Combination(sourceOffset + (NAInt)end, naMakeMaxWithEndi64(sourceOffset + (NAInt)prevByteSize)));
+    int64 sourceOffset = na_GetBufferPartSourceOffset(part);
+    NABufferPart* newPart = na_NewBufferPartSparse(part->source, naMakeRangei64Combination(sourceOffset + (int64)end, naMakeMaxWithEndi64(sourceOffset + (int64)prevByteSize)));
     naAddTreeNextMutable(partIter, newPart, NA_FALSE);
   }
 
@@ -166,8 +166,8 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partIter, size_t start,
     part->byteSize = start;
     naUpdateTreeLeaf(partIter);
 
-    NAInt sourceOffset = na_GetBufferPartSourceOffset(part);
-    NABufferPart* newPart = na_NewBufferPartSparse(part->source, naMakeRangei64Combination(sourceOffset + (NAInt)start, naMakeMaxWithEndi64(sourceOffset + (NAInt)end)));
+    int64 sourceOffset = na_GetBufferPartSourceOffset(part);
+    NABufferPart* newPart = na_NewBufferPartSparse(part->source, naMakeRangei64Combination(sourceOffset + (int64)start, naMakeMaxWithEndi64(sourceOffset + (int64)end)));
     naAddTreeNextMutable(partIter, newPart, NA_TRUE);
     // Note that using the NA_TRUE, we automatically move to the new part.
     // This means that iter now points to the desired part.
@@ -190,7 +190,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
       naError("range origin is negative");
   #endif
 
-  NAInt sourceOffset = na_GetBufferPartSourceOffset(returnPart) + partRange.origin;
+    int64 sourceOffset = na_GetBufferPartSourceOffset(returnPart) + partRange.origin;
   NABuffer* sourceCache = na_GetBufferSourceCache(returnPart->source);
 
   #if NA_DEBUG
@@ -309,7 +309,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
     if(remainingBytesInSourcePart < (size_t)partRange.length) {
       partRange.origin += remainingBytesInSourcePart;
       partRange.length -= remainingBytesInSourcePart;
-      naIterateBuffer(&sourceIter, (NAInt)remainingBytesInSourcePart);
+      naIterateBuffer(&sourceIter, (int64)remainingBytesInSourcePart);
       naIterateTree(&curPartIter, NA_NULL, NA_NULL);
     }else{
       partRange.length = 0;
@@ -322,10 +322,10 @@ NA_HDEF NABufferPart* na_PrepareBufferPartCache(NATreeIterator* partIter, NARang
 //    naError("source part is sparse");
 //#endif
 
-  //NAInt offsetInSourcePart = sourceIter.partOffset;
-  //NAInt remainingBytesInSourcePart = sourcePart->byteSize - sourceIter.partOffset;
-  //NAInt normedStart = partRange.origin - offsetInSourcePart;
-  //NAInt normedEnd = (partRange.origin + remainingBytesInSourcePart);
+  //int64 offsetInSourcePart = sourceIter.partOffset;
+  //int64 remainingBytesInSourcePart = sourcePart->byteSize - sourceIter.partOffset;
+  //int64 normedStart = partRange.origin - offsetInSourcePart;
+  //int64 normedEnd = (partRange.origin + remainingBytesInSourcePart);
   //part = na_SplitBufferPart(partIter, normedStart, normedEnd);
 
   //part->memBlock = naRetain(na_GetBufferPartMemoryBlock(sourcePart));
@@ -355,14 +355,14 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
   // a part containing at least the byte pointed to by partRange.origin but
   // possibly a few bytes more. We do this by aligning start and end at
   // NA_INTERNAL_BUFFER_PART_BYTESIZE.
-  NAInt normedStart = na_GetBufferPartNormedStart(partRange.origin);
-  NAInt normedEnd = na_GetBufferPartNormedEnd(naGetRangei64End(partRange));
+    int64 normedStart = na_GetBufferPartNormedStart(partRange.origin);
+    int64 normedEnd = na_GetBufferPartNormedEnd(naGetRangei64End(partRange));
   #if NA_DEBUG
     if(normedStart < 0)
       naError("normed start is negative");
   #endif
-  if(normedEnd > (NAInt)part->byteSize) {
-    normedEnd = (NAInt)part->byteSize;
+  if(normedEnd > (int64)part->byteSize) {
+    normedEnd = (int64)part->byteSize;
   }
 
   // We split the sparse part as necessary.
@@ -375,12 +375,12 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partIter, NARan
   
   // Fill the memory block according to the source.
   if(part->source) {
-    NAInt sourceOffset = na_GetBufferPartSourceOffset(part);
+    int64 sourceOffset = na_GetBufferPartSourceOffset(part);
     void* dst = na_GetMemoryBlockDataPointerMutable(part->memBlock, 0);
     na_FillBufferSourceMemory(
       part->source,
       dst,
-      naMakeRangei64Combination(sourceOffset, naMakeMaxWithEndi64(sourceOffset + (NAInt)part->byteSize)));
+      naMakeRangei64Combination(sourceOffset, naMakeMaxWithEndi64(sourceOffset + (int64)part->byteSize)));
   }
 
   return part;
@@ -409,18 +409,18 @@ NA_HDEF size_t na_PrepareBufferPart(NABufferIterator* iter, size_t byteCount) {
       // There is a cache, so we try to fill the part with it.
       part = na_PrepareBufferPartCache(
         &iter->partIter,
-        naMakeRangei64(iter->partOffset, (NAInt)byteCount));
+        naMakeRangei64(iter->partOffset, (int64)byteCount));
     }else{
       // We have no cache, meaning, we prepare memory ourselfes.
       part = na_PrepareBufferPartMemory(
         &iter->partIter,
-        naMakeRangei64(iter->partOffset, (NAInt)byteCount));
+        naMakeRangei64(iter->partOffset, (int64)byteCount));
     }
   }
   
   // Reaching here, the current part is a prepared part. We compute the number
   // of remaining bytes in the part and return it.
-  NAInt preparedByteCount = (NAInt)part->byteSize - iter->partOffset;
+  int64 preparedByteCount = (int64)part->byteSize - iter->partOffset;
   #if NA_DEBUG
     if(preparedByteCount <= 0)
       naError("Returned value should be greater zero");

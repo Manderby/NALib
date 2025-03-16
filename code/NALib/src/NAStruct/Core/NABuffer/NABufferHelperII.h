@@ -33,7 +33,7 @@ NA_IDEF void naFixBufferRange(NABuffer* buffer) {
 
 
 
-NA_IDEF void naExtendBufferRange(NABuffer* buffer, NAInt bytesAtStart, NAInt bytesAtEnd) {
+NA_IDEF void naExtendBufferRange(NABuffer* buffer, int64 bytesAtStart, int64 bytesAtEnd) {
   #if NA_DEBUG
     if(bytesAtStart < 0)
       naError("bytesAtStart should not be negative");

@@ -244,9 +244,9 @@ NA_IDEF void naReadBufferBytes(NABufferIterator* iter, void* data, size_t byteSi
 
 
 
-NA_IDEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt byteSize) {
+NA_IDEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, int64 byteSize) {
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
-  NAInt abspos = naGetBufferLocation(iter);
+  int64 abspos = naGetBufferLocation(iter);
   NABuffer* newbuffer = naCreateBufferExtraction(buffer, abspos, byteSize);
   naLocateBufferAbsolute(iter, abspos + byteSize);
   return newbuffer;

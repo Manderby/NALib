@@ -6,9 +6,9 @@
 
 
 #if NA_BUFFER_PART_BYTESIZE == 0
-  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)naGetRuntimeMemoryPageSize())
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((int64)naGetRuntimeMemoryPageSize())
 #else
-  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)NA_BUFFER_PART_BYTESIZE)
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((int64)NA_BUFFER_PART_BYTESIZE)
 #endif
 
 
@@ -17,7 +17,7 @@
 // blockOffset is the same as quering the source buffer with sourceOffset.
 struct NABufferPart{
   NABufferSource*     source;       // The referenced source.
-  NAInt               sourceOffset; // The source offset of the first byte
+  int64               sourceOffset; // The source offset of the first byte
   size_t              byteSize;     // The number of bytes referenced.
   size_t              blockOffset;  // The byte offset in the block.
   NAMemoryBlock*      memBlock;     // The referenced memory block.
@@ -25,8 +25,8 @@ struct NABufferPart{
 
 
 
-NA_HIDEF NAInt na_GetBufferPartNormedStart(NAInt start) {
-  NAInt signShift = (start < 0);   // Note that (start < 0) either results in 0 or 1.
+NA_HIDEF int64 na_GetBufferPartNormedStart(int64 start) {
+  int64 signShift = (start < 0);   // Note that (start < 0) either results in 0 or 1.
   return ((((start + signShift) / NA_INTERNAL_BUFFER_PART_BYTESIZE) - signShift) * NA_INTERNAL_BUFFER_PART_BYTESIZE);
   // Examples explain best how this behaves (assume default part size to be 10):
   //  11:  (( 11 + 0) / 10) - 0 * 10 =  10
@@ -42,10 +42,10 @@ NA_HIDEF NAInt na_GetBufferPartNormedStart(NAInt start) {
 
 
 
-NA_HIDEF NAInt na_GetBufferPartNormedEnd(NAInt end) {
+NA_HIDEF int64 na_GetBufferPartNormedEnd(int64 end) {
   // Return the end coordinate, such that max (= end-1) is within the normed
   // range.
-  return na_GetBufferPartNormedStart(naMakeMaxWithEndi(end)) + NA_INTERNAL_BUFFER_PART_BYTESIZE;
+  return na_GetBufferPartNormedStart(naMakeMaxWithEndi64(end)) + NA_INTERNAL_BUFFER_PART_BYTESIZE;
 }
 
 
@@ -60,7 +60,7 @@ NA_HIDEF NABufferSource* na_GetBufferPartSource(const NABufferPart* part) {
 
 
 
-NA_HIDEF NAInt na_GetBufferPartSourceOffset(const NABufferPart* part) {
+NA_HIDEF int64 na_GetBufferPartSourceOffset(const NABufferPart* part) {
   #if NA_DEBUG
     if(!part)
       naCrash("part is Null");

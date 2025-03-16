@@ -407,9 +407,9 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   NABufferIterator iterz;
 
   // First, read RFC 1950
-  NAInt zbuffersize = naGetBufferRange(input).length - 6;
+  int64 zBufferSize = naGetBufferRange(input).length - 6;
   // The 6 Bytes are the CMF and FLG Bytes as well as the Adler number.
-  // If there is a DICTID, zbuffersize will be reduced by 4 more bytes later.
+  // If there is a DICTID, zBufferSize will be reduced by 4 more bytes later.
 
   iterIn = naMakeBufferAccessor(input);
 
@@ -448,12 +448,12 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
 
   if(haspresetdict) {
     dictadler = naReadBufferu32(&iterIn);
-    zbuffersize -= 4;
+    zBufferSize -= 4;
   }
   NA_UNUSED(dictadler);
 
-  zbuffer = naCreateBufferExtraction(input, naGetBufferLocation(&iterIn), zbuffersize);
-  naLocateBufferRelative(&iterIn, zbuffersize);
+  zbuffer = naCreateBufferExtraction(input, naGetBufferLocation(&iterIn), zBufferSize);
+  naLocateBufferRelative(&iterIn, zBufferSize);
   zbufferadler = naReadBufferu32(&iterIn);
 
   naClearBufferIterator(&iterIn);
@@ -559,10 +559,10 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
 
   uint8 cmf;
   uint8 flg;
-  NAInt byteSize;
+  int64 byteSize;
   NAChecksum checksum;
   uint32 adler;
-  NAInt curOffset;
+  int64 curOffset;
   NABufferIterator iterOut;
 
   #if NA_DEBUG

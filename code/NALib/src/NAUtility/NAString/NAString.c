@@ -141,7 +141,7 @@ NA_DEF NAUTF8Char* naPriix256(NAi256 value) {
 struct NAString{
   NABuffer* buffer;
   #if NA_DEBUG
-    const NAUTF8Char* cachedstr;
+    const NAUTF8Char* cachedStr;
   #endif
 };
 
@@ -156,7 +156,7 @@ NA_DEF NAString* naNewString() {
   NAString* string = naNew(NAString);
   string->buffer = naCreateBuffer(NA_FALSE);
   #if NA_DEBUG
-    string->cachedstr = NA_NULL;
+    string->cachedStr = NA_NULL;
   #endif
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(string);
@@ -174,7 +174,7 @@ NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, size_t len
   NAString* string = naNew(NAString);
   string->buffer = naCreateBufferWithMutableData(buffer, length, destructor);
   #if NA_DEBUG
-    string->cachedstr = NA_NULL;
+    string->cachedStr = NA_NULL;
   #endif
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(string);
@@ -223,7 +223,7 @@ NA_DEF NAString* naNewStringWithArguments(const NAUTF8Char* format, va_list argu
 
 
 
-NA_DEF NAString* naNewStringExtraction(const NAString* srcString, NAInt offset, NAInt length) {
+NA_DEF NAString* naNewStringExtraction(const NAString* srcString, int64 offset, int64 length) {
   NAString* string = naNewString();
 
   #if NA_DEBUG
@@ -235,7 +235,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcString, NAInt offset, 
   naRelease(string->buffer);
   string->buffer = naCreateBufferExtraction(srcString->buffer, offset, length);
   #if NA_DEBUG
-    string->cachedstr = NA_NULL;
+    string->cachedStr = NA_NULL;
   #endif
 
   #if NA_STRING_ALWAYS_CACHE == 1
@@ -249,15 +249,15 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcString, NAInt offset, 
 NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei64 range) {
   NAString* string;
   #if NA_DEBUG
-    if(!naIsLengthValueUsefuli(buffer->range.length))
+    if(!naIsLengthValueUsefuli64(buffer->range.length))
       naError("Buffer Range length is not useful.");
-    if(!naIsLengthValueUsefuli(range.length))
+    if(!naIsLengthValueUsefuli64(range.length))
       naError("Range length is not useful.");
   #endif
   string = naNew(NAString);
   string->buffer = naCreateBufferExtraction(buffer, range.origin, range.length);
   #if NA_DEBUG
-    string->cachedstr = NA_NULL;
+    string->cachedStr = NA_NULL;
   #endif
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(string);
@@ -325,21 +325,21 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string) {
   if(naIsStringEmpty(string)) {
     return (const NAUTF8Char*)"";
   }else{
-    NAInt numchars;
-    NAUTF8Char* newstr;
-    numchars = naGetBufferRange(string->buffer).length;
+    int64 numChars;
+    NAUTF8Char* newStr;
+    numChars = naGetBufferRange(string->buffer).length;
     #if NA_DEBUG
-      if(!numchars)
+      if(!numChars)
         naError("String is empty");
     #endif
-    newstr = naMallocTmp((size_t)(numchars + 1));
+    newStr = naMallocTmp((size_t)(numChars + 1));
     naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer));
-    naWriteBufferToData(string->buffer, newstr);
-    newstr[numchars] = '\0';
+    naWriteBufferToData(string->buffer, newStr);
+    newStr[numChars] = '\0';
     #if NA_DEBUG
-      mutablestring->cachedstr = newstr;
+      mutablestring->cachedStr = newStr;
     #endif
-    return newstr;
+    return newStr;
   }
 }
 
@@ -373,15 +373,15 @@ NA_DEF NAUTF8Char naGetStringChar(NAString* string, size_t index) {
 
 
 
-NA_HDEF NAInt naGetLastSlashOffset(const NAString* filePath) {
-  NAInt slashOffset = naSearchBufferByteOffset(
+NA_HDEF int64 naGetLastSlashOffset(const NAString* filePath) {
+  int64 slashOffset = naSearchBufferByteOffset(
     filePath->buffer,
     NA_PATH_DELIMITER_UNIX,
     naGetRangei64Max(naGetBufferRange(filePath->buffer)),
     NA_FALSE);
     
   if(slashOffset == NA_INVALID_MEMORY_INDEX) {
-    NAInt backSlashOffset = naSearchBufferByteOffset(
+    int64 backSlashOffset = naSearchBufferByteOffset(
       filePath->buffer,
       NA_PATH_DELIMITER_WIN,
       naGetRangei64Max(naGetBufferRange(filePath->buffer)),
@@ -398,7 +398,7 @@ NA_HDEF NAInt naGetLastSlashOffset(const NAString* filePath) {
 NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath) {
   NAString* string;
   naCacheBufferRange(filePath->buffer, filePath->buffer->range);
-  NAInt slashOffset = naGetLastSlashOffset(filePath);
+  int64 slashOffset = naGetLastSlashOffset(filePath);
   if(slashOffset != NA_INVALID_MEMORY_INDEX) {
     string = naNewStringExtraction(filePath, 0, slashOffset);
   }else{
@@ -416,12 +416,12 @@ NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath) {
 NA_DEF NAString* naNewStringWithBaseNameOfPath(const NAString* filePath) {
   NAString* string;
   naCacheBufferRange(filePath->buffer, filePath->buffer->range);
-  NAInt slashOffset = naGetLastSlashOffset(filePath);
+  int64 slashOffset = naGetLastSlashOffset(filePath);
   // If slashOffset is invalid, return all leading.
   if(slashOffset == NA_INVALID_MEMORY_INDEX) {
     slashOffset = -1;
   }
-  NAInt dotOffset = naSearchBufferByteOffset(
+  int64 dotOffset = naSearchBufferByteOffset(
     filePath->buffer,
     NA_SUFFIX_DELIMITER,
     naGetRangei64Max(naGetBufferRange(filePath->buffer)),
@@ -442,7 +442,7 @@ NA_DEF NAString* naNewStringWithBaseNameOfPath(const NAString* filePath) {
 
 NA_DEF NAString* naNewStringWithSuffixOfPath(const NAString* filePath) {
   NAString* string;
-  NAInt dotOffset = naSearchBufferByteOffset(
+  int64 dotOffset = naSearchBufferByteOffset(
     filePath->buffer,
     NA_SUFFIX_DELIMITER,
     naGetRangei64Max(naGetBufferRange(filePath->buffer)),
@@ -743,10 +743,10 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString) {
 
   NA_DEF NAString* naNewStringWithWideCharString(const wchar_t* wcharString) {
     size_t length = wcslen(wcharString);
-    NAInt utf8Length = WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, NULL, 0, NULL, NULL);
-    NAUTF8Char* stringBuf = naMalloc((utf8Length + 1) * sizeof(NAUTF8Char));
+    int64 utf8Length = WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, NULL, 0, NULL, NULL);
+    NAUTF8Char* stringBuf = naMalloc((size_t)(utf8Length + 1) * sizeof(NAUTF8Char));
     WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, stringBuf, (int)utf8Length, NULL, NULL);
-    NAString* newLineString = naNewStringWithMutableUTF8Buffer(stringBuf, utf8Length, (NAMutator)naFree);
+    NAString* newLineString = naNewStringWithMutableUTF8Buffer(stringBuf, (size_t)utf8Length, (NAMutator)naFree);
     NAString* string = naNewStringWithNewlineSanitization(newLineString, NA_NEWLINE_UNIX);
     naDelete(newLineString);
     return string;

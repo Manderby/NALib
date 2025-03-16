@@ -203,7 +203,7 @@ NA_HIDEF void na_UnregisterTypeInfo(NA_TypeInfo* typeInfo) {
     // We shrink the info array by one by omitting the one entry which equals
     // the given parameter. Again, just like na_RegisterTypeInfo, this is not
     // very fast, but does the job. See comment there.
-    NAInt oldindex = 0;
+    int64 oldindex = 0;
     for(size_t i = 0; i < (na_Runtime->typeInfoCount - NA_ONE_s); ++i) {
       if(na_Runtime->typeInfos[i] == typeInfo) {
         oldindex++;

@@ -18,7 +18,7 @@ struct NAArray{
   size_t   typeSize;    // The size in bytes of the stored type
   NAMutator destructor;
   #if NA_DEBUG
-    NAInt    iterCount;   // The number of iterators attached to this array.
+    size_t    iterCount;   // The number of iterators attached to this array.
   #endif
 };
 
@@ -286,7 +286,7 @@ NA_IDEF size_t naGetArrayCount(const NAArray* array) {
       naCrash("array is Null-Pointer.");
       return 0;
     }
-    if((NAInt)(array->count) < 0)
+    if(array->count > NA_MAX_i)
       naError("Array count looks like it was negative when interpreted as signed integer. Do not create Arrays with negative sizes!");
   #endif
   // Note that an empty array has a typeSize of 1.

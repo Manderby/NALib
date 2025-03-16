@@ -185,7 +185,7 @@ typedef struct NABufferSearchToken NABufferSearchToken;
 
 struct NABuffer{
   NABufferSource* source;
-  NAInt sourceOffset; // Offset of source relative to this buffers
+  int64 sourceOffset; // Offset of source relative to this buffers
                              // origin. Add this offset to the desired pos to
                              // get the position within the source.
   uint32 flags;
@@ -197,13 +197,13 @@ struct NABuffer{
   NATree parts;             // Tree with all parts in this buffer
 
   #if NA_DEBUG
-    NAInt iterCount;
+  int64 iterCount;
   #endif
 };
 
 struct NABufferSearchToken{
-  NAInt searchOffset;
-  NAInt curOffset;
+  int64 searchOffset;
+  int64 curOffset;
 };
 
 typedef struct NABufferTreeNodeData NABufferTreeNodeData;
@@ -232,13 +232,13 @@ NA_HIAPI void na_FillBufferSourceMemory(const NABufferSource* source, void* dst,
 
 
 // NABufferPart
-NA_HIAPI NAInt na_GetBufferPartNormedStart(NAInt start);
-NA_HIAPI NAInt na_GetBufferPartNormedEnd(NAInt end);
+NA_HIAPI int64 na_GetBufferPartNormedStart(int64 start);
+NA_HIAPI int64 na_GetBufferPartNormedEnd(int64 end);
 NA_HAPI NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei64 sourceRange);
 NA_HAPI NABufferPart* na_NewBufferPartWithConstData(const void* data, size_t byteSize);
 NA_HAPI NABufferPart* na_NewBufferPartWithMutableData(void* data, size_t byteSize, NAMutator destructor);
 NA_HIAPI NABufferSource* na_GetBufferPartSource(const NABufferPart* part);
-NA_HIAPI NAInt na_GetBufferPartSourceOffset(const NABufferPart* part);
+NA_HIAPI int64 na_GetBufferPartSourceOffset(const NABufferPart* part);
 NA_HIAPI size_t na_GetBufferPartByteSize(const NABufferPart* part);
 NA_HIAPI NABool na_IsBufferPartSparse(const NABufferPart* part);
 NA_HIAPI NAMemoryBlock* na_GetBufferPartMemoryBlock(const NABufferPart* part);
@@ -248,7 +248,7 @@ NA_HIAPI void na_EnlargeBufferPart(NABufferPart* part, size_t bytesAtStart, size
 
 
 // NABufferHelper
-NA_HAPI void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end);
+NA_HAPI void na_EnsureBufferRange(NABuffer* buffer, int64 start, int64 end);
 
 // NABufferIteration
 NA_HIAPI const NABuffer* na_GetBufferIteratorBufferConst(const NABufferIterator* iter);
@@ -263,7 +263,7 @@ NA_HAPI NABool na_LocateBufferEnd(NABufferIterator* iter);
 NA_HAPI NABool na_IterateBufferPart(NABufferIterator* iter);
 
 NA_HAPI NABuffer* na_GetBufferIteratorCache(NABufferIterator* iter);
-NA_HIAPI NAInt na_GetBufferIteratorPartOffset(NABufferIterator* iter);
+NA_HIAPI int64 na_GetBufferIteratorPartOffset(NABufferIterator* iter);
 NA_HAPI NABool na_IsBufferIteratorSparse(NABufferIterator* iter);
 NA_HIAPI NABufferPart* na_GetBufferPart(NABufferIterator* iter);
 NA_HAPI void na_PrepareBuffer(NABufferIterator* iter, size_t byteCount);
