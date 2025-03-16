@@ -232,7 +232,7 @@ void pressExperimentButton(NAReaction reaction){
   }else if(reaction.uiElement == con->buttonButton){
     showButtons();
   }else if(reaction.uiElement == con->converterButton){
-    allocTemperatureController();
+    spawnTemperatureController();
   }else if(reaction.uiElement == con->quitButton){
     naStopApplication();
   }

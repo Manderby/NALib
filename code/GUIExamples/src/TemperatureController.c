@@ -43,7 +43,7 @@ void pressButton(NAReaction reaction){
   TemperatureController* con = reaction.controller;
   
   if(reaction.uiElement == con->newButton){
-    allocTemperatureController();
+    spawnTemperatureController();
   }else if(reaction.uiElement == con->quitButton){
     naStopApplication();
   }
@@ -51,7 +51,7 @@ void pressButton(NAReaction reaction){
 
 
 
-TemperatureController* allocTemperatureController(){
+TemperatureController* spawnTemperatureController(){
   TemperatureController* con = naAlloc(TemperatureController);
 
   // Create a new window
@@ -115,7 +115,7 @@ TemperatureController* allocTemperatureController(){
 
 
 // Clear all allocated elements.
-void deallocTemperatureController(TemperatureController* con){
+void despawnTemperatureController(TemperatureController* con){
   // Note that all UI elements which are attached in some way to the root
   // application UIElement will be cleared automatically.
   naFree(con);

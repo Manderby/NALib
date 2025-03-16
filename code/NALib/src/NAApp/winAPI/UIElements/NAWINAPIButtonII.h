@@ -181,10 +181,11 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
     NASpace* parentSpace = naGetUIElementParentSpace(uiElement);
     NAColor maskColor = {1.f, 1.f, 0.f, 1.f};
-    NAUIColor* tmpBgColor = naAllocUIColor(&maskColor, NA_NULL);
     NAUIColor* prevBgColor;
+    NAUIColor* tmpBgColor;
 
     if(customDraw) {
+      tmpBgColor = naAllocUIColor(&maskColor, NA_NULL);
       prevBgColor = na_SwapWINAPISpaceBackgroundColor(parentSpace, tmpBgColor);
     }
 
@@ -234,9 +235,9 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       BitBlt(drawitemstruct->hDC, 0, 0, (int)buttonSize.width, (int)buttonSize.height, hMemDC, 0, 0, SRCCOPY);
 
       if(customDraw) {
+        naDeallocUIColor(tmpBgColor);
         na_SwapWINAPISpaceBackgroundColor(parentSpace, prevBgColor);
       }
-      naDeallocUIColor(tmpBgColor);
 
       // Deleting the blended objects and buffers
       naRelease(buttonImage);

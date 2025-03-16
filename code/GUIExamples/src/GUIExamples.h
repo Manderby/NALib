@@ -7,8 +7,8 @@
 
 
 typedef struct TemperatureController TemperatureController;
-TemperatureController* allocTemperatureController(void);
-void deallocTemperatureController(TemperatureController* con);
+TemperatureController* spawnTemperatureController(void);
+void despawnTemperatureController(TemperatureController* con);
 
 typedef struct ExperimentController ExperimentController;
 ExperimentController* createExperimentController(void);

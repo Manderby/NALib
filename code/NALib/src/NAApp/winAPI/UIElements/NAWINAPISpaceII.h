@@ -150,8 +150,8 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
   case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
     GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
-    if(1){
-    //if(winapiSpace->forceEraseBackground) {
+    //if(1){
+    if(winapiSpace->forceEraseBackground) {
       if(winapiSpace->curBgColor) { naDeallocUIColor(winapiSpace->curBgColor); }
       naFillSpaceBackgroundColor(&bgColor, uiElement);
       winapiSpace->curBgColor = naAllocUIColor(&bgColor, NA_NULL);
@@ -344,19 +344,19 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
 
 
 NA_HDEF void na_ForceWINAPISpaceToRedrawBackground(NA_UIElement* space) {
-  //NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
-  //winapiSpace->forceEraseBackground = NA_TRUE;
-  //naRefreshUIElement(space, 0);
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
+  winapiSpace->forceEraseBackground = NA_TRUE;
+  naRefreshUIElement(space, 0);
 
-  //NASpace* naSpace = (NASpace*)space;
-  //NAListIterator iter = naMakeListModifier(&naSpace->childs);
-  //while(naIterateList(&iter)) {
-  //  NA_UIElement* elem = naGetListCurMutable(&iter);
-  //  if(elem->elementType == NA_UI_SPACE) {
-  //    na_ForceWINAPISpaceToRedrawBackground(elem);
-  //  }
-  //}
-  //naClearListIterator(&iter);
+  NASpace* naSpace = (NASpace*)space;
+  NAListIterator iter = naMakeListModifier(&naSpace->childs);
+  while(naIterateList(&iter)) {
+    NA_UIElement* elem = naGetListCurMutable(&iter);
+    if(elem->elementType == NA_UI_SPACE) {
+      na_ForceWINAPISpaceToRedrawBackground(elem);
+    }
+  }
+  naClearListIterator(&iter);
 }
 
 NA_HDEF NAUIColor* na_SwapWINAPISpaceBackgroundColor(NASpace* space, NAUIColor* bgColor) {
