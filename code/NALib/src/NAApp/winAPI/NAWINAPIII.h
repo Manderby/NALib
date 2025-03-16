@@ -808,7 +808,7 @@ NAWINAPICallbackInfo naWINAPIScrollItemProc(WPARAM wParam, LPARAM lParam) {
 // ///////////////////////////////////
 
 NA_HDEF void na_RefreshUIElementNow(void* uiElement) {
-  RedrawWindow(naGetUIElementNativePtr(uiElement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE | RDW_UPDATENOW);
+  RedrawWindow(naGetUIElementNativePtr(uiElement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE | RDW_UPDATENOW/* | RDW_NOERASE*/);
 }
 
 
