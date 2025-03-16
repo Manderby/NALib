@@ -122,8 +122,8 @@ NA_DEF NASelect* naNewSelect(double width) {
     WS_CHILD | WS_VISIBLE | CBS_DROPDOWN | CBS_HASSTRINGS | WS_OVERLAPPED | CBS_SIMPLE,
     0,
     0,
-    (int)(winapiSelect->rect.size.width * uiScale),
-    (int)(winapiSelect->rect.size.height * uiScale),
+    (LONG)naRound(winapiSelect->rect.size.width * uiScale),
+    (LONG)naRound(winapiSelect->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -205,10 +205,10 @@ NA_HDEF void na_SetSelectRect(NA_UIElement* select, NARect rect) {
   SetWindowPos(
     naGetUIElementNativePtr(select),
     HWND_TOP,
-    (int)(winapiSelect->rect.pos.x * uiScale),
-    (int)((parentRect.size.height - winapiSelect->rect.pos.y - winapiSelect->rect.size.height) * uiScale),
-    (int)(winapiSelect->rect.size.width * uiScale),
-    (int)(winapiSelect->rect.size.height * uiScale),
+    (LONG)naRound(winapiSelect->rect.pos.x * uiScale),
+    (LONG)naRound((parentRect.size.height - winapiSelect->rect.pos.y - winapiSelect->rect.size.height) * uiScale),
+    (LONG)naRound(winapiSelect->rect.size.width * uiScale),
+    (LONG)naRound(winapiSelect->rect.size.height * uiScale),
     0);
 }
 

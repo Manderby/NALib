@@ -56,8 +56,8 @@ NA_DEF NATextBox* naNewTextBox(NASize size) {
     WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
 		0,
     0, 
-    (int)(winapiTextBox->rect.size.width * uiScale),
-    (int)(winapiTextBox->rect.size.height * uiScale),
+    (LONG)naRound(winapiTextBox->rect.size.width * uiScale),
+    (LONG)naRound(winapiTextBox->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(), 
     NULL, 
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -183,10 +183,10 @@ NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect) {
   SetWindowPos(
     naGetUIElementNativePtr(textBox),
     HWND_TOP,
-    (int)(winapiTextBox->rect.pos.x * uiScale),
-    (int)((parentRect.size.height - winapiTextBox->rect.pos.y - winapiTextBox->rect.size.height) * uiScale),
-    (int)(winapiTextBox->rect.size.width * uiScale),
-    (int)(winapiTextBox->rect.size.height * uiScale),
+    (LONG)naRound(winapiTextBox->rect.pos.x * uiScale),
+    (LONG)naRound((parentRect.size.height - winapiTextBox->rect.pos.y - winapiTextBox->rect.size.height) * uiScale),
+    (LONG)naRound(winapiTextBox->rect.size.width * uiScale),
+    (LONG)naRound(winapiTextBox->rect.size.height * uiScale),
     0);
 }
 

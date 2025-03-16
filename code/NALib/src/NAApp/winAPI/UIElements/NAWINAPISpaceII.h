@@ -186,8 +186,8 @@ NA_DEF NASpace* naNewSpace(NASize size) {
     WS_CHILD | WS_VISIBLE,
     0,
     0,
-    (int)(winapiSpace->rect.size.width * uiScale),
-    (int)(winapiSpace->rect.size.height * uiScale),
+    (LONG)naRound(winapiSpace->rect.size.width * uiScale),
+    (LONG)naRound(winapiSpace->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -325,10 +325,10 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
   SetWindowPos(
     naGetUIElementNativePtr(space),
     HWND_TOP,
-    (int)(winapiSpace->rect.pos.x * uiScale),
-    (int)((parentRect.size.height - winapiSpace->rect.pos.y - winapiSpace->rect.size.height) * uiScale),
-    (int)(winapiSpace->rect.size.width * uiScale),
-    (int)(winapiSpace->rect.size.height * uiScale),
+    (LONG)naRound(winapiSpace->rect.pos.x * uiScale),
+    (LONG)naRound((parentRect.size.height - winapiSpace->rect.pos.y - winapiSpace->rect.size.height) * uiScale),
+    (LONG)naRound(winapiSpace->rect.size.width * uiScale),
+    (LONG)naRound(winapiSpace->rect.size.height * uiScale),
     SWP_NOZORDER);
 
   // We need to trigger a repositioning because in WinAPI, the coordinates

@@ -380,10 +380,10 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
       SetWindowPos(
         naGetUIElementNativePtr(window),
         HWND_TOPMOST,
-        (int)(screenRect.pos.x * uiScale),
-        (int)((screenRect.pos.y - screenRect.pos.y) * uiScale),
-        (int)(screenRect.size.width * uiScale),
-        (int)(screenRect.size.height * uiScale),
+        (LONG)naRound(screenRect.pos.x * uiScale),
+        (LONG)naRound((screenRect.pos.y - screenRect.pos.y) * uiScale),
+        (LONG)naRound(screenRect.size.width * uiScale),
+        (LONG)naRound(screenRect.size.height * uiScale),
         SWP_SHOWWINDOW);
       // Commented out for future use. Note: Incorporate resolution depencence zoom.
       //ChangeDisplaySettings(NULL, 0);
@@ -395,10 +395,10 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
       SetWindowPos(
         naGetUIElementNativePtr(window),
         HWND_NOTOPMOST,
-        (int)(window->windowedFrame.pos.x * uiScale),
-        (int)(((screenRect.size.height - window->windowedFrame.pos.y - window->windowedFrame.size.height) * uiScale)),
-        (int)(window->windowedFrame.size.width * uiScale),
-        (int)(window->windowedFrame.size.height * uiScale),
+        (LONG)naRound(window->windowedFrame.pos.x * uiScale),
+        (LONG)naRound((screenRect.size.height - window->windowedFrame.pos.y - window->windowedFrame.size.height) * uiScale),
+        (LONG)naRound(window->windowedFrame.size.width * uiScale),
+        (LONG)naRound(window->windowedFrame.size.height * uiScale),
         SWP_SHOWWINDOW);
       //ChangeDisplaySettings(NULL, 0);
     }
@@ -520,10 +520,10 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
 
   MoveWindow(
     naGetUIElementNativePtr(winapiWindow),
-    (LONG)(naRound(rect.pos.x * uiScale)),
-    (LONG)(naRound((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale)),
-    (LONG)(naRound(rect.size.width * uiScale)),
-    (LONG)(naRound(rect.size.height * uiScale)),
+    (LONG)naRound(rect.pos.x * uiScale),
+    (LONG)naRound((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale),
+    (LONG)naRound(rect.size.width * uiScale),
+    (LONG)naRound(rect.size.height * uiScale),
     NA_FALSE);
 
   na_UpdateMouseTracking(&winapiWindow->window.uiElement);

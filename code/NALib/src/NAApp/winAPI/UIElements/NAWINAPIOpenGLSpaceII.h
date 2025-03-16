@@ -103,8 +103,8 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
     WS_CHILD | WS_VISIBLE | ES_READONLY,
     0,
     0,
-    (int)(winapiOpenGLSpace->rect.size.width * uiScale),
-    (int)(winapiOpenGLSpace->rect.size.height * uiScale),
+    (LONG)naRound(winapiOpenGLSpace->rect.size.width * uiScale),
+    (LONG)naRound(winapiOpenGLSpace->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), 
@@ -190,10 +190,10 @@ NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
   SetWindowPos(
     naGetUIElementNativePtr(openGLSpace),
     HWND_TOP,
-    (int)(winapiOpenGLSpace->rect.pos.x * uiScale),
-    (int)((parentRect.size.height - winapiOpenGLSpace->rect.pos.y - winapiOpenGLSpace->rect.size.height) * uiScale),
-    (int)(winapiOpenGLSpace->rect.size.width * uiScale),
-    (int)(winapiOpenGLSpace->rect.size.height * uiScale),
+    (LONG)naRound(winapiOpenGLSpace->rect.pos.x * uiScale),
+    (LONG)naRound((parentRect.size.height - winapiOpenGLSpace->rect.pos.y - winapiOpenGLSpace->rect.size.height) * uiScale),
+    (LONG)naRound(winapiOpenGLSpace->rect.size.width * uiScale),
+    (LONG)naRound(winapiOpenGLSpace->rect.size.height * uiScale),
     SWP_NOREDRAW);
 }
 
