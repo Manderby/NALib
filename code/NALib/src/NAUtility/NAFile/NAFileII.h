@@ -176,7 +176,7 @@ NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NAB
 }
 
 
-NA_IDEF NAUTF8Char* naGetCwd(NAUTF8Char* buf, NAInt bufSize) {
+NA_IDEF NAUTF8Char* naGetCwd(NAUTF8Char* buf, int64 bufSize) {
   #if NA_OS == NA_OS_WINDOWS
     return _getcwd(buf, (int)bufSize);
   #elif NA_IS_POSIX

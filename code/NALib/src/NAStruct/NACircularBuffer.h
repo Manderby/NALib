@@ -27,7 +27,7 @@ typedef struct NACircularBuffer NACircularBuffer;
 
 // Creates a circular buffer with sufficient space for the given number of
 // void-Pointers.
-NACircularBuffer* naInitCircularBuffer(NACircularBuffer* buffer, NAInt count);
+NACircularBuffer* naInitCircularBuffer(NACircularBuffer* buffer, int64 count);
 
 // Clears the circular buffer. Does not deletes the content-pointers!
 void naClearCircularBuffer(NACircularBuffer* buffer);

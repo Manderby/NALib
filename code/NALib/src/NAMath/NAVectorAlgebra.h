@@ -63,7 +63,8 @@ typedef float  NAMat44f[16];
 // Type         The type of the elements. Following are the possible entries:
 //              d    double
 //              f    float
-//              i    NAInt
+//              i32  int32
+//              i64  int64
 // Something    Anything which explains the functionality more detailed.
 // E and/or S   Some functions are available in E or S variants. They are
 //              explained in the following text.

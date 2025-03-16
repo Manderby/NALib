@@ -263,7 +263,7 @@ NA_API NAi64 naGetFirstUncertainSecondNumber(void);
 // When the library updates, you can check if the new library has a new
 // uncertain second number. You do this by giving the uncertain second number
 // which you stored with your data to the following function:
-NA_API NAInt naGetLeapSecondCorrectionConstant(NAi64 oldUncertainSecondNumber);
+NA_API int64 naGetLeapSecondCorrectionConstant(NAi64 oldUncertainSecondNumber);
 // The return value of this function is a number needed for an internal
 // structure not visible to the programmer. A value >= 0 means, that a
 // correction of your data might be required. If the value is < 0, no
@@ -277,7 +277,7 @@ NA_API NAInt naGetLeapSecondCorrectionConstant(NAi64 oldUncertainSecondNumber);
 // function together with the akquired constant from above. This function will
 // correct dates only if needed or possible.
 NA_API void naCorrectDateTimeForLeapSeconds(NADateTime* dateTime,
-                                          NAInt leapSecondCorrectionConstant);
+                                          int64 leapSecondCorrectionConstant);
 
 // When all your data is converted to the new library and you want to store
 // the corrected dates, don't forget to store the NEW uncertain second number

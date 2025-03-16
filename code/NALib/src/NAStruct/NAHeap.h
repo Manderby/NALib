@@ -30,7 +30,7 @@
 // NA_DEBUG is 1.
 //
 // The implementation in NALib also allows you to store an optional backPointer
-// for each element. The backPointer is a pointer to an (mutable!) NAInt where
+// for each element. The backPointer is a pointer to an (mutable!) int64 where
 // the heap will store an implementation-defined value. Using this value, a
 // heap can update the internal ordering when the key of an already inserted
 // element has changed. You can do this with a call to naUpdateHeapElement.
@@ -43,11 +43,11 @@
 //
 // You can always use NA_NULL for the backPointer to not store this value for
 // a particular element. If you do store the value, you should probably provide
-// a pointer to an NAInt which is stored somewhere within the element itself.
+// a pointer to an int64 which is stored somewhere within the element itself.
 // But you may choose otherwise, for example if you yourself have no mutable
-// access to the element and therefore can only provide an array of NAInt.
+// access to the element and therefore can only provide an array of int64.
 // Note that, most importantly, under no circumstances, you should *-krrrrt-*
-// NOT alter these NAInt-values by yourself!
+// NOT alter these int64-values by yourself!
 //
 // A typical application of a heap is to insert a bunch of unsorted elements
 // into the heap and removing them out of the heap one by one to get a sorted
@@ -86,7 +86,7 @@ typedef struct NAHeap NAHeap;
 //
 // Beware in multithreaded environments that growing and shrinking requires
 // memory allocation and deallocation.
-NA_API NAHeap* naInitHeap(NAHeap* heap, size_t count, NAInt flags);
+NA_API NAHeap* naInitHeap(NAHeap* heap, size_t count, uint32 flags);
 
 // Clears the given heap. Deallocates all allocated memory.
 NA_IAPI void naClearHeap(NAHeap* heap);
@@ -95,12 +95,12 @@ NA_IAPI void naClearHeap(NAHeap* heap);
 NA_IAPI void naEmptyHeap(NAHeap* heap);
 
 // Returns the number of elements stored
-NA_IAPI NAInt naGetHeapCount(const NAHeap* heap);
+NA_IAPI int64 naGetHeapCount(const NAHeap* heap);
 
 // Returns the maximum number of elements that can be stored. If heap was
 // initialized with count 0, that size can change over time and reflects the
 // currently reserved count.
-NA_IAPI NAInt naGetHeapMaxCount(const NAHeap* heap);
+NA_IAPI int64 naGetHeapMaxCount(const NAHeap* heap);
 
 // Shrinks the heap if at least three quarters of the heap are unused. Can only
 // be called if the initial count given to naInitHeap was negative.
@@ -111,12 +111,12 @@ NA_IAPI void naInsertHeapElementConst(
   NAHeap*     heap,
   const void* ptr,
   const void* key,
-  NAInt*      backPointer);
+  int64*      backPointer);
 NA_IAPI void naInsertHeapElementMutable(
   NAHeap*     heap,
   void*       ptr,
   const void* key,
-  NAInt*      backPointer);
+  int64*      backPointer);
 
 // Returns the root element of the heap.
 // The Remove-Function will additionally remove that element such that the
@@ -138,11 +138,11 @@ NA_IAPI const void* naGetHeapRootKey(const NAHeap* heap);
 //
 // If the stored backPointer is 0, the element is considered to not be in the
 // heap.
-NA_IAPI void naUpdateHeapElement(           NAHeap* heap, NAInt backPointer);
+NA_IAPI void naUpdateHeapElement(           NAHeap* heap, int64 backPointer);
 
 // If you have such a backPointer, you can also remove an element.
-NA_IAPI const void* naRemoveHeapPosConst(   NAHeap* heap, NAInt backPointer);
-NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAInt backPointer);
+NA_IAPI const void* naRemoveHeapPosConst(   NAHeap* heap, int64 backPointer);
+NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, int64 backPointer);
 
 
 

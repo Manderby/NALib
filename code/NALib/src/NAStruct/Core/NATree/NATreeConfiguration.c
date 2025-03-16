@@ -157,10 +157,10 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags) {
     case NA_TREE_KEY_i32:
       config->childIndexGetter      = na_GetChildIndexBini32;
       config->keyIndexGetter        = na_GetKeyIndexBini32;
-      config->keyEqualComparer      = NA_KEY_OP(Equal, i32);
-      config->keyLessComparer       = NA_KEY_OP(Less, i32);
-      config->keyLessEqualComparer  = NA_KEY_OP(LessEqual, i32);
-      config->keyAssigner           = NA_KEY_OP(Assign, i32);
+      config->keyEqualComparer      = NA_KEY_OP(Equal, int32);
+      config->keyLessComparer       = NA_KEY_OP(Less, int32);
+      config->keyLessEqualComparer  = NA_KEY_OP(LessEqual, int32);
+      config->keyAssigner           = NA_KEY_OP(Assign, int32);
       config->keyTester             = na_TestKeyBini32;
       config->keyNodeContainTester  = NA_NULL;
       config->keyLeafContainTester  = na_TestKeyLeafContainBini32;
@@ -170,10 +170,10 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags) {
     case NA_TREE_KEY_u32:
       config->childIndexGetter      = na_GetChildIndexBinu32;
       config->keyIndexGetter        = na_GetKeyIndexBinu32;
-      config->keyEqualComparer      = NA_KEY_OP(Equal, u32);
-      config->keyLessComparer       = NA_KEY_OP(Less, u32);
-      config->keyLessEqualComparer  = NA_KEY_OP(LessEqual, u32);
-      config->keyAssigner           = NA_KEY_OP(Assign, u32);
+      config->keyEqualComparer      = NA_KEY_OP(Equal, uint32);
+      config->keyLessComparer       = NA_KEY_OP(Less, uint32);
+      config->keyLessEqualComparer  = NA_KEY_OP(LessEqual, uint32);
+      config->keyAssigner           = NA_KEY_OP(Assign, uint32);
       config->keyTester             = na_TestKeyBinu32;
       config->keyNodeContainTester  = NA_NULL;
       config->keyLeafContainTester  = na_TestKeyLeafContainBinu32;

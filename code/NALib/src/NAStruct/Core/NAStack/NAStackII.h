@@ -12,13 +12,13 @@
 
 struct NAStack{
   size_t         typeSize;     // The size of the stored elements in bytes.
-  NAInt          flags;        // Flags defining the behaviour of the stack.
+  uint32         flags;        // Flags defining the behaviour of the stack.
   NAList         arrays;       // List of StackArray (void*)
   NAListIterator curArray;     // List position of current array
   size_t         curBaseIndex; // Absolute index of current array
   size_t         curCount;     // Number of used elements in current array
   #if NA_DEBUG
-    NAInt        iterCount;     // The number of iterators on this stack.
+    int64        iterCount;     // The number of iterators on this stack.
   #endif
 };
 

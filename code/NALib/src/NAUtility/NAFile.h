@@ -121,7 +121,7 @@ NA_IAPI NABool      naAccess  (const char* path,
                                     NABool canRead,
                                     NABool canWrite,
                                     NABool canExecute);
-NA_IAPI NAUTF8Char* naGetCwd  (NAUTF8Char* buf, NAInt bufSize);
+NA_IAPI NAUTF8Char* naGetCwd  (NAUTF8Char* buf, int64 bufSize);
 
 
 

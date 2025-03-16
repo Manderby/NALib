@@ -250,7 +250,7 @@ NA_IAPI NABool naEqualListIterator(
 // Returns NA_FALSE when one of the two ends of the list is reached.
 NA_IAPI NABool naIterateList        (NAListIterator* iter);
 NA_IAPI NABool naIterateListBack    (NAListIterator* iter);
-NA_IAPI NABool naIterateListStep    (NAListIterator* iter, NAInt step);
+NA_IAPI NABool naIterateListStep    (NAListIterator* iter, int64 step);
 
 
 // /////////////////////////////////

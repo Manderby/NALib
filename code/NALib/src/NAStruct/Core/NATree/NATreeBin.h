@@ -5,7 +5,7 @@ struct NATreeBinNode{
   NATreeItem* childs[2];  // must come right after the node.
   union{
     double d;
-    NAInt i;
+    int64 i;
   } key;
   NAPtr userData;
 };
@@ -16,7 +16,7 @@ struct NATreeBinLeaf{
   NATreeLeaf leaf;
   union{
     double d;
-    NAInt i;
+    int64 i;
   } key;
   NAPtr userData;
 };

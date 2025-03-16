@@ -7,7 +7,7 @@ NA_DEF NAStack* naInitStack(
   NAStack* stack,
   size_t typeSize,
   size_t initialCount,
-  NAInt flags)
+  uint32 flags)
 {
   #if NA_DEBUG
     if(!stack)

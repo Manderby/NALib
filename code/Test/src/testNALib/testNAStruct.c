@@ -18,17 +18,17 @@ void testNATree(void);
 void benchmarkNAStack(void);
 
 void printNAStruct(void) {
-  //printNABuffer();
+  printNABuffer();
   printNAHeap();
-  //printNAStack();
-  //printNATree();
+  printNAStack();
+  printNATree();
 }
 
 void testNAStruct(void) {
-//  naTestFunction(testNABuffer);
+  naTestFunction(testNABuffer);
   naTestFunction(testNAHeap);
-//  naTestFunction(testNAStack);
-//  naTestFunction(testNATree);
+  naTestFunction(testNAStack);
+  naTestFunction(testNATree);
 }
 
 void benchmarkNAStruct(void) {

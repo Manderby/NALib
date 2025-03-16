@@ -155,8 +155,8 @@ NA_DEF void naShrinkHeapIfNecessary(NAHeap* heap) {
 
 
 
-NA_HDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, const void* key, NAInt* backPointer) {
-  NAInt newIndex;
+NA_HDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, const void* key, int64* backPointer) {
+  int64 newIndex;
   NAHeapEntry* theData;
   NA_UNUSED(backPointer);
   #if NA_DEBUG
@@ -168,7 +168,7 @@ NA_HDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, con
   if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
   }
-  newIndex = heap->moveDown(heap, key, (NAInt)(heap->count + 1));
+  newIndex = heap->moveDown(heap, key, (int64)(heap->count + 1));
   theData = (NAHeapEntry*)(heap->data);
   theData[newIndex].ptr = naMakePtrWithDataConst(data);
   theData[newIndex].key = key;
@@ -177,8 +177,8 @@ NA_HDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, con
 
 
 
-NA_HDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const void* key, NAInt* backPointer) {
-  NAInt newIndex;
+NA_HDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const void* key, int64* backPointer) {
+  int64 newIndex;
   NAHeapBackEntry* theData;
   #if NA_DEBUG
     if(!heap->autoGrow && (heap->count == heap->maxCount))
@@ -187,7 +187,7 @@ NA_HDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const
   if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
   }
-  newIndex = heap->moveDown(heap, key, (NAInt)(heap->count + 1));
+  newIndex = heap->moveDown(heap, key, (int64)(heap->count + 1));
   theData = (NAHeapBackEntry*)(heap->data);
   theData[newIndex].ptr = naMakePtrWithDataConst(data);
   theData[newIndex].key = key;
@@ -195,7 +195,7 @@ NA_HDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const
     theData[newIndex].backPointer = backPointer;
   }else{
     // The element 0 of the data field is a dummy field which is more than
-    // wide enough to store an NAInt.
+    // wide enough to store an int64.
     theData[newIndex].backPointer = heap->data;
     // Bad, bad programming style, but using this trick, a lot of conditional
     // code can be omitted.
@@ -206,8 +206,8 @@ NA_HDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const
 
 
 
-NA_HDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const void* key, NAInt* backPointer) {
-  NAInt newIndex;
+NA_HDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const void* key, int64* backPointer) {
+  int64 newIndex;
   NAHeapEntry* theData;
   NA_UNUSED(backPointer);
   #if NA_DEBUG
@@ -219,7 +219,7 @@ NA_HDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const v
   if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
   }
-  newIndex = heap->moveDown(heap, key, (NAInt)(heap->count + 1));
+  newIndex = heap->moveDown(heap, key, (int64)(heap->count + 1));
   theData = (NAHeapEntry*)(heap->data);
   theData[newIndex].ptr = naMakePtrWithDataMutable(data);
   theData[newIndex].key = key;
@@ -228,8 +228,8 @@ NA_HDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const v
 
 
 
-NA_HDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const void* key, NAInt* backPointer) {
-  NAInt newIndex;
+NA_HDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const void* key, int64* backPointer) {
+  int64 newIndex;
   NAHeapBackEntry* theData;
   #if NA_DEBUG
     if(!heap->autoGrow && (heap->count == heap->maxCount))
@@ -238,7 +238,7 @@ NA_HDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const voi
   if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
   }
-  newIndex = heap->moveDown(heap, key, (NAInt)(heap->count + 1));
+  newIndex = heap->moveDown(heap, key, (int64)(heap->count + 1));
   theData = (NAHeapBackEntry*)(heap->data);
   theData[newIndex].ptr = naMakePtrWithDataMutable(data);
   theData[newIndex].key = key;
@@ -246,7 +246,7 @@ NA_HDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const voi
     theData[newIndex].backPointer = backPointer;
   }else{
     // The element 0 of the data field is a dummy field which is more than
-    // wide enough to store an NAInt.
+    // wide enough to store an int64.
     theData[newIndex].backPointer = heap->data;
     // Bad, bad programming style, but using this trick, a lot of conditional
     // code can be omitted.
@@ -267,7 +267,7 @@ NA_HDEF const void* na_RemoveHeapRootConstNoBack(NAHeap* heap) {
   returnValue = naGetPtrConst(theData[1].ptr);
   heap->count--;
   if(heap->count) {
-    NAInt curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
+    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
     theData[curIndex] = theData[heap->count + 1];
   }
   return returnValue;
@@ -286,7 +286,7 @@ NA_HDEF const void* na_RemoveHeapRootConstBack(NAHeap* heap) {
   *(theData[1].backPointer) = 0;
   heap->count--;
   if(heap->count) {
-    NAInt curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
+    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
     theData[curIndex] = theData[heap->count + 1];
     *(theData[curIndex].backPointer) = curIndex;
   }
@@ -305,7 +305,7 @@ NA_HDEF void* na_RemoveHeapRootMutableNoBack(NAHeap* heap) {
   returnValue = naGetPtrMutable(theData[1].ptr);
   heap->count--;
   if(heap->count) {
-    NAInt curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
+    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
     theData[curIndex] = theData[heap->count + 1];
   }
   return returnValue;
@@ -323,7 +323,7 @@ NA_HDEF void* na_RemoveHeapRootMutableBack(NAHeap* heap) {
   *(theData[1].backPointer) = 0;
   heap->count--;
   if(heap->count) {
-    NAInt curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
+    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
     theData[curIndex] = theData[heap->count + 1];
     *(theData[curIndex].backPointer) = curIndex;
   }
@@ -332,7 +332,7 @@ NA_HDEF void* na_RemoveHeapRootMutableBack(NAHeap* heap) {
 
 
 
-NA_HDEF const void* na_RemoveHeapPosConstNoBack(NAHeap* heap, NAInt backPointer) {
+NA_HDEF const void* na_RemoveHeapPosConstNoBack(NAHeap* heap, int64 backPointer) {
   NA_UNUSED(heap);
   NA_UNUSED(backPointer);
   #if NA_DEBUG
@@ -343,11 +343,11 @@ NA_HDEF const void* na_RemoveHeapPosConstNoBack(NAHeap* heap, NAInt backPointer)
 
 
 
-NA_HDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, NAInt backPointer) {
+NA_HDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, int64 backPointer) {
   NAHeapBackEntry* theData = (NAHeapBackEntry*)(heap->data);
   const void* returnValue;
   #if NA_DEBUG
-    if(backPointer > (NAInt)heap->count)
+    if(backPointer > (int64)heap->count)
       naError("backPointer makes no sense.");
     if(backPointer == 0)
       naError("backPointer says that element is not part of the heap.");
@@ -356,7 +356,7 @@ NA_HDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, NAInt backPointer) {
   *(theData[backPointer].backPointer) = 0;
   heap->count--;
   if(heap->count) {
-    NAInt curIndex = heap->moveUp(heap, theData[heap->count + 1].key, backPointer);
+    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, backPointer);
     theData[curIndex] = theData[heap->count + 1];
     *(theData[curIndex].backPointer) = curIndex;
   }
@@ -365,7 +365,7 @@ NA_HDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, NAInt backPointer) {
 
 
 
-NA_HDEF void* na_RemoveHeapPosMutableNoBack(NAHeap* heap, NAInt backPointer) {
+NA_HDEF void* na_RemoveHeapPosMutableNoBack(NAHeap* heap, int64 backPointer) {
   NA_UNUSED(heap);
   NA_UNUSED(backPointer);
   #if NA_DEBUG
@@ -375,11 +375,11 @@ NA_HDEF void* na_RemoveHeapPosMutableNoBack(NAHeap* heap, NAInt backPointer) {
 }
 
 
-NA_HDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, NAInt backPointer) {
+NA_HDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, int64 backPointer) {
   NAHeapBackEntry* theData = (NAHeapBackEntry*)(heap->data);
   void* returnValue;
   #if NA_DEBUG
-    if(backPointer > (NAInt)heap->count)
+    if(backPointer > (int64)heap->count)
       naError("backPointer makes no sense.");
     if(backPointer == 0)
       naError("backPointer says that element is not part of the heap.");
@@ -388,7 +388,7 @@ NA_HDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, NAInt backPointer) {
   *(theData[backPointer].backPointer) = 0;
   heap->count--;
   if(heap->count) {
-    NAInt curIndex = heap->moveUp(heap, theData[heap->count + 1].key, backPointer);
+    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, backPointer);
     theData[curIndex] = theData[heap->count + 1];
     *(theData[curIndex].backPointer) = curIndex;
   }
@@ -396,7 +396,7 @@ NA_HDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, NAInt backPointer) {
 }
 
 
-NA_HDEF void na_UpdateHeapElementNoBack(NAHeap* heap, NAInt backPointer) {
+NA_HDEF void na_UpdateHeapElementNoBack(NAHeap* heap, int64 backPointer) {
   NA_UNUSED(heap);
   NA_UNUSED(backPointer);
   #if NA_DEBUG
@@ -406,12 +406,12 @@ NA_HDEF void na_UpdateHeapElementNoBack(NAHeap* heap, NAInt backPointer) {
 
 
 
-NA_HDEF void na_UpdateHeapElementBack(NAHeap* heap, NAInt backPointer) {
+NA_HDEF void na_UpdateHeapElementBack(NAHeap* heap, int64 backPointer) {
   NAHeapBackEntry* theData = (NAHeapBackEntry*)(heap->data);
   NAHeapBackEntry tmp;
-  NAInt curIndex;
+  int64 curIndex;
   #if NA_DEBUG
-    if(backPointer > (NAInt)heap->count)
+    if(backPointer > (int64)heap->count)
       naError("backPointer makes no sense.");
     if(backPointer == 0)
       naError("backPointer says that element is not part of the heap.");
@@ -427,7 +427,7 @@ NA_HDEF void na_UpdateHeapElementBack(NAHeap* heap, NAInt backPointer) {
 // This is the one function where all the function pointers of the NAHeap
 // structure are set. After this function, these pointers can no longer be
 // changed and therefore define the behaviour of the heap until its deletion.
-NA_DEF NAHeap* naInitHeap(NAHeap* heap, size_t count, NAInt flags) {
+NA_DEF NAHeap* naInitHeap(NAHeap* heap, size_t count, uint32 flags) {
   #if NA_DEBUG
     if(!heap)
       naCrash("heap is Null-Pointer");

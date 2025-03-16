@@ -10,13 +10,13 @@ NA_HDEF void na_InitNodeAVL(NATreeBinNode* binnode) {
 
 
 
-NA_HIDEF NAInt na_GetNodeAVL(NATreeBinNode* binnode) {
-  return (NAInt)((na_GetBinNodeNode(binnode)->flags & NA_TREE_NODE_AVL_MASK) >> NA_TREE_NODE_AVL_BITSHIFT) - 1;
+NA_HIDEF int64 na_GetNodeAVL(NATreeBinNode* binnode) {
+  return (int64)((na_GetBinNodeNode(binnode)->flags & NA_TREE_NODE_AVL_MASK) >> NA_TREE_NODE_AVL_BITSHIFT) - 1;
 }
 
 
 
-NA_HIDEF void na_SetNodeAVL(NATreeBinNode* binnode, NAInt balance) {
+NA_HIDEF void na_SetNodeAVL(NATreeBinNode* binnode, int64 balance) {
   naSetFlagu32(&na_GetBinNodeNode(binnode)->flags, NA_TREE_NODE_AVL_MASK, NA_FALSE);
   na_GetBinNodeNode(binnode)->flags |= (balance + 1) << NA_TREE_NODE_AVL_BITSHIFT;
 }
@@ -102,8 +102,8 @@ NA_HIDEF void na_PropagateAVLShrink(NATree* tree, NATreeBinNode* binnode) {
 
 
 NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex) {
-  NAInt nodebalance = na_GetNodeAVL(binnode);
-  nodebalance += ((NAInt)childIndex * 2) - 1;
+  int64 nodebalance = na_GetNodeAVL(binnode);
+  nodebalance += ((int64)childIndex * 2) - 1;
   if(nodebalance == 0) {
     na_SetNodeAVL(binnode, nodebalance);
   }else if(nodebalance == 1 || nodebalance == -1) {
@@ -111,14 +111,14 @@ NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex)
     na_PropagateAVLGrow(tree, binnode);
   }else if(nodebalance == -2) {
     NATreeBinNode* child = (NATreeBinNode*)binnode->childs[0];
-    NAInt childbalance = na_GetNodeAVL(child);
+    int64 childbalance = na_GetNodeAVL(child);
     if(childbalance == -1) {
       na_RotateRightBin(tree, child, binnode);
       na_SetNodeAVL(child, 0);
       na_SetNodeAVL(binnode, 0);
     }else{
       NATreeBinNode* grandchild;
-      NAInt grandchildbalance;
+      int64 grandchildbalance;
       #if NA_DEBUG
         if(childbalance != 1)
           naError("child balance invalid with node balance -2");
@@ -147,14 +147,14 @@ NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex)
     }
   }else if(nodebalance == 2) {
     NATreeBinNode* child = (NATreeBinNode*)binnode->childs[1];
-    NAInt childbalance = na_GetNodeAVL(child);
+    int64 childbalance = na_GetNodeAVL(child);
     if(childbalance == 1) {
       na_RotateLeftBin(tree, binnode, child);
       na_SetNodeAVL(binnode, 0);
       na_SetNodeAVL(child, 0);
     }else{
       NATreeBinNode* grandchild;
-      NAInt grandchildbalance;
+      int64 grandchildbalance;
       #if NA_DEBUG
         if(childbalance != -1)
           naError("child balance invalid with node balance 2");
@@ -191,8 +191,8 @@ NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex)
 
 
 NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex) {
-  NAInt nodebalance = na_GetNodeAVL(binnode);
-  nodebalance -= ((NAInt)childIndex * 2) - 1;
+  int64 nodebalance = na_GetNodeAVL(binnode);
+  nodebalance -= ((int64)childIndex * 2) - 1;
   if(nodebalance == 0) {
     na_SetNodeAVL(binnode, nodebalance);
     na_PropagateAVLShrink(tree, binnode);
@@ -200,7 +200,7 @@ NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, size_t childInde
     na_SetNodeAVL(binnode, nodebalance);
   }else if(nodebalance == 2) {
     NATreeBinNode* child = (NATreeBinNode*)binnode->childs[1];
-    NAInt childbalance = na_GetNodeAVL(child);
+    int64 childbalance = na_GetNodeAVL(child);
     if(childbalance == 0) {
       na_RotateLeftBin(tree, binnode, child);
       na_SetNodeAVL(binnode, 1);
@@ -212,7 +212,7 @@ NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, size_t childInde
       na_PropagateAVLShrink(tree, child);
     }else{
       NATreeBinNode* grandchild;
-      NAInt grandchildbalance;
+      int64 grandchildbalance;
       #if NA_DEBUG
         if(childbalance != -1)
           naError("child balance invalid with node balance 2");
@@ -240,7 +240,7 @@ NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, size_t childInde
     }
   }else if(nodebalance == -2) {
     NATreeBinNode* child = (NATreeBinNode*)binnode->childs[0];
-    NAInt childbalance = na_GetNodeAVL(child);
+    int64 childbalance = na_GetNodeAVL(child);
     if(childbalance == 0) {
       na_RotateRightBin(tree, child, binnode);
       na_SetNodeAVL(child, 1);
@@ -252,7 +252,7 @@ NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, size_t childInde
       na_PropagateAVLShrink(tree, child);
     }else{
       NATreeBinNode* grandchild;
-      NAInt grandchildbalance;
+      int64 grandchildbalance;
       #if NA_DEBUG
         if(childbalance != 1)
           naError("child balance invalid with node balance -2");

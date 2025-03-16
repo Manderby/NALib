@@ -113,10 +113,11 @@ typedef void  (*NATreeNodeDataDestructor) (NAPtr nodeData);
 //
 // When returning NA_TRUE, the update will propagate to the next parent. When
 // returning NA_FALSE, propagation stops.
-typedef NABool (*NATreeNodeUpdater)       (NAPtr parentData,
-                                           NAPtr* childDatas,
-                                           size_t childIndex,
-                                           size_t childMask);
+typedef NABool (*NATreeNodeUpdater)(
+  NAPtr parentData,
+  NAPtr* childDatas,
+  size_t childIndex,
+  size_t childMask);
 
 
 
@@ -158,30 +159,30 @@ typedef NABool (*NATreeNodeUpdater)       (NAPtr parentData,
 NA_API  NATreeConfiguration* naCreateTreeConfiguration(uint32 flags);
 
 NA_IAPI void naSetTreeConfigurationUserData(
-  NATreeConfiguration*       config,
-  NAPtr                      userData);
+  NATreeConfiguration* config,
+  NAPtr userData);
 
 NA_IAPI void naSetTreeConfigurationTreeCallbacks(
-  NATreeConfiguration*       config,
-  NATreeContructorCallback   treeConstructor,
-  NATreeDestructorCallback   treeDestructor);
+  NATreeConfiguration* config,
+  NATreeContructorCallback treeConstructor,
+  NATreeDestructorCallback treeDestructor);
 
 NA_IAPI void naSetTreeConfigurationLeafCallbacks(
-  NATreeConfiguration*       config,
-  NATreeLeafDataConstructor  leafDataConstructor,
-  NATreeLeafDataDestructor   leafDataDestructor);
+  NATreeConfiguration* config,
+  NATreeLeafDataConstructor leafDataConstructor,
+  NATreeLeafDataDestructor leafDataDestructor);
 
 NA_IAPI void naSetTreeConfigurationNodeCallbacks(
-  NATreeConfiguration*       config,
-  NATreeNodeDataConstructor  nodeDataConstructor,
-  NATreeNodeDataDestructor   nodeDataDestructor,
-  NATreeNodeUpdater          nodeUpdater);
+  NATreeConfiguration* config,
+  NATreeNodeDataConstructor nodeDataConstructor,
+  NATreeNodeDataDestructor nodeDataDestructor,
+  NATreeNodeUpdater nodeUpdater);
 
 NA_IAPI void naSetTreeConfigurationBaseLeafExponent(
-  NATreeConfiguration*       config,
-  NAInt                      baseLeafExponent);
+  NATreeConfiguration* config,
+  int64 baseLeafExponent);
 
-NA_IAPI NAInt naGetTreeConfigurationBaseLeafExponent(
+NA_IAPI int64 naGetTreeConfigurationBaseLeafExponent(
   const NATreeConfiguration* config);
 
 
@@ -300,10 +301,12 @@ NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 #define NA_TREE_SEARCH_PARENT  -1
 #define NA_TREE_SEARCH_FOUND   -2
 #define NA_TREE_SEARCH_ABORT   -3
-typedef NAInt (*NATreeNodeTokenSearcher)(   void* token,
-                                            NAPtr data);
-typedef NAInt (*NATreeLeafTokenSearcher)(   void* token,
-                                            NAPtr data);
+typedef int64 (*NATreeNodeTokenSearcher)(
+  void* token,
+  NAPtr data);
+typedef int64 (*NATreeLeafTokenSearcher)(
+  void* token,
+  NAPtr data);
 
 // Moves the iterator to the specified position. If the desired position is
 // not found or the iterator points at the initial position, NA_FALSE is
@@ -322,17 +325,22 @@ typedef NAInt (*NATreeLeafTokenSearcher)(   void* token,
 //           This is the only function which allows searching for leafes in
 //           a tree which is configured to have no keys. The iterator will
 //           point to the last leaf for which matchfound was true.
-NA_IAPI NABool naLocateTreeKey(     NATreeIterator* iter,
-                                        const void* key,
-                                             NABool assumeClose);
-NA_IAPI NABool naLocateTreeFirst(   NATreeIterator* iter);
-NA_IAPI NABool naLocateTreeLast(    NATreeIterator* iter);
-NA_IAPI NABool naLocateTreeIterator(NATreeIterator* iter,
-                                    NATreeIterator* srcIter);
-NA_API  NABool naLocateTreeToken   (NATreeIterator* iter,
-                                              void* token,
-                            NATreeNodeTokenSearcher nodeSearcher,
-                            NATreeLeafTokenSearcher leafSearcher);
+NA_IAPI NABool naLocateTreeKey(
+  NATreeIterator* iter,
+  const void* key,
+  NABool assumeClose);
+NA_IAPI NABool naLocateTreeFirst(
+  NATreeIterator* iter);
+NA_IAPI NABool naLocateTreeLast(
+  NATreeIterator* iter);
+NA_IAPI NABool naLocateTreeIterator(
+  NATreeIterator* iter,
+  NATreeIterator* srcIter);
+NA_API NABool naLocateTreeToken(
+  NATreeIterator* iter,
+  void* token,
+  NATreeNodeTokenSearcher nodeSearcher,
+  NATreeLeafTokenSearcher leafSearcher);
 
 // Executes the nodeUpdater callback starting from the parent node of the
 // current leaf of iter. Bubbles towards the root if the callback returns
@@ -345,12 +353,14 @@ NA_IAPI void naUpdateTreeLeaf(NATreeIterator* iter);
 //
 // The callback will get the token, the data of the current node as well as
 // the index of the child from which the bubbling comes from.
-typedef NABool (*NATreeNodeTokenCallback)(     void* token,
-                                               NAPtr data,
-                                               NAInt nextIndex);
-NA_IAPI void naBubbleTreeToken(const NATreeIterator* iter,
-                                               void* token,
-                             NATreeNodeTokenCallback nodeTokenCallback);
+typedef NABool (*NATreeNodeTokenCallback)(
+  void* token,
+  NAPtr data,
+  int64 nextIndex);
+NA_IAPI void naBubbleTreeToken(
+  const NATreeIterator* iter,
+  void* token,
+  NATreeNodeTokenCallback nodeTokenCallback);
 
 
 
@@ -362,12 +372,14 @@ NA_IAPI void naBubbleTreeToken(const NATreeIterator* iter,
 // iterator backwards. Returns NA_FALSE when iteration is over. For trees
 // which store a key, you can even send a limit in which range the tree shall
 // be traversed. You can send Null if you want the whole tree to be traversed.
-NA_IAPI NABool naIterateTree        (NATreeIterator* iter,
-                                         const void* lowerLimit,
-                                         const void* upperLimit);
-NA_IAPI NABool naIterateTreeBack    (NATreeIterator* iter,
-                                         const void* lowerLimit,
-                                         const void* upperLimit);
+NA_IAPI NABool naIterateTree(
+  NATreeIterator* iter,
+  const void* lowerLimit,
+  const void* upperLimit);
+NA_IAPI NABool naIterateTreeBack(
+  NATreeIterator* iter,
+  const void* lowerLimit,
+  const void* upperLimit);
 
 // /////////////////////////////////
 // Returns the content of the current element without moving the iterator.
@@ -395,32 +407,38 @@ NA_IAPI void*       naGetTreeCurNodeMutable(NATreeIterator* iter);
 //
 // The iterator will afterwards always point at the tree leaf with the given
 // key, no matter if it is the replaced content or the existing content.
-NA_IAPI NABool naAddTreeKeyConst(   NATreeIterator* iter,
-                                        const void* key,
-                                        const void* content,
-                                             NABool replace);
-NA_IAPI NABool naAddTreeKeyMutable( NATreeIterator* iter,
-                                        const void* key,
-                                              void* content,
-                                             NABool replace);
+NA_IAPI NABool naAddTreeKeyConst(
+  NATreeIterator* iter,
+  const void* key,
+  const void* content,
+  NABool replace);
+NA_IAPI NABool naAddTreeKeyMutable(
+  NATreeIterator* iter,
+  const void* key,
+  void* content,
+  NABool replace);
 
 // Adds the given content at the specified position. Note that if the iterator
 // is at initial position, "Next" behaves like "First" and "Prev" behaves like
 // "Last".
 //
 // These functions only work on trees which are configured to have no keys.
-NA_IAPI NABool naAddTreePrevConst(  NATreeIterator* iter,
-                                        const void* content,
-                                             NABool moveToNew);
-NA_IAPI NABool naAddTreePrevMutable(NATreeIterator* iter,
-                                              void* content,
-                                             NABool moveToNew);
-NA_IAPI NABool naAddTreeNextConst(  NATreeIterator* iter,
-                                        const void* content,
-                                             NABool moveToNew);
-NA_IAPI NABool naAddTreeNextMutable(NATreeIterator* iter,
-                                              void* content,
-                                             NABool moveToNew);
+NA_IAPI NABool naAddTreePrevConst(
+  NATreeIterator* iter,
+  const void* content,
+  NABool moveToNew);
+NA_IAPI NABool naAddTreePrevMutable(
+  NATreeIterator* iter,
+  void* content,
+  NABool moveToNew);
+NA_IAPI NABool naAddTreeNextConst(
+  NATreeIterator* iter,
+  const void* content,
+  NABool moveToNew);
+NA_IAPI NABool naAddTreeNextMutable(
+  NATreeIterator* iter,
+  void* content,
+  NABool moveToNew);
 
 // /////////////////////////////////
 // Removes elements.

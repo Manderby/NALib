@@ -10,14 +10,14 @@
 
 
 struct NACircularBuffer{
-  NAInt space;
-  NAInt cur;
-  NAInt last;
+  int64 space;
+  int64 cur;
+  int64 last;
   void** data;
 };
 
 
-NACircularBuffer* naInitCircularBuffer(NACircularBuffer* buffer, NAInt count) {
+NACircularBuffer* naInitCircularBuffer(NACircularBuffer* buffer, int64 count) {
   buffer->space = count + 1;
   buffer->cur = 0;
   buffer->last = 0;

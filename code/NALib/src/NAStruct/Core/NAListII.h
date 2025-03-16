@@ -657,7 +657,7 @@ NA_IDEF NABool naIterateListBack(NAListIterator* iter) {
 // Note that this function looks extremely complicated but it is not. When
 // this code is built in release, it all boils down to two loops just moving
 // a pointer forward or backward.
-NA_IDEF NABool naIterateListStep(NAListIterator* iter, NAInt step) {
+NA_IDEF NABool naIterateListStep(NAListIterator* iter, int64 step) {
   #if NA_DEBUG
     if(step == NA_ZERO) {
       naError("step is zero.");

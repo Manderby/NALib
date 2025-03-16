@@ -70,7 +70,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
   }
   
   if(!advance) {
-    iter->partOffset = (NAInt)firstPartOffset;
+    iter->partOffset = (int64)firstPartOffset;
     naLocateTreeIterator(&iter->partIter, &firstBufIter);
   }
   naClearTreeIterator(&firstBufIter);  
@@ -89,7 +89,7 @@ NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, size_t index) {
   #endif
 
   iter = naMakeBufferAccessor(buffer);  
-  found = naLocateBufferAbsolute(&iter, (NAInt)index);
+  found = naLocateBufferAbsolute(&iter, (int64)index);
   if(found) {
     retbyte = naGetBufferu8(&iter);
   }else{
