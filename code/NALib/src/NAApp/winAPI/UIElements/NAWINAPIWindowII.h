@@ -243,10 +243,10 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
 
   NARect screenRect = naGetMainScreenRect();
   RECT windowRect;
-  windowRect.top = (int)((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale);
-  windowRect.right = (int)((rect.pos.x + rect.size.width) * uiScale);
-  windowRect.bottom = (int)((screenRect.size.height - rect.pos.y) * uiScale);
-  windowRect.left = (int)(rect.pos.x * uiScale);
+  windowRect.top = (LONG)naRound((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale);
+  windowRect.right = (LONG)naRound((rect.pos.x + rect.size.width) * uiScale);
+  windowRect.bottom = (LONG)naRound((screenRect.size.height - rect.pos.y) * uiScale);
+  windowRect.left = (LONG)naRound(rect.pos.x * uiScale);
   AdjustWindowRect(&windowRect, style, NA_FALSE);
 
   TCHAR* systemTitle = naAllocSystemStringWithUTF8String(title);
@@ -511,21 +511,19 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
 
   leftdiff = (testPoint.x - windowRect.left);
   topdiff =  (testPoint.y - windowRect.top);
-  rightdiff =  ((windowRect.right - windowRect.left) - (clientRect.right - clientRect.left) - leftdiff);
-  bottomdiff =  ((windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top) - topdiff);
-  rect.pos.x -= leftdiff;
-  rect.pos.y -= bottomdiff;
-  rect.size.width += leftdiff;
-  rect.size.height += bottomdiff;
-  rect.size.width += rightdiff;
-  rect.size.height += topdiff;
+  rightdiff =  (windowRect.right - (testPoint.x + clientRect.right));
+  bottomdiff =  (windowRect.bottom - (testPoint.y + clientRect.bottom));
+  rect.pos.x -= leftdiff / uiScale;
+  rect.pos.y -= bottomdiff / uiScale;
+  rect.size.width += (leftdiff + rightdiff) / uiScale;
+  rect.size.height += (bottomdiff + topdiff) / uiScale;
 
   MoveWindow(
     naGetUIElementNativePtr(winapiWindow),
-    (LONG)(rect.pos.x * uiScale),
-    (LONG)((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale),
-    (LONG)(rect.size.width * uiScale),
-    (LONG)(rect.size.height * uiScale),
+    (LONG)(naRound(rect.pos.x * uiScale)),
+    (LONG)(naRound((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale)),
+    (LONG)(naRound(rect.size.width * uiScale)),
+    (LONG)(naRound(rect.size.height * uiScale)),
     NA_FALSE);
 
   na_UpdateMouseTracking(&winapiWindow->window.uiElement);
