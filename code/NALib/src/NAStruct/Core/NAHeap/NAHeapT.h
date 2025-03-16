@@ -9,13 +9,13 @@
 // return value is the index in which the key can safely be inserted. The
 // curIndex points at the starting position and the element at curIndex is
 // assumed to be empty (or contain no useful information).
-NA_HDEF NAInt NA_T3(na_HeapMoveDown, NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE, NA_T_USE_BACKPOINTERS)(NAHeap* heap, const void* key, NAInt curIndex) {
+NA_HDEF int64 NA_T3(na_HeapMoveDown, NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE, NA_T_USE_BACKPOINTERS)(NAHeap* heap, const void* key, int64 curIndex) {
   #if NA_T_USE_BACKPOINTERS
     NAHeapBackEntry* entries = heap->data;
   #else
     NAHeapEntry* entries = heap->data;
   #endif
-  NAInt nextIndex = curIndex / 2;
+    int64 nextIndex = curIndex / 2;
   
   // Go from the leaf to the root and test, where the new element shall lie.
   while((nextIndex > 0) && NA_KEY_OP(NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE)(entries[nextIndex].key, key)) {
@@ -36,22 +36,22 @@ NA_HDEF NAInt NA_T3(na_HeapMoveDown, NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE, 
 // Assumes the given index to point at an element which is empty (or contains
 // no useful information). Performs a reordering of the heap such that the
 // given key can be inserted at a suitable index and returns this index.
-NA_HDEF NAInt NA_T3(na_HeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T_USE_BACKPOINTERS)(NAHeap* heap, const void* key, NAInt curIndex) {
+NA_HDEF int64 NA_T3(na_HeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T_USE_BACKPOINTERS)(NAHeap* heap, const void* key, int64 curIndex) {
   #if NA_T_USE_BACKPOINTERS
     NAHeapBackEntry* entries = heap->data;
   #else
     NAHeapEntry* entries = heap->data;
   #endif
 
-  NAInt indexl = curIndex * 2 + 0;
-  NAInt indexr = curIndex * 2 + 1;
+    int64 indexl = curIndex * 2 + 0;
+    int64 indexr = curIndex * 2 + 1;
   // as long as there is at least one possible position... 
   while(NA_TRUE) {
   
-    if(indexr > (NAInt)heap->count) {
+    if(indexr > (int64)heap->count) {
       // There is at least one of the elements out of bounds.
       
-      if(indexl <= (NAInt)heap->count) {
+      if(indexl <= (int64)heap->count) {
         // only the left element must be checked. 
         if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexl].key, key)) {
           entries[curIndex] = entries[indexl];

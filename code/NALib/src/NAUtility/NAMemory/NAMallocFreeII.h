@@ -20,7 +20,7 @@ NA_IDEF void* naMalloc(size_t byteSize) {
   void* ptr;
 
   #if NA_DEBUG
-    if(byteSize == NA_ZERO)
+    if(byteSize == NA_ZERO_s)
       naCrash("size is zero.");
   #endif
 
@@ -62,7 +62,7 @@ NA_IDEF void* naMallocAligned(size_t byteSize, size_t align) {
       #endif
       // make a pointer point to the first byte being aligned within the memory
       // allocated in mem which comes after align bytes and a pointer size.
-      void** ptr = (void**)((size_t)((NAByte*)mem + align + sizeof(void*)) & ~(align - NA_ONE));
+      void** ptr = (void**)((size_t)((NAByte*)mem + align + sizeof(void*)) & ~(align - NA_ONE_s));
       // Store the pointer to the original allocation pointer in the element
       // right before the first returned byte.
       ptr[-1] = mem;
@@ -87,7 +87,7 @@ NA_IDEF void* naMallocAligned(size_t byteSize, size_t align) {
   #endif
 
   #if NA_DEBUG
-    if(((size_t)retPtr & (size_t)(align - NA_ONE)) != NA_ZERO)
+    if(((size_t)retPtr & (size_t)(align - NA_ONE_s)) != NA_ZERO_s)
       naError("pointer misaligned.");
   #endif
 

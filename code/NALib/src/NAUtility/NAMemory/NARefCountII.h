@@ -67,7 +67,7 @@ NA_IDEF NARefCount* naRetainRefCount(NARefCount* refCount) {
       // The next test can detect some erroneous behaviour in the code. Note
       // however that most likely the true cause of the error did occur long
       // before reaching here.
-      if(refCount->count == NA_ZERO)
+      if(refCount->count == NA_ZERO_s)
         naError("Retaining NARefCount with a count of 0");
       if(refCount->count == NA_MAX_s)
         naError("Reference count overflow");
@@ -88,7 +88,7 @@ NA_IDEF void naReleaseRefCount(NARefCount* refCount, void* data, NAMutator destr
     // The next test can detect some erroneous behaviour in the code. Note
     // however that most likely the true cause of the error did occur long
     // before reaching here.
-    if(refCount->count == NA_ZERO)
+    if(refCount->count == NA_ZERO_s)
       naError("Releasing NARefCount with a count of 0");
   #endif
   // Note that the author decided to always count to zero, even if it is clear
@@ -98,7 +98,7 @@ NA_IDEF void naReleaseRefCount(NARefCount* refCount, void* data, NAMutator destr
   // and NA_DEBUG is 1, this can be detected!
   refCount->count--;
 
-  if(refCount->count == NA_ZERO) {
+  if(refCount->count == NA_ZERO_s) {
     // Call the destructor on the data if available.
     if(destructor)
       destructor(data);

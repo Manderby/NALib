@@ -141,19 +141,6 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(uint32 flags) {
       config->keyNodeOverlapTester  = NA_NULL;
       config->keyLeafOverlapTester  = NA_NULL;
       break;
-    case NA_TREE_KEY_NAINT:
-      config->childIndexGetter      = na_GetChildIndexBinNAInt;
-      config->keyIndexGetter        = na_GetKeyIndexBinNAInt;
-      config->keyEqualComparer      = NA_KEY_OP(Equal, NAInt);
-      config->keyLessComparer       = NA_KEY_OP(Less, NAInt);
-      config->keyLessEqualComparer  = NA_KEY_OP(LessEqual, NAInt);
-      config->keyAssigner           = NA_KEY_OP(Assign, NAInt);
-      config->keyTester             = na_TestKeyBinNAInt;
-      config->keyNodeContainTester  = NA_NULL;
-      config->keyLeafContainTester  = na_TestKeyLeafContainBinNAInt;
-      config->keyNodeOverlapTester  = NA_NULL;
-      config->keyLeafOverlapTester  = NA_NULL;
-      break;
     case NA_TREE_KEY_i32:
       config->childIndexGetter      = na_GetChildIndexBini32;
       config->keyIndexGetter        = na_GetKeyIndexBini32;

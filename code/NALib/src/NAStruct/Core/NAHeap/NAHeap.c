@@ -36,7 +36,7 @@
       #include "NAHeapT.h"
     #undef NA_T_TYPE
 
-    #define NA_T_TYPE NAInt
+    #define NA_T_TYPE int64
       #include "NAHeapT.h"
     #undef NA_T_TYPE
 
@@ -56,7 +56,7 @@
       #include "NAHeapT.h"
     #undef NA_T_TYPE
 
-    #define NA_T_TYPE NAInt
+    #define NA_T_TYPE int64
       #include "NAHeapT.h"
     #undef NA_T_TYPE
 
@@ -78,7 +78,7 @@
       #include "NAHeapT.h"
     #undef NA_T_TYPE
 
-    #define NA_T_TYPE NAInt
+    #define NA_T_TYPE int64
       #include "NAHeapT.h"
     #undef NA_T_TYPE
 
@@ -98,7 +98,7 @@
       #include "NAHeapT.h"
     #undef NA_T_TYPE
 
-    #define NA_T_TYPE NAInt
+    #define NA_T_TYPE int64
       #include "NAHeapT.h"
     #undef NA_T_TYPE
 
@@ -474,13 +474,13 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, size_t count, uint32 flags) {
         heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   float, 0);
       }
       break;
-    case NA_HEAP_USES_NAINT_KEY:
+    case NA_HEAP_USES_INT64_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP) {
-        heap->moveDown = NA_T3(na_HeapMoveDown, Less,   NAInt, 0);
-        heap->moveUp   = NA_T3(na_HeapMoveUp,   Greater, NAInt, 0);
+        heap->moveDown = NA_T3(na_HeapMoveDown, Less,   int64, 0);
+        heap->moveUp   = NA_T3(na_HeapMoveUp,   Greater, int64, 0);
       }else{
-        heap->moveDown = NA_T3(na_HeapMoveDown, Greater, NAInt, 0);
-        heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   NAInt, 0);
+        heap->moveDown = NA_T3(na_HeapMoveDown, Greater, int64, 0);
+        heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   int64, 0);
       }
       break;
     case NA_HEAP_USES_DATETIME_KEY:
@@ -535,13 +535,13 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, size_t count, uint32 flags) {
         heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   float, 1);
       }
       break;
-    case NA_HEAP_USES_NAINT_KEY:
+    case NA_HEAP_USES_INT64_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP) {
-        heap->moveDown = NA_T3(na_HeapMoveDown, Less,   NAInt, 1);
-        heap->moveUp   = NA_T3(na_HeapMoveUp,   Greater, NAInt, 1);
+        heap->moveDown = NA_T3(na_HeapMoveDown, Less,   int64, 1);
+        heap->moveUp   = NA_T3(na_HeapMoveUp,   Greater, int64, 1);
       }else{
-        heap->moveDown = NA_T3(na_HeapMoveDown, Greater, NAInt, 1);
-        heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   NAInt, 1);
+        heap->moveDown = NA_T3(na_HeapMoveDown, Greater, int64, 1);
+        heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   int64, 1);
       }
       break;
     case NA_HEAP_USES_DATETIME_KEY:

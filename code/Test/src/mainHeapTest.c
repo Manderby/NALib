@@ -76,7 +76,7 @@
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
 //  for(i = 0; i < TESTSIZE; i++) {
-////    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
+////    int64 key = (int64)(naUniformRandZE() * TESTSIZE);
 //    double key = naUniformRandZE();
 ////    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
 ////    double key = (double)i / TESTSIZE;
@@ -90,7 +90,7 @@
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeAccessor(&tree);
 //  for(i = 0; i < TESTSIZE; i++) {
-////    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
+////    int64 key = (int64)(naUniformRandZE() * TESTSIZE);
 ////    double key = naUniformRandZE();
 //    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
 ////    double key = (double)i / TESTSIZE;
@@ -103,14 +103,14 @@
 //  t2 = naMakeDateTimeNow();
 //  printf("Tree Locate: %f" NA_NL, naGetDateTimeDifference(&t2, &t1));
 //
-////  NAInt prevKey = -1.;
+////  int64 prevKey = -1.;
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
 //  i = 0;
 //  while(naIterateTree(&iter, NA_NULL, NA_NULL)) {
 //    const double* key;
 //    i++;
-////    const NAInt* key = naGetTreeCurKey(&iter);
+////    const int64* key = naGetTreeCurKey(&iter);
 ////    if(*key < prevKey) {
 ////      printf("Wrong sorting: %d: %"NA_PRIi", %"NA_PRIi NA_NL, i, *key, prevKey);
 ////    }
@@ -134,7 +134,7 @@
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
 //  for(i = 0; i < TESTSIZE; i++) {
-////    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
+////    int64 key = (int64)(naUniformRandZE() * TESTSIZE);
 //    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
 ////    double key = (double)i / TESTSIZE;
 //    if(i%5 != 0) {

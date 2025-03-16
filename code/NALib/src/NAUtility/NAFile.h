@@ -35,9 +35,7 @@ typedef struct NAFile NAFile;
 //
 // New types and macros introduced:
 // NAFileSize:          The file size integer. Guaranteed to be signed. May be
-//                      32 or 64 bits depending on system compiled for. Note
-//                      that it may differ from NAInt which can be 32 or 64
-//                      bits too depending on the system.
+//                      32 or 64 bits depending on system compiled for.
 // NA_FILESIZE_BITS and NA_FILESIZE_MAX     Two additional macros
 //                      storing the bits needed for a file byteOffset.
 // NAFileMode:          The filesystem permission mode. On Windows corresponds

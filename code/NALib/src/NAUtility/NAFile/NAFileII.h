@@ -278,7 +278,7 @@ NA_IDEF NAFileSize naComputeFileByteSize(const NAFile* file) {
   #endif
   fileSize = naLseek(file->desc, 0, SEEK_END);
   naLseek(file->desc, curOffset, SEEK_SET);
-  return fileSize;  // todo: check if fileSize too big for NAInt
+  return fileSize;
 }
 
 

@@ -75,27 +75,6 @@
 
 
 // ////////////////////////////////
-// NAInt bit width
-// ////////////////////////////////
-
-// Usually, an NAInt has the same bit width as an address in the current
-// configuration, meaning 32 bits on a 32 bit system and 64 bits on a 64 bit
-// system. But there may be instances, where an NAInt shall have a specific
-// size.
-//
-// Choose from the following values:
-// 0   NAInt has bit width defined by NA_SYSTEM_ADDRESS_BITS
-// 32  NAInt has a 32 bit width.
-// 64  NAInt has a 64 bit width.
-//
-// Default is 0
-
-#ifndef NA_PREFERRED_NAINT_BITS
-  #define NA_PREFERRED_NAINT_BITS 0
-#endif
-
-
-// ////////////////////////////////
 // OpenGL and Metal support
 // ////////////////////////////////
 

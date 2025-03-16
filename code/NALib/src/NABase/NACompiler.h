@@ -100,7 +100,6 @@
   //
   // - Comments with // will give errors.
   // - stdint.h might be undefined.
-  // - NAInt assumes 32 or 64 bits even if there is no type to implement it.
   // - printf prefixes like ll or hh will not work.
   // - The long long datatype might not be available.
   // - va_copy might be undefined.

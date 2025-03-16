@@ -129,7 +129,6 @@ typedef NABool (*NATreeNodeUpdater)(
 //
 // KEY_NOKEY        Set this flag for your nodes and leafes to have no key.
 // KEY_DOUBLE       Set this flag for your keys to have the double type.
-// KEY_NAINT        Set this flag for your keys to have the NAInt type.
 // KEY_i32          Set this flag for your keys to have the int32 type.
 // KEY_u32          Set this flag for your keys to have the uint32 type.
 // BALANCE_AVL      Makes the tree a self-balancing tree using the AVL method
@@ -139,7 +138,6 @@ typedef NABool (*NATreeNodeUpdater)(
 //                      (currently available only for quadtree and octtree)
 #define NA_TREE_KEY_NOKEY     0x0000
 #define NA_TREE_KEY_DOUBLE    0x0001
-#define NA_TREE_KEY_NAINT     0x0002
 #define NA_TREE_KEY_i32       0x0010
 #define NA_TREE_KEY_u32       0x0020
 

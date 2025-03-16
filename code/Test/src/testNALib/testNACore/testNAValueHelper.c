@@ -57,7 +57,6 @@ void testRange(void) {
   naTestGroup("Make Max with End") {
     naTest(naMakeMaxWithEndi32(1234) == 1233);
     naTest(naMakeMaxWithEndi64(1234) == 1233);
-    naTest(naMakeMaxWithEndi(1234) == 1233);
     naTest(naMakeMaxWithEnds(1234) == 1233);
     naTestError(naMakeMaxWithEndi32(NA_MIN_i32));
     naTestError(naMakeMaxWithEndi64(NA_MIN_i64));
@@ -65,7 +64,6 @@ void testRange(void) {
 
     naTest(naMakeEndWithMaxi32(1234) == 1235);
     naTest(naMakeEndWithMaxi64(1234) == 1235);
-    naTest(naMakeEndWithMaxi(1234) == 1235);
     naTest(naMakeEndWithMaxs(1234) == 1235);
     naTestError(naMakeEndWithMaxi32(NA_MAX_i32));
     naTestError(naMakeEndWithMaxi64(NA_MAX_i64));
@@ -79,18 +77,25 @@ void testRange(void) {
     naTest(naMakeEndWithStartAndLengthf(5.f, 10.f) == 15.f);
     naTestError(naMakeEndWithStartAndLengthf(0.f, -1.f));
     naTestError(naMakeEndWithStartAndLengthf(0.f, NA_NANf));
-    naTest(naMakeEndWithStartAndLengthi(5, 10) == 15);
-    naTestError(naMakeEndWithStartAndLengthi(0, -1));
-    naTestError(naMakeEndWithStartAndLengthi(NA_MAX_i, 1));
+    naTest(naMakeEndWithStartAndLengthi32(5, 10) == 15);
+    naTestError(naMakeEndWithStartAndLengthi32(0, -1));
+    naTestError(naMakeEndWithStartAndLengthi32(NA_MAX_i32, 1));
+    naTest(naMakeEndWithStartAndLengthi64(5, 10) == 15);
+    naTestError(naMakeEndWithStartAndLengthi64(0, -1));
+    naTestError(naMakeEndWithStartAndLengthi64(NA_MAX_i64, 1));
     naTest(naMakeEndWithStartAndLengths(5, 10) == 15);
     naTestError(naMakeEndWithStartAndLengths(1, NA_MAX_s));
   }
 
   naTestGroup("Make Max with Min and Length") {
-    naTest(naMakeMaxWithMinAndLengthi(5, 10) == 14);
-    naTestError(naMakeMaxWithMinAndLengthi(0, -1));
-    naTestError(naMakeMaxWithMinAndLengthi(NA_MAX_i, 1));
-    naTestError(naMakeMaxWithMinAndLengthi(NA_MAX_i, 2));
+    naTest(naMakeMaxWithMinAndLengthi32(5, 10) == 14);
+    naTestError(naMakeMaxWithMinAndLengthi32(0, -1));
+    naTestError(naMakeMaxWithMinAndLengthi32(NA_MAX_i32, 1));
+    naTestError(naMakeMaxWithMinAndLengthi32(NA_MAX_i32, 2));
+    naTest(naMakeMaxWithMinAndLengthi64(5, 10) == 14);
+    naTestError(naMakeMaxWithMinAndLengthi64(0, -1));
+    naTestError(naMakeMaxWithMinAndLengthi64(NA_MAX_i64, 1));
+    naTestError(naMakeMaxWithMinAndLengthi64(NA_MAX_i64, 2));
     naTest(naMakeMaxWithMinAndLengths(5, 10) == 14);
     naTest(naMakeMaxWithMinAndLengths(0, NA_MAX_s) == NA_MAX_s - 1);
     naTestError(naMakeMaxWithMinAndLengths(1, NA_MAX_s));
@@ -101,16 +106,20 @@ void testRange(void) {
     naTest(naMakeLengthWithStartAndEnd(5., 5.) == 0.);
     naTest(naMakeLengthWithStartAndEndf(5.f, 10.f) == 5.f);
     naTest(naMakeLengthWithStartAndEndf(5.f, 5.f) == 0.f);
-    naTest(naMakeLengthWithStartAndEndi(5, 10) == 5);
-    naTest(naMakeLengthWithStartAndEndi(5, 5) == 0);
+    naTest(naMakeLengthWithStartAndEndi32(5, 10) == 5);
+    naTest(naMakeLengthWithStartAndEndi32(5, 5) == 0);
+    naTest(naMakeLengthWithStartAndEndi64(5, 10) == 5);
+    naTest(naMakeLengthWithStartAndEndi64(5, 5) == 0);
     naTest(naMakeLengthWithStartAndEnds(5, 10) == 5);
     naTest(naMakeLengthWithStartAndEnds(5, 5) == 0);
     naTestError(naMakeLengthWithStartAndEnd(10., 5.));
     naTestError(naMakeLengthWithStartAndEnd(5., NA_NAN));
     naTestError(naMakeLengthWithStartAndEndf(10.f, 5.f));
     naTestError(naMakeLengthWithStartAndEndf(5.f, NA_NANf));
-    naTestError(naMakeLengthWithStartAndEndi(50, 10));
-    naTestError(naMakeLengthWithStartAndEndi(-1, NA_MAX_i));
+    naTestError(naMakeLengthWithStartAndEndi32(50, 10));
+    naTestError(naMakeLengthWithStartAndEndi32(-1, NA_MAX_i32));
+    naTestError(naMakeLengthWithStartAndEndi64(50, 10));
+    naTestError(naMakeLengthWithStartAndEndi64(-1, NA_MAX_i64));
     naTestError(naMakeLengthWithStartAndEnds(50, 10));
   }
 
@@ -119,25 +128,34 @@ void testRange(void) {
     naTest(naMakeLengthWithStartAndEndE(5., 5.) == 0.);
     naTest(naMakeLengthWithStartAndEndfE(5.f, 10.f) == 5.f);
     naTest(naMakeLengthWithStartAndEndfE(5.f, 5.f) == 0.f);
-    naTest(naMakeLengthWithStartAndEndiE(5, 10) == 5);
-    naTest(naMakeLengthWithStartAndEndiE(5, 5) == 0);
+    naTest(naMakeLengthWithStartAndEndi32E(5, 10) == 5);
+    naTest(naMakeLengthWithStartAndEndi32E(5, 5) == 0);
+    naTest(naMakeLengthWithStartAndEndi64E(5, 10) == 5);
+    naTest(naMakeLengthWithStartAndEndi64E(5, 5) == 0);
     naTest(naMakeLengthWithStartAndEndsE(5, 10) == 5);
     naTest(naMakeLengthWithStartAndEndsE(5, 5) == 0);
     naTestVoid(naMakeLengthWithStartAndEndE(10., 5.));
     naTestError(naMakeLengthWithStartAndEndE(5., NA_NAN));
     naTestVoid(naMakeLengthWithStartAndEndfE(10.f, 5.f));
     naTestError(naMakeLengthWithStartAndEndfE(5.f, NA_NANf));
-    naTestVoid(naMakeLengthWithStartAndEndiE(50, 10));
-    naTestError(naMakeLengthWithStartAndEndiE(-1, NA_MAX_i));
+    naTestVoid(naMakeLengthWithStartAndEndi32E(50, 10));
+    naTestError(naMakeLengthWithStartAndEndi32E(-1, NA_MAX_i32));
+    naTestVoid(naMakeLengthWithStartAndEndi64E(50, 10));
+    naTestError(naMakeLengthWithStartAndEndi64E(-1, NA_MAX_i64));
     naTestVoid(naMakeLengthWithStartAndEndsE(50, 10));
   }
 
   naTestGroup("Make Length with Min and Max") {
-    naTest(naMakeLengthWithMinAndMaxi(5, 10) == 6);
-    naTest(naMakeLengthWithMinAndMaxi(5, 5) == 1);
-    naTestError(naMakeLengthWithMinAndMaxi(0, NA_MAX_i));
-    naTestError(naMakeLengthWithMinAndMaxi(10, 5));
-    naTestError(naMakeLengthWithMinAndMaxi(-1, NA_MAX_i - 1));
+    naTest(naMakeLengthWithMinAndMaxi32(5, 10) == 6);
+    naTest(naMakeLengthWithMinAndMaxi32(5, 5) == 1);
+    naTest(naMakeLengthWithMinAndMaxi64(5, 10) == 6);
+    naTest(naMakeLengthWithMinAndMaxi64(5, 5) == 1);
+    naTestError(naMakeLengthWithMinAndMaxi32(0, NA_MAX_i32));
+    naTestError(naMakeLengthWithMinAndMaxi32(10, 5));
+    naTestError(naMakeLengthWithMinAndMaxi32(-1, NA_MAX_i32 - 1));
+    naTestError(naMakeLengthWithMinAndMaxi64(0, NA_MAX_i64));
+    naTestError(naMakeLengthWithMinAndMaxi64(10, 5));
+    naTestError(naMakeLengthWithMinAndMaxi64(-1, NA_MAX_i64 - 1));
     naTest(naMakeLengthWithMinAndMaxs(5, 10) == 6);
     naTest(naMakeLengthWithMinAndMaxs(5, 5) == 1);
     naTestError(naMakeLengthWithMinAndMaxs(0, NA_MAX_s));
@@ -229,10 +247,15 @@ void testIsValueValid(void) {
       naTest(naIsOffsetValueValidf(-NA_INFINITYf));
       naTest(!naIsOffsetValueValidf(NA_NANf));
   }
-  naTestGroup("naIsOffsetValueValidi") {
-      naTest(naIsOffsetValueValidi(0));
-      naTest(naIsOffsetValueValidi(NA_MAX_i));
-      naTest(naIsOffsetValueValidi(NA_MIN_i));
+  naTestGroup("naIsOffsetValueValidi32") {
+    naTest(naIsOffsetValueValidi32(0));
+    naTest(naIsOffsetValueValidi32(NA_MAX_i32));
+    naTest(naIsOffsetValueValidi32(NA_MIN_i32));
+  }
+  naTestGroup("naIsOffsetValueValidi64") {
+    naTest(naIsOffsetValueValidi64(0));
+    naTest(naIsOffsetValueValidi64(NA_MAX_i64));
+    naTest(naIsOffsetValueValidi64(NA_MIN_i64));
   }
   naTestGroup("naIsOffsetValueValids") {
       naTest(naIsOffsetValueValids(0));
@@ -251,10 +274,15 @@ void testIsValueValid(void) {
       naTest(naIsLengthValueValidf(-NA_INFINITYf));
       naTest(!naIsLengthValueValidf(NA_NANf));
   }
-  naTestGroup("naIsLengthValueValidi") {
-      naTest(naIsLengthValueValidi(0));
-      naTest(naIsLengthValueValidi(NA_MAX_i));
-      naTest(naIsLengthValueValidi(NA_MIN_i));
+  naTestGroup("naIsLengthValueValidi32") {
+    naTest(naIsLengthValueValidi32(0));
+    naTest(naIsLengthValueValidi32(NA_MAX_i32));
+    naTest(naIsLengthValueValidi32(NA_MIN_i32));
+  }
+  naTestGroup("naIsLengthValueValidi64") {
+    naTest(naIsLengthValueValidi64(0));
+    naTest(naIsLengthValueValidi64(NA_MAX_i64));
+    naTest(naIsLengthValueValidi64(NA_MIN_i64));
   }
   naTestGroup("naIsLengthValueValids") {
       naTest(naIsLengthValueValids(0));
@@ -277,10 +305,15 @@ void testIsValueEmpty(void) {
       naTest(!naIsLengthValueEmptyf(-1.f));
       naTest(!naIsLengthValueEmptyf(NA_NANf));
   }
-  naTestGroup("naIsLengthValueEmptyi") {
-      naTest(naIsLengthValueEmptyi(0));
-      naTest(!naIsLengthValueEmptyi(1));
-      naTest(!naIsLengthValueEmptyi(-1));
+  naTestGroup("naIsLengthValueEmptyi32") {
+    naTest(naIsLengthValueEmptyi32(0));
+    naTest(!naIsLengthValueEmptyi32(1));
+    naTest(!naIsLengthValueEmptyi32(-1));
+  }
+  naTestGroup("naIsLengthValueEmptyi64") {
+    naTest(naIsLengthValueEmptyi64(0));
+    naTest(!naIsLengthValueEmptyi64(1));
+    naTest(!naIsLengthValueEmptyi64(-1));
   }
   naTestGroup("naIsLengthValueEmptys") {
       naTest(naIsLengthValueEmptys(0));
@@ -308,12 +341,19 @@ void testIsValueNegative(void) {
       naTest(naIsLengthValueNegativef(-NA_INFINITYf));
       naTest(!naIsLengthValueNegativef(NA_NANf));
   }
-  naTestGroup("naIsLengthValueNegativei") {
-      naTest(!naIsLengthValueNegativei(0));
-      naTest(!naIsLengthValueNegativei(1));
-      naTest(naIsLengthValueNegativei(-1));
-      naTest(!naIsLengthValueNegativei(NA_MAX_i));
-      naTest(naIsLengthValueNegativei(NA_MIN_i));
+  naTestGroup("naIsLengthValueNegativei32") {
+    naTest(!naIsLengthValueNegativei32(0));
+    naTest(!naIsLengthValueNegativei32(1));
+    naTest(naIsLengthValueNegativei32(-1));
+    naTest(!naIsLengthValueNegativei32(NA_MAX_i32));
+    naTest(naIsLengthValueNegativei32(NA_MIN_i32));
+  }
+  naTestGroup("naIsLengthValueNegativei64") {
+    naTest(!naIsLengthValueNegativei64(0));
+    naTest(!naIsLengthValueNegativei64(1));
+    naTest(naIsLengthValueNegativei64(-1));
+    naTest(!naIsLengthValueNegativei64(NA_MAX_i64));
+    naTest(naIsLengthValueNegativei64(NA_MIN_i64));
   }
   naTestGroup("naIsLengthValueNegatives") {
       naTest(!naIsLengthValueNegatives(0));
@@ -341,12 +381,19 @@ void testIsValueUseful(void) {
       naTest(!naIsOffsetValueUsefulf(-NA_INFINITYf));
       naTest(!naIsOffsetValueUsefulf(NA_NANf));
   }
-  naTestGroup("naIsOffsetValueUsefuli") {
-      naTest(naIsOffsetValueUsefuli(0));
-      naTest(naIsOffsetValueUsefuli(1));
-      naTest(naIsOffsetValueUsefuli(-1));
-      naTest(naIsOffsetValueUsefuli(NA_MAX_i));
-      naTest(naIsOffsetValueUsefuli(NA_MIN_i));
+  naTestGroup("naIsOffsetValueUsefuli32") {
+    naTest(naIsOffsetValueUsefuli32(0));
+    naTest(naIsOffsetValueUsefuli32(1));
+    naTest(naIsOffsetValueUsefuli32(-1));
+    naTest(naIsOffsetValueUsefuli32(NA_MAX_i32));
+    naTest(naIsOffsetValueUsefuli32(NA_MIN_i32));
+  }
+  naTestGroup("naIsOffsetValueUsefuli64") {
+    naTest(naIsOffsetValueUsefuli64(0));
+    naTest(naIsOffsetValueUsefuli64(1));
+    naTest(naIsOffsetValueUsefuli64(-1));
+    naTest(naIsOffsetValueUsefuli64(NA_MAX_i64));
+    naTest(naIsOffsetValueUsefuli64(NA_MIN_i64));
   }
   naTestGroup("naIsOffsetValueUsefuls") {
       naTest(naIsOffsetValueUsefuls(0));
@@ -370,12 +417,19 @@ void testIsValueUseful(void) {
       naTest(!naIsLengthValueUsefulf(-NA_INFINITYf));
       naTest(!naIsLengthValueUsefulf(NA_NANf));
   }
-  naTestGroup("naIsLengthValueUsefuli") {
-      naTest(!naIsLengthValueUsefuli(0));
-      naTest(naIsLengthValueUsefuli(1));
-      naTest(!naIsLengthValueUsefuli(-1));
-      naTest(naIsLengthValueUsefuli(NA_MAX_i));
-      naTest(!naIsLengthValueUsefuli(NA_MIN_i));
+  naTestGroup("naIsLengthValueUsefuli32") {
+    naTest(!naIsLengthValueUsefuli32(0));
+    naTest(naIsLengthValueUsefuli32(1));
+    naTest(!naIsLengthValueUsefuli32(-1));
+    naTest(naIsLengthValueUsefuli32(NA_MAX_i32));
+    naTest(!naIsLengthValueUsefuli32(NA_MIN_i32));
+  }
+  naTestGroup("naIsLengthValueUsefuli64") {
+    naTest(!naIsLengthValueUsefuli64(0));
+    naTest(naIsLengthValueUsefuli64(1));
+    naTest(!naIsLengthValueUsefuli64(-1));
+    naTest(naIsLengthValueUsefuli64(NA_MAX_i64));
+    naTest(!naIsLengthValueUsefuli64(NA_MIN_i64));
   }
   naTestGroup("naIsLengthValueUsefuls") {
       naTest(!naIsLengthValueUsefuls(0));

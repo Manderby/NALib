@@ -259,7 +259,6 @@ void printNATree(void) {
 
   naPrintMacro(NA_TREE_KEY_NOKEY);
   naPrintMacro(NA_TREE_KEY_DOUBLE);
-  naPrintMacro(NA_TREE_KEY_NAINT);
   naPrintMacro(NA_TREE_BALANCE_AVL);
   naPrintMacro(NA_TREE_QUADTREE);
   naPrintMacro(NA_TREE_OCTTREE);

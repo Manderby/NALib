@@ -16,15 +16,15 @@ struct NAHeap{
   size_t maxCount; // heap holds max elements.
   NABool autoGrow;
   
-  void        (*insertConst)      (NAHeap*, const void*, const void*, NAInt*);
-  void        (*insertMutable)    (NAHeap*,       void*, const void*, NAInt*);
+  void        (*insertConst)      (NAHeap*, const void*, const void*, int64*);
+  void        (*insertMutable)    (NAHeap*,       void*, const void*, int64*);
   const void* (*removeConst)      (NAHeap*);
   void*       (*removeMutable)    (NAHeap*);
-  const void* (*removePosConst)   (NAHeap*, NAInt);
-  void*       (*removePosMutable) (NAHeap*, NAInt);
-  void        (*updateBack)       (NAHeap*, NAInt);
-  NAInt       (*moveUp)           (NAHeap*, const void*, NAInt);
-  NAInt       (*moveDown)         (NAHeap*, const void*, NAInt);
+  const void* (*removePosConst)   (NAHeap*, int64);
+  void*       (*removePosMutable) (NAHeap*, int64);
+  void        (*updateBack)       (NAHeap*, int64);
+  int64       (*moveUp)           (NAHeap*, const void*, int64);
+  int64       (*moveDown)         (NAHeap*, const void*, int64);
 };
 // The root field is needed because the inline functions below have no idea
 // whether the heap stores backPointers or not. But as the root element is
@@ -54,7 +54,7 @@ typedef struct NAHeapBackEntry NAHeapBackEntry;
 struct NAHeapBackEntry{
   const void*       key;
   NAPtr             ptr;
-  NAInt*            backPointer;
+  int64*            backPointer;
 };
 
 
@@ -77,21 +77,21 @@ NA_IDEF void naEmptyHeap(NAHeap* heap) {
 }
 
 
-NA_IDEF NAInt naGetHeapCount(const NAHeap* heap) {
+NA_IDEF int64 naGetHeapCount(const NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
       naCrash("heap is Null-Pointer.");
   #endif
-  return (NAInt)heap->count;
+  return (int64)heap->count;
 }
 
 
-NA_IDEF NAInt naGetHeapMaxCount(const NAHeap* heap) {
+NA_IDEF int64 naGetHeapMaxCount(const NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
       naCrash("heap is Null-Pointer.");
   #endif
-  return (NAInt)heap->maxCount;
+  return (int64)heap->maxCount;
 }
 
 
@@ -99,7 +99,7 @@ NA_IDEF void naInsertHeapElementConst(
   NAHeap* heap,
   const void* ptr,
   const void* key,
-  NAInt* backPointer)
+  int64* backPointer)
 {
   #if NA_DEBUG
     if(!heap)
@@ -114,7 +114,7 @@ NA_IDEF void naInsertHeapElementMutable(
   NAHeap* heap,
   void* ptr,
   const void* key,
-  NAInt* backPointer)
+  int64* backPointer)
 {
   #if NA_DEBUG
     if(!heap)
@@ -198,19 +198,19 @@ NA_IDEF const void* naGetHeapRootKey(const NAHeap* heap) {
 }
 
 
-NA_IDEF void naUpdateHeapElement(NAHeap* heap, NAInt backPointer) {
+NA_IDEF void naUpdateHeapElement(NAHeap* heap, int64 backPointer) {
   heap->updateBack(heap, backPointer);
 }
 
 
 
-NA_IDEF const void* naRemoveHeapPosConst(NAHeap* heap, NAInt backPointer) {
+NA_IDEF const void* naRemoveHeapPosConst(NAHeap* heap, int64 backPointer) {
   return heap->removePosConst(heap, backPointer);
 }
 
 
 
-NA_IDEF void* naRemoveHeapPosMutable(NAHeap* heap, NAInt backPointer) {
+NA_IDEF void* naRemoveHeapPosMutable(NAHeap* heap, int64 backPointer) {
   return heap->removePosMutable(heap, backPointer);
 }
 

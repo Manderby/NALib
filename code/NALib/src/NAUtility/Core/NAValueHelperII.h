@@ -45,16 +45,6 @@ NA_IDEF NAi64 naMakeMaxWithEndi64(NAi64 end) {
   #endif
   return naSubi64(end, NA_ONE_i64);
 }
-NA_IDEF NAInt naMakeMaxWithEndi(NAInt end) {
-  #if NA_TYPE_NAINT_BITS == 32
-    return naMakeMaxWithEndi32(end);
-  #elif NA_TYPE_NAINT_BITS == 64
-    return naMakeMaxWithEndi64(end);
-  #else
-    #error "NAInt size not supported"
-    return 0;
-  #endif
-}
 NA_IDEF size_t naMakeMaxWithEnds(size_t end) {
   #if NA_DEBUG
     if(end == NA_ZERO_s)
@@ -78,16 +68,6 @@ NA_IDEF NAi64 naMakeEndWithMaxi64(NAi64 max) {
       naError("Integer overflow");
   #endif
   return naAddi64(max, NA_ONE_i64);
-}
-NA_IDEF NAInt naMakeEndWithMaxi(NAInt max) {
-  #if NA_TYPE_NAINT_BITS == 32
-    return naMakeEndWithMaxi32(max);
-  #elif NA_TYPE_NAINT_BITS == 64
-    return naMakeEndWithMaxi64(max);
-  #else
-    #error "NAInt size not supported"
-    return 0;
-  #endif
 }
 NA_IDEF size_t naMakeEndWithMaxs(size_t max) {
   #if NA_DEBUG
@@ -124,19 +104,6 @@ NA_IDEF float naMakeEndWithStartAndLengthf(float start, float length) {
     if(!naIsOffsetValueValidf(result)) {
       naError("result invalid");
     }
-  #endif
-  return result;
-}
-NA_IDEF NAInt naMakeEndWithStartAndLengthi(NAInt start, NAInt length) {
-  #if NA_DEBUG
-    if(length < 0) {
-      naError("length is negative");
-    }
-  #endif
-  NAInt result = start + length;
-  #if NA_DEBUG
-    if(length >= 0 && result < start)
-      naError("Integer overflow");
   #endif
   return result;
 }
@@ -177,19 +144,6 @@ NA_IDEF size_t naMakeEndWithStartAndLengths(size_t start, size_t length) {
 
 
 
-NA_IDEF NAInt naMakeMaxWithMinAndLengthi(NAInt min, NAInt length) {
-  #if NA_DEBUG
-    if(length < 0) {
-      naError("length is negative");
-    }
-  #endif
-  NAInt result = naMakeMaxWithEndi(min + length);
-  #if NA_DEBUG
-    if(length > 0 && result < min)
-      naError("Integer overflow");
-  #endif
-  return result;
-}
 NA_IDEF int32 naMakeMaxWithMinAndLengthi32(int32 min, int32 length) {
   #if NA_DEBUG
     if(length < 0) {
@@ -259,21 +213,6 @@ NA_IDEF float naMakeLengthWithStartAndEndfE(float start, float end) {
   #endif
   return result;
 }
-NA_IDEF NAInt naMakeLengthWithStartAndEndi(NAInt start, NAInt end) {
-  #if NA_DEBUG
-    if(start > end)
-      naError("start is greater than end");
-  #endif
-  return naMakeLengthWithStartAndEndiE(start, end);
-}
-NA_IDEF NAInt naMakeLengthWithStartAndEndiE(NAInt start, NAInt end) {
-  NAInt result = end - start;
-  #if NA_DEBUG
-    if(end > start && result < 0)
-      naError("Integer overflow");
-  #endif
-  return result;
-}
 NA_IDEF int32 naMakeLengthWithStartAndEndi32(int32 start, int32 end) {
   #if NA_DEBUG
     if(start > end)
@@ -318,20 +257,6 @@ NA_IDEF size_t naMakeLengthWithStartAndEndsE(size_t start, size_t end) {
 
 
 
-NA_IDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max) {
-  #if NA_DEBUG
-    if(max == NA_MAX_i32)
-      naError("max being equal to the integer maximum will lead to an overflow");
-    if(min > max + 1)
-      naError("min is greater than max + 1");
-  #endif
-  NAInt result = naMakeEndWithMaxi(max) - min;
-  #if NA_DEBUG
-    if(max > min && result < 0)
-      naError("Integer overflow");
-  #endif
-  return result;
-}
 NA_IDEF int32 naMakeLengthWithMinAndMaxi32(int32 min, int32 max) {
   #if NA_DEBUG
     if(max == NA_MAX_i32)
@@ -448,10 +373,6 @@ NA_IDEF NABool naIsOffsetValueValid(double a) {
 NA_IDEF NABool naIsOffsetValueValidf(float a) {
   return !naIsNaNf(a);
 }
-NA_IDEF NABool naIsOffsetValueValidi(NAInt a) {
-  NA_UNUSED(a);
-  return NA_TRUE;
-}
 NA_IDEF NABool naIsOffsetValueValidi32(int32 a) {
   NA_UNUSED(a);
   return NA_TRUE;
@@ -475,10 +396,6 @@ NA_IDEF NABool naIsLengthValueValid(double a) {
 }
 NA_IDEF NABool naIsLengthValueValidf(float a) {
   return !naIsNaNf(a);
-}
-NA_IDEF NABool naIsLengthValueValidi(NAInt a) {
-  NA_UNUSED(a);
-  return NA_TRUE;
 }
 NA_IDEF NABool naIsLengthValueValidi32(int32 a) {
   NA_UNUSED(a);
@@ -504,9 +421,6 @@ NA_IDEF NABool naIsLengthValueEmpty(double a) {
 NA_IDEF NABool naIsLengthValueEmptyf(float a) {
   return (a == 0.f);
 }
-NA_IDEF NABool naIsLengthValueEmptyi(NAInt a) {
-  return (a == 0);
-}
 NA_IDEF NABool naIsLengthValueEmptyi32(int32 a) {
   return (a == 0);
 }
@@ -527,9 +441,6 @@ NA_IDEF NABool naIsLengthValueNegative(double a) {
 }
 NA_IDEF NABool naIsLengthValueNegativef(float a) {
   return (a < 0.f);
-}
-NA_IDEF NABool naIsLengthValueNegativei(NAInt a) {
-  return (a < 0);
 }
 NA_IDEF NABool naIsLengthValueNegativei32(int32 a) {
   return (a < 0);
@@ -553,10 +464,6 @@ NA_IDEF NABool naIsOffsetValueUseful(double a) {
 }
 NA_IDEF NABool naIsOffsetValueUsefulf(float a) {
   return !naIsNaNf(a) && !naIsInfinitef(a);
-}
-NA_IDEF NABool naIsOffsetValueUsefuli(NAInt a) {
-  NA_UNUSED(a);
-  return NA_TRUE;
 }
 NA_IDEF NABool naIsOffsetValueUsefuli32(int32 a) {
     NA_UNUSED(a);
@@ -584,9 +491,6 @@ NA_IDEF NABool naIsLengthValueUseful(double a) {
 NA_IDEF NABool naIsLengthValueUsefulf(float a) {
   // Note that this test will return NA_FALSE if a is NaN or infinite.
   return (a > 0.) && !naIsInfinitef(a);
-}
-NA_IDEF NABool naIsLengthValueUsefuli(NAInt a) {
-  return (a > 0);
 }
 NA_IDEF NABool naIsLengthValueUsefuli32(int32 a) {
     return (a > 0);

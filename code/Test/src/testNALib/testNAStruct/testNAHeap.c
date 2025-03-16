@@ -172,7 +172,7 @@ void printNAHeap(void) {
 
   naPrintMacroux16(NA_HEAP_USES_DOUBLE_KEY);
   naPrintMacroux16(NA_HEAP_USES_FLOAT_KEY);
-  naPrintMacroux16(NA_HEAP_USES_NAINT_KEY);
+  naPrintMacroux16(NA_HEAP_USES_INT64_KEY);
   naPrintMacroux16(NA_HEAP_USES_DATETIME_KEY);
   naPrintMacroux16(NA_HEAP_DATATYPE_MASK);
   

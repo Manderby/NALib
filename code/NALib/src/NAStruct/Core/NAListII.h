@@ -147,7 +147,7 @@ NA_IDEF size_t naGetListCount(const NAList* list) {
 
 
 NA_IDEF NABool naIsListEmpty(const NAList* list) {
-  return (list->count == NA_ZERO);
+  return (list->count == NA_ZERO_s);
 }
 
 
@@ -659,11 +659,11 @@ NA_IDEF NABool naIterateListBack(NAListIterator* iter) {
 // a pointer forward or backward.
 NA_IDEF NABool naIterateListStep(NAListIterator* iter, int64 step) {
   #if NA_DEBUG
-    if(step == NA_ZERO) {
+    if(step == NA_ZERO_i64) {
       naError("step is zero.");
     }
   #endif
-  while(step > NA_ZERO) {
+  while(step > NA_ZERO_i64) {
     #if NA_DEBUG
       if(iter->cur->iterCount == 0)
         naError("No Iterator at this element. Did you do a double clear?");
@@ -673,12 +673,12 @@ NA_IDEF NABool naIterateListStep(NAListIterator* iter, int64 step) {
     step--;
     #if NA_DEBUG
       iter->cur->iterCount++;
-      if((iter->cur == &((NAList*)naGetPtrConst(iter->listptr))->sentinel) && (step != NA_ZERO)) {
+      if((iter->cur == &((NAList*)naGetPtrConst(iter->listptr))->sentinel) && (step != NA_ZERO_i64)) {
         naError("The iteration overflows the number of elements.");
       }
     #endif
   }
-  while(step < NA_ZERO) {
+  while(step < NA_ZERO_i64) {
     #if NA_DEBUG
       if(iter->cur->iterCount == 0)
         naError("No Iterator at this element. Did you do a double clear?");
@@ -688,7 +688,7 @@ NA_IDEF NABool naIterateListStep(NAListIterator* iter, int64 step) {
     step++;
     #if NA_DEBUG
       iter->cur->iterCount++;
-      if((iter->cur == &((NAList*)naGetPtrConst(iter->listptr))->sentinel) && (step != NA_ZERO)) {
+      if((iter->cur == &((NAList*)naGetPtrConst(iter->listptr))->sentinel) && (step != NA_ZERO_i64)) {
         naError("The iteration underflows the number of elements.");
       }
     #endif

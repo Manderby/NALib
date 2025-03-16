@@ -47,7 +47,7 @@ NA_IAPI size_t naGetSystemMemoryPagesizeMask(void);
 // also in other encodings, the most negative integer is probably never used
 // by any programmer. Any other number than this invalid number might have a
 // valid meaning in NALib.
-#define NA_INVALID_MEMORY_INDEX     NA_MIN_i
+#define NA_INVALID_MEMORY_INDEX     NA_MIN_i64
 
 
 

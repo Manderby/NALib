@@ -286,7 +286,7 @@ NA_IDEF size_t naGetArrayCount(const NAArray* array) {
       naCrash("array is Null-Pointer.");
       return 0;
     }
-    if(array->count > NA_MAX_i)
+    if(array->count > NA_MAX_s)
       naError("Array count looks like it was negative when interpreted as signed integer. Do not create Arrays with negative sizes!");
   #endif
   // Note that an empty array has a typeSize of 1.

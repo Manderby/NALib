@@ -15,6 +15,7 @@ Big changes:
 - Adding PubSub implementation NANotifier
 - Adding latest NIST CODATA physical constants of 2022
 - Improving GUI on Windows drastically
+- Removed NAInt. Use int64 or int32.
 
 Smaller things:
 - Great NAApp cleanup

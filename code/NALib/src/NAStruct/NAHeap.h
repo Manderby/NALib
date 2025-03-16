@@ -67,15 +67,15 @@ typedef struct NAHeap NAHeap;
 // If this flag is 0 or not present, the heap will use double-value keys.
 #define NA_HEAP_USES_DOUBLE_KEY       0x0000
 #define NA_HEAP_USES_FLOAT_KEY        0x0001
-#define NA_HEAP_USES_NAINT_KEY        0x0002
+#define NA_HEAP_USES_INT64_KEY        0x0002
 #define NA_HEAP_USES_DATETIME_KEY     0x0003
-#define NA_HEAP_DATATYPE_MASK         0x0003
+#define NA_HEAP_DATATYPE_MASK         0x00ff
 // Use the following flags to define if the heap shall be a min- or a max-heap.
 // If this flag is 0 or not present, the heap will be a min-heap.
 #define NA_HEAP_IS_MIN_HEAP           0x0000
-#define NA_HEAP_IS_MAX_HEAP           0x0004
+#define NA_HEAP_IS_MAX_HEAP           0x0010
 // Set this flag if you want your heap elements to store backPointers.
-#define NA_HEAP_STORES_BACKPOINTERS   0x0008
+#define NA_HEAP_STORES_BACKPOINTERS   0x0020
 
 // Creates a new heap. The count parameter denotes the number of elements which
 // the heap must hold and the flags denote a combination of the macros above.

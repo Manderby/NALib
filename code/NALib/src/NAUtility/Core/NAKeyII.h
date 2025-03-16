@@ -49,27 +49,6 @@ NA_IDEF NABool NA_KEY_OP(Greater, float)(const void* a, const void* b) {
 
 
 
-NA_IDEF void NA_KEY_OP(Assign, NAInt)(void* dst, const void* src) {
-  *(NAInt*)dst = *(const NAInt*)src;
-}
-NA_IDEF NABool NA_KEY_OP(LessEqual, NAInt)(const void* a, const void* b) {
-  return *(const NAInt*)a <= *(const NAInt*)b;
-}
-NA_IDEF NABool NA_KEY_OP(Less, NAInt)(const void* a, const void* b) {
-  return *(const NAInt*)a < *(const NAInt*)b;
-}
-NA_IDEF NABool NA_KEY_OP(Equal, NAInt)(const void* a, const void* b) {
-  return *(const NAInt*)a == *(const NAInt*)b;
-}
-NA_IDEF NABool NA_KEY_OP(GreaterEqual, NAInt)(const void* a, const void* b) {
-  return *(const NAInt*)a >= *(const NAInt*)b;
-}
-NA_IDEF NABool NA_KEY_OP(Greater, NAInt)(const void* a, const void* b) {
-  return *(const NAInt*)a > *(const NAInt*)b;
-}
-
-
-
 NA_IDEF void NA_KEY_OP(Assign, int32)(void* dst, const void* src) {
   *(int32*)dst = *(const int32*)src;
 }

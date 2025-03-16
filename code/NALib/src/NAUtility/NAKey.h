@@ -14,7 +14,7 @@
 //
 // Implementation on this has started after the NATree implementation had
 // been completed. The trees required key values to create ordered search
-// trees. These keys had to exist in multiple types, like double, NAInt,
+// trees. These keys had to exist in multiple types, like double, int64,
 // NAPos, NAVertex, etc. A first implementation used function pointers which
 // worked fine but had the drawback of requiring lots of function calls for
 // very tiny functions.
@@ -85,13 +85,6 @@ NA_IAPI NABool NA_KEY_OP(GreaterEqual, float)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(Equal,        float)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(Less,         float)(const void* a, const void* b);
 NA_IAPI NABool NA_KEY_OP(LessEqual,    float)(const void* a, const void* b);
-
-NA_IAPI void   NA_KEY_OP(Assign,       NAInt)(void* dst, const void* src);
-NA_IAPI NABool NA_KEY_OP(Greater,      NAInt)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(GreaterEqual, NAInt)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(Equal,        NAInt)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(Less,         NAInt)(const void* a, const void* b);
-NA_IAPI NABool NA_KEY_OP(LessEqual,    NAInt)(const void* a, const void* b);
 
 NA_IAPI void   NA_KEY_OP(Assign,       int32)(void* dst, const void* src);
 NA_IAPI NABool NA_KEY_OP(Greater,      int32)(const void* a, const void* b);

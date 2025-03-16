@@ -160,9 +160,9 @@ void testBufferPart(void) {
     naTest(na_GetBufferPartNormedStart(0) == 0);
     naTest(na_GetBufferPartNormedStart(NA_INTERNAL_BUFFER_PART_BYTESIZE - 1) == 0);
     naTest(na_GetBufferPartNormedStart(NA_INTERNAL_BUFFER_PART_BYTESIZE) == NA_INTERNAL_BUFFER_PART_BYTESIZE);
-    naTest(na_GetBufferPartNormedStart(-1) == -(NAInt)NA_INTERNAL_BUFFER_PART_BYTESIZE);
-    naTest(na_GetBufferPartNormedStart(-(NAInt)NA_INTERNAL_BUFFER_PART_BYTESIZE + 1) == -NA_INTERNAL_BUFFER_PART_BYTESIZE);
-    naTest(na_GetBufferPartNormedStart(-(NAInt)NA_INTERNAL_BUFFER_PART_BYTESIZE) == -NA_INTERNAL_BUFFER_PART_BYTESIZE);
+    naTest(na_GetBufferPartNormedStart(-1) == -(int64)NA_INTERNAL_BUFFER_PART_BYTESIZE);
+    naTest(na_GetBufferPartNormedStart(-(int64)NA_INTERNAL_BUFFER_PART_BYTESIZE + 1) == -NA_INTERNAL_BUFFER_PART_BYTESIZE);
+    naTest(na_GetBufferPartNormedStart(-(int64)NA_INTERNAL_BUFFER_PART_BYTESIZE) == -NA_INTERNAL_BUFFER_PART_BYTESIZE);
 
     naTest(na_GetBufferPartNormedEnd(0) == 0);
     naTest(na_GetBufferPartNormedEnd(1) == NA_INTERNAL_BUFFER_PART_BYTESIZE);

@@ -52,11 +52,6 @@ void testNAInteger(void) {
     naTest(naEqualu256(u256, naMakeu256WithLo(u128)));
     naTest(naEquali256(i256, naMakei256WithLo(i128)));
   }
-
-  naTestGroup("NAInt typedefs") {
-    NAInt  i  = -42;
-    naTest(i == -42);
-  }
 }
 
 
@@ -66,14 +61,6 @@ void printNAInteger(void) {
   
   naPrintMacroInt(NA_FALSE);
   naPrintMacroInt(NA_TRUE);
-
-  naPrintMacroInt(NA_TYPE_NAINT_BITS);
-
-  naPrintMacro(NA_MAX_i);
-  naPrintMacro(NA_MIN_i);
-  naPrintMacro(NA_MAX_U);
-  naPrintMacro(NA_ZERO);
-  naPrintMacro(NA_ONE);
 
   printf(NA_NL);
 }

@@ -95,16 +95,8 @@ NA_IDEF void naSpitPool(NAPool* pool, void* drop) {
   #if NA_DEBUG
     if(pool->cur == pool->count)
       naError("Pool is full");
-    #if NA_TYPE_NAINT_BITS == 32
-      if(pool->storageArray && (!naInsidei32((NAByte*)drop - (NAByte*)pool->storageArray, 0, pool->typeSize * pool->count)))
-        naError("Pool was created filled. This drop does not seem to be a drop of this pool.");
-    #elif NA_TYPE_NAINT_BITS == 64
-      if(pool->storageArray && (!naInsidei64((NAByte*)drop - (NAByte*)pool->storageArray, 0, pool->typeSize * pool->count)))
-        naError("Pool was created filled. This drop does not seem to be a drop of this pool.");
-    #else
-      #error "integer size not supported"
-      return 0;
-    #endif
+    if(pool->storageArray && (!naInsidei64((NAByte*)drop - (NAByte*)pool->storageArray, 0, pool->typeSize * pool->count)))
+      naError("Pool was created filled. This drop does not seem to be a drop of this pool.");
   #endif
   pool->drops[pool->cur] = drop;
   pool->cur++;

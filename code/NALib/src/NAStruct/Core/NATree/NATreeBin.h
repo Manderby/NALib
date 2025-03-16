@@ -34,11 +34,6 @@ NA_HAPI size_t na_GetKeyIndexBinDouble(const void* baseKey, const void* testKey,
 NA_HAPI NABool na_TestKeyBinDouble(const void* lowerLimit, const void* upperLimit, const void* key);
 NA_HAPI NABool na_TestKeyLeafContainBinDouble(NATreeLeaf* leaf, const void* key);
 
-NA_HAPI size_t na_GetChildIndexBinNAInt(NATreeNode* parentNode, const void* childKey);
-NA_HAPI size_t na_GetKeyIndexBinNAInt(const void* baseKey, const void* key, const void* data);
-NA_HAPI NABool na_TestKeyBinNAInt(const void* lowerLimit, const void* upperLimit, const void* key);
-NA_HAPI NABool na_TestKeyLeafContainBinNAInt(NATreeLeaf* leaf, const void* key);
-
 NA_HAPI size_t na_GetChildIndexBini32(NATreeNode* parentNode, const void* childKey);
 NA_HAPI size_t na_GetKeyIndexBini32(const void* baseKey, const void* key, const void* data);
 NA_HAPI NABool na_TestKeyBini32(const void* lowerLimit, const void* upperLimit, const void* key);

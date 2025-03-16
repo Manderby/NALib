@@ -69,8 +69,8 @@ NA_IDEF NAPtr naMakePtrNull() {
   NAPtr ptr;
   ptr.data.d = NA_NULL;
   #if NA_DEBUG
-    ptr.debugFlags = NA_ZERO; // Do not mark a null pointer as const.
-                              // Otherwise many more errors will spawn.
+    ptr.debugFlags = NA_ZERO_u32; // Do not mark a null pointer as const.
+                                  // Otherwise many more errors will spawn.
   #endif
   return ptr;
 }
@@ -110,7 +110,7 @@ NA_IDEF NAPtr naMakePtrWithDataMutable(void* data) {
   NAPtr ptr;
   ptr.data.d = data;
   #if NA_DEBUG
-    ptr.debugFlags = NA_ZERO;
+    ptr.debugFlags = NA_ZERO_u32;
   #endif
   return ptr;
 }

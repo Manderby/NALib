@@ -214,7 +214,7 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
 // size_t basic integer constants
 #define NA_ZERO_s              ((size_t)0)
 #define NA_ONE_s               ((size_t)1)
-#define NA_MAX_s               ((size_t)NA_MAX_u)
+#define NA_MAX_s               ((size_t)SIZE_MAX)
 
 
 

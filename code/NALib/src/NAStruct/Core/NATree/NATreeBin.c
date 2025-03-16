@@ -76,26 +76,6 @@ NA_HDEF NABool na_TestKeyLeafContainBinDouble(NATreeLeaf* leaf, const void* key)
 }
 
 
-NA_HDEF size_t na_GetChildIndexBinNAInt(NATreeNode* parentNode, const void* childKey) {
-  NATreeBinNode* binnode = (NATreeBinNode*)(parentNode);
-  return na_GetKeyIndexBinNAInt(na_GetBinNodeKey(binnode), childKey, NA_NULL);
-}
-NA_HDEF size_t na_GetKeyIndexBinNAInt(const void* baseKey, const void* key, const void* data) {
-  NA_UNUSED(data);
-  // if key is equal to baseKey, the return value must be 1.
-  return !(*(const NAInt*)key < *(const NAInt*)baseKey); // results in 0 or 1
-}
-NA_HDEF NABool na_TestKeyBinNAInt(const void* lowerLimit, const void* upperLimit, const void* key) {
-  return ((*(const NAInt*)lowerLimit <= *(const NAInt*)key) && (*(const NAInt*)key <= *(const NAInt*)upperLimit));
-}
-NA_HDEF NABool na_TestKeyLeafContainBinNAInt(NATreeLeaf* leaf, const void* key) {
-  NAInt* key1 = (NAInt*)na_GetBinLeafKey((NATreeBinLeaf*)leaf);
-  NAInt* key2 = (NAInt*)key;
-  return *key1 == *key2;
-}
-
-
-
 NA_HDEF size_t na_GetChildIndexBini32(NATreeNode* parentNode, const void* childKey) {
   NATreeBinNode* binnode = (NATreeBinNode*)(parentNode);
   return na_GetKeyIndexBini32(na_GetBinNodeKey(binnode), childKey, NA_NULL);

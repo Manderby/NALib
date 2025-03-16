@@ -717,7 +717,7 @@ NA_DEF void naStartRuntime() {
       na_Runtime->partSizeMask = naGetSystemMemoryPagesizeMask();
     #elif(NA_POOLPART_BYTESIZE < NA_MAX_i32)
       na_Runtime->partSize = (size_t)NA_POOLPART_BYTESIZE;
-      na_Runtime->partSizeMask = ~(size_t)(NA_POOLPART_BYTESIZE - NA_ONE);
+      na_Runtime->partSizeMask = ~(size_t)(NA_POOLPART_BYTESIZE - NA_ONE_s);
     #else
       #error "Pool part byteSize is too large"
     #endif
