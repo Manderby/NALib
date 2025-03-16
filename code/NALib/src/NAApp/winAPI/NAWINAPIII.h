@@ -141,7 +141,7 @@ NA_HDEF void na_SetUIElementMouseInside(NA_UIElement* elem, NABool inside) {
   if(naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE) == inside)
     naError("mouse inside flag already set");
   #endif
-  naGetFlagu32(elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE);
+  naSetFlagu32(&elem->flags, NA_UI_ELEMENT_FLAG_MOUSE_INSIDE, inside);
 }
 
 
@@ -378,7 +378,7 @@ NABool naWINAPICaptureMouseHover() {
   HWND hWndUnderMouse = WindowFromPoint(pt);
   NA_UIElement* elementUnderMouse = (NA_UIElement*)na_GetUINALibEquivalent(hWndUnderMouse);
 
-  if(elementUnderMouse && elementUnderMouse->hoverReactionCount == 0)
+  if(!elementUnderMouse || elementUnderMouse->hoverReactionCount == 0)
     return NA_FALSE;
 
   NA_UIElement* curElement = naGetApplicationMouseHoverElement();

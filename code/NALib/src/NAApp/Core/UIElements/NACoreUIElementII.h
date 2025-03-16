@@ -18,14 +18,17 @@ NA_HDEF void na_InitCoreUIElement(NA_UIElement* uiElement, NAUIElementType eleme
   uiElement->flags = 0;
 
   uiElement->hoverReactionCount = 0;
-  if(elementType == NA_UI_BUTTON) {
-    uiElement->hoverReactionCount++;
-  }
 
   uiElement->mouseTrackingCount = 0;
   uiElement->mouseTracking = NA_NULL;
   
   naAddListLastMutable(&naGetApplication()->uiElements, uiElement);
+}
+
+
+
+NA_HDEF void na_IncCoreUIElementHoverTrackingCount(NA_UIElement* uiElement) {
+  uiElement->hoverReactionCount++;
 }
 
 

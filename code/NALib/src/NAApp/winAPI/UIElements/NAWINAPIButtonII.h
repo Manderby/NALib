@@ -468,6 +468,8 @@ NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
     icon,
     NA_NULL,
     flags);
+  na_IncCoreUIElementHoverTrackingCount(&winapiButton->button.uiElement);
+
   winapiButton->state = 0;
 
   naSetFlagu32(&winapiButton->state, NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
@@ -517,6 +519,8 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
     icon,
     icon2 ? icon2 : secondaryIcon,
     flags);
+  na_IncCoreUIElementHoverTrackingCount(&winapiButton->button.uiElement);
+
   winapiButton->state = 0;
 
   if(secondaryIcon) {
@@ -565,6 +569,8 @@ NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet, NASize size) {
     imageSet,
     NA_NULL,
     flags);
+  na_IncCoreUIElementHoverTrackingCount(&winapiButton->button.uiElement);
+
   winapiButton->state = 0;
 
   naSetFlagu32(&winapiButton->state, NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
@@ -609,6 +615,8 @@ NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImage
     imageSet,
     imageSet2,
     flags);
+  na_IncCoreUIElementHoverTrackingCount(&winapiButton->button.uiElement);
+
   winapiButton->state = 0;
 
   naSetFlagu32(&winapiButton->state, NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
