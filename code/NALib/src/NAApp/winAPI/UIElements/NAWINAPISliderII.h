@@ -118,8 +118,8 @@ NA_DEF NASlider* naNewSlider(double width) {
     WS_CHILD | WS_VISIBLE | TBS_NOTICKS | TBS_TRANSPARENTBKGND,
 		0,
     0,
-    (LONG)naRound(winapiSlider->rect.size.width * uiScale),
-    (LONG)naRound(winapiSlider->rect.size.height * uiScale),
+    (LONG)(winapiSlider->rect.size.width * uiScale),
+    (LONG)(winapiSlider->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -234,10 +234,10 @@ NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect) {
   SetWindowPos(
     naGetUIElementNativePtr(slider),
     HWND_TOP,
-    (LONG)naRound(winapiSlider->rect.pos.x * uiScale),
-    (LONG)naRound((parentRect.size.height - winapiSlider->rect.pos.y - winapiSlider->rect.size.height) * uiScale),
-    (LONG)naRound(winapiSlider->rect.size.width * uiScale),
-    (LONG)naRound(winapiSlider->rect.size.height * uiScale),
+    (LONG)(winapiSlider->rect.pos.x * uiScale),
+    (LONG)((parentRect.size.height - winapiSlider->rect.pos.y - winapiSlider->rect.size.height) * uiScale),
+    (LONG)(winapiSlider->rect.size.width * uiScale),
+    (LONG)(winapiSlider->rect.size.height * uiScale),
     0);
 }
 

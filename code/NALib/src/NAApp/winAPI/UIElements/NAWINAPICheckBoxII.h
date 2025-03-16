@@ -80,8 +80,8 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
     WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_CHECKBOX,
     0,
     0,
-    (LONG)naRound(winapiCheckBox->rect.size.width * uiScale),
-    (LONG)naRound(winapiCheckBox->rect.size.height * uiScale),
+    (LONG)(winapiCheckBox->rect.size.width * uiScale),
+    (LONG)(winapiCheckBox->rect.size.height * uiScale),
 		naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -161,10 +161,10 @@ NA_HDEF void na_SetCheckBoxRect(NA_UIElement* checkBox, NARect rect) {
   SetWindowPos(
     naGetUIElementNativePtr(checkBox),
     HWND_TOP,
-    (LONG)naRound(winapiCheckBox->rect.pos.x * uiScale),
-    (LONG)naRound((parentRect.size.height - winapiCheckBox->rect.pos.y - winapiCheckBox->rect.size.height) * uiScale),
-    (LONG)naRound(winapiCheckBox->rect.size.width * uiScale),
-    (LONG)naRound(winapiCheckBox->rect.size.height * uiScale),
+    (LONG)(winapiCheckBox->rect.pos.x * uiScale),
+    (LONG)((parentRect.size.height - winapiCheckBox->rect.pos.y - winapiCheckBox->rect.size.height) * uiScale),
+    (LONG)(winapiCheckBox->rect.size.width * uiScale),
+    (LONG)(winapiCheckBox->rect.size.height * uiScale),
     0);
 }
 

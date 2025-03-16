@@ -72,8 +72,8 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
     WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_RADIOBUTTON,
 		0,
     0,
-    (LONG)naRound(winapiRadio->rect.size.width * uiScale),
-    (LONG)naRound(winapiRadio->rect.size.height * uiScale),
+    (LONG)(winapiRadio->rect.size.width * uiScale),
+    (LONG)(winapiRadio->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -149,10 +149,10 @@ NA_HDEF void na_SetRadioRect(NA_UIElement* radio, NARect rect) {
   SetWindowPos(
     naGetUIElementNativePtr(radio),
     HWND_TOP,
-    (LONG)naRound(winapiRadio->rect.pos.x * uiScale),
-    (LONG)naRound((parentRect.size.height - winapiRadio->rect.pos.y - winapiRadio->rect.size.height) * uiScale),
-    (LONG)naRound(winapiRadio->rect.size.width * uiScale),
-    (LONG)naRound(winapiRadio->rect.size.height * uiScale),
+    (LONG)(winapiRadio->rect.pos.x * uiScale),
+    (LONG)((parentRect.size.height - winapiRadio->rect.pos.y - winapiRadio->rect.size.height) * uiScale),
+    (LONG)(winapiRadio->rect.size.width * uiScale),
+    (LONG)(winapiRadio->rect.size.height * uiScale),
     0);
 }
 

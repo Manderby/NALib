@@ -97,8 +97,8 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
     WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE,
     0,
     0,
-    (LONG)naRound(winapiLabel->rect.size.width * uiScale),
-    (LONG)naRound(winapiLabel->rect.size.height * uiScale),
+    (LONG)(winapiLabel->rect.size.width * uiScale),
+    (LONG)(winapiLabel->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -197,10 +197,10 @@ NA_DEF void naSetLabelHeight(NALabel* label, double height) {
   SetWindowPos(
     naGetUIElementNativePtr(label),
     HWND_TOP,
-    (LONG)naRound(winapiLabel->rect.pos.x * uiScale),
-    (LONG)naRound((parentRect.size.height - winapiLabel->rect.pos.y - winapiLabel->rect.size.height) * uiScale),
-    (LONG)naRound(winapiLabel->rect.size.width * uiScale),
-    (LONG)naRound(winapiLabel->rect.size.height * 2 * uiScale),
+    (LONG)(winapiLabel->rect.pos.x * uiScale),
+    (LONG)((parentRect.size.height - winapiLabel->rect.pos.y - winapiLabel->rect.size.height) * uiScale),
+    (LONG)(winapiLabel->rect.size.width * uiScale),
+    (LONG)(winapiLabel->rect.size.height * 2 * uiScale),
     0);
 }
 
@@ -244,10 +244,10 @@ NA_HDEF void na_SetLabelRect(NA_UIElement* label, NARect rect) {
   SetWindowPos(
     naGetUIElementNativePtr(label),
     HWND_TOP,
-    (LONG)naRound(winapiLabel->rect.pos.x * uiScale),
-    (LONG)naRound((parentRect.size.height - winapiLabel->rect.pos.y - winapiLabel->rect.size.height) * uiScale),
-    (LONG)naRound(winapiLabel->rect.size.width * uiScale),
-    (LONG)naRound(winapiLabel->rect.size.height * uiScale),
+    (LONG)(winapiLabel->rect.pos.x * uiScale),
+    (LONG)((parentRect.size.height - winapiLabel->rect.pos.y - winapiLabel->rect.size.height) * uiScale),
+    (LONG)(winapiLabel->rect.size.width * uiScale),
+    (LONG)(winapiLabel->rect.size.height * uiScale),
     0);
 }
 

@@ -138,8 +138,8 @@ NA_DEF NAImageSpace* naNewImageSpace(NAImageSet* imageSet, NASize size) {
     WS_CHILD | WS_VISIBLE,
 		0,
     0,
-    (LONG)naRound(winapiImageSpace->rect.size.width * uiScale),
-    (LONG)naRound(winapiImageSpace->rect.size.height * uiScale),
+    (LONG)(winapiImageSpace->rect.size.width * uiScale),
+    (LONG)(winapiImageSpace->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -199,10 +199,10 @@ NA_HDEF void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect) {
   SetWindowPos(
     naGetUIElementNativePtr(imageSpace),
     HWND_TOP,
-    (LONG)naRound(winapiImageSpace->rect.pos.x * uiScale),
-    (LONG)naRound((parentRect.size.height - winapiImageSpace->rect.pos.y - winapiImageSpace->rect.size.height) * uiScale),
-    (LONG)naRound(winapiImageSpace->rect.size.width * uiScale),
-    (LONG)naRound(winapiImageSpace->rect.size.height * uiScale),
+    (LONG)(winapiImageSpace->rect.pos.x * uiScale),
+    (LONG)((parentRect.size.height - winapiImageSpace->rect.pos.y - winapiImageSpace->rect.size.height) * uiScale),
+    (LONG)(winapiImageSpace->rect.size.width * uiScale),
+    (LONG)(winapiImageSpace->rect.size.height * uiScale),
     0);
 }
 

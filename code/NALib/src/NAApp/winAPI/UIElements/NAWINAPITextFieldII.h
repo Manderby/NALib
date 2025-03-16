@@ -124,8 +124,8 @@ NA_DEF NATextField* naNewTextField(double width) {
     WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL,
 	  0,
     0,
-    (LONG)naRound(winapiTextField->rect.size.width * uiScale),
-    (LONG)naRound(winapiTextField->rect.size.height * uiScale),
+    (LONG)(winapiTextField->rect.size.width * uiScale),
+    (LONG)(winapiTextField->rect.size.height * uiScale),
     naGetApplicationOffscreenWindow(),
     NULL, 
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
@@ -253,10 +253,10 @@ NA_HDEF void na_SetTextFieldRect(NA_UIElement* textField, NARect rect) {
   SetWindowPos(
     naGetUIElementNativePtr(textField),
     HWND_TOP,
-    (LONG)naRound(winapiTextField->rect.pos.x * uiScale),
-    (LONG)naRound((parentRect.size.height - winapiTextField->rect.pos.y - winapiTextField->rect.size.height) * uiScale),
-    (LONG)naRound(winapiTextField->rect.size.width * uiScale),
-    (LONG)naRound(winapiTextField->rect.size.height * uiScale),
+    (LONG)(winapiTextField->rect.pos.x * uiScale),
+    (LONG)((parentRect.size.height - winapiTextField->rect.pos.y - winapiTextField->rect.size.height) * uiScale),
+    (LONG)(winapiTextField->rect.size.width * uiScale),
+    (LONG)(winapiTextField->rect.size.height * uiScale),
     0);
 }
 

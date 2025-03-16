@@ -91,8 +91,8 @@ NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement) 
   /*int selection = */TrackPopupMenu(
     winapiMenu->hMenu, 
     TPM_LEFTALIGN | TPM_RIGHTBUTTON/* | TPM_RETURNCMD*/, 
-    (LONG)naRound(pos.x * uiScale),
-    (LONG)naRound((screenRect.size.height - pos.y) * uiScale),
+    (LONG)(pos.x * uiScale),
+    (LONG)((screenRect.size.height - pos.y) * uiScale),
     0,
     naGetUIElementNativePtr(parentUIElement),
     NULL);

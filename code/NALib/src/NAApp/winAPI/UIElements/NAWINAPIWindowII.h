@@ -243,10 +243,10 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
 
   NARect screenRect = naGetMainScreenRect();
   RECT windowRect;
-  windowRect.top = (LONG)naRound((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale);
-  windowRect.right = (LONG)naRound((rect.pos.x + rect.size.width) * uiScale);
-  windowRect.bottom = (LONG)naRound((screenRect.size.height - rect.pos.y) * uiScale);
-  windowRect.left = (LONG)naRound(rect.pos.x * uiScale);
+  windowRect.top = (LONG)((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale);
+  windowRect.right = (LONG)((rect.pos.x + rect.size.width) * uiScale);
+  windowRect.bottom = (LONG)((screenRect.size.height - rect.pos.y) * uiScale);
+  windowRect.left = (LONG)(rect.pos.x * uiScale);
   AdjustWindowRect(&windowRect, style, NA_FALSE);
 
   TCHAR* systemTitle = naAllocSystemStringWithUTF8String(title);
@@ -380,10 +380,10 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
       SetWindowPos(
         naGetUIElementNativePtr(window),
         HWND_TOPMOST,
-        (LONG)naRound(screenRect.pos.x * uiScale),
-        (LONG)naRound((screenRect.pos.y - screenRect.pos.y) * uiScale),
-        (LONG)naRound(screenRect.size.width * uiScale),
-        (LONG)naRound(screenRect.size.height * uiScale),
+        (LONG)(screenRect.pos.x * uiScale),
+        (LONG)((screenRect.pos.y - screenRect.pos.y) * uiScale),
+        (LONG)(screenRect.size.width * uiScale),
+        (LONG)(screenRect.size.height * uiScale),
         SWP_SHOWWINDOW);
       // Commented out for future use. Note: Incorporate resolution depencence zoom.
       //ChangeDisplaySettings(NULL, 0);
@@ -395,10 +395,10 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
       SetWindowPos(
         naGetUIElementNativePtr(window),
         HWND_NOTOPMOST,
-        (LONG)naRound(window->windowedFrame.pos.x * uiScale),
-        (LONG)naRound((screenRect.size.height - window->windowedFrame.pos.y - window->windowedFrame.size.height) * uiScale),
-        (LONG)naRound(window->windowedFrame.size.width * uiScale),
-        (LONG)naRound(window->windowedFrame.size.height * uiScale),
+        (LONG)(window->windowedFrame.pos.x * uiScale),
+        (LONG)((screenRect.size.height - window->windowedFrame.pos.y - window->windowedFrame.size.height) * uiScale),
+        (LONG)(window->windowedFrame.size.width * uiScale),
+        (LONG)(window->windowedFrame.size.height * uiScale),
         SWP_SHOWWINDOW);
       //ChangeDisplaySettings(NULL, 0);
     }
@@ -520,10 +520,10 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
 
   MoveWindow(
     naGetUIElementNativePtr(winapiWindow),
-    (LONG)naRound(rect.pos.x * uiScale),
-    (LONG)naRound((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale),
-    (LONG)naRound(rect.size.width * uiScale),
-    (LONG)naRound(rect.size.height * uiScale),
+    (LONG)(rect.pos.x * uiScale),
+    (LONG)((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale),
+    (LONG)(rect.size.width * uiScale),
+    (LONG)(rect.size.height * uiScale),
     NA_FALSE);
 
   na_UpdateMouseTracking(&winapiWindow->window.uiElement);
