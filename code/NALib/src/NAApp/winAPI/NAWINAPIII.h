@@ -36,6 +36,7 @@ NA_HAPI uint32 na_GetMenuItemId(const NAMenuItem* menuItem);
 NA_HAPI void na_updateMenuItem(NAMenu* menu, const NAMenuItem* menuItem);
 
 NA_HAPI NAUIColor* na_SwapWINAPISpaceBackgroundColor(NASpace* space, NAUIColor* bgColor);
+NA_HAPI void na_ForceWINAPISpaceToRedrawBackground(NA_UIElement* space);
 
 
 NA_HDEF void na_ClearUINativePtr(void* nativePtr) {
