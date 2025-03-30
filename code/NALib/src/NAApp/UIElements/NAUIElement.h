@@ -161,6 +161,8 @@ NA_API void* naGetUIElementNativePtr(void* uiElement);
 NA_API void* naGetUIElementNativePtrConst(const void* uiElement);
 
 
+NA_API void naDebugUIElement(const void* elem);
+
 
 #ifdef __cplusplus
   } // extern "C"

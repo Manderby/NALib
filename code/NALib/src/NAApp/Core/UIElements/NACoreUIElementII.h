@@ -68,6 +68,8 @@ NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
   na_ClearUINativePtr(uiElement->nativePtr);
 
   naRemoveListData(&naGetApplication()->uiElements, uiElement);
+
+  na_UndebugUIElement(uiElement);
 }
 
 

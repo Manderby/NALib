@@ -287,6 +287,10 @@ NA_HDEF NAApplication* na_NewApplication(void) {
 
   NAWINAPIApplication* winapiApplication = naNew(NAWINAPIApplication);
 
+  #if NA_DEBUG
+    naInitList(&winapiApplication->debugElements);
+  #endif
+
   winapiApplication->nonClientMetrics.cbSize = sizeof(NONCLIENTMETRICS);
   SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &winapiApplication->nonClientMetrics, 0);
 
@@ -331,8 +335,40 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
   naClearList(&winapiApplication->timers, (NAMutator)naFree);
 
   naClearList(&winapiApplication->openGLRedrawList, NA_NULL);
+
+  #if NA_DEBUG
+    naClearList(&winapiApplication->debugElements, NA_NULL);
+  #endif
 }
 
+
+
+#if NA_DEBUG
+  NA_DEF void naDebugUIElement(const void* elem) {
+    NA_UIElement* uiElem = (NA_UIElement*)elem;
+    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)na_App;
+    naAddListLastConst(&winapiApplication->debugElements, uiElem);
+  }
+  NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) {
+    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)na_App;
+    NAListIterator iter = naMakeListModifier(&winapiApplication->debugElements);
+    if(naLocateListData(&iter, elem)) {
+      naRemoveListCurConst(&iter, NA_FALSE);
+    }
+    naClearListIterator(&iter);
+  }
+  NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) {
+    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)na_App;
+    NAListIterator iter = naMakeListModifier(&winapiApplication->debugElements);
+    NABool found = naLocateListData(&iter, elem);
+    naClearListIterator(&iter);
+    return found;
+  }
+  #else
+  NA_DEF void naDebugUIElement(const void* elem) {}
+  NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) {}
+  NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) {}
+#endif
 
 
 HWND naGetApplicationOffscreenWindow(void) {

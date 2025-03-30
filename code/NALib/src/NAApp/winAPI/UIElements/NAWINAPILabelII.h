@@ -39,7 +39,7 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_WINDOWPOSCHANGED:
     // NALib by default ignores this message but for labels, we need it.
     // Otherwise, the rect of the wnd will not be computed properly. More
-    // explizitely, the bottom coordinate will be incorrect.
+    // explicitely, the bottom coordinate will be incorrect.
     info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
     break;
 

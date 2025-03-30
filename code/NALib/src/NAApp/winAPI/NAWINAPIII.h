@@ -621,11 +621,69 @@ NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARA
 
 
 
+#if NA_DEBUG
+  na_DebugWINAPIMessage(NA_UIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+    switch(naGetUIElementType(uiElement)) {
+    case NA_UI_LABEL:  printf("%p Label:  ", uiElement); break;
+    case NA_UI_SPACE:  printf("%p Space:  ", uiElement); break;
+    case NA_UI_WINDOW: printf("%p Window: ", uiElement); break;
+    default:           printf("%p ?    :  ", uiElement); break;
+    }
+
+    switch(message) {
+    case   0x3: printf("WM_MOVE"); break;
+    case   0x6: printf("WM_ACTIVATE"); break;
+    case   0x7: printf("WM_SETFOCUS"); break;
+    case   0x5: printf("WM_SIZE"); break;
+    case   0x8: printf("WM_KILLFOCUS"); break;
+    case   0xc: printf("WM_SETTEXT"); break;
+    case   0xf: printf("WM_PAINT"); break;
+    case  0x14: printf("WM_ERASEBKGND"); break;
+    case  0x18: printf("WM_SHOWWINDOW"); break;
+    case  0x1c: printf("WM_ACTIVATEAPP"); break;
+    case  0x20: printf("WM_SETCURSOR"); break;
+    case  0x21: printf("WM_MOUSEACTIVATE"); break;
+    case  0x22: printf("WM_CHILDACTIVATE"); break;
+    case  0x24: printf("WM_GETMINMAXINFO"); break;
+    case  0x46: printf("WM_WINDOWPOSCHANGING"); break;
+    case  0x47: printf("WM_WINDOWPOSCHANGED"); break;
+    case  0x7f: printf("WM_GETICON"); break;
+    case  0x83: printf("WM_NCCALCSIZE"); break;
+    case  0x84: printf("WM_NCHITTEST"); break;
+    case  0x85: printf("WM_NCPAINT"); break;
+    case  0x86: printf("WM_NCACTIVATE"); break;
+    case 0x113: printf("WM_TIMER"); break;
+    case 0x133: printf("WM_CTLCOLOREDIT"); break;
+    case 0x138: printf("WM_CTLCOLORSTATIC"); break;
+    case 0x200: printf("WM_MOUSEFIRST / WM_MOUSEMOVE"); break;
+    case 0x201: printf("WM_LBUTTONDOWN"); break;
+    case 0x202: printf("WM_LBUTTONDOWN"); break;
+    case 0x203: printf("WM_LBUTTONDBLCLK"); break;
+    case 0x215: printf("WM_CAPTURECHANGED"); break;
+    case 0x2a3: printf("WM_MOUSELEAVE"); break;
+    case 0x281: printf("WM_IME_SETCONTEXT"); break;
+    case 0x282: printf("WM_IME_NOTIFY"); break;
+    case 0x318: printf("WM_PRINTCLIENT"); break;
+    case 0x31f: printf("WM_DWMNCRENDERINGCHANGED"); break;
+    default:    printf("%4x Unknown message", (int)message); break;
+    }
+
+    printf(NA_NL);
+  }
+#endif
+
+
 // This is the one and only, master of destruction, defender of chaos and
 // pimp of the century function handling all and everything in WINAPI.
 
 LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
   NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(hWnd);
+
+  #if NA_DEBUG
+    if(na_IsUIElementBeingDebugged(uiElement)) {
+      na_DebugWINAPIMessage(uiElement, message, wParam, lParam);
+    }
+  #endif
 
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 

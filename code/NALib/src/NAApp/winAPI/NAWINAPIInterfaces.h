@@ -81,6 +81,10 @@ struct NAWINAPIApplication {
   WNDPROC          oldSelectWindowProc;
   WNDPROC          oldSliderWindowProc;
   WNDPROC          oldTextFieldWindowProc;
+
+  #if NA_DEBUG
+    NAList         debugElements;
+  #endif
 };
 
 struct NAWINAPIButton{

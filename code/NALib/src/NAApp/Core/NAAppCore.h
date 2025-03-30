@@ -221,6 +221,9 @@ NA_HAPI void na_ClearCoreUIElement(NA_UIElement* uiElement);
 
 NA_HAPI void na_IncCoreUIElementHoverTrackingCount(NA_UIElement* uiElement);
 
+NA_HAPI void na_UndebugUIElement(const NA_UIElement* elem);
+NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem);
+
 // System dependent implementations:
 NA_HAPI void na_InitSystemUIElement(NA_UIElement* uiElement, void* nativePtr);
 NA_HAPI void na_ClearSystemUIElement(void* nativePtr);

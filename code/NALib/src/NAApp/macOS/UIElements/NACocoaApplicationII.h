@@ -227,6 +227,18 @@ NA_DEF void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication) {
 
 
 
+#if NA_DEBUG
+  NA_DEF void naDebugUIElement(const void* elem) {}
+  NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) {}
+  NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) {}
+#else
+  NA_DEF void naDebugUIElement(const void* elem) {}
+  NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) {}
+  NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) {}
+#endif
+
+
+
 NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff) {
   dispatch_time_t nextTime = dispatch_time(DISPATCH_TIME_NOW, naMakei64WithDouble(1000000000. * timediff));
   dispatch_queue_t queue = dispatch_get_main_queue();
