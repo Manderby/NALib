@@ -31,7 +31,7 @@ NA_PROTOTYPE(NATranslator);
 // NA_UIElement is the base type of any ui element. All ui element struct
 // definitions have an NA_UIElement as the first entry:
 
-typedef struct NA_UIElement NA_UIElement;
+NA_PROTOTYPE(NA_UIElement);
 struct NA_UIElement{
   NAUIElementType elementType;
   void*           parent;
@@ -164,14 +164,14 @@ struct NAWindow{
 
 
 
-typedef struct NA_EventReaction NA_EventReaction;
+NA_PROTOTYPE(NA_EventReaction);
 struct NA_EventReaction{
   void*              controller;
   NAReactionCallback callback;
   NAUICommand        command;
 };
 
-typedef struct NA_KeyboardShortcutReaction NA_KeyboardShortcutReaction;
+NA_PROTOTYPE(NA_KeyboardShortcutReaction);
 struct NA_KeyboardShortcutReaction{
   void*              controller;
   NAReactionCallback callback;

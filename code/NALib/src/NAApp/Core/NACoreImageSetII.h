@@ -19,7 +19,7 @@ NA_RUNTIME_TYPE(NAImageSet, na_DestructImageSet, NA_TRUE);
 
 
 
-typedef struct NA_UISubImage NA_UISubImage;
+NA_PROTOTYPE(NA_UISubImage);
 struct NA_UISubImage{
   const NAImage* image;
   void* nativeImage;

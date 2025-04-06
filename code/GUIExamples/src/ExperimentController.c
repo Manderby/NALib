@@ -58,7 +58,7 @@ struct ExperimentController{
   NALabel* imageSpaceLabel;
   NAImageSpace* imageSpace;
 
-  NAInt fontId;
+  size_t fontId;
   NALabel* openGLSpaceLabel;
   NAOpenGLSpace* openGLSpace;
   int openGLSpaceRefreshCount;
