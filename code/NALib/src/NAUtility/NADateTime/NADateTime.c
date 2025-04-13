@@ -75,7 +75,7 @@ typedef struct{
 } NATAIPeriod;
 
 // Leap second information:
-#define NA_TAI_PERIODS_COUNT 107
+#define NA_TAI_PERIODS_COUNT 108
 
 // This table stores all leap second entries since 1958. Every year has at
 // least 1 entry. Every entry defines, what the number of its first second is.
@@ -192,6 +192,7 @@ NATAIPeriod naTAIPeriods[NA_TAI_PERIODS_COUNT] = {
   {naMakeu64WithLiteralLo(2051222400), naMakeu64WithLiteralLo(2051222437), 2023, NA_START_JANUARY_FIRST},
   {naMakeu64WithLiteralLo(2082758400), naMakeu64WithLiteralLo(2082758437), 2024, NA_START_JANUARY_FIRST},
   {naMakeu64WithLiteralLo(2114380800), naMakeu64WithLiteralLo(2114380837), 2025, NA_START_JANUARY_FIRST},
+  {naMakeu64WithLiteralLo(2130019200), naMakeu64WithLiteralLo(2130019237), 2025, NA_START_JULY_FIRST},
   // the last entry is the first date with unknown future leap seconds.
   // everything up and including that date is known.
 };
