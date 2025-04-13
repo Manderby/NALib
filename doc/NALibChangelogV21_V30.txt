@@ -8,9 +8,12 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 28 (released 13. April 2025)
+==========
+
 Big changes:
 - Adding PubSub implementation NANotifier
-- Improving GUI on Windows drastically
+- Improving GUI on Windows drastically.
 - Changing NABabyColor to NAColor and changing its implementation.
 - Renaming NABabyImage to NAImage
 - Renaming NAUIImage to NAImageSet
