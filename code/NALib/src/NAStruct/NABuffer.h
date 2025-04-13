@@ -7,6 +7,7 @@
 
 
 
+#include "stdlib.h"
 #include "../NABase/NABase.h"
 NA_PROTOTYPE(NAChecksum);
 NA_PROTOTYPE(NAFile);

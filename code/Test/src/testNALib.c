@@ -56,6 +56,8 @@ void benchmarkNALib(void) {
   //benchmarkNAStruct();
 }
 
+
+
 int main(int argc, const char** argv) {
   printf("Testing NALib Version: %d ", NA_VERSION);
   #if NA_DEBUG
