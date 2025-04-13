@@ -276,9 +276,10 @@ NA_HDEF void naFillColorWithSkinTextColor(NAColor* color, NASkin skin) {
     #if NA_DEBUG
       naError("Cannot provide color for plain skin");
     #endif
-    // Fallthrough to light.
 
-  case NA_SKIN_LIGHT:
+    NA_FALLTHROUGH; // Fallthrough to light.
+
+    case NA_SKIN_LIGHT:
     skinColor[0] = 16;
     skinColor[1] = 16;
     skinColor[2] = 16;
@@ -308,7 +309,8 @@ NA_DEF void naFillColorWithSkinLinkColor(NAColor* color, NASkin skin) {
     #if NA_DEBUG
       naError("Cannot provide color for plain skin");
     #endif
-    // Fallthrough to light.
+
+    NA_FALLTHROUGH; // Fallthrough to light.
     
   case NA_SKIN_LIGHT:
     skinColor[0] = 16;
@@ -340,7 +342,8 @@ NA_DEF void naFillColorWithSkinAccentColor(NAColor* color, NASkin skin) {
     #if NA_DEBUG
       naError("Cannot provide color for plain skin");
     #endif
-    // Fallthrough to light.
+    
+    NA_FALLTHROUGH; // Fallthrough to light.
     
   case NA_SKIN_LIGHT:
     skinColor[0] = 255;

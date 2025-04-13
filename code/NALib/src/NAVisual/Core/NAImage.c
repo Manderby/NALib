@@ -177,7 +177,7 @@ NAImage* na_CreateBlendedImage(
   // In case we have two images, fill up the trivial vertical parts.
   if(topIsImage && baseIsImage) {
     // Simply copy the lower part of the base image
-    size_t basePixelCount = innerRect.pos.y;
+    size_t basePixelCount = (size_t)innerRect.pos.y;
     if(basePixelCount > 0) {
       naCopyn(
         ret,

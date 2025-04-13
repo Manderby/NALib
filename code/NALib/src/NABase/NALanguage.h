@@ -37,6 +37,7 @@
   #define NA_INLINE             _inline
   #define NA_LINKER_NO_EXPORT
   #define NA_LINKER_EXPORT      __declspec(dllexport)
+  #define NA_FALLTHROUGH        // todo
 #elif NA_OS == NA_OS_MAC_OS_X
   #define NA_INLINE             inline
   #ifdef __cplusplus
@@ -47,6 +48,7 @@
   #endif
   #define NA_LINKER_NO_EXPORT   __attribute__ ((visibility("hidden")))
   #define NA_LINKER_EXPORT      __attribute__ ((visibility("default")))
+  #define NA_FALLTHROUGH        __attribute__((fallthrough))
 #else
   #define NA_INLINE             inline
   #ifdef __cplusplus
@@ -57,6 +59,7 @@
   #endif
   #define NA_LINKER_NO_EXPORT
   #define NA_LINKER_EXPORT
+  #define NA_FALLTHROUGH
 #endif
 
 

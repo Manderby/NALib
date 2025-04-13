@@ -93,7 +93,7 @@ NA_IDEF void naUnsetSignBit256(void* i) {
 NA_IDEF int8 naAbsi8(int8 i) {
   // See comments of NAAbsi32
   uint8 signum = naGetSignum8(i);
-  return (int8)(signum ^ (uint8)i) - signum;
+  return (int8)((signum ^ (uint8)i) - signum);
 }
 NA_IDEF int16 naAbsi16(int16 i) {
   // See comments of NAAbsi32
@@ -101,7 +101,7 @@ NA_IDEF int16 naAbsi16(int16 i) {
   return (int16)((signum ^ (uint16)i) - signum);
 }
 NA_IDEF int32 naAbsi32(int32 i) {
-  // Note that the casts to unsigned int are necessary as otherwise, some
+  // Note that the casts to unsigned int are necessary as otherwise,
   // the computation NA_MAX_i32 - -1 leads to undefined results.
   uint32 signum = naGetSignum32(i);
   return (int32)((signum ^ (uint32)i) - signum);
