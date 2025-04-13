@@ -91,28 +91,35 @@ NA_IDEF void naUnsetSignBit256(void* i) {
 
 
 NA_IDEF int8 naAbsi8(int8 i) {
-  int8 signum = (int8)naGetSignum8(i);
-  return (signum ^ i) - signum;
+  // See comments of NAAbsi32
+  uint8 signum = naGetSignum8(i);
+  return (int8)(signum ^ (uint8)i) - signum;
 }
 NA_IDEF int16 naAbsi16(int16 i) {
-  int16 signum = (int16)naGetSignum16(i);
-  return (signum ^ i) - signum;
+  // See comments of NAAbsi32
+  uint16 signum = naGetSignum16(i);
+  return (int16)((signum ^ (uint16)i) - signum);
 }
 NA_IDEF int32 naAbsi32(int32 i) {
-  int32 signum = (int32)naGetSignum32(i);
-  return (signum ^ i) - signum;
+  // Note that the casts to unsigned int are necessary as otherwise, some
+  // the computation NA_MAX_i32 - -1 leads to undefined results.
+  uint32 signum = naGetSignum32(i);
+  return (int32)((signum ^ (uint32)i) - signum);
 }
 NA_IDEF NAi64 naAbsi64(NAi64 i) {
-  NAi64 signum = naCastu64Toi64(naGetSignum64(i));
-  return naSubi64(naXori64(signum, i), signum);
+  // See comments of NAAbsi32
+  NAu64 signum = naGetSignum64(i);
+  return naCastu64Toi64(naSubu64(naXoru64(signum, naCasti64Tou64(i)), signum));
 }
 NA_IDEF NAi128 naAbsi128(NAi128 i) {
-  NAi128 signum = naCastu128Toi128(naGetSignum128(i));
-  return naSubi128(naXori128(signum, i), signum);
+  // See comments of NAAbsi32
+  NAu128 signum = naGetSignum128(i);
+  return naCastu128Toi128(naSubu128(naXoru128(signum, naCasti128Tou128(i)), signum));
 }
 NA_IDEF NAi256 naAbsi256(NAi256 i) {
-  NAi256 signum = naCastu256Toi256(naGetSignum256(i));
-  return naSubi256(naXori256(signum, i), signum);
+  // See comments of NAAbsi32
+  NAu256 signum = naGetSignum256(i);
+  return naCastu256Toi256(naSubu256(naXoru256(signum, naCasti256Tou256(i)), signum));
 }
 
 
