@@ -35,7 +35,11 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
 
   naFree(systemFontName);
 
-  return na_CreateFont(nativePtr, name, flags, size);
+  NAFont* retFont = na_CreateFont(nativePtr, name, flags, size);
+
+  naDelete(name);
+
+  return retFont;
 }
 
 
