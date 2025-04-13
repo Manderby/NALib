@@ -252,7 +252,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
   if(message->message == WM_KEYUP || message->message == WM_SYSKEYDOWN || message->message == WM_SYSKEYUP) {
     NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(message->hwnd);
     na_CaptureKeyboardStatus(message);
-    if(!naGetDefaultWindowSystemKeyHandling(uiElement)) {
+    if(!naGetDefaultWindowSystemKeyHandling()) {
       // We mark the key stroke to be handeled such that Windows will not
       // do any funny business.
       retValue = NA_TRUE;

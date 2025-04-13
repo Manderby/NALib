@@ -271,13 +271,13 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
         foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_PRESSED, secondaryState);
       }else{
         if(na_GetUIElementMouseInside(&winapiButton->button.uiElement)) {
-          foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM,  NA_IMAGE_SET_INTERACTION_HOVER, secondaryState);
+          foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_HOVER, secondaryState);
         }else{
-          foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM,  NA_IMAGE_SET_INTERACTION_NONE, secondaryState);
+          foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_NONE, secondaryState);
         }
       }
     }else{
-      foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM,  NA_IMAGE_SET_INTERACTION_DISABLED, secondaryState);
+      foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_DISABLED, secondaryState);
     }
 
     // We store the background where the image will be placed.
@@ -487,6 +487,11 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
   winapiButton->rect = naMakeRectS(0., 0., width, 24.);
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
+  // Note: We need a copy because the tinting might be different.
+  NAImageSet* imageSet2 = icon2
+    ? NA_NULL
+    : naRecreateImageSet(icon);
+
   HWND nativePtr = CreateWindow(
     TEXT("BUTTON"),
     TEXT(""),
@@ -512,9 +517,13 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
     NA_NULL,
     NA_NULL,
     icon,
-    icon2 ? icon2 : icon,
+    icon2 ? icon2 : imageSet2,
     flags);
   na_IncCoreUIElementHoverTrackingCount(&winapiButton->button.uiElement);
+
+  if(imageSet2) {
+    naRelease(imageSet2);
+  }
 
   winapiButton->state = 0;
 

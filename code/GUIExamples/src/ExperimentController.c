@@ -5,8 +5,8 @@
 
 
 #include "GUIExamples.h"
-#include "../../NALib/src/NAVisual/NA3DHelper.h"
-#include "../../NALib/src/NAVisual/NAPNG.h"
+#include "NAVisual/NA3DHelper.h"
+#include "NAVisual/NAPNG.h"
 
 
 struct ExperimentController{
