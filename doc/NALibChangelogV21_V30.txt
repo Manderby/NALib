@@ -20,13 +20,14 @@ Big changes:
 Smaller things:
 - Great NAApp cleanup
 - naRefreshUIElement now executes immediately if timediff = 0
+- Using NA_PROTOTYPE
 - Removing list and tree iterator macros.
 - Replacing scroll reactions with transform reactions.
 - Changing NAReaction callback signature to return void.
 - Dprecating NABezel4. Using NABorder2D instead.
 - Deleting NABounds. Had been deprecated already in version 27
 - Changeing main branch name to main instead of master.
-- Adding leap second information based on bulletin C 66, 67, 68
+- Adding leap second information based on bulletin C 66, 67, 68, 69
 - Changed behaviour of naNewStringWithBaseNameOfPath
 - Adding conversion of upper and lower cases for all kind of characters.
 - Removung NAURL
