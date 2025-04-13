@@ -506,26 +506,17 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
     app->oldButtonWindowProc = oldproc;
   }
 
-  NAImageSet* secondaryIcon = NA_NULL;
-  if(!icon2) {
-    secondaryIcon = naRecreateImageSet(icon);
-  }
-
   na_InitButton(
     (NAButton*)winapiButton,
     nativePtr,
     NA_NULL,
     NA_NULL,
     icon,
-    icon2 ? icon2 : secondaryIcon,
+    icon2 ? icon2 : icon,
     flags);
   na_IncCoreUIElementHoverTrackingCount(&winapiButton->button.uiElement);
 
   winapiButton->state = 0;
-
-  if(secondaryIcon) {
-    naRelease(secondaryIcon);
-  }
 
   naSetFlagu32(&winapiButton->state, NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
 

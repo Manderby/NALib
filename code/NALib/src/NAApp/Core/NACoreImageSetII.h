@@ -252,7 +252,7 @@ NA_DEF NAImageSet* naRecreateImageSet(const NAImageSet* imageSet) {
   
   na_AddImageSetSubImage(
     newImageSet,
-    naRetainConst(subImage->image),
+    subImage->image,
     subImage->resolution,
     NA_SKIN_PLAIN,
     NA_IMAGE_SET_INTERACTION_NONE);
@@ -409,6 +409,7 @@ NA_HDEF NA_UISubImage* na_AddImageSetSubImage(
 
 NA_HDEF void na_DeallocUISubImage(NA_UISubImage* subImage) {
   naReleaseConst(subImage->image);
+  naDeallocNativeImage(subImage->nativeImage);
   naFree(subImage);
 }
 

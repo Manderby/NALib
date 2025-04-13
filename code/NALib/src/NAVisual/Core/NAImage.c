@@ -99,12 +99,12 @@ NA_DEF NASizes naGetImageSize(const NAImage* image) {
 
 NA_DEF NAImage* naCreateImage(NASizes size, const NAColor* color) {
   NAImage* image;
-#if NA_DEBUG
-  if(size.width <= 0 || size.height <= 0)
-    naError("size must be > 0");
-  if(size.width > NA_MAX_i32 || size.height > NA_MAX_i32)
-    naError("size is too big");
-#endif
+  #if NA_DEBUG
+    if(size.width <= 0 || size.height <= 0)
+      naError("size must be > 0");
+    if(size.width > NA_MAX_i32 || size.height > NA_MAX_i32)
+      naError("size is too big");
+  #endif
   image = naCreate(NAImage);
   image->width = (uint32)size.width;
   image->height = (uint32)size.height;
