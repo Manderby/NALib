@@ -61,7 +61,7 @@
 
 
 // The full type definition is in the file "NAHeapII.h"
-typedef struct NAHeap NAHeap;
+NA_PROTOTYPE(NAHeap);
 
 // Use the following flags to define what type the key is.
 // If this flag is 0 or not present, the heap will use double-value keys.

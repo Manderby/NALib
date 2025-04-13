@@ -7,14 +7,14 @@
 
 
 
-typedef struct NA_MessageDispatch NA_MessageDispatch;
+NA_PROTOTYPE(NA_MessageDispatch);
 struct NA_MessageDispatch{
   NAMessage message;
   NAMessageCallback callback;
 };
 NA_RUNTIME_TYPE(NA_MessageDispatch, NA_NULL, NA_FALSE);
 
-typedef struct NA_Subscription NA_Subscription;
+NA_PROTOTYPE(NA_Subscription);
 struct NA_Subscription{
   const void* sender;
   void* reciever;
@@ -22,13 +22,13 @@ struct NA_Subscription{
 };
 NA_RUNTIME_TYPE(NA_Subscription, NA_NULL, NA_FALSE);
 
-typedef struct NA_Signal NA_Signal;
+NA_PROTOTYPE(NA_Signal);
 struct NA_Signal{
   SignalPriority priority;
   NAList subscriptions;
 };
 
-typedef struct NA_Topic NA_Topic;
+NA_PROTOTYPE(NA_Topic);
 struct NA_Topic{
   size_t signalCount;
   NA_Signal* signals;

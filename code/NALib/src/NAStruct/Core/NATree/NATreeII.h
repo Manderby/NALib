@@ -4,10 +4,10 @@
 // including "NATree.h"
 
 // A Tree consists of Items which can either be a Node or a Leaf.
-typedef struct NATreeItem NATreeItem;
-typedef struct NATreeNode NATreeNode;
-typedef struct NATreeLeaf NATreeLeaf;
-typedef struct NATreeIterationInfo NATreeIterationInfo;
+NA_PROTOTYPE(NATreeItem);
+NA_PROTOTYPE(NATreeNode);
+NA_PROTOTYPE(NATreeLeaf);
+NA_PROTOTYPE(NATreeIterationInfo);
 
 // Currently, an NATree is supposed to store a max of 16 childs, meaning any
 // other flag must be non-overlapping with 0x0000ffff or having a bitshift
@@ -92,7 +92,7 @@ typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 
 
 
-typedef struct NATreeNodeABI NATreeNodeABI;
+NA_PROTOTYPE(NATreeNodeABI);
 struct NATreeNodeABI{
   size_t                        childPerNode;
   size_t                        leafKeyOffset;

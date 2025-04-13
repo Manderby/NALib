@@ -20,9 +20,9 @@
 
 
 
-typedef struct NAJSONParser NAJSONParser;
-typedef struct NAJSONRule NAJSONRule;
-typedef struct NAJSONRuleSet NAJSONRuleSet;
+NA_PROTOTYPE(NAJSONParser);
+NA_PROTOTYPE(NAJSONRule);
+NA_PROTOTYPE(NAJSONRuleSet);
 
 
 

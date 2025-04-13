@@ -44,13 +44,13 @@ typedef enum{
   NA_JSON_RULE_POINTER_OBJECT,
 } NA_JSONDataType;
 
-typedef struct NA_JSONString NA_JSONString;
+NA_PROTOTYPE(NA_JSONString);
 struct NA_JSONString{
   const NAUTF8Char* ptr;
   size_t strLen;
 };
 
-typedef struct NAJSONRule NAJSONRule;
+NA_PROTOTYPE(NAJSONRule);
 struct NAJSONRule{
   NA_JSONString key;
   NA_JSONDataType type;
@@ -59,13 +59,13 @@ struct NAJSONRule{
   #endif
 };
 
-typedef struct NA_JSONMemberRule NA_JSONMemberRule;
+NA_PROTOTYPE(NA_JSONMemberRule);
 struct NA_JSONMemberRule{
   NAJSONRule baseRule;
   size_t memberOffset;
 };
 
-typedef struct NA_JSONFixedArrayRule NA_JSONFixedArrayRule;
+NA_PROTOTYPE(NA_JSONFixedArrayRule);
 struct NA_JSONFixedArrayRule{
   NAJSONRule baseRule;
   size_t arrayOffset;
@@ -78,7 +78,7 @@ struct NA_JSONFixedArrayRule{
   NAJSONRule* subRule;
 };
 
-typedef struct NA_JSONDynamicArrayRule NA_JSONDynamicArrayRule;
+NA_PROTOTYPE(NA_JSONDynamicArrayRule);
 struct NA_JSONDynamicArrayRule{
   NAJSONRule baseRule;
   size_t arrayOffset;
@@ -89,13 +89,13 @@ struct NA_JSONDynamicArrayRule{
   NAJSONRule* subRule;
 };
 
-typedef struct NA_JSONObjectRule NA_JSONObjectRule;
+NA_PROTOTYPE(NA_JSONObjectRule);
 struct NA_JSONObjectRule{
   NAJSONRule baseRule;
   const NAJSONRuleSet* ruleSet;
 };
 
-typedef struct NA_JSONPointerObjectRule NA_JSONPointerObjectRule;
+NA_PROTOTYPE(NA_JSONPointerObjectRule);
 struct NA_JSONPointerObjectRule{
   NAJSONRule baseRule;
   size_t memberOffset;

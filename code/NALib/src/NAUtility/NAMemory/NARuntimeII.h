@@ -63,9 +63,9 @@ NA_API void* na_CreateStruct(NATypeInfo* info);
 
 
 
-typedef struct NA_TypeInfo NA_TypeInfo;
-typedef struct NAMallocGarbage NAMallocGarbage;
-typedef struct NARuntime NARuntime;
+NA_PROTOTYPE(NA_TypeInfo);
+NA_PROTOTYPE(NAMallocGarbage);
+NA_PROTOTYPE(NARuntime);
 
 // The runtime struct stores base informations about the runtime.
 struct NARuntime{

@@ -45,12 +45,12 @@ struct NAHeap{
 // The important thing is that the ptr and key field are at the same position
 // in the struct such that they can be accessed by the inlined functions
 // below no matter what struct type is stored.
-typedef struct NAHeapEntry NAHeapEntry;
+NA_PROTOTYPE(NAHeapEntry);
 struct NAHeapEntry{
   const void*       key;
   NAPtr             ptr;
 };
-typedef struct NAHeapBackEntry NAHeapBackEntry;
+NA_PROTOTYPE(NAHeapBackEntry);
 struct NAHeapBackEntry{
   const void*       key;
   NAPtr             ptr;

@@ -10,7 +10,7 @@
 
 
 
-typedef struct NANotifier NANotifier;
+NA_PROTOTYPE(NANotifier);
 
 typedef enum{
   NA_SIGNAL_PRIORITY_UPDATE,   // lowest prio
@@ -18,7 +18,7 @@ typedef enum{
   NA_SIGNAL_PRIORITY_DELETE,   // highest prio
 } SignalPriority;
 
-typedef struct NAMessage NAMessage;
+NA_PROTOTYPE(NAMessage);
 struct NAMessage {
   void* reciever;
   void* sender;

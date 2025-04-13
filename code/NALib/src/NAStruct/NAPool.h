@@ -24,7 +24,7 @@
 #include "../NABase/NABase.h"
 
 
-typedef struct NAPool NAPool;
+NA_PROTOTYPE(NAPool);
 
 
 // Creates a new pointer pool with the given maximum count. The pool is empty

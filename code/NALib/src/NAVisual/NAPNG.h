@@ -10,7 +10,7 @@
 #include "NAImage.h"
 
 
-typedef struct NAPNG NAPNG;
+NA_PROTOTYPE(NAPNG);
 
 typedef enum{
   NA_PNG_COLORTYPE_GREYSCALE        = 0,

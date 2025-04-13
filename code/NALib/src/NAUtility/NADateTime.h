@@ -52,12 +52,12 @@ typedef enum{
 // Note that NADateTime is a pure pod and does not require a call to naClearXXX.
 //
 // The full type definition is in the file "NADateTimeII.h"
-typedef struct NADateTime NADateTime;
+NA_PROTOTYPE(NADateTime);
 
 
 // These are the structs accessible to the programmer. He can both construct
 // date and time and readout information thereof.
-typedef struct NADateTimeStruct NADateTimeStruct;
+NA_PROTOTYPE(NADateTimeStruct);
 struct NADateTimeStruct{
   NAi64 year;      // year number in astronomic numbering (-, 0 and +)
   int32   mon;       // month number in [0, 11].   Beware the 0-index!
@@ -71,7 +71,7 @@ struct NADateTimeStruct{
   uint8   flags;     // Various flags.
 };
 
-typedef struct NADateTimeAttribute NADateTimeAttribute;
+NA_PROTOTYPE(NADateTimeAttribute);
 struct NADateTimeAttribute{
   int32  yearsign;     // either +1 or -1
   int32  dayOfYear;    // days since start of year, 0-indexed (Beware 1582!)

@@ -9,12 +9,12 @@ correct, complete or final.
 
 
 Big changes:
+- Adding PubSub implementation NANotifier
+- Improving GUI on Windows drastically
 - Changing NABabyColor to NAColor and changing its implementation.
 - Renaming NABabyImage to NAImage
 - Renaming NAUIImage to NAImageSet
-- Adding PubSub implementation NANotifier
 - Adding latest NIST CODATA physical constants of 2022
-- Improving GUI on Windows drastically
 - Removed NAInt. Use int64 or int32.
 
 Smaller things:

@@ -3,7 +3,7 @@
 #include "../../NAUtility/NAMemory.h"
 
 
-typedef struct NAHuffmanCodeTree NAHuffmanCodeTree;
+NA_PROTOTYPE(NAHuffmanCodeTree);
 struct NAHuffmanCodeTree{
   uint16 alphabetcount;
   uint16* codes;

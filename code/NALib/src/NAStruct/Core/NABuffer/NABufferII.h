@@ -175,9 +175,9 @@
 // content.
 
 
-typedef struct NABufferPart NABufferPart;
-typedef struct NAMemoryBlock NAMemoryBlock;
-typedef struct NABufferSearchToken NABufferSearchToken;
+NA_PROTOTYPE(NABufferPart);
+NA_PROTOTYPE(NAMemoryBlock);
+NA_PROTOTYPE(NABufferSearchToken);
 
 
 #include "../../NATree.h"
@@ -207,7 +207,7 @@ struct NABufferSearchToken{
   int64 curOffset;
 };
 
-typedef struct NABufferTreeNodeData NABufferTreeNodeData;
+NA_PROTOTYPE(NABufferTreeNodeData);
 struct NABufferTreeNodeData{
   size_t len1;
   size_t len2;

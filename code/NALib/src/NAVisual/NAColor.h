@@ -21,7 +21,7 @@
 
 
 
-typedef struct NAColor NAColor;
+NA_PROTOTYPE(NAColor);
 struct NAColor{
   float r;
   float g;

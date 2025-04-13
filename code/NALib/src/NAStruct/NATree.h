@@ -28,9 +28,9 @@
 
 
 
-typedef struct NATree NATree;
-typedef struct NATreeIterator NATreeIterator;
-typedef struct NATreeConfiguration NATreeConfiguration;
+NA_PROTOTYPE(NATree);
+NA_PROTOTYPE(NATreeIterator);
+NA_PROTOTYPE(NATreeConfiguration);
 
 
 

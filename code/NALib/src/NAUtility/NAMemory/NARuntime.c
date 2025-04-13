@@ -97,7 +97,7 @@
 // This structure is stored in the first bytes of every part block.
 // Its size is ALWAYS 8 times an addressSize, the rest of the block is
 // available for the memory.
-typedef struct NA_PoolPart NA_PoolPart;
+NA_PROTOTYPE(NA_PoolPart);
 struct NA_PoolPart{
   NA_TypeInfo* typeInfo;
   size_t maxCount;

@@ -10,7 +10,7 @@
 
 // The following struct should be opaque. Or even better: Completely invisible
 // to the programmer.
-typedef struct NAListElement NAListElement;
+NA_PROTOTYPE(NAListElement);
 
 
 struct NAListElement{

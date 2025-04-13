@@ -84,7 +84,7 @@ NA_IDEF int naSleepS(double seconds) {
 #endif
 
 
-typedef struct NAThreadStruct NAThreadStruct;
+NA_PROTOTYPE(NAThreadStruct);
 struct NAThreadStruct{
   const char* name;
   #if NA_OS == NA_OS_MAC_OS_X
@@ -172,7 +172,7 @@ NA_IDEF void naAwaitThread(NAThread thread) {
 
   // On windows, we need a more complex structure to really make a mutex being
   // lockable just once.
-  typedef struct NAWindowsMutex NAWindowsMutex;
+  NA_PROTOTYPE(NAWindowsMutex);
 
   struct NAWindowsMutex{
     #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
@@ -196,7 +196,7 @@ NA_IDEF void naAwaitThread(NAThread thread) {
 #else
 
   #if NA_DEBUG
-    typedef struct NAMacintoshMutex NAMacintoshMutex;
+    NA_PROTOTYPE(NAMacintoshMutex);
     struct NAMacintoshMutex{
       dispatch_semaphore_t mutex;
       NABool seemslocked;

@@ -118,7 +118,7 @@ NAByte na_PngChunkTypeNames[NA_PNG_CHUNK_TYPE_COUNT][4] = {
 uint8 na_PngMagic[8] = {137, 80, 78, 71, 13, 10, 26, 10};
 
 
-typedef struct NAPNGChunk NAPNGChunk;
+NA_PROTOTYPE(NAPNGChunk);
 struct NAPNGChunk{
   NABuffer* data;      // All data without the preceding chunk type
   NAChunkType type;   // The type as an enum.

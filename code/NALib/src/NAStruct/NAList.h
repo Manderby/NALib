@@ -30,8 +30,8 @@
 // - NAListIterator  Defines the struct holding the iterator of a list.
 //
 // The full type definitions are in the file "NAListII.h"
-typedef struct NAList         NAList;
-typedef struct NAListIterator NAListIterator;
+NA_PROTOTYPE(NAList);
+NA_PROTOTYPE(NAListIterator);
 
 
 // Creates an empty list.

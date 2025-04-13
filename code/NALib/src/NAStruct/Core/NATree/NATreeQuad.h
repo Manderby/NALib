@@ -1,7 +1,7 @@
 
 
-typedef struct NATreeQuadNode NATreeQuadNode;
-typedef struct NATreeQuadLeaf NATreeQuadLeaf;
+NA_PROTOTYPE(NATreeQuadNode);
+NA_PROTOTYPE(NATreeQuadLeaf);
 
 NA_HAPI void na_fillTreeNodeQuadABI(NATreeNodeABI* abi);
 

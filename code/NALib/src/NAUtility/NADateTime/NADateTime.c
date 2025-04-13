@@ -67,12 +67,13 @@ typedef enum{
   NA_POSITIVE_LEAP_SECONDS_DECEMBER
 } NALeapSecondCorrectionIndicator;
 
-typedef struct{
+NA_PROTOTYPE(NATAIPeriod);
+struct NATAIPeriod{
   NAi64 startgregsec;
   NAi64 startsiSecond;
   int16 gregyear;
   NALeapSecondCorrectionIndicator indicator;
-} NATAIPeriod;
+};
 
 // Leap second information:
 #define NA_TAI_PERIODS_COUNT 108

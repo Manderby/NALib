@@ -13,7 +13,7 @@ NA_PROTOTYPE(NABuffer);
 
 
 // The typedef needs to be here to resolve cyclic include problems.
-typedef struct NAString NAString;
+NA_PROTOTYPE(NAString);
 
 
 

@@ -8,7 +8,8 @@
 
 
 // The typedef needs to be here to resolve cyclic include problems.
-typedef struct NAFile NAFile;
+#include "../NABase/NABase.h"
+NA_PROTOTYPE(NAFile);
 
 
 

@@ -1,5 +1,5 @@
 
-typedef struct NATreeBinNode NATreeBinNode;
+NA_PROTOTYPE(NATreeBinNode);
 struct NATreeBinNode{
   NATreeNode node;
   NATreeItem* childs[2];  // must come right after the node.
@@ -11,7 +11,7 @@ struct NATreeBinNode{
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeBinNode);
 
-typedef struct NATreeBinLeaf NATreeBinLeaf;
+NA_PROTOTYPE(NATreeBinLeaf);
 struct NATreeBinLeaf{
   NATreeLeaf leaf;
   union{
