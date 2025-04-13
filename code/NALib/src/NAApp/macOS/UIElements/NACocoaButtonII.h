@@ -13,6 +13,13 @@
 
 
 
+struct NACocoaButton{
+  NAButton button;
+};
+NA_HAPI void na_DestructCocoaButton(NACocoaButton* cocoaButton);
+NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
+
+
 @implementation NACocoaNativeButton
 
 - (id) initWithButton:(NACocoaButton*)newCocoaButton flags:(uint32)flags isImage:(bool)newIsImage frame:(NSRect)frame{

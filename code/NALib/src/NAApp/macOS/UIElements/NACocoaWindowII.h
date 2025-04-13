@@ -9,6 +9,15 @@
 
 
 
+struct NACocoaWindow{
+  NAWindow window;
+};
+NA_HAPI void na_DestructCocoaWindow(NACocoaWindow* cocoaWindow);
+NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
+
+
+
+
 @implementation NACocoaNativeWindow
 
 - (id) initWithWindow:(NACocoaWindow*)newCocoaWindow contentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag screen:(NSScreen *)screen{

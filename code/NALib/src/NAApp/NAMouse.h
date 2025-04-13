@@ -27,7 +27,7 @@ typedef enum NAMouseButton {
 // ////////////////////////////////////
 
 // A mouse status stores various position data of the mouse.
-typedef struct NAMouseStatus NAMouseStatus;
+NA_PROTOTYPE(NAMouseStatus);
 
 // Returns the current mouse status.
 NA_API const NAMouseStatus* naGetCurrentMouseStatus(void);

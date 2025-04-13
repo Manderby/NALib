@@ -35,7 +35,7 @@ typedef enum{
 
 // When a command occurs in a certain uiElement, an information package with
 // the NAReaction type will be created:
-typedef struct NAReaction NAReaction;
+NA_PROTOTYPE(NAReaction);
 struct NAReaction{
   const void* uiElement;
   NAUICommand command;

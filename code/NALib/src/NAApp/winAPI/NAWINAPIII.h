@@ -317,7 +317,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
 
 
 
-typedef struct NAWINAPICallbackInfo NAWINAPICallbackInfo;
+NA_PROTOTYPE(NAWINAPICallbackInfo);
 struct NAWINAPICallbackInfo{
   LRESULT result;
   NABool hasBeenHandeled;

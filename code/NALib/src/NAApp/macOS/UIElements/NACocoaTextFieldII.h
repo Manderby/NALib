@@ -6,6 +6,14 @@
 
 
 
+struct NACocoaTextField{
+  NATextField textField;
+};
+NA_HAPI void na_DestructCocoaTextField(NACocoaTextField* cocoaTextField);
+NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
+
+
+
 @implementation NACocoaNativeTextField
 
 - (id) initWithTextField:(NACocoaTextField*)newCocoaTextField frame:(NSRect)frame{

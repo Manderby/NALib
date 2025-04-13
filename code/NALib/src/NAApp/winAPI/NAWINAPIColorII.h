@@ -6,7 +6,7 @@
 
 
 
-typedef struct NAWINAPIColor NAWINAPIColor;
+NA_PROTOTYPE(NAWINAPIColor);
 struct NAWINAPIColor {
   COLORREF colorRef;
   HBRUSH   brush;

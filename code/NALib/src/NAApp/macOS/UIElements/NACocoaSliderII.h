@@ -6,6 +6,14 @@
 
 
 
+struct NACocoaSlider{
+  NASlider slider;
+};
+NA_HAPI void na_DestructCocoaSlider(NACocoaSlider* cocoaSlider);
+NA_RUNTIME_TYPE(NACocoaSlider, na_DestructCocoaSlider, NA_FALSE);
+
+
+
 @implementation NACocoaNativeSlider
 
 - (id) initWithSlider:(NACocoaSlider*)newCocoaSlider frame:(NSRect)frame{

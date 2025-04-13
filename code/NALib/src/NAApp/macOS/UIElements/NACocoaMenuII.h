@@ -6,6 +6,14 @@
 
 
 
+struct NACocoaMenu{
+  NAMenu menu;
+};
+NA_HAPI void na_DestructCocoaMenu(NACocoaMenu* cocoaMenu);
+NA_RUNTIME_TYPE(NACocoaMenu, na_DestructCocoaMenu, NA_FALSE);
+
+
+
 @implementation NACocoaNativeMenu
 
 - (id) initWithMenu:(NACocoaMenu*)newCocoaMenu{

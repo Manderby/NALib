@@ -6,6 +6,14 @@
 
 
 
+struct NACocoaRadio{
+  NARadio radio;
+};
+NA_HAPI void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio);
+NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
+
+
+
 @implementation NACocoaNativeRadio
 
 - (id) initWithRadio:(NACocoaRadio*)newCocoaRadio frame:(NSRect)frame{

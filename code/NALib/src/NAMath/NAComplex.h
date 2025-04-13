@@ -11,7 +11,7 @@
 
 // Type is presented as non-opaque as the programmer wants to access the two
 // parts of a complex number.
-typedef struct NAComplex NAComplex;
+NA_PROTOTYPE(NAComplex);
 struct NAComplex{
   double re;
   double im;

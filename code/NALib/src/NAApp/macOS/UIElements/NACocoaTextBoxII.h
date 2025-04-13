@@ -6,6 +6,14 @@
 
 
 
+struct NACocoaTextBox{
+  NATextBox textBox;
+};
+NA_HAPI void na_DestructCocoaTextBox(NACocoaTextBox* cocoaTextBox);
+NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
+
+
+
 @implementation NACocoaNativeTextBox
 
 - (id) initWithTextBox:(NACocoaTextBox*)newCocoaTextBox frame:(NSRect)frame{

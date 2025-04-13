@@ -6,6 +6,7 @@
 #endif
 
 
+#include "../NABase/NABase.h"
 
 NA_PROTOTYPE(NABuffer);
 

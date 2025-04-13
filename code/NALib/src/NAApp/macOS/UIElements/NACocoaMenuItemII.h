@@ -6,6 +6,14 @@
 
 
 
+struct NACocoaMenuItem{
+  NAMenuItem menuItem;
+};
+NA_HAPI void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem);
+NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
+
+
+
 @implementation NACocoaNativeMenuItem
 
 - (id) initWithMenuItem:(NACocoaMenuItem*)newCocoaMenuItem text:(const NAUTF8Char*) text{

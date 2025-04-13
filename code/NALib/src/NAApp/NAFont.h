@@ -11,7 +11,7 @@
 // An NAFont stores information about a specific font with family, size and
 // style.
 
-typedef struct NAFont NAFont;
+NA_PROTOTYPE(NAFont);
 
 // An NAFont has reference counting built-in. Use naRetain and naRelease.
 // ///////////////////////////////

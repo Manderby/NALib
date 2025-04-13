@@ -6,6 +6,14 @@
 
 
 
+struct NACocoaSpace{
+  NASpace space;
+};
+NA_HAPI void na_DestructCocoaSpace(NACocoaSpace* _Nonnull cocoaSpace);
+NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
+
+
+
 @implementation NACocoaNativeSpace
 
 - (id _Nonnull) initWithSpace:(NACocoaSpace* _Nonnull)newCocoaSpace frame:(NSRect)frame{
