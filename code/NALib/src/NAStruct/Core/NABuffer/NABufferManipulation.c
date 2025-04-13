@@ -1,5 +1,6 @@
 
 #include "../../NABuffer.h"
+#include "../../../NAUtility/NAFile.h"
 
 // /////////////////////////////////////
 // Whole Buffer Functions

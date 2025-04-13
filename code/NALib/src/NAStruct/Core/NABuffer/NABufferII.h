@@ -181,6 +181,7 @@ typedef struct NABufferSearchToken NABufferSearchToken;
 
 
 #include "../../NATree.h"
+#include "../../../NAMath/NACoord.h"
 
 
 struct NABuffer{

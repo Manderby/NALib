@@ -25,12 +25,11 @@
 // pointers, get functions will return a pointer to a pointer.
 
 
-#include "../NAUtility/NAMemory.h"
-
 
 // The full type definition is in the file "NAArrayII.h"
-typedef struct NAArray NAArray;
-typedef struct NAArrayIterator NAArrayIterator;
+NA_PROTOTYPE(NAArray);
+NA_PROTOTYPE(NAArrayIterator);
+
 
 
 // ///////////////////////////

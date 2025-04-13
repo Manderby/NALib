@@ -1,5 +1,6 @@
 
 #include "../../NABuffer.h"
+#include "../../../NAUtility/NAFile.h"
 
 
 NA_HAPI void na_DestructBuffer(NABuffer* buffer);

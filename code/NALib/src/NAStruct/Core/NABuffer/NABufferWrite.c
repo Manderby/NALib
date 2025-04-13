@@ -1,5 +1,6 @@
 
 #include "../../NABuffer.h"
+#include "../../../NAUtility/NAString.h"
 
 
 // This is the internal function actually preparing and storing the bytes

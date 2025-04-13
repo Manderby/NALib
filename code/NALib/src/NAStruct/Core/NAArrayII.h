@@ -4,9 +4,6 @@
 // including "NAArray.h"
 
 
-#include "../../NAMath/NACoord.h"
-
-
 
 #define NA_ARRAY_INVALID_INDEX NA_MAX_s
 

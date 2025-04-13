@@ -1,6 +1,8 @@
 
 #include "../../NABuffer.h"
 
+#include "../../../NAMath/NACoord.h"
+
 
 
 NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer) {

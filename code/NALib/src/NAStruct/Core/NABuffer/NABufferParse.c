@@ -1,5 +1,6 @@
 
 #include "../../NABuffer.h"
+#include "../../../NAUtility/NAString.h"
 
 
 

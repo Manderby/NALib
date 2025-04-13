@@ -7,16 +7,18 @@
 
 
 
-typedef struct NABuffer NABuffer;
-typedef struct NABufferSource NABufferSource;
-typedef struct NABufferIterator NABufferIterator;
-
-
-
 #include "../NABase/NABase.h"
-#include "../NAMath/NACoord.h"
-#include "../NAUtility/NAFile.h"
-#include "../NAUtility/NAString.h"
+NA_PROTOTYPE(NAChecksum);
+NA_PROTOTYPE(NAFile);
+NA_PROTOTYPE(NARangei64);
+NA_PROTOTYPE(NAString);
+
+
+
+NA_PROTOTYPE(NABuffer);
+NA_PROTOTYPE(NABufferSource);
+NA_PROTOTYPE(NABufferIterator);
+
 
 
 // This file contains the API for NABuffer.
