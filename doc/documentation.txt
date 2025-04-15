@@ -108,8 +108,8 @@ You can also allocate memory on byte numbers or even page boundaries:
                        will be aligned to a page boundary.
 - naFreePageAligned    Frees the aligned memory.
 
-Additionally, you can also use the runtime-system to allocate memory. See next
-sections.
+Additionally, you can also use the NALib-runtime-system to allocate memory.
+See next sections.
 
 
 
@@ -121,12 +121,12 @@ constructors or destructors like in typical OOP languages and consequently,
 such initialization must be done manually by the programmer.
 
 Therefore, NALib offers construction and destruction functions for many
-structs. The naming scheme guides you.
+structs. The naming scheme shall guide you.
 
 
 
-3.3 POD functions make, fill
-----------------------------
+3.3 POD functions: make, fill
+-----------------------------
 Simple structs like NAPos are very basic structs which are generally called
 POD (plain old data). Such structs usually provide an naMakeXXX or naFillXXX
 function. Sometimes, to destruct such a struct, a corresponding naClearXXX
@@ -137,7 +137,7 @@ function is needed. See the specific API for more information.
 
 
 
-3.4 Struct functions init, clear, new, delete, create, retain, release
+3.4 Struct functions: init, clear, new, delete, create, retain, release
 ----------------------------------------------------------------------
 For more complex structs like NAArray, NAFile or NAString, the construction-
 functions usually are called naInitXXX, naCreateXXX or naNewXXX. These
@@ -399,8 +399,8 @@ functions are declared as helper functions.
 
 
 
-5.2 Inline Implementations
---------------------------
+5.2 Inline Implementations II
+-----------------------------
 Unfortunately, inline- and (in C++) template-functions must be present to
 the compiler during compilation. This means, every declaration must be
 followed by a definition in the same file scope.
@@ -453,7 +453,7 @@ compilation, meaning the data organisation is unknown and unreachable to the
 programmer.
 
 This normally is a good thing. For end products, this is the desirable
-behaviour, such that reengineering or misuse of undocumented functionality
+behaviour, such that reverse engineering or misuse of undocumented functionality
 becomes much more difficult. The downfall though is that even the programmers
 have no access to the declaration. The type defined by the typedef-line can
 only be used as pointer or by a specific set of API calls given by the
