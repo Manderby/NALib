@@ -151,7 +151,6 @@ NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox) {
 
 
 NA_DEF void naSetTextBoxUseVerticalScrolling(NATextBox* textBox, NABool use) {
-  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   ShowScrollBar(naGetUIElementNativePtr(textBox), SB_VERT, use);
 }
 

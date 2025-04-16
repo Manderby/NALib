@@ -495,7 +495,6 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, size_t count, uint32 flags) {
     default:
       #if NA_DEBUG
         naCrash("flag combination not implemented.");
-        return NA_NULL;
       #else
         break;
       #endif
@@ -556,7 +555,6 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, size_t count, uint32 flags) {
     default:
       #if NA_DEBUG
         naCrash("flag combination not implemented.");
-        return NA_NULL;
       #else
         break;
       #endif

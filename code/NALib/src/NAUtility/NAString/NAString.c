@@ -318,7 +318,6 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string) {
     NAString* mutablestring = (NAString*)string;
     if(!string) {
       naCrash("string is Null-Pointer.");
-      return NA_NULL;
     }
   #endif
 
@@ -349,7 +348,6 @@ NA_DEF NABool naIsStringEmpty(const NAString* string) {
   #if NA_DEBUG
     if(!string) {
       naCrash("string is Null-Pointer.");
-      return NA_TRUE;
     }
   #endif
   return naIsBufferEmpty(string->buffer);

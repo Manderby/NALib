@@ -11,7 +11,6 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   RECT spaceRect;
   NA_UIElement* childElement;
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)uiElement;
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAColor fgColor;
   NAColor bgColor;
   NAWINAPIColor* winapiFgColor;
@@ -196,7 +195,6 @@ NA_DEF NASpace* naNewSpace(NASize size) {
 
   na_InitSpace(&winapiSpace->space, nativePtr);
 
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   winapiSpace->curBgColor = NA_NULL;
 
   winapiSpace->forceEraseBackground = NA_FALSE;
@@ -277,8 +275,6 @@ NA_DEF void naRemoveAllSpaceChilds(NASpace* space) {
 
 
 NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift) {
-  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
-
   NAListIterator childIt = naMakeListMutator(&space->childs);
   while(naIterateList(&childIt)) {
     void* child = naGetListCurMutable(&childIt);
@@ -320,8 +316,6 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
   winapiSpace->rect = rect;
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(space));
-
-  double test = parentRect.size.height - winapiSpace->rect.pos.y - winapiSpace->rect.size.height;
 
   winapiSpace->forceEraseBackground = NA_TRUE;
 

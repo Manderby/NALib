@@ -445,7 +445,7 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
 
 #if NA_COMPILE_OPENGL == 1
 
-NA_HDEF na_redrawOpenGLSpaces(void* data) {
+NA_HDEF void na_redrawOpenGLSpaces(void* data) {
   NA_UNUSED(data);
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();

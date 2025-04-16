@@ -499,9 +499,6 @@ NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window)
 NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
 
-  //NARect currect = naGetUIElementRect(&winapiWindow->window);
-  double yDiff = winapiWindow->rect.pos.y = rect.pos.y;
-
   POINT testPoint = {0, 0};
   RECT clientRect;
   RECT windowRect;

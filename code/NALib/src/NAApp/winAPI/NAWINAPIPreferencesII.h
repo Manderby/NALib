@@ -65,7 +65,6 @@ NA_HDEF void* na_GetWINRegistryVariableEntry(
 {
   void* retValue = NA_NULL;
 
-  NABool success = NA_FALSE;
   HKEY registry;
   LSTATUS errorCode;
   wchar_t* pathKey = naAllocWideCharStringWithUTF8String(path);
@@ -118,7 +117,6 @@ NA_HDEF void* na_GetWINRegistryFixedEntry(
 
   void* retValue = NA_NULL;
 
-  NABool success = NA_FALSE;
   HKEY registry;
   LSTATUS errorCode;
   wchar_t* pathKey = naAllocWideCharStringWithUTF8String(path);

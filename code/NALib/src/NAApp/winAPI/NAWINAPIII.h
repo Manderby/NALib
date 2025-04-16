@@ -210,7 +210,7 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message) {
   NABool lOption;
   NABool rOption;
 
-  NABool isExtendedKey = (message->lParam >> 24) & 0x01;  // Extended keys usually are the ones on the right.
+  //NABool isExtendedKey = (message->lParam >> 24) & 0x01;  // Extended keys usually are the ones on the right.
 
   NAKeyCode keyCode = (NAKeyCode)MapVirtualKey((UINT)message->wParam, MAPVK_VK_TO_VSC);
 
@@ -255,7 +255,6 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
   NABool retValue = NA_FALSE;
 
   if(message->message == WM_KEYUP || message->message == WM_SYSKEYDOWN || message->message == WM_SYSKEYUP) {
-    NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(message->hwnd);
     na_CaptureKeyboardStatus(message);
     if(!naGetDefaultWindowSystemKeyHandling()) {
       // We mark the key stroke to be handeled such that Windows will not
@@ -632,7 +631,7 @@ NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARA
 
 
 #if NA_DEBUG
-  na_DebugWINAPIMessage(NA_UIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  void na_DebugWINAPIMessage(NA_UIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
     NA_UNUSED(wParam);
     NA_UNUSED(lParam);
     switch(naGetUIElementType(uiElement)) {
@@ -958,8 +957,8 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem) {
 NA_DEF double naGetUIElementResolutionScale(const void* uiElement) {
   NA_UNUSED(uiElement);
   int dpi;
-  HDC hDC;
-  if(hDC = GetDC (NULL)) {
+  HDC hDC = GetDC (NULL);
+  if(hDC) {
     dpi = GetDeviceCaps (hDC, LOGPIXELSX);
     ReleaseDC (NULL, hDC);
   }else{

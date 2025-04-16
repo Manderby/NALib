@@ -60,7 +60,6 @@ NA_IDEF NARefCount* naRetainRefCount(NARefCount* refCount) {
   #if NA_DEBUG
     if(!refCount) {
       naCrash("refCount is Null-Pointer.");
-      return NA_NULL;
     }else{
       if(refCount->dummy != NA_REFCOUNT_DUMMY_VALUE)
         naError("Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");

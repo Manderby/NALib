@@ -184,8 +184,8 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
     NASpace* parentSpace = naGetUIElementParentSpace(uiElement);
     NAColor maskColor = {1.f, 1.f, 0.f, 1.f};
-    NAUIColor* prevBgColor;
-    NAUIColor* tmpBgColor;
+    NAUIColor* prevBgColor = NA_NULL;
+    NAUIColor* tmpBgColor = NA_NULL;
 
     if(customDraw) {
       tmpBgColor = naAllocUIColor(&maskColor, NA_NULL);
@@ -642,7 +642,6 @@ NA_DEF void naSetButtonVisible(NAButton* button, NABool visible) {
 
 
 NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled) {
-  const NAWINAPIButton* winapiButton = (const NAWINAPIButton*)button;
   EnableWindow(naGetUIElementNativePtr(button), enabled);
 }
 

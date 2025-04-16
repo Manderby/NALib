@@ -135,7 +135,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 
   //glfwWindowHint(GLFW_SAMPLES, 4);
 
-	const char* extensions = (char*)glGetString(GL_EXTENSIONS);
+	//const char* extensions = (char*)glGetString(GL_EXTENSIONS);
 	PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
 	if(wglSwapIntervalEXT) {

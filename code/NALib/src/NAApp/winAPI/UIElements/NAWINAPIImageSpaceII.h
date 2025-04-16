@@ -168,8 +168,6 @@ NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace) {
 
 
 NA_DEF void naSetImageSpaceImage(NAImageSpace* imageSpace, NAImageSet* imageSet) {
-  NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
-  
   if(imageSpace->imageSet) {
     naRelease(imageSpace->imageSet);
   }

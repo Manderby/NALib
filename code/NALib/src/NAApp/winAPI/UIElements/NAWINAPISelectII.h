@@ -83,7 +83,6 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
 
 NABool naSelectWINAPINotify(void* uiElement, WORD notificationCode) {
-  NAWINAPISelect* winapiSelect = (NAWINAPISelect*)uiElement;
   NABool hasBeenHandeled = NA_FALSE;
   size_t itemIndex;
   const NAMenuItem* child;
@@ -164,8 +163,6 @@ NA_DEF void naSetSelectEnabled(NASelect* select, NABool enabled) {
 }
 
 NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenuItem* atItem) {
-  NAWINAPISelect* winapiSelect = (NAWINAPISelect*)select;
-  
   // todo: allow separators. Will crash currently.
   if(naGetMenuItemIsSeparator(item)) { return; }
 
