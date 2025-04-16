@@ -17,7 +17,6 @@
 // //////////////////////////
 
 
-
 // The version number of this NALib distribution.
 #define NA_VERSION 28
 

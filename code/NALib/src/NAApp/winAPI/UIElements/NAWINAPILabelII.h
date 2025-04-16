@@ -181,6 +181,8 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url) {
 
 
 NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable) {
+  NA_UNUSED(selectable);
+  NA_UNUSED(label);
   // todo
 }
 

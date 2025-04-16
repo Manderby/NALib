@@ -11,8 +11,8 @@
 
 static NAList* redrawList;
 static int redrawCount = 0;
-void na_drawAllOpenGLSpaces(void* data)
-{
+void na_drawAllOpenGLSpaces(void* data) {
+  NA_UNUSED(data);
   printf("Redraw: %d\n", redrawCount);
   redrawCount = 0;
 }
@@ -20,6 +20,7 @@ void na_drawAllOpenGLSpaces(void* data)
 
 
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(lParam);
   NAWINAPIOpenGLSpace* winapiOpenGLSpace;
   int wheelDelta;
 

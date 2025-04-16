@@ -93,6 +93,7 @@ NA_IDEF NAFileSize naWrite(int fd, const void* buf, NAFileSize byteSize) {
 // Use NA_DIRMODE_DEFAULT if you don't know what to use for the mode
 // argument.
 NA_IDEF int naMkDir(const char* path, int mode) {
+  NA_UNUSED(mode);
   #if NA_OS == NA_OS_WINDOWS
     return _mkdir(path);
   #elif NA_IS_POSIX
@@ -158,6 +159,7 @@ NA_IDEF NABool naCopyFile(const char* dstPath, const char* srcPath) {
 
 
 NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NABool canWrite, NABool canExecute) {
+  NA_UNUSED(doesExists);
   #if NA_OS == NA_OS_WINDOWS
     int testMode = 0;
     // testMode |= (exists?00:0); // This line has been commented out because of static code analysis.

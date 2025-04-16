@@ -7,6 +7,7 @@
 
 
 NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(lParam);
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NASlider* slider = (NASlider*)uiElement;
   NASpace* space;
@@ -90,6 +91,7 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
 
 NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam) {
+  NA_UNUSED(wParam);
   NAWINAPICallbackInfo info = {NA_TRUE, 0};
 
   naSetSliderValue(uiElement, naGetSliderValue(uiElement));
@@ -211,6 +213,7 @@ NA_API void naSetSliderValue(NASlider* slider, double value) {
 
 
 NA_API void naSetSliderRange(NASlider* slider, double min, double max, size_t tickCount) {
+  NA_UNUSED(tickCount);
   // todo
   slider->min = min;
   slider->max = max;

@@ -7,6 +7,8 @@
 
 
 NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(lParam);
+  NA_UNUSED(wParam);
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NABool check;
 

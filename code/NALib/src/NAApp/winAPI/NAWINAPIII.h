@@ -191,6 +191,11 @@ NA_HDEF NABool naPresentFilePanel(
   NAFilePanelCallback callback,
   const void* data)
 {
+  NA_UNUSED(data);
+  NA_UNUSED(callback);
+  NA_UNUSED(allowedFileSuffix);
+  NA_UNUSED(fileName);
+  NA_UNUSED(load);
   // todo
   return NA_FALSE;
 }
@@ -463,6 +468,8 @@ NAWINAPICallbackInfo na_HandleMousePress(
 // Capture messages which shall be handeled globally the same no matter what
 // the object behind it is.
 NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(wParam);
+
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NA_UIElement* elem = (NA_UIElement*)uiElement;
   NAPos pos;
@@ -555,6 +562,9 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPA
 // Capture messages which shall be handeled globally, if and only if the
 // object behind the message does NOT provide a WINAPIProc handling.
 NAWINAPICallbackInfo naUIElementWINAPIPostProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(uiElement);
+  NA_UNUSED(wParam);
+  NA_UNUSED(lParam);
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message) {
@@ -623,6 +633,8 @@ NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARA
 
 #if NA_DEBUG
   na_DebugWINAPIMessage(NA_UIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+    NA_UNUSED(wParam);
+    NA_UNUSED(lParam);
     switch(naGetUIElementType(uiElement)) {
     case NA_UI_LABEL:  printf("%p Label:  ", uiElement); break;
     case NA_UI_SPACE:  printf("%p Space:  ", uiElement); break;
@@ -770,6 +782,7 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 
 
 NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(wParam);
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   DRAWITEMSTRUCT* drawitemstruct = (DRAWITEMSTRUCT*)lParam;
   NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(drawitemstruct->hwndItem);
@@ -943,6 +956,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem) {
 
 
 NA_DEF double naGetUIElementResolutionScale(const void* uiElement) {
+  NA_UNUSED(uiElement);
   int dpi;
   HDC hDC;
   if(hDC = GetDC (NULL)) {
@@ -1008,6 +1022,7 @@ NA_HDEF void* na_AddMouseTracking(NA_UIElement* uiElement) {
 
 
 NA_HDEF void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking) {
+  NA_UNUSED(uiElement);
   TRACKMOUSEEVENT* winapiTracking = (TRACKMOUSEEVENT*)mouseTracking;
   winapiTracking->dwFlags |= TME_CANCEL;
   TrackMouseEvent(winapiTracking);

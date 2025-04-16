@@ -42,6 +42,9 @@ WNDPROC na_GetApplicationOldTextFieldWindowProc() {
 
 
 NAWINAPICallbackInfo naApplicationWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(lParam);
+  NA_UNUSED(wParam);
+  NA_UNUSED(uiElement);
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message) {
@@ -403,6 +406,8 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void) {
 //
 // Definitely not the fastest and best method. But as for now, it's ok. todo.
 NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
+  NA_UNUSED(dwTime);
+  NA_UNUSED(uMsg);
   //todo something is wrong here with the type.
   NAWINAPIApplication* app;
 
@@ -767,6 +772,7 @@ NA_DEF void naHideMouse() {
 
 
 NA_DEF void naHideMouseUntilMovement(NABool hide) {
+  NA_UNUSED(hide);
   // todo
 }
 

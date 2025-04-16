@@ -7,6 +7,9 @@
 
 
 NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(lParam);
+  NA_UNUSED(wParam);
+  NA_UNUSED(uiElement);
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message) {
@@ -109,6 +112,7 @@ NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable) {
 
 
 NA_DEF NAString* naNewStringWithTextBoxText(const NATextBox* textBox) {
+  NA_UNUSED(textBox);
   return NA_NULL;
   // todo
 }
@@ -140,6 +144,7 @@ NA_DEF void naSetTextBoxFont(NATextBox* textBox, NAFont* font) {
 
 
 NA_DEF void naSetTextBoxUseHorizontalScrolling(NATextBox* textBox) {
+  NA_UNUSED(textBox);
   // todo
 }
 

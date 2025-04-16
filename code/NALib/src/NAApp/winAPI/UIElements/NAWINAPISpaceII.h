@@ -299,6 +299,8 @@ NA_DEF void naSetSpaceVisible(NASpace* space, NABool visible) {
 
 
 NA_HDEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable) {
+  NA_UNUSED(isDraggable);
+  NA_UNUSED(space);
   // todo
 }
 

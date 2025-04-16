@@ -333,6 +333,7 @@ NA_DEF void naShowWindow(const NAWindow* window) {
 }
 
 NA_DEF void naShowWindowModal(NAWindow* window, NAWindow* parentWindow) {
+  NA_UNUSED(parentWindow);
   // todo: modal windows do not work yet on windows
   //EnableWindow(naGetUIElementNativePtr(parentWindow), FALSE);
   naShowWindow(window);
@@ -353,6 +354,8 @@ NA_DEF void naCloseWindow(const NAWindow* window) {
 
 
 NA_DEF void naMarkWindowChanged(NAWindow* window, NABool changed) {
+  NA_UNUSED(changed);
+  NA_UNUSED(window);
   // todo
 }
 
@@ -438,6 +441,8 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop) {
 
 
 NA_DEF void naSetWindowAcceptsKeyboardReactions(NAWindow* window, NABool accepts) {
+  NA_UNUSED(accepts);
+  NA_UNUSED(window);
   // todo
 }
 

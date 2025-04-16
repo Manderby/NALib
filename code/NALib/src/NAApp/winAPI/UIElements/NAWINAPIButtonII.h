@@ -12,6 +12,9 @@
 
 
 NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(lParam);
+  NA_UNUSED(wParam);
+  NA_UNUSED(uiElement);
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message) {
@@ -698,6 +701,7 @@ NA_DEF void naSetButtonText2(NAButton* button, const NAUTF8Char* text) {
 
 
 NA_DEF void naSetButtonImage(NAButton* button, const NAImageSet* imageSet) {
+  NA_UNUSED(imageSet);
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   #if NA_DEBUG
     if(!naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))

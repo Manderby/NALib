@@ -50,6 +50,8 @@ NA_DEF const NAUTF8Char* naGetMenuItemText(NAMenuItem* menuItem) {
 
 
 NA_DEF void naSetMenuItemText(NAMenuItem* menuItem, const NAUTF8Char* text) {
+  NA_UNUSED(text);
+  NA_UNUSED(menuItem);
   // todo
   //NA_WINAPIMenuItem* winapiMenuItem = (NA_WINAPIMenuItem*)menuItem;
   //naDelete(winapiMenuItem->text);
