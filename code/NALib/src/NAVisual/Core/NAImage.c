@@ -272,7 +272,7 @@ NA_DEF NAImage* naCreateImageWithTint(
   if(!base)
     naCrash("Given base image is a Null-Pointer");
   if(!tint)
-    naCrash("tint is Null");
+    naCrash("tint is nullptr");
 #endif
   
   return na_CreateBlendedImage(
@@ -296,9 +296,9 @@ NA_DEF NAImage* naCreateImageWithBlend(
 {
 #if NA_DEBUG
   if(!base)
-    naCrash("base is Null");
+    naCrash("base is nullptr");
   if(!top)
-    naCrash("top is Null");
+    naCrash("top is nullptr");
 #endif
   
   return na_CreateBlendedImage(
@@ -316,9 +316,9 @@ NA_DEF NAImage* naCreateImageWithBlend(
 NA_DEF NAImage* naCreateImageWithApply(const NAColor* ground, const NAImage* top, NABlendMode mode, float factor) {
 #if NA_DEBUG
   if(!ground)
-    naCrash("ground is Null");
+    naCrash("ground is nullptr");
   if(!top)
-    naCrash("top is Null");
+    naCrash("top is nullptr");
 #endif
   
   const NAColor* topPtr = top->data;

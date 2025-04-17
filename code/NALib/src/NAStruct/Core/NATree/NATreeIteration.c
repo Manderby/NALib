@@ -221,9 +221,9 @@ NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTok
     if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
     if(!nodeSearcher)
-      naCrash("node token searcher is Null.");
+      naCrash("node token searcher is nullptr");
     if(!leafSearcher)
-      naCrash("leaf token searcher is Null.");
+      naCrash("leaf token searcher is nullptr");
   #endif
   
   // If the tree is empty, we do nothing.

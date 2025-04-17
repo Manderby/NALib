@@ -54,7 +54,7 @@ NA_HAPI void na_DestructPointer(NAPointer* pointer);
 NA_IDEF void naReleasePointer(NAPointer* pointer) {
   #if NA_DEBUG
     if(!pointer)
-      naCrash("pointer is Null-Pointer.");
+      naCrash("pointer is nullptr");
   #endif
   naReleaseSmartPtr(&pointer->sptr, (NAMutator)na_DestructPointer, NA_FALSE);
 }

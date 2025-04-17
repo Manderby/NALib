@@ -57,6 +57,11 @@ void na_DeallocKeyboardShortcutReaction(NA_KeyboardShortcutReaction* keyReaction
 
 
 NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naCrash("uiElement is nullptr");
+  #endif
+
   if(uiElement->mouseTracking) {
     na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
   }
@@ -74,8 +79,13 @@ NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
 
 
 
-NA_HDEF NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAUICommand command) {
-  NAListIterator iter = naMakeListAccessor(&element->reactions);
+NA_HDEF NABool na_UIHasElementCommandDispatches(const NA_UIElement* uiElement, NAUICommand command) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naCrash("uiElement is nullptr");
+  #endif
+
+  NAListIterator iter = naMakeListAccessor(&uiElement->reactions);
   while(naIterateList(&iter)) {
     const NA_EventReaction* eventReaction = naGetListCurConst(&iter);
     if(eventReaction->command == command) {
@@ -89,15 +99,20 @@ NA_HDEF NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAU
 
 
 
-NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command) {
+NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* uiElement, NAUICommand command) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naCrash("uiElement is nullptr");
+  #endif
+
   NABool hasReaction = NA_FALSE;
 
   NAReaction reaction = {
-    element,
+    uiElement,
     command,
     NA_NULL};
 
-  NAListIterator iter = naMakeListMutator(&element->reactions);
+  NAListIterator iter = naMakeListMutator(&uiElement->reactions);
   while(naIterateList(&iter)) {
     NA_EventReaction* eventReaction = naGetListCurMutable(&iter);
     if(eventReaction->command == command) {
@@ -112,7 +127,7 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
     // If the command has no reaction, search for other reactions in the
     // parent elements.  
     if(command != NA_UI_COMMAND_MOUSE_ENTERED && command != NA_UI_COMMAND_MOUSE_EXITED) {
-      const NA_UIElement* parentElement = (const NA_UIElement*)naGetUIElementParentConst(element);
+      const NA_UIElement* parentElement = (const NA_UIElement*)naGetUIElementParent(uiElement);
       return parentElement
         ? na_DispatchUIElementCommand(parentElement, command)
         : NA_FALSE;
@@ -124,6 +139,11 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUIComm
 
 
 NA_DEF void naRefreshUIElement(void* uiElement, double timediff) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naCrash("uiElement is nullptr");
+  #endif
+
   if(timediff == 0.) {
     na_RefreshUIElementNow(uiElement);
   }else{
@@ -134,7 +154,12 @@ NA_DEF void naRefreshUIElement(void* uiElement, double timediff) {
 
 
 NA_DEF NAUIElementType naGetUIElementType(const void* uiElement) {
-  return uiElement ? ((NA_UIElement*)uiElement)->elementType : NA_UI_ELEMENT_UNDEFINED;
+  #if NA_DEBUG
+    if(!uiElement)
+      naCrash("uiElement is nullptr");
+  #endif
+
+  return ((NA_UIElement*)uiElement)->elementType;
 }
 
 
@@ -151,50 +176,61 @@ NA_DEF void* naGetUIElementNativePtrConst(const void* uiElement) {
 
 
 
-NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCallback callback, void* controller) {
+NA_DEF void naAddUIReaction(
+  void* uiElement,
+  NAUICommand command,
+  NAReactionCallback callback,
+  void* controller)
+{
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   NA_EventReaction* eventReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
-  
+  NAUIElementType elementType = naGetUIElementType(uiElement);
+
   #if NA_DEBUG
     if((command == NA_UI_COMMAND_RESHAPE)
-      && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
+      && (elementType != NA_UI_WINDOW))
       naError("Only windows can receyve RESHAPE commands.");
     if((command == NA_UI_COMMAND_MOUSE_MOVED)
-      && ((naGetUIElementType(uiElement) == NA_UI_APPLICATION)
-       || (naGetUIElementType(uiElement) == NA_UI_SCREEN)))
+      && ((elementType == NA_UI_APPLICATION)
+       || (elementType == NA_UI_SCREEN)))
       naError("Application and screen can NOT receyve MOUSE_MOVED commands.");
     if((command == NA_UI_COMMAND_MOUSE_MOVED)
-      && ((naGetUIElementType(uiElement) == NA_UI_BUTTON)
-       || (naGetUIElementType(uiElement) == NA_UI_CHECKBOX)
-       || (naGetUIElementType(uiElement) == NA_UI_LABEL)
-       || (naGetUIElementType(uiElement) == NA_UI_MENU)
-       || (naGetUIElementType(uiElement) == NA_UI_MENUITEM)
-       || (naGetUIElementType(uiElement) == NA_UI_RADIO)
-       || (naGetUIElementType(uiElement) == NA_UI_SELECT)
-       || (naGetUIElementType(uiElement) == NA_UI_SLIDER)
-       || (naGetUIElementType(uiElement) == NA_UI_TEXTBOX)
-       || (naGetUIElementType(uiElement) == NA_UI_TEXTFIELD)))
+      && ((elementType == NA_UI_BUTTON)
+       || (elementType == NA_UI_CHECKBOX)
+       || (elementType == NA_UI_LABEL)
+       || (elementType == NA_UI_MENU)
+       || (elementType == NA_UI_MENUITEM)
+       || (elementType == NA_UI_RADIO)
+       || (elementType == NA_UI_SELECT)
+       || (elementType == NA_UI_SLIDER)
+       || (elementType == NA_UI_TEXTBOX)
+       || (elementType == NA_UI_TEXTFIELD)))
       naError("MOUSE_MOVED command not implemented yet for this element type.");
     if((command == NA_UI_COMMAND_CLOSES)
-      && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
+      && (elementType != NA_UI_WINDOW))
       naError("Only windows can receyve CLOSES commands.");
     if((command == NA_UI_COMMAND_PRESSED)
-      && (naGetUIElementType(uiElement) != NA_UI_BUTTON)
-      && (naGetUIElementType(uiElement) != NA_UI_CHECKBOX)
-      && (naGetUIElementType(uiElement) != NA_UI_RADIO)
-      && (naGetUIElementType(uiElement) != NA_UI_MENU)
-      && (naGetUIElementType(uiElement) != NA_UI_MENUITEM)
-      && (naGetUIElementType(uiElement) != NA_UI_SLIDER)
-      && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
+      && (elementType != NA_UI_BUTTON)
+      && (elementType != NA_UI_CHECKBOX)
+      && (elementType != NA_UI_RADIO)
+      && (elementType != NA_UI_MENU)
+      && (elementType != NA_UI_MENUITEM)
+      && (elementType != NA_UI_SLIDER)
+      && (elementType != NA_UI_WINDOW))
       naError("Only buttons, checkBoxes, radios, menus, menuItems and sliders can receyve PRESSED commands.");
     if((command == NA_UI_COMMAND_EDITED)
-      && (naGetUIElementType(uiElement) != NA_UI_TEXTBOX)
-      && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD)
-      && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
+      && (elementType != NA_UI_TEXTBOX)
+      && (elementType != NA_UI_TEXTFIELD)
+      && (elementType != NA_UI_SLIDER))
       naError("Only textFields or Sliders can receyve EDITED commands.");
     if((command == NA_UI_COMMAND_EDIT_FINISHED)
-      && (naGetUIElementType(uiElement) != NA_UI_SLIDER)
-      && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD))
+      && (elementType != NA_UI_SLIDER)
+      && (elementType != NA_UI_TEXTFIELD))
       naError("Only textFields and sliders can receyve EDIT_FINISHED commands.");
   #endif
   
@@ -210,37 +246,44 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionCall
     element->hoverReactionCount++;
   
     NA_UIElement* trackedElement = element;
-    if(naGetUIElementType(uiElement) == NA_UI_WINDOW) {
+    if(elementType == NA_UI_WINDOW) {
       trackedElement = &naGetWindowContentSpace((NAWindow*)uiElement)->uiElement;
     }
     na_RetainMouseTracking(trackedElement);
   }
-  
-//  if(command == NA_UI_COMMAND_MOUSE_MOVED) {
-//    NA_UIElement* trackedElement = element;
-//    if(naGetUIElementType(uiElement) == NA_UI_WINDOW) {
-//      trackedElement = &naGetWindowContentSpace((NAWindow*)uiElement)->uiElement;
-//    }
-//    na_RetainMouseTracking(trackedElement);
-//  }
 }
 
 
 
-NA_DEF void* naGetUIElementParent(void* uiElement) {
+NA_DEF const void* naGetUIElementParent(const void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   return uiElement ? ((NA_UIElement*)uiElement)->parent : NA_NULL;
 }
 
 
 
-NA_DEF const void* naGetUIElementParentConst(const void* uiElement) {
+NA_DEF void* naGetUIElementParentMutable(void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   return uiElement ? ((NA_UIElement*)uiElement)->parent : NA_NULL;
 }
 
 
 
-NA_DEF NAWindow* naGetUIElementWindow(void* uiElement) {
-  void* curElement = uiElement;
+NA_DEF const NAWindow* naGetUIElementWindow(const void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
+  const void* curElement = uiElement;
   while(curElement && naGetUIElementType(curElement) != NA_UI_WINDOW) {
     curElement = naGetUIElementParent(curElement);
   }
@@ -249,18 +292,28 @@ NA_DEF NAWindow* naGetUIElementWindow(void* uiElement) {
 
 
 
-NA_DEF const NAWindow* naGetUIElementWindowConst(const void* uiElement) {
-  const void* curElement = uiElement;
+NA_DEF NAWindow* naGetUIElementWindowMutable(void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
+  void* curElement = uiElement;
   while(curElement && naGetUIElementType(curElement) != NA_UI_WINDOW) {
-    curElement = naGetUIElementParentConst(curElement);
+    curElement = naGetUIElementParentMutable(curElement);
   }
   return curElement;
 }
 
 
 
-NA_DEF NASpace* naGetUIElementParentSpace(void* uiElement) {
-  NASpace* parent = naGetUIElementParent(uiElement);
+NA_DEF const NASpace* naGetUIElementParentSpace(const void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
+  const NASpace* parent = naGetUIElementParent(uiElement);
   while(parent && naGetUIElementType(parent) != NA_UI_SPACE) {
     parent = naGetUIElementParent(parent);
   }
@@ -269,10 +322,15 @@ NA_DEF NASpace* naGetUIElementParentSpace(void* uiElement) {
 
 
 
-NA_DEF const NASpace* naGetUIElementParentSpaceConst(const void* uiElement) {
-  const NASpace* parent = naGetUIElementParentConst(uiElement);
+NA_DEF NASpace* naGetUIElementParentSpaceMutable(void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
+  NASpace* parent = naGetUIElementParentMutable(uiElement);
   while(parent && naGetUIElementType(parent) != NA_UI_SPACE) {
-    parent = naGetUIElementParentConst(parent);
+    parent = naGetUIElementParentMutable(parent);
   }
   return parent;
 }
@@ -280,19 +338,21 @@ NA_DEF const NASpace* naGetUIElementParentSpaceConst(const void* uiElement) {
 
 
 NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   NARect rect;
   const NA_UIElement* elem = (const NA_UIElement*)uiElement;
 
-  if(!elem)
-    return naMakeRectZero();
-
   rect = naGetUIElementRect(elem);
-  elem = naGetUIElementParentConst(elem);
+  elem = naGetUIElementParent(elem);
   while(elem) {
     NARect curRect = naGetUIElementRect(elem);
     rect.pos.x += curRect.pos.x;
     rect.pos.y += curRect.pos.y;
-    elem = naGetUIElementParentConst(elem);
+    elem = naGetUIElementParent(elem);
   }
 
   return rect;
@@ -301,6 +361,10 @@ NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement) {
 
 
 NA_DEF NARect naGetUIElementRect(const void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
 
   NARect elemRect;
   switch(naGetUIElementType(uiElement)) {
@@ -321,7 +385,6 @@ NA_DEF NARect naGetUIElementRect(const void* uiElement) {
   case NA_UI_TEXTBOX:      elemRect = na_GetTextBoxRect(uiElement); break;
   case NA_UI_TEXTFIELD:    elemRect = na_GetTextFieldRect(uiElement); break;
   case NA_UI_WINDOW:       elemRect = na_GetWindowRect(uiElement); break;
-  default:                 elemRect = naMakeRectZero(); break;
   }
 
   return elemRect;
@@ -330,6 +393,11 @@ NA_DEF NARect naGetUIElementRect(const void* uiElement) {
 
 
 NA_DEF void naSetUIElementRect(void* uiElement, NARect rect) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   switch(naGetUIElementType(uiElement)) {
   case NA_UI_APPLICATION:  na_SetApplicationRect(uiElement, rect); break;
   case NA_UI_BUTTON:       na_SetButtonRect(uiElement, rect); break;
@@ -355,6 +423,11 @@ NA_DEF void naSetUIElementRect(void* uiElement, NARect rect) {
 
 
 NA_HDEF void na_RetainMouseTracking(NA_UIElement* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   uiElement->mouseTrackingCount++;
   if(uiElement->mouseTrackingCount == 1) {
     uiElement->mouseTracking = na_AddMouseTracking(uiElement);
@@ -362,6 +435,11 @@ NA_HDEF void na_RetainMouseTracking(NA_UIElement* uiElement) {
 }
 
 NA_HDEF void na_ReleaseMouseTracking(NA_UIElement* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   uiElement->mouseTrackingCount--;
   if(uiElement->mouseTrackingCount == 0) {
     na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
@@ -370,6 +448,11 @@ NA_HDEF void na_ReleaseMouseTracking(NA_UIElement* uiElement) {
 }
 
 NA_HDEF void na_UpdateMouseTracking(NA_UIElement* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   if(uiElement->mouseTracking) {
     na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
     uiElement->mouseTracking = na_AddMouseTracking(uiElement);
@@ -384,6 +467,11 @@ NA_DEF void naAddUIKeyboardShortcut(
   NAReactionCallback callback,
   void* controller)
 {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   NA_UIElement* element = (NA_UIElement*)uiElement;
   //#if NA_DEBUG
   //  if((naGetUIElementType(uiElement) != NA_UI_APPLICATION) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))

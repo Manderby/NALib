@@ -430,7 +430,7 @@ NA_HDEF void na_UpdateHeapElementBack(NAHeap* heap, int64 backPointer) {
 NA_DEF NAHeap* naInitHeap(NAHeap* heap, size_t count, uint32 flags) {
   #if NA_DEBUG
     if(!heap)
-      naCrash("heap is Null-Pointer");
+      naCrash("heap is nullptr");
     if(count == NA_MAX_s)
       naCrash("count is too big");
   #endif

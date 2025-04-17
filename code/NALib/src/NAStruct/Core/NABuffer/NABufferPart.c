@@ -12,7 +12,7 @@ NA_RUNTIME_TYPE(NABufferPart, na_DestructBufferPart, NA_FALSE);
 NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei64 sourceRange) {
   #if NA_DEBUG
     //if(!source)
-    //  naError("source is Null");
+    //  naError("source is nullptr");
     if(!naIsLengthValueUsefuli64(sourceRange.length))
       naError("range length is not useful");
   #endif
@@ -45,7 +45,7 @@ NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei64 
 NA_HDEF NABufferPart* na_NewBufferPartWithConstData(const void* data, size_t byteSize) {
   #if NA_DEBUG
     if(!data)
-      naError("data is Null");
+      naError("data is nullptr");
     if(byteSize == 0)
       naError("byteSize is zero");
   #endif
@@ -66,7 +66,7 @@ NA_HDEF NABufferPart* na_NewBufferPartWithMutableData(void* data, size_t byteSiz
 
   #if NA_DEBUG
     if(!data)
-      naError("data is Null");
+      naError("data is nullptr");
     if(byteSize == 0)
       naError("byteSize is zero");
   #endif
@@ -98,7 +98,7 @@ NA_HDEF void na_DestructBufferPart(NABufferPart* part) {
 NA_HDEF void na_DecoupleBufferPart(NABufferPart* part) {
   #if NA_DEBUG
     if(!part)
-      naCrash("part is Null");
+      naCrash("part is nullptr");
   #endif
   NAMemoryBlock* newblock = na_CreateMemoryBlock(part->byteSize);
   naCopyn(

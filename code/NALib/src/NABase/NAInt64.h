@@ -175,22 +175,22 @@
 #endif
 
 
-#if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS
-  #define naCastu64ToUInt(i) ((NAu64)i)
-  #define naCasti64ToInt(i)  ((NAi64)i)
-  #define naCastIntToi64(i)  ((NAi64)i)
-  #define naCastUIntTou64(i) ((NAu64)i)
-#elif NA_TYPE_NAINT_BITS == NA_TYPE32_BITS
-  #define naCastu64ToUInt(i) naCastu64Tou32(i)
-  #define naCasti64ToInt(i)  naCasti64Toi32(i)
-  #define naCastIntToi64(i)  naMakei64WithLo(i)
-  #define naCastUIntTou64(i) naMakeu64WithLo(i)
-#elif NA_TYPE_NAINT_BITS == NA_TYPE16_BITS
-  #define naCastu64ToUInt(i) naCastu64Tou16(i)
-  #define naCasti64ToInt(i)  naCasti64Toi16(i)
-  #define naCastIntToi64(i)  naMakei64WithLo((int32)i)
-  #define naCastUIntTou64(i) naMakeu64WithLo((uint32)i)
-#endif
+//#if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS
+//  #define naCastu64ToUInt(i) ((NAu64)i)
+//  #define naCasti64ToInt(i)  ((NAi64)i)
+//  #define naCastIntToi64(i)  ((NAi64)i)
+//  #define naCastUIntTou64(i) ((NAu64)i)
+//#elif NA_TYPE_NAINT_BITS == NA_TYPE32_BITS
+//  #define naCastu64ToUInt(i) naCastu64Tou32(i)
+//  #define naCasti64ToInt(i)  naCasti64Toi32(i)
+//  #define naCastIntToi64(i)  naMakei64WithLo(i)
+//  #define naCastUIntTou64(i) naMakeu64WithLo(i)
+//#elif NA_TYPE_NAINT_BITS == NA_TYPE16_BITS
+//  #define naCastu64ToUInt(i) naCastu64Tou16(i)
+//  #define naCasti64ToInt(i)  naCasti64Toi16(i)
+//  #define naCastIntToi64(i)  naMakei64WithLo((int32)i)
+//  #define naCastUIntTou64(i) naMakeu64WithLo((uint32)i)
+//#endif
 
 
 

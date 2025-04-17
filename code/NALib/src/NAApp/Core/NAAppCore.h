@@ -229,10 +229,10 @@ NA_HAPI void na_InitSystemUIElement(NA_UIElement* uiElement, void* nativePtr);
 NA_HAPI void na_ClearSystemUIElement(void* nativePtr);
 
 NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
-NA_HAPI double na_GetUIElementXOffset(const NA_UIElement* elem);
-NA_HAPI double na_GetUIElementYOffset(const NA_UIElement* elem);
+NA_HAPI double na_GetUIElementXOffset(const NA_UIElement* uiElement);
+NA_HAPI double na_GetUIElementYOffset(const NA_UIElement* uiElement);
 
-NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
+NA_HAPI const NA_UIElement* na_GetUIElementCommonParent(const NA_UIElement* elem1, const NA_UIElement* elem2);
 
 NA_HAPI NABool na_GetApplicationMouseVisible();
 NA_HAPI void na_SetApplicationMouseVisible(NABool visible);
@@ -252,7 +252,7 @@ NA_HAPI void* na_GetUINALibEquivalent(void* nativePtr);
 
 // Returns true if the given element has any reaction attached which responds
 // to the given command.
-NA_HAPI NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAUICommand command);
+NA_HAPI NABool na_UIHasElementCommandDispatches(const NA_UIElement* uiElement, NAUICommand command);
 
 // Dispatches a command with the given uiElement.
 // 
@@ -271,7 +271,7 @@ NA_HAPI NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAU
 //   returns NA_FALSE, meaning, the event has not been handeled at all.
 //   This in turn will usually cause the NALib GUI elements to call the event
 //   handling method given by the system or base class of the native element.
-NA_HAPI NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command);
+NA_HAPI NABool na_DispatchUIElementCommand(const NA_UIElement* uiElement, NAUICommand command);
 
 // To be implemented in the system dependent files:
 NA_HAPI void na_RefreshUIElementNow(void* uiElement);

@@ -58,7 +58,6 @@ NA_PROTOTYPE(NAWindow);
 // the following enum and function.
 
 typedef enum{
-  NA_UI_ELEMENT_UNDEFINED = 0,
   NA_UI_APPLICATION,
   NA_UI_BUTTON,
   NA_UI_CHECKBOX,
@@ -83,22 +82,22 @@ NA_API NAUIElementType naGetUIElementType(const void* uiElement);
 // Any ui element has a strict hierarchical ordering: Application - Screen -
 // Window - Space - Subspace - Subsubspace ... You can get the parent element
 // with this function. The parent of the Application will be NA_NULL.
-NA_API void* naGetUIElementParent(void* uiElement);
-NA_API const void* naGetUIElementParentConst(const void* uiElement);
+NA_API const void* naGetUIElementParent(const void* uiElement);
+NA_API void* naGetUIElementParentMutable(void* uiElement);
 
 // You can get the window of any ui element except for application and screen
 // elements. An application or screen element will return NA_NULL. A window
 // element will return itself and any other ui element will return the window
 // it is contained in.
-NA_API NAWindow* naGetUIElementWindow(void* uiElement);
-NA_API const NAWindow* naGetUIElementWindowConst(const void* uiElement);
+NA_API const NAWindow* naGetUIElementWindow(const void* uiElement);
+NA_API NAWindow* naGetUIElementWindowMutable(void* uiElement);
 
 // You can get the parent space of any ui element. Note that when the
 // given element is itself a space, the parental space will be returned.
 // If there is no parental space, NA_NULL will be returned. Applications,
 // screens and windows will always return NA_NULL.
-NA_API NASpace* naGetUIElementParentSpace(void* uiElement);
-NA_API const NASpace* naGetUIElementParentSpaceConst(const void* uiElement);
+NA_API const NASpace* naGetUIElementParentSpace(const void* uiElement);
+NA_API NASpace* naGetUIElementParentSpaceMutable(void* uiElement);
 
 // In NALib, all coordinates of the UI are described in a mathematical, right-
 // handed coordinate system. The origin of the global coordinate system is

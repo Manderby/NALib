@@ -214,6 +214,13 @@ NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace) {
 
 
 NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos) {
+  #if NA_DEBUG
+    if(!space)
+      naCrash("space is nullptr");
+    if(!child)
+      naCrash("child is nullptr");
+  #endif
+
   na_AddSpaceChild(space, child);
   double offsetY = na_GetUIElementYOffset(child);
 

@@ -59,7 +59,7 @@ NA_IDEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next
 NA_IDEF NAList* naInitList(NAList* list) {
   #if NA_DEBUG
     if(!list)
-      naCrash("list is Null");
+      naCrash("list is nullptr");
   #endif
   list->count = 0;
   list->sentinel.ptr  = naMakePtrNull();
@@ -100,7 +100,7 @@ NA_IDEF NAList* naInitListWithCopy(NAList* list, NAList* originalList) {
 NA_IDEF void naClearList(NAList* list, NAMutator elementDestructor) {
   #if NA_DEBUG
     if(!list)
-      naCrash("list is Null-Pointer.");
+      naCrash("list is nullptr");
     if(list->iterCount)
       naError("Iterators still running on the list. Did you use naClearListIterator?");
   #endif
@@ -113,7 +113,7 @@ NA_IDEF void naClearList(NAList* list, NAMutator elementDestructor) {
 NA_IDEF void naEmptyList(NAList* list, NAMutator elementDestructor) {
   #if NA_DEBUG
     if(!list)
-      naCrash("list is Null-Pointer.");
+      naCrash("list is nullptr");
   #endif
 
   if(elementDestructor) {
@@ -366,9 +366,9 @@ NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor) {
   NAListElement* cur;
   #if NA_DEBUG
     if(!list)
-      naCrash("list is Null-Pointer.");
+      naCrash("list is nullptr");
     if(!accessor)
-      naCrash("accessor is Null-Pointer.");
+      naCrash("accessor is nullptr");
   #endif
   cur = list->sentinel.next;
   while(cur != &list->sentinel) {
@@ -391,9 +391,9 @@ NA_IDEF void naForeachListMutable(const NAList* list, NAMutator mutator) {
   NAListElement* cur;
   #if NA_DEBUG
     if(!list)
-      naCrash("list is Null-Pointer.");
+      naCrash("list is nullptr");
     if(!mutator)
-      naCrash("mutator is Null-Pointer.");
+      naCrash("mutator is nullptr");
   #endif
   cur = list->sentinel.next;
   while(cur != &list->sentinel) {
@@ -501,7 +501,7 @@ NA_IDEF NAListIterator naMakeListAccessor(const NAList* list) {
   iter.cur = (NAListElement*)(&list->sentinel);
   #if NA_DEBUG
     if(!list)
-      naCrash("list is Null pointer");
+      naCrash("list is nullptr");
     iter.mutator = NA_FALSE;
     iter.cur->iterCount++;
     ((NAList*)list)->iterCount++;

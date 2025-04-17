@@ -73,7 +73,7 @@ typedef void (*NATreeDestructorCallback)(NAPtr userData);
 // constructor.
 //
 // The key parameter denotes the key of the node. If the tree does not use a
-// key, that parameter is Null.
+// key, that parameter is nullptr.
 //
 // Use these callbacks for example, if you want to store a reference counted
 // pointer which shall be incremented before storing it in the tree. Or you
@@ -99,7 +99,7 @@ typedef void  (*NATreeLeafDataDestructor) (NAPtr leafData);
 // This data pointer will then be available to other callback functions.
 //
 // The key parameter denotes the key of the node. If the tree does not use a
-// key, that parameter is Null.
+// key, that parameter is nullptr.
 typedef NAPtr (*NATreeNodeDataConstructor)(const void* key);
 typedef void  (*NATreeNodeDataDestructor) (NAPtr nodeData);
 

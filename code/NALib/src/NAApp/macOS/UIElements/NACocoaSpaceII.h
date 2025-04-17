@@ -219,6 +219,11 @@ NA_DEF void naSetSpaceDragsWindow(NASpace* _Nonnull space, NABool isDraggable) {
 
 
 NA_HDEF NSView* _Nonnull na_getNSViewOfChild(void* _Nonnull child) {
+  #if NA_DEBUG
+    if(!child)
+      naError("child is nullptr");
+  #endif
+
   naDefineCocoaObjectConst(NSView<NACocoaNativeEncapsulatedElement>, cocoaView, child);
 
   NSView* childView;  

@@ -22,9 +22,9 @@ NA_IDEF void naCopy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s) {
   #if NA_DEBUG
     int64 dist;
     if(!d)
-      naCrash("Pointer d is Null-Pointer.");
+      naCrash("Pointer d is nullptr");
     if(!s)
-      naCrash("Pointer s is Null-Pointer.");
+      naCrash("Pointer s is nullptr");
     dist = (int64)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s) {
       dist = -dist;
@@ -38,9 +38,9 @@ NA_IDEF void naCopy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s) {
   #if NA_DEBUG
     int64 dist;
     if(!d)
-      naCrash("Pointer d is Null-Pointer.");
+      naCrash("Pointer d is nullptr");
     if(!s)
-      naCrash("Pointer s is Null-Pointer.");
+      naCrash("Pointer s is nullptr");
     dist = (int64)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s) {
       dist = -dist;
@@ -54,9 +54,9 @@ NA_IDEF void naCopy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s) {
   #if NA_DEBUG
     int64 dist;
     if(!d)
-      naCrash("Pointer d is Null-Pointer.");
+      naCrash("Pointer d is nullptr");
     if(!s)
-      naCrash("Pointer s is Null-Pointer.");
+      naCrash("Pointer s is nullptr");
     dist = (int64)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s) {
       dist = -dist;
@@ -70,9 +70,9 @@ NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s) {
   #if NA_DEBUG
     int64 dist;
     if(!d)
-      naCrash("Pointer d is Null-Pointer.");
+      naCrash("Pointer d is nullptr");
     if(!s)
-      naCrash("Pointer s is Null-Pointer.");
+      naCrash("Pointer s is nullptr");
     dist = (int64)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s) {
       dist = -dist;
@@ -86,9 +86,9 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s) {
   #if NA_DEBUG
     int64 dist;
     if(!d)
-      naCrash("Pointer d is Null-Pointer.");
+      naCrash("Pointer d is nullptr");
     if(!s)
-      naCrash("Pointer s is Null-Pointer.");
+      naCrash("Pointer s is nullptr");
     dist = (int64)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s) {
       dist = -dist;
@@ -105,9 +105,9 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s) {
 NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, size_t byteSize) {
   #if NA_DEBUG
     if(!d)
-      naCrash("Pointer d is Null-Pointer.");
+      naCrash("Pointer d is nullptr");
     if(!s)
-      naCrash("Pointer s is Null-Pointer.");
+      naCrash("Pointer s is nullptr");
     if(byteSize < 1)
       naCrash("count is smaller than 1.");
   #endif
@@ -125,9 +125,9 @@ NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b) {
   #if NA_DEBUG
     int64 dist;
     if(!a)
-      naCrash("Pointer a is Null-Pointer");
+      naCrash("Pointer a is nullptr");
     if(!b)
-      naCrash("Pointer b is Null-Pointer");
+      naCrash("Pointer b is nullptr");
     dist = (int64)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b) {
       dist = -dist;
@@ -146,9 +146,9 @@ NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b) {
   #if NA_DEBUG
     int64 dist;
     if(!a)
-      naCrash("Pointer a is Null-Pointer");
+      naCrash("Pointer a is nullptr");
     if(!b)
-      naCrash("Pointer b is Null-Pointer");
+      naCrash("Pointer b is nullptr");
     dist = (int64)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b) {
       dist = -dist;
@@ -167,9 +167,9 @@ NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b) {
   #if NA_DEBUG
     int64 dist;
     if(!a)
-      naCrash("Pointer a is Null-Pointer");
+      naCrash("Pointer a is nullptr");
     if(!b)
-      naCrash("Pointer b is Null-Pointer");
+      naCrash("Pointer b is nullptr");
     dist = (int64)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b) {
       dist = -dist;
@@ -188,9 +188,9 @@ NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b) {
   #if NA_DEBUG
     int64 dist;
     if(!a)
-      naCrash("Pointer a is Null-Pointer");
+      naCrash("Pointer a is nullptr");
     if(!b)
-      naCrash("Pointer b is Null-Pointer");
+      naCrash("Pointer b is nullptr");
     dist = (int64)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b) {
       dist = -dist;
@@ -209,9 +209,9 @@ NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b) {
   #if NA_DEBUG
   int64 dist;
     if(!a)
-      naCrash("Pointer a is Null-Pointer");
+      naCrash("Pointer a is nullptr");
     if(!b)
-      naCrash("Pointer b is Null-Pointer");
+      naCrash("Pointer b is nullptr");
     dist = (int64)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a < (NAByte*)b) {
       dist = -dist;
@@ -274,7 +274,7 @@ NA_IDEF void naFill8WithBytes(
   NAByte* p;
   #if NA_DEBUG
     if(!d)
-      naCrash("Pointer is Null-Pointer.");
+      naCrash("Pointer is nullptr");
   #endif
   p = (NAByte*)d;
   *p = b0;
@@ -287,7 +287,7 @@ NA_IDEF void naFill16WithBytes(
   NAByte* p;
   #if NA_DEBUG
     if(!d)
-      naCrash("Pointer is Null-Pointer.");
+      naCrash("Pointer is nullptr");
   #endif
   p = (NAByte*)d;
   *p++ = b0; *p = b1;
@@ -300,7 +300,7 @@ NA_IDEF void naFill32WithBytes(
   NAByte* p;
   #if NA_DEBUG
     if(!d)
-      naCrash("Pointer is Null-Pointer.");
+      naCrash("Pointer is nullptr");
   #endif
   p = (NAByte*)d;
   *p++ = b0; *p++ = b1; *p++ = b2; *p = b3;
@@ -313,7 +313,7 @@ NA_IDEF void naFill64WithBytes(void* d,
   NAByte* p;
   #if NA_DEBUG
     if(!d)
-      naCrash("Pointer is Null-Pointer.");
+      naCrash("Pointer is nullptr");
   #endif
   p = (NAByte*)d;
   *p++ = b0; *p++ = b1; *p++ = b2; *p++ = b3;
@@ -329,7 +329,7 @@ NA_IDEF void naFill128WithBytes(void* d,
   NAByte* p;
   #if NA_DEBUG
     if(!d)
-      naCrash("Pointer is Null-Pointer.");
+      naCrash("Pointer is nullptr");
   #endif
   p = (NAByte*)d;
   *p++ = b0;  *p++ = b1;  *p++ = b2;  *p++ = b3;
@@ -351,7 +351,7 @@ NA_IDEF void naFill256WithBytes(void* d,
   NAByte* p;
   #if NA_DEBUG
     if(!d)
-      naCrash("Pointer is Null-Pointer.");
+      naCrash("Pointer is nullptr");
   #endif
   p = (NAByte*)d;
   *p++ = b0;  *p++ = b1;  *p++ = b2;  *p++ = b3;
@@ -377,7 +377,7 @@ NA_IDEF NABool naEqual8WithBytes(
   NAByte* p;
   #if NA_DEBUG
     if(!s)
-      naCrash("Pointer is Null-Pointer.");
+      naCrash("Pointer is nullptr");
   #endif
   p = (NAByte*)s;
   if(*p   != b0) { return NA_FALSE; }
@@ -391,7 +391,7 @@ NA_IDEF NABool naEqual16WithBytes(
   NAByte* p;
   #if NA_DEBUG
     if(!s)
-      naCrash("Pointer is Null-Pointer.");
+      naCrash("Pointer is nullptr");
   #endif
   p = (NAByte*)s;
   if(*p++ != b0) { return NA_FALSE; }
@@ -406,7 +406,7 @@ NA_IDEF NABool naEqual32WithBytes(
   NAByte* p;
   #if NA_DEBUG
     if(!s)
-      naCrash("Pointer is Null-Pointer.");
+      naCrash("Pointer is nullptr");
   #endif
   p = (NAByte*)s;
   if(*p++ != b0) { return NA_FALSE; }
@@ -424,7 +424,7 @@ NA_IDEF NABool naEqual64WithBytes(
   NAByte* p;
   #if NA_DEBUG
     if(!s)
-      naCrash("Pointer is Null-Pointer.");
+      naCrash("Pointer is nullptr");
   #endif
   p = (NAByte*)s;
   if(*p++ != b0) { return NA_FALSE; }
@@ -448,7 +448,7 @@ NA_IDEF NABool naEqual128WithBytes(
   NAByte* p;
   #if NA_DEBUG
     if(!s)
-      naCrash("Pointer is Null-Pointer.");
+      naCrash("Pointer is nullptr");
   #endif
   p = (NAByte*)s;
   if(*p++ !=  b0) { return NA_FALSE; }
@@ -484,7 +484,7 @@ NA_IDEF NABool naEqual256WithBytes(
   NAByte* p;
   #if NA_DEBUG
     if(!s)
-      naCrash("Pointer is Null-Pointer.");
+      naCrash("Pointer is nullptr");
   #endif
   p = (NAByte*)s;
   if(*p++ !=  b0) { return NA_FALSE; }

@@ -311,6 +311,10 @@ NA_DEF void naMarkWindowChanged(NAWindow* window, NABool changed) {
 
 NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space) {
   #if NA_DEBUG
+    if(!window)
+      naError("window is nullptr");
+    if(!space)
+      naError("space is nullptr");
     if((naGetUIElementType(space) != NA_UI_SPACE) &&
       (naGetUIElementType(space) != NA_UI_IMAGE_SPACE) &&
       (naGetUIElementType(space) != NA_UI_OPENGL_SPACE) &&

@@ -313,7 +313,7 @@ NA_DEF void* na_NewStructInternal(NATypeInfo* info) {
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!info)
-      naCrash("Given type identifier is Null-Pointer. Do not call na_NewStruct directly. Use the naNew macro.");
+      naCrash("Given type identifier is nullptr. Do not call na_NewStruct directly. Use the naNew macro.");
     if(info->typeSize == 0)
       naError("Type size is zero. Is the type void?");
   #endif
@@ -528,7 +528,7 @@ NA_DEF void* naRetain(void* pointer) {
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!pointer)
-      naCrash("pointer is Null");
+      naCrash("pointer is nullptr");
 
     // Find the part entry at the beginning of the part by AND'ing the
     // address with the partSizeMask
@@ -557,7 +557,7 @@ NA_DEF void naRelease(void* pointer) {
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!pointer)
-      naCrash("pointer is Null");
+      naCrash("pointer is nullptr");
   #endif
 
   #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
@@ -644,7 +644,7 @@ NA_DEF void* naMallocTmp(size_t byteSize) {
 
 #if NA_DEBUG
   if(!na_Runtime->mallocGarbage)
-    naCrash("Garbage struct is Null");
+    naCrash("Garbage struct is nullptr");
   if(na_Runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)
     naCrash("Buffer overrun.");
 #endif
@@ -809,7 +809,7 @@ NA_HDEF size_t naGetRuntimeTypeRefCount(const void* pointer) {
     // Find the pool entry at the beginning of the part by AND'ing the
     // address with the partSizeMask
     if(!pointer)
-      naCrash("pointer is Null");
+      naCrash("pointer is nullptr");
     NA_PoolPart* part = (NA_PoolPart*)((size_t)pointer & na_Runtime->partSizeMask);
     if(part->dummy != part)
       naError("Pointer seems not to be from a pool.");

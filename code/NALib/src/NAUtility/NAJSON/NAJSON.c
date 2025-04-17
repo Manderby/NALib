@@ -134,7 +134,7 @@ struct NAJSONParser{
 NA_HIDEF void na_FillJSONString(NA_JSONString* dst, const NAUTF8Char* src) {
   #if NA_DEBUG
     if(!src)
-      naCrash("src is Nullptr");
+      naCrash("src is nullptr");
   #endif
   
   dst->ptr = src;
@@ -189,7 +189,7 @@ NA_HDEF void na_DeallocJSONRule(NAJSONRule* rule) {
 NA_DEF NAJSONRuleSet* naRegisterJSONRuleSet(NAJSONParser* parser) {
   #if NA_DEBUG
     if(!parser)
-      naCrash("parser is Nullptr");
+      naCrash("parser is nullptr");
     if(parser->prepared)
       naError("The parser has already been used. Adding more rule sets results in undefined behaviour.");
   #endif
@@ -229,9 +229,9 @@ NA_DEF void naAddJSONRule(
 {
   #if NA_DEBUG
     if(!ruleSet)
-      naCrash("ruleSet is Nullptr");
+      naCrash("ruleSet is nullptr");
     if(!rule)
-      naCrash("rule is Nullptr");
+      naCrash("rule is nullptr");
     if(rule->hasBeenAdded)
       naError("rule has already been added to another ruleSet. This is not allowed and will likely result in memory corruption.");
     if(ruleSet->prepared)
@@ -608,7 +608,7 @@ NA_DEF NAJSONParser* naAllocateJSONParser() {
 NA_DEF void naDeallocateJSONParser(NAJSONParser* parser) {
   #if NA_DEBUG
     if(!parser)
-      naCrash("parser is Nullptr");
+      naCrash("parser is nullptr");
   #endif
 
   naFree(parser->stackStatusStack);
@@ -630,9 +630,9 @@ void naParseJSONBuffer(
 {
   #if NA_DEBUG
     if(!parser)
-      naCrash("parser is Nullptr");
+      naCrash("parser is nullptr");
     if(!buf)
-      naCrash("buf is Nullptr");
+      naCrash("buf is nullptr");
     if(((NAByte*)buf)[byteCount - 1] != '\0')
       naError("buffer must end with a zero byte.");
   #else

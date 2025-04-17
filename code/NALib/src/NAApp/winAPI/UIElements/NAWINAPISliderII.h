@@ -10,7 +10,7 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   NA_UNUSED(lParam);
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NASlider* slider = (NASlider*)uiElement;
-  NASpace* space;
+  const NASpace* space;
   NAColor bgColor;
   NAWINAPIColor* bgWinapiColor;
   RECT sliderRect;

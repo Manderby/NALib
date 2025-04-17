@@ -66,7 +66,7 @@ NA_IDEF  void naConvertEndianness128v(uint32 endianness, void* buffer, size_t co
 NA_IDEF void naConvertLittleBig8(void* buffer) {
   #if NA_DEBUG
     if(!buffer)
-      naError("Buffer is Null-Pointer");
+      naError("Buffer is nullptr");
   #endif
   NA_UNUSED(buffer);
 }
@@ -74,7 +74,7 @@ NA_IDEF void naConvertLittleBig8(void* buffer) {
 NA_IDEF void naConvertLittleBig16(void* buffer) {
   #if NA_DEBUG
     if(!buffer)
-      naCrash("Buffer is Null-Pointer");
+      naCrash("Buffer is nullptr");
   #endif
   naSwap8(((NAByte*)buffer)+1, ((NAByte*)buffer)+0);
 }
@@ -82,7 +82,7 @@ NA_IDEF void naConvertLittleBig16(void* buffer) {
 NA_IDEF void naConvertLittleBig32(void* buffer) {
   #if NA_DEBUG
     if(!buffer)
-      naCrash("Buffer is Null-Pointer");
+      naCrash("Buffer is nullptr");
   #endif
   naSwap8(((NAByte*)buffer)+3, ((NAByte*)buffer)+0);
   naSwap8(((NAByte*)buffer)+2, ((NAByte*)buffer)+1);
@@ -91,7 +91,7 @@ NA_IDEF void naConvertLittleBig32(void* buffer) {
 NA_IDEF void naConvertLittleBig64(void* buffer) {
   #if NA_DEBUG
     if(!buffer)
-      naCrash("Buffer is Null-Pointer");
+      naCrash("Buffer is nullptr");
   #endif
     naSwap8(((NAByte*)buffer)+7, ((NAByte*)buffer)+0);
     naSwap8(((NAByte*)buffer)+6, ((NAByte*)buffer)+1);
@@ -102,7 +102,7 @@ NA_IDEF void naConvertLittleBig64(void* buffer) {
 NA_IDEF void naConvertLittleBig128(void* buffer) {
   #if NA_DEBUG
     if(!buffer)
-      naCrash("Buffer is Null-Pointer");
+      naCrash("Buffer is nullptr");
   #endif
   naSwap8(((NAByte*)buffer)+15, ((NAByte*)buffer)+0);
   naSwap8(((NAByte*)buffer)+14, ((NAByte*)buffer)+1);
@@ -129,7 +129,7 @@ NA_IDEF void naConvertLittleBig128(void* buffer) {
 NA_IDEF void naConvertLittleBig8v(void* buffer, size_t count) {
   #if NA_DEBUG
     if(!buffer)
-      naError("buffer is Null-Pointer");
+      naError("buffer is nullptr");
   #endif
   NA_UNUSED(buffer);
   NA_UNUSED(count);
@@ -138,7 +138,7 @@ NA_IDEF void naConvertLittleBig8v(void* buffer, size_t count) {
 NA_IDEF void naConvertLittleBig16v(void* buffer, size_t count) {
   #if NA_DEBUG
     if(!buffer)
-      naError("buffer is Null-Pointer");
+      naError("buffer is nullptr");
   #endif
   for(size_t i = 0; i < count; ++i) {
     naConvertLittleBig16(buffer);
@@ -149,7 +149,7 @@ NA_IDEF void naConvertLittleBig16v(void* buffer, size_t count) {
 NA_IDEF void naConvertLittleBig32v(void* buffer, size_t count) {
   #if NA_DEBUG
     if(!buffer)
-      naError("buffer is Null-Pointer");
+      naError("buffer is nullptr");
   #endif
   for(size_t i = 0; i < count; ++i) {
     naConvertLittleBig32(buffer);
@@ -160,7 +160,7 @@ NA_IDEF void naConvertLittleBig32v(void* buffer, size_t count) {
 NA_IDEF void naConvertLittleBig64v(void* buffer, size_t count) {
   #if NA_DEBUG
     if(!buffer)
-      naError("buffer is Null-Pointer");
+      naError("buffer is nullptr");
   #endif
   for(size_t i = 0; i < count; ++i) {
     naConvertLittleBig64(buffer);
@@ -171,7 +171,7 @@ NA_IDEF void naConvertLittleBig64v(void* buffer, size_t count) {
 NA_IDEF void naConvertLittleBig128v(void* buffer, size_t count) {
   #if NA_DEBUG
     if(!buffer)
-      naError("buffer is Null-Pointer");
+      naError("buffer is nullptr");
   #endif
   for(size_t i = 0; i < count; ++i) {
     naConvertLittleBig128(buffer);

@@ -48,9 +48,14 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 
 
 
-NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* elem) {
-  if(naGetUIElementType(elem) == NA_UI_BUTTON) {
-    if(naIsButtonBordered((const NAButton*)elem)) {
+NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
+  if(naGetUIElementType(uiElement) == NA_UI_BUTTON) {
+    if(naIsButtonBordered((const NAButton*)uiElement)) {
       if(isAtLeastMacOSVersion(11, 0)) {
         // On newer systems bordered buttons are 5 units shorter than expected on
         // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
@@ -64,7 +69,12 @@ NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* elem) {
 
 
 
-NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem) {
+NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   // Line height is considered to be 25 for an optimal display. In this
   // function, the UI elements are shifted in Y direction such that text
   // always is displayed on a common baseline. The reference element is
@@ -72,7 +82,7 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem) {
   // All spaces and stateful/image buttons have offset 0.
   
   if(NSAppKitVersionNumber < NSAppKitVersionNumber11_0) {
-    switch(naGetUIElementType(elem)) {
+    switch(naGetUIElementType(uiElement)) {
     case NA_UI_APPLICATION:  return  0.;
     case NA_UI_BUTTON:       return 0.;
     case NA_UI_CHECKBOX:     return +5.;
@@ -93,11 +103,11 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem) {
     default: return 0.;
     }
   }else{
-    switch(naGetUIElementType(elem)) {
+    switch(naGetUIElementType(uiElement)) {
     case NA_UI_APPLICATION:  return  0.;
     case NA_UI_BUTTON:
     {
-      if(naIsButtonBordered((const NAButton*)elem)) {
+      if(naIsButtonBordered((const NAButton*)uiElement)) {
         if(isAtLeastMacOSVersion(11, 0)) {
           // On newer systems bordered buttons are 5 units smaller than expected 
           // concerning the mouse capture area. Therefore, we add 10 units and
@@ -160,7 +170,7 @@ NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event) {
 NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
   NABool retValue = NA_FALSE;
   if([event type] == NAEventTypeKeyDown || [event type] == NAEventTypeFlagsChanged) {
-    NA_UIElement* elem;
+    const NA_UIElement* elem;
     NSWindow* focusWindow;
     na_CaptureKeyboardStatus(event);
     
@@ -280,6 +290,13 @@ NA_DEF void na_RefreshUIElementNow(void* uiElement) {
 
 
 NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabElem) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+    if(!nextTabElem)
+      naError("nextTabElem is nullptr");
+  #endif
+
   if(  naGetUIElementType(uiElement) != NA_UI_TEXTFIELD
     && naGetUIElementType(uiElement) != NA_UI_TEXTBOX) {
     #if NA_DEBUG
@@ -305,6 +322,11 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
 
 
 NA_DEF double naGetUIElementResolutionScale(const void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   if(naGetUIElementType(uiElement) == NA_UI_APPLICATION)
     return 1.;
     
@@ -541,6 +563,11 @@ NA_DEF NABool naPresentFilePanel(
 
 
 NA_DEF void naCenterMouse(void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   NARect spaceRect;
   NSRect screenframe;
   CGPoint centerPos;

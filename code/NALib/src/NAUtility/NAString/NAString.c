@@ -228,7 +228,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcString, int64 offset, 
 
   #if NA_DEBUG
     if(!srcString)
-      naCrash("srcString is Null-Pointer.");
+      naCrash("srcString is nullptr");
   #endif
 
   // Extract the string
@@ -317,7 +317,7 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string) {
   #if NA_DEBUG
     NAString* mutablestring = (NAString*)string;
     if(!string) {
-      naCrash("string is Null-Pointer.");
+      naCrash("string is nullptr");
     }
   #endif
 
@@ -347,7 +347,7 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string) {
 NA_DEF NABool naIsStringEmpty(const NAString* string) {
   #if NA_DEBUG
     if(!string) {
-      naCrash("string is Null-Pointer.");
+      naCrash("string is nullptr");
     }
   #endif
   return naIsBufferEmpty(string->buffer);

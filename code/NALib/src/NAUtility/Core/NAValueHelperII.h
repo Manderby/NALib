@@ -14,7 +14,7 @@ NA_IDEF NABool naGetFlagu32Or(uint32 flags, uint32 mask) {
 NA_IDEF void naSetFlagu32(uint32* flags, uint32 mask, NABool set) {
   #if NA_DEBUG
     if(flags == NA_NULL)
-      naCrash("flags is Nullpointer");
+      naCrash("flags is nullptr");
     if(set != NA_FALSE && set != NA_TRUE)
       naError("Boolean value invalid");
   #endif
@@ -23,7 +23,7 @@ NA_IDEF void naSetFlagu32(uint32* flags, uint32 mask, NABool set) {
 NA_IDEF NABool naToggleFlagu32(uint32* flags, uint32 mask) {
   #if NA_DEBUG
     if(flags == NA_NULL)
-      naCrash("flags is Nullpointer");
+      naCrash("flags is nullptr");
   #endif
   (*flags) ^= mask;
   return naGetFlagu32(*flags, mask);

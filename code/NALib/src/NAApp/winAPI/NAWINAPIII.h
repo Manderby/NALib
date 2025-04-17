@@ -43,19 +43,20 @@ NA_HDEF void na_ClearUINativePtr(void* nativePtr) {
     DestroyWindow(nativePtr);
 }
 
-NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable) {
-  NA_UIElement* elem;
-  NA_UIElement* parentElem;
-  NAWindow* window;
-
+NA_HDEF void na_SetUIElementParent(
+  NA_UIElement* uiElement,
+  void* parent,
+  NABool isElementAttachable)
+{
   #if NA_DEBUG
     if(!uiElement)
-      naCrash("uiElement is Null");
+      naCrash("uiElement is nullptr");
   #endif
-  elem = (NA_UIElement*)uiElement;
-  parentElem = (NA_UIElement*)parent;
 
-  window = naGetUIElementWindow(uiElement);
+  NA_UIElement* elem = (NA_UIElement*)uiElement;
+  NA_UIElement* parentElem = (NA_UIElement*)parent;
+
+  NAWindow* window = naGetUIElementWindowMutable(uiElement);
   if(window && naGetWindowFirstTabElement(window) == elem) {
     naSetWindowFirstTabElement(window, NA_NULL);
   }
@@ -77,7 +78,12 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 
 
 
-NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem) {
+NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naCrash("uiElement is nullptr");
+  #endif
+
   // Line height is considered to be 25 for an optimal display. In this
   // function, the UI elements are shifted in Y direction such that text
   // always is displayed on a common baseline with 1x resolution. Higher
@@ -85,7 +91,7 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem) {
   // The reference element is a stateful text button.
   // All spaces and stateful/image buttons have offset 0.
 
-  switch(naGetUIElementType(elem)) {
+  switch(naGetUIElementType(uiElement)) {
   case NA_UI_APPLICATION:  return  0.0;
   case NA_UI_BUTTON:       return  0.0;
   case NA_UI_CHECKBOX:     return  2.5;
@@ -109,7 +115,10 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* elem) {
 
 
 
-NA_HDEF NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2) {
+NA_HDEF const NA_UIElement* na_GetUIElementCommonParent(
+  const NA_UIElement* elem1,
+  const NA_UIElement* elem2)
+{
   NA_UIElement* commonParent = NA_NULL;
   NA_UIElement* tmpelem2;
   while(elem1) {
@@ -312,7 +321,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
         }
       }
       naClearListIterator(&iter);
-      elem = naGetUIElementParent(elem);
+      elem = naGetUIElementParentMutable(elem);
     }
   }
 
@@ -388,7 +397,7 @@ NABool naWINAPICaptureMouseHover() {
   NA_UIElement* curElement = naGetApplicationMouseHoverElement();
 
   if(curElement != elementUnderMouse) {
-    NA_UIElement* commonParent = na_GetUIElementCommonParent(curElement, elementUnderMouse);
+    const NA_UIElement* commonParent = na_GetUIElementCommonParent(curElement, elementUnderMouse);
 
     // Send a leave reaction to all elements which are not hovered anymore.
     while(curElement && curElement != commonParent) {
@@ -401,7 +410,7 @@ NABool naWINAPICaptureMouseHover() {
       if(!na_DispatchUIElementCommand(curElement, NA_UI_COMMAND_MOUSE_EXITED)) {
         // don't know what to do.
       }
-      curElement = naGetUIElementParent(curElement);
+      curElement = naGetUIElementParentMutable(curElement);
     }
 
     // Reset the hover element to the current one and track the mouse leaving it.
@@ -426,7 +435,7 @@ NABool naWINAPICaptureMouseHover() {
       if(!na_DispatchUIElementCommand(elementUnderMouse, NA_UI_COMMAND_MOUSE_ENTERED)) {
         // don't know what to do.
       }
-      elementUnderMouse = naGetUIElementParent(elementUnderMouse);
+      elementUnderMouse = naGetUIElementParentMutable(elementUnderMouse);
     }
   }
   return NA_TRUE;
@@ -435,12 +444,17 @@ NABool naWINAPICaptureMouseHover() {
 
 
 NAWINAPICallbackInfo na_HandleMousePress(
-  NA_UIElement* elem,
+  NA_UIElement* uiElement,
   NAMouseButton button,
   NABool press)
 {
+  #if NA_DEBUG
+    if(!uiElement)
+      naCrash("uiElement is nullptr");
+  #endif
+
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  NAUIElementType type = naGetUIElementType(elem);
+  NAUIElementType type = naGetUIElementType(uiElement);
   if(type == NA_UI_APPLICATION
     || type == NA_UI_IMAGE_SPACE
     || type == NA_UI_METAL_SPACE
@@ -453,7 +467,7 @@ NAWINAPICallbackInfo na_HandleMousePress(
     NAUICommand command = press
       ? NA_UI_COMMAND_MOUSE_DOWN
       : NA_UI_COMMAND_MOUSE_UP;
-    if(!na_DispatchUIElementCommand(elem, command)) {
+    if(!na_DispatchUIElementCommand(uiElement, command)) {
       // don't know what to do.
     }
     info.result = 0;
@@ -466,8 +480,17 @@ NAWINAPICallbackInfo na_HandleMousePress(
 
 // Capture messages which shall be handeled globally the same no matter what
 // the object behind it is.
-NAWINAPICallbackInfo naUIElementWINAPIPreProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+NAWINAPICallbackInfo naUIElementWINAPIPreProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
   NA_UNUSED(wParam);
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
 
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NA_UIElement* elem = (NA_UIElement*)uiElement;
@@ -632,6 +655,11 @@ NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARA
 
 #if NA_DEBUG
   void na_DebugWINAPIMessage(NA_UIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+    #if NA_DEBUG
+      if(!uiElement)
+        naCrash("uiElement is nullptr");
+    #endif
+
     NA_UNUSED(wParam);
     NA_UNUSED(lParam);
     switch(naGetUIElementType(uiElement)) {
@@ -865,7 +893,7 @@ NAWINAPICallbackInfo naWINAPIScrollItemProc(WPARAM wParam, LPARAM lParam) {
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   // lParam is the control which has the event. Sliders for example. Is a HWND.
   NA_UIElement* scrollElem = (NA_UIElement*)na_GetUINALibEquivalent((void*)lParam);
-  if(naGetUIElementType(scrollElem) == NA_UI_SLIDER) {
+  if(scrollElem && naGetUIElementType(scrollElem) == NA_UI_SLIDER) {
     info = naSliderWINAPIScroll(scrollElem, wParam);
   }
   return info;
@@ -884,6 +912,11 @@ NA_HDEF void na_RefreshUIElementNow(void* uiElement) {
 
 
 NA_HDEF void** na_GetUIElementNextTabReference(void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naCrash("uiElement is nullptr");
+  #endif
+
   switch(naGetUIElementType(uiElement)) {
   case NA_UI_TEXTFIELD: return na_GetTextFieldNextTabReference(uiElement); break;
   case NA_UI_TEXTBOX:   return na_GetTextBoxNextTabReference(uiElement); break;
@@ -898,6 +931,11 @@ NA_HDEF void** na_GetUIElementNextTabReference(void* uiElement) {
 
 
 NA_HDEF void** na_GetUIElementPrevTabReference(void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naCrash("uiElement is nullptr");
+  #endif
+
   switch(naGetUIElementType(uiElement)) {
   case NA_UI_TEXTFIELD: return na_GetTextFieldPrevTabReference(uiElement); break;
   case NA_UI_TEXTBOX:   return na_GetTextBoxPrevTabReference(uiElement); break;
@@ -912,36 +950,38 @@ NA_HDEF void** na_GetUIElementPrevTabReference(void* uiElement) {
 
 
 NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem) {
-  void** elemNextRef;
-  void** nextPrevRef;
-  void** elemNextPrevRef;
-  void** nextPrevNextRef;
-
   #if NA_DEBUG
-    if(naGetUIElementWindowConst(uiElement) != naGetUIElementWindowConst(nextTabElem))
+    if(!uiElement)
+      naError("uiElement is nullptr");
+    if(!nextTabElem)
+      naError("nextTabElem is nullptr");
+    if(naGetUIElementWindow(uiElement) != naGetUIElementWindow(nextTabElem))
       naError("element do not share the same window.");
   #endif
+  
+  NAUIElementType elemType = naGetUIElementType(uiElement);
+  NAUIElementType nextElemType = naGetUIElementType(nextTabElem);
 
-  if(  naGetUIElementType(uiElement) != NA_UI_TEXTFIELD
-    && naGetUIElementType(uiElement) != NA_UI_TEXTBOX) {
+  if(  elemType != NA_UI_TEXTFIELD
+    && elemType != NA_UI_TEXTBOX) {
     #if NA_DEBUG
       naError("elem has a type which can not be used as a next tab.");
     #endif
     return;
   }
 
-  if(  naGetUIElementType(nextTabElem) != NA_UI_TEXTFIELD
-    && naGetUIElementType(nextTabElem) != NA_UI_TEXTBOX) {
+  if(  nextElemType != NA_UI_TEXTFIELD
+    && nextElemType != NA_UI_TEXTBOX) {
     #if NA_DEBUG
       naError("nextTabElem has a type which can not be used as a next tab.");
     #endif
     return;
   }
 
-  elemNextRef = na_GetUIElementNextTabReference(uiElement);
-  nextPrevRef = na_GetUIElementPrevTabReference(nextTabElem);
-  elemNextPrevRef = na_GetUIElementPrevTabReference(*elemNextRef);
-  nextPrevNextRef = na_GetUIElementNextTabReference(*nextPrevRef);
+  void** elemNextRef = na_GetUIElementNextTabReference(uiElement);
+  void** nextPrevRef = na_GetUIElementPrevTabReference(nextTabElem);
+  void** elemNextPrevRef = na_GetUIElementPrevTabReference(*elemNextRef);
+  void** nextPrevNextRef = na_GetUIElementNextTabReference(*nextPrevRef);
 
   *nextPrevNextRef = *elemNextRef;
   *elemNextPrevRef = *nextPrevRef;

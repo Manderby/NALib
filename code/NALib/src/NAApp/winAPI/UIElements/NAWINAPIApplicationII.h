@@ -737,6 +737,11 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
 
 
 NA_DEF void naCenterMouse(void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect rect = naGetUIElementRectAbsolute(uiElement);
 

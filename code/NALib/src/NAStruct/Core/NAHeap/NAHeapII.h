@@ -62,7 +62,7 @@ struct NAHeapBackEntry{
 NA_IDEF void naClearHeap(NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
-      naCrash("heap is Null-Pointer.");
+      naCrash("heap is nullptr");
   #endif
   free(heap->data);
 }
@@ -71,7 +71,7 @@ NA_IDEF void naClearHeap(NAHeap* heap) {
 NA_IDEF void naEmptyHeap(NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
-      naCrash("heap is Null-Pointer.");
+      naCrash("heap is nullptr");
   #endif
   heap->count = 0;
 }
@@ -80,7 +80,7 @@ NA_IDEF void naEmptyHeap(NAHeap* heap) {
 NA_IDEF int64 naGetHeapCount(const NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
-      naCrash("heap is Null-Pointer.");
+      naCrash("heap is nullptr");
   #endif
   return (int64)heap->count;
 }
@@ -89,7 +89,7 @@ NA_IDEF int64 naGetHeapCount(const NAHeap* heap) {
 NA_IDEF int64 naGetHeapMaxCount(const NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
-      naCrash("heap is Null-Pointer.");
+      naCrash("heap is nullptr");
   #endif
   return (int64)heap->maxCount;
 }

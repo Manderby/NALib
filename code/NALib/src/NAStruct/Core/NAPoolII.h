@@ -19,7 +19,7 @@ struct NAPool{
 NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, size_t count) {
   #if NA_DEBUG
     if(!pool)
-      naCrash("pool is Null-Pointer");
+      naCrash("pool is nullptr");
     if(count == 0)
       naError("count is 0");
   #endif
@@ -35,7 +35,7 @@ NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, size_t count) {
 NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, size_t count, size_t typeSize) {
   #if NA_DEBUG
     if(!pool)
-      naCrash("pool is Null-Pointer");
+      naCrash("pool is nullptr");
     if(count == 0)
       naError("count is 0");
     if(typeSize == 0)

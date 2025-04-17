@@ -10,7 +10,7 @@ NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer) {
   #if NA_DEBUG
     NABuffer* mutablebuffer;
     if(!buffer)
-      naCrash("buffer is Null pointer");
+      naCrash("buffer is nullptr");
     mutablebuffer = (NABuffer*)buffer;
   #endif
   iter.bufferPtr = naMakePtrWithDataConst(buffer);
@@ -31,7 +31,7 @@ NA_DEF NABufferIterator naMakeBufferMutator(NABuffer* buffer) {
   #if NA_DEBUG
     NABuffer* mutablebuffer;
     if(!buffer)
-      naCrash("buffer is Null pointer");
+      naCrash("buffer is nullptr");
     mutablebuffer = (NABuffer*)buffer;
   #endif
   iter.bufferPtr = naMakePtrWithDataMutable(buffer);
@@ -52,7 +52,7 @@ NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer) {
   #if NA_DEBUG
     NABuffer* mutablebuffer;
     if(!buffer)
-      naCrash("buffer is Null pointer");
+      naCrash("buffer is nullptr");
     mutablebuffer = (NABuffer*)buffer;
   #endif
   iter.bufferPtr = naMakePtrWithDataMutable(buffer);

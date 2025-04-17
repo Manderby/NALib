@@ -150,6 +150,9 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
         #endif
       }
       break;
+    case NA_IMAGE_SET_INTERACTION_NONE:
+      // Fallthrough. This is the default case.
+      NA_FALLTHROUGH;
     default: break;
     }
   

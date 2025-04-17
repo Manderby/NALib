@@ -20,6 +20,11 @@ NA_HDEF void* na_GetUINALibEquivalent(void* nativePtr) {
 
 
 NA_HDEF void na_InitSystemUIElement(NA_UIElement* uiElement, void* nativePtr) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naCrash("uiElement is nullptr");
+  #endif
+
   switch(naGetUIElementType(uiElement)) {
   case NA_UI_APPLICATION:
   case NA_UI_SCREEN:

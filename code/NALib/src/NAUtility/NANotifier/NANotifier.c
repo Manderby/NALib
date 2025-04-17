@@ -255,7 +255,7 @@ NA_DEF void* naSubscribe(
     if(signalId >= na_notifier->topics[topicId]->signalCount)
       naCrash("Unknown signalId.");
     if(callback == NA_NULL)
-      naCrash("callback is Nullpointer");
+      naCrash("callback is nullptr");
   #endif
   
   NA_Signal* signal = &na_notifier->topics[topicId]->signals[signalId];

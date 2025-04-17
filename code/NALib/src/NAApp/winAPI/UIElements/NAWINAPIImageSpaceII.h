@@ -30,7 +30,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   imageSpace = (NAWINAPIImageSpace*)uiElement;
 
   NAColor bgColor;
-  naFillSpaceBackgroundColor(&bgColor, naGetUIElementParentSpaceConst(uiElement));
+  naFillSpaceBackgroundColor(&bgColor, naGetUIElementParentSpace(uiElement));
   NAWINAPIColor* bgWinapiColor = naAllocUIColor(&bgColor, NA_NULL);
   FillRect(paintStruct.hdc, &paintStruct.rcPaint, bgWinapiColor->brush);
   naDeallocUIColor(bgWinapiColor);

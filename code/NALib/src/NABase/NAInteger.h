@@ -21,7 +21,7 @@
 // never uses the bool type or the true and false keywords. Also the macros
 // available in C11 are unused.
 
-#if __cplusplus
+#if defined __cplusplus
   typedef bool NABool;
   #define NA_TRUE    true
   #define NA_FALSE   false

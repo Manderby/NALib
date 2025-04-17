@@ -12,7 +12,7 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, size_
 
   #if NA_DEBUG
     if(!data)
-      naError("data is Null pointer.");
+      naError("data is nullptr");
     if(naGetBufferCurBit(iter) != 0)
       naError("Bit offset not 0.");
   #endif

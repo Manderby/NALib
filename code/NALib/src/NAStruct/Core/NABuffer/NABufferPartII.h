@@ -53,7 +53,7 @@ NA_HIDEF int64 na_GetBufferPartNormedEnd(int64 end) {
 NA_HIDEF NABufferSource* na_GetBufferPartSource(const NABufferPart* part) {
   #if NA_DEBUG
     if(!part)
-      naCrash("part is Null");
+      naCrash("part is nullptr");
   #endif
   return part->source;
 }
@@ -63,7 +63,7 @@ NA_HIDEF NABufferSource* na_GetBufferPartSource(const NABufferPart* part) {
 NA_HIDEF int64 na_GetBufferPartSourceOffset(const NABufferPart* part) {
   #if NA_DEBUG
     if(!part)
-      naCrash("part is Null");
+      naCrash("part is nullptr");
     if(!part->source)
       naError("part has no source");
   #endif
@@ -75,7 +75,7 @@ NA_HIDEF int64 na_GetBufferPartSourceOffset(const NABufferPart* part) {
 NA_HIDEF size_t na_GetBufferPartByteSize(const NABufferPart* part) {
 #if NA_DEBUG
   if(!part)
-    naCrash("part is Null");
+    naCrash("part is nullptr");
 #endif
   return part->byteSize;
 }
@@ -85,7 +85,7 @@ NA_HIDEF size_t na_GetBufferPartByteSize(const NABufferPart* part) {
 NA_HIDEF NABool na_IsBufferPartSparse(const NABufferPart* part) {
   #if NA_DEBUG
     if(!part)
-      naCrash("part is Null");
+      naCrash("part is nullptr");
   #endif
   return (part->memBlock == NA_NULL);
 }
@@ -95,7 +95,7 @@ NA_HIDEF NABool na_IsBufferPartSparse(const NABufferPart* part) {
 NA_HIDEF NAMemoryBlock* na_GetBufferPartMemoryBlock(const NABufferPart* part) {
   #if NA_DEBUG
     if(!part)
-      naCrash("part is Null");
+      naCrash("part is nullptr");
     if(na_IsBufferPartSparse(part))
       naError("part is sparse");
   #endif
@@ -109,7 +109,7 @@ NA_HIDEF NAMemoryBlock* na_GetBufferPartMemoryBlock(const NABufferPart* part) {
 NA_HIDEF void na_EnlargeBufferPart(NABufferPart* part, size_t bytesAtStart, size_t bytesAtEnd) {
   #if NA_DEBUG
   if(!part)
-    naCrash("part is Null");
+    naCrash("part is nullptr");
   if(!na_IsBufferPartSparse(part))
     naError("part is not sparse");
 #endif
@@ -124,7 +124,7 @@ NA_HIDEF size_t na_GetBufferPartRemainingBytes(NABufferIterator* iter) {
   NABufferPart* part;
   #if NA_DEBUG
     if(!iter)
-      naCrash("iterator is Null pointer");
+      naCrash("iterator is nullptr");
     if(na_IsBufferIteratorSparse(iter))
       naError("buffer part is sparse");
     if(iter->partOffset < 0)
@@ -141,7 +141,7 @@ NA_HIDEF const void* na_GetBufferPartDataPointerConst(NABufferIterator* iter) {
   NABufferPart* part;
   #if NA_DEBUG
     if(!iter)
-      naCrash("iterator is Null pointer");
+      naCrash("iterator is nullptr");
     if(na_IsBufferIteratorSparse(iter))
       naError("buffer part is sparse");
     if(iter->partOffset < 0)
@@ -158,7 +158,7 @@ NA_HIDEF void* na_GetBufferPartDataPointerMutable(NABufferIterator* iter) {
   NABufferPart* part;
   #if NA_DEBUG
     if(!iter)
-      naCrash("iterator is Null pointer");
+      naCrash("iterator is nullptr");
     if(na_IsBufferIteratorSparse(iter))
       naError("buffer part is sparse");
     if(iter->partOffset < 0)

@@ -73,7 +73,7 @@ NA_DEF void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem) {
 NA_DEF void naSetMenuItemText(NAMenuItem* menuItem, const NAUTF8Char* text) {
   #if NA_DEBUG
     if(!menuItem)
-      naError("Menu item is Null pointer");
+      naError("Menu item is nullptr");
   #endif
 
   naDefineCocoaObject(NACocoaNativeMenuItem, nativePtr, menuItem);
