@@ -107,7 +107,7 @@ struct NA_PoolPart{
   NA_PoolPart* prevPart;
   NA_PoolPart* nextPart;
   // The following field is a dummy entry and has no meaning in release code.
-  // It shall not be removed though as the total amount of bytes used for
+  // It must not be removed though as the total amount of bytes used for
   // an NA_PoolPart shall be 8 times an addressSize.
   // It is used in debugging though. Points at first byte of the whole pool
   // for consistency check.
@@ -160,7 +160,7 @@ NA_HIDEF void na_RegisterTypeInfo(NA_TypeInfo* typeInfo) {
 
   #if NA_DEBUG
     if(typeInfo->curPart)
-      naError("Newly registered type should have Null as current part.");
+      naError("Newly registered type should have nullptr as current part.");
     if(typeInfo->typeSize < NA_ADDRESS_BYTES)
       naError("Size of type is too small");
     if(typeInfo->typeSize > (na_Runtime->partSize - sizeof(NA_PoolPart)))

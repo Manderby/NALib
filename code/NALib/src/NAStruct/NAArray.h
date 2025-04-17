@@ -195,7 +195,7 @@ NA_IAPI NABool naIterateArrayBack(NAArrayIterator* iterator, size_t step);
 //
 // If the iterator is at a position where the desired element does not exist
 // (for example the next element when being at the last element or the current
-// element when being located at the initial position), a Null-Pointer
+// element when being located at the initial position), a nullptr
 // will be returned without warning.
 NA_IAPI const void* naGetArrayPrevConst  (const NAArrayIterator* iterator);
 NA_IAPI       void* naGetArrayPrevMutable(      NAArrayIterator* iterator);

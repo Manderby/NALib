@@ -207,7 +207,7 @@ NA_HDEF NABool na_LocateTreeKey(NATreeIterator* iter, const void* key, NABool us
   na_SetTreeIteratorCurItem(iter, founditem);
   #if NA_DEBUG
     if(!founditem)
-      naError("Result of capture locator was Null");
+      naError("Result of capture locator was nullptr");
   #endif
   return matchfound;
 }

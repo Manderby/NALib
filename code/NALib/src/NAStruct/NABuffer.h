@@ -626,8 +626,8 @@ NA_API NAString* naParseBufferPathComponent(NABufferIterator* iter);
 // Parses the given buffer for decimal digits and accumulates them into an
 // unsigned integer. The function will start at the current byte and parse
 // as long as there is a decimal digit. The number of bytes considered is
-// returned. The resulting integer value is returned in retValuei. If retValuei is
-// a Null-Pointer, the function just returns the number of bytes considered.
+// returned. The resulting integer value is returned in retValuei. If retValuei
+// is a nullptr, the function just returns the number of bytes considered.
 //
 // The function will not parse more than maxDigitCount characters. If that
 // value is 0 it can read any number of characters.

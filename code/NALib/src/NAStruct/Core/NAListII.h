@@ -721,7 +721,7 @@ NA_IDEF void* naGetListPrevMutable(NAListIterator* iter) {
 NA_IDEF const void* naGetListCurConst(const NAListIterator* iter) {
   #if NA_DEBUG
     // Note that the empty check has been removed. Getting the current elem
-    // of an empty list automatically returns Null. This is a feature!
+    // of an empty list automatically returns nullptr. This is a feature!
     // if(naIsListEmpty(naGetPtrConst(iter->listptr)))
     //   naError("List is empty");
   #endif
@@ -734,7 +734,7 @@ NA_IDEF void* naGetListCurMutable(NAListIterator* iter) {
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     // Note that the empty check has been removed. Getting the current elem
-    // of an empty list automatically returns Null. This is a feature!
+    // of an empty list automatically returns nullptr. This is a feature!
     // if(naIsListEmpty(naGetPtrConst(iter->listptr)))
     //   naError("List is empty");
   #endif

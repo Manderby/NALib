@@ -317,10 +317,10 @@ NA_HDEF size_t na_GetTreeNodeChildIndex(NATreeNode* node, NATreeItem* child, con
   #if NA_DEBUG
     if(!node)
       naCrash("node is nullptr");
+    if(!child)
+      naError("child is nullptr");
     if(!config)
       naCrash("config is nullptr");
-    if(!child)
-      naError("child should not be Null");
   #endif
 
   NATreeItem** childs = na_GetTreeNodeChildStorage(node);
@@ -395,7 +395,7 @@ NA_HIDEF void na_DestructLeafData(NAPtr data, const NATreeConfiguration* config)
 NA_HIDEF void na_DestructTreeLeaf(NATreeLeaf* leaf, const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!leaf)
-      naCrash("leaf shall not be Null");
+      naCrash("leaf is nullptr");
   #endif
   na_DestructLeafData(na_GetTreeLeafData(leaf, config), config);
   na_ClearTreeLeaf(leaf);

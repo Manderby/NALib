@@ -15,7 +15,7 @@ NA_HIDEF NABool na_GetTreeConfigurationConst(NATreeConfiguration* config) {
 NA_HIDEF void na_SetTreeConfigurationConst(NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!config)
-      naCrash("config is nullptr");
+      naCrash("config nullptr");
   #endif
   naSetFlagu32(&config->flags, NA_TREE_CONFIG_DEBUG_FLAG_CONST, NA_TRUE);
 }

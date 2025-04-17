@@ -119,16 +119,16 @@ NA_HDEF const NA_UIElement* na_GetUIElementCommonParent(
   const NA_UIElement* elem1,
   const NA_UIElement* elem2)
 {
-  NA_UIElement* commonParent = NA_NULL;
-  NA_UIElement* tmpelem2;
+  const NA_UIElement* commonParent = NA_NULL;
+  const NA_UIElement* tmpElem2;
   while(elem1) {
-    tmpelem2 = elem2;
-    while(tmpelem2) {
-      if(elem1 == tmpelem2) {
+    tmpElem2 = elem2;
+    while(tmpElem2) {
+      if(elem1 == tmpElem2) {
         commonParent = elem1;
         break;
       }
-      tmpelem2 = naGetUIElementParent(tmpelem2);
+      tmpElem2 = naGetUIElementParent(tmpElem2);
     }
     
     if(commonParent)

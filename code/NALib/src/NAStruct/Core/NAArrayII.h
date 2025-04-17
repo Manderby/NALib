@@ -69,7 +69,7 @@ NA_IDEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, size
     if(!array)
       naCrash("array is nullptr");
     if(typeSize < 1)
-      naError("typeSize should not be < 1");
+      naError("typeSize is < 1");
   #endif
   array->typeSize = typeSize;
   array->count = count;
@@ -89,7 +89,7 @@ NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, size_t t
     if(!array)
       naCrash("array is nullptr");
     if(typeSize < 1)
-      naError("typeSize should not be < 1");
+      naError("typeSize is < 1");
   #endif
   array->typeSize = typeSize;
   array->count = count;

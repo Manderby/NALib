@@ -80,8 +80,8 @@ typedef void            (*NA_TreeLeafDestructor)(NATreeLeaf* leaf);
 
 // This function shall return the uppermost node which contains the given key.
 // It must start searching for the key at the given item and bubble upwards.
-// Should return Null, if the key does not fit anywhere in the tree. The
-// given item is never Null and never the root of the tree which itself is
+// Should return nullptr, if the key does not fit anywhere in the tree. The
+// given item is never nullptr and never the root of the tree which itself is
 // never empty.
 typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeItem* item, const void* key);
 // This function must insert the given newleaf into the tree, positioned

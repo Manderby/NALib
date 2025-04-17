@@ -163,7 +163,7 @@ NA_HDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, con
     if(!heap->autoGrow && (heap->count == heap->maxCount))
       naCrash("Heap overflow.");
     if(backPointer)
-      naError("Heap dos not store backPointers. packpointer should be Null. Ignored.");
+      naError("Heap dos not store backPointers. packpointer should be nullptr. Ignored.");
   #endif
   if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
@@ -214,7 +214,7 @@ NA_HDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const v
     if(!heap->autoGrow && (heap->count == heap->maxCount))
       naCrash("Heap overflow.");
     if(backPointer)
-      naError("Heap does not store backPointers. packpointer should be Null. Ignored.");
+      naError("Heap does not store backPointers. packpointer should be nullptr. Ignored.");
   #endif
   if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);

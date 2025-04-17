@@ -369,7 +369,8 @@ NA_IAPI void naBubbleTreeToken(
 // Moves the iterator in order through the tree. The Back-variant moves the
 // iterator backwards. Returns NA_FALSE when iteration is over. For trees
 // which store a key, you can even send a limit in which range the tree shall
-// be traversed. You can send Null if you want the whole tree to be traversed.
+// be traversed. You can send nullptr if you want the whole tree to be
+// traversed.
 NA_IAPI NABool naIterateTree(
   NATreeIterator* iter,
   const void* lowerLimit,

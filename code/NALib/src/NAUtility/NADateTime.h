@@ -158,7 +158,7 @@ NA_API NAString* naNewStringWithDateTime(const NADateTime* dateTime,
 NA_API struct tm naMakeTMfromDateTime   (const NADateTime* dateTime);
 // Computes the time shift in minutes including daylight saving time, if applicable.
 NA_API int16     naMakeShiftWithTimeZone(const NATimeZone* timeZone, NABool daylightSaving);
-// if timeZone is a Null-Pointer, the global timeZone settings are used.
+// if timeZone is a nullptr, the global timeZone settings are used.
 
 #if NA_OS == NA_OS_WINDOWS
   NA_API NADateTime naMakeDateTimeWithFileTime(
@@ -184,7 +184,7 @@ NA_API int16     naMakeShiftWithTimeZone(const NATimeZone* timeZone, NABool dayl
 
 // Fills the given struct with date and time values, splitted into all of the
 // components of the given dateTime. Fills an NADateTimeAttribute with further
-// information about this date if desired. The attribute can be Null.
+// information about this date if desired. The attribute can be nullptr.
 NA_API void naExtractDateTimeInformation(const NADateTime* dateTime,
                                          NADateTimeStruct* dts,
                                       NADateTimeAttribute* dta);

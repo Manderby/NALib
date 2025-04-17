@@ -129,15 +129,15 @@ NA_HDEF void na_DestructTreeLeafBin(NATreeLeaf* leaf) {
 
 
 
-NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode* node, const void* key, const void* lowerLimit, const void* upperLimit, NATreeItem* previtem) {
+NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode* node, const void* key, const void* lowerLimit, const void* upperLimit, NATreeItem* prevItem) {
   NATreeBinNode* binnode;
   NATreeItem* item;
   
   #if NA_DEBUG
     if(node == NA_NULL)
-      naError("node should not be Null");
-    if(previtem == NA_NULL)
-      naError("prevnode should not be Null");
+      naError("node is nullptr");
+    if(prevItem == NA_NULL)
+      naError("prevNode is nullptr");
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("tree is configured with no key");
   #endif
@@ -148,7 +148,7 @@ NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode*
     return node;
   
   // Otherwise, we set the limits dependent on the previous node.
-  if(na_GetTreeNodeChildIndex(node, previtem, tree->config) == 1) {
+  if(na_GetTreeNodeChildIndex(node, prevItem, tree->config) == 1) {
     lowerLimit = na_GetBinNodeKey(binnode);
   }else{
     upperLimit = na_GetBinNodeKey(binnode);

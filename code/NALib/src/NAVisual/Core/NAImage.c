@@ -60,7 +60,7 @@ NA_HIDEF void na_ConvertToRadiometricRGB(NAColor* outColor, const NAColor* inCol
 NA_HIDEF size_t na_GetImagePixelCount(const NAImage* image) {
 #if NA_DEBUG
   if(!image)
-    naCrash("Given image is a Null-Pointer");
+    naCrash("image is nullptr");
 #endif
   return (size_t)image->width * (size_t)image->height;
 }
@@ -70,7 +70,7 @@ NA_HIDEF size_t na_GetImagePixelCount(const NAImage* image) {
 NA_HIDEF size_t na_GetImageDataSize(const NAImage* image) {
 #if NA_DEBUG
   if(!image)
-    naCrash("Given image is a Null-Pointer");
+    naCrash("image is nullptr");
 #endif
   return na_GetImagePixelCount(image) * sizeof(NAColor);
 }
@@ -80,7 +80,7 @@ NA_HIDEF size_t na_GetImageDataSize(const NAImage* image) {
 NA_DEF NAColor* naGetImageData(const NAImage* image) {
 #if NA_DEBUG
   if(!image)
-    naCrash("Given image is a Null-Pointer");
+    naCrash("image is nullptr");
 #endif
   return image->data;
 }
@@ -90,7 +90,7 @@ NA_DEF NAColor* naGetImageData(const NAImage* image) {
 NA_DEF NASizes naGetImageSize(const NAImage* image) {
 #if NA_DEBUG
   if(!image)
-    naCrash("Given image is a Null-Pointer");
+    naCrash("image is nullptr");
 #endif
   return naMakeSizes(image->width, image->height);
 }
@@ -126,7 +126,7 @@ NA_HDEF NAImage* naCreateImageCopy(const NAImage* image) {
   NAImage* newImage;
 #if NA_DEBUG
   if(!image)
-    naCrash("given image is a Null pointer");
+    naCrash("image is nullptr");
 #endif
   newImage = naCreate(NAImage);
   newImage->width = image->width;
@@ -270,7 +270,7 @@ NA_DEF NAImage* naCreateImageWithTint(
 {
 #if NA_DEBUG
   if(!base)
-    naCrash("Given base image is a Null-Pointer");
+    naCrash("base is nullptr");
   if(!tint)
     naCrash("tint is nullptr");
 #endif

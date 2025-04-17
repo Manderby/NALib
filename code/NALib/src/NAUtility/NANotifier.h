@@ -79,11 +79,11 @@ NA_API void* naSubscribe(
   NAMessageCallback callback);
 
 // Unsubscribes the given subscription.
-// You can send Null as a subscription which does nothing.
+// You can send nullptr as a subscription which does nothing.
 NA_API void naUnsubscribe(
   void* subscription);
 // Unsubscribes all subscriptions of the given receiver.
-// You can send Null as a receyver which does nothing.
+// You can send nullptr as a receyver which does nothing.
 NA_API void naUnsubscribeAllOfReceyver(
   const void* reciever);
 

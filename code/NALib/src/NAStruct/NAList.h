@@ -45,7 +45,7 @@ NA_IAPI NAList* naInitList    (NAList* list);
 NA_IAPI NAList* naInitListWithCopy    (NAList* list, NAList* originalList);
 
 // Clears or empties the given list. The given destructor is called for every
-// element if not Null.
+// element if not nullptr.
 //
 // The difference between naEmptyList and naClearList is that Clear should be
 // called with a semantic of invalidating the list whereas Empty simply empties
@@ -258,7 +258,7 @@ NA_IAPI NABool naIterateListStep    (NAListIterator* iter, int64 step);
 // the iterator.
 //
 // If the iterator is at a position where the desired element does not exist
-// (for example the next element when being at the last element), a Null-Pointer
+// (for example the next element when being at the last element), a nullptr
 // will be returned without warning.
 NA_IAPI const void* naGetListPrevConst      (const NAListIterator* iter);
 NA_IAPI       void* naGetListPrevMutable    (      NAListIterator* iter);
@@ -306,7 +306,7 @@ NA_IAPI void* naRemoveListNextMutable   (NAListIterator* iter);
 // /////////////////////////////////////////////
 // Getting position informations around the current position.
 //
-// The Prev and Next getter will return a Null-Pointer if the list is at the
+// The Prev and Next getter will return a nullptr if the list is at the
 // first or last element respectively.
 NA_IAPI NABool    naIsListAtFirst           (const NAListIterator* iter);
 NA_IAPI NABool    naIsListAtLast            (const NAListIterator* iter);

@@ -221,15 +221,15 @@ NA_HDEF void na_DestructTreeLeafQuad(NATreeLeaf* leaf) {
 
 
 
-NA_HDEF NATreeNode* na_LocateBubbleQuadWithLimits(const NATree* tree, NATreeNode* node, const void* origin, const void* lowerLimit, const void* upperLimit, NATreeItem* previtem) {
+NA_HDEF NATreeNode* na_LocateBubbleQuadWithLimits(const NATree* tree, NATreeNode* node, const void* origin, const void* lowerLimit, const void* upperLimit, NATreeItem* prevItem) {
   NATreeQuadNode* quadNode;
   NATreeItem* item;
   #if NA_DEBUG
     naError("not implemented yet");
     if(node == NA_NULL)
-      naError("node should not be Null");
-    if(previtem == NA_NULL)
-      naError("prevnode should not be Null");
+      naError("node is nullptr");
+    if(prevItem == NA_NULL)
+      naError("prevNode is nullptr");
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("tree is configured with no key");
   #endif
@@ -237,7 +237,7 @@ NA_HDEF NATreeNode* na_LocateBubbleQuadWithLimits(const NATree* tree, NATreeNode
   // If we are at a node which stores the key itself, return this node.
 //  if(tree->config->keyEqualComparer(origin, na_GetQuadNodeKey(quadNode))) { return node; }  // Wrong! todo
   // Otherwise, we set the limits dependent on the previous node.
-  if(na_GetTreeNodeChildIndex(node, previtem, tree->config) == 1) { // for quadtrees, that is of course wrong.
+  if(na_GetTreeNodeChildIndex(node, prevItem, tree->config) == 1) { // for quadtrees, that is of course wrong.
     lowerLimit = na_GetQuadNodeKey(quadNode);
   }else{
     upperLimit = na_GetQuadNodeKey(quadNode);
@@ -279,7 +279,7 @@ NA_HDEF NATreeNode* na_RemoveLeafQuad(NATree* tree, NATreeLeaf* leaf) {
       if(!na_GetNodeChildIsLeaf(parent, leafIndex, tree->config))
         naError("Child is not marked as a leaf");
       if(!parent)
-        naCrash("That is strange. parent should not be Null");
+        naCrash("That is strange. parent is nullptr");
       if(((NATreeQuadNode*)parent)->childs[leafIndex] == NA_NULL)
         naError("Child seems to be not linked to the tree");
     #endif

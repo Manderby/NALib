@@ -460,7 +460,7 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxWaitTime) {
     DWORD result;
     #if NA_DEBUG
       if(maxWaitTime < 0.)
-        naError("maxWaitTime should not be negative. Beware of the zero!");
+        naError("maxWaitTime is negative. Beware of the zero!");
     #endif
     ResetEvent(alarmer);
     if(maxWaitTime == 0) {
@@ -473,7 +473,7 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxWaitTime) {
     long result;
     #if NA_DEBUG
       if(maxWaitTime < 0.)
-        naError("maxWaitTime should not be negative. Beware of the zero!");
+        naError("maxWaitTime is negative. Beware of the zero!");
     #endif
     if(maxWaitTime == 0) {
       result = dispatch_semaphore_wait((NA_COCOA_BRIDGE dispatch_semaphore_t)alarmer, DISPATCH_TIME_FOREVER);
