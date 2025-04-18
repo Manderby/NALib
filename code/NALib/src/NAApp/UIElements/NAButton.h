@@ -71,8 +71,8 @@ NA_API NABool naIsButtonTextual(const NAButton* button);
 // which is pressed when the window shall be dismissed (often times labeled as
 // 'Cancel'). The following keyboard shortcut reactions are mapped to the
 // given callback with the given controller argument:
-// - default/submit: Return + Enter
-// - abort/cancel:   Escape + Cmd-Dot (on macOS)
+// - default/submit: Return as well as Enter
+// - abort/cancel:   Escape as well as Cmd-Dot (on macOS)
 NA_API void naSetButtonSubmit(
   NAButton* button,
   NAReactionCallback callback,

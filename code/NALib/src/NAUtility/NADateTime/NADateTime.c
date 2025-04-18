@@ -863,7 +863,7 @@ NA_DEF int16 naMakeShiftWithTimeZone(const NATimeZone* timeZone, NABool daylight
       timeSpec.tv_sec = (__darwin_time_t)naCasti64Toi32(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
       timeSpec.tv_sec -= (__darwin_time_t)naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
     #else
-      #if !defined NA_TYPE_INT64
+      #if !NA_NATIVE_INT64_IN_USE
         // We fall back to 32 bits as there simply is no solution to this problem.
         #error "impossible to convert 64 bit integer. Falling back to 32 bits"
         timeSpec.tv_sec = (time_t)naCasti64Toi32(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
@@ -909,7 +909,7 @@ NA_DEF int16 naMakeShiftWithTimeZone(const NATimeZone* timeZone, NABool daylight
     #if NA_TYPE_NATIVE_LONG_BITS == 32
       dateTimesec = naMakei64WithLo((int32)timeSpec->tv_sec + naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
     #else
-      #if !defined NA_TYPE_INT64
+      #if !NA_NATIVE_INT64_IN_USE
         // We fall back to 32 bits as there simply is no solution to this problem.
         #error "impossible to convert 64 bit integer. Falling back to 32 bits"
         dateTimesec = naMakei64WithLo(timeSpec->tv_sec + naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));

@@ -24,7 +24,7 @@
 // Now, we are sure, we compile with Objective-C and on MacOSX. The
 // #if directives will be closed at the very bottom of this file.
 
-#if !defined NA_TYPE_INT64
+#if !NA_NATIVE_INT64_IN_USE
   #error Compiling NALib and Cocoa without a native int64 type will not work.
 #endif
 

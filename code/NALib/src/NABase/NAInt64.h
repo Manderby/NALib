@@ -7,7 +7,7 @@
 
 
 
-#if defined NA_TYPE_INT64
+#if NA_NATIVE_INT64_IN_USE
 
   #define naMakei64(hi, lo)
   #define naMakei64WithLo(lo)

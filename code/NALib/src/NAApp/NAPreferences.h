@@ -21,7 +21,7 @@
 #include "../NABase/NABase.h"
 
 #if NA_DEBUG
-  #if NA_TYPE_INT64_REPRESENTATION == NA_TYPE_NATIVE_NONE
+  #if !NA_NATIVE_INT64_IN_USE
     #warning "Preferences require a native 64 bit integer type"
   #endif
 #endif

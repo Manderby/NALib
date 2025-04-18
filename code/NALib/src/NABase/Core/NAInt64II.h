@@ -77,21 +77,21 @@
 
 
 
-#if defined NA_TYPE_INT64
+#if NA_NATIVE_INT64_IN_USE
 
   // Native
 
-  NA_IDEF NAi64 na_Makei64(int32 hi, uint32 lo) {
-    return ((NAi64)((NAu64)hi << 32)) | lo;
+  NA_HIDEF int64 na_Makei64(int32 hi, uint32 lo) {
+    return ((int64)((uint64)hi << 32)) | lo;
   }
-  NA_IDEF NAi64 na_Makei64WithLo(int32 lo) {
-    return (NAi64)lo;
+  NA_HIDEF int64 na_Makei64WithLo(int32 lo) {
+    return (int64)lo;
   }
-  NA_IDEF NAi64 na_Makei64WithDouble(double lo) {
-    return (NAi64)lo;
+  NA_HIDEF int64 na_Makei64WithDouble(double lo) {
+    return (int64)lo;
   }
-  NA_IDEF NAi64 na_Makei64WithBinary(uint32 b1, uint32 b0) {
-    return ((NAi64)((NAu64)b1 << 32)) | b0;
+  NA_HIDEF int64 na_Makei64WithBinary(uint32 b1, uint32 b0) {
+    return ((int64)((uint64)b1 << 32)) | b0;
   }
 
   // We declare these as inline functions to reduce warnings.
@@ -130,17 +130,17 @@
   #define naCasti64Tou8(i)            ((uint8)(i))
   #define naCasti64Tou16(i)           ((uint16)(i))
   #define naCasti64Tou32(i)           ((uint32)(i))
-  #define naCasti64Tou64(i)           ((NAu64)(i))
+  #define naCasti64Tou64(i)           ((uint64)(i))
   #define naCasti64Toi8(i)            ((int8)(i))
   #define naCasti64Toi16(i)           ((int16)(i))
   #define naCasti64Toi32(i)           ((int32)(i))
   #define naCasti64ToDouble(i)        ((double)(i))
 
-  #define naMakeu64(hi, lo)           ((NAu64)(((NAu64)(hi) << 32) | (lo)))
-  #define naMakeu64WithLo(lo)         ((NAu64)(lo))
-  #define naMakeu64WithDouble(d)      ((NAu64)(d))
+  #define naMakeu64(hi, lo)           ((uint64)(((uint64)(hi) << 32) | (lo)))
+  #define naMakeu64WithLo(lo)         ((uint64)(lo))
+  #define naMakeu64WithDouble(d)      ((uint64)(d))
   #define naMakeu64WithLiteralLo(lo)  (lo ## uLL)
-  #define naMakeu64WithBinary(b1, b0) ((NAu64)(((NAu64)(b1) << 32) | (b0)))
+  #define naMakeu64WithBinary(b1, b0) ((uint64)(((uint64)(b1) << 32) | (b0)))
 
   #define naIncu64(i)                 ((i)++)
   #define naDecu64(i)                 ((i)--)
@@ -166,7 +166,7 @@
   #define naCastu64Toi8(i)            ((int8)(i))
   #define naCastu64Toi16(i)           ((int16)(i))
   #define naCastu64Toi32(i)           ((int32)(i))
-  #define naCastu64Toi64(i)           ((NAi64)(i))
+  #define naCastu64Toi64(i)           ((int64)(i))
   #define naCastu64Tou8(i)            ((uint8)(i))
   #define naCastu64Tou16(i)           ((uint16)(i))
   #define naCastu64Tou32(i)           ((uint32)(i))
@@ -198,19 +198,20 @@
     return retValuei;
   }
 
+  #define naGeti64Hi(i) (i.hi)
+  #define naGeti64Lo(i) (i.lo)
+  #define naGetu64Hi(u) (u.hi)
+  #define naGetu64Lo(u) (u.lo)
 
-
-  #undef naInci64
   #define naInci64(i) (i.hi += (i.lo == NA_MAX_u32), i.lo++, i)
-  #undef naDeci64
   #define naDeci64(i) (i.hi -= (i.lo == NA_ZERO_u32), i.lo--, i)
-
 
   NA_IDEF NAi64 naNegi64(NAi64 i) {
     NAi64 retValuei = naNoti64(i);
     naInci64(retValuei);
     return retValuei;
   }
+
   NA_IDEF NAi64 naAddi64(NAi64 a, NAi64 b) {
     return naCastu64Toi64(naAddu64(naCasti64Tou64(a), naCasti64Tou64(b)));
   }
@@ -633,7 +634,7 @@
     return (double)i.hi * naMakeDoubleWithExponent(32) + (double)i.lo;
   }
 
-#endif // defined NA_TYPE_INT64
+#endif // NA_TYPE_INT64_AVAILABLE
 
 
 

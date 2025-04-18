@@ -98,7 +98,7 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
 
 // 64 bit basic integer constants
 #define NA_SIGN_MASK_64      naMakei64(NA_SIGN_MASK_32, NA_ZERO_u32)
-#if defined NA_TYPE_INT64
+#if NA_NATIVE_INT64_IN_USE
   #define NA_ZERO_u64          ((uint64)0u)
   #define NA_ZERO_i64          ((int64)0)
   #define NA_ONE_u64           ((uint64)1u)
@@ -136,7 +136,7 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
 
 // 128 bit basic integer constants
 #define NA_SIGN_MASK_128     naMakei128(NA_SIGN_MASK_64, NA_ZERO_u64)
-#if defined NA_TYPE_INT128
+#if NA_NATIVE_INT128_IN_USE
   #define NA_ZERO_u128         ((uint128)0u)
   #define NA_ZERO_i128         ((int128)0)
   #define NA_ONE_u128          ((uint128)1u)
@@ -175,7 +175,7 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
 // 256 bit basic integer constants
 #define NA_SIGN_MASK_256      naMakei256(NA_SIGN_MASK_128, NA_ZERO_u128)
 
-#if defined NA_TYPE_INT256
+#if NA_NATIVE_INT256_IN_USE
   #define NA_ZERO_u256          ((uint256)0u)
   #define NA_ZERO_i256          ((int256)0)
   #define NA_ONE_u256           ((uint256)1u)

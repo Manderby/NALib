@@ -56,7 +56,7 @@ typedef uint32_t              uint32;
 typedef int32_t               int32;
 
 // Int 64 bits
-#if defined NA_TYPE_INT64
+#if NA_NATIVE_INT64_IN_USE
   typedef uint64_t            uint64;
   typedef int64_t             int64;
   typedef uint64              NAu64;
@@ -76,7 +76,7 @@ typedef int32_t               int32;
 #endif
 
 // Int 128 bits
-#if defined NA_TYPE_INT128
+#if NA_NATIVE_INT128_IN_USE
   typedef unsigned __int128   uint128;
   typedef signed   __int128   int128;
   typedef uint128             NAu128;
@@ -96,7 +96,7 @@ typedef int32_t               int32;
 #endif
 
 // Int 256 bits
-#if defined NA_TYPE_INT256
+#if NA_NATIVE_INT256_IN_USE
   typedef unsigned __int256   uint256;
   typedef signed   __int256   int256;
   typedef uint256             NAu256;

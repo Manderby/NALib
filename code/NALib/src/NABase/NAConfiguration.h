@@ -195,6 +195,34 @@
 
 
 // ////////////////////////////////
+// Integer emulation
+// ////////////////////////////////
+
+// Integers with 64, 128 or even 256 bits are not available on all systems as
+// native types. NALib has emulations for these but they are not accessible
+// using simple integral types but as structs and need special function calls
+// to work properly. Therefore, they are only implemented sparsely where really
+// needed internally in NALib.
+//
+// The need though might arise that applications should be written for systems
+// which do not have the native types. Therefore, one can define with the
+// preprocessor macro NA_INTEGER_EMULATION_START what bit number the emulation
+// shall start, even if there is a native type available.
+
+// value | 64 bit Integers     | 128 bit Integers    | 256 bit Integers
+// ------+---------------------+---------------------+--------------------
+// 64    | emulated            | emulated            | emulated
+// 128   | native if available | emulated            | emulated
+// 256   | native if available | native if available | emulated
+// 0     | native if available | native if available | native if available
+//
+// Default is 0
+
+#define NA_INTEGER_EMULATION_START 0
+
+
+
+// ////////////////////////////////
 // Runtime memory pools
 // ////////////////////////////////
 

@@ -151,8 +151,8 @@ NA_HDEF void* na_GetWINRegistryFixedEntry(
 
 
 
-NA_HDEF NAi64 na_GetRawPreferencesBool(void* prefs, const char* key) {
-  NAi64 valueStorage;
+NA_HDEF int64 na_GetRawPreferencesBool(void* prefs, const char* key) {
+  int64 valueStorage;
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
   DWORD type;
@@ -162,7 +162,7 @@ NA_HDEF NAi64 na_GetRawPreferencesBool(void* prefs, const char* key) {
     : NA_ZERO_i64;
 }
 
-NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, NAi64 valueStorage) {
+NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, int64 valueStorage) {
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);
@@ -174,7 +174,7 @@ NA_HDEF void na_SetRawPreferencesBool(void* prefs, const char* key, NAi64 valueS
 
 
 
-NA_HDEF NAi64 na_GetRawPreferencesi64(void* prefs, const char* key) {
+NA_HDEF int64 na_GetRawPreferencesi64(void* prefs, const char* key) {
   int64 valueStorage;
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
@@ -197,8 +197,8 @@ NA_HDEF void na_SetRawPreferencesi64(void* prefs, const char* key, int64 valueSt
 
 
 
-NA_HDEF NAi64 na_GetRawPreferencesEnum(void* prefs, const char* key) {
-  NAi64 valueStorage;
+NA_HDEF int64 na_GetRawPreferencesEnum(void* prefs, const char* key) {
+  int64 valueStorage;
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
   DWORD type;
@@ -208,7 +208,7 @@ NA_HDEF NAi64 na_GetRawPreferencesEnum(void* prefs, const char* key) {
     : NA_ZERO_i64;
 }
 
-NA_HDEF void na_SetRawPreferencesEnum(void* prefs, const char* key, NAi64 valueStorage) {
+NA_HDEF void na_SetRawPreferencesEnum(void* prefs, const char* key, int64 valueStorage) {
   HKEY registry = (HKEY)prefs;
   DWORD valueSize = NA_TYPE64_BYTES;
   LSTATUS errorCode = RegSetKeyValueA(registry, NULL, key, REG_QWORD, &valueStorage, valueSize);

@@ -157,8 +157,8 @@ NA_API void naResetApplicationPreferredTranslatorLanguages(void);
 // on Mac, the settings provided here override anything read from a plist.
 //
 // On windows, when creating an installer, you might want to set the resource
-// path to something like this to be able to locate resources relative to
-// the installation directory (best to do this in a preStartup function as
+// path to something like the following to be able to locate resources relative
+// to the installation directory (best to do this in a preStartup function as
 // this needs an NAApplication to be running):
 // 
 // NAString* exePath = naNewExecutablePath();
@@ -171,7 +171,6 @@ NA_API void naResetApplicationPreferredTranslatorLanguages(void);
 // a subfolder named after the application. Otherwise, the application folder
 // is directly under the software root folder. The author would like to advice
 // you, dear programmer, to not use a company name.
-
 NA_API void naSetApplicationName(const NAUTF8Char* name);
 NA_API void naSetApplicationCompanyName(const NAUTF8Char* name);
 NA_API void naSetApplicationVersionString(const NAUTF8Char* string);
@@ -202,7 +201,7 @@ NA_API NAString* naNewApplicationResourcePath(
 
 
 // Returns the Skin for the current Appearance. Either returns LIGHT or DARK.
-// Never returns PLAIN.
+// Never returns PLAIN or SYSTEM.
 NA_API NASkin naGetCurrentSkin(void);
 
 // Fills the colors dependent on the given skin. The skin PLAIN is not allowed
