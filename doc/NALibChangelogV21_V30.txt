@@ -8,6 +8,14 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+
+Current development:
+====================
+
+- Removing NABezel4. Had been deprecated already in version 28
+
+
+
 Version 28 (released 13. April 2025)
 ==========
 
