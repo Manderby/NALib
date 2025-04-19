@@ -9,8 +9,9 @@
 
 // We gather basic information about integer types from the standardized
 // limits.h and stdint.h libraries.
-#include <limits.h>
-#include <stdint.h>
+#include <limits.h> // old limits
+#include <stdint.h> // limits and precision integer types
+#include <stddef.h> // size_t and offsetof
 
 
 

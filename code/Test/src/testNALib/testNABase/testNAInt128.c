@@ -242,8 +242,8 @@ void benchmarkNAInt128Arithmetic(void) {
   NAu128 u;
 
   naBenchmark(naNegi128(randi128));
-  naBenchmark((i = randi128, naInci128(i), i));
-  naBenchmark((i = randi128, naDeci128(i), i));
+  naBenchmark((i = randi128, naInci128(i)));
+  naBenchmark((i = randi128, naDeci128(i)));
 
   naBenchmark(naAddi128(randi128, randi128));
   naBenchmark(naSubi128(randi128, randi128));
@@ -251,8 +251,8 @@ void benchmarkNAInt128Arithmetic(void) {
   naBenchmark(naDivi128(randi128, randi128));
   naBenchmark(naModi128(randi128, randi128));
 
-  naBenchmark((u = randu128, naIncu128(u), u));
-  naBenchmark((u = randu128, naDecu128(u), u));
+  naBenchmark((u = randu128, naIncu128(u)));
+  naBenchmark((u = randu128, naDecu128(u)));
 
   naBenchmark(naAddu128(randu128, randu128));
   naBenchmark(naSubu128(randu128, randu128));

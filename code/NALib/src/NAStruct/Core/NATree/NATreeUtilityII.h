@@ -17,7 +17,7 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config) {
   tree->root = NA_NULL;
   tree->flags = 0;
   #if NA_DEBUG
-    tree->iterCount = NA_ZERO_i64;
+    tree->iterCount = 0;
   #endif
 
   return tree;

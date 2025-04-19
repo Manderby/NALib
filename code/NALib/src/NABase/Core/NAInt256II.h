@@ -149,8 +149,8 @@
     naMakeu256(naMakeu128WithBinary(b7, b6, b5, b4), \
     naMakeu128WithBinary(b3, b2, b1, b0))
 
-  #define naIncu256(i)    ((i)++)
-  #define naDecu256(i)    ((i)--)
+  #define naIncu256(i)    (++(i))
+  #define naDecu256(i)    (--(i))
   #define naAddu256(a, b) ((a) + (b))
   #define naSubu256(a, b) ((a) - (b))
   #define naMulu256(a, b) ((a) * (b))
@@ -209,16 +209,14 @@
 
 
 
-  #undef naInci256
   #define naInci256(i)\
-    (i.hi = naAddi128(i.hi, naMakei128WithLo(naMakei64WithLo(naEqualu128(i.lo, NA_MAX_u128)))),\
-    naIncu128(i.lo),\
-    i)
-  #undef naDeci256
+    ((i).hi = naAddi128((i).hi, naMakei128WithLo(naCastBoolToi64(naEqualu128((i).lo, NA_MAX_u128)))),\
+    naIncu128((i).lo),\
+    (i))
   #define naDeci256(i)\
-    (i.hi = naSubi128(i.hi, naMakei128WithLo(naMakei64WithLo(naEqualu128(i.lo, NA_ZERO_u128)))),\
-    naDecu128(i.lo),\
-    i)
+    ((i).hi = naSubi128((i).hi, naMakei128WithLo(naCastBoolToi64(naEqualu128((i).lo, NA_ZERO_u128)))),\
+    naDecu128((i).lo),\
+    (i))
 
 
 
@@ -424,17 +422,22 @@
 
   #define naGeti256Hi(i) (i.hi)
   #define naGeti256Lo(i) (i.lo)
+  
+  
+  
   #define naGetu256Hi(u) (u.hi)
   #define naGetu256Lo(u) (u.lo)
 
-  #define naIncu256(i)\
-    (i.hi = naAddu128(i.hi, naMakeu128WithLo(naMakeu64WithLo(naEqualu128(i.lo, NA_MAX_u128)))),\
-    naIncu128(i.lo),\
-    i)
-  #define naDecu256(i)\
-    (i.hi = naSubu128(i.hi, naMakeu128WithLo(naMakeu64WithLo(naEqualu128(i.lo, NA_ZERO_u128)))),\
-    naDecu128(i.lo),\
-    i)
+
+
+  #define naIncu256(u)\
+    ((u).hi = naAddu128((u).hi, naMakeu128WithLo(naMakeu64WithLo(naEqualu128((u).lo, NA_MAX_u128)))),\
+    naIncu128((u).lo),\
+    (u))
+  #define naDecu256(u)\
+    ((u).hi = naSubu128((u).hi, naMakeu128WithLo(naMakeu64WithLo(naEqualu128((u).lo, NA_ZERO_u128)))),\
+    naDecu128((u).lo),\
+    (u))
 
 
 

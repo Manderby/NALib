@@ -24,7 +24,6 @@ NA_RUNTIME_TYPE(NATreeOctLeaf, NA_NULL, NA_FALSE);
 
 
 
-#include <stddef.h>
 #define NODE_CHILDS_OFFSET_OCT     offsetof(NATreeOctNode, childs)
 #define LEAF_KEY_OFFSET_OCT        offsetof(NATreeOctLeaf, origin)
 #define NODE_KEY_OFFSET_OCT        offsetof(NATreeOctNode, origin)

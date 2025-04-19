@@ -22,7 +22,6 @@ struct NATreeBinLeaf{
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeBinLeaf);
 
-#include <stddef.h>
 #define NODE_CHILDS_OFFSET_BIN     offsetof(NATreeBinNode, childs)
 #define LEAF_KEY_OFFSET_BIN        offsetof(NATreeBinLeaf, key)
 #define NODE_KEY_OFFSET_BIN        offsetof(NATreeBinNode, key)

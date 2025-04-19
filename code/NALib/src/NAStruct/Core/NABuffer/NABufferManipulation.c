@@ -7,7 +7,7 @@
 // /////////////////////////////////////
 
 NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool appendEndSign) {
-  int64 totalbyteSize;
+  int64 totalByteSize;
   int64 triples;
   int64 sizeRemainder;
   NABuffer* dstBuffer;
@@ -20,30 +20,30 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
     if(!naHasBufferFixedRange(buffer))
       naError("Buffer has no determined range. Use naFixBufferRange");
   #endif
-  totalbyteSize = buffer->range.length;
-  triples = totalbyteSize / 3;
-  sizeRemainder = totalbyteSize % 3;
+  totalByteSize = buffer->range.length;
+  triples = naDivi64(totalByteSize, naCastu32Toi64(3));
+  sizeRemainder = naModi64(totalByteSize, naCastu32Toi64(3));
 
   dstBuffer = naCreateBuffer(NA_FALSE);
   dstIter = naMakeBufferModifier(dstBuffer);
   srcIter = naMakeBufferMutator(buffer);
 
-  while(triples) {
+  while(naEquali64(triples, NA_ZERO_i64)) {
     naReadBufferBytes(&srcIter, srctriple, 3);
     dstTriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
     dstTriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4) | (NAUTF8Char)(srctriple[1] >> 4);
     dstTriple[2] = (NAUTF8Char)((srctriple[1] & 0x0f) << 2) | (NAUTF8Char)(srctriple[2] >> 6);
     dstTriple[3] = (NAUTF8Char) (srctriple[2] & 0x3f);
     naWriteBufferBytes(&dstIter, dstTriple, 4);
-    triples--;
+    naDeci64(triples);
   }
-  if(sizeRemainder == 1) {
+  if(naEquali64(sizeRemainder, NA_ONE_i64)) {
     naReadBufferBytes(&srcIter, srctriple, 1);
     dstTriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
     dstTriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4);
     naWriteBufferBytes(&dstIter, dstTriple, 2);
   }
-  if(sizeRemainder == 2) {
+  if(naEquali64(sizeRemainder, naCastu32Toi64(2))) {
     naReadBufferBytes(&srcIter, srctriple, 2);
     dstTriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
     dstTriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4) | (NAUTF8Char)(srctriple[1] >> 4);
@@ -65,11 +65,11 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
     else { newChar = '/'; }
     naWriteBufferu8(&dstIter, (uint8)newChar);
   }
-  if(appendEndSign && sizeRemainder == 1) {
+  if(appendEndSign && naEquali64(sizeRemainder, NA_ONE_i64)) {
     naWriteBufferu8(&dstIter, '=');
     naWriteBufferu8(&dstIter, '=');
   }
-  if(appendEndSign && sizeRemainder == 2) {
+  if(appendEndSign && naEquali64(sizeRemainder, naCastu32Toi64(2))) {
     naWriteBufferu8(&dstIter, '=');
   }
 

@@ -28,22 +28,22 @@ NA_HIDEF NABuffer* na_GetBufferIteratorBufferMutable(NABufferIterator* iter) {
 
 
 NA_IDEF NABool naLocateBufferRelative(NABufferIterator* iter, int64 offset) {
-  int64 abspos = naGetBufferLocation(iter);
-  return naLocateBufferAbsolute(iter, abspos + offset);
+  int64 absPos = naGetBufferLocation(iter);
+  return naLocateBufferAbsolute(iter, naAddi64(absPos, offset));
 }
 
 
 
 NA_IDEF NABool naLocateBufferAtStart(NABufferIterator* iter, int64 offset) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-  return naLocateBufferAbsolute(iter, buffer->range.origin + offset);
+  return naLocateBufferAbsolute(iter, naAddi64(buffer->range.origin, offset));
 }
 
 
 
 NA_IDEF NABool naLocateBufferAtEnd(NABufferIterator* iter, int64 offset) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-  return naLocateBufferAbsolute(iter, naGetRangei64End(buffer->range) + offset);
+  return naLocateBufferAbsolute(iter, naAddi64(naGetRangei64End(buffer->range), offset));
 }
 
 
@@ -70,7 +70,7 @@ NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter) {
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
   if(!naIsBufferAtInitial(iter)) {
     NABufferPart* part = na_GetBufferPart(iter);
-    if(iter->partOffset < 0 || iter->partOffset >= (int64)na_GetBufferPartByteSize(part)) {
+    if(naSmalleri64(iter->partOffset, NA_ZERO_i64) || naGreaterEquali64(iter->partOffset, naCastSize_tToi64(na_GetBufferPartByteSize(part)))) {
       NABool found = naLocateBufferAbsolute(iter, naGetBufferLocation(iter));
       if(!found) {
         naResetTreeIterator(&iter->partIter);
@@ -78,8 +78,8 @@ NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter) {
       }
     }
   }
-  return buffer->range.length == 0
-    || (naIsBufferAtInitial(iter) && (iter->partOffset == naGetRangei64End(buffer->range)));
+  return naEquali64(buffer->range.length, NA_ZERO_i64)
+    || (naIsBufferAtInitial(iter) && (naEquali64(iter->partOffset, naGetRangei64End(buffer->range))));
 }
 
 

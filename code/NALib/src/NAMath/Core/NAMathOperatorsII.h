@@ -516,7 +516,7 @@ NA_IDEF NAi64 naExp2i64(NAi64 x) {
   #if NA_DEBUG
     if(naSmalleri64(x, NA_ZERO_i64))
       naError("Exponent negative. Will result in 0.");
-    if(naGreaterEquali64(x, naMakei64WithLo(64)))
+    if(naGreaterEquali64(x, naCastu32Toi64(64)))
       naError("Exponent too big. Will result in 0.");
   #endif
   return naShli64(NA_ONE_i64, naCasti64Toi32(x));
@@ -546,12 +546,12 @@ NA_IDEF int32 naExp10i32(int32 x) {
 NA_IDEF NAi64 naExp10i64(NAi64 x) {
   NAi64 i;
   #if NA_DEBUG
-    if(naGreateri64(x, naMakei64WithLo(18)))
+    if(naGreateri64(x, naCastu32Toi64(18)))
       naError("Exponent of 10 exceeds integer range.");
   #endif
   i = NA_ONE_i64;
   while(!naEquali64(x, NA_ZERO_i64)) {
-    i = naMuli64(i, naMakei64WithLo(10));
+    i = naMuli64(i, naCastu32Toi64(10));
     naDeci64(x);
   }
   return i;

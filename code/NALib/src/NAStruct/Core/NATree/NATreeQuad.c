@@ -24,7 +24,6 @@ NA_RUNTIME_TYPE(NATreeQuadLeaf, NA_NULL, NA_FALSE);
 
 
 
-#include <stddef.h>
 #define NODE_CHILDS_OFFSET_QUAD     offsetof(NATreeQuadNode, childs)
 #define LEAF_KEY_OFFSET_QUAD        offsetof(NATreeQuadLeaf, origin)
 #define NODE_KEY_OFFSET_QUAD        offsetof(NATreeQuadNode, origin)

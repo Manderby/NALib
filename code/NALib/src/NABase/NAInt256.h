@@ -210,24 +210,6 @@
 #endif
 
 
-//#if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS
-//  #define naCastu256ToUInt(i) naCastu256Tou64(i)
-//  #define naCasti256ToInt(i)  naCasti256Toi64(i)
-//  #define naCastIntToi256(i)  naMakei256WithLo(naMakei128WithLo(i))
-//  #define naCastUIntTou256(i) naMakeu256WithLo(naMakeu128WithLo(i))
-//#elif NA_TYPE_NAINT_BITS == NA_TYPE32_BITS
-//  #define naCastu256ToUInt(i) naCastu256Tou32(i)
-//  #define naCasti256ToInt(i)  naCasti256Toi32(i)
-//  #define naCastIntToi256(i)  naMakei256WithLo(naMakei128WithLo(naMakei64WithLo(i)))
-//  #define naCastUIntTou256(i) naMakei256WithLo(naMakeu128WithLo(naMakeu64WithLo(i)))
-//#elif NA_TYPE_NAINT_BITS == NA_TYPE16_BITS
-//  #define naCastu256ToUInt(i) naCastu256Tou16(i)
-//  #define naCasti256ToInt(i)  naCasti256Toi16(i)
-//  #define naCastIntToi256(i)  naMakei256WithLo(naMakei128WithLo(naMakei64WithLo((int32)i)))
-//  #define naCastUIntTou256(i) naMakei256WithLo(naMakeu128WithLo(naMakeu64WithLo((uint32)i)))
-//#endif
-//
-
 
 #endif // NA_INT_256_INCLUDED
 

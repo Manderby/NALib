@@ -312,7 +312,7 @@ NA_IDEF double naMakeDouble(NAi64 signedSignificand, int32 signedExponent) {
   NAi64 dBits =
     naOri64(naOri64(
       naAndi64(signedSignificand, NA_IEEE754_DOUBLE_SIGN_MASK),
-      naShli64(naMakei64WithLo(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS)),
+      naShli64(naCasti32Toi64(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS)),
       naAndi64(naAbsi64(signedSignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK));
   return *((double*)(void*)&dBits);
   // Note that the additional void* cast is necessary for static code analizers.
@@ -331,7 +331,7 @@ NA_IDEF double naMakeDoubleWithExponent(int32 signedExponent) {
     if(signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
       naError("exponent equals max exponent which is reserved for special values");
   #endif
-  NAi64 dBits = naShli64(naMakei64WithLo(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
+  NAi64 dBits = naShli64(naCasti32Toi64(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
   return *((double*)(void*)&dBits);
   // Note that the additional void* cast is necessary for static code analizers.
 }
@@ -551,7 +551,7 @@ NA_IAPI int32 naGetFloatFractionSlowE(float f) {
 
 NA_IAPI NAi64 naGetDoubleFraction(double d) {
   #if NA_DEBUG
-  if(naEquali64(naGetDoubleInteger(d), NA_ZERO_i64))
+  if(!naEquali64(naGetDoubleInteger(d), NA_ZERO_i64))
     naError("Less than 15 decimal digits available for accuracy. Result may contain rounding errors. Use E or Slow variant.");
   #endif
   NAi64 result = naGetDoubleFractionE(d);
@@ -633,7 +633,7 @@ NA_IAPI NAi64 naGetDoubleFractionSlowE(double d) {
       dbits = naAndi64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
       int64 i = naGetDoubleInteger(d);
       while(!naEquali64(i, NA_ONE_i64)) {
-        i = naDivi64(i, naMakei64WithLo(10));
+        i = naDivi64(i, naCasti32Toi64(10));
         mul = naMulu64(mul, naMakeu64WithLo(10));
       }
       hyperTens = naMakei128(NA_ZERO_i64, naDivu64(NA_ONE_E_15, mul));

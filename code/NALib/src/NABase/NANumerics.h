@@ -122,9 +122,9 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
   #define NA_MINUS_ONE_i64     ((int64)NA_MAX_u64)
 #else
   #define NA_ZERO_u64          naMakeu64WithLo(NA_ZERO_u32)
-  #define NA_ZERO_i64          naMakei64WithLo(NA_ZERO_i32)
+  #define NA_ZERO_i64          naCastu32Toi64(NA_ZERO_u32)
   #define NA_ONE_u64           naMakeu64WithLo(NA_ONE_u32)
-  #define NA_ONE_i64           naMakei64WithLo(NA_ONE_i32)
+  #define NA_ONE_i64           naCastu32Toi64(NA_ONE_u32)
 
   #define NA_MAX_u64           naMakeu64(NA_MAX_u32, NA_MAX_u32)
   #define NA_MAX_i64           naMakei64(NA_MAX_i32, NA_MAX_u32)

@@ -201,20 +201,26 @@
     return retValuei;
   }
 
-  #define naGeti128Hi(i) (i.hi)
-  #define naGeti128Lo(i) (i.lo)
-  #define naGetu128Hi(u) (u.hi)
-  #define naGetu128Lo(u) (u.lo)
+  
+  
+  #define naGeti128Hi(i) ((i).hi)
+  #define naGeti128Lo(i) ((i).lo)
+  
+  
+  
+  #define naGetu128Hi(u) ((u).hi)
+  #define naGetu128Lo(u) ((u).lo)
+
+
 
   #define naInci128(i)\
-    (i.hi = naAddi64(i.hi, naMakei64WithLo(naEqualu64(i.lo, NA_MAX_u64))),\
-    naIncu64(i.lo),\
-    i)
+    ((i).hi = naAddi64((i).hi, naCastBoolToi64(naEqualu64((i).lo, NA_MAX_u64))),\
+    naIncu64((i).lo),\
+    (i))
   #define naDeci128(i)\
-    (i.hi = naSubi64(i.hi, naMakei64WithLo(naEqualu64(i.lo, NA_ZERO_u64))),\
-    naDecu64(i.lo),\
-    i)
-
+    ((i).hi = naSubi64((i).hi, naCastBoolToi64(naEqualu64((i).lo, NA_ZERO_u64))),\
+    naDecu64((i).lo),\
+    (i))
 
   NA_IDEF NAi128 naNegi128(NAi128 i) {
     NAi128 retValuei = naNoti128(i);
@@ -411,16 +417,14 @@
 
 
 
-  #undef naIncu128
-  #define naIncu128(i)\
-    (i.hi = naAddu64(i.hi, naMakeu64WithLo(naEqualu64(i.lo, NA_MAX_u64))),\
-    naIncu64(i.lo),\
-    i)
-  #undef naDecu128
-  #define naDecu128(i)\
-    (i.hi = naSubu64(i.hi, naMakeu64WithLo(naEqualu64(i.lo, NA_ZERO_u64))),\
-    naDecu64(i.lo),\
-    i)
+  #define naIncu128(u)\
+    ((u).hi = naAddu64((u).hi, naMakeu64WithLo(naEqualu64((u).lo, NA_MAX_u64))),\
+    naIncu64((u).lo),\
+    (u))
+  #define naDecu128(u)\
+    ((u).hi = naSubu64((u).hi, naMakeu64WithLo(naEqualu64((u).lo, NA_ZERO_u64))),\
+    naDecu64((u).lo),\
+    (u))
 
 
 

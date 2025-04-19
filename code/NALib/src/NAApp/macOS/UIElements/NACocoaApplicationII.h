@@ -249,7 +249,7 @@ NA_DEF void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication) {
 
 
 NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff) {
-  dispatch_time_t nextTime = dispatch_time(DISPATCH_TIME_NOW, naMakei64WithDouble(1000000000. * timediff));
+  dispatch_time_t nextTime = dispatch_time(DISPATCH_TIME_NOW, naCastDoubleToi64(1000000000. * timediff));
   dispatch_queue_t queue = dispatch_get_main_queue();
   dispatch_after_f(nextTime, queue, arg, function);
 }

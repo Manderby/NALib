@@ -328,7 +328,7 @@ void testGetDouble(void) {
     naTest(naGetDoubleFractionSlow(1234.5678) == 567800000000000);
     naTest(naGetDoubleFractionSlow(0.123456) == 123456000000000);
     naTest(naGetDoubleFractionSlow(123456789.12345) == 123450000000000);
-    naTest(naGetDoubleFractionSlow(123456789.12345678) == 123457000000000);
+    naTest(naGetDoubleFractionSlow(123456789.12345678) == 123456800000000);
     naTest(naGetDoubleFractionSlow(0.000000000000001) == 000000000000001);
     naTest(naGetDoubleFractionSlow(0.999999999999999) == 999999999999999);
     naTest(naGetDoubleFractionSlow(0.99999999999999999) == 0); // compiler rounds up to 1

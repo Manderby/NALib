@@ -20,12 +20,6 @@
 
 #include "../NABase/NABase.h"
 
-#if NA_DEBUG
-  #if !NA_NATIVE_INT64_IN_USE
-    #warning "Preferences require a native 64 bit integer type"
-  #endif
-#endif
-
 NA_PROTOTYPE(NAString);
 
 

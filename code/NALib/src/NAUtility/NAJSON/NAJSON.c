@@ -703,7 +703,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser) {
   }
   
   while(isdigit(curByte)) {
-    decimals = naAddi64(naAddi64(naShli64(decimals, 1), naShli64(decimals, 3)), naMakei64WithLo(curByte & 0x0f));
+    decimals = naAddi64(naAddi64(naShli64(decimals, 1), naShli64(decimals, 3)), naCastu8Toi64(curByte & 0x0f));
     curByte = na_NextJSONByte(parser);
   }
   
@@ -712,7 +712,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser) {
     const NAByte* firstDecimalPtr = parser->curPtr;
 
     while(isdigit(curByte)) {
-      decimals = naAddi64(naAddi64(naShli64(decimals, 1), naShli64(decimals, 3)), naMakei64WithLo(curByte & 0x0f));
+      decimals = naAddi64(naAddi64(naShli64(decimals, 1), naShli64(decimals, 3)), naCastu8Toi64(curByte & 0x0f));
       curByte = na_NextJSONByte(parser);
     }
 
@@ -738,7 +738,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser) {
 
   decimals = naMuli64(decimals, decimalSign);
   exponent = exponentSign * exponent - decimalShift;
-  parser->number = (double)(decimals) * naExp10((double)(exponent));
+  parser->number = naCasti64ToDouble(decimals) * naExp10((double)(exponent));
   
   parser->parseStatus = NA_JSON_PARSE_NUMBER;
   return parser->parseStatus;

@@ -62,8 +62,10 @@ typedef int32_t               int32;
   typedef uint64              NAu64;
   typedef int64               NAi64;
 #else
-  typedef struct NAu64        uint64;
-  typedef struct NAi64        int64;
+  #define uint64 NAu64
+  #define int64 NAi64
+//  typedef struct NAu64        uint64;
+//  typedef struct NAi64        int64;
   typedef struct NAu64        NAu64;
   typedef struct NAi64        NAi64;
   #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
@@ -82,8 +84,10 @@ typedef int32_t               int32;
   typedef uint128             NAu128;
   typedef int128              NAi128;
 #else
-  typedef struct NAu128       uint128;
-  typedef struct NAi128       int128;
+  #define uint128 NAu128
+  #define int128 NAi128
+//  typedef struct NAu128       uint128;
+//  typedef struct NAi128       int128;
   typedef struct NAu128       NAu128;
   typedef struct NAi128       NAi128;
   #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
