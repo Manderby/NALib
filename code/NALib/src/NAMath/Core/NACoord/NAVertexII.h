@@ -103,9 +103,9 @@ NA_IDEF NAVertexi32 naMakeVertexi32Zero(void) {
 
 NA_IDEF NAVertexi64 naMakeVertexi64Zero(void) {
   NAVertexi64 newVertex;
-  newVertex.x = 0;
-  newVertex.y = 0;
-  newVertex.z = 0;
+  newVertex.x = NA_ZERO_i64;
+  newVertex.y = NA_ZERO_i64;
+  newVertex.z = NA_ZERO_i64;
   return newVertex;
 }
 

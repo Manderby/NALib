@@ -74,7 +74,7 @@ NA_IDEF size_t naMakeEndWithMaxs(size_t max) {
     if(max == NA_MAX_s)
       naError("Integer overflow");
   #endif
-  return naAddi64(max, 1);
+  return max + 1;
 }
 
 
@@ -122,13 +122,13 @@ NA_IDEF int32 naMakeEndWithStartAndLengthi32(int32 start, int32 length) {
 }
 NA_IDEF int64 naMakeEndWithStartAndLengthi64(int64 start, int64 length) {
   #if NA_DEBUG
-    if(length < 0) {
+    if(naSmalleri64(length, NA_ZERO_i64)) {
       naError("length is negative");
     }
   #endif
-  int64 result = start + length;
+  int64 result = naAddi64(start, length);
   #if NA_DEBUG
-    if(length >= 0 && result < start)
+    if(naGreaterEquali64(length, NA_ZERO_i64) && naSmalleri64(result, start))
       naError("Integer overflow");
   #endif
   return result;
@@ -159,13 +159,13 @@ NA_IDEF int32 naMakeMaxWithMinAndLengthi32(int32 min, int32 length) {
 }
 NA_IDEF int64 naMakeMaxWithMinAndLengthi64(int64 min, int64 length) {
   #if NA_DEBUG
-    if(length < 0) {
+    if(naSmalleri64(length, NA_ZERO_i64)) {
       naError("length is negative");
     }
   #endif
-  int64 result = naMakeMaxWithEndi64(min + length);
+  int64 result = naMakeMaxWithEndi64(naAddi64(min, length));
   #if NA_DEBUG
-    if(length > 0 && result < min)
+    if(naGreateri64(length, NA_ZERO_i64) && naSmalleri64(result, min))
       naError("Integer overflow");
   #endif
   return result;
@@ -230,15 +230,15 @@ NA_IDEF int32 naMakeLengthWithStartAndEndi32E(int32 start, int32 end) {
 }
 NA_IDEF int64 naMakeLengthWithStartAndEndi64(int64 start, int64 end) {
   #if NA_DEBUG
-    if(start > end)
+    if(naGreateri64(start, end))
       naError("start is greater than end");
   #endif
   return naMakeLengthWithStartAndEndi64E(start, end);
 }
 NA_IDEF int64 naMakeLengthWithStartAndEndi64E(int64 start, int64 end) {
-  int64 result = end - start;
+  int64 result = naSubi64(end, start);
   #if NA_DEBUG
-    if(end > start && result < 0)
+    if(naGreateri64(end, start) && naSmalleri64(result, NA_ZERO_i64))
       naError("Integer overflow");
   #endif
   return result;
@@ -273,14 +273,14 @@ NA_IDEF int32 naMakeLengthWithMinAndMaxi32(int32 min, int32 max) {
 }
 NA_IDEF int64 naMakeLengthWithMinAndMaxi64(int64 min, int64 max) {
   #if NA_DEBUG
-    if(max == NA_MAX_i64)
+    if(naEquali64(max, NA_MAX_i64))
       naError("max being equal to the integer maximum will lead to an overflow");
-    if(min > max + 1)
+    if(naGreateri64(min, naAddi64(max, NA_ONE_i64)))
       naError("min is greater than max + 1");
   #endif
-  int64 result = naMakeEndWithMaxi64(max) - min;
+  int64 result = naSubi64(naMakeEndWithMaxi64(max), min);
   #if NA_DEBUG
-    if(max > min && result < 0)
+    if(naGreateri64(max, min) && naSmalleri64(result, NA_ZERO_i64))
       naError("Integer overflow");
   #endif
   return result;
@@ -337,19 +337,19 @@ NA_IDEF int32 naAlignValuei32(int32 value, int32 offset, int32 alignLength) {
   }
 }
 NA_IDEF int64 naAlignValuei64(int64 value, int64 offset, int64 alignLength) {
-  int64 shiftValue = value - offset;
+  int64 shiftValue = naSubi64(value, offset);
   #if NA_DEBUG
     if(!naIsLengthValueUsefuli64(alignLength))
       naError("Length must be > 0");
-    if(offset > value && shiftValue > 0)
+    if(naGreateri64(offset, value) && naGreateri64(shiftValue, NA_ZERO_i64))
       naError("Underflow");
-    if(value > offset && shiftValue < 0)
+    if(naGreateri64(value, offset) && naSmalleri64(shiftValue, NA_ZERO_i64))
       naError("Overflow");
   #endif
-  if(shiftValue < 0) {
-    return (((int64)((shiftValue + 1) / alignLength) - 1) * alignLength) + offset;
+  if(naSmalleri64(shiftValue, NA_ZERO_i64)) {
+    return naAddi64(naMuli64(naSubi64(naDivi64(naAddi64(shiftValue, NA_ONE_i64), alignLength), NA_ONE_i64), alignLength), offset);
   }else{
-    return (((int64)((shiftValue + 0) / alignLength) - 0) * alignLength) + offset;
+    return naAddi64(naMuli64(naSubi64(naDivi64(naAddi64(shiftValue, NA_ZERO_i64), alignLength), NA_ZERO_i64), alignLength), offset);
   }
 }
 NA_IDEF size_t naAlignValues(size_t value, size_t offset, size_t alignLength) {
@@ -381,9 +381,10 @@ NA_IDEF NABool naIsOffsetValueValidi64(int64 a) {
   NA_UNUSED(a);
   return NA_TRUE;
 }
+
 NA_IDEF NABool naIsOffsetValueValids(size_t a) {
   #if NA_DEBUG
-    if((int64)a < 0)
+    if(a >> (NA_ADDRESS_BITS - 1) == 1)
       naError("Unsigned integer looks like a negative number");
   #else
     NA_UNUSED(a);
@@ -407,7 +408,7 @@ NA_IDEF NABool naIsLengthValueValidi64(int64 a) {
 }
 NA_IDEF NABool naIsLengthValueValids(size_t a) {
   #if NA_DEBUG
-    if((int64)a < 0)
+    if(a >> (NA_ADDRESS_BITS - 1) == 1)
       naError("Unsigned integer looks like a negative number");
   #else
     NA_UNUSED(a);
@@ -425,11 +426,11 @@ NA_IDEF NABool naIsLengthValueEmptyi32(int32 a) {
   return (a == 0);
 }
 NA_IDEF NABool naIsLengthValueEmptyi64(int64 a) {
-return (a == 0);
+return naEquali64(a, NA_ZERO_i64);
 }
 NA_IDEF NABool naIsLengthValueEmptys(size_t a) {
   #if NA_DEBUG
-    if((int64)a < 0)
+    if(a >> (NA_ADDRESS_BITS - 1) == 1)
       naError("Unsigned integer looks like a negative number");
   #endif
   return (a == 0);
@@ -446,11 +447,11 @@ NA_IDEF NABool naIsLengthValueNegativei32(int32 a) {
   return (a < 0);
 }
 NA_IDEF NABool naIsLengthValueNegativei64(int64 a) {
-  return (a < 0);
+  return naSmalleri64(a, NA_ZERO_i64);
 }
 NA_IDEF NABool naIsLengthValueNegatives(size_t a) {
   #if NA_DEBUG
-    if((int64)a < 0)
+    if(a >> (NA_ADDRESS_BITS - 1) == 1)
       naError("Unsigned integer looks like a negative number");
   #else
     NA_UNUSED(a);
@@ -475,7 +476,7 @@ NA_IDEF NABool naIsOffsetValueUsefuli64(int64 a) {
 }
 NA_IDEF NABool naIsOffsetValueUsefuls(size_t a) {
   #if NA_DEBUG
-    if((int64)a < 0)
+    if(a >> (NA_ADDRESS_BITS - 1) == 1)
       naError("Unsigned integer looks like a negative number");
   #else
     NA_UNUSED(a);
@@ -496,11 +497,11 @@ NA_IDEF NABool naIsLengthValueUsefuli32(int32 a) {
     return (a > 0);
 }
 NA_IDEF NABool naIsLengthValueUsefuli64(int64 a) {
-    return (a > 0);
+    return naGreateri64(a, NA_ZERO_i64);
 }
 NA_IDEF NABool naIsLengthValueUsefuls(size_t a) {
   #if NA_DEBUG
-    if((int64)a < 0)
+    if(a >> (NA_ADDRESS_BITS - 1) == 1)
       naError("Unsigned integer looks like a negative number");
   #endif
   return (a > 0);

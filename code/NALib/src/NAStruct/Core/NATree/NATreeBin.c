@@ -9,8 +9,8 @@ NA_RUNTIME_TYPE(NATreeBinLeaf, NA_NULL, NA_FALSE);
 
 
 
-NA_HIDEF void* na_GetBinNodeKey(NATreeBinNode* binnode) {
-  return &binnode->key;
+NA_HIDEF void* na_GetBinNodeKey(NATreeBinNode* binNode) {
+  return &binNode->key;
 }
 NA_HIDEF void* na_GetBinLeafKey(NATreeBinLeaf* binleaf) {
   return &binleaf->key;
@@ -30,17 +30,17 @@ NA_HIDEF void na_AddTreeNodeChildBin(NATree* tree, NATreeBinNode* parent, NATree
 
 
 NA_HDEF NATreeNode* na_NewTreeNodeBin(NATree* tree, const void* key, NATreeLeaf* leftleaf, NATreeLeaf* rightleaf) {
-  NATreeBinNode* binnode = naNew(NATreeBinNode);
-  na_InitTreeNode(na_GetBinNodeNode(binnode), key, tree->config);
+  NATreeBinNode* binNode = naNew(NATreeBinNode);
+  na_InitTreeNode(na_GetBinNodeNode(binNode), key, tree->config);
 
   // Node-specific initialization
-  na_AddTreeNodeChildBin(tree, binnode, na_GetTreeLeafItem(leftleaf),  0, NA_TRUE);
-  na_AddTreeNodeChildBin(tree, binnode, na_GetTreeLeafItem(rightleaf), 1, NA_TRUE);
+  na_AddTreeNodeChildBin(tree, binNode, na_GetTreeLeafItem(leftleaf),  0, NA_TRUE);
+  na_AddTreeNodeChildBin(tree, binNode, na_GetTreeLeafItem(rightleaf), 1, NA_TRUE);
   if(tree->config->flags & NA_TREE_BALANCE_AVL) {
-    na_InitNodeAVL(binnode);
+    na_InitNodeAVL(binNode);
   }
 
-  return na_GetBinNodeNode(binnode);
+  return na_GetBinNodeNode(binNode);
 }
 
 
@@ -59,8 +59,8 @@ NA_HDEF NATreeLeaf* na_NewTreeLeafBin(NATree* tree, const void* key, NAPtr conte
 
 
 NA_HDEF size_t na_GetChildIndexBinDouble(NATreeNode* parentNode, const void* childKey) {
-  NATreeBinNode* binnode = (NATreeBinNode*)(parentNode);
-  return na_GetKeyIndexBinDouble(na_GetBinNodeKey(binnode), childKey, NA_NULL);
+  NATreeBinNode* binNode = (NATreeBinNode*)(parentNode);
+  return na_GetKeyIndexBinDouble(na_GetBinNodeKey(binNode), childKey, NA_NULL);
 }
 NA_HDEF size_t na_GetKeyIndexBinDouble(const void* baseKey, const void* testKey, const void* data) {
   NA_UNUSED(data);
@@ -77,8 +77,8 @@ NA_HDEF NABool na_TestKeyLeafContainBinDouble(NATreeLeaf* leaf, const void* key)
 
 
 NA_HDEF size_t na_GetChildIndexBini32(NATreeNode* parentNode, const void* childKey) {
-  NATreeBinNode* binnode = (NATreeBinNode*)(parentNode);
-  return na_GetKeyIndexBini32(na_GetBinNodeKey(binnode), childKey, NA_NULL);
+  NATreeBinNode* binNode = (NATreeBinNode*)(parentNode);
+  return na_GetKeyIndexBini32(na_GetBinNodeKey(binNode), childKey, NA_NULL);
 }
 NA_HDEF size_t na_GetKeyIndexBini32(const void* baseKey, const void* key, const void* data) {
   NA_UNUSED(data);
@@ -97,8 +97,8 @@ NA_HDEF NABool na_TestKeyLeafContainBini32(NATreeLeaf* leaf, const void* key) {
 
 
 NA_HDEF size_t na_GetChildIndexBinu32(NATreeNode* parentNode, const void* childKey) {
-  NATreeBinNode* binnode = (NATreeBinNode*)(parentNode);
-  return na_GetKeyIndexBinu32(na_GetBinNodeKey(binnode), childKey, NA_NULL);
+  NATreeBinNode* binNode = (NATreeBinNode*)(parentNode);
+  return na_GetKeyIndexBinu32(na_GetBinNodeKey(binNode), childKey, NA_NULL);
 }
 NA_HDEF size_t na_GetKeyIndexBinu32(const void* baseKey, const void* key, const void* data) {
   NA_UNUSED(data);
@@ -130,7 +130,7 @@ NA_HDEF void na_DestructTreeLeafBin(NATreeLeaf* leaf) {
 
 
 NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode* node, const void* key, const void* lowerLimit, const void* upperLimit, NATreeItem* prevItem) {
-  NATreeBinNode* binnode;
+  NATreeBinNode* binNode;
   NATreeItem* item;
   
   #if NA_DEBUG
@@ -141,17 +141,17 @@ NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode*
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("tree is configured with no key");
   #endif
-  binnode = (NATreeBinNode*)(node);
+  binNode = (NATreeBinNode*)(node);
   
   // If we are at a node which stores the key itself, return this node.
-  if(tree->config->keyEqualComparer(key, na_GetBinNodeKey(binnode)))
+  if(tree->config->keyEqualComparer(key, na_GetBinNodeKey(binNode)))
     return node;
   
   // Otherwise, we set the limits dependent on the previous node.
   if(na_GetTreeNodeChildIndex(node, prevItem, tree->config) == 1) {
-    lowerLimit = na_GetBinNodeKey(binnode);
+    lowerLimit = na_GetBinNodeKey(binNode);
   }else{
-    upperLimit = na_GetBinNodeKey(binnode);
+    upperLimit = na_GetBinNodeKey(binNode);
   }
   // If we know both limits and the key is contained within, return.
   if(lowerLimit && upperLimit && tree->config->keyTester(lowerLimit, upperLimit, key)) {

@@ -95,8 +95,8 @@ NA_IDEF NAPosi32 naMakePosi32Zero() {
 
 NA_IDEF NAPosi64 naMakePosi64Zero() {
   NAPosi64 newPos;
-  newPos.x = 0;
-  newPos.y = 0;
+  newPos.x = NA_ZERO_i64;
+  newPos.y = NA_ZERO_i64;
   return newPos;
 }
 

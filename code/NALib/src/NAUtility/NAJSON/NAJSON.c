@@ -690,20 +690,20 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser) {
   NAByte curByte = na_CurJSONByte(parser);
   
   int32 decimalShift = 0;
-  int64 decimalSign = 1;
+  int64 decimalSign = NA_ONE_i64;
   int32 exponentSign = 1;
-  int64 decimals = 0;
+  int64 decimals = NA_ZERO_i64;
   int32 exponent = 0;
   
   if(curByte == '-') {
-    decimalSign = -1;
+    decimalSign = NA_MINUS_ONE_i64;
     curByte = na_NextJSONByte(parser);
   }else if(curByte == '+') {
     curByte = na_NextJSONByte(parser);
   }
   
   while(isdigit(curByte)) {
-    decimals = (decimals << 1) + (decimals << 3) + (curByte & 0x0f);
+    decimals = naAddi64(naAddi64(naShli64(decimals, 1), naShli64(decimals, 3)), naMakei64WithLo(curByte & 0x0f));
     curByte = na_NextJSONByte(parser);
   }
   
@@ -712,7 +712,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser) {
     const NAByte* firstDecimalPtr = parser->curPtr;
 
     while(isdigit(curByte)) {
-      decimals = (decimals << 1) + (decimals << 3) + (curByte & 0x0f);
+      decimals = naAddi64(naAddi64(naShli64(decimals, 1), naShli64(decimals, 3)), naMakei64WithLo(curByte & 0x0f));
       curByte = na_NextJSONByte(parser);
     }
 
@@ -736,7 +736,7 @@ NA_HDEF NA_JSONParseStatus na_ParseJSONNumber(NAJSONParser* parser) {
     }
   }
 
-  decimals = decimals * decimalSign;
+  decimals = naMuli64(decimals, decimalSign);
   exponent = exponentSign * exponent - decimalShift;
   parser->number = (double)(decimals) * naExp10((double)(exponent));
   

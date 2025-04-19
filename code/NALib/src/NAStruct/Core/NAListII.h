@@ -659,36 +659,36 @@ NA_IDEF NABool naIterateListBack(NAListIterator* iter) {
 // a pointer forward or backward.
 NA_IDEF NABool naIterateListStep(NAListIterator* iter, int64 step) {
   #if NA_DEBUG
-    if(step == NA_ZERO_i64) {
+    if(naEquali64(step, NA_ZERO_i64)) {
       naError("step is zero.");
     }
   #endif
-  while(step > NA_ZERO_i64) {
+  while(naGreateri64(step, NA_ZERO_i64)) {
     #if NA_DEBUG
       if(iter->cur->iterCount == 0)
         naError("No Iterator at this element. Did you do a double clear?");
       iter->cur->iterCount--;
     #endif
     iter->cur = iter->cur->next;
-    step--;
+    naDeci64(step);
     #if NA_DEBUG
       iter->cur->iterCount++;
-      if((iter->cur == &((NAList*)naGetPtrConst(iter->listptr))->sentinel) && (step != NA_ZERO_i64)) {
+      if((iter->cur == &((NAList*)naGetPtrConst(iter->listptr))->sentinel) && !naEquali64(step, NA_ZERO_i64)) {
         naError("The iteration overflows the number of elements.");
       }
     #endif
   }
-  while(step < NA_ZERO_i64) {
+  while(naSmalleri64(step, NA_ZERO_i64)) {
     #if NA_DEBUG
       if(iter->cur->iterCount == 0)
         naError("No Iterator at this element. Did you do a double clear?");
       iter->cur->iterCount--;
     #endif
     iter->cur = iter->cur->prev;
-    step++;
+    naInci64(step);
     #if NA_DEBUG
       iter->cur->iterCount++;
-      if((iter->cur == &((NAList*)naGetPtrConst(iter->listptr))->sentinel) && (step != NA_ZERO_i64)) {
+      if((iter->cur == &((NAList*)naGetPtrConst(iter->listptr))->sentinel) && !naEquali64(step, NA_ZERO_i64)) {
         naError("The iteration underflows the number of elements.");
       }
     #endif

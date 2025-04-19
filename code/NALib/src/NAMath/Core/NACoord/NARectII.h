@@ -282,10 +282,10 @@ NA_IDEF NARecti32 naMakeRecti32Zero() {
 
 NA_IDEF NARecti64 naMakeRecti64Zero() {
   NARecti64 newRect;
-  newRect.pos.x = 0;
-  newRect.pos.y = 0;
-  newRect.size.width = 0;
-  newRect.size.height = 0;
+  newRect.pos.x = NA_ZERO_i64;
+  newRect.pos.y = NA_ZERO_i64;
+  newRect.size.width = NA_ZERO_i64;
+  newRect.size.height = NA_ZERO_i64;
   return newRect;
 }
 

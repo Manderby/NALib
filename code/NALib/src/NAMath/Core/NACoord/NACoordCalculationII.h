@@ -24,9 +24,9 @@ NA_IDEF NARangei32 naMakeRangei32Positive(NARangei32 range) {
   return range;
 }
 NA_IDEF NARangei64 naMakeRangei64Positive(NARangei64 range) {
-  int64 rangeNegative = (int64)(range.length < 0);
-  range.origin += rangeNegative * range.length;
-  range.length -= rangeNegative * 2 * range.length;
+  int64 rangeNegative = naMakei64WithLo(naSmalleri64(range.length, NA_ZERO_i64));
+  range.origin = naAddi64(range.origin, naMuli64(rangeNegative, range.length));
+  range.length = naSubi64(range.length, naMuli64(naMuli64(rangeNegative, naMakei64WithLo(2)), range.length));
   return range;
 }
 NA_IDEF NARanges naMakeRangesPositive(NARanges range) {
@@ -132,7 +132,7 @@ NA_IDEF int64 naGetRangei64Center(NARangei64 range) {
     if(!naIsRangei64Useful(range))
       naError("range is not useful");
   #endif
-  center = range.origin + range.length / 2;
+  center = naAddi64(range.origin, naDivi64(range.length, naMakei64WithLo(2)));
   return center;
 }
 NA_IDEF size_t naGetRangesCenter(NARanges range) {
@@ -183,8 +183,8 @@ NA_IDEF NAPosi64 naGetRecti64Center(NARecti64 rect) {
     if(!naIsRecti64Useful(rect))
       naError("rect is not useful");
   #endif
-  center.x = rect.pos.x + rect.size.width / 2;
-  center.y = rect.pos.y + rect.size.height / 2;
+  center.x = naAddi64(rect.pos.x, naDivi64(rect.size.width, naMakei64WithLo(2)));
+  center.y = naAddi64(rect.pos.y, naDivi64(rect.size.height, naMakei64WithLo(2)));
   return center;
 }
 NA_IDEF NAPoss naGetRectsCenter(NARects rect) {
@@ -239,9 +239,9 @@ NA_IDEF NAVertexi64 naGetBoxi64Center(NABoxi64 box) {
     if(!naIsBoxi64Useful(box))
       naError("box is not useful");
   #endif
-  center.x = box.vertex.x + box.volume.width / 2;
-  center.y = box.vertex.y + box.volume.height / 2;
-  center.z = box.vertex.z + box.volume.depth / 2;
+  center.x = naAddi64(box.vertex.x, naDivi64(box.volume.width, naMakei64WithLo(2)));
+  center.y = naAddi64(box.vertex.y, naDivi64(box.volume.height, naMakei64WithLo(2)));
+  center.z = naAddi64(box.vertex.z, naDivi64(box.volume.depth, naMakei64WithLo(2)));
   return center;
 }
 NA_IDEF NAVertexs naGetBoxsCenter(NABoxs box) {

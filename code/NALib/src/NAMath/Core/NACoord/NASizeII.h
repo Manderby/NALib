@@ -152,8 +152,8 @@ NA_IDEF NASizei32 naMakeSizei32Zero() {
 
 NA_IDEF NASizei64 naMakeSizei64Zero() {
   NASizei64 newSize;
-  newSize.width = 0;
-  newSize.height = 0;
+  newSize.width = NA_ZERO_i64;
+  newSize.height = NA_ZERO_i64;
   return newSize;
 }
 

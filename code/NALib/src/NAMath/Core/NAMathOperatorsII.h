@@ -598,7 +598,7 @@ NA_IDEF int64 naPowerOf2i64(int32 n) {
     if(n > 62)
       naError("Overflow");
   #endif
-  return NA_ONE_i64 << n;
+  return naShli64(NA_ONE_i64, n);
 }
 NA_IDEF size_t naPowerOf2s(int32 n) {
   #if NA_DEBUG

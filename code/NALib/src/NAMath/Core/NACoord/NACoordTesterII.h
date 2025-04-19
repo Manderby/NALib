@@ -170,7 +170,7 @@ NA_IDEF NABool naIsSizei32Empty(NASizei32 size) {
   return naIsLengthValueEmptyi32(totalSize);
 }
 NA_IDEF NABool naIsSizei64Empty(NASizei64 size) {
-  int64 totalSize = size.width * size.height;
+  int64 totalSize = naMuli64(size.width, size.height);
   #if NA_DEBUG
     if(naIsLengthValueEmptyi64(totalSize) && !naIsLengthValueEmptyi64(size.width) && !naIsLengthValueEmptyi64(size.height))
       naError("You experience a rare occasion of integer overflow. Consider using naIsSizeiEmptySlow");
@@ -243,28 +243,28 @@ NA_IDEF NABool naIsVolumefEmpty (NAVolumef volume) {
   return naIsLengthValueEmptyf(volume.width) || naIsLengthValueEmptyf(volume.height) || naIsLengthValueEmptyf(volume.depth);
 }
 NA_IDEF NABool naIsVolumei32Empty(NAVolumei32 volume) {
-  int32 totalvolume = volume.width * volume.height * volume.depth;
+  int32 totalVolume = volume.width * volume.height * volume.depth;
   #if NA_DEBUG
-    if(naIsLengthValueEmptyi32(totalvolume) && !naIsLengthValueEmptyi32(volume.width) && !naIsLengthValueEmptyi32(volume.height) && !naIsLengthValueEmptyi32(volume.depth))
+    if(naIsLengthValueEmptyi32(totalVolume) && !naIsLengthValueEmptyi32(volume.width) && !naIsLengthValueEmptyi32(volume.height) && !naIsLengthValueEmptyi32(volume.depth))
       naError("You experience a rare occasion of integer overflow. Consider using naIsVolumeiEmptySlow");
   #endif
-  return naIsLengthValueEmptyi32(totalvolume);
+  return naIsLengthValueEmptyi32(totalVolume);
 }
 NA_IDEF NABool naIsVolumei64Empty(NAVolumei64 volume) {
-  int64 totalvolume = volume.width * volume.height * volume.depth;
+  int64 totalVolume = naMuli64(naMuli64(volume.width, volume.height), volume.depth);
   #if NA_DEBUG
-    if(naIsLengthValueEmptyi64(totalvolume) && !naIsLengthValueEmptyi64(volume.width) && !naIsLengthValueEmptyi64(volume.height) && !naIsLengthValueEmptyi64(volume.depth))
+    if(naIsLengthValueEmptyi64(totalVolume) && !naIsLengthValueEmptyi64(volume.width) && !naIsLengthValueEmptyi64(volume.height) && !naIsLengthValueEmptyi64(volume.depth))
       naError("You experience a rare occasion of integer overflow. Consider using naIsVolumeiEmptySlow");
   #endif
-  return naIsLengthValueEmptyi64(totalvolume);
+  return naIsLengthValueEmptyi64(totalVolume);
 }
 NA_IDEF NABool naIsVolumesEmpty(NAVolumes volume) {
-  size_t totalvolume = volume.width * volume.height * volume.depth;
+  size_t totalVolume = volume.width * volume.height * volume.depth;
   #if NA_DEBUG
-    if(naIsLengthValueEmptys(totalvolume) && !naIsLengthValueEmptys(volume.width) && !naIsLengthValueEmptys(volume.height) && !naIsLengthValueEmptys(volume.depth))
+    if(naIsLengthValueEmptys(totalVolume) && !naIsLengthValueEmptys(volume.width) && !naIsLengthValueEmptys(volume.height) && !naIsLengthValueEmptys(volume.depth))
       naError("You experience a rare occasion of integer overflow. Consider using naIsVolumeiEmptySlow");
   #endif
-  return naIsLengthValueEmptys(totalvolume);
+  return naIsLengthValueEmptys(totalVolume);
 }
 
 

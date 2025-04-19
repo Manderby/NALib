@@ -243,7 +243,7 @@ NA_IDEF NABoxi32 naMakeBoxi32Empty() {
 
 NA_IDEF NABoxi64 naMakeBoxi64Empty() {
   NABoxi64 newBox;
-  newBox.volume.width = 0;
+  newBox.volume.width = NA_ZERO_i64;
   return newBox;
 }
 

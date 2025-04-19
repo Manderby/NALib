@@ -77,21 +77,21 @@ NA_IDEF void naEmptyHeap(NAHeap* heap) {
 }
 
 
-NA_IDEF int64 naGetHeapCount(const NAHeap* heap) {
+NA_IDEF size_t naGetHeapCount(const NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
       naCrash("heap is nullptr");
   #endif
-  return (int64)heap->count;
+  return heap->count;
 }
 
 
-NA_IDEF int64 naGetHeapMaxCount(const NAHeap* heap) {
+NA_IDEF size_t naGetHeapMaxCount(const NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
       naCrash("heap is nullptr");
   #endif
-  return (int64)heap->maxCount;
+  return heap->maxCount;
 }
 
 

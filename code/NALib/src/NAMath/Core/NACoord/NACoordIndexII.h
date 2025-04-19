@@ -26,7 +26,7 @@ NA_IDEF size_t naGetSizei64IndexCount(NASizei64 size) {
     if(!naIsSizei64Useful(size))
       naError("size is not useful.");
   #endif
-  return (size_t)(size.width * size.height);
+  return (size_t)naMuli64(size.width, size.height);
 }
 
 NA_IDEF size_t naGetSizesIndexCount(NASizes size) {
@@ -64,7 +64,7 @@ NA_IDEF size_t naGetVolumei64IndexCount(NAVolumei64 volume) {
     if(!naIsVolumei64Useful(volume))
       naError("volume is not useful.");
   #endif
-  return (size_t)(volume.width * volume.height * volume.depth);
+  return (size_t)naMuli64(naMuli64(volume.width, volume.height), volume.depth);
 }
 
 NA_IDEF size_t naGetVolumesIndexCount(NAVolumes volume) {
@@ -85,7 +85,7 @@ NA_IDEF size_t naGetIndexWithOrigini32AndPosRowFirst(NAPosi32 origin, NAPosi32 o
   return (size_t)((offset.y - origin.y) * width + (offset.x - origin.x));
 }
 NA_IDEF size_t naGetIndexWithOrigini64AndPosRowFirst(NAPosi64 origin, NAPosi64 offset, int64 width) {
-  return (size_t)((offset.y - origin.y) * width + (offset.x - origin.x));
+  return (size_t)naAddi64(naMuli64(naSubi64(offset.y, origin.y), width), naSubi64(offset.x, origin.x));
 }
 NA_IDEF size_t naGetIndexWithOriginsAndPosRowFirst(NAPoss origin, NAPoss offset, size_t width) {
   return (size_t)((offset.y - origin.y) * width + (offset.x - origin.x));
@@ -97,7 +97,7 @@ NA_IDEF size_t naGetIndexWithOrigini32AndPosColumnFirst(NAPosi32 origin, NAPosi3
   return (size_t)((offset.x - origin.x) * height + (offset.y - origin.y));
 }
 NA_IDEF size_t naGetIndexWithOrigini64AndPosColumnFirst(NAPosi64 origin, NAPosi64 offset, int64 height) {
-  return (size_t)((offset.x - origin.x) * height + (offset.y - origin.y));
+  return (size_t)naAddi64(naMuli64(naSubi64(offset.x, origin.x), height), naSubi64(offset.y, origin.y));
 }
 NA_IDEF size_t naGetIndexWithOriginsAndPosColumnFirst(NAPoss origin, NAPoss offset, size_t height) {
   return (size_t)((offset.x - origin.x) * height + (offset.y - origin.y));
@@ -109,7 +109,7 @@ NA_IDEF size_t naGetIndexWithOrigini32AndVertexRowFirst(NAVertexi32 origin, NAVe
   return (size_t)(((vertex.z - origin.z) * height + (vertex.y - origin.y)) * width + (vertex.x - origin.x));
 }
 NA_IDEF size_t naGetIndexWithOrigini64AndVertexRowFirst(NAVertexi64 origin, NAVertexi64 vertex, int64 width, int64 height) {
-  return (size_t)(((vertex.z - origin.z) * height + (vertex.y - origin.y)) * width + (vertex.x - origin.x));
+  return (size_t)naAddi64(naMuli64(naAddi64(naMuli64(naSubi64(vertex.z, origin.z), height), naSubi64(vertex.y, origin.y)), width), naSubi64(vertex.x, origin.x));
 }
 NA_IDEF size_t naGetIndexWithOriginsAndVertexRowFirst(NAVertexs origin, NAVertexs vertex, size_t width, size_t height) {
   return (size_t)(((vertex.z - origin.z) * height + (vertex.y - origin.y)) * width + (vertex.x - origin.x));
@@ -121,7 +121,7 @@ NA_IDEF size_t naGetIndexWithOrigini32AndVertexColumnFirst(NAVertexi32 origin, N
   return (size_t)(((vertex.x - origin.x) * height + (vertex.y - origin.y)) * depth + (vertex.z - origin.z));
 }
 NA_IDEF size_t naGetIndexWithOrigini64AndVertexColumnFirst(NAVertexi64 origin, NAVertexi64 vertex, int64 depth, int64 height) {
-  return (size_t)(((vertex.x - origin.x) * height + (vertex.y - origin.y)) * depth + (vertex.z - origin.z));
+  return (size_t)naAddi64(naMuli64(naAddi64(naMuli64(naSubi64(vertex.x, origin.x), height), naSubi64(vertex.y, origin.y)), depth), naSubi64(vertex.z, origin.z));
 }
 NA_IDEF size_t naGetIndexWithOriginsAndVertexColumnFirst(NAVertexs origin, NAVertexs vertex, size_t depth, size_t height) {
   return (size_t)(((vertex.x - origin.x) * height + (vertex.y - origin.y)) * depth + (vertex.z - origin.z));

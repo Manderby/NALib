@@ -180,14 +180,14 @@ struct NATree{
   NATreeItem* root;
   int32 flags;
   #if NA_DEBUG
-    int64 iterCount;
+    size_t iterCount;
   #endif
 };
 
 struct NATreeIterationInfo{
-  int64 step;
-  int64 startIndex;
-  int64 breakIndex;
+  int32 step;
+  int32 startIndex;
+  int32 breakIndex;
   const void* lowerLimit;
   const void* upperLimit;
 };
@@ -242,7 +242,7 @@ NA_HIAPI void na_SetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newite
 NA_HIAPI const NATree* na_GetTreeIteratorTreeConst(const NATreeIterator* iter);
 NA_HIAPI NATree* na_GetTreeIteratorTreeMutable(NATreeIterator* iter);
 NA_HIAPI NABool na_AddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafInsertOrder insertOrder, NABool moveToNew);
-NA_HAPI void na_IterateTreeCapture(NATreeIterator* iter, int64 index, NATreeIterationInfo* info);
+NA_HAPI void na_IterateTreeCapture(NATreeIterator* iter, int32 index, NATreeIterationInfo* info);
 NA_HAPI void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NABool na_IterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NABool na_LocateTreeKey(NATreeIterator* iter, const void* key, NABool usebubble);

@@ -106,21 +106,21 @@ NA_IDEF NABoxi64 naMakeBoxi64Combination(NAVertexi64 point1, NAVertexi64 point2)
     if(!naIsVertexi64Valid(point2))
       naError("point2 is invalid.");
   #endif
-  if(point2.x > point1.x) {
+  if(naGreateri64(point2.x, point1.x)) {
     newBox.vertex.x = point1.x;
     newBox.volume.width = naMakeLengthWithStartAndEndi64(point1.x, point2.x);
   }else{
     newBox.vertex.x = point2.x;
     newBox.volume.width = naMakeLengthWithStartAndEndi64(point2.x, point1.x);
   }
-  if(point2.y > point1.y) {
+  if(naGreateri64(point2.y, point1.y)) {
     newBox.vertex.y = point1.y;
     newBox.volume.height = naMakeLengthWithStartAndEndi64(point1.y, point2.y);
   }else{
     newBox.vertex.y = point2.y;
     newBox.volume.height = naMakeLengthWithStartAndEndi64(point2.y, point1.y);
   }
-  if(point2.z > point1.z) {
+  if(naGreateri64(point2.z, point1.z)) {
     newBox.vertex.z = point1.z;
     newBox.volume.depth = naMakeLengthWithStartAndEndi64(point1.z, point2.z);
   }else{
@@ -344,7 +344,7 @@ NA_IDEF NABoxi64 naMakeBoxi64ExtensionE(NABoxi64 box, NAVertexi64 vertex) {
   if(naIsBoxi64Empty(box)) {
     NABoxi64 newBox;
     newBox.vertex = vertex;
-    newBox.volume = naMakeVolumei64(1, 1, 1);
+    newBox.volume = naMakeVolumei64(NA_ONE_i64, NA_ONE_i64, NA_ONE_i64);
     return newBox;
   }else{
     return naMakeBoxi64Extension(box, vertex);
