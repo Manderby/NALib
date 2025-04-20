@@ -178,9 +178,9 @@ NA_IAPI void naSetTreeConfigurationNodeCallbacks(
 
 NA_IAPI void naSetTreeConfigurationBaseLeafExponent(
   NATreeConfiguration* config,
-  int64 baseLeafExponent);
+  int32 baseLeafExponent);
 
-NA_IAPI int64 naGetTreeConfigurationBaseLeafExponent(
+NA_IAPI int32 naGetTreeConfigurationBaseLeafExponent(
   const NATreeConfiguration* config);
 
 
