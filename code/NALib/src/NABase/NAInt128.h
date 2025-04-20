@@ -13,7 +13,7 @@
   NA_IAPI NAi128 naMakei128          (NAi64 hi, NAu64 lo);
   NA_IAPI NAi128 naMakei128WithLo    (NAi64 lo);
   NA_IAPI NAi128 naMakei128WithDouble(double lo);
-  NA_IAPI NAi128 naMakei128WithBinary(
+  NA_IAPI NAi128 naMakei128Withu32(
     uint32 b3,
     uint32 b2,
     uint32 b1,
@@ -60,7 +60,7 @@
   #define naMakeu128(hi, lo)
   #define naMakeu128WithLo(lo)
   #define naMakeu128WithDouble(d)
-  #define naMakeu128WithBinary(b3, b2, b1, b0)
+  #define naMakeu128Withu32(b3, b2, b1, b0)
 
   #define naIncu128(i)
   #define naDecu128(i)
@@ -101,7 +101,7 @@
   NA_IAPI NAi128 naMakei128          (NAi64 hi, NAu64 lo);
   NA_IAPI NAi128 naMakei128WithLo    (NAi64 lo);
   NA_IAPI NAi128 naMakei128WithDouble(double d);
-  NA_IAPI NAi128 naMakei128WithBinary(
+  NA_IAPI NAi128 naMakei128Withu32(
     uint32 b3,
     uint32 b2,
     uint32 b1,
@@ -148,7 +148,7 @@
   NA_IAPI NAu128 naMakeu128          (NAu64 hi, NAu64 lo);
   NA_IAPI NAu128 naMakeu128WithLo    (NAu64 lo);
   NA_IAPI NAu128 naMakeu128WithDouble(double d);
-  NA_IAPI NAu128 naMakeu128WithBinary(
+  NA_IAPI NAu128 naMakeu128Withu32(
     uint32 b3,
     uint32 b2,
     uint32 b1,

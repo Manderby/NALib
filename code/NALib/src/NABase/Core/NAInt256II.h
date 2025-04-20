@@ -11,7 +11,7 @@
 #undef naMakei256
 #undef naMakei256WithLo
 #undef naMakei256WithDouble
-#undef naMakei256WithBinary
+#undef naMakei256Withu32
 #undef naGeti256Hi
 #undef naGeti256Lo
 #undef naGetu256Hi
@@ -51,7 +51,7 @@
 #undef naMakeu256WithLo
 #undef naMakeu256WithDouble
 #undef naMakeu256WithLiteralLo
-#undef naMakeu256WithBinary
+#undef naMakeu256Withu32
 #undef naIncu256
 #undef naDecu256
 #undef naAddu256
@@ -95,7 +95,7 @@
   NA_IDEF int256 naMakei256WithDouble(double lo) {
     return (int256)lo;
   }
-  NA_IDEF int256 naMakei256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0) {
+  NA_IDEF int256 naMakei256Withu32(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0) {
     return ((int256)b3 << 224) | (int256)b3 << 192) | (int256)b3 << 160) | (int256)b3 << 128) | (int256)b3 << 96) | ((int256)b2 << 64) | ((int256)b1 << 32) | b0;
   }
   
@@ -145,9 +145,9 @@
     ((NAu256)(lo))
   #define naMakeu256WithDouble(d) \
     ((NAu256)(d))
-  #define naMakeu256WithBinary(b7, b6, b5, b4, b3, b2, b1, b0) \
-    naMakeu256(naMakeu128WithBinary(b7, b6, b5, b4), \
-    naMakeu128WithBinary(b3, b2, b1, b0))
+  #define naMakeu256Withu32(b7, b6, b5, b4, b3, b2, b1, b0) \
+    naMakeu256(naMakeu128Withu32(b7, b6, b5, b4), \
+    naMakeu128Withu32(b3, b2, b1, b0))
 
   #define naIncu256(i)    (++(i))
   #define naDecu256(i)    (--(i))
@@ -200,10 +200,10 @@
   NA_IDEF NAi256 naMakei256WithDouble(double d) {
     return naMakei256WithLo(naMakei128WithLo(naGetDoubleInteger(d)));
   }
-  NA_IDEF NAi256 naMakei256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0) {
+  NA_IDEF NAi256 naMakei256Withu32(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0) {
     NAi256 retValuei;
-    retValuei.hi = naMakei128WithBinary(b7, b6, b5, b4);
-    retValuei.lo = naMakeu128WithBinary(b3, b2, b1, b0);
+    retValuei.hi = naMakei128Withu32(b7, b6, b5, b4);
+    retValuei.lo = naMakeu128Withu32(b3, b2, b1, b0);
     return retValuei;
   }
 
@@ -412,10 +412,10 @@
     return naMakeu256WithLo(naMakeu128WithDouble(d));
   }
 
-  NA_IDEF NAu256 naMakeu256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0) {
+  NA_IDEF NAu256 naMakeu256Withu32(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0) {
     NAu256 retValueu;
-    retValueu.hi = naMakeu128WithBinary(b7, b6, b5, b4);
-    retValueu.lo = naMakeu128WithBinary(b3, b2, b1, b0);
+    retValueu.hi = naMakeu128Withu32(b7, b6, b5, b4);
+    retValueu.lo = naMakeu128Withu32(b3, b2, b1, b0);
     return retValueu;
   }
 

@@ -10,13 +10,13 @@
 #if NA_NATIVE_INT64_IN_USE
 
   #define naMakei64(hi, lo)
-  #define naMakei64WithBinary(b1, b0)
+  #define naMakei64Withu32(b1, b0)
 
   #define naMakeu64(hi, lo)
   #define naMakeu64WithLo(lo)
   #define naMakeu64WithDouble(d)
   #define naMakeu64WithLiteralLo(lo)
-  #define naMakeu64WithBinary(b1, b0)
+  #define naMakeu64Withu32(b1, b0)
 
   #define naGeti64Hi(i)
   #define naGeti64Lo(i)
@@ -104,7 +104,7 @@
   // if no native int64 type is available, we have to emulate it.
 
   NA_IAPI NAi64   naMakei64          (int32 hi, uint32 lo);
-  NA_IAPI NAi64   naMakei64WithBinary(
+  NA_IAPI NAi64   naMakei64Withu32(
     uint32 b1, 
     uint32 b0); 
  
@@ -112,7 +112,7 @@
   NA_IAPI NAu64   naMakeu64WithLo       (uint32 lo);
   NA_IAPI NAu64   naMakeu64WithDouble   (double d);
   #define         naMakeu64WithLiteralLo(lo)
-  NA_IAPI NAu64   naMakeu64WithBinary   (
+  NA_IAPI NAu64   naMakeu64Withu32   (
     uint32 hi,
     uint32 lo);
     

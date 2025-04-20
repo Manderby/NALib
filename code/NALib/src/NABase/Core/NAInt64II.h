@@ -9,13 +9,13 @@
 
 // first, undefine all things which were defined in the .h file.
 #undef naMakei64
-#undef naMakei64WithBinary
+#undef naMakei64Withu32
 
 #undef naMakeu64
 #undef naMakeu64WithLo
 #undef naMakeu64WithDouble
 #undef naMakeu64WithLiteralLo
-#undef naMakeu64WithBinary
+#undef naMakeu64Withu32
 
 #undef naGeti64Hi
 #undef naGeti64Lo
@@ -108,19 +108,19 @@
   NA_HIDEF int64 na_Makei64WithDouble(double lo) {
     return (int64)lo;
   }
-  NA_HIDEF int64 na_Makei64WithBinary(uint32 b1, uint32 b0) {
+  NA_HIDEF int64 na_Makei64Withu32(uint32 b1, uint32 b0) {
     return ((int64)((uint64)b1 << 32)) | b0;
   }
 
   // We declare these as inline functions to reduce warnings.
   #define naMakei64(hi, lo)           na_Makei64(hi, lo)
-  #define naMakei64WithBinary(b1, b0) na_Makei64WithBinary(b1, b0)
+  #define naMakei64Withu32(b1, b0) na_Makei64Withu32(b1, b0)
 
   #define naMakeu64(hi, lo)           ((uint64)(((uint64)(hi) << 32) | (lo)))
   #define naMakeu64WithLo(lo)         ((uint64)(lo))
   #define naMakeu64WithDouble(d)      ((uint64)(d))
   #define naMakeu64WithLiteralLo(lo)  (lo ## uLL)
-  #define naMakeu64WithBinary(b1, b0) ((uint64)(((uint64)(b1) << 32) | (b0)))
+  #define naMakeu64Withu32(b1, b0) ((uint64)(((uint64)(b1) << 32) | (b0)))
 
   #define naGeti64Hi(i)               ((int32)((i) >> NA_TYPE32_BITS))
   #define naGeti64Lo(i)               ((uint32)i)
@@ -213,7 +213,7 @@
     retValuei.lo = lo;
     return retValuei;
   }
-  NA_IDEF NAi64 naMakei64WithBinary(uint32 b1, uint32 b0) {
+  NA_IDEF NAi64 naMakei64Withu32(uint32 b1, uint32 b0) {
     NAi64 retValuei;
     retValuei.hi = (int32)b1;
     retValuei.lo = b0;
@@ -249,7 +249,7 @@
     #define naMakeu64WithLiteralLo(lo)  {lo, 0}
   #endif
 
-  NA_IDEF NAu64 naMakeu64WithBinary(uint32 b1, uint32 b0) {
+  NA_IDEF NAu64 naMakeu64Withu32(uint32 b1, uint32 b0) {
     NAu64 retValuei;
     retValuei.hi = b1;
     retValuei.lo = b0;
@@ -486,7 +486,14 @@
     // in garbage when the shift is equal to the type size.
       if(n < 32) {
         retValuei.lo = a.lo >> n;
-        retValuei.lo |= ((uint32)a.hi << (32 - n));
+        // This is dangerous! If n is zero, then the shift left operator would
+        // exceed the number of bits an int32 can hold. According to the
+        // standard, that is an undefined behaviour. And the author observerd
+        // that the result can be terribly wrong. Therefore, treat n == 0
+        // separately.
+        if(n) {
+          retValuei.lo |= ((uint32)a.hi << (32 - n));
+        }
         retValuei.hi = a.hi >> n;
       }else{
         uint32 signum = naGetSignum32(a.hi); // Sign preservation!
@@ -530,6 +537,8 @@
     }else{
       // Beware, do not use <= as some processors will result
       // in garbage when the shift is equal to the type size.
+      // todo: This actually happens more often than expected. Go look for
+      // all occurrencies and add warnings.
       if(n < 32) {
         retValuei.hi = a.hi << n;
         retValuei.hi |= a.lo >> (32 - n);
@@ -648,9 +657,12 @@
     #endif
   }
   NA_IDEF double naCasti64ToDouble(NAi64 i) {
-    // warning: this seems to be troublesome in the lower part. Find a
-    // better solution in the future by using bit manipulation. todo
-    return (double)i.hi * naMakeDoubleWithExponent(32) + ((i.hi < 0) ? -(double)i.lo : (double)i.lo);
+    if(i.hi < 0) {
+      int64 iPositive = naNegi64(i);
+      return -((double)iPositive.hi * naMakeDoubleWithExponent(32) + (double)iPositive.lo);
+    }else{
+      return (double)i.hi * naMakeDoubleWithExponent(32) + (double)i.lo;
+    }
   }
 
 

@@ -331,7 +331,7 @@ NA_IDEF double naMakeDoubleWithExponent(int32 signedExponent) {
     if(signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
       naError("exponent equals max exponent which is reserved for special values");
   #endif
-  int64 dBits = naShli64(naCasti32Toi64(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
+  int64 dBits = naShli64(naCastu32Toi64(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
   return *((double*)(void*)&dBits);
   // Note that the additional void* cast is necessary for static code analizers.
 }
@@ -422,7 +422,7 @@ NA_IAPI int64 naGetDoubleInteger(double d) {
   #if NA_DEBUG
     if(d == NA_INFINITY || d == -NA_INFINITY)
       naError("Given number is +-Infinity. Result will be undefined");
-    if(fabs(d) > 0x1.fffffffffffffp52)
+    if(fabs(d) > 0x1.p53)
       naError("Given numbers absolute value is too large. Result will be undefined");
     #endif
   int64 dBits = NA_ZERO_i64;
@@ -473,6 +473,11 @@ NA_IAPI int32 naGetFloatFractionE(float f) {
       fbits = fbits >> (-exponent - 1);
       fbits++;
       fbits = fbits >> 1;
+    }else if(exponent >= 32){
+      // This is dangerous! According to the standard, values greater equal to
+      // the bitsize with the shift operator lead to undefined behaviour.
+      // Therefore, treat that case separately.
+      fbits = 0;
     }else{
       fbits = fbits << exponent;
       fbits = fbits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
@@ -489,7 +494,14 @@ NA_IAPI int32 naGetFloatFractionE(float f) {
     fbits++;
     fbits = fbits >> 1;
     if(exponent > 0) {
-      fbits = fbits << exponent;
+      if(exponent >= 32){
+        // This is dangerous! According to the standard, values greater equal to
+        // the bitsize with the shift operator lead to undefined behaviour.
+        // Therefore, treat that case separately.
+        fbits = 0;
+      }else{
+        fbits = fbits << exponent;
+      }
     }
   }
   return fbits;
@@ -524,6 +536,12 @@ NA_IAPI int32 naGetFloatFractionSlowE(float f) {
       fbits++;
       fbits = fbits >> 1;
       hyperTens = naMakei64(NA_ZERO_i32, 1000000);  // 1e6
+    }else if(exponent >= 32){
+      // This is dangerous! According to the standard, values greater equal to
+      // the bitsize with the shift operator lead to undefined behaviour.
+      // Therefore, treat that case separately.
+      fbits = 0;
+      hyperTens = NA_ZERO_i64;
     }else{
       fbits = fbits << exponent;
       fbits = fbits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;

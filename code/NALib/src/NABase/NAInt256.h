@@ -13,7 +13,7 @@
   NA_IAPI NAi256 naMakei256          (NAi128 hi, NAu128 lo);
   NA_IAPI NAi256 naMakei256WithLo    (NAi128 lo);
   NA_IAPI NAi256 naMakei256WithDouble(double lo);
-  NA_IAPI NAi128 naMakei256WithBinary(
+  NA_IAPI NAi128 naMakei256Withu32(
     uint32 b7,
     uint32 b6,
     uint32 b5,
@@ -66,7 +66,7 @@
   #define naMakeu256(hi, lo)
   #define naMakeu256WithLo(lo)
   #define naMakeu256WithDouble(d)
-  #define naMakeu256WithBinary(b7, b6, b5, b4, b3, b2, b1, b0)
+  #define naMakeu256Withu32(b7, b6, b5, b4, b3, b2, b1, b0)
 
   #define naIncu256(i)
   #define naDecu256(i)
@@ -109,7 +109,7 @@
   NA_IAPI NAi256  naMakei256          (NAi128 hi, NAu128 lo);
   NA_IAPI NAi256  naMakei256WithLo    (NAi128 lo);
   NA_IAPI NAi256  naMakei256WithDouble(double d);
-  NA_IAPI NAi256 naMakei256WithBinary(
+  NA_IAPI NAi256 naMakei256Withu32(
     uint32 b7,
     uint32 b6,
     uint32 b5,
@@ -162,7 +162,7 @@
   NA_IAPI NAu256 naMakeu256          (NAu128 hi, NAu128 lo);
   NA_IAPI NAu256 naMakeu256WithLo    (NAu128 lo);
   NA_IAPI NAu256 naMakeu256WithDouble(double d);
-  NA_IAPI NAu256 naMakeu256WithBinary(
+  NA_IAPI NAu256 naMakeu256Withu32(
     uint32 b7,
     uint32 b6,
     uint32 b5,

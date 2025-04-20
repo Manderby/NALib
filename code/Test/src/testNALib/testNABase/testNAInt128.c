@@ -21,11 +21,11 @@ void testNAInt128Make(void) {
   NAi128 i1 = naMakei128(naMakei64(-0x11223344, 0xffeeddcc), naMakeu64(0x98765432, 0x12345678));
   NAi128 i2 = naMakei128WithLo(naNegi64(naMakei64(0x12345678, 0x12345678)));
   NAi128 i3 = naMakei128WithDouble(-123456789012345.);
-  NAi128 i4 = naMakei128WithBinary(0x11223344, 0xffeeddcc, 0x98765432, 0x12345678);
+  NAi128 i4 = naMakei128Withu32(0x11223344, 0xffeeddcc, 0x98765432, 0x12345678);
   NAu128 u1 = naMakeu128(naMakeu64(0x11223344, 0xffeeddcc), naMakeu64(0x98765432, 0x12345678));
   NAu128 u2 = naMakeu128WithLo(naMakeu64(0x98765432, 0x12345678));
   NAu128 u3 = naMakeu128WithDouble(123456789012345.);
-  NAu128 u5 = naMakeu128WithBinary(0x11223344, 0xffeeddcc, 0x98765432, 0x12345678);
+  NAu128 u5 = naMakeu128Withu32(0x11223344, 0xffeeddcc, 0x98765432, 0x12345678);
 
   naTest(equali128(i1, 0xeeddccbc, 0xffeeddcc, 0x98765432, 0x12345678));
   naTest(equali128(i2, 0xffffffff, 0xffffffff, 0xedcba987, 0xedcba988));
@@ -39,29 +39,29 @@ void testNAInt128Make(void) {
 
 
 
-#define randi64 naMakei64WithBinary(naTestIn, naTestIn)
-#define randu64 naMakeu64WithBinary(naTestIn, naTestIn)
-#define randi128 naMakei128WithBinary(naTestIn, naTestIn, naTestIn, naTestIn)
-#define randu128 naMakeu128WithBinary(naTestIn, naTestIn, naTestIn, naTestIn)
+#define randi64 naMakei64Withu32(naTestIn, naTestIn)
+#define randu64 naMakeu64Withu32(naTestIn, naTestIn)
+#define randi128 naMakei128Withu32(naTestIn, naTestIn, naTestIn, naTestIn)
+#define randu128 naMakeu128Withu32(naTestIn, naTestIn, naTestIn, naTestIn)
 
 void benchmarkNAInt128Make(void) {
-  naBenchmark(naMakei128(-randi64, randu64));
-  naBenchmark(naMakei128WithLo(-randi64));
+  naBenchmark(naMakei128(naNegi64(randi64), randu64));
+  naBenchmark(naMakei128WithLo(naNegi64(randi64)));
   naBenchmark(naMakei128WithDouble(-((int32)naTestIn / NA_MAX_i32)));
-  naBenchmark(naMakei128WithBinary(naTestIn, naTestIn, naTestIn, naTestIn));
+  naBenchmark(naMakei128Withu32(naTestIn, naTestIn, naTestIn, naTestIn));
   naBenchmark(naMakeu128(randu64, randu64));
   naBenchmark(naMakeu128WithLo(randu64));
   naBenchmark(naMakeu128WithDouble((naTestIn / NA_MAX_u32)));
-  naBenchmark(naMakeu128WithBinary(naTestIn, naTestIn, naTestIn, naTestIn));
+  naBenchmark(naMakeu128Withu32(naTestIn, naTestIn, naTestIn, naTestIn));
 }
 
 
 
 void testNAInt128Binary(void) {
-  NAi128 i =     naMakei128WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
-  NAi128 term =  naMakei128WithBinary(0x55555555, 0x55555555, 0x55555555, 0x55555555);
-  NAu128 u =     naMakeu128WithBinary(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
-  NAu128 uterm = naMakeu128WithBinary(0x55555555, 0x55555555, 0x55555555, 0x55555555);
+  NAi128 i =     naMakei128Withu32(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
+  NAi128 term =  naMakei128Withu32(0x55555555, 0x55555555, 0x55555555, 0x55555555);
+  NAu128 u =     naMakeu128Withu32(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
+  NAu128 uterm = naMakeu128Withu32(0x55555555, 0x55555555, 0x55555555, 0x55555555);
   
   NAi128 i1 = naNoti128(i);
   NAi128 i2 = naOri128(i, term);
@@ -113,10 +113,10 @@ void benchmarkNAInt128Binary(void) {
 
 
 void testNAInt128Comparison(void) {
-  NAi128 i1 =   naMakei128WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
-  NAi128 i2 =   naMakei128WithBinary(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
-  NAu128 u1 = naMakeu128WithBinary(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
-  NAu128 u2 = naMakeu128WithBinary(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1);
+  NAi128 i1 =   naMakei128Withu32(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
+  NAi128 i2 =   naMakei128Withu32(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
+  NAu128 u1 = naMakeu128Withu32(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
+  NAu128 u2 = naMakeu128Withu32(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1);
   
   naTest(naEquali128(i1, i1));
   naTest(!naGreateri128(i1, i2));
@@ -166,13 +166,13 @@ void benchmarkNAInt128Comparison(void) {
 
 
 void testNAInt128Arithmetic(void) {
-  NAi128 i01 =   naMakei128WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
-  NAi128 i02 =   naMakei128WithBinary(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
+  NAi128 i01 =   naMakei128Withu32(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
+  NAi128 i02 =   naMakei128Withu32(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
   NAi128 i03 =   NA_ZERO_i128;
   NAi128 i04 =   naMakei128WithDouble(-123.);
   NAi128 i1, i2;
-  NAu128 u01 = naMakeu128WithBinary(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
-  NAu128 u02 = naMakeu128WithBinary(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1);
+  NAu128 u01 = naMakeu128Withu32(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
+  NAu128 u02 = naMakeu128Withu32(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1);
   NAu128 u03 = NA_ZERO_u128;
   NAu128 u2;
   

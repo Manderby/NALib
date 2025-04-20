@@ -31,7 +31,7 @@ void testNAInteger(void) {
     naTest(u32 == 42);
     naTest(i32 == -42);
     naTest(naEqualu64(u64,   naMakeu64WithLo(42)));
-    naTest(naEqualu64(i64,   naCasti32Toi64(-42)));
+    naTest(naEquali64(i64,   naCasti32Toi64(-42)));
     naTest(naEqualu128(u128, naMakeu128WithLo(u64)));
     naTest(naEquali128(i128, naMakei128WithLo(i64)));
     naTest(naEqualu256(u256, naMakeu256WithLo(u128)));
@@ -46,7 +46,7 @@ void testNAInteger(void) {
     NAu256 u256 = naMakeu256WithLo(u128);
     NAi256 i256 = naMakei256WithLo(i128);
     naTest(naEqualu64(u64,   naMakeu64WithLo(42)));
-    naTest(naEqualu64(i64,   naCasti32Toi64(-42)));
+    naTest(naEquali64(i64,   naCasti32Toi64(-42)));
     naTest(naEqualu128(u128, naMakeu128WithLo(u64)));
     naTest(naEquali128(i128, naMakei128WithLo(i64)));
     naTest(naEqualu256(u256, naMakeu256WithLo(u128)));

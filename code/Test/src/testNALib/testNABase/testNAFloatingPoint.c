@@ -85,31 +85,31 @@ void testMakeDouble(void) {
   // Never seen this kind of literal yet? Go look for hex float literals!
   // It is actually quite useful for testing..
   naTestGroup("naMakeDouble valid cases") {
-    int64 number = 0xf123456789abc;
-    int64 maxNumber = 0xfffffffffffff;
-    int64 negNumber = -number;
-    int64 negMaxNumber = -maxNumber;
-    naTest(naMakeDouble(0, 0) == 0x1.0000000000000p0);
-    naTest(naMakeDouble(1, 0) == 0x1.0000000000001p0);
-    naTest(naMakeDouble(1, 42) == 0x1.0000000000001p42);
-    naTest(naMakeDouble(-1, 42) == -0x1.0000000000001p42);
-    naTest(naMakeDouble(1, -42) == 0x1.0000000000001p-42);
-    naTest(naMakeDouble(-1, -42) == -0x1.0000000000001p-42);
+    int64 number = naMakei64Withu32(0xf1234, 0x56789abc) ;
+    int64 maxNumber = naMakei64Withu32(0xfffff, 0xffffffff);
+    int64 negNumber = naNegi64(number);
+    int64 negMaxNumber = naNegi64(maxNumber);
+    naTest(naMakeDouble(NA_ZERO_i64, 0) == 0x1.0000000000000p0);
+    naTest(naMakeDouble(NA_ONE_i64, 0) == 0x1.0000000000001p0);
+    naTest(naMakeDouble(NA_ONE_i64, 42) == 0x1.0000000000001p42);
+    naTest(naMakeDouble(NA_MINUS_ONE_i64, 42) == -0x1.0000000000001p42);
+    naTest(naMakeDouble(NA_ONE_i64, -42) == 0x1.0000000000001p-42);
+    naTest(naMakeDouble(NA_MINUS_ONE_i64, -42) == -0x1.0000000000001p-42);
     naTest(naMakeDouble(number, 42) == 0x1.f123456789abcp42);
     naTest(naMakeDouble(negNumber, 42) == -0x1.f123456789abcp42);
     naTest(naMakeDouble(maxNumber, 42) == 0x1.fffffffffffffp42);
     naTest(naMakeDouble(negMaxNumber, 42) == -0x1.fffffffffffffp42);
     naTest(naMakeDouble(maxNumber, 1023) == 0x1.fffffffffffffp1023);
-    naTest(naMakeDouble(0, -1022) == 0x1.0000000000000p-1022);
-    naTest(naMakeDouble(0, -1023) == 0.f);
+    naTest(naMakeDouble(NA_ZERO_i64, -1022) == 0x1.0000000000000p-1022);
+    naTest(naMakeDouble(NA_ZERO_i64, -1023) == 0.f);
   }
 
   naTestGroup("naMakeDouble invalid cases") {
-    naTestError(naMakeDouble(0x10000000000000, 0));
-    naTestError(naMakeDouble(0x1, 10000));
-    naTestError(naMakeDouble(0x1, 1024));
-    naTestError(naMakeDouble(0x1, -1023));
-    naTestError(naMakeDouble(0x1, -10000));
+    naTestError(naMakeDouble(naMakei64Withu32(0x100000, 0x00000000), 0));
+    naTestError(naMakeDouble(NA_ONE_i64, 10000));
+    naTestError(naMakeDouble(NA_ONE_i64, 1024));
+    naTestError(naMakeDouble(NA_ONE_i64, -1023));
+    naTestError(naMakeDouble(NA_ONE_i64, -10000));
   }
 
   naTestGroup("naMakeDoubleWithExponent valid cases") {
@@ -131,16 +131,16 @@ void testMakeDouble(void) {
   }
 
   naTestGroup("naMakeDoubleSubnormal valid cases") {
-    int64 number = 0xf123456789abc;
-    int64 maxNumber = 0xfffffffffffff;
-    int64 negNumber = -number;
-    int64 negMaxNumber = -maxNumber;
-    naTest(naMakeDoubleSubnormal(1) > 0.);
+    int64 number = naMakei64Withu32(0xf1234, 0x56789abc);
+    int64 maxNumber = naMakei64Withu32(0xfffff, 0xffffffff);
+    int64 negNumber = naNegi64(number);
+    int64 negMaxNumber = naNegi64(maxNumber);
+    naTest(naMakeDoubleSubnormal(NA_ONE_i64) > 0.);
     naTest(naMakeDoubleSubnormal(number) > 0.);
     naTest(naMakeDoubleSubnormal(maxNumber) > 0.);
     naTest(naMakeDoubleSubnormal(negNumber) < 0.);
     naTest(naMakeDoubleSubnormal(negMaxNumber) < 0.);
-    naTest(naMakeDoubleSubnormal(1) < 0x1.000000p-1022);
+    naTest(naMakeDoubleSubnormal(NA_ONE_i64) < 0x1.000000p-1022);
     naTest(naMakeDoubleSubnormal(number) < 0x1.000000p-1022);
     naTest(naMakeDoubleSubnormal(maxNumber) < 0x1.000000p-1022);
     naTest(naMakeDoubleSubnormal(negNumber) > -0x1.000000p-1022);
@@ -148,8 +148,8 @@ void testMakeDouble(void) {
   }
 
   naTestGroup("naMakeDoubleSubnormal invalid cases") {
-    naTestError(naMakeDoubleSubnormal(0x10000000000000));
-    naTestError(naMakeDoubleSubnormal(-0x10000000000000));
+    naTestError(naMakeDoubleSubnormal(naMakei64Withu32(0x100000, 0x00000000)));
+    naTestError(naMakeDoubleSubnormal(naNegi64(naMakei64Withu32(0x100000, 0x00000000))));
   }
 }
 
@@ -267,33 +267,29 @@ void testGetDouble(void) {
   }
  
   naTestGroup("naGetDoubleInteger valid cases") {
-    naTest(naGetDoubleInteger(0.) == 0);
-    naTest(naGetDoubleInteger(-0.) == 0);
-    naTest(naGetDoubleInteger(0.00001234) == 0);
-    naTest(naGetDoubleInteger(0x0.fffffffffffffp0) == 0);
-    naTest(naGetDoubleInteger(0.99999999999999999) == 1);
-    naTest(naGetDoubleInteger(42.) == 42);
-    naTest(naGetDoubleInteger(-42.) == -42);
-    naTest(naGetDoubleInteger(0x1.fffffffffffffp52) == 0x1fffffffffffff);
-    naTest(naGetDoubleInteger(-0x1.fffffffffffffp52) == -0x1fffffffffffff);
-    naTest(naEquali64(naGetDoubleInteger(naCasti64ToDouble(naMakei64(0x001fffff, 0xffffffff))), naMakei64(0x001fffff, 0xffffffff)));
-    naTest(naGetDoubleInteger(naCasti64ToDouble(naNegi64(naMakei64(0x001fffff, 0xffffffff)))) == naNegi64(naMakei64(0x001fffff, 0xffffffff)));
+    naTest(naEquali64(naGetDoubleInteger(0.), NA_ZERO_i64));
+    naTest(naEquali64(naGetDoubleInteger(-0.), NA_ZERO_i64));
+    naTest(naEquali64(naGetDoubleInteger(0.00001234), NA_ZERO_i64));
+    naTest(naEquali64(naGetDoubleInteger(0x0.fffffffffffffp0), NA_ZERO_i64));
+    naTest(naEquali64(naGetDoubleInteger(0.99999999999999999), NA_ONE_i64));
+    naTest(naEquali64(naGetDoubleInteger(42.), naCasti32Toi64(42)));
+    naTest(naEquali64(naGetDoubleInteger(-42.), naCasti32Toi64(-42)));
+    naTest(naEquali64(naGetDoubleInteger(0x1.p53), naMakei64Withu32(0x00200000, 0x00000000)));
+    naTest(naEquali64(naGetDoubleInteger(-0x1.p53), naNegi64(naMakei64Withu32(0x00200000, 0x00000000))));
   }
 
   naTestGroup("naGetDoubleInteger invalid cases") {
     naTestError(naGetDoubleInteger(NA_INFINITY));
-    naTestError(naGetDoubleInteger(0x1.fffffffffffffp53));
-    naTestError(naGetDoubleInteger(naCasti64ToDouble(naMakei64(0x00200000, 0x00000000))));
-    naTestError(naGetDoubleInteger(naCasti64ToDouble(naNegi64(naMakei64(0x00200000, 0x00000000)))));
+    naTestError(naGetDoubleInteger(0x1.0000000000001p53));
   }
 
   naTestGroup("naGetDoubleFraction valid cases") {
-    naTest(naGetDoubleFraction(0.0) == 0);
-    naTest(naGetDoubleFraction(0.5) == 500000000000000);
-    naTest(naGetDoubleFraction(0.00001234) == 12340000000);
-    naTest(naGetDoubleFraction(0.123456) == 123456000000000);
-    naTest(naGetDoubleFraction(0.000000000000001) == 000000000000001);
-    naTest(naGetDoubleFraction(0.999999999999999) == 999999999999999);
+    naTest(naEquali64(naGetDoubleFraction(0.0), NA_ZERO_i64));
+    naTest(naEquali64(naGetDoubleFraction(0.5), naMakei64Withu32(0x0001c6bf, 0x52634000))); // 500000000000000 
+    naTest(naEquali64(naGetDoubleFraction(0.00001234), naMakei64Withu32(0x00000002, 0xdf857500))); // 12340000000
+    naTest(naEquali64(naGetDoubleFraction(0.123456), naMakei64Withu32(0x00007048, 0x57068000))); // 123456000000000
+    naTest(naEquali64(naGetDoubleFraction(0.000000000000001), naMakei64Withu32(0x00000000, 0x00000001)));
+    naTest(naEquali64(naGetDoubleFraction(0.999999999999999), naMakei64Withu32(0x00038d7e, 0xa4c67fff))); // 999999999999999
   }
 
   naTestGroup("naGetDoubleFraction invalid cases") {
@@ -307,31 +303,31 @@ void testGetDouble(void) {
   }
 
   naTestGroup("naGetDoubleFractionE") {
-    naTest(naGetDoubleFractionE(1.0) == 0);
-    naTest(naGetDoubleFractionE(1111.0) == 0);
-    naTest(naGetDoubleFractionE(1234.5678) >= 567700000000000);
-    naTest(naGetDoubleFractionE(1234.5678) <= 567900000000000);
-    naTest(naGetDoubleFractionE(123456789.12345) >= 123440000000000);
-    naTest(naGetDoubleFractionE(123456789.12345) <= 123460000000000);
-    naTest(naGetDoubleFractionE(123456789.12345678) >= 123455000000000);
-    naTest(naGetDoubleFractionE(123456789.12345678) <= 123457000000000);
-    naTest(naGetDoubleFractionE(0.99999999999999999) == 0); // compiler rounding up
-    naTest(naGetDoubleFractionE(0x0.fffffffffffffp0) == 1000000000000000);  // function rounding up
+    naTest(naEquali64(naGetDoubleFractionE(1.0), NA_ZERO_i64));
+    naTest(naEquali64(naGetDoubleFractionE(1111.0), NA_ZERO_i64));
+    naTest(naGreaterEquali64(naGetDoubleFractionE(1234.5678), naMakei64Withu32(0x00020451, 0xf4d6c800))); // 567700000000000
+    naTest(naSmallerEquali64(naGetDoubleFractionE(1234.5678), naMakei64Withu32(0x00020480, 0x85c49800))); // 567900000000000 
+    naTest(naGreaterEquali64(naGetDoubleFractionE(123456789.12345), naMakei64Withu32(0x00007044, 0x9d59e000))); // 123440000000000
+    naTest(naSmallerEquali64(naGetDoubleFractionE(123456789.12345), naMakei64Withu32(0x00007049, 0x4571a800))); // 123460000000000
+    naTest(naGreaterEquali64(naGetDoubleFractionE(123456789.12345678), naMakei64Withu32(0x00007048, 0x1b6bb600))); // 123455000000000
+    naTest(naSmallerEquali64(naGetDoubleFractionE(123456789.12345678), naMakei64Withu32(0x00007048, 0x92a14a00))); // 123457000000000
+    naTest(naEquali64(naGetDoubleFractionE(0.99999999999999999), NA_ZERO_i64)); // compiler rounding up
+    naTest(naEquali64(naGetDoubleFractionE(0x0.fffffffffffffp0), naMakei64Withu32(0x00038d7e, 0xa4c68000)));  // function rounding up to 1000000000000000
   }
 
   naTestGroup("naGetDoubleFractionSlow valid cases") {
-    naTest(naGetDoubleFractionSlow(0.0) == 0);
-    naTest(naGetDoubleFractionSlow(1.0) == 0);
-    naTest(naGetDoubleFractionSlow(1111.0) == 0);
-    naTest(naGetDoubleFractionSlow(0.5) == 500000000000000);
-    naTest(naGetDoubleFractionSlow(0.00001234) == 12340000000);
-    naTest(naGetDoubleFractionSlow(1234.5678) == 567800000000000);
-    naTest(naGetDoubleFractionSlow(0.123456) == 123456000000000);
-    naTest(naGetDoubleFractionSlow(123456789.12345) == 123450000000000);
-    naTest(naGetDoubleFractionSlow(123456789.12345678) == 123456800000000);
-    naTest(naGetDoubleFractionSlow(0.000000000000001) == 000000000000001);
-    naTest(naGetDoubleFractionSlow(0.999999999999999) == 999999999999999);
-    naTest(naGetDoubleFractionSlow(0.99999999999999999) == 0); // compiler rounds up to 1
+    naTest(naEquali64(naGetDoubleFractionSlow(0.0), NA_ZERO_i64));
+    naTest(naEquali64(naGetDoubleFractionSlow(1.0), NA_ZERO_i64));
+    naTest(naEquali64(naGetDoubleFractionSlow(1111.0), NA_ZERO_i64));
+    naTest(naEquali64(naGetDoubleFractionSlow(0.5), naMakei64Withu32(0x0001c6bf, 0x52634000))); // 500000000000000
+    naTest(naEquali64(naGetDoubleFractionSlow(0.00001234), naMakei64Withu32(0x00000002, 0xdf857500))); // 12340000000
+    naTest(naEquali64(naGetDoubleFractionSlow(1234.5678), naMakei64Withu32(0x00020469, 0x3d4db000))); // 567800000000000
+    naTest(naEquali64(naGetDoubleFractionSlow(0.123456), naMakei64Withu32(0x00007048, 0x57068000))); // 123456000000000
+    naTest(naEquali64(naGetDoubleFractionSlow(123456789.12345), naMakei64Withu32(0x00007046, 0xf165c400))); // 123450000000000
+    naTest(naEquali64(naGetDoubleFractionSlow(123456789.12345678), naMakei64Withu32(0x00007048, 0x86b58800))); // 123456800000000
+    naTest(naEquali64(naGetDoubleFractionSlow(0.000000000000001), naMakei64Withu32(0x00000000, 0x00000001)));
+    naTest(naEquali64(naGetDoubleFractionSlow(0.999999999999999), naMakei64Withu32(0x00038d7e, 0xa4c67fff))); // 999999999999999
+    naTest(naEquali64(naGetDoubleFractionSlow(0.99999999999999999), NA_ZERO_i64)); // compiler rounds up to 1
   }
 
   naTestGroup("naGetDoubleFractionSlow invalid cases") {
@@ -339,7 +335,7 @@ void testGetDouble(void) {
   }
 
   naTestGroup("naGetDoubleFractionSlowE valid cases") {
-    naTest(naGetDoubleFractionSlowE(0x0.fffffffffffffp0) == 1000000000000000);  // rounding up
+    naTest(naEquali64(naGetDoubleFractionSlowE(0x0.fffffffffffffp0), naMakei64Withu32(0x00038d7e, 0xa4c68000)));  // rounding up to 1000000000000000
   }
 }
 
