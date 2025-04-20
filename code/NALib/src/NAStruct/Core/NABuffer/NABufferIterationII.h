@@ -70,7 +70,7 @@ NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter) {
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
   if(!naIsBufferAtInitial(iter)) {
     NABufferPart* part = na_GetBufferPart(iter);
-    if(naSmalleri64(iter->partOffset, NA_ZERO_i64) || naGreaterEquali64(iter->partOffset, naCastSize_tToi64(na_GetBufferPartByteSize(part)))) {
+    if(naSmalleri64(iter->partOffset, NA_ZERO_i64) || naGreaterEquali64(iter->partOffset, naCastSizeToi64(na_GetBufferPartByteSize(part)))) {
       NABool found = naLocateBufferAbsolute(iter, naGetBufferLocation(iter));
       if(!found) {
         naResetTreeIterator(&iter->partIter);

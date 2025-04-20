@@ -306,6 +306,7 @@ NA_IAPI NABool naInsideEEf(float  a, float  b, float  x);
 // inclusive - inclusive.
 NA_IAPI NABool naInsidei32(int32  a, int32  b, int32  x);
 NA_IAPI NABool naInsidei64(NAi64 a, NAi64 b, NAi64 x);
+NA_IAPI NABool naInsides(size_t a, size_t b, size_t x);
 
 // naAlmostInside checks if the given value is almost or completely inside
 // the given values. Meaning, a small relative margin of NA_SINGULARITY on

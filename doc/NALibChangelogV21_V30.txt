@@ -12,8 +12,10 @@ correct, complete or final.
 Current development:
 ====================
 
-- Removing NABezel4. Had been deprecated already in version 28
+- Making whole NALib working with i64 emulation
 
+- Removing NABezel4. Had been deprecated already in version 28
+- Renamed NAFileSize to fsize_t
 
 
 Version 28 (released 13. April 2025)

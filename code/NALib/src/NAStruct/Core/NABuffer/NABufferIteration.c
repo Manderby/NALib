@@ -87,7 +87,7 @@ NA_HDEF NABool na_AccumulateBufferLocation(void* token, NAPtr nodeData, size_t c
   NABufferSearchToken* searchToken = (NABufferSearchToken*)token;
   NABufferTreeNodeData* bufferNodeData = (NABufferTreeNodeData*)naGetPtrConst(nodeData);
   if(childIndex == 1) {
-    searchToken->curOffset = naAddi64(searchToken->curOffset, naCastSize_tToi64(bufferNodeData->len1));
+    searchToken->curOffset = naAddi64(searchToken->curOffset, naCastSizeToi64(bufferNodeData->len1));
   }
   return NA_TRUE;
 }

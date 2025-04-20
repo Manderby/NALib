@@ -75,7 +75,8 @@
 #undef naCasti64Toi8
 #undef naCasti64Toi16
 #undef naCasti64Toi32
-#undef naCasti64ToSize_t
+#undef naCasti64ToSize
+#undef naCasti64ToFSize
 #undef naCasti64ToDouble
 
 #undef naCastu64Toi8
@@ -92,7 +93,8 @@
 #undef naCasti8Toi64
 #undef naCasti16Toi64
 #undef naCasti32Toi64
-#undef naCastSize_tToi64
+#undef naCastSizeToi64
+#undef naCastFSizeToi64
 #undef naCastDoubleToi64
 #undef naCastBoolToi64
 
@@ -178,7 +180,8 @@
   #define naCasti64Toi8(i)            ((int8)(i))
   #define naCasti64Toi16(i)           ((int16)(i))
   #define naCasti64Toi32(i)           ((int32)(i))
-  #define naCasti64ToSize_t(i)        ((size_t)(i))
+  #define naCasti64ToSize(i)          ((size_t)(i))
+  #define naCasti64ToFSize(i)         ((fsize_t)(i))
   #define naCasti64ToDouble(i)        ((double)(i))
 
   #define naCastu64Toi8(i)            ((int8)(i))
@@ -195,7 +198,8 @@
   #define naCasti8Toi64(i)            ((int64)(i))
   #define naCasti16Toi64(i)           ((int64)(i))
   #define naCasti32Toi64(i)           ((int64)(i))
-  #define naCastSize_tToi64(s)        ((int64)(s))
+  #define naCastSizeToi64(s)          ((int64)(s))
+  #define naCastFSizeToi64(f)         ((int64)(f))
   #define naCastDoubleToi64(d)        ((int64)(d))
   #define naCastBoolToi64(b)          ((int64)(b))
 
@@ -627,12 +631,20 @@
   NA_IDEF int32 naCasti64Toi32(NAi64 i) {
     return naCastu64Toi32(naCasti64Tou64(i));
   }
-  NA_IDEF size_t naCasti64ToSize_t(NAi64 i) {
+  NA_IDEF size_t naCasti64ToSize(NAi64 i) {
     #if NA_ADDRESS_BITS == NA_TYPE32_BITS
       return (size_t)naCasti64Tou32(i);
     #elif NA_ADDRESS_BITS == NA_TYPE64_BITS
       NAu64 u = naCasti64Tou64(i);
       return (size_t)u.hi << NA_TYPE32_BITS | (size_t)u.lo;
+    #endif
+  }
+  NA_IDEF fsize_t naCasti64ToFSize(NAi64 i) {
+    #if NA_FILESIZE_BITS == NA_TYPE32_BITS
+      return (size_t)naCasti64Tou32(i);
+    #elif NA_FILESIZE_BITS == NA_TYPE64_BITS
+      NAu64 u = naCasti64Tou64(i);
+      return (fsize_t)u.hi << NA_TYPE32_BITS | (fsize_t)u.lo;
     #endif
   }
   NA_IDEF double naCasti64ToDouble(NAi64 i) {
@@ -703,11 +715,18 @@
     retValuei.lo = (uint32)i;
     return retValuei;
   }
-  NA_IDEF int64 naCastSize_tToi64(size_t s) {
+  NA_IDEF int64 naCastSizeToi64(size_t s) {
     #if NA_ADDRESS_BITS == NA_TYPE32_BITS
       return naCastu64Toi64(naMakeu64WithLo(s));
     #elif NA_ADDRESS_BITS == NA_TYPE64_BITS
       return naMakei64((int32)(s >> NA_TYPE32_BITS), (uint32)s);
+    #endif
+  }
+  NA_IDEF int64 naCastFSizeToi64(fsize_t f) {
+    #if NA_FILESIZE_BITS == NA_TYPE32_BITS
+      return naCastu64Toi64(naMakeu64WithLo(s));
+    #elif NA_FILESIZE_BITS == NA_TYPE64_BITS
+      return naMakei64((int32)(f >> NA_TYPE32_BITS), (uint32)f);
     #endif
   }
   NA_IDEF NAi64 naCastDoubleToi64(double d) {

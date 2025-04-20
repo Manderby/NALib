@@ -12,10 +12,6 @@
 #include "NAPointerII.h"
 #include "NARuntimeII.h"
 
-#if NA_IS_POSIX
-#include <unistd.h>
-#endif
-
 // //////////////////////////////////////
 // Accessing informations about the memory system
 // //////////////////////////////////////

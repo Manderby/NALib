@@ -407,7 +407,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   NABufferIterator iterz;
 
   // First, read RFC 1950
-  int64 zBufferSize = naGetBufferRange(input).length - 6;
+  int64 zBufferSize = naSubi64(naGetBufferRange(input).length, naCastu32Toi64(6));
   // The 6 Bytes are the CMF and FLG Bytes as well as the Adler number.
   // If there is a DICTID, zBufferSize will be reduced by 4 more bytes later.
 
@@ -448,7 +448,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
 
   if(haspresetdict) {
     dictadler = naReadBufferu32(&iterIn);
-    zBufferSize -= 4;
+    zBufferSize = naSubi64(zBufferSize, naCastu32Toi64(4));
   }
   NA_UNUSED(dictadler);
 
@@ -520,7 +520,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
           length = naDecodeLiteralLength(&iterz, curCode);
           distcode = naDecodeHuffman(distancehuffman, &iterz);
           dist = naDecodeDistance(&iterz, distcode);
-          naRepeatBufferBytes(&iterOut, dist, length, NA_FALSE);
+          naRepeatBufferBytes(&iterOut, naCastu16Toi64(dist), length, NA_FALSE);
         }
       }
 
@@ -587,22 +587,22 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
   byteSize = naGetBufferRange(input).length;
 //  naLocateBufferAbsolute(input, 0);
 
-  curOffset = 0;
-  while(byteSize > 0) {
+  curOffset = NA_ZERO_i64;
+  while(naGreateri64(byteSize, NA_ZERO_i64)) {
     uint16 curByteSize;
     NAByte headbyte = (0 << 1);
-    if(byteSize >= (1 << 15)) {
+    if(naGreaterEquali64(byteSize, naCastu32Toi64(1 << 15))) {
       curByteSize = (1 << 15) - 1;
     }else{
-      curByteSize = (uint16)byteSize;
+      curByteSize = naCasti64Tou16(byteSize);
       headbyte |= 1;
     }
     naWriteBufferu8(&iterOut, headbyte);
     naWriteBufferu16(&iterOut, curByteSize);
     naWriteBufferu16(&iterOut, ~curByteSize);
-    naWriteBufferBuffer(&iterOut, input, naMakeRangei64(curOffset, curByteSize));
-    byteSize -= curByteSize;
-    curOffset += curByteSize;
+    naWriteBufferBuffer(&iterOut, input, naMakeRangei64(curOffset, naCastu16Toi64(curByteSize)));
+    byteSize = naSubi64(byteSize, naCastu16Toi64(curByteSize));
+    curOffset = naAddi64(curOffset, naCastu16Toi64(curByteSize));
   }
 
   // We write the adler number. Note that this must be in network byte order

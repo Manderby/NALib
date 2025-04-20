@@ -393,7 +393,7 @@ NA_IDEF NABool naEqualBoxs(NABoxs box1, NABoxs box2) {
 
 
 
-NA_IDEF NABool naLessPos(NAPos pos1, NAPos pos2) {
+NA_IDEF NABool naSmallerPos(NAPos pos1, NAPos pos2) {
   #if NA_DEBUG
     if(!naIsPosValid(pos1))
       naError("pos1 is invalid.");
@@ -402,7 +402,7 @@ NA_IDEF NABool naLessPos(NAPos pos1, NAPos pos2) {
   #endif
   return ((pos1.x < pos2.x) && (pos1.y < pos2.y));
 }
-NA_IDEF NABool naLessEqualPos(NAPos pos1, NAPos pos2) {
+NA_IDEF NABool naSmallerEqualPos(NAPos pos1, NAPos pos2) {
   #if NA_DEBUG
     if(!naIsPosValid(pos1))
       naError("pos1 is invalid.");
@@ -432,7 +432,7 @@ NA_IDEF NABool naGreaterPos(NAPos pos1, NAPos pos2) {
 
 
 
-NA_IDEF NABool naLessVertex(NAVertex vertex1, NAVertex vertex2) {
+NA_IDEF NABool naSmallerVertex(NAVertex vertex1, NAVertex vertex2) {
   #if NA_DEBUG
     if(!naIsVertexValid(vertex1))
       naError("vertex1 is invalid.");
@@ -441,7 +441,7 @@ NA_IDEF NABool naLessVertex(NAVertex vertex1, NAVertex vertex2) {
   #endif
   return ((vertex1.x < vertex2.x) && (vertex1.y < vertex2.y) && (vertex1.z < vertex2.z));
 }
-NA_IDEF NABool naLessEqualVertex(NAVertex vertex1, NAVertex vertex2) {
+NA_IDEF NABool naSmallerEqualVertex(NAVertex vertex1, NAVertex vertex2) {
   #if NA_DEBUG
     if(!naIsVertexValid(vertex1))
       naError("vertex1 is invalid.");

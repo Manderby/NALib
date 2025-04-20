@@ -19,7 +19,7 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter) {
     
     curByte = na_GetBufferPartDataPointerConst(iter);
 
-    while(naSmalleri64(iter->partOffset, naCasti64ToSize_t(na_GetBufferPartByteSize(part)))) {
+    while(naSmalleri64(iter->partOffset, naCasti64ToSize(na_GetBufferPartByteSize(part)))) {
       if(*curByte > ' ') {
         found = NA_TRUE;
         break;

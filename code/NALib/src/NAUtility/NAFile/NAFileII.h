@@ -6,9 +6,9 @@
 
 
 // Use this function with originType = SEEK_SET, SEEK_CUR or SEEK_END.
-// Note that all systems define NAFileSize to be a signed integer. Therefore
+// Note that all systems define fsize_t to be a signed integer. Therefore
 // searching backwards with SEEK_CUR is possible.
-NA_IDEF NAFileSize naLseek(int fd, NAFileSize byteOffset, int originType) {
+NA_IDEF fsize_t naLseek(int fd, fsize_t byteOffset, int originType) {
   #if NA_OS == NA_OS_WINDOWS
     #if NA_ADDRESS_BITS == 64
       return _lseeki64(fd, byteOffset, originType);
@@ -26,9 +26,9 @@ NA_IDEF NAFileSize naLseek(int fd, NAFileSize byteOffset, int originType) {
 
 
 // Use this function with originType = SEEK_SET, SEEK_CUR or SEEK_END.
-// Note that all systems define NAFileSize to be a signed integer. Therefore
+// Note that all systems define fsize_t to be a signed integer. Therefore
 // searching backwards with SEEK_CUR is possible.
-NA_IDEF NAFileSize naTell(int fd) {
+NA_IDEF fsize_t naTell(int fd) {
   #if NA_OS == NA_OS_WINDOWS
     #if NA_ADDRESS_BITS == 64
       return _lseeki64(fd, 0, SEEK_CUR);
@@ -72,20 +72,20 @@ NA_IDEF int naClose(int fd) {
 }
 
 
-NA_IDEF NAFileSize naRead(int fd, void* buf, NAFileSize byteSize) {
+NA_IDEF fsize_t naRead(int fd, void* buf, fsize_t byteSize) {
   #if NA_OS == NA_OS_WINDOWS
-    return (NAFileSize)_read(fd, buf, (unsigned int)byteSize);
+    return (fsize_t)_read(fd, buf, (unsigned int)byteSize);
   #elif NA_IS_POSIX
-    return (NAFileSize)read(fd, buf, (size_t)byteSize);
+    return (fsize_t)read(fd, buf, (size_t)byteSize);
   #endif
 }
 
 
-NA_IDEF NAFileSize naWrite(int fd, const void* buf, NAFileSize byteSize) {
+NA_IDEF fsize_t naWrite(int fd, const void* buf, fsize_t byteSize) {
   #if NA_OS == NA_OS_WINDOWS
-    return (NAFileSize)_write(fd, buf, (unsigned int)byteSize);
+    return (fsize_t)_write(fd, buf, (unsigned int)byteSize);
   #elif NA_IS_POSIX
-    return (NAFileSize)write(fd, buf, (size_t)byteSize);
+    return (fsize_t)write(fd, buf, (size_t)byteSize);
   #endif
 }
 
@@ -178,11 +178,11 @@ NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NAB
 }
 
 
-NA_IDEF NAUTF8Char* naGetCwd(NAUTF8Char* buf, int64 bufSize) {
+NA_IDEF NAUTF8Char* naGetCwd(NAUTF8Char* buf, size_t bufSize) {
   #if NA_OS == NA_OS_WINDOWS
     return _getcwd(buf, (int)bufSize);
   #elif NA_IS_POSIX
-    return getcwd(buf, (size_t)bufSize);
+    return getcwd(buf, bufSize);
   #endif
 }
 
@@ -270,9 +270,9 @@ NA_IDEF NAFile* naCreateFileWritingStderr() {
 
 
 
-NA_IDEF NAFileSize naComputeFileByteSize(const NAFile* file) {
-  NAFileSize curOffset;
-  NAFileSize fileSize;
+NA_IDEF fsize_t naComputeFileByteSize(const NAFile* file) {
+  fsize_t curOffset;
+  fsize_t fileSize;
   curOffset = naLseek(file->desc, 0, SEEK_CUR);
   #if NA_DEBUG
     if(curOffset == -1)
@@ -291,8 +291,8 @@ NA_IDEF NABool naIsFileOpen(const NAFile* file) {
 
 
 
-NA_IDEF void naSeekFileAbsolute(NAFile* file, NAFileSize byteOffset) {
-  NAFileSize newOffset;
+NA_IDEF void naSeekFileAbsolute(NAFile* file, fsize_t byteOffset) {
+  fsize_t newOffset;
   #if NA_DEBUG
     if(byteOffset < 0)
       naError("Negative offset in absolute jump.");
@@ -308,8 +308,8 @@ NA_IDEF void naSeekFileAbsolute(NAFile* file, NAFileSize byteOffset) {
 
 
 
-NA_IDEF void naSeekFileRelative(NAFile* file, NAFileSize byteOffset) {
-  NAFileSize newOffset;
+NA_IDEF void naSeekFileRelative(NAFile* file, fsize_t byteOffset) {
+  fsize_t newOffset;
   newOffset = naLseek(file->desc, byteOffset, SEEK_CUR);
   #if NA_DEBUG
     if(newOffset == -1)
@@ -321,7 +321,7 @@ NA_IDEF void naSeekFileRelative(NAFile* file, NAFileSize byteOffset) {
 
 
 
-NA_IDEF NAFileSize naReadFileBytes(NAFile* file, void* buf, NAFileSize byteSize) {
+NA_IDEF fsize_t naReadFileBytes(NAFile* file, void* buf, fsize_t byteSize) {
   if(!byteSize)
     return 0;
 
@@ -338,7 +338,7 @@ NA_IDEF NAFileSize naReadFileBytes(NAFile* file, void* buf, NAFileSize byteSize)
 }
 
 
-NA_IDEF NAFileSize naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize byteSize) {
+NA_IDEF fsize_t naWriteFileBytes(NAFile* file, const void* ptr, fsize_t byteSize) {
   if(!byteSize)
     return 0;
 

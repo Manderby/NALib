@@ -248,7 +248,7 @@ NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTok
           naError("Invalid return value given in callback");
         if(na_IsTreeItemLeaf(tree, iter->item) && nextIndex >= 0)
           naError("Leaf callback must one of the predefined macros");
-        if(!na_IsTreeItemLeaf(tree, iter->item) && nextIndex >= (int64)tree->config->abi.childPerNode)
+        if(!na_IsTreeItemLeaf(tree, iter->item) && nextIndex >= (int32)tree->config->abi.childPerNode)
           naError("child index returned in callback is too high");
       #endif
       

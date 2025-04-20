@@ -222,7 +222,7 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file) {
           naError("Buffer contains sparse parts.");
       #endif
 
-      naWriteFileBytes(file, src, (NAFileSize)remainingBytes);
+      naWriteFileBytes(file, src, (fsize_t)remainingBytes);
       na_LocateBufferNextPart(&iter);
       byteSize -= remainingBytes;
     }

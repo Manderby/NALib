@@ -6,7 +6,7 @@
 
 
 #if NA_BUFFER_PART_BYTESIZE == 0
-  #define NA_INTERNAL_BUFFER_PART_BYTESIZE (naCastSize_tToi64(naGetRuntimeMemoryPageSize()))
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE (naCastSizeToi64(naGetRuntimeMemoryPageSize()))
 #else
   #define NA_INTERNAL_BUFFER_PART_BYTESIZE (naCastu32Toi64(NA_BUFFER_PART_BYTESIZE))
 #endif
@@ -114,7 +114,7 @@ NA_HIDEF void na_EnlargeBufferPart(NABufferPart* part, size_t bytesAtStart, size
     naError("part is not sparse");
 #endif
   part->byteSize += bytesAtStart + bytesAtEnd;
-  part->sourceOffset = naSubi64(part->sourceOffset, naCastSize_tToi64(bytesAtStart));
+  part->sourceOffset = naSubi64(part->sourceOffset, naCastSizeToi64(bytesAtStart));
 }
 
 
@@ -131,7 +131,7 @@ NA_HIDEF size_t na_GetBufferPartRemainingBytes(NABufferIterator* iter) {
       naError("part offset is negative");
   #endif
   part = na_GetBufferPart(iter);
-  return part->byteSize - naCasti64ToSize_t(iter->partOffset);
+  return part->byteSize - naCasti64ToSize(iter->partOffset);
 }
 
 
@@ -148,7 +148,7 @@ NA_HIDEF const void* na_GetBufferPartDataPointerConst(NABufferIterator* iter) {
       naError("part offset is negative");
   #endif
   part = na_GetBufferPart(iter);
-  return na_GetMemoryBlockDataPointerConst(part->memBlock, part->blockOffset + naCasti64ToSize_t(iter->partOffset));
+  return na_GetMemoryBlockDataPointerConst(part->memBlock, part->blockOffset + naCasti64ToSize(iter->partOffset));
 }
 
 
@@ -165,7 +165,7 @@ NA_HIDEF void* na_GetBufferPartDataPointerMutable(NABufferIterator* iter) {
       naError("part offset is negative");
   #endif
   part = na_GetBufferPart(iter);
-  return na_GetMemoryBlockDataPointerMutable(part->memBlock, part->blockOffset + naCasti64ToSize_t(iter->partOffset));
+  return na_GetMemoryBlockDataPointerMutable(part->memBlock, part->blockOffset + naCasti64ToSize(iter->partOffset));
 }
 
 

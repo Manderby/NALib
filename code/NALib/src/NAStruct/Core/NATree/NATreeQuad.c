@@ -166,23 +166,23 @@ NA_HDEF size_t na_GetKeyIndexQuadDouble(const void* baseKey, const void* testKey
   return index;
 }
 NA_HDEF NABool na_TestKeyQuadDouble(const void* lowerLimit, const void* upperLimit, const void* key) {
-  return NA_KEY_OP(LessEqual, NAPos)(lowerLimit, key) && NA_KEY_OP(Less, NAPos)(key, upperLimit);
+  return NA_KEY_OP(SmallerEqual, NAPos)(lowerLimit, key) && NA_KEY_OP(Smaller, NAPos)(key, upperLimit);
 }
 NA_HDEF NABool na_TestKeyNodeContainQuadDouble(NATreeNode* parentNode, const void* key) {
   NATreeQuadNode* quadNode = (NATreeQuadNode*)(parentNode);
   double childwidth = naMakeDoubleWithExponent((int32)quadNode->childExponent);
   NAPos upperLimit = naMakePos(quadNode->origin.x + 2 * childwidth, quadNode->origin.y + 2 * childwidth);
   return
-    NA_KEY_OP(LessEqual, NAPos)(&quadNode->origin, key) &&
-    NA_KEY_OP(Less, NAPos)(key, &upperLimit);
+    NA_KEY_OP(SmallerEqual, NAPos)(&quadNode->origin, key) &&
+    NA_KEY_OP(Smaller, NAPos)(key, &upperLimit);
 }
 NA_HDEF NABool na_TestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key) {
   NATreeQuadLeaf* quadLeaf = (NATreeQuadLeaf*)(leaf);
   double leafwidth = naMakeDoubleWithExponent((int32)quadLeaf->leafExponent);
   NAPos upperLimit = naMakePos(quadLeaf->origin.x + leafwidth, quadLeaf->origin.y + leafwidth);
   return
-    NA_KEY_OP(LessEqual, NAPos)(&quadLeaf->origin, key) &&
-    NA_KEY_OP(Less, NAPos)(key, &upperLimit);
+    NA_KEY_OP(SmallerEqual, NAPos)(&quadLeaf->origin, key) &&
+    NA_KEY_OP(Smaller, NAPos)(key, &upperLimit);
 }
 NA_HDEF NABool na_TestKeyNodeOverlapQuadDouble(NATreeNode* parentNode, const void* lowerKey, const void* upperKey) {
   NATreeQuadNode* quadNode = (NATreeQuadNode*)(parentNode);

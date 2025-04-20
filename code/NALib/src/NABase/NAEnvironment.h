@@ -43,13 +43,20 @@
 #define NA_OS_WINDOWS   2
 #define NA_OS_FREEBSD   3
 
-// Figuring out what system this is. The following macros will be defined:
+// Figuring out what system this is. The following symbols will be defined:
 //
-// NA_OS                   One of the system macros above
-// NA_ENDIANNESS_HOST      Either big or little, see macros above
-// NA_ADDRESS_BITS         32 or 64. Denoting the number of bits per address.
-// NA_SIZE_T_BITS          32 or 64. Denoting the number of bits for size_t.
-//
+// NA_OS                One of the system macros above
+// NA_ENDIANNESS_HOST   Either big or little, see macros above
+// NA_ADDRESS_BITS      32 or 64. Denoting the number of bits per address.
+// NA_SIZE_T_BITS       32 or 64. Denoting the number of bits for size_t.
+// fsize_t:             The file size integer. Guaranteed to be signed. May be
+//                      32 or 64 bits depending on the system compiled for.
+//                      Note that the naming "fsize_t" is reminiscent of size_t
+//                      but that is just the authors choice. This is far from
+//                      standardized!
+// NA_FILESIZE_BITS     Storing the bits needed for a file byteOffset.
+// NA_FILESIZE_MAX      The max value to use for fsize_t
+
 // Currently, there are the following system configurations assumed:
 // - Mac OS X with GCC or Clang
 // - Windows with Microsoft Visual Studio compiler
@@ -80,6 +87,16 @@
     #define NA_SIZE_T_BITS  NA_TYPE32_BITS
   #endif
 
+  #if NA_ADDRESS_BITS == NA_TYPE64_BITS
+    typedef __int64 fsize_t; // Is signed (Important for negative offsets)
+    #define NA_FILESIZE_BITS NA_TYPE64_BITS
+    #define NA_FILESIZE_MAX NA_MAX_i64
+  #elif NA_ADDRESS_BITS == NA_TYPE32_BITS
+    typedef long fsize_t;    // Is signed (Important for negative offsets)
+    #define NA_FILESIZE_BITS NA_TYPE32_BITS
+    #define NA_FILESIZE_MAX NA_MAX_i32
+  #endif
+
 #elif defined __APPLE__ && __MACH__
   #define NA_OS NA_OS_MAC_OS_X
   #define NA_IS_POSIX 1
@@ -97,6 +114,11 @@
     #define NA_ADDRESS_BITS NA_TYPE32_BITS
     #define NA_SIZE_T_BITS  NA_TYPE32_BITS
   #endif
+
+  #include <unistd.h>
+  typedef off_t fsize_t;     // Is signed (Important for negative offsets)
+  #define NA_FILESIZE_BITS NA_TYPE64_BITS
+  #define NA_FILESIZE_MAX NA_MAX_i64
 
   #if defined __has_feature
     #define NA_MACOS_USES_ARC __has_feature(objc_arc)
@@ -142,6 +164,12 @@
     #define NA_ADDRESS_BITS NA_TYPE32_BITS
     #define NA_SIZE_T_BITS  NA_TYPE32_BITS
   #endif
+
+  // todo: is this correct? Seems posix standard but please check.
+  #include <unistd.h>
+  typedef off_t fsize_t;     // Is signed (Important for negative offsets)
+  #define NA_FILESIZE_BITS NA_TYPE64_BITS
+  #define NA_FILESIZE_MAX NA_MAX_i64
 
 #else
   #define NA_OS NA_OS_UNKNOWN

@@ -776,6 +776,13 @@ NA_IDEF NABool naInsidei64(NAi64 a, NAi64 b, NAi64 x) {
   #endif
   return (!(naSmalleri64(x, a) || naGreateri64(x, b)));
 }
+NA_IDEF NABool naInsides(size_t a, size_t b, size_t x) {
+  #if NA_DEBUG
+    if(a > b)
+      naError("a is greater b. Will always return FALSE");
+  #endif
+  return (!((x < a) || (x > b)));
+}
 
 
 
