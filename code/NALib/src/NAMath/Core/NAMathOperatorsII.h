@@ -128,7 +128,7 @@ NA_IDEF int16 naMini16(int16 a, int16 b) {
 NA_IDEF int32 naMini32(int32 a, int32 b) {
   return (a < b) ? a : b;
 }
-NA_IDEF NAi64 naMini64(NAi64 a, NAi64 b) {
+NA_IDEF int64 naMini64(int64 a, int64 b) {
   return naSmalleri64(a, b) ? a : b;
 }
 
@@ -151,7 +151,7 @@ NA_IDEF int16 naMaxi16(int16 a, int16 b) {
 NA_IDEF int32 naMaxi32(int32 a, int32 b) {
   return (a > b) ? a : b;
 }
-NA_IDEF NAi64 naMaxi64(NAi64 a, NAi64 b) {
+NA_IDEF int64 naMaxi64(int64 a, int64 b) {
   return naGreateri64(a, b) ? a : b;
 }
 
@@ -454,8 +454,8 @@ NA_IDEF int32 naLog2i32(int32 x) {
   }
   return retValue;
 }
-NA_IDEF NAi64 naLog2i64(NAi64 x) {
-  NAi64 retValue;
+NA_IDEF int64 naLog2i64(int64 x) {
+  int64 retValue;
   #if NA_DEBUG
     if(naSmalleri64(x, NA_ZERO_i64))
       naError("Logarithm of negative number.");
@@ -512,7 +512,7 @@ NA_IDEF int32 naExp2i32(int32 x) {
   #endif
   return NA_ONE_i32 << x;
 }
-NA_IDEF NAi64 naExp2i64(NAi64 x) {
+NA_IDEF int64 naExp2i64(int64 x) {
   #if NA_DEBUG
     if(naSmalleri64(x, NA_ZERO_i64))
       naError("Exponent negative. Will result in 0.");
@@ -543,8 +543,8 @@ NA_IDEF int32 naExp10i32(int32 x) {
   }
   return i;
 }
-NA_IDEF NAi64 naExp10i64(NAi64 x) {
-  NAi64 i;
+NA_IDEF int64 naExp10i64(int64 x) {
+  int64 i;
   #if NA_DEBUG
     if(naGreateri64(x, naCastu32Toi64(18)))
       naError("Exponent of 10 exceeds integer range.");
@@ -769,7 +769,7 @@ NA_IDEF NABool naInsidei32(int32 a, int32 b, int32 x) {
   #endif
   return (!((x < a) || (x > b)));
 }
-NA_IDEF NABool naInsidei64(NAi64 a, NAi64 b, NAi64 x) {
+NA_IDEF NABool naInsidei64(int64 a, int64 b, int64 x) {
   #if NA_DEBUG
     if(naGreateri64(a, b))
       naError("a is greater b. Will always return FALSE");

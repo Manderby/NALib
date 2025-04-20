@@ -38,7 +38,7 @@ NA_IDEF int32 naMakeMaxWithEndi32(int32 end) {
   #endif
   return end - NA_ONE_i32;
 }
-NA_IDEF NAi64 naMakeMaxWithEndi64(NAi64 end) {
+NA_IDEF int64 naMakeMaxWithEndi64(int64 end) {
   #if NA_DEBUG
     if(naEquali64(end, NA_MIN_i64))
       naError("Integer underflow");
@@ -62,7 +62,7 @@ NA_IDEF int32 naMakeEndWithMaxi32(int32 max) {
   #endif
   return max + NA_ONE_i32;
 }
-NA_IDEF NAi64 naMakeEndWithMaxi64(NAi64 max) {
+NA_IDEF int64 naMakeEndWithMaxi64(int64 max) {
   #if NA_DEBUG
     if(naEquali64(max, NA_MAX_i64))
       naError("Integer overflow");

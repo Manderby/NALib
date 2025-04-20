@@ -59,7 +59,7 @@ NA_PROTOTYPE(NADateTime);
 // date and time and readout information thereof.
 NA_PROTOTYPE(NADateTimeStruct);
 struct NADateTimeStruct{
-  NAi64 year;      // year number in astronomic numbering (-, 0 and +)
+  int64 year;      // year number in astronomic numbering (-, 0 and +)
   int32   mon;       // month number in [0, 11].   Beware the 0-index!
   int32   day;       // day number in [0, 30].     Beware the 0-index!
   int32   hour;      // hour number in [0, 23]
@@ -94,11 +94,11 @@ NA_API int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str);
 NA_API int32 naGetMonthNumberWithUTF8CStringLiteral(const NAUTF8Char* str);
 
 // Returns true if the given year number is a leap year.
-NA_IAPI NABool naIsLeapYearJulian      (NAi64 year);
-NA_IAPI NABool naIsLeapYearGregorian   (NAi64 year);
+NA_IAPI NABool naIsLeapYearJulian      (int64 year);
+NA_IAPI NABool naIsLeapYearGregorian   (int64 year);
 // The following function returns the julian information for years <= 1582 and
 // the gregorian information for years > 1582.
-NA_IAPI NABool naIsLeapYear            (NAi64 year);
+NA_IAPI NABool naIsLeapYear            (int64 year);
 
 
 
@@ -111,7 +111,7 @@ NA_IAPI NABool naIsLeapYear            (NAi64 year);
 // the global setting, see below. If you want to set the timeZone manually or
 // provide any additional information, use the constructor with the
 // NADateTimeStruct as an argument instead, it is much more powerful.
-NA_IAPI NADateTime naMakeDateTime(  NAi64 year,
+NA_IAPI NADateTime naMakeDateTime(  int64 year,
                                     int32 mon,
                                     int32 day,
                                     int32 hour,
@@ -128,7 +128,7 @@ NA_API NADateTime naMakeDateTimeNow(void);
 
 // Returns an NADateTime struct with the given second number interpreted like
 // in NALib. Nanoseconds and Timeshift will be zero.
-NA_IAPI NADateTime naMakeDateTimeWithNALibSecondNumber(NAi64 secondNumber);
+NA_IAPI NADateTime naMakeDateTimeWithNALibSecondNumber(int64 secondNumber);
 
 // Create a new NADateTime struct with the values provided.
 NA_API NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts);
@@ -258,7 +258,7 @@ NA_API void naSetGlobalTimeShiftToSystemSettings(void);
 //
 // To do so, you just store a specific identifier together with your data: The
 // number of the first uncertain second of this library.
-NA_API NAi64 naGetFirstUncertainSecondNumber(void);
+NA_API int64 naGetFirstUncertainSecondNumber(void);
 
 // When the library updates, you can check if the new library has a new
 // uncertain second number. You do this by giving the uncertain second number

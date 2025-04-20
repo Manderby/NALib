@@ -79,7 +79,7 @@ NA_IAPI size_t       naMins  (size_t  a, size_t  b);
 NA_IAPI int8         naMini8 (int8    a, int8    b);
 NA_IAPI int16        naMini16(int16   a, int16   b);
 NA_IAPI int32        naMini32(int32   a, int32   b);
-NA_IAPI NAi64        naMini64(NAi64 a, NAi64 b);
+NA_IAPI int64        naMini64(int64 a, int64 b);
 
 NA_IAPI double       naMax   (double  a, double  b);
 NA_IAPI float        naMaxf  (float   a, float   b);
@@ -87,7 +87,7 @@ NA_IAPI size_t       naMaxs  (size_t  a, size_t  b);
 NA_IAPI int8         naMaxi8 (int8    a, int8    b);
 NA_IAPI int16        naMaxi16(int16   a, int16   b);
 NA_IAPI int32        naMaxi32(int32   a, int32   b);
-NA_IAPI NAi64        naMaxi64(NAi64 a, NAi64 b);
+NA_IAPI int64        naMaxi64(int64 a, int64 b);
 
 
 
@@ -183,7 +183,7 @@ NA_IAPI float         naLog10f(float  x);
 NA_IAPI double        naLog2   (double  x);
 NA_IAPI float         naLog2f  (float   x);
 NA_IAPI int32         naLog2i32(int32   x);
-NA_IAPI NAi64         naLog2i64(NAi64 x);
+NA_IAPI int64         naLog2i64(int64 x);
 NA_IAPI size_t        naLog2s (size_t x);
 
 // Returns the exponential function e^x
@@ -194,13 +194,13 @@ NA_IAPI float         naExpf(float  x);
 NA_IAPI float         naExp2f  (float   x);
 NA_IAPI double        naExp2   (double  x);
 NA_IAPI int32         naExp2i32(int32   x);
-NA_IAPI NAi64         naExp2i64(NAi64 x);
+NA_IAPI int64         naExp2i64(int64 x);
 
 // Returns the exponent of 10 function 10^x
 NA_IAPI float         naExp10f  (float   x);
 NA_IAPI double        naExp10   (double  x);
 NA_IAPI int32         naExp10i32(int32   x);
-NA_IAPI NAi64         naExp10i64(NAi64 x);
+NA_IAPI int64         naExp10i64(int64 x);
 
 // Returns the power function b^x
 NA_IAPI double        naPow (double b, double x);
@@ -305,7 +305,7 @@ NA_IAPI NABool naInsideEEf(float  a, float  b, float  x);
 // Integer variants. a denotes Min, b denotes Max. Comparison is always
 // inclusive - inclusive.
 NA_IAPI NABool naInsidei32(int32  a, int32  b, int32  x);
-NA_IAPI NABool naInsidei64(NAi64 a, NAi64 b, NAi64 x);
+NA_IAPI NABool naInsidei64(int64 a, int64 b, int64 x);
 NA_IAPI NABool naInsides(size_t a, size_t b, size_t x);
 
 // naAlmostInside checks if the given value is almost or completely inside

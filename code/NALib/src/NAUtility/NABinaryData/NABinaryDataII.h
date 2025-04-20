@@ -64,7 +64,7 @@ NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s) {
     if(dist > -8 && dist < 8)
       naError("Restrict pointers overlap.");
   #endif
-  *(NAu64*)d = *(NAu64*)s;
+  *(uint64*)d = *(uint64*)s;
 }
 NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s) {
   #if NA_DEBUG
@@ -76,10 +76,10 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s) {
     if(dist > -16 && dist < 16)
       naError("Restrict pointers overlap.");
   #endif
-  *(NAu64*)d = *(NAu64*)s;
+  *(uint64*)d = *(uint64*)s;
   d = ((NAByte*)d) + 8;
   s = ((NAByte*)s) + 8;
-  *(NAu64*)d = *(NAu64*)s;
+  *(uint64*)d = *(uint64*)s;
 }
 
 NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, size_t byteSize) {
@@ -164,9 +164,9 @@ NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b) {
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
-  *(NAu64*)a = naXoru64(*(NAu64*)a, *(NAu64*)b);
-  *(NAu64*)b = naXoru64(*(NAu64*)b, *(NAu64*)a);
-  *(NAu64*)a = naXoru64(*(NAu64*)a, *(NAu64*)b);
+  *(uint64*)a = naXoru64(*(uint64*)a, *(uint64*)b);
+  *(uint64*)b = naXoru64(*(uint64*)b, *(uint64*)a);
+  *(uint64*)a = naXoru64(*(uint64*)a, *(uint64*)b);
 }
 
 NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b) {
@@ -197,10 +197,10 @@ NA_IDEF NABool naEqual32( void* NA_RESTRICT a, void* NA_RESTRICT b) {
   return (*((uint32*)a) == *((uint32*)b));
 }
 NA_IDEF NABool naEqual64( void* NA_RESTRICT a, void* NA_RESTRICT b) {
-  return naEqualu64(*((NAu64*)a), *((NAu64*)b));
+  return naEqualu64(*((uint64*)a), *((uint64*)b));
 }
 NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b) {
-  return naEqualu128(*((NAu128*)a), *((NAu128*)b));
+  return naEqualu128(*((uint128*)a), *((uint128*)b));
 }
 
 

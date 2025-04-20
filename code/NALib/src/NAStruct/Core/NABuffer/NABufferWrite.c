@@ -122,9 +122,9 @@ NA_DEF void naWriteBufferi32v(NABufferIterator* iter, const int32* src, size_t c
     count--;
   }
 }
-NA_DEF void naWriteBufferi64v(NABufferIterator* iter, const NAi64* src, size_t count) {
+NA_DEF void naWriteBufferi64v(NABufferIterator* iter, const int64* src, size_t count) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-  NAi64 value;
+  int64 value;
   na_PrepareBuffer(iter, count * 8);
   while(count) {
     value = *src;
@@ -173,9 +173,9 @@ NA_DEF void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, size_t 
     count--;
   }
 }
-NA_DEF void naWriteBufferu64v(NABufferIterator* iter, const NAu64* src, size_t count) {
+NA_DEF void naWriteBufferu64v(NABufferIterator* iter, const uint64* src, size_t count) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-  NAu64 value;
+  uint64 value;
   na_PrepareBuffer(iter, count * 8);
   while(count) {
     value = *src;

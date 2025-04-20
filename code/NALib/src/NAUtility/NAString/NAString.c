@@ -89,31 +89,31 @@ NA_DEF NAUTF8Char* naPriux32(uint32 value) {
 NA_DEF NAUTF8Char* naPriix32(int32 value) {
   return naAllocSprintf(NA_TRUE, "%08x", (int)value);
 }
-NA_DEF NAUTF8Char* naPriux64(NAu64 value) {
+NA_DEF NAUTF8Char* naPriux64(uint64 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x",
     naGetu64Hi(value),
     naGetu64Lo(value));
 }
-NA_DEF NAUTF8Char* naPriix64(NAi64 value) {
+NA_DEF NAUTF8Char* naPriix64(int64 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x",
     naGeti64Hi(value),
     naGeti64Lo(value));
 }
-NA_DEF NAUTF8Char* naPriux128(NAu128 value) {
+NA_DEF NAUTF8Char* naPriux128(uint128 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x",
     naGetu64Hi(naGetu128Hi(value)),
     naGetu64Lo(naGetu128Hi(value)),
     naGetu64Hi(naGetu128Lo(value)),
     naGetu64Lo(naGetu128Lo(value)));
 }
-NA_DEF NAUTF8Char* naPriix128(NAi128 value) {
+NA_DEF NAUTF8Char* naPriix128(int128 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x",
     naGeti64Hi(naGeti128Hi(value)),
     naGeti64Lo(naGeti128Hi(value)),
     naGetu64Hi(naGeti128Lo(value)),
     naGetu64Lo(naGeti128Lo(value)));
 }
-NA_DEF NAUTF8Char* naPriux256(NAu256 value) {
+NA_DEF NAUTF8Char* naPriux256(uint256 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x%08x%08x%08x%08x",
     naGetu64Hi(naGetu128Hi(naGetu256Hi(value))),
     naGetu64Lo(naGetu128Hi(naGetu256Hi(value))),
@@ -124,7 +124,7 @@ NA_DEF NAUTF8Char* naPriux256(NAu256 value) {
     naGetu64Hi(naGetu128Lo(naGetu256Lo(value))),
     naGetu64Lo(naGetu128Lo(naGetu256Lo(value))));
 }
-NA_DEF NAUTF8Char* naPriix256(NAi256 value) {
+NA_DEF NAUTF8Char* naPriix256(int256 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x%08x%08x%08x%08x",
     naGeti64Hi(naGeti128Hi(naGeti256Hi(value))),
     naGeti64Lo(naGeti128Hi(naGeti256Hi(value))),
@@ -847,8 +847,8 @@ NA_DEF int32 naParseStringi32(const NAString* string) {
   naClearBufferIterator(&iter);
   return retValue;
 }
-NA_DEF NAi64 naParseStringi64(const NAString* string) {
-  NAi64 retValue;
+NA_DEF int64 naParseStringi64(const NAString* string) {
+  int64 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferAtStart(&iter, NA_ZERO_i64);
   retValue = naParseBufferi64(&iter, NA_FALSE);
@@ -881,8 +881,8 @@ NA_DEF uint32 naParseStringu32(const NAString* string) {
   naClearBufferIterator(&iter);
   return retValue;
 }
-NA_DEF NAu64 naParseStringu64(const NAString* string) {
-  NAu64 retValue;
+NA_DEF uint64 naParseStringu64(const NAString* string) {
+  uint64 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferAtStart(&iter, NA_ZERO_i64);
   retValue = naParseBufferu64(&iter, NA_FALSE);
