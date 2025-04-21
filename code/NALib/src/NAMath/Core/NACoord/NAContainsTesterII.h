@@ -167,9 +167,8 @@ NA_IDEF NABool naContainsSizesPoint(NASizes outerSize, NAPoss point) {
     if(naIsSizesUseful(outerSize))
       naError("Inside test not valid for sizes which are not useful.");
   #endif
-  return  ((point.x >= 0)
-        && (point.x <  outerSize.width)
-        && (point.y >= 0)
+  // No need to check for >= 0 as this is unsigned.
+  return  ((point.x <  outerSize.width)
         && (point.y <  outerSize.height));
 }
 
@@ -510,11 +509,9 @@ NA_IDEF NABool naContainsVolumesPoint(NAVolumes outerVolume, NAVertexs point) {
     if(naIsVolumesUseful(outerVolume))
       naError("Inside test not valid for volumes which are not useful.");
   #endif
-  return  ((point.x >= 0)
-        && (point.x <  outerVolume.width)
-        && (point.y >= 0)
+  // No need to check for >= 0 as this is unsigned.
+  return  ((point.x <  outerVolume.width)
         && (point.y <  outerVolume.height)
-        && (point.z >= 0)
         && (point.z <  outerVolume.depth));
 }
 

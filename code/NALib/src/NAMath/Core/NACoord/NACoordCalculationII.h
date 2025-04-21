@@ -30,9 +30,9 @@ NA_IDEF NARangei64 naMakeRangei64Positive(NARangei64 range) {
   return range;
 }
 NA_IDEF NARanges naMakeRangesPositive(NARanges range) {
-  size_t rangeNegative = (size_t)(range.length < 0);
-  range.origin += rangeNegative * range.length;
-  range.length -= rangeNegative * 2 * range.length;
+  #if NA_DEBUG
+    naError("NARanges is always positive.");
+  #endif
   return range;
 }
 

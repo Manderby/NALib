@@ -359,8 +359,8 @@ NA_IDEF size_t naAlignValues(size_t value, size_t offset, size_t alignLength) {
       naError("Length must be > 0");
     if(offset > value)
       naError("Underflow");
-    if(value > offset && shiftValue < 0)
-      naError("Overflow");
+    //if(value > offset && shiftValue < 0)
+    //  naError("Overflow"); // Overflow can not happen with unsigned.
   #endif
   return (((size_t)((shiftValue + 0) / alignLength) - 0) * alignLength) + offset;
 }

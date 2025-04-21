@@ -59,7 +59,6 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree) {
     codelengthcount[tree->codelengths[a]]++;
   }
 
-
   // Prepare the next bit codes per codelength
   code = 0;
   codelengthcount[0] = 0;
