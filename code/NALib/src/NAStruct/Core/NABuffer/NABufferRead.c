@@ -24,7 +24,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
   // memory. The iterator should point to the buffer part containing offset.
   
   // We store the current iterator to move back to it later on if necessary.
-  size_t firstPartOffset = (size_t)iter->partOffset;
+  size_t firstPartOffset = naCasti64ToSize(iter->partOffset);
   firstBufIter = naMakeTreeAccessor(&buffer->parts);
   naLocateTreeIterator(&firstBufIter, &iter->partIter);
 
@@ -48,7 +48,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
     // We get the data pointer where we can read bytes.
     src = na_GetBufferPartDataPointerConst(iter);
     // We detect, how many bytes actually can be read from the current part.
-    size_t possibleLength = na_GetBufferPartByteSize(part) - (size_t)iter->partOffset;
+    size_t possibleLength = na_GetBufferPartByteSize(part) - naCasti64ToSize(iter->partOffset);
 
     #if NA_DEBUG
       if(possibleLength <= 0)
@@ -59,7 +59,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
       // If we can get out more bytes than needed, we copy all remaining bytes
       // and stay on this part.
       possibleLength = byteSize;
-      iter->partOffset += byteSize;
+      iter->partOffset = naAddi64(iter->partOffset, naCastSizeToi64(byteSize));
     }else{
       // We copy as many bytes as possible and advance to the next part.
       na_LocateBufferNextPart(iter);
@@ -70,7 +70,7 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, size_t b
   }
   
   if(!advance) {
-    iter->partOffset = (int64)firstPartOffset;
+    iter->partOffset = naCastSizeToi64(firstPartOffset);
     naLocateTreeIterator(&iter->partIter, &firstBufIter);
   }
   naClearTreeIterator(&firstBufIter);  
@@ -84,12 +84,12 @@ NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, size_t index) {
   NABool found;
   
   #if NA_DEBUG
-    if(buffer->range.origin != 0)
+    if(!naEquali64(buffer->range.origin, NA_ZERO_i64))
       naError("This function should only be used for buffers with origin 0.");
   #endif
 
   iter = naMakeBufferAccessor(buffer);  
-  found = naLocateBufferAbsolute(&iter, (int64)index);
+  found = naLocateBufferAbsolute(&iter, naCastSizeToi64(index));
   if(found) {
     retbyte = naGetBufferu8(&iter);
   }else{
@@ -122,7 +122,7 @@ NA_DEF NABool naReadBufferBit(NABufferIterator* iter) {
 
   if(iter->curBit == 8) {
     iter->curBit = 0;
-    iter->partOffset++;
+    naInci64(iter->partOffset);
   }
 
   return bit;
@@ -151,7 +151,7 @@ NA_DEF uint32 naReadBufferBits32(NABufferIterator* iter, uint8 count) {
 NA_DEF void naPadBufferBits(NABufferIterator* iter) {
   if(iter->curBit != 0) {
     iter->curBit = 0;
-    iter->partOffset++;
+    naInci64(iter->partOffset);
   }
 }
 

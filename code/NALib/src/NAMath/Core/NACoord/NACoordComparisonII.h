@@ -39,7 +39,7 @@ NA_IDEF NABool naEqualRangei64(NARangei64 range1, NARangei64 range2) {
     if(!naIsRangei64Valid(range2))
       naError("range2 is invalid.");
   #endif
-  return ((range1.origin == range2.origin) && (range1.length == range2.length));
+  return (naEquali64(range1.origin, range2.origin) && naEquali64(range1.length, range2.length));
 }
 NA_IDEF NABool naEqualRanges(NARanges range1, NARanges range2) {
   #if NA_DEBUG
@@ -87,7 +87,7 @@ NA_IDEF NABool naEqualPosi64(NAPosi64 pos1, NAPosi64 pos2) {
     if(!naIsPosi64Valid(pos2))
       naError("pos2 is invalid.");
   #endif
-  return ((pos1.x == pos2.x) && (pos1.y == pos2.y));
+  return (naEquali64(pos1.x, pos2.x) && naEquali64(pos1.y, pos2.y));
 }
 NA_IDEF NABool naEqualPoss(NAPoss pos1, NAPoss pos2) {
   #if NA_DEBUG
@@ -143,7 +143,7 @@ NA_IDEF NABool naEqualSizei64(NASizei64 size1, NASizei64 size2) {
     if(!naIsSizei64Valid(size2))
       naError("size2 is invalid.");
   #endif
-  return ((size1.width == size2.width) && (size1.height == size2.height));
+  return (naEquali64(size1.width, size2.width) && naEquali64(size1.height, size2.height));
 }
 NA_IDEF NABool naEqualSizes(NASizes size1, NASizes size2) {
   #if NA_DEBUG
@@ -258,7 +258,7 @@ NA_IDEF NABool naEqualVertexi64(NAVertexi64 vertex1, NAVertexi64 vertex2) {
     if(!naIsVertexi64Valid(vertex2))
       naError("vertex2 is invalid.");
   #endif
-  return ((vertex1.x == vertex2.x) && (vertex1.y == vertex2.y) && (vertex1.z == vertex2.z));
+  return (naEquali64(vertex1.x, vertex2.x) && naEquali64(vertex1.y, vertex2.y) && naEquali64(vertex1.z, vertex2.z));
 }
 NA_IDEF NABool naEqualVertexs(NAVertexs vertex1, NAVertexs vertex2) {
   #if NA_DEBUG
@@ -314,7 +314,7 @@ NA_IDEF NABool naEqualVolumei64(NAVolumei64 volume1, NAVolumei64 volume2) {
     if(!naIsVolumei64Valid(volume2))
       naError("volume2 is invalid.");
   #endif
-  return ((volume1.width == volume2.width) && (volume1.height == volume2.height) && (volume1.depth == volume2.depth));
+  return (naEquali64(volume1.width, volume2.width) && naEquali64(volume1.height, volume2.height) && naEquali64(volume1.depth, volume2.depth));
 }
 NA_IDEF NABool naEqualVolumes(NAVolumes volume1, NAVolumes volume2) {
   #if NA_DEBUG
@@ -393,7 +393,7 @@ NA_IDEF NABool naEqualBoxs(NABoxs box1, NABoxs box2) {
 
 
 
-NA_IDEF NABool naLessPos(NAPos pos1, NAPos pos2) {
+NA_IDEF NABool naSmallerPos(NAPos pos1, NAPos pos2) {
   #if NA_DEBUG
     if(!naIsPosValid(pos1))
       naError("pos1 is invalid.");
@@ -402,7 +402,7 @@ NA_IDEF NABool naLessPos(NAPos pos1, NAPos pos2) {
   #endif
   return ((pos1.x < pos2.x) && (pos1.y < pos2.y));
 }
-NA_IDEF NABool naLessEqualPos(NAPos pos1, NAPos pos2) {
+NA_IDEF NABool naSmallerEqualPos(NAPos pos1, NAPos pos2) {
   #if NA_DEBUG
     if(!naIsPosValid(pos1))
       naError("pos1 is invalid.");
@@ -432,7 +432,7 @@ NA_IDEF NABool naGreaterPos(NAPos pos1, NAPos pos2) {
 
 
 
-NA_IDEF NABool naLessVertex(NAVertex vertex1, NAVertex vertex2) {
+NA_IDEF NABool naSmallerVertex(NAVertex vertex1, NAVertex vertex2) {
   #if NA_DEBUG
     if(!naIsVertexValid(vertex1))
       naError("vertex1 is invalid.");
@@ -441,7 +441,7 @@ NA_IDEF NABool naLessVertex(NAVertex vertex1, NAVertex vertex2) {
   #endif
   return ((vertex1.x < vertex2.x) && (vertex1.y < vertex2.y) && (vertex1.z < vertex2.z));
 }
-NA_IDEF NABool naLessEqualVertex(NAVertex vertex1, NAVertex vertex2) {
+NA_IDEF NABool naSmallerEqualVertex(NAVertex vertex1, NAVertex vertex2) {
   #if NA_DEBUG
     if(!naIsVertexValid(vertex1))
       naError("vertex1 is invalid.");

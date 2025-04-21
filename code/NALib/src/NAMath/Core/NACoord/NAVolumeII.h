@@ -162,9 +162,9 @@ NA_IDEF NAVolumei32 naMakeVolumei32Zero() {
 }
 NA_IDEF NAVolumei64 naMakeVolumei64Zero() {
   NAVolumei64 newVolume;
-  newVolume.width  = 0;
-  newVolume.height = 0;
-  newVolume.depth  = 0;
+  newVolume.width  = NA_ZERO_i64;
+  newVolume.height = NA_ZERO_i64;
+  newVolume.depth  = NA_ZERO_i64;
   return newVolume;
 }
 NA_IDEF NAVolumes naMakeVolumesZero() {

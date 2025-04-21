@@ -11,7 +11,6 @@
   #include <windows.h>
 #elif NA_OS == NA_OS_MAC_OS_X
   #include <objc/objc.h>
-  #include <unistd.h>
   #include <dispatch/dispatch.h>
   // Workaround for XCode 3 where the following macro is not defined:
   #ifndef DISPATCH_QUEUE_SERIAL

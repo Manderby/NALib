@@ -22,7 +22,6 @@ struct NATreeBinLeaf{
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeBinLeaf);
 
-#include <stddef.h>
 #define NODE_CHILDS_OFFSET_BIN     offsetof(NATreeBinNode, childs)
 #define LEAF_KEY_OFFSET_BIN        offsetof(NATreeBinLeaf, key)
 #define NODE_KEY_OFFSET_BIN        offsetof(NATreeBinNode, key)
@@ -51,19 +50,19 @@ NA_HAPI  NATreeNode* na_LocateBubbleBin(const NATree* tree, NATreeItem* item, co
 NA_HAPI  NATreeNode* na_RemoveLeafBin(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI  NATreeLeaf* na_InsertLeafBin(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 
-NA_HAPI  void na_InitNodeAVL(NATreeBinNode* binnode);
-NA_HAPI  void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex);
-NA_HAPI  void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, size_t childIndex);
+NA_HAPI  void na_InitNodeAVL(NATreeBinNode* binNode);
+NA_HAPI  void na_GrowAVL(NATree* tree, NATreeBinNode* binNode, size_t childIndex);
+NA_HAPI  void na_ShrinkAVL(NATree* tree, NATreeBinNode* binNode, size_t childIndex);
 
-NA_HIAPI NATreeItem* na_GetBinNodeItem(NATreeBinNode* binnode);
-
-
+NA_HIAPI NATreeItem* na_GetBinNodeItem(NATreeBinNode* binNode);
 
 
 
 
-NA_HIDEF NATreeNode* na_GetBinNodeNode(NATreeBinNode* binnode) {
-  return &binnode->node;
+
+
+NA_HIDEF NATreeNode* na_GetBinNodeNode(NATreeBinNode* binNode) {
+  return &binNode->node;
 }
 NA_HIDEF NATreeLeaf* na_GetBinLeafLeaf(NATreeBinLeaf* binleaf) {
   return &binleaf->leaf;
@@ -71,8 +70,8 @@ NA_HIDEF NATreeLeaf* na_GetBinLeafLeaf(NATreeBinLeaf* binleaf) {
 
 
 
-NA_HIDEF NATreeItem* na_GetBinNodeItem(NATreeBinNode* binnode) {
-  return na_GetTreeNodeItem(na_GetBinNodeNode(binnode));
+NA_HIDEF NATreeItem* na_GetBinNodeItem(NATreeBinNode* binNode) {
+  return na_GetTreeNodeItem(na_GetBinNodeNode(binNode));
 }
 NA_HIDEF NATreeItem* na_GetBinLeafItem(NATreeBinLeaf* binleaf) {
   return na_GetTreeLeafItem(na_GetBinLeafLeaf(binleaf));

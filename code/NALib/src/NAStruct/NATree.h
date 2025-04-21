@@ -178,9 +178,9 @@ NA_IAPI void naSetTreeConfigurationNodeCallbacks(
 
 NA_IAPI void naSetTreeConfigurationBaseLeafExponent(
   NATreeConfiguration* config,
-  int64 baseLeafExponent);
+  int32 baseLeafExponent);
 
-NA_IAPI int64 naGetTreeConfigurationBaseLeafExponent(
+NA_IAPI int32 naGetTreeConfigurationBaseLeafExponent(
   const NATreeConfiguration* config);
 
 
@@ -299,10 +299,10 @@ NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 #define NA_TREE_SEARCH_PARENT  -1
 #define NA_TREE_SEARCH_FOUND   -2
 #define NA_TREE_SEARCH_ABORT   -3
-typedef int64 (*NATreeNodeTokenSearcher)(
+typedef int32 (*NATreeNodeTokenSearcher)(
   void* token,
   NAPtr data);
-typedef int64 (*NATreeLeafTokenSearcher)(
+typedef int32 (*NATreeLeafTokenSearcher)(
   void* token,
   NAPtr data);
 
@@ -354,7 +354,7 @@ NA_IAPI void naUpdateTreeLeaf(NATreeIterator* iter);
 typedef NABool (*NATreeNodeTokenCallback)(
   void* token,
   NAPtr data,
-  int64 nextIndex);
+  size_t nextIndex);
 NA_IAPI void naBubbleTreeToken(
   const NATreeIterator* iter,
   void* token,

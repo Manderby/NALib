@@ -18,7 +18,7 @@ struct NAStack{
   size_t         curBaseIndex; // Absolute index of current array
   size_t         curCount;     // Number of used elements in current array
   #if NA_DEBUG
-    int64        iterCount;     // The number of iterators on this stack.
+    size_t        iterCount;     // The number of iterators on this stack.
   #endif
 };
 
@@ -253,9 +253,9 @@ NA_IDEF void naClearStackIterator(NAStackIterator* iter) {
   naClearListIterator(&iter->curArray);
   #if NA_DEBUG
     mutablestack = (NAStack*)iter->stack;
-    mutablestack->iterCount--;
-    if(mutablestack->iterCount < 0)
+    if(mutablestack->iterCount == 0)
       naError("Too many cleared iterators on that stack.");
+    mutablestack->iterCount--;
   #endif
 }
 

@@ -9,8 +9,9 @@
 
 // We gather basic information about integer types from the standardized
 // limits.h and stdint.h libraries.
-#include <limits.h>
-#include <stdint.h>
+#include <limits.h> // old limits
+#include <stdint.h> // limits and precision integer types
+#include <stddef.h> // size_t and offsetof
 
 
 
@@ -193,24 +194,18 @@
 // Depending on the representations gathered, find out, which types have a
 // native representation and define integer type macros for them.
 // If these macros are not defined, no native type is available.
-#if NA_TYPE_INT8_REPRESENTATION != NA_TYPE_NATIVE_NONE
-  #define NA_TYPE_INT8
-#endif
-#if NA_TYPE_INT16_REPRESENTATION != NA_TYPE_NATIVE_NONE
-  #define NA_TYPE_INT16
-#endif
-#if NA_TYPE_INT32_REPRESENTATION != NA_TYPE_NATIVE_NONE
-  #define NA_TYPE_INT32
-#endif
-#if NA_TYPE_INT64_REPRESENTATION != NA_TYPE_NATIVE_NONE
-  #define NA_TYPE_INT64
-#endif
-#if NA_TYPE_INT128_REPRESENTATION != NA_TYPE_NATIVE_NONE
-  #define NA_TYPE_INT128
-#endif
-#if NA_TYPE_INT256_REPRESENTATION != NA_TYPE_NATIVE_NONE
-  #define NA_TYPE_INT256
-#endif
+#define NA_NATIVE_INT8_IN_USE   (NA_TYPE_INT8_REPRESENTATION   != NA_TYPE_NATIVE_NONE)
+#define NA_NATIVE_INT16_IN_USE  (NA_TYPE_INT16_REPRESENTATION  != NA_TYPE_NATIVE_NONE)
+#define NA_NATIVE_INT32_IN_USE  (NA_TYPE_INT32_REPRESENTATION  != NA_TYPE_NATIVE_NONE)
+#define NA_NATIVE_INT64_IN_USE (\
+  ((NA_NATIVE_INTEGER_UP_TO >= 64)) && \
+  (NA_TYPE_INT64_REPRESENTATION != NA_TYPE_NATIVE_NONE))
+#define NA_NATIVE_INT128_IN_USE (\
+  ((NA_NATIVE_INTEGER_UP_TO >= 128)) && \
+  (NA_TYPE_INT128_REPRESENTATION != NA_TYPE_NATIVE_NONE))
+#define NA_NATIVE_INT256_IN_USE (\
+  ((NA_NATIVE_INTEGER_UP_TO >= 256)) && \
+  (NA_TYPE_INT256_REPRESENTATION != NA_TYPE_NATIVE_NONE))
 
 
 

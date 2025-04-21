@@ -7,19 +7,182 @@
 
 
 
-#if defined NA_TYPE_INT256
-  NA_IDEF NAi256 naMakei256(int128 hi, uint128 lo) {
-    return (NAi256)((NAu256)hi << 128) | lo;
+// first, undefine all things which were defined in the .h file.
+#undef naMakei256
+#undef naMakei256WithLo
+#undef naMakei256WithDouble
+#undef naMakei256Withu32
+#undef naGeti256Hi
+#undef naGeti256Lo
+#undef naGetu256Hi
+#undef naGetu256Lo
+#undef naNegi256
+#undef naInci256
+#undef naDeci256
+#undef naAddi256
+#undef naSubi256
+#undef naMuli256
+#undef naDivi256
+#undef naModi256
+#undef naNoti256
+#undef naOri256
+#undef naAndi256
+#undef naXori256
+#undef naShli256
+#undef naShri256
+#undef naEquali256
+#undef naGreateri256
+#undef naGreaterEquali256
+#undef naSmalleri256
+#undef naSmallerEquali256
+#undef naCasti256Tou8
+#undef naCasti256Tou16
+#undef naCasti256Tou32
+#undef naCasti256Tou64
+#undef naCasti256Tou128
+#undef naCasti256Tou256
+#undef naCasti256Toi8
+#undef naCasti256Toi16
+#undef naCasti256Toi32
+#undef naCasti256Toi64
+#undef naCasti256Toi128
+#undef naCasti256ToDouble
+#undef naMakeu256
+#undef naMakeu256WithLo
+#undef naMakeu256WithDouble
+#undef naMakeu256WithLiteralLo
+#undef naMakeu256Withu32
+#undef naIncu256
+#undef naDecu256
+#undef naAddu256
+#undef naSubu256
+#undef naMulu256
+#undef naDivu256
+#undef naModu256
+#undef naNotu256
+#undef naOru256
+#undef naAndu256
+#undef naXoru256
+#undef naShlu256
+#undef naShru256
+#undef naEqualu256
+#undef naGreateru256
+#undef naGreaterEqualu256
+#undef naSmalleru256
+#undef naSmallerEqualu256
+#undef naCastu256Toi8
+#undef naCastu256Toi16
+#undef naCastu256Toi32
+#undef naCastu256Toi64
+#undef naCastu256Toi128
+#undef naCastu256Toi256
+#undef naCastu256Tou8
+#undef naCastu256Tou16
+#undef naCastu256Tou32
+#undef naCastu256Tou64
+#undef naCastu256Tou128
+#undef naCastu256ToDouble
+
+
+#if NA_NATIVE_INT256_IN_USE
+
+  NA_IDEF int256 naMakei256(int128 hi, uint128 lo) {
+    return (int256)((uint256)hi << 128) | lo;
   }
-  NA_IDEF NAi256 naMakei256WithLo(NAi128 lo) {
-    return (NAi256)lo;
+  NA_IDEF int256 naMakei256WithLo(int128 lo) {
+    return (int256)lo;
   }
-  NA_IDEF NAi256 naMakei256WithDouble(double lo) {
-    return (NAi256)lo;
+  NA_IDEF int256 naMakei256WithDouble(double lo) {
+    return (int256)lo;
   }
-  NA_IDEF NAi256 naMakei256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0) {
-    return ((NAi256)b3 << 224) | (NAi256)b3 << 192) | (NAi256)b3 << 160) | (NAi256)b3 << 128) | (NAi256)b3 << 96) | ((NAi256)b2 << 64) | ((NAi256)b1 << 32) | b0;
+  NA_IDEF int256 naMakei256Withu32(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0) {
+    return ((int256)b3 << 224) | (int256)b3 << 192) | (int256)b3 << 160) | (int256)b3 << 128) | (int256)b3 << 96) | ((int256)b2 << 64) | ((int256)b1 << 32) | b0;
   }
+  
+  #define naGeti256Hi(i) ((int128)((i) >> NA_TYPE128_BITS))
+  #define naGeti256Lo(i) ((uint128)i)
+  #define naGetu256Hi(u) ((uint128)((u) >> NA_TYPE128_BITS))
+  #define naGetu256Lo(u) ((uint128)u)
+
+  #define naNegi256(i)    (-(i))
+  #define naInci256(i)    (++(i))
+  #define naDeci256(i)    (--(i))
+  #define naAddi256(a, b) ((a) + (b))
+  #define naSubi256(a, b) ((a) - (b))
+  #define naMuli256(a, b) ((a) * (b))
+  #define naDivi256(a, b) ((a) / (b))
+  #define naModi256(a, b) ((a) % (b))
+
+  #define naNoti256(i)    (~(i))
+  #define naOri256(a, b)  ((a) | (b))
+  #define naAndi256(a, b) ((a) & (b))
+  #define naXori256(a, b) ((a) ^ (b))
+  #define naShli256(a, n) ((int256)(((uint256)(a)) << (n)))
+  #define naShri256(a, n) ((a) >> (n))
+
+  #define naEquali256(a, b)        ((a) == (b))
+  #define naGreateri256(a, b)      ((a) > (b))
+  #define naGreaterEquali256(a, b) ((a) >= (b))
+  #define naSmalleri256(a, b)      ((a) < (b))
+  #define naSmallerEquali256(a, b) ((a) <= (b))
+
+  #define naCasti256Tou8(i)     ((uint8)(i))
+  #define naCasti256Tou16(i)    ((uint16)(i))
+  #define naCasti256Tou32(i)    ((uint32)(i))
+  #define naCasti256Tou64(i)    ((NAu64)(i))
+  #define naCasti256Tou128(i)   ((NAu128)(i))
+  #define naCasti256Tou256(i)   ((NAu256)(i))
+  #define naCasti256Toi8(i)     ((int8)(i))
+  #define naCasti256Toi16(i)    ((int16)(i))
+  #define naCasti256Toi32(i)    ((int32)(i))
+  #define naCasti256Toi64(i)    ((NAi64)(i))
+  #define naCasti256Toi128(i)   ((NAi128)(i))
+  #define naCasti256ToDouble(i) ((double)(i))
+
+  #define naMakeu256(hi, lo) \
+    ((NAu256)(((NAu256)(hi) << 128) | (lo)))
+  #define naMakeu256WithLo(lo) \
+    ((NAu256)(lo))
+  #define naMakeu256WithDouble(d) \
+    ((NAu256)(d))
+  #define naMakeu256Withu32(b7, b6, b5, b4, b3, b2, b1, b0) \
+    naMakeu256(naMakeu128Withu32(b7, b6, b5, b4), \
+    naMakeu128Withu32(b3, b2, b1, b0))
+
+  #define naIncu256(i)    (++(i))
+  #define naDecu256(i)    (--(i))
+  #define naAddu256(a, b) ((a) + (b))
+  #define naSubu256(a, b) ((a) - (b))
+  #define naMulu256(a, b) ((a) * (b))
+  #define naDivu256(a, b) ((a) / (b))
+  #define naModu256(a, b) ((a) % (b))
+
+  #define naNotu256(i)    (~(i))
+  #define naOru256(a, b)  ((a) | (b))
+  #define naAndu256(a, b) ((a) & (b))
+  #define naXoru256(a, b) ((a) ^ (b))
+  #define naShlu256(a, n) ((a) << (n))
+  #define naShru256(a, n) ((a) >> (n))
+
+  #define naEqualu256(a, b)        ((a) == (b))
+  #define naGreateru256(a, b)      ((a) > (b))
+  #define naGreaterEqualu256(a, b) ((a) >= (b))
+  #define naSmalleru256(a, b)      ((a) < (b))
+  #define naSmallerEqualu256(a, b) ((a) <= (b))
+
+  #define naCastu256Toi8(i)     ((int8)(i))
+  #define naCastu256Toi16(i)    ((int16)(i))
+  #define naCastu256Toi32(i)    ((int32)(i))
+  #define naCastu256Toi64(i)    ((NAi64)(i))
+  #define naCastu256Toi128(i)   ((NAi128)(i))
+  #define naCastu256Toi256(i)   ((NAi256)(i))
+  #define naCastu256Tou8(i)     ((uint8)(i))
+  #define naCastu256Tou16(i)    ((uint16)(i))
+  #define naCastu256Tou32(i)    ((uint32)(i))
+  #define naCastu256Tou64(i)    ((NAu64)(i))
+  #define naCastu256Tou128(i)   ((NAu128)(i))
+  #define naCastu256ToDouble(i) ((double)(i))
+
 #else
 
   NA_IDEF NAi256 naMakei256(NAi128 hi, NAu128 lo) {
@@ -37,25 +200,24 @@
   NA_IDEF NAi256 naMakei256WithDouble(double d) {
     return naMakei256WithLo(naMakei128WithLo(naGetDoubleInteger(d)));
   }
-  NA_IDEF NAi256 naMakei256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0) {
+  NA_IDEF NAi256 naMakei256Withu32(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0) {
     NAi256 retValuei;
-    retValuei.hi = naMakei128WithBinary(b7, b6, b5, b4);
-    retValuei.lo = naMakeu128WithBinary(b3, b2, b1, b0);
+    retValuei.hi = naMakei128Withu32(b7, b6, b5, b4);
+    retValuei.lo = naMakeu128Withu32(b3, b2, b1, b0);
     return retValuei;
   }
 
 
 
-  #undef naInci256
   #define naInci256(i)\
-    (i.hi = naAddi128(i.hi, naMakei128WithLo(naMakei64WithLo(naEqualu128(i.lo, NA_MAX_u128)))),\
-    naIncu128(i.lo),\
-    i)
-  #undef naDeci256
+    ((i).hi = naAddi128((i).hi, naMakei128WithLo(naCastBoolToi64(naEqualu128((i).lo, NA_MAX_u128)))),\
+    naIncu128((i).lo),\
+    (i))
   #define naDeci256(i)\
-    (i.hi = naSubi128(i.hi, naMakei128WithLo(naMakei64WithLo(naEqualu128(i.lo, NA_ZERO_u128)))),\
-    naDecu128(i.lo),\
-    i)
+    ((i).hi = naSubi128((i).hi, naMakei128WithLo(naCastBoolToi64(naEqualu128((i).lo, NA_ZERO_u128)))),\
+    naDecu128((i).lo),\
+    (i))
+
 
 
   NA_IDEF NAi256 naNegi256(NAi256 i) {
@@ -250,25 +412,32 @@
     return naMakeu256WithLo(naMakeu128WithDouble(d));
   }
 
-  NA_IDEF NAu256 naMakeu256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0) {
+  NA_IDEF NAu256 naMakeu256Withu32(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0) {
     NAu256 retValueu;
-    retValueu.hi = naMakeu128WithBinary(b7, b6, b5, b4);
-    retValueu.lo = naMakeu128WithBinary(b3, b2, b1, b0);
+    retValueu.hi = naMakeu128Withu32(b7, b6, b5, b4);
+    retValueu.lo = naMakeu128Withu32(b3, b2, b1, b0);
     return retValueu;
   }
 
 
+  #define naGeti256Hi(i) (i.hi)
+  #define naGeti256Lo(i) (i.lo)
+  
+  
+  
+  #define naGetu256Hi(u) (u.hi)
+  #define naGetu256Lo(u) (u.lo)
 
-  #undef naIncu256
-  #define naIncu256(i)\
-    (i.hi = naAddu128(i.hi, naMakeu128WithLo(naMakeu64WithLo(naEqualu128(i.lo, NA_MAX_u128)))),\
-    naIncu128(i.lo),\
-    i)
-  #undef naDecu256
-  #define naDecu256(i)\
-    (i.hi = naSubu128(i.hi, naMakeu128WithLo(naMakeu64WithLo(naEqualu128(i.lo, NA_ZERO_u128)))),\
-    naDecu128(i.lo),\
-    i)
+
+
+  #define naIncu256(u)\
+    ((u).hi = naAddu128((u).hi, naMakeu128WithLo(naMakeu64WithLo(naEqualu128((u).lo, NA_MAX_u128)))),\
+    naIncu128((u).lo),\
+    (u))
+  #define naDecu256(u)\
+    ((u).hi = naSubu128((u).hi, naMakeu128WithLo(naMakeu64WithLo(naEqualu128((u).lo, NA_ZERO_u128)))),\
+    naDecu128((u).lo),\
+    (u))
 
 
 
@@ -300,7 +469,7 @@
     retValuei.lo = naAddu128(retValuei.lo, naMulu128(a0, b0));
     NAu128 shla0b1 = naShlu128(a0b1, 64);
     retValuei.lo = naAddu128(retValuei.lo, shla0b1);
-    retValuei.hi = naAddu128(retValuei.hi, naMakeu128WithLo(naSmalleru128(retValuei.lo, shla0b1)));
+    retValuei.hi = naAddu128(retValuei.hi, naMakeu128WithLo(naMakeu64WithLo(naSmalleru128(retValuei.lo, shla0b1))));
     retValuei.hi = naAddu128(retValuei.hi, naShru128(a0b1, 64));
     retValuei.hi = naAddu128(retValuei.hi, naMulu128(a0, b2));
     retValuei.hi = naAddu128(retValuei.hi, naShlu128(naMulu128(a0, b3), 64));
@@ -308,7 +477,7 @@
     // multiply a1 * b and add up
     NAu128 shla1b0 = naShlu128(a1b0, 64);
     retValuei.lo = naAddu128(retValuei.lo, shla1b0);
-    retValuei.hi = naAddu128(retValuei.hi, naMakeu128WithLo(naSmalleru128(retValuei.lo, shla1b0)));
+    retValuei.hi = naAddu128(retValuei.hi, naMakeu128WithLo(naMakeu64WithLo(naSmalleru128(retValuei.lo, shla1b0))));
     retValuei.hi = naAddu128(retValuei.hi, naShru128(a1b0, 64));
     retValuei.hi = naAddu128(retValuei.hi, naMulu128(a1, b1));
     retValuei.hi = naAddu128(retValuei.hi, naShlu128(naMulu128(a1, b2), 64));
@@ -512,7 +681,7 @@
     return naCastu128ToDouble(i.hi) * naMakeDoubleWithExponent(128) + naCastu128ToDouble(i.lo);
   }
 
-#endif // defined NA_TYPE_INT256
+#endif // NA_NATIVE_INT256_IN_USE
 
 
 

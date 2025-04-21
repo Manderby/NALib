@@ -6,7 +6,7 @@
 // Locates the iterator on the "next" leaf from the current node given an
 // index of the child to first look at. If if no more child is available, the
 // iterator is set to the initial position.
-NA_HDEF void na_IterateTreeCapture(NATreeIterator* iter, int64 index, NATreeIterationInfo* info) {
+NA_HDEF void na_IterateTreeCapture(NATreeIterator* iter, int32 index, NATreeIterationInfo* info) {
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
   NATreeNode* parentNode;
 
@@ -71,7 +71,7 @@ NA_HDEF void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* inf
 
   while(!na_GetTreeItemIsRoot(item)) {
     NATreeNode* parent = na_GetTreeItemParent(item);
-    int64 nextIndex = (int64)na_GetTreeNodeChildIndex(parent, item, tree->config) + info->step;
+    int32 nextIndex = (int32)na_GetTreeNodeChildIndex(parent, item, tree->config) + info->step;
 
     // Capture the next sibling, if any.
     if(nextIndex != info->breakIndex) {
@@ -131,7 +131,7 @@ NA_HDEF NABool na_IterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo*
 
 
 NA_HDEF NATreeItem* na_LocateTreeKeyCapture(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound) {
-  int64 childIndex;
+  int32 childIndex;
   NATreeItem* child;
   #if NA_DEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
@@ -155,7 +155,7 @@ NA_HDEF NATreeItem* na_LocateTreeKeyCapture(const NATree* tree, NATreeNode* node
     return na_GetTreeNodeItem(node);
   }
 
-  childIndex = (int64)tree->config->childIndexGetter(node, key);
+  childIndex = (int32)tree->config->childIndexGetter(node, key);
   child = na_GetTreeNodeChild(node, (size_t)childIndex, tree->config);
 
   if(!child) {
@@ -215,7 +215,7 @@ NA_HDEF NABool na_LocateTreeKey(NATreeIterator* iter, const void* key, NABool us
 
 
 NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher) {
-  int64 nextIndex = NA_TREE_SEARCH_ABORT;
+  int32 nextIndex = NA_TREE_SEARCH_ABORT;
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
   #if NA_DEBUG
     if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
@@ -248,7 +248,7 @@ NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTok
           naError("Invalid return value given in callback");
         if(na_IsTreeItemLeaf(tree, iter->item) && nextIndex >= 0)
           naError("Leaf callback must one of the predefined macros");
-        if(!na_IsTreeItemLeaf(tree, iter->item) && nextIndex >= (int64)tree->config->abi.childPerNode)
+        if(!na_IsTreeItemLeaf(tree, iter->item) && nextIndex >= (int32)tree->config->abi.childPerNode)
           naError("child index returned in callback is too high");
       #endif
       

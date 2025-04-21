@@ -7,13 +7,13 @@
 
 
 
-#if defined NA_TYPE_INT256
+#if NA_NATIVE_INT256_IN_USE
 
   // We declare these as inline functions to reduce warnings.
   NA_IAPI NAi256 naMakei256          (NAi128 hi, NAu128 lo);
   NA_IAPI NAi256 naMakei256WithLo    (NAi128 lo);
   NA_IAPI NAi256 naMakei256WithDouble(double lo);
-  NA_IAPI NAi128 naMakei256WithBinary(
+  NA_IAPI NAi128 naMakei256Withu32(
     uint32 b7,
     uint32 b6,
     uint32 b5,
@@ -23,89 +23,84 @@
     uint32 b1,
     uint32 b0);
 
-  #define naGeti256Hi(i) ((int128)((i) >> NA_TYPE128_BITS))
-  #define naGeti256Lo(i) ((uint128)i)
-  #define naGetu256Hi(u) ((uint128)((u) >> NA_TYPE128_BITS))
-  #define naGetu256Lo(u) ((uint128)u)
+  #define naGeti256Hi(i)
+  #define naGeti256Lo(i)
+  #define naGetu256Hi(u)
+  #define naGetu256Lo(u)
 
-  #define naNegi256(i)    (-(i))
-  #define naInci256(i)    (++(i))
-  #define naDeci256(i)    (--(i))
-  #define naAddi256(a, b) ((a) + (b))
-  #define naSubi256(a, b) ((a) - (b))
-  #define naMuli256(a, b) ((a) * (b))
-  #define naDivi256(a, b) ((a) / (b))
-  #define naModi256(a, b) ((a) % (b))
+  #define naNegi256(i)
+  #define naInci256(i)
+  #define naDeci256(i)
+  #define naAddi256(a, b)
+  #define naSubi256(a, b)
+  #define naMuli256(a, b)
+  #define naDivi256(a, b)
+  #define naModi256(a, b)
 
-  #define naNoti256(i)    (~(i))
-  #define naOri256(a, b)  ((a) | (b))
-  #define naAndi256(a, b) ((a) & (b))
-  #define naXori256(a, b) ((a) ^ (b))
-  #define naShli256(a, n) ((int256)(((uint256)(a)) << (n)))
-  #define naShri256(a, n) ((a) >> (n))
+  #define naNoti256(i)
+  #define naOri256(a, b)
+  #define naAndi256(a, b)
+  #define naXori256(a, b)
+  #define naShli256(a, n)
+  #define naShri256(a, n)
 
-  #define naEquali256(a, b)        ((a) == (b))
-  #define naGreateri256(a, b)      ((a) > (b))
-  #define naGreaterEquali256(a, b) ((a) >= (b))
-  #define naSmalleri256(a, b)      ((a) < (b))
-  #define naSmallerEquali256(a, b) ((a) <= (b))
+  #define naEquali256(a, b)
+  #define naGreateri256(a, b)
+  #define naGreaterEquali256(a, b)
+  #define naSmalleri256(a, b)
+  #define naSmallerEquali256(a, b)
 
-  #define naCasti256Tou8(i)     ((uint8)(i))
-  #define naCasti256Tou16(i)    ((uint16)(i))
-  #define naCasti256Tou32(i)    ((uint32)(i))
-  #define naCasti256Tou64(i)    ((NAu64)(i))
-  #define naCasti256Tou128(i)   ((NAu128)(i))
-  #define naCasti256Tou256(i)   ((NAu256)(i))
-  #define naCasti256Toi8(i)     ((int8)(i))
-  #define naCasti256Toi16(i)    ((int16)(i))
-  #define naCasti256Toi32(i)    ((int32)(i))
-  #define naCasti256Toi64(i)    ((NAi64)(i))
-  #define naCasti256Toi128(i)   ((NAi128)(i))
-  #define naCasti256ToDouble(i) ((double)(i))
+  #define naCasti256Tou8(i)
+  #define naCasti256Tou16(i)
+  #define naCasti256Tou32(i)
+  #define naCasti256Tou64(i)
+  #define naCasti256Tou128(i)
+  #define naCasti256Tou256(i)
+  #define naCasti256Toi8(i)
+  #define naCasti256Toi16(i)
+  #define naCasti256Toi32(i)
+  #define naCasti256Toi64(i)
+  #define naCasti256Toi128(i)
+  #define naCasti256ToDouble(i)
 
-  #define naMakeu256(hi, lo) \
-    ((NAu256)(((NAu256)(hi) << 128) | (lo)))
-  #define naMakeu256WithLo(lo) \
-    ((NAu256)(lo))
-  #define naMakeu256WithDouble(d) \
-    ((NAu256)(d))
-  #define naMakeu256WithBinary(b7, b6, b5, b4, b3, b2, b1, b0) \
-    naMakeu256(naMakeu128WithBinary(b7, b6, b5, b4), \
-    naMakeu128WithBinary(b3, b2, b1, b0))
+  #define naMakeu256(hi, lo)
+  #define naMakeu256WithLo(lo)
+  #define naMakeu256WithDouble(d)
+  #define naMakeu256Withu32(b7, b6, b5, b4, b3, b2, b1, b0)
 
-  #define naIncu256(i)    ((i)++)
-  #define naDecu256(i)    ((i)--)
-  #define naAddu256(a, b) ((a) + (b))
-  #define naSubu256(a, b) ((a) - (b))
-  #define naMulu256(a, b) ((a) * (b))
-  #define naDivu256(a, b) ((a) / (b))
-  #define naModu256(a, b) ((a) % (b))
+  #define naIncu256(i)
+  #define naDecu256(i)
+  #define naAddu256(a, b)
+  #define naSubu256(a, b)
+  #define naMulu256(a, b)
+  #define naDivu256(a, b)
+  #define naModu256(a, b)
 
-  #define naNotu256(i)    (~(i))
-  #define naOru256(a, b)  ((a) | (b))
-  #define naAndu256(a, b) ((a) & (b))
-  #define naXoru256(a, b) ((a) ^ (b))
-  #define naShlu256(a, n) ((a) << (n))
-  #define naShru256(a, n) ((a) >> (n))
+  #define naNotu256(i)
+  #define naOru256(a, b)
+  #define naAndu256(a, b)
+  #define naXoru256(a, b)
+  #define naShlu256(a, n)
+  #define naShru256(a, n)
 
-  #define naEqualu256(a, b)        ((a) == (b))
-  #define naGreateru256(a, b)      ((a) > (b))
-  #define naGreaterEqualu256(a, b) ((a) >= (b))
-  #define naSmalleru256(a, b)      ((a) < (b))
-  #define naSmallerEqualu256(a, b) ((a) <= (b))
+  #define naEqualu256(a, b) 
+  #define naGreateru256(a, b)
+  #define naGreaterEqualu256(a, b)
+  #define naSmalleru256(a, b)
+  #define naSmallerEqualu256(a, b)
 
-  #define naCastu256Toi8(i)     ((int8)(i))
-  #define naCastu256Toi16(i)    ((int16)(i))
-  #define naCastu256Toi32(i)    ((int32)(i))
-  #define naCastu256Toi64(i)    ((NAi64)(i))
-  #define naCastu256Toi128(i)   ((NAi128)(i))
-  #define naCastu256Toi256(i)   ((NAi256)(i))
-  #define naCastu256Tou8(i)     ((uint8)(i))
-  #define naCastu256Tou16(i)    ((uint16)(i))
-  #define naCastu256Tou32(i)    ((uint32)(i))
-  #define naCastu256Tou64(i)    ((NAu64)(i))
-  #define naCastu256Tou128(i)   ((NAu128)(i))
-  #define naCastu256ToDouble(i) ((double)(i))
+  #define naCastu256Toi8(i)
+  #define naCastu256Toi16(i)
+  #define naCastu256Toi32(i)
+  #define naCastu256Toi64(i)
+  #define naCastu256Toi128(i)
+  #define naCastu256Toi256(i)
+  #define naCastu256Tou8(i)
+  #define naCastu256Tou16(i)
+  #define naCastu256Tou32(i)
+  #define naCastu256Tou64(i)
+  #define naCastu256Tou128(i)
+  #define naCastu256ToDouble(i)
 
 #else
 
@@ -114,7 +109,7 @@
   NA_IAPI NAi256  naMakei256          (NAi128 hi, NAu128 lo);
   NA_IAPI NAi256  naMakei256WithLo    (NAi128 lo);
   NA_IAPI NAi256  naMakei256WithDouble(double d);
-  NA_IAPI NAi256 naMakei256WithBinary(
+  NA_IAPI NAi256 naMakei256Withu32(
     uint32 b7,
     uint32 b6,
     uint32 b5,
@@ -167,7 +162,7 @@
   NA_IAPI NAu256 naMakeu256          (NAu128 hi, NAu128 lo);
   NA_IAPI NAu256 naMakeu256WithLo    (NAu128 lo);
   NA_IAPI NAu256 naMakeu256WithDouble(double d);
-  NA_IAPI NAu256 naMakeu256WithBinary(
+  NA_IAPI NAu256 naMakeu256Withu32(
     uint32 b7,
     uint32 b6,
     uint32 b5,
@@ -214,24 +209,6 @@
 
 #endif
 
-
-//#if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS
-//  #define naCastu256ToUInt(i) naCastu256Tou64(i)
-//  #define naCasti256ToInt(i)  naCasti256Toi64(i)
-//  #define naCastIntToi256(i)  naMakei256WithLo(naMakei128WithLo(i))
-//  #define naCastUIntTou256(i) naMakeu256WithLo(naMakeu128WithLo(i))
-//#elif NA_TYPE_NAINT_BITS == NA_TYPE32_BITS
-//  #define naCastu256ToUInt(i) naCastu256Tou32(i)
-//  #define naCasti256ToInt(i)  naCasti256Toi32(i)
-//  #define naCastIntToi256(i)  naMakei256WithLo(naMakei128WithLo(naMakei64WithLo(i)))
-//  #define naCastUIntTou256(i) naMakei256WithLo(naMakeu128WithLo(naMakeu64WithLo(i)))
-//#elif NA_TYPE_NAINT_BITS == NA_TYPE16_BITS
-//  #define naCastu256ToUInt(i) naCastu256Tou16(i)
-//  #define naCasti256ToInt(i)  naCasti256Toi16(i)
-//  #define naCastIntToi256(i)  naMakei256WithLo(naMakei128WithLo(naMakei64WithLo((int32)i)))
-//  #define naCastUIntTou256(i) naMakei256WithLo(naMakeu128WithLo(naMakeu64WithLo((uint32)i)))
-//#endif
-//
 
 
 #endif // NA_INT_256_INCLUDED

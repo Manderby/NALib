@@ -104,14 +104,14 @@ NA_IDEF NARangei64 naClampRangei64(NARangei64 range, NARangei64 clampRange) {
   #endif
   newRange = range;
 
-  value = clampRange.origin - newRange.origin;
-  if(value > 0) {
-    newRange.length -= value;
+  value = naSubi64(clampRange.origin, newRange.origin);
+  if(naGreateri64(value, NA_ZERO_i64)) {
+    newRange.length = naSubi64(newRange.length, value);
     newRange.origin = clampRange.origin;
   }
   value = naGetRangei64End(clampRange);
-  if(naGetRangei64End(newRange) > value) {
-    newRange.length = value - newRange.origin;
+  if(naGreateri64(naGetRangei64End(newRange), value)) {
+    newRange.length = naSubi64(value, newRange.origin);
   }
 
   return newRange;
@@ -219,9 +219,11 @@ NA_IDEF int64 naClampPointToRangei64(int64 point, NARangei64 clampRange) {
       naError("clampRange is invalid.");
   #endif
   newPoint = point;
-  if(newPoint <  clampRange.origin) { newPoint = clampRange.origin; }
+  if(naSmalleri64(newPoint, clampRange.origin)) {
+    newPoint = clampRange.origin;
+  }
   max = naGetRangei64Max(clampRange);
-  if(newPoint > max) {
+  if(naGreateri64(newPoint, max)) {
     newPoint = max;
   }
   return newPoint;
@@ -398,35 +400,35 @@ NA_IDEF NARecti64 naClampRecti64(NARecti64 rect, NARecti64 clampRect) {
   newRect = rect;
 
   // Adjust in first dimension
-  value = clampRect.pos.x - newRect.pos.x;
-  if(value > 0) {
-    newRect.size.width -= value;
-    if(newRect.size.width <= 0) {
+  value = naSubi64(clampRect.pos.x, newRect.pos.x);
+  if(naGreateri64(value, NA_ZERO_i64)) {
+    newRect.size.width = naSubi64(newRect.size.width, value);
+    if(naSmallerEquali64(newRect.size.width, NA_ZERO_i64)) {
       return newRect;
     }
     newRect.pos.x = clampRect.pos.x;
   }
   value = naGetRecti64EndX(clampRect);
-  if(naGetRecti64EndX(newRect) > value) {
-    newRect.size.width = value - newRect.pos.x;
-    if(newRect.size.width <= 0) {
+  if(naGreateri64(naGetRecti64EndX(newRect), value)) {
+    newRect.size.width = naSubi64(value, newRect.pos.x);
+    if(naSmallerEquali64(newRect.size.width, NA_ZERO_i64)) {
       return newRect;
     }
   }
 
   // Adjust in second dimension
-  value = clampRect.pos.y - newRect.pos.y;
-  if(value > 0) {
-    newRect.size.height -= value;
-    if(newRect.size.height <= 0) {
+  value = naSubi64(clampRect.pos.y, newRect.pos.y);
+  if(naGreateri64(value, NA_ZERO_i64)) {
+    newRect.size.height = naSubi64(newRect.size.height, value);
+    if(naSmallerEquali64(newRect.size.height, NA_ZERO_i64)) {
       return newRect;
     }
     newRect.pos.y = clampRect.pos.y;
   }
   value = naGetRecti64EndY(clampRect);
-  if(naGetRecti64EndY(newRect) > value) {
-    newRect.size.height = value - newRect.pos.y;
-    if(newRect.size.height <= 0) {
+  if(naGreateri64(naGetRecti64EndY(newRect), value)) {
+    newRect.size.height = naSubi64(value, newRect.pos.y);
+    if(naSmallerEquali64(newRect.size.height, NA_ZERO_i64)) {
       return newRect;
     }
   }
@@ -575,14 +577,18 @@ NA_IDEF NAPosi64 naClampPointToRecti64(NAPosi64 point, NARecti64 clampRect) {
       naError("clampRect is invalid.");
   #endif
   newPoint = point;
-  if(newPoint.x <  clampRect.pos.x) { newPoint.x = clampRect.pos.x; }
+  if(naSmalleri64(newPoint.x, clampRect.pos.x)) {
+    newPoint.x = clampRect.pos.x;
+  }
   max = naGetRecti64MaxX(clampRect);
-  if(newPoint.x > max) {
+  if(naGreateri64(newPoint.x, max)) {
     newPoint.x = max;
   }
-  if(newPoint.y <  clampRect.pos.y) { newPoint.y = clampRect.pos.y; }
+  if(naSmalleri64(newPoint.y, clampRect.pos.y)) {
+    newPoint.y = clampRect.pos.y;
+  }
   max = naGetRecti64MaxY(clampRect);
-  if(newPoint.y > max) {
+  if(naGreateri64(newPoint.y, max)) {
     newPoint.y = max;
   }
   return newPoint;
@@ -803,52 +809,52 @@ NA_IDEF NABoxi64 naClampBoxi64(NABoxi64 box, NABoxi64 clampBox) {
   newBox = box;
 
   // Adjust in first dimension
-  value = clampBox.vertex.x - newBox.vertex.x;
-  if(value > 0) {
-    newBox.volume.width -= value;
-    if(newBox.volume.width <= 0) {
+  value = naSubi64(clampBox.vertex.x, newBox.vertex.x);
+  if(naGreateri64(value, NA_ZERO_i64)) {
+    newBox.volume.width = naSubi64(newBox.volume.width, value);
+    if(naSmallerEquali64(newBox.volume.width, NA_ZERO_i64)) {
       return newBox;
     }
     newBox.vertex.x = clampBox.vertex.x;
   }
   value = naGetBoxi64EndX(clampBox);
-  if(naGetBoxi64EndX(newBox) > value) {
-    newBox.volume.width = value - newBox.vertex.x;
-    if(newBox.volume.width <= 0) {
+  if(naGreateri64(naGetBoxi64EndX(newBox), value)) {
+    newBox.volume.width = naSubi64(value, newBox.vertex.x);
+    if(naSmallerEquali64(newBox.volume.width, NA_ZERO_i64)) {
       return newBox;
     }
   }
 
   // Adjust in second dimension
-  value = clampBox.vertex.y - newBox.vertex.y;
-  if(value > 0) {
-    newBox.volume.height -= value;
-    if(newBox.volume.height <= 0) {
+  value = naSubi64(clampBox.vertex.y, newBox.vertex.y);
+  if(naGreateri64(value, NA_ZERO_i64)) {
+    newBox.volume.height = naSubi64(newBox.volume.height, value);
+    if(naSmallerEquali64(newBox.volume.height, NA_ZERO_i64)) {
       return newBox;
     }
     newBox.vertex.y = clampBox.vertex.y;
   }
   value = naGetBoxi64EndY(clampBox);
-  if(naGetBoxi64EndY(newBox) > value) {
-    newBox.volume.height = value - newBox.vertex.y;
-    if(newBox.volume.height <= 0) {
+  if(naGreateri64(naGetBoxi64EndY(newBox), value)) {
+    newBox.volume.height = naSubi64(value, newBox.vertex.y);
+    if(naSmallerEquali64(newBox.volume.height, NA_ZERO_i64)) {
       return newBox;
     }
   }
 
   // Adjust in third dimension
-  value = clampBox.vertex.z - newBox.vertex.z;
-  if(value > 0) {
-    newBox.volume.depth -= value;
-    if(newBox.volume.depth <= 0) {
+  value = naSubi64(clampBox.vertex.z, newBox.vertex.z);
+  if(naGreateri64(value, NA_ZERO_i64)) {
+    newBox.volume.depth = naSubi64(newBox.volume.depth, value);
+    if(naSmallerEquali64(newBox.volume.depth, NA_ZERO_i64)) {
       return newBox;
     }
     newBox.vertex.z = clampBox.vertex.z;
   }
   value = naGetBoxi64EndZ(clampBox);
-  if(naGetBoxi64EndZ(newBox) > value) {
-    newBox.volume.depth = value - newBox.vertex.z;
-    if(newBox.volume.depth <= 0) {
+  if(naGreateri64(naGetBoxi64EndZ(newBox), value)) {
+    newBox.volume.depth = naSubi64(value, newBox.vertex.z);
+    if(naSmallerEquali64(newBox.volume.depth, NA_ZERO_i64)) {
       return newBox;
     }
   }
@@ -1029,19 +1035,25 @@ NA_IDEF NAVertexi64 naClampPointToBoxi64(NAVertexi64 point, NABoxi64 clampBox) {
       naError("clampBox is invalid.");
   #endif
   newPoint = point;
-  if(newPoint.x <  clampBox.vertex.x) { newPoint.x = clampBox.vertex.x; }
+  if(naSmalleri64(newPoint.x, clampBox.vertex.x)) {
+    newPoint.x = clampBox.vertex.x;
+  }
   max = naGetBoxi64MaxX(clampBox);
-  if(newPoint.x > max) {
+  if(naGreateri64(newPoint.x, max)) {
     newPoint.x = max;
   }
-  if(newPoint.y <  clampBox.vertex.y) { newPoint.y = clampBox.vertex.y; }
+  if(naSmalleri64(newPoint.y, clampBox.vertex.y)) {
+    newPoint.y = clampBox.vertex.y;
+  }
   max = naGetBoxi64MaxY(clampBox);
-  if(newPoint.y > max) {
+  if(naGreateri64(newPoint.y, max)) {
     newPoint.y = max;
   }
-  if(newPoint.z <  clampBox.vertex.z) { newPoint.z = clampBox.vertex.z; }
+  if(naSmalleri64(newPoint.z, clampBox.vertex.z)) {
+    newPoint.z = clampBox.vertex.z;
+  }
   max = naGetBoxi64MaxZ(clampBox);
-  if(newPoint.z > max) {
+  if(naGreateri64(newPoint.z, max)) {
     newPoint.z = max;
   }
   return newPoint;

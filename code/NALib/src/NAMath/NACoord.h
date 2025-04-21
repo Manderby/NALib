@@ -801,13 +801,13 @@ NA_IAPI NABool naEqualBoxs     (NABoxs      box1,    NABoxs      box2);
 
 // Use the following functions to make comparison tests between elements.
 // They only return true if the condition is true for all components.
-NA_IAPI NABool naLessPos           (NAPos    pos1,    NAPos    pos2);
-NA_IAPI NABool naLessEqualPos      (NAPos    pos1,    NAPos    pos2);
+NA_IAPI NABool naSmallerPos        (NAPos    pos1,    NAPos    pos2);
+NA_IAPI NABool naSmallerEqualPos   (NAPos    pos1,    NAPos    pos2);
 NA_IAPI NABool naGreaterEqualPos   (NAPos    pos1,    NAPos    pos2);
 NA_IAPI NABool naGreaterPos        (NAPos    pos1,    NAPos    pos2);
 
-NA_IAPI NABool naLessVertex        (NAVertex vertex1, NAVertex vertex2);
-NA_IAPI NABool naLessEqualVertex   (NAVertex vertex1, NAVertex vertex2);
+NA_IAPI NABool naSmallerVertex     (NAVertex vertex1, NAVertex vertex2);
+NA_IAPI NABool naSmallerEqualVertex(NAVertex vertex1, NAVertex vertex2);
 NA_IAPI NABool naGreaterEqualVertex(NAVertex vertex1, NAVertex vertex2);
 NA_IAPI NABool naGreaterVertex     (NAVertex vertex1, NAVertex vertex2);
 

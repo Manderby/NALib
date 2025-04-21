@@ -22,14 +22,14 @@ NABool equali256(NAi256 i, uint32 goal7, uint32 goal6, uint32 goal5, uint32 goal
 
 
 void testNAInt256Make(void) {
-  NAi256 i1 = naMakei256(naMakei128(naMakei64(-0x11223344, 0xffeeddcc), naMakeu64(0x98765432, 0x12345678)), naMakeu128(naMakei64(0xfedcba98, 0xabcabcde), naMakeu64(0x54345676, 0x11224488)));
+  NAi256 i1 = naMakei256(naMakei128(naMakei64(-0x11223344, 0xffeeddcc), naMakeu64(0x98765432, 0x12345678)), naMakeu128(naMakeu64(0xfedcba98, 0xabcabcde), naMakeu64(0x54345676, 0x11224488)));
   NAi256 i2 = naMakei256WithLo(naMakei128WithLo(naNegi64(naMakei64(0x12345678, 0x12345678))));
   NAi256 i3 = naMakei256WithDouble(-123456789012345.);
-  NAi256 i4 = naMakei256WithBinary(0x12345678, 0x56473829, 0xfabcedae, 0x33333333, 0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488);
-  NAu256 u1 = naMakeu256(naMakeu128(naMakeu64(0x11223344, 0xffeeddcc), naMakeu64(0x98765432, 0x12345678)), naMakeu128(naMakei64(0xfedcba98, 0xabcabcde), naMakeu64(0x54345676, 0x11224488)));
+  NAi256 i4 = naMakei256Withu32(0x12345678, 0x56473829, 0xfabcedae, 0x33333333, 0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488);
+  NAu256 u1 = naMakeu256(naMakeu128(naMakeu64(0x11223344, 0xffeeddcc), naMakeu64(0x98765432, 0x12345678)), naMakeu128(naMakeu64(0xfedcba98, 0xabcabcde), naMakeu64(0x54345676, 0x11224488)));
   NAu256 u2 = naMakeu256WithLo(naMakeu128WithLo(naMakeu64(0x12345678, 0x12345678)));
   NAu256 u3 = naMakeu256WithDouble(123456789012345.);
-  NAu256 u5 = naMakeu256WithBinary(0x12345678, 0x56473829, 0xfabcedae, 0x33333333, 0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488);
+  NAu256 u5 = naMakeu256Withu32(0x12345678, 0x56473829, 0xfabcedae, 0x33333333, 0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488);
 
   naTest(equali256(i1, 0xeeddccbc, 0xffeeddcc, 0x98765432, 0x12345678, 0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488));
   naTest(equali256(i2, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xedcba987, 0xedcba988));
@@ -43,10 +43,10 @@ void testNAInt256Make(void) {
 
 
 
-#define randi128 naMakei128WithBinary(naTestIn, naTestIn, naTestIn, naTestIn)
-#define randu128 naMakeu128WithBinary(naTestIn, naTestIn, naTestIn, naTestIn)
-#define randi256 naMakei256WithBinary(naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn)
-#define randu256 naMakeu256WithBinary(naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn)
+#define randi128 naMakei128Withu32(naTestIn, naTestIn, naTestIn, naTestIn)
+#define randu128 naMakeu128Withu32(naTestIn, naTestIn, naTestIn, naTestIn)
+#define randi256 naMakei256Withu32(naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn)
+#define randu256 naMakeu256Withu32(naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn)
 
 
 
@@ -54,20 +54,20 @@ void benchmarkNAInt256Make(void) {
   naBenchmark(naMakei256(naNegi128(randi128), randu128));
   naBenchmark(naMakei256WithLo(naNegi128(randi128)));
   naBenchmark(naMakei256WithDouble(-((int32)naTestIn / NA_MAX_i32)));
-  naBenchmark(naMakei256WithBinary(naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn));
+  naBenchmark(naMakei256Withu32(naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn));
   naBenchmark(naMakeu256(randu128, randu128));
   naBenchmark(naMakeu256WithLo(randu128));
   naBenchmark(naMakeu256WithDouble((naTestIn / NA_MAX_u32)));
-  naBenchmark(naMakeu256WithBinary(naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn));
+  naBenchmark(naMakeu256Withu32(naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn, naTestIn));
 }
 
 
 
 void testNAInt256Binary(void) {
-  NAi256 i =      naMakei256WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
-  NAi256 term =   naMakei256WithBinary(0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555);
-  NAu256 u =    naMakeu256WithBinary(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
-  NAu256 uterm = naMakeu256WithBinary(0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555);
+  NAi256 i =      naMakei256Withu32(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
+  NAi256 term =   naMakei256Withu32(0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555);
+  NAu256 u =    naMakeu256Withu32(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
+  NAu256 uterm = naMakeu256Withu32(0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555);
   
   NAi256 i1 = naNoti256(i);
   NAi256 i2 = naOri256(i, term);
@@ -118,10 +118,10 @@ void benchmarkNAInt256Binary(void) {
 
 
 void testNAInt256Comparison(void) {
-  NAi256 i1 =   naMakei256WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
-  NAi256 i2 =   naMakei256WithBinary(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6, 0xf2461b44, 0x945472ea, 0xf3516735, 0x7ce3a145);
-  NAu256 u1 = naMakeu256WithBinary(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
-  NAu256 u2 = naMakeu256WithBinary(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1, 0x893c1216, 0x7145ceaf, 0xaa53c8ef, 0x72baeaa7);
+  NAi256 i1 =   naMakei256Withu32(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
+  NAi256 i2 =   naMakei256Withu32(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6, 0xf2461b44, 0x945472ea, 0xf3516735, 0x7ce3a145);
+  NAu256 u1 = naMakeu256Withu32(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
+  NAu256 u2 = naMakeu256Withu32(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1, 0x893c1216, 0x7145ceaf, 0xaa53c8ef, 0x72baeaa7);
   
   naTest(naEquali256(i1, i1));
   naTest(!naGreateri256(i1, i2));
@@ -171,13 +171,13 @@ void benchmarkNAInt256Comparison(void) {
 
 
 void testNAInt256Arithmetic(void) {
-  NAi256 i01 =   naMakei256WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
-  NAi256 i02 =   naMakei256WithBinary(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6, 0xf2461b44, 0x945472ea, 0xf3516735, 0x7ce3a145);
+  NAi256 i01 =   naMakei256Withu32(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
+  NAi256 i02 =   naMakei256Withu32(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6, 0xf2461b44, 0x945472ea, 0xf3516735, 0x7ce3a145);
   NAi256 i03 =   NA_ZERO_i256;
   NAi256 i04 =   naMakei256WithDouble(-123.);
   NAi256 i1, i2;
-  NAu256 u01 = naMakeu256WithBinary(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
-  NAu256 u02 = naMakeu256WithBinary(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1, 0x893c1216, 0x7145ceaf, 0xaa53c8ef, 0x72baeaa7);
+  NAu256 u01 = naMakeu256Withu32(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
+  NAu256 u02 = naMakeu256Withu32(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1, 0x893c1216, 0x7145ceaf, 0xaa53c8ef, 0x72baeaa7);
   NAu256 u03 = NA_ZERO_u256;
   NAu256 u2;
   
@@ -202,6 +202,14 @@ void testNAInt256Arithmetic(void) {
   naTest(equali256(i2, 0xfb617c69, 0x5c5a548c, 0x92f837d5, 0x67836ab8, 0xeaeb5cff, 0xf6811350, 0x243c3b89, 0x31739396));
   i2 = naSubi256(i01, i02);
   naTest(equali256(i2, 0xf7036f50, 0x841118cc, 0x663c728b, 0x17f4aacb, 0x065f2676, 0xcdd82d7a, 0x3d996d1e, 0x37ac510c));
+
+  
+  // i01 = 112 715 055 111 280 137 671 819 803 161 321 393 840 964 156 394 864 124 674 071 607 282 282 294 932 049  
+  // i01 = 112715055111280137671819803161321393840964156394864124674071607282282294932049  
+  //-13,863,951,778,687,456,933,633,835,788,842,531,442,438,591,236,568,287,334,910,807,695,720,722,276,642,027
+  // 88 44c15ed8 96313b20 21d911d1 60a6d4cd 88996af7 d48eef61 7f2bfbc8 3ed69315 
+  //NAi256 i04 =   naMakei256WithDouble(-123.);
+
   i2 = naMuli256(i01, i04);
   naTest(equali256(i2, 0x44c15ed8, 0x96313b20, 0x21d911d1, 0x60a6d4cd, 0x88996af7, 0xd48eef61, 0x7f2bfbc8, 0x3ed69315));
   i2 = naMuli256(i02, i04);
@@ -247,8 +255,8 @@ void benchmarkNAInt256Arithmetic(void) {
   NAu256 u;
 
   naBenchmark(naNegi256(randi256));
-  naBenchmark((i = randi256, (void)naInci256(i), i));
-  naBenchmark((i = randi256, (void)naDeci256(i), i));
+  naBenchmark((i = randi256, (void)naInci256(i)));
+  naBenchmark((i = randi256, (void)naDeci256(i)));
 
   naBenchmark(naAddi256(randi256, randi256));
   naBenchmark(naSubi256(randi256, randi256));
@@ -256,8 +264,8 @@ void benchmarkNAInt256Arithmetic(void) {
   naBenchmark(naDivi256(randi256, randi256));
   naBenchmark(naModi256(randi256, randi256));
 
-  naBenchmark((u = randu256, (void)naIncu256(u), u));
-  naBenchmark((u = randu256, (void)naDecu256(u), u));
+  naBenchmark((u = randu256, (void)naIncu256(u)));
+  naBenchmark((u = randu256, (void)naDecu256(u)));
 
   naBenchmark(naAddu256(randu256, randu256));
   naBenchmark(naSubu256(randu256, randu256));

@@ -27,7 +27,7 @@
 
 #define NA_T_USE_BACKPOINTERS 0
   #define NA_T_DONT_MOVE_DOWN_COMPARATOR Greater
-  #define NA_T_DONT_MOVE_UP_COMPARATOR Less
+  #define NA_T_DONT_MOVE_UP_COMPARATOR Smaller
     #define NA_T_TYPE double
       #include "NAHeapT.h"
     #undef NA_T_TYPE
@@ -46,7 +46,7 @@
   #undef NA_T_DONT_MOVE_DOWN_COMPARATOR
   #undef NA_T_DONT_MOVE_UP_COMPARATOR
 
-  #define NA_T_DONT_MOVE_DOWN_COMPARATOR Less
+  #define NA_T_DONT_MOVE_DOWN_COMPARATOR Smaller
   #define NA_T_DONT_MOVE_UP_COMPARATOR Greater
     #define NA_T_TYPE double
       #include "NAHeapT.h"
@@ -69,7 +69,7 @@
 
 #define NA_T_USE_BACKPOINTERS 1
   #define NA_T_DONT_MOVE_DOWN_COMPARATOR Greater
-  #define NA_T_DONT_MOVE_UP_COMPARATOR Less
+  #define NA_T_DONT_MOVE_UP_COMPARATOR Smaller
     #define NA_T_TYPE double
       #include "NAHeapT.h"
     #undef NA_T_TYPE
@@ -88,7 +88,7 @@
   #undef NA_T_DONT_MOVE_DOWN_COMPARATOR
   #undef NA_T_DONT_MOVE_UP_COMPARATOR
 
-  #define NA_T_DONT_MOVE_DOWN_COMPARATOR Less
+  #define NA_T_DONT_MOVE_DOWN_COMPARATOR Smaller
   #define NA_T_DONT_MOVE_UP_COMPARATOR Greater
     #define NA_T_TYPE double
       #include "NAHeapT.h"
@@ -168,10 +168,10 @@ NA_HDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, con
   if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
   }
-  newIndex = heap->moveDown(heap, key, (int64)(heap->count + 1));
+  newIndex = heap->moveDown(heap, key, naCastSizeToi64(heap->count + 1));
   theData = (NAHeapEntry*)(heap->data);
-  theData[newIndex].ptr = naMakePtrWithDataConst(data);
-  theData[newIndex].key = key;
+  theData[naCasti64ToSize(newIndex)].ptr = naMakePtrWithDataConst(data);
+  theData[naCasti64ToSize(newIndex)].key = key;
   heap->count++;
 }
 
@@ -187,20 +187,20 @@ NA_HDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const
   if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
   }
-  newIndex = heap->moveDown(heap, key, (int64)(heap->count + 1));
+  newIndex = heap->moveDown(heap, key, naCastSizeToi64(heap->count + 1));
   theData = (NAHeapBackEntry*)(heap->data);
-  theData[newIndex].ptr = naMakePtrWithDataConst(data);
-  theData[newIndex].key = key;
+  theData[naCasti64ToSize(newIndex)].ptr = naMakePtrWithDataConst(data);
+  theData[naCasti64ToSize(newIndex)].key = key;
   if(backPointer) {
-    theData[newIndex].backPointer = backPointer;
+    theData[naCasti64ToSize(newIndex)].backPointer = backPointer;
   }else{
     // The element 0 of the data field is a dummy field which is more than
     // wide enough to store an int64.
-    theData[newIndex].backPointer = heap->data;
+    theData[naCasti64ToSize(newIndex)].backPointer = heap->data;
     // Bad, bad programming style, but using this trick, a lot of conditional
     // code can be omitted.
   }
-  *(theData[newIndex].backPointer) = newIndex;
+  *(theData[naCasti64ToSize(newIndex)].backPointer) = newIndex;
   heap->count++;
 }
 
@@ -219,10 +219,10 @@ NA_HDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const v
   if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
   }
-  newIndex = heap->moveDown(heap, key, (int64)(heap->count + 1));
+  newIndex = heap->moveDown(heap, key, naCastSizeToi64(heap->count + 1));
   theData = (NAHeapEntry*)(heap->data);
-  theData[newIndex].ptr = naMakePtrWithDataMutable(data);
-  theData[newIndex].key = key;
+  theData[naCasti64ToSize(newIndex)].ptr = naMakePtrWithDataMutable(data);
+  theData[naCasti64ToSize(newIndex)].key = key;
   heap->count++;
 }
 
@@ -238,20 +238,20 @@ NA_HDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const voi
   if(heap->autoGrow && (heap->count == heap->maxCount)) {
     na_GrowHeap(heap);
   }
-  newIndex = heap->moveDown(heap, key, (int64)(heap->count + 1));
+  newIndex = heap->moveDown(heap, key, naCastSizeToi64(heap->count + 1));
   theData = (NAHeapBackEntry*)(heap->data);
-  theData[newIndex].ptr = naMakePtrWithDataMutable(data);
-  theData[newIndex].key = key;
+  theData[naCasti64ToSize(newIndex)].ptr = naMakePtrWithDataMutable(data);
+  theData[naCasti64ToSize(newIndex)].key = key;
   if(backPointer) {
-    theData[newIndex].backPointer = backPointer;
+    theData[naCasti64ToSize(newIndex)].backPointer = backPointer;
   }else{
     // The element 0 of the data field is a dummy field which is more than
     // wide enough to store an int64.
-    theData[newIndex].backPointer = heap->data;
+    theData[naCasti64ToSize(newIndex)].backPointer = heap->data;
     // Bad, bad programming style, but using this trick, a lot of conditional
     // code can be omitted.
   }
-  *(theData[newIndex].backPointer) = newIndex;
+  *(theData[naCasti64ToSize(newIndex)].backPointer) = newIndex;
   heap->count++;
 }
 
@@ -267,8 +267,8 @@ NA_HDEF const void* na_RemoveHeapRootConstNoBack(NAHeap* heap) {
   returnValue = naGetPtrConst(theData[1].ptr);
   heap->count--;
   if(heap->count) {
-    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
-    theData[curIndex] = theData[heap->count + 1];
+    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, NA_ONE_i64);
+    theData[naCasti64ToSize(curIndex)] = theData[heap->count + 1];
   }
   return returnValue;
 }
@@ -283,12 +283,12 @@ NA_HDEF const void* na_RemoveHeapRootConstBack(NAHeap* heap) {
       naError("Heap is empty.");
   #endif
   returnValue = naGetPtrConst(theData[1].ptr);
-  *(theData[1].backPointer) = 0;
+  *(theData[1].backPointer) = NA_ZERO_i64;
   heap->count--;
   if(heap->count) {
-    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
-    theData[curIndex] = theData[heap->count + 1];
-    *(theData[curIndex].backPointer) = curIndex;
+    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, NA_ONE_i64);
+    theData[naCasti64ToSize(curIndex)] = theData[heap->count + 1];
+    *(theData[naCasti64ToSize(curIndex)].backPointer) = curIndex;
   }
   return returnValue;
 }
@@ -305,8 +305,8 @@ NA_HDEF void* na_RemoveHeapRootMutableNoBack(NAHeap* heap) {
   returnValue = naGetPtrMutable(theData[1].ptr);
   heap->count--;
   if(heap->count) {
-    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
-    theData[curIndex] = theData[heap->count + 1];
+    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, NA_ONE_i64);
+    theData[naCasti64ToSize(curIndex)] = theData[heap->count + 1];
   }
   return returnValue;
 }
@@ -320,12 +320,12 @@ NA_HDEF void* na_RemoveHeapRootMutableBack(NAHeap* heap) {
       naError("Heap is empty.");
   #endif
   returnValue = naGetPtrMutable(theData[1].ptr);
-  *(theData[1].backPointer) = 0;
+  *(theData[1].backPointer) = NA_ZERO_i64;
   heap->count--;
   if(heap->count) {
-    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, 1);
-    theData[curIndex] = theData[heap->count + 1];
-    *(theData[curIndex].backPointer) = curIndex;
+    int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, NA_ONE_i64);
+    theData[naCasti64ToSize(curIndex)] = theData[heap->count + 1];
+    *(theData[naCasti64ToSize(curIndex)].backPointer) = curIndex;
   }
   return returnValue;
 }
@@ -347,18 +347,18 @@ NA_HDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, int64 backPointer) {
   NAHeapBackEntry* theData = (NAHeapBackEntry*)(heap->data);
   const void* returnValue;
   #if NA_DEBUG
-    if(backPointer > (int64)heap->count)
+    if(naGreateri64(backPointer, naCastSizeToi64(heap->count)))
       naError("backPointer makes no sense.");
-    if(backPointer == 0)
+    if(naEquali64(backPointer, NA_ZERO_i64))
       naError("backPointer says that element is not part of the heap.");
   #endif
-  returnValue = naGetPtrConst(theData[backPointer].ptr);
-  *(theData[backPointer].backPointer) = 0;
+  returnValue = naGetPtrConst(theData[naCasti64ToSize(backPointer)].ptr);
+  *(theData[naCasti64ToSize(backPointer)].backPointer) = NA_ZERO_i64;
   heap->count--;
   if(heap->count) {
     int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, backPointer);
-    theData[curIndex] = theData[heap->count + 1];
-    *(theData[curIndex].backPointer) = curIndex;
+    theData[naCasti64ToSize(curIndex)] = theData[heap->count + 1];
+    *(theData[naCasti64ToSize(curIndex)].backPointer) = curIndex;
   }
   return returnValue;
 }
@@ -379,18 +379,18 @@ NA_HDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, int64 backPointer) {
   NAHeapBackEntry* theData = (NAHeapBackEntry*)(heap->data);
   void* returnValue;
   #if NA_DEBUG
-    if(backPointer > (int64)heap->count)
+    if(naGreateri64(backPointer, naCastSizeToi64(heap->count)))
       naError("backPointer makes no sense.");
-    if(backPointer == 0)
+    if(naEquali64(backPointer, NA_ZERO_i64))
       naError("backPointer says that element is not part of the heap.");
   #endif
-  returnValue = naGetPtrMutable(theData[backPointer].ptr);
-  *(theData[backPointer].backPointer) = 0;
+  returnValue = naGetPtrMutable(theData[naCasti64ToSize(backPointer)].ptr);
+  *(theData[naCasti64ToSize(backPointer)].backPointer) = NA_ZERO_i64;
   heap->count--;
   if(heap->count) {
     int64 curIndex = heap->moveUp(heap, theData[heap->count + 1].key, backPointer);
-    theData[curIndex] = theData[heap->count + 1];
-    *(theData[curIndex].backPointer) = curIndex;
+    theData[naCasti64ToSize(curIndex)] = theData[heap->count + 1];
+    *(theData[naCasti64ToSize(curIndex)].backPointer) = curIndex;
   }
   return returnValue;
 }
@@ -411,16 +411,16 @@ NA_HDEF void na_UpdateHeapElementBack(NAHeap* heap, int64 backPointer) {
   NAHeapBackEntry tmp;
   int64 curIndex;
   #if NA_DEBUG
-    if(backPointer > (int64)heap->count)
+    if(naGreateri64(backPointer, naCastSizeToi64(heap->count)))
       naError("backPointer makes no sense.");
-    if(backPointer == 0)
+    if(naEquali64(backPointer, NA_ZERO_i64))
       naError("backPointer says that element is not part of the heap.");
   #endif
-  tmp = theData[backPointer];
+  tmp = theData[naCasti64ToSize(backPointer)];
   curIndex = heap->moveUp(heap, tmp.key, backPointer);
   curIndex = heap->moveDown(heap, tmp.key, curIndex);
-  theData[curIndex] = tmp;
-  *(theData[curIndex].backPointer) = curIndex;
+  theData[naCasti64ToSize(curIndex)] = tmp;
+  *(theData[naCasti64ToSize(curIndex)].backPointer) = curIndex;
 }
 
 
@@ -458,38 +458,38 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, size_t count, uint32 flags) {
     switch(flags & NA_HEAP_DATATYPE_MASK) {
     case NA_HEAP_USES_DOUBLE_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP) {
-        heap->moveDown = NA_T3(na_HeapMoveDown, Less,   double, 0);
+        heap->moveDown = NA_T3(na_HeapMoveDown, Smaller, double, 0);
         heap->moveUp   = NA_T3(na_HeapMoveUp,   Greater, double, 0);
       }else{
         heap->moveDown = NA_T3(na_HeapMoveDown, Greater, double, 0);
-        heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   double, 0);
+        heap->moveUp   = NA_T3(na_HeapMoveUp,   Smaller, double, 0);
       }
       break;
     case NA_HEAP_USES_FLOAT_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP) {
-        heap->moveDown = NA_T3(na_HeapMoveDown, Less,   float, 0);
+        heap->moveDown = NA_T3(na_HeapMoveDown, Smaller, float, 0);
         heap->moveUp   = NA_T3(na_HeapMoveUp,   Greater, float, 0);
       }else{
         heap->moveDown = NA_T3(na_HeapMoveDown, Greater, float, 0);
-        heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   float, 0);
+        heap->moveUp   = NA_T3(na_HeapMoveUp,   Smaller, float, 0);
       }
       break;
     case NA_HEAP_USES_INT64_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP) {
-        heap->moveDown = NA_T3(na_HeapMoveDown, Less,   int64, 0);
+        heap->moveDown = NA_T3(na_HeapMoveDown, Smaller, int64, 0);
         heap->moveUp   = NA_T3(na_HeapMoveUp,   Greater, int64, 0);
       }else{
         heap->moveDown = NA_T3(na_HeapMoveDown, Greater, int64, 0);
-        heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   int64, 0);
+        heap->moveUp   = NA_T3(na_HeapMoveUp,   Smaller, int64, 0);
       }
       break;
     case NA_HEAP_USES_DATETIME_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP) {
-        heap->moveDown = NA_T3(na_HeapMoveDown, Less,   NADateTime, 0);
+        heap->moveDown = NA_T3(na_HeapMoveDown, Smaller, NADateTime, 0);
         heap->moveUp   = NA_T3(na_HeapMoveUp,   Greater, NADateTime, 0);
       }else{
         heap->moveDown = NA_T3(na_HeapMoveDown, Greater, NADateTime, 0);
-        heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   NADateTime, 0);
+        heap->moveUp   = NA_T3(na_HeapMoveUp,   Smaller, NADateTime, 0);
       }
       break;
     default:
@@ -518,38 +518,38 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, size_t count, uint32 flags) {
     switch(flags & NA_HEAP_DATATYPE_MASK) {
     case NA_HEAP_USES_DOUBLE_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP) {
-        heap->moveDown = NA_T3(na_HeapMoveDown, Less,   double, 1);
+        heap->moveDown = NA_T3(na_HeapMoveDown, Smaller, double, 1);
         heap->moveUp   = NA_T3(na_HeapMoveUp,   Greater, double, 1);
       }else{
         heap->moveDown = NA_T3(na_HeapMoveDown, Greater, double, 1);
-        heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   double, 1);
+        heap->moveUp   = NA_T3(na_HeapMoveUp,   Smaller, double, 1);
       }
       break;
     case NA_HEAP_USES_FLOAT_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP) {
-        heap->moveDown = NA_T3(na_HeapMoveDown, Less,   float, 1);
+        heap->moveDown = NA_T3(na_HeapMoveDown, Smaller, float, 1);
         heap->moveUp   = NA_T3(na_HeapMoveUp,   Greater, float, 1);
       }else{
         heap->moveDown = NA_T3(na_HeapMoveDown, Greater, float, 1);
-        heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   float, 1);
+        heap->moveUp   = NA_T3(na_HeapMoveUp,   Smaller, float, 1);
       }
       break;
     case NA_HEAP_USES_INT64_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP) {
-        heap->moveDown = NA_T3(na_HeapMoveDown, Less,   int64, 1);
+        heap->moveDown = NA_T3(na_HeapMoveDown, Smaller, int64, 1);
         heap->moveUp   = NA_T3(na_HeapMoveUp,   Greater, int64, 1);
       }else{
         heap->moveDown = NA_T3(na_HeapMoveDown, Greater, int64, 1);
-        heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   int64, 1);
+        heap->moveUp   = NA_T3(na_HeapMoveUp,   Smaller, int64, 1);
       }
       break;
     case NA_HEAP_USES_DATETIME_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP) {
-        heap->moveDown = NA_T3(na_HeapMoveDown, Less,   NADateTime, 1);
+        heap->moveDown = NA_T3(na_HeapMoveDown, Smaller, NADateTime, 1);
         heap->moveUp   = NA_T3(na_HeapMoveUp,   Greater, NADateTime, 1);
       }else{
         heap->moveDown = NA_T3(na_HeapMoveDown, Greater, NADateTime, 1);
-        heap->moveUp   = NA_T3(na_HeapMoveUp,   Less,   NADateTime, 1);
+        heap->moveUp   = NA_T3(na_HeapMoveUp,   Smaller, NADateTime, 1);
       }
       break;
     default:

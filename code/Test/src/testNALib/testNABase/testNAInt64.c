@@ -17,14 +17,14 @@ NABool equali64(NAi64 i, uint32 goal1, uint32 goal0) {
 
 void testNAInt64Make(void) {
   NAi64 i1 = naMakei64(-0x12345678, 0x98765432);
-  NAi64 i2 = naMakei64WithLo(-0x12345678);
-  NAi64 i3 = naMakei64WithDouble(-123456789012345.);
-  NAi64 i4 = naMakei64WithBinary(0x12345678, 0x98765432);
+  NAi64 i2 = naCasti32Toi64(-0x12345678);
+  NAi64 i3 = naCastDoubleToi64(-123456789012345.);
+  NAi64 i4 = naMakei64Withu32(0x12345678, 0x98765432);
   NAu64 u1 = naMakeu64(0x98765432, 0x12345678);
   NAu64 u2 = naMakeu64WithLo(0x12345678);
   NAu64 u3 = naMakeu64WithDouble(123456789012345.);
   NAu64 u4 = naMakeu64WithLiteralLo(0x12345678);
-  NAu64 u5 = naMakeu64WithBinary(0x98765432, 0x12345678);
+  NAu64 u5 = naMakeu64Withu32(0x98765432, 0x12345678);
 
   naTest(equali64(i1, 0xedcba988, 0x98765432));
   naTest(equali64(i2, 0xffffffff, 0xedcba988));
@@ -39,24 +39,31 @@ void testNAInt64Make(void) {
 
 
 
+void testNAInt64Cast(void) {
+  naTest(naCasti64ToDouble(naMakei64(0x00200000, 0x00000000)) == 0x1.p53);
+  naTest(naCasti64ToDouble(naNegi64(naMakei64(0x00200000, 0x00000000))) == -0x1.p53);
+}
+
+
+
 void benchmarkNAInt64Make(void) {
   naBenchmark(naMakei64(-(int32)naTestIn, naTestIn));
-  naBenchmark(naMakei64WithLo(-(int32)naTestIn));
-  naBenchmark(naMakei64WithDouble(-((int32)naTestIn / NA_MAX_i32)));
-  naBenchmark(naMakei64WithBinary(naTestIn, naTestIn));
+  naBenchmark(naCasti32Toi64(-(int32)naTestIn));
+  naBenchmark(naCastDoubleToi64(-((int32)naTestIn / NA_MAX_i32)));
+  naBenchmark(naMakei64Withu32(naTestIn, naTestIn));
   naBenchmark(naMakeu64(naTestIn, naTestIn));
   naBenchmark(naMakeu64WithLo(naTestIn));
   naBenchmark(naMakeu64WithDouble((naTestIn / NA_MAX_u32)));
-  naBenchmark(naMakeu64WithBinary(naTestIn, naTestIn));
+  naBenchmark(naMakeu64Withu32(naTestIn, naTestIn));
 }
 
 
 
 void testNAInt64Binary(void) {
-  NAi64 i = naMakei64WithDouble(-123456789012345.); 
-  NAi64 term = naMakei64WithBinary(0x55555555, 0x55555555);
-  NAu64 u = naMakeu64WithBinary(0x12345678, 0x56473829);
-  NAu64 uterm = naMakeu64WithBinary(0x55555555, 0x55555555);
+  NAi64 i = naCastDoubleToi64(-123456789012345.); 
+  NAi64 term = naMakei64Withu32(0x55555555, 0x55555555);
+  NAu64 u = naMakeu64Withu32(0x12345678, 0x56473829);
+  NAu64 uterm = naMakeu64Withu32(0x55555555, 0x55555555);
 
   NAi64 i1 = naNoti64(i);
   NAi64 i2 = naOri64(i, term);
@@ -89,8 +96,8 @@ void testNAInt64Binary(void) {
 
 
 
-#define randi64 naMakei64WithBinary(naTestIn, naTestIn)
-#define randu64 naMakeu64WithBinary(naTestIn, naTestIn)
+#define randi64 naMakei64Withu32(naTestIn, naTestIn)
+#define randu64 naMakeu64Withu32(naTestIn, naTestIn)
 
 void benchmarkNAInt64Binary(void) {
   naBenchmark(naNoti64(randi64));
@@ -111,8 +118,8 @@ void benchmarkNAInt64Binary(void) {
 
 
 void testNAInt64Comparison(void) {
-  NAi64 i1 = naMakei64WithDouble(-123456789012345.);
-  NAi64 i2 = naMakei64WithDouble(-123456.);
+  NAi64 i1 = naCastDoubleToi64(-123456789012345.);
+  NAi64 i2 = naCastDoubleToi64(-123456.);
   NAu64 u1 = naMakeu64WithDouble(123456789012345.);
   NAu64 u2 = naMakeu64WithDouble(123456.);
 
@@ -164,10 +171,10 @@ void benchmarkNAInt64Comparison(void) {
 
 
 void testNAInt64Arithmetic(void) {
-  NAi64 i01 = naMakei64WithDouble(-123456789012345.);
-  NAi64 i02 = naMakei64WithDouble(987654321987.);
+  NAi64 i01 = naCastDoubleToi64(-123456789012345.);
+  NAi64 i02 = naCastDoubleToi64(987654321987.);
   NAi64 i03 = NA_ZERO_i64;
-  NAi64 i04 = naMakei64WithDouble(-123.);
+  NAi64 i04 = naCastDoubleToi64(-123.);
   NAi64 i1, i2;
   NAu64 u01 = naMakeu64WithDouble(123456789012345.);
   NAu64 u02 = naMakeu64WithDouble(987654321987.);
@@ -240,8 +247,8 @@ void benchmarkNAInt64Arithmetic(void) {
   NAu64 u;
 
   naBenchmark(naNegi64(randi64));
-  naBenchmark((i = randi64, naInci64(i), i));
-  naBenchmark((i = randi64, naDeci64(i), i));
+  naBenchmark((i = randi64, naInci64(i)));
+  naBenchmark((i = randi64, naDeci64(i)));
 
   naBenchmark(naAddi64(randi64, randi64));
   naBenchmark(naSubi64(randi64, randi64));
@@ -249,8 +256,8 @@ void benchmarkNAInt64Arithmetic(void) {
   naBenchmark(naDivi64(randi64, randi64));
   naBenchmark(naModi64(randi64, randi64));
 
-  naBenchmark((u = randu64, naIncu64(u), u));
-  naBenchmark((u = randu64, naDecu64(u), u));
+  naBenchmark((u = randu64, naIncu64(u)));
+  naBenchmark((u = randu64, naDecu64(u)));
 
   naBenchmark(naAddu64(randu64, randu64));
   naBenchmark(naSubu64(randu64, randu64));
@@ -263,6 +270,7 @@ void benchmarkNAInt64Arithmetic(void) {
 
 void testNAInt64(void) {
   naTestFunction(testNAInt64Make);
+  naTestFunction(testNAInt64Cast);
   naTestFunction(testNAInt64Binary);
   naTestFunction(testNAInt64Comparison);
   naTestFunction(testNAInt64Arithmetic);

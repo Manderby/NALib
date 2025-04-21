@@ -89,31 +89,31 @@ NA_DEF NAUTF8Char* naPriux32(uint32 value) {
 NA_DEF NAUTF8Char* naPriix32(int32 value) {
   return naAllocSprintf(NA_TRUE, "%08x", (int)value);
 }
-NA_DEF NAUTF8Char* naPriux64(NAu64 value) {
+NA_DEF NAUTF8Char* naPriux64(uint64 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x",
     naGetu64Hi(value),
     naGetu64Lo(value));
 }
-NA_DEF NAUTF8Char* naPriix64(NAi64 value) {
+NA_DEF NAUTF8Char* naPriix64(int64 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x",
     naGeti64Hi(value),
     naGeti64Lo(value));
 }
-NA_DEF NAUTF8Char* naPriux128(NAu128 value) {
+NA_DEF NAUTF8Char* naPriux128(uint128 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x",
     naGetu64Hi(naGetu128Hi(value)),
     naGetu64Lo(naGetu128Hi(value)),
     naGetu64Hi(naGetu128Lo(value)),
     naGetu64Lo(naGetu128Lo(value)));
 }
-NA_DEF NAUTF8Char* naPriix128(NAi128 value) {
+NA_DEF NAUTF8Char* naPriix128(int128 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x",
     naGeti64Hi(naGeti128Hi(value)),
     naGeti64Lo(naGeti128Hi(value)),
     naGetu64Hi(naGeti128Lo(value)),
     naGetu64Lo(naGeti128Lo(value)));
 }
-NA_DEF NAUTF8Char* naPriux256(NAu256 value) {
+NA_DEF NAUTF8Char* naPriux256(uint256 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x%08x%08x%08x%08x",
     naGetu64Hi(naGetu128Hi(naGetu256Hi(value))),
     naGetu64Lo(naGetu128Hi(naGetu256Hi(value))),
@@ -124,7 +124,7 @@ NA_DEF NAUTF8Char* naPriux256(NAu256 value) {
     naGetu64Hi(naGetu128Lo(naGetu256Lo(value))),
     naGetu64Lo(naGetu128Lo(naGetu256Lo(value))));
 }
-NA_DEF NAUTF8Char* naPriix256(NAi256 value) {
+NA_DEF NAUTF8Char* naPriix256(int256 value) {
   return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x%08x%08x%08x%08x",
     naGeti64Hi(naGeti128Hi(naGeti256Hi(value))),
     naGeti64Lo(naGeti128Hi(naGeti256Hi(value))),
@@ -309,7 +309,7 @@ NA_HDEF void na_DestructString(NAString* string) {
 
 
 NA_DEF size_t naGetStringByteSize(const NAString* string) {
-  return (size_t)naGetBufferRange(string->buffer).length;
+  return naCasti64ToSize(naGetBufferRange(string->buffer).length);
 }
 
 
@@ -328,13 +328,13 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string) {
     NAUTF8Char* newStr;
     numChars = naGetBufferRange(string->buffer).length;
     #if NA_DEBUG
-      if(!numChars)
+      if(naEquali64(numChars, NA_ZERO_i64))
         naError("String is empty");
     #endif
-    newStr = naMallocTmp((size_t)(numChars + 1));
+    newStr = naMallocTmp(naCasti64ToSize(naAddi64(numChars, NA_ONE_i64)));
     naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer));
     naWriteBufferToData(string->buffer, newStr);
-    newStr[numChars] = '\0';
+    newStr[naCasti64ToSize(numChars)] = '\0';
     #if NA_DEBUG
       mutablestring->cachedStr = newStr;
     #endif
@@ -378,7 +378,7 @@ NA_HDEF int64 naGetLastSlashOffset(const NAString* filePath) {
     naGetRangei64Max(naGetBufferRange(filePath->buffer)),
     NA_FALSE);
     
-  if(slashOffset == NA_INVALID_MEMORY_INDEX) {
+  if(naEquali64(slashOffset, NA_INVALID_MEMORY_INDEX)) {
     int64 backSlashOffset = naSearchBufferByteOffset(
       filePath->buffer,
       NA_PATH_DELIMITER_WIN,
@@ -397,10 +397,10 @@ NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath) {
   NAString* string;
   naCacheBufferRange(filePath->buffer, filePath->buffer->range);
   int64 slashOffset = naGetLastSlashOffset(filePath);
-  if(slashOffset != NA_INVALID_MEMORY_INDEX) {
-    string = naNewStringExtraction(filePath, 0, slashOffset);
+  if(!naEquali64(slashOffset, NA_INVALID_MEMORY_INDEX)) {
+    string = naNewStringExtraction(filePath, NA_ZERO_i64, slashOffset);
   }else{
-    string = naNewStringExtraction(filePath, 0, -1);
+    string = naNewStringExtraction(filePath, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }
 
   #if NA_STRING_ALWAYS_CACHE == 1
@@ -416,8 +416,8 @@ NA_DEF NAString* naNewStringWithBaseNameOfPath(const NAString* filePath) {
   naCacheBufferRange(filePath->buffer, filePath->buffer->range);
   int64 slashOffset = naGetLastSlashOffset(filePath);
   // If slashOffset is invalid, return all leading.
-  if(slashOffset == NA_INVALID_MEMORY_INDEX) {
-    slashOffset = -1;
+  if(naEquali64(slashOffset, NA_INVALID_MEMORY_INDEX)) {
+    slashOffset = NA_MINUS_ONE_i64;
   }
   int64 dotOffset = naSearchBufferByteOffset(
     filePath->buffer,
@@ -425,10 +425,10 @@ NA_DEF NAString* naNewStringWithBaseNameOfPath(const NAString* filePath) {
     naGetRangei64Max(naGetBufferRange(filePath->buffer)),
     NA_FALSE);
   // If dotpos is invalid, return the tailing characters.
-  if(dotOffset == NA_INVALID_MEMORY_INDEX) {
-    string = naNewStringExtraction(filePath, slashOffset + 1, -1);
+  if(naEquali64(dotOffset, NA_INVALID_MEMORY_INDEX)) {
+    string = naNewStringExtraction(filePath, naAddi64(slashOffset, NA_ONE_i64), NA_MINUS_ONE_i64);
   }else{
-    string = naNewStringExtraction(filePath, slashOffset + 1, dotOffset - slashOffset - 1);
+    string = naNewStringExtraction(filePath, naAddi64(slashOffset, NA_ONE_i64), naSubi64(naSubi64(dotOffset, slashOffset), NA_ONE_i64));
   }
   #if NA_STRING_ALWAYS_CACHE == 1
   naGetStringUTF8Pointer(string);
@@ -445,10 +445,10 @@ NA_DEF NAString* naNewStringWithSuffixOfPath(const NAString* filePath) {
     NA_SUFFIX_DELIMITER,
     naGetRangei64Max(naGetBufferRange(filePath->buffer)),
     NA_FALSE);
-  if(dotOffset == NA_INVALID_MEMORY_INDEX) {
+  if(naEquali64(dotOffset, NA_INVALID_MEMORY_INDEX)) {
     string = naNewString();
   }else{
-    string = naNewStringExtraction(filePath, dotOffset + 1, -1);
+    string = naNewStringExtraction(filePath, naAddi64(dotOffset, NA_ONE_i64), NA_MINUS_ONE_i64);
   }
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(string);
@@ -556,7 +556,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputString) {
   }
   buffer = naCreateBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputString->buffer);
-  naIterateBuffer(&iter, 1);
+  naIterateBuffer(&iter, NA_ONE_i64);
   outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtInitial(&iter)) {
     NAUTF8Char curChar = naReadBufferi8(&iter);
@@ -826,7 +826,7 @@ NA_DEF NABool naEqualStringToUTF8CString(const NAString* string1, const NAUTF8Ch
 NA_DEF int8 naParseStringi8(const NAString* string) {
   int8 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
-  naLocateBufferAtStart(&iter, 0);
+  naLocateBufferAtStart(&iter, NA_ZERO_i64);
   retValue = naParseBufferi8(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retValue;
@@ -834,7 +834,7 @@ NA_DEF int8 naParseStringi8(const NAString* string) {
 NA_DEF int16 naParseStringi16(const NAString* string) {
   int16 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
-  naLocateBufferAtStart(&iter, 0);
+  naLocateBufferAtStart(&iter, NA_ZERO_i64);
   retValue = naParseBufferi16(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retValue;
@@ -842,15 +842,15 @@ NA_DEF int16 naParseStringi16(const NAString* string) {
 NA_DEF int32 naParseStringi32(const NAString* string) {
   int32 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
-  naLocateBufferAtStart(&iter, 0);
+  naLocateBufferAtStart(&iter, NA_ZERO_i64);
   retValue = naParseBufferi32(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retValue;
 }
-NA_DEF NAi64 naParseStringi64(const NAString* string) {
-  NAi64 retValue;
+NA_DEF int64 naParseStringi64(const NAString* string) {
+  int64 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
-  naLocateBufferAtStart(&iter, 0);
+  naLocateBufferAtStart(&iter, NA_ZERO_i64);
   retValue = naParseBufferi64(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retValue;
@@ -860,7 +860,7 @@ NA_DEF NAi64 naParseStringi64(const NAString* string) {
 NA_DEF uint8 naParseStringu8(const NAString* string) {
   uint8 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
-  naLocateBufferAtStart(&iter, 0);
+  naLocateBufferAtStart(&iter, NA_ZERO_i64);
   retValue = naParseBufferu8(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retValue;
@@ -868,7 +868,7 @@ NA_DEF uint8 naParseStringu8(const NAString* string) {
 NA_DEF uint16 naParseStringu16(const NAString* string) {
   uint16 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
-  naLocateBufferAtStart(&iter, 0);
+  naLocateBufferAtStart(&iter, NA_ZERO_i64);
   retValue = naParseBufferu16(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retValue;
@@ -876,15 +876,15 @@ NA_DEF uint16 naParseStringu16(const NAString* string) {
 NA_DEF uint32 naParseStringu32(const NAString* string) {
   uint32 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
-  naLocateBufferAtStart(&iter, 0);
+  naLocateBufferAtStart(&iter, NA_ZERO_i64);
   retValue = naParseBufferu32(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retValue;
 }
-NA_DEF NAu64 naParseStringu64(const NAString* string) {
-  NAu64 retValue;
+NA_DEF uint64 naParseStringu64(const NAString* string) {
+  uint64 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
-  naLocateBufferAtStart(&iter, 0);
+  naLocateBufferAtStart(&iter, NA_ZERO_i64);
   retValue = naParseBufferu64(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retValue;
@@ -903,7 +903,7 @@ NA_DEF float naParseStringFloat(const NAString* string) {
   }
   buf = naMalloc((len + 1) * sizeof(NAUTF8Char));
   bufiter = naMakeBufferAccessor(string->buffer);
-  naLocateBufferAtStart(&bufiter, 0);
+  naLocateBufferAtStart(&bufiter, NA_ZERO_i64);
   naReadBufferBytes(&bufiter, buf, len);
   naClearBufferIterator(&bufiter);
   retValue = (float)atof(buf);
@@ -923,7 +923,7 @@ NA_DEF double naParseStringDouble(const NAString* string) {
   }
   buf = naMalloc((len + 1) * sizeof(NAUTF8Char));
   bufiter = naMakeBufferAccessor(string->buffer);
-  naLocateBufferAtStart(&bufiter, 0);
+  naLocateBufferAtStart(&bufiter, NA_ZERO_i64);
   naReadBufferBytes(&bufiter, buf, len);
   naClearBufferIterator(&bufiter);
   retValue = atof(buf);

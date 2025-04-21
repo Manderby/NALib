@@ -9,7 +9,6 @@
 #if NA_OS == NA_OS_WINDOWS
   #include <Windows.h>
 #elif NA_OS == NA_OS_MAC_OS_X
-  #include <unistd.h>
   #include "malloc/malloc.h"
 #endif
 #include <stdlib.h>

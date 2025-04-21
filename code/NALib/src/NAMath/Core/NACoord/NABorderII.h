@@ -307,8 +307,8 @@ NA_IDEF NARangei32 naMakeRangei32WithBorder(NARangei32 range, NABorder1Di32 bord
 }
 NA_IDEF NARangei64 naMakeRangei64WithBorder(NARangei64 range, NABorder1Di64 border) {
   NARangei64 newRange;
-  newRange.origin = range.origin - border.left;
-  newRange.length = range.length + border.left + border.right;
+  newRange.origin = naSubi64(range.origin, border.left);
+  newRange.length = naAddi64(naAddi64(range.length, border.left), border.right);
   return newRange;
 }
 NA_IDEF NARanges naMakeRangesWithBorder(NARanges range, NABorder1Ds border) {
@@ -346,10 +346,10 @@ NA_IDEF NARecti32 naMakeRecti32WithBorder(NARecti32 rect, NABorder2Di32 border) 
 }
 NA_IDEF NARecti64 naMakeRecti64WithBorder(NARecti64 rect, NABorder2Di64 border) {
   NARecti64 newRect;
-  newRect.pos.x = rect.pos.x - border.left;
-  newRect.pos.y = rect.pos.y - border.bottom;
-  newRect.size.width = rect.size.width + border.left + border.right;
-  newRect.size.height = rect.size.height + border.bottom + border.top;
+  newRect.pos.x = naSubi64(rect.pos.x, border.left);
+  newRect.pos.y = naSubi64(rect.pos.y, border.bottom);
+  newRect.size.width = naAddi64(naAddi64(rect.size.width, border.left), border.right);
+  newRect.size.height = naAddi64(naAddi64(rect.size.height, border.bottom), border.top);
   return newRect;
 }
 NA_IDEF NARects naMakeRectsWithBorder(NARects rect, NABorder2Ds border) {
@@ -395,12 +395,12 @@ NA_IDEF NABoxi32 naMakeBoxi32WithBorder(NABoxi32 box, NABorder3Di32 border) {
 }
 NA_IDEF NABoxi64 naMakeBoxi64WithBorder(NABoxi64 box, NABorder3Di64 border) {
   NABoxi64 newBox;
-  newBox.vertex.x = box.vertex.x - border.left;
-  newBox.vertex.y = box.vertex.y - border.bottom;
-  newBox.vertex.z = box.vertex.z - border.back;
-  newBox.volume.width = box.volume.width + border.left + border.right;
-  newBox.volume.height = box.volume.height + border.bottom + border.top;
-  newBox.volume.depth = box.volume.depth + border.back + border.front;
+  newBox.vertex.x = naSubi64(box.vertex.x, border.left);
+  newBox.vertex.y = naSubi64(box.vertex.y, border.bottom);
+  newBox.vertex.z = naSubi64(box.vertex.z, border.back);
+  newBox.volume.width = naAddi64(naAddi64(box.volume.width, border.left), border.right);
+  newBox.volume.height = naAddi64(naAddi64(box.volume.height, border.bottom), border.top);
+  newBox.volume.depth = naAddi64(naAddi64(box.volume.depth, border.back), border.front);
   return newBox;
 }
 NA_IDEF NABoxs naMakeBoxsWithBorder(NABoxs box, NABorder3Ds border) {

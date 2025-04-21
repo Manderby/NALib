@@ -15,16 +15,16 @@ NA_HDEF int64 NA_T3(na_HeapMoveDown, NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE, 
   #else
     NAHeapEntry* entries = heap->data;
   #endif
-    int64 nextIndex = curIndex / 2;
+    int64 nextIndex = naDivi64(curIndex, naCastu32Toi64(2));
   
   // Go from the leaf to the root and test, where the new element shall lie.
-  while((nextIndex > 0) && NA_KEY_OP(NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE)(entries[nextIndex].key, key)) {
-    entries[curIndex] = entries[nextIndex];
+  while(naGreateri64(nextIndex, NA_ZERO_i64) && NA_KEY_OP(NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE)(entries[naCasti64ToSize(nextIndex)].key, key)) {
+    entries[naCasti64ToSize(curIndex)] = entries[naCasti64ToSize(nextIndex)];
     #if NA_T_USE_BACKPOINTERS
-      *(entries[curIndex].backPointer) = curIndex;
+      *(entries[naCasti64ToSize(curIndex)].backPointer) = curIndex;
     #endif
     curIndex = nextIndex;
-    nextIndex /= 2;
+    nextIndex = naDivi64(nextIndex, naCastu32Toi64(2));
   }
   
   return curIndex;
@@ -43,20 +43,20 @@ NA_HDEF int64 NA_T3(na_HeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T
     NAHeapEntry* entries = heap->data;
   #endif
 
-    int64 indexl = curIndex * 2 + 0;
-    int64 indexr = curIndex * 2 + 1;
+    int64 indexl = naAddi64(naMuli64(curIndex, naCastu32Toi64(2)), NA_ZERO_i64);
+    int64 indexr = naAddi64(naMuli64(curIndex, naCastu32Toi64(2)), NA_ONE_i64);
   // as long as there is at least one possible position... 
   while(NA_TRUE) {
   
-    if(indexr > (int64)heap->count) {
+    if(naGreateri64(indexr, naCastSizeToi64(heap->count))) {
       // There is at least one of the elements out of bounds.
       
-      if(indexl <= (int64)heap->count) {
+      if(naSmallerEquali64(indexl, naCastSizeToi64(heap->count))) {
         // only the left element must be checked. 
-        if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexl].key, key)) {
-          entries[curIndex] = entries[indexl];
+        if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[naCasti64ToSize(indexl)].key, key)) {
+          entries[naCasti64ToSize(curIndex)] = entries[naCasti64ToSize(indexl)];
           #if NA_T_USE_BACKPOINTERS
-            *(entries[curIndex].backPointer) = curIndex;
+            *(entries[naCasti64ToSize(curIndex)].backPointer) = curIndex;
           #endif
           curIndex = indexl;
         }
@@ -65,13 +65,13 @@ NA_HDEF int64 NA_T3(na_HeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T
       break;
     }
 
-    if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexl].key, entries[indexr].key)) {
+    if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[naCasti64ToSize(indexl)].key, entries[naCasti64ToSize(indexr)].key)) {
       // the left element is more important than the right 
-      if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexl].key, key)) {
+      if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[naCasti64ToSize(indexl)].key, key)) {
         // the left is more important than the key 
-        entries[curIndex] = entries[indexl];
+        entries[naCasti64ToSize(curIndex)] = entries[naCasti64ToSize(indexl)];
         #if NA_T_USE_BACKPOINTERS
-          *(entries[curIndex].backPointer) = curIndex;
+          *(entries[naCasti64ToSize(curIndex)].backPointer) = curIndex;
         #endif
         curIndex = indexl;
       }else{
@@ -80,11 +80,11 @@ NA_HDEF int64 NA_T3(na_HeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T
       }
     }else{
       // the right element is more important than the left
-      if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexr].key, key)) {
+      if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[naCasti64ToSize(indexr)].key, key)) {
         // the right is more important than the key 
-        entries[curIndex] = entries[indexr];
+        entries[naCasti64ToSize(curIndex)] = entries[naCasti64ToSize(indexr)];
         #if NA_T_USE_BACKPOINTERS
-          *(entries[curIndex].backPointer) = curIndex;
+          *(entries[naCasti64ToSize(curIndex)].backPointer) = curIndex;
         #endif
         curIndex = indexr;
       }else{
@@ -93,8 +93,8 @@ NA_HDEF int64 NA_T3(na_HeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T
       }
     }
 
-    indexl = curIndex * 2 + 0;
-    indexr = curIndex * 2 + 1;
+    indexl = naAddi64(naMuli64(curIndex, naCastu32Toi64(2)), NA_ZERO_i64);
+    indexr = naAddi64(naMuli64(curIndex, naCastu32Toi64(2)), NA_ONE_i64);
   }
   return curIndex;
 }

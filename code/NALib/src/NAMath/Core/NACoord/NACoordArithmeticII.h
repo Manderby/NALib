@@ -49,8 +49,8 @@ NA_IDEF NAPosi64 naAddPosi64Size(NAPosi64 pos, NASizei64 size) {
     if(!naIsSizei64Valid(size))
       naError("size is invalid.");
   #endif
-  newPos.x = pos.x + size.width;
-  newPos.y = pos.y + size.height;
+  newPos.x = naAddi64(pos.x, size.width);
+  newPos.y = naAddi64(pos.y, size.height);
   return newPos;
 }
 NA_IDEF NAPoss naAddPossSize(NAPoss pos, NASizes size) {
@@ -112,8 +112,8 @@ NA_IDEF NASizei64 naSubPosi64Pos(NAPosi64 pos1, NAPosi64 pos2) {
     if(!naIsPosi64Valid(pos2))
       naError("pos2 is invalid.");
   #endif
-  newSize.width  = pos1.x - pos2.x;
-  newSize.height = pos1.y - pos2.y;
+  newSize.width  = naSubi64(pos1.x, pos2.x);
+  newSize.height = naSubi64(pos1.y, pos2.y);
   return newSize;
 }
 NA_IDEF NASizes naSubPossPos(NAPoss pos1, NAPoss pos2) {
@@ -178,9 +178,9 @@ NA_IDEF NAVertexi64 naAddVertexi64Volume(NAVertexi64 vertex, NAVolumei64 volume)
     if(!naIsVolumei64Valid(volume))
       naError("volume is invalid.");
   #endif
-  newVertex.x = vertex.x + volume.width;
-  newVertex.y = vertex.y + volume.height;
-  newVertex.z = vertex.z + volume.depth;
+  newVertex.x = naAddi64(vertex.x, volume.width);
+  newVertex.y = naAddi64(vertex.y, volume.height);
+  newVertex.z = naAddi64(vertex.z, volume.depth);
   return newVertex;
 }
 NA_IDEF NAVertexs naAddVertexsVolume(NAVertexs vertex, NAVolumes volume) {
@@ -246,9 +246,9 @@ NA_IDEF NAVolumei64 naSubVertexi64Vertex(NAVertexi64 vertex1, NAVertexi64 vertex
     if(!naIsVertexi64Valid(vertex2))
       naError("vertex2 is invalid.");
   #endif
-  newVolume.width  = vertex1.x - vertex2.x;
-  newVolume.height = vertex1.y - vertex2.y;
-  newVolume.depth  = vertex1.z - vertex2.y;
+  newVolume.width  = naSubi64(vertex1.x, vertex2.x);
+  newVolume.height = naSubi64(vertex1.y, vertex2.y);
+  newVolume.depth  = naSubi64(vertex1.z, vertex2.y);
   return newVolume;
 }
 NA_IDEF NAVolumes naSubVertexsVertex(NAVertexs vertex1, NAVertexs vertex2) {

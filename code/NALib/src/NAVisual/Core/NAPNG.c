@@ -152,7 +152,7 @@ NA_HDEF NAPNGChunk* na_AllocPNGChunkWithBuffer(NABufferIterator* iter) {
 
   naReadBufferBytes(iter, chunk->typeName, 4);
   if(chunk->length) {
-    chunk->data = naReadBufferBuffer(iter, chunk->length);
+    chunk->data = naReadBufferBuffer(iter, naCastu32Toi64(chunk->length));
   }else{
     chunk->data = naCreateBuffer(NA_FALSE);
   }
@@ -901,7 +901,7 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath) {
 
     naFixBufferRange(chunk->data);
 
-    chunk->length = (uint32)naGetBufferRange(chunk->data).length;
+    chunk->length = naCasti64Tou32(naGetBufferRange(chunk->data).length);
     naWriteBufferu32(&iterOut, chunk->length);
 
     naCopy32(chunk->typeName, na_PngChunkTypeNames[chunk->type]);

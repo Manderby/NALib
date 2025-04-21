@@ -95,7 +95,7 @@ NA_IDEF void naSpitPool(NAPool* pool, void* drop) {
   #if NA_DEBUG
     if(pool->cur == pool->count)
       naError("Pool is full");
-    if(pool->storageArray && (!naInsidei64((NAByte*)drop - (NAByte*)pool->storageArray, 0, pool->typeSize * pool->count)))
+    if(pool->storageArray && (!naInsides((NAByte*)drop - (NAByte*)pool->storageArray, 0, pool->typeSize * pool->count)))
       naError("Pool was created filled. This drop does not seem to be a drop of this pool.");
   #endif
   pool->drops[pool->cur] = drop;

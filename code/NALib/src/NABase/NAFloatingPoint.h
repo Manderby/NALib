@@ -57,16 +57,16 @@ NA_IAPI float  naMakeFloat(int32 signedSignificand, int32 signedExponent);
 NA_IAPI float  naMakeFloatWithExponent(int32 signedExponent);
 NA_IAPI float  naMakeFloatSubnormal(int32 signedSignificand);
 
-NA_IAPI double naMakeDouble(NAi64 signedSignificand, int32 signedExponent);
+NA_IAPI double naMakeDouble(int64 signedSignificand, int32 signedExponent);
 NA_IAPI double naMakeDoubleWithExponent(int32 signedExponent);
-NA_IAPI double naMakeDoubleSubnormal(NAi64 signedSignificand);
+NA_IAPI double naMakeDoubleSubnormal(int64 signedSignificand);
 
 // Returns the exponent and integer part of a float or double.
 NA_IAPI int32  naGetFloatExponent (float  f);
 NA_IAPI int32  naGetFloatInteger  (float  f);
 
 NA_IAPI int32  naGetDoubleExponent(double d);
-NA_IAPI NAi64  naGetDoubleInteger (double d);
+NA_IAPI int64  naGetDoubleInteger (double d);
 
 // Returns the decimal fraction of the given float or double as an integer
 // with 6 or 15 decimal places respectively.
@@ -94,10 +94,10 @@ NA_IAPI int32  naGetFloatFractionE(float f);
 NA_IAPI int32  naGetFloatFractionSlow(float f);
 NA_IAPI int32  naGetFloatFractionSlowE(float f);
 
-NA_IAPI NAi64  naGetDoubleFraction(double d);
-NA_IAPI NAi64  naGetDoubleFractionE(double d);
-NA_IAPI NAi64  naGetDoubleFractionSlow(double d);
-NA_IAPI NAi64  naGetDoubleFractionSlowE(double d);
+NA_IAPI int64  naGetDoubleFraction(double d);
+NA_IAPI int64  naGetDoubleFractionE(double d);
+NA_IAPI int64  naGetDoubleFractionSlow(double d);
+NA_IAPI int64  naGetDoubleFractionSlowE(double d);
 
 
 
