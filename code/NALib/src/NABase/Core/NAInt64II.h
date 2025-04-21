@@ -539,7 +539,9 @@
       // in garbage when the shift is equal to the type size.
       // todo: This actually happens more often than expected. Go look for
       // all occurrencies and add warnings.
-      if(n < 32) {
+      if(n == 0) {
+        retValuei = a;
+      }else if(n < 32) {
         retValuei.hi = a.hi << n;
         retValuei.hi |= a.lo >> (32 - n);
         retValuei.lo = a.lo << n;
@@ -557,7 +559,9 @@
     }else{
       // Beware, do not use <= as some processors will result
       // in garbage when the shift is equal to the type size.
-      if(n < 32) {
+      if(n == 0) {
+        retValuei = a;
+      }else if(n < 32) {
         retValuei.lo = a.lo >> n;
         retValuei.lo |= a.hi << (32 - n);
         retValuei.hi = a.hi >> n;

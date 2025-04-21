@@ -274,8 +274,13 @@ void testGetDouble(void) {
     naTest(naEquali64(naGetDoubleInteger(0.99999999999999999), NA_ONE_i64));
     naTest(naEquali64(naGetDoubleInteger(42.), naCasti32Toi64(42)));
     naTest(naEquali64(naGetDoubleInteger(-42.), naCasti32Toi64(-42)));
-    naTest(naEquali64(naGetDoubleInteger(0x1.p53), naMakei64Withu32(0x00200000, 0x00000000)));
-    naTest(naEquali64(naGetDoubleInteger(-0x1.p53), naNegi64(naMakei64Withu32(0x00200000, 0x00000000))));
+    
+    naTest(naEquali64(naGetDoubleInteger(0x1.fffffffffffffp52), naMakei64Withu32(0x001fffff, 0xffffffff)));
+    naTest(naEquali64(naGetDoubleInteger(-0x1.fffffffffffffp52), naNegi64(naMakei64Withu32(0x001fffff, 0xffffffff))));
+    // Note that theoretically, it would be possible to go up to 0x1.p53 but
+    // the native type might result in undefined behaviour.
+//    naTest(naEquali64(naGetDoubleInteger(0x1.p53), naMakei64Withu32(0x00200000, 0x00000000)));
+//    naTest(naEquali64(naGetDoubleInteger(-0x1.p53), naNegi64(naMakei64Withu32(0x00200000, 0x00000000))));
   }
 
   naTestGroup("naGetDoubleInteger invalid cases") {
