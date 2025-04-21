@@ -400,7 +400,7 @@ NA_DEF NADateTime naMakeDateTimeNow() {
     NATimeZone timeZone;
     GetSystemTimeAsFileTime(&fileTime);
     // Daylight saving is active if the function returns 2.
-    int64 daylightCode = GetTimeZoneInformation(&timeZone);
+    int32 daylightCode = GetTimeZoneInformation(&timeZone);
     return naMakeDateTimeWithFileTime(&fileTime, &timeZone, daylightCode == 2);
   #elif NA_IS_POSIX
     struct timeval curtime;
@@ -835,7 +835,7 @@ NA_DEF int16 naMakeShiftWithTimeZone(const NATimeZone* timeZone, NABool daylight
     dateTime.nanoSecond = naCasti64Toi32(naMuli64(naModi64(nanoSeconds, naCastu32Toi64(10000000)), naCastu32Toi64(100)));  // 100-nanosecond intervals.
     dateTime.siSecond = naAddi64(naDivi64(nanoSeconds, naCastu32Toi64(10000000)), NA_DATETIME_SISEC_FILETIME_YEAR_ZERO);
     if(naGreaterEquali64(dateTime.siSecond, NA_ZERO_i64)) {
-      int64 taiPeriod = naGetLatestTAIPeriodIndexForGregorianSecond(dateTime.siSecond);
+      int32 taiPeriod = naGetLatestTAIPeriodIndexForGregorianSecond(dateTime.siSecond);
       dateTime.siSecond = naAddi64(dateTime.siSecond, naSubi64(naTAIPeriods[taiPeriod].startSiSecond, naTAIPeriods[taiPeriod].startGregSec));
     }
 
@@ -1242,7 +1242,7 @@ NA_DEF void naSetGlobalTimeShiftToSystemSettings() {
   #if NA_OS == NA_OS_WINDOWS
     NATimeZone curTimeZone;
     // Daylight saving is active if the function returns 2.
-    int64 daylightCode = GetTimeZoneInformation(&curTimeZone);
+    int32 daylightCode = GetTimeZoneInformation(&curTimeZone);
     NABool daylightSaving = (daylightCode == 2);
     na_GlobalTimeShift = naMakeShiftWithTimeZone(&curTimeZone, daylightSaving);
     na_GlobalDaylightSavingTime = (daylightSaving ? NA_TRUE : NA_FALSE);

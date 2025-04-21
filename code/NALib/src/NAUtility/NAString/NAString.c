@@ -741,7 +741,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString) {
 
   NA_DEF NAString* naNewStringWithWideCharString(const wchar_t* wcharString) {
     size_t length = wcslen(wcharString);
-    int64 utf8Length = WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, NULL, 0, NULL, NULL);
+    size_t utf8Length = WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, NULL, 0, NULL, NULL);
     NAUTF8Char* stringBuf = naMalloc((size_t)(utf8Length + 1) * sizeof(NAUTF8Char));
     WideCharToMultiByte(CP_UTF8, 0, wcharString, (int)length, stringBuf, (int)utf8Length, NULL, NULL);
     NAString* newLineString = naNewStringWithMutableUTF8Buffer(stringBuf, (size_t)utf8Length, (NAMutator)naFree);

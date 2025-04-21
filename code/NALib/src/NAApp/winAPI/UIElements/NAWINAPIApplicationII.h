@@ -540,7 +540,7 @@ NA_HDEF void na_SetApplicationIconPath(const NAUTF8Char* path) {
 NA_DEF NAString* naNewApplicationName(void) {
   NAApplication* app = naGetApplication();
   if(app->appName) {
-    return naNewStringExtraction(app->appName, 0, -1);
+    return naNewStringExtraction(app->appName, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }else{
     TCHAR modulePath[MAX_PATH];
     NAString* utf8ModulePath;
@@ -559,7 +559,7 @@ NA_DEF NAString* naNewApplicationName(void) {
 NA_DEF NAString* naNewApplicationCompanyName(void) {
   NAApplication* app = naGetApplication();
   if(app->companyName) {
-    return naNewStringExtraction(app->companyName, 0, -1);
+    return naNewStringExtraction(app->companyName, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }else{
     return NA_NULL;
   }
@@ -568,7 +568,7 @@ NA_DEF NAString* naNewApplicationCompanyName(void) {
 NA_DEF NAString* naNewApplicationVersionString(void) {
   NAApplication* app = naGetApplication();
   if(app->versionString) {
-    return naNewStringExtraction(app->versionString, 0, -1);
+    return naNewStringExtraction(app->versionString, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }else{
     return NA_NULL;
   }
@@ -577,7 +577,7 @@ NA_DEF NAString* naNewApplicationVersionString(void) {
 NA_DEF NAString* naNewApplicationBuildString(void) {
   NAApplication* app = naGetApplication();
   if(app->buildString) {
-    return naNewStringExtraction(app->buildString, 0, -1);
+    return naNewStringExtraction(app->buildString, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }else{
     return NA_NULL;
   }
@@ -586,7 +586,7 @@ NA_DEF NAString* naNewApplicationBuildString(void) {
 NA_DEF NAString* naNewApplicationResourceBasePath(void) {
   NAApplication* app = naGetApplication();
   if(app->resourceBasePath) {
-    return naNewStringExtraction(app->resourceBasePath, 0, -1);
+    return naNewStringExtraction(app->resourceBasePath, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }else{
     return naNewExecutablePath();
   }

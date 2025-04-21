@@ -100,7 +100,7 @@ NA_DEF int64 naGetBufferLocation(const NABufferIterator* iter) {
       naError("Buffer bitCount is not Zero.");
   #endif
   if(naIsTreeAtInitial(&iter->partIter)) {
-    return (int64)iter->partOffset;
+    return iter->partOffset;
   }else{
     const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
     NABufferSearchToken token;
@@ -162,7 +162,7 @@ NA_HDEF NABool na_LocateBufferStart(NABufferIterator* iter) {
   naLocateTreeFirst(&iter->partIter);
   if(naIsTreeAtInitial(&iter->partIter)) {
     const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-    iter->partOffset = (int64)buffer->range.origin;
+    iter->partOffset = buffer->range.origin;
     return NA_FALSE;
   }else{
     iter->partOffset = NA_ZERO_i64;
@@ -182,7 +182,7 @@ NA_HDEF NABool na_LocateBufferLastPart(NABufferIterator* iter) {
   naLocateTreeLast(&iter->partIter);
   if(naIsTreeAtInitial(&iter->partIter)) {
     const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-    iter->partOffset = (int64)naGetRangei64End(buffer->range);
+    iter->partOffset = naGetRangei64End(buffer->range);
     return NA_FALSE;
   }else{
     iter->partOffset = NA_ZERO_i64;
@@ -202,7 +202,7 @@ NA_HDEF NABool na_LocateBufferNextPart(NABufferIterator* iter) {
   naIterateTree(&iter->partIter, NA_NULL, NA_NULL);
   if(naIsTreeAtInitial(&iter->partIter)) {
     const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-    iter->partOffset = (int64)naGetRangei64End(buffer->range);
+    iter->partOffset = naGetRangei64End(buffer->range);
     return NA_FALSE;
   }else{
     iter->partOffset = NA_ZERO_i64;
@@ -222,7 +222,7 @@ NA_HDEF NABool na_LocateBufferPrevPartMax(NABufferIterator* iter) {
   naIterateTreeBack(&iter->partIter, NA_NULL, NA_NULL);
   if(naIsTreeAtInitial(&iter->partIter)) {
     const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-    iter->partOffset = (int64)buffer->range.origin;
+    iter->partOffset = buffer->range.origin;
     return NA_FALSE;
   }else{
     iter->partOffset = naSubi64(naCastSizeToi64(na_GetBufferPartByteSize(na_GetBufferPart(iter))), NA_ONE_i64);
@@ -240,7 +240,7 @@ NA_HDEF NABool na_LocateBufferMax(NABufferIterator* iter) {
   naLocateTreeLast(&iter->partIter);
   if(naIsTreeAtInitial(&iter->partIter)) {
     const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-    iter->partOffset = (int64)naGetRangei64End(buffer->range);
+    iter->partOffset = naGetRangei64End(buffer->range);
     return NA_FALSE;
   }else{
     iter->partOffset = naSubi64(naCastSizeToi64(na_GetBufferPartByteSize(na_GetBufferPart(iter))), NA_ONE_i64);
@@ -258,7 +258,7 @@ NA_HDEF NABool na_LocateBufferEnd(NABufferIterator* iter) {
   #endif
   buffer = na_GetBufferIteratorBufferConst(iter);
   if(!naEquali64(buffer->range.length, NA_ZERO_i64)) {
-    iter->partOffset = (int64)naGetRangei64End(buffer->range);
+    iter->partOffset = naGetRangei64End(buffer->range);
   }else{
     iter->partOffset = NA_ZERO_i64;
   }
@@ -278,7 +278,7 @@ NA_HDEF NABool na_IterateBufferPart(NABufferIterator* iter) {
   success = naIterateTree(&iter->partIter, NA_NULL, NA_NULL);
   if(!success) {
     const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-    iter->partOffset = (int64)naGetRangei64End(buffer->range);
+    iter->partOffset = naGetRangei64End(buffer->range);
   }
   return success;
 }
@@ -442,12 +442,12 @@ NA_HDEF void na_PrepareBuffer(NABufferIterator* iter, size_t byteCount) {
       // If this iterator is not at a part, we either have not ensured the
       // range yet or the iterator simply was not located at its desired
       // position yet. The desired buffer offset is defined by iter->partOffset.
-      na_EnsureBufferRangeAndLocate(iter, (int64)iter->partOffset, byteCount);
+      na_EnsureBufferRangeAndLocate(iter, iter->partOffset, byteCount);
     }else if(naGreaterEquali64(iter->partOffset, naCastSizeToi64(na_GetBufferPartByteSize(na_GetBufferPart(iter))))) {
       // If the range is overflown, some other iterator changed this part in
       // the meantime. Maybe it even became a non-sparse part. Therefore
       // we have to search for the correct part again.
-      na_EnsureBufferRangeAndLocate(iter, (int64)naGetBufferLocation(iter), byteCount);
+      na_EnsureBufferRangeAndLocate(iter, naGetBufferLocation(iter), byteCount);
     }
 
     // Reaching here, iter must be at a valid part.

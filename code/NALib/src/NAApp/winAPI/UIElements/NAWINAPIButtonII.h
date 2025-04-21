@@ -165,9 +165,9 @@ const NAImageSet* currentImage(NAWINAPIButton* winapiButton) {
 
 
 NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* drawitemstruct) {
-  NASizei64 buttonSize = naMakeSizei64(
-    (int64)drawitemstruct->rcItem.right - (int64)drawitemstruct->rcItem.left,
-    (int64)drawitemstruct->rcItem.bottom - (int64)drawitemstruct->rcItem.top);
+  NASizei32 buttonSize = naMakeSizei32(
+    (drawitemstruct->rcItem.right - drawitemstruct->rcItem.left),
+    (drawitemstruct->rcItem.bottom - drawitemstruct->rcItem.top));
 
   // Create an offscreen device context and buffer
   HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);  
@@ -260,9 +260,9 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     size1x.width = (size_t)(size1x.width * uiScale);
     size1x.height = (size_t)(size1x.height * uiScale);
 
-    NAPosi64 offset = naMakePosi64(
-      (buttonSize.width - size1x.width) / 2,
-      (buttonSize.height - size1x.height) / 2);
+    NAPosi32 offset = naMakePosi32(
+      (buttonSize.width - (int32)size1x.width) / 2,
+      (buttonSize.height - (int32)size1x.height) / 2);
 
     LRESULT result = SendMessage(naGetUIElementNativePtr(winapiButton), BM_GETSTATE, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
     NABool pushed = (result & BST_PUSHED) == BST_PUSHED;
