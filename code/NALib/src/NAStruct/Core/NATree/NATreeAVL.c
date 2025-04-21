@@ -18,7 +18,7 @@ NA_HIDEF int32 na_GetNodeAVL(NATreeBinNode* binNode) {
 
 NA_HIDEF void na_SetNodeAVL(NATreeBinNode* binNode, int32 balance) {
   naSetFlagu32(&na_GetBinNodeNode(binNode)->flags, NA_TREE_NODE_AVL_MASK, NA_FALSE);
-  na_GetBinNodeNode(binNode)->flags |= (balance + 1) << NA_TREE_NODE_AVL_BITSHIFT;
+  na_GetBinNodeNode(binNode)->flags |= (uint32)((balance + 1) << NA_TREE_NODE_AVL_BITSHIFT);
 }
 
 
