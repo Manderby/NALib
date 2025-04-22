@@ -505,17 +505,18 @@ NA_DEF void naOpenConsoleWindow(void) {
 
 
 
-NA_HDEF void na_SetApplicationIconPath(const NAUTF8Char* path) {  
-  if(path) {
+NA_HDEF void na_UpdateApplicationIconPath() {  
+  NAApplication* app = naGetApplication();
+  NAString* appIconPath = naNewApplicationIconPath();
+  if(appIconPath) {
     NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-    NAString* resPath = naNewApplicationResourcePath(NA_NULL, path, NA_NULL);
-    //printf("OUTPUT %s", naGetStringUTF8Pointer(resPath));
+    //printf("OUTPUT %s", naGetStringUTF8Pointer(appIconPath));
     
-    NAImage* iconImage = naCreateImageWithFilePath(naGetStringUTF8Pointer(resPath));
+    NAImage* iconImage = naCreateImageWithFilePath(naGetStringUTF8Pointer(appIconPath));
     HBITMAP bitmap = naAllocNativeImageWithImage(iconImage);
    
-    naDelete(resPath);
+    naDelete(appIconPath);
 
     HBITMAP hbmMask = CreateCompatibleBitmap(
       GetDC(NULL), 

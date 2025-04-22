@@ -236,7 +236,7 @@ NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElem
 
 NA_HAPI NABool na_GetApplicationMouseVisible();
 NA_HAPI void na_SetApplicationMouseVisible(NABool visible);
-NA_HAPI void na_SetApplicationIconPath(const NAUTF8Char* path);
+NA_HAPI void na_UpdateApplicationIconPath(void);
 
 NA_HAPI void na_SetUIElementMouseInside(NA_UIElement* elem, NABool inside);
 NA_HAPI NABool na_GetUIElementMouseInside(const NA_UIElement* elem);

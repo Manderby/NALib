@@ -159,6 +159,8 @@ NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
   app->iconPath = path
     ? naNewStringWithFormat("%s", path)
     : NA_NULL;
+
+  na_UpdateApplicationIconPath();
 }
 
 

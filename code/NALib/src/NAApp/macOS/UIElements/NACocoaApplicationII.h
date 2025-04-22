@@ -331,8 +331,7 @@ NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* path, const NAUT
   return naNewStringWithFormat("%s", [[url path] UTF8String]);
 }
 
-NA_HDEF void na_SetApplicationIconPath(const NAUTF8Char* path) {
-  NA_UNUSED(path);
+NA_HDEF void na_UpdateApplicationIconPath() {
   // nothing to be done on macOS
 }
 
