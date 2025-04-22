@@ -1047,6 +1047,14 @@ long getWINAPITextAlignmentWithAlignment(NATextAlignment alignment) {
 
 
 
+NA_DEF void naOpenURLInBrowser(const NAUTF8Char* url) {
+  TCHAR* sysString = naAllocSystemStringWithUTF8String(url);
+  ShellExecute(NULL, TEXT("open"), sysString, NULL, NULL, SW_SHOWNORMAL);
+  naFree(sysString);
+}
+
+
+
 NA_HDEF void* na_AddMouseTracking(NA_UIElement* uiElement) {
   NABool success;
   TRACKMOUSEEVENT* winapiTracking = naAlloc(TRACKMOUSEEVENT);
