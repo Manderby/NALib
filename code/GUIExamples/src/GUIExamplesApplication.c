@@ -3,8 +3,8 @@
 // converts temperatures from Degree Celsius to Degree Fahrenheit.
 
 #include "GUIExamples.h"
-#include "../../NALib/src/NAStruct/NAStack.h"
-#include "../../NALib/src/NAVisual/NAPNG.h"
+#include "NAStruct/NAStack.h"
+#include "NAVisual/NAPNG.h"
 #include "NAUtility/NAString.h"
 
 #define RESOURCE_PATH ""

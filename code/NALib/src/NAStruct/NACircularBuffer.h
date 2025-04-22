@@ -21,7 +21,7 @@
 
 
 // The full type definition is in the file "NACircularBufferII.h"
-typedef struct NACircularBuffer NACircularBuffer;
+NA_PROTOTYPE(NACircularBuffer);
 
 
 

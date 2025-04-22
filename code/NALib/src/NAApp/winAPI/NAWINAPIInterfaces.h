@@ -11,7 +11,7 @@
 
 // The following struct stores all relevant data which will then be stored in
 // a list of the running NAWINAPIApplication.
-typedef struct NAWINAPITimerStruct NAWINAPITimerStruct;
+NA_PROTOTYPE(NAWINAPITimerStruct);
 struct NAWINAPITimerStruct {
   UINT      key;
   NAMutator func;
@@ -21,23 +21,23 @@ struct NAWINAPITimerStruct {
 
 
 // Typedefs of all ui elements
-typedef struct NAWINAPIApplication NAWINAPIApplication;
-typedef struct NAWINAPIButton NAWINAPIButton;
-typedef struct NAWINAPICheckBox NAWINAPICheckBox;
-typedef struct NAWINAPIImageSpace NAWINAPIImageSpace;
-typedef struct NAWINAPILabel NAWINAPILabel;
-typedef struct NAWINAPIMenu NAWINAPIMenu;
-typedef struct NA_WINAPIMenuItem NA_WINAPIMenuItem;
+NA_PROTOTYPE(NAWINAPIApplication);
+NA_PROTOTYPE(NAWINAPIButton);
+NA_PROTOTYPE(NAWINAPICheckBox);
+NA_PROTOTYPE(NAWINAPIImageSpace);
+NA_PROTOTYPE(NAWINAPILabel);
+NA_PROTOTYPE(NAWINAPIMenu);
+NA_PROTOTYPE(NA_WINAPIMenuItem);
 #if NA_COMPILE_OPENGL == 1
-  typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
+  NA_PROTOTYPE(NAWINAPIOpenGLSpace);
 #endif
-typedef struct NAWINAPIRadio NAWINAPIRadio;
-typedef struct NAWINAPISelect NAWINAPISelect;
-typedef struct NAWINAPISlider NAWINAPISlider;
-typedef struct NAWINAPISpace NAWINAPISpace;
-typedef struct NAWINAPITextBox NAWINAPITextBox;
-typedef struct NAWINAPITextField NAWINAPITextField;
-typedef struct NAWINAPIWindow NAWINAPIWindow;
+NA_PROTOTYPE(NAWINAPIRadio);
+NA_PROTOTYPE(NAWINAPISelect);
+NA_PROTOTYPE(NAWINAPISlider);
+NA_PROTOTYPE(NAWINAPISpace);
+NA_PROTOTYPE(NAWINAPITextBox);
+NA_PROTOTYPE(NAWINAPITextField);
+NA_PROTOTYPE(NAWINAPIWindow);
 
 
 

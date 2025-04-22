@@ -10,7 +10,7 @@
 
 
 
-typedef struct NANotifier NANotifier;
+NA_PROTOTYPE(NANotifier);
 
 typedef enum{
   NA_SIGNAL_PRIORITY_UPDATE,   // lowest prio
@@ -18,7 +18,7 @@ typedef enum{
   NA_SIGNAL_PRIORITY_DELETE,   // highest prio
 } SignalPriority;
 
-typedef struct NAMessage NAMessage;
+NA_PROTOTYPE(NAMessage);
 struct NAMessage {
   void* reciever;
   void* sender;
@@ -79,11 +79,11 @@ NA_API void* naSubscribe(
   NAMessageCallback callback);
 
 // Unsubscribes the given subscription.
-// You can send Null as a subscription which does nothing.
+// You can send nullptr as a subscription which does nothing.
 NA_API void naUnsubscribe(
   void* subscription);
 // Unsubscribes all subscriptions of the given receiver.
-// You can send Null as a receyver which does nothing.
+// You can send nullptr as a receyver which does nothing.
 NA_API void naUnsubscribeAllOfReceyver(
   const void* reciever);
 

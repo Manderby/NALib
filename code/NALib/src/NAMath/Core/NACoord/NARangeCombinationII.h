@@ -42,7 +42,7 @@ NA_IDEF NARangei64 naMakeRangei64Combination(int64 point1, int64 point2) {
   #if NA_DEBUG
     if(!(naIsOffsetValueValidi64(point1) && naIsOffsetValueValidi64(point2)))
       naError("Invalid values given.");
-    if(point2 < point1)
+    if(naSmalleri64(point2, point1))
       naError("point1 should be smallerequal to point2.");
   #endif
   newRange.origin = point1;
@@ -141,10 +141,10 @@ NA_IDEF NARangei64 naMakeRangei64Extension(NARangei64 range, int64 point) {
   #endif
   
   NARangei64 newRange;
-  if(point < range.origin) {
+  if(naSmalleri64(point, range.origin)) {
     newRange.length = naMakeLengthWithStartAndEndi64(point, naGetRangei64End(range));
     newRange.origin = point;
-  }else if(point > naGetRangei64Max(range)) {
+  }else if(naGreateri64(point, naGetRangei64Max(range))) {
     newRange.length = naMakeLengthWithMinAndMaxi64(range.origin, point);
     newRange.origin = range.origin;
   }else{
@@ -238,7 +238,7 @@ NA_IDEF NARangei64 naMakeRangei64ExtensionE(NARangei64 range, int64 point) {
   
   if(naIsRangei64Empty(range)) {
     NARangei64 newRange;
-    newRange.length = 1;
+    newRange.length = NA_ONE_i64;
     newRange.origin = point;
     return newRange;
   }else{

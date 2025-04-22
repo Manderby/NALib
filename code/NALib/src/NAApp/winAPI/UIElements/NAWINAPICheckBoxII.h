@@ -7,6 +7,9 @@
 
 
 NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(lParam);
+  NA_UNUSED(wParam);
+  NA_UNUSED(uiElement);
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message) {
@@ -140,6 +143,8 @@ NA_DEF void naSetCheckBoxState(NACheckBox* checkBox, NABool state) {
 
 
 NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NAColor* color) {
+  NA_UNUSED(color);
+  NA_UNUSED(checkBox);
   // todo
 }
 

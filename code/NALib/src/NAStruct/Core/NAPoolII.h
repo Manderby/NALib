@@ -19,7 +19,7 @@ struct NAPool{
 NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, size_t count) {
   #if NA_DEBUG
     if(!pool)
-      naCrash("pool is Null-Pointer");
+      naCrash("pool is nullptr");
     if(count == 0)
       naError("count is 0");
   #endif
@@ -35,7 +35,7 @@ NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, size_t count) {
 NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, size_t count, size_t typeSize) {
   #if NA_DEBUG
     if(!pool)
-      naCrash("pool is Null-Pointer");
+      naCrash("pool is nullptr");
     if(count == 0)
       naError("count is 0");
     if(typeSize == 0)
@@ -95,7 +95,7 @@ NA_IDEF void naSpitPool(NAPool* pool, void* drop) {
   #if NA_DEBUG
     if(pool->cur == pool->count)
       naError("Pool is full");
-    if(pool->storageArray && (!naInsidei64((NAByte*)drop - (NAByte*)pool->storageArray, 0, pool->typeSize * pool->count)))
+    if(pool->storageArray && (!naInsides((NAByte*)drop - (NAByte*)pool->storageArray, 0, pool->typeSize * pool->count)))
       naError("Pool was created filled. This drop does not seem to be a drop of this pool.");
   #endif
   pool->drops[pool->cur] = drop;

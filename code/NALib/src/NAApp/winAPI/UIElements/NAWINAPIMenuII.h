@@ -78,8 +78,6 @@ NA_DEF void na_updateMenuItem(NAMenu* menu, const NAMenuItem* menuItem) {
 NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement) {
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
-  HMENU hMenu = CreatePopupMenu();
-
   na_SetApplicationLastOpenedMenu(naGetApplication(), menu);
   NARect screenRect = naGetMainScreenRect();
 

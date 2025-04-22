@@ -115,6 +115,16 @@
 //
 //@end
 
+
+
+struct NACocoaLabel{
+  NALabel label;
+};
+NA_HAPI void na_DestructCocoaLabel(NACocoaLabel* cocoaLabel);
+NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
+
+
+
 @implementation NACocoaNativeLabel
 
 - (id) initWithLabel:(NACocoaLabel*)newCocoaLabel frame:(NSRect)frame{

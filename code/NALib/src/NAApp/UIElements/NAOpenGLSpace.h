@@ -37,7 +37,7 @@
 // Creates a new openGLSpace
 // Use initFunc to perform any initialization necessary like for example
 // uploading of textures to the GPU. The initFunc will be called with
-// initData as the input parameter. The initFunc can be Null.
+// initData as the input parameter. The initFunc can be nullptr.
 // Note that the initFunc will be called...
 // Win: Right within the naNewOpenGLSpace
 // Mac: when prepareOpenGL is called (which may be as late as when the

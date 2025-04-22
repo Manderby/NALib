@@ -24,7 +24,7 @@ NA_API void naSetSelectEnabled(
   NASelect* select,
   NABool enabled);
 
-// Adds a menu item before atItem. If atItem is Null,
+// Adds a menu item before atItem. If atItem is nullptr,
 // it is added to the end of the menu.
 NA_API void naAddSelectMenuItem(
   NASelect* select,

@@ -14,6 +14,7 @@
 #endif  // NA_COMPILE_METAL == 1
 
 NA_HDEF NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace) {
+  NA_UNUSED(metalSpace);
   #if NA_DEBUG
     naError("Metal does not work on windows");
   #endif
@@ -21,6 +22,8 @@ NA_HDEF NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace) {
 }
 
 NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect) {
+  NA_UNUSED(rect);
+  NA_UNUSED(metalSpace);
   #if NA_DEBUG
     naError("Metal does not work on windows");
   #endif

@@ -162,8 +162,8 @@ NA_IDEF NARangei32 naMakeRangei32Zero() {
 
 NA_IDEF NARangei64 naMakeRangei64Zero() {
   NARangei64 newRange;
-  newRange.origin = 0;
-  newRange.length = 0;
+  newRange.origin = NA_ZERO_i64;
+  newRange.length = NA_ZERO_i64;
   return newRange;
 }
 

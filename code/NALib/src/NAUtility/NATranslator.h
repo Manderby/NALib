@@ -80,9 +80,10 @@
 
 
 
-typedef struct NATranslator NATranslator;
-
 #include "../NABase/NABase.h"
+NA_PROTOTYPE(NATranslator);
+
+
 
 // These codes denote the standardized ISO 639-3 codes.
 typedef enum{

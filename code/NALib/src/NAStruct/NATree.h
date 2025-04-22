@@ -28,9 +28,9 @@
 
 
 
-typedef struct NATree NATree;
-typedef struct NATreeIterator NATreeIterator;
-typedef struct NATreeConfiguration NATreeConfiguration;
+NA_PROTOTYPE(NATree);
+NA_PROTOTYPE(NATreeIterator);
+NA_PROTOTYPE(NATreeConfiguration);
 
 
 
@@ -73,7 +73,7 @@ typedef void (*NATreeDestructorCallback)(NAPtr userData);
 // constructor.
 //
 // The key parameter denotes the key of the node. If the tree does not use a
-// key, that parameter is Null.
+// key, that parameter is nullptr.
 //
 // Use these callbacks for example, if you want to store a reference counted
 // pointer which shall be incremented before storing it in the tree. Or you
@@ -99,7 +99,7 @@ typedef void  (*NATreeLeafDataDestructor) (NAPtr leafData);
 // This data pointer will then be available to other callback functions.
 //
 // The key parameter denotes the key of the node. If the tree does not use a
-// key, that parameter is Null.
+// key, that parameter is nullptr.
 typedef NAPtr (*NATreeNodeDataConstructor)(const void* key);
 typedef void  (*NATreeNodeDataDestructor) (NAPtr nodeData);
 
@@ -178,9 +178,9 @@ NA_IAPI void naSetTreeConfigurationNodeCallbacks(
 
 NA_IAPI void naSetTreeConfigurationBaseLeafExponent(
   NATreeConfiguration* config,
-  int64 baseLeafExponent);
+  int32 baseLeafExponent);
 
-NA_IAPI int64 naGetTreeConfigurationBaseLeafExponent(
+NA_IAPI int32 naGetTreeConfigurationBaseLeafExponent(
   const NATreeConfiguration* config);
 
 
@@ -299,10 +299,10 @@ NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 #define NA_TREE_SEARCH_PARENT  -1
 #define NA_TREE_SEARCH_FOUND   -2
 #define NA_TREE_SEARCH_ABORT   -3
-typedef int64 (*NATreeNodeTokenSearcher)(
+typedef int32 (*NATreeNodeTokenSearcher)(
   void* token,
   NAPtr data);
-typedef int64 (*NATreeLeafTokenSearcher)(
+typedef int32 (*NATreeLeafTokenSearcher)(
   void* token,
   NAPtr data);
 
@@ -354,7 +354,7 @@ NA_IAPI void naUpdateTreeLeaf(NATreeIterator* iter);
 typedef NABool (*NATreeNodeTokenCallback)(
   void* token,
   NAPtr data,
-  int64 nextIndex);
+  size_t nextIndex);
 NA_IAPI void naBubbleTreeToken(
   const NATreeIterator* iter,
   void* token,
@@ -369,7 +369,8 @@ NA_IAPI void naBubbleTreeToken(
 // Moves the iterator in order through the tree. The Back-variant moves the
 // iterator backwards. Returns NA_FALSE when iteration is over. For trees
 // which store a key, you can even send a limit in which range the tree shall
-// be traversed. You can send Null if you want the whole tree to be traversed.
+// be traversed. You can send nullptr if you want the whole tree to be
+// traversed.
 NA_IAPI NABool naIterateTree(
   NATreeIterator* iter,
   const void* lowerLimit,

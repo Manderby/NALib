@@ -181,6 +181,8 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url) {
 
 
 NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable) {
+  NA_UNUSED(selectable);
+  NA_UNUSED(label);
   // todo
 }
 
@@ -192,7 +194,10 @@ NA_DEF void naSetLabelHeight(NALabel* label, double height) {
 
   winapiLabel->rect.size.height = height;
   
-  NARect parentRect = naGetUIElementRect(naGetUIElementParent(label));
+  const void* parent = naGetUIElementParent(label);
+  NARect parentRect = parent
+    ? naGetUIElementRect(parent)
+    : naMakeRectZero();
 
   SetWindowPos(
     naGetUIElementNativePtr(label),

@@ -11,8 +11,8 @@
 
 static NAList* redrawList;
 static int redrawCount = 0;
-void na_drawAllOpenGLSpaces(void* data)
-{
+void na_drawAllOpenGLSpaces(void* data) {
+  NA_UNUSED(data);
   printf("Redraw: %d\n", redrawCount);
   redrawCount = 0;
 }
@@ -20,6 +20,7 @@ void na_drawAllOpenGLSpaces(void* data)
 
 
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(lParam);
   NAWINAPIOpenGLSpace* winapiOpenGLSpace;
   int wheelDelta;
 
@@ -134,7 +135,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 
   //glfwWindowHint(GLFW_SAMPLES, 4);
 
-	const char* extensions = (char*)glGetString(GL_EXTENSIONS);
+	//const char* extensions = (char*)glGetString(GL_EXTENSIONS);
 	PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
 	if(wglSwapIntervalEXT) {

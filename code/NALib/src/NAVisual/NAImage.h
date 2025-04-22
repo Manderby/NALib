@@ -12,10 +12,10 @@
 #include "NAColor.h"
 
 
-typedef struct NAImage NAImage;
+NA_PROTOTYPE(NAImage);
 
 // Creates an image with the specified size and fills it with the given color.
-// If color is Null, the image contents will be uninitialized.
+// If color is nullptr, the image contents will be uninitialized.
 NA_API NAImage* naCreateImage(NASizes size, const NAColor* color);
 
 // Creates an image which is an exact duplicate of the image given.

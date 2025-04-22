@@ -6,6 +6,14 @@
 
 
 
+struct NACocoaSelect{
+  NASelect select;
+};
+NA_HAPI void na_DestructCocoaSelect(NACocoaSelect* cocoaSelect);
+NA_RUNTIME_TYPE(NACocoaSelect, na_DestructCocoaSelect, NA_FALSE);
+
+
+
 @implementation NACocoaNativeSelect
 
 - (id) initWithSelect:(NACocoaSelect*)newCocoaSelect frame:(NSRect)frame{

@@ -147,7 +147,7 @@
 // floating-point-type. This is different than the machine-epsilon, found in
 // the <float.h> or <cfloat> header files and has been useful to the author
 // many times already.
-// The sub- and sup-norm macros correspond to 1 minus or 1 plus NA_SINGULARITY.
+// The sub- and sup-norm macros correspond to 1 minus or plus NA_SINGULARITY.
 #if(FLT_DIG < 6) || (DBL_DIG < 15)
   #warning "FLT and DBL digits for NA_SINGULARITY not achieved on this system"
 #endif
@@ -175,6 +175,14 @@
   #define NA_SUB_NORMl       0.99999999999999999L
   #define NA_SUP_NORMl       1.00000000000000001L
 #endif
+
+
+
+// The lowest accurate digit of a double, represented in integral form.
+// 0x00038d7e, 0xa4c68000 is hex for 1000000000000000 = 1e15
+#define NA_ONE_E_15 naMakeu64(0x00038d7e, 0xa4c68000)
+// 1e15 * 2^(64-52+1) = 1e15 << 13
+#define NA_ONE_E_15_SHL_13 naMakeu64(0x71afd498, 0xd0000000)
 
 
 
@@ -288,7 +296,7 @@ NA_IDEF float naMakeFloatSubnormal(int32 signedSignificand) {
   // Note that the additional void* cast is necessary for static code analizers.
 }
 
-NA_IDEF double naMakeDouble(NAi64 signedSignificand, int32 signedExponent) {
+NA_IDEF double naMakeDouble(int64 signedSignificand, int32 signedExponent) {
   #if NA_DEBUG
   if(signedExponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
     naError("exponent too low for double precision");
@@ -298,13 +306,13 @@ NA_IDEF double naMakeDouble(NAi64 signedSignificand, int32 signedExponent) {
     naError("exponent too high for double precision");
   if(signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
     naError("exponent equals max exponent which is reserved for special values");
-  if(naGreateru64(naCasti64Tou64(naAbsi64(signedSignificand)), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
+  if(naGreateru64(naCasti64Tou64(naAbsi64(signedSignificand)), naCasti64Tou64(NA_IEEE754_DOUBLE_SIGNIFICAND_MASK)))
     naError("significand out of range");
   #endif
-  NAi64 dBits =
+  int64 dBits =
     naOri64(naOri64(
       naAndi64(signedSignificand, NA_IEEE754_DOUBLE_SIGN_MASK),
-      naShli64(naMakei64WithLo(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS)),
+      naShli64(naCasti32Toi64(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS)),
       naAndi64(naAbsi64(signedSignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK));
   return *((double*)(void*)&dBits);
   // Note that the additional void* cast is necessary for static code analizers.
@@ -323,19 +331,19 @@ NA_IDEF double naMakeDoubleWithExponent(int32 signedExponent) {
     if(signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
       naError("exponent equals max exponent which is reserved for special values");
   #endif
-  NAi64 dBits = naShli64(naMakei64WithLo(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
+  int64 dBits = naShli64(naCastu32Toi64(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
   return *((double*)(void*)&dBits);
   // Note that the additional void* cast is necessary for static code analizers.
 }
 
 
 
-NA_IDEF double naMakeDoubleSubnormal(NAi64 signedSignificand) {
+NA_IDEF double naMakeDoubleSubnormal(int64 signedSignificand) {
   #if NA_DEBUG
     if(naGreateri64(naAbsi64(signedSignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
       naError("significand out of range");
   #endif
-  NAi64 dBits =
+  int64 dBits =
       naOri64(
       naAndi64(signedSignificand, NA_IEEE754_DOUBLE_SIGN_MASK),
       naAndi64(naAbsi64(signedSignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK));
@@ -398,11 +406,11 @@ NA_IAPI int32 naGetDoubleExponent(double d) {
     if(d == NA_INFINITY || d == -NA_INFINITY)
       naError("Given number is +-Infinity. Result will be max+1 exponent");
   #endif
-  NAi64 dBits = *((NAi64*)(void*)&d);
+  int64 dBits = *((int64*)(void*)&d);
   dBits = naAndi64(dBits, NA_IEEE754_DOUBLE_EXPONENT_MASK);
   dBits = naShri64(dBits, NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
   #if NA_DEBUG
-    if(d != 0. && dBits == 0)
+    if(d != 0. && naEquali64(dBits, NA_ZERO_i64))
       naError("Given number is subnormal. Result will always be subnormal exponent");
   #endif
   return naCasti64Toi32(dBits) - NA_IEEE754_DOUBLE_EXPONENT_BIAS;
@@ -410,16 +418,16 @@ NA_IAPI int32 naGetDoubleExponent(double d) {
 
 
 
-NA_IAPI NAi64 naGetDoubleInteger(double d) {
+NA_IAPI int64 naGetDoubleInteger(double d) {
   #if NA_DEBUG
     if(d == NA_INFINITY || d == -NA_INFINITY)
       naError("Given number is +-Infinity. Result will be undefined");
-    if(fabs(d) > 0x1.fffffffffffffp52)
+    if(fabs(d) > 0x1.p53)
       naError("Given numbers absolute value is too large. Result will be undefined");
     #endif
-  NAi64 dBits = NA_ZERO_u64;
+  int64 dBits = NA_ZERO_i64;
   if(d != 0) {
-    dBits = *((NAi64*)(void*)&d);
+    dBits = *((int64*)(void*)&d);
     dBits = naAndi64(dBits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
     dBits = naOri64(dBits, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);
     int32 exponent = naGetDoubleExponent(d);
@@ -465,13 +473,18 @@ NA_IAPI int32 naGetFloatFractionE(float f) {
       fbits = fbits >> (-exponent - 1);
       fbits++;
       fbits = fbits >> 1;
+    }else if(exponent >= 32){
+      // This is dangerous! According to the standard, values greater equal to
+      // the bitsize with the shift operator lead to undefined behaviour.
+      // Therefore, treat that case separately.
+      fbits = 0;
     }else{
       fbits = fbits << exponent;
       fbits = fbits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
     }
 
-    NAi64 hyperTens = naMakei64(NA_ZERO_i32, 0x3d090000);  // = 1e6 * 2^(32-23+1)
-    NAi64 hyperBits = naMakei64(NA_ZERO_i32, (uint32)fbits);
+    int64 hyperTens = naMakei64(NA_ZERO_i32, 0x3d090000);  // = 1e6 * 2^(32-23+1)
+    int64 hyperBits = naMakei64(NA_ZERO_i32, (uint32)fbits);
     hyperBits = naMuli64(hyperBits, hyperTens);
     fbits = naGeti64Hi(hyperBits);
 
@@ -481,7 +494,14 @@ NA_IAPI int32 naGetFloatFractionE(float f) {
     fbits++;
     fbits = fbits >> 1;
     if(exponent > 0) {
-      fbits = fbits << exponent;
+      if(exponent >= 32){
+        // This is dangerous! According to the standard, values greater equal to
+        // the bitsize with the shift operator lead to undefined behaviour.
+        // Therefore, treat that case separately.
+        fbits = 0;
+      }else{
+        fbits = fbits << exponent;
+      }
     }
   }
   return fbits;
@@ -506,7 +526,7 @@ NA_IAPI int32 naGetFloatFractionSlowE(float f) {
   if(f == 0.) {
     fbits = NA_ZERO_i32;
   }else{
-    NAi64 hyperTens;
+    int64 hyperTens;
     uint32 mul = 1;
     exponent = naGetFloatExponent(f);
     if(exponent < 0) {
@@ -516,6 +536,12 @@ NA_IAPI int32 naGetFloatFractionSlowE(float f) {
       fbits++;
       fbits = fbits >> 1;
       hyperTens = naMakei64(NA_ZERO_i32, 1000000);  // 1e6
+    }else if(exponent >= 32){
+      // This is dangerous! According to the standard, values greater equal to
+      // the bitsize with the shift operator lead to undefined behaviour.
+      // Therefore, treat that case separately.
+      fbits = 0;
+      hyperTens = NA_ZERO_i64;
     }else{
       fbits = fbits << exponent;
       fbits = fbits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
@@ -527,7 +553,7 @@ NA_IAPI int32 naGetFloatFractionSlowE(float f) {
       hyperTens = naMakei64(NA_ZERO_i32, 1000000 / mul);
     }
 
-    NAi64 hyperBits = naMakei64(NA_ZERO_i32, (uint32)fbits);
+    int64 hyperBits = naMakei64(NA_ZERO_i32, (uint32)fbits);
     hyperBits = naMuli64(hyperBits, hyperTens);
     hyperBits = naShli64(hyperBits, 10); // (32-23+1)
 
@@ -541,14 +567,14 @@ NA_IAPI int32 naGetFloatFractionSlowE(float f) {
 
 
 
-NA_IAPI NAi64 naGetDoubleFraction(double d) {
+NA_IAPI int64 naGetDoubleFraction(double d) {
   #if NA_DEBUG
-  if(naGetDoubleInteger(d))
+  if(!naEquali64(naGetDoubleInteger(d), NA_ZERO_i64))
     naError("Less than 15 decimal digits available for accuracy. Result may contain rounding errors. Use E or Slow variant.");
   #endif
-  NAi64 result = naGetDoubleFractionE(d);
+  int64 result = naGetDoubleFractionE(d);
   #if NA_DEBUG
-  if(result == 1000000000000000)
+    if(naEqualu64(naCasti64Tou64(result), NA_ONE_E_15))
     naError("Fraction rounded up to 1e16. Take care of this case in your code and then use the E method to inhibit this error.");
   #endif
   return result;
@@ -556,9 +582,9 @@ NA_IAPI NAi64 naGetDoubleFraction(double d) {
 
 
 
-NA_IAPI NAi64 naGetDoubleFractionE(double d) {
+NA_IAPI int64 naGetDoubleFractionE(double d) {
   int32 exponent;
-  NAi64 dbits = *((NAi64*)(void*)&d);
+  int64 dbits = *((int64*)(void*)&d);
   if(d == 0.) {
     dbits = NA_ZERO_i64;
   }else{
@@ -574,8 +600,8 @@ NA_IAPI NAi64 naGetDoubleFractionE(double d) {
       dbits = naAndi64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
     }
 
-    NAi128 hyperTens = naMakei128(NA_ZERO_i64, 0x71afd498d0000000);  // = 1e15 * 2^(64-52+1)
-    NAi128 hyperBits = naMakei128(NA_ZERO_i64, naCasti64Tou64(dbits));
+    int128 hyperTens = naMakei128(NA_ZERO_i64, NA_ONE_E_15_SHL_13);  // = 1e15 * 2^(64-52+1)
+    int128 hyperBits = naMakei128(NA_ZERO_i64, naCasti64Tou64(dbits));
     hyperBits = naMuli128(hyperBits, hyperTens);
     dbits = naGeti128Hi(hyperBits);
 
@@ -593,10 +619,10 @@ NA_IAPI NAi64 naGetDoubleFractionE(double d) {
 
 
 
-NA_IAPI NAi64 naGetDoubleFractionSlow(double d) {
-  NAi64 result = naGetDoubleFractionSlowE(d);
+NA_IAPI int64 naGetDoubleFractionSlow(double d) {
+  int64 result = naGetDoubleFractionSlowE(d);
   #if NA_DEBUG
-    if(result == 1000000000000000)
+    if(naEqualu64(naCasti64Tou64(result), NA_ONE_E_15))
       naError("Fraction rounded up to 1e16. Take care of this case in your code and then use the SlowE method to inhibit this error.");
     #endif
   return result;
@@ -604,14 +630,14 @@ NA_IAPI NAi64 naGetDoubleFractionSlow(double d) {
 
 
 
-NA_IAPI NAi64 naGetDoubleFractionSlowE(double d) {
+NA_IAPI int64 naGetDoubleFractionSlowE(double d) {
   int32 exponent;
-  NAi64 dbits = *((NAi64*)(void*)&d);
+  int64 dbits = *((int64*)(void*)&d);
   if(d == 0.) {
     dbits = NA_ZERO_i64;
   }else{
-    NAi128 hyperTens;
-    NAu64 mul = 1;
+    int128 hyperTens;
+    uint64 mul = NA_ONE_u64;
     exponent = naGetDoubleExponent(d);
     if(exponent < 0) {
       dbits = naAndi64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
@@ -619,19 +645,19 @@ NA_IAPI NAi64 naGetDoubleFractionSlowE(double d) {
       dbits = naShri64(dbits, -exponent - 1);
       naIncu64(dbits);
       dbits = naShri64(dbits, 1);
-      hyperTens = naMakei128(NA_ZERO_i64, 1000000000000000);  // 1e15
+      hyperTens = naMakei128(NA_ZERO_i64, NA_ONE_E_15);
     }else{
       dbits = naShli64(dbits, exponent);
       dbits = naAndi64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
       int64 i = naGetDoubleInteger(d);
-      while(i) {
-        i /= 10;
-        mul *= 10;
+      while(!naEquali64(i, NA_ONE_i64)) {
+        i = naDivi64(i, naCasti32Toi64(10));
+        mul = naMulu64(mul, naMakeu64WithLo(10));
       }
-      hyperTens = naMakei128(NA_ZERO_i64, 1000000000000000 / mul);
+      hyperTens = naMakei128(NA_ZERO_i64, naDivu64(NA_ONE_E_15, mul));
     }
 
-    NAi128 hyperBits = naMakei128(NA_ZERO_i64, naCasti64Tou64(dbits));
+    int128 hyperBits = naMakei128(NA_ZERO_i64, naCasti64Tou64(dbits));
     hyperBits = naMuli128(hyperBits, hyperTens);
     hyperBits = naShli128(hyperBits, 13); // (64-52+1)
 

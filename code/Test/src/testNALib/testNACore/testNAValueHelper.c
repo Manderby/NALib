@@ -56,14 +56,14 @@ void testFlags(void) {
 void testRange(void) {
   naTestGroup("Make Max with End") {
     naTest(naMakeMaxWithEndi32(1234) == 1233);
-    naTest(naMakeMaxWithEndi64(1234) == 1233);
+    naTest(naEquali64(naMakeMaxWithEndi64(naCasti32Toi64(1234)), naCasti32Toi64(1233)));
     naTest(naMakeMaxWithEnds(1234) == 1233);
     naTestError(naMakeMaxWithEndi32(NA_MIN_i32));
     naTestError(naMakeMaxWithEndi64(NA_MIN_i64));
     naTestError(naMakeMaxWithEnds(NA_ZERO_s));
 
     naTest(naMakeEndWithMaxi32(1234) == 1235);
-    naTest(naMakeEndWithMaxi64(1234) == 1235);
+    naTest(naEquali64(naMakeEndWithMaxi64(naCasti32Toi64(1234)), naCasti32Toi64(1235)));
     naTest(naMakeEndWithMaxs(1234) == 1235);
     naTestError(naMakeEndWithMaxi32(NA_MAX_i32));
     naTestError(naMakeEndWithMaxi64(NA_MAX_i64));
@@ -80,9 +80,9 @@ void testRange(void) {
     naTest(naMakeEndWithStartAndLengthi32(5, 10) == 15);
     naTestError(naMakeEndWithStartAndLengthi32(0, -1));
     naTestError(naMakeEndWithStartAndLengthi32(NA_MAX_i32, 1));
-    naTest(naMakeEndWithStartAndLengthi64(5, 10) == 15);
-    naTestError(naMakeEndWithStartAndLengthi64(0, -1));
-    naTestError(naMakeEndWithStartAndLengthi64(NA_MAX_i64, 1));
+    naTest(naEquali64(naMakeEndWithStartAndLengthi64(naCasti32Toi64(5), naCasti32Toi64(10)), naCasti32Toi64(15)));
+    naTestError(naMakeEndWithStartAndLengthi64(NA_ZERO_i64, NA_MINUS_ONE_i64));
+    naTestError(naMakeEndWithStartAndLengthi64(NA_MAX_i64, NA_ONE_i64));
     naTest(naMakeEndWithStartAndLengths(5, 10) == 15);
     naTestError(naMakeEndWithStartAndLengths(1, NA_MAX_s));
   }
@@ -92,10 +92,10 @@ void testRange(void) {
     naTestError(naMakeMaxWithMinAndLengthi32(0, -1));
     naTestError(naMakeMaxWithMinAndLengthi32(NA_MAX_i32, 1));
     naTestError(naMakeMaxWithMinAndLengthi32(NA_MAX_i32, 2));
-    naTest(naMakeMaxWithMinAndLengthi64(5, 10) == 14);
-    naTestError(naMakeMaxWithMinAndLengthi64(0, -1));
-    naTestError(naMakeMaxWithMinAndLengthi64(NA_MAX_i64, 1));
-    naTestError(naMakeMaxWithMinAndLengthi64(NA_MAX_i64, 2));
+    naTest(naEquali64(naMakeMaxWithMinAndLengthi64(naCasti32Toi64(5), naCasti32Toi64(10)), naCasti32Toi64(14)));
+    naTestError(naMakeMaxWithMinAndLengthi64(NA_ZERO_i64, NA_MINUS_ONE_i64));
+    naTestError(naMakeMaxWithMinAndLengthi64(NA_MAX_i64, NA_ONE_i64));
+    naTestError(naMakeMaxWithMinAndLengthi64(NA_MAX_i64, naCasti32Toi64(2)));
     naTest(naMakeMaxWithMinAndLengths(5, 10) == 14);
     naTest(naMakeMaxWithMinAndLengths(0, NA_MAX_s) == NA_MAX_s - 1);
     naTestError(naMakeMaxWithMinAndLengths(1, NA_MAX_s));
@@ -108,8 +108,8 @@ void testRange(void) {
     naTest(naMakeLengthWithStartAndEndf(5.f, 5.f) == 0.f);
     naTest(naMakeLengthWithStartAndEndi32(5, 10) == 5);
     naTest(naMakeLengthWithStartAndEndi32(5, 5) == 0);
-    naTest(naMakeLengthWithStartAndEndi64(5, 10) == 5);
-    naTest(naMakeLengthWithStartAndEndi64(5, 5) == 0);
+    naTest(naEquali64(naMakeLengthWithStartAndEndi64(naCasti32Toi64(5), naCasti32Toi64(10)), naCasti32Toi64(5)));
+    naTest(naEquali64(naMakeLengthWithStartAndEndi64(naCasti32Toi64(5), naCasti32Toi64(5)), NA_ZERO_i64));
     naTest(naMakeLengthWithStartAndEnds(5, 10) == 5);
     naTest(naMakeLengthWithStartAndEnds(5, 5) == 0);
     naTestError(naMakeLengthWithStartAndEnd(10., 5.));
@@ -118,8 +118,8 @@ void testRange(void) {
     naTestError(naMakeLengthWithStartAndEndf(5.f, NA_NANf));
     naTestError(naMakeLengthWithStartAndEndi32(50, 10));
     naTestError(naMakeLengthWithStartAndEndi32(-1, NA_MAX_i32));
-    naTestError(naMakeLengthWithStartAndEndi64(50, 10));
-    naTestError(naMakeLengthWithStartAndEndi64(-1, NA_MAX_i64));
+    naTestError(naMakeLengthWithStartAndEndi64(naCasti32Toi64(50), naCasti32Toi64(10)));
+    naTestError(naMakeLengthWithStartAndEndi64(NA_MINUS_ONE_i64, NA_MAX_i64));
     naTestError(naMakeLengthWithStartAndEnds(50, 10));
   }
 
@@ -130,8 +130,8 @@ void testRange(void) {
     naTest(naMakeLengthWithStartAndEndfE(5.f, 5.f) == 0.f);
     naTest(naMakeLengthWithStartAndEndi32E(5, 10) == 5);
     naTest(naMakeLengthWithStartAndEndi32E(5, 5) == 0);
-    naTest(naMakeLengthWithStartAndEndi64E(5, 10) == 5);
-    naTest(naMakeLengthWithStartAndEndi64E(5, 5) == 0);
+    naTest(naEquali64(naMakeLengthWithStartAndEndi64E(naCasti32Toi64(5), naCasti32Toi64(10)), naCasti32Toi64(5)));
+    naTest(naEquali64(naMakeLengthWithStartAndEndi64E(naCasti32Toi64(5), naCasti32Toi64(5)), naCasti32Toi64(0)));
     naTest(naMakeLengthWithStartAndEndsE(5, 10) == 5);
     naTest(naMakeLengthWithStartAndEndsE(5, 5) == 0);
     naTestVoid(naMakeLengthWithStartAndEndE(10., 5.));
@@ -140,22 +140,22 @@ void testRange(void) {
     naTestError(naMakeLengthWithStartAndEndfE(5.f, NA_NANf));
     naTestVoid(naMakeLengthWithStartAndEndi32E(50, 10));
     naTestError(naMakeLengthWithStartAndEndi32E(-1, NA_MAX_i32));
-    naTestVoid(naMakeLengthWithStartAndEndi64E(50, 10));
-    naTestError(naMakeLengthWithStartAndEndi64E(-1, NA_MAX_i64));
+    naTestVoid(naMakeLengthWithStartAndEndi64E(naCasti32Toi64(50), naCasti32Toi64(10)));
+    naTestError(naMakeLengthWithStartAndEndi64E(NA_MINUS_ONE_i64, NA_MAX_i64));
     naTestVoid(naMakeLengthWithStartAndEndsE(50, 10));
   }
 
   naTestGroup("Make Length with Min and Max") {
     naTest(naMakeLengthWithMinAndMaxi32(5, 10) == 6);
     naTest(naMakeLengthWithMinAndMaxi32(5, 5) == 1);
-    naTest(naMakeLengthWithMinAndMaxi64(5, 10) == 6);
-    naTest(naMakeLengthWithMinAndMaxi64(5, 5) == 1);
+    naTest(naEquali64(naMakeLengthWithMinAndMaxi64(naCasti32Toi64(5), naCasti32Toi64(10)), naCasti32Toi64(6)));
+    naTest(naEquali64(naMakeLengthWithMinAndMaxi64(naCasti32Toi64(5), naCasti32Toi64(5)), naCasti32Toi64(1)));
     naTestError(naMakeLengthWithMinAndMaxi32(0, NA_MAX_i32));
     naTestError(naMakeLengthWithMinAndMaxi32(10, 5));
     naTestError(naMakeLengthWithMinAndMaxi32(-1, NA_MAX_i32 - 1));
-    naTestError(naMakeLengthWithMinAndMaxi64(0, NA_MAX_i64));
-    naTestError(naMakeLengthWithMinAndMaxi64(10, 5));
-    naTestError(naMakeLengthWithMinAndMaxi64(-1, NA_MAX_i64 - 1));
+    naTestError(naMakeLengthWithMinAndMaxi64(NA_ZERO_i64, NA_MAX_i64));
+    naTestError(naMakeLengthWithMinAndMaxi64(naCasti32Toi64(10), naCasti32Toi64(5)));
+    naTestError(naMakeLengthWithMinAndMaxi64(NA_MINUS_ONE_i64, naSubi64(NA_MAX_i64, NA_ONE_i64)));
     naTest(naMakeLengthWithMinAndMaxs(5, 10) == 6);
     naTest(naMakeLengthWithMinAndMaxs(5, 5) == 1);
     naTestError(naMakeLengthWithMinAndMaxs(0, NA_MAX_s));
@@ -165,18 +165,31 @@ void testRange(void) {
 
 
 
-void testAlign(void) {
-  naTestGroup("naAlignValue") {
-    naTest(naAlignValue(0., 0., 20.) == 0.);
-    naTest(naAlignValue(5., 0., 20.) == 0.);
-    naTest(naAlignValue(65., 0., 20.) == 60.);
-    naTest(naAlignValue(-75., 0., 20.) == -80.);
-    naTest(naAlignValue(10., 10., 20.) == 10.);
-    naTest(naAlignValue(55., 10., 20.) == 50.);
-    naTest(naAlignValue(5., 10., 20.) == -10.);
-    naTestError(naAlignValue(5., 0., -20.));
-    naTestError(naAlignValue(5., -NA_INFINITY, 20.));
-    naTestError(naAlignValue(-5., NA_INFINITY, 20.));
+void testAlign(void){
+  naTestGroup("naAlignValuei32"){
+    naTest(naAlignValuei32(0, 0, 20) == 0);
+    naTest(naAlignValuei32(5, 0, 20) == 0);
+    naTest(naAlignValuei32(65, 0, 20) == 60);
+    naTest(naAlignValuei32(-75, 0, 20) == -80);
+    naTest(naAlignValuei32(10, 10, 20) == 10);
+    naTest(naAlignValuei32(55, 10, 20) == 50);
+    naTest(naAlignValuei32(5, 10, 20) == -10);
+    naTestError(naAlignValuei32(5, 0, -20));
+    naTestError(naAlignValuei32(5, NA_MIN_i32, 20));
+    naTestError(naAlignValuei32(-5, NA_MAX_i32, 20));
+  }
+
+  naTestGroup("naAlignValuei64"){
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(0), naCasti32Toi64(0), naCasti32Toi64(20)), naCasti32Toi64(0)));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(5), naCasti32Toi64(0), naCasti32Toi64(20)), naCasti32Toi64(0)));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(65), naCasti32Toi64(0), naCasti32Toi64(20)), naCasti32Toi64(60)));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(-75), naCasti32Toi64(0), naCasti32Toi64(20)), naCasti32Toi64(-80)));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(10), naCasti32Toi64(10), naCasti32Toi64(20)), naCasti32Toi64(10)));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(55), naCasti32Toi64(10), naCasti32Toi64(20)), naCasti32Toi64(50)));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(5), naCasti32Toi64(10), naCasti32Toi64(20)), naCasti32Toi64(-10)));
+    naTestError(naAlignValuei64(naCasti32Toi64(5), naCasti32Toi64(0), naCasti32Toi64(-20)));
+    naTestError(naAlignValuei64(naCasti32Toi64(5), NA_MIN_i64, naCasti32Toi64(20)));
+    naTestError(naAlignValuei64(naCasti32Toi64(-5), NA_MAX_i64, naCasti32Toi64(20)));
   }
 
   naTestGroup("naAlignValuef") {
@@ -193,16 +206,16 @@ void testAlign(void) {
   }
 
   naTestGroup("naAlignValuei64") {
-    naTest(naAlignValuei64(0, 0, 20) == 0);
-    naTest(naAlignValuei64(5, 0, 20) == 0);
-    naTest(naAlignValuei64(65, 0, 20) == 60);
-    naTest(naAlignValuei64(-75, 0, 20) == -80);
-    naTest(naAlignValuei64(10, 10, 20) == 10);
-    naTest(naAlignValuei64(55, 10, 20) == 50);
-    naTest(naAlignValuei64(5, 10, 20) == -10);
-    naTestError(naAlignValuei64(5, 0, -20));
-    naTestError(naAlignValuei64(5, NA_MIN_i64, 20));
-    naTestError(naAlignValuei64(-5, NA_MAX_i64, 20));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(0), naCasti32Toi64(0), naCasti32Toi64(20)), naCasti32Toi64(0)));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(5), naCasti32Toi64(0), naCasti32Toi64(20)), naCasti32Toi64(0)));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(65), naCasti32Toi64(0), naCasti32Toi64(20)), naCasti32Toi64(60)));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(-75), naCasti32Toi64(0), naCasti32Toi64(20)), naCasti32Toi64(-80)));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(10), naCasti32Toi64(10), naCasti32Toi64(20)), naCasti32Toi64(10)));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(55), naCasti32Toi64(10), naCasti32Toi64(20)), naCasti32Toi64(50)));
+    naTest(naEquali64(naAlignValuei64(naCasti32Toi64(5), naCasti32Toi64(10), naCasti32Toi64(20)), naCasti32Toi64(-10)));
+    naTestError(naAlignValuei64(naCasti32Toi64(5), naCasti32Toi64(0), naCasti32Toi64(-20)));
+    naTestError(naAlignValuei64(naCasti32Toi64(5), NA_MIN_i64, naCasti32Toi64(20)));
+    naTestError(naAlignValuei64(naCasti32Toi64(-5), NA_MAX_i64, naCasti32Toi64(20)));
   }
 
   naTestGroup("naAlignValuei32") {
@@ -253,7 +266,7 @@ void testIsValueValid(void) {
     naTest(naIsOffsetValueValidi32(NA_MIN_i32));
   }
   naTestGroup("naIsOffsetValueValidi64") {
-    naTest(naIsOffsetValueValidi64(0));
+    naTest(naIsOffsetValueValidi64(NA_ZERO_i64));
     naTest(naIsOffsetValueValidi64(NA_MAX_i64));
     naTest(naIsOffsetValueValidi64(NA_MIN_i64));
   }
@@ -280,7 +293,7 @@ void testIsValueValid(void) {
     naTest(naIsLengthValueValidi32(NA_MIN_i32));
   }
   naTestGroup("naIsLengthValueValidi64") {
-    naTest(naIsLengthValueValidi64(0));
+    naTest(naIsLengthValueValidi64(NA_ZERO_i64));
     naTest(naIsLengthValueValidi64(NA_MAX_i64));
     naTest(naIsLengthValueValidi64(NA_MIN_i64));
   }
@@ -311,9 +324,9 @@ void testIsValueEmpty(void) {
     naTest(!naIsLengthValueEmptyi32(-1));
   }
   naTestGroup("naIsLengthValueEmptyi64") {
-    naTest(naIsLengthValueEmptyi64(0));
-    naTest(!naIsLengthValueEmptyi64(1));
-    naTest(!naIsLengthValueEmptyi64(-1));
+    naTest(naIsLengthValueEmptyi64(NA_ZERO_i64));
+    naTest(!naIsLengthValueEmptyi64(NA_ONE_i64));
+    naTest(!naIsLengthValueEmptyi64(NA_MINUS_ONE_i64));
   }
   naTestGroup("naIsLengthValueEmptys") {
       naTest(naIsLengthValueEmptys(0));
@@ -349,9 +362,9 @@ void testIsValueNegative(void) {
     naTest(naIsLengthValueNegativei32(NA_MIN_i32));
   }
   naTestGroup("naIsLengthValueNegativei64") {
-    naTest(!naIsLengthValueNegativei64(0));
-    naTest(!naIsLengthValueNegativei64(1));
-    naTest(naIsLengthValueNegativei64(-1));
+    naTest(!naIsLengthValueNegativei64(NA_ZERO_i64));
+    naTest(!naIsLengthValueNegativei64(NA_ONE_i64));
+    naTest(naIsLengthValueNegativei64(NA_MINUS_ONE_i64));
     naTest(!naIsLengthValueNegativei64(NA_MAX_i64));
     naTest(naIsLengthValueNegativei64(NA_MIN_i64));
   }
@@ -389,9 +402,9 @@ void testIsValueUseful(void) {
     naTest(naIsOffsetValueUsefuli32(NA_MIN_i32));
   }
   naTestGroup("naIsOffsetValueUsefuli64") {
-    naTest(naIsOffsetValueUsefuli64(0));
-    naTest(naIsOffsetValueUsefuli64(1));
-    naTest(naIsOffsetValueUsefuli64(-1));
+    naTest(naIsOffsetValueUsefuli64(NA_ZERO_i64));
+    naTest(naIsOffsetValueUsefuli64(NA_ONE_i64));
+    naTest(naIsOffsetValueUsefuli64(NA_MINUS_ONE_i64));
     naTest(naIsOffsetValueUsefuli64(NA_MAX_i64));
     naTest(naIsOffsetValueUsefuli64(NA_MIN_i64));
   }
@@ -425,9 +438,9 @@ void testIsValueUseful(void) {
     naTest(!naIsLengthValueUsefuli32(NA_MIN_i32));
   }
   naTestGroup("naIsLengthValueUsefuli64") {
-    naTest(!naIsLengthValueUsefuli64(0));
-    naTest(naIsLengthValueUsefuli64(1));
-    naTest(!naIsLengthValueUsefuli64(-1));
+    naTest(!naIsLengthValueUsefuli64(NA_ZERO_i64));
+    naTest(naIsLengthValueUsefuli64(NA_ONE_i64));
+    naTest(!naIsLengthValueUsefuli64(NA_MINUS_ONE_i64));
     naTest(naIsLengthValueUsefuli64(NA_MAX_i64));
     naTest(!naIsLengthValueUsefuli64(NA_MIN_i64));
   }

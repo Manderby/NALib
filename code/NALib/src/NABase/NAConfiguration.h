@@ -195,6 +195,36 @@
 
 
 // ////////////////////////////////
+// Integer emulation
+// ////////////////////////////////
+
+// Integers with 64, 128 or even 256 bits are not available on all systems as
+// native types. NALib has emulations for these but they are not accessible
+// using simple integral types but as structs and need special function calls
+// to work properly. Therefore, they are only implemented where really
+// needed internally in NALib.
+//
+// The need though might arise that applications should be written for systems
+// which do not have the native types. Therefore, one can define with the
+// preprocessor macro NA_NATIVE_INTEGER_UP_TO to what maximal bit number NALib
+// shall use the native types. Everything above will be emulated.
+
+// value | int32  | int64    | int128   | int256 
+// ------+--------+----------+----------+----------
+// 32    | navive | emulated | emulated | emulated
+// 64    | native | native*  | emulated | emulated
+// 128   | native | native*  | native*  | emulated
+// 256   | native | native*  | native*  | native*
+// * = if available on the system
+// 32 bits integers are assumed to always be available.
+//
+// Default is 256
+
+#define NA_NATIVE_INTEGER_UP_TO 256
+
+
+
+// ////////////////////////////////
 // Runtime memory pools
 // ////////////////////////////////
 

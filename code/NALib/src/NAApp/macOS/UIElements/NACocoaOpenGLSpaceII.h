@@ -13,6 +13,14 @@
   
 
 
+  struct NACocoaOpenGLSpace{
+    NAOpenGLSpace openGLSpace;
+  };
+  NA_HAPI void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace);
+  NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
+
+
+
   @implementation NACocoaNativeOpenGLSpace
   
   - (id)initWithOpenGLSpace:(NACocoaOpenGLSpace*)newCocoaOpenGLSpace frame:(NSRect)frameRect initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{

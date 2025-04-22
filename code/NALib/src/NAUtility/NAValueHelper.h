@@ -38,11 +38,11 @@ NA_IAPI NABool naToggleFlagu32(uint32* flags, uint32 mask);
 // Converts an integer denoting an end or max to its counterpart. Also does
 // some checks if the values over- or underflow.
 NA_IAPI int32  naMakeMaxWithEndi32          (int32  end);
-NA_IAPI NAi64  naMakeMaxWithEndi64          (int64  end);
+NA_IAPI int64  naMakeMaxWithEndi64          (int64  end);
 NA_IAPI size_t naMakeMaxWithEnds            (size_t end);
 
 NA_IAPI int32  naMakeEndWithMaxi32          (int32  max);
-NA_IAPI NAi64  naMakeEndWithMaxi64          (int64  max);
+NA_IAPI int64  naMakeEndWithMaxi64          (int64  max);
 NA_IAPI size_t naMakeEndWithMaxs            (size_t max);
 
 NA_IAPI double naMakeEndWithStartAndLength   (double start, double length);

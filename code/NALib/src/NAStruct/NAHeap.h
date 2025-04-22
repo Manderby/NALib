@@ -61,7 +61,7 @@
 
 
 // The full type definition is in the file "NAHeapII.h"
-typedef struct NAHeap NAHeap;
+NA_PROTOTYPE(NAHeap);
 
 // Use the following flags to define what type the key is.
 // If this flag is 0 or not present, the heap will use double-value keys.
@@ -95,12 +95,12 @@ NA_IAPI void naClearHeap(NAHeap* heap);
 NA_IAPI void naEmptyHeap(NAHeap* heap);
 
 // Returns the number of elements stored
-NA_IAPI int64 naGetHeapCount(const NAHeap* heap);
+NA_IAPI size_t naGetHeapCount(const NAHeap* heap);
 
 // Returns the maximum number of elements that can be stored. If heap was
 // initialized with count 0, that size can change over time and reflects the
 // currently reserved count.
-NA_IAPI int64 naGetHeapMaxCount(const NAHeap* heap);
+NA_IAPI size_t naGetHeapMaxCount(const NAHeap* heap);
 
 // Shrinks the heap if at least three quarters of the heap are unused. Can only
 // be called if the initial count given to naInitHeap was negative.

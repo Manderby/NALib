@@ -60,7 +60,7 @@ NA_HIDEF void na_ConvertToRadiometricRGB(NAColor* outColor, const NAColor* inCol
 NA_HIDEF size_t na_GetImagePixelCount(const NAImage* image) {
 #if NA_DEBUG
   if(!image)
-    naCrash("Given image is a Null-Pointer");
+    naCrash("image is nullptr");
 #endif
   return (size_t)image->width * (size_t)image->height;
 }
@@ -70,7 +70,7 @@ NA_HIDEF size_t na_GetImagePixelCount(const NAImage* image) {
 NA_HIDEF size_t na_GetImageDataSize(const NAImage* image) {
 #if NA_DEBUG
   if(!image)
-    naCrash("Given image is a Null-Pointer");
+    naCrash("image is nullptr");
 #endif
   return na_GetImagePixelCount(image) * sizeof(NAColor);
 }
@@ -80,7 +80,7 @@ NA_HIDEF size_t na_GetImageDataSize(const NAImage* image) {
 NA_DEF NAColor* naGetImageData(const NAImage* image) {
 #if NA_DEBUG
   if(!image)
-    naCrash("Given image is a Null-Pointer");
+    naCrash("image is nullptr");
 #endif
   return image->data;
 }
@@ -90,7 +90,7 @@ NA_DEF NAColor* naGetImageData(const NAImage* image) {
 NA_DEF NASizes naGetImageSize(const NAImage* image) {
 #if NA_DEBUG
   if(!image)
-    naCrash("Given image is a Null-Pointer");
+    naCrash("image is nullptr");
 #endif
   return naMakeSizes(image->width, image->height);
 }
@@ -99,12 +99,12 @@ NA_DEF NASizes naGetImageSize(const NAImage* image) {
 
 NA_DEF NAImage* naCreateImage(NASizes size, const NAColor* color) {
   NAImage* image;
-#if NA_DEBUG
-  if(size.width <= 0 || size.height <= 0)
-    naError("size must be > 0");
-  if(size.width > NA_MAX_i32 || size.height > NA_MAX_i32)
-    naError("size is too big");
-#endif
+  #if NA_DEBUG
+    if(size.width <= 0 || size.height <= 0)
+      naError("size must be > 0");
+    if(size.width > NA_MAX_i32 || size.height > NA_MAX_i32)
+      naError("size is too big");
+  #endif
   image = naCreate(NAImage);
   image->width = (uint32)size.width;
   image->height = (uint32)size.height;
@@ -126,7 +126,7 @@ NA_HDEF NAImage* naCreateImageCopy(const NAImage* image) {
   NAImage* newImage;
 #if NA_DEBUG
   if(!image)
-    naCrash("given image is a Null pointer");
+    naCrash("image is nullptr");
 #endif
   newImage = naCreate(NAImage);
   newImage->width = image->width;
@@ -177,7 +177,7 @@ NAImage* na_CreateBlendedImage(
   // In case we have two images, fill up the trivial vertical parts.
   if(topIsImage && baseIsImage) {
     // Simply copy the lower part of the base image
-    size_t basePixelCount = innerRect.pos.y;
+    size_t basePixelCount = (size_t)innerRect.pos.y;
     if(basePixelCount > 0) {
       naCopyn(
         ret,
@@ -270,9 +270,9 @@ NA_DEF NAImage* naCreateImageWithTint(
 {
 #if NA_DEBUG
   if(!base)
-    naCrash("Given base image is a Null-Pointer");
+    naCrash("base is nullptr");
   if(!tint)
-    naCrash("tint is Null");
+    naCrash("tint is nullptr");
 #endif
   
   return na_CreateBlendedImage(
@@ -296,9 +296,9 @@ NA_DEF NAImage* naCreateImageWithBlend(
 {
 #if NA_DEBUG
   if(!base)
-    naCrash("base is Null");
+    naCrash("base is nullptr");
   if(!top)
-    naCrash("top is Null");
+    naCrash("top is nullptr");
 #endif
   
   return na_CreateBlendedImage(
@@ -316,9 +316,9 @@ NA_DEF NAImage* naCreateImageWithBlend(
 NA_DEF NAImage* naCreateImageWithApply(const NAColor* ground, const NAImage* top, NABlendMode mode, float factor) {
 #if NA_DEBUG
   if(!ground)
-    naCrash("ground is Null");
+    naCrash("ground is nullptr");
   if(!top)
-    naCrash("top is Null");
+    naCrash("top is nullptr");
 #endif
   
   const NAColor* topPtr = top->data;

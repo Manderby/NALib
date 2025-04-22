@@ -5,8 +5,8 @@
 
 
 #include "GUIExamples.h"
-#include "../../NALib/src/NAVisual/NA3DHelper.h"
-#include "../../NALib/src/NAVisual/NAPNG.h"
+#include "NAVisual/NA3DHelper.h"
+#include "NAVisual/NAPNG.h"
 
 
 struct ExperimentController{
@@ -58,7 +58,7 @@ struct ExperimentController{
   NALabel* imageSpaceLabel;
   NAImageSpace* imageSpace;
 
-  NAInt fontId;
+  size_t fontId;
   NALabel* openGLSpaceLabel;
   NAOpenGLSpace* openGLSpace;
   int openGLSpaceRefreshCount;
@@ -471,9 +471,9 @@ void clearExperimentController(ExperimentController* con){
   // Note that all UI elements which are attached in some way to the root
   // application UIElement will be cleared automatically.
   naDelete(con->menu);
-  naFree(con);
-
   naShutdownPixelFont(con->fontId);
+
+  naFree(con);
 }
 
 

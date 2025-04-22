@@ -20,5 +20,3 @@ Future
 - MOB
 - TimeZones
 - NASocket
-- URL
-- CODATA 2022

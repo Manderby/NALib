@@ -12,7 +12,7 @@
 // Code stolen and adapted from the PNG reference:
 // http://www.w3.org/TR/PNG/#D-CRCAppendix
 
-typedef struct NAChecksumCRC NAChecksumCRC;
+NA_PROTOTYPE(NAChecksumCRC);
 struct NAChecksumCRC{
   uint32 value;
   uint32 table[256];
@@ -55,7 +55,7 @@ NA_HIDEF void na_AccumulateCRCPNG(NAChecksumCRC* checksumcrc, const NAByte* buf,
 #include "../../NAMath/NAMathConstants.h"
 #define NA_CHECKSUM_ADLER_BASE NA_PRIME_BEFORE_2_16;
 
-typedef struct NAChecksumAdler NAChecksumAdler;
+NA_PROTOTYPE(NAChecksumAdler);
 struct NAChecksumAdler{
   uint32 s1;
   uint32 s2;

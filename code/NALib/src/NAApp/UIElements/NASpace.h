@@ -25,7 +25,7 @@ NA_API NASpace* naNewSpace(NASize size);
 
 // Adds a child ui element at the given position.
 // Beware that adding a child to a space which formerly was the first responder
-// of a window, that windows first responder will be reset to Null.
+// of a window, that windows first responder will be reset to nullptr.
 //
 // Usually, UI-elementes are placed in a line-by-line fashion, usually asking
 // the user to read from top to bottom. Therefore, it is good to know the

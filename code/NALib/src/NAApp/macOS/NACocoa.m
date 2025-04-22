@@ -24,9 +24,7 @@
 // Now, we are sure, we compile with Objective-C and on MacOSX. The
 // #if directives will be closed at the very bottom of this file.
 
-#if !defined NA_TYPE_INT64
-  #error Compiling NALib and Cocoa without a native int64 type will not work.
-#endif
+#if NA_NATIVE_INT64_IN_USE
 
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
@@ -62,6 +60,10 @@
 #include "UIElements/NACocoaTextFieldII.h"
 #include "UIElements/NACocoaUIElementII.h"
 #include "UIElements/NACocoaWindowII.h"
+
+#else // NA_NATIVE_INT64_IN_USE
+  #error Compiling NALib and Cocoa without a native int64 type will not work.
+#endif
 
 #endif // NA_COMPILE_GUI == 1
 #endif // defined __OBJC__

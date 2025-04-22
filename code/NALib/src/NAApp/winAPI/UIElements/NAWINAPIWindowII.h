@@ -14,7 +14,17 @@
   #error "System specific flags overlap with core flags"
 #endif
 
-NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+NAWINAPICallbackInfo naWindowWINAPIProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NAWINAPIWindow* windowMutable;
   NASpace* contentSpace;
@@ -27,7 +37,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
   switch(message) {
   case WM_SHOWWINDOW:
     // We force the content space to redraw the proper background colors.
-    windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
+    windowMutable = (NAWINAPIWindow*)naGetUIElementWindowMutable(uiElement);
     contentSpace = naGetWindowContentSpace(&windowMutable->window);
 
     if(wParam){
@@ -43,7 +53,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     // wParam: Unused
     // lParam: (int)(short)LOWORD: x coordinate, (int)(short)HIWORD: y coordinate
     // result: 0 when handeled.
-    windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
+    windowMutable = (NAWINAPIWindow*)naGetUIElementWindowMutable(uiElement);
     if(!naGetFlagu32(windowMutable->window.flags, NA_WINAPI_WINDOW_KEEP_POS)) {
       screenRect = naGetMainScreenRect();
       uiScale = naGetUIElementResolutionScale(NA_NULL);
@@ -70,7 +80,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     // wParam: Type of resizing (maximize, minimize, ...)
     // lParam: LOWORD: width, HIWORD: height
     // result: 0 when handeled.
-    windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
+    windowMutable = (NAWINAPIWindow*)naGetUIElementWindowMutable(uiElement);
     uiScale = naGetUIElementResolutionScale(NA_NULL);
     oldHeight = windowMutable->rect.size.height;
     windowMutable->rect.size.width = (double)LOWORD(lParam) / uiScale;
@@ -98,7 +108,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
     break;
 
   case WM_CLOSE:
-    windowMutable = (NAWINAPIWindow*)naGetUIElementWindow(uiElement);
+    windowMutable = (NAWINAPIWindow*)naGetUIElementWindowMutable(uiElement);
     naSetFlagu32(&windowMutable->window.flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES)) {
       // don't know what to do.
@@ -309,6 +319,13 @@ NA_DEF void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow) {
 
 NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space) {
   #if NA_DEBUG
+    if(!window)
+      naCrash("window is nullptr");
+    if(!space)
+      naCrash("space is nullptr");
+  #endif
+
+  #if NA_DEBUG
     if((naGetUIElementType(space) != NA_UI_SPACE) &&
       (naGetUIElementType(space) != NA_UI_IMAGE_SPACE) &&
       (naGetUIElementType(space) != NA_UI_OPENGL_SPACE) &&
@@ -333,6 +350,7 @@ NA_DEF void naShowWindow(const NAWindow* window) {
 }
 
 NA_DEF void naShowWindowModal(NAWindow* window, NAWindow* parentWindow) {
+  NA_UNUSED(parentWindow);
   // todo: modal windows do not work yet on windows
   //EnableWindow(naGetUIElementNativePtr(parentWindow), FALSE);
   naShowWindow(window);
@@ -353,12 +371,19 @@ NA_DEF void naCloseWindow(const NAWindow* window) {
 
 
 NA_DEF void naMarkWindowChanged(NAWindow* window, NABool changed) {
+  NA_UNUSED(changed);
+  NA_UNUSED(window);
   // todo
 }
 
 
 
 NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
+  #if NA_DEBUG
+    if(!window)
+      naError("window is nullptr");
+  #endif
+
   DWORD style;
   NARect newRect;
   NARect screenRect;
@@ -438,6 +463,8 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop) {
 
 
 NA_DEF void naSetWindowAcceptsKeyboardReactions(NAWindow* window, NABool accepts) {
+  NA_UNUSED(accepts);
+  NA_UNUSED(window);
   // todo
 }
 
@@ -451,13 +478,14 @@ NA_DEF void* naGetWindowFirstTabElement(NAWindow* window) {
 
 
 NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem) {
-  NAWINAPIWindow* winapiWindow;
-  
   #if NA_DEBUG
-    if(naGetUIElementWindowConst(firstTabElem) != window)
+    if(!window)
+      naError("window is nullptr");
+    if(firstTabElem && naGetUIElementWindow(firstTabElem) != window)
       naError("Element is not part of the window.");
   #endif
-  winapiWindow = (NAWINAPIWindow*)window;
+
+  NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
   winapiWindow->firstResponder = firstTabElem;
 }
 
@@ -493,9 +521,6 @@ NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window)
 
 NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
-
-  //NARect currect = naGetUIElementRect(&winapiWindow->window);
-  double yDiff = winapiWindow->rect.pos.y = rect.pos.y;
 
   POINT testPoint = {0, 0};
   RECT clientRect;

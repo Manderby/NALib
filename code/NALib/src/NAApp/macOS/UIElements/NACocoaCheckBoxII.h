@@ -6,6 +6,14 @@
 
 
 
+struct NACocoaCheckBox{
+  NACheckBox checkBox;
+};
+NA_HAPI void na_DestructCocoaCheckBox(NACocoaCheckBox* cocoaCheckBox);
+NA_RUNTIME_TYPE(NACocoaCheckBox, na_DestructCocoaCheckBox, NA_FALSE);
+
+
+
 @implementation NACocoaNativeCheckBox
 
 - (id) initWithCheckBox:(NACocoaCheckBox*)newCocoaCheckBox frame:(NSRect)frame{

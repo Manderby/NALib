@@ -152,7 +152,7 @@ int jsonExample(void){
     printf("File not found. You must adjust the path on your machine for this example to work.\n");
     return 0;
   }
-  NAFileSize bufferSize = naComputeFileByteSize(file);
+  fsize_t bufferSize = naComputeFileByteSize(file);
   NAByte* buf = naMalloc(bufferSize + 1);
   naReadFileBytes(file, buf, bufferSize);
   // Buffer needs to be closed with a \0 byte.

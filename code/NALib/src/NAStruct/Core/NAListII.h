@@ -10,7 +10,7 @@
 
 // The following struct should be opaque. Or even better: Completely invisible
 // to the programmer.
-typedef struct NAListElement NAListElement;
+NA_PROTOTYPE(NAListElement);
 
 
 struct NAListElement{
@@ -59,7 +59,7 @@ NA_IDEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next
 NA_IDEF NAList* naInitList(NAList* list) {
   #if NA_DEBUG
     if(!list)
-      naCrash("list is Null");
+      naCrash("list is nullptr");
   #endif
   list->count = 0;
   list->sentinel.ptr  = naMakePtrNull();
@@ -100,7 +100,7 @@ NA_IDEF NAList* naInitListWithCopy(NAList* list, NAList* originalList) {
 NA_IDEF void naClearList(NAList* list, NAMutator elementDestructor) {
   #if NA_DEBUG
     if(!list)
-      naCrash("list is Null-Pointer.");
+      naCrash("list is nullptr");
     if(list->iterCount)
       naError("Iterators still running on the list. Did you use naClearListIterator?");
   #endif
@@ -113,7 +113,7 @@ NA_IDEF void naClearList(NAList* list, NAMutator elementDestructor) {
 NA_IDEF void naEmptyList(NAList* list, NAMutator elementDestructor) {
   #if NA_DEBUG
     if(!list)
-      naCrash("list is Null-Pointer.");
+      naCrash("list is nullptr");
   #endif
 
   if(elementDestructor) {
@@ -366,9 +366,9 @@ NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor) {
   NAListElement* cur;
   #if NA_DEBUG
     if(!list)
-      naCrash("list is Null-Pointer.");
+      naCrash("list is nullptr");
     if(!accessor)
-      naCrash("accessor is Null-Pointer.");
+      naCrash("accessor is nullptr");
   #endif
   cur = list->sentinel.next;
   while(cur != &list->sentinel) {
@@ -391,9 +391,9 @@ NA_IDEF void naForeachListMutable(const NAList* list, NAMutator mutator) {
   NAListElement* cur;
   #if NA_DEBUG
     if(!list)
-      naCrash("list is Null-Pointer.");
+      naCrash("list is nullptr");
     if(!mutator)
-      naCrash("mutator is Null-Pointer.");
+      naCrash("mutator is nullptr");
   #endif
   cur = list->sentinel.next;
   while(cur != &list->sentinel) {
@@ -501,7 +501,7 @@ NA_IDEF NAListIterator naMakeListAccessor(const NAList* list) {
   iter.cur = (NAListElement*)(&list->sentinel);
   #if NA_DEBUG
     if(!list)
-      naCrash("list is Null pointer");
+      naCrash("list is nullptr");
     iter.mutator = NA_FALSE;
     iter.cur->iterCount++;
     ((NAList*)list)->iterCount++;
@@ -659,36 +659,36 @@ NA_IDEF NABool naIterateListBack(NAListIterator* iter) {
 // a pointer forward or backward.
 NA_IDEF NABool naIterateListStep(NAListIterator* iter, int64 step) {
   #if NA_DEBUG
-    if(step == NA_ZERO_i64) {
+    if(naEquali64(step, NA_ZERO_i64)) {
       naError("step is zero.");
     }
   #endif
-  while(step > NA_ZERO_i64) {
+  while(naGreateri64(step, NA_ZERO_i64)) {
     #if NA_DEBUG
       if(iter->cur->iterCount == 0)
         naError("No Iterator at this element. Did you do a double clear?");
       iter->cur->iterCount--;
     #endif
     iter->cur = iter->cur->next;
-    step--;
+    naDeci64(step);
     #if NA_DEBUG
       iter->cur->iterCount++;
-      if((iter->cur == &((NAList*)naGetPtrConst(iter->listptr))->sentinel) && (step != NA_ZERO_i64)) {
+      if((iter->cur == &((NAList*)naGetPtrConst(iter->listptr))->sentinel) && !naEquali64(step, NA_ZERO_i64)) {
         naError("The iteration overflows the number of elements.");
       }
     #endif
   }
-  while(step < NA_ZERO_i64) {
+  while(naSmalleri64(step, NA_ZERO_i64)) {
     #if NA_DEBUG
       if(iter->cur->iterCount == 0)
         naError("No Iterator at this element. Did you do a double clear?");
       iter->cur->iterCount--;
     #endif
     iter->cur = iter->cur->prev;
-    step++;
+    naInci64(step);
     #if NA_DEBUG
       iter->cur->iterCount++;
-      if((iter->cur == &((NAList*)naGetPtrConst(iter->listptr))->sentinel) && (step != NA_ZERO_i64)) {
+      if((iter->cur == &((NAList*)naGetPtrConst(iter->listptr))->sentinel) && !naEquali64(step, NA_ZERO_i64)) {
         naError("The iteration underflows the number of elements.");
       }
     #endif
@@ -721,7 +721,7 @@ NA_IDEF void* naGetListPrevMutable(NAListIterator* iter) {
 NA_IDEF const void* naGetListCurConst(const NAListIterator* iter) {
   #if NA_DEBUG
     // Note that the empty check has been removed. Getting the current elem
-    // of an empty list automatically returns Null. This is a feature!
+    // of an empty list automatically returns nullptr. This is a feature!
     // if(naIsListEmpty(naGetPtrConst(iter->listptr)))
     //   naError("List is empty");
   #endif
@@ -734,7 +734,7 @@ NA_IDEF void* naGetListCurMutable(NAListIterator* iter) {
     if(!iter->mutator)
       naError("Trying to mutate elements with an accessor");
     // Note that the empty check has been removed. Getting the current elem
-    // of an empty list automatically returns Null. This is a feature!
+    // of an empty list automatically returns nullptr. This is a feature!
     // if(naIsListEmpty(naGetPtrConst(iter->listptr)))
     //   naError("List is empty");
   #endif

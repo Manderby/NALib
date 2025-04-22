@@ -10,7 +10,7 @@
 // ///////////////////////////////
 // A key stroke consists of a single key and modifier flags.
 
-typedef struct NAKeyStroke NAKeyStroke;
+NA_PROTOTYPE(NAKeyStroke);
 
 // An NAKeyStroke must be deleted with naDelete. Unless used for a method
 // like naAddUIKeyboardShortcut which will take ownership.

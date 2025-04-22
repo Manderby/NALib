@@ -11,7 +11,7 @@
 // An NAFont stores information about a specific font with family, size and
 // style.
 
-typedef struct NAFont NAFont;
+NA_PROTOTYPE(NAFont);
 
 // An NAFont has reference counting built-in. Use naRetain and naRelease.
 // ///////////////////////////////
@@ -31,7 +31,6 @@ typedef enum{
   NA_FONT_KIND_MONOSPACE,   // A monospace font.
   NA_FONT_KIND_PARAGRAPH,   // A nice to read font for displaying longer texts.
   NA_FONT_KIND_MATH,        // A font close to mathematical representation.
-  NA_FONT_KIND_COUNT
 } NAFontKind;
 
 typedef enum{
@@ -39,7 +38,6 @@ typedef enum{
   NA_FONT_SIZE_DEFAULT,     // The default system font size
   NA_FONT_SIZE_BIG,
   NA_FONT_SIZE_HUGE,
-  NA_FONT_SIZE_COUNT
 } NAFontSize;
 
 #define NA_FONT_FLAG_REGULAR    0x00

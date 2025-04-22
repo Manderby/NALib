@@ -42,8 +42,8 @@ NA_IDEF NABool naContainsRangei64Point(NARangei64 outerRange, int64 point) {
     if(!naIsRangei64Useful(outerRange))
       naError("Inside test not valid for ranges which are not useful.");
   #endif
-  return !((point < outerRange.origin)
-        || (point > naGetRangei64Max(outerRange)));
+  return !(naSmalleri64(point, outerRange.origin)
+        || naGreateri64(point, naGetRangei64Max(outerRange)));
 }
 NA_IDEF NABool naContainsRangesPoint(NARanges outerRange, size_t point) {
   #if NA_DEBUG
@@ -95,8 +95,8 @@ NA_IDEF NABool naContainsRangei64Range(NARangei64 outerRange, NARangei64 range) 
     if(!naIsRangei64Useful(outerRange))
       naError("Inside test not valid if outerRange is not useful.");
   #endif
-  return  ((range.origin           >= outerRange.origin)
-        && (naGetRangei64End(range) <=  naGetRangei64End(outerRange)));
+  return  (naGreaterEquali64(range.origin, outerRange.origin)
+        && naSmallerEquali64(naGetRangei64End(range), naGetRangei64End(outerRange)));
 }
 NA_IDEF NABool naContainsRangesRange(NARanges outerRange, NARanges range) {
   #if NA_DEBUG
@@ -155,10 +155,10 @@ NA_IDEF NABool naContainsSizei64Point(NASizei64 outerSize, NAPosi64 point) {
     if(naIsSizei64Useful(outerSize))
       naError("Inside test not valid for sizes which are not useful.");
   #endif
-  return  ((point.x >= 0)
-        && (point.x <  outerSize.width)
-        && (point.y >= 0)
-        && (point.y <  outerSize.height));
+  return  (naGreaterEquali64(point.x, NA_ZERO_i64)
+        && naSmalleri64(point.x, outerSize.width)
+        && naGreaterEquali64(point.y, NA_ZERO_i64)
+        && naSmalleri64(point.y, outerSize.height));
 }
 NA_IDEF NABool naContainsSizesPoint(NASizes outerSize, NAPoss point) {
   #if NA_DEBUG
@@ -167,9 +167,8 @@ NA_IDEF NABool naContainsSizesPoint(NASizes outerSize, NAPoss point) {
     if(naIsSizesUseful(outerSize))
       naError("Inside test not valid for sizes which are not useful.");
   #endif
-  return  ((point.x >= 0)
-        && (point.x <  outerSize.width)
-        && (point.y >= 0)
+  // No need to check for >= 0 as this is unsigned.
+  return  ((point.x <  outerSize.width)
         && (point.y <  outerSize.height));
 }
 
@@ -212,8 +211,8 @@ NA_IDEF NABool naContainsSizei64Size(NASizei64 outerSize, NASizei64 size) {
     if(!naIsSizei64Useful(outerSize))
       naError("Inside test not valid if outerSize is not useful.");
   #endif
-  return !((size.width  > outerSize.width)
-        || (size.height > outerSize.height));
+  return !(naGreateri64(size.width, outerSize.width)
+        || naGreateri64(size.height, outerSize.height));
 }
 NA_IDEF NABool naContainsSizesSize(NASizes outerSize, NASizes size) {
   #if NA_DEBUG
@@ -279,10 +278,10 @@ NA_IDEF NABool naContainsRecti64Point(NARecti64 outerRect, NAPosi64 point) {
     if(!naIsRecti64Valid(outerRect))
       naError("outerRect is invalid.");
   #endif
-  return  ((point.x >= outerRect.pos.x)
-        && (point.x <  naGetRecti64EndX(outerRect))
-        && (point.y >= outerRect.pos.y)
-        && (point.y <  naGetRecti64EndY(outerRect)));
+  return  (naGreaterEquali64(point.x, outerRect.pos.x)
+        && naSmalleri64(point.x, naGetRecti64EndX(outerRect))
+        && naGreaterEquali64(point.y, outerRect.pos.y)
+        && naSmalleri64(point.y, naGetRecti64EndY(outerRect)));
 }
 NA_IDEF NABool naContainsRectsPoint(NARects outerRect, NAPoss point) {
   #if NA_DEBUG
@@ -352,10 +351,10 @@ NA_IDEF NABool naContainsRecti64PointE(NARecti64 outerRect, NAPosi64 pos) {
     if(!naIsRecti64Valid(outerRect))
       naError("outerRect is invalid.");
   #endif
-  return !((pos.x < outerRect.pos.x)
-        || (pos.x >= naGetRecti64EndX(outerRect))
-        || (pos.y < outerRect.pos.y)
-        || (pos.y >= naGetRecti64EndY(outerRect)));
+  return !(naSmalleri64(pos.x, outerRect.pos.x)
+        || naGreaterEquali64(pos.x, naGetRecti64EndX(outerRect))
+        || naSmalleri64(pos.y, outerRect.pos.y)
+        || naGreaterEquali64(pos.y, naGetRecti64EndY(outerRect)));
 }
 NA_IDEF NABool naContainsRectsPointE(NARects outerRect, NAPoss pos) {
   #if NA_DEBUG
@@ -425,10 +424,10 @@ NA_IDEF NABool naContainsRecti64Rect(NARecti64 outerRect, NARecti64 rect) {
     if(!naIsRecti64Valid(outerRect))
       naError("outerRect is invalid.");
   #endif
-  return  ((rect.pos.x           >= outerRect.pos.x)
-        && (naGetRecti64EndX(rect) <=  naGetRecti64EndX(outerRect))
-        && (rect.pos.y           >= outerRect.pos.y)
-        && (naGetRecti64EndY(rect) <=  naGetRecti64EndY(outerRect)));
+  return  (naGreaterEquali64(rect.pos.x, outerRect.pos.x)
+        && naSmallerEquali64(naGetRecti64EndX(rect),  naGetRecti64EndX(outerRect))
+        && naGreaterEquali64(rect.pos.y, outerRect.pos.y)
+        && naSmallerEquali64(naGetRecti64EndY(rect),naGetRecti64EndY(outerRect)));
 }
 NA_IDEF NABool naContainsRectsRect(NARects outerRect, NARects rect) {
   #if NA_DEBUG
@@ -496,12 +495,12 @@ NA_IDEF NABool naContainsVolumei64Point(NAVolumei64 outerVolume, NAVertexi64 poi
     if(naIsVolumei64Useful(outerVolume))
       naError("Inside test not valid for volumes which are not useful.");
   #endif
-  return  ((point.x >= 0)
-        && (point.x <  outerVolume.width)
-        && (point.y >= 0)
-        && (point.y <  outerVolume.height)
-        && (point.z >= 0)
-        && (point.z <  outerVolume.depth));
+  return  (naGreaterEquali64(point.x, NA_ZERO_i64)
+        && naSmalleri64(point.x,outerVolume.width)
+        && naGreaterEquali64(point.y, NA_ZERO_i64)
+        && naSmalleri64(point.y, outerVolume.height)
+        && naGreaterEquali64(point.z, NA_ZERO_i64)
+        && naSmalleri64(point.z, outerVolume.depth));
 }
 NA_IDEF NABool naContainsVolumesPoint(NAVolumes outerVolume, NAVertexs point) {
   #if NA_DEBUG
@@ -510,11 +509,9 @@ NA_IDEF NABool naContainsVolumesPoint(NAVolumes outerVolume, NAVertexs point) {
     if(naIsVolumesUseful(outerVolume))
       naError("Inside test not valid for volumes which are not useful.");
   #endif
-  return  ((point.x >= 0)
-        && (point.x <  outerVolume.width)
-        && (point.y >= 0)
+  // No need to check for >= 0 as this is unsigned.
+  return  ((point.x <  outerVolume.width)
         && (point.y <  outerVolume.height)
-        && (point.z >= 0)
         && (point.z <  outerVolume.depth));
 }
 
@@ -560,9 +557,9 @@ NA_IDEF NABool naContainsVolumei64Volume(NAVolumei64 outerVolume, NAVolumei64 vo
     if(!naIsVolumei64Useful(outerVolume))
       naError("Inside test not valid if outerVolume is not useful.");
   #endif
-  return !((volume.width  > outerVolume.width)
-        || (volume.height > outerVolume.height)
-        || (volume.depth  > outerVolume.depth));
+  return !(naGreateri64(volume.width, outerVolume.width)
+        || naGreateri64(volume.height, outerVolume.height)
+        || naGreateri64(volume.depth, outerVolume.depth));
 }
 NA_IDEF NABool naContainsVolumesVolume(NAVolumes outerVolume, NAVolumes volume) {
   #if NA_DEBUG
@@ -635,12 +632,12 @@ NA_IDEF NABool naContainsBoxi64Point(NABoxi64 outerBox, NAVertexi64 point) {
     if(!naIsBoxi64Valid(outerBox))
       naError("outerBox is invalid.");
   #endif
-  return  ((point.x >= outerBox.vertex.x)
-        && (point.x <  naGetBoxi64EndX(outerBox))
-        && (point.y >= outerBox.vertex.y)
-        && (point.y <  naGetBoxi64EndY(outerBox))
-        && (point.z >= outerBox.vertex.z)
-        && (point.z <  naGetBoxi64EndZ(outerBox)));
+  return  (naGreaterEquali64(point.x, outerBox.vertex.x)
+        && naSmalleri64(point.x, naGetBoxi64EndX(outerBox))
+        && naGreaterEquali64(point.y, outerBox.vertex.y)
+        && naSmalleri64(point.y, naGetBoxi64EndY(outerBox))
+        && naGreaterEquali64(point.z, outerBox.vertex.z)
+        && naSmalleri64(point.z, naGetBoxi64EndZ(outerBox)));
 }
 NA_IDEF NABool naContainsBoxsPoint(NABoxs outerBox, NAVertexs point) {
   #if NA_DEBUG
@@ -718,12 +715,12 @@ NA_IDEF NABool naContainsBoxi64PointE(NABoxi64 outerBox, NAVertexi64 point) {
     if(!naIsBoxi64Valid(outerBox))
       naError("outerBox is invalid.");
   #endif
-  return !((point.x < outerBox.vertex.x)
-        || (point.x >= naGetBoxi64EndX(outerBox))
-        || (point.y < outerBox.vertex.y)
-        || (point.y >= naGetBoxi64EndY(outerBox))
-        || (point.z < outerBox.vertex.z)
-        || (point.z >= naGetBoxi64EndZ(outerBox)));
+  return !(naSmalleri64(point.x, outerBox.vertex.x)
+        || naGreaterEquali64(point.x, naGetBoxi64EndX(outerBox))
+        || naSmalleri64(point.y, outerBox.vertex.y)
+        || naGreaterEquali64(point.y, naGetBoxi64EndY(outerBox))
+        || naSmalleri64(point.z, outerBox.vertex.z)
+        || naGreaterEquali64(point.z, naGetBoxi64EndZ(outerBox)));
 }
 NA_IDEF NABool naContainsBoxsPointE(NABoxs outerBox, NAVertexs point) {
   #if NA_DEBUG
@@ -801,12 +798,12 @@ NA_IDEF NABool naContainsBoxi64Box(NABoxi64 outerBox, NABoxi64 box) {
     if(!naIsBoxi64Valid(outerBox))
       naError("outerBox is invalid.");
   #endif
-  return  ((box.vertex.x           >= outerBox.vertex.x)
-        && (naGetBoxi64EndX(box) <=  naGetBoxi64EndX(outerBox))
-        && (box.vertex.y           >= outerBox.vertex.y)
-        && (naGetBoxi64EndY(box) <=  naGetBoxi64EndY(outerBox))
-        && (box.vertex.z           >= outerBox.vertex.z)
-        && (naGetBoxi64EndZ(box) <=  naGetBoxi64EndZ(outerBox)));
+  return  (naGreaterEquali64(box.vertex.x, outerBox.vertex.x)
+        && naSmallerEquali64(naGetBoxi64EndX(box), naGetBoxi64EndX(outerBox))
+        && naGreaterEquali64(box.vertex.y, outerBox.vertex.y)
+        && naSmallerEquali64(naGetBoxi64EndY(box), naGetBoxi64EndY(outerBox))
+        && naGreaterEquali64(box.vertex.z, outerBox.vertex.z)
+        && naSmallerEquali64(naGetBoxi64EndZ(box), naGetBoxi64EndZ(outerBox)));
 }
 NA_IDEF NABool naContainsBoxsBox(NABoxs outerBox, NABoxs box) {
   #if NA_DEBUG

@@ -10,12 +10,12 @@ extern NABool na_GlobalDaylightSavingTime;
 
 #define NA_DATETIME_FLAG_DAYLIGHT_SAVING_TIME 0x01
 
-#define NA_DATETIME_GREGORIAN_400_YEAR_PERIOD naMakei64WithLo(400)
-#define NA_DATETIME_GREGORIAN_100_YEAR_PERIOD naMakei64WithLo(100)
-#define NA_DATETIME_GREGORIAN_4_YEAR_PERIOD   naMakei64WithLo(4)
+#define NA_DATETIME_GREGORIAN_400_YEAR_PERIOD naCastu32Toi64(400)
+#define NA_DATETIME_GREGORIAN_100_YEAR_PERIOD naCastu32Toi64(100)
+#define NA_DATETIME_GREGORIAN_4_YEAR_PERIOD   naCastu32Toi64(4)
 
-#define NA_DATETIME_YEAR_1582                 naMakei64WithLo(1582)
-#define NA_DATETIME_YEAR_1958                 naMakei64WithLo(1958)
+#define NA_DATETIME_YEAR_1582                 naCastu32Toi64(1582)
+#define NA_DATETIME_YEAR_1958                 naCastu32Toi64(1958)
 
 
 // The following macros evaluate to the following numbers:
@@ -37,9 +37,9 @@ extern NABool na_GlobalDaylightSavingTime;
 #define NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR  (NA_SECONDS_PER_DAY * (31+28+31+30+31+30))
 #define NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR    (NA_SECONDS_PER_DAY * (31+29+31+30+31+30))
 #define NA_SECONDS_JUL_TO_DEC            (NA_SECONDS_PER_DAY * (31+31+30+31+30+31))
-#define NA_SECONDS_IN_NORMAL_YEAR        naMakei64WithLo(NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR + NA_SECONDS_JUL_TO_DEC)
-#define NA_SECONDS_IN_LEAP_YEAR          naMakei64WithLo(NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR   + NA_SECONDS_JUL_TO_DEC)
-#define NA_SECONDS_IN_4_YEAR_PERIOD      naMakei64WithLo(NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR + 3 * NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR + 4 * NA_SECONDS_JUL_TO_DEC)
+#define NA_SECONDS_IN_NORMAL_YEAR        naCastu32Toi64(NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR + NA_SECONDS_JUL_TO_DEC)
+#define NA_SECONDS_IN_LEAP_YEAR          naCastu32Toi64(NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR   + NA_SECONDS_JUL_TO_DEC)
+#define NA_SECONDS_IN_4_YEAR_PERIOD      naCastu32Toi64(NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR + 3 * NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR + 4 * NA_SECONDS_JUL_TO_DEC)
 
 //#define NA_SECONDS_IN_100_YEAR_PERIOD \
 //  (76LL * NA_SECONDS_IN_NORMAL_YEAR + 24LL * NA_SECONDS_IN_LEAP_YEAR)
@@ -57,7 +57,7 @@ extern NABool na_GlobalDaylightSavingTime;
 
 
 struct NADateTime{
-  NAi64  siSecond;   // SI-second number starting Jan 1st 1958, 00:00 + 00:00
+  int64  siSecond;   // SI-second number starting Jan 1st 1958, 00:00 + 00:00
   int32  nanoSecond; // nanosecond number in range [0, 999999999]
   int16  shift;      // time shift in minutes (positive and negative)
   uint8  errorNum;   // error number in case invalid values were given.
@@ -65,12 +65,12 @@ struct NADateTime{
 };
 
 
-NA_IDEF NABool naIsLeapYearJulian(NAi64 year) {
+NA_IDEF NABool naIsLeapYearJulian(int64 year) {
   return naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_i64);
 }
 
 
-NA_IDEF NABool naIsLeapYearGregorian(NAi64 year) {
+NA_IDEF NABool naIsLeapYearGregorian(int64 year) {
   if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD), NA_ZERO_i64))
     return NA_TRUE;
   if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD), NA_ZERO_i64))
@@ -81,7 +81,7 @@ NA_IDEF NABool naIsLeapYearGregorian(NAi64 year) {
 }
 
 
-NA_IDEF NABool naIsLeapYear(NAi64 year) {
+NA_IDEF NABool naIsLeapYear(int64 year) {
   if(naSmallerEquali64(year, NA_DATETIME_YEAR_1582)) {
     return naIsLeapYearJulian(year);
   }else{
@@ -91,7 +91,7 @@ NA_IDEF NABool naIsLeapYear(NAi64 year) {
 
 
 
-NA_IDEF NADateTime naMakeDateTime(NAi64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec) {
+NA_IDEF NADateTime naMakeDateTime(int64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec) {
   NADateTimeStruct dts;
   dts.year = year;
   dts.mon = mon - 1;
@@ -108,7 +108,7 @@ NA_IDEF NADateTime naMakeDateTime(NAi64 year, int32 mon, int32 day, int32 hour, 
 
 
 
-NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(NAi64 secondNumber) {
+NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(int64 secondNumber) {
   NADateTime dateTime;
   dateTime.siSecond = secondNumber;
   dateTime.nanoSecond = 0;
@@ -153,8 +153,8 @@ NA_IDEF void naCorrectDateTimeZone( NADateTime* dateTime,
                                   int16 newShift,
                                  NABool daylightSavingTime) {
   dateTime->errorNum = NA_DATETIME_ERROR_NONE;
-  dateTime->siSecond = naSubi64(dateTime->siSecond, naMakei64WithLo(dateTime->shift * (int32)NA_SECONDS_PER_MINUTE));
-  dateTime->siSecond = naAddi64(dateTime->siSecond, naMakei64WithLo(newShift * (int32)NA_SECONDS_PER_MINUTE));
+  dateTime->siSecond = naSubi64(dateTime->siSecond, naCasti32Toi64((int32)dateTime->shift * (int32)NA_SECONDS_PER_MINUTE));
+  dateTime->siSecond = naAddi64(dateTime->siSecond, naCasti32Toi64((int32)newShift * (int32)NA_SECONDS_PER_MINUTE));
   naSetDateTimeZone(dateTime, newShift, daylightSavingTime);
 }
 
@@ -177,7 +177,7 @@ NA_DEF double naGetDateTimeDifference(const NADateTime* end, const NADateTime* b
 
 
 NA_IDEF void naAddDateTimeDifference(NADateTime* dateTime, double difference) {
-  NAi64 fullSeconds = naMakei64WithDouble(difference);
+  int64 fullSeconds = naCastDoubleToi64(difference);
   int32 nanoSeconds = (int32)((difference - naCasti64ToDouble(fullSeconds)) * 1e9);
   dateTime->errorNum = NA_DATETIME_ERROR_NONE;
   if(difference < 0) {

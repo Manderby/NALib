@@ -21,7 +21,7 @@
 // never uses the bool type or the true and false keywords. Also the macros
 // available in C11 are unused.
 
-#if __cplusplus
+#if defined __cplusplus
   typedef bool NABool;
   #define NA_TRUE    true
   #define NA_FALSE   false
@@ -56,14 +56,13 @@ typedef uint32_t              uint32;
 typedef int32_t               int32;
 
 // Int 64 bits
-#if defined NA_TYPE_INT64
+#if NA_NATIVE_INT64_IN_USE
   typedef uint64_t            uint64;
   typedef int64_t             int64;
-  typedef uint64              NAu64;
-  typedef int64               NAi64;
+  #define NAu64 uint64
+  #define NAi64 int64
 #else
-  typedef struct NAu64        uint64;
-  typedef struct NAi64        int64;
+  // Int 64 bits emulation
   typedef struct NAu64        NAu64;
   typedef struct NAi64        NAi64;
   #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
@@ -73,17 +72,18 @@ typedef int32_t               int32;
     struct NAi64 { uint32 lo; int32  hi; };
     struct NAu64 { uint32 lo; uint32 hi; };
   #endif
+  #define uint64 NAu64
+  #define int64 NAi64
 #endif
 
 // Int 128 bits
-#if defined NA_TYPE_INT128
+#if NA_NATIVE_INT128_IN_USE
   typedef unsigned __int128   uint128;
   typedef signed   __int128   int128;
-  typedef uint128             NAu128;
-  typedef int128              NAi128;
+  #define NAu128 uint128
+  #define NAi128 int128
 #else
-  typedef struct NAu128       uint128;
-  typedef struct NAi128       int128;
+  // Int 128 bits emulation
   typedef struct NAu128       NAu128;
   typedef struct NAi128       NAi128;
   #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
@@ -93,17 +93,18 @@ typedef int32_t               int32;
     struct NAi128 { NAu64 lo; NAi64 hi; };
     struct NAu128 { NAu64 lo; NAu64 hi; };
   #endif
+  #define uint128 NAu128
+  #define int128 NAi128
 #endif
 
 // Int 256 bits
-#if defined NA_TYPE_INT256
+#if NA_NATIVE_INT256_IN_USE
   typedef unsigned __int256   uint256;
   typedef signed   __int256   int256;
-  typedef uint256             NAu256;
-  typedef int256              NAi256;
+  #define NAu256 uint256
+  #define NAi256 int256
 #else
-  typedef struct NAu256       uint256;
-  typedef struct NAi256       int256;
+  // Int 256 bits emulation
   typedef struct NAu256       NAu256;
   typedef struct NAi256       NAi256;
   #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
@@ -113,6 +114,8 @@ typedef int32_t               int32;
     struct NAi256 { NAu128 lo; NAi128 hi; };
     struct NAu256 { NAu128 lo; NAu128 hi; };
   #endif
+  #define uint256 NAu256
+  #define int256 NAi256
 #endif
 
 

@@ -6,17 +6,14 @@
 #endif
 
 
+#include "../NABase/NABase.h"
+
+NA_PROTOTYPE(NABuffer);
+
+
 
 // The typedef needs to be here to resolve cyclic include problems.
-typedef struct NAString NAString;
-
-// The different newline-encodings as an enum type
-typedef enum{
-  NA_NEWLINE_UNIX,              // \n    Used in Unix, Linux, MacOSX
-  NA_NEWLINE_MAC9,              // \r    Used in old Mac OS
-  NA_NEWLINE_WIN,               // \r\n  Used in Windows
-  NA_NEWLINE_NATIVE             //       Dependant on the local machines system
-} NANewlineEncoding;
+NA_PROTOTYPE(NAString);
 
 
 
@@ -66,12 +63,12 @@ NA_API NAUTF8Char* naPriux16(uint16 value);
 NA_API NAUTF8Char* naPriix16(int16 value);
 NA_API NAUTF8Char* naPriux32(uint32 value);
 NA_API NAUTF8Char* naPriix32(int32 value);
-NA_API NAUTF8Char* naPriux64(NAu64 value);
-NA_API NAUTF8Char* naPriix64(NAi64 value);
-NA_API NAUTF8Char* naPriux128(NAu128 value);
-NA_API NAUTF8Char* naPriix128(NAi128 value);
-NA_API NAUTF8Char* naPriux256(NAu256 value);
-NA_API NAUTF8Char* naPriix256(NAi256 value);
+NA_API NAUTF8Char* naPriux64(uint64 value);
+NA_API NAUTF8Char* naPriix64(int64 value);
+NA_API NAUTF8Char* naPriux128(uint128 value);
+NA_API NAUTF8Char* naPriix128(int128 value);
+NA_API NAUTF8Char* naPriux256(uint256 value);
+NA_API NAUTF8Char* naPriix256(int256 value);
 
 
 // /////////////////////////////////////////
@@ -267,11 +264,11 @@ NA_API NABool naEqualStringToUTF8CString(
 NA_API int8     naParseStringi8  (const NAString* string);
 NA_API int16    naParseStringi16 (const NAString* string);
 NA_API int32    naParseStringi32 (const NAString* string);
-NA_API NAi64    naParseStringi64 (const NAString* string);
+NA_API int64    naParseStringi64 (const NAString* string);
 NA_API uint8    naParseStringu8 (const NAString* string);
 NA_API uint16   naParseStringu16(const NAString* string);
 NA_API uint32   naParseStringu32(const NAString* string);
-NA_API NAu64    naParseStringu64(const NAString* string);
+NA_API uint64    naParseStringu64(const NAString* string);
 NA_API float    naParseStringFloat (const NAString* string);
 NA_API double   naParseStringDouble(const NAString* string);
 

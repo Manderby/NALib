@@ -11,7 +11,6 @@
   #include <windows.h>
 #elif NA_OS == NA_OS_MAC_OS_X
   #include <objc/objc.h>
-  #include <unistd.h>
   #include <dispatch/dispatch.h>
   // Workaround for XCode 3 where the following macro is not defined:
   #ifndef DISPATCH_QUEUE_SERIAL
@@ -84,7 +83,7 @@ NA_IDEF int naSleepS(double seconds) {
 #endif
 
 
-typedef struct NAThreadStruct NAThreadStruct;
+NA_PROTOTYPE(NAThreadStruct);
 struct NAThreadStruct{
   const char* name;
   #if NA_OS == NA_OS_MAC_OS_X
@@ -172,7 +171,7 @@ NA_IDEF void naAwaitThread(NAThread thread) {
 
   // On windows, we need a more complex structure to really make a mutex being
   // lockable just once.
-  typedef struct NAWindowsMutex NAWindowsMutex;
+  NA_PROTOTYPE(NAWindowsMutex);
 
   struct NAWindowsMutex{
     #if(NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
@@ -196,7 +195,7 @@ NA_IDEF void naAwaitThread(NAThread thread) {
 #else
 
   #if NA_DEBUG
-    typedef struct NAMacintoshMutex NAMacintoshMutex;
+    NA_PROTOTYPE(NAMacintoshMutex);
     struct NAMacintoshMutex{
       dispatch_semaphore_t mutex;
       NABool seemslocked;
@@ -460,7 +459,7 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxWaitTime) {
     DWORD result;
     #if NA_DEBUG
       if(maxWaitTime < 0.)
-        naError("maxWaitTime should not be negative. Beware of the zero!");
+        naError("maxWaitTime is negative. Beware of the zero!");
     #endif
     ResetEvent(alarmer);
     if(maxWaitTime == 0) {
@@ -473,7 +472,7 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxWaitTime) {
     long result;
     #if NA_DEBUG
       if(maxWaitTime < 0.)
-        naError("maxWaitTime should not be negative. Beware of the zero!");
+        naError("maxWaitTime is negative. Beware of the zero!");
     #endif
     if(maxWaitTime == 0) {
       result = dispatch_semaphore_wait((NA_COCOA_BRIDGE dispatch_semaphore_t)alarmer, DISPATCH_TIME_FOREVER);

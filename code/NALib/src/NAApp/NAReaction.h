@@ -35,7 +35,7 @@ typedef enum{
 
 // When a command occurs in a certain uiElement, an information package with
 // the NAReaction type will be created:
-typedef struct NAReaction NAReaction;
+NA_PROTOTYPE(NAReaction);
 struct NAReaction{
   const void* uiElement;
   NAUICommand command;
@@ -65,17 +65,17 @@ typedef void(*NAReactionCallback)(NAReaction reaction);
 // be traversed sequentially forward from start to end.
 
 NA_API void naAddUIReaction(
-  void*              uiElement,
-  NAUICommand        command,
+  void* uiElement,
+  NAUICommand command,
   NAReactionCallback callback,
-  void*              controller);
+  void* controller);
 
 // Takes the ownership of the keyStroke. Do not call naDelete on it!
 NA_API void naAddUIKeyboardShortcut(
-  void*              uiElement,
-  NAKeyStroke*       keyStroke,
+  void* uiElement,
+  NAKeyStroke* keyStroke,
   NAReactionCallback callback,
-  void*              controller);
+  void* controller);
 
 // Commands are somewhat specific. Not all commands work with all uiElement
 // types. See header files of the elements for more information.

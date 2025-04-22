@@ -31,7 +31,7 @@ NA_PROTOTYPE(NATranslator);
 // NA_UIElement is the base type of any ui element. All ui element struct
 // definitions have an NA_UIElement as the first entry:
 
-typedef struct NA_UIElement NA_UIElement;
+NA_PROTOTYPE(NA_UIElement);
 struct NA_UIElement{
   NAUIElementType elementType;
   void*           parent;
@@ -164,14 +164,14 @@ struct NAWindow{
 
 
 
-typedef struct NA_EventReaction NA_EventReaction;
+NA_PROTOTYPE(NA_EventReaction);
 struct NA_EventReaction{
   void*              controller;
   NAReactionCallback callback;
   NAUICommand        command;
 };
 
-typedef struct NA_KeyboardShortcutReaction NA_KeyboardShortcutReaction;
+NA_PROTOTYPE(NA_KeyboardShortcutReaction);
 struct NA_KeyboardShortcutReaction{
   void*              controller;
   NAReactionCallback callback;
@@ -229,10 +229,10 @@ NA_HAPI void na_InitSystemUIElement(NA_UIElement* uiElement, void* nativePtr);
 NA_HAPI void na_ClearSystemUIElement(void* nativePtr);
 
 NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
-NA_HAPI double na_GetUIElementXOffset(const NA_UIElement* elem);
-NA_HAPI double na_GetUIElementYOffset(const NA_UIElement* elem);
+NA_HAPI double na_GetUIElementXOffset(const NA_UIElement* uiElement);
+NA_HAPI double na_GetUIElementYOffset(const NA_UIElement* uiElement);
 
-NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
+NA_HAPI const NA_UIElement* na_GetUIElementCommonParent(const NA_UIElement* elem1, const NA_UIElement* elem2);
 
 NA_HAPI NABool na_GetApplicationMouseVisible();
 NA_HAPI void na_SetApplicationMouseVisible(NABool visible);
@@ -252,7 +252,7 @@ NA_HAPI void* na_GetUINALibEquivalent(void* nativePtr);
 
 // Returns true if the given element has any reaction attached which responds
 // to the given command.
-NA_HAPI NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAUICommand command);
+NA_HAPI NABool na_UIHasElementCommandDispatches(const NA_UIElement* uiElement, NAUICommand command);
 
 // Dispatches a command with the given uiElement.
 // 
@@ -271,7 +271,7 @@ NA_HAPI NABool na_UIHasElementCommandDispatches(const NA_UIElement* element, NAU
 //   returns NA_FALSE, meaning, the event has not been handeled at all.
 //   This in turn will usually cause the NALib GUI elements to call the event
 //   handling method given by the system or base class of the native element.
-NA_HAPI NABool na_DispatchUIElementCommand(const NA_UIElement* element, NAUICommand command);
+NA_HAPI NABool na_DispatchUIElementCommand(const NA_UIElement* uiElement, NAUICommand command);
 
 // To be implemented in the system dependent files:
 NA_HAPI void na_RefreshUIElementNow(void* uiElement);
@@ -436,15 +436,15 @@ NA_HAPI void na_DestructFontNativePtr(void* nativePtr);
 NA_HAPI void* na_GetNativePreferences(void);
 NA_HAPI void na_ShutdownPreferences(void);
 
-NA_HAPI NAi64     na_GetRawPreferencesBool  (void* prefs, const char* key);
+NA_HAPI int64     na_GetRawPreferencesBool  (void* prefs, const char* key);
 NA_HAPI int64     na_GetRawPreferencesi64   (void* prefs, const char* key);
-NA_HAPI NAi64     na_GetRawPreferencesEnum  (void* prefs, const char* key);
+NA_HAPI int64     na_GetRawPreferencesEnum  (void* prefs, const char* key);
 NA_HAPI double    na_GetRawPreferencesDouble(void* prefs, const char* key);
 NA_HAPI NAString* na_GetRawPreferencesString(void* prefs, const char* key);
 
-NA_HAPI void na_SetRawPreferencesBool  (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesBool  (void* prefs, const char* key, int64 valueStorage);
 NA_HAPI void na_SetRawPreferencesi64   (void* prefs, const char* key, int64 valueStorage);
-NA_HAPI void na_SetRawPreferencesEnum  (void* prefs, const char* key, NAi64 valueStorage);
+NA_HAPI void na_SetRawPreferencesEnum  (void* prefs, const char* key, int64 valueStorage);
 NA_HAPI void na_SetRawPreferencesDouble(void* prefs, const char* key, double valueStorage);
 NA_HAPI void na_SetRawPreferencesString(void* prefs, const char* key, NAString* valueStorage);
 

@@ -5,117 +5,53 @@
 // Do not include this file anywhere else!
 
 
-typedef struct NACocoaApplication NACocoaApplication;
-struct NACocoaApplication {
-  NAApplication application;
-};
-NA_HAPI void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication);
-NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
+NA_PROTOTYPE(NACocoaApplication);
+NA_EXTERN_RUNTIME_TYPE(NACocoaApplication);
 
-typedef struct NACocoaButton NACocoaButton;
-struct NACocoaButton{
-  NAButton button;
-};
-NA_HAPI void na_DestructCocoaButton(NACocoaButton* cocoaButton);
-NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
+NA_PROTOTYPE(NACocoaButton);
+NA_EXTERN_RUNTIME_TYPE(NACocoaButton);
 
-typedef struct NACocoaCheckBox NACocoaCheckBox;
-struct NACocoaCheckBox{
-  NACheckBox checkBox;
-};
-NA_HAPI void na_DestructCocoaCheckBox(NACocoaCheckBox* cocoaCheckBox);
-NA_RUNTIME_TYPE(NACocoaCheckBox, na_DestructCocoaCheckBox, NA_FALSE);
+NA_PROTOTYPE(NACocoaCheckBox);
+NA_EXTERN_RUNTIME_TYPE(NACocoaCheckBox);
 
-typedef struct NACocoaImageSpace NACocoaImageSpace;
-struct NACocoaImageSpace{
-  NAImageSpace imageSpace;
-};
-NA_HAPI void na_DestructCocoaImageSpace(NACocoaImageSpace* cocoaImageSpace);
-NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
+NA_PROTOTYPE(NACocoaImageSpace);
+NA_EXTERN_RUNTIME_TYPE(NACocoaImageSpace);
 
-typedef struct NACocoaLabel NACocoaLabel;
-struct NACocoaLabel{
-  NALabel label;
-};
-NA_HAPI void na_DestructCocoaLabel(NACocoaLabel* cocoaLabel);
-NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
+NA_PROTOTYPE(NACocoaLabel);
+NA_EXTERN_RUNTIME_TYPE(NACocoaLabel);
 
-typedef struct NACocoaMenu NACocoaMenu;
-struct NACocoaMenu{
-  NAMenu menu;
-};
-NA_HAPI void na_DestructCocoaMenu(NACocoaMenu* cocoaMenu);
-NA_RUNTIME_TYPE(NACocoaMenu, na_DestructCocoaMenu, NA_FALSE);
+NA_PROTOTYPE(NACocoaMenu);
+NA_EXTERN_RUNTIME_TYPE(NACocoaMenu);
 
-typedef struct NACocoaMenuItem NACocoaMenuItem;
-struct NACocoaMenuItem{
-  NAMenuItem menuItem;
-};
-NA_HAPI void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem);
-NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
+NA_PROTOTYPE(NACocoaMenuItem);
+NA_EXTERN_RUNTIME_TYPE(NACocoaMenuItem);
 
-typedef struct NACocoaMetalSpace NACocoaMetalSpace;
-struct NACocoaMetalSpace{
-  NAMetalSpace metalSpace;
-};
-NA_HAPI void na_DestructCocoaMetalSpace(NACocoaMetalSpace* cocoaMetalSpace);
-NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
+NA_PROTOTYPE(NACocoaMetalSpace);
+NA_EXTERN_RUNTIME_TYPE(NACocoaMetalSpace);
 
-typedef struct NACocoaOpenGLSpace NACocoaOpenGLSpace;
-struct NACocoaOpenGLSpace{
-  NAOpenGLSpace openGLSpace;
-};
-NA_HAPI void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace);
-NA_RUNTIME_TYPE(NACocoaOpenGLSpace, na_DestructCocoaOpenGLSpace, NA_FALSE);
+NA_PROTOTYPE(NACocoaOpenGLSpace);
+NA_EXTERN_RUNTIME_TYPE(NACocoaOpenGLSpace);
 
-typedef struct NACocoaSelect NACocoaSelect;
-struct NACocoaSelect{
-  NASelect select;
-};
-NA_HAPI void na_DestructCocoaSelect(NACocoaSelect* cocoaSelect);
-NA_RUNTIME_TYPE(NACocoaSelect, na_DestructCocoaSelect, NA_FALSE);
+NA_PROTOTYPE(NACocoaRadio);
+NA_EXTERN_RUNTIME_TYPE(NACocoaRadio);
 
-typedef struct NACocoaRadio NACocoaRadio;
-struct NACocoaRadio{
-  NARadio radio;
-};
-NA_HAPI void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio);
-NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
+NA_PROTOTYPE(NACocoaSelect);
+NA_EXTERN_RUNTIME_TYPE(NACocoaSelect);
 
-typedef struct NACocoaSlider NACocoaSlider;
-struct NACocoaSlider{
-  NASlider slider;
-};
-NA_HAPI void na_DestructCocoaSlider(NACocoaSlider* cocoaSlider);
-NA_RUNTIME_TYPE(NACocoaSlider, na_DestructCocoaSlider, NA_FALSE);
+NA_PROTOTYPE(NACocoaSlider);
+NA_EXTERN_RUNTIME_TYPE(NACocoaSlider);
 
-typedef struct NACocoaSpace NACocoaSpace;
-struct NACocoaSpace{
-  NASpace space;
-};
-NA_HAPI void na_DestructCocoaSpace(NACocoaSpace* cocoaSpace);
-NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
+NA_PROTOTYPE(NACocoaSpace);
+NA_EXTERN_RUNTIME_TYPE(NACocoaSpace);
 
-typedef struct NACocoaTextBox NACocoaTextBox;
-struct NACocoaTextBox{
-  NATextBox textBox;
-};
-NA_HAPI void na_DestructCocoaTextBox(NACocoaTextBox* cocoaTextBox);
-NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
+NA_PROTOTYPE(NACocoaTextBox);
+NA_EXTERN_RUNTIME_TYPE(NACocoaTextBox);
 
-typedef struct NACocoaTextField NACocoaTextField;
-struct NACocoaTextField{
-  NATextField textField;
-};
-NA_HAPI void na_DestructCocoaTextField(NACocoaTextField* cocoaTextField);
-NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
+NA_PROTOTYPE(NACocoaTextField);
+NA_EXTERN_RUNTIME_TYPE(NACocoaTextField);
 
-typedef struct NACocoaWindow NACocoaWindow;
-struct NACocoaWindow{
-  NAWindow window;
-};
-NA_HAPI void na_DestructCocoaWindow(NACocoaWindow* cocoaWindow);
-NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
+NA_PROTOTYPE(NACocoaWindow);
+NA_EXTERN_RUNTIME_TYPE(NACocoaWindow);
 
 
 

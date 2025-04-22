@@ -85,14 +85,14 @@ NA_IDEF NARecti64 naMakeRecti64Combination(NAPosi64 point1, NAPosi64 point2) {
     if(!naIsPosi64Valid(point2))
       naError("point2 is invalid.");
   #endif
-  if(point2.x > point1.x) {
+  if(naGreateri64(point2.x, point1.x)) {
     newRect.pos.x = point1.x;
     newRect.size.width = naMakeLengthWithMinAndMaxi64(point1.x, point2.x);
   }else{
     newRect.pos.x = point2.x;
     newRect.size.width = naMakeLengthWithMinAndMaxi64(point2.x, point1.x);
   }
-  if(point2.y > point1.y) {
+  if(naGreateri64(point2.y, point1.y)) {
     newRect.pos.y = point1.y;
     newRect.size.height = naMakeLengthWithMinAndMaxi64(point1.y, point2.y);
   }else{
@@ -294,7 +294,7 @@ NA_IDEF NARecti64 naMakeRecti64ExtensionE(NARecti64 rect, NAPosi64 point) {
   if(naIsRecti64Empty(rect)) {
     NARecti64 newRect;
     newRect.pos = point;
-    newRect.size = naMakeSizei64(1, 1);
+    newRect.size = naMakeSizei64(NA_ONE_i64, NA_ONE_i64);
     return newRect;
   }else{
     return naMakeRecti64Extension(rect, point);

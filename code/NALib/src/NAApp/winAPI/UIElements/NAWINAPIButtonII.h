@@ -12,6 +12,9 @@
 
 
 NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(lParam);
+  NA_UNUSED(wParam);
+  NA_UNUSED(uiElement);
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message) {
@@ -162,9 +165,9 @@ const NAImageSet* currentImage(NAWINAPIButton* winapiButton) {
 
 
 NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* drawitemstruct) {
-  NASizei64 buttonSize = naMakeSizei64(
-    (int64)drawitemstruct->rcItem.right - (int64)drawitemstruct->rcItem.left,
-    (int64)drawitemstruct->rcItem.bottom - (int64)drawitemstruct->rcItem.top);
+  NASizei32 buttonSize = naMakeSizei32(
+    (drawitemstruct->rcItem.right - drawitemstruct->rcItem.left),
+    (drawitemstruct->rcItem.bottom - drawitemstruct->rcItem.top));
 
   // Create an offscreen device context and buffer
   HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);  
@@ -179,10 +182,10 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     HWND hwnd = naGetUIElementNativePtr(uiElement);
     NABool customDraw = naIsButtonStateful(&winapiButton->button) && naGetButtonState(&winapiButton->button);
 
-    NASpace* parentSpace = naGetUIElementParentSpace(uiElement);
+    NASpace* parentSpace = naGetUIElementParentSpaceMutable(uiElement);
     NAColor maskColor = {1.f, 1.f, 0.f, 1.f};
-    NAUIColor* prevBgColor;
-    NAUIColor* tmpBgColor;
+    NAUIColor* prevBgColor = NA_NULL;
+    NAUIColor* tmpBgColor = NA_NULL;
 
     if(customDraw) {
       tmpBgColor = naAllocUIColor(&maskColor, NA_NULL);
@@ -257,9 +260,9 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     size1x.width = (size_t)(size1x.width * uiScale);
     size1x.height = (size_t)(size1x.height * uiScale);
 
-    NAPosi64 offset = naMakePosi64(
-      (buttonSize.width - size1x.width) / 2,
-      (buttonSize.height - size1x.height) / 2);
+    NAPosi32 offset = naMakePosi32(
+      (buttonSize.width - (int32)size1x.width) / 2,
+      (buttonSize.height - (int32)size1x.height) / 2);
 
     LRESULT result = SendMessage(naGetUIElementNativePtr(winapiButton), BM_GETSTATE, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
     NABool pushed = (result & BST_PUSHED) == BST_PUSHED;
@@ -271,13 +274,13 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
         foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_PRESSED, secondaryState);
       }else{
         if(na_GetUIElementMouseInside(&winapiButton->button.uiElement)) {
-          foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM,  NA_IMAGE_SET_INTERACTION_HOVER, secondaryState);
+          foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_HOVER, secondaryState);
         }else{
-          foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM,  NA_IMAGE_SET_INTERACTION_NONE, secondaryState);
+          foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_NONE, secondaryState);
         }
       }
     }else{
-      foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM,  NA_IMAGE_SET_INTERACTION_DISABLED, secondaryState);
+      foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_DISABLED, secondaryState);
     }
 
     // We store the background where the image will be placed.
@@ -487,6 +490,11 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
   winapiButton->rect = naMakeRectS(0., 0., width, 24.);
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
+  // Note: We need a copy because the tinting might be different.
+  NAImageSet* imageSet2 = icon2
+    ? NA_NULL
+    : naRecreateImageSet(icon);
+
   HWND nativePtr = CreateWindow(
     TEXT("BUTTON"),
     TEXT(""),
@@ -506,26 +514,21 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
     app->oldButtonWindowProc = oldproc;
   }
 
-  NAImageSet* secondaryIcon = NA_NULL;
-  if(!icon2) {
-    secondaryIcon = naRecreateImageSet(icon);
-  }
-
   na_InitButton(
     (NAButton*)winapiButton,
     nativePtr,
     NA_NULL,
     NA_NULL,
     icon,
-    icon2 ? icon2 : secondaryIcon,
+    icon2 ? icon2 : imageSet2,
     flags);
   na_IncCoreUIElementHoverTrackingCount(&winapiButton->button.uiElement);
 
-  winapiButton->state = 0;
-
-  if(secondaryIcon) {
-    naRelease(secondaryIcon);
+  if(imageSet2) {
+    naRelease(imageSet2);
   }
+
+  winapiButton->state = 0;
 
   naSetFlagu32(&winapiButton->state, NA_WINAPI_BUTTON_IMAGE, NA_TRUE); 
 
@@ -633,31 +636,53 @@ NA_DEF void na_DestructWINAPIButton(NAWINAPIButton* winapiButton) {
 
 
 NA_DEF void naSetButtonVisible(NAButton* button, NABool visible) {
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+
   ShowWindow(naGetUIElementNativePtr(button), visible ? SW_SHOW : SW_HIDE);
 }
 
 
 
 NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled) {
-  const NAWINAPIButton* winapiButton = (const NAWINAPIButton*)button;
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+
   EnableWindow(naGetUIElementNativePtr(button), enabled);
 }
 
 
 
 NA_DEF NABool naGetButtonState(const NAButton* button) {
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+
   const NAWINAPIButton* winapiButton = (const NAWINAPIButton*)button;
+  
   #if NA_DEBUG
     if(!naGetFlagu32(winapiButton->button.flags, NA_BUTTON_STATEFUL))
       naError("This is not a stateful button");
   #endif
+
   return na_GetButtonState(winapiButton);
 }
 
 
 
 NA_DEF void naSetButtonState(NAButton* button, NABool state) {
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
+  
   // Note that BM_SETSTATE only changes the visual highlight, not the state of the
   // WINAPI button. Therefore, we need a separate state boolean.
   if(naGetFlagu32(winapiButton->button.flags, NA_BUTTON_STATEFUL)) {
@@ -674,11 +699,18 @@ NA_DEF void naSetButtonState(NAButton* button, NABool state) {
 
 
 NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text) {
-  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   #if NA_DEBUG
-  if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))
-    naError("This is not a text button");
+    if(!button)
+      naError("button is nullptr");
   #endif
+
+  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
+  
+  #if NA_DEBUG
+    if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))
+      naError("This is not a text button");
+  #endif
+
   na_setButtonText(button, text);
   updateButtonText(winapiButton);
 }
@@ -686,11 +718,18 @@ NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text) {
 
 
 NA_DEF void naSetButtonText2(NAButton* button, const NAUTF8Char* text) {
-  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   #if NA_DEBUG
-  if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))
-    naError("This is not a text button");
+    if(!button)
+      naError("button is nullptr");
   #endif
+
+  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
+  
+  #if NA_DEBUG
+    if(naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))
+      naError("This is not a text button");
+  #endif
+
   na_setButtonText2(button, text);
   updateButtonText(winapiButton);
 }
@@ -698,50 +737,83 @@ NA_DEF void naSetButtonText2(NAButton* button, const NAUTF8Char* text) {
 
 
 NA_DEF void naSetButtonImage(NAButton* button, const NAImageSet* imageSet) {
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
+
   #if NA_DEBUG
     if(!naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))
       naError("This is not a image button");
   #endif
+
   // todo
+  NA_UNUSED(imageSet);
 }
 
 
 
 NA_DEF NABool naIsButtonStateful(const NAButton* button) {
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+
   return naGetFlagu32(button->flags, NA_BUTTON_STATEFUL);
 }
 
 
 
 NA_DEF NABool naIsButtonBordered(const NAButton* button) {
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+
   return naGetFlagu32(button->flags, NA_BUTTON_BORDERED);
 }
 
 
 
 NA_DEF NABool naIsButtonTextual(const NAButton* button) {
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   return naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE);
 }
 
 
 
-NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionCallback callback, void* controller) {
+NA_DEF void naSetButtonSubmit(
+  NAButton* button,
+  NAReactionCallback callback,
+  void* controller)
+{
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(winapiButton), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | BS_DEFPUSHBUTTON;
   SetWindowLongPtr(naGetUIElementNativePtr(winapiButton), GWL_STYLE, (LONG_PTR)style);
 
   naAddUIKeyboardShortcut(
-    naGetUIElementWindow(button),
+    naGetUIElementWindowMutable(button),
     naNewKeyStroke(NA_KEYCODE_ENTER, NA_KEY_MODIFIER_NONE),
     callback,
     controller);
+
   // Windows can not distinguish between ENTER and NUMPAD_ENTER. So we do not
-  // install another keystroke listener.
+  // install another keystroke listener. really? todo.
   //naAddUIKeyboardShortcut(
-  //  naGetUIElementWindow(button),
+  //  naGetUIElementWindowMutable(button),
   //  naNewKeyStroke(NA_KEYCODE_NUMPAD_ENTER, NA_KEY_MODIFIER_NONE),
   //  callback,
   //  controller);
@@ -749,9 +821,18 @@ NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionCallback callback, voi
 
 
 
-NA_DEF void naSetButtonAbort(NAButton* button, NAReactionCallback callback, void* controller) {
+NA_DEF void naSetButtonAbort(
+  NAButton* button,
+  NAReactionCallback callback,
+  void* controller)
+{
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+
   naAddUIKeyboardShortcut(
-    naGetUIElementWindow(button),
+    naGetUIElementWindowMutable(button),
     naNewKeyStroke(NA_KEYCODE_ESCAPE, NA_KEY_MODIFIER_NONE),
     callback,
     controller);
@@ -760,6 +841,11 @@ NA_DEF void naSetButtonAbort(NAButton* button, NAReactionCallback callback, void
 
 
 NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+
   const NAWINAPIButton* winapiButton = (const NAWINAPIButton*)button;
   return winapiButton->rect;
 }
@@ -767,6 +853,11 @@ NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
 
 
 NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect) {
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
 
   winapiButton->rect = rect;

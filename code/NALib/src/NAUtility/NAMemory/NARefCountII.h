@@ -59,8 +59,7 @@ NA_IDEF NABool naIsRefCountZero(NARefCount* refCount) {
 NA_IDEF NARefCount* naRetainRefCount(NARefCount* refCount) {
   #if NA_DEBUG
     if(!refCount) {
-      naCrash("refCount is Null-Pointer.");
-      return NA_NULL;
+      naCrash("refCount is nullptr");
     }else{
       if(refCount->dummy != NA_REFCOUNT_DUMMY_VALUE)
         naError("Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");
@@ -82,7 +81,7 @@ NA_IDEF NARefCount* naRetainRefCount(NARefCount* refCount) {
 NA_IDEF void naReleaseRefCount(NARefCount* refCount, void* data, NAMutator destructor) {
   #if NA_DEBUG
     if(!refCount)
-      naCrash("refCount is Null-Pointer.");
+      naCrash("refCount is nullptr");
     if(refCount->dummy != NA_REFCOUNT_DUMMY_VALUE)
       naError("Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");
     // The next test can detect some erroneous behaviour in the code. Note

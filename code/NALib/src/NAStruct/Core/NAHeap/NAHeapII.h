@@ -45,12 +45,12 @@ struct NAHeap{
 // The important thing is that the ptr and key field are at the same position
 // in the struct such that they can be accessed by the inlined functions
 // below no matter what struct type is stored.
-typedef struct NAHeapEntry NAHeapEntry;
+NA_PROTOTYPE(NAHeapEntry);
 struct NAHeapEntry{
   const void*       key;
   NAPtr             ptr;
 };
-typedef struct NAHeapBackEntry NAHeapBackEntry;
+NA_PROTOTYPE(NAHeapBackEntry);
 struct NAHeapBackEntry{
   const void*       key;
   NAPtr             ptr;
@@ -62,7 +62,7 @@ struct NAHeapBackEntry{
 NA_IDEF void naClearHeap(NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
-      naCrash("heap is Null-Pointer.");
+      naCrash("heap is nullptr");
   #endif
   free(heap->data);
 }
@@ -71,27 +71,27 @@ NA_IDEF void naClearHeap(NAHeap* heap) {
 NA_IDEF void naEmptyHeap(NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
-      naCrash("heap is Null-Pointer.");
+      naCrash("heap is nullptr");
   #endif
   heap->count = 0;
 }
 
 
-NA_IDEF int64 naGetHeapCount(const NAHeap* heap) {
+NA_IDEF size_t naGetHeapCount(const NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
-      naCrash("heap is Null-Pointer.");
+      naCrash("heap is nullptr");
   #endif
-  return (int64)heap->count;
+  return heap->count;
 }
 
 
-NA_IDEF int64 naGetHeapMaxCount(const NAHeap* heap) {
+NA_IDEF size_t naGetHeapMaxCount(const NAHeap* heap) {
   #if NA_DEBUG
     if(!heap)
-      naCrash("heap is Null-Pointer.");
+      naCrash("heap is nullptr");
   #endif
-  return (int64)heap->maxCount;
+  return heap->maxCount;
 }
 
 

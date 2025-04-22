@@ -6,6 +6,14 @@
 
 
 
+struct NACocoaImageSpace{
+  NAImageSpace imageSpace;
+};
+NA_HAPI void na_DestructCocoaImageSpace(NACocoaImageSpace* _Nonnull cocoaImageSpace);
+NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
+
+
+
 @implementation NACocoaNativeImageSpace
 
 - (id _Nonnull) initWithImageSpace:(NACocoaImageSpace* _Nonnull)newCocoaImageSpace frame:(NSRect)frame{

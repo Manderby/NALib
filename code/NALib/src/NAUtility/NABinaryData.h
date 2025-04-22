@@ -14,7 +14,6 @@
 
 
 #include "../NABase/NABase.h"
-#include <stddef.h>
 
 
 // Copies the array s to array d byte-by-byte
@@ -193,7 +192,7 @@ NA_IAPI uint32 naParseEndiannessMarker(const NAByte marker[4]);
 // ////////////////////
 
 // The full type definition is in the file "NABinaryDataII.h"
-typedef struct NAChecksum NAChecksum;
+NA_PROTOTYPE(NAChecksum);
 
 typedef enum{
   NA_CHECKSUM_TYPE_CRC_PNG,

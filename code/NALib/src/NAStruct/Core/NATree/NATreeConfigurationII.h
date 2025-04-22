@@ -7,7 +7,7 @@
 NA_HIDEF NABool na_GetTreeConfigurationConst(NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!config)
-      naCrash("config is Nullptr");
+      naCrash("config is nullptr");
   #endif
   return naGetFlagu32(config->flags, NA_TREE_CONFIG_DEBUG_FLAG_CONST);
 }
@@ -15,7 +15,7 @@ NA_HIDEF NABool na_GetTreeConfigurationConst(NATreeConfiguration* config) {
 NA_HIDEF void na_SetTreeConfigurationConst(NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!config)
-      naCrash("config is Nullptr");
+      naCrash("config nullptr");
   #endif
   naSetFlagu32(&config->flags, NA_TREE_CONFIG_DEBUG_FLAG_CONST, NA_TRUE);
 }
@@ -66,26 +66,26 @@ NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NA
 
 
 
-NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config, int64 baseLeafExponent) {
-  int64* configData;
+NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config, int32 baseLeafExponent) {
+  int32* configData;
   #if NA_DEBUG
     if(!(config->flags & NA_TREE_QUADTREE) && !(config->flags & NA_TREE_OCTTREE))
       naError("This configuration is not for a quadtree and not for an octtree");
   #endif
   if(config->configData) {naFree(config->configData);}
-  configData = (int64*)naMalloc(sizeof(int64));
+  configData = (int32*)naMalloc(sizeof(int32));
   *configData = baseLeafExponent;
   config->configData = configData;
 }
 
 
 
-NA_IDEF int64 naGetTreeConfigurationBaseLeafExponent(const NATreeConfiguration* config) {
+NA_IDEF int32 naGetTreeConfigurationBaseLeafExponent(const NATreeConfiguration* config) {
   #if NA_DEBUG
     if(!(config->flags & NA_TREE_QUADTREE) && !(config->flags & NA_TREE_OCTTREE))
       naError("This configuration is not for a quadtree and not for an octtree");
   #endif
-  return *((int64*)(config->configData));
+  return *((int32*)(config->configData));
 }
 
 

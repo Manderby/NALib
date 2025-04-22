@@ -19,7 +19,7 @@ int generalExample(void){
   #else
     printf(" Release");
   #endif
-  printf(" %d Bits Addresses, %d Bits Integers)\n\n", NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
+  printf(" %d Bits Addresses)\n\n", NA_ADDRESS_BITS);
 
 
   NAString* wd = naNewStringWithCurWorkingDirectory();

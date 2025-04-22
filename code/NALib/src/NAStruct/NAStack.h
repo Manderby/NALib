@@ -52,8 +52,8 @@
 
 
 // The full type definition is in the file "NAStackII.h"
-typedef struct NAStack NAStack;
-typedef struct NAStackIterator NAStackIterator;
+NA_PROTOTYPE(NAStack);
+NA_PROTOTYPE(NAStackIterator);
 
 
 

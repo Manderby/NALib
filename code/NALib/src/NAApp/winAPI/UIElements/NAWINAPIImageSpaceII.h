@@ -14,8 +14,8 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   NAWINAPIImageSpace* imageSpace;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
   NASizes size1x;
-  NASizei64 spaceSize;
-  NAPosi64 offset;
+  NASizei32 spaceSize;
+  NAPosi32 offset;
   const NAImage* foreImage;
   NAByte* backBuffer;
   HBITMAP hBackBitmap;
@@ -30,7 +30,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   imageSpace = (NAWINAPIImageSpace*)uiElement;
 
   NAColor bgColor;
-  naFillSpaceBackgroundColor(&bgColor, naGetUIElementParentSpaceConst(uiElement));
+  naFillSpaceBackgroundColor(&bgColor, naGetUIElementParentSpace(uiElement));
   NAWINAPIColor* bgWinapiColor = naAllocUIColor(&bgColor, NA_NULL);
   FillRect(paintStruct.hdc, &paintStruct.rcPaint, bgWinapiColor->brush);
   naDeallocUIColor(bgWinapiColor);
@@ -44,12 +44,12 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   size1x.width = (size_t)(size1x.width * uiScale);
   size1x.height = (size_t)(size1x.height * uiScale);
 
-  spaceSize = naMakeSizei64(
-    (int64)paintStruct.rcPaint.right - (int64)paintStruct.rcPaint.left,
-    (int64)paintStruct.rcPaint.bottom - (int64)paintStruct.rcPaint.top);
-  offset = naMakePosi64(
-    (spaceSize.width - size1x.width) / 2,
-    (spaceSize.height - size1x.height) / 2);
+  spaceSize = naMakeSizei32(
+    paintStruct.rcPaint.right - paintStruct.rcPaint.left,
+    paintStruct.rcPaint.bottom - paintStruct.rcPaint.top);
+  offset = naMakePosi32(
+    (spaceSize.width - (int32)size1x.width) / 2,
+    (spaceSize.height - (int32)size1x.height) / 2);
 
   foreImage = na_GetImageSetSubImage(imageSpace->imageSpace.imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_PLAIN, NA_IMAGE_SET_INTERACTION_NONE, NA_FALSE);
 
@@ -97,6 +97,8 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
 
 
 NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(lParam);
+  NA_UNUSED(wParam);
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message) {
@@ -166,8 +168,6 @@ NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace) {
 
 
 NA_DEF void naSetImageSpaceImage(NAImageSpace* imageSpace, NAImageSet* imageSet) {
-  NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
-  
   if(imageSpace->imageSet) {
     naRelease(imageSpace->imageSet);
   }

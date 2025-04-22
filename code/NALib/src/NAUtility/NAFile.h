@@ -8,7 +8,8 @@
 
 
 // The typedef needs to be here to resolve cyclic include problems.
-typedef struct NAFile NAFile;
+#include "../NABase/NABase.h"
+NA_PROTOTYPE(NAFile);
 
 
 
@@ -34,10 +35,6 @@ typedef struct NAFile NAFile;
 // everything to one definition.
 //
 // New types and macros introduced:
-// NAFileSize:          The file size integer. Guaranteed to be signed. May be
-//                      32 or 64 bits depending on system compiled for.
-// NA_FILESIZE_BITS and NA_FILESIZE_MAX     Two additional macros
-//                      storing the bits needed for a file byteOffset.
 // NAFileMode:          The filesystem permission mode. On Windows corresponds
 //                      to a flag combination like _S_IREAD, and on Unix
 //                      corresponds to the octal permission flags like 0644.
@@ -61,15 +58,6 @@ typedef struct NAFile NAFile;
   #include <io.h>
   #include <share.h>
   #include <sys/stat.h>
-  #if NA_ADDRESS_BITS == 64
-    typedef __int64 NAFileSize; // Is signed (Important for negative offsets)
-    #define NA_FILESIZE_BITS 64
-    #define NA_FILESIZE_MAX NA_MAX_i64
-  #elif NA_ADDRESS_BITS == 32
-    typedef long NAFileSize;    // Is signed (Important for negative offsets)
-    #define NA_FILESIZE_BITS 32
-    #define NA_FILESIZE_MAX NA_MAX_i32
-  #endif
   typedef int NAFileMode;
   #define NA_FILEMODE_DEFAULT (_S_IREAD | _S_IWRITE)
   #define NA_DIRMODE_DEFAULT 0 // No directory modes on windows needed.
@@ -77,14 +65,10 @@ typedef struct NAFile NAFile;
   #define NA_FILE_OPEN_FLAGS_WRITE (O_WRONLY | O_CREAT | O_TRUNC | O_BINARY)
   #define NA_FILE_OPEN_FLAGS_APPEND (O_WRONLY | O_CREAT | O_APPEND | O_BINARY)
 #elif NA_IS_POSIX
-  #include <unistd.h>
   #include <dirent.h>
   #if NA_OS == NA_OS_MAC_OS_X
     #include <copyfile.h>
   #endif
-  typedef off_t NAFileSize;     // Is signed (Important for negative offsets)
-  #define NA_FILESIZE_BITS 64
-  #define NA_FILESIZE_MAX NA_MAX_i64
   typedef int NAFileMode;
   #define NA_FILEMODE_DEFAULT 0644
   #define NA_DIRMODE_DEFAULT 0755
@@ -101,12 +85,12 @@ typedef struct NAFile NAFile;
 // on the system are mapped to NALib types. All other types are corresponding
 // to the standards.
 
-NA_IAPI NAFileSize  naLseek   (int fd, NAFileSize byteOffset, int originType);
-NA_IAPI NAFileSize  naTell(int fd);
+NA_IAPI fsize_t     naLseek   (int fd, fsize_t byteOffset, int originType);
+NA_IAPI fsize_t     naTell(int fd);
 NA_IAPI int         naOpen    (const char* path, int flags, int mode);
 NA_IAPI int         naClose   (int fd);
-NA_IAPI NAFileSize  naRead    (int fd, void* buf, NAFileSize byteSize);
-NA_IAPI NAFileSize  naWrite   (int fd, const void* buf, NAFileSize byteSize);
+NA_IAPI fsize_t     naRead    (int fd, void* buf, fsize_t byteSize);
+NA_IAPI fsize_t     naWrite   (int fd, const void* buf, fsize_t byteSize);
 NA_IAPI int         naMkDir   (const char* path, int mode);
 NA_IAPI int         naChDir   (const char* path);
 NA_IAPI NABool      naExists  (const char* path);
@@ -114,12 +98,13 @@ NA_API  NABool      naIsDir   (const char* path);
 NA_API  NABool      naIsHidden(const char* path);
 NA_IAPI int         naRemove  (const char* path);
 NA_IAPI NABool      naCopyFile(const char* dstPath, const char* srcPath);
-NA_IAPI NABool      naAccess  (const char* path,
-                                    NABool doesExists,
-                                    NABool canRead,
-                                    NABool canWrite,
-                                    NABool canExecute);
-NA_IAPI NAUTF8Char* naGetCwd  (NAUTF8Char* buf, int64 bufSize);
+NA_IAPI NABool      naAccess  (
+  const char* path,
+  NABool doesExists,
+  NABool canRead,
+  NABool canWrite,
+  NABool canExecute);
+NA_IAPI NAUTF8Char* naGetCwd  (NAUTF8Char* buf, size_t bufSize);
 
 
 
@@ -167,14 +152,14 @@ NA_IAPI NAFile* naCreateFileWritingStdout(void);
 NA_IAPI NAFile* naCreateFileWritingStderr(void);
 
 // Computes the fileSize (from first to last byte).
-NA_IAPI NAFileSize naComputeFileByteSize(const NAFile* file);
+NA_IAPI fsize_t naComputeFileByteSize(const NAFile* file);
 
 // Tests if a file has been opened.
 NA_IAPI NABool naIsFileOpen(const NAFile* file);
 
 // Re-adjusts the internal file pointer to the given offset.
-NA_IAPI void naSeekFileAbsolute(NAFile* file, NAFileSize byteOffset);
-NA_IAPI void naSeekFileRelative(NAFile* file, NAFileSize byteOffset);
+NA_IAPI void naSeekFileAbsolute(NAFile* file, fsize_t byteOffset);
+NA_IAPI void naSeekFileRelative(NAFile* file, fsize_t byteOffset);
 
 // Reads the given number of bytes and stores it without further manipulation
 // in buf. The buffer must be big enough, no overflow check is made. This is
@@ -183,9 +168,10 @@ NA_IAPI void naSeekFileRelative(NAFile* file, NAFileSize byteOffset);
 // files or with any kind of buffers.
 //
 // Returns the number of bytes read.
-NA_IAPI NAFileSize naReadFileBytes( NAFile* file,
-                                      void* buf,
-                                 NAFileSize byteSize);
+NA_IAPI fsize_t naReadFileBytes(
+  NAFile* file,
+  void* buf,
+  fsize_t byteSize);
 
 // Writes the given number of bytes from ptr to the file without further
 // manipulation. The buffer must be big enough, no overflow check is made.
@@ -194,9 +180,10 @@ NA_IAPI NAFileSize naReadFileBytes( NAFile* file,
 // writing files with any kind of buffers.
 //
 // Returns the number of bytes written.
-NA_IAPI NAFileSize naWriteFileBytes(  NAFile* file,
-                                  const void* ptr,
-                                   NAFileSize byteSize);
+NA_IAPI fsize_t naWriteFileBytes(
+  NAFile* file,
+  const void* ptr,
+  fsize_t byteSize);
 
 
 // //////////////////////////

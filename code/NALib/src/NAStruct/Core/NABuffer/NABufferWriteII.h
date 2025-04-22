@@ -24,7 +24,7 @@ NA_HIDEF void na_StoreBufferi32(NABufferIterator* iter, int32 value, NABool adva
   naConvertEndianness32(buffer->endianness, &value);
   na_StoreBufferBytes(iter, &value, 4, NA_TRUE, advance);
 }
-NA_HIDEF void na_StoreBufferi64(NABufferIterator* iter, NAi64 value, NABool advance) {
+NA_HIDEF void na_StoreBufferi64(NABufferIterator* iter, int64 value, NABool advance) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   naConvertEndianness64(buffer->endianness, &value);
   na_StoreBufferBytes(iter, &value, 8, NA_TRUE, advance);
@@ -47,7 +47,7 @@ NA_HIDEF void na_StoreBufferu32(NABufferIterator* iter, uint32 value, NABool adv
   naConvertEndianness32(buffer->endianness, &value);
   na_StoreBufferBytes(iter, &value, 4, NA_TRUE, advance);
 }
-NA_HIDEF void na_StoreBufferu64(NABufferIterator* iter, NAu64 value, NABool advance) {
+NA_HIDEF void na_StoreBufferu64(NABufferIterator* iter, uint64 value, NABool advance) {
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   naConvertEndianness64(buffer->endianness, &value);
   na_StoreBufferBytes(iter, &value, 8, NA_TRUE, advance);
@@ -81,7 +81,7 @@ NA_IDEF void naSetBufferi16(NABufferIterator* iter, int16 value) {
 NA_IDEF void naSetBufferi32(NABufferIterator* iter, int32 value) {
   na_StoreBufferi32(iter, value, NA_FALSE);
 }
-NA_IDEF void naSetBufferi64(NABufferIterator* iter, NAi64 value) {
+NA_IDEF void naSetBufferi64(NABufferIterator* iter, int64 value) {
   na_StoreBufferi64(iter, value, NA_FALSE);
 }
 
@@ -96,7 +96,7 @@ NA_IDEF void naSetBufferu16(NABufferIterator* iter, uint16 value) {
 NA_IDEF void naSetBufferu32(NABufferIterator* iter, uint32 value) {
   na_StoreBufferu32(iter, value, NA_FALSE);
 }
-NA_IDEF void naSetBufferu64(NABufferIterator* iter, NAu64 value) {
+NA_IDEF void naSetBufferu64(NABufferIterator* iter, uint64 value) {
   na_StoreBufferu64(iter, value, NA_FALSE);
 }
 
@@ -124,7 +124,7 @@ NA_IDEF void naWriteBufferi16(NABufferIterator* iter, int16 value) {
 NA_IDEF void naWriteBufferi32(NABufferIterator* iter, int32 value) {
   na_StoreBufferi32(iter, value, NA_TRUE);
 }
-NA_IDEF void naWriteBufferi64(NABufferIterator* iter, NAi64 value) {
+NA_IDEF void naWriteBufferi64(NABufferIterator* iter, int64 value) {
   na_StoreBufferi64(iter, value, NA_TRUE);
 }
 
@@ -139,7 +139,7 @@ NA_IDEF void naWriteBufferu16(NABufferIterator* iter, uint16 value) {
 NA_IDEF void naWriteBufferu32(NABufferIterator* iter, uint32 value) {
   na_StoreBufferu32(iter, value, NA_TRUE);
 }
-NA_IDEF void naWriteBufferu64(NABufferIterator* iter, NAu64 value) {
+NA_IDEF void naWriteBufferu64(NABufferIterator* iter, uint64 value) {
   na_StoreBufferu64(iter, value, NA_TRUE);
 }
 

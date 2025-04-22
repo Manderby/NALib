@@ -13,7 +13,7 @@
 // representations based on the systems skin, the resolution of the screen
 // or the interaction the user has with the image.
 
-typedef struct NAImageSet NAImageSet;
+NA_PROTOTYPE(NAImageSet);
 
 // An NAImageSet has reference counting built-in. Use naRetain and naRelease.
 // ///////////////////////////////

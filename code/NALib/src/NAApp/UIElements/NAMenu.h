@@ -15,7 +15,7 @@
 // Creates a new menu
 NA_API NAMenu* naNewMenu(void);
 
-// Sdds a menu item before atItem. If atItem is Null, it is added at the end.
+// Sdds a menu item before atItem. If atItem is nullptr, it is added at the end.
 // Note that item must be mutable.
 NA_API void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atItem);
 

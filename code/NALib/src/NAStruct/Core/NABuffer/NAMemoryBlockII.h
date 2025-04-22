@@ -19,7 +19,7 @@ struct NAMemoryBlock{
 NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, size_t index) {
   #if NA_DEBUG
     if(!block)
-      naCrash("block is Null");
+      naCrash("block is nullptr");
     if(index >= block->byteSize)
       naError("index out of range");
   #endif
@@ -31,7 +31,7 @@ NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, siz
 NA_HIDEF void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, size_t index) {
   #if NA_DEBUG
     if(!block)
-      naCrash("block is Null");
+      naCrash("block is nullptr");
     if(index >= block->byteSize)
       naError("index out of range");
   #endif

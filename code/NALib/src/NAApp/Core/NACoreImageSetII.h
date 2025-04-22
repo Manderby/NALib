@@ -19,7 +19,7 @@ NA_RUNTIME_TYPE(NAImageSet, na_DestructImageSet, NA_TRUE);
 
 
 
-typedef struct NA_UISubImage NA_UISubImage;
+NA_PROTOTYPE(NA_UISubImage);
 struct NA_UISubImage{
   const NAImage* image;
   void* nativeImage;
@@ -150,6 +150,9 @@ NA_HDEF const NA_UISubImage* na_GetUISubImage(
         #endif
       }
       break;
+    case NA_IMAGE_SET_INTERACTION_NONE:
+      // Fallthrough. This is the default case.
+      NA_FALLTHROUGH;
     default: break;
     }
   
@@ -252,7 +255,7 @@ NA_DEF NAImageSet* naRecreateImageSet(const NAImageSet* imageSet) {
   
   na_AddImageSetSubImage(
     newImageSet,
-    naRetainConst(subImage->image),
+    subImage->image,
     subImage->resolution,
     NA_SKIN_PLAIN,
     NA_IMAGE_SET_INTERACTION_NONE);
@@ -276,9 +279,10 @@ NA_HDEF void naFillColorWithSkinTextColor(NAColor* color, NASkin skin) {
     #if NA_DEBUG
       naError("Cannot provide color for plain skin");
     #endif
-    // Fallthrough to light.
 
-  case NA_SKIN_LIGHT:
+    NA_FALLTHROUGH; // Fallthrough to light.
+
+    case NA_SKIN_LIGHT:
     skinColor[0] = 16;
     skinColor[1] = 16;
     skinColor[2] = 16;
@@ -308,7 +312,8 @@ NA_DEF void naFillColorWithSkinLinkColor(NAColor* color, NASkin skin) {
     #if NA_DEBUG
       naError("Cannot provide color for plain skin");
     #endif
-    // Fallthrough to light.
+
+    NA_FALLTHROUGH; // Fallthrough to light.
     
   case NA_SKIN_LIGHT:
     skinColor[0] = 16;
@@ -340,7 +345,8 @@ NA_DEF void naFillColorWithSkinAccentColor(NAColor* color, NASkin skin) {
     #if NA_DEBUG
       naError("Cannot provide color for plain skin");
     #endif
-    // Fallthrough to light.
+    
+    NA_FALLTHROUGH; // Fallthrough to light.
     
   case NA_SKIN_LIGHT:
     skinColor[0] = 255;
@@ -409,6 +415,7 @@ NA_HDEF NA_UISubImage* na_AddImageSetSubImage(
 
 NA_HDEF void na_DeallocUISubImage(NA_UISubImage* subImage) {
   naReleaseConst(subImage->image);
+  naDeallocNativeImage(subImage->nativeImage);
   naFree(subImage);
 }
 

@@ -97,7 +97,7 @@
 // This structure is stored in the first bytes of every part block.
 // Its size is ALWAYS 8 times an addressSize, the rest of the block is
 // available for the memory.
-typedef struct NA_PoolPart NA_PoolPart;
+NA_PROTOTYPE(NA_PoolPart);
 struct NA_PoolPart{
   NA_TypeInfo* typeInfo;
   size_t maxCount;
@@ -107,7 +107,7 @@ struct NA_PoolPart{
   NA_PoolPart* prevPart;
   NA_PoolPart* nextPart;
   // The following field is a dummy entry and has no meaning in release code.
-  // It shall not be removed though as the total amount of bytes used for
+  // It must not be removed though as the total amount of bytes used for
   // an NA_PoolPart shall be 8 times an addressSize.
   // It is used in debugging though. Points at first byte of the whole pool
   // for consistency check.
@@ -160,7 +160,7 @@ NA_HIDEF void na_RegisterTypeInfo(NA_TypeInfo* typeInfo) {
 
   #if NA_DEBUG
     if(typeInfo->curPart)
-      naError("Newly registered type should have Null as current part.");
+      naError("Newly registered type should have nullptr as current part.");
     if(typeInfo->typeSize < NA_ADDRESS_BYTES)
       naError("Size of type is too small");
     if(typeInfo->typeSize > (na_Runtime->partSize - sizeof(NA_PoolPart)))
@@ -203,13 +203,13 @@ NA_HIDEF void na_UnregisterTypeInfo(NA_TypeInfo* typeInfo) {
     // We shrink the info array by one by omitting the one entry which equals
     // the given parameter. Again, just like na_RegisterTypeInfo, this is not
     // very fast, but does the job. See comment there.
-    int64 oldindex = 0;
+    size_t oldIndex = 0;
     for(size_t i = 0; i < (na_Runtime->typeInfoCount - NA_ONE_s); ++i) {
       if(na_Runtime->typeInfos[i] == typeInfo) {
-        oldindex++;
+        oldIndex++;
       }
-      newinfos[i] = na_Runtime->typeInfos[oldindex];
-      oldindex++;
+      newinfos[i] = na_Runtime->typeInfos[oldIndex];
+      oldIndex++;
     }
   }
 
@@ -313,7 +313,7 @@ NA_DEF void* na_NewStructInternal(NATypeInfo* info) {
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!info)
-      naCrash("Given type identifier is Null-Pointer. Do not call na_NewStruct directly. Use the naNew macro.");
+      naCrash("Given type identifier is nullptr. Do not call na_NewStruct directly. Use the naNew macro.");
     if(info->typeSize == 0)
       naError("Type size is zero. Is the type void?");
   #endif
@@ -528,7 +528,7 @@ NA_DEF void* naRetain(void* pointer) {
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!pointer)
-      naCrash("pointer is Null");
+      naCrash("pointer is nullptr");
 
     // Find the part entry at the beginning of the part by AND'ing the
     // address with the partSizeMask
@@ -557,7 +557,7 @@ NA_DEF void naRelease(void* pointer) {
     if(!naIsRuntimeRunning())
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!pointer)
-      naCrash("pointer is Null");
+      naCrash("pointer is nullptr");
   #endif
 
   #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
@@ -644,7 +644,7 @@ NA_DEF void* naMallocTmp(size_t byteSize) {
 
 #if NA_DEBUG
   if(!na_Runtime->mallocGarbage)
-    naCrash("Garbage struct is Null");
+    naCrash("Garbage struct is nullptr");
   if(na_Runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)
     naCrash("Buffer overrun.");
 #endif
@@ -809,7 +809,7 @@ NA_HDEF size_t naGetRuntimeTypeRefCount(const void* pointer) {
     // Find the pool entry at the beginning of the part by AND'ing the
     // address with the partSizeMask
     if(!pointer)
-      naCrash("pointer is Null");
+      naCrash("pointer is nullptr");
     NA_PoolPart* part = (NA_PoolPart*)((size_t)pointer & na_Runtime->partSizeMask);
     if(part->dummy != part)
       naError("Pointer seems not to be from a pool.");

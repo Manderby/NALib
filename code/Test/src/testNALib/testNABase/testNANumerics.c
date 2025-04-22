@@ -266,8 +266,7 @@ void testGetAbsi(void) {
     naTest(naAbsi32(NA_ZERO_i32) == NA_ZERO_i32);
     naTest(naAbsi32(n.v32) == p.v32);
     naTest(naAbsi32(NA_MAX_i32) == NA_MAX_i32);
-    naTest((int32)naAbsi32(NA_MIN_i32) == (int32)NA_MIN_i32);
-    naTest(naAbsi32((-2147483647 -1)) == (-2147483647 -1));
+    naTest(naAbsi32(NA_MIN_i32) == NA_MIN_i32);
   }
 
   naTestGroup("naAbsi64") {

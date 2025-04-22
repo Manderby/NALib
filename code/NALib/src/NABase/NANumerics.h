@@ -9,12 +9,12 @@
 
 // Returns either 0 or -1 in two complement form but stored as an uint
 // depending on whether the parameter is positive or negative.
-NA_IAPI uint8  naGetSignum8  (int8   i);
-NA_IAPI uint16 naGetSignum16 (int16  i);
-NA_IAPI uint32 naGetSignum32 (int32  i);
-NA_IAPI NAu64  naGetSignum64 (NAi64  i);
-NA_IAPI NAu128 naGetSignum128(NAi128 i);
-NA_IAPI NAu256 naGetSignum256(NAi256 i);
+NA_IAPI uint8   naGetSignum8  (int8   i);
+NA_IAPI uint16  naGetSignum16 (int16  i);
+NA_IAPI uint32  naGetSignum32 (int32  i);
+NA_IAPI uint64  naGetSignum64 (int64  i);
+NA_IAPI uint128 naGetSignum128(int128 i);
+NA_IAPI uint256 naGetSignum256(int256 i);
 
 // Returns either 1 or -1. The value 0 returns 1. Never returns 0.
 // 
@@ -25,9 +25,9 @@ NA_IAPI NAu256 naGetSignum256(NAi256 i);
 NA_IAPI int8   naSigni8  (int8   i);
 NA_IAPI int16  naSigni16 (int16  i);
 NA_IAPI int32  naSigni32 (int32  i);
-NA_IAPI NAi64  naSigni64 (NAi64  i);
-NA_IAPI NAi128 naSigni128(NAi128 i);
-NA_IAPI NAi256 naSigni256(NAi256 i);
+NA_IAPI int64  naSigni64 (int64  i);
+NA_IAPI int128 naSigni128(int128 i);
+NA_IAPI int256 naSigni256(int256 i);
 
 // Sets or unsets the sign bit. This is pure bit logic, not performing
 // any complement.
@@ -48,9 +48,9 @@ NA_IAPI void naUnsetSignBit256(void* i);
 NA_IAPI int8   naAbsi8  (int8   i);
 NA_IAPI int16  naAbsi16 (int16  i);
 NA_IAPI int32  naAbsi32 (int32  i);
-NA_IAPI NAi64  naAbsi64 (NAi64  i);
-NA_IAPI NAi128 naAbsi128(NAi128 i);
-NA_IAPI NAi256 naAbsi256(NAi256 i);
+NA_IAPI int64  naAbsi64 (int64  i);
+NA_IAPI int128 naAbsi128(int128 i);
+NA_IAPI int256 naAbsi256(int256 i);
 
 
 
@@ -98,7 +98,7 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
 
 // 64 bit basic integer constants
 #define NA_SIGN_MASK_64      naMakei64(NA_SIGN_MASK_32, NA_ZERO_u32)
-#if defined NA_TYPE_INT64
+#if NA_NATIVE_INT64_IN_USE
   #define NA_ZERO_u64          ((uint64)0u)
   #define NA_ZERO_i64          ((int64)0)
   #define NA_ONE_u64           ((uint64)1u)
@@ -122,9 +122,9 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
   #define NA_MINUS_ONE_i64     ((int64)NA_MAX_u64)
 #else
   #define NA_ZERO_u64          naMakeu64WithLo(NA_ZERO_u32)
-  #define NA_ZERO_i64          naMakei64WithLo(NA_ZERO_i32)
+  #define NA_ZERO_i64          naCastu32Toi64(NA_ZERO_u32)
   #define NA_ONE_u64           naMakeu64WithLo(NA_ONE_u32)
-  #define NA_ONE_i64           naMakei64WithLo(NA_ONE_i32)
+  #define NA_ONE_i64           naCastu32Toi64(NA_ONE_u32)
 
   #define NA_MAX_u64           naMakeu64(NA_MAX_u32, NA_MAX_u32)
   #define NA_MAX_i64           naMakei64(NA_MAX_i32, NA_MAX_u32)
@@ -136,7 +136,7 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
 
 // 128 bit basic integer constants
 #define NA_SIGN_MASK_128     naMakei128(NA_SIGN_MASK_64, NA_ZERO_u64)
-#if defined NA_TYPE_INT128
+#if NA_NATIVE_INT128_IN_USE
   #define NA_ZERO_u128         ((uint128)0u)
   #define NA_ZERO_i128         ((int128)0)
   #define NA_ONE_u128          ((uint128)1u)
@@ -175,7 +175,7 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
 // 256 bit basic integer constants
 #define NA_SIGN_MASK_256      naMakei256(NA_SIGN_MASK_128, NA_ZERO_u128)
 
-#if defined NA_TYPE_INT256
+#if NA_NATIVE_INT256_IN_USE
   #define NA_ZERO_u256          ((uint256)0u)
   #define NA_ZERO_i256          ((int256)0)
   #define NA_ONE_u256           ((uint256)1u)

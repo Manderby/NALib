@@ -56,6 +56,17 @@
 #endif
 
 
+
+// The different newline-encodings as an enum type
+typedef enum{
+  NA_NEWLINE_UNIX,              // \n    Used in Unix, Linux, MacOSX
+  NA_NEWLINE_MAC9,              // \r    Used in old Mac OS
+  NA_NEWLINE_WIN,               // \r\n  Used in Windows
+  NA_NEWLINE_NATIVE             //       Dependant on the local machines system
+} NANewlineEncoding;
+
+
+
 #endif // NA_CHAR_INCLUDED
 
 

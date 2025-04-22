@@ -156,13 +156,6 @@ NA_PROTOTYPE(NABoxi32);
 NA_PROTOTYPE(NABoxi64);
 NA_PROTOTYPE(NABoxs);
 
-// Bezel4 is deprecated. Use Border2D
-NA_PROTOTYPE(NABezel4);
-NA_PROTOTYPE(NABezel4f);
-NA_PROTOTYPE(NABezel4i32);
-NA_PROTOTYPE(NABezel4i64);
-NA_PROTOTYPE(NABezel4s);
-
 NA_PROTOTYPE(NABorder1D);
 NA_PROTOTYPE(NABorder1Df);
 NA_PROTOTYPE(NABorder1Di32);
@@ -229,13 +222,6 @@ struct NABoxf{      NAVertexf   vertex; NAVolumef   volume; };
 struct NABoxi32{    NAVertexi32 vertex; NAVolumei32 volume; };
 struct NABoxi64{    NAVertexi64 vertex; NAVolumei64 volume; };
 struct NABoxs{      NAVertexs   vertex; NAVolumes   volume; };
-
-// Bezel4 is deprecated. Use Border2D
-struct NABezel4{    double right; double top; double left; double bottom; };
-struct NABezel4f{   float  right; float  top; float  left; float  bottom; };
-struct NABezel4i32{ int32  right; int32  top; int32  left; int32  bottom; };
-struct NABezel4i64{ int64  right; int64  top; int64  left; int64  bottom; };
-struct NABezel4s{   size_t right; size_t top; size_t left; size_t bottom; };
 
 struct NABorder1D{    double left; double right; };
 struct NABorder1Df{   float  left; float  right; };
@@ -455,14 +441,6 @@ NA_IAPI void        naFillBoxfWithCopy  (NABoxf*   boxd, const NABoxf*   boxs);
 NA_IAPI void        naFillBoxi32WithCopy(NABoxi32* boxd, const NABoxi32* boxs);
 NA_IAPI void        naFillBoxi64WithCopy(NABoxi64* boxd, const NABoxi64* boxs);
 NA_IAPI void        naFillBoxsWithCopy  (NABoxs*   boxd, const NABoxs*   boxs);
-
-// NABezel (deprecated)
-
-NA_IAPI NABezel4    naMakeBezel4   (double right, double top, double left, double bottom);
-NA_IAPI NABezel4f   naMakeBezel4f  (float  right, float  top, float  left, float  bottom);
-NA_IAPI NABezel4i32 naMakeBezel4i32(int32  right, int32  top, int32  left, int32  bottom);
-NA_IAPI NABezel4i64 naMakeBezel4i64(int64  right, int64  top, int64  left, int64  bottom);
-NA_IAPI NABezel4s   naMakeBezel4s  (size_t right, size_t top, size_t left, size_t bottom);
 
 // NABorder
 
@@ -823,13 +801,13 @@ NA_IAPI NABool naEqualBoxs     (NABoxs      box1,    NABoxs      box2);
 
 // Use the following functions to make comparison tests between elements.
 // They only return true if the condition is true for all components.
-NA_IAPI NABool naLessPos           (NAPos    pos1,    NAPos    pos2);
-NA_IAPI NABool naLessEqualPos      (NAPos    pos1,    NAPos    pos2);
+NA_IAPI NABool naSmallerPos        (NAPos    pos1,    NAPos    pos2);
+NA_IAPI NABool naSmallerEqualPos   (NAPos    pos1,    NAPos    pos2);
 NA_IAPI NABool naGreaterEqualPos   (NAPos    pos1,    NAPos    pos2);
 NA_IAPI NABool naGreaterPos        (NAPos    pos1,    NAPos    pos2);
 
-NA_IAPI NABool naLessVertex        (NAVertex vertex1, NAVertex vertex2);
-NA_IAPI NABool naLessEqualVertex   (NAVertex vertex1, NAVertex vertex2);
+NA_IAPI NABool naSmallerVertex     (NAVertex vertex1, NAVertex vertex2);
+NA_IAPI NABool naSmallerEqualVertex(NAVertex vertex1, NAVertex vertex2);
 NA_IAPI NABool naGreaterEqualVertex(NAVertex vertex1, NAVertex vertex2);
 NA_IAPI NABool naGreaterVertex     (NAVertex vertex1, NAVertex vertex2);
 

@@ -7,6 +7,11 @@
 
 
 NA_HDEF void na_InitSpace(NASpace* space, void* nativePtr) {
+  #if NA_DEBUG
+    if(!space)
+      naError("space is nullptr");
+  #endif
+
   na_InitCoreUIElement(&space->uiElement, NA_UI_SPACE, nativePtr);
   naInitList(&space->childs);
   space->backgroundColor = NA_NULL;
@@ -15,6 +20,11 @@ NA_HDEF void na_InitSpace(NASpace* space, void* nativePtr) {
 
 
 NA_HDEF void na_ClearSpace(NASpace* space) {
+  #if NA_DEBUG
+    if(!space)
+      naError("space is nullptr");
+  #endif
+
   if(space->backgroundColor) { naFree(space->backgroundColor); }
   naClearList(&space->childs, (NAMutator)naDelete);
   na_ClearCoreUIElement(&space->uiElement);
@@ -23,6 +33,11 @@ NA_HDEF void na_ClearSpace(NASpace* space) {
 
 
 NA_HDEF void na_AddSpaceChild(NASpace* space, NA_UIElement* child) {
+  #if NA_DEBUG
+    if(!space)
+      naError("space is nullptr");
+  #endif
+
   naAddListLastMutable(&space->childs, child);
   na_SetUIElementParent(child, space, NA_TRUE);
 }
@@ -30,6 +45,11 @@ NA_HDEF void na_AddSpaceChild(NASpace* space, NA_UIElement* child) {
 
 
 NA_HDEF void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child) {
+  #if NA_DEBUG
+    if(!space)
+      naError("space is nullptr");
+  #endif
+
   naRemoveListData(&space->childs, child);
   na_SetUIElementParent(child, NA_NULL, NA_TRUE);
 }
@@ -37,12 +57,22 @@ NA_HDEF void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child) {
 
 
 NA_DEF NABool naGetSpaceAlternateBackground(const NASpace* space) {
+  #if NA_DEBUG
+    if(!space)
+      naError("space is nullptr");
+  #endif
+
   return space->alternateBackground;
 }
 
 
 
 NA_HDEF void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
+  #if NA_DEBUG
+    if(!space)
+      naError("space is nullptr");
+  #endif
+
   if(space->backgroundColor) { naFree(space->backgroundColor); }
   if(color) {
     space->backgroundColor = naAlloc(NAColor);
@@ -56,12 +86,12 @@ NA_HDEF void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
 
 NA_DEF void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
   #if NA_DEBUG
-  if(!space)
-    naError("space is nullptr");
+    if(!space)
+      naError("space is nullptr");
   #endif
 
   NAColor parentBgColor;
-  const NASpace* parentSpace = naGetUIElementParentSpaceConst(space);
+  const NASpace* parentSpace = naGetUIElementParentSpace(space);
   if(parentSpace) {
     naFillSpaceBackgroundColor(&parentBgColor, parentSpace);
   }else{

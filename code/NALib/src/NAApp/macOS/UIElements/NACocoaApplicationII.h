@@ -8,6 +8,15 @@
 #include "../../../NAUtility/NAString.h"
 
 
+
+struct NACocoaApplication {
+  NAApplication application;
+};
+NA_HAPI void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication);
+NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
+
+
+
 @implementation NACocoaNativeApplicationDelegate
 
 - (id) initWithCocoaApplication:(NACocoaApplication*)newCocoaApplication{
@@ -228,19 +237,19 @@ NA_DEF void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication) {
 
 
 #if NA_DEBUG
-  NA_DEF void naDebugUIElement(const void* elem) {}
-  NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) {}
-  NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) {}
+  NA_DEF void naDebugUIElement(const void* elem) { NA_UNUSED(elem); }
+  NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) { NA_UNUSED(elem); }
+  NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) { NA_UNUSED(elem); return NA_FALSE;}
 #else
-  NA_DEF void naDebugUIElement(const void* elem) {}
-  NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) {}
-  NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) {}
+  NA_DEF void naDebugUIElement(const void* elem) { NA_UNUSED(elem); }
+  NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) { NA_UNUSED(elem); }
+  NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) { NA_UNUSED(elem); return NA_FALSE;}
 #endif
 
 
 
 NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff) {
-  dispatch_time_t nextTime = dispatch_time(DISPATCH_TIME_NOW, naMakei64WithDouble(1000000000. * timediff));
+  dispatch_time_t nextTime = dispatch_time(DISPATCH_TIME_NOW, naCastDoubleToi64(1000000000. * timediff));
   dispatch_queue_t queue = dispatch_get_main_queue();
   dispatch_after_f(nextTime, queue, arg, function);
 }

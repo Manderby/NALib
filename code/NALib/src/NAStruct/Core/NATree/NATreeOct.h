@@ -4,8 +4,8 @@
 
 
 
-typedef struct NATreeOctNode NATreeOctNode;
-typedef struct NATreeOctLeaf NATreeOctLeaf;
+NA_PROTOTYPE(NATreeOctNode);
+NA_PROTOTYPE(NATreeOctLeaf);
 
 NA_HAPI void na_fillTreeNodeOctABI(NATreeNodeABI* abi);
 

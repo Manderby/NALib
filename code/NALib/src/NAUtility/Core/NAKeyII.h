@@ -11,10 +11,10 @@
 NA_IDEF void NA_KEY_OP(Assign, double)(void* dst, const void* src) {
   *(double*)dst = *(const double*)src;
 }
-NA_IDEF NABool NA_KEY_OP(LessEqual, double)(const void* a, const void* b) {
+NA_IDEF NABool NA_KEY_OP(SmallerEqual, double)(const void* a, const void* b) {
   return *(const double*)a <= *(const double*)b;
 }
-NA_IDEF NABool NA_KEY_OP(Less, double)(const void* a, const void* b) {
+NA_IDEF NABool NA_KEY_OP(Smaller, double)(const void* a, const void* b) {
   return *(const double*)a < *(const double*)b;
 }
 NA_IDEF NABool NA_KEY_OP(Equal, double)(const void* a, const void* b) {
@@ -31,10 +31,10 @@ a, const void* b) {
 NA_IDEF void NA_KEY_OP(Assign, float)(void* dst, const void* src) {
   *(float*)dst = *(const float*)src;
 }
-NA_IDEF NABool NA_KEY_OP(LessEqual, float)(const void* a, const void* b) {
+NA_IDEF NABool NA_KEY_OP(SmallerEqual, float)(const void* a, const void* b) {
   return *(const float*)a <= *(const float*)b;
 }
-NA_IDEF NABool NA_KEY_OP(Less, float)(const void* a, const void* b) {
+NA_IDEF NABool NA_KEY_OP(Smaller, float)(const void* a, const void* b) {
   return *(const float*)a < *(const float*)b;
 }
 NA_IDEF NABool NA_KEY_OP(Equal, float)(const void* a, const void* b) {
@@ -52,10 +52,10 @@ NA_IDEF NABool NA_KEY_OP(Greater, float)(const void* a, const void* b) {
 NA_IDEF void NA_KEY_OP(Assign, int32)(void* dst, const void* src) {
   *(int32*)dst = *(const int32*)src;
 }
-NA_IDEF NABool NA_KEY_OP(LessEqual, int32)(const void* a, const void* b) {
+NA_IDEF NABool NA_KEY_OP(SmallerEqual, int32)(const void* a, const void* b) {
   return *(const int32*)a <= *(const int32*)b;
 }
-NA_IDEF NABool NA_KEY_OP(Less, int32)(const void* a, const void* b) {
+NA_IDEF NABool NA_KEY_OP(Smaller, int32)(const void* a, const void* b) {
   return *(const int32*)a < *(const int32*)b;
 }
 NA_IDEF NABool NA_KEY_OP(Equal, int32)(const void* a, const void* b) {
@@ -73,10 +73,10 @@ NA_IDEF NABool NA_KEY_OP(Greater, int32)(const void* a, const void* b) {
 NA_IDEF void NA_KEY_OP(Assign, uint32)(void* dst, const void* src) {
   *(uint32*)dst = *(const uint32*)src;
 }
-NA_IDEF NABool NA_KEY_OP(LessEqual, uint32)(const void* a, const void* b) {
+NA_IDEF NABool NA_KEY_OP(SmallerEqual, uint32)(const void* a, const void* b) {
   return *(const uint32*)a <= *(const uint32*)b;
 }
-NA_IDEF NABool NA_KEY_OP(Less, uint32)(const void* a, const void* b) {
+NA_IDEF NABool NA_KEY_OP(Smaller, uint32)(const void* a, const void* b) {
   return *(const uint32*)a < *(const uint32*)b;
 }
 NA_IDEF NABool NA_KEY_OP(Equal, uint32)(const void* a, const void* b) {
@@ -94,20 +94,20 @@ NA_IDEF NABool NA_KEY_OP(Greater, uint32)(const void* a, const void* b) {
 NA_IDEF void NA_KEY_OP(Assign, int64)(void* dst, const void* src) {
   *(int64*)dst = *(const int64*)src;
 }
-NA_IDEF NABool NA_KEY_OP(LessEqual, int64)(const void* a, const void* b) {
-  return *(const int64*)a <= *(const int64*)b;
+NA_IDEF NABool NA_KEY_OP(SmallerEqual, int64)(const void* a, const void* b) {
+  return naSmallerEquali64(*(const int64*)a, *(const int64*)b);
 }
-NA_IDEF NABool NA_KEY_OP(Less, int64)(const void* a, const void* b) {
-  return *(const int64*)a < *(const int64*)b;
+NA_IDEF NABool NA_KEY_OP(Smaller, int64)(const void* a, const void* b) {
+  return naSmalleri64(*(const int64*)a, *(const int64*)b);
 }
 NA_IDEF NABool NA_KEY_OP(Equal, int64)(const void* a, const void* b) {
-  return *(const int64*)a == *(const int64*)b;
+  return naEquali64(*(const int64*)a, *(const int64*)b);
 }
 NA_IDEF NABool NA_KEY_OP(GreaterEqual, int64)(const void* a, const void* b) {
-  return *(const int64*)a >= *(const int64*)b;
+  return naGreaterEquali64(*(const int64*)a, *(const int64*)b);
 }
 NA_IDEF NABool NA_KEY_OP(Greater, int64)(const void* a, const void* b) {
-  return *(const int64*)a > *(const int64*)b;
+  return naGreateri64(*(const int64*)a, *(const int64*)b);
 }
 
 
@@ -115,20 +115,20 @@ NA_IDEF NABool NA_KEY_OP(Greater, int64)(const void* a, const void* b) {
 NA_IDEF void NA_KEY_OP(Assign, uint64)(void* dst, const void* src) {
   *(uint64*)dst = *(const uint64*)src;
 }
-NA_IDEF NABool NA_KEY_OP(LessEqual, uint64)(const void* a, const void* b) {
-  return *(const uint64*)a <= *(const uint64*)b;
+NA_IDEF NABool NA_KEY_OP(SmallerEqual, uint64)(const void* a, const void* b) {
+  return naSmallerEqualu64(*(const uint64*)a, *(const uint64*)b);
 }
-NA_IDEF NABool NA_KEY_OP(Less, uint64)(const void* a, const void* b) {
-  return *(const uint64*)a < *(const uint64*)b;
+NA_IDEF NABool NA_KEY_OP(Smaller, uint64)(const void* a, const void* b) {
+  return naSmalleru64(*(const uint64*)a, *(const uint64*)b);
 }
 NA_IDEF NABool NA_KEY_OP(Equal, uint64)(const void* a, const void* b) {
-  return *(const uint64*)a == *(const uint64*)b;
+  return naEqualu64(*(const uint64*)a, *(const uint64*)b);
 }
 NA_IDEF NABool NA_KEY_OP(GreaterEqual, uint64)(const void* a, const void* b) {
-  return *(const uint64*)a >= *(const uint64*)b;
+  return naGreaterEqualu64(*(const uint64*)a, *(const uint64*)b);
 }
 NA_IDEF NABool NA_KEY_OP(Greater, uint64)(const void* a, const void* b) {
-  return *(const uint64*)a > *(const uint64*)b;
+  return naGreateru64(*(const uint64*)a, *(const uint64*)b);
 }
 
 
@@ -136,11 +136,11 @@ NA_IDEF NABool NA_KEY_OP(Greater, uint64)(const void* a, const void* b) {
 NA_IDEF void NA_KEY_OP(Assign, NAPos)(void* dst, const void* src) {
   naFillPosWithCopy((NAPos*)dst, (const NAPos*)src);
 }
-NA_IDEF NABool NA_KEY_OP(Less, NAPos)(const void* a, const void* b) {
-  return naLessPos(*(const NAPos*)a, *(const NAPos*)b);
+NA_IDEF NABool NA_KEY_OP(Smaller, NAPos)(const void* a, const void* b) {
+  return naSmallerPos(*(const NAPos*)a, *(const NAPos*)b);
 }
-NA_IDEF NABool NA_KEY_OP(LessEqual, NAPos)(const void* a, const void* b) {
-  return naLessEqualPos(*(const NAPos*)a, *(const NAPos*)b);
+NA_IDEF NABool NA_KEY_OP(SmallerEqual, NAPos)(const void* a, const void* b) {
+  return naSmallerEqualPos(*(const NAPos*)a, *(const NAPos*)b);
 }
 NA_IDEF NABool NA_KEY_OP(Equal, NAPos)(const void* a, const void* b) {
   return naEqualPos(*(const NAPos*)a, *(const NAPos*)b);
@@ -157,11 +157,11 @@ NA_IDEF NABool NA_KEY_OP(Greater, NAPos)(const void* a, const void* b) {
 NA_IDEF void NA_KEY_OP(Assign, NAVertex)(void* dst, const void* src) {
   naFillVertexWithCopy((NAVertex*)dst, (const NAVertex*)src);
 }
-NA_IDEF NABool NA_KEY_OP(Less, NAVertex)(const void* a, const void* b) {
-  return naLessVertex(*(const NAVertex*)a, *(const NAVertex*)b);
+NA_IDEF NABool NA_KEY_OP(Smaller, NAVertex)(const void* a, const void* b) {
+  return naSmallerVertex(*(const NAVertex*)a, *(const NAVertex*)b);
 }
-NA_IDEF NABool NA_KEY_OP(LessEqual, NAVertex)(const void* a, const void* b) {
-  return naLessEqualVertex(*(const NAVertex*)a, *(const NAVertex*)b);
+NA_IDEF NABool NA_KEY_OP(SmallerEqual, NAVertex)(const void* a, const void* b) {
+  return naSmallerEqualVertex(*(const NAVertex*)a, *(const NAVertex*)b);
 }
 NA_IDEF NABool NA_KEY_OP(Equal, NAVertex)(const void* a, const void* b) {
   return naEqualVertex(*(const NAVertex*)a, *(const NAVertex*)b);
@@ -180,13 +180,13 @@ NA_IDEF void NA_KEY_OP(Assign, NADateTime)(void* dst, const void* src) {
   const NADateTime* srcDateTime = (const NADateTime*)src; 
   *dstDateTime = *srcDateTime;
 }
-NA_IDEF NABool NA_KEY_OP(Less, NADateTime)(const void* a, const void* b) {
+NA_IDEF NABool NA_KEY_OP(Smaller, NADateTime)(const void* a, const void* b) {
   const NADateTime* aDateTime = (const NADateTime*)a; 
   const NADateTime* bDateTime = (const NADateTime*)b; 
   return naSmalleri64(aDateTime->siSecond, bDateTime->siSecond)
     || (naEquali64(aDateTime->siSecond, bDateTime->siSecond) && (aDateTime->nanoSecond < bDateTime->nanoSecond));
 }
-NA_IDEF NABool NA_KEY_OP(LessEqual, NADateTime)(const void* a, const void* b) {
+NA_IDEF NABool NA_KEY_OP(SmallerEqual, NADateTime)(const void* a, const void* b) {
   const NADateTime* aDateTime = (const NADateTime*)a; 
   const NADateTime* bDateTime = (const NADateTime*)b; 
   return naSmallerEquali64(aDateTime->siSecond, bDateTime->siSecond)

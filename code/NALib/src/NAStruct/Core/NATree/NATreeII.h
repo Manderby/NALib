@@ -4,10 +4,10 @@
 // including "NATree.h"
 
 // A Tree consists of Items which can either be a Node or a Leaf.
-typedef struct NATreeItem NATreeItem;
-typedef struct NATreeNode NATreeNode;
-typedef struct NATreeLeaf NATreeLeaf;
-typedef struct NATreeIterationInfo NATreeIterationInfo;
+NA_PROTOTYPE(NATreeItem);
+NA_PROTOTYPE(NATreeNode);
+NA_PROTOTYPE(NATreeLeaf);
+NA_PROTOTYPE(NATreeIterationInfo);
 
 // Currently, an NATree is supposed to store a max of 16 childs, meaning any
 // other flag must be non-overlapping with 0x0000ffff or having a bitshift
@@ -65,8 +65,8 @@ typedef enum{
 typedef size_t          (*NAKeyIndexGetter)(const void* baseKey, const void* testKey, const void* data);
 typedef size_t          (*NAChildIndexGetter)(NATreeNode* parentNode, const void* childKey);
 typedef NABool          (*NAKeyEqualComparer)(const void* key1, const void* key2);
-typedef NABool          (*NAKeyLessComparer)(const void* key1, const void* key2);
-typedef NABool          (*NAKeyLessEqualComparer)(const void* key1, const void* key2);
+typedef NABool          (*NAKeySmallerComparer)(const void* key1, const void* key2);
+typedef NABool          (*NAKeySmallerEqualComparer)(const void* key1, const void* key2);
 typedef void            (*NAKeyAssigner)(void* dst, const void* src);
 typedef void            (*NAKeyAdder)(void* dst, const void* src1, const void* src2);
 typedef NABool          (*NAKeyTester)(const void* lowerLimit, const void* upperLimit, const void* key);
@@ -80,8 +80,8 @@ typedef void            (*NA_TreeLeafDestructor)(NATreeLeaf* leaf);
 
 // This function shall return the uppermost node which contains the given key.
 // It must start searching for the key at the given item and bubble upwards.
-// Should return Null, if the key does not fit anywhere in the tree. The
-// given item is never Null and never the root of the tree which itself is
+// Should return nullptr, if the key does not fit anywhere in the tree. The
+// given item is never nullptr and never the root of the tree which itself is
 // never empty.
 typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeItem* item, const void* key);
 // This function must insert the given newleaf into the tree, positioned
@@ -92,7 +92,7 @@ typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 
 
 
-typedef struct NATreeNodeABI NATreeNodeABI;
+NA_PROTOTYPE(NATreeNodeABI);
 struct NATreeNodeABI{
   size_t                        childPerNode;
   size_t                        leafKeyOffset;
@@ -120,8 +120,8 @@ struct NATreeConfiguration{
   NAKeyIndexGetter              keyIndexGetter;
   NAChildIndexGetter            childIndexGetter;
   NAKeyEqualComparer            keyEqualComparer;
-  NAKeyLessComparer             keyLessComparer;
-  NAKeyLessEqualComparer        keyLessEqualComparer;
+  NAKeySmallerComparer          keySmallerComparer;
+  NAKeySmallerEqualComparer     keySmallerEqualComparer;
   NAKeyAssigner                 keyAssigner;
   NAKeyTester                   keyTester;
   NAKeyNodeContainTester        keyNodeContainTester;
@@ -180,14 +180,14 @@ struct NATree{
   NATreeItem* root;
   int32 flags;
   #if NA_DEBUG
-    int64 iterCount;
+    size_t iterCount;
   #endif
 };
 
 struct NATreeIterationInfo{
-  int64 step;
-  int64 startIndex;
-  int64 breakIndex;
+  int32 step;
+  int32 startIndex;
+  int32 breakIndex;
   const void* lowerLimit;
   const void* upperLimit;
 };
@@ -242,7 +242,7 @@ NA_HIAPI void na_SetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newite
 NA_HIAPI const NATree* na_GetTreeIteratorTreeConst(const NATreeIterator* iter);
 NA_HIAPI NATree* na_GetTreeIteratorTreeMutable(NATreeIterator* iter);
 NA_HIAPI NABool na_AddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafInsertOrder insertOrder, NABool moveToNew);
-NA_HAPI void na_IterateTreeCapture(NATreeIterator* iter, int64 index, NATreeIterationInfo* info);
+NA_HAPI void na_IterateTreeCapture(NATreeIterator* iter, int32 index, NATreeIterationInfo* info);
 NA_HAPI void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NABool na_IterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NABool na_LocateTreeKey(NATreeIterator* iter, const void* key, NABool usebubble);

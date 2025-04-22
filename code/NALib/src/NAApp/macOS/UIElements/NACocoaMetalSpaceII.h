@@ -9,6 +9,16 @@
 #if(NA_COMPILE_METAL == 1) && defined __MAC_10_12
 // Metal is only available since macOS 10.11, CALayerDelegate since 10.12
 
+
+
+  struct NACocoaMetalSpace{
+    NAMetalSpace metalSpace;
+  };
+  NA_HAPI void na_DestructCocoaMetalSpace(NACocoaMetalSpace* cocoaMetalSpace);
+  NA_RUNTIME_TYPE(NACocoaMetalSpace, na_DestructCocoaMetalSpace, NA_FALSE);
+
+
+
   @implementation NACocoaNativeMetalSpace
   
   - (id)initWithMetalSpace:(NACocoaMetalSpace*)newCocoaMetalSpace frame:(NSRect)frameRect{

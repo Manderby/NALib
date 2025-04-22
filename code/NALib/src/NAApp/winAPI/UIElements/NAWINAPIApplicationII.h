@@ -42,6 +42,9 @@ WNDPROC na_GetApplicationOldTextFieldWindowProc() {
 
 
 NAWINAPICallbackInfo naApplicationWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NA_UNUSED(lParam);
+  NA_UNUSED(wParam);
+  NA_UNUSED(uiElement);
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message) {
@@ -403,6 +406,8 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void) {
 //
 // Definitely not the fastest and best method. But as for now, it's ok. todo.
 NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
+  NA_UNUSED(dwTime);
+  NA_UNUSED(uMsg);
   //todo something is wrong here with the type.
   NAWINAPIApplication* app;
 
@@ -440,7 +445,7 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
 
 #if NA_COMPILE_OPENGL == 1
 
-NA_HDEF na_redrawOpenGLSpaces(void* data) {
+NA_HDEF void na_redrawOpenGLSpaces(void* data) {
   NA_UNUSED(data);
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
@@ -536,7 +541,7 @@ NA_HDEF void na_UpdateApplicationIconPath() {
 NA_DEF NAString* naNewApplicationName(void) {
   NAApplication* app = naGetApplication();
   if(app->appName) {
-    return naNewStringExtraction(app->appName, 0, -1);
+    return naNewStringExtraction(app->appName, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }else{
     TCHAR modulePath[MAX_PATH];
     NAString* utf8ModulePath;
@@ -555,7 +560,7 @@ NA_DEF NAString* naNewApplicationName(void) {
 NA_DEF NAString* naNewApplicationCompanyName(void) {
   NAApplication* app = naGetApplication();
   if(app->companyName) {
-    return naNewStringExtraction(app->companyName, 0, -1);
+    return naNewStringExtraction(app->companyName, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }else{
     return NA_NULL;
   }
@@ -564,7 +569,7 @@ NA_DEF NAString* naNewApplicationCompanyName(void) {
 NA_DEF NAString* naNewApplicationVersionString(void) {
   NAApplication* app = naGetApplication();
   if(app->versionString) {
-    return naNewStringExtraction(app->versionString, 0, -1);
+    return naNewStringExtraction(app->versionString, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }else{
     return NA_NULL;
   }
@@ -573,7 +578,7 @@ NA_DEF NAString* naNewApplicationVersionString(void) {
 NA_DEF NAString* naNewApplicationBuildString(void) {
   NAApplication* app = naGetApplication();
   if(app->buildString) {
-    return naNewStringExtraction(app->buildString, 0, -1);
+    return naNewStringExtraction(app->buildString, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }else{
     return NA_NULL;
   }
@@ -582,7 +587,7 @@ NA_DEF NAString* naNewApplicationBuildString(void) {
 NA_DEF NAString* naNewApplicationResourceBasePath(void) {
   NAApplication* app = naGetApplication();
   if(app->resourceBasePath) {
-    return naNewStringExtraction(app->resourceBasePath, 0, -1);
+    return naNewStringExtraction(app->resourceBasePath, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }else{
     return naNewExecutablePath();
   }
@@ -733,6 +738,11 @@ NA_DEF NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
 
 
 NA_DEF void naCenterMouse(void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
   NARect rect = naGetUIElementRectAbsolute(uiElement);
 
@@ -768,6 +778,7 @@ NA_DEF void naHideMouse() {
 
 
 NA_DEF void naHideMouseUntilMovement(NABool hide) {
+  NA_UNUSED(hide);
   // todo
 }
 

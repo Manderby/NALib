@@ -96,16 +96,16 @@ void testBufferSource(void) {
 
   naTestGroup("Set limit") {
     NABufferSource* source = naCreateBufferSource(NA_NULL, NA_NULL);
-    naTestVoid(naSetBufferSourceLimit(source, naMakeRangei64(0, 10)));
+    naTestVoid(naSetBufferSourceLimit(source, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(10))));
     // trying to set it twice:
-    naTestError(naSetBufferSourceLimit(source, naMakeRangei64(0, 10)));
+    naTestError(naSetBufferSourceLimit(source, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(10))));
     naRelease(source);
 
     source = naCreateBufferSource(NA_NULL, NA_NULL);
     // trying to set a bad range
-    naTestError(naSetBufferSourceLimit(source, naMakeRangei64(0, 0)));
+    naTestError(naSetBufferSourceLimit(source, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(0))));
     // source is Null:
-    naTestCrash(naSetBufferSourceLimit(NA_NULL, naMakeRangei64(0, 10)));
+    naTestCrash(naSetBufferSourceLimit(NA_NULL, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(10))));
     naRelease(source);
   }
 
@@ -121,9 +121,9 @@ void testBufferSource(void) {
     naRelease(cache);
 
     naTest(!na_HasBufferSourceLimit(source));
-    naSetBufferSourceLimit(source, naMakeRangei64(0, 10));
+    naSetBufferSourceLimit(source, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(10)));
     naTest(na_HasBufferSourceLimit(source));
-    naTest(naEqualRangei64(na_GetBufferSourceLimit(source), naMakeRangei64(0, 10)));
+    naTest(naEqualRangei64(na_GetBufferSourceLimit(source), naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(10))));
     naRelease(source);
 
     naTestCrash(na_HasBufferSourceCache(NA_NULL));
@@ -136,17 +136,17 @@ void testBufferSource(void) {
     NAByte buf[10];
 
     NABufferSource* source = naCreateBufferSource(NA_NULL, NA_NULL);
-    naTestVoid(na_FillBufferSourceMemory(source, buf, naMakeRangei64(0, 10)));
-    naSetBufferSourceLimit(source, naMakeRangei64(0, 10));
-    naTestVoid(na_FillBufferSourceMemory(source, buf, naMakeRangei64(0, 10)));
-    naTestError(na_FillBufferSourceMemory(source, buf, naMakeRangei64(0, 11)));
+    naTestVoid(na_FillBufferSourceMemory(source, buf, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(10))));
+    naSetBufferSourceLimit(source, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(10)));
+    naTestVoid(na_FillBufferSourceMemory(source, buf, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(10))));
+    naTestError(na_FillBufferSourceMemory(source, buf, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(11))));
     naRelease(source);
 
     source = naCreateBufferSource(na_DummyBufferFiller, NA_NULL);
-    naTestVoid(na_FillBufferSourceMemory(source, buf, naMakeRangei64(0, 10)));
-    naTestCrash(na_FillBufferSourceMemory(NA_NULL, buf, naMakeRangei64(0, 10)));
-    naTestCrash(na_FillBufferSourceMemory(source, NA_NULL, naMakeRangei64(0, 10)));
-    naTestError(na_FillBufferSourceMemory(source, buf, naMakeRangei64(0, 0)));
+    naTestVoid(na_FillBufferSourceMemory(source, buf, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(10))));
+    naTestCrash(na_FillBufferSourceMemory(NA_NULL, buf, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(10))));
+    naTestCrash(na_FillBufferSourceMemory(source, NA_NULL, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(10))));
+    naTestError(na_FillBufferSourceMemory(source, buf, naMakeRangei64(naCasti32Toi64(0), naCasti32Toi64(0))));
     naRelease(source);
   }
 }
@@ -157,30 +157,30 @@ void testBufferPart(void) {
   NABufferSource* source = naCreateBufferSource(NA_NULL, NA_NULL);
 
   naTestGroup("Normed start and end") {
-    naTest(na_GetBufferPartNormedStart(0) == 0);
-    naTest(na_GetBufferPartNormedStart(NA_INTERNAL_BUFFER_PART_BYTESIZE - 1) == 0);
-    naTest(na_GetBufferPartNormedStart(NA_INTERNAL_BUFFER_PART_BYTESIZE) == NA_INTERNAL_BUFFER_PART_BYTESIZE);
-    naTest(na_GetBufferPartNormedStart(-1) == -(int64)NA_INTERNAL_BUFFER_PART_BYTESIZE);
-    naTest(na_GetBufferPartNormedStart(-(int64)NA_INTERNAL_BUFFER_PART_BYTESIZE + 1) == -NA_INTERNAL_BUFFER_PART_BYTESIZE);
-    naTest(na_GetBufferPartNormedStart(-(int64)NA_INTERNAL_BUFFER_PART_BYTESIZE) == -NA_INTERNAL_BUFFER_PART_BYTESIZE);
+    naTest(naEquali64(na_GetBufferPartNormedStart(NA_ZERO_i64), NA_ZERO_i64));
+    naTest(naEquali64(na_GetBufferPartNormedStart(naSubi64(NA_INTERNAL_BUFFER_PART_BYTESIZE, NA_ONE_i64)), NA_ZERO_i64));
+    naTest(naEquali64(na_GetBufferPartNormedStart(NA_INTERNAL_BUFFER_PART_BYTESIZE), NA_INTERNAL_BUFFER_PART_BYTESIZE));
+    naTest(naEquali64(na_GetBufferPartNormedStart(NA_MINUS_ONE_i64), naNegi64(NA_INTERNAL_BUFFER_PART_BYTESIZE)));
+    naTest(naEquali64(na_GetBufferPartNormedStart(naAddi64(naNegi64(NA_INTERNAL_BUFFER_PART_BYTESIZE), NA_ONE_i64)), naNegi64(NA_INTERNAL_BUFFER_PART_BYTESIZE)));
+    naTest(naEquali64(na_GetBufferPartNormedStart(naNegi64(NA_INTERNAL_BUFFER_PART_BYTESIZE)), naNegi64(NA_INTERNAL_BUFFER_PART_BYTESIZE)));
 
-    naTest(na_GetBufferPartNormedEnd(0) == 0);
-    naTest(na_GetBufferPartNormedEnd(1) == NA_INTERNAL_BUFFER_PART_BYTESIZE);
-    naTest(na_GetBufferPartNormedEnd(NA_INTERNAL_BUFFER_PART_BYTESIZE) == NA_INTERNAL_BUFFER_PART_BYTESIZE);
-    naTest(na_GetBufferPartNormedEnd(-NA_INTERNAL_BUFFER_PART_BYTESIZE + 1) == 0);
-    naTest(na_GetBufferPartNormedEnd(-NA_INTERNAL_BUFFER_PART_BYTESIZE) == -NA_INTERNAL_BUFFER_PART_BYTESIZE);
+    naTest(naEquali64(na_GetBufferPartNormedEnd(NA_ZERO_i64), NA_ZERO_i64));
+    naTest(naEquali64(na_GetBufferPartNormedEnd(NA_ONE_i64), NA_INTERNAL_BUFFER_PART_BYTESIZE));
+    naTest(naEquali64(na_GetBufferPartNormedEnd(NA_INTERNAL_BUFFER_PART_BYTESIZE), NA_INTERNAL_BUFFER_PART_BYTESIZE));
+    naTest(naEquali64(na_GetBufferPartNormedEnd(naAddi64(naNegi64(NA_INTERNAL_BUFFER_PART_BYTESIZE), NA_ONE_i64)), NA_ZERO_i64));
+    naTest(naEquali64(na_GetBufferPartNormedEnd(naNegi64(NA_INTERNAL_BUFFER_PART_BYTESIZE)), naNegi64(NA_INTERNAL_BUFFER_PART_BYTESIZE)));
   }
 
   naTestGroup("New and delete sparse part") {
     NABufferPart* part = NA_NULL;
-    naTestVoid(part = na_NewBufferPartSparse(source, naMakeRangei64(0, 1)));
+    naTestVoid(part = na_NewBufferPartSparse(source, naMakeRangei64(NA_ZERO_i64, NA_ONE_i64)));
     naTestVoid(naDelete(part));
 
     // no source
     //naTestError(part = na_NewBufferPartSparse(NA_NULL, naMakeRangei(0, 1)));
     //naDelete(part);
     // no useful range
-    naTestError(part = na_NewBufferPartSparse(source, naMakeRangei64(0, 0)); naDelete(part));
+    naTestError(part = na_NewBufferPartSparse(source, naMakeRangei64(NA_ZERO_i64, NA_ZERO_i64)); naDelete(part));
   }
 
   naTestGroup("New and delete data part") {
@@ -202,11 +202,11 @@ void testBufferPart(void) {
 
   naTestGroup("Accessors") {
     NAByte dataConst[] = {0, 1, 2, 3};
-    NABufferPart* sparsePart = na_NewBufferPartSparse(source, naMakeRangei64(2, 8));
+    NABufferPart* sparsePart = na_NewBufferPartSparse(source, naMakeRangei64(naCasti32Toi64(2), naCasti32Toi64(8)));
     NABufferPart* dataPart = na_NewBufferPartWithConstData(dataConst, 4);
     naTest(na_GetBufferPartSource(sparsePart) == source);
     naTest(na_GetBufferPartSource(dataPart) == NA_NULL);
-    naTest(na_GetBufferPartSourceOffset(sparsePart) == 2);
+    naTest(naEquali64(na_GetBufferPartSourceOffset(sparsePart), naCasti32Toi64(2)));
     naTest(na_GetBufferPartByteSize(sparsePart) == 8);
     naTest(na_GetBufferPartByteSize(dataPart) == 4);
     naTest(na_IsBufferPartSparse(sparsePart) == NA_TRUE);
@@ -225,12 +225,12 @@ void testBufferPart(void) {
   }
 
   naTestGroup("Part enlarging") {
-    NABufferPart* sparsePart = na_NewBufferPartSparse(source, naMakeRangei64(2, 6));
+    NABufferPart* sparsePart = na_NewBufferPartSparse(source, naMakeRangei64(naCasti32Toi64(2), naCasti32Toi64(6)));
     naTestVoid(na_EnlargeBufferPart(sparsePart, 0, 0));
-    naTest(na_GetBufferPartSourceOffset(sparsePart) == 2);
+    naTest(naEquali64(na_GetBufferPartSourceOffset(sparsePart), naCasti32Toi64(2)));
     naTest(na_GetBufferPartByteSize(sparsePart) == 6);
     naTestVoid(na_EnlargeBufferPart(sparsePart, 5, 7));
-    naTest(na_GetBufferPartSourceOffset(sparsePart) == -3);
+    naTest(naEquali64(na_GetBufferPartSourceOffset(sparsePart), naCasti32Toi64(-3)));
     naTest(na_GetBufferPartByteSize(sparsePart) == 18);
 
     NAByte dataConst[] = {0, 1, 2, 3};

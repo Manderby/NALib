@@ -8,25 +8,39 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+
+Current development:
+====================
+
+- Making whole NALib working with i64 emulation
+
+- Removing NABezel4. Had been deprecated already in version 28
+- Renamed NAFileSize to fsize_t
+
+
+Version 28 (released 13. April 2025)
+==========
+
 Big changes:
+- Adding PubSub implementation NANotifier
+- Improving GUI on Windows drastically.
 - Changing NABabyColor to NAColor and changing its implementation.
 - Renaming NABabyImage to NAImage
 - Renaming NAUIImage to NAImageSet
-- Adding PubSub implementation NANotifier
 - Adding latest NIST CODATA physical constants of 2022
-- Improving GUI on Windows drastically
 - Removed NAInt. Use int64 or int32.
 
 Smaller things:
 - Great NAApp cleanup
 - naRefreshUIElement now executes immediately if timediff = 0
+- Using NA_PROTOTYPE
 - Removing list and tree iterator macros.
 - Replacing scroll reactions with transform reactions.
 - Changing NAReaction callback signature to return void.
 - Dprecating NABezel4. Using NABorder2D instead.
 - Deleting NABounds. Had been deprecated already in version 27
 - Changeing main branch name to main instead of master.
-- Adding leap second information based on bulletin C 66, 67, 68
+- Adding leap second information based on bulletin C 66, 67, 68, 69
 - Changed behaviour of naNewStringWithBaseNameOfPath
 - Adding conversion of upper and lower cases for all kind of characters.
 - Removung NAURL

@@ -24,7 +24,6 @@
 
 
 #include "../NABase/NABase.h"
-#include <stddef.h>
 
 
 // //////////////////////////////////////
@@ -145,7 +144,7 @@ NA_API size_t naGetRuntimeTypeRefCount(const void* pointer);
 // is the first field in your struct!
 
 // The full type definition is in the file "NAMemoryII.h"
-typedef struct NARefCount NARefCount;
+NA_PROTOTYPE(NARefCount);
 
 // Initializes an NARefCount.
 NA_IAPI NARefCount* naInitRefCount(     NARefCount* refCount);
@@ -209,7 +208,7 @@ NA_IAPI void        naReleaseRefCount(NARefCount* refCount,
 
 
 // The full type definition is in the file "NAMemoryII.h"
-typedef struct NAPtr NAPtr;
+NA_PROTOTYPE(NAPtr);
 
 // Creates a NULL pointer
 NA_IAPI NAPtr naMakePtrNull(void);
@@ -269,7 +268,7 @@ NA_IAPI NABool naIsPtrConst(NAPtr ptr);
 
 
 // The full type definition is in the file "NAMemoryII.h"
-typedef struct NASmartPtr NASmartPtr;
+NA_PROTOTYPE(NASmartPtr);
 
 // Initialize a smart pointer. Define how the smart pointer itself shall be
 // cleaned up, define the data it shall store and define, how that data shall
@@ -325,7 +324,7 @@ NA_IAPI void*       naGetSmartPtrMutable(       NASmartPtr* sptr);
 // but is a little more complicated to use.
 
 // The full type definition is in the file "NAMemoryII.h"
-typedef struct NAPointer NAPointer;
+NA_PROTOTYPE(NAPointer);
 
 // Creates an NAPointer struct around the given data pointer.
 //
@@ -421,7 +420,7 @@ NA_IAPI size_t naGetRuntimePoolPartSize(void);
 // Every type using the runtime system will get a global typeinfo variable
 // which has the following type. The full type definition is in the file
 // "NAMemoryII.h"
-typedef struct NATypeInfo NATypeInfo;
+NA_PROTOTYPE(NATypeInfo);
 
 
 
