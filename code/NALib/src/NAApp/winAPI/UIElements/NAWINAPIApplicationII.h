@@ -370,7 +370,7 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
   #else
   NA_DEF void naDebugUIElement(const void* elem) {}
   NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) {}
-  NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) {}
+  NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) { return NA_FALSE; }
 #endif
 
 

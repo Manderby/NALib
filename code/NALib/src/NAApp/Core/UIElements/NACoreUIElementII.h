@@ -361,10 +361,9 @@ NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement) {
 
 
 NA_DEF NARect naGetUIElementRect(const void* uiElement) {
-  #if NA_DEBUG
-    if(!uiElement)
-      naError("uiElement is nullptr");
-  #endif
+  if(!uiElement) {
+    return naMakeRectS(0., 0., 1., 1.);
+  }
 
   NARect elemRect;
   switch(naGetUIElementType(uiElement)) {
