@@ -32,7 +32,9 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM w
 void naHandleTextBoxTabOrder(NAReaction reaction) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uiElement;
   if(winapiTextBox->nextTabStop) {
-    SetFocus(naGetUIElementNativePtr(winapiTextBox->nextTabStop));
+    HWND nextHWnd = naGetUIElementNativePtr(winapiTextBox->nextTabStop);
+    SetFocus(nextHWnd);
+    //SendMessage(nextHWnd, EM_SETSEL, 0, -1);
   }
 }
 

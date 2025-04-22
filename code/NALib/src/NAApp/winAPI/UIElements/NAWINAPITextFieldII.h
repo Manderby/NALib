@@ -91,7 +91,9 @@ void naHandleTextFieldTabOrder(NAReaction reaction) {
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)reaction.uiElement;
   if(winapiTextField->nextTabStop) {
     naHandleTextFieldEnter(reaction);
-    SetFocus(naGetUIElementNativePtr(winapiTextField->nextTabStop));
+    HWND nextHWnd = naGetUIElementNativePtr(winapiTextField->nextTabStop);
+    SetFocus(nextHWnd);
+    SendMessage(nextHWnd, EM_SETSEL, 0, -1);
   }
 }
 
