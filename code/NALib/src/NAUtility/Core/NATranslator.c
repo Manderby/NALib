@@ -201,9 +201,6 @@ NA_DEF void naInsertTranslatorString(uint32 id, NAUTF8Char* str) {
 
 
 NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code) {
-  NABool codeFound;
-  NAListIterator it;
-  
   #if NA_DEBUG
     #if NA_COMPILE_GUI == 1
       if(!naGetApplication())
@@ -213,8 +210,10 @@ NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code) {
         naCrash("No translator running. Please use naStartTranslator.");
     #endif
   #endif
-  codeFound = NA_FALSE;
-  it = naMakeListModifier(&NA_TRANSLATOR->languagePreferences);
+  
+  NABool codeFound = NA_FALSE;
+  
+  NAListIterator it = naMakeListModifier(&NA_TRANSLATOR->languagePreferences);
   while(!codeFound && naIterateList(&it)) {
     const NALanguageCode3* curCode = naGetListCurConst(&it);
     if(*curCode == code) {
@@ -224,8 +223,23 @@ NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code) {
   }
   naClearListIterator(&it);
   
+  // Try to find a replacement (People often have dialects selected but are
+  // fine with a more general language)
   if(!codeFound) {
-    uint32* newCode = naAlloc(uint32);  // No, not TranslatorCode3, enums may have not the same size!!!
+    NALanguageCode3 replacingCode = naGetLanguageReplacement(code);
+    NAListIterator it = naMakeListModifier(&NA_TRANSLATOR->languagePreferences);
+    while(!codeFound && naIterateList(&it)) {
+      const NALanguageCode3* curCode = naGetListCurConst(&it);
+      if(*curCode == replacingCode) {
+        codeFound = NA_TRUE;
+        naMoveListCurToFirst(&it, NA_FALSE, &NA_TRANSLATOR->languagePreferences);
+      }
+    }
+    naClearListIterator(&it);
+  }
+  
+  if(!codeFound) {
+    uint32* newCode = naAlloc(uint32);  // No, not type TranslatorCode3, enums may have not the same size!!!
     *newCode = code;
     naAddListFirstMutable(&NA_TRANSLATOR->languagePreferences, newCode);
   }
@@ -305,15 +319,11 @@ NA_DEF NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str) {
 #if NA_OS == NA_OS_WINDOWS
 
   NA_DEF NALanguageCode3 naGetLanguageCodeWithLANGID(LANGID langId) {
-    // One could search for specific languages like the following but then,
-    // no fallback is defined. So unless one specifies an explicit fallback,
-    // one might never see the language in the UI.
-    //switch(langId)
-    //{
-    //case 0x0807: return NA_LANG_GSW;
-    //}
+    // One can switch for (langId & 0x01ff) to only get the main languages
+    // but not the dialects. But when using naGetLanguageReplacement, one
+    // finds the proper display language anyway.
 
-    switch(langId & 0x01ff)
+    switch(langId)
     {
     case 0x0004: return NA_LANG_ZHO;
     case 0x0007: return NA_LANG_DEU;
@@ -321,6 +331,7 @@ NA_DEF NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str) {
     case 0x000a: return NA_LANG_SPA;
     case 0x000c: return NA_LANG_FRA;
     case 0x0011: return NA_LANG_JPN;
+    case 0x0807: return NA_LANG_GSW;
     }
 
     // no Klingon, sorry.
@@ -339,6 +350,15 @@ NA_DEF NALanguageCode3 naConvertLanguageCode1To3(NALanguageCode1 code1) {
   case NA_LANG_JA: return NA_LANG_JPN;
   case NA_LANG_ZH: return NA_LANG_ZHO;
   default: return NA_LANG_ENG;
+  }
+}
+
+
+
+NA_DEF NALanguageCode3 naGetLanguageReplacement(NALanguageCode3 code) {
+  switch(code) {
+  case NA_LANG_GSW: return NA_LANG_DEU;
+  default: return code;
   }
 }
 

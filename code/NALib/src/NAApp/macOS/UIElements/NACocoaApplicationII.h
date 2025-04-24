@@ -207,8 +207,8 @@ NA_DEF void naStartApplication(
 
 
 NA_DEF void naResetApplicationPreferredTranslatorLanguages(void) {
-  size_t langIndex = (size_t)[[NSLocale preferredLanguages] count] - 1;
-  while(langIndex) {
+  int32 langIndex = (int32)[[NSLocale preferredLanguages] count] - 1;
+  while(langIndex >= 0) {
     NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)langIndex];
     NALanguageCode3 langCode = naGetLanguageCode([language UTF8String]);
     naSetTranslatorLanguagePreference(langCode);

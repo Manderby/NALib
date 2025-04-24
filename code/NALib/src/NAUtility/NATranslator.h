@@ -175,6 +175,10 @@ NA_API NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str);
 // or de to deu. Try to avoid this function, it's bloated. Use ISO 639-3.
 NA_API NALanguageCode3 naConvertLanguageCode1To3(NALanguageCode1 code1);
 
+// Returns a language code which is a more general form of the given code.
+// For example Swiss German has the code GSW, but people who speak Swiss German
+// are perfectly fine with standard German, so this function returns DEU.
+NA_API NALanguageCode3 naGetLanguageReplacement(NALanguageCode3 code);
 
 
 #ifdef __cplusplus
