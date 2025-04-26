@@ -64,18 +64,6 @@ NA_EXTERN_RUNTIME_TYPE(NACocoaWindow);
 - (NSView*) getEncapsulatingView;
 @end
 
-@interface NACocoaNativeApplicationDelegate : NSObject <NSApplicationDelegate>{
-  NACocoaApplication* cocoaApplication;
-  NSObject <NSApplicationDelegate>* oldDelegate;
-  NAMutator postStartupFunction;
-  void* postStartupArg;
-  NABool atStartup;
-}
-- (void)setOldDelegate:(NSObject <NSApplicationDelegate>*)delegate;
-- (void)setPostStartupFunction:(NAMutator)postUpdate;
-- (void)setPostStartupArg:(void*)arg;
-@end
-
 @interface NACocoaNativeButton : NSButton{
   NACocoaButton* cocoaButton;
   bool isImage;
