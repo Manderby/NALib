@@ -248,6 +248,7 @@ NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
 // This means two things:
 // 1. Instead of in main(int, char**), you need
 //    int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
+//    Don't forget to #include <windows.h> in that file.
 // 2. There is no console output using the standard channels 0, 1 and 2 like
 //    they are used with printf and such.
 //
