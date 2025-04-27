@@ -53,13 +53,24 @@
 #include "GUIExamples.h"
 #include "NAUtility/NAMemory.h"
 
+#include "NAUtility/NADateTime.h"
+#include "NAUtility/NAFile.h"
+#include "NAUtility/NAString.h"
+
 
 
 int main(){
 
   naStartRuntime();
 
-    //NAString* pwd = naNewStringWithCurWorkingDirectory();
+    NADateTime now = naMakeDateTimeNow();
+    NAString* dateTimeStr = naNewStringWithDateTime(&now, NA_DATETIME_FORMAT_NATURAL);
+    printf("DateTime: %s\n", naGetStringUTF8Pointer(dateTimeStr));
+    naDelete(dateTimeStr);
+
+    NAString* pwd = naNewStringWithCurWorkingDirectory();
+    printf("Working Directory: %s\n", naGetStringUTF8Pointer(pwd));
+    naDelete(pwd);
 
     naStartApplication(preStartup, postStartup, clearApplication, NA_NULL);
 

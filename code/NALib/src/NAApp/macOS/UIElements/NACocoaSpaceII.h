@@ -38,12 +38,12 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 
   NAColor bgColor;
   naFillSpaceBackgroundColor(&bgColor, &cocoaSpace->space);
-  NSColor* curBgColor = naAllocUIColor(&bgColor, NA_NULL);
+  NSColor* curBgColor = NA_COCOA_PTR_C_TO_OBJC(naAllocUIColor(&bgColor, NA_NULL));
   [curBgColor setFill];
 
   NSRectFill(dirtyRect);
 
-  naDeallocUIColor(curBgColor);
+  naDeallocUIColor(NA_COCOA_PTR_OBJC_TO_C(curBgColor));
 }
 
 - (void)mouseMoved:(NSEvent* _Nonnull)event{

@@ -25,7 +25,7 @@ NA_DEF NAUIColor* naAllocUIColor(const NAColor* color, const NAColor* bgColor) {
       alpha: color->alpha];
   }
 
-  return nsColor;
+  return NA_COCOA_PTR_OBJC_TO_C(nsColor);
 }
 
 NA_DEF void naDeallocUIColor(NAUIColor* uiColor) {

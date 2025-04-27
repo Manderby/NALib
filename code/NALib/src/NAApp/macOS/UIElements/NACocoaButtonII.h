@@ -56,7 +56,7 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 }
 
 - (void) dealloc{
-  [super dealloc];
+  NA_COCOA_SUPER_DEALLOC();
 }
 
 - (bool) isImage{

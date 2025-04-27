@@ -21,17 +21,10 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
 @interface NA_ApplicationHelper : NSObject {
   NAMutator postStartupFunction;
   void* postStartupArg;
-  NABool wasCalled;
 }
 @end
 
 @implementation NA_ApplicationHelper
-
-- (NA_ApplicationHelper*)init {
-  self = [super init];
-  wasCalled = NA_FALSE;
-  return self;
-}
 
 - (void)setPostStartupFunction:(NAMutator)postUpdate {
   postStartupFunction = postUpdate;
@@ -41,171 +34,26 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
   postStartupArg = arg;
 }
 
-- (void)handleDidBecomeActive:(NSNotification *)notification {
-  // At this point, we get notified that the application has become active.
-  // This means, after this notification has been fully delivered by the
-  // notification center, we can call postStartup. But we need to wait for
-  // all notifications to be handeled and therefore, we post another
-  // notification which will then be processed right in the next cycle.
-  
-  if(!wasCalled) {
-    [self
-      performSelector:@selector(handleDidBecomeActiveAfterAll:)
-      withObject:notification
-      afterDelay:0];
-  }
-  wasCalled = NA_TRUE;
+- (void)handleDidFinishLaunching:(NSNotification *)notification {
+  [self
+    performSelector:@selector(handleDidFinishLaunchingAfterAll:)
+    withObject:notification
+    afterDelay:0];
+
+  // We only needed this for the startup.
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationDidFinishLaunchingNotification object:nil]; 
 }
 
-- (void)handleDidBecomeActiveAfterAll:(NSNotification *)notification {
-  // Reaching here, we can be sure, all notifications of the DidBecomeActive
-  // type have been successfully processed and now it is time to call the
-  // postUpdate function.
+- (void)handleDidFinishLaunchingAfterAll:(NSNotification *)notification {
+  // Reaching here, we can be sure, all notifications of the DidFinishLaunching
+  // type have been successfully processed and now it is time to initialize
+  // the UI.
 
-  if(postStartupFunction) {
-    postStartupFunction(postStartupArg);
-  }
-    
   // If this is a bare application without XIB
   if(![NSApp delegate]) {
-    // Make the application active
-    [NSApp activateIgnoringOtherApps:YES];
-  }
-}
-
-@end
-
-
-
-
-//#import <objc/runtime.h>
-
-//@interface NSObject (AppDelegateSwizzling)
-//- (NSApplicationTerminateReply)na_applicationShouldTerminate:(NSApplication *)sender;
-//- (void)na_applicationWillTerminate:(NSApplication *)sender;
-//@end
-//
-//
-//
-//@implementation NSObject (AppDelegateSwizzling)
-//
-//- (NSApplicationTerminateReply)na_applicationShouldTerminate:(NSApplication *)sender {
-//  NSApplicationTerminateReply reply = [self na_applicationShouldTerminate:sender];
-//  switch(reply) {
-//  case NSTerminateCancel:
-//    return NSTerminateCancel;
-//  case NSTerminateNow:
-//    naStopApplication();
-//    return NSTerminateCancel;
-//  case NSTerminateLater:
-//    #if NA_DEBUG
-//      naError("NSTerminateLater is not fully supported and may lead to not cleaning up the application properly.");
-//    #endif
-//    return NSTerminateLater;
-//  }
-//}
-//
-//- (void)na_applicationWillTerminate:(NSApplication *)sender {
-//  // We can get here, if the programmer uses NSTerminateLater. In that case,
-//  // we get here, where no cleanup is possible. Don't know yet how to solve
-//  // this issue. 
-//  naError("applicationWillTerminate called.");
-//  // Call original method. Maybe the programmer has something useful to cleanup.
-//  [self na_applicationWillTerminate:sender];
-//}
-//
-//@end
-//
-//void naSwizzleObjectMethods(
-//  id delegate,
-//  SEL originalSelector,
-//  SEL newSelector)
-//{
-//  Class delegateClass = [delegate class];
-//
-//  if([delegateClass instancesRespondToSelector:originalSelector]) {
-//    Method originalMethod = class_getInstanceMethod(delegateClass, originalSelector);
-//    Method swizzledMethod = class_getInstanceMethod(delegateClass, newSelector);
-//
-//    if(class_addMethod(
-//      delegateClass,
-//      originalSelector,
-//      method_getImplementation(swizzledMethod),
-//      method_getTypeEncoding(swizzledMethod)))
-//    {
-//      class_replaceMethod(
-//        delegateClass,
-//        newSelector,
-//        method_getImplementation(originalMethod),
-//        method_getTypeEncoding(originalMethod));
-//    }else{
-//      method_exchangeImplementations(
-//        originalMethod,
-//        swizzledMethod);
-//    }
-//  }
-//}
-
-
-
-
-@interface NACocoaNativeApplicationDelegate : NSObject <NSApplicationDelegate>{
-  NACocoaApplication* cocoaApplication;
-  NSObject <NSApplicationDelegate>* oldDelegate;
-  NABool atStartup;
-}
-- (void)setOldDelegate:(NSObject <NSApplicationDelegate>*)delegate;
-@end
-
-@implementation NACocoaNativeApplicationDelegate
-
-- (id) initWithCocoaApplication:(NACocoaApplication*)newCocoaApplication{
-  self = [super init];
-  cocoaApplication = newCocoaApplication;
-  oldDelegate = NA_NULL;
-  return self;
-}
-
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender{
-  // forward the enquiry to the oldDelegate, if available
-  if(oldDelegate && oldDelegate != self
-    && [oldDelegate respondsToSelector:@selector(applicationShouldTerminate:)]) {
-    return [oldDelegate applicationShouldTerminate:sender];
-  }
-  // Otherwise, by default, we set the stopApplication flag and cancel
-  // the current temination request. The message loop will then
-  // terminate immediately and do the proper cleanup.
-  naStopApplication();
-  return NSTerminateCancel;
-}
-
-- (void)setOldDelegate:(NSObject <NSApplicationDelegate>*)delegate {
-  oldDelegate = delegate;
-}
-
-- (void)applicationDidFinishLaunching:(NSNotification *)notification{
-
-//  if(oldDelegate) {
-//    naSwizzleObjectMethods(
-//      oldDelegate,
-//      @selector(applicationShouldTerminate:),
-//      @selector(na_applicationShouldTerminate:));
-//    naSwizzleObjectMethods(
-//      oldDelegate,
-//      @selector(applicationWillTerminate:),
-//      @selector(na_applicationWillTerminate:));
-//  }
-
-  // forward the notification to the oldDelegate
-  if(oldDelegate && oldDelegate != self
-    && [oldDelegate respondsToSelector:@selector(applicationDidFinishLaunching:)]) {
-    [oldDelegate applicationDidFinishLaunching:notification];
-  }
-  
-  // If this is a bare application without XIB
-  if(!oldDelegate) {
     // Show with a dock icon:
     [NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
+
     // Without this event, the applicationDidBecomeActive will not be called.
     NSEvent* activationEvent = [NSEvent
       otherEventWithType: NSEventTypeAppKitDefined
@@ -221,18 +69,39 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
   }
 }
 
-- (BOOL)application:(NSApplication *)sender openFile:(NSString *) filename{
-  // forward the call to the oldDelegate
-  if(oldDelegate && oldDelegate != self
-    && [oldDelegate respondsToSelector:@selector(application:openFile:)])
-  {
-    [oldDelegate application:sender openFile:filename];
+- (void)handleDidBecomeActive:(NSNotification *)notification {
+  // At this point, we get notified that the application has become active.
+  // This means, after this notification has been fully delivered by the
+  // notification center, we can call postStartup. But we need to wait for
+  // all notifications to be handeled and therefore, we post another
+  // notification which will then be processed right in the next cycle.
+  
+  [self
+    performSelector:@selector(handleDidBecomeActiveAfterAll:)
+    withObject:notification
+    afterDelay:0];
+
+  // We only needed this for the startup.
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationDidBecomeActiveNotification object:nil]; 
+}
+
+- (void)handleDidBecomeActiveAfterAll:(NSNotification *)notification {
+  // Reaching here, we can be sure, all notifications of the DidBecomeActive
+  // type have been successfully processed and now it is time to call the
+  // postUpdate function.
+
+  if(postStartupFunction) {
+    postStartupFunction(postStartupArg);
   }
-  return YES;
+    
+  // Make the application active
+  // If this is a bare application without XIB
+  if(![NSApp delegate]) {
+    [NSApp activateIgnoringOtherApps:YES];
+  }
 }
 
 @end
-
 
 
 
@@ -268,23 +137,18 @@ NA_DEF void naStartApplication(
     [pool drain]; // also releases the pool. No separate release necessary.
   #endif
 
-  NACocoaNativeApplicationDelegate* nativeApp = (NA_COCOA_BRIDGE NACocoaNativeApplicationDelegate*)naGetUIElementNativePtr(app);
-
-  // Hijack the delegate during startup without losing the old delegate
-  // which might have already been set by the user or in a XIB file.
-  NSObject <NSApplicationDelegate>* oldDelegate = [NSApp delegate];
-  [nativeApp setOldDelegate:oldDelegate];
-//  [nativeApp setPostStartupFunction: postStartup];
-//  [nativeApp setPostStartupArg: arg];
-  [NSApp setDelegate:nativeApp];
-
+  // We want to get notified about the DidFinishLaunching and DidBecomeActive
+  // notification because that is the point when the UI needs to be activated
+  // and is ready to be built.
   NA_ApplicationHelper* applicationHelper = [[NA_ApplicationHelper alloc] init];
   [applicationHelper setPostStartupFunction: postStartup];
   [applicationHelper setPostStartupArg: arg];
 
-  // We want to get notified about the DidBecomeActive notification because
-  // that is the point when the UI is ready to be built.
-  // After this notification, postStartup should be called.
+  [[NSNotificationCenter defaultCenter] 
+    addObserver:applicationHelper
+    selector:@selector(handleDidFinishLaunching:)
+    name:NSApplicationDidFinishLaunchingNotification
+    object:nil];
   [[NSNotificationCenter defaultCenter] 
     addObserver:applicationHelper
     selector:@selector(handleDidBecomeActive:)
@@ -306,7 +170,7 @@ NA_DEF void naStartApplication(
 //      NSEventSubtype subtype = [curEvent subtype];
 //      printf("type %d, desc %s\n", (int)type, [[curEvent description] UTF8String]);
 
-      NSEventType type = [curEvent type];
+//      NSEventType type = [curEvent type];
 
       if(!na_InterceptKeyboardShortcut(curEvent)) {
         if(curEvent) {
@@ -347,9 +211,7 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void) {
 NA_HDEF NAApplication* na_NewApplication(void) {
   NACocoaApplication* cocoaApplication = naNew(NACocoaApplication);
 
-  NACocoaNativeApplicationDelegate* nativePtr = [[NACocoaNativeApplicationDelegate alloc]
-    initWithCocoaApplication:cocoaApplication];
-  na_InitApplication(&cocoaApplication->application, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitApplication(&cocoaApplication->application, NA_COCOA_PTR_OBJC_TO_C(NSApp));
 
   return (NAApplication*)cocoaApplication;
 }
