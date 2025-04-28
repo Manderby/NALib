@@ -74,6 +74,24 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
 
 
 
+NA_HDEF void na_TerminateApplication(NAMutator cleanup, void* arg) {
+  // Before deleting the application, we cleanup whatever the user needs to
+  // clean up.
+  if(cleanup)
+    cleanup(arg);
+
+  // Shutdown the preferences if necessary
+  na_ShutdownPreferences();
+
+  // Delete the application object itself.
+  naDelete(na_App);
+  
+  // Finally, stop the runtime.
+  naStopRuntime();
+}
+
+
+
 NA_HDEF void na_ClearApplication(NAApplication* app) {
   #if NA_DEBUG
     if(!na_App)

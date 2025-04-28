@@ -16,6 +16,8 @@ Current development:
 
 - Removing NABezel4. Had been deprecated already in version 28
 - Renamed NAFileSize to fsize_t
+- Removed the need for start and stop Runtime when using NAApplication.
+- Replaced the obfuscated AppDelegate handling in macOS with Notifications.
 
 
 Version 28 (released 13. April 2025)

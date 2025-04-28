@@ -289,6 +289,7 @@ NA_HAPI void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking)
 NA_HAPI NAApplication* na_NewApplication(void);
 NA_HAPI NABool na_IsApplicationRunning(void);
 NA_HAPI void na_InitApplication(NAApplication* application, void* nativePtr);
+NA_HAPI void na_TerminateApplication(NAMutator cleanup, void* arg);
 NA_HAPI void na_ClearApplication(NAApplication* application);
 NA_HAPI NARect na_GetApplicationRect(const NAApplication* application);
 NA_HAPI void na_SetApplicationRect(const NAApplication* application, NARect rect);

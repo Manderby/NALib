@@ -20,7 +20,8 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
 
 @interface NA_ApplicationHelper : NSObject {
   NAMutator postStartupFunction;
-  void* postStartupArg;
+  NAMutator cleanupFunction;
+  void* arg;
 }
 @end
 
@@ -30,8 +31,12 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
   postStartupFunction = postUpdate;
 }
 
-- (void)setPostStartupArg:(void*)arg {
-  postStartupArg = arg;
+- (void)setCleanupFunction:(NAMutator)cleanup {
+  cleanupFunction = cleanup;
+}
+
+- (void)setPostStartupArg:(void*)newArg {
+  arg = newArg;
 }
 
 - (void)handleDidFinishLaunching:(NSNotification *)notification {
@@ -91,7 +96,7 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
   // postUpdate function.
 
   if(postStartupFunction) {
-    postStartupFunction(postStartupArg);
+    postStartupFunction(arg);
   }
     
   // Make the application active
@@ -101,8 +106,11 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
   }
 }
 
-@end
+- (void)handleApplicationWillTerminate:(NSNotification *)notification {
+  na_TerminateApplication(cleanupFunction, arg);
+}
 
+@end
 
 
 // Interesting read:
@@ -113,6 +121,10 @@ NA_DEF void naStartApplication(
   NAMutator cleanup,
   void* arg)
 {  
+  if(!naIsRuntimeRunning()) {
+    naStartRuntime();
+  }
+
   // Start the shared application if not started already.
   [NSApplication sharedApplication];
   
@@ -142,6 +154,7 @@ NA_DEF void naStartApplication(
   // and is ready to be built.
   NA_ApplicationHelper* applicationHelper = [[NA_ApplicationHelper alloc] init];
   [applicationHelper setPostStartupFunction: postStartup];
+  [applicationHelper setCleanupFunction: cleanup];
   [applicationHelper setPostStartupArg: arg];
 
   [[NSNotificationCenter defaultCenter] 
@@ -153,6 +166,11 @@ NA_DEF void naStartApplication(
     addObserver:applicationHelper
     selector:@selector(handleDidBecomeActive:)
     name:NSApplicationDidBecomeActiveNotification
+    object:nil];
+  [[NSNotificationCenter defaultCenter] 
+    addObserver:applicationHelper
+    selector:@selector(handleApplicationWillTerminate:)
+    name:NSApplicationWillTerminateNotification
     object:nil];
     
   // Start the event loop.
@@ -185,13 +203,7 @@ NA_DEF void naStartApplication(
     #endif
   }
 
-  // Before deleting the application, we cleanup whatever the user needs to
-  // clean up.
-  if(cleanup)
-    cleanup(arg);
-
-  // When reaching here, the application had been stopped.
-  naDelete(app);
+  na_TerminateApplication(cleanup, arg);
 }
 
 

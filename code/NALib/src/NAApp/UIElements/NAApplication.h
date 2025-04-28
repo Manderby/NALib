@@ -26,7 +26,8 @@ NA_API void naStartApplication(
 // call the given two startup functions with the given arg. The precise order
 // of the calls is described here:
 //
-// Mac: - NALib calls [NSApplication sharedApplication]. If you have already
+// Mac: - The NARuntime is started if it wasn't started already
+//      - NALib calls [NSApplication sharedApplication]. If you have already
 //        created an application (for example by using a XIB file), then that
 //        application is used. If you need your own delegate, you have to set
 //        it before calling naStartApplication, otherwise, the application
@@ -47,7 +48,8 @@ NA_API void naStartApplication(
 //      - The first time an applicationDidBecomeActive notification is sent,
 //        The postStartup function is called with arg.
 //
-// Win: - NALib registers its window classes
+// Win: - The NARuntime is started if it wasn't started already
+//      - NALib registers its window classes
 //      - NALib allocates some structures in the background to run the UI
 //        including the application internal translator.
 //      - NALib calls preStartup with arg.
@@ -131,6 +133,7 @@ NA_API NAApplication* naGetApplication(void);
 // will stop the run message loop and eventually return from the call
 // to naStartApplication. All attached memory of the application will be freed
 // and the application will not be able to run again!
+// Eventually, the currently running NARuntime will be stopped as well.
 NA_API void naStopApplication(void);
 
 // Executes the given function in the given number of seconds with the given

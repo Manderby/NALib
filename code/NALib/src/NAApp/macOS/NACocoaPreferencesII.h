@@ -15,6 +15,10 @@ NA_HDEF void* na_GetNativePreferences() {
   return NA_COCOA_PTR_OBJC_TO_C([NSUserDefaults standardUserDefaults]);
 }
 
+NA_HDEF void na_ShutdownPreferences() {
+  // Nothing to do.
+}
+
 
 
 NA_HDEF int64 na_GetRawPreferencesBool(void* prefs, const char* key) {

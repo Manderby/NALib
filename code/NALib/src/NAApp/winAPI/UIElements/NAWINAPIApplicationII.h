@@ -59,6 +59,11 @@ NAWINAPICallbackInfo naApplicationWINAPIProc(void* uiElement, UINT message, WPAR
 
 
 NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMutator cleanup, void* arg) {
+
+  if(!naIsRuntimeRunning()) {
+    naStartRuntime();
+  }
+
   NAWINAPIApplication* app;
   WNDCLASS wndclass;
   MSG message;
