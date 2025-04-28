@@ -91,16 +91,18 @@ NA_API void naStartApplication(
 // can use in your main.m file:
 //
 // void postStartup(void* arg) {
-//   [NSBundle loadNibNamed:@"MainMenu" owner:NSApp];
-//   // or use naLoadNib("MainMenu", NSApp);
+//   naLoadNib("MainMenu", NA_NULL);
+//   // or use [NSBundle loadNibNamed:@"MainMenu" owner:NSApp]; but that
+//   // requires you to compile this file as a .m file.
+//
 //   // Now, do UI stuff with NALib.
 // }
 //
 // int main(int argc, char *argv[]) {
-//   naStartRuntime();
-//   [MyExistingApplication sharedApplication];
+//
+//   naInstanciateNSApplication(MyExistingApplication);
 //   naStartApplication(NA_NULL, postStartup, NA_NULL);
-//   naStopRuntime();
+//
 //   return 0;
 // }
 //
@@ -231,6 +233,17 @@ NA_API void naFillColorWithSkinAccentColor(NAColor* color, NASkin skin);
   // A good idea is to call this in the preStartup callback of
   // naStartApplication.
   void naSwitchApplicationToGraphiteAppearance(void);
+
+  // Use this macro to instanciate your primary class BEFORE calling
+  // naStartApplication in case you defined a specific primary class in your
+  // plist file or in your xib file.
+  #include <objc/objc.h>
+  #include <objc/runtime.h>
+  #include <objc/message.h>
+  #define naInstanciateNSApplication(primaryClass) \
+    id nsStringClass = (id)objc_getClass(#primaryClass);\
+    SEL sel = sel_registerName("sharedApplication");\
+    ((id (*)(id, SEL))objc_msgSend)(nsStringClass, sel);
 
 #endif // macOS specific functions
 

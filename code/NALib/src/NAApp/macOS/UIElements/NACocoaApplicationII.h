@@ -113,6 +113,7 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
 @end
 
 
+
 // Interesting read:
 // https://lapcatsoftware.com/blog/2007/03/10/everything-you-always-wanted-to-know-about-nsapplication/
 NA_DEF void naStartApplication(
