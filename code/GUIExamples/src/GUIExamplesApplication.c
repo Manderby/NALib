@@ -5,7 +5,9 @@
 #include "GUIExamples.h"
 #include "NAStruct/NAStack.h"
 #include "NAVisual/NAPNG.h"
+#include "NAUtility/NADateTime.h"
 #include "NAUtility/NAString.h"
+#include "NAUtility/NAFile.h"
 
 #define RESOURCE_PATH ""
 //#define RESOURCE_PATH "res/"
@@ -35,6 +37,15 @@ HelloWorldGUIApplication* app;
 // Initialize all global and general values here.
 // See naStartApplication for a detailed explanation.
 void preStartup(void* arg){
+  NADateTime now = naMakeDateTimeNow();
+  NAString* dateTimeStr = naNewStringWithDateTime(&now, NA_DATETIME_FORMAT_NATURAL);
+  printf("DateTime: %s\n", naGetStringUTF8Pointer(dateTimeStr));
+  naDelete(dateTimeStr);
+
+  NAString* pwd = naNewStringWithCurWorkingDirectory();
+  printf("Working Directory: %s\n", naGetStringUTF8Pointer(pwd));
+  naDelete(pwd);
+
   NA_UNUSED(arg);
   app = naAlloc(HelloWorldGUIApplication);
   naInitStack(&(app->temperatureControllers), sizeof(TemperatureController*), 0, 0);

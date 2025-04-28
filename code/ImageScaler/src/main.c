@@ -143,7 +143,8 @@ void naStartImageTestApplication(void) {
 
 
 
-void naStopImageTestApplication(void) {
+void cleanup(void* arg) {
+  NA_UNUSED(arg);
   naDeallocImageTestController(app->imageTestController);
   naRelease(app->transparencyGridImage);
   for(size_t i = 0; i < IMAGE_COUNT; ++i) {
@@ -424,10 +425,7 @@ void postStartup(void* arg) {
 
 int main(void) {
  
-  naStartRuntime();
-  naStartApplication(preStartup, postStartup, NA_NULL, NA_NULL);
-  naStopImageTestApplication();
-  naStopRuntime();
+  naStartApplication(preStartup, postStartup, cleanup, NA_NULL);
     
   return 0;
 }
