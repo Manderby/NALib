@@ -120,6 +120,19 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
   // ClearUIElement operation.
   // todo test if all uiElements are gone.
   naClearList(&na_App->uiElements, NA_NULL);
+  
+  if(app->appName)
+    naDelete(app->appName);
+  if(app->companyName)
+    naDelete(app->companyName);
+  if(app->versionString)
+    naDelete(app->versionString);
+  if(app->buildString)
+    naDelete(app->buildString);
+  if(app->resourceBasePath)
+    naDelete(app->resourceBasePath);
+  if(app->iconPath)
+    naDelete(app->iconPath);
 }
 
 
