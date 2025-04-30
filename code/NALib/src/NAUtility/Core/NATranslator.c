@@ -227,15 +227,15 @@ NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code) {
   // fine with a more general language)
   if(!codeFound) {
     NALanguageCode3 replacingCode = naGetLanguageReplacement(code);
-    NAListIterator it = naMakeListModifier(&NA_TRANSLATOR->languagePreferences);
-    while(!codeFound && naIterateList(&it)) {
-      const NALanguageCode3* curCode = naGetListCurConst(&it);
+    NAListIterator it2 = naMakeListModifier(&NA_TRANSLATOR->languagePreferences);
+    while(!codeFound && naIterateList(&it2)) {
+      const NALanguageCode3* curCode = naGetListCurConst(&it2);
       if(*curCode == replacingCode) {
         codeFound = NA_TRUE;
-        naMoveListCurToFirst(&it, NA_FALSE, &NA_TRANSLATOR->languagePreferences);
+        naMoveListCurToFirst(&it2, NA_FALSE, &NA_TRANSLATOR->languagePreferences);
       }
     }
-    naClearListIterator(&it);
+    naClearListIterator(&it2);
   }
   
   if(!codeFound) {

@@ -474,9 +474,9 @@ NA_DEF size_t naPresentOptionBox(
 {
   #if NA_DEBUG
     if(!buttonTextPrimary)
-      naError("Primary button must be present");
+      naError("Primary button text is nullptr");
     if(!buttonTextSecondary)
-      naError("Secondary button must be present");
+      naError("Secondary button text is nullptr");
   #endif
 
   // Create the alert

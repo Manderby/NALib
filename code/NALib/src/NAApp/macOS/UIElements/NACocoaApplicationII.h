@@ -129,7 +129,7 @@ NA_DEF void naStartApplication(
   // Start the shared application if not started already.
   [NSApplication sharedApplication];
   
-  NAApplication* app = na_NewApplication();
+  na_NewApplication();
 
   // Put an autorelease pool in place for the startup sequence.
   #if !NA_MACOS_USES_ARC
