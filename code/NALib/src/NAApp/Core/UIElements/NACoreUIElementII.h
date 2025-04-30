@@ -105,25 +105,26 @@ NA_HDEF NABool na_DispatchUIElementCommand(const NA_UIElement* uiElement, NAUICo
       naCrash("uiElement is nullptr");
   #endif
 
-  NABool hasReaction = NA_FALSE;
-
-  NAReaction reaction = {
-    uiElement,
-    command,
-    NA_NULL};
-
-  NAListIterator iter = naMakeListMutator(&uiElement->reactions);
+  const NA_EventReaction* eventReaction = NA_NULL;
+  NAListIterator iter = naMakeListAccessor(&uiElement->reactions);
   while(naIterateList(&iter)) {
-    NA_EventReaction* eventReaction = naGetListCurMutable(&iter);
+    eventReaction = naGetListCurConst(&iter);
     if(eventReaction->command == command) {
-      reaction.controller = eventReaction->controller;
-      eventReaction->callback(reaction);
-      hasReaction = NA_TRUE;
+      break;
     }
+    eventReaction = NA_NULL;
   }
   naClearListIterator(&iter);
 
-  if(!hasReaction) {
+  if(eventReaction) {
+    // We found a suitable reaction. Execute it.
+    NAReaction reaction = {
+      uiElement,
+      command,
+      NA_NULL};
+    reaction.controller = eventReaction->controller;
+    eventReaction->callback(reaction);
+  }else{
     // If the command has no reaction, search for other reactions in the
     // parent elements.  
     if(command != NA_UI_COMMAND_MOUSE_ENTERED && command != NA_UI_COMMAND_MOUSE_EXITED) {
@@ -187,8 +188,25 @@ NA_DEF void naAddUIReaction(
       naError("uiElement is nullptr");
   #endif
 
-  NA_EventReaction* eventReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
+
+  NABool reactionFound = NA_FALSE;
+  NAListIterator iter = naMakeListAccessor(&element->reactions);
+  while(naIterateList(&iter)) {
+    const NA_EventReaction* existingEventReaction = naGetListCurConst(&iter);
+    if(existingEventReaction->command == command) {
+      reactionFound = NA_TRUE;
+      break;
+    }
+  }
+  naClearListIterator(&iter);
+  if(reactionFound) {
+    #if NA_DEBUG
+      naError("One UI element can only have one reaction per command. Ignoring this new reaction.");
+    #endif
+    return;
+  }
+
   NAUIElementType elementType = naGetUIElementType(uiElement);
 
   #if NA_DEBUG
@@ -234,7 +252,7 @@ NA_DEF void naAddUIReaction(
       naError("Only textFields and sliders can receyve EDIT_FINISHED commands.");
   #endif
   
-  eventReaction = naAlloc(NA_EventReaction);
+  NA_EventReaction* eventReaction = naAlloc(NA_EventReaction);
   eventReaction->controller = controller;
   eventReaction->command = command;
   eventReaction->callback = callback;

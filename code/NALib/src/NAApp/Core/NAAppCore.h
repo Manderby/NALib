@@ -250,25 +250,25 @@ NA_HAPI NABool na_GetUIElementWINAPINotificationsBlocked(const NA_UIElement* ele
 // NALib struct. This function solves that. Slow, but does the job.
 NA_HAPI void* na_GetUINALibEquivalent(void* nativePtr);
 
-// Returns true if the given element has any reaction attached which responds
+// Returns true if the given element has a reaction attached which responds
 // to the given command.
 NA_HAPI NABool na_UIHasElementCommandDispatches(const NA_UIElement* uiElement, NAUICommand command);
 
 // Dispatches a command with the given uiElement.
 // 
 // Dispatching happends according to the following rules:
-// - If the given element has at least 1 reaction fitting to the given command,
-//   these reaction will be called in the same order they were added. Afterwards
-//   the function returns with NA_TRUE. No bubbling towards parent elements
-//   happens automatically. If bubbling is desired, one has to do it manually by
-//   calling the dispatch method with the parent element in the reaction methd.
-// - If the given element has NO reactions fitting the given command, the
+// - If the given element has a reaction fitting to the given command, that
+//   reaction will be called. Afterwards the function returns with NA_TRUE.
+//   No bubbling towards parent elements happens automatically. If bubbling is
+//   desired, one has to do it manually by calling the dispatch method with
+//   the parent element in the reaction methd.
+// - If the given element has NO reaction fitting the given command, the
 //   dispatch method will be called for the parent element of the given element.
 //   The parent element is the parent given by the NALib structure, not the
 //   native parent! The return value of this function is determined by the
 //   return value of the recursive call.
 // - If there is no parent available in the NALib structure, the function
-//   returns NA_FALSE, meaning, the event has not been handeled at all.
+//   returns NA_FALSE, meaning, the event has not been handeled by NALib.
 //   This in turn will usually cause the NALib GUI elements to call the event
 //   handling method given by the system or base class of the native element.
 NA_HAPI NABool na_DispatchUIElementCommand(const NA_UIElement* uiElement, NAUICommand command);
