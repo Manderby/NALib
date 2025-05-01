@@ -8,14 +8,32 @@
 
 
 NA_PROTOTYPE(NAString);
+NA_PROTOTYPE(NABuffer);
 
 
-// Gets a standard string from the systems clipboard.
-NA_API NAString* naNewStringFromClipboard(void);
+
+// You can put multiple objects onto the clipboard, denoting different
+// representations of the currently copied content.
+//
+// To put objects onto the clipboard, you need to encapsulate the calls into
+// the following begin and end calls. Begin will empty the current clipboard.
+// Do not forget the end call!
+void naBeginClipboard();
+void naEndClipboard();
 
 // Puts the given string on the systems clipboard in a standard string format.
 NA_API void naPutStringToClipboard(const NAString* string);
+// Puts the given buffer on the systems clipboard as raw data.
+NA_API void naPutBufferToClipboard(const NABuffer* buffer);
 
+
+
+// Returns a new string containing what has been stored as as standard string
+// in the systems clipboard.
+NA_API NAString* naNewStringFromClipboard(void);
+// Creates a new buffer containing what has been stored as NABuffer in the
+// systems clipboard.
+NA_API NABuffer* naCreateBufferFromClipboard(void);
 
 
 #ifdef __cplusplus

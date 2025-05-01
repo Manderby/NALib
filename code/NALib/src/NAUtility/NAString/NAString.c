@@ -892,7 +892,7 @@ NA_DEF uint64 naParseStringu64(const NAString* string) {
 
 NA_DEF float naParseStringFloat(const NAString* string) {
   NAUTF8Char* buf;
-  NABufferIterator bufiter;
+  NABufferIterator bufIter;
   float retValue;
   size_t len = naGetStringByteSize(string);
   if(len > 20) {
@@ -902,17 +902,17 @@ NA_DEF float naParseStringFloat(const NAString* string) {
     #endif
   }
   buf = naMalloc((len + 1) * sizeof(NAUTF8Char));
-  bufiter = naMakeBufferAccessor(string->buffer);
-  naLocateBufferAtStart(&bufiter, NA_ZERO_i64);
-  naReadBufferBytes(&bufiter, buf, len);
-  naClearBufferIterator(&bufiter);
+  bufIter = naMakeBufferAccessor(string->buffer);
+  naLocateBufferAtStart(&bufIter, NA_ZERO_i64);
+  naReadBufferBytes(&bufIter, buf, len);
+  naClearBufferIterator(&bufIter);
   retValue = (float)atof(buf);
   naFree(buf);
   return retValue;
 }
 NA_DEF double naParseStringDouble(const NAString* string) {
   NAUTF8Char* buf;
-  NABufferIterator bufiter;
+  NABufferIterator bufIter;
   double retValue;
   size_t len = naGetStringByteSize(string);
   if(len > 20) {
@@ -922,10 +922,10 @@ NA_DEF double naParseStringDouble(const NAString* string) {
     #endif
   }
   buf = naMalloc((len + 1) * sizeof(NAUTF8Char));
-  bufiter = naMakeBufferAccessor(string->buffer);
-  naLocateBufferAtStart(&bufiter, NA_ZERO_i64);
-  naReadBufferBytes(&bufiter, buf, len);
-  naClearBufferIterator(&bufiter);
+  bufIter = naMakeBufferAccessor(string->buffer);
+  naLocateBufferAtStart(&bufIter, NA_ZERO_i64);
+  naReadBufferBytes(&bufIter, buf, len);
+  naClearBufferIterator(&bufIter);
   retValue = atof(buf);
   naFree(buf);
   return retValue;

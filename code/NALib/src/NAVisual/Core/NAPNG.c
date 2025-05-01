@@ -709,7 +709,7 @@ NA_DEF NAPNG* naNewPNG(NASizes size, NAPNGColorType colorType, int8 bitDepth) {
 NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
   NABuffer* buffer;
   NAByte magic[8];
-  NABufferIterator bufiter;
+  NABufferIterator bufIter;
 
   NAPNG* png = naNew(NAPNG);
   naInitList(&png->chunks);
@@ -723,7 +723,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
   png->filteredData = NA_NULL;
 
   buffer = naCreateBufferWithInputPath(filePath);
-  bufiter = naMakeBufferModifier(buffer);
+  bufIter = naMakeBufferModifier(buffer);
 
   // If the buffer is empty, there is no png to read.
   if(naIsBufferEmpty(buffer)) {
@@ -734,7 +734,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
   naSetBufferEndianness(buffer, NA_ENDIANNESS_NETWORK);
 
   // Read the magic numbers. If they do not match, this is no png file.
-  naReadBufferBytes(&bufiter, magic, 8);
+  naReadBufferBytes(&bufIter, magic, 8);
   if(!naEqual64(magic, na_PngMagic)) {
     #if NA_DEBUG
       naError("File is not a PNG file.");
@@ -744,13 +744,13 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
 
   // Read the chunks until the IEND chunk is read.
   while(1) {
-    NAPNGChunk* chunk = na_AllocPNGChunkWithBuffer(&bufiter);
+    NAPNGChunk* chunk = na_AllocPNGChunkWithBuffer(&bufIter);
     naAddListLastMutable(&png->chunks, chunk);
     
     if(chunk->type == NA_PNG_CHUNK_TYPE_IEND)
       break;
   }
-  naClearBufferIterator(&bufiter);
+  naClearBufferIterator(&bufIter);
 
   // Create the buffer to hold the compressed and decompressed data
   png->compresseddata = naCreateBuffer(NA_FALSE);

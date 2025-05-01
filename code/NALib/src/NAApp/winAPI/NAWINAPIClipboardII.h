@@ -6,9 +6,50 @@
 
 
 
+void naBeginClipboard() {
+  // NA_NULL means: Current task becomes owner instead of a hWnd
+  if(!OpenClipboard(NA_NULL))
+    return;
+  EmptyClipboard();
+  // After emtying, the clipboard owner is set to NA_NULL and SetClipboardData
+  // will fail. Therefore, we have to cloase and reopen the clipboard again.
+  CloseClipboard();
+  
+  if(!OpenClipboard(NA_NULL))
+    return;
+}
+
+void naEndClipboard() {
+  CloseClipboard();
+}
+
+
+
+void naPutStringToClipboard(const NAString* string) {
+  size_t stringLength = naGetStringByteSize(string);
+  wchar_t* unicodeString = naAllocWideCharStringWithUTF8String(naGetStringUTF8Pointer(string));
+
+  HGLOBAL clipboardHandle = GlobalAlloc(GMEM_MOVEABLE, (stringLength + 1) * sizeof(wchar_t));
+  if(clipboardHandle) {
+    LPTSTR globalMemory = GlobalLock(clipboardHandle);
+    if(globalMemory) {
+      memcpy(globalMemory, unicodeString, stringLength * sizeof(wchar_t)); 
+      globalMemory[stringLength] = (wchar_t) 0;    // null character 
+      GlobalUnlock(clipboardHandle);
+      SetClipboardData(CF_UNICODETEXT, clipboardHandle);
+    }
+  }
+
+  naFree(unicodeString);
+}
+
+
+
 NAString* naNewStringFromClipboard() {
   NAString* string = NA_NULL;
-  OpenClipboard(NA_NULL); // NA_NULL means: Current task becomes owner instead of a hWnd
+  // NA_NULL means: Current task becomes owner instead of a hWnd
+  if(!OpenClipboard(NA_NULL))
+    return;
 
   HGLOBAL clipboardHandle = GetClipboardData(CF_UNICODETEXT);
   if(clipboardHandle) {
@@ -25,30 +66,6 @@ NAString* naNewStringFromClipboard() {
 
   CloseClipboard();
   return string;
-}
-
-
-
-void naPutStringToClipboard(const NAString* string) {
-  OpenClipboard(NA_NULL); // NA_NULL means: Current task becomes owner instead of a hWnd
-
-  size_t stringLength = naGetStringByteSize(string);
-  wchar_t* unicodeString = naAllocWideCharStringWithUTF8String(naGetStringUTF8Pointer(string));
-
-  HGLOBAL clipboardHandle = GlobalAlloc(GMEM_MOVEABLE, (stringLength + 1) * sizeof(wchar_t));
-  if(clipboardHandle) {
-    LPTSTR globalMemory = GlobalLock(clipboardHandle);
-    if(globalMemory) {
-      memcpy(globalMemory, unicodeString, stringLength * sizeof(wchar_t)); 
-      globalMemory[stringLength] = (wchar_t) 0;    // null character 
-      GlobalUnlock(clipboardHandle);
-      SetClipboardData(CF_UNICODETEXT, clipboardHandle);
-    }
-  }
-
-  naFree(unicodeString);
-
-  CloseClipboard();
 }
 
 

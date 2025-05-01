@@ -159,8 +159,8 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter) {
   if(!found) {
     end = naGetRangei64End(buffer->range);
   }
-  range = naMakeRangei64Combination(start, naMakeMaxWithEndi64(end));
-  if(!naIsRangei64Empty(range)) {
+  if(start != end) {
+    range = naMakeRangei64Combination(start, naMakeMaxWithEndi64(end));
     string = naNewStringWithBufferExtraction(buffer, range);
   }else{
     string = naNewString();

@@ -8,11 +8,113 @@
 
 #include "../../NAUtility/NAString.h"
 
+NSString* naBufferSnippletType = @"nalib.nabuffer.snipplet";
+
+@interface NABufferSnipplet : NSObject <NSPasteboardWriting, NSPasteboardReading> {
+  NABuffer* buffer;
+}
+@end
+
+
+
+@implementation NABufferSnipplet
+// Yes, it is complicated. Praise the OOP enthusiasts of the early 2000s!
+
+- (id)initWithBuffer:(const NABuffer*)newBuffer{
+  self = [super init];
+  buffer = naCreateBufferCopy(newBuffer, naGetBufferRange(newBuffer), NA_FALSE);
+  return self;
+}
+
+- (void)dealloc{
+  naRelease(buffer);
+  NA_COCOA_SUPER_DEALLOC();
+}
+
+- (NABuffer*)getBuffer{
+  return buffer;
+}
+
+// Copy TO pasteboard. First is definite, others are promised.
+- (NSArray *)writableTypesForPasteboard:(NSPasteboard *)pasteboard{
+  NA_UNUSED(pasteboard);
+  return [NSArray arrayWithObjects:naBufferSnippletType, nil];
+}
+
+// Paste FROM pasteboard. What is accepted as a constructor input
++ (NSArray *)readableTypesForPasteboard:(NSPasteboard *)pasteboard{
+  NA_UNUSED(pasteboard);
+  return [NSArray arrayWithObjects:naBufferSnippletType, NSPasteboardTypeString, nil];
+}
+
+// Defines, how the pasteboarddata parameter of initWithPasteboardPropertyList
+// is encoded
++ (NSPasteboardReadingOptions)readingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard{
+  NA_UNUSED(pasteboard);
+  if([type isEqualToString:naBufferSnippletType]) {
+    return NSPasteboardReadingAsData;
+  }else{
+    return NSPasteboardReadingAsPropertyList;
+  }
+}
+
+- (id)initWithPasteboardPropertyList:(id)pasteboarddata ofType:(NSString *)type{
+  if([type isEqualToString:naBufferSnippletType]) {
+    const NAByte* buf = [(NSData*)pasteboarddata bytes];
+    buffer = naCreateBufferWithConstData(buf, (size_t)[(NSData*)pasteboarddata length]);
+    return self;
+  }
+  return nil;
+}
+
+- (id)pasteboardPropertyListForType:(NSString *)type{
+  if([type isEqualToString:naBufferSnippletType]) {
+    size_t bufSize = (size_t)naGetBufferRange(buffer).length;
+    NAByte* buf = naMalloc(bufSize);
+    naWriteBufferToData(buffer, buf);
+    
+    NSData* thedata = [NSData dataWithBytesNoCopy:buf length:(NSUInteger)bufSize freeWhenDone:YES];
+    return thedata;
+  }
+  return nil;
+}
+
+@end
+
+
+
+void naBeginClipboard() {
+  NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
+  [pasteboard clearContents];
+}
+
+void naEndClipboard() {
+  // nothing to do.
+}
+
+
+
+NA_DEF void naPutStringToClipboard(const NAString* string) {
+  NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
+
+  [pasteboard writeObjects:
+    [NSArray arrayWithObject:
+      [NSString stringWithUTF8String:naGetStringUTF8Pointer(string)]]];
+}
+
+// Puts the given buffer on the systems clipboard as raw data.
+NA_DEF void naPutBufferToClipboard(const NABuffer* buffer) {
+  NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
+
+  NABufferSnipplet* snipplet = [[NABufferSnipplet alloc] initWithBuffer:buffer];
+  [pasteboard writeObjects:[NSArray arrayWithObject:snipplet]];
+}
+
 
 
 NA_DEF NAString* naNewStringFromClipboard() {
-  NAString* string = NA_NULL;
   NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
+  NAString* string = NA_NULL;
   NSArray *classes = [[NSArray alloc] initWithObjects:[NSString class], nil];
   NSDictionary *options = [NSDictionary dictionary];
   NSArray *copiedItems = [pasteboard readObjectsForClasses:classes options:options];
@@ -26,14 +128,18 @@ NA_DEF NAString* naNewStringFromClipboard() {
   return string;
 }
 
-
-
-NA_DEF void naPutStringToClipboard(const NAString* string) {
+NA_DEF NABuffer* naCreateBufferFromClipboard() {
   NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
-  [pasteboard clearContents];
-  [pasteboard writeObjects:
-  [NSArray arrayWithObject:
-  [NSString stringWithUTF8String:naGetStringUTF8Pointer(string)]]];
+  NSArray *classes = [[NSArray alloc] initWithObjects:[NABufferSnipplet class], [NSString class], nil];
+  NSDictionary *options = [NSDictionary dictionary];
+  NSArray *copiedItems = [pasteboard readObjectsForClasses:classes options:options];
+  NA_COCOA_RELEASE(classes);
+
+  if ([copiedItems count]) {
+    NABufferSnipplet* pastedSnipplet = (NABufferSnipplet*)[copiedItems objectAtIndex:0];
+    return naCreateBufferCopy([pastedSnipplet getBuffer], naGetBufferRange([pastedSnipplet getBuffer]), NA_FALSE);
+  }
+  return NA_NULL;
 }
 
 

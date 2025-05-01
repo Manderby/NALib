@@ -28,7 +28,7 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
   dstIter = naMakeBufferModifier(dstBuffer);
   srcIter = naMakeBufferMutator(buffer);
 
-  while(naEquali64(triples, NA_ZERO_i64)) {
+  while(!naEquali64(triples, NA_ZERO_i64)) {
     naReadBufferBytes(&srcIter, srctriple, 3);
     dstTriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
     dstTriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4) | (NAUTF8Char)(srctriple[1] >> 4);
