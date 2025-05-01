@@ -130,7 +130,7 @@ NA_DEF NAString* naNewStringFromClipboard() {
 
 NA_DEF NABuffer* naCreateBufferFromClipboard() {
   NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
-  NSArray *classes = [[NSArray alloc] initWithObjects:[NABufferSnipplet class], [NSString class], nil];
+  NSArray *classes = [[NSArray alloc] initWithObjects:[NABufferSnipplet class], nil];
   NSDictionary *options = [NSDictionary dictionary];
   NSArray *copiedItems = [pasteboard readObjectsForClasses:classes options:options];
   NA_COCOA_RELEASE(classes);
