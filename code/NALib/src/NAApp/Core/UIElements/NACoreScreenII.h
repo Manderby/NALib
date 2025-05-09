@@ -6,22 +6,37 @@
 
 
 
-NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr) {
+NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr, const NAUTF8Char* name, NARect rect, double scale) {
   na_InitCoreUIElement(&screen->uiElement, NA_UI_SCREEN, nativePtr);
+  screen->name = naNewStringWithFormat("%s", name);
+  screen->rect = rect;
+  // The relative center will be set properly in na_UpdateScreenRelativeCenter.
+  screen->relativeCenter = naMakePosZero();
+  screen->scale = scale;
 }
 
 
 
 NA_HDEF void na_ClearScreen(NAScreen* screen) {
   na_ClearCoreUIElement(&screen->uiElement);
+  naDelete(screen->name);
+}
+
+
+
+NA_HDEF void na_UpdateScreenRelativeCenter(NAScreen* screen, NARect totalRect) {
+  NARect screenRect = na_GetScreenRect((NA_UIElement*)screen);
+  NAPos center = naGetRectCenter(screenRect);
+  screen->relativeCenter = naMakePos(
+    (center.x - totalRect.pos.x) / totalRect.size.width,
+    (center.y - totalRect.pos.y) / totalRect.size.height);
 }
 
 
 
 NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen) {
-  NA_UNUSED(screen);
-  NARect rect = {{0, 0}, {1, 1}};
-  return rect;
+  NAScreen* naScreen = (NAScreen*)screen;
+  return naScreen->rect;
 }
 
 

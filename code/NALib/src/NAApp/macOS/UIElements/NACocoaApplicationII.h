@@ -110,6 +110,13 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
   na_TerminateApplication(cleanupFunction, arg);
 }
 
+- (void)handleApplicationDidChangeScreenParameters:(NSNotification *)notification {
+  NAList newScreenList;
+  naInitList(&newScreenList);
+  na_FillScreenList(&newScreenList);
+}
+
+
 @end
 
 
@@ -173,6 +180,11 @@ NA_DEF void naStartApplication(
     addObserver:applicationHelper
     selector:@selector(handleApplicationWillTerminate:)
     name:NSApplicationWillTerminateNotification
+    object:nil];
+  [[NSNotificationCenter defaultCenter] 
+    addObserver:applicationHelper
+    selector:@selector(handleApplicationDidChangeScreenParameters:)
+    name:NSApplicationDidChangeScreenParametersNotification
     object:nil];
     
   // Start the event loop.

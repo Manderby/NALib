@@ -38,6 +38,7 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
   #endif
   na_App = app;
 
+  naInitList(&app->screens);
   naInitList(&app->windows);
   naInitList(&app->uiElements);
 
@@ -70,6 +71,8 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
   // This is done at the very end of the InitApplication function as the
   // application must be fully functional before it can init any UIElements.
   na_InitCoreUIElement(&app->uiElement, NA_UI_APPLICATION, nativePtr);
+  
+  na_FillScreenList(&app->screens);
 }
 
 
@@ -106,6 +109,11 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
     naDelete(naGetListFirstMutable(&na_App->windows));
   }
   naClearList(&na_App->windows, NA_NULL);
+
+  while(!naIsListEmpty(&na_App->screens)) {
+    naDelete(naGetListFirstMutable(&na_App->screens));
+  }
+  naClearList(&na_App->screens, NA_NULL);
 
   naStopTranslator();
   na_ClearCoreUIElement(&app->uiElement);

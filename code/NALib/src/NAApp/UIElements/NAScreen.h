@@ -20,6 +20,10 @@
 // Returns the main screen rect.
 NA_API NARect naGetMainScreenRect(void);
 
+// Creates a new window.
+NA_API NAScreen* naNewScreen(
+  void* nativePtr);
+
 
 
 #ifdef __cplusplus

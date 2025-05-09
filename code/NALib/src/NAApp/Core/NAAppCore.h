@@ -47,6 +47,7 @@ struct NA_UIElement{
 struct NAApplication{
   NA_UIElement      uiElement;
   
+  NAList            screens;         // A list of all screens
   NAList            windows;         // A list of all windows
   NAList            uiElements;      // A list of all ui elements in use.
   
@@ -125,6 +126,10 @@ struct NARadio{
 
 struct NAScreen{
   NA_UIElement uiElement;
+  NAString* name;
+  NARect rect;
+  NAPos relativeCenter; // relative pos of screen center in whole screen setup.
+  double scale;
 };
 
 struct NASlider{
@@ -363,8 +368,10 @@ NA_HAPI NARect na_GetRadioRect(const NA_UIElement* radio);
 NA_HAPI void na_SetRadioRect(NA_UIElement* radio, NARect rect);
 
 // NAScreen
-NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr);
+NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr, const NAUTF8Char* name, NARect rect, double scale);
 NA_HAPI void na_ClearScreen(NAScreen* screen);
+NA_HAPI void na_UpdateScreenRelativeCenter(NAScreen* screen, NARect totalRect);
+NA_HAPI void na_FillScreenList(NAList* screenList);
 NA_HAPI NARect na_GetScreenRect(const NA_UIElement* screen);
 NA_HAPI void na_SetScreenRect(NA_UIElement* screen, NARect rect);
 
