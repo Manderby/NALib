@@ -6,8 +6,9 @@
 
 
 
-NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr, const NAUTF8Char* name, NARect rect, double scale) {
+NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, const NAUTF8Char* name, NARect rect, double scale) {
   na_InitCoreUIElement(&screen->uiElement, NA_UI_SCREEN, nativePtr);
+  screen->isMain = isMain;
   screen->name = naNewStringWithFormat("%s", name);
   screen->rect = rect;
   // The relative center will be set properly in na_UpdateScreenRelativeCenter.
@@ -47,6 +48,11 @@ NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect) {
   #if NA_DEBUG
     naError("A screen can not be resized by software.");
   #endif
+}
+
+
+NA_DEF NAPos naGetScreenRelativeCenter(const NAScreen* screen) {
+  return screen->relativeCenter;
 }
 
 

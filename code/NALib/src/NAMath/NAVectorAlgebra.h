@@ -6,9 +6,9 @@
 #endif
 
 
-#include <stdlib.h>
 #include "../NABase/NABase.h"
-#include "NACoord.h"
+
+
 
 // In this file, you find basic vector algebra functions for both
 // Vector and Matrix.
@@ -1144,6 +1144,7 @@ NA_IAPI void naTranslateM44dS(double* D, double s1, double s2, double s3);
 NA_IAPI void naTranslateM33fS(float* D, float s1, float s2);
 NA_IAPI void naTranslateM44fS(float* D, float s1, float s2, float s3);
 
+NA_PROTOTYPE(NAPos);
 NA_IAPI NAPos naGetMat33dTranslation(const double* A);
 NA_IAPI double naGetMat33dMagnification(const double* A);
 

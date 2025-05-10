@@ -145,6 +145,53 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
 
 
 
+NA_DEF const NAScreen* naGetApplicationMainScreen() {
+  const NAScreen* mainScreen = NA_NULL;
+  NAListIterator it = naMakeListAccessor(&na_App->screens);
+  while(naIterateList(&it)) {
+    const NAScreen* screen = naGetListCurConst(&it);
+    if(naIsScreenMain(screen)) {
+      mainScreen = screen;
+      break;
+    }
+  }
+  naClearListIterator(&it);
+  return mainScreen;
+}
+
+
+
+NA_DEF const NAScreen* naGetApplicationCenterScreen() {
+  const NAScreen* centerScreen = NA_NULL;
+  double minDist = NA_INFINITY;
+  NAPos minCenter = naMakePosZero();
+  NAListIterator it = naMakeListAccessor(&na_App->screens);
+  while(naIterateList(&it)) {
+    const NAScreen* screen = naGetListCurConst(&it);
+    NAPos relativeCenter = naGetScreenRelativeCenter(screen);
+    double dist = naGetPosDistance(relativeCenter, naMakePos(.5, .5));
+    NABool newCenterFound = NA_FALSE;
+    if(dist < minDist) {
+      newCenterFound = NA_TRUE;
+    } else if (dist == minDist) {
+      if(relativeCenter.x < minCenter.x) {
+        newCenterFound = NA_TRUE;
+      } else if(relativeCenter.y < minCenter.y) {
+        newCenterFound = NA_TRUE;
+      } 
+    }
+    if(newCenterFound) {
+      centerScreen = screen;
+      minDist = dist;
+      minCenter = relativeCenter;
+    }
+  }
+  naClearListIterator(&it);
+  return centerScreen;
+}
+
+
+
 NA_DEF void naSetApplicationName(const NAUTF8Char* name) {
   NAApplication* app = naGetApplication();
   if(app->appName)

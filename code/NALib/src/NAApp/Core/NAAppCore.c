@@ -19,6 +19,7 @@
 
 
 #include "../../NAVisual/NAImage.h"
+#include "../../NAUtility/NAString.h"
 
 
 

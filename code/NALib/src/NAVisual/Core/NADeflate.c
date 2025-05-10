@@ -388,8 +388,8 @@ NA_HDEF void na_AllocFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuf
 
 
 NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input) {
-  uint8 compressionmethodflags;
-  uint8 compressionmethod;
+  uint8 compressionMethodflags;
+  uint8 compressionMethod;
   uint8 compressioninfo;
   uint16 windowsize;
   uint8 compressionadditionalflags;
@@ -416,20 +416,20 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
     if(naGetBufferEndianness(input) != NA_ENDIANNESS_NETWORK)
       naError("Input buffer should be big endianed");
   #endif
-  compressionmethodflags = naReadBufferu8(&iterIn);
-  compressionmethod = compressionmethodflags & 0x0f;
+  compressionMethodflags = naReadBufferu8(&iterIn);
+  compressionMethod = compressionMethodflags & 0x0f;
   #if NA_DEBUG
-    if(compressionmethod != NA_ZLIB_CMF_COMPRESSION_DEFLATE)
+    if(compressionMethod != NA_ZLIB_CMF_COMPRESSION_DEFLATE)
       naError("Compression method of Deflate buffer unknown");
   #endif
-  compressioninfo = (compressionmethodflags & 0xf0) >> 4;
+  compressioninfo = (compressionMethodflags & 0xf0) >> 4;
   #if NA_DEBUG
     if(compressioninfo > NA_ZLIB_CMF_MAX_WINDOW_SIZE)
       naError("Window size too big");
   #endif
   windowsize = (uint16)(1 << (compressioninfo + 8));
   compressionadditionalflags = naReadBufferu8(&iterIn);
-  flagcheck = compressionmethodflags * 256 + compressionadditionalflags;
+  flagcheck = compressionMethodflags * 256 + compressionadditionalflags;
   #if NA_DEBUG
     if(flagcheck % 31)
       naError("Flag check failed");
@@ -441,7 +441,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   NA_UNUSED(compressionlevel);
   #if NA_DEBUG
   #else
-    NA_UNUSED(compressionmethod);
+    NA_UNUSED(compressionMethod);
     NA_UNUSED(flagcheck);
   #endif
 

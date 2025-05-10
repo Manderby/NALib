@@ -3,7 +3,7 @@
 // implementation necessary.
 
 
-NA_DEF NAScreen* naNewScreen(
+NA_DEF NAScreen* na_NewScreen(
   void* nativePtr)
 {
   // todo

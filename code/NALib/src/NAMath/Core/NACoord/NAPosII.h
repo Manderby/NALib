@@ -5,6 +5,10 @@
 
 
 
+#include "NAVectorAlgebra.h"
+
+
+
 NA_IDEF NAPos naMakePos(double x, double y) {
   NAPos newPos;
   #if NA_DEBUG
@@ -128,6 +132,14 @@ NA_IDEF void naFillPosi64WithCopy(NAPosi64* posd, const NAPosi64* poss) {
 NA_IDEF void naFillPossWithCopy(NAPoss* posd, const NAPoss* poss) {
   posd->x = poss->x;
   posd->y = poss->y;
+}
+
+
+
+NA_IDEF double naGetPosDistance(const NAPos pos1, const NAPos pos2) {
+  NAVec2d p1 = {pos1.x, pos1.y};
+  NAVec2d p2 = {pos2.x, pos2.y};
+  return naDistanceV2d(p1, p2);
 }
 
 

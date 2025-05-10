@@ -15,7 +15,7 @@ NA_DEF NARect naGetMainScreenRect() {
 
 
 
-NA_DEF NAScreen* naNewScreen(
+NA_DEF NAScreen* na_NewScreen(
   void* nativePtr)
 {
   // A screen is given by its native pointer and not created as a NALib custom
@@ -29,6 +29,7 @@ NA_DEF NAScreen* naNewScreen(
   na_InitScreen(
     (NAScreen*)cocoaScreen,
     nativePtr,
+    nativePtr == [NSScreen mainScreen],
     [[nsScreen localizedName] UTF8String],
     naMakeRectWithNSRect([nsScreen frame]),
     [nsScreen backingScaleFactor]);
@@ -44,12 +45,18 @@ NA_DEF void na_DestructCocoaScreen(NACocoaScreen* cocoaScreen) {
 
 
 
+NA_HDEF NABool naIsScreenMain(const NAScreen* screen) {
+  return screen->isMain;
+}
+
+
+
 NA_HDEF void na_FillScreenList(NAList* screenList) {
   NSArray<NSScreen*>* nsScreens = [NSScreen screens];
   NARect totalRect = naMakeRectZero();
   for (size_t i = 0; i < [nsScreens count]; ++i) {
     NSScreen* nsScreen = [nsScreens objectAtIndex:i];
-    NAScreen* screen = naNewScreen(nsScreen);
+    NAScreen* screen = na_NewScreen(nsScreen);
     NARect screenRect = naGetUIElementRect(screen);
     totalRect = naIsRectEmpty(totalRect)
       ? screenRect

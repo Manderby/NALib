@@ -294,6 +294,8 @@ NA_IAPI void     naFillPosi32WithCopy(NAPosi32* posd, const NAPosi32* poss);
 NA_IAPI void     naFillPosi64WithCopy(NAPosi64* posd, const NAPosi64* poss);
 NA_IAPI void     naFillPossWithCopy  (NAPoss*   posd, const NAPoss*   poss);
 
+NA_IAPI double   naGetPosDistance(const NAPos pos1, const NAPos pos2);
+
 // NASize
 
 NA_IAPI NASize    naMakeSize    (double width, double height);

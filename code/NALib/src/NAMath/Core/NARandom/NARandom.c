@@ -5,29 +5,12 @@
 
 
 
-#include <stdlib.h>
-#include "../../NAUtility/NADateTime.h"
+#include "../../NARandom.h"
+#include "../../../NAUtility/NADateTime.h"
 
 
-NA_IDEF int32 naRand() {
-  #if NA_OS == NA_OS_WINDOWS
-    return (int32)rand();
-  #elif NA_IS_POSIX
-    return (int32)rand();
-  #endif
-}
 
-
-NA_IDEF void naSRand(uint32 seed) {
-  #if NA_OS == NA_OS_WINDOWS
-    srand(seed);
-  #elif NA_IS_POSIX
-    srand(seed);
-  #endif
-}
-
-
-NA_IDEF uint32 naSeedRand(uint32 seed) {
+NA_DEF uint32 naSeedRand(uint32 seed) {
   if(seed) {
     seed = (uint32)seed;
   }else{
@@ -38,33 +21,6 @@ NA_IDEF uint32 naSeedRand(uint32 seed) {
   return seed;
 }
 
-
-#define NA_INV_RAND_MAX  (1.  / RAND_MAX)
-#define NA_INV_RAND_MAXf (1.f / RAND_MAX)
-
-NA_IDEF double naUniformRandZE() {
-  double rnd;
-  do {
-    rnd = (double)naRand();
-  } while(rnd == RAND_MAX);
-  return rnd * NA_INV_RAND_MAX;
-}
-NA_IDEF float naUniformRandZEf() {
-  float rnd;
-  do {
-    rnd = (float)naRand();
-  } while(rnd == RAND_MAX);
-  return rnd * NA_INV_RAND_MAXf;
-}
-
-
-
-NA_IDEF double naUniformRandZI() {
-  return (double)naRand() * NA_INV_RAND_MAX;
-}
-NA_IDEF float naUniformRandZIf() {
-  return (float)naRand() * NA_INV_RAND_MAXf;
-}
 
 
 

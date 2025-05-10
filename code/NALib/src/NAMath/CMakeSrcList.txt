@@ -16,7 +16,6 @@ set(coreImplementationFiles
   ${NAMathDir}/Core/NAComplexII.h
   ${NAMathDir}/Core/NAMathOperators.c
   ${NAMathDir}/Core/NAMathOperatorsII.h
-  ${NAMathDir}/Core/NARandomII.h
 )
 
 set(coreCoordFiles
@@ -42,6 +41,11 @@ set(coreCoordFiles
   ${NAMathDir}/Core/NACoord/NASizeII.h
   ${NAMathDir}/Core/NACoord/NAVertexII.h
   ${NAMathDir}/Core/NACoord/NAVolumeII.h
+)
+
+set(coreRandomFiles
+  ${NAMathDir}/Core/NARandom/NARandom.c
+  ${NAMathDir}/Core/NARandom/NARandomII.h
 )
 
 set(coreVectorAlgebraFiles
