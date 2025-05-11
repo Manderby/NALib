@@ -106,12 +106,14 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
   // An NAWindow removes itself from the windows array automatically. So
   // no naForeach is allowed here.
   while(!naIsListEmpty(&na_App->windows)) {
+    // The window will remove itself from the list during deletion.
     naDelete(naGetListFirstMutable(&na_App->windows));
   }
   naClearList(&na_App->windows, NA_NULL);
 
   while(!naIsListEmpty(&na_App->screens)) {
-    naDelete(naGetListFirstMutable(&na_App->screens));
+    // The screen will NOT remove itself from the list during deletion.
+    naDelete(naRemoveListFirstMutable(&na_App->screens));
   }
   naClearList(&na_App->screens, NA_NULL);
 
