@@ -7,7 +7,15 @@
 
 
 
-NA_HDEF void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame) {
+NA_HDEF void na_InitWindow(
+  NAWindow* window,
+  void* nativePtr,
+  void* nativeScreenPtr,
+  NASpace* contentSpace,
+  NABool fullScreen,
+  NABool resizeable,
+  NARect windowedFrame)
+{
   na_InitCoreUIElement(&window->uiElement, NA_UI_WINDOW, nativePtr);
   naAddListLastMutable(&naGetApplication()->windows, window);
   window->contentSpace = contentSpace;
@@ -15,6 +23,12 @@ NA_HDEF void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSp
   if(fullScreen) { window->coreFlags |= NA_CORE_WINDOW_FLAG_FULLSCREEN; }
   if(resizeable) { window->coreFlags |= NA_CORE_WINDOW_FLAG_RESIZEABLE; }
   window->windowedFrame = windowedFrame;
+  
+  NAScreen* screen = na_GetApplicationScreenWithNativePtr(nativeScreenPtr);
+  na_AddScreenWindow(
+    screen,
+    window);
+  na_SetUIElementParent((NA_UIElement*)window, screen, NA_TRUE);
 }
 
 
@@ -26,6 +40,18 @@ NA_HDEF void na_ClearWindow(NAWindow* window) {
     naDelete(window->contentSpace);
   
   na_ClearCoreUIElement(&window->uiElement);
+}
+
+
+
+NA_HDEF void na_UpdateWindowScreen(NAWindow* window, void* nativeScreenPtr) {
+  NAScreen* screen = na_GetApplicationScreenWithNativePtr(nativeScreenPtr);
+  NAScreen* oldScreen = naGetUIElementParentMutable(window);
+  if(screen != oldScreen) {
+    na_RemoveScreenWindow(oldScreen, window);
+    na_AddScreenWindow(screen, window);
+    na_SetUIElementParent((NA_UIElement*)window, screen, NA_TRUE);
+  }
 }
 
 
@@ -48,6 +74,12 @@ NA_HDEF void na_RememberWindowPosition(const NAWindow* window) {
       naDelete(prefSizeHeightString);
     }
   }
+}
+
+
+
+NA_DEF const NAScreen* naGetWindowScreen(const NAWindow* window) {
+  return naGetUIElementParent(window);
 }
 
 

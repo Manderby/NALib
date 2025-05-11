@@ -239,7 +239,13 @@ void naHandleWindowTabOrder(NAReaction reaction) {
 
 
 
-NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, size_t storageTag) {
+NA_DEF NAWindow* naNewWindow(
+  const NAUTF8Char* title,
+  NARect rect,
+  uint32 flags,
+  size_t storageTag,
+  const NAScreen* screen)
+{
   NAWINAPIWindow* winapiWindow = naNew(NAWINAPIWindow);
 
   NABool resizeable = naGetFlagu32(flags, NA_WINDOW_RESIZEABLE);
@@ -286,7 +292,14 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
 
   naFree(systemTitle);
 
-  na_InitWindow(&winapiWindow->window, nativePtr, NA_NULL, NA_FALSE, resizeable, rect);
+  na_InitWindow(
+    &winapiWindow->window,
+    nativePtr,
+    NA_NULL,  // nativeScreenPtr, todo
+    NA_NULL,
+    NA_FALSE,
+    resizeable,
+    rect);
   winapiWindow->firstResponder = NA_NULL;
   winapiWindow->window.flags = flags;
 
@@ -303,8 +316,6 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
 
   NASpace* contentSpace = naNewSpace(naMakeSize(rect.size.width, rect.size.height));
   naSetWindowContentSpace(&winapiWindow->window, contentSpace);
-
-  na_SetUIElementParent((NA_UIElement*)winapiWindow, naGetApplication(), NA_TRUE);
 
   return (NAWindow*)winapiWindow;
 }

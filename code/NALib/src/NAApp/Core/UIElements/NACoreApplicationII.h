@@ -145,6 +145,12 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
 
 
 
+NA_HDEF NABool naIsScreenMain(const NAScreen* screen) {
+  return screen->isMain;
+}
+
+
+
 NA_DEF const NAScreen* naGetApplicationMainScreen() {
   const NAScreen* mainScreen = NA_NULL;
   NAListIterator it = naMakeListAccessor(&na_App->screens);
@@ -161,7 +167,7 @@ NA_DEF const NAScreen* naGetApplicationMainScreen() {
 
 
 
-NA_DEF const NAScreen* naGetApplicationCenterScreen() {
+NA_DEF const NAScreen* naGetApplicationScreen(NAPos pos) {
   const NAScreen* centerScreen = NA_NULL;
   double minDist = NA_INFINITY;
   NAPos minCenter = naMakePosZero();
@@ -169,7 +175,7 @@ NA_DEF const NAScreen* naGetApplicationCenterScreen() {
   while(naIterateList(&it)) {
     const NAScreen* screen = naGetListCurConst(&it);
     NAPos relativeCenter = naGetScreenRelativeCenter(screen);
-    double dist = naGetPosDistance(relativeCenter, naMakePos(.5, .5));
+    double dist = naGetPosDistance(relativeCenter, pos);
     NABool newCenterFound = NA_FALSE;
     if(dist < minDist) {
       newCenterFound = NA_TRUE;
@@ -188,6 +194,22 @@ NA_DEF const NAScreen* naGetApplicationCenterScreen() {
   }
   naClearListIterator(&it);
   return centerScreen;
+}
+
+
+
+NA_HDEF NAScreen* na_GetApplicationScreenWithNativePtr(void* nativePtr) {
+  NAScreen* theScreen = NA_NULL;
+  NAListIterator it = naMakeListMutator(&na_App->screens);
+  while(naIterateList(&it)) {
+    NAScreen* screen = naGetListCurMutable(&it);
+    if(naGetUIElementNativePtrConst(screen) == nativePtr) {
+      theScreen = screen;
+      break;
+    }
+  }
+  naClearListIterator(&it);
+  return theScreen;
 }
 
 

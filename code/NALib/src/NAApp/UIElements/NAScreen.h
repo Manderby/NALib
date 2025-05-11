@@ -35,6 +35,10 @@ NA_API NABool naIsScreenMain(const NAScreen* screen);
 // in the range of [0, 1], whereas 0.5 is in the center of the whole setup.
 NA_API NAPos naGetScreenRelativeCenter(const NAScreen* screen);
 
+// Returns the rectangle in the whole screen setup which is safe for display
+// regarding the given screen. This excludes places where a dock, taskbar or
+// menu might be located.
+NA_API NARect naGetScreenUsableRect(const NAScreen* screen);
 
 #ifdef __cplusplus
   } // extern "C"

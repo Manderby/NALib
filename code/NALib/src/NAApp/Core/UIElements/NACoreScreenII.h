@@ -14,12 +14,16 @@ NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, con
   // The relative center will be set properly in na_UpdateScreenRelativeCenter.
   screen->relativeCenter = naMakePosZero();
   screen->scale = scale;
+  naInitList(&screen->windows);
+
+  na_SetUIElementParent((NA_UIElement*)screen, naGetApplication(), NA_TRUE);
 }
 
 
 
 NA_HDEF void na_ClearScreen(NAScreen* screen) {
   na_ClearCoreUIElement(&screen->uiElement);
+  naClearList(&screen->windows, NA_NULL);  // does not own the windows.
   naDelete(screen->name);
 }
 
@@ -31,6 +35,15 @@ NA_HDEF void na_UpdateScreenRelativeCenter(NAScreen* screen, NARect totalRect) {
   screen->relativeCenter = naMakePos(
     (center.x - totalRect.pos.x) / totalRect.size.width,
     (center.y - totalRect.pos.y) / totalRect.size.height);
+}
+
+
+
+NA_HDEF void na_AddScreenWindow(NAScreen* screen, NAWindow* window) {
+  naAddListLastMutable(&screen->windows, window);
+}
+NA_HDEF void na_RemoveScreenWindow(NAScreen* screen, NAWindow* window) {
+  naRemoveListData(&screen->windows, window);
 }
 
 

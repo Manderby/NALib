@@ -158,10 +158,13 @@ NA_API void naResetApplicationPreferredTranslatorLanguages(void);
 
 // Returns the screen which is marked as main screen by the system
 NA_API const NAScreen* naGetApplicationMainScreen(void);
-// Returns the screen which is centermost in the current screen setup. If there
-// are multiple screens being equally close to the center, the one screen
-// left-most and then bottom-most of those screens is chosen.
-NA_API const NAScreen* naGetApplicationCenterScreen(void);
+
+// Returns the screen which is closest to the given reltaive position in the
+// current screen setup. The position is given in values in range [0, 1] where
+// the position x=0.5 and y=0.5) for example returns the centermost screen.
+// If there are multiple screens being equally close to the position, the one
+// screen left-closest and then bottom-closest of those screens is chosen.
+NA_API const NAScreen* naGetApplicationScreen(NAPos pos);
 
 // Define basic information about the application. On a mac, these informations
 // can be extracted automatically from a plist file if not defined. On windows

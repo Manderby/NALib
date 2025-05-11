@@ -45,8 +45,13 @@ NA_DEF void na_DestructCocoaScreen(NACocoaScreen* cocoaScreen) {
 
 
 
-NA_HDEF NABool naIsScreenMain(const NAScreen* screen) {
-  return screen->isMain;
+NA_API NARect naGetScreenUsableRect(const NAScreen* screen) {
+  NSScreen* nsScreen = screen->uiElement.nativePtr;
+  NARect usableRect = naMakeRectWithNSRect([nsScreen visibleFrame]);
+  NSRect frame = [nsScreen frame];
+  usableRect.pos.x -= frame.origin.x;
+  usableRect.pos.y -= frame.origin.y;
+  return usableRect;
 }
 
 

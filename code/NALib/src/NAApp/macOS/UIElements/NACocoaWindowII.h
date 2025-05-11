@@ -132,6 +132,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 - (void)windowDidMove:(NSNotification *)notification{
   NA_UNUSED(notification);
+  na_UpdateWindowScreen((NAWindow*)cocoaWindow, [self screen]);
   na_RememberWindowPosition((NAWindow*)cocoaWindow);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
     // don't know what to do.
@@ -164,7 +165,13 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 
 
-NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags, size_t storageTag) {
+NA_DEF NAWindow* naNewWindow(
+  const NAUTF8Char* title,
+  NARect rect,
+  uint32 flags,
+  size_t storageTag,
+  const NAScreen* screen)
+{
   NACocoaWindow* cocoaWindow = naNew(NACocoaWindow);
 
   NABool resizeable = naGetFlagu32(flags, NA_WINDOW_RESIZEABLE);
@@ -198,7 +205,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
     styleMask:styleMask
     backing:NSBackingStoreBuffered
     defer:NO
-    screen:nil];
+    screen:screen ? naGetUIElementNativePtrConst(screen) : nil];
   
   if(auxiliary) {
     [nativePtr setKeepOnTop:YES];
@@ -210,14 +217,19 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, uint32 flags,
   [nativePtr setDelegate:nativePtr];
   [nativePtr setTitle:[NSString stringWithUTF8String:title]];
   [nativePtr setInitialFirstResponder:[nativePtr contentView]];
-  na_InitWindow((NAWindow*)cocoaWindow, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL, NA_FALSE, resizeable, rect);
+  na_InitWindow(
+    (NAWindow*)cocoaWindow,
+    NA_COCOA_PTR_OBJC_TO_C(nativePtr),
+    NA_COCOA_PTR_OBJC_TO_C([nativePtr screen]),
+    NA_NULL,
+    NA_FALSE,
+    resizeable,
+    rect);
 
   cocoaWindow->window.flags = flags;
 
   NASpace* space = naNewSpace(rect.size);
   naSetWindowContentSpace((NAWindow*)cocoaWindow, space);
-
-  na_SetUIElementParent((NA_UIElement*)cocoaWindow, naGetApplication(), NA_TRUE);
 
   return (NAWindow*)cocoaWindow;
 }

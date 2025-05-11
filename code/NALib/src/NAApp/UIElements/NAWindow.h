@@ -46,7 +46,8 @@ NA_API NAWindow* naNewWindow(
   const NAUTF8Char* title,
   NARect rect,
   uint32 flags,
-  size_t storageTag);
+  size_t storageTag,
+  const NAScreen* screen);
 
 // Get and set the content space.
 NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
@@ -60,6 +61,9 @@ NA_API void naCloseWindow(const NAWindow* window);
 // Close must be called explicitely.
 NA_API void naShowWindowModal(NAWindow* window, NAWindow* parentWindow);
 NA_API void naCloseWindowModal(NAWindow* window);
+
+// Returns the screen the window is attached to.
+NA_API const NAScreen* naGetWindowScreen(const NAWindow* window);
 
 // During a NA_UI_COMMAND_CLOSES command, call this function to prevent the
 // window from closing. If not called, the window will close.
