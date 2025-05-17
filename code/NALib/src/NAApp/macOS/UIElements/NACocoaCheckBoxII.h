@@ -58,7 +58,7 @@ NA_RUNTIME_TYPE(NACocoaCheckBox, na_DestructCocoaCheckBox, NA_FALSE);
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaCheckBox, NA_UI_COMMAND_PRESSED)) {
-    // don't know what to do.
+    // no super method to be called.
   }
 }
 

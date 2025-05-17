@@ -28,7 +28,7 @@ NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
 
 - (void)itemSelected:(id)sender{
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMenuItem, NA_UI_COMMAND_PRESSED)) {
-    // don't know what to do.
+    // no super method to be called.
   }
 }
 

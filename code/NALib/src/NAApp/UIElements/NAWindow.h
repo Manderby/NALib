@@ -41,13 +41,11 @@
 
 
 
-// Creates a new window.
+// Creates a new window. Use Null for screen to use the main screen.
 NA_API NAWindow* naNewWindow(
   const NAUTF8Char* title,
   NARect rect,
-  uint32 flags,
-  size_t storageTag,
-  const NAScreen* screen);
+  uint32 flags);
 
 // Get and set the content space.
 NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
@@ -80,6 +78,13 @@ NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);
 // Get various properties of the window
 NA_API NABool naIsWindowResizeable(const NAWindow* window);
 
+// Set a value different from zero to automatically store position and size
+// of the window. If the same storageTag is used in a later run of an app,
+// this call will automatically restore the stored position and size.
+// This provides an easy way for small applicaitons to remember window
+// arrangements.
+NA_API void naSetWindowStorageTag(NAWindow* window, size_t storageTag);
+
 // Get and set the outer (non-client) rect of the window. Note that the
 // function naGetUIElementRect will always return the inner (client) rect of
 // the window.
@@ -94,14 +99,6 @@ NA_API void naSetWindowAcceptsKeyboardReactions(NAWindow* window, NABool accepts
 // Get and set the first tab element of the window.
 NA_API void* naGetWindowFirstTabElement(NAWindow* window);
 NA_API void naSetWindowFirstTabElement(NAWindow* window, const void* firstTabElem);
-
-// Set the storage tag for automatically remembering the position of the
-// window.
-NA_API NARect naSetWindowStorageTag(
-  NAWindow* window,
-  size_t storageTag,
-  NARect rect,
-  NABool resizeable);
 
 
 

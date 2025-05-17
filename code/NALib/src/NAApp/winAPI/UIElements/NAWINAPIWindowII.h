@@ -61,10 +61,10 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
       windowMutable->rect.pos.y = screenRect.size.height - (double)HIWORD(lParam) / uiScale - windowMutable->rect.size.height;
 
       if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE)) {
-        // don't know what to do.
+        // no super method to be called.
       }
       if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW)) {
-        // don't know what to do.
+        // no super method to be called.
       }
       na_RememberWindowPosition(&windowMutable->window);
       info.result = 0;
@@ -98,10 +98,10 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
     naSetUIElementRect(contentSpace, contentRect);
 
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE)) {
-      // don't know what to do.
+      // no super method to be called.
     }
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW)) {
-      // don't know what to do.
+      // no super method to be called.
     }
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
@@ -111,7 +111,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
     windowMutable = (NAWINAPIWindow*)naGetUIElementWindowMutable(uiElement);
     naSetFlagu32(&windowMutable->window.flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES)) {
-      // don't know what to do.
+      // no super method to be called.
     }
     shouldClose = !naGetFlagu32(windowMutable->window.flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
     naSetFlagu32(&windowMutable->window.flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
@@ -242,15 +242,11 @@ void naHandleWindowTabOrder(NAReaction reaction) {
 NA_DEF NAWindow* naNewWindow(
   const NAUTF8Char* title,
   NARect rect,
-  uint32 flags,
-  size_t storageTag,
-  const NAScreen* screen)
+  uint32 flags)
 {
   NAWINAPIWindow* winapiWindow = naNew(NAWINAPIWindow);
 
   NABool resizeable = naGetFlagu32(flags, NA_WINDOW_RESIZEABLE);
-
-  rect = naSetWindowStorageTag(&winapiWindow->window, storageTag, rect, resizeable);
 
   DWORD style = WS_OVERLAPPEDWINDOW;
   if(!resizeable) {

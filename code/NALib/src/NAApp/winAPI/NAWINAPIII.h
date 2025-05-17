@@ -408,7 +408,7 @@ NABool naWINAPICaptureMouseHover() {
       }
 
       if(!na_DispatchUIElementCommand(curElement, NA_UI_COMMAND_MOUSE_EXITED)) {
-        // don't know what to do.
+        // no super method to be called.
       }
       curElement = naGetUIElementParentMutable(curElement);
     }
@@ -433,7 +433,7 @@ NABool naWINAPICaptureMouseHover() {
       }
 
       if(!na_DispatchUIElementCommand(elementUnderMouse, NA_UI_COMMAND_MOUSE_ENTERED)) {
-        // don't know what to do.
+        // no super method to be called.
       }
       elementUnderMouse = naGetUIElementParentMutable(elementUnderMouse);
     }
@@ -468,7 +468,7 @@ NAWINAPICallbackInfo na_HandleMousePress(
       ? NA_UI_COMMAND_MOUSE_DOWN
       : NA_UI_COMMAND_MOUSE_UP;
     if(!na_DispatchUIElementCommand(uiElement, command)) {
-      // don't know what to do.
+      // no super method to be called.
     }
     info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
@@ -544,7 +544,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
       na_SetMouseMovedByDiff(na_GetApplicationMouseStatus(naGetApplication()), size.width - pos.x, size.height - pos.y);
 
       if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED)) {
-        // don't know what to do.
+        // no super method to be called.
       }
       info.result = 0;
       info.hasBeenHandeled = NA_TRUE;
@@ -558,7 +558,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
   case WM_KEYDOWN:
     if(na_UIHasElementCommandDispatches(elem, NA_UI_COMMAND_KEY_DOWN)) {
       if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_DOWN)) {
-        // don't know what to do.
+        // no super method to be called.
       }
       info.result = 0;
       info.hasBeenHandeled = NA_TRUE;
@@ -568,7 +568,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
   case WM_KEYUP:
     if(na_UIHasElementCommandDispatches(elem, NA_UI_COMMAND_KEY_UP)) {
       if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_UP)) {
-        // don't know what to do.
+        // no super method to be called.
       }
       info.result = 0;
       info.hasBeenHandeled = NA_TRUE;
@@ -849,7 +849,7 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam) {
 
     if(menuItem) {
       if(!na_DispatchUIElementCommand((const NA_UIElement*)menuItem, NA_UI_COMMAND_PRESSED)) {
-        // don't know what to do.
+        // no super method to be called.
       }
       hasBeenHandeled = NA_TRUE;
     }

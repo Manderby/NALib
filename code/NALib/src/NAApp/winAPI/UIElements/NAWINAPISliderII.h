@@ -96,7 +96,7 @@ NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam) {
 
   naSetSliderValue(uiElement, naGetSliderValue(uiElement));
   if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED)) {
-    // don't know what to do.
+    // no super method to be called.
   }
 
   return info;

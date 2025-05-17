@@ -109,7 +109,7 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 - (void)textDidChange:(NSNotification *)obj{
   NA_UNUSED(obj);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaTextBox, NA_UI_COMMAND_EDITED)) {
-    // don't know what to do.
+    // no super method to be called.
   }
 }
 

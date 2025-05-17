@@ -43,7 +43,7 @@ NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     check = naGetRadioState(uiElement);
     naSetRadioState(uiElement, !check);
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED)) {
-      // don't know what to do.
+      // no super method to be called.
     }
     info.result = 0;
     info.hasBeenHandeled = NA_TRUE;

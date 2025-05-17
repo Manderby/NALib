@@ -36,9 +36,8 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
   NABool shouldClose;
   NA_UNUSED(sender);
   naSetFlagu32(&cocoaWindow->window.coreFlags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
-  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_CLOSES))
-  {
-    // don't know what to do.
+  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_CLOSES)) {
+    // no super method to be called.
   }
   shouldClose = !naGetFlagu32(cocoaWindow->window.coreFlags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
   naSetFlagu32(&cocoaWindow->window.coreFlags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
@@ -52,7 +51,9 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 - (void)setContentRect:(NARect)rect{
   NSRect frame = [NSWindow frameRectForContentRect:naMakeNSRectWithRect(rect) styleMask:[self styleMask]];
-  [self setFrame: frame];
+  if(!NSEqualRects([self frame], frame)) {
+    [self setFrame: frame];
+  }
 }
 
 - (void)setFrame:(NSRect)frame {
@@ -126,23 +127,25 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
   na_RememberWindowPosition((NAWindow*)cocoaWindow);
   na_UpdateMouseTracking(&cocoaWindow->window.uiElement);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
-    // don't know what to do.
+    // no super method to be called.
   }
 }
 
 - (void)windowDidMove:(NSNotification *)notification{
+  // Note that this method will also be called after a window is created with
+  // naNewWindow when the rect is outside of the main screen.
   NA_UNUSED(notification);
   na_UpdateWindowScreen((NAWindow*)cocoaWindow, [self screen]);
   na_RememberWindowPosition((NAWindow*)cocoaWindow);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
-    // don't know what to do.
+    // no super method to be called.
   }
 }
 
 - (void)windowDidChangeBackingProperties:(NSNotification *)notification{    
   NA_UNUSED(notification);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
-    // don't know what to do.
+    // no super method to be called.
   }
 }
 
@@ -157,7 +160,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 - (void)windowDidBecomeMain:(NSNotification *)notification{
   NA_UNUSED(notification);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_PRESSED)) {
-    // don't know what to do.
+    // no super method to be called.
   }
 }
 
@@ -168,9 +171,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 NA_DEF NAWindow* naNewWindow(
   const NAUTF8Char* title,
   NARect rect,
-  uint32 flags,
-  size_t storageTag,
-  const NAScreen* screen)
+  uint32 flags)
 {
   NACocoaWindow* cocoaWindow = naNew(NACocoaWindow);
 
@@ -180,8 +181,6 @@ NA_DEF NAWindow* naNewWindow(
   NABool nonminiaturizeable = naGetFlagu32(flags, NA_WINDOW_NON_MINIATURIZEABLE);
   NABool auxiliary = naGetFlagu32(flags, NA_WINDOW_AUXILIARY);
   
-  rect = naSetWindowStorageTag((NAWindow*)cocoaWindow, storageTag, rect, resizeable);
-
   NSUInteger styleMask = 0;
   if(resizeable) {
     styleMask |= NAWindowStyleMaskResizable;
@@ -198,6 +197,13 @@ NA_DEF NAWindow* naNewWindow(
 //  if(auxiliary) {
 //    styleMask |= NAWindowStyleMaskNonactivatingPanel | NAWindowStyleMaskUtilityWindow;
 //  }
+  
+  const NAScreen* screen = naGetApplicationScreenWithPos(naGetRectCenter(rect));
+  if(screen) {
+    NARect screenRect = na_GetScreenRect(&screen->uiElement);
+    rect.pos.x -= screenRect.pos.x;
+    rect.pos.y -= screenRect.pos.y;
+  }
   
   NACocoaNativeWindow* nativePtr = [[NACocoaNativeWindow alloc]
     initWithWindow:cocoaWindow
@@ -290,8 +296,18 @@ NA_HDEF NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window) {
 
 
 NA_DEF void naShowWindow(const NAWindow* window) {
+  // Unfortunately, macOS automatically changes the position of the window if
+  // it does not fit properly on the screen. We do not want that, therefore,
+  // we need to manually readjust the intended rect after the call to
+  // makeKeyAndOrderFront. Which requires a mutable pointer. Not great but
+  // that's what you get if the os is trying to do things automatically which
+  // are not supposed to.
+  NAWindow* mutableWindow = (NAWindow*)window;
+  
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
+  NARect rect = na_GetWindowRect(&window->uiElement);
   [nativePtr makeKeyAndOrderFront:NA_NULL];
+  na_SetWindowRect(&mutableWindow->uiElement, rect);
 }
 
 NA_DEF void naShowWindowModal(NAWindow* window, NAWindow* parentWindow) {

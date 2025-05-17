@@ -169,8 +169,8 @@ NA_DEF const NAScreen* naGetApplicationMainScreen() {
 
 
 
-NA_DEF const NAScreen* naGetApplicationScreen(NAPos pos) {
-  const NAScreen* centerScreen = NA_NULL;
+NA_DEF const NAScreen* naGetApplicationScreenWithRelativePos(NAPos pos) {
+  const NAScreen* desiredScreen = NA_NULL;
   double minDist = NA_INFINITY;
   NAPos minCenter = naMakePosZero();
   NAListIterator it = naMakeListAccessor(&na_App->screens);
@@ -189,13 +189,42 @@ NA_DEF const NAScreen* naGetApplicationScreen(NAPos pos) {
       } 
     }
     if(newCenterFound) {
-      centerScreen = screen;
+      desiredScreen = screen;
       minDist = dist;
       minCenter = relativeCenter;
     }
   }
   naClearListIterator(&it);
-  return centerScreen;
+  return desiredScreen;
+}
+
+
+
+NA_DEF const NAScreen* naGetApplicationScreenWithPos(NAPos pos) {
+  NAScreen* theScreen = NA_NULL;
+
+  double minDist = NA_INFINITY;
+  NAPos minCenter = naMakePosZero();
+
+  NAListIterator it = naMakeListMutator(&na_App->screens);
+  while(naIterateList(&it)) {
+    NAScreen* screen = naGetListCurMutable(&it);
+    NARect rect = na_GetScreenRect(&screen->uiElement);
+    NAPos center = naGetRectCenter(rect);
+    if(naContainsRectPoint(rect, pos)) {
+      theScreen = screen;
+      break;
+    }else{
+      double dist = naGetPosDistance(center, pos);
+      if(dist < minDist) {
+        theScreen = screen;
+        minDist = dist;
+        minCenter = center;
+      }
+    }
+  }
+  naClearListIterator(&it);
+  return theScreen;
 }
 
 

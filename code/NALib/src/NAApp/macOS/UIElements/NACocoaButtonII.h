@@ -102,7 +102,7 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED)) {
-    // don't know what to do.
+    // no super method to be called.
   }
   [self updateButtonBackground];
   [self updateButtonText];

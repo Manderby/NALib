@@ -5,7 +5,7 @@
 
 
 
-#include "NAVectorAlgebra.h"
+#include "../../NAVectorAlgebra.h"
 
 
 

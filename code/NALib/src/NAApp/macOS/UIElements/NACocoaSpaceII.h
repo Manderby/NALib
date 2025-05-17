@@ -107,7 +107,7 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
   }else{
     [super mouseDragged:event];
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
-      // don't know what to do.
+      // no super method to be called.
     }
   }
 }
