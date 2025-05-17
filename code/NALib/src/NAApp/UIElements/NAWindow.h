@@ -23,6 +23,7 @@
 // error otherwise.
 
 
+
 // Window flags:
 #define NA_WINDOW_FIXED_SIZE             0x00
 #define NA_WINDOW_RESIZEABLE             0x01
@@ -38,8 +39,6 @@
 
 #define NA_WINDOW_MINIATURIZEABLE        0x00
 #define NA_WINDOW_NON_MINIATURIZEABLE    0x10
-
-
 
 // Creates a new window. Use Null for screen to use the main screen.
 NA_API NAWindow* naNewWindow(
