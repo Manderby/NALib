@@ -195,7 +195,10 @@ NA_DEF NAWindow* naNewWindow(
     styleMask |= NAWindowStyleMaskMiniaturizable;
   }
   // Commented out because in newer macOS versions, there is no more distinction
-  // between auxiliary and normal windows
+  // between auxiliary and normal windows. And the non-activating property
+  // doesn't really work well together with other properties. This will probably
+  // never be reintroduced again, since further below, some properties of
+  // auxiliary windows are set manually, but this remains here for reference.
 //  if(auxiliary) {
 //    styleMask |= NAWindowStyleMaskNonactivatingPanel | NAWindowStyleMaskUtilityWindow;
 //  }
