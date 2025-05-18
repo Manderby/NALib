@@ -248,7 +248,6 @@ NAString* naNewStringWithKeyStroke(const NAKeyStroke* keyStroke) {
   UniCharCount realLength;
                 
   UInt32 modifierKeyState = 0;
-  
   if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_SHIFT)) { modifierKeyState |= shiftKey; }
   if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_CONTROL)) { modifierKeyState |= controlKey; }
   if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_OPTION)) { modifierKeyState |= optionKey; }

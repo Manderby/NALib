@@ -13,8 +13,8 @@
 
 
 
-// Creates a new menuItem with a text entry
-NA_API NAMenuItem* naNewMenuItem(const NAUTF8Char* text);
+// Creates a new menuItem with a text entry. The keyStroke can be nullptr
+NA_API NAMenuItem* naNewMenuItem(const NAUTF8Char* text, NAKeyStroke* keyStroke);
 
 // Creates a new menuItem which is a separator.
 NA_API NAMenuItem* naNewMenuSeparator(void);

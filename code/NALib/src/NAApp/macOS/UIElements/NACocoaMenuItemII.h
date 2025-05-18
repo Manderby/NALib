@@ -16,11 +16,33 @@ NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
 
 @implementation NACocoaNativeMenuItem
 
-- (id) initWithMenuItem:(NACocoaMenuItem*)newCocoaMenuItem text:(const NAUTF8Char*) text{
-  self = [super
-    initWithTitle:[NSString stringWithUTF8String:text]
-    action:@selector(itemSelected:)
-    keyEquivalent:@""];
+- (id) initWithMenuItem:(NACocoaMenuItem*)newCocoaMenuItem text:(const NAUTF8Char*) text keyStroke:(NAKeyStroke*) stroke{
+  if(stroke) {
+    NAKeyStroke* unmodifiedStroke = naNewKeyStroke(naGetKeyStrokeKeyCode(stroke), 0);
+    NAString* visibleKey = naNewStringWithKeyStroke(unmodifiedStroke);
+    
+    self = [super
+      initWithTitle:[NSString stringWithUTF8String:text]
+      action:@selector(itemSelected:)
+      keyEquivalent:[NSString stringWithUTF8String:naGetStringUTF8Pointer(visibleKey)]];
+    
+    naDelete(visibleKey);
+    naDelete(unmodifiedStroke);
+
+    NSEventModifierFlags flags = 0;
+      if(naGetKeyStrokeModifierPressed(stroke, NA_KEY_MODIFIER_SHIFT)) { flags |= NAEventModifierFlagShift; }  
+      if(naGetKeyStrokeModifierPressed(stroke, NA_KEY_MODIFIER_CONTROL)) { flags |= NAEventModifierFlagControl; }  
+      if(naGetKeyStrokeModifierPressed(stroke, NA_KEY_MODIFIER_OPTION)) { flags |= NAEventModifierFlagOption; }  
+      if(naGetKeyStrokeModifierPressed(stroke, NA_KEY_MODIFIER_COMMAND)) { flags |= NAEventModifierFlagCommand; }  
+    [self setKeyEquivalentModifierMask:flags];
+    
+  }else{
+    self = [super
+      initWithTitle:[NSString stringWithUTF8String:text]
+      action:@selector(itemSelected:)
+      keyEquivalent:@""];
+  }
+  
   [self setTarget:self];
   cocoaMenuItem = newCocoaMenuItem;
   return self;
@@ -41,12 +63,13 @@ NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
 
 
 
-NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text) {
+NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text, NAKeyStroke* keyStroke) {
   NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
   
   NACocoaNativeMenuItem* nativeItemPtr = [[NACocoaNativeMenuItem alloc]
     initWithMenuItem:cocoaMenuItem
-    text: text];
+    text: text
+    keyStroke: keyStroke];
   na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), NA_NULL);
 
   return (NAMenuItem*)cocoaMenuItem;
