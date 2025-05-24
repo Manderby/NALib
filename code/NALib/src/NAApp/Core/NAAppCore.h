@@ -100,6 +100,7 @@ struct NAMenu{
 
 struct NAMenuItem{
   NA_UIElement uiElement;
+  NAMenu* subMenu;
 };
 
 

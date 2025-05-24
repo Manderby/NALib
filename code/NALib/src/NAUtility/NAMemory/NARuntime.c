@@ -423,6 +423,11 @@ NA_DEF void* na_CreateStruct(NATypeInfo* info) {
 NA_HIDEF void na_EjectPoolPartObject(NA_PoolPart* part, void* pointer) {
   // The memory at pointer is expected to be erased and hence garbage.
 
+  #if NA_DEBUG
+    if(part->usedCount == 0)
+      naError("Too many objects deleted.");
+  #endif
+
   // We explicitely store a pointer to the next unused space at that
   // position, ultimately creating a list.
   // Note that for reference counting types, we store the next pointer at
