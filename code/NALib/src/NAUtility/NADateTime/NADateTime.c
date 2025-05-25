@@ -410,7 +410,12 @@ NA_DEF NADateTime naMakeDateTimeNow() {
   #endif
 }
 
-
+NA_DEF NADateTime naMakeDateTimePast() {
+  return naMakeDateTimeWithNALibSecondNumber(NA_MIN_i64);
+}
+NA_DEF NADateTime naMakeDateTimeFuture() {
+  return naMakeDateTimeWithNALibSecondNumber(NA_MAX_i64);
+}
 
 
 

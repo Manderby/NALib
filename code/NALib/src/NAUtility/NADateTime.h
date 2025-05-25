@@ -126,6 +126,10 @@ NA_IAPI NADateTime naMakeDateTime(  int64 year,
 // with naGetDateTimeDiff.
 NA_API NADateTime naMakeDateTimeNow(void);
 
+// Returns an NADateTime struct with a time in the distant past or future.
+NA_API NADateTime naMakeDateTimePast(void);
+NA_API NADateTime naMakeDateTimeFuture(void);
+
 // Returns an NADateTime struct with the given second number interpreted like
 // in NALib. Nanoseconds and Timeshift will be zero.
 NA_IAPI NADateTime naMakeDateTimeWithNALibSecondNumber(int64 secondNumber);
