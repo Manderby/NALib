@@ -133,7 +133,7 @@ struct NAScreen{
   NAString* name;
   NARect rect;
   NAPos relativeCenter; // relative pos of screen center in whole screen setup.
-  double scale;
+  double uiScale;
   NAList windows; // References. Does NOT own the windows. The application does.
 };
 
@@ -374,7 +374,7 @@ NA_HAPI void na_SetRadioRect(NA_UIElement* radio, NARect rect);
 // NAScreen
 // Creates a new screen.
 NA_HAPI NAScreen* na_NewScreen(void* nativePtr);
-NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, const NAUTF8Char* name, NARect rect, double scale);
+NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, const NAUTF8Char* name, NARect rect, double uiScale);
 NA_HAPI void na_ClearScreen(NAScreen* screen);
 NA_HAPI void na_UpdateScreenRelativeCenter(NAScreen* screen, NARect totalRect);
 NA_HAPI NARect na_FillScreenList(NAList* screenList);

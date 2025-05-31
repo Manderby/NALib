@@ -99,8 +99,7 @@ void checkBoxPressed(NAReaction reaction){
   naSetLabelText(con->outputLabel, "CheckBox Pressed");
 }
 
-void initOpenGL(void* initData)
-{
+static void initOpenGL(void* initData) {
   ExperimentController* con = (ExperimentController*)initData;
   con->fontId = naStartupPixelFont();
 }
@@ -125,7 +124,7 @@ void redrawOpenGLSpace(NAReaction reaction){
 
   static float ang = 0.f;
 
-  ang += .05f;
+  ang += .01f;
   if(ang > NA_PI2f){ang = 0.f;}
 
 
@@ -141,6 +140,9 @@ void redrawOpenGLSpace(NAReaction reaction){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glDisable(GL_TEXTURE_2D);
+  // Enable blending to render pixel font properly
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glColor4f(1.f, .5f, 1.f, 1.f);
   glPointSize(5);
@@ -148,7 +150,7 @@ void redrawOpenGLSpace(NAReaction reaction){
     glVertex3f(naSinf(ang) * .9f, 0.f, 0.f);
   glEnd();
 
-  naDrawASCIICharacters(con->fontId, "Hello World", (double)naSinf(ang) * .9, 0, 0);
+  naDrawASCIICharacters(con->fontId, "Hello World", (double)naSinf(ang) * .9, 0, 0, uiScale);
    
   naSwapOpenGLSpaceBuffer(con->openGLSpace);
   

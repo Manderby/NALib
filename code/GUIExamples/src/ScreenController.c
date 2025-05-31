@@ -9,6 +9,7 @@ struct ScreenController{
   NAWindow* window;
 
   NAOpenGLSpace* display;
+  size_t fontId;
 
   NALabel* totalRectTitle;
   NALabel* totalRectLabel;
@@ -30,6 +31,13 @@ void applicationReshaped(NAReaction reaction) {
 
 
 
+static void initOpenGL(void* data) {
+  ScreenController* con = (ScreenController*)data;
+  con->fontId = naStartupPixelFont();
+}
+
+
+
 void redrawDisplayReaction(NAReaction reaction) {
   ScreenController* con = reaction.controller;
 
@@ -43,6 +51,8 @@ void redrawDisplayReaction(NAReaction reaction) {
 
   glClearColor(0.f, 0.f, .4f, 1.f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDisable(GL_TEXTURE_2D);
 
   glMatrixMode(GL_PROJECTION);
@@ -71,7 +81,7 @@ void redrawDisplayReaction(NAReaction reaction) {
   glLoadIdentity();
   glMultMatrixd(ortho);
 
-  glLineWidth(1);
+  // Draw the absolute rect.
   glColor4f(.25f, .25f, .5f, 1.f);
     glBegin(GL_TRIANGLE_STRIP);
       glVertex2d(totalRect.pos.x, totalRect.pos.y);
@@ -79,19 +89,9 @@ void redrawDisplayReaction(NAReaction reaction) {
       glVertex2d(totalRect.pos.x, naGetRectEndY(totalRect));
       glVertex2d(naGetRectEndX(totalRect), naGetRectEndY(totalRect));
     glEnd();
-  glColor4f(.75f, .75f, .75f, 1.f);
-  glBegin(GL_LINES);
-    glVertex2d(-100000., 0.);
-    glVertex2d(+100000., 0.);
-    glVertex2d(0., -100000.);
-    glVertex2d(0., +100000.);
-  glEnd();
-  glPointSize(10.);
-  glBegin(GL_POINTS);
-    glVertex2d(0., 0.);
-  glEnd();
 
-  glLineWidth(5);
+  // Draw the individual screens.
+  glLineWidth(3);
   size_t screenCount = naGetApplicationScreenCount();
   for(size_t i = 0; i < screenCount; ++i) {
     const NAScreen* screen = naGetApplicationScreenWithIndex(i);
@@ -113,7 +113,42 @@ void redrawDisplayReaction(NAReaction reaction) {
       glVertex2d(naGetRectEndX(rect), naGetRectEndY(rect));
       glVertex2d(rect.pos.x, naGetRectEndY(rect));
     glEnd();
+
+    glColor4f(1.f, 1.f, 1.f, 1.f);
+    NAPos center = naGetRectCenter(rect);
+    NAString* name = naNewScreenName(screen);
+    double thisUIScale = naGetScreenUIScale(screen);
+    naDrawASCIICharacters(
+      con->fontId,
+      naAllocSprintf(
+        NA_TRUE,
+        "%s\nUI scale: %.2f\nOrigin: %.0f, %.0f\nSize: %.0f, %.0f",
+        naGetStringUTF8Pointer(name),
+        thisUIScale,
+        rect.pos.x,
+        rect.pos.y,
+        rect.size.width,
+        rect.size.height),
+      center.x - 500,
+      center.y,
+      0,
+      uiScale);
+    naDelete(name);
   }
+
+  // Draw the coordinate system
+  glLineWidth(1);
+  glColor4f(.75f, .75f, .75f, 1.f);
+  glBegin(GL_LINES);
+    glVertex2d(-100000., 0.);
+    glVertex2d(+100000., 0.);
+    glVertex2d(0., -100000.);
+    glVertex2d(0., +100000.);
+  glEnd();
+  glPointSize(10.);
+  glBegin(GL_POINTS);
+    glVertex2d(0., 0.);
+  glEnd();
 
   naSwapOpenGLSpaceBuffer(con->display);
 }
@@ -139,14 +174,14 @@ ScreenController* createScreenController(){
 
   double curPosY = windowHeight - 210;
   
-  con->display = naNewOpenGLSpace(naMakeSize(windowWidth - 40, 200), NA_NULL, con);
+  con->display = naNewOpenGLSpace(naMakeSize(windowWidth - 40, 200), initOpenGL, con);
   naAddUIReaction(con->display, NA_UI_COMMAND_REDRAW, redrawDisplayReaction, con);
   naAddSpaceChild(contentSpace, con->display, naMakePos(20, curPosY));
   
   curPosY -= 25;
 
   con->totalRectTitle = naNewLabel("Absolute application space:", labelWidth);
-  con->totalRectLabel = naNewLabel("", labelWidth);
+  con->totalRectLabel = naNewLabel("", labelWidth * 2);
   naAddSpaceChild(contentSpace, con->totalRectTitle, naMakePos(20, curPosY));
   naAddSpaceChild(contentSpace, con->totalRectLabel, naMakePos(left1, curPosY));
 
@@ -168,6 +203,8 @@ ScreenController* createScreenController(){
 
 void clearScreenController(ScreenController* con){
   NA_UNUSED(con);
+  naShutdownPixelFont(con->fontId);
+  naFree(con);
 }
 
 
@@ -185,11 +222,11 @@ void udpateScreenController(ScreenController* con){
   NARect totalRect = naGetUIElementRect(naGetApplication());
 
   naSetLabelText(con->totalRectLabel,
-    naAllocSprintf(NA_TRUE, "(%.0f, %.0f) - (%.0f, %.0f)",
+    naAllocSprintf(NA_TRUE, "Origin: %.0f, %.0f Size: %.0f, %.0f",
       totalRect.pos.x,
       totalRect.pos.y,
-      naGetRectEndX(totalRect),
-      naGetRectEndY(totalRect)));
+      totalRect.size.width,
+      totalRect.size.height));
 }
 
 

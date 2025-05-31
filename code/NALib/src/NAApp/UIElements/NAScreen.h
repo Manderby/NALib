@@ -31,6 +31,12 @@
 // Returns true if the given screen is the main screen
 NA_API NABool naIsScreenMain(const NAScreen* screen);
 
+// Returns a new string with the name of the screen.
+NA_API NAString* naNewScreenName(const NAScreen* screen);
+
+// Returns the ui scale factor used on this screen.
+NA_DEF double naGetScreenUIScale(const NAScreen* screen);
+
 // Returns the center relative to the whole screen setup. Results in values
 // in the range of [0, 1], whereas 0.5 is in the center of the whole setup.
 NA_API NAPos naGetScreenRelativeCenter(const NAScreen* screen);

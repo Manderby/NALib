@@ -6,14 +6,14 @@
 
 
 
-NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, const NAUTF8Char* name, NARect rect, double scale) {
+NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, const NAUTF8Char* name, NARect rect, double uiScale) {
   na_InitCoreUIElement(&screen->uiElement, NA_UI_SCREEN, nativePtr);
   screen->isMain = isMain;
   screen->name = naNewStringWithFormat("%s", name);
   screen->rect = rect;
   // The relative center will be set properly in na_UpdateScreenRelativeCenter.
   screen->relativeCenter = naMakePosZero();
-  screen->scale = scale;
+  screen->uiScale = uiScale;
   naInitList(&screen->windows);
 
   na_SetUIElementParent((NA_UIElement*)screen, naGetApplication(), NA_TRUE);
@@ -63,6 +63,14 @@ NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect) {
   #endif
 }
 
+
+NA_DEF NAString* naNewScreenName(const NAScreen* screen) {
+  return naNewStringExtraction(screen->name, 0, -1);
+}
+
+NA_DEF double naGetScreenUIScale(const NAScreen* screen) {
+  return screen->uiScale;
+}
 
 NA_DEF NAPos naGetScreenRelativeCenter(const NAScreen* screen) {
   return screen->relativeCenter;

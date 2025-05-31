@@ -43,7 +43,6 @@ struct ButtonController{
   NALabel* abortLabel;
   NAButton* textButtonAbort;
 
-
   NALabel* outputLabel;
 };
 

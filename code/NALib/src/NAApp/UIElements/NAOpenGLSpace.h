@@ -87,7 +87,8 @@ NA_API void naDrawASCIICharacters(
   const char* str,
   double x,
   double y,
-  double z);
+  double z,
+  double uiScale);
 
 
 // Sets the transformation of the space to the depicted delta values.

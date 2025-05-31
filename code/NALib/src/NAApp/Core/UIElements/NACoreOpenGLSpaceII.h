@@ -128,7 +128,7 @@
   }
 
 
-  NA_DEF void naDrawASCIICharacters(size_t fontId, const char* str, double x, double y, double z) {
+  NA_DEF void naDrawASCIICharacters(size_t fontId, const char* str, double x, double y, double z, double uiScale) {
     GLuint fontTex = (GLuint)fontId;
     NAMat44d modelViewMatrix;
     NAMat44d invModelViewMatrix;
@@ -157,6 +157,10 @@
       glMatrixMode(GL_MODELVIEW);
       glPushMatrix();
       glLoadIdentity();
+//      NAMat44d factor;
+//      naFillM44dWithDiag(factor, 2.);
+//      glMultMatrixd(factor);
+
       glMatrixMode(GL_PROJECTION);
       glPushMatrix();
       glLoadIdentity();
@@ -174,7 +178,7 @@
         char c = str[i];
         
         if(c == '\n') {
-          viewY -= 10;
+          viewY -= 10 * uiScale;
           offsetX = 0;
         }
         if(c < 32 || c > 127)
@@ -185,18 +189,19 @@
         float scaleX = 1.f / (5.f * 16.f);
         float scaleY = 1.f / (6.f * 9.f);
         
+       
         glBegin(GL_TRIANGLE_STRIP);
           glTexCoord2f((texX * 5.f) * scaleX, ((texY + 1.f) * 9.f) * scaleY);
           glVertex3i(viewX + offsetX, viewY, 0);
           glTexCoord2f((texX * 5.f) * scaleX, (texY * 9.f) * scaleY);
-          glVertex3i(viewX + offsetX, viewY + 9, 0);
+          glVertex3i(viewX + offsetX, viewY + 9 * uiScale, 0);
           glTexCoord2f(((texX + 1.f) * 5.f) * scaleX, ((texY + 1.f) * 9.f) * scaleY);
-          glVertex3i(viewX + offsetX + 5, viewY, 0);
+          glVertex3i(viewX + offsetX + 5 * uiScale, viewY, 0);
           glTexCoord2f(((texX + 1.f) * 5.f) * scaleX, (texY * 9.f) * scaleY);
-          glVertex3i(viewX + offsetX + 5, viewY + 9, 0);
+          glVertex3i(viewX + offsetX + 5 * uiScale, viewY + 9 * uiScale, 0);
         glEnd();
         
-        offsetX += 6;
+        offsetX += 6 * uiScale;
       }
 
       glPopMatrix();
