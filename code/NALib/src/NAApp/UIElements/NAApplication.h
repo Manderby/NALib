@@ -173,6 +173,15 @@ NA_API const NAScreen* naGetApplicationScreenWithPos(NAPos pos);
 // screen left-closest and then bottom-closest of those screens is chosen.
 NA_API const NAScreen* naGetApplicationScreenWithRelativePos(NAPos pos);
 
+// Assumes the given rect to be the content rect of a window and changes it
+// such that at least one point far to the edge of the titlebar is inside
+// a screen such that it can be dragged by the mouse.
+// If the window is titleless, an equally close point inside the window content
+// area is chosen.
+NA_API void naCorrectApplicationWindowRect(
+  NARect* contentRect,
+  NABool titleless);
+
 // Define basic information about the application. On a mac, these informations
 // can be extracted automatically from a plist file if not defined. On windows
 // though, one has to provide it using the following functions. Note that also

@@ -42,6 +42,8 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
   naInitList(&app->windows);
   naInitList(&app->uiElements);
 
+  app->totalRect = na_FillScreenList(&app->screens);
+
   app->translator = NA_NULL;
   naStartTranslator();
   
@@ -71,8 +73,6 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
   // This is done at the very end of the InitApplication function as the
   // application must be fully functional before it can init any UIElements.
   na_InitCoreUIElement(&app->uiElement, NA_UI_APPLICATION, nativePtr);
-  
-  na_FillScreenList(&app->screens);
 }
 
 
@@ -229,6 +229,15 @@ NA_DEF const NAScreen* naGetApplicationScreenWithPos(NAPos pos) {
 
 
 
+NA_DEF void naCorrectApplicationWindowRect(NARect* contentRect, NABool titleless) {
+//  NAPos topLeft = naMakePos(
+//    contentRect.pos.x + 10.,
+//    contentRect.pos.y + contentRect.size.height + 10.);
+//
+}
+
+
+
 NA_HDEF NAScreen* na_GetApplicationScreenWithNativePtr(void* nativePtr) {
   NAScreen* theScreen = NA_NULL;
   NAListIterator it = naMakeListMutator(&na_App->screens);
@@ -305,17 +314,25 @@ NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
 
 
 
+NA_HDEF void na_RenewApplicationScreens() {
+  NAList newScreenList;
+  naInitList(&newScreenList);
+  na_App->totalRect = na_FillScreenList(&newScreenList);
+}
+
+
+
+
 NA_HDEF NARect na_GetApplicationRect(const NAApplication* app) {
-  NA_UNUSED(app);
-  NARect rect = {{0., 0.}, {1., 1.}};
-  return rect;
+  const NAApplication* application = (const NAApplication*)app;
+  return application->totalRect;
 }
 
 NA_HDEF void na_SetApplicationRect(const NAApplication* app, NARect rect) {
   NA_UNUSED(app);
   NA_UNUSED(rect);
   #if NA_DEBUG
-    naError("Application rect can not be set.");
+    naError("Application rect can not be set but is defined by the screens available.");
   #endif
 }
 

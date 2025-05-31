@@ -47,15 +47,17 @@ struct NA_UIElement{
 struct NAApplication{
   NA_UIElement      uiElement;
   
-  NAList            screens;         // A list of all screens
-  NAList            windows;         // A list of all windows
-  NAList            uiElements;      // A list of all ui elements in use.
+  NAList            screens;        // A list of all screens
+  NAList            windows;        // A list of all windows
+  NAList            uiElements;     // A list of all ui elements in use.
+  
+  NARect            totalRect;      // The global rect of all screens.
   
   NATranslator*     translator;
   NANotifier*       notifier;
   NAFont*           systemFont;
-  NAMouseStatus*    mouseStatus;     // The mouse cursor status
-  NAKeyStroke*      keyStroke;       // The currently pressed key combination
+  NAMouseStatus*    mouseStatus;    // The mouse cursor status
+  NAKeyStroke*      keyStroke;      // The currently pressed key combination
   uint32            flags;
 
   NAString*       appName;
@@ -299,6 +301,7 @@ NA_HAPI NABool na_IsApplicationRunning(void);
 NA_HAPI void na_InitApplication(NAApplication* application, void* nativePtr);
 NA_HAPI void na_TerminateApplication(NAMutator cleanup, void* arg);
 NA_HAPI void na_ClearApplication(NAApplication* application);
+NA_HAPI void na_RenewApplicationScreens();
 NA_HAPI NARect na_GetApplicationRect(const NAApplication* application);
 NA_HAPI void na_SetApplicationRect(const NAApplication* application, NARect rect);
 NA_HAPI const NAFont* na_GetApplicationSystemFont(const NAApplication* app);
@@ -376,7 +379,7 @@ NA_HAPI NAScreen* na_NewScreen(void* nativePtr);
 NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, const NAUTF8Char* name, NARect rect, double scale);
 NA_HAPI void na_ClearScreen(NAScreen* screen);
 NA_HAPI void na_UpdateScreenRelativeCenter(NAScreen* screen, NARect totalRect);
-NA_HAPI void na_FillScreenList(NAList* screenList);
+NA_HAPI NARect na_FillScreenList(NAList* screenList);
 NA_HAPI NAScreen* na_GetApplicationScreenWithNativePtr(void* nativePtr);
 NA_HAPI NARect na_GetScreenRect(const NA_UIElement* screen);
 NA_HAPI void na_SetScreenRect(NA_UIElement* screen, NARect rect);

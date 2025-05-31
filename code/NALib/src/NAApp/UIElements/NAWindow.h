@@ -31,6 +31,7 @@
 #define NA_WINDOW_DEFAULT                0x00
 #define NA_WINDOW_AUXILIARY              0x02
 
+// Titleless windows can automatically be dragged by their content space.
 #define NA_WINDOW_TITLED                 0x00
 #define NA_WINDOW_TITLELESS              0x04
 
@@ -86,9 +87,14 @@ NA_API void naSetWindowStorageTag(NAWindow* window, size_t storageTag);
 
 // Get and set the outer (non-client) rect of the window. Note that the
 // function naGetUIElementRect will always return the inner (client) rect of
-// the window.
+// the window. The returned rect is in global coordinates.
 NA_API NARect naGetWindowOuterRect(const NAWindow * window);
 NA_API void naSetWindowOuterRect(NAWindow * window, NARect rect);
+
+// Returns the area in global coordinates which moves the window when dragged.
+// For titeled windows, that is the area of the titlebar.
+// For titleless windows, it is the content area.
+NA_API NARect naGetWindowDraggableRect(const NAWindow * window);
 
 // Set various properties of the window
 NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);

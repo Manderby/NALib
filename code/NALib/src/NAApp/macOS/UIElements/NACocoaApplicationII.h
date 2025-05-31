@@ -111,9 +111,7 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
 }
 
 - (void)handleApplicationDidChangeScreenParameters:(NSNotification *)notification {
-  NAList newScreenList;
-  naInitList(&newScreenList);
-  na_FillScreenList(&newScreenList);
+  na_RenewApplicationScreens();
 }
 
 

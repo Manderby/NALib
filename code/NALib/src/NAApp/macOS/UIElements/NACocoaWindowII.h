@@ -203,6 +203,9 @@ NA_DEF NAWindow* naNewWindow(
 //    styleMask |= NAWindowStyleMaskNonactivatingPanel | NAWindowStyleMaskUtilityWindow;
 //  }
   
+  // Correct the rect such that the titlebar is at least partially on a screen.
+  naCorrectApplicationWindowRect(&rect, titleless);
+  
   const NAScreen* screen = naGetApplicationScreenWithPos(naGetRectCenter(rect));
   if(screen) {
     NARect screenRect = na_GetScreenRect(&screen->uiElement);
@@ -240,6 +243,10 @@ NA_DEF NAWindow* naNewWindow(
   cocoaWindow->window.flags = flags;
 
   NASpace* space = naNewSpace(rect.size);
+  if(titleless) {
+    naSetSpaceDragsWindow(space, NA_TRUE);
+  }
+
   naSetWindowContentSpace((NAWindow*)cocoaWindow, space);
 
   return (NAWindow*)cocoaWindow;

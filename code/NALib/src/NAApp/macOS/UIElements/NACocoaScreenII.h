@@ -56,7 +56,7 @@ NA_API NARect naGetScreenUsableRect(const NAScreen* screen) {
 
 
 
-NA_HDEF void na_FillScreenList(NAList* screenList) {
+NA_HDEF NARect na_FillScreenList(NAList* screenList) {
   NSArray<NSScreen*>* nsScreens = [NSScreen screens];
   NARect totalRect = naMakeRectZero();
   for (size_t i = 0; i < [nsScreens count]; ++i) {
@@ -76,6 +76,8 @@ NA_HDEF void na_FillScreenList(NAList* screenList) {
     na_UpdateScreenRelativeCenter(screen, totalRect);
   }
   naClearListIterator(&it);
+  
+  return totalRect;
 }
 
 

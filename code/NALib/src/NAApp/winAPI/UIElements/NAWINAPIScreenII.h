@@ -10,7 +10,7 @@ NA_DEF NAScreen* na_NewScreen(
 }
 
 
-NA_HDEF void na_FillScreenList(NAList* screenList) {
+NA_HDEF NARect na_FillScreenList(NAList* screenList) {
   // todo
 }
 

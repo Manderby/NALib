@@ -311,6 +311,9 @@ NA_DEF NAWindow* naNewWindow(
     NA_NULL);
 
   NASpace* contentSpace = naNewSpace(naMakeSize(rect.size.width, rect.size.height));
+  if(titleless) {
+    naSetSpaceDragsWindow(contentSpace, NA_TRUE);
+  }
   naSetWindowContentSpace(&winapiWindow->window, contentSpace);
 
   return (NAWindow*)winapiWindow;

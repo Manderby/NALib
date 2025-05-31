@@ -106,8 +106,11 @@ NA_API NASpace* naGetUIElementParentSpaceMutable(void* uiElement);
 // Using naGetUIElementRect, you can get the rect of any ui element either
 // in absolute coordinates or in relative coordinates to its parent element.
 //
-// Note that elements always return the inner (client) rect. For example
-// windows will not return their outer boundary.
+// Note that windows and screens always return absolute coordinates.
+// Additionally, windows only return the inner (client) rect. If you need the
+// outer rect (including the titlebar), use naGetWindowOuterRect.
+//
+// Quering the NSApplication object returns the total rect of all screens.
 NA_API NARect naGetUIElementRect(const void* uiElement);
 NA_API NARect naGetUIElementRectAbsolute(const void* uiElement);
 NA_API void   naSetUIElementRect(void* uiElement, NARect rect);
