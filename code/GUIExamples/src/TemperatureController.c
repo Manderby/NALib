@@ -60,7 +60,7 @@ TemperatureController* spawnTemperatureController(){
       getAndAdvanceNextWindowY(),
       400,
       200);
-  con->window = naNewWindow("Temperature Converter", windowRect, NA_FALSE, 0);
+  con->window = naNewWindow("Temperature Converter", windowRect, NA_FALSE);
 
   // Every window has a space which defines its contents.
   NASpace* windowSpace = naGetWindowContentSpace(con->window);

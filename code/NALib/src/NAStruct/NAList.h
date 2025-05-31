@@ -39,9 +39,10 @@ NA_IAPI NAList* naInitList    (NAList* list);
 
 // Creates an exact copy of originalList by replicating all elements in the
 // same order. Note that the contents are again only referenced by a pointer
-// and will still be marked as const or mutable. The two parameters must
-// not be the same. If you are using NAListIterator's  on the originalList,
-// these iterators will keep the location of the original list.
+// (shallow copy) and will still be marked as const or mutable.
+// The two parameters must not be the same. If you are using NAListIterator
+// on the originalList, these iterators will keep the location of the original
+// list.
 NA_IAPI NAList* naInitListWithCopy    (NAList* list, NAList* originalList);
 
 // Clears or empties the given list. The given destructor is called for every

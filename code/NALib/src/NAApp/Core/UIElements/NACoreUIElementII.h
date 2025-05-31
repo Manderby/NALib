@@ -211,8 +211,9 @@ NA_DEF void naAddUIReaction(
 
   #if NA_DEBUG
     if((command == NA_UI_COMMAND_RESHAPE)
+      && (elementType != NA_UI_APPLICATION)
       && (elementType != NA_UI_WINDOW))
-      naError("Only windows can receyve RESHAPE commands.");
+      naError("Only windows and the application can receyve RESHAPE commands.");
     if((command == NA_UI_COMMAND_MOUSE_MOVED)
       && ((elementType == NA_UI_APPLICATION)
        || (elementType == NA_UI_SCREEN)))

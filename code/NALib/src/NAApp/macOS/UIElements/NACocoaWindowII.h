@@ -135,7 +135,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
   // Note that this method will also be called after a window is created with
   // naNewWindow when the rect is outside of the main screen.
   NA_UNUSED(notification);
-  na_UpdateWindowScreen((NAWindow*)cocoaWindow, [self screen]);
+  na_UpdateWindowScreen((NAWindow*)cocoaWindow, na_GetApplicationScreenWithNativePtr([self screen]));
   na_RememberWindowPosition((NAWindow*)cocoaWindow);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
     // no super method to be called.
@@ -221,6 +221,8 @@ NA_DEF NAWindow* naNewWindow(
     defer:NO
     screen:screen ? naGetUIElementNativePtrConst(screen) : nil];
   
+  NAScreen* actualScreen = na_GetApplicationScreenWithNativePtr(NA_COCOA_PTR_OBJC_TO_C([nativePtr screen]));
+  
   if(auxiliary) {
     [nativePtr setKeepOnTop:YES];
     [nativePtr setHidesOnDeactivate:YES];
@@ -234,7 +236,7 @@ NA_DEF NAWindow* naNewWindow(
   na_InitWindow(
     (NAWindow*)cocoaWindow,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
-    NA_COCOA_PTR_OBJC_TO_C([nativePtr screen]),
+    actualScreen,
     NA_NULL,
     NA_FALSE,
     resizeable,

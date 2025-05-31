@@ -16,7 +16,7 @@ FontController* createFontController(){
   FontController* con = naAlloc(FontController);
 
   NARect windowRect = naMakeRectS(100, 800, 500, 400);
-  con->window = naNewWindow("Fonts", windowRect, NA_FALSE, 0);
+  con->window = naNewWindow("Fonts", windowRect, NA_FALSE);
   NASpace* windowSpace = naGetWindowContentSpace(con->window);
 
   NALabel* label;

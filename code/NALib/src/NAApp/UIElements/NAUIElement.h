@@ -100,7 +100,7 @@ NA_API const NASpace* naGetUIElementParentSpace(const void* uiElement);
 NA_API NASpace* naGetUIElementParentSpaceMutable(void* uiElement);
 
 // In NALib, all coordinates of the UI are described in a mathematical, right-
-// handed coordinate system. The origin of the global coordinate system is
+// handed coordinate system. The origin of the absolute coordinate system is
 // at the lower left screen corner of the main screen.
 //
 // Using naGetUIElementRect, you can get the rect of any ui element either

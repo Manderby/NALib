@@ -153,7 +153,25 @@ NA_HDEF NABool naIsScreenMain(const NAScreen* screen) {
 
 
 
-NA_DEF const NAScreen* naGetApplicationMainScreen() {
+NA_DEF size_t naGetApplicationScreenCount(void) {
+  return naGetListCount(&na_App->screens);
+}
+
+
+
+NA_DEF const NAScreen* naGetApplicationScreenWithIndex(size_t index) {
+  NAListIterator it = naMakeListAccessor(&na_App->screens);
+  const NAScreen* retScreen = NA_NULL;
+  if(naLocateListIndex(&it, index)) {
+    retScreen = naGetListCurConst(&it);
+  }
+  naClearListIterator(&it);
+  return retScreen;
+}
+
+
+
+NA_DEF const NAScreen* naGetApplicationScreenMain() {
   const NAScreen* mainScreen = NA_NULL;
   NAListIterator it = naMakeListAccessor(&na_App->screens);
   while(naIterateList(&it)) {
@@ -315,9 +333,33 @@ NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
 
 
 NA_HDEF void na_RenewApplicationScreens() {
-  NAList newScreenList;
-  naInitList(&newScreenList);
-  na_App->totalRect = na_FillScreenList(&newScreenList);
+  // Create a copy of the old screen setup
+  NAList oldScreenList;
+  naInitListWithCopy(&oldScreenList, &na_App->screens);
+  NARect oldTotalRect = na_GetApplicationRect(na_App);
+  
+  // Clear the old list.
+  naClearList(&na_App->screens, NA_NULL);
+  
+  // Gather the information of the new list
+  na_App->totalRect = na_FillScreenList(&na_App->screens);
+  
+  // Go through all windows, readjust their position if necessary and reattach
+  // them to a new screen.
+  NAListIterator it = naMakeListMutator(&na_App->windows);
+  while(naIterateList(&it)) {
+    NAWindow* window = naGetListCurMutable(&it);
+    NARect rect = na_GetWindowRect(&window->uiElement);
+    NAPos center = naGetRectCenter(rect);
+    na_UpdateWindowScreen(window, (NAScreen*)naGetApplicationScreenWithPos(center)); // evil cast
+  }
+  naClearListIterator(&it);
+  
+  // Delete the old screen objects.
+  naClearList(&oldScreenList, naDelete);
+  
+  // Spread the information about the change.
+  na_DispatchUIElementCommand(&na_App->uiElement, NA_UI_COMMAND_RESHAPE);
 }
 
 

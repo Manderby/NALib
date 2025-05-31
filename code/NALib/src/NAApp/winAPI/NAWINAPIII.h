@@ -478,8 +478,8 @@ NAWINAPICallbackInfo na_HandleMousePress(
 }
 
 
-// Capture messages which shall be handeled globally the same no matter what
-// the object behind it is.
+// Capture messages which shall be handeled the same no matter what the NALib
+// object behind it is.
 NAWINAPICallbackInfo naUIElementWINAPIPreProc(
   void* uiElement,
   UINT message,
@@ -581,8 +581,9 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
 
 
 
-// Capture messages which shall be handeled globally, if and only if the
-// object behind the message does NOT provide a WINAPIProc handling.
+// Capture messages which shall be handeled the same no matter what the NALib
+// object behind it is, if and only if the object behind the message does
+// NOT provide a WINAPIProc handling.
 NAWINAPICallbackInfo naUIElementWINAPIPostProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NA_UNUSED(uiElement);
   NA_UNUSED(wParam);
@@ -793,7 +794,7 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 
     if(!info.hasBeenHandeled) {
       // If the element does not handle the event, try handling it with the
-      // global post handling function.
+      // universal post handling function.
       info = naUIElementWINAPIPostProc(uiElement, message, wParam, lParam);
     }
   }

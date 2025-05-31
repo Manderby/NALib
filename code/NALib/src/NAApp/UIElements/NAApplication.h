@@ -7,6 +7,11 @@
 
 
 
+// An NAApplication can react to the following commands:
+//
+// NA_UI_COMMAND_RESHAPE       If any screen setup changes
+
+
 
 // ////////////////////////////////
 // The Application
@@ -58,7 +63,7 @@ NA_API void naStartApplication(
 //      - NALib will start a message loop.
 //
 // preStartup:
-// The preStartup function is here for initialization of global variables
+// The preStartup function is here for initialization of variables
 // and structures before any of the UI specific functions gets called.
 // This function is intended to execute mainly C code but you of course are
 // free to use other languages like Objective-C alongside with it.
@@ -122,8 +127,8 @@ NA_API void naStartApplication(
 
 
 // Note that both in the preStartup as well as the postStartup function, the
-// global NAApplication struct of NALib is ready to be used. You can get this
-// struct using the following function.
+// single static NAApplication struct of NALib is ready to be used. 
+// You can get this struct using the following function.
 //
 // If you need to get the native app pointer HINSTANCE (on Windows) or NSApp
 // (on a Macintosh), call naGetUIElementNativePtr with the result.
@@ -156,8 +161,14 @@ NA_API void naCallApplicationFunctionInSeconds(
 // manually.
 NA_API void naResetApplicationPreferredTranslatorLanguages(void);
 
-// Returns the screen which is marked as main screen by the system.
-NA_API const NAScreen* naGetApplicationMainScreen(void);
+// Returns the number of screens available.
+NA_API size_t naGetApplicationScreenCount(void);
+
+// Returns the screen with the given index.
+NA_API const NAScreen* naGetApplicationScreenWithIndex(size_t index);
+
+// Returns the screen which contains the absolute coordinate (0,0).
+NA_API const NAScreen* naGetApplicationScreenMain(void);
 
 // Returns the screen which contains the given position in the current screen
 // setup. If it is not contained in any of the screens, a screen whose center

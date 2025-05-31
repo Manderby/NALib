@@ -10,7 +10,7 @@
 NA_HDEF void na_InitWindow(
   NAWindow* window,
   void* nativePtr,
-  void* nativeScreenPtr,
+  NAScreen* screen,
   NASpace* contentSpace,
   NABool fullScreen,
   NABool resizeable,
@@ -25,7 +25,6 @@ NA_HDEF void na_InitWindow(
   if(resizeable) { window->coreFlags |= NA_CORE_WINDOW_FLAG_RESIZEABLE; }
   window->windowedFrame = windowedFrame;
   
-  NAScreen* screen = na_GetApplicationScreenWithNativePtr(nativeScreenPtr);
   na_AddScreenWindow(
     screen,
     window);
@@ -45,8 +44,7 @@ NA_HDEF void na_ClearWindow(NAWindow* window) {
 
 
 
-NA_HDEF void na_UpdateWindowScreen(NAWindow* window, void* nativeScreenPtr) {
-  NAScreen* screen = na_GetApplicationScreenWithNativePtr(nativeScreenPtr);
+NA_HDEF void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen) {
   NAScreen* oldScreen = naGetUIElementParentMutable(window);
   if(screen && screen != oldScreen) {
     na_RemoveScreenWindow(oldScreen, window);

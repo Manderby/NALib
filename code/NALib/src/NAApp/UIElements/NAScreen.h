@@ -22,7 +22,7 @@
 // current system settings. Retrieve the desired screen using the following
 // mehtods:
 //
-// naGetApplicationMainScreen();
+// naGetApplicationScreenMain();
 // naGetApplicationCenterScreen();
 //
 // You will only get const access. But then, you can use the following methods

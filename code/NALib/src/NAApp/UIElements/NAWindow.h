@@ -87,11 +87,11 @@ NA_API void naSetWindowStorageTag(NAWindow* window, size_t storageTag);
 
 // Get and set the outer (non-client) rect of the window. Note that the
 // function naGetUIElementRect will always return the inner (client) rect of
-// the window. The returned rect is in global coordinates.
+// the window. The returned rect is in absolute coordinates.
 NA_API NARect naGetWindowOuterRect(const NAWindow * window);
 NA_API void naSetWindowOuterRect(NAWindow * window, NARect rect);
 
-// Returns the area in global coordinates which moves the window when dragged.
+// Returns the area in absolute coordinates which moves the window when dragged.
 // For titeled windows, that is the area of the titlebar.
 // For titleless windows, it is the content area.
 NA_API NARect naGetWindowDraggableRect(const NAWindow * window);

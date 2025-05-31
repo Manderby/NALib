@@ -291,7 +291,7 @@ NA_DEF NAWindow* naNewWindow(
   na_InitWindow(
     &winapiWindow->window,
     nativePtr,
-    NA_NULL,  // nativeScreenPtr, todo
+    NA_NULL,  // screen, todo
     NA_NULL,
     NA_FALSE,
     resizeable,

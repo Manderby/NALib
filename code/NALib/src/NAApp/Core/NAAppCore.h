@@ -51,7 +51,7 @@ struct NAApplication{
   NAList            windows;        // A list of all windows
   NAList            uiElements;     // A list of all ui elements in use.
   
-  NARect            totalRect;      // The global rect of all screens.
+  NARect            totalRect;      // The absolute rect of all screens.
   
   NATranslator*     translator;
   NANotifier*       notifier;
@@ -189,8 +189,6 @@ struct NA_KeyboardShortcutReaction{
 };
 
 
-
-extern NAApplication* na_App;
 
 #define NA_APPLICATION_FLAG_RUNNING                 0x01
 #define NA_APPLICATION_FLAG_MOUSE_VISIBLE           0x02
@@ -419,9 +417,9 @@ NA_HAPI NARect na_GetTextFieldRect(const NA_UIElement* textField);
 NA_HAPI void na_SetTextFieldRect(NA_UIElement* textField, NARect rect);
 
 // NAWindow
-NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, void* nativeScreenPtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
+NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NAScreen* screen, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
 NA_HAPI void na_ClearWindow(NAWindow* window);
-NA_HAPI void na_UpdateWindowScreen(NAWindow* window, void* nativeScreenPtr);
+NA_HAPI void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen);
 NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
 NA_HAPI void na_RetainWindowMouseTracking(NAWindow* window);
 NA_HAPI void na_ReleaseWindowMouseTracking(NAWindow* window);

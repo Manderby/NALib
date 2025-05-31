@@ -25,16 +25,17 @@ struct HelloWorldGUIApplication{
   
   ExperimentController* experimentController;
   FontController* fontController;
+  ScreenController* screenController;
   ButtonController* buttonController;
 };
 
-// The central variable storing the app. Defined as global.
+// The central variable storing the app.
 HelloWorldGUIApplication* app;
 
 
 
 // preStartup is called before most system specific initialization takes place.
-// Initialize all global and general values here.
+// Initialize all general values here.
 // See naStartApplication for a detailed explanation.
 void preStartup(void* arg){
   NADateTime now = naMakeDateTimeNow();
@@ -105,6 +106,7 @@ void postStartup(void* arg){
   // Create the controllers
   app->experimentController = createExperimentController();
   app->fontController = createFontController();
+  app->screenController = createScreenController();
   app->buttonController = createButtonController();
 }
 
@@ -118,6 +120,7 @@ void clearApplication(void* arg){
   naClearStack(&(app->temperatureControllers));
   clearExperimentController(app->experimentController);
   clearFontController(app->fontController);
+  clearScreenController(app->screenController);
   clearButtonController(app->buttonController);
   naRelease(app->iconImageSet);
   naRelease(app->state1ImageSet);
@@ -155,6 +158,10 @@ void addTemperatureControllerToApplication(TemperatureController* con){
 
 void showFonts(){
   showFontController(app->fontController);
+}
+
+void showScreens(){
+  showScreenController(app->screenController);
 }
 
 void showButtons(){

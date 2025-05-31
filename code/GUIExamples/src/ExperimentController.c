@@ -13,6 +13,8 @@ struct ExperimentController{
   NAWindow* experimentWindow;
   NASpace* contentSpace;
 
+  NAButton* screenButton;
+
   NALabel* buttonLabel;
   NAButton* buttonButton;
 
@@ -224,11 +226,15 @@ void menuItemKeyboardSelected(NAReaction reaction){
   naSetLabelText(con->outputLabel, outputText);
 }
 
+
+
 void pressExperimentButton(NAReaction reaction){
   ExperimentController* con = (ExperimentController*)reaction.controller;
 
   if(reaction.uiElement == con->fontButton){
     showFonts();
+  }else if(reaction.uiElement == con->screenButton){
+    showScreens();
   }else if(reaction.uiElement == con->buttonButton){
     showButtons();
   }else if(reaction.uiElement == con->converterButton){
@@ -251,8 +257,7 @@ ExperimentController* createExperimentController(){
   con->experimentWindow = naNewWindow(
     "Experiment",
     naMakeRectS(150, 150, windowWidth, windowHeight),
-    NA_WINDOW_RESIZEABLE,
-    0);
+    NA_WINDOW_RESIZEABLE);
 
   con->contentSpace = naNewSpace(naMakeSize(windowWidth, windowHeight));
   //NAColor windowBackColor;
@@ -262,6 +267,10 @@ ExperimentController* createExperimentController(){
   naAddUIReaction(con->experimentWindow, NA_UI_COMMAND_RESHAPE, windowReshaped, con);
 
   double curPosY = windowHeight - 42;
+
+  con->screenButton = naNewTextPushButton("NAScreen...", 200);
+  naAddSpaceChild(con->contentSpace, con->screenButton, naMakePos(left + 200, curPosY));
+  naAddUIReaction(con->screenButton, NA_UI_COMMAND_PRESSED, pressExperimentButton, con);
 
   con->buttonLabel = naNewLabel("NAButton", descSize);
   naAddSpaceChild(con->contentSpace, con->buttonLabel, naMakePos(20, curPosY));
@@ -310,7 +319,7 @@ ExperimentController* createExperimentController(){
   con->select = naNewSelect(200);
   naAddSpaceChild(con->contentSpace, con->select, naMakePos(left, curPosY));
   for(size_t i = 0; i < 5; ++i){
-    NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Select menu item %d", i));
+    NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Select menu item %d", i), NA_NULL);
     naAddSelectMenuItem(con->select, item, NA_NULL);
     naAddUIReaction(item, NA_UI_COMMAND_PRESSED, selectItemSelected, con);
   }
@@ -318,7 +327,7 @@ ExperimentController* createExperimentController(){
 
   con->selectDisabled = naNewSelect(200);
   naSetSelectEnabled(con->selectDisabled, NA_FALSE);
-  NAMenuItem* disabledItem = naNewMenuItem(naAllocSprintf(NA_TRUE, "Disabled Select Item", 0));
+  NAMenuItem* disabledItem = naNewMenuItem(naAllocSprintf(NA_TRUE, "Disabled Select Item", 0), NA_NULL);
   naAddSelectMenuItem(con->selectDisabled, disabledItem, NA_NULL);
   naAddSpaceChild(con->contentSpace, con->selectDisabled, naMakePos(left2, curPosY));
 
@@ -377,11 +386,11 @@ ExperimentController* createExperimentController(){
   naAddUIReaction(con->menuButton, NA_UI_COMMAND_PRESSED, menuButtonPressed, con);
   naAddSpaceChild(con->contentSpace, con->menuButton, naMakePos(left, curPosY));
   con->menu = naNewMenu();  
-  NAMenuItem* menuItem0 = naNewMenuItem("You are Winner");
-  NAMenuItem* menuItem1 = naNewMenuItem("Kohle, Kohle, Kohle");
-  NAMenuItem* menuItem2 = naNewMenuItem("I am Groot");
-  NAMenuItem* menuItem3 = naNewMenuItem("None of that Objective-C rubbish");
-  NAMenuItem* menuItem4 = naNewMenuItem("Bread crumbs and beaver spit");
+  NAMenuItem* menuItem0 = naNewMenuItem("You are Winner", NA_NULL);
+  NAMenuItem* menuItem1 = naNewMenuItem("Kohle, Kohle, Kohle", NA_NULL);
+  NAMenuItem* menuItem2 = naNewMenuItem("I am Groot", NA_NULL);
+  NAMenuItem* menuItem3 = naNewMenuItem("None of that Objective-C rubbish", NA_NULL);
+  NAMenuItem* menuItem4 = naNewMenuItem("Bread crumbs and beaver spit", NA_NULL);
   NAMenuItem* menuSeparator = naNewMenuSeparator();
   naAddMenuItem(con->menu, menuItem0, NA_NULL);
   naAddMenuItem(con->menu, menuItem1, NA_NULL);

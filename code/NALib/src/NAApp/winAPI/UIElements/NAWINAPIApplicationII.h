@@ -354,11 +354,11 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
 #if NA_DEBUG
   NA_DEF void naDebugUIElement(const void* elem) {
     NA_UIElement* uiElem = (NA_UIElement*)elem;
-    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)na_App;
+    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)naGetApplication();
     naAddListLastConst(&winapiApplication->debugElements, uiElem);
   }
   NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) {
-    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)na_App;
+    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)naGetApplication();
     NAListIterator iter = naMakeListModifier(&winapiApplication->debugElements);
     if(naLocateListData(&iter, elem)) {
       naRemoveListCurConst(&iter, NA_FALSE);
@@ -366,7 +366,7 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
     naClearListIterator(&iter);
   }
   NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) {
-    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)na_App;
+    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)naGetApplication();
     NAListIterator iter = naMakeListModifier(&winapiApplication->debugElements);
     NABool found = naLocateListData(&iter, elem);
     naClearListIterator(&iter);

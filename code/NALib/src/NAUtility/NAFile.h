@@ -104,6 +104,8 @@ NA_IAPI NABool      naAccess  (
   NABool canRead,
   NABool canWrite,
   NABool canExecute);
+
+// bufSize denotes the size of the buffer including the \0 byte.
 NA_IAPI NAUTF8Char* naAllocCwd(NAUTF8Char* buf, size_t bufSize);
 
 

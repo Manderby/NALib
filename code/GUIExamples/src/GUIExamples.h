@@ -18,6 +18,12 @@ FontController* createFontController(void);
 void clearFontController(FontController* con);
 void showFontController(FontController* con);
 
+typedef struct ScreenController ScreenController;
+ScreenController* createScreenController(void);
+void clearScreenController(ScreenController* con);
+void showScreenController(ScreenController* con);
+void udpateScreenController(ScreenController* con);
+
 typedef struct ButtonController ButtonController;
 ButtonController* createButtonController(void);
 void clearButtonController(ButtonController* con);
@@ -38,6 +44,7 @@ NAImageSet* getState2ImageSet(void);
 
 void addTemperatureControllerToApplication(TemperatureController* con);
 void showFonts(void);
+void showScreens(void);
 void showButtons(void);
 
 
