@@ -189,6 +189,7 @@ ScreenController* createScreenController(){
 void clearScreenController(ScreenController* con){
   NA_UNUSED(con);
   naShutdownPixelFont(con->fontId);
+  naDelete(con->space);
   naFree(con);
 }
 

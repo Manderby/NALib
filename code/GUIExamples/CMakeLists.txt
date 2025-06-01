@@ -52,6 +52,8 @@ set(controllerSourceFiles
   src/Controller/ApplicationController.c
   src/Controller/ButtonController.c
   src/Controller/FontController.c
+  src/Controller/ImageSpaceController.c
+  src/Controller/LabelController.c
   src/Controller/OpenGLSpaceController.c
   src/Controller/MetalSpaceController.c
   src/Controller/ScreenController.c

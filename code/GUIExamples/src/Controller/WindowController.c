@@ -30,7 +30,8 @@ WindowController* createWindowController(){
 
 
 void clearWindowController(WindowController* con){
-  NA_UNUSED(con);
+  naDelete(con->space);
+  naFree(con);
 }
 
 

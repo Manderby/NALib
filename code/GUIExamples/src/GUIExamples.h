@@ -51,6 +51,12 @@ void clearMetalSpaceController(MetalSpaceController* con);
 NASpace* getMetalSpaceControllerSpace(MetalSpaceController* con);
 void updateMetalSpaceController(MetalSpaceController* con);
 
+typedef struct ImageSpaceController ImageSpaceController;
+ImageSpaceController* createImageSpaceController(void);
+void clearImageSpaceController(ImageSpaceController* con);
+NASpace* getImageSpaceControllerSpace(ImageSpaceController* con);
+void updateImageSpaceController(ImageSpaceController* con);
+
 
 
 typedef struct ButtonController ButtonController;
@@ -58,6 +64,12 @@ ButtonController* createButtonController(void);
 void clearButtonController(ButtonController* con);
 NASpace* getButtonControllerSpace(ButtonController* con);
 void updateButtonController(ButtonController* con);
+
+typedef struct LabelController LabelController;
+LabelController* createLabelController(void);
+void clearLabelController(LabelController* con);
+NASpace* getLabelControllerSpace(LabelController* con);
+void updateLabelController(LabelController* con);
 
 
 
@@ -81,7 +93,6 @@ NAImageSet* getState2ImageSet(void);
 
 
 void addTemperatureControllerToApplication(TemperatureController* con);
-void showNAApplication(void);
 
 
 

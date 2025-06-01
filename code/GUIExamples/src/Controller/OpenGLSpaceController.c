@@ -100,6 +100,8 @@ OpenGLSpaceController* createOpenGLSpaceController(){
 
 void clearOpenGLSpaceController(OpenGLSpaceController* con){
   naShutdownPixelFont(con->fontId);
+  naDelete(con->space);
+  naFree(con);
 }
 
 

@@ -5,44 +5,44 @@
 
 
 
-struct ApplicationController{
+struct ImageSpaceController{
   NASpace* space;
 
-  NALabel* dummyLabel;
+  NAImageSpace* imageSpace;
 };
 
 
 
-ApplicationController* createApplicationController(){
-  ApplicationController* con = naAlloc(ApplicationController);
+ImageSpaceController* createImageSpaceController(){
+  ImageSpaceController* con = naAlloc(ImageSpaceController);
 
   con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->dummyLabel = naNewLabel("NAApplication examples not available yet", 400);
-  naAddSpaceChild(con->space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  con->imageSpace = naNewImageSpace(getIconImageSet(), naMakeSize(50, 22));
+  naAddSpaceChild(con->space, con->imageSpace, naMakePos(WINDOW_MARGIN, curPosY));
 
   return con;
 }
 
 
 
-void clearApplicationController(ApplicationController* con){
+void clearImageSpaceController(ImageSpaceController* con){
   naDelete(con->space);
   naFree(con);
 }
 
 
 
-NASpace* getApplicationControllerSpace(ApplicationController* con){
+NASpace* getImageSpaceControllerSpace(ImageSpaceController* con){
   return con->space;
 }
 
 
 
-void updateApplicationController(ApplicationController* con) {
+void updateImageSpaceController(ImageSpaceController* con) {
   NA_UNUSED(con);
   // nothing to do.
 }

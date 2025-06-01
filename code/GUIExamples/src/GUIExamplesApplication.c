@@ -148,9 +148,6 @@ void addTemperatureControllerToApplication(TemperatureController* con){
   *(TemperatureController**)naPushStack(&(app->temperatureControllers)) = con;
 }
 
-void showNAApplication(){
-//  showScreenController(app->screenController);
-}
 
 
 

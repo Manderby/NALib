@@ -30,7 +30,8 @@ MetalSpaceController* createMetalSpaceController(){
 
 
 void clearMetalSpaceController(MetalSpaceController* con){
-  NA_UNUSED(con);
+  naDelete(con->space);
+  naFree(con);
 }
 
 

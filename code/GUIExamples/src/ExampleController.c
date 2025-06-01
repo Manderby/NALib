@@ -21,8 +21,11 @@ struct ExampleController{
   NAButton* spaceButton;
   NAButton* openGLSpaceButton;
   NAButton* metalSpaceButton;
+  NAButton* imageSpaceButton;
 
   NAButton* buttonButton;
+  NAButton* labelButton;
+  
   NAButton* fontButton;
 
   NASpace* exampleSpace;
@@ -33,8 +36,10 @@ struct ExampleController{
   SpaceController* spaceController;
   OpenGLSpaceController* openGLSpaceController;
   MetalSpaceController* metalSpaceController;
+  ImageSpaceController* imageSpaceController;
 
   ButtonController* buttonController;
+  LabelController* labelController;
   
   FontController* fontController;
   
@@ -43,12 +48,6 @@ struct ExampleController{
 
   NALabel* enabledLabel;
   NALabel* disabledLabel;
-
-  NALabel* labelLabel;
-  NALabel* label;
-  NALabel* labelDisabled;
-  NALabel* labelColor;
-  NALabel* labelColorDisabled;
 
   NALabel* selectLabel;
   NASelect* select;
@@ -76,9 +75,6 @@ struct ExampleController{
   NALabel* menuLabel;
   NAButton* menuButton;
   NAMenu* menu;
-
-  NALabel* imageSpaceLabel;
-  NAImageSpace* imageSpace;
 
   NASpace* subSpace1;
   NASpace* subSpace2;
@@ -214,18 +210,29 @@ static void pressButton(NAReaction reaction){
       con->metalSpaceController = createMetalSpaceController();
     updateMetalSpaceController(con->metalSpaceController);
     newSpace = getMetalSpaceControllerSpace(con->metalSpaceController);
+  }else if(reaction.uiElement == con->imageSpaceButton){
+    if(!con->imageSpaceController)
+      con->imageSpaceController = createImageSpaceController();
+    updateImageSpaceController(con->imageSpaceController);
+    newSpace = getImageSpaceControllerSpace(con->imageSpaceController);
+
   }else if(reaction.uiElement == con->buttonButton){
     if(!con->buttonController)
       con->buttonController = createButtonController();
     updateButtonController(con->buttonController);
     newSpace = getButtonControllerSpace(con->buttonController);
+  }else if(reaction.uiElement == con->labelButton){
+    if(!con->labelController)
+      con->labelController = createLabelController();
+    updateLabelController(con->labelController);
+    newSpace = getLabelControllerSpace(con->labelController);
+
   }else if(reaction.uiElement == con->fontButton){
     if(!con->fontController)
       con->fontController = createFontController();
     updateFontController(con->fontController);
     newSpace = getFontControllerSpace(con->fontController);
-  }else if(reaction.uiElement == con->applicationButton){
-    showNAApplication();
+
   }else if(reaction.uiElement == con->converterButton){
     spawnTemperatureController();
   }else if(reaction.uiElement == con->quitButton){
@@ -257,8 +264,11 @@ ExampleController* createExampleController(){
   con->windowController = NA_NULL;
   con->spaceController = NA_NULL;
   con->openGLSpaceController = NA_NULL;
+  con->metalSpaceController = NA_NULL;
+  con->imageSpaceController = NA_NULL;
 
   con->buttonController = NA_NULL;
+  con->labelController = NA_NULL;
 
   con->fontController = NA_NULL;
 
@@ -343,6 +353,17 @@ ExampleController* createExampleController(){
     pressButton,
     con);
 
+  con->imageSpaceButton = naNewTextStateButton("NAImageSpace", NA_NULL, SMALL_BUTTON_WIDTH);
+  naAddSpaceChild(
+    con->buttonSpace,
+    con->imageSpaceButton,
+    naMakePos(WINDOW_MARGIN, curButtonPosY - 6 * UI_ELEMENT_HEIGTH));
+  naAddUIReaction(
+    con->imageSpaceButton,
+    NA_UI_COMMAND_PRESSED,
+    pressButton,
+    con);
+
 
 
   con->buttonButton = naNewTextStateButton("NAButton", NA_NULL, SMALL_BUTTON_WIDTH);
@@ -352,6 +373,17 @@ ExampleController* createExampleController(){
     naMakePos(WINDOW_MARGIN + SMALL_BUTTON_WIDTH + BUTTON_MARGIN, curButtonPosY - 0 * UI_ELEMENT_HEIGTH));
   naAddUIReaction(
     con->buttonButton,
+    NA_UI_COMMAND_PRESSED, 
+    pressButton,
+    con);
+
+  con->labelButton = naNewTextStateButton("NALabel", NA_NULL, SMALL_BUTTON_WIDTH);
+  naAddSpaceChild(
+    con->buttonSpace,
+    con->labelButton,
+    naMakePos(WINDOW_MARGIN + SMALL_BUTTON_WIDTH + BUTTON_MARGIN, curButtonPosY - 1 * UI_ELEMENT_HEIGTH));
+  naAddUIReaction(
+    con->labelButton,
     NA_UI_COMMAND_PRESSED, 
     pressButton,
     con);
@@ -411,26 +443,6 @@ ExampleController* createExampleController(){
   con->disabledLabel = naNewLabel("Disabled", 200);
   naSetLabelTextAlignment(con->disabledLabel, NA_TEXT_ALIGNMENT_CENTER);
   naAddSpaceChild(contentSpace, con->disabledLabel, naMakePos(left2, curPosY));
-
-  curPosY -= 30;
-  con->labelLabel = naNewLabel("NALabel", descSize);
-  naAddSpaceChild(contentSpace, con->labelLabel, naMakePos(20, curPosY));
-  con->label = naNewLabel("Normal Label", 100);
-  naAddSpaceChild(contentSpace, con->label, naMakePos(left, curPosY));
-  con->labelColor = naNewLabel("Colored Label", 100);
-  naAddSpaceChild(contentSpace, con->labelColor, naMakePos(left + 100, curPosY));
-  
-  con->labelDisabled = naNewLabel("Disabled Label", 100);
-  naSetLabelEnabled(con->labelDisabled, NA_FALSE);
-  con->labelColorDisabled = naNewLabel("Disabled Color Label", 100);
-  naSetLabelEnabled(con->labelColorDisabled, NA_FALSE);
-  naAddSpaceChild(contentSpace, con->labelDisabled, naMakePos(left2, curPosY));
-  naAddSpaceChild(contentSpace, con->labelColorDisabled, naMakePos(left2 + 100, curPosY));
-
-  NAColor textColor;
-  naFillColorWithSRGB(&textColor, .1f, .2f, 1.f, 1.f);
-  naSetLabelTextColor(con->labelColor, &textColor);
-  naSetLabelTextColor(con->labelColorDisabled, &textColor);
 
   curPosY -= 30;
   con->selectLabel = naNewLabel("NASelect", descSize);
@@ -523,12 +535,6 @@ ExampleController* createExampleController(){
   naAddUIReaction(menuItem3, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
   naAddUIReaction(menuItem4, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
 
-  curPosY -= 30;
-  con->imageSpaceLabel = naNewLabel("NAImageSpace", descSize);
-  naAddSpaceChild(contentSpace, con->imageSpaceLabel, naMakePos(20, curPosY));
-  con->imageSpace = naNewImageSpace(getIconImageSet(), naMakeSize(200, 22));
-  naAddSpaceChild(contentSpace, con->imageSpace, naMakePos(left, curPosY));
-
   curPosY -= 60;
   con->subSpace1 = naNewSpace(naMakeSize(300, 30));
   con->subSpace2 = naNewSpace(naMakeSize(300, 30));
@@ -597,10 +603,16 @@ void updateExampleController(ExampleController* con){
   naSetButtonState(
     con->metalSpaceButton,
     con->metalSpaceController && con->exampleSpace == getMetalSpaceControllerSpace(con->metalSpaceController));
+  naSetButtonState(
+    con->imageSpaceButton,
+    con->imageSpaceController && con->exampleSpace == getImageSpaceControllerSpace(con->imageSpaceController));
 
   naSetButtonState(
     con->buttonButton,
     con->buttonController && con->exampleSpace == getButtonControllerSpace(con->buttonController));
+  naSetButtonState(
+    con->labelButton,
+    con->labelController && con->exampleSpace == getLabelControllerSpace(con->labelController));
     
   naSetButtonState(
     con->fontButton,
@@ -609,16 +621,26 @@ void updateExampleController(ExampleController* con){
 
 
 void clearExampleController(ExampleController* con){
-  // Note that all UI elements which are attached in some way to the root
-  // application UIElement will be cleared automatically.
+  // Note that usually, all UI elements which are attached in some way to a
+  // window will be cleared automatically.
+  // But as the spaces in this example application are added and removed
+  // manually, we need to clean them up manually as well.
+  
+  if(con->exampleSpace) {
+    naRemoveSpaceChild(naGetWindowContentSpace(con->window), con->exampleSpace);
+    con->exampleSpace = NA_NULL;
+  }
+
   if(con->applicationController) { clearApplicationController(con->applicationController); }
   if(con->screenController) { clearScreenController(con->screenController); }
   if(con->windowController) { clearWindowController(con->windowController); }
 //  if(con->spaceController) { clearSpaceController(con->spaceController); }
   if(con->openGLSpaceController) { clearOpenGLSpaceController(con->openGLSpaceController); }
   if(con->metalSpaceController) { clearMetalSpaceController(con->metalSpaceController); }
+  if(con->imageSpaceController) { clearImageSpaceController(con->imageSpaceController); }
 
   if(con->buttonController) { clearButtonController(con->buttonController); }
+  if(con->labelController) { clearLabelController(con->labelController); }
 
   if(con->fontController) { clearFontController(con->fontController); }
 

@@ -202,7 +202,8 @@ FontController* createFontController(){
 
 
 void clearFontController(FontController* con){
-  NA_UNUSED(con);
+  naDelete(con->space);
+  naFree(con);
 }
 
 
