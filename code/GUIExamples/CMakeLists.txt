@@ -48,18 +48,24 @@ add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
 
 # ######### Sources ################
 
+set(controllerSourceFiles
+  src/Controller/ApplicationController.c
+  src/Controller/ButtonController.c
+  src/Controller/FontController.c
+  src/Controller/OpenGLSpaceController.c
+  src/Controller/MetalSpaceController.c
+  src/Controller/ScreenController.c
+  src/Controller/WindowController.c
+)
+
 set(sourceFiles
-  src/ButtonController.c
-  src/ExperimentController.c
-  src/FontController.c
+  src/ExampleController.c
   src/GUIExamples.h
   src/GUIExamplesApplication.c
   src/Layout.h
   src/main.c
-  src/ScreenController.c
   src/TemperatureController.c
   src/translationIDs.h
-  src/WindowController.c
 )
 
 set(resourceFiles
@@ -75,6 +81,9 @@ set(macOSResourceFiles
 
 source_group("src" FILES ${sourceFiles})
 target_sources(${TARGET_NAME} PRIVATE ${sourceFiles})
+
+source_group("src/Controller" FILES ${controllerSourceFiles})
+target_sources(${TARGET_NAME} PRIVATE ${controllerSourceFiles})
 
 source_group("res" FILES ${resourceFiles})
 target_sources(${TARGET_NAME} PRIVATE ${resourceFiles})

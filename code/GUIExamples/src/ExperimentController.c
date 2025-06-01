@@ -10,7 +10,7 @@
 #include "NAVisual/NAPNG.h"
 
 
-struct ExperimentController{
+struct ExampleController{
   NAWindow* window;
 
   NASpace* buttonSpace;
@@ -19,15 +19,23 @@ struct ExperimentController{
   NAButton* screenButton;
   NAButton* windowButton;
   NAButton* spaceButton;
+  NAButton* openGLSpaceButton;
+  NAButton* metalSpaceButton;
 
   NAButton* buttonButton;
   NAButton* fontButton;
 
-  NASpace* experimentSpace;
+  NASpace* exampleSpace;
 
+  ApplicationController* applicationController;
   ScreenController* screenController;
   WindowController* windowController;
+  SpaceController* spaceController;
+  OpenGLSpaceController* openGLSpaceController;
+  MetalSpaceController* metalSpaceController;
+
   ButtonController* buttonController;
+  
   FontController* fontController;
   
   
@@ -72,11 +80,6 @@ struct ExperimentController{
   NALabel* imageSpaceLabel;
   NAImageSpace* imageSpace;
 
-  size_t fontId;
-  NALabel* openGLSpaceLabel;
-  NAOpenGLSpace* openGLSpace;
-  int openGLSpaceRefreshCount;
-
   NASpace* subSpace1;
   NASpace* subSpace2;
   NASpace* subSpace3;
@@ -94,12 +97,12 @@ struct ExperimentController{
   NALabel* outputLabel;
 };
 
-void updateExperimentController(ExperimentController* con);
+void updateExampleController(ExampleController* con);
 
 
 
 //void windowReshaped(NAReaction reaction){
-//  ExperimentController* con = reaction.controller;
+//  ExampleController* con = reaction.controller;
 //  NARect rect = naGetUIElementRect(con->window);
 //  NARect borderRect = naGetUIElementRect(con->window);
 //  const NAUTF8Char* labelString = naAllocSprintf(NA_TRUE, "Window reshaped.\nRect with border:    %.01f, %.01f, %.01f, %.01f\nRect without border: %.01f, %.01f, %.01f, %.01f", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height, borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
@@ -107,84 +110,24 @@ void updateExperimentController(ExperimentController* con);
 //}
 
 void checkBoxPressed(NAReaction reaction){
-  ExperimentController* con = reaction.controller;
+  ExampleController* con = reaction.controller;
   naSetLabelText(con->outputLabel, "CheckBox Pressed");
 }
 
-static void initOpenGL(void* initData) {
-  ExperimentController* con = (ExperimentController*)initData;
-  con->fontId = naStartupPixelFont();
-}
-
-void redrawOpenGLSpace(NAReaction reaction){
-  // OpenGL is declared deprecated on macOS 10.14. These pragma directives
-  // omit the nasty warnings. Do not forget the pragma pop at the end of this
-  // function!
-  #if NA_OS == NA_OS_MAC_OS_X
-    #pragma GCC diagnostic push 
-    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-  #endif
-
-  ExperimentController* con = reaction.controller;
-  con->openGLSpaceRefreshCount--;
-
-  // Prepare the next refresh.
-  if(con->openGLSpaceRefreshCount == 0){
-    naRefreshUIElement(con->openGLSpace, 1./ 60);
-    con->openGLSpaceRefreshCount++;
-  }
-
-  static float ang = 0.f;
-
-  ang += .01f;
-  if(ang > NA_PI2f){ang = 0.f;}
-
-
-  double uiScale = naGetUIElementResolutionScale(con->openGLSpace);
-  NASize viewSize = naGetUIElementRect(reaction.uiElement).size;
-  glViewport(
-    0,
-    0,
-    (GLsizei)(viewSize.width * uiScale),
-    (GLsizei)(viewSize.height * uiScale));
-
-  glClearColor(0.f, 0.f, .4f, 1.f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  glDisable(GL_TEXTURE_2D);
-  // Enable blending to render pixel font properly
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  glColor4f(1.f, .5f, 1.f, 1.f);
-  glPointSize(5);
-  glBegin(GL_POINTS);
-    glVertex3f(naSinf(ang) * .9f, 0.f, 0.f);
-  glEnd();
-
-  naDrawASCIICharacters(con->fontId, "Hello World", (double)naSinf(ang) * .9, 0, 0, uiScale);
-   
-  naSwapOpenGLSpaceBuffer(con->openGLSpace);
-  
-  #if NA_OS == NA_OS_MAC_OS_X
-    #pragma GCC diagnostic pop
-  #endif
-}
-
 void radioPressed(NAReaction reaction){
-  ExperimentController* con = reaction.controller;
+  ExampleController* con = reaction.controller;
   naSetLabelText(con->outputLabel, "Radio Pressed");
 }
 
 void sliderEdited(NAReaction reaction){
-  ExperimentController* con = reaction.controller;
+  ExampleController* con = reaction.controller;
   const NASlider* slider = reaction.uiElement;
   const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "Slider Value Edited to %f", naGetSliderValue(slider));
   naSetLabelText(con->outputLabel, outputText);
 }
 
 void textFieldEdited(NAReaction reaction){
-  ExperimentController* con = reaction.controller;
+  ExampleController* con = reaction.controller;
   const NATextField* textField = reaction.uiElement;
   NAString* textFieldString = naNewStringWithTextFieldText(textField);
   const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "TextField Value Edited to %s", naGetStringUTF8Pointer(textFieldString));
@@ -193,7 +136,7 @@ void textFieldEdited(NAReaction reaction){
 }
 
 void textFieldEditFinished(NAReaction reaction){
-  ExperimentController* con = reaction.controller;
+  ExampleController* con = reaction.controller;
   const NATextField* textField = reaction.uiElement;
   NAString* textFieldString = naNewStringWithTextFieldText(textField);
   const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "TextField Value Finished Editing to %s", naGetStringUTF8Pointer(textFieldString));
@@ -202,7 +145,7 @@ void textFieldEditFinished(NAReaction reaction){
 }
 
 void menuButtonPressed(NAReaction reaction){
-  ExperimentController* con = reaction.controller;
+  ExampleController* con = reaction.controller;
   
   NARect rect = naGetUIElementRectAbsolute(con->menuButton);
   NAPos menuPos = rect.pos;
@@ -214,7 +157,7 @@ void menuButtonPressed(NAReaction reaction){
 }
 
 void selectItemSelected(NAReaction reaction){
-  ExperimentController* con = reaction.controller;
+  ExampleController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(
     NA_TRUE,
     "Select item with index %d selected",
@@ -223,7 +166,7 @@ void selectItemSelected(NAReaction reaction){
 }
 
 void menuItemSelected(NAReaction reaction){
-  ExperimentController* con = reaction.controller;
+  ExampleController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(
     NA_TRUE,
     "MenuItem with index %d selected",
@@ -232,7 +175,7 @@ void menuItemSelected(NAReaction reaction){
 }
 
 void menuItemKeyboardSelected(NAReaction reaction){
-  ExperimentController* con = reaction.controller;
+  ExampleController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(
     NA_TRUE,
     "MenuItem with index %d selected by keyboard shortcut",
@@ -243,10 +186,15 @@ void menuItemKeyboardSelected(NAReaction reaction){
 
 
 static void pressButton(NAReaction reaction){
-  ExperimentController* con = (ExperimentController*)reaction.controller;
+  ExampleController* con = (ExampleController*)reaction.controller;
   NASpace* newSpace = NA_NULL;
 
-  if(reaction.uiElement == con->screenButton){
+  if(reaction.uiElement == con->applicationButton){
+    if(!con->applicationController)
+      con->applicationController = createApplicationController();
+    updateApplicationController(con->applicationController);
+    newSpace = getApplicationControllerSpace(con->applicationController);
+  }else if(reaction.uiElement == con->screenButton){
     if(!con->screenController)
       con->screenController = createScreenController();
     updateScreenController(con->screenController);
@@ -256,6 +204,16 @@ static void pressButton(NAReaction reaction){
       con->windowController = createWindowController();
     updateWindowController(con->windowController);
     newSpace = getWindowControllerSpace(con->windowController);
+  }else if(reaction.uiElement == con->openGLSpaceButton){
+    if(!con->openGLSpaceController)
+      con->openGLSpaceController = createOpenGLSpaceController();
+    updateOpenGLSpaceController(con->openGLSpaceController);
+    newSpace = getOpenGLSpaceControllerSpace(con->openGLSpaceController);
+  }else if(reaction.uiElement == con->metalSpaceButton){
+    if(!con->metalSpaceController)
+      con->metalSpaceController = createMetalSpaceController();
+    updateMetalSpaceController(con->metalSpaceController);
+    newSpace = getMetalSpaceControllerSpace(con->metalSpaceController);
   }else if(reaction.uiElement == con->buttonButton){
     if(!con->buttonController)
       con->buttonController = createButtonController();
@@ -275,45 +233,51 @@ static void pressButton(NAReaction reaction){
   }
   
   NASpace* contentSpace = naGetWindowContentSpace(con->window);
-  if(con->experimentSpace) {
-    naRemoveSpaceChild(contentSpace, con->experimentSpace);
+  if(con->exampleSpace) {
+    naRemoveSpaceChild(contentSpace, con->exampleSpace);
   }
   if(newSpace) {
     naAddSpaceChild(contentSpace, newSpace, naMakePos(0, 0));
   }
-  con->experimentSpace = newSpace;
+  con->exampleSpace = newSpace;
 
-  updateExperimentController(con);
+  updateExampleController(con);
 }
 
-ExperimentController* createExperimentController(){
+ExampleController* createExampleController(){
 
   double descSize = 120;
   double left = 160;
   double left2 = 380;
 
-  ExperimentController* con = naAlloc(ExperimentController);
+  ExampleController* con = naAlloc(ExampleController);
 
+  con->applicationController = NA_NULL;
   con->screenController = NA_NULL;
+  con->windowController = NA_NULL;
+  con->spaceController = NA_NULL;
+  con->openGLSpaceController = NA_NULL;
+
   con->buttonController = NA_NULL;
+
   con->fontController = NA_NULL;
 
   con->window = naNewWindow(
-    "Experiment with the NALib UI elements",
+    "Examples of the NALib UI elements",
     naMakeRectS(150, 150, WINDOW_WIDTH, WINDOW_HEIGTH),
     0);
 //  naAddUIReaction(con->window, NA_UI_COMMAND_RESHAPE, windowReshaped, con);
 
-  con->experimentSpace = NA_NULL;
+  con->exampleSpace = NA_NULL;
 
   double curPosY = WINDOW_HEIGTH;
 
   con->buttonSpace = naNewSpace(naMakeSize(WINDOW_WIDTH, BUTTON_SPACE_HEIGHT));
   naSetSpaceAlternateBackground(con->buttonSpace, NA_TRUE);
 
-  double curButtonPosY = BUTTON_SPACE_HEIGHT - WINDOW_MARGIN - UI_ELEMENT_HEIGTH;
+  double curButtonPosY = BUTTON_SPACE_HEIGHT - SPACE_MARGIN - UI_ELEMENT_HEIGTH;
   
-  con->applicationButton = naNewTextPushButton("NAApplication", SMALL_BUTTON_WIDTH);
+  con->applicationButton = naNewTextStateButton("NAApplication", NA_NULL, SMALL_BUTTON_WIDTH);
   naAddSpaceChild(
     con->buttonSpace,
     con->applicationButton,
@@ -346,13 +310,35 @@ ExperimentController* createExperimentController(){
     pressButton,
     con);
   
-  con->spaceButton = naNewTextPushButton("NASpace", SMALL_BUTTON_WIDTH);
+  con->spaceButton = naNewTextStateButton("NASpace", NA_NULL, SMALL_BUTTON_WIDTH);
   naAddSpaceChild(
     con->buttonSpace,
     con->spaceButton,
     naMakePos(WINDOW_MARGIN, curButtonPosY - 3 * UI_ELEMENT_HEIGTH));
   naAddUIReaction(
     con->spaceButton,
+    NA_UI_COMMAND_PRESSED,
+    pressButton,
+    con);
+
+  con->openGLSpaceButton = naNewTextStateButton("NAOpenGLSpace", NA_NULL, SMALL_BUTTON_WIDTH);
+  naAddSpaceChild(
+    con->buttonSpace,
+    con->openGLSpaceButton,
+    naMakePos(WINDOW_MARGIN, curButtonPosY - 4 * UI_ELEMENT_HEIGTH));
+  naAddUIReaction(
+    con->openGLSpaceButton,
+    NA_UI_COMMAND_PRESSED,
+    pressButton,
+    con);
+
+  con->metalSpaceButton = naNewTextStateButton("NAMetalSpace", NA_NULL, SMALL_BUTTON_WIDTH);
+  naAddSpaceChild(
+    con->buttonSpace,
+    con->metalSpaceButton,
+    naMakePos(WINDOW_MARGIN, curButtonPosY - 5 * UI_ELEMENT_HEIGTH));
+  naAddUIReaction(
+    con->metalSpaceButton,
     NA_UI_COMMAND_PRESSED,
     pressButton,
     con);
@@ -543,14 +529,6 @@ ExperimentController* createExperimentController(){
   con->imageSpace = naNewImageSpace(getIconImageSet(), naMakeSize(200, 22));
   naAddSpaceChild(contentSpace, con->imageSpace, naMakePos(left, curPosY));
 
-  curPosY -= 30;
-  con->openGLSpaceLabel = naNewLabel("NAOpenGLSpace", descSize);
-  naAddSpaceChild(contentSpace, con->openGLSpaceLabel, naMakePos(20, curPosY));
-  con->openGLSpace = naNewOpenGLSpace(naMakeSize(200, 22), initOpenGL, con);
-  naAddSpaceChild(contentSpace, con->openGLSpace, naMakePos(left, curPosY));
-  naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, con);
-  con->openGLSpaceRefreshCount = 1;
-
   curPosY -= 60;
   con->subSpace1 = naNewSpace(naMakeSize(300, 30));
   con->subSpace2 = naNewSpace(naMakeSize(300, 30));
@@ -600,30 +578,51 @@ ExperimentController* createExperimentController(){
 }
 
 
-void updateExperimentController(ExperimentController* con){
+void updateExampleController(ExampleController* con){
   naSetButtonState(
     con->screenButton,
-    con->screenController && con->experimentSpace == getScreenControllerSpace(con->screenController));
+    con->screenController && con->exampleSpace == getScreenControllerSpace(con->screenController));
+  naSetButtonState(
+    con->applicationButton,
+    con->applicationController && con->exampleSpace == getApplicationControllerSpace(con->applicationController));
   naSetButtonState(
     con->windowButton,
-    con->windowController && con->experimentSpace == getWindowControllerSpace(con->windowController));
+    con->windowController && con->exampleSpace == getWindowControllerSpace(con->windowController));
+//  naSetButtonState(
+//    con->spaceButton,
+//    con->spaceController && con->exampleSpace == getSpaceControllerSpace(con->spaceController));
+  naSetButtonState(
+    con->openGLSpaceButton,
+    con->openGLSpaceController && con->exampleSpace == getOpenGLSpaceControllerSpace(con->openGLSpaceController));
+  naSetButtonState(
+    con->metalSpaceButton,
+    con->metalSpaceController && con->exampleSpace == getMetalSpaceControllerSpace(con->metalSpaceController));
+
   naSetButtonState(
     con->buttonButton,
-    con->buttonController && con->experimentSpace == getButtonControllerSpace(con->buttonController));
+    con->buttonController && con->exampleSpace == getButtonControllerSpace(con->buttonController));
+    
   naSetButtonState(
     con->fontButton,
-    con->fontController && con->experimentSpace == getFontControllerSpace(con->fontController));
+    con->fontController && con->exampleSpace == getFontControllerSpace(con->fontController));
 }
 
 
-void clearExperimentController(ExperimentController* con){
+void clearExampleController(ExampleController* con){
   // Note that all UI elements which are attached in some way to the root
   // application UIElement will be cleared automatically.
+  if(con->applicationController) { clearApplicationController(con->applicationController); }
   if(con->screenController) { clearScreenController(con->screenController); }
+  if(con->windowController) { clearWindowController(con->windowController); }
+//  if(con->spaceController) { clearSpaceController(con->spaceController); }
+  if(con->openGLSpaceController) { clearOpenGLSpaceController(con->openGLSpaceController); }
+  if(con->metalSpaceController) { clearMetalSpaceController(con->metalSpaceController); }
+
   if(con->buttonController) { clearButtonController(con->buttonController); }
+
   if(con->fontController) { clearFontController(con->fontController); }
+
   naDelete(con->menu);
-  naShutdownPixelFont(con->fontId);
 
   naFree(con);
 }

@@ -1,6 +1,6 @@
 
-#include "GUIExamples.h"
-#include "Layout.h"
+#include "../GUIExamples.h"
+#include "../Layout.h"
 #include "NAUtility/NAString.h"
 #include "NAApp/NAApp.h"
 

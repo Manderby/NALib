@@ -23,7 +23,7 @@ struct HelloWorldGUIApplication{
   NAImageSet* state1ImageSet;
   NAImageSet* state2ImageSet;
   
-  ExperimentController* experimentController;
+  ExampleController* exampleController;
   FontController* fontController;
 };
 
@@ -102,7 +102,7 @@ void postStartup(void* arg){
   naRelease(originalState2Image);
 
   // Create the controllers
-  app->experimentController = createExperimentController();
+  app->exampleController = createExampleController();
 }
 
 
@@ -113,7 +113,7 @@ void clearApplication(void* arg){
 
   naForeachStackpMutable(&(app->temperatureControllers), (NAMutator)despawnTemperatureController);
   naClearStack(&(app->temperatureControllers));
-  clearExperimentController(app->experimentController);
+  clearExampleController(app->exampleController);
   naRelease(app->iconImageSet);
   naRelease(app->state1ImageSet);
   naRelease(app->state2ImageSet);

@@ -1,11 +1,11 @@
 
-#include "GUIExamples.h"
-#include "Layout.h"
+#include "../GUIExamples.h"
+#include "../Layout.h"
 #include "NAUtility/NAMemory.h"
 
 
 
-struct WindowController{
+struct ApplicationController{
   NASpace* space;
 
   NALabel* dummyLabel;
@@ -13,15 +13,15 @@ struct WindowController{
 
 
 
-WindowController* createWindowController(){
-  WindowController* con = naAlloc(WindowController);
+ApplicationController* createApplicationController(){
+  ApplicationController* con = naAlloc(ApplicationController);
 
   con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->dummyLabel = naNewLabel("Not yet available", 200);
+  con->dummyLabel = naNewLabel("NAApplication examples not available yet", 400);
   naAddSpaceChild(con->space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   return con;
@@ -29,19 +29,19 @@ WindowController* createWindowController(){
 
 
 
-void clearWindowController(WindowController* con){
+void clearApplicationController(ApplicationController* con){
   NA_UNUSED(con);
 }
 
 
 
-NASpace* getWindowControllerSpace(WindowController* con){
+NASpace* getApplicationControllerSpace(ApplicationController* con){
   return con->space;
 }
 
 
 
-void updateWindowController(WindowController* con) {
+void updateApplicationController(ApplicationController* con) {
   NA_UNUSED(con);
   // nothing to do.
 }

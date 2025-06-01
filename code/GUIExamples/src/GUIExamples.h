@@ -9,15 +9,17 @@ typedef struct TemperatureController TemperatureController;
 TemperatureController* spawnTemperatureController(void);
 void despawnTemperatureController(TemperatureController* con);
 
-typedef struct ExperimentController ExperimentController;
-ExperimentController* createExperimentController(void);
-void clearExperimentController(ExperimentController* con);
+typedef struct ExampleController ExampleController;
+ExampleController* createExampleController(void);
+void clearExampleController(ExampleController* con);
 
-typedef struct FontController FontController;
-FontController* createFontController(void);
-void clearFontController(FontController* con);
-NASpace* getFontControllerSpace(FontController* con);
-void updateFontController(FontController* con);
+
+
+typedef struct ApplicationController ApplicationController;
+ApplicationController* createApplicationController(void);
+void clearApplicationController(ApplicationController* con);
+NASpace* getApplicationControllerSpace(ApplicationController* con);
+void updateApplicationController(ApplicationController* con);
 
 typedef struct ScreenController ScreenController;
 ScreenController* createScreenController(void);
@@ -31,11 +33,39 @@ void clearWindowController(WindowController* con);
 NASpace* getWindowControllerSpace(WindowController* con);
 void updateWindowController(WindowController* con);
 
+typedef struct SpaceController SpaceController;
+SpaceController* createSpaceController(void);
+void clearSpaceController(SpaceController* con);
+NASpace* getSpaceControllerSpace(SpaceController* con);
+void updateSpaceController(SpaceController* con);
+
+typedef struct OpenGLSpaceController OpenGLSpaceController;
+OpenGLSpaceController* createOpenGLSpaceController(void);
+void clearOpenGLSpaceController(OpenGLSpaceController* con);
+NASpace* getOpenGLSpaceControllerSpace(OpenGLSpaceController* con);
+void updateOpenGLSpaceController(OpenGLSpaceController* con);
+
+typedef struct MetalSpaceController MetalSpaceController;
+MetalSpaceController* createMetalSpaceController(void);
+void clearMetalSpaceController(MetalSpaceController* con);
+NASpace* getMetalSpaceControllerSpace(MetalSpaceController* con);
+void updateMetalSpaceController(MetalSpaceController* con);
+
+
+
 typedef struct ButtonController ButtonController;
 ButtonController* createButtonController(void);
 void clearButtonController(ButtonController* con);
 NASpace* getButtonControllerSpace(ButtonController* con);
 void updateButtonController(ButtonController* con);
+
+
+
+typedef struct FontController FontController;
+FontController* createFontController(void);
+void clearFontController(FontController* con);
+NASpace* getFontControllerSpace(FontController* con);
+void updateFontController(FontController* con);
 
 
 
