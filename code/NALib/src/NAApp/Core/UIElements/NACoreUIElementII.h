@@ -364,14 +364,20 @@ NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement) {
 
   NARect rect;
   const NA_UIElement* elem = (const NA_UIElement*)uiElement;
-
   rect = naGetUIElementRect(elem);
-  elem = naGetUIElementParent(elem);
-  while(elem) {
+
+  while(true) {
+    NAUIElementType type = naGetUIElementType(elem);
+    if(type == NA_UI_WINDOW || type == NA_UI_SCREEN || type == NA_UI_APPLICATION)
+      break;
+
+    elem = naGetUIElementParent(elem);
+    if(!elem) 
+      break;
+    
     NARect curRect = naGetUIElementRect(elem);
     rect.pos.x += curRect.pos.x;
     rect.pos.y += curRect.pos.y;
-    elem = naGetUIElementParent(elem);
   }
 
   return rect;
