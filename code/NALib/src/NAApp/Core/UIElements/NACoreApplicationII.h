@@ -248,6 +248,8 @@ NA_DEF const NAScreen* naGetApplicationScreenWithPos(NAPos pos) {
 
 
 NA_DEF void naCorrectApplicationWindowRect(NARect* contentRect, NABool titleless) {
+  NA_UNUSED(contentRect);
+  NA_UNUSED(titleless);
 //  NAPos topLeft = naMakePos(
 //    contentRect.pos.x + 10.,
 //    contentRect.pos.y + contentRect.size.height + 10.);
@@ -336,7 +338,7 @@ NA_HDEF void na_RenewApplicationScreens() {
   // Create a copy of the old screen setup
   NAList oldScreenList;
   naInitListWithCopy(&oldScreenList, &na_App->screens);
-  NARect oldTotalRect = na_GetApplicationRect(na_App);
+//  NARect oldTotalRect = na_GetApplicationRect(na_App);
   
   // Clear the old list.
   naClearList(&na_App->screens, NA_NULL);

@@ -178,7 +178,7 @@
         char c = str[i];
         
         if(c == '\n') {
-          viewY -= 10 * uiScale;
+          viewY -= (int)(10. * uiScale);
           offsetX = 0;
         }
         if(c < 32 || c > 127)
@@ -194,14 +194,14 @@
           glTexCoord2f((texX * 5.f) * scaleX, ((texY + 1.f) * 9.f) * scaleY);
           glVertex3i(viewX + offsetX, viewY, 0);
           glTexCoord2f((texX * 5.f) * scaleX, (texY * 9.f) * scaleY);
-          glVertex3i(viewX + offsetX, viewY + 9 * uiScale, 0);
+          glVertex3i(viewX + offsetX, viewY + (int)(9. * uiScale), 0);
           glTexCoord2f(((texX + 1.f) * 5.f) * scaleX, ((texY + 1.f) * 9.f) * scaleY);
-          glVertex3i(viewX + offsetX + 5 * uiScale, viewY, 0);
+          glVertex3i(viewX + offsetX + (int)(5. * uiScale), viewY, 0);
           glTexCoord2f(((texX + 1.f) * 5.f) * scaleX, (texY * 9.f) * scaleY);
-          glVertex3i(viewX + offsetX + 5 * uiScale, viewY + 9 * uiScale, 0);
+          glVertex3i(viewX + offsetX + (int)(5. * uiScale), viewY + (int)(9. * uiScale), 0);
         glEnd();
         
-        offsetX += 6 * uiScale;
+        offsetX += (int)(6. * uiScale);
       }
 
       glPopMatrix();

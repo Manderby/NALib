@@ -25,8 +25,6 @@ struct HelloWorldGUIApplication{
   
   ExperimentController* experimentController;
   FontController* fontController;
-  ScreenController* screenController;
-  ButtonController* buttonController;
 };
 
 // The central variable storing the app.
@@ -105,9 +103,6 @@ void postStartup(void* arg){
 
   // Create the controllers
   app->experimentController = createExperimentController();
-  app->fontController = createFontController();
-  app->screenController = createScreenController();
-  app->buttonController = createButtonController();
 }
 
 
@@ -119,9 +114,6 @@ void clearApplication(void* arg){
   naForeachStackpMutable(&(app->temperatureControllers), (NAMutator)despawnTemperatureController);
   naClearStack(&(app->temperatureControllers));
   clearExperimentController(app->experimentController);
-  clearFontController(app->fontController);
-  clearScreenController(app->screenController);
-  clearButtonController(app->buttonController);
   naRelease(app->iconImageSet);
   naRelease(app->state1ImageSet);
   naRelease(app->state2ImageSet);
@@ -156,16 +148,8 @@ void addTemperatureControllerToApplication(TemperatureController* con){
   *(TemperatureController**)naPushStack(&(app->temperatureControllers)) = con;
 }
 
-void showFonts(){
-  showFontController(app->fontController);
-}
-
-void showScreens(){
-  showScreenController(app->screenController);
-}
-
-void showButtons(){
-  showButtonController(app->buttonController);
+void showNAApplication(){
+//  showScreenController(app->screenController);
 }
 
 

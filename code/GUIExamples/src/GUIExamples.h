@@ -16,18 +16,26 @@ void clearExperimentController(ExperimentController* con);
 typedef struct FontController FontController;
 FontController* createFontController(void);
 void clearFontController(FontController* con);
-void showFontController(FontController* con);
+NASpace* getFontControllerSpace(FontController* con);
+void updateFontController(FontController* con);
 
 typedef struct ScreenController ScreenController;
 ScreenController* createScreenController(void);
 void clearScreenController(ScreenController* con);
-void showScreenController(ScreenController* con);
-void udpateScreenController(ScreenController* con);
+NASpace* getScreenControllerSpace(ScreenController* con);
+void updateScreenController(ScreenController* con);
+
+typedef struct WindowController WindowController;
+WindowController* createWindowController(void);
+void clearWindowController(WindowController* con);
+NASpace* getWindowControllerSpace(WindowController* con);
+void updateWindowController(WindowController* con);
 
 typedef struct ButtonController ButtonController;
 ButtonController* createButtonController(void);
 void clearButtonController(ButtonController* con);
-void showButtonController(ButtonController* con);
+NASpace* getButtonControllerSpace(ButtonController* con);
+void updateButtonController(ButtonController* con);
 
 
 
@@ -43,9 +51,7 @@ NAImageSet* getState2ImageSet(void);
 
 
 void addTemperatureControllerToApplication(TemperatureController* con);
-void showFonts(void);
-void showScreens(void);
-void showButtons(void);
+void showNAApplication(void);
 
 
 

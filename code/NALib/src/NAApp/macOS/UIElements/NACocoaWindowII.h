@@ -364,6 +364,13 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space) {
       naError("Require a space, not any arbitrary ui element.");
   #endif
 
+  if(space == window->contentSpace) {
+    #if NA_DEBUG
+      naError("Setting the same content space again. Nothing will happen");
+    #endif
+    return;
+  }
+
   naDefineCocoaObject(NACocoaNativeWindow, nativeWindowPtr, window);
   naDefineCocoaObjectConst(NSView, nativeUIElementPtr, space);
 

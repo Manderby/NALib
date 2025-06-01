@@ -54,9 +54,12 @@ set(sourceFiles
   src/FontController.c
   src/GUIExamples.h
   src/GUIExamplesApplication.c
+  src/Layout.h
   src/main.c
+  src/ScreenController.c
   src/TemperatureController.c
   src/translationIDs.h
+  src/WindowController.c
 )
 
 set(resourceFiles
