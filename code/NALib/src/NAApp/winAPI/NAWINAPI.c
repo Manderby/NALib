@@ -53,6 +53,7 @@
 #include "UIElements/NAWINAPIMetalSpaceII.h"
 #include "UIElements/NAWINAPIOpenGLSpaceII.h"
 #include "UIElements/NAWINAPIRadioII.h"
+#include "UIElements/NAWINAPIScreenII.h"
 #include "UIElements/NAWINAPISelectII.h"
 #include "UIElements/NAWINAPISliderII.h"
 #include "UIElements/NAWINAPISpaceII.h"

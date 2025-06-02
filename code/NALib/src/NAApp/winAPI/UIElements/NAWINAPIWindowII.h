@@ -247,11 +247,22 @@ NA_DEF NAWindow* naNewWindow(
   NAWINAPIWindow* winapiWindow = naNew(NAWINAPIWindow);
 
   NABool resizeable = naGetFlagu32(flags, NA_WINDOW_RESIZEABLE);
+  NABool titleless = naGetFlagu32(flags, NA_WINDOW_TITLELESS);
+  NABool noncloseable = naGetFlagu32(flags, NA_WINDOW_NON_CLOSEABLE);
+  NABool nonminiaturizeable = naGetFlagu32(flags, NA_WINDOW_NON_MINIATURIZEABLE);
+  NABool auxiliary = naGetFlagu32(flags, NA_WINDOW_AUXILIARY);
 
   DWORD style = WS_OVERLAPPEDWINDOW;
   if(!resizeable) {
     style &= ~WS_THICKFRAME;
     style &= ~WS_MAXIMIZEBOX;
+  }
+
+  const NAScreen* screen = naGetApplicationScreenWithPos(naGetRectCenter(rect));
+  if(screen) {
+    NARect screenRect = na_GetScreenRect(&screen->uiElement);
+    rect.pos.x -= screenRect.pos.x;
+    rect.pos.y -= screenRect.pos.y;
   }
 
   winapiWindow->rect = rect;
@@ -288,10 +299,12 @@ NA_DEF NAWindow* naNewWindow(
 
   naFree(systemTitle);
 
+  NAScreen* actualScreen = na_GetApplicationScreenWithNativePtr(MonitorFromWindow(nativePtr, MONITOR_DEFAULTTONEAREST));
+
   na_InitWindow(
     &winapiWindow->window,
     nativePtr,
-    NA_NULL,  // screen, todo
+    actualScreen,
     NA_NULL,
     NA_FALSE,
     resizeable,

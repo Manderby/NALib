@@ -25,14 +25,19 @@ NA_DEF NAScreen* na_NewScreen(
   NSScreen* nsScreen = (NSScreen*)NA_COCOA_RETAIN(nativePtr);
   
   NACocoaScreen* cocoaScreen = naNew(NACocoaScreen);
-  
+
+  NABool isMainScreen = nativePtr == [NSScreen mainScreen];
+  const NAUTF8Char* name = [[nsScreen localizedName] UTF8String];
+  NARect rect = naMakeRectWithNSRect([nsScreen frame]);
+  double uiScale = [nsScreen backingScaleFactor];
+
   na_InitScreen(
     (NAScreen*)cocoaScreen,
     nativePtr,
-    nativePtr == [NSScreen mainScreen],
-    [[nsScreen localizedName] UTF8String],
-    naMakeRectWithNSRect([nsScreen frame]),
-    [nsScreen backingScaleFactor]);
+    isMainScreen,
+    name,
+    rect,
+    uiScale);
   
   return (NAScreen*)cocoaScreen;
 }
@@ -45,7 +50,7 @@ NA_DEF void na_DestructCocoaScreen(NACocoaScreen* cocoaScreen) {
 
 
 
-NA_API NARect naGetScreenUsableRect(const NAScreen* screen) {
+NA_DEF NARect naGetScreenUsableRect(const NAScreen* screen) {
   NSScreen* nsScreen = screen->uiElement.nativePtr;
   return naMakeRectWithNSRect([nsScreen visibleFrame]);
 }

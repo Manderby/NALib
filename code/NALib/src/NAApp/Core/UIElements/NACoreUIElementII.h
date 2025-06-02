@@ -366,7 +366,7 @@ NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement) {
   const NA_UIElement* elem = (const NA_UIElement*)uiElement;
   rect = naGetUIElementRect(elem);
 
-  while(true) {
+  while(1) {
     NAUIElementType type = naGetUIElementType(elem);
     if(type == NA_UI_WINDOW || type == NA_UI_SCREEN || type == NA_UI_APPLICATION)
       break;
