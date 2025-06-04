@@ -376,6 +376,7 @@ NA_HAPI void na_SetRadioRect(NA_UIElement* radio, NARect rect);
 NA_HAPI NAScreen* na_NewScreen(void* nativePtr);
 NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, const NAUTF8Char* name, NARect rect, double uiScale);
 NA_HAPI void na_ClearScreen(NAScreen* screen);
+NA_HAPI void na_FlipScreenCoordinatesVertically(NAScreen* screen, NARect totalRect);
 NA_HAPI void na_UpdateScreenRelativeCenter(NAScreen* screen, NARect totalRect);
 NA_HAPI NARect na_FillScreenList(NAList* screenList);
 NA_HAPI NAScreen* na_GetApplicationScreenWithNativePtr(void* nativePtr);

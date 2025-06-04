@@ -12,9 +12,9 @@
 #define NA_UI_RESOLUTION_2x 7559.05511811023622   // 192 ppi
 // One can dream of having a metric unit in the future. Like for example
 // 4000 spm (subdivisions per meter). By chance, this would be almost, but not
-// completely be the square root of 2 apart from 72 ppi and would barely be
-// noticeable by the naked eye. Wouldn't that be a nice change of unit?
-// But for now, we stick to the cumbersome relation to ppi.
+// quite be a multiple of the square root of 2 apart from 72 ppi and would
+// barely be distingquishable to the naked eye. Wouldn't that be a nice change
+// of unit? But for now, we stick to the cumbersome relation to ppi.
 
 
 

@@ -1331,17 +1331,21 @@ NA_IAPI NASize    naMakeSizeWithCGSize(CGSize  cgSize);
 NA_IAPI NARect    naMakeRectWithCGRect(CGRect  cgRect);
 #endif
 #if defined __OBJC__ && defined __AVAILABILITYMACROS__
-// Note: In order to make this compile, you need to include "NACoord.h" AFTER
-// including <Cocoa/Cocoa.h>
-NA_IAPI NAPos     naMakePosWithNSPoint  (NSPoint nsPoint);
-NA_IAPI NSPoint   naMakeNSPointWithPos  (NAPos   naPos);
-NA_IAPI NASize    naMakeSizeWithNSSize  (NSSize  nsSize);
-NA_IAPI NSSize    naMakeNSSizeWithSize  (NASize  naSize);
-NA_IAPI NARect    naMakeRectWithNSRect  (NSRect  nsRect);
-NA_IAPI NSRect    naMakeNSRectWithSize  (NASize  naSize); // origin = (0, 0)
-NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  naRect);
+  // Note: In order to make this compile, you need to include "NACoord.h" AFTER
+  // including <Cocoa/Cocoa.h>
+  NA_IAPI NAPos     naMakePosWithNSPoint  (NSPoint nsPoint);
+  NA_IAPI NSPoint   naMakeNSPointWithPos  (NAPos   naPos);
+  NA_IAPI NASize    naMakeSizeWithNSSize  (NSSize  nsSize);
+  NA_IAPI NSSize    naMakeNSSizeWithSize  (NASize  naSize);
+  NA_IAPI NARect    naMakeRectWithNSRect  (NSRect  nsRect);
+  NA_IAPI NSRect    naMakeNSRectWithSize  (NASize  naSize); // origin = (0, 0)
+  NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  naRect);
 #endif
-
+#if defined _WINDOWS_
+  // Note: In order to make this compile, you need to include "NACoord.h" AFTER
+  // including <windows.h>
+  NA_IAPI NARecti32 naMakeRecti32WithWinapiRECT  (RECT  winapiRect);
+#endif
 
 
 // Inline implementations are in a separate file:

@@ -269,12 +269,13 @@ NA_DEF NAWindow* naNewWindow(
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
   NARect screenRect = naGetMainScreenRect();
-  RECT windowRect;
-  windowRect.top = (LONG)((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale);
-  windowRect.right = (LONG)((rect.pos.x + rect.size.width) * uiScale);
-  windowRect.bottom = (LONG)((screenRect.size.height - rect.pos.y) * uiScale);
-  windowRect.left = (LONG)(rect.pos.x * uiScale);
-  AdjustWindowRect(&windowRect, style, NA_FALSE);
+
+  RECT winapiRect;
+  winapiRect.top = (LONG)((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale);
+  winapiRect.right = (LONG)((rect.pos.x + rect.size.width) * uiScale);
+  winapiRect.bottom = (LONG)((screenRect.size.height - rect.pos.y) * uiScale);
+  winapiRect.left = (LONG)(rect.pos.x * uiScale);
+  AdjustWindowRect(&winapiRect, style, NA_FALSE);
 
   TCHAR* systemTitle = naAllocSystemStringWithUTF8String(title);
 
@@ -282,10 +283,10 @@ NA_DEF NAWindow* naNewWindow(
 		TEXT("NAWindow"),
     systemTitle,
     style,
-    windowRect.left,
-    windowRect.top,
-    windowRect.right - windowRect.left,
-    windowRect.bottom - windowRect.top,
+    winapiRect.left,
+    winapiRect.top,
+    winapiRect.right - winapiRect.left,
+    winapiRect.bottom - winapiRect.top,
 		NULL,
     NULL,
     naGetUIElementNativePtr(naGetApplication()),
