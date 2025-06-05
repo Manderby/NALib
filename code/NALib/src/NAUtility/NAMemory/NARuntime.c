@@ -264,7 +264,7 @@ NA_HIDEF void na_EnhancePool(NA_TypeInfo* typeInfo) {
   part = (NA_PoolPart*)naMallocAligned(na_Runtime->partSize, na_Runtime->partSize);
   #if NA_DEBUG
     if(!typeInfo)
-      naError("typeInfo is null");
+      naCrash("typeInfo is null");
     // Do you think the following check is not necessary? You'd be surprised
     // how many systems do not align memory correctly!
     if(((size_t)part & ~na_Runtime->partSizeMask) != 0)

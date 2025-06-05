@@ -109,7 +109,7 @@ NA_HDEF NARect na_FillScreenList(NAList* screenList) {
 
   EnumDisplayMonitors(NULL, NULL, na_MonitorEnumProc, (LPARAM)screenList);  
 
-  NARect mainScreenRect;
+  NARect mainScreenRect = naMakeRectS(0., 0., 1., 1.);
 
   NAListIterator it1 = naMakeListMutator(screenList);
   while(naIterateList(&it1)) {

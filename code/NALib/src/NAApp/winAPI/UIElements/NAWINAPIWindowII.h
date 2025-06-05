@@ -412,7 +412,7 @@ NA_DEF void naMarkWindowChanged(NAWindow* window, NABool changed) {
 NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen) {
   #if NA_DEBUG
     if(!window)
-      naError("window is nullptr");
+      naCrash("window is nullptr");
   #endif
 
   DWORD style;
@@ -511,7 +511,7 @@ NA_DEF void* naGetWindowFirstTabElement(NAWindow* window) {
 NA_DEF void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem) {
   #if NA_DEBUG
     if(!window)
-      naError("window is nullptr");
+      naCrash("window is nullptr");
     if(firstTabElem && naGetUIElementWindow(firstTabElem) != window)
       naError("Element is not part of the window.");
   #endif

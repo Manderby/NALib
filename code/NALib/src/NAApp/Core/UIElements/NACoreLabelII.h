@@ -50,7 +50,7 @@ NA_HDEF void na_SetLabelTextColor(NALabel* label, const NAColor* color) {
 void naFillLabelTextColor(NAColor* color, const NALabel* label) {
   #if NA_DEBUG
   if(!label)
-    naError("label is nullptr");
+    naCrash("label is nullptr");
   #endif
 
   if(label->textColor) {

@@ -238,8 +238,8 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
       BitBlt(drawitemstruct->hDC, 0, 0, (int)buttonSize.width, (int)buttonSize.height, hMemDC, 0, 0, SRCCOPY);
 
       if(customDraw) {
+        tmpBgColor = na_SwapWINAPISpaceBackgroundColor(parentSpace, prevBgColor);
         naDeallocUIColor(tmpBgColor);
-        na_SwapWINAPISpaceBackgroundColor(parentSpace, prevBgColor);
       }
 
       // Deleting the blended objects and buffers
@@ -660,7 +660,7 @@ NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled) {
 NA_DEF NABool naGetButtonState(const NAButton* button) {
   #if NA_DEBUG
     if(!button)
-      naError("button is nullptr");
+      naCrash("button is nullptr");
   #endif
 
   const NAWINAPIButton* winapiButton = (const NAWINAPIButton*)button;
@@ -678,7 +678,7 @@ NA_DEF NABool naGetButtonState(const NAButton* button) {
 NA_DEF void naSetButtonState(NAButton* button, NABool state) {
   #if NA_DEBUG
     if(!button)
-      naError("button is nullptr");
+      naCrash("button is nullptr");
   #endif
 
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
@@ -701,7 +701,7 @@ NA_DEF void naSetButtonState(NAButton* button, NABool state) {
 NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text) {
   #if NA_DEBUG
     if(!button)
-      naError("button is nullptr");
+      naCrash("button is nullptr");
   #endif
 
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
@@ -720,7 +720,7 @@ NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text) {
 NA_DEF void naSetButtonText2(NAButton* button, const NAUTF8Char* text) {
   #if NA_DEBUG
     if(!button)
-      naError("button is nullptr");
+      naCrash("button is nullptr");
   #endif
 
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
@@ -739,7 +739,7 @@ NA_DEF void naSetButtonText2(NAButton* button, const NAUTF8Char* text) {
 NA_DEF void naSetButtonImage(NAButton* button, const NAImageSet* imageSet) {
   #if NA_DEBUG
     if(!button)
-      naError("button is nullptr");
+      naCrash("button is nullptr");
   #endif
 
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
@@ -758,7 +758,7 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAImageSet* imageSet) {
 NA_DEF NABool naIsButtonStateful(const NAButton* button) {
   #if NA_DEBUG
     if(!button)
-      naError("button is nullptr");
+      naCrash("button is nullptr");
   #endif
 
   return naGetFlagu32(button->flags, NA_BUTTON_STATEFUL);
@@ -769,7 +769,7 @@ NA_DEF NABool naIsButtonStateful(const NAButton* button) {
 NA_DEF NABool naIsButtonBordered(const NAButton* button) {
   #if NA_DEBUG
     if(!button)
-      naError("button is nullptr");
+      naCrash("button is nullptr");
   #endif
 
   return naGetFlagu32(button->flags, NA_BUTTON_BORDERED);
@@ -780,7 +780,7 @@ NA_DEF NABool naIsButtonBordered(const NAButton* button) {
 NA_DEF NABool naIsButtonTextual(const NAButton* button) {
   #if NA_DEBUG
     if(!button)
-      naError("button is nullptr");
+      naCrash("button is nullptr");
   #endif
 
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
@@ -843,7 +843,7 @@ NA_DEF void naSetButtonAbort(
 NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
   #if NA_DEBUG
     if(!button)
-      naError("button is nullptr");
+      naCrash("button is nullptr");
   #endif
 
   const NAWINAPIButton* winapiButton = (const NAWINAPIButton*)button;
@@ -855,7 +855,7 @@ NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
 NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect) {
   #if NA_DEBUG
     if(!button)
-      naError("button is nullptr");
+      naCrash("button is nullptr");
   #endif
 
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;

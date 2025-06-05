@@ -125,7 +125,10 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     switch(childElement->elementType) {
     case NA_UI_LABEL:
       naFillLabelTextColor(&fgColor, (NALabel*)childElement);
-      if(winapiSpace->curBgColor) { naDeallocUIColor(winapiSpace->curBgColor); }
+      if(winapiSpace->curBgColor) {
+        naDeallocUIColor(winapiSpace->curBgColor);
+        winapiSpace->curBgColor = NA_NULL;
+      }
       naFillSpaceBackgroundColor(&bgColor, uiElement);
       winapiSpace->curBgColor = naAllocUIColor(&bgColor, NA_NULL);
       winapiFgColor = naAllocUIColor(&fgColor, &bgColor);
@@ -151,7 +154,10 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
     //if(1){
     if(winapiSpace->forceEraseBackground) {
-      if(winapiSpace->curBgColor) { naDeallocUIColor(winapiSpace->curBgColor); }
+      if(winapiSpace->curBgColor) {
+        naDeallocUIColor(winapiSpace->curBgColor);
+        winapiSpace->curBgColor = NA_NULL;
+      }
       naFillSpaceBackgroundColor(&bgColor, uiElement);
       winapiSpace->curBgColor = naAllocUIColor(&bgColor, NA_NULL);
       FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
@@ -207,7 +213,10 @@ NA_DEF NASpace* naNewSpace(NASize size) {
 
 
 NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace) {
-  if(winapiSpace->curBgColor) { naDeallocUIColor(winapiSpace->curBgColor); }
+  if(winapiSpace->curBgColor) {
+    naDeallocUIColor(winapiSpace->curBgColor);
+    winapiSpace->curBgColor = NA_NULL;
+  }
   na_ClearSpace((NASpace*)winapiSpace);
 }
 
