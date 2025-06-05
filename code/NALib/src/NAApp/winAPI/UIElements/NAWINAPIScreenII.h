@@ -18,7 +18,8 @@ NA_DEF NAScreen* na_NewScreen(
     winapiScreen = naNew(NAWINAPIScreen);
 
     NABool isMainScreen = (monitorInfo.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY;
-    const NAUTF8Char* name = "Screen X";
+    NAString* string = naNewStringWithSystemString(monitorInfo.szDevice);
+    const NAUTF8Char* name = naGetStringUTF8Pointer(string);
     // Regarding the rect: For now, we store the top but as soon as we have
     // enumerated all screens, we transform that value into a bottom value
     // relative to the absolute coordinate system.
@@ -38,7 +39,7 @@ NA_DEF NAScreen* na_NewScreen(
 
     HDC hDC = CreateDC(NULL, monitorInfo.szDevice, NULL, NULL);
     int logpixels = GetDeviceCaps(hDC, LOGPIXELSX);
-    int horzres = GetDeviceCaps(hDC, HORZRES);
+    double horzres = (double)GetDeviceCaps(hDC, HORZRES);
     double uiScale = (horzres > rect.size.width)
       ? horzres / rect.size.width
       : rect.size.width / horzres;
@@ -57,6 +58,9 @@ NA_DEF NAScreen* na_NewScreen(
       name,
       rect,
       uiScale);
+
+    naDelete(string);
+
   }
 
   return (NAScreen*)winapiScreen;
@@ -77,7 +81,7 @@ NA_DEF NARect naGetScreenUsableRect(const NAScreen* screen) {
 
   return naMakeRectS(
     screenInfo.rcWork.left,
-    screenInfo.rcWork.top,
+    screen->rect.pos.x + (screenInfo.rcMonitor.bottom - screenInfo.rcWork.bottom),
     screenInfo.rcWork.right - screenInfo.rcWork.left,
     screenInfo.rcWork.bottom - screenInfo.rcWork.top);
 }
