@@ -17,17 +17,27 @@ NA_DEF NAScreen* na_NewScreen(
   if (GetMonitorInfo(nativePtr, (MONITORINFO*)&monitorInfo)) {
     winapiScreen = naNew(NAWINAPIScreen);
 
+    // The default resolution of Windows monitors is 96 ppi. All sizes returned
+    // by GetMonitorInfo are multiplied by the ui scale factor of the main
+    // screen. So we divide it back to get a reproducible pixel size.
+    double totalUIScale = 1.;
+    HDC totalDC = GetDC (NULL);
+    if(totalDC) {
+      totalUIScale = 96. / (double)GetDeviceCaps (totalDC, LOGPIXELSX);
+      ReleaseDC (NULL, totalDC);
+    }
+
     NABool isMainScreen = (monitorInfo.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY;
     NAString* string = naNewStringWithSystemString(monitorInfo.szDevice);
     const NAUTF8Char* name = naGetStringUTF8Pointer(string);
     // Regarding the rect: For now, we store the top but as soon as we have
     // enumerated all screens, we transform that value into a bottom value
     // relative to the absolute coordinate system.
-    NARect rect = naMakeRectS(
-      monitorInfo.rcMonitor.left,
-      monitorInfo.rcMonitor.top,
-      monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left,
-      monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top);
+    //NARect rect = naMakeRectS(
+    //  monitorInfo.rcMonitor.left * totalUIScale,
+    //  monitorInfo.rcMonitor.top * totalUIScale,
+    //  (monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left) * totalUIScale,
+    //  (monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top) * totalUIScale);
 
     // Now, Windows does some strange things when computing the ui scaling.
     // As far as the author can detect, under windows 11, the HORZRES value
@@ -37,13 +47,31 @@ NA_DEF NAScreen* na_NewScreen(
     // whether HORZRES is smaller or greater than the pixel count and compute
     // the scaling factor accordingly.
 
-    HDC hDC = CreateDC(NULL, monitorInfo.szDevice, NULL, NULL);
-    int logpixels = GetDeviceCaps(hDC, LOGPIXELSX);
-    double horzres = (double)GetDeviceCaps(hDC, HORZRES);
-    double uiScale = (horzres > rect.size.width)
-      ? horzres / rect.size.width
-      : rect.size.width / horzres;
-    ReleaseDC (NULL, hDC);
+    //HDC hDC = CreateDC(NULL, monitorInfo.szDevice, NULL, NULL);
+    //int logpixels = GetDeviceCaps(hDC, LOGPIXELSX);
+    //double horzres = (double)GetDeviceCaps(hDC, HORZRES);
+    //double uiScale = (horzres > rect.size.width)
+    //  ? horzres / rect.size.width
+    //  : rect.size.width / horzres;
+    //ReleaseDC (NULL, hDC);
+
+    DEVMODE devMode;
+    EnumDisplaySettings(monitorInfo.szDevice, ENUM_CURRENT_SETTINGS, &devMode);
+    double uiScale = (double)devMode.dmPelsWidth / (monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left) / totalUIScale;
+
+    //double virtualWidth = (monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left) * totalUIScale;
+
+    NARect rect = naMakeRectS(
+      (double)devMode.dmPosition.x,
+      (double)devMode.dmPosition.y,
+      (double)devMode.dmPelsWidth,
+      (double)devMode.dmPelsHeight);
+
+
+    //rect.pos.x *= uiScale;
+    //rect.pos.y *= uiScale;
+    //rect.size.width *= uiScale;
+    //rect.size.height *= uiScale;
 
     // Another often referred to solution is the use of the following function.
     // But that requires Shcore.lib and works like ass. 140% scaling when 150%

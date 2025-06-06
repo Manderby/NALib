@@ -30,7 +30,7 @@ NA_HDEF void na_ClearScreen(NAScreen* screen) {
 
 
 NA_HDEF void na_FlipScreenCoordinatesVertically(NAScreen* screen, NARect totalRect) {
-  screen->rect.pos.y = totalRect.size.height - screen->rect.pos.y - screen->rect.size.height;
+  screen->rect.pos.y = totalRect.pos.y + totalRect.size.height - screen->rect.pos.y - screen->rect.size.height;
 }
 
 NA_HDEF void na_UpdateScreenRelativeCenter(NAScreen* screen, NARect totalRect) {
