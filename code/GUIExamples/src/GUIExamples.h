@@ -71,6 +71,24 @@ void clearLabelController(LabelController* con);
 NASpace* getLabelControllerSpace(LabelController* con);
 void updateLabelController(LabelController* con);
 
+typedef struct MenuController MenuController;
+MenuController* createMenuController(void);
+void clearMenuController(MenuController* con);
+NASpace* getMenuControllerSpace(MenuController* con);
+void updateMenuController(MenuController* con);
+
+typedef struct TextBoxController TextBoxController;
+TextBoxController* createTextBoxController(void);
+void clearTextBoxController(TextBoxController* con);
+NASpace* getTextBoxControllerSpace(TextBoxController* con);
+void updateTextBoxController(TextBoxController* con);
+
+typedef struct TextFieldController TextFieldController;
+TextFieldController* createTextFieldController(void);
+void clearTextFieldController(TextFieldController* con);
+NASpace* getTextFieldControllerSpace(TextFieldController* con);
+void updateTextFieldController(TextFieldController* con);
+
 
 
 typedef struct FontController FontController;

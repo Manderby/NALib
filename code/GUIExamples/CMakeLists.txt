@@ -55,8 +55,11 @@ set(controllerSourceFiles
   src/Controller/ImageSpaceController.c
   src/Controller/LabelController.c
   src/Controller/OpenGLSpaceController.c
+  src/Controller/MenuController.c
   src/Controller/MetalSpaceController.c
   src/Controller/ScreenController.c
+  src/Controller/TextBoxController.c
+  src/Controller/TextFieldController.c
   src/Controller/WindowController.c
 )
 
