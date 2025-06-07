@@ -134,6 +134,7 @@ NAImageSet* getState1ImageSet(void);
 NAImageSet* getState2ImageSet(void);
 NAFont* getTitleFont(void);
 NAFont* getMonoFont(void);
+void flashLabel(NALabel* label, const NAUTF8Char* text);
 
 
 void addTemperatureControllerToApplication(TemperatureController* con);

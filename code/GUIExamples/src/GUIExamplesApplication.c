@@ -25,6 +25,8 @@ struct GUIExamplesApplication{
   
   NAFont* titleFont;
   NAFont* monoFont;
+  
+  NAList flashList;
 
   ExampleController* exampleController;
 };
@@ -106,6 +108,8 @@ void postStartup(void* arg){
   app->titleFont = naCreateFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_DEFAULT);
   app->monoFont = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
 
+  naInitList(&app->flashList);
+
   // Create the controllers
   app->exampleController = createExampleController();
 }
@@ -124,6 +128,7 @@ void clearApplication(void* arg){
   naRelease(app->state2ImageSet);
   naRelease(app->titleFont);
   naRelease(app->monoFont);
+  naClearList(&app->flashList, naFree);
   naFree(app);
 }
 
@@ -156,6 +161,51 @@ NAFont* getTitleFont(void) {
 }
 NAFont* getMonoFont(void) {
   return app->monoFont;
+}
+
+
+typedef struct FlashEntry FlashEntry;
+struct FlashEntry {
+  NADateTime lastChange;
+  NALabel* label;
+};
+
+static void naUnflash(void* data) {
+  NADateTime now = naMakeDateTimeNow();
+  NAListIterator it = naMakeListModifier(&app->flashList);
+  while(naIterateList(&it)) {
+    FlashEntry* cur = naGetListCurMutable(&it);
+    if(naGetDateTimeDifference(&now, &cur->lastChange) >= 1.) {
+      naSetLabelText(cur->label, "");
+      naRemoveListCurMutable(&it, NA_FALSE);
+      naFree(cur);
+    }
+  }
+  naClearListIterator(&it);
+}
+
+void flashLabel(NALabel* label, const NAUTF8Char* text) {
+  naSetLabelText(label, text);
+  // Add the label to the unflash-list
+  NADateTime now = naMakeDateTimeNow();
+  NAListIterator it = naMakeListModifier(&app->flashList);
+  NABool found = NA_FALSE;
+  while(naIterateList(&it)) {
+    FlashEntry* cur = naGetListCurMutable(&it);
+    if(cur->label == label) {
+      cur->lastChange = now;
+      found = NA_TRUE;
+    }
+  }
+  naClearListIterator(&it);
+  if(!found) {
+    FlashEntry* newEntry = naAlloc(FlashEntry);
+    newEntry->label = label;
+    newEntry->lastChange = now;
+    naAddListLastMutable(&app->flashList, newEntry);
+  }
+  // Erase the flash in 1 second:
+  naCallApplicationFunctionInSeconds(naUnflash, NA_NULL, 1.);
 }
 
 void addTemperatureControllerToApplication(TemperatureController* con){

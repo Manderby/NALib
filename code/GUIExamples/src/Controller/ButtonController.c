@@ -11,36 +11,43 @@ struct ButtonController{
   
   NALabel* textPushButtonLabel;
   NAButton* textPushButton;
+  NALabel* reactionTextPushButton;
 
   NALabel* textStateButtonLabel;
   NAButton* textStateButton;
   NAButton* textStateButtonDisabled1;
   NAButton* textStateButtonDisabled2;
-  
+  NALabel* reactionTextStateButton;
+
   NALabel* iconPushButtonLabel;
   NAButton* iconPushButton;
-  
+  NALabel* reactionIconPushButton;
+
   NALabel* iconStateButtonLabel;
   NAButton* iconStateButton;
   NAButton* iconStateButtonDisabled1;
   NAButton* iconStateButtonDisabled2;
-  
+  NALabel* reactionIconStateButton;
+
   NALabel* imagePushButtonLabel;
   NAButton* imagePushButton;
-  
+  NALabel* reactionImagePushButton;
+
   NALabel* imageStateButtonLabel;
   NAButton* imageStateButton;
   NAButton* imageStateButtonDisabled1;
   NAButton* imageStateButtonDisabled2;
+  NALabel* reactionImageStateButton;
 
   NALabel* submitLabel;
   NAButton* textButtonSubmit;
+  NALabel* reactionSubmitButton;
+
   NALabel* abortLabel;
   NAButton* textButtonAbort;
+  NALabel* reactionAbortButton;
 
   NALabel* disabledLabel;
-
-  NALabel* outputLabel;
 };
 
 
@@ -48,43 +55,36 @@ struct ButtonController{
 static void buttonPressed(NAReaction reaction){
   ButtonController* con = reaction.controller;
 
-  NAString* labelString;
-
   if(reaction.uiElement == con->textPushButton){
-    labelString = naNewStringWithFormat("Text Push Button Pressed");
+    flashLabel(con->reactionTextPushButton, "Pressed");
   }else if(reaction.uiElement == con->textStateButton){
     NABool state = naGetButtonState(reaction.uiElement);
-    labelString = naNewStringWithFormat("Text State Button Switched to %d", (int)state);
+    flashLabel(con->reactionTextStateButton, naAllocSprintf(NA_TRUE, "State %d", (int)state));
   }else if(reaction.uiElement == con->iconPushButton){
-    labelString = naNewStringWithFormat("Icon Push Button Pressed");
+    flashLabel(con->reactionIconPushButton, "Pressed");
   }else if(reaction.uiElement == con->iconStateButton){
     NABool state = naGetButtonState(reaction.uiElement);
-    labelString = naNewStringWithFormat("Icon State Button Switched to %d", (int)state);
+    flashLabel(con->reactionIconStateButton, naAllocSprintf(NA_TRUE, "State %d", (int)state));
   }else if(reaction.uiElement == con->imagePushButton){
-    labelString = naNewStringWithFormat("Image Push Button Pressed");
+    flashLabel(con->reactionImagePushButton, "Pressed");
   }else if(reaction.uiElement == con->imageStateButton){
     NABool state = naGetButtonState(reaction.uiElement);
-    labelString = naNewStringWithFormat("Image State Button Switched to %d", (int)state);
-  }else{
-    labelString = naNewString();
+    flashLabel(con->reactionImageStateButton, naAllocSprintf(NA_TRUE, "State %d", (int)state));
   }
-
-  naSetLabelText(con->outputLabel, naGetStringUTF8Pointer(labelString));
-  naDelete(labelString);
 }
 
 
 
 static void submitPressed(NAReaction reaction){
   ButtonController* con = reaction.controller;
-  naSetLabelText(con->outputLabel, "Submit pressed");
+  flashLabel(con->reactionSubmitButton, "Activated");
 }
 
 
 
 static void abortPressed(NAReaction reaction){
   ButtonController* con = reaction.controller;
-  naSetLabelText(con->outputLabel, "Abort pressed");
+  flashLabel(con->reactionAbortButton, "Activated");
 }
 
 
@@ -105,6 +105,10 @@ ButtonController* createButtonController(){
   naAddUIReaction(con->textPushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(con->space, con->textPushButton, naMakePos(TAB1, curPosY));
 
+  con->reactionTextPushButton = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->reactionTextPushButton, getMonoFont());
+  naAddSpaceChild(con->space, con->reactionTextPushButton, naMakePos(TAB2, curPosY));
+
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->textStateButtonLabel = naNewLabel("Text Two States", COLUMN0_WIDTH);
@@ -112,9 +116,12 @@ ButtonController* createButtonController(){
   naAddSpaceChild(con->space, con->textStateButtonLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   con->textStateButton = naNewTextStateButton("Off", "On", COLUMN1_WIDTH);
-  naSetButtonState(con->textStateButton, NA_TRUE);
   naAddUIReaction(con->textStateButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(con->space, con->textStateButton, naMakePos(TAB1, curPosY));
+
+  con->reactionTextStateButton = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->reactionTextStateButton, getMonoFont());
+  naAddSpaceChild(con->space, con->reactionTextStateButton, naMakePos(TAB2, curPosY));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
@@ -126,6 +133,10 @@ ButtonController* createButtonController(){
   naAddUIReaction(con->iconPushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(con->space, con->iconPushButton, naMakePos(TAB1, curPosY));
 
+  con->reactionIconPushButton = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->reactionIconPushButton, getMonoFont());
+  naAddSpaceChild(con->space, con->reactionIconPushButton, naMakePos(TAB2, curPosY));
+
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->iconStateButtonLabel = naNewLabel("Icon Two States", COLUMN0_WIDTH);
@@ -133,30 +144,40 @@ ButtonController* createButtonController(){
   naAddSpaceChild(con->space, con->iconStateButtonLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   con->iconStateButton = naNewIconStateButton(getIconImageSet(), NA_NULL, COLUMN1_WIDTH);
-  naSetButtonState(con->iconStateButton, NA_TRUE);
   naAddUIReaction(con->iconStateButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(con->space, con->iconStateButton, naMakePos(TAB1, curPosY));
+
+  con->reactionIconStateButton = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->reactionIconStateButton, getMonoFont());
+  naAddSpaceChild(con->space, con->reactionIconStateButton, naMakePos(TAB2, curPosY));
 
   curPosY = curPosY - 2 * UI_ELEMENT_HEIGTH;
 
   con->imagePushButtonLabel = naNewLabel("Image Push", COLUMN0_WIDTH);
   naSetLabelFont(con->imagePushButtonLabel, getTitleFont());
-  naAddSpaceChild(con->space, con->imagePushButtonLabel, naMakePos(WINDOW_MARGIN, curPosY + UI_ELEMENT_HEIGTH));
+  naAddSpaceChild(con->space, con->imagePushButtonLabel, naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH));
 
   con->imagePushButton = naNewImagePushButton(getState1ImageSet(), naMakeSize(COLUMN1_WIDTH, 2 * UI_ELEMENT_HEIGTH));
   naAddUIReaction(con->imagePushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(con->space, con->imagePushButton, naMakePos(TAB1, curPosY));
 
+  con->reactionImagePushButton = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->reactionImagePushButton, getMonoFont());
+  naAddSpaceChild(con->space, con->reactionImagePushButton, naMakePos(TAB2, curPosY + .5 * UI_ELEMENT_HEIGTH));
+
   curPosY = curPosY - 2 * UI_ELEMENT_HEIGTH;
 
   con->imageStateButtonLabel = naNewLabel("Image Two states", COLUMN0_WIDTH);
   naSetLabelFont(con->imageStateButtonLabel, getTitleFont());
-  naAddSpaceChild(con->space, con->imageStateButtonLabel, naMakePos(WINDOW_MARGIN, curPosY + UI_ELEMENT_HEIGTH));
+  naAddSpaceChild(con->space, con->imageStateButtonLabel, naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH));
 
   con->imageStateButton = naNewImageStateButton(getState1ImageSet(), getState2ImageSet(), naMakeSize(COLUMN1_WIDTH, 2 * UI_ELEMENT_HEIGTH));
-  naSetButtonState(con->imageStateButton, NA_TRUE);
   naAddUIReaction(con->imageStateButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(con->space, con->imageStateButton, naMakePos(TAB1, curPosY));
+
+  con->reactionImageStateButton = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->reactionImageStateButton, getMonoFont());
+  naAddSpaceChild(con->space, con->reactionImageStateButton, naMakePos(TAB2, curPosY + .5 * UI_ELEMENT_HEIGTH));
 
   curPosY = curPosY - 2 * UI_ELEMENT_HEIGTH;
 
@@ -208,6 +229,10 @@ ButtonController* createButtonController(){
   naAddSpaceChild(con->space, con->textButtonSubmit, naMakePos(TAB1, curPosY));
 //  naSetButtonSubmit(con->textButtonSubmit, submitPressed, con);
 
+  con->reactionSubmitButton = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->reactionSubmitButton, getMonoFont());
+  naAddSpaceChild(con->space, con->reactionSubmitButton, naMakePos(TAB2, curPosY));
+
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->abortLabel = naNewLabel("Abort (Esc)", COLUMN0_WIDTH);
@@ -219,12 +244,9 @@ ButtonController* createButtonController(){
   naAddSpaceChild(con->space, con->textButtonAbort, naMakePos(TAB1, curPosY));
 //  naSetButtonAbort(con->textButtonAbort, abortPressed, con);
 
-
-  curPosY = curPosY - 60;
-
-  con->outputLabel = naNewLabel( "Here will be the output of any operation.", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naSetLabelFont(con->outputLabel, getMonoFont());
-  naAddSpaceChild(con->space, con->outputLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  con->reactionAbortButton = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->reactionAbortButton, getMonoFont());
+  naAddSpaceChild(con->space, con->reactionAbortButton, naMakePos(TAB2, curPosY));
 
   return con;
 }
