@@ -82,14 +82,14 @@ OpenGLSpaceController* createOpenGLSpaceController(){
   con->openGLSpaceRefreshCount = 1;
 
   con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
-  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN;
+  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   #define OPENGL_DISPLAY_HEIGHT 100.
 
-  curPosY = curPosY - SPACE_MARGIN - OPENGL_DISPLAY_HEIGHT;
+  curPosY = curPosY - SPACE_MARGIN_V - OPENGL_DISPLAY_HEIGHT;
   
   con->openGLSpace = naNewOpenGLSpace(naMakeSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN, OPENGL_DISPLAY_HEIGHT), initOpenGL, con);
-  naAddSpaceChild(con->space, con->openGLSpace, naMakePos(WINDOW_MARGIN, curPosY + SPACE_MARGIN));
+  naAddSpaceChild(con->space, con->openGLSpace, naMakePos(WINDOW_MARGIN, curPosY + SPACE_MARGIN_V));
   naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, con);
 
 

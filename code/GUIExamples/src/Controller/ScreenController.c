@@ -153,30 +153,23 @@ void redrawDisplayReaction(NAReaction reaction) {
 ScreenController* createScreenController(){
   ScreenController* con = naAlloc(ScreenController);
 
-  #define DISPLAY_HEIGHT 200.
-
-  double labelWidth = 200;
-  double left1 = 240;
-  double left2 = 400;
-
-  double buttonWidth = 120;
-  double buttonHeight = 50;
+  double displayHeight = 200.;
 
   con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
-  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN;
+  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
-  curPosY = curPosY - DISPLAY_HEIGHT - SPACE_MARGIN;
+  curPosY = curPosY - displayHeight - SPACE_MARGIN_V;
   
-  con->display = naNewOpenGLSpace(naMakeSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN, DISPLAY_HEIGHT), initOpenGL, con);
+  con->display = naNewOpenGLSpace(naMakeSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN, displayHeight), initOpenGL, con);
   naAddUIReaction(con->display, NA_UI_COMMAND_REDRAW, redrawDisplayReaction, con);
-  naAddSpaceChild(con->space, con->display, naMakePos(WINDOW_MARGIN, curPosY + SPACE_MARGIN));
+  naAddSpaceChild(con->space, con->display, naMakePos(WINDOW_MARGIN, curPosY + SPACE_MARGIN_V));
   
   curPosY = curPosY - 25;
 
-  con->totalRectTitle = naNewLabel("Absolute application space:", labelWidth);
-  con->totalRectLabel = naNewLabel("", labelWidth * 2);
-  naAddSpaceChild(con->space, con->totalRectTitle, naMakePos(20, curPosY));
-  naAddSpaceChild(con->space, con->totalRectLabel, naMakePos(left1, curPosY));
+  con->totalRectTitle = naNewLabel("Absolute space:", COLUMN0_WIDTH);
+  con->totalRectLabel = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
+  naAddSpaceChild(con->space, con->totalRectTitle, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(con->space, con->totalRectLabel, naMakePos(TAB1, curPosY));
 
   // We capture the event when the screen setup is changing.
   naAddUIReaction(naGetApplication(), NA_UI_COMMAND_RESHAPE, applicationReshaped, con);
@@ -207,7 +200,7 @@ void updateScreenController(ScreenController* con){
   NARect totalRect = naGetUIElementRect(naGetApplication());
 
   naSetLabelText(con->totalRectLabel,
-    naAllocSprintf(NA_TRUE, "Origin: %.0f, %.0f Size: %.0f, %.0f",
+    naAllocSprintf(NA_TRUE, "Origin: (%.0f, %.0f) Size: (%.0f, %.0f)",
       totalRect.pos.x,
       totalRect.pos.y,
       totalRect.size.width,

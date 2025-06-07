@@ -43,42 +43,37 @@ TextFieldController* createTextFieldController(){
   TextFieldController* con = naAlloc(TextFieldController);
 
   con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
-  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN;
-
-  NAFont* titleFont = naCreateFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_DEFAULT);
+  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->enabledLabel = naNewLabel("Enabled", COLUMN1_WIDTH);
-  naSetLabelFont(con->enabledLabel, titleFont);
+  con->enabledLabel = naNewLabel("Normal", COLUMN0_WIDTH);
+  naSetLabelFont(con->enabledLabel, getTitleFont());
   naSetLabelTextAlignment(con->enabledLabel, NA_TEXT_ALIGNMENT_CENTER);
-  naAddSpaceChild(con->space, con->enabledLabel, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(con->space, con->enabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
-  con->disabledLabel = naNewLabel("Disabled", COLUMN2_WIDTH);
-  naSetLabelFont(con->disabledLabel, titleFont);
-  naSetLabelTextAlignment(con->disabledLabel, NA_TEXT_ALIGNMENT_CENTER);
-  naAddSpaceChild(con->space, con->disabledLabel, naMakePos(TAB2, curPosY));
-
-  curPosY = curPosY - UI_ELEMENT_HEIGTH;
-
-  con->textField = naNewTextField(200);
+  con->textField = naNewTextField(COLUMN1_WIDTH);
   naAddSpaceChild(con->space, con->textField, naMakePos(TAB1, curPosY));
   naAddUIReaction(con->textField, NA_UI_COMMAND_EDITED, textFieldEdited, con);
   naAddUIReaction(con->textField, NA_UI_COMMAND_EDIT_FINISHED, textFieldEditFinished, con);
-  con->textFieldDisabled = naNewTextField(200);
+  
+  curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
+  naSetLabelFont(con->disabledLabel, getTitleFont());
+  naSetLabelTextAlignment(con->disabledLabel, NA_TEXT_ALIGNMENT_CENTER);
+  naAddSpaceChild(con->space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
+
+  con->textFieldDisabled = naNewTextField(COLUMN1_WIDTH);
   naSetTextFieldEnabled(con->textFieldDisabled, NA_FALSE);
   naSetTextFieldText(con->textFieldDisabled, "Disabled Textfield");
-  naAddSpaceChild(con->space, con->textFieldDisabled, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(con->space, con->textFieldDisabled, naMakePos(TAB1, curPosY));
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
     WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  NAFont* monospaceFont = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
-  naSetLabelFont(con->outputLabel, monospaceFont);
-  naRelease(monospaceFont);
+  naSetLabelFont(con->outputLabel, getMonoFont());
   naAddSpaceChild(con->space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
-
-  naRelease(titleFont);
 
   return con;
 }

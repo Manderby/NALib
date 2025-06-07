@@ -14,7 +14,7 @@
 
 
 // Put GUI elements belonging together into a controller struct.
-struct HelloWorldGUIApplication{
+struct GUIExamplesApplication{
   NAStack temperatureControllers;
   int nextWindowX;
   int nextWindowY;
@@ -23,12 +23,14 @@ struct HelloWorldGUIApplication{
   NAImageSet* state1ImageSet;
   NAImageSet* state2ImageSet;
   
+  NAFont* titleFont;
+  NAFont* monoFont;
+
   ExampleController* exampleController;
-  FontController* fontController;
 };
 
 // The central variable storing the app.
-HelloWorldGUIApplication* app;
+GUIExamplesApplication* app;
 
 
 
@@ -46,7 +48,7 @@ void preStartup(void* arg){
   naDelete(pwd);
 
   NA_UNUSED(arg);
-  app = naAlloc(HelloWorldGUIApplication);
+  app = naAlloc(GUIExamplesApplication);
   naInitStack(&(app->temperatureControllers), sizeof(TemperatureController*), 0, 0);
   app->nextWindowX = 700;
   app->nextWindowY = 400;
@@ -101,6 +103,9 @@ void postStartup(void* arg){
   naDelete(png2);
   naRelease(originalState2Image);
 
+  app->titleFont = naCreateFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_DEFAULT);
+  app->monoFont = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
+
   // Create the controllers
   app->exampleController = createExampleController();
 }
@@ -117,6 +122,8 @@ void clearApplication(void* arg){
   naRelease(app->iconImageSet);
   naRelease(app->state1ImageSet);
   naRelease(app->state2ImageSet);
+  naRelease(app->titleFont);
+  naRelease(app->monoFont);
   naFree(app);
 }
 
@@ -142,6 +149,13 @@ NAImageSet* getState1ImageSet(void){
 }
 NAImageSet* getState2ImageSet(void){
   return app->state2ImageSet;
+}
+
+NAFont* getTitleFont(void) {
+  return app->titleFont;
+}
+NAFont* getMonoFont(void) {
+  return app->monoFont;
 }
 
 void addTemperatureControllerToApplication(TemperatureController* con){

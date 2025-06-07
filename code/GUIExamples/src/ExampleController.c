@@ -115,7 +115,7 @@ static void pressButton(NAReaction reaction){
     newSpace = getImageSpaceControllerSpace(con->imageSpaceController);
 
   }else if(reaction.uiElement == con->buttonButton){
-    if(!con->checkBoxController)
+    if(!con->buttonController)
       con->buttonController = createButtonController();
     updateButtonController(con->buttonController);
     newSpace = getButtonControllerSpace(con->buttonController);
@@ -187,13 +187,13 @@ static void pressButton(NAReaction reaction){
 
 
 NAButton* addButton(ExampleController* con, const NAUTF8Char* text, int32 x, int32 y) {
-  double curButtonPosY = BUTTON_SPACE_HEIGHT - SPACE_MARGIN - UI_ELEMENT_HEIGTH;
+  double curButtonPosY = BUTTON_SPACE_HEIGHT - SPACE_MARGIN_V - UI_ELEMENT_HEIGTH;
 
-  NAButton* button = naNewTextStateButton(text, NA_NULL, SMALL_BUTTON_WIDTH);
+  NAButton* button = naNewTextStateButton(text, NA_NULL, BUTTON_WIDTH);
   naAddSpaceChild(
     con->buttonSpace,
     button,
-    naMakePos(WINDOW_MARGIN + x * (SMALL_BUTTON_WIDTH + BUTTON_MARGIN), curButtonPosY - y * UI_ELEMENT_HEIGTH));
+    naMakePos(WINDOW_MARGIN + x * (BUTTON_WIDTH + UI_ELEMENT_MARGIN), curButtonPosY - y * UI_ELEMENT_HEIGTH));
   naAddUIReaction(
     button,
     NA_UI_COMMAND_PRESSED, 

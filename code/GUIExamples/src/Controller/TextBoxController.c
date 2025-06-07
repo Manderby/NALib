@@ -17,11 +17,11 @@ TextBoxController* createTextBoxController(){
   TextBoxController* con = naAlloc(TextBoxController);
 
   con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
-  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN;
+  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->textBox = naNewTextBox(naMakeSize(200, 50));
+  con->textBox = naNewTextBox(naMakeSize(COLUMN1_WIDTH, 50));
   naAddSpaceChild(con->space, con->textBox, naMakePos(TAB1, curPosY - 20));
 
   return con;

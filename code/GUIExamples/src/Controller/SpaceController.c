@@ -25,14 +25,15 @@ SpaceController* createSpaceController(){
   SpaceController* con = naAlloc(SpaceController);
 
   con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
-  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN;
+  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
+  double spaceHeigth = UI_ELEMENT_HEIGTH + 2 * SPACE_MARGIN_V;
 
-  con->subSpace1 = naNewSpace(naMakeSize(300, 30));
-  con->subSpace2 = naNewSpace(naMakeSize(300, 30));
-  con->subSpace3 = naNewSpace(naMakeSize(300, 30));
-  con->subSpace4 = naNewSpace(naMakeSize(300, 30));
+  con->subSpace1 = naNewSpace(naMakeSize(WINDOW_WIDTH, spaceHeigth));
+  con->subSpace2 = naNewSpace(naMakeSize(WINDOW_WIDTH, spaceHeigth));
+  con->subSpace3 = naNewSpace(naMakeSize(WINDOW_WIDTH, spaceHeigth));
+  con->subSpace4 = naNewSpace(naMakeSize(WINDOW_WIDTH, spaceHeigth));
 
   NAColor backColor;
   naFillColorWithSRGB(&backColor, .8f, .5f, .2f, .25f);
@@ -41,20 +42,23 @@ SpaceController* createSpaceController(){
   
   naSetSpaceAlternateBackground(con->subSpace2, NA_TRUE);
   naSetSpaceAlternateBackground(con->subSpace4, NA_TRUE);
-  con->subSpace1Label = naNewLabel("Subspace with normal background", 520);
-  con->subSpace2Label = naNewLabel("Subspace with alternate background", 520);
-  con->subSpace3Label = naNewLabel("Subspace with colored background", 520);
-  con->subSpace4Label = naNewLabel("Subspace with colored and alternate background", 520);
-  naAddSpaceChild(con->subSpace1, con->subSpace1Label, naMakePos(20, 0));
-  naAddSpaceChild(con->subSpace2, con->subSpace2Label, naMakePos(20, 0));
-  naAddSpaceChild(con->subSpace3, con->subSpace3Label, naMakePos(20, 0));
-  naAddSpaceChild(con->subSpace4, con->subSpace4Label, naMakePos(20, 0));
-  naAddSpaceChild(con->space, con->subSpace1, naMakePos(0, curPosY));
-  naAddSpaceChild(con->space, con->subSpace2, naMakePos(300, curPosY));
+  con->subSpace1Label = naNewLabel("Space with normal background", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
+  con->subSpace2Label = naNewLabel("Space with alternate background", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
+  con->subSpace3Label = naNewLabel("Space with colored background", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
+  con->subSpace4Label = naNewLabel("Space with colored and alternate background", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
+  naSetLabelTextAlignment(con->subSpace1Label, NA_TEXT_ALIGNMENT_CENTER);
+  naSetLabelTextAlignment(con->subSpace2Label, NA_TEXT_ALIGNMENT_CENTER);
+  naSetLabelTextAlignment(con->subSpace3Label, NA_TEXT_ALIGNMENT_CENTER);
+  naSetLabelTextAlignment(con->subSpace4Label, NA_TEXT_ALIGNMENT_CENTER);
+  naAddSpaceChild(con->subSpace1, con->subSpace1Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));
+  naAddSpaceChild(con->subSpace2, con->subSpace2Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));
+  naAddSpaceChild(con->subSpace3, con->subSpace3Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));
+  naAddSpaceChild(con->subSpace4, con->subSpace4Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));
   
-  curPosY -= 30;
-  naAddSpaceChild(con->space, con->subSpace3, naMakePos(0, curPosY));
-  naAddSpaceChild(con->space, con->subSpace4, naMakePos(300, curPosY));
+  naAddSpaceChild(con->space, con->subSpace1, naMakePos(0, curPosY - 0 * spaceHeigth));
+  naAddSpaceChild(con->space, con->subSpace2, naMakePos(0, curPosY - 1 * spaceHeigth));
+  naAddSpaceChild(con->space, con->subSpace3, naMakePos(0, curPosY - 2 * spaceHeigth));
+  naAddSpaceChild(con->space, con->subSpace4, naMakePos(0, curPosY - 3 * spaceHeigth));
 
   return con;
 }

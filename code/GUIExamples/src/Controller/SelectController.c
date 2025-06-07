@@ -8,7 +8,10 @@
 struct SelectController{
   NASpace* space;
 
+  NALabel* normalLabel;
   NASelect* select;
+  
+  NALabel* disabledLabel;
   NASelect* selectDisabled;
 
   NALabel* outputLabel;
@@ -31,11 +34,15 @@ SelectController* createSelectController(){
   SelectController* con = naAlloc(SelectController);
 
   con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
-  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN;
+  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->select = naNewSelect(200);
+  con->normalLabel = naNewLabel("Normal", COLUMN0_WIDTH);
+  naSetLabelFont(con->normalLabel, getTitleFont());
+  naAddSpaceChild(con->space, con->normalLabel, naMakePos(WINDOW_MARGIN, curPosY));
+
+  con->select = naNewSelect(COLUMN1_WIDTH);
   naAddSpaceChild(con->space, con->select, naMakePos(TAB1, curPosY));
   for(size_t i = 0; i < 5; ++i){
     NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Select menu item %d", i), NA_NULL);
@@ -44,18 +51,22 @@ SelectController* createSelectController(){
   }
   naSetSelectIndexSelected(con->select, 3);
 
-  con->selectDisabled = naNewSelect(200);
+  curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
+  naSetLabelFont(con->disabledLabel, getTitleFont());
+  naAddSpaceChild(con->space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
+
+  con->selectDisabled = naNewSelect(COLUMN1_WIDTH);
   naSetSelectEnabled(con->selectDisabled, NA_FALSE);
-  NAMenuItem* disabledItem = naNewMenuItem(naAllocSprintf(NA_TRUE, "Disabled Select Item", 0), NA_NULL);
+  NAMenuItem* disabledItem = naNewMenuItem(naAllocSprintf(NA_TRUE, "Disabled Select", 0), NA_NULL);
   naAddSelectMenuItem(con->selectDisabled, disabledItem, NA_NULL);
-  naAddSpaceChild(con->space, con->selectDisabled, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(con->space, con->selectDisabled, naMakePos(TAB1, curPosY));
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
     WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  NAFont* monospaceFont = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
-  naSetLabelFont(con->outputLabel, monospaceFont);
-  naRelease(monospaceFont);
+  naSetLabelFont(con->outputLabel, getMonoFont());
   naAddSpaceChild(con->space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
   return con;

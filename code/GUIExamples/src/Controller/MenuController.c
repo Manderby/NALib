@@ -45,11 +45,11 @@ MenuController* createMenuController(){
   MenuController* con = naAlloc(MenuController);
 
   con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
-  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN;
+  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->button = naNewTextPushButton("Push for Menu", 200);
+  con->button = naNewTextPushButton("Push for Menu", COLUMN1_WIDTH);
   naAddUIReaction(con->button, NA_UI_COMMAND_PRESSED, menuButtonPressed, con);
   naAddSpaceChild(con->space, con->button, naMakePos(TAB1, curPosY));
   con->menu = naNewMenu();  
@@ -74,9 +74,7 @@ MenuController* createMenuController(){
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
     WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  NAFont* monospaceFont = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
-  naSetLabelFont(con->outputLabel, monospaceFont);
-  naRelease(monospaceFont);
+  naSetLabelFont(con->outputLabel, getMonoFont());
   naAddSpaceChild(con->space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
   return con;

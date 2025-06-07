@@ -123,7 +123,7 @@ void updateFontController(FontController* con);
 
 
 
-typedef struct HelloWorldGUIApplication HelloWorldGUIApplication;
+typedef struct GUIExamplesApplication GUIExamplesApplication;
 void preStartup(void* arg);
 void postStartup(void* arg);
 void clearApplication(void* arg);
@@ -132,6 +132,8 @@ double getAndAdvanceNextWindowY(void);
 NAImageSet* getIconImageSet(void);
 NAImageSet* getState1ImageSet(void);
 NAImageSet* getState2ImageSet(void);
+NAFont* getTitleFont(void);
+NAFont* getMonoFont(void);
 
 
 void addTemperatureControllerToApplication(TemperatureController* con);

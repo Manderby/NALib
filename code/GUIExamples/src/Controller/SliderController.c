@@ -8,8 +8,15 @@
 struct SliderController{
   NASpace* space;
 
+  NALabel* normalLabel;
   NASlider* slider;
-  NASlider* sliderDisabled;
+
+  NALabel* ticksLabel;
+  NASlider* ticksSlider;
+  
+  NALabel* disabledLabel;
+  NASlider* sliderDisabled1;
+  NASlider* sliderDisabled2;
 
   NALabel* outputLabel;
 };
@@ -29,23 +36,51 @@ SliderController* createSliderController(){
   SliderController* con = naAlloc(SliderController);
 
   con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
-  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN;
+  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->slider = naNewSlider(200);
+  con->normalLabel = naNewLabel("Normal", COLUMN0_WIDTH);
+  naSetLabelFont(con->normalLabel, getTitleFont());
+  naAddSpaceChild(con->space, con->normalLabel, naMakePos(WINDOW_MARGIN, curPosY));
+
+  con->slider = naNewSlider(COLUMN1_WIDTH);
   naAddSpaceChild(con->space, con->slider, naMakePos(TAB1, curPosY));
   naAddUIReaction(con->slider, NA_UI_COMMAND_EDITED, sliderEdited, con);
-  con->sliderDisabled = naNewSlider(200);
-  naSetSliderEnabled(con->sliderDisabled, NA_FALSE);
-  naAddSpaceChild(con->space, con->sliderDisabled, naMakePos(TAB2, curPosY));
+
+  curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->ticksLabel = naNewLabel("Ticks", COLUMN0_WIDTH);
+  naSetLabelFont(con->ticksLabel, getTitleFont());
+  naAddSpaceChild(con->space, con->ticksLabel, naMakePos(WINDOW_MARGIN, curPosY));
+
+  con->ticksSlider = naNewSlider(COLUMN1_WIDTH);
+  naSetSliderRange(con->ticksSlider, 0., 1., 11);
+  naAddSpaceChild(con->space, con->ticksSlider, naMakePos(TAB1, curPosY));
+  naAddUIReaction(con->ticksSlider, NA_UI_COMMAND_EDITED, sliderEdited, con);
+
+  curPosY = curPosY - (2. * UI_ELEMENT_HEIGTH);
+
+  con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
+  naSetLabelFont(con->disabledLabel, getTitleFont());
+  naAddSpaceChild(con->space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH));
+  
+  con->sliderDisabled1 = naNewSlider(COLUMN1_WIDTH);
+  naSetSliderEnabled(con->sliderDisabled1, NA_FALSE);
+  naSetSliderValue(con->sliderDisabled1, .5);
+  naAddSpaceChild(con->space, con->sliderDisabled1, naMakePos(TAB1, curPosY + UI_ELEMENT_HEIGTH));
+
+  con->sliderDisabled2 = naNewSlider(COLUMN1_WIDTH);
+  naSetSliderEnabled(con->sliderDisabled2, NA_FALSE);
+  naSetSliderRange(con->sliderDisabled2, 0., 1., 11);
+  naSetSliderValue(con->sliderDisabled2, .5);
+  naAddSpaceChild(con->space, con->sliderDisabled2, naMakePos(TAB1, curPosY));
+  naAddUIReaction(con->sliderDisabled2, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
     WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  NAFont* monospaceFont = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
-  naSetLabelFont(con->outputLabel, monospaceFont);
-  naRelease(monospaceFont);
+  naSetLabelFont(con->outputLabel, getMonoFont());
   naAddSpaceChild(con->space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
   return con;

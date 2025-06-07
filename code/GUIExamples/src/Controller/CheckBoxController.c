@@ -8,8 +8,12 @@
 struct CheckBoxController{
   NASpace* space;
 
+  NALabel* normalLabel;
   NACheckBox* checkBox;
-  NACheckBox* checkBoxDisabled;
+
+  NALabel* disabledLabel;
+  NACheckBox* checkBoxDisabled1;
+  NACheckBox* checkBoxDisabled2;
 
   NALabel* outputLabel;
 };
@@ -27,23 +31,37 @@ CheckBoxController* createCheckBoxController(){
   CheckBoxController* con = naAlloc(CheckBoxController);
 
   con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
-  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN;
+  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->checkBox = naNewCheckBox("I am a CheckBox", 200);
+  con->normalLabel = naNewLabel("Normal", COLUMN0_WIDTH);
+  naSetLabelFont(con->normalLabel, getTitleFont());
+  naAddSpaceChild(con->space, con->normalLabel, naMakePos(WINDOW_MARGIN, curPosY));
+
+  con->checkBox = naNewCheckBox("I am a CheckBox", COLUMN1_WIDTH);
   naAddSpaceChild(con->space, con->checkBox, naMakePos(TAB1, curPosY));
   naAddUIReaction(con->checkBox, NA_UI_COMMAND_PRESSED, checkBoxPressed, con);
-  con->checkBoxDisabled = naNewCheckBox("I am a disabled CheckBox", 200);
-  naSetCheckBoxEnabled(con->checkBoxDisabled, NA_FALSE);
-  naAddSpaceChild(con->space, con->checkBoxDisabled, naMakePos(TAB2, curPosY));
+  
+  curPosY = curPosY - (2. * UI_ELEMENT_HEIGTH);
+
+  con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
+  naSetLabelFont(con->disabledLabel, getTitleFont());
+  naAddSpaceChild(con->space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH));
+
+  con->checkBoxDisabled1 = naNewCheckBox("Disabled CheckBox On", COLUMN1_WIDTH);
+  naSetCheckBoxState(con->checkBoxDisabled1, NA_TRUE);
+  naSetCheckBoxEnabled(con->checkBoxDisabled1, NA_FALSE);
+  naAddSpaceChild(con->space, con->checkBoxDisabled1, naMakePos(TAB1, curPosY + UI_ELEMENT_HEIGTH));
+  
+  con->checkBoxDisabled1 = naNewCheckBox("Disabled CheckBox Off", COLUMN1_WIDTH);
+  naSetCheckBoxEnabled(con->checkBoxDisabled1, NA_FALSE);
+  naAddSpaceChild(con->space, con->checkBoxDisabled1, naMakePos(TAB1, curPosY));
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
     WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  NAFont* monospaceFont = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
-  naSetLabelFont(con->outputLabel, monospaceFont);
-  naRelease(monospaceFont);
+  naSetLabelFont(con->outputLabel, getMonoFont());
   naAddSpaceChild(con->space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
   return con;
