@@ -65,6 +65,12 @@ void clearButtonController(ButtonController* con);
 NASpace* getButtonControllerSpace(ButtonController* con);
 void updateButtonController(ButtonController* con);
 
+typedef struct CheckBoxController CheckBoxController;
+CheckBoxController* createCheckBoxController(void);
+void clearCheckBoxController(CheckBoxController* con);
+NASpace* getCheckBoxControllerSpace(CheckBoxController* con);
+void updateCheckBoxController(CheckBoxController* con);
+
 typedef struct LabelController LabelController;
 LabelController* createLabelController(void);
 void clearLabelController(LabelController* con);
@@ -76,6 +82,24 @@ MenuController* createMenuController(void);
 void clearMenuController(MenuController* con);
 NASpace* getMenuControllerSpace(MenuController* con);
 void updateMenuController(MenuController* con);
+
+typedef struct RadioController RadioController;
+RadioController* createRadioController(void);
+void clearRadioController(RadioController* con);
+NASpace* getRadioControllerSpace(RadioController* con);
+void updateRadioController(RadioController* con);
+
+typedef struct SelectController SelectController;
+SelectController* createSelectController(void);
+void clearSelectController(SelectController* con);
+NASpace* getSelectControllerSpace(SelectController* con);
+void updateSelectController(SelectController* con);
+
+typedef struct SliderController SliderController;
+SliderController* createSliderController(void);
+void clearSliderController(SliderController* con);
+NASpace* getSliderControllerSpace(SliderController* con);
+void updateSliderController(SliderController* con);
 
 typedef struct TextBoxController TextBoxController;
 TextBoxController* createTextBoxController(void);

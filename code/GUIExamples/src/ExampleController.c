@@ -14,6 +14,7 @@ struct ExampleController{
   NAWindow* window;
 
   NASpace* buttonSpace;
+  NASpace* exampleSpace;
 
   NAButton* applicationButton;
   NAButton* screenButton;
@@ -24,14 +25,19 @@ struct ExampleController{
   NAButton* imageSpaceButton;
 
   NAButton* buttonButton;
+  NAButton* checkBoxButton;
   NAButton* labelButton;
   NAButton* menuButton;
+  NAButton* radioButton;
+  NAButton* selectButton;
+  NAButton* sliderButton;
   NAButton* textBoxButton;
   NAButton* textFieldButton;
   
   NAButton* fontButton;
 
-  NASpace* exampleSpace;
+  NAButton* converterButton;
+  NAButton* quitButton;
 
   ApplicationController* applicationController;
   ScreenController* screenController;
@@ -42,50 +48,16 @@ struct ExampleController{
   ImageSpaceController* imageSpaceController;
 
   ButtonController* buttonController;
+  CheckBoxController* checkBoxController;
   LabelController* labelController;
   MenuController* menuController;
+  RadioController* radioController;
+  SelectController* selectController;
+  SliderController* sliderController;
   TextBoxController* textBoxController;
   TextFieldController* textFieldController;
   
   FontController* fontController;
-  
-  
-  
-
-  NALabel* enabledLabel;
-  NALabel* disabledLabel;
-
-  NALabel* selectLabel;
-  NASelect* select;
-  NASelect* selectDisabled;
-
-  NALabel* checkBoxLabel;
-  NACheckBox* checkBox;
-  NACheckBox* checkBoxDisabled;
-
-  NALabel* radioLabel;
-  NARadio* radio;
-  NARadio* radioDisabled;
-
-  NALabel* sliderLabel;
-  NASlider* slider;
-  NASlider* sliderDisabled;
-
-  NASpace* subSpace1;
-  NASpace* subSpace2;
-  NASpace* subSpace3;
-  NASpace* subSpace4;
-  NALabel* subSpace1Label;
-  NALabel* subSpace2Label;
-  NALabel* subSpace3Label;
-  NALabel* subSpace4Label;
-
-  NAButton* converterButton;
-  NAButton* quitButton;
-
-  int textOption;
-  int imageOption;
-  NALabel* outputLabel;
 };
 
 void updateExampleController(ExampleController* con);
@@ -99,33 +71,6 @@ void updateExampleController(ExampleController* con);
 //  const NAUTF8Char* labelString = naAllocSprintf(NA_TRUE, "Window reshaped.\nRect with border:    %.01f, %.01f, %.01f, %.01f\nRect without border: %.01f, %.01f, %.01f, %.01f", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height, borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
 //  naSetLabelText(con->outputLabel, labelString);
 //}
-
-void checkBoxPressed(NAReaction reaction){
-  ExampleController* con = reaction.controller;
-  naSetLabelText(con->outputLabel, "CheckBox Pressed");
-}
-
-void radioPressed(NAReaction reaction){
-  ExampleController* con = reaction.controller;
-  naSetLabelText(con->outputLabel, "Radio Pressed");
-}
-
-void sliderEdited(NAReaction reaction){
-  ExampleController* con = reaction.controller;
-  const NASlider* slider = reaction.uiElement;
-  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "Slider Value Edited to %f", naGetSliderValue(slider));
-  naSetLabelText(con->outputLabel, outputText);
-}
-
-void selectItemSelected(NAReaction reaction){
-  ExampleController* con = reaction.controller;
-  const NAUTF8Char* outputText = naAllocSprintf(
-    NA_TRUE,
-    "Select item with index %d selected",
-    (int)naGetSelectItemIndex(con->select, reaction.uiElement));
-  naSetLabelText(con->outputLabel, outputText);
-}
-
 
 
 
@@ -148,6 +93,11 @@ static void pressButton(NAReaction reaction){
       con->windowController = createWindowController();
     updateWindowController(con->windowController);
     newSpace = getWindowControllerSpace(con->windowController);
+  }else if(reaction.uiElement == con->spaceButton){
+    if(!con->spaceController)
+      con->spaceController = createSpaceController();
+    updateSpaceController(con->spaceController);
+    newSpace = getSpaceControllerSpace(con->spaceController);
   }else if(reaction.uiElement == con->openGLSpaceButton){
     if(!con->openGLSpaceController)
       con->openGLSpaceController = createOpenGLSpaceController();
@@ -165,10 +115,15 @@ static void pressButton(NAReaction reaction){
     newSpace = getImageSpaceControllerSpace(con->imageSpaceController);
 
   }else if(reaction.uiElement == con->buttonButton){
-    if(!con->buttonController)
+    if(!con->checkBoxController)
       con->buttonController = createButtonController();
     updateButtonController(con->buttonController);
     newSpace = getButtonControllerSpace(con->buttonController);
+  }else if(reaction.uiElement == con->checkBoxButton){
+    if(!con->checkBoxController)
+      con->checkBoxController = createCheckBoxController();
+    updateCheckBoxController(con->checkBoxController);
+    newSpace = getCheckBoxControllerSpace(con->checkBoxController);
   }else if(reaction.uiElement == con->labelButton){
     if(!con->labelController)
       con->labelController = createLabelController();
@@ -179,6 +134,21 @@ static void pressButton(NAReaction reaction){
       con->menuController = createMenuController();
     updateMenuController(con->menuController);
     newSpace = getMenuControllerSpace(con->menuController);
+  }else if(reaction.uiElement == con->radioButton){
+    if(!con->radioController)
+      con->radioController = createRadioController();
+    updateRadioController(con->radioController);
+    newSpace = getRadioControllerSpace(con->radioController);
+  }else if(reaction.uiElement == con->selectButton){
+    if(!con->selectController)
+      con->selectController = createSelectController();
+    updateSelectController(con->selectController);
+    newSpace = getSelectControllerSpace(con->selectController);
+  }else if(reaction.uiElement == con->sliderButton){
+    if(!con->sliderController)
+      con->sliderController = createSliderController();
+    updateSliderController(con->sliderController);
+    newSpace = getSliderControllerSpace(con->sliderController);
   }else if(reaction.uiElement == con->textBoxButton){
     if(!con->textBoxController)
       con->textBoxController = createTextBoxController();
@@ -236,11 +206,6 @@ NAButton* addButton(ExampleController* con, const NAUTF8Char* text, int32 x, int
 
 
 ExampleController* createExampleController(){
-
-  double descSize = 120;
-  double left = 160;
-  double left2 = 380;
-
   ExampleController* con = naAlloc(ExampleController);
 
   con->applicationController = NA_NULL;
@@ -252,7 +217,14 @@ ExampleController* createExampleController(){
   con->imageSpaceController = NA_NULL;
 
   con->buttonController = NA_NULL;
+  con->checkBoxController = NA_NULL;
   con->labelController = NA_NULL;
+  con->menuController = NA_NULL;
+  con->radioController = NA_NULL;
+  con->selectController = NA_NULL;
+  con->sliderController = NA_NULL;
+  con->textBoxController = NA_NULL;
+  con->textFieldController = NA_NULL;
 
   con->fontController = NA_NULL;
 
@@ -264,137 +236,37 @@ ExampleController* createExampleController(){
 
   con->exampleSpace = NA_NULL;
 
-  double curPosY = WINDOW_HEIGTH;
-
   con->buttonSpace = naNewSpace(naMakeSize(WINDOW_WIDTH, BUTTON_SPACE_HEIGHT));
   naSetSpaceAlternateBackground(con->buttonSpace, NA_TRUE);
 
   con->applicationButton = addButton(con, "NAApplication", 0, 0);
   con->screenButton = addButton(con, "NAScreen", 0, 1);
   con->windowButton = addButton(con, "NAWindow", 0, 2);
-  con->spaceButton = addButton(con, "NASpace", 0, 3);
-  con->openGLSpaceButton = addButton(con, "NAOpenGLSpace", 0, 4);
-  con->metalSpaceButton = addButton(con, "NAMetalSpace", 0, 5);
-  con->imageSpaceButton = addButton(con, "NAImageSpace", 0, 6);
+  con->spaceButton = addButton(con, "NASpace", 0, 5);
+  con->openGLSpaceButton = addButton(con, "NAOpenGLSpace", 0, 6);
+  con->metalSpaceButton = addButton(con, "NAMetalSpace", 0, 7);
+  con->imageSpaceButton = addButton(con, "NAImageSpace", 0, 8);
   
   con->buttonButton = addButton(con, "NAButton", 1, 0);
-  con->labelButton = addButton(con, "NALabel", 1, 1);
-  con->menuButton = addButton(con, "NAMenu", 1, 2);
-  con->textBoxButton = addButton(con, "NATextBox", 1, 3);
-  con->textFieldButton = addButton(con, "NATextField", 1, 4);
+  con->checkBoxButton = addButton(con, "NACheckBox", 1, 1);
+  con->labelButton = addButton(con, "NALabel", 1, 2);
+  con->menuButton = addButton(con, "NAMenu", 1, 3);
+  con->radioButton = addButton(con, "NARadio", 1, 4);
+  con->selectButton = addButton(con, "NASelect", 1, 5);
+  con->sliderButton = addButton(con, "NASlider", 1, 6);
+  con->textBoxButton = addButton(con, "NATextBox", 1, 7);
+  con->textFieldButton = addButton(con, "NATextField", 1, 8);
 
   con->fontButton = addButton(con, "NAFont", 2, 0);
 
-  con->converterButton = addButton(con, "Temp. Converter", 3, 0);
-  con->quitButton = addButton(con, "Quit", 3, 1);
+  con->converterButton = addButton(con, "Temp. Converter", 2, 7);
+  con->quitButton = addButton(con, "Quit", 2, 8);
 
   NASpace* contentSpace = naGetWindowContentSpace(con->window);
   naAddSpaceChild(
     contentSpace,
     con->buttonSpace,
-    naMakePos(0, curPosY - BUTTON_SPACE_HEIGHT));
-
-
-
-  curPosY = curPosY - BUTTON_SPACE_HEIGHT - WINDOW_MARGIN - UI_ELEMENT_HEIGTH;
-
-  con->enabledLabel = naNewLabel("Enabled", 200);
-  naSetLabelTextAlignment(con->enabledLabel, NA_TEXT_ALIGNMENT_CENTER);
-  naAddSpaceChild(contentSpace, con->enabledLabel, naMakePos(left, curPosY));
-  con->disabledLabel = naNewLabel("Disabled", 200);
-  naSetLabelTextAlignment(con->disabledLabel, NA_TEXT_ALIGNMENT_CENTER);
-  naAddSpaceChild(contentSpace, con->disabledLabel, naMakePos(left2, curPosY));
-
-  curPosY -= 30;
-  con->selectLabel = naNewLabel("NASelect", descSize);
-  naAddSpaceChild(contentSpace, con->selectLabel, naMakePos(20, curPosY));
-  con->select = naNewSelect(200);
-  naAddSpaceChild(contentSpace, con->select, naMakePos(left, curPosY));
-  for(size_t i = 0; i < 5; ++i){
-    NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Select menu item %d", i), NA_NULL);
-    naAddSelectMenuItem(con->select, item, NA_NULL);
-    naAddUIReaction(item, NA_UI_COMMAND_PRESSED, selectItemSelected, con);
-  }
-  naSetSelectIndexSelected(con->select, 3);
-
-  con->selectDisabled = naNewSelect(200);
-  naSetSelectEnabled(con->selectDisabled, NA_FALSE);
-  NAMenuItem* disabledItem = naNewMenuItem(naAllocSprintf(NA_TRUE, "Disabled Select Item", 0), NA_NULL);
-  naAddSelectMenuItem(con->selectDisabled, disabledItem, NA_NULL);
-  naAddSpaceChild(contentSpace, con->selectDisabled, naMakePos(left2, curPosY));
-
-  curPosY -= 30;
-  con->checkBoxLabel = naNewLabel("NACheckBox", descSize);
-  naAddSpaceChild(contentSpace, con->checkBoxLabel, naMakePos(20, curPosY));
-  con->checkBox = naNewCheckBox("I am a CheckBox", 200);
-  naAddSpaceChild(contentSpace, con->checkBox, naMakePos(left, curPosY));
-  naAddUIReaction(con->checkBox, NA_UI_COMMAND_PRESSED, checkBoxPressed, con);
-  con->checkBoxDisabled = naNewCheckBox("I am a disabled CheckBox", 200);
-  naSetCheckBoxEnabled(con->checkBoxDisabled, NA_FALSE);
-  naAddSpaceChild(contentSpace, con->checkBoxDisabled, naMakePos(left2, curPosY));
-
-  curPosY -= 30;
-  con->radioLabel = naNewLabel("NARadio", descSize);
-  naAddSpaceChild(contentSpace, con->radioLabel, naMakePos(20, curPosY));
-  con->radio = naNewRadio("I am a Radio", 200);
-  naAddSpaceChild(contentSpace, con->radio, naMakePos(left, curPosY));
-  naAddUIReaction(con->radio, NA_UI_COMMAND_PRESSED, radioPressed, con);
-  con->radioDisabled = naNewRadio("I am a disabled Radio", 200);
-  naSetRadioEnabled(con->radioDisabled, NA_FALSE);
-  naAddSpaceChild(contentSpace, con->radioDisabled, naMakePos(left2, curPosY));
-
-  curPosY -= 30;
-  con->sliderLabel = naNewLabel("NASlider", descSize);
-  naAddSpaceChild(contentSpace, con->sliderLabel, naMakePos(20, curPosY));
-  con->slider = naNewSlider(200);
-  naAddSpaceChild(contentSpace, con->slider, naMakePos(left, curPosY));
-  naAddUIReaction(con->slider, NA_UI_COMMAND_EDITED, sliderEdited, con);
-  con->sliderDisabled = naNewSlider(200);
-  naSetSliderEnabled(con->sliderDisabled, NA_FALSE);
-  naAddSpaceChild(contentSpace, con->sliderDisabled, naMakePos(left2, curPosY));
-
-  curPosY -= 60;
-  con->subSpace1 = naNewSpace(naMakeSize(300, 30));
-  con->subSpace2 = naNewSpace(naMakeSize(300, 30));
-  con->subSpace3 = naNewSpace(naMakeSize(300, 30));
-  con->subSpace4 = naNewSpace(naMakeSize(300, 30));
-
-  NAColor backColor;
-  naFillColorWithSRGB(&backColor, .8f, .5f, .2f, .25f);
-  naSetSpaceBackgroundColor(con->subSpace3, &backColor);
-  naSetSpaceBackgroundColor(con->subSpace4, &backColor);
-  
-  naSetSpaceAlternateBackground(con->subSpace2, NA_TRUE);
-  naSetSpaceAlternateBackground(con->subSpace4, NA_TRUE);
-  con->subSpace1Label = naNewLabel("Subspace with normal background", 520);
-  con->subSpace2Label = naNewLabel("Subspace with alternate background", 520);
-  con->subSpace3Label = naNewLabel("Subspace with colored background", 520);
-  con->subSpace4Label = naNewLabel("Subspace with colored and alternate background", 520);
-  naAddSpaceChild(con->subSpace1, con->subSpace1Label, naMakePos(20, 0));
-  naAddSpaceChild(con->subSpace2, con->subSpace2Label, naMakePos(20, 0));
-  naAddSpaceChild(con->subSpace3, con->subSpace3Label, naMakePos(20, 0));
-  naAddSpaceChild(con->subSpace4, con->subSpace4Label, naMakePos(20, 0));
-  naAddSpaceChild(contentSpace, con->subSpace1, naMakePos(0, curPosY));
-  naAddSpaceChild(contentSpace, con->subSpace2, naMakePos(300, curPosY));
-  curPosY -= 30;
-  naAddSpaceChild(contentSpace, con->subSpace3, naMakePos(0, curPosY));
-  naAddSpaceChild(contentSpace, con->subSpace4, naMakePos(300, curPosY));
-
-  curPosY -= 225;
-
-
-  curPosY -= 25;
-
-
-  con->outputLabel = naNewLabel(
-    "Here will be the output of any operation.",
-    WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  NAFont* monospaceFont = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
-  naSetLabelFont(con->outputLabel, monospaceFont);
-  naRelease(monospaceFont);
-  naAddSpaceChild(contentSpace, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
-
-  con->textOption = 0;
+    naMakePos(0, WINDOW_HEIGTH - BUTTON_SPACE_HEIGHT));
 
   naShowWindow(con->window);
 
@@ -412,9 +284,9 @@ void updateExampleController(ExampleController* con){
   naSetButtonState(
     con->windowButton,
     con->windowController && con->exampleSpace == getWindowControllerSpace(con->windowController));
-//  naSetButtonState(
-//    con->spaceButton,
-//    con->spaceController && con->exampleSpace == getSpaceControllerSpace(con->spaceController));
+  naSetButtonState(
+    con->spaceButton,
+    con->spaceController && con->exampleSpace == getSpaceControllerSpace(con->spaceController));
   naSetButtonState(
     con->openGLSpaceButton,
     con->openGLSpaceController && con->exampleSpace == getOpenGLSpaceControllerSpace(con->openGLSpaceController));
@@ -429,11 +301,23 @@ void updateExampleController(ExampleController* con){
     con->buttonButton,
     con->buttonController && con->exampleSpace == getButtonControllerSpace(con->buttonController));
   naSetButtonState(
+    con->checkBoxButton,
+    con->checkBoxController && con->exampleSpace == getCheckBoxControllerSpace(con->checkBoxController));
+  naSetButtonState(
     con->labelButton,
     con->labelController && con->exampleSpace == getLabelControllerSpace(con->labelController));
   naSetButtonState(
     con->menuButton,
     con->menuController && con->exampleSpace == getMenuControllerSpace(con->menuController));
+  naSetButtonState(
+    con->radioButton,
+    con->radioController && con->exampleSpace == getRadioControllerSpace(con->radioController));
+  naSetButtonState(
+    con->selectButton,
+    con->selectController && con->exampleSpace == getSelectControllerSpace(con->selectController));
+  naSetButtonState(
+    con->sliderButton,
+    con->sliderController && con->exampleSpace == getSliderControllerSpace(con->sliderController));
   naSetButtonState(
     con->textBoxButton,
     con->textBoxController && con->exampleSpace == getTextBoxControllerSpace(con->textBoxController));
@@ -461,14 +345,18 @@ void clearExampleController(ExampleController* con){
   if(con->applicationController) { clearApplicationController(con->applicationController); }
   if(con->screenController) { clearScreenController(con->screenController); }
   if(con->windowController) { clearWindowController(con->windowController); }
-//  if(con->spaceController) { clearSpaceController(con->spaceController); }
+  if(con->spaceController) { clearSpaceController(con->spaceController); }
   if(con->openGLSpaceController) { clearOpenGLSpaceController(con->openGLSpaceController); }
   if(con->metalSpaceController) { clearMetalSpaceController(con->metalSpaceController); }
   if(con->imageSpaceController) { clearImageSpaceController(con->imageSpaceController); }
 
   if(con->buttonController) { clearButtonController(con->buttonController); }
+  if(con->checkBoxController) { clearCheckBoxController(con->checkBoxController); }
   if(con->labelController) { clearLabelController(con->labelController); }
   if(con->menuController) { clearMenuController(con->menuController); }
+  if(con->radioController) { clearRadioController(con->radioController); }
+  if(con->selectController) { clearSelectController(con->selectController); }
+  if(con->sliderController) { clearSliderController(con->sliderController); }
   if(con->textBoxController) { clearTextBoxController(con->textBoxController); }
   if(con->textFieldController) { clearTextFieldController(con->textFieldController); }
 

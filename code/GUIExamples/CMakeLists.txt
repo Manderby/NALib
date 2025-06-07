@@ -51,13 +51,18 @@ add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
 set(controllerSourceFiles
   src/Controller/ApplicationController.c
   src/Controller/ButtonController.c
+  src/Controller/CheckBoxController.c
   src/Controller/FontController.c
   src/Controller/ImageSpaceController.c
   src/Controller/LabelController.c
   src/Controller/OpenGLSpaceController.c
   src/Controller/MenuController.c
   src/Controller/MetalSpaceController.c
+  src/Controller/RadioController.c
   src/Controller/ScreenController.c
+  src/Controller/SelectController.c
+  src/Controller/SliderController.c
+  src/Controller/SpaceController.c
   src/Controller/TextBoxController.c
   src/Controller/TextFieldController.c
   src/Controller/WindowController.c
