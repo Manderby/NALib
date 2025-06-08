@@ -86,7 +86,7 @@ CommonController* createMenuController() {
   initCommonController(
     &con->comCon,
     space,
-    clearMenuController,
+    (NAMutator)clearMenuController,
     NA_NULL);
 
   return (CommonController*)con;

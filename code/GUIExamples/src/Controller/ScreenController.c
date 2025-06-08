@@ -121,7 +121,7 @@ void redrawDisplayReaction(NAReaction reaction) {
       con->fontId,
       naAllocSprintf(
         NA_TRUE,
-        "%s\nUI scale: %.2f\nOrigin: %.0f, %.0f\nSize: %.0f, %.0f",
+        "%s\nUI scale: %.2f\nPos: %.0f, %.0f\nSize: %.0f, %.0f",
         naGetStringUTF8Pointer(name),
         thisUIScale,
         rect.pos.x,
@@ -181,8 +181,8 @@ CommonController* createScreenController() {
   initCommonController(
     &con->comCon,
     space,
-    clearScreenController,
-    updateScreenController);
+    (NAMutator)clearScreenController,
+    (NAMutator)updateScreenController);
 
   return (CommonController*)con;
 }
@@ -201,7 +201,7 @@ void updateScreenController(ScreenController* con) {
   NARect totalRect = naGetUIElementRect(naGetApplication());
 
   naSetLabelText(con->totalRectLabel,
-    naAllocSprintf(NA_TRUE, "Origin: (%.0f, %.0f) Size: (%.0f, %.0f)",
+    naAllocSprintf(NA_TRUE, "Pos: (%.0f, %.0f) Size: (%.0f, %.0f)",
       totalRect.pos.x,
       totalRect.pos.y,
       totalRect.size.width,

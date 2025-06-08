@@ -339,7 +339,13 @@ NA_DEF void naCloseWindowModal(NAWindow* window) {
 
 NA_DEF void naCloseWindow(const NAWindow* window) {
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
-  [nativePtr performClose:NA_NULL];
+  NABool titleless = naGetFlagu32(window->flags, NA_WINDOW_TITLELESS);
+  NABool noncloseable = naGetFlagu32(window->flags, NA_WINDOW_NON_CLOSEABLE);
+  if(titleless || noncloseable) {
+    [nativePtr close];
+  }else{
+    [nativePtr performClose:nil];
+  }
 }
 
 

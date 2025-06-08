@@ -101,7 +101,7 @@ CommonController* createOpenGLSpaceController() {
   initCommonController(
     &con->comCon,
     space,
-    clearOpenGLSpaceController,
+    (NAMutator)clearOpenGLSpaceController,
     NA_NULL);
 
   return (CommonController*)con;

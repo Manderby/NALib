@@ -9,8 +9,64 @@
 struct WindowController{
   CommonController comCon;
 
-  NALabel* dummyLabel;
+  NALabel* normalWindowLabel;
+  NAButton* openNormalWindow;
+  NAWindow* normalWindow;
+  NALabel* normalReaction;
+
+  NALabel* resizeWindowLabel;
+  NAButton* openResizeWindow;
+  NAWindow* resizeWindow;
+  NALabel* resizeReaction;
+
+  NALabel* nothingWindowLabel;
+  NAButton* openNothingWindow;
+  NAButton* closeNothingWindow;
+  NAWindow* nothingWindow;
+  NALabel* nothingReaction;
+
+  NALabel* titlelessWindowLabel;
+  NAButton* openTitlelessWindow;
+  NAButton* closeTitlelessWindow;
+  NAWindow* titlelessWindow;
+  NALabel* titlelessReaction;
+  
+  NALabel* auxiliaryWindowLabel;
+  NAButton* openAuxiliaryWindow;
+  NAWindow* auxiliaryWindow;
+  NALabel* auxiliaryReaction;
 };
+
+// Prototype:
+void updateWindowController(WindowController* con);
+
+
+
+static void buttonPressed(NAReaction reaction) {
+  WindowController* con = (WindowController*)reaction.controller;
+  
+  if(reaction.uiElement == con->openNormalWindow) {
+    naShowWindow(con->normalWindow);
+  }else if(reaction.uiElement == con->openResizeWindow) {
+    naShowWindow(con->resizeWindow);
+  }else if(reaction.uiElement == con->openNothingWindow) {
+    naShowWindow(con->nothingWindow);
+  }else if(reaction.uiElement == con->closeNothingWindow) {
+    naCloseWindow(con->nothingWindow);
+  }else if(reaction.uiElement == con->openTitlelessWindow) {
+    naShowWindow(con->titlelessWindow);
+  }else if(reaction.uiElement == con->closeTitlelessWindow) {
+    naCloseWindow(con->titlelessWindow);
+  }else if(reaction.uiElement == con->openAuxiliaryWindow) {
+    naShowWindow(con->auxiliaryWindow);
+  }
+}
+
+static void reshape(NAReaction reaction) {
+  WindowController* con = (WindowController*)reaction.controller;
+  
+  updateWindowController(con);
+}
 
 
 
@@ -22,19 +78,142 @@ CommonController* createWindowController() {
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->dummyLabel = naNewLabel("NAWindow examples not available yet", 400);
-  naAddSpaceChild(space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  con->normalWindowLabel = naNewLabel("Normal", COLUMN0_WIDTH);
+  naSetLabelFont(con->normalWindowLabel, getTitleFont());
+  naAddSpaceChild(space, con->normalWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  
+  con->normalWindow = naNewWindow("Normal Window", naMakeRectS(200, 200, 300, 100), 0);
+  naAddUIReaction(con->normalWindow, NA_UI_COMMAND_RESHAPE, reshape, con);
+
+  con->openNormalWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
+  naAddSpaceChild(space, con->openNormalWindow, naMakePos(TAB1, curPosY));
+  naAddUIReaction(con->openNormalWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+
+  curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->normalReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
+  naSetLabelFont(con->normalReaction, getMonoFont());
+  naAddSpaceChild(space, con->normalReaction, naMakePos(TAB1, curPosY));
+
+  curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->resizeWindowLabel = naNewLabel("Resizeable", COLUMN0_WIDTH);
+  naSetLabelFont(con->resizeWindowLabel, getTitleFont());
+  naAddSpaceChild(space, con->resizeWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  
+  con->resizeWindow = naNewWindow("Resizeable Window", naMakeRectS(220, 180, 300, 100), NA_WINDOW_RESIZEABLE);
+  naAddUIReaction(con->resizeWindow, NA_UI_COMMAND_RESHAPE, reshape, con);
+
+  con->openResizeWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
+  naAddSpaceChild(space, con->openResizeWindow, naMakePos(TAB1, curPosY));
+  naAddUIReaction(con->openResizeWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+
+  curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->resizeReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
+  naSetLabelFont(con->resizeReaction, getMonoFont());
+  naAddSpaceChild(space, con->resizeReaction, naMakePos(TAB1, curPosY));
+
+  curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->nothingWindowLabel = naNewLabel("No title buttons", COLUMN0_WIDTH);
+  naSetLabelFont(con->nothingWindowLabel, getTitleFont());
+  naAddSpaceChild(space, con->nothingWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  
+  con->nothingWindow = naNewWindow("Window with no title buttons", naMakeRectS(240, 160, 300, 100), NA_WINDOW_NON_MINIATURIZEABLE | NA_WINDOW_NON_CLOSEABLE | NA_WINDOW_FIXED_SIZE);
+  naAddUIReaction(con->nothingWindow, NA_UI_COMMAND_RESHAPE, reshape, con);
+
+  con->openNothingWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
+  naAddSpaceChild(space, con->openNothingWindow, naMakePos(TAB1, curPosY));
+  naAddUIReaction(con->openNothingWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+
+  con->closeNothingWindow = naNewTextPushButton("close", MEDIUM_BUTTON_WIDTH);
+  naAddSpaceChild(space, con->closeNothingWindow, naMakePos(TAB1 + MEDIUM_BUTTON_WIDTH + UI_ELEMENT_MARGIN, curPosY));
+  naAddUIReaction(con->closeNothingWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+
+  curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->nothingReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
+  naSetLabelFont(con->nothingReaction, getMonoFont());
+  naAddSpaceChild(space, con->nothingReaction, naMakePos(TAB1, curPosY));
+
+  curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->titlelessWindowLabel = naNewLabel("Titleless Window", COLUMN0_WIDTH);
+  naSetLabelFont(con->titlelessWindowLabel, getTitleFont());
+  naAddSpaceChild(space, con->titlelessWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  
+  con->titlelessWindow = naNewWindow("This title should never be displayed", naMakeRectS(260, 140, 300, 100), NA_WINDOW_TITLELESS | NA_WINDOW_RESIZEABLE);
+  naAddUIReaction(con->titlelessWindow, NA_UI_COMMAND_RESHAPE, reshape, con);
+
+  con->openTitlelessWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
+  naAddSpaceChild(space, con->openTitlelessWindow, naMakePos(TAB1, curPosY));
+  naAddUIReaction(con->openTitlelessWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+
+  con->closeTitlelessWindow = naNewTextPushButton("close", MEDIUM_BUTTON_WIDTH);
+  naAddSpaceChild(space, con->closeTitlelessWindow, naMakePos(TAB1 + MEDIUM_BUTTON_WIDTH + UI_ELEMENT_MARGIN, curPosY));
+  naAddUIReaction(con->closeTitlelessWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+
+  curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->titlelessReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
+  naSetLabelFont(con->titlelessReaction, getMonoFont());
+  naAddSpaceChild(space, con->titlelessReaction, naMakePos(TAB1, curPosY));
+
+  curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->auxiliaryWindowLabel = naNewLabel("Auxiliary", COLUMN0_WIDTH);
+  naSetLabelFont(con->auxiliaryWindowLabel, getTitleFont());
+  naAddSpaceChild(space, con->auxiliaryWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  
+  con->auxiliaryWindow = naNewWindow("Auxiliary Window", naMakeRectS(280, 120, 300, 100), NA_WINDOW_RESIZEABLE);
+  naAddUIReaction(con->auxiliaryWindow, NA_UI_COMMAND_RESHAPE, reshape, con);
+
+  con->openAuxiliaryWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
+  naAddSpaceChild(space, con->openAuxiliaryWindow, naMakePos(TAB1, curPosY));
+  naAddUIReaction(con->openAuxiliaryWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+
+  curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->auxiliaryReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
+  naSetLabelFont(con->auxiliaryReaction, getMonoFont());
+  naAddSpaceChild(space, con->auxiliaryReaction, naMakePos(TAB1, curPosY));
 
   initCommonController(
     &con->comCon,
     space,
     NA_NULL,
-    NA_NULL);
+    (NAMutator)updateWindowController);
 
   return (CommonController*)con;
 }
 
 
+
+void updateWindowController(WindowController* con) {
+  NARect borderRect;
+  const NAUTF8Char* labelString;
+  
+  borderRect = naGetWindowOuterRect(con->normalWindow);
+  labelString = naAllocSprintf(NA_TRUE, "Pos: (%.0f, %.0f) Size: (%.0f, %.0f)", borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
+  naSetLabelText(con->normalReaction, labelString);
+
+  borderRect = naGetWindowOuterRect(con->resizeWindow);
+  labelString = naAllocSprintf(NA_TRUE, "Pos: (%.0f, %.0f) Size: (%.0f, %.0f)", borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
+  naSetLabelText(con->resizeReaction, labelString);
+
+  borderRect = naGetWindowOuterRect(con->nothingWindow);
+  labelString = naAllocSprintf(NA_TRUE, "Pos: (%.0f, %.0f) Size: (%.0f, %.0f)", borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
+  naSetLabelText(con->nothingReaction, labelString);
+
+  borderRect = naGetWindowOuterRect(con->titlelessWindow);
+  labelString = naAllocSprintf(NA_TRUE, "Pos: (%.0f, %.0f) Size: (%.0f, %.0f)", borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
+  naSetLabelText(con->titlelessReaction, labelString);
+
+  borderRect = naGetWindowOuterRect(con->auxiliaryWindow);
+  labelString = naAllocSprintf(NA_TRUE, "Pos: (%.0f, %.0f) Size: (%.0f, %.0f)", borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
+  naSetLabelText(con->auxiliaryReaction, labelString);
+}
 
 // This is free and unencumbered software released into the public domain.
 

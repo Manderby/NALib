@@ -267,7 +267,7 @@ CommonController* createButtonController() {
     &con->comCon,
     space,
     NA_NULL,
-    updateButtonController);
+    (NAMutator)updateButtonController);
 
   return (CommonController*)con;
 }

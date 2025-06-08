@@ -65,17 +65,6 @@ void updateExampleController(ExampleController* con);
 
 
 
-//void windowReshaped(NAReaction reaction){
-//  ExampleController* con = reaction.controller;
-//  NARect rect = naGetUIElementRect(con->window);
-//  NARect borderRect = naGetUIElementRect(con->window);
-//  const NAUTF8Char* labelString = naAllocSprintf(NA_TRUE, "Window reshaped.\nRect with border:    %.01f, %.01f, %.01f, %.01f\nRect without border: %.01f, %.01f, %.01f, %.01f", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height, borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
-//  naSetLabelText(con->outputLabel, labelString);
-//}
-
-
-
-
 static void pressButton(NAReaction reaction){
   ExampleController* con = (ExampleController*)reaction.controller;
 
@@ -227,7 +216,6 @@ ExampleController* createExampleController(){
     "Examples of the NALib UI elements",
     naMakeRectS(150, 150, WINDOW_WIDTH, WINDOW_HEIGTH),
     0);
-//  naAddUIReaction(con->window, NA_UI_COMMAND_RESHAPE, windowReshaped, con);
 
   con->exampleSpace = NA_NULL;
 
