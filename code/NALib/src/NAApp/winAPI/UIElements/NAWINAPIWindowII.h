@@ -40,7 +40,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
     windowMutable = (NAWINAPIWindow*)naGetUIElementWindowMutable(uiElement);
     contentSpace = naGetWindowContentSpace(&windowMutable->window);
 
-    if(wParam){
+    if(wParam) {
       na_ForceWINAPISpaceToRedrawBackground(&contentSpace->uiElement);
     }
 

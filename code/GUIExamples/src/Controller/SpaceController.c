@@ -1,5 +1,6 @@
 
 #include "../GUIExamples.h"
+#include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAMemory.h"
 #include "NAVisual/NAColor.h"
@@ -7,7 +8,7 @@
 
 
 struct SpaceController{
-  NASpace* space;
+  CommonController comCon;
 
   NASpace* subSpace1;
   NASpace* subSpace2;
@@ -21,10 +22,10 @@ struct SpaceController{
 
 
 
-SpaceController* createSpaceController(){
+CommonController* createSpaceController() {
   SpaceController* con = naAlloc(SpaceController);
 
-  con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
@@ -55,33 +56,20 @@ SpaceController* createSpaceController(){
   naAddSpaceChild(con->subSpace3, con->subSpace3Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));
   naAddSpaceChild(con->subSpace4, con->subSpace4Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));
   
-  naAddSpaceChild(con->space, con->subSpace1, naMakePos(0, curPosY - 0 * spaceHeigth));
-  naAddSpaceChild(con->space, con->subSpace2, naMakePos(0, curPosY - 1 * spaceHeigth));
-  naAddSpaceChild(con->space, con->subSpace3, naMakePos(0, curPosY - 2 * spaceHeigth));
-  naAddSpaceChild(con->space, con->subSpace4, naMakePos(0, curPosY - 3 * spaceHeigth));
+  naAddSpaceChild(space, con->subSpace1, naMakePos(0, curPosY - 0 * spaceHeigth));
+  naAddSpaceChild(space, con->subSpace2, naMakePos(0, curPosY - 1 * spaceHeigth));
+  naAddSpaceChild(space, con->subSpace3, naMakePos(0, curPosY - 2 * spaceHeigth));
+  naAddSpaceChild(space, con->subSpace4, naMakePos(0, curPosY - 3 * spaceHeigth));
 
-  return con;
+  initCommonController(
+    &con->comCon,
+    space,
+    NA_NULL,
+    NA_NULL);
+
+  return (CommonController*)con;
 }
 
-
-
-void clearSpaceController(SpaceController* con){
-  naDelete(con->space);
-  naFree(con);
-}
-
-
-
-NASpace* getSpaceControllerSpace(SpaceController* con){
-  return con->space;
-}
-
-
-
-void updateSpaceController(SpaceController* con) {
-  NA_UNUSED(con);
-  // nothing to do.
-}
 
 
 // This is free and unencumbered software released into the public domain.

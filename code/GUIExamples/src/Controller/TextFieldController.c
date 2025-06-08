@@ -1,12 +1,13 @@
 
 #include "../GUIExamples.h"
+#include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAMemory.h"
 
 
 
 struct TextFieldController{
-  NASpace* space;
+  CommonController comCon;
 
   NALabel* enabledLabel;
   NALabel* disabledLabel;
@@ -19,7 +20,7 @@ struct TextFieldController{
 
 
 
-static void textFieldEdited(NAReaction reaction){
+static void textFieldEdited(NAReaction reaction) {
   TextFieldController* con = reaction.controller;
   const NATextField* textField = reaction.uiElement;
   NAString* textFieldString = naNewStringWithTextFieldText(textField);
@@ -28,7 +29,7 @@ static void textFieldEdited(NAReaction reaction){
   naDelete(textFieldString);
 }
 
-static void textFieldEditFinished(NAReaction reaction){
+static void textFieldEditFinished(NAReaction reaction) {
   TextFieldController* con = reaction.controller;
   const NATextField* textField = reaction.uiElement;
   NAString* textFieldString = naNewStringWithTextFieldText(textField);
@@ -39,10 +40,10 @@ static void textFieldEditFinished(NAReaction reaction){
 
 
 
-TextFieldController* createTextFieldController(){
+CommonController* createTextFieldController() {
   TextFieldController* con = naAlloc(TextFieldController);
 
-  con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
@@ -50,10 +51,10 @@ TextFieldController* createTextFieldController(){
   con->enabledLabel = naNewLabel("Normal", COLUMN0_WIDTH);
   naSetLabelFont(con->enabledLabel, getTitleFont());
   naSetLabelTextAlignment(con->enabledLabel, NA_TEXT_ALIGNMENT_CENTER);
-  naAddSpaceChild(con->space, con->enabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(space, con->enabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   con->textField = naNewTextField(COLUMN1_WIDTH);
-  naAddSpaceChild(con->space, con->textField, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(space, con->textField, naMakePos(TAB1, curPosY));
   naAddUIReaction(con->textField, NA_UI_COMMAND_EDITED, textFieldEdited, con);
   naAddUIReaction(con->textField, NA_UI_COMMAND_EDIT_FINISHED, textFieldEditFinished, con);
   
@@ -62,41 +63,29 @@ TextFieldController* createTextFieldController(){
   con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
   naSetLabelFont(con->disabledLabel, getTitleFont());
   naSetLabelTextAlignment(con->disabledLabel, NA_TEXT_ALIGNMENT_CENTER);
-  naAddSpaceChild(con->space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   con->textFieldDisabled = naNewTextField(COLUMN1_WIDTH);
   naSetTextFieldEnabled(con->textFieldDisabled, NA_FALSE);
   naSetTextFieldText(con->textFieldDisabled, "Disabled Textfield");
-  naAddSpaceChild(con->space, con->textFieldDisabled, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(space, con->textFieldDisabled, naMakePos(TAB1, curPosY));
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
     WINDOW_WIDTH - 2 * WINDOW_MARGIN);
   naSetLabelFont(con->outputLabel, getMonoFont());
-  naAddSpaceChild(con->space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
+  naAddSpaceChild(space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
-  return con;
+  initCommonController(
+    &con->comCon,
+    space,
+    NA_NULL,
+    NA_NULL);
+
+  return (CommonController*)con;
 }
 
 
-
-void clearTextFieldController(TextFieldController* con){
-  naDelete(con->space);
-  naFree(con);
-}
-
-
-
-NASpace* getTextFieldControllerSpace(TextFieldController* con){
-  return con->space;
-}
-
-
-
-void updateTextFieldController(TextFieldController* con) {
-  NA_UNUSED(con);
-  // nothing to do.
-}
 
 
 // This is free and unencumbered software released into the public domain.

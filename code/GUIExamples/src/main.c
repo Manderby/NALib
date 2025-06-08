@@ -54,7 +54,7 @@
 
 
 
-int main(){
+int main() {
 
   naStartApplication(preStartup, postStartup, clearApplication, NA_NULL);
 

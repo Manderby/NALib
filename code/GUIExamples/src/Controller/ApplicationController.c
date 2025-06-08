@@ -1,51 +1,38 @@
 
-#include "../GUIExamples.h"
+#include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAMemory.h"
 
 
 
 struct ApplicationController{
-  NASpace* space;
+  CommonController comCon;
 
   NALabel* dummyLabel;
 };
 
 
 
-ApplicationController* createApplicationController(){
+CommonController* createApplicationController() {
   ApplicationController* con = naAlloc(ApplicationController);
 
-  con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->dummyLabel = naNewLabel("NAApplication examples not available yet", 400);
-  naAddSpaceChild(con->space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
-  return con;
+  initCommonController(
+    &con->comCon,
+    space,
+    NA_NULL,
+    NA_NULL);
+
+  return (CommonController*)con;
 }
 
-
-
-void clearApplicationController(ApplicationController* con){
-  naDelete(con->space);
-  naFree(con);
-}
-
-
-
-NASpace* getApplicationControllerSpace(ApplicationController* con){
-  return con->space;
-}
-
-
-
-void updateApplicationController(ApplicationController* con) {
-  NA_UNUSED(con);
-  // nothing to do.
-}
 
 
 // This is free and unencumbered software released into the public domain.

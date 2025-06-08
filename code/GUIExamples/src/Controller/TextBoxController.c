@@ -1,51 +1,39 @@
 
 #include "../GUIExamples.h"
+#include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAMemory.h"
 
 
 
 struct TextBoxController{
-  NASpace* space;
+  CommonController comCon;
 
   NATextBox* textBox;
 };
 
 
 
-TextBoxController* createTextBoxController(){
+CommonController* createTextBoxController() {
   TextBoxController* con = naAlloc(TextBoxController);
 
-  con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->textBox = naNewTextBox(naMakeSize(COLUMN1_WIDTH, 50));
-  naAddSpaceChild(con->space, con->textBox, naMakePos(TAB1, curPosY - 20));
+  naAddSpaceChild(space, con->textBox, naMakePos(TAB1, curPosY - 20));
 
-  return con;
+  initCommonController(
+    &con->comCon,
+    space,
+    NA_NULL,
+    NA_NULL);
+
+  return (CommonController*)con;
 }
 
-
-
-void clearTextBoxController(TextBoxController* con){
-  naDelete(con->space);
-  naFree(con);
-}
-
-
-
-NASpace* getTextBoxControllerSpace(TextBoxController* con){
-  return con->space;
-}
-
-
-
-void updateTextBoxController(TextBoxController* con) {
-  NA_UNUSED(con);
-  // nothing to do.
-}
 
 
 // This is free and unencumbered software released into the public domain.

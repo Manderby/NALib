@@ -1,37 +1,37 @@
 
-#include "../GUIExamples.h"
-#include "../CommonController.h"
-#include "../Layout.h"
-#include "NAUtility/NAMemory.h"
+#include "CommonController.h"
 
 
 
-struct WindowController{
-  CommonController comCon;
+void initCommonController(
+  CommonController* con,
+  NASpace* space,
+  NAMutator clearer,
+  NAMutator updater)
+{
+  con->space = space;
+  con->clearer = clearer;
+  con->updater = updater;
+}
 
-  NALabel* dummyLabel;
-};
+
+
+void clearCommonController(CommonController* con) {
+  if(con->clearer) { con->clearer(con); }
+  naDelete(con->space);
+  naFree(con);
+}
 
 
 
-CommonController* createWindowController() {
-  WindowController* con = naAlloc(WindowController);
+NASpace* getCommonControllerSpace(CommonController* con) {
+  return con->space;
+}
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
-  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
-  curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->dummyLabel = naNewLabel("NAWindow examples not available yet", 400);
-  naAddSpaceChild(space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
-
-  initCommonController(
-    &con->comCon,
-    space,
-    NA_NULL,
-    NA_NULL);
-
-  return (CommonController*)con;
+void updateCommonController(CommonController* con) {
+  if(con->updater) { con->updater(con); }
 }
 
 

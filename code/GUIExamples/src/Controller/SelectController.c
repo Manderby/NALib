@@ -1,12 +1,13 @@
 
 #include "../GUIExamples.h"
+#include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAMemory.h"
 
 
 
 struct SelectController{
-  NASpace* space;
+  CommonController comCon;
 
   NALabel* normalLabel;
   NASelect* select;
@@ -19,7 +20,7 @@ struct SelectController{
 
 
 
-static void selectItemSelected(NAReaction reaction){
+static void selectItemSelected(NAReaction reaction) {
   SelectController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(
     NA_TRUE,
@@ -30,21 +31,21 @@ static void selectItemSelected(NAReaction reaction){
 
 
 
-SelectController* createSelectController(){
+CommonController* createSelectController() {
   SelectController* con = naAlloc(SelectController);
 
-  con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->normalLabel = naNewLabel("Normal", COLUMN0_WIDTH);
   naSetLabelFont(con->normalLabel, getTitleFont());
-  naAddSpaceChild(con->space, con->normalLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(space, con->normalLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   con->select = naNewSelect(COLUMN1_WIDTH);
-  naAddSpaceChild(con->space, con->select, naMakePos(TAB1, curPosY));
-  for(size_t i = 0; i < 5; ++i){
+  naAddSpaceChild(space, con->select, naMakePos(TAB1, curPosY));
+  for(size_t i = 0; i < 5; ++i) {
     NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Select menu item %d", i), NA_NULL);
     naAddSelectMenuItem(con->select, item, NA_NULL);
     naAddUIReaction(item, NA_UI_COMMAND_PRESSED, selectItemSelected, con);
@@ -55,42 +56,29 @@ SelectController* createSelectController(){
 
   con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
   naSetLabelFont(con->disabledLabel, getTitleFont());
-  naAddSpaceChild(con->space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   con->selectDisabled = naNewSelect(COLUMN1_WIDTH);
   naSetSelectEnabled(con->selectDisabled, NA_FALSE);
   NAMenuItem* disabledItem = naNewMenuItem(naAllocSprintf(NA_TRUE, "Disabled Select", 0), NA_NULL);
   naAddSelectMenuItem(con->selectDisabled, disabledItem, NA_NULL);
-  naAddSpaceChild(con->space, con->selectDisabled, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(space, con->selectDisabled, naMakePos(TAB1, curPosY));
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
     WINDOW_WIDTH - 2 * WINDOW_MARGIN);
   naSetLabelFont(con->outputLabel, getMonoFont());
-  naAddSpaceChild(con->space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
+  naAddSpaceChild(space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
-  return con;
+  initCommonController(
+    &con->comCon,
+    space,
+    NA_NULL,
+    NA_NULL);
+
+  return (CommonController*)con;
 }
 
-
-
-void clearSelectController(SelectController* con){
-  naDelete(con->space);
-  naFree(con);
-}
-
-
-
-NASpace* getSelectControllerSpace(SelectController* con){
-  return con->space;
-}
-
-
-
-void updateSelectController(SelectController* con) {
-  NA_UNUSED(con);
-  // nothing to do.
-}
 
 
 // This is free and unencumbered software released into the public domain.

@@ -1,12 +1,13 @@
 
 #include "../GUIExamples.h"
+#include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAMemory.h"
 
 
 
 struct SliderController{
-  NASpace* space;
+  CommonController comCon;
 
   NALabel* normalLabel;
   NASlider* slider;
@@ -23,7 +24,7 @@ struct SliderController{
 
 
 
-static void sliderEdited(NAReaction reaction){
+static void sliderEdited(NAReaction reaction) {
   SliderController* con = reaction.controller;
   const NASlider* slider = reaction.uiElement;
   const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "Slider Value Edited to %f", naGetSliderValue(slider));
@@ -32,79 +33,66 @@ static void sliderEdited(NAReaction reaction){
 
 
 
-SliderController* createSliderController(){
+CommonController* createSliderController() {
   SliderController* con = naAlloc(SliderController);
 
-  con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->normalLabel = naNewLabel("Normal", COLUMN0_WIDTH);
   naSetLabelFont(con->normalLabel, getTitleFont());
-  naAddSpaceChild(con->space, con->normalLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(space, con->normalLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   con->slider = naNewSlider(COLUMN1_WIDTH);
-  naAddSpaceChild(con->space, con->slider, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(space, con->slider, naMakePos(TAB1, curPosY));
   naAddUIReaction(con->slider, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->ticksLabel = naNewLabel("Ticks", COLUMN0_WIDTH);
   naSetLabelFont(con->ticksLabel, getTitleFont());
-  naAddSpaceChild(con->space, con->ticksLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(space, con->ticksLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   con->ticksSlider = naNewSlider(COLUMN1_WIDTH);
   naSetSliderRange(con->ticksSlider, 0., 1., 11);
-  naAddSpaceChild(con->space, con->ticksSlider, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(space, con->ticksSlider, naMakePos(TAB1, curPosY));
   naAddUIReaction(con->ticksSlider, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
   curPosY = curPosY - (2. * UI_ELEMENT_HEIGTH);
 
   con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
   naSetLabelFont(con->disabledLabel, getTitleFont());
-  naAddSpaceChild(con->space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH));
+  naAddSpaceChild(space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH));
   
   con->sliderDisabled1 = naNewSlider(COLUMN1_WIDTH);
   naSetSliderEnabled(con->sliderDisabled1, NA_FALSE);
   naSetSliderValue(con->sliderDisabled1, .5);
-  naAddSpaceChild(con->space, con->sliderDisabled1, naMakePos(TAB1, curPosY + UI_ELEMENT_HEIGTH));
+  naAddSpaceChild(space, con->sliderDisabled1, naMakePos(TAB1, curPosY + UI_ELEMENT_HEIGTH));
 
   con->sliderDisabled2 = naNewSlider(COLUMN1_WIDTH);
   naSetSliderEnabled(con->sliderDisabled2, NA_FALSE);
   naSetSliderRange(con->sliderDisabled2, 0., 1., 11);
   naSetSliderValue(con->sliderDisabled2, .5);
-  naAddSpaceChild(con->space, con->sliderDisabled2, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(space, con->sliderDisabled2, naMakePos(TAB1, curPosY));
   naAddUIReaction(con->sliderDisabled2, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
     WINDOW_WIDTH - 2 * WINDOW_MARGIN);
   naSetLabelFont(con->outputLabel, getMonoFont());
-  naAddSpaceChild(con->space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
+  naAddSpaceChild(space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
-  return con;
+  initCommonController(
+    &con->comCon,
+    space,
+    NA_NULL,
+    NA_NULL);
+
+  return (CommonController*)con;
 }
 
-
-
-void clearSliderController(SliderController* con){
-  naDelete(con->space);
-  naFree(con);
-}
-
-
-
-NASpace* getSliderControllerSpace(SliderController* con){
-  return con->space;
-}
-
-
-
-void updateSliderController(SliderController* con) {
-  NA_UNUSED(con);
-  // nothing to do.
-}
 
 
 // This is free and unencumbered software released into the public domain.

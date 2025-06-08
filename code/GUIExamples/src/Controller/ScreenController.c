@@ -1,5 +1,6 @@
 
 #include "../GUIExamples.h"
+#include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAString.h"
 #include "NAApp/NAApp.h"
@@ -7,7 +8,7 @@
 
 
 struct ScreenController{
-  NASpace* space;
+  CommonController comCon;
 
   NAOpenGLSpace* display;
   size_t fontId;
@@ -16,6 +17,9 @@ struct ScreenController{
   NALabel* totalRectLabel;
 };
 
+// Prototypes:
+void clearScreenController(ScreenController* con);
+void updateScreenController(ScreenController* con);
 
 
 void applicationReshaped(NAReaction reaction) {
@@ -150,51 +154,48 @@ void redrawDisplayReaction(NAReaction reaction) {
 
 
 
-ScreenController* createScreenController(){
+CommonController* createScreenController() {
   ScreenController* con = naAlloc(ScreenController);
 
   double displayHeight = 200.;
 
-  con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - displayHeight - SPACE_MARGIN_V;
   
   con->display = naNewOpenGLSpace(naMakeSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN, displayHeight), initOpenGL, con);
   naAddUIReaction(con->display, NA_UI_COMMAND_REDRAW, redrawDisplayReaction, con);
-  naAddSpaceChild(con->space, con->display, naMakePos(WINDOW_MARGIN, curPosY + SPACE_MARGIN_V));
+  naAddSpaceChild(space, con->display, naMakePos(WINDOW_MARGIN, curPosY + SPACE_MARGIN_V));
   
   curPosY = curPosY - 25;
 
   con->totalRectTitle = naNewLabel("Absolute space:", COLUMN0_WIDTH);
   con->totalRectLabel = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naAddSpaceChild(con->space, con->totalRectTitle, naMakePos(WINDOW_MARGIN, curPosY));
-  naAddSpaceChild(con->space, con->totalRectLabel, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(space, con->totalRectTitle, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(space, con->totalRectLabel, naMakePos(TAB1, curPosY));
 
   // We capture the event when the screen setup is changing.
   naAddUIReaction(naGetApplication(), NA_UI_COMMAND_RESHAPE, applicationReshaped, con);
 
-  return con;
+  initCommonController(
+    &con->comCon,
+    space,
+    clearScreenController,
+    updateScreenController);
+
+  return (CommonController*)con;
 }
 
 
 
-void clearScreenController(ScreenController* con){
-  NA_UNUSED(con);
+void clearScreenController(ScreenController* con) {
   naShutdownPixelFont(con->fontId);
-  naDelete(con->space);
-  naFree(con);
 }
 
 
 
-NASpace* getScreenControllerSpace(ScreenController* con){
-  return con->space;
-}
-
-
-
-void updateScreenController(ScreenController* con){
+void updateScreenController(ScreenController* con) {
   naRefreshUIElement(con->display, 0.);
 
   NARect totalRect = naGetUIElementRect(naGetApplication());

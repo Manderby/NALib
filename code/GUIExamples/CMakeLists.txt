@@ -69,6 +69,8 @@ set(controllerSourceFiles
 )
 
 set(sourceFiles
+  src/CommonController.c
+  src/CommonController.h
   src/ExampleController.c
   src/GUIExamples.h
   src/GUIExamplesApplication.c

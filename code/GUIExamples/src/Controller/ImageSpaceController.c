@@ -1,51 +1,39 @@
 
 #include "../GUIExamples.h"
+#include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAMemory.h"
 
 
 
 struct ImageSpaceController{
-  NASpace* space;
+  CommonController comCon;
 
   NAImageSpace* imageSpace;
 };
 
 
 
-ImageSpaceController* createImageSpaceController(){
+CommonController* createImageSpaceController() {
   ImageSpaceController* con = naAlloc(ImageSpaceController);
 
-  con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->imageSpace = naNewImageSpace(getIconImageSet(), naMakeSize(50, 22));
-  naAddSpaceChild(con->space, con->imageSpace, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(space, con->imageSpace, naMakePos(WINDOW_MARGIN, curPosY));
 
-  return con;
+  initCommonController(
+    &con->comCon,
+    space,
+    NA_NULL,
+    NA_NULL);
+
+  return (CommonController*)con;
 }
 
-
-
-void clearImageSpaceController(ImageSpaceController* con){
-  naDelete(con->space);
-  naFree(con);
-}
-
-
-
-NASpace* getImageSpaceControllerSpace(ImageSpaceController* con){
-  return con->space;
-}
-
-
-
-void updateImageSpaceController(ImageSpaceController* con) {
-  NA_UNUSED(con);
-  // nothing to do.
-}
 
 
 // This is free and unencumbered software released into the public domain.

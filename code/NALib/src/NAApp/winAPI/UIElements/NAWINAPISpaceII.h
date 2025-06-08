@@ -152,7 +152,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
   case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
     GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
-    //if(1){
+    //if(1) {
     if(winapiSpace->forceEraseBackground) {
       if(winapiSpace->curBgColor) {
         naDeallocUIColor(winapiSpace->curBgColor);

@@ -1,12 +1,13 @@
 
 #include "../GUIExamples.h"
+#include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAMemory.h"
 
 
 
 struct FontController{
-  NASpace* space;
+  CommonController comCon;
 };
 
 
@@ -15,10 +16,10 @@ struct FontController{
 
 
 
-FontController* createFontController(){
+CommonController* createFontController() {
   FontController* con = naAlloc(FontController);
 
-  con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
@@ -31,27 +32,27 @@ FontController* createFontController(){
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 12.);
-  naAddSpaceChild(con->space, label, naMakePos(10, curPosY));
+  naAddSpaceChild(space, label, naMakePos(10, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_DEFAULT);
   naSetLabelFont(label, font);
   naRelease(font);
-  naAddSpaceChild(con->space, label, naMakePos(110, curPosY));
+  naAddSpaceChild(space, label, naMakePos(110, curPosY));
    
   label = naNewLabel(HAMBURGEFONTSIV, 120);
   font = naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
-  naAddSpaceChild(con->space, label, naMakePos(210, curPosY));
+  naAddSpaceChild(space, label, naMakePos(210, curPosY));
    
   label = naNewLabel(HAMBURGEFONTSIV, 150);
   font = naCreateFontWithPreset(NA_FONT_KIND_SYSTEM, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 24.);
-  naAddSpaceChild(con->space, label, naMakePos(350, curPosY));
+  naAddSpaceChild(space, label, naMakePos(350, curPosY));
 
 
 
@@ -62,27 +63,27 @@ FontController* createFontController(){
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 12.);
-  naAddSpaceChild(con->space, label, naMakePos(10, curPosY));
+  naAddSpaceChild(space, label, naMakePos(10, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_DEFAULT);
   naSetLabelFont(label, font);
   naRelease(font);
-  naAddSpaceChild(con->space, label, naMakePos(110, curPosY));
+  naAddSpaceChild(space, label, naMakePos(110, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 120);
   font = naCreateFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
-  naAddSpaceChild(con->space, label, naMakePos(210, curPosY));
+  naAddSpaceChild(space, label, naMakePos(210, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 150);
   font = naCreateFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 24.);
-  naAddSpaceChild(con->space, label, naMakePos(350, curPosY));
+  naAddSpaceChild(space, label, naMakePos(350, curPosY));
 
 
 
@@ -93,27 +94,27 @@ FontController* createFontController(){
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 12.);
-  naAddSpaceChild(con->space, label, naMakePos(10, curPosY));
+  naAddSpaceChild(space, label, naMakePos(10, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
   naSetLabelFont(label, font);
   naRelease(font);
-  naAddSpaceChild(con->space, label, naMakePos(110, curPosY));
+  naAddSpaceChild(space, label, naMakePos(110, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 120);
   font = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
-  naAddSpaceChild(con->space, label, naMakePos(210, curPosY));
+  naAddSpaceChild(space, label, naMakePos(210, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 150);
   font = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 24.);
-  naAddSpaceChild(con->space, label, naMakePos(350, curPosY));
+  naAddSpaceChild(space, label, naMakePos(350, curPosY));
 
 
 
@@ -124,27 +125,27 @@ FontController* createFontController(){
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 12.);
-  naAddSpaceChild(con->space, label, naMakePos(10, curPosY));
+  naAddSpaceChild(space, label, naMakePos(10, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_DEFAULT);
   naSetLabelFont(label, font);
   naRelease(font);
-  naAddSpaceChild(con->space, label, naMakePos(110, curPosY));
+  naAddSpaceChild(space, label, naMakePos(110, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 120);
   font = naCreateFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
-  naAddSpaceChild(con->space, label, naMakePos(210, curPosY));
+  naAddSpaceChild(space, label, naMakePos(210, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 150);
   font = naCreateFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 24.);
-  naAddSpaceChild(con->space, label, naMakePos(350, curPosY));
+  naAddSpaceChild(space, label, naMakePos(350, curPosY));
 
 
 
@@ -155,27 +156,27 @@ FontController* createFontController(){
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 12.);
-  naAddSpaceChild(con->space, label, naMakePos(10, curPosY));
+  naAddSpaceChild(space, label, naMakePos(10, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 100);
   font = naCreateFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_DEFAULT);
   naSetLabelFont(label, font);
   naRelease(font);
-  naAddSpaceChild(con->space, label, naMakePos(110, curPosY));
+  naAddSpaceChild(space, label, naMakePos(110, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 120);
   font = naCreateFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_BIG);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 20.);
-  naAddSpaceChild(con->space, label, naMakePos(210, curPosY));
+  naAddSpaceChild(space, label, naMakePos(210, curPosY));
 
   label = naNewLabel(HAMBURGEFONTSIV, 150);
   font = naCreateFontWithPreset(NA_FONT_KIND_MATH, NA_FONT_SIZE_HUGE);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 24.);
-  naAddSpaceChild(con->space, label, naMakePos(350, curPosY));
+  naAddSpaceChild(space, label, naMakePos(350, curPosY));
 
 
 
@@ -186,7 +187,7 @@ FontController* createFontController(){
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 50);
-  naAddSpaceChild(con->space, label, naMakePos(10, curPosY));
+  naAddSpaceChild(space, label, naMakePos(10, curPosY));
 
   label = naNewLabel(u8"Comic Sans Link", 250);
   font = naCreateFont("Comic Sans MS", NA_FONT_FLAG_REGULAR, 32);
@@ -194,30 +195,17 @@ FontController* createFontController(){
   naRelease(font);
   naSetLabelHeight(label, 50);
   naSetLabelLink(label, "https://manderc.com");
-  naAddSpaceChild(con->space, label, naMakePos(210, curPosY));
+  naAddSpaceChild(space, label, naMakePos(210, curPosY));
 
-  return con;
+  initCommonController(
+    &con->comCon,
+    space,
+    NA_NULL,
+    NA_NULL);
+
+  return (CommonController*)con;
 }
 
-
-
-void clearFontController(FontController* con){
-  naDelete(con->space);
-  naFree(con);
-}
-
-
-
-NASpace* getFontControllerSpace(FontController* con){
-  return con->space;
-}
-
-
-
-void updateFontController(FontController* con) {
-  NA_UNUSED(con);
-  // nothing to do.
-}
 
 
 // This is free and unencumbered software released into the public domain.

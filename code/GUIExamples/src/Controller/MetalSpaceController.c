@@ -1,51 +1,44 @@
 
 #include "../GUIExamples.h"
+#include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAMemory.h"
 
 
 
 struct MetalSpaceController{
-  NASpace* space;
+  CommonController comCon;
 
   NALabel* dummyLabel;
 };
 
 
 
-MetalSpaceController* createMetalSpaceController(){
+CommonController* createMetalSpaceController() {
   MetalSpaceController* con = naAlloc(MetalSpaceController);
 
-  con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->dummyLabel = naNewLabel("NAMetalSpace examples not available yet", 400);
-  naAddSpaceChild(con->space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  #if NA_OS == NA_OS_MAC_OS_X
+    con->dummyLabel = naNewLabel("NAMetalSpace examples not yet available", 400);
+  #else
+    con->dummyLabel = naNewLabel("NAMetalSpace examples not available on Windows", 400);
+  #endif
 
-  return con;
+  naAddSpaceChild(space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
+
+  initCommonController(
+    &con->comCon,
+    space,
+    NA_NULL,
+    NA_NULL);
+
+  return (CommonController*)con;
 }
 
-
-
-void clearMetalSpaceController(MetalSpaceController* con){
-  naDelete(con->space);
-  naFree(con);
-}
-
-
-
-NASpace* getMetalSpaceControllerSpace(MetalSpaceController* con){
-  return con->space;
-}
-
-
-
-void updateMetalSpaceController(MetalSpaceController* con) {
-  NA_UNUSED(con);
-  // nothing to do.
-}
 
 
 // This is free and unencumbered software released into the public domain.

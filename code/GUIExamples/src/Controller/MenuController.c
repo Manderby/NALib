@@ -1,12 +1,13 @@
 
 #include "../GUIExamples.h"
+#include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAMemory.h"
 
 
 
 struct MenuController{
-  NASpace* space;
+  CommonController comCon;
 
   NAButton* button;
   NAMenu* menu;
@@ -14,9 +15,11 @@ struct MenuController{
   NALabel* outputLabel;
 };
 
+// Prototype:
+void clearMenuController(MenuController* con);
 
 
-static void menuButtonPressed(NAReaction reaction){
+static void menuButtonPressed(NAReaction reaction) {
   MenuController* con = reaction.controller;
   
   NARect rect = naGetUIElementRectAbsolute(con->button);
@@ -30,7 +33,7 @@ static void menuButtonPressed(NAReaction reaction){
 
 
 
-static void menuItemSelected(NAReaction reaction){
+static void menuItemSelected(NAReaction reaction) {
   MenuController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(
     NA_TRUE,
@@ -41,17 +44,17 @@ static void menuItemSelected(NAReaction reaction){
 
 
 
-MenuController* createMenuController(){
+CommonController* createMenuController() {
   MenuController* con = naAlloc(MenuController);
 
-  con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->button = naNewTextPushButton("Push for Menu", COLUMN1_WIDTH);
   naAddUIReaction(con->button, NA_UI_COMMAND_PRESSED, menuButtonPressed, con);
-  naAddSpaceChild(con->space, con->button, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(space, con->button, naMakePos(TAB1, curPosY));
   con->menu = naNewMenu();  
   NAMenuItem* menuItem0 = naNewMenuItem("You are Winner", NA_NULL);
   NAMenuItem* menuItem1 = naNewMenuItem("Kohle, Kohle, Kohle", NA_NULL);
@@ -75,31 +78,23 @@ MenuController* createMenuController(){
     "Here will be the output of any operation.",
     WINDOW_WIDTH - 2 * WINDOW_MARGIN);
   naSetLabelFont(con->outputLabel, getMonoFont());
-  naAddSpaceChild(con->space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
+  naAddSpaceChild(space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
-  return con;
+  initCommonController(
+    &con->comCon,
+    space,
+    clearMenuController,
+    NA_NULL);
+
+  return (CommonController*)con;
 }
 
 
 
-void clearMenuController(MenuController* con){
+void clearMenuController(MenuController* con) {
   naDelete(con->menu);
-  naDelete(con->space);
-  naFree(con);
 }
 
-
-
-NASpace* getMenuControllerSpace(MenuController* con){
-  return con->space;
-}
-
-
-
-void updateMenuController(MenuController* con) {
-  NA_UNUSED(con);
-  // nothing to do.
-}
 
 
 // This is free and unencumbered software released into the public domain.

@@ -1,17 +1,21 @@
 
 #include "../GUIExamples.h"
+#include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAMemory.h"
 
 
 
 struct OpenGLSpaceController{
-  NASpace* space;
+  CommonController comCon;
 
   size_t fontId;
   NAOpenGLSpace* openGLSpace;
   int openGLSpaceRefreshCount;
 };
+
+// Prototype:
+void clearOpenGLSpaceController(OpenGLSpaceController* con);
 
 
 
@@ -20,7 +24,9 @@ static void initOpenGL(void* initData) {
   con->fontId = naStartupPixelFont();
 }
 
-void redrawOpenGLSpace(NAReaction reaction){
+
+
+void redrawOpenGLSpace(NAReaction reaction) {
   // OpenGL is declared deprecated on macOS 10.14. These pragma directives
   // omit the nasty warnings. Do not forget the pragma pop at the end of this
   // function!
@@ -33,7 +39,7 @@ void redrawOpenGLSpace(NAReaction reaction){
   con->openGLSpaceRefreshCount--;
 
   // Prepare the next refresh.
-  if(con->openGLSpaceRefreshCount == 0){
+  if(con->openGLSpaceRefreshCount == 0) {
     naRefreshUIElement(con->openGLSpace, 1./ 60);
     con->openGLSpaceRefreshCount++;
   }
@@ -41,7 +47,7 @@ void redrawOpenGLSpace(NAReaction reaction){
   static float ang = 0.f;
 
   ang += .01f;
-  if(ang > NA_PI2f){ang = 0.f;}
+  if(ang > NA_PI2f) {ang = 0.f;}
 
 
   double uiScale = naGetUIElementResolutionScale(con->openGLSpace);
@@ -76,12 +82,12 @@ void redrawOpenGLSpace(NAReaction reaction){
 }
 
 
-OpenGLSpaceController* createOpenGLSpaceController(){
+CommonController* createOpenGLSpaceController() {
   OpenGLSpaceController* con = naAlloc(OpenGLSpaceController);
 
   con->openGLSpaceRefreshCount = 1;
 
-  con->space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   #define OPENGL_DISPLAY_HEIGHT 100.
@@ -89,33 +95,24 @@ OpenGLSpaceController* createOpenGLSpaceController(){
   curPosY = curPosY - SPACE_MARGIN_V - OPENGL_DISPLAY_HEIGHT;
   
   con->openGLSpace = naNewOpenGLSpace(naMakeSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN, OPENGL_DISPLAY_HEIGHT), initOpenGL, con);
-  naAddSpaceChild(con->space, con->openGLSpace, naMakePos(WINDOW_MARGIN, curPosY + SPACE_MARGIN_V));
+  naAddSpaceChild(space, con->openGLSpace, naMakePos(WINDOW_MARGIN, curPosY + SPACE_MARGIN_V));
   naAddUIReaction(con->openGLSpace, NA_UI_COMMAND_REDRAW, redrawOpenGLSpace, con);
 
+  initCommonController(
+    &con->comCon,
+    space,
+    clearOpenGLSpaceController,
+    NA_NULL);
 
-  return con;
+  return (CommonController*)con;
 }
 
 
 
-void clearOpenGLSpaceController(OpenGLSpaceController* con){
+void clearOpenGLSpaceController(OpenGLSpaceController* con) {
   naShutdownPixelFont(con->fontId);
-  naDelete(con->space);
-  naFree(con);
 }
 
-
-
-NASpace* getOpenGLSpaceControllerSpace(OpenGLSpaceController* con){
-  return con->space;
-}
-
-
-
-void updateOpenGLSpaceController(OpenGLSpaceController* con) {
-  NA_UNUSED(con);
-  // nothing to do.
-}
 
 
 // This is free and unencumbered software released into the public domain.

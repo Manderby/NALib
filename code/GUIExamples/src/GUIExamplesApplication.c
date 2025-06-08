@@ -39,7 +39,7 @@ GUIExamplesApplication* app;
 // preStartup is called before most system specific initialization takes place.
 // Initialize all general values here.
 // See naStartApplication for a detailed explanation.
-void preStartup(void* arg){
+void preStartup(void* arg) {
   NADateTime now = naMakeDateTimeNow();
   NAString* dateTimeStr = naNewStringWithDateTime(&now, NA_DATETIME_FORMAT_NATURAL);
   printf("DateTime: %s\n", naGetStringUTF8Pointer(dateTimeStr));
@@ -62,12 +62,12 @@ void preStartup(void* arg){
 // postStartup is called after base application stuff has been initialized.
 // Build-up your GUI here.
 // See naStartApplication for a detailed explanation.
-void postStartup(void* arg){
+void postStartup(void* arg) {
   NA_UNUSED(arg);
   
   // Load the image files
   NAPNG* pngIcon = naNewPNGWithPath(RESOURCE_PATH "icon.png");
-  if(!naIsSizesUseful(naGetPNGSize(pngIcon))){
+  if(!naIsSizesUseful(naGetPNGSize(pngIcon))) {
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
@@ -80,7 +80,7 @@ void postStartup(void* arg){
   naRelease(originalIconImage);
 
   NAPNG* png1 = naNewPNGWithPath(RESOURCE_PATH "man.png");
-  if(!naIsSizesUseful(naGetPNGSize(png1))){
+  if(!naIsSizesUseful(naGetPNGSize(png1))) {
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
@@ -93,7 +93,7 @@ void postStartup(void* arg){
   naRelease(originalState1Image);
 
   NAPNG* png2 = naNewPNGWithPath(RESOURCE_PATH "man2.png");
-  if(!naIsSizesUseful(naGetPNGSize(png2))){
+  if(!naIsSizesUseful(naGetPNGSize(png2))) {
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
@@ -117,7 +117,7 @@ void postStartup(void* arg){
 
 
 // Delete all controllers and finally, delete this application
-void clearApplication(void* arg){
+void clearApplication(void* arg) {
   NA_UNUSED(arg);
 
   naForeachStackpMutable(&(app->temperatureControllers), (NAMutator)despawnTemperatureController);
@@ -134,25 +134,25 @@ void clearApplication(void* arg){
 
 
 
-double getAndAdvanceNextWindowX(void){
+double getAndAdvanceNextWindowX(void) {
   double curWindowX = app->nextWindowX;
   app->nextWindowX += 20;
   return curWindowX;
 }
 
-double getAndAdvanceNextWindowY(void){
+double getAndAdvanceNextWindowY(void) {
   double curWindowY = app->nextWindowY;
   app->nextWindowY -= 20;
   return curWindowY;
 }
 
-NAImageSet* getIconImageSet(void){
+NAImageSet* getIconImageSet(void) {
   return app->iconImageSet;
 }
-NAImageSet* getState1ImageSet(void){
+NAImageSet* getState1ImageSet(void) {
   return app->state1ImageSet;
 }
-NAImageSet* getState2ImageSet(void){
+NAImageSet* getState2ImageSet(void) {
   return app->state2ImageSet;
 }
 
@@ -208,7 +208,7 @@ void flashLabel(NALabel* label, const NAUTF8Char* text) {
   naCallApplicationFunctionInSeconds(naUnflash, NA_NULL, 1.);
 }
 
-void addTemperatureControllerToApplication(TemperatureController* con){
+void addTemperatureControllerToApplication(TemperatureController* con) {
   *(TemperatureController**)naPushStack(&(app->temperatureControllers)) = con;
 }
 
