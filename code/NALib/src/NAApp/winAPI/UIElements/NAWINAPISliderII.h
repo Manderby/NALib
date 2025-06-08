@@ -118,7 +118,7 @@ NA_DEF NASlider* naNewSlider(double width) {
     TRACKBAR_CLASS,
     NULL,
     WS_CHILD | WS_VISIBLE | TBS_NOTICKS | TBS_TRANSPARENTBKGND,
-		0,
+    0,
     0,
     (LONG)(winapiSlider->rect.size.width * uiScale),
     (LONG)(winapiSlider->rect.size.height * uiScale),
@@ -213,8 +213,17 @@ NA_API void naSetSliderValue(NASlider* slider, double value) {
 
 
 NA_API void naSetSliderRange(NASlider* slider, double min, double max, size_t tickCount) {
-  NA_UNUSED(tickCount);
-  // todo
+
+  SendMessage(naGetUIElementNativePtr(slider), TBM_CLEARTICS, TRUE, 0); // true = redraw
+  if(tickCount) {
+    SetWindowLongPtr(naGetUIElementNativePtr(slider), GWL_STYLE, WS_CHILD | WS_VISIBLE | TBS_TRANSPARENTBKGND);
+    for(size_t i = 1; i < tickCount - 1; ++i) {
+      SendMessage(naGetUIElementNativePtr(slider), TBM_SETTIC , 0, i * NA_MAX_i32 / (tickCount - 1));
+    }
+  }else{
+    SetWindowLongPtr(naGetUIElementNativePtr(slider), GWL_STYLE, WS_CHILD | WS_VISIBLE | TBS_NOTICKS | TBS_TRANSPARENTBKGND);
+  }
+
   slider->min = min;
   slider->max = max;
 }
