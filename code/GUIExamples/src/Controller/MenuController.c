@@ -3,6 +3,7 @@
 #include "../CommonController.h"
 #include "../Layout.h"
 #include "NAUtility/NAMemory.h"
+#include "NAApp/NAMouse.h"
 
 
 
@@ -11,12 +12,12 @@ struct MenuController{
 
   NAButton* button;
   NAMenu* menu;
-
-  NALabel* outputLabel;
+  NALabel* menuReaction;
 };
 
 // Prototype:
 void clearMenuController(MenuController* con);
+
 
 
 static void menuButtonPressed(NAReaction reaction) {
@@ -24,10 +25,11 @@ static void menuButtonPressed(NAReaction reaction) {
   
   NARect rect = naGetUIElementRectAbsolute(con->button);
   NAPos menuPos = rect.pos;
-  menuPos.x += rect.size.width;
-  menuPos.y += rect.size.height;
+  //menuPos.x += rect.size.width;
+  //menuPos.y += rect.size.height;
 
-  naSetLabelText(con->outputLabel, "Menu button pressed");
+  flashLabel(con->menuReaction, "Menu On");
+
   naPresentMenu(con->menu, menuPos, con->button);
 }
 
@@ -37,9 +39,10 @@ static void menuItemSelected(NAReaction reaction) {
   MenuController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(
     NA_TRUE,
-    "MenuItem with index %d selected",
+    "Index %d",
     (int)naGetMenuItemIndex(con->menu, reaction.uiElement));
-  naSetLabelText(con->outputLabel, outputText);
+  flashLabel(con->menuReaction, outputText);
+
 }
 
 
@@ -68,17 +71,17 @@ CommonController* createMenuController() {
   naAddMenuItem(con->menu, menuItem3, NA_NULL);
   naAddMenuItem(con->menu, menuItem4, NA_NULL);
   naAddMenuItem(con->menu, menuSeparator, menuItem3);
+  naSetMenuItemState(menuItem1, NA_TRUE);
+  naSetMenuItemState(menuItem4, NA_TRUE);
   naAddUIReaction(menuItem0, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
   naAddUIReaction(menuItem1, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
   naAddUIReaction(menuItem2, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
   naAddUIReaction(menuItem3, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
   naAddUIReaction(menuItem4, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
 
-  con->outputLabel = naNewLabel(
-    "Here will be the output of any operation.",
-    WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naSetLabelFont(con->outputLabel, getMonoFont());
-  naAddSpaceChild(space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
+  con->menuReaction = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->menuReaction, getMonoFont());
+  naAddSpaceChild(space, con->menuReaction, naMakePos(TAB2, curPosY));
 
   initCommonController(
     &con->comCon,

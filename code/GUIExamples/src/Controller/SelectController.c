@@ -11,11 +11,10 @@ struct SelectController{
 
   NALabel* normalLabel;
   NASelect* select;
-  
+  NALabel* normalReaction;
+
   NALabel* disabledLabel;
   NASelect* selectDisabled;
-
-  NALabel* outputLabel;
 };
 
 
@@ -24,9 +23,9 @@ static void selectItemSelected(NAReaction reaction) {
   SelectController* con = reaction.controller;
   const NAUTF8Char* outputText = naAllocSprintf(
     NA_TRUE,
-    "Select item with index %d selected",
+    "Index %d",
     (int)naGetSelectItemIndex(con->select, reaction.uiElement));
-  naSetLabelText(con->outputLabel, outputText);
+  flashLabel(con->normalReaction, outputText);
 }
 
 
@@ -52,6 +51,10 @@ CommonController* createSelectController() {
   }
   naSetSelectIndexSelected(con->select, 3);
 
+  con->normalReaction = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->normalReaction, getMonoFont());
+  naAddSpaceChild(space, con->normalReaction, naMakePos(TAB2, curPosY));
+
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
@@ -63,12 +66,6 @@ CommonController* createSelectController() {
   NAMenuItem* disabledItem = naNewMenuItem(naAllocSprintf(NA_TRUE, "Disabled Select", 0), NA_NULL);
   naAddSelectMenuItem(con->selectDisabled, disabledItem, NA_NULL);
   naAddSpaceChild(space, con->selectDisabled, naMakePos(TAB1, curPosY));
-
-  con->outputLabel = naNewLabel(
-    "Here will be the output of any operation.",
-    WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naSetLabelFont(con->outputLabel, getMonoFont());
-  naAddSpaceChild(space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
   initCommonController(
     &con->comCon,

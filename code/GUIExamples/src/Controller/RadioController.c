@@ -11,19 +11,18 @@ struct RadioController{
 
   NALabel* normalLabel;
   NARadio* radio;
+  NALabel* normalReaction;
 
   NALabel* disabledLabel;
   NARadio* radioDisabled1;
   NARadio* radioDisabled2;
-
-  NALabel* outputLabel;
 };
 
 
 
 static void radioPressed(NAReaction reaction) {
   RadioController* con = reaction.controller;
-  naSetLabelText(con->outputLabel, "Radio Pressed");
+  flashLabel(con->normalReaction, "Pressed");
 }
 
 
@@ -44,6 +43,10 @@ CommonController* createRadioController() {
   naAddSpaceChild(space, con->radio, naMakePos(TAB1, curPosY));
   naAddUIReaction(con->radio, NA_UI_COMMAND_PRESSED, radioPressed, con);
   
+  con->normalReaction = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->normalReaction, getMonoFont());
+  naAddSpaceChild(space, con->normalReaction, naMakePos(TAB2, curPosY));
+
   curPosY = curPosY - (2. * UI_ELEMENT_HEIGTH);
 
   con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
@@ -58,12 +61,6 @@ CommonController* createRadioController() {
   con->radioDisabled1 = naNewRadio("Disabled Radio Off", COLUMN1_WIDTH);
   naSetRadioEnabled(con->radioDisabled1, NA_FALSE);
   naAddSpaceChild(space, con->radioDisabled1, naMakePos(TAB1, curPosY));
-
-  con->outputLabel = naNewLabel(
-    "Here will be the output of any operation.",
-    WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naSetLabelFont(con->outputLabel, getMonoFont());
-  naAddSpaceChild(space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
   initCommonController(
     &con->comCon,

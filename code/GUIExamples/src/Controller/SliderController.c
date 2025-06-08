@@ -11,15 +11,15 @@ struct SliderController{
 
   NALabel* normalLabel;
   NASlider* slider;
+  NALabel* normalReaction;
 
   NALabel* ticksLabel;
   NASlider* ticksSlider;
-  
+  NALabel* ticksReaction;
+
   NALabel* disabledLabel;
   NASlider* sliderDisabled1;
   NASlider* sliderDisabled2;
-
-  NALabel* outputLabel;
 };
 
 
@@ -27,8 +27,12 @@ struct SliderController{
 static void sliderEdited(NAReaction reaction) {
   SliderController* con = reaction.controller;
   const NASlider* slider = reaction.uiElement;
-  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "Slider Value Edited to %f", naGetSliderValue(slider));
-  naSetLabelText(con->outputLabel, outputText);
+  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "%f", naGetSliderValue(slider));
+  if(slider == con->slider) {
+    flashLabel(con->normalReaction, outputText);
+  }else if(slider == con->ticksSlider) {
+    flashLabel(con->ticksReaction, outputText);
+  }
 }
 
 
@@ -49,6 +53,10 @@ CommonController* createSliderController() {
   naAddSpaceChild(space, con->slider, naMakePos(TAB1, curPosY));
   naAddUIReaction(con->slider, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
+  con->normalReaction = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->normalReaction, getMonoFont());
+  naAddSpaceChild(space, con->normalReaction, naMakePos(TAB2, curPosY));
+
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->ticksLabel = naNewLabel("Ticks", COLUMN0_WIDTH);
@@ -59,6 +67,10 @@ CommonController* createSliderController() {
   naSetSliderRange(con->ticksSlider, 0., 1., 11);
   naAddSpaceChild(space, con->ticksSlider, naMakePos(TAB1, curPosY));
   naAddUIReaction(con->ticksSlider, NA_UI_COMMAND_EDITED, sliderEdited, con);
+
+  con->ticksReaction = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->ticksReaction, getMonoFont());
+  naAddSpaceChild(space, con->ticksReaction, naMakePos(TAB2, curPosY));
 
   curPosY = curPosY - (2. * UI_ELEMENT_HEIGTH);
 
@@ -77,12 +89,6 @@ CommonController* createSliderController() {
   naSetSliderValue(con->sliderDisabled2, .5);
   naAddSpaceChild(space, con->sliderDisabled2, naMakePos(TAB1, curPosY));
   naAddUIReaction(con->sliderDisabled2, NA_UI_COMMAND_EDITED, sliderEdited, con);
-
-  con->outputLabel = naNewLabel(
-    "Here will be the output of any operation.",
-    WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naSetLabelFont(con->outputLabel, getMonoFont());
-  naAddSpaceChild(space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
   initCommonController(
     &con->comCon,

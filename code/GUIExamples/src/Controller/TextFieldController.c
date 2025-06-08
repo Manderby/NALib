@@ -10,12 +10,11 @@ struct TextFieldController{
   CommonController comCon;
 
   NALabel* enabledLabel;
-  NALabel* disabledLabel;
-
   NATextField* textField;
-  NATextField* textFieldDisabled;
+  NALabel* normalReaction;
 
-  NALabel* outputLabel;
+  NALabel* disabledLabel;
+  NATextField* textFieldDisabled;
 };
 
 
@@ -24,8 +23,8 @@ static void textFieldEdited(NAReaction reaction) {
   TextFieldController* con = reaction.controller;
   const NATextField* textField = reaction.uiElement;
   NAString* textFieldString = naNewStringWithTextFieldText(textField);
-  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "TextField Value Edited to %s", naGetStringUTF8Pointer(textFieldString));
-  naSetLabelText(con->outputLabel, outputText);
+  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "%s", naGetStringUTF8Pointer(textFieldString));
+  flashLabel(con->normalReaction, outputText);
   naDelete(textFieldString);
 }
 
@@ -33,8 +32,8 @@ static void textFieldEditFinished(NAReaction reaction) {
   TextFieldController* con = reaction.controller;
   const NATextField* textField = reaction.uiElement;
   NAString* textFieldString = naNewStringWithTextFieldText(textField);
-  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "TextField Value Finished Editing to %s", naGetStringUTF8Pointer(textFieldString));
-  naSetLabelText(con->outputLabel, outputText);
+  const NAUTF8Char* outputText = naAllocSprintf(NA_TRUE, "End %s", naGetStringUTF8Pointer(textFieldString));
+  flashLabel(con->normalReaction, outputText);
   naDelete(textFieldString);
 }
 
@@ -58,6 +57,10 @@ CommonController* createTextFieldController() {
   naAddUIReaction(con->textField, NA_UI_COMMAND_EDITED, textFieldEdited, con);
   naAddUIReaction(con->textField, NA_UI_COMMAND_EDIT_FINISHED, textFieldEditFinished, con);
   
+  con->normalReaction = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->normalReaction, getMonoFont());
+  naAddSpaceChild(space, con->normalReaction, naMakePos(TAB2, curPosY));
+
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
@@ -69,12 +72,6 @@ CommonController* createTextFieldController() {
   naSetTextFieldEnabled(con->textFieldDisabled, NA_FALSE);
   naSetTextFieldText(con->textFieldDisabled, "Disabled Textfield");
   naAddSpaceChild(space, con->textFieldDisabled, naMakePos(TAB1, curPosY));
-
-  con->outputLabel = naNewLabel(
-    "Here will be the output of any operation.",
-    WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naSetLabelFont(con->outputLabel, getMonoFont());
-  naAddSpaceChild(space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
   initCommonController(
     &con->comCon,

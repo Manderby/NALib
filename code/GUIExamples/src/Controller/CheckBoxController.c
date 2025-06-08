@@ -10,20 +10,20 @@ struct CheckBoxController{
   CommonController comCon;
 
   NALabel* normalLabel;
-  NACheckBox* checkBox;
+  NACheckBox* normalCheckBox;
+  NALabel* normalReaction;
 
   NALabel* disabledLabel;
   NACheckBox* checkBoxDisabled1;
   NACheckBox* checkBoxDisabled2;
-
-  NALabel* outputLabel;
 };
 
 
 
 static void checkBoxPressed(NAReaction reaction) {
   CheckBoxController* con = reaction.controller;
-  naSetLabelText(con->outputLabel, "CheckBox Pressed");
+  NABool state = naGetCheckBoxState(reaction.uiElement);
+  flashLabel(con->normalReaction, naAllocSprintf(NA_TRUE, "State %d", (int)state));
 }
 
 
@@ -40,10 +40,14 @@ CommonController* createCheckBoxController() {
   naSetLabelFont(con->normalLabel, getTitleFont());
   naAddSpaceChild(space, con->normalLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
-  con->checkBox = naNewCheckBox("I am a CheckBox", COLUMN1_WIDTH);
-  naAddSpaceChild(space, con->checkBox, naMakePos(TAB1, curPosY));
-  naAddUIReaction(con->checkBox, NA_UI_COMMAND_PRESSED, checkBoxPressed, con);
+  con->normalCheckBox = naNewCheckBox("I am a CheckBox", COLUMN1_WIDTH);
+  naAddSpaceChild(space, con->normalCheckBox, naMakePos(TAB1, curPosY));
+  naAddUIReaction(con->normalCheckBox, NA_UI_COMMAND_PRESSED, checkBoxPressed, con);
   
+  con->normalReaction = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->normalReaction, getMonoFont());
+  naAddSpaceChild(space, con->normalReaction, naMakePos(TAB2, curPosY));
+
   curPosY = curPosY - (2. * UI_ELEMENT_HEIGTH);
 
   con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
@@ -58,12 +62,6 @@ CommonController* createCheckBoxController() {
   con->checkBoxDisabled1 = naNewCheckBox("Disabled CheckBox Off", COLUMN1_WIDTH);
   naSetCheckBoxEnabled(con->checkBoxDisabled1, NA_FALSE);
   naAddSpaceChild(space, con->checkBoxDisabled1, naMakePos(TAB1, curPosY));
-
-  con->outputLabel = naNewLabel(
-    "Here will be the output of any operation.",
-    WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naSetLabelFont(con->outputLabel, getMonoFont());
-  naAddSpaceChild(space, con->outputLabel, naMakePos(WINDOW_MARGIN, WINDOW_MARGIN));
 
   initCommonController(
     &con->comCon,
