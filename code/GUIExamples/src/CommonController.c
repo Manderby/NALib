@@ -17,9 +17,11 @@ void initCommonController(
 
 
 void clearCommonController(CommonController* con) {
-  if(con->clearer) { con->clearer(con); }
-  naDelete(con->space);
-  naFree(con);
+  if(con) {
+    if(con->clearer) { con->clearer(con); }
+    naDelete(con->space);
+    naFree(con);
+  }
 }
 
 

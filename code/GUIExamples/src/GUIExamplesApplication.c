@@ -175,7 +175,8 @@ static void naUnflash(void* data) {
   NAListIterator it = naMakeListModifier(&app->flashList);
   while(naIterateList(&it)) {
     FlashEntry* cur = naGetListCurMutable(&it);
-    if(naGetDateTimeDifference(&now, &cur->lastChange) >= 1.) {
+    // We already erase after .75 seconds to be sure we catch all timers.
+    if(naGetDateTimeDifference(&now, &cur->lastChange) >= .75) {
       naSetLabelText(cur->label, "");
       naRemoveListCurMutable(&it, NA_FALSE);
       naFree(cur);

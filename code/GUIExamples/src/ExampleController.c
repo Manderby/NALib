@@ -75,112 +75,106 @@ void updateExampleController(ExampleController* con);
 
 
 
+
 static void pressButton(NAReaction reaction){
   ExampleController* con = (ExampleController*)reaction.controller;
-  NASpace* newSpace = NA_NULL;
+
+  CommonController* newController = NA_NULL;
 
   if(reaction.uiElement == con->applicationButton){
     if(!con->applicationController)
       con->applicationController = createApplicationController();
-    updateCommonController(con->applicationController);
-    newSpace = getCommonControllerSpace(con->applicationController);
+    newController = con->applicationController;
   }else if(reaction.uiElement == con->screenButton){
     if(!con->screenController)
       con->screenController = createScreenController();
-    updateCommonController(con->screenController);
-    newSpace = getCommonControllerSpace(con->screenController);
+    newController = con->screenController;
   }else if(reaction.uiElement == con->windowButton){
     if(!con->windowController)
       con->windowController = createWindowController();
-    updateCommonController(con->windowController);
-    newSpace = getCommonControllerSpace(con->windowController);
+    newController = con->windowController;
   }else if(reaction.uiElement == con->spaceButton){
     if(!con->spaceController)
       con->spaceController = createSpaceController();
-    updateCommonController(con->spaceController);
-    newSpace = getCommonControllerSpace(con->spaceController);
+    newController = con->spaceController;
   }else if(reaction.uiElement == con->openGLSpaceButton){
     if(!con->openGLSpaceController)
       con->openGLSpaceController = createOpenGLSpaceController();
-    updateCommonController(con->openGLSpaceController);
-    newSpace = getCommonControllerSpace(con->openGLSpaceController);
+    newController = con->openGLSpaceController;
   }else if(reaction.uiElement == con->metalSpaceButton){
     if(!con->metalSpaceController)
       con->metalSpaceController = createMetalSpaceController();
-    updateCommonController(con->metalSpaceController);
-    newSpace = getCommonControllerSpace(con->metalSpaceController);
+    newController = con->metalSpaceController;
   }else if(reaction.uiElement == con->imageSpaceButton){
     if(!con->imageSpaceController)
       con->imageSpaceController = createImageSpaceController();
-    updateCommonController(con->imageSpaceController);
-    newSpace = getCommonControllerSpace(con->imageSpaceController);
+    newController = con->imageSpaceController;
 
   }else if(reaction.uiElement == con->buttonButton){
     if(!con->buttonController)
       con->buttonController = createButtonController();
-    updateCommonController(con->buttonController);
-    newSpace = getCommonControllerSpace(con->buttonController);
+    newController = con->buttonController;
   }else if(reaction.uiElement == con->checkBoxButton){
     if(!con->checkBoxController)
       con->checkBoxController = createCheckBoxController();
-    updateCommonController(con->checkBoxController);
-    newSpace = getCommonControllerSpace(con->checkBoxController);
+    newController = con->checkBoxController;
   }else if(reaction.uiElement == con->labelButton){
     if(!con->labelController)
       con->labelController = createLabelController();
-    updateCommonController(con->labelController);
-    newSpace = getCommonControllerSpace(con->labelController);
+    newController = con->labelController;
   }else if(reaction.uiElement == con->menuButton){
     if(!con->menuController)
       con->menuController = createMenuController();
-    updateCommonController(con->menuController);
-    newSpace = getCommonControllerSpace(con->menuController);
+    newController = con->menuController;
   }else if(reaction.uiElement == con->radioButton){
     if(!con->radioController)
       con->radioController = createRadioController();
-    updateCommonController(con->radioController);
-    newSpace = getCommonControllerSpace(con->radioController);
+    newController = con->radioController;
   }else if(reaction.uiElement == con->selectButton){
     if(!con->selectController)
       con->selectController = createSelectController();
-    updateCommonController(con->selectController);
-    newSpace = getCommonControllerSpace(con->selectController);
+    newController = con->selectController;
   }else if(reaction.uiElement == con->sliderButton){
     if(!con->sliderController)
       con->sliderController = createSliderController();
-    updateCommonController(con->sliderController);
-    newSpace = getCommonControllerSpace(con->sliderController);
+    newController = con->sliderController;
   }else if(reaction.uiElement == con->textBoxButton){
     if(!con->textBoxController)
       con->textBoxController = createTextBoxController();
-    updateCommonController(con->textBoxController);
-    newSpace = getCommonControllerSpace(con->textBoxController);
+    newController = con->textBoxController;
   }else if(reaction.uiElement == con->textFieldButton){
     if(!con->textFieldController)
       con->textFieldController = createTextFieldController();
-    updateCommonController(con->textFieldController);
-    newSpace = getCommonControllerSpace(con->textFieldController);
+    newController = con->textFieldController;
 
   }else if(reaction.uiElement == con->fontButton){
     if(!con->fontController)
       con->fontController = createFontController();
-    updateCommonController(con->fontController);
-    newSpace = getCommonControllerSpace(con->fontController);
+    newController = con->fontController;
 
   }else if(reaction.uiElement == con->converterButton){
     spawnTemperatureController();
   }else if(reaction.uiElement == con->quitButton){
     naStopApplication();
   }
-  
-  NASpace* contentSpace = naGetWindowContentSpace(con->window);
-  if(con->exampleSpace) {
-    naRemoveSpaceChild(contentSpace, con->exampleSpace);
+
+  if(newController) {
+    NASpace* contentSpace = naGetWindowContentSpace(con->window);
+
+    if(con->exampleSpace) {
+      naRemoveSpaceChild(contentSpace, con->exampleSpace);
+    }
+
+    NASpace* newSpace = getCommonControllerSpace(newController);
+    naAddSpaceChild(
+      contentSpace,
+      newSpace,
+      naMakePos(0, 0));
+
+    updateCommonController(newController);
+
+    con->exampleSpace = newSpace;
   }
-  if(newSpace) {
-    naAddSpaceChild(contentSpace, newSpace, naMakePos(0, 0));
-  }
-  con->exampleSpace = newSpace;
 
   updateExampleController(con);
 }
@@ -275,60 +269,32 @@ ExampleController* createExampleController(){
 }
 
 
-void updateExampleController(ExampleController* con){
+static void setExampleButtonState(ExampleController* con, NAButton* button, CommonController* comCon) {
   naSetButtonState(
-    con->screenButton,
-    con->screenController && con->exampleSpace == getCommonControllerSpace(con->screenController));
-  naSetButtonState(
-    con->applicationButton,
-    con->applicationController && con->exampleSpace == getCommonControllerSpace(con->applicationController));
-  naSetButtonState(
-    con->windowButton,
-    con->windowController && con->exampleSpace == getCommonControllerSpace(con->windowController));
-  naSetButtonState(
-    con->spaceButton,
-    con->spaceController && con->exampleSpace == getCommonControllerSpace(con->spaceController));
-  naSetButtonState(
-    con->openGLSpaceButton,
-    con->openGLSpaceController && con->exampleSpace == getCommonControllerSpace(con->openGLSpaceController));
-  naSetButtonState(
-    con->metalSpaceButton,
-    con->metalSpaceController && con->exampleSpace == getCommonControllerSpace(con->metalSpaceController));
-  naSetButtonState(
-    con->imageSpaceButton,
-    con->imageSpaceController && con->exampleSpace == getCommonControllerSpace(con->imageSpaceController));
+    button,
+    comCon && con->exampleSpace == getCommonControllerSpace(comCon));
+}
 
-  naSetButtonState(
-    con->buttonButton,
-    con->buttonController && con->exampleSpace == getCommonControllerSpace(con->buttonController));
-  naSetButtonState(
-    con->checkBoxButton,
-    con->checkBoxController && con->exampleSpace == getCommonControllerSpace(con->checkBoxController));
-  naSetButtonState(
-    con->labelButton,
-    con->labelController && con->exampleSpace == getCommonControllerSpace(con->labelController));
-  naSetButtonState(
-    con->menuButton,
-    con->menuController && con->exampleSpace == getCommonControllerSpace(con->menuController));
-  naSetButtonState(
-    con->radioButton,
-    con->radioController && con->exampleSpace == getCommonControllerSpace(con->radioController));
-  naSetButtonState(
-    con->selectButton,
-    con->selectController && con->exampleSpace == getCommonControllerSpace(con->selectController));
-  naSetButtonState(
-    con->sliderButton,
-    con->sliderController && con->exampleSpace == getCommonControllerSpace(con->sliderController));
-  naSetButtonState(
-    con->textBoxButton,
-    con->textBoxController && con->exampleSpace == getCommonControllerSpace(con->textBoxController));
-  naSetButtonState(
-    con->textFieldButton,
-    con->textFieldController && con->exampleSpace == getCommonControllerSpace(con->textFieldController));
-    
-  naSetButtonState(
-    con->fontButton,
-    con->fontController && con->exampleSpace == getCommonControllerSpace(con->fontController));
+void updateExampleController(ExampleController* con){
+  setExampleButtonState(con, con->applicationButton, con->applicationController);
+  setExampleButtonState(con, con->screenButton,      con->screenController);
+  setExampleButtonState(con, con->windowButton,      con->windowController);
+  setExampleButtonState(con, con->spaceButton,       con->spaceController);
+  setExampleButtonState(con, con->openGLSpaceButton, con->openGLSpaceController);
+  setExampleButtonState(con, con->metalSpaceButton,  con->metalSpaceController);
+  setExampleButtonState(con, con->imageSpaceButton,  con->imageSpaceController);
+
+  setExampleButtonState(con, con->buttonButton,      con->buttonController);
+  setExampleButtonState(con, con->checkBoxButton,    con->checkBoxController);
+  setExampleButtonState(con, con->labelButton,       con->labelController);
+  setExampleButtonState(con, con->menuButton,        con->menuController);
+  setExampleButtonState(con, con->radioButton,       con->radioController);
+  setExampleButtonState(con, con->selectButton,      con->selectController);
+  setExampleButtonState(con, con->sliderButton,      con->sliderController);
+  setExampleButtonState(con, con->textBoxButton,     con->textBoxController);
+  setExampleButtonState(con, con->textFieldButton,   con->textFieldController);
+
+  setExampleButtonState(con, con->fontButton,        con->fontController);
 }
 
 
@@ -343,25 +309,25 @@ void clearExampleController(ExampleController* con){
     con->exampleSpace = NA_NULL;
   }
 
-  if(con->applicationController) { clearCommonController(con->applicationController); }
-  if(con->screenController) { clearCommonController(con->screenController); }
-  if(con->windowController) { clearCommonController(con->windowController); }
-  if(con->spaceController) { clearCommonController(con->spaceController); }
-  if(con->openGLSpaceController) { clearCommonController(con->openGLSpaceController); }
-  if(con->metalSpaceController) { clearCommonController(con->metalSpaceController); }
-  if(con->imageSpaceController) { clearCommonController(con->imageSpaceController); }
+  clearCommonController(con->applicationController);
+  clearCommonController(con->screenController);
+  clearCommonController(con->windowController);
+  clearCommonController(con->spaceController);
+  clearCommonController(con->openGLSpaceController);
+  clearCommonController(con->metalSpaceController);
+  clearCommonController(con->imageSpaceController);
 
-  if(con->buttonController) { clearCommonController(con->buttonController); }
-  if(con->checkBoxController) { clearCommonController(con->checkBoxController); }
-  if(con->labelController) { clearCommonController(con->labelController); }
-  if(con->menuController) { clearCommonController(con->menuController); }
-  if(con->radioController) { clearCommonController(con->radioController); }
-  if(con->selectController) { clearCommonController(con->selectController); }
-  if(con->sliderController) { clearCommonController(con->sliderController); }
-  if(con->textBoxController) { clearCommonController(con->textBoxController); }
-  if(con->textFieldController) { clearCommonController(con->textFieldController); }
+  clearCommonController(con->buttonController);
+  clearCommonController(con->checkBoxController);
+  clearCommonController(con->labelController);
+  clearCommonController(con->menuController);
+  clearCommonController(con->radioController);
+  clearCommonController(con->selectController);
+  clearCommonController(con->sliderController);
+  clearCommonController(con->textBoxController);
+  clearCommonController(con->textFieldController);
 
-  if(con->fontController) { clearCommonController(con->fontController); }
+  clearCommonController(con->fontController);
 
   naFree(con);
 }

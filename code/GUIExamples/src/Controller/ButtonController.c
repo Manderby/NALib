@@ -276,8 +276,8 @@ CommonController* createButtonController() {
 
 void updateButtonController(ButtonController* con) {
   if(con->firstTime) {
-    //naSetButtonSubmit(con->textButtonSubmit, submitPressed, con);
-    //naSetButtonAbort(con->textButtonAbort, abortPressed, con);
+    naSetButtonSubmit(con->textButtonSubmit, submitPressed, con);
+    naSetButtonAbort(con->textButtonAbort, abortPressed, con);
 
     con->firstTime = NA_FALSE;
   }
