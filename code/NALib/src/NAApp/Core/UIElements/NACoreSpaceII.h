@@ -119,6 +119,16 @@ NA_DEF void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
 
 
 
+NA_DEF NABool naGetSpaceDragsWindow(const NASpace* space) {
+  return space->dragsWindow;
+}
+
+NA_DEF void naSetSpaceDragsWindow(NASpace* space, NABool dragsWindow) {
+  space->dragsWindow = dragsWindow;
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

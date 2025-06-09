@@ -257,6 +257,18 @@ NA_DEF NAWindow* naNewWindow(
     style &= ~WS_THICKFRAME;
     style &= ~WS_MAXIMIZEBOX;
   }
+  if(nonminiaturizeable) {
+    style &= ~WS_MINIMIZEBOX;
+  }
+  if(!resizeable & nonminiaturizeable & noncloseable) {
+    style &= ~WS_SYSMENU;
+  }
+  if(titleless) {
+    style = WS_POPUPWINDOW;
+  }
+  if(auxiliary) {
+    // todo
+  }
 
   const NAScreen* screen = naGetApplicationScreenWithPos(naGetRectCenter(rect));
   if(screen) {
@@ -291,6 +303,11 @@ NA_DEF NAWindow* naNewWindow(
     NULL,
     naGetUIElementNativePtr(naGetApplication()),
     NULL);
+
+  if(noncloseable) {
+    EnableMenuItem(GetSystemMenu(nativePtr, FALSE), SC_CLOSE,
+      MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+  }
 
   HICON hIcon = na_GetWINAPIApplicationIcon();
   if(hIcon) {   
@@ -328,6 +345,7 @@ NA_DEF NAWindow* naNewWindow(
   if(titleless) {
     naSetSpaceDragsWindow(contentSpace, NA_TRUE);
   }
+
   naSetWindowContentSpace(&winapiWindow->window, contentSpace);
 
   return (NAWindow*)winapiWindow;
@@ -550,40 +568,45 @@ NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window)
   return winapiWindow->rect;
 }
 
+static NARect na_convertInnerToOuterRect(const NAWINAPIWindow* winapiWindow, NARect rect, NARect screenRect) {
+  NARect outerRect = rect;
+  RECT clientRect;
+  RECT windowRect;
+  POINT testPoint = {0, 0};
+  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+
+  HWND nativePtr = naGetUIElementNativePtrConst(&winapiWindow->window);
+  GetClientRect(nativePtr, &clientRect);
+  GetWindowRect(nativePtr, &windowRect);
+  ClientToScreen(nativePtr, &testPoint);
+
+  LONG leftdiff = (testPoint.x - windowRect.left);
+  LONG topdiff =  (testPoint.y - windowRect.top);
+  LONG rightdiff =  (windowRect.right - (testPoint.x + clientRect.right));
+  LONG bottomdiff =  (windowRect.bottom - (testPoint.y + clientRect.bottom));
+  outerRect.pos.x -= leftdiff / uiScale;
+  outerRect.pos.y -= bottomdiff / uiScale;
+  outerRect.size.width += (leftdiff + rightdiff) / uiScale;
+  outerRect.size.height += (bottomdiff + topdiff) / uiScale;
+
+  return outerRect;
+}
+
 NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
 
-  POINT testPoint = {0, 0};
-  RECT clientRect;
-  RECT windowRect;
-  LONG leftdiff;
-  LONG topdiff;
-  LONG rightdiff;
-  LONG bottomdiff;
-
+  NARect screenRect = naGetMainScreenRect();
   winapiWindow->rect = rect;
   double uiScale = naGetUIElementResolutionScale(NA_NULL);
 
-  NARect screenRect = naGetMainScreenRect();
-  GetClientRect(naGetUIElementNativePtr(window), &clientRect);
-  GetWindowRect(naGetUIElementNativePtr(window), &windowRect);
-  ClientToScreen(naGetUIElementNativePtr(window), &testPoint);
-
-  leftdiff = (testPoint.x - windowRect.left);
-  topdiff =  (testPoint.y - windowRect.top);
-  rightdiff =  (windowRect.right - (testPoint.x + clientRect.right));
-  bottomdiff =  (windowRect.bottom - (testPoint.y + clientRect.bottom));
-  rect.pos.x -= leftdiff / uiScale;
-  rect.pos.y -= bottomdiff / uiScale;
-  rect.size.width += (leftdiff + rightdiff) / uiScale;
-  rect.size.height += (bottomdiff + topdiff) / uiScale;
+  NARect outerRect = na_convertInnerToOuterRect(winapiWindow, rect, screenRect);
 
   MoveWindow(
     naGetUIElementNativePtr(winapiWindow),
-    (LONG)(rect.pos.x * uiScale),
-    (LONG)((screenRect.size.height - rect.pos.y - rect.size.height) * uiScale),
-    (LONG)(rect.size.width * uiScale),
-    (LONG)(rect.size.height * uiScale),
+    (LONG)(outerRect.pos.x * uiScale),
+    (LONG)((screenRect.size.height - outerRect.pos.y - outerRect.size.height) * uiScale),
+    (LONG)(outerRect.size.width * uiScale),
+    (LONG)(outerRect.size.height * uiScale),
     NA_FALSE);
 
   na_UpdateMouseTracking(&winapiWindow->window.uiElement);
@@ -594,10 +617,24 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
   NARect contentRect = naMakeRectS(
     0.,
     0.,
-    clientRect.right - clientRect.left,
-    clientRect.bottom - clientRect.top);
+    rect.size.width,
+    rect.size.height);
   naSetUIElementRect(contentSpace, contentRect);
 }
+
+
+NA_DEF NARect naGetWindowOuterRect(const NAWindow* window) {
+  const NAWINAPIWindow* winapiWindow = (const NAWINAPIWindow*)window;
+
+  NARect screenRect = naGetMainScreenRect();
+  return na_convertInnerToOuterRect(winapiWindow, winapiWindow->rect, screenRect);
+}
+
+NA_DEF void naSetWindowOuterRect(NAWindow* window, NARect rect) {
+  //naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+  //[nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
+
 
 
 // This is free and unencumbered software released into the public domain.

@@ -28,6 +28,7 @@
 #define NA_WINDOW_FIXED_SIZE             0x00
 #define NA_WINDOW_RESIZEABLE             0x01
 
+// Auxiliary windows are helper windows. The implementation is os-specific.
 #define NA_WINDOW_DEFAULT                0x00
 #define NA_WINDOW_AUXILIARY              0x02
 
@@ -35,11 +36,18 @@
 #define NA_WINDOW_TITLED                 0x00
 #define NA_WINDOW_TITLELESS              0x04
 
+// Hide or show the close button
 #define NA_WINDOW_CLOSEABLE              0x00
 #define NA_WINDOW_NON_CLOSEABLE          0x08
 
+// Hide or show the miniaturization button
 #define NA_WINDOW_MINIATURIZEABLE        0x00
 #define NA_WINDOW_NON_MINIATURIZEABLE    0x10
+
+// If a window is not resizeable and does not show the mini nor the close
+// button, it will automatically hide all buttons, leaving a pure title bar.
+
+
 
 // Creates a new window. Use Null for screen to use the main screen.
 NA_API NAWindow* naNewWindow(

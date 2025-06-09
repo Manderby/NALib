@@ -82,7 +82,7 @@ CommonController* createWindowController() {
   naSetLabelFont(con->normalWindowLabel, getTitleFont());
   naAddSpaceChild(space, con->normalWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
   
-  con->normalWindow = naNewWindow("Normal Window", naMakeRectS(200, 200, 300, 100), 0);
+  con->normalWindow = naNewWindow("Normal Window", naMakeRectS(200 + WINDOW_WIDTH, 700, 300, 100), 0);
   naAddUIReaction(con->normalWindow, NA_UI_COMMAND_RESHAPE, reshape, con);
 
   con->openNormalWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
@@ -101,7 +101,7 @@ CommonController* createWindowController() {
   naSetLabelFont(con->resizeWindowLabel, getTitleFont());
   naAddSpaceChild(space, con->resizeWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
   
-  con->resizeWindow = naNewWindow("Resizeable Window", naMakeRectS(220, 180, 300, 100), NA_WINDOW_RESIZEABLE);
+  con->resizeWindow = naNewWindow("Resizeable Window", naMakeRectS(200 + WINDOW_WIDTH, 550, 300, 100), NA_WINDOW_RESIZEABLE);
   naAddUIReaction(con->resizeWindow, NA_UI_COMMAND_RESHAPE, reshape, con);
 
   con->openResizeWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
@@ -120,7 +120,7 @@ CommonController* createWindowController() {
   naSetLabelFont(con->nothingWindowLabel, getTitleFont());
   naAddSpaceChild(space, con->nothingWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
   
-  con->nothingWindow = naNewWindow("Window with no title buttons", naMakeRectS(240, 160, 300, 100), NA_WINDOW_NON_MINIATURIZEABLE | NA_WINDOW_NON_CLOSEABLE | NA_WINDOW_FIXED_SIZE);
+  con->nothingWindow = naNewWindow("Window with no title buttons", naMakeRectS(200 + WINDOW_WIDTH, 400, 300, 100), NA_WINDOW_NON_MINIATURIZEABLE | NA_WINDOW_NON_CLOSEABLE | NA_WINDOW_FIXED_SIZE);
   naAddUIReaction(con->nothingWindow, NA_UI_COMMAND_RESHAPE, reshape, con);
 
   con->openNothingWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
@@ -143,7 +143,7 @@ CommonController* createWindowController() {
   naSetLabelFont(con->titlelessWindowLabel, getTitleFont());
   naAddSpaceChild(space, con->titlelessWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
   
-  con->titlelessWindow = naNewWindow("This title should never be displayed", naMakeRectS(260, 140, 300, 100), NA_WINDOW_TITLELESS | NA_WINDOW_RESIZEABLE);
+  con->titlelessWindow = naNewWindow("This title should never be displayed", naMakeRectS(200 + WINDOW_WIDTH, 250, 300, 100), NA_WINDOW_TITLELESS | NA_WINDOW_RESIZEABLE);
   naAddUIReaction(con->titlelessWindow, NA_UI_COMMAND_RESHAPE, reshape, con);
 
   con->openTitlelessWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
@@ -166,7 +166,7 @@ CommonController* createWindowController() {
   naSetLabelFont(con->auxiliaryWindowLabel, getTitleFont());
   naAddSpaceChild(space, con->auxiliaryWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
   
-  con->auxiliaryWindow = naNewWindow("Auxiliary Window", naMakeRectS(280, 120, 300, 100), NA_WINDOW_RESIZEABLE);
+  con->auxiliaryWindow = naNewWindow("Auxiliary Window", naMakeRectS(200 + WINDOW_WIDTH, 100, 300, 100), NA_WINDOW_RESIZEABLE | NA_WINDOW_AUXILIARY);
   naAddUIReaction(con->auxiliaryWindow, NA_UI_COMMAND_RESHAPE, reshape, con);
 
   con->openAuxiliaryWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);

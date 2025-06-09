@@ -66,7 +66,8 @@ NA_API void naSetSpaceVisible(
   NABool visible);
 
 // Makes the space react to mouse drags in order to move the window.
-NA_API void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable);
+NA_API NABool naGetSpaceDragsWindow(const NASpace* space);
+NA_API void naSetSpaceDragsWindow(NASpace* space, NABool dragsWindow);
 
 
 

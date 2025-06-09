@@ -494,6 +494,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
 
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NA_UIElement* elem = (NA_UIElement*)uiElement;
+  NAUIElementType type;
   NAPos pos;
   NASize size = {0};
   NARect rect = {0};
@@ -543,8 +544,18 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
       pos = naGetMousePos(mouseStatus);
       na_SetMouseMovedByDiff(na_GetApplicationMouseStatus(naGetApplication()), size.width - pos.x, size.height - pos.y);
 
-      if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED)) {
-        // no super method to be called.
+      type = naGetUIElementType(elem);
+      if(type == NA_UI_SPACE) {
+        NASpace* space = (NASpace*)elem;
+        if(naGetSpaceDragsWindow(space)) {
+          // todo
+        }
+      }
+
+      if(!info.hasBeenHandeled) {
+        if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED)) {
+          // no super method to be called.
+        }
       }
       info.result = 0;
       info.hasBeenHandeled = NA_TRUE;

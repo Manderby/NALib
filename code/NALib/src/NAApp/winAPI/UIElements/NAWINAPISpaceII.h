@@ -310,14 +310,6 @@ NA_DEF void naSetSpaceVisible(NASpace* space, NABool visible) {
 
 
 
-NA_HDEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable) {
-  NA_UNUSED(isDraggable);
-  NA_UNUSED(space);
-  // todo
-}
-
-
-
 NA_HDEF NARect na_GetSpaceRect(const NA_UIElement* space) {
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
   return winapiSpace->rect;
