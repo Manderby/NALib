@@ -61,7 +61,7 @@
   }
   
   - (void)adjustLayerFrame{
-    double uiScale = naGetCocoaBackingScaleFactor([self window]);
+    double uiScale = naGetUIElementUIScale(&[self cocoaMetalSpace]->metalSpace);
     NSRect frame = [self frame];
     frame.size.width *= uiScale;
     frame.size.height *= uiScale;

@@ -96,7 +96,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = naNew(NAWINAPIOpenGLSpace);
 
   winapiOpenGLSpace->rect = naMakeRect(naMakePos(0., 0.), size);
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
 
 	HWND nativePtr = CreateWindow(
 		TEXT("NAOpenGLSpace"),
@@ -185,7 +185,7 @@ NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openGLSpace;
 
   winapiOpenGLSpace->rect = rect;
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(openGLSpace));
 
   SetWindowPos(

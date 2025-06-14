@@ -25,11 +25,12 @@ NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
 
 - (void) setImageSet:(NAImageSet* _Nullable)imageSet{
   if(imageSet) {
+    double uiScale = naGetUIElementUIScale(&cocoaImageSpace->imageSpace);
     NSImage* image = na_CreateResolutionIndependentNativeImage(
-      self,
       imageSet,
       NA_IMAGE_SET_INTERACTION_NONE,
-      NA_FALSE);
+      NA_FALSE,
+      uiScale);
     [self setImage:image];
   }else{
     [self setImage:nil];

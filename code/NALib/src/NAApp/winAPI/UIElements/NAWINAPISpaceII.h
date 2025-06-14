@@ -184,7 +184,7 @@ NA_DEF NASpace* naNewSpace(NASize size) {
   NAWINAPISpace* winapiSpace = naNew(NAWINAPISpace);
 
   winapiSpace->rect = naMakeRect(naMakePos(0., 0.), size);
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
 
 	HWND nativePtr = CreateWindow(
 		TEXT("NASpace"),
@@ -322,7 +322,7 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
 
   double prevHeight = winapiSpace->rect.size.height;
   winapiSpace->rect = rect;
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(space));
 
   winapiSpace->forceEraseBackground = NA_TRUE;

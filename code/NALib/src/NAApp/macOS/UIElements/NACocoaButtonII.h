@@ -123,26 +123,27 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 - (void) updateImages{
   const NAImageSet* imageSet = [self currentImage];
   NABool secondaryState = [self getButtonState];
+  double uiScale = naGetUIElementUIScale(&cocoaButton->button);
 
   if(imageSet) {
     if([self isEnabled]) {
       [self setImage:na_CreateResolutionIndependentNativeImage(
-        self,
         imageSet,
         NA_IMAGE_SET_INTERACTION_NONE,
-        secondaryState)];
+        secondaryState,
+        uiScale)];
         
       [self setAlternateImage:na_CreateResolutionIndependentNativeImage(
-        self,
         imageSet,
         NA_IMAGE_SET_INTERACTION_PRESSED,
-        secondaryState)];
+        secondaryState,
+        uiScale)];
     }else{
       [self setImage:na_CreateResolutionIndependentNativeImage(
-        self,
         imageSet,
         NA_IMAGE_SET_INTERACTION_DISABLED,
-        secondaryState)];
+        secondaryState,
+        uiScale)];
         
       [self setAlternateImage:nil];
     }
@@ -158,11 +159,12 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   NABool secondaryState = [self getButtonState];
 
   if(imageSet && [self isEnabled]) {
+    double uiScale = naGetUIElementUIScale(&cocoaButton->button);
     [self setImage:na_CreateResolutionIndependentNativeImage(
-      self,
       imageSet,
       NA_IMAGE_SET_INTERACTION_HOVER,
-      secondaryState)];
+      secondaryState,
+      uiScale)];
   }
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_ENTERED)) {
     [super mouseEntered:event];
@@ -175,11 +177,12 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   NABool secondaryState = [self getButtonState];
 
   if(imageSet) {
+    double uiScale = naGetUIElementUIScale(&cocoaButton->button);
     [self setImage:na_CreateResolutionIndependentNativeImage(
-      self,
       imageSet,
       NA_IMAGE_SET_INTERACTION_NONE,
-      secondaryState)];
+      secondaryState,
+      uiScale)];
   }
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_EXITED)) {
     [super mouseExited:event];

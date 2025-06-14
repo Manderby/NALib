@@ -40,7 +40,7 @@ static void initOpenGL(void* data) {
 void redrawDisplayReaction(NAReaction reaction) {
   ScreenController* con = reaction.controller;
 
-  double uiScale = naGetUIElementResolutionScale(con->display);
+  double uiScale = naGetUIElementUIScale(con->display);
   NASize viewSize = naGetUIElementRect(reaction.uiElement).size;
   glViewport(
     0,

@@ -200,7 +200,7 @@ void updateWindowController(WindowController* con) {
   const NAUTF8Char* labelString;
   
   borderRect = naGetWindowOuterRect(con->normalWindow);
-  labelString = naAllocSprintf(NA_TRUE, "%.2fx", naGetUIElementResolutionScale(con->normalWindow));
+  labelString = naAllocSprintf(NA_TRUE, "%.2fx", naGetUIElementUIScale(con->normalWindow));
   naSetLabelText(con->normalReaction, labelString);
 
   borderRect = naGetWindowOuterRect(con->normalWindow);

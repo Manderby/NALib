@@ -313,31 +313,6 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
 
 
 
-
-NA_DEF double naGetUIElementResolutionScale(const void* uiElement) {
-  #if NA_DEBUG
-    if(!uiElement)
-      naError("uiElement is nullptr");
-  #endif
-
-  if(naGetUIElementType(uiElement) == NA_UI_APPLICATION)
-    return 1.;
-    
-  if(naGetUIElementType(uiElement) == NA_UI_SCREEN) {
-    return naGetScreenUIScale(uiElement);
-  }
-
-  const void* parent = naGetUIElementParent(uiElement);
-  if(parent) {
-    return naGetUIElementResolutionScale(parent);
-  }
-  
-  return naGetCocoaBackingScaleFactor(
-    NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtrConst(uiElement)));
-}
-
-
-
 NA_HDEF void na_DestructFontNativePtr(void* nativePtr) {
   NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(nativePtr));
 }
@@ -599,12 +574,12 @@ NA_DEF void naHideMouseUntilMovement(NABool hide) {
 
 
 
-NA_DEF NACursorImage* naAllocCursorImage(const NAImageSet* imageSet, NAPos hotspot) {
+NA_DEF NACursorImage* naAllocCursorImage(const NAImageSet* imageSet, NAPos hotspot, double uiScale) {
   NSImage* nsImage = na_CreateResolutionIndependentNativeImage(
-    NA_NULL,
     imageSet,
     NA_IMAGE_SET_INTERACTION_NONE,
-    NA_FALSE);
+    NA_FALSE,
+    uiScale);
   return NA_COCOA_PTR_OBJC_TO_C([[NSCursor alloc] initWithImage:nsImage hotSpot:naMakeNSPointWithPos(hotspot)]);
 }
 
@@ -638,7 +613,7 @@ NA_DEF void naOpenURLInBrowser(const NAUTF8Char* url) {
 
 NA_HDEF void* na_AddMouseTracking(NA_UIElement* uiElement) {
   naDefineCocoaObject(NSView, nativePtr, uiElement);
-  double uiScale = naGetUIElementResolutionScale(uiElement);
+  double uiScale = naGetUIElementUIScale(uiElement);
   NARect trackingRect = naGetUIElementRect(uiElement);
   trackingRect.pos.x *= uiScale;
   trackingRect.pos.y *= uiScale;

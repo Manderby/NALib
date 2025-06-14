@@ -534,7 +534,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
     // GET_X_LPARAM(lParam): x coord relative to top left
     // GET_Y_LPARAM(lParam): y coord relative to top left
     if(naWINAPICaptureMouseHover()) {
-      double uiScale = naGetUIElementResolutionScale(elem);
+      double uiScale = naGetUIElementUIScale(elem);
       size.width = GET_X_LPARAM(lParam) / uiScale;
       size.height = GET_Y_LPARAM(lParam) / uiScale;
       rect = naGetUIElementRectAbsolute(uiElement);
@@ -1006,7 +1006,7 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem) {
 
 
 
-NA_DEF double naGetUIElementResolutionScale(const void* uiElement) {
+NA_DEF double naGetUIElementUIScale(const void* uiElement) {
   NA_UNUSED(uiElement);
   int dpi;
   HDC hDC = GetDC (NULL);
@@ -1028,7 +1028,7 @@ NA_API NARect naGetMainScreenRect() {
   screen = MonitorFromPoint(origin, MONITOR_DEFAULTTOPRIMARY);
   screeninfo.cbSize = sizeof(MONITORINFO);
   GetMonitorInfo(screen, &screeninfo);
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
 
   // The main monitor is by definition at (0,0) which in NALib is the bottom left corner.
   NARect rect = naMakeRectS(

@@ -54,7 +54,7 @@
 
 
 
-int main() {
+int main(int argc, const char** argv) {
 
   naStartApplication(preStartup, postStartup, clearApplication, NA_NULL);
 

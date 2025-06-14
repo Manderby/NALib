@@ -748,7 +748,7 @@ NA_DEF void naCenterMouse(void* uiElement) {
       naError("uiElement is nullptr");
   #endif
 
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
   NARect rect = naGetUIElementRectAbsolute(uiElement);
 
   // todo: screen not defined

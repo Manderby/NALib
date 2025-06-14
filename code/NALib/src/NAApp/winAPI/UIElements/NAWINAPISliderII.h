@@ -108,7 +108,7 @@ NA_DEF NASlider* naNewSlider(double width) {
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   NAWINAPISlider* winapiSlider = naNew(NAWINAPISlider);
 
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
   winapiSlider->rect = naMakeRectS(0., 0., width, 24.);
 
   // TBS_TRANSPARENTBKGND is necessary to call WM_PRINTCLIENT of the parent
@@ -240,7 +240,7 @@ NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect) {
   NAWINAPISlider* winapiSlider = (NAWINAPISlider*)slider;
 
   winapiSlider->rect = rect;
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(slider));
 
   SetWindowPos(

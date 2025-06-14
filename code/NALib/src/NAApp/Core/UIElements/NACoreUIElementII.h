@@ -251,7 +251,7 @@ NA_DEF void naAddUIReaction(
       && (elementType != NA_UI_SLIDER)
       && (elementType != NA_UI_TEXTFIELD))
       naError("Only textFields and sliders can receyve EDIT_FINISHED commands.");
-  #endif
+#endif // NA_DEBUG
   
   NA_EventReaction* eventReaction = naAlloc(NA_EventReaction);
   eventReaction->controller = controller;
@@ -269,6 +269,26 @@ NA_DEF void naAddUIReaction(
       trackedElement = &naGetWindowContentSpace((NAWindow*)uiElement)->uiElement;
     }
     na_RetainMouseTracking(trackedElement);
+  }
+}
+
+
+
+NA_DEF double naGetUIElementUIScale(const void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
+  if(naGetUIElementType(uiElement) == NA_UI_SCREEN) {
+    return naGetScreenUIScale(uiElement);
+  }
+
+  const void* parent = naGetUIElementParent(uiElement);
+  if(parent) {
+    return naGetUIElementUIScale(parent);
+  }else{
+    return 1.;
   }
 }
 

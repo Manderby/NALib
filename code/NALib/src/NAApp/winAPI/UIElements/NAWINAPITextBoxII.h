@@ -52,7 +52,7 @@ void naHandleTextBoxReverseTabOrder(NAReaction reaction) {
 NA_DEF NATextBox* naNewTextBox(NASize size) {
   NAWINAPITextBox* winapiTextBox = naNew(NAWINAPITextBox);
 
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
   winapiTextBox->rect = naMakeRect(naMakePos(0., 0.), size);
 
 	HWND nativePtr = CreateWindow(
@@ -183,7 +183,7 @@ NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect) {
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
 
   winapiTextBox->rect = rect;
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(textBox));
 
   SetWindowPos(

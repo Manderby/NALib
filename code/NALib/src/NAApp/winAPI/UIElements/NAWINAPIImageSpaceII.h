@@ -38,7 +38,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   if(!imageSpace->imageSpace.imageSet)
     return info;
 
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
 
   size1x = naGetImageSet1xSize(imageSpace->imageSpace.imageSet);
   size1x.width = (size_t)(size1x.width * uiScale);
@@ -132,7 +132,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAImageSet* imageSet, NASize size) {
   NAWINAPIImageSpace* winapiImageSpace = naNew(NAWINAPIImageSpace);
 
   winapiImageSpace->rect = naMakeRect(naMakePos(0., 0.), size);
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
 
 	HWND nativePtr = CreateWindow(
 		TEXT("NASpace"),
@@ -193,7 +193,7 @@ NA_HDEF void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect) {
   NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
 
   winapiImageSpace->rect = rect;
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(imageSpace));
 
   SetWindowPos(

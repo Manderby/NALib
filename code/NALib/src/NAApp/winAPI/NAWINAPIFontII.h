@@ -13,7 +13,7 @@ NA_HDEF void na_DestructFontNativePtr(void* nativePtr) {
 NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size) {
   TCHAR* systemFontName = naAllocSystemStringWithUTF8String(fontFamilyName);
 
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
 
   HFONT nativePtr = CreateFont(
     (int)(size * uiScale),

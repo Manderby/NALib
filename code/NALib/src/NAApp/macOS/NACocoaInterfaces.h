@@ -110,8 +110,8 @@ NA_EXTERN_RUNTIME_TYPE(NACocoaWindow);
   }
   @end  
 
-#endif
-#endif
+#endif // __MAC_10_12
+#endif // (NA_COMPILE_METAL == 1)
 
 #if(NA_COMPILE_OPENGL == 1)
 
@@ -128,7 +128,7 @@ NA_EXTERN_RUNTIME_TYPE(NACocoaWindow);
 
   #pragma GCC diagnostic pop
 
-#endif
+#endif // (NA_COMPILE_OPENGL == 1)
 
 @interface NACocoaNativeRadio : NSButton <NACocoaNativeEncapsulatedElement>{
   NACocoaRadio* cocoaRadio;

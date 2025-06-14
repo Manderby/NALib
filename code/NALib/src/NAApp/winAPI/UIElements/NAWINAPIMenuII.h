@@ -81,7 +81,7 @@ NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement) 
   na_SetApplicationLastOpenedMenu(naGetApplication(), menu);
   NARect screenRect = naGetMainScreenRect();
 
-  double uiScale = naGetUIElementResolutionScale(NA_NULL);
+  double uiScale = naGetUIElementUIScale(NA_NULL);
 
   // The messages are sent to the parent ui element. See WM_ENTERMENULOOP for
   // example. Currently only works with buttons.

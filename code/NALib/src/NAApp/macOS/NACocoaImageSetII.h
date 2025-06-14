@@ -163,10 +163,10 @@ NA_HDEF BOOL na_drawFixedResolutionImage(const NAImageSet* imageSet, double reso
 
 
 NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
-  const NSView* containingView,
   const NAImageSet* imageSet,
   NAImageSetInteraction interaction,
-  NABool secondaryState)
+  NABool secondaryState,
+  double uiScale)
 {
   NSImage* image = nil;
 
@@ -174,12 +174,12 @@ NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
   // This is commented out as there have been severe problems with this working
   // on different computers. The context sometimes simply does not seem to be
   // there and returns null, resulting in empty images.
-  if(containingView && [NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]) {
+  if([NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]) {
     NA_MACOS_AVAILABILITY_GUARD_10_8(
       NSSize imageSize = NSMakeSize(naGetImageSet1xSize(imageSet).width, naGetImageSet1xSize(imageSet).height);
       image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
       {
-        double resolution = naGetCocoaBackingScaleFactor(containingView) * NA_UI_RESOLUTION_1x;
+        double resolution = uiScale * NA_UI_RESOLUTION_1x;
         return na_drawFixedResolutionImage(imageSet, resolution, interaction, secondaryState, imageSize, dstRect);
       }];
     ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
