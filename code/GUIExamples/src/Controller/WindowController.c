@@ -11,30 +11,31 @@ struct WindowController{
 
   NALabel* normalWindowLabel;
   NAButton* openNormalWindow;
-  NAWindow* normalWindow;
   NALabel* normalReaction;
+  NAWindow* normalWindow;
+  NALabel* normalRectReaction;
 
   NALabel* resizeWindowLabel;
   NAButton* openResizeWindow;
   NAWindow* resizeWindow;
-  NALabel* resizeReaction;
+  NALabel* resizeRectReaction;
 
   NALabel* nothingWindowLabel;
   NAButton* openNothingWindow;
   NAButton* closeNothingWindow;
   NAWindow* nothingWindow;
-  NALabel* nothingReaction;
+  NALabel* nothingRectReaction;
 
   NALabel* titlelessWindowLabel;
   NAButton* openTitlelessWindow;
   NAButton* closeTitlelessWindow;
   NAWindow* titlelessWindow;
-  NALabel* titlelessReaction;
+  NALabel* titlelessRectReaction;
   
   NALabel* auxiliaryWindowLabel;
   NAButton* openAuxiliaryWindow;
   NAWindow* auxiliaryWindow;
-  NALabel* auxiliaryReaction;
+  NALabel* auxiliaryRectReaction;
 };
 
 // Prototype:
@@ -89,11 +90,15 @@ CommonController* createWindowController() {
   naAddSpaceChild(space, con->openNormalWindow, naMakePos(TAB1, curPosY));
   naAddUIReaction(con->openNormalWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
 
+  con->normalReaction = naNewLabel("", COLUMN2_WIDTH);
+  naSetLabelFont(con->normalReaction, getMonoFont());
+  naAddSpaceChild(space, con->normalReaction, naMakePos(TAB2, curPosY));
+
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->normalReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naSetLabelFont(con->normalReaction, getMonoFont());
-  naAddSpaceChild(space, con->normalReaction, naMakePos(TAB1, curPosY));
+  con->normalRectReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
+  naSetLabelFont(con->normalRectReaction, getMonoFont());
+  naAddSpaceChild(space, con->normalRectReaction, naMakePos(TAB1, curPosY));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
@@ -110,9 +115,9 @@ CommonController* createWindowController() {
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->resizeReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naSetLabelFont(con->resizeReaction, getMonoFont());
-  naAddSpaceChild(space, con->resizeReaction, naMakePos(TAB1, curPosY));
+  con->resizeRectReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
+  naSetLabelFont(con->resizeRectReaction, getMonoFont());
+  naAddSpaceChild(space, con->resizeRectReaction, naMakePos(TAB1, curPosY));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
@@ -133,9 +138,9 @@ CommonController* createWindowController() {
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->nothingReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naSetLabelFont(con->nothingReaction, getMonoFont());
-  naAddSpaceChild(space, con->nothingReaction, naMakePos(TAB1, curPosY));
+  con->nothingRectReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
+  naSetLabelFont(con->nothingRectReaction, getMonoFont());
+  naAddSpaceChild(space, con->nothingRectReaction, naMakePos(TAB1, curPosY));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
@@ -156,9 +161,9 @@ CommonController* createWindowController() {
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->titlelessReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naSetLabelFont(con->titlelessReaction, getMonoFont());
-  naAddSpaceChild(space, con->titlelessReaction, naMakePos(TAB1, curPosY));
+  con->titlelessRectReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
+  naSetLabelFont(con->titlelessRectReaction, getMonoFont());
+  naAddSpaceChild(space, con->titlelessRectReaction, naMakePos(TAB1, curPosY));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
@@ -175,9 +180,9 @@ CommonController* createWindowController() {
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->auxiliaryReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naSetLabelFont(con->auxiliaryReaction, getMonoFont());
-  naAddSpaceChild(space, con->auxiliaryReaction, naMakePos(TAB1, curPosY));
+  con->auxiliaryRectReaction = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
+  naSetLabelFont(con->auxiliaryRectReaction, getMonoFont());
+  naAddSpaceChild(space, con->auxiliaryRectReaction, naMakePos(TAB1, curPosY));
 
   initCommonController(
     &con->comCon,
@@ -195,24 +200,28 @@ void updateWindowController(WindowController* con) {
   const NAUTF8Char* labelString;
   
   borderRect = naGetWindowOuterRect(con->normalWindow);
-  labelString = naAllocSprintf(NA_TRUE, "Pos: (%.0f, %.0f) Size: (%.0f, %.0f)", borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
+  labelString = naAllocSprintf(NA_TRUE, "%.2fx", naGetUIElementResolutionScale(con->normalWindow));
   naSetLabelText(con->normalReaction, labelString);
+
+  borderRect = naGetWindowOuterRect(con->normalWindow);
+  labelString = naAllocSprintf(NA_TRUE, "Pos: (%.0f, %.0f) Size: (%.0f, %.0f)", borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
+  naSetLabelText(con->normalRectReaction, labelString);
 
   borderRect = naGetWindowOuterRect(con->resizeWindow);
   labelString = naAllocSprintf(NA_TRUE, "Pos: (%.0f, %.0f) Size: (%.0f, %.0f)", borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
-  naSetLabelText(con->resizeReaction, labelString);
+  naSetLabelText(con->resizeRectReaction, labelString);
 
   borderRect = naGetWindowOuterRect(con->nothingWindow);
   labelString = naAllocSprintf(NA_TRUE, "Pos: (%.0f, %.0f) Size: (%.0f, %.0f)", borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
-  naSetLabelText(con->nothingReaction, labelString);
+  naSetLabelText(con->nothingRectReaction, labelString);
 
   borderRect = naGetWindowOuterRect(con->titlelessWindow);
   labelString = naAllocSprintf(NA_TRUE, "Pos: (%.0f, %.0f) Size: (%.0f, %.0f)", borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
-  naSetLabelText(con->titlelessReaction, labelString);
+  naSetLabelText(con->titlelessRectReaction, labelString);
 
   borderRect = naGetWindowOuterRect(con->auxiliaryWindow);
   labelString = naAllocSprintf(NA_TRUE, "Pos: (%.0f, %.0f) Size: (%.0f, %.0f)", borderRect.pos.x, borderRect.pos.y, borderRect.size.width, borderRect.size.height);
-  naSetLabelText(con->auxiliaryReaction, labelString);
+  naSetLabelText(con->auxiliaryRectReaction, labelString);
 }
 
 // This is free and unencumbered software released into the public domain.

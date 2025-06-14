@@ -324,10 +324,12 @@ NA_DEF double naGetUIElementResolutionScale(const void* uiElement) {
     return 1.;
     
   if(naGetUIElementType(uiElement) == NA_UI_SCREEN) {
-    #if NA_DEBUG
-      naError("Sorry, was too lazy to implement this. I mean, it's not hard, but as screens are not used anyway at the moment, who cares.");
-    #endif
-    return 1.;
+    return naGetScreenUIScale(uiElement);
+  }
+
+  const void* parent = naGetUIElementParent(uiElement);
+  if(parent) {
+    return naGetUIElementResolutionScale(parent);
   }
   
   return naGetCocoaBackingScaleFactor(
