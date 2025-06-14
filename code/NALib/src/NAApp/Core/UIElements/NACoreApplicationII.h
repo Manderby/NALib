@@ -222,7 +222,6 @@ NA_DEF const NAScreen* naGetApplicationScreenWithPos(NAPos pos) {
   NAScreen* theScreen = NA_NULL;
 
   double minDist = NA_INFINITY;
-  NAPos minCenter = naMakePosZero();
 
   NAListIterator it = naMakeListMutator(&na_App->screens);
   while(naIterateList(&it)) {
@@ -237,7 +236,6 @@ NA_DEF const NAScreen* naGetApplicationScreenWithPos(NAPos pos) {
       if(dist < minDist) {
         theScreen = screen;
         minDist = dist;
-        minCenter = center;
       }
     }
   }

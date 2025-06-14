@@ -724,79 +724,78 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
   png->filteredData = NA_NULL;
 
   buffer = naCreateBufferWithInputPath(filePath);
-  bufIter = naMakeBufferModifier(buffer);
 
   // If the buffer is empty, there is no png to read.
-  if(naIsBufferEmpty(buffer)) {
-    goto NAEndReadingPNG;
-  }
+  if(!naIsBufferEmpty(buffer)) {
+    bufIter = naMakeBufferModifier(buffer);
 
-  // Important! RFC 1950 is big endianed (network endianness)
-  naSetBufferEndianness(buffer, NA_ENDIANNESS_NETWORK);
+    // Important! RFC 1950 is big endianed (network endianness)
+    naSetBufferEndianness(buffer, NA_ENDIANNESS_NETWORK);
 
-  // Read the magic numbers. If they do not match, this is no png file.
-  naReadBufferBytes(&bufIter, magic, 8);
-  if(!naEqual64(magic, na_PngMagic)) {
-    #if NA_DEBUG
-      naError("File is not a PNG file.");
-    #endif
-    goto NAEndReadingPNG;
-  }
+    // Read the magic numbers. If they do not match, this is no png file.
+    naReadBufferBytes(&bufIter, magic, 8);
+    if(!naEqual64(magic, na_PngMagic)) {
+      #if NA_DEBUG
+        naError("File is not a PNG file.");
+      #endif
 
-  // Read the chunks until the IEND chunk is read.
-  while(1) {
-    NAPNGChunk* chunk = na_AllocPNGChunkWithBuffer(&bufIter);
-    naAddListLastMutable(&png->chunks, chunk);
-    
-    if(chunk->type == NA_PNG_CHUNK_TYPE_IEND)
-      break;
-  }
-  naClearBufferIterator(&bufIter);
+    }else{
 
-  // Create the buffer to hold the compressed and decompressed data
-  png->compressedData = naCreateBuffer(NA_FALSE);
-  naSetBufferEndianness(png->compressedData, NA_ENDIANNESS_NETWORK);
-  png->filteredData = naCreateBuffer(NA_FALSE);
+      // Read the chunks until the IEND chunk is read.
+      while(1) {
+        NAPNGChunk* chunk = na_AllocPNGChunkWithBuffer(&bufIter);
+        naAddListLastMutable(&png->chunks, chunk);
+        
+        if(chunk->type == NA_PNG_CHUNK_TYPE_IEND)
+          break;
+      }
+      naClearBufferIterator(&bufIter);
 
-  NAListIterator iter = naMakeListMutator(&png->chunks);
-  while(naIterateList(&iter)) {
-    NAPNGChunk* chunk = naGetListCurMutable(&iter);
+      // Create the buffer to hold the compressed and decompressed data
+      png->compressedData = naCreateBuffer(NA_FALSE);
+      naSetBufferEndianness(png->compressedData, NA_ENDIANNESS_NETWORK);
+      png->filteredData = naCreateBuffer(NA_FALSE);
 
-    switch(chunk->type) {
-    case NA_PNG_CHUNK_TYPE_IHDR:  na_ReadPNGIHDRChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_PLTE:  na_ReadPNGPLTEChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_IDAT:  na_ReadPNGIDATChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_IEND:  na_ReadPNGIENDChunk(png, chunk);  break;
+      NAListIterator iter = naMakeListMutator(&png->chunks);
+      while(naIterateList(&iter)) {
+        NAPNGChunk* chunk = naGetListCurMutable(&iter);
 
-    case NA_PNG_CHUNK_TYPE_cHRM:  na_ReadPNGcHRMChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_gAMA:  na_ReadPNGgAMAChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_iCCP:  na_ReadPNGiCCPChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_sBIT:  na_ReadPNGsBITChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_sRGB:  na_ReadPNGsRGBChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_bKGD:  na_ReadPNGbKGDChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_hIST:  na_ReadPNGhISTChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_tRNS:  na_ReadPNGtRNSChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_pHYs:  na_ReadPNGpHYsChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_sPLT:  na_ReadPNGsPLTChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_tIME:  na_ReadPNGtIMEChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_iTXt:  na_ReadPNGiTXtChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_tEXt:  na_ReadPNGtEXtChunk(png, chunk);  break;
-    case NA_PNG_CHUNK_TYPE_zTXt:  na_ReadPNGzTXtChunk(png, chunk);  break;
-    default:
-      break;
+        switch(chunk->type) {
+        case NA_PNG_CHUNK_TYPE_IHDR:  na_ReadPNGIHDRChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_PLTE:  na_ReadPNGPLTEChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_IDAT:  na_ReadPNGIDATChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_IEND:  na_ReadPNGIENDChunk(png, chunk);  break;
+
+        case NA_PNG_CHUNK_TYPE_cHRM:  na_ReadPNGcHRMChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_gAMA:  na_ReadPNGgAMAChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_iCCP:  na_ReadPNGiCCPChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_sBIT:  na_ReadPNGsBITChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_sRGB:  na_ReadPNGsRGBChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_bKGD:  na_ReadPNGbKGDChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_hIST:  na_ReadPNGhISTChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_tRNS:  na_ReadPNGtRNSChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_pHYs:  na_ReadPNGpHYsChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_sPLT:  na_ReadPNGsPLTChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_tIME:  na_ReadPNGtIMEChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_iTXt:  na_ReadPNGiTXtChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_tEXt:  na_ReadPNGtEXtChunk(png, chunk);  break;
+        case NA_PNG_CHUNK_TYPE_zTXt:  na_ReadPNGzTXtChunk(png, chunk);  break;
+        default:
+          break;
+        }
+      }
+      naClearListIterator(&iter);
+
+    //  NAFile* outFile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
+    //  naWriteBufferToFile(png->compressedData, outFile);
+    //  naRelease(outFile);
+
+      naFixBufferRange(png->compressedData);
+      naFillBufferWithZLIBDecompression(png->filteredData, png->compressedData);
+      naReconstructFilterData(png);
     }
   }
-  naClearListIterator(&iter);
-
-//  NAFile* outFile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
-//  naWriteBufferToFile(png->compressedData, outFile);
-//  naRelease(outFile);
-
-  naFixBufferRange(png->compressedData);
-  naFillBufferWithZLIBDecompression(png->filteredData, png->compressedData);
-  naReconstructFilterData(png);
-
-  NAEndReadingPNG:
+  
   naRelease(buffer);
 
   return png;

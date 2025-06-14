@@ -17,12 +17,12 @@ struct MetalSpaceController{
 
 
 void redrawMetalSpace(NAReaction reaction) {
-  MetalSpaceController* con = (MetalSpaceController*)reaction.controller;
-  
+  NA_UNUSED(reaction);
+
   // There is still a lot of objective C code necessary. Sorry, no example yet.
-  
+
+  //MetalSpaceController* con = (MetalSpaceController*)reaction.controller;
   //void* layer = naGetMetalSpaceSystemContext(con->metalSpace);
-  
 }
 
 

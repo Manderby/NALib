@@ -228,25 +228,27 @@ NA_DEF NABuffer* naCreateBufferWithInputPath(const char* filePath) {
 
 //  NAString* pwd = naNewStringWithCurWorkingDirectory();
   file = naCreateFileReadingPath(filePath);
-  range = naMakeRangei64(NA_ZERO_i64, naCastFSizeToi64(naComputeFileByteSize(file)));
-
   fileBuffer = naCreateBuffer(NA_FALSE);
-  readSource = naCreateBufferSource(na_FillBufferPartFile, NA_NULL);
-    naSetBufferSourceData(readSource, file, (NAMutator)naRelease);
-    naSetBufferSourceLimit(readSource, range);
-    fileBuffer->source = naRetain(readSource);
-    fileBuffer->sourceOffset = NA_ZERO_i64;
-  naRelease(readSource);
 
-  bufSource = naCreateBufferSource(NA_NULL, fileBuffer);
-    buffer->source = naRetain(bufSource);
-    buffer->sourceOffset = NA_ZERO_i64;
-  naRelease(bufSource);
-  naRelease(fileBuffer);
+  if(file->desc >= 0) {
+    range = naMakeRangei64(NA_ZERO_i64, naCastFSizeToi64(naComputeFileByteSize(file)));
+    readSource = naCreateBufferSource(na_FillBufferPartFile, NA_NULL);
+      naSetBufferSourceData(readSource, file, (NAMutator)naRelease);
+      naSetBufferSourceLimit(readSource, range);
+      fileBuffer->source = naRetain(readSource);
+      fileBuffer->sourceOffset = NA_ZERO_i64;
+    naRelease(readSource);
 
-  na_EnsureBufferRange(buffer, NA_ZERO_i64, range.length);
+    bufSource = naCreateBufferSource(NA_NULL, fileBuffer);
+      buffer->source = naRetain(bufSource);
+      buffer->sourceOffset = NA_ZERO_i64;
+    naRelease(bufSource);
+    naRelease(fileBuffer);
+
+    na_EnsureBufferRange(buffer, NA_ZERO_i64, range.length);
+  }
+
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
-
   buffer->newlineEncoding = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_HOST;
 
