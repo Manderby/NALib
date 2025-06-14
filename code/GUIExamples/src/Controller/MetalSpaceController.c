@@ -9,8 +9,21 @@
 struct MetalSpaceController{
   CommonController comCon;
 
+  NAMetalSpace* metalSpace;
+
   NALabel* dummyLabel;
 };
+
+
+
+void redrawMetalSpace(NAReaction reaction) {
+  MetalSpaceController* con = (MetalSpaceController*)reaction.controller;
+  
+  // There is still a lot of objective C code necessary. Sorry, no example yet.
+  
+  //void* layer = naGetMetalSpaceSystemContext(con->metalSpace);
+  
+}
 
 
 
@@ -23,12 +36,20 @@ CommonController* createMetalSpaceController() {
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   #if NA_OS == NA_OS_MAC_OS_X
-    con->dummyLabel = naNewLabel("NAMetalSpace examples not yet available", 400);
+    #define METAL_DISPLAY_HEIGHT 100.
+    curPosY = curPosY - SPACE_MARGIN_V - METAL_DISPLAY_HEIGHT;
+    
+    con->metalSpace = naNewMetalSpace(naMakeSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN, METAL_DISPLAY_HEIGHT));
+    naAddSpaceChild(space, con->metalSpace, naMakePos(WINDOW_MARGIN, curPosY + SPACE_MARGIN_V));
+    naAddUIReaction(con->metalSpace, NA_UI_COMMAND_REDRAW, redrawMetalSpace, con);
+
+    con->dummyLabel = naNewLabel("NAMetalSpace examples not available yet", 400);
+    naAddSpaceChild(space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
+
   #else
     con->dummyLabel = naNewLabel("NAMetalSpace examples not available on Windows", 400);
+    naAddSpaceChild(space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
   #endif
-
-  naAddSpaceChild(space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   initCommonController(
     &con->comCon,

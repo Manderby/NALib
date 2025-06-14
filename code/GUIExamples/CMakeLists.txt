@@ -107,11 +107,13 @@ target_sources(${TARGET_NAME} PRIVATE ${macOSResourceFiles})
 
 # ######### Linking to NALib ################
 
-# Define GUI and OpenGL to be in use and hide the CMake GUI options.
+# Define GUI, OpenGL and Metal to be in use and hide the CMake GUI options.
 add_definitions(-DNA_COMPILE_GUI=1)
 add_definitions(-DNA_COMPILE_OPENGL=1)
+add_definitions(-DNA_COMPILE_METAL=1)
 set(COMPILE_NALIB_GUI 1 CACHE INTERNAL "GUI required")
 set(COMPILE_NALIB_OPENGL 1 CACHE INTERNAL "OpenGL required")
+set(COMPILE_NALIB_METAL 1 CACHE INTERNAL "Metal required")
 
 set(NALIB_DIR "../NALib")
 target_include_directories(${TARGET_NAME} PRIVATE ${NALIB_DIR}/src)
@@ -122,8 +124,13 @@ target_link_libraries(${TARGET_NAME} PRIVATE NALib)
 
 # ######### Linking to other libraries ################
 
+# These lines are necessary to include OpenGL
 find_package(OpenGL REQUIRED)
 target_link_libraries(${TARGET_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
+
+# These lines are necessary to include Metal
+target_link_libraries(${TARGET_NAME} PRIVATE "-framework Metal")
+target_link_libraries(${TARGET_NAME} PRIVATE "-framework QuartzCore")
 
 if (MSVC)
   target_link_libraries(${TARGET_NAME} PRIVATE ComCtl32.lib)

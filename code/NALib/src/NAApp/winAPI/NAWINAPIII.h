@@ -1006,18 +1006,18 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, void* nextTabElem) {
 
 
 
-NA_DEF double naGetUIElementUIScale(const void* uiElement) {
-  NA_UNUSED(uiElement);
-  int dpi;
-  HDC hDC = GetDC (NULL);
-  if(hDC) {
-    dpi = GetDeviceCaps (hDC, LOGPIXELSX);
-    ReleaseDC (NULL, hDC);
-  }else{
-    dpi = USER_DEFAULT_SCREEN_DPI;
-  }
-  return (double)dpi / (double)USER_DEFAULT_SCREEN_DPI;
-}
+//NA_DEF double naGetUIElementUIScale(const void* uiElement) {
+//  NA_UNUSED(uiElement);
+//  int dpi;
+//  HDC hDC = GetDC (NULL);
+//  if(hDC) {
+//    dpi = GetDeviceCaps (hDC, LOGPIXELSX);
+//    ReleaseDC (NULL, hDC);
+//  }else{
+//    dpi = USER_DEFAULT_SCREEN_DPI;
+//  }
+//  return (double)dpi / (double)USER_DEFAULT_SCREEN_DPI;
+//}
 
 
 
