@@ -662,7 +662,6 @@ NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
       naError("button is nullptr");
   #endif
 
-  NAButton* naButton = (NAButton*)button;
   naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
   NARect rect = naMakeRectWithNSRect([nativePtr frame]);
   if(na_HasShortButton()) {

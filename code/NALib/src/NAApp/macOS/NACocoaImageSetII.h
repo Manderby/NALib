@@ -121,7 +121,7 @@ NA_DEF void* naAllocNativeImageWithImage(const NAImage* image) {
     NA_BITS_PER_BYTE,
     (size_t)naGetImageSize(image).width * 4, // 4 channels: RGBA
     colorSpace,
-    kCGImageAlphaPremultipliedLast,
+    (CGBitmapInfo)kCGImageAlphaPremultipliedLast,
     NULL,
     NULL);
 
