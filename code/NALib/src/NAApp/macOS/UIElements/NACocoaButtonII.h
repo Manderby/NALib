@@ -222,8 +222,6 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
   uint32 flags = NA_BUTTON_BORDERED;
   
   double sizeSupplement = 0.;
-        NSOperatingSystemVersion curVer = [[NSProcessInfo processInfo] operatingSystemVersion];
-
   if(na_HasShortButton()) {
     sizeSupplement = 10.;
   }

@@ -157,9 +157,6 @@
       glMatrixMode(GL_MODELVIEW);
       glPushMatrix();
       glLoadIdentity();
-//      NAMat44d factor;
-//      naFillM44dWithDiag(factor, 2.);
-//      glMultMatrixd(factor);
 
       glMatrixMode(GL_PROJECTION);
       glPushMatrix();

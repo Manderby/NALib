@@ -61,10 +61,10 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
       windowMutable->rect.pos.y = screenRect.size.height - (double)HIWORD(lParam) / uiScale - windowMutable->rect.size.height;
 
       if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE)) {
-        // no super method to be called.
+        // no parent method to be called.
       }
       if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW)) {
-        // no super method to be called.
+        // no parent method to be called.
       }
       na_RememberWindowPosition(&windowMutable->window);
       info.result = 0;
@@ -98,10 +98,10 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
     naSetUIElementRect(contentSpace, contentRect);
 
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE)) {
-      // no super method to be called.
+      // no parent method to be called.
     }
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW)) {
-      // no super method to be called.
+      // no parent method to be called.
     }
     na_RememberWindowPosition(&windowMutable->window);
     info.result = 0;
@@ -111,7 +111,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
     windowMutable = (NAWINAPIWindow*)naGetUIElementWindowMutable(uiElement);
     naSetFlagu32(&windowMutable->window.flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES)) {
-      // no super method to be called.
+      // no parent method to be called.
     }
     shouldClose = !naGetFlagu32(windowMutable->window.flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
     naSetFlagu32(&windowMutable->window.flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);

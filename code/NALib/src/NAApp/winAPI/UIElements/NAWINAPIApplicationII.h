@@ -460,7 +460,7 @@ NA_HDEF void na_redrawOpenGLSpaces(void* data) {
     NAWINAPIOpenGLSpace* openGLSpace = naGetListCurMutable(&it);
     wglMakeCurrent(GetDC(naGetUIElementNativePtr(openGLSpace)), openGLSpace->hRC);
     if(!na_DispatchUIElementCommand(&openGLSpace->openGLSpace.uiElement, NA_UI_COMMAND_REDRAW)) {
-      // no super method to be called.
+      // no parent method to be called.
     }
   }
   naClearListIterator(&it);

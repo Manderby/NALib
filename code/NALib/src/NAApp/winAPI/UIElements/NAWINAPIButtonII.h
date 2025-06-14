@@ -138,7 +138,7 @@ NABool naButtonWINAPINotify(void* uiElement, WORD notificationCode) {
       }
     }
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED)) {
-      // no super method to be called.
+      // no parent method to be called.
     }
     hasBeenHandeled = NA_TRUE;
     break;
