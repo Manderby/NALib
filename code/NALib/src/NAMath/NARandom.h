@@ -34,7 +34,7 @@ NA_IAPI void  naSRand(uint32 seed);
 // Seeds the random generator with the provided seed. If seed is 0, a seed will
 // be chosen dependent on the system time. Not suitable for security business
 // but good enough for pretty much all other uses.
-NA_IAPI uint32 naSeedRand(uint32 seed);
+NA_API uint32 naSeedRand(uint32 seed);
 
 // Returns a uniformly disributed random value within interval [0,1)
 NA_IAPI double naUniformRandZE(void);
@@ -51,7 +51,7 @@ NA_IAPI float  naUniformRandZIf(void);
 
 
 // Inline implementations are in a separate file:
-#include "Core/NARandomII.h"
+#include "Core/NARandom/NARandomII.h"
 
 
 

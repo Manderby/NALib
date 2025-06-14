@@ -9,23 +9,13 @@ typedef struct TemperatureController TemperatureController;
 TemperatureController* spawnTemperatureController(void);
 void despawnTemperatureController(TemperatureController* con);
 
-typedef struct ExperimentController ExperimentController;
-ExperimentController* createExperimentController(void);
-void clearExperimentController(ExperimentController* con);
-
-typedef struct FontController FontController;
-FontController* createFontController(void);
-void clearFontController(FontController* con);
-void showFontController(FontController* con);
-
-typedef struct ButtonController ButtonController;
-ButtonController* createButtonController(void);
-void clearButtonController(ButtonController* con);
-void showButtonController(ButtonController* con);
+typedef struct ExampleController ExampleController;
+ExampleController* createExampleController(void);
+void clearExampleController(ExampleController* con);
 
 
 
-typedef struct HelloWorldGUIApplication HelloWorldGUIApplication;
+typedef struct GUIExamplesApplication GUIExamplesApplication;
 void preStartup(void* arg);
 void postStartup(void* arg);
 void clearApplication(void* arg);
@@ -34,11 +24,12 @@ double getAndAdvanceNextWindowY(void);
 NAImageSet* getIconImageSet(void);
 NAImageSet* getState1ImageSet(void);
 NAImageSet* getState2ImageSet(void);
+NAFont* getTitleFont(void);
+NAFont* getMonoFont(void);
+void flashLabel(NALabel* label, const NAUTF8Char* text);
 
 
 void addTemperatureControllerToApplication(TemperatureController* con);
-void showFonts(void);
-void showButtons(void);
 
 
 

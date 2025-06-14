@@ -102,7 +102,7 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_PRESSED)) {
-    // don't know what to do.
+    // no super method to be called.
   }
   [self updateButtonBackground];
   [self updateButtonText];
@@ -222,12 +222,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
   uint32 flags = NA_BUTTON_BORDERED;
   
   double sizeSupplement = 0.;
-  if(isAtLeastMacOSVersion(11, 0)) {
-  // On newer systems bordered buttons are 5 units shorter than expected on
-  // the left and right. At the same time, the top and bottom mouse capture
-  // area is also 5 units shorter. Therefore, we add 10 units and in
-  // naAddSpaceChild we move the button 5 units to the left and bottom and
-  // enlarge the frame accordingly.
+  if(na_HasShortButton()) {
     sizeSupplement = 10.;
   }
   
@@ -261,12 +256,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
 
   double sizeSupplement = 0.;
-  if(isAtLeastMacOSVersion(11, 0)) {
-  // On newer systems bordered buttons are 5 units shorter than expected on
-  // the left and right. At the same time, the top and bottom mouse capture
-  // area is also 5 units shorter. Therefore, we add 10 units and in
-  // naAddSpaceChild we move the button 5 units to the left and bottom and
-  // enlarge the frame accordingly.
+  if(na_HasShortButton()) {
     sizeSupplement = 10.;
   }
 
@@ -299,12 +289,7 @@ NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
   uint32 flags = NA_BUTTON_BORDERED;
 
   double sizeSupplement = 0.;
-  if(isAtLeastMacOSVersion(11, 0)) {
-  // On newer systems bordered buttons are 5 units shorter than expected on
-  // the left and right. At the same time, the top and bottom mouse capture
-  // area is also 5 units shorter. Therefore, we add 10 units and in
-  // naAddSpaceChild we move the button 5 units to the left and bottom and
-  // enlarge the frame accordingly.
+  if(na_HasShortButton()) {
     sizeSupplement = 10.;
   }
 
@@ -340,12 +325,7 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
 
   double sizeSupplement = 0.;
-  if(isAtLeastMacOSVersion(11, 0)) {
-  // On newer systems bordered buttons are 5 units shorter than expected on
-  // the left and right. At the same time, the top and bottom mouse capture
-  // area is also 5 units shorter. Therefore, we add 10 units and in
-  // naAddSpaceChild we move the button 5 units to the left and bottom and
-  // enlarge the frame accordingly.
+  if(na_HasShortButton()) {
     sizeSupplement = 10.;
   }
 
@@ -685,12 +665,7 @@ NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
   NAButton* naButton = (NAButton*)button;
   naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
   NARect rect = naMakeRectWithNSRect([nativePtr frame]);
-  if(naIsButtonBordered(naButton) && isAtLeastMacOSVersion(11, 0)) {
-  // On newer systems bordered buttons are 5 units shorter than expected on
-  // the left and right. At the same time, the top and bottom mouse capture
-  // area is also 5 units shorter. Therefore, we add 10 units and in
-  // naAddSpaceChild we move the button 5 units to the left and bottom and
-  // enlarge the frame accordingly.
+  if(na_HasShortButton()) {
     rect.pos.x += 5;
     rect.size.width -= 10;
   }

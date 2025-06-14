@@ -6,22 +6,54 @@
 
 
 
-NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr) {
+NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, const NAUTF8Char* name, NARect rect, double uiScale) {
   na_InitCoreUIElement(&screen->uiElement, NA_UI_SCREEN, nativePtr);
+  screen->isMain = isMain;
+  screen->name = naNewStringWithFormat("%s", name);
+  screen->rect = rect;
+  // The relative center will be set properly in na_UpdateScreenRelativeCenter.
+  screen->relativeCenter = naMakePosZero();
+  screen->uiScale = uiScale;
+  naInitList(&screen->windows);
+
+  na_SetUIElementParent((NA_UIElement*)screen, naGetApplication(), NA_TRUE);
 }
 
 
 
 NA_HDEF void na_ClearScreen(NAScreen* screen) {
   na_ClearCoreUIElement(&screen->uiElement);
+  naClearList(&screen->windows, NA_NULL);  // does not own the windows.
+  naDelete(screen->name);
+}
+
+
+
+NA_HDEF void na_FlipScreenCoordinatesVertically(NAScreen* screen, NARect totalRect) {
+  screen->rect.pos.y = totalRect.pos.y + totalRect.size.height - screen->rect.pos.y - screen->rect.size.height;
+}
+
+NA_HDEF void na_UpdateScreenRelativeCenter(NAScreen* screen, NARect totalRect) {
+  NAPos center = naGetRectCenter(screen->rect);
+  screen->relativeCenter = naMakePos(
+    (center.x - totalRect.pos.x) / totalRect.size.width,
+    (center.y - totalRect.pos.y) / totalRect.size.height);
+}
+
+
+
+NA_HDEF void na_AddScreenWindow(NAScreen* screen, NAWindow* window) {
+  naAddListLastMutable(&screen->windows, window);
+}
+NA_HDEF void na_RemoveScreenWindow(NAScreen* screen, NAWindow* window) {
+  naRemoveListData(&screen->windows, window);
 }
 
 
 
 NA_HDEF NARect na_GetScreenRect(const NA_UIElement* screen) {
-  NA_UNUSED(screen);
-  NARect rect = {{0, 0}, {1, 1}};
-  return rect;
+  NAScreen* naScreen = (NAScreen*)screen;
+  return naScreen->rect;
 }
 
 
@@ -32,6 +64,19 @@ NA_HDEF void na_SetScreenRect(NA_UIElement* screen, NARect rect) {
   #if NA_DEBUG
     naError("A screen can not be resized by software.");
   #endif
+}
+
+
+NA_DEF NAString* naNewScreenName(const NAScreen* screen) {
+  return naNewStringExtraction(screen->name, 0, -1);
+}
+
+NA_DEF double naGetScreenUIScale(const NAScreen* screen) {
+  return screen->uiScale;
+}
+
+NA_DEF NAPos naGetScreenRelativeCenter(const NAScreen* screen) {
+  return screen->relativeCenter;
 }
 
 

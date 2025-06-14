@@ -56,10 +56,7 @@ NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* uiElement) {
 
   if(naGetUIElementType(uiElement) == NA_UI_BUTTON) {
     if(naIsButtonBordered((const NAButton*)uiElement)) {
-      if(isAtLeastMacOSVersion(11, 0)) {
-        // On newer systems bordered buttons are 5 units shorter than expected on
-        // the left and right. Therefore, we add 10 units and in naAddSpaceChild we
-        // move the button 5 units to the left.
+      if(na_HasShortButton()) {
         return -5.;
       }
     }
@@ -108,10 +105,7 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* uiElement) {
     case NA_UI_BUTTON:
     {
       if(naIsButtonBordered((const NAButton*)uiElement)) {
-        if(isAtLeastMacOSVersion(11, 0)) {
-          // On newer systems bordered buttons are 5 units smaller than expected 
-          // concerning the mouse capture area. Therefore, we add 10 units and
-          // move the button 5 units to the bottom.
+        if(na_HasShortButton()) {
           return -5.;
         }
       }
@@ -248,7 +242,6 @@ NAString* naNewStringWithKeyStroke(const NAKeyStroke* keyStroke) {
   UniCharCount realLength;
                 
   UInt32 modifierKeyState = 0;
-  
   if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_SHIFT)) { modifierKeyState |= shiftKey; }
   if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_CONTROL)) { modifierKeyState |= controlKey; }
   if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_OPTION)) { modifierKeyState |= optionKey; }

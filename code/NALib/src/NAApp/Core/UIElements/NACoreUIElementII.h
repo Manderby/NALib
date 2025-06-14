@@ -185,7 +185,7 @@ NA_DEF void naAddUIReaction(
 {
   #if NA_DEBUG
     if(!uiElement)
-      naError("uiElement is nullptr");
+      naCrash("uiElement is nullptr");
   #endif
 
   NA_UIElement* element = (NA_UIElement*)uiElement;
@@ -211,8 +211,9 @@ NA_DEF void naAddUIReaction(
 
   #if NA_DEBUG
     if((command == NA_UI_COMMAND_RESHAPE)
+      && (elementType != NA_UI_APPLICATION)
       && (elementType != NA_UI_WINDOW))
-      naError("Only windows can receyve RESHAPE commands.");
+      naError("Only windows and the application can receyve RESHAPE commands.");
     if((command == NA_UI_COMMAND_MOUSE_MOVED)
       && ((elementType == NA_UI_APPLICATION)
        || (elementType == NA_UI_SCREEN)))
@@ -363,14 +364,20 @@ NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement) {
 
   NARect rect;
   const NA_UIElement* elem = (const NA_UIElement*)uiElement;
-
   rect = naGetUIElementRect(elem);
-  elem = naGetUIElementParent(elem);
-  while(elem) {
+
+  while(1) {
+    NAUIElementType type = naGetUIElementType(elem);
+    if(type == NA_UI_WINDOW || type == NA_UI_SCREEN || type == NA_UI_APPLICATION)
+      break;
+
+    elem = naGetUIElementParent(elem);
+    if(!elem) 
+      break;
+    
     NARect curRect = naGetUIElementRect(elem);
     rect.pos.x += curRect.pos.x;
     rect.pos.y += curRect.pos.y;
-    elem = naGetUIElementParent(elem);
   }
 
   return rect;
@@ -379,29 +386,28 @@ NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement) {
 
 
 NA_DEF NARect naGetUIElementRect(const void* uiElement) {
-  if(!uiElement) {
-    return naMakeRectS(0., 0., 1., 1.);
-  }
+  NARect elemRect = naMakeRectS(0., 0., 1., 1.);
 
-  NARect elemRect;
-  switch(naGetUIElementType(uiElement)) {
-  case NA_UI_APPLICATION:  elemRect = na_GetApplicationRect(uiElement); break;
-  case NA_UI_BUTTON:       elemRect = na_GetButtonRect(uiElement); break;
-  case NA_UI_CHECKBOX:     elemRect = na_GetCheckBoxRect(uiElement); break;
-  case NA_UI_IMAGE_SPACE:  elemRect = na_GetImageSpaceRect(uiElement); break;
-  case NA_UI_LABEL:        elemRect = na_GetLabelRect(uiElement); break;
-  case NA_UI_MENU:         elemRect = na_GetMenuRect(uiElement); break;
-  case NA_UI_MENUITEM:     elemRect = na_GetMenuItemRect(uiElement); break;
-  case NA_UI_METAL_SPACE:  elemRect = na_GetMetalSpaceRect(uiElement); break;
-  case NA_UI_OPENGL_SPACE: elemRect = na_GetOpenGLSpaceRect(uiElement); break;
-  case NA_UI_RADIO:        elemRect = na_GetRadioRect(uiElement); break;
-  case NA_UI_SCREEN:       elemRect = na_GetScreenRect(uiElement); break;
-  case NA_UI_SELECT:       elemRect = na_GetSelectRect(uiElement); break;
-  case NA_UI_SLIDER:       elemRect = na_GetSliderRect(uiElement); break;
-  case NA_UI_SPACE:        elemRect = na_GetSpaceRect(uiElement); break;
-  case NA_UI_TEXTBOX:      elemRect = na_GetTextBoxRect(uiElement); break;
-  case NA_UI_TEXTFIELD:    elemRect = na_GetTextFieldRect(uiElement); break;
-  case NA_UI_WINDOW:       elemRect = na_GetWindowRect(uiElement); break;
+  if(uiElement) {
+    switch(naGetUIElementType(uiElement)) {
+    case NA_UI_APPLICATION:  elemRect = na_GetApplicationRect(uiElement); break;
+    case NA_UI_BUTTON:       elemRect = na_GetButtonRect(uiElement); break;
+    case NA_UI_CHECKBOX:     elemRect = na_GetCheckBoxRect(uiElement); break;
+    case NA_UI_IMAGE_SPACE:  elemRect = na_GetImageSpaceRect(uiElement); break;
+    case NA_UI_LABEL:        elemRect = na_GetLabelRect(uiElement); break;
+    case NA_UI_MENU:         elemRect = na_GetMenuRect(uiElement); break;
+    case NA_UI_MENUITEM:     elemRect = na_GetMenuItemRect(uiElement); break;
+    case NA_UI_METAL_SPACE:  elemRect = na_GetMetalSpaceRect(uiElement); break;
+    case NA_UI_OPENGL_SPACE: elemRect = na_GetOpenGLSpaceRect(uiElement); break;
+    case NA_UI_RADIO:        elemRect = na_GetRadioRect(uiElement); break;
+    case NA_UI_SCREEN:       elemRect = na_GetScreenRect(uiElement); break;
+    case NA_UI_SELECT:       elemRect = na_GetSelectRect(uiElement); break;
+    case NA_UI_SLIDER:       elemRect = na_GetSliderRect(uiElement); break;
+    case NA_UI_SPACE:        elemRect = na_GetSpaceRect(uiElement); break;
+    case NA_UI_TEXTBOX:      elemRect = na_GetTextBoxRect(uiElement); break;
+    case NA_UI_TEXTFIELD:    elemRect = na_GetTextFieldRect(uiElement); break;
+    case NA_UI_WINDOW:       elemRect = na_GetWindowRect(uiElement); break;
+    }
   }
 
   return elemRect;
@@ -442,7 +448,7 @@ NA_DEF void naSetUIElementRect(void* uiElement, NARect rect) {
 NA_HDEF void na_RetainMouseTracking(NA_UIElement* uiElement) {
   #if NA_DEBUG
     if(!uiElement)
-      naError("uiElement is nullptr");
+      naCrash("uiElement is nullptr");
   #endif
 
   uiElement->mouseTrackingCount++;
@@ -454,7 +460,7 @@ NA_HDEF void na_RetainMouseTracking(NA_UIElement* uiElement) {
 NA_HDEF void na_ReleaseMouseTracking(NA_UIElement* uiElement) {
   #if NA_DEBUG
     if(!uiElement)
-      naError("uiElement is nullptr");
+      naCrash("uiElement is nullptr");
   #endif
 
   uiElement->mouseTrackingCount--;
@@ -467,7 +473,7 @@ NA_HDEF void na_ReleaseMouseTracking(NA_UIElement* uiElement) {
 NA_HDEF void na_UpdateMouseTracking(NA_UIElement* uiElement) {
   #if NA_DEBUG
     if(!uiElement)
-      naError("uiElement is nullptr");
+      naCrash("uiElement is nullptr");
   #endif
 
   if(uiElement->mouseTracking) {
@@ -486,7 +492,7 @@ NA_DEF void naAddUIKeyboardShortcut(
 {
   #if NA_DEBUG
     if(!uiElement)
-      naError("uiElement is nullptr");
+      naCrash("uiElement is nullptr");
   #endif
 
   NA_UIElement* element = (NA_UIElement*)uiElement;

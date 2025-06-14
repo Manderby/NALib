@@ -48,23 +48,23 @@ void naPutStringToClipboard(const NAString* string) {
 NAString* naNewStringFromClipboard() {
   NAString* string = NA_NULL;
   // NA_NULL means: Current task becomes owner instead of a hWnd
-  if(!OpenClipboard(NA_NULL))
-    return;
-
-  HGLOBAL clipboardHandle = GetClipboardData(CF_UNICODETEXT);
-  if(clipboardHandle) {
-    LPTSTR globalMemory = GlobalLock(clipboardHandle);
-    if(globalMemory) {
-      size_t stringLength = wcslen(globalMemory);
-      wchar_t* unicodeString = naMalloc(stringLength * sizeof(wchar_t));
-      memcpy(unicodeString, globalMemory, stringLength * sizeof(wchar_t)); 
-      unicodeString[stringLength] = (wchar_t) 0;    // null character 
-      GlobalUnlock(clipboardHandle);
-      string = naNewStringWithWideCharString(unicodeString);
+  if(OpenClipboard(NA_NULL)) {
+    HGLOBAL clipboardHandle = GetClipboardData(CF_UNICODETEXT);
+    if(clipboardHandle) {
+      LPTSTR globalMemory = GlobalLock(clipboardHandle);
+      if(globalMemory) {
+        size_t stringLength = wcslen(globalMemory);
+        wchar_t* unicodeString = naMalloc(stringLength * sizeof(wchar_t));
+        memcpy(unicodeString, globalMemory, stringLength * sizeof(wchar_t)); 
+        unicodeString[stringLength] = (wchar_t) 0;    // null character 
+        GlobalUnlock(clipboardHandle);
+        string = naNewStringWithWideCharString(unicodeString);
+      }
     }
+
+    CloseClipboard();
   }
 
-  CloseClipboard();
   return string;
 }
 

@@ -98,16 +98,18 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 
 - (void)mouseDragged:(NSEvent* _Nonnull)event{
   if(cocoaSpace->space.dragsWindow && isMoving) {
-    NAPos curMousePos = naMakePosWithNSPoint([event locationInWindow]);
-    NSRect frame = [[self window] frame];
-    frame.origin.x += curMousePos.x - originMousePos.x;
-    frame.origin.y += curMousePos.y - originMousePos.y;
-
-    [[self window] setFrame:frame display:YES];
+    // The commented out code works too but the performWindowDragWithEvent
+    // method is preferred.
+//    NAPos curMousePos = naMakePosWithNSPoint([event locationInWindow]);
+//    NSRect frame = [[self window] frame];
+//    frame.origin.x += curMousePos.x - originMousePos.x;
+//    frame.origin.y += curMousePos.y - originMousePos.y;
+//    [[self window] setFrame:frame display:YES];
+    [self.window performWindowDragWithEvent:event];
   }else{
     [super mouseDragged:event];
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_MOUSE_MOVED)) {
-      // don't know what to do.
+      // no super method to be called.
     }
   }
 }
@@ -204,12 +206,6 @@ NA_DEF void naSetSpaceRect(NASpace* _Nonnull space, NARect rect) {
 NA_DEF void naSetSpaceVisible(NASpace* _Nonnull space, NABool visible) {
   naDefineCocoaObject(NACocoaNativeSpace, nativePtr, space);
   [nativePtr setHidden:visible ? NO : YES];
-}
-
-
-
-NA_DEF void naSetSpaceDragsWindow(NASpace* _Nonnull space, NABool isDraggable) {
-  space->dragsWindow = isDraggable;
 }
 
 

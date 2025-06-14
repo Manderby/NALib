@@ -125,7 +125,10 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     switch(childElement->elementType) {
     case NA_UI_LABEL:
       naFillLabelTextColor(&fgColor, (NALabel*)childElement);
-      if(winapiSpace->curBgColor) { naDeallocUIColor(winapiSpace->curBgColor); }
+      if(winapiSpace->curBgColor) {
+        naDeallocUIColor(winapiSpace->curBgColor);
+        winapiSpace->curBgColor = NA_NULL;
+      }
       naFillSpaceBackgroundColor(&bgColor, uiElement);
       winapiSpace->curBgColor = naAllocUIColor(&bgColor, NA_NULL);
       winapiFgColor = naAllocUIColor(&fgColor, &bgColor);
@@ -149,9 +152,12 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
 
   case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
     GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
-    //if(1){
+    //if(1) {
     if(winapiSpace->forceEraseBackground) {
-      if(winapiSpace->curBgColor) { naDeallocUIColor(winapiSpace->curBgColor); }
+      if(winapiSpace->curBgColor) {
+        naDeallocUIColor(winapiSpace->curBgColor);
+        winapiSpace->curBgColor = NA_NULL;
+      }
       naFillSpaceBackgroundColor(&bgColor, uiElement);
       winapiSpace->curBgColor = naAllocUIColor(&bgColor, NA_NULL);
       FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
@@ -207,7 +213,10 @@ NA_DEF NASpace* naNewSpace(NASize size) {
 
 
 NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace) {
-  if(winapiSpace->curBgColor) { naDeallocUIColor(winapiSpace->curBgColor); }
+  if(winapiSpace->curBgColor) {
+    naDeallocUIColor(winapiSpace->curBgColor);
+    winapiSpace->curBgColor = NA_NULL;
+  }
   na_ClearSpace((NASpace*)winapiSpace);
 }
 
@@ -297,14 +306,6 @@ NA_DEF void naShiftSpaceChilds(NASpace* space, NAPos shift) {
 
 NA_DEF void naSetSpaceVisible(NASpace* space, NABool visible) {
   ShowWindow(naGetUIElementNativePtr(space), visible ? SW_SHOW : SW_HIDE);
-}
-
-
-
-NA_HDEF void naSetSpaceDragsWindow(NASpace* space, NABool isDraggable) {
-  NA_UNUSED(isDraggable);
-  NA_UNUSED(space);
-  // todo
 }
 
 

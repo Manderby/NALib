@@ -9,7 +9,7 @@
 NA_HDEF void na_InitSpace(NASpace* space, void* nativePtr) {
   #if NA_DEBUG
     if(!space)
-      naError("space is nullptr");
+      naCrash("space is nullptr");
   #endif
 
   na_InitCoreUIElement(&space->uiElement, NA_UI_SPACE, nativePtr);
@@ -22,7 +22,7 @@ NA_HDEF void na_InitSpace(NASpace* space, void* nativePtr) {
 NA_HDEF void na_ClearSpace(NASpace* space) {
   #if NA_DEBUG
     if(!space)
-      naError("space is nullptr");
+      naCrash("space is nullptr");
   #endif
 
   if(space->backgroundColor) { naFree(space->backgroundColor); }
@@ -35,7 +35,7 @@ NA_HDEF void na_ClearSpace(NASpace* space) {
 NA_HDEF void na_AddSpaceChild(NASpace* space, NA_UIElement* child) {
   #if NA_DEBUG
     if(!space)
-      naError("space is nullptr");
+      naCrash("space is nullptr");
   #endif
 
   naAddListLastMutable(&space->childs, child);
@@ -47,7 +47,7 @@ NA_HDEF void na_AddSpaceChild(NASpace* space, NA_UIElement* child) {
 NA_HDEF void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child) {
   #if NA_DEBUG
     if(!space)
-      naError("space is nullptr");
+      naCrash("space is nullptr");
   #endif
 
   naRemoveListData(&space->childs, child);
@@ -59,7 +59,7 @@ NA_HDEF void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child) {
 NA_DEF NABool naGetSpaceAlternateBackground(const NASpace* space) {
   #if NA_DEBUG
     if(!space)
-      naError("space is nullptr");
+      naCrash("space is nullptr");
   #endif
 
   return space->alternateBackground;
@@ -70,7 +70,7 @@ NA_DEF NABool naGetSpaceAlternateBackground(const NASpace* space) {
 NA_HDEF void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
   #if NA_DEBUG
     if(!space)
-      naError("space is nullptr");
+      naCrash("space is nullptr");
   #endif
 
   if(space->backgroundColor) { naFree(space->backgroundColor); }
@@ -87,7 +87,7 @@ NA_HDEF void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
 NA_DEF void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
   #if NA_DEBUG
     if(!space)
-      naError("space is nullptr");
+      naCrash("space is nullptr");
   #endif
 
   NAColor parentBgColor;
@@ -115,6 +115,16 @@ NA_DEF void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
   NAColor alternatedColor;
   naBlendColors(&alternatedColor, &thisBgColor, &fgColor, 0.075f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
   naBlendColors(color, &parentBgColor, &alternatedColor, 1.f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
+}
+
+
+
+NA_DEF NABool naGetSpaceDragsWindow(const NASpace* space) {
+  return space->dragsWindow;
+}
+
+NA_DEF void naSetSpaceDragsWindow(NASpace* space, NABool dragsWindow) {
+  space->dragsWindow = dragsWindow;
 }
 
 

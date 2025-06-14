@@ -110,7 +110,17 @@ NA_IDEF NSRect naMakeNSRectWithRect(NARect naRect) {
 }
 #endif
 
-
+#if defined _WINDOWS_
+NA_IDEF NARecti32 naMakeRecti32WithWinapiRECT(RECT winapiRect) {
+  NARecti32 newRect;
+  // Note that a RECT counts y from top to bottom.
+  newRect.pos.x = (int32)winapiRect.left;
+  newRect.pos.y = (int32)winapiRect.bottom;
+  newRect.size.width = naMakeLengthWithMinAndMaxi32(winapiRect.left, winapiRect.right);
+  newRect.size.width = naMakeLengthWithMinAndMaxi32(winapiRect.top, winapiRect.bottom);
+  return newRect;
+}
+#endif
 
 // This is free and unencumbered software released into the public domain.
 

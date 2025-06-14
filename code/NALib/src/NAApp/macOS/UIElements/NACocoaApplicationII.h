@@ -110,6 +110,11 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
   na_TerminateApplication(cleanupFunction, arg);
 }
 
+- (void)handleApplicationDidChangeScreenParameters:(NSNotification *)notification {
+  na_RenewApplicationScreens();
+}
+
+
 @end
 
 
@@ -129,6 +134,7 @@ NA_DEF void naStartApplication(
   // Start the shared application if not started already.
   [NSApplication sharedApplication];
   
+  // After the following call, the Translator and Notifier will be ready.
   na_NewApplication();
 
   // Put an autorelease pool in place for the startup sequence.
@@ -172,6 +178,11 @@ NA_DEF void naStartApplication(
     addObserver:applicationHelper
     selector:@selector(handleApplicationWillTerminate:)
     name:NSApplicationWillTerminateNotification
+    object:nil];
+  [[NSNotificationCenter defaultCenter] 
+    addObserver:applicationHelper
+    selector:@selector(handleApplicationDidChangeScreenParameters:)
+    name:NSApplicationDidChangeScreenParametersNotification
     object:nil];
     
   // Start the event loop.

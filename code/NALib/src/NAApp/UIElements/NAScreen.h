@@ -10,17 +10,41 @@
 // These are the default resolutions given in rasterpositions/meter.
 #define NA_UI_RESOLUTION_1x 3779.52755905511811   // 96 ppi
 #define NA_UI_RESOLUTION_2x 7559.05511811023622   // 192 ppi
+// One can dream of having a metric unit in the future. Like for example
+// 4000 spm (subdivisions per meter). By chance, this would be almost, but not
+// quite be a multiple of the square root of 2 apart from 72 ppi and would
+// barely be distingquishable to the naked eye. Wouldn't that be a nice change
+// of unit? But for now, we stick to the cumbersome relation to ppi.
 
 
 
-// Screens are not properly implemented yet.
+// NALib will automatically create all present screen objects based on the
+// current system settings. Retrieve the desired screen using the following
+// mehtods:
+//
+// naGetApplicationScreenMain();
+// naGetApplicationCenterScreen();
+//
+// You will only get const access. But then, you can use the following methods
+// as well as for example naGetUIElementRect.
 
+// Returns true if the given screen is the main screen
+NA_API NABool naIsScreenMain(const NAScreen* screen);
 
+// Returns a new string with the name of the screen.
+NA_API NAString* naNewScreenName(const NAScreen* screen);
 
-// Returns the main screen rect.
-NA_API NARect naGetMainScreenRect(void);
+// Returns the ui scale factor used on this screen.
+NA_DEF double naGetScreenUIScale(const NAScreen* screen);
 
+// Returns the center relative to the whole screen setup. Results in values
+// in the range of [0, 1], whereas 0.5 is in the center of the whole setup.
+NA_API NAPos naGetScreenRelativeCenter(const NAScreen* screen);
 
+// Returns the rectangle in the whole screen setup which is safe for display
+// regarding the given screen. This excludes places where a dock, taskbar or
+// menu might be located.
+NA_API NARect naGetScreenUsableRect(const NAScreen* screen);
 
 #ifdef __cplusplus
   } // extern "C"

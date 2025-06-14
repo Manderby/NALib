@@ -69,6 +69,7 @@ typedef size_t NAKeyCode;
   #define NA_KEYCODE_X              0x2d
   #define NA_KEYCODE_Y              0x15
   #define NA_KEYCODE_Z              0x2c
+  #define NA_KEYCODE_COMMA          0xff // todo
   #define NA_KEYCODE_SPACE          0x39
   #define NA_KEYCODE_TAB            0x0f
   #define NA_KEYCODE_ENTER          0x1c
@@ -142,6 +143,7 @@ typedef size_t NAKeyCode;
   #define NA_KEYCODE_X              0x07
   #define NA_KEYCODE_Y              0x10
   #define NA_KEYCODE_Z              0x06
+  #define NA_KEYCODE_COMMA          0x2b
   #define NA_KEYCODE_SPACE          0x31
   #define NA_KEYCODE_TAB            0x30
   #define NA_KEYCODE_ENTER          0x24

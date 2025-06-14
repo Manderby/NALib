@@ -38,8 +38,11 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
   #endif
   na_App = app;
 
+  naInitList(&app->screens);
   naInitList(&app->windows);
   naInitList(&app->uiElements);
+
+  app->totalRect = na_FillScreenList(&app->screens);
 
   app->translator = NA_NULL;
   naStartTranslator();
@@ -103,9 +106,16 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
   // An NAWindow removes itself from the windows array automatically. So
   // no naForeach is allowed here.
   while(!naIsListEmpty(&na_App->windows)) {
+    // The window will remove itself from the list during deletion.
     naDelete(naGetListFirstMutable(&na_App->windows));
   }
   naClearList(&na_App->windows, NA_NULL);
+
+  while(!naIsListEmpty(&na_App->screens)) {
+    // The screen will NOT remove itself from the list during deletion.
+    naDelete(naRemoveListFirstMutable(&na_App->screens));
+  }
+  naClearList(&na_App->screens, NA_NULL);
 
   naStopTranslator();
   na_ClearCoreUIElement(&app->uiElement);
@@ -133,6 +143,133 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
     naDelete(app->resourceBasePath);
   if(app->iconPath)
     naDelete(app->iconPath);
+}
+
+
+
+NA_HDEF NABool naIsScreenMain(const NAScreen* screen) {
+  return screen->isMain;
+}
+
+
+
+NA_DEF size_t naGetApplicationScreenCount(void) {
+  return naGetListCount(&na_App->screens);
+}
+
+
+
+NA_DEF const NAScreen* naGetApplicationScreenWithIndex(size_t index) {
+  NAListIterator it = naMakeListAccessor(&na_App->screens);
+  const NAScreen* retScreen = NA_NULL;
+  if(naLocateListIndex(&it, index)) {
+    retScreen = naGetListCurConst(&it);
+  }
+  naClearListIterator(&it);
+  return retScreen;
+}
+
+
+
+NA_DEF const NAScreen* naGetApplicationScreenMain() {
+  const NAScreen* mainScreen = NA_NULL;
+  NAListIterator it = naMakeListAccessor(&na_App->screens);
+  while(naIterateList(&it)) {
+    const NAScreen* screen = naGetListCurConst(&it);
+    if(naIsScreenMain(screen)) {
+      mainScreen = screen;
+      break;
+    }
+  }
+  naClearListIterator(&it);
+  return mainScreen;
+}
+
+
+
+NA_DEF const NAScreen* naGetApplicationScreenWithRelativePos(NAPos pos) {
+  const NAScreen* desiredScreen = NA_NULL;
+  double minDist = NA_INFINITY;
+  NAPos minCenter = naMakePosZero();
+  NAListIterator it = naMakeListAccessor(&na_App->screens);
+  while(naIterateList(&it)) {
+    const NAScreen* screen = naGetListCurConst(&it);
+    NAPos relativeCenter = naGetScreenRelativeCenter(screen);
+    double dist = naGetPosDistance(relativeCenter, pos);
+    NABool newCenterFound = NA_FALSE;
+    if(dist < minDist) {
+      newCenterFound = NA_TRUE;
+    } else if (dist == minDist) {
+      if(relativeCenter.x < minCenter.x) {
+        newCenterFound = NA_TRUE;
+      } else if(relativeCenter.y < minCenter.y) {
+        newCenterFound = NA_TRUE;
+      } 
+    }
+    if(newCenterFound) {
+      desiredScreen = screen;
+      minDist = dist;
+      minCenter = relativeCenter;
+    }
+  }
+  naClearListIterator(&it);
+  return desiredScreen;
+}
+
+
+
+NA_DEF const NAScreen* naGetApplicationScreenWithPos(NAPos pos) {
+  NAScreen* theScreen = NA_NULL;
+
+  double minDist = NA_INFINITY;
+  NAPos minCenter = naMakePosZero();
+
+  NAListIterator it = naMakeListMutator(&na_App->screens);
+  while(naIterateList(&it)) {
+    NAScreen* screen = naGetListCurMutable(&it);
+    NARect rect = na_GetScreenRect(&screen->uiElement);
+    NAPos center = naGetRectCenter(rect);
+    if(naContainsRectPoint(rect, pos)) {
+      theScreen = screen;
+      break;
+    }else{
+      double dist = naGetPosDistance(center, pos);
+      if(dist < minDist) {
+        theScreen = screen;
+        minDist = dist;
+        minCenter = center;
+      }
+    }
+  }
+  naClearListIterator(&it);
+  return theScreen;
+}
+
+
+
+NA_DEF void naCorrectApplicationWindowRect(NARect* contentRect, NABool titleless) {
+  NA_UNUSED(contentRect);
+  NA_UNUSED(titleless);
+//  NAPos topLeft = naMakePos(
+//    contentRect.pos.x + 10.,
+//    contentRect.pos.y + contentRect.size.height + 10.);
+//
+}
+
+
+
+NA_HDEF NAScreen* na_GetApplicationScreenWithNativePtr(void* nativePtr) {
+  NAScreen* theScreen = NA_NULL;
+  NAListIterator it = naMakeListMutator(&na_App->screens);
+  while(naIterateList(&it)) {
+    NAScreen* screen = naGetListCurMutable(&it);
+    if(naGetUIElementNativePtrConst(screen) == nativePtr) {
+      theScreen = screen;
+      break;
+    }
+  }
+  naClearListIterator(&it);
+  return theScreen;
 }
 
 
@@ -197,17 +334,49 @@ NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
 
 
 
+NA_HDEF void na_RenewApplicationScreens() {
+  // Create a copy of the old screen setup
+  NAList oldScreenList;
+  naInitListWithCopy(&oldScreenList, &na_App->screens);
+//  NARect oldTotalRect = na_GetApplicationRect(na_App);
+  
+  // Clear the old list.
+  naClearList(&na_App->screens, NA_NULL);
+  
+  // Gather the information of the new list
+  na_App->totalRect = na_FillScreenList(&na_App->screens);
+  
+  // Go through all windows, readjust their position if necessary and reattach
+  // them to a new screen.
+  NAListIterator it = naMakeListMutator(&na_App->windows);
+  while(naIterateList(&it)) {
+    NAWindow* window = naGetListCurMutable(&it);
+    NARect rect = na_GetWindowRect(&window->uiElement);
+    NAPos center = naGetRectCenter(rect);
+    na_UpdateWindowScreen(window, (NAScreen*)naGetApplicationScreenWithPos(center)); // evil cast
+  }
+  naClearListIterator(&it);
+  
+  // Delete the old screen objects.
+  naClearList(&oldScreenList, naDelete);
+  
+  // Spread the information about the change.
+  na_DispatchUIElementCommand(&na_App->uiElement, NA_UI_COMMAND_RESHAPE);
+}
+
+
+
+
 NA_HDEF NARect na_GetApplicationRect(const NAApplication* app) {
-  NA_UNUSED(app);
-  NARect rect = {{0., 0.}, {1., 1.}};
-  return rect;
+  const NAApplication* application = (const NAApplication*)app;
+  return application->totalRect;
 }
 
 NA_HDEF void na_SetApplicationRect(const NAApplication* app, NARect rect) {
   NA_UNUSED(app);
   NA_UNUSED(rect);
   #if NA_DEBUG
-    naError("Application rect can not be set.");
+    naError("Application rect can not be set but is defined by the screens available.");
   #endif
 }
 

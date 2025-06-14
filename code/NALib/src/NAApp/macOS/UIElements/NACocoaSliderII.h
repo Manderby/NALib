@@ -44,12 +44,12 @@ NA_RUNTIME_TYPE(NACocoaSlider, na_DestructCocoaSlider, NA_FALSE);
 
   if(event.type == NAEventTypeLeftMouseUp) {
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDIT_FINISHED)) {
-      // don't know what to do.
+      // no super method to be called.
     }
     cocoaSlider->slider.sliderInMovement = false;
   }else{
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_EDITED)) {
-      // don't know what to do.
+      // no super method to be called.
     }
     cocoaSlider->slider.sliderInMovement = true;
   }
@@ -58,7 +58,7 @@ NA_RUNTIME_TYPE(NACocoaSlider, na_DestructCocoaSlider, NA_FALSE);
 - (void) mouseDown:(id)sender{
   cocoaSlider->slider.sliderInMovement = true;
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSlider, NA_UI_COMMAND_PRESSED)) {
-    // don't know what to do.
+    // no super method to be called.
   }
   [super mouseDown:sender];
 }

@@ -7,14 +7,28 @@
 
 
 
-NA_HDEF void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame) {
+NA_HDEF void na_InitWindow(
+  NAWindow* window,
+  void* nativePtr,
+  NAScreen* screen,
+  NASpace* contentSpace,
+  NABool fullScreen,
+  NABool resizeable,
+  NARect windowedFrame)
+{
   na_InitCoreUIElement(&window->uiElement, NA_UI_WINDOW, nativePtr);
   naAddListLastMutable(&naGetApplication()->windows, window);
+  window->storageTag = 0;
   window->contentSpace = contentSpace;
   window->coreFlags = NA_CORE_WINDOW_FLAG_ACCEPTS_KEY_REACTIONS;
   if(fullScreen) { window->coreFlags |= NA_CORE_WINDOW_FLAG_FULLSCREEN; }
   if(resizeable) { window->coreFlags |= NA_CORE_WINDOW_FLAG_RESIZEABLE; }
   window->windowedFrame = windowedFrame;
+  
+  na_AddScreenWindow(
+    screen,
+    window);
+  na_SetUIElementParent((NA_UIElement*)window, screen, NA_TRUE);
 }
 
 
@@ -26,6 +40,17 @@ NA_HDEF void na_ClearWindow(NAWindow* window) {
     naDelete(window->contentSpace);
   
   na_ClearCoreUIElement(&window->uiElement);
+}
+
+
+
+NA_HDEF void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen) {
+  NAScreen* oldScreen = naGetUIElementParentMutable(window);
+  if(screen && screen != oldScreen) {
+    na_RemoveScreenWindow(oldScreen, window);
+    na_AddScreenWindow(screen, window);
+    na_SetUIElementParent((NA_UIElement*)window, screen, NA_TRUE);
+  }
 }
 
 
@@ -52,6 +77,12 @@ NA_HDEF void na_RememberWindowPosition(const NAWindow* window) {
 
 
 
+NA_DEF const NAScreen* naGetWindowScreen(const NAWindow* window) {
+  return naGetUIElementParent(window);
+}
+
+
+
 NA_DEF void naPreventWindowClosing(NAWindow* window, NABool prevent) {
   #if NA_DEBUG
     if(!naGetFlagu32(window->coreFlags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE))
@@ -68,13 +99,10 @@ NA_DEF NABool naIsWindowResizeable(const NAWindow* window) {
   return naGetFlagu32(window->coreFlags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
 }
 
-NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window) {
-  return window->contentSpace;
-}
-
-
-
-NA_DEF NARect naSetWindowStorageTag(NAWindow* window, size_t storageTag, NARect rect, NABool resizeable) {
+NA_DEF void naSetWindowStorageTag(NAWindow* window, size_t storageTag) {
+  NARect rect = na_GetWindowRect(&window->uiElement);
+  NABool resizeable = naIsWindowResizeable(window);
+  
   window->storageTag = storageTag;
   if(window->storageTag) {
     NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, window->storageTag);
@@ -108,7 +136,12 @@ NA_DEF NARect naSetWindowStorageTag(NAWindow* window, size_t storageTag, NARect 
       naDelete(prefSizeHeightString);
     }
   }
-  return rect;
+    
+  na_SetWindowRect(&window->uiElement, rect);
+}
+
+NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window) {
+  return window->contentSpace;
 }
 
 

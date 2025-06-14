@@ -14,7 +14,7 @@
 
 
 // Put GUI elements belonging together into a controller struct.
-struct HelloWorldGUIApplication{
+struct GUIExamplesApplication{
   NAStack temperatureControllers;
   int nextWindowX;
   int nextWindowY;
@@ -23,20 +23,23 @@ struct HelloWorldGUIApplication{
   NAImageSet* state1ImageSet;
   NAImageSet* state2ImageSet;
   
-  ExperimentController* experimentController;
-  FontController* fontController;
-  ButtonController* buttonController;
+  NAFont* titleFont;
+  NAFont* monoFont;
+  
+  NAList flashList;
+
+  ExampleController* exampleController;
 };
 
-// The central variable storing the app. Defined as global.
-HelloWorldGUIApplication* app;
+// The central variable storing the app.
+GUIExamplesApplication* app;
 
 
 
 // preStartup is called before most system specific initialization takes place.
-// Initialize all global and general values here.
+// Initialize all general values here.
 // See naStartApplication for a detailed explanation.
-void preStartup(void* arg){
+void preStartup(void* arg) {
   NADateTime now = naMakeDateTimeNow();
   NAString* dateTimeStr = naNewStringWithDateTime(&now, NA_DATETIME_FORMAT_NATURAL);
   printf("DateTime: %s\n", naGetStringUTF8Pointer(dateTimeStr));
@@ -47,7 +50,7 @@ void preStartup(void* arg){
   naDelete(pwd);
 
   NA_UNUSED(arg);
-  app = naAlloc(HelloWorldGUIApplication);
+  app = naAlloc(GUIExamplesApplication);
   naInitStack(&(app->temperatureControllers), sizeof(TemperatureController*), 0, 0);
   app->nextWindowX = 700;
   app->nextWindowY = 400;
@@ -59,12 +62,12 @@ void preStartup(void* arg){
 // postStartup is called after base application stuff has been initialized.
 // Build-up your GUI here.
 // See naStartApplication for a detailed explanation.
-void postStartup(void* arg){
+void postStartup(void* arg) {
   NA_UNUSED(arg);
   
   // Load the image files
   NAPNG* pngIcon = naNewPNGWithPath(RESOURCE_PATH "icon.png");
-  if(!naIsSizesUseful(naGetPNGSize(pngIcon))){
+  if(!naIsSizesUseful(naGetPNGSize(pngIcon))) {
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
@@ -77,7 +80,7 @@ void postStartup(void* arg){
   naRelease(originalIconImage);
 
   NAPNG* png1 = naNewPNGWithPath(RESOURCE_PATH "man.png");
-  if(!naIsSizesUseful(naGetPNGSize(png1))){
+  if(!naIsSizesUseful(naGetPNGSize(png1))) {
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
@@ -90,7 +93,7 @@ void postStartup(void* arg){
   naRelease(originalState1Image);
 
   NAPNG* png2 = naNewPNGWithPath(RESOURCE_PATH "man2.png");
-  if(!naIsSizesUseful(naGetPNGSize(png2))){
+  if(!naIsSizesUseful(naGetPNGSize(png2))) {
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
   }
@@ -102,64 +105,114 @@ void postStartup(void* arg){
   naDelete(png2);
   naRelease(originalState2Image);
 
+  app->titleFont = naCreateFontWithPreset(NA_FONT_KIND_TITLE, NA_FONT_SIZE_DEFAULT);
+  app->monoFont = naCreateFontWithPreset(NA_FONT_KIND_MONOSPACE, NA_FONT_SIZE_DEFAULT);
+
+  naInitList(&app->flashList);
+
   // Create the controllers
-  app->experimentController = createExperimentController();
-  app->fontController = createFontController();
-  app->buttonController = createButtonController();
+  app->exampleController = createExampleController();
 }
 
 
 
 // Delete all controllers and finally, delete this application
-void clearApplication(void* arg){
+void clearApplication(void* arg) {
   NA_UNUSED(arg);
 
   naForeachStackpMutable(&(app->temperatureControllers), (NAMutator)despawnTemperatureController);
   naClearStack(&(app->temperatureControllers));
-  clearExperimentController(app->experimentController);
-  clearFontController(app->fontController);
-  clearButtonController(app->buttonController);
+  clearExampleController(app->exampleController);
   naRelease(app->iconImageSet);
   naRelease(app->state1ImageSet);
   naRelease(app->state2ImageSet);
+  naRelease(app->titleFont);
+  naRelease(app->monoFont);
+  naClearList(&app->flashList, naFree);
   naFree(app);
 }
 
 
 
-double getAndAdvanceNextWindowX(void){
+double getAndAdvanceNextWindowX(void) {
   double curWindowX = app->nextWindowX;
   app->nextWindowX += 20;
   return curWindowX;
 }
 
-double getAndAdvanceNextWindowY(void){
+double getAndAdvanceNextWindowY(void) {
   double curWindowY = app->nextWindowY;
   app->nextWindowY -= 20;
   return curWindowY;
 }
 
-NAImageSet* getIconImageSet(void){
+NAImageSet* getIconImageSet(void) {
   return app->iconImageSet;
 }
-NAImageSet* getState1ImageSet(void){
+NAImageSet* getState1ImageSet(void) {
   return app->state1ImageSet;
 }
-NAImageSet* getState2ImageSet(void){
+NAImageSet* getState2ImageSet(void) {
   return app->state2ImageSet;
 }
 
-void addTemperatureControllerToApplication(TemperatureController* con){
+NAFont* getTitleFont(void) {
+  return app->titleFont;
+}
+NAFont* getMonoFont(void) {
+  return app->monoFont;
+}
+
+
+typedef struct FlashEntry FlashEntry;
+struct FlashEntry {
+  NADateTime lastChange;
+  NALabel* label;
+};
+
+static void naUnflash(void* data) {
+  NADateTime now = naMakeDateTimeNow();
+  NAListIterator it = naMakeListModifier(&app->flashList);
+  while(naIterateList(&it)) {
+    FlashEntry* cur = naGetListCurMutable(&it);
+    // We already erase after .75 seconds to be sure we catch all timers.
+    if(naGetDateTimeDifference(&now, &cur->lastChange) >= .75) {
+      naSetLabelText(cur->label, "");
+      naRemoveListCurMutable(&it, NA_FALSE);
+      naFree(cur);
+    }
+  }
+  naClearListIterator(&it);
+}
+
+void flashLabel(NALabel* label, const NAUTF8Char* text) {
+  naSetLabelText(label, text);
+  // Add the label to the unflash-list
+  NADateTime now = naMakeDateTimeNow();
+  NAListIterator it = naMakeListModifier(&app->flashList);
+  NABool found = NA_FALSE;
+  while(naIterateList(&it)) {
+    FlashEntry* cur = naGetListCurMutable(&it);
+    if(cur->label == label) {
+      cur->lastChange = now;
+      found = NA_TRUE;
+    }
+  }
+  naClearListIterator(&it);
+  if(!found) {
+    FlashEntry* newEntry = naAlloc(FlashEntry);
+    newEntry->label = label;
+    newEntry->lastChange = now;
+    naAddListLastMutable(&app->flashList, newEntry);
+  }
+  // Erase the flash in 1 second:
+  naCallApplicationFunctionInSeconds(naUnflash, NA_NULL, 1.);
+}
+
+void addTemperatureControllerToApplication(TemperatureController* con) {
   *(TemperatureController**)naPushStack(&(app->temperatureControllers)) = con;
 }
 
-void showFonts(){
-  showFontController(app->fontController);
-}
-
-void showButtons(){
-  showButtonController(app->buttonController);
-}
 
 
 

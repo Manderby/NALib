@@ -408,7 +408,7 @@ NABool naWINAPICaptureMouseHover() {
       }
 
       if(!na_DispatchUIElementCommand(curElement, NA_UI_COMMAND_MOUSE_EXITED)) {
-        // don't know what to do.
+        // no parent method to be called.
       }
       curElement = naGetUIElementParentMutable(curElement);
     }
@@ -433,7 +433,7 @@ NABool naWINAPICaptureMouseHover() {
       }
 
       if(!na_DispatchUIElementCommand(elementUnderMouse, NA_UI_COMMAND_MOUSE_ENTERED)) {
-        // don't know what to do.
+        // no parent method to be called.
       }
       elementUnderMouse = naGetUIElementParentMutable(elementUnderMouse);
     }
@@ -468,7 +468,7 @@ NAWINAPICallbackInfo na_HandleMousePress(
       ? NA_UI_COMMAND_MOUSE_DOWN
       : NA_UI_COMMAND_MOUSE_UP;
     if(!na_DispatchUIElementCommand(uiElement, command)) {
-      // don't know what to do.
+      // no parent method to be called.
     }
     info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
@@ -478,8 +478,8 @@ NAWINAPICallbackInfo na_HandleMousePress(
 }
 
 
-// Capture messages which shall be handeled globally the same no matter what
-// the object behind it is.
+// Capture messages which shall be handeled the same no matter what the NALib
+// object behind it is.
 NAWINAPICallbackInfo naUIElementWINAPIPreProc(
   void* uiElement,
   UINT message,
@@ -494,6 +494,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
 
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NA_UIElement* elem = (NA_UIElement*)uiElement;
+  NAUIElementType type;
   NAPos pos;
   NASize size = {0};
   NARect rect = {0};
@@ -543,8 +544,18 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
       pos = naGetMousePos(mouseStatus);
       na_SetMouseMovedByDiff(na_GetApplicationMouseStatus(naGetApplication()), size.width - pos.x, size.height - pos.y);
 
-      if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED)) {
-        // don't know what to do.
+      type = naGetUIElementType(elem);
+      if(type == NA_UI_SPACE) {
+        NASpace* space = (NASpace*)elem;
+        if(naGetSpaceDragsWindow(space)) {
+          // todo
+        }
+      }
+
+      if(!info.hasBeenHandeled) {
+        if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED)) {
+          // no parent method to be called.
+        }
       }
       info.result = 0;
       info.hasBeenHandeled = NA_TRUE;
@@ -558,7 +569,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
   case WM_KEYDOWN:
     if(na_UIHasElementCommandDispatches(elem, NA_UI_COMMAND_KEY_DOWN)) {
       if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_DOWN)) {
-        // don't know what to do.
+        // no parent method to be called.
       }
       info.result = 0;
       info.hasBeenHandeled = NA_TRUE;
@@ -568,7 +579,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
   case WM_KEYUP:
     if(na_UIHasElementCommandDispatches(elem, NA_UI_COMMAND_KEY_UP)) {
       if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_UP)) {
-        // don't know what to do.
+        // no parent method to be called.
       }
       info.result = 0;
       info.hasBeenHandeled = NA_TRUE;
@@ -581,8 +592,9 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
 
 
 
-// Capture messages which shall be handeled globally, if and only if the
-// object behind the message does NOT provide a WINAPIProc handling.
+// Capture messages which shall be handeled the same no matter what the NALib
+// object behind it is, if and only if the object behind the message does
+// NOT provide a WINAPIProc handling.
 NAWINAPICallbackInfo naUIElementWINAPIPostProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NA_UNUSED(uiElement);
   NA_UNUSED(wParam);
@@ -793,7 +805,7 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 
     if(!info.hasBeenHandeled) {
       // If the element does not handle the event, try handling it with the
-      // global post handling function.
+      // universal post handling function.
       info = naUIElementWINAPIPostProc(uiElement, message, wParam, lParam);
     }
   }
@@ -849,7 +861,7 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam) {
 
     if(menuItem) {
       if(!na_DispatchUIElementCommand((const NA_UIElement*)menuItem, NA_UI_COMMAND_PRESSED)) {
-        // don't know what to do.
+        // no parent method to be called.
       }
       hasBeenHandeled = NA_TRUE;
     }

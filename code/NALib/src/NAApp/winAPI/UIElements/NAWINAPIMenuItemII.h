@@ -6,7 +6,7 @@
 
 
 
-NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text) {
+NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text, NAKeyStroke* keyStroke) {
   NA_WINAPIMenuItem* winapiMenuItem = naNew(NA_WINAPIMenuItem);
 
   winapiMenuItem->isSeparator = NA_FALSE;

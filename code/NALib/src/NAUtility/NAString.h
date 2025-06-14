@@ -18,7 +18,6 @@ NA_PROTOTYPE(NAString);
 
 
 #include "NAMemory.h"
-#include "../NAMath/NACoord.h"
 #include "../NAStruct/NABuffer.h"
 
 

@@ -48,12 +48,33 @@ add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
 
 # ######### Sources ################
 
+set(controllerSourceFiles
+  src/Controller/ApplicationController.c
+  src/Controller/ButtonController.c
+  src/Controller/CheckBoxController.c
+  src/Controller/FontController.c
+  src/Controller/ImageSpaceController.c
+  src/Controller/LabelController.c
+  src/Controller/OpenGLSpaceController.c
+  src/Controller/MenuController.c
+  src/Controller/MetalSpaceController.c
+  src/Controller/RadioController.c
+  src/Controller/ScreenController.c
+  src/Controller/SelectController.c
+  src/Controller/SliderController.c
+  src/Controller/SpaceController.c
+  src/Controller/TextBoxController.c
+  src/Controller/TextFieldController.c
+  src/Controller/WindowController.c
+)
+
 set(sourceFiles
-  src/ButtonController.c
-  src/ExperimentController.c
-  src/FontController.c
+  src/CommonController.c
+  src/CommonController.h
+  src/ExampleController.c
   src/GUIExamples.h
   src/GUIExamplesApplication.c
+  src/Layout.h
   src/main.c
   src/TemperatureController.c
   src/translationIDs.h
@@ -72,6 +93,9 @@ set(macOSResourceFiles
 
 source_group("src" FILES ${sourceFiles})
 target_sources(${TARGET_NAME} PRIVATE ${sourceFiles})
+
+source_group("src/Controller" FILES ${controllerSourceFiles})
+target_sources(${TARGET_NAME} PRIVATE ${controllerSourceFiles})
 
 source_group("res" FILES ${resourceFiles})
 target_sources(${TARGET_NAME} PRIVATE ${resourceFiles})

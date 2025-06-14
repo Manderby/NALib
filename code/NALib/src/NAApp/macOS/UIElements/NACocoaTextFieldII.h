@@ -37,14 +37,14 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
 - (void) controlTextDidEndEditing:(NSNotification *)notification{
   NA_UNUSED(notification);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDIT_FINISHED)) {
-    // dont know what to do.
+    // no super method to be called.
   }
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification{
   NA_UNUSED(notification);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDITED)) {
-    // dont know what to do.
+    // no super method to be called.
   }
 }
 

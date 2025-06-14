@@ -23,30 +23,37 @@
 // error otherwise.
 
 
+
 // Window flags:
 #define NA_WINDOW_FIXED_SIZE             0x00
 #define NA_WINDOW_RESIZEABLE             0x01
 
+// Auxiliary windows are helper windows. The implementation is os-specific.
 #define NA_WINDOW_DEFAULT                0x00
 #define NA_WINDOW_AUXILIARY              0x02
 
+// Titleless windows can automatically be dragged by their content space.
 #define NA_WINDOW_TITLED                 0x00
 #define NA_WINDOW_TITLELESS              0x04
 
+// Hide or show the close button
 #define NA_WINDOW_CLOSEABLE              0x00
 #define NA_WINDOW_NON_CLOSEABLE          0x08
 
+// Hide or show the miniaturization button
 #define NA_WINDOW_MINIATURIZEABLE        0x00
 #define NA_WINDOW_NON_MINIATURIZEABLE    0x10
 
+// If a window is not resizeable and does not show the mini nor the close
+// button, it will automatically hide all buttons, leaving a pure title bar.
 
 
-// Creates a new window.
+
+// Creates a new window. Use Null for screen to use the main screen.
 NA_API NAWindow* naNewWindow(
   const NAUTF8Char* title,
   NARect rect,
-  uint32 flags,
-  size_t storageTag);
+  uint32 flags);
 
 // Get and set the content space.
 NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
@@ -60,6 +67,9 @@ NA_API void naCloseWindow(const NAWindow* window);
 // Close must be called explicitely.
 NA_API void naShowWindowModal(NAWindow* window, NAWindow* parentWindow);
 NA_API void naCloseWindowModal(NAWindow* window);
+
+// Returns the screen the window is attached to.
+NA_API const NAScreen* naGetWindowScreen(const NAWindow* window);
 
 // During a NA_UI_COMMAND_CLOSES command, call this function to prevent the
 // window from closing. If not called, the window will close.
@@ -76,11 +86,23 @@ NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);
 // Get various properties of the window
 NA_API NABool naIsWindowResizeable(const NAWindow* window);
 
+// Set a value different from zero to automatically store position and size
+// of the window. If the same storageTag is used in a later run of an app,
+// this call will automatically restore the stored position and size.
+// This provides an easy way for small applicaitons to remember window
+// arrangements.
+NA_API void naSetWindowStorageTag(NAWindow* window, size_t storageTag);
+
 // Get and set the outer (non-client) rect of the window. Note that the
 // function naGetUIElementRect will always return the inner (client) rect of
-// the window.
+// the window. The returned rect is in absolute coordinates.
 NA_API NARect naGetWindowOuterRect(const NAWindow * window);
 NA_API void naSetWindowOuterRect(NAWindow * window, NARect rect);
+
+// Returns the area in absolute coordinates which moves the window when dragged.
+// For titeled windows, that is the area of the titlebar.
+// For titleless windows, it is the content area.
+NA_API NARect naGetWindowDraggableRect(const NAWindow * window);
 
 // Set various properties of the window
 NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
@@ -90,14 +112,6 @@ NA_API void naSetWindowAcceptsKeyboardReactions(NAWindow* window, NABool accepts
 // Get and set the first tab element of the window.
 NA_API void* naGetWindowFirstTabElement(NAWindow* window);
 NA_API void naSetWindowFirstTabElement(NAWindow* window, const void* firstTabElem);
-
-// Set the storage tag for automatically remembering the position of the
-// window.
-NA_API NARect naSetWindowStorageTag(
-  NAWindow* window,
-  size_t storageTag,
-  NARect rect,
-  NABool resizeable);
 
 
 

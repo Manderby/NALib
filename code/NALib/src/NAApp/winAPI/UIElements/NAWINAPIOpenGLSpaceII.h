@@ -58,7 +58,7 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
     wheelDelta = (int)(-8. * GET_WHEEL_DELTA_WPARAM(wParam) / (double)WHEEL_DELTA);
     naSetOpenGLSpaceTranslation(&winapiOpenGLSpace->openGLSpace, 0, wheelDelta);
     if(!na_DispatchUIElementCommand((NA_UIElement*)winapiOpenGLSpace, NA_UI_COMMAND_TRANSFORMED)) {
-      // don't know what to do.
+      // no parent method to be called.
     }
     naResetOpenGLSpaceTransformation(&winapiOpenGLSpace->openGLSpace);
     info.result = 0;

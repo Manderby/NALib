@@ -47,14 +47,17 @@ struct NA_UIElement{
 struct NAApplication{
   NA_UIElement      uiElement;
   
-  NAList            windows;         // A list of all windows
-  NAList            uiElements;      // A list of all ui elements in use.
+  NAList            screens;        // A list of all screens
+  NAList            windows;        // A list of all windows
+  NAList            uiElements;     // A list of all ui elements in use.
+  
+  NARect            totalRect;      // The absolute rect of all screens.
   
   NATranslator*     translator;
   NANotifier*       notifier;
   NAFont*           systemFont;
-  NAMouseStatus*    mouseStatus;     // The mouse cursor status
-  NAKeyStroke*      keyStroke;       // The currently pressed key combination
+  NAMouseStatus*    mouseStatus;    // The mouse cursor status
+  NAKeyStroke*      keyStroke;      // The currently pressed key combination
   uint32            flags;
 
   NAString*       appName;
@@ -99,6 +102,7 @@ struct NAMenu{
 
 struct NAMenuItem{
   NA_UIElement uiElement;
+  NAMenu* subMenu;
 };
 
 
@@ -125,6 +129,12 @@ struct NARadio{
 
 struct NAScreen{
   NA_UIElement uiElement;
+  NABool isMain;
+  NAString* name;
+  NARect rect;
+  NAPos relativeCenter; // relative pos of screen center in whole screen setup.
+  double uiScale;
+  NAList windows; // References. Does NOT own the windows. The application does.
 };
 
 struct NASlider{
@@ -179,8 +189,6 @@ struct NA_KeyboardShortcutReaction{
 };
 
 
-
-extern NAApplication* na_App;
 
 #define NA_APPLICATION_FLAG_RUNNING                 0x01
 #define NA_APPLICATION_FLAG_MOUSE_VISIBLE           0x02
@@ -291,6 +299,7 @@ NA_HAPI NABool na_IsApplicationRunning(void);
 NA_HAPI void na_InitApplication(NAApplication* application, void* nativePtr);
 NA_HAPI void na_TerminateApplication(NAMutator cleanup, void* arg);
 NA_HAPI void na_ClearApplication(NAApplication* application);
+NA_HAPI void na_RenewApplicationScreens();
 NA_HAPI NARect na_GetApplicationRect(const NAApplication* application);
 NA_HAPI void na_SetApplicationRect(const NAApplication* application, NARect rect);
 NA_HAPI const NAFont* na_GetApplicationSystemFont(const NAApplication* app);
@@ -363,8 +372,14 @@ NA_HAPI NARect na_GetRadioRect(const NA_UIElement* radio);
 NA_HAPI void na_SetRadioRect(NA_UIElement* radio, NARect rect);
 
 // NAScreen
-NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr);
+// Creates a new screen.
+NA_HAPI NAScreen* na_NewScreen(void* nativePtr);
+NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, const NAUTF8Char* name, NARect rect, double uiScale);
 NA_HAPI void na_ClearScreen(NAScreen* screen);
+NA_HAPI void na_FlipScreenCoordinatesVertically(NAScreen* screen, NARect totalRect);
+NA_HAPI void na_UpdateScreenRelativeCenter(NAScreen* screen, NARect totalRect);
+NA_HAPI NARect na_FillScreenList(NAList* screenList);
+NA_HAPI NAScreen* na_GetApplicationScreenWithNativePtr(void* nativePtr);
 NA_HAPI NARect na_GetScreenRect(const NA_UIElement* screen);
 NA_HAPI void na_SetScreenRect(NA_UIElement* screen, NARect rect);
 
@@ -403,8 +418,9 @@ NA_HAPI NARect na_GetTextFieldRect(const NA_UIElement* textField);
 NA_HAPI void na_SetTextFieldRect(NA_UIElement* textField, NARect rect);
 
 // NAWindow
-NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
+NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NAScreen* screen, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
 NA_HAPI void na_ClearWindow(NAWindow* window);
+NA_HAPI void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen);
 NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
 NA_HAPI void na_RetainWindowMouseTracking(NAWindow* window);
 NA_HAPI void na_ReleaseWindowMouseTracking(NAWindow* window);

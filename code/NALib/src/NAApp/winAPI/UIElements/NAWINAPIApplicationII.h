@@ -73,7 +73,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
   // Uncommented for future use.
   //DPI_AWARENESS awareness = DPI_AWARENESS_SYSTEM_AWARE;
   //SetProcessDpiAwarenessContext(&awareness);
-  SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2); 
+  SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE); 
 
   #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
     InitCommonControls();   // enable visual styles
@@ -354,11 +354,11 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
 #if NA_DEBUG
   NA_DEF void naDebugUIElement(const void* elem) {
     NA_UIElement* uiElem = (NA_UIElement*)elem;
-    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)na_App;
+    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)naGetApplication();
     naAddListLastConst(&winapiApplication->debugElements, uiElem);
   }
   NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) {
-    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)na_App;
+    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)naGetApplication();
     NAListIterator iter = naMakeListModifier(&winapiApplication->debugElements);
     if(naLocateListData(&iter, elem)) {
       naRemoveListCurConst(&iter, NA_FALSE);
@@ -366,7 +366,7 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
     naClearListIterator(&iter);
   }
   NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) {
-    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)na_App;
+    NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)naGetApplication();
     NAListIterator iter = naMakeListModifier(&winapiApplication->debugElements);
     NABool found = naLocateListData(&iter, elem);
     naClearListIterator(&iter);
@@ -460,7 +460,7 @@ NA_HDEF void na_redrawOpenGLSpaces(void* data) {
     NAWINAPIOpenGLSpace* openGLSpace = naGetListCurMutable(&it);
     wglMakeCurrent(GetDC(naGetUIElementNativePtr(openGLSpace)), openGLSpace->hRC);
     if(!na_DispatchUIElementCommand(&openGLSpace->openGLSpace.uiElement, NA_UI_COMMAND_REDRAW)) {
-      // don't know what to do.
+      // no parent method to be called.
     }
   }
   naClearListIterator(&it);

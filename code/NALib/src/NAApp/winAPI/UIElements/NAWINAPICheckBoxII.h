@@ -57,7 +57,7 @@ NABool naCheckBoxWINAPINotify(void* uiElement, WORD notificationCode) {
       check = naGetCheckBoxState(uiElement);
       naSetCheckBoxState(uiElement, !check);
       if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED)) {
-        // don't know what to do.
+        // no parent method to be called.
       }
       hasBeenHandeled = NA_TRUE;
       break;

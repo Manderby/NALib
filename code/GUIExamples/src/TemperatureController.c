@@ -21,7 +21,7 @@ struct TemperatureController{
 
 
 // Will be called when the calculate Button or Enter is pressed.
-void computeResults(NAReaction reaction){
+void computeResults(NAReaction reaction) {
   // The reaction parameter contains - amongst other things - the controller
   // provided with naAddUIReaction.
   TemperatureController* con = reaction.controller;
@@ -39,19 +39,19 @@ void computeResults(NAReaction reaction){
 
 
 // Will be called when a button is pressed.
-void pressButton(NAReaction reaction){
+void pressButton(NAReaction reaction) {
   TemperatureController* con = reaction.controller;
   
-  if(reaction.uiElement == con->newButton){
+  if(reaction.uiElement == con->newButton) {
     spawnTemperatureController();
-  }else if(reaction.uiElement == con->quitButton){
+  }else if(reaction.uiElement == con->quitButton) {
     naStopApplication();
   }
 }
 
 
 
-TemperatureController* spawnTemperatureController(){
+TemperatureController* spawnTemperatureController() {
   TemperatureController* con = naAlloc(TemperatureController);
 
   // Create a new window
@@ -60,7 +60,7 @@ TemperatureController* spawnTemperatureController(){
       getAndAdvanceNextWindowY(),
       400,
       200);
-  con->window = naNewWindow("Temperature Converter", windowRect, NA_FALSE, 0);
+  con->window = naNewWindow("Temperature Converter", windowRect, NA_FALSE);
 
   // Every window has a space which defines its contents.
   NASpace* windowSpace = naGetWindowContentSpace(con->window);
@@ -115,7 +115,7 @@ TemperatureController* spawnTemperatureController(){
 
 
 // Clear all allocated elements.
-void despawnTemperatureController(TemperatureController* con){
+void despawnTemperatureController(TemperatureController* con) {
   // Note that all UI elements which are attached in some way to the root
   // application UIElement will be cleared automatically.
   naFree(con);

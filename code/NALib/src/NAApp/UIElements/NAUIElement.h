@@ -100,14 +100,17 @@ NA_API const NASpace* naGetUIElementParentSpace(const void* uiElement);
 NA_API NASpace* naGetUIElementParentSpaceMutable(void* uiElement);
 
 // In NALib, all coordinates of the UI are described in a mathematical, right-
-// handed coordinate system. The origin of the global coordinate system is
+// handed coordinate system. The origin of the absolute coordinate system is
 // at the lower left screen corner of the main screen.
 //
 // Using naGetUIElementRect, you can get the rect of any ui element either
 // in absolute coordinates or in relative coordinates to its parent element.
 //
-// Note that elements always return the inner (client) rect. For example
-// windows will not return their outer boundary.
+// Note that windows and screens always return absolute coordinates.
+// Additionally, windows only return the inner (client) rect. If you need the
+// outer rect (including the titlebar), use naGetWindowOuterRect.
+//
+// Quering the NSApplication object returns the total rect of all screens.
 NA_API NARect naGetUIElementRect(const void* uiElement);
 NA_API NARect naGetUIElementRectAbsolute(const void* uiElement);
 NA_API void   naSetUIElementRect(void* uiElement, NARect rect);

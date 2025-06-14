@@ -178,14 +178,17 @@ NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NAB
 }
 
 
+#include <errno.h>
 NA_IDEF NAUTF8Char* naAllocCwd(NAUTF8Char* buf, size_t bufSize) {
   #if NA_OS == NA_OS_WINDOWS
     return _getcwd(buf, (int)bufSize);
   #elif NA_IS_POSIX
     if(!buf) {
-      buf = naMalloc(PATH_MAX + 1);
+      bufSize = PATH_MAX + 1;
+      buf = naMalloc(bufSize);
     }
-    return getcwd(buf, bufSize);
+    char* ret = getcwd(buf, bufSize);
+    return ret;
   #endif
 }
 

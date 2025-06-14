@@ -32,6 +32,7 @@ NA_PROTOTYPE(NA_WINAPIMenuItem);
   NA_PROTOTYPE(NAWINAPIOpenGLSpace);
 #endif
 NA_PROTOTYPE(NAWINAPIRadio);
+NA_PROTOTYPE(NAWINAPIScreen);
 NA_PROTOTYPE(NAWINAPISelect);
 NA_PROTOTYPE(NAWINAPISlider);
 NA_PROTOTYPE(NAWINAPISpace);
@@ -53,6 +54,7 @@ NA_HAPI void na_DestructWINAPIMenuItem(NA_WINAPIMenuItem* winapiMenuItem);
   NA_HAPI void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace);
 #endif
 NA_HAPI void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio);
+NA_HAPI void na_DestructWINAPIScreen(NAWINAPIScreen* winapiScreen);
 NA_HAPI void na_DestructWINAPISelect(NAWINAPISelect* winapiSelect);
 NA_HAPI void na_DestructWINAPISlider(NAWINAPISlider* winapiSlider);
 NA_HAPI void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace);
@@ -137,6 +139,10 @@ struct NAWINAPIRadio {
   NARect  rect;
 };
 
+struct NAWINAPIScreen {
+  NAScreen screen;
+};
+
 struct NAWINAPISelect {
   NASelect select;
   NARect   rect;
@@ -187,6 +193,7 @@ NA_RUNTIME_TYPE(NA_WINAPIMenuItem, na_DestructWINAPIMenuItem, NA_FALSE);
   NA_RUNTIME_TYPE(NAWINAPIOpenGLSpace, na_DestructWINAPIOpenGLSpace, NA_FALSE);
 #endif
 NA_RUNTIME_TYPE(NAWINAPIRadio, na_DestructWINAPIRadio, NA_FALSE);
+NA_RUNTIME_TYPE(NAWINAPIScreen, na_DestructWINAPIScreen, NA_FALSE);
 NA_RUNTIME_TYPE(NAWINAPISelect, na_DestructWINAPISelect, NA_FALSE);
 NA_RUNTIME_TYPE(NAWINAPISlider, na_DestructWINAPISlider, NA_FALSE);
 NA_RUNTIME_TYPE(NAWINAPISpace, na_DestructWINAPISpace, NA_FALSE);

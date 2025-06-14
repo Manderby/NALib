@@ -1,69 +1,39 @@
 
-// This file contains inline implementations of the file NARandom.h
-// Do not include this file directly! It will automatically be included when
-// including "NARandom.h"
+#include "CommonController.h"
 
 
 
-#include <stdlib.h>
-#include "../../NAUtility/NADateTime.h"
-
-
-NA_IDEF int32 naRand() {
-  #if NA_OS == NA_OS_WINDOWS
-    return (int32)rand();
-  #elif NA_IS_POSIX
-    return (int32)rand();
-  #endif
+void initCommonController(
+  CommonController* con,
+  NASpace* space,
+  NAMutator clearer,
+  NAMutator updater)
+{
+  con->space = space;
+  con->clearer = clearer;
+  con->updater = updater;
 }
 
 
-NA_IDEF void naSRand(uint32 seed) {
-  #if NA_OS == NA_OS_WINDOWS
-    srand(seed);
-  #elif NA_IS_POSIX
-    srand(seed);
-  #endif
-}
 
-
-NA_IDEF uint32 naSeedRand(uint32 seed) {
-  if(seed) {
-    seed = (uint32)seed;
-  }else{
-    NADateTime dt = naMakeDateTimeNow();
-    seed = naCasti64Tou32(dt.siSecond) ^ (uint32)dt.nanoSecond;
+void clearCommonController(CommonController* con) {
+  if(con) {
+    if(con->clearer) { con->clearer(con); }
+    naDelete(con->space);
+    naFree(con);
   }
-  naSRand((uint32)seed);
-  return seed;
-}
-
-
-#define NA_INV_RAND_MAX  (1.  / RAND_MAX)
-#define NA_INV_RAND_MAXf (1.f / RAND_MAX)
-
-NA_IDEF double naUniformRandZE() {
-  double rnd;
-  do {
-    rnd = (double)naRand();
-  } while(rnd == RAND_MAX);
-  return rnd * NA_INV_RAND_MAX;
-}
-NA_IDEF float naUniformRandZEf() {
-  float rnd;
-  do {
-    rnd = (float)naRand();
-  } while(rnd == RAND_MAX);
-  return rnd * NA_INV_RAND_MAXf;
 }
 
 
 
-NA_IDEF double naUniformRandZI() {
-  return (double)naRand() * NA_INV_RAND_MAX;
+NASpace* getCommonControllerSpace(CommonController* con) {
+  return con->space;
 }
-NA_IDEF float naUniformRandZIf() {
-  return (float)naRand() * NA_INV_RAND_MAXf;
+
+
+
+void updateCommonController(CommonController* con) {
+  if(con->updater) { con->updater(con); }
 }
 
 

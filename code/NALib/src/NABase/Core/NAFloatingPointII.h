@@ -473,7 +473,7 @@ NA_IAPI int32 naGetFloatFractionE(float f) {
       fbits = fbits >> (-exponent - 1);
       fbits++;
       fbits = fbits >> 1;
-    }else if(exponent >= 32){
+    }else if(exponent >= 32) {
       // This is dangerous! According to the standard, values greater equal to
       // the bitsize with the shift operator lead to undefined behaviour.
       // Therefore, treat that case separately.
@@ -494,7 +494,7 @@ NA_IAPI int32 naGetFloatFractionE(float f) {
     fbits++;
     fbits = fbits >> 1;
     if(exponent > 0) {
-      if(exponent >= 32){
+      if(exponent >= 32) {
         // This is dangerous! According to the standard, values greater equal to
         // the bitsize with the shift operator lead to undefined behaviour.
         // Therefore, treat that case separately.
@@ -536,7 +536,7 @@ NA_IAPI int32 naGetFloatFractionSlowE(float f) {
       fbits++;
       fbits = fbits >> 1;
       hyperTens = naMakei64(NA_ZERO_i32, 1000000);  // 1e6
-    }else if(exponent >= 32){
+    }else if(exponent >= 32) {
       // This is dangerous! According to the standard, values greater equal to
       // the bitsize with the shift operator lead to undefined behaviour.
       // Therefore, treat that case separately.

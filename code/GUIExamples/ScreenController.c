@@ -5,7 +5,7 @@
 
 
 
-struct ButtonController{
+struct ScreenController{
   NAWindow* window;
   
   NALabel* enabledLabel;
@@ -50,7 +50,7 @@ struct ButtonController{
 
 
 void buttonPressed(NAReaction reaction){
-  ButtonController* con = reaction.controller;
+  ScreenController* con = reaction.controller;
 
   NAString* labelString;
 
@@ -80,21 +80,21 @@ void buttonPressed(NAReaction reaction){
 
 
 void submitPressed(NAReaction reaction){
-  ButtonController* con = reaction.controller;
+  ScreenController* con = reaction.controller;
   naSetLabelText(con->outputLabel, "Submit pressed");
 }
 
 
 
 void abortPressed(NAReaction reaction){
-  ButtonController* con = reaction.controller;
+  ScreenController* con = reaction.controller;
   naSetLabelText(con->outputLabel, "Abort pressed");
 }
 
 
 
-ButtonController* createButtonController(){
-  ButtonController* con = naAlloc(ButtonController);
+ScreenController* createScreenController(){
+  ScreenController* con = naAlloc(ScreenController);
 
   double windowWidth = 550;
   double windowHeight = 500;
@@ -107,7 +107,7 @@ ButtonController* createButtonController(){
   double buttonHeight = 50;
 
   NARect windowRect = naMakeRectS(500, 400, windowWidth, windowHeight);
-  con->window = naNewWindow("Buttons", windowRect, 0, 0);
+  con->window = naNewWindow("Buttons", windowRect, 0);
   NASpace* windowSpace = naGetWindowContentSpace(con->window);
 
   double curPosY = windowHeight - 42;
@@ -255,13 +255,13 @@ ButtonController* createButtonController(){
 
 
 
-void clearButtonController(ButtonController* con){
+void clearScreenController(ScreenController* con){
   NA_UNUSED(con);
 }
 
 
 
-void showButtonController(ButtonController* con){
+void showScreenController(ScreenController* con){
   naShowWindow(con->window);
 }
 
