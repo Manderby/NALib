@@ -147,6 +147,15 @@ NA_DEF NSColor* naGetAccentColor() {
   return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
 
+NA_HDEF NABool na_HasShortButton() {
+  // On systems starting with 11 but before 26, bordered buttons are 5 units
+  // shorter than expected on the left and right. At the same time, the top
+  // and bottom mouse capture area is also 5 units shorter. Therefore, we add
+  // 10 units and in naAddSpaceChild we move the button 5 units to the left
+  // and bottom and enlarge the frame accordingly.
+  return isAtLeastMacOSVersion(11, 0) && !isAtLeastMacOSVersion(26, 0);
+}
+
 NA_DEF NABool isAtLeastMacOSVersion(int major, int minor) {
   #if NA_DEBUG
     NA_MACOS_AVAILABILITY_GUARD_10_10(

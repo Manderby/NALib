@@ -8,7 +8,7 @@
 
 
 // The newlines used on different systems as utf8 strings.
-#if defined NA_C11 || defined NA_CPP11
+#if (defined NA_C11 || defined NA_CPP11) && (!defined __clang_major__)
   #define NA_NL_UNIX  u8"\n"
   #define NA_NL_MAC9  u8"\r"
   #define NA_NL_WIN   u8"\r\n"
@@ -49,7 +49,8 @@
 // Types like NAByte, int8 or uint8 can not be used as it these are
 // defined to be incompatible with char. But at least we can be sure that
 // a char consists of 8 Bits. See definition of NAByte for that.
-#if (defined NA_C23)
+#if (defined NA_C23) && (!defined __clang_major__)
+  #include <uchar.h>
   typedef char8_t NAUTF8Char;
 #else
   typedef char NAUTF8Char;

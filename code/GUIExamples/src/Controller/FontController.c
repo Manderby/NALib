@@ -12,7 +12,7 @@ struct FontController{
 
 
 
-#define HAMBURGEFONTSIV u8"H\u00e4xig \u4f60\u597d"
+#define HAMBURGEFONTSIV ((const NAUTF8Char*)u8"H\u00e4xig \u4f60\u597d")
 
 
 
@@ -182,14 +182,14 @@ CommonController* createFontController() {
 
   curPosY = curPosY - 60;
 
-  label = naNewLabel(u8"Comic Sans", 200);
+  label = naNewLabel("Comic Sans", 200);
   font = naCreateFont("Comic Sans MS", NA_FONT_FLAG_REGULAR, 32);
   naSetLabelFont(label, font);
   naRelease(font);
   naSetLabelHeight(label, 50);
   naAddSpaceChild(space, label, naMakePos(10, curPosY));
 
-  label = naNewLabel(u8"Comic Sans Link", 250);
+  label = naNewLabel("Comic Sans Link", 250);
   font = naCreateFont("Comic Sans MS", NA_FONT_FLAG_REGULAR, 32);
   naSetLabelFont(label, font);
   naRelease(font);
