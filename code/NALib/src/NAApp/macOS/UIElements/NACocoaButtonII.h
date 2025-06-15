@@ -633,17 +633,18 @@ NA_DEF void naSetButtonAbort(
   #endif
   
   NAWindow* window = naGetUIElementWindowMutable(button);
-
-  naAddUIKeyboardShortcut(
-    window,
-    naNewKeyStroke(NA_KEYCODE_ESCAPE, NA_KEY_MODIFIER_NONE),
-    callback,
-    controller);
-  naAddUIKeyboardShortcut(
-    window,
-    naNewKeyStroke(NA_KEYCODE_PERIOD, NA_KEY_MODIFIER_COMMAND),
-    callback,
-    controller);
+  if(window) {
+    naAddUIKeyboardShortcut(
+      window,
+      naNewKeyStroke(NA_KEYCODE_ESCAPE, NA_KEY_MODIFIER_NONE),
+      callback,
+      controller);
+    naAddUIKeyboardShortcut(
+      window,
+      naNewKeyStroke(NA_KEYCODE_PERIOD, NA_KEY_MODIFIER_COMMAND),
+      callback,
+      controller);
+  }
 }
 
 

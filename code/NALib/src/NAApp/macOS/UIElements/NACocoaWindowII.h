@@ -144,6 +144,8 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 - (void)windowDidChangeBackingProperties:(NSNotification *)notification{    
   NA_UNUSED(notification);
+  na_UpdateWindowScreen((NAWindow*)cocoaWindow, na_GetApplicationScreenWithNativePtr([self screen]));
+  na_RememberWindowPosition((NAWindow*)cocoaWindow);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
     // no super method to be called.
   }
