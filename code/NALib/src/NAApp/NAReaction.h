@@ -14,21 +14,21 @@
 // interface element can react to several commands.
 
 typedef enum{
-  NA_UI_COMMAND_REDRAW = 0,
-  NA_UI_COMMAND_RESHAPE,
-  NA_UI_COMMAND_KEY_DOWN,
-  NA_UI_COMMAND_KEY_UP,
-  NA_UI_COMMAND_MOUSE_DOWN,
-  NA_UI_COMMAND_MOUSE_UP,
-  NA_UI_COMMAND_MOUSE_MOVED,
-  NA_UI_COMMAND_MOUSE_ENTERED,
-  NA_UI_COMMAND_MOUSE_EXITED,
-  NA_UI_COMMAND_TRANSFORMED,
-  NA_UI_COMMAND_CLOSES,
-  NA_UI_COMMAND_PRESSED,
-  NA_UI_COMMAND_EDITED,
-  NA_UI_COMMAND_EDIT_FINISHED,
-  NA_UI_COMMAND_KEYBOARD_SHORTCUT
+  NA_UI_COMMAND_REDRAW = 0,         // redraw
+  NA_UI_COMMAND_RESHAPE,            // reshape
+  NA_UI_COMMAND_KEY_DOWN,           // key
+  NA_UI_COMMAND_KEY_UP,             // key
+  NA_UI_COMMAND_MOUSE_DOWN,         // mouse
+  NA_UI_COMMAND_MOUSE_UP,           // mouse
+  NA_UI_COMMAND_MOUSE_MOVED,        // mouse
+  NA_UI_COMMAND_MOUSE_ENTERED,      // mouse
+  NA_UI_COMMAND_MOUSE_EXITED,       // mouse
+  NA_UI_COMMAND_TRANSFORMED,        // reshape
+  NA_UI_COMMAND_CLOSES,             // reshape
+  NA_UI_COMMAND_PRESSED,            // interaction
+  NA_UI_COMMAND_EDITED,             // interaction
+  NA_UI_COMMAND_EDIT_FINISHED,      // interaction
+  NA_UI_COMMAND_KEYBOARD_SHORTCUT   // key
 } NAUICommand;
 
 

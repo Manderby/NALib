@@ -202,7 +202,7 @@ NA_DEF const NAScreen* naGetApplicationScreenWithRelativePos(NAPos pos) {
     } else if (dist == minDist) {
       if(relativeCenter.x < minCenter.x) {
         newCenterFound = NA_TRUE;
-      } else if(relativeCenter.y < minCenter.y) {
+      } else if((relativeCenter.x == minCenter.x) && (relativeCenter.y < minCenter.y)) {
         newCenterFound = NA_TRUE;
       } 
     }

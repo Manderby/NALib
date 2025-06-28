@@ -214,7 +214,7 @@ ExampleController* createExampleController(){
 
   con->window = naNewWindow(
     "Examples of the NALib UI elements",
-    naMakeRectS(150, 150, WINDOW_WIDTH, WINDOW_HEIGTH),
+    naMakeRectS(WINDOW_POS_X, WINDOW_POS_Y, WINDOW_WIDTH, WINDOW_HEIGTH),
     0);
 
   con->exampleSpace = NA_NULL;
