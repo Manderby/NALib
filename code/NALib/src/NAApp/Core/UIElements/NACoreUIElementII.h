@@ -273,6 +273,26 @@ NA_DEF void naAddUIReaction(
 }
 
 
+#if NA_OS == NA_OS_WINDOWS
+
+// todo: This is just so that the windows version compiles.
+// but should be done the same way as below.
+
+NA_DEF double naGetUIElementUIScale(const void* uiElement) {
+	NA_UNUSED(uiElement);
+	int dpi;
+	HDC hDC = GetDC(NULL);
+	if (hDC) {
+		dpi = GetDeviceCaps(hDC, LOGPIXELSX);
+		ReleaseDC(NULL, hDC);
+	}
+	else {
+		dpi = USER_DEFAULT_SCREEN_DPI;
+	}
+	return (double)dpi / (double)USER_DEFAULT_SCREEN_DPI;
+}
+
+#else
 
 NA_DEF double naGetUIElementUIScale(const void* uiElement) {
   #if NA_DEBUG
@@ -292,7 +312,7 @@ NA_DEF double naGetUIElementUIScale(const void* uiElement) {
   }
 }
 
-
+#endif
 
 NA_DEF const void* naGetUIElementParent(const void* uiElement) {
   #if NA_DEBUG

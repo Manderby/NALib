@@ -15,7 +15,7 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
 
   double uiScale = naGetUIElementUIScale(NA_NULL);
 
-  HFONT nativePtr = CreateFont(
+	HFONT nativePtr = CreateFont(
     (int)(size * uiScale),
     0,
     0,
