@@ -356,9 +356,24 @@ NA_HDEF void na_UpdateApplicationIconPath() {
   // nothing to be done on macOS
 }
 
-NA_DEF NAString* naNewExecutablePath(void) {
+NA_DEF NAString* naNewExecutablePath() {
   return naNewStringWithFormat("%s", [[[NSBundle mainBundle] bundlePath] UTF8String]);
 }
+
+NA_DEF NAString* naNewAppDataPath() {
+  NSArray<NSString *>* path = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+  NAString* appName = naNewApplicationName();
+  NAString* appDataPath = naNewStringWithFormat(
+    "%s%c%s%c",
+    [path[0] UTF8String],
+    NA_PATH_DELIMITER_UNIX,
+    naGetStringUTF8Pointer(appName),
+    NA_PATH_DELIMITER_UNIX);
+  naDelete(appName);
+  return appDataPath;
+}
+
+
 
 // This is free and unencumbered software released into the public domain.
 

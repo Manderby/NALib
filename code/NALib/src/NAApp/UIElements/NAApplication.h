@@ -231,6 +231,9 @@ NA_API NAString* naNewApplicationIconPath(void);
 // Sometimes, one just needs the path of where the executable runs.
 NA_API NAString* naNewExecutablePath(void);
 
+// Returns a path where application data can be stored.
+NA_API NAString* naNewAppDataPath(void);
+
 // The application binary usually resides in some kind of base package folder
 // and resources are located relative to that location. Using the following
 // function, you can retrieve files with a baseBame and a suffix. dir can be

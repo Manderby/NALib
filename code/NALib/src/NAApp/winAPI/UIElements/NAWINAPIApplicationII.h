@@ -643,6 +643,13 @@ NA_DEF NAString* naNewExecutablePath(void) {
 
 
 
+NA_DEF NAString* naNewAppDataPath() {
+  // todo
+  return NA_NULL;
+}
+
+
+
 NA_DEF HICON na_GetWINAPIApplicationIcon(void) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   return app->appIcon;
