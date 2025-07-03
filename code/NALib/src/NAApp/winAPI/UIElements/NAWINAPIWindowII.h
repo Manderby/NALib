@@ -278,7 +278,7 @@ NA_DEF NAWindow* naNewWindow(
   }
 
   winapiWindow->rect = rect;
-  double uiScale = naGetUIElementUIScale(NA_NULL);
+	double uiScale = naGetUIElementUIScale(NA_NULL);
 
   NARect screenRect = naGetMainScreenRect();
 

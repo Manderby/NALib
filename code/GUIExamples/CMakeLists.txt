@@ -109,12 +109,18 @@ target_sources(${TARGET_NAME} PRIVATE ${macOSResourceFiles})
 
 # Define GUI, OpenGL and Metal to be in use and hide the CMake GUI options.
 add_definitions(-DNA_COMPILE_GUI=1)
-add_definitions(-DNA_COMPILE_OPENGL=1)
-add_definitions(-DNA_COMPILE_METAL=1)
 set(COMPILE_NALIB_GUI 1 CACHE INTERNAL "GUI required")
-set(COMPILE_NALIB_OPENGL 1 CACHE INTERNAL "OpenGL required")
-set(COMPILE_NALIB_METAL 1 CACHE INTERNAL "Metal required")
 
+add_definitions(-DNA_COMPILE_OPENGL=1)
+set(COMPILE_NALIB_OPENGL 1 CACHE INTERNAL "OpenGL required")
+
+if (MSVC)
+else()
+	add_definitions(-DNA_COMPILE_METAL=1)
+	set(COMPILE_NALIB_METAL 1 CACHE INTERNAL "Metal required")
+endif()
+
+# Adding NALib.
 set(NALIB_DIR "../NALib")
 target_include_directories(${TARGET_NAME} PRIVATE ${NALIB_DIR}/src)
 add_subdirectory(${NALIB_DIR} NALib)
@@ -128,13 +134,13 @@ target_link_libraries(${TARGET_NAME} PRIVATE NALib)
 find_package(OpenGL REQUIRED)
 target_link_libraries(${TARGET_NAME} PRIVATE ${OPENGL_gl_LIBRARY})
 
-# These lines are necessary to include Metal
-target_link_libraries(${TARGET_NAME} PRIVATE "-framework Metal")
-target_link_libraries(${TARGET_NAME} PRIVATE "-framework QuartzCore")
-
 if (MSVC)
   target_link_libraries(${TARGET_NAME} PRIVATE ComCtl32.lib)
 else()
+	# These lines are necessary to include Metal
+	target_link_libraries(${TARGET_NAME} PRIVATE "-framework Metal")
+	target_link_libraries(${TARGET_NAME} PRIVATE "-framework QuartzCore")
+
   FIND_LIBRARY(CARBON_FRAMEWORK Carbon)
   FIND_LIBRARY(COCOA_FRAMEWORK Cocoa)
   FIND_LIBRARY(UTYPE_FRAMEWORK UniformTypeIdentifiers)

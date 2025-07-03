@@ -184,7 +184,7 @@ NA_DEF NASpace* naNewSpace(NASize size) {
   NAWINAPISpace* winapiSpace = naNew(NAWINAPISpace);
 
   winapiSpace->rect = naMakeRect(naMakePos(0., 0.), size);
-  double uiScale = naGetUIElementUIScale(NA_NULL);
+	double uiScale = naGetUIElementUIScale(NA_NULL);
 
 	HWND nativePtr = CreateWindow(
 		TEXT("NASpace"),
