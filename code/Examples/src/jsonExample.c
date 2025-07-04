@@ -46,10 +46,10 @@ struct Test {
 
 
 
-NAJSONParser* allocateSimpleParser(void){
-  NAJSONParser* parser = naAllocateJSONParser();
+NAJSONWorker* allocateSimpleWorker(void){
+  NAJSONWorker* worker = naAllocateJSONWorker();
 
-  NAJSONRuleSet* simpleRules = naRegisterJSONRuleSet(parser);
+  NAJSONRuleSet* simpleRules = naRegisterJSONRuleSet(worker);
   
   // Reading simple values
   
@@ -62,7 +62,7 @@ NAJSONParser* allocateSimpleParser(void){
   // Reading objects
   
   // Reading an object by creating it with malloc and storing a pointer.
-  NAJSONRuleSet* tinyRules1 = naRegisterJSONRuleSet(parser);
+  NAJSONRuleSet* tinyRules1 = naRegisterJSONRuleSet(worker);
   naAddJSONRule(tinyRules1, "message", naNewJSONRuleString(offsetof(TinyObject, message)));
   naAddJSONRule(simpleRules, "object6", naNewJSONRulePointerObject(
     offsetof(Test, simpleValues.object6),
@@ -70,7 +70,7 @@ NAJSONParser* allocateSimpleParser(void){
     tinyRules1));
 
   // Reading an object directly into an existing object.
-  NAJSONRuleSet* tinyRules2 = naRegisterJSONRuleSet(parser);
+  NAJSONRuleSet* tinyRules2 = naRegisterJSONRuleSet(worker);
   naAddJSONRule(tinyRules2, "message", naNewJSONRuleString(offsetof(Test, simpleValues.object7.message)));
   naAddJSONRule(simpleRules, "object7", naNewJSONRuleObject(tinyRules2));
 
@@ -82,7 +82,7 @@ NAJSONParser* allocateSimpleParser(void){
     
   // reading arrays of simple values
 
-  NAJSONRuleSet* arrayRules = naRegisterJSONRuleSet(parser);
+  NAJSONRuleSet* arrayRules = naRegisterJSONRuleSet(worker);
   naAddJSONRule(arrayRules, "values1", naNewJSONRuleFixedArrayInt32(
     offsetof(Test, arrayValues.values1),
     /*elementCount:*/ 5));
@@ -126,17 +126,17 @@ NAJSONParser* allocateSimpleParser(void){
     sizeof(TinyObject),
     naNewJSONRuleObject(tinyRules1)));
 
-  NAJSONRuleSet* baseRules = naRegisterJSONRuleSet(parser);
+  NAJSONRuleSet* baseRules = naRegisterJSONRuleSet(worker);
   naAddJSONRule(baseRules, "SimpleObject", naNewJSONRuleObject(simpleRules));
   naAddJSONRule(baseRules, "ArraysObject", naNewJSONRuleObject(arrayRules));
 
   // The whole file contains one (unnamed) object. As this is the last ruleSet
   // being registered, it will automatically serve as the initial ruleSet when
   // parsing.
-  NAJSONRuleSet* fileRules = naRegisterJSONRuleSet(parser);
+  NAJSONRuleSet* fileRules = naRegisterJSONRuleSet(worker);
   naAddJSONRule(fileRules, "", naNewJSONRuleObject(baseRules));
 
-  return parser;
+  return worker;
 }
 
 
@@ -163,9 +163,9 @@ int jsonExample(void){
 
   printf("Time: %f milliseconds to read file\n", 1000. * naGetDateTimeDifference(&now2, &now1));
 
-  // Creating a parser which reads into the Test structure.
+  // Creating a worker which reads into the Test structure.
   Test test;
-  NAJSONParser* simpleParser = allocateSimpleParser();
+  NAJSONWorker* simpleWorker = allocateSimpleWorker();
 
   // Running a benchmark
   #define TESTCOUNT 1000
@@ -173,7 +173,7 @@ int jsonExample(void){
   for(int i = 0; i < TESTCOUNT; ++i){
   
     // Parse the buffer into the test variable.
-    naParseJSONBuffer(simpleParser, &test, buf, bufferSize + 1);
+    naParseJSONBuffer(simpleWorker, &test, buf, bufferSize + 1);
     
     // Deleting the objects from the memory again.
     naFree(test.simpleValues.member5);
@@ -191,8 +191,8 @@ int jsonExample(void){
 
   printf("Time: %f milliseconds to parse file\n", 1000. * naGetDateTimeDifference(&now4, &now3) / (double)TESTCOUNT);
 
-  // Deallocating the parser also deallocates all rules and ruleSets.
-  naDeallocateJSONParser(simpleParser);
+  // Deallocating the worker also deallocates all rules and ruleSets.
+  naDeallocateJSONWorker(simpleWorker);
 
   naFree(buf);
 

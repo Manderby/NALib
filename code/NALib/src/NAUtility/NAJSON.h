@@ -9,53 +9,58 @@
 #include "../NABase/NABase.h"
 #include "../NAStruct/NAStack.h"
 
-// This file provides a very simple JSON parser.
+// This file provides a very simple JSON worker: Parser and writer.
 //
-// You define rules where to store data and just let the parser run. In the
+// You define rules where to store data and just let the worker run. In the
 // end, your storage will be filled with the contents desired. If you haven't
 // defined a rule for a JSON entry, it will not be stored.
 //
-// Note that this is by no means a standard compliant parser. Many things are
-// allowed which should not be.
+// Note that this is by no means a standard compliant parser/writer.
+// Many things are allowed which should not be.
 
 
 
-NA_PROTOTYPE(NAJSONParser);
+NA_PROTOTYPE(NAJSONWorker);
 NA_PROTOTYPE(NAJSONRule);
 NA_PROTOTYPE(NAJSONRuleSet);
+NA_PROTOTYPE(NABuffer);
 
 
 
-// Allocate and deallocate JSON parsers.
+// Allocate and deallocate JSON workers.
 // After allocation, you create RuleSets to define, where to place the parsed
 // items. See further below.
 
-NAJSONParser* naAllocateJSONParser(void);
-void naDeallocateJSONParser(NAJSONParser* parser);
+NAJSONWorker* naAllocateJSONWorker(void);
+void naDeallocateJSONWorker(NAJSONWorker* worker);
 
 // Parses the given buffer into the given object.
 // You can send byteCount = 0 to automatically determine the buffer size.
 // Important: The buffer must end with a '\0'
 
 void naParseJSONBuffer(
-  NAJSONParser* parser,
+  NAJSONWorker* worker,
   void* object,
   const void* buf,
   size_t byteCount);
+
+NABuffer* naCreateBufferWithJSON(
+  NAJSONWorker* worker,
+  void* object);
 
 
 
 // /////////////////
 // RuleSets and Rules
 
-// Creates a new RuleSet stored in the given parser. When the parser gets
+// Creates a new RuleSet stored in the given worker. When the worker gets
 // deallocated, all rule sets will be deallocated too.
 //
-// The last ruleSet being added to a parser is automatically defined as the
+// The last ruleSet being added to a worker is automatically defined as the
 // initial ruleSet.
 
 NA_API NAJSONRuleSet* naRegisterJSONRuleSet(
-  NAJSONParser* parser);
+  NAJSONWorker* worker);
 
 // Adds a rule to the given ruleSet.
 // For example, to store an Integer which comes from a JSON entry with the key
@@ -74,7 +79,7 @@ NA_API void naAddJSONRule(
 
 // Following are the rules you can create. Note that the returned pointer shall
 // be used for one naAddJSONRule only. The rule will automatically deallocate
-// when the ruleSet is deallocated, which in turn deallocates when the parser
+// when the ruleSet is deallocated, which in turn deallocates when the worker
 // is deallocated.
 //
 // The offset can be computed by offsetof(MyStruct, member).
