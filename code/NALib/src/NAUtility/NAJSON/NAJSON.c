@@ -1464,6 +1464,7 @@ NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABuf
     const NA_JSONFixedArrayRule* fixedArrayRule = (const NA_JSONFixedArrayRule*)(ruleSet->rules[i]);
     const NA_JSONObjectRule* objectRule = (const NA_JSONObjectRule*)(ruleSet->rules[i]);
     const NA_JSONPointerObjectRule* pointerObjectRule = (const NA_JSONPointerObjectRule*)(ruleSet->rules[i]);
+    void* subObject = NA_NULL;
 
     switch(ruleSet->rules[i]->type) {
     case NA_JSON_RULE_BOOL:
@@ -1551,23 +1552,31 @@ NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABuf
         "}" NA_NL);
       break;
 
-//    case NA_JSON_RULE_POINTER_OBJECT:
-//      naWriteBufferStringWithFormat(bufIt, "%s", ident);
-//      na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
-//      naWriteBufferStringWithFormat(
-//        bufIt,
-//        "{" NA_NL);
-//      na_WriteJSONRuleSetObject(
-//        worker,
-//        (NAByte*)object + pointerObjectRule->memberOffset,
-//        bufIt,
-//        pointerObjectRule->ruleSet,
-//        naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, ident));
-//      naWriteBufferStringWithFormat(bufIt, "%s", ident);
-//      naWriteBufferStringWithFormat(
-//        bufIt,
-//        "}" NA_NL);
-//      break;
+    case NA_JSON_RULE_POINTER_OBJECT:
+      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+      na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
+      subObject = *(void**)((NAByte*)object + pointerObjectRule->memberOffset);
+      if(!subObject) {
+        naWriteBufferStringWithFormat(
+          bufIt,
+          "null" NA_NL);
+      }else{
+        naWriteBufferStringWithFormat(
+          bufIt,
+          "{" NA_NL);
+        na_WriteJSONRuleSetObject(
+          worker,
+          subObject,
+          bufIt,
+          pointerObjectRule->ruleSet,
+          naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, ident));
+        naWriteBufferStringWithFormat(bufIt, "%s", ident);
+        naWriteBufferStringWithFormat(
+          bufIt,
+          "}" NA_NL);
+      }
+      break;
+      
 
     default:
       break;

@@ -184,18 +184,18 @@ int jsonExample(void){
 
   // Running a benchmark
   #define TESTCOUNT 1000
-  NADateTime now3 = naMakeDateTimeNow();
-  for(int i = 0; i < TESTCOUNT; ++i){
-  
-    // Parse the buffer into the test variable.
-    naParseJSONBuffer(simpleWorker, &test, buf, bufferSize + 1);
-    
-    // Deleting the objects from the memory again.
-    cleanTest(&test);
-  }
-  NADateTime now4 = naMakeDateTimeNow();
-
-  printf("Time: %f milliseconds to parse file\n", 1000. * naGetDateTimeDifference(&now4, &now3) / (double)TESTCOUNT);
+//  NADateTime now3 = naMakeDateTimeNow();
+//  for(int i = 0; i < TESTCOUNT; ++i){
+//  
+//    // Parse the buffer into the test variable.
+//    naParseJSONBuffer(simpleWorker, &test, buf, bufferSize + 1);
+//    
+//    // Deleting the objects from the memory again.
+//    cleanTest(&test);
+//  }
+//  NADateTime now4 = naMakeDateTimeNow();
+//
+//  printf("Time: %f milliseconds to parse file\n", 1000. * naGetDateTimeDifference(&now4, &now3) / (double)TESTCOUNT);
 
   printf("Writing JSON file...\n");
 
@@ -208,7 +208,7 @@ int jsonExample(void){
     jsonBuffer = naCreateBufferWithJSON(simpleWorker, &test);
   }
   NADateTime now5 = naMakeDateTimeNow();
-  printf("Time: %f milliseconds to create file contents\n", 1000. * naGetDateTimeDifference(&now5, &now4) / (double)TESTCOUNT);
+//  printf("Time: %f milliseconds to create file contents\n", 1000. * naGetDateTimeDifference(&now5, &now4) / (double)TESTCOUNT);
   
   naFixBufferRange(jsonBuffer);
   NAFile* outFile = naCreateFileWritingPath("JSONOutput.txt", NA_FILEMODE_DEFAULT);
