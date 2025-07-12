@@ -70,9 +70,7 @@ struct NA_JSONMemberRule{
 NA_PROTOTYPE(NA_JSONFixedArrayRule);
 struct NA_JSONFixedArrayRule{
   NAJSONRule baseRule;
-  #if NA_DEBUG
-    size_t elementCount;
-  #endif
+  size_t elementCount;
   NA_JSONDataType contentType;
   size_t structSize;
   NABool storeAsPointer;
@@ -303,14 +301,9 @@ NA_DEF NAJSONRule* naNewJSONRuleFixedArray(
   size_t structSize,
   NAJSONRule* subRule)
 {
-  #if !NA_DEBUG
-    NA_UNUSED(elementCount);
-  #endif
   NA_JSONFixedArrayRule* rule = naAlloc(NA_JSONFixedArrayRule);
   na_initJSONRule(&rule->baseRule, byteOffset, NA_JSON_RULE_FIXED_ARRAY);
-  #if NA_DEBUG
-    rule->elementCount = elementCount;
-  #endif
+  rule->elementCount = elementCount;
   rule->contentType = NA_JSON_RULE_UNDEFINED;
   rule->structSize = structSize;
   rule->storeAsPointer = NA_FALSE;
@@ -325,14 +318,9 @@ NA_DEF NAJSONRule* naNewJSONRuleFixedPointerArray(
   size_t structSize,
   NAJSONRule* subRule)
 {
-  #if !NA_DEBUG
-    NA_UNUSED(elementCount);
-  #endif
   NA_JSONFixedArrayRule* rule = naAlloc(NA_JSONFixedArrayRule);
   na_initJSONRule(&rule->baseRule, byteOffset, NA_JSON_RULE_FIXED_ARRAY);
-  #if NA_DEBUG
-    rule->elementCount = elementCount;
-  #endif
+  rule->elementCount = elementCount;
   rule->contentType = NA_JSON_RULE_UNDEFINED;
   rule->structSize = structSize;
   rule->storeAsPointer = NA_TRUE;
@@ -449,7 +437,7 @@ NA_DEF NAJSONRule* naNewJSONRuleDynamicArrayInt32(
     byteOffset,
     countOffset,
     sizeof(int32),
-    NA_NULL);
+    naNewJSONRuleInt32(0));
   rule->contentType = NA_JSON_RULE_INT32;
   return &rule->baseRule;
 }
@@ -462,7 +450,7 @@ NA_DEF NAJSONRule* naNewJSONRuleDynamicArrayInt64(
     byteOffset,
     countOffset,
     sizeof(int64),
-    NA_NULL);
+    naNewJSONRuleInt64(0));
   rule->contentType = NA_JSON_RULE_INT64;
   return &rule->baseRule;
 }
@@ -475,7 +463,7 @@ NA_DEF NAJSONRule* naNewJSONRuleDynamicArrayDouble(
     byteOffset,
     countOffset,
     sizeof(double),
-    NA_NULL);
+    naNewJSONRuleDouble(0));
   rule->contentType = NA_JSON_RULE_DOUBLE;
   return &rule->baseRule;
 }
@@ -488,7 +476,7 @@ NA_DEF NAJSONRule* naNewJSONRuleDynamicArrayFloat(
     byteOffset,
     countOffset,
     sizeof(float),
-    NA_NULL);
+    naNewJSONRuleFloat(0));
   rule->contentType = NA_JSON_RULE_FLOAT;
   return &rule->baseRule;
 }
@@ -501,7 +489,7 @@ NA_DEF NAJSONRule* naNewJSONRuleDynamicArrayString(
     byteOffset,
     countOffset,
     sizeof(NAUTF8Char*),
-    NA_NULL);
+    naNewJSONRuleString(0));
   rule->contentType = NA_JSON_RULE_STRING;
   return &rule->baseRule;
 }
@@ -1114,10 +1102,8 @@ NA_HDEF void na_ParseJSONFixedArray(NAJSONWorker* worker, void* object, const NA
     }
   }
 
-  #if NA_DEBUG
-    if(count < elementRule->elementCount)
-      naError("Not all elements of the array are filled. Remainder is uninitialized.");
-  #endif
+  if(count < elementRule->elementCount)
+    naError("Not all elements of the array are filled. Remainder is uninitialized.");
 }
 
 NA_HDEF void na_ParseJSONDynamicArray(NAJSONWorker* worker, void* object, const NA_JSONDynamicArrayRule* elementRule) {
@@ -1456,6 +1442,7 @@ NA_HAPI void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABuf
 NA_HDEF void na_WriteJSONRuleSetElement(NAJSONWorker* worker, void* element, NABufferIterator* bufIt, const NAJSONRule* rule, NAUTF8Char* indent) {
   const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
   const NA_JSONFixedArrayRule* fixedArrayRule = (const NA_JSONFixedArrayRule*)rule;
+  const NA_JSONDynamicArrayRule* dynamicArrayRule = (const NA_JSONDynamicArrayRule*)rule;
   const NA_JSONObjectRule* objectRule = (const NA_JSONObjectRule*)rule;
   const NA_JSONPointerObjectRule* pointerObjectRule = (const NA_JSONPointerObjectRule*)rule;
   void** subObject = NA_NULL;
@@ -1524,6 +1511,30 @@ NA_HDEF void na_WriteJSONRuleSetElement(NAJSONWorker* worker, void* element, NAB
         (fixedArrayRule->storeAsPointer) ? *subObject : subObject,
         bufIt,
         fixedArrayRule->subRule,
+        naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, indent));
+      naWriteBufferStringWithFormat(
+        bufIt,
+        (a < count - 1) ? "," NA_NL : NA_NL);
+    }
+    naWriteBufferStringWithFormat(bufIt, "%s", indent);
+    naWriteBufferStringWithFormat(
+      bufIt,
+      "]");
+    break;
+
+  case NA_JSON_RULE_DYNAMIC_ARRAY:
+    naWriteBufferStringWithFormat(bufIt, "%s", indent);
+    naWriteBufferStringWithFormat(
+      bufIt,
+      "[" NA_NL);
+    count = *(size_t*)((NAByte*)element + dynamicArrayRule->countOffset - dynamicArrayRule->baseRule.byteOffset);
+    for(size_t a = 0; a < count; ++a) {
+      subObject = (void**)(*(NAByte**)element + dynamicArrayRule->structSize * a);
+      na_WriteJSONRuleSetElement(
+        worker,
+        (dynamicArrayRule->storeAsPointer) ? *subObject : subObject,
+        bufIt,
+        dynamicArrayRule->subRule,
         naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, indent));
       naWriteBufferStringWithFormat(
         bufIt,
