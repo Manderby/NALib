@@ -1458,7 +1458,10 @@ NA_HDEF void na_WriteJSONKey(NABufferIterator* bufIt, NA_JSONString* key) {
 #define NA_JSON_INDENT "  "
 
 NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABufferIterator* bufIt, const NAJSONRuleSet* ruleSet, NAUTF8Char* ident) {
-  for(size_t i = 0; i < naGetStackCount(&ruleSet->ruleStack); ++i) {
+  size_t count = naGetStackCount(&ruleSet->ruleStack);
+  for(size_t i = 0; i < count; ++i) {
+
+    NAUTF8Char* endLine = (i < count - 1) ? "," NA_NL : NA_NL;
 
     const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)(ruleSet->rules[i]);
     const NA_JSONFixedArrayRule* fixedArrayRule = (const NA_JSONFixedArrayRule*)(ruleSet->rules[i]);
@@ -1472,48 +1475,54 @@ NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABuf
       na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
       naWriteBufferStringWithFormat(
         bufIt,
-        "%s" NA_NL,
-        *((NABool*)((NAByte*)object + memberRule->memberOffset)) ? "true" : "false");
+        "%s%s",
+        *((NABool*)((NAByte*)object + memberRule->memberOffset)) ? "true" : "false",
+        endLine);
       break;
     case NA_JSON_RULE_INT32:
       naWriteBufferStringWithFormat(bufIt, "%s", ident);
       na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
       naWriteBufferStringWithFormat(
         bufIt,
-        "%d" NA_NL,
-        *((int32*)((NAByte*)object + memberRule->memberOffset)));
+        "%d%s",
+        *((int32*)((NAByte*)object + memberRule->memberOffset)),
+        endLine);
       break;
     case NA_JSON_RULE_INT64:
       naWriteBufferStringWithFormat(bufIt, "%s", ident);
       na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
       naWriteBufferStringWithFormat(
         bufIt,
-        "%ld" NA_NL,
-        *((int64*)((NAByte*)object + memberRule->memberOffset)));
+        "%ld%s",
+        *((int64*)((NAByte*)object + memberRule->memberOffset)),
+        endLine);
       break;
     case NA_JSON_RULE_DOUBLE:
       naWriteBufferStringWithFormat(bufIt, "%s", ident);
       na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
       naWriteBufferStringWithFormat(
         bufIt,
-        "%g" NA_NL,
-        *((double*)((NAByte*)object + memberRule->memberOffset)));
+        "%g%s",
+        *((double*)((NAByte*)object + memberRule->memberOffset)),
+        endLine);
       break;
     case NA_JSON_RULE_FLOAT:
       naWriteBufferStringWithFormat(bufIt, "%s", ident);
       na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
       naWriteBufferStringWithFormat(
         bufIt,
-        "%g" NA_NL,
-        (double)*((float*)((NAByte*)object + memberRule->memberOffset)));
+        "%g%s",
+        (double)*((float*)((NAByte*)object + memberRule->memberOffset)),
+        endLine);
       break;
     case NA_JSON_RULE_STRING:
       naWriteBufferStringWithFormat(bufIt, "%s", ident);
       na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
       naWriteBufferStringWithFormat(
         bufIt,
-        "\"%s\"" NA_NL,
-        *(NAUTF8Char**)((NAByte*)object + memberRule->memberOffset));
+        "\"%s\"%s",
+        *(NAUTF8Char**)((NAByte*)object + memberRule->memberOffset),
+        endLine);
       break;
 
 //    case NA_JSON_RULE_FIXED_ARRAY:
@@ -1531,7 +1540,8 @@ NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABuf
 //      naWriteBufferStringWithFormat(bufIt, "%s", ident);
 //      naWriteBufferStringWithFormat(
 //        bufIt,
-//        "]" NA_NL);
+//        "]%s",
+//        endLine);
 //      break;
 
     case NA_JSON_RULE_OBJECT:
@@ -1549,7 +1559,8 @@ NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABuf
       naWriteBufferStringWithFormat(bufIt, "%s", ident);
       naWriteBufferStringWithFormat(
         bufIt,
-        "}" NA_NL);
+        "}%s",
+        endLine);
       break;
 
     case NA_JSON_RULE_POINTER_OBJECT:
@@ -1559,7 +1570,8 @@ NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABuf
       if(!subObject) {
         naWriteBufferStringWithFormat(
           bufIt,
-          "null" NA_NL);
+          "null%s",
+          endLine);
       }else{
         naWriteBufferStringWithFormat(
           bufIt,
@@ -1573,7 +1585,8 @@ NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABuf
         naWriteBufferStringWithFormat(bufIt, "%s", ident);
         naWriteBufferStringWithFormat(
           bufIt,
-          "}" NA_NL);
+          "}%s",
+          endLine);
       }
       break;
       
