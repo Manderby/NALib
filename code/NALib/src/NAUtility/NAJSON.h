@@ -100,8 +100,7 @@ NA_API NAJSONRule* naNewJSONRuleString(size_t memberOffset);
 //
 // The Object function allows to store an object directly as part of another
 // object. For example MyContainer{..., MyObject obj, ...}. In that case, no
-// memory needs to be allocated but the rules of the given subRuleSet must use
-// an appropriate member offset like offsetof(MyContainer, obj.value).
+// memory needs to be allocated.
 //
 // The PointerObject function allows to store an object indirectly in a pointer.
 // The memberOffset gives the offset to that member and the structSize is the
@@ -110,7 +109,8 @@ NA_API NAJSONRule* naNewJSONRuleString(size_t memberOffset);
 // with malloc.
 
 NA_API NAJSONRule* naNewJSONRuleObject(
-  const NAJSONRuleSet* subRuleSet);
+  const NAJSONRuleSet* subRuleSet,
+  size_t byteOffset);
   
 NA_API NAJSONRule* naNewJSONRulePointerObject(
   size_t memberOffset,

@@ -71,8 +71,8 @@ NAJSONWorker* allocateSimpleWorker(void){
 
   // Reading an object directly into an existing object.
   NAJSONRuleSet* tinyRules2 = naRegisterJSONRuleSet(worker);
-  naAddJSONRule(tinyRules2, "message", naNewJSONRuleString(offsetof(Test, simpleValues.object7.message)));
-  naAddJSONRule(simpleRules, "object7", naNewJSONRuleObject(tinyRules2));
+  naAddJSONRule(tinyRules2, "message", naNewJSONRuleString(offsetof(TinyObject, message)));
+  naAddJSONRule(simpleRules, "object7", naNewJSONRuleObject(tinyRules2, offsetof(Test, simpleValues.object7)));
 
   // Reading an object which turns out to be null.
   naAddJSONRule(simpleRules, "object8", naNewJSONRulePointerObject(
@@ -103,38 +103,38 @@ NAJSONWorker* allocateSimpleWorker(void){
     offsetof(Test, arrayValues.objects5),
     /*elementCount:*/ 5,
     sizeof(TinyObject),
-    naNewJSONRuleObject(tinyRules1)));
+    naNewJSONRuleObject(tinyRules1, 0)));
 
   // Reading objects into a fixed array
   naAddJSONRule(arrayRules, "values6", naNewJSONRuleFixedPointerArray(
     offsetof(Test, arrayValues.objects6),
     /*elementCount:*/ 5,
     sizeof(TinyObject),
-    naNewJSONRuleObject(tinyRules1)));
+    naNewJSONRuleObject(tinyRules1, 0)));
 
   // Reading objects into a dynamic array
   naAddJSONRule(arrayRules, "values7", naNewJSONRuleDynamicArray(
     offsetof(Test, arrayValues.objects7),
     offsetof(Test, arrayValues.count7),
     sizeof(TinyObject),
-    naNewJSONRuleObject(tinyRules1)));
+    naNewJSONRuleObject(tinyRules1, 0)));
 
   // Reading objects as poitners into a dynamic array
   naAddJSONRule(arrayRules, "values8", naNewJSONRuleDynamicPointerArray(
     offsetof(Test, arrayValues.objects8),
     offsetof(Test, arrayValues.count8),
     sizeof(TinyObject),
-    naNewJSONRuleObject(tinyRules1)));
+    naNewJSONRuleObject(tinyRules1, 0)));
 
   NAJSONRuleSet* baseRules = naRegisterJSONRuleSet(worker);
-  naAddJSONRule(baseRules, "SimpleObject", naNewJSONRuleObject(simpleRules));
-  naAddJSONRule(baseRules, "ArraysObject", naNewJSONRuleObject(arrayRules));
+  naAddJSONRule(baseRules, "SimpleObject", naNewJSONRuleObject(simpleRules, 0));
+  naAddJSONRule(baseRules, "ArraysObject", naNewJSONRuleObject(arrayRules, 0));
 
   // The whole file contains one (unnamed) object. As this is the last ruleSet
   // being registered, it will automatically serve as the initial ruleSet when
   // parsing.
   NAJSONRuleSet* fileRules = naRegisterJSONRuleSet(worker);
-  naAddJSONRule(fileRules, "", naNewJSONRuleObject(baseRules));
+  naAddJSONRule(fileRules, "", naNewJSONRuleObject(baseRules, 0));
 
   return worker;
 }
@@ -184,18 +184,18 @@ int jsonExample(void){
 
   // Running a benchmark
   #define TESTCOUNT 1000
-//  NADateTime now3 = naMakeDateTimeNow();
-//  for(int i = 0; i < TESTCOUNT; ++i){
-//  
-//    // Parse the buffer into the test variable.
-//    naParseJSONBuffer(simpleWorker, &test, buf, bufferSize + 1);
-//    
-//    // Deleting the objects from the memory again.
-//    cleanTest(&test);
-//  }
-//  NADateTime now4 = naMakeDateTimeNow();
-//
-//  printf("Time: %f milliseconds to parse file\n", 1000. * naGetDateTimeDifference(&now4, &now3) / (double)TESTCOUNT);
+  NADateTime now3 = naMakeDateTimeNow();
+  for(int i = 0; i < TESTCOUNT; ++i){
+  
+    // Parse the buffer into the test variable.
+    naParseJSONBuffer(simpleWorker, &test, buf, bufferSize + 1);
+    
+    // Deleting the objects from the memory again.
+    cleanTest(&test);
+  }
+  NADateTime now4 = naMakeDateTimeNow();
+
+  printf("Time: %f milliseconds to parse file\n", 1000. * naGetDateTimeDifference(&now4, &now3) / (double)TESTCOUNT);
 
   printf("Writing JSON file...\n");
 
@@ -203,12 +203,12 @@ int jsonExample(void){
   naParseJSONBuffer(simpleWorker, &test, buf, bufferSize + 1);
   
   NABuffer* jsonBuffer = NA_NULL;
-  for(int i = 0; i < TESTCOUNT; ++i){
-    if(jsonBuffer) { naRelease(jsonBuffer); }
+//  for(int i = 0; i < TESTCOUNT; ++i){
+//    if(jsonBuffer) { naRelease(jsonBuffer); }
     jsonBuffer = naCreateBufferWithJSON(simpleWorker, &test);
-  }
+//  }
   NADateTime now5 = naMakeDateTimeNow();
-//  printf("Time: %f milliseconds to create file contents\n", 1000. * naGetDateTimeDifference(&now5, &now4) / (double)TESTCOUNT);
+  printf("Time: %f milliseconds to create file contents\n", 1000. * naGetDateTimeDifference(&now5, &now4) / (double)TESTCOUNT);
   
   naFixBufferRange(jsonBuffer);
   NAFile* outFile = naCreateFileWritingPath("JSONOutput.txt", NA_FILEMODE_DEFAULT);
