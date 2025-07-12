@@ -56,7 +56,7 @@ NAJSONWorker* allocateSimpleWorker(void){
   naAddJSONRule(simpleRules, "value1", naNewJSONRuleInt64(offsetof(Test, simpleValues.member1)));
   naAddJSONRule(simpleRules, "value2", naNewJSONRuleFloat(offsetof(Test, simpleValues.member2)));
   naAddJSONRule(simpleRules, "value3", naNewJSONRuleDouble(offsetof(Test, simpleValues.member3)));
-  naAddJSONRule(simpleRules, "value4", naNewJSONRuleInt32(offsetof(Test, simpleValues.member4)));
+  naAddJSONRule(simpleRules, "value4", naNewJSONRuleBool(offsetof(Test, simpleValues.member4)));
   naAddJSONRule(simpleRules, "value5", naNewJSONRuleString(offsetof(Test, simpleValues.member5)));
   
   // Reading objects
@@ -140,11 +140,26 @@ NAJSONWorker* allocateSimpleWorker(void){
 }
 
 
+void cleanTest(Test* test) {
+  naFree(test->simpleValues.member5);
+  naFree(test->simpleValues.object8);
+  naFree(test->arrayValues.values2);
+  for(size_t i = 0; i < test->arrayValues.count4; ++i)
+    naFree(test->arrayValues.values4[i]);
+  naFree(test->arrayValues.values4);
+  naFree(test->arrayValues.objects7);
+  for(size_t i = 0; i < test->arrayValues.count8; ++i)
+    naFree(test->arrayValues.objects8[i]);
+  naFree(test->arrayValues.objects8);
+}
+
 
 int jsonExample(void){
 
   naStartRuntime();
   
+  printf("Reading JSON file...\n");
+
   // Loading the buffer from a file.
   NADateTime now1 = naMakeDateTimeNow();
   NAFile* file = naCreateFileReadingPath("JSONinput.txt");
@@ -176,20 +191,36 @@ int jsonExample(void){
     naParseJSONBuffer(simpleWorker, &test, buf, bufferSize + 1);
     
     // Deleting the objects from the memory again.
-    naFree(test.simpleValues.member5);
-    naFree(test.simpleValues.object8);
-    naFree(test.arrayValues.values2);
-    for(size_t i = 0; i < test.arrayValues.count4; ++i)
-      naFree(test.arrayValues.values4[i]);
-    naFree(test.arrayValues.values4);
-    naFree(test.arrayValues.objects7);
-    for(size_t i = 0; i < test.arrayValues.count8; ++i)
-      naFree(test.arrayValues.objects8[i]);
-    naFree(test.arrayValues.objects8);
+    cleanTest(&test);
   }
   NADateTime now4 = naMakeDateTimeNow();
 
   printf("Time: %f milliseconds to parse file\n", 1000. * naGetDateTimeDifference(&now4, &now3) / (double)TESTCOUNT);
+
+  printf("Writing JSON file...\n");
+
+  // Prepare the data for writing.
+  naParseJSONBuffer(simpleWorker, &test, buf, bufferSize + 1);
+  
+  NABuffer* jsonBuffer = NA_NULL;
+  for(int i = 0; i < TESTCOUNT; ++i){
+    if(jsonBuffer) { naRelease(jsonBuffer); }
+    jsonBuffer = naCreateBufferWithJSON(simpleWorker, &test);
+  }
+  NADateTime now5 = naMakeDateTimeNow();
+  printf("Time: %f milliseconds to create file contents\n", 1000. * naGetDateTimeDifference(&now5, &now4) / (double)TESTCOUNT);
+  
+  naFixBufferRange(jsonBuffer);
+  NAFile* outFile = naCreateFileWritingPath("JSONOutput.txt", NA_FILEMODE_DEFAULT);
+  naWriteBufferToFile(jsonBuffer, outFile);
+
+  NADateTime now6 = naMakeDateTimeNow();
+  printf("Time: %f milliseconds to write file\n", 1000. * naGetDateTimeDifference(&now6, &now5));
+
+  cleanTest(&test);
+
+  naRelease(outFile);
+  naRelease(jsonBuffer);
 
   // Deallocating the worker also deallocates all rules and ruleSets.
   naDeallocateJSONWorker(simpleWorker);

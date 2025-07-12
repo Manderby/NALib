@@ -34,6 +34,7 @@ typedef enum{
 
 typedef enum{
   NA_JSON_RULE_UNDEFINED,
+  NA_JSON_RULE_BOOL,
   NA_JSON_RULE_INT32,
   NA_JSON_RULE_INT64,
   NA_JSON_RULE_DOUBLE,
@@ -252,6 +253,14 @@ NA_DEF void na_initJSONRule(NAJSONRule* rule, NA_JSONDataType type) {
   #if NA_DEBUG
     rule->hasBeenAdded = NA_FALSE;
   #endif
+}
+
+NA_DEF NAJSONRule* naNewJSONRuleBool(size_t memberOffset) {
+  NA_JSONMemberRule* rule = naAlloc(NA_JSONMemberRule);
+  na_initJSONRule(&rule->baseRule, NA_JSON_RULE_BOOL);
+  rule->memberOffset = memberOffset;
+
+  return &rule->baseRule;
 }
 
 NA_DEF NAJSONRule* naNewJSONRuleInt32(size_t memberOffset) {
@@ -1028,6 +1037,10 @@ NA_HDEF void na_ParseJSONFixedArray(NAJSONWorker* worker, void* object, const NA
     switch(worker->parseStatus) {
     case NA_JSON_PARSE_BOOLEAN:
       switch(elementRule->contentType) {
+      case NA_JSON_RULE_BOOL:
+        na_incArrayCount();
+        *(NABool*)arrayPtr = worker->boolean;
+        break;
       case NA_JSON_RULE_INT32:
         na_incArrayCount();
         *(int32*)arrayPtr = (int32)worker->boolean;
@@ -1044,6 +1057,10 @@ NA_HDEF void na_ParseJSONFixedArray(NAJSONWorker* worker, void* object, const NA
       
     case NA_JSON_PARSE_NUMBER:
       switch(elementRule->contentType) {
+      case NA_JSON_RULE_BOOL:
+        na_incArrayCount();
+        *(NABool*)arrayPtr = (NABool)worker->number;
+        break;
       case NA_JSON_RULE_INT32:
         na_incArrayCount();
         *(int32*)arrayPtr = (int32)worker->number;
@@ -1127,10 +1144,54 @@ NA_HDEF void na_ParseJSONDynamicArray(NAJSONWorker* worker, void* object, const 
 
     switch(worker->parseStatus) {
     case NA_JSON_PARSE_BOOLEAN:
+      switch(elementRule->contentType) {
+      case NA_JSON_RULE_BOOL:
+        if(elementRule->storeAsPointer) {
+          NABool** curNumberPtrPtr = naPushStack(&elementStack);
+          *curNumberPtrPtr = naMalloc(sizeof(NABool));
+          **curNumberPtrPtr = worker->boolean;
+        }else{
+          NABool* curNumberPtr = naPushStack(&elementStack);
+          *curNumberPtr = worker->boolean;
+        }
+        break;
+      case NA_JSON_RULE_INT32:
+        if(elementRule->storeAsPointer) {
+          int32** curNumberPtrPtr = naPushStack(&elementStack);
+          *curNumberPtrPtr = naMalloc(sizeof(int32));
+          **curNumberPtrPtr = (int32)worker->boolean;
+        }else{
+          int32* curNumberPtr = naPushStack(&elementStack);
+          *curNumberPtr = (int32)worker->boolean;
+        }
+        break;
+      case NA_JSON_RULE_INT64:
+        if(elementRule->storeAsPointer) {
+          int64** curNumberPtrPtr = naPushStack(&elementStack);
+          *curNumberPtrPtr = naMalloc(sizeof(int64));
+          **curNumberPtrPtr = naCastDoubleToi64(worker->boolean);
+        }else{
+          int64* curNumberPtr = naPushStack(&elementStack);
+          *curNumberPtr = naCastDoubleToi64(worker->boolean);
+        }
+        break;
+      default:
+        break;
+      }
       break;
       
     case NA_JSON_PARSE_NUMBER:
       switch(elementRule->contentType) {
+      case NA_JSON_RULE_BOOL:
+        if(elementRule->storeAsPointer) {
+          NABool** curNumberPtrPtr = naPushStack(&elementStack);
+          *curNumberPtrPtr = naMalloc(sizeof(NABool));
+          **curNumberPtrPtr = (NABool)worker->number;
+        }else{
+          NABool* curNumberPtr = naPushStack(&elementStack);
+          *curNumberPtr = (NABool)worker->number;
+        }
+        break;
       case NA_JSON_RULE_INT32:
         if(elementRule->storeAsPointer) {
           int32** curNumberPtrPtr = naPushStack(&elementStack);
@@ -1290,7 +1351,8 @@ NA_HDEF void na_ParseJSONRuleSetObject(NAJSONWorker* worker, void* object, const
     switch(worker->parseStatus) {
     case NA_JSON_PARSE_NULL:
       #if NA_DEBUG
-        if(  (na_findJSONRule(ruleSet, NA_JSON_RULE_INT32, &worker->key))
+        if(  (na_findJSONRule(ruleSet, NA_JSON_RULE_BOOL, &worker->key))
+          || (na_findJSONRule(ruleSet, NA_JSON_RULE_INT32, &worker->key))
           || (na_findJSONRule(ruleSet, NA_JSON_RULE_INT64, &worker->key))
           || (na_findJSONRule(ruleSet, NA_JSON_RULE_DOUBLE, &worker->key))
           || (na_findJSONRule(ruleSet, NA_JSON_RULE_FLOAT, &worker->key))
@@ -1310,9 +1372,12 @@ NA_HDEF void na_ParseJSONRuleSetObject(NAJSONWorker* worker, void* object, const
       break;
 
     case NA_JSON_PARSE_BOOLEAN:
-      if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_INT32, &worker->key))) {
+      if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_BOOL, &worker->key))) {
         const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
-        *((int32*)((NAByte*)object + memberRule->memberOffset)) = worker->boolean;
+        *((NABool*)((NAByte*)object + memberRule->memberOffset)) = worker->boolean;
+      }else if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_INT32, &worker->key))) {
+        const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
+        *((int32*)((NAByte*)object + memberRule->memberOffset)) = (int32)worker->boolean;
       }else if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_INT64, &worker->key))) {
         const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
         *((int64*)((NAByte*)object + memberRule->memberOffset)) = naCastBoolToi64(worker->boolean);
@@ -1320,7 +1385,10 @@ NA_HDEF void na_ParseJSONRuleSetObject(NAJSONWorker* worker, void* object, const
       break;
 
     case NA_JSON_PARSE_NUMBER:
-      if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_INT32, &worker->key))) {
+      if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_BOOL, &worker->key))) {
+        const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
+        *((NABool*)((NAByte*)object + memberRule->memberOffset)) = (NABool)worker->number;
+      }else if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_INT32, &worker->key))) {
         const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
         *((int32*)((NAByte*)object + memberRule->memberOffset)) = (int32)worker->number;
       }else if((rule = na_findJSONRule(ruleSet, NA_JSON_RULE_INT64, &worker->key))) {
@@ -1378,31 +1446,129 @@ NA_HDEF void na_ParseJSONRuleSetObject(NAJSONWorker* worker, void* object, const
 
 
 
-NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABufferIterator* bufIt, const NAJSONRuleSet* ruleSet) {
+NA_HDEF void na_WriteJSONKey(NABufferIterator* bufIt, NA_JSONString* key) {
+  if(key->strLen) {
+    naWriteBufferu8(bufIt, '\"');
+    naWriteBufferBytes(bufIt, key->ptr, key->strLen);
+    naWriteBufferStringWithFormat(bufIt, "\" : ");
+  }
+}
+
+
+#define NA_JSON_INDENT "  "
+
+NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABufferIterator* bufIt, const NAJSONRuleSet* ruleSet, NAUTF8Char* ident) {
   for(size_t i = 0; i < naGetStackCount(&ruleSet->ruleStack); ++i) {
-    naWriteBufferBytes(bufIt, ruleSet->rules[i]->key.ptr, ruleSet->rules[i]->key.strLen);
 
     const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)(ruleSet->rules[i]);
+    const NA_JSONFixedArrayRule* fixedArrayRule = (const NA_JSONFixedArrayRule*)(ruleSet->rules[i]);
+    const NA_JSONObjectRule* objectRule = (const NA_JSONObjectRule*)(ruleSet->rules[i]);
+    const NA_JSONPointerObjectRule* pointerObjectRule = (const NA_JSONPointerObjectRule*)(ruleSet->rules[i]);
 
     switch(ruleSet->rules[i]->type) {
-    case NA_JSON_RULE_INT32:
+    case NA_JSON_RULE_BOOL:
+      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+      na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
       naWriteBufferStringWithFormat(
         bufIt,
-        ": %d" NA_NL,
+        "%s" NA_NL,
+        *((NABool*)((NAByte*)object + memberRule->memberOffset)) ? "true" : "false");
+      break;
+    case NA_JSON_RULE_INT32:
+      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+      na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
+      naWriteBufferStringWithFormat(
+        bufIt,
+        "%d" NA_NL,
         *((int32*)((NAByte*)object + memberRule->memberOffset)));
       break;
     case NA_JSON_RULE_INT64:
+      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+      na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
       naWriteBufferStringWithFormat(
         bufIt,
-        ": %ld" NA_NL,
-        *((int32*)((NAByte*)object + memberRule->memberOffset)));
+        "%ld" NA_NL,
+        *((int64*)((NAByte*)object + memberRule->memberOffset)));
       break;
     case NA_JSON_RULE_DOUBLE:
+      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+      na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
       naWriteBufferStringWithFormat(
         bufIt,
-        ": %f" NA_NL,
+        "%g" NA_NL,
         *((double*)((NAByte*)object + memberRule->memberOffset)));
       break;
+    case NA_JSON_RULE_FLOAT:
+      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+      na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
+      naWriteBufferStringWithFormat(
+        bufIt,
+        "%g" NA_NL,
+        (double)*((float*)((NAByte*)object + memberRule->memberOffset)));
+      break;
+    case NA_JSON_RULE_STRING:
+      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+      na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
+      naWriteBufferStringWithFormat(
+        bufIt,
+        "\"%s\"" NA_NL,
+        *(NAUTF8Char**)((NAByte*)object + memberRule->memberOffset));
+      break;
+
+//    case NA_JSON_RULE_FIXED_ARRAY:
+//      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+//      naWriteBufferStringWithFormat(
+//        bufIt,
+//        "[" NA_NL);
+//      for(size_t a = 0; a < fixedArrayRule->elementCount; ++a) {
+//        na_WriteJSONRuleSetObject(
+//          worker,
+//          object,
+//          bufIt,
+//          fixedArrayRule->);
+//      }
+//      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+//      naWriteBufferStringWithFormat(
+//        bufIt,
+//        "]" NA_NL);
+//      break;
+
+    case NA_JSON_RULE_OBJECT:
+      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+      na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
+      naWriteBufferStringWithFormat(
+        bufIt,
+        "{" NA_NL);
+      na_WriteJSONRuleSetObject(
+        worker,
+        object,
+        bufIt,
+        objectRule->ruleSet,
+        naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, ident));
+      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+      naWriteBufferStringWithFormat(
+        bufIt,
+        "}" NA_NL);
+      break;
+
+//    case NA_JSON_RULE_POINTER_OBJECT:
+//      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+//      na_WriteJSONKey(bufIt, &ruleSet->rules[i]->key);
+//      naWriteBufferStringWithFormat(
+//        bufIt,
+//        "{" NA_NL);
+//      na_WriteJSONRuleSetObject(
+//        worker,
+//        (NAByte*)object + pointerObjectRule->memberOffset,
+//        bufIt,
+//        pointerObjectRule->ruleSet,
+//        naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, ident));
+//      naWriteBufferStringWithFormat(bufIt, "%s", ident);
+//      naWriteBufferStringWithFormat(
+//        bufIt,
+//        "}" NA_NL);
+//      break;
+
     default:
       break;
     }
@@ -1424,7 +1590,7 @@ NA_HDEF void na_WriteJSONObject(NAJSONWorker* worker, void* object, NABufferIter
   if(!ruleSet) {
     // In case no rule is given, we just write nothing.
   }else{
-    na_WriteJSONRuleSetObject(worker, object, bufIt, ruleSet);
+    na_WriteJSONRuleSetObject(worker, object, bufIt, ruleSet, "");
   }
 }
 

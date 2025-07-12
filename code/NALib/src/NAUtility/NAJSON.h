@@ -37,13 +37,14 @@ void naDeallocateJSONWorker(NAJSONWorker* worker);
 // Parses the given buffer into the given object.
 // You can send byteCount = 0 to automatically determine the buffer size.
 // Important: The buffer must end with a '\0'
-
 void naParseJSONBuffer(
   NAJSONWorker* worker,
   void* object,
   const void* buf,
   size_t byteCount);
 
+// Creates a new buffer containing the given object transformed into a JSON
+// file using the given worker.
 NABuffer* naCreateBufferWithJSON(
   NAJSONWorker* worker,
   void* object);
@@ -88,6 +89,7 @@ NA_API void naAddJSONRule(
 // JSON Numbers can be stored in Int32, Int64, Double and Float
 // JSON Strings are stored as C-strings. Its memory is allocated with malloc.
 
+NA_API NAJSONRule* naNewJSONRuleBool(size_t memberOffset);
 NA_API NAJSONRule* naNewJSONRuleInt32(size_t memberOffset);
 NA_API NAJSONRule* naNewJSONRuleInt64(size_t memberOffset);
 NA_API NAJSONRule* naNewJSONRuleDouble(size_t memberOffset);
