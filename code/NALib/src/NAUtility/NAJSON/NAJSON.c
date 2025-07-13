@@ -1008,9 +1008,7 @@ NA_HDEF void na_ParseJSONFixedArray(NAJSONWorker* worker, void* object, const NA
   void* arrayPtr = (NAByte*)object + elementRule->baseRule.byteOffset;
   NA_JSONObjectRule* subObjectRule = (NA_JSONObjectRule*)elementRule->subRule;
 
-  #if NA_DEBUG
-    size_t count = 0;
-  #endif
+  size_t count = 0;
 
   while(!unexpectedEnd && na_ParseJSONPrimitives(worker) != NA_JSON_PARSE_ARRAY_END) {
 
@@ -1102,8 +1100,10 @@ NA_HDEF void na_ParseJSONFixedArray(NAJSONWorker* worker, void* object, const NA
     }
   }
 
-  if(count < elementRule->elementCount)
-    naError("Not all elements of the array are filled. Remainder is uninitialized.");
+  #if NA_DEBUG
+    if(count < elementRule->elementCount)
+      naError("Not all elements of the array are filled. Remainder is uninitialized.");
+  #endif
 }
 
 NA_HDEF void na_ParseJSONDynamicArray(NAJSONWorker* worker, void* object, const NA_JSONDynamicArrayRule* elementRule) {
