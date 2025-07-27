@@ -613,7 +613,7 @@ NA_DEF void naDeallocateJSONWorker(NAJSONWorker* worker) {
 
 // Prototypes:
 NA_HAPI void na_ParseJSONObject(NAJSONWorker* worker, void* object, const NAJSONRuleSet* ruleSet);
-NA_HAPI void na_WriteJSONObject(NAJSONWorker* worker, void* object, NABufferIterator* bufIt, const NAJSONRuleSet* ruleSet);
+NA_HAPI void na_WriteJSONObject(NAJSONWorker* worker, void* object, NABufferIterator* bufIt, const NAJSONRuleSet* ruleSet, NABool multiLine);
 
 
 
@@ -670,7 +670,8 @@ void naParseJSONBuffer(
 
 NABuffer* naCreateBufferWithJSON(
   NAJSONWorker* worker,
-  void* object)
+  void* object,
+  NABool multiLine)
 {
   NABuffer* buffer = naCreateBuffer(NA_FALSE);
   NABufferIterator bufIt = naMakeBufferModifier(buffer);
@@ -678,7 +679,7 @@ NABuffer* naCreateBufferWithJSON(
   na_PrepareJSONWorker(worker);
 
   NAJSONRuleSet** initialRuleSet = naTopStack(&worker->ruleSetStack);
-  na_WriteJSONObject(worker, object, &bufIt, *initialRuleSet);
+  na_WriteJSONObject(worker, object, &bufIt, *initialRuleSet, multiLine);
   
   naClearBufferIterator(&bufIt);
   
@@ -1435,12 +1436,14 @@ NA_HDEF void na_WriteJSONKey(NABufferIterator* bufIt, const NA_JSONString* key) 
 
 #define NA_JSON_INDENT "  "
 
-NA_HAPI void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABufferIterator* bufIt, const NAJSONRuleSet* ruleSet, NAUTF8Char* indent);
+NA_HAPI void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABufferIterator* bufIt, const NAJSONRuleSet* ruleSet, NAUTF8Char* indent, NABool multiLine);
 
 
 
-NA_HDEF void na_WriteJSONRuleSetElement(NAJSONWorker* worker, void* element, NABufferIterator* bufIt, const NAJSONRule* rule, NAUTF8Char* indent) {
-  const NA_JSONMemberRule* memberRule = (const NA_JSONMemberRule*)rule;
+NA_HDEF void na_WriteJSONRuleSetElement(NAJSONWorker* worker, void* element, NABufferIterator* bufIt, const NAJSONRule* rule, NAUTF8Char* indent, NABool multiLine) {
+  NAUTF8Char* lineSeparator = multiLine ? NA_NL : " ";
+  if(!multiLine) {indent = "";}
+
   const NA_JSONFixedArrayRule* fixedArrayRule = (const NA_JSONFixedArrayRule*)rule;
   const NA_JSONDynamicArrayRule* dynamicArrayRule = (const NA_JSONDynamicArrayRule*)rule;
   const NA_JSONObjectRule* objectRule = (const NA_JSONObjectRule*)rule;
@@ -1502,7 +1505,8 @@ NA_HDEF void na_WriteJSONRuleSetElement(NAJSONWorker* worker, void* element, NAB
     naWriteBufferStringWithFormat(bufIt, "%s", indent);
     naWriteBufferStringWithFormat(
       bufIt,
-      "[" NA_NL);
+      "[%s",
+      lineSeparator);
     count = fixedArrayRule->elementCount;
     for(size_t a = 0; a < count; ++a) {
       subObject = (void**)((NAByte*)element + fixedArrayRule->structSize * a);
@@ -1511,10 +1515,12 @@ NA_HDEF void na_WriteJSONRuleSetElement(NAJSONWorker* worker, void* element, NAB
         (fixedArrayRule->storeAsPointer) ? *subObject : subObject,
         bufIt,
         fixedArrayRule->subRule,
-        naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, indent));
+        naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, indent),
+        multiLine);
       naWriteBufferStringWithFormat(
         bufIt,
-        (a < count - 1) ? "," NA_NL : NA_NL);
+        (a < count - 1) ? ",%s" : "%s",
+        lineSeparator);
     }
     naWriteBufferStringWithFormat(bufIt, "%s", indent);
     naWriteBufferStringWithFormat(
@@ -1526,7 +1532,8 @@ NA_HDEF void na_WriteJSONRuleSetElement(NAJSONWorker* worker, void* element, NAB
     naWriteBufferStringWithFormat(bufIt, "%s", indent);
     naWriteBufferStringWithFormat(
       bufIt,
-      "[" NA_NL);
+      "[%s",
+      lineSeparator);
     count = *(size_t*)((NAByte*)element + dynamicArrayRule->countOffset - dynamicArrayRule->baseRule.byteOffset);
     for(size_t a = 0; a < count; ++a) {
       subObject = (void**)(*(NAByte**)element + dynamicArrayRule->structSize * a);
@@ -1535,10 +1542,12 @@ NA_HDEF void na_WriteJSONRuleSetElement(NAJSONWorker* worker, void* element, NAB
         (dynamicArrayRule->storeAsPointer) ? *subObject : subObject,
         bufIt,
         dynamicArrayRule->subRule,
-        naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, indent));
+        naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, indent),
+        multiLine);
       naWriteBufferStringWithFormat(
         bufIt,
-        (a < count - 1) ? "," NA_NL : NA_NL);
+        (a < count - 1) ? ",%s" : "%s",
+        lineSeparator);
     }
     naWriteBufferStringWithFormat(bufIt, "%s", indent);
     naWriteBufferStringWithFormat(
@@ -1552,13 +1561,15 @@ NA_HDEF void na_WriteJSONRuleSetElement(NAJSONWorker* worker, void* element, NAB
     subObject = (void**)element;
     naWriteBufferStringWithFormat(
       bufIt,
-      "{" NA_NL);
+      "{%s",
+      lineSeparator);
     na_WriteJSONRuleSetObject(
       worker,
       subObject,
       bufIt,
       objectRule->ruleSet,
-      naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, indent));
+      naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, indent),
+      multiLine);
     naWriteBufferStringWithFormat(bufIt, "%s", indent);
     naWriteBufferStringWithFormat(
       bufIt,
@@ -1576,13 +1587,15 @@ NA_HDEF void na_WriteJSONRuleSetElement(NAJSONWorker* worker, void* element, NAB
     }else{
       naWriteBufferStringWithFormat(
         bufIt,
-        "{" NA_NL);
+        "{%s",
+        lineSeparator);
       na_WriteJSONRuleSetObject(
         worker,
         *subObject,
         bufIt,
         pointerObjectRule->ruleSet,
-        naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, indent));
+        naAllocSprintf(NA_TRUE, "%s" NA_JSON_INDENT, indent),
+        multiLine);
       naWriteBufferStringWithFormat(bufIt, "%s", indent);
       naWriteBufferStringWithFormat(
         bufIt,
@@ -1598,7 +1611,10 @@ NA_HDEF void na_WriteJSONRuleSetElement(NAJSONWorker* worker, void* element, NAB
 
 
 
-NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABufferIterator* bufIt, const NAJSONRuleSet* ruleSet, NAUTF8Char* indent) {
+NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABufferIterator* bufIt, const NAJSONRuleSet* ruleSet, NAUTF8Char* indent, NABool multiLine) {
+  NAUTF8Char* lineSeparator = multiLine ? NA_NL : " ";
+  if(!multiLine) {indent = "";}
+
   size_t count = naGetStackCount(&ruleSet->ruleStack);
   for(size_t i = 0; i < count; ++i) {
 
@@ -1607,11 +1623,13 @@ NA_HDEF void na_WriteJSONRuleSetObject(NAJSONWorker* worker, void* object, NABuf
       (NAByte*)object + ruleSet->rules[i]->byteOffset,
       bufIt,
       ruleSet->rules[i],
-      indent);
+      indent,
+      multiLine);
       
     naWriteBufferStringWithFormat(
       bufIt,
-      (i < count - 1) ? "," NA_NL : NA_NL);
+      (i < count - 1) ? ",%s" : "%s",
+      lineSeparator);
 
   }
 }
@@ -1627,11 +1645,11 @@ NA_HDEF void na_ParseJSONObject(NAJSONWorker* worker, void* object, const NAJSON
   }
 }
 
-NA_HDEF void na_WriteJSONObject(NAJSONWorker* worker, void* object, NABufferIterator* bufIt, const NAJSONRuleSet* ruleSet) {
+NA_HDEF void na_WriteJSONObject(NAJSONWorker* worker, void* object, NABufferIterator* bufIt, const NAJSONRuleSet* ruleSet, NABool multiLine) {
   if(!ruleSet) {
     // In case no rule is given, we just write nothing.
   }else{
-    na_WriteJSONRuleSetObject(worker, object, bufIt, ruleSet, "");
+    na_WriteJSONRuleSetObject(worker, object, bufIt, ruleSet, "", multiLine);
   }
 }
 

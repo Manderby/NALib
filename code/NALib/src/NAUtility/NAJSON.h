@@ -45,9 +45,12 @@ void naParseJSONBuffer(
 
 // Creates a new buffer containing the given object transformed into a JSON
 // file using the given worker.
+// When multiLine is true, newlines are placed in the buffer, otherwise, spaces
+// are used.
 NABuffer* naCreateBufferWithJSON(
   NAJSONWorker* worker,
-  void* object);
+  void* object,
+  NABool multiLine);
 
 
 
