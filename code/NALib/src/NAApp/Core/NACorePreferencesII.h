@@ -61,11 +61,14 @@ NA_DEF NABool naInitPreferencesBool(const char* key, NABool newValue) {
 NA_DEF NABool naGetPreferencesBool(const char* key) {
   void* prefs = na_GetNativePreferences();
   int64 value = na_GetRawPreferencesBool(prefs, key);
-  #if NA_DEBUG
-    if(naEquali64(value, NA_ZERO_i64))
+  if(naEquali64(value, NA_ZERO_i64)) {
+    #if NA_DEBUG
       naError("Preferences value not initialized.");
-  #endif
-  return na_ConvertPreferencesBoolToNABool(value);
+    #endif
+    return NA_FALSE;
+  }else{
+    return na_ConvertPreferencesBoolToNABool(value);
+  }
 }
 
 NA_DEF NABool naSetPreferencesBool(const char* key, NABool newValue) {
@@ -82,14 +85,17 @@ NA_DEF NABool naSetPreferencesBool(const char* key, NABool newValue) {
 NA_DEF NABool naTogglePreferencesBool(const char* key) {
   void* prefs = na_GetNativePreferences();
   int64 value = na_GetRawPreferencesBool(prefs, key);
-  #if NA_DEBUG
-    if(naEquali64(value, NA_ZERO_i64))
+  if(naEquali64(value, NA_ZERO_i64)) {
+    #if NA_DEBUG
       naError("Preferences value not initialized.");
-  #endif
-  NABool boolValue = na_ConvertPreferencesBoolToNABool(value);
-  value = na_ConvertNABoolToPreferencesBool(!boolValue);
-  na_SetRawPreferencesBool(prefs, key, value);
-  return na_ConvertPreferencesBoolToNABool(value);
+    #endif
+    return NA_FALSE;
+  }else{
+    NABool boolValue = na_ConvertPreferencesBoolToNABool(value);
+    value = na_ConvertNABoolToPreferencesBool(!boolValue);
+    na_SetRawPreferencesBool(prefs, key, value);
+    return na_ConvertPreferencesBoolToNABool(value);
+  }
 }
 
 
@@ -137,11 +143,14 @@ NA_DEF int64 naInitPreferencesi64(const char* key, int64 newValue, int64 min, in
 NA_DEF int64 naGetPreferencesi64(const char* key) {
   void* prefs = na_GetNativePreferences();
   int64 value = na_GetRawPreferencesi64(prefs, key);
-  #if NA_DEBUG
-    if(naEquali64(value, NA_ZERO_i64))
+  if(naEquali64(value, NA_ZERO_i64)) {
+    #if NA_DEBUG
       naError("Preferences value not initialized.");
-  #endif
-  return na_ConvertPreferencesIntToi64(value);
+    #endif
+    return NA_ZERO_i64;
+  }else{
+    return na_ConvertPreferencesIntToi64(value);
+  }
 }
 
 NA_DEF NABool naSetPreferencesi64(const char* key, int64 newValue) {
@@ -196,11 +205,14 @@ NA_DEF uint32 naInitPreferencesEnum(const char* key, uint32 newValue, uint32 cou
 NA_DEF uint32 naGetPreferencesEnum(const char* key) {
   void* prefs = na_GetNativePreferences();
   int64 value = na_GetRawPreferencesEnum(prefs, key);
-  #if NA_DEBUG
-    if(naEquali64(value, NA_ZERO_i64))
+  if(naEquali64(value, NA_ZERO_i64)) {
+    #if NA_DEBUG
       naError("Preferences value not initialized.");
-  #endif
-  return na_ConvertPreferencesEnumToNAEnum(value);
+    #endif
+    return NA_ZERO_i32;
+  }else{
+    return na_ConvertPreferencesEnumToNAEnum(value);
+  }
 }
 
 NA_DEF NABool naSetPreferencesEnum(const char* key, uint32 newValue) {
@@ -259,11 +271,14 @@ NA_DEF double naInitPreferencesDouble(const char* key, double newValue, double m
 NA_DEF double naGetPreferencesDouble(const char* key) {
   void* prefs = na_GetNativePreferences();
   double value = na_GetRawPreferencesDouble(prefs, key);
-  #if NA_DEBUG
-    if(value == 0.)
+  if(value == 0.) {
+    #if NA_DEBUG
       naError("Preferences value not initialized.");
-  #endif
-  return na_ConvertPreferencesDoubleToNADouble(value);
+    #endif
+    return 0.;
+  }else{
+    return na_ConvertPreferencesDoubleToNADouble(value);
+  }
 }
 
 NA_DEF NABool naSetPreferencesDouble(const char* key, double newValue) {
@@ -314,16 +329,16 @@ NA_DEF NAString* naInitPreferencesString(const char* key, NAString* newValue) {
 NA_DEF NAString* naNewPreferencesString(const char* key) {
   void* prefs = na_GetNativePreferences();
   NAString* value = na_GetRawPreferencesString(prefs, key);
-  #if NA_DEBUG
-    if(value == NA_NULL)
+  if(value == NA_NULL) {
+    #if NA_DEBUG
       naError("Preferences value not initialized.");
-  #endif
-  NAString* returnValue = na_ConvertPreferencesStringToNAString(value);
-  
-  if(value)
-    naDelete(value);
-  
-  return returnValue;
+    #endif
+    return naNewString();
+  }else{
+    NAString* returnValue = na_ConvertPreferencesStringToNAString(value);
+    if(value) { naDelete(value); }
+    return returnValue;
+  }
 }
 
 NA_DEF NABool naSetPreferencesString(const char* key, NAString* newValue) {
