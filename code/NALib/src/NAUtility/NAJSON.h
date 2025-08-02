@@ -93,6 +93,7 @@ NA_API void naAddJSONRule(
 // JSON Strings are stored as C-strings. Its memory is allocated with malloc.
 
 NA_API NAJSONRule* naNewJSONRuleBool(size_t memberOffset);
+NA_API NAJSONRule* naNewJSONRuleUInt8(size_t memberOffset);
 NA_API NAJSONRule* naNewJSONRuleInt32(size_t memberOffset);
 NA_API NAJSONRule* naNewJSONRuleInt64(size_t memberOffset);
 NA_API NAJSONRule* naNewJSONRuleDouble(size_t memberOffset);
@@ -167,6 +168,9 @@ NA_API NAJSONRule* naNewJSONRuleDynamicPointerArray(
 // You can construct all these rules yourself but it is easier to rely on the
 // following functions:
 
+NA_API NAJSONRule* naNewJSONRuleDynamicArrayUInt8(
+  size_t arrayOffset,
+  size_t countOffset);
 NA_API NAJSONRule* naNewJSONRuleDynamicArrayInt32(
   size_t arrayOffset,
   size_t countOffset);
@@ -182,6 +186,9 @@ NA_API NAJSONRule* naNewJSONRuleDynamicArrayFloat(
 NA_API NAJSONRule* naNewJSONRuleDynamicArrayString(
   size_t arrayOffset,
   size_t countOffset);
+NA_API NAJSONRule* naNewJSONRuleFixedArrayUInt8(
+  size_t arrayOffset,
+  size_t elementCount);
 NA_API NAJSONRule* naNewJSONRuleFixedArrayInt32(
   size_t arrayOffset,
   size_t elementCount);
