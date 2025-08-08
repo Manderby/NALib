@@ -284,6 +284,9 @@ NA_HAPI NABool na_DispatchUIElementCommand(const NA_UIElement* uiElement, NAUICo
 // To be implemented in the system dependent files:
 NA_HAPI void na_RefreshUIElementNow(void* uiElement);
 
+// Updates the given element and all its children (if any) for a new uiScale.
+NA_HAPI void na_UpdateUIElementUIScale(void* uiElement);
+
 // Ensures the mouse being tracked as soon as there is one reason to do so.
 NA_HAPI void na_RetainMouseTracking(NA_UIElement* uiElement);
 NA_HAPI void na_ReleaseMouseTracking(NA_UIElement* uiElement);
@@ -319,18 +322,21 @@ NA_HAPI void na_setButtonImage(NAButton* button, const NAImageSet* imageSet);
 NA_HAPI void na_setButtonImage2(NAButton* button, const NAImageSet* imageSet);
 NA_HAPI NARect na_GetButtonRect(const NA_UIElement* button);
 NA_HAPI void na_SetButtonRect(NA_UIElement* button, NARect rect);
+NA_HAPI void na_UpdateButtonUIScale(NA_UIElement* button);
 
 // NACheckBox
 NA_HAPI void na_InitCheckBox(NACheckBox* checkBox, void* nativePtr);
 NA_HAPI void na_ClearCheckBox(NACheckBox* checkBox);
 NA_HAPI NARect na_GetCheckBoxRect(const NA_UIElement* checkBox);
 NA_HAPI void na_SetCheckBoxRect(NA_UIElement* checkBox, NARect rect);
+NA_HAPI void na_UpdateCheckBoxUIScale(NA_UIElement* button);
 
 // NAImageSpace
 NA_HAPI void na_InitImageSpace(NAImageSpace* imageSpace, void* nativePtr);
 NA_HAPI void na_ClearImageSpace(NAImageSpace* imageSpace);
 NA_HAPI NARect na_GetImageSpaceRect(const NA_UIElement* imageSpace);
 NA_HAPI void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect);
+NA_HAPI void na_UpdateImageSpaceUIScale(NA_UIElement* button);
 
 // NALabel
 NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
@@ -339,6 +345,7 @@ NA_HAPI void na_SetLabelEnabled(NALabel* label, NABool enabled);
 NA_HAPI void na_SetLabelTextColor(NALabel* label, const NAColor* color);
 NA_HAPI NARect na_GetLabelRect(const NA_UIElement* space);
 NA_HAPI void na_SetLabelRect(NA_UIElement* label, NARect rect);
+NA_HAPI void na_UpdateLabelUIScale(NA_UIElement* button);
 
 // NAMenu
 NA_HAPI void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent);
@@ -346,30 +353,35 @@ NA_HAPI void na_ClearMenu(NAMenu* menu);
 NA_HAPI void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* itemAt);
 NA_HAPI NARect na_GetMenuRect(const NA_UIElement* menu);
 NA_HAPI void na_SetMenuRect(NA_UIElement* menu, NARect rect);
+NA_HAPI void na_UpdateMenuUIScale(NA_UIElement* button);
 
 // NAMenuItem
 NA_HAPI void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent);
 NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);
 NA_HAPI NARect na_GetMenuItemRect(const NA_UIElement* menuItem);
 NA_HAPI void na_SetMenuItemRect(NA_UIElement* menuItem, NARect rect);
+NA_HAPI void na_UpdateMenuItemUIScale(NA_UIElement* button);
 
 // NAMetalSpace
 NA_HAPI void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr);
 NA_HAPI void na_ClearMetalSpace(NAMetalSpace* metalSpace);
 NA_HAPI NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace);
 NA_HAPI void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect);
+NA_HAPI void na_UpdateMetalSpaceUIScale(NA_UIElement* button);
 
 // NAOpenGLSpace
 NA_HAPI void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr);
 NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
 NA_HAPI NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace);
 NA_HAPI void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect);
+NA_HAPI void na_UpdateOpenGLSpaceUIScale(NA_UIElement* button);
 
 // NARadio
 NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
 NA_HAPI void na_ClearRadio(NARadio* radio);
 NA_HAPI NARect na_GetRadioRect(const NA_UIElement* radio);
 NA_HAPI void na_SetRadioRect(NA_UIElement* radio, NARect rect);
+NA_HAPI void na_UpdateRadioUIScale(NA_UIElement* button);
 
 // NAScreen
 // Creates a new screen.
@@ -389,12 +401,14 @@ NA_HAPI void na_ClearSelect(NASelect* select);
 NA_HAPI void na_AddSelectChild(NASelect* select, NAMenuItem* child, const NAMenuItem* itemAt);
 NA_HAPI NARect na_GetSelectRect(const NA_UIElement* select);
 NA_HAPI void na_SetSelectRect(NA_UIElement* select, NARect rect);
+NA_HAPI void na_UpdateSelectUIScale(NA_UIElement* button);
 
 // NASlider
 NA_HAPI void na_InitSlider(NASlider* slider, void* nativePtr);
 NA_HAPI void na_ClearSlider(NASlider* slider);
 NA_HAPI NARect na_GetSliderRect(const NA_UIElement* slider);
 NA_HAPI void na_SetSliderRect(NA_UIElement* slider, NARect rect);
+NA_HAPI void na_UpdateSliderUIScale(NA_UIElement* button);
 
 // NASpace
 NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);
@@ -404,29 +418,33 @@ NA_HAPI void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child);
 NA_HAPI void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color);
 NA_HAPI NARect na_GetSpaceRect(const NA_UIElement* space);
 NA_HAPI void na_SetSpaceRect(NA_UIElement* space, NARect rect);
+NA_HAPI void na_UpdateSpaceUIScale(NA_UIElement* button);
 
 // NATextBox
 NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);
 NA_HAPI void na_ClearTextBox(NATextBox* textBox);
 NA_HAPI NARect na_GetTextBoxRect(const NA_UIElement* textBox);
 NA_HAPI void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect);
+NA_HAPI void na_UpdateTextBoxUIScale(NA_UIElement* button);
 
 // NATextField
 NA_HAPI void na_InitTextField(NATextField* textField, void* nativePtr);
 NA_HAPI void na_ClearTextField(NATextField* textField);
 NA_HAPI NARect na_GetTextFieldRect(const NA_UIElement* textField);
 NA_HAPI void na_SetTextFieldRect(NA_UIElement* textField, NARect rect);
+NA_HAPI void na_UpdateTextFieldUIScale(NA_UIElement* button);
 
 // NAWindow
 NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NAScreen* screen, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
 NA_HAPI void na_ClearWindow(NAWindow* window);
-NA_HAPI void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen);
 NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
+NA_HAPI void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen);
 NA_HAPI void na_RetainWindowMouseTracking(NAWindow* window);
 NA_HAPI void na_ReleaseWindowMouseTracking(NAWindow* window);
 NA_HAPI NARect na_GetWindowAbsoluteInnerRect(const NA_UIElement* window);
 NA_HAPI NARect na_GetWindowRect(const NA_UIElement* window);
 NA_HAPI void na_SetWindowRect(NA_UIElement* window, NARect rect);
+NA_HAPI void na_UpdateWindowUIScale(NA_UIElement* button);
 
 
 

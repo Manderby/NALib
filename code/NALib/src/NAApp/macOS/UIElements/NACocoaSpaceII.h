@@ -254,6 +254,8 @@ NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos
   [childView setFrame: frame];
   
   na_AddSpaceChild(space, child);
+  
+  na_UpdateUIElementUIScale(child);
 }
 
 

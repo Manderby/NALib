@@ -29,6 +29,12 @@ NA_DEF double naGetTextFieldDouble(NATextField* textField) {
 
 
 
+NA_HDEF void na_UpdateTextFieldUIScale(NA_UIElement* textField) {
+  NA_UNUSED(textField);
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

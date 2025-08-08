@@ -22,6 +22,12 @@ NA_HDEF void na_ClearSlider(NASlider* slider) {
 
 
 
+NA_HDEF void na_UpdateSliderUIScale(NA_UIElement* slider) {
+  NA_UNUSED(slider);
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

@@ -214,6 +214,8 @@ NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect) {
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }
 
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

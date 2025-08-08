@@ -325,6 +325,10 @@ NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect) {
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }
 
+NA_HDEF void na_UpdateMetalSpaceUIScale(NA_UIElement* metalSpace) {
+  NA_UNUSED(metalSpace);
+}
+
 
 
 #else
@@ -376,6 +380,13 @@ NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect) {
   NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect) {
     NA_UNUSED(metalSpace);
     NA_UNUSED(rect);
+    #if NA_DEBUG
+      naError("Metal has not been configured. See NAConfiguration.h");
+    #endif
+  }
+
+  NA_HDEF void na_UpdateLabelUIScale(NA_UIElement* metalSpace) {
+    NA_UNUSED(metalSpace);
     #if NA_DEBUG
       naError("Metal has not been configured. See NAConfiguration.h");
     #endif

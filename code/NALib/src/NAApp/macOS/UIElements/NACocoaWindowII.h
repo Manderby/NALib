@@ -124,7 +124,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 - (void)windowDidResize:(NSNotification *)notification{
   NA_UNUSED(notification);
-  na_RememberWindowPosition((NAWindow*)cocoaWindow);
+  na_UpdateWindowScreen((NAWindow*)cocoaWindow, na_GetApplicationScreenWithNativePtr([self screen]));
   na_UpdateMouseTracking(&cocoaWindow->window.uiElement);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
     // no super method to be called.
@@ -136,16 +136,18 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
   // naNewWindow when the rect is outside of the main screen.
   NA_UNUSED(notification);
   na_UpdateWindowScreen((NAWindow*)cocoaWindow, na_GetApplicationScreenWithNativePtr([self screen]));
-  na_RememberWindowPosition((NAWindow*)cocoaWindow);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
     // no super method to be called.
   }
 }
 
 - (void)windowDidChangeBackingProperties:(NSNotification *)notification{    
+  // This method is called for every window by itself but is always called
+  // after handleApplicationDidChangeScreenParameters which in turn already
+  // created a list of new NAScreen entries and attached each window to a
+  // proper NAScreen entry and repositioned it properly.
+  
   NA_UNUSED(notification);
-  na_UpdateWindowScreen((NAWindow*)cocoaWindow, na_GetApplicationScreenWithNativePtr([self screen]));
-  na_RememberWindowPosition((NAWindow*)cocoaWindow);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
     // no super method to be called.
   }
@@ -320,6 +322,8 @@ NA_DEF void naShowWindow(const NAWindow* window) {
   // are not supposed to.
   NAWindow* mutableWindow = (NAWindow*)window;
   
+  na_UpdateUIElementUIScale(mutableWindow);
+
   naDefineCocoaObjectConst(NACocoaNativeWindow, nativePtr, window);
   NARect rect = na_GetWindowRect(&window->uiElement);
   [nativePtr makeKeyAndOrderFront:NA_NULL];
@@ -438,6 +442,8 @@ NA_DEF void naSetWindowOuterRect(NAWindow* window, NARect rect) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
 }
+
+
 
 // This is free and unencumbered software released into the public domain.
 

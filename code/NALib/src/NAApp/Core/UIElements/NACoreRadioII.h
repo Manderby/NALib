@@ -20,6 +20,12 @@ NA_HDEF void na_ClearRadio(NARadio* radio) {
 
 
 
+NA_HDEF void na_UpdateRadioUIScale(NA_UIElement* radio) {
+  NA_UNUSED(radio);
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

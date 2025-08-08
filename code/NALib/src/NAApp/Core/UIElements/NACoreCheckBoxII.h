@@ -20,6 +20,11 @@ NA_HDEF void na_ClearCheckBox(NACheckBox* checkBox) {
 
 
 
+NA_HDEF void na_UpdateCheckBoxUIScale(NA_UIElement* checkBox) {
+  NA_UNUSED(checkBox);
+}
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

@@ -44,6 +44,12 @@ NA_HDEF void na_SetMenuItemRect(NA_UIElement* menuItem, NARect rect) {
 
 
 
+NA_HDEF void na_UpdateMenuItemUIScale(NA_UIElement* menuItem) {
+  NA_UNUSED(menuItem);
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

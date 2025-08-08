@@ -129,6 +129,18 @@ NA_DEF void naSetSpaceDragsWindow(NASpace* space, NABool dragsWindow) {
 
 
 
+NA_HDEF void na_UpdateSpaceUIScale(NA_UIElement* space) {
+  NASpace* naSpace = (NASpace*)space;
+  
+  NAListIterator it = naMakeListMutator(&naSpace->childs);
+  while(naIterateList(&it)) {
+    NA_UIElement* uiElement = naGetListCurMutable(&it);
+    na_UpdateUIElementUIScale(uiElement);
+  }
+  naClearListIterator(&it);
+}
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

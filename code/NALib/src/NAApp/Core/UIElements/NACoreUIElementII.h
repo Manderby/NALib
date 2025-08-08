@@ -485,6 +485,44 @@ NA_DEF void naSetUIElementRect(void* uiElement, NARect rect) {
 
 
 
+NA_DEF void na_UpdateUIElementUIScale(void* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is nullptr");
+  #endif
+
+  switch(naGetUIElementType(uiElement)) {
+  case NA_UI_APPLICATION:
+    #if NA_DEBUG
+      naError("The application should never be used as an argument for this function.");
+    #endif
+    break;
+  case NA_UI_BUTTON:       na_UpdateButtonUIScale(uiElement); break;
+  case NA_UI_CHECKBOX:     na_UpdateCheckBoxUIScale(uiElement); break;
+  case NA_UI_IMAGE_SPACE:  na_UpdateImageSpaceUIScale(uiElement); break;
+  case NA_UI_LABEL:        na_UpdateLabelUIScale(uiElement); break;
+  case NA_UI_MENU:         na_UpdateMenuUIScale(uiElement); break;
+  case NA_UI_MENUITEM:     na_UpdateMenuItemUIScale(uiElement); break;
+  case NA_UI_METAL_SPACE:  na_UpdateMetalSpaceUIScale(uiElement); break;
+  case NA_UI_OPENGL_SPACE: na_UpdateOpenGLSpaceUIScale(uiElement); break;
+  case NA_UI_RADIO:        na_UpdateRadioUIScale(uiElement); break;
+  case NA_UI_SCREEN:
+    #if NA_DEBUG
+      naError("A screen should never be used as an argument for this function.");
+    #endif
+    break;
+  case NA_UI_SELECT:       na_UpdateSelectUIScale(uiElement); break;
+  case NA_UI_SLIDER:       na_UpdateSliderUIScale(uiElement); break;
+  case NA_UI_SPACE:        na_UpdateSpaceUIScale(uiElement); break;
+  case NA_UI_TEXTBOX:      na_UpdateTextBoxUIScale(uiElement); break;
+  case NA_UI_TEXTFIELD:    na_UpdateTextFieldUIScale(uiElement); break;
+  case NA_UI_WINDOW:       na_UpdateWindowUIScale(uiElement); break;
+  default:                 break;
+  }
+}
+
+
+
 NA_HDEF void na_RetainMouseTracking(NA_UIElement* uiElement) {
   #if NA_DEBUG
     if(!uiElement)

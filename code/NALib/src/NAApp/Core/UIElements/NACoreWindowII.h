@@ -44,17 +44,6 @@ NA_HDEF void na_ClearWindow(NAWindow* window) {
 
 
 
-NA_HDEF void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen) {
-  NAScreen* oldScreen = naGetUIElementParentMutable(window);
-  if(screen && screen != oldScreen) {
-    na_RemoveScreenWindow(oldScreen, window);
-    na_AddScreenWindow(screen, window);
-    na_SetUIElementParent((NA_UIElement*)window, screen, NA_TRUE);
-  }
-}
-
-
-
 NA_HDEF void na_RememberWindowPosition(const NAWindow* window) {
   if(window->storageTag) {
     NARect rect = na_GetWindowAbsoluteInnerRect(&window->uiElement);
@@ -73,6 +62,25 @@ NA_HDEF void na_RememberWindowPosition(const NAWindow* window) {
       naDelete(prefSizeHeightString);
     }
   }
+}
+
+
+
+NA_HDEF void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen) {  
+  NAScreen* oldScreen = naGetUIElementParentMutable(window);
+  double oldUIScale = naGetScreenUIScale(oldScreen);
+  double newUIScale = naGetScreenUIScale(screen);
+  
+  if(screen && screen != oldScreen) {
+    na_RemoveScreenWindow(oldScreen, window);
+    na_AddScreenWindow(screen, window);
+    na_SetUIElementParent((NA_UIElement*)window, screen, NA_TRUE);
+    
+    if(oldUIScale != newUIScale) {
+      na_UpdateUIElementUIScale(window);
+    }
+  }
+  na_RememberWindowPosition(window);
 }
 
 
@@ -142,6 +150,13 @@ NA_DEF void naSetWindowStorageTag(NAWindow* window, size_t storageTag) {
 
 NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window) {
   return window->contentSpace;
+}
+
+
+
+NA_HDEF void na_UpdateWindowUIScale(NA_UIElement* window) {
+  NAWindow* naWindow = (NAWindow*)window;
+  na_UpdateSpaceUIScale(naWindow->contentSpace);
 }
 
 

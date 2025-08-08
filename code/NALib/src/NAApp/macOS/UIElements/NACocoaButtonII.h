@@ -6,9 +6,6 @@
 
 
 
-// Theoretically, it should be 24, but due to some strange reason, starting
-// with one of the newer systems, the button mouse capture are did shrink.
-// Setting this value to 10 points more does the trick.
 #define NA_COCOA_DEFAULT_BUTTON_HEIGHT 24
 
 
@@ -683,6 +680,11 @@ NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect) {
 
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+}
+
+NA_HDEF void na_UpdateButtonUIScale(NA_UIElement* button) {
+  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  [nativePtr updateImages];
 }
 
 

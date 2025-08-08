@@ -346,6 +346,7 @@ NA_HDEF void na_RenewApplicationScreens() {
   
   // Go through all windows, readjust their position if necessary and reattach
   // them to a new screen.
+  // todo: readjust the position if necessary.
   NAListIterator it = naMakeListMutator(&na_App->windows);
   while(naIterateList(&it)) {
     NAWindow* window = naGetListCurMutable(&it);

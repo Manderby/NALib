@@ -111,6 +111,8 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
 }
 
 - (void)handleApplicationDidChangeScreenParameters:(NSNotification *)notification {
+  // This method is always the first one being called if anything changes
+  // with the screen setup.
   na_RenewApplicationScreens();
 }
 

@@ -20,6 +20,12 @@ NA_HDEF void na_ClearTextBox(NATextBox* textBox) {
 
 
 
+NA_HDEF void na_UpdateTextBoxUIScale(NA_UIElement* textBox) {
+  NA_UNUSED(textBox);
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
