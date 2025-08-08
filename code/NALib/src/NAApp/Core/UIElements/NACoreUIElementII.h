@@ -503,7 +503,9 @@ NA_DEF void na_UpdateUIElementUIScale(void* uiElement) {
   case NA_UI_LABEL:        na_UpdateLabelUIScale(uiElement); break;
   case NA_UI_MENU:         na_UpdateMenuUIScale(uiElement); break;
   case NA_UI_MENUITEM:     na_UpdateMenuItemUIScale(uiElement); break;
-  case NA_UI_METAL_SPACE:  na_UpdateMetalSpaceUIScale(uiElement); break;
+  #if(NA_COMPILE_METAL == 1) && defined __MAC_10_12
+    case NA_UI_METAL_SPACE:  na_UpdateMetalSpaceUIScale(uiElement); break;
+  #endif
   case NA_UI_OPENGL_SPACE: na_UpdateOpenGLSpaceUIScale(uiElement); break;
   case NA_UI_RADIO:        na_UpdateRadioUIScale(uiElement); break;
   case NA_UI_SCREEN:

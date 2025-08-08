@@ -205,7 +205,7 @@ int jsonExample(void){
   NABuffer* jsonBuffer = NA_NULL;
 //  for(int i = 0; i < TESTCOUNT; ++i){
 //    if(jsonBuffer) { naRelease(jsonBuffer); }
-    jsonBuffer = naCreateBufferWithJSON(simpleWorker, &test);
+    jsonBuffer = naCreateBufferWithJSON(simpleWorker, &test, NA_TRUE);
 //  }
   NADateTime now5 = naMakeDateTimeNow();
   printf("Time: %f milliseconds to create file contents\n", 1000. * naGetDateTimeDifference(&now5, &now4) / (double)TESTCOUNT);

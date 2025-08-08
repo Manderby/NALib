@@ -198,6 +198,11 @@ NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
     SWP_NOREDRAW);
 }
 
+NA_HDEF void na_UpdateOpenGLSpaceUIScale(NA_UIElement* openGLSpace) {
+  NA_UNUSED(openGLSpace);
+}
+
+
 
 
 #else
@@ -252,6 +257,11 @@ NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
+  }
+
+
+  NA_HDEF void na_UpdateOpenGLSpaceUIScale(NA_UIElement* openGLSpace) {
+    NA_UNUSED(openGLSpace);
   }
 
 #endif  // NA_COMPILE_OPENGL == 1

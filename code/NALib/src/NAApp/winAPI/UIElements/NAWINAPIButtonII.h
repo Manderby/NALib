@@ -876,6 +876,11 @@ NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect) {
 
 
 
+NA_HDEF void na_UpdateButtonUIScale(NA_UIElement* button) {
+  NA_UNUSED(button);
+}
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
