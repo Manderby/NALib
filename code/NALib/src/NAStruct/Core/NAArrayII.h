@@ -8,6 +8,7 @@
 #define NA_ARRAY_INVALID_INDEX NA_MAX_s
 
 #include "../../NAUtility/NAMemory.h"
+#include "../../NAUtility/NAValueHelper.h"
 
 
 

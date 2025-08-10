@@ -26,6 +26,8 @@
 
 
 
+#include "../NABase/NABase.h"
+
 // The full type definition is in the file "NAArrayII.h"
 NA_PROTOTYPE(NAArray);
 NA_PROTOTYPE(NAArrayIterator);
