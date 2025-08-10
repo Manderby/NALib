@@ -122,6 +122,14 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
     info.hasBeenHandeled = NA_TRUE;
     break;
 
+  case WM_ACTIVATE:
+    if(LOWORD(wParam) != WA_INACTIVE) {
+      if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED)) {
+        // no parent method to be called.
+      }
+    }
+  break;
+
   case WM_CHILDACTIVATE:
   case WM_STYLECHANGING:
   case WM_STYLECHANGED:
@@ -130,7 +138,6 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
   case WM_ACTIVATEAPP:
   case WM_NCACTIVATE:
   case WM_GETICON:
-  case WM_ACTIVATE:
   case WM_IME_SETCONTEXT:
     break;
 
@@ -601,6 +608,8 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
 
   NARect outerRect = na_convertInnerToOuterRect(winapiWindow, rect, screenRect);
 
+  //na_ReleaseMouseTracking(winapiWindow);
+
   MoveWindow(
     naGetUIElementNativePtr(winapiWindow),
     (LONG)(outerRect.pos.x * uiScale),
@@ -608,6 +617,15 @@ NA_HDEF void na_SetWindowRect(NA_UIElement* window, NARect rect) {
     (LONG)(outerRect.size.width * uiScale),
     (LONG)(outerRect.size.height * uiScale),
     NA_FALSE);
+
+  //SetWindowPos(
+  //  naGetUIElementNativePtr(winapiWindow),
+  //  NA_NULL,
+  //  (LONG)(outerRect.pos.x * uiScale),
+  //  (LONG)((screenRect.size.height - outerRect.pos.y - outerRect.size.height) * uiScale),
+  //  (LONG)(outerRect.size.width * uiScale),
+  //  (LONG)(outerRect.size.height * uiScale),
+  //  0);
 
   na_UpdateMouseTracking(&winapiWindow->window.uiElement);
 

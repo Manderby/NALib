@@ -6,6 +6,7 @@
 
 
 
+#include "../../../NAUtility/NANotifier.h"
 #include "../../../NAUtility/NAString.h"
 #include "../../../NAUtility/NATranslator.h"
 #include "../../../NAStruct/NAStack.h"
@@ -221,6 +222,9 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
         TranslateMessage(&message);
         DispatchMessage(&message);
       }
+
+      naRunNotifier();
+
     }
   }
 

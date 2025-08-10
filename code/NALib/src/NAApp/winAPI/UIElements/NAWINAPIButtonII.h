@@ -810,21 +810,21 @@ NA_DEF void naSetButtonSubmit(
   NAReactionCallback callback,
   void* controller)
 {
-  #if NA_DEBUG
-    if(!button)
-      naError("button is nullptr");
-  #endif
+  //#if NA_DEBUG
+  //  if(!button)
+  //    naError("button is nullptr");
+  //#endif
 
-  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
-  long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(winapiButton), GWL_STYLE);
-  style = (style & ~SS_TYPEMASK) | BS_DEFPUSHBUTTON;
-  SetWindowLongPtr(naGetUIElementNativePtr(winapiButton), GWL_STYLE, (LONG_PTR)style);
+  //NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
+  //long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(winapiButton), GWL_STYLE);
+  //style = (style & ~SS_TYPEMASK) | BS_DEFPUSHBUTTON;
+  //SetWindowLongPtr(naGetUIElementNativePtr(winapiButton), GWL_STYLE, (LONG_PTR)style);
 
-  naAddUIKeyboardShortcut(
-    naGetUIElementWindowMutable(button),
-    naNewKeyStroke(NA_KEYCODE_ENTER, NA_KEY_MODIFIER_NONE),
-    callback,
-    controller);
+  //naAddUIKeyboardShortcut(
+  //  naGetUIElementWindowMutable(button),
+  //  naNewKeyStroke(NA_KEYCODE_ENTER, NA_KEY_MODIFIER_NONE),
+  //  callback,
+  //  controller);
 
   // Windows can not distinguish between ENTER and NUMPAD_ENTER. So we do not
   // install another keystroke listener. really? todo.
@@ -842,16 +842,16 @@ NA_DEF void naSetButtonAbort(
   NAReactionCallback callback,
   void* controller)
 {
-  #if NA_DEBUG
-    if(!button)
-      naError("button is nullptr");
-  #endif
+  //#if NA_DEBUG
+  //  if(!button)
+  //    naError("button is nullptr");
+  //#endif
 
-  naAddUIKeyboardShortcut(
-    naGetUIElementWindowMutable(button),
-    naNewKeyStroke(NA_KEYCODE_ESCAPE, NA_KEY_MODIFIER_NONE),
-    callback,
-    controller);
+  //naAddUIKeyboardShortcut(
+  //  naGetUIElementWindowMutable(button),
+  //  naNewKeyStroke(NA_KEYCODE_ESCAPE, NA_KEY_MODIFIER_NONE),
+  //  callback,
+  //  controller);
 }
 
 
