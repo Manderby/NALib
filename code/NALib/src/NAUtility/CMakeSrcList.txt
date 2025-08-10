@@ -62,6 +62,7 @@ set(memoryFiles
 set(stringFiles
   ${NAUtilityDir}/NAString/NAString.c
   ${NAUtilityDir}/NAString/NAStringII.h
+  ${NAUtilityDir}/NAString/NAUTF8Utility.c
 )
 
 source_group("NAUtility" FILES ${headerFiles})

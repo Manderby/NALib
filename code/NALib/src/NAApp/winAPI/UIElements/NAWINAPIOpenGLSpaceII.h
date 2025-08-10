@@ -166,6 +166,10 @@ NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible) 
   ShowWindow(naGetUIElementNativePtr(openGLSpace), visible ? SW_SHOW : SW_HIDE);
 }
 
+NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace) {
+  // todo
+  return NA_NULL;
+}
 
 
 NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace) {

@@ -192,6 +192,15 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
   naDelete(messageString);
 }
 
+NA_DEF size_t naPresentOptionBox(
+  const NAUTF8Char* titleText,
+  const NAUTF8Char* infoText,
+  const NAUTF8Char* buttonTextPrimary,
+  const NAUTF8Char* buttonTextSecondary,
+  const NAUTF8Char* buttonTextTernary)
+{
+  return 0;
+}
 
 NA_HDEF NABool naPresentFilePanel(
   NABool load,
@@ -326,6 +335,13 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
   }
 
   return retValue;
+}
+
+
+
+NAString* naNewStringWithKeyStroke(const NAKeyStroke* keyStroke) {
+  // todo;
+  return NA_NULL;
 }
 
 

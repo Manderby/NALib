@@ -794,6 +794,22 @@ NA_DEF void naHideMouseUntilMovement(NABool hide) {
   // todo
 }
 
+NA_DEF NACursorImage* naAllocCursorImage(const NAImageSet* imageSet, NAPos hotspot, double uiScale) {
+  // todo
+  return NA_NULL;
+}
+NA_DEF void naDeallocCursorImage(NACursorImage* image) {
+  #if NA_DEBUG
+  if(!image)
+    naError("image is nullptr");
+  #endif
+  // todo
+}
+NA_DEF void naActivateCursorImage(const NACursorImage* image) {
+  // todo
+}
+
+
 NA_HDEF UINT na_GetApplicationNextMenuItemId(NAApplication* application)
 {
   NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;

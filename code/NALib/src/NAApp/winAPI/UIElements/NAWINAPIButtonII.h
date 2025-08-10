@@ -753,6 +753,22 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAImageSet* imageSet) {
   NA_UNUSED(imageSet);
 }
 
+NA_DEF void naSetButtonImage2(NAButton* button, const NAImageSet* imageSet) {
+  #if NA_DEBUG
+  if(!button)
+    naError("button is nullptr");
+  #endif
+
+  NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
+
+  #if NA_DEBUG
+  if(!naGetFlagu32(winapiButton->state, NA_WINAPI_BUTTON_IMAGE))
+    naError("This is not a image button");
+  #endif
+
+  // todo
+  NA_UNUSED(imageSet);
+}
 
 
 NA_DEF NABool naIsButtonStateful(const NAButton* button) {

@@ -43,6 +43,10 @@ void naPutStringToClipboard(const NAString* string) {
   naFree(unicodeString);
 }
 
+NA_DEF void naPutBufferToClipboard(const NABuffer* buffer) {
+  NA_UNUSED(buffer);
+}
+
 
 
 NAString* naNewStringFromClipboard() {
@@ -66,6 +70,10 @@ NAString* naNewStringFromClipboard() {
   }
 
   return string;
+}
+
+NA_DEF NABuffer* naCreateBufferFromClipboard() {
+  return NA_NULL;
 }
 
 

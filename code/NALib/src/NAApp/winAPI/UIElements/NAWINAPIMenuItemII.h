@@ -31,6 +31,9 @@ NA_DEF NAMenuItem* naNewMenuSeparator() {
   return (NAMenuItem*)winapiMenuItem;
 }
 
+NA_DEF NAMenuItem* naNewSubmenuItem(const NAUTF8Char* text, NAMenu* subMenu) {
+  return NA_NULL;
+}
 
 
 NA_DEF void na_DestructWINAPIMenuItem(NA_WINAPIMenuItem* winapiMenuItem) {

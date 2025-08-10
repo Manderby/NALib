@@ -126,6 +126,12 @@ NA_DEF NABool naGetRadioState(const NARadio* radio) {
 
 
 
+NA_DEF void naSetRadioTextColor(NARadio* radio, const NAColor* color) {
+  // todo
+}
+
+
+
 NA_DEF void naSetRadioState(NARadio* radio, NABool state) {
   LPARAM lParam = state ? BST_CHECKED : BST_UNCHECKED;
   SendMessage(naGetUIElementNativePtr(radio), BM_SETCHECK, lParam, 0);
