@@ -12,6 +12,10 @@
   #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
   
 
+  
+  typedef CGLContextObj NativeContext;
+
+
 
   struct NACocoaOpenGLSpace{
     NAOpenGLSpace openGLSpace;
@@ -307,6 +311,53 @@
     NA_UNUSED(openGLSpace);
   }
   
+
+
+
+  NA_DEF void* naAllocateOffscreenOpenGLContext() {
+    NativeContext nativeContext;
+
+    // Definition of the pixel format
+    CGLPixelFormatAttribute pixelFormatAttributes[] = {
+      kCGLPFAColorSize, (CGLPixelFormatAttribute) 32,
+      kCGLPFAAlphaSize, (CGLPixelFormatAttribute) 8,
+      kCGLPFAAllowOfflineRenderers,
+      (CGLPixelFormatAttribute) 0,
+    };
+
+    CGLPixelFormatObj pixelFormat;
+    GLint numberOfPixels;
+    CGLChoosePixelFormat(pixelFormatAttributes, &pixelFormat, &numberOfPixels);
+
+    // create the OpenGL context with that pixel format
+    CGLCreateContext(pixelFormat, 0, &openGL->nativeContext);
+    
+    // We do not need the pixel format anymore.
+    CGLDestroyPixelFormat(pixelFormat);
+    
+    return nativeContext;
+  }
+
+
+
+  NA_DEF void naDeallocateOffscreenOpenGLContext(void* nativeOpenGLContext) {
+    CGLDestroyContext(nativeOpenGLContext);
+  }
+
+
+
+  NA_DEF void naSwapNativeOpenGLContext(void* nativeOpenGLContext) {
+    [nativeOpenGLContext flushBuffer];
+  }
+
+
+
+  NA_DEF void naActivateNativeOpenGLContext(void* nativeOpenGLContext) {
+    CGLSetCurrentContext(nativeOpenGLContext);
+  }
+
+
+
   #pragma GCC diagnostic pop
 
 #else

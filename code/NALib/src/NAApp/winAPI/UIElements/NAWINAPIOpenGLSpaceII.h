@@ -18,6 +18,9 @@ void na_drawAllOpenGLSpaces(void* data) {
 }
 
 
+typedef void* NativeContext;
+
+
 
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
   NA_UNUSED(lParam);
@@ -167,8 +170,8 @@ NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible) 
 }
 
 NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace) {
-  // todo
-  return NA_NULL;
+  NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openGLSpace;
+  return GetDC((HWND)naGetUIElementNativePtr(&winapiOpenGLSpace->openGLSpace.uiElement));
 }
 
 
@@ -205,6 +208,55 @@ NA_API void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
 NA_HDEF void na_UpdateOpenGLSpaceUIScale(NA_UIElement* openGLSpace) {
   NA_UNUSED(openGLSpace);
 }
+
+
+
+
+
+
+NA_DEF void* naAllocateOffscreenOpenGLContext() {
+  NativeContext nativeContext;
+
+  //// Definition of the pixel format
+  //CGLPixelFormatAttribute pixelFormatAttributes[] = {
+  //  kCGLPFAColorSize, (CGLPixelFormatAttribute) 32,
+  //  kCGLPFAAlphaSize, (CGLPixelFormatAttribute) 8,
+  //  kCGLPFAAllowOfflineRenderers,
+  //  (CGLPixelFormatAttribute) 0,
+  //};
+
+  //CGLPixelFormatObj pixelFormat;
+  //GLint numberOfPixels;
+  //CGLChoosePixelFormat(pixelFormatAttributes, &pixelFormat, &numberOfPixels);
+
+  //// create the OpenGL context with that pixel format
+  //CGLCreateContext(pixelFormat, 0, &openGL->nativeContext);
+
+  //// We do not need the pixel format anymore.
+  //CGLDestroyPixelFormat(pixelFormat);
+
+  return nativeContext;
+}
+
+
+
+NA_DEF void naDeallocateOffscreenOpenGLContext(void* nativeOpenGLContext) {
+  //CGLDestroyContext(nativeOpenGLContext);
+}
+
+
+
+NA_DEF void naSwapNativeOpenGLContext(void* nativeOpenGLContext) {
+  SwapBuffers(nativeOpenGLContext);
+}
+
+
+
+NA_DEF void naActivateNativeOpenGLContext(void* nativeOpenGLContext) {
+  //CGLSetCurrentContext(nativeOpenGLContext);
+}
+
+
 
 
 

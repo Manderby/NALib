@@ -113,6 +113,15 @@ NA_API void naResetOpenGLSpaceTransformation(NAOpenGLSpace* openGLSpace);
 
 
 
+
+// Returns a native openGL context.
+NA_API void* naAllocateOffscreenOpenGLContext();
+NA_API void naDeallocateOffscreenOpenGLContext(void* nativeOpenGLContext);
+NA_API void naSwapNativeOpenGLContext(void* nativeOpenGLContext);
+NA_API void naActivateNativeOpenGLContext(void* nativeOpenGLContext);
+
+
+
 #ifdef __cplusplus
   } // extern "C"
   #endif
