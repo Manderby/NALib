@@ -151,7 +151,7 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* uiElement) {
     case NA_UI_SELECT:       return  0.;
     case NA_UI_SLIDER:       return -2.;
     case NA_UI_SPACE:        return  0.;
-    case NA_UI_TEXTBOX:      return +1.;
+    case NA_UI_TEXTBOX:      return  0.;
     case NA_UI_TEXTFIELD:    return +1.;
     case NA_UI_WINDOW:       return  0.;
     default: return 0.;
