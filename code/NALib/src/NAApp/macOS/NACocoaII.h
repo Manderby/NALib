@@ -45,6 +45,11 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 #ifndef NSAppKitVersionNumber11_0
   #define NSAppKitVersionNumber11_0 2022
 #endif
+#ifndef NSAppKitVersionNumber14_1
+  #define NSAppKitVersionNumber14_1 2487.2
+#endif
+
+
 
 
 
@@ -81,7 +86,7 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* uiElement) {
   if(NSAppKitVersionNumber < NSAppKitVersionNumber11_0) {
     switch(naGetUIElementType(uiElement)) {
     case NA_UI_APPLICATION:  return  0.;
-    case NA_UI_BUTTON:       return 0.;
+    case NA_UI_BUTTON:       return  0.;
     case NA_UI_CHECKBOX:     return +5.;
     case NA_UI_IMAGE_SPACE:  return  0.;
     case NA_UI_LABEL:        return +6.;
@@ -99,7 +104,9 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* uiElement) {
     case NA_UI_WINDOW:       return  0.;
     default: return 0.;
     }
-  }else{
+    
+  }else if(NSAppKitVersionNumber <= NSAppKitVersionNumber14_1) {
+  
     switch(naGetUIElementType(uiElement)) {
     case NA_UI_APPLICATION:  return  0.;
     case NA_UI_BUTTON:
@@ -125,6 +132,27 @@ NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* uiElement) {
     case NA_UI_SPACE:        return  0.;
     case NA_UI_TEXTBOX:      return +1.;
     case NA_UI_TEXTFIELD:    return +3.;
+    case NA_UI_WINDOW:       return  0.;
+    default: return 0.;
+    }
+  }else{
+    switch(naGetUIElementType(uiElement)) {
+    case NA_UI_APPLICATION:  return  0.;
+    case NA_UI_BUTTON:       return  0.;
+    case NA_UI_CHECKBOX:     return +3.;
+    case NA_UI_IMAGE_SPACE:  return  0.;
+    case NA_UI_LABEL:        return +3.;
+    case NA_UI_MENU:         return  0.;
+    case NA_UI_MENUITEM:     return  0.;
+    case NA_UI_METAL_SPACE:  return  0.;
+    case NA_UI_OPENGL_SPACE: return  0.;
+    case NA_UI_RADIO:        return +3.;
+    case NA_UI_SCREEN:       return  0.;
+    case NA_UI_SELECT:       return  0.;
+    case NA_UI_SLIDER:       return -2.;
+    case NA_UI_SPACE:        return  0.;
+    case NA_UI_TEXTBOX:      return +1.;
+    case NA_UI_TEXTFIELD:    return +1.;
     case NA_UI_WINDOW:       return  0.;
     default: return 0.;
     }

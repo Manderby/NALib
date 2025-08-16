@@ -330,7 +330,7 @@
     CGLChoosePixelFormat(pixelFormatAttributes, &pixelFormat, &numberOfPixels);
 
     // create the OpenGL context with that pixel format
-    CGLCreateContext(pixelFormat, 0, &openGL->nativeContext);
+    CGLCreateContext(pixelFormat, 0, &nativeContext);
     
     // We do not need the pixel format anymore.
     CGLDestroyPixelFormat(pixelFormat);
@@ -347,7 +347,7 @@
 
 
   NA_DEF void naSwapNativeOpenGLContext(void* nativeOpenGLContext) {
-    [nativeOpenGLContext flushBuffer];
+    [(NA_COCOA_BRIDGE NSOpenGLContext*)nativeOpenGLContext flushBuffer];
   }
 
 

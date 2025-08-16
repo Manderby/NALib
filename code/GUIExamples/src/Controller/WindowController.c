@@ -108,7 +108,6 @@ CommonController* createWindowController() {
   
   double smallWindowLeft = WINDOW_POS_X + WINDOW_WIDTH + WINDOW_MARGIN;
   double smallWindowHeight = 3 * UI_ELEMENT_HEIGTH + 2 * SPACE_MARGIN_V;
-  double windowTop = smallWindowHeight - SPACE_MARGIN_V - UI_ELEMENT_HEIGTH;
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;

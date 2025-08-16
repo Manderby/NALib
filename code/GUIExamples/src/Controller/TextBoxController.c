@@ -9,6 +9,7 @@
 struct TextBoxController{
   CommonController comCon;
 
+  NALabel* enabledLabel;
   NATextBox* textBox;
 };
 
@@ -21,6 +22,10 @@ CommonController* createTextBoxController() {
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
+
+  con->enabledLabel = naNewLabel("Normal", COLUMN0_WIDTH);
+  naSetLabelFont(con->enabledLabel, getTitleFont());
+  naAddSpaceChild(space, con->enabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   con->textBox = naNewTextBox(naMakeSize(COLUMN1_WIDTH, 50));
   naAddSpaceChild(space, con->textBox, naMakePos(TAB1, curPosY - 20));

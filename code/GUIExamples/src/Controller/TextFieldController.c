@@ -49,7 +49,6 @@ CommonController* createTextFieldController() {
 
   con->enabledLabel = naNewLabel("Normal", COLUMN0_WIDTH);
   naSetLabelFont(con->enabledLabel, getTitleFont());
-  naSetLabelTextAlignment(con->enabledLabel, NA_TEXT_ALIGNMENT_CENTER);
   naAddSpaceChild(space, con->enabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   con->textField = naNewTextField(COLUMN1_WIDTH);
@@ -65,7 +64,6 @@ CommonController* createTextFieldController() {
 
   con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
   naSetLabelFont(con->disabledLabel, getTitleFont());
-  naSetLabelTextAlignment(con->disabledLabel, NA_TEXT_ALIGNMENT_CENTER);
   naAddSpaceChild(space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
 
   con->textFieldDisabled = naNewTextField(COLUMN1_WIDTH);

@@ -119,7 +119,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
 
 
 
-NA_DEF void `(NACocoaRadio* cocoaRadio) {
+NA_DEF void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio) {
   na_ClearRadio((NARadio*)cocoaRadio);
 }
 
