@@ -70,7 +70,9 @@ NA_DEF NABool naLoadNib(const NAUTF8Char* nibName, void* owner) {
       loaded = [[NSBundle mainBundle] loadNibNamed:[NSString stringWithUTF8String:nibName] owner:cocoaOwner topLevelObjects:&topLevelObjects];
       // Yes, we are retaining the topLevelObjects just like that. Upon closing the app,
       // these will be a leak but who cares at this point.
-      (void)NA_COCOA_RETAIN(topLevelObjects);
+      if(loaded) {
+        (void)NA_COCOA_RETAIN(topLevelObjects);
+      }
     }
   )
   if(!loaded) {

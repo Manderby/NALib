@@ -96,7 +96,7 @@ void naEndClipboard() {
 
 NA_DEF void naPutStringToClipboard(const NAString* string) {
   NSPasteboard* pasteboard = [NSPasteboard generalPasteboard];
-
+  [pasteboard clearContents];
   [pasteboard writeObjects:
     [NSArray arrayWithObject:
       [NSString stringWithUTF8String:naGetStringUTF8Pointer(string)]]];
