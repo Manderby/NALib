@@ -64,8 +64,8 @@ struct NAApplication{
   NAString*       companyName;
   NAString*       versionString;
   NAString*       buildString;
-  NAString*       resourceBasePath;
-  NAString*       iconPath;
+  NAString*       resourceBaseUrl;
+  NAString*       iconUrl;
 };
 
 struct NAButton{
@@ -244,7 +244,7 @@ NA_HAPI const NA_UIElement* na_GetUIElementCommonParent(const NA_UIElement* elem
 
 NA_HAPI NABool na_GetApplicationMouseVisible();
 NA_HAPI void na_SetApplicationMouseVisible(NABool visible);
-NA_HAPI void na_UpdateApplicationIconPath(void);
+NA_HAPI void na_UpdateApplicationIconUrl(void);
 
 NA_HAPI void na_SetUIElementMouseInside(NA_UIElement* elem, NABool inside);
 NA_HAPI NABool na_GetUIElementMouseInside(const NA_UIElement* elem);

@@ -85,9 +85,9 @@ NA_API void naConvertImageTou8(
 
 
 
-// Creates a new NAImage with the given path. Can only be PNG on windows,
+// Creates a new NAImage with the given url. Can only be PNG on windows,
 // macOS allows for various kind of input files.
-NA_API NAImage* naCreateImageWithFilePath(const NAUTF8Char* pathStr);
+NA_API NAImage* naCreateImageWithFileUrl(const NAUTF8Char* urlStr);
 
 
 

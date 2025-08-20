@@ -67,8 +67,8 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
   app->companyName = NA_NULL;
   app->versionString = NA_NULL;
   app->buildString = NA_NULL;
-  app->resourceBasePath = NA_NULL;
-  app->iconPath = NA_NULL;
+  app->resourceBaseUrl = NA_NULL;
+  app->iconUrl = NA_NULL;
 
   // This is done at the very end of the InitApplication function as the
   // application must be fully functional before it can init any UIElements.
@@ -139,10 +139,10 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
     naDelete(app->versionString);
   if(app->buildString)
     naDelete(app->buildString);
-  if(app->resourceBasePath)
-    naDelete(app->resourceBasePath);
-  if(app->iconPath)
-    naDelete(app->iconPath);
+  if(app->resourceBaseUrl)
+    naDelete(app->resourceBaseUrl);
+  if(app->iconUrl)
+    naDelete(app->iconUrl);
 }
 
 
@@ -308,25 +308,25 @@ NA_DEF void naSetApplicationBuildString(const NAUTF8Char* string) {
     ? naNewStringWithFormat("%s", string)
     : NA_NULL;
 }
-NA_DEF void naSetApplicationResourceBasePath(const NAUTF8Char* path) {
+NA_DEF void naSetApplicationResourceBaseUrl(const NAUTF8Char* url) {
   NAApplication* app = naGetApplication();
-  if(app->resourceBasePath)
-    naDelete(app->resourceBasePath);
+  if(app->resourceBaseUrl)
+    naDelete(app->resourceBaseUrl);
 
-  app->resourceBasePath = path
-    ? naNewStringWithFormat("%s", path)
+  app->resourceBaseUrl = url
+    ? naNewStringWithFormat("%s", url)
     : NA_NULL;
 }
-NA_DEF void naSetApplicationIconPath(const NAUTF8Char* path) {
+NA_DEF void naSetApplicationIconUrl(const NAUTF8Char* url) {
   NAApplication* app = naGetApplication();
-  if(app->iconPath)
-    naDelete(app->iconPath);
+  if(app->iconUrl)
+    naDelete(app->iconUrl);
 
-  app->iconPath = path
-    ? naNewStringWithFormat("%s", path)
+  app->iconUrl = url
+    ? naNewStringWithFormat("%s", url)
     : NA_NULL;
 
-  na_UpdateApplicationIconPath();
+  na_UpdateApplicationIconUrl();
 }
 
 

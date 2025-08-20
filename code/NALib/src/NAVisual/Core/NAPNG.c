@@ -331,7 +331,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png) {
     upBufPtr = curByte - bytesPerLine;
   }
 
-//  outFile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
+//  outFile = naCreateFileWritingUrl("test.raw", NA_FILEMODE_DEFAULT);
 //  naWriteFileBytes(outFile, png->pixelData, png->size.width * png->size.height * bpp);
 //  naRelease(outFile);
 
@@ -707,7 +707,7 @@ NA_DEF NAPNG* naNewPNG(NASizes size, NAPNGColorType colorType, int8 bitDepth) {
 
 
 
-NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
+NA_DEF NAPNG* naNewPNGWithUrhl(const char* fileUrl) {
   NABuffer* buffer;
   NAByte magic[8];
   NABufferIterator bufIter;
@@ -723,7 +723,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
   png->pixelUnit = NA_PIXEL_UNIT_RATIO;
   png->filteredData = NA_NULL;
 
-  buffer = naCreateBufferWithInputPath(filePath);
+  buffer = naCreateBufferWithInputUrl(fileUrl);
 
   // If the buffer is empty, there is no png to read.
   if(!naIsBufferEmpty(buffer)) {
@@ -786,7 +786,7 @@ NA_DEF NAPNG* naNewPNGWithPath(const char* filePath) {
       }
       naClearListIterator(&iter);
 
-    //  NAFile* outFile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
+    //  NAFile* outFile = naCreateFileWritingUrl("test.raw", NA_FILEMODE_DEFAULT);
     //  naWriteBufferToFile(png->compressedData, outFile);
     //  naRelease(outFile);
 
@@ -878,7 +878,7 @@ NA_DEF int8 naGetPNGBitDepth(NAPNG* png) {
 
 
 
-NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath) {
+NA_DEF void naWritePNGToUrl(NAPNG* png, const char* fileUrl) {
 
   NABuffer* outbuffer;
   NAChecksum checksum;
@@ -924,7 +924,7 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath) {
 
   naClearBufferIterator(&iterOut);
 
-  outFile = naCreateFileWritingPath(filePath, NA_FILEMODE_DEFAULT);
+  outFile = naCreateFileWritingUrl(fileUrl, NA_FILEMODE_DEFAULT);
   naFixBufferRange(outbuffer);
   naWriteBufferToFile(outbuffer, outFile);
   naRelease(outFile);

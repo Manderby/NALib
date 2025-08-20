@@ -216,7 +216,7 @@ NA_HDEF void na_FillBufferPartFile(void* dst, NARangei64 sourceRange, void* data
 
 
 
-NA_DEF NABuffer* naCreateBufferWithInputPath(const char* filePath) {
+NA_DEF NABuffer* naCreateBufferWithInputUrl(const char* fileUrl) {
   NARangei64 range;
   NAFile* file;
   NABuffer* fileBuffer;
@@ -227,7 +227,7 @@ NA_DEF NABuffer* naCreateBufferWithInputPath(const char* filePath) {
   na_InitBufferStruct(buffer);
 
 //  NAString* pwd = naNewStringWithCurWorkingDirectory();
-  file = naCreateFileReadingPath(filePath);
+  file = naCreateFileReadingUrl(fileUrl);
   fileBuffer = naCreateBuffer(NA_FALSE);
 
   if(file->desc >= 0) {

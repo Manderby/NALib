@@ -79,15 +79,15 @@ NA_DEF NAImage* naCreateImageWithNativeImage(const void* nativeImage) {
 
 
 
-NA_DEF NAImage* naCreateImageWithFilePath(const NAUTF8Char* pathStr) {
+NA_DEF NAImage* naCreateImageWithFileUrl(const NAUTF8Char* urlStr) {
   NAImage* image = NA_NULL;
 
 //  // Currently, only png is possible
-//  NAPNG* png = naNewPNGWithPath(pathStr);
+//  NAPNG* png = naNewPNGWithUrhl(urlStr);
 //  NAImage* image = naCreateImageWithPNG(png);
 //  return image;
 
-//  CGDataProviderRef dataprovider = CGDataProviderCreateWithFilename(pathStr);
+//  CGDataProviderRef dataprovider = CGDataProviderCreateWithFilename(urlStr);
 //  if(dataprovider) {
 //  
 //    CGImageRef nativeImage = CGImageCreateWithPNGDataProvider(dataprovider, NULL, NA_FALSE, kCGRenderingIntentAbsoluteColorimetric);
@@ -97,7 +97,7 @@ NA_DEF NAImage* naCreateImageWithFilePath(const NAUTF8Char* pathStr) {
 //    CGDataProviderRelease(dataprovider);
 //  }
 
-  NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:pathStr]];
+  NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:urlStr]];
   NSImage* nsImage = [[NSImage alloc] initWithContentsOfURL:url];
   CGImageRef nativeImage = [nsImage CGImageForProposedRect:NA_NULL context:NA_NULL hints:NA_NULL];
   image = naCreateImageWithNativeImage(nativeImage);

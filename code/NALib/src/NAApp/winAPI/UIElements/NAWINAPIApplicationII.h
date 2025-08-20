@@ -519,18 +519,18 @@ NA_DEF void naOpenConsoleWindow(void) {
 
 
 
-NA_HDEF void na_UpdateApplicationIconPath() {  
+NA_HDEF void na_UpdateApplicationIconUrl() {  
   NAApplication* app = naGetApplication();
-  NAString* appIconPath = naNewApplicationIconPath();
-  if(appIconPath) {
+  NAString* appIconUrl = naNewApplicationIconUrl();
+  if(appIconUrl) {
     NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-    //printf("OUTPUT %s", naGetStringUTF8Pointer(appIconPath));
+    //printf("OUTPUT %s", naGetStringUTF8Pointer(appIconUrl));
     
-    NAImage* iconImage = naCreateImageWithFilePath(naGetStringUTF8Pointer(appIconPath));
+    NAImage* iconImage = naCreateImageWithFileUrl(naGetStringUTF8Pointer(appIconUrl));
     HBITMAP bitmap = naAllocNativeImageWithImage(iconImage);
    
-    naDelete(appIconPath);
+    naDelete(appIconUrl);
 
     HBITMAP hbmMask = CreateCompatibleBitmap(
       GetDC(NULL), 
@@ -552,13 +552,13 @@ NA_DEF NAString* naNewApplicationName(void) {
   if(app->appName) {
     return naNewStringExtraction(app->appName, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }else{
-    TCHAR modulePath[MAX_PATH];
-    NAString* utf8ModulePath;
+    TCHAR moduleUrl[MAX_PATH];
+    NAString* utf8ModuleUrl;
     NAString* applicationbaseBame;
 
-    GetModuleFileName(NULL, modulePath, MAX_PATH);
-    utf8ModulePath = naNewStringWithSystemString(modulePath);
-    applicationbaseBame = naNewStringWithBaseNameOfPath(utf8ModulePath);
+    GetModuleFileName(NULL, moduleUrl, MAX_PATH);
+    utf8ModuleUrl = naNewStringWithSystemString(moduleUrl);
+    applicationbaseBame = naNewStringWithBaseNameOfUrl(utf8ModuleUrl);
 
     return applicationbaseBame;
   }
@@ -593,61 +593,61 @@ NA_DEF NAString* naNewApplicationBuildString(void) {
   }
 }
 
-NA_DEF NAString* naNewApplicationResourceBasePath(void) {
+NA_DEF NAString* naNewApplicationResourceBaseUrl(void) {
   NAApplication* app = naGetApplication();
-  if(app->resourceBasePath) {
-    return naNewStringExtraction(app->resourceBasePath, NA_ZERO_i64, NA_MINUS_ONE_i64);
+  if(app->resourceBaseUrl) {
+    return naNewStringExtraction(app->resourceBaseUrl, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }else{
-    return naNewExecutablePath();
+    return naNewExecutableUrl();
   }
 }
 
-NA_DEF NAString* naNewApplicationIconPath(void) {
+NA_DEF NAString* naNewApplicationIconUrl(void) {
   NAApplication* app = naGetApplication();
-  if(app->iconPath) {
-    return naNewApplicationResourcePath(
+  if(app->iconUrl) {
+    return naNewApplicationResourceUrl(
       NA_NULL,
-      naGetStringUTF8Pointer(app->iconPath),
+      naGetStringUTF8Pointer(app->iconUrl),
       NA_NULL);
   }else{
     return NA_NULL;
   }
 }
 
-NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* path, const NAUTF8Char* baseBame, const NAUTF8Char* suffix) {
+NA_DEF NAString* naNewApplicationResourceUrl(const NAUTF8Char* url, const NAUTF8Char* baseBame, const NAUTF8Char* suffix) {
   NAApplication* app = naGetApplication();
-  NAUTF8Char* basePathStr = app->resourceBasePath
-    ? naAllocSprintf(NA_TRUE, "%s%c", naGetStringUTF8Pointer(app->resourceBasePath), NA_PATH_DELIMITER_WIN)
+  NAUTF8Char* baseUrlStr = app->resourceBaseUrl
+    ? naAllocSprintf(NA_TRUE, "%s%c", naGetStringUTF8Pointer(app->resourceBaseUrl), NA_PATH_DELIMITER_WIN)
     : "";
-  NAUTF8Char* pathStr = (path && *path)
-    ? naAllocSprintf(NA_TRUE, "%s%c", path, NA_PATH_DELIMITER_WIN)
+  NAUTF8Char* urlStr = (url && *url)
+    ? naAllocSprintf(NA_TRUE, "%s%c", url, NA_PATH_DELIMITER_WIN)
     : "";
   NAUTF8Char* suffixStr = (suffix && *suffix)
     ? naAllocSprintf(NA_TRUE, "%c%s", NA_SUFFIX_DELIMITER, suffix)
     : "";
 
-  return naNewStringWithFormat("%s%s%s%s", basePathStr, pathStr, baseBame, suffixStr);
+  return naNewStringWithFormat("%s%s%s%s", baseUrlStr, urlStr, baseBame, suffixStr);
 }
 
 
 
-NA_DEF NAString* naNewExecutablePath(void) {
-  TCHAR modulePath[MAX_PATH];
-  NAString* utf8ModulePath;
-  NAString* utf8ModuleBasePath;
+NA_DEF NAString* naNewExecutableUrl(void) {
+  TCHAR moduleUrl[MAX_PATH];
+  NAString* utf8ModuleUrl;
+  NAString* utf8ModuleBaseUrl;
 
-  GetModuleFileName(NULL, modulePath, MAX_PATH);
-  utf8ModulePath = naNewStringWithSystemString(modulePath);
-  utf8ModuleBasePath = naNewStringWithParentOfPath(utf8ModulePath);
+  GetModuleFileName(NULL, moduleUrl, MAX_PATH);
+  utf8ModuleUrl = naNewStringWithSystemString(moduleUrl);
+  utf8ModuleBaseUrl = naNewStringWithParentOfUrl(utf8ModuleUrl);
 
-  naDelete(utf8ModulePath);
+  naDelete(utf8ModuleUrl);
 
-  return utf8ModuleBasePath;
+  return utf8ModuleBaseUrl;
 }
 
 
 
-NA_DEF NAString* naNewAppDataPath() {
+NA_DEF NAString* naNewAppDataUrl() {
   // todo
   return NA_NULL;
 }

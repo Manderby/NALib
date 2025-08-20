@@ -52,13 +52,13 @@ NA_IDEF fsize_t naTell(int fd) {
 //
 // For writing files, use NA_FILEMODE_DEFAULT if you don't know what to use
 // for the mode argument.
-NA_IDEF int naOpen(const char* path, int flags, int mode) {
+NA_IDEF int naOpen(const char* url, int flags, int mode) {
   #if NA_OS == NA_OS_WINDOWS
     int handle;
-    _sopen_s(&handle, path, flags, _SH_DENYNO, mode);
+    _sopen_s(&handle, url, flags, _SH_DENYNO, mode);
     return handle;
   #elif NA_IS_POSIX
-    return open(path, flags, mode);
+    return open(url, flags, mode);
   #endif
 }
 
@@ -92,56 +92,56 @@ NA_IDEF fsize_t naWrite(int fd, const void* buf, fsize_t byteSize) {
 
 // Use NA_DIRMODE_DEFAULT if you don't know what to use for the mode
 // argument.
-NA_IDEF int naMkDir(const char* path, int mode) {
+NA_IDEF int naMkDir(const char* url, int mode) {
   NA_UNUSED(mode);
   #if NA_OS == NA_OS_WINDOWS
-    return _mkdir(path);
+    return _mkdir(url);
   #elif NA_IS_POSIX
-    return mkdir(path, (mode_t)mode);
+    return mkdir(url, (mode_t)mode);
   #endif
 }
 
 
-NA_IDEF int naChDir(const char* path) {
+NA_IDEF int naChDir(const char* url) {
   #if NA_OS == NA_OS_WINDOWS
-    return _chdir(path);
+    return _chdir(url);
   #elif NA_IS_POSIX
-    return chdir(path);
+    return chdir(url);
   #endif
 }
 
 
-NA_IDEF NABool naExists(const char* path) {
+NA_IDEF NABool naExists(const char* url) {
   #if NA_OS == NA_OS_WINDOWS
-    return !(_access(path, 0));
+    return !(_access(url, 0));
   #elif NA_IS_POSIX
-    return !(access(path, 0));
+    return !(access(url, 0));
   #endif
 }
 
 
-NA_IDEF int naRemove(const char* path) {
+NA_IDEF int naRemove(const char* url) {
   #if NA_OS == NA_OS_WINDOWS
-    return remove(path);
+    return remove(url);
   #elif NA_IS_POSIX
-    return remove(path);
+    return remove(url);
   #endif
 }
 
 
-NA_IDEF NABool naCopyFile(const char* dstPath, const char* srcPath) {
+NA_IDEF NABool naCopyFile(const char* dstUrl, const char* srcUrl) {
   #if NA_OS == NA_OS_WINDOWS
-    return (CopyFile( (LPCTSTR)(const char*)srcPath,
-                      (LPCTSTR)(const char*)dstPath,
+    return (CopyFile( (LPCTSTR)(const char*)srcUrl,
+                      (LPCTSTR)(const char*)dstUrl,
                       NA_FALSE) != 0);
   #elif NA_OS == NA_OS_MAC_OS_X
-    return (copyfile(srcPath, dstPath, NULL, COPYFILE_ALL) == 0);
+    return (copyfile(srcUrl, dstUrl, NULL, COPYFILE_ALL) == 0);
   #elif NA_OS == NA_OS_FREEBSD
-    int srcFd = open(srcPath, O_RDONLY);
+    int srcFd = open(srcUrl, O_RDONLY);
     if(srcFd < 0)
 	    return NA_FALSE;
 
-    int dstFd = open(dstPath, O_WRONLY|O_CREAT|O_TRUNC);
+    int dstFd = open(dstUrl, O_WRONLY|O_CREAT|O_TRUNC);
     if(dstFd < 0) {
 	    close(srcFd);
 	    return NA_FALSE;
@@ -158,7 +158,7 @@ NA_IDEF NABool naCopyFile(const char* dstPath, const char* srcPath) {
 
 
 
-NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NABool canWrite, NABool canExecute) {
+NA_IDEF NABool naAccess(const char* url, NABool doesExists, NABool canRead, NABool canWrite, NABool canExecute) {
   NA_UNUSED(doesExists);
   #if NA_OS == NA_OS_WINDOWS
     int testMode = 0;
@@ -166,14 +166,14 @@ NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NAB
     testMode |= (canRead?04:0);
     testMode |= (canWrite?02:0);
     NA_UNUSED(canExecute); // Under windows, the executable flag does not exist.
-    return (_access(path, testMode) == 0);
+    return (_access(url, testMode) == 0);
   #elif NA_IS_POSIX
     int testMode = 0;
     testMode |= (doesExists?F_OK:0);
     testMode |= (canRead?R_OK:0);
     testMode |= (canWrite?W_OK:0);
     testMode |= (canExecute?X_OK:0);
-    return (access(path, testMode) == 0);
+    return (access(url, testMode) == 0);
   #endif
 }
 
@@ -216,9 +216,9 @@ NA_EXTERN_RUNTIME_TYPE(NAFile);
 
 
 
-NA_IDEF NAFile* naCreateFileReadingPath(const char* filePath) {
+NA_IDEF NAFile* naCreateFileReadingUrl(const char* fileUrl) {
   NAFile* file = naCreate(NAFile);
-  file->desc = naOpen(filePath, NA_FILE_OPEN_FLAGS_READ, NA_FILEMODE_DEFAULT);
+  file->desc = naOpen(fileUrl, NA_FILE_OPEN_FLAGS_READ, NA_FILEMODE_DEFAULT);
   #if NA_DEBUG
     if(file->desc < 0)
       naError("Could not open file.");
@@ -228,9 +228,9 @@ NA_IDEF NAFile* naCreateFileReadingPath(const char* filePath) {
 
 
 
-NA_IDEF NAFile* naCreateFileWritingPath(const char* filePath, NAFileMode mode) {
+NA_IDEF NAFile* naCreateFileWritingUrl(const char* fileUrl, NAFileMode mode) {
   NAFile* file = naCreate(NAFile);
-  file->desc = naOpen(filePath, NA_FILE_OPEN_FLAGS_WRITE, mode);
+  file->desc = naOpen(fileUrl, NA_FILE_OPEN_FLAGS_WRITE, mode);
   #if NA_DEBUG
     if(file->desc < 0)
       naError("Could not create file.");
@@ -240,9 +240,9 @@ NA_IDEF NAFile* naCreateFileWritingPath(const char* filePath, NAFileMode mode) {
 
 
 
-NA_IDEF NAFile* naCreateFileAppendingPath(const char* filePath, NAFileMode mode) {
+NA_IDEF NAFile* naCreateFileAppendingUrl(const char* fileUrl, NAFileMode mode) {
   NAFile* file = naCreate(NAFile);
-  file->desc = naOpen(filePath, NA_FILE_OPEN_FLAGS_APPEND, mode);
+  file->desc = naOpen(fileUrl, NA_FILE_OPEN_FLAGS_APPEND, mode);
   #if NA_DEBUG
     if(file->desc < 0)
       naError("Could not create file.");

@@ -199,13 +199,13 @@ NA_API void naCorrectApplicationWindowRect(
 // on Mac, the settings provided here override anything read from a plist.
 //
 // On windows, when creating an installer, you might want to set the resource
-// path to something like the following to be able to locate resources relative
+// url to something like the following to be able to locate resources relative
 // to the installation directory (best to do this in a preStartup function as
 // this needs an NAApplication to be running):
 // 
-// NAString* exePath = naNewExecutablePath();
-// naSetApplicationResourceBasePath(naGetStringUTF8Pointer(exePath));
-// naDelete(exePath);
+// NAString* exeUrl = naNewExecutableUrl();
+// naSetApplicationResourceBaseUrl(naGetStringUTF8Pointer(exeUrl));
+// naDelete(exeUrl);
 //
 // Note that setting the name and company name influences on windows where
 // in the windows registry preferences are stored. If a company name is
@@ -217,28 +217,28 @@ NA_API void naSetApplicationName(const NAUTF8Char* name);
 NA_API void naSetApplicationCompanyName(const NAUTF8Char* name);
 NA_API void naSetApplicationVersionString(const NAUTF8Char* string);
 NA_API void naSetApplicationBuildString(const NAUTF8Char* string);
-NA_API void naSetApplicationResourceBasePath(const NAUTF8Char* path);
-NA_API void naSetApplicationIconPath(const NAUTF8Char* path);
+NA_API void naSetApplicationResourceBaseUrl(const NAUTF8Char* url);
+NA_API void naSetApplicationIconUrl(const NAUTF8Char* url);
 
 // Retrieve the informations. All functions might return NA_NULL.
 NA_API NAString* naNewApplicationName(void);
 NA_API NAString* naNewApplicationCompanyName(void);
 NA_API NAString* naNewApplicationVersionString(void);
 NA_API NAString* naNewApplicationBuildString(void);
-NA_API NAString* naNewApplicationResourceBasePath(void);
-NA_API NAString* naNewApplicationIconPath(void);
+NA_API NAString* naNewApplicationResourceBaseUrl(void);
+NA_API NAString* naNewApplicationIconUrl(void);
 
-// Sometimes, one just needs the path of where the executable runs.
-NA_API NAString* naNewExecutablePath(void);
+// Sometimes, one just needs the url of where the executable runs.
+NA_API NAString* naNewExecutableUrl(void);
 
-// Returns a path where application data can be stored.
-NA_API NAString* naNewAppDataPath(void);
+// Returns a url where application data can be stored.
+NA_API NAString* naNewAppDataUrl(void);
 
 // The application binary usually resides in some kind of base package folder
 // and resources are located relative to that location. Using the following
 // function, you can retrieve files with a baseBame and a suffix. dir can be
 // NA_NULL to search in the base package folder.
-NA_API NAString* naNewApplicationResourcePath(
+NA_API NAString* naNewApplicationResourceUrl(
   const NAUTF8Char* dir,
   const NAUTF8Char* baseBame,
   const NAUTF8Char* suffix);

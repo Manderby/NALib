@@ -158,14 +158,14 @@ NA_API NAUTF8Char naGetStringChar(NAString* string, size_t index);
 
 
 // The following functions allow you to get the parent, the baseBame or the
-// suffix of a path. For example, the file "bin/folder/document.txt" returns
+// suffix of a url. For example, the file "bin/folder/document.txt" returns
 // the parent "bin/folder", the baseBame "bin/folder/document" and the suffix
 // "txt". The suffix is detected by the first dot '.' from the right. If no
-// such dot is found, suffix is empty. Both path delimiters / and \ are
+// such dot is found, suffix is empty. Both url delimiters / and \ are
 // detected.
-NA_API NAString* naNewStringWithParentOfPath(const NAString* filePath);
-NA_API NAString* naNewStringWithBaseNameOfPath(const NAString* filePath);
-NA_API NAString* naNewStringWithSuffixOfPath(const NAString* filePath);
+NA_API NAString* naNewStringWithParentOfUrl(const NAString* fileUrl);
+NA_API NAString* naNewStringWithBaseNameOfUrl(const NAString* fileUrl);
+NA_API NAString* naNewStringWithSuffixOfUrl(const NAString* fileUrl);
 
 
 

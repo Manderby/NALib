@@ -87,19 +87,19 @@ NA_PROTOTYPE(NAFile);
 
 NA_IAPI fsize_t     naLseek   (int fd, fsize_t byteOffset, int originType);
 NA_IAPI fsize_t     naTell(int fd);
-NA_IAPI int         naOpen    (const char* path, int flags, int mode);
+NA_IAPI int         naOpen    (const char* url, int flags, int mode);
 NA_IAPI int         naClose   (int fd);
 NA_IAPI fsize_t     naRead    (int fd, void* buf, fsize_t byteSize);
 NA_IAPI fsize_t     naWrite   (int fd, const void* buf, fsize_t byteSize);
-NA_IAPI int         naMkDir   (const char* path, int mode);
-NA_IAPI int         naChDir   (const char* path);
-NA_IAPI NABool      naExists  (const char* path);
-NA_API  NABool      naIsDir   (const char* path);
-NA_API  NABool      naIsHidden(const char* path);
-NA_IAPI int         naRemove  (const char* path);
-NA_IAPI NABool      naCopyFile(const char* dstPath, const char* srcPath);
+NA_IAPI int         naMkDir   (const char* url, int mode);
+NA_IAPI int         naChDir   (const char* url);
+NA_IAPI NABool      naExists  (const char* url);
+NA_API  NABool      naIsDir   (const char* url);
+NA_API  NABool      naIsHidden(const char* url);
+NA_IAPI int         naRemove  (const char* url);
+NA_IAPI NABool      naCopyFile(const char* dstUrl, const char* srcUrl);
 NA_IAPI NABool      naAccess  (
-  const char* path,
+  const char* url,
   NABool doesExists,
   NABool canRead,
   NABool canWrite,
@@ -135,10 +135,10 @@ NA_IAPI NAUTF8Char* naAllocCwd(NAUTF8Char* buf, size_t bufSize);
 //
 // If you don't know, what the mode argument means, use NA_FILEMODE_DEFAULT.
 
-NA_IAPI NAFile* naCreateFileReadingPath(   const char* filePath);
-NA_IAPI NAFile* naCreateFileWritingPath(   const char* filePath,
+NA_IAPI NAFile* naCreateFileReadingUrl(   const char* fileUrl);
+NA_IAPI NAFile* naCreateFileWritingUrl(   const char* fileUrl,
                                                 NAFileMode mode);
-NA_IAPI NAFile* naCreateFileAppendingPath( const char* filePath,
+NA_IAPI NAFile* naCreateFileAppendingUrl( const char* fileUrl,
                                                 NAFileMode mode);
 
 // Makes an NAFile struct wrapped around the standard channels.

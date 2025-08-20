@@ -323,19 +323,19 @@ NA_DEF NAString* naNewApplicationBuildString(void) {
   }
 }
 
-NA_DEF NAString* naNewApplicationResourceBasePath(void) {
+NA_DEF NAString* naNewApplicationResourceBaseUrl(void) {
   NAApplication* app = naGetApplication();
-  if(app->resourceBasePath) {
-    return naNewStringExtraction(app->resourceBasePath, 0, -1);
+  if(app->resourceBaseUrl) {
+    return naNewStringExtraction(app->resourceBaseUrl, 0, -1);
   }else{
-    return naNewExecutablePath();
+    return naNewExecutableUrl();
   }
 }
 
-NA_DEF NAString* naNewApplicationIconPath(void) {
+NA_DEF NAString* naNewApplicationIconUrl(void) {
   NAApplication* app = naGetApplication();
-  if(app->iconPath) {
-    return naNewStringExtraction(app->iconPath, 0, -1);
+  if(app->iconUrl) {
+    return naNewStringExtraction(app->iconUrl, 0, -1);
   }else{
     NSString* iconFilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
     NSString* iconBaseName = [iconFilename stringByDeletingPathExtension];
@@ -344,35 +344,35 @@ NA_DEF NAString* naNewApplicationIconPath(void) {
   }
 }
 
-NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* path, const NAUTF8Char* baseBame, const NAUTF8Char* suffix) {
-  NSURL* url;
-  if(path && *path) {
-    url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:baseBame] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:path]];
+NA_DEF NAString* naNewApplicationResourceUrl(const NAUTF8Char* url, const NAUTF8Char* baseBame, const NAUTF8Char* suffix) {
+  NSURL* nsurl;
+  if(url && *url) {
+    nsurl = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:baseBame] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:url]];
   }else{
-    url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:baseBame] withExtension:[NSString stringWithUTF8String:suffix]];
+    nsurl = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:baseBame] withExtension:[NSString stringWithUTF8String:suffix]];
   }
-  return naNewStringWithFormat("%s", [[url path] UTF8String]);
+  return naNewStringWithFormat("%s", [[nsurl path] UTF8String]);
 }
 
-NA_HDEF void na_UpdateApplicationIconPath() {
+NA_HDEF void na_UpdateApplicationIconUrl() {
   // nothing to be done on macOS
 }
 
-NA_DEF NAString* naNewExecutablePath() {
+NA_DEF NAString* naNewExecutableUrl() {
   return naNewStringWithFormat("%s", [[[NSBundle mainBundle] bundlePath] UTF8String]);
 }
 
-NA_DEF NAString* naNewAppDataPath() {
+NA_DEF NAString* naNewAppDataUrl() {
   NSArray<NSString *>* path = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
   NAString* appName = naNewApplicationName();
-  NAString* appDataPath = naNewStringWithFormat(
+  NAString* appDataUrl = naNewStringWithFormat(
     "%s%c%s%c",
     [path[0] UTF8String],
     NA_PATH_DELIMITER_UNIX,
     naGetStringUTF8Pointer(appName),
     NA_PATH_DELIMITER_UNIX);
   naDelete(appName);
-  return appDataPath;
+  return appDataUrl;
 }
 
 

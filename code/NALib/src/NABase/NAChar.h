@@ -32,7 +32,7 @@
   #define NA_TAB      "\t"
 #endif
 
-// Macros for different path delimiters as utf8 chars.
+// Macros for different url delimiters as utf8 chars.
 #define NA_PATH_DELIMITER_UNIX '/'
 #define NA_PATH_DELIMITER_WIN  '\\'
 #define NA_SUFFIX_DELIMITER    '.'

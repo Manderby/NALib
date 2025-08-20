@@ -119,8 +119,8 @@ NA_API NABuffer* naCreateBufferWithSameSource(
 
 // Creates a buffer inputting contents from a file. Its origin is always at
 // zero and its range is fixed to the fileSize.
-NA_API NABuffer* naCreateBufferWithInputPath(
-  const char* filePath);
+NA_API NABuffer* naCreateBufferWithInputUrl(
+  const char* fileUrl);
 
 // Creates a buffer accessing already existing const or mutable data. If the
 // data is mutable, you can give a destructor if you want to delete the
@@ -617,11 +617,11 @@ NA_API NAString* naParseBufferTokenWithDelimiter(
   NAUTF8Char delimiter,
   NABool skipWhitespace);
 
-// Gathers the first token within buffer which ends in a path delimiter. Both
-// path delimiters / and \ are detected. The delimiter will not be included.
+// Gathers the first token within buffer which ends in a url delimiter. Both
+// url delimiters / and \ are detected. The delimiter will not be included.
 // After this function, string will point to the first character after the
 // delimiter. Whitespaces at the start or end will NOT be stripped at all.
-NA_API NAString* naParseBufferPathComponent(NABufferIterator* iter);
+NA_API NAString* naParseBufferUrlComponent(NABufferIterator* iter);
 
 // Parses the given buffer for decimal digits and accumulates them into an
 // unsigned integer. The function will start at the current byte and parse

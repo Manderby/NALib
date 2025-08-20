@@ -157,7 +157,7 @@ NA_API size_t naPresentOptionBox(
 // to a cancel operation.
 typedef NABool (*NAFilePanelCallback)(
   NABool doPerform,
-  const NAArray* paths,
+  const NAArray* urls,
   const void* data);
 
 // Returns true, if the callback returns true.

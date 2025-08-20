@@ -21,32 +21,32 @@ NA_DEF NAString* naNewStringWithCurWorkingDirectory() {
 
 
 
-NA_DEF NABool naIsDir(const char* path) {
+NA_DEF NABool naIsDir(const char* url) {
   #if NA_OS == NA_OS_WINDOWS
     TCHAR* sysstring;
     NABool retValue;
-    sysstring = naAllocSystemStringWithUTF8String(path);
+    sysstring = naAllocSystemStringWithUTF8String(url);
     retValue = (GetFileAttributes(sysstring)  & FILE_ATTRIBUTE_DIRECTORY) ? NA_TRUE : NA_FALSE;
     free(sysstring);
     return retValue;
   #elif NA_IS_POSIX
     struct stat stat_struct;
-    stat(path, &stat_struct);
+    stat(url, &stat_struct);
     return (stat_struct.st_mode & S_IFDIR) ? NA_TRUE : NA_FALSE;
   #endif
 }
 
 
-NA_DEF NABool naIsHidden(const char* path) {
+NA_DEF NABool naIsHidden(const char* url) {
   #if NA_OS == NA_OS_WINDOWS
     TCHAR* sysstring;
     NABool retValue;
-    sysstring = naAllocSystemStringWithUTF8String(path);
+    sysstring = naAllocSystemStringWithUTF8String(url);
     retValue = (GetFileAttributes(sysstring) & FILE_ATTRIBUTE_HIDDEN) ? NA_TRUE : NA_FALSE;
     free(sysstring);
     return retValue;
   #elif NA_IS_POSIX
-    return (path[0] == '.');
+    return (url[0] == '.');
   #endif
 }
 

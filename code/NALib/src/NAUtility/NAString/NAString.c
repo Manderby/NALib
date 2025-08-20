@@ -371,18 +371,18 @@ NA_DEF NAUTF8Char naGetStringChar(NAString* string, size_t index) {
 
 
 
-NA_HDEF int64 naGetLastSlashOffset(const NAString* filePath) {
+NA_HDEF int64 naGetLastSlashOffset(const NAString* fileUrl) {
   int64 slashOffset = naSearchBufferByteOffset(
-    filePath->buffer,
+    fileUrl->buffer,
     NA_PATH_DELIMITER_UNIX,
-    naGetRangei64Max(naGetBufferRange(filePath->buffer)),
+    naGetRangei64Max(naGetBufferRange(fileUrl->buffer)),
     NA_FALSE);
     
   if(naEquali64(slashOffset, NA_INVALID_MEMORY_INDEX)) {
     int64 backSlashOffset = naSearchBufferByteOffset(
-      filePath->buffer,
+      fileUrl->buffer,
       NA_PATH_DELIMITER_WIN,
-      naGetRangei64Max(naGetBufferRange(filePath->buffer)),
+      naGetRangei64Max(naGetBufferRange(fileUrl->buffer)),
       NA_FALSE);
       
     return backSlashOffset;
@@ -393,14 +393,14 @@ NA_HDEF int64 naGetLastSlashOffset(const NAString* filePath) {
 
 
 
-NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath) {
+NA_DEF NAString* naNewStringWithParentOfUrl(const NAString* fileUrl) {
   NAString* string;
-  naCacheBufferRange(filePath->buffer, filePath->buffer->range);
-  int64 slashOffset = naGetLastSlashOffset(filePath);
+  naCacheBufferRange(fileUrl->buffer, fileUrl->buffer->range);
+  int64 slashOffset = naGetLastSlashOffset(fileUrl);
   if(!naEquali64(slashOffset, NA_INVALID_MEMORY_INDEX)) {
-    string = naNewStringExtraction(filePath, NA_ZERO_i64, slashOffset);
+    string = naNewStringExtraction(fileUrl, NA_ZERO_i64, slashOffset);
   }else{
-    string = naNewStringExtraction(filePath, NA_ZERO_i64, NA_MINUS_ONE_i64);
+    string = naNewStringExtraction(fileUrl, NA_ZERO_i64, NA_MINUS_ONE_i64);
   }
 
   #if NA_STRING_ALWAYS_CACHE == 1
@@ -411,24 +411,24 @@ NA_DEF NAString* naNewStringWithParentOfPath(const NAString* filePath) {
 
 
 
-NA_DEF NAString* naNewStringWithBaseNameOfPath(const NAString* filePath) {
+NA_DEF NAString* naNewStringWithBaseNameOfUrl(const NAString* fileUrl) {
   NAString* string;
-  naCacheBufferRange(filePath->buffer, filePath->buffer->range);
-  int64 slashOffset = naGetLastSlashOffset(filePath);
+  naCacheBufferRange(fileUrl->buffer, fileUrl->buffer->range);
+  int64 slashOffset = naGetLastSlashOffset(fileUrl);
   // If slashOffset is invalid, return all leading.
   if(naEquali64(slashOffset, NA_INVALID_MEMORY_INDEX)) {
     slashOffset = NA_MINUS_ONE_i64;
   }
   int64 dotOffset = naSearchBufferByteOffset(
-    filePath->buffer,
+    fileUrl->buffer,
     NA_SUFFIX_DELIMITER,
-    naGetRangei64Max(naGetBufferRange(filePath->buffer)),
+    naGetRangei64Max(naGetBufferRange(fileUrl->buffer)),
     NA_FALSE);
   // If dotpos is invalid, return the tailing characters.
   if(naEquali64(dotOffset, NA_INVALID_MEMORY_INDEX)) {
-    string = naNewStringExtraction(filePath, naAddi64(slashOffset, NA_ONE_i64), NA_MINUS_ONE_i64);
+    string = naNewStringExtraction(fileUrl, naAddi64(slashOffset, NA_ONE_i64), NA_MINUS_ONE_i64);
   }else{
-    string = naNewStringExtraction(filePath, naAddi64(slashOffset, NA_ONE_i64), naSubi64(naSubi64(dotOffset, slashOffset), NA_ONE_i64));
+    string = naNewStringExtraction(fileUrl, naAddi64(slashOffset, NA_ONE_i64), naSubi64(naSubi64(dotOffset, slashOffset), NA_ONE_i64));
   }
   #if NA_STRING_ALWAYS_CACHE == 1
   naGetStringUTF8Pointer(string);
@@ -438,17 +438,17 @@ NA_DEF NAString* naNewStringWithBaseNameOfPath(const NAString* filePath) {
 
 
 
-NA_DEF NAString* naNewStringWithSuffixOfPath(const NAString* filePath) {
+NA_DEF NAString* naNewStringWithSuffixOfUrl(const NAString* fileUrl) {
   NAString* string;
   int64 dotOffset = naSearchBufferByteOffset(
-    filePath->buffer,
+    fileUrl->buffer,
     NA_SUFFIX_DELIMITER,
-    naGetRangei64Max(naGetBufferRange(filePath->buffer)),
+    naGetRangei64Max(naGetBufferRange(fileUrl->buffer)),
     NA_FALSE);
   if(naEquali64(dotOffset, NA_INVALID_MEMORY_INDEX)) {
     string = naNewString();
   }else{
-    string = naNewStringExtraction(filePath, naAddi64(dotOffset, NA_ONE_i64), NA_MINUS_ONE_i64);
+    string = naNewStringExtraction(fileUrl, naAddi64(dotOffset, NA_ONE_i64), NA_MINUS_ONE_i64);
   }
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(string);

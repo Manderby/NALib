@@ -223,7 +223,7 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
 
 
 
-NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter) {
+NA_DEF NAString* naParseBufferUrlComponent(NABufferIterator* iter) {
   NAString* string;
   NARangei64 range;
   NABool found = NA_FALSE;
