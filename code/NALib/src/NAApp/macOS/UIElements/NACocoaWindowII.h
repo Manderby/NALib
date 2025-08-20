@@ -276,6 +276,14 @@ NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title) {
 
 
 
+NA_DEF void naSetWindowDocumentURL(NAWindow* window, const NAUTF8Char* url) {
+  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+  NSURL* nsurl = [[NSURL alloc] initFileURLWithPath:[NSString stringWithFormat:@"%s", url]];
+  [nativePtr setRepresentedURL:nsurl];
+}
+
+
+
 NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   [nativePtr setKeepOnTop:keepOnTop];

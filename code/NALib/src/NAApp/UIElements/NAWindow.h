@@ -24,6 +24,10 @@
 
 
 
+NA_PROTOTYPE(NAArray);
+
+
+
 // Window flags:
 #define NA_WINDOW_FIXED_SIZE             0x00
 #define NA_WINDOW_RESIZEABLE             0x01
@@ -106,6 +110,7 @@ NA_API NARect naGetWindowDraggableRect(const NAWindow * window);
 
 // Set various properties of the window
 NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
+NA_API void naSetWindowDocumentURL(NAWindow* window, const NAUTF8Char* url);
 NA_API void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
 NA_API void naSetWindowAcceptsKeyboardReactions(NAWindow* window, NABool accepts);
 
@@ -152,7 +157,7 @@ NA_API size_t naPresentOptionBox(
 // to a cancel operation.
 typedef NABool (*NAFilePanelCallback)(
   NABool doPerform,
-  const NAUTF8Char* path,
+  const NAArray* paths,
   const void* data);
 
 // Returns true, if the callback returns true.

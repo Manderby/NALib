@@ -9,6 +9,7 @@
 #include "../NAKeyboard.h"
 #include "../../NAUtility/NAMemory.h"
 #include "../../NAMath/NACoord.h"
+#include "../../NAStruct/NAArray.h"
 #include "../../NAUtility/NAThreading.h"
 #include "../../NAUtility/NATranslator.h"
 #include "../../NAUtility/NAValueHelper.h"
@@ -516,11 +517,24 @@ NA_DEF NABool naPresentFilePanel(
 {
   if(load) {
     NSOpenPanel* openPanel = [NSOpenPanel openPanel];
+    [openPanel setAllowsMultipleSelection:YES];
+    
     NSModalResponse response = [openPanel runModal];
     
     // Handle the button response
     if (response == NSModalResponseOK) {
-      return callback(NA_TRUE, [[[openPanel URL] path] UTF8String], data);
+      NAArray urls;
+      size_t urlCount = [[openPanel URLs] count];
+      naInitArrayWithCount(&urls, sizeof(const NAUTF8Char*), urlCount);
+
+      for (size_t i = 0; i < urlCount; ++i) {
+        const NAUTF8Char** elem = naGetArrayElementMutable(&urls, i);
+        *elem = [[[[openPanel URLs] objectAtIndex:i] path] UTF8String];
+      }
+      
+      NABool retValue = callback(NA_TRUE, &urls, data);
+      naClearArray(&urls);
+      return retValue;
     }
 
   }else { // save panel
@@ -541,7 +555,13 @@ NA_DEF NABool naPresentFilePanel(
     
     // Handle the button response
     if (response == NSModalResponseOK) {
-      return callback(NA_TRUE, [[[savePanel URL] path] UTF8String], data);
+      NAArray urls;
+      naInitArrayWithCount(&urls, sizeof(const NAUTF8Char*), 1);
+      const NAUTF8Char** elem = naGetArrayElementMutable(&urls, 0);
+      *elem = [[[savePanel URL] path] UTF8String];
+      NABool retValue = callback(NA_TRUE, &urls, data);
+      naClearArray(&urls);
+      return retValue;
     }
     
   //  [savePanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(nativeWindow) completionHandler:^(NSInteger result) {
