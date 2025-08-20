@@ -326,7 +326,8 @@ NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect) {
 }
 
 NA_HDEF void na_UpdateMetalSpaceUIScale(NA_UIElement* metalSpace) {
-  NA_UNUSED(metalSpace);
+  naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
+  [nativePtr adjustLayerFrame];
 }
 
 

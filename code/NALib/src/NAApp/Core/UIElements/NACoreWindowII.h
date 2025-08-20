@@ -66,7 +66,12 @@ NA_HDEF void na_RememberWindowPosition(const NAWindow* window) {
 
 
 
-NA_HDEF void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen) {  
+NA_HDEF void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen) {
+  // Sometimes, this function gets called before new screens can be attached
+  // to windows. todo: Investigate.
+  if(!screen)
+    return;
+    
   NAScreen* oldScreen = naGetUIElementParentMutable(window);
   double oldUIScale = naGetScreenUIScale(oldScreen);
   double newUIScale = naGetScreenUIScale(screen);
