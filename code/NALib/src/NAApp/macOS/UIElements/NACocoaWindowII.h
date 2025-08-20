@@ -278,8 +278,12 @@ NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title) {
 
 NA_DEF void naSetWindowDocumentURL(NAWindow* window, const NAUTF8Char* url) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
-  NSURL* nsurl = [[NSURL alloc] initFileURLWithPath:[NSString stringWithFormat:@"%s", url]];
-  [nativePtr setRepresentedURL:nsurl];
+  if(url) {
+    NSURL* nsurl = [[NSURL alloc] initFileURLWithPath:[NSString stringWithFormat:@"%s", url]];
+    [nativePtr setRepresentedURL:nsurl];
+  }else{
+    [nativePtr setRepresentedURL:nil];
+  }
 }
 
 
