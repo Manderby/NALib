@@ -163,7 +163,7 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
 - (void) setLink:(const NAUTF8Char*)url{
   NSMutableAttributedString* attrString;
   NSRange range;
-  NSURL* nsurl;
+  NSUrl* nsurl;
   NSMutableParagraphStyle* paragraphStyle;
   
   [self setAllowsEditingTextAttributes: YES];
@@ -172,7 +172,7 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
   attrString = [[NSMutableAttributedString alloc] initWithString: [self stringValue]];
   range = NSMakeRange(0, [attrString length]);
 
-  nsurl = [NSURL URLWithString:[NSString stringWithUTF8String:url]];
+  nsurl = [NSUrl UrlWithString:[NSString stringWithUTF8String:url]];
   
   [attrString beginEditing];
   [attrString addAttribute:NSLinkAttributeName value:[nsurl absoluteString] range:range];

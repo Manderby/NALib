@@ -508,6 +508,14 @@ NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title) {
 
 
 
+NA_DEF void naSetWindowDocumentUrl(NAWindow* window, const NAUTF8Char* url) {
+  NA_UNUSED(window);
+  NA_UNUSED(url);
+  // todo
+}
+
+
+
 NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop) {
   if(keepOnTop) {
     SetWindowPos(naGetUIElementNativePtr(window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);

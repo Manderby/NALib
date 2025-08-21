@@ -110,7 +110,7 @@ NA_API NARect naGetWindowDraggableRect(const NAWindow * window);
 
 // Set various properties of the window
 NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
-NA_API void naSetWindowDocumentURL(NAWindow* window, const NAUTF8Char* url);
+NA_API void naSetWindowDocumentUrl(NAWindow* window, const NAUTF8Char* url);
 NA_API void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
 NA_API void naSetWindowAcceptsKeyboardReactions(NAWindow* window, NABool accepts);
 

@@ -215,7 +215,7 @@ NA_HDEF void na_UpdateOpenGLSpaceUIScale(NA_UIElement* openGLSpace) {
 
 
 NA_DEF void* naAllocateOffscreenOpenGLContext() {
-  NativeContext nativeContext;
+  //NativeContext nativeContext;
 
   //// Definition of the pixel format
   //CGLPixelFormatAttribute pixelFormatAttributes[] = {
@@ -235,7 +235,8 @@ NA_DEF void* naAllocateOffscreenOpenGLContext() {
   //// We do not need the pixel format anymore.
   //CGLDestroyPixelFormat(pixelFormat);
 
-  return nativeContext;
+  //return nativeContext;
+  return NA_NULL;
 }
 
 

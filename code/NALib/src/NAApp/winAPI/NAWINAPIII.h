@@ -1061,7 +1061,7 @@ long getWINAPITextAlignmentWithAlignment(NATextAlignment alignment) {
 
 
 
-NA_DEF void naOpenURLInBrowser(const NAUTF8Char* url) {
+NA_DEF void naOpenUrlInBrowser(const NAUTF8Char* url) {
   TCHAR* sysString = naAllocSystemStringWithUTF8String(url);
   ShellExecute(NULL, TEXT("open"), sysString, NULL, NULL, SW_SHOWNORMAL);
   naFree(sysString);

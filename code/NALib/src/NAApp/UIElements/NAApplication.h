@@ -290,9 +290,9 @@ NA_API void naFillColorWithSkinAccentColor(NAColor* color, NASkin skin);
 
 
 // ////////////////////////////////
-// Open URL in system default wrowser
+// Open Url in system default wrowser
 
-NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
+NA_API void naOpenUrlInBrowser(const NAUTF8Char* url);
 
 
 
