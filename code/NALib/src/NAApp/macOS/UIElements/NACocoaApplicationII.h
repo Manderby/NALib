@@ -339,17 +339,17 @@ NA_DEF NAString* naNewApplicationIconUrl(void) {
   }else{
     NSString* iconFilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
     NSString* iconBaseName = [iconFilename stringByDeletingPathExtension];
-    NSUrl* url = [[NSBundle mainBundle] UrlForResource:iconBaseName withExtension:@"icns"];
+    NSURL* url = [[NSBundle mainBundle] URLForResource:iconBaseName withExtension:@"icns"];
     return naNewStringWithFormat("%s", [[url path] UTF8String]);
   }
 }
 
 NA_DEF NAString* naNewApplicationResourceUrl(const NAUTF8Char* url, const NAUTF8Char* baseBame, const NAUTF8Char* suffix) {
-  NSUrl* nsurl;
+  NSURL* nsurl;
   if(url && *url) {
-    nsurl = [[NSBundle mainBundle] UrlForResource:[NSString stringWithUTF8String:baseBame] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:url]];
+    nsurl = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:baseBame] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:url]];
   }else{
-    nsurl = [[NSBundle mainBundle] UrlForResource:[NSString stringWithUTF8String:baseBame] withExtension:[NSString stringWithUTF8String:suffix]];
+    nsurl = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:baseBame] withExtension:[NSString stringWithUTF8String:suffix]];
   }
   return naNewStringWithFormat("%s", [[nsurl path] UTF8String]);
 }

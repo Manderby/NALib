@@ -97,8 +97,8 @@ NA_DEF NAImage* naCreateImageWithFileUrl(const NAUTF8Char* urlStr) {
 //    CGDataProviderRelease(dataprovider);
 //  }
 
-  NSUrl* url = [NSUrl fileUrlWithPath:[NSString stringWithUTF8String:urlStr]];
-  NSImage* nsImage = [[NSImage alloc] initWithContentsOfUrl:url];
+  NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:urlStr]];
+  NSImage* nsImage = [[NSImage alloc] initWithContentsOfURL:url];
   CGImageRef nativeImage = [nsImage CGImageForProposedRect:NA_NULL context:NA_NULL hints:NA_NULL];
   image = naCreateImageWithNativeImage(nativeImage);
 

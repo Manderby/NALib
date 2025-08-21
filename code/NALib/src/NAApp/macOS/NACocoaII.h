@@ -531,12 +531,12 @@ NA_DEF NABool naPresentFilePanel(
     // Handle the button response
     if (response == NSModalResponseOK) {
       NAArray urls;
-      size_t urlCount = [[openPanel Urls] count];
+      size_t urlCount = [[openPanel URLs] count];
       naInitArrayWithCount(&urls, sizeof(const NAUTF8Char*), urlCount);
 
       for (size_t i = 0; i < urlCount; ++i) {
         const NAUTF8Char** elem = naGetArrayElementMutable(&urls, i);
-        *elem = [[[[openPanel Urls] objectAtIndex:i] path] UTF8String];
+        *elem = [[[[openPanel URLs] objectAtIndex:i] path] UTF8String];
       }
       
       NABool retValue = callback(NA_TRUE, &urls, data);
@@ -565,7 +565,7 @@ NA_DEF NABool naPresentFilePanel(
       NAArray urls;
       naInitArrayWithCount(&urls, sizeof(const NAUTF8Char*), 1);
       const NAUTF8Char** elem = naGetArrayElementMutable(&urls, 0);
-      *elem = [[[savePanel Url] path] UTF8String];
+      *elem = [[[savePanel URL] path] UTF8String];
       NABool retValue = callback(NA_TRUE, &urls, data);
       naClearArray(&urls);
       return retValue;
@@ -661,7 +661,7 @@ NA_DEF void naActivateCursorImage(const NACursorImage* image) {
 
 
 NA_DEF void naOpenUrlInBrowser(const NAUTF8Char* url) {
-  [[NSWorkspace sharedWorkspace] openUrl:[NSUrl UrlWithString:[NSString stringWithUTF8String:url]]];
+  [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithUTF8String:url]]];
 }
 
 
