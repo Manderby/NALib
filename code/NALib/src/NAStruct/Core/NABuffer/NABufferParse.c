@@ -99,9 +99,10 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty) {
   }
 
   if(!found) {
-    NARangei64 remainingrange = naMakeRangei64Combination(start, naGetRangei64Max(buffer->range));
-    if(!naIsRangei64Empty(remainingrange)) {
-      string = naNewStringWithBufferExtraction(buffer, remainingrange);
+    int64 max = naGetRangei64Max(buffer->range);
+    if(start < max) {
+      NARangei64 remainingRange = naMakeRangei64Combination(start, naGetRangei64Max(buffer->range));
+      string = naNewStringWithBufferExtraction(buffer, remainingRange);
     }else{
       string = naNewString();
     }

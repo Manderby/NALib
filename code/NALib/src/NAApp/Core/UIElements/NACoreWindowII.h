@@ -85,6 +85,7 @@ NA_HDEF void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen) {
       na_UpdateUIElementUIScale(window);
     }
   }
+  // todo: Correcting the window position if it is offscreen
   na_RememberWindowPosition(window);
 }
 

@@ -23,6 +23,10 @@ NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, con
 
 NA_HDEF void na_ClearScreen(NAScreen* screen) {
   na_ClearCoreUIElement(&screen->uiElement);
+  #if NA_DEBUG
+    if(!naIsListEmpty(&screen->windows))
+      naError("Screen still contains windows");
+  #endif
   naClearList(&screen->windows, NA_NULL);  // does not own the windows.
   naDelete(screen->name);
 }
