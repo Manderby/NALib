@@ -66,7 +66,7 @@ void postStartup(void* arg) {
   NA_UNUSED(arg);
   
   // Load the image files
-  NAPNG* pngIcon = naNewPNGWithPath(RESOURCE_PATH "icon.png");
+  NAPNG* pngIcon = naNewPNGWithUrl(RESOURCE_PATH "icon.png");
   if(!naIsSizesUseful(naGetPNGSize(pngIcon))) {
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
@@ -79,7 +79,7 @@ void postStartup(void* arg) {
   naDelete(pngIcon);
   naRelease(originalIconImage);
 
-  NAPNG* png1 = naNewPNGWithPath(RESOURCE_PATH "man.png");
+  NAPNG* png1 = naNewPNGWithUrl(RESOURCE_PATH "man.png");
   if(!naIsSizesUseful(naGetPNGSize(png1))) {
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);
@@ -92,7 +92,7 @@ void postStartup(void* arg) {
   naDelete(png1);
   naRelease(originalState1Image);
 
-  NAPNG* png2 = naNewPNGWithPath(RESOURCE_PATH "man2.png");
+  NAPNG* png2 = naNewPNGWithUrl(RESOURCE_PATH "man2.png");
   if(!naIsSizesUseful(naGetPNGSize(png2))) {
     printf("\nCould not open the image file. Check that the working directory is correct.\n");
     exit(1);

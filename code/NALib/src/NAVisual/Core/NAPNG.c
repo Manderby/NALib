@@ -707,7 +707,7 @@ NA_DEF NAPNG* naNewPNG(NASizes size, NAPNGColorType colorType, int8 bitDepth) {
 
 
 
-NA_DEF NAPNG* naNewPNGWithUrhl(const char* fileUrl) {
+NA_DEF NAPNG* naNewPNGWithUrl(const char* fileUrl) {
   NABuffer* buffer;
   NAByte magic[8];
   NABufferIterator bufIter;

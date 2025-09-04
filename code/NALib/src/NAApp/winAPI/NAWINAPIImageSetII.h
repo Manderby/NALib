@@ -55,7 +55,7 @@ NA_DEF NAImage* naCreateImageWithNativeImage(const void* nativeImage) {
 
 NA_DEF NAImage* naCreateImageWithFileUrl(const NAUTF8Char* urlStr) {
   // Currently, only png is possible
-  NAPNG* png = naNewPNGWithUrhl(urlStr);
+  NAPNG* png = naNewPNGWithUrl(urlStr);
   NAImage* image = naCreateImageWithPNG(png);
   naDelete(png);
   return image;

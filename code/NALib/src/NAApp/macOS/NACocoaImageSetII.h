@@ -83,7 +83,7 @@ NA_DEF NAImage* naCreateImageWithFileUrl(const NAUTF8Char* urlStr) {
   NAImage* image = NA_NULL;
 
 //  // Currently, only png is possible
-//  NAPNG* png = naNewPNGWithUrhl(urlStr);
+//  NAPNG* png = naNewPNGWithUrl(urlStr);
 //  NAImage* image = naCreateImageWithPNG(png);
 //  return image;
 
