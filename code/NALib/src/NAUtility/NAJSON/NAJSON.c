@@ -1043,7 +1043,9 @@ NA_HDEF void na_ParseJSONFixedArray(NAJSONWorker* worker, void* object, const NA
   void* arrayPtr = (NAByte*)object + elementRule->baseRule.byteOffset;
   NA_JSONObjectRule* subObjectRule = (NA_JSONObjectRule*)elementRule->subRule;
 
-  size_t count = 0;
+  #if NA_DEBUG
+    size_t count = 0;
+  #endif
 
   while(!unexpectedEnd && na_ParseJSONPrimitives(worker) != NA_JSON_PARSE_ARRAY_END) {
 

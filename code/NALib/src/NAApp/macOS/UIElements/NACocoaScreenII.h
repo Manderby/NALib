@@ -1,5 +1,4 @@
 
-
 struct NACocoaScreen{
   NAScreen screen;
 };
@@ -27,7 +26,16 @@ NA_DEF NAScreen* na_NewScreen(
   NACocoaScreen* cocoaScreen = naNew(NACocoaScreen);
 
   NABool isMainScreen = nativePtr == [NSScreen mainScreen];
-  const NAUTF8Char* name = [[nsScreen localizedName] UTF8String];
+  const NAUTF8Char* name = "Unknown Display";
+  if(isAtLeastMacOSVersion(10, 15)) {
+    NA_MACOS_AVAILABILITY_GUARD_10_15(
+      name = [[nsScreen localizedName] UTF8String];
+    )
+  }else{
+    NSDictionary *screenDictionary = [nsScreen deviceDescription];
+    NSNumber *screenID = [screenDictionary objectForKey:@"NSScreenNumber"];
+    name = naAllocSprintf(NA_TRUE, "Display %s", [[screenID stringValue] UTF8String]);
+  }
   NARect rect = naMakeRectWithNSRect([nsScreen frame]);
   double uiScale = [nsScreen backingScaleFactor];
 
