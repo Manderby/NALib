@@ -313,8 +313,16 @@
   
 
 
+  typedef struct CocoaOpenGLContextData CocoaOpenGLContextData;
+  struct CocoaOpenGLContextData {
+    GLuint frameBuffer;
+    GLuint renderBuffer;
+  };
 
-  NA_DEF void* naAllocateOffscreenOpenGLContext() {
+  NA_DEF void* naAllocateOffscreenOpenGLContext(
+    void** contextData,
+    NASizes size)
+  {
     NativeContext nativeContext;
 
     // Definition of the pixel format
@@ -335,13 +343,43 @@
     // We do not need the pixel format anymore.
     CGLDestroyPixelFormat(pixelFormat);
     
+    // Now to set up the frame and render buffers, we need the context to be
+    // current.
+    CGLSetCurrentContext(nativeOpenGLContext);
+
+    CocoaOpenGLContextData* cd = naAlloc(CocoaOpenGLContextData);
+
+    // Setup frame buffer.
+    glGenFramebuffers(1, cd->frameBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, cd->frameBuffer);
+
+    // Attach one RGBA render buffer as color attachement.
+    glGenRenderbuffers(1, cd->renderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, cd->renderBuffer);
+    glRenderbufferStorage(
+      GL_RENDERBUFFER,
+      GL_RGBA,
+      (GLsizei)size.width),
+      (GLsizei)size.height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, *cd->renderBuffer);
+
+    *contextData = cd;
     return nativeContext;
   }
 
 
 
-  NA_DEF void naDeallocateOffscreenOpenGLContext(void* nativeOpenGLContext) {
+  NA_DEF void naDeallocateOffscreenOpenGLContext(
+    void* nativeOpenGLContext,
+    void** contextData)
+  {
     CGLDestroyContext(nativeOpenGLContext);
+    if(contextData) {
+      CocoaOpenGLContextData* cd = (CocoaOpenGLContextData*)*contextData;
+      glDeleteRenderbuffers(1, cd->renderBuffer);
+      glDeleteFramebuffers(1, cd->frameBuffer);
+      naFree(cd);
+    }
   }
 
 
@@ -352,7 +390,11 @@
 
 
 
-  NA_DEF void naActivateNativeOpenGLContext(void* nativeOpenGLContext) {
+  NA_DEF void naActivateNativeOpenGLContext(
+    void* nativeOpenGLContext,
+    void* contextData)
+  {
+    NA_UNUSED(contextData);
     CGLSetCurrentContext(nativeOpenGLContext);
   }
 

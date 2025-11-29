@@ -18,7 +18,7 @@ void na_drawAllOpenGLSpaces(void* data) {
 }
 
 
-typedef void* NativeContext;
+typedef HDC NativeContext;
 
 
 
@@ -98,6 +98,8 @@ typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
 NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData) {
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = naNew(NAWINAPIOpenGLSpace);
 
+  DWORD error;
+
   winapiOpenGLSpace->rect = naMakeRect(naMakePos(0., 0.), size);
   double uiScale = naGetUIElementUIScale(NA_NULL);
 
@@ -113,7 +115,8 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
     NULL,
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()), 
     NULL);
-    
+  error = GetLastError();
+
   HDC hDC = GetDC(nativePtr);
 
   // Expected to be called when initializing. Do not multithread!
@@ -128,13 +131,16 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 	pfd.cColorBits = 24;
 	pfd.cDepthBits = 16;
 	pfd.iLayerType = PFD_MAIN_PLANE;
-	int format = ChoosePixelFormat( GetDC(nativePtr), &pfd );
+	int format = ChoosePixelFormat( hDC, &pfd );
 
 	SetPixelFormat( hDC, format, &pfd );
-	
+  error = GetLastError();
+
 	// make render context with this device context.
 	winapiOpenGLSpace->hRC = wglCreateContext(hDC);
-	wglMakeCurrent(hDC, winapiOpenGLSpace->hRC);
+  error = GetLastError();
+  wglMakeCurrent(hDC, winapiOpenGLSpace->hRC);
+  error = GetLastError();
 
   //glfwWindowHint(GLFW_SAMPLES, 4);
 
@@ -160,6 +166,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 
 
 NA_DEF void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace) {
+  wglDeleteContext(winapiOpenGLSpace->hRC);
   na_ClearOpenGLSpace((NAOpenGLSpace*)winapiOpenGLSpace);
 }
 
@@ -213,36 +220,96 @@ NA_HDEF void na_UpdateOpenGLSpaceUIScale(NA_UIElement* openGLSpace) {
 
 
 
+typedef struct WINAPIOpenGLContextData WINAPIOpenGLContextData;
+struct WINAPIOpenGLContextData {
+  NAByte* buf;
+  HBITMAP bitmap;
+  HGLRC hRC;    // The rendering context for OpenGL
+};
 
-NA_DEF void* naAllocateOffscreenOpenGLContext() {
-  //NativeContext nativeContext;
+NA_DEF void* naAllocateOffscreenOpenGLContext(
+  void** contextData,
+  NASizes size)
+{
+  DWORD error;
 
-  //// Definition of the pixel format
-  //CGLPixelFormatAttribute pixelFormatAttributes[] = {
-  //  kCGLPFAColorSize, (CGLPixelFormatAttribute) 32,
-  //  kCGLPFAAlphaSize, (CGLPixelFormatAttribute) 8,
-  //  kCGLPFAAllowOfflineRenderers,
-  //  (CGLPixelFormatAttribute) 0,
-  //};
+  //HDC testDC = GetDC(naGetApplicationOffscreenWindow());
+  //error = GetLastError();
 
-  //CGLPixelFormatObj pixelFormat;
-  //GLint numberOfPixels;
-  //CGLChoosePixelFormat(pixelFormatAttributes, &pixelFormat, &numberOfPixels);
+  //HWND hiddenWindow = naGetApplicationOffscreenWindow();
 
-  //// create the OpenGL context with that pixel format
-  //CGLCreateContext(pixelFormat, 0, &openGL->nativeContext);
+  HWND hiddenWindow = CreateWindow(
+    TEXT("NAWindow"),
+    TEXT(""),
+    WS_POPUP | WS_EX_NOACTIVATE ,
+      0,
+      0,
+      (LONG)(size.width),
+      (LONG)(size.height),
+    NULL,
+    NULL,
+    naGetUIElementNativePtr(naGetApplication()),
+    NULL);
+  error = GetLastError();
 
-  //// We do not need the pixel format anymore.
-  //CGLDestroyPixelFormat(pixelFormat);
+  //HDC hDC = CreateCompatibleDC(GetDC(naGetApplicationOffscreenWindow()));  
+  HDC hDC = GetDC(hiddenWindow);
+  error = GetLastError();
 
-  //return nativeContext;
-  return NA_NULL;
+  // Expected to be called when initializing. Do not multithread!
+  // define pixel format for device context
+  PIXELFORMATDESCRIPTOR pfd;
+  ZeroMemory( &pfd, sizeof( pfd ) );
+  pfd.nSize = sizeof( pfd );
+  pfd.nVersion = 1;
+  pfd.dwFlags = PFD_SUPPORT_OPENGL;// | PFD_DOUBLEBUFFER;
+  pfd.iPixelType = PFD_TYPE_RGBA;
+  pfd.cAlphaBits = 8;
+  pfd.cColorBits = 24;
+  pfd.cDepthBits = 16;
+  pfd.iLayerType = PFD_MAIN_PLANE;
+  int format = ChoosePixelFormat( hDC, &pfd );
+  error = GetLastError();
+
+  PIXELFORMATDESCRIPTOR pfd2;
+  DescribePixelFormat(hDC, format, sizeof(PIXELFORMATDESCRIPTOR), &pfd2);
+  error = GetLastError();
+
+  SetPixelFormat( hDC, format, &pfd );
+  error = GetLastError();
+
+  WINAPIOpenGLContextData* cd = naAlloc(WINAPIOpenGLContextData);
+
+  //cd->buf = naMalloc((size_t)(size.width * size.height) * 4);
+  //cd->bitmap = CreateBitmap((int)size.width, (int)size.height, 1, 32, cd->buf);
+  //error = GetLastError();
+  //SelectObject(hDC, cd->bitmap);
+  //error = GetLastError();
+
+  //cd->hRC = wglCreateContext(hDC);
+  //error = GetLastError();
+  //wglMakeCurrent(hDC, cd->hRC);
+  //error = GetLastError();
+
+  *contextData = cd;
+  return hDC;
 }
 
 
 
-NA_DEF void naDeallocateOffscreenOpenGLContext(void* nativeOpenGLContext) {
-  //CGLDestroyContext(nativeOpenGLContext);
+NA_DEF void naDeallocateOffscreenOpenGLContext(
+  void* nativeOpenGLContext,
+  void** contextData)
+{
+  na_ClearUINativePtr(nativeOpenGLContext);
+
+  if(contextData) {
+    WINAPIOpenGLContextData* cd = (WINAPIOpenGLContextData*)*contextData;
+    DeleteObject(cd->bitmap);
+    wglDeleteContext(cd->hRC);
+    naFree(cd->buf);
+    naFree(cd);
+  }
 }
 
 
@@ -253,8 +320,29 @@ NA_DEF void naSwapNativeOpenGLContext(void* nativeOpenGLContext) {
 
 
 
-NA_DEF void naActivateNativeOpenGLContext(void* nativeOpenGLContext) {
-  //CGLSetCurrentContext(nativeOpenGLContext);
+NA_DEF void naActivateNativeOpenGLContext(
+  void* nativeOpenGLContext,
+  void* contextData)
+{
+  if(contextData) {
+    WINAPIOpenGLContextData* cd = (WINAPIOpenGLContextData*)contextData;
+
+    DWORD error;
+
+    cd->buf = naMalloc((size_t)(256 * 256) * 4);
+    cd->bitmap = CreateBitmap(256, 256, 1, 32, cd->buf);
+    error = GetLastError();
+    SelectObject(nativeOpenGLContext, cd->bitmap);
+    error = GetLastError();
+
+    cd->hRC = wglCreateContext(nativeOpenGLContext);
+    error = GetLastError();
+    wglMakeCurrent(nativeOpenGLContext, cd->hRC);
+    error = GetLastError();
+
+    //SelectObject(nativeOpenGLContext, cd->bitmap);
+    //error = GetLastError();
+  }
 }
 
 
