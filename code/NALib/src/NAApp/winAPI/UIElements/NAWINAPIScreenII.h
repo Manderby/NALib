@@ -56,6 +56,7 @@ NA_DEF NAScreen* na_NewScreen(
     //ReleaseDC (NULL, hDC);
 
     DEVMODE devMode;
+    naZeron(&devMode, sizeof(DEVMODE));
     EnumDisplaySettings(monitorInfo.szDevice, ENUM_CURRENT_SETTINGS, &devMode);
     double uiScale = (double)devMode.dmPelsWidth / (monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left) / totalUIScale;
 

@@ -156,7 +156,6 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
     initFunc(initData);
   }
 
-	//glewInit();
   return (NAOpenGLSpace*)winapiOpenGLSpace;
 }
 
@@ -233,6 +232,7 @@ NA_DEF void* naAllocateOnscreenOpenGLContext(void* systemContext) {
   oc->hDC = systemContext;
   oc->hRC = NA_NULL;
   oc->hiddenWindow = NA_NULL;
+  return oc;
 }
 
 

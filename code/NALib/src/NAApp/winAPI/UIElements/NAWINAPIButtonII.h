@@ -176,7 +176,6 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   SelectObject(hMemDC, hButtonBitmap);
 
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)uiElement;
-  NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
 
   if(naIsButtonBordered(&winapiButton->button)) {
     HWND hwnd = naGetUIElementNativePtr(uiElement);
@@ -321,6 +320,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   DeleteDC(hMemDC);
   ReleaseDC(drawitemstruct->hwndItem, drawitemstruct->hDC);
 
+  NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
   return info;
 }
 
@@ -756,7 +756,7 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAImageSet* imageSet) {
 NA_DEF void naSetButtonImage2(NAButton* button, const NAImageSet* imageSet) {
   #if NA_DEBUG
   if(!button)
-    naError("button is nullptr");
+    naCrash("button is nullptr");
   #endif
 
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;

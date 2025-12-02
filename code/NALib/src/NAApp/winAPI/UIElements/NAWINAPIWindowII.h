@@ -267,7 +267,7 @@ NA_DEF NAWindow* naNewWindow(
   if(nonminiaturizeable) {
     style &= ~WS_MINIMIZEBOX;
   }
-  if(!resizeable & nonminiaturizeable & noncloseable) {
+  if(!resizeable && nonminiaturizeable && noncloseable) {
     style &= ~WS_SYSMENU;
   }
   if(titleless) {

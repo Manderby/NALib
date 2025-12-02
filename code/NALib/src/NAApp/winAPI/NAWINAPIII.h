@@ -455,6 +455,7 @@ NABool naWINAPICaptureMouseHover() {
     }
   }
   return NA_TRUE;
+  //return NA_FALSE;
 }
 
 
