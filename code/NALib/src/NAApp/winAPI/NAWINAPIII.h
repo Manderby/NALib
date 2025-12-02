@@ -340,8 +340,39 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
 
 
 NAString* naNewStringWithKeyStroke(const NAKeyStroke* keyStroke) {
-  // todo;
-  return NA_NULL;
+  //TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardLayoutInputSource();
+  //CFDataRef layoutData = TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
+  //const UCKeyboardLayout* keyboardLayout = (const UCKeyboardLayout*)CFDataGetBytePtr(layoutData);
+
+  //uint32 keysDown = 0;
+  //UniChar chars[4];
+  //UniCharCount realLength;
+
+  //UInt32 modifierKeyState = 0;
+  //if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_SHIFT)) { modifierKeyState |= shiftKey; }
+  //if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_CONTROL)) { modifierKeyState |= controlKey; }
+  //if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_OPTION)) { modifierKeyState |= optionKey; }
+  //if(naGetKeyStrokeModifierPressed(keyStroke, NA_KEY_MODIFIER_COMMAND)) { modifierKeyState |= cmdKey; }
+
+  //UCKeyTranslate(
+  //  keyboardLayout,
+  //  (UInt16)naGetKeyStrokeKeyCode(keyStroke),
+  //  kUCKeyActionDisplay,
+  //  modifierKeyState >> 8,
+  //  LMGetKbdType(),
+  //  kUCKeyTranslateNoDeadKeysBit,
+  //  &keysDown,
+  //  sizeof(chars) / sizeof(chars[0]),
+  //  &realLength,
+  //  chars);
+  //CFRelease(currentKeyboard);
+
+  //NAUTF8Char utf8String[10];
+  //CFStringRef letterCFString = CFStringCreateWithCharacters(kCFAllocatorDefault, chars, 1);
+  //CFStringGetCString(letterCFString, utf8String, 10, kCFStringEncodingUTF8);
+  //CFRelease(letterCFString);
+  //return naNewStringWithFormat("%s", utf8String);
+  return naNewStringWithFormat("XXX");
 }
 
 
