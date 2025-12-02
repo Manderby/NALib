@@ -10,10 +10,6 @@
 
   #pragma GCC diagnostic push 
   #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-  
-
-  
-  typedef CGLContextObj NativeContext;
 
 
 
@@ -315,15 +311,15 @@
 
   typedef struct CocoaOpenGLContextData CocoaOpenGLContextData;
   struct CocoaOpenGLContextData {
+    CGLContextObj contextObj;
     GLuint frameBuffer;
     GLuint renderBuffer;
   };
 
-  NA_DEF void* naAllocateOffscreenOpenGLContext(
-    void** contextData,
-    NASizes size)
-  {
-    NativeContext nativeContext;
+
+
+  NA_DEF void* naAllocateOffscreenOpenGLContext(NASizes size) {
+    CocoaOpenGLContextData* cd = naAlloc(CocoaOpenGLContextData);
 
     // Definition of the pixel format
     CGLPixelFormatAttribute pixelFormatAttributes[] = {
@@ -338,7 +334,7 @@
     CGLChoosePixelFormat(pixelFormatAttributes, &pixelFormat, &numberOfPixels);
 
     // create the OpenGL context with that pixel format
-    CGLCreateContext(pixelFormat, 0, &nativeContext);
+    CGLCreateContext(pixelFormat, 0, &cd->contextObj);
     
     // We do not need the pixel format anymore.
     CGLDestroyPixelFormat(pixelFormat);
@@ -346,8 +342,6 @@
     // Now to set up the frame and render buffers, we need the context to be
     // current.
     CGLSetCurrentContext(nativeOpenGLContext);
-
-    CocoaOpenGLContextData* cd = naAlloc(CocoaOpenGLContextData);
 
     // Setup frame buffer.
     glGenFramebuffers(1, cd->frameBuffer);
@@ -363,8 +357,7 @@
       (GLsizei)size.height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, *cd->renderBuffer);
 
-    *contextData = cd;
-    return nativeContext;
+    return cd;
   }
 
 
@@ -396,6 +389,16 @@
   {
     NA_UNUSED(contextData);
     CGLSetCurrentContext(nativeOpenGLContext);
+  }
+
+
+
+  NA_DEF void naDeactivateNativeOpenGLContext(
+    void* nativeOpenGLContext,
+    void* contextData)
+  {
+    NA_UNUSED(nativeOpenGLContext);
+    NA_UNUSED(contextData);
   }
 
 

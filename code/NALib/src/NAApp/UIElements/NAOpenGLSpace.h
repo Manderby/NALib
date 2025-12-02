@@ -117,16 +117,11 @@ NA_API void naResetOpenGLSpaceTransformation(NAOpenGLSpace* openGLSpace);
 // Returns a native openGL context. Will be set to the current context
 // automatically. Provide a pointer to contextData
 // and provide the exact same pointers upon deallocating.
-NA_API void* naAllocateOffscreenOpenGLContext(
-  void** contextData,
-  NASizes size);
-NA_API void naDeallocateOffscreenOpenGLContext(
-  void* nativeOpenGLContext,
-  void** contextData);
-NA_API void naSwapNativeOpenGLContext(void* nativeOpenGLContext);
-NA_API void naActivateNativeOpenGLContext(
-  void* nativeOpenGLContext,
-  void* contextData);
+NA_API void* naAllocateOffscreenOpenGLContext(NASizes size);
+NA_API void naDeallocateOffscreenOpenGLContext(void* openGLContext);
+NA_API void naSwapNativeOpenGLContext(void* openGLContext);
+NA_API void naActivateNativeOpenGLContext(void* openGLContext);
+NA_API void naDeactivateNativeOpenGLContext(void* openGLContext);
 
 
 

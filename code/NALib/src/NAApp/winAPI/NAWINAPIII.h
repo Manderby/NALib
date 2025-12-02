@@ -40,7 +40,7 @@ NA_HAPI void na_ForceWINAPISpaceToRedrawBackground(NA_UIElement* space);
 
 
 NA_HDEF void na_ClearUINativePtr(void* nativePtr) {
-    DestroyWindow(nativePtr);
+  DestroyWindow(nativePtr);
 }
 
 NA_HDEF void na_SetUIElementParent(
