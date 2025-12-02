@@ -227,6 +227,16 @@ struct WINAPIOpenGLContext {
 
 
 
+NA_DEF void* naAllocateOnscreenOpenGLContext(void* systemContext) {
+  WINAPIOpenGLContext* oc = naAlloc(WINAPIOpenGLContext);
+  oc->offscreen = NA_FALSE;
+  oc->hDC = systemContext;
+  oc->hRC = NA_NULL;
+  oc->hiddenWindow = NA_NULL;
+}
+
+
+
 NA_DEF void* naAllocateOffscreenOpenGLContext(NASizes size) {
   DWORD error;
 
