@@ -224,7 +224,6 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
       }
 
       naRunNotifier();
-
     }
   }
 
@@ -238,6 +237,9 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, NAMu
 
   // When reaching here, the application had been stopped.
   naDelete(app);
+
+  // Finally, stop the runtime.
+  naStopRuntime();
 }
 
 #include "muiload.h"

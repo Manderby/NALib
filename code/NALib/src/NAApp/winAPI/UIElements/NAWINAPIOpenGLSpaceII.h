@@ -295,6 +295,7 @@ NA_DEF void naDeallocateOffscreenOpenGLContext(void* openGLContext) {
   
   if(oc->offscreen) {
     DestroyWindow(oc->hiddenWindow);
+    oc->hiddenWindow = NA_NULL;
 
     #if NA_DEBUG
       if(oc->hRC)
@@ -331,11 +332,14 @@ NA_DEF void naActivateNativeOpenGLContext(void* openGLContext) {
     #endif
 
     oc->hDC = GetDC(oc->hiddenWindow);
+    error = GetLastError();
 
     oc->hRC = wglCreateContext(oc->hDC);
     error = GetLastError();
     wglMakeCurrent(oc->hDC, oc->hRC);
     error = GetLastError();
+
+    //int asdf = 1234;
 
   }else{
     // This is a NON-offscreen context. Do nothing.
@@ -356,12 +360,19 @@ NA_DEF void naDeactivateNativeOpenGLContext(void* openGLContext) {
     #endif
 
     if(oc->hRC) {
+      //wglMakeCurrent(oc->hDC, NULL);
+      //error = GetLastError();
       wglDeleteContext(oc->hRC);
+      oc->hRC = NA_NULL;
       error = GetLastError();
     }
 
-    oc->hDC = NA_NULL;
-    oc->hRC = NA_NULL;
+    if(oc->hDC) {
+      ReleaseDC(oc->hiddenWindow, oc->hDC);
+      oc->hDC = NA_NULL;
+      error = GetLastError();
+    }
+
   }else{
     // This is a NON-offscreen context. Do nothing.
   }

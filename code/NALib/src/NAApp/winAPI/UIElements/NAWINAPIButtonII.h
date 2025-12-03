@@ -25,7 +25,6 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_SHOWWINDOW:
   case WM_PAINT:
   case WM_NCPAINT:
-  case WM_ERASEBKGND:
   case WM_GETTEXTLENGTH:
   case WM_GETTEXT:
   case WM_NCHITTEST:
@@ -47,6 +46,12 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case BM_GETSTATE:
   case WM_WINDOWPOSCHANGED:
     break;
+
+  case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
+  // We pretend to have erased.
+  info.result = 1;
+  info.hasBeenHandeled = NA_TRUE;
+  break;
 
   // Menu messages
   case WM_ENTERMENULOOP:
