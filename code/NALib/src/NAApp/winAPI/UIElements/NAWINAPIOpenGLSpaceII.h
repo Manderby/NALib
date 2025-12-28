@@ -246,9 +246,10 @@ NA_DEF void* naAllocateOffscreenOpenGLContext(NASizes size) {
   oc->hRC = NA_NULL;
 
   // The proper way nowadays is indeed to create a hidden window and use the
-  // device context given.
+  // device context given. Using a memory device does not allow for hardware
+  // acceleration.
   oc->hiddenWindow = CreateWindow(
-    TEXT("NAWindow"),
+    TEXT("NAOffscreenWindow"),
     TEXT(""),
     WS_POPUP | WS_EX_NOACTIVATE,
       0,
@@ -261,7 +262,7 @@ NA_DEF void* naAllocateOffscreenOpenGLContext(NASizes size) {
     NULL);
   error = GetLastError();
 
-  HDC hDC = GetDC(oc->hiddenWindow);
+  oc->hDC = GetDC(oc->hiddenWindow);
   error = GetLastError();
 
   // define pixel format for device context
@@ -275,14 +276,14 @@ NA_DEF void* naAllocateOffscreenOpenGLContext(NASizes size) {
   pfd.cColorBits = 24;
   pfd.cDepthBits = 16;
   pfd.iLayerType = PFD_MAIN_PLANE;
-  int format = ChoosePixelFormat( hDC, &pfd );
+  int format = ChoosePixelFormat( oc->hDC, &pfd );
   error = GetLastError();
 
-  //PIXELFORMATDESCRIPTOR pfd2;
-  //DescribePixelFormat(hDC, format, sizeof(PIXELFORMATDESCRIPTOR), &pfd2);
-  //error = GetLastError();
+  PIXELFORMATDESCRIPTOR pfd2;
+  DescribePixelFormat(oc->hDC, format, sizeof(PIXELFORMATDESCRIPTOR), &pfd2);
+  error = GetLastError();
 
-  SetPixelFormat( hDC, format, &pfd );
+  SetPixelFormat( oc->hDC, format, &pfd2 );
   error = GetLastError();
 
   return oc;
@@ -294,6 +295,11 @@ NA_DEF void naDeallocateOffscreenOpenGLContext(void* openGLContext) {
   WINAPIOpenGLContext* oc = (WINAPIOpenGLContext*)openGLContext;
   
   if(oc->offscreen) {
+    if(oc->hDC) {
+      ReleaseDC(oc->hiddenWindow, oc->hDC);
+      oc->hDC = NA_NULL;
+    }
+
     DestroyWindow(oc->hiddenWindow);
     oc->hiddenWindow = NA_NULL;
 
@@ -336,10 +342,10 @@ NA_DEF void naActivateNativeOpenGLContext(void* openGLContext) {
 
     oc->hRC = wglCreateContext(oc->hDC);
     error = GetLastError();
-    wglMakeCurrent(oc->hDC, oc->hRC);
+    NABool success = wglMakeCurrent(oc->hDC, oc->hRC);
     error = GetLastError();
 
-    //int asdf = 1234;
+    int asdf = 1234;
 
   }else{
     // This is a NON-offscreen context. Do nothing.
@@ -353,6 +359,7 @@ NA_DEF void naDeactivateNativeOpenGLContext(void* openGLContext) {
 
   if(oc->offscreen) {
     DWORD error;
+    error = GetLastError();
 
     #if NA_DEBUG
       if(!oc->hRC)
@@ -360,18 +367,22 @@ NA_DEF void naDeactivateNativeOpenGLContext(void* openGLContext) {
     #endif
 
     if(oc->hRC) {
-      //wglMakeCurrent(oc->hDC, NULL);
-      //error = GetLastError();
+      // wglMakeCurrent releases the device context!
+      NABool success = wglMakeCurrent(oc->hDC, NULL);
+      error = GetLastError();
       wglDeleteContext(oc->hRC);
       oc->hRC = NA_NULL;
       error = GetLastError();
     }
 
-    if(oc->hDC) {
-      ReleaseDC(oc->hiddenWindow, oc->hDC);
-      oc->hDC = NA_NULL;
-      error = GetLastError();
-    }
+    // wglMakeCurrent releases the device context, so no duplicate release here!
+    //if(oc->hDC) {
+    //  ReleaseDC(oc->hiddenWindow, oc->hDC);
+    //  oc->hDC = NA_NULL;
+    //  error = GetLastError();
+    //}
+
+    int asdf = 1234;
 
   }else{
     // This is a NON-offscreen context. Do nothing.

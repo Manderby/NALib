@@ -323,7 +323,20 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
   // Deleting device contexts
   DeleteDC(hMemDC);
-  ReleaseDC(drawitemstruct->hwndItem, drawitemstruct->hDC);
+  //ReleaseDC(drawitemstruct->hwndItem, drawitemstruct->hDC);
+
+  //NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  //const NAFont* systemFont = na_GetApplicationSystemFont(&app->application);
+  //SelectFont(drawitemstruct->hDC, naGetFontNativePointer(systemFont));
+  //SetTextColor(drawitemstruct->hDC, RGB(255, 255, 255));
+  //SetBkColor(drawitemstruct->hDC, RGB(0, 50, 255));
+
+  //DrawText(
+  //  drawitemstruct->hDC,
+  //  TEXT("Hallo"),
+  //  -1,
+  //  &drawitemstruct->rcItem,
+  //  DT_CENTER | DT_PATH_ELLIPSIS | DT_NOCLIP | DT_SINGLELINE | DT_VCENTER);
 
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
   return info;
@@ -754,8 +767,8 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAImageSet* imageSet) {
       naError("This is not a image button");
   #endif
 
+  na_setButtonImage(button, imageSet);
   // todo
-  NA_UNUSED(imageSet);
 }
 
 NA_DEF void naSetButtonImage2(NAButton* button, const NAImageSet* imageSet) {
@@ -771,8 +784,8 @@ NA_DEF void naSetButtonImage2(NAButton* button, const NAImageSet* imageSet) {
     naError("This is not a image button");
   #endif
 
+  na_setButtonImage2(button, imageSet);
   // todo
-  NA_UNUSED(imageSet);
 }
 
 

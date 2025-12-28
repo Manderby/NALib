@@ -876,7 +876,9 @@ NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam) {
 
   if(uiElement) {
     switch(naGetUIElementType(uiElement)) {
-    case NA_UI_BUTTON:     info = naButtonWINAPIDrawItem (uiElement, drawitemstruct); break;
+    case NA_UI_BUTTON:
+      info = naButtonWINAPIDrawItem(uiElement, drawitemstruct);
+      break;
     default:
       //printf("Uncaught draw item message" NA_NL);
       break;
