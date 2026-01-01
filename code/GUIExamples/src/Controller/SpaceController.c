@@ -26,10 +26,9 @@ CommonController* createSpaceController() {
   SpaceController* con = naAlloc(SpaceController);
 
   NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
-  double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
-  curPosY = curPosY - UI_ELEMENT_HEIGTH;
   double spaceHeigth = UI_ELEMENT_HEIGTH + 2 * SPACE_MARGIN_V;
+  double curPosY = EXPERIMENT_HEIGHT - spaceHeigth;
 
   con->subSpace1 = naNewSpace(naMakeSize(WINDOW_WIDTH, spaceHeigth));
   con->subSpace2 = naNewSpace(naMakeSize(WINDOW_WIDTH, spaceHeigth));

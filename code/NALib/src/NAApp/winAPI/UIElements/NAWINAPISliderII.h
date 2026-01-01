@@ -46,7 +46,6 @@ NAWINAPICallbackInfo naSliderWINAPIProc(
   case WM_MOUSEFIRST:
   case WM_MOUSEWHEEL:
   case WM_KEYFIRST:
-  case WM_WINDOWPOSCHANGED:
 
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   case TBM_SETPOS:  // (WM_USER + 5)
@@ -76,6 +75,10 @@ NAWINAPICallbackInfo naSliderWINAPIProc(
     slider->sliderInMovement = NA_TRUE;
     info.result = 0;
     break;
+
+  // Handeled in naUIElementWINAPIPostProc:
+  case WM_WINDOWPOSCHANGED:
+  break;
 
   default:
     //printf("Uncaught Slider message" NA_NL);

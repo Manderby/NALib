@@ -21,11 +21,6 @@ NAWINAPICallbackInfo naButtonWINAPIProc(
   NA_UNUSED(wParam);
   NA_UNUSED(lParam);
 
-  NAWINAPICallbackInfo info = {
-    .hasBeenHandeled = NA_FALSE,
-    .result = 0
-  };
-
   switch(message) {
   case WM_SETFONT:
   case WM_WINDOWPOSCHANGING:
@@ -53,7 +48,6 @@ NAWINAPICallbackInfo naButtonWINAPIProc(
   case BM_SETSTATE:
   case BM_SETCHECK:
   case BM_GETSTATE:
-  case WM_WINDOWPOSCHANGED:
     break;
 
   // Menu messages
@@ -77,11 +71,19 @@ NAWINAPICallbackInfo naButtonWINAPIProc(
   case WM_KILLFOCUS:
   break;
 
+  // Handeled in naUIElementWINAPIPostProc:
+  case WM_WINDOWPOSCHANGED:
+    break;
+
   default:
     //printf("Uncaught Button message" NA_NL);
     break;
   }
   
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
   return info;
 }
 

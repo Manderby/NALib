@@ -9,12 +9,45 @@
 
 #include "../../../NAUtility/NADateTime.h"
 
-static NAList* redrawList;
-static int redrawCount = 0;
-void na_drawAllOpenGLSpaces(void* data) {
-  NA_UNUSED(data);
-  printf("Redraw: %d\n", redrawCount);
-  redrawCount = 0;
+
+NAWINAPICallbackInfo na_HandleWINAPIOpenGLMouseWheel(
+  void* uiElement,
+  short wheelDeltaParam)
+{
+  NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
+  int wheelDelta = (int)(-8. * wheelDeltaParam / (double)WHEEL_DELTA);
+  naSetOpenGLSpaceTranslation(&winapiOpenGLSpace->openGLSpace, 0, wheelDelta);
+  if(!na_DispatchUIElementCommand((NA_UIElement*)winapiOpenGLSpace, NA_UI_COMMAND_TRANSFORMED)) {
+    // no parent method to be called.
+  }
+  naResetOpenGLSpaceTransformation(&winapiOpenGLSpace->openGLSpace);
+
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_TRUE,
+    .result = 0
+  };
+  return info;
+}
+
+
+
+NAWINAPICallbackInfo na_HandleWINAPIOpenGLPaint(void* uiElement) {
+  NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
+
+  // Activating the redraw list is using a timer to update all openGL spaces
+  // at once.
+  naAddOpenGLSpaceToRedrawList(winapiOpenGLSpace);
+
+  // Mark the region as updated.
+  RECT updateRegion;
+  GetClientRect(naGetUIElementNativePtr(uiElement), &updateRegion);
+  ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
+
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_TRUE,
+    .result = 0
+  };
+  return info;
 }
 
 
@@ -27,14 +60,6 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(
 {
   NA_UNUSED(lParam);
 
-  NAWINAPICallbackInfo info = {
-    .hasBeenHandeled = NA_FALSE,
-    .result = 0
-  };
-
-  NAWINAPIOpenGLSpace* winapiOpenGLSpace;
-  int wheelDelta;
-
   switch(message) {
   case WM_NCHITTEST:
   case WM_SHOWWINDOW:
@@ -45,50 +70,29 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(
   case WM_MOUSEFIRST:
   case WM_UPDATEUISTATE:
   case WM_MOUSEACTIVATE:
-    break;
-
   case WM_LBUTTONDOWN:
-    break;
-
   case WM_LBUTTONUP:
   case WM_NCPAINT:
   case WM_NCCALCSIZE:
   break;
 
   case WM_MOUSEWHEEL:
-
-    winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
-    wheelDelta = (int)(-8. * GET_WHEEL_DELTA_WPARAM(wParam) / (double)WHEEL_DELTA);
-    naSetOpenGLSpaceTranslation(&winapiOpenGLSpace->openGLSpace, 0, wheelDelta);
-    if(!na_DispatchUIElementCommand((NA_UIElement*)winapiOpenGLSpace, NA_UI_COMMAND_TRANSFORMED)) {
-      // no parent method to be called.
-    }
-    naResetOpenGLSpaceTransformation(&winapiOpenGLSpace->openGLSpace);
-    info.result = 0;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
+    return na_HandleWINAPIOpenGLMouseWheel(
+      uiElement,
+      GET_WHEEL_DELTA_WPARAM(wParam));
 
   case WM_PAINT:
-
-    winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)uiElement;
-
-    // Activating the redraw list is using a timer to update all openGL spaces
-    // at once.
-    naAddOpenGLSpaceToRedrawList(winapiOpenGLSpace);
-
-    RECT updateRegion;
-    GetClientRect(naGetUIElementNativePtr(uiElement), &updateRegion);
-    ValidateRect(naGetUIElementNativePtr(uiElement), &updateRegion);
-  
-    info.result = 0;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
+      return na_HandleWINAPIOpenGLPaint(uiElement);
 
   default:
     //printf("Uncaught OpenGL Space message" NA_NL);
     break;
   }
   
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
   return info;
 }
 

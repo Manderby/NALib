@@ -6,12 +6,13 @@
 
 
 
-NAWINAPIColor* na_DetermineSpaceBackgroundColor(NAWINAPISpace* winapiSpace) {
+NAWINAPIColor* na_GetSpaceBackgroundWINAPIColor(NASpace* space) {
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
   if(winapiSpace->curBgColor) {
     return winapiSpace->curBgColor;
   }else{
     NAColor bgColor;
-    naFillSpaceBackgroundColor(&bgColor, &winapiSpace->space);
+    naFillSpaceBackgroundColor(&bgColor, space);
     return naAllocUIColor(&bgColor, NA_NULL);
   }
 }
@@ -25,8 +26,8 @@ NAWINAPICallbackInfo na_PaintWINAPISpace(void* uiElement) {
 
   HDC hdc = BeginPaint(naGetUIElementNativePtr(uiElement), &ps);
   // All painting occurs here, between BeginPaint and EndPaint.
-  winapiSpace->curBgColor = na_DetermineSpaceBackgroundColor(uiElement);
-  FillRect(hdc, &ps.rcPaint, winapiSpace->curBgColor->brush);
+  NAWINAPIColor* curBgColor = na_GetSpaceBackgroundWINAPIColor(uiElement);
+  FillRect(hdc, &ps.rcPaint, curBgColor->brush);
   EndPaint(naGetUIElementNativePtr(uiElement), &ps);
 
   NAWINAPICallbackInfo info = {
@@ -53,6 +54,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(
   NAColor fgColor;
   NAColor bgColor;
   NAWINAPIColor* winapiFgColor;
+  NAWINAPIColor* curBgColor;
 
   switch(message) {
   case WM_SHOWWINDOW:
@@ -102,8 +104,8 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(
   break;
 
   case WM_SIZE: // todo: never called? why handeled?
-    info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
     break;
 
   case WM_SETFOCUS:
@@ -139,11 +141,11 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(
       // The default procedure for the slider draws an always the same gray
       // background. We need to manually override this.
       //const NA_UIElement* uiElement = na_GetUINALibEquivalent((void*)lParam);
-      winapiSpace->curBgColor = na_DetermineSpaceBackgroundColor(uiElement);
+      curBgColor = na_GetSpaceBackgroundWINAPIColor(uiElement);
       GetClientRect(naGetUIElementNativePtrConst(uiElement), &spaceRect);
-      FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
-      info.result = 0;
+      FillRect((HDC)wParam, &spaceRect, curBgColor->brush);
       info.hasBeenHandeled = NA_TRUE;
+      info.result = 0;
       break;
     }
 
@@ -153,9 +155,9 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(
     //bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
     //SetBkMode( (HDC)wParam, TRANSPARENT ); 
     //SetBkColor((HDC)wParam, bgColor->color);
-    //info.result = (LRESULT)bgColor->brush;
     //info.hasBeenHandeled = NA_TRUE;
-    break;
+    //info.result = (LRESULT)bgColor->brush;
+  break;
 
   // Note that an NALabel is declared as an "EDIT" control but as it is
   // marked with "ES_READONLY", it answers to WM_CTLCOLORSTATIC rathern than
@@ -175,13 +177,13 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(
         winapiSpace->curBgColor = NA_NULL;
       }
       naFillSpaceBackgroundColor(&bgColor, uiElement);
-      winapiSpace->curBgColor = na_DetermineSpaceBackgroundColor(uiElement);
+      curBgColor = na_GetSpaceBackgroundWINAPIColor(uiElement);
       winapiFgColor = naAllocUIColor(&fgColor, &bgColor);
       SetTextColor((HDC)wParam, winapiFgColor->colorRef);
       naDeallocUIColor(winapiFgColor);
-      SetBkColor((HDC)wParam, winapiSpace->curBgColor->colorRef);
-      info.result = (LRESULT)winapiSpace->curBgColor->brush;
+      SetBkColor((HDC)wParam, curBgColor->colorRef);
       info.hasBeenHandeled = NA_TRUE;
+      info.result = (LRESULT)curBgColor->brush;
       break;
     case NA_UI_TEXTFIELD:
       // Background of a textfield or a textbox is really the back of the text,
@@ -189,8 +191,9 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(
       break;
     default:
       // Radio, CheckBox, Select
-      info.result = (LRESULT)winapiSpace->curBgColor->brush;
+      curBgColor = na_GetSpaceBackgroundWINAPIColor(uiElement);
       info.hasBeenHandeled = NA_TRUE;
+      info.result = (LRESULT)curBgColor->brush;
       break;
     }
     break;

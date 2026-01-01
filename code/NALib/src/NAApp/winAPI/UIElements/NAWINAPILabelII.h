@@ -12,12 +12,6 @@ NAWINAPICallbackInfo naLabelWINAPIProc(
   WPARAM wParam,
   LPARAM lParam)
 {
-
-  NAWINAPICallbackInfo info = {
-    .hasBeenHandeled = NA_FALSE,
-    .result = 0
-  };
-
   switch(message) {
   case WM_SETFONT:
   case WM_STYLECHANGING:
@@ -49,21 +43,31 @@ NAWINAPICallbackInfo naLabelWINAPIProc(
     // NALib by default ignores this message but for labels, we need it.
     // Otherwise, the rect of the wnd will not be computed properly. More
     // explicitely, the bottom coordinate will be incorrect.
-    info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
-    break;
+    return naUIElementWINAPIDefaultProc(
+      naGetUIElementNativePtr(uiElement),
+      message,
+      wParam,
+      lParam);
 
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
     // NALib by default ignores focus but for labels, we need it. Otherwise,
     // this would cause labels to not display a selection.
-    info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
-    break;
+    return naUIElementWINAPIDefaultProc(
+      naGetUIElementNativePtr(uiElement),
+      message,
+      wParam,
+      lParam);
 
   default:
     //printf("Uncaught Label message" NA_NL);
     break;
   }
   
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
   return info;
 }
 

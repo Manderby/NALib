@@ -46,7 +46,6 @@ NAWINAPICallbackInfo naSelectWINAPIProc(
   case WM_CANCELMODE:
   case WM_UPDATEUISTATE:
   case WM_ENABLE:
-  case WM_WINDOWPOSCHANGED:
   case WM_SETFONT:
   case WM_IME_NOTIFY:
   case 0x98:  // undocumented. When screen resolution changes
@@ -66,11 +65,15 @@ NAWINAPICallbackInfo naSelectWINAPIProc(
   case WM_MOUSELEAVE:
   break;
 
+  // Handeled in naUIElementWINAPIPostProc:
+  case WM_WINDOWPOSCHANGED:
+  break;
+
   case WM_MOUSEWHEEL:
     // Mousewheel events are discarded. This eliminates erroneous value changes
     // when scrolling. Who designed that!
-    info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
     break;
 
   case WM_SETFOCUS:

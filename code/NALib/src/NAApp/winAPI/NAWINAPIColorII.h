@@ -12,6 +12,8 @@ struct NAWINAPIColor {
   HBRUSH   brush;
 };
 
+NA_HAPI NAWINAPIColor* na_GetSpaceBackgroundWINAPIColor(NASpace* space);
+
 NA_DEF NAUIColor* naAllocUIColor(const NAColor* color, const NAColor* bgColor) {
   NAWINAPIColor* winapiColor = naAlloc(NAWINAPIColor);
 

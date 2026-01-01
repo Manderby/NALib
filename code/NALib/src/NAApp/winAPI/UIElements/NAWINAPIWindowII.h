@@ -75,8 +75,8 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
       //printf("move %f, %f\n", windowMutable->rect.pos.x, windowMutable->rect.pos.y);
       //printf("size %f, %f\n", windowMutable->rect.size.width, windowMutable->rect.size.height);
     }else{
-      info.result = 0;
       info.hasBeenHandeled = NA_TRUE;
+      info.result = 0;
     }
     break;
 
@@ -122,8 +122,8 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
     if(shouldClose) {
       naCloseWindow(&windowMutable->window);
     }
-    info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
     break;
 
   case WM_ACTIVATE:
@@ -151,8 +151,8 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
     // //result: 0 when handeled.
     // We let the default window procedure do its job which will emit the
     // WM_MOVE and WM_SIZE messages in turn.
-    info.result = DefWindowProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
     info.hasBeenHandeled = NA_TRUE;
+    info.result = DefWindowProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
 
     break;
 

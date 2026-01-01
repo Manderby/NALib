@@ -16,11 +16,6 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(
   NA_UNUSED(wParam);
   NA_UNUSED(lParam);
 
-  NAWINAPICallbackInfo info = {
-    .hasBeenHandeled = NA_FALSE,
-    .result = 0
-  };
-
   switch(message) {
   case WM_SETFONT:
   case WM_WINDOWPOSCHANGING:
@@ -50,6 +45,10 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(
     break;
   }
   
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
   return info;
 }
 

@@ -54,8 +54,8 @@ NAWINAPICallbackInfo naRadioWINAPIProc(
     if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED)) {
       // no parent method to be called.
     }
-    info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
     break;
 
   default:

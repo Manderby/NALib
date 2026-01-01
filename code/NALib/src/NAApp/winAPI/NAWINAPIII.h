@@ -522,8 +522,8 @@ NAWINAPICallbackInfo na_HandleMousePress(
     if(!na_DispatchUIElementCommand(uiElement, command)) {
       // no parent method to be called.
     }
-    info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
   }
 
   return info;
@@ -560,8 +560,8 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
     // including the background when processing different messages. Therefore,
     // we pretend to have erased by returning a non-zero value. That way, no
     // additional erase messages will be sent.
-    info.result = 1;
     info.hasBeenHandeled = NA_TRUE;
+    info.result = 1;
     break;
 
   case WM_LBUTTONDOWN:
@@ -619,8 +619,8 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
           // no parent method to be called.
         }
       }
-      info.result = 0;
       info.hasBeenHandeled = NA_TRUE;
+      info.result = 0;
     }
     break;
 
@@ -633,8 +633,8 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
       if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_DOWN)) {
         // no parent method to be called.
       }
-      info.result = 0;
       info.hasBeenHandeled = NA_TRUE;
+      info.result = 0;
     }
     break;
 
@@ -643,8 +643,8 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
       if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_UP)) {
         // no parent method to be called.
       }
-      info.result = 0;
       info.hasBeenHandeled = NA_TRUE;
+      info.result = 0;
     }
     break;
   }
@@ -670,15 +670,15 @@ NAWINAPICallbackInfo naUIElementWINAPIPostProc(void* uiElement, UINT message, WP
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
     // We do not display any caret.
-    info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
     break;
 
   case WM_WINDOWPOSCHANGED:
     // Always handle this message otherwise it will be given to the parents
     // until someone implements it. But then, the coords are wrong.
-    info.result = 0;
     info.hasBeenHandeled = NA_TRUE;
+    info.result = 0;
     break;
 
   default:
@@ -986,8 +986,8 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam) {
   }
 
   if(hasBeenHandeled) {
-    info.result = 0; // Must be zero. See documentation.
     info.hasBeenHandeled = NA_TRUE;
+    info.result = 0; // Must be zero. See documentation.
   }
   return info;
 }

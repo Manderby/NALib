@@ -7,93 +7,116 @@
 
 
 
-NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
-  PAINTSTRUCT paintStruct;
-  HBITMAP hOldBitmap;
-  HDC hMemDC;
-  NAWINAPIImageSpace* imageSpace;
+NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem(void* uiElement) {
+  NAWINAPIImageSpace* imageSpace = (NAWINAPIImageSpace*)uiElement;
+
+  if(imageSpace->imageSpace.imageSet) {
+    PAINTSTRUCT paintStruct;
+    BeginPaint(naGetUIElementNativePtr(uiElement), &paintStruct);
+
+    // Create a memory device context to do image blending.
+    HDC hMemDC = CreateCompatibleDC(paintStruct.hdc);
+
+    //NAWINAPIColor* bgWinapiColor = na_GetSpaceBackgroundWINAPIColor(naGetUIElementParentSpaceMutable(uiElement));
+    //FillRect(paintStruct.hdc, &paintStruct.rcPaint, bgWinapiColor->brush);
+
+    double uiScale = naGetUIElementUIScale(NA_NULL);
+
+    NASizes size1x = naGetImageSet1xSize(imageSpace->imageSpace.imageSet);
+    size1x.width = (size_t)(size1x.width * uiScale);
+    size1x.height = (size_t)(size1x.height * uiScale);
+
+    NASizei32 spaceSize = naMakeSizei32(
+      paintStruct.rcPaint.right - paintStruct.rcPaint.left,
+      paintStruct.rcPaint.bottom - paintStruct.rcPaint.top);
+    NAPosi32 offset = naMakePosi32(
+      (spaceSize.width - (int32)size1x.width) / 2,
+      (spaceSize.height - (int32)size1x.height) / 2);
+
+    const NAImage* foreImage = na_GetImageSetSubImage(
+      imageSpace->imageSpace.imageSet,
+      NA_UI_RESOLUTION_1x * uiScale,
+      NA_SKIN_PLAIN,
+      NA_IMAGE_SET_INTERACTION_NONE,
+      NA_FALSE);
+
+    // We store the background where the image will be placed.
+    NAByte* backBuffer = naMalloc(size1x.width * size1x.height * 4);
+    HBITMAP hBackBitmap = CreateBitmap(
+      (int)size1x.width,
+      (int)size1x.height,
+      1,
+      32,
+      backBuffer);
+
+    HBITMAP hOldBitmap = SelectObject(hMemDC, hBackBitmap);
+    BitBlt(
+      hMemDC,
+      0,
+      0,
+      (int)size1x.width,
+      (int)size1x.height,
+      paintStruct.hdc,
+      (int)offset.x,
+      (int)offset.y,
+      SRCCOPY);
+    NAImage* backImage = naCreateImageWithNativeImage(hBackBitmap);
+
+    // Now we blend manually the foreground to the background.
+    NAImage* blendedImage = naCreateImageWithBlend(
+      backImage,
+      foreImage,
+      NA_BLEND_OVERLAY,
+      1.f,
+      naMakePosi32(0, 0));
+    NAByte* blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
+    naConvertImageTou8(
+      blendedImage,
+      blendedBuffer,
+      NA_TRUE,
+      NA_COLOR_BUFFER_BGR0);
+    HBITMAP hBlendedBitmap = CreateBitmap(
+      (int)size1x.width,
+      (int)size1x.height,
+      1,
+      32,
+      blendedBuffer);
+
+    // Finally, we put the blended image onscreen.
+    SelectObject(hMemDC, hBlendedBitmap);
+    BitBlt(
+      paintStruct.hdc,
+      (int)offset.x,
+      (int)offset.y,
+      (int)size1x.width,
+      (int)size1x.height,
+      hMemDC,
+      0,
+      0,
+      SRCCOPY);
+    SelectObject(hMemDC, hOldBitmap);
+
+    // Deleting the blended objects and buffers
+    DeleteObject(hBlendedBitmap);
+    naFree(blendedBuffer);
+    naRelease(blendedImage);
+
+    // Deleting background objects and buffers
+    DeleteObject(hBackBitmap);
+    naFree(backBuffer);
+    naRelease(backImage);
+
+    // Deleting device contexts
+    ReleaseDC(naGetUIElementNativePtr(uiElement), paintStruct.hdc);
+    DeleteDC(hMemDC);
+
+    EndPaint(naGetUIElementNativePtr(uiElement), &paintStruct);
+  }
+
   NAWINAPICallbackInfo info = {
     .hasBeenHandeled = NA_TRUE,
-    .result = TRUE
+    .result = 0
   };
-  NASizes size1x;
-  NASizei32 spaceSize;
-  NAPosi32 offset;
-  const NAImage* foreImage;
-  NAByte* backBuffer;
-  HBITMAP hBackBitmap;
-  NAImage* backImage;
-  NAImage* blendedImage;
-  NAByte* blendedBuffer;
-  HBITMAP hBlendedBitmap;
-
-  BeginPaint(naGetUIElementNativePtr(uiElement), &paintStruct);
-  hMemDC = CreateCompatibleDC(paintStruct.hdc);
-
-  imageSpace = (NAWINAPIImageSpace*)uiElement;
-
-  NAColor bgColor;
-  naFillSpaceBackgroundColor(&bgColor, naGetUIElementParentSpace(uiElement));
-  NAWINAPIColor* bgWinapiColor = naAllocUIColor(&bgColor, NA_NULL);
-  FillRect(paintStruct.hdc, &paintStruct.rcPaint, bgWinapiColor->brush);
-  naDeallocUIColor(bgWinapiColor);
-
-  if(!imageSpace->imageSpace.imageSet)
-    return info;
-
-  double uiScale = naGetUIElementUIScale(NA_NULL);
-
-  size1x = naGetImageSet1xSize(imageSpace->imageSpace.imageSet);
-  size1x.width = (size_t)(size1x.width * uiScale);
-  size1x.height = (size_t)(size1x.height * uiScale);
-
-  spaceSize = naMakeSizei32(
-    paintStruct.rcPaint.right - paintStruct.rcPaint.left,
-    paintStruct.rcPaint.bottom - paintStruct.rcPaint.top);
-  offset = naMakePosi32(
-    (spaceSize.width - (int32)size1x.width) / 2,
-    (spaceSize.height - (int32)size1x.height) / 2);
-
-  foreImage = na_GetImageSetSubImage(imageSpace->imageSpace.imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_PLAIN, NA_IMAGE_SET_INTERACTION_NONE, NA_FALSE);
-
-  // We store the background where the image will be placed.
-  backBuffer = naMalloc(size1x.width * size1x.height * 4);
-  hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
-  hOldBitmap = SelectObject(hMemDC, hBackBitmap);
-  BitBlt(hMemDC, 0, 0, (int)size1x.width, (int)size1x.height, paintStruct.hdc, (int)offset.x, (int)offset.y, SRCCOPY);
-  backImage = naCreateImageWithNativeImage(hBackBitmap);
-
-  // Now we blend manually the foreground to the background.
-  blendedImage = naCreateImageWithBlend(
-    backImage,
-    foreImage,
-    NA_BLEND_OVERLAY,
-    1.f,
-    naMakePosi32(0, 0));
-  blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
-  naConvertImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
-  hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);
-
-  // Finally, we put the blended image onscreen.
-  SelectObject(hMemDC, hBlendedBitmap);
-  BitBlt(paintStruct.hdc, (int)offset.x, (int)offset.y, (int)size1x.width, (int)size1x.height, hMemDC, 0, 0, SRCCOPY);
-  SelectObject(hMemDC, hOldBitmap);
-
-  // Deleting the blended objects and buffers
-  DeleteObject(hBlendedBitmap);
-  naFree(blendedBuffer);
-  naRelease(blendedImage);
-
-  // Deleting background objects and buffers
-  DeleteObject(hBackBitmap);
-  naFree(backBuffer);
-  naRelease(backImage);
-
-  // Deleting device contexts
-  DeleteDC(hMemDC);
-  ReleaseDC(naGetUIElementNativePtr(uiElement), paintStruct.hdc);
-  EndPaint(naGetUIElementNativePtr(uiElement), &paintStruct);
-
   return info;
 }
 
@@ -108,11 +131,6 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(
   NA_UNUSED(wParam);
   NA_UNUSED(lParam);
 
-  NAWINAPICallbackInfo info = {
-    .hasBeenHandeled = NA_FALSE,
-    .result = 0
-  };
-
   switch(message) {
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
@@ -122,16 +140,17 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(
   break;
 
   case WM_PAINT:
-    naImageSpaceWINAPIDrawItem(uiElement);
-    info.result = 0;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
+    return naImageSpaceWINAPIDrawItem(uiElement);
 
   default:
     //printf("Uncaught Image Space message" NA_NL);
     break;
   }
   
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
   return info;
 }
 
