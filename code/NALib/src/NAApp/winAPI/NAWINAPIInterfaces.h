@@ -157,7 +157,6 @@ struct NAWINAPISpace {
   NASpace        space;
   NARect         rect;
   NAWINAPIColor* curBgColor;
-  NABool         forceEraseBackground;
 };
 
 struct NAWINAPITextBox {

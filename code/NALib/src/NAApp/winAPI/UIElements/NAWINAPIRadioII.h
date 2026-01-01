@@ -6,10 +6,20 @@
 
 
 
-NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
-  NA_UNUSED(lParam);
+NAWINAPICallbackInfo naRadioWINAPIProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
   NA_UNUSED(wParam);
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NA_UNUSED(lParam);
+
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
+
   NABool check;
 
   switch(message) {
@@ -20,7 +30,6 @@ NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_SHOWWINDOW:
   case WM_PAINT:
   case WM_NCPAINT:
-  case WM_ERASEBKGND:
   case WM_GETTEXTLENGTH:
   case WM_GETTEXT:
   case WM_NCHITTEST:

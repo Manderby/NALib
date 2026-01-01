@@ -6,8 +6,17 @@
 
 
 
-NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+NAWINAPICallbackInfo naSelectWINAPIProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
+
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
 
   switch(message) {
   case WM_SHOWWINDOW:
@@ -16,7 +25,6 @@ NAWINAPICallbackInfo naSelectWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_MOVE:
   case WM_PAINT:
   case WM_NCPAINT:
-  case WM_ERASEBKGND:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
   case WM_MOUSEFIRST:

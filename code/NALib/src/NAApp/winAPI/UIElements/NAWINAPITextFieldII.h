@@ -6,8 +6,16 @@
 
 
 
-NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+NAWINAPICallbackInfo naTextFieldWINAPIProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
 
   switch(message) {
   case WM_SETFONT:
@@ -19,7 +27,6 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM
   case WM_SHOWWINDOW:
   case WM_PAINT:
   case WM_NCPAINT:
-  case WM_ERASEBKGND:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
   case WM_MOUSEACTIVATE:

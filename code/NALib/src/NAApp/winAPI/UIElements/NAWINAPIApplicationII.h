@@ -42,11 +42,15 @@ WNDPROC na_GetApplicationOldTextFieldWindowProc() {
 
 
 
-NAWINAPICallbackInfo naApplicationWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
-  NA_UNUSED(lParam);
-  NA_UNUSED(wParam);
+NAWINAPICallbackInfo naApplicationWINAPIProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
   NA_UNUSED(uiElement);
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NA_UNUSED(wParam);
+  NA_UNUSED(lParam);
 
   switch(message) {
   default:
@@ -54,6 +58,10 @@ NAWINAPICallbackInfo naApplicationWINAPIProc(void* uiElement, UINT message, WPAR
     break;
   }
   
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
   return info;
 }
 

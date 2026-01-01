@@ -6,8 +6,47 @@
 
 
 
-NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+NAWINAPIColor* na_DetermineSpaceBackgroundColor(NAWINAPISpace* winapiSpace) {
+  if(winapiSpace->curBgColor) {
+    return winapiSpace->curBgColor;
+  }else{
+    NAColor bgColor;
+    naFillSpaceBackgroundColor(&bgColor, &winapiSpace->space);
+    return naAllocUIColor(&bgColor, NA_NULL);
+  }
+}
+
+NAWINAPICallbackInfo na_PaintWINAPISpace(void* uiElement) {
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)uiElement;
+  PAINTSTRUCT ps;
+
+  //BOOL test = GetUpdateRect(naGetUIElementNativePtr(uiElement), &spaceRect, FALSE);
+  //printf("PAINT, %d: %d, %d, %d, %d\n", test, spaceRect.left, spaceRect.right, spaceRect.top, spaceRect.bottom);
+
+  HDC hdc = BeginPaint(naGetUIElementNativePtr(uiElement), &ps);
+  // All painting occurs here, between BeginPaint and EndPaint.
+  winapiSpace->curBgColor = na_DetermineSpaceBackgroundColor(uiElement);
+  FillRect(hdc, &ps.rcPaint, winapiSpace->curBgColor->brush);
+  EndPaint(naGetUIElementNativePtr(uiElement), &ps);
+
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
+  return info;
+}
+
+NAWINAPICallbackInfo naSpaceWINAPIProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
+
   RECT spaceRect;
   NA_UIElement* childElement;
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)uiElement;
@@ -20,7 +59,12 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
   case WM_MOVE:
+  break;
+
   case WM_PAINT:
+    info = na_PaintWINAPISpace(uiElement);
+    break;
+
   case WM_NCPAINT:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
@@ -95,6 +139,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
       // The default procedure for the slider draws an always the same gray
       // background. We need to manually override this.
       //const NA_UIElement* uiElement = na_GetUINALibEquivalent((void*)lParam);
+      winapiSpace->curBgColor = na_DetermineSpaceBackgroundColor(uiElement);
       GetClientRect(naGetUIElementNativePtrConst(uiElement), &spaceRect);
       FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
       info.result = 0;
@@ -130,7 +175,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
         winapiSpace->curBgColor = NA_NULL;
       }
       naFillSpaceBackgroundColor(&bgColor, uiElement);
-      winapiSpace->curBgColor = naAllocUIColor(&bgColor, NA_NULL);
+      winapiSpace->curBgColor = na_DetermineSpaceBackgroundColor(uiElement);
       winapiFgColor = naAllocUIColor(&fgColor, &bgColor);
       SetTextColor((HDC)wParam, winapiFgColor->colorRef);
       naDeallocUIColor(winapiFgColor);
@@ -148,26 +193,6 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wPa
       info.hasBeenHandeled = NA_TRUE;
       break;
     }
-    break;
-
-  case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
-    GetClientRect(naGetUIElementNativePtr(uiElement), &spaceRect);
-    //if(1) {
-    if(winapiSpace->forceEraseBackground) {
-      if(winapiSpace->curBgColor) {
-        naDeallocUIColor(winapiSpace->curBgColor);
-        winapiSpace->curBgColor = NA_NULL;
-      }
-      naFillSpaceBackgroundColor(&bgColor, uiElement);
-      winapiSpace->curBgColor = naAllocUIColor(&bgColor, NA_NULL);
-      FillRect((HDC)wParam, &spaceRect, winapiSpace->curBgColor->brush);
-      winapiSpace->forceEraseBackground = NA_FALSE;
-
-      info.result = 1;
-    }else{
-      info.result = 0;
-    }
-    info.hasBeenHandeled = NA_TRUE;
     break;
 
   default:
@@ -203,8 +228,6 @@ NA_DEF NASpace* naNewSpace(NASize size) {
 
   winapiSpace->curBgColor = NA_NULL;
 
-  winapiSpace->forceEraseBackground = NA_FALSE;
-
   winapiSpace->space.alternateBackground = NA_FALSE;
 
   return (NASpace*)winapiSpace;
@@ -232,14 +255,6 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos) {
 
   na_AddSpaceChild(space, child);
   double offsetY = na_GetUIElementYOffset(child);
-
-  if(naGetUIElementType(child) == NA_UI_SPACE) {
-    NAWINAPISpace* childElem = (NAWINAPISpace*)child;
-    childElem->forceEraseBackground = NA_TRUE;
-  }
-
-  ((NAWINAPISpace*)space)->forceEraseBackground = NA_TRUE;
-
   NARect childRect = naGetUIElementRect(child);
   childRect.pos = naMakePos(pos.x, pos.y + offsetY);
   naSetUIElementRect(child, childRect);
@@ -249,8 +264,6 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos) {
 
 NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
   na_SetSpaceBackgroundColor(space, color);
-  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
-  winapiSpace->forceEraseBackground = NA_TRUE;
   naRefreshUIElement(space, 0);
 }
 
@@ -258,7 +271,6 @@ NA_DEF void naSetSpaceBackgroundColor(NASpace* space, const NAColor* color) {
 
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate) {
   space->alternateBackground = alternate;
-  ((NAWINAPISpace*)space)->forceEraseBackground = NA_TRUE;
   naRefreshUIElement(space, 0.);
 }
 
@@ -270,7 +282,6 @@ NA_DEF void naRemoveSpaceChild(NASpace* space, void* child) {
   naClearListIterator(&iter);
   if(found) {
     na_RemoveSpaceChild(space, child);
-    ((NAWINAPISpace*)space)->forceEraseBackground = NA_TRUE;
   }else{
     #if NA_DEBUG
     naError("Child UI element not found in given space.");
@@ -285,7 +296,6 @@ NA_DEF void naRemoveAllSpaceChilds(NASpace* space) {
     void* child = naGetListFirstMutable(&space->childs);
     na_RemoveSpaceChild(space, child);
   }
-  ((NAWINAPISpace*)space)->forceEraseBackground = NA_TRUE;
 }
 
 
@@ -325,8 +335,6 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
   double uiScale = naGetUIElementUIScale(NA_NULL);
   NARect parentRect = naGetUIElementRect(naGetUIElementParent(space));
 
-  winapiSpace->forceEraseBackground = NA_TRUE;
-
   SetWindowPos(
     naGetUIElementNativePtr(space),
     HWND_TOP,
@@ -349,7 +357,6 @@ NA_HDEF void na_SetSpaceRect(NA_UIElement* space, NARect rect) {
 
 NA_HDEF void na_ForceWINAPISpaceToRedrawBackground(NA_UIElement* space) {
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
-  winapiSpace->forceEraseBackground = NA_TRUE;
   naRefreshUIElement(space, 0);
 
   NASpace* naSpace = (NASpace*)space;

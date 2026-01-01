@@ -11,11 +11,20 @@
 
 
 
-NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
-  NA_UNUSED(lParam);
-  NA_UNUSED(wParam);
+NAWINAPICallbackInfo naButtonWINAPIProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
   NA_UNUSED(uiElement);
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NA_UNUSED(wParam);
+  NA_UNUSED(lParam);
+
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
 
   switch(message) {
   case WM_SETFONT:
@@ -46,12 +55,6 @@ NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case BM_GETSTATE:
   case WM_WINDOWPOSCHANGED:
     break;
-
-  case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
-  // We pretend to have erased.
-  info.result = 1;
-  info.hasBeenHandeled = NA_TRUE;
-  break;
 
   // Menu messages
   case WM_ENTERMENULOOP:
@@ -338,7 +341,11 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   //  &drawitemstruct->rcItem,
   //  DT_CENTER | DT_PATH_ELLIPSIS | DT_NOCLIP | DT_SINGLELINE | DT_VCENTER);
 
-  NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_TRUE,
+    .result = TRUE
+  };
+
   return info;
 }
 
@@ -768,7 +775,6 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAImageSet* imageSet) {
   #endif
 
   na_setButtonImage(button, imageSet);
-  // todo
 }
 
 NA_DEF void naSetButtonImage2(NAButton* button, const NAImageSet* imageSet) {
@@ -785,7 +791,6 @@ NA_DEF void naSetButtonImage2(NAButton* button, const NAImageSet* imageSet) {
   #endif
 
   na_setButtonImage2(button, imageSet);
-  // todo
 }
 
 

@@ -19,12 +19,21 @@ void na_drawAllOpenGLSpaces(void* data) {
 
 
 
-NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
   NA_UNUSED(lParam);
+
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
+
   NAWINAPIOpenGLSpace* winapiOpenGLSpace;
   int wheelDelta;
-
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message) {
   case WM_NCHITTEST:
@@ -45,12 +54,6 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
   case WM_NCPAINT:
   case WM_NCCALCSIZE:
   break;
-
-  case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
-    // not called.
-    //info.result = 0;
-    //info.hasBeenHandeled = NA_TRUE;
-    break;
 
   case WM_MOUSEWHEEL:
 
@@ -396,11 +399,19 @@ NA_DEF void naDeactivateNativeOpenGLContext(void* openGLContext) {
 
 #else
 
-  NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+  NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(
+    void* uiElement,
+    UINT message,
+    WPARAM wParam,
+    LPARAM lParam)
+  {
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif
-    NAWINAPICallbackInfo info = {NA_FALSE, 0};
+    NAWINAPICallbackInfo info = {
+      .hasBeenHandeled = NA_FALSE,
+      .result = 0
+    };
     return info;
   }
 

@@ -6,11 +6,20 @@
 
 
 
-NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
-  NA_UNUSED(lParam);
-  NA_UNUSED(wParam);
+NAWINAPICallbackInfo naCheckBoxWINAPIProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
   NA_UNUSED(uiElement);
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NA_UNUSED(wParam);
+  NA_UNUSED(lParam);
+
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
 
   switch(message) {
   case WM_SETFONT:
@@ -21,7 +30,6 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM 
   case BM_SETCHECK:
   case WM_PAINT:
   case WM_NCPAINT:
-  case WM_ERASEBKGND:
   case WM_GETTEXTLENGTH:
   case WM_GETTEXT:
   case WM_NCHITTEST:

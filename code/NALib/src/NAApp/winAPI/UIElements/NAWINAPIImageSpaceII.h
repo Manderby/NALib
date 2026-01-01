@@ -12,7 +12,10 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
   HBITMAP hOldBitmap;
   HDC hMemDC;
   NAWINAPIImageSpace* imageSpace;
-  NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_TRUE,
+    .result = TRUE
+  };
   NASizes size1x;
   NASizei32 spaceSize;
   NAPosi32 offset;
@@ -96,10 +99,19 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement) {
 
 
 
-NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
-  NA_UNUSED(lParam);
+NAWINAPICallbackInfo naImageSpaceWINAPIProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
   NA_UNUSED(wParam);
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NA_UNUSED(lParam);
+
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
 
   switch(message) {
   case WM_WINDOWPOSCHANGING:
@@ -108,9 +120,6 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARA
   case WM_SHOWWINDOW:
   case WM_NCPAINT:
   break;
-
-  case WM_ERASEBKGND:
-    break;
 
   case WM_PAINT:
     naImageSpaceWINAPIDrawItem(uiElement);

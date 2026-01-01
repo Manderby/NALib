@@ -25,7 +25,11 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
       naError("uiElement is nullptr");
   #endif
 
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
+
   NAWINAPIWindow* windowMutable;
   NASpace* contentSpace;
   NARect contentRect;
@@ -198,13 +202,6 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
   case WM_EXITSIZEMOVE:
     break;
 
-  case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
-    // We pretend to have erased, although it will be the content space which
-    // erases the background.
-    info.result = 1;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
-
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
     // Do not change the default behaviour of focus. Otherwise, this would cause
@@ -223,7 +220,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(
   //  break;
   //case WM_THEMECHANGED :
   //case WM_WININICHANGE:
-  //  "hello dark mode";
+  //  "hello dark mode my old friend";
   //  break;
 
   default:

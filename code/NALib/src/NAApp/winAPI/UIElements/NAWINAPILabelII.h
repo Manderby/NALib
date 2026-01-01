@@ -6,8 +6,17 @@
 
 
 
-NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+NAWINAPICallbackInfo naLabelWINAPIProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
+
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
 
   switch(message) {
   case WM_SETFONT:
@@ -48,11 +57,6 @@ NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wPa
     // NALib by default ignores focus but for labels, we need it. Otherwise,
     // this would cause labels to not display a selection.
     info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
-    break;
-
-  case WM_ERASEBKGND:
-    info.result = 1;
-    info.hasBeenHandeled = NA_TRUE;
     break;
 
   default:

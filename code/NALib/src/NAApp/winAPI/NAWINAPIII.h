@@ -379,8 +379,8 @@ NAString* naNewStringWithKeyStroke(const NAKeyStroke* keyStroke) {
 
 NA_PROTOTYPE(NAWINAPICallbackInfo);
 struct NAWINAPICallbackInfo{
-  LRESULT result;
   NABool hasBeenHandeled;
+  LRESULT result;
 };
 
 
@@ -501,7 +501,11 @@ NAWINAPICallbackInfo na_HandleMousePress(
       naCrash("uiElement is nullptr");
   #endif
 
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
+    
   NAUIElementType type = naGetUIElementType(uiElement);
   if(type == NA_UI_APPLICATION
     || type == NA_UI_IMAGE_SPACE
@@ -549,6 +553,16 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
   const NAMouseStatus* mouseStatus;
 
   switch(message) {
+  
+  case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
+    // WINAPI uses this message to prepare a drawing region. But it is quite
+    // unspecific when this message is sent. In NALib, we do all drawing
+    // including the background when processing different messages. Therefore,
+    // we pretend to have erased by returning a non-zero value. That way, no
+    // additional erase messages will be sent.
+    info.result = 1;
+    info.hasBeenHandeled = NA_TRUE;
+    break;
 
   case WM_LBUTTONDOWN:
     info = na_HandleMousePress(elem, NA_MOUSE_BUTTON_LEFT, NA_TRUE);
@@ -647,7 +661,10 @@ NAWINAPICallbackInfo naUIElementWINAPIPostProc(void* uiElement, UINT message, WP
   NA_UNUSED(uiElement);
   NA_UNUSED(wParam);
   NA_UNUSED(lParam);
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
 
   switch(message) {
   case WM_SETFOCUS:
@@ -676,7 +693,10 @@ NAWINAPICallbackInfo naUIElementWINAPIPostProc(void* uiElement, UINT message, WP
 
 // This method calls the default procedure given by WINAPI.
 NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
 
   NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(hWnd);
   NAUIElementType uiType = uiElement ? naGetUIElementType(uiElement) : NA_UI_APPLICATION;
@@ -736,6 +756,8 @@ NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARA
     case   0x5: printf("WM_SIZE"); break;
     case   0x8: printf("WM_KILLFOCUS"); break;
     case   0xc: printf("WM_SETTEXT"); break;
+    case   0xd: printf("WM_GETTEXT"); break;
+    case   0xe: printf("WM_GETTEXTLENGTH"); break;
     case   0xf: printf("WM_PAINT"); break;
     case  0x14: printf("WM_ERASEBKGND"); break;
     case  0x18: printf("WM_SHOWWINDOW"); break;
@@ -746,6 +768,8 @@ NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARA
     case  0x24: printf("WM_GETMINMAXINFO"); break;
     case  0x46: printf("WM_WINDOWPOSCHANGING"); break;
     case  0x47: printf("WM_WINDOWPOSCHANGED"); break;
+    case  0x7c: printf("WM_STYLECHANGING"); break;
+    case  0x7d: printf("WM_STYLECHANGED"); break;
     case  0x7f: printf("WM_GETICON"); break;
     case  0x83: printf("WM_NCCALCSIZE"); break;
     case  0x84: printf("WM_NCHITTEST"); break;
@@ -775,7 +799,12 @@ NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARA
 // This is the one and only, master of destruction, defender of chaos and
 // pimp of the century function handling all and everything in WINAPI.
 
-LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK naWINAPIWindowCallback(
+  HWND hWnd,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
   NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(hWnd);
 
   #if NA_DEBUG
@@ -784,7 +813,10 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     }
   #endif
 
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
 
   // Capture specific messages
   if(message == WM_DRAWITEM) {
@@ -794,6 +826,7 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
   }else if(message == WM_HSCROLL) {
     info = naWINAPIScrollItemProc(wParam, lParam);
   }else if(message == WM_NOTIFY) {
+    // Maybe one day, we need to capture those messages.
   }
 
 
@@ -848,7 +881,7 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
         break;
       default:
         break;
-    }
+      }
     }
 
     if(!info.hasBeenHandeled) {
@@ -870,7 +903,11 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 
 NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam) {
   NA_UNUSED(wParam);
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
+
   DRAWITEMSTRUCT* drawitemstruct = (DRAWITEMSTRUCT*)lParam;
   NA_UIElement* uiElement = (NA_UIElement*)na_GetUINALibEquivalent(drawitemstruct->hwndItem);
 
@@ -888,7 +925,11 @@ NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam) {
 }
 
 NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam) {
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
+
   WORD notificationCode = HIWORD(wParam);
   WORD controlIdentifier = LOWORD(wParam);
   HWND controlWnd = (HWND)lParam;
@@ -952,7 +993,11 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam) {
 }
 
 NAWINAPICallbackInfo naWINAPIScrollItemProc(WPARAM wParam, LPARAM lParam) {
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
+
   // lParam is the control which has the event. Sliders for example. Is a HWND.
   NA_UIElement* scrollElem = (NA_UIElement*)na_GetUINALibEquivalent((void*)lParam);
   if(scrollElem && naGetUIElementType(scrollElem) == NA_UI_SLIDER) {

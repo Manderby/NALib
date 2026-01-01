@@ -6,9 +6,19 @@
 
 
 
-NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam) {
+NAWINAPICallbackInfo naSliderWINAPIProc(
+  void* uiElement,
+  UINT message,
+  WPARAM wParam,
+  LPARAM lParam)
+{
   NA_UNUSED(lParam);
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
+
   NASlider* slider = (NASlider*)uiElement;
   const NASpace* space;
   NAColor bgColor;
@@ -57,19 +67,6 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
     naDeallocUIColor(bgWinapiColor);
     break;
 
-  case WM_ERASEBKGND: // wParam: Device context, return != 0 if erasing, 0 otherwise
-    //space = naGetUIElementParentSpace(uiElement);
-    //GetClientRect(naGetUIElementNativePtr(uiElement), &sliderRect);
-
-    //naFillSpaceBackgroundColor(&bgColor, space);
-    //bgWinapiColor = naAllocUIColor(&bgColor);
-    //FillRect((HDC)wParam, &sliderRect, bgWinapiColor->brush);
-    //naDeallocUIColor(bgWinapiColor);
-
-    info.result = 0;
-    info.hasBeenHandeled = NA_TRUE;
-    break;
-
   case WM_LBUTTONDOWN:
     slider->sliderInMovement = NA_TRUE;
     info.result = 0;
@@ -92,7 +89,10 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
 NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam) {
   NA_UNUSED(wParam);
-  NAWINAPICallbackInfo info = {NA_TRUE, 0};
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_TRUE,
+    .result = 0
+  };
 
   naSetSliderValue(uiElement, naGetSliderValue(uiElement));
   if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED)) {
