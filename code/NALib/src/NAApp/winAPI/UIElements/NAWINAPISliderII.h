@@ -20,10 +20,6 @@ NAWINAPICallbackInfo naSliderWINAPIProc(
   };
 
   NASlider* slider = (NASlider*)uiElement;
-  const NASpace* space;
-  NAColor bgColor;
-  NAWINAPIColor* bgWinapiColor;
-  RECT sliderRect;
 
   switch(message) {
   case WM_WINDOWPOSCHANGING:
@@ -35,6 +31,7 @@ NAWINAPICallbackInfo naSliderWINAPIProc(
   case WM_SETCURSOR:
   case WM_MOUSEACTIVATE:
   case WM_IME_SETCONTEXT:
+  case WM_PAINT:
   case WM_DESTROY:
   case WM_NCDESTROY:
   case WM_CAPTURECHANGED:
@@ -56,24 +53,14 @@ NAWINAPICallbackInfo naSliderWINAPIProc(
 
     break;
 
-  case WM_PAINT:
-    space = naGetUIElementParentSpace(uiElement);
-    GetClientRect(naGetUIElementNativePtr(uiElement), &sliderRect);
-
-    naFillSpaceBackgroundColor(&bgColor, space);
-    bgWinapiColor = naAllocUIColor(&bgColor, NA_NULL);
-    FillRect((HDC)wParam, &sliderRect, bgWinapiColor->brush);
-    naDeallocUIColor(bgWinapiColor);
-    break;
-
   case WM_LBUTTONDOWN:
     slider->sliderInMovement = NA_TRUE;
-    info.result = 0;
+    //info.result = 0;
     break;
 
   case WM_LBUTTONUP:
     slider->sliderInMovement = NA_TRUE;
-    info.result = 0;
+    //info.result = 0;
     break;
 
   // Handeled in naUIElementWINAPIPostProc:
@@ -202,6 +189,7 @@ NA_DEF double naGetSliderStaticValue(const NASlider* slider) {
 
 NA_API void naSetSliderValue(NASlider* slider, double value) {
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
+  NABool wasEnabled = IsWindowEnabled(naGetUIElementNativePtr(slider));
   double plainValue = (value - slider->min) / (slider->max - slider->min);
   int32 sliderValue = (int32)(plainValue * (double)NA_MAX_i32);
   SendMessage(naGetUIElementNativePtr(slider), TBM_SETPOS, 
@@ -210,12 +198,17 @@ NA_API void naSetSliderValue(NASlider* slider, double value) {
   if(!slider->sliderInMovement) {
     slider->staticValue = value;
   }
+  if(!wasEnabled) {
+    naSetSliderEnabled(slider, NA_FALSE);
+  }
 #endif
 }
 
 
 
 NA_API void naSetSliderRange(NASlider* slider, double min, double max, size_t tickCount) {
+
+  NABool wasEnabled = IsWindowEnabled(naGetUIElementNativePtr(slider));
 
   SendMessage(naGetUIElementNativePtr(slider), TBM_CLEARTICS, TRUE, 0); // true = redraw
   if(tickCount) {
@@ -225,6 +218,10 @@ NA_API void naSetSliderRange(NASlider* slider, double min, double max, size_t ti
     }
   }else{
     SetWindowLongPtr(naGetUIElementNativePtr(slider), GWL_STYLE, WS_CHILD | WS_VISIBLE | TBS_NOTICKS | TBS_TRANSPARENTBKGND);
+  }
+
+  if(!wasEnabled) {
+    naSetSliderEnabled(slider, NA_FALSE);
   }
 
   slider->min = min;

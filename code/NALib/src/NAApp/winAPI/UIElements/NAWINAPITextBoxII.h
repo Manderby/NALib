@@ -16,17 +16,16 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(
   NA_UNUSED(wParam);
   NA_UNUSED(lParam);
 
-  NAWINAPICallbackInfo info = {
-    .hasBeenHandeled = NA_FALSE,
-    .result = 0
-  };
-
   switch(message) {
   default:
     //printf("Uncaught TextBox message" NA_NL);
     break;
   }
   
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
   return info;
 }
 

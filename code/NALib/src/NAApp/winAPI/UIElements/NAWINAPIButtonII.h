@@ -21,13 +21,31 @@ NAWINAPICallbackInfo naButtonWINAPIProc(
   NA_UNUSED(wParam);
   NA_UNUSED(lParam);
 
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
+
+  NABool customDraw;
+
   switch(message) {
   case WM_SETFONT:
   case WM_WINDOWPOSCHANGING:
   case WM_CHILDACTIVATE:
   case WM_MOVE:
   case WM_SHOWWINDOW:
+    break;
+
   case WM_PAINT:
+    //customDraw = naIsButtonStateful((NAButton*)uiElement) && naGetButtonState((NAButton*)uiElement);
+    //if(customDraw){
+    //  PAINTSTRUCT paintStruct;
+    //  BeginPaint(naGetUIElementNativePtr(uiElement), &paintStruct);
+    //  EndPaint(naGetUIElementNativePtr(uiElement), &paintStruct);
+    //  info.hasBeenHandeled = NA_TRUE;
+    //}
+    break;
+
   case WM_NCPAINT:
   case WM_GETTEXTLENGTH:
   case WM_GETTEXT:
@@ -80,10 +98,6 @@ NAWINAPICallbackInfo naButtonWINAPIProc(
     break;
   }
   
-  NAWINAPICallbackInfo info = {
-    .hasBeenHandeled = NA_FALSE,
-    .result = 0
-  };
   return info;
 }
 

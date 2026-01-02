@@ -166,6 +166,9 @@ CommonController* createButtonController() {
   naAddUIReaction(con->imagePushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naAddSpaceChild(space, con->imagePushButton, naMakePos(TAB1, curPosY));
 
+  //naDebugUIElement(con->imagePushButton);
+  //naDebugUIElement(space);
+
   con->imagePushButtonReaction = naNewLabel("", COLUMN2_WIDTH);
   naSetLabelFont(con->imagePushButtonReaction, getMonoFont());
   naAddSpaceChild(space, con->imagePushButtonReaction, naMakePos(TAB2, curPosY + .5 * UI_ELEMENT_HEIGTH));

@@ -78,10 +78,13 @@ NAWINAPICallbackInfo naSelectWINAPIProc(
 
   case WM_SETFOCUS:
   case WM_KILLFOCUS:
-    // Do not change the default behaviour of focus. Otherwise, this would cause
-    // labels and textFields to not display a cursor or selection.
-    info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
-    break;
+    // Do not change the default behaviour of focus. Otherwise, the select
+    // will simply not open up.
+    return naUIElementWINAPIDefaultProc(
+      naGetUIElementNativePtr(uiElement),
+      message,
+      wParam,
+      lParam);
 
   default:
     //printf("Uncaught Select message" NA_NL);

@@ -7,7 +7,7 @@
 
 
 
-NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem(void* uiElement) {
+NAWINAPICallbackInfo na_HandleWINAPIImageSpacePaint(void* uiElement) {
   NAWINAPIImageSpace* imageSpace = (NAWINAPIImageSpace*)uiElement;
 
   if(imageSpace->imageSpace.imageSet) {
@@ -140,7 +140,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(
   break;
 
   case WM_PAINT:
-    return naImageSpaceWINAPIDrawItem(uiElement);
+    return na_HandleWINAPIImageSpacePaint(uiElement);
 
   default:
     //printf("Uncaught Image Space message" NA_NL);

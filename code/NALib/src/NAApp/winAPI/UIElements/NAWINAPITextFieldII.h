@@ -12,11 +12,6 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(
   WPARAM wParam,
   LPARAM lParam)
 {
-  NAWINAPICallbackInfo info = {
-    .hasBeenHandeled = NA_FALSE,
-    .result = 0
-  };
-
   switch(message) {
   case WM_SETFONT:
   case WM_STYLECHANGING:
@@ -57,14 +52,22 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(
   case WM_KILLFOCUS:
     // Do not change the default behaviour of focus. Otherwise, this would cause
     // textFields to not display a cursor or selection.
-    info = naUIElementWINAPIDefaultProc(naGetUIElementNativePtr(uiElement), message, wParam, lParam);
+    return naUIElementWINAPIDefaultProc(
+      naGetUIElementNativePtr(uiElement),
+      message,
+      wParam,
+      lParam);
     break;
 
   default:
     //printf("Uncaught TextField message" NA_NL);
-  break;
+    break;
   }
  
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
   return info;
 }
 

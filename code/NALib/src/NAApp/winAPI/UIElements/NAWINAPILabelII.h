@@ -12,6 +12,11 @@ NAWINAPICallbackInfo naLabelWINAPIProc(
   WPARAM wParam,
   LPARAM lParam)
 {
+  PAINTSTRUCT paintStruct;
+  HDC hDC;
+  RECT rect;
+  BOOL test;
+
   switch(message) {
   case WM_SETFONT:
   case WM_STYLECHANGING:
@@ -21,7 +26,35 @@ NAWINAPICallbackInfo naLabelWINAPIProc(
   case WM_STYLECHANGED:
   case WM_MOVE:
   case WM_SETTEXT:
+    break;
+
   case WM_PAINT:
+    //hDC = GetDC(naGetUIElementNativePtr(uiElement));
+    //test = GetUpdateRect (hDC, &rect, FALSE);
+    ////BeginPaint(naGetUIElementNativePtr(uiElement), &paintStruct);
+    ////EndPaint(naGetUIElementNativePtr(uiElement), &paintStruct);
+    ////return naUIElementWINAPIDefaultProc(
+    ////  naGetUIElementNativePtr(uiElement),
+    ////  message,
+    ////  wParam,
+    ////  lParam);
+
+    //rect.left = 0;
+    //rect.right = 300;
+    //rect.top = 0;
+    //rect.bottom = 16;
+
+    //test = DrawText(
+    //  hDC,
+    //  TEXT("Hallo"),
+    //  -1,
+    //  &rect,
+    //  DT_CENTER | DT_PATH_ELLIPSIS | DT_NOCLIP | DT_SINGLELINE | DT_VCENTER);
+
+    //ReleaseDC(naGetUIElementNativePtr(uiElement), hDC);
+
+    break;
+
   case WM_NCPAINT:
   case WM_GETFONT:
   case WM_DESTROY:

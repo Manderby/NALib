@@ -6,6 +6,21 @@
 
 
 
+NAWINAPICallbackInfo na_HandleWINAPIRadioLButtonUp(void* uiElement) {
+  ReleaseCapture();
+  NABool check = naGetRadioState(uiElement);
+  naSetRadioState(uiElement, !check);
+  if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED)) {
+    // no parent method to be called.
+  }
+
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_TRUE,
+    .result = 0
+  };
+  return info;
+}
+
 NAWINAPICallbackInfo naRadioWINAPIProc(
   void* uiElement,
   UINT message,
@@ -14,13 +29,6 @@ NAWINAPICallbackInfo naRadioWINAPIProc(
 {
   NA_UNUSED(wParam);
   NA_UNUSED(lParam);
-
-  NAWINAPICallbackInfo info = {
-    .hasBeenHandeled = NA_FALSE,
-    .result = 0
-  };
-
-  NABool check;
 
   switch(message) {
   case WM_SETFONT:
@@ -48,21 +56,17 @@ NAWINAPICallbackInfo naRadioWINAPIProc(
     break;
 
   case WM_LBUTTONUP:
-    ReleaseCapture();
-    check = naGetRadioState(uiElement);
-    naSetRadioState(uiElement, !check);
-    if(!na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED)) {
-      // no parent method to be called.
-    }
-    info.hasBeenHandeled = NA_TRUE;
-    info.result = 0;
-    break;
+    return na_HandleWINAPIRadioLButtonUp(uiElement);
 
   default:
     //printf("Uncaught Radio message" NA_NL);
     break;
   }
   
+  NAWINAPICallbackInfo info = {
+    .hasBeenHandeled = NA_FALSE,
+    .result = 0
+  };
   return info;
 }
 

@@ -476,7 +476,7 @@ NABool naWINAPICaptureMouseHover() {
       na_SetUIElementMouseInside(elementUnderMouse, NA_TRUE);
 
       if(naGetUIElementType(elementUnderMouse) == NA_UI_BUTTON) {
-        na_RefreshUIElementNow(curElement);
+        na_RefreshUIElementNow(elementUnderMouse);
       }
 
       if(!na_DispatchUIElementCommand(elementUnderMouse, NA_UI_COMMAND_MOUSE_ENTERED)) {
@@ -743,6 +743,7 @@ NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARA
     NA_UNUSED(wParam);
     NA_UNUSED(lParam);
     switch(naGetUIElementType(uiElement)) {
+    case NA_UI_BUTTON: printf("%p Button: ", uiElement); break;
     case NA_UI_LABEL:  printf("%p Label:  ", uiElement); break;
     case NA_UI_SPACE:  printf("%p Space:  ", uiElement); break;
     case NA_UI_WINDOW: printf("%p Window: ", uiElement); break;
@@ -766,6 +767,7 @@ NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARA
     case  0x21: printf("WM_MOUSEACTIVATE"); break;
     case  0x22: printf("WM_CHILDACTIVATE"); break;
     case  0x24: printf("WM_GETMINMAXINFO"); break;
+    case  0x2b: printf("WM_DRAWITEM"); break;
     case  0x46: printf("WM_WINDOWPOSCHANGING"); break;
     case  0x47: printf("WM_WINDOWPOSCHANGED"); break;
     case  0x7c: printf("WM_STYLECHANGING"); break;
@@ -777,6 +779,7 @@ NAWINAPICallbackInfo naUIElementWINAPIDefaultProc(HWND hWnd, UINT message, WPARA
     case  0x86: printf("WM_NCACTIVATE"); break;
     case 0x113: printf("WM_TIMER"); break;
     case 0x133: printf("WM_CTLCOLOREDIT"); break;
+    case 0x135: printf("WM_CTLCOLORBTN"); break;
     case 0x138: printf("WM_CTLCOLORSTATIC"); break;
     case 0x200: printf("WM_MOUSEFIRST / WM_MOUSEMOVE"); break;
     case 0x201: printf("WM_LBUTTONDOWN"); break;
