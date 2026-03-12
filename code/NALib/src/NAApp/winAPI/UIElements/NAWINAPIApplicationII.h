@@ -329,8 +329,7 @@ NA_HDEF NAApplication* na_NewApplication(void) {
   winapiApplication->appIcon = NA_NULL;
 
   winapiApplication->mouseHoverElement = NA_NULL;
-  winapiApplication->lastOpenedMenu = NA_NULL;
-  winapiApplication->nextMenuItemId = 1;
+  naInitList(&winapiApplication->menuItems);
 
   winapiApplication->oldButtonWindowProc = NA_NULL;
   winapiApplication->oldCheckBoxWindowProc = NA_NULL;
@@ -353,9 +352,9 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
   na_ClearApplication(&winapiApplication->application);  
 
   // Now that all windows are destroyed, all dependent timers are deleted. We can
-  // safely release the timer structs. todo: Make killing the timers a sport.
+  // safely release all other structs. todo: Make killing the timers a sport.
+  naClearList(&winapiApplication->menuItems, NA_NULL);
   naClearList(&winapiApplication->timers, (NAMutator)naFree);
-
   naClearList(&winapiApplication->openGLRedrawList, NA_NULL);
 
   #if NA_DEBUG
@@ -824,23 +823,52 @@ NA_DEF void naActivateCursorImage(const NACursorImage* image) {
 }
 
 
-NA_HDEF UINT na_GetApplicationNextMenuItemId(NAApplication* application)
+
+NA_HDEF UINT na_RegisterApplicationMenuItem(NAApplication* application, const NAMenuItem* menuItem)
 {
   NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;
-  return winapiApplication->nextMenuItemId++;
+  NAListIterator it = naMakeListModifier(&winapiApplication->menuItems);
+  naIterateListBack(&it);
+  
+  uint32 id = 0;
+  
+  if (!naIsListAtInitial(&it)) {
+    const NAMenuItem* menuItem = naGetListCurConst(&it);
+    id = na_GetMenuItemId(menuItem);
+  }
+
+  id++;
+
+  naAddListAfterConst(&it, menuItem);
+  
+  naClearListIterator(&it);
+
+  return id;
 }
 
-NA_HDEF void na_SetApplicationLastOpenedMenu(NAApplication* application, const NAMenu* menu)
+NA_HDEF void na_UnregisterApplicationMenuItem(NAApplication* application, const NAMenuItem* menuItem)
 {
   NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;
-  winapiApplication->lastOpenedMenu = menu;
+  naRemoveListData(&winapiApplication->menuItems, menuItem);
 }
 
-NA_HDEF const NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application)
+NA_HDEF const NAMenuItem* na_GetApplicationMenuItemById(NAApplication* application, uint32 id)
 {
   NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;
-  return winapiApplication->lastOpenedMenu;
+  NAMenuItem* menuItem = NA_NULL;
+  NAListIterator iter = naMakeListAccessor(&winapiApplication->menuItems);
+  while(naIterateList(&iter)) {
+    const NAMenuItem* curItem = naGetListCurConst(&iter);
+    if(na_GetMenuItemId(curItem) == id) {
+      menuItem = curItem;
+      break;
+    }
+  }
+  naClearListIterator(&iter);
+
+  return menuItem;
 }
+
 
 
 

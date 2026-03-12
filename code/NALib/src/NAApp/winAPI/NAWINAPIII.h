@@ -28,9 +28,9 @@ NA_UIElement* naGetApplicationMouseHoverElement(void);
 void naSetApplicationMouseHoverElement(NA_UIElement* element);
 const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 
-NA_HAPI UINT na_GetApplicationNextMenuItemId(NAApplication* application);
-NA_HAPI void na_SetApplicationLastOpenedMenu(NAApplication* application, const NAMenu* menu);
-NA_HAPI const NAMenu* na_GetApplicationLastOpenedMenu(NAApplication* application);
+NA_HAPI UINT na_RegisterApplicationMenuItem(NAApplication* application, const NAMenuItem* menuItem);
+NA_HAPI void na_UnregisterApplicationMenuItem(NAApplication* application, const NAMenuItem* menuItem);
+NA_HAPI const NAMenuItem* na_GetApplicationMenuItemById(NAApplication* application, uint32 id);
 NA_HAPI void na_SetMenuItemId(NAMenuItem* menuItem, uint32 id, NAMenu* menu);
 NA_HAPI uint32 na_GetMenuItemId(const NAMenuItem* menuItem);
 NA_HAPI void na_updateMenuItem(NAMenu* menu, const NAMenuItem* menuItem);
@@ -941,17 +941,7 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam) {
   if(controlWnd == 0 && notificationCode == 0)
   {
     // This is a menu message
-    const NAMenu* menu = na_GetApplicationLastOpenedMenu(naGetApplication());
-    const NAMenuItem* menuItem = NA_NULL;
-    NAListIterator iter = naMakeListAccessor(&menu->childs);
-    while(naIterateList(&iter)) {
-      menuItem = naGetListCurConst(&iter);
-      if(na_GetMenuItemId(menuItem) == controlIdentifier) {
-        break;
-      }
-      menuItem = NA_NULL;
-    }
-    naClearListIterator(&iter);
+    const NAMenuItem* menuItem = na_GetApplicationMenuItemById(naGetApplication(), controlIdentifier);
 
     if(menuItem) {
       if(!na_DispatchUIElementCommand((const NA_UIElement*)menuItem, NA_UI_COMMAND_PRESSED)) {
@@ -959,7 +949,6 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam) {
       }
       hasBeenHandeled = NA_TRUE;
     }
-    na_SetApplicationLastOpenedMenu(naGetApplication(), NA_NULL);
 
   }else{
     // This is a control message

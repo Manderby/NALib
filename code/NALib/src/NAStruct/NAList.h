@@ -96,7 +96,7 @@ NA_IAPI void  naRemoveListFirstConst    (NAList* list);
 NA_IAPI void* naRemoveListFirstMutable  (NAList* list);
 NA_IAPI void  naRemoveListLastConst     (NAList* list);
 NA_IAPI void* naRemoveListLastMutable   (NAList* list);
-NA_IAPI void  naRemoveListData          (NAList* list, void* data);
+NA_IAPI void  naRemoveListData          (NAList* list, const void* data);
 
 
 // /////////////////////////////////////////////

@@ -33,21 +33,26 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
   naZeron(&menuItemInfo, sizeof(MENUITEMINFO));
   menuItemInfo.cbSize = sizeof(MENUITEMINFO);
 
+  UINT menuItemID = na_RegisterApplicationMenuItem(naGetApplication(), item);
+  na_SetMenuItemId(item, menuItemID, menu);
+
   if(winapiMenuItem->isSeparator) {
     menuItemInfo.fMask = MIIM_ID | MIIM_FTYPE;
-    menuItemInfo.wID = na_GetApplicationNextMenuItemId(naGetApplication());
+    menuItemInfo.wID = menuItemID;
     menuItemInfo.fType = MFT_SEPARATOR;
   }else{
     // Note for the future, do not combine MIIM_TYPE with MIIM_FTYPE.
     menuItemInfo.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
-    menuItemInfo.wID = na_GetApplicationNextMenuItemId(naGetApplication());
+    if(item->subMenu) {
+      menuItemInfo.fMask |= MIIM_SUBMENU;
+      menuItemInfo.hSubMenu = naGetUIElementNativePtr(item->subMenu);
+    }
+    menuItemInfo.wID = menuItemID;
     menuItemInfo.fType = MFT_STRING;
     menuItemInfo.dwTypeData = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(winapiMenuItem->text));
     menuItemInfo.cch = (UINT)naGetStringByteSize(winapiMenuItem->text);
     menuItemInfo.fState = /*MFS_CHECKED | */MFS_ENABLED/* | MFS_DEFAULT*/;
   }
-
-  na_SetMenuItemId(&winapiMenuItem->menuItem, menuItemInfo.wID, menu);
 
   size_t index = naGetMenuItemIndex(menu, atItem);
 
@@ -78,7 +83,6 @@ NA_DEF void na_updateMenuItem(NAMenu* menu, const NAMenuItem* menuItem) {
 NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement) {
   NAWINAPIMenu* winapiMenu = (NAWINAPIMenu*)menu;
 
-  na_SetApplicationLastOpenedMenu(naGetApplication(), menu);
   NARect screenRect = naGetMainScreenRect();
 
   double uiScale = naGetUIElementUIScale(NA_NULL);

@@ -73,8 +73,7 @@ struct NAWINAPIApplication {
   HICON            appIcon;
 
   NA_UIElement*    mouseHoverElement;
-  const NAMenu*    lastOpenedMenu;
-  UINT             nextMenuItemId;
+  NAList           menuItems;
 
   WNDPROC          oldButtonWindowProc;
   WNDPROC          oldCheckBoxWindowProc;
@@ -120,7 +119,7 @@ struct NAWINAPIMenu {
 struct NA_WINAPIMenuItem {
   NAMenuItem   menuItem;
   uint32       id;
-  NAMenu*      menu;
+  NAMenu*      parentMenu;
   NABool       isSeparator;
   NAString*    text;
   NABool       state;

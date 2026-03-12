@@ -286,7 +286,7 @@ NA_IDEF void* naRemoveListLastMutable(NAList* list) {
 }
 
 
-NA_IAPI void naRemoveListData(NAList* list, void* data) {
+NA_IAPI void naRemoveListData(NAList* list, const void* data) {
   NAListIterator iter = naMakeListModifier(list);
   NABool found = naLocateListData(&iter, data);
   #if NA_DEBUG
