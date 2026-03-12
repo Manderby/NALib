@@ -855,7 +855,7 @@ NA_HDEF void na_UnregisterApplicationMenuItem(NAApplication* application, const 
 NA_HDEF const NAMenuItem* na_GetApplicationMenuItemById(NAApplication* application, uint32 id)
 {
   NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;
-  NAMenuItem* menuItem = NA_NULL;
+  const NAMenuItem* menuItem = NA_NULL;
   NAListIterator iter = naMakeListAccessor(&winapiApplication->menuItems);
   while(naIterateList(&iter)) {
     const NAMenuItem* curItem = naGetListCurConst(&iter);
