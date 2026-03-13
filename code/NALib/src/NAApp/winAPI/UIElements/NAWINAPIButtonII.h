@@ -26,7 +26,7 @@ NAWINAPICallbackInfo naButtonWINAPIProc(
     .result = 0
   };
 
-  NABool customDraw;
+  //NABool customDraw;
 
   switch(message) {
   case WM_SETFONT:

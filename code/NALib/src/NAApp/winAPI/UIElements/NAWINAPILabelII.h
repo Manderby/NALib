@@ -12,10 +12,10 @@ NAWINAPICallbackInfo naLabelWINAPIProc(
   WPARAM wParam,
   LPARAM lParam)
 {
-  PAINTSTRUCT paintStruct;
-  HDC hDC;
-  RECT rect;
-  BOOL test;
+  //PAINTSTRUCT paintStruct;
+  //HDC hDC;
+  //RECT rect;
+  //BOOL test;
 
   switch(message) {
   case WM_SETFONT:
