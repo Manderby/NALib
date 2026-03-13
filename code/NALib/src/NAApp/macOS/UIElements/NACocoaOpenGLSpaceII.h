@@ -275,11 +275,6 @@
   }
 
 
-  NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace) {
-    naDefineCocoaObjectConst(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
-    return (NA_COCOA_BRIDGE void*)[nativePtr openGLContext];
-  }
-
 
   NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace) {
     [[(NA_COCOA_BRIDGE NACocoaNativeOpenGLSpace*)(openGLSpace->uiElement.nativePtr) openGLContext] flushBuffer];
@@ -309,25 +304,30 @@
   
 
 
-  typedef struct CocoaOpenGLContextData CocoaOpenGLContextData;
-  struct CocoaOpenGLContextData {
-    CGLContextObj contextObj;
+  typedef struct NA_CocoaOpenGLContext NA_CocoaOpenGLContext;
+  struct NA_CocoaOpenGLContext {
+    NABool onScreen;
+    CGLContextObj cglContextObj;
     GLuint frameBuffer;
     GLuint renderBuffer;
   };
 
 
 
-  NA_DEF void* naAllocateOnscreenOpenGLContext(void* systemContext) {
-    CocoaOpenGLContextData* cd = naAlloc(CocoaOpenGLContextData);
-    cd->contextObj = systemContext;
-    return cd;
+  NA_DEF NAOpenGLContext* naAllocateOpenGLContextOnscreen(void* systemContext) {
+    NA_CocoaOpenGLContext* naContext = naAlloc(NA_CocoaOpenGLContext);
+    naContext->onScreen = NA_TRUE;
+    naContext->cglContextObj = systemContext;
+    naContext->frameBuffer = 0;
+    naContext->renderBuffer = 0;
+    return naContext;
   }
 
 
 
-  NA_DEF void* naAllocateOffscreenOpenGLContext(NASizes size) {
-    CocoaOpenGLContextData* cd = naAlloc(CocoaOpenGLContextData);
+  NA_DEF NAOpenGLContext* naAllocateOpenGLContextOffscreen(NASizes size) {
+    NA_CocoaOpenGLContext* naContext = naAlloc(NA_CocoaOpenGLContext);
+    naContext->onScreen = NA_FALSE;
 
     // Definition of the pixel format
     CGLPixelFormatAttribute pixelFormatAttributes[] = {
@@ -341,64 +341,76 @@
     GLint numberOfPixels;
     CGLChoosePixelFormat(pixelFormatAttributes, &pixelFormat, &numberOfPixels);
 
-    // create the OpenGL context with that pixel format
-    CGLCreateContext(pixelFormat, 0, &cd->contextObj);
+    // create the OpenGL context object with that pixel format
+    CGLCreateContext(pixelFormat, 0, &naContext->cglContextObj);
     
     // We do not need the pixel format anymore.
     CGLDestroyPixelFormat(pixelFormat);
     
-    // Now to set up the frame and render buffers, we need the context to be
-    // current.
-    CGLSetCurrentContext(cd->contextObj);
+    // To set up frame and render buffers, we need the context to be current.
+    CGLSetCurrentContext(naContext->cglContextObj);
 
     // Setup frame buffer.
-    glGenFramebuffers(1, &cd->frameBuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, cd->frameBuffer);
+    glGenFramebuffers(1, &naContext->frameBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, naContext->frameBuffer);
 
     // Attach one RGBA render buffer as color attachement.
-    glGenRenderbuffers(1, &cd->renderBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, cd->renderBuffer);
+    glGenRenderbuffers(1, &naContext->renderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, naContext->renderBuffer);
     glRenderbufferStorage(
       GL_RENDERBUFFER,
       GL_RGBA,
       (GLsizei)size.width,
       (GLsizei)size.height);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, cd->renderBuffer);
+    glFramebufferRenderbuffer(
+      GL_FRAMEBUFFER,
+      GL_COLOR_ATTACHMENT0,
+      GL_RENDERBUFFER,
+      naContext->renderBuffer);
 
-    return cd;
+    return naContext;
   }
 
 
 
-  NA_DEF void naDeallocateOffscreenOpenGLContext(void* openGLContext) {
-    if(openGLContext) {
-      CocoaOpenGLContextData* cd = (CocoaOpenGLContextData*)openGLContext;
-      CGLDestroyContext(cd->contextObj);
-      glDeleteRenderbuffers(1, cd->renderBuffer);
-      glDeleteFramebuffers(1, cd->frameBuffer);
-      naFree(cd);
+  NA_DEF void naDeallocateOpenGLContext(NAOpenGLContext* openGLContext) {
+    NA_CocoaOpenGLContext* naContext = (NA_CocoaOpenGLContext*)openGLContext;
+    if(!naContext->onScreen) {
+      CGLDestroyContext(naContext->cglContextObj);
+      glDeleteRenderbuffers(1, naContext->renderBuffer);
+      glDeleteFramebuffers(1, naContext->frameBuffer);
+      naFree(naContext);
+    }else{
+      // Nothing to do when the context was onscreen
     }
   }
 
 
 
-  NA_DEF void naSwapNativeOpenGLContext(void* openGLContext) {
-    CocoaOpenGLContextData* cd = (CocoaOpenGLContextData*)openGLContext;
-    CGLFlushDrawable(cd->contextObj);
-    //[(NA_COCOA_BRIDGE NSOpenGLContext*)cd->contextObj flushBuffer];
+  NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace) {
+    naDefineCocoaObjectConst(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
+    return (NA_COCOA_BRIDGE void*)[nativePtr openGLContext];
   }
 
 
 
-  NA_DEF void naActivateNativeOpenGLContext(void* openGLContext) {
-    CocoaOpenGLContextData* cd = (CocoaOpenGLContextData*)openGLContext;
-    CGLSetCurrentContext(cd->contextObj);
+  NA_DEF void naSwapOpenGLContext(NAOpenGLContext* openGLContext) {
+    NA_CocoaOpenGLContext* naContext = (NA_CocoaOpenGLContext*)openGLContext;
+    CGLFlushDrawable(naContext->cglContextObj);
   }
 
 
 
-  NA_DEF void naDeactivateNativeOpenGLContext(void* openGLContext) {
+  NA_DEF void naActivateOpenGLContext(NAOpenGLContext* openGLContext) {
+    NA_CocoaOpenGLContext* naContext = (NA_CocoaOpenGLContext*)openGLContext;
+    CGLSetCurrentContext(naContext->cglContextObj);
+  }
+
+
+
+  NA_DEF void naDeactivateOpenGLContext(NAOpenGLContext* openGLContext) {
     NA_UNUSED(openGLContext);
+    // Nothing to be done on macOS
   }
 
 

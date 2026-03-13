@@ -246,6 +246,13 @@
 #endif
 
 
+#if defined __MAC_11_0
+  #define NAPrintingPaginationModeFit NSPrintingPaginationModeFit
+  #define NAPrintingPaginationModeAutomatic NSPrintingPaginationModeAutomatic
+#else
+  #define NAPrintingPaginationModeFit NSFitPagination
+  #define NAPrintingPaginationModeAutomatic NSAutoPagination
+#endif
 
 NA_API CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext);
 NA_API CGFloat naGetCocoaBackingScaleFactor(id uiElement);

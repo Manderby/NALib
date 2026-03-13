@@ -223,39 +223,39 @@ NA_HDEF void na_UpdateOpenGLSpaceUIScale(NA_UIElement* openGLSpace) {
 
 
 
-typedef struct WINAPIOpenGLContext WINAPIOpenGLContext;
-struct WINAPIOpenGLContext {
-  NABool offscreen;
-  HDC hDC;            // The dc, after activating.
-  HGLRC hRC;          // The rendering context for OpenGL
+typedef struct NA_WINAPIOpenGLContext NA_WINAPIOpenGLContext;
+struct NA_WINAPIOpenGLContext {
+  NABool onScreen;
+  HDC hDC;            // The device contect (dc), after activating.
+  HGLRC hRC;          // The rendering context (rc) for OpenGL
   HWND hiddenWindow;  // The hidden window, if context is offscreen.
 };
 
 
 
-NA_DEF void* naAllocateOnscreenOpenGLContext(void* systemContext) {
-  WINAPIOpenGLContext* oc = naAlloc(WINAPIOpenGLContext);
-  oc->offscreen = NA_FALSE;
-  oc->hDC = systemContext;
-  oc->hRC = NA_NULL;
-  oc->hiddenWindow = NA_NULL;
-  return oc;
+NA_DEF void* naAllocateOpenGLContextOnscreen(void* systemContext) {
+  NA_WINAPIOpenGLContext* naContext = naAlloc(NA_WINAPIOpenGLContext);
+  naContext->onScreen = NA_TRUE;
+  naContext->hDC = systemContext;
+  naContext->hRC = NA_NULL;
+  naContext->hiddenWindow = NA_NULL;
+  return naContext;
 }
 
 
 
-NA_DEF void* naAllocateOffscreenOpenGLContext(NASizes size) {
+NA_DEF void* naAllocateOpenGLContextOffscreen(NASizes size) {
   DWORD error;
 
-  WINAPIOpenGLContext* oc = naAlloc(WINAPIOpenGLContext);
-  oc->offscreen = NA_TRUE;
-  oc->hDC = NA_NULL;
-  oc->hRC = NA_NULL;
+  NA_WINAPIOpenGLContext* naContext = naAlloc(NA_WINAPIOpenGLContext);
+  naContext->onScreen = NA_FALSE;
+  naContext->hDC = NA_NULL;
+  naContext->hRC = NA_NULL;
 
   // The proper way nowadays is indeed to create a hidden window and use the
   // device context given. Using a memory device does not allow for hardware
   // acceleration.
-  oc->hiddenWindow = CreateWindow(
+  naContext->hiddenWindow = CreateWindow(
     TEXT("NAOffscreenWindow"),
     TEXT(""),
     WS_POPUP | WS_EX_NOACTIVATE,
@@ -269,7 +269,7 @@ NA_DEF void* naAllocateOffscreenOpenGLContext(NASizes size) {
     NULL);
   error = GetLastError();
 
-  oc->hDC = GetDC(oc->hiddenWindow);
+  naContext->hDC = GetDC(oc->hiddenWindow);
   error = GetLastError();
 
   // define pixel format for device context
@@ -287,10 +287,10 @@ NA_DEF void* naAllocateOffscreenOpenGLContext(NASizes size) {
   error = GetLastError();
 
   PIXELFORMATDESCRIPTOR pfd2;
-  DescribePixelFormat(oc->hDC, format, sizeof(PIXELFORMATDESCRIPTOR), &pfd2);
+  DescribePixelFormat(naContext->hDC, format, sizeof(PIXELFORMATDESCRIPTOR), &pfd2);
   error = GetLastError();
 
-  SetPixelFormat( oc->hDC, format, &pfd2 );
+  SetPixelFormat( naContext->hDC, format, &pfd2 );
   error = GetLastError();
 
   return oc;
@@ -298,17 +298,17 @@ NA_DEF void* naAllocateOffscreenOpenGLContext(NASizes size) {
 
 
 
-NA_DEF void naDeallocateOffscreenOpenGLContext(void* openGLContext) {
-  WINAPIOpenGLContext* oc = (WINAPIOpenGLContext*)openGLContext;
+NA_DEF void naDeallocateOpenGLContext(void* openGLContext) {
+  NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)openGLContext;
   
-  if(oc->offscreen) {
-    if(oc->hDC) {
-      ReleaseDC(oc->hiddenWindow, oc->hDC);
-      oc->hDC = NA_NULL;
+  if(!naContext->onScreen) {
+    if(naContext->hDC) {
+      ReleaseDC(oc->hiddenWindow, naContext->hDC);
+      naContext->hDC = NA_NULL;
     }
 
-    DestroyWindow(oc->hiddenWindow);
-    oc->hiddenWindow = NA_NULL;
+    DestroyWindow(naContext->hiddenWindow);
+    naContext->hiddenWindow = NA_NULL;
 
     #if NA_DEBUG
       if(oc->hRC)
@@ -316,55 +316,53 @@ NA_DEF void naDeallocateOffscreenOpenGLContext(void* openGLContext) {
     #endif
   }
 
-  naFree(oc);
+  naFree(naContext);
 }
 
 
 
-NA_DEF void naSwapNativeOpenGLContext(void* openGLContext) {
-  WINAPIOpenGLContext* oc = (WINAPIOpenGLContext*)openGLContext;
+NA_DEF void naSwapOpenGLContext(void* openGLContext) {
+  NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)openGLContext;
 
   #if NA_DEBUG
-    if(!oc->hDC)
+    if(!naContext->hDC)
       naError("No device context available.");
   #endif
 
-  SwapBuffers(oc->hDC);
+  SwapBuffers(naContext->hDC);
 }
 
 
-NA_DEF void naActivateNativeOpenGLContext(void* openGLContext) {
-  WINAPIOpenGLContext* oc = (WINAPIOpenGLContext*)openGLContext;
+NA_DEF void naActivateOpenGLContext(void* openGLContext) {
+  NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)openGLContext;
 
-  if(oc->offscreen) {
+  if(!naContext->onScreen) {
     DWORD error;
 
     #if NA_DEBUG
-      if(oc->hRC)
+      if(naContext->hRC)
         naError("Rendering context already available. Did you forget Deactivate?");
     #endif
 
-    oc->hDC = GetDC(oc->hiddenWindow);
+    naContext->hDC = GetDC(oc->hiddenWindow);
     error = GetLastError();
 
-    oc->hRC = wglCreateContext(oc->hDC);
+    naContext->hRC = wglCreateContext(naContext->hDC);
     error = GetLastError();
-    NABool success = wglMakeCurrent(oc->hDC, oc->hRC);
+    NABool success = wglMakeCurrent(naContext->hDC, naContext->hRC);
     error = GetLastError();
-
-    int asdf = 1234;
 
   }else{
-    // This is a NON-offscreen context. Do nothing.
+    // This is an onscreen context. Do nothing.
   }
 }
 
 
 
-NA_DEF void naDeactivateNativeOpenGLContext(void* openGLContext) {
-  WINAPIOpenGLContext* oc = (WINAPIOpenGLContext*)openGLContext;
+NA_DEF void naDeactivateOpenGLContext(void* openGLContext) {
+  NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)openGLContext;
 
-  if(oc->offscreen) {
+  if(!naContext->onScreen) {
     DWORD error;
     error = GetLastError();
 
@@ -373,12 +371,12 @@ NA_DEF void naDeactivateNativeOpenGLContext(void* openGLContext) {
         naError("No rendering context available.");
     #endif
 
-    if(oc->hRC) {
+    if(naContext->hRC) {
       // wglMakeCurrent releases the device context!
       NABool success = wglMakeCurrent(oc->hDC, NULL);
       error = GetLastError();
       wglDeleteContext(oc->hRC);
-      oc->hRC = NA_NULL;
+      naContext->hRC = NA_NULL;
       error = GetLastError();
     }
 
@@ -389,10 +387,8 @@ NA_DEF void naDeactivateNativeOpenGLContext(void* openGLContext) {
     //  error = GetLastError();
     //}
 
-    int asdf = 1234;
-
   }else{
-    // This is a NON-offscreen context. Do nothing.
+    // This is an onscreen context. Do nothing.
   }
 }
 

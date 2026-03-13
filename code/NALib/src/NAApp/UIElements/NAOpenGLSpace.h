@@ -52,10 +52,6 @@ NA_API void naSetOpenGLSpaceVisible(
   NAOpenGLSpace* openGLSpace,
   NABool visible);
 
-// Returns the system specific context (macOS: NSOpenGLContext*)
-NA_API void* naGetOpenGLSpaceSystemContext(
-  const NAOpenGLSpace* openGLSpace);
-
 // Swaps the buffers (double buffer is turned on by default)
 NA_API void naSwapOpenGLSpaceBuffer(
   NAOpenGLSpace* openGLSpace);
@@ -113,22 +109,29 @@ NA_API void naResetOpenGLSpaceTransformation(NAOpenGLSpace* openGLSpace);
 
 
 
+// To have more control about onscreen and offscreen buffers, you can use the
+// following functions.
+typedef void NAOpenGLContext;
+NA_API NAOpenGLContext* naAllocateOpenGLContextOnscreen(void* systemContext);
+NA_API NAOpenGLContext* naAllocateOpenGLContextOffscreen(NASizes size);
+NA_API void naDeallocateOpenGLContext(NAOpenGLContext* openGLContext);
 
-// Returns a native openGL context. Will be set to the current context
-// automatically. Provide a pointer to contextData
-// and provide the exact same pointers upon deallocating.
-NA_API void* naAllocateOnscreenOpenGLContext(void* systemContext);
-NA_API void* naAllocateOffscreenOpenGLContext(NASizes size);
-NA_API void naDeallocateOffscreenOpenGLContext(void* openGLContext);
-NA_API void naSwapNativeOpenGLContext(void* openGLContext);
-NA_API void naActivateNativeOpenGLContext(void* openGLContext);
-NA_API void naDeactivateNativeOpenGLContext(void* openGLContext);
+// Returns the system specific context of an NAOpenGLSpace to be used for
+// example for naAllocateOpenGLContextOnscreen.
+// macOS: NSOpenGLContext*
+// WINAPI: HDC
+NA_API void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace);
+
+// Activate, Deactivate and Swap Contexts
+NA_API void naSwapOpenGLContext(NAOpenGLContext* openGLContext);
+NA_API void naActivateOpenGLContext(NAOpenGLContext* openGLContext);
+NA_API void naDeactivateOpenGLContext(NAOpenGLContext* openGLContext);
 
 
 
 #ifdef __cplusplus
   } // extern "C"
-  #endif
+#endif
 #endif // NA_UI_OPENGL_SPACE_INCLUDED
 
 
