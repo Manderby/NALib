@@ -585,7 +585,7 @@ NA_IDEF float naPowerOf2f(int32 n) {
 NA_IDEF int32 naPowerOf2i32(int32 n) {
   #if NA_DEBUG
     if(n < 0)
-      naError("Can only compute integral numbers");
+      naCrash("Can only compute integral numbers");
     if(n > 30)
       naError("Overflow");
   #endif
@@ -594,7 +594,7 @@ NA_IDEF int32 naPowerOf2i32(int32 n) {
 NA_IDEF int64 naPowerOf2i64(int32 n) {
   #if NA_DEBUG
     if(n < 0)
-      naError("Can only compute integral numbers");
+      naCrash("Can only compute integral numbers");
     if(n > 62)
       naError("Overflow");
   #endif
@@ -603,7 +603,7 @@ NA_IDEF int64 naPowerOf2i64(int32 n) {
 NA_IDEF size_t naPowerOf2s(int32 n) {
   #if NA_DEBUG
     if(n < 0)
-      naError("Can only compute integral numbers");
+      naCrash("Can only compute integral numbers");
     if(n > 62)
       naError("Overflow");
   #endif

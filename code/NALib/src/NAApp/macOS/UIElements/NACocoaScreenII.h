@@ -21,11 +21,11 @@ NA_DEF NAScreen* na_NewScreen(
   // subclass. Therefore, we must retain it. It will be stored during a call
   // to na_InitScreen and will be released automatically as soon as
   // na_ClearCoreUIElement will be called.
-  NSScreen* nsScreen = (NSScreen*)NA_COCOA_RETAIN(nativePtr);
+  NSScreen* nsScreen = (NA_COCOA_BRIDGE NSScreen*)NA_COCOA_RETAIN(nativePtr);
   
   NACocoaScreen* cocoaScreen = naNew(NACocoaScreen);
 
-  NABool isMainScreen = nativePtr == [NSScreen mainScreen];
+  NABool isMainScreen = (NA_COCOA_BRIDGE NSScreen*)nativePtr == [NSScreen mainScreen];
   const NAUTF8Char* name = "Unknown Display";
   if(isAtLeastMacOSVersion(10, 15)) {
     NA_MACOS_AVAILABILITY_GUARD_10_15(
@@ -59,7 +59,7 @@ NA_DEF void na_DestructCocoaScreen(NACocoaScreen* cocoaScreen) {
 
 
 NA_DEF NARect naGetScreenUsableRect(const NAScreen* screen) {
-  NSScreen* nsScreen = screen->uiElement.nativePtr;
+  NSScreen* nsScreen = NA_COCOA_PTR_C_TO_OBJC(screen->uiElement.nativePtr);
   return naMakeRectWithNSRect([nsScreen visibleFrame]);
 }
 
@@ -70,7 +70,7 @@ NA_HDEF NARect na_FillScreenList(NAList* screenList) {
   NARect totalRect = naMakeRectZero();
   for (size_t i = 0; i < [nsScreens count]; ++i) {
     NSScreen* nsScreen = [nsScreens objectAtIndex:i];
-    NAScreen* screen = na_NewScreen(nsScreen);
+    NAScreen* screen = na_NewScreen(NA_COCOA_PTR_OBJC_TO_C(nsScreen));
     NARect screenRect = naGetUIElementRect(screen);
     totalRect = naIsRectEmpty(totalRect)
       ? screenRect

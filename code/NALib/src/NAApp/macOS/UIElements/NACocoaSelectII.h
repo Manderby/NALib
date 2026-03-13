@@ -27,10 +27,6 @@ NA_RUNTIME_TYPE(NACocoaSelect, na_DestructCocoaSelect, NA_FALSE);
   return self;
 }
 
-- (void)dealloc{
-  NA_COCOA_SUPER_DEALLOC();
-}
-
 - (void) addMenuItem:(NSMenuItem*)item atItem:(const NAMenuItem*)atItem{  
   size_t index = naGetSelectItemIndex(&cocoaSelect->select, atItem);
   //int index = [self getMenuItemIndex:atItem];

@@ -96,7 +96,7 @@ NA_DEF NAMenuItem* naNewSubmenuItem(const NAUTF8Char* text, NAMenu* subMenu) {
   na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), NA_NULL);
 
   cocoaMenuItem->menuItem.subMenu = subMenu;
-  [nativeItemPtr setSubmenu:naGetUIElementNativePtr(subMenu)];
+  [nativeItemPtr setSubmenu:NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(subMenu))];
 
   return (NAMenuItem*)cocoaMenuItem;
 }

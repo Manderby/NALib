@@ -456,17 +456,19 @@ NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment) {
 
 
 NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText) {
-    NSAlert* alert = NA_COCOA_AUTORELEASE([[NSAlert alloc] init]);
+  NSAlert* alert = [[NSAlert alloc] init];
 
-    switch(alertBoxType) {
-    case NA_ALERT_BOX_INFO:    alert.alertStyle = NAAlertStyleWarning; break;
-    case NA_ALERT_BOX_WARNING: alert.alertStyle = NAAlertStyleInfo; break;
-    case NA_ALERT_BOX_ERROR:   alert.alertStyle = NAAlertStyleError; break;
-    }
-    
-    alert.messageText = [NSString stringWithUTF8String:titleText];
-    alert.informativeText = [NSString stringWithUTF8String:infoText];
-    [alert runModal];
+  switch(alertBoxType) {
+  case NA_ALERT_BOX_INFO:    alert.alertStyle = NAAlertStyleWarning; break;
+  case NA_ALERT_BOX_WARNING: alert.alertStyle = NAAlertStyleInfo; break;
+  case NA_ALERT_BOX_ERROR:   alert.alertStyle = NAAlertStyleError; break;
+  }
+  
+  alert.messageText = [NSString stringWithUTF8String:titleText];
+  alert.informativeText = [NSString stringWithUTF8String:infoText];
+  [alert runModal];
+  
+  NA_COCOA_RELEASE(alert);
 }
 
 

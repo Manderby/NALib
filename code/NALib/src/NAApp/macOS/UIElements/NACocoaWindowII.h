@@ -124,7 +124,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 - (void)windowDidResize:(NSNotification *)notification{
   NA_UNUSED(notification);
-  na_UpdateWindowScreen((NAWindow*)cocoaWindow, na_GetApplicationScreenWithNativePtr([self screen]));
+  na_UpdateWindowScreen((NAWindow*)cocoaWindow, na_GetApplicationScreenWithNativePtr(NA_COCOA_PTR_OBJC_TO_C([self screen])));
   na_UpdateMouseTracking(&cocoaWindow->window.uiElement);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
     // no super method to be called.
@@ -135,7 +135,7 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
   // Note that this method will also be called after a window is created with
   // naNewWindow when the rect is outside of the main screen.
   NA_UNUSED(notification);
-  na_UpdateWindowScreen((NAWindow*)cocoaWindow, na_GetApplicationScreenWithNativePtr([self screen]));
+  na_UpdateWindowScreen((NAWindow*)cocoaWindow, na_GetApplicationScreenWithNativePtr(NA_COCOA_PTR_OBJC_TO_C([self screen])));
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
     // no super method to be called.
   }
@@ -223,7 +223,7 @@ NA_DEF NAWindow* naNewWindow(
     styleMask:styleMask
     backing:NSBackingStoreBuffered
     defer:NO
-    screen:screen ? naGetUIElementNativePtrConst(screen) : nil];
+    screen:NA_COCOA_PTR_C_TO_OBJC(screen ? naGetUIElementNativePtrConst(screen) : NA_NULL)];
   
   NAScreen* actualScreen = na_GetApplicationScreenWithNativePtr(NA_COCOA_PTR_OBJC_TO_C([nativePtr screen]));
   

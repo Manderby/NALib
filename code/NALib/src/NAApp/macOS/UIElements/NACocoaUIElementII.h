@@ -20,7 +20,7 @@ NA_HDEF void na_InitSystemUIElement(NA_UIElement* uiElement, void* nativePtr) {
   objc_setAssociatedObject(
     NA_COCOA_PTR_C_TO_OBJC(nativePtr),
     &na_naUIElementKey,
-    NA_COCOA_PTR_C_TO_OBJC(uiElement),
+    (NA_COCOA_BRIDGE id _Nullable)uiElement,
     OBJC_ASSOCIATION_ASSIGN);
 }
 

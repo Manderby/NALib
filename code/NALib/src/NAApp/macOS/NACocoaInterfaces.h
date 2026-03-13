@@ -105,8 +105,9 @@ NA_EXTERN_RUNTIME_TYPE(NACocoaWindow);
   #include <Metal/Metal.h>
 
   @interface NACocoaNativeMetalSpace : NSView<CALayerDelegate>{
+    CAMetalLayer* metalLayer;
     NACocoaMetalSpace* cocoaMetalSpace;
-    NSTrackingArea*     trackingArea;
+    NSTrackingArea* trackingArea;
   }
   @end  
 

@@ -143,6 +143,7 @@ NA_DEF void naStartApplication(
   #if !NA_MACOS_USES_ARC
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
   #endif
+  
     // Call preStartup if desired.
     if(preStartup) {
       preStartup(arg);
