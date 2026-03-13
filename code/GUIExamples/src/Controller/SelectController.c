@@ -49,6 +49,13 @@ CommonController* createSelectController() {
     naAddSelectMenuItem(con->select, item, NA_NULL);
     naAddUIReaction(item, NA_UI_COMMAND_PRESSED, selectItemSelected, con);
   }
+
+  //NAMenu* subMenu = naNewMenu();
+  //NAMenuItem* subItem = naNewMenuItem(naAllocSprintf(NA_TRUE, "Subitem"), NA_NULL);
+  //naAddMenuItem(subMenu, subItem, NA_NULL);
+  //NAMenuItem* item = naNewSubmenuItem(naAllocSprintf(NA_TRUE, "Submenu"), subMenu);
+  //naAddSelectMenuItem(con->select, item, NA_NULL);
+
   naSetSelectIndexSelected(con->select, 3);
 
   con->normalReaction = naNewLabel("", COLUMN2_WIDTH);

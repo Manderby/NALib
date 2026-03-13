@@ -269,7 +269,7 @@ NA_DEF void* naAllocateOpenGLContextOffscreen(NASizes size) {
     NULL);
   error = GetLastError();
 
-  naContext->hDC = GetDC(oc->hiddenWindow);
+  naContext->hDC = GetDC(naContext->hiddenWindow);
   error = GetLastError();
 
   // define pixel format for device context
@@ -283,7 +283,7 @@ NA_DEF void* naAllocateOpenGLContextOffscreen(NASizes size) {
   pfd.cColorBits = 24;
   pfd.cDepthBits = 16;
   pfd.iLayerType = PFD_MAIN_PLANE;
-  int format = ChoosePixelFormat( oc->hDC, &pfd );
+  int format = ChoosePixelFormat( naContext->hDC, &pfd );
   error = GetLastError();
 
   PIXELFORMATDESCRIPTOR pfd2;
@@ -293,7 +293,7 @@ NA_DEF void* naAllocateOpenGLContextOffscreen(NASizes size) {
   SetPixelFormat( naContext->hDC, format, &pfd2 );
   error = GetLastError();
 
-  return oc;
+  return naContext;
 }
 
 
@@ -303,7 +303,7 @@ NA_DEF void naDeallocateOpenGLContext(void* openGLContext) {
   
   if(!naContext->onScreen) {
     if(naContext->hDC) {
-      ReleaseDC(oc->hiddenWindow, naContext->hDC);
+      ReleaseDC(naContext->hiddenWindow, naContext->hDC);
       naContext->hDC = NA_NULL;
     }
 
@@ -311,7 +311,7 @@ NA_DEF void naDeallocateOpenGLContext(void* openGLContext) {
     naContext->hiddenWindow = NA_NULL;
 
     #if NA_DEBUG
-      if(oc->hRC)
+      if(naContext->hRC)
         naError("Rendering context still available. Did you forget Deactivate?");
     #endif
   }
@@ -344,7 +344,7 @@ NA_DEF void naActivateOpenGLContext(void* openGLContext) {
         naError("Rendering context already available. Did you forget Deactivate?");
     #endif
 
-    naContext->hDC = GetDC(oc->hiddenWindow);
+    naContext->hDC = GetDC(naContext->hiddenWindow);
     error = GetLastError();
 
     naContext->hRC = wglCreateContext(naContext->hDC);
@@ -367,15 +367,15 @@ NA_DEF void naDeactivateOpenGLContext(void* openGLContext) {
     error = GetLastError();
 
     #if NA_DEBUG
-      if(!oc->hRC)
+      if(!naContext->hRC)
         naError("No rendering context available.");
     #endif
 
     if(naContext->hRC) {
       // wglMakeCurrent releases the device context!
-      NABool success = wglMakeCurrent(oc->hDC, NULL);
+      NABool success = wglMakeCurrent(naContext->hDC, NULL);
       error = GetLastError();
-      wglDeleteContext(oc->hRC);
+      wglDeleteContext(naContext->hRC);
       naContext->hRC = NA_NULL;
       error = GetLastError();
     }

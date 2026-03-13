@@ -74,11 +74,11 @@ typedef size_t NAKeyCode;
   #define NA_KEYCODE_TAB            0x0f
   #define NA_KEYCODE_ENTER          0x1c
   #define NA_KEYCODE_LEFT_SHIFT     0x2a
-  #define NA_KEYCODE_RIGHT_SHIFT    0x2a // right shift is not captured like this
+  #define NA_KEYCODE_RIGHT_SHIFT    0x2a01 // right shift is not captured like this
   #define NA_KEYCODE_LEFT_CONTROL   0x1d
-  #define NA_KEYCODE_RIGHT_CONTROL  0x1d
-  #define NA_KEYCODE_LEFT_OPTION    0x38 // Handeled differently on windows
-  #define NA_KEYCODE_RIGHT_OPTION   0x38 // Handeled differently on windows
+  #define NA_KEYCODE_RIGHT_CONTROL  0x1d01
+  #define NA_KEYCODE_LEFT_OPTION    0x3801 // Handeled differently on windows
+  #define NA_KEYCODE_RIGHT_OPTION   0x3802 // Handeled differently on windows
   #define NA_KEYCODE_LEFT_COMMAND   0x5b // The windows key
   #define NA_KEYCODE_RIGHT_COMMAND  0x5c
   #define NA_KEYCODE_FN             0xff // Can not catch.
@@ -87,25 +87,25 @@ typedef size_t NAKeyCode;
   #define NA_KEYCODE_MINUS          0x0c
   #define NA_KEYCODE_EQUAL          0x0d
   #define NA_KEYCODE_PERIOD         0x34
-  #define NA_KEYCODE_NUMPAD_0       0xff // todo
-  #define NA_KEYCODE_NUMPAD_1       0xff // todo
-  #define NA_KEYCODE_NUMPAD_2       0xff // todo
-  #define NA_KEYCODE_NUMPAD_3       0xff // todo
-  #define NA_KEYCODE_NUMPAD_4       0xff // todo
-  #define NA_KEYCODE_NUMPAD_5       0xff // todo
-  #define NA_KEYCODE_NUMPAD_6       0xff // todo
-  #define NA_KEYCODE_NUMPAD_7       0xff // todo
-  #define NA_KEYCODE_NUMPAD_8       0xff // todo
-  #define NA_KEYCODE_NUMPAD_9       0xff // todo
+  #define NA_KEYCODE_NUMPAD_0       0xff00 // todo
+  #define NA_KEYCODE_NUMPAD_1       0xff01 // todo
+  #define NA_KEYCODE_NUMPAD_2       0xff02 // todo
+  #define NA_KEYCODE_NUMPAD_3       0xff03 // todo
+  #define NA_KEYCODE_NUMPAD_4       0xff04 // todo
+  #define NA_KEYCODE_NUMPAD_5       0xff05 // todo
+  #define NA_KEYCODE_NUMPAD_6       0xff06 // todo
+  #define NA_KEYCODE_NUMPAD_7       0xff07 // todo
+  #define NA_KEYCODE_NUMPAD_8       0xff08 // todo
+  #define NA_KEYCODE_NUMPAD_9       0xff09 // todo
   #define NA_KEYCODE_NUMPAD_MINUS   0x4a
   #define NA_KEYCODE_NUMPAD_PLUS    0x4e
-  #define NA_KEYCODE_NUMPAD_ENTER   0x1c  // can not distinguish from ENTER
+  #define NA_KEYCODE_NUMPAD_ENTER   0x1ccc  // can not distinguish from ENTER
   #define NA_KEYCODE_ARROW_LEFT     0x4b
   #define NA_KEYCODE_ARROW_RIGHT    0x4d
   #define NA_KEYCODE_ARROW_DOWN     0x50
   #define NA_KEYCODE_ARROW_UP       0x48
-  #define NA_KEYCODE_BACKSPACE      0xff // todo
-  #define NA_KEYCODE_DELETE         0xff // todo
+  #define NA_KEYCODE_BACKSPACE      0xffaa // todo
+  #define NA_KEYCODE_DELETE         0xffbb // todo
 #elif NA_OS == NA_OS_MAC_OS_X
   #define NA_KEYCODE_0              0x1d
   #define NA_KEYCODE_1              0x12
