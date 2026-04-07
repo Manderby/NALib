@@ -19,7 +19,7 @@ Current development:
 - Renamed NAFileSize to fsize_t
 - Removed the need for start and stop Runtime when using NAApplication.
 - Replaced the obfuscated AppDelegate handling in macOS with Notifications.
-- Adding leap second information based on bulletin C 70
+- Adding leap second information based on bulletin C70 and C71
 
 
 
