@@ -276,6 +276,24 @@ NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title) {
 
 
 
+NA_DEF void naSetWindowSkin(NAWindow* window, NASkin skin) {
+  naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
+  switch(skin) {
+  case NA_SKIN_DARK:
+     [nativePtr setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameVibrantDark]];
+    break;
+  case NA_SKIN_LIGHT:
+     [nativePtr setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameVibrantLight]];
+    break;
+  case NA_SKIN_PLAIN:
+  case NA_SKIN_SYSTEM:
+    [nativePtr setAppearance:[NSAppearance currentDrawingAppearance]];
+    break;
+  }
+}
+
+
+
 NA_DEF void naSetWindowDocumentUrl(NAWindow* window, const NAUTF8Char* url) {
   naDefineCocoaObject(NACocoaNativeWindow, nativePtr, window);
   if(url) {
