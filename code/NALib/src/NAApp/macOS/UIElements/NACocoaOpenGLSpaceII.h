@@ -66,12 +66,6 @@
     if(initFunc) {
       initFunc(initData);
     }
-  
-    // On newer macOS systems, only just now the openGL context has been
-    // properly attached to a view and is valid.
-    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_RESHAPE)) {
-      // Nothing to do
-    }
 }
   
   - (void)drawRect:(NSRect)dirtyRect{

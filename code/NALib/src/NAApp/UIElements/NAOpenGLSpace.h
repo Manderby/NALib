@@ -9,7 +9,6 @@
 
 // An NAOpenGLSpace can react to the following commands:
 //
-// NA_UI_COMMAND_RESHAPE       When the underlying system context has changed
 // NA_UI_COMMAND_REDRAW        When the content shall be redrawn
 // NA_UI_COMMAND_MOUSE_DOWN    When a mouse button has been pressed
 // NA_UI_COMMAND_MOUSE_UP      When a mouse button has been released
