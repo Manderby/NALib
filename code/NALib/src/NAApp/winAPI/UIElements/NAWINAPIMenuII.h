@@ -90,7 +90,7 @@ NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement) 
   // The messages are sent to the parent ui element. See WM_ENTERMENULOOP for
   // example. Currently only works with buttons.
 
-  /*int selection = */TrackPopupMenu(
+  TrackPopupMenu(
     winapiMenu->hMenu, 
     TPM_LEFTALIGN | TPM_RIGHTBUTTON/* | TPM_RETURNCMD*/, 
     (LONG)(pos.x * uiScale),

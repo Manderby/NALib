@@ -846,11 +846,15 @@ NA_HDEF UINT na_RegisterApplicationMenuItem(NAApplication* application, const NA
   return id;
 }
 
+
+
 NA_HDEF void na_UnregisterApplicationMenuItem(NAApplication* application, const NAMenuItem* menuItem)
 {
   NAWINAPIApplication* winapiApplication = (NAWINAPIApplication*)application;
   naRemoveListData(&winapiApplication->menuItems, menuItem);
 }
+
+
 
 NA_HDEF const NAMenuItem* na_GetApplicationMenuItemById(NAApplication* application, uint32 id)
 {

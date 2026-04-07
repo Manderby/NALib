@@ -267,6 +267,23 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message) {
 
 
 
+NA_HDEF NA_UIElement* na_GetWINAPIFocusUIElement() {
+  // Search for the native first responder which is represented in NALib.
+  NA_UIElement* elem = NA_NULL;
+  HWND keyWindow = GetFocus();
+  while(!elem && keyWindow) {
+    elem = na_GetUINALibEquivalent(keyWindow);
+    keyWindow = GetParent(keyWindow);
+  }
+  if(!elem) {
+    elem = &naGetApplication()->uiElement;
+  }
+
+  return elem;
+}
+
+
+
 // For certain elements like TextField, WS_TABSTOP and WS_GROUP seem not to
 // work... strange. I solved it using this function. 
 NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
@@ -281,20 +298,9 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message) {
     }
 
   }else if(message->message == WM_KEYDOWN) {
-    NA_UIElement* elem;
-    HWND keyWindow;
     na_CaptureKeyboardStatus(message);
     
-    // Search for the native first responder which is represented in NALib.
-    elem = NA_NULL;
-    keyWindow = GetFocus();
-    while(!elem && keyWindow) {
-      elem = na_GetUINALibEquivalent(keyWindow);
-      keyWindow = GetParent(keyWindow);
-    }
-    if(!elem) {
-      elem = &naGetApplication()->uiElement;
-    }
+    NA_UIElement* elem = na_GetWINAPIFocusUIElement();
 
     const NAKeyStroke* keyStroke = naGetCurrentKeyStroke();
 
@@ -546,6 +552,7 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
 
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NA_UIElement* elem = (NA_UIElement*)uiElement;
+  NA_UIElement* focusElem = na_GetWINAPIFocusUIElement();
   NAUIElementType type;
   NAPos pos;
   NASize size = {0};
@@ -629,8 +636,8 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
     break;
 
   case WM_KEYDOWN:
-    if(na_UIHasElementCommandDispatches(elem, NA_UI_COMMAND_KEY_DOWN)) {
-      if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_DOWN)) {
+    if(na_UIHasElementCommandDispatches(focusElem, NA_UI_COMMAND_KEY_DOWN)) {
+      if(!na_DispatchUIElementCommand(focusElem, NA_UI_COMMAND_KEY_DOWN)) {
         // no parent method to be called.
       }
       info.hasBeenHandeled = NA_TRUE;
@@ -639,8 +646,8 @@ NAWINAPICallbackInfo naUIElementWINAPIPreProc(
     break;
 
   case WM_KEYUP:
-    if(na_UIHasElementCommandDispatches(elem, NA_UI_COMMAND_KEY_UP)) {
-      if(!na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEY_UP)) {
+    if(na_UIHasElementCommandDispatches(focusElem, NA_UI_COMMAND_KEY_UP)) {
+      if(!na_DispatchUIElementCommand(focusElem, NA_UI_COMMAND_KEY_UP)) {
         // no parent method to be called.
       }
       info.hasBeenHandeled = NA_TRUE;
