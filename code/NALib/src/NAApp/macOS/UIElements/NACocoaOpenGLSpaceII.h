@@ -53,7 +53,7 @@
   }
 
   - (void)prepareOpenGL{
-    // When entering this function, the opengl context is set.
+    // When entering this function, the openGL context is set.
     [super prepareOpenGL];
     // Make sure OpenGL always swaps the buffers of the default frameBuffer. If
     // this is not done, sometimes, the double buffer will not work properly.
@@ -66,7 +66,13 @@
     if(initFunc) {
       initFunc(initData);
     }
-  }
+  
+    // On newer macOS systems, only just now the openGL context has been
+    // properly attached to a view and is valid.
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_RESHAPE)) {
+      // Nothing to do
+    }
+}
   
   - (void)drawRect:(NSRect)dirtyRect{
     NA_UNUSED(dirtyRect);
@@ -307,6 +313,7 @@
   typedef struct NA_CocoaOpenGLContext NA_CocoaOpenGLContext;
   struct NA_CocoaOpenGLContext {
     NABool onScreen;
+    void* nsOpenGLContext;
     CGLContextObj cglContextObj;
     GLuint frameBuffer;
     GLuint renderBuffer;
@@ -317,7 +324,8 @@
   NA_DEF NAOpenGLContext* naAllocateOpenGLContextOnscreen(void* systemContext) {
     NA_CocoaOpenGLContext* naContext = naAlloc(NA_CocoaOpenGLContext);
     naContext->onScreen = NA_TRUE;
-    naContext->cglContextObj = systemContext;
+    naContext->nsOpenGLContext = systemContext;
+    naContext->cglContextObj = NA_NULL;
     naContext->frameBuffer = 0;
     naContext->renderBuffer = 0;
     return naContext;
@@ -328,6 +336,7 @@
   NA_DEF NAOpenGLContext* naAllocateOpenGLContextOffscreen(NASizes size) {
     NA_CocoaOpenGLContext* naContext = naAlloc(NA_CocoaOpenGLContext);
     naContext->onScreen = NA_FALSE;
+    naContext->nsOpenGLContext = NA_NULL;
 
     // Definition of the pixel format
     CGLPixelFormatAttribute pixelFormatAttributes[] = {
@@ -396,14 +405,22 @@
 
   NA_DEF void naSwapOpenGLContext(NAOpenGLContext* openGLContext) {
     NA_CocoaOpenGLContext* naContext = (NA_CocoaOpenGLContext*)openGLContext;
-    CGLFlushDrawable(naContext->cglContextObj);
+    if(!naContext->onScreen) {
+      CGLFlushDrawable(naContext->cglContextObj);
+    }else{
+      [(NA_COCOA_BRIDGE NSOpenGLContext*)naContext->nsOpenGLContext flushBuffer];
+    }
   }
 
 
 
   NA_DEF void naActivateOpenGLContext(NAOpenGLContext* openGLContext) {
     NA_CocoaOpenGLContext* naContext = (NA_CocoaOpenGLContext*)openGLContext;
-    CGLSetCurrentContext(naContext->cglContextObj);
+    if(!naContext->onScreen) {
+      CGLSetCurrentContext(naContext->cglContextObj);
+    }else{
+      // Nothing to do when the context is onscreen
+    }
   }
 
 
