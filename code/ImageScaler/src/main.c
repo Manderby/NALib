@@ -118,8 +118,8 @@ void updateImageTestController(ImageTesterController* con);
 
 
 
-void loadImage(size_t index, const NAUTF8Char* path) {
-  NAPNG* png = naNewPNGWithPath(path);
+void loadImage(size_t index, const NAUTF8Char* url) {
+  NAPNG* png = naNewPNGWithUrl(url);
   app->images[index] = naCreateImageWithPNG(png);
   naDelete(png);
 }
@@ -127,7 +127,7 @@ void loadImage(size_t index, const NAUTF8Char* path) {
 void naStartImageTestApplication(void) {
   app = naAlloc(ImageTesterApplication);
 
-  NAPNG* gridPNG = naNewPNGWithPath("transparencyGrid.png");
+  NAPNG* gridPNG = naNewPNGWithUrl("transparencyGrid.png");
   NAImage* gridImage = naCreateImageWithPNG(gridPNG);
   NASizes gridSize = naGetImageSize(gridImage);
   app->transparencyGridImage = naCreateImageWithResize(gridImage, naMakeSizes(gridSize.width * 2, gridSize.height * 2));
@@ -155,7 +155,7 @@ void cleanup(void* arg) {
 
 
 void addSingleSelectItem(const NAUTF8Char* text, NASelect* select, NAReactionCallback callback, ImageTesterController* con) {
-  NAMenuItem* item = naNewMenuItem(text);
+  NAMenuItem* item = naNewMenuItem(text, NA_NULL);
   naAddSelectMenuItem(select, item, NA_NULL);
   naAddUIReaction(item, NA_UI_COMMAND_PRESSED, callback, con);
 }
@@ -177,8 +177,7 @@ ImageTesterController* naAllocImageTestController() {
   con->window = naNewWindow(
     "ImageScaler",
     naMakeRectS(100, 100, 860, 440),
-    NA_WINDOW_FIXED_SIZE | NA_WINDOW_DEFAULT | NA_WINDOW_TITLED | NA_WINDOW_CLOSEABLE | NA_WINDOW_MINIATURIZEABLE,
-    0);
+    NA_WINDOW_FIXED_SIZE | NA_WINDOW_DEFAULT | NA_WINDOW_TITLED | NA_WINDOW_CLOSEABLE | NA_WINDOW_MINIATURIZEABLE);
 
   NASpace* contentSpace = naGetWindowContentSpace(con->window);
 
@@ -219,6 +218,7 @@ ImageTesterController* naAllocImageTestController() {
   addSingleSelectItem("LINEAR",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("OVERLAY",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("OPAQUE",con->blendModeSelect, blendModeSelected, con);
+  addSingleSelectItem("REPLACE",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("MULTIPLY",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("SCREEN",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("ERODE_LIGHT",con->blendModeSelect, blendModeSelected, con);

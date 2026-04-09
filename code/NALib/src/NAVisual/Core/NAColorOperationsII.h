@@ -168,6 +168,27 @@ NA_HIDEF void na_BlendColorOpaque(
   }
 }
 
+NA_HIDEF void na_BlendColorReplace(
+  NAColor* dstPtr,
+  const NAColor* basePtr,
+  const NAColor* topPtr,
+  float factor)
+{
+  float baseColorFactor = basePtr->alpha;
+  float topColorFactor = (1. - factor) * basePtr->alpha + factor * topPtr->alpha;
+  float colorSum = baseColorFactor * topColorFactor;
+  if(colorSum > NA_SINGULARITYf) {
+    float baseBlend = 1.f - factor;
+    float topBlend = factor;
+    dstPtr->r = baseBlend * basePtr->r + topBlend * topPtr->r;
+    dstPtr->g = baseBlend * basePtr->g + topBlend * topPtr->g;
+    dstPtr->b = baseBlend * basePtr->b + topBlend * topPtr->b;
+    dstPtr->alpha = colorSum;
+  }else{
+    naFillColorWithTransparent(dstPtr);
+  }
+}
+
 NA_HIDEF void na_BlendColorMultiply(
   NAColor* dstPtr,
   const NAColor* basePtr,
@@ -322,6 +343,11 @@ NA_HIDEF void na_BlendColorEraseHue(
     
     float prevSaturation = baseHSL[1];
     
+    // This happens only with the value 0 and 360.
+    if(baseHSL[0] - discolorizationHue == -360.f){
+     discolorizationHue = baseHSL[0];
+    }
+    
     baseHSL[0] = factor * discolorizationHue + (1.f - factor) * baseHSL[0];
     baseHSL[1] *= (1.f - hueCloseness * factor);
     
@@ -362,6 +388,9 @@ NA_DEF void naBlendColors(
       break;
     case NA_BLEND_OPAQUE:
       na_BlendColorOpaque(dstPtr, basePtr, topPtr, factor);
+      break;
+    case NA_BLEND_REPLACE:
+      na_BlendColorReplace(dstPtr, basePtr, topPtr, factor);
       break;
     case NA_BLEND_MULTIPLY:
       na_BlendColorMultiply(dstPtr, basePtr, topPtr, factor);

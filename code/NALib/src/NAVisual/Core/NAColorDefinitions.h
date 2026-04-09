@@ -19,6 +19,7 @@ typedef enum {
     NA_BLEND_LINEAR,        // Linear interpolation according blend factor.
     NA_BLEND_OVERLAY,       // Blends where top is opaque.
     NA_BLEND_OPAQUE,        // Blends where base is opaque.
+    NA_BLEND_REPLACE,       // Replaces with top where base is opaque.
     NA_BLEND_MULTIPLY,      // Blends where base is opaque by multiplying the color.
     NA_BLEND_SCREEN,        // Blends where base is opaque by inverse multiplying the color.
     NA_BLEND_ERODE_LIGHT,   // Same as screen but makes light pixels of base transparent.

@@ -287,12 +287,20 @@ NA_HDEF void naFillColorWithSkinTextColor(NAColor* color, NASkin skin) {
     skinColor[1] = 16;
     skinColor[2] = 16;
     skinColor[3] = 255;
+//    skinColor[0] = 0x0d;
+//    skinColor[1] = 0x0d;
+//    skinColor[2] = 0x0d;
+//    skinColor[3] = 0xc0;
     break;
   case NA_SKIN_DARK:
     skinColor[0] = 240;
     skinColor[1] = 240;
     skinColor[2] = 240;
     skinColor[3] = 255;
+//    skinColor[0] = 0xf4;
+//    skinColor[1] = 0xf4;
+//    skinColor[2] = 0xf4;
+//    skinColor[3] = 0xf0;
     break;
   case NA_SKIN_SYSTEM:
     naFillColorWithDefaultTextColor(color);
