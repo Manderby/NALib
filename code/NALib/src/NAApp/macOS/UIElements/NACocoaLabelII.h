@@ -134,7 +134,6 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
   [self setEditable:NO];
   [self setBordered:NO];
   [self setDrawsBackground:NO];
-  [self setTextColor:naGetLabelColor()];
   [[self cell] setLineBreakMode:NSLineBreakByWordWrapping];
   cocoaLabel = newCocoaLabel;
   return self;
