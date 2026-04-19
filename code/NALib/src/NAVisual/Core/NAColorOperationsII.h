@@ -175,7 +175,7 @@ NA_HIDEF void na_BlendColorReplace(
   float factor)
 {
   float baseColorFactor = basePtr->alpha;
-  float topColorFactor = (1. - factor) * basePtr->alpha + factor * topPtr->alpha;
+  float topColorFactor = (1.f - factor) * basePtr->alpha + factor * topPtr->alpha;
   float colorSum = baseColorFactor * topColorFactor;
   if(colorSum > NA_SINGULARITYf) {
     float baseBlend = 1.f - factor;

@@ -499,6 +499,12 @@ NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title) {
 
 
 
+NA_DEF void naSetWindowSkin(NAWindow* window, NASkin skin) {
+  // todo
+}
+
+
+
 //NA_DEF void naSetWindowRect(NAWindow* window, NARect rect) {
 //  NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
 //}
