@@ -54,7 +54,7 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
   NSColor* nsColor;
   if(color) {
     uint8 buf[4];
-    naFillSRGBu8WithColor(buf, color, NA_COLOR_BUFFER_RGBA);
+    naFillSRGBu8WithColor(buf, color, NA_COLOR_BUFFER_RGBA, 1);
     nsColor = [NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.];
   }else{
     nsColor = naGetLabelColor();

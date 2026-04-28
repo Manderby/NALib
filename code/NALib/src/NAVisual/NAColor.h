@@ -38,12 +38,11 @@ NA_API void naFillColorWithSRGBu8v(NAColor* outColor, const uint8* inColor, NACo
 
 NA_API void naFillSRGBAWithColor(float rgba[4], const NAColor* color);
 // Converts between NAColor and an uint8 representation.
-// When premultiplied is set to NA_TRUE, the uint8 variant is assumed to be
-// premultiplied with the alpha values.
 NA_API void naFillSRGBu8WithColor(
   uint8* outColor,
   const NAColor* inColor,
-  NAColorBufferType bufferType);
+  NAColorBufferType bufferType,
+  size_t count);
 
 NA_API void naBlendColors(
   NAColor* dstPtr,

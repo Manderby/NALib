@@ -103,49 +103,94 @@ NA_DEF void naFillSRGBAWithColor(float rgba[4], const NAColor* color) {
   rgba[3] = color->alpha;
 }
 
+
+
 NA_HIDEF void na_LimitColorComponentu8(uint8* outvalue, const float inValue) {
   if(inValue < 0.f) {
     *outvalue = 0;
   }else if(inValue > 1.f) {
     *outvalue = 255;
   }else{
-    *outvalue = (uint8)(inValue * 255);
+    *outvalue = (uint8)(inValue * 255.f);
   }
 }
 
-NA_DEF void naFillSRGBu8WithColor(uint8* outColor, const NAColor* inColor, NAColorBufferType bufferType) {
-  switch(bufferType) {
-  case NA_COLOR_BUFFER_RGBA:
+
+typedef void (*NA_ColorToUInt8Converter)(uint8* outColor, const NAColor* inColor, size_t count);
+
+NA_HDEF void na_FillSRGBu8WithColorRGBA(uint8* outColor, const NAColor* inColor, size_t count) {
+  for(size_t i = 0; i < count; ++i) {
     na_LimitColorComponentu8(&outColor[0], inColor->r);
     na_LimitColorComponentu8(&outColor[1], inColor->g);
     na_LimitColorComponentu8(&outColor[2], inColor->b);
     na_LimitColorComponentu8(&outColor[3], inColor->alpha);
-    break;
-  case NA_COLOR_BUFFER_RGBAPre:
-    {
+    outColor += 4;
+    inColor++;
+  }
+}
+
+NA_HDEF void na_FillSRGBu8WithColorRGBAPre(uint8* outColor, const NAColor* inColor, size_t count) {
+  for(size_t i = 0; i < count; ++i) {
     float inAlpha = inColor->alpha;
     na_LimitColorComponentu8(&outColor[0], inColor->r * inAlpha);
     na_LimitColorComponentu8(&outColor[1], inColor->g * inAlpha);
     na_LimitColorComponentu8(&outColor[2], inColor->b * inAlpha);
     na_LimitColorComponentu8(&outColor[3], inAlpha);
-    break;
-    }
-  case NA_COLOR_BUFFER_RGB:
+    outColor += 4;
+    inColor++;
+  }
+}
+
+NA_HDEF void na_FillSRGBu8WithColorRGB(uint8* outColor, const NAColor* inColor, size_t count) {
+  for(size_t i = 0; i < count; ++i) {
     na_LimitColorComponentu8(&outColor[0], inColor->r);
     na_LimitColorComponentu8(&outColor[1], inColor->g);
     na_LimitColorComponentu8(&outColor[2], inColor->b);
-    break;
-  case NA_COLOR_BUFFER_BGR0:
+    outColor += 3;
+    inColor++;
+  }
+}
+
+NA_HDEF void na_FillSRGBu8WithColorRGB0(uint8* outColor, const NAColor* inColor, size_t count) {
+  for(size_t i = 0; i < count; ++i) {
     na_LimitColorComponentu8(&outColor[0], inColor->b);
     na_LimitColorComponentu8(&outColor[1], inColor->g);
     na_LimitColorComponentu8(&outColor[2], inColor->r);
     na_LimitColorComponentu8(&outColor[3], 0);
-    break;
-  case NA_COLOR_BUFFER_BGRA:
+    outColor += 4;
+    inColor++;
+  }
+}
+
+NA_HDEF void na_FillSRGBu8WithColorBGRA(uint8* outColor, const NAColor* inColor, size_t count) {
+  for(size_t i = 0; i < count; ++i) {
     na_LimitColorComponentu8(&outColor[0], inColor->b);
     na_LimitColorComponentu8(&outColor[1], inColor->g);
     na_LimitColorComponentu8(&outColor[2], inColor->r);
     na_LimitColorComponentu8(&outColor[3], inColor->alpha);
+    outColor += 4;
+    inColor++;
+  }
+}
+
+
+
+NA_DEF void naFillSRGBu8WithColor(uint8* outColor, const NAColor* inColor, NAColorBufferType bufferType, size_t count) {
+  switch(bufferType) {
+  case NA_COLOR_BUFFER_RGBA:
+    na_FillSRGBu8WithColorRGBA(outColor, inColor, count);
+    break;
+  case NA_COLOR_BUFFER_RGBAPre:
+    na_FillSRGBu8WithColorRGBAPre(outColor, inColor, count);
+    break;
+  case NA_COLOR_BUFFER_RGB:
+    na_FillSRGBu8WithColorRGB(outColor, inColor, count);
+    break;
+  case NA_COLOR_BUFFER_BGR0:
+    na_FillSRGBu8WithColorRGB0(outColor, inColor, count);
+    break;
+  case NA_COLOR_BUFFER_BGRA:
+    na_FillSRGBu8WithColorBGRA(outColor, inColor, count);
     break;
   }
 }
