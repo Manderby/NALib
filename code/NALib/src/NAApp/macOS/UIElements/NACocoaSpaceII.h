@@ -19,6 +19,8 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 - (id _Nonnull) initWithSpace:(NACocoaSpace* _Nonnull)newCocoaSpace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
+  NSRect newFrame = [super frame];
+
   [self setWantsLayer:YES];
   [self resetDrag];
 
@@ -31,7 +33,7 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 }
 
 - (void)drawRect:(NSRect)dirtyRect{
-  [super drawRect:dirtyRect];
+//  [super drawRect:dirtyRect];
 
   dirtyRect = [self frame];
   dirtyRect.origin = NSMakePoint(0., 0.);
