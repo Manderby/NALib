@@ -676,11 +676,13 @@ NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect) {
 
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+//  na_UpdateMouseTracking(button);
 }
 
 NA_HDEF void na_UpdateButtonUIScale(NA_UIElement* button) {
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   [nativePtr updateImages];
+//  na_UpdateMouseTracking(button);
 }
 
 

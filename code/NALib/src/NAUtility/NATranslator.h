@@ -87,26 +87,30 @@ NA_PROTOTYPE(NATranslator);
 
 // These codes denote the standardized ISO 639-3 codes.
 typedef enum{
-  NA_LANG_DEU = 0x646575,  // German
-  NA_LANG_ENG = 0x656e67,  // English
-  NA_LANG_FRA = 0x667261,  // French
-  NA_LANG_GSW = 0x677377,  // Swiss German
-  NA_LANG_JPN = 0x6a706e,  // Japanese
-  NA_LANG_SPA = 0x737061,  // Spanish
-  NA_LANG_TLH = 0x746c68,  // Klingon
-  NA_LANG_ZHO = 0x7a686f,  // Chinese
+  NA_LANG_DAN = 0x64616e,  // dan, Danish
+  NA_LANG_DEU = 0x646575,  // deu, German
+  NA_LANG_ENG = 0x656e67,  // eng, English
+  NA_LANG_FRA = 0x667261,  // fra, French
+  NA_LANG_GSW = 0x677377,  // gsw, Swiss German
+  NA_LANG_HIN = 0x68696e,  // hin, Hindi
+  NA_LANG_JPN = 0x6a706e,  // jpn, Japanese
+  NA_LANG_SPA = 0x737061,  // spa, Spanish
+  NA_LANG_TLH = 0x746c68,  // tlh, Klingon
+  NA_LANG_ZHO = 0x7a686f,  // zho, Chinese
 } NALanguageCode3;
 
 // These codes denote the standardized ISO 639-1 codes. They should not be
 // used, please use the 3 variant whenever possible or use the conversion
 // function naConvertLanguageCode1To3
 typedef enum{
-  NA_LANG_DE = 0x6465,  // German
-  NA_LANG_EN = 0x656e,  // English
-  NA_LANG_ES = 0x6573,  // Spanish
-  NA_LANG_FR = 0x6672,  // French
-  NA_LANG_JA = 0x6a61,  // Japanese
-  NA_LANG_ZH = 0x7a68,  // Chinese
+  NA_LANG_DA = 0x6461,  // da, Danish
+  NA_LANG_DE = 0x6465,  // de, German
+  NA_LANG_EN = 0x656e,  // en, English
+  NA_LANG_ES = 0x6573,  // es, Spanish
+  NA_LANG_FR = 0x6672,  // fr, French
+  NA_LANG_HI = 0x6869,  // hi, Hindi
+  NA_LANG_JA = 0x6a61,  // ja, Japanese
+  NA_LANG_ZH = 0x7a68,  // zh, Chinese
 } NALanguageCode1;
 
 

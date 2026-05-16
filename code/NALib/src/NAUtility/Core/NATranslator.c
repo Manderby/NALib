@@ -325,6 +325,8 @@ NA_DEF NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str) {
 
     switch(langId)
     {
+    // todo: danish
+    // todo: hindi
     case 0x0004: return NA_LANG_ZHO;
     case 0x0007: return NA_LANG_DEU;
     case 0x0009: return NA_LANG_ENG;
@@ -332,10 +334,10 @@ NA_DEF NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str) {
     case 0x000c: return NA_LANG_FRA;
     case 0x0011: return NA_LANG_JPN;
     case 0x0807: return NA_LANG_GSW;
+    default:
+      return NA_LANG_ENG;
     }
 
-    // no Klingon, sorry.
-    return NA_LANG_ENG;
   }
 
 #endif // NA_OS == NA_OS_WINDOWS
@@ -343,13 +345,16 @@ NA_DEF NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str) {
 
 NA_DEF NALanguageCode3 naConvertLanguageCode1To3(NALanguageCode1 code1) {
   switch(code1) {
+    // todo: danish
+    // todo: hindi
   case NA_LANG_DE: return NA_LANG_DEU;
   case NA_LANG_EN: return NA_LANG_ENG;
   case NA_LANG_ES: return NA_LANG_SPA;
   case NA_LANG_FR: return NA_LANG_FRA;
   case NA_LANG_JA: return NA_LANG_JPN;
   case NA_LANG_ZH: return NA_LANG_ZHO;
-  default: return NA_LANG_ENG;
+  default:
+    return NA_LANG_ENG;
   }
 }
 

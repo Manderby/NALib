@@ -33,7 +33,7 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 }
 
 - (void)drawRect:(NSRect)dirtyRect{
-//  [super drawRect:dirtyRect];
+//  [super drawRect:dirtyRect]; // Not needed as we fill the whole frame.
 
   dirtyRect = [self frame];
   dirtyRect.origin = NSMakePoint(0., 0.);
