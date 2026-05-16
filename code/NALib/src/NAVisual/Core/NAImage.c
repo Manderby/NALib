@@ -72,7 +72,9 @@ NA_HIDEF size_t na_GetImageDataSize(const NAImage* image) {
   if(!image)
     naCrash("image is nullptr");
 #endif
-  return na_GetImagePixelCount(image) * sizeof(NAColor);
+  size_t pixelCount = na_GetImagePixelCount(image);
+  if(pixelCount > SIZE_MAX / sizeof(NAColor)) { abort(); }
+  return pixelCount * sizeof(NAColor);
 }
 
 
