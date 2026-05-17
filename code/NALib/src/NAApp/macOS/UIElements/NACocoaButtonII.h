@@ -464,7 +464,7 @@ NA_DEF void naSetButtonText2(NAButton* button, const NAUTF8Char* text) {
       naError("This is not a text button");
   #endif
   
-  na_setButtonText(button, text);
+  na_setButtonText2(button, text);
   [nativePtr updateButtonText];
 }
 

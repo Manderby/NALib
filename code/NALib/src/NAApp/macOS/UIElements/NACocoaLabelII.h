@@ -146,7 +146,11 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
 }
 
 - (void) setText:(const NAUTF8Char*)text{
-  [self setStringValue:[NSString stringWithUTF8String:text]];
+  if(text) {
+    [self setStringValue:[NSString stringWithUTF8String:text]];
+  }else{
+    [self setStringValue:@""];
+  }
 }
 
 - (void) setColor:(const NAColor*)color{

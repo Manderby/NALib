@@ -59,7 +59,7 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
     postStartupFunction(arg);
   }
 
-  // If this is a bare application without XIB
+  // If this is a bare application without NIB
   if(![NSApp delegate]) {
     // Show with a dock icon:
     [NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
@@ -103,7 +103,7 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
   // postUpdate function.
 
   // Make the application active
-  // If this is a bare application without XIB
+  // If this is a bare application without NIB
   if(![NSApp delegate]) {
     [NSApp activateIgnoringOtherApps:YES];
   }

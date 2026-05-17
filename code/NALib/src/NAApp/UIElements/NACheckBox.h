@@ -20,6 +20,9 @@ NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width);
 NA_API void naSetCheckBoxVisible(NACheckBox* checkBox, NABool visible);
 NA_API void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled);
 
+// Sets the text of the checkbox
+NA_API void naSetCheckBoxText(NACheckBox* checkBox, const NAUTF8Char* text);
+
 // Gets or sets the check state of the checkBox
 NA_API NABool naGetCheckBoxState(const NACheckBox* checkBox);
 NA_API void naSetCheckBoxState(NACheckBox* checkBox, NABool state);

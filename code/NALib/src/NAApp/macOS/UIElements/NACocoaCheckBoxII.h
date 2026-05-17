@@ -28,7 +28,10 @@ NA_RUNTIME_TYPE(NACocoaCheckBox, na_DestructCocoaCheckBox, NA_FALSE);
 }
 
 - (void) setText:(const NAUTF8Char*)text{
-  [self setTitle:[NSString stringWithUTF8String:text]];
+  NSString* titleText = text
+    ? [NSString stringWithUTF8String:text]
+    : @"";
+  [self setTitle:titleText];
 }
 
 - (void) setColor:(const NAColor*)color{
@@ -105,6 +108,13 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
 
 NA_HAPI void na_DestructCocoaCheckBox(NACocoaCheckBox* cocoaCheckBox) {
   na_ClearCheckBox((NACheckBox*)cocoaCheckBox);
+}
+
+
+
+NA_DEF void naSetCheckBoxText(NACheckBox* checkBox, const NAUTF8Char* text) {
+  naDefineCocoaObject(NACocoaNativeCheckBox, nativePtr, checkBox);
+  [nativePtr setText:text];
 }
 
 

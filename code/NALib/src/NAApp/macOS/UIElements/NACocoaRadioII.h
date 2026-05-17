@@ -47,7 +47,10 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
 }
 
 - (void) setText:(const NAUTF8Char*)text{
-  [self setTitle:[NSString stringWithUTF8String:text]];
+  NSString* titleString = text
+    ? [NSString stringWithUTF8String:text]
+    : @"";
+  [self setTitle:titleString];
 }
 
 - (void) setColor:(const NAColor*)color{
@@ -121,6 +124,13 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
 
 NA_DEF void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio) {
   na_ClearRadio((NARadio*)cocoaRadio);
+}
+
+
+
+NA_DEF void naSetRadioText(NARadio* radio, const NAUTF8Char* text) {
+  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  [nativePtr setText:text];
 }
 
 

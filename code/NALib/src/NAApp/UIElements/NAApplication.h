@@ -33,7 +33,7 @@ NA_API void naStartApplication(
 //
 // Mac: - The NARuntime is started if it wasn't started already
 //      - NALib calls [NSApplication sharedApplication]. If you have already
-//        created an application (for example by using a XIB file), then that
+//        created an application (for example by using a NIB file), then that
 //        application is used. If you need your own delegate, you have to set
 //        it before calling naStartApplication, otherwise, the application
 //        startup might not work as expected.
@@ -49,9 +49,11 @@ NA_API void naStartApplication(
 //      - NALib will start a message loop. When ARC is turned off, a new
 //        NSAutoreleasePools is created for each and every message. At its
 //        first run, a message to NSApplicationDidFinishLaunchingNotification
-//        will be sent to your application delegate.
-//      - The first time an applicationDidBecomeActive notification is sent,
-//        The postStartup function is called with arg.
+//        will be sent to your application delegate. Additionally, NALib will
+//        process that notification in parallel and will call the postStartup
+//        function with arg. If your application is NOT using a NIB file,
+//        NALib will make sure, the applicationDidBecomeActive notification
+//        is sent afterwards.
 //
 // Win: - The NARuntime is started if it wasn't started already
 //      - NALib registers its window classes

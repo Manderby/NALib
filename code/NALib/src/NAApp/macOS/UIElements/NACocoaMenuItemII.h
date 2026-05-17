@@ -17,12 +17,16 @@ NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
 @implementation NACocoaNativeMenuItem
 
 - (id) initWithMenuItem:(NACocoaMenuItem*)newCocoaMenuItem text:(const NAUTF8Char*) text keyStroke:(NAKeyStroke*) stroke{
+  NSString* titleString = text
+    ? [NSString stringWithUTF8String:text]
+    : @"";
+
   if(stroke) {
     NAKeyStroke* unmodifiedStroke = naNewKeyStroke(naGetKeyStrokeKeyCode(stroke), 0);
     NAString* visibleKey = naNewStringWithKeyStroke(unmodifiedStroke);
-    
+        
     self = [super
-      initWithTitle:[NSString stringWithUTF8String:text]
+      initWithTitle:titleString
       action:@selector(itemSelected:)
       keyEquivalent:[NSString stringWithUTF8String:naGetStringUTF8Pointer(visibleKey)]];
     
@@ -38,7 +42,7 @@ NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
     
   }else{
     self = [super
-      initWithTitle:[NSString stringWithUTF8String:text]
+      initWithTitle:titleString
       action:@selector(itemSelected:)
       keyEquivalent:@""];
   }
@@ -117,7 +121,9 @@ NA_DEF void naSetMenuItemText(NAMenuItem* menuItem, const NAUTF8Char* text) {
 
   naDefineCocoaObject(NACocoaNativeMenuItem, nativePtr, menuItem);
   
-  NSString* nsString = [NSString stringWithUTF8String:text];
+  NSString* nsString = text
+    ? [NSString stringWithUTF8String:text]
+    : @"";
   [nativePtr setTitle: nsString];
   if([nativePtr hasSubmenu]) {
     [[nativePtr submenu] setTitle: nsString];

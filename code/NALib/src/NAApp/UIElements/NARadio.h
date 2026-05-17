@@ -20,6 +20,9 @@ NA_API NARadio* naNewRadio(const NAUTF8Char* text, double width);
 NA_API void naSetRadioVisible(NARadio* radio, NABool visible);
 NA_API void naSetRadioEnabled(NARadio* radio, NABool enabled);
 
+// Changes the text of the radio.
+NA_API void naSetRadioText(NARadio* radio, const NAUTF8Char* text);
+
 // Gets or sets the state of the radio.
 NA_API NABool naGetRadioState(const NARadio* radio);
 NA_API void naSetRadioState(NARadio* radio, NABool state);
