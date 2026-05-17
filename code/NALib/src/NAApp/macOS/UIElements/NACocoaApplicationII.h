@@ -40,6 +40,7 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
 }
 
 - (void)handleDidFinishLaunching:(NSNotification *)notification {
+
   [self
     performSelector:@selector(handleDidFinishLaunchingAfterAll:)
     withObject:notification
@@ -53,6 +54,10 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
   // Reaching here, we can be sure, all notifications of the DidFinishLaunching
   // type have been successfully processed and now it is time to initialize
   // the UI.
+
+  if(postStartupFunction) {
+    postStartupFunction(arg);
+  }
 
   // If this is a bare application without XIB
   if(![NSApp delegate]) {
@@ -90,15 +95,13 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
   [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationDidBecomeActiveNotification object:nil]; 
 }
 
+
+
 - (void)handleDidBecomeActiveAfterAll:(NSNotification *)notification {
   // Reaching here, we can be sure, all notifications of the DidBecomeActive
   // type have been successfully processed and now it is time to call the
   // postUpdate function.
 
-  if(postStartupFunction) {
-    postStartupFunction(arg);
-  }
-    
   // Make the application active
   // If this is a bare application without XIB
   if(![NSApp delegate]) {
