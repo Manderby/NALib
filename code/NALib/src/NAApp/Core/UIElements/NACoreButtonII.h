@@ -10,6 +10,7 @@ NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* 
   na_InitCoreUIElement(&button->uiElement, NA_UI_BUTTON, nativePtr);
   button->text = NA_NULL;
   button->text2 = NA_NULL;
+  button->hint = NA_NULL;
   button->imageSet = NA_NULL;
   button->imageSet2 = NA_NULL;
   na_setButtonText(button, text);
@@ -63,6 +64,27 @@ NA_HDEF void na_setButtonText2(NAButton* button, const NAUTF8Char* text) {
     button->text2[len] = '\0';
   }else{
     button->text2 = NA_NULL;
+  }
+}
+
+
+
+NA_DEF void naSetButtonHint(NAButton* button, const NAUTF8Char* text) {
+  #if NA_DEBUG
+    if(!button)
+      naError("button is nullptr");
+  #endif
+  
+  if(button->hint) {
+    naFree(button->hint);
+  }
+  if(text) {
+    size_t len = strlen(text);
+    button->hint = naMalloc(len + 1);
+    memcpy(button->hint, text, len);
+    button->hint[len] = '\0';
+  }else{
+    button->hint = NA_NULL;
   }
 }
 

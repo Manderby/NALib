@@ -72,6 +72,7 @@ struct NAButton{
   NA_UIElement uiElement;
   NAUTF8Char* text;
   NAUTF8Char* text2;
+  NAUTF8Char* hint;
   NAFont* font;
   const NAImageSet* imageSet;
   const NAImageSet* imageSet2;
@@ -318,6 +319,7 @@ NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* 
 NA_HAPI void na_ClearButton(NAButton* button);
 NA_HAPI void na_setButtonText(NAButton* button, const NAUTF8Char* text);
 NA_HAPI void na_setButtonText2(NAButton* button, const NAUTF8Char* text);
+NA_HAPI void na_setButtonHint(NAButton* button, const NAUTF8Char* text);
 NA_HAPI void na_setButtonImage(NAButton* button, const NAImageSet* imageSet);
 NA_HAPI void na_setButtonImage2(NAButton* button, const NAImageSet* imageSet);
 NA_HAPI NARect na_GetButtonRect(const NA_UIElement* button);

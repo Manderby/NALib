@@ -57,6 +57,7 @@ NA_API void naSetButtonState(NAButton* button, NABool state);
 // Will emit an error if the button was not created with the matching type.
 NA_API void naSetButtonText(NAButton* button, const NAUTF8Char* text);
 NA_API void naSetButtonText2(NAButton* button, const NAUTF8Char* text);
+NA_API void naSetButtonHint(NAButton* button, const NAUTF8Char* text);
 NA_API void naSetButtonImage(NAButton* button, const NAImageSet* imageSet);
 NA_API void naSetButtonImage2(NAButton* button, const NAImageSet* imageSet);
 

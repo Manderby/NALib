@@ -71,6 +71,7 @@ NA_EXTERN_RUNTIME_TYPE(NACocoaWindow);
   NACocoaButton* cocoaButton;
   bool isImage;
 }
+- (NSString *)accessibilityHelp;
 @end
 
 @interface NACocoaNativeCheckBox : NSButton{

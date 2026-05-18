@@ -106,6 +106,7 @@ typedef size_t NAKeyCode;
   #define NA_KEYCODE_ARROW_UP       0x48
   #define NA_KEYCODE_BACKSPACE      0xffaa // todo
   #define NA_KEYCODE_DELETE         0xffbb // todo
+  #define NA_KEYCODE_UNDEFINED      0xff
 #elif NA_OS == NA_OS_MAC_OS_X
   #define NA_KEYCODE_0              0x1d
   #define NA_KEYCODE_1              0x12
@@ -180,6 +181,7 @@ typedef size_t NAKeyCode;
   #define NA_KEYCODE_ARROW_UP       0x7e
   #define NA_KEYCODE_BACKSPACE      0x33
   #define NA_KEYCODE_DELETE         0x75
+  #define NA_KEYCODE_UNDEFINED      0xff
 #endif
 
 // The modifier keys are stored as a bitmask with the following predefined

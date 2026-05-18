@@ -52,6 +52,20 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   return self;
 }
 
+- (BOOL)isAccessibilityElement
+{
+    return YES;
+}
+
+- (NSString *)accessibilityHelp
+{
+  if(cocoaButton->button.hint) {
+    return [NSString stringWithUTF8String:cocoaButton->button.hint];
+  }else{
+    return @"";
+  }
+}
+
 - (bool) isImage{
   return isImage;
 }
@@ -676,13 +690,12 @@ NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect) {
 
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
-//  na_UpdateMouseTracking(button);
+  na_UpdateMouseTracking(button);
 }
 
 NA_HDEF void na_UpdateButtonUIScale(NA_UIElement* button) {
   naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
   [nativePtr updateImages];
-//  na_UpdateMouseTracking(button);
 }
 
 
