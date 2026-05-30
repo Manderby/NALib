@@ -176,7 +176,12 @@ NA_HDEF NARect na_GetRadioRect(const NA_UIElement* radio) {
 
 NA_HDEF void na_SetRadioRect(NA_UIElement* radio, NARect rect) {
   naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
+  [[nativePtr getEncapsulatingView] setFrame:naMakeNSRectWithRect(rect)];
+  rect.pos = naMakePos(0, 0);
   [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+//  [nativePtr setBounds:naMakeNSRectWithRect(rect)];
+//  rect.size = naMakeSize(rect.size.width * 3 / 4, rect.size.height * 3 / 4);
+//  [nativePtr setBounds:naMakeNSRectWithRect(rect)];
 }
 
 
