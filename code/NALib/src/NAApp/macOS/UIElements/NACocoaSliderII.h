@@ -17,8 +17,9 @@ NA_RUNTIME_TYPE(NACocoaSlider, na_DestructCocoaSlider, NA_FALSE);
 @implementation NACocoaNativeSlider
 
 - (id) initWithSlider:(NACocoaSlider*)newCocoaSlider frame:(NSRect)frame{
-  NSRect documentRect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
-  self = [super initWithFrame:documentRect];
+  NSRect rect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
+  self = [super initWithFrame:rect];
+  [self setVertical:NO];
   [self setTarget:self];
   [self setAction:@selector(onValueChanged:)];
   cocoaSlider = newCocoaSlider;

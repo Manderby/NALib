@@ -19,8 +19,8 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 - (id) initWithTextBox:(NACocoaTextBox*)newCocoaTextBox frame:(NSRect)frame{
   NSRect clipRect;
   NSClipView* clipView;
-  NSRect documentRect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
-  self = [super initWithFrame:documentRect];
+  NSRect rect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
+  self = [super initWithFrame:rect];
   
   [self setDelegate:self];
   [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver: self
