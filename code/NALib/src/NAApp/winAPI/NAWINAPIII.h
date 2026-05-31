@@ -78,48 +78,38 @@ NA_HDEF void na_SetUIElementParent(
 
 
 
-NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* uiElement) {
+NA_HDEF NARect na_GetUIElementOffsetRect(
+  const NA_UIElement* uiElement)
+{
   #if NA_DEBUG
-    if(!uiElement)
-      naCrash("uiElement is nullptr");
-  #endif
-  return 0.;
-}
-
-
-NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* uiElement) {
-  #if NA_DEBUG
-    if(!uiElement)
-      naCrash("uiElement is nullptr");
+  if(!uiElement)
+    naError("uiElement is Null");
   #endif
 
-  // Line height is considered to be 25 for an optimal display. In this
-  // function, the UI elements are shifted in Y direction such that text
-  // always is displayed on a common baseline with 1x resolution. Higher
-  // resolutions might show different alignments out of our control.
-  // The reference element is a stateful text button.
-  // All spaces and stateful/image buttons have offset 0.
+  NARect offsetRect = naMakeRectSE(0., 0., 0., 0.);
 
   switch(naGetUIElementType(uiElement)) {
-  case NA_UI_APPLICATION:  return  0.0;
-  case NA_UI_BUTTON:       return  0.0;
-  case NA_UI_CHECKBOX:     return  2.5;
-  case NA_UI_IMAGE_SPACE:  return  0.0;
-  case NA_UI_LABEL:        return  4.0;
-  case NA_UI_MENU:         return  0.0;
-  case NA_UI_MENUITEM:     return  0.0;
-  case NA_UI_METAL_SPACE:  return  0.0;
-  case NA_UI_OPENGL_SPACE: return  0.0;
-  case NA_UI_RADIO:        return  2.5;
-  case NA_UI_SCREEN:       return  0.0;
-  case NA_UI_SELECT:       return -0.5;
-  case NA_UI_SLIDER:       return  0.0;
-  case NA_UI_SPACE:        return  0.0;
-  case NA_UI_TEXTBOX:      return  2.0;
-  case NA_UI_TEXTFIELD:    return  2.0;
-  case NA_UI_WINDOW:       return  0.0;
-  default: return 0.;
+  case NA_UI_APPLICATION:  break;
+  case NA_UI_BUTTON:       break;
+  case NA_UI_CHECKBOX:     offsetRect.pos.y = 2.5; break;
+  case NA_UI_IMAGE_SPACE:  break;
+  case NA_UI_LABEL:        offsetRect.pos.y = 4.; break;
+  case NA_UI_MENU:         break;
+  case NA_UI_MENUITEM:     break;
+  case NA_UI_METAL_SPACE:  break;
+  case NA_UI_OPENGL_SPACE: break;
+  case NA_UI_RADIO:        offsetRect.pos.y = 2.5; break;
+  case NA_UI_SCREEN:       break;
+  case NA_UI_SELECT:       offsetRect.pos.y = -0.5; break;
+  case NA_UI_SLIDER:       break;
+  case NA_UI_SPACE:        break;
+  case NA_UI_TEXTBOX:      offsetRect.pos.y = 2.; break;
+  case NA_UI_TEXTFIELD:    offsetRect.pos.y = 2.; break;
+  case NA_UI_WINDOW:       break;
+  default: break;
   }
+
+  return offsetRect;
 }
 
 

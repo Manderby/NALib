@@ -57,7 +57,7 @@ NA_HDEF NARect na_GetUIElementOffsetRect(
 {
   #if NA_DEBUG
     if(!uiElement)
-      naError("uiElement is nullptr");
+      naError("uiElement is Null");
   #endif
 
   NARect offsetRect = naMakeRectSE(0., 0., 0., 0.);
@@ -140,48 +140,6 @@ NA_HDEF NARect na_GetUIElementOffsetRect(
   }
   
   return offsetRect;
-}
-
-
-
-NA_HDEF NARect na_GetUIElementAdjustedRect(
-  const NA_UIElement* uiElement,
-  NARect rect)
-{
-  NARect adjustedRect = rect;
-
-  // In this function, the UI elements are offset such that text always is
-  // displayed on a common baseline. The reference element is a stateful
-  // text button. All spaces and stateful/image buttons have offset 0.
-  
-  NARect offsetRect = na_GetUIElementOffsetRect(uiElement);
-  
-  adjustedRect.pos.x += offsetRect.pos.x;
-  adjustedRect.pos.y += offsetRect.pos.y;
-  adjustedRect.size.width += offsetRect.size.width;
-  adjustedRect.size.height += offsetRect.size.height;
-  
-  return adjustedRect;
-}
-
-
-
-NA_HDEF NARect na_GetUIElementUnadjustedRect(
-  const NA_UIElement* uiElement,
-  NARect rect)
-{
-  NARect unadjustedRect = rect;
-
-  // This function reverses the offset computed in na_GetUIElementAdjustedRect.
-  
-  NARect offsetRect = na_GetUIElementOffsetRect(uiElement);
-  
-  unadjustedRect.pos.x -= offsetRect.pos.x;
-  unadjustedRect.pos.y -= offsetRect.pos.y;
-  unadjustedRect.size.width -= offsetRect.size.width;
-  unadjustedRect.size.height -= offsetRect.size.height;
-  
-  return unadjustedRect;
 }
 
 

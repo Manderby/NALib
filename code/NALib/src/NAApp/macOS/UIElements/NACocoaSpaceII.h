@@ -249,6 +249,8 @@ NA_DEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child,
   
   [nativeSpacePtr addSubview:childView];
 
+  na_AddSpaceChild(space, child);
+
   NARect rect = naGetUIElementRect(child);
   rect.pos = pos;
   if(raw) {
@@ -256,8 +258,6 @@ NA_DEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child,
   }else{
     naSetUIElementRect(child, rect);
   }
-
-  na_AddSpaceChild(space, child);
   
   na_UpdateUIElementUIScale(child);
 }
