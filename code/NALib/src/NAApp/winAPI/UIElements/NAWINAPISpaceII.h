@@ -286,11 +286,11 @@ NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos) {
       naCrash("child is nullptr");
   #endif
 
+  NARect rect = naGetUIElementRect(child);
+  child.pos = pos;
+  naSetUIElementRectAdjusted(uiElement, rect);
+
   na_AddSpaceChild(space, child);
-  double offsetY = na_GetUIElementYOffset(child);
-  NARect childRect = naGetUIElementRect(child);
-  childRect.pos = naMakePos(pos.x, pos.y + offsetY);
-  naSetUIElementRect(child, childRect);
 }
 
 

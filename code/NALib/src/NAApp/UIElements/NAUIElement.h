@@ -105,6 +105,11 @@ NA_API NASpace* naGetUIElementParentSpaceMutable(void* uiElement);
 //
 // Using naGetUIElementRect, you can get the rect of any ui element either
 // in absolute coordinates or in relative coordinates to its parent element.
+// 
+// The Raw function works differently from the default function. The default
+// function assumes NALib to automatically offset the ui elements such that
+// they are aligned to a common text baseline and hence reverses that offset
+// in the getter. The Raw function does not incorporate any offset.
 //
 // Note that windows and screens always return absolute coordinates.
 // Additionally, windows only return the inner (client) rect. If you need the
@@ -112,8 +117,15 @@ NA_API NASpace* naGetUIElementParentSpaceMutable(void* uiElement);
 //
 // Quering the NSApplication object returns the total rect of all screens.
 NA_API NARect naGetUIElementRect(const void* uiElement);
+NA_API NARect naGetUIElementRectRaw(const void* uiElement);
 NA_API NARect naGetUIElementRectAbsolute(const void* uiElement);
-NA_API void   naSetUIElementRect(void* uiElement, NARect rect);
+
+// You can set the rect of an element with these functions.
+// The default function will automatically offset the uiElements such that
+// they are aligned to a common text baseline. If you want full control over
+// positioning, use the Raw variant.
+NA_API void naSetUIElementRect(void* uiElement, NARect rect);
+NA_API void naSetUIElementRectRaw(void* uiElement, NARect rect);
 
 // You can ask any ui element to refresh its contents. This will cause the
 // element to be displayed anew. The time difference defines when the refresh

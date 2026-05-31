@@ -78,6 +78,15 @@ NA_HDEF void na_SetUIElementParent(
 
 
 
+NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* uiElement) {
+  #if NA_DEBUG
+    if(!uiElement)
+      naCrash("uiElement is nullptr");
+  #endif
+  return 0.;
+}
+
+
 NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* uiElement) {
   #if NA_DEBUG
     if(!uiElement)

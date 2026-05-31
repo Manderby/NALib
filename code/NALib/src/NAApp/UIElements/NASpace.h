@@ -25,17 +25,13 @@ NA_API NASpace* naNewSpace(NASize size);
 
 // Adds a child ui element at the given position.
 // Beware that adding a child to a space which formerly was the first responder
-// of a window, that windows first responder will be reset to nullptr.
+// of a window, that windows first responder will be reset to Null.
 //
-// Usually, UI-elementes are placed in a line-by-line fashion, usually asking
-// the user to read from top to bottom. Therefore, it is good to know the
-// vertical alignment of all UI-elements.
-//
-// The tallest items are 24 points in height. But the visual representation is
-// often times shifted in vertical position such that some elements are even
-// overlapping when displayed line by line. The author recommends a line height
-// of 25 points.
+// The default function will automatically offset the uiElements such that
+// they are aligned to a common text baseline. If you want full control over
+// positioning, use the Raw variant.
 NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
+NA_API void naAddSpaceChildRaw(NASpace* space, void* child, NAPos pos);
 
 // Removes the given child from the space. If the child is not a child of the
 // space, nothing happens. NALib will output a warning though.

@@ -231,18 +231,13 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
 
   uint32 flags = NA_BUTTON_BORDERED;
   
-  double sizeSupplement = 0.;
-  if(na_HasShortButton()) {
-    sizeSupplement = 10.;
-  }
-  
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
     frame:naMakeNSRectWithSize(naMakeSize(
-      width + sizeSupplement,
-      NA_COCOA_DEFAULT_BUTTON_HEIGHT + sizeSupplement))];
+      width,
+      NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -265,18 +260,13 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
 
-  double sizeSupplement = 0.;
-  if(na_HasShortButton()) {
-    sizeSupplement = 10.;
-  }
-
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
     frame:naMakeNSRectWithSize(naMakeSize(
-      width + sizeSupplement,
-      NA_COCOA_DEFAULT_BUTTON_HEIGHT + sizeSupplement))];
+      width,
+      NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -298,18 +288,13 @@ NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
   
   uint32 flags = NA_BUTTON_BORDERED;
 
-  double sizeSupplement = 0.;
-  if(na_HasShortButton()) {
-    sizeSupplement = 10.;
-  }
-
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(naMakeSize(
-      width + sizeSupplement,
-      NA_COCOA_DEFAULT_BUTTON_HEIGHT + sizeSupplement))];
+      width,
+      NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -334,18 +319,13 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
   
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
 
-  double sizeSupplement = 0.;
-  if(na_HasShortButton()) {
-    sizeSupplement = 10.;
-  }
-
   NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(naMakeSize(
-      width + sizeSupplement,
-      NA_COCOA_DEFAULT_BUTTON_HEIGHT + sizeSupplement))];
+      width,
+      NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
   na_InitButton(
     (NAButton*)cocoaButton,
     NA_COCOA_PTR_OBJC_TO_C(nativePtr),
@@ -674,12 +654,7 @@ NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
   #endif
 
   naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
-  NARect rect = naMakeRectWithNSRect([nativePtr frame]);
-  if(na_HasShortButton()) {
-    rect.pos.x += 5;
-    rect.size.width -= 10;
-  }
-  return rect;
+  return naMakeRectWithNSRect([nativePtr frame]);
 }
 
 NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect) {

@@ -425,7 +425,7 @@ NA_DEF NARect naGetUIElementRectAbsolute(const void* uiElement) {
 
 
 
-NA_DEF NARect naGetUIElementRect(const void* uiElement) {
+NA_DEF NARect naGetUIElementRectRaw(const void* uiElement) {
   NARect elemRect = naMakeRectS(0., 0., 1., 1.);
 
   if(uiElement) {
@@ -455,7 +455,21 @@ NA_DEF NARect naGetUIElementRect(const void* uiElement) {
 
 
 
+NA_DEF NARect naGetUIElementRect(const void* uiElement) {
+  NARect rawRect = naGetUIElementRectRaw(uiElement);
+  return na_GetUIElementUnadjustedRect(uiElement, rawRect);
+}
+
+
+
 NA_DEF void naSetUIElementRect(void* uiElement, NARect rect) {
+  NARect adjustedRect = na_GetUIElementAdjustedRect(uiElement, rect);
+  naSetUIElementRectRaw(uiElement, adjustedRect);
+}
+
+
+
+NA_DEF void naSetUIElementRectRaw(void* uiElement, NARect rect) {
   #if NA_DEBUG
     if(!uiElement)
       naError("uiElement is nullptr");

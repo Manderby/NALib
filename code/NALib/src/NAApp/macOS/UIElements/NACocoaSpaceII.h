@@ -242,22 +242,36 @@ NA_HDEF NSView* _Nonnull na_getNSViewOfChild(void* _Nonnull child) {
 
 
 
-NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos) {
+NA_DEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NABool raw) {
   naDefineCocoaObject(NACocoaNativeSpace, nativeSpacePtr, space);
 
   NSView* childView = na_getNSViewOfChild(child);  
   
-  double offsetX = na_GetUIElementXOffset(child);
-  double offsetY = na_GetUIElementYOffset(child);
-   
   [nativeSpacePtr addSubview:childView];
-  NSRect frame = [childView frame];
-  frame.origin = NSMakePoint((CGFloat)pos.x + offsetX, (CGFloat)pos.y + offsetY);
-  [childView setFrame: frame];
-  
+
+  NARect rect = naGetUIElementRect(child);
+  rect.pos = pos;
+  if(raw) {
+    naSetUIElementRectRaw(child, rect);
+  }else{
+    naSetUIElementRect(child, rect);
+  }
+
   na_AddSpaceChild(space, child);
   
   na_UpdateUIElementUIScale(child);
+}
+
+
+
+NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos) {
+  na_AddSpaceChildAtPos(space, child, pos, NA_FALSE);
+}
+
+
+
+NA_DEF void naAddSpaceChildRaw(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos) {
+  na_AddSpaceChildAtPos(space, child, pos, NA_TRUE);
 }
 
 

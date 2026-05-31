@@ -52,112 +52,136 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 
 
 
-
-
-NA_HDEF double na_GetUIElementXOffset(const NA_UIElement* uiElement) {
+NA_HDEF NARect na_GetUIElementOffsetRect(
+  const NA_UIElement* uiElement)
+{
   #if NA_DEBUG
     if(!uiElement)
       naError("uiElement is nullptr");
   #endif
 
-  if(naGetUIElementType(uiElement) == NA_UI_BUTTON) {
-    if(naIsButtonBordered((const NAButton*)uiElement)) {
-      if(na_HasShortButton()) {
-        return -5.;
-      }
-    }
-  }
-  return 0.;
-}
+  NARect offsetRect = naMakeRectSE(0., 0., 0., 0.);
 
-
-
-NA_HDEF double na_GetUIElementYOffset(const NA_UIElement* uiElement) {
-  #if NA_DEBUG
-    if(!uiElement)
-      naError("uiElement is nullptr");
-  #endif
-
-  // Line height is considered to be 25 for an optimal display. In this
-  // function, the UI elements are shifted in Y direction such that text
-  // always is displayed on a common baseline. The reference element is
-  // a stateful text button.
-  // All spaces and stateful/image buttons have offset 0.
-  
   if(NSAppKitVersionNumber < NSAppKitVersionNumber11_0) {
     switch(naGetUIElementType(uiElement)) {
-    case NA_UI_APPLICATION:  return  0.;
-    case NA_UI_BUTTON:       return  0.;
-    case NA_UI_CHECKBOX:     return +5.;
-    case NA_UI_IMAGE_SPACE:  return  0.;
-    case NA_UI_LABEL:        return +6.;
-    case NA_UI_MENU:         return  0.;
-    case NA_UI_MENUITEM:     return  0.;
-    case NA_UI_METAL_SPACE:  return  0.;
-    case NA_UI_OPENGL_SPACE: return  0.;
-    case NA_UI_RADIO:        return +5.;
-    case NA_UI_SCREEN:       return  0.;
-    case NA_UI_SELECT:       return +2.;
-    case NA_UI_SLIDER:       return +1.;
-    case NA_UI_SPACE:        return  0.;
-    case NA_UI_TEXTBOX:      return +1.;
-    case NA_UI_TEXTFIELD:    return +4.;
-    case NA_UI_WINDOW:       return  0.;
-    default: return 0.;
+    case NA_UI_APPLICATION:  break;
+    case NA_UI_BUTTON:       break;
+    case NA_UI_CHECKBOX:     offsetRect.pos.y = 5.; break;
+    case NA_UI_IMAGE_SPACE:  break;
+    case NA_UI_LABEL:        offsetRect.pos.y = 6.; break;
+    case NA_UI_MENU:         break;
+    case NA_UI_MENUITEM:     break;
+    case NA_UI_METAL_SPACE:  break;
+    case NA_UI_OPENGL_SPACE: break;
+    case NA_UI_RADIO:        offsetRect.pos.y = 5.; break;
+    case NA_UI_SCREEN:       break;
+    case NA_UI_SELECT:       offsetRect.pos.y = 2.; break;
+    case NA_UI_SLIDER:       offsetRect.pos.y = 1.; break;
+    case NA_UI_SPACE:        break;
+    case NA_UI_TEXTBOX:      offsetRect.pos.y = 1.; break;
+    case NA_UI_TEXTFIELD:    offsetRect.pos.y = 4.; break;
+    case NA_UI_WINDOW:       break;
+    default: break;;
     }
     
   }else if(NSAppKitVersionNumber <= NSAppKitVersionNumber14_1) {
   
     switch(naGetUIElementType(uiElement)) {
-    case NA_UI_APPLICATION:  return  0.;
+    case NA_UI_APPLICATION:  break;
     case NA_UI_BUTTON:
     {
       if(naIsButtonBordered((const NAButton*)uiElement)) {
         if(na_HasShortButton()) {
-          return -5.;
+          offsetRect.pos.x = -5.;
+          offsetRect.pos.y = -5.;
+          offsetRect.size.width = 10.;
         }
       }
-      return  0.;
+      break;
     }
-    case NA_UI_CHECKBOX:     return +5.;
-    case NA_UI_IMAGE_SPACE:  return  0.;
-    case NA_UI_LABEL:        return +5.;
-    case NA_UI_MENU:         return  0.;
-    case NA_UI_MENUITEM:     return  0.;
-    case NA_UI_METAL_SPACE:  return  0.;
-    case NA_UI_OPENGL_SPACE: return  0.;
-    case NA_UI_RADIO:        return +5.;
-    case NA_UI_SCREEN:       return  0.;
-    case NA_UI_SELECT:       return -1.;
-    case NA_UI_SLIDER:       return -1.;
-    case NA_UI_SPACE:        return  0.;
-    case NA_UI_TEXTBOX:      return +1.;
-    case NA_UI_TEXTFIELD:    return +3.;
-    case NA_UI_WINDOW:       return  0.;
-    default: return 0.;
+    case NA_UI_CHECKBOX:     offsetRect.pos.y = 5.; break;
+    case NA_UI_IMAGE_SPACE:  break;
+    case NA_UI_LABEL:        offsetRect.pos.y = 5.; break;
+    case NA_UI_MENU:         break;
+    case NA_UI_MENUITEM:     break;
+    case NA_UI_METAL_SPACE:  break;
+    case NA_UI_OPENGL_SPACE: break;
+    case NA_UI_RADIO:        offsetRect.pos.y = 5.; break;
+    case NA_UI_SCREEN:       break;
+    case NA_UI_SELECT:       offsetRect.pos.y = -1.; break;
+    case NA_UI_SLIDER:       offsetRect.pos.y = -1.; break;
+    case NA_UI_SPACE:        break;
+    case NA_UI_TEXTBOX:      offsetRect.pos.y = 1.; break;
+    case NA_UI_TEXTFIELD:    offsetRect.pos.y = 3.; break;
+    case NA_UI_WINDOW:       break;
+    default: break;
     }
   }else{
     switch(naGetUIElementType(uiElement)) {
-    case NA_UI_APPLICATION:  return  0.;
-    case NA_UI_BUTTON:       return  0.;
-    case NA_UI_CHECKBOX:     return +3.;
-    case NA_UI_IMAGE_SPACE:  return  0.;
-    case NA_UI_LABEL:        return +3.;
-    case NA_UI_MENU:         return  0.;
-    case NA_UI_MENUITEM:     return  0.;
-    case NA_UI_METAL_SPACE:  return  0.;
-    case NA_UI_OPENGL_SPACE: return  0.;
-    case NA_UI_RADIO:        return +3.;
-    case NA_UI_SCREEN:       return  0.;
-    case NA_UI_SELECT:       return  0.;
-    case NA_UI_SLIDER:       return -2.;
-    case NA_UI_SPACE:        return  0.;
-    case NA_UI_TEXTBOX:      return  0.;
-    case NA_UI_TEXTFIELD:    return +1.;
-    case NA_UI_WINDOW:       return  0.;
-    default: return 0.;
+    case NA_UI_APPLICATION:  break;
+    case NA_UI_BUTTON:       break;
+    case NA_UI_CHECKBOX:     offsetRect.pos.y = 3.; break;
+    case NA_UI_IMAGE_SPACE:  break;
+    case NA_UI_LABEL:        offsetRect.pos.y = 3.; break;
+    case NA_UI_MENU:         break;
+    case NA_UI_MENUITEM:     break;
+    case NA_UI_METAL_SPACE:  break;
+    case NA_UI_OPENGL_SPACE: break;
+    case NA_UI_RADIO:        offsetRect.pos.y = 3.; break;
+    case NA_UI_SCREEN:       break;
+    case NA_UI_SELECT:       break;
+    case NA_UI_SLIDER:       offsetRect.pos.y = -2.; break;
+    case NA_UI_SPACE:        break;
+    case NA_UI_TEXTBOX:      break;
+    case NA_UI_TEXTFIELD:    offsetRect.pos.y = 1.; break;
+    case NA_UI_WINDOW:       break;
+    default: break;
     }
   }
+  
+  return offsetRect;
+}
+
+
+
+NA_HDEF NARect na_GetUIElementAdjustedRect(
+  const NA_UIElement* uiElement,
+  NARect rect)
+{
+  NARect adjustedRect = rect;
+
+  // In this function, the UI elements are offset such that text always is
+  // displayed on a common baseline. The reference element is a stateful
+  // text button. All spaces and stateful/image buttons have offset 0.
+  
+  NARect offsetRect = na_GetUIElementOffsetRect(uiElement);
+  
+  adjustedRect.pos.x += offsetRect.pos.x;
+  adjustedRect.pos.y += offsetRect.pos.y;
+  adjustedRect.size.width += offsetRect.size.width;
+  adjustedRect.size.height += offsetRect.size.height;
+  
+  return adjustedRect;
+}
+
+
+
+NA_HDEF NARect na_GetUIElementUnadjustedRect(
+  const NA_UIElement* uiElement,
+  NARect rect)
+{
+  NARect unadjustedRect = rect;
+
+  // This function reverses the offset computed in na_GetUIElementAdjustedRect.
+  
+  NARect offsetRect = na_GetUIElementOffsetRect(uiElement);
+  
+  unadjustedRect.pos.x -= offsetRect.pos.x;
+  unadjustedRect.pos.y -= offsetRect.pos.y;
+  unadjustedRect.size.width -= offsetRect.size.width;
+  unadjustedRect.size.height -= offsetRect.size.height;
+  
+  return unadjustedRect;
 }
 
 

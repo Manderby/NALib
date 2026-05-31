@@ -238,8 +238,8 @@ NA_HAPI void na_InitSystemUIElement(NA_UIElement* uiElement, void* nativePtr);
 NA_HAPI void na_ClearSystemUIElement(void* nativePtr);
 
 NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
-NA_HAPI double na_GetUIElementXOffset(const NA_UIElement* uiElement);
-NA_HAPI double na_GetUIElementYOffset(const NA_UIElement* uiElement);
+NA_HAPI NARect na_GetUIElementAdjustedRect(const NA_UIElement* uiElement, NARect rect);
+NA_HAPI NARect na_GetUIElementUnadjustedRect(const NA_UIElement* uiElement, NARect rect);
 
 NA_HAPI const NA_UIElement* na_GetUIElementCommonParent(const NA_UIElement* elem1, const NA_UIElement* elem2);
 

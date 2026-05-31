@@ -156,7 +156,6 @@ NA_HDEF NABool na_HasShortButton() {
   // and bottom mouse capture area is also 5 units shorter. Therefore, we add
   // 10 units and in naAddSpaceChild we move the button 5 units to the left
   // and bottom and enlarge the frame accordingly.
-  
   return isAtLeastMacOSVersion(11, 0) && !isAtLeastMacOSVersion(26, 0);
 }
 
