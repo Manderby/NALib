@@ -135,6 +135,14 @@ NA_DEF void naSetCheckBoxEnabled(NACheckBox* checkBox, NABool enabled) {
 
 
 
+NA_DEF void naSetCheckBoxText(NACheckBox* checkBox, const NAUTF8Char* text) {
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
+  SetWindowText(naGetUIElementNativePtr(checkBox), systemText);
+  naFree(systemText);
+}
+
+
+
 NA_DEF NABool naGetCheckBoxState(const NACheckBox* checkBox) {
   LPARAM state = SendMessage(naGetUIElementNativePtrConst(checkBox), BM_GETSTATE, 0, 0);
   return (state & BST_CHECKED) == BST_CHECKED;

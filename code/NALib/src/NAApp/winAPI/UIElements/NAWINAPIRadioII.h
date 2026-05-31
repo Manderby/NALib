@@ -132,6 +132,14 @@ NA_DEF void naSetRadioEnabled(NARadio* radio, NABool enabled) {
 
 
 
+NA_DEF void naSetRadioText(NARadio* radio, const NAUTF8Char* text) {
+  TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
+  SetWindowText(naGetUIElementNativePtr(radio), systemText);
+  naFree(systemText);
+}
+
+
+
 NA_DEF NABool naGetRadioState(const NARadio* radio) {
   LPARAM state = SendMessage(naGetUIElementNativePtrConst(radio), BM_GETSTATE, 0, 0);
   return (state & BST_CHECKED) == BST_CHECKED;
