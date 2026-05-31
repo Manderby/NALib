@@ -71,6 +71,9 @@ NA_HIDEF size_t na_GetImageDataSize(const NAImage* image) {
 #if NA_DEBUG
   if(!image)
     naCrash("image is nullptr");
+  // https://github.com/Manderby/NALib/pull/65
+  if(na_GetImagePixelCount(image) > SIZE_MAX / sizeof(NAColor))
+    naCrash("image size exceeds memory capability");
 #endif
   return na_GetImagePixelCount(image) * sizeof(NAColor);
 }
