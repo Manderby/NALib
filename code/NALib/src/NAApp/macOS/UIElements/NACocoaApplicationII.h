@@ -40,7 +40,6 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
 }
 
 - (void)handleDidFinishLaunching:(NSNotification *)notification {
-
   [self
     performSelector:@selector(handleDidFinishLaunchingAfterAll:)
     withObject:notification
@@ -63,20 +62,20 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
   if(![NSApp delegate]) {
     // Show with a dock icon:
     [NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
-
-    // Without this event, the applicationDidBecomeActive will not be called.
-    NSEvent* activationEvent = [NSEvent
-      otherEventWithType: NSEventTypeAppKitDefined
-      location: NSMakePoint(0, 0)
-      modifierFlags: 0
-      timestamp: 0
-      windowNumber: 0
-      context: nil
-      subtype: NSEventSubtypeApplicationActivated
-      data1: 0
-      data2: 0];
-    [NSApp sendEvent:activationEvent];
   }
+
+  // Without this event, the applicationDidBecomeActive might not be called.
+  NSEvent* activationEvent = [NSEvent
+    otherEventWithType: NSEventTypeAppKitDefined
+    location: NSMakePoint(0, 0)
+    modifierFlags: 0
+    timestamp: 0
+    windowNumber: 0
+    context: nil
+    subtype: NSEventSubtypeApplicationActivated
+    data1: 0
+    data2: 0];
+  [NSApp sendEvent:activationEvent];
 }
 
 - (void)handleDidBecomeActive:(NSNotification *)notification {
@@ -138,29 +137,6 @@ NA_DEF void naStartApplication(
 
   // Start the shared application if not started already.
   [NSApplication sharedApplication];
-  
-  // After the following call, the Translator and Notifier will be ready.
-  na_NewApplication();
-
-  // Put an autorelease pool in place for the startup sequence.
-  #if !NA_MACOS_USES_ARC
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-  #endif
-  
-    // Call preStartup if desired.
-    if(preStartup) {
-      preStartup(arg);
-    }
-
-    // Set the preferred translator languages.
-    naResetApplicationPreferredTranslatorLanguages();
-
-    // Let the Macintosh System know that the app is ready to run.
-    [NSApp finishLaunching];
-    
-  #if !NA_MACOS_USES_ARC
-    [pool drain]; // also releases the pool. No separate release necessary.
-  #endif
 
   // We want to get notified about the DidFinishLaunching and DidBecomeActive
   // notification because that is the point when the UI needs to be activated
@@ -190,6 +166,29 @@ NA_DEF void naStartApplication(
     selector:@selector(handleApplicationDidChangeScreenParameters:)
     name:NSApplicationDidChangeScreenParametersNotification
     object:nil];
+  
+  // After the following call, the Translator and Notifier will be ready.
+  na_NewApplication();
+
+  // Put an autorelease pool in place for the startup sequence.
+  #if !NA_MACOS_USES_ARC
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+  #endif
+  
+    // Call preStartup if desired.
+    if(preStartup) {
+      preStartup(arg);
+    }
+
+    // Set the preferred translator languages.
+    naResetApplicationPreferredTranslatorLanguages();
+
+    // Let the Macintosh System know that the app is ready to run.
+    [NSApp finishLaunching];
+    
+  #if !NA_MACOS_USES_ARC
+    [pool drain]; // also releases the pool. No separate release necessary.
+  #endif
     
   // Start the event loop.
   NSDate* distantFuture = [NSDate distantFuture];

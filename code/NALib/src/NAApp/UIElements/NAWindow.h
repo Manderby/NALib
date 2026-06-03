@@ -74,6 +74,7 @@ NA_API void naCloseWindowModal(NAWindow* window);
 
 // Returns the screen the window is attached to.
 NA_API const NAScreen* naGetWindowScreen(const NAWindow* window);
+NA_API NAScreen* naGetWindowScreenMutable(NAWindow* window);
 
 // During a NA_UI_COMMAND_CLOSES command, call this function to prevent the
 // window from closing. If not called, the window will close.

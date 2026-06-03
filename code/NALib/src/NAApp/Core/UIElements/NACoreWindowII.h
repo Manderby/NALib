@@ -38,6 +38,8 @@ NA_HDEF void na_ClearWindow(NAWindow* window) {
   
   if(window->contentSpace)
     naDelete(window->contentSpace);
+
+  na_RemoveScreenWindow(naGetWindowScreenMutable(window), window);
   
   na_ClearCoreUIElement(&window->uiElement);
 }
@@ -93,6 +95,10 @@ NA_HDEF void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen) {
 
 NA_DEF const NAScreen* naGetWindowScreen(const NAWindow* window) {
   return naGetUIElementParent(window);
+}
+
+NA_DEF NAScreen* naGetWindowScreenMutable(NAWindow* window) {
+  return naGetUIElementParentMutable(window);
 }
 
 
