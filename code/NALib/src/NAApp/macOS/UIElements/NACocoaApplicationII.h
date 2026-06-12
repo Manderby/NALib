@@ -45,8 +45,24 @@ NA_RUNTIME_TYPE(NACocoaApplication, na_DestructCocoaApplication, NA_FALSE);
     withObject:notification
     afterDelay:0];
 
+  [NSApp addObserver:self
+          forKeyPath:@"effectiveAppearance"
+             options:NSKeyValueObservingOptionNew
+             context:nil];
+
   // We only needed this for the startup.
   [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationDidFinishLaunchingNotification object:nil]; 
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey,id> *)change
+                       context:(void *)context {
+  if ([keyPath isEqualToString:@"effectiveAppearance"]) {
+    if(!na_DispatchUIElementCommand(&naGetApplication()->uiElement, NA_UI_COMMAND_RESHAPE)) {
+      // nothing to do
+    }
+  }
 }
 
 - (void)handleDidFinishLaunchingAfterAll:(NSNotification *)notification {

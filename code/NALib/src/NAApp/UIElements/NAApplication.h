@@ -9,7 +9,7 @@
 
 // An NAApplication can react to the following commands:
 //
-// NA_UI_COMMAND_RESHAPE       If any screen setup changes
+// NA_UI_COMMAND_RESHAPE  If any screen setup changes or the system appearance
 
 
 

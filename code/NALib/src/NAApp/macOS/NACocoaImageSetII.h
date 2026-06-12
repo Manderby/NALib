@@ -22,33 +22,33 @@
 
   NA_DEF NASkin naGetCurrentSkin(void) {
     NASkin skin = NA_SKIN_LIGHT;
-    NSAppearanceName appearancename = NSAppearanceNameAqua;
+    NSAppearanceName appearanceName = NSAppearanceNameAqua;
 
     #if defined __MAC_11_0
-      NA_MACOS_AVAILABILITY_GUARD_11_0(
-        if([NSAppearance respondsToSelector:@selector(currentDrawingAppearance)]) {
-          appearancename = [[NSAppearance currentDrawingAppearance] name];
-        }
+      NA_MACOS_AVAILABILITY_GUARD_10_14(
+        appearanceName = [[NSApp effectiveAppearance] name];
       )
+      // In earlier versions of NALib, NSAppearance currentDrawingAppearance
+      // was used which was unreliable.
     #else
       if([NSAppearance respondsToSelector:@selector(currentAppearance)]) {
         if([[NSAppearance currentAppearance] respondsToSelector:@selector(name)]) {
           NA_MACOS_AVAILABILITY_GUARD_10_9(
-            appearancename = [[NSAppearance currentAppearance] name];
+            appearanceName = [[NSAppearance currentAppearance] name];
           )
         }
       }
     #endif
 
     NA_MACOS_AVAILABILITY_GUARD_10_10(
-      if(appearancename == NSAppearanceNameVibrantDark) {
+      if(appearanceName == NSAppearanceNameVibrantDark) {
         skin = NA_SKIN_DARK;
       }
     )
     NA_MACOS_AVAILABILITY_GUARD_10_14(
-      if(appearancename == NSAppearanceNameDarkAqua
-      || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
-      || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark) {
+      if(appearanceName == NSAppearanceNameDarkAqua
+      || appearanceName == NSAppearanceNameAccessibilityHighContrastDarkAqua
+      || appearanceName == NSAppearanceNameAccessibilityHighContrastVibrantDark) {
         skin = NA_SKIN_DARK;
       }
     )

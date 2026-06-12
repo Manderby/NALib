@@ -287,7 +287,9 @@ NA_DEF void naSetWindowSkin(NAWindow* window, NASkin skin) {
     break;
   case NA_SKIN_PLAIN:
   case NA_SKIN_SYSTEM:
-    [nativePtr setAppearance:[NSAppearance currentDrawingAppearance]];
+    // Setting the appearance to nil resets it to whatever effectiveAppearance
+    // of the Application is.
+    [nativePtr setAppearance:nil];
     break;
   }
 }
