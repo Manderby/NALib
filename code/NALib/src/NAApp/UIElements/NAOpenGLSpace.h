@@ -107,25 +107,24 @@ NA_API const double* naGetOpenGLSpaceTransformation(const NAOpenGLSpace* openGLS
 // after reacting to NA_UI_COMMAND_TRANSFORMED.
 NA_API void naResetOpenGLSpaceTransformation(NAOpenGLSpace* openGLSpace);
 
-
-
-// To have more control about onscreen and offscreen buffers, you can use the
-// following functions.
-typedef void NAOpenGLContext;
-NA_API NAOpenGLContext* naAllocateOpenGLContextOnscreen(void* systemContext);
-NA_API NAOpenGLContext* naAllocateOpenGLContextOffscreen(NASizes size);
-NA_API void naDeallocateOpenGLContext(NAOpenGLContext* openGLContext);
-
-// Returns the system specific context of an NAOpenGLSpace to be used for
-// example for naAllocateOpenGLContextOnscreen.
+// Returns the system specific context of an NAOpenGLSpace.
 // macOS: NSOpenGLContext*
 // WINAPI: HDC
 NA_API void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace);
 
+
+
+// //////////////////////////
+// Offscreen render context.
+
+typedef void NAOpenGLOffscreenContext;
+NA_API NAOpenGLOffscreenContext* naAllocateOpenGLContextOffscreen(NASizes size);
+NA_API void naDeallocateOpenGLContext(NAOpenGLOffscreenContext* openGLContext);
+
 // Activate, Deactivate and Swap Contexts
-NA_API void naSwapOpenGLContext(NAOpenGLContext* openGLContext);
-NA_API void naActivateOpenGLContext(NAOpenGLContext* openGLContext);
-NA_API void naDeactivateOpenGLContext(NAOpenGLContext* openGLContext);
+NA_API void naSwapOpenGLContext(NAOpenGLOffscreenContext* openGLContext);
+NA_API void naActivateOpenGLContext(NAOpenGLOffscreenContext* openGLContext, NASizes size);
+NA_API void naDeactivateOpenGLContext(NAOpenGLOffscreenContext* openGLContext);
 
 
 

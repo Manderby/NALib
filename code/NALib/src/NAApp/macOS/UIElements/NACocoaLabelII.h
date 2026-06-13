@@ -129,7 +129,7 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
 
 - (id) initWithLabel:(NACocoaLabel*)newCocoaLabel frame:(NSRect)frame{
   self = [super initWithFrame:frame];
-//  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
+//  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Test"]];
   [self setSelectable:YES];
   [self setEditable:NO];
   [self setBordered:NO];

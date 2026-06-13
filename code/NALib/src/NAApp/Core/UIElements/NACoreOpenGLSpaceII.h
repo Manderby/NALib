@@ -238,6 +238,8 @@
     naFillM33dWithDiag(openGLSpace->transformation, 1.);
   }
 
+
+
 #else
 
   NA_DEF size_t naStartupPixelFont(void) {

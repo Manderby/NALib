@@ -229,7 +229,7 @@
   #define NAButtonTypeRadio               NSButtonTypeRadio
   #define NAButtonTypeSwitch              NSButtonTypeSwitch
   #define NAButtonTypeToggle              NSButtonTypeToggle
-  #define NAOpenGLContextParameterSwapInterval  NSOpenGLContextParameterSwapInterval
+  #define NAOpenGLOffscreenContextParameterSwapInterval  NSOpenGLContextParameterSwapInterval
   #define NAStateOff                      NSControlStateValueOff
   #define NAStateOn                       NSControlStateValueOn
 #else // deprecated definitions before 10.14
@@ -240,7 +240,7 @@
   #define NAButtonTypeRadio               NSRadioButton
   #define NAButtonTypeSwitch              NSSwitchButton
   #define NAButtonTypeToggle              NSToggleButton
-  #define NAOpenGLContextParameterSwapInterval  NSOpenGLCPSwapInterval
+  #define NAOpenGLOffscreenContextParameterSwapInterval  NSOpenGLCPSwapInterval
   #define NAStateOff                      NSOffState
   #define NAStateOn                       NSOnState
 #endif

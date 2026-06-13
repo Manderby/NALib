@@ -233,17 +233,6 @@ struct NA_WINAPIOpenGLContext {
 
 
 
-NA_DEF void* naAllocateOpenGLContextOnscreen(void* systemContext) {
-  NA_WINAPIOpenGLContext* naContext = naAlloc(NA_WINAPIOpenGLContext);
-  naContext->onScreen = NA_TRUE;
-  naContext->hDC = systemContext;
-  naContext->hRC = NA_NULL;
-  naContext->hiddenWindow = NA_NULL;
-  return naContext;
-}
-
-
-
 NA_DEF void* naAllocateOpenGLContextOffscreen(NASizes size) {
   DWORD error;
 
@@ -333,7 +322,7 @@ NA_DEF void naSwapOpenGLContext(void* openGLContext) {
 }
 
 
-NA_DEF void naActivateOpenGLContext(void* openGLContext) {
+NA_DEF void naActivateOpenGLContext(void* openGLContextNASizes size) {
   NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)openGLContext;
 
   if(!naContext->onScreen) {
