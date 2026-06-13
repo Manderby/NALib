@@ -233,7 +233,7 @@ struct NA_WINAPIOpenGLContext {
 
 
 
-NA_DEF void* naAllocateOpenGLContextOffscreen(NASizes size) {
+NA_DEF void* naAllocateOpenGLOffscreenContext() {
   DWORD error;
 
   NA_WINAPIOpenGLContext* naContext = naAlloc(NA_WINAPIOpenGLContext);
@@ -287,7 +287,7 @@ NA_DEF void* naAllocateOpenGLContextOffscreen(NASizes size) {
 
 
 
-NA_DEF void naDeallocateOpenGLContext(void* openGLContext) {
+NA_DEF void naDeallocateOpenGLOffscreenContext(void* openGLContext) {
   NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)openGLContext;
   
   if(!naContext->onScreen) {
@@ -310,8 +310,8 @@ NA_DEF void naDeallocateOpenGLContext(void* openGLContext) {
 
 
 
-NA_DEF void naSwapOpenGLContext(void* openGLContext) {
-  NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)openGLContext;
+NA_DEF void naSwapOpenGLOffscreenContext(void* offscreenContext) {
+  NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)offscreenContext;
 
   #if NA_DEBUG
     if(!naContext->hDC)
@@ -322,7 +322,7 @@ NA_DEF void naSwapOpenGLContext(void* openGLContext) {
 }
 
 
-NA_DEF void naActivateOpenGLContext(void* openGLContextNASizes size) {
+NA_DEF void naActivateOpenGLOffscreenContext(NAOpenGLOffscreenContext* offscreenContext, NASizes size) {
   NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)openGLContext;
 
   if(!naContext->onScreen) {
@@ -348,8 +348,8 @@ NA_DEF void naActivateOpenGLContext(void* openGLContextNASizes size) {
 
 
 
-NA_DEF void naDeactivateOpenGLContext(void* openGLContext) {
-  NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)openGLContext;
+NA_DEF void naDeactivateOpenGLOffscreenContext(void* offscreenContext) {
+  NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)offscreenContext;
 
   if(!naContext->onScreen) {
     DWORD error;

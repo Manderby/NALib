@@ -337,6 +337,118 @@ NA_HDEF void na_UpdateMetalSpaceUIScale(NA_UIElement* metalSpace) {
 
 
 
+
+
+
+  typedef struct NA_CocoaMetalOffscreenContext NA_CocoaMetalOffscreenContext;
+  struct NA_CocoaMetalOffscreenContext {
+//    CGLContextObj cglContextObj;
+//    GLuint frameBuffer;
+//    GLuint renderBuffer;
+    int asdf;
+  };
+
+
+
+  NA_DEF NAMetalOffscreenContext* naAllocateMetalOffscreenContext() {
+    NA_CocoaMetalOffscreenContext* cocoaOffscreenContext = naAlloc(NA_CocoaMetalOffscreenContext);
+
+//    // Definition of the pixel format
+//    CGLPixelFormatAttribute pixelFormatAttributes[] = {
+//      kCGLPFAColorSize, (CGLPixelFormatAttribute) 32,
+//      kCGLPFAAlphaSize, (CGLPixelFormatAttribute) 8,
+//      kCGLPFAAllowOfflineRenderers,
+//      (CGLPixelFormatAttribute) 0,
+//    };
+//
+//    CGLPixelFormatObj pixelFormat;
+//    GLint numberOfPixels;
+//    CGLChoosePixelFormat(pixelFormatAttributes, &pixelFormat, &numberOfPixels);
+//
+//    // create the Metal context object with that pixel format
+//    CGLCreateContext(pixelFormat, 0, &cocoaOffscreenContext->cglContextObj);
+//    
+//    // We do not need the pixel format anymore.
+//    CGLDestroyPixelFormat(pixelFormat);
+//    
+//    cocoaOffscreenContext->frameBuffer = 0;
+//    cocoaOffscreenContext->renderBuffer = 0;
+
+    return cocoaOffscreenContext;
+  }
+
+
+
+  NA_DEF void naDeallocateMetalOffscreenContext(NAMetalOffscreenContext* offscreenContext) {
+    NA_CocoaMetalOffscreenContext* cocoaOffscreenContext = (NA_CocoaMetalOffscreenContext*)offscreenContext;
+//    #if NA_DEBUG
+//      if(cocoaOffscreenContext->frameBuffer || cocoaOffscreenContext->renderBuffer)
+//        naError("frameBuffer or renderBuffer still existing. Call naDeactivateMetalOffscreenContext first");
+//    #endif
+//
+//    CGLDestroyContext(cocoaOffscreenContext->cglContextObj);
+    naFree(cocoaOffscreenContext);
+  }
+
+
+
+  NA_DEF void naSwapMetalOffscreenContext(NAMetalOffscreenContext* offscreenContext) {
+//    NA_CocoaMetalOffscreenContext* cocoaOffscreenContext = (NA_CocoaMetalOffscreenContext*)offscreenContext;
+//    CGLFlushDrawable(cocoaOffscreenContext->cglContextObj);
+  }
+
+
+
+  NA_DEF void naActivateMetalOffscreenContext(NAMetalOffscreenContext* offscreenContext, NASizes size) {
+    NA_CocoaMetalOffscreenContext* cocoaOffscreenContext = (NA_CocoaMetalOffscreenContext*)offscreenContext;
+//    #if NA_DEBUG
+//      if(cocoaOffscreenContext->frameBuffer || cocoaOffscreenContext->renderBuffer)
+//        naError("frameBuffer or renderBuffer already existing");
+//    #endif
+//  
+//    // To set up frame and render buffers, we need the context to be current.
+//    CGLSetCurrentContext(cocoaOffscreenContext->cglContextObj);
+//
+//    // Setup frame buffer.
+//    glGenFramebuffers(1, &cocoaOffscreenContext->frameBuffer);
+//    glBindFramebuffer(GL_FRAMEBUFFER, cocoaOffscreenContext->frameBuffer);
+//
+//    // Attach one RGBA render buffer as color attachement.
+//    glGenRenderbuffers(1, &cocoaOffscreenContext->renderBuffer);
+//    glBindRenderbuffer(GL_RENDERBUFFER, cocoaOffscreenContext->renderBuffer);
+//    glRenderbufferStorage(
+//      GL_RENDERBUFFER,
+//      GL_RGBA,
+//      (GLsizei)size.width,
+//      (GLsizei)size.height);
+//    glFramebufferRenderbuffer(
+//      GL_FRAMEBUFFER,
+//      GL_COLOR_ATTACHMENT0,
+//      GL_RENDERBUFFER,
+//      cocoaOffscreenContext->renderBuffer);
+  }
+
+
+
+  NA_DEF void naDeactivateMetalOffscreenContext(NAMetalOffscreenContext* offscreenContext) {
+    NA_CocoaMetalOffscreenContext* cocoaOffscreenContext = (NA_CocoaMetalOffscreenContext*)offscreenContext;
+//    #if NA_DEBUG
+//      if(CGLGetCurrentContext() != cocoaOffscreenContext->cglContextObj)
+//        naError("Metal context to deactivate is not current");
+//      if(!cocoaOffscreenContext->frameBuffer || !cocoaOffscreenContext->renderBuffer)
+//        naError("no frameBuffer or renderBuffer existing");
+//    #endif
+//    
+//    glDeleteRenderbuffers(1, &cocoaOffscreenContext->renderBuffer);
+//    glDeleteFramebuffers(1, &cocoaOffscreenContext->frameBuffer);
+//    cocoaOffscreenContext->renderBuffer = 0;
+//    cocoaOffscreenContext->frameBuffer = 0;
+  }
+
+
+
+
+
 #else
 
   NA_DEF NAMetalSpace* naNewMetalSpace(NASize size) {

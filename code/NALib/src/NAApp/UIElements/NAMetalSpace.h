@@ -66,6 +66,26 @@ NA_API void naResetMetalSpaceTransformation(NAMetalSpace* metalSpace);
 
 
 
+// //////////////////////////
+// Offscreen context.
+
+typedef void NAMetalOffscreenContext;
+NA_API NAMetalOffscreenContext* naAllocateMetalOffscreenContext();
+NA_API void naDeallocateMetalOffscreenContext(
+  NAMetalOffscreenContext* offscreenContext);
+
+// Activate, Deactivate and Swap Contexts
+NA_API void naSwapMetalOffscreenContext(
+  NAMetalOffscreenContext* offscreenContext);
+NA_API void naActivateMetalOffscreenContext(
+  NAMetalOffscreenContext* offscreenContext,
+  NASizes size);
+NA_API void naDeactivateMetalOffscreenContext(
+  NAMetalOffscreenContext* offscreenContext);
+
+
+
+
 #ifdef __cplusplus
   } // extern "C"
 #endif

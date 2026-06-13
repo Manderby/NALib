@@ -115,16 +115,21 @@ NA_API void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace);
 
 
 // //////////////////////////
-// Offscreen render context.
+// Offscreen context.
 
 typedef void NAOpenGLOffscreenContext;
-NA_API NAOpenGLOffscreenContext* naAllocateOpenGLContextOffscreen(NASizes size);
-NA_API void naDeallocateOpenGLContext(NAOpenGLOffscreenContext* openGLContext);
+NA_API NAOpenGLOffscreenContext* naAllocateOpenGLOffscreenContext();
+NA_API void naDeallocateOpenGLOffscreenContext(
+  NAOpenGLOffscreenContext* offscreenContext);
 
 // Activate, Deactivate and Swap Contexts
-NA_API void naSwapOpenGLContext(NAOpenGLOffscreenContext* openGLContext);
-NA_API void naActivateOpenGLContext(NAOpenGLOffscreenContext* openGLContext, NASizes size);
-NA_API void naDeactivateOpenGLContext(NAOpenGLOffscreenContext* openGLContext);
+NA_API void naSwapOpenGLOffscreenContext(
+  NAOpenGLOffscreenContext* offscreenContext);
+NA_API void naActivateOpenGLOffscreenContext(
+  NAOpenGLOffscreenContext* offscreenContext,
+  NASizes size);
+NA_API void naDeactivateOpenGLOffscreenContext(
+  NAOpenGLOffscreenContext* offscreenContext);
 
 
 
