@@ -614,11 +614,15 @@ NA_DEF void naHideMouseUntilMovement(NABool hide) {
 
 
 NA_DEF NACursorImage* naAllocCursorImage(const NAImageSet* imageSet, NAPos hotspot, double uiScale) {
+  
+  hotspot.y -= 1.; // NSCursor images are aligned top left instead of bottom left.
+  
   NSImage* nsImage = na_CreateResolutionIndependentNativeImage(
     imageSet,
     NA_IMAGE_SET_INTERACTION_NONE,
     NA_FALSE,
-    uiScale);
+    uiScale,
+    NA_TRUE);
   return NA_COCOA_PTR_OBJC_TO_C([[NSCursor alloc] initWithImage:nsImage hotSpot:naMakeNSPointWithPos(hotspot)]);
 }
 

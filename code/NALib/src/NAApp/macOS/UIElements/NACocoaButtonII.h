@@ -138,19 +138,22 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
         imageSet,
         NA_IMAGE_SET_INTERACTION_NONE,
         secondaryState,
-        uiScale)];
+        uiScale,
+        NA_FALSE)];
         
       [self setAlternateImage:na_CreateResolutionIndependentNativeImage(
         imageSet,
         NA_IMAGE_SET_INTERACTION_PRESSED,
         secondaryState,
-        uiScale)];
+        uiScale,
+        NA_FALSE)];
     }else{
       [self setImage:na_CreateResolutionIndependentNativeImage(
         imageSet,
         NA_IMAGE_SET_INTERACTION_DISABLED,
         secondaryState,
-        uiScale)];
+        uiScale,
+        NA_FALSE)];
         
       [self setAlternateImage:nil];
     }
@@ -171,7 +174,8 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
       imageSet,
       NA_IMAGE_SET_INTERACTION_HOVER,
       secondaryState,
-      uiScale)];
+      uiScale,
+        NA_FALSE)];
   }
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_ENTERED)) {
     [super mouseEntered:event];
@@ -189,7 +193,8 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
       imageSet,
       NA_IMAGE_SET_INTERACTION_NONE,
       secondaryState,
-      uiScale)];
+      uiScale,
+        NA_FALSE)];
   }
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaButton, NA_UI_COMMAND_MOUSE_EXITED)) {
     [super mouseExited:event];

@@ -30,7 +30,8 @@ NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
       imageSet,
       NA_IMAGE_SET_INTERACTION_NONE,
       NA_FALSE,
-      uiScale);
+      uiScale,
+        NA_FALSE);
     [self setImage:image];
   }else{
     [self setImage:nil];

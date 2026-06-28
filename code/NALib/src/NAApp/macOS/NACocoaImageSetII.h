@@ -166,7 +166,8 @@ NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
   const NAImageSet* imageSet,
   NAImageSetInteraction interaction,
   NABool secondaryState,
-  double uiScale)
+  double uiScale,
+  NABool forceOldMethod)
 {
   NSImage* image = nil;
 
@@ -174,7 +175,7 @@ NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
   // This is commented out as there have been severe problems with this working
   // on different computers. The context sometimes simply does not seem to be
   // there and returns null, resulting in empty images.
-  if([NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]) {
+  if(!forceOldMethod && [NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]) {
     NA_MACOS_AVAILABILITY_GUARD_10_8(
       NSSize imageSize = NSMakeSize(naGetImageSet1xSize(imageSet).width, naGetImageSet1xSize(imageSet).height);
       image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
