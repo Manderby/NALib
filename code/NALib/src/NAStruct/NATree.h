@@ -371,6 +371,8 @@ NA_IAPI void naBubbleTreeToken(
 // which store a key, you can even send a limit in which range the tree shall
 // be traversed. You can send nullptr if you want the whole tree to be
 // traversed.
+//
+// Note that the upper limit is non-inclusive. Meaning [lower, upper)
 NA_IAPI NABool naIterateTree(
   NATreeIterator* iter,
   const void* lowerLimit,
