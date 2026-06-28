@@ -58,6 +58,24 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
   NA_COCOA_SUPER_DEALLOC();
 }
 
+- (BOOL)performKeyEquivalent:(NSEvent *)event {
+  if ([event modifierFlags] & (NAEventModifierFlagCommand)) {
+    NSString* chars = event.characters;
+    if ([[event charactersIgnoringModifiers] isEqualToString:@"c"]) {
+      if ([NSApp sendAction:@selector(copy:) to:nil from:self]) { return YES; }
+    }else if ([[event charactersIgnoringModifiers] isEqualToString:@"x"]) {
+      if ([NSApp sendAction:@selector(cut:) to:nil from:self]) { return YES; }
+    }else if ([[event charactersIgnoringModifiers] isEqualToString:@"v"]) {
+      if ([NSApp sendAction:@selector(paste:) to:nil from:self]) { return YES; }
+    }else if ([[event charactersIgnoringModifiers] isEqualToString:@"a"]) {
+      if ([NSApp sendAction:@selector(selectAll:) to:nil from:self]) { return YES; }
+    }
+  }
+  
+  // Return NO to allow default handling or propagation to super
+  return [super performKeyEquivalent:event];
+}
+
 - (void)paste:(id) sender{
   [self pasteAsPlainText:sender];
 }

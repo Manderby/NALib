@@ -34,6 +34,25 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
   return self;
 }
 
+- (BOOL)performKeyEquivalent:(NSEvent *)event {
+  if ([event modifierFlags] & (NAEventModifierFlagCommand)) {
+    NSString* chars = event.characters;
+    if ([[event charactersIgnoringModifiers] isEqualToString:@"c"]) {
+      if ([NSApp sendAction:@selector(copy:) to:nil from:self]) { return YES; }
+    }else if ([[event charactersIgnoringModifiers] isEqualToString:@"x"]) {
+      if ([NSApp sendAction:@selector(cut:) to:nil from:self]) { return YES; }
+    }else if ([[event charactersIgnoringModifiers] isEqualToString:@"v"]) {
+      if ([NSApp sendAction:@selector(paste:) to:nil from:self]) { return YES; }
+    }else if ([[event charactersIgnoringModifiers] isEqualToString:@"a"]) {
+      if ([NSApp sendAction:@selector(selectAll:) to:nil from:self]) { return YES; }
+    }
+  }
+  
+  // Return NO to allow default handling or propagation to super
+  return [super performKeyEquivalent:event];
+}
+
+
 - (void) controlTextDidEndEditing:(NSNotification *)notification{
   NA_UNUSED(notification);
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaTextField, NA_UI_COMMAND_EDIT_FINISHED)) {

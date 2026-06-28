@@ -189,10 +189,9 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
           elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE void*)firstResponder);
           if(elem) {
             NAUIElementType type = naGetUIElementType(elem);
-            if(type == NA_UI_TEXTFIELD || type == NA_UI_TEXTBOX) {
+            if([event type] == NAEventTypeKeyDown && (type == NA_UI_TEXTFIELD || type == NA_UI_TEXTBOX)) {
               // Textfields and Textboxes do not intercept keyboard shortcuts.
-              // Otherwise, copy and past would not work properly.
-              return retValue;
+              return [firstResponder performKeyEquivalent: event];
             }
           }else{
             if(firstResponder == focusWindow) {
