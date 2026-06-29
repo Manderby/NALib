@@ -58,6 +58,11 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
   NA_COCOA_SUPER_DEALLOC();
 }
 
+- (void)setFrame:(NSRect)frame {
+  [scrollView setFrame:frame];
+  [super setFrame: frame];
+}
+
 - (BOOL)performKeyEquivalent:(NSEvent *)event {
   if ([event modifierFlags] & (NAEventModifierFlagCommand)) {
     NSString* chars = event.characters;
