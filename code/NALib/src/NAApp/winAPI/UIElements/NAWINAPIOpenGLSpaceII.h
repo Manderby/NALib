@@ -234,53 +234,10 @@ struct NA_WINAPIOpenGLContext {
 
 
 NA_DEF void* naAllocateOpenGLOffscreenContext() {
-  DWORD error;
-
   NA_WINAPIOpenGLContext* naContext = naAlloc(NA_WINAPIOpenGLContext);
   naContext->onScreen = NA_FALSE;
   naContext->hDC = NA_NULL;
   naContext->hRC = NA_NULL;
-
-  // The proper way nowadays is indeed to create a hidden window and use the
-  // device context given. Using a memory device does not allow for hardware
-  // acceleration.
-  naContext->hiddenWindow = CreateWindow(
-    TEXT("NAOffscreenWindow"),
-    TEXT(""),
-    WS_POPUP | WS_EX_NOACTIVATE,
-      0,
-      0,
-      (LONG)(size.width),
-      (LONG)(size.height),
-    NULL,
-    NULL,
-    naGetUIElementNativePtr(naGetApplication()),
-    NULL);
-  error = GetLastError();
-
-  naContext->hDC = GetDC(naContext->hiddenWindow);
-  error = GetLastError();
-
-  // define pixel format for device context
-  PIXELFORMATDESCRIPTOR pfd;
-  ZeroMemory( &pfd, sizeof( pfd ) );
-  pfd.nSize = sizeof( pfd );
-  pfd.nVersion = 1;
-  pfd.dwFlags = PFD_SUPPORT_OPENGL;// | PFD_DOUBLEBUFFER;
-  pfd.iPixelType = PFD_TYPE_RGBA;
-  pfd.cAlphaBits = 8;
-  pfd.cColorBits = 24;
-  pfd.cDepthBits = 16;
-  pfd.iLayerType = PFD_MAIN_PLANE;
-  int format = ChoosePixelFormat( naContext->hDC, &pfd );
-  error = GetLastError();
-
-  PIXELFORMATDESCRIPTOR pfd2;
-  DescribePixelFormat(naContext->hDC, format, sizeof(PIXELFORMATDESCRIPTOR), &pfd2);
-  error = GetLastError();
-
-  SetPixelFormat( naContext->hDC, format, &pfd2 );
-  error = GetLastError();
 
   return naContext;
 }
@@ -323,10 +280,51 @@ NA_DEF void naSwapOpenGLOffscreenContext(void* offscreenContext) {
 
 
 NA_DEF void naActivateOpenGLOffscreenContext(NAOpenGLOffscreenContext* offscreenContext, NASizes size) {
-  NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)openGLContext;
+  NA_WINAPIOpenGLContext* naContext = (NA_WINAPIOpenGLContext*)offscreenContext;
 
   if(!naContext->onScreen) {
     DWORD error;
+
+    // The proper way nowadays is indeed to create a hidden window and use the
+    // device context given. Using a memory device does not allow for hardware
+    // acceleration.
+    naContext->hiddenWindow = CreateWindow(
+      TEXT("NAOffscreenWindow"),
+      TEXT(""),
+      WS_POPUP | WS_EX_NOACTIVATE,
+      0,
+      0,
+      (LONG)(size.width),
+      (LONG)(size.height),
+      NULL,
+      NULL,
+      naGetUIElementNativePtr(naGetApplication()),
+      NULL);
+    error = GetLastError();
+
+    naContext->hDC = GetDC(naContext->hiddenWindow);
+    error = GetLastError();
+
+    // define pixel format for device context
+    PIXELFORMATDESCRIPTOR pfd;
+    ZeroMemory( &pfd, sizeof( pfd ) );
+    pfd.nSize = sizeof( pfd );
+    pfd.nVersion = 1;
+    pfd.dwFlags = PFD_SUPPORT_OPENGL;// | PFD_DOUBLEBUFFER;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.cAlphaBits = 8;
+    pfd.cColorBits = 24;
+    pfd.cDepthBits = 16;
+    pfd.iLayerType = PFD_MAIN_PLANE;
+    int format = ChoosePixelFormat( naContext->hDC, &pfd );
+    error = GetLastError();
+
+    PIXELFORMATDESCRIPTOR pfd2;
+    DescribePixelFormat(naContext->hDC, format, sizeof(PIXELFORMATDESCRIPTOR), &pfd2);
+    error = GetLastError();
+
+    SetPixelFormat( naContext->hDC, format, &pfd2 );
+    error = GetLastError();
 
     #if NA_DEBUG
       if(naContext->hRC)
