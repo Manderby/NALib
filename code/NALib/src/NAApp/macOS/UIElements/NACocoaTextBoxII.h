@@ -60,7 +60,7 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 
 - (void)setFrame:(NSRect)frame {
   [scrollView setFrame:frame];
-  [super setFrame: frame];
+  [super setFrame:frame];
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event {

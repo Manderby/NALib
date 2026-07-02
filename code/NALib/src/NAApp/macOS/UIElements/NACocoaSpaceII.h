@@ -245,6 +245,11 @@ NA_HDEF NSView* _Nonnull na_getNSViewOfChild(void* _Nonnull child) {
 NA_DEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NABool raw) {
   naDefineCocoaObject(NACocoaNativeSpace, nativeSpacePtr, space);
 
+  NASpace* prevSpace = naGetUIElementParentSpaceMutable(child);
+  if(prevSpace) {
+    naRemoveSpaceChild(prevSpace, child);
+  }
+
   NSView* childView = na_getNSViewOfChild(child);  
   
   [nativeSpacePtr addSubview:childView];
@@ -282,7 +287,8 @@ NA_DEF void naRemoveSpaceChild(NASpace* _Nonnull space, void* _Nonnull child) {
   naClearListIterator(&iter);
   if(found) {
     na_RemoveSpaceChild(space, child);
-    [(NA_COCOA_BRIDGE NSView*)(naGetUIElementNativePtr(child)) removeFromSuperview];
+    NSView* childView = na_getNSViewOfChild(child);  
+    [(NA_COCOA_BRIDGE NSView*)(childView) removeFromSuperview];
   }else{
     #if NA_DEBUG
       naError("Child UI element not found in given space.");
@@ -296,7 +302,8 @@ NA_DEF void naRemoveAllSpaceChilds(NASpace* _Nonnull space) {
   while(!naIsListEmpty(&space->childs)) {
     void* child = naGetListFirstMutable(&space->childs);
     na_RemoveSpaceChild(space, child);
-    [(NA_COCOA_BRIDGE NSView*)(naGetUIElementNativePtr(child)) removeFromSuperview];
+    NSView* childView = na_getNSViewOfChild(child);  
+    [(NA_COCOA_BRIDGE NSView*)(childView) removeFromSuperview];
   }
 }
 
