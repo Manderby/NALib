@@ -52,6 +52,37 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool
 
 
 
+NA_DEF NABool naIsUIElementBlock(
+  const void* uiElement)
+{
+  #if NA_DEBUG
+    if(!uiElement)
+      naError("uiElement is Null");
+  #endif
+
+  switch(naGetUIElementType(uiElement)) {
+  case NA_UI_APPLICATION:  return NA_TRUE;
+  case NA_UI_BUTTON:       return !naIsButtonTextual((const NAButton*)uiElement);  
+  case NA_UI_CHECKBOX:     return NA_FALSE;
+  case NA_UI_IMAGE_SPACE:  return NA_TRUE;
+  case NA_UI_LABEL:        return NA_FALSE;
+  case NA_UI_MENU:         return NA_TRUE;
+  case NA_UI_MENUITEM:     return NA_FALSE;
+  case NA_UI_METAL_SPACE:  return NA_TRUE;
+  case NA_UI_OPENGL_SPACE: return NA_TRUE;
+  case NA_UI_RADIO:        return NA_FALSE;
+  case NA_UI_SCREEN:       return NA_TRUE;
+  case NA_UI_SELECT:       return NA_FALSE;
+  case NA_UI_SLIDER:       return NA_FALSE;
+  case NA_UI_SPACE:        return NA_TRUE;
+  case NA_UI_TEXTBOX:      return NA_FALSE;
+  case NA_UI_TEXTFIELD:    return NA_FALSE;
+  case NA_UI_WINDOW:       return NA_TRUE;
+  default: return NA_TRUE;
+  }
+}
+
+
 NA_HDEF NARect na_GetUIElementOffsetRect(
   const NA_UIElement* uiElement)
 {
@@ -79,9 +110,12 @@ NA_HDEF NARect na_GetUIElementOffsetRect(
     case NA_UI_SLIDER:       offsetRect.pos.y = 1.; break;
     case NA_UI_SPACE:        break;
     case NA_UI_TEXTBOX:      offsetRect.pos.y = 1.; break;
+      // note that later NSAppKitVersions use a more sophisticated calculation
+      // which the author did not bother to transcode into earlier versions.
+      // See below.
     case NA_UI_TEXTFIELD:    offsetRect.pos.y = 4.; break;
     case NA_UI_WINDOW:       break;
-    default: break;;
+    default: break;
     }
     
   }else if(NSAppKitVersionNumber <= NSAppKitVersionNumber14_1) {
@@ -112,6 +146,9 @@ NA_HDEF NARect na_GetUIElementOffsetRect(
     case NA_UI_SLIDER:       offsetRect.pos.y = -1.; break;
     case NA_UI_SPACE:        break;
     case NA_UI_TEXTBOX:      offsetRect.pos.y = 1.; break;
+      // note that later NSAppKitVersions use a more sophisticated calculation
+      // which the author did not bother to transcode into earlier versions.
+      // See below.
     case NA_UI_TEXTFIELD:    offsetRect.pos.y = 3.; break;
     case NA_UI_WINDOW:       break;
     default: break;
@@ -132,7 +169,15 @@ NA_HDEF NARect na_GetUIElementOffsetRect(
     case NA_UI_SELECT:       break;
     case NA_UI_SLIDER:       offsetRect.pos.y = -2.; break;
     case NA_UI_SPACE:        break;
-    case NA_UI_TEXTBOX:      break;
+    case NA_UI_TEXTBOX:
+      {
+        // A textbox is a strange uiElement. Its baseline can not really be
+        // pinpointed exactly, but at least, it should be aligned such that
+        // the first line is close to the top when reading from top to bottom.
+        NARect uiElementRectRaw = naGetUIElementRectRaw(uiElement);
+        offsetRect.pos.y = - uiElementRectRaw.size.height + 24.;
+      }
+      break;
     case NA_UI_TEXTFIELD:    offsetRect.pos.y = 1.; break;
     case NA_UI_WINDOW:       break;
     default: break;

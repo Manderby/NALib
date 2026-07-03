@@ -276,7 +276,7 @@ NA_DEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTok
 
 NA_HDEF NABool na_AddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace) {
   NABool found;
-  NATree* tree = na_GetTreeIteratorTreeMutable(iter);;
+  NATree* tree = na_GetTreeIteratorTreeMutable(iter);
   #if NA_DEBUG
     if(naGetFlagu32(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");

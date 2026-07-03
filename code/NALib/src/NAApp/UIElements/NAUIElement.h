@@ -127,6 +127,11 @@ NA_API NARect naGetUIElementRectAbsolute(const void* uiElement);
 NA_API void naSetUIElementRect(void* uiElement, NARect rect);
 NA_API void naSetUIElementRectRaw(void* uiElement, NARect rect);
 
+// As described in the functions above, some elements should be aligned to
+// a common baseline. The other elements are here called block elements. This
+// function allows to find out whether a uiElement is the one or the other.
+NA_API NABool naIsUIElementBlock(const void* uiElement);
+
 // You can ask any ui element to refresh its contents. This will cause the
 // element to be displayed anew. The time difference defines when the refresh
 // shall occur in seconds. Note that when using 0 as timediff, the redraw
