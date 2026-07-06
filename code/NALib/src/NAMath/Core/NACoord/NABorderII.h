@@ -5,202 +5,202 @@
 
 
 
-NA_IDEF NABorder1D naMakeBorder1D(double left, double right) {
+NA_IDEF NABorder1D naMakeBorder1D(double begin1, double end1) {
   NABorder1D newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValid(left) || !naIsLengthValueValid(right))
+    if(!naIsLengthValueValid(begin1) || !naIsLengthValueValid(end1))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
   return newBorder;
 }
 
-NA_IDEF NABorder1Df naMakeBorder1Df(float left, float right) {
+NA_IDEF NABorder1Df naMakeBorder1Df(float begin1, float end1) {
   NABorder1Df newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValidf(left) || !naIsLengthValueValidf(right))
+    if(!naIsLengthValueValidf(begin1) || !naIsLengthValueValidf(end1))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
   return newBorder;
 }
 
-NA_IDEF NABorder1Di32 naMakeBorder1Di32(int32 left, int32 right) {
+NA_IDEF NABorder1Di32 naMakeBorder1Di32(int32 begin1, int32 end1) {
   NABorder1Di32 newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValidi32(left) || !naIsLengthValueValidi32(right))
+    if(!naIsLengthValueValidi32(begin1) || !naIsLengthValueValidi32(end1))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
   return newBorder;
 }
 
-NA_IDEF NABorder1Di64 naMakeBorder1Di64(int64 left, int64 right) {
+NA_IDEF NABorder1Di64 naMakeBorder1Di64(int64 begin1, int64 end1) {
   NABorder1Di64 newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValidi64(left) || !naIsLengthValueValidi64(right))
+    if(!naIsLengthValueValidi64(begin1) || !naIsLengthValueValidi64(end1))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
   return newBorder;
 }
 
-NA_IDEF NABorder1Ds naMakeBorder1Ds(size_t left, size_t right) {
+NA_IDEF NABorder1Ds naMakeBorder1Ds(size_t begin1, size_t end1) {
   NABorder1Ds newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValids(left) || !naIsLengthValueValids(right))
+    if(!naIsLengthValueValids(begin1) || !naIsLengthValueValids(end1))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
   return newBorder;
 }
 
 
 
-NA_IDEF NABorder2D naMakeBorder2D(double left, double right, double bottom, double top) {
+NA_IDEF NABorder2D naMakeBorder2D(double begin1, double end1, double begin2, double end2) {
   NABorder2D newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValid(left) || !naIsLengthValueValid(right) || !naIsLengthValueValid(bottom) || !naIsLengthValueValid(top))
+    if(!naIsLengthValueValid(begin1) || !naIsLengthValueValid(end1) || !naIsLengthValueValid(begin2) || !naIsLengthValueValid(end2))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
-  newBorder.bottom = bottom;
-  newBorder.top = top;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
+  newBorder.begin2 = begin2;
+  newBorder.end2 = end2;
   return newBorder;
 }
 
-NA_IDEF NABorder2Df naMakeBorder2Df(float left, float right, float bottom, float top) {
+NA_IDEF NABorder2Df naMakeBorder2Df(float begin1, float end1, float begin2, float end2) {
   NABorder2Df newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValidf(left) || !naIsLengthValueValidf(right) || !naIsLengthValueValidf(bottom) || !naIsLengthValueValidf(top))
+    if(!naIsLengthValueValidf(begin1) || !naIsLengthValueValidf(end1) || !naIsLengthValueValidf(begin2) || !naIsLengthValueValidf(end2))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
-  newBorder.bottom = bottom;
-  newBorder.top = top;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
+  newBorder.begin2 = begin2;
+  newBorder.end2 = end2;
   return newBorder;
 }
 
-NA_IDEF NABorder2Di32 naMakeBorder2Di32(int32 left, int32 right, int32 bottom, int32 top) {
+NA_IDEF NABorder2Di32 naMakeBorder2Di32(int32 begin1, int32 end1, int32 begin2, int32 end2) {
   NABorder2Di32 newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValidi32(left) || !naIsLengthValueValidi32(right) || !naIsLengthValueValidi32(bottom) || !naIsLengthValueValidi32(top))
+    if(!naIsLengthValueValidi32(begin1) || !naIsLengthValueValidi32(end1) || !naIsLengthValueValidi32(begin2) || !naIsLengthValueValidi32(end2))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
-  newBorder.bottom = bottom;
-  newBorder.top = top;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
+  newBorder.begin2 = begin2;
+  newBorder.end2 = end2;
   return newBorder;
 }
 
-NA_IDEF NABorder2Di64 naMakeBorder2Di64(int64 left, int64 right, int64 bottom, int64 top) {
+NA_IDEF NABorder2Di64 naMakeBorder2Di64(int64 begin1, int64 end1, int64 begin2, int64 end2) {
   NABorder2Di64 newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValidi64(left) || !naIsLengthValueValidi64(right) || !naIsLengthValueValidi64(bottom) || !naIsLengthValueValidi64(top))
+    if(!naIsLengthValueValidi64(begin1) || !naIsLengthValueValidi64(end1) || !naIsLengthValueValidi64(begin2) || !naIsLengthValueValidi64(end2))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
-  newBorder.bottom = bottom;
-  newBorder.top = top;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
+  newBorder.begin2 = begin2;
+  newBorder.end2 = end2;
   return newBorder;
 }
 
-NA_IDEF NABorder2Ds naMakeBorder2Ds(size_t left, size_t right, size_t bottom, size_t top) {
+NA_IDEF NABorder2Ds naMakeBorder2Ds(size_t begin1, size_t end1, size_t begin2, size_t end2) {
   NABorder2Ds newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValids(left) || !naIsLengthValueValids(right) || !naIsLengthValueValids(bottom) || !naIsLengthValueValids(top))
+    if(!naIsLengthValueValids(begin1) || !naIsLengthValueValids(end1) || !naIsLengthValueValids(begin2) || !naIsLengthValueValids(end2))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
-  newBorder.bottom = bottom;
-  newBorder.top = top;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
+  newBorder.begin2 = begin2;
+  newBorder.end2 = end2;
   return newBorder;
 }
 
 
 
-NA_IDEF NABorder3D naMakeBorder3D(double left, double right, double bottom, double top, double back, double front) {
+NA_IDEF NABorder3D naMakeBorder3D(double begin1, double end1, double begin2, double end2, double begin3, double end3) {
   NABorder3D newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValid(left) || !naIsLengthValueValid(right) || !naIsLengthValueValid(bottom) || !naIsLengthValueValid(top) || !naIsLengthValueValid(back) || !naIsLengthValueValid(front))
+    if(!naIsLengthValueValid(begin1) || !naIsLengthValueValid(end1) || !naIsLengthValueValid(begin2) || !naIsLengthValueValid(end2) || !naIsLengthValueValid(begin3) || !naIsLengthValueValid(end3))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
-  newBorder.bottom = bottom;
-  newBorder.top = top;
-  newBorder.back = back;
-  newBorder.front = front;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
+  newBorder.begin2 = begin2;
+  newBorder.end2 = end2;
+  newBorder.begin3 = begin3;
+  newBorder.end3 = end3;
   return newBorder;
 }
 
-NA_IDEF NABorder3Df naMakeBorder3Df(float left, float right, float bottom, float top, float back, float front) {
+NA_IDEF NABorder3Df naMakeBorder3Df(float begin1, float end1, float begin2, float end2, float begin3, float end3) {
   NABorder3Df newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValidf(left) || !naIsLengthValueValidf(right) || !naIsLengthValueValidf(bottom) || !naIsLengthValueValidf(top) || !naIsLengthValueValidf(back) || !naIsLengthValueValidf(front))
+    if(!naIsLengthValueValidf(begin1) || !naIsLengthValueValidf(end1) || !naIsLengthValueValidf(begin2) || !naIsLengthValueValidf(end2) || !naIsLengthValueValidf(begin3) || !naIsLengthValueValidf(end3))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
-  newBorder.bottom = bottom;
-  newBorder.top = top;
-  newBorder.back = back;
-  newBorder.front = front;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
+  newBorder.begin2 = begin2;
+  newBorder.end2 = end2;
+  newBorder.begin3 = begin3;
+  newBorder.end3 = end3;
   return newBorder;
 }
 
-NA_IDEF NABorder3Di32 naMakeBorder3Di32(int32 left, int32 right, int32 bottom, int32 top, int32 back, int32 front) {
+NA_IDEF NABorder3Di32 naMakeBorder3Di32(int32 begin1, int32 end1, int32 begin2, int32 end2, int32 begin3, int32 end3) {
   NABorder3Di32 newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValidi32(left) || !naIsLengthValueValidi32(right) || !naIsLengthValueValidi32(bottom) || !naIsLengthValueValidi32(top) || !naIsLengthValueValidi32(back) || !naIsLengthValueValidi32(front))
+    if(!naIsLengthValueValidi32(begin1) || !naIsLengthValueValidi32(end1) || !naIsLengthValueValidi32(begin2) || !naIsLengthValueValidi32(end2) || !naIsLengthValueValidi32(begin3) || !naIsLengthValueValidi32(end3))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
-  newBorder.bottom = bottom;
-  newBorder.top = top;
-  newBorder.back = back;
-  newBorder.front = front;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
+  newBorder.begin2 = begin2;
+  newBorder.end2 = end2;
+  newBorder.begin3 = begin3;
+  newBorder.end3 = end3;
   return newBorder;
 }
 
-NA_IDEF NABorder3Di64 naMakeBorder3Di64(int64 left, int64 right, int64 bottom, int64 top, int64 back, int64 front) {
+NA_IDEF NABorder3Di64 naMakeBorder3Di64(int64 begin1, int64 end1, int64 begin2, int64 end2, int64 begin3, int64 end3) {
   NABorder3Di64 newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValidi64(left) || !naIsLengthValueValidi64(right) || !naIsLengthValueValidi64(bottom) || !naIsLengthValueValidi64(top) || !naIsLengthValueValidi64(back) || !naIsLengthValueValidi64(front))
+    if(!naIsLengthValueValidi64(begin1) || !naIsLengthValueValidi64(end1) || !naIsLengthValueValidi64(begin2) || !naIsLengthValueValidi64(end2) || !naIsLengthValueValidi64(begin3) || !naIsLengthValueValidi64(end3))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
-  newBorder.bottom = bottom;
-  newBorder.top = top;
-  newBorder.back = back;
-  newBorder.front = front;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
+  newBorder.begin2 = begin2;
+  newBorder.end2 = end2;
+  newBorder.begin3 = begin3;
+  newBorder.end3 = end3;
   return newBorder;
 }
 
-NA_IDEF NABorder3Ds naMakeBorder3Ds(size_t left, size_t right, size_t bottom, size_t top, size_t back, size_t front) {
+NA_IDEF NABorder3Ds naMakeBorder3Ds(size_t begin1, size_t end1, size_t begin2, size_t end2, size_t begin3, size_t end3) {
   NABorder3Ds newBorder;
   #if NA_DEBUG
-    if(!naIsLengthValueValids(left) || !naIsLengthValueValids(right) || !naIsLengthValueValids(bottom) || !naIsLengthValueValids(top) || !naIsLengthValueValids(back) || !naIsLengthValueValids(front))
+    if(!naIsLengthValueValids(begin1) || !naIsLengthValueValids(end1) || !naIsLengthValueValids(begin2) || !naIsLengthValueValids(end2) || !naIsLengthValueValids(begin3) || !naIsLengthValueValids(end3))
       naError("Invalid values given.");
   #endif
-  newBorder.left = left;
-  newBorder.right = right;
-  newBorder.bottom = bottom;
-  newBorder.top = top;
-  newBorder.back = back;
-  newBorder.front = front;
+  newBorder.begin1 = begin1;
+  newBorder.end1 = end1;
+  newBorder.begin2 = begin2;
+  newBorder.end2 = end2;
+  newBorder.begin3 = begin3;
+  newBorder.end3 = end3;
   return newBorder;
 }
 
@@ -289,32 +289,32 @@ NA_IDEF NABorder3Ds naMakeBorder3DsWithThickness(size_t thickness) {
 
 NA_IDEF NARange naMakeRangeWithBorder(NARange range, NABorder1D border) {
   NARange newRange;
-  newRange.origin = range.origin - border.left;
-  newRange.length = range.length + border.left + border.right;
+  newRange.origin = range.origin - border.begin1;
+  newRange.length = range.length + border.begin1 + border.end1;
   return newRange;
 }
 NA_IDEF NARangef naMakeRangefWithBorder(NARangef range, NABorder1Df border) {
   NARangef newRange;
-  newRange.origin = range.origin - border.left;
-  newRange.length = range.length + border.left + border.right;
+  newRange.origin = range.origin - border.begin1;
+  newRange.length = range.length + border.begin1 + border.end1;
   return newRange;
 }
 NA_IDEF NARangei32 naMakeRangei32WithBorder(NARangei32 range, NABorder1Di32 border) {
   NARangei32 newRange;
-  newRange.origin = range.origin - border.left;
-  newRange.length = range.length + border.left + border.right;
+  newRange.origin = range.origin - border.begin1;
+  newRange.length = range.length + border.begin1 + border.end1;
   return newRange;
 }
 NA_IDEF NARangei64 naMakeRangei64WithBorder(NARangei64 range, NABorder1Di64 border) {
   NARangei64 newRange;
-  newRange.origin = naSubi64(range.origin, border.left);
-  newRange.length = naAddi64(naAddi64(range.length, border.left), border.right);
+  newRange.origin = naSubi64(range.origin, border.begin1);
+  newRange.length = naAddi64(naAddi64(range.length, border.begin1), border.end1);
   return newRange;
 }
 NA_IDEF NARanges naMakeRangesWithBorder(NARanges range, NABorder1Ds border) {
   NARanges newRange;
-  newRange.origin = range.origin - border.left;
-  newRange.length = range.length + border.left + border.right;
+  newRange.origin = range.origin - border.begin1;
+  newRange.length = range.length + border.begin1 + border.end1;
   return newRange;
 }
 
@@ -322,42 +322,42 @@ NA_IDEF NARanges naMakeRangesWithBorder(NARanges range, NABorder1Ds border) {
 
 NA_IDEF NARect naMakeRectWithBorder(NARect rect, NABorder2D border) {
   NARect newRect;
-  newRect.pos.x = rect.pos.x - border.left;
-  newRect.pos.y = rect.pos.y - border.bottom;
-  newRect.size.width = rect.size.width + border.left + border.right;
-  newRect.size.height = rect.size.height + border.bottom + border.top;
+  newRect.pos.x = rect.pos.x - border.begin1;
+  newRect.pos.y = rect.pos.y - border.begin2;
+  newRect.size.width = rect.size.width + border.begin1 + border.end1;
+  newRect.size.height = rect.size.height + border.begin2 + border.end2;
   return newRect;
 }
 NA_IDEF NARectf naMakeRectfWithBorder(NARectf rect, NABorder2Df border) {
   NARectf newRect;
-  newRect.pos.x = rect.pos.x - border.left;
-  newRect.pos.y = rect.pos.y - border.bottom;
-  newRect.size.width = rect.size.width + border.left + border.right;
-  newRect.size.height = rect.size.height + border.bottom + border.top;
+  newRect.pos.x = rect.pos.x - border.begin1;
+  newRect.pos.y = rect.pos.y - border.begin2;
+  newRect.size.width = rect.size.width + border.begin1 + border.end1;
+  newRect.size.height = rect.size.height + border.begin2 + border.end2;
   return newRect;
 }
 NA_IDEF NARecti32 naMakeRecti32WithBorder(NARecti32 rect, NABorder2Di32 border) {
   NARecti32 newRect;
-  newRect.pos.x = rect.pos.x - border.left;
-  newRect.pos.y = rect.pos.y - border.bottom;
-  newRect.size.width = rect.size.width + border.left + border.right;
-  newRect.size.height = rect.size.height + border.bottom + border.top;
+  newRect.pos.x = rect.pos.x - border.begin1;
+  newRect.pos.y = rect.pos.y - border.begin2;
+  newRect.size.width = rect.size.width + border.begin1 + border.end1;
+  newRect.size.height = rect.size.height + border.begin2 + border.end2;
   return newRect;
 }
 NA_IDEF NARecti64 naMakeRecti64WithBorder(NARecti64 rect, NABorder2Di64 border) {
   NARecti64 newRect;
-  newRect.pos.x = naSubi64(rect.pos.x, border.left);
-  newRect.pos.y = naSubi64(rect.pos.y, border.bottom);
-  newRect.size.width = naAddi64(naAddi64(rect.size.width, border.left), border.right);
-  newRect.size.height = naAddi64(naAddi64(rect.size.height, border.bottom), border.top);
+  newRect.pos.x = naSubi64(rect.pos.x, border.begin1);
+  newRect.pos.y = naSubi64(rect.pos.y, border.begin2);
+  newRect.size.width = naAddi64(naAddi64(rect.size.width, border.begin1), border.end1);
+  newRect.size.height = naAddi64(naAddi64(rect.size.height, border.begin2), border.end2);
   return newRect;
 }
 NA_IDEF NARects naMakeRectsWithBorder(NARects rect, NABorder2Ds border) {
   NARects newRect;
-  newRect.pos.x = rect.pos.x - border.left;
-  newRect.pos.y = rect.pos.y - border.bottom;
-  newRect.size.width = rect.size.width + border.left + border.right;
-  newRect.size.height = rect.size.height + border.bottom + border.top;
+  newRect.pos.x = rect.pos.x - border.begin1;
+  newRect.pos.y = rect.pos.y - border.begin2;
+  newRect.size.width = rect.size.width + border.begin1 + border.end1;
+  newRect.size.height = rect.size.height + border.begin2 + border.end2;
   return newRect;
 }
 
@@ -365,52 +365,52 @@ NA_IDEF NARects naMakeRectsWithBorder(NARects rect, NABorder2Ds border) {
 
 NA_IDEF NABox naMakeBoxWithBorder(NABox box, NABorder3D border) {
   NABox newBox;
-  newBox.vertex.x = box.vertex.x - border.left;
-  newBox.vertex.y = box.vertex.y - border.bottom;
-  newBox.vertex.z = box.vertex.z - border.back;
-  newBox.volume.width = box.volume.width + border.left + border.right;
-  newBox.volume.height = box.volume.height + border.bottom + border.top;
-  newBox.volume.depth = box.volume.depth + border.back + border.front;
+  newBox.vertex.x = box.vertex.x - border.begin1;
+  newBox.vertex.y = box.vertex.y - border.begin2;
+  newBox.vertex.z = box.vertex.z - border.begin3;
+  newBox.volume.width = box.volume.width + border.begin1 + border.end1;
+  newBox.volume.height = box.volume.height + border.begin2 + border.end2;
+  newBox.volume.depth = box.volume.depth + border.begin3 + border.end3;
   return newBox;
 }
 NA_IDEF NABoxf naMakeBoxfWithBorder(NABoxf box, NABorder3Df border) {
   NABoxf newBox;
-  newBox.vertex.x = box.vertex.x - border.left;
-  newBox.vertex.y = box.vertex.y - border.bottom;
-  newBox.vertex.z = box.vertex.z - border.back;
-  newBox.volume.width = box.volume.width + border.left + border.right;
-  newBox.volume.height = box.volume.height + border.bottom + border.top;
-  newBox.volume.depth = box.volume.depth + border.back + border.front;
+  newBox.vertex.x = box.vertex.x - border.begin1;
+  newBox.vertex.y = box.vertex.y - border.begin2;
+  newBox.vertex.z = box.vertex.z - border.begin3;
+  newBox.volume.width = box.volume.width + border.begin1 + border.end1;
+  newBox.volume.height = box.volume.height + border.begin2 + border.end2;
+  newBox.volume.depth = box.volume.depth + border.begin3 + border.end3;
   return newBox;
 }
 NA_IDEF NABoxi32 naMakeBoxi32WithBorder(NABoxi32 box, NABorder3Di32 border) {
   NABoxi32 newBox;
-  newBox.vertex.x = box.vertex.x - border.left;
-  newBox.vertex.y = box.vertex.y - border.bottom;
-  newBox.vertex.z = box.vertex.z - border.back;
-  newBox.volume.width = box.volume.width + border.left + border.right;
-  newBox.volume.height = box.volume.height + border.bottom + border.top;
-  newBox.volume.depth = box.volume.depth + border.back + border.front;
+  newBox.vertex.x = box.vertex.x - border.begin1;
+  newBox.vertex.y = box.vertex.y - border.begin2;
+  newBox.vertex.z = box.vertex.z - border.begin3;
+  newBox.volume.width = box.volume.width + border.begin1 + border.end1;
+  newBox.volume.height = box.volume.height + border.begin2 + border.end2;
+  newBox.volume.depth = box.volume.depth + border.begin3 + border.end3;
   return newBox;
 }
 NA_IDEF NABoxi64 naMakeBoxi64WithBorder(NABoxi64 box, NABorder3Di64 border) {
   NABoxi64 newBox;
-  newBox.vertex.x = naSubi64(box.vertex.x, border.left);
-  newBox.vertex.y = naSubi64(box.vertex.y, border.bottom);
-  newBox.vertex.z = naSubi64(box.vertex.z, border.back);
-  newBox.volume.width = naAddi64(naAddi64(box.volume.width, border.left), border.right);
-  newBox.volume.height = naAddi64(naAddi64(box.volume.height, border.bottom), border.top);
-  newBox.volume.depth = naAddi64(naAddi64(box.volume.depth, border.back), border.front);
+  newBox.vertex.x = naSubi64(box.vertex.x, border.begin1);
+  newBox.vertex.y = naSubi64(box.vertex.y, border.begin2);
+  newBox.vertex.z = naSubi64(box.vertex.z, border.begin3);
+  newBox.volume.width = naAddi64(naAddi64(box.volume.width, border.begin1), border.end1);
+  newBox.volume.height = naAddi64(naAddi64(box.volume.height, border.begin2), border.end2);
+  newBox.volume.depth = naAddi64(naAddi64(box.volume.depth, border.begin3), border.end3);
   return newBox;
 }
 NA_IDEF NABoxs naMakeBoxsWithBorder(NABoxs box, NABorder3Ds border) {
   NABoxs newBox;
-  newBox.vertex.x = box.vertex.x - border.left;
-  newBox.vertex.y = box.vertex.y - border.bottom;
-  newBox.vertex.z = box.vertex.z - border.back;
-  newBox.volume.width = box.volume.width + border.left + border.right;
-  newBox.volume.height = box.volume.height + border.bottom + border.top;
-  newBox.volume.depth = box.volume.depth + border.back + border.front;
+  newBox.vertex.x = box.vertex.x - border.begin1;
+  newBox.vertex.y = box.vertex.y - border.begin2;
+  newBox.vertex.z = box.vertex.z - border.begin3;
+  newBox.volume.width = box.volume.width + border.begin1 + border.end1;
+  newBox.volume.height = box.volume.height + border.begin2 + border.end2;
+  newBox.volume.depth = box.volume.depth + border.begin3 + border.end3;
   return newBox;
 }
 

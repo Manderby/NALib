@@ -18,9 +18,11 @@ Current development:
 - Adding NA_BLEND_REPLACE.
 - Fixing NA_BLEND_ERASE_HUE in the magenta range.
 - Removing NABezel4. Had been deprecated already in version 28
+- Changing NABorder again. Using more general begin and end instead of left and right.
 - Renamed NAFileSize to fsize_t
 - Removed the need for start and stop Runtime when using NAApplication.
 - Replaced the obfuscated AppDelegate handling in macOS with Notifications.
+- Made startup on macOS more smooth.
 - Adding leap second information based on bulletin C70 and C71
 
 

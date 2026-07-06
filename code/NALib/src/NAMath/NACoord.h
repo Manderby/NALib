@@ -180,7 +180,8 @@ NA_PROTOTYPE(NABorder3Ds);
 // parts of the structs.
 //
 // Please excuse this formatting. It is usually not recommended but here, it
-// would be much more confusing if written otherwise.
+// would be much more confusing if written differently.
+
 struct NARange{     double origin; double length; };
 struct NARangef{    float  origin; float  length; };
 struct NARangei32{  int32  origin; int32  length; };
@@ -223,23 +224,23 @@ struct NABoxi32{    NAVertexi32 vertex; NAVolumei32 volume; };
 struct NABoxi64{    NAVertexi64 vertex; NAVolumei64 volume; };
 struct NABoxs{      NAVertexs   vertex; NAVolumes   volume; };
 
-struct NABorder1D{    double left; double right; };
-struct NABorder1Df{   float  left; float  right; };
-struct NABorder1Di32{ int32  left; int32  right; };
-struct NABorder1Di64{ int64  left; int64  right; };
-struct NABorder1Ds{   size_t left; size_t right; };
+struct NABorder1D{    double begin1; double end1; };
+struct NABorder1Df{   float  begin1; float  end1; };
+struct NABorder1Di32{ int32  begin1; int32  end1; };
+struct NABorder1Di64{ int64  begin1; int64  end1; };
+struct NABorder1Ds{   size_t begin1; size_t end1; };
 
-struct NABorder2D{    double left; double right; double bottom; double top; };
-struct NABorder2Df{   float  left; float  right; float  bottom; float  top; };
-struct NABorder2Di32{ int32  left; int32  right; int32  bottom; int32  top; };
-struct NABorder2Di64{ int64  left; int64  right; int64  bottom; int64  top; };
-struct NABorder2Ds{   size_t left; size_t right; size_t bottom; size_t top; };
+struct NABorder2D{    double begin1; double end1; double begin2; double end2; };
+struct NABorder2Df{   float  begin1; float  end1; float  begin2; float  end2; };
+struct NABorder2Di32{ int32  begin1; int32  end1; int32  begin2; int32  end2; };
+struct NABorder2Di64{ int64  begin1; int64  end1; int64  begin2; int64  end2; };
+struct NABorder2Ds{   size_t begin1; size_t end1; size_t begin2; size_t end2; };
 
-struct NABorder3D{    double left; double right; double bottom; double top; double back; double front; };
-struct NABorder3Df{   float  left; float  right; float  bottom; float  top; float  back; float  front; };
-struct NABorder3Di32{ int32  left; int32  right; int32  bottom; int32  top; int32  back; int32  front; };
-struct NABorder3Di64{ int64  left; int64  right; int64  bottom; int64  top; int64  back; int64  front; };
-struct NABorder3Ds{   size_t left; size_t right; size_t bottom; size_t top; size_t back; size_t front; };
+struct NABorder3D{    double begin1; double end1; double begin2; double end2; double begin3; double end3; };
+struct NABorder3Df{   float  begin1; float  end1; float  begin2; float  end2; float  begin3; float  end3; };
+struct NABorder3Di32{ int32  begin1; int32  end1; int32  begin2; int32  end2; int32  begin3; int32  end3; };
+struct NABorder3Di64{ int64  begin1; int64  end1; int64  begin2; int64  end2; int64  begin3; int64  end3; };
+struct NABorder3Ds{   size_t begin1; size_t end1; size_t begin2; size_t end2; size_t begin3; size_t end3; };
 
 
 
@@ -446,23 +447,23 @@ NA_IAPI void        naFillBoxsWithCopy  (NABoxs*   boxd, const NABoxs*   boxs);
 
 // NABorder
 
-NA_IAPI NABorder1D    naMakeBorder1D   (double left, double right);
-NA_IAPI NABorder1Df   naMakeBorder1Df  (float  left, float  right);
-NA_IAPI NABorder1Di32 naMakeBorder1Di32(int32  left, int32  right);
-NA_IAPI NABorder1Di64 naMakeBorder1Di64(int64  left, int64  right);
-NA_IAPI NABorder1Ds   naMakeBorder1Ds  (size_t left, size_t right);
+NA_IAPI NABorder1D    naMakeBorder1D   (double begin1, double end1);
+NA_IAPI NABorder1Df   naMakeBorder1Df  (float  begin1, float  end1);
+NA_IAPI NABorder1Di32 naMakeBorder1Di32(int32  begin1, int32  end1);
+NA_IAPI NABorder1Di64 naMakeBorder1Di64(int64  begin1, int64  end1);
+NA_IAPI NABorder1Ds   naMakeBorder1Ds  (size_t begin1, size_t end1);
 
-NA_IAPI NABorder2D    naMakeBorder2D   (double left, double right, double bottom, double top);
-NA_IAPI NABorder2Df   naMakeBorder2Df  (float  left, float  right, float  bottom, float  top);
-NA_IAPI NABorder2Di32 naMakeBorder2Di32(int32  left, int32  right, int32  bottom, int32  top);
-NA_IAPI NABorder2Di64 naMakeBorder2Di64(int64  left, int64  right, int64  bottom, int64  top);
-NA_IAPI NABorder2Ds   naMakeBorder2Ds  (size_t left, size_t right, size_t bottom, size_t top);
+NA_IAPI NABorder2D    naMakeBorder2D   (double begin1, double end1, double begin2, double end2);
+NA_IAPI NABorder2Df   naMakeBorder2Df  (float  begin1, float  end1, float  begin2, float  end2);
+NA_IAPI NABorder2Di32 naMakeBorder2Di32(int32  begin1, int32  end1, int32  begin2, int32  end2);
+NA_IAPI NABorder2Di64 naMakeBorder2Di64(int64  begin1, int64  end1, int64  begin2, int64  end2);
+NA_IAPI NABorder2Ds   naMakeBorder2Ds  (size_t begin1, size_t end1, size_t begin2, size_t end2);
 
-NA_IAPI NABorder3D    naMakeBorder3D   (double left, double right, double bottom, double top, double back, double front);
-NA_IAPI NABorder3Df   naMakeBorder3Df  (float  left, float  right, float  bottom, float  top, float  back, float  front);
-NA_IAPI NABorder3Di32 naMakeBorder3Di32(int32  left, int32  right, int32  bottom, int32  top, int32  back, int32  front);
-NA_IAPI NABorder3Di64 naMakeBorder3Di64(int64  left, int64  right, int64  bottom, int64  top, int64  back, int64  front);
-NA_IAPI NABorder3Ds   naMakeBorder3Ds  (size_t left, size_t right, size_t bottom, size_t top, size_t back, size_t front);
+NA_IAPI NABorder3D    naMakeBorder3D   (double begin1, double end1, double begin2, double end2, double begin3, double end3);
+NA_IAPI NABorder3Df   naMakeBorder3Df  (float  begin1, float  end1, float  begin2, float  end2, float  begin3, float  end3);
+NA_IAPI NABorder3Di32 naMakeBorder3Di32(int32  begin1, int32  end1, int32  begin2, int32  end2, int32  begin3, int32  end3);
+NA_IAPI NABorder3Di64 naMakeBorder3Di64(int64  begin1, int64  end1, int64  begin2, int64  end2, int64  begin3, int64  end3);
+NA_IAPI NABorder3Ds   naMakeBorder3Ds  (size_t begin1, size_t end1, size_t begin2, size_t end2, size_t begin3, size_t end3);
 
 NA_IAPI NABorder1D    naMakeBorder1DWithThickness   (double thickness);
 NA_IAPI NABorder1Df   naMakeBorder1DfWithThickness  (float  thickness);
