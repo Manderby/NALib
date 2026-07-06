@@ -177,6 +177,38 @@ NA_DEF void* naGetUIElementNativePtrConst(const void* uiElement) {
 
 
 
+NA_DEF NABool naIsUIElementBlock(
+  const void* uiElement)
+{
+  #if NA_DEBUG
+  if(!uiElement)
+    naError("uiElement is Null");
+  #endif
+
+  switch(naGetUIElementType(uiElement)) {
+  case NA_UI_APPLICATION:  return NA_TRUE;
+  case NA_UI_BUTTON:       return !naIsButtonTextual((const NAButton*)uiElement);  
+  case NA_UI_CHECKBOX:     return NA_FALSE;
+  case NA_UI_IMAGE_SPACE:  return NA_TRUE;
+  case NA_UI_LABEL:        return NA_FALSE;
+  case NA_UI_MENU:         return NA_TRUE;
+  case NA_UI_MENUITEM:     return NA_FALSE;
+  case NA_UI_METAL_SPACE:  return NA_TRUE;
+  case NA_UI_OPENGL_SPACE: return NA_TRUE;
+  case NA_UI_RADIO:        return NA_FALSE;
+  case NA_UI_SCREEN:       return NA_TRUE;
+  case NA_UI_SELECT:       return NA_FALSE;
+  case NA_UI_SLIDER:       return NA_FALSE;
+  case NA_UI_SPACE:        return NA_TRUE;
+  case NA_UI_TEXTBOX:      return NA_FALSE;
+  case NA_UI_TEXTFIELD:    return NA_FALSE;
+  case NA_UI_WINDOW:       return NA_TRUE;
+  default: return NA_TRUE;
+  }
+}
+
+
+
 NA_DEF void naAddUIReaction(
   void* uiElement,
   NAUICommand command,
