@@ -27,6 +27,17 @@ NA_PROTOTYPE(NATranslator);
 
 
 
+#if NA_DEBUG
+typedef struct NA_LayoutRects NA_LayoutRects;
+struct NA_LayoutRects {
+  NARect marginRect;
+  NARect blockRect;
+  NARect contentRect;
+};
+#endif // NA_DEBUG
+
+
+
 // //////////////////////////////
 // NA_UIElement is the base type of any ui element. All ui element struct
 // definitions have an NA_UIElement as the first entry:
@@ -37,11 +48,14 @@ struct NA_UIElement{
   void*           parent;
   NAList          reactions;
   NAList          shortcuts;
-  uint32          flags;             // Currently only used in winAPI
+  uint32          flags;
   void*           nativePtr;         // The native pointer
   size_t          hoverReactionCount;
   size_t          mouseTrackingCount;
   void*           mouseTracking;
+  #if NA_DEBUG
+    NA_LayoutRects* layoutRects;
+  #endif
 };
 
 struct NAApplication{
@@ -298,6 +312,10 @@ NA_HAPI void na_UpdateMouseTracking(NA_UIElement* uiElement);
 // System dependent implementation for adding a new mouse tracking object:
 NA_HAPI void* na_AddMouseTracking(NA_UIElement* uiElement);
 NA_HAPI void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking);
+
+NA_HAPI NABool na_GetUIElementDebugLayout(const NA_UIElement* elem);
+NA_HAPI void na_SetUIElementDebugLayout(NA_UIElement* elem, NABool debug);
+
 
 
 // NAApplication

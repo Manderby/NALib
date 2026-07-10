@@ -27,6 +27,13 @@ NA_RUNTIME_TYPE(NACocoaCheckBox, na_DestructCocoaCheckBox, NA_FALSE);
   return self;
 }
 
+- (void)drawRect:(NSRect)dirtyRect{
+  #if NA_DEBUG
+    na_DrawLayoutDebugging([self frame], &cocoaCheckBox->checkBox.uiElement);
+  #endif // NA_DEBUG
+  [super drawRect:dirtyRect];
+}
+
 - (void) setText:(const NAUTF8Char*)text{
   NSString* titleText = text
     ? [NSString stringWithUTF8String:text]

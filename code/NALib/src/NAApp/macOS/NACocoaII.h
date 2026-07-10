@@ -22,6 +22,15 @@ NA_HAPI NARect na_GetNativeWindowAbsoluteInnerRect(const NSWindow* window);
 
 
 
+// UI_Element flags:
+// Note that flags will always be initialized with 0
+// UI_Element flags must follow the following schemata:
+// 0x0000?? common flags
+// 0x00??00 macOS flags
+// 0x??0000 windows flags
+// Currently, there are no macOS flags
+
+
 #define naDefineCocoaObject(cocoatype, var, uiElement)\
   cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativePtr(uiElement))
   
@@ -446,6 +455,48 @@ NSTextAlignment getNSTextAlignment(NALayoutAlign alignment, NALayoutDirections d
 
 
 
+#if NA_DEBUG
+void na_DrawLayoutDebugging(NSRect frame, const NA_UIElement* elem) {
+  if(elem->layoutRects == NA_NULL) { return; }
+  
+  NABool isDebuggable = NA_FALSE;
+  const NA_UIElement* curElem = elem;
+  while(1) {
+    isDebuggable = na_GetUIElementDebugLayout(curElem);
+    if(isDebuggable) { break; }
+    if(!curElem->parent) { break; }
+    curElem = curElem->parent;
+  }
+  
+  if(isDebuggable) {
+    [[NSColor colorWithRed:1 green:.7 blue:0 alpha:.15] setFill];
+    NARect marginRect = elem->layoutRects->marginRect;
+    marginRect.pos.x -= frame.origin.x;
+    marginRect.pos.y -= frame.origin.y;
+    NSRectFill(naMakeNSRectWithRect(marginRect));
+
+    [[NSColor colorWithRed:.7 green:0 blue:1 alpha:.15] setFill];
+    NARect blockRect = elem->layoutRects->blockRect;
+    blockRect.pos.x -= frame.origin.x;
+    blockRect.pos.y -= frame.origin.y;
+    NSRectFill(naMakeNSRectWithRect(blockRect));
+
+    [[NSColor colorWithRed:0 green:1 blue:0 alpha:.15] setFill];
+    NARect contentRect = elem->layoutRects->contentRect;
+    contentRect.pos.x -= frame.origin.x;
+    contentRect.pos.y -= frame.origin.y;
+    NSRectFill(naMakeNSRectWithRect(contentRect));
+
+    if(naGetUIElementType(elem) != NA_UI_SPACE) {
+      [[NSColor colorWithRed:0 green:0 blue:1 alpha:.15] setFill];
+      NARect uiElementRect = naMakeRectWithNSRect(frame);
+      uiElementRect.pos.x -= frame.origin.x;
+      uiElementRect.pos.y -= frame.origin.y;
+      NSRectFill(naMakeNSRectWithRect(uiElementRect));
+    }
+  }
+}
+#endif // NA_DEBUG
 
 
 // ///////////////////

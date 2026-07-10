@@ -11,8 +11,12 @@
 
 // UI_Element flags:
 // Note that flags will always be initialized with 0
-#define NA_UI_ELEMENT_FLAG_MOUSE_INSIDE                    0x01
-#define NA_UI_ELEMENT_FLAG_BLOCK_WINAPI_NOTIFICATIONS      0x02
+// UI_Element flags must follow the following schemata:
+// 0x0000?? common flags
+// 0x00??00 macOS flags
+// 0x??0000 windows flags
+#define NA_UI_ELEMENT_FLAG_MOUSE_INSIDE                    0x010000
+#define NA_UI_ELEMENT_FLAG_BLOCK_WINAPI_NOTIFICATIONS      0x020000
 
 
 

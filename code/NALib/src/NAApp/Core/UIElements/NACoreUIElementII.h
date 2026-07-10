@@ -6,30 +6,13 @@
 
 
 
-NA_HDEF void na_InitCoreUIElement(NA_UIElement* uiElement, NAUIElementType elementType, void* nativePtr) {
-  uiElement->parent = NA_NULL;
-  uiElement->elementType = elementType;
-  uiElement->nativePtr = nativePtr;
-  naInitList(&uiElement->reactions);
-  naInitList(&uiElement->shortcuts);
-  
-  na_InitSystemUIElement(uiElement, nativePtr);
-  
-  uiElement->flags = 0;
-
-  uiElement->hoverReactionCount = 0;
-
-  uiElement->mouseTrackingCount = 0;
-  uiElement->mouseTracking = NA_NULL;
-  
-  naAddListLastMutable(&naGetApplication()->uiElements, uiElement);
-}
-
-
-
-NA_HDEF void na_IncCoreUIElementHoverTrackingCount(NA_UIElement* uiElement) {
-  uiElement->hoverReactionCount++;
-}
+// UI_Element flags:
+// Note that flags will always be initialized with 0
+// UI_Element flags must follow the following schemata:
+// 0x0000?? common flags
+// 0x00??00 macOS flags
+// 0x??0000 windows flags
+#define NA_UI_ELEMENT_DEBUG_LAYOUT 0x000001
 
 
 
@@ -56,11 +39,41 @@ void na_DeallocKeyboardShortcutReaction(NA_KeyboardShortcutReaction* keyReaction
 
 
 
+NA_HDEF void na_InitCoreUIElement(NA_UIElement* uiElement, NAUIElementType elementType, void* nativePtr) {
+  uiElement->parent = NA_NULL;
+  uiElement->elementType = elementType;
+  uiElement->nativePtr = nativePtr;
+  
+  naInitList(&uiElement->reactions);
+  naInitList(&uiElement->shortcuts);
+  
+  na_InitSystemUIElement(uiElement, nativePtr);
+  
+  uiElement->flags = 0;
+
+  uiElement->hoverReactionCount = 0;
+
+  uiElement->mouseTrackingCount = 0;
+  uiElement->mouseTracking = NA_NULL;
+  
+  #if NA_DEBUG
+    uiElement->layoutRects = NA_NULL;
+  #endif // NA_DEBUG
+  
+  naAddListLastMutable(&naGetApplication()->uiElements, uiElement);
+}
+
+
+
 NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
   #if NA_DEBUG
     if(!uiElement)
       naCrash("uiElement is nullptr");
   #endif
+
+  if(uiElement->layoutRects) {
+    naFree(uiElement->layoutRects);
+  }
 
   if(uiElement->mouseTracking) {
     na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
@@ -75,6 +88,12 @@ NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
   naRemoveListData(&naGetApplication()->uiElements, uiElement);
 
   na_UndebugUIElement(uiElement);
+}
+
+
+
+NA_HDEF void na_IncCoreUIElementHoverTrackingCount(NA_UIElement* uiElement) {
+  uiElement->hoverReactionCount++;
 }
 
 
@@ -667,6 +686,19 @@ NA_DEF void naAddUIKeyboardShortcut(
     callback));
 }
 
+
+
+NA_HDEF NABool na_GetUIElementDebugLayout(const NA_UIElement* elem) {
+  return naGetFlagu32(elem->flags, NA_UI_ELEMENT_DEBUG_LAYOUT);
+}
+
+NA_HDEF void na_SetUIElementDebugLayout(NA_UIElement* elem, NABool debug) {
+  #if NA_DEBUG
+  if(naGetFlagu32(elem->flags, NA_UI_ELEMENT_DEBUG_LAYOUT) == debug)
+    naError("debug flag already set");
+  #endif
+  naSetFlagu32(&elem->flags, NA_UI_ELEMENT_DEBUG_LAYOUT, debug);
+}
 
 
 

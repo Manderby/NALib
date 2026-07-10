@@ -1,29 +1,23 @@
 
+#include "NAAppCore.h"
 #include "../NAApp.h"
 #include "../../NAStruct/NAList.h"
 
 
 
-//      +----------------- margin ---------------+
-//     /     /----------- padding ----------\     \
-//    /     /     /- block with flex --\     \     \
-//   /     /     /      /- block -\     \     \     \
+//              /--------------- block ------------\
+//   /-margin-\/-padding-\                          \
 //
-//   +----------------------------------------------+
-//   |     +----------------------------------+     |
-//   |     |     +----------------------+     |     |
-//   |     |     |      +---------+     |     |     |
-//   |     |     |      |    C    |     |     |     |
-//   |     |     |      +---------+     |     |     |
-//   |     |     +----------------------+     |     |
-//   |     +----------------------------------+     |
-//   +----------------------------------------------+
+//   +-------------------------------------------------+
+//   |         +------------------------------------+  |
+//   |         |          +----------------------+  |  |
+//   |         |          |      +=========+     |  |  |
+//   |         |          |      | content |     |  |  |
+//   |         |          |      +=========+     |  |  |
+//   |         |          +----------------------+  |  |
+//   |         +------------------------------------+  |
+//   +-------------------------------------------------+
 //
-// C = content
-// content is aligned inside block.
-// block is enlarged by flex.
-// block with flex is surrounded by padding. This padded block is given from parent.
-// padding is surrounded by margin.
 
 
 
@@ -336,6 +330,27 @@ void na_EndLayoutElement(NA_LayoutElement* elem) {
 
 
 
+void na_PreserveDebugInfo(NA_LayoutElement* elem, NARect blockRect) {
+  NA_LayoutRects* layoutRects = naAlloc(NA_LayoutRects);
+  
+  layoutRects->marginRect = naMakeRectWithBorder(blockRect, elem->margin);
+  layoutRects->blockRect = blockRect;
+  
+  NABorder2D negativePadding;
+  negativePadding.begin1 = -elem->padding.begin1;
+  negativePadding.begin2 = -elem->padding.begin2;
+  negativePadding.end1 = -elem->padding.end1;
+  negativePadding.end2 = -elem->padding.end2;
+  layoutRects->contentRect = naMakeRectWithBorder(blockRect, negativePadding);
+  
+  if(((NA_UIElement*)elem->uiElement)->layoutRects) {
+    naFree(((NA_UIElement*)elem->uiElement)->layoutRects);
+  }
+  ((NA_UIElement*)elem->uiElement)->layoutRects = layoutRects;
+}
+
+
+
 void na_AlignLayoutSection(
   NA_LayoutElement* elem,
   NARect blockRect,
@@ -346,6 +361,10 @@ void na_AlignLayoutSection(
   // Finally, if a uiElement is available, add it to the parent space.
   if(elem->uiElement) {
     naAddSpaceChildWithSize(na_GetLayoutParentSpace(elem), elem->uiElement, blockRect.pos, blockRect.size);
+
+    #if NA_DEBUG
+      na_PreserveDebugInfo(elem, blockRect);
+    #endif // NA_DEBUG
   }
 
   NARect flexRect = blockRect;
@@ -631,6 +650,12 @@ void na_AlignLayoutElement(
   NABool verticalIsBottomToTop,
   NABool orderingVH)
 {
+  #if NA_DEBUG
+    if(elem->uiElement) {
+      na_PreserveDebugInfo(elem, blockRect);
+    }
+  #endif // NA_DEBUG
+
   // compute absolute values for blockSize and size.
   if(elem->blockSize1 == NA_LAYOUT_GROW) {
     elem->blockSize1 = (orderingVH) ? blockRect.size.height : blockRect.size.width;

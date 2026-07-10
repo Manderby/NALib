@@ -271,10 +271,14 @@ NA_DEF void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication) {
 
 #if NA_DEBUG
   NA_DEF void naDebugUIElement(const void* elem) { NA_UNUSED(elem); }
+  NA_DEF void naDebugUIElementLayout(const void* elem) {
+    na_SetUIElementDebugLayout((NA_UIElement*)elem, NA_TRUE);
+  }
   NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) { NA_UNUSED(elem); }
   NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) { NA_UNUSED(elem); return NA_FALSE;}
 #else
   NA_DEF void naDebugUIElement(const void* elem) { NA_UNUSED(elem); }
+  NA_DEF void naDebugUIElementLayout(const void* elem) { NA_UNUSED(elem); }
   NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) { NA_UNUSED(elem); }
   NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) { NA_UNUSED(elem); return NA_FALSE;}
 #endif

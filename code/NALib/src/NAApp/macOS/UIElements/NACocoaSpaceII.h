@@ -46,6 +46,24 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
   NSRectFill(dirtyRect);
 
   naDeallocUIColor(NA_COCOA_PTR_OBJC_TO_C(curBgColor));
+  
+  NARect marginRect = naMakeRectS(10, 10, 30, 30);
+
+//  [[NSColor colorWithRed:1 green:0 blue:0 alpha:.5] setFill];
+//  NSRectFill(naMakeNSRectWithRect(marginRect));
+//
+//  if(na_GetUIElementDebugLayout(&cocoaSpace->space.uiElement) && cocoaSpace->space.uiElement.layoutRects) {
+//    [[NSColor colorWithRed:0 green:0 blue:1 alpha:.5] setFill];
+//    NSRectFill(naMakeNSRectWithRect(marginRect));
+//  }
+
+//  [[NSColor colorWithRed:0 green:1 blue:0 alpha:.5] setFill];
+//  NSRectFill(naMakeNSRectWithRect(marginRect));
+
+  #if NA_DEBUG
+    na_DrawLayoutDebugging([self frame], &cocoaSpace->space.uiElement);
+  #endif // NA_DEBUG
+
 }
 
 - (void)mouseMoved:(NSEvent* _Nonnull)event{

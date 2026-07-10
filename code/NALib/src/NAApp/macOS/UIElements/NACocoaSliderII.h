@@ -26,6 +26,13 @@ NA_RUNTIME_TYPE(NACocoaSlider, na_DestructCocoaSlider, NA_FALSE);
   return self;
 }
 
+- (void)drawRect:(NSRect)dirtyRect{
+  #if NA_DEBUG
+    na_DrawLayoutDebugging([self frame], &cocoaSlider->slider.uiElement);
+  #endif // NA_DEBUG
+  [super drawRect:dirtyRect];
+}
+
 - (void) setTickCount:(size_t)tickCount{
   self.numberOfTickMarks = (NSInteger)tickCount;
   self.allowsTickMarkValuesOnly = tickCount > 0;
