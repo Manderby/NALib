@@ -32,6 +32,10 @@ NA_API NASpace* naNewSpace(NASize size);
 // positioning, use the Raw variant.
 NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
 NA_API void naAddSpaceChildRaw(NASpace* space, void* child, NAPos pos);
+// If you want to change the size at the same time, use the following two
+// functions:
+NA_API void naAddSpaceChildWithSize(NASpace* space, void* child, NAPos pos, NASize size);
+NA_API void naAddSpaceChildRawWithSize(NASpace* space, void* child, NAPos pos, NASize size);
 
 // Removes the given child from the space. If the child is not a child of the
 // space, nothing happens. NALib will output a warning though.
@@ -51,6 +55,15 @@ NA_API void naSetSpaceBackgroundColor(
   const NAColor* color);
 // Fills the given color with the background acutally used for displaying.
 NA_API void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space);
+
+// Gets and sets the layout directions for this space.
+NA_API NALayoutDirections naGetSpaceLayoutDirections(const NASpace* space);
+NA_API void naSetSpaceLayoutDirections(NASpace* space, NALayoutDirections directions);
+// Note that the getter automatically returns an explicit direction and hence
+// resolves any inherit direction. If there is no explicit direction or space
+// is a nullptr, NA_LAYOUT_DIRECTIONS_RLTB is returned.
+// If you need to know whether a space uses inherit, use this function:
+NA_API NABool naGetSpaceLayoutDirectionsIsInherit(const NASpace* space);
 
 // Moves all childs with the given x and y coordinates in direction
 // to the right and top.

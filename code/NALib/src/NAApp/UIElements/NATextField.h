@@ -37,7 +37,7 @@ NA_API void naSetTextFieldFont(
   NAFont* font);
 NA_API void naSetTextFieldTextAlignment(
   NATextField* textField,
-  NATextAlignment alignment);
+  NALayoutAlign alignment);
 
 
 

@@ -200,10 +200,6 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
   [self setSelectable:selectable ? YES : NO];
 }
 
-- (void) setTextAlignment:(NATextAlignment) alignment{
-  [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
-}
-
 - (void) setNAFont:(NAFont*)font{
   [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
 }
@@ -287,9 +283,17 @@ NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable) {
 
 
 
-NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment) {
+NA_DEF void naSetLabelTextAlignment(NALabel* label, NALayoutAlign alignment) {
+  label->alignment = alignment;
+  na_UpdateLabelTextAlignment(label);
+}
+
+
+
+NA_HDEF void na_UpdateLabelTextAlignment(NALabel* label) {
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setTextAlignment:alignment];
+  NALayoutDirections directions = naGetSpaceLayoutDirections(naGetUIElementParentSpace(nativePtr));
+  [nativePtr setAlignment:getNSTextAlignment(label->alignment, directions)];
 }
 
 

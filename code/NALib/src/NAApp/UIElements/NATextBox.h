@@ -27,7 +27,7 @@ NA_API void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text);
 // Sets different kind of font properties of the textBox.
 NA_API void naSetTextBoxTextAlignment(
   NATextBox* textBox,
-  NATextAlignment alignment);
+  NALayoutAlign alignment);
 NA_API void naSetTextBoxFont(
   NATextBox* textBox,
   NAFont* font);

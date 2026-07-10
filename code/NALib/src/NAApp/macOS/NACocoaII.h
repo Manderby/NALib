@@ -428,12 +428,13 @@ NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
 
 
 
-NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment) {
+NSTextAlignment getNSTextAlignment(NALayoutAlign alignment, NALayoutDirections directions) {
+  NABool isRTL = naGetLayoutDirectionsHorizontalIsRightToLeft(directions);
   NSTextAlignment nsalignment;
   switch(alignment) {
-    case NA_TEXT_ALIGNMENT_LEFT: nsalignment = NATextAlignmentLeft; break;
-    case NA_TEXT_ALIGNMENT_RIGHT: nsalignment = NATextAlignmentRight; break;
-    case NA_TEXT_ALIGNMENT_CENTER: nsalignment = NATextAlignmentCenter; break;
+    case NA_ALIGN_BEGIN: nsalignment = isRTL ? NATextAlignmentRight : NATextAlignmentLeft; break;
+    case NA_ALIGN_END: nsalignment = isRTL ? NATextAlignmentLeft : NATextAlignmentRight; break;
+    case NA_ALIGN_CENTER: nsalignment = NATextAlignmentCenter; break;
   default:
     #if NA_DEBUG
       naError("Invalid alignment enumeration");

@@ -91,10 +91,6 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
 ////  [self setAlphaValue:enabled ? 1. : .35];
 //}
 
-- (void) setTextAlignment:(NATextAlignment) alignment{
-  [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
-}
-
 - (void) setNAFont:(NAFont*)font{
    [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
 }
@@ -157,9 +153,17 @@ NA_DEF void naSetTextFieldColor(NATextField* textField, const NAColor* color) {
 
 
 
-NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment alignment) {
+NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NALayoutAlign alignment) {
+  textField->alignment = alignment;
+  na_UpdateTextFieldTextAlignment(textField);
+}
+
+
+
+NA_HDEF void na_UpdateTextFieldTextAlignment(NATextField* textField) {
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
-  [nativePtr setTextAlignment:alignment];
+  NALayoutDirections directions = naGetSpaceLayoutDirections(naGetUIElementParentSpace(textField));
+  [nativePtr setAlignment:getNSTextAlignment(textField->alignment, directions)];
 }
 
 

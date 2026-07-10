@@ -134,21 +134,23 @@ NA_PROTOTYPE(NASpace);
 
 
 typedef enum {
-  NA_LAYOUT_DIRECTIONS_LRTB = 0x00,  // western
-  NA_LAYOUT_DIRECTIONS_RLTB = 0x01,  // arabic
+  NA_LAYOUT_DIRECTIONS_LRTB = 0x00,  // reading direction: western
+  NA_LAYOUT_DIRECTIONS_RLTB = 0x01,  // reading direction: middle eastern
   NA_LAYOUT_DIRECTIONS_LRBT = 0x02,
   NA_LAYOUT_DIRECTIONS_RLBT = 0x03,
 
-  NA_LAYOUT_DIRECTIONS_TBLR = 0x04, // mongolian
-  NA_LAYOUT_DIRECTIONS_TBRL = 0x05, // traditional asian
+  NA_LAYOUT_DIRECTIONS_TBLR = 0x04, // reading direction: mongolian
+  NA_LAYOUT_DIRECTIONS_TBRL = 0x05, // reading direction: traditional eastern
   NA_LAYOUT_DIRECTIONS_BTLR = 0x06,
   NA_LAYOUT_DIRECTIONS_BTRL = 0x07,
+
+  NA_LAYOUT_DIRECTIONS_INHERIT = 0x80, // same as the parent space.
 } NALayoutDirections;
 
 typedef enum {
-  NA_LAYOUT_BEGIN,
-  NA_LAYOUT_CENTER,
-  NA_LAYOUT_END,
+  NA_ALIGN_BEGIN,
+  NA_ALIGN_CENTER,
+  NA_ALIGN_END,
 } NALayoutAlign;
 
 #define NA_LAYOUT_MIN  -1.
@@ -190,8 +192,8 @@ void naSetLayoutSectionSpace(NASpace* space);
 
 // Changes the attributes of the last element added.
 // Defaults are:
-// PrimaryAlign:   NA_LAYOUT_CENTER
-// SecondaryAlign: NA_LAYOUT_CENTER
+// PrimaryAlign:   NA_ALIGN_CENTER
+// SecondaryAlign: NA_ALIGN_CENTER
 // AligneBaseline: false for block elements, true for baseline elements.
 // BlockSize1:     same as size1 for elements. NA_LAYOUT_GROW for layouts.
 void naSetLayoutElementPrimaryAlign(NALayoutAlign align1);
@@ -200,3 +202,10 @@ void naSetLayoutElementAlignBaseline(NABool alignBaseline);
 void naSetLayoutElementBlockSize1(double blockSize1);
 
 
+
+// The following getters are convencience functions to determin characteristics
+// of the directions chosen. Usually only used internally in NALib but it might
+// be of use for anybody.
+NABool naGetLayoutDirectionsHorizontalIsRightToLeft(NALayoutDirections directions);
+NABool naGetLayoutDirectionsVerticalIsBottomToTop(NALayoutDirections directions);
+NABool naGetLayoutDirectionsPrimaryIsVertical(NALayoutDirections directions);

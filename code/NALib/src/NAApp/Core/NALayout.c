@@ -61,6 +61,32 @@ struct NA_LayoutElement {
 
 
 
+NABool naGetLayoutDirectionsHorizontalIsRightToLeft(NALayoutDirections directions) {
+  #if NA_DEBUG
+    if(directions < 0 || directions > 7)
+      naError("Only explicit directions can be used with this function");
+  #endif
+  return naGetFlagu32(directions, NA_LAYOUT_DIRECTION_RIGHT_TO_LEFT);
+}
+
+NABool naGetLayoutDirectionsVerticalIsBottomToTop(NALayoutDirections directions) {
+  #if NA_DEBUG
+    if(directions < 0 || directions > 7)
+      naError("Only explicit directions can be used with this function");
+  #endif
+  return naGetFlagu32(directions, NA_LAYOUT_DIRECTION_BOTTOM_TO_TOP);
+}
+
+NABool naGetLayoutDirectionsPrimaryIsVertical(NALayoutDirections directions) {
+  #if NA_DEBUG
+    if(directions < 0 || directions > 7)
+      naError("Only explicit directions can be used with this function");
+  #endif
+  return naGetFlagu32(directions, NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL);
+}
+
+
+
 void na_EndLayoutElement(NA_LayoutElement* elem);
 void na_AlignLayoutElement(
   NA_LayoutElement* elem,
@@ -120,8 +146,8 @@ void naBeginLayout(NASpace* space, NABorder2D padding, NALayoutDirections layout
   newElement->element.size1 = NA_LAYOUT_GROW;
   newElement->element.size2 = NA_LAYOUT_GROW;
   newElement->blockSize1 = NA_LAYOUT_GROW;
-  newElement->element.align1 = NA_LAYOUT_CENTER;
-  newElement->element.align2 = NA_LAYOUT_CENTER;
+  newElement->element.align1 = NA_ALIGN_CENTER;
+  newElement->element.align2 = NA_ALIGN_CENTER;
   newElement->element.alignBaseline = NA_FALSE;
   newElement->element.layoutDirections = layoutDirections;
 
@@ -173,9 +199,9 @@ void naEndLayout() {
         0.,
         na_curLayoutElement->minBlockSize1,
         na_curLayoutElement->minBlockSize2),
-      naGetFlagu32(na_curLayoutElement->element.layoutDirections, NA_LAYOUT_DIRECTION_RIGHT_TO_LEFT),
-      naGetFlagu32(na_curLayoutElement->element.layoutDirections, NA_LAYOUT_DIRECTION_BOTTOM_TO_TOP),
-      naGetFlagu32(na_curLayoutElement->element.layoutDirections, NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL));
+      naGetLayoutDirectionsHorizontalIsRightToLeft(na_curLayoutElement->element.layoutDirections),
+      naGetLayoutDirectionsVerticalIsBottomToTop(na_curLayoutElement->element.layoutDirections),
+      naGetLayoutDirectionsPrimaryIsVertical(na_curLayoutElement->element.layoutDirections));
     
     // Finally, deallocate everything.
     na_DeallocLayoutElement(na_curLayoutElement);
@@ -261,7 +287,7 @@ void na_EndLayoutElement(NA_LayoutElement* elem) {
 
   // If this elements sub-layouts primary and secondary directions are opposite
   // to the directions this element is contained in, we need to swap the sizes.
-  if(!elem->isSecondary && elem->parent && naGetFlagu32(elem->element.layoutDirections, NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL) != naGetFlagu32(elem->parent->parent->element.layoutDirections, NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL)) {
+  if(!elem->isSecondary && elem->parent && naGetLayoutDirectionsPrimaryIsVertical(elem->element.layoutDirections) != naGetLayoutDirectionsPrimaryIsVertical(elem->parent->parent->element.layoutDirections)) {
     double tmpSize = elem->minBlockSize1;
     elem->minBlockSize1 = elem->minBlockSize2;
     elem->minBlockSize2 = tmpSize;
@@ -317,6 +343,11 @@ void na_AlignLayoutSection(
   NABool verticalIsBottomToTop,
   NABool orderingVH)
 {
+  // Finally, if a uiElement is available, add it to the parent space.
+  if(elem->uiElement) {
+    naAddSpaceChildWithSize(na_GetLayoutParentSpace(elem), elem->uiElement, blockRect.pos, blockRect.size);
+  }
+
   NARect flexRect = blockRect;
 
   // First, we position the uiElement, if available.
@@ -409,17 +440,11 @@ void na_AlignLayoutSection(
     na_AlignLayoutElement(
       child,
       subElemRect,
-      naGetFlagu32(elem->parent->element.layoutDirections, NA_LAYOUT_DIRECTION_RIGHT_TO_LEFT),
-      naGetFlagu32(elem->parent->element.layoutDirections, NA_LAYOUT_DIRECTION_BOTTOM_TO_TOP),
+      naGetLayoutDirectionsHorizontalIsRightToLeft(elem->parent->element.layoutDirections),
+      naGetLayoutDirectionsVerticalIsBottomToTop(elem->parent->element.layoutDirections),
       orderingVH);
   }
   naClearListIterator(&iter);
-
-  // Finally, if a uiElement is available, add it to the parent space.
-  if(elem->uiElement) {
-    naSetUIElementRect(elem->uiElement, blockRect);
-    naAddSpaceChild(na_GetLayoutParentSpace(elem), elem->uiElement, blockRect.pos);
-  }
 }
 
 
@@ -436,7 +461,7 @@ void naAddLayoutElement(
     na_EndLayoutElement(lastElement);
   }
   
-  NABool orderingVH = naGetFlagu32(na_curLayoutElement->parent->element.layoutDirections, NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL);
+  NABool orderingVH = naGetLayoutDirectionsPrimaryIsVertical(na_curLayoutElement->parent->element.layoutDirections);
 
   #if NA_DEBUG
     if(!na_curLayoutElement)
@@ -489,8 +514,8 @@ void naAddLayoutElement(
   }
 
   subElem->margin.begin1 = preMargin1;
-  subElem->element.align1 = NA_LAYOUT_CENTER;
-  subElem->element.align2 = NA_LAYOUT_CENTER;
+  subElem->element.align1 = NA_ALIGN_CENTER;
+  subElem->element.align2 = NA_ALIGN_CENTER;
   
   if(uiElement && !naIsUIElementBlock(uiElement)) {
     subElem->element.alignBaseline = NA_TRUE;
@@ -629,10 +654,10 @@ void na_AlignLayoutElement(
 
   double alignMargin1;
   switch(elem->element.align1) {
-  case NA_LAYOUT_BEGIN:
+  case NA_ALIGN_BEGIN:
     alignMargin1 = 0.;
     break;
-  case NA_LAYOUT_CENTER:
+  case NA_ALIGN_CENTER:
     if(orderingVH) {
       alignMargin1 = elem->element.alignBaseline
         ? blockRect.size.height - NA_LAYOUT_LINE_HEIGHT
@@ -641,7 +666,7 @@ void na_AlignLayoutElement(
       alignMargin1 = naFloor((blockRect.size.width - elem->element.size1) * .5);
     }
     break;
-  case NA_LAYOUT_END:
+  case NA_ALIGN_END:
     if(orderingVH) {
       alignMargin1 = elem->element.alignBaseline
         ? blockRect.size.height - NA_LAYOUT_LINE_HEIGHT
@@ -654,7 +679,7 @@ void na_AlignLayoutElement(
 
   double alignMargin2;
   switch(elem->element.align2) {
-  case NA_LAYOUT_BEGIN:
+  case NA_ALIGN_BEGIN:
     if(orderingVH) {
       alignMargin2 = blockRect.size.width - elem->element.size2;
     }else{
@@ -663,7 +688,7 @@ void na_AlignLayoutElement(
         : blockRect.size.height - elem->element.size2;
     }
     break;
-  case NA_LAYOUT_CENTER:
+  case NA_ALIGN_CENTER:
     if(orderingVH) {
       alignMargin2 = naFloor((blockRect.size.width - elem->element.size2) * .5);
     }else{
@@ -672,7 +697,7 @@ void na_AlignLayoutElement(
         : naFloor((blockRect.size.height - elem->element.size2) * .5);
     }
     break;
-  case NA_LAYOUT_END:
+  case NA_ALIGN_END:
     alignMargin2 = 0.;
     break;
   }
@@ -686,6 +711,28 @@ void na_AlignLayoutElement(
 
   // This is the block we want to use with our uiElement if available.
   NARect uiElementRect = innerBlockRect;
+
+  // Finally, if a uiElement is available, add it to the parent space and
+  // adjust the window if needed.
+  if(elem->uiElement) {
+    if(naGetUIElementType(elem->uiElement) == NA_UI_SPACE) {
+      naSetSpaceLayoutDirections(elem->uiElement, elem->element.layoutDirections);
+    }
+    if(elem->parent) {
+      naAddSpaceChildWithSize(na_GetLayoutParentSpace(elem), elem->uiElement, uiElementRect.pos, uiElementRect.size);
+    }else{
+      naSetUIElementRect(elem->uiElement, uiElementRect);
+      NAWindow* window = naGetUIElementWindowMutable(elem->uiElement);
+      if(window){
+        NASpace* contentSpace = naGetWindowContentSpace(window);
+        if(contentSpace == elem->uiElement){
+          NARect windowRect = naGetUIElementRect(window);
+          windowRect.size = uiElementRect.size;
+          naSetUIElementRect(window, windowRect);
+        }
+      }
+    }
+  }
 
   // When the given element denotes a section or a new sub-layout, the given
   // uiElement must be an NASpace and childs will be added to that space.
@@ -776,29 +823,9 @@ void na_AlignLayoutElement(
     na_AlignLayoutSection(
       child,
       subElemRect,
-      naGetFlagu32(elem->element.layoutDirections, NA_LAYOUT_DIRECTION_RIGHT_TO_LEFT),
-      naGetFlagu32(elem->element.layoutDirections, NA_LAYOUT_DIRECTION_BOTTOM_TO_TOP),
-      naGetFlagu32(elem->element.layoutDirections, NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL));
+      naGetLayoutDirectionsHorizontalIsRightToLeft(elem->element.layoutDirections),
+      naGetLayoutDirectionsVerticalIsBottomToTop(elem->element.layoutDirections),
+      naGetLayoutDirectionsPrimaryIsVertical(elem->element.layoutDirections));
   }
   naClearListIterator(&iter);
-
-
-  // Finally, if a uiElement is available, add it to the parent space and
-  // adjust the window if needed.
-  if(elem->uiElement) {
-    naSetUIElementRect(elem->uiElement, uiElementRect);
-    if(elem->parent) {
-      naAddSpaceChild(na_GetLayoutParentSpace(elem), elem->uiElement, uiElementRect.pos);
-    }else{
-      NAWindow* window = naGetUIElementWindowMutable(elem->uiElement);
-      if(window){
-        NASpace* contentSpace = naGetWindowContentSpace(window);
-        if(contentSpace == elem->uiElement){
-          NARect windowRect = naGetUIElementRect(window);
-          windowRect.size = uiElementRect.size;
-          naSetUIElementRect(window, windowRect);
-        }
-      }
-    }
-  }
 }

@@ -97,10 +97,6 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
   return naNewStringWithFormat([[[self textStorage] string] UTF8String]);
 }
 
-- (void) setTextAlignment:(NATextAlignment) alignment{
-  [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
-}
-
 - (void) setNAFont:(NAFont*)font{
   [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
 }
@@ -184,9 +180,17 @@ NA_DEF NAString* naNewStringWithTextBoxText(const NATextBox* textBox) {
 
 
 
-NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment) {
+NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NALayoutAlign alignment) {
+  textBox->alignment = alignment;
+  na_UpdateTextBoxTextAlignment(textBox);
+}
+
+
+
+NA_HDEF void na_UpdateTextBoxTextAlignment(NATextBox* textBox) {
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
-  [nativePtr setTextAlignment:alignment];
+  NALayoutDirections directions = naGetSpaceLayoutDirections(naGetUIElementParentSpace(textBox));
+  [nativePtr setAlignment:getNSTextAlignment(textBox->alignment, directions)];
 }
 
 

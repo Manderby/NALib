@@ -242,7 +242,7 @@ NA_HDEF NSView* _Nonnull na_getNSViewOfChild(void* _Nonnull child) {
 
 
 
-NA_DEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NABool raw) {
+NA_DEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NASize size, NABool ignoreSize, NABool raw) {
   naDefineCocoaObject(NACocoaNativeSpace, nativeSpacePtr, space);
 
   NASpace* prevSpace = naGetUIElementParentSpaceMutable(child);
@@ -258,6 +258,9 @@ NA_DEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child,
 
   NARect rect = naGetUIElementRect(child);
   rect.pos = pos;
+  if(!ignoreSize) {
+    rect.size = size;
+  }
   if(raw) {
     naSetUIElementRectRaw(child, rect);
   }else{
@@ -270,13 +273,16 @@ NA_DEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child,
 
 
 NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos) {
-  na_AddSpaceChildAtPos(space, child, pos, NA_FALSE);
+  na_AddSpaceChildAtPos(space, child, pos, naMakeSizeZero(), NA_TRUE, NA_FALSE);
 }
-
-
-
 NA_DEF void naAddSpaceChildRaw(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos) {
-  na_AddSpaceChildAtPos(space, child, pos, NA_TRUE);
+  na_AddSpaceChildAtPos(space, child, pos, naMakeSizeZero(), NA_TRUE, NA_TRUE);
+}
+NA_DEF void naAddSpaceChildWithSize(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NASize size) {
+  na_AddSpaceChildAtPos(space, child, pos, size, NA_FALSE, NA_FALSE);
+}
+NA_DEF void naAddSpaceChildRawWithSize(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NASize size) {
+  na_AddSpaceChildAtPos(space, child, pos, size, NA_FALSE, NA_TRUE);
 }
 
 

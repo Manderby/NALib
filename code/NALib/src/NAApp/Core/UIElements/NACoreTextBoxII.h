@@ -9,6 +9,7 @@
 NA_HDEF void na_InitTextBox(NATextBox* textBox, void* nativePtr) {
   na_InitCoreUIElement(&textBox->uiElement, NA_UI_TEXTBOX, nativePtr);
   textBox->font = naCreateSystemFont();
+  textBox->alignment = NA_ALIGN_BEGIN;
 }
 
 

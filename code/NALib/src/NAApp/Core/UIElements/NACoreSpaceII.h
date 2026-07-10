@@ -13,6 +13,7 @@ NA_HDEF void na_InitSpace(NASpace* space, void* nativePtr) {
   #endif
 
   na_InitCoreUIElement(&space->uiElement, NA_UI_SPACE, nativePtr);
+  space->layoutDirections = NA_LAYOUT_DIRECTIONS_INHERIT;
   naInitList(&space->childs);
   space->backgroundColor = NA_NULL;
 }
@@ -115,6 +116,38 @@ NA_DEF void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
   NAColor alternatedColor;
   naBlendColors(&alternatedColor, &thisBgColor, &fgColor, 0.075f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
   naBlendColors(color, &parentBgColor, &alternatedColor, 1.f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
+}
+
+
+
+NA_DEF NALayoutDirections naGetSpaceLayoutDirections(const NASpace* space) {
+  if(!space) {
+    return NA_LAYOUT_DIRECTIONS_LRTB;
+  }else if(space->layoutDirections == NA_LAYOUT_DIRECTIONS_INHERIT) {
+    return naGetSpaceLayoutDirections(naGetUIElementParentSpace(space));
+  }else{
+    return space->layoutDirections;
+  }
+}
+
+NA_DEF void naSetSpaceLayoutDirections(NASpace* space, NALayoutDirections directions) {
+  #if NA_DEBUG
+    if(!space)
+      naError("space must not be a nullptr");
+  #endif
+  NABool didChange = space->layoutDirections != directions;
+  space->layoutDirections = directions;
+  if(didChange) {
+    // todo: auto-update all childs.
+  }
+}
+
+NA_DEF NABool naGetSpaceLayoutDirectionsIsInherit(const NASpace* space) {
+  #if NA_DEBUG
+    if(!space)
+      naError("space must not be a nullptr");
+  #endif
+  return space->layoutDirections == NA_LAYOUT_DIRECTIONS_INHERIT;
 }
 
 

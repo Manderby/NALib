@@ -91,6 +91,7 @@ struct NAImageSpace{
 
 struct NALabel{
   NA_UIElement uiElement;
+  NALayoutAlign alignment;
   NAFont* font;
   NAColor* textColor;
   NABool enabled;
@@ -149,6 +150,7 @@ struct NASlider{
 struct NASpace{
   NA_UIElement uiElement;
   NAList childs;
+  NALayoutDirections layoutDirections;
   NAColor* backgroundColor;
   NABool alternateBackground;
   NABool dragsWindow;
@@ -157,11 +159,13 @@ struct NASpace{
 struct NATextField{
   NA_UIElement uiElement;
   NAFont* font;
+  NALayoutAlign alignment;
 };
 
 struct NATextBox{
   NA_UIElement uiElement;
   NAFont* font;
+  NALayoutAlign alignment;
 };
 
 struct NAWindow{
@@ -347,6 +351,7 @@ NA_HAPI void na_SetLabelTextColor(NALabel* label, const NAColor* color);
 NA_HAPI NARect na_GetLabelRect(const NA_UIElement* space);
 NA_HAPI void na_SetLabelRect(NA_UIElement* label, NARect rect);
 NA_HAPI void na_UpdateLabelUIScale(NA_UIElement* button);
+NA_HAPI void na_UpdateLabelTextAlignment(NALabel* label);
 
 // NAMenu
 NA_HAPI void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent);
@@ -427,6 +432,7 @@ NA_HAPI void na_ClearTextBox(NATextBox* textBox);
 NA_HAPI NARect na_GetTextBoxRect(const NA_UIElement* textBox);
 NA_HAPI void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect);
 NA_HAPI void na_UpdateTextBoxUIScale(NA_UIElement* button);
+NA_HAPI void na_UpdateTextBoxTextAlignment(NATextBox* textBox);
 
 // NATextField
 NA_HAPI void na_InitTextField(NATextField* textField, void* nativePtr);
@@ -434,6 +440,7 @@ NA_HAPI void na_ClearTextField(NATextField* textField);
 NA_HAPI NARect na_GetTextFieldRect(const NA_UIElement* textField);
 NA_HAPI void na_SetTextFieldRect(NA_UIElement* textField, NARect rect);
 NA_HAPI void na_UpdateTextFieldUIScale(NA_UIElement* button);
+NA_HAPI void na_UpdateTextFieldTextAlignment(NATextField* textField);
 
 // NAWindow
 NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NAScreen* screen, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
