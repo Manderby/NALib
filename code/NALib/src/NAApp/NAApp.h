@@ -37,6 +37,7 @@
 #include "NAClipboard.h"
 #include "NAFont.h"
 #include "NAKeyboard.h"
+#include "NALayout.h"
 #include "NAMouse.h"
 #include "NAPreferences.h"
 #include "NAReaction.h"

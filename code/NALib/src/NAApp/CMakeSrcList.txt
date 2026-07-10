@@ -8,6 +8,7 @@ set(headerFiles
   ${NAAppDir}/NAFont.h
   ${NAAppDir}/NAImageSet.h
   ${NAAppDir}/NAKeyboard.h
+  ${NAAppDir}/NALayout.h
   ${NAAppDir}/NAMouse.h
   ${NAAppDir}/NAPreferences.h
   ${NAAppDir}/NAReaction.h
@@ -44,6 +45,7 @@ set(coreFiles
   ${NAAppDir}/Core/NACoreKeyboardII.h
   ${NAAppDir}/Core/NACoreMouseII.h
   ${NAAppDir}/Core/NACorePreferencesII.h
+  ${NAAppDir}/Core/NALayout.c
 )
 
 set(coreUIFiles
