@@ -443,6 +443,11 @@ NA_HAPI void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color);
 NA_HAPI NARect na_GetSpaceRect(const NA_UIElement* space);
 NA_HAPI void na_SetSpaceRect(NA_UIElement* space, NARect rect);
 NA_HAPI void na_UpdateSpaceUIScale(NA_UIElement* button);
+// In some rare cases, you just want to add a child to a space and position
+// it later. This function does the trick without triggering any repositioning
+// or resize. Note that the latter should be done manually afterwards or some
+// unexpected drawing artifacts might occur.
+NA_HAPI void na_AddSpaceChildUnpositioned(NASpace* space, void* child);
 
 // NATextBox
 NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);

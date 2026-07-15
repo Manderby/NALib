@@ -131,6 +131,12 @@ void naBeginLayout(NASpace* space, NABorder2D padding, NALayoutDirections layout
       naError("Use naBeginLayout either for a new layout or when working within a subsection.");
   #endif // NA_DEBUG
 
+  if(na_curLayoutElement && space) {
+    na_AddSpaceChildUnpositioned(
+      na_curLayoutElement->uiElement ? na_curLayoutElement->uiElement : na_GetLayoutParentSpace(na_curLayoutElement),
+      space);
+  }
+
   NA_LayoutElement* newElement = na_AllocLayoutElement(
     na_curLayoutElement,
     space,
@@ -360,7 +366,7 @@ void na_AlignLayoutSection(
 {
   // Finally, if a uiElement is available, add it to the parent space.
   if(elem->uiElement) {
-    naAddSpaceChildWithSize(na_GetLayoutParentSpace(elem), elem->uiElement, blockRect.pos, blockRect.size);
+    naSetUIElementRect(elem->uiElement, blockRect);
 
     #if NA_DEBUG
       na_PreserveDebugInfo(elem, blockRect);
@@ -480,6 +486,12 @@ void naAddLayoutElement(
     na_EndLayoutElement(lastElement);
   }
   
+  if(uiElement) {
+    na_AddSpaceChildUnpositioned(
+      na_curLayoutElement->uiElement ? na_curLayoutElement->uiElement : na_GetLayoutParentSpace(na_curLayoutElement),
+      uiElement);
+  }
+
   NABool orderingVH = naGetLayoutDirectionsPrimaryIsVertical(na_curLayoutElement->parent->element.layoutDirections);
 
   #if NA_DEBUG
@@ -557,6 +569,12 @@ void naSetLayoutSectionSpace(NASpace* space) {
       naError("Use naAddLayoutSection first.");
   #endif // NA_DEBUG
   
+  if(space) {
+    na_AddSpaceChildUnpositioned(
+      na_curLayoutElement->uiElement ? na_curLayoutElement->uiElement : na_GetLayoutParentSpace(na_curLayoutElement),
+      space);
+  }
+
   na_curLayoutElement->uiElement = space;
 }
 
@@ -743,10 +761,9 @@ void na_AlignLayoutElement(
     if(naGetUIElementType(elem->uiElement) == NA_UI_SPACE) {
       naSetSpaceLayoutDirections(elem->uiElement, elem->element.layoutDirections);
     }
-    if(elem->parent) {
-      naAddSpaceChildWithSize(na_GetLayoutParentSpace(elem), elem->uiElement, uiElementRect.pos, uiElementRect.size);
-    }else{
-      naSetUIElementRect(elem->uiElement, uiElementRect);
+
+    naSetUIElementRect(elem->uiElement, uiElementRect);
+    if(!elem->parent) {
       NAWindow* window = naGetUIElementWindowMutable(elem->uiElement);
       if(window){
         NASpace* contentSpace = naGetWindowContentSpace(window);
