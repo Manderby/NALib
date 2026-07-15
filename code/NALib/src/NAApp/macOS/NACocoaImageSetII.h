@@ -141,7 +141,7 @@ NA_HDEF BOOL na_drawFixedResolutionImage(const NAImageSet* imageSet, NAImageSetI
 //    skin = naGetCurrentSkin();
 //  }
 
-  [NSGraphicsContext saveGraphicsState];
+    [NSGraphicsContext saveGraphicsState];
     CGContextRef contextRef = naGetCGContextRef([NSGraphicsContext currentContext]);
     CGAffineTransform transform = CGContextGetCTM(contextRef);
     CGFloat uiScale = transform.a;  // This is x. Could also use .d for y.

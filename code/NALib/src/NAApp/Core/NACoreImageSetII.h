@@ -231,13 +231,6 @@ NA_HDEF const NAImage* naGetImageSetSubImage(const NAImageSet* imageSet, NASizes
 NA_HDEF void* naGetImageSetNativeSubImage(const NAImageSet* imageSet, NASizes size, NASkin skin, NAImageSetInteraction interaction, NABool secondaryState) {
   // Let the following function do the hard work.
   const NA_UISubImage* subImage = na_GetUISubImage(imageSet, size, skin, interaction, secondaryState);
-  
-//  NAPNG* png = naNewPNG(naGetImageSize(subImage->image), NA_PNG_COLORTYPE_TRUECOLOR_ALPHA, 8);
-//  void* data = naGetPNGPixelData(png);  
-//  naConvertImageTou8(subImage->image, data, NA_TRUE, NA_COLOR_BUFFER_RGBAPre);
-//  naWritePNGToUrl(png, "test.png");
-//  naDelete(png);
-
   return subImage->nativeImage;
 }
 
