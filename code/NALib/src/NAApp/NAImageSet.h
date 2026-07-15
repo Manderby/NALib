@@ -10,7 +10,7 @@
 // ///////////////////////////////
 // An NAImageSet stores a collection of images ready to be presented to a user.
 // Such an image might be based on a single image but can have different
-// representations based on the systems skin, the resolution of the screen
+// representations based on the systems skin, the width and height of the image
 // or the interaction the user has with the image.
 
 NA_PROTOTYPE(NAImageSet);
@@ -42,12 +42,12 @@ typedef enum{
 
 
 // naCreateImageSet creates an ImageSet which stores multiple representations
-// of an image depending on resolution, skin, interaction.
+// of an image depending on widht and height, skin, interaction.
 //
 // You always provide the images in the highest resolution available. If you
 // have for example a 512x512 point image representing the double resolution
-// image of a 256x256 icon, you provide that 512x512 image with the resolution
-// NA_UI_RESOLUTION_2x.
+// image of a 256x256 icon, you provide that 512x512 image with the size
+// 256x256.
 //
 // Downsampling will be done automatically by NALib in case you do not provide
 // a subimage yourself using naSetImageSetSubImage.
@@ -72,27 +72,47 @@ typedef enum{
 // images.
 NA_API NAImageSet* naCreateImageSet(
   const NAImage* baseImage,
-  double baseResolution,
+  NASizes size1x,
   NABlendMode tinting);
-
-// Creates a new imageSet with the primary subimage, resolution and tinting
-// of the given one. All other subimages (different resolutions, pressed,
-// hover, ...) will be computed anew.
-NA_API NAImageSet* naRecreateImageSet(const NAImageSet* imageSet);
-
-// Returns the size of the 1x representation.
-NA_API NASizes naGetImageSet1xSize(const NAImageSet* imageSet);
-
-// Returns the tinting of the image set.
-NA_API NABlendMode naGetImageSetTinting(const NAImageSet* imageSet);
 
 // Sets a custom image for the given parameters.
 NA_API void naSetImageSetSubImage(
   NAImageSet* imageSet,
   const NAImage* subImage,
-  double resolution,
   NASkin skin,
   NAImageSetInteraction interaction);
+
+// Returns the desired sub image of the image set.
+// Note that the imageSex, although const, might internally set alter its state
+// due to automatically added images, if non-existing.
+NA_HAPI const NAImage* naGetImageSetSubImage(
+  const NAImageSet* imageSet,
+  NASizes size,
+  NASkin skin,
+  NAImageSetInteraction interaction,
+  NABool secondaryState);
+
+// Same as naGetImageSetSubImage but returns the image as a system native
+// pointer. On macOS, this is a CGImageRef, on windows, this is a HBITMAP
+NA_HAPI void* naGetImageSetNativeSubImage(
+  const NAImageSet* imageSet,
+  NASizes size,
+  NASkin skin,
+  NAImageSetInteraction interaction,
+  NABool secondaryState);
+
+
+
+// Creates a new imageSet with the image given upon creating the set.
+// All other subimages (different sizes, pressed, hover, ...) will be
+// computed anew.
+NA_API NAImageSet* naRecreateImageSet(const NAImageSet* imageSet);
+
+// Returns the size of the 1x representation.
+NA_API NASizes naGetImageSetSize1x(const NAImageSet* imageSet);
+
+// Returns the tinting of the image set.
+NA_API NABlendMode naGetImageSetTinting(const NAImageSet* imageSet);
 
 
 

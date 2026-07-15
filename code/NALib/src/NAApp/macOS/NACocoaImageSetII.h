@@ -135,26 +135,34 @@ NA_DEF void* naAllocNativeImageWithImage(const NAImage* image) {
 }
 
 
-NA_HDEF BOOL na_drawFixedResolutionImage(const NAImageSet* imageSet, double resolution, NAImageSetInteraction interaction, NABool secondaryState, NSSize imageSize, NSRect dstRect) {
+NA_HDEF BOOL na_drawFixedResolutionImage(const NAImageSet* imageSet, NAImageSetInteraction interaction, NABool secondaryState, NSRect dstRect) {
   NASkin skin = NA_SKIN_SYSTEM;
 //  if(naGetImageSetTinting(imageSet) != NA_BLEND_ZERO) {
 //    skin = naGetCurrentSkin();
 //  }
-  
-  CGImageRef cocoaImage = na_GetImageSetNativeSubImage(imageSet, resolution, skin, interaction, secondaryState);
 
-  // Yes, we create a new NSImage which we draw into the NSImage which
-  // calls this callback. It is unknown to me exactly why I need to do
-  // that but otherwise the context just isn't there on all systems.
-  // Potentially this has to do with threading which can only allocate
-  // memory in its own region as this callback may be called in a thread.
   [NSGraphicsContext saveGraphicsState];
-  NSImage* drawImage = [[NSImage alloc] initWithSize:imageSize];
-  [drawImage lockFocus];
-    CGContextDrawImage(naGetCGContextRef([NSGraphicsContext currentContext]), dstRect, cocoaImage);
-  [drawImage unlockFocus];
-  [NSGraphicsContext restoreGraphicsState];
+    CGContextRef contextRef = naGetCGContextRef([NSGraphicsContext currentContext]);
+    CGAffineTransform transform = CGContextGetCTM(contextRef);
+    CGFloat uiScale = transform.a;  // This is x. Could also use .d for y.
+    
+    NASizes subImageSize = naMakeSizes(
+      (size_t)naFloor(dstRect.size.width * uiScale),
+      (size_t)naFloor(dstRect.size.height * uiScale));
+    CGImageRef cocoaImage = naGetImageSetNativeSubImage(imageSet, subImageSize, skin, interaction, secondaryState);
 
+    // Yes, we create a new NSImage which we draw into the NSImage which
+    // calls this callback. It is unknown to me exactly why I need to do
+    // that but otherwise the context just isn't there on all systems.
+    // Potentially this has to do with threading which can only allocate
+    // memory in its own region as this callback may be called in a thread.
+    NSImage* drawImage = [[NSImage alloc] initWithSize:dstRect.size];
+    
+    [drawImage lockFocus];
+      CGContextDrawImage(contextRef, dstRect, cocoaImage);
+    [drawImage unlockFocus];
+  [NSGraphicsContext restoreGraphicsState];
+  
   [drawImage drawInRect:dstRect];
 
   return YES;
@@ -177,18 +185,19 @@ NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
   // there and returns null, resulting in empty images.
   if(!forceOldMethod && [NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]) {
     NA_MACOS_AVAILABILITY_GUARD_10_8(
-      NSSize imageSize = NSMakeSize(naGetImageSet1xSize(imageSet).width, naGetImageSet1xSize(imageSet).height);
+      NSSize imageSize = NSMakeSize(
+        naGetImageSetSize1x(imageSet).width,
+        naGetImageSetSize1x(imageSet).height);
       image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect)
       {
-        double resolution = uiScale * NA_UI_RESOLUTION_1x;
-        return na_drawFixedResolutionImage(imageSet, resolution, interaction, secondaryState, imageSize, dstRect);
+        return na_drawFixedResolutionImage(imageSet, interaction, secondaryState, dstRect);
       }];
     ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
   }
   
   // old method: Just create an image with multiple representations.
   if(!image) {
-    NASizes imageSize = naGetImageSet1xSize(imageSet);
+    NASizes imageSize = naGetImageSetSize1x(imageSet);
     image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
 
     NASkin skin = NA_SKIN_PLAIN;
@@ -196,8 +205,10 @@ NA_DEF NSImage* na_CreateResolutionIndependentNativeImage(
       skin = naGetCurrentSkin();
     }
 
-    CGImageRef img1x = na_GetImageSetNativeSubImage(imageSet, NA_UI_RESOLUTION_1x, skin, interaction, secondaryState);
-    CGImageRef img2x = na_GetImageSetNativeSubImage(imageSet, NA_UI_RESOLUTION_2x, skin, interaction, secondaryState);
+    NASizes size1x = naGetImageSetSize1x(imageSet);
+    NASizes size2x = naMakeSizes(size1x.width * 2, size1x.height * 2);
+    CGImageRef img1x = naGetImageSetNativeSubImage(imageSet, size1x, skin, interaction, secondaryState);
+    CGImageRef img2x = naGetImageSetNativeSubImage(imageSet, size2x, skin, interaction, secondaryState);
     if(img1x) {
       NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithCGImage:img1x];
       [image addRepresentation:rep];

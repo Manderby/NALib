@@ -540,22 +540,6 @@ NA_HAPI void na_SetRawPreferencesString(void* prefs, const char* key, NAString* 
 #endif
 
 
-// ImageSet
-NA_HAPI const NAImage* na_GetImageSetSubImage(
-  const NAImageSet* imageSet,
-  double resolution,
-  NASkin skin,
-  NAImageSetInteraction interaction,
-  NABool secondaryState);
-
-NA_HAPI void* na_GetImageSetNativeSubImage(
-  const NAImageSet* imageSet,
-  double resolution,
-  NASkin skin,
-  NAImageSetInteraction interaction,
-  NABool secondaryState);
-
-
 
 #endif // NA_COMPILE_GUI == 1
 
