@@ -166,6 +166,8 @@ void naEndLayout() {
     // na_curLayoutElement is the root element. Finalize the element.
     na_EndLayoutElement(na_curLayoutElement);
 
+    NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(na_curLayoutElement->uiElement);
+
     // Reaching here, all min sizes of the whole design are computed. Propagate
     // the information down the whole tree and align all elements properly.
     na_AlignLayoutElement(
@@ -174,8 +176,8 @@ void naEndLayout() {
       naMakeRectS(
         0.,
         0.,
-        na_curLayoutElement->minBlockSize1,
-        na_curLayoutElement->minBlockSize2));
+        orderingVH ? na_curLayoutElement->minBlockSize2 : na_curLayoutElement->minBlockSize1,
+        orderingVH ? na_curLayoutElement->minBlockSize1 : na_curLayoutElement->minBlockSize2));
     
     // Finally, deallocate everything.
     na_DeallocLayoutElement(na_curLayoutElement);
@@ -327,19 +329,41 @@ void na_EndLayoutElement(NA_LayoutElement* elem) {
 
 
 
-void na_PreserveDebugInfo(NA_LayoutElement* elem, NARect blockRect) {
+void na_PreserveDebugInfo(const NASpace* layoutingSpace, NA_LayoutElement* elem, NARect blockRect) {
   NA_LayoutRects* layoutRects = naAlloc(NA_LayoutRects);
   
-  layoutRects->marginRect = naMakeRectWithBorder(blockRect, elem->margin);
+  NABool horizontalIsRightToLeft = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(layoutingSpace);
+  NABool verticalIsBottomToTop = naGetSpaceLayoutDirectionsVerticalIsBottomToTop(layoutingSpace);
+  NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
+
+  layoutRects->marginRect = blockRect;
+  if(orderingVH) {
+    layoutRects->marginRect.pos.x -= horizontalIsRightToLeft ? elem->margin.end2 : elem->margin.begin2;
+    layoutRects->marginRect.pos.y -= verticalIsBottomToTop   ? elem->margin.begin1 : elem->margin.end1;
+    layoutRects->marginRect.size.width  += (elem->margin.begin2 + elem->margin.end2);
+    layoutRects->marginRect.size.height += (elem->margin.begin1 + elem->margin.end1);
+  }else{
+    layoutRects->marginRect.pos.x -= horizontalIsRightToLeft ? elem->margin.end1 : elem->margin.begin1;
+    layoutRects->marginRect.pos.y -= verticalIsBottomToTop   ? elem->margin.begin2 : elem->margin.end2;
+    layoutRects->marginRect.size.width  += (elem->margin.begin1 + elem->margin.end1);
+    layoutRects->marginRect.size.height += (elem->margin.begin2 + elem->margin.end2);
+  }
+
   layoutRects->blockRect = blockRect;
   
-  NABorder2D negativePadding;
-  negativePadding.begin1 = -elem->padding.begin1;
-  negativePadding.begin2 = -elem->padding.begin2;
-  negativePadding.end1 = -elem->padding.end1;
-  negativePadding.end2 = -elem->padding.end2;
-  layoutRects->contentRect = naMakeRectWithBorder(blockRect, negativePadding);
-  
+  layoutRects->contentRect = blockRect;
+  if(orderingVH) {
+    layoutRects->contentRect.pos.x += horizontalIsRightToLeft ? elem->padding.end2 : elem->padding.begin2;
+    layoutRects->contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.begin1 : elem->padding.end1;
+    layoutRects->contentRect.size.width  -= (elem->padding.begin2 + elem->padding.end2);
+    layoutRects->contentRect.size.height -= (elem->padding.begin1 + elem->padding.end1);
+  }else{
+    layoutRects->contentRect.pos.x += horizontalIsRightToLeft ? elem->padding.end1 : elem->padding.begin1;
+    layoutRects->contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.begin2 : elem->padding.end2;
+    layoutRects->contentRect.size.width  -= (elem->padding.begin1 + elem->padding.end1);
+    layoutRects->contentRect.size.height -= (elem->padding.begin2 + elem->padding.end2);
+  }
+
   if(((NA_UIElement*)elem->uiElement)->layoutRects) {
     naFree(((NA_UIElement*)elem->uiElement)->layoutRects);
   }
@@ -532,7 +556,7 @@ void na_AlignLayoutElement(
 {
   #if NA_DEBUG
     if(elem->uiElement) {
-      na_PreserveDebugInfo(elem, blockRect);
+      na_PreserveDebugInfo(layoutingSpace, elem, blockRect);
     }
   #endif // NA_DEBUG
 
@@ -627,8 +651,8 @@ void na_AlignLayoutElement(
   NARect contentRect = naMakeRectS(
     blockRect.pos.x + (orderingVH ? alignMargin2 : alignMargin1),
     blockRect.pos.y + (orderingVH ? alignMargin1 : alignMargin2),
-    elem->contentSize1,
-    elem->contentSize2
+    orderingVH ? elem->contentSize2 : elem->contentSize1,
+    orderingVH ? elem->contentSize1 : elem->contentSize2
   );
 
   // Place the uiElement and adjust the window if needed.
@@ -666,12 +690,12 @@ void na_AlignLayoutElement(
   // We subtract the padding around the rectangle.
   if(orderingVH) {
     contentRect.pos.x += horizontalIsRightToLeft ? elem->padding.end2 : elem->padding.begin2;
-    contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.end1 : elem->padding.begin1;
+    contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.begin1 : elem->padding.end1;
     contentRect.size.width  -= (elem->padding.begin2 + elem->padding.end2);
     contentRect.size.height -= (elem->padding.begin1 + elem->padding.end1);
   }else{
     contentRect.pos.x += horizontalIsRightToLeft ? elem->padding.end1 : elem->padding.begin1;
-    contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.end2 : elem->padding.begin2;
+    contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.begin2 : elem->padding.end2;
     contentRect.size.width  -= (elem->padding.begin1 + elem->padding.end1);
     contentRect.size.height -= (elem->padding.begin2 + elem->padding.end2);
   }
@@ -765,12 +789,12 @@ void na_AlignLayoutElement(
     NARect childBlockRect = childMarginRect;
     if(orderingVH) {
       childBlockRect.pos.x += horizontalIsRightToLeft ? child->margin.end2 : child->margin.begin2;
-      childBlockRect.pos.y += verticalIsBottomToTop   ? child->margin.end1 : child->margin.begin1;
+      childBlockRect.pos.y += verticalIsBottomToTop   ? child->margin.begin1 : child->margin.end1;
       childBlockRect.size.width  -= (child->margin.begin2 + child->margin.end2);
       childBlockRect.size.height -= (child->margin.begin1 + child->margin.end1);
     }else{
       childBlockRect.pos.x += horizontalIsRightToLeft ? child->margin.end1 : child->margin.begin1;
-      childBlockRect.pos.y += verticalIsBottomToTop   ? child->margin.end2 : child->margin.begin2;
+      childBlockRect.pos.y += verticalIsBottomToTop   ? child->margin.begin2 : child->margin.end2;
       childBlockRect.size.width  -= (child->margin.begin1 + child->margin.end1);
       childBlockRect.size.height -= (child->margin.begin2 + child->margin.end2);
     }

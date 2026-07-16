@@ -468,29 +468,44 @@ void na_DrawLayoutDebugging(NSRect frame, const NA_UIElement* elem) {
   }
   
   if(isDebuggable) {
-    [[NSColor colorWithRed:1 green:.7 blue:0 alpha:.15] setFill];
+    NABool isSpace = naGetUIElementType(elem) == NA_UI_SPACE;
     NARect marginRect = elem->layoutRects->marginRect;
-//    marginRect.pos.x -= frame.origin.x;
-//    marginRect.pos.y -= frame.origin.y;
+    NARect blockRect = elem->layoutRects->blockRect;
+    NARect contentRect = elem->layoutRects->contentRect;
+
+    // Yellow: Margin
+    [[NSColor colorWithRed:1 green:.7 blue:0 alpha:.15] setFill];
+    if(!isSpace) {
+      marginRect.pos.x -= frame.origin.x;
+      // Fuck. Apple. Get. Your. Shit. Together. As for uiElements other than
+      // NSSpace, NSRectFill supposedly switches from bottom left cornered
+      // drawing to top left cornered drawing.
+      marginRect.pos.y = (marginRect.pos.y - frame.origin.y) + (marginRect.size.height - frame.size.height);
+    }
     NSRectFill(naMakeNSRectWithRect(marginRect));
 
+    // Purple: Block
     [[NSColor colorWithRed:.7 green:0 blue:1 alpha:.15] setFill];
-    NARect blockRect = elem->layoutRects->blockRect;
-//    blockRect.pos.x -= frame.origin.x;
-//    blockRect.pos.y -= frame.origin.y;
+    if(!isSpace) {
+      blockRect.pos.x -= frame.origin.x;
+      blockRect.pos.y = (blockRect.pos.y - frame.origin.y) + (blockRect.size.height - frame.size.height);
+    }
     NSRectFill(naMakeNSRectWithRect(blockRect));
 
+    // Green: Content
     [[NSColor colorWithRed:0 green:1 blue:0 alpha:.15] setFill];
-    NARect contentRect = elem->layoutRects->contentRect;
-//    contentRect.pos.x -= frame.origin.x;
-//    contentRect.pos.y -= frame.origin.y;
+    if(!isSpace) {
+      contentRect.pos.x -= frame.origin.x;
+      contentRect.pos.y = (contentRect.pos.y - frame.origin.y) + (contentRect.size.height - frame.size.height);
+    }
     NSRectFill(naMakeNSRectWithRect(contentRect));
 
-    if(naGetUIElementType(elem) != NA_UI_SPACE) {
+    // Blue: UI Element
+    if(!isSpace) {
       [[NSColor colorWithRed:0 green:0 blue:1 alpha:.15] setFill];
       NARect uiElementRect = naMakeRectWithNSRect(frame);
-//      uiElementRect.pos.x -= frame.origin.x;
-//      uiElementRect.pos.y -= frame.origin.y;
+      uiElementRect.pos.x -= frame.origin.x;
+      uiElementRect.pos.y -= frame.origin.y;
       NSRectFill(naMakeNSRectWithRect(uiElementRect));
     }
   }
