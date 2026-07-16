@@ -7,18 +7,19 @@ NA_PROTOTYPE(NASpace);
 // The layouter of NALib allows you to place elements in an ordered fashion
 // inside of an NASpace.
 //
-// You start a layout by selecting a space and providing a desired layout
-// direction. A layout direction always consists of a primary and secondary
-// direction. For example, default western language reads primarily from
-// left-to-right (LR) and secondarily from top-to-bottom (TB).
+// You start a layout by selecting a space. That space has itself defined a
+// desired layout direction. A layout direction always consists of a primary
+// and secondary direction. For example, typical western language reads
+// primarily from left-to-right (LR) and secondarily from top-to-bottom (TB).
 //
 // Then, you place uiElements by defining sections which themselves contain
-// elements. Depending on your layout directions, sections and elements alternate between
-// being ordered vertically and horizontally.
+// elements. Depending on your layout directions, sections and elements
+// alternate between being ordered vertically and horizontally.
 //
 // The following could be an example of a layout:
 //
-// naBeginLayout(space, LRTB)
+// naSetSpaceLayoutDirections(space, LRTB)
+// naBeginLayout(space)
 //   naAddLayoutSection(section 1)
 //     naAddLayoutElement(element 1)
 //     naAddLayoutElement(element 2)
@@ -52,26 +53,28 @@ NA_PROTOTYPE(NASpace);
 //
 // ---------------------
 //
+// You alternate between adding sections with naAddLayoutSection and elements
+// with naAllLayoutElement.
+//
 // When using naAddLayoutElement, you actually create a layout block which
 // itelf contais the element you want to add.
 //
-// Each block and each element has a primary and secondary size, whereas the
-// meaning of primary and secondary is defined by the layout direction set by
-// naBeginLayout.
+// Both each block and each element have a primary and secondary size, whereas
+// the meaning of primary and secondary is defined by the layout direction set
+// by the containing space.
 //
-// The size of an element is set by the two arguments provided to
-// naAddLayoutElement.
+// The element size is set by the arguments provided to naAddLayoutElement.
 //
-// The size of a block is set as follows:
-// Primary size:   By default, this value is equal to the element primary size
-//                 but can be changed with naSetLayoutElementBlockSize1.
-// Secondary size: Is set by naAddLayoutSection.
+// The block size is set as follows:
+// Primary size:     By default, this value is equal to the elements primary
+//                   size but can be changed with naSetLayoutElementBlockSize1.
+// Secondary size:   Is set by naAddLayoutSection.
 //
 // Blocks and their contained elements may therefore have different sizes.
 // Both can be individually set to be either an explicitely fixed value or
 // implicitely being computed:
 //
-// For sizes, you can always provide one of those three things:
+// For all sizes, you can always provide one of those three things:
 //
 // - Positive value      A positive value is treated as a fixed size. Blocks
 //                       as well as elements will explicitely be set to that
@@ -125,11 +128,6 @@ NA_PROTOTYPE(NASpace);
 // +---+       |   |   +---+   |   |       +---+
 // +-----------+   +-----------+   +-----------+
 //
-// By default, the primary blockSize is set to be the same as the primary size
-// of an element, but you can change it by calling naSetLayoutElementBlockSize1
-// after adding an element.
-// The secondary blockSize is defined by the containing section.
-//
 
 
 
@@ -166,8 +164,8 @@ void naAddLayoutSection(
 void naAddLayoutElement(
   void* uiElement,
   double preMargin1,
-  double size1,
-  double size2);
+  double contentSize1,
+  double contentSize2);
 
 // Assigns a space to the last added section. That space is automatically
 // resized according to the size of the section. By default, a section has

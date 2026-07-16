@@ -28,22 +28,17 @@ struct NA_LayoutElement {
   void* uiElement;
   NABool isSecondary;
 
+  double contentSize1;
+  double contentSize2;
   double blockSize1;
   double blockSize2;
   double minBlockSize1;
   double minBlockSize2;
+  NAAlignment alignment1;
+  NAAlignment alignment2;
+  NABool alignBaseline;
   NABorder2D margin;
   NABorder2D padding;
-
-  union {
-    struct {
-      double size1;
-      double size2;
-      NAAlignment alignment1;
-      NAAlignment alignment2;
-      NABool alignBaseline;
-    } element;
-  };
 };
 
 
@@ -53,15 +48,27 @@ struct NA_LayoutElement {
 
 void na_EndLayoutElement(NA_LayoutElement* elem);
 void na_AlignLayoutElement(
+  NASpace* layoutingSpace,
   NA_LayoutElement* elem,
-  NARect rect,
-  NABool horizontalIsRightToLeft,
-  NABool verticalIsBottomToTop,
-  NABool orderingVH); // sections vertical, elements horizontal
+  NARect rect);
 NASpace* na_GetLayoutingSpace(NA_LayoutElement* elem);
 
 NA_LayoutElement* na_curLayoutElement = NA_NULL;
 
+
+
+
+NA_HDEF void na_EndLastSectionElement() {
+  #if NA_DEBUG
+    if(!na_curLayoutElement->isSecondary)
+      naError("This function must be used with sections");
+  #endif // NA_DEBUG
+
+  if(!naIsListEmpty(&na_curLayoutElement->childs)) {
+    NA_LayoutElement* lastElement = naGetListLastMutable(&na_curLayoutElement->childs);
+    na_EndLayoutElement(lastElement);
+  }
+}
 
 
 NA_LayoutElement* na_AllocLayoutElement(
@@ -76,8 +83,15 @@ NA_LayoutElement* na_AllocLayoutElement(
   elem->uiElement = uiElement;
   elem->isSecondary = isSecondary;
 
-  elem->minBlockSize1 = 0.;
-  elem->minBlockSize2 = 0.;
+  elem->contentSize1 = NA_LAYOUT_GROW;
+  elem->contentSize2 = NA_LAYOUT_GROW;
+  elem->blockSize1 = NA_LAYOUT_GROW;
+  elem->blockSize2 = NA_LAYOUT_GROW;
+  elem->minBlockSize1 = 0.; // not yet computed
+  elem->minBlockSize2 = 0.; // not yet computed
+  elem->alignment1 = NA_ALIGN_CENTER;
+  elem->alignment2 = NA_ALIGN_CENTER;
+  elem->alignBaseline = NA_TRUE;
   elem->margin = naMakeBorder2D(0., 0., 0., 0.);
   elem->padding = padding;
 
@@ -98,9 +112,10 @@ void naBeginLayout(NASpace* space, NABorder2D padding) {
     if(na_curLayoutElement == NA_NULL && !space)
       naError("For a new layout, space must not be a nullptr.");
     if(na_curLayoutElement && !na_curLayoutElement->isSecondary)
-      naError("Use naBeginLayout either for a new layout or when working within a subsection.");
+      naError("Use naBeginLayout either for a new layout or when working within a section.");
   #endif // NA_DEBUG
 
+  // First, we set the parent-child relationship right.
   if(na_curLayoutElement && space) {
     na_AddSpaceChildUnpositioned(
       na_GetLayoutingSpace(na_curLayoutElement),
@@ -113,20 +128,12 @@ void naBeginLayout(NASpace* space, NABorder2D padding) {
     padding,
     NA_FALSE);
 
-  newElement->element.size1 = NA_LAYOUT_GROW;
-  newElement->element.size2 = NA_LAYOUT_GROW;
-  newElement->blockSize1 = NA_LAYOUT_GROW;
-  newElement->element.alignment1 = NA_ALIGN_CENTER;
-  newElement->element.alignment2 = NA_ALIGN_CENTER;
-  newElement->element.alignBaseline = NA_FALSE;
+  newElement->alignBaseline = NA_FALSE;
 
   if(na_curLayoutElement) {
     // We create a sub-layout
     // End the last element of the current section if available
-    if(!naIsListEmpty(&na_curLayoutElement->childs)) {
-      NA_LayoutElement* lastElement = naGetListLastMutable(&na_curLayoutElement->childs);
-      na_EndLayoutElement(lastElement);
-    }
+    na_EndLastSectionElement();
     // Add the new layout to the end.
     naAddListLastMutable(&na_curLayoutElement->childs, newElement);
   }
@@ -151,26 +158,24 @@ void naEndLayout() {
   
   if(na_curLayoutElement->parent) {
     // We are in a sub-layout.
-    // Move up to the containing section.
+    // Here, one might be tempted to end the current element but that will
+    // acutally happen automatically as soon as the containing section will
+    // be closed. Therefore, simply move up to the containing section.
     na_curLayoutElement = na_curLayoutElement->parent;
   }else{
-    // Reaching here, na_curLayoutElement is the root element which now has
-    // the min sizes computed. Propagate the information down the whole tree
-    // and align all elements properly.
-    
-    // Compute the min sizes
+    // na_curLayoutElement is the root element. Finalize the element.
     na_EndLayoutElement(na_curLayoutElement);
 
+    // Reaching here, all min sizes of the whole design are computed. Propagate
+    // the information down the whole tree and align all elements properly.
     na_AlignLayoutElement(
+      na_GetLayoutingSpace(na_curLayoutElement),
       na_curLayoutElement,
       naMakeRectS(
         0.,
         0.,
         na_curLayoutElement->minBlockSize1,
-        na_curLayoutElement->minBlockSize2),
-      naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(na_curLayoutElement->uiElement),
-      naGetSpaceLayoutDirectionsVerticalIsBottomToTop(na_curLayoutElement->uiElement),
-      naGetSpaceLayoutDirectionsPrimaryIsVertical(na_curLayoutElement->uiElement));
+        na_curLayoutElement->minBlockSize2));
     
     // Finally, deallocate everything.
     na_DeallocLayoutElement(na_curLayoutElement);
@@ -214,7 +219,7 @@ void naAddLayoutSection(
   #endif // NA_DEBUG
 
   if(na_curLayoutElement->isSecondary) {
-    // Currently working on another section. Close this first.
+    // Currently working on another section. Close that one first.
     na_EndLayoutElement(na_curLayoutElement);
     // Move up to the parent.
     na_curLayoutElement = na_curLayoutElement->parent;
@@ -225,7 +230,6 @@ void naAddLayoutSection(
     NA_NULL,
     padding,
     NA_TRUE);
-  subElem->blockSize1 = NA_LAYOUT_GROW;
   subElem->blockSize2 = blockSize2;
 
   naAddListLastMutable(&na_curLayoutElement->childs, subElem);
@@ -236,9 +240,8 @@ void naAddLayoutSection(
 
 void na_EndLayoutElement(NA_LayoutElement* elem) {
   // If this is a section, end the last element if available
-  if(elem->isSecondary && !naIsListEmpty(&elem->childs)) {
-    NA_LayoutElement* lastElement = naGetListLastMutable(&elem->childs);
-    na_EndLayoutElement(lastElement);
+  if(elem->isSecondary) {
+    na_EndLastSectionElement();
   }
   
   // Go through all childs and sum up the min blockSizes and the margins.
@@ -263,28 +266,40 @@ void na_EndLayoutElement(NA_LayoutElement* elem) {
 
   // If this elements sub-layouts primary and secondary directions are opposite
   // to the directions this element is contained in, we need to swap the sizes.
-  if(!elem->isSecondary && elem->parent && naGetSpaceLayoutDirectionsPrimaryIsVertical(na_GetLayoutingSpace(elem)) != naGetSpaceLayoutDirectionsPrimaryIsVertical(na_GetLayoutingSpace(elem->parent))) {
+  if(elem->parent && naGetSpaceLayoutDirectionsPrimaryIsVertical(na_GetLayoutingSpace(elem)) != naGetSpaceLayoutDirectionsPrimaryIsVertical(na_GetLayoutingSpace(elem->parent))) {
     double tmpSize = elem->minBlockSize1;
     elem->minBlockSize1 = elem->minBlockSize2;
     elem->minBlockSize2 = tmpSize;
   }
   
-  if(!elem->isSecondary) {
-    if(elem->element.size1 > elem->minBlockSize1) {
-      elem->minBlockSize1 = elem->element.size1;
-    }
-    if(elem->element.size2 > elem->minBlockSize2) {
-      elem->minBlockSize2 = elem->element.size2;
-    }
+  // Reaching here, the minBlockSize contains just the childs content.
+  
+  // If this element declares itself a fixed content size which is larger,
+  // we adjust the min size accordingly.
+  //
+  // Note that we do not check whether a fixed contentSize is smaller than
+  // the childs minimal requirement as there are situations like uiElements
+  // having a size bigger than a lineHeight by default even when coming from
+  // the native system implementation.
+
+  if(elem->contentSize1 > 0. && elem->contentSize1 > elem->minBlockSize1) {
+    elem->minBlockSize1 = elem->contentSize1;
+  }
+  if(elem->contentSize2 > 0. && elem->contentSize2 > elem->minBlockSize2) {
+    elem->minBlockSize2 = elem->contentSize2;
   }
 
-  // The following error message was removed because there are situations
-  // like uiElements having a size bigger than a lineHeight by default
-  // even when coming from the native system implementation.
-  // if(elem->minBlockSize2 > elem->section.size2)
-  //   naError("The minimal required size is larger than the given size");
+  // Reaching here, the minBlockSize contains all content but without padding.
 
-  // If the blockSize of the section is defined, override the minBlockSize.
+  // If the content size was set to shrinking, we set it to the minimal size.
+  if(elem->contentSize1 < 0.) { // NA_LAYOUT_MIN
+    elem->contentSize1 = elem->minBlockSize1;
+  }
+  if(elem->contentSize2 < 0.) { // NA_LAYOUT_MIN
+    elem->contentSize2 = elem->minBlockSize2;
+  }
+
+  // If the blockSize is given as a fixed value, override the minBlockSize.
   if(elem->blockSize1 > 0.) {
     elem->minBlockSize1 = elem->blockSize1;
   }
@@ -293,6 +308,7 @@ void na_EndLayoutElement(NA_LayoutElement* elem) {
   }
   
   // If the blockSize was set to shrinking, we set it to the minimal size.
+  
   if(elem->blockSize1 < 0.) { // NA_LAYOUT_MIN
     elem->blockSize1 = elem->minBlockSize1;
   }
@@ -300,14 +316,13 @@ void na_EndLayoutElement(NA_LayoutElement* elem) {
     elem->blockSize2 = elem->minBlockSize2;
   }
   
-  // Add the padding of this section.
+  // Reaching here, the following holds true:
+  // contentSize is either defined or NA_LAYOUT_GROW.
+  // blockSize is either defined or NA_LAYOUT_GROW.
+
+  // Finally, add the padding of this section.
   elem->minBlockSize1 += elem->padding.begin1 + elem->padding.end1;
   elem->minBlockSize2 += elem->padding.begin2 + elem->padding.end2;
-
-  // Reaching here, the following holds true:
-  // minBlockSize1 and minBlockSize2 are defined.
-  // element.size is either defined or NA_LAYOUT_GROW.
-  // blockSize is either defined or NA_LAYOUT_GROW.
 }
 
 
@@ -334,12 +349,14 @@ void na_PreserveDebugInfo(NA_LayoutElement* elem, NARect blockRect) {
 
 
 void na_AlignLayoutSection(
+  NASpace* layoutingSpace,
   NA_LayoutElement* elem,
-  NARect blockRect,
-  NABool horizontalIsRightToLeft,
-  NABool verticalIsBottomToTop,
-  NABool orderingVH)
+  NARect blockRect)
 {
+  NABool horizontalIsRightToLeft = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(layoutingSpace);
+  NABool verticalIsBottomToTop = naGetSpaceLayoutDirectionsVerticalIsBottomToTop(layoutingSpace);
+  NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
+
   // Finally, if a uiElement is available, add it to the parent space.
   if(elem->uiElement) {
     naSetUIElementRect(elem->uiElement, blockRect);
@@ -439,11 +456,9 @@ void na_AlignLayoutSection(
 
     // Finally, align the child.
     na_AlignLayoutElement(
+      na_GetLayoutingSpace(elem->parent),
       child,
-      subElemRect,
-      naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(na_GetLayoutingSpace(elem->parent)),
-      naGetSpaceLayoutDirectionsVerticalIsBottomToTop(na_GetLayoutingSpace(elem->parent)),
-      orderingVH);
+      subElemRect);
   }
   naClearListIterator(&iter);
 }
@@ -453,30 +468,28 @@ void na_AlignLayoutSection(
 void naAddLayoutElement(
   void* uiElement,
   double preMargin1,
-  double size1,
-  double size2)
+  double contentSize1,
+  double contentSize2)
 {
-  // End the last element of the current section if available
-  if(!naIsListEmpty(&na_curLayoutElement->childs)) {
-    NA_LayoutElement* lastElement = naGetListLastMutable(&na_curLayoutElement->childs);
-    na_EndLayoutElement(lastElement);
-  }
-  
-  if(uiElement) {
-    na_AddSpaceChildUnpositioned(
-      na_GetLayoutingSpace(na_curLayoutElement),
-      uiElement);
-  }
-
-  NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(na_GetLayoutingSpace(na_curLayoutElement->parent));
-
   #if NA_DEBUG
     if(!na_curLayoutElement)
       naError("No layout in progress. Use naBeginLayout.");
     if(!na_curLayoutElement->isSecondary)
       naError("Use naAddLayoutSection before adding Elements.");
   #endif // NA_DEBUG
+
+  // End the last element of the current section if available
+  na_EndLastSectionElement();
   
+  NASpace* layoutingSpace = na_GetLayoutingSpace(na_curLayoutElement);
+  
+  if(uiElement) {
+    na_AddSpaceChildUnpositioned(
+      layoutingSpace,
+      uiElement);
+  }
+
+  NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
   NARect uiElementRect = uiElement
     ? naGetUIElementRect(uiElement)
     : naMakeRectZero();
@@ -488,46 +501,40 @@ void naAddLayoutElement(
     NA_FALSE);
   
   // compute the element primary size.
-  if(size1 < 0) { // NA_LAYOUT_MIN
+  if(contentSize1 < 0.) { // NA_LAYOUT_MIN
     #if NA_DEBUG
       if(!uiElement)
         naError("Using NA_LAYOUT_MIN without a uiElement will shrink to zero.");
     #endif // NA_DEBUG
-    if(orderingVH) {
-      subElem->element.size1 = uiElementRect.size.height;
-    }else{
-      subElem->element.size1 = uiElementRect.size.width;
-    }
+    subElem->contentSize1 = (orderingVH)
+      ? uiElementRect.size.height
+      : uiElementRect.size.width;
   }else{
-    subElem->element.size1 = size1;
+    subElem->contentSize1 = contentSize1;
   }
   
-  subElem->blockSize1 = subElem->element.size1;
-  subElem->blockSize2 = NA_LAYOUT_GROW;
+  // By default, the blockSize1 is set to the same as contentSize1.
+  subElem->blockSize1 = subElem->contentSize1;
 
   // compute the element secondary size.
-  if(size2 < 0) { // NA_LAYOUT_MIN
+  if(contentSize2 < 0.) { // NA_LAYOUT_MIN
     #if NA_DEBUG
       if(!uiElement)
         naError("Using NA_LAYOUT_MIN without a uiElement will shrink to zero.");
     #endif // NA_DEBUG
-    if(orderingVH) {
-      subElem->element.size2 = uiElementRect.size.width;
-    }else{
-      subElem->element.size2 = uiElementRect.size.height;
-    }
+    subElem->contentSize2 = (orderingVH)
+      ? uiElementRect.size.width
+      : uiElementRect.size.height;
   }else{
-    subElem->element.size2 = size2;
+    subElem->contentSize2 = contentSize2;
   }
 
   subElem->margin.begin1 = preMargin1;
-  subElem->element.alignment1 = NA_ALIGN_CENTER;
-  subElem->element.alignment2 = NA_ALIGN_CENTER;
   
   if(uiElement && !naIsUIElementBlock(uiElement)) {
-    subElem->element.alignBaseline = NA_TRUE;
+    subElem->alignBaseline = NA_TRUE;
   }else{
-    subElem->element.alignBaseline = NA_FALSE;
+    subElem->alignBaseline = NA_FALSE;
   }
   
   naAddListLastMutable(&na_curLayoutElement->childs, subElem);
@@ -569,7 +576,7 @@ void naSetLayoutElementPrimaryAlign(NAAlignment alignment1) {
       naError("No element in the current section available.");
   #endif // NA_DEBUG
 
-  lastChild->element.alignment1 = alignment1;
+  lastChild->alignment1 = alignment1;
 }
 
 
@@ -589,7 +596,7 @@ void naSetLayoutElementSecondaryAlign(NAAlignment alignment2) {
       naError("No element in the current section available.");
   #endif // NA_DEBUG
 
-  lastChild->element.alignment2 = alignment2;
+  lastChild->alignment2 = alignment2;
 }
 
 
@@ -609,7 +616,7 @@ void naSetLayoutElementAlignBaseline(NABool alignBaseline) {
       naError("No element in the current section available.");
   #endif // NA_DEBUG
 
-  lastChild->element.alignBaseline = alignBaseline;
+  lastChild->alignBaseline = alignBaseline;
 }
 
 
@@ -636,11 +643,9 @@ void naSetLayoutElementBlockSize1(double blockSize1) {
 
 
 void na_AlignLayoutElement(
+  NASpace* layoutingSpace,
   NA_LayoutElement* elem,
-  NARect blockRect,
-  NABool horizontalIsRightToLeft,
-  NABool verticalIsBottomToTop,
-  NABool orderingVH)
+  NARect blockRect)
 {
   #if NA_DEBUG
     if(elem->uiElement) {
@@ -648,18 +653,22 @@ void na_AlignLayoutElement(
     }
   #endif // NA_DEBUG
 
+  NABool horizontalIsRightToLeft = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(layoutingSpace);
+  NABool verticalIsBottomToTop = naGetSpaceLayoutDirectionsVerticalIsBottomToTop(layoutingSpace);
+  NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
+      
   // compute absolute values for blockSize and size.
   if(elem->blockSize1 == NA_LAYOUT_GROW) {
     elem->blockSize1 = (orderingVH) ? blockRect.size.height : blockRect.size.width;
   }
-  if(elem->element.size1 == NA_LAYOUT_GROW) {
-    elem->element.size1 = (orderingVH) ? blockRect.size.height : blockRect.size.width;
+  if(elem->contentSize1 == NA_LAYOUT_GROW) {
+    elem->contentSize1 = (orderingVH) ? blockRect.size.height : blockRect.size.width;
   }
   if(elem->blockSize2 == NA_LAYOUT_GROW) {
     elem->blockSize2 = (orderingVH) ? blockRect.size.width : blockRect.size.height;
   }
-  if(elem->element.size2 == NA_LAYOUT_GROW) {
-    elem->element.size2 = (orderingVH) ? blockRect.size.width : blockRect.size.height;
+  if(elem->contentSize2 == NA_LAYOUT_GROW) {
+    elem->contentSize2 = (orderingVH) ? blockRect.size.width : blockRect.size.height;
   }
 
   #if NA_DEBUG
@@ -670,48 +679,48 @@ void na_AlignLayoutElement(
   #endif // NA_DEBUG
 
   double alignMargin1;
-  switch(elem->element.alignment1) {
+  switch(elem->alignment1) {
   case NA_ALIGN_BEGIN:
     alignMargin1 = 0.;
     break;
   case NA_ALIGN_CENTER:
     if(orderingVH) {
-      alignMargin1 = elem->element.alignBaseline
+      alignMargin1 = elem->alignBaseline
         ? blockRect.size.height - NA_LAYOUT_LINE_HEIGHT
-        : naFloor((blockRect.size.height - elem->element.size1) * .5);
+        : naFloor((blockRect.size.height - elem->contentSize1) * .5);
     }else{
-      alignMargin1 = naFloor((blockRect.size.width - elem->element.size1) * .5);
+      alignMargin1 = naFloor((blockRect.size.width - elem->contentSize1) * .5);
     }
     break;
   case NA_ALIGN_END:
     if(orderingVH) {
-      alignMargin1 = elem->element.alignBaseline
+      alignMargin1 = elem->alignBaseline
         ? blockRect.size.height - NA_LAYOUT_LINE_HEIGHT
-        : blockRect.size.height - elem->element.size1;
+        : blockRect.size.height - elem->contentSize1;
     }else{
-      alignMargin1 = blockRect.size.width - elem->element.size1;
+      alignMargin1 = blockRect.size.width - elem->contentSize1;
     }
     break;
   }
 
   double alignMargin2;
-  switch(elem->element.alignment2) {
+  switch(elem->alignment2) {
   case NA_ALIGN_BEGIN:
     if(orderingVH) {
-      alignMargin2 = blockRect.size.width - elem->element.size2;
+      alignMargin2 = blockRect.size.width - elem->contentSize2;
     }else{
-      alignMargin2 = elem->element.alignBaseline
+      alignMargin2 = elem->alignBaseline
         ? blockRect.size.height - NA_LAYOUT_LINE_HEIGHT
-        : blockRect.size.height - elem->element.size2;
+        : blockRect.size.height - elem->contentSize2;
     }
     break;
   case NA_ALIGN_CENTER:
     if(orderingVH) {
-      alignMargin2 = naFloor((blockRect.size.width - elem->element.size2) * .5);
+      alignMargin2 = naFloor((blockRect.size.width - elem->contentSize2) * .5);
     }else{
-      alignMargin2 = elem->element.alignBaseline
+      alignMargin2 = elem->alignBaseline
         ? naFloor((blockRect.size.height - NA_LAYOUT_LINE_HEIGHT) * .5)
-        : naFloor((blockRect.size.height - elem->element.size2) * .5);
+        : naFloor((blockRect.size.height - elem->contentSize2) * .5);
     }
     break;
   case NA_ALIGN_END:
@@ -722,8 +731,8 @@ void na_AlignLayoutElement(
   NARect innerBlockRect = naMakeRectS(
     blockRect.pos.x + (orderingVH ? alignMargin2 : alignMargin1),
     blockRect.pos.y + (orderingVH ? alignMargin1 : alignMargin2),
-    elem->element.size1,
-    elem->element.size2
+    elem->contentSize1,
+    elem->contentSize2
   );
 
   // This is the block we want to use with our uiElement if available.
@@ -833,11 +842,9 @@ void na_AlignLayoutElement(
 
     // Finally, align the child.
     na_AlignLayoutSection(
+      na_GetLayoutingSpace(elem),
       child,
-      subElemRect,
-      naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(na_GetLayoutingSpace(elem)),
-      naGetSpaceLayoutDirectionsVerticalIsBottomToTop(na_GetLayoutingSpace(elem)),
-      naGetSpaceLayoutDirectionsPrimaryIsVertical(na_GetLayoutingSpace(elem)));
+      subElemRect);
   }
   naClearListIterator(&iter);
 }
