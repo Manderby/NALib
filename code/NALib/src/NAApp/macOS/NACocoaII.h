@@ -470,27 +470,27 @@ void na_DrawLayoutDebugging(NSRect frame, const NA_UIElement* elem) {
   if(isDebuggable) {
     [[NSColor colorWithRed:1 green:.7 blue:0 alpha:.15] setFill];
     NARect marginRect = elem->layoutRects->marginRect;
-    marginRect.pos.x -= frame.origin.x;
-    marginRect.pos.y -= frame.origin.y;
+//    marginRect.pos.x -= frame.origin.x;
+//    marginRect.pos.y -= frame.origin.y;
     NSRectFill(naMakeNSRectWithRect(marginRect));
 
     [[NSColor colorWithRed:.7 green:0 blue:1 alpha:.15] setFill];
     NARect blockRect = elem->layoutRects->blockRect;
-    blockRect.pos.x -= frame.origin.x;
-    blockRect.pos.y -= frame.origin.y;
+//    blockRect.pos.x -= frame.origin.x;
+//    blockRect.pos.y -= frame.origin.y;
     NSRectFill(naMakeNSRectWithRect(blockRect));
 
     [[NSColor colorWithRed:0 green:1 blue:0 alpha:.15] setFill];
     NARect contentRect = elem->layoutRects->contentRect;
-    contentRect.pos.x -= frame.origin.x;
-    contentRect.pos.y -= frame.origin.y;
+//    contentRect.pos.x -= frame.origin.x;
+//    contentRect.pos.y -= frame.origin.y;
     NSRectFill(naMakeNSRectWithRect(contentRect));
 
     if(naGetUIElementType(elem) != NA_UI_SPACE) {
       [[NSColor colorWithRed:0 green:0 blue:1 alpha:.15] setFill];
       NARect uiElementRect = naMakeRectWithNSRect(frame);
-      uiElementRect.pos.x -= frame.origin.x;
-      uiElementRect.pos.y -= frame.origin.y;
+//      uiElementRect.pos.x -= frame.origin.x;
+//      uiElementRect.pos.y -= frame.origin.y;
       NSRectFill(naMakeNSRectWithRect(uiElementRect));
     }
   }

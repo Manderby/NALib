@@ -58,6 +58,13 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
   NA_COCOA_SUPER_DEALLOC();
 }
 
+- (void)drawRect:(NSRect)dirtyRect{
+  #if NA_DEBUG
+    na_DrawLayoutDebugging([self frame], &cocoaTextBox->textBox.uiElement);
+  #endif // NA_DEBUG
+  [super drawRect:dirtyRect];
+}
+
 - (void)setFrame:(NSRect)frame {
   [scrollView setFrame:frame];
   [super setFrame:frame];

@@ -348,123 +348,6 @@ void na_PreserveDebugInfo(NA_LayoutElement* elem, NARect blockRect) {
 
 
 
-void na_AlignLayoutSection(
-  NASpace* layoutingSpace,
-  NA_LayoutElement* elem,
-  NARect blockRect)
-{
-  NABool horizontalIsRightToLeft = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(layoutingSpace);
-  NABool verticalIsBottomToTop = naGetSpaceLayoutDirectionsVerticalIsBottomToTop(layoutingSpace);
-  NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
-
-  // Finally, if a uiElement is available, add it to the parent space.
-  if(elem->uiElement) {
-    naSetUIElementRect(elem->uiElement, blockRect);
-
-    #if NA_DEBUG
-      na_PreserveDebugInfo(elem, blockRect);
-    #endif // NA_DEBUG
-  }
-
-  NARect flexRect = blockRect;
-
-  // First, we position the uiElement, if available.
-  if(elem->uiElement) {
-    // When the uiElement is given, it must be an NASpace and childs will be
-    // added to that space. Therefore, we reset the local coordinate system
-    // origin to zero.
-    flexRect.pos = naMakePosZero();
-  }
-  
-  // Compute, how much space there is in the primary direction to distribute
-  double totalFlexibleSpace1 = orderingVH
-    ? flexRect.size.height - elem->minBlockSize1
-    : flexRect.size.width - elem->minBlockSize1;
-
-  // We subtract the padding around the rectangle.
-  if(orderingVH) {
-    flexRect.pos.x += horizontalIsRightToLeft ? elem->padding.end2 : elem->padding.begin2;
-    flexRect.pos.y += verticalIsBottomToTop ? elem->padding.end1 : elem->padding.begin1;
-    flexRect.size.width -= elem->padding.begin2 + elem->padding.end2;
-    flexRect.size.height -= elem->padding.begin1 + elem->padding.end1;
-  }else{
-    flexRect.pos.x += horizontalIsRightToLeft ? elem->padding.end1 : elem->padding.begin1;
-    flexRect.pos.y += verticalIsBottomToTop ? elem->padding.end2 : elem->padding.begin2;
-    flexRect.size.width -= elem->padding.begin1 + elem->padding.end1;
-    flexRect.size.height -= elem->padding.begin2 + elem->padding.end2;
-  }
-  
-  // Now, flexRect is the final rect we want to distribute our elements in.
-  
-  // Go through all childs and count how many have to grow in primary size.
-  size_t elementsToFit = 0;
-  NAListIterator countingIter = naMakeListMutator(&elem->childs);
-  while(naIterateList(&countingIter)) {
-    NA_LayoutElement* child = naGetListCurMutable(&countingIter);
-    if(child->blockSize1 == NA_LAYOUT_GROW) {
-      elementsToFit++;
-    }
-  }
-  naClearListIterator(&countingIter);
-  
-  // We have all the information we need. Go through all childs and align them.
-  
-  NAListIterator iter = naMakeListMutator(&elem->childs);
-  while(naIterateList(&iter)) {
-    NA_LayoutElement* child = naGetListCurMutable(&iter);
-    
-    // Determine the primary size which needs to be added to the child rect
-    // due to distribution of flexible space.
-    double flexSpace1 = 0.;
-    if(child->blockSize1 == NA_LAYOUT_GROW) {
-      // Compute it like that so that no rounding errors or left over sizes
-      // occur.
-      flexSpace1 = naFloor(totalFlexibleSpace1 / (double)elementsToFit);
-      totalFlexibleSpace1 -= flexSpace1;
-      elementsToFit--;
-    }
-    
-    double childBlockSize1 = child->minBlockSize1 + flexSpace1;
-    
-    NARect subElemRect = naMakeRectS(
-        flexRect.pos.x,
-        flexRect.pos.y,
-        orderingVH ? flexRect.size.width : childBlockSize1,
-        orderingVH ? childBlockSize1 : flexRect.size.height);
-        
-    double marginedChildBlockSize1 = childBlockSize1 + child->margin.begin1;
-        
-    // Flip the primary direction if necessary and adjust the rect of the
-    // container as well as the child.
-    if(orderingVH) {
-      if(verticalIsBottomToTop) {
-        flexRect.pos.y += marginedChildBlockSize1;
-        subElemRect.pos.y += child->margin.begin1;
-      }else{
-        subElemRect.pos.y = naGetRectEndY(flexRect) - marginedChildBlockSize1;
-      }
-      flexRect.size.height -= marginedChildBlockSize1;
-    }else{
-      if(horizontalIsRightToLeft) {
-        subElemRect.pos.x = naGetRectEndX(flexRect) - marginedChildBlockSize1;
-      }else{
-        flexRect.pos.x += marginedChildBlockSize1;
-        subElemRect.pos.x += child->margin.begin1;
-      }
-      flexRect.size.width -= marginedChildBlockSize1;
-    }
-
-    // Finally, align the child.
-    na_AlignLayoutElement(
-      na_GetLayoutingSpace(elem->parent),
-      child,
-      subElemRect);
-  }
-  naClearListIterator(&iter);
-}
-
-
-
 void naAddLayoutElement(
   void* uiElement,
   double preMargin1,
@@ -490,7 +373,7 @@ void naAddLayoutElement(
   }
 
   NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
-  NARect uiElementRect = uiElement
+  NARect contentRect = uiElement
     ? naGetUIElementRect(uiElement)
     : naMakeRectZero();
 
@@ -507,8 +390,8 @@ void naAddLayoutElement(
         naError("Using NA_LAYOUT_MIN without a uiElement will shrink to zero.");
     #endif // NA_DEBUG
     subElem->contentSize1 = (orderingVH)
-      ? uiElementRect.size.height
-      : uiElementRect.size.width;
+      ? contentRect.size.height
+      : contentRect.size.width;
   }else{
     subElem->contentSize1 = contentSize1;
   }
@@ -523,8 +406,8 @@ void naAddLayoutElement(
         naError("Using NA_LAYOUT_MIN without a uiElement will shrink to zero.");
     #endif // NA_DEBUG
     subElem->contentSize2 = (orderingVH)
-      ? uiElementRect.size.width
-      : uiElementRect.size.height;
+      ? contentRect.size.width
+      : contentRect.size.height;
   }else{
     subElem->contentSize2 = contentSize2;
   }
@@ -657,141 +540,168 @@ void na_AlignLayoutElement(
   NABool verticalIsBottomToTop = naGetSpaceLayoutDirectionsVerticalIsBottomToTop(layoutingSpace);
   NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
       
-  // compute absolute values for blockSize and size.
-  if(elem->blockSize1 == NA_LAYOUT_GROW) {
-    elem->blockSize1 = (orderingVH) ? blockRect.size.height : blockRect.size.width;
-  }
+  // If any of the size entries of this element is NA_LAYOUT_GROW, compute now
+  // the fixed values.
   if(elem->contentSize1 == NA_LAYOUT_GROW) {
     elem->contentSize1 = (orderingVH) ? blockRect.size.height : blockRect.size.width;
-  }
-  if(elem->blockSize2 == NA_LAYOUT_GROW) {
-    elem->blockSize2 = (orderingVH) ? blockRect.size.width : blockRect.size.height;
   }
   if(elem->contentSize2 == NA_LAYOUT_GROW) {
     elem->contentSize2 = (orderingVH) ? blockRect.size.width : blockRect.size.height;
   }
+  if(elem->blockSize1 == NA_LAYOUT_GROW) {
+    elem->blockSize1 = (orderingVH) ? blockRect.size.height : blockRect.size.width;
+  }
+  if(elem->blockSize2 == NA_LAYOUT_GROW) {
+    elem->blockSize2 = (orderingVH) ? blockRect.size.width : blockRect.size.height;
+  }
 
-  #if NA_DEBUG
-    if(elem->blockSize1 != (orderingVH ? blockRect.size.height : blockRect.size.width))
-      naError("blockSize should be the same");
-    if(elem->blockSize2 != (orderingVH ? blockRect.size.width : blockRect.size.height))
-      naError("blockSize should be the same");
-  #endif // NA_DEBUG
-
+  // Properly align in both directions if the content size is smaller than the
+  // block size.
   double alignMargin1;
+  double alignMargin2;
+
   switch(elem->alignment1) {
   case NA_ALIGN_BEGIN:
-    alignMargin1 = 0.;
+    if(orderingVH) {
+      alignMargin1 = verticalIsBottomToTop
+        ? blockRect.size.height - elem->contentSize1
+        : 0.;
+    }else{
+      alignMargin1 = horizontalIsRightToLeft
+        ? blockRect.size.width - elem->contentSize1
+        : 0.;
+    }
     break;
   case NA_ALIGN_CENTER:
     if(orderingVH) {
-      alignMargin1 = elem->alignBaseline
-        ? blockRect.size.height - NA_LAYOUT_LINE_HEIGHT
-        : naFloor((blockRect.size.height - elem->contentSize1) * .5);
+      alignMargin1 = ((blockRect.size.height - elem->contentSize1) * .5);
     }else{
       alignMargin1 = naFloor((blockRect.size.width - elem->contentSize1) * .5);
     }
     break;
   case NA_ALIGN_END:
     if(orderingVH) {
-      alignMargin1 = elem->alignBaseline
-        ? blockRect.size.height - NA_LAYOUT_LINE_HEIGHT
+      alignMargin1 = verticalIsBottomToTop 
+        ? 0.
         : blockRect.size.height - elem->contentSize1;
     }else{
-      alignMargin1 = blockRect.size.width - elem->contentSize1;
+      alignMargin1 = horizontalIsRightToLeft
+        ? 0.
+        : blockRect.size.width - elem->contentSize1;
     }
     break;
   }
 
-  double alignMargin2;
   switch(elem->alignment2) {
   case NA_ALIGN_BEGIN:
     if(orderingVH) {
-      alignMargin2 = blockRect.size.width - elem->contentSize2;
+      alignMargin2 = horizontalIsRightToLeft
+        ? blockRect.size.width - elem->contentSize2
+        : 0.;
     }else{
-      alignMargin2 = elem->alignBaseline
-        ? blockRect.size.height - NA_LAYOUT_LINE_HEIGHT
-        : blockRect.size.height - elem->contentSize2;
+      alignMargin2 = verticalIsBottomToTop
+        ? blockRect.size.height - elem->contentSize2
+        : 0.;
     }
     break;
   case NA_ALIGN_CENTER:
     if(orderingVH) {
       alignMargin2 = naFloor((blockRect.size.width - elem->contentSize2) * .5);
     }else{
-      alignMargin2 = elem->alignBaseline
-        ? naFloor((blockRect.size.height - NA_LAYOUT_LINE_HEIGHT) * .5)
-        : naFloor((blockRect.size.height - elem->contentSize2) * .5);
+      alignMargin2 = ((blockRect.size.height - elem->contentSize2) * .5);
     }
     break;
   case NA_ALIGN_END:
-    alignMargin2 = 0.;
+    if(orderingVH) {
+      alignMargin2 = horizontalIsRightToLeft
+        ? 0.
+        : blockRect.size.width - elem->contentSize2;
+    }else{
+      alignMargin2 = verticalIsBottomToTop
+        ? 0.
+        : blockRect.size.height - elem->contentSize2;
+    }
     break;
   }
 
-  NARect innerBlockRect = naMakeRectS(
+  NARect contentRect = naMakeRectS(
     blockRect.pos.x + (orderingVH ? alignMargin2 : alignMargin1),
     blockRect.pos.y + (orderingVH ? alignMargin1 : alignMargin2),
     elem->contentSize1,
     elem->contentSize2
   );
 
-  // This is the block we want to use with our uiElement if available.
-  NARect uiElementRect = innerBlockRect;
-
-  // Finally, if a uiElement is available, add it to the parent space and
-  // adjust the window if needed.
+  // Place the uiElement and adjust the window if needed.
   if(elem->uiElement) {
-    naSetUIElementRect(elem->uiElement, uiElementRect);
+  
+    if(elem->alignBaseline) {
+      naSetUIElementRect(elem->uiElement, contentRect);
+    }else{
+      naSetUIElementRectRaw(elem->uiElement, contentRect);
+    }
+  
     if(!elem->parent) {
       NAWindow* window = naGetUIElementWindowMutable(elem->uiElement);
       if(window){
         NASpace* contentSpace = naGetWindowContentSpace(window);
         if(contentSpace == elem->uiElement){
           NARect windowRect = naGetUIElementRect(window);
-          windowRect.size = uiElementRect.size;
+          windowRect.size = contentRect.size;
           naSetUIElementRect(window, windowRect);
         }
       }
     }
   }
 
+  // From here on, contentRect becomes a working rect and denotes the remaining
+  // space available for each of the child elements.
+
   // When the given element denotes a section or a new sub-layout, the given
   // uiElement must be an NASpace and childs will be added to that space.
   // Therefore, we reset the local coordinate system origin to zero.
   if(elem->uiElement) {
-    innerBlockRect.pos = naMakePosZero();
+    contentRect.pos = naMakePosZero();
   }
 
   // We subtract the padding around the rectangle.
   if(orderingVH) {
-    innerBlockRect.pos.x += horizontalIsRightToLeft ? elem->padding.end2 : elem->padding.begin2;
-    innerBlockRect.pos.y += verticalIsBottomToTop ? elem->padding.end1 : elem->padding.begin1;
-    innerBlockRect.size.width -= elem->padding.begin2 + elem->padding.end2;
-    innerBlockRect.size.height -= elem->padding.begin1 + elem->padding.end1;
+    contentRect.pos.x += horizontalIsRightToLeft ? elem->padding.end2 : elem->padding.begin2;
+    contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.end1 : elem->padding.begin1;
+    contentRect.size.width  -= (elem->padding.begin2 + elem->padding.end2);
+    contentRect.size.height -= (elem->padding.begin1 + elem->padding.end1);
   }else{
-    innerBlockRect.pos.x += horizontalIsRightToLeft ? elem->padding.end1 : elem->padding.begin1;
-    innerBlockRect.pos.y += verticalIsBottomToTop ? elem->padding.end2 : elem->padding.begin2;
-    innerBlockRect.size.width -= elem->padding.begin1 + elem->padding.end1;
-    innerBlockRect.size.height -= elem->padding.begin2 + elem->padding.end2;
+    contentRect.pos.x += horizontalIsRightToLeft ? elem->padding.end1 : elem->padding.begin1;
+    contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.end2 : elem->padding.begin2;
+    contentRect.size.width  -= (elem->padding.begin1 + elem->padding.end1);
+    contentRect.size.height -= (elem->padding.begin2 + elem->padding.end2);
   }
 
   // Now, innerBlockRect is the final rect we want to distribute our elements in.
   
   // Compute, how much flex space there is to distribute
+  double totalFlexibleSpace1 = orderingVH
+    ? blockRect.size.height - elem->minBlockSize1
+    : blockRect.size.width  - elem->minBlockSize1;
   double totalFlexibleSpace2 = orderingVH
-    ? blockRect.size.width - elem->minBlockSize2
+    ? blockRect.size.width  - elem->minBlockSize2
     : blockRect.size.height - elem->minBlockSize2;
 
-  // Go through all childs and count how many have to grow in secondary size.
-  size_t elementsToFit = 0;
+  // Go through all childs and count how many have to grow in size.
+  size_t elementsToFit1 = 0;
+  size_t elementsToFit2 = 0;
   NAListIterator countingIter = naMakeListMutator(&elem->childs);
   while(naIterateList(&countingIter)) {
     NA_LayoutElement* child = naGetListCurMutable(&countingIter);
+    if(child->blockSize1 == 0.) { // NA_LAYOUT_GROW
+      elementsToFit1++;
+    }
     if(child->blockSize2 == 0.) { // NA_LAYOUT_GROW
-      elementsToFit++;
+      elementsToFit2++;
     }
   }
   naClearListIterator(&countingIter);
+  
+  NABool distributeVertically = (elem->isSecondary && orderingVH) || (!elem->isSecondary && !orderingVH);
   
   // We have all the information we need. Go through all childs and align them.
   
@@ -799,52 +709,77 @@ void na_AlignLayoutElement(
   while(naIterateList(&iter)) {
     NA_LayoutElement* child = naGetListCurMutable(&iter);
     
-    // Determine the secondary size which needs to be added to the child rect
-    // due to distribution of flexible space.
+    // Determine the size which needs to be added to the child rect due to
+    // distribution of flexible space. Note that the computation is done like
+    // so that no rounding errors or left over sizes occur.
+    double flexSpace1 = 0.;
     double flexSpace2 = 0.;
+    
+    if(child->blockSize1 == 0.) { // NA_LAYOUT_GROW
+      flexSpace1 = naFloor(totalFlexibleSpace1 / (double)elementsToFit1);
+      totalFlexibleSpace1 -= flexSpace1;
+      elementsToFit1--;
+    }
     if(child->blockSize2 == 0.) { // NA_LAYOUT_GROW
-      // Compute it like that so that no rounding errors or left over sizes
-      // occur.
-      flexSpace2 = naFloor(totalFlexibleSpace2 / (double)elementsToFit);
+      flexSpace2 = naFloor(totalFlexibleSpace2 / (double)elementsToFit2);
       totalFlexibleSpace2 -= flexSpace2;
-      elementsToFit--;
+      elementsToFit2--;
     }
     
-    double childBlockSize2 = child->minBlockSize2 + flexSpace2;
+    NARect childMarginRect;
+    childMarginRect.size.width = orderingVH
+      ? child->minBlockSize2 + flexSpace2 + (child->margin.begin2 + child->margin.end2)
+      : child->minBlockSize1 + flexSpace1 + (child->margin.begin1 + child->margin.end1);
+    childMarginRect.size.height = orderingVH
+      ? child->minBlockSize1 + flexSpace2 + (child->margin.begin1 + child->margin.end1)
+      : child->minBlockSize2 + flexSpace1 + (child->margin.begin2 + child->margin.end2);
     
-    NARect subElemRect = naMakeRectS(
-      innerBlockRect.pos.x,
-      innerBlockRect.pos.y,
-      orderingVH ? childBlockSize2 : innerBlockRect.size.width,
-      orderingVH ? innerBlockRect.size.height : childBlockSize2);
- 
-    double marginedChildBlockSize2 = childBlockSize2 + child->margin.begin2;
-        
-    // Flip the secondary direction if necessary and adjust the rect of the
-    // container as well as the child.
-    if(orderingVH) {
-      if(horizontalIsRightToLeft) {
-        subElemRect.pos.x = naGetRectEndX(innerBlockRect) - marginedChildBlockSize2;
-      }else{
-        innerBlockRect.pos.x += marginedChildBlockSize2;
-        subElemRect.pos.x += child->margin.begin2;
+    // set the child to the proper position based on the layout direction and
+    // adjust the working rect too.
+    if(horizontalIsRightToLeft) {
+      childMarginRect.pos.x = naGetRectEndX(contentRect) - childMarginRect.size.width;
+      if(!distributeVertically) {
+        contentRect.size.width -= childMarginRect.size.width;
       }
-      innerBlockRect.size.width -= marginedChildBlockSize2;
     }else{
-      if(verticalIsBottomToTop) {
-        innerBlockRect.pos.y += marginedChildBlockSize2;
-        subElemRect.pos.y += child->margin.begin2;
-      }else{
-        subElemRect.pos.y = naGetRectEndY(innerBlockRect) - marginedChildBlockSize2;
+      childMarginRect.pos.x = contentRect.pos.x;
+      if(!distributeVertically) {
+        contentRect.pos.x += childMarginRect.size.width;
+        contentRect.size.width -= childMarginRect.size.width;
       }
-      innerBlockRect.size.height -= marginedChildBlockSize2;
+    }
+    if(verticalIsBottomToTop) {
+      childMarginRect.pos.y = contentRect.pos.y;
+      if(distributeVertically) {
+        contentRect.pos.y += childMarginRect.size.height;
+        contentRect.size.height -= childMarginRect.size.height;
+      }
+    }else{
+      childMarginRect.pos.y = naGetRectEndY(contentRect) - childMarginRect.size.height;
+      if(distributeVertically) {
+        contentRect.size.height -= childMarginRect.size.height;
+      }
+    }
+    
+    // Subtract the margin again.
+    NARect childBlockRect = childMarginRect;
+    if(orderingVH) {
+      childBlockRect.pos.x += horizontalIsRightToLeft ? child->margin.end2 : child->margin.begin2;
+      childBlockRect.pos.y += verticalIsBottomToTop   ? child->margin.end1 : child->margin.begin1;
+      childBlockRect.size.width  -= (child->margin.begin2 + child->margin.end2);
+      childBlockRect.size.height -= (child->margin.begin1 + child->margin.end1);
+    }else{
+      childBlockRect.pos.x += horizontalIsRightToLeft ? child->margin.end1 : child->margin.begin1;
+      childBlockRect.pos.y += verticalIsBottomToTop   ? child->margin.end2 : child->margin.begin2;
+      childBlockRect.size.width  -= (child->margin.begin1 + child->margin.end1);
+      childBlockRect.size.height -= (child->margin.begin2 + child->margin.end2);
     }
 
     // Finally, align the child.
-    na_AlignLayoutSection(
-      na_GetLayoutingSpace(elem),
+    na_AlignLayoutElement(
+      na_GetLayoutingSpace(child),
       child,
-      subElemRect);
+      childBlockRect);
   }
   naClearListIterator(&iter);
 }

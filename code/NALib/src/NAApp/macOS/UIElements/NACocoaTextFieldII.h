@@ -34,6 +34,13 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
   return self;
 }
 
+- (void)drawRect:(NSRect)dirtyRect{
+  #if NA_DEBUG
+    na_DrawLayoutDebugging([self frame], &cocoaTextField->textField.uiElement);
+  #endif // NA_DEBUG
+  [super drawRect:dirtyRect];
+}
+
 - (BOOL)performKeyEquivalent:(NSEvent *)event {
   if ([event modifierFlags] & (NAEventModifierFlagCommand)) {
     NSString* chars = event.characters;

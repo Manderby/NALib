@@ -52,6 +52,13 @@
     NA_COCOA_SUPER_DEALLOC();
   }
   
+  - (void)drawRect:(NSRect)dirtyRect{
+  #if NA_DEBUG
+    na_DrawLayoutDebugging([self frame], &cocoaMetalSpace->metalSpace.uiElement);
+  #endif // NA_DEBUG
+  [super drawRect:dirtyRect];
+}
+
   - (BOOL)acceptsFirstResponder{
     return YES; // This is required to get keyboard input.
   }

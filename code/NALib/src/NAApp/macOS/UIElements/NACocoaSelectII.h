@@ -27,6 +27,13 @@ NA_RUNTIME_TYPE(NACocoaSelect, na_DestructCocoaSelect, NA_FALSE);
   return self;
 }
 
+- (void)drawRect:(NSRect)dirtyRect{
+  #if NA_DEBUG
+    na_DrawLayoutDebugging([self frame], &cocoaSelect->select.uiElement);
+  #endif // NA_DEBUG
+  [super drawRect:dirtyRect];
+}
+
 - (void) addMenuItem:(NSMenuItem*)item atItem:(const NAMenuItem*)atItem{  
   size_t index = naGetSelectItemIndex(&cocoaSelect->select, atItem);
   //int index = [self getMenuItemIndex:atItem];

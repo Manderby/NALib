@@ -52,6 +52,13 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   return self;
 }
 
+- (void)drawRect:(NSRect)dirtyRect{
+  #if NA_DEBUG
+    na_DrawLayoutDebugging([self frame], &cocoaButton->button.uiElement);
+  #endif // NA_DEBUG
+  [super drawRect:dirtyRect];
+}
+
 - (BOOL)isAccessibilityElement
 {
     return YES;

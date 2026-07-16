@@ -23,6 +23,13 @@ NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
   return self;
 }
 
+- (void)drawRect:(NSRect)dirtyRect{
+  #if NA_DEBUG
+    na_DrawLayoutDebugging([self frame], &cocoaImageSpace->imageSpace.uiElement);
+  #endif // NA_DEBUG
+  [super drawRect:dirtyRect];
+}
+
 - (void) setImageSet:(NAImageSet* _Nullable)imageSet{
   if(imageSet) {
     double uiScale = naGetUIElementUIScale(&cocoaImageSpace->imageSpace);

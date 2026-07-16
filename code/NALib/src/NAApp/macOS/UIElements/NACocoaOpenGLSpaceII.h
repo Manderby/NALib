@@ -70,6 +70,11 @@
   
   - (void)drawRect:(NSRect)dirtyRect{
     NA_UNUSED(dirtyRect);
+
+    #if NA_DEBUG
+      na_DrawLayoutDebugging([self frame], &cocoaOpenGLSpace->openGLSpace.uiElement);
+    #endif // NA_DEBUG
+
     [[self openGLContext] makeCurrentContext];
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_REDRAW)) {
       [super drawRect:dirtyRect];
