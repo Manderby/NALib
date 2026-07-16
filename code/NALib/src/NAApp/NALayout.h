@@ -133,19 +133,6 @@ NA_PROTOTYPE(NASpace);
 
 
 
-typedef enum {
-  NA_LAYOUT_DIRECTIONS_LRTB = 0x00,  // reading direction: western
-  NA_LAYOUT_DIRECTIONS_RLTB = 0x01,  // reading direction: middle eastern
-  NA_LAYOUT_DIRECTIONS_LRBT = 0x02,
-  NA_LAYOUT_DIRECTIONS_RLBT = 0x03,
-
-  NA_LAYOUT_DIRECTIONS_TBLR = 0x04, // reading direction: mongolian
-  NA_LAYOUT_DIRECTIONS_TBRL = 0x05, // reading direction: traditional eastern
-  NA_LAYOUT_DIRECTIONS_BTLR = 0x06,
-  NA_LAYOUT_DIRECTIONS_BTRL = 0x07,
-
-  NA_LAYOUT_DIRECTIONS_INHERIT = 0x80, // same as the parent space.
-} NALayoutDirections;
 
 typedef enum {
   NA_ALIGN_BEGIN,
@@ -164,8 +151,7 @@ typedef enum {
 // When starting a new layout, you must provide a space.
 void naBeginLayout(
   NASpace* space,
-  NABorder2D padding,
-  NALayoutDirections layoutDirections);
+  NABorder2D padding);
   
 // Any layout must be ended with naEndLayout.
 void naEndLayout(void);

@@ -299,8 +299,8 @@ NA_DEF void naSetLabelTextAlignment(NALabel* label, NAAlignment alignment) {
 
 NA_HDEF void na_UpdateLabelTextAlignment(NALabel* label) {
   naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  NALayoutDirections directions = naGetSpaceLayoutDirections(naGetUIElementParentSpace(nativePtr));
-  [nativePtr setAlignment:getNSTextAlignment(label->alignment, directions)];
+  NABool isRTL = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(naGetUIElementParentSpace(nativePtr));
+  [nativePtr setAlignment:na_GetNSTextAlignment(label->alignment, isRTL)];
 }
 
 

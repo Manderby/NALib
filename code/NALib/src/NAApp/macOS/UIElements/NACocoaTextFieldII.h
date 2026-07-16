@@ -162,8 +162,8 @@ NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NAAlignment alig
 
 NA_HDEF void na_UpdateTextFieldTextAlignment(NATextField* textField) {
   naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
-  NALayoutDirections directions = naGetSpaceLayoutDirections(naGetUIElementParentSpace(textField));
-  [nativePtr setAlignment:getNSTextAlignment(textField->alignment, directions)];
+  NABool isRTL = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(naGetUIElementParentSpace(textField));
+  [nativePtr setAlignment:na_GetNSTextAlignment(textField->alignment, isRTL)];
 }
 
 

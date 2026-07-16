@@ -56,15 +56,6 @@ NA_API void naSetSpaceBackgroundColor(
 // Fills the given color with the background acutally used for displaying.
 NA_API void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space);
 
-// Gets and sets the layout directions for this space.
-NA_API NALayoutDirections naGetSpaceLayoutDirections(const NASpace* space);
-NA_API void naSetSpaceLayoutDirections(NASpace* space, NALayoutDirections directions);
-// Note that the getter automatically returns an explicit direction and hence
-// resolves any inherit direction. If there is no explicit direction or space
-// is a nullptr, NA_LAYOUT_DIRECTIONS_RLTB is returned.
-// If you need to know whether a space uses inherit, use this function:
-NA_API NABool naGetSpaceLayoutDirectionsIsInherit(const NASpace* space);
-
 // Moves all childs with the given x and y coordinates in direction
 // to the right and top.
 NA_API void naShiftSpaceChilds(NASpace* space, NAPos shift);
@@ -78,12 +69,39 @@ NA_API void naSetSpaceVisible(
 NA_API NABool naGetSpaceDragsWindow(const NASpace* space);
 NA_API void naSetSpaceDragsWindow(NASpace* space, NABool dragsWindow);
 
+
+
+// Layouting
+
+typedef enum {
+  NA_LAYOUT_DIRECTIONS_LRTB = 0x00,  // reading direction: western
+  NA_LAYOUT_DIRECTIONS_RLTB = 0x01,  // reading direction: middle eastern
+  NA_LAYOUT_DIRECTIONS_LRBT = 0x02,
+  NA_LAYOUT_DIRECTIONS_RLBT = 0x03,
+
+  NA_LAYOUT_DIRECTIONS_TBLR = 0x04, // reading direction: mongolian
+  NA_LAYOUT_DIRECTIONS_TBRL = 0x05, // reading direction: traditional eastern
+  NA_LAYOUT_DIRECTIONS_BTLR = 0x06,
+  NA_LAYOUT_DIRECTIONS_BTRL = 0x07,
+
+  NA_LAYOUT_DIRECTIONS_INHERIT = 0x80, // same as the parent space.
+} NALayoutDirections;
+
+// Gets and sets the layout directions for this space.
+// Note that the default getter automatically returns an explicit direction and
+// hence resolves any inherit direction. If there is no explicit direction or
+// space is a nullptr, NA_LAYOUT_DIRECTIONS_RLTB is returned.
+// If you need to know whether a space uses inherit, use the raw function
+NA_API NALayoutDirections naGetSpaceLayoutDirections(const NASpace* space);
+NA_API NALayoutDirections naGetSpaceLayoutDirectionsRaw(const NASpace* space);
+NA_API void naSetSpaceLayoutDirections(NASpace* space, NALayoutDirections directions);
+
 // The following getters are convencience functions to determine characteristic
 // properties of the directions defined by the space. Usually, this is only
 // used internally in NALib but it might be of use for somebody.
-NABool naGetLayoutDirectionsHorizontalIsRightToLeft(NALayoutDirections directions);
-NABool naGetLayoutDirectionsVerticalIsBottomToTop(NALayoutDirections directions);
-NABool naGetLayoutDirectionsPrimaryIsVertical(NALayoutDirections directions);
+NABool naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(const NASpace* space);
+NABool naGetSpaceLayoutDirectionsVerticalIsBottomToTop(const NASpace* space);
+NABool naGetSpaceLayoutDirectionsPrimaryIsVertical(const NASpace* space);
 
 
 

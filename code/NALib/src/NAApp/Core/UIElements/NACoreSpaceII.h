@@ -120,38 +120,6 @@ NA_DEF void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
 
 
 
-NA_DEF NALayoutDirections naGetSpaceLayoutDirections(const NASpace* space) {
-  if(!space) {
-    return NA_LAYOUT_DIRECTIONS_LRTB;
-  }else if(space->layoutDirections == NA_LAYOUT_DIRECTIONS_INHERIT) {
-    return naGetSpaceLayoutDirections(naGetUIElementParentSpace(space));
-  }else{
-    return space->layoutDirections;
-  }
-}
-
-NA_DEF void naSetSpaceLayoutDirections(NASpace* space, NALayoutDirections directions) {
-  #if NA_DEBUG
-    if(!space)
-      naError("space must not be a nullptr");
-  #endif
-  NABool didChange = space->layoutDirections != directions;
-  space->layoutDirections = directions;
-  if(didChange) {
-    // todo: auto-update all childs.
-  }
-}
-
-NA_DEF NABool naGetSpaceLayoutDirectionsIsInherit(const NASpace* space) {
-  #if NA_DEBUG
-    if(!space)
-      naError("space must not be a nullptr");
-  #endif
-  return space->layoutDirections == NA_LAYOUT_DIRECTIONS_INHERIT;
-}
-
-
-
 NA_DEF NABool naGetSpaceDragsWindow(const NASpace* space) {
   return space->dragsWindow;
 }
@@ -175,32 +143,55 @@ NA_HDEF void na_UpdateSpaceUIScale(NA_UIElement* space) {
 
 
 
+
 #define NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL 0x04
 #define NA_LAYOUT_DIRECTION_BOTTOM_TO_TOP 0x02
 #define NA_LAYOUT_DIRECTION_RIGHT_TO_LEFT 0x01
 
-NABool naGetLayoutDirectionsHorizontalIsRightToLeft(NALayoutDirections directions) {
-  #if NA_DEBUG
-    if(directions < 0 || directions > 7)
-      naError("Only explicit directions can be used with this function");
-  #endif
-  return naGetFlagu32(directions, NA_LAYOUT_DIRECTION_RIGHT_TO_LEFT);
+NA_DEF NALayoutDirections naGetSpaceLayoutDirections(const NASpace* space) {
+  if(!space) {
+    return NA_LAYOUT_DIRECTIONS_LRTB;
+  }else if(space->layoutDirections == NA_LAYOUT_DIRECTIONS_INHERIT) {
+    return naGetSpaceLayoutDirections(naGetUIElementParentSpace(space));
+  }else{
+    return space->layoutDirections;
+  }
 }
 
-NABool naGetLayoutDirectionsVerticalIsBottomToTop(NALayoutDirections directions) {
+NA_DEF NALayoutDirections naGetSpaceLayoutDirectionsRaw(const NASpace* space) {
   #if NA_DEBUG
-    if(directions < 0 || directions > 7)
-      naError("Only explicit directions can be used with this function");
+    if(!space)
+      naError("space must not be a nullptr");
   #endif
-  return naGetFlagu32(directions, NA_LAYOUT_DIRECTION_BOTTOM_TO_TOP);
+  return space->layoutDirections;
 }
 
-NABool naGetLayoutDirectionsPrimaryIsVertical(NALayoutDirections directions) {
+NA_DEF void naSetSpaceLayoutDirections(NASpace* space, NALayoutDirections directions) {
   #if NA_DEBUG
-    if(directions < 0 || directions > 7)
-      naError("Only explicit directions can be used with this function");
+    if(!space)
+      naError("space must not be a nullptr");
+    if(directions < 0 || directions > 8)
+      naError("Invalid direction given");
   #endif
-  return naGetFlagu32(directions, NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL);
+  NABool didChange = space->layoutDirections != directions;
+  space->layoutDirections = directions;
+  if(didChange) {
+    // todo: auto-update all childs.
+  }
+}
+
+
+
+NABool naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(const NASpace* space) {
+  return naGetFlagu32(naGetSpaceLayoutDirections(space), NA_LAYOUT_DIRECTION_RIGHT_TO_LEFT);
+}
+
+NABool naGetSpaceLayoutDirectionsVerticalIsBottomToTop(const NASpace* space) {
+  return naGetFlagu32(naGetSpaceLayoutDirections(space), NA_LAYOUT_DIRECTION_BOTTOM_TO_TOP);
+}
+
+NABool naGetSpaceLayoutDirectionsPrimaryIsVertical(const NASpace* space) {
+  return naGetFlagu32(naGetSpaceLayoutDirections(space), NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL);
 }
 
 
