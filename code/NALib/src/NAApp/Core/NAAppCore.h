@@ -105,7 +105,7 @@ struct NAImageSpace{
 
 struct NALabel{
   NA_UIElement uiElement;
-  NALayoutAlign alignment;
+  NAAlignment alignment;
   NAFont* font;
   NAColor* textColor;
   NABool enabled;
@@ -173,13 +173,13 @@ struct NASpace{
 struct NATextField{
   NA_UIElement uiElement;
   NAFont* font;
-  NALayoutAlign alignment;
+  NAAlignment alignment;
 };
 
 struct NATextBox{
   NA_UIElement uiElement;
   NAFont* font;
-  NALayoutAlign alignment;
+  NAAlignment alignment;
 };
 
 struct NAWindow{

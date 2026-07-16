@@ -180,7 +180,7 @@ NA_DEF NAString* naNewStringWithTextBoxText(const NATextBox* textBox) {
 
 
 
-NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NALayoutAlign alignment) {
+NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NAAlignment alignment) {
   textBox->alignment = alignment;
   na_UpdateTextBoxTextAlignment(textBox);
 }

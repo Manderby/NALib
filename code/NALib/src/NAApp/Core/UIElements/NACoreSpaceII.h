@@ -174,6 +174,37 @@ NA_HDEF void na_UpdateSpaceUIScale(NA_UIElement* space) {
 }
 
 
+
+#define NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL 0x04
+#define NA_LAYOUT_DIRECTION_BOTTOM_TO_TOP 0x02
+#define NA_LAYOUT_DIRECTION_RIGHT_TO_LEFT 0x01
+
+NABool naGetLayoutDirectionsHorizontalIsRightToLeft(NALayoutDirections directions) {
+  #if NA_DEBUG
+    if(directions < 0 || directions > 7)
+      naError("Only explicit directions can be used with this function");
+  #endif
+  return naGetFlagu32(directions, NA_LAYOUT_DIRECTION_RIGHT_TO_LEFT);
+}
+
+NABool naGetLayoutDirectionsVerticalIsBottomToTop(NALayoutDirections directions) {
+  #if NA_DEBUG
+    if(directions < 0 || directions > 7)
+      naError("Only explicit directions can be used with this function");
+  #endif
+  return naGetFlagu32(directions, NA_LAYOUT_DIRECTION_BOTTOM_TO_TOP);
+}
+
+NABool naGetLayoutDirectionsPrimaryIsVertical(NALayoutDirections directions) {
+  #if NA_DEBUG
+    if(directions < 0 || directions > 7)
+      naError("Only explicit directions can be used with this function");
+  #endif
+  return naGetFlagu32(directions, NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL);
+}
+
+
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

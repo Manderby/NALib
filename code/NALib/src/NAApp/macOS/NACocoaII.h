@@ -437,7 +437,7 @@ NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
 
 
 
-NSTextAlignment getNSTextAlignment(NALayoutAlign alignment, NALayoutDirections directions) {
+NSTextAlignment getNSTextAlignment(NAAlignment alignment, NALayoutDirections directions) {
   NABool isRTL = naGetLayoutDirectionsHorizontalIsRightToLeft(directions);
   NSTextAlignment nsalignment;
   switch(alignment) {

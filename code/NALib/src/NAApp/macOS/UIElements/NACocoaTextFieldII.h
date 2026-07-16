@@ -153,7 +153,7 @@ NA_DEF void naSetTextFieldColor(NATextField* textField, const NAColor* color) {
 
 
 
-NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NALayoutAlign alignment) {
+NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NAAlignment alignment) {
   textField->alignment = alignment;
   na_UpdateTextFieldTextAlignment(textField);
 }

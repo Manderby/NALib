@@ -290,7 +290,7 @@ NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable) {
 
 
 
-NA_DEF void naSetLabelTextAlignment(NALabel* label, NALayoutAlign alignment) {
+NA_DEF void naSetLabelTextAlignment(NALabel* label, NAAlignment alignment) {
   label->alignment = alignment;
   na_UpdateLabelTextAlignment(label);
 }

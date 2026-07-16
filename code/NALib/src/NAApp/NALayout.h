@@ -151,7 +151,7 @@ typedef enum {
   NA_ALIGN_BEGIN,
   NA_ALIGN_CENTER,
   NA_ALIGN_END,
-} NALayoutAlign;
+} NAAlignment;
 
 #define NA_LAYOUT_MIN  -1.
 #define NA_LAYOUT_GROW  0.
@@ -196,16 +196,7 @@ void naSetLayoutSectionSpace(NASpace* space);
 // SecondaryAlign: NA_ALIGN_CENTER
 // AligneBaseline: false for block elements, true for baseline elements.
 // BlockSize1:     same as size1 for elements. NA_LAYOUT_GROW for layouts.
-void naSetLayoutElementPrimaryAlign(NALayoutAlign align1);
-void naSetLayoutElementSecondaryAlign(NALayoutAlign align2);
+void naSetLayoutElementPrimaryAlign(NAAlignment alignment1);
+void naSetLayoutElementSecondaryAlign(NAAlignment alignment2);
 void naSetLayoutElementAlignBaseline(NABool alignBaseline);
 void naSetLayoutElementBlockSize1(double blockSize1);
-
-
-
-// The following getters are convencience functions to determin characteristics
-// of the directions chosen. Usually only used internally in NALib but it might
-// be of use for anybody.
-NABool naGetLayoutDirectionsHorizontalIsRightToLeft(NALayoutDirections directions);
-NABool naGetLayoutDirectionsVerticalIsBottomToTop(NALayoutDirections directions);
-NABool naGetLayoutDirectionsPrimaryIsVertical(NALayoutDirections directions);

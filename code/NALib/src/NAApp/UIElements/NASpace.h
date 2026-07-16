@@ -78,6 +78,13 @@ NA_API void naSetSpaceVisible(
 NA_API NABool naGetSpaceDragsWindow(const NASpace* space);
 NA_API void naSetSpaceDragsWindow(NASpace* space, NABool dragsWindow);
 
+// The following getters are convencience functions to determine characteristic
+// properties of the directions defined by the space. Usually, this is only
+// used internally in NALib but it might be of use for somebody.
+NABool naGetLayoutDirectionsHorizontalIsRightToLeft(NALayoutDirections directions);
+NABool naGetLayoutDirectionsVerticalIsBottomToTop(NALayoutDirections directions);
+NABool naGetLayoutDirectionsPrimaryIsVertical(NALayoutDirections directions);
+
 
 
 #ifdef __cplusplus

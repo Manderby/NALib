@@ -39,8 +39,8 @@ struct NA_LayoutElement {
     struct {
       double size1;
       double size2;
-      NALayoutAlign align1;
-      NALayoutAlign align2;
+      NAAlignment alignment1;
+      NAAlignment alignment2;
       NABool alignBaseline;
       NALayoutDirections layoutDirections;
     } element;
@@ -49,35 +49,6 @@ struct NA_LayoutElement {
 
 
 
-#define NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL 0x04
-#define NA_LAYOUT_DIRECTION_BOTTOM_TO_TOP 0x02
-#define NA_LAYOUT_DIRECTION_RIGHT_TO_LEFT 0x01
-
-
-
-NABool naGetLayoutDirectionsHorizontalIsRightToLeft(NALayoutDirections directions) {
-  #if NA_DEBUG
-    if(directions < 0 || directions > 7)
-      naError("Only explicit directions can be used with this function");
-  #endif
-  return naGetFlagu32(directions, NA_LAYOUT_DIRECTION_RIGHT_TO_LEFT);
-}
-
-NABool naGetLayoutDirectionsVerticalIsBottomToTop(NALayoutDirections directions) {
-  #if NA_DEBUG
-    if(directions < 0 || directions > 7)
-      naError("Only explicit directions can be used with this function");
-  #endif
-  return naGetFlagu32(directions, NA_LAYOUT_DIRECTION_BOTTOM_TO_TOP);
-}
-
-NABool naGetLayoutDirectionsPrimaryIsVertical(NALayoutDirections directions) {
-  #if NA_DEBUG
-    if(directions < 0 || directions > 7)
-      naError("Only explicit directions can be used with this function");
-  #endif
-  return naGetFlagu32(directions, NA_LAYOUT_DIRECTION_PRIMARY_IS_VERTICAL);
-}
 
 
 
@@ -146,8 +117,8 @@ void naBeginLayout(NASpace* space, NABorder2D padding, NALayoutDirections layout
   newElement->element.size1 = NA_LAYOUT_GROW;
   newElement->element.size2 = NA_LAYOUT_GROW;
   newElement->blockSize1 = NA_LAYOUT_GROW;
-  newElement->element.align1 = NA_ALIGN_CENTER;
-  newElement->element.align2 = NA_ALIGN_CENTER;
+  newElement->element.alignment1 = NA_ALIGN_CENTER;
+  newElement->element.alignment2 = NA_ALIGN_CENTER;
   newElement->element.alignBaseline = NA_FALSE;
   newElement->element.layoutDirections = layoutDirections;
 
@@ -545,8 +516,8 @@ void naAddLayoutElement(
   }
 
   subElem->margin.begin1 = preMargin1;
-  subElem->element.align1 = NA_ALIGN_CENTER;
-  subElem->element.align2 = NA_ALIGN_CENTER;
+  subElem->element.alignment1 = NA_ALIGN_CENTER;
+  subElem->element.alignment2 = NA_ALIGN_CENTER;
   
   if(uiElement && !naIsUIElementBlock(uiElement)) {
     subElem->element.alignBaseline = NA_TRUE;
@@ -580,7 +551,7 @@ void naSetLayoutSectionSpace(NASpace* space) {
 
 
 
-void naSetLayoutElementPrimaryAlign(NALayoutAlign align1) {
+void naSetLayoutElementPrimaryAlign(NAAlignment alignment1) {
   #if NA_DEBUG
     if(!na_curLayoutElement)
       naError("No layout in progress. Use naBeginLayout.");
@@ -595,12 +566,12 @@ void naSetLayoutElementPrimaryAlign(NALayoutAlign align1) {
       naError("No element in the current section available.");
   #endif // NA_DEBUG
 
-  lastChild->element.align1 = align1;
+  lastChild->element.alignment1 = alignment1;
 }
 
 
 
-void naSetLayoutElementSecondaryAlign(NALayoutAlign align2) {
+void naSetLayoutElementSecondaryAlign(NAAlignment alignment2) {
   #if NA_DEBUG
     if(!na_curLayoutElement)
       naError("No layout in progress. Use naBeginLayout.");
@@ -615,7 +586,7 @@ void naSetLayoutElementSecondaryAlign(NALayoutAlign align2) {
       naError("No element in the current section available.");
   #endif // NA_DEBUG
 
-  lastChild->element.align2 = align2;
+  lastChild->element.alignment2 = alignment2;
 }
 
 
@@ -696,7 +667,7 @@ void na_AlignLayoutElement(
   #endif // NA_DEBUG
 
   double alignMargin1;
-  switch(elem->element.align1) {
+  switch(elem->element.alignment1) {
   case NA_ALIGN_BEGIN:
     alignMargin1 = 0.;
     break;
@@ -721,7 +692,7 @@ void na_AlignLayoutElement(
   }
 
   double alignMargin2;
-  switch(elem->element.align2) {
+  switch(elem->element.alignment2) {
   case NA_ALIGN_BEGIN:
     if(orderingVH) {
       alignMargin2 = blockRect.size.width - elem->element.size2;
