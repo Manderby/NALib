@@ -309,13 +309,6 @@ void na_EndLayoutElement(NA_LayoutElement* elem) {
     minContentSize2 = elem->blockSize2;
   }
   
-  #if NA_DEBUG
-    if(minContentSize1 == 0.)
-      naError("Can not compute minimal size 1 for this element");
-    if(minContentSize2 == 0.)
-      naError("Can not compute minimal size 2 for this element");
-  #endif
-  
   // Add the padding of this section.
   elem->minPaddingSize1 = minContentSize1 + elem->padding.begin1 + elem->padding.end1;
   elem->minPaddingSize2 = minContentSize2 + elem->padding.begin2 + elem->padding.end2;
