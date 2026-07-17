@@ -317,44 +317,46 @@ void na_EndLayoutElement(NA_LayoutElement* elem) {
 
 
 void na_PreserveDebugInfo(const NASpace* layoutingSpace, NA_LayoutElement* elem, NARect paddingRect) {
-  NA_LayoutRects* layoutRects = naAlloc(NA_LayoutRects);
-  
-  NABool horizontalIsRightToLeft = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(layoutingSpace);
-  NABool verticalIsBottomToTop = naGetSpaceLayoutDirectionsVerticalIsBottomToTop(layoutingSpace);
-  NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
+  #if NA_DEBUG
+    NA_LayoutRects* layoutRects = naAlloc(NA_LayoutRects);
+    
+    NABool horizontalIsRightToLeft = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(layoutingSpace);
+    NABool verticalIsBottomToTop = naGetSpaceLayoutDirectionsVerticalIsBottomToTop(layoutingSpace);
+    NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
 
-  layoutRects->marginRect = paddingRect;
-  if(orderingVH) {
-    layoutRects->marginRect.pos.x -= horizontalIsRightToLeft ? elem->margin.end2 : elem->margin.begin2;
-    layoutRects->marginRect.pos.y -= verticalIsBottomToTop   ? elem->margin.begin1 : elem->margin.end1;
-    layoutRects->marginRect.size.width  += (elem->margin.begin2 + elem->margin.end2);
-    layoutRects->marginRect.size.height += (elem->margin.begin1 + elem->margin.end1);
-  }else{
-    layoutRects->marginRect.pos.x -= horizontalIsRightToLeft ? elem->margin.end1 : elem->margin.begin1;
-    layoutRects->marginRect.pos.y -= verticalIsBottomToTop   ? elem->margin.begin2 : elem->margin.end2;
-    layoutRects->marginRect.size.width  += (elem->margin.begin1 + elem->margin.end1);
-    layoutRects->marginRect.size.height += (elem->margin.begin2 + elem->margin.end2);
-  }
+    layoutRects->marginRect = paddingRect;
+    if(orderingVH) {
+      layoutRects->marginRect.pos.x -= horizontalIsRightToLeft ? elem->margin.end2 : elem->margin.begin2;
+      layoutRects->marginRect.pos.y -= verticalIsBottomToTop   ? elem->margin.begin1 : elem->margin.end1;
+      layoutRects->marginRect.size.width  += (elem->margin.begin2 + elem->margin.end2);
+      layoutRects->marginRect.size.height += (elem->margin.begin1 + elem->margin.end1);
+    }else{
+      layoutRects->marginRect.pos.x -= horizontalIsRightToLeft ? elem->margin.end1 : elem->margin.begin1;
+      layoutRects->marginRect.pos.y -= verticalIsBottomToTop   ? elem->margin.begin2 : elem->margin.end2;
+      layoutRects->marginRect.size.width  += (elem->margin.begin1 + elem->margin.end1);
+      layoutRects->marginRect.size.height += (elem->margin.begin2 + elem->margin.end2);
+    }
 
-  layoutRects->paddingRect = paddingRect;
-  
-  layoutRects->contentRect = paddingRect;
-  if(orderingVH) {
-    layoutRects->contentRect.pos.x += horizontalIsRightToLeft ? elem->padding.end2 : elem->padding.begin2;
-    layoutRects->contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.begin1 : elem->padding.end1;
-    layoutRects->contentRect.size.width  -= (elem->padding.begin2 + elem->padding.end2);
-    layoutRects->contentRect.size.height -= (elem->padding.begin1 + elem->padding.end1);
-  }else{
-    layoutRects->contentRect.pos.x += horizontalIsRightToLeft ? elem->padding.end1 : elem->padding.begin1;
-    layoutRects->contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.begin2 : elem->padding.end2;
-    layoutRects->contentRect.size.width  -= (elem->padding.begin1 + elem->padding.end1);
-    layoutRects->contentRect.size.height -= (elem->padding.begin2 + elem->padding.end2);
-  }
+    layoutRects->paddingRect = paddingRect;
+    
+    layoutRects->contentRect = paddingRect;
+    if(orderingVH) {
+      layoutRects->contentRect.pos.x += horizontalIsRightToLeft ? elem->padding.end2 : elem->padding.begin2;
+      layoutRects->contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.begin1 : elem->padding.end1;
+      layoutRects->contentRect.size.width  -= (elem->padding.begin2 + elem->padding.end2);
+      layoutRects->contentRect.size.height -= (elem->padding.begin1 + elem->padding.end1);
+    }else{
+      layoutRects->contentRect.pos.x += horizontalIsRightToLeft ? elem->padding.end1 : elem->padding.begin1;
+      layoutRects->contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.begin2 : elem->padding.end2;
+      layoutRects->contentRect.size.width  -= (elem->padding.begin1 + elem->padding.end1);
+      layoutRects->contentRect.size.height -= (elem->padding.begin2 + elem->padding.end2);
+    }
 
-  if(((NA_UIElement*)elem->uiElement)->layoutRects) {
-    naFree(((NA_UIElement*)elem->uiElement)->layoutRects);
-  }
-  ((NA_UIElement*)elem->uiElement)->layoutRects = layoutRects;
+    if(((NA_UIElement*)elem->uiElement)->layoutRects) {
+      naFree(((NA_UIElement*)elem->uiElement)->layoutRects);
+    }
+    ((NA_UIElement*)elem->uiElement)->layoutRects = layoutRects;
+  #endif // NA_DEBUG
 }
 
 

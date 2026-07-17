@@ -69,11 +69,11 @@ NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
   #if NA_DEBUG
     if(!uiElement)
       naCrash("uiElement is nullptr");
-  #endif
 
-  if(uiElement->layoutRects) {
-    naFree(uiElement->layoutRects);
-  }
+    if(uiElement->layoutRects) {
+      naFree(uiElement->layoutRects);
+    }
+  #endif
 
   if(uiElement->mouseTracking) {
     na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
