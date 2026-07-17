@@ -31,7 +31,7 @@ NA_PROTOTYPE(NATranslator);
 typedef struct NA_LayoutRects NA_LayoutRects;
 struct NA_LayoutRects {
   NARect marginRect;
-  NARect blockRect;
+  NARect paddingRect;
   NARect contentRect;
 };
 #endif // NA_DEBUG

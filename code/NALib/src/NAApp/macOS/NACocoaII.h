@@ -470,7 +470,7 @@ void na_DrawLayoutDebugging(NSRect frame, const NA_UIElement* elem) {
   if(isDebuggable) {
     NABool isSpace = naGetUIElementType(elem) == NA_UI_SPACE;
     NARect marginRect = elem->layoutRects->marginRect;
-    NARect blockRect = elem->layoutRects->blockRect;
+    NARect paddingRect = elem->layoutRects->paddingRect;
     NARect contentRect = elem->layoutRects->contentRect;
 
     // Yellow: Margin
@@ -484,13 +484,13 @@ void na_DrawLayoutDebugging(NSRect frame, const NA_UIElement* elem) {
     }
     NSRectFill(naMakeNSRectWithRect(marginRect));
 
-    // Purple: Block
+    // Purple: Padding
     [[NSColor colorWithRed:.7 green:0 blue:1 alpha:.15] setFill];
     if(!isSpace) {
-      blockRect.pos.x -= frame.origin.x;
-      blockRect.pos.y = (blockRect.pos.y - frame.origin.y) + (blockRect.size.height - frame.size.height);
+      paddingRect.pos.x -= frame.origin.x;
+      paddingRect.pos.y = (paddingRect.pos.y - frame.origin.y) + (paddingRect.size.height - frame.size.height);
     }
-    NSRectFill(naMakeNSRectWithRect(blockRect));
+    NSRectFill(naMakeNSRectWithRect(paddingRect));
 
     // Green: Content
     [[NSColor colorWithRed:0 green:1 blue:0 alpha:.15] setFill];

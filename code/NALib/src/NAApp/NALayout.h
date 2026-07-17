@@ -96,8 +96,8 @@ NA_PROTOTYPE(NASpace);
 // - zero (0)            Uses all available space provided by the parent
 //   or NA_LAYOUT_GROW   element. For elements, this means, the size will grow
 //                       to the size of the containing block. The size will
-//                       never shrink to a value smaller than the initial size
-//                       upon creation of the uiElement.
+//                       never shrink to a value smaller than what size would
+//                       be achieved with NA_LAYOUT_MIN.
 //                       For blocks, the size of all blocks will be distributed
 //                       evenly as follows:
 //
