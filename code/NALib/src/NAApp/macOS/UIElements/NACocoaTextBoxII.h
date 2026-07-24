@@ -60,7 +60,7 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 
 - (void)drawRect:(NSRect)dirtyRect{
   #if NA_DEBUG
-    na_DrawLayoutDebugging([self frame], &cocoaTextBox->textBox.uiElement);
+    na_DrawLayoutDebugging([scrollView frame], &cocoaTextBox->textBox.uiElement);
   #endif // NA_DEBUG
   [super drawRect:dirtyRect];
 }

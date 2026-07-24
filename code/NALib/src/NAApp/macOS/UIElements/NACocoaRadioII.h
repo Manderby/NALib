@@ -44,7 +44,7 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
 
 - (void)drawRect:(NSRect)dirtyRect{
   #if NA_DEBUG
-    na_DrawLayoutDebugging([self frame], &cocoaRadio->radio.uiElement);
+    na_DrawLayoutDebugging([containingView frame], &cocoaRadio->radio.uiElement);
   #endif // NA_DEBUG
   [super drawRect:dirtyRect];
 }
