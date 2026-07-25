@@ -164,6 +164,9 @@ void naAddLayoutSection(
 void naAddLayoutElement(
   void* uiElement,
   double preMargin1,
+  double blockSize1);
+  
+void naSetLayoutElementContentSize(
   double contentSize1,
   double contentSize2);
 
@@ -183,4 +186,3 @@ void naSetLayoutSectionSpace(NASpace* space);
 void naSetLayoutElementPrimaryAlign(NAAlignment alignment1);
 void naSetLayoutElementSecondaryAlign(NAAlignment alignment2);
 void naSetLayoutElementAlignBaseline(NABool alignBaseline);
-void naSetLayoutElementBlockSize1(double blockSize1);
