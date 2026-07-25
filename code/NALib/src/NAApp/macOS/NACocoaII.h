@@ -484,8 +484,8 @@ void na_DrawLayoutDebugging(NSRect frame, const NA_UIElement* elem) {
     }
     NSRectFill(naMakeNSRectWithRect(marginRect));
 
-    // Purple: Padding
-    [[NSColor colorWithRed:.7 green:0 blue:1 alpha:.15] setFill];
+    // Red: Padding
+    [[NSColor colorWithRed:.7 green:0 blue:0 alpha:.25] setFill];
     if(!isSpace) {
       paddingRect.pos.x -= frame.origin.x;
       paddingRect.pos.y = (paddingRect.pos.y - frame.origin.y) + (paddingRect.size.height - frame.size.height);

@@ -52,7 +52,6 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
   #if NA_DEBUG
     na_DrawLayoutDebugging([self frame], &cocoaSpace->space.uiElement);
   #endif // NA_DEBUG
-
 }
 
 - (void)mouseMoved:(NSEvent* _Nonnull)event{
