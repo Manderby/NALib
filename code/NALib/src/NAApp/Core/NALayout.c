@@ -573,8 +573,8 @@ void na_AlignLayoutElement(
         : 0.;
     }else{
       alignMargin1 = horizontalIsRightToLeft
-        ? paddingRect.size.width - paddedContentSize1
-        : 0.;
+        ? 0.
+        : paddingRect.size.width - paddedContentSize1;
     }
     break;
   case NA_ALIGN_CENTER:
@@ -609,8 +609,8 @@ void na_AlignLayoutElement(
         : 0.;
     }else{
       alignMargin2 = verticalIsBottomToTop
-        ? paddingRect.size.height - paddedContentSize2
-        : 0.;
+        ? 0.
+        : paddingRect.size.height - paddedContentSize2;
     }
     break;
   case NA_ALIGN_CENTER:
