@@ -179,7 +179,7 @@ void naSetLayoutSectionSpace(NASpace* space);
 // PrimaryAlign:   NA_ALIGN_CENTER
 // SecondaryAlign: NA_ALIGN_CENTER
 // AligneBaseline: false for block elements, true for baseline elements.
-// BlockSize1:     same as size1 for elements. NA_LAYOUT_GROW for layouts.
+// BlockSize1:     NA_LAYOUT_MIN
 void naSetLayoutElementPrimaryAlign(NAAlignment alignment1);
 void naSetLayoutElementSecondaryAlign(NAAlignment alignment2);
 void naSetLayoutElementAlignBaseline(NABool alignBaseline);

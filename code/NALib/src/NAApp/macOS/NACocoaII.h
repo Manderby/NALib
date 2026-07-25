@@ -474,7 +474,7 @@ void na_DrawLayoutDebugging(NSRect frame, const NA_UIElement* elem) {
     NARect contentRect = elem->layoutRects->contentRect;
 
     // Yellow: Margin
-    [[NSColor colorWithRed:1 green:.7 blue:0 alpha:.15] setFill];
+    [[NSColor colorWithRed:1 green:.7 blue:0 alpha:.2] setFill];
     if(!isSpace) {
       marginRect.pos.x -= frame.origin.x;
       // Fuck. Apple. Get. Your. Shit. Together. As for uiElements other than

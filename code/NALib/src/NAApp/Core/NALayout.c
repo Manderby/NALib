@@ -90,8 +90,8 @@ NA_LayoutElement* na_AllocLayoutElement(
 
   elem->contentSize1 = NA_LAYOUT_GROW;
   elem->contentSize2 = NA_LAYOUT_GROW;
-  elem->blockSize1 = NA_LAYOUT_GROW;
-  elem->blockSize2 = NA_LAYOUT_GROW;
+  elem->blockSize1 = NA_LAYOUT_MIN;
+  elem->blockSize2 = NA_LAYOUT_MIN;
   elem->minPaddingSize1 = 0.; // not yet computed
   elem->minPaddingSize2 = 0.; // not yet computed
   elem->alignment1 = NA_ALIGN_CENTER;
