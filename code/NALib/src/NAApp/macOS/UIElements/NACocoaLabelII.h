@@ -146,6 +146,24 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
   [super drawRect:dirtyRect];
 }
 
+- (BOOL)performKeyEquivalent:(NSEvent *)event {
+  if ([event modifierFlags] & (NAEventModifierFlagCommand)) {
+    NSString* chars = event.characters;
+    if ([[event charactersIgnoringModifiers] isEqualToString:@"c"]) {
+      if ([NSApp sendAction:@selector(copy:) to:nil from:self]) { return YES; }
+    }else if ([[event charactersIgnoringModifiers] isEqualToString:@"x"]) {
+      if ([NSApp sendAction:@selector(cut:) to:nil from:self]) { return YES; }
+    }else if ([[event charactersIgnoringModifiers] isEqualToString:@"v"]) {
+      if ([NSApp sendAction:@selector(paste:) to:nil from:self]) { return YES; }
+    }else if ([[event charactersIgnoringModifiers] isEqualToString:@"a"]) {
+      if ([NSApp sendAction:@selector(selectAll:) to:nil from:self]) { return YES; }
+    }
+  }
+  
+  // Return NO to allow default handling or propagation to super
+  return [super performKeyEquivalent:event];
+}
+
 - (void) setHeight:(double)height{
   NSRect frame = [self frame];
   frame.size.height = height;
