@@ -23,7 +23,7 @@ Current development:
 - Removed the need for start and stop Runtime when using NAApplication.
 - Replaced the obfuscated AppDelegate handling in macOS with Notifications.
 - Made startup on macOS more smooth.
-- Adding leap second information based on bulletin C70 and C71
+- Adding leap second information based on bulletin C70, C71, C72
 
 
 
