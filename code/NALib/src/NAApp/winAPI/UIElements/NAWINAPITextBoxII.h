@@ -131,7 +131,7 @@ NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text) {
 
 
 
-NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment) {
+NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NAAlignment alignment) {
   long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(textBox), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
   SetWindowLongPtr(naGetUIElementNativePtr(textBox), GWL_STYLE, style);

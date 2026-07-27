@@ -96,8 +96,8 @@ NA_LayoutElement* na_AllocLayoutElement(
   elem->blockSize2 = NA_LAYOUT_GROW;
   elem->minPaddingSize1 = 0.; // not yet computed
   elem->minPaddingSize2 = 0.; // not yet computed
-  elem->alignment1 = NA_ALIGN_CENTER;
-  elem->alignment2 = NA_ALIGN_CENTER;
+  elem->alignment1 = NA_ALIGNMENT_CENTER;
+  elem->alignment2 = NA_ALIGNMENT_CENTER;
   elem->alignBaseline = NA_TRUE;
   elem->margin = naMakeBorder2D(0., 0., 0., 0.);
   elem->padding = padding;
@@ -566,7 +566,7 @@ void na_AlignLayoutElement(
   double alignMargin2;
 
   switch(elem->alignment1) {
-  case NA_ALIGN_BEGIN:
+  case NA_ALIGNMENT_BEGIN:
     if(orderingVH) {
       alignMargin1 = verticalIsBottomToTop
         ? paddingRect.size.height - paddedContentSize1
@@ -577,7 +577,7 @@ void na_AlignLayoutElement(
         : paddingRect.size.width - paddedContentSize1;
     }
     break;
-  case NA_ALIGN_CENTER:
+  case NA_ALIGNMENT_CENTER:
     if(orderingVH) {
       alignMargin1 = ((paddingRect.size.height - paddedContentSize1) * .5);
     }else{
@@ -588,7 +588,7 @@ void na_AlignLayoutElement(
       }
     }
     break;
-  case NA_ALIGN_END:
+  case NA_ALIGNMENT_END:
     if(orderingVH) {
       alignMargin1 = verticalIsBottomToTop 
         ? 0.
@@ -602,7 +602,7 @@ void na_AlignLayoutElement(
   }
 
   switch(elem->alignment2) {
-  case NA_ALIGN_BEGIN:
+  case NA_ALIGNMENT_BEGIN:
     if(orderingVH) {
       alignMargin2 = horizontalIsRightToLeft
         ? paddingRect.size.width - paddedContentSize2
@@ -613,14 +613,14 @@ void na_AlignLayoutElement(
         : paddingRect.size.height - paddedContentSize2;
     }
     break;
-  case NA_ALIGN_CENTER:
+  case NA_ALIGNMENT_CENTER:
     if(orderingVH) {
       alignMargin2 = naFloor((paddingRect.size.width  - paddedContentSize2) * .5);
     }else{
       alignMargin2 = naFloor((paddingRect.size.height - paddedContentSize2) * .5);
     }
     break;
-  case NA_ALIGN_END:
+  case NA_ALIGNMENT_END:
     if(orderingVH) {
       alignMargin2 = horizontalIsRightToLeft
         ? 0.

@@ -1124,12 +1124,12 @@ NA_API NARect naGetMainScreenRect() {
 
 
 
-long getWINAPITextAlignmentWithAlignment(NATextAlignment alignment) {
+long getWINAPITextAlignmentWithAlignment(NAAlignment alignment) {
   long winapiAlignment;
   switch(alignment) {
-  case NA_TEXT_ALIGNMENT_LEFT: winapiAlignment = ES_LEFT; break;
-  case NA_TEXT_ALIGNMENT_RIGHT: winapiAlignment = ES_RIGHT; break;
-  case NA_TEXT_ALIGNMENT_CENTER: winapiAlignment = ES_CENTER; break;
+  case NA_ALIGNMENT_BEGIN: winapiAlignment = ES_LEFT; break;
+  case NA_ALIGNMENT_END: winapiAlignment = ES_RIGHT; break;
+  case NA_ALIGNMENT_CENTER: winapiAlignment = ES_CENTER; break;
   default:
     #if NA_DEBUG
       naError("Invalid alignment enumeration");

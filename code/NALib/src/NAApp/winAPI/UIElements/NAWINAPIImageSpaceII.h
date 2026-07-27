@@ -22,7 +22,7 @@ NAWINAPICallbackInfo na_HandleWINAPIImageSpacePaint(void* uiElement) {
 
     double uiScale = naGetUIElementUIScale(NA_NULL);
 
-    NASizes size1x = naGetImageSet1xSize(imageSpace->imageSpace.imageSet);
+    NASizes size1x = naGetImageSetSize1x(imageSpace->imageSpace.imageSet);
     size1x.width = (size_t)(size1x.width * uiScale);
     size1x.height = (size_t)(size1x.height * uiScale);
 
@@ -33,9 +33,13 @@ NAWINAPICallbackInfo na_HandleWINAPIImageSpacePaint(void* uiElement) {
       (spaceSize.width - (int32)size1x.width) / 2,
       (spaceSize.height - (int32)size1x.height) / 2);
 
-    const NAImage* foreImage = na_GetImageSetSubImage(
+    NASizes contentSize = naMakeSizes(
+      (size_t)naFloor(spaceSize.width * uiScale),
+      (size_t)naFloor(spaceSize.height * uiScale));
+
+    const NAImage* foreImage = naGetImageSetSubImage(
       imageSpace->imageSpace.imageSet,
-      NA_UI_RESOLUTION_1x * uiScale,
+      contentSize,
       NA_SKIN_PLAIN,
       NA_IMAGE_SET_INTERACTION_NONE,
       NA_FALSE);

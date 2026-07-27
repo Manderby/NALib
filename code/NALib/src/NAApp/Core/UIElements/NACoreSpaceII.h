@@ -35,8 +35,20 @@ NA_HDEF void na_ClearSpace(NASpace* space) {
 
 NA_HDEF void na_AddSpaceChild(NASpace* space, NA_UIElement* child) {
   #if NA_DEBUG
-    if(!space)
-      naCrash("space is nullptr");
+  if(!space)
+    naCrash("space is nullptr");
+  #endif
+
+  naAddListLastMutable(&space->childs, child);
+  na_SetUIElementParent(child, space, NA_TRUE);
+}
+
+
+
+NA_HDEF void na_AddSpaceChildUnpositioned(NASpace* space, NA_UIElement* child) {
+  #if NA_DEBUG
+  if(!space)
+    naCrash("space is nullptr");
   #endif
 
   naAddListLastMutable(&space->childs, child);

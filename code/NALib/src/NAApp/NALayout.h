@@ -133,9 +133,9 @@ NA_PROTOTYPE(NASpace);
 
 
 typedef enum {
-  NA_ALIGN_BEGIN,
-  NA_ALIGN_CENTER,
-  NA_ALIGN_END,
+  NA_ALIGNMENT_BEGIN,
+  NA_ALIGNMENT_CENTER,
+  NA_ALIGNMENT_END,
 } NAAlignment;
 
 #define NA_LAYOUT_MIN  -1.
@@ -179,8 +179,8 @@ void naSetLayoutSectionSpace(NASpace* space);
 
 // Changes the attributes of the last element added.
 // Defaults are:
-// PrimaryAlign:   NA_ALIGN_CENTER
-// SecondaryAlign: NA_ALIGN_CENTER
+// PrimaryAlign:   NA_ALIGNMENT_CENTER
+// SecondaryAlign: NA_ALIGNMENT_CENTER
 // AligneBaseline: false for block elements, true for baseline elements.
 // BlockSize1:     NA_LAYOUT_MIN
 void naSetLayoutElementPrimaryAlign(NAAlignment alignment1);

@@ -279,13 +279,17 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   const NAImageSet* imageSet = currentImage(winapiButton);
   if(imageSet) {
     double uiScale = naGetUIElementUIScale(NA_NULL);
-    NASizes size1x = naGetImageSet1xSize(imageSet);
+    NASizes size1x = naGetImageSetSize1x(imageSet);
     size1x.width = (size_t)(size1x.width * uiScale);
     size1x.height = (size_t)(size1x.height * uiScale);
 
     NAPosi32 offset = naMakePosi32(
       (buttonSize.width - (int32)size1x.width) / 2,
       (buttonSize.height - (int32)size1x.height) / 2);
+
+    NASizes imageSize = naMakeSizes(
+      (size_t)naFloor(size1x.width * uiScale),
+      (size_t)naFloor(size1x.height * uiScale));
 
     LRESULT result = SendMessage(naGetUIElementNativePtr(winapiButton), BM_GETSTATE, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
     NABool pushed = (result & BST_PUSHED) == BST_PUSHED;
@@ -294,16 +298,16 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     NABool secondaryState = na_GetButtonState(winapiButton);
     if(IsWindowEnabled(naGetUIElementNativePtr(winapiButton))) {
       if(pushed) {
-        foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_PRESSED, secondaryState);
+        foreImage = naGetImageSetSubImage(imageSet, imageSize, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_PRESSED, secondaryState);
       }else{
         if(na_GetUIElementMouseInside(&winapiButton->button.uiElement)) {
-          foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_HOVER, secondaryState);
+          foreImage = naGetImageSetSubImage(imageSet, imageSize, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_HOVER, secondaryState);
         }else{
-          foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_NONE, secondaryState);
+          foreImage = naGetImageSetSubImage(imageSet, imageSize, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_NONE, secondaryState);
         }
       }
     }else{
-      foreImage = na_GetImageSetSubImage(imageSet, NA_UI_RESOLUTION_1x * uiScale, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_DISABLED, secondaryState);
+      foreImage = naGetImageSetSubImage(imageSet, imageSize, NA_SKIN_SYSTEM, NA_IMAGE_SET_INTERACTION_DISABLED, secondaryState);
     }
 
     // We store the background where the image will be placed.

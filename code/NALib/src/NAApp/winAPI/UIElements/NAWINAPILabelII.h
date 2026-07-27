@@ -258,7 +258,7 @@ NA_DEF void naSetLabelTextColor(NALabel* label, const NAColor* color) {
 
 
 
-NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment) {
+NA_DEF void naSetLabelTextAlignment(NALabel* label, NAAlignment alignment) {
   long style = (long)GetWindowLongPtr(naGetUIElementNativePtr(label), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
   SetWindowLongPtr(naGetUIElementNativePtr(label), GWL_STYLE, style);
