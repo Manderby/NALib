@@ -263,7 +263,13 @@ NA_HDEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child
   na_AddSpaceChild(space, child);
   
   if(!ignorePositioning) {
-    NARect rect = naGetUIElementRect(child);
+    NARect rect;
+    if(raw) {
+      rect = naGetUIElementRectRaw(child);
+    }else{
+      rect = naGetUIElementRect(child);
+    }
+    
     rect.pos = pos;
     if(!ignoreSize) {
       rect.size = size;
