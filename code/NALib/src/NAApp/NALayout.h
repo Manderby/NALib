@@ -177,6 +177,11 @@ void naSetLayoutElementContentSize(
 // seciton or track whether the mouse is inside.
 void naSetLayoutSectionSpace(NASpace* space);
 
+// Sets the line height of the current layout. You shall only use this after
+// a call to naBeginLayout before the first section of that layout has started.
+// The default line height is NA_LAYOUT_LINE_HEIGHT
+void naSetLayoutLineHeight(double lineHeight);
+
 // Changes the attributes of the last element added.
 // Defaults are:
 // PrimaryAlign:   NA_ALIGNMENT_CENTER

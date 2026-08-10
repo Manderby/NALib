@@ -153,7 +153,7 @@ NA_HDEF NARect na_GetUIElementOffsetRect(
         // pinpointed exactly, but at least, it should be aligned such that
         // the first line is close to the top when reading from top to bottom.
         NARect uiElementRectRaw = naGetUIElementRectRaw(uiElement);
-        offsetRect.pos.y = - uiElementRectRaw.size.height + 24.;
+        offsetRect.pos.y = - uiElementRectRaw.size.height + NA_LAYOUT_LINE_HEIGHT;
       }
       break;
     case NA_UI_TEXTFIELD:    offsetRect.pos.y = 1.; break;

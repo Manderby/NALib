@@ -39,6 +39,7 @@ struct NA_LayoutElement {
   double blockSize2;
   double minPaddingSize1;
   double minPaddingSize2;
+  double lineHeight;
   NAAlignment alignment1;
   NAAlignment alignment2;
   NABool alignBaseline;
@@ -96,6 +97,9 @@ NA_LayoutElement* na_AllocLayoutElement(
   elem->blockSize2 = NA_LAYOUT_GROW;
   elem->minPaddingSize1 = 0.; // not yet computed
   elem->minPaddingSize2 = 0.; // not yet computed
+  elem->lineHeight = parent
+    ? parent->lineHeight
+    : NA_LAYOUT_LINE_HEIGHT;
   elem->alignment1 = NA_ALIGNMENT_CENTER;
   elem->alignment2 = NA_ALIGNMENT_CENTER;
   elem->alignBaseline = NA_TRUE;
@@ -337,13 +341,20 @@ void na_EndLayoutElement(NASpace* layoutingSpace, NA_LayoutElement* elem) {
 
 
 
-void na_PreserveDebugInfo(const NASpace* layoutingSpace, NA_LayoutElement* elem, NARect paddingRect) {
+void na_PreserveDebugInfo(const NASpace* layoutingSpace, NA_LayoutElement* elem, NARect paddingRect, NARect paddedContentRect) {
   #if NA_DEBUG
     NA_LayoutRects* layoutRects = naAlloc(NA_LayoutRects);
     
     NABool horizontalIsRightToLeft = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(layoutingSpace);
     NABool verticalIsBottomToTop = naGetSpaceLayoutDirectionsVerticalIsBottomToTop(layoutingSpace);
     NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
+
+    // When the given element denotes a section or a new sub-layout, the given
+    // uiElement must be an NASpace and childs will be added to that space.
+    // Therefore, we reset the local coordinate system origin to zero.
+    if(elem->uiElement && (naGetUIElementType(elem->uiElement) == NA_UI_SPACE)) {
+      paddingRect.pos = naMakePosZero();
+    }
 
     layoutRects->marginRect = paddingRect;
     if(orderingVH) {
@@ -360,7 +371,7 @@ void na_PreserveDebugInfo(const NASpace* layoutingSpace, NA_LayoutElement* elem,
 
     layoutRects->paddingRect = paddingRect;
     
-    layoutRects->contentRect = paddingRect;
+    layoutRects->contentRect = paddedContentRect;
     if(orderingVH) {
       layoutRects->contentRect.pos.x += horizontalIsRightToLeft ? elem->padding.end2 : elem->padding.begin2;
       layoutRects->contentRect.pos.y += verticalIsBottomToTop   ? elem->padding.begin1 : elem->padding.end1;
@@ -460,9 +471,24 @@ void naSetLayoutSectionSpace(NASpace* space) {
     na_AddSpaceChildUnpositioned(
       na_GetLayoutingSpace(na_curLayoutElement),
       space);
+
+    na_curLayoutElement->alignBaseline = NA_FALSE;
   }
 
   na_curLayoutElement->uiElement = space;
+}
+
+
+
+void naSetLayoutLineHeight(double lineHeight) {
+  #if NA_DEBUG
+    if(!na_curLayoutElement)
+      naError("No layout in progress. Use naBeginLayout.");
+    if(na_curLayoutElement->isSecondary)
+      naError("You should not use this on sections");
+  #endif // NA_DEBUG
+  
+  na_curLayoutElement->lineHeight = lineHeight;
 }
 
 
@@ -562,11 +588,33 @@ void na_AlignLayoutElement(
   double alignMargin1;
   double alignMargin2;
 
+  double baseLineOffset1 = (elem->alignBaseline)
+    ? elem->lineHeight - paddedContentSize1
+    : 0.;
+
   switch(elem->alignment1) {
   case NA_ALIGNMENT_BEGIN:
     if(orderingVH) {
       alignMargin1 = verticalIsBottomToTop
-        ? paddingRect.size.height - paddedContentSize1
+        ? 0.
+        : paddingRect.size.height - paddedContentSize1 - baseLineOffset1;
+    }else{
+      alignMargin1 = horizontalIsRightToLeft
+        ? paddingRect.size.width - paddedContentSize1
+        : 0.;
+    }
+    break;
+  case NA_ALIGNMENT_CENTER:
+    if(orderingVH) {
+      alignMargin1 = naFloor((paddingRect.size.height - paddedContentSize1 - baseLineOffset1) * .5);
+    }else{
+      alignMargin1 = naFloor((paddingRect.size.width  - paddedContentSize1) * .5);
+    }
+    break;
+  case NA_ALIGNMENT_END:
+    if(orderingVH) {
+      alignMargin1 = verticalIsBottomToTop 
+        ? paddingRect.size.height - paddedContentSize1 - baseLineOffset1
         : 0.;
     }else{
       alignMargin1 = horizontalIsRightToLeft
@@ -574,29 +622,11 @@ void na_AlignLayoutElement(
         : paddingRect.size.width - paddedContentSize1;
     }
     break;
-  case NA_ALIGNMENT_CENTER:
-    if(orderingVH) {
-      alignMargin1 = ((paddingRect.size.height - paddedContentSize1) * .5);
-    }else{
-      if(orderingVH) {
-        alignMargin1 = naFloor((paddingRect.size.height - paddedContentSize1) * .5);
-      }else{
-        alignMargin1 = naFloor((paddingRect.size.width  - paddedContentSize1) * .5);
-      }
-    }
-    break;
-  case NA_ALIGNMENT_END:
-    if(orderingVH) {
-      alignMargin1 = verticalIsBottomToTop 
-        ? 0.
-        : paddingRect.size.height - paddedContentSize1;
-    }else{
-      alignMargin1 = horizontalIsRightToLeft
-        ? 0.
-        : paddingRect.size.width - paddedContentSize1;
-    }
-    break;
   }
+
+  double baseLineOffset2 = (elem->alignBaseline)
+    ? elem->lineHeight - paddedContentSize2
+    : 0.;
 
   switch(elem->alignment2) {
   case NA_ALIGNMENT_BEGIN:
@@ -607,14 +637,14 @@ void na_AlignLayoutElement(
     }else{
       alignMargin2 = verticalIsBottomToTop
         ? 0.
-        : paddingRect.size.height - paddedContentSize2;
+        : paddingRect.size.height - paddedContentSize2 - baseLineOffset2;
     }
     break;
   case NA_ALIGNMENT_CENTER:
     if(orderingVH) {
       alignMargin2 = naFloor((paddingRect.size.width  - paddedContentSize2) * .5);
     }else{
-      alignMargin2 = naFloor((paddingRect.size.height - paddedContentSize2) * .5);
+      alignMargin2 = naFloor((paddingRect.size.height - paddedContentSize2 - baseLineOffset2) * .5);
     }
     break;
   case NA_ALIGNMENT_END:
@@ -624,8 +654,8 @@ void na_AlignLayoutElement(
         : paddingRect.size.width - paddedContentSize2;
     }else{
       alignMargin2 = verticalIsBottomToTop
-        ? 0.
-        : paddingRect.size.height - paddedContentSize2;
+        ? paddingRect.size.height - paddedContentSize2 - baseLineOffset2
+        : 0.;
     }
     break;
   }
@@ -642,11 +672,11 @@ void na_AlignLayoutElement(
   // Place the uiElement and adjust the window if needed.
   if(elem->uiElement) {
   
-//    if(elem->alignBaseline) {
-//      naSetUIElementRect(elem->uiElement, paddedContentRect);
-//    }else{
+    if(elem->alignBaseline) {
+      naSetUIElementRect(elem->uiElement, paddedContentRect);
+    }else{
       naSetUIElementRectRaw(elem->uiElement, paddedContentRect);
-//    }
+    }
   
     if(!elem->parent) {
       NAWindow* window = naGetUIElementWindowMutable(elem->uiElement);
@@ -666,11 +696,16 @@ void na_AlignLayoutElement(
   // Therefore, we reset the local coordinate system origin to zero.
   if(elem->uiElement && (naGetUIElementType(elem->uiElement) == NA_UI_SPACE)) {
     paddedContentRect.pos = naMakePosZero();
+  }else{
+    // Otherwise, restore the original padding position without any potential
+    // baseline adjustments.
+    paddedContentRect.pos.x -= (orderingVH ? alignMargin2 : alignMargin1);
+    paddedContentRect.pos.y -= (orderingVH ? alignMargin1 : alignMargin2);
   }
 
   #if NA_DEBUG
     if(elem->uiElement) {
-      na_PreserveDebugInfo(layoutingSpace, elem, paddedContentRect);
+      na_PreserveDebugInfo(layoutingSpace, elem, paddingRect, paddedContentRect);
     }
   #endif // NA_DEBUG
 
