@@ -589,6 +589,7 @@ void na_AlignLayoutElement(
   double alignMargin2;
 
   double baseLineOffset1 = (elem->alignBaseline)
+//    ? NA_LAYOUT_LINE_HEIGHT - paddedContentSize1
     ? elem->lineHeight - paddedContentSize1
     : 0.;
 
@@ -625,6 +626,7 @@ void na_AlignLayoutElement(
   }
 
   double baseLineOffset2 = (elem->alignBaseline)
+//    ? NA_LAYOUT_LINE_HEIGHT - paddedContentSize2
     ? elem->lineHeight - paddedContentSize2
     : 0.;
 
