@@ -228,7 +228,6 @@ NA_DEF void naStartApplication(
           [NSApp sendEvent:curEvent];
         }
       }
-
       naRunNotifier();
 
     #if !NA_MACOS_USES_ARC

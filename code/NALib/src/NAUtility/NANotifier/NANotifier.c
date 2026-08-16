@@ -411,6 +411,7 @@ NA_DEF void naPublish(
         sender,
         data,
         sub->callback);
+
       naAddListLastMutable(list, message);
     }
   }
