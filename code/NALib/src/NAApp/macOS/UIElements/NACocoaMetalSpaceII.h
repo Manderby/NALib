@@ -227,7 +227,17 @@
   }
 
   - (void)scrollWheel:(NSEvent*)event{
-    naSetMetalSpaceTranslation(&cocoaMetalSpace->metalSpace, [event deltaX], [event deltaY]);
+    if ([event hasPreciseScrollingDeltas]) {
+      naSetMetalSpaceTranslation(
+        &cocoaMetalSpace->metalSpace,
+        [event scrollingDeltaX] * .1,
+        [event scrollingDeltaY] * .1);
+    }else{
+      naSetMetalSpaceTranslation(
+        &cocoaMetalSpace->metalSpace,
+        [event deltaX],
+        [event deltaY]);
+    }
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaMetalSpace, NA_UI_COMMAND_TRANSFORMED)) {
       [super scrollWheel:event];
     }
