@@ -332,7 +332,6 @@ void na_EndLayoutElement(NASpace* layoutingSpace, NA_LayoutElement* elem) {
         : contentRect.size.height;
     }
   }
-    
 
   // If this element declares a fixed content or even a fixed block size, that
   // overrides the values.
@@ -360,7 +359,7 @@ void na_EndLayoutElement(NASpace* layoutingSpace, NA_LayoutElement* elem) {
 
 
 
-void na_PreserveDebugInfo(const NASpace* layoutingSpace, NA_LayoutElement* elem, NARect paddingRect, NARect paddedContentRect) {
+void na_PreserveDebugInfo(const NASpace* layoutingSpace, NA_LayoutElement* elem, NARect paddedContentRect) {
   #if NA_DEBUG
     NA_LayoutRects* layoutRects = naAlloc(NA_LayoutRects);
     
@@ -372,10 +371,10 @@ void na_PreserveDebugInfo(const NASpace* layoutingSpace, NA_LayoutElement* elem,
     // uiElement must be an NASpace and childs will be added to that space.
     // Therefore, we reset the local coordinate system origin to zero.
     if(elem->uiElement && (naGetUIElementType(elem->uiElement) == NA_UI_SPACE)) {
-      paddingRect.pos = naMakePosZero();
+      paddedContentRect.pos = naMakePosZero();
     }
 
-    layoutRects->marginRect = paddingRect;
+    layoutRects->marginRect = paddedContentRect;
     if(orderingVH) {
       layoutRects->marginRect.pos.x -= horizontalIsRightToLeft ? elem->margin.end2 : elem->margin.begin2;
       layoutRects->marginRect.pos.y -= verticalIsBottomToTop   ? elem->margin.begin1 : elem->margin.end1;
@@ -388,7 +387,7 @@ void na_PreserveDebugInfo(const NASpace* layoutingSpace, NA_LayoutElement* elem,
       layoutRects->marginRect.size.height += (elem->margin.begin2 + elem->margin.end2);
     }
 
-    layoutRects->paddingRect = paddingRect;
+    layoutRects->paddingRect = paddedContentRect;
     
     layoutRects->contentRect = paddedContentRect;
     if(orderingVH) {
@@ -720,7 +719,7 @@ void na_AlignLayoutElement(
 
     #if NA_DEBUG
       if(elem->uiElement) {
-        na_PreserveDebugInfo(layoutingSpace, elem, paddingRect, paddedContentRect);
+        na_PreserveDebugInfo(layoutingSpace, elem, paddedContentRect);
       }
     #endif // NA_DEBUG
     
@@ -730,7 +729,7 @@ void na_AlignLayoutElement(
 
     #if NA_DEBUG
       if(elem->uiElement) {
-        na_PreserveDebugInfo(layoutingSpace, elem, paddingRect, paddedContentRect);
+        na_PreserveDebugInfo(layoutingSpace, elem, paddedContentRect);
       }
     #endif // NA_DEBUG
 
