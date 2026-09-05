@@ -204,7 +204,17 @@
   }
 
   - (void)scrollWheel:(NSEvent*)event{
-    naSetOpenGLSpaceTranslation(&cocoaOpenGLSpace->openGLSpace, [event deltaX], [event deltaY]);
+    if ([event hasPreciseScrollingDeltas]) {
+      naSetOpenGLSpaceTranslation(
+        &cocoaOpenGLSpace->openGLSpace,
+        [event scrollingDeltaX] * .1,
+        [event scrollingDeltaY] * .1);
+    }else{
+      naSetOpenGLSpaceTranslation(
+        &cocoaOpenGLSpace->openGLSpace,
+        [event deltaX],
+        [event deltaY]);
+    }
     if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_TRANSFORMED)) {
       [super scrollWheel:event];
     }
