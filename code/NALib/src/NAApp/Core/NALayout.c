@@ -300,18 +300,37 @@ void na_EndLayoutElement(NASpace* layoutingSpace, NA_LayoutElement* elem) {
   
   double contentSize1 = elem->contentSize1;
   double contentSize2 = elem->contentSize2;
-  NARect contentRect = elem->uiElement
-    ? naGetUIElementRect(elem->uiElement)
-    : naMakeRectZero();
-  if(contentSize1 < 0.) { // NA_LAYOUT_MIN
-    contentSize1 = (orderingVH)
-      ? contentRect.size.height
-      : contentRect.size.width;
+  NARect contentRect = naMakeRectZero();
+  NABool isSpace = NA_FALSE;
+  if (elem->uiElement) {
+    isSpace = (naGetUIElementType(elem->uiElement) == NA_UI_SPACE);
+    contentRect = naGetUIElementRect(elem->uiElement);
+    contentRect.size.width -= orderingVH
+      ? (elem->padding.begin2 + elem->padding.end2)
+      : (elem->padding.begin1 + elem->padding.end1);
+    contentRect.size.height -= orderingVH
+      ? (elem->padding.begin1 + elem->padding.end1)
+      : (elem->padding.begin2 + elem->padding.end2);
   }
-  if(contentSize2 < 0.) { // NA_LAYOUT_MIN
-    contentSize2 = (orderingVH)
-      ? contentRect.size.width
-      : contentRect.size.height;
+
+  if(isSpace) {
+    if(contentSize1 < 0.) { // NA_LAYOUT_MIN
+      contentSize1 = minContentSize1;
+    }
+    if(contentSize2 < 0.) { // NA_LAYOUT_MIN
+      contentSize2 = minContentSize2;
+    }
+  }else{
+    if(contentSize1 < 0.) { // NA_LAYOUT_MIN
+      contentSize1 = (orderingVH)
+        ? contentRect.size.height
+        : contentRect.size.width;
+    }
+    if(contentSize2 < 0.) { // NA_LAYOUT_MIN
+      contentSize2 = (orderingVH)
+        ? contentRect.size.width
+        : contentRect.size.height;
+    }
   }
     
 
