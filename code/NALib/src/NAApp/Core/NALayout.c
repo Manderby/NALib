@@ -301,9 +301,9 @@ void na_EndLayoutElement(NASpace* layoutingSpace, NA_LayoutElement* elem) {
   double contentSize1 = elem->contentSize1;
   double contentSize2 = elem->contentSize2;
   NARect contentRect = naMakeRectZero();
-  NABool isSpace = NA_FALSE;
+  NABool isBlock = NA_FALSE;
   if (elem->uiElement) {
-    isSpace = (naGetUIElementType(elem->uiElement) == NA_UI_SPACE);
+    isBlock = naIsUIElementBlock(elem->uiElement);
     contentRect = naGetUIElementRect(elem->uiElement);
     contentRect.size.width -= orderingVH
       ? (elem->padding.begin2 + elem->padding.end2)
@@ -313,7 +313,7 @@ void na_EndLayoutElement(NASpace* layoutingSpace, NA_LayoutElement* elem) {
       : (elem->padding.begin2 + elem->padding.end2);
   }
 
-  if(isSpace) {
+  if(isBlock) {
     if(contentSize1 < 0.) { // NA_LAYOUT_MIN
       contentSize1 = minContentSize1;
     }
@@ -353,8 +353,12 @@ void na_EndLayoutElement(NASpace* layoutingSpace, NA_LayoutElement* elem) {
   }
   
   // Add the padding of this section.
-  elem->minPaddingSize1 = minContentSize1 + elem->padding.begin1 + elem->padding.end1;
-  elem->minPaddingSize2 = minContentSize2 + elem->padding.begin2 + elem->padding.end2;
+  elem->minPaddingSize1 = minContentSize1
+    ? minContentSize1 + elem->padding.begin1 + elem->padding.end1
+    : 0;
+  elem->minPaddingSize2 = minContentSize2
+    ? minContentSize2 + elem->padding.begin2 + elem->padding.end2
+    : 0;
 }
 
 
