@@ -698,18 +698,26 @@ void na_AlignLayoutElement(
   // Therefore, we reset the local coordinate system origin to zero.
   if(elem->uiElement && (naGetUIElementType(elem->uiElement) == NA_UI_SPACE)) {
     paddedContentRect.pos = naMakePosZero();
+
+    #if NA_DEBUG
+      if(elem->uiElement) {
+        na_PreserveDebugInfo(layoutingSpace, elem, paddingRect, paddedContentRect);
+      }
+    #endif // NA_DEBUG
+    
   }else{
     // Otherwise, restore the original padding position without any potential
     // baseline adjustments.
+
+    #if NA_DEBUG
+      if(elem->uiElement) {
+        na_PreserveDebugInfo(layoutingSpace, elem, paddingRect, paddedContentRect);
+      }
+    #endif // NA_DEBUG
+
     paddedContentRect.pos.x -= (orderingVH ? alignMargin2 : alignMargin1);
     paddedContentRect.pos.y -= (orderingVH ? alignMargin1 : alignMargin2);
   }
-
-  #if NA_DEBUG
-    if(elem->uiElement) {
-      na_PreserveDebugInfo(layoutingSpace, elem, paddingRect, paddedContentRect);
-    }
-  #endif // NA_DEBUG
 
   // Remove the padding to get the final contentRect in which we want to
   // distribute our elements in.
