@@ -67,7 +67,6 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 
 - (void)setTextBoxFrame:(NSRect)frame {
   [scrollView setFrame:frame];
-  printf("%f, %f, %f, %f\n", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event {
@@ -126,6 +125,10 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 //  [self setMaxSize:NSMakeSize(LargeNumberForText, [self maxSize].height)];
 //  [self setHorizontallyResizable:YES];
   [scrollView setHasVerticalScroller:use];
+}
+
+- (void) setHidden:(BOOL) hidden {
+  [scrollView setHidden: hidden];
 }
 
 - (void) setReadOnly:(NABool)readonly{
@@ -246,6 +249,7 @@ NA_HDEF NARect na_GetTextBoxRect(const NA_UIElement* textBox) {
 NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect) {
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setTextBoxFrame:naMakeNSRectWithRect(rect)];
+  printf("%f, %f, %f, %f\n", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
 }
 
 

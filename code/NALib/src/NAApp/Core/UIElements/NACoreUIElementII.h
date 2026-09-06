@@ -219,7 +219,7 @@ NA_DEF NABool naIsUIElementBlock(
   case NA_UI_SELECT:       return NA_FALSE;
   case NA_UI_SLIDER:       return NA_FALSE;
   case NA_UI_SPACE:        return NA_TRUE;
-  case NA_UI_TEXTBOX:      return NA_FALSE;
+  case NA_UI_TEXTBOX:      return NA_TRUE;
   case NA_UI_TEXTFIELD:    return NA_FALSE;
   case NA_UI_WINDOW:       return NA_TRUE;
   default: return NA_TRUE;
