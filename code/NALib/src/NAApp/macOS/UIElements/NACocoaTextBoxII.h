@@ -249,7 +249,6 @@ NA_HDEF NARect na_GetTextBoxRect(const NA_UIElement* textBox) {
 NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect) {
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
   [nativePtr setTextBoxFrame:naMakeNSRectWithRect(rect)];
-  printf("%f, %f, %f, %f\n", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
 }
 
 
