@@ -65,9 +65,9 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
   [super drawRect:dirtyRect];
 }
 
-- (void)setFrame:(NSRect)frame {
+- (void)setTextBoxFrame:(NSRect)frame {
   [scrollView setFrame:frame];
-  [super setFrame:frame];
+  printf("%f, %f, %f, %f\n", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event {
@@ -245,7 +245,7 @@ NA_HDEF NARect na_GetTextBoxRect(const NA_UIElement* textBox) {
 
 NA_HDEF void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect) {
   naDefineCocoaObject(NACocoaNativeTextBox, nativePtr, textBox);
-  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+  [nativePtr setTextBoxFrame:naMakeNSRectWithRect(rect)];
 }
 
 
