@@ -5,6 +5,11 @@
 
 #define NA_U8_UPPER_LOWER_COUNT 1456
 
+//#pragma GCC diagnostic push 
+//#pragma GCC diagnostic ignored "-Wno-pointer-sign"
+  
+
+
 const NAUTF8Char* na_u8Uppers[NA_U8_UPPER_LOWER_COUNT] = {
   // 0
   u8"Ѐ", u8"Ё", u8"Ђ", u8"Ѓ", u8"Є", u8"Ѕ", u8"І", u8"Ї", u8"Ј", u8"Љ",
@@ -333,6 +338,8 @@ const NAUTF8Char* na_u8Lowers[NA_U8_UPPER_LOWER_COUNT] = {
   u8"ύ", u8"ῥ", u8"ὸ", u8"ό", u8"ὼ", u8"ώ"
 };
 
+
+//#pragma GCC diagnostic pop
 
 
 // This is not a very fast method. It uses brute force over 1500 strings.
