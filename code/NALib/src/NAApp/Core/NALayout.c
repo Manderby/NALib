@@ -447,7 +447,7 @@ void naAddLayoutElement(
     NA_FALSE);
   
   subElem->contentSize1 = NA_LAYOUT_GROW;
-  subElem->contentSize2 = NA_LAYOUT_MIN;
+  subElem->contentSize2 = uiElement ? NA_LAYOUT_MIN : NA_LAYOUT_GROW;
   
   subElem->blockSize1 = blockSize1;
 
