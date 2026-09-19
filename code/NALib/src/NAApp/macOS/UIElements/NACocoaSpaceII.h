@@ -312,7 +312,7 @@ NA_DEF void naRemoveSpaceChild(NASpace* _Nonnull space, void* _Nonnull child) {
   if(found) {
     na_RemoveSpaceChild(space, child);
     NSView* childView = na_getNSViewOfChild(child);  
-    [(NA_COCOA_BRIDGE NSView*)(childView) removeFromSuperview];
+    [childView removeFromSuperview];
   }else{
     #if NA_DEBUG
       naError("Child UI element not found in given space.");
@@ -327,7 +327,7 @@ NA_DEF void naRemoveAllSpaceChilds(NASpace* _Nonnull space) {
     void* child = naGetListFirstMutable(&space->childs);
     na_RemoveSpaceChild(space, child);
     NSView* childView = na_getNSViewOfChild(child);  
-    [(NA_COCOA_BRIDGE NSView*)(childView) removeFromSuperview];
+    [childView removeFromSuperview];
   }
 }
 
