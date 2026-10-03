@@ -255,7 +255,7 @@ NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem);
 NA_HAPI void na_InitSystemUIElement(NA_UIElement* uiElement, void* nativePtr);
 NA_HAPI void na_ClearSystemUIElement(void* nativePtr);
 
-NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable);
+NA_HAPI void na_SetUIElementParent(NA_UIElement* uiElement, void* parent);
 NA_HAPI NARect na_GetUIElementOffsetRect(const NA_UIElement* uiElement);
 
 NA_HAPI const NA_UIElement* na_GetUIElementCommonParent(const NA_UIElement* elem1, const NA_UIElement* elem2);
@@ -437,7 +437,7 @@ NA_HAPI void na_UpdateSliderUIScale(NA_UIElement* button);
 // NASpace
 NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);
 NA_HAPI void na_ClearSpace(NASpace* space);
-NA_HAPI void na_AddSpaceChild(NASpace*, NA_UIElement* child);
+NA_HAPI void na_AddSpaceChild(NASpace* space, NA_UIElement* child);
 NA_HAPI void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child);
 NA_HAPI void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color);
 NA_HAPI NARect na_GetSpaceRect(const NA_UIElement* space);

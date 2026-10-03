@@ -44,10 +44,8 @@ NA_HDEF void na_ClearUINativePtr(void* nativePtr) {
 
 
 
-NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable) {
-  NA_UNUSED(isElementAttachable);
+NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent) {
   NA_UIElement* elem = (NA_UIElement*)uiElement;
-  // todo: remove from old parent
   elem->parent = parent;
 }
 

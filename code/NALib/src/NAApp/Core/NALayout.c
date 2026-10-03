@@ -122,6 +122,10 @@ void naBeginLayout(NASpace* space, NABorder2D padding) {
       naError("Use naBeginLayout either for a new layout or when working within a section.");
   #endif // NA_DEBUG
 
+  if(space) {
+    naRemoveAllSpaceChilds(space);
+  }
+
   // First, we set the parent-child relationship right.
   if(na_curLayoutElement && space) {
     na_AddSpaceChildUnpositioned(
@@ -486,6 +490,8 @@ void naSetLayoutSectionSpace(NASpace* space) {
   #endif // NA_DEBUG
   
   if(space) {
+//    naRemoveAllSpaceChilds(space);
+  
     na_AddSpaceChildUnpositioned(
       na_GetLayoutingSpace(na_curLayoutElement),
       space);

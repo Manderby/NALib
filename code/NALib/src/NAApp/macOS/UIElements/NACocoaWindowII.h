@@ -423,7 +423,7 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, void* space) {
     
   if(window->contentSpace) { naDelete(window->contentSpace); }
   window->contentSpace = space;
-  na_SetUIElementParent(space, window, NA_TRUE);
+  na_SetUIElementParent(space, window);
 }
 
 

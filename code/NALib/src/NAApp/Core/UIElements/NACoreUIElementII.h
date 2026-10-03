@@ -82,6 +82,11 @@ NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
   naClearList(&uiElement->reactions, (NAMutator)naFree);
   naClearList(&uiElement->shortcuts, (NAMutator)na_DeallocKeyboardShortcutReaction);
   
+//  NASpace* parentSpace = naGetUIElementParentSpaceMutable(uiElement);
+//  if(parentSpace) {
+//    na_RemoveSpaceChild(parentSpace, uiElement);
+//  }
+  
   na_ClearSystemUIElement(uiElement->nativePtr);
   na_ClearUINativePtr(uiElement->nativePtr);
 

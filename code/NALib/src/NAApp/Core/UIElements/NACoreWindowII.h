@@ -28,7 +28,7 @@ NA_HDEF void na_InitWindow(
   na_AddScreenWindow(
     screen,
     window);
-  na_SetUIElementParent((NA_UIElement*)window, screen, NA_TRUE);
+  na_SetUIElementParent((NA_UIElement*)window, screen);
 }
 
 
@@ -81,7 +81,7 @@ NA_HDEF void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen) {
   if(screen && screen != oldScreen) {
     na_RemoveScreenWindow(oldScreen, window);
     na_AddScreenWindow(screen, window);
-    na_SetUIElementParent((NA_UIElement*)window, screen, NA_TRUE);
+    na_SetUIElementParent((NA_UIElement*)window, screen);
     
     if(oldUIScale != newUIScale) {
       na_UpdateUIElementUIScale(window);

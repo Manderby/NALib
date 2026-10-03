@@ -11,7 +11,7 @@ NA_HDEF void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement
   // as there does not exist a native pointer for a MenuItem in WINAPI at all.
   na_InitCoreUIElement(&menuItem->uiElement, NA_UI_MENUITEM, nativePtr);
   menuItem->subMenu = NA_NULL;
-  na_SetUIElementParent(&menuItem->uiElement, parent, NA_FALSE);
+  na_SetUIElementParent(&menuItem->uiElement, parent);
 }
 
 

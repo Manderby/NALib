@@ -51,7 +51,7 @@ NA_HDEF void na_AddSelectChild(NASelect* select, NAMenuItem* child, const NAMenu
   naClearListIterator(&iter);
   // todo
   //naAddListLastMutable(&menu->childs, child);
-  na_SetUIElementParent(&child->uiElement, select, NA_FALSE);
+  na_SetUIElementParent(&child->uiElement, select);
 }
 
 

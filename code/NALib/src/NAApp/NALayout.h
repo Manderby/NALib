@@ -146,7 +146,8 @@ typedef enum {
 
 
 // Start a new layout or add a sub-layout.
-// When starting a new layout, you must provide a space.
+// When starting a new layout, you must provide a space. All previously
+// contained elements in that space will be removed from the space.
 void naBeginLayout(
   NASpace* space,
   NABorder2D padding);
@@ -161,6 +162,7 @@ void naAddLayoutSection(
 
 // Adds one element in the current section.
 // Use preMargin to define a margin to the previous element.
+// If uiElement is a space, its children will not be removed automatically.
 void naAddLayoutElement(
   void* uiElement,
   double preMargin1,
@@ -172,7 +174,7 @@ void naSetLayoutElementContentSize(
 
 // Assigns a space to the last added section. That space is automatically
 // resized according to the size of the section. By default, a section has
-// so space assigned.
+// no space assigned. If a space is provided, it is taken as is.
 // This is useful for example, if you want to paint in the background of a
 // seciton or track whether the mouse is inside.
 void naSetLayoutSectionSpace(NASpace* space);

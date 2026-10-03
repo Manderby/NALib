@@ -16,7 +16,7 @@ NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, con
   screen->uiScale = uiScale;
   naInitList(&screen->windows);
 
-  na_SetUIElementParent((NA_UIElement*)screen, naGetApplication(), NA_TRUE);
+  na_SetUIElementParent((NA_UIElement*)screen, naGetApplication());
 }
 
 

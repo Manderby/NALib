@@ -27,7 +27,17 @@ NA_HDEF void na_ClearSpace(NASpace* space) {
   #endif
 
   if(space->backgroundColor) { naFree(space->backgroundColor); }
+  
+//  NAListIterator it = naMakeListModifier(&space->childs);
+//  while(naIterateList(&it)) {
+//    NA_UIElement* elem = naRemoveListCurMutable(&it, NA_FALSE);
+//    na_SetUIElementParent(elem, NA_NULL);
+//    naDelete(elem);
+//  }
+//  naClearListIterator(&it);
+  
   naClearList(&space->childs, (NAMutator)naDelete);
+  
   na_ClearCoreUIElement(&space->uiElement);
 }
 
@@ -40,7 +50,7 @@ NA_HDEF void na_AddSpaceChild(NASpace* space, NA_UIElement* child) {
   #endif
 
   naAddListLastMutable(&space->childs, child);
-  na_SetUIElementParent(child, space, NA_TRUE);
+  na_SetUIElementParent(child, space);
 }
 
 
@@ -52,7 +62,7 @@ NA_HDEF void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child) {
   #endif
 
   naRemoveListData(&space->childs, child);
-  na_SetUIElementParent(child, NA_NULL, NA_TRUE);
+  na_SetUIElementParent(child, NA_NULL);
 }
 
 
