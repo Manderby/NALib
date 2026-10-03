@@ -39,7 +39,6 @@ struct NA_LayoutElement {
   double blockSize2;
   double minPaddingSize1;
   double minPaddingSize2;
-  double lineHeight;
   NAAlignment alignment1;
   NAAlignment alignment2;
   NABool alignBaseline;
@@ -97,9 +96,6 @@ NA_LayoutElement* na_AllocLayoutElement(
   elem->blockSize2 = NA_LAYOUT_GROW;
   elem->minPaddingSize1 = 0.; // not yet computed
   elem->minPaddingSize2 = 0.; // not yet computed
-  elem->lineHeight = parent
-    ? parent->lineHeight
-    : NA_LAYOUT_LINE_HEIGHT;
   elem->alignment1 = NA_ALIGNMENT_CENTER;
   elem->alignment2 = NA_ALIGNMENT_CENTER;
   elem->alignBaseline = NA_TRUE;
@@ -502,19 +498,6 @@ void naSetLayoutSectionSpace(NASpace* space) {
 
 
 
-void naSetLayoutLineHeight(double lineHeight) {
-  #if NA_DEBUG
-    if(!na_curLayoutElement)
-      naError("No layout in progress. Use naBeginLayout.");
-    if(na_curLayoutElement->isSecondary)
-      naError("You should not use this on sections");
-  #endif // NA_DEBUG
-  
-  na_curLayoutElement->lineHeight = lineHeight;
-}
-
-
-
 void naSetLayoutElementPrimaryAlign(NAAlignment alignment1) {
   #if NA_DEBUG
     if(!na_curLayoutElement)
@@ -611,8 +594,7 @@ void na_AlignLayoutElement(
   double alignMargin2;
 
   double baseLineOffset1 = (elem->alignBaseline)
-//    ? NA_LAYOUT_LINE_HEIGHT - paddedContentSize1
-    ? elem->lineHeight - paddedContentSize1
+    ? NA_LAYOUT_LINE_HEIGHT - paddedContentSize1
     : 0.;
 
   switch(elem->alignment1) {
@@ -648,8 +630,7 @@ void na_AlignLayoutElement(
   }
 
   double baseLineOffset2 = (elem->alignBaseline)
-//    ? NA_LAYOUT_LINE_HEIGHT - paddedContentSize2
-    ? elem->lineHeight - paddedContentSize2
+    ? NA_LAYOUT_LINE_HEIGHT - paddedContentSize2
     : 0.;
 
   switch(elem->alignment2) {
