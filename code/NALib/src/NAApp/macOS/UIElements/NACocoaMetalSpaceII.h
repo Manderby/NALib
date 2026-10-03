@@ -362,7 +362,7 @@ NA_HDEF void na_UpdateMetalSpaceUIScale(NA_UIElement* metalSpace) {
 //    CGLContextObj cglContextObj;
 //    GLuint frameBuffer;
 //    GLuint renderBuffer;
-    int asdf;
+    int asdf; // do not comment this out, otherwise malloc will fail.
   };
 
 
