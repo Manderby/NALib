@@ -99,7 +99,8 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
 //}
 
 - (void) setNAFont:(NAFont*)font{
-   [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
+  NSFont* nativeFontObj = (NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(font));
+  [self setFont:nativeFontObj];
 }
 
 - (NARect) getInnerRect{
@@ -113,13 +114,15 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
 NA_DEF NATextField* naNewTextField(double width) {
   NACocoaTextField* cocoaTextField = naNew(NACocoaTextField);
   
-  NACocoaNativeTextField* nativePtr = [[NACocoaNativeTextField alloc]
+  NACocoaNativeTextField* nativeObj = [[NACocoaNativeTextField alloc]
     initWithTextField:cocoaTextField
     frame:naMakeNSRectWithSize(naMakeSize(width, 21))];
     
-  na_InitTextField((NATextField*)cocoaTextField, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitCoreTextField(
+    (NATextField*)cocoaTextField,
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj));
 
-  [nativePtr setNAFont:cocoaTextField->textField.font];
+  [nativeObj setNAFont:cocoaTextField->textField.font];
 
   return (NATextField*)cocoaTextField;
 }
@@ -127,35 +130,35 @@ NA_DEF NATextField* naNewTextField(double width) {
 
 
 NA_DEF void na_DestructCocoaTextField(NACocoaTextField* cocoaTextField) {
-  na_ClearTextField((NATextField*)cocoaTextField);
+  na_ClearCoreTextField((NATextField*)cocoaTextField);
 }
 
 
 
 NA_DEF void naSetTextFieldEnabled(NATextField* textField, NABool enabled) {
-  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
-  [nativePtr setEnabled:(BOOL)enabled];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeTextField, nativeObj, textField);
+  [nativeObj setEnabled:(BOOL)enabled];
 }
 
 
 
 NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text) {
-  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
-  [nativePtr setText:text];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeTextField, nativeObj, textField);
+  [nativeObj setText:text];
 }
 
 
 
 NA_DEF NAString* naNewStringWithTextFieldText(const NATextField* textField) {
-  naDefineCocoaObjectConst(NACocoaNativeTextField, nativePtr, textField);
-  return [nativePtr newStringWithText];
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeTextField, nativeObj, textField);
+  return [nativeObj newStringWithText];
 }
 
 
 
 NA_DEF void naSetTextFieldColor(NATextField* textField, const NAColor* color) {
-  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
-  [nativePtr setColor:color];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeTextField, nativeObj, textField);
+  [nativeObj setColor:color];
 }
 
 
@@ -168,29 +171,29 @@ NA_DEF void naSetTextFieldTextAlignment(NATextField* textField, NAAlignment alig
 
 
 NA_HDEF void na_UpdateTextFieldTextAlignment(NATextField* textField) {
-  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeTextField, nativeObj, textField);
   NABool isRTL = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(naGetUIElementParentSpace(textField));
-  [nativePtr setAlignment:na_GetNSTextAlignment(textField->alignment, isRTL)];
+  [nativeObj setAlignment:na_GetNSTextAlignment(textField->alignment, isRTL)];
 }
 
 
 
 NA_DEF void naSetTextFieldFont(NATextField* textField, NAFont* font) {
-  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
-  [nativePtr setNAFont:font];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeTextField, nativeObj, textField);
+  [nativeObj setNAFont:font];
   naRelease(textField->font);
   textField->font = naRetain(font);
 }
 
 
 NA_HDEF NARect na_GetTextFieldRect(const NA_UIElement* textField) {
-  naDefineCocoaObjectConst(NACocoaNativeTextField, nativePtr, textField);
-  return naMakeRectWithNSRect([nativePtr frame]);
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeTextField, nativeObj, textField);
+  return naMakeRectWithNSRect([nativeObj frame]);
 }
 
 NA_HDEF void na_SetTextFieldRect(NA_UIElement* textField, NARect rect) {
-  naDefineCocoaObject(NACocoaNativeTextField, nativePtr, textField);
-  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeTextField, nativeObj, textField);
+  [nativeObj setFrame:naMakeNSRectWithRect(rect)];
 }
 
 

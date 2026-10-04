@@ -15,14 +15,21 @@
 
 
 
-  NA_HDEF void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr) {
-    na_InitCoreUIElement(&openGLSpace->uiElement, NA_UI_OPENGL_SPACE, nativePtr);
+  NA_HDEF void na_InitCoreOpenGLSpace(
+    NAOpenGLSpace* openGLSpace,
+    void* nativeOpenGLSpacePtr)
+  {
+    na_InitCoreUIElement(
+      &openGLSpace->uiElement,
+      NA_UI_OPENGL_SPACE,
+      nativeOpenGLSpacePtr);
+      
     naResetOpenGLSpaceTransformation(openGLSpace);
   }
 
 
 
-  NA_HDEF void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace) {
+  NA_HDEF void na_ClearCoreOpenGLSpace(NAOpenGLSpace* openGLSpace) {
     na_ClearCoreUIElement(&openGLSpace->uiElement);
   }
 

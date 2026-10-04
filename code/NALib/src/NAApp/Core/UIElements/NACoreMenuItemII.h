@@ -6,21 +6,30 @@
 
 
 
-NA_HDEF void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent) {
-  // Note that the nativePtr in this case is a pointer to the menuItem itself,
-  // as there does not exist a native pointer for a MenuItem in WINAPI at all.
-  na_InitCoreUIElement(&menuItem->uiElement, NA_UI_MENUITEM, nativePtr);
+NA_HDEF void na_InitCoreMenuItem(
+  NAMenuItem* menuItem,
+  void* nativeMenuItemPtr,
+  NA_UIElement* parent)
+{
+  // Note that on windows, the nativePtr in this case is a pointer to the
+  // menuItem itself, as there does not exist a native pointer for a MenuItem
+  // in WINAPI at all.
+  na_InitCoreUIElement(
+    &menuItem->uiElement,
+    NA_UI_MENUITEM,
+    nativeMenuItemPtr);
+  
   menuItem->subMenu = NA_NULL;
   na_SetUIElementParent(&menuItem->uiElement, parent);
 }
 
 
 
-NA_HDEF void na_ClearMenuItem(NAMenuItem* menuItem) {
+NA_HDEF void na_ClearCoreMenuItem(NAMenuItem* menuItem) {
   if(menuItem->subMenu) {
-    na_ClearMenu(menuItem->subMenu);
     naDelete(menuItem->subMenu);
   }
+  
   na_ClearCoreUIElement(&menuItem->uiElement);
 }
 

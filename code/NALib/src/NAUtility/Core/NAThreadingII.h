@@ -253,7 +253,7 @@ NA_IDEF void naClearMutex(NAMutex mutex) {
       #if NA_MACOS_USES_ARC
       // Mutex will be released automatically when ARC is turned on.
       #else
-        dispatch_release(macintoshmutex->mutex);
+        dispatch_release(NA_COCOA_PTR_C_TO_OBJC(macintoshmutex->mutex));
       #endif
       naFree(macintoshmutex);
     #else
@@ -261,7 +261,7 @@ NA_IDEF void naClearMutex(NAMutex mutex) {
         // Mutex will be released automatically when ARC is turned on.
         NA_UNUSED(mutex);
       #else
-        dispatch_release(mutex);
+        dispatch_release(NA_COCOA_PTR_C_TO_OBJC(mutex));
       #endif
     #endif
   #endif
@@ -433,6 +433,7 @@ NA_IDEF NAAlarm naMakeAlarm(void) {
     return (NAAlarm)alarmer;
 #else
     alarmer = dispatch_semaphore_create(0);
+  // asdf
     return (NAAlarm)NA_COCOA_PTR_OBJC_TO_C(alarmer);
   #endif
 }
@@ -447,7 +448,7 @@ NA_IDEF void naClearAlarm(NAAlarm alarmer) {
       NA_UNUSED(alarmer);
       // Alarm will be released automatically when ARC is turned on.
     #else
-      dispatch_release(alarmer);
+      dispatch_release(NA_COCOA_PTR_C_TO_OBJC(alarmer));
     #endif
   #endif
 }

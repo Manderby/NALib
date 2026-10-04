@@ -6,17 +6,25 @@
 
 
 
-NA_HDEF void na_InitTextField(NATextField* textField, void* nativePtr) {
-  na_InitCoreUIElement(&textField->uiElement, NA_UI_TEXTFIELD, nativePtr);
+NA_HDEF void na_InitCoreTextField(
+  NATextField* textField,
+  void* nativeTextFieldPtr)
+{
+  na_InitCoreUIElement(
+    &textField->uiElement,
+    NA_UI_TEXTFIELD,
+    nativeTextFieldPtr);
+    
   textField->font = naCreateSystemFont();
   textField->alignment = NA_ALIGNMENT_BEGIN;
 }
 
 
 
-NA_HDEF void na_ClearTextField(NATextField* textField) {
-  na_ClearCoreUIElement(&textField->uiElement);
+NA_HDEF void na_ClearCoreTextField(NATextField* textField) {
   naRelease(textField->font);
+
+  na_ClearCoreUIElement(&textField->uiElement);
 }
 
 

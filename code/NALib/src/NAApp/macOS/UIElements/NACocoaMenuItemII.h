@@ -70,11 +70,15 @@ NA_RUNTIME_TYPE(NACocoaMenuItem, na_DestructCocoaMenuItem, NA_FALSE);
 NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text, NAKeyStroke* keyStroke) {
   NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
   
-  NACocoaNativeMenuItem* nativeItemPtr = [[NACocoaNativeMenuItem alloc]
+  NACocoaNativeMenuItem* nativeMenuItemPtr = [[NACocoaNativeMenuItem alloc]
     initWithMenuItem:cocoaMenuItem
     text: text
     keyStroke: keyStroke];
-  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), NA_NULL);
+    
+  na_InitCoreMenuItem(
+    (NAMenuItem*)cocoaMenuItem,
+    NA_COCOA_PTR_OBJC_TO_C(nativeMenuItemPtr),
+    NA_NULL);
 
   return (NAMenuItem*)cocoaMenuItem;
 }
@@ -83,8 +87,12 @@ NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text, NAKeyStroke* keyStroke)
 NA_DEF NAMenuItem* naNewMenuSeparator() {
   NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
   
-  NSMenuItem* nativeItemPtr = [NSMenuItem separatorItem];
-  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), NA_NULL);
+  NSMenuItem* nativeMenuItemPtr = [NSMenuItem separatorItem];
+  
+  na_InitCoreMenuItem(
+    (NAMenuItem*)cocoaMenuItem,
+    NA_COCOA_PTR_OBJC_TO_C(nativeMenuItemPtr),
+    NA_NULL);
   
   return (NAMenuItem*)cocoaMenuItem;
 }
@@ -92,15 +100,19 @@ NA_DEF NAMenuItem* naNewMenuSeparator() {
 NA_DEF NAMenuItem* naNewSubmenuItem(const NAUTF8Char* text, NAMenu* subMenu) {
   NACocoaMenuItem* cocoaMenuItem = naNew(NACocoaMenuItem);
   
-  NACocoaNativeMenuItem* nativeItemPtr = [[NACocoaNativeMenuItem alloc]
+  NACocoaNativeMenuItem* nativeMenuItemObj = [[NACocoaNativeMenuItem alloc]
     initWithMenuItem:cocoaMenuItem
     text: text
     keyStroke: nil];
   
-  na_InitMenuItem((NAMenuItem*)cocoaMenuItem, NA_COCOA_PTR_OBJC_TO_C(nativeItemPtr), NA_NULL);
+  na_InitCoreMenuItem(
+    (NAMenuItem*)cocoaMenuItem,
+    NA_COCOA_PTR_OBJC_TO_C(nativeMenuItemObj),
+    NA_NULL);
 
   cocoaMenuItem->menuItem.subMenu = subMenu;
-  [nativeItemPtr setSubmenu:NA_COCOA_PTR_C_TO_OBJC(naGetUIElementNativePtr(subMenu))];
+  naDefineUIElementNativeCocoaObj(NSMenu, nativeSubMenuObj, subMenu);
+  [nativeMenuItemObj setSubmenu:nativeSubMenuObj];
 
   return (NAMenuItem*)cocoaMenuItem;
 }
@@ -108,7 +120,7 @@ NA_DEF NAMenuItem* naNewSubmenuItem(const NAUTF8Char* text, NAMenu* subMenu) {
 
 
 NA_DEF void na_DestructCocoaMenuItem(NACocoaMenuItem* cocoaMenuItem) {
-  na_ClearMenuItem((NAMenuItem*)cocoaMenuItem);
+  na_ClearCoreMenuItem((NAMenuItem*)cocoaMenuItem);
 }
 
 
@@ -119,22 +131,22 @@ NA_DEF void naSetMenuItemText(NAMenuItem* menuItem, const NAUTF8Char* text) {
       naError("Menu item is nullptr");
   #endif
 
-  naDefineCocoaObject(NACocoaNativeMenuItem, nativePtr, menuItem);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeMenuItem, nativeObj, menuItem);
   
   NSString* nsString = text
     ? [NSString stringWithUTF8String:text]
     : @"";
-  [nativePtr setTitle: nsString];
-  if([nativePtr hasSubmenu]) {
-    [[nativePtr submenu] setTitle: nsString];
+  [nativeObj setTitle: nsString];
+  if([nativeObj hasSubmenu]) {
+    [[nativeObj submenu] setTitle: nsString];
   }
 }
 
 
 
 NA_DEF void naSetMenuItemState(NAMenuItem* menuItem, NABool state) {
-  naDefineCocoaObject(NACocoaNativeMenuItem, nativePtr, menuItem);
-  [nativePtr setState:state ? NAValueStateOn : NAValueStateOff];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeMenuItem, nativeObj, menuItem);
+  [nativeObj setState:state ? NAValueStateOn : NAValueStateOff];
 }
 
 

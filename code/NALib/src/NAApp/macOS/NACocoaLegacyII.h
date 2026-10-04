@@ -104,6 +104,8 @@ NA_DEF NSColor* naGetWindowBackColor() {
   return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
 
+
+
 NA_DEF NSColor* naGetLabelColor() {
   NSColor* color = nil;
   
@@ -111,15 +113,14 @@ NA_DEF NSColor* naGetLabelColor() {
     if([NSColor respondsToSelector:@selector(labelColor)]) {
       color = [NSColor labelColor];
     }
-//    if([NSColor respondsToSelector:@selector(labelColor)]) {
-//      color = [NSColor labelColor];
-//    }
   )
   if(!color) {
     color = [NSColor controlTextColor];
   }
   return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
+
+
 
 NA_DEF NSColor* naGetLinkColor() {
   NSColor* color = nil;
@@ -136,6 +137,8 @@ NA_DEF NSColor* naGetLinkColor() {
   return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
 
+
+
 NA_DEF NSColor* naGetAccentColor() {
   NSColor* color = nil;
 
@@ -150,6 +153,8 @@ NA_DEF NSColor* naGetAccentColor() {
   return [color colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
 }
 
+
+
 NA_HDEF NABool na_HasShortButton() {
   // On systems starting with 11 but before 26, bordered buttons are 5 units
   // shorter than expected on the left and right. At the same time, the top
@@ -158,6 +163,8 @@ NA_HDEF NABool na_HasShortButton() {
   // and bottom and enlarge the frame accordingly.
   return isAtLeastMacOSVersion(11, 0) && !isAtLeastMacOSVersion(26, 0);
 }
+
+
 
 NA_DEF NABool isAtLeastMacOSVersion(int major, int minor) {
   #if NA_DEBUG
@@ -178,9 +185,11 @@ NA_DEF NABool isAtLeastMacOSVersion(int major, int minor) {
 }
 
 
+
 #if defined __clang_major__
   #pragma clang diagnostic pop
 #endif
+
 
 
 // This is free and unencumbered software released into the public domain.

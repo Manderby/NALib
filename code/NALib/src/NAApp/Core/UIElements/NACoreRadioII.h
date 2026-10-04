@@ -6,16 +6,24 @@
 
 
 
-NA_HDEF void na_InitRadio(NARadio* radio, void* nativePtr) {
-  na_InitCoreUIElement(&radio->uiElement, NA_UI_RADIO, nativePtr);
+NA_HDEF void na_InitCoreRadio(
+  NARadio* radio,
+  void* nativeRadioPtr)
+{
+  na_InitCoreUIElement(
+    &radio->uiElement,
+    NA_UI_RADIO,
+    nativeRadioPtr);
+    
   radio->font = naCreateSystemFont();
 }
 
 
 
-NA_HDEF void na_ClearRadio(NARadio* radio) {
-  na_ClearCoreUIElement(&radio->uiElement);
+NA_HDEF void na_ClearCoreRadio(NARadio* radio) {
   naRelease(radio->font);
+
+  na_ClearCoreUIElement(&radio->uiElement);
 }
 
 

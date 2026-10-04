@@ -113,7 +113,7 @@ struct NALabel{
 
 struct NAMenu{
   NA_UIElement uiElement;
-  NAList       childs;
+  NAList childs;
 };
 
 struct NAMenuItem{
@@ -134,8 +134,8 @@ struct NAOpenGLSpace{
 
 struct NASelect{
   NA_UIElement uiElement;
-  NAList       childs;
-  NAFont*      font;
+  NAList childs;
+  NAFont* font;
 };
 
 struct NARadio{
@@ -212,7 +212,6 @@ struct NA_KeyboardShortcutReaction{
 #define NA_APPLICATION_FLAG_RUNNING                 0x01
 #define NA_APPLICATION_FLAG_MOUSE_VISIBLE           0x02
 #define NA_APPLICATION_FLAG_DEFAULT_SYSKEY_HANDLING 0x04 // only for winAPI
-
 
 #define NA_CORE_WINDOW_FLAG_FULLSCREEN             0x01
 #define NA_CORE_WINDOW_FLAG_RESIZEABLE             0x02
@@ -318,26 +317,74 @@ NA_HAPI void na_SetUIElementDebugLayout(NA_UIElement* elem, NABool debug);
 
 
 
+// //////////////////////////////////
+// UI Elements
+// //////////////////////////////////
+
+
+
+// Initializing the core ui Elements
+NA_HAPI void na_InitCoreApplication(NAApplication* application, void* nativeApplicationPtr);
+NA_HAPI void na_InitCoreButton(NAButton* button, void* nativeButtonPtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAImageSet* imageSet, const NAImageSet* imageSet2, uint32 flags);
+NA_HAPI void na_InitCoreCheckBox(NACheckBox* checkBox, void* nativeCheckBoxPtr);
+NA_HAPI void na_InitCoreImageSpace(NAImageSpace* imageSpace, void* nativeImageSpacePtr);
+NA_HAPI void na_InitCoreLabel(NALabel* label, void* nativeLabelPtr);
+NA_HAPI void na_InitCoreMenu(NAMenu* menu, void* nativeMenuPtr, NA_UIElement* parent);
+NA_HAPI void na_InitCoreMenuItem(NAMenuItem* menuItem, void* nativeMenuItemPtr, NA_UIElement* parent);
+NA_HAPI void na_InitCoreMetalSpace(NAMetalSpace* metalSpace, void* nativeMetalSpacePtr);
+NA_HAPI void na_InitCoreOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativeOpenGLSpacePtr);
+NA_HAPI void na_InitCoreRadio(NARadio* radio, void* nativeRadioPtr);
+NA_HAPI void na_InitCoreScreen(NAScreen* screen, void* nativeScreenPtr, NABool isMain, const NAUTF8Char* name, NARect rect, double uiScale);
+NA_HAPI void na_InitCoreSelect(NASelect* select, void* nativeSelectPtr);
+NA_HAPI void na_InitCoreSlider(NASlider* slider, void* nativeSliderPtr);
+NA_HAPI void na_InitCoreSpace(NASpace* space, void* nativeSpacePtr);
+NA_HAPI void na_InitCoreTextBox(NATextBox* textBox, void* nativeTextBoxPtr);
+NA_HAPI void na_InitCoreTextField(NATextField* textField, void* nativeTextFieldPtr);
+NA_HAPI void na_InitCoreWindow(NAWindow* window, void* nativeWindowPtr, NAScreen* screen, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
+
+
+
+// Clearing the core ui Elements
+NA_HAPI void na_ClearCoreApplication(NAApplication* application);
+NA_HAPI void na_ClearCoreButton(NAButton* button);
+NA_HAPI void na_ClearCoreCheckBox(NACheckBox* checkBox);
+NA_HAPI void na_ClearCoreImageSpace(NAImageSpace* imageSpace);
+NA_HAPI void na_ClearCoreLabel(NALabel* label);
+NA_HAPI void na_ClearCoreMenu(NAMenu* menu);
+NA_HAPI void na_ClearCoreMenuItem(NAMenuItem* menuItem);
+NA_HAPI void na_ClearCoreMetalSpace(NAMetalSpace* metalSpace);
+NA_HAPI void na_ClearCoreOpenGLSpace(NAOpenGLSpace* openGLSpace);
+NA_HAPI void na_ClearCoreRadio(NARadio* radio);
+NA_HAPI void na_ClearCoreScreen(NAScreen* screen);
+NA_HAPI void na_ClearCoreSelect(NASelect* select);
+NA_HAPI void na_ClearCoreSlider(NASlider* slider);
+NA_HAPI void na_ClearCoreSpace(NASpace* space);
+NA_HAPI void na_ClearCoreTextBox(NATextBox* textBox);
+NA_HAPI void na_ClearCoreTextField(NATextField* textField);
+NA_HAPI void na_ClearCoreWindow(NAWindow* window);
+
+
+
 // NAApplication
 NA_HAPI NAApplication* na_NewApplication(void);
 NA_HAPI NABool na_IsApplicationRunning(void);
-NA_HAPI void na_InitApplication(NAApplication* application, void* nativePtr);
 NA_HAPI void na_TerminateApplication(NAMutator cleanup, void* arg);
-NA_HAPI void na_ClearApplication(NAApplication* application);
 NA_HAPI void na_RenewApplicationScreens();
 NA_HAPI NARect na_GetApplicationRect(const NAApplication* application);
 NA_HAPI void na_SetApplicationRect(const NAApplication* application, NARect rect);
-NA_HAPI const NAFont* na_GetApplicationSystemFont(const NAApplication* app);
+NA_HAPI const NAFont* na_GetCoreApplicationSystemFont(const NAApplication* app);
 NA_HAPI NAMouseStatus* na_GetApplicationMouseStatus(NAApplication* application);
 // Takes the ownership of the keyStroke. Do not call naDelete on it!
 NA_HAPI void na_SetApplicationKeyStroke(NAApplication* app, NAKeyStroke* keyStroke);
+#if NA_DEBUG
+  NA_HAPI void na_RegisterUIElement(NA_UIElement* elem);
+  NA_HAPI void na_UnregisterUIElement(NA_UIElement* elem);
+#endif
 
 // NAButton
 #define NA_BUTTON_BORDERED   0x01
 #define NA_BUTTON_STATEFUL   0x02
 
-NA_HAPI void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAImageSet* imageSet, const NAImageSet* imageSet2, uint32 flags);
-NA_HAPI void na_ClearButton(NAButton* button);
 NA_HAPI void na_setButtonText(NAButton* button, const NAUTF8Char* text);
 NA_HAPI void na_setButtonText2(NAButton* button, const NAUTF8Char* text);
 NA_HAPI void na_setButtonHint(NAButton* button, const NAUTF8Char* text);
@@ -348,22 +395,16 @@ NA_HAPI void na_SetButtonRect(NA_UIElement* button, NARect rect);
 NA_HAPI void na_UpdateButtonUIScale(NA_UIElement* button);
 
 // NACheckBox
-NA_HAPI void na_InitCheckBox(NACheckBox* checkBox, void* nativePtr);
-NA_HAPI void na_ClearCheckBox(NACheckBox* checkBox);
 NA_HAPI NARect na_GetCheckBoxRect(const NA_UIElement* checkBox);
 NA_HAPI void na_SetCheckBoxRect(NA_UIElement* checkBox, NARect rect);
 NA_HAPI void na_UpdateCheckBoxUIScale(NA_UIElement* button);
 
 // NAImageSpace
-NA_HAPI void na_InitImageSpace(NAImageSpace* imageSpace, void* nativePtr);
-NA_HAPI void na_ClearImageSpace(NAImageSpace* imageSpace);
 NA_HAPI NARect na_GetImageSpaceRect(const NA_UIElement* imageSpace);
 NA_HAPI void na_SetImageSpaceRect(NA_UIElement* imageSpace, NARect rect);
 NA_HAPI void na_UpdateImageSpaceUIScale(NA_UIElement* button);
 
 // NALabel
-NA_HAPI void na_InitLabel(NALabel* label, void* nativePtr);
-NA_HAPI void na_ClearLabel(NALabel* label);
 NA_HAPI void na_SetLabelEnabled(NALabel* label, NABool enabled);
 NA_HAPI void na_SetLabelTextColor(NALabel* label, const NAColor* color);
 NA_HAPI NARect na_GetLabelRect(const NA_UIElement* space);
@@ -372,71 +413,51 @@ NA_HAPI void na_UpdateLabelUIScale(NA_UIElement* button);
 NA_HAPI void na_UpdateLabelTextAlignment(NALabel* label);
 
 // NAMenu
-NA_HAPI void na_InitMenu(NAMenu* menu, void* nativePtr, NA_UIElement* parent);
-NA_HAPI void na_ClearMenu(NAMenu* menu);
 NA_HAPI void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* itemAt);
 NA_HAPI NARect na_GetMenuRect(const NA_UIElement* menu);
 NA_HAPI void na_SetMenuRect(NA_UIElement* menu, NARect rect);
 NA_HAPI void na_UpdateMenuUIScale(NA_UIElement* button);
 
 // NAMenuItem
-NA_HAPI void na_InitMenuItem(NAMenuItem* menuItem, void* nativePtr, NA_UIElement* parent);
-NA_HAPI void na_ClearMenuItem(NAMenuItem* menuItem);
 NA_HAPI NARect na_GetMenuItemRect(const NA_UIElement* menuItem);
 NA_HAPI void na_SetMenuItemRect(NA_UIElement* menuItem, NARect rect);
 NA_HAPI void na_UpdateMenuItemUIScale(NA_UIElement* button);
 
 // NAMetalSpace
-NA_HAPI void na_InitMetalSpace(NAMetalSpace* metalSpace, void* nativePtr);
-NA_HAPI void na_ClearMetalSpace(NAMetalSpace* metalSpace);
 NA_HAPI NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace);
 NA_HAPI void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect);
 NA_HAPI void na_UpdateMetalSpaceUIScale(NA_UIElement* button);
 
 // NAOpenGLSpace
-NA_HAPI void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativePtr);
-NA_HAPI void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace);
 NA_HAPI NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace);
 NA_HAPI void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect);
 NA_HAPI void na_UpdateOpenGLSpaceUIScale(NA_UIElement* button);
 
 // NARadio
-NA_HAPI void na_InitRadio(NARadio* radio, void* nativePtr);
-NA_HAPI void na_ClearRadio(NARadio* radio);
 NA_HAPI NARect na_GetRadioRect(const NA_UIElement* radio);
 NA_HAPI void na_SetRadioRect(NA_UIElement* radio, NARect rect);
 NA_HAPI void na_UpdateRadioUIScale(NA_UIElement* button);
 
 // NAScreen
-// Creates a new screen.
-NA_HAPI NAScreen* na_NewScreen(void* nativePtr);
-NA_HAPI void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, const NAUTF8Char* name, NARect rect, double uiScale);
-NA_HAPI void na_ClearScreen(NAScreen* screen);
 NA_HAPI void na_FlipScreenCoordinatesVertically(NAScreen* screen, NARect totalRect);
 NA_HAPI void na_UpdateScreenRelativeCenter(NAScreen* screen, NARect totalRect);
 NA_HAPI NARect na_FillScreenList(NAList* screenList);
-NA_HAPI NAScreen* na_GetApplicationScreenWithNativePtr(void* nativePtr);
+NA_HAPI NAScreen* na_GetApplicationScreenWithNativeScreenPtr(const void* nativeScreenPtr);
 NA_HAPI NARect na_GetScreenRect(const NA_UIElement* screen);
 NA_HAPI void na_SetScreenRect(NA_UIElement* screen, NARect rect);
 
 // NASelect
-NA_HAPI void na_InitSelect(NASelect* select, void* nativePtr);
-NA_HAPI void na_ClearSelect(NASelect* select);
 NA_HAPI void na_AddSelectChild(NASelect* select, NAMenuItem* child, const NAMenuItem* itemAt);
 NA_HAPI NARect na_GetSelectRect(const NA_UIElement* select);
 NA_HAPI void na_SetSelectRect(NA_UIElement* select, NARect rect);
 NA_HAPI void na_UpdateSelectUIScale(NA_UIElement* button);
 
 // NASlider
-NA_HAPI void na_InitSlider(NASlider* slider, void* nativePtr);
-NA_HAPI void na_ClearSlider(NASlider* slider);
 NA_HAPI NARect na_GetSliderRect(const NA_UIElement* slider);
 NA_HAPI void na_SetSliderRect(NA_UIElement* slider, NARect rect);
 NA_HAPI void na_UpdateSliderUIScale(NA_UIElement* button);
 
 // NASpace
-NA_HAPI void na_InitSpace(NASpace* space, void* nativePtr);
-NA_HAPI void na_ClearSpace(NASpace* space);
 NA_HAPI void na_AddSpaceChild(NASpace* space, NA_UIElement* child);
 NA_HAPI void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child);
 NA_HAPI void na_SetSpaceBackgroundColor(NASpace* space, const NAColor* color);
@@ -450,24 +471,18 @@ NA_HAPI void na_UpdateSpaceUIScale(NA_UIElement* button);
 NA_HAPI void na_AddSpaceChildUnpositioned(NASpace* space, void* child);
 
 // NATextBox
-NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativePtr);
-NA_HAPI void na_ClearTextBox(NATextBox* textBox);
 NA_HAPI NARect na_GetTextBoxRect(const NA_UIElement* textBox);
 NA_HAPI void na_SetTextBoxRect(NA_UIElement* textBox, NARect rect);
 NA_HAPI void na_UpdateTextBoxUIScale(NA_UIElement* button);
 NA_HAPI void na_UpdateTextBoxTextAlignment(NATextBox* textBox);
 
 // NATextField
-NA_HAPI void na_InitTextField(NATextField* textField, void* nativePtr);
-NA_HAPI void na_ClearTextField(NATextField* textField);
 NA_HAPI NARect na_GetTextFieldRect(const NA_UIElement* textField);
 NA_HAPI void na_SetTextFieldRect(NA_UIElement* textField, NARect rect);
 NA_HAPI void na_UpdateTextFieldUIScale(NA_UIElement* button);
 NA_HAPI void na_UpdateTextFieldTextAlignment(NATextField* textField);
 
 // NAWindow
-NA_HAPI void na_InitWindow(NAWindow* window, void* nativePtr, NAScreen* screen, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame);
-NA_HAPI void na_ClearWindow(NAWindow* window);
 NA_HAPI void na_RememberWindowPosition(const NAWindow* window);
 NA_HAPI void na_UpdateWindowScreen(NAWindow* window, NAScreen* screen);
 NA_HAPI void na_RetainWindowMouseTracking(NAWindow* window);
@@ -494,8 +509,8 @@ NA_HAPI void na_SetMouseExitedAtPos(NAMouseStatus* status, NAPos newpos);
 
 
 // Font
-NA_HAPI NAFont* na_CreateFont(void* nativePtr, const NAString* name, uint32 flags, double size);
-NA_HAPI void na_DestructFontNativePtr(void* nativePtr);
+NA_HAPI NAFont* na_CreateFont(void* nativeFontPtr, const NAString* name, uint32 flags, double size);
+NA_HAPI void na_DestructFontNativePtr(void* nativeFontPtr);
 
 
 // Preferences

@@ -6,7 +6,97 @@
 
 
 
-// All implementations are in the core. Nothing to see here.
+#include "../NAFont.h"
+#include "../Core/NAAppCore.h"
+
+
+
+NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size) {
+  NSString* systemFontName = [NSString stringWithUTF8String: fontFamilyName];
+
+  NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
+  NSFont* nativeFontObj;
+
+  if(systemFontName == [systemFont familyName]) {
+    nativeFontObj = (naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) ?
+      [NSFont systemFontOfSize:size] :
+      [NSFont boldSystemFontOfSize:size];
+  }else{
+    NSFontTraitMask traits = 0;
+    if(naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) { traits |= NSBoldFontMask; }
+    if(naGetFlagu32(flags, NA_FONT_FLAG_ITALIC)) { traits |= NSItalicFontMask; }
+    if(naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE)) { }
+
+    nativeFontObj = [[NSFontManager sharedFontManager]
+      fontWithFamily:systemFontName
+      traits:traits
+      weight:5  // ignored if NSBoldFontMask is set.
+      size:size];
+  }
+  
+  NAString* fontName = naNewStringWithFormat("%s", fontFamilyName);
+  
+  // asdf
+  NAFont* retFont = na_CreateFont(
+    NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(nativeFontObj)),
+    fontName,
+    flags,
+    size);
+    
+  naDelete(fontName);
+  
+  return retFont;
+}
+
+
+
+NA_HDEF void na_DestructFontNativePtr(void* nativeFontPtr) {
+  NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(nativeFontPtr));
+}
+
+
+
+NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
+  CGFloat baseSize;
+  switch(fontSize) {
+  case NA_FONT_SIZE_SMALL: baseSize = 11; break;
+  case NA_FONT_SIZE_DEFAULT: baseSize = [NSFont systemFontSize]; break;
+  case NA_FONT_SIZE_BIG: baseSize = 18; break;
+  case NA_FONT_SIZE_HUGE: baseSize = 24; break;
+  default: baseSize = [NSFont systemFontSize]; break;
+  }
+
+  NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
+
+  NAFont* retFont;
+  switch(kind) {
+    case NA_FONT_KIND_SYSTEM:
+      retFont = naCreateFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_REGULAR, baseSize);
+      break;
+    case NA_FONT_KIND_TITLE:
+      retFont = naCreateFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_BOLD, baseSize);
+      break;
+    case NA_FONT_KIND_MONOSPACE:
+      retFont = naCreateFont("Courier", NA_FONT_FLAG_REGULAR, baseSize);
+      break;
+    case NA_FONT_KIND_PARAGRAPH:
+      retFont = naCreateFont("Palatino", NA_FONT_FLAG_REGULAR, baseSize);
+      break;
+    case NA_FONT_KIND_MATH:
+      // Note: Times new roman would be more traditional but unicode support is worse.
+      retFont = naCreateFont("STIX Two Math", NA_FONT_FLAG_REGULAR, baseSize);
+      //retFont = naCreateFont("STIX Two Text", NA_FONT_FLAG_ITALIC, baseSize);
+      break;
+    default:
+      #if NA_DEBUG
+        naError("Unknown font kind");
+      #endif
+      retFont = naCreateFont("San Francisco", NA_FONT_FLAG_REGULAR, baseSize);
+      break;
+  }
+  
+  return retFont;
+}
 
 
 

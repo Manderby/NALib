@@ -14,34 +14,32 @@ NA_DEF NARect naGetMainScreenRect() {
 
 
 
-NA_DEF NAScreen* na_NewScreen(
-  void* nativePtr)
-{
+NA_HDEF NAScreen* na_NewScreen(NSScreen* nativeObj) {
+  // asdf
   // A screen is given by its native pointer and not created as a NALib custom
   // subclass. Therefore, we must retain it. It will be stored during a call
   // to na_InitScreen and will be released automatically as soon as
   // na_ClearCoreUIElement will be called.
-  NSScreen* nsScreen = (NA_COCOA_BRIDGE NSScreen*)NA_COCOA_RETAIN(nativePtr);
-  
+
   NACocoaScreen* cocoaScreen = naNew(NACocoaScreen);
 
-  NABool isMainScreen = (NA_COCOA_BRIDGE NSScreen*)nativePtr == [NSScreen mainScreen];
+  NABool isMainScreen = nativeObj == [NSScreen mainScreen];
   const NAUTF8Char* name = "Unknown Display";
   if(isAtLeastMacOSVersion(10, 15)) {
     NA_MACOS_AVAILABILITY_GUARD_10_15(
-      name = [[nsScreen localizedName] UTF8String];
+      name = [[nativeObj localizedName] UTF8String];
     )
   }else{
-    NSDictionary *screenDictionary = [nsScreen deviceDescription];
+    NSDictionary *screenDictionary = [nativeObj deviceDescription];
     NSNumber *screenID = [screenDictionary objectForKey:@"NSScreenNumber"];
     name = naAllocSprintf(NA_TRUE, "Display %s", [[screenID stringValue] UTF8String]);
   }
-  NARect rect = naMakeRectWithNSRect([nsScreen frame]);
-  double uiScale = [nsScreen backingScaleFactor];
+  NARect rect = naMakeRectWithNSRect([nativeObj frame]);
+  double uiScale = [nativeObj backingScaleFactor];
 
-  na_InitScreen(
+  na_InitCoreScreen(
     (NAScreen*)cocoaScreen,
-    nativePtr,
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj),
     isMainScreen,
     name,
     rect,
@@ -53,14 +51,14 @@ NA_DEF NAScreen* na_NewScreen(
 
 
 NA_DEF void na_DestructCocoaScreen(NACocoaScreen* cocoaScreen) {
-  na_ClearScreen((NAScreen*)cocoaScreen);
+  na_ClearCoreScreen((NAScreen*)cocoaScreen);
 }
 
 
 
 NA_DEF NARect naGetScreenUsableRect(const NAScreen* screen) {
-  NSScreen* nsScreen = NA_COCOA_PTR_C_TO_OBJC(screen->uiElement.nativePtr);
-  return naMakeRectWithNSRect([nsScreen visibleFrame]);
+  naDefineUIElementNativeCocoaObjConst(NSScreen, nativeObj, screen);
+  return naMakeRectWithNSRect([nativeObj visibleFrame]);
 }
 
 
@@ -70,7 +68,7 @@ NA_HDEF NARect na_FillScreenList(NAList* screenList) {
   NARect totalRect = naMakeRectZero();
   for (size_t i = 0; i < [nsScreens count]; ++i) {
     NSScreen* nsScreen = [nsScreens objectAtIndex:i];
-    NAScreen* screen = na_NewScreen(NA_COCOA_PTR_OBJC_TO_C(nsScreen));
+    NAScreen* screen = na_NewScreen(nsScreen);
     NARect screenRect = naGetUIElementRect(screen);
     totalRect = naIsRectEmpty(totalRect)
       ? screenRect

@@ -45,7 +45,8 @@ NA_RUNTIME_TYPE(NACocoaSelect, na_DestructCocoaSelect, NA_FALSE);
 }
 
 - (void) setNAFont:(NAFont*)font{
-  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
+  NSFont* nativeFontObj = (NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(font));
+  [self setFont:nativeFontObj];
 }
 
 - (void) setVisible:(NABool)visible{
@@ -62,13 +63,15 @@ NA_RUNTIME_TYPE(NACocoaSelect, na_DestructCocoaSelect, NA_FALSE);
 NA_DEF NASelect* naNewSelect(double width) {
   NACocoaSelect* cocoaSelect = naNew(NACocoaSelect);
 
-  NACocoaNativeSelect* nativePtr = [[NACocoaNativeSelect alloc]
+  NACocoaNativeSelect* nativeObj = [[NACocoaNativeSelect alloc]
     initWithSelect:cocoaSelect
     frame:naMakeNSRectWithSize(naMakeSize(width, 25))];
     
-  na_InitSelect((NASelect*)cocoaSelect, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitCoreSelect(
+    (NASelect*)cocoaSelect,
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj));
   
-  [nativePtr setNAFont:cocoaSelect->select.font];
+  [nativeObj setNAFont:cocoaSelect->select.font];
 
   return (NASelect*)cocoaSelect;
 }
@@ -76,27 +79,26 @@ NA_DEF NASelect* naNewSelect(double width) {
 
 
 NA_DEF void na_DestructCocoaSelect(NACocoaSelect* cocoaSelect) {
-  na_ClearSelect((NASelect*)cocoaSelect);
+  na_ClearCoreSelect((NASelect*)cocoaSelect);
 }
 
 
 
 NA_DEF void naSetSelectVisible(NASelect* select, NABool visible) {
-  naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
-  [nativePtr setVisible:visible];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeSelect, nativeObj, select);
+  [nativeObj setVisible:visible];
 }
 
 
 
 NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenuItem* atItem) {
-  naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
-  naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemPtr, item);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeSelect, nativeSelectObj, select);
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeMenuItem, nativeItemObj, item);
 
   if(atItem) {
-//    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
-    [nativePtr addMenuItem:nativeItemPtr atItem:atItem];
+    [nativeSelectObj addMenuItem:nativeItemObj atItem:atItem];
   }else{
-    [nativePtr addMenuItem:nativeItemPtr atItem:nil];
+    [nativeSelectObj addMenuItem:nativeItemObj atItem:nil];
   }
   
   na_AddSelectChild(select, item, atItem);
@@ -105,34 +107,34 @@ NA_DEF void naAddSelectMenuItem(NASelect* select, NAMenuItem* item, const NAMenu
 
 
 NA_DEF void naSetSelectIndexSelected(NASelect* select, size_t index) {
-  naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
-  [nativePtr selectItemAtIndex:(NSInteger)index];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeSelect, nativeObj, select);
+  [nativeObj selectItemAtIndex:(NSInteger)index];
 }
 
 
 
 NA_DEF void naSetSelectItemSelected(NASelect* select, const NAMenuItem* item) {
-  naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeSelect, nativeObj, select);
   size_t index = naGetSelectItemIndex(select, item);
-  [nativePtr selectItemAtIndex:(NSInteger)index];
+  [nativeObj selectItemAtIndex:(NSInteger)index];
 }
 
 
 
 NA_DEF void naSetSelectEnabled(NASelect* select, NABool enabled) {
-  naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
-  [nativePtr setEnabled:(BOOL)enabled];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeSelect, nativeObj, select);
+  [nativeObj setEnabled:(BOOL)enabled];
 }
 
 
 NA_HDEF NARect na_GetSelectRect(const NA_UIElement* select) {
-  naDefineCocoaObjectConst(NACocoaNativeSelect, nativePtr, select);
-  return naMakeRectWithNSRect([nativePtr frame]);
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeSelect, nativeObj, select);
+  return naMakeRectWithNSRect([nativeObj frame]);
 }
 
 NA_HDEF void na_SetSelectRect(NA_UIElement* select, NARect rect) {
-  naDefineCocoaObject(NACocoaNativeSelect, nativePtr, select);
-  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeSelect, nativeObj, select);
+  [nativeObj setFrame:naMakeNSRectWithRect(rect)];
 }
 
 

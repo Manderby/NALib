@@ -226,7 +226,8 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
 }
 
 - (void) setNAFont:(NAFont*)font{
-  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
+  NSFont* nativeFontObj = (NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(font));
+  [self setFont:nativeFontObj];
 }
 
 - (void) setVisible:(NABool)visible{
@@ -244,13 +245,15 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
   NACocoaLabel* cocoaLabel = naNew(NACocoaLabel);
 
-  NACocoaNativeLabel* nativePtr = [[NACocoaNativeLabel alloc]
+  NACocoaNativeLabel* nativeObj = [[NACocoaNativeLabel alloc]
     initWithLabel:cocoaLabel
     frame:naMakeNSRectWithSize(naMakeSize(width, 17))];
     
-  na_InitLabel((NALabel*)cocoaLabel, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitCoreLabel(
+    (NALabel*)cocoaLabel,
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj));
 
-  [nativePtr setNAFont:cocoaLabel->label.font];
+  [nativeObj setNAFont:cocoaLabel->label.font];
 
   naSetLabelText((NALabel*)cocoaLabel, text);
 
@@ -260,50 +263,50 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
 
 
 NA_DEF void na_DestructCocoaLabel(NACocoaLabel* cocoaLabel) {
-  na_ClearLabel((NALabel*)cocoaLabel);
+  na_ClearCoreLabel((NALabel*)cocoaLabel);
 }
 
 
 
 NA_DEF void naSetLabelHeight(NALabel* label, double height) {
-  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setHeight:height];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeLabel, nativeObj, label);
+  [nativeObj setHeight:height];
 }
 
 
 
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text) {
-  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setText:text];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeLabel, nativeObj, label);
+  [nativeObj setText:text];
 }
 
 
 
 NA_DEF void naSetLabelTextColor(NALabel* label, const NAColor* color) {
-  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setColor:color];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeLabel, nativeObj, label);
+  [nativeObj setColor:color];
 }
 
 
 
 NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url) {
-  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setLink:url];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeLabel, nativeObj, label);
+  [nativeObj setLink:url];
 }
 
 
 
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled) {
-  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeLabel, nativeObj, label);
   na_SetLabelEnabled(label, enabled);
-  [nativePtr setLabelEnabled:enabled];
+  [nativeObj setLabelEnabled:enabled];
 }
 
 
 
 NA_DEF void naSetLabelSelectable(NALabel* label, NABool selectable) {
-  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setLabelSelectable:selectable];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeLabel, nativeObj, label);
+  [nativeObj setLabelSelectable:selectable];
 }
 
 
@@ -316,16 +319,16 @@ NA_DEF void naSetLabelTextAlignment(NALabel* label, NAAlignment alignment) {
 
 
 NA_HDEF void na_UpdateLabelTextAlignment(NALabel* label) {
-  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeLabel, nativeObj, label);
   NABool isRTL = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(naGetUIElementParentSpace(label));
-  [nativePtr setAlignment:na_GetNSTextAlignment(label->alignment, isRTL)];
+  [nativeObj setAlignment:na_GetNSTextAlignment(label->alignment, isRTL)];
 }
 
 
 
 NA_DEF void naSetLabelFont(NALabel* label, NAFont* font) {
-  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setNAFont:font];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeLabel, nativeObj, label);
+  [nativeObj setNAFont:font];
   naRelease(label->font);
   label->font = naRetain(font);
 }
@@ -333,20 +336,20 @@ NA_DEF void naSetLabelFont(NALabel* label, NAFont* font) {
 
 
 NA_DEF void naSetLabelVisible(NALabel* label, NABool visible) {
-  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setVisible:visible];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeLabel, nativeObj, label);
+  [nativeObj setVisible:visible];
 }
 
 
 
 NA_HDEF NARect na_GetLabelRect(const NA_UIElement* label) {
-  naDefineCocoaObjectConst(NACocoaNativeLabel, nativePtr, label);
-  return naMakeRectWithNSRect([nativePtr frame]);
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeLabel, nativeObj, label);
+  return naMakeRectWithNSRect([nativeObj frame]);
 }
 
 NA_HDEF void na_SetLabelRect(NA_UIElement* label, NARect rect) {
-  naDefineCocoaObject(NACocoaNativeLabel, nativePtr, label);
-  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeLabel, nativeObj, label);
+  [nativeObj setFrame:naMakeNSRectWithRect(rect)];
 }
 
 

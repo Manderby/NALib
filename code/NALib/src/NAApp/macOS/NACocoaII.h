@@ -18,8 +18,6 @@
 #import <UniformTypeIdentifiers/UTType.h>
 #import <Carbon/Carbon.h>
 
-NA_HAPI NARect na_GetNativeWindowAbsoluteInnerRect(const NSWindow* window);
-
 
 
 // UI_Element flags:
@@ -31,15 +29,15 @@ NA_HAPI NARect na_GetNativeWindowAbsoluteInnerRect(const NSWindow* window);
 // Currently, there are no macOS flags
 
 
-#define naDefineCocoaObject(cocoatype, var, uiElement)\
-  cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativePtr(uiElement))
-  
-#define naDefineCocoaObjectConst(cocoatype, var, uiElement)\
-  cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativePtrConst(uiElement))
+#define naDefineUIElementNativeCocoaObj(cocoaType, var, uiElement)\
+  cocoaType* var = (NA_COCOA_BRIDGE cocoaType*)(naGetUIElementNativePtr(uiElement))
+#define naDefineUIElementNativeCocoaObjConst(cocoaType, var, uiElement)\
+  cocoaType* var = (NA_COCOA_BRIDGE cocoaType*)(naGetUIElementNativePtrConst(uiElement))
+
 
 
 NA_HDEF void na_ClearUINativePtr(void* nativePtr) {
-  NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(nativePtr));
+  NA_COCOA_PTR_C_TO_OBJC(nativePtr);
 }
 
 
@@ -48,6 +46,7 @@ NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent) {
   NA_UIElement* elem = (NA_UIElement*)uiElement;
   elem->parent = parent;
 }
+
 
 
 #ifndef NSAppKitVersionNumber11_0
@@ -207,7 +206,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
       NSResponder* firstResponder = [focusWindow firstResponder];
       if(firstResponder) {
         while(!elem && firstResponder) {
-          elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE void*)firstResponder);
+          elem = na_GetUINALibEquivalent(((NA_COCOA_BRIDGE void*)firstResponder));
           if(elem) {
             NAUIElementType type = naGetUIElementType(elem);
             if([event type] == NAEventTypeKeyDown && (type == NA_UI_LABEL || type == NA_UI_TEXTBOX || type == NA_UI_TEXTBOX)) {
@@ -223,7 +222,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
           }
         }
       }else{
-        elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE void*)focusWindow);
+        elem = na_GetUINALibEquivalent(((NA_COCOA_BRIDGE void*)focusWindow));
       }
     }else{
       elem = &naGetApplication()->uiElement;
@@ -313,8 +312,8 @@ NAString* naNewStringWithKeyStroke(const NAKeyStroke* keyStroke) {
 
 
 NA_DEF void na_RefreshUIElementNow(void* uiElement) {
-  naDefineCocoaObjectConst(NSView, cocoaView, uiElement);
-  [cocoaView setNeedsDisplay:YES];
+  naDefineUIElementNativeCocoaObjConst(NSView, nativeObj, uiElement);
+  [nativeObj setNeedsDisplay:YES];
 }
 
 
@@ -344,93 +343,9 @@ NA_DEF void naSetUIElementNextTabElement(void* uiElement, const void* nextTabEle
     return;
   }
 
-  naDefineCocoaObject(NSView, cocoaCurTabElem, uiElement);
-  naDefineCocoaObjectConst(NSView, cocoaNextTabElem, nextTabElem);
-  [cocoaCurTabElem setNextKeyView:cocoaNextTabElem];
-}
-
-
-
-NA_HDEF void na_DestructFontNativePtr(void* nativePtr) {
-  NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(nativePtr));
-}
-
-NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, double size) {
-  NSString* systemFontName = [NSString stringWithUTF8String: fontFamilyName];
-
-  NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
-  NSFont* nsFont;
-
-  if(systemFontName == [systemFont familyName]) {
-    nsFont = (naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) ?
-      [NSFont systemFontOfSize:size] :
-      [NSFont boldSystemFontOfSize:size];
-  }else{
-    NSFontTraitMask traits = 0;
-    if(naGetFlagu32(flags, NA_FONT_FLAG_BOLD)) { traits |= NSBoldFontMask; }
-    if(naGetFlagu32(flags, NA_FONT_FLAG_ITALIC)) { traits |= NSItalicFontMask; }
-    if(naGetFlagu32(flags, NA_FONT_FLAG_UNDERLINE)) { }
-
-    nsFont = [[NSFontManager sharedFontManager]
-      fontWithFamily:systemFontName
-      traits:traits
-      weight:5  // ignored if NSBoldFontMask is set.
-      size:size];
-  }
-  
-  NAString* fontName = naNewStringWithFormat("%s", fontFamilyName);
-  
-  NAFont* retFont = na_CreateFont(
-    NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(nsFont)),
-    fontName,
-    flags,
-    size);
-    
-  naDelete(fontName);
-  
-  return retFont;
-}
-
-NAFont* naCreateFontWithPreset(NAFontKind kind, NAFontSize fontSize) {
-  CGFloat baseSize;
-  switch(fontSize) {
-  case NA_FONT_SIZE_SMALL: baseSize = 11; break;
-  case NA_FONT_SIZE_DEFAULT: baseSize = [NSFont systemFontSize]; break;
-  case NA_FONT_SIZE_BIG: baseSize = 18; break;
-  case NA_FONT_SIZE_HUGE: baseSize = 24; break;
-  default: baseSize = [NSFont systemFontSize]; break;
-  }
-
-  NSFont* systemFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
-
-  NAFont* retFont;
-  switch(kind) {
-    case NA_FONT_KIND_SYSTEM:
-      retFont = naCreateFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_REGULAR, baseSize);
-      break;
-    case NA_FONT_KIND_TITLE:
-      retFont = naCreateFont([[systemFont familyName] UTF8String], NA_FONT_FLAG_BOLD, baseSize);
-      break;
-    case NA_FONT_KIND_MONOSPACE:
-      retFont = naCreateFont("Courier", NA_FONT_FLAG_REGULAR, baseSize);
-      break;
-    case NA_FONT_KIND_PARAGRAPH:
-      retFont = naCreateFont("Palatino", NA_FONT_FLAG_REGULAR, baseSize);
-      break;
-    case NA_FONT_KIND_MATH:
-      // Note: Times new roman would be more traditional but unicode support is worse.
-      retFont = naCreateFont("STIX Two Math", NA_FONT_FLAG_REGULAR, baseSize);
-      //retFont = naCreateFont("STIX Two Text", NA_FONT_FLAG_ITALIC, baseSize);
-      break;
-    default:
-      #if NA_DEBUG
-        naError("Unknown font kind");
-      #endif
-      retFont = naCreateFont("San Francisco", NA_FONT_FLAG_REGULAR, baseSize);
-      break;
-  }
-  
-  return retFont;
+  naDefineUIElementNativeCocoaObj(NSView, cocoaCurTabElemObj, uiElement);
+  naDefineUIElementNativeCocoaObjConst(NSView, cocoaNextTabElemObj, nextTabElem);
+  [cocoaCurTabElemObj setNextKeyView:cocoaNextTabElemObj];
 }
 
 
@@ -700,7 +615,8 @@ NA_DEF NACursorImage* naAllocCursorImage(const NAImageSet* imageSet, NAPos hotsp
     NA_FALSE,
     uiScale,
     NA_TRUE);
-  return NA_COCOA_PTR_OBJC_TO_C([[NSCursor alloc] initWithImage:nsImage hotSpot:naMakeNSPointWithPos(hotspot)]);
+
+  return NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN([[NSCursor alloc] initWithImage:nsImage hotSpot:naMakeNSPointWithPos(hotspot)]));
 }
 
 
@@ -719,7 +635,7 @@ NA_DEF void naActivateCursorImage(const NACursorImage* image) {
   if(!image) {
     [[NSCursor arrowCursor] set];
   }else{
-    [(NSCursor*)NA_COCOA_PTR_C_TO_OBJC(image) set];
+    [((NA_COCOA_BRIDGE NSCursor*)image) set];
   }
 }
 
@@ -732,26 +648,27 @@ NA_DEF void naOpenUrlInBrowser(const NAUTF8Char* url) {
 
 
 NA_HDEF void* na_AddMouseTracking(NA_UIElement* uiElement) {
-  naDefineCocoaObject(NSView, nativePtr, uiElement);
+  naDefineUIElementNativeCocoaObj(NSView, nativeObj, uiElement);
   NARect trackingRect = naGetUIElementRect(uiElement);
   trackingRect.pos.x = 0.;
   trackingRect.pos.y = 0.;
   NSTrackingArea* trackingArea = [[NSTrackingArea alloc]
     initWithRect:naMakeNSRectWithRect(trackingRect)
     options:(NSTrackingAreaOptions)(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | /*NSTrackingActiveWhenFirstResponder | NSTrackingActiveInKeyWindow |*/ NSTrackingActiveInActiveApp)
-    owner:nativePtr
+    owner:nativeObj
     userInfo:nil];
-  [nativePtr addTrackingArea:trackingArea];
+  [nativeObj addTrackingArea:trackingArea];
   
-  return NA_COCOA_PTR_OBJC_TO_C(trackingArea);
+  // asdf
+  return NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(trackingArea));
 }
 
 
 
 NA_HDEF void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking) {
-  naDefineCocoaObject(NSView, nativePtr, uiElement);
+  naDefineUIElementNativeCocoaObj(NSView, nativeObj, uiElement);
   NSTrackingArea* trackingArea = NA_COCOA_PTR_C_TO_OBJC(mouseTracking);
-  [nativePtr removeTrackingArea:trackingArea];
+  [nativeObj removeTrackingArea:trackingArea];
   NA_COCOA_RELEASE(trackingArea);
 }
 

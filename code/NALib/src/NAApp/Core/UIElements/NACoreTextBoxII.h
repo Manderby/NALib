@@ -6,17 +6,25 @@
 
 
 
-NA_HDEF void na_InitTextBox(NATextBox* textBox, void* nativePtr) {
-  na_InitCoreUIElement(&textBox->uiElement, NA_UI_TEXTBOX, nativePtr);
+NA_HDEF void na_InitCoreTextBox(
+  NATextBox* textBox,
+  void* nativeTextBoxPtr)
+{
+  na_InitCoreUIElement(
+    &textBox->uiElement,
+    NA_UI_TEXTBOX,
+    nativeTextBoxPtr);
+    
   textBox->font = naCreateSystemFont();
   textBox->alignment = NA_ALIGNMENT_BEGIN;
 }
 
 
 
-NA_HDEF void na_ClearTextBox(NATextBox* textBox) {
-  na_ClearCoreUIElement(&textBox->uiElement);
+NA_HDEF void na_ClearCoreTextBox(NATextBox* textBox) {
   naRelease(textBox->font);
+
+  na_ClearCoreUIElement(&textBox->uiElement);
 }
 
 

@@ -290,11 +290,13 @@
   NA_DEF NAMetalSpace* naNewMetalSpace(NASize size) {
     NACocoaMetalSpace* cocoaMetalSpace = naNew(NACocoaMetalSpace);
 
-    NACocoaNativeMetalSpace* nativePtr = [[NACocoaNativeMetalSpace alloc]
+    NACocoaNativeMetalSpace* nativeObj = [[NACocoaNativeMetalSpace alloc]
       initWithMetalSpace:cocoaMetalSpace
       frame:naMakeNSRectWithSize(size)];
       
-    na_InitMetalSpace((NAMetalSpace*)cocoaMetalSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+    na_InitCoreMetalSpace(
+      (NAMetalSpace*)cocoaMetalSpace,
+      NA_COCOA_PTR_OBJC_TO_C(nativeObj));
 
     return (NAMetalSpace*)cocoaMetalSpace;
   }
@@ -302,54 +304,55 @@
 
 
   NA_API NABool naIsMetalTechnologyAvailable(NAMetalSpace* metalSpace) {
-    naDefineCocoaObjectConst(NACocoaNativeMetalSpace, nativePtr, metalSpace);
+    naDefineUIElementNativeCocoaObjConst(NACocoaNativeMetalSpace, nativeObj, metalSpace);
     // Security check for Sierra and High Sierra systems.
     // Damnit Apple, get your shit together!
-    return [nativePtr layer] != nil;
+    return [nativeObj layer] != nil;
   }
 
 
 
   NA_DEF void na_DestructCocoaMetalSpace(NACocoaMetalSpace* cocoaMetalSpace) {
-    na_ClearMetalSpace((NAMetalSpace*)cocoaMetalSpace);
+    na_ClearCoreMetalSpace((NAMetalSpace*)cocoaMetalSpace);
   }
 
 
   NA_DEF void* naGetMetalSpaceSystemContext(const NAMetalSpace* metalSpace) {
-    naDefineCocoaObjectConst(NACocoaNativeMetalSpace, nativePtr, metalSpace);
-    return (NA_COCOA_BRIDGE void*)[nativePtr layer];
+    // asdf
+    naDefineUIElementNativeCocoaObjConst(NACocoaNativeMetalSpace, nativeObj, metalSpace);
+    return NA_COCOA_PTR_OBJC_TO_C([nativeObj layer]);
   }
 
 
   NA_DEF void naSetMetalSpaceVisible(NAMetalSpace* metalSpace, NABool visible) {
-    naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
-    [nativePtr setHidden:visible ? NO : YES];
+    naDefineUIElementNativeCocoaObj(NACocoaNativeMetalSpace, nativeObj, metalSpace);
+    [nativeObj setHidden:visible ? NO : YES];
   }
 
 
 
   NA_DEF void naSetMetalSpaceInnerRect(NAMetalSpace* metalSpace, NARect bounds) {
-    naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
+    naDefineUIElementNativeCocoaObj(NACocoaNativeMetalSpace, nativeObj, metalSpace);
     NSRect frame = naMakeNSRectWithRect(bounds);
     frame.origin = NSMakePoint(0, 0);
-    [nativePtr setFrame: frame];
+    [nativeObj setFrame: frame];
   }
 
 
 
 NA_HDEF NARect na_GetMetalSpaceRect(const NA_UIElement* metalSpace) {
-  naDefineCocoaObjectConst(NACocoaNativeMetalSpace, nativePtr, metalSpace);
-  return naMakeRectWithNSRect([nativePtr frame]);
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeMetalSpace, nativeObj, metalSpace);
+  return naMakeRectWithNSRect([nativeObj frame]);
 }
 
 NA_HDEF void na_SetMetalSpaceRect(NA_UIElement* metalSpace, NARect rect) {
-  naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
-  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeMetalSpace, nativeObj, metalSpace);
+  [nativeObj setFrame:naMakeNSRectWithRect(rect)];
 }
 
 NA_HDEF void na_UpdateMetalSpaceUIScale(NA_UIElement* metalSpace) {
-  naDefineCocoaObject(NACocoaNativeMetalSpace, nativePtr, metalSpace);
-  [nativePtr adjustLayerFrame];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeMetalSpace, nativeObj, metalSpace);
+  [nativeObj adjustLayerFrame];
 }
 
 
@@ -362,7 +365,7 @@ NA_HDEF void na_UpdateMetalSpaceUIScale(NA_UIElement* metalSpace) {
 //    CGLContextObj cglContextObj;
 //    GLuint frameBuffer;
 //    GLuint renderBuffer;
-    int asdf; // do not comment this out, otherwise malloc will fail.
+    int dummy; // do not comment this out, otherwise malloc will fail.
   };
 
 

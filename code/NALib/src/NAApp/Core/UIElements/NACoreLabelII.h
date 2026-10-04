@@ -6,8 +6,15 @@
 
 
 
-NA_HDEF void na_InitLabel(NALabel* label, void* nativePtr) {
-  na_InitCoreUIElement(&label->uiElement, NA_UI_LABEL, nativePtr);
+NA_HDEF void na_InitCoreLabel(
+  NALabel* label,
+  void* nativeLabelPtr)
+{
+  na_InitCoreUIElement(
+    &label->uiElement,
+    NA_UI_LABEL,
+    nativeLabelPtr);
+
   label->font = naCreateSystemFont();
   label->textColor = NA_NULL;
   label->enabled = NA_TRUE;
@@ -15,10 +22,11 @@ NA_HDEF void na_InitLabel(NALabel* label, void* nativePtr) {
 
 
 
-NA_HDEF void na_ClearLabel(NALabel* label) {
-  na_ClearCoreUIElement(&label->uiElement);
+NA_HDEF void na_ClearCoreLabel(NALabel* label) {
   if(label->textColor) { naFree(label->textColor); }
   naRelease(label->font);
+
+  na_ClearCoreUIElement(&label->uiElement);
 }
 
 

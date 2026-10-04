@@ -6,13 +6,19 @@
 
 
 
-NA_HDEF void na_InitImageSpace(NAImageSpace* imageSpace, void* nativePtr) {
-  na_InitCoreUIElement(&imageSpace->uiElement, NA_UI_IMAGE_SPACE, nativePtr);
+NA_HDEF void na_InitCoreImageSpace(
+  NAImageSpace* imageSpace,
+  void* nativeImageSpacePtr)
+{
+  na_InitCoreUIElement(
+    &imageSpace->uiElement,
+    NA_UI_IMAGE_SPACE,
+    nativeImageSpacePtr);
 }
 
 
 
-NA_HDEF void na_ClearImageSpace(NAImageSpace* imageSpace) {
+NA_HDEF void na_ClearCoreImageSpace(NAImageSpace* imageSpace) {
   na_ClearCoreUIElement(&imageSpace->uiElement);
 }
 

@@ -267,16 +267,19 @@
   NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData) {
     NACocoaOpenGLSpace* cocoaOpenGLSpace = naNew(NACocoaOpenGLSpace);
 
-    NACocoaNativeOpenGLSpace* nativePtr = [[NACocoaNativeOpenGLSpace alloc]
+    NACocoaNativeOpenGLSpace* nativeObj = [[NACocoaNativeOpenGLSpace alloc]
       initWithOpenGLSpace:cocoaOpenGLSpace
       frame:naMakeNSRectWithSize(size)
       initFunc:initFunc
       initData:initData];
-    na_InitOpenGLSpace((NAOpenGLSpace*)cocoaOpenGLSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+      
+    na_InitCoreOpenGLSpace(
+      (NAOpenGLSpace*)cocoaOpenGLSpace,
+      NA_COCOA_PTR_OBJC_TO_C(nativeObj));
 
-    if([nativePtr respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]) {
+    if([nativeObj respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]) {
       NA_MACOS_AVAILABILITY_GUARD_10_7(
-        [nativePtr setWantsBestResolutionOpenGLSurface:YES];
+        [nativeObj setWantsBestResolutionOpenGLSurface:YES];
       )
     }
     
@@ -286,31 +289,32 @@
 
 
   NA_DEF void na_DestructCocoaOpenGLSpace(NACocoaOpenGLSpace* cocoaOpenGLSpace) {
-    na_ClearOpenGLSpace((NAOpenGLSpace*)cocoaOpenGLSpace);
+    na_ClearCoreOpenGLSpace((NAOpenGLSpace*)cocoaOpenGLSpace);
   }
 
 
 
   NA_DEF void naSwapOpenGLSpaceBuffer(NAOpenGLSpace* openGLSpace) {
-    [[(NA_COCOA_BRIDGE NACocoaNativeOpenGLSpace*)(openGLSpace->uiElement.nativePtr) openGLContext] flushBuffer];
+    naDefineUIElementNativeCocoaObj(NACocoaNativeOpenGLSpace, nativeObj, openGLSpace);
+    [[nativeObj openGLContext] flushBuffer];
   }
 
 
 
   NA_DEF void naSetOpenGLSpaceVisible(NAOpenGLSpace* openGLSpace, NABool visible) {
-    naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
-    [nativePtr setHidden:visible ? NO : YES];
+    naDefineUIElementNativeCocoaObj(NACocoaNativeOpenGLSpace, nativeObj, openGLSpace);
+    [nativeObj setHidden:visible ? NO : YES];
   }
 
 
   NA_HDEF NARect na_GetOpenGLSpaceRect(const NA_UIElement* openGLSpace) {
-    naDefineCocoaObjectConst(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
-    return naMakeRectWithNSRect([nativePtr frame]);
+    naDefineUIElementNativeCocoaObjConst(NACocoaNativeOpenGLSpace, nativeObj, openGLSpace);
+    return naMakeRectWithNSRect([nativeObj frame]);
   }
 
   NA_HDEF void na_SetOpenGLSpaceRect(NA_UIElement* openGLSpace, NARect rect) {
-    naDefineCocoaObject(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
-    [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+    naDefineUIElementNativeCocoaObj(NACocoaNativeOpenGLSpace, nativeObj, openGLSpace);
+    [nativeObj setFrame:naMakeNSRectWithRect(rect)];
   }
 
   NA_HDEF void na_UpdateOpenGLSpaceUIScale(NA_UIElement* openGLSpace) {
@@ -318,8 +322,9 @@
   }
   
   NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace) {
-    naDefineCocoaObjectConst(NACocoaNativeOpenGLSpace, nativePtr, openGLSpace);
-    return (NA_COCOA_BRIDGE void*)[nativePtr openGLContext];
+    // asdf
+    naDefineUIElementNativeCocoaObjConst(NACocoaNativeOpenGLSpace, nativeObj, openGLSpace);
+    return NA_COCOA_PTR_OBJC_TO_C([nativeObj openGLContext]);
   }
 
 

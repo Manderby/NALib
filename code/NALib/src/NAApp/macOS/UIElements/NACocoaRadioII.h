@@ -85,7 +85,8 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
 }
 
 - (void) setNAFont:(NAFont*)font{
-  [self setFont:NA_COCOA_PTR_C_TO_OBJC(naGetFontNativePointer(font))];
+  NSFont* nativeFontObj = (NA_COCOA_BRIDGE NSFont*)(naGetFontNativePointer(font));
+  [self setFont:nativeFontObj];
 }
 
 - (void) onPressed:(id)sender{
@@ -114,15 +115,16 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
   NACocoaRadio* cocoaRadio = naNew(NACocoaRadio);
 
-  NACocoaNativeRadio* nativePtr = [[NACocoaNativeRadio alloc]
+  NACocoaNativeRadio* nativeObj = [[NACocoaNativeRadio alloc]
     initWithRadio:cocoaRadio
     frame:naMakeNSRectWithSize(naMakeSize(width, 18))];
     
-  na_InitRadio((NARadio*)cocoaRadio, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitCoreRadio(
+    (NARadio*)cocoaRadio,
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj));
   
-  [nativePtr setNAFont:cocoaRadio->radio.font];
-
-  [nativePtr setText:text];
+  [nativeObj setNAFont:cocoaRadio->radio.font];
+  [nativeObj setText:text];
   
   return (NARadio*)cocoaRadio;
 }
@@ -130,64 +132,64 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
 
 
 NA_DEF void na_DestructCocoaRadio(NACocoaRadio* cocoaRadio) {
-  na_ClearRadio((NARadio*)cocoaRadio);
+  na_ClearCoreRadio((NARadio*)cocoaRadio);
 }
 
 
 
 NA_DEF void naSetRadioText(NARadio* radio, const NAUTF8Char* text) {
-  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
-  [nativePtr setText:text];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeRadio, nativeObj, radio);
+  [nativeObj setText:text];
 }
 
 
 
 NA_DEF void naSetRadioTextColor(NARadio* radio, const NAColor* color) {
-  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
-  [nativePtr setColor:color];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeRadio, nativeObj, radio);
+  [nativeObj setColor:color];
 }
 
 
 
 NA_DEF void naSetRadioState(NARadio* radio, NABool state) {
-  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
-  [nativePtr setRadioState:state];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeRadio, nativeObj, radio);
+  [nativeObj setRadioState:state];
 }
 
 
 
 NA_DEF void naSetRadioVisible(NARadio* radio, NABool visible) {
-  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
-  [nativePtr setHidden:(BOOL)!visible];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeRadio, nativeObj, radio);
+  [nativeObj setHidden:(BOOL)!visible];
 }
 
 
 
 NA_DEF void naSetRadioEnabled(NARadio* radio, NABool enabled) {
-  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
-  [nativePtr setEnabled:(BOOL)enabled];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeRadio, nativeObj, radio);
+  [nativeObj setEnabled:(BOOL)enabled];
 }
 
 
 
 NA_DEF NABool naGetRadioState(const NARadio* radio) {
-  naDefineCocoaObjectConst(NACocoaNativeRadio, nativePtr, radio);
-  return [nativePtr radioState];
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeRadio, nativeObj, radio);
+  return [nativeObj radioState];
 }
 
 
 NA_HDEF NARect na_GetRadioRect(const NA_UIElement* radio) {
-  naDefineCocoaObjectConst(NACocoaNativeRadio, nativePtr, radio);
-  return naMakeRectWithNSRect([nativePtr frame]);
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeRadio, nativeObj, radio);
+  return naMakeRectWithNSRect([nativeObj frame]);
 }
 
 
 
 NA_HDEF void na_SetRadioRect(NA_UIElement* radio, NARect rect) {
-  naDefineCocoaObject(NACocoaNativeRadio, nativePtr, radio);
-  [[nativePtr getEncapsulatingView] setFrame:naMakeNSRectWithRect(rect)];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeRadio, nativeObj, radio);
+  [[nativeObj getEncapsulatingView] setFrame:naMakeNSRectWithRect(rect)];
   rect.pos = naMakePos(0, 0);
-  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+  [nativeObj setFrame:naMakeNSRectWithRect(rect)];
 }
 
 

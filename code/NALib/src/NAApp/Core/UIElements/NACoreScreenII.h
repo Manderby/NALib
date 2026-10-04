@@ -6,8 +6,19 @@
 
 
 
-NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, const NAUTF8Char* name, NARect rect, double uiScale) {
-  na_InitCoreUIElement(&screen->uiElement, NA_UI_SCREEN, nativePtr);
+NA_HDEF void na_InitCoreScreen(
+  NAScreen* screen,
+  void* nativeScreenPtr,
+  NABool isMain,
+  const NAUTF8Char* name,
+  NARect rect,
+  double uiScale)
+{
+  na_InitCoreUIElement(
+    &screen->uiElement,
+    NA_UI_SCREEN,
+    nativeScreenPtr);
+  
   screen->isMain = isMain;
   screen->name = naNewStringWithFormat("%s", name);
   screen->rect = rect;
@@ -21,14 +32,15 @@ NA_HDEF void na_InitScreen(NAScreen* screen, void* nativePtr, NABool isMain, con
 
 
 
-NA_HDEF void na_ClearScreen(NAScreen* screen) {
-  na_ClearCoreUIElement(&screen->uiElement);
+NA_HDEF void na_ClearCoreScreen(NAScreen* screen) {
   #if NA_DEBUG
     if(!naIsListEmpty(&screen->windows))
       naError("Screen still contains windows");
   #endif
   naClearList(&screen->windows, NA_NULL);  // does not own the windows.
   naDelete(screen->name);
+
+  na_ClearCoreUIElement(&screen->uiElement);
 }
 
 

@@ -6,13 +6,20 @@
 
 
 
-NA_HDEF void na_InitSpace(NASpace* space, void* nativePtr) {
+NA_HDEF void na_InitCoreSpace(
+  NASpace* space,
+  void* nativeSpacePtr)
+{
   #if NA_DEBUG
     if(!space)
       naCrash("space is nullptr");
   #endif
 
-  na_InitCoreUIElement(&space->uiElement, NA_UI_SPACE, nativePtr);
+  na_InitCoreUIElement(
+    &space->uiElement,
+    NA_UI_SPACE,
+    nativeSpacePtr);
+    
   space->layoutDirections = NA_LAYOUT_DIRECTIONS_INHERIT;
   naInitList(&space->childs);
   space->backgroundColor = NA_NULL;
@@ -20,7 +27,7 @@ NA_HDEF void na_InitSpace(NASpace* space, void* nativePtr) {
 
 
 
-NA_HDEF void na_ClearSpace(NASpace* space) {
+NA_HDEF void na_ClearCoreSpace(NASpace* space) {
   #if NA_DEBUG
     if(!space)
       naCrash("space is nullptr");

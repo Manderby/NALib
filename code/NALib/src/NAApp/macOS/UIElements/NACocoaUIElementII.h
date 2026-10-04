@@ -3,15 +3,16 @@
 // implementation necessary.
 
 
+
 #include <objc/objc-runtime.h>
 
-int na_naUIElementKey = 42; // Arbitrarily but carefully chosen number.
+int na_naUIElementKey = 42; // Arbitrary but carefully chosen number.
 
 
 
 NA_HDEF void* na_GetUINALibEquivalent(void* nativePtr) {
-  NA_UIElement* obj = NA_COCOA_PTR_OBJC_TO_C(objc_getAssociatedObject(NA_COCOA_PTR_C_TO_OBJC(nativePtr), &na_naUIElementKey));
-  return obj;
+  NA_UIElement* elem = (NA_COCOA_BRIDGE NA_UIElement*)(objc_getAssociatedObject(((NA_COCOA_BRIDGE id)nativePtr), &na_naUIElementKey));
+  return elem;
 }
 
 

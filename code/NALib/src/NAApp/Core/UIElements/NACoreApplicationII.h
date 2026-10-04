@@ -31,7 +31,10 @@ NA_HDEF NABool na_IsApplicationRunning(void) {
 
 
 
-NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
+NA_HDEF void na_InitCoreApplication(
+  NAApplication* app,
+  void* nativeApplicationPtr)
+{
   #if NA_DEBUG
     if(na_App)
       naError("Application already started.");
@@ -72,7 +75,10 @@ NA_HDEF void na_InitApplication(NAApplication* app, void* nativePtr) {
 
   // This is done at the very end of the InitApplication function as the
   // application must be fully functional before it can init any UIElements.
-  na_InitCoreUIElement(&app->uiElement, NA_UI_APPLICATION, nativePtr);
+  na_InitCoreUIElement(
+    &app->uiElement,
+    NA_UI_APPLICATION,
+    nativeApplicationPtr);
 }
 
 
@@ -86,6 +92,9 @@ NA_HDEF void na_TerminateApplication(NAMutator cleanup, void* arg) {
   // Shutdown the preferences if necessary
   na_ShutdownPreferences();
 
+  // Stop the translator
+  naStopTranslator();
+
   // Delete the application object itself.
   naDelete(na_App);
   
@@ -95,12 +104,14 @@ NA_HDEF void na_TerminateApplication(NAMutator cleanup, void* arg) {
 
 
 
-NA_HDEF void na_ClearApplication(NAApplication* app) {
+NA_HDEF void na_ClearCoreApplication(NAApplication* app) {
   #if NA_DEBUG
     if(!na_App)
       naCrash("No Application running");
   #endif
 
+  // asdf: proper cleanup process
+  
   naDeallocNotifier(na_App->notifier);
 
   // An NAWindow removes itself from the windows array automatically. So
@@ -117,8 +128,9 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
   }
   naClearList(&na_App->screens, NA_NULL);
 
-  naStopTranslator();
   na_ClearCoreUIElement(&app->uiElement);
+
+
 
   na_DeallocMouseStatus(app->mouseStatus);
   if(app->keyStroke) { naDelete(app->keyStroke); }
@@ -128,8 +140,11 @@ NA_HDEF void na_ClearApplication(NAApplication* app) {
 
   // This must be at the very end as the uiElements are used up until the last
   // ClearUIElement operation.
-  // todo test if all uiElements are gone.
-  naClearList(&na_App->uiElements, NA_NULL);
+  // todo: test if all uiElements are gone.
+//  naClearList(&na_App->uiElements, (NAMutator)naDelete);
+  while(!naIsListEmpty(&na_App->uiElements)) {
+    naDelete(naGetListFirstMutable(&na_App->uiElements));
+  }
   
   if(app->appName)
     naDelete(app->appName);
@@ -256,17 +271,21 @@ NA_DEF void naCorrectApplicationWindowRect(NARect* contentRect, NABool titleless
 
 
 
-NA_HDEF NAScreen* na_GetApplicationScreenWithNativePtr(void* nativePtr) {
+NA_HDEF NAScreen* na_GetApplicationScreenWithNativeScreenPtr(const void* nativeScreenPtr) {
   NAScreen* theScreen = NA_NULL;
   NAListIterator it = naMakeListMutator(&na_App->screens);
   while(naIterateList(&it)) {
     NAScreen* screen = naGetListCurMutable(&it);
-    if(naGetUIElementNativePtrConst(screen) == nativePtr) {
+    if(naGetUIElementNativePtrConst(screen) == nativeScreenPtr) {
       theScreen = screen;
       break;
     }
   }
   naClearListIterator(&it);
+  #if NA_DEBUG
+    if(!theScreen)
+      naError("Requested Screen not found");
+  #endif
   return theScreen;
 }
 
@@ -416,6 +435,19 @@ NA_HDEF void na_SetApplicationKeyStroke(NAApplication* app, NAKeyStroke* keyStro
   if(app->keyStroke) { naDelete(app->keyStroke); }
   app->keyStroke = keyStroke;
 }
+
+
+
+#if NA_DEBUG
+  NA_HDEF void na_RegisterUIElement(NA_UIElement* elem) {
+    NAApplication* app = naGetApplication();
+    naAddListLastMutable(&app->uiElements, elem);
+  }
+  NA_HDEF void na_UnregisterUIElement(NA_UIElement* elem) {
+    NAApplication* app = naGetApplication();
+    naRemoveListData(&app->uiElements, elem);
+  }
+#endif // NA_DEBUG
 
 
 

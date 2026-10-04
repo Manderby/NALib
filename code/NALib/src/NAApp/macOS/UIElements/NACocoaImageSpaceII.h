@@ -73,17 +73,20 @@ NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
 NA_DEF NAImageSpace* _Nonnull naNewImageSpace(NAImageSet* _Nullable imageSet, NASize size) {
   NACocoaImageSpace* cocoaImageSpace = naNew(NACocoaImageSpace);
 
-  NACocoaNativeImageSpace* nativePtr = [[NACocoaNativeImageSpace alloc]
+  NACocoaNativeImageSpace* nativeObj = [[NACocoaNativeImageSpace alloc]
     initWithImageSpace:cocoaImageSpace
     frame:naMakeNSRectWithSize(size)];
-  na_InitImageSpace((NAImageSpace*)cocoaImageSpace, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+    
+  na_InitCoreImageSpace(
+    (NAImageSpace*)cocoaImageSpace,
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj));
   
   if(imageSet) {
     cocoaImageSpace->imageSpace.imageSet = naRetain(imageSet);
   }else{
     cocoaImageSpace->imageSpace.imageSet = NA_NULL;
   }
-  [nativePtr setImageSet: imageSet];
+  [nativeObj setImageSet: imageSet];
 
   return (NAImageSpace*)cocoaImageSpace;
 }
@@ -94,13 +97,13 @@ NA_DEF void na_DestructCocoaImageSpace(NACocoaImageSpace* _Nonnull cocoaImageSpa
   if(cocoaImageSpace->imageSpace.imageSet) {
     naRelease(cocoaImageSpace->imageSpace.imageSet);
   }
-  na_ClearImageSpace((NAImageSpace*)cocoaImageSpace);
+  na_ClearCoreImageSpace((NAImageSpace*)cocoaImageSpace);
 }
 
 
 
 NA_DEF void naSetImageSpaceImage(NAImageSpace* _Nonnull imageSpace, NAImageSet* _Nullable imageSet) {
-  naDefineCocoaObjectConst(NACocoaNativeImageSpace, nativePtr, imageSpace);
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeImageSpace, nativeObj, imageSpace);
   
   if(imageSpace->imageSet) {
     naRelease(imageSpace->imageSet);
@@ -110,19 +113,19 @@ NA_DEF void naSetImageSpaceImage(NAImageSpace* _Nonnull imageSpace, NAImageSet* 
   }else{
     imageSpace->imageSet = NA_NULL;
   }
-  [nativePtr setImageSet: imageSet];
+  [nativeObj setImageSet: imageSet];
 }
 
 
 
 NA_HDEF NARect na_GetImageSpaceRect(const NA_UIElement* _Nonnull imageSpace) {
-  naDefineCocoaObjectConst(NACocoaNativeImageSpace, nativePtr, imageSpace);
-  return naMakeRectWithNSRect([nativePtr frame]);
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeImageSpace, nativeObj, imageSpace);
+  return naMakeRectWithNSRect([nativeObj frame]);
 }
 
 NA_HDEF void na_SetImageSpaceRect(NA_UIElement* _Nonnull imageSpace, NARect rect) {
-  naDefineCocoaObjectConst(NACocoaNativeImageSpace, nativePtr, imageSpace);
-  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeImageSpace, nativeObj, imageSpace);
+  [nativeObj setFrame:naMakeNSRectWithRect(rect)];
 }
 
 

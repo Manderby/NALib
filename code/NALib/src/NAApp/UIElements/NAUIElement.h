@@ -172,16 +172,17 @@ NA_API double naGetUIElementUIScale(const void* uiElement);
 // that in the background, NALib implements certain Objective-C methods to
 // provide a UI most closely resembling a native experience. The nativePtr
 // corresponds to NSResponder*. Note that also NSApplication inherits from
-// NSResponder.
+// NSResponder. Be aware: You need to properly bridge the pointer!
 //
 // Use the following function to retrieve the nativePtr for any ui element:
-
 NA_API void* naGetUIElementNativePtr(void* uiElement);
 NA_API void* naGetUIElementNativePtrConst(const void* uiElement);
 
 
+
 NA_API void naDebugUIElement(const void* elem);
 NA_API void naDebugUIElementLayout(const void* elem);
+
 
 
 #ifdef __cplusplus

@@ -82,10 +82,12 @@ NA_RUNTIME_TYPE(NACocoaSlider, na_DestructCocoaSlider, NA_FALSE);
 NA_DEF NASlider* naNewSlider(double width) {
   NACocoaSlider* cocoaSlider = naNew(NACocoaSlider);
   
-  NACocoaNativeSlider* nativePtr = [[NACocoaNativeSlider alloc]
+  NACocoaNativeSlider* nativeObj = [[NACocoaNativeSlider alloc]
     initWithSlider:cocoaSlider
     frame:naMakeNSRectWithSize(naMakeSize(width, 26))];
-  na_InitSlider((NASlider*)cocoaSlider, NA_COCOA_PTR_OBJC_TO_C(nativePtr));
+  na_InitCoreSlider(
+    (NASlider*)cocoaSlider,
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj));
 
   return (NASlider*)cocoaSlider;
 }
@@ -93,30 +95,30 @@ NA_DEF NASlider* naNewSlider(double width) {
 
 
 NA_DEF void na_DestructCocoaSlider(NACocoaSlider* cocoaSlider) {
-  na_ClearSlider((NASlider*)cocoaSlider);
+  na_ClearCoreSlider((NASlider*)cocoaSlider);
 }
 
 
 
 NA_DEF void naSetSliderEnabled(NASlider* slider, NABool enabled) {
-  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
-  [nativePtr setEnabled:(BOOL)enabled];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeSlider, nativeObj, slider);
+  [nativeObj setEnabled:(BOOL)enabled];
 }
 
 
 
 NA_DEF void naSetSliderRange(NASlider* slider, double min, double max, size_t tickCount) {
-  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeSlider, nativeObj, slider);
   slider->min = min;
   slider->max = max;
-  [nativePtr setTickCount:tickCount];
+  [nativeObj setTickCount:tickCount];
 }
 
 
 
 NA_DEF double naGetSliderValue(const NASlider* slider) {
-  naDefineCocoaObjectConst(NACocoaNativeSlider, nativePtr, slider);
-  double plainValue = [nativePtr getSliderValue];
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeSlider, nativeObj, slider);
+  double plainValue = [nativeObj getSliderValue];
   return plainValue * (slider->max - slider->min) + slider->min;
 }
 
@@ -129,9 +131,9 @@ NA_DEF double naGetSliderStaticValue(const NASlider* slider) {
 
 
 NA_DEF void naSetSliderValue(NASlider* slider, double value) {
-  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeSlider, nativeObj, slider);
   double plainValue = (value - slider->min) / (slider->max - slider->min);
-  [nativePtr setSliderValue:plainValue];
+  [nativeObj setSliderValue:plainValue];
   if(!slider->sliderInMovement) {
     slider->staticValue = value;
   }
@@ -139,13 +141,13 @@ NA_DEF void naSetSliderValue(NASlider* slider, double value) {
 
 
 NA_HDEF NARect na_GetSliderRect(const NA_UIElement* slider) {
-  naDefineCocoaObjectConst(NACocoaNativeSlider, nativePtr, slider);
-  return naMakeRectWithNSRect([nativePtr frame]);
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeSlider, nativeObj, slider);
+  return naMakeRectWithNSRect([nativeObj frame]);
 }
 
 NA_HDEF void na_SetSliderRect(NA_UIElement* slider, NARect rect) {
-  naDefineCocoaObject(NACocoaNativeSlider, nativePtr, slider);
-  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeSlider, nativeObj, slider);
+  [nativeObj setFrame:naMakeNSRectWithRect(rect)];
 }
 
 

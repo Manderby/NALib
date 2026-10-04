@@ -255,7 +255,9 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void) {
 NA_HDEF NAApplication* na_NewApplication(void) {
   NACocoaApplication* cocoaApplication = naNew(NACocoaApplication);
 
-  na_InitApplication(&cocoaApplication->application, NA_COCOA_PTR_OBJC_TO_C(NSApp));
+  na_InitCoreApplication(
+    &cocoaApplication->application,
+    NA_COCOA_PTR_OBJC_TO_C(NSApp));
 
   return (NAApplication*)cocoaApplication;
 }
@@ -263,7 +265,7 @@ NA_HDEF NAApplication* na_NewApplication(void) {
 
 
 NA_DEF void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication) {
-  na_ClearApplication((NAApplication*)cocoaApplication);
+  na_ClearCoreApplication((NAApplication*)cocoaApplication);
 }
 
 
@@ -278,8 +280,6 @@ NA_DEF void na_DestructCocoaApplication(NACocoaApplication* cocoaApplication) {
 #else
   NA_DEF void naDebugUIElement(const void* elem) { NA_UNUSED(elem); }
   NA_DEF void naDebugUIElementLayout(const void* elem) { NA_UNUSED(elem); }
-  NA_HDEF void na_UndebugUIElement(const NA_UIElement* elem) { NA_UNUSED(elem); }
-  NA_HDEF NABool na_IsUIElementBeingDebugged(const NA_UIElement* elem) { NA_UNUSED(elem); return NA_FALSE;}
 #endif
 
 

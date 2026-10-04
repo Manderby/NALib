@@ -7,16 +7,20 @@
 
 
 
-NA_HDEF void na_InitWindow(
+NA_HDEF void na_InitCoreWindow(
   NAWindow* window,
-  void* nativePtr,
+  void* nativeWindowPtr,
   NAScreen* screen,
   NASpace* contentSpace,
   NABool fullScreen,
   NABool resizeable,
   NARect windowedFrame)
 {
-  na_InitCoreUIElement(&window->uiElement, NA_UI_WINDOW, nativePtr);
+  na_InitCoreUIElement(
+    &window->uiElement,
+    NA_UI_WINDOW,
+    nativeWindowPtr);
+    
   naAddListLastMutable(&naGetApplication()->windows, window);
   window->storageTag = 0;
   window->contentSpace = contentSpace;
@@ -33,7 +37,7 @@ NA_HDEF void na_InitWindow(
 
 
 
-NA_HDEF void na_ClearWindow(NAWindow* window) {
+NA_HDEF void na_ClearCoreWindow(NAWindow* window) {
   naRemoveListData(&naGetApplication()->windows, window);
   
   if(window->contentSpace)

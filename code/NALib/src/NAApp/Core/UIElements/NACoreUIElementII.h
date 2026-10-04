@@ -39,7 +39,11 @@ void na_DeallocKeyboardShortcutReaction(NA_KeyboardShortcutReaction* keyReaction
 
 
 
-NA_HDEF void na_InitCoreUIElement(NA_UIElement* uiElement, NAUIElementType elementType, void* nativePtr) {
+NA_HDEF void na_InitCoreUIElement(
+  NA_UIElement* uiElement,
+  NAUIElementType elementType,
+  void* nativePtr)
+{
   uiElement->parent = NA_NULL;
   uiElement->elementType = elementType;
   uiElement->nativePtr = nativePtr;
@@ -58,9 +62,8 @@ NA_HDEF void na_InitCoreUIElement(NA_UIElement* uiElement, NAUIElementType eleme
   
   #if NA_DEBUG
     uiElement->layoutRects = NA_NULL;
+    na_RegisterUIElement(uiElement);
   #endif // NA_DEBUG
-  
-  naAddListLastMutable(&naGetApplication()->uiElements, uiElement);
 }
 
 
@@ -73,7 +76,7 @@ NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
     if(uiElement->layoutRects) {
       naFree(uiElement->layoutRects);
     }
-  #endif
+  #endif // NA_DEBUG
 
   if(uiElement->mouseTracking) {
     na_ClearMouseTracking(uiElement, uiElement->mouseTracking);
@@ -87,12 +90,16 @@ NA_HDEF void na_ClearCoreUIElement(NA_UIElement* uiElement) {
 //    na_RemoveSpaceChild(parentSpace, uiElement);
 //  }
   
+  // Remove any system dependent initialization
   na_ClearSystemUIElement(uiElement->nativePtr);
+
+  // Delete the pointer for good.
   na_ClearUINativePtr(uiElement->nativePtr);
 
-  naRemoveListData(&naGetApplication()->uiElements, uiElement);
-
-  na_UndebugUIElement(uiElement);
+  #if NA_DEBUG
+    na_UnregisterUIElement(uiElement);
+    na_UndebugUIElement(uiElement);
+  #endif
 }
 
 

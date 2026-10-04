@@ -50,10 +50,13 @@ NA_RUNTIME_TYPE(NACocoaMenu, na_DestructCocoaMenu, NA_FALSE);
 NA_DEF NAMenu* naNewMenu() {
   NACocoaMenu* cocoaMenu = naNew(NACocoaMenu);
   
-  NACocoaNativeMenu* nativePtr = [[NACocoaNativeMenu alloc]
+  NACocoaNativeMenu* nativeObj = [[NACocoaNativeMenu alloc]
     initWithMenu:cocoaMenu];
     
-  na_InitMenu((NAMenu*)cocoaMenu, NA_COCOA_PTR_OBJC_TO_C(nativePtr), NA_NULL);
+  na_InitCoreMenu(
+    (NAMenu*)cocoaMenu,
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj),
+    NA_NULL);
 
   return (NAMenu*)cocoaMenu;
 }
@@ -61,20 +64,19 @@ NA_DEF NAMenu* naNewMenu() {
 
 
 NA_DEF void na_DestructCocoaMenu(NACocoaMenu* cocoaMenu) {
-  na_ClearMenu((NAMenu*)cocoaMenu);
+  na_ClearCoreMenu((NAMenu*)cocoaMenu);
 }
 
 
 
 NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atItem) {
-  naDefineCocoaObject(NACocoaNativeMenu, nativeMenuPtr, menu);
-  naDefineCocoaObject(NACocoaNativeMenuItem, nativeItemPtr, item);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeMenu, nativeMenuObj, menu);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeMenuItem, nativeItemObj, item);
 
   if(atItem) {
-//    naDefineCocoaObjectConst(NACocoaNativeMenuItem, nativeItemAtPtr, atItem);
-    [nativeMenuPtr addMenuItem:nativeItemPtr atItem:atItem];
+    [nativeMenuObj addMenuItem:nativeItemObj atItem:atItem];
   }else{
-    [nativeMenuPtr addMenuItem:nativeItemPtr atItem:nil];
+    [nativeMenuObj addMenuItem:nativeItemObj atItem:nil];
   }
   
   na_AddMenuChild(menu, item, atItem);
@@ -84,8 +86,8 @@ NA_DEF void naAddMenuItem(NAMenu* menu, NAMenuItem* item, const NAMenuItem* atIt
 
 NA_DEF void naPresentMenu(const NAMenu* menu, NAPos pos, void* parentUIElement) {
   NA_UNUSED(parentUIElement);
-  naDefineCocoaObjectConst(NACocoaNativeMenu, nativePtr, menu);
-  [nativePtr displayAt:pos];
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeMenu, nativeObj, menu);
+  [nativeObj displayAt:pos];
 }
 
 

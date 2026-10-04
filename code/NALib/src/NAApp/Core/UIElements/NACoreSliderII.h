@@ -6,8 +6,15 @@
 
 
 
-NA_HDEF void na_InitSlider(NASlider* slider, void* nativePtr) {
-  na_InitCoreUIElement(&slider->uiElement, NA_UI_SLIDER, nativePtr);
+NA_HDEF void na_InitCoreSlider(
+  NASlider* slider,
+  void* nativeSliderPtr)
+{
+  na_InitCoreUIElement(
+    &slider->uiElement,
+    NA_UI_SLIDER,
+    nativeSliderPtr);
+  
   slider->staticValue = 0.;
   slider->sliderInMovement = NA_FALSE;
   slider->min = 0.;
@@ -16,7 +23,7 @@ NA_HDEF void na_InitSlider(NASlider* slider, void* nativePtr) {
 
 
 
-NA_HDEF void na_ClearSlider(NASlider* slider) {
+NA_HDEF void na_ClearCoreSlider(NASlider* slider) {
   na_ClearCoreUIElement(&slider->uiElement);
 }
 

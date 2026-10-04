@@ -6,8 +6,20 @@
 
 
 
-NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* text, const NAUTF8Char* text2, const NAImageSet* imageSet, const NAImageSet* imageSet2, uint32 flags) {
-  na_InitCoreUIElement(&button->uiElement, NA_UI_BUTTON, nativePtr);
+NA_HDEF void na_InitCoreButton(
+  NAButton* button,
+  void* nativeButtonPtr,
+  const NAUTF8Char* text,
+  const NAUTF8Char* text2,
+  const NAImageSet* imageSet,
+  const NAImageSet* imageSet2,
+  uint32 flags)
+{
+  na_InitCoreUIElement(
+    &button->uiElement,
+    NA_UI_BUTTON,
+    nativeButtonPtr);
+    
   button->text = NA_NULL;
   button->text2 = NA_NULL;
   button->hint = NA_NULL;
@@ -22,7 +34,7 @@ NA_HDEF void na_InitButton(NAButton* button, void* nativePtr, const NAUTF8Char* 
 
 
 
-NA_HDEF void na_ClearButton(NAButton* button) {
+NA_HDEF void na_ClearCoreButton(NAButton* button) {
   if(button->text)
     naFree(button->text);
   if(button->text2)

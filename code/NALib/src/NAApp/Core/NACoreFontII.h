@@ -7,7 +7,7 @@
 
 
 struct NAFont{
-  void* nativePtr;  // HFONT on Windows, NSFont* on Mac
+  void* nativeFontPtr;  // HFONT on Windows, NSFont* on Mac
   NAString* name;
   uint32 flags;
   double size;
@@ -19,13 +19,13 @@ NA_RUNTIME_TYPE(NAFont, na_DestructFont, NA_TRUE);
 
 
 NA_HDEF NAFont* na_CreateFont(
-  void* nativePtr,
+  void* nativeFontPtr,
   const NAString* name,
   uint32 flags,
   double size)
 {
   NAFont* font = naCreate(NAFont);
-  font->nativePtr = nativePtr;
+  font->nativeFontPtr = nativeFontPtr;
   font->name = naNewStringExtraction(name, NA_ZERO_i64, NA_MINUS_ONE_i64);
   font->flags = flags;
   font->size = size;
@@ -33,7 +33,7 @@ NA_HDEF NAFont* na_CreateFont(
 }
 
 NA_HDEF void na_DestructFont(NAFont* font) {
-  na_DestructFontNativePtr(font->nativePtr);
+  na_DestructFontNativePtr(font->nativeFontPtr);
   naDelete(font->name);
 }
 
@@ -44,7 +44,7 @@ NA_DEF NAFont* naCreateSystemFont(void) {
 }
 
 NA_DEF void* naGetFontNativePointer(const NAFont* font) {
-  return font->nativePtr;
+  return font->nativeFontPtr;
 }
 
 NA_DEF const NAString* naGetFontName(const NAFont* font) {

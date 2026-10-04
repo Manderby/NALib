@@ -59,19 +59,19 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
   [super drawRect:dirtyRect];
 }
 
-- (BOOL)isAccessibilityElement
-{
-    return YES;
-}
-
-- (NSString *)accessibilityHelp
-{
-  if(cocoaButton->button.hint) {
-    return [NSString stringWithUTF8String:cocoaButton->button.hint];
-  }else{
-    return @"";
-  }
-}
+//- (BOOL)isAccessibilityElement
+//{
+//    return YES;
+//}
+//
+//- (NSString *)accessibilityHelp
+//{
+//  if(cocoaButton->button.hint) {
+//    return [NSString stringWithUTF8String:cocoaButton->button.hint];
+//  }else{
+//    return @"";
+//  }
+//}
 
 - (bool) isImage{
   return isImage;
@@ -243,23 +243,24 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
 
   uint32 flags = NA_BUTTON_BORDERED;
   
-  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
+  NACocoaNativeButton* nativeObj = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
     frame:naMakeNSRectWithSize(naMakeSize(
       width,
       NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
-  na_InitButton(
+      
+  na_InitCoreButton(
     (NAButton*)cocoaButton,
-    NA_COCOA_PTR_OBJC_TO_C(nativePtr),
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj),
     text,
     NA_NULL,
     NA_NULL,
     NA_NULL,
     flags);
   
-  [nativePtr updateButtonText];
+  [nativeObj updateButtonText];
   
   return (NAButton*)cocoaButton;
 }
@@ -272,23 +273,24 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
 
-  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
+  NACocoaNativeButton* nativeObj = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:NO
     frame:naMakeNSRectWithSize(naMakeSize(
       width,
       NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
-  na_InitButton(
+      
+  na_InitCoreButton(
     (NAButton*)cocoaButton,
-    NA_COCOA_PTR_OBJC_TO_C(nativePtr),
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj),
     text,
     text2,
     NA_NULL,
     NA_NULL,
     flags);
   
-  [nativePtr updateButtonText];
+  [nativeObj updateButtonText];
   
   return (NAButton*)cocoaButton;
 }
@@ -300,23 +302,24 @@ NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
   
   uint32 flags = NA_BUTTON_BORDERED;
 
-  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
+  NACocoaNativeButton* nativeObj = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(naMakeSize(
       width,
       NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
-  na_InitButton(
+      
+  na_InitCoreButton(
     (NAButton*)cocoaButton,
-    NA_COCOA_PTR_OBJC_TO_C(nativePtr),
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj),
     NA_NULL,
     NA_NULL,
     icon,
     NA_NULL,
     flags);
   
-  [nativePtr updateImages];
+  [nativeObj updateImages];
   
   // For hovering effects:
   na_RetainMouseTracking(&cocoaButton->button.uiElement);
@@ -331,23 +334,24 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
   
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
 
-  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
+  NACocoaNativeButton* nativeObj = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(naMakeSize(
       width,
       NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
-  na_InitButton(
+      
+  na_InitCoreButton(
     (NAButton*)cocoaButton,
-    NA_COCOA_PTR_OBJC_TO_C(nativePtr),
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj),
     NA_NULL,
     NA_NULL,
     icon,
     icon2 ? icon2 : icon,
     flags);
       
-  [nativePtr updateImages];
+  [nativeObj updateImages];
 
   // For hovering effects:
   na_RetainMouseTracking(&cocoaButton->button.uiElement);
@@ -362,21 +366,22 @@ NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet, NASize size) {
   
   uint32 flags = 0;
 
-  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
+  NACocoaNativeButton* nativeObj = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(size)];
-  na_InitButton(
+    
+  na_InitCoreButton(
     (NAButton*)cocoaButton,
-    NA_COCOA_PTR_OBJC_TO_C(nativePtr),
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj),
     NA_NULL,
     NA_NULL,
     imageSet,
     NA_NULL,
     flags);
   
-  [nativePtr updateImages];
+  [nativeObj updateImages];
 
   // For hovering effects:
   na_RetainMouseTracking(&cocoaButton->button.uiElement);
@@ -391,21 +396,22 @@ NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImage
   
   uint32 flags = NA_BUTTON_STATEFUL;
 
-  NACocoaNativeButton* nativePtr = [[NACocoaNativeButton alloc]
+  NACocoaNativeButton* nativeObj = [[NACocoaNativeButton alloc]
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(size)];
-  na_InitButton(
+    
+  na_InitCoreButton(
     (NAButton*)cocoaButton,
-    NA_COCOA_PTR_OBJC_TO_C(nativePtr),
+    NA_COCOA_PTR_OBJC_TO_C(nativeObj),
     NA_NULL,
     NA_NULL,
     imageSet,
     imageSet2,
     flags);
   
-  [nativePtr updateImages];
+  [nativeObj updateImages];
 
   // For hovering effects:
   na_RetainMouseTracking(&cocoaButton->button.uiElement);
@@ -419,7 +425,7 @@ NA_DEF void na_DestructCocoaButton(NACocoaButton* cocoaButton) {
   if(cocoaButton->button.imageSet) {
     na_ReleaseMouseTracking(&cocoaButton->button.uiElement);
   }
-  na_ClearButton((NAButton*)cocoaButton);
+  na_ClearCoreButton((NAButton*)cocoaButton);
 }
 
 
@@ -430,10 +436,10 @@ NA_DEF void naSetButtonEnabled(NAButton* button, NABool enabled) {
     naError("button is nullptr");
   #endif
 
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeButton, nativeObj, button);
 
-  [nativePtr setEnabled:(BOOL)enabled];
-  [nativePtr updateImages];
+  [nativeObj setEnabled:(BOOL)enabled];
+  [nativeObj updateImages];
 }
 
 
@@ -444,15 +450,15 @@ NA_DEF void naSetButtonText(NAButton* button, const NAUTF8Char* text) {
       naError("button is nullptr");
   #endif
 
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeButton, nativeObj, button);
   
   #if NA_DEBUG
-    if([nativePtr isImage])
+    if([nativeObj isImage])
       naError("This is not a text button");
   #endif
 
   na_setButtonText(button, text);
-  [nativePtr updateButtonText];
+  [nativeObj updateButtonText];
 }
 
 
@@ -463,15 +469,15 @@ NA_DEF void naSetButtonText2(NAButton* button, const NAUTF8Char* text) {
       naError("button is nullptr");
   #endif
   
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeButton, nativeObj, button);
   
   #if NA_DEBUG
-    if([nativePtr isImage])
+    if([nativeObj isImage])
       naError("This is not a text button");
   #endif
   
   na_setButtonText2(button, text);
-  [nativePtr updateButtonText];
+  [nativeObj updateButtonText];
 }
 
 
@@ -482,15 +488,15 @@ NA_DEF void naSetButtonImage(NAButton* button, const NAImageSet* imageSet) {
       naError("button is nullptr");
   #endif
 
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeButton, nativeObj, button);
 
   #if NA_DEBUG
-    if(![nativePtr isImage])
+    if(![nativeObj isImage])
       naError("This is not an image button.");
   #endif
 
   na_setButtonImage(button, imageSet);
-  [nativePtr updateImages];
+  [nativeObj updateImages];
 }
 
 
@@ -501,15 +507,15 @@ NA_DEF void naSetButtonImage2(NAButton* button, const NAImageSet* imageSet) {
       naError("button is nullptr");
   #endif
 
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeButton, nativeObj, button);
 
   #if NA_DEBUG
-    if(![nativePtr isImage])
+    if(![nativeObj isImage])
       naError("This is not an image button.");
   #endif
 
   na_setButtonImage2(button, imageSet);
-  [nativePtr updateImages];
+  [nativeObj updateImages];
 }
 
 
@@ -542,8 +548,8 @@ NA_DEF NABool naIsButtonTextual(const NAButton* button) {
       naError("button is nullptr");
   #endif
 
-  naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
-  return ![nativePtr isImage];
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeButton, nativeObj, button);
+  return ![nativeObj isImage];
 }
 
 
@@ -554,13 +560,13 @@ NA_DEF NABool naGetButtonState(const NAButton* button) {
       naError("button is nullptr");
   #endif
 
-  naDefineCocoaObjectConst(const NACocoaNativeButton, nativePtr, button);
+  naDefineUIElementNativeCocoaObjConst(const NACocoaNativeButton, nativeObj, button);
   #if NA_DEBUG
   if(!naGetFlagu32(button->flags, NA_BUTTON_STATEFUL))
     naError("This is not a stateful button");
   #endif
 
-  return [nativePtr getButtonState];
+  return [nativeObj getButtonState];
 }
 
 
@@ -571,9 +577,9 @@ NA_DEF void naSetButtonState(NAButton* button, NABool state) {
       naError("button is nullptr");
   #endif
 
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
+  naDefineUIElementNativeCocoaObj(NACocoaNativeButton, nativeObj, button);
   if(naGetFlagu32(button->flags, NA_BUTTON_STATEFUL)) {
-    [nativePtr setButtonState:state];
+    [nativeObj setButtonState:state];
   }else{
     #if NA_DEBUG
     naError("This is not a stateful button");
@@ -593,10 +599,10 @@ NA_DEF void naSetButtonSubmit(
       naError("button is nullptr");
     if(naGetFlagu32(button->flags, NA_BUTTON_STATEFUL))
       naError("Abort functionality only works reliably for push buttons");
-  #endif
+  #endif // NA_DEBUG
 
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
-  [nativePtr setDefaultButton:NA_TRUE];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeButton, nativeObj, button);
+  [nativeObj setDefaultButton:NA_TRUE];
   
   NAWindow* window = naGetUIElementWindowMutable(button);
   if(window) {
@@ -654,8 +660,8 @@ NA_API void naSetButtonVisible(NAButton* button, NABool visible) {
       naError("button is nullptr");
   #endif
 
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
-  [nativePtr setVisible:visible];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeButton, nativeObj, button);
+  [nativeObj setVisible:visible];
 }
 
 
@@ -665,8 +671,8 @@ NA_HDEF NARect na_GetButtonRect(const NA_UIElement* button) {
       naError("button is nullptr");
   #endif
 
-  naDefineCocoaObjectConst(NACocoaNativeButton, nativePtr, button);
-  return naMakeRectWithNSRect([nativePtr frame]);
+  naDefineUIElementNativeCocoaObjConst(NACocoaNativeButton, nativeObj, button);
+  return naMakeRectWithNSRect([nativeObj frame]);
 }
 
 NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect) {
@@ -675,14 +681,14 @@ NA_HDEF void na_SetButtonRect(NA_UIElement* button, NARect rect) {
       naError("button is nullptr");
   #endif
 
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
-  [nativePtr setFrame:naMakeNSRectWithRect(rect)];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeButton, nativeObj, button);
+  [nativeObj setFrame:naMakeNSRectWithRect(rect)];
   na_UpdateMouseTracking(button);
 }
 
 NA_HDEF void na_UpdateButtonUIScale(NA_UIElement* button) {
-  naDefineCocoaObject(NACocoaNativeButton, nativePtr, button);
-  [nativePtr updateImages];
+  naDefineUIElementNativeCocoaObj(NACocoaNativeButton, nativeObj, button);
+  [nativeObj updateImages];
 }
 
 
