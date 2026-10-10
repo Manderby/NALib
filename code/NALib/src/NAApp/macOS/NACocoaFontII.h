@@ -38,7 +38,7 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
   
   // asdf
   NAFont* retFont = na_CreateFont(
-    NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(nativeFontObj)),
+    NA_COCOA_PTR_OBJC_TO_C(nativeFontObj),
     fontName,
     flags,
     size);
@@ -51,7 +51,7 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
 
 
 NA_HDEF void na_DestructFontNativePtr(void* nativeFontPtr) {
-  NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(nativeFontPtr));
+  NA_COCOA_PTR_C_TO_OBJC(nativeFontPtr);
 }
 
 

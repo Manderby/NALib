@@ -73,10 +73,6 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
   NSRange range = NSMakeRange(0, [attrString length]);
 
   [attrString beginEditing];
-//  NSMutableParagraphStyle* paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-//  [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
-//  paragraphStyle.alignment = [self alignment];
-//  NA_COCOA_RELEASE(paragraphStyle);
   [attrString addAttribute:NSForegroundColorAttributeName value:nsColor range:range];
   [attrString endEditing];
   

@@ -546,16 +546,6 @@ NA_DEF NABool naPresentFilePanel(
       naClearArray(&urls);
       return retValue;
     }
-    
-  //  [savePanel beginSheetModalForWindow:NA_COCOA_PTR_C_TO_OBJC(nativeWindow) completionHandler:^(NSInteger result) {
-  //    #if defined __MAC_10_9
-  //      NABool doPerform = result != NSModalResponseCancel;
-  //    #else
-  //      NABool doPerform = result != NSFileHandlingPanelCancelButton;
-  //    #endif
-  //    callback(doPerform, [[[savePanel Url] path] UTF8String], data);
-  //  }];
-  
   }
 
   return NA_FALSE;
@@ -616,7 +606,7 @@ NA_DEF NACursorImage* naAllocCursorImage(const NAImageSet* imageSet, NAPos hotsp
     uiScale,
     NA_TRUE);
 
-  return NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN([[NSCursor alloc] initWithImage:nsImage hotSpot:naMakeNSPointWithPos(hotspot)]));
+  return NA_COCOA_PTR_OBJC_TO_C([[NSCursor alloc] initWithImage:nsImage hotSpot:naMakeNSPointWithPos(hotspot)]);
 }
 
 
@@ -626,7 +616,7 @@ NA_DEF void naDeallocCursorImage(NACursorImage* image) {
     if(!image)
       naError("image is nullptr");
   #endif
-  NA_COCOA_RELEASE(NA_COCOA_PTR_C_TO_OBJC(image));
+  NA_COCOA_PTR_C_TO_OBJC(image);
 }
 
 
@@ -659,8 +649,7 @@ NA_HDEF void* na_AddMouseTracking(NA_UIElement* uiElement) {
     userInfo:nil];
   [nativeObj addTrackingArea:trackingArea];
   
-  // asdf
-  return NA_COCOA_PTR_OBJC_TO_C(NA_COCOA_RETAIN(trackingArea));
+  return NA_COCOA_PTR_OBJC_TO_C(trackingArea);
 }
 
 
@@ -669,7 +658,6 @@ NA_HDEF void na_ClearMouseTracking(NA_UIElement* uiElement, void* mouseTracking)
   naDefineUIElementNativeCocoaObj(NSView, nativeObj, uiElement);
   NSTrackingArea* trackingArea = NA_COCOA_PTR_C_TO_OBJC(mouseTracking);
   [nativeObj removeTrackingArea:trackingArea];
-  NA_COCOA_RELEASE(trackingArea);
 }
 
 
