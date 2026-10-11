@@ -124,7 +124,6 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 
 - (void)windowDidResize:(NSNotification *)notification{
   NA_UNUSED(notification);
-  // asdf
 
   na_UpdateWindowScreen((NAWindow*)cocoaWindow, na_GetApplicationScreenWithNativeScreenPtr((NA_COCOA_BRIDGE void*)[self screen]));
   na_UpdateMouseTracking(&cocoaWindow->window.uiElement);
@@ -137,7 +136,6 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
   // Note that this method will also be called after a window is created with
   // naNewWindow when the rect is outside of the main screen.
   NA_UNUSED(notification);
-  // asdf
 
   na_UpdateWindowScreen((NAWindow*)cocoaWindow, na_GetApplicationScreenWithNativeScreenPtr((NA_COCOA_BRIDGE void*)[self screen]));
   if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_RESHAPE)) {
@@ -231,7 +229,6 @@ NA_DEF NAWindow* naNewWindow(
     defer:NO
     screen:nativeScreenObj];
   
-  // asdf
   NAScreen* actualScreen = na_GetApplicationScreenWithNativeScreenPtr((NA_COCOA_BRIDGE void*)[nativeObj screen]);
   
   if(auxiliary) {

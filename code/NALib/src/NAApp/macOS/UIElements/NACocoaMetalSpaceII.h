@@ -48,6 +48,7 @@
   }
   
   - (void)dealloc{
+//    NA_COCOA_RELEASE(metalLayer.device);
     NA_COCOA_RELEASE(metalLayer);
     NA_COCOA_SUPER_DEALLOC();
   }
@@ -318,7 +319,6 @@
 
 
   NA_DEF void* naGetMetalSpaceSystemContext(const NAMetalSpace* metalSpace) {
-    // asdf
     naDefineUIElementNativeCocoaObjConst(NACocoaNativeMetalSpace, nativeObj, metalSpace);
     return NA_COCOA_PTR_OBJC_TO_C([nativeObj layer]);
   }

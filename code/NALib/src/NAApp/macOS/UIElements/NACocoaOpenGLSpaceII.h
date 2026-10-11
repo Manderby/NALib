@@ -322,7 +322,6 @@
   }
   
   NA_DEF void* naGetOpenGLSpaceSystemContext(const NAOpenGLSpace* openGLSpace) {
-    // asdf
     naDefineUIElementNativeCocoaObjConst(NACocoaNativeOpenGLSpace, nativeObj, openGLSpace);
     return NA_COCOA_PTR_OBJC_TO_C([nativeObj openGLContext]);
   }

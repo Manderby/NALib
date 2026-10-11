@@ -110,8 +110,6 @@ NA_HDEF void na_ClearCoreApplication(NAApplication* app) {
       naCrash("No Application running");
   #endif
 
-  // asdf: proper cleanup process
-  
   naDeallocNotifier(na_App->notifier);
 
   // An NAWindow removes itself from the windows array automatically. So

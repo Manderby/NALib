@@ -11,7 +11,10 @@ int na_naUIElementKey = 42; // Arbitrary but carefully chosen number.
 
 
 NA_HDEF void* na_GetUINALibEquivalent(void* nativePtr) {
-  NA_UIElement* elem = (NA_COCOA_BRIDGE NA_UIElement*)(objc_getAssociatedObject(((NA_COCOA_BRIDGE id)nativePtr), &na_naUIElementKey));
+  NSValue* value = objc_getAssociatedObject(
+    (NA_COCOA_BRIDGE id)nativePtr,
+    &na_naUIElementKey);
+  NA_UIElement* elem = (NA_UIElement*)[value pointerValue];
   return elem;
 }
 
@@ -19,10 +22,10 @@ NA_HDEF void* na_GetUINALibEquivalent(void* nativePtr) {
 
 NA_HDEF void na_InitSystemUIElement(NA_UIElement* uiElement, void* nativePtr) {
   objc_setAssociatedObject(
-    NA_COCOA_PTR_C_TO_OBJC(nativePtr),
+    (NA_COCOA_BRIDGE id)nativePtr,
     &na_naUIElementKey,
-    (NA_COCOA_BRIDGE id _Nullable)uiElement,
-    OBJC_ASSOCIATION_ASSIGN);
+    [NSValue valueWithPointer:uiElement],
+    OBJC_ASSOCIATION_RETAIN);
 }
 
 
@@ -31,8 +34,8 @@ NA_HAPI void na_ClearSystemUIElement(void* nativePtr) {
   // note: do not use objc_removeAssociatedObject as this will not use the key
   // to identify the poper associated object.
   objc_setAssociatedObject(
-    NA_COCOA_PTR_C_TO_OBJC(nativePtr),
+    (NA_COCOA_BRIDGE id)nativePtr,
     &na_naUIElementKey,
     nil,
-    OBJC_ASSOCIATION_ASSIGN);
+    OBJC_ASSOCIATION_RETAIN);
 }

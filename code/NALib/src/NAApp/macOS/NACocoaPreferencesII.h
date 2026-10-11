@@ -11,7 +11,6 @@ NA_HDEF void* na_GetNativePreferences() {
     if(!naGetApplication())
       naError("No application running. Use naStartApplication.");
   #endif
-  // asdf
 //  return [[NSUserDefaults alloc] initWithSuiteName:@"XXXXXXX.group.com.mycompany.appidentifier"];
   return (NA_COCOA_BRIDGE void*)[NSUserDefaults standardUserDefaults];
 }

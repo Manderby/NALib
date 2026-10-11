@@ -433,7 +433,6 @@ NA_IDEF NAAlarm naMakeAlarm(void) {
     return (NAAlarm)alarmer;
 #else
     alarmer = dispatch_semaphore_create(0);
-  // asdf
     return (NAAlarm)NA_COCOA_PTR_OBJC_TO_C(alarmer);
   #endif
 }

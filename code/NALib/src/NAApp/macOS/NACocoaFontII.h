@@ -36,7 +36,6 @@ NA_DEF NAFont* naCreateFont(const NAUTF8Char* fontFamilyName, uint32 flags, doub
   
   NAString* fontName = naNewStringWithFormat("%s", fontFamilyName);
   
-  // asdf
   NAFont* retFont = na_CreateFont(
     NA_COCOA_PTR_OBJC_TO_C(nativeFontObj),
     fontName,

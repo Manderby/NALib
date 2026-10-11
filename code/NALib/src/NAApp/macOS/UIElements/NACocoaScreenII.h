@@ -15,7 +15,6 @@ NA_DEF NARect naGetMainScreenRect() {
 
 
 NA_HDEF NAScreen* na_NewScreen(NSScreen* nativeObj) {
-  // asdf
   // A screen is given by its native pointer and not created as a NALib custom
   // subclass. Therefore, we must retain it. It will be stored during a call
   // to na_InitScreen and will be released automatically as soon as
