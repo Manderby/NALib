@@ -46,10 +46,10 @@ CommonController* createSpaceController() {
   con->subSpace2Label = naNewLabel("Space with alternate background", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
   con->subSpace3Label = naNewLabel("Space with colored background", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
   con->subSpace4Label = naNewLabel("Space with colored and alternate background", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naSetLabelTextAlignment(con->subSpace1Label, NA_TEXT_ALIGNMENT_CENTER);
-  naSetLabelTextAlignment(con->subSpace2Label, NA_TEXT_ALIGNMENT_CENTER);
-  naSetLabelTextAlignment(con->subSpace3Label, NA_TEXT_ALIGNMENT_CENTER);
-  naSetLabelTextAlignment(con->subSpace4Label, NA_TEXT_ALIGNMENT_CENTER);
+  naSetLabelTextAlignment(con->subSpace1Label, NA_ALIGNMENT_CENTER);
+  naSetLabelTextAlignment(con->subSpace2Label, NA_ALIGNMENT_CENTER);
+  naSetLabelTextAlignment(con->subSpace3Label, NA_ALIGNMENT_CENTER);
+  naSetLabelTextAlignment(con->subSpace4Label, NA_ALIGNMENT_CENTER);
   naAddSpaceChild(con->subSpace1, con->subSpace1Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));
   naAddSpaceChild(con->subSpace2, con->subSpace2Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));
   naAddSpaceChild(con->subSpace3, con->subSpace3Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));

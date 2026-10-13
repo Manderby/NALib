@@ -74,12 +74,12 @@ TemperatureController* spawnTemperatureController() {
 
   // Create the infoLabel containing informations.
   con->infoLabel = naNewLabel("Temperature in Celsius", 160);
-  naSetLabelTextAlignment(con->infoLabel, NA_TEXT_ALIGNMENT_CENTER);
+  naSetLabelTextAlignment(con->infoLabel, NA_ALIGNMENT_CENTER);
   naAddSpaceChild(windowSpace, con->infoLabel, naMakePos(120, 130));
 
   // Create the textField.
   con->textField = naNewTextField(80);
-  naSetTextFieldTextAlignment(con->textField, NA_TEXT_ALIGNMENT_CENTER);
+  naSetTextFieldTextAlignment(con->textField, NA_ALIGNMENT_CENTER);
   naAddSpaceChild(windowSpace, con->textField, naMakePos(160, 100));
   naAddUIReaction(
       con->textField,
@@ -89,7 +89,7 @@ TemperatureController* spawnTemperatureController() {
 
   // Create the resutLabel containing the results.
   con->resutLabel = naNewLabel("Result in Fahrenheit", 160);
-  naSetLabelTextAlignment(con->resutLabel, NA_TEXT_ALIGNMENT_CENTER);
+  naSetLabelTextAlignment(con->resutLabel, NA_ALIGNMENT_CENTER);
   naAddSpaceChild(windowSpace, con->resutLabel, naMakePos(120, 70));
 
   // Create a + button for opening a new window.
