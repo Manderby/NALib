@@ -80,7 +80,7 @@ NA_DEF NAScreen* na_NewScreen(
     //DEVICE_SCALE_FACTOR dsFactor;
     //GetScaleFactorForMonitor(nativePtr, &dsFactor);
 
-    na_InitScreen(
+    na_InitCoreScreen(
       (NAScreen*)winapiScreen,
       nativePtr,
       isMainScreen,
@@ -98,7 +98,7 @@ NA_DEF NAScreen* na_NewScreen(
 
 
 NA_DEF void na_DestructWINAPIScreen(NAWINAPIScreen* winapiScreen) {
-  na_ClearScreen((NAScreen*)winapiScreen);
+  na_ClearCoreScreen((NAScreen*)winapiScreen);
 }
 
 

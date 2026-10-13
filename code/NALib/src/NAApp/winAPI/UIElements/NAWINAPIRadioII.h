@@ -101,7 +101,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
     app->oldRadioWindowProc = oldproc;
   }
 
-  na_InitRadio(&winapiRadio->radio, nativePtr);
+  na_InitCoreRadio(&winapiRadio->radio, nativePtr);
 
   SendMessage(
     nativePtr,
@@ -115,7 +115,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
 
 
 NA_DEF void na_DestructWINAPIRadio(NAWINAPIRadio* winapiRadio) {
-  na_ClearRadio((NARadio*)winapiRadio);
+  na_ClearCoreRadio((NARadio*)winapiRadio);
 }
 
 

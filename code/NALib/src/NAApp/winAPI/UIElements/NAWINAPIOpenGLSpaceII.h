@@ -155,7 +155,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
     wglSwapIntervalEXT(1);
   }
 
-  na_InitOpenGLSpace(&winapiOpenGLSpace->openGLSpace, nativePtr);
+  na_InitCoreOpenGLSpace(&winapiOpenGLSpace->openGLSpace, nativePtr);
 
   // Now the OpenGL context is created and current. We can initialize it
   // if necessary.
@@ -170,7 +170,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* in
 
 NA_DEF void na_DestructWINAPIOpenGLSpace(NAWINAPIOpenGLSpace* winapiOpenGLSpace) {
   wglDeleteContext(winapiOpenGLSpace->hRC);
-  na_ClearOpenGLSpace((NAOpenGLSpace*)winapiOpenGLSpace);
+  na_ClearCoreOpenGLSpace((NAOpenGLSpace*)winapiOpenGLSpace);
 }
 
 

@@ -152,7 +152,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
     app->oldLabelWindowProc = oldproc;
   }
 
-  na_InitLabel(&winapiLabel->label, nativePtr);
+  na_InitCoreLabel(&winapiLabel->label, nativePtr);
 
   SendMessage(
     nativePtr,
@@ -172,7 +172,7 @@ NA_DEF void na_DestructWINAPILabel(NAWINAPILabel* winapiLabel) {
   if(winapiLabel->href) {
     naDelete(winapiLabel->href);
   }
-  na_ClearLabel((NALabel*)winapiLabel);
+  na_ClearCoreLabel((NALabel*)winapiLabel);
 }
 
 

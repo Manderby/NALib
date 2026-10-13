@@ -399,7 +399,7 @@ NA_HDEF void na_SetApplicationRect(const NAApplication* app, NARect rect) {
 
 
 
-NA_HDEF const NAFont* na_GetApplicationSystemFont(const NAApplication* app) {
+NA_HDEF const NAFont* na_GetCoreApplicationSystemFont(const NAApplication* app) {
   if(!app->systemFont) {
     NAApplication* mutableApp = (NAApplication*)app;
     mutableApp->systemFont = naCreateSystemFont();

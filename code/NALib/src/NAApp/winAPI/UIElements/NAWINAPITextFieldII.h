@@ -148,7 +148,7 @@ NA_DEF NATextField* naNewTextField(double width) {
     app->oldTextFieldWindowProc = oldproc;
   }
 
-  na_InitTextField(&winapiTextField->textField, nativePtr);
+  na_InitCoreTextField(&winapiTextField->textField, nativePtr);
   
   SendMessage(
     nativePtr,
@@ -181,7 +181,7 @@ NA_DEF NATextField* naNewTextField(double width) {
 
 
 NA_DEF void na_DestructWINAPITextField(NAWINAPITextField* winapiTextField) {
-  na_ClearTextField((NATextField*)winapiTextField);
+  na_ClearCoreTextField((NATextField*)winapiTextField);
 }
 
 

@@ -17,7 +17,7 @@ NA_HDEF void na_InitCoreMenu(
     nativeMenuPtr);
     
   naInitList(&menu->childs);
-  na_SetUIElementParent(&menu->uiElement, parent);
+  na_SetUIElementParent(&menu->uiElement, parent, NA_FALSE);
 }
 
 
@@ -35,7 +35,7 @@ NA_HDEF void na_AddMenuChild(NAMenu* menu, NAMenuItem* child, const NAMenuItem* 
   naLocateListData(&iter, itemAt);
   naAddListBeforeMutable(&iter, child);
   naClearListIterator(&iter);
-  na_SetUIElementParent(&child->uiElement, menu);
+  na_SetUIElementParent(&child->uiElement, menu, NA_FALSE);
 }
 
 

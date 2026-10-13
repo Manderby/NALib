@@ -20,7 +20,7 @@ NA_HDEF void na_InitCoreMenuItem(
     nativeMenuItemPtr);
   
   menuItem->subMenu = NA_NULL;
-  na_SetUIElementParent(&menuItem->uiElement, parent);
+  na_SetUIElementParent(&menuItem->uiElement, parent, NA_FALSE);
 }
 
 

@@ -349,7 +349,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   //ReleaseDC(drawitemstruct->hwndItem, drawitemstruct->hDC);
 
   //NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  //const NAFont* systemFont = na_GetApplicationSystemFont(&app->application);
+  //const NAFont* systemFont = na_GetCoreApplicationSystemFont(&app->application);
   //SelectFont(drawitemstruct->hDC, naGetFontNativePointer(systemFont));
   //SetTextColor(drawitemstruct->hDC, RGB(255, 255, 255));
   //SetBkColor(drawitemstruct->hDC, RGB(0, 50, 255));
@@ -397,7 +397,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
 
   naFree(systemText);
 
-  const NAFont* systemFont = na_GetApplicationSystemFont(&app->application);
+  const NAFont* systemFont = na_GetCoreApplicationSystemFont(&app->application);
   SendMessage(
     nativePtr,
     WM_SETFONT,
@@ -409,7 +409,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
     app->oldButtonWindowProc = oldproc;
   }
 
-  na_InitButton(
+  na_InitCoreButton(
     (NAButton*)winapiButton,
     nativePtr,
     text,
@@ -452,7 +452,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
   naFree(systemText);
 
-  const NAFont* systemFont = na_GetApplicationSystemFont(&app->application);
+  const NAFont* systemFont = na_GetCoreApplicationSystemFont(&app->application);
   SendMessage(
     nativePtr,
     WM_SETFONT,
@@ -464,7 +464,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
     app->oldButtonWindowProc = oldproc;
   }
 
-  na_InitButton(
+  na_InitCoreButton(
     (NAButton*)winapiButton,
     nativePtr,
     text,
@@ -508,7 +508,7 @@ NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
     app->oldButtonWindowProc = oldproc;
   }
 
-  na_InitButton(
+  na_InitCoreButton(
     (NAButton*)winapiButton,
     nativePtr,
     NA_NULL,
@@ -559,7 +559,7 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
     app->oldButtonWindowProc = oldproc;
   }
 
-  na_InitButton(
+  na_InitCoreButton(
     (NAButton*)winapiButton,
     nativePtr,
     NA_NULL,
@@ -609,7 +609,7 @@ NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet, NASize size) {
     app->oldButtonWindowProc = oldproc;
   }
 
-  na_InitButton(
+  na_InitCoreButton(
     (NAButton*)winapiButton,
     nativePtr,
     NA_NULL,
@@ -655,7 +655,7 @@ NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImage
     app->oldButtonWindowProc = oldproc;
   }
 
-  na_InitButton(
+  na_InitCoreButton(
     (NAButton*)winapiButton,
     nativePtr,
     NA_NULL,
@@ -675,7 +675,7 @@ NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImage
 
 
 NA_DEF void na_DestructWINAPIButton(NAWINAPIButton* winapiButton) {
-  na_ClearButton((NAButton*)winapiButton);
+  na_ClearCoreButton((NAButton*)winapiButton);
 }
 
 
