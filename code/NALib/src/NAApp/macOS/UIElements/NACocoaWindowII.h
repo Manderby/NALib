@@ -100,16 +100,18 @@ NA_RUNTIME_TYPE(NACocoaWindow, na_DestructCocoaWindow, NA_FALSE);
 }
 
 - (void)keyDown:(NSEvent*)event{
-  NA_UNUSED(event);
-  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_DOWN)) {
-    [super keyDown:event];
+  if(!event.isARepeat) {
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_DOWN)) {
+      [super keyDown:event];
+    }
   }
 }
 
 - (void)keyUp:(NSEvent*)event{
-  NA_UNUSED(event);
-  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_UP)) {
-    [super keyUp:event];
+  if(!event.isARepeat) {
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaWindow, NA_UI_COMMAND_KEY_UP)) {
+      [super keyUp:event];
+    }
   }
 }
 

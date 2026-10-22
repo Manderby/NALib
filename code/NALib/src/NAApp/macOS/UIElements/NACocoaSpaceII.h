@@ -143,9 +143,11 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 }
 
 - (void)keyDown:(NSEvent* _Nonnull)event{
-  na_CaptureKeyboardStatus(event);
-  if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_DOWN)) {
-    [super keyDown:event];
+  if(!event.isARepeat) {
+    na_CaptureKeyboardStatus(event);
+    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaSpace, NA_UI_COMMAND_KEY_DOWN)) {
+      [super keyDown:event];
+    }
   }
 }
 

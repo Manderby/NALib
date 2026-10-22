@@ -231,16 +231,20 @@
   }
 
   - (void)keyDown:(NSEvent*)event{
-    na_CaptureKeyboardStatus(event);
-    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEY_DOWN)) {
-      [super keyDown:event];
+    if(!event.isARepeat) {
+      na_CaptureKeyboardStatus(event);
+      if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEY_DOWN)) {
+        [super keyDown:event];
+      }
     }
   }
   
   - (void)keyUp:(NSEvent*)event{
-    na_CaptureKeyboardStatus(event);
-    if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEY_UP)) {
-      [super keyUp:event];
+    if(!event.isARepeat) {
+      na_CaptureKeyboardStatus(event);
+      if(!na_DispatchUIElementCommand((NA_UIElement*)cocoaOpenGLSpace, NA_UI_COMMAND_KEY_UP)) {
+        [super keyUp:event];
+      }
     }
   }
   
