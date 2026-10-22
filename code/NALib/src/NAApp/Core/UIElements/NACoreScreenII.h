@@ -27,7 +27,7 @@ NA_HDEF void na_InitCoreScreen(
   screen->uiScale = uiScale;
   naInitList(&screen->windows);
 
-  na_SetUIElementParent((NA_UIElement*)screen, naGetApplication());
+  na_SetUIElementParent((NA_UIElement*)screen, naGetApplication(), NA_TRUE);
 }
 
 

@@ -57,7 +57,7 @@ NA_HDEF void na_AddSpaceChild(NASpace* space, NA_UIElement* child) {
   #endif
 
   naAddListLastMutable(&space->childs, child);
-  na_SetUIElementParent(child, space);
+  na_SetUIElementParent(child, space, NA_TRUE);
 }
 
 
@@ -69,7 +69,7 @@ NA_HDEF void na_RemoveSpaceChild(NASpace* space, NA_UIElement* child) {
   #endif
 
   naRemoveListData(&space->childs, child);
-  na_SetUIElementParent(child, NA_NULL);
+  na_SetUIElementParent(child, NA_NULL, NA_TRUE);
 }
 
 

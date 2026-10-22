@@ -70,7 +70,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size) {
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL );
   
-  na_InitTextBox(&winapiTextBox->textBox, nativePtr);
+  na_InitCoreTextBox(&winapiTextBox->textBox, nativePtr);
   
   SendMessage(
     nativePtr,
@@ -98,7 +98,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size) {
 
 
 NA_DEF void na_DestructWINAPITextBox(NAWINAPITextBox* winapiTextBox) {
-  na_ClearTextBox((NATextBox*)winapiTextBox);
+  na_ClearCoreTextBox((NATextBox*)winapiTextBox);
 }
 
 

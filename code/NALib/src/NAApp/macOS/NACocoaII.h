@@ -42,7 +42,8 @@ NA_HDEF void na_ClearUINativePtr(void* nativePtr) {
 
 
 
-NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent) {
+NA_HDEF void na_SetUIElementParent(NA_UIElement* uiElement, void* parent, NABool isElementAttachable) {
+  NA_UNUSED(isElementAttachable); // not needed for Cocoa
   NA_UIElement* elem = (NA_UIElement*)uiElement;
   elem->parent = parent;
 }

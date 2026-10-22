@@ -316,7 +316,7 @@ NA_HDEF NAApplication* na_NewApplication(void) {
   winapiApplication->nonClientMetrics.cbSize = sizeof(NONCLIENTMETRICS);
   SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &winapiApplication->nonClientMetrics, 0);
 
-  na_InitApplication(&winapiApplication->application, GetModuleHandle(NULL));
+  na_InitCoreApplication(&winapiApplication->application, GetModuleHandle(NULL));
 
   naInitList(&winapiApplication->timers);
   naInitList(&winapiApplication->openGLRedrawList);
@@ -349,7 +349,7 @@ NA_DEF void na_DestructWINAPIApplication(NAWINAPIApplication* winapiApplication)
 
   DestroyIcon(winapiApplication->appIcon);
 
-  na_ClearApplication(&winapiApplication->application);  
+  na_ClearCoreApplication(&winapiApplication->application);  
 
   // Now that all windows are destroyed, all dependent timers are deleted. We can
   // safely release all other structs. todo: Make killing the timers a sport.

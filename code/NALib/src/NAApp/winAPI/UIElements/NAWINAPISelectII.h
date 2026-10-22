@@ -149,7 +149,7 @@ NA_DEF NASelect* naNewSelect(double width) {
     app->oldSelectWindowProc = oldproc;
   }
 
-  na_InitSelect((NASelect*)winapiSelect, nativePtr);
+  na_InitCoreSelect((NASelect*)winapiSelect, nativePtr);
 
   SendMessage(
     nativePtr,
@@ -165,7 +165,7 @@ NA_DEF NASelect* naNewSelect(double width) {
 }
 
 NA_DEF void na_DestructWINAPISelect(NAWINAPISelect* winapiSelect) {
-  na_ClearSelect((NASelect*)winapiSelect);
+  na_ClearCoreSelect((NASelect*)winapiSelect);
 }
 
 NA_DEF void naSetSelectVisible(NASelect* select, NABool visible) {

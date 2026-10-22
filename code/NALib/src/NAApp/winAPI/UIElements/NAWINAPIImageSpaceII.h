@@ -179,7 +179,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAImageSet* imageSet, NASize size) {
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
 
-  na_InitImageSpace(&winapiImageSpace->imageSpace, nativePtr);
+  na_InitCoreImageSpace(&winapiImageSpace->imageSpace, nativePtr);
 
   if(imageSet) {
     winapiImageSpace->imageSpace.imageSet = naRetain(imageSet);
@@ -194,7 +194,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAImageSet* imageSet, NASize size) {
 
 NA_DEF void na_DestructWINAPIImageSpace(NAWINAPIImageSpace* winapiImageSpace) {
   naRelease(winapiImageSpace->imageSpace.imageSet);
-  na_ClearImageSpace((NAImageSpace*)winapiImageSpace);
+  na_ClearCoreImageSpace((NAImageSpace*)winapiImageSpace);
 }
 
 

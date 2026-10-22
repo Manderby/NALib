@@ -104,7 +104,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
     app->oldCheckBoxWindowProc = oldproc;
   }
 
-  na_InitCheckBox(&winapiCheckBox->checkBox, nativePtr);
+  na_InitCoreCheckBox(&winapiCheckBox->checkBox, nativePtr);
 
   SendMessage(
     nativePtr,
@@ -118,7 +118,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
 
 
 NA_DEF void na_DestructWINAPICheckBox(NAWINAPICheckBox* winapiCheckBox) {
-  na_ClearCheckBox((NACheckBox*)winapiCheckBox);
+  na_ClearCoreCheckBox((NACheckBox*)winapiCheckBox);
 }
 
 

@@ -321,9 +321,9 @@ NA_DEF NAWindow* naNewWindow(
 
   naFree(systemTitle);
 
-  NAScreen* actualScreen = na_GetApplicationScreenWithNativePtr(MonitorFromWindow(nativePtr, MONITOR_DEFAULTTONEAREST));
+  NAScreen* actualScreen = na_GetApplicationScreenWithNativeScreenPtr(MonitorFromWindow(nativePtr, MONITOR_DEFAULTTONEAREST));
 
-  na_InitWindow(
+  na_InitCoreWindow(
     &winapiWindow->window,
     nativePtr,
     actualScreen,
@@ -358,7 +358,7 @@ NA_DEF NAWindow* naNewWindow(
 
 
 NA_DEF void na_DestructWINAPIWindow(NAWINAPIWindow* winapiWindow) {
-  na_ClearWindow((NAWindow*)winapiWindow);
+  na_ClearCoreWindow((NAWindow*)winapiWindow);
 }
 
 

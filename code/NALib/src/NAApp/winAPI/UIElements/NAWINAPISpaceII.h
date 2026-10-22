@@ -257,7 +257,7 @@ NA_DEF NASpace* naNewSpace(NASize size) {
     (HINSTANCE)naGetUIElementNativePtr(naGetApplication()),
     NULL);
 
-  na_InitSpace(&winapiSpace->space, nativePtr);
+  na_InitCoreSpace(&winapiSpace->space, nativePtr);
 
   winapiSpace->curBgColor = NA_NULL;
 
@@ -273,7 +273,7 @@ NA_DEF void na_DestructWINAPISpace(NAWINAPISpace* winapiSpace) {
     naDeallocUIColor(winapiSpace->curBgColor);
     winapiSpace->curBgColor = NA_NULL;
   }
-  na_ClearSpace((NASpace*)winapiSpace);
+  na_ClearCoreSpace((NASpace*)winapiSpace);
 }
 
 

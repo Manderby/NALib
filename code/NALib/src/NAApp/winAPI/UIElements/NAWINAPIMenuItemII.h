@@ -13,7 +13,7 @@ NA_DEF NAMenuItem* naNewMenuItem(const NAUTF8Char* text, NAKeyStroke* keyStroke)
   winapiMenuItem->text = naNewStringWithFormat("%s", text);
   winapiMenuItem->state = NA_FALSE;
 
-  na_InitMenuItem(&winapiMenuItem->menuItem, winapiMenuItem, NA_NULL);
+  na_InitCoreMenuItem(&winapiMenuItem->menuItem, winapiMenuItem, NA_NULL);
 
   return (NAMenuItem*)winapiMenuItem;
 }
@@ -26,7 +26,7 @@ NA_DEF NAMenuItem* naNewMenuSeparator() {
   winapiMenuItem->isSeparator = NA_TRUE;
   winapiMenuItem->text = NA_NULL;
 
-  na_InitMenuItem(&winapiMenuItem->menuItem, winapiMenuItem, NA_NULL);
+  na_InitCoreMenuItem(&winapiMenuItem->menuItem, winapiMenuItem, NA_NULL);
 
   return (NAMenuItem*)winapiMenuItem;
 }
@@ -40,7 +40,7 @@ NA_DEF NAMenuItem* naNewSubmenuItem(const NAUTF8Char* text, NAMenu* subMenu) {
   winapiMenuItem->text = naNewStringWithFormat("%s", text);
   winapiMenuItem->state = NA_FALSE;
 
-  na_InitMenuItem(&winapiMenuItem->menuItem, winapiMenuItem, NA_NULL);
+  na_InitCoreMenuItem(&winapiMenuItem->menuItem, winapiMenuItem, NA_NULL);
 
   winapiMenuItem->menuItem.subMenu = subMenu;
 
@@ -54,7 +54,7 @@ NA_DEF void na_DestructWINAPIMenuItem(NA_WINAPIMenuItem* winapiMenuItem) {
     naDelete(winapiMenuItem->text);
   }
   na_UnregisterApplicationMenuItem(naGetApplication(), &winapiMenuItem->menuItem);
-  na_ClearMenuItem((NAMenuItem*)winapiMenuItem);
+  na_ClearCoreMenuItem((NAMenuItem*)winapiMenuItem);
 }
 
 

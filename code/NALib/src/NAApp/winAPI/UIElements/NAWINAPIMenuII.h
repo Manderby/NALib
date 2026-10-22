@@ -11,7 +11,7 @@ NA_DEF NAMenu* naNewMenu() {
 
   winapiMenu->hMenu = CreatePopupMenu();
 
-  na_InitMenu(&winapiMenu->menu, winapiMenu->hMenu, NA_NULL);
+  na_InitCoreMenu(&winapiMenu->menu, winapiMenu->hMenu, NA_NULL);
 
   return (NAMenu*)winapiMenu;
 }
@@ -20,7 +20,7 @@ NA_DEF NAMenu* naNewMenu() {
 
 NA_DEF void na_DestructWINAPIMenu(NAWINAPIMenu* winapiMenu) {
   DestroyMenu(winapiMenu->hMenu);
-  na_ClearMenu((NAMenu*)winapiMenu);
+  na_ClearCoreMenu((NAMenu*)winapiMenu);
 }
 
 
