@@ -387,10 +387,10 @@ NA_DEF NAImage* naCreateImageWithHalfSize(const NAImage* image) {
       inPtr3 += 2;
       inPtr4 += 2;
       if(outDataPtr->alpha > NA_SINGULARITYf) {
-        float invweight = naInvf(outDataPtr->alpha);
-        outDataPtr->r *= invweight;
-        outDataPtr->g *= invweight;
-        outDataPtr->b *= invweight;
+        float invWeight = naInvf(outDataPtr->alpha);
+        outDataPtr->r *= invWeight;
+        outDataPtr->g *= invWeight;
+        outDataPtr->b *= invWeight;
         outDataPtr->alpha *= .25f;
       }else{
         outDataPtr->r = 0.f;
