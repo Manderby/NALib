@@ -157,7 +157,7 @@ void naBeginLayout(NASpace* space, NABorder2D padding) {
 void naEndLayout() {
   #if NA_DEBUG
     if(!na_curLayoutElement)
-      naError("No layout in progress. Use naBeginLayout.");
+      naCrash("No layout in progress. Use naBeginLayout.");
   #endif // NA_DEBUG
 
   if(na_curLayoutElement->isSecondary) {
@@ -228,7 +228,7 @@ void naAddLayoutSection(
 {
   #if NA_DEBUG
     if(!na_curLayoutElement)
-      naError("No layout in progress. Use naBeginLayout.");
+      naCrash("No layout in progress. Use naBeginLayout.");
   #endif // NA_DEBUG
 
   if(na_curLayoutElement->isSecondary) {
@@ -406,7 +406,7 @@ void na_PreserveDebugInfo(const NASpace* layoutingSpace, NA_LayoutElement* elem,
       layoutRects->contentRect.size.height -= (elem->padding.begin2 + elem->padding.end2);
     }
 
-    if(((NA_UIElement*)elem->uiElement)->layoutRects) {
+    if(elem->uiElement && ((NA_UIElement*)elem->uiElement)->layoutRects) {
       naFree(((NA_UIElement*)elem->uiElement)->layoutRects);
     }
     ((NA_UIElement*)elem->uiElement)->layoutRects = layoutRects;
@@ -422,7 +422,7 @@ void naAddLayoutElement(
 {
   #if NA_DEBUG
     if(!na_curLayoutElement)
-      naError("No layout in progress. Use naBeginLayout.");
+      naCrash("No layout in progress. Use naBeginLayout.");
     if(!na_curLayoutElement->isSecondary)
       naError("Use naAddLayoutSection before adding Elements.");
   #endif // NA_DEBUG
@@ -472,7 +472,7 @@ void naSetLayoutElementContentSize(
   
   #if NA_DEBUG
     if(!lastChild)
-      naError("No element in the current section available.");
+      naCrash("No element in the current section available.");
   #endif // NA_DEBUG
 
   lastChild->contentSize1 = contentSize1;
@@ -484,7 +484,7 @@ void naSetLayoutElementContentSize(
 void naSetLayoutSectionSpace(NASpace* space) {
   #if NA_DEBUG
     if(!na_curLayoutElement)
-      naError("No layout in progress. Use naBeginLayout.");
+      naCrash("No layout in progress. Use naBeginLayout.");
     if(!na_curLayoutElement->isSecondary)
       naError("Use naAddLayoutSection first.");
   #endif // NA_DEBUG
@@ -507,16 +507,16 @@ void naSetLayoutSectionSpace(NASpace* space) {
 void naSetLayoutElementPrimaryAlign(NAAlignment alignment1) {
   #if NA_DEBUG
     if(!na_curLayoutElement)
-      naError("No layout in progress. Use naBeginLayout.");
+      naCrash("No layout in progress. Use naBeginLayout.");
     if(!na_curLayoutElement->isSecondary)
-      naError("Use naAddLayoutSection before working with Elements.");
+      naCrash("Use naAddLayoutSection before working with Elements.");
   #endif // NA_DEBUG
   
   NA_LayoutElement* lastChild = naGetListLastMutable(&na_curLayoutElement->childs);
   
   #if NA_DEBUG
     if(!lastChild)
-      naError("No element in the current section available.");
+      naCrash("No element in the current section available.");
   #endif // NA_DEBUG
 
   lastChild->alignment1 = alignment1;
@@ -527,7 +527,7 @@ void naSetLayoutElementPrimaryAlign(NAAlignment alignment1) {
 void naSetLayoutElementSecondaryAlign(NAAlignment alignment2) {
   #if NA_DEBUG
     if(!na_curLayoutElement)
-      naError("No layout in progress. Use naBeginLayout.");
+      naCrash("No layout in progress. Use naBeginLayout.");
     if(!na_curLayoutElement->isSecondary)
       naError("Use naAddLayoutSection before working with Elements.");
   #endif // NA_DEBUG
@@ -536,7 +536,7 @@ void naSetLayoutElementSecondaryAlign(NAAlignment alignment2) {
   
   #if NA_DEBUG
     if(!lastChild)
-      naError("No element in the current section available.");
+      naCrash("No element in the current section available.");
   #endif // NA_DEBUG
 
   lastChild->alignment2 = alignment2;
@@ -547,7 +547,7 @@ void naSetLayoutElementSecondaryAlign(NAAlignment alignment2) {
 void naSetLayoutElementAlignBaseline(NABool alignBaseline) {
   #if NA_DEBUG
     if(!na_curLayoutElement)
-      naError("No layout in progress. Use naBeginLayout.");
+      naCrash("No layout in progress. Use naBeginLayout.");
     if(!na_curLayoutElement->isSecondary)
       naError("Use naAddLayoutSection before working with Elements.");
   #endif // NA_DEBUG
@@ -556,7 +556,7 @@ void naSetLayoutElementAlignBaseline(NABool alignBaseline) {
   
   #if NA_DEBUG
     if(!lastChild)
-      naError("No element in the current section available.");
+      naCrash("No element in the current section available.");
   #endif // NA_DEBUG
 
   lastChild->alignBaseline = alignBaseline;

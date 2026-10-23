@@ -178,7 +178,7 @@ NA_DEF NALayoutDirections naGetSpaceLayoutDirections(const NASpace* space) {
 NA_DEF NALayoutDirections naGetSpaceLayoutDirectionsRaw(const NASpace* space) {
   #if NA_DEBUG
     if(!space)
-      naError("space must not be a nullptr");
+      naCrash("space must not be a nullptr");
   #endif
   return space->layoutDirections;
 }
@@ -186,7 +186,7 @@ NA_DEF NALayoutDirections naGetSpaceLayoutDirectionsRaw(const NASpace* space) {
 NA_DEF void naSetSpaceLayoutDirections(NASpace* space, NALayoutDirections directions) {
   #if NA_DEBUG
     if(!space)
-      naError("space must not be a nullptr");
+      naCrash("space must not be a nullptr");
     if(directions < 0 || directions > 8)
       naError("Invalid direction given");
   #endif

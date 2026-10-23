@@ -84,7 +84,7 @@ NA_HDEF void na_setButtonText2(NAButton* button, const NAUTF8Char* text) {
 NA_DEF void naSetButtonHint(NAButton* button, const NAUTF8Char* text) {
   #if NA_DEBUG
     if(!button)
-      naError("button is nullptr");
+      naCrash("button is nullptr");
   #endif
   
   if(button->hint) {
