@@ -20,7 +20,9 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
   self = [super initWithFrame:frame];
   [self setSelectable:YES];
   [self setEditable:YES];
-//  [self setBordered:YES];
+
+//  [[self cell] setAllowsUndo:YES];
+
   if([self respondsToSelector:@selector(setLineBreakMode:)]) {
     NA_MACOS_AVAILABILITY_GUARD_10_10(
       [self setLineBreakMode:NSLineBreakByTruncatingHead];
@@ -42,6 +44,11 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event {
+  NSTextField* editor = (NSTextField*)[self.window firstResponder];
+  if (![editor isKindOfClass:[NSTextField class]] || ![editor.delegate isEqual:self]) {
+    return [super performKeyEquivalent:event];
+  }
+
   if ([event modifierFlags] & (NAEventModifierFlagCommand)) {
     NSString* chars = event.characters;
     if ([[event charactersIgnoringModifiers] isEqualToString:@"c"]) {
@@ -58,7 +65,6 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
   // Return NO to allow default handling or propagation to super
   return [super performKeyEquivalent:event];
 }
-
 
 - (void) controlTextDidEndEditing:(NSNotification *)notification{
   NA_UNUSED(notification);

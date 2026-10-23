@@ -22,6 +22,8 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
   NSRect rect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
   self = [super initWithFrame:rect];
   
+//  [self setAllowsUndo:YES];
+  
   [self setDelegate:self];
   [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver: self
     selector: @selector(textDidChange:)
@@ -70,6 +72,11 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event {
+  NSTextView* editor = (NSTextView*)[self.window firstResponder];
+  if (![editor isKindOfClass:[NSTextView class]] || ![editor.delegate isEqual:self]) {
+    return [super performKeyEquivalent:event];
+  }
+
   if ([event modifierFlags] & (NAEventModifierFlagCommand)) {
     NSString* chars = event.characters;
     if ([[event charactersIgnoringModifiers] isEqualToString:@"c"]) {

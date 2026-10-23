@@ -212,7 +212,9 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event) {
             NAUIElementType type = naGetUIElementType(elem);
             if([event type] == NAEventTypeKeyDown && (type == NA_UI_LABEL || type == NA_UI_TEXTBOX || type == NA_UI_TEXTBOX)) {
               // Textfields and Textboxes do not intercept keyboard shortcuts.
-              return [firstResponder performKeyEquivalent: event];
+              if([firstResponder performKeyEquivalent: event]) {
+                return NA_TRUE;
+              }
             }
           }else{
             if(firstResponder == focusWindow) {
