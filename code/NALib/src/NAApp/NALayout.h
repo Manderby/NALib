@@ -53,32 +53,76 @@ NA_PROTOTYPE(NASpace);
 //
 // ---------------------
 //
-// You alternate between adding sections with naAddLayoutSection and elements
-// with naAddLayoutElement.
+// This is the full picture of what is actually going on inside the layouter:
 //
-// When using naAddLayoutElement, you actually create a layout block which
-// itelf contains the element. The idea behind this is to allow your element
-// to be positioned (aligned) and resized within the block.
+// +------------------------------- layout --------------------------------+
+// |                                                                       |
+// |         +------------ block ----------+- block -+- block -+-------+   |
+// |         |                             |         |         |       |   |
+// |         |   +------- content -----+   |         |         |       |   |
+// |         |   |                     |   |         |         |       |   |
+// |         |   |   +- uiElement -+   |   |         |         | flex  |   |
+// | section |   |   |             |   |   |         |         | space |   |
+// |         |   |   +-------------+   |   |         |         |       |   |
+// |         |   |                     |   |         |         |       |   |
+// |         |   +---------------------+   |         |         |       |   |
+// |         |                             |         |         |       |   |
+// |         +-----------------------------+---------+---------+-------+   |
+// | section |                                                         |   |
+// |         +---------------------------------------------------------+   |
+// | section |                                                         |   |
+// |         +---------------------------------------------------------+   |
+// |                                                                       |
+// +-----------------------------------------------------------------------+
 //
-// +------ block ------+
-// |                   |
-// |   +- element -+   |
-// |   |           |   |
-// |   +-----------+   |
-// |                   |
-// +-------------------+
+// layout:
+// The topmost element is the layout which must be defined by an NASpace.
+// That space defines the layout directions. Here in this example, one assumes
+// that the primary direction is from left to right and the secondary direction
+// is from top to bottom.
 //
-// Both the block and the element have a primary and secondary size, whereas
-// the meaning of primary and secondary is defined by the layout direction set
-// by the containing space.
+// section:
+// Each layout has multiple sections which are added sequentially with a call
+// to naAddLayoutSection, here from top to bottom. Each section in one layout
+// has the SAME width which is defined by how much space the elements contained
+// within need at least. The height of each section is depicted by blocksize2,
+// in this case, the height. You define blocksize2 when adding a section.
 //
-// Primary block size:   Is set by naAddLayoutElement.
-// Secondary block size: Is set by naAddLayoutSection.
-// Element size:         Is set by naSetLayoutElementContentSize if desired.
-//                       The element size by default is set to use as much
-//                       space as available.
+// block:
+// Each section has multiple blocks which are added sequentially with a call
+// to naAddLayoutElement, here from left to right. Each block in one section
+// has the SAME height as defined by the height of the section. You define a
+// margin to the previous element as well as blocksize1, in this case the
+// width of the block. You can also create a sublayout with naBeginSubLayout
+// which behaves just the same as an arbitrary block but contains a complete
+// layout within.
 //
-// For all sizes, you can always provide one of those three things:
+// flex space:
+// As each section in one layout has the SAME width, there can be sections
+// which are not filled completely in the primary direction with blocks.
+// That unused space is distributed equally among the blocks of that section
+// which have NA_LAYOUT_GROW set as a blocksize1. See below for further info.
+//
+// content:
+// The content is a virtual rectangle which you can define its dimensions
+// arbitrarily if desired by calling naSetLayoutElementContentSize. By default,
+// the content size is the same as the blocksize but if it is smaller than the
+// blocksize, the user can define, how the content shall be aligned within the
+// block. You can control the alignment with naSetLayoutElementPrimaryAlign and
+// naSetLayoutElementSecondaryAlign. See below for further info.
+//
+// uiElement:
+// The uiElement finally is the actual system-specific element which will be
+// placed on the screen. That uiElement usually occupies the same rectangle
+// as the content discussed above but there are exceptions. For example, there
+// are uiElements which can not or should not stretch vertically, like for
+// example a one-line label. These uiElements will be left unstretched even if
+// the content has a different rectangle. Also, the uiElement might be shifted
+// vertically to the content rectangle due to text aligment to the baseline.
+// You control the latter with naSetLayoutElementAlignBaseline.
+//
+// For all blocksizes and contentsizes, you can always provide one of those
+// three things:
 //
 // - Positive value      A positive value is treated as a fixed size. Blocks
 //                       as well as the content will explicitely be set to that
@@ -105,21 +149,21 @@ NA_PROTOTYPE(NASpace);
 //                       For blocks, the size of all blocks will be distributed
 //                       evenly as follows:
 //
-// If you set the blockSize to NA_LAYOUT_GROW, the final size will be computed
-// by distributing any remaining space of the containing rectangle evenly to
-// all such elements. For example in the following diagram, fixed blocks are
-// marked with = and blocks with NA_LAYOUT_GROW are marked with X:
+// If you set the blockSize1 to NA_LAYOUT_GROW, the final size of a block will
+// be computed by distributing any remaining space of the containing section
+// evenly to all such elements. For example in the following diagram, fixed
+// blocks are marked with = and blocks with NA_LAYOUT_GROW are marked with X:
 //
 // As defined:
 // +===+-----+===+---+===+=====+---+ - - - - - - - - +
-// |   |  X  |   | X |   |     | X | undefined space |
+// |   |  X  |   | X |   |     | X |    flex space   |
 // +===+-----+===+---+===+=====+---+ - - - - - - - - +
 // After space distribution:
 // +===+-----------+===+---------+===+=====+---------+
 // |   |     X     |   |    X    |   |     |    X    |
 // +===+-----------+===+---------+===+=====+---------+
 //
-// The alignment of the elements within the blocks is defined by the alignment
+// The alignment of the content within the blocks is defined by the alignment
 // setting of the elements. By default, the align is centered. But one can
 // choose to align them both in primary as well as in secondary direction.
 // For example, if the direction is left-to-right, elements are aligned like
@@ -172,6 +216,11 @@ void naAddLayoutElement(
   double preMargin1,
   double blockSize1);
 
+// Sets the size of the actual content
+void naSetLayoutElementContentSize(
+  double contentSize1,
+  double contentSize2);
+
 // Starts a new sublayout. The new sublayout behaves the same as an arbitrary
 // element added with naAddLayoutElement but contains subelements.
 // When the sublayout is finished, you must call naEndLayout.
@@ -180,11 +229,6 @@ void naBeginSubLayout(
   NABorder2D padding,
   double preMargin1,
   double blockSize1);
-
-// Sets the size of the actual content
-void naSetLayoutElementContentSize(
-  double contentSize1,
-  double contentSize2);
 
 // Assigns a space to the last added section. That space is automatically
 // resized according to the size of the section. By default, a section has
