@@ -114,7 +114,7 @@ void na_DeallocLayoutElement(NA_LayoutElement* elem) {
 
 
 
-void naBeginLayout(NASpace* space, NABorder2D padding) {
+void naBeginLayout(NASpace* space, NABorder2D padding, double blockSize1) {
   #if NA_DEBUG
     if(na_curLayoutElement == NA_NULL && !space)
       naError("For a new layout, space must not be a nullptr.");
@@ -139,6 +139,7 @@ void naBeginLayout(NASpace* space, NABorder2D padding) {
     padding,
     NA_FALSE);
 
+  newElement->blockSize1 = blockSize1;
   newElement->alignBaseline = NA_FALSE;
 
   if(na_curLayoutElement) {
@@ -353,12 +354,8 @@ void na_EndLayoutElement(NASpace* layoutingSpace, NA_LayoutElement* elem) {
   }
   
   // Add the padding of this section.
-  elem->minPaddingSize1 = minContentSize1
-    ? minContentSize1 + elem->padding.begin1 + elem->padding.end1
-    : 0;
-  elem->minPaddingSize2 = minContentSize2
-    ? minContentSize2 + elem->padding.begin2 + elem->padding.end2
-    : 0;
+  elem->minPaddingSize1 = elem->padding.begin1 + elem->padding.end1 + (minContentSize1 ? minContentSize1 : 0);
+  elem->minPaddingSize2 = elem->padding.begin2 + elem->padding.end2 + (minContentSize2 ? minContentSize2 : 0);
 }
 
 
@@ -477,6 +474,21 @@ void naSetLayoutElementContentSize(
 
   lastChild->contentSize1 = contentSize1;
   lastChild->contentSize2 = contentSize2;
+}
+
+
+
+void naSetLayoutElementBlockSize1(
+  double blockSize1)
+{
+  NA_LayoutElement* lastChild = naGetListLastMutable(&na_curLayoutElement->childs);
+
+  #if NA_DEBUG
+    if(!lastChild)
+      naCrash("No element in the current section available.");
+  #endif // NA_DEBUG
+
+  lastChild->blockSize1 = blockSize1;
 }
 
 
@@ -756,6 +768,7 @@ void na_AlignLayoutElement(
   double totalFlexibleSpace2 = orderingVH
     ? paddingRect.size.width  - elem->minPaddingSize2
     : paddingRect.size.height - elem->minPaddingSize2;
+//    : paddingRect.size.height - elem->minPaddingSize2 - elem->padding.begin2 - elem->padding.end2;
 
   // Go through all childs and count how many have to grow in size.
   size_t elementsToFit1 = 0;

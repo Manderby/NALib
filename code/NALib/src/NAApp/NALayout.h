@@ -150,7 +150,8 @@ typedef enum {
 // contained elements in that space will be removed from the space.
 void naBeginLayout(
   NASpace* space,
-  NABorder2D padding);
+  NABorder2D padding,
+  double blockSize1);
   
 // Any layout must be ended with naEndLayout.
 void naEndLayout(void);
@@ -171,6 +172,9 @@ void naAddLayoutElement(
 void naSetLayoutElementContentSize(
   double contentSize1,
   double contentSize2);
+
+void naSetLayoutElementBlockSize1(
+  double blockSize1);
 
 // Assigns a space to the last added section. That space is automatically
 // resized according to the size of the section. By default, a section has
