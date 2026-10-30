@@ -180,14 +180,18 @@ void naEndLayout() {
 
     NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(na_curLayoutElement->uiElement);
 
+    // There are some occasions, where a space has already been positioned.
+    // We try to preserve the position.
+    NARect originalRect = naGetUIElementRectRaw(na_GetLayoutingSpace(na_curLayoutElement));
+
     // Reaching here, all min sizes of the whole design are computed. Propagate
     // the information down the whole tree and align all elements properly.
     na_AlignLayoutElement(
       na_GetLayoutingSpace(na_curLayoutElement),
       na_curLayoutElement,
       naMakeRectS(
-        0.,
-        0.,
+        originalRect.pos.x,
+        originalRect.pos.y,
         orderingVH ? na_curLayoutElement->minPaddingSize2 : na_curLayoutElement->minPaddingSize1,
         orderingVH ? na_curLayoutElement->minPaddingSize1 : na_curLayoutElement->minPaddingSize2));
     
@@ -478,21 +482,6 @@ void naSetLayoutElementContentSize(
 
 
 
-void naSetLayoutElementBlockSize1(
-  double blockSize1)
-{
-  NA_LayoutElement* lastChild = naGetListLastMutable(&na_curLayoutElement->childs);
-
-  #if NA_DEBUG
-    if(!lastChild)
-      naCrash("No element in the current section available.");
-  #endif // NA_DEBUG
-
-  lastChild->blockSize1 = blockSize1;
-}
-
-
-
 void naSetLayoutSectionSpace(NASpace* space) {
   #if NA_DEBUG
     if(!na_curLayoutElement)
@@ -713,6 +702,8 @@ void na_AlignLayoutElement(
       }
     }
   }
+
+  // Starting from here, we compute the coordinates of the children.
 
   // When the given element denotes a section or a new sub-layout, the given
   // uiElement must be an NASpace and childs will be added to that space.

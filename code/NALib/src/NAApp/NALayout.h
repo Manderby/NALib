@@ -67,7 +67,7 @@ NA_PROTOTYPE(NASpace);
 //
 // The block size is set as follows:
 // Primary size:     By default, this value is equal to the elements primary
-//                   size but can be changed with naSetLayoutElementBlockSize1.
+//                   size.
 // Secondary size:   Is set by naAddLayoutSection.
 //
 // Blocks and their contained elements may therefore have different sizes.
@@ -172,9 +172,6 @@ void naAddLayoutElement(
 void naSetLayoutElementContentSize(
   double contentSize1,
   double contentSize2);
-
-void naSetLayoutElementBlockSize1(
-  double blockSize1);
 
 // Assigns a space to the last added section. That space is automatically
 // resized according to the size of the section. By default, a section has
