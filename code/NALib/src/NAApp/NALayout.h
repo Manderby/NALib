@@ -54,30 +54,34 @@ NA_PROTOTYPE(NASpace);
 // ---------------------
 //
 // You alternate between adding sections with naAddLayoutSection and elements
-// with naAllLayoutElement.
+// with naAddLayoutElement.
 //
 // When using naAddLayoutElement, you actually create a layout block which
-// itelf contais the element you want to add.
+// itelf contains the element. The idea behind this is to allow your element
+// to be positioned (aligned) and resized within the block.
 //
-// Both each block and each element have a primary and secondary size, whereas
+// +------ block ------+
+// |                   |
+// |   +- element -+   |
+// |   |           |   |
+// |   +-----------+   |
+// |                   |
+// +-------------------+
+//
+// Both the block and the element have a primary and secondary size, whereas
 // the meaning of primary and secondary is defined by the layout direction set
 // by the containing space.
 //
-// The element size is set by the arguments provided to naAddLayoutElement.
-//
-// The block size is set as follows:
-// Primary size:     By default, this value is equal to the elements primary
-//                   size.
-// Secondary size:   Is set by naAddLayoutSection.
-//
-// Blocks and their contained elements may therefore have different sizes.
-// Both can be individually set to be either an explicitely fixed value or
-// implicitely being computed:
+// Primary block size:   Is set by naAddLayoutElement.
+// Secondary block size: Is set by naAddLayoutSection.
+// Element size:         Is set by naSetLayoutElementContentSize if desired.
+//                       The element size by default is set to use as much
+//                       space as available.
 //
 // For all sizes, you can always provide one of those three things:
 //
 // - Positive value      A positive value is treated as a fixed size. Blocks
-//                       as well as elements will explicitely be set to that
+//                       as well as the content will explicitely be set to that
 //                       size.
 //
 // - any negative value  The absolute amount of the value does not matter but
@@ -150,8 +154,7 @@ typedef enum {
 // contained elements in that space will be removed from the space.
 void naBeginLayout(
   NASpace* space,
-  NABorder2D padding,
-  double blockSize1);
+  NABorder2D padding);
   
 // Any layout must be ended with naEndLayout.
 void naEndLayout(void);
@@ -168,7 +171,17 @@ void naAddLayoutElement(
   void* uiElement,
   double preMargin1,
   double blockSize1);
-  
+
+// Starts a new sublayout. The new sublayout behaves the same as an arbitrary
+// element added with naAddLayoutElement but contains subelements.
+// When the sublayout is finished, you must call naEndLayout.
+void naBeginSubLayout(
+  NASpace* space,
+  NABorder2D padding,
+  double preMargin1,
+  double blockSize1);
+
+// Sets the size of the actual content
 void naSetLayoutElementContentSize(
   double contentSize1,
   double contentSize2);
@@ -177,7 +190,7 @@ void naSetLayoutElementContentSize(
 // resized according to the size of the section. By default, a section has
 // no space assigned. If a space is provided, it is taken as is.
 // This is useful for example, if you want to paint in the background of a
-// seciton or track whether the mouse is inside.
+// section or track whether the mouse is inside.
 void naSetLayoutSectionSpace(NASpace* space);
 
 // Changes the attributes of the last element added.
@@ -185,7 +198,6 @@ void naSetLayoutSectionSpace(NASpace* space);
 // PrimaryAlign:   NA_ALIGNMENT_CENTER
 // SecondaryAlign: NA_ALIGNMENT_CENTER
 // AligneBaseline: false for block elements, true for baseline elements.
-// BlockSize1:     NA_LAYOUT_MIN
 void naSetLayoutElementPrimaryAlign(NAAlignment alignment1);
 void naSetLayoutElementSecondaryAlign(NAAlignment alignment2);
 void naSetLayoutElementAlignBaseline(NABool alignBaseline);

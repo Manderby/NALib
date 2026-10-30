@@ -114,7 +114,7 @@ void na_DeallocLayoutElement(NA_LayoutElement* elem) {
 
 
 
-void naBeginLayout(NASpace* space, NABorder2D padding, double blockSize1) {
+void naBeginLayout(NASpace* space, NABorder2D padding) {
   #if NA_DEBUG
     if(na_curLayoutElement == NA_NULL && !space)
       naError("For a new layout, space must not be a nullptr.");
@@ -139,7 +139,6 @@ void naBeginLayout(NASpace* space, NABorder2D padding, double blockSize1) {
     padding,
     NA_FALSE);
 
-  newElement->blockSize1 = blockSize1;
   newElement->alignBaseline = NA_FALSE;
 
   if(na_curLayoutElement) {
@@ -461,6 +460,19 @@ void naAddLayoutElement(
   }
   
   naAddListLastMutable(&na_curLayoutElement->childs, subElem);
+}
+
+
+
+void naBeginSubLayout(
+  NASpace* space,
+  NABorder2D padding,
+  double preMargin1,
+  double blockSize1)
+{
+  naBeginLayout(space, padding);
+  na_curLayoutElement->margin.begin1 = preMargin1;
+  na_curLayoutElement->blockSize1 = blockSize1;
 }
 
 
