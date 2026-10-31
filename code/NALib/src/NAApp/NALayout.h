@@ -130,7 +130,7 @@ NA_PROTOTYPE(NASpace);
 //
 // - any negative value  The absolute amount of the value does not matter but
 //   or NA_LAYOUT_MIN    the negative sign means: Use the minimal amount of
-//                       space to encapsulate content. For elements, this sets
+//                       space to encapsulate content. For content, this sets
 //                       the size to the size of the actual uiElement provided.
 //                       This is especially useful, if you do not (need to)
 //                       know the actual size of an element (like for example,
@@ -163,11 +163,10 @@ NA_PROTOTYPE(NASpace);
 // |   |     X     |   |    X    |   |     |    X    |
 // +===+-----------+===+---------+===+=====+---------+
 //
-// The alignment of the content within the blocks is defined by the alignment
-// setting of the elements. By default, the align is centered. But one can
-// choose to align them both in primary as well as in secondary direction.
-// For example, if the direction is left-to-right, elements are aligned like
-// this:
+// The alignment of the content within the blocks is centered by default. But
+// one can choose to align them differently both in primary as well as in
+// secondary direction. For example, if the direction is left-to-right,
+// elements are aligned like this:
 //
 //     BEGIN           CENTER           END
 // +-----------+   +-----------+   +-----------+
