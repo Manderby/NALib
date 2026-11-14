@@ -78,7 +78,6 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
   }
 
   if ([event modifierFlags] & (NAEventModifierFlagCommand)) {
-    NSString* chars = event.characters;
     if ([[event charactersIgnoringModifiers] isEqualToString:@"c"]) {
       if ([NSApp sendAction:@selector(copy:) to:nil from:self]) { return YES; }
     }else if ([[event charactersIgnoringModifiers] isEqualToString:@"x"]) {

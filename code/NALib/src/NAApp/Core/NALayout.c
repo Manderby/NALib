@@ -438,8 +438,6 @@ void naAddLayoutElement(
       uiElement);
   }
 
-  NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
-
   NA_LayoutElement* subElem = na_AllocLayoutElement(
     na_curLayoutElement,
     uiElement,

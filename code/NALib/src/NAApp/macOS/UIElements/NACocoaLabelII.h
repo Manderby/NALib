@@ -148,7 +148,6 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event {
   if ([event modifierFlags] & (NAEventModifierFlagCommand)) {
-    NSString* chars = event.characters;
     if ([[event charactersIgnoringModifiers] isEqualToString:@"c"]) {
       if ([NSApp sendAction:@selector(copy:) to:nil from:self]) { return YES; }
     }else if ([[event charactersIgnoringModifiers] isEqualToString:@"x"]) {

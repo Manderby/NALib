@@ -424,7 +424,7 @@ NA_HDEF void na_UpdateMetalSpaceUIScale(NA_UIElement* metalSpace) {
 
 
   NA_DEF void naActivateMetalOffscreenContext(NAMetalOffscreenContext* offscreenContext, NASizes size) {
-    NA_CocoaMetalOffscreenContext* cocoaOffscreenContext = (NA_CocoaMetalOffscreenContext*)offscreenContext;
+//    NA_CocoaMetalOffscreenContext* cocoaOffscreenContext = (NA_CocoaMetalOffscreenContext*)offscreenContext;
 //    #if NA_DEBUG
 //      if(cocoaOffscreenContext->frameBuffer || cocoaOffscreenContext->renderBuffer)
 //        naError("frameBuffer or renderBuffer already existing");
@@ -455,7 +455,7 @@ NA_HDEF void na_UpdateMetalSpaceUIScale(NA_UIElement* metalSpace) {
 
 
   NA_DEF void naDeactivateMetalOffscreenContext(NAMetalOffscreenContext* offscreenContext) {
-    NA_CocoaMetalOffscreenContext* cocoaOffscreenContext = (NA_CocoaMetalOffscreenContext*)offscreenContext;
+//    NA_CocoaMetalOffscreenContext* cocoaOffscreenContext = (NA_CocoaMetalOffscreenContext*)offscreenContext;
 //    #if NA_DEBUG
 //      if(CGLGetCurrentContext() != cocoaOffscreenContext->cglContextObj)
 //        naError("Metal context to deactivate is not current");

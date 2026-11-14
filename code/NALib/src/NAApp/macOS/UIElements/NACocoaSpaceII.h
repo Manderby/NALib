@@ -19,8 +19,6 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 - (id _Nonnull) initWithSpace:(NACocoaSpace* _Nonnull)newCocoaSpace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
-  NSRect newFrame = [super frame];
-
   [self setWantsLayer:YES];
   [self resetDrag];
 
@@ -45,8 +43,6 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
   NSRectFill(dirtyRect);
   naDeallocUIColor(curBgColor);
   
-  NARect marginRect = naMakeRectS(10, 10, 30, 30);
-
   #if NA_DEBUG
     na_DrawLayoutDebugging([self frame], &cocoaSpace->space.uiElement);
   #endif // NA_DEBUG
