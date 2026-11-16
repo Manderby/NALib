@@ -333,7 +333,7 @@
   #if NA_DEBUG
     #define NA_STRING_ALWAYS_CACHE 1
   #else
-    #define NA_STRING_ALWAYS_CACHE 0
+    #define NA_STRING_ALWAYS_CACHE 1  // There is a serious bug. So leave this as 1 for now please.
   #endif
 #endif
 
