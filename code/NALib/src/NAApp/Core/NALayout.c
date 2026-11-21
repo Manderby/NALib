@@ -316,6 +316,14 @@ void na_EndLayoutElement(NASpace* layoutingSpace, NA_LayoutElement* elem) {
       ? (elem->padding.begin1 + elem->padding.end1)
       : (elem->padding.begin2 + elem->padding.end2);
   }
+  
+  if(orderingVH) {
+    if(minContentSize1 < contentRect.size.height) { minContentSize1 = contentRect.size.height; }
+    if(minContentSize2 < contentRect.size.width) { minContentSize2 = contentRect.size.width; }
+  }else{
+    if(minContentSize1 < contentRect.size.width) { minContentSize1 = contentRect.size.width; }
+    if(minContentSize2 < contentRect.size.height) { minContentSize2 = contentRect.size.height; }
+  }
 
   if(isBlock) {
     if(contentSize1 < 0.) { // NA_LAYOUT_MIN
