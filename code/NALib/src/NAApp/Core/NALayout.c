@@ -710,9 +710,9 @@ void na_AlignLayoutElement(
   
     if(!elem->parent) {
       NAWindow* window = naGetUIElementWindowMutable(elem->uiElement);
-      if(window){
+      if(window) {
         NASpace* contentSpace = naGetWindowContentSpace(window);
-        if(contentSpace == elem->uiElement){
+        if(contentSpace == elem->uiElement) {
           NARect windowRect = naGetUIElementRect(window);
           windowRect.size = paddedContentRect.size;
           naSetUIElementRect(window, windowRect);
@@ -828,7 +828,7 @@ void na_AlignLayoutElement(
       : child->minPaddingSize2 + flexSpace2 + (child->margin.begin2 + child->margin.end2);
       
     // Set the fixed block size1 if this is a primary element
-    if(!elem->isSecondary){
+    if(!elem->isSecondary) {
       if(orderingVH) {
         childMarginRect.size.height = contentRect.size.height;
       }else{
@@ -836,7 +836,7 @@ void na_AlignLayoutElement(
       }
     }
     // Set the fixed block size2 if this is a secondary element
-    if(elem->isSecondary){
+    if(elem->isSecondary) {
       if(orderingVH) {
         childMarginRect.size.width = contentRect.size.width;
       }else{

@@ -270,7 +270,8 @@ NA_HDEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child
     
     rect.pos = pos;
     if(!ignoreSize) {
-      rect.size = size;
+      rect.size.width = size.width >= 0 ? size.width : rect.size.width;
+      rect.size.height = size.height >= 0 ? size.height : rect.size.height;
     }
     
     if(raw) {
@@ -299,6 +300,12 @@ NA_DEF void naAddSpaceChildRawWithSize(NASpace* _Nonnull space, void* _Nonnull c
 }
 NA_HDEF void na_AddSpaceChildUnpositioned(NASpace* _Nonnull space, void* _Nonnull child) {
   na_AddSpaceChildAtPos(space, child, naMakePosZero(), naMakeSizeZero(), NA_FALSE, NA_FALSE, NA_TRUE);
+}
+NASize naMakeInlineSize(double width) {
+  return naMakeSizeE(width, NA_LAYOUT_MIN);
+}
+NASize naMakeUnchangedSize() {
+  return naMakeSizeE(NA_LAYOUT_MIN, NA_LAYOUT_MIN);
 }
 
 

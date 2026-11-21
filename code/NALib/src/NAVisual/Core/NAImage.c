@@ -581,7 +581,6 @@ NA_DEF void naConvertImageTou8(const NAImage* image, void* data, NABool topToBot
       u8Ptr = &((uint8*)data)[(size.height - y - 1) * naGetImageSize(image).width * NA_RGBA_COLOR_CHANNEL_COUNT];
       naFillSRGBu8WithColor(u8Ptr, imgPtr, bufferType, size.width);
       imgPtr += size.width;
-      u8Ptr += size.width * NA_RGBA_COLOR_CHANNEL_COUNT;
     }
   }else{
     u8Ptr = data;

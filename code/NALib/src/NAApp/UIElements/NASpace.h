@@ -36,6 +36,11 @@ NA_API void naAddSpaceChildRaw(NASpace* space, void* child, NAPos pos);
 // functions:
 NA_API void naAddSpaceChildWithSize(NASpace* space, void* child, NAPos pos, NASize size);
 NA_API void naAddSpaceChildRawWithSize(NASpace* space, void* child, NAPos pos, NASize size);
+// For inline elements, you do not want to explicitely set the height of the
+// ui element, or leave the elements size completely unchanged. For that, use
+// the following helper functions:
+NASize naMakeInlineSize(double width);
+NASize naMakeUnchangedSize(void);
 
 // Removes the given child from the space. If the child is not a child of the
 // space, nothing happens. NALib will output a warning though.

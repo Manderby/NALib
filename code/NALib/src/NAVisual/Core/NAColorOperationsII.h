@@ -344,7 +344,7 @@ NA_HIDEF void na_BlendColorEraseHue(
     float prevSaturation = baseHSL[1];
     
     // This happens only with the value 0 and 360.
-    if(baseHSL[0] - discolorizationHue == -360.f){
+    if(baseHSL[0] - discolorizationHue == -360.f) {
      discolorizationHue = baseHSL[0];
     }
     
