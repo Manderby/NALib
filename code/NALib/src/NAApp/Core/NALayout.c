@@ -887,7 +887,7 @@ void na_AlignLayoutElement(
 
     // Finally, align the child.
     na_AlignLayoutElement(
-      na_GetLayoutingSpace(child),
+      na_GetLayoutingSpace(elem),
       child,
       childPaddingRect);
   }
