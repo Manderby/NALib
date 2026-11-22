@@ -23,19 +23,15 @@
 // (In other frameworks called View, Frame, Area, Widget...)
 NA_API NASpace* naNewSpace(void);
 
-// Adds a child ui element at the given position.
+// Adds a child ui element at the given position with the given size.
 // Beware that adding a child to a space which formerly was the first responder
 // of a window, that windows first responder will be reset to Null.
 //
 // The default function will automatically offset the uiElements such that
 // they are aligned to a common text baseline. If you want full control over
 // positioning, use the Raw variant.
-NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
-NA_API void naAddSpaceChildRaw(NASpace* space, void* child, NAPos pos);
-// If you want to change the size at the same time, use the following two
-// functions:
-NA_API void naAddSpaceChildWithSize(NASpace* space, void* child, NAPos pos, NASize size);
-NA_API void naAddSpaceChildRawWithSize(NASpace* space, void* child, NAPos pos, NASize size);
+NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos, NASize size);
+NA_API void naAddSpaceChildRaw(NASpace* space, void* child, NAPos pos, NASize size);
 // For inline elements, you do not want to explicitely set the height of the
 // ui element, or leave the elements size completely unchanged. For that, use
 // the following helper functions:

@@ -286,16 +286,10 @@ NA_HDEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child
 
 
 
-NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos) {
-  na_AddSpaceChildAtPos(space, child, pos, naMakeSizeZero(), NA_FALSE, NA_TRUE, NA_FALSE);
-}
-NA_DEF void naAddSpaceChildRaw(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos) {
-  na_AddSpaceChildAtPos(space, child, pos, naMakeSizeZero(), NA_TRUE, NA_TRUE, NA_FALSE);
-}
-NA_DEF void naAddSpaceChildWithSize(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NASize size) {
+NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NASize size) {
   na_AddSpaceChildAtPos(space, child, pos, size, NA_FALSE, NA_FALSE, NA_FALSE);
 }
-NA_DEF void naAddSpaceChildRawWithSize(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NASize size) {
+NA_DEF void naAddSpaceChildRaw(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NASize size) {
   na_AddSpaceChildAtPos(space, child, pos, size, NA_TRUE, NA_FALSE, NA_FALSE);
 }
 NA_HDEF void na_AddSpaceChildUnpositioned(NASpace* _Nonnull space, void* _Nonnull child) {
