@@ -116,12 +116,12 @@ NA_RUNTIME_TYPE(NACocoaTextField, na_DestructCocoaTextField, NA_FALSE);
 
 
 
-NA_DEF NATextField* naNewTextField(double width) {
+NA_DEF NATextField* naNewTextField() {
   NACocoaTextField* cocoaTextField = naNew(NACocoaTextField);
   
   NACocoaNativeTextField* nativeObj = [[NACocoaNativeTextField alloc]
     initWithTextField:cocoaTextField
-    frame:naMakeNSRectWithSize(naMakeSize(width, 21))];
+    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_DEFAULT_TEXTFIELD_HEIGHT))];
     
   na_InitCoreTextField(
     (NATextField*)cocoaTextField,

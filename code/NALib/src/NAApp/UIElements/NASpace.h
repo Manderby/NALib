@@ -21,7 +21,7 @@
 
 // Creates a new Space
 // (In other frameworks called View, Frame, Area, Widget...)
-NA_API NASpace* naNewSpace();
+NA_API NASpace* naNewSpace(void);
 
 // Adds a child ui element at the given position.
 // Beware that adding a child to a space which formerly was the first responder

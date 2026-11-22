@@ -79,12 +79,12 @@ NA_RUNTIME_TYPE(NACocoaSlider, na_DestructCocoaSlider, NA_FALSE);
 
 
 
-NA_DEF NASlider* naNewSlider(double width) {
+NA_DEF NASlider* naNewSlider() {
   NACocoaSlider* cocoaSlider = naNew(NACocoaSlider);
   
   NACocoaNativeSlider* nativeObj = [[NACocoaNativeSlider alloc]
     initWithSlider:cocoaSlider
-    frame:naMakeNSRectWithSize(naMakeSize(width, 26))];
+    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_DEFAULT_SLIDER_HEIGHT))];
   na_InitCoreSlider(
     (NASlider*)cocoaSlider,
     NA_COCOA_PTR_OBJC_TO_C(nativeObj));

@@ -13,8 +13,7 @@
 
 
 // Creates a new select (also called popup button, dropdown menu etc.).
-// Default height is 23.
-NA_API NASelect* naNewSelect(double width);
+NA_API NASelect* naNewSelect(void);
 
 // Changes the visibility or enabled state of the select.
 NA_API void naSetSelectVisible(

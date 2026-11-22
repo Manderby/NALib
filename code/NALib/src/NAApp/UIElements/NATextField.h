@@ -14,8 +14,8 @@
 
 
 
-// Creates a new TextField. Default height is 21.
-NA_API NATextField* naNewTextField(double width);
+// Creates a new TextField.
+NA_API NATextField* naNewTextField(void);
 
 // Get or set the text of the textField.
 NA_API NAString* naNewStringWithTextFieldText(const NATextField* textField);

@@ -119,7 +119,7 @@ NABool naSelectWINAPINotify(void* uiElement, WORD notificationCode) {
 
 
 
-NA_DEF NASelect* naNewSelect(double width) {
+NA_DEF NASelect* naNewSelect() {
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPISelect* winapiSelect = naNew(NAWINAPISelect);
@@ -127,7 +127,7 @@ NA_DEF NASelect* naNewSelect(double width) {
   TCHAR* systemText = naAllocSystemStringWithUTF8String("Select");
 
   double uiScale = naGetUIElementUIScale(NA_NULL);
-  winapiSelect->rect = naMakeRectS(0., 0., width, 24.);
+  winapiSelect->rect = naMakeRectS(0., 0., NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_DEFAULT_SELECT_HEIGHT);
 
   HWND nativePtr = CreateWindow(
     WC_COMBOBOX,

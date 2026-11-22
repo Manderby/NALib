@@ -94,12 +94,12 @@ NAWINAPICallbackInfo naSliderWINAPIScroll(void* uiElement, WPARAM wParam) {
 
 
 
-NA_DEF NASlider* naNewSlider(double width) {
+NA_DEF NASlider* naNewSlider() {
 #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   NAWINAPISlider* winapiSlider = naNew(NAWINAPISlider);
 
   double uiScale = naGetUIElementUIScale(NA_NULL);
-  winapiSlider->rect = naMakeRectS(0., 0., width, 24.);
+  winapiSlider->rect = naMakeRectS(0., 0., NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_DEFAULT_SLIDER_HEIGHT);
 
   // TBS_TRANSPARENTBKGND is necessary to call WM_PRINTCLIENT of the parent
   // space.
