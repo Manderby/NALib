@@ -588,8 +588,9 @@ void na_AlignLayoutElement(
   NA_LayoutElement* elem,
   NARect paddingRect)
 {
-  NABool horizontalIsRightToLeft = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(layoutingSpace);
-  NABool verticalIsBottomToTop = naGetSpaceLayoutDirectionsVerticalIsBottomToTop(layoutingSpace);
+  NABool elemIsSpace = elem->uiElement && (naGetUIElementType(elem->uiElement) == NA_UI_SPACE);
+  NABool horizontalIsRightToLeft = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(elemIsSpace ? elem->uiElement : layoutingSpace);
+  NABool verticalIsBottomToTop = naGetSpaceLayoutDirectionsVerticalIsBottomToTop(elemIsSpace ? elem->uiElement : layoutingSpace);
   NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
   
   // Compute the actual size of the padded content of the element.
@@ -726,7 +727,7 @@ void na_AlignLayoutElement(
   // When the given element denotes a section or a new sub-layout, the given
   // uiElement must be an NASpace and childs will be added to that space.
   // Therefore, we reset the local coordinate system origin to zero.
-  if(elem->uiElement && (naGetUIElementType(elem->uiElement) == NA_UI_SPACE)) {
+  if(elem->uiElement && elemIsSpace) {
     paddedContentRect.pos = naMakePosZero();
 
     #if NA_DEBUG
