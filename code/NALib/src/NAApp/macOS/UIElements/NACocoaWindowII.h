@@ -254,7 +254,8 @@ NA_DEF NAWindow* naNewWindow(
 
   cocoaWindow->window.flags = flags;
 
-  NASpace* space = naNewSpace(rect.size);
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRect(naMakePos(0., 0.), rect.size));
   if(titleless) {
     naSetSpaceDragsWindow(space, NA_TRUE);
   }

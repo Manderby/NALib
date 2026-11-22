@@ -42,6 +42,12 @@
 #include "NACocoaColorII.h"
 #include "NACocoaInterfaces.h"
 
+#define NA_COCOA_DEFAULT_BUTTON_HEIGHT   24.
+#define NA_COCOA_DEFAULT_CHECKBOX_HEIGHT 18.
+#define NA_COCOA_DEFAULT_LABEL_HEIGHT    17.
+#define NA_COCOA_DEFAULT_RADIO_HEIGHT    18.
+#define NA_COCOA_UI_ELEMENT_DUMMY_WIDTH  10.
+
 #include "UIElements/NACocoaApplicationII.h"
 #include "UIElements/NACocoaButtonII.h"
 #include "UIElements/NACocoaCheckBoxII.h"

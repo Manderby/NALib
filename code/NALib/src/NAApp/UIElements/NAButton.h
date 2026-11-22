@@ -22,26 +22,20 @@
 //
 // Default height for Text- and Icon-Button is 24.
 NA_API NAButton* naNewTextPushButton(
-  const NAUTF8Char* text,
-  double width);
+  const NAUTF8Char* text);
 NA_API NAButton* naNewTextStateButton(
   const NAUTF8Char* text,
-  const NAUTF8Char* text2,
-  double width);
+  const NAUTF8Char* text2);
 NA_API NAButton* naNewIconPushButton(
-  const NAImageSet* icon,
-  double width);
+  const NAImageSet* icon);
 NA_API NAButton* naNewIconStateButton(
   const NAImageSet* icon,
-  const NAImageSet* icon2,
-  double width);
+  const NAImageSet* icon2);
 NA_API NAButton* naNewImagePushButton(
-  const NAImageSet* imageSet,
-  NASize size);
+  const NAImageSet* imageSet);
 NA_API NAButton* naNewImageStateButton(
   const NAImageSet* imageSet,
-  const NAImageSet* imageSet2,
-  NASize size);
+  const NAImageSet* imageSet2);
 
 // Changes the visibility or enabled state of the button.
 NA_API void naSetButtonVisible(NAButton* button, NABool visible);

@@ -160,7 +160,7 @@ NA_DEF NASelect* naNewSelect(double width) {
   return (NASelect*)winapiSelect;
 #else
   // not a very good cast but things are broken in such a situation anyway.
-  return (NASelect*)naNewLabel("Slider error", width);
+  return (NASelect*)naNewLabel("Slider error");
 #endif
 }
 

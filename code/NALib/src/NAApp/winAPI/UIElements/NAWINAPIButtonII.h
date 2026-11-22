@@ -371,7 +371,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
 
 
-NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
+NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
@@ -379,7 +379,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
-  winapiButton->rect = naMakeRectS(0., 0., width, 24.);
+  winapiButton->rect = naMakeRectS(0., 0., NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_DEFAULT_BUTTON_HEIGHT);
   double uiScale = naGetUIElementUIScale(NA_NULL);
 
   HWND nativePtr = CreateWindow(
@@ -426,7 +426,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
 
 
 
-NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* text2, double width) {
+NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* text2) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
@@ -434,7 +434,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
-  winapiButton->rect = naMakeRectS(0., 0., width, 24.);
+  winapiButton->rect = naMakeRectS(0., 0., NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_DEFAULT_BUTTON_HEIGHT);
   double uiScale = naGetUIElementUIScale(NA_NULL);
 
   HWND nativePtr = CreateWindow(
@@ -481,12 +481,12 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
 
 
-NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
+NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon) {
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
   uint32 flags = NA_BUTTON_BORDERED;
 
-  winapiButton->rect = naMakeRectS(0., 0., width, 24.);
+  winapiButton->rect = naMakeRectS(0., 0., NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_DEFAULT_BUTTON_HEIGHT);
   double uiScale = naGetUIElementUIScale(NA_NULL);
 
   HWND nativePtr = CreateWindow(
@@ -527,12 +527,12 @@ NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
 
 
 
-NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* icon2, double width) {
+NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* icon2) {
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
 
-  winapiButton->rect = naMakeRectS(0., 0., width, 24.);
+  winapiButton->rect = naMakeRectS(0., 0., NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_DEFAULT_BUTTON_HEIGHT);
   double uiScale = naGetUIElementUIScale(NA_NULL);
 
   // Note: We need a copy because the tinting might be different.
@@ -582,12 +582,12 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
 
 
 
-NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet, NASize size) {
+NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet) {
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
   uint32 flags = 0;
 
-  winapiButton->rect = naMakeRect(naMakePos(0., 0.), size);
+  winapiButton->rect = naMakeRectS(0., 0., NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_UI_ELEMENT_DUMMY_WIDTH);
   double uiScale = naGetUIElementUIScale(NA_NULL);
 
   HWND nativePtr = CreateWindow(
@@ -628,12 +628,12 @@ NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet, NASize size) {
 
 
 
-NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImageSet* imageSet2, NASize size) {
+NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImageSet* imageSet2) {
   NAWINAPIButton* winapiButton = naNew(NAWINAPIButton);
 
   uint32 flags = NA_BUTTON_STATEFUL;
 
-  winapiButton->rect = naMakeRect(naMakePos(0., 0.), size);
+  winapiButton->rect = naMakeRectS(0., 0., NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_UI_ELEMENT_DUMMY_WIDTH);
   double uiScale = naGetUIElementUIScale(NA_NULL);
 
   HWND nativePtr = CreateWindow(

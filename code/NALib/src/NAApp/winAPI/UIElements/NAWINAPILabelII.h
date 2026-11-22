@@ -122,13 +122,13 @@ NABool naLabelWINAPINotify(void* uiElement, WORD notificationCode) {
 
 
 
-NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
+NA_DEF NALabel* naNewLabel(const NAUTF8Char* text) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPILabel* winapiLabel = naNew(NAWINAPILabel);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
-  winapiLabel->rect = naMakeRectS(0., 0., width, 16.);
+  winapiLabel->rect = naMakeRectS(0., 0., NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_DEFAULT_LABEL_HEIGHT);
   double uiScale = naGetUIElementUIScale(NA_NULL);
 
   // We need a read only edit control here, otherwise on windows, the user is not able to select text.

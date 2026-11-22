@@ -238,10 +238,10 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(
 
 
 
-NA_DEF NASpace* naNewSpace(NASize size) {
+NA_DEF NASpace* naNewSpace() {
   NAWINAPISpace* winapiSpace = naNew(NAWINAPISpace);
 
-  winapiSpace->rect = naMakeRect(naMakePos(0., 0.), size);
+  winapiSpace->rect = naMakeRectS(0., 0., NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH);
 	double uiScale = naGetUIElementUIScale(NA_NULL);
 
 	HWND nativePtr = CreateWindow(

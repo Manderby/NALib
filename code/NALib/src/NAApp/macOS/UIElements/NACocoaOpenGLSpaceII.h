@@ -268,12 +268,12 @@
 
 
 
-  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData) {
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAMutator initFunc, void* initData) {
     NACocoaOpenGLSpace* cocoaOpenGLSpace = naNew(NACocoaOpenGLSpace);
 
     NACocoaNativeOpenGLSpace* nativeObj = [[NACocoaNativeOpenGLSpace alloc]
       initWithOpenGLSpace:cocoaOpenGLSpace
-      frame:naMakeNSRectWithSize(size)
+      frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_UI_ELEMENT_DUMMY_WIDTH))
       initFunc:initFunc
       initData:initData];
       
@@ -444,8 +444,7 @@
 
 #else
 
-  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData) {
-    NA_UNUSED(size);
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAMutator initFunc, void* initData) {
     NA_UNUSED(initFunc);
     NA_UNUSED(initData);
     #if NA_DEBUG

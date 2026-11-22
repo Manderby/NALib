@@ -96,12 +96,12 @@ NA_RUNTIME_TYPE(NACocoaCheckBox, na_DestructCocoaCheckBox, NA_FALSE);
 
 
 
-NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
+NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text) {
   NACocoaCheckBox* cocoaCheckBox = naNew(NACocoaCheckBox);
 
   NACocoaNativeCheckBox* nativeObj = [[NACocoaNativeCheckBox alloc]
     initWithCheckBox:cocoaCheckBox
-    frame:naMakeNSRectWithSize(naMakeSize(width, 18))];    
+    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_DEFAULT_CHECKBOX_HEIGHT))];    
 
   na_InitCoreCheckBox(
     (NACheckBox*)cocoaCheckBox,

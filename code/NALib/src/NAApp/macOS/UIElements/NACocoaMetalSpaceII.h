@@ -292,12 +292,12 @@
 
 
 
-  NA_DEF NAMetalSpace* naNewMetalSpace(NASize size) {
+  NA_DEF NAMetalSpace* naNewMetalSpace() {
     NACocoaMetalSpace* cocoaMetalSpace = naNew(NACocoaMetalSpace);
 
     NACocoaNativeMetalSpace* nativeObj = [[NACocoaNativeMetalSpace alloc]
       initWithMetalSpace:cocoaMetalSpace
-      frame:naMakeNSRectWithSize(size)];
+      frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_UI_ELEMENT_DUMMY_WIDTH))];
       
     na_InitCoreMetalSpace(
       (NAMetalSpace*)cocoaMetalSpace,
@@ -475,8 +475,7 @@ NA_HDEF void na_UpdateMetalSpaceUIScale(NA_UIElement* metalSpace) {
 
 #else
 
-  NA_DEF NAMetalSpace* naNewMetalSpace(NASize size) {
-    NA_UNUSED(size);
+  NA_DEF NAMetalSpace* naNewMetalSpace() {
     #if NA_DEBUG
       naError("Metal has not been configured. See NAConfiguration.h");
     #endif

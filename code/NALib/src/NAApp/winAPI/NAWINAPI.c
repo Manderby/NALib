@@ -24,8 +24,6 @@
   #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
-
-
 #include <windows.h>
 #include <windowsx.h>
 
@@ -42,6 +40,12 @@
 #include "NAWINAPIII.h"
 #include "NAWINAPIColorII.h"
 #include "NAWINAPIInterfaces.h"
+
+#define NA_WINAPI_DEFAULT_BUTTON_HEIGHT   24.
+#define NA_WINAPI_DEFAULT_CHECKBOX_HEIGHT 18.
+#define NA_WINAPI_DEFAULT_LABEL_HEIGHT    16.
+#define NA_WINAPI_DEFAULT_RADIO_HEIGHT    18.
+#define NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH  10.
 
 #include "UIElements/NAWINAPIApplicationII.h"
 #include "UIElements/NAWINAPIButtonII.h"
@@ -63,8 +67,10 @@
 #include "UIElements/NAWINAPIWindowII.h"
 
 
-
+#else
+  int na_gui_not_compiled_on_windows = 1; // reduces warnings.
 #endif // NA_COMPILE_GUI == 1
+
 #endif // NA_OS == NA_OS_WINDOWS
 
 

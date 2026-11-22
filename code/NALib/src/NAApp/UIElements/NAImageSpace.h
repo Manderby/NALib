@@ -15,7 +15,7 @@
 
 // Creates a new imageSpace. Will retain the imageSet.
 // An imageSpace is a space which displays the given image.
-NA_API NAImageSpace* naNewImageSpace(NAImageSet* imageSet, NASize size);
+NA_API NAImageSpace* naNewImageSpace(NAImageSet* imageSet);
 
 NA_API void naSetImageSpaceImage(NAImageSpace* imageSpace, NAImageSet* imageSet);
 

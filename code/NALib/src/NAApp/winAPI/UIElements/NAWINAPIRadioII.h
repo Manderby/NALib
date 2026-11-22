@@ -79,7 +79,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
   double uiScale = naGetUIElementUIScale(NA_NULL);
-  winapiRadio->rect = naMakeRectS(0., 0., width, 18.);
+  winapiRadio->rect = naMakeRectS(0., 0., NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_DEFAULT_RADIO_HEIGHT);
 
 	HWND nativePtr = CreateWindow(
 		TEXT("BUTTON"),

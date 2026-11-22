@@ -241,12 +241,12 @@ NA_RUNTIME_TYPE(NACocoaLabel, na_DestructCocoaLabel, NA_FALSE);
 
 
 
-NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, double width) {
+NA_DEF NALabel* naNewLabel(const NAUTF8Char* text) {
   NACocoaLabel* cocoaLabel = naNew(NACocoaLabel);
 
   NACocoaNativeLabel* nativeObj = [[NACocoaNativeLabel alloc]
     initWithLabel:cocoaLabel
-    frame:naMakeNSRectWithSize(naMakeSize(width, 17))];
+    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_DEFAULT_LABEL_HEIGHT))];
     
   na_InitCoreLabel(
     (NALabel*)cocoaLabel,

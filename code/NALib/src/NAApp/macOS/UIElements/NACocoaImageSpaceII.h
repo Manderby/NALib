@@ -70,12 +70,12 @@ NA_RUNTIME_TYPE(NACocoaImageSpace, na_DestructCocoaImageSpace, NA_FALSE);
 
 
 
-NA_DEF NAImageSpace* _Nonnull naNewImageSpace(NAImageSet* _Nullable imageSet, NASize size) {
+NA_DEF NAImageSpace* _Nonnull naNewImageSpace(NAImageSet* _Nullable imageSet) {
   NACocoaImageSpace* cocoaImageSpace = naNew(NACocoaImageSpace);
 
   NACocoaNativeImageSpace* nativeObj = [[NACocoaNativeImageSpace alloc]
     initWithImageSpace:cocoaImageSpace
-    frame:naMakeNSRectWithSize(size)];
+    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_UI_ELEMENT_DUMMY_WIDTH))];
     
   na_InitCoreImageSpace(
     (NAImageSpace*)cocoaImageSpace,

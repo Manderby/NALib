@@ -160,10 +160,10 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(
 
 
 
-NA_DEF NAImageSpace* naNewImageSpace(NAImageSet* imageSet, NASize size) {
+NA_DEF NAImageSpace* naNewImageSpace(NAImageSet* imageSet) {
   NAWINAPIImageSpace* winapiImageSpace = naNew(NAWINAPIImageSpace);
 
-  winapiImageSpace->rect = naMakeRect(naMakePos(0., 0.), size);
+  winapiImageSpace->rect = naMakeRectS(0., 0., NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH);
   double uiScale = naGetUIElementUIScale(NA_NULL);
 
 	HWND nativePtr = CreateWindow(

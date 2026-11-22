@@ -13,8 +13,8 @@
 
 
 
-// Creates a new Radio. Default height is 18.
-NA_API NARadio* naNewRadio(const NAUTF8Char* text, double width);
+// Creates a new Radio.
+NA_API NARadio* naNewRadio(const NAUTF8Char* text);
 
 // Changes the visibility or enabled state of the radio.
 NA_API void naSetRadioVisible(NARadio* radio, NABool visible);
