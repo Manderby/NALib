@@ -131,7 +131,7 @@ NA_DEF void naFillSpaceBackgroundColor(NAColor* color, const NASpace* space) {
   }
 
   NAColor alternatedColor;
-  naBlendColors(&alternatedColor, &thisBgColor, &fgColor, 0.075f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
+  naBlendColors(&alternatedColor, &thisBgColor, &fgColor, 0.05f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
   naBlendColors(color, &parentBgColor, &alternatedColor, 1.f, NA_BLEND_OVERLAY, 1, NA_FALSE, NA_FALSE);
 }
 
