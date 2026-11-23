@@ -317,6 +317,12 @@ NA_IAPI NASizei32 naMakeSizei32Zero(void);
 NA_IAPI NASizei64 naMakeSizei64Zero(void);
 NA_IAPI NASizes   naMakeSizesZero  (void);
 
+NA_IAPI NASize    naMakeSizeHalf    (NASize    size);
+NA_IAPI NASizef   naMakeSizeHalff   (NASizef   size);
+NA_IAPI NASizei32 naMakeSizeHalfi32 (NASizei32 size);
+NA_IAPI NASizei64 naMakeSizeHalfi64 (NASizei64 size);
+NA_IAPI NASizes   naMakeSizeHalfs   (NASizes   size);
+
 NA_IAPI void      naFillSizeWithCopy   (NASize*    sized, const NASize*    sizes);
 NA_IAPI void      naFillSizefWithCopy  (NASizef*   sized, const NASizef*   sizes);
 NA_IAPI void      naFillSizei32WithCopy(NASizei32* sized, const NASizei32* sizes);

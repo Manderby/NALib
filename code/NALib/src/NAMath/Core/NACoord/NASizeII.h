@@ -165,6 +165,22 @@ NA_IDEF NASizes naMakeSizesZero() {
 }
 
 
+NA_IAPI NASize naMakeSizeHalf(NASize size) {
+  return naMakeSize(size.width * .5, size.height * .5);
+}
+NA_IAPI NASizef naMakeSizeHalff(NASizef size) {
+  return naMakeSizef(size.width * .5f, size.height * .5f);
+}
+NA_IAPI NASizei32 naMakeSizeHalfi32(NASizei32 size) {
+  return naMakeSizei32(size.width / 2, size.height / 2);
+}
+NA_IAPI NASizei64 naMakeSizeHalfi64(NASizei64 size) {
+  return naMakeSizei64(size.width / 2, size.height / 2);
+}
+NA_IAPI NASizes naMakeSizeHalfs(NASizes size) {
+  return naMakeSizes(size.width / 2, size.height / 2);
+}
+
 
 NA_IDEF void naFillSizeWithCopy(NASize* sized, const NASize* sizes) {
   sized->width  = sizes->width;

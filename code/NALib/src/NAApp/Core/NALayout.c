@@ -523,7 +523,7 @@ void naSetLayoutSectionSpace(NASpace* space) {
 
 
 
-void naSetLayoutElementPrimaryAlign(NAAlignment alignment1) {
+void naSetLayoutElementPrimaryAlignment(NAAlignment alignment1) {
   #if NA_DEBUG
     if(!na_curLayoutElement)
       naCrash("No layout in progress. Use naBeginLayout.");
@@ -543,7 +543,7 @@ void naSetLayoutElementPrimaryAlign(NAAlignment alignment1) {
 
 
 
-void naSetLayoutElementSecondaryAlign(NAAlignment alignment2) {
+void naSetLayoutElementSecondaryAlignment(NAAlignment alignment2) {
   #if NA_DEBUG
     if(!na_curLayoutElement)
       naCrash("No layout in progress. Use naBeginLayout.");
