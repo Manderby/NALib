@@ -479,6 +479,8 @@ void naBeginSubLayout(
   naBeginLayout(space, padding);
   na_curLayoutElement->margin.begin1 = preMargin1;
   na_curLayoutElement->blockSize1 = blockSize1;
+  na_curLayoutElement->contentSize1 = NA_LAYOUT_MIN;
+  na_curLayoutElement->contentSize2 = NA_LAYOUT_MIN;
 }
 
 
