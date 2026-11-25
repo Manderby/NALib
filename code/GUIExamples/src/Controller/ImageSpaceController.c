@@ -17,13 +17,18 @@ struct ImageSpaceController{
 CommonController* createImageSpaceController() {
   ImageSpaceController* con = naAlloc(ImageSpaceController);
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->imageSpace = naNewImageSpace(getIconImageSet(), naMakeSize(50, 22));
-  naAddSpaceChild(space, con->imageSpace, naMakePos(WINDOW_MARGIN, curPosY));
+  con->imageSpace = naNewImageSpace(getIconImageSet());
+  naAddSpaceChild(
+    space,
+    con->imageSpace,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeSize(50, 22));
 
   initCommonController(
     &con->comCon,

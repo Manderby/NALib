@@ -346,7 +346,7 @@ NA_DEF NAWindow* naNewWindow(
     NA_NULL);
 
   NASpace* contentSpace = naNewSpace();
-  naSetUIElementRect(naMakeRect(naMakePos(0., 0.), rect.size));
+  naSetUIElementRect(contentSpace, naMakeRect(naMakePos(0., 0.), rect.size));
   if(titleless) {
     naSetSpaceDragsWindow(contentSpace, NA_TRUE);
   }

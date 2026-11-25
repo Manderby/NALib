@@ -40,54 +40,91 @@ static void sliderEdited(NAReaction reaction) {
 CommonController* createSliderController() {
   SliderController* con = naAlloc(SliderController);
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->normalLabel = naNewLabel("Normal", COLUMN0_WIDTH);
+  con->normalLabel = naNewLabel("Normal");
   naSetLabelFont(con->normalLabel, getTitleFont());
-  naAddSpaceChild(space, con->normalLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->normalLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->slider = naNewSlider(COLUMN1_WIDTH);
-  naAddSpaceChild(space, con->slider, naMakePos(TAB1, curPosY));
+  con->slider = naNewSlider();
+  naAddSpaceChild(
+    space,
+    con->slider,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
   naAddUIReaction(con->slider, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
-  con->normalReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->normalReaction = naNewLabel("");
   naSetLabelFont(con->normalReaction, getMonoFont());
-  naAddSpaceChild(space, con->normalReaction, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(
+    space,
+    con->normalReaction,
+    naMakePos(TAB2, curPosY),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->ticksLabel = naNewLabel("Ticks", COLUMN0_WIDTH);
+  con->ticksLabel = naNewLabel("Ticks");
   naSetLabelFont(con->ticksLabel, getTitleFont());
-  naAddSpaceChild(space, con->ticksLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->ticksLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->ticksSlider = naNewSlider(COLUMN1_WIDTH);
+  con->ticksSlider = naNewSlider();
   naSetSliderRange(con->ticksSlider, 0., 1., 11);
-  naAddSpaceChild(space, con->ticksSlider, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->ticksSlider,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
   naAddUIReaction(con->ticksSlider, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
-  con->ticksReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->ticksReaction = naNewLabel("");
   naSetLabelFont(con->ticksReaction, getMonoFont());
-  naAddSpaceChild(space, con->ticksReaction, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(
+    space,
+    con->ticksReaction,
+    naMakePos(TAB2, curPosY),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   curPosY = curPosY - (2. * UI_ELEMENT_HEIGTH);
 
-  con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
+  con->disabledLabel = naNewLabel("Disabled");
   naSetLabelFont(con->disabledLabel, getTitleFont());
-  naAddSpaceChild(space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH));
+  naAddSpaceChild(
+    space,
+    con->disabledLabel,
+    naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN0_WIDTH));
   
-  con->sliderDisabled1 = naNewSlider(COLUMN1_WIDTH);
+  con->sliderDisabled1 = naNewSlider();
   naSetSliderEnabled(con->sliderDisabled1, NA_FALSE);
   naSetSliderValue(con->sliderDisabled1, .5);
-  naAddSpaceChild(space, con->sliderDisabled1, naMakePos(TAB1, curPosY + UI_ELEMENT_HEIGTH));
+  naAddSpaceChild(
+    space,
+    con->sliderDisabled1,
+    naMakePos(TAB1, curPosY + UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
-  con->sliderDisabled2 = naNewSlider(COLUMN1_WIDTH);
+  con->sliderDisabled2 = naNewSlider();
   naSetSliderEnabled(con->sliderDisabled2, NA_FALSE);
   naSetSliderRange(con->sliderDisabled2, 0., 1., 11);
   naSetSliderValue(con->sliderDisabled2, .5);
-  naAddSpaceChild(space, con->sliderDisabled2, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->sliderDisabled2,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
   naAddUIReaction(con->sliderDisabled2, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
   initCommonController(

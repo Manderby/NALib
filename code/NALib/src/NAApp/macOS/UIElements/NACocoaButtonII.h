@@ -244,7 +244,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text) {
     flags:flags
     isImage:NO
     frame:naMakeNSRectWithSize(naMakeSize(
-      NA_COCOA_UI_ELEMENT_DUMMY_WIDTH,
+      NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH,
       NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
       
   na_InitCoreButton(
@@ -274,7 +274,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
     flags:flags
     isImage:NO
     frame:naMakeNSRectWithSize(naMakeSize(
-      NA_COCOA_UI_ELEMENT_DUMMY_WIDTH,
+      NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH,
       NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
       
   na_InitCoreButton(
@@ -303,7 +303,7 @@ NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon) {
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(naMakeSize(
-      NA_COCOA_UI_ELEMENT_DUMMY_WIDTH,
+      NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH,
       NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
       
   na_InitCoreButton(
@@ -335,7 +335,7 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(naMakeSize(
-      NA_COCOA_UI_ELEMENT_DUMMY_WIDTH,
+      NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH,
       NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
       
   na_InitCoreButton(
@@ -366,7 +366,7 @@ NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet) {
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
-    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_UI_ELEMENT_DUMMY_WIDTH))];
+    frame:naMakeNSRectWithSize(naMakeSize(NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH))];
     
   na_InitCoreButton(
     (NAButton*)cocoaButton,
@@ -396,7 +396,7 @@ NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImage
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
-    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_UI_ELEMENT_DUMMY_WIDTH))];
+    frame:naMakeNSRectWithSize(naMakeSize(NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH))];
     
   na_InitCoreButton(
     (NAButton*)cocoaButton,

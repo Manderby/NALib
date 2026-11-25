@@ -50,14 +50,19 @@ static void menuItemSelected(NAReaction reaction) {
 CommonController* createMenuController() {
   MenuController* con = naAlloc(MenuController);
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->button = naNewTextPushButton("Push for Menu", COLUMN1_WIDTH);
+  con->button = naNewTextPushButton("Push for Menu");
   naAddUIReaction(con->button, NA_UI_COMMAND_PRESSED, menuButtonPressed, con);
-  naAddSpaceChild(space, con->button, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->button,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
   con->menu = naNewMenu();  
   NAMenuItem* menuItem0 = naNewMenuItem("You are Winner", NA_NULL);
   NAMenuItem* menuItem1 = naNewMenuItem("Kohle, Kohle, Kohle", NA_NULL);
@@ -79,9 +84,13 @@ CommonController* createMenuController() {
   naAddUIReaction(menuItem3, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
   naAddUIReaction(menuItem4, NA_UI_COMMAND_PRESSED, menuItemSelected, con);
 
-  con->menuReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->menuReaction = naNewLabel("");
   naSetLabelFont(con->menuReaction, getMonoFont());
-  naAddSpaceChild(space, con->menuReaction, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(
+    space,
+    con->menuReaction,
+    naMakePos(TAB2, curPosY),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   initCommonController(
     &con->comCon,

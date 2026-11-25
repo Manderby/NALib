@@ -127,7 +127,7 @@ NA_DEF NASelect* naNewSelect() {
   TCHAR* systemText = naAllocSystemStringWithUTF8String("Select");
 
   double uiScale = naGetUIElementUIScale(NA_NULL);
-  winapiSelect->rect = naMakeRectS(0., 0., NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_DEFAULT_SELECT_HEIGHT);
+  winapiSelect->rect = naMakeRectS(0., 0., NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_DEFAULT_SELECT_HEIGHT);
 
   HWND nativePtr = CreateWindow(
     WC_COMBOBOX,

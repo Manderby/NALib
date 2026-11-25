@@ -18,17 +18,26 @@ struct TextBoxController{
 CommonController* createTextBoxController() {
   TextBoxController* con = naAlloc(TextBoxController);
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->enabledLabel = naNewLabel("Normal", COLUMN0_WIDTH);
+  con->enabledLabel = naNewLabel("Normal");
   naSetLabelFont(con->enabledLabel, getTitleFont());
-  naAddSpaceChild(space, con->enabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->enabledLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->textBox = naNewTextBox(naMakeSize(COLUMN1_WIDTH, 50));
-  naAddSpaceChild(space, con->textBox, naMakePos(TAB1, curPosY - 20));
+  con->textBox = naNewTextBox();
+  naAddSpaceChild(
+    space,
+    con->textBox,
+    naMakePos(TAB1, curPosY - 20),
+    naMakeSize(COLUMN1_WIDTH, 50));
 
   initCommonController(
     &con->comCon,

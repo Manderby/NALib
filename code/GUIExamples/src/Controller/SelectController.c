@@ -33,17 +33,26 @@ static void selectItemSelected(NAReaction reaction) {
 CommonController* createSelectController() {
   SelectController* con = naAlloc(SelectController);
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->normalLabel = naNewLabel("Normal", COLUMN0_WIDTH);
+  con->normalLabel = naNewLabel("Normal");
   naSetLabelFont(con->normalLabel, getTitleFont());
-  naAddSpaceChild(space, con->normalLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->normalLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->select = naNewSelect(COLUMN1_WIDTH);
-  naAddSpaceChild(space, con->select, naMakePos(TAB1, curPosY));
+  con->select = naNewSelect();
+  naAddSpaceChild(
+    space,
+    con->select,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
   for(size_t i = 0; i < 5; ++i) {
     NAMenuItem* item = naNewMenuItem(naAllocSprintf(NA_TRUE, "Select menu item %d", i), NA_NULL);
     naAddSelectMenuItem(con->select, item, NA_NULL);
@@ -58,21 +67,33 @@ CommonController* createSelectController() {
 
   naSetSelectIndexSelected(con->select, 3);
 
-  con->normalReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->normalReaction = naNewLabel("");
   naSetLabelFont(con->normalReaction, getMonoFont());
-  naAddSpaceChild(space, con->normalReaction, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(
+    space,
+    con->normalReaction,
+    naMakePos(TAB2, curPosY),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
+  con->disabledLabel = naNewLabel("Disabled");
   naSetLabelFont(con->disabledLabel, getTitleFont());
-  naAddSpaceChild(space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->disabledLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->selectDisabled = naNewSelect(COLUMN1_WIDTH);
+  con->selectDisabled = naNewSelect();
   naSetSelectEnabled(con->selectDisabled, NA_FALSE);
   NAMenuItem* disabledItem = naNewMenuItem(naAllocSprintf(NA_TRUE, "Disabled Select", 0), NA_NULL);
   naAddSelectMenuItem(con->selectDisabled, disabledItem, NA_NULL);
-  naAddSpaceChild(space, con->selectDisabled, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->selectDisabled,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
   initCommonController(
     &con->comCon,

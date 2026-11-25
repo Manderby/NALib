@@ -30,7 +30,8 @@ void redrawMetalSpace(NAReaction reaction) {
 CommonController* createMetalSpaceController() {
   MetalSpaceController* con = naAlloc(MetalSpaceController);
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
@@ -43,12 +44,20 @@ CommonController* createMetalSpaceController() {
     naAddSpaceChild(space, con->metalSpace, naMakePos(WINDOW_MARGIN, curPosY + SPACE_MARGIN_V));
     naAddUIReaction(con->metalSpace, NA_UI_COMMAND_REDRAW, redrawMetalSpace, con);
 
-    con->dummyLabel = naNewLabel("NAMetalSpace examples not available yet", 400);
-    naAddSpaceChild(space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
+    con->dummyLabel = naNewLabel("NAMetalSpace examples not available yet");
+    naAddSpaceChild(
+      space,
+      con->dummyLabel,
+      naMakePos(WINDOW_MARGIN, curPosY),
+      naMakeInlineSize(400));
 
   #else
-    con->dummyLabel = naNewLabel("NAMetalSpace examples not available on Windows", 400);
-    naAddSpaceChild(space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
+    con->dummyLabel = naNewLabel("NAMetalSpace examples not available on Windows");
+    naAddSpaceChild(
+      space,
+      con->dummyLabel,
+      naMakePos(WINDOW_MARGIN, curPosY),
+      naMakeInlineSize(400));
   #endif
 
   initCommonController(

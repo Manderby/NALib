@@ -159,21 +159,34 @@ CommonController* createScreenController() {
 
   double displayHeight = 200.;
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - displayHeight - SPACE_MARGIN_V;
   
-  con->display = naNewOpenGLSpace(naMakeSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN, displayHeight), initOpenGL, con);
+  con->display = naNewOpenGLSpace(initOpenGL, con);
   naAddUIReaction(con->display, NA_UI_COMMAND_REDRAW, redrawDisplayReaction, con);
-  naAddSpaceChild(space, con->display, naMakePos(WINDOW_MARGIN, curPosY + SPACE_MARGIN_V));
+  naAddSpaceChild(
+    space,
+    con->display,
+    naMakePos(WINDOW_MARGIN, curPosY + SPACE_MARGIN_V),
+    naMakeSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN, displayHeight));
   
   curPosY = curPosY - 25;
 
-  con->totalRectTitle = naNewLabel("Absolute space:", COLUMN0_WIDTH);
-  con->totalRectLabel = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naAddSpaceChild(space, con->totalRectTitle, naMakePos(WINDOW_MARGIN, curPosY));
-  naAddSpaceChild(space, con->totalRectLabel, naMakePos(TAB1, curPosY));
+  con->totalRectTitle = naNewLabel("Absolute space:");
+  con->totalRectLabel = naNewLabel("");
+  naAddSpaceChild(
+    space,
+    con->totalRectTitle,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
+  naAddSpaceChild(
+    space,
+    con->totalRectLabel,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN));
 
   // We capture the event when the screen setup is changing.
   naAddUIReaction(naGetApplication(), NA_UI_COMMAND_RESHAPE, applicationReshaped, con);
