@@ -230,7 +230,7 @@ NA_IDEF NAMutex naMakeMutex(void) {
       macintoshMutex->seemslocked = NA_FALSE;
       return macintoshMutex;
     #else
-      NAMutex mutex = NA_COCOA_PTR_OBJC_TO_C(dispatch_semaphore_create(1));
+      NAMutex mutex = dispatch_semaphore_create(1);
       return mutex;
     #endif
   #endif
@@ -261,7 +261,7 @@ NA_IDEF void naClearMutex(NAMutex mutex) {
         // Mutex will be released automatically when ARC is turned on.
         NA_UNUSED(mutex);
       #else
-        dispatch_release(NA_COCOA_PTR_C_TO_OBJC(mutex));
+        dispatch_release(mutex);
       #endif
     #endif
   #endif

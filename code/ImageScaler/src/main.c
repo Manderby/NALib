@@ -192,28 +192,56 @@ ImageTesterController* naAllocImageTestController() {
   con->blendMode = NA_BLEND_ERASE_HUE;
   con->selectedBottom = COLOR_COUNT + IMAGE_RAINBOW;
 
-  con->imageSpace = naNewImageSpace(NA_NULL, naMakeSize(600, 400));
+  con->imageSpace = naNewImageSpace(NA_NULL);
   naAddUIReaction(con->imageSpace, NA_UI_COMMAND_MOUSE_MOVED, mouseMoved, con);
-  naAddSpaceChild(contentSpace, con->imageSpace, naMakePos(20, 20));
+  naAddSpaceChild(
+    contentSpace,
+    con->imageSpace,
+    naMakePos(20, 20),
+    naMakeSize(600, 400));
 
-  con->topLabel = naNewLabel("Top:", 200);
-  con->topSelect = naNewSelect(200);
-  naAddSpaceChild(contentSpace, con->topLabel, naMakePos(640, 325));
-  naAddSpaceChild(contentSpace, con->topSelect, naMakePos(640, 300));
+  con->topLabel = naNewLabel("Top:");
+  con->topSelect = naNewSelect();
+  naAddSpaceChild(
+    contentSpace,
+    con->topLabel,
+    naMakePos(640, 325),
+    naMakeInlineSize(200));
+  naAddSpaceChild(
+    contentSpace,
+    con->topSelect,
+    naMakePos(640, 300),
+    naMakeInlineSize(200));
   fillSelect(con->topSelect, topSelected, con);
 
-  con->scaleLabel = naNewLabel("Scale:", 200);
-  con->scaleSlider = naNewSlider(200);
+  con->scaleLabel = naNewLabel("Scale:");
+  con->scaleSlider = naNewSlider();
   naSetSliderRange(con->scaleSlider, 0., 2., 0);
   naSetSliderValue(con->scaleSlider, 1.);
-  naAddSpaceChild(contentSpace, con->scaleLabel, naMakePos(640, 275));
-  naAddSpaceChild(contentSpace, con->scaleSlider, naMakePos(640, 250));
+  naAddSpaceChild(
+    contentSpace,
+    con->scaleLabel,
+    naMakePos(640, 275),
+    naMakeInlineSize(200));
+  naAddSpaceChild(
+    contentSpace,
+    con->scaleSlider,
+    naMakePos(640, 250),
+    naMakeInlineSize(200));
   naAddUIReaction(con->scaleSlider, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
-  con->blendModeLabel = naNewLabel("Blend Mode:", 200);
-  con->blendModeSelect = naNewSelect(200);
-  naAddSpaceChild(contentSpace, con->blendModeLabel, naMakePos(640, 225));
-  naAddSpaceChild(contentSpace, con->blendModeSelect, naMakePos(640, 200));
+  con->blendModeLabel = naNewLabel("Blend Mode:");
+  con->blendModeSelect = naNewSelect();
+  naAddSpaceChild(
+    contentSpace,
+    con->blendModeLabel,
+    naMakePos(640, 225),
+    naMakeInlineSize(200));
+  naAddSpaceChild(
+    contentSpace,
+    con->blendModeSelect,
+    naMakePos(640, 200),
+    naMakeInlineSize(200));
   addSingleSelectItem("ZERO",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("LINEAR",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("OVERLAY",con->blendModeSelect, blendModeSelected, con);
@@ -225,18 +253,34 @@ ImageTesterController* naAllocImageTestController() {
   addSingleSelectItem("ERODE_DARK",con->blendModeSelect, blendModeSelected, con);
   addSingleSelectItem("ERASE_HUE",con->blendModeSelect, blendModeSelected, con);
 
-  con->alphaLabel = naNewLabel("Blend:", 200);
-  con->alphaSlider = naNewSlider(200);
+  con->alphaLabel = naNewLabel("Blend:");
+  con->alphaSlider = naNewSlider();
   naSetSliderRange(con->alphaSlider, 0., 1., 0);
   naSetSliderValue(con->alphaSlider, 1.);
-  naAddSpaceChild(contentSpace, con->alphaLabel, naMakePos(640, 175));
-  naAddSpaceChild(contentSpace, con->alphaSlider, naMakePos(640, 150));
+  naAddSpaceChild(
+    contentSpace,
+    con->alphaLabel,
+    naMakePos(640, 175),
+    naMakeInlineSize(200));
+  naAddSpaceChild(
+    contentSpace,
+    con->alphaSlider,
+    naMakePos(640, 150),
+    naMakeInlineSize(200));
   naAddUIReaction(con->alphaSlider, NA_UI_COMMAND_EDITED, sliderEdited, con);
 
-  con->bottomLabel = naNewLabel("Bottom:", 200);
-  con->bottomSelect = naNewSelect(200);
-  naAddSpaceChild(contentSpace, con->bottomLabel, naMakePos(640, 125));
-  naAddSpaceChild(contentSpace, con->bottomSelect, naMakePos(640, 100));
+  con->bottomLabel = naNewLabel("Bottom:");
+  con->bottomSelect = naNewSelect();
+  naAddSpaceChild(
+    contentSpace,
+    con->bottomLabel,
+    naMakePos(640, 125),
+    naMakeInlineSize(200));
+  naAddSpaceChild(
+    contentSpace,
+    con->bottomSelect,
+    naMakePos(640, 100),
+    naMakeInlineSize(200));
   fillSelect(con->bottomSelect, bottomSelected, con);
 
   naShowWindow(con->window);
@@ -344,7 +388,7 @@ void updateImageTestController(ImageTesterController* con) {
 
   NAImageSet* imageSet = naCreateImageSet(
     fullImage,
-    NA_UI_RESOLUTION_1x,
+    naGetImageSize(fullImage),
     NA_BLEND_ZERO);
   naRelease(fullImage);
 
