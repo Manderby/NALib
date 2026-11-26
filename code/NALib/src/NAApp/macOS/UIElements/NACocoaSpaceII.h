@@ -182,7 +182,7 @@ NA_DEF NASpace* _Nonnull naNewSpace() {
 
   NACocoaNativeSpace* nativeObj = [[NACocoaNativeSpace alloc]
     initWithSpace:cocoaSpace
-    frame:naMakeNSRectWithSize(naMakeSize(NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH))];  
+    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_UI_ELEMENT_DUMMY_WIDTH))];  
   na_InitCoreSpace(
     (NASpace*)cocoaSpace,
     NA_COCOA_PTR_OBJC_TO_C(nativeObj));
