@@ -908,7 +908,7 @@ NA_DEF int16 naMakeShiftWithTimeZone(const NATimeZone* timeZone, NABool daylight
     #if NA_TYPE_NATIVE_LONG_BITS == 32
       dateTimesec = naCasti32Toi64((int32)timeSpec->tv_sec + naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
     #else
-      dateTimesec = naCasti32Toi64((int32)timeSpec->tv_sec + naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
+      dateTimesec = timeSpec->tv_sec + NA_DATETIME_SISEC_UNIX_YEAR_ZERO;
     #endif
     if(naGreateri64(dateTimesec, NA_ZERO_i64)) {
       int32 taiPeriod = naGetLatestTAIPeriodIndexForGregorianSecond(dateTimesec);
