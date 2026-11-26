@@ -162,7 +162,7 @@ int jsonExample(void){
 
   // Loading the buffer from a file.
   NADateTime now1 = naMakeDateTimeNow();
-  NAFile* file = naCreateFileReadingPath("JSONinput.txt");
+  NAFile* file = naCreateFileReadingUrl("JSONinput.txt");
   if(!naIsFileOpen(file)){
     printf("File not found. You must adjust the path on your machine for this example to work.\n");
     return 0;
@@ -211,7 +211,7 @@ int jsonExample(void){
   printf("Time: %f milliseconds to create file contents\n", 1000. * naGetDateTimeDifference(&now5, &now4) / (double)TESTCOUNT);
   
   naFixBufferRange(jsonBuffer);
-  NAFile* outFile = naCreateFileWritingPath("JSONOutput.txt", NA_FILEMODE_DEFAULT);
+  NAFile* outFile = naCreateFileWritingUrl("JSONOutput.txt", NA_FILEMODE_DEFAULT);
   naWriteBufferToFile(jsonBuffer, outFile);
 
   NADateTime now6 = naMakeDateTimeNow();

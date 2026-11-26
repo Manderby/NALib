@@ -47,9 +47,6 @@
 }
 
 
-#else
-  int na_debugging_is_inactive = 0; // this prevents warnings during the
-                                    // release build phase.
 #endif // NA_DEBUG
 
 
