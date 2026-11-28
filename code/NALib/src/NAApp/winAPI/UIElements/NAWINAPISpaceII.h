@@ -21,43 +21,10 @@ NAWINAPICallbackInfo na_PaintWINAPISpace(void* uiElement) {
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)uiElement;
   PAINTSTRUCT ps;
 
-  //BOOL test = GetUpdateRect(naGetUIElementNativePtr(uiElement), &spaceRect, FALSE);
-  //printf("PAINT, %d: %d, %d, %d, %d\n", test, spaceRect.left, spaceRect.right, spaceRect.top, spaceRect.bottom);
-
-  HDC hdc = BeginPaint(naGetUIElementNativePtr(uiElement), &ps);
   // All painting occurs here, between BeginPaint and EndPaint.
-  NAWINAPIColor* curBgColor = na_GetSpaceBackgroundWINAPIColor(uiElement);
-  FillRect(hdc, &ps.rcPaint, curBgColor->brush);
-
-  NAListIterator it = naMakeListAccessor(&winapiSpace->space.childs);
-  while(naIterateList(&it)) {
-    const NA_UIElement* uiElement = naGetListCurConst(&it);
-    //RedrawWindow(
-    //  naGetUIElementNativePtrConst(uiElement),
-    //  NULL,
-    //  NULL,
-    //  RDW_INTERNALPAINT | RDW_NOERASE | RDW_NOFRAME | RDW_VALIDATE | RDW_UPDATENOW);
-    //ValidateRect(
-    //  naGetUIElementNativePtrConst(uiElement),
-    //  NULL);
-
-    //CallWindowProc(
-    //  na_GetApplicationOldButtonWindowProc(),
-    //  hwnd,
-    //  WM_PAINT,
-    //  customDraw ? (WPARAM)hMemDC : (WPARAM)drawitemstruct->hDC,
-    //  (LPARAM)NA_NULL);
-
-    //DrawText(
-    //  hdc,
-    //  TEXT("Hallo"),
-    //  -1,
-    //  &ps.rcPaint,
-    //  DT_CENTER | DT_PATH_ELLIPSIS | DT_NOCLIP | DT_SINGLELINE | DT_VCENTER);
-
-  }
-  naClearListIterator(&it);
-
+  HDC hdc = BeginPaint(naGetUIElementNativePtr(uiElement), &ps);
+    NAWINAPIColor* curBgColor = na_GetSpaceBackgroundWINAPIColor(uiElement);
+    FillRect(hdc, &ps.rcPaint, curBgColor->brush);
   EndPaint(naGetUIElementNativePtr(uiElement), &ps);
 
   NAWINAPICallbackInfo info = {
@@ -247,7 +214,7 @@ NA_DEF NASpace* naNewSpace(NASize size) {
 	HWND nativePtr = CreateWindow(
 		TEXT("NASpace"),
     TEXT(""),
-    WS_CHILD | WS_VISIBLE,
+    WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
     0,
     0,
     (LONG)(winapiSpace->rect.size.width * uiScale),

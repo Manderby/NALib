@@ -262,6 +262,7 @@ NA_DEF NAImageSet* naRecreateImageSet(const NAImageSet* imageSet) {
   NAImageSet* newImageSet = naCreate(NAImageSet);
   
   naInitList(&newImageSet->subImages);
+  newImageSet->size1x = imageSet->size1x;
   newImageSet->tinting = imageSet->tinting;
   
   const NA_UISubImage* subImage = naGetListFirstConst(&imageSet->subImages);

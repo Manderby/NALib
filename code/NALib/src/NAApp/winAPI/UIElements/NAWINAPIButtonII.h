@@ -193,6 +193,20 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     (drawitemstruct->rcItem.right - drawitemstruct->rcItem.left),
     (drawitemstruct->rcItem.bottom - drawitemstruct->rcItem.top));
 
+  NASpace* parentSpace = naGetUIElementParentSpaceMutable(uiElement);
+
+  //if(parentSpace) {
+  //  NAWINAPIColor* curBgColor = na_GetSpaceBackgroundWINAPIColor(parentSpace);
+  //  FillRect(drawitemstruct->hDC, &drawitemstruct->rcItem, curBgColor->brush);
+  //}
+
+  NAColor backColor;
+  if(parentSpace) {
+    naFillSpaceBackgroundColor(&backColor, parentSpace);
+  }else{
+    naFillColorWithDefaultWindowBackgroundColor(&backColor);
+  }
+
   // Create an offscreen device context and buffer
   HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);  
   NAByte* buttonBuffer = naMalloc((size_t)(buttonSize.width * buttonSize.height) * 4);
@@ -205,7 +219,6 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     HWND hwnd = naGetUIElementNativePtr(uiElement);
     NABool customDraw = naIsButtonStateful(&winapiButton->button) && naGetButtonState(&winapiButton->button);
 
-    NASpace* parentSpace = naGetUIElementParentSpaceMutable(uiElement);
     NAColor maskColor = {1.f, 1.f, 0.f, 1.f};
     NAUIColor* prevBgColor = NA_NULL;
     NAUIColor* tmpBgColor = NA_NULL;
@@ -237,12 +250,6 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
 
       // Now we blend manually the foreground to the background.
 
-      NAColor backColor;
-      if(parentSpace) {
-        naFillSpaceBackgroundColor(&backColor, parentSpace);
-      }else{
-        naFillColorWithDefaultWindowBackgroundColor(&backColor);
-      }
       NAColor accentColor;
       naFillColorWithSkinAccentColor(&accentColor, NA_SKIN_SYSTEM);
       NAImage* alphaImage = naCreateImageWithTint(buttonImage, &maskColor, NA_BLEND_ERASE_HUE, 1.f);
@@ -318,12 +325,11 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
     NAImage* backImage = naCreateImageWithNativeImage(hBackBitmap);
 
     // Now we blend manually the foreground to the background.
-    NAImage* blendedImage = naCreateImageWithBlend(
-      backImage,
+    NAImage* blendedImage = naCreateImageWithApply(
+      &backColor,
       foreImage,
       NA_BLEND_OVERLAY,
-      1.f,
-      naMakePosi32(0, 0));
+      1.f);
     NAByte* blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
     naConvertImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
     HBITMAP hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);

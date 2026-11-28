@@ -64,6 +64,7 @@ void preStartup(void* arg) {
 // See naStartApplication for a detailed explanation.
 void postStartup(void* arg) {
   NA_UNUSED(arg);
+  NASizes size1x;
   
   // Load the image files
   NAPNG* pngIcon = naNewPNGWithUrl(RESOURCE_PATH "icon.png");
@@ -72,9 +73,12 @@ void postStartup(void* arg) {
     exit(1);
   }
   NAImage* originalIconImage = naCreateImageWithPNG(pngIcon);
+  size1x = naGetPNGSize(pngIcon);
+  size1x.width /= 2;
+  size1x.height /= 2;
   app->iconImageSet = naCreateImageSet(
     originalIconImage,
-    naGetPNGSize(pngIcon),
+    size1x,
     NA_BLEND_ERODE_LIGHT);
   naDelete(pngIcon);
   naRelease(originalIconImage);
@@ -85,9 +89,12 @@ void postStartup(void* arg) {
     exit(1);
   }
   NAImage* originalState1Image = naCreateImageWithPNG(png1);
+  size1x = naGetPNGSize(png1);
+  size1x.width /= 2;
+  size1x.height /= 2;
   app->state1ImageSet = naCreateImageSet(
     originalState1Image,
-    naGetPNGSize(png1),
+    size1x,
     NA_BLEND_ZERO);
   naDelete(png1);
   naRelease(originalState1Image);
@@ -98,9 +105,12 @@ void postStartup(void* arg) {
     exit(1);
   }
   NAImage* originalState2Image = naCreateImageWithPNG(png2);
+  size1x = naGetPNGSize(png2);
+  size1x.width /= 2;
+  size1x.height /= 2;
   app->state2ImageSet = naCreateImageSet(
     originalState2Image,
-    naGetPNGSize(png2),
+    size1x,
     NA_BLEND_ZERO);
   naDelete(png2);
   naRelease(originalState2Image);

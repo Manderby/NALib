@@ -274,6 +274,8 @@ NA_DEF NAWindow* naNewWindow(
     // todo
   }
 
+  style |= WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+
   const NAScreen* screen = naGetApplicationScreenWithPos(naGetRectCenter(rect));
   if(screen) {
     NARect screenRect = na_GetScreenRect(&screen->uiElement);
