@@ -254,7 +254,8 @@ NA_DEF NAWindow* naNewWindow(
 
   cocoaWindow->window.flags = flags;
 
-  NASpace* space = naNewSpace(rect.size);
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRect(naMakePos(0., 0.), rect.size));
   if(titleless) {
     naSetSpaceDragsWindow(space, NA_TRUE);
   }
@@ -367,15 +368,12 @@ NA_DEF void naShowWindow(const NAWindow* window) {
   // we need to manually readjust the intended rect after the call to
   // makeKeyAndOrderFront. Which requires a mutable pointer. Not great but
   // that's what you get if the os is trying to do things automatically which
-  // are not supposed to.
+  // it is not supposed to.
   NAWindow* mutableWindow = (NAWindow*)window;
-  
   na_UpdateUIElementUIScale(mutableWindow);
 
   naDefineUIElementNativeCocoaObjConst(NACocoaNativeWindow, nativeObj, window);
-  NARect rect = na_GetWindowRect(&window->uiElement);
   [nativeObj makeKeyAndOrderFront:NA_NULL];
-  na_SetWindowRect(&mutableWindow->uiElement, rect);
 }
 
 NA_DEF void naShowWindowModal(NAWindow* window, NAWindow* parentWindow) {

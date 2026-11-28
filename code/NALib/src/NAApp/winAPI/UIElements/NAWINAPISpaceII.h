@@ -205,10 +205,10 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(
 
 
 
-NA_DEF NASpace* naNewSpace(NASize size) {
+NA_DEF NASpace* naNewSpace() {
   NAWINAPISpace* winapiSpace = naNew(NAWINAPISpace);
 
-  winapiSpace->rect = naMakeRect(naMakePos(0., 0.), size);
+  winapiSpace->rect = naMakeRectS(0., 0., NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH);
 	double uiScale = naGetUIElementUIScale(NA_NULL);
 
 	HWND nativePtr = CreateWindow(
@@ -274,20 +274,20 @@ NA_DEF void na_AddSpaceChildAtPos(NASpace* space, void* child, NAPos pos, NASize
     }
 }
 
-NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos) {
-  na_AddSpaceChildAtPos(space, child, pos, naMakeSizeZero(), NA_FALSE, NA_TRUE, NA_FALSE);
-}
-NA_DEF void naAddSpaceChildRaw(NASpace* space, void* child, NAPos pos) {
-  na_AddSpaceChildAtPos(space, child, pos, naMakeSizeZero(), NA_TRUE, NA_TRUE, NA_FALSE);
-}
-NA_DEF void naAddSpaceChildWithSize(NASpace* space, void* child, NAPos pos, NASize size) {
+NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos, NASize size) {
   na_AddSpaceChildAtPos(space, child, pos, size, NA_FALSE, NA_FALSE, NA_FALSE);
 }
-NA_DEF void naAddSpaceChildRawWithSize(NASpace* space, void* child, NAPos pos, NASize size) {
+NA_DEF void naAddSpaceChildRaw(NASpace* space, void* child, NAPos pos, NASize size) {
   na_AddSpaceChildAtPos(space, child, pos, size, NA_TRUE, NA_FALSE, NA_FALSE);
 }
 NA_HDEF void na_AddSpaceChildUnpositioned(NASpace* space, void* child) {
   na_AddSpaceChildAtPos(space, child, naMakePosZero(), naMakeSizeZero(), NA_FALSE, NA_FALSE, NA_TRUE);
+}
+NA_HDEF NASize naMakeInlineSize(double width) {
+  return naMakeSizeE(width, NA_LAYOUT_MIN);
+}
+NA_HDEF NASize naMakeUnchangedSize() {
+  return naMakeSizeE(NA_LAYOUT_MIN, NA_LAYOUT_MIN);
 }
 
 

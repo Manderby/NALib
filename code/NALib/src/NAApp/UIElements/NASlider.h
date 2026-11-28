@@ -15,8 +15,8 @@
 
 
 
-// Creates a new Slider. Default height is 24.
-NA_API NASlider* naNewSlider(double width);
+// Creates a new Slider.
+NA_API NASlider* naNewSlider(void);
 
 // Changes the visibility or enabled state of the button.
 NA_API void naSetSliderVisible(NASlider* slider, NABool visible);

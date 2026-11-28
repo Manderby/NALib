@@ -14,7 +14,7 @@
 
 
 // Creates a new TextBox.
-NA_API NATextBox* naNewTextBox(NASize size);
+NA_API NATextBox* naNewTextBox(void);
 
 // Changes the visibility or editable state of the textBox.
 NA_API void naSetTextBoxVisible(NATextBox* textBox, NABool visible);

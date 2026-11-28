@@ -51,11 +51,11 @@ void naHandleTextBoxReverseTabOrder(NAReaction reaction) {
 
 
 
-NA_DEF NATextBox* naNewTextBox(NASize size) {
+NA_DEF NATextBox* naNewTextBox() {
   NAWINAPITextBox* winapiTextBox = naNew(NAWINAPITextBox);
 
   double uiScale = naGetUIElementUIScale(NA_NULL);
-  winapiTextBox->rect = naMakeRect(naMakePos(0., 0.), size);
+  winapiTextBox->rect = naMakeRectS(0., 0., NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH);
 
 	HWND nativePtr = CreateWindow(
 		TEXT("EDIT"),

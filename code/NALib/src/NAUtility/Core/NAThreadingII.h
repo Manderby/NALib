@@ -195,13 +195,13 @@ NA_IDEF void naAwaitThread(NAThread thread) {
 #else
 
   #if NA_DEBUG
-    NA_PROTOTYPE(NAMacintoshMutex);
-    struct NAMacintoshMutex{
+    NA_PROTOTYPE(NAmacintoshMutex);
+    struct NAmacintoshMutex{
       dispatch_semaphore_t mutex;
       NABool seemslocked;
     };
   #else
-    typedef dispatch_semaphore_t NAMacintoshMutex;
+    typedef dispatch_semaphore_t NAmacintoshMutex;
   #endif
 
 
@@ -225,12 +225,12 @@ NA_IDEF NAMutex naMakeMutex(void) {
   #else
 
     #if NA_DEBUG
-      NAMacintoshMutex* macintoshmutex = naAlloc(NAMacintoshMutex);
-      macintoshmutex->mutex = dispatch_semaphore_create(1);
-      macintoshmutex->seemslocked = NA_FALSE;
-      return macintoshmutex;
+      NAmacintoshMutex* macintoshMutex = naAlloc(NAmacintoshMutex);
+      macintoshMutex->mutex = dispatch_semaphore_create(1);
+      macintoshMutex->seemslocked = NA_FALSE;
+      return macintoshMutex;
     #else
-      NAMutex mutex = NA_COCOA_PTR_OBJC_TO_C(dispatch_semaphore_create(1));
+      NAMutex mutex = dispatch_semaphore_create(1);
       return mutex;
     #endif
   #endif
@@ -249,19 +249,19 @@ NA_IDEF void naClearMutex(NAMutex mutex) {
     naFree(windowsMutex);
   #else
     #if NA_DEBUG
-      NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
+      NAmacintoshMutex* macintoshMutex = (NAmacintoshMutex*)mutex;
       #if NA_MACOS_USES_ARC
       // Mutex will be released automatically when ARC is turned on.
       #else
-        dispatch_release(NA_COCOA_PTR_C_TO_OBJC(macintoshmutex->mutex));
+        dispatch_release(macintoshMutex->mutex);
       #endif
-      naFree(macintoshmutex);
+      naFree(macintoshMutex);
     #else
       #if NA_MACOS_USES_ARC
         // Mutex will be released automatically when ARC is turned on.
         NA_UNUSED(mutex);
       #else
-        dispatch_release(NA_COCOA_PTR_C_TO_OBJC(mutex));
+        dispatch_release(mutex);
       #endif
     #endif
   #endif
@@ -290,9 +290,9 @@ NA_IDEF void naLockMutex(NAMutex mutex) {
     #endif
    #else
     #if NA_DEBUG
-      NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
-      dispatch_semaphore_wait(macintoshmutex->mutex, DISPATCH_TIME_FOREVER);
-      macintoshmutex->seemslocked = NA_TRUE;
+      NAmacintoshMutex* macintoshMutex = (NAmacintoshMutex*)mutex;
+      dispatch_semaphore_wait(macintoshMutex->mutex, DISPATCH_TIME_FOREVER);
+      macintoshMutex->seemslocked = NA_TRUE;
     #else
       dispatch_semaphore_wait((NA_COCOA_BRIDGE dispatch_semaphore_t)mutex, DISPATCH_TIME_FOREVER);
     #endif
@@ -322,9 +322,9 @@ NA_IDEF void naUnlockMutex(NAMutex mutex) {
     #endif
   #else
     #if NA_DEBUG
-      NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
-      macintoshmutex->seemslocked = NA_FALSE;
-      dispatch_semaphore_signal(macintoshmutex->mutex);
+      NAmacintoshMutex* macintoshMutex = (NAmacintoshMutex*)mutex;
+      macintoshMutex->seemslocked = NA_FALSE;
+      dispatch_semaphore_signal(macintoshMutex->mutex);
     #else
       dispatch_semaphore_signal((NA_COCOA_BRIDGE dispatch_semaphore_t)mutex);
     #endif
@@ -339,8 +339,8 @@ NA_IDEF void naUnlockMutex(NAMutex mutex) {
       NAWindowsMutex* windowsMutex = (NAWindowsMutex*)mutex;
       return windowsMutex->seemslocked;
     #else
-      NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
-      return macintoshmutex->seemslocked;
+      NAmacintoshMutex* macintoshMutex = (NAmacintoshMutex*)mutex;
+      return macintoshMutex->seemslocked;
     #endif
 
     // This was the old code which worked but it introduced long wait times
@@ -396,13 +396,13 @@ NA_IDEF NABool naTryMutex(NAMutex mutex) {
     #endif
   #else
     #if NA_DEBUG
-      NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
-      long retValue = dispatch_semaphore_wait(macintoshmutex->mutex, DISPATCH_TIME_NOW);
+      NAmacintoshMutex* macintoshMutex = (NAmacintoshMutex*)mutex;
+      long retValue = dispatch_semaphore_wait(macintoshMutex->mutex, DISPATCH_TIME_NOW);
       if(retValue) {
         return NA_FALSE;
       }else{
         return NA_TRUE;
-        macintoshmutex->seemslocked = NA_TRUE;
+        macintoshMutex->seemslocked = NA_TRUE;
       }
     #else
       long retValue = dispatch_semaphore_wait((NA_COCOA_BRIDGE dispatch_semaphore_t)mutex, DISPATCH_TIME_NOW);
@@ -433,7 +433,8 @@ NA_IDEF NAAlarm naMakeAlarm(void) {
     return (NAAlarm)alarmer;
 #else
     alarmer = dispatch_semaphore_create(0);
-    return (NAAlarm)NA_COCOA_PTR_OBJC_TO_C(alarmer);
+    
+    return (NAAlarm)alarmer;
   #endif
 }
 
@@ -447,7 +448,7 @@ NA_IDEF void naClearAlarm(NAAlarm alarmer) {
       NA_UNUSED(alarmer);
       // Alarm will be released automatically when ARC is turned on.
     #else
-      dispatch_release(NA_COCOA_PTR_C_TO_OBJC(alarmer));
+      dispatch_release(alarmer);
     #endif
   #endif
 }

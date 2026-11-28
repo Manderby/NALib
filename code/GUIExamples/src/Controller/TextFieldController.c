@@ -42,34 +42,55 @@ static void textFieldEditFinished(NAReaction reaction) {
 CommonController* createTextFieldController() {
   TextFieldController* con = naAlloc(TextFieldController);
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->enabledLabel = naNewLabel("Normal", COLUMN0_WIDTH);
+  con->enabledLabel = naNewLabel("Normal");
   naSetLabelFont(con->enabledLabel, getTitleFont());
-  naAddSpaceChild(space, con->enabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->enabledLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->textField = naNewTextField(COLUMN1_WIDTH);
-  naAddSpaceChild(space, con->textField, naMakePos(TAB1, curPosY));
+  con->textField = naNewTextField();
+  naAddSpaceChild(
+    space,
+    con->textField,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
   naAddUIReaction(con->textField, NA_UI_COMMAND_EDITED, textFieldEdited, con);
   naAddUIReaction(con->textField, NA_UI_COMMAND_EDIT_FINISHED, textFieldEditFinished, con);
   
-  con->normalReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->normalReaction = naNewLabel("");
   naSetLabelFont(con->normalReaction, getMonoFont());
-  naAddSpaceChild(space, con->normalReaction, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(
+    space,
+    con->normalReaction,
+    naMakePos(TAB2, curPosY),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
+  con->disabledLabel = naNewLabel("Disabled");
   naSetLabelFont(con->disabledLabel, getTitleFont());
-  naAddSpaceChild(space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->disabledLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->textFieldDisabled = naNewTextField(COLUMN1_WIDTH);
+  con->textFieldDisabled = naNewTextField();
   naSetTextFieldEnabled(con->textFieldDisabled, NA_FALSE);
   naSetTextFieldText(con->textFieldDisabled, "Disabled Textfield");
-  naAddSpaceChild(space, con->textFieldDisabled, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->textFieldDisabled,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
   initCommonController(
     &con->comCon,

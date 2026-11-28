@@ -11,9 +11,9 @@
 
 
 
-// Creates a new label. Default Height is 16.
+// Creates a new label.
 // A label is by default: Enabled, visible, selectable
-NA_API NALabel* naNewLabel(const NAUTF8Char* text, double width);
+NA_API NALabel* naNewLabel(const NAUTF8Char* text);
 
 // Gets or sets the visibility or enabled state of the button.
 NA_API void naSetLabelVisible(NALabel* label, NABool visible);

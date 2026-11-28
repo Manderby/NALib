@@ -97,172 +97,298 @@ static void abortPressed(NAReaction reaction) {
 CommonController* createButtonController() {
   ButtonController* con = naAlloc(ButtonController);
   
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->textPushButtonLabel = naNewLabel("Text Push", COLUMN0_WIDTH);
+  con->textPushButtonLabel = naNewLabel("Text Push");
   naSetLabelFont(con->textPushButtonLabel, getTitleFont());
-  naAddSpaceChild(space, con->textPushButtonLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->textPushButtonLabel,
+    naMakePos(WINDOW_MARGIN,
+    curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->textPushButton = naNewTextPushButton("Push", COLUMN1_WIDTH);
+  con->textPushButton = naNewTextPushButton("Push");
   naAddUIReaction(con->textPushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  naAddSpaceChild(space, con->textPushButton, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->textPushButton,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
-  con->textPushButtonReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->textPushButtonReaction = naNewLabel("");
   naSetLabelFont(con->textPushButtonReaction, getMonoFont());
-  naAddSpaceChild(space, con->textPushButtonReaction, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(
+    space,
+    con->textPushButtonReaction,
+    naMakePos(TAB2, curPosY),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->textStateButtonLabel = naNewLabel("Text Two States", COLUMN0_WIDTH);
+  con->textStateButtonLabel = naNewLabel("Text Two States");
   naSetLabelFont(con->textStateButtonLabel, getTitleFont());
-  naAddSpaceChild(space, con->textStateButtonLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->textStateButtonLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->textStateButton = naNewTextStateButton("Off", "On", COLUMN1_WIDTH);
+  con->textStateButton = naNewTextStateButton("Off", "On");
   naAddUIReaction(con->textStateButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  naAddSpaceChild(space, con->textStateButton, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->textStateButton,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
-  con->textStateButtonReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->textStateButtonReaction = naNewLabel("");
   naSetLabelFont(con->textStateButtonReaction, getMonoFont());
-  naAddSpaceChild(space, con->textStateButtonReaction, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(
+    space,
+    con->textStateButtonReaction,
+    naMakePos(TAB2, curPosY),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->iconPushButtonLabel = naNewLabel("Icon Push", COLUMN0_WIDTH);
+  con->iconPushButtonLabel = naNewLabel("Icon Push");
   naSetLabelFont(con->iconPushButtonLabel, getTitleFont());
-  naAddSpaceChild(space, con->iconPushButtonLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->iconPushButtonLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->iconPushButton = naNewIconPushButton(getIconImageSet(), COLUMN1_WIDTH);
+  con->iconPushButton = naNewIconPushButton(getIconImageSet());
   naAddUIReaction(con->iconPushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  naAddSpaceChild(space, con->iconPushButton, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->iconPushButton,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
-  con->iconPushButtonReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->iconPushButtonReaction = naNewLabel("");
   naSetLabelFont(con->iconPushButtonReaction, getMonoFont());
-  naAddSpaceChild(space, con->iconPushButtonReaction, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(
+    space,
+    con->iconPushButtonReaction,
+    naMakePos(TAB2, curPosY),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->iconStateButtonLabel = naNewLabel("Icon Two States", COLUMN0_WIDTH);
+  con->iconStateButtonLabel = naNewLabel("Icon Two States");
   naSetLabelFont(con->iconStateButtonLabel, getTitleFont());
-  naAddSpaceChild(space, con->iconStateButtonLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->iconStateButtonLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->iconStateButton = naNewIconStateButton(getIconImageSet(), NA_NULL, COLUMN1_WIDTH);
+  con->iconStateButton = naNewIconStateButton(getIconImageSet(), NA_NULL);
   naAddUIReaction(con->iconStateButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  naAddSpaceChild(space, con->iconStateButton, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->iconStateButton,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
-  con->iconStateButtonReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->iconStateButtonReaction = naNewLabel("");
   naSetLabelFont(con->iconStateButtonReaction, getMonoFont());
-  naAddSpaceChild(space, con->iconStateButtonReaction, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(
+    space,
+    con->iconStateButtonReaction,
+    naMakePos(TAB2, curPosY),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   curPosY = curPosY - 2 * UI_ELEMENT_HEIGTH;
 
-  con->imagePushButtonLabel = naNewLabel("Image Push", COLUMN0_WIDTH);
+  con->imagePushButtonLabel = naNewLabel("Image Push");
   naSetLabelFont(con->imagePushButtonLabel, getTitleFont());
-  naAddSpaceChild(space, con->imagePushButtonLabel, naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH));
+  naAddSpaceChild(
+    space,
+    con->imagePushButtonLabel,
+    naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->imagePushButton = naNewImagePushButton(getState1ImageSet(), naMakeSize(COLUMN1_WIDTH, 2 * UI_ELEMENT_HEIGTH));
+  con->imagePushButton = naNewImagePushButton(getState1ImageSet());
   naAddUIReaction(con->imagePushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  naAddSpaceChild(space, con->imagePushButton, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->imagePushButton,
+    naMakePos(TAB1, curPosY),
+    naMakeSize(COLUMN1_WIDTH, 2 * UI_ELEMENT_HEIGTH));
 
   //naDebugUIElement(con->imagePushButton);
   //naDebugUIElement(space);
 
-  con->imagePushButtonReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->imagePushButtonReaction = naNewLabel("");
   naSetLabelFont(con->imagePushButtonReaction, getMonoFont());
-  naAddSpaceChild(space, con->imagePushButtonReaction, naMakePos(TAB2, curPosY + .5 * UI_ELEMENT_HEIGTH));
+  naAddSpaceChild(
+    space,
+    con->imagePushButtonReaction,
+    naMakePos(TAB2, curPosY + .5 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   curPosY = curPosY - 2 * UI_ELEMENT_HEIGTH;
 
-  con->imageStateButtonLabel = naNewLabel("Image Two states", COLUMN0_WIDTH);
+  con->imageStateButtonLabel = naNewLabel("Image Two states");
   naSetLabelFont(con->imageStateButtonLabel, getTitleFont());
-  naAddSpaceChild(space, con->imageStateButtonLabel, naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH));
+  naAddSpaceChild(
+    space,
+    con->imageStateButtonLabel,
+    naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->imageStateButton = naNewImageStateButton(getState1ImageSet(), getState2ImageSet(), naMakeSize(COLUMN1_WIDTH, 2 * UI_ELEMENT_HEIGTH));
+  con->imageStateButton = naNewImageStateButton(getState1ImageSet(), getState2ImageSet());
   naAddUIReaction(con->imageStateButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  naAddSpaceChild(space, con->imageStateButton, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->imageStateButton,
+    naMakePos(TAB1, curPosY),
+    naMakeSize(COLUMN1_WIDTH, 2 * UI_ELEMENT_HEIGTH));
 
-  con->imageStateButtonReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->imageStateButtonReaction = naNewLabel("");
   naSetLabelFont(con->imageStateButtonReaction, getMonoFont());
-  naAddSpaceChild(space, con->imageStateButtonReaction, naMakePos(TAB2, curPosY + .5 * UI_ELEMENT_HEIGTH));
+  naAddSpaceChild(
+    space,
+    con->imageStateButtonReaction,
+    naMakePos(TAB2, curPosY + .5 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   curPosY = curPosY - 2 * UI_ELEMENT_HEIGTH;
 
-  con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
+  con->disabledLabel = naNewLabel("Disabled");
   naSetLabelFont(con->disabledLabel, getTitleFont());
-  naAddSpaceChild(space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY + UI_ELEMENT_HEIGTH * .5));
+  naAddSpaceChild(
+    space,
+    con->disabledLabel,
+    naMakePos(WINDOW_MARGIN, curPosY + UI_ELEMENT_HEIGTH * .5),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->textStateButtonDisabled1 = naNewTextStateButton("Off", NA_NULL, SMALL_BUTTON_WIDTH);
+  con->textStateButtonDisabled1 = naNewTextStateButton("Off", NA_NULL);
   naAddUIReaction(con->textStateButtonDisabled1, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naSetButtonEnabled(con->textStateButtonDisabled1, NA_FALSE);
-  naAddSpaceChild(space, con->textStateButtonDisabled1, naMakePos(TAB1 + 0 * (SMALL_BUTTON_WIDTH + UI_ELEMENT_MARGIN), curPosY + UI_ELEMENT_HEIGTH * .5));
+  naAddSpaceChild(
+    space,
+    con->textStateButtonDisabled1,
+    naMakePos(TAB1 + 0 * (SMALL_BUTTON_WIDTH + UI_ELEMENT_MARGIN), curPosY + UI_ELEMENT_HEIGTH * .5),
+    naMakeInlineSize(SMALL_BUTTON_WIDTH));
 
-  con->textStateButtonDisabled2 = naNewTextStateButton(NA_NULL, "On", SMALL_BUTTON_WIDTH);
+  con->textStateButtonDisabled2 = naNewTextStateButton(NA_NULL, "On");
   naAddUIReaction(con->textStateButtonDisabled2, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   naSetButtonState(con->textStateButtonDisabled2, NA_TRUE);
   naSetButtonEnabled(con->textStateButtonDisabled2, NA_FALSE);
-  naAddSpaceChild(space, con->textStateButtonDisabled2, naMakePos(TAB1 + 1 * (SMALL_BUTTON_WIDTH + UI_ELEMENT_MARGIN), curPosY + UI_ELEMENT_HEIGTH * .5));
+  naAddSpaceChild(
+    space,
+    con->textStateButtonDisabled2,
+    naMakePos(TAB1 + 1 * (SMALL_BUTTON_WIDTH + UI_ELEMENT_MARGIN), curPosY + UI_ELEMENT_HEIGTH * .5),
+    naMakeInlineSize(SMALL_BUTTON_WIDTH));
 
-  con->iconStateButtonDisabled1 = naNewIconStateButton(getIconImageSet(), NA_NULL, SMALL_BUTTON_WIDTH);
+  con->iconStateButtonDisabled1 = naNewIconStateButton(getIconImageSet(), NA_NULL);
   naSetButtonEnabled(con->iconStateButtonDisabled1, NA_FALSE);
   naAddUIReaction(con->iconStateButtonDisabled1, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  naAddSpaceChild(space, con->iconStateButtonDisabled1, naMakePos(TAB1 + 2 * (SMALL_BUTTON_WIDTH + UI_ELEMENT_MARGIN), curPosY + UI_ELEMENT_HEIGTH * .5));
+  naAddSpaceChild(
+    space,
+    con->iconStateButtonDisabled1,
+    naMakePos(TAB1 + 2 * (SMALL_BUTTON_WIDTH + UI_ELEMENT_MARGIN), curPosY + UI_ELEMENT_HEIGTH * .5),
+    naMakeInlineSize(SMALL_BUTTON_WIDTH));
 
-  con->iconStateButtonDisabled2 = naNewIconStateButton(getIconImageSet(), NA_NULL, SMALL_BUTTON_WIDTH);
+  con->iconStateButtonDisabled2 = naNewIconStateButton(getIconImageSet(), NA_NULL);
   naSetButtonState(con->iconStateButtonDisabled2, NA_TRUE);
   naSetButtonEnabled(con->iconStateButtonDisabled2, NA_FALSE);
   naAddUIReaction(con->iconStateButtonDisabled2, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  naAddSpaceChild(space, con->iconStateButtonDisabled2, naMakePos(TAB1 + 3 * (SMALL_BUTTON_WIDTH + UI_ELEMENT_MARGIN), curPosY + UI_ELEMENT_HEIGTH * .5));
+  naAddSpaceChild(
+    space,
+    con->iconStateButtonDisabled2,
+    naMakePos(TAB1 + 3 * (SMALL_BUTTON_WIDTH + UI_ELEMENT_MARGIN), curPosY + UI_ELEMENT_HEIGTH * .5),
+    naMakeInlineSize(SMALL_BUTTON_WIDTH));
 
-  con->imageStateButtonDisabled1 = naNewImageStateButton(getState1ImageSet(), NA_NULL, naMakeSize(SMALL_BUTTON_WIDTH, 2 * UI_ELEMENT_HEIGTH));
+  con->imageStateButtonDisabled1 = naNewImageStateButton(getState1ImageSet(), NA_NULL);
   naSetButtonEnabled(con->imageStateButtonDisabled1, NA_FALSE);
   naAddUIReaction(con->imageStateButtonDisabled1, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  naAddSpaceChild(space, con->imageStateButtonDisabled1, naMakePos(TAB1 + 4 * (SMALL_BUTTON_WIDTH + UI_ELEMENT_MARGIN), curPosY));
+  naAddSpaceChild(
+    space,
+    con->imageStateButtonDisabled1,
+    naMakePos(TAB1 + 4 * (SMALL_BUTTON_WIDTH + UI_ELEMENT_MARGIN), curPosY),
+    naMakeSize(SMALL_BUTTON_WIDTH, 2 * UI_ELEMENT_HEIGTH));
 
-  con->imageStateButtonDisabled2 = naNewImageStateButton(NA_NULL, getState2ImageSet(), naMakeSize(SMALL_BUTTON_WIDTH, 2 * UI_ELEMENT_HEIGTH));
+  con->imageStateButtonDisabled2 = naNewImageStateButton(NA_NULL, getState2ImageSet());
   naSetButtonState(con->imageStateButtonDisabled2, NA_TRUE);
   naSetButtonEnabled(con->imageStateButtonDisabled2, NA_FALSE);
   naAddUIReaction(con->imageStateButtonDisabled2, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  naAddSpaceChild(space, con->imageStateButtonDisabled2, naMakePos(TAB1 + 5 * (SMALL_BUTTON_WIDTH + UI_ELEMENT_MARGIN), curPosY));
+  naAddSpaceChild(
+    space,
+    con->imageStateButtonDisabled2,
+    naMakePos(TAB1 + 5 * (SMALL_BUTTON_WIDTH + UI_ELEMENT_MARGIN), curPosY),
+    naMakeSize(SMALL_BUTTON_WIDTH, 2 * UI_ELEMENT_HEIGTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
   
-  con->submitLabel = naNewLabel("Submit (Enter)", COLUMN0_WIDTH);
+  con->submitLabel = naNewLabel("Submit (Enter)");
   naSetLabelFont(con->submitLabel, getTitleFont());
-  naAddSpaceChild(space, con->submitLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->submitLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->textButtonSubmit = naNewTextPushButton("Ok Button", COLUMN1_WIDTH);
+  con->textButtonSubmit = naNewTextPushButton("Ok Button");
   naAddUIReaction(con->textButtonSubmit, NA_UI_COMMAND_PRESSED, submitPressed, con);
-  naAddSpaceChild(space, con->textButtonSubmit, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->textButtonSubmit,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
   // Usually, one would set the submit button upon creation. But submit and
   // cancel buttons require the space they're added to to belong to a window.
   // As this example application attaches the spaces to the window later, we
   // must set these buttons properly in the update function below.
   // naSetButtonSubmit(con->textButtonSubmit, submitPressed, con);
 
-  con->submitButtonReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->submitButtonReaction = naNewLabel("");
   naSetLabelFont(con->submitButtonReaction, getMonoFont());
-  naAddSpaceChild(space, con->submitButtonReaction, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(
+    space,
+    con->submitButtonReaction,
+    naMakePos(TAB2, curPosY),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->abortLabel = naNewLabel("Abort (Esc)", COLUMN0_WIDTH);
+  con->abortLabel = naNewLabel("Abort (Esc)");
   naSetLabelFont(con->abortLabel, getTitleFont());
-  naAddSpaceChild(space, con->abortLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->abortLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->textButtonAbort = naNewTextPushButton("Cancel Button", COLUMN1_WIDTH);
+  con->textButtonAbort = naNewTextPushButton("Cancel Button");
   naAddUIReaction(con->textButtonAbort, NA_UI_COMMAND_PRESSED, abortPressed, con);
-  naAddSpaceChild(space, con->textButtonAbort, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->textButtonAbort,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
   // Usually, one would set the submit button upon creation. But submit and
   // cancel buttons require the space they're added to to belong to a window.
   // As this example application attaches the spaces to the window later, we
   // must set these buttons properly in the update function below.
   // naSetButtonAbort(con->textButtonAbort, abortPressed, con);
 
-  con->abortButtonReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->abortButtonReaction = naNewLabel("");
   naSetLabelFont(con->abortButtonReaction, getMonoFont());
-  naAddSpaceChild(space, con->abortButtonReaction, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(
+    space,
+    con->abortButtonReaction,
+    naMakePos(TAB2, curPosY),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   con->firstTime = NA_TRUE;
 

@@ -99,12 +99,12 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(
 
 typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
 
-NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData) {
+NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAMutator initFunc, void* initData) {
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = naNew(NAWINAPIOpenGLSpace);
 
   DWORD error;
 
-  winapiOpenGLSpace->rect = naMakeRect(naMakePos(0., 0.), size);
+  winapiOpenGLSpace->rect = naMakeRectS(0., 0., NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH);
   double uiScale = naGetUIElementUIScale(NA_NULL);
 
 	HWND nativePtr = CreateWindow(
@@ -402,7 +402,7 @@ NA_DEF void naDeactivateOpenGLOffscreenContext(void* offscreenContext) {
     return info;
   }
 
-  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NASize size, NAMutator initFunc, void* initData) {
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAMutator initFunc, void* initData) {
     #if NA_DEBUG
       naError("OpenGL has not been configured. See NAConfiguration.h");
     #endif

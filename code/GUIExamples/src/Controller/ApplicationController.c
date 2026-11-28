@@ -16,13 +16,18 @@ struct ApplicationController{
 CommonController* createApplicationController() {
   ApplicationController* con = naAlloc(ApplicationController);
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->dummyLabel = naNewLabel("NAApplication examples not available yet", 400);
-  naAddSpaceChild(space, con->dummyLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  con->dummyLabel = naNewLabel("NAApplication examples not available yet");
+  naAddSpaceChild(
+    space,
+    con->dummyLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(400));
 
   initCommonController(
     &con->comCon,

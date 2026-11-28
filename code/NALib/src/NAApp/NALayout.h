@@ -53,36 +53,84 @@ NA_PROTOTYPE(NASpace);
 //
 // ---------------------
 //
-// You alternate between adding sections with naAddLayoutSection and elements
-// with naAllLayoutElement.
+// This is the full picture of what is actually going on inside the layouter:
 //
-// When using naAddLayoutElement, you actually create a layout block which
-// itelf contais the element you want to add.
+// +------------------------------- layout --------------------------------+
+// |                                                                       |
+// |         +------------ block ----------+- block -+- block -+-------+   |
+// |         |                             |         |         |       |   |
+// |         |   +------- content -----+   |         |         |       |   |
+// |         |   |                     |   |         |         |       |   |
+// |         |   |   +- uiElement -+   |   |         |         | flex  |   |
+// | section |   |   |             |   |   |         |         | space |   |
+// |         |   |   +-------------+   |   |         |         |       |   |
+// |         |   |                     |   |         |         |       |   |
+// |         |   +---------------------+   |         |         |       |   |
+// |         |                             |         |         |       |   |
+// |         +-----------------------------+---------+---------+-------+   |
+// | section |                                                         |   |
+// |         +---------------------------------------------------------+   |
+// | section |                                                         |   |
+// |         +---------------------------------------------------------+   |
+// |                                                                       |
+// +-----------------------------------------------------------------------+
 //
-// Both each block and each element have a primary and secondary size, whereas
-// the meaning of primary and secondary is defined by the layout direction set
-// by the containing space.
+// layout:
+// The topmost element is the layout which must be defined by an NASpace.
+// That space defines the layout directions. Here in this example, one assumes
+// that the primary direction is from left to right and the secondary direction
+// is from top to bottom.
 //
-// The element size is set by the arguments provided to naAddLayoutElement.
+// section:
+// Each layout has multiple sections which are added sequentially with a call
+// to naAddLayoutSection, here from top to bottom. Each section in one layout
+// has the SAME width which is defined by how much space the elements contained
+// within need at least. The height of each section is depicted by blocksize2,
+// in this case, the height. You define blocksize2 when adding a section.
 //
-// The block size is set as follows:
-// Primary size:     By default, this value is equal to the elements primary
-//                   size but can be changed with naSetLayoutElementBlockSize1.
-// Secondary size:   Is set by naAddLayoutSection.
+// block:
+// Each section has multiple blocks which are added sequentially with a call
+// to naAddLayoutElement, here from left to right. Each block in one section
+// has the SAME height as defined by the height of the section. You define a
+// margin to the previous element as well as blocksize1, in this case the
+// width of the block. You can also create a sublayout with naBeginSubLayout
+// which behaves just the same as an arbitrary block but contains a complete
+// layout within.
 //
-// Blocks and their contained elements may therefore have different sizes.
-// Both can be individually set to be either an explicitely fixed value or
-// implicitely being computed:
+// flex space:
+// As each section in one layout has the SAME width, there can be sections
+// which are not filled completely in the primary direction with blocks.
+// That unused space is distributed equally among the blocks of that section
+// which have NA_LAYOUT_GROW set as a blocksize1. See below for further info.
 //
-// For all sizes, you can always provide one of those three things:
+// content:
+// The content is a virtual rectangle which you can define its dimensions
+// arbitrarily if desired by calling naSetLayoutElementContentSize. By default,
+// the content size is the same as the blocksize but if it is smaller than the
+// blocksize, the user can define, how the content shall be aligned within the
+// block. You can control the alignment with naSetLayoutElementPrimaryAlign and
+// naSetLayoutElementSecondaryAlign. See below for further info.
+//
+// uiElement:
+// The uiElement finally is the actual system-specific element which will be
+// placed on the screen. That uiElement usually occupies the same rectangle
+// as the content discussed above but there are exceptions. For example, there
+// are uiElements which can not or should not stretch vertically, like for
+// example a one-line label. These uiElements will be left unstretched even if
+// the content has a different rectangle. Also, the uiElement might be shifted
+// vertically to the content rectangle due to text aligment to the baseline.
+// You control the latter with naSetLayoutElementAlignBaseline.
+//
+// For all blocksizes and contentsizes, you can always provide one of those
+// three things:
 //
 // - Positive value      A positive value is treated as a fixed size. Blocks
-//                       as well as elements will explicitely be set to that
+//                       as well as the content will explicitely be set to that
 //                       size.
 //
 // - any negative value  The absolute amount of the value does not matter but
 //   or NA_LAYOUT_MIN    the negative sign means: Use the minimal amount of
-//                       space to encapsulate content. For elements, this sets
+//                       space to encapsulate content. For content, this sets
 //                       the size to the size of the actual uiElement provided.
 //                       This is especially useful, if you do not (need to)
 //                       know the actual size of an element (like for example,
@@ -101,25 +149,24 @@ NA_PROTOTYPE(NASpace);
 //                       For blocks, the size of all blocks will be distributed
 //                       evenly as follows:
 //
-// If you set the blockSize to NA_LAYOUT_GROW, the final size will be computed
-// by distributing any remaining space of the containing rectangle evenly to
-// all such elements. For example in the following diagram, fixed blocks are
-// marked with = and blocks with NA_LAYOUT_GROW are marked with X:
+// If you set the blockSize1 to NA_LAYOUT_GROW, the final size of a block will
+// be computed by distributing any remaining space of the containing section
+// evenly to all such elements. For example in the following diagram, fixed
+// blocks are marked with = and blocks with NA_LAYOUT_GROW are marked with X:
 //
 // As defined:
 // +===+-----+===+---+===+=====+---+ - - - - - - - - +
-// |   |  X  |   | X |   |     | X | undefined space |
+// |   |  X  |   | X |   |     | X |    flex space   |
 // +===+-----+===+---+===+=====+---+ - - - - - - - - +
 // After space distribution:
 // +===+-----------+===+---------+===+=====+---------+
 // |   |     X     |   |    X    |   |     |    X    |
 // +===+-----------+===+---------+===+=====+---------+
 //
-// The alignment of the elements within the blocks is defined by the alignment
-// setting of the elements. By default, the align is centered. But one can
-// choose to align them both in primary as well as in secondary direction.
-// For example, if the direction is left-to-right, elements are aligned like
-// this:
+// The alignment of the content within the blocks is centered by default. But
+// one can choose to align them differently both in primary as well as in
+// secondary direction. For example, if the direction is left-to-right,
+// elements are aligned like this:
 //
 //     BEGIN           CENTER           END
 // +-----------+   +-----------+   +-----------+
@@ -167,16 +214,26 @@ void naAddLayoutElement(
   void* uiElement,
   double preMargin1,
   double blockSize1);
-  
+
+// Sets the size of the actual content
 void naSetLayoutElementContentSize(
   double contentSize1,
   double contentSize2);
+
+// Starts a new sublayout. The new sublayout behaves the same as an arbitrary
+// element added with naAddLayoutElement but contains subelements.
+// When the sublayout is finished, you must call naEndLayout.
+void naBeginSubLayout(
+  NASpace* space,
+  NABorder2D padding,
+  double preMargin1,
+  double blockSize1);
 
 // Assigns a space to the last added section. That space is automatically
 // resized according to the size of the section. By default, a section has
 // no space assigned. If a space is provided, it is taken as is.
 // This is useful for example, if you want to paint in the background of a
-// seciton or track whether the mouse is inside.
+// section or track whether the mouse is inside.
 void naSetLayoutSectionSpace(NASpace* space);
 
 // Changes the attributes of the last element added.
@@ -184,7 +241,35 @@ void naSetLayoutSectionSpace(NASpace* space);
 // PrimaryAlign:   NA_ALIGNMENT_CENTER
 // SecondaryAlign: NA_ALIGNMENT_CENTER
 // AligneBaseline: false for block elements, true for baseline elements.
-// BlockSize1:     NA_LAYOUT_MIN
-void naSetLayoutElementPrimaryAlign(NAAlignment alignment1);
-void naSetLayoutElementSecondaryAlign(NAAlignment alignment2);
+void naSetLayoutElementPrimaryAlignment(NAAlignment alignment1);
+void naSetLayoutElementSecondaryAlignment(NAAlignment alignment2);
 void naSetLayoutElementAlignBaseline(NABool alignBaseline);
+
+
+
+
+
+// This is free and unencumbered software released into the public domain.
+
+// Anyone is free to copy, modify, publish, use, compile, sell, or
+// distribute this software, either in source code form or as a compiled
+// binary, for any purpose, commercial or non-commercial, and by any
+// means.
+
+// In jurisdictions that recognize copyright laws, the author or authors
+// of this software dedicate any and all copyright interest in the
+// software to the public domain. We make this dedication for the benefit
+// of the public at large and to the detriment of our heirs and
+// successors. We intend this dedication to be an overt act of
+// relinquishment in perpetuity of all present and future rights to this
+// software under copyright law.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+
+// For more information, please refer to <http://unlicense.org/>

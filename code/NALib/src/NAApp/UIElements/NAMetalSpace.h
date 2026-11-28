@@ -30,7 +30,7 @@
 
 
 // Creates a new metalSpace
-NA_API NAMetalSpace* naNewMetalSpace(NASize size);
+NA_API NAMetalSpace* naNewMetalSpace();
 
 // Returns true, if the given metalSpace has allocated a valid Metal structure.
 NA_API NABool naIsMetalTechnologyAvailable(NAMetalSpace* metalSpace);

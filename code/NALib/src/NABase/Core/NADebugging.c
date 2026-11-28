@@ -47,7 +47,6 @@
 }
 
 
-
 #endif // NA_DEBUG
 
 

@@ -78,7 +78,6 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
   }
 
   if ([event modifierFlags] & (NAEventModifierFlagCommand)) {
-    NSString* chars = event.characters;
     if ([[event charactersIgnoringModifiers] isEqualToString:@"c"]) {
       if ([NSApp sendAction:@selector(copy:) to:nil from:self]) { return YES; }
     }else if ([[event charactersIgnoringModifiers] isEqualToString:@"x"]) {
@@ -162,12 +161,12 @@ NA_RUNTIME_TYPE(NACocoaTextBox, na_DestructCocoaTextBox, NA_FALSE);
 
 
 
-NA_DEF NATextBox* naNewTextBox(NASize size) {
+NA_DEF NATextBox* naNewTextBox() {
   NACocoaTextBox* cocoaTextBox = naNew(NACocoaTextBox);
   
   NACocoaNativeTextBox* nativeObj = [[NACocoaNativeTextBox alloc]
     initWithTextBox:cocoaTextBox
-    frame:naMakeNSRectWithSize(size)];
+    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_UI_ELEMENT_DUMMY_WIDTH))];
     
   na_InitCoreTextBox(
     (NATextBox*)cocoaTextBox,

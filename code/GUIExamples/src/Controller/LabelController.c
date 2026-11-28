@@ -37,84 +37,141 @@ struct LabelController{
 CommonController* createLabelController() {
   LabelController* con = naAlloc(LabelController);
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->normalLabel = naNewLabel("Normal Label", COLUMN0_WIDTH);
+  con->normalLabel = naNewLabel("Normal Label");
   naSetLabelFont(con->normalLabel, getTitleFont());
-  naAddSpaceChild(space, con->normalLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->normalLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->label = naNewLabel("I am a label", COLUMN1_WIDTH);
-  naAddSpaceChild(space, con->label, naMakePos(TAB1, curPosY));
+  con->label = naNewLabel("I am a label");
+  naAddSpaceChild(
+    space,
+    con->label,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->coloredLabel = naNewLabel("Colored Label", COLUMN0_WIDTH);
+  con->coloredLabel = naNewLabel("Colored Label");
   naSetLabelFont(con->coloredLabel, getTitleFont());
-  naAddSpaceChild(space, con->coloredLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->coloredLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
   NAColor textColor;
   naFillColorWithSRGB(&textColor, .8f, .5f, .1f, 1.f);
 
-  con->labelColor = naNewLabel("I am colorful", COLUMN1_WIDTH);
+  con->labelColor = naNewLabel("I am colorful");
   naSetLabelTextColor(con->labelColor, &textColor);
-  naAddSpaceChild(space, con->labelColor, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->labelColor,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->nonSelectableLabel = naNewLabel("Non-Selectable Label", COLUMN0_WIDTH);
+  con->nonSelectableLabel = naNewLabel("Non-Selectable Label");
   naSetLabelFont(con->nonSelectableLabel, getTitleFont());
-  naAddSpaceChild(space, con->nonSelectableLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->nonSelectableLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->labelNonSelectable = naNewLabel("I am non-selectable", COLUMN1_WIDTH);
+  con->labelNonSelectable = naNewLabel("I am non-selectable");
   naSetLabelSelectable(con->labelNonSelectable, NA_FALSE);
-  naAddSpaceChild(space, con->labelNonSelectable, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->labelNonSelectable,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->linkLabel = naNewLabel("Label with Link", COLUMN0_WIDTH);
+  con->linkLabel = naNewLabel("Label with Link");
   naSetLabelFont(con->linkLabel, getTitleFont());
-  naAddSpaceChild(space, con->linkLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->linkLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->labelLink = naNewLabel("I am a link", COLUMN1_WIDTH);
+  con->labelLink = naNewLabel("I am a link");
   naSetLabelLink(con->labelLink, "https://manderc.com");
-  naAddSpaceChild(space, con->labelLink, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->labelLink,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
   NAFont* paragraphFont = naCreateFontWithPreset(NA_FONT_KIND_PARAGRAPH, NA_FONT_SIZE_DEFAULT);
 
-  con->fontLabel = naNewLabel("Label with Font", COLUMN0_WIDTH);
+  con->fontLabel = naNewLabel("Label with Font");
   naSetLabelFont(con->fontLabel, getTitleFont());
-  naAddSpaceChild(space, con->fontLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->fontLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->labelFont = naNewLabel("I am pretty", COLUMN1_WIDTH);
+  con->labelFont = naNewLabel("I am pretty");
   naSetLabelFont(con->labelFont, paragraphFont);
-  naAddSpaceChild(space, con->labelFont, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->labelFont,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
   naRelease(paragraphFont);
 
   curPosY = curPosY - 2 * UI_ELEMENT_HEIGTH - SPACE_MARGIN_V;
 
-  con->multiLineLabel = naNewLabel("Multi-Line Label", COLUMN0_WIDTH);
+  con->multiLineLabel = naNewLabel("Multi-Line Label");
   naSetLabelFont(con->multiLineLabel, getTitleFont());
-  naAddSpaceChild(space, con->multiLineLabel, naMakePos(WINDOW_MARGIN, curPosY + UI_ELEMENT_HEIGTH + SPACE_MARGIN_V));
+  naAddSpaceChild(
+    space,
+    con->multiLineLabel,
+    naMakePos(WINDOW_MARGIN, curPosY + UI_ELEMENT_HEIGTH + SPACE_MARGIN_V),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->labelMultiLine = naNewLabel("The meerkat (Suricata suricatta) or suricate is a small mongoose found in southern Africa.", COLUMN1_WIDTH);
+  con->labelMultiLine = naNewLabel("The meerkat (Suricata suricatta) or suricate is a small mongoose found in southern Africa.");
   naSetLabelHeight(con->labelMultiLine, 2 * UI_ELEMENT_HEIGTH);
-  naAddSpaceChild(space, con->labelMultiLine, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->labelMultiLine,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
+  con->disabledLabel = naNewLabel("Disabled");
   naSetLabelFont(con->disabledLabel, getTitleFont());
-  naAddSpaceChild(space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->disabledLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->labelDisabled = naNewLabel("I am disabled", COLUMN1_WIDTH);
+  con->labelDisabled = naNewLabel("I am disabled");
   naSetLabelEnabled(con->labelDisabled, NA_FALSE);
-  naAddSpaceChild(space, con->labelDisabled, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->labelDisabled,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
   initCommonController(
     &con->comCon,

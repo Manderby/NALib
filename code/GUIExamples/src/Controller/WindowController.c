@@ -104,19 +104,28 @@ static void reshape(NAReaction reaction) {
 CommonController* createWindowController() {
   WindowController* con = naAlloc(WindowController);
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
-  
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+
   double smallWindowLeft = WINDOW_POS_X + WINDOW_WIDTH + WINDOW_MARGIN;
   double smallWindowHeight = 3 * UI_ELEMENT_HEIGTH + 2 * SPACE_MARGIN_V;
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->normalWindowLabel = naNewLabel("Normal & Resizeable", COLUMN0_WIDTH);
+  con->normalWindowLabel = naNewLabel("Normal & Resizeable");
   naSetLabelFont(con->normalWindowLabel, getTitleFont());
-  naAddSpaceChild(space, con->normalWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
-  con->openNormalWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
-  naAddSpaceChild(space, con->openNormalWindow, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->normalWindowLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
+  con->openNormalWindow = naNewTextPushButton("open");
+  naAddSpaceChild(
+    space,
+    con->openNormalWindow,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(MEDIUM_BUTTON_WIDTH));
   naAddUIReaction(con->openNormalWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
 
   con->normalWindow = naNewWindow("Normal Window", naMakeRectS(smallWindowLeft, 550, 300, smallWindowHeight), NA_WINDOW_RESIZEABLE);
@@ -124,20 +133,40 @@ CommonController* createWindowController() {
 
   NASpace* normalSpace = naGetWindowContentSpace(con->normalWindow);
 
-  con->normalScreenLabel = naNewLabel("", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naAddSpaceChild(normalSpace, con->normalScreenLabel, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH));
-  con->normalUIScale = naNewLabel("", COLUMN2_WIDTH);
-  naAddSpaceChild(normalSpace, con->normalUIScale, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH));
-  con->normalRect = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naAddSpaceChild(normalSpace, con->normalRect, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH));
+  con->normalScreenLabel = naNewLabel("");
+  naAddSpaceChild(
+    normalSpace,
+    con->normalScreenLabel,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN));
+  con->normalUIScale = naNewLabel("");
+  naAddSpaceChild(
+    normalSpace,
+    con->normalUIScale,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN2_WIDTH));
+  con->normalRect = naNewLabel("");
+  naAddSpaceChild(
+    normalSpace,
+    con->normalRect,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN));
   
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->nonresizeWindowLabel = naNewLabel("Non-Resizeable", COLUMN0_WIDTH);
+  con->nonresizeWindowLabel = naNewLabel("Non-Resizeable");
   naSetLabelFont(con->nonresizeWindowLabel, getTitleFont());
-  naAddSpaceChild(space, con->nonresizeWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
-  con->openNonResizeWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
-  naAddSpaceChild(space, con->openNonResizeWindow, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->nonresizeWindowLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
+  con->openNonResizeWindow = naNewTextPushButton("open");
+  naAddSpaceChild(
+    space,
+    con->openNonResizeWindow,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(MEDIUM_BUTTON_WIDTH));
   naAddUIReaction(con->openNonResizeWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   
   con->nonresizeWindow = naNewWindow("Non-Resizeable Window", naMakeRectS(smallWindowLeft + 0 * 50, 325 + 3 * 25, 300, smallWindowHeight), 0);
@@ -145,23 +174,47 @@ CommonController* createWindowController() {
 
   NASpace* nonresizeSpace = naGetWindowContentSpace(con->nonresizeWindow);
 
-  con->nonresizeScreenLabel = naNewLabel("", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naAddSpaceChild(nonresizeSpace, con->nonresizeScreenLabel, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH));
-  con->nonresizeUIScale = naNewLabel("", COLUMN2_WIDTH);
-  naAddSpaceChild(nonresizeSpace, con->nonresizeUIScale, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH));
-  con->nonresizeRect = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naAddSpaceChild(nonresizeSpace, con->nonresizeRect, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH));
+  con->nonresizeScreenLabel = naNewLabel("");
+  naAddSpaceChild(
+    nonresizeSpace,
+    con->nonresizeScreenLabel,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN));
+  con->nonresizeUIScale = naNewLabel("");
+  naAddSpaceChild(
+    nonresizeSpace,
+    con->nonresizeUIScale,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN2_WIDTH));
+  con->nonresizeRect = naNewLabel("");
+  naAddSpaceChild(
+    nonresizeSpace,
+    con->nonresizeRect,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->noncloseWindowLabel = naNewLabel("Non-Closeable", COLUMN0_WIDTH);
+  con->noncloseWindowLabel = naNewLabel("Non-Closeable");
   naSetLabelFont(con->noncloseWindowLabel, getTitleFont());
-  naAddSpaceChild(space, con->noncloseWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
-  con->openNonCloseWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
-  naAddSpaceChild(space, con->openNonCloseWindow, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->noncloseWindowLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
+  con->openNonCloseWindow = naNewTextPushButton("open");
+  naAddSpaceChild(
+    space,
+    con->openNonCloseWindow,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(MEDIUM_BUTTON_WIDTH));
   naAddUIReaction(con->openNonCloseWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  con->closeNonCloseWindow = naNewTextPushButton("close", MEDIUM_BUTTON_WIDTH);
-  naAddSpaceChild(space, con->closeNonCloseWindow, naMakePos(TAB1 + MEDIUM_BUTTON_WIDTH + UI_ELEMENT_MARGIN, curPosY));
+  con->closeNonCloseWindow = naNewTextPushButton("close");
+  naAddSpaceChild(
+    space,
+    con->closeNonCloseWindow,
+    naMakePos(TAB1 + MEDIUM_BUTTON_WIDTH + UI_ELEMENT_MARGIN, curPosY),
+    naMakeInlineSize(MEDIUM_BUTTON_WIDTH));
   naAddUIReaction(con->closeNonCloseWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
 
   con->noncloseWindow = naNewWindow("Non-Closeable Window", naMakeRectS(smallWindowLeft + 1 * 50, 325 + 2 * 25, 300, smallWindowHeight), NA_WINDOW_RESIZEABLE | NA_WINDOW_NON_CLOSEABLE);
@@ -169,20 +222,40 @@ CommonController* createWindowController() {
 
   NASpace* noncloseSpace = naGetWindowContentSpace(con->noncloseWindow);
 
-  con->noncloseScreenLabel = naNewLabel("", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naAddSpaceChild(noncloseSpace, con->noncloseScreenLabel, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH));
-  con->noncloseUIScale = naNewLabel("", COLUMN2_WIDTH);
-  naAddSpaceChild(noncloseSpace, con->noncloseUIScale, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH));
-  con->noncloseRect = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naAddSpaceChild(noncloseSpace, con->noncloseRect, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH));
+  con->noncloseScreenLabel = naNewLabel("");
+  naAddSpaceChild(
+    noncloseSpace,
+    con->noncloseScreenLabel,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN));
+  con->noncloseUIScale = naNewLabel("");
+  naAddSpaceChild(
+    noncloseSpace,
+    con->noncloseUIScale,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN2_WIDTH));
+  con->noncloseRect = naNewLabel("");
+  naAddSpaceChild(
+    noncloseSpace,
+    con->noncloseRect,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->nonminiaturizeWindowLabel = naNewLabel("Non-Miniaturizeable", COLUMN0_WIDTH);
+  con->nonminiaturizeWindowLabel = naNewLabel("Non-Miniaturizeable");
   naSetLabelFont(con->nonminiaturizeWindowLabel, getTitleFont());
-  naAddSpaceChild(space, con->nonminiaturizeWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
-  con->openNonMinimizeWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
-  naAddSpaceChild(space, con->openNonMinimizeWindow, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->nonminiaturizeWindowLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
+  con->openNonMinimizeWindow = naNewTextPushButton("open");
+  naAddSpaceChild(
+    space,
+    con->openNonMinimizeWindow,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(MEDIUM_BUTTON_WIDTH));
   naAddUIReaction(con->openNonMinimizeWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
   
   con->nonminiaturizeWindow = naNewWindow("Non-Miniaturizeable Window", naMakeRectS(smallWindowLeft + 2 * 50, 325 + 1 * 25, 300, smallWindowHeight), NA_WINDOW_RESIZEABLE | NA_WINDOW_NON_MINIATURIZEABLE);
@@ -190,23 +263,47 @@ CommonController* createWindowController() {
 
   NASpace* nonminiaturizeSpace = naGetWindowContentSpace(con->nonminiaturizeWindow);
 
-  con->nonminiaturizeScreenLabel = naNewLabel("", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naAddSpaceChild(nonminiaturizeSpace, con->nonminiaturizeScreenLabel, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH));
-  con->nonminiaturizeUIScale = naNewLabel("", COLUMN2_WIDTH);
-  naAddSpaceChild(nonminiaturizeSpace, con->nonminiaturizeUIScale, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH));
-  con->nonminiaturizeRect = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naAddSpaceChild(nonminiaturizeSpace, con->nonminiaturizeRect, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH));
+  con->nonminiaturizeScreenLabel = naNewLabel("");
+  naAddSpaceChild(
+    nonminiaturizeSpace,
+    con->nonminiaturizeScreenLabel,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN));
+  con->nonminiaturizeUIScale = naNewLabel("");
+  naAddSpaceChild(
+    nonminiaturizeSpace,
+    con->nonminiaturizeUIScale,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN2_WIDTH));
+  con->nonminiaturizeRect = naNewLabel("");
+  naAddSpaceChild(
+    nonminiaturizeSpace,
+    con->nonminiaturizeRect,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->nothingWindowLabel = naNewLabel("No title buttons", COLUMN0_WIDTH);
+  con->nothingWindowLabel = naNewLabel("No title buttons");
   naSetLabelFont(con->nothingWindowLabel, getTitleFont());
-  naAddSpaceChild(space, con->nothingWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
-  con->openNothingWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
-  naAddSpaceChild(space, con->openNothingWindow, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->nothingWindowLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
+  con->openNothingWindow = naNewTextPushButton("open");
+  naAddSpaceChild(
+    space,
+    con->openNothingWindow,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(MEDIUM_BUTTON_WIDTH));
   naAddUIReaction(con->openNothingWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  con->closeNothingWindow = naNewTextPushButton("close", MEDIUM_BUTTON_WIDTH);
-  naAddSpaceChild(space, con->closeNothingWindow, naMakePos(TAB1 + MEDIUM_BUTTON_WIDTH + UI_ELEMENT_MARGIN, curPosY));
+  con->closeNothingWindow = naNewTextPushButton("close");
+  naAddSpaceChild(
+    space,
+    con->closeNothingWindow,
+    naMakePos(TAB1 + MEDIUM_BUTTON_WIDTH + UI_ELEMENT_MARGIN, curPosY),
+    naMakeInlineSize(MEDIUM_BUTTON_WIDTH));
   naAddUIReaction(con->closeNothingWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
 
   con->nothingWindow = naNewWindow("Window with no title buttons", naMakeRectS(smallWindowLeft + 3 * 50, 325 + 0 * 25, 300, smallWindowHeight), NA_WINDOW_NON_MINIATURIZEABLE | NA_WINDOW_NON_CLOSEABLE | NA_WINDOW_FIXED_SIZE);
@@ -214,23 +311,47 @@ CommonController* createWindowController() {
 
   NASpace* nothingSpace = naGetWindowContentSpace(con->nothingWindow);
 
-  con->nothingScreenLabel = naNewLabel("", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naAddSpaceChild(nothingSpace, con->nothingScreenLabel, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH));
-  con->nothingUIScale = naNewLabel("", COLUMN2_WIDTH);
-  naAddSpaceChild(nothingSpace, con->nothingUIScale, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH));
-  con->nothingRect = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naAddSpaceChild(nothingSpace, con->nothingRect, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH));
+  con->nothingScreenLabel = naNewLabel("");
+  naAddSpaceChild(
+    nothingSpace,
+    con->nothingScreenLabel,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN));
+  con->nothingUIScale = naNewLabel("");
+  naAddSpaceChild(
+    nothingSpace,
+    con->nothingUIScale,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN2_WIDTH));
+  con->nothingRect = naNewLabel("");
+  naAddSpaceChild(
+    nothingSpace,
+    con->nothingRect,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->titlelessWindowLabel = naNewLabel("Titleless Window", COLUMN0_WIDTH);
+  con->titlelessWindowLabel = naNewLabel("Titleless Window");
   naSetLabelFont(con->titlelessWindowLabel, getTitleFont());
-  naAddSpaceChild(space, con->titlelessWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
-  con->openTitlelessWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
-  naAddSpaceChild(space, con->openTitlelessWindow, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->titlelessWindowLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
+  con->openTitlelessWindow = naNewTextPushButton("open");
+  naAddSpaceChild(
+    space,
+    con->openTitlelessWindow,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(MEDIUM_BUTTON_WIDTH));
   naAddUIReaction(con->openTitlelessWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
-  con->closeTitlelessWindow = naNewTextPushButton("close", MEDIUM_BUTTON_WIDTH);
-  naAddSpaceChild(space, con->closeTitlelessWindow, naMakePos(TAB1 + MEDIUM_BUTTON_WIDTH + UI_ELEMENT_MARGIN, curPosY));
+  con->closeTitlelessWindow = naNewTextPushButton("close");
+  naAddSpaceChild(
+    space,
+    con->closeTitlelessWindow,
+    naMakePos(TAB1 + MEDIUM_BUTTON_WIDTH + UI_ELEMENT_MARGIN, curPosY),
+    naMakeInlineSize(MEDIUM_BUTTON_WIDTH));
   naAddUIReaction(con->closeTitlelessWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
 
   con->titlelessWindow = naNewWindow("This title should never be displayed", naMakeRectS(smallWindowLeft, 200, 300, smallWindowHeight), NA_WINDOW_TITLELESS | NA_WINDOW_RESIZEABLE);
@@ -238,20 +359,40 @@ CommonController* createWindowController() {
 
   NASpace* titlelessSpace = naGetWindowContentSpace(con->titlelessWindow);
 
-  con->titlelessScreenLabel = naNewLabel("", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naAddSpaceChild(titlelessSpace, con->titlelessScreenLabel, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH));
-  con->titlelessUIScale = naNewLabel("", COLUMN2_WIDTH);
-  naAddSpaceChild(titlelessSpace, con->titlelessUIScale, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH));
-  con->titlelessRect = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naAddSpaceChild(titlelessSpace, con->titlelessRect, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH));
+  con->titlelessScreenLabel = naNewLabel("");
+  naAddSpaceChild(
+    titlelessSpace,
+    con->titlelessScreenLabel,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN));
+  con->titlelessUIScale = naNewLabel("");
+  naAddSpaceChild(
+    titlelessSpace,
+    con->titlelessUIScale,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN2_WIDTH));
+  con->titlelessRect = naNewLabel("");
+  naAddSpaceChild(
+    titlelessSpace,
+    con->titlelessRect,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN));
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->auxiliaryWindowLabel = naNewLabel("Auxiliary", COLUMN0_WIDTH);
+  con->auxiliaryWindowLabel = naNewLabel("Auxiliary");
   naSetLabelFont(con->auxiliaryWindowLabel, getTitleFont());
-  naAddSpaceChild(space, con->auxiliaryWindowLabel, naMakePos(WINDOW_MARGIN, curPosY));
-  con->openAuxiliaryWindow = naNewTextPushButton("open", MEDIUM_BUTTON_WIDTH);
-  naAddSpaceChild(space, con->openAuxiliaryWindow, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->auxiliaryWindowLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
+  con->openAuxiliaryWindow = naNewTextPushButton("open");
+  naAddSpaceChild(
+    space,
+    con->openAuxiliaryWindow,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(MEDIUM_BUTTON_WIDTH));
   naAddUIReaction(con->openAuxiliaryWindow, NA_UI_COMMAND_PRESSED, buttonPressed, con);
 
   con->auxiliaryWindow = naNewWindow("Auxiliary Window", naMakeRectS(smallWindowLeft, 50, 300, smallWindowHeight), NA_WINDOW_RESIZEABLE | NA_WINDOW_AUXILIARY);
@@ -259,12 +400,24 @@ CommonController* createWindowController() {
 
   NASpace* auxiliarySpace = naGetWindowContentSpace(con->auxiliaryWindow);
 
-  con->auxiliaryScreenLabel = naNewLabel("", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  naAddSpaceChild(auxiliarySpace, con->auxiliaryScreenLabel, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH));
-  con->auxiliaryUIScale = naNewLabel("", COLUMN2_WIDTH);
-  naAddSpaceChild(auxiliarySpace, con->auxiliaryUIScale, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH));
-  con->auxiliaryRect = naNewLabel("", COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN);
-  naAddSpaceChild(auxiliarySpace, con->auxiliaryRect, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH));
+  con->auxiliaryScreenLabel = naNewLabel("");
+  naAddSpaceChild(
+    auxiliarySpace,
+    con->auxiliaryScreenLabel,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 2 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN));
+  con->auxiliaryUIScale = naNewLabel("");
+  naAddSpaceChild(
+    auxiliarySpace,
+    con->auxiliaryUIScale,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 1 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN2_WIDTH));
+  con->auxiliaryRect = naNewLabel("");
+  naAddSpaceChild(
+    auxiliarySpace,
+    con->auxiliaryRect,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V + 0 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN1_WIDTH + COLUMN2_WIDTH + UI_ELEMENT_MARGIN));
 
   initCommonController(
     &con->comCon,

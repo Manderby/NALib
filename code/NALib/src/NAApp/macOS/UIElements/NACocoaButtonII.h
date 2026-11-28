@@ -6,10 +6,6 @@
 
 
 
-#define NA_COCOA_DEFAULT_BUTTON_HEIGHT 24
-
-
-
 struct NACocoaButton{
   NAButton button;
 };
@@ -238,7 +234,7 @@ NA_RUNTIME_TYPE(NACocoaButton, na_DestructCocoaButton, NA_FALSE);
 
 
 
-NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
+NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text) {
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
 
   uint32 flags = NA_BUTTON_BORDERED;
@@ -248,7 +244,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
     flags:flags
     isImage:NO
     frame:naMakeNSRectWithSize(naMakeSize(
-      width,
+      NA_COCOA_UI_ELEMENT_DUMMY_WIDTH,
       NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
       
   na_InitCoreButton(
@@ -267,7 +263,7 @@ NA_DEF NAButton* naNewTextPushButton(const NAUTF8Char* text, double width) {
 
 
 
-NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* text2, double width) {
+NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* text2) {
   
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
 
@@ -278,7 +274,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
     flags:flags
     isImage:NO
     frame:naMakeNSRectWithSize(naMakeSize(
-      width,
+      NA_COCOA_UI_ELEMENT_DUMMY_WIDTH,
       NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
       
   na_InitCoreButton(
@@ -297,7 +293,7 @@ NA_DEF NAButton* naNewTextStateButton(const NAUTF8Char* text, const NAUTF8Char* 
 
 
 
-NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
+NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon) {
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   uint32 flags = NA_BUTTON_BORDERED;
@@ -307,7 +303,7 @@ NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(naMakeSize(
-      width,
+      NA_COCOA_UI_ELEMENT_DUMMY_WIDTH,
       NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
       
   na_InitCoreButton(
@@ -329,7 +325,7 @@ NA_DEF NAButton* naNewIconPushButton(const NAImageSet* icon, double width) {
 
 
 
-NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* icon2, double width) {
+NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* icon2) {
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   uint32 flags = NA_BUTTON_STATEFUL | NA_BUTTON_BORDERED;
@@ -339,7 +335,7 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
     flags:flags
     isImage:YES
     frame:naMakeNSRectWithSize(naMakeSize(
-      width,
+      NA_COCOA_UI_ELEMENT_DUMMY_WIDTH,
       NA_COCOA_DEFAULT_BUTTON_HEIGHT))];
       
   na_InitCoreButton(
@@ -361,7 +357,7 @@ NA_DEF NAButton* naNewIconStateButton(const NAImageSet* icon, const NAImageSet* 
 
 
 
-NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet, NASize size) {
+NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet) {
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   uint32 flags = 0;
@@ -370,7 +366,7 @@ NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet, NASize size) {
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
-    frame:naMakeNSRectWithSize(size)];
+    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_UI_ELEMENT_DUMMY_WIDTH))];
     
   na_InitCoreButton(
     (NAButton*)cocoaButton,
@@ -391,7 +387,7 @@ NA_DEF NAButton* naNewImagePushButton(const NAImageSet* imageSet, NASize size) {
 
 
 
-NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImageSet* imageSet2, NASize size) {
+NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImageSet* imageSet2) {
   NACocoaButton* cocoaButton = naNew(NACocoaButton);
   
   uint32 flags = NA_BUTTON_STATEFUL;
@@ -400,7 +396,7 @@ NA_DEF NAButton* naNewImageStateButton(const NAImageSet* imageSet, const NAImage
     initWithButton:cocoaButton
     flags:flags
     isImage:YES
-    frame:naMakeNSRectWithSize(size)];
+    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_UI_ELEMENT_DUMMY_WIDTH))];
     
   na_InitCoreButton(
     (NAButton*)cocoaButton,

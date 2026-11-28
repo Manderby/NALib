@@ -14,7 +14,7 @@
 
 
 // Creates a new checkBox. Default height is 18.
-NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width);
+NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text);
 
 // Changes the visibility or enabled state of the button.
 NA_API void naSetCheckBoxVisible(NACheckBox* checkBox, NABool visible);

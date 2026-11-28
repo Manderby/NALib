@@ -19,8 +19,6 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 - (id _Nonnull) initWithSpace:(NACocoaSpace* _Nonnull)newCocoaSpace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
-  NSRect newFrame = [super frame];
-
   [self setWantsLayer:YES];
   [self resetDrag];
 
@@ -45,8 +43,6 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
   NSRectFill(dirtyRect);
   naDeallocUIColor(curBgColor);
   
-  NARect marginRect = naMakeRectS(10, 10, 30, 30);
-
   #if NA_DEBUG
     na_DrawLayoutDebugging([self frame], &cocoaSpace->space.uiElement);
   #endif // NA_DEBUG
@@ -181,12 +177,12 @@ NA_RUNTIME_TYPE(NACocoaSpace, na_DestructCocoaSpace, NA_FALSE);
 
 
 
-NA_DEF NASpace* _Nonnull naNewSpace(NASize size) {
+NA_DEF NASpace* _Nonnull naNewSpace() {
   NACocoaSpace* cocoaSpace = naNew(NACocoaSpace);
 
   NACocoaNativeSpace* nativeObj = [[NACocoaNativeSpace alloc]
     initWithSpace:cocoaSpace
-    frame:naMakeNSRectWithSize(size)];  
+    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_UI_ELEMENT_DUMMY_WIDTH))];  
   na_InitCoreSpace(
     (NASpace*)cocoaSpace,
     NA_COCOA_PTR_OBJC_TO_C(nativeObj));
@@ -274,7 +270,8 @@ NA_HDEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child
     
     rect.pos = pos;
     if(!ignoreSize) {
-      rect.size = size;
+      rect.size.width = size.width >= 0 ? size.width : rect.size.width;
+      rect.size.height = size.height >= 0 ? size.height : rect.size.height;
     }
     
     if(raw) {
@@ -289,20 +286,20 @@ NA_HDEF void na_AddSpaceChildAtPos(NASpace* _Nonnull space, void* _Nonnull child
 
 
 
-NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos) {
-  na_AddSpaceChildAtPos(space, child, pos, naMakeSizeZero(), NA_FALSE, NA_TRUE, NA_FALSE);
-}
-NA_DEF void naAddSpaceChildRaw(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos) {
-  na_AddSpaceChildAtPos(space, child, pos, naMakeSizeZero(), NA_TRUE, NA_TRUE, NA_FALSE);
-}
-NA_DEF void naAddSpaceChildWithSize(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NASize size) {
+NA_DEF void naAddSpaceChild(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NASize size) {
   na_AddSpaceChildAtPos(space, child, pos, size, NA_FALSE, NA_FALSE, NA_FALSE);
 }
-NA_DEF void naAddSpaceChildRawWithSize(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NASize size) {
+NA_DEF void naAddSpaceChildRaw(NASpace* _Nonnull space, void* _Nonnull child, NAPos pos, NASize size) {
   na_AddSpaceChildAtPos(space, child, pos, size, NA_TRUE, NA_FALSE, NA_FALSE);
 }
 NA_HDEF void na_AddSpaceChildUnpositioned(NASpace* _Nonnull space, void* _Nonnull child) {
   na_AddSpaceChildAtPos(space, child, naMakePosZero(), naMakeSizeZero(), NA_FALSE, NA_FALSE, NA_TRUE);
+}
+NASize naMakeInlineSize(double width) {
+  return naMakeSizeE(width, NA_LAYOUT_MIN);
+}
+NASize naMakeUnchangedSize() {
+  return naMakeSizeE(NA_LAYOUT_MIN, NA_LAYOUT_MIN);
 }
 
 

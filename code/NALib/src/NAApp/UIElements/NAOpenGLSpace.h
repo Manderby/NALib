@@ -43,7 +43,6 @@
 // Mac: when prepareOpenGL is called (which may be as late as when the
 //      space comes onsceen)
 NA_API NAOpenGLSpace* naNewOpenGLSpace(
-  NASize size,
   NAMutator initFunc,
   void* initData);
 

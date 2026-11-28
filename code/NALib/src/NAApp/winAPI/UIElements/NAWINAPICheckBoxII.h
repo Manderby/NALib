@@ -75,14 +75,14 @@ NABool naCheckBoxWINAPINotify(void* uiElement, WORD notificationCode) {
 
 
 
-NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, double width) {
+NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text) {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPICheckBox* winapiCheckBox = naNew(NAWINAPICheckBox);
 
   TCHAR* systemText = naAllocSystemStringWithUTF8String(text);
 
   double uiScale = naGetUIElementUIScale(NA_NULL);
-  winapiCheckBox->rect = naMakeRectS(0., 0., width, 18.);
+  winapiCheckBox->rect = naMakeRectS(0., 0., NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_DEFAULT_CHECKBOX_HEIGHT);
 
 	HWND nativePtr = CreateWindow(
 		TEXT("BUTTON"),

@@ -67,20 +67,20 @@ TemperatureController* spawnTemperatureController() {
 
   // Create the main button, assign a press command and make it the default
   // button.
-  con->button = naNewTextPushButton("Compute", 100);
-  naAddSpaceChild(windowSpace, con->button, naMakePos(150, 20));
+  con->button = naNewTextPushButton("Compute");
+  naAddSpaceChild(windowSpace, con->button, naMakePos(150, 20), naMakeInlineSize(100));
   naAddUIReaction(con->button, NA_UI_COMMAND_PRESSED, computeResults, con);
   naSetButtonSubmit(con->button, computeResults, con);
 
   // Create the infoLabel containing informations.
-  con->infoLabel = naNewLabel("Temperature in Celsius", 160);
+  con->infoLabel = naNewLabel("Temperature in Celsius");
   naSetLabelTextAlignment(con->infoLabel, NA_ALIGNMENT_CENTER);
-  naAddSpaceChild(windowSpace, con->infoLabel, naMakePos(120, 130));
+  naAddSpaceChild(windowSpace, con->infoLabel, naMakePos(120, 130), naMakeInlineSize(160));
 
   // Create the textField.
-  con->textField = naNewTextField(80);
+  con->textField = naNewTextField();
   naSetTextFieldTextAlignment(con->textField, NA_ALIGNMENT_CENTER);
-  naAddSpaceChild(windowSpace, con->textField, naMakePos(160, 100));
+  naAddSpaceChild(windowSpace, con->textField, naMakePos(160, 100), naMakeInlineSize(80));
   naAddUIReaction(
       con->textField,
       NA_UI_COMMAND_EDIT_FINISHED,
@@ -88,18 +88,18 @@ TemperatureController* spawnTemperatureController() {
       con);
 
   // Create the resutLabel containing the results.
-  con->resutLabel = naNewLabel("Result in Fahrenheit", 160);
+  con->resutLabel = naNewLabel("Result in Fahrenheit");
   naSetLabelTextAlignment(con->resutLabel, NA_ALIGNMENT_CENTER);
-  naAddSpaceChild(windowSpace, con->resutLabel, naMakePos(120, 70));
+  naAddSpaceChild(windowSpace, con->resutLabel, naMakePos(120, 70), naMakeInlineSize(160));
 
   // Create a + button for opening a new window.
-  con->newButton = naNewTextPushButton("+", 60);
-  naAddSpaceChild(windowSpace, con->newButton, naMakePos(20, 20));
+  con->newButton = naNewTextPushButton("+");
+  naAddSpaceChild(windowSpace, con->newButton, naMakePos(20, 20), naMakeInlineSize(60));
   naAddUIReaction(con->newButton, NA_UI_COMMAND_PRESSED, pressButton, con);
 
   // Create a Quit button for terminating the whole application.
-  con->quitButton = naNewTextPushButton("Quit", 60);
-  naAddSpaceChild(windowSpace, con->quitButton, naMakePos(320, 20));
+  con->quitButton = naNewTextPushButton("Quit");
+  naAddSpaceChild(windowSpace, con->quitButton, naMakePos(320, 20), naMakeInlineSize(60));
   naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, pressButton, con);
 
   // Show the current window.

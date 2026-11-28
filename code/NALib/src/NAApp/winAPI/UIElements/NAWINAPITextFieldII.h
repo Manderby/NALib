@@ -119,13 +119,13 @@ void naHandleTextFieldReverseTabOrder(NAReaction reaction) {
 
 
 
-NA_DEF NATextField* naNewTextField(double width) {
+NA_DEF NATextField* naNewTextField() {
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
   NAWINAPITextField* winapiTextField = naNew(NAWINAPITextField);
 
   double uiScale = naGetUIElementUIScale(NA_NULL);
-  winapiTextField->rect = naMakeRectS(0., 0., width, 20.);
+  winapiTextField->rect = naMakeRectS(0., 0., NA_WINAPI_UI_ELEMENT_DUMMY_WIDTH, NA_WINAPI_DEFAULT_TEXTFIELD_HEIGHT);
 
   // If this is used before Win XP, it might fail. Use CreateWindow() instead
   // and omit the first argument.

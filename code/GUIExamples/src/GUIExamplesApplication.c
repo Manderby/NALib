@@ -78,7 +78,11 @@ void postStartup(void* arg) {
   size1x.height /= 2;
   app->iconImageSet = naCreateImageSet(
     originalIconImage,
+<<<<<<< HEAD
     size1x,
+=======
+    naMakeSizeHalfs(naGetPNGSize(pngIcon)),
+>>>>>>> 5e7e907cb87c444efe5372a76a4b6b4aea7a9fa7
     NA_BLEND_ERODE_LIGHT);
   naDelete(pngIcon);
   naRelease(originalIconImage);
@@ -94,7 +98,11 @@ void postStartup(void* arg) {
   size1x.height /= 2;
   app->state1ImageSet = naCreateImageSet(
     originalState1Image,
+<<<<<<< HEAD
     size1x,
+=======
+    naMakeSizeHalfs(naGetPNGSize(png1)),
+>>>>>>> 5e7e907cb87c444efe5372a76a4b6b4aea7a9fa7
     NA_BLEND_ZERO);
   naDelete(png1);
   naRelease(originalState1Image);
@@ -110,7 +118,11 @@ void postStartup(void* arg) {
   size1x.height /= 2;
   app->state2ImageSet = naCreateImageSet(
     originalState2Image,
+<<<<<<< HEAD
     size1x,
+=======
+    naMakeSizeHalfs(naGetPNGSize(png2)),
+>>>>>>> 5e7e907cb87c444efe5372a76a4b6b4aea7a9fa7
     NA_BLEND_ZERO);
   naDelete(png2);
   naRelease(originalState2Image);

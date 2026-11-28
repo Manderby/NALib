@@ -158,7 +158,8 @@ static void pressButton(NAReaction reaction){
     naAddSpaceChild(
       contentSpace,
       newSpace,
-      naMakePos(0, 0));
+      naMakePos(0, 0),
+      naMakeUnchangedSize());
 
     updateCommonController(newController);
 
@@ -173,11 +174,12 @@ static void pressButton(NAReaction reaction){
 NAButton* addButton(ExampleController* con, const NAUTF8Char* text, int32 x, int32 y) {
   double curButtonPosY = BUTTON_SPACE_HEIGHT - SPACE_MARGIN_V - UI_ELEMENT_HEIGTH;
 
-  NAButton* button = naNewTextStateButton(text, NA_NULL, BUTTON_WIDTH);
+  NAButton* button = naNewTextStateButton(text, NA_NULL);
   naAddSpaceChild(
     con->buttonSpace,
     button,
-    naMakePos(WINDOW_MARGIN + x * (BUTTON_WIDTH + UI_ELEMENT_MARGIN), curButtonPosY - y * UI_ELEMENT_HEIGTH));
+    naMakePos(WINDOW_MARGIN + x * (BUTTON_WIDTH + UI_ELEMENT_MARGIN), curButtonPosY - y * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(BUTTON_WIDTH));
   naAddUIReaction(
     button,
     NA_UI_COMMAND_PRESSED, 
@@ -219,7 +221,7 @@ ExampleController* createExampleController(){
 
   con->exampleSpace = NA_NULL;
 
-  con->buttonSpace = naNewSpace(naMakeSize(WINDOW_WIDTH, BUTTON_SPACE_HEIGHT));
+  con->buttonSpace = naNewSpace();
   naSetSpaceAlternateBackground(con->buttonSpace, NA_TRUE);
 
   con->applicationButton = addButton(con, "NAApplication", 0, 0);
@@ -249,7 +251,8 @@ ExampleController* createExampleController(){
   naAddSpaceChild(
     contentSpace,
     con->buttonSpace,
-    naMakePos(0, WINDOW_HEIGTH - BUTTON_SPACE_HEIGHT));
+    naMakePos(0, WINDOW_HEIGTH - BUTTON_SPACE_HEIGHT),
+    naMakeSize(WINDOW_WIDTH, BUTTON_SPACE_HEIGHT));
 
   naShowWindow(con->window);
 

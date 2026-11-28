@@ -27,7 +27,7 @@ int main(int argc, char *argv[]){
   
   printf("Creating Font... ");
 
-  NABuffer* readBuffer = naCreateBufferWithInputPath("miniascii.raw");
+  NABuffer* readBuffer = naCreateBufferWithInputUrl("miniascii.raw");
   NABufferIterator bufIter = naMakeBufferAccessor(readBuffer);
   NABuffer* outBuffer = naCreateBuffer(NA_FALSE);
   NABufferIterator outIter = naMakeBufferModifier(outBuffer);

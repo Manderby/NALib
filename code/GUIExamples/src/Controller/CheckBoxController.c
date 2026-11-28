@@ -31,37 +31,62 @@ static void checkBoxPressed(NAReaction reaction) {
 CommonController* createCheckBoxController() {
   CheckBoxController* con = naAlloc(CheckBoxController);
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
   double curPosY = EXPERIMENT_HEIGHT - SPACE_MARGIN_V;
 
   curPosY = curPosY - UI_ELEMENT_HEIGTH;
 
-  con->normalLabel = naNewLabel("Normal", COLUMN0_WIDTH);
+  con->normalLabel = naNewLabel("Normal");
   naSetLabelFont(con->normalLabel, getTitleFont());
-  naAddSpaceChild(space, con->normalLabel, naMakePos(WINDOW_MARGIN, curPosY));
+  naAddSpaceChild(
+    space,
+    con->normalLabel,
+    naMakePos(WINDOW_MARGIN, curPosY),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->normalCheckBox = naNewCheckBox("I am a CheckBox", COLUMN1_WIDTH);
-  naAddSpaceChild(space, con->normalCheckBox, naMakePos(TAB1, curPosY));
+  con->normalCheckBox = naNewCheckBox("I am a CheckBox");
+  naAddSpaceChild(
+    space,
+    con->normalCheckBox,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
   naAddUIReaction(con->normalCheckBox, NA_UI_COMMAND_PRESSED, checkBoxPressed, con);
   
-  con->normalReaction = naNewLabel("", COLUMN2_WIDTH);
+  con->normalReaction = naNewLabel("");
   naSetLabelFont(con->normalReaction, getMonoFont());
-  naAddSpaceChild(space, con->normalReaction, naMakePos(TAB2, curPosY));
+  naAddSpaceChild(
+    space,
+    con->normalReaction,
+    naMakePos(TAB2, curPosY),
+    naMakeInlineSize(COLUMN2_WIDTH));
 
   curPosY = curPosY - (2. * UI_ELEMENT_HEIGTH);
 
-  con->disabledLabel = naNewLabel("Disabled", COLUMN0_WIDTH);
+  con->disabledLabel = naNewLabel("Disabled");
   naSetLabelFont(con->disabledLabel, getTitleFont());
-  naAddSpaceChild(space, con->disabledLabel, naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH));
+  naAddSpaceChild(
+    space,
+    con->disabledLabel,
+    naMakePos(WINDOW_MARGIN, curPosY + .5 * UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN0_WIDTH));
 
-  con->checkBoxDisabled1 = naNewCheckBox("Disabled CheckBox On", COLUMN1_WIDTH);
+  con->checkBoxDisabled1 = naNewCheckBox("Disabled CheckBox On");
   naSetCheckBoxState(con->checkBoxDisabled1, NA_TRUE);
   naSetCheckBoxEnabled(con->checkBoxDisabled1, NA_FALSE);
-  naAddSpaceChild(space, con->checkBoxDisabled1, naMakePos(TAB1, curPosY + UI_ELEMENT_HEIGTH));
+  naAddSpaceChild(
+    space,
+    con->checkBoxDisabled1,
+    naMakePos(TAB1, curPosY + UI_ELEMENT_HEIGTH),
+    naMakeInlineSize(COLUMN1_WIDTH));
   
-  con->checkBoxDisabled1 = naNewCheckBox("Disabled CheckBox Off", COLUMN1_WIDTH);
+  con->checkBoxDisabled1 = naNewCheckBox("Disabled CheckBox Off");
   naSetCheckBoxEnabled(con->checkBoxDisabled1, NA_FALSE);
-  naAddSpaceChild(space, con->checkBoxDisabled1, naMakePos(TAB1, curPosY));
+  naAddSpaceChild(
+    space,
+    con->checkBoxDisabled1,
+    naMakePos(TAB1, curPosY),
+    naMakeInlineSize(COLUMN1_WIDTH));
 
   initCommonController(
     &con->comCon,

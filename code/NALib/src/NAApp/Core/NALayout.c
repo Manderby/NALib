@@ -1,4 +1,7 @@
 
+#include "../../NABase/NAConfiguration.h"
+#if NA_COMPILE_GUI == 1
+
 #include "NAAppCore.h"
 #include "../NAApp.h"
 #include "../../NAStruct/NAList.h"
@@ -179,14 +182,18 @@ void naEndLayout() {
 
     NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(na_curLayoutElement->uiElement);
 
+    // There are some occasions, where a space has already been positioned.
+    // We try to preserve the position.
+    NARect originalRect = naGetUIElementRectRaw(na_GetLayoutingSpace(na_curLayoutElement));
+
     // Reaching here, all min sizes of the whole design are computed. Propagate
     // the information down the whole tree and align all elements properly.
     na_AlignLayoutElement(
       na_GetLayoutingSpace(na_curLayoutElement),
       na_curLayoutElement,
       naMakeRectS(
-        0.,
-        0.,
+        originalRect.pos.x,
+        originalRect.pos.y,
         orderingVH ? na_curLayoutElement->minPaddingSize2 : na_curLayoutElement->minPaddingSize1,
         orderingVH ? na_curLayoutElement->minPaddingSize1 : na_curLayoutElement->minPaddingSize2));
     
@@ -312,6 +319,14 @@ void na_EndLayoutElement(NASpace* layoutingSpace, NA_LayoutElement* elem) {
       ? (elem->padding.begin1 + elem->padding.end1)
       : (elem->padding.begin2 + elem->padding.end2);
   }
+  
+  if(orderingVH) {
+    if(minContentSize1 < contentRect.size.height) { minContentSize1 = contentRect.size.height; }
+    if(minContentSize2 < contentRect.size.width) { minContentSize2 = contentRect.size.width; }
+  }else{
+    if(minContentSize1 < contentRect.size.width) { minContentSize1 = contentRect.size.width; }
+    if(minContentSize2 < contentRect.size.height) { minContentSize2 = contentRect.size.height; }
+  }
 
   if(isBlock) {
     if(contentSize1 < 0.) { // NA_LAYOUT_MIN
@@ -353,12 +368,8 @@ void na_EndLayoutElement(NASpace* layoutingSpace, NA_LayoutElement* elem) {
   }
   
   // Add the padding of this section.
-  elem->minPaddingSize1 = minContentSize1
-    ? minContentSize1 + elem->padding.begin1 + elem->padding.end1
-    : 0;
-  elem->minPaddingSize2 = minContentSize2
-    ? minContentSize2 + elem->padding.begin2 + elem->padding.end2
-    : 0;
+  elem->minPaddingSize1 = elem->padding.begin1 + elem->padding.end1 + (minContentSize1 ? minContentSize1 : 0);
+  elem->minPaddingSize2 = elem->padding.begin2 + elem->padding.end2 + (minContentSize2 ? minContentSize2 : 0);
 }
 
 
@@ -438,8 +449,6 @@ void naAddLayoutElement(
       uiElement);
   }
 
-  NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
-
   NA_LayoutElement* subElem = na_AllocLayoutElement(
     na_curLayoutElement,
     uiElement,
@@ -460,6 +469,21 @@ void naAddLayoutElement(
   }
   
   naAddListLastMutable(&na_curLayoutElement->childs, subElem);
+}
+
+
+
+void naBeginSubLayout(
+  NASpace* space,
+  NABorder2D padding,
+  double preMargin1,
+  double blockSize1)
+{
+  naBeginLayout(space, padding);
+  na_curLayoutElement->margin.begin1 = preMargin1;
+  na_curLayoutElement->blockSize1 = blockSize1;
+  na_curLayoutElement->contentSize1 = NA_LAYOUT_MIN;
+  na_curLayoutElement->contentSize2 = NA_LAYOUT_MIN;
 }
 
 
@@ -504,7 +528,7 @@ void naSetLayoutSectionSpace(NASpace* space) {
 
 
 
-void naSetLayoutElementPrimaryAlign(NAAlignment alignment1) {
+void naSetLayoutElementPrimaryAlignment(NAAlignment alignment1) {
   #if NA_DEBUG
     if(!na_curLayoutElement)
       naCrash("No layout in progress. Use naBeginLayout.");
@@ -524,7 +548,7 @@ void naSetLayoutElementPrimaryAlign(NAAlignment alignment1) {
 
 
 
-void naSetLayoutElementSecondaryAlign(NAAlignment alignment2) {
+void naSetLayoutElementSecondaryAlignment(NAAlignment alignment2) {
   #if NA_DEBUG
     if(!na_curLayoutElement)
       naCrash("No layout in progress. Use naBeginLayout.");
@@ -569,8 +593,9 @@ void na_AlignLayoutElement(
   NA_LayoutElement* elem,
   NARect paddingRect)
 {
-  NABool horizontalIsRightToLeft = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(layoutingSpace);
-  NABool verticalIsBottomToTop = naGetSpaceLayoutDirectionsVerticalIsBottomToTop(layoutingSpace);
+  NABool elemIsSpace = elem->uiElement && (naGetUIElementType(elem->uiElement) == NA_UI_SPACE);
+  NABool horizontalIsRightToLeft = naGetSpaceLayoutDirectionsHorizontalIsRightToLeft(elemIsSpace ? elem->uiElement : layoutingSpace);
+  NABool verticalIsBottomToTop = naGetSpaceLayoutDirectionsVerticalIsBottomToTop(elemIsSpace ? elem->uiElement : layoutingSpace);
   NABool orderingVH = naGetSpaceLayoutDirectionsPrimaryIsVertical(layoutingSpace);
   
   // Compute the actual size of the padded content of the element.
@@ -691,9 +716,9 @@ void na_AlignLayoutElement(
   
     if(!elem->parent) {
       NAWindow* window = naGetUIElementWindowMutable(elem->uiElement);
-      if(window){
+      if(window) {
         NASpace* contentSpace = naGetWindowContentSpace(window);
-        if(contentSpace == elem->uiElement){
+        if(contentSpace == elem->uiElement) {
           NARect windowRect = naGetUIElementRect(window);
           windowRect.size = paddedContentRect.size;
           naSetUIElementRect(window, windowRect);
@@ -702,10 +727,12 @@ void na_AlignLayoutElement(
     }
   }
 
+  // Starting from here, we compute the coordinates of the children.
+
   // When the given element denotes a section or a new sub-layout, the given
   // uiElement must be an NASpace and childs will be added to that space.
   // Therefore, we reset the local coordinate system origin to zero.
-  if(elem->uiElement && (naGetUIElementType(elem->uiElement) == NA_UI_SPACE)) {
+  if(elem->uiElement && elemIsSpace) {
     paddedContentRect.pos = naMakePosZero();
 
     #if NA_DEBUG
@@ -756,6 +783,7 @@ void na_AlignLayoutElement(
   double totalFlexibleSpace2 = orderingVH
     ? paddingRect.size.width  - elem->minPaddingSize2
     : paddingRect.size.height - elem->minPaddingSize2;
+//    : paddingRect.size.height - elem->minPaddingSize2 - elem->padding.begin2 - elem->padding.end2;
 
   // Go through all childs and count how many have to grow in size.
   size_t elementsToFit1 = 0;
@@ -806,7 +834,7 @@ void na_AlignLayoutElement(
       : child->minPaddingSize2 + flexSpace2 + (child->margin.begin2 + child->margin.end2);
       
     // Set the fixed block size1 if this is a primary element
-    if(!elem->isSecondary){
+    if(!elem->isSecondary) {
       if(orderingVH) {
         childMarginRect.size.height = contentRect.size.height;
       }else{
@@ -814,7 +842,7 @@ void na_AlignLayoutElement(
       }
     }
     // Set the fixed block size2 if this is a secondary element
-    if(elem->isSecondary){
+    if(elem->isSecondary) {
       if(orderingVH) {
         childMarginRect.size.width = contentRect.size.width;
       }else{
@@ -865,9 +893,39 @@ void na_AlignLayoutElement(
 
     // Finally, align the child.
     na_AlignLayoutElement(
-      na_GetLayoutingSpace(child),
+      na_GetLayoutingSpace(elem),
       child,
       childPaddingRect);
   }
   naClearListIterator(&iter);
 }
+
+#endif //NA_COMPILE_GUI == 1
+
+
+
+
+// This is free and unencumbered software released into the public domain.
+
+// Anyone is free to copy, modify, publish, use, compile, sell, or
+// distribute this software, either in source code form or as a compiled
+// binary, for any purpose, commercial or non-commercial, and by any
+// means.
+
+// In jurisdictions that recognize copyright laws, the author or authors
+// of this software dedicate any and all copyright interest in the
+// software to the public domain. We make this dedication for the benefit
+// of the public at large and to the detriment of our heirs and
+// successors. We intend this dedication to be an overt act of
+// relinquishment in perpetuity of all present and future rights to this
+// software under copyright law.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+
+// For more information, please refer to <http://unlicense.org/>

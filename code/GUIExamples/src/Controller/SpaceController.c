@@ -25,15 +25,16 @@ struct SpaceController{
 CommonController* createSpaceController() {
   SpaceController* con = naAlloc(SpaceController);
 
-  NASpace* space = naNewSpace(naMakeSize(WINDOW_WIDTH, EXPERIMENT_HEIGHT));
+  NASpace* space = naNewSpace();
+  naSetUIElementRect(space, naMakeRectS(0., 0., WINDOW_WIDTH, EXPERIMENT_HEIGHT));
 
   double spaceHeigth = UI_ELEMENT_HEIGTH + 2 * SPACE_MARGIN_V;
   double curPosY = EXPERIMENT_HEIGHT - spaceHeigth;
 
-  con->subSpace1 = naNewSpace(naMakeSize(WINDOW_WIDTH, spaceHeigth));
-  con->subSpace2 = naNewSpace(naMakeSize(WINDOW_WIDTH, spaceHeigth));
-  con->subSpace3 = naNewSpace(naMakeSize(WINDOW_WIDTH, spaceHeigth));
-  con->subSpace4 = naNewSpace(naMakeSize(WINDOW_WIDTH, spaceHeigth));
+  con->subSpace1 = naNewSpace();
+  con->subSpace2 = naNewSpace();
+  con->subSpace3 = naNewSpace();
+  con->subSpace4 = naNewSpace();
 
   NAColor backColor;
   naFillColorWithSRGB(&backColor, .8f, .5f, .2f, .25f);
@@ -42,23 +43,55 @@ CommonController* createSpaceController() {
   
   naSetSpaceAlternateBackground(con->subSpace2, NA_TRUE);
   naSetSpaceAlternateBackground(con->subSpace4, NA_TRUE);
-  con->subSpace1Label = naNewLabel("Space with normal background", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  con->subSpace2Label = naNewLabel("Space with alternate background", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  con->subSpace3Label = naNewLabel("Space with colored background", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
-  con->subSpace4Label = naNewLabel("Space with colored and alternate background", WINDOW_WIDTH - 2 * WINDOW_MARGIN);
+  con->subSpace1Label = naNewLabel("Space with normal background");
+  con->subSpace2Label = naNewLabel("Space with alternate background");
+  con->subSpace3Label = naNewLabel("Space with colored background");
+  con->subSpace4Label = naNewLabel("Space with colored and alternate background");
   naSetLabelTextAlignment(con->subSpace1Label, NA_ALIGNMENT_CENTER);
   naSetLabelTextAlignment(con->subSpace2Label, NA_ALIGNMENT_CENTER);
   naSetLabelTextAlignment(con->subSpace3Label, NA_ALIGNMENT_CENTER);
   naSetLabelTextAlignment(con->subSpace4Label, NA_ALIGNMENT_CENTER);
-  naAddSpaceChild(con->subSpace1, con->subSpace1Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));
-  naAddSpaceChild(con->subSpace2, con->subSpace2Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));
-  naAddSpaceChild(con->subSpace3, con->subSpace3Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));
-  naAddSpaceChild(con->subSpace4, con->subSpace4Label, naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V));
+  naAddSpaceChild(
+    con->subSpace1,
+    con->subSpace1Label,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V),
+    naMakeInlineSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN));
+  naAddSpaceChild(
+    con->subSpace2,
+    con->subSpace2Label,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V),
+    naMakeInlineSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN));
+  naAddSpaceChild(
+    con->subSpace3,
+    con->subSpace3Label,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V),
+    naMakeInlineSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN));
+  naAddSpaceChild(
+    con->subSpace4,
+    con->subSpace4Label,
+    naMakePos(WINDOW_MARGIN, SPACE_MARGIN_V),
+    naMakeInlineSize(WINDOW_WIDTH - 2 * WINDOW_MARGIN));
   
-  naAddSpaceChild(space, con->subSpace1, naMakePos(0, curPosY - 0 * spaceHeigth));
-  naAddSpaceChild(space, con->subSpace2, naMakePos(0, curPosY - 1 * spaceHeigth));
-  naAddSpaceChild(space, con->subSpace3, naMakePos(0, curPosY - 2 * spaceHeigth));
-  naAddSpaceChild(space, con->subSpace4, naMakePos(0, curPosY - 3 * spaceHeigth));
+  naAddSpaceChild(
+    space,
+    con->subSpace1,
+    naMakePos(0, curPosY - 0 * spaceHeigth),
+    naMakeSize(WINDOW_WIDTH, spaceHeigth));
+  naAddSpaceChild(
+    space,
+    con->subSpace2,
+    naMakePos(0, curPosY - 1 * spaceHeigth),
+    naMakeSize(WINDOW_WIDTH, spaceHeigth));
+  naAddSpaceChild(
+    space,
+    con->subSpace3,
+    naMakePos(0, curPosY - 2 * spaceHeigth),
+    naMakeSize(WINDOW_WIDTH, spaceHeigth));
+  naAddSpaceChild(
+    space,
+    con->subSpace4,
+    naMakePos(0, curPosY - 3 * spaceHeigth),
+    naMakeSize(WINDOW_WIDTH, spaceHeigth));
 
   initCommonController(
     &con->comCon,

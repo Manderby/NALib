@@ -60,12 +60,12 @@ NA_RUNTIME_TYPE(NACocoaSelect, na_DestructCocoaSelect, NA_FALSE);
 
 
 
-NA_DEF NASelect* naNewSelect(double width) {
+NA_DEF NASelect* naNewSelect() {
   NACocoaSelect* cocoaSelect = naNew(NACocoaSelect);
 
   NACocoaNativeSelect* nativeObj = [[NACocoaNativeSelect alloc]
     initWithSelect:cocoaSelect
-    frame:naMakeNSRectWithSize(naMakeSize(width, 25))];
+    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_DEFAULT_SELECT_HEIGHT))];
     
   na_InitCoreSelect(
     (NASelect*)cocoaSelect,

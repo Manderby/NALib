@@ -108,12 +108,12 @@ NA_RUNTIME_TYPE(NACocoaRadio, na_DestructCocoaRadio, NA_FALSE);
 
 
 
-NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, double width) {
+NA_DEF NARadio* naNewRadio(const NAUTF8Char* text) {
   NACocoaRadio* cocoaRadio = naNew(NACocoaRadio);
 
   NACocoaNativeRadio* nativeObj = [[NACocoaNativeRadio alloc]
     initWithRadio:cocoaRadio
-    frame:naMakeNSRectWithSize(naMakeSize(width, 18))];
+    frame:naMakeNSRectWithSize(naMakeSize(NA_COCOA_UI_ELEMENT_DUMMY_WIDTH, NA_COCOA_DEFAULT_RADIO_HEIGHT))];
     
   na_InitCoreRadio(
     (NARadio*)cocoaRadio,
